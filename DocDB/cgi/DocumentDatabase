@@ -104,6 +104,29 @@ print "</td>";
 
 print "<tr>\n";
 
+# Keywords
+
+  print "<td>\n";
+  print "<ul>\n";
+  print "<li>by <a href=\"$ListKeywords\">keyword</a>\n";
+  print "</ul>\n";
+  print "</td>";
+
+# All Meetings
+
+print "<td>\n";
+if ($Public) {
+  print "&nbsp;\n";
+} else {
+  print "<ul>\n";
+  print "<li> from <a href=\"$ListAllMeetings\">all meetings</a>\n";
+  print "</ul>\n";
+}
+print "</td>";
+print "</tr>";
+
+print "<tr>\n";
+
 # Last Modified
 
 print "<td>\n";
@@ -122,19 +145,6 @@ print "</ul>\n";
 print "</td>";
 
 print "</tr>\n";
-
-# All Meetings
-print "<tr>\n";
-print "<td>\n";
-if ($Public) {
-  print "&nbsp;\n";
-} else {
-  print "<ul>\n";
-  print "<li> from <a href=\"$ListAllMeetings\">all meetings</a>\n";
-  print "</ul>\n";
-}
-print "</td>";
-print "</tr>";
 
 # Old number 
 
