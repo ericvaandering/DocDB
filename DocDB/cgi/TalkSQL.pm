@@ -11,6 +11,22 @@ sub ClearSessionTalks {
   $GotAllSessionTalks = 0;
 }
 
+sub FetchSessionTalksByConferenceID ($) {
+  my ($ConferenceID) = @_;
+  my $SessionTalkID;
+  my @SessionTalkIDs = ();
+  my $SessionTalkList   = $dbh -> prepare(
+    "select SessionTalk.SessionTalkID from SessionTalk,Session ".
+    "where Session.SessionID=SessionTalk.SessionID and Session.ConferenceID=?");
+  $SessionTalkList -> execute($SessionID);
+  $SessionTalkList -> bind_columns(undef, \($SessionTalkID));
+  while ($SessionTalkList -> fetch) {
+    $SessionTalkID = &FetchSessionTalkByID($SessionTalkID);
+    push @SessionTalkIDs,$SessionTalkID;
+  }
+  return @SessionTalkIDs; 
+}
+
 sub FetchSessionTalksBySessionID ($) {
   my ($SessionID) = @_;
   my $SessionTalkID;

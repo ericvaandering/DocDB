@@ -22,6 +22,9 @@ require "ResponseElements.pm";
 require "HTMLUtilities.pm";
 require "Defaults.pm";
 require "Security.pm";
+require "TalkHTML.pm";
+
+require "Debug.pm"; #FIXME Remove
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -35,30 +38,27 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 %params = $query -> Vars;
 
 my $Special    = $params{special};
-my $DocumentID = $params{docid};
-my $Version    = $params{version};
+my $DocumentID   = $params{docid};
+my $ConferenceID = $params{conferenceid}; #FIXME SessionID too.
+my $Version      = $params{version};
+my @PreTopics    = $query -> param('pretopic');
+   $mode   = $params{mode}; # FIXME: Can't be my since used in subroutines
+
+@TopicDefaults = ();
 
 if ($Special eq "meeting")      {$Meeting = 1;}
 if ($Special eq "othermeeting") {$OtherMeeting = 1;}
 
 if ($Meeting) {
  require "WebUtilities.pm";
- $mode = "add";
- @TopicDefaults = (&NearByMeeting); #FIXME: push onto pretopics 
+ push @TopicDefaults,(&NearByMeeting); 
 }
 
-if ($OtherMeeting) {
- $mode = "add";
- @PreTopics  = $query -> param('pretopic');
- @TopicDefaults = @PreTopics; #FIXME: Not just for meetings
-}
+push @TopicDefaults,@PreTopics; 
 
-unless ($mode) { 
-  $mode   = $params{mode};
-}
 if ($mode ne "add"    && $mode ne "reserve" && 
     $mode ne "update" && $mode ne "updatedb") {
-  $mode = "reserve";
+  $mode = "add";
 }  
 
 &SetUploadMethod;
@@ -149,6 +149,43 @@ if ($EnhancedSecurity) {
   }    
 }
 
+# Find SessionTalks that the user might choose and display
+
+my @OpenSessionTalkIDs = ();
+
+# First check all preselected topics, see if they are conferences, etc. 
+# FIXME: Not SessionID
+
+if ($mode eq "add" && @TopicDefaults) { # FIXME: Look into modification too
+  foreach my $MinorTopicID (@TopicDefaults) {
+    my $ConferenceID = &FetchConferenceByTopicID($MinorTopicID);
+    if ($ConferenceID) {
+      my @CheckSessionTalkIDs = &FetchSessionTalksByConferenceID($ConferenceIDs);
+      foreach my $SessionTalkID (@CheckSessionTalkIDs) {
+        unless ($SessionTalks{$SessionTalkID}{Confirmed}) {
+          push @OpenSessionTalkIDs,$SessionTalkID;
+        } 
+      }
+    }    
+  }
+}
+
+# Explicit conference check for things that aren't topics
+# FIXME: Also sessionID instead
+
+if ($mode eq "add" && $ConferenceID) { # FIXME: Look into modification too
+  my @CheckSessionTalkIDs = &FetchSessionTalksByConferenceID($ConferenceIDs);
+  foreach my $SessionTalkID (@CheckSessionTalkIDs) {
+    unless ($SessionTalks{$SessionTalkID}{Confirmed}) {
+      push @OpenSessionTalkIDs,$SessionTalkID;
+    } 
+  }
+}    
+
+if (@OpenSessionTalks) {
+  &DBPrintLine("Found some talks to display: @OpenSessionTalks");
+}  
+
 &EndPage(@error_stack); # The user may have made mistakes, warn and exit
 
 &SetFileOptions($DocRevID);
@@ -216,6 +253,12 @@ print "Click on any of the headings for help.</h4>\n"; print "</td>\n";
 print "</tr>\n";
 
 ### Title, abstract, and keywords
+
+if (@OpenSessionTalkIDs) {
+  print "<tr>\n";
+  print "<td colspan=4>\n"; &SessionTalkPulldown(@OpenSessionTalkIDs);    print "</td>\n";
+  print "</tr>\n";
+}
 
 print "<tr>\n";
 print "<td colspan=4>\n"; &TitleBox;    print "</td>\n";

@@ -265,4 +265,30 @@ sub TalkTopics ($) {
   }
 }
 
+sub SessionTalkPulldown {
+  my (@SessionTalkIDs) = @_;
+  
+  require "TalkHintsSQL.pm";
+  require "AuthorSQL.pm";
+  
+  my %SessionTalkLabels = ();
+  foreach my $SessionTalkID (@SessionTalkIDs) {
+    my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID); 
+    my @Authors = ();
+    foreach my $AuthorHintID (@AuthorHintIDs) {
+      my $AuthorID = $AuthorHints{$AuthorHintID}{AuthorID}; 
+      &FetchAuthor($AuthorID);
+      $Author = $Authors{$AuthorID}{FULLNAME};
+      push @Authors,$Author;
+    }
+    
+    my $Authors = join ', ',@Authors;
+      
+    $SessionTalkLabels{$SessionTalkID} = $SessionTalks{$SessionTalkID}{HintTitle}.$Authors;
+  }                                   
+  print $query -> popup_menu (-name    => 'sessiontalkid', 
+                              -labels => \%SessionTalkLabels, 
+                              -values  => \@SessionTalkIDs);
+
+}
 1;
