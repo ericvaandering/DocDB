@@ -128,110 +128,80 @@ sub PrintRevisionInfo {
   if ($EnhancedSecurity) {
     @ModifyIDs   = &GetRevisionModifyGroups($DocRevID);
   }
+  print "<center><table cellpadding=10 width=95%>\n";
+  print "<tr><td colspan=3 align=center>\n";
+  &PrintTitle($DocRevisions{$DocRevID}{Title});
+  if ($UseSignoffs) {
+    require "SignoffUtilities.pm";
+    my ($ApprovalStatus,$LastApproved) = &RevisionStatus($DocRevID);
+    unless ($ApprovalStatus eq "Unmanaged") { 
+      print "(Document Status: $ApprovalStatus)";
+    }  
+  }  
+  print "</td></tr>\n";
+  print "<tr valign=top>";
+  print "<td>";
   
-  print "<div id=\"RevisionInfo\">\n";
-  
-  ### Header info
-  
-  print "<div id=\"Header3Col\">\n";
+  print "<table>\n"; 
+  &RequesterByID($Documents{$DocumentID}{REQUESTER});
+  &SubmitterByID($DocRevisions{$DocRevID}{SUBMITTER});
+  print "</table>\n"; 
 
-  print "<div id=\"DocTitle\">\n";
-   &PrintTitle($DocRevisions{$DocRevID}{Title});
-   if ($UseSignoffs) {
-     require "SignoffUtilities.pm";
-     my ($ApprovalStatus,$LastApproved) = &RevisionStatus($DocRevID);
-     unless ($ApprovalStatus eq "Unmanaged") { 
-       print "(Document Status: $ApprovalStatus)";
-     }  
-   }  
-  print "</div>\n";  # DocTitle
-  print "</div>\n";  # Header3Col
+  print "<td>"; 
+  &PrintDocNumber($DocRevID);
 
-  ### Left Column
+  print "<td>"; 
+  &ModTimes;
 
-  print "<div id=\"LeftColumn3Col\">\n";
-  print "<div id=\"DocumentID\">\n";
-   &PrintDocNumber($DocRevID);
-  print "</div>\n";
-  
-  print "<div id=\"Requester\">\n";
-   &RequesterByID($Documents{$DocumentID}{REQUESTER});
-   &SubmitterByID($DocRevisions{$DocRevID}{SUBMITTER});
-  print "</div>\n";
+  print "</td></tr>\n";
+  print "</table>\n";
+  print "<table cellpadding=10 width=95%>\n";
+  print "<tr valign=top>";
+  print "<td>"; 
+  &AuthorListByID(@AuthorIDs);
 
-  print "<div id=\"BasicDocInfo\">\n";
-   &ModTimes;
-  print "</div>\n";
-  
-  print "<div id=\"OtherVersions\">\n";
-  print "</div>\n";
-  
-  print "</div>\n";  # LeftColumn3Col
+  print "<td>"; 
+  &TopicListByID(@TopicIDs);
 
-  ### Right column (wrapped around by middle column)
-
-  print "<div id=\"RightColumn3Col\">\n";
-  
-  print "<div id=\"Files\">\n";
-   &FileListByRevID($DocRevID);
-  print "</div>\n";
-  
-  print "<div id=\"Authors\">\n";
-   &AuthorListByID(@AuthorIDs);
-  print "</div>\n";
-
-  print "<div id=\"Topics\">\n";
-   &TopicListByID(@TopicIDs);
-  print "</div>\n";
-
-  print "<div id=\"Viewable\">\n";
-   &SecurityListByID(@GroupIDs);
-  print "</div>\n";
-
+  print "<td>"; 
+  &SecurityListByID(@GroupIDs);
   if ($EnhancedSecurity) {
-    print "<div id=\"Modifiable\">\n";
-     &ModifyListByID(@ModifyIDs);
-    print "</div>\n";
+    print "<td>"; 
+    &ModifyListByID(@ModifyIDs);
   }
+  print "</td></tr>\n";
+  print "</table>\n";
+  print "<table cellpadding=10 width=95%>\n";
+  print "<tr valign=top>";
+  print "<td>"; 
+  &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT});
 
-  print "</div>\n";  # RightColumn3Col
-  
-  ### Main Column
-  
-  print "<div id=\"MainColumn3Col\">\n";
+  print "<td rowspan=3>"; 
+  &FileListByRevID($DocRevID);
 
-  print "<div id=\"Abstract\">\n";
-   &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT});
-  print "</div>\n";
-  
-  print "<div id=\"Keywords\">\n";
-   &PrintKeywords($DocRevisions{$DocRevID}{Keywords});
-  print "</div>\n";
-  
-  print "<div id=\"RevisionNote\">\n";
-   &PrintRevisionNote($DocRevisions{$DocRevID}{Note});
-  print "</div>\n";
-  
-  print "<div id=\"Reference\">\n";
-   &PrintReferenceInfo($DocRevID);
-  print "</div>\n";
-  
-  print "<div id=\"ConfereneInfo\">\n";
-   &PrintConfInfo(@TopicIDs);
-  print "</div>\n";
-  
-  print "<div id=\"PubInfo\">\n";
-   &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
-  print "</div>\n";
-  
+  print "</td></tr>\n";
+
+  print "<tr valign=top>";
+  print "<td>"; 
+  &PrintKeywords($DocRevisions{$DocRevID}{Keywords});
+
+  print "<tr valign=top>";
+  print "<td>"; 
+  &PrintRevisionNote($DocRevisions{$DocRevID}{Note});
+
+  print "<tr valign=top>";
+  print "<td>"; 
+  &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
+  &PrintConfInfo(@TopicIDs);
+  &PrintReferenceInfo($DocRevID);
+  print "</td></tr>\n";
   if ($UseSignoffs) {
     require "SignoffHTML.pm";
-    print "<div id=\"Signoffs\">\n";
+    print "<tr valign=top><td colspan=2>\n";
     &PrintRevisionSignoffInfo($DocRevID);
-    print "</div>\n";
+    print "</td></tr>\n";
   }  
-  print "</div>\n";  # MainColumn3Col
-
+  print "</table>\n";
   if (&CanModify($DocumentID) && !$HideButtons) {
     print "<hr width=\"90%\"/>\n";
     print "<table cellpadding=10>\n";
