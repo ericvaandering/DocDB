@@ -49,6 +49,8 @@ my @TalkDeletes     = split /\0/,$params{talkdelete};
 my @TalkConfirms    = split /\0/,$params{talkconfirm};
 my @TimeStamps      = split /\0/,$params{timestamp};
 
+$query -> delete_all(); # Stop program from caching variable from script to script
+
 # Also have params for DocID, authors, and topics in special params with 
 # SessionID embedded
 
@@ -167,23 +169,19 @@ if ($Mode eq "modify") {
 
       if ($SessionTalkID) {
         &FetchSessionTalkByID($SessionTalkID);
-        
         if ($TimeStamp < $SessionTalks{$SessionTalkID}{TimeStamp}) {
-          push @WarnStack,"Your attempt to modify $TalkTitle failed. Your
-                          modification collided with another. (Please ignore
-                          this message if you didn't actually try to change
-                          anything for that agenda entry.)";
+          push @WarnStack,"Someone else modifed $TalkTitle while you were working. 
+                          If you tried to modify $TalkTitle too, your modifications
+                          have been discarded.";
           next;
         }
       }                    
       if ($TalkSeparatorID) {
         &FetchTalkSeparatorByID($TalkSeparatorID);
-        
         if ($TimeStamp < $TalkSeparators{$TalkSeparatorID}{TimeStamp}) {
-          push @WarnStack,"Your attempt to modify $TalkTitle failed. Your
-                          modification collided with another. (Please ignore
-                          this message if you didn't actually try to change
-                          anything for that agenda entry.)";
+          push @WarnStack,"Someone else modifed $TalkTitle while you were working. 
+                          If you tried to modify $TalkTitle too, your modifications
+                          have been discarded.";
           next;
         }
       }                    
@@ -289,7 +287,6 @@ print "</table>\n";
 my $NavBarText = "Display&nbsp;Session";
 my $NavBarURL  = "$DisplayMeeting?sessionid=$SessionID";
 &DocDBNavBar($NavBarText,$NavBarURL);
-
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  
 exit;
