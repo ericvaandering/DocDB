@@ -157,10 +157,11 @@ my @OpenSessionTalkIDs = ();
 # FIXME: Not SessionID
 
 if ($mode eq "add" && @TopicDefaults) { # FIXME: Look into modification too
+  require "TalkSQL.pm";
   foreach my $MinorTopicID (@TopicDefaults) {
     my $ConferenceID = &FetchConferenceByTopicID($MinorTopicID);
     if ($ConferenceID) {
-      my @CheckSessionTalkIDs = &FetchSessionTalksByConferenceID($ConferenceIDs);
+      my @CheckSessionTalkIDs = &FetchSessionTalksByConferenceID($ConferenceID);
       foreach my $SessionTalkID (@CheckSessionTalkIDs) {
         unless ($SessionTalks{$SessionTalkID}{Confirmed}) {
           push @OpenSessionTalkIDs,$SessionTalkID;
@@ -174,16 +175,18 @@ if ($mode eq "add" && @TopicDefaults) { # FIXME: Look into modification too
 # FIXME: Also sessionID instead
 
 if ($mode eq "add" && $ConferenceID) { # FIXME: Look into modification too
-  my @CheckSessionTalkIDs = &FetchSessionTalksByConferenceID($ConferenceIDs);
+  require "TalkSQL.pm";
+  my @CheckSessionTalkIDs = &FetchSessionTalksByConferenceID($ConferenceID);
   foreach my $SessionTalkID (@CheckSessionTalkIDs) {
+#    &DBPrintLine("Checking: $SessionTalkID");
     unless ($SessionTalks{$SessionTalkID}{Confirmed}) {
       push @OpenSessionTalkIDs,$SessionTalkID;
     } 
   }
 }    
 
-if (@OpenSessionTalks) {
-  &DBPrintLine("Found some talks to display: @OpenSessionTalks");
+if (@OpenSessionTalkIDs) {
+  &DBPrintLine("Found some talks to display:", @OpenSessionTalkIDs);
 }  
 
 &EndPage(@error_stack); # The user may have made mistakes, warn and exit

@@ -18,7 +18,7 @@ sub FetchSessionTalksByConferenceID ($) {
   my $SessionTalkList   = $dbh -> prepare(
     "select SessionTalk.SessionTalkID from SessionTalk,Session ".
     "where Session.SessionID=SessionTalk.SessionID and Session.ConferenceID=?");
-  $SessionTalkList -> execute($SessionID);
+  $SessionTalkList -> execute($ConferenceID);
   $SessionTalkList -> bind_columns(undef, \($SessionTalkID));
   while ($SessionTalkList -> fetch) {
     $SessionTalkID = &FetchSessionTalkByID($SessionTalkID);

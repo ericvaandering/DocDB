@@ -268,13 +268,10 @@ sub TalkTopics ($) {
 sub SessionTalkPulldown {
   my (@SessionTalkIDs) = @_;
   
-  require "TalkHintsSQL.pm";
+  require "TalkHintSQL.pm";
   require "AuthorSQL.pm";
   
   my %SessionTalkLabels = ();
-  
-  $SessionTalkLabels{0} = "Select your talk from this list";
-  unshift @SessionTalkIDs,0;
   
   foreach my $SessionTalkID (@SessionTalkIDs) {
     my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID); 
@@ -287,9 +284,21 @@ sub SessionTalkPulldown {
     }
     
     my $Authors = join ', ',@Authors;
-      
-    $SessionTalkLabels{$SessionTalkID} = $SessionTalks{$SessionTalkID}{HintTitle}.$Authors;
+    if ($SessionTalks{$SessionTalkID}{HintTitle}) {
+      $SessionTalkLabels{$SessionTalkID} = $SessionTalks{$SessionTalkID}{HintTitle};
+    } else {
+      $SessionTalkLabels{$SessionTalkID} = "Unknown";
+    }  
+    $SessionTalkLabels{$SessionTalkID} .= " -- ";
+    if (@Authors) {
+      $SessionTalkLabels{$SessionTalkID} .= $Authors;
+    } else {
+      $SessionTalkLabels{$SessionTalkID} .= "Unknown";
+    }  
   }                                   
+  $SessionTalkLabels{0} = "Select your talk from this list";
+  unshift @SessionTalkIDs,"0";
+  
   print $query -> popup_menu (-name    => 'sessiontalkid', 
                               -labels => \%SessionTalkLabels, 
                               -values  => \@SessionTalkIDs);
