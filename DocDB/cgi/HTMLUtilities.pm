@@ -7,8 +7,10 @@ sub BTeVHeader {
   my @title_parts = split /\s+/, $page_title;
   $page_title = join '&nbsp;',@title_parts;
    
-  print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"\n";
-  print "         \"http://www.w3.org/TR/html4/loose.dtd\">\n";
+  print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
+
+#  print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"\n";
+#  print "         \"http://www.w3.org/TR/html4/loose.dtd\">\n";
 
   print "<html>\n";
   print "<head>\n";
@@ -40,8 +42,10 @@ sub BTeVStyle { # Same as above, but no nav-bar
   my @title_parts = split /\s+/, $page_title;
   $page_title = join '&nbsp;',@title_parts;
    
-  print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"\n";
-  print "         \"http://www.w3.org/TR/html4/loose.dtd\">\n";
+  print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
+
+#  print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"\n";
+#  print "         \"http://www.w3.org/TR/html4/loose.dtd\">\n";
 
   print "<html>\n";
   print "<head>\n";
