@@ -207,7 +207,7 @@ sub TopicSelect { # Scrolling selectable list for topics
   my @TopicIDs = sort byTopic keys %MinorTopics;
   my %TopicLabels = ();
   foreach my $ID (@TopicIDs) {
-    $TopicLabels{$ID} = $MinorTopics{$MinorTopicID}{Full};
+    $TopicLabels{$ID} = $MinorTopics{$ID}{Full};
   }
   print "<b><a ";
   &HelpLink("topics");
