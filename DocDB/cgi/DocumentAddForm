@@ -83,6 +83,7 @@ if      ($mode eq "add") {
   &DocDBHeader("$Project Document Update","Document Update");
 }
 &HelpPopupScript;
+&KeywordChooserPopupScript;
 
 @error_stack = ();
 @warn_stack = ();

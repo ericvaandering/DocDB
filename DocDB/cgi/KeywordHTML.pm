@@ -227,8 +227,10 @@ sub KeywordsBox {
   print "<b><a ";
   &HelpLink("keywords");
   print "Keywords:</a></b> (space separated)\n";
-  print " (<a href=\"$ListKeywords?mode=chooser\" target=\"_blank\">Keyword
-  Chooser</a>)<br> \n";
+  print " - <a
+ 
+href=\"Javascript:keywordchooserwindow(\'$ListKeywords?mode=chooser\');\"><b>Keyword
+  Chooser</b></a><br> \n";
   print $query -> textfield (-name => 'keywords', -default => $KeywordsDefault, 
                              -size => 70, -maxlength => 240);
 };
