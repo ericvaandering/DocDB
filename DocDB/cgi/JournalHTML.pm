@@ -54,7 +54,7 @@ sub JournalEntryBox {
   &HelpLink("journalentry");
   print "URL:</a></b><br> \n";
   print $query -> textfield (-name => 'url', 
-                             -size => 40, -maxlength => 240);
+                             -size => 40, -maxlength => 128);
   print "</td></tr>\n";
   print "<tr><td>\n";
   print "<b><a ";

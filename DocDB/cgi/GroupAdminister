@@ -49,16 +49,16 @@ if ($Create) {$Create = 1;} # Make sure they are in format MySQL is expecting
 if ($Admin)  {$Admin  = 1;}
 if ($NoPerm) {$NoPerm = 1;}
 
+unless (&CanAdminister) {
+  push @ErrorStack,$Msg_AdminNoLogin;
+}  
+&EndPage(@ErrorStack);
+
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
 unless ($dbh) {
   push @ErrorStack,$Msg_AdminNoConnect;
 }         
-&EndPage(@ErrorStack);
-
-unless (&CanAdminister) {
-  push @ErrorStack,$Msg_AdminNoLogin;
-}  
 &EndPage(@ErrorStack);
 
 &GetSecurityGroups;
@@ -142,7 +142,7 @@ if      ($Action eq "Delete") { # Delete group
    "insert into SecurityGroup (GroupID,Name,Description,CanCreate,CanAdminister) ".
                       "values (0,?,?,?,?)");
 
-  $GroupInsert -> execute($Name,$Description,$Create,$Admin);
+  $GroupInsert -> execute($Name,$Description,$Create);
   $ParentID = $GroupInsert -> {mysql_insertid}; # Works with MySQL only
 
   my $HierarchyInsert = $dbh->prepare(

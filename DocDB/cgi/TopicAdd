@@ -34,11 +34,14 @@ $MajorTopicID     = $params{majortopic};
 $ShortDescription = $params{short};
 $LongDescription  = $params{long};
 
-if (&MajorIsGathering($MajorTopicID)) {
-  push @error_stack,"You cannot add conferences or meetings with this form, use the 
-       <a href=\"$AdministerForm\">Administration</a> form instead.";
+if ($MajorTopicID == &LookupMajorTopic("Conferences")) {
+  push @error_stack,"You cannot add conferences with this form, use the 
+       <a href=\"$ConferenceAddForm\">Conference Add</a> form instead.";
 }       
-&EndPage(@error_stack);
+
+if (@error_stack) {
+  &EndPage(@error_stack);
+}
 
 $topic_insert -> execute($MajorTopicID,$ShortDescription,$LongDescription);
 my $MinorTopicID = $topic_insert -> {mysql_insertid}; # Works with MySQL only

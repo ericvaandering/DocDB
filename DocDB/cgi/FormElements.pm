@@ -418,8 +418,13 @@ sub MultiTopicSelect { # Multiple scrolling selectable lists for topics
         $MatchLabels{$MinorID} = $MinorTopics{$MinorID}{SHORT};
       }  
     }
-    @MatchMinorIDs = sort byTopic @MatchMinorIDs;
-
+    if (&MajorIsMeeting($MajorID)) {
+      @MatchMinorIDs = reverse sort byMeetingDate @MatchMinorIDs;
+    } elsif (&MajorIsConference($MajorID)) {
+      @MatchMinorIDs = reverse sort ConferenceByDate @MatchMinorIDs;
+    } else {
+      @MatchMinorIDs = sort byMinorTopic @MatchMinorIDs;
+    }
     print $query -> scrolling_list(-name => "topics", 
              -values => \@MatchMinorIDs, -labels => \%MatchLabels,
              -size => 8, -multiple => 'true', -default => \@TopicDefaults);
@@ -517,7 +522,7 @@ sub ConferenceURLBox {
   &HelpLink("confurl");
   print "URL:</a></b><br> \n";
   print $query -> textfield (-name => 'url', 
-                             -size => 40, -maxlength => 240);
+                             -size => 40, -maxlength => 64);
 };
 
 sub NameEntryBox {

@@ -82,7 +82,7 @@ sub DocDBNavBar {
   print "</div>\n";
 }
 
-sub ProjectReferenceLink (;$$$$) {
+sub ProjectReferenceLink ($$$$) {
   my ($Acronym,$Volume,$Page,$ReferenceID) = @_;
 
 # This routine is used to add links to and optionally replace the text of 

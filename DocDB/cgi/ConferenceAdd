@@ -16,8 +16,6 @@ require "WebUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
-  
-&SpecialMajorTopics;
 
 %params = $query -> Vars;
 
@@ -40,7 +38,7 @@ my $conference_insert = $dbh->prepare(
 @error_stack = ();
 @warn_stack = ();
 
-my ($MajorTopicID)   = @ConferenceMajorIDs; 
+my $MajorTopicID     = &LookupMajorTopic("Conferences"); 
 my $ShortDescription = $params{short};
 my $LongDescription  = $params{long};
 my $Location         = $params{location};
