@@ -35,6 +35,7 @@ unless ($NumberUploads)                     {$NumberUploads = 1;}
 
 print $query->header;
 &BTeVHeader("File Addition");
+&HelpPopupScript;
 
 @error_stack = ();
 
@@ -103,6 +104,13 @@ if ($Upload eq "file") {
 } elsif ($Upload eq "http") {
   &SingleHTTPBox;
 }  
+print "</td></tr>";
+
+print "<tr><td align=left>\n";
+print "<a "; &HelpLink("replacefiles"); 
+print "<b>Replace duplicate files?</b></a> \n";
+print $query -> checkbox(-name => "replace", -label => '(Check for yes.)', 
+                         -onClick => "helppopupwindow(\'DocDBHelp?term=replacefiles\');");
 print "</td></tr>";
 
 print "<tr><td align=center>\n";

@@ -65,7 +65,7 @@ print "or by <a href=\"$ListAuthors\">author</a>, ";
 print "<a href=\"$ListTopics\">topic</a>, ";
 print "<a href=\"$ListTypes\">type</a>, ";
 unless ($Public) {
-#  print "<a href=\"$ListMeetings\">group meeting</a>, ";
+  print "<a href=\"$ListMeetings\">group meeting</a>, ";
 }
 print "<a href=\"$ListByTopic?major=Conferences&mode=conference\">conference
 documents</a>, ";
@@ -128,7 +128,8 @@ unless ($Public) {
   print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
   print $query -> hidden(-name => 'mode',    -default => 'updatedb');
   print $query -> endform;
-  print "<li> <a href=\"#addform\">Add files</a> to a document."; 
+
+  print "<li> <a href=\"#addform\">Add or replace files</a> in a document."; 
   print "</ul>\n";
 
   print "<p>\n";
@@ -163,7 +164,7 @@ unless ($Public) {
   @authormodes = ("list","field");
 
   print "<table cellpadding=5 border=5>\n";
-
+  print "<tr><th colspan=2><big>Customize Insert/Modify</big></th></tr>\n";
   print "<tr><td align=right>\n";
   print "<a "; &HelpLink("modifytypes"); 
   print "<b>Type of modification:</b></a>\n";
@@ -228,6 +229,7 @@ unless ($Public) {
 
   print "<table cellpadding=5 border=5>\n";
 
+  print "<tr><th colspan=2><big>Customize Add/Replace Files</big></th></tr>\n";
   print "<tr><td align=right>\n";
   print "<a "; &HelpLink("docnumber"); 
   print "<b>Update Doc #:</b></a>\n";

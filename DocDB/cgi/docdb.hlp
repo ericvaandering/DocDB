@@ -1,3 +1,13 @@
+replacefiles
+Replace Duplicate Files
+If you select this option, any files you add which duplicate file names of
+existing files will completely replace the old files (no backup will be kept). Yuu
+should <b>not</b> be using this option avoid creating a new version of a
+document, even if only minor changes have been made. This option is, instead,
+intended for making minor fixes to presentation formats and the like. 
+<p>
+Please use this option responsibly. 
+#
 authormanual
 Authors
 Type the names of the authors here. Put each author on a new line. Use full last
