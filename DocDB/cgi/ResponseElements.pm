@@ -126,7 +126,7 @@ sub PrintRevisionInfo {
  
   my ($DocRevID,$HideButtons) = @_;
 
-  &FetchDocRevisionByID($DocRevID);
+  &FetchRevisionByDocumentAndVersion($DocRevID);
 
   my $DocumentID  = $DocRevisions{$DocRevID}{DOCID};
   my $Version     = $DocRevisions{$DocRevID}{VERSION};
@@ -341,7 +341,7 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
     unless (&CanAccess($DocumentID,$Version)) {return;}
     
     my $full_docid  = &DocumentLink($DocumentID,$Version);
-    my $DocRevID    = &FetchDocRevision($DocumentID,$Version);
+    my $DocRevID    = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
     my $title       = &DocumentLink($DocumentID,$Version,$DocRevisions{$DocRevID}{TITLE});
     if ($Mode eq "meeting") {
       my @FileIDs   = &FetchDocFiles($DocRevID);

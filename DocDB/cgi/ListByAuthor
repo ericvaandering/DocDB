@@ -69,7 +69,7 @@ my @DocumentIDs = keys %DocumentIDs;
 
 foreach my $DocumentID (@DocumentIDs) { # For shorter lists
   &FetchDocument($DocumentID);
-  &FetchDocRevision($DocumentID,$Documents{$DocumentID}{NVER});
+  &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVER});
 }
 
 ### Sort

@@ -11,7 +11,7 @@ sub FetchDocRevisionByID {
            "Abstract,RevisionDate,TimeStamp,DocumentID,Obsolete, ".
            "JournalID,Volume,Page,Keywords ".
     "from DocumentRevision ".
-    "where DocRevID=?");
+    "where DocRevID=? and Obsolete=0");
   if ($DocRevisions{$docRevID}{DOCID} && $DocRevisions{$docRevID}{COMPLETE}) {
     return $DocRevisions{$docRevID}{DOCID};
   }
@@ -88,7 +88,7 @@ sub FetchRevisionsByDocument {
   my ($DocumentID) = @_;
   &FetchDocument($DocumentID);
   my $revision_list = $dbh->prepare(
-    "select DocRevID from DocumentRevision where DocumentID=?");
+    "select DocRevID from DocumentRevision where DocumentID=? and Obsolete=0");
   
   my ($DocRevID);
   $revision_list -> execute($DocumentID);

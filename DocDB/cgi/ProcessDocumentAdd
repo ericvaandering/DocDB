@@ -269,10 +269,10 @@ if      ($mode eq "reserve") {
 
 if ($mode eq "updatedb") { # New Document revision replaces old. Fetch 
                            # old DocumentRevision and mark it obsolete
-  $oldRevID = &FetchDocRevision($documentID,$version);
+  my $OldRevID = &FetchRevisionByDocumentAndVersion($documentID,$version);
   my $obsolete_revision = $dbh -> prepare(
      "update DocumentRevision set Obsolete=1 where DocRevID=?");
-  $obsolete_revision -> execute($oldRevID); 
+  $obsolete_revision -> execute($OldRevID); 
 }  
 
 ### Add entry to Document Revision
@@ -411,7 +411,7 @@ if ($mode = "updatedb") { # Local DB not in sync, clear it
 # Output feedback to the user
 
 $full_docid = &FullDocumentID($documentID);
-my $DocRevID   = &FetchDocRevision($documentID,$version);
+my $DocRevID   = &FetchRevisionByDocumentAndVersion($documentID,$version);
 
 unless ($DocRevID) {
   print "This document does not exist.<p>\n";

@@ -104,9 +104,9 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   $DocumentID = $params{docid};
   &FetchDocument($DocumentID);
   if ($mode eq "update") { # Need to read in last version values and update
-    $DocRevID = &FetchDocRevision($DocumentID,$Documents{$DocumentID}{NVER});
+    $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVER});
   } elsif ($mode eq "updatedb") {
-    $DocRevID = &FetchDocRevision($DocumentID,$Version);
+    $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
     if ($Version != $Documents{$DocumentID}{NVER}) {
       push @warn_stack,"You are about to update an old version of this document.";
     }

@@ -57,7 +57,7 @@ unless (&CanAccess($DocumentID,$Version)) {
   exit;
 }  
 
-my $DocRevID   = &FetchDocRevision($DocumentID,$Version);
+my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 
 unless ($DocRevID) {
   print "This document does not exist.<p>\n";

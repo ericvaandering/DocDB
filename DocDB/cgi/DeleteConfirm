@@ -45,7 +45,7 @@ unless (&CanModify($DocumentID,$Version)) { # FIXME CanAdmin function
   exit;
 }  
 
-my $DocRevID   = &FetchDocRevision($DocumentID,$Version);
+my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 
 unless ($DocRevID) {
   print "This document does not exist.<p>\n";

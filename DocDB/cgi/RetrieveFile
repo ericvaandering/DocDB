@@ -44,7 +44,7 @@ unless (&CanAccess($DocumentID,$Version)) {
   push @error_stack,"You are not authorized to view this document.";
 }  
 
-my $DocRevID   = &FetchDocRevision($DocumentID,$Version);
+my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 
 unless ($DocRevID) {
   push @error_stack,"This document does not exist.";

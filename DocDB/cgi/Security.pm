@@ -2,7 +2,7 @@ sub CanAccess { # Can the user access (with current security) this version
   require "RevisionSQL.pm";
   
   my ($documentID,$version) = @_;
-  my $DocRevID = &FetchDocRevision($documentID,$version);
+  my $DocRevID = &FetchRevisionByDocumentAndVersion($documentID,$version);
   
   unless ($DocRevID) { # Document doesn't exist
     return 0;

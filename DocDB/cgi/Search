@@ -276,7 +276,7 @@ if ($OuterLogic eq "OR") {
 
 foreach my $DocumentID (@DocumentIDs) { 
   &FetchDocument($DocumentID);
-  &FetchDocRevision($DocumentID,$Documents{$DocumentID}{NVER});
+  &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVER});
 }
 
 if ($Mode eq "conference") {

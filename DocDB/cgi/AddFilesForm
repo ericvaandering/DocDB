@@ -54,7 +54,7 @@ if ($params{version} eq "0") {
     $Version = $Documents{$DocumentID}{NVER};
   }
 }
-my $DocRevID   = &FetchDocRevision($DocumentID,$Version);
+my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 
 my $UpdateLink = $DocumentAddForm."?mode=update&docid=$DocumentID";
 unless (&CanModify($DocumentID,$Version)) {

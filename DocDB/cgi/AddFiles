@@ -48,7 +48,7 @@ my $DocRevID;
 ### Check for user errors
 
 if ($DocumentID && $Version) {
-  $DocRevID = &FetchDocRevision($DocumentID,$Version);
+  $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   unless ($DocRevID) {
     push @error_stack,"No such document exists.";
   }
@@ -188,7 +188,7 @@ if (@warn_stack) {
 ### Output feedback to the user
 
 my $full_docid = &FullDocumentID($DocumentID);
-   $DocRevID   = &FetchDocRevision($DocumentID,$Version);
+   $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 
 unless ($DocRevID) {
   print "This document does not exist.<p>\n";

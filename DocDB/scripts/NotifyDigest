@@ -166,7 +166,7 @@ foreach $EmailUserID (@EmailUserIDs) {
     }
     foreach my $DocumentID (@DocumentIDs) {
       &FetchDocument($DocumentID);
-      my $DocRevID = &FetchDocRevision($DocumentID,$Documents{$DocumentID}{NVER});
+      my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVER});
 
 
       &RevisionMailBody($DocRevID);       # Write the body
