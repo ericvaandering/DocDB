@@ -50,7 +50,6 @@ if ($ProjectHelp) {
   $ProjectSchema = $ProjectParser -> parse(Source => {SystemId => "ProjectHelp.xml"});
 }
 
-
 # Start page
 
 $query = new CGI;  
