@@ -565,7 +565,7 @@ sub AllMeetingsTable (;$) {
   
   &SpecialMajorTopics;
   
-  my $NCols = 4;
+  my $NCols = 3;
   my @MajorTopicIDs = (@GatheringMajorIDs,0);
 
   my $Col   = 0;

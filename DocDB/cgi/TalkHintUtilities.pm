@@ -183,7 +183,7 @@ sub ReHintTalksBySessionID ($) { # FIXME: Refactor to use GetHintDocuments and T
         $FuzzyScore = $FuzzyScore2;
       }
             
-      my $Score = $MethodScore*($AuthorMatches+1)*(2*$TopicMatches+1)+(2*$FuzzyScore+1);
+      my $Score = $MethodScore*($AuthorMatches+1)*(2*$TopicMatches+1)*($FuzzyScore+1);
       if ($Score > $BestDocuments{$SessionTalkID}{Score} && ($AuthorMatches+$TopicMatches)) {
         $BestDocuments{$SessionTalkID}{Score}      = $Score;
         $BestDocuments{$SessionTalkID}{DocumentID} = $DocumentID;
@@ -319,6 +319,9 @@ sub TalkMatches ($$@) {
   my ($SessionTalkID,$TalkMatchThreshold,%DocumentIDs) = @_;
   
   require "Sorts.pm";
+  require "DocumentSQL.pm";
+  require "RevisionSQL.pm";
+  require "TalkHintSQL.pm";
   
   my @DocumentIDs = keys %DocumentIDs;
   
@@ -331,6 +334,7 @@ sub TalkMatches ($$@) {
   my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID); 
 
   foreach my $DocumentID (@DocumentIDs) { # Check each document in the list
+    &FetchDocument($DocumentID);
     my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVersions});
     my @RevTopics  = &GetRevisionTopics($DocRevID);
     my @RevAuthors = &GetRevisionAuthors($DocRevID);
@@ -378,7 +382,11 @@ sub TalkMatches ($$@) {
       $FuzzyScore = $FuzzyScore2;
     }
 
-    my $Score = $MethodScore*($AuthorMatches+1)*(2*$TopicMatches+1)+(2*$FuzzyScore+1);
+    my $Score = $MethodScore*($AuthorMatches+1)*(2*$TopicMatches+1)*($FuzzyScore+1);
+ 
+#    print "DI: $DocumentID Score: $Score AM: $AuthorMatches TM: $TopicMatches
+#           FM: $FuzzyScore MS: $MethodScore <br>\n";
+
     my $NoMatchScore = 1*(0+1)*(2*0+1)*(2*0+1);
     if ($Score > $Threshold && $Score > $NoMatchScore) { # Might loosen
       $TalkMatches{$DocumentID}{Score} = $Score;
