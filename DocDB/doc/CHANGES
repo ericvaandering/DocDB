@@ -1,14 +1,20 @@
+6.3.0 
+
+By default, certificate authorization uses the e-mail address in a client
+certificate to determine if it is unique. Some certificate providers don't
+encode an e-mail address. In that case, you can set
+$Preferences{Security}{Certificates}{UseCNOnly} = TRUE to use the CN instead.
+
+Also, adds indicators of required fields to the meeting entry form and fixes a
+few small bugs discovered by FNAL-CD.
+
 6.2 
 
 Allows people with personal accounts to monitor specific documents, not just
-based on authors, topics, or keywords. When viewing a document, at the bottom
-of the left column you will see a place to type your username and password to
-watch a document. You can erase the list of watched documents from the "Manage
-a personal account" page. When a document you are watching changes, you get
-e-mail.
-
-For users of the certificate system, there is just a "Watch Document" button.
-The system already knows who you are.
+based on authors, topics, or keywords. At the bottom of the left column you will
+see a place to type your username and password to watch a document. You can
+erase the list of watched documents from the "Manage a personal account" page.
+When a document you are watching changes, you get e-mail.
 
 6.1 
 

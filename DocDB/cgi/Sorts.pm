@@ -213,4 +213,18 @@ sub DocIDsByScore {
   $TalkMatches{$a}{Score} <=> $TalkMatches{$b}{Score};
 }    
 
+sub EmailUserIDsByName {
+  my $NameA = $EmailUser{$a}{Name};
+  my $NameB = $EmailUser{$b}{Name};
+  
+  my @PartsA = split /\s+/,$NameA;
+  my @NamesA = grep /^\w+$/,@PartsA;
+  my $LastA  = pop @NamesA;
+  
+  my @PartsB = split /\s+/,$NameB;
+  my @NamesB = grep /^\w+$/,@PartsB;
+  my $LastB  = pop @NamesB;
+  
+  $LastA cmp $LastB;
+}  
 1;

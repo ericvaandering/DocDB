@@ -403,30 +403,20 @@ sub ShortDescriptionBox  (;%) {
 sub LongDescriptionBox (;%) {
   my (%Params) = @_;
   
-  my $HelpLink  =   $Params{-helplink}  || "longdescription";  #FIXME  Not used, Blank might be needed later?
-  my $HelpText  =   $Params{-helptext}  || "Topics";           # Not used
+  my $HelpLink  =   $Params{-helplink}  || "longdescription";  
+  my $HelpText  =   $Params{-helptext}  || "Long Description";           
   my $ExtraText =   $Params{-extratext} || "";                 # Not used
-  my $Required  =   $Params{-required}  || 0;                  # Not used
+  my $Required  =   $Params{-required}  || 0;                  
   my $Name      =   $Params{-name}      || "long";
   my $Size      =   $Params{-size}      || 40;
   my $MaxLength =   $Params{-maxlength} || 120;
   my $Disabled  =   $Params{-disabled}  || "0";
   my $Default   =   $Params{-default}   || "";                 # Not used
 
-  print "<b><a ";
-  &HelpLink("longdescription");
-  print "Long Description:</a></b><br> \n";
-  if ($Disabled) {  # Doesn't scale
-    print $query -> textfield (-name => $Name,  -default   => $DefaultLongDescription,
-                               -size => $Size , -maxlength => $MaxLength, -disabled);
-    
-    
-  } else {
-    print $query -> textfield (-name => $Name,  -default   => $DefaultLongDescription,
-                               -size => $Size , -maxlength => $MaxLength);
-    
-    
-  }                               
+  &TextField(-name     => $Name,                   -helptext  => $HelpText, 
+             -helplink => $HelpLink,               -required  => $Required, 
+             -size     => $Size,                   -maxlength => $MaxLength,
+             -default  => $DefaultLongDescription, -disabled  => $Disabled);
 };
 
 sub FullTopicScroll ($$;@) { # Scrolling selectable list for topics, all info

@@ -5,7 +5,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -57,10 +57,6 @@
 #  UnixBaseFile    
 #    Like WindowsBaseFile, but removes Unix-style directory names. It's not
 #    clear this ever needs to be done.
-#    
-#  ProcessURL
-#    Using wget, fetches a URL and places the resulting file in the correct 
-#    place in the file system
 #    
 #  ProcessUpload
 #    Retrieves a file uploaded by the user's browser and places the resulting 
@@ -206,26 +202,6 @@ sub UnixBaseFile {       # Strips off Unix directories
   my $short_file = pop @parts;
   return $short_file;
 }  
-
-sub ProcessURL($$) {
-  my ($new_dir,$url) = @_;
-  
-  my @url_parts = split /\//,$url;
-  my $short_file = pop @url_parts;
-
-  my $command   = $Wget.$Authentication.$url;
-  my @url_lines = `$command`;
-
-  open (OUTFILE,">$new_dir/$short_file");
-  print OUTFILE @url_lines;
-  close OUTFILE;
-
-  unless (-s "$new_dir/$short_file") {
-    push @WarnStack,"The file $short_file did not exist or was blank.";
-  }  
-  
-  return $short_file;
-}
 
 sub ProcessUpload($$) {
   my ($new_dir,$long_file) = @_;

@@ -183,6 +183,26 @@ sub FetchUserGroupIDs ($) {
   return @UserGroupIDs;
 }
   
+sub FetchEmailUSerIDsBySecurityGroup ($) {
+  require "Utilities.pm";
+
+  my ($GroupID) = @_;
+
+  my @EmailUserIDs = ();
+  my $EmailUserID;
+  
+  if ($GroupID) {
+    my $List = $dbh -> prepare("select EmailUserID from UsersGroup where GroupID=?");
+    $List -> execute($GroupID);
+    $List -> bind_columns(undef, \($EmailUserID));
+    while ($List -> fetch) {
+      push @EmailUserIDs,$EmailUserID;
+    }
+  }
+  @EmailUserIDs = &Unique(@EmailUserIDs);
+  return @EmailUserIDs;
+}
+  
 sub InsertSecurity (%) {
   my %Params = @_;
   

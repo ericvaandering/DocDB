@@ -32,6 +32,7 @@ $StartTime = new Benchmark;
 
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
+require "ResponseElements.pm";
 require "SecuritySQL.pm";
 require "Security.pm";
 require "Scripts.pm";
@@ -64,6 +65,7 @@ if ($UserValidation eq "certificate") {
     $PersonalAccountLink = "";
   }
 }
+&DebugPage("Certificate check:");
 
 if ($WelcomeMessage) {
   print "<p><center><h4>\n";

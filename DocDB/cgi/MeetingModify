@@ -89,6 +89,11 @@ my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
 
 my ($StartTime,$EndTime);
 
+my %RequiredEntries = ();
+   $RequiredEntries{StartDate}       = TRUE;
+   $RequiredEntries{EndDate}         = TRUE;
+   $RequiredEntries{LongDescription} = TRUE;
+   
 if ($StartDay && $StartMonth && $StartYear) {
   $StartTime = timelocal(0,0,0,$StartDay,$ReverseAbrvMonth{$StartMonth}-1,$StartYear);
 }
@@ -496,9 +501,11 @@ foreach my $MeetingModifyID (@MeetingModifyIDs) {
   push @MeetingModifyDefaults,$GroupID;
 }
 
+
+
 print "<tr valign=top>\n";
  print "<td colspan=2>Only select a Major Topic and fill in the short description if
- you want to make a new topic.\n";
+ you want to make a new topic. Required fields are marked with $RequiredMark. \n";
  print "<a ";
  &HelpLink("meetingtopic");
  print "Click for an explanation.</a>\n";
@@ -515,11 +522,15 @@ print "<td rowspan=2 valign=top>\n";
  print "</tr>\n";
 
  print "<tr valign=top>\n";
- print "<td>\n"; &StartDatePullDown; print "</td>\n";
+ print "<td>\n"; 
+   &StartDatePullDown(-required => $RequiredEntries{StartDate}); 
+ print "</td>\n";
  print "</tr>\n";
 
  print "<tr valign=top>\n";
- print "<td>\n"; &EndDatePullDown;   print "</td>\n";
+ print "<td>\n"; 
+   &EndDatePullDown(-required => $RequiredEntries{EndDate});   
+ print "</td>\n";
  print "</tr>\n";
 
  print "</table>\n";
@@ -530,7 +541,7 @@ print "<td>\n"; &MajorGatheringSelect; print "</td>\n";
 print "<td valign=top>\n";
  print "<table>\n";
  print "<tr valign=top>\n";
- print "<td>\n"; &LongDescriptionBox;     print "</td>\n";
+ print "<td>\n"; &LongDescriptionBox(-required => $RequiredEntries{LongDescription});     print "</td>\n";
  print "</tr>\n";
  print "<tr valign=top>\n";
  print "<td>\n"; &ShortDescriptionBox;    print "</td>\n";

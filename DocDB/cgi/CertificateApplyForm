@@ -93,10 +93,15 @@ if ($CertificateStatus eq "verified") {
   print "<table cellpadding=5>\n";
   print "<tr>\n";
   print "<td valign=top><b>Your name (Certificate CN):</b><br>&nbsp;&nbsp;$CertCN<p/>\n";
-  print "<b>Your e-mail:</b><br>&nbsp;&nbsp;$CertEmail\n";
+  if ($Preferences{Security}{Certificates}{UseCNOnly}) {
+    &TextField(-name => "email", -helplink => "email", -helptext => "Your E-mail",
+               -size => 20, -maxlength => 64);
+  } else {
+    print "<b>Your e-mail:</b><br>&nbsp;&nbsp;$CertEmail\n";
+  }  
   print "</td>\n";
   print "<td>\n";
-  &SecurityList(-helplink => "reqgroups", -helptext => "Requested<br/>Groups",
+  &SecurityScroll(-helplink => "reqgroups", -helptext => "Requested<br/>Groups",
                 -name => "reqgroups");
   print "</td></tr>\n";
   print "<tr>\n";
