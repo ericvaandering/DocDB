@@ -22,15 +22,15 @@ print $query->header;
 
 print "<h3>Useful links:</h3>\n";
 print "<ul>\n";
-print "<li><a href=\"http://www-btev.fnal.gov/calendar.html\">Upcoming Meetings</a>.\n";
+print "<li><a href=\"http://www-btev.fnal.gov/calendar.html\">Upcoming Meetings</a>\n";
+print "<li><a href=\"$DocumentAddForm?special=meeting\">Submit a talk</a> for
+       the upcoming or just-past  meeting\n";
 print "<li>
        <a href=\"$HelpFile#meeting\">Instructions</a> for submitting talks and
-       <a href=\"$HelpFile#formats\">pointers</a> on document formats.\n";
-print "<li><a href=\"$DocumentAddForm?special=meeting\">Submit a talk</a> for
-       the upcoming or just-past  meeting.\n";
-print "<li><a href=\"http://www-btev.fnal.gov/internal_documents/meetings.html\">Collaboration meeting listings</a> 
-       pre-dating the Document Database.\n";
+       <a href=\"$HelpFile#formats\">pointers</a> on document formats\n";
 print "<li> <a href=\"http://www-btev.fnal.gov/atwork/general/userinfo/meet.shtml\">Visiting Fermilab</a> for a Collaboration Meeting\n";
+print "<li><a href=\"http://www-btev.fnal.gov/internal_documents/meetings.html\">Collaboration meeting listings</a> 
+       pre-dating the Document Database\n";
 print "</ul>\n";
 
 print "<h3>Meetings in the document database:</h3>\n";
@@ -39,44 +39,13 @@ print "<h3>Meetings in the document database:</h3>\n";
 
 print "<h3>Meetings not yet in database:</h3>\n";
 
-print "These links will be replaced as meetings are replicated in the document database.\n";
+print "These links will be removed as meetings are replicated in the document database.\n";
 
 print <<OLDMEETINGS; # Following is straight from Rob/Lory page with subs
 
 <ul>
-<li> Sunday September 30, 2001, BTeV Collaboration Meeting
-     <a href = http://www-btev.fnal.gov/internal_documents/mtg/Sep_30_01/sep_30_01.html> links to agenda and
-     transparencies</a>
-<li> Wednesday, August 22 and Thursday, August 23, 2001, BTeV Collaboration Meeting
-     <a href = http://www-btev.fnal.gov/internal_documents/mtg/Aug_22_01/aug_22_01.html> links to agenda and
-     transparencies</a>
-<li> Wednesday, June 27, 2001, BTeV Collaboration Meeting
-     <a href = http://www-btev.fnal.gov/internal_documents/mtg/Jun_27_01/jun_27_01.html> links to agenda and
-     transparencies</a>
-<li> Friday, May 25, 2001, BTeV Collaboration Meeting
-     <a href = http://www-btev.fnal.gov/internal_documents/mtg/agenda_25may01.html> links to agenda and
-     transparencies</a>
-
-<li> Saturday April 21, 2001, BTeV Collaboration Meeting
-     <a href = http://www-btev.fnal.gov/internal_documents/mtg/apr_21_01.html> links to agenda and
-     transparencies.</a>
-<li> Sunday March 4, 2001, BTeV Collaboration Meeting
-     <a href = http://www-btev.fnal.gov/internal_documents/mtg/mar_04_01.html> links to agenda and
-     transparencies.</a>
 <li> Saturday January 27, 2001, BTeV Collaboration Meeting
      <a href = http://www-btev.fnal.gov/internal_documents/mtg/jan_27_01.html> links to agenda and
-     transparencies.</a>
-<li> Saturday December 16, 2000, BTeV Collaboration Meeting
-     <a href = http://www-btev.fnal.gov/internal_documents/mtg/dec_16_00.html> links to agenda and
-     transparencies.</a>
-<li> Saturday November 4, 2000, BTeV Collaboration Meeting
-     <a href = http://www-btev.fnal.gov/internal_documents/mtg/nov_04_00.html> links to agenda and
-     transparencies.</a>
-<li> Saturday September 2, 2000, BTeV Collaboration Meeting
-     <a href = http://www-btev.fnal.gov/internal_documents/mtg/sep_02_00.html> links to agenda and
-     transparencies.</a>
-<li> Saturday July 22, 2000, BTeV Collaboration Meeting
-     <a href = http://www-btev.fnal.gov/internal_documents/mtg/jul_22_00.html>agenda with links to
      transparencies.</a>
 <li> Sunday April 30, 2000, BTeV Collaboration Meeting
      <a href = http://www-btev.fnal.gov/internal_documents/mtg/apr_30_00.html>agenda with links to
@@ -93,20 +62,8 @@ print <<OLDMEETINGS; # Following is straight from Rob/Lory page with subs
 <li> Saturday Dec. 18, 1999, BTeV Collaboration Meeting
      <a href = http://www-btev.fnal.gov/internal_documents/mtg/dec_18_99.html>agenda with links to
      transparencies.</a>
-<li> Saturday Nov. 6, 1999, BTeV Collaboration Meeting
-     <a href = http://www-btev.fnal.gov/internal_documents/mtg/nov_06_99.html> agenda with links to
-     transparencies.</a>
 <li> Saturday Oct. 9, 1999, BTeV Collaboration Meeting
      <a href = http://www-btev.fnal.gov/internal_documents/mtg/oct_09_99.html>agenda with links to
-     transparencies.</a>
-<li> Friday September 10, 1999, BTeV Collaboration Meeting
-     <a href = http://www-btev.fnal.gov/internal_documents/mtg/sep_10_99.html>agenda with links to
-     transparencies.</a>
-<li> Friday August 6, 1999, BTeV Collaboration Meeting
-     <a href = http://www-btev.fnal.gov/internal_documents/mtg/aug_06_99.html>agenda with links to
-     transparencies.</a>
-<li> Friday June 11, 1999, BTeV Collaboration Meeting
-     <a href = http://www-btev.fnal.gov/internal_documents/mtg/jun_11_99.html>agenda with links to
      transparencies.</a>
 <li> Friday April 23, 1999, BTeV Collaboration Meeting
      <a href = http://www-btev.fnal.gov/internal_documents/mtg/apr_23_99.html>agenda with links to
@@ -123,38 +80,7 @@ print <<OLDMEETINGS; # Following is straight from Rob/Lory page with subs
 <li> Sunday March 8, 1998, BTeV Collaboration Meeting
      <a href = http://www-btev.fnal.gov/internal_documents/mtg/mar_08_98.html>agenda with links to
      transparencies.</a>
-<li> Friday December 12, 1997, BTeV Collaboration Meeting
-     <a href = http://www-btev.fnal.gov/internal_documents/mtg/dec_12_97.html>agenda with links to
-     transparencies.</a>
-<li> Saturday October 18, 1997, BTeV Collaboration Meeting
-     <a href = http://www-btev.fnal.gov/internal_documents/mtg/oct_18_97.html>agenda with links to
-     transparencies.</a>.
-<li> Saturday September 20, 1997, BTeV Collaboration Meeting
-     <a href = http://www-btev.fnal.gov/internal_documents/mtg/sep_20_97.html>agenda with links to
-     transparencies.</a>
-<li> Wednesday July 30, 1997, BTeV Collaboration Meeting
-     <a href=http://www-btev.fnal.gov/internal_documents/mtg/jul30_agenda.txt>agenda</a>
-<li> Wednesday June 25, 1997, BTeV Collaboration Meeting
-     <a href=http://www-btev.fnal.gov/internal_documents/mtg/jun25_agenda.html>agenda</a> <br>
-<a href=http://www-btev.fnal.gov/internal_documents/notes/membership.html>
-BTeV Membership (Proposal by membership committee)</a>
-<li> Friday May 23, 1997, BTeV Collaboration Meeting
-     <a href = http://www-btev.fnal.gov/internal_documents/mtg/may_23_97.html>agenda with links to
-     transparencies.</a>
-<li> Friday and Saturday May 9 & 10, 1997, BTeV Collaboration Meeting
-     <a href = http://www-btev.fnal.gov/internal_documents/mtg/may_09_97.html>agenda with links to
-     transparencies.</a>
-<li> Sunday April 20, 1997, BTeV Collaboration Meeting
-     <a href=http://www-btev.fnal.gov/internal_documents/mtg/apr20_agenda.html>agenda</a>
-and <a href=http://www-btev.fnal.gov/internal_documents/mtg/apr20_minutes.html>summary</a>
-<li> Sunday March 16, 1997, BTeV Collaboration Meeting
-     <a href=http://www-btev.fnal.gov/internal_documents/mtg/agd_march16.html>agenda</a>
-and <a href=http://www-btev.fnal.gov/internal_documents/mtg/minutes_mar16.html>summary</a>
-<li> BTEV Collaboration Meeting, February 15, 1997 <br>
---<a href="http://www-btev.fnal.gov/internal_documents/agenda_021597.html">
-agenda </a> and
- <a href="http://www-btev.fnal.gov/workgroup/">
-charges to the working groups</a> <br>
+
 </ul>
 
 OLDMEETINGS
