@@ -94,12 +94,12 @@ sub CertificateStatus () {
     
   my $EmailUserSelect;
   if ($Preferences{Security}{Certificates}{UseCNOnly}) {  
-    $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
+    $EmailUserSelect = $dbh->prepare("select EmailUserID,Verified from EmailUser ".
                                        "where Name=?");
     $EmailUserSelect -> execute($CertCN);
     push @DebugStack,"Checking user $CertCN";
   } else {
-    $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
+    $EmailUserSelect = $dbh->prepare("select EmailUserID,Verified from EmailUser ".
                                        "where EmailAddress=? and Name=?");
     $EmailUserSelect -> execute($CertEmail,$CertCN);
   }                                    
