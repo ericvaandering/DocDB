@@ -9,6 +9,10 @@
 #    A box to type words/strings and a mode selecter for text searches 
 #    on Abstract
 #   
+#  KeywordSearchBox
+#    A box to type words/strings and a mode selecter for text searches 
+#    on Keywords
+#   
 #  PubInfoSearchBox
 #    A box to type words/strings and a mode selecter for text searches 
 #    on PublicationInfo
@@ -45,13 +49,13 @@ sub TitleSearchBox { # Box and mode selecter for searches on DocumentTitle
   print "Title:</a></th> \n";
   print "<td>\n";
   print $query -> textfield (-name      => 'titlesearch', 
-                             -default   => $TitleSearchDefault, 
+#                             -default   => $TitleSearchDefault, 
                              -size      => 40, 
                              -maxlength => 240);
   print "</td>\n";
   print "<td>\n";
   print $query -> popup_menu (-name    => 'titlesearchmode', 
-                              -default => $TitleSearchModeDefault, 
+#                              -default => $TitleSearchModeDefault, 
                               -values  => \%SearchModes);
   print "</td></tr>\n";
 };
@@ -62,13 +66,30 @@ sub AbstractSearchBox { # Field and mode selecter for searches on Abstract
   print "Abstract:</a></th> \n";
   print "<td>\n";
   print $query -> textfield (-name      => 'abstractsearch', 
-                             -default   => $TitleSearchDefault, 
+#                             -default   => $TitleSearchDefault, 
                              -size      => 40, 
                              -maxlength => 240);
   print "</td>\n";
   print "<td>\n";
   print $query -> popup_menu (-name    => 'abstractsearchmode', 
-                              -default => $TitleSearchModeDefault, 
+#                              -default => $TitleSearchModeDefault, 
+                              -values  => \%SearchModes);
+  print "</td></tr>\n";
+};
+
+sub KeywordsSearchBox { # Field and mode selecter for searches on Keywords
+  print "<tr><th align=right><a ";
+  &HelpLink("wordsearch");
+  print "Keywords:</a></th> \n";
+  print "<td>\n";
+  print $query -> textfield (-name      => 'keywordsearch', 
+#                             -default   => $TitleSearchDefault, 
+                             -size      => 40, 
+                             -maxlength => 240);
+  print "</td>\n";
+  print "<td>\n";
+  print $query -> popup_menu (-name    => 'keywordsearchmode', 
+#                              -default => $TitleSearchModeDefault, 
                               -values  => \%SearchModes);
   print "</td></tr>\n";
 };
@@ -79,13 +100,13 @@ sub PubInfoSearchBox { # Field and mode selecter for searches on PublicationInfo
   print "Publication Info:</a></th> \n";
   print "<td>\n";
   print $query -> textfield (-name      => 'pubinfosearch', 
-                             -default   => $TitleSearchDefault, 
+#                             -default   => $TitleSearchDefault, 
                              -size      => 40, 
                              -maxlength => 240);
   print "</td>\n";
   print "<td>\n";
   print $query -> popup_menu (-name    => 'pubinfosearchmode', 
-                              -default => $TitleSearchModeDefault, 
+#                              -default => $TitleSearchModeDefault, 
                               -values  => \%SearchModes);
   print "</td></tr>\n";
 };

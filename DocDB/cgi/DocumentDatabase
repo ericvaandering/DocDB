@@ -36,11 +36,7 @@ print "</h4></center>\n";
 print "<p><b>Find the information you want in the database:</b>\n";
 print "<ul>\n";
 
-if ($Test) {
-  print "<li><a href=\"$SearchForm\">Search</a> documents"; 
-} else {
-  print "<li>Search documents (still coming)"; 
-}
+print "<li><a href=\"$SearchForm\">Search</a> documents (pre-alpha version)"; 
 
 print "<p>\n";
 

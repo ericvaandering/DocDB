@@ -40,6 +40,8 @@ $TitleSearch = $params{titlesearch};
 $TitleSearchMode = $params{titlesearchmode};
 $AbstractSearch = $params{abstractsearch};
 $AbstractSearchMode = $params{abstractsearchmode};
+$KeywordSearch = $params{keywordsearch};
+$KeywordSearchMode = $params{keywordsearchmode};
 $PubInfoSearch = $params{pubinfosearch};
 $PubInfoSearchMode = $params{pubinfosearchmode};
 @MinorSearchIDs = split /\0/,$params{minortopic};
@@ -62,15 +64,16 @@ if ((@error_stack)) {  # The user made one or more mistakes, warn and exit
 }
 
 print "<p>\n";
-print "OL: $OuterLogic<br>\n";
-print "IL: $InnerLogic<br>\n";
-print "MIN: @MinorSearchIDs<br>\n";
-print "MAJ: @MajorSearchIDs<br>\n";
+#print "OL: $OuterLogic<br>\n";
+#print "IL: $InnerLogic<br>\n";
+#print "MIN: @MinorSearchIDs<br>\n";
+#print "MAJ: @MajorSearchIDs<br>\n";
 
 ### Text search matches
 
 my $TitlePhrase    = &TextSearch("DocumentTitle",  $TitleSearchMode,   $TitleSearch);
 my $AbstractPhrase = &TextSearch("Abstract",       $AbstractSearchMode,$AbstractSearch);
+my $KeywordPhrase  = &TextSearch("Keywords",       $KeywordSearchMode, $KeywordSearch);
 my $PubInfoPhrase  = &TextSearch("PublicationInfo",$PubInfoSearchMode, $PubInfoSearch);
 
 ### Get Documents from DocumentRevision that match
@@ -80,11 +83,12 @@ my $RevisionQuery   = "select DocumentID from DocumentRevision where ";
 
 if ($TitlePhrase   ) {push @RevisionPhrases,$TitlePhrase   ;}
 if ($AbstractPhrase) {push @RevisionPhrases,$AbstractPhrase;}
+if ($KeywordPhrase ) {push @RevisionPhrases,$KeywordPhrase ;}
 if ($PubInfoPhrase ) {push @RevisionPhrases,$PubInfoPhrase ;}
 
 $RevisionQuery .= join $OuterLogic,@RevisionPhrases;
 
-print "RQ: $RevisionQuery<br>\n";
+#print "RQ: $RevisionQuery<br>\n";
 
 my %DocumentIDs = ();
 

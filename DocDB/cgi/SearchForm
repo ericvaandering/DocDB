@@ -67,6 +67,7 @@ print "<tr>\n";
   print "<table cellpadding=2>\n";
    &TitleSearchBox;    
    &AbstractSearchBox;    
+   &KeywordsSearchBox;    
    &PubInfoSearchBox;    
   print "</table>\n";
 
@@ -75,32 +76,28 @@ print "<tr>\n";
 print "</tr>\n";
 
 
- print "<tr valign=top>\n";
-  print "<td>\n"; &RequesterSearchBox; print "</td>\n";
-
-  print "<td>\n"; &AuthorSelect;    print "</td>\n";
-
-  print "<td colspan=1 valign=top>\n"; &SecurityList; print "</td>\n";
- print "</tr>\n";
+# print "<tr valign=top>\n";
+#  print "<td>\n"; &RequesterSearchBox; print "</td>\n";
+#  print "<td>\n"; &AuthorSelect;    print "</td>\n";
+# print "</tr>\n";
  
- print "<tr>\n";
+# print "<tr>\n";
+#
+#  print "<td valign=top>\n";
+#  &DocTypeMulti;
+#  print "</td>\n";
 
-  print "<td valign=top>\n";
-  &DocTypeMulti;
-  print "</td>\n";
+#  print "<td valign=top colspan=2>\n";
+#  print "<dl>\n";
+#  print "<dt><b><a ";
+#  &HelpLink("beforeafterdate");
+#  print "Last Modified Between:</a></b><p>\n";
+#  print "<dd>\n";
+#  &DateRangePullDown;
+#  print "</dl>\n";
+#  print "</td>\n";
 
-  print "<td valign=top colspan=2>\n";
-  print "<dl>\n";
-  print "<dt><b><a ";
-  &HelpLink("beforeafterdate");
-  print "Last Modified Between:</a></b><p>\n";
-  print "<dd>\n";
-  &DateRangePullDown;
-  print "</dl>\n";
-  print "</td>\n";
-
-
- print "</tr>\n";
+# print "</tr>\n";
 
  print "<tr>\n";
   &MajorMinorSelect;
