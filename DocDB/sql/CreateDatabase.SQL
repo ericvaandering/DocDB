@@ -72,12 +72,13 @@ CREATE TABLE DocumentRevision (
   PublicationInfo text,
   VersionNumber int(11) NOT NULL,
   Abstract text,
+  Keywords varchar(240),
   RevisionDate datetime default NULL,
   TimeStamp timestamp(14) NOT NULL,
   Obsolete tinyint(4) default '0',
   JournalID int(11) default '0',
-  Volume int(11) default '0',
-  Page int(11) default '0',
+  Volume int(11) default NULL,
+  Page int(11) default NULL,
   PRIMARY KEY (DocRevID),
   KEY DocumentID(DocumentID),
   KEY DocumentTitle(DocumentTitle),
@@ -366,4 +367,37 @@ INSERT INTO Journal VALUES (7,'Eur. Phys. J. C','European Physical Journal C','S
 INSERT INTO Journal VALUES (4,'Phys. Lett. B','Physics Letters B','Elsevier Science','http://www.elsevier.nl/',20020102164139,'PLB');
 INSERT INTO Journal VALUES (5,'Phys. Rev. D','Physical Review D','American Physical Society','http://publish.aps.org/',20020102164339,'PRD');
 INSERT INTO Journal VALUES (6,'Phys. Rev. Lett.','Physical Review Letters','American Physical Society','http://publish.aps.org/',20020102164355,'PRL');
+
+CREATE TABLE EmailUsers (
+  EmailUserID int(11) NOT NULL auto_increment,
+  Username char(32) NOT NULL default '',
+  Password char(32) NOT NULL default '',
+  Name char(128) NOT NULL default '',
+  EmailAddress char(64) NOT NULL default '',
+  PRIMARY KEY (EmailUserID)
+) TYPE=MyISAM;
+
+CREATE TABLE EmailTopicImmediate (
+  ImmediateEmailID int(11) NOT NULL auto_increment,
+  EMailUserID int(11) NOT NULL ,
+  MajorTopicID int(11) NOT NULL ,
+  MinorTopicID int(11) NOT NULL ,
+  PRIMARY KEY (ImmediateEmailID)
+) TYPE=MyISAM;
+
+CREATE TABLE EmailTopicDaily (
+  DailyEmailID int(11) NOT NULL auto_increment,
+  EMailUserID int(11) NOT NULL ,
+  MajorTopicID int(11) NOT NULL ,
+  MinorTopicID int(11) NOT NULL ,
+  PRIMARY KEY (DailyEmailID)
+) TYPE=MyISAM;
+
+CREATE TABLE EmailTopicWeekly (
+  WeeklyEmailID int(11) NOT NULL auto_increment,
+  EMailUserID int(11) NOT NULL ,
+  MajorTopicID int(11) NOT NULL ,
+  MinorTopicID int(11) NOT NULL ,
+  PRIMARY KEY (WeeklyEmailID)
+) TYPE=MyISAM;
 
