@@ -39,8 +39,8 @@ print $query->header;
 
 ### Pull info out of params into local variables
 
-$InnerLogic  = $params{innerlogic};
-$OuterLogic  = $params{outerlogic};
+$InnerLogic  = $params{innerlogic} || "OR";
+$OuterLogic  = $params{outerlogic} || "AND";
 
 $TitleSearch        = $params{titlesearch};
 $TitleSearchMode    = $params{titlesearchmode};
