@@ -155,7 +155,7 @@ my $file_insert = $dbh->prepare(
    "       (DocFileID, DocRevID, FileName, Date, RootFile, Description) ".
    "values (0,         ?,        ?,        ?,    ?       , ?)");
 
-my $SessionTalkUpdate = $dbh -> prepare("update SessionTalk set DocumentID=? where SessionTalkID=?");
+my $SessionTalkUpdate = $dbh -> prepare("update SessionTalk set DocumentID=?,Confirmed=1 where SessionTalkID=?");
 
 # FIXME: Build links for other document actions to use below
 

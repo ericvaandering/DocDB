@@ -70,7 +70,7 @@ sub DocDBNavBar {
   print "[&nbsp;<a href=\"$MainPage\">DocDB&nbsp;Home</a>&nbsp;]&nbsp;\n";
   unless ($Public) {
     print "[&nbsp;<a href=\"$DocumentAddForm?mode=add\">New</a>&nbsp;]&nbsp;\n";
-    print "[&nbsp;<a href=\"$DocumentAddForm\">Reserve</a>&nbsp;]&nbsp;\n";
+    print "[&nbsp;<a href=\"$DocumentAddForm?mode=reserve\">Reserve</a>&nbsp;]&nbsp;\n";
   }
   print "[&nbsp;<a href=\"$SearchForm\">Search</a>&nbsp;]\n";
   print "[&nbsp;<a href=\"$LastModified?days=$LastDays\">Last&nbsp;$LastDays&nbsp;Days</a>&nbsp;]\n";

@@ -175,10 +175,10 @@ if ($mode eq "add" && @TopicDefaults) { # FIXME: Look into modification too
 # FIXME: Also sessionID instead
 
 if ($mode eq "add" && $ConferenceID) { # FIXME: Look into modification too
+  # FIXME: push onto topicdefaults, make topicdefaults unique
   require "TalkSQL.pm";
   my @CheckSessionTalkIDs = &FetchSessionTalksByConferenceID($ConferenceID);
   foreach my $SessionTalkID (@CheckSessionTalkIDs) {
-#    &DBPrintLine("Checking: $SessionTalkID");
     unless ($SessionTalks{$SessionTalkID}{Confirmed}) {
       push @OpenSessionTalkIDs,$SessionTalkID;
     } 
