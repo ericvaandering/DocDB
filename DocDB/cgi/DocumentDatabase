@@ -45,13 +45,14 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 # %params = $query -> Vars;  # No parameters (yet?) 
 
+my $PersonalAccountLink = "<a href=\"$EmailLogin\">Personal account</a>";
+
 print $query->header;
 &DocDBHeader("$Project Document Database","Document Database");
 
 &HelpPopupScript;
 
 print "<div id=\"DocDBHomeBody\">\n";
-my $PersonalAccountLink = "<a href=\"$EmailLogin\">Personal account</a>";
 
 ### Header info
 
@@ -63,14 +64,18 @@ if ($UserValidation eq "certificate") {
   if ($CertificateStatus eq "verified") {
     $PersonalAccountLink = "<a href=\"$SelectEmailPrefs\">Personal account</a>";
   } else {
-    print "<p><center><h4><font color=\"red\">\n";
+    print "<p><center><h4 class=\"Warning\">\n";
     print "You have presented a valid certificate, but are not yet authorized to access the DocDB.<br>\n";
-    print "</font>\n";
-    print "<a href=\"$CertificateApplyForm\">Apply for access or get more information.</a></h4></center>\n";
+    print "</h4>\n";
+    print "<h4>\n";
+    print "<a href=\"$CertificateApplyForm\">Apply for access or get more information.</a></h4></center></p>\n";
     $PersonalAccountLink = "";
   }
 }
 &DebugPage("Certificate check:");
+
+$WelcomMessage = "blah blah blagh";
+$ProjectMessages{Homepage}{LeftColumn} = ["first","second"];
 
 if ($WelcomeMessage) {
   print "<p><center><h4>\n";
@@ -85,14 +90,17 @@ print "</div>\n";  # Header3Col
 
 print "<div id=\"LeftColumn3Col\">\n";
 unless ($Public) {
-  print "<p><strong><a href=\"$HelpFile\">Instructions</a></strong></p>";
-  print "<p><strong><a href=\"$SelectPrefs\">Preferences</a></strong></p>";
+  print "<p><strong><a href=\"$HelpFile\">Instructions</a></strong></p>\n";
+  print "<p><strong><a href=\"$SelectPrefs\">Preferences</a></strong></p>\n";
   if ($PersonalAccountLink) {
-    print "<p><strong>$PersonalAccountLink</strong></p>";
+    print "<p><strong>$PersonalAccountLink</strong></p>\n";
   }  
-  print "<p><strong><a href=\"$Statistics\">Statistics</a></strong></p>";
+  print "<p><strong><a href=\"$Statistics\">Statistics</a></strong></p>\n";
 }
 
+foreach my $Text (@{ $ProjectMessages{Homepage}{LeftColumn} }) {
+  print "<p><strong>$Text</strong></p>\n";
+}
 
 print "</div>\n";  # LeftColumn3Col
 
@@ -119,8 +127,6 @@ my $ShowForm  = $query -> startform('POST',$ShowDocument);
 
 push @MainFirstColumn,$ShowForm; 
 push @MainFirstColumn,"<b>List documents:</b>";
-
-push @MainOtherColumns,@MainPageAddendum;
 
 my $Rows = scalar(@MainFirstColumn);
 my $Cols = int((scalar(@MainOtherColumns) - 1)/scalar(@MainFirstColumn) + 1);

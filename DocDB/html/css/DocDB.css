@@ -157,3 +157,7 @@ li.Even, tr.Even {
 .Highlight {
   color: blue;
 }  
+
+.Error, .Warning {
+  color: red;
+}  
