@@ -46,7 +46,7 @@
        </td>
      </tr>
      <tr>
-       <td> miscellaneous html pages
+       <td> html pages
        </td>
        <td> appropriately placed under /www/html/...
        </td>
@@ -78,13 +78,12 @@
     Note that you will need to create a mysql root account for administration.
     You will also need a mysql account for the database.
 <li> <b> start mysqld</b> <br>
-    <br>
     Mysqld may be started interactively by running mysql/bin/safe_mysqld.
     However, you will want to copy mysql/support-files/mysql.server into
     your system startup files (often /etc/init.d) and configure it to start
     mysqld automatically when the machine is booted.
 <li> <b> get DocDB</b> <br>
-    The <a href=ftp://www-btev.fnal.gov/~garren/doc/docdb.tar>tar ball</a> 
+    The <a href=ftp://www-btev.fnal.gov/~garren/doc/docdb-2.2.0.tar>tar ball</a> 
     <br>
     Unwind the tarball under your docdbadm account.
 <li> <b> customize DocDB</b>
@@ -92,6 +91,9 @@
     Edit the files in DocDB/cgi and DocDB/html.  Replace refereces to 
     www-btev.fnal.gov, btev_docdb, etc.  Many global variables 
     defined in DocDBGlobals.pm. 
+    <br>
+    Edit DodDB/sql/CreateDatabase.SQL to specify your own MajorTopics, 
+    Institutions, and SecuritySettings.
     <br>
     Once the files are customized, copy them to the appropriate directories.
 <li> <b> create a MySQL DocDB database</b>
