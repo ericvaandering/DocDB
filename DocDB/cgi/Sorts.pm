@@ -209,4 +209,8 @@ sub byKeyword {
   $Keywords{$a}{Short} cmp $Keywords{$b}{Short};
 }    
 
+sub DocIDsByScore {
+  $TalkMatches{$a}{Score} <=> $TalkMatches{$b}{Score};
+}    
+
 1;
