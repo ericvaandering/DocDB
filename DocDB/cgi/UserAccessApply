@@ -91,7 +91,7 @@ if ($CertificateStatus eq "verified") {
   my $CertNote          = $params{certnote};
   my @RequestedGroupIDs = split /\0/,$params{reqgroups};
   my $UserName = $CertCN;
-     $UserName =~ s/\W//;
+     $UserName =~ s/\W//g;
      
 ### Fill in DB tables
 
