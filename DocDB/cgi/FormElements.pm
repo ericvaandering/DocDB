@@ -59,7 +59,7 @@ sub RequesterSelect { # Scrolling selectable list for requesting author
   &HelpLink("requester");
   print "Requester:</a></b><br> \n";
   print $query -> scrolling_list(-name => "requester", -values => \@ActiveIDs, 
-                                 -size => 15, -labels => \%AuthorLabels,                      
+                                 -size => 10, -labels => \%AuthorLabels,                      
                                  -default => $RequesterDefault);
 };
 
@@ -78,10 +78,9 @@ sub AuthorSelect { # Scrolling selectable list for authors
   print "Authors:</a></b><br> \n";
   print $query -> scrolling_list(-name => "authors", -values => \@ActiveIDs, 
                                  -labels => \%AuthorLabels,
-                                 -size => 15, -multiple => 'true',
+                                 -size => 10, -multiple => 'true',
                                  -default => @AuthorDefaults);
 };
-
 
 sub TopicSelect { # Scrolling selectable list for topics
   my @TopicIDs = sort byTopic keys %FullTopics;
@@ -94,8 +93,45 @@ sub TopicSelect { # Scrolling selectable list for topics
   print "Topics:</a></b><br> \n";
   print $query -> scrolling_list(-name => "topics", -values => \@TopicIDs, 
                                  -labels => \%TopicLabels,
-                                 -size => 15, -multiple => 'true',
+                                 -size => 10, -multiple => 'true',
                                  -default => @TopicDefaults);
+};
+
+sub MultiTopicSelect { # Multiple scrolling selectable lists for topics
+  my $NCols = 4;
+  my @MajorIDs = sort byMajorTopic keys %MajorTopics;
+  my @MinorIDs = keys %MinorTopics;
+
+  print "<table cellpadding=5>\n";
+  print "<tr><td colspan=$NCols align=center>\n";
+  print "<b><a ";
+  &HelpLink("topics");
+  print "Topics:</a></b><br> \n";
+  my $Col = 0;
+  foreach $MajorID (@MajorIDs) {
+    unless ($Col % $NCols) {
+      print "<tr valign=top>\n";
+    }
+    print "<td><b>$MajorTopics{$MajorID}{SHORT}</b><br>\n";
+    ++$Col;
+    my @MatchMinorIDs = ();
+    my %MatchLabels = ();
+    foreach my $MinorID (@MinorIDs) {
+      if ($MinorTopics{$MinorID}{MAJOR} == $MajorID) {
+        push @MatchMinorIDs,$MinorID;
+        $MatchLabels{$MinorID} = $MinorTopics{$MinorID}{SHORT};
+      }  
+    }
+    if ($MajorTopics{$MajorID}{SHORT} eq "Meetings") {
+      @MatchMinorIDs = reverse sort byMeetingDate @MatchMinorIDs;
+    } else {
+      @MatchMinorIDs = sort byMinorTopic @MatchMinorIDs;
+    }
+    print $query -> scrolling_list(-name => "topics", 
+             -values => \@MatchMinorIDs, -labels => \%MatchLabels,
+             -size => 8, -multiple => 'true', -default => @TopicDefaults);
+  }  
+  print "</table>\n";
 };
 
 sub MajorTopicSelect { # Scrolling selectable list for major topics
@@ -150,7 +186,7 @@ sub SecurityList {
   &HelpLink("security");
   print "Security:</a></b><br> \n";
   print $query -> scrolling_list(-name => 'security', -values => \@available_securities, 
-                                 -size => 5, -multiple => 'true', 
+                                 -size => 10, -multiple => 'true', 
                                  -default => @SecurityDefaults);
 };
 

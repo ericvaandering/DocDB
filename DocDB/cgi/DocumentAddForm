@@ -34,6 +34,11 @@ if ($upload ne "http" && $upload ne "file") {
   $upload = "file";
 }  
 
+$topicmode = $params{topicmode};
+if ($topicmode ne "single" && $topicmode ne "multi") {
+  $topicmode = "single";
+}  
+
 print $query->header;
 if      ($mode eq "add") {
   &BTeVHeader("BTeV Document Addition","Document Addition");
@@ -107,12 +112,22 @@ if ($mode eq "add" || $mode eq "update") {
   print "</td></tr>";
 }
 
-print "<tr>\n";
-print "<td>\n"; &RequesterSelect; print "</td>\n";
-print "<td>\n"; &AuthorSelect;    print "</td>\n";
-print "<td>\n"; &TopicSelect;     print "</td>\n";
-print "</tr><tr>\n";
-print "<td colspan=1 valign=top>\n"; &SecurityList; print "</td>\n";
+if ($topicmode eq "single") {
+  print "<tr>\n";
+  print "<td>\n"; &RequesterSelect; print "</td>\n";
+  print "<td>\n"; &AuthorSelect;    print "</td>\n";
+  print "<td>\n"; &TopicSelect;     print "</td>\n";
+  print "</tr><tr>\n";
+  print "<td colspan=1 valign=top>\n"; &SecurityList; print "</td>\n";
+} elsif ($topicmode eq "multi") {
+  print "<tr>\n";
+  print "<td>\n"; &RequesterSelect; print "</td>\n";
+  print "<td>\n"; &AuthorSelect;    print "</td>\n";
+  print "<td colspan=1 valign=top>\n"; &SecurityList; print "</td>\n";
+  print "</tr><tr>\n";
+  print "<td colspan=3 align=center>\n"; &MultiTopicSelect;     print "</td>\n";
+  print "</tr><tr>\n";
+}
 
 if ($mode eq "add" || $mode eq "reserve") {
   print "<td colspan=2 valign=top>\n";

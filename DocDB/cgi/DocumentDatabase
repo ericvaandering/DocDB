@@ -42,6 +42,10 @@ $uploads{file}   = "Local file upload";
 $archives{multi}   = "Single file";
 $archives{singe}   = "Archive (multi-file) upload";
 
+$topicmodes{multi}  = "Multiple Topic Boxes";
+$topicmodes{single} = "Single Topic List";
+
+
 print $query -> start_multipart_form('POST',$DocumentAddForm);
 
 print "<b>Type of modification: </b>\n";
@@ -52,6 +56,9 @@ print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 print "<p>\n";
 print "<b>Upload method: </b>\n";
 print $query -> radio_group(-name => "upload", -values => \%uploads);
+print "<p>\n";
+print "<b>Topic Selection: </b>\n";
+print $query -> radio_group(-name => "topicmode", -values => \%topicmodes);
 print "<p>\n";
 print "<b>Upload type (not implemented): </b>\n";
 print $query -> radio_group(-name => "archive", -values => \%archives);

@@ -39,12 +39,13 @@ print "<th>Date Requested</th>\n";
 print "<th>Date Modified</th>\n";
 print "<th>Security</th>\n";
 print "</tr>\n";
+
 foreach $document (@DocumentIDs) {
   unless (&CanAccess($document,$Documents{$document}{NVER})) {next;}
   my $full_docid = &DocumentLink($document,$Documents{$document}{NVER});
   my $DocRevID   = &FetchDocRevision($document,$Documents{$document}{NVER});
   my $Files_ref  = &FetchDocFiles($DocRevID);
-                   
+  #FIXME put this printing stuff in a sub, call with 0 to get header                 
   my $title = $DocRevisions{$DocRevID}{TITLE};
   print "<tr valign=top>\n";
   print "<td>$full_docid </td>\n";
