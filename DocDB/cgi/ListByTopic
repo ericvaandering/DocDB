@@ -170,7 +170,6 @@ if      ($Mode eq "meeting") {
 } elsif ($Mode eq "conference") {
   &SpecialMajorTopics;
   @DocumentIDs = reverse sort DocumentByConferenceDate @DocumentIDs;
-  $docids = join ' ',@DocumentIDs;
 } else {
   @DocumentIDs = reverse sort DocumentByRevisionDate   @DocumentIDs;  
 }

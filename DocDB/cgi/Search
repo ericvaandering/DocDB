@@ -2,6 +2,11 @@
 #
 # Author Eric Vaandering (ewv@fnal.gov)
 #
+#
+#  Three modes of presenting information:
+#    1) mode=date (default, sorted by reverse date, modification date given)
+#    2) mode=meeting (sorted by author, files are listed)
+#    3) mode=conference (sorted by reverse date, conference fields shown)
 
 use Benchmark;
 use CGI;
@@ -74,6 +79,11 @@ if ($Beforeyear && $Beforeyear ne "----") {
   if ($Beforeday   eq "--")  {$Beforeday   = &DaysInMonth($ReverseAbrvMonth{$Beforemonth},$Beforeyear);}
   $SQLEnd     = "$Beforeyear-$ReverseAbrvMonth{$Beforemonth}-$Beforeday";
 }
+
+my $Mode    = $params{mode};
+unless ($Mode eq "date" or $Mode eq "meeting" or $Mode eq "conference") {
+  $Mode = "date";
+}  
 
 ### Check parameters for errors
 
@@ -268,7 +278,20 @@ foreach my $DocumentID (@DocumentIDs) {
   &FetchDocument($DocumentID);
   &FetchDocRevision($DocumentID,$Documents{$DocumentID}{NVER});
 }
-@DocumentIDs = reverse sort DocumentByRevisionDate   @DocumentIDs;  
+
+if ($Mode eq "conference") {
+  require "MiscSQL.pm";
+  &SpecialMajorTopics;
+  &GetConferences;
+}
+
+if      ($Mode eq "meeting") {
+  @DocumentIDs  =        sort DocumentByRequester      @DocumentIDs;
+} elsif ($Mode eq "conference") {
+  @DocumentIDs = reverse sort DocumentByConferenceDate @DocumentIDs;
+} else {
+  @DocumentIDs = reverse sort DocumentByRevisionDate   @DocumentIDs;  
+}
 
 ### Print out summary info for matching documents
 

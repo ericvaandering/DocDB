@@ -40,6 +40,10 @@
 #    Two buttons allow the user to control whether the inner logic (multiple 
 #    members of field) and the outer logic (between fields) are done with ANDs
 #    or ORs.  
+#    
+#  ModeSelect
+#    A pulldown to select the display mode for searches
+#
 
 require "SearchModes.pm";
 
@@ -252,5 +256,18 @@ sub LogicTypeButtons { # Two buttons allow control whether inner and outer
   print $query -> radio_group(-name => "innerlogic", 
                               -values => @values, -default => "OR");
 }
+
+sub ModeSelect { # Display Mode selecter for searches 
+  print "<a ";
+  &HelpLink("displaymode");
+  print "<b>Sort by:</b></a> \n";
+  print "</a>";
+  print " \n";
+  my %Modes = ();
+  $Modes{meeting} = "Author with topics and files";
+  $Modes{date}    = "Date with document #";
+  print $query -> popup_menu (-name    => 'mode', 
+                              -values  => \%Modes);
+};
 
 1;

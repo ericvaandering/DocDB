@@ -1,3 +1,9 @@
+displaymode
+Sort by
+This controls how the list of documents is sorted and what is shown on the
+one-line summary of the document. "By Date" is usually used for generic
+documents and "By Author" is useful for meetings.
+#
 filename
 File Name
 When updating the database information on a document, you can't rename the

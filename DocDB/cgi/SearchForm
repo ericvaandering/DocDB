@@ -66,6 +66,10 @@ print "<tr>\n";
  &LogicTypeButtons; 
  print "</td>\n";
 print "</tr>\n";
+print "<tr>\n";
+ print "<td colspan=3 align=center>\n";
+ &ModeSelect; 
+print "</tr>\n";
 
 print "<tr>\n";
  print "<td colspan=3>\n"; 
