@@ -10,6 +10,10 @@ sub ReHintTalksBySessionID ($) {
   require "TalkHintSQL.pm";
   require "Utilities.pm";
   
+  if ($Public) { # Can't write to DB
+    return;
+  }  
+
   my $DocRevID,$DocumentID;
   my %DocumentIDs = (); 
   my $SearchDays  = 5;
@@ -23,6 +27,12 @@ sub ReHintTalksBySessionID ($) {
   my $EndDate      = $Conferences{$ConferenceID}{EndDate};
   my $MinorTopicID = $Conferences{$ConferenceID}{Minor};
 
+  if ($MinorTopicID) { 
+    $TalkMatchThreshold = $TopicMatchThreshold;
+  } else {     
+    $TalkMatchThreshold = $NoTopicMatchThreshold 
+  }	
+
   my $DocumentList = $dbh -> prepare("select DocumentID from DocumentRevision where DocRevID=? and Obsolete=0"); 
 
   # Find documents in a time window
@@ -34,7 +44,9 @@ sub ReHintTalksBySessionID ($) {
   while ($TimedList -> fetch) {
     $DocumentList -> execute($DocRevID);
     ($DocumentID) = $DocumentList -> fetchrow_array;
-    $DocumentIDs{$DocumentID} = "Timed"; 
+    if ($DocumentID) {
+      $DocumentIDs{$DocumentID} = "Timed";
+    }   
   }
 
   my $TimedList = $dbh -> prepare("select DocRevID from DocumentRevision where ABS(TO_DAYS(?)-TO_DAYS(RevisionDate))<=?"); 
@@ -44,7 +56,9 @@ sub ReHintTalksBySessionID ($) {
   while ($TimedList -> fetch) {
     $DocumentList -> execute($DocRevID);
     ($DocumentID) = $DocumentList -> fetchrow_array;
-    $DocumentIDs{$DocumentID} = "Timed"; 
+    if ($DocumentID) {
+      $DocumentIDs{$DocumentID} = "Timed"; 
+    }   
   }
 
   $TimedList -> execute($EndDate,$SearchDays);   # Within $SearchDays days of end
@@ -52,7 +66,9 @@ sub ReHintTalksBySessionID ($) {
   while ($TimedList -> fetch) {
     $DocumentList -> execute($DocRevID);
     ($DocumentID) = $DocumentList -> fetchrow_array;
-    $DocumentIDs{$DocumentID} = "Timed"; 
+    if ($DocumentID) {
+      $DocumentIDs{$DocumentID} = "Timed"; 
+    }   
   }
 
   if ($MinorTopicID) {
@@ -63,14 +79,16 @@ sub ReHintTalksBySessionID ($) {
     while ($RevisionList -> fetch) {
       $DocumentList -> execute($DocRevID);
       ($DocumentID) = $DocumentList -> fetchrow_array;
-      $DocumentIDs{$DocumentID} = "Topic"; # Hash removes duplicates
+      if ($DocumentID) {
+        $DocumentIDs{$DocumentID} = "Topic"; # Hash removes duplicates
+      }
     }
   }
 
   # Get unique document IDs
 
   my @DocumentIDs = sort keys %DocumentIDs;
-  
+
   # Remove documents already confirmed with a conference
   
   my $ConfirmedList = $dbh -> prepare("select DocumentID from SessionTalk where Confirmed=1"); 
@@ -93,18 +111,21 @@ sub ReHintTalksBySessionID ($) {
     push @DocRevIDs,$DocRevID;
   }
 
+  my $dbh_w = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+
   # Loop over all session talk IDs
 
   my %BestDocuments = ();
   foreach my $SessionTalkID (@SessionTalkIDs) { 
     &FetchSessionTalkByID($SessionTalkID);
     if ($SessionTalks{$SessionTalkID}{Confirmed}) {next;} # Skip if confirmed
+    my $HintTitle = $SessionTalks{$SessionTalkID}{HintTitle};
 
     if ($SessionTalks{$SessionTalkID}{DocumentID}) { # Remove hints to confirmed documents
       my $DocumentID = $SessionTalks{$SessionTalkID}{DocumentID};
       foreach my $ConfirmedDocumentID (@ConfirmedDocumentIDs) {
         if ($DocumentID == $ConfirmedDocumentID) {
-          my $BestDocUpdate = $dbh -> prepare("update SessionTalk set DocumentID=0 where SessionTalkID=?"); 
+          my $BestDocUpdate = $dbh_w -> prepare("update SessionTalk set DocumentID=0 where SessionTalkID=?"); 
           $BestDocUpdate -> execute($SessionTalkID); # Remove hinted DocumentID
           last;  
         }
@@ -129,7 +150,7 @@ sub ReHintTalksBySessionID ($) {
           }   
         }
       }
-        
+       
       my $AuthorMatches = 0;
       foreach my $RevAuthor (@RevAuthors) {
         foreach my $AuthorHintID (@AuthorHintIDs) {
@@ -142,29 +163,89 @@ sub ReHintTalksBySessionID ($) {
 
       # Assemble a score based on hints, track maximum
       
-      my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+      my $DocumentID    = $DocRevisions{$DocRevID}{DOCID};
+      my $DocumentTitle = $DocRevisions{$DocRevID}{Title};
 
       my $MethodScore = 0;
       if ($DocumentIDs{$DocumentID} eq "Timed") { # More points for being with right meeting topic than time window
         $MethodScore = 1;
       } elsif ($DocumentIDs{$DocumentID} eq "Topic") {
-        $MethodScore = 2;
+        $MethodScore = 3;
       } 
-
-      my $Score = $MethodScore*($AuthorMatches+1)*(2*$TopicMatches+1);
+      
+      my $FuzzyScore1 = &FuzzyStringMatch($DocumentTitle,$HintTitle);
+      my $FuzzyScore2 = &FuzzyStringMatch($HintTitle,$DocumentTitle);
+      my $FuzzyScore;
+      
+      if ($FuzzyScore1 > $FuzzyScore2) { # Can be different since "test" matches "testbeam," not vvs.
+        $FuzzyScore = $FuzzyScore1;
+      } else {	 
+        $FuzzyScore = $FuzzyScore2;
+      }
+            
+      my $Score = $MethodScore*($AuthorMatches+1)*(2*$TopicMatches+1)+(2*$FuzzyScore+1);
       if ($Score > $BestDocuments{$SessionTalkID}{Score} && ($AuthorMatches+$TopicMatches)) {
         $BestDocuments{$SessionTalkID}{Score}      = $Score;
         $BestDocuments{$SessionTalkID}{DocumentID} = $DocumentID;
       }
     }  
   
-    if ($BestDocuments{$SessionTalkID}{Score} > 1) {
-      my $BestDocUpdate = $dbh -> prepare("update SessionTalk set DocumentID=? where SessionTalkID=?"); 
+    if ($BestDocuments{$SessionTalkID}{Score} > $TalkMatchThreshold) {
+      my $BestDocUpdate = $dbh_w -> prepare("update SessionTalk set DocumentID=? where SessionTalkID=?"); 
       my $DocumentID    = $BestDocuments{$SessionTalkID}{DocumentID};
       $BestDocUpdate -> execute($DocumentID,$SessionTalkID); # Update database
-    }  
+    } else {
+      my $BestDocUpdate = $dbh_w -> prepare("update SessionTalk set DocumentID=? where SessionTalkID=?"); 
+      $BestDocUpdate -> execute(0,$SessionTalkID); # Update database
+    }   
   }
 }
 
+sub FuzzyStringMatch ($$) {
+#  use String::Approx qw(amatch);
+  
+  # FIXME: Look at soundex and fuzzy matching, cookbook 1.16 and 6.13
+  
+  my ($String1,$String2) = @_;
+  
+  $String1 =~ tr/[A-Z]/[a-z]/;
+  $String2 =~ tr/[A-Z]/[a-z]/;
+  
+  my @Words1 = split /\s+/,$String1;
+  my @Words2 = split /\s+/,$String2;
+  
+  @Words1 = &RemoveArray(\@Words1,@MatchIgnoreWords); 
+  @Words2 = &RemoveArray(\@Words2,@MatchIgnoreWords); 
+  
+  my $Matches = 0;
+  foreach my $Word (@Words1) {
+    my $WordLength = length $Word;
+    if ($WordLength < 4) {next;}
+    if (grep /$Word/,@Words2) {
+      if ($WordLength > 6) { # More points for matching longer words
+        $Matches += $WordLength/6;
+      } else {
+        ++$Matches;
+      }		
+    }  
+  }
+  
+  my $NWords1 = @Words1;
+  my $NWords2 = @Words2;
+  
+  # Use NWords to calculate a "fraction" of matches, restrict to 3 - 10
+  
+  $NWords = 3;
+  
+  if ($NWords1 > $NWords) {$NWords = $NWords1;}
+  if ($NWords2 > $NWords) {$NWords = $NWords2;}
+  if ($NWords > 10)       {$NWords = 10;}
+ 
+  my $MatchScore = 0;
+  if ($Matches >= 1.1) {
+    $MatchScore = $Matches/$NWords * 10;
+  }
+  return $MatchScore;  
+}
 
 1;
