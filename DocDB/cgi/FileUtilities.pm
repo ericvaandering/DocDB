@@ -19,7 +19,7 @@
 # The %Files hash has the following possible fields:
 
 #  Filename    -- The name of the file, already on the file system to be inserted
-#  File        -- Contains actual file contents (from CGI, presumably) -- not implemented
+#  File        -- Contains file handle from CGI -- not implemented
 #  URL         -- URL of the file -- not implemented
 #  Pass        -- Password for wget -- not implemented
 #  User        -- Username for wget -- not implemented

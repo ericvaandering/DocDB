@@ -312,4 +312,52 @@ sub ExtractArchive {
   chdir $current_dir;
 }  
 
+sub DownloadURLs (%) {
+  use Cwd;
+
+  my %Params = @_;
+  
+  my $TmpDir = $Params{-tmpdir} || "/tmp";
+  my %Files    = %{$Params{-files}}; # Documented in FileUtilities.pm
+
+  $CurrentDir = cwd();
+  chdir $TmpDir or die "<p>Fatal error in chdir<p>\n";
+
+  my @Filenames = ();
+
+  foreach my $FileKey (keys %Files) {
+    if ($Files{$FileKey}{URL}) {
+      my @Authentication = ();
+      if ($Files{$FileKey}{User}) {
+        @Authentication = ("--http-user",$Files{$FileKey}{User}, 
+	                   "--http-pass",$Files{$FileKey}{Pass});
+      }
+      system ($Wget,@Authentication,$Files{$FileKey}{URL});
+      my @URLParts = split /\//,$Files{$FileKey}{URL};
+      my $Filename = pop @URLParts;
+      if (-e "$TmpDir/$Filename") {
+        push @Filenames,$Filename;
+	delete $Files{$FileKey}{URL};
+	$Files{$FileKey}{$Filename} =  "$TmpDir/$Filename";      			    
+      } else {
+        push @WarnStack,"The URL $Files{$FileKey}{URL} did not exist, was blank,
+	                 or was not accessible.";
+      }
+    }
+  }
+          
+  unless (@Filenames) {
+    push @ErrorStack,"No files were downloaded.";
+  }   
+      
+  chdir $CurrentDir;
+  return %Files;
+}
+
+sub MakeTmpSubDir {
+  my $TmpSubDir = $TmpDir."/".(time ^ $$ ^ unpack "%32L*", `ps axww`);
+  mkdir $TmpSubDir, oct 700 or die "Could not make temporary directory";
+  return $TmpSubDir;
+}  
+
 1;
