@@ -1,18 +1,18 @@
 sub byKeywordGroup {
-  $KeywordGroups{$a}{SHORT} cmp $KeywordGroups{$b}{SHORT};
+  $KeywordGroups{$a}{Short} cmp $KeywordGroups{$b}{Short};
 }    
 
 sub byKeyword {
-  $KeywordLists{$a}{SHORT} cmp $KeywordLists{$b}{SHORT};
+  $KeywordLists{$a}{Short} cmp $KeywordLists{$b}{Short};
 }    
 
 sub byKey {
   
-    $KeywordGroups{$KeywordLists{$a}{KEYGRP}}{SHORT} cmp
-    $KeywordGroups{$KeywordLists{$b}{KEYGRP}}{SHORT}
+    $KeywordGroups{$KeywordLists{$a}{KeywordGroupID}}{Short} cmp
+    $KeywordGroups{$KeywordLists{$b}{KeywordGroupID}}{Short}
                    or
-        $KeywordLists{$a}{SHORT} cmp
-        $KeywordLists{$b}{SHORT};
+        $KeywordLists{$a}{Short} cmp
+        $KeywordLists{$b}{Short};
 }    
 
 1;

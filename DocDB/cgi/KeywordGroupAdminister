@@ -66,7 +66,7 @@ if      ($Action eq "Delete") { # Delete keyword groups
   } else {
     my $KeywordGroupDelete = $dbh -> prepare("delete from KeywordGroup where KeywordGroupID=?");
     $KeywordGroupDelete -> execute($KeywordGroupID);
-    print "<b>$KeywordGroups{$KeywordGroupID}{LONG} has been deleted.</b><br>\n";
+    print "<b>$KeywordGroups{$KeywordGroupID}{Long} has been deleted.</b><br>\n";
   }
 } elsif ($Action eq "Modify") { # Modify keyword groups
   unless ($KeywordGroupID) {
@@ -105,8 +105,8 @@ if      ($Action eq "Delete") { # Delete keyword groups
 if ($Action eq "Modify" || $Action eq "New") {
   &GetKeywordList;
   print "<p><b>Here are the results of your modification:<br>\n";
-  print "Short description: $KeywordGroups{$KeywordGroupID}{SHORT}<br>\n";
-  print "Long description:  $KeywordGroups{$KeywordGroupID}{LONG}<br>\n";
+  print "Short description: $KeywordGroups{$KeywordGroupID}{Short}<br>\n";
+  print "Long description:  $KeywordGroups{$KeywordGroupID}{Long}<br>\n";
   print "</b><p>\n";
 }  
 

@@ -16,14 +16,14 @@ sub KeywordListLink ($;$) {
   
   &FetchKeyword($KeyID);
   my $link;
-  ##$link = " ";
-  $link = "<a href=\"$Search?innerlogic=AND&outerlogic=AND&keywordsearchmode=anysub&keywordsearch=$KeywordListEntries{$KeyID}{SHORT}\">";
+  ##$link = " "; # FIXME: Use KeywordLink?
+  $link = "<a href=\"$Search?innerlogic=AND&outerlogic=AND&keywordsearchmode=anysub&keywordsearch=$KeywordListEntries{$KeyID}{Short}\">";
   if ($mode eq "short") {
-    $link .= $KeywordListEntries{$KeyID}{SHORT};
+    $link .= $KeywordListEntries{$KeyID}{Short};
   } elsif ($mode eq "long") {
-    $link .= $KeywordListEntries{$KeyID}{LONG};
+    $link .= $KeywordListEntries{$KeyID}{Long};
   } else {
-    $link .= $KeywordListEntries{$KeyID}{FULL};
+    $link .= $KeywordListEntries{$KeyID}{Full};
   }
   ##$link .= " ";
   $link .= "</a>";
@@ -40,11 +40,11 @@ sub KeywordGroupInfo ($;$) {
   &FetchKeywordGroup($KeyID);
   my $info;
   if ($mode eq "short") {
-    $info = $KeywordGroups{$KeyID}{SHORT};
+    $info = $KeywordGroups{$KeyID}{Short};
   } elsif ($mode eq "long") {
-    $info = $KeywordGroups{$KeyID}{LONG};
+    $info = $KeywordGroups{$KeyID}{Long};
   } else {
-    $info = $KeywordGroups{$KeyID}{SHORT};
+    $info = $KeywordGroups{$KeyID}{Short};
   }
   
   return $info;
@@ -58,11 +58,11 @@ sub GetKeywordInfo ($;$) {
   &FetchKeyword($KeyID);
   my $link;
   if ($mode eq "short") {
-    $link = $KeywordListEntries{$KeyID}{SHORT};
+    $link = $KeywordListEntries{$KeyID}{Short};
   } elsif ($mode eq "long") {
-    $link = $KeywordListEntries{$KeyID}{LONG};
+    $link = $KeywordListEntries{$KeyID}{Long};
   } else {
-    $link = $KeywordListEntries{$KeyID}{FULL};
+    $link = $KeywordListEntries{$KeyID}{Full};
   }
   
   return $link;
@@ -75,11 +75,11 @@ sub KeywordsbyKeywordGroup ($) {
 
   my @KeywordListIDs = sort byKey keys %KeywordListEntries;
 
-  my $KeyGrpLink = &KeywordGroupInfo($KeywordGroupID,"short");
-  print "<b>$KeyGrpLink</b>\n";
+  my $KeywordGroupIDLink = &KeywordGroupInfo($KeywordGroupID,"short");
+  print "<b>$KeywordGroupIDLink</b>\n";
   print "<ul>\n";
   foreach my $KeyID (@KeywordListIDs) {
-    if ($KeywordGroupID == $KeywordListEntries{$KeyID}{KEYGRP}) {
+    if ($KeywordGroupID == $KeywordListEntries{$KeyID}{KeywordGroupID}) {
       my $KeyLink = &KeywordListLink($KeyID,"short");
       print "<li>$KeyLink</li>\n";
     }  
@@ -96,7 +96,7 @@ sub KeywordTable {
   my $Col   = 0;
   my $Row   = 0;
   print "<table cellpadding=10>\n";
-  foreach my $KeyGrpID (@KeywordGroupIDs) {
+  foreach my $KeywordGroupIDID (@KeywordGroupIDs) {
     unless ($Col % $NCols) {
       if ($Row) {
         print "</tr>\n";
@@ -105,7 +105,7 @@ sub KeywordTable {
       ++$Row;
     }
     print "<td>\n";
-    &KeywordsbyKeywordGroup($KeyGrpID);
+    &KeywordsbyKeywordGroup($KeywordGroupIDID);
     print "</td>\n";
     ++$Col;
   }  
@@ -120,29 +120,29 @@ sub KeywordDetailedList {
 
   print "<table cellpadding=10>\n";
   print "<tr valign=top>\n";
-  foreach my $KeyGrpID (@KeywordGroupIDs) {
-    my $KeyGrp = &KeywordGroupInfo($KeyGrpID,"short");
+  foreach my $KeywordGroupIDID (@KeywordGroupIDs) {
+    my $KeywordGroupID = &KeywordGroupInfo($KeywordGroupIDID,"short");
     print "  <td>\n";
-    print "  <a href=\"#$KeyGrp\"><b>$KeyGrp</b>\n";
+    print "  <a href=\"#$KeywordGroupID\"><b>$KeywordGroupID</b>\n";
     print "  </td>\n";
   }
   print "</tr>\n";
   print "</table>\n";
 
   print "<table cellpadding=10>\n";
-  foreach my $KeyGrpID (@KeywordGroupIDs) {
+  foreach my $KeywordGroupIDID (@KeywordGroupIDs) {
 
     my @KeywordListIDs = sort byKey keys %KeywordListEntries;
 
-    my $KeyGrpLink = &KeywordGroupInfo($KeyGrpID,"short");
+    my $KeywordGroupIDLink = &KeywordGroupInfo($KeywordGroupIDID,"short");
     print "<tr valign=top>\n";
     print "  <td colspan=2>\n";
-    print "  <a name=$KeyGrpLink>\n";
-    print "  <b>$KeyGrpLink</b>\n";
+    print "  <a name=$KeywordGroupIDLink>\n";
+    print "  <b>$KeywordGroupIDLink</b>\n";
     print "  </td>\n";
     print "</tr>\n";
     foreach my $KeyID (@KeywordListIDs) {
-      if ($KeyGrpID == $KeywordListEntries{$KeyID}{KEYGRP}) {
+      if ($KeywordGroupIDID == $KeywordListEntries{$KeyID}{KeywordGroupID}) {
 	my $KeyWd = &GetKeywordInfo($KeyID,"short");
 	my $LongLink = &GetKeywordInfo($KeyID,"long");
 	$link = "<a href=\"$Search?innerlogic=AND&outerlogic=AND&keywordsearchmode=anysub&keywordsearch=$KeyWd\">";
@@ -175,8 +175,8 @@ sub KeywordSelectLong { # Scrolling selectable list for keywords, all info
   my @KeywordListIDs = sort byKeyword keys %FullKeywords;
   my %KeywordLabels = ();
   foreach my $ID (@KeywordListIDs) {
-    ##$KeywordLabels{$ID} = $FullKeywords{$ID}." [$KeywordListEntries{$ID}{LONG}]"; 
-    my $descr = $KeywordListEntries{$ID}{LONG};
+    ##$KeywordLabels{$ID} = $FullKeywords{$ID}." [$KeywordListEntries{$ID}{Long}]"; 
+    my $descr = $KeywordListEntries{$ID}{Long};
     my $long;
     if ( (length $descr ) > 40 ) {
       $long = substr($descr,0,40)." ...";
@@ -206,7 +206,7 @@ sub KeywordGroupSelect (;$) { # Scrolling selectable list for keyword groups
     if ($Mode eq "full") {
       $GroupLabels{$ID} = $KeywordGroups{$ID}{Full};
     } else {  
-      $GroupLabels{$ID} = $KeywordGroups{$ID}{SHORT};
+      $GroupLabels{$ID} = $KeywordGroups{$ID}{Short};
     }  
   }  
   print $query -> scrolling_list(-name => "keywordgroup", -values => \@KeyGroupIDs, 
