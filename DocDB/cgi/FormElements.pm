@@ -201,6 +201,7 @@ sub EndDatePullDown (;%) {
   my (%Params) = @_;
   
   my $Disabled = $Params{-disabled}  || 0;
+  my $Required = $Params{-required}  || 0;
   
   my $Booleans = "";
   
@@ -236,7 +237,11 @@ sub EndDatePullDown (;%) {
 
   print "<b><a ";
   &HelpLink("enddate");
-  print "End Date:</a></b><br> \n";
+  print "End Date:</a></b>";
+  if ($Required) {
+    print $RequiredMark;
+  }  
+  print "<br> \n";
   print $query -> popup_menu (-name => 'endday',-values => \@days, -default => $day, $Booleans);
   print $query -> popup_menu (-name => 'endmonth',-values => \@months, -default => $months[$mon], $Booleans);
   print $query -> popup_menu (-name => 'endyear',-values => \@years, -default => $year, $Booleans);
