@@ -19,7 +19,6 @@ require "HTMLUtilities.pm";
 require "TopicSQL.pm";
 require "TopicHTML.pm";
 require "Messages.pm";
-require "Debug.pm"; # FIXME: Remove
 
 $query = new CGI;  # Global for subroutines
 
@@ -54,8 +53,6 @@ unless ($dbh) {
 &EndPage(@ErrorStack);
 
 &GetTopics;
-
-&HTMLPrintParams;
 
 if      ($Action eq "Delete") { # Delete major topics
   @TopicIDs = &GetSubTopics($MajorTopicID); 
