@@ -90,9 +90,13 @@ if (defined $Version) {
 }
 
 unless (&CanAccess($DocumentID,$Version)) {
- 
-  push @ErrorStack,"You are not authorized to view this document.";
+  if ($remote_user) {
+    push @ErrorStack,"The $remote_user group is not authorized to view this document (or it does not exist).";
+  } else {
+    push @ErrorStack,"This document is not publicly accessible.";
+  }  
 }  
+
 unless ($DocRevID) {
   push @ErrorStack,"This document does not exist.";
 }

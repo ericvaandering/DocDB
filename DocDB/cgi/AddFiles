@@ -242,5 +242,7 @@ if ($MailInstalled && $UseSignoffs) {
   &NotifySignees($DocRevID);
 }
 
+$EndTime  = new Benchmark;
+
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

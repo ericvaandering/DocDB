@@ -232,6 +232,8 @@ if (&NearByMeeting == $TopicID && $Mode eq "meeting" && !$Public) {
   print "</ul>\n";
 }
 
+$EndTime  = new Benchmark;
+
 if ($Mode eq "meeting" && !$Public) {
   &DocDBNavBar("List&nbsp;Meetings",$ListMeetings);
 } else {

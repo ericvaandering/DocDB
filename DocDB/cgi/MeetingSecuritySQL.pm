@@ -128,6 +128,7 @@ sub MeetingSecurityUpdate (%) {
     my $Insert = $dbh -> prepare("insert into $Table ($IDField,ConferenceID,GroupID) values (0,?,?)");
     $Delete -> execute($ConferenceID);
     foreach my $GroupID (@GroupIDs) {
+      unless ($GroupID) {next;}
       $Insert -> execute($ConferenceID,$GroupID);
     }
     $Success = 1;  

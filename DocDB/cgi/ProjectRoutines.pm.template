@@ -89,7 +89,7 @@ sub DocDBFooter {
   
   if ($EndTime && $StartTime) {
     my $TimeDiff = timediff($EndTime,$StartTime);
-    print "<br><small><b>Execution time: </b>",timestr($TimeDiff),"</small><br>\n";
+    print "<small><b>Execution time: </b>",timestr($TimeDiff),"</small><br>\n";
   }
 
 # while the simplest possible routine is just this:

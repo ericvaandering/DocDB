@@ -138,16 +138,16 @@ sub SecurityListByID {
 sub ModifyListByID {
   my (@GroupIDs) = @_;
   
+  print "<b>Modifiable by:</b><br>\n";
+  print "<ul>\n";
   if (@GroupIDs) {
-    print "<b>Modifiable by:</b><br>\n";
-    print "<ul>\n";
     foreach $GroupID (@GroupIDs) {
       print "<li>$SecurityGroups{$GroupID}{NAME}</li>\n";
     }
-    print "</ul>\n";
   } else {
-    print "<b>Security:</b> Public document<br>\n";
+    print "<li>Same as Viewable by</li>\n";
   }
+  print "</ul>\n";
 }
 
 sub WarnPage { # Non-fatal errors
