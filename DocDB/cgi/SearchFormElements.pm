@@ -264,10 +264,11 @@ sub ModeSelect { # Display Mode selecter for searches
   print "</a>";
   print " \n";
   my %Modes = ();
-  $Modes{meeting} = "Author with topics and files";
   $Modes{date}    = "Date with document #";
+  $Modes{meeting} = "Author with topics and files";
   print $query -> popup_menu (-name    => 'mode', 
-                              -values  => \%Modes);
+                              -values  => \%Modes,
+                              -default => 'date');
 };
 
 1;

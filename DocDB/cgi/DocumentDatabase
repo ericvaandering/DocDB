@@ -282,6 +282,7 @@ unless ($Public) {
   }
   print "<li>Add a  <a href=\"$ConferenceAddForm\">conference</a>\n";
   print "<li>Add an <a href=\"$AuthorAddForm\">author</a>\n";
+  print "<li><a href=\"$Statistics\">Statistics</a> on the database\n";
   print "</ul>\n";
 } # Public
 

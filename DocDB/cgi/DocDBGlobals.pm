@@ -95,6 +95,9 @@ $AddFiles           = $cgi_root."AddFiles";
 $AddFilesForm       = $cgi_root."AddFilesForm";
 
 $ConferenceAddForm  = $cgi_root."ConferenceAddForm";
+$ConferenceAdd      = $cgi_root."ConferenceAdd";
+
+$Statistics         = $cgi_root."Statistics";
 
 $HelpFile           = $web_root."Static/Restricted/DocDB_Help.shtml";
 

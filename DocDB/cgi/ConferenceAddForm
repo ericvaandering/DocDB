@@ -30,7 +30,7 @@ print $query->header;
 
 &HelpPopupScript;
 
-print $query -> start_multipart_form('POST',"ConferenceAdd");
+print $query -> start_multipart_form('POST',"$ConferenceAdd");
 
 print "<center><table cellpadding=10>\n";
 

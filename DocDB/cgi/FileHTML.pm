@@ -90,25 +90,24 @@ sub ShortFileListByFileID {
 sub FileLink {
   require "FSUtilities.pm";
 
-  my ($documentID,$version,$shortfile,$description) = @_;
-  my $shortname = $shortfile;
-  $shortfile = CGI::escape($shortfile);
+  my ($documentID,$version,$shortname,$description) = @_;
+  
+  my $shortfile = CGI::escape($shortname);
   my $base_url = &GetURLDir($documentID,$version);
   my $file_size = &FileSize(&FullFile($documentID,$version,$shortname));
   $file_size =~ s/^\s+//; # Chop off leading spaces
   if ($description) {
     return "<a href=\"$base_url$shortfile\">$description</a> ($shortname, $file_size)";
   } else {
-    return "<a href=\"$base_url$shortfile\">$shortfile</a> ($file_size)";
+    return "<a href=\"$base_url$shortfile\">$shortname</a> ($file_size)";
   }
 }  
 
 sub ShortFileLink {
   require "FSUtilities.pm";
 
-  my ($documentID,$version,$shortfile,$description) = @_;
-  $shortname = $shortfile;
-  $shortfile = CGI::escape($shortfile);
+  my ($documentID,$version,$shortname,$description) = @_;
+  my $shortfile = CGI::escape($shortname);
   $base_url = &GetURLDir($documentID,$version);
   if ($description) {
     return "<a href=\"$base_url$shortfile\">$description</a>";
