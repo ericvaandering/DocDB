@@ -198,7 +198,7 @@ sub SessionDateTimePullDown (;%) {
     $DefaultMonth = $Month-1;
     $DefaultDay   = int($Day);
     $DefaultHour  = $Time;
-  } elsif
+  } elsif ($Default) {
     my ($Date,$Time) = split /\s+/,$Default;
     my ($Year,$Month,$Day) = split /-/,$Date;
     my ($Hour,$Minute,undef) = split /:/,$Time;
