@@ -114,6 +114,7 @@ sub AuthorsTable {
   my @AuthorIDs = sort byLastName    keys %Authors;
   my $NCols     = 4;
   my $NPerCol   = int (scalar(@AuthorIDs)/$NCols + 1);
+  my $NThisCol  = 0;
 
   print "<table>\n";
   print "<tr valign=top>\n";

@@ -163,17 +163,40 @@ sub MeetingsTable {
   
   &SpecialMajorTopics;
 
-  my @MinorTopicIDs = sort byTopic keys %MinorTopics; #FIXME special sort 
-
+  my @MeetingTopicIDs = ();
+  my @MinorTopicIDs   = keys %MinorTopics; 
   $MajorID = $CollabMeetMajorID; 
-  print "<ul>\n";
+
   foreach my $MinorID (@MinorTopicIDs) {
     if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
-      my $topic_link = &TopicLink($MinorID,"short");
-      print "<li>$topic_link\n";
+      push @MeetingTopicIDs,$MinorID;
     }  
   }  
-  print "</ul>";
+
+  @MeetingTopicIDs = sort byTopic @MeetingTopicIDs; 
+
+  my $NCols     = 3;
+  my $NPerCol   = int (scalar(@MeetingTopicIDs)/$NCols + 1);
+  my $NThisCol  = 0;
+
+  print "<table>\n";
+  print "<tr valign=top>\n";
+  
+  print "<td>\n";
+  print "<ul>\n";
+  foreach my $MinorID (@MeetingTopicIDs) {
+    if ($NThisCol >= $NPerCol) {
+      print "</ul></td>\n";
+      print "<td>\n";
+      print "<ul>\n";
+      $NThisCol = 0;
+    }
+    ++$NThisCol;
+    my $topic_link = &TopicLink($MinorID,"short");
+    print "<li>$topic_link\n";
+  }  
+  print "</ul></td></tr>";
+  print "</table>\n";
 }
 
 1;
