@@ -2,21 +2,24 @@ sub TitleBox {
   print "<b><a ";
   &HelpLink("title");
   print "Title:</a></b><br> \n";
-  print $query -> textfield (-name => 'title', -size => 80, -maxlength => 240);
+  print $query -> textfield (-name => 'title', -default => $TitleDefault, 
+                             -size => 80, -maxlength => 240);
 };
 
 sub PubInfoBox {
   print "<b><a ";
   &HelpLink("pubinfo");
   print "Publication information:</a></b><br> \n";
-  print $query -> textarea (-name => 'pubinfo', -columns => 50, -rows => 3);
+  print $query -> textarea (-name => 'pubinfo', -default => $PubInfoDefault,
+                            -columns => 50, -rows => 3);
 };
 
 sub AbstractBox {
   print "<b><a ";
   &HelpLink("abstract");
   print "Abstract:</a></b><br> \n";
-  print $query -> textarea (-name => 'abstract', -columns => 50, -rows => 6);
+  print $query -> textarea (-name => 'abstract', -default => $AbstractDefault,
+                            -columns => 50, -rows => 6);
 };
 
 sub SingleUploadBox {
@@ -42,18 +45,21 @@ sub SingleHTTPBox {
   print "</table>\n";
 };
 
-sub RequestorSelect { # Scrolling selectable list for requesting author
+sub RequesterSelect { # Scrolling selectable list for requesting author
   print "<b><a ";
-  &HelpLink("requestor");
-  print "Requestor:</a></b><br> \n";
-  print $query -> scrolling_list(-name => "requestor", -values => \%names, -size => 15);
+  &HelpLink("requester");
+  print "Requester:</a></b><br> \n";
+  print $query -> scrolling_list(-name => "requester", -values => \%names, -size
+  => 15,                         -default => $RequesterDefault);
 };
 
 sub AuthorSelect { # Scrolling selectable list for authors
   print "<b><a ";
   &HelpLink("authors");
   print "Authors:</a></b><br> \n";
-  print $query -> scrolling_list(-name => "authors", -values => \%names, -size => 15, -multiple => 'true');
+  print $query -> scrolling_list(-name => "authors", -values => \%names, 
+                                 -size => 15, -multiple => 'true',
+                                 -default => @AuthorDefaults);
 };
 
 
@@ -61,10 +67,13 @@ sub TopicSelect { # Scrolling selectable list for topics
   print "<b><a ";
   &HelpLink("topics");
   print "Topics:</a></b><br> \n";
-  print $query -> scrolling_list(-name => "topics", -values => \%full_topics, -size => 15, -multiple => 'true');
+  print $query -> scrolling_list(-name => "topics", -values => \%full_topics, 
+                                 -size => 15, -multiple => 'true',
+                                 -default => @TopicDefaults);
 };
 
 sub DocTypeButtons {
+# FIXME move fetches to MySQLaccess
   my ($DocTypeID,$ShortType,$LongType);
   my $doctype_list  = $dbh->prepare("select DocTypeID,ShortType,LongType from DocumentType");
   $doctype_list -> execute;
@@ -83,11 +92,13 @@ sub DocTypeButtons {
 };
 
 sub SecurityList {
+  unless (@SecurityDefaults) {@SecurityDefaults = ['BTeV'];} 
   print "<b><a ";
   &HelpLink("security");
   print "Security:</a></b><br> \n";
   print $query -> scrolling_list(-name => 'security', -values => \@available_securities, 
-                                 -size => 5, -multiple => 'true', -default => 'BTeV');
+                                 -size => 5, -multiple => 'true', 
+                                 -default => @SecurityDefaults);
 };
 
 1;

@@ -59,21 +59,47 @@ sub GetAllDocuments {
   $document_list -> execute;
   $document_list -> bind_columns(undef, \($DocumentID,$RequesterID,$RequestDate,$DocumentType,$TimeStamp));
   %Documents = ();
-  @documents = ();
+  @DocumentIDs = ();
   while ($document_list -> fetch) {
     $Documents{$DocumentID}{DOCID} = $DocumentID;
-    $Documents{$DocumentID}{REQUESTOR} = $RequesterID;
+    $Documents{$DocumentID}{REQUESTER} = $RequesterID;
     $Documents{$DocumentID}{DATE} = $RequestDate;
     $Documents{$DocumentID}{TYPE} = $DocumentType;
     $Documents{$DocumentID}{TIMESTAMP} = $TimeStamp;
-    push @documents,$DocumentID;
+    push @DocumentIDs,$DocumentID;
   }
   my $document;
-  foreach $document (@documents) {
+  foreach $document (@DocumentIDs) {
     $max_version -> execute($document);
     ($Documents{$document}{NVER}) = $max_version -> fetchrow_array;
   }
 };
+
+sub FetchDocument {
+  my ($DocumentID) =@_;
+  my $document_list  = $dbh->prepare(
+     "select DocumentID,RequesterID,RequestDate,DocumentType,TimeStamp ".
+     "from Document where DocumentID=?");
+  my $max_version    = $dbh->prepare("select MAX(VersionNumber) from ".
+                                     "DocumentRevision where DocumentID=?");
+  if ($Documents{$DocumentID}{DOCID}) { # Already fetched
+    return $Documents{$DocumentID}{DOCID};
+  }  
+  $document_list -> execute($DocumentID);
+  ($DocumentID,$RequesterID,$RequestDate,$DocumentType,$TimeStamp) = $document_list -> fetchrow_array;
+
+# FIXME handle non-existent documents
+
+  $Documents{$DocumentID}{DOCID} = $DocumentID;
+  $Documents{$DocumentID}{REQUESTER} = $RequesterID;
+  $Documents{$DocumentID}{DATE} = $RequestDate;
+  $Documents{$DocumentID}{TYPE} = $DocumentType;
+  $Documents{$DocumentID}{TIMESTAMP} = $TimeStamp;
+  push @DocumentIDs,$DocumentID;
+  
+  $max_version -> execute($DocumentID);
+  ($Documents{$DocumentID}{NVER}) = $max_version -> fetchrow_array;
+}
 
 sub FetchDocRevision {
   # Creates two hashes:
@@ -90,14 +116,17 @@ sub FetchDocRevision {
     return $DocRevIDs{$documentID}{$versionNumber};
   }
   $revision_list -> execute($documentID,$versionNumber);
-  ($DocRevID,$SubmitterID,$DocumentTitle,$PublicationInfo,$VersionNumber,
-   $Abstract,$RevisionDate,$Security) = $revision_list -> fetchrow_array;
+  my ($DocRevID,$SubmitterID,$DocumentTitle,$PublicationInfo,$VersionNumber,
+      $Abstract,$RevisionDate,$Security) = $revision_list -> fetchrow_array;
 
   $DocRevIDs{$documentID}{$versionNumber} = $DocRevID;
+  $DocRevisions{$DocRevID}{SUBMITTER}    = $SubmitterID;
   $DocRevisions{$DocRevID}{TITLE}    = $DocumentTitle;
+  $DocRevisions{$DocRevID}{PUBINFO}     = $PublicationInfo;
   $DocRevisions{$DocRevID}{ABSTRACT} = $Abstract;
   $DocRevisions{$DocRevID}{DATE}     = $RevisionDate;
-  $DocRevisions{$DocRevID}{SECURITY} = $Security;
+  @{$DocRevisions{$DocRevID}{SECURITY}} = split /\,/,$Security;
+
   return $DocRevID;
 }
 
@@ -123,5 +152,29 @@ sub FetchDocFiles {
   return $Files{$DocRevID};
 }
 
+sub GetRevisionAuthors {
+  my ($DocRevID) = @_;
+  my @authors = ();
+  my $author_list = $dbh->prepare(
+    "select RevAuthorID,AuthorID from RevisionAuthor where DocRevID=?");
+  $author_list -> execute($DocRevID);
+  $author_list -> bind_columns(undef, \($RevAuthorID,$AuthorID));
+  while ($author_list -> fetch) {
+    push @authors,$AuthorID;
+  }
+  return \@authors;  
+}
 
+sub GetRevisionTopics {
+  my ($DocRevID) = @_;
+  my @topics = ();
+  my $topic_list = $dbh->prepare(
+    "select RevTopicID,MinorTopicID from RevisionTopic where DocRevID=?");
+  $topic_list -> execute($DocRevID);
+  $topic_list -> bind_columns(undef, \($RevTopicID,$MinorTopicID));
+  while ($topic_list -> fetch) {
+    push @topics,$MinorTopicID;
+  }
+  return \@topics;
+}
 1;

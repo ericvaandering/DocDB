@@ -10,6 +10,7 @@ require "FormElements.pm";
 require "Scripts.pm";
 require "MySQLAccess.pm";
 require "DocDBGlobals.pm";
+require "ResponseElements.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
@@ -20,7 +21,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
 %params = $query -> Vars;
 $mode   = $params{mode};
-if ($mode ne "add" && $mode ne "reserve") {
+if ($mode ne "add" && $mode ne "reserve" && $mode ne "update") {
   $mode = "reserve";
 }  
 $upload = $params{upload};
@@ -33,6 +34,23 @@ if      ($mode eq "add") {
   print $query->start_html(-title=>"BTeV Document Addition");
 } elsif ($mode eq "reserve") {
   print $query->start_html(-title=>"BTeV Document Reservation");
+} elsif ($mode eq "update") {
+  print $query->start_html(-title=>"BTeV Document Update");
+}
+my $DocumentID;
+if ($mode eq "update") { # Need to read in last version values and update
+#  $documentID = $params{docid};
+  $DocumentID = 78;
+  &FetchDocument($DocumentID);
+  my $DocRevID = &FetchDocRevision($DocumentID,$Documents{$DocumentID}{NVER});
+  
+  @SecurityDefaults = $DocRevisions{$DocRevID}{SECURITY};
+  $TitleDefault = $DocRevisions{$DocRevID}{TITLE};
+  $PubInfoDefault = $DocRevisions{$DocRevID}{PUBINFO};
+  $AbstractDefault = $DocRevisions{$DocRevID}{ABSTRACT};
+  $RequesterDefault = $DocRevisions{$DocRevID}{SUBMITTER};
+  @AuthorDefaults   = &GetRevisionAuthors($DocRevID);
+  @TopicDefaults   = &GetRevisionTopics($DocRevID);
 }
 
 &HelpPopupScript;
@@ -54,23 +72,23 @@ if      ($mode eq "add") {
              the database. <br>
              You CANNOT upload the document using this form.<br>
              Make sure you know all the required information.<br>\n";
+} elsif ($mode eq "update") {
+  $documentName = &FullDocumentID($DocumentID);
+  print "<h4>You have chosen to update $documentName.
+             Make sure you know all the required information.<br>\n";
 }
-print "Click on any of the headings for help.</h4>\n";
-print "</td></tr>\n";
-print "<tr>\n";
-print "<td colspan=3>\n";
-&TitleBox;
-print "</td></tr>\n";
-print "<tr>\n";
-print "<td colspan=3>\n";
-&PubInfoBox;
-print "</td></tr>\n";
-print "<tr>\n";
-print "<td colspan=3>\n";
-&AbstractBox;
-print "</td></tr>\n";
-if ($mode eq "add") {
-  print "<td colspan=3>\n";
+
+print "Click on any of the headings for help.</h4>\n"; print "</td>\n";
+print "</tr><tr>\n";
+print "<td colspan=3>\n"; &TitleBox;    print "</td>\n";
+print "</tr><tr>\n";
+print "<td colspan=3>\n"; &PubInfoBox;  print "</td>\n";
+print "</tr><tr>\n";
+print "<td colspan=3>\n"; &AbstractBox; print "</td>\n";
+print "</tr>\n";
+
+if ($mode eq "add" || $mode eq "update") {
+  print "<tr><td colspan=3>\n";
   if ($upload eq "file") {
     &SingleUploadBox;
   } elsif ($upload eq "http") {
@@ -78,30 +96,29 @@ if ($mode eq "add") {
   }  
   print "</td></tr>";
 }
-print "<tr>\n";
-print "<td>\n";
-&RequestorSelect;
-print "</td>\n";
-print "<td>\n";
-&AuthorSelect;
-print "</td>\n";
-print "<td>\n";
-&TopicSelect;
-print "</td></tr>";
-print "<tr>\n";
-print "<td colspan=1 valign=top>\n";
-&SecurityList;
-print "<td colspan=2 valign=top>\n";
-&DocTypeButtons;
-print "</td>";
-print "</td></tr>";
-print "</table><p>";
 
+print "<tr>\n";
+print "<td>\n"; &RequesterSelect; print "</td>\n";
+print "<td>\n"; &AuthorSelect;    print "</td>\n";
+print "<td>\n"; &TopicSelect;     print "</td>\n";
+print "</tr><tr>\n";
+print "<td colspan=1 valign=top>\n"; &SecurityList; print "</td>\n";
+
+if ($mode eq "add" || $mode eq "reserve") {
+  print "<td colspan=2 valign=top>\n";
+  &DocTypeButtons;
+  print "</td>\n";
+}
+
+print "</tr>\n";
+print "</table><p>\n";
 
 if      ($mode eq "add") {
   print $query -> submit (-value => "Submit document");
 } elsif ($mode eq "reserve") {
   print $query -> submit (-value => "Request document ID");
+} elsif ($mode eq "update") {
+  print $query -> submit (-value => "Update document");
 }
 print "</center><p>";
 print $query -> end_multipart_form;

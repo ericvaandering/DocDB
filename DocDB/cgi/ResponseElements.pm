@@ -14,11 +14,11 @@ sub AuthorListByID {
   print "<p>\n";
 }
 
-sub RequestorByID {
-  my ($requestorID) = @_;
+sub RequesterByID {
+  my ($requesterID) = @_;
   
   print "<b>Requested by:</b> ";
-  print "$names{$requestorID}<br>\n";
+  print "$names{$requesterID}<br>\n";
   print "<p>\n";
 }
 
@@ -68,5 +68,30 @@ sub FileLink {
   $base_url = &GetURLDir($documentID,$version);
   return "<a href=\"$base_url$shortfile\">$shortfile</a>";
 }  
+
+sub EuroDate {
+  my ($sql_datetime) = @_;
+  unless ($sql_datetime) {return "";}
+  
+  my ($date,$time) = split /\s+/,$sql_datetime;
+  my ($year,$month,$day) = split /\-/,$date;
+  $return_date = "$day ".("Jan","Feb","Mar","Apr","May","Jun",
+                          "Jul","Aug","Sep","Oct","Nov","Dec")[$month-1].
+                 " $year"; 
+  return $return_date;
+}
+
+sub EuroDateTime {
+  my ($sql_datetime) = @_;
+  unless ($sql_datetime) {return "";}
+  
+  my ($date,$time) = split /\s+/,$sql_datetime;
+  my ($year,$month,$day) = split /\-/,$date;
+  $return_date = "$time ".
+                 "$day ".("Jan","Feb","Mar","Apr","May","Jun",
+                          "Jul","Aug","Sep","Oct","Nov","Dec")[$month-1].
+                 " $year"; 
+  return $return_date;
+}
 
 1;

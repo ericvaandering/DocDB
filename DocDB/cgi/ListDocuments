@@ -30,11 +30,11 @@ print "<th>Latest<br>Version</th>\n";
 print "<th>Title</th>\n";
 print "<th>Primary<br>Author</th>\n";
 print "<th>Files</th>\n";
-print "<th>Date<br>Requested</th>\n";
-print "<th>Date<br>Modified</th>\n";
+print "<th>Date Requested</th>\n";
+print "<th>Date Modified</th>\n";
 print "<th>Security</th>\n";
 print "</tr>\n";
-foreach $document (@documents) {
+foreach $document (@DocumentIDs) {
   unless (&CanAccess($document,$Documents{$document}{NVER})) {next;}
   my $full_docid = &FullDocumentID($document);
   my $DocRevID   = &FetchDocRevision($document,$Documents{$document}{NVER});
@@ -45,16 +45,19 @@ foreach $document (@documents) {
   print "<td>$full_docid </td>\n";
   print "<td align=center>$Documents{$document}{NVER} </td>\n";
   print "<td>$title</td>\n";
-  print "<td>$names{$Documents{$document}{REQUESTOR}}</td>\n";
+  print "<td>$names{$Documents{$document}{REQUESTER}}</td>\n";
   print "<td>\n";
   foreach $file (@{$Files_ref}) {
     $link = &FileLink($document,$Documents{$document}{NVER},$DocFiles{$file}{NAME});
     print "$link<br>\n";
   }  
   print "</td>\n";
-  print "<td>$Documents{$document}{DATE}</td>\n";
-  print "<td>$DocRevisions{$DocRevID}{DATE}</td>\n";
-  print "<td>$DocRevisions{$DocRevID}{SECURITY}</td>\n";
+  $res_date = &EuroDate($Documents{$document}{DATE});
+  $rev_date = &EuroDateTime($DocRevisions{$DocRevID}{DATE});
+  $sec_string = join ',',@{$DocRevisions{$DocRevID}{SECURITY}};
+  print "<td>$res_date</td>\n";
+  print "<td>$rev_date</td>\n";
+  print "<td>$sec_string</td>\n";
   print "</tr>\n";
 }
 print "</table>\n";

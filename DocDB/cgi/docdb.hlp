@@ -3,11 +3,12 @@ Title
 This is the initial title of of your document. This option must be supplied for
 when placing a document into the database and when reserving a document number.
 #
-requestor
-Requestor
+requester
+Requester
 This is the name of the person who is requesting the document number or placing
-the document in the database. In other words, this is you. This option must be supplied for
-when placing a document into the database and when reserving a document number.
+the document in the database. In other words, this is you. This option must be 
+supplied when reserving a document number, placing a document into the database,
+or updating a document.
 #
 pubinfo
 Publication Information

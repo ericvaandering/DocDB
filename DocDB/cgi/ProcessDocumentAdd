@@ -67,8 +67,8 @@ values (0,         ?,        ?,        NOW(),?)");
 
 @error_stack = ();
 
-unless ($params{requestor}) {
-  push @error_stack,"You must supply a requestor for this document.";
+unless ($params{requester}) {
+  push @error_stack,"You must supply a requester for this document.";
 }
 unless ($params{title}) {
   push @error_stack,"You must supply a title for this document.";
@@ -108,7 +108,7 @@ if (($#error_stack + 1)) {
 
 $security_list = join ',',@securities; # Ready for MySQL
 
-$document_insert -> execute($params{requestor},$params{doctype});
+$document_insert -> execute($params{requester},$params{doctype});
 my $documentID = $document_insert -> {mysql_insertid}; # Works with MySQL only
 
 my $version;
@@ -118,7 +118,7 @@ if      ($mode eq "reserve") {
   $version   = 1;
 }
 
-$doc_rev_insert -> execute($documentID,$params{requestor},$params{title},
+$doc_rev_insert -> execute($documentID,$params{requester},$params{title},
                            $params{pubinfo},$version,$params{abstract},
                            $security_list);
 my $docRevID = $doc_rev_insert -> {mysql_insertid}; # Works with MySQL only
@@ -174,7 +174,7 @@ print "You were successful. Your Document ID is <b>$full_docid</b><br>
        Your entry was created with the following information:
        <p>\n"; 
 
-&RequestorByID($params{requestor});
+&RequesterByID($params{requester});
 &AuthorListByID(@authorIDs);
 &TopicListByID(@topicIDs);
 &PrintAbstract($params{abstract});

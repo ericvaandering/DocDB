@@ -6,7 +6,7 @@ sub CanAccess { # Can the user access (with current security) this version
     return 0;
   } 
 
-  my @ok_users = split /\,/,$DocRevisions{$DocRevID}{SECURITY};
+  my @ok_users = @{$DocRevisions{$DocRevID}{SECURITY}};
   
   unless (@ok_users) {return 1;}             # Public documents
   
