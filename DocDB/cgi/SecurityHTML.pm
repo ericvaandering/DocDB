@@ -30,7 +30,7 @@ sub SecurityScroll (%) {
   my $AddPublic =   $Params{-addpublic} || 0;
   my $HelpLink  =   $Params{-helplink}  || "";
   my $HelpText  =   $Params{-helptext}  || "Groups";
-  my $Multiple  =   $Params{-multiple}; # FIXME: May not be able to set false
+  my $Multiple  =   $Params{-multiple}; 
   my $Name      =   $Params{-name}      || "groups";
   my $Size      =   $Params{-size}      || 10;
   my $Disabled  =   $Params{-disabled}  || "0";
@@ -39,11 +39,8 @@ sub SecurityScroll (%) {
   my $Booleans = "";
   
   if ($Disabled) {
-    $Booleans .= "disabled ";
+    $Booleans .= "disabled";
   }  
-#  if ($Multiple) {
-#    $Booleans .= "multiple";
-#  }  
   if ($Booleans) {
     $Booleans = "-".$Booleans;
   }
