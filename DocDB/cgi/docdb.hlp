@@ -38,12 +38,13 @@ document(s) you are searching for. You can select topics on the left and
 sub-topics on the right. Selecting a topic on the left will limit your choices
 on the right (assuming you have Javascript turned on). 
 <p>
-Selecting any sub-topic on the right will search only for the
-specified sub-topics. This means that if you have <i>Meetings</i> and
+Selecting any sub-topic on the right ignore its parent topic on the left. 
+This means that if you have <i>Meetings</i> and
 <i>Detectors</i>
 selected on the left and <i>Detectors:Straws</i> selected on the right, your
-search will only be performed on <i>Detectors:Straws</i>. Meetings will be
-completely ignored.
+search will be performed on <i>Detectors:Straws</i> and <i>Meetings</i>. But,
+even if you have "OR" selected for "Within Fields," you won't get documents for
+detectors other than straws.  
 #
 beforeafterdate
 Last Modified Between
