@@ -9,9 +9,14 @@ use DBI;
 
 $StartTime = new Benchmark;
 
-require "ResponseElements.pm";
-require "MySQLAccess.pm";
 require "DocDBGlobals.pm";
+require "ResponseElements.pm";
+require "AuthorSQL.pm";
+require "TopicSQL.pm";
+require "SecuritySQL.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
+require "MiscSQL.pm";
 require "MailNotification.pm";
 require "FSUtilities.pm";
 require "WebUtilities.pm";

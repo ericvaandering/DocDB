@@ -7,7 +7,7 @@ use CGI;
 use DBI;
 
 require "ResponseElements.pm";
-require "MySQLAccess.pm";
+require "TopicSQL.pm";
 require "DocDBGlobals.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";

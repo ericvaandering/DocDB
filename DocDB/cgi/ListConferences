@@ -6,8 +6,8 @@
 use CGI;                                                                                      
 use DBI;
 
-require "MySQLAccess.pm";
 require "DocDBGlobals.pm";
+require "TopicSQL.pm";
 require "ResponseElements.pm";
 require "HTMLUtilities.pm";
 require "Sorts.pm";
@@ -17,7 +17,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 &GetTopics;
 
-print $query->header;
+print $query -> header;
 &BTeVHeader("List of Conferences");
 
 print "<h3>Conferences in database:</h3>\n";

@@ -6,8 +6,8 @@
 use CGI;                                                                                      
 use DBI;
 
-require "MySQLAccess.pm";
 require "DocDBGlobals.pm";
+require "TopicSQL.pm";
 require "ResponseElements.pm";
 require "HTMLUtilities.pm";
 require "Sorts.pm";
@@ -22,7 +22,7 @@ print $query->header;
 
 print "<h3>Useful links:</h3>\n";
 print "<ul>\n";
-print "<li><a href=\"http://www-btev.fnal.gov/calendar.html\">Upcoming Meetings</a>\n";
+print "<li><a href=\"http://www-btev.fnal.gov/public/hep/general/calendar/index.shtml\">Upcoming Meetings</a>\n";
 print "<li><a href=\"$DocumentAddForm?special=meeting\">Submit a talk</a> for
        the upcoming or just-past  meeting\n";
 print "<li>
