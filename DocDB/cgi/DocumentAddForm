@@ -54,9 +54,9 @@ if ($mode ne "add"    && $mode ne "reserve" &&
 }  
 
 &SetUploadMethod;
+&SetDateOverride;
 
 $Archive       = $params{archive};
-$Overdate      = $params{overdate};
 
 if ($Archive eq "single") {$NumberUploads = 1;}  # Make sure
 if ($Archive eq "multi")  {$Archive = "single";} # No real difference
@@ -243,7 +243,7 @@ if ($TopicMode eq "single") {
   print "</tr><tr>\n";
 }
 
-if ($Overdate) {
+if ($Overdate eq "Yes") {
   print "<td valign=top>\n";
   &DateTimePullDown;
   print "</td>\n";

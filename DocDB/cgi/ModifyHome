@@ -198,12 +198,8 @@ print "<tr><td align=right>\n";
 print "<a "; &HelpLink("dateoverride"); 
 print "<b>Override submit date:</b></a>\n";
 print "<td>\n";
-if ($DateOverridePref) {
-    print $query -> checkbox(-name => "overdate", -checked => 'checked', -label => '(Check for Yes)');
-}
-else {
-    print $query -> checkbox(-name => "overdate", -label => '(Check for Yes)');
-}
+print $query -> radio_group(-name => "overdate", -values => ['Yes','No'],
+                            -default => $DateOverridePref);
 print "<tr><td align=center colspan=2>\n";
 print $query -> submit (-value => "Give me my customized form");
 print "</table>\n";
