@@ -48,10 +48,10 @@ $revision_list -> bind_columns(undef, \($DocRevID));
 while ($revision_list -> fetch) {
   $document_list -> execute($DocRevID);
   ($DocumentID) = $document_list -> fetchrow_array;
-  $DocumentIDs{$DocumentID} = 1;
+  $DocumentIDs{$DocumentID} = 1; # Hash removes duplicates
 }
 
-my @DocumentIDs = sort keys %DocumentIDs;  # Hash removes dups
+my @DocumentIDs = reverse sort DocumentByRevisionDate keys %DocumentIDs;  
 
 print "<center><table cellpadding=3>\n";
 
