@@ -43,7 +43,7 @@ sub CanAccessMeeting ($) {
   my $SecurityGroupID = &FetchSecurityGroupByName($remote_user);
 
   foreach my $MeetingSecurityID (@MeetingSecurityIDs) {
-    my $MeetingGroupID = $MeetingModify{$MeetingSecurityID}{GroupID};
+    my $MeetingGroupID = $MeetingSecurities{$MeetingSecurityID}{GroupID};
     push @MeetingGroupIDs,$MeetingGroupID; # Needed later by subordinates
     if ($SecurityGroupID == $MeetingGroupID) { 
       $CanAccessMeeting = 1;

@@ -474,8 +474,22 @@ $MeetingDefaultEpilogue     = $Conferences{$ConferenceID}{Epilogue};
 $MeetingDefaultShowAllTalks = $Conferences{$ConferenceID}{ShowAllTalks};
 $DefaultStartDate           = $Conferences{$ConferenceID}{StartDate};
 $DefaultEndDate             = $Conferences{$ConferenceID}{EndDate};
-my @MeetingViewDefaults     = &GetMeetingSecurityGroups($ConferenceID);
-my @MeetingModifyDefaults   = &GetMeetingModifyGroups($ConferenceID);
+
+# Get deaults for meeting view/modify
+
+my @MeetingViewDefaults   = ();
+my @MeetingModifyDefaults = ();
+my @MeetingViewIDs        = &GetMeetingSecurityGroups($ConferenceID);
+my @MeetingModifyIDs      = &GetMeetingModifyGroups($ConferenceID);
+
+foreach my $MeetingViewID (@MeetingViewIDs) {
+  my $GroupID = $MeetingSecurities{$MeetingViewID}{GroupID};
+  push @MeetingViewDefaults,$GroupID;
+}
+foreach my $MeetingModifyID (@MeetingModifyIDs) {
+  my $GroupID = $MeetingModify{$MeetingModifyID}{GroupID};
+  push @MeetingModifyDefaults,$GroupID;
+}
 
 print "<tr valign=top>\n";
  print "<td colspan=2>Only select a Major Topic and fill in the short description if
