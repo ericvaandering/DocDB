@@ -1,5 +1,5 @@
 #        Name: MeetingHTML.pm
-# Description: FIXME
+# Description: HTML producing routines for meetings and conferences
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 

@@ -1,5 +1,5 @@
 #
-#        Name: MiscSQL.pm 
+#        Name: MeetingSQL.pm 
 # Description: Routines to access SQL tables related to conferences and meetings 
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)

@@ -345,14 +345,20 @@ sub LongDescriptionBox {
                              -size => 40, -maxlength => 120);
 };
 
-sub FullTopicMultipleScroll ($;@) { # Scrolling selectable list for topics, all info
-  my ($ElementName,@Defaults) = @_;
+sub FullTopicScroll ($$;@) { # Scrolling selectable list for topics, all info
+  my ($Multiple,$ElementName,@Defaults) = @_;
 
   require "TopicSQL.pm";
   
   unless (keys %MinorTopics) {
     &GetTopics;
   }
+  
+  if ($Multiple) {
+    $Multiple = "true";
+  } else { 
+    $Multiple = "false";
+  }  
   
   my @TopicIDs = sort byTopic keys %MinorTopics;
   my %TopicLabels = ();
@@ -361,7 +367,7 @@ sub FullTopicMultipleScroll ($;@) { # Scrolling selectable list for topics, all 
   }  
   print $query -> scrolling_list(-name => $ElementName, -values => \@TopicIDs, 
                                  -labels => \%TopicLabels,
-                                 -size => 10, -multiple => 'true',
+                                 -size => 10, -multiple => $Multiple,
                                  -default => \@Defaults);
 };
 

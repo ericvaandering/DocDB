@@ -9,16 +9,20 @@ sub Unique {
   return @UniqueElements;
 }
 
-sub RemoveArray (\@\@) { # Removes elements of one array from another
+sub RemoveArray (\@@) { # Removes elements of one array from another
+                        # Call &RemoveArray(\@Array1,@Array2)
+                        # FIXME: Figure out how to do like push, no reference
+                        #        on call needed
+                        
+  my ($Array_ref,@BadElements) = @_;
 
-  # Verify first two lines are correct
-  my (@Array,@BadElements) = @_;
+  my @Array = @{$Array_ref};
+
   foreach my $BadElement (@BadElements) { # Move this into utility function
     my $Index = 0;
     foreach my $Element (@Array) {
       if ($Element eq $BadElement) {
         splice @Array,$Index,1;
-        last;
       }
       ++$Index;  
     }
