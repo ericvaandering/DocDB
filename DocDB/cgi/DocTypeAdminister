@@ -40,16 +40,16 @@ $DocTypeID = $params{doctype};
 $ShortName = $params{name};
 $LongName  = $params{long};
 
-unless (&CanAdminister) {
-  push @ErrorStack,$Msg_AdminNoLogin;
-}  
-&EndPage(@ErrorStack);
-
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
 unless ($dbh) {
   push @ErrorStack,$Msg_AdminNoConnect;
 }         
+&EndPage(@ErrorStack);
+
+unless (&CanAdminister) {
+  push @ErrorStack,$Msg_AdminNoLogin;
+}  
 &EndPage(@ErrorStack);
 
 &GetDocTypes;

@@ -38,7 +38,7 @@ my $conference_insert = $dbh->prepare(
 @error_stack = ();
 @warn_stack = ();
 
-my $MajorTopicID     = &LookupMajorTopic("Conferences"); 
+my ($MajorTopicID)   = @ConferenceMajorTopics; 
 my $ShortDescription = $params{short};
 my $LongDescription  = $params{long};
 my $Location         = $params{location};
