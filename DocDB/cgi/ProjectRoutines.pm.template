@@ -2,14 +2,16 @@
 # Description: These are routines that are specific to your installation and 
 #              should be customized for your needs. This file is a template
 #              only. Make a copy of this file as ProjectRoutines.pm (no
-#              "template") and make your changes there. 
+# "template") and make your changes there. Basically you can use ProjectHeader,
+# ProjectBodyStart, ProjectFooter, and DocDBFooter to make DocDB  web pages
+# just like the web pages for the rest of your project. If you don't want to do
+# any customization or just want to test DocDB, these routines work as-is.
+# A global variable $Public is used (when set) to remove elements from the
+# nav-bars that the public has no interest in. The variable is global
+# and can control the style of your headers and footers too. 
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
-#
-# A global variable $Public is used (when set) to remove elements from the
-# nav-bars that the public has no interest in. The variable is global
-# and can control the style of your headers and footers too.
 
 # Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -32,16 +34,14 @@ sub ProjectHeader {
   my ($Title,$PageTitle) = @_;
   
 # This routine is reponsible for whatever HTML you want to write in the <HEAD>  
-# section of the page. You can embed style sheets, etc. Basically you can use
-# ProjectHeader, ProjectBodyStart, ProjectFooter, and DocDBFooter to make DocDB 
-# web pages just like the web pages for the rest of your project. If you don't
-# want to do any customization or just want to test DocDB, these routines work
-# as-is.
+# section of the page. You can embed style sheets, etc. 
 #
-# $Title is what is in the <title> element while $PageTitle is the title of the page
-# you may put in the text of the page. They are provided here for your
-# convenience, but you should not print the <title> here since DocDB already takes
-# care of that.
+# $Title is what is in the <title> element while $PageTitle is the title  of
+# the page you may put in the text of the page. They are provided here for
+# your  convenience, but you should not print the <title> here since DocDB
+# already takes  care of that.
+
+# Here is a link to a style sheet.
 
 #   print "<link rel=\"stylesheet\" href=\"/includes/style.css\" type=\"text/css\">\n";
 }
@@ -50,7 +50,8 @@ sub ProjectBodyStart {
 
 # This routine is called after the <body> tag is written. Here you can put your
 # project specific HTML. You might want to put the document title too, as a
-# header.
+# header. ($Title is what is in the <title> element while $PageTitle is the 
+# title  of the page you may put in the text of the page.)
 
   my ($Title,$PageTitle) = @_;
   my @TitleParts = split /\s+/, $PageTitle;
