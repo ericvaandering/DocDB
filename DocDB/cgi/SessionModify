@@ -30,41 +30,36 @@ print $query -> header;
 
 %params = $query -> Vars;
 
-my $Mode               = $params{mode};
-
 my $SessionID          = $params{sessionid};
+my $Mode               = $params{mode};
 
 my @SessionOrderIDs = split /\0/,$params{sessionorderid};
 my @TalkOrders      = split /\0/,$params{talkorder};
 my @TalkTitles      = split /\0/,$params{talktitle};
 my @TalkNotes       = split /\0/,$params{talknote};
 my @TalkTimes       = split /\0/,$params{talktime};
+my @TalkSeparators  = split /\0/,$params{talkseparator};
 my @TalkDeletes     = split /\0/,$params{talkdelete};
 my @TalkConfirms    = split /\0/,$params{talkconfirm};
 
 # Also have params for DocID, authors, and topics in special params with 
 # SessionID embedded
 
-#my $StartYear          = $params{startyear};
-#my $StartMonth         = $params{startmonth};
-#my $StartDay           = $params{startday};
-#my $EndYear            = $params{endyear};
-#my $EndMonth           = $params{endmonth};
-#my $EndDay             = $params{endday};
-#my $MeetPreamble       = $params{meetpreamble};
-#my $MeetEpilogue       = $params{meetepilogue};
-#my $Location           = $params{location};
-#my $URL                = $params{url};
+# Repack checkboxes into hashes
 
-#my @SessionYears         = split /\0/,$params{sessionyear};
-#my @SessionMonths        = split /\0/,$params{sessionmonth};
-#my @SessionDays          = split /\0/,$params{sessionday};
-#my @RawSessionSeparators = split /\0/,$params{sessionseparator};
-#my @SessionTypes         = split /\0/,$params{sessiontype};
-
-#my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
-#my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
-
+my %TalkDeleteFlags = ();
+foreach my $TalkDelete (@TalkDeletes) { 
+  $TalkDeleteFlags{$TalkDelete} = 1; 
+}  
+my %TalkSeparatorFlags = ();
+foreach my $TalkSeparator (@TalkSeparators) { 
+  $TalkSeparatorFlags{$TalkSeparator} = 1; 
+}  
+my %TalkConfirmFlags = ();
+foreach my $TalkConfirm (@TalkConfirms) { 
+  $TalkConfirmFlags{$TalkConfirm} = 1; 
+}  
+  
 @ErrorStack = ();
 @WarnStack  = ();
 
@@ -77,8 +72,124 @@ unless ($dbh) {
 }         
 &EndPage(@ErrorStack);
 
-#if ($Mode eq "create") {
-#}
+if ($Mode eq "modify") {
+# Re-sort talk orders
+
+  my %TalkOrders = ();
+  {
+    foreach my $TalkOrder (@TalkOrders) {
+      $TalkOrders{$TalkOrder} = $TalkOrder;
+    } 
+    my @OrderedOrders = sort numerically @TalkOrders;
+
+    my $NewOrder = 1;
+    foreach my $TalkOrder (@OrderedOrders) {
+      $TalkOrders{$TalkOrder} = $NewOrder;
+      ++$NewOrder;
+    } 
+  }
+  
+# Loop over sessions and insert
+  
+#  my $SessionUpdate = $dbh -> prepare(
+#   "update Session set ".
+#   "StartTime=?, Title=?, Description=? ". 
+#   "where SessionID=?");
+
+#  my $SessionSeparatorUpdate = $dbh -> prepare(
+#   "update SessionSeparator set ".
+#   "StartTime=?, Title=?, Description=? ". 
+#   "where SessionSeparatorID=?");
+
+#  my $MeetingOrderUpdate = $dbh -> prepare(
+#   "update MeetingOrder set SessionOrder=? where MeetingOrderID=?");
+
+  my $TalksUpdated    = 0;
+
+  foreach my $TalkOrder (@TalkOrders) {
+    my $TalkTime       = shift @TalkTimes       ;
+    my $TalkTitle      = shift @TalkTitles      ;
+    my $TalkNote       = shift @TalkNotes       ;
+    my $SessionOrderID = shift @SessionOrderIDs ;
+    my $TalkNewOrder   = $TalkOrders{$TalkOrder};
+#    my $SessionDate        = "$SessionYear-$ReverseAbrvMonth{$SessionMonth}-$SessionDay $SessionHour:00";
+
+    my $TalkSeparatorID = 0;
+    my $SessionTalkID   = 0;
+    
+    my $TalkConfirmed   = $TalkConfirmFlags{$SessionOrderID};
+    my $TalkDocID       = $params{"talkdocid-$SessionOrderID"};
+    
+    &DBPrintLine ("Evaluating $TalkOrder $SessionOrderID");
+    # Key on SessionOrderID to see if we are going to insert or update.	
+    if (grep /n/,$SessionOrderID) {
+      if ($TalkTitle || $TalkNote) {
+	++$TalksUpdated;
+	if ($TalkSeparatorFlags{$SessionOrderID}) {
+          &DBPrintLine ("Creating Talk Separator");
+          my $TalkSeparatorInsert = $dbh -> prepare(
+           "insert into TalkSeparator ".
+           "(TalkSeparatorID, SessionID, Time, Title, Note) ". 
+           "values (0,?,?,?,?)");
+          $TalkSeparatorInsert -> execute($SessionID,$TalkTime,$TalkTitle,$TalkNote);
+          $TalkSeparatorID = $TalkSeparatorInsert -> {mysql_insertid}; # Works with MySQL only
+	} else {
+          # FIXME: Get DocumentID
+	  &DBPrintLine ("Creating Talk Entry");
+          my $TalkInsert = $dbh -> prepare(
+           "insert into SessionTalk ".
+           "(SessionTalkID, SessionID, DocumentID, Confirmed, Time, HintTitle, Note) ". 
+           "values (0,?,?,?,?,?,?)");
+          $TalkInsert          -> execute($SessionID,$TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote);
+          $SessionTalkID = $TalkInsert -> {mysql_insertid}; # Works with MySQL only
+          # FIXME Get and insert hints
+	}
+        my $SessionOrderInsert = $dbh -> prepare(
+         "insert into SessionOrder ".
+         "(SessionOrderID, TalkOrder, SessionTalkID, TalkSeparatorID) ". 
+         "values (0,?,?,?)");
+	$SessionOrderInsert -> execute($TalkNewOrder,$SessionTalkID,$TalkSeparatorID);
+      }  
+#    } else {
+#      $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
+#      $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
+
+      # Find out if this session is flagged for deletion
+
+#      if ($SessionDeleteFlags{$MeetingOrderID}) { # Delete session or separator
+#        my $SessionDelete = $dbh -> prepare(
+#         "delete from Session where SessionID=?");
+#        my $SessionSeparatorDelete = $dbh -> prepare(
+#         "delete from SessionSeparator where SessionSeparatorID=?");
+#        my $MeetingOrderDelete = $dbh -> prepare(
+#         "delete from MeetingOrder where MeetingOrderID=?");
+     
+#	if ($SessionSeparatorID) {
+#          $SessionSeparatorDelete -> execute($SessionSeparatorID);
+#	} else {
+#          $SessionDelete          -> execute($SessionID);
+#	}
+#	$MeetingOrderDelete -> execute($MeetingOrderID);
+#      } elsif ($SessionTitle || $SessionDescription) {
+#	++$SessionsUpdated;
+#	
+#	if ($SessionSeparatorID) {
+#         &DBPrint ("Updating Separator $SessionSeparatorID");
+#          $SessionSeparatorUpdate -> execute($SessionDate,$SessionTitle,$SessionDescription,$SessionSeparatorID);
+#	} else {
+#         &DBPrint ("Updating Session $SessionID");
+#          $SessionUpdate          -> execute($SessionDate,$SessionTitle,$SessionDescription,$SessionID);
+#	}
+#	$MeetingOrderUpdate -> execute($SessionNewOrder,$MeetingOrderID);
+#      } else {
+#        push @WarnStack,$Msg_SessionBlankDelete;
+#      }  
+    }  
+  }
+  unless ($TalksUpdated) {
+    push @WarnStack,$Msg_MeetNoTalks; #FIXME Define
+  }
+}
 
 &EndPage(@ErrorStack);
 
@@ -103,7 +214,7 @@ print $query -> start_multipart_form('POST',"$SessionModify");
 $query -> param('sessionid',$SessionID);
 print $query -> hidden(-name => 'sessionid', -default => $SessionID);
 $query -> param('mode','modify');
-print $query -> hidden(-name => 'sessionid', -default => 'modify');
+print $query -> hidden(-name => 'mode', -default => 'modify');
 
 print "<table cellpadding=10>\n";
 

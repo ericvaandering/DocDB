@@ -153,28 +153,16 @@ if ($Mode eq "create" || $Mode eq "modify") {
   
 # Loop over sessions and insert
   
-  my $SessionInsert = $dbh -> prepare(
-   "insert into Session ".
-          "(SessionID, ConferenceID, StartTime, Title, Description) ". 
-   "values (0,?,?,?,?)");
   my $SessionUpdate = $dbh -> prepare(
    "update Session set ".
    "StartTime=?, Title=?, Description=? ". 
    "where SessionID=?");
 
-  my $SessionSeparatorInsert = $dbh -> prepare(
-   "insert into SessionSeparator ".
-   "(SessionSeparatorID, ConferenceID, StartTime, Title, Description) ". 
-   "values (0,?,?,?,?)");
   my $SessionSeparatorUpdate = $dbh -> prepare(
    "update SessionSeparator set ".
    "StartTime=?, Title=?, Description=? ". 
    "where SessionSeparatorID=?");
 
-  my $MeetingOrderInsert = $dbh -> prepare(
-   "insert into MeetingOrder ".
-   "(MeetingOrderID, SessionOrder, SessionID, SessionSeparatorID) ". 
-   "values (0,?,?,?)");
   my $MeetingOrderUpdate = $dbh -> prepare(
    "update MeetingOrder set SessionOrder=? where MeetingOrderID=?");
   
@@ -185,7 +173,6 @@ if ($Mode eq "create" || $Mode eq "modify") {
     my $SessionMonth       = shift @SessionMonths        ;
     my $SessionDay         = shift @SessionDays          ;
     my $SessionHour        = shift @SessionHours         ;
-    my $SessionSeparator   = shift @SessionSeparators    ;
     my $SessionTitle       = shift @SessionTitles        ;
     my $SessionDescription = shift @SessionDescriptions  ;
     my $MeetingOrderID     = shift @MeetingOrderIDs ;
@@ -197,17 +184,29 @@ if ($Mode eq "create" || $Mode eq "modify") {
 
     # Key on MeetingOrderID to see if we are going to insert or update.	
     if (grep /n/,$MeetingOrderID) {
-      if ($SessionSeparator || $SessionTitle || $SessionDescription) {
+      if ($SessionTitle || $SessionDescription) {
 	++$SessionsUpdated;
 	if ($SessionSeparatorFlags{$MeetingOrderID}) {
 	  &DBPrint ("Creating Separator");
+          my $SessionSeparatorInsert = $dbh -> prepare(
+           "insert into SessionSeparator ".
+           "(SessionSeparatorID, ConferenceID, StartTime, Title, Description) ". 
+           "values (0,?,?,?,?)");
           $SessionSeparatorInsert -> execute($ConferenceID,$SessionDate,$SessionTitle,$SessionDescription);
           $SessionSeparatorID = $SessionSeparatorInsert -> {mysql_insertid}; # Works with MySQL only
 	} else {
-	  &DBPrint ("Creating Session $SessionSeparator");
+	  &DBPrint ("Creating Session");
+          my $SessionInsert = $dbh -> prepare(
+           "insert into Session ".
+                  "(SessionID, ConferenceID, StartTime, Title, Description) ". 
+           "values (0,?,?,?,?)");
           $SessionInsert          -> execute($ConferenceID,$SessionDate,$SessionTitle,$SessionDescription);
           $SessionID = $SessionInsert -> {mysql_insertid}; # Works with MySQL only
 	}
+        my $MeetingOrderInsert = $dbh -> prepare(
+         "insert into MeetingOrder ".
+         "(MeetingOrderID, SessionOrder, SessionID, SessionSeparatorID) ". 
+         "values (0,?,?,?)");
 	$MeetingOrderInsert -> execute($SessionNewOrder,$SessionID,$SessionSeparatorID);
       }  
     } else {
@@ -230,7 +229,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
           $SessionDelete          -> execute($SessionID);
 	}
 	$MeetingOrderDelete -> execute($MeetingOrderID);
-        #FIXME: Delete talk and talk separator entries too
+        #FIXME: Delete talk and talk separator entries too, and associated hints
       } elsif ($SessionTitle || $SessionDescription) {
 	++$SessionsUpdated;
 	
@@ -248,7 +247,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
     }  
   }
   unless ($SessionsUpdated) {
-    push @WarnStack,$Msg_MeetNoSessions;
+    push @WarnStack,$Msg_MeetNoSessions; #FIXME Define?
   }
 }
 
