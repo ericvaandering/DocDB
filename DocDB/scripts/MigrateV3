@@ -42,13 +42,26 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                    " index(GroupID),index(DocRevID))"); 
   my $RefCreate    = $dbh -> prepare("create table RevisionReference ".
                    "(ReferenceID integer auto_increment primary key,".
-                   " JournalID integer, Volume integer, Page integer, TimeStamp timestamp,".
-                   " index(JournalID))"); 
+                   " DocRevID integer,JournalID integer, Volume char(32), Page char(32), TimeStamp timestamp,".
+                   " index(JournalID),index(DocRevID))"); 
                    
   $AdminAdd     -> execute();
   $AdminSet     -> execute();
   $ModifyCreate -> execute();               
   $RefCreate    -> execute(); 
+}
+
+if ($Action eq "migrate") {
+  my ($DocRevID,$JournalID,$Volume,$Page);
+  my $RevisionList  = $dbh -> prepare(
+     "select DocRevID,JournalID,Volume,Page from DocumentRevision where JournalID>0"); 
+  my $ReferenceInsert  = $dbh -> prepare(
+     "insert into RevisionReference (ReferenceID,DocRevID,JournalID,Volume,Page) values (0,?,?,?,?)"); 
+  $RevisionList -> execute;
+  $RevisionList -> bind_columns(undef, \($DocRevID,$JournalID,$Volume,$Page));
+  while ($RevisionList -> fetch) {
+    $ReferenceInsert -> execute($DocRevID,$JournalID,$Volume,$Page);
+  }
 }
 
 if ($Action eq "delete") { # Drop useless columns 
@@ -58,7 +71,7 @@ if ($Action eq "delete") { # Drop useless columns
   
   die "This part is not ready yet!\n";
   
-  print "Should not see this.\n"
+  print "Should not see this.\n";
   $JournalDel -> execute();
   $VolumeDel  -> execute();
   $PageDel    -> execute();
