@@ -65,6 +65,7 @@ $AuthUserFile = $script_root."htpasswd";
 
 # CGI Scripts
 
+$MainPage           = $cgi_root."DocumentDatabase";
 $ProcessDocumentAdd = $cgi_root."ProcessDocumentAdd";
 $DocumentAddForm    = $cgi_root."DocumentAddForm";
 $ShowDocument       = $cgi_root."ShowDocument";
@@ -72,5 +73,7 @@ $ListDocuments      = $cgi_root."ListDocuments";
 
 $TopicAddForm       = $cgi_root."TopicAddForm";
 $AuthorAddForm      = $cgi_root."AuthorAddForm";
+
+$ListByAuthor       = $cgi_root."ListByAuthor";
 
 1;

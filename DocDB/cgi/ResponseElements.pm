@@ -6,7 +6,8 @@ sub AuthorListByID {
     print "<ul>\n";
     foreach $AuthorID (@AuthorIDs) {
       &FetchAuthor($AuthorID);
-      print "<li> $Authors{$AuthorID}{FULLNAME} </li>\n";
+      my $author_link = &AuthorLink($AuthorID);
+      print "<li> $author_link </li>\n";
     }
     print "</ul>\n";
   } else {
@@ -309,6 +310,21 @@ sub OtherVersionLinks {
   print "</center>\n";
 }
 
+sub AuthorLink {
+  my ($AuthorID) = @_;
+  
+  require "AuthorSQL.pm";
+  
+  &FetchAuthor($AuthorID);
+  my $link;
+  $link = "<a href=$ListByAuthor?authorid=$AuthorID>";
+  $link .= $Authors{$AuthorID}{FULLNAME};
+  $link .= "</a>";
+  
+  return $link;
+}
+
+
 sub DocumentSummary { # One line document summary for listings
   my ($DocumentID) = @_;
   if ($DocumentID) {
@@ -323,7 +339,8 @@ sub DocumentSummary { # One line document summary for listings
     print "<tr valign=top>\n";
     print "<td><nobr>$full_docid</nobr></td>\n";
     print "<td>$title</td>\n";
-    print "<td><nobr>$Authors{$Documents{$DocumentID}{REQUESTER}}{FULLNAME}</nobr></td>\n";
+    my $author_link = AuthorLink($Documents{$DocumentID}{REQUESTER});
+    print "<td><nobr>$author_link</nobr></td>\n";
     print "<td><nobr>$rev_date</nobr></td>\n";
     print "</tr>\n";
   } else { # Print header
