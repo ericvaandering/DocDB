@@ -71,7 +71,7 @@ if ($WelcomeMessage) {
   print "</h4></center>\n";
 }
 
-print "<p><h4>Database options:</h4>\n";
+print "<p><h4 class=\"SectionHeading\">Database options:</h4>\n";
 
 # Fill arrays with stuff that goes in main, bold table
 
