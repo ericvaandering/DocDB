@@ -72,7 +72,10 @@ if ($EmailUserID) {
   &FetchEmailUser($EmailUserID);
 #  $Digest = &EmailUserDigest($EmailUserID);
 } else {
-  push @ErrorStack,"The username/password pair or certificate you supplied is invalid. Please try again or contact and administrator.";
+  push @ErrorStack,"The username/password pair or certificate you supplied is
+                    invalid. Please try again or contact an administrator. If
+                    you don't have a personal account, you need to 
+                    <a href=\"$EmailLogin\">set one up.</a>";
 }
 
 if (@ErrorStack) {  # The user made one or more mistakes, warn and exit

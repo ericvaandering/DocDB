@@ -160,7 +160,7 @@ if ($EmailUserID) {
   &FetchEmailUser($EmailUserID);
   $Digest = &EmailUserDigest($EmailUserID);
 } else {
-  push @ErrorStack,"The username/password pair or certificate you supplied is invalid. Please try again or contact and administrator.";
+  push @ErrorStack,"The username/password pair or certificate you supplied is invalid. Please try again or contact an administrator.";
   &ErrorPage(@ErrorStack);
   &LoginEmailUserForm;
   print "<p>\n";
