@@ -1,11 +1,16 @@
 body {
-  margin:10px 10px 0px 10px;
+  margin:10px 10px 10px 10px;
   padding:0px;
 }
 
 dd {
   margin-left: 1em;
 }
+
+/* li, ul {
+  margin-left: 0em;
+  padding-left: 0em;
+} For IE */
 
 ul {
   padding-left: 2em;
@@ -20,12 +25,89 @@ dt {
   font-weight: bold;
 }
  
-h1, h2, h3, h5, p, img {
-  margin: 0 12px 0 12px;
+h1, h2, h3, h4, h5 {
+  margin: 0 1em 0 1em;
   text-align: center;
 }
 
-h1 {
-  margin-bottom: 12px;
+
+h1 {font-size: 150%}
+h2 {font-size: 120%}
+h3 {font-size: 100%}
+
+#LeftColumn3Col {
+//	width: 19%;
+  width: 12.5em;
+  float: left;
+  background: #eee;
+  padding-left: 0.3em;
+  padding-bottom: 0.5em;
+  padding-right: 0.5em;
+  padding-top: 0em;
+  margin-left: 0em;
+}
+
+#MainColumn3Col {
+  width: auto; /* 12 matches LeftColums */
+  background: white;
+  padding-bottom: 1em;
+  padding-left: 13.5em;   /* 13=12+1 matches LeftColums (can't hardcode?!?)*/
+  padding-right: 0.5em;
+}
+
+#RightColumn3Col {
+/*	width: 25%; For IE */
+  width: auto;
+  max-width: 45%;
+  background: #eee;
+  float: right;
+  margin-bottom: 1em;
+  margin-left: 0.5em;
+  padding-bottom: 0.5em;
+  padding-right: 0.5em;
+  padding-left: 0.3em;
+  padding-top: 0em;
+}
+
+
+#Header3Col {
+  background: white;      
+  margin-bottom: 1.5em;
+}
+	
+
+#Footer3Col {
+  clear: both;
+  padding-bottom: 1em;
+  text-align: center;
+}
+	
+#Signoffs ul ul {
+  padding-left: 1em;
+}
+
+/* Allow for lists with alternating colors */
+
+li.Odd {
+  background: #eee;
+}
+
+li.Even {
+  background: white;
+}
+
+/* Allow for tables alternating color rows. 
+   border-collapse gets rid of spacing between cells */
+
+table.Alternating {
+  border-collapse: collapse;
+}
+
+tr.Odd {
+  background: #eee;
+}
+
+tr.Even {
+  background: white;
 }
 
