@@ -1,0 +1,104 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+use Benchmark;
+use DBI;
+use Getopt::Long;
+
+require "CGIInclude.pm";
+
+require "DocDBGlobals.pm";
+require "SecuritySQL.pm";
+require "FSUtilities.pm";
+require "Sorts.pm";
+
+&GetOptions("days=i" =>  \$Days,
+            "hours=i" => \$Hours,
+            "force!"  => \$Force);
+
+$StartTime = new Benchmark;
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+&GetSecurityGroups;
+
+if ($Force) {
+  print "Forcing\n";
+  my $revision_list = $dbh -> prepare(
+    "select DocRevID,DocumentID,VersionNumber ".
+    "from DocumentRevision where Obsolete=0");
+    
+  $revision_list -> execute();
+  $revision_list -> bind_columns(undef, \($DocRevID,$DocumentID,$VersionNumber));
+  while ($revision_list -> fetch) {
+    $Revision{$DocRevID}{DocRevID}      = $DocRevID;
+    $Revision{$DocRevID}{DocumentID}    = $DocumentID;
+    $Revision{$DocRevID}{VersionNumber} = $VersionNumber;
+  }
+}
+
+
+if ($Days || $Hours) {
+  my $TD; 
+  if ($Days)  {$TD = $Days*1000000;}
+  if ($Hours) {$TD = $Hours*10000;}
+   
+  my   @Queries = ();
+  push @Queries,"select DocRevID from DocumentRevision where Obsolete=0 and NOW()-TimeStamp<$TD";
+  push @Queries,"select DocRevID from RevisionSecurity where NOW()-Timestamp<$TD";
+  push @Queries,"select DocRevID from DocumentFile     where NOW()-TimeStamp<$TD";
+
+  foreach $Query (@Queries) {
+    my $revision_list = $dbh -> prepare($Query);
+    $revision_list -> execute();
+    $revision_list -> bind_columns(undef, \($DocRevID));
+    while ($revision_list -> fetch) {
+      $AllRevision{$DocRevID}{DocRevID}      = $DocRevID;
+    }
+  } 
+  my $revision_list = $dbh -> prepare(
+    "select DocRevID,DocumentID,VersionNumber ".
+    "from DocumentRevision where Obsolete=0 and DocRevID=?");
+  my @AllRevisions = sort numerically keys %AllRevision;
+  foreach $RevID (@AllRevisions) {
+    unless ($RevID) {next;}
+    $revision_list -> execute($RevID);
+    ($DocRevID,$DocumentID,$VersionNumber) = $revision_list -> fetchrow_array;
+    $Revision{$DocRevID}{DocRevID}      = $DocRevID;
+    $Revision{$DocRevID}{DocumentID}    = $DocumentID;
+    $Revision{$DocRevID}{VersionNumber} = $VersionNumber;
+  }   
+}
+
+my @Revisions = sort numerically keys %Revision;
+
+foreach $RevisionID (@Revisions) {
+  unless ($Revision{$RevisionID}{VersionNumber}) {next;} # No directories for v0 documents
+  my $security_list = $dbh -> prepare(
+    "select GroupID ".
+    "from RevisionSecurity where DocRevID=?");
+  my ($GroupID);
+  $security_list -> execute($RevisionID);
+  $security_list -> bind_columns(undef, \($GroupID));
+  my @GroupIDs = ();
+  while ($security_list -> fetch) {
+    push @GroupIDs,$GroupID;
+  }  
+  
+  print "$RevisionID: $Revision{$RevisionID}{DocumentID}-$Revision{$RevisionID}{VersionNumber} ";
+  foreach $GroupID (@GroupIDs) {
+    print " $GroupID";
+  }
+  &ProtectDirectory($Revision{$RevisionID}{DocumentID},
+                    $Revision{$RevisionID}{VersionNumber},
+                    @GroupIDs);
+  print "\n"; 
+}
+ 
+$EndTime  = new Benchmark;
+$TimeDiff = timediff($EndTime,$StartTime);
+print "Execution time: ",timestr($TimeDiff),"\n";
+
+exit;

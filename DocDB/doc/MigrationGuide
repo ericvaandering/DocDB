@@ -1,0 +1,50 @@
+version 2.x to 3.0
+
+  A number of things have changed starting with version 3.0:
+  
+     The first step in migration is to redo the database structure. This has to be
+  done BEFORE the CGI code is upgraded. A script, MigrateV3, has been
+  provided in the  scripts/ directory to make the required changes. Run this
+  script first in  init mode: "MigrateV3 --u=username --p=password --a=init"
+  where username and password are the MySQL username and password of the
+  administrator for the DocDB or the MySQL root user. If your main DocDB
+  administrator account is anything other than "docdbadm" you will want to edit
+  this script before running it. 
+     Run this script again, but this time instead of "init," select "migrate."
+  This copies the relevant data into the new DB structure. 
+     At this point it is safe to upgrade the CGI code. When you are sure
+  everything is working well, you can run the MigrateV3 script again with the
+  "--a=delete" option to remove unused data from the DB.
+     The things that are changed in this part of the upgrade are:
+       o Journal references are moved from the Revision table to a separate
+         table.
+       o An additional table is created for the enhanced security model
+       o The CanAdministrate field is set for the primary admin account
+       
+       
+     The second change that may require user intervention in this upgrade
+  relates to the help files. Previously the help text was stored in docdb.hlp.
+  Now, there are two files, both of which are XML. DocDBHelp.xml contains the
+  default help for DocDB and should not be changed. ProjectHelp.xml contains
+  help specific to your project. ProjectHelp.xml.template provides examples of
+  how to construct ProjectHelp.xml. In ProjectHelp.xml, you can specify
+  additional help that overrides, prepends, or appends to the default help
+  text.
+  
+     The third change regards administration priveledges. Currently the account
+  name of the administrator is hard coded and must agree between the SQL DB and
+  the wegb/.htaccess users. In the new scheme, the ability to administer is
+  stored in the DB itself, so any web/.htaccess account can administer (assuming
+  the user knows the MySQL admin name and password.) If the web admin user is
+  docdbadm (case insensitive) this is take care of for you. If it is something
+  else, you need to edit the MigrateV3 script. 
+  
+     The v3.0 code does not use this new mechanism, but 3.1 will.    
+  
+  There are many other things changed in version 3 of DocDB, but those do not
+  require intervention. 
+  
+  Several new configuration variables have been added to DocDB:
+    $FirstYear         = 2000;     # Earliest year that documents can be created
+    @MeetingMajorTopics    = ("Collaboration Meetings","Other Meetings");
+    @ConferenceMajorTopics = ("Conferences");

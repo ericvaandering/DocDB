@@ -43,7 +43,7 @@ sub MinorTopicLink ($;$) {
   
   &FetchMinorTopic($TopicID);
   my $link;
-  $link = "<a href=\"$ListByTopic?topicid=$TopicID\" title=\"$MinorTopics{$TopicID}{LONG}\">";
+  $link = "<a href=$ListByTopic?topicid=$TopicID>";
   if ($mode eq "short") {
     $link .= $MinorTopics{$TopicID}{SHORT};
   } elsif ($mode eq "long") {
@@ -63,7 +63,7 @@ sub MajorTopicLink ($;$) {
   
   &FetchMajorTopic($TopicID);
   my $link;
-  $link = "<a href=\"$ListByTopic?majorid=$TopicID\" title=\"$MajorTopics{$TopicID}{LONG}\">";
+  $link = "<a href=$ListByTopic?majorid=$TopicID>";
   if ($mode eq "short") {
     $link .= $MajorTopics{$TopicID}{SHORT};
   } elsif ($mode eq "long") {
@@ -94,7 +94,7 @@ sub MeetingLink {
   
   &FetchMinorTopic($TopicID);
   my $link;
-  $link = "<a href=\"$ListByTopic?topicid=$TopicID&mode=meeting\" title=\"$MinorTopics{$TopicID}{LONG}\">";
+  $link = "<a href=$ListByTopic?topicid=$TopicID&mode=meeting>";
   if ($Mode eq "short") {
     $link .= $MinorTopics{$TopicID}{SHORT};
   } else {

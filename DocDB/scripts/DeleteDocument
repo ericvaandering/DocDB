@@ -1,65 +1,36 @@
 #! /usr/bin/env perl
 #
-# Description: This script is called by DeleteConfirm to actually delete
-#              the requested document, all associated entries in the DB, 
-#              and the actual files as well. 
-#
-#      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+# Author Eric Vaandering (ewv@fnal.gov)
 #
 
-use CGI;
+# Usage: DeleteDocument -d Doc# -u admin_user -p admin_password
+
+use Benchmark;
 use DBI;
+use Getopt::Long;
+
+require "CGIInclude.pm";
 
 require "DocDBGlobals.pm";
-require "ResponseElements.pm";
-require "Security.pm";
+require "SecuritySQL.pm";
 require "FSUtilities.pm";
-require "HTMLUtilities.pm";
+require "Sorts.pm";
 
-$query = new CGI;  # Global for subroutines
-
-print $query->header;
-&DocDBHeader("Deleting Document $DocumentID");
-
-%params = $query -> Vars;
-
-$DocumentID = $params{docid};
-$DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
-$DocumentID =~ s/\s+$//;
-
-my $Password      = $params{password};
-my $Username      = $params{admuser};
-
-@error_stack = ();
+&GetOptions("d=i" =>  \$DocumentID,
+            "u=s" => \$Username,
+            "p=s" => \$Password);
 
 unless ($DocumentID) {
-  push @error_stack,"You are must supply a document number to delete.";
+  print "Document $DocumentID is invalid\n";
+  exit;
 }  
-unless (&CanAdminister) {
-  push @error_stack,"You must be logged in as the adminstrator to delete
-  documents";
-}  
-
-if (@error_stack) {
-  &EndPage(@error_stack);
-}
 
 # Get directory and pull of version number
 
 $Directory = &GetDirectory($DocumentID);
-chop $Directory;chop $Directory;chop $Directory;chop $Directory; # 3 numbers plus /
+chop $Directory;chop $Directory;chop $Directory;chop $Directory;
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
-
-unless ($dbh) {
-  push @error_stack,"Unable to connect to the database. Check the password.";
-}         
-if (@error_stack) {
-  &EndPage(@error_stack);
-}
-
-
 
 my $revision_list   = $dbh -> prepare("select DocRevID from DocumentRevision where DocumentID=?");
 my $document_delete = $dbh -> prepare("delete from Document         where DocumentID=?");
@@ -100,12 +71,7 @@ $revision_delete -> execute($DocumentID);
 # Delete stuff from file system
 
 $command = "rm -rf $Directory/*";
+print "Executing $command\n";
 system ($command);
- 
-print "<b>Document $DocumentID has been deleted.</b><p>";
-
-&DocDBNavBar;
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
-
  
 exit;

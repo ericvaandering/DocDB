@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>File Format Help</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="/includes/style.css" type="text/css">
+<!--#include virtual="/includes/navbar_header.html" --> <!-- Defining Javascript functions-->
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<!--#include virtual="/includes/atwork_menuload.html" --> <!-- Loads menus and images in nav bar -->
+<!--#include virtual="/includes/begin_atwork_top.html" --> <!-- Starts the table at the top -->
+      <div align="center"><font size="+2"
+      color="#003399">File&nbsp;Format&nbsp;Help</font></div>
+<!--#include virtual="/includes/end_atwork_top.html" --> <!-- Ends the table at the top -->
+<!--#include virtual="/includes/atwork_navbar.html" --> <!-- Puts in the nav bar table row entry -->
+<!--#include virtual="/includes/end_table.html" --> <!-- Ends the table -->
+<hr>
+
+
+<p>
+<center>
+<h2>PowerPoint, Postscript, PDF etc. </h2>
+</center>
+</p>
+
+<p>At the present time most of our collaborators view the web from a UNIX
+platform. This means they cannot view files in formats such as PowerPoint, MS
+Word, and Excel. The two file formats that everyone can read are Postscript and
+PDF. Please save your presentation in one of these formats <i>as well as</i> in
+the native format. This way  your presentation is readable by the entire
+collaboration and  the full power of the native format is available to those
+who can make use of it, to extract figures for their own use, for example.</p>
+
+<p>To produce PDF files from Microsoft Office (including PowerPoint), the
+solution is to print the document using the <q>printer</q> <q>Acrobat
+PDFwriter.</q> If you do not have the capability of saving your document or
+presentation as PDF you may get an account on the PPD WinCenter 
+(<a href="mailto:dcc@fnal.gov">mailto:dcc@fnal.gov</a>) that has the software
+to do this.  Adobe, the creator of PDF, has a  
+<a href="https://createpdf.adobe.com/index.pl">website</a> (free trial) where
+you can upload MS Office documents and get a PDF in return.</p>
+
+<p>PowerPoint also has the option of saving a
+presentation as an HTML slideshow. The
+Office '97 version of this worked very well, however the more recent versions
+of Office '97 have been "improved" and they now generate HTML that is
+unreadable by Netscape (versions 4.x or 6.x). <i>Please do not use this option unless you
+have a sufficiently old version of PowerPoint</i>. </p>
+
+<p>Also be aware that some PowerPoint fonts do not appear at all in PDF and/or
+postscript.  There are other fonts that make unreadable marks on the paper.
+There are also fonts that work in one size but not others. Please be careful
+about this when starting a PowerPoint document. Try converting a few test pages
+to PDF/PS and verify that your choice of font is safe.</p>
+
+Adapted from pages originally by  Rob Kutschke  
+(<a href="mailto:kutschke@fnal.gov">kutschke@fnal.gov</a>) and Lory Curry 
+(<a href="mailto:curry@fnal.gov">curry@fnal.gov</a>).<p>
+
+<hr>
+<!-- begin footer, change the webmaster info if appropriate -->
+<div align="center"> 
+<!--#include virtual="/includes/atwork_bottomnav.html"-->  <!-- Put in the bottom navigation bar-->
+</div>
+<div align="left"> 
+<i><font size="-1">
+<A HREF="mailto:btev-docdb@fnal.gov">Document Database Administrators</A> 
+</font></i></div>
+<!--#include virtual="/includes/full_fermi_footer.shtml" --> 
+</body>
+</html>

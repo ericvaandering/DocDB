@@ -1,0 +1,73 @@
+<title>Installing MySQL for DocDB</title>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<center><h1>Installing MySQL for DocDB</h1></center>
+<p>
+  Install the latest available release of MySQL for your machine.
+  (DocDB is known to work with releases as old as MySQL 3.22.30.)
+<p>
+  
+  <ul>
+  <li> Create an account to own the mysql database.
+       MySQL assumes that this account will be named "mysql", 
+       but this is not a requirement.
+  <li> Linux
+    <ul>
+    <li> MySQL rpms are available with the standard RedHat or 
+         FermiRedHat installation (e.g., ftp://linux.fnal.gov/linux/711/i386/RedHat/RPMS/).
+    <li> install the <a href=rpms.html>appropriate rpms</a>
+    <li> if you don't plan to use the default mysql username or database
+         location, take the following actions:
+       <ul>
+       <li> edit <a href=my.cnf.html>/etc/my.cnf</a>
+       <li> change ownership of <b>/var/log/mysqld.log</b>
+       <li> change ownership of <b>/var/run/mysqld</b>
+       <li> rm <b>/var/lib/mysql</b> (default database location)
+       <li> edit <b>/etc/rc.d/init.d/mysqld</b>, changing username and datadir
+       </ul>
+    <li> chkconfig mysqld on
+    <li> as the database owner, run <b>/usr/bin/mysql_install_db</b> <br>
+         <font color="red">This script uses the information in /etc/my.cnf.</font>
+    <li> start MySQL with "<b>/usr/bin/safe_mysqld &</b>" or 
+        "<b>/etc/rc.d/init.d/mysqld start</b>"
+    </ul>
+  <li> other UNIX
+    <ul>
+    <li> Get MySQL from <a href=http://www.mysql.com/>http://www.mysql.com/</a>.
+         We recommend downloading a pre-compiled release of MySQL.
+    <li> Edit <b>mysql/bin/mysqlaccess</b> to point to the appropriate bin directory.
+    <li> <a href=mysqlModules.html>install Msql-Mysql-modules</a>
+    <li> Run the mysql <b>scripts/mysql_install_db script</b>.
+         This is where you decide where the database will reside.
+    <li> copy <b>mysql/support-files/mysql.server</b> into
+         your system startup files (often <b>/etc/init.d</b>) 
+	 and configure it to start
+         mysqld automatically when the machine is booted
+    <li> start MySQL with 
+         "<b>cd <your mysql directory>; mysql/bin/safe_mysqld &</b>" or 
+           "<b>/etc/rc.d/init.d/mysqld start</b>"
+    </ul>
+  <li> Create a mysql root administrator account with: <br>
+       <b>mysqladmin -u root password <em>some password</em> </b>
+  </ul>
+<p>
+
+<!-- begin footer -->
+<hr>
+<i><font size="-1">
+<script language="javascript">
+<!-- Hide from browsers that do not understand Javascript
+// print the URL and modification date of this page
+var url = document.location;
+document.write(url)  
+var dt = document.lastModified;
+document.write('<br> Last Modified:')  
+document.write(dt)  
+// end hiding --> 
+</script> 
+<br>
+<A HREF="mailto:btev-docdb@fnal.gov">Document Database Administrators</A> 
+</font></i>
+</body>
+</html>

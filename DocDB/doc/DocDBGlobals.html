@@ -1,0 +1,120 @@
+<title>DocDBGlobals.pm</title>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<center><h1>ProjectGlobals.pm and DocDBGlobals.pm</h1></center>
+<p>
+ProjectGlobals.pm contains a number of useful global variables. Additional
+variables with (we think) sensible defaults are in DocDBGlobals.pm. Variables
+from both files are changed by the user in ProjectGlobals.pm (which is
+distributed as ProjectGlobals.pm.template).
+
+Pay particular attention to the variables listed below.
+
+<table>
+<tr>
+<td><b>$db_name</b> </td>
+<td>MySQL database name </td>
+</tr>
+<tr>
+<td> <b>$db_host</b></td>
+<td> machine running mysqld</td>
+</tr>
+<tr>
+<td> <b>$db_rwuser</b></td>
+<td> MySQL user name for read/write access </td>
+</tr>
+<tr>
+<td><b>$db_rouser</b> </td>
+<td> MySQL user name for read only access</td>
+</tr>
+<tr>
+<td><b>$Project</b> </td>
+<td> Your project name (BTeV, Beams, etc.)</td>
+</tr>
+<tr>
+<td><b>$ShortProject</b> </td>
+<td> The version of your project name used in document IDs. eg. Proj-doc-1-v1</td>
+</tr>
+<tr>
+<td><b>$file_root</b> </td>
+<td> documents will be stored under this directory</td>
+<td> </td>
+</tr>
+<tr>
+<td><b>$script_root</b> </td>
+<td> path to the DocDB cgi scripts</td>
+</tr>
+<tr>
+<td> <b>$web_root</b></td>
+<td> web address for documents</td>
+</tr>
+<tr>
+<td><b>$cgi_root</b> </td>
+<td> web address for DocDB cgi scripts</td>
+</tr>
+<tr>
+<td><b>$cgi_path</b> </td>
+<td> path from server to DocDB cgi scripts</td>
+</tr>
+<tr>
+<td> <b>$Wget</b></td>
+<td> wget command - used to retrieve documents</td>
+</tr>
+<tr>
+<td> <b>$Tar</b></td>
+<td> tar command</td>
+</tr>
+<tr>
+<td><b>$Unzip</b> </td>
+<td> unzip command</td>
+</tr>
+<tr>
+<td><b>$Zip</b> </td>
+<td> zip command (optional)</td>
+</tr>
+<tr>
+<td> <b>$DBWebMasterEmail</b></td>
+<td> email address of DocDB administrator</td>
+</tr>
+<tr>
+<td> <b>$DBWebMasterName</b></td>
+<td> name of DocDB administrator</td>
+</tr>
+<tr>
+<td> <b>$Administrator</b></td>
+<td> MySQL DocDB administrator user name </td>
+</tr>
+<tr>
+<td> <b>$AuthUserFile</b></td>
+<td> where to find .htpasswd</td>
+</tr>
+<tr>
+<td> <b>$MailServer</b></td>
+<td> SMTP mailserver for outgoing email</td>
+</tr>
+<tr>
+<td> <b>$htaccess</b></td>
+<td> name of .htaccess file in httpd config file (usually .htaccess)</td>
+</tr>
+</table>
+
+
+<!-- begin footer -->
+<hr>
+<i><font size="-1">
+<script language="javascript">
+<!-- Hide from browsers that do not understand Javascript
+// print the URL and modification date of this page
+var url = document.location;
+document.write(url)  
+var dt = document.lastModified;
+document.write('<br> Last Modified:')  
+document.write(dt)  
+// end hiding --> 
+</script> 
+<br>
+<A HREF="mailto:btev-docdb@fnal.gov">Document Database Administrators</A> 
+</font></i>
+</body>
+</html>

@@ -517,7 +517,7 @@ sub ConferenceURLBox {
   &HelpLink("confurl");
   print "URL:</a></b><br> \n";
   print $query -> textfield (-name => 'url', 
-                             -size => 40, -maxlength => 240);
+                             -size => 40, -maxlength => 64);
 };
 
 sub NameEntryBox {

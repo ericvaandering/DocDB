@@ -1,0 +1,70 @@
+#! /usr/bin/env perl
+#
+# Description: Invoke with "-u username" which will generate an HTML list of  
+#              all the documents that user is allowed to see. Redirect to a 
+#              file. This script should be run regularly by cron.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+use DBI;
+use Getopt::Long;
+
+require "CGIInclude.pm";
+
+require "DocDBGlobals.pm";
+require "ResponseElements.pm";
+require "Security.pm";
+
+require "AuthorSQL.pm";
+require "SecuritySQL.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
+
+require "HTMLUtilities.pm";
+require "Sorts.pm";
+
+&GetOptions("u:s" => \$UserName);
+$remote_user = $UserName;
+
+&DocDBHeader("$Project Document List","Document List");
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+&GetAuthors;
+&GetSecurityGroups;
+
+### Get all revisions and documents
+
+&GetAllDocuments;  # For very 
+&GetAllRevisions;  # long lists
+
+### Sort
+
+my @SortedDocuments = reverse sort DocumentByRevisionDate @DocumentIDs;
+
+### Print summary information
+
+print "<center><table cellpadding=3>\n";
+
+&DocumentSummary(0);
+my $NumDoc = 0;
+
+foreach $DocumentID (@SortedDocuments) {
+  unless ($DocumentID) {next;}
+  $Version = &LastAccess($DocumentID);
+  if ($Version == -1) {next;}
+  &DocumentSummary($DocumentID,$Mode,$Version);
+  ++$NumDoc;
+}
+
+print "</table></center>\n";
+print "<p>\n";
+
+### Statistics
+
+print "<p><b>Number of documents found: $NumDoc</b><p>\n";
+
+&DocDBNavBar();
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
