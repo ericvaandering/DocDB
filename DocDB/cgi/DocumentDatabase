@@ -6,7 +6,6 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
-#
 
 # Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -24,7 +23,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 
 use Benchmark;
 use CGI;                                                      
@@ -63,27 +61,63 @@ if ($WelcomeMessage) {
 
 print "<p><h4>Database options:</h4>\n";
 
-print "<table cellspacing=10><tr><td>\n";
+# Fill arrays with stuff that goes in main, bold table
 
-print "<ul>\n";
+my @MainFirstColumn  = ();
+my @MainOtherColumns = ();
+
 unless ($Public || !&CanCreate()) {
-  print "<li><b><a href=\"$ModifyHome\">Create or change</a> documents or metadata</b><p>\n";
+  push @MainFirstColumn,"<b><a href=\"$ModifyHome\">Create or change</a> documents or metadata</b>";
 }
-print "<li><b><a href=\"$SearchForm\">Search</a> documents</b><p>\n"; 
+push @MainFirstColumn,"<b><a href=\"$SearchForm\">Search</a> documents</b>"; 
 
-# Show document
+my $ShowForm  = $query -> startform('POST',$ShowDocument);
+   $ShowForm .= "&bull;&nbsp;";
+   $ShowForm .= $query -> submit (-value => "Show");
+   $ShowForm .= " <b>$ShortProject-doc-#</b> "; 
+   $ShowForm .= $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
+   $ShowForm .= " <b>-v</b> "; 
+   $ShowForm .= $query -> textfield(-name => "version", -size => 3, -maxlength => 3);
+   $ShowForm .= $query -> endform;
 
-print "<li>"; 
-print $query -> startform('POST',$ShowDocument);
-print $query -> submit (-value => "Show");
-print " <b>$ShortProject-doc-#</b> "; 
-print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
-print " <b>-v</b> "; 
-print $query -> textfield(-name => "version", -size => 3, -maxlength => 3);
-print $query -> endform;
+push @MainFirstColumn,$ShowForm; 
+push @MainFirstColumn,"<b>List documents:</b>";
 
-print "<li>"; 
-print "<b>List documents:</b>\n";
+unless ($Public) {
+  push @MainOtherColumns,"<b><a href=\"$HelpFile\">Get instructions</a></b>";
+  push @MainOtherColumns,"<b><a href=\"$SelectPrefs\">Set preferences</a></b>";
+  push @MainOtherColumns,"<b><a href=\"$EmailLogin\">Setup/manage a personal account</a></b>";
+  push @MainOtherColumns,"<b><a href=\"$Statistics\">Get statistics</a></b>";
+}
+push @MainOtherColumns,@MainPageAddendum;
+
+my $Rows = scalar(@MainFirstColumn);
+my $Cols = int((scalar(@MainOtherColumns) - 1)/scalar(@MainFirstColumn) + 1);
+
+# Display main table
+
+print "<table cellspacing=15>\n";
+
+for (my $Index = 0; $Index < $Rows; ++$Index) {
+  print "<tr>\n";
+  print "<td>";
+  unless (grep /\&bull/,$MainFirstColumn[$Index]) {
+    print "&bull;&nbsp;";
+  }  
+  print $MainFirstColumn[$Index],"</td>\n";
+  for (my $ColIndex = 0; $ColIndex < $Cols; ++$ColIndex) {
+    unless ($Index+$ColIndex*$Rows >= scalar(@MainOtherColumns)) {
+      print "<td>&bull;&nbsp;",$MainOtherColumns[$Index+$ColIndex*$Rows],"</td>\n";
+    }  
+  }  
+  print "</tr>\n";
+}    
+
+++$Cols;
+
+print "<tr><td colspan=$Cols>\n"; # List of lists spans whole bottom of main table
+
+# Fill arrays that print lists of documents
 
 my @FirstColumn  = ();
 my @OtherColumns = ();
@@ -94,13 +128,17 @@ push @FirstColumn,"by <a href=\"$ListTopics\">topic</a>";
 push @FirstColumn,"by <a href=\"$ListKeywords\">keyword</a>";
 push @FirstColumn,"modified in the <a href=\"$LastModified?days=$LastDays\">last $LastDays days</a>";
 
-push @OtherColumns,"from <a href=\"$ListByTopic?major=Conferences&mode=conference\">conferences</a>";
 unless ($Public) {
   push @OtherColumns,"from <a href=\"$ListMeetings\">collaboration meetings</a>";
 }
+push @OtherColumns,"from <a href=\"$ListByTopic?major=Conferences&mode=conference\">conferences</a>";
 unless ($Public && !$PublicAccess{MeetingList}) {
   push @OtherColumns,"from <a href=\"$ListAllMeetings\">all meetings</a>";
 }  
+if ($UseSignoffs && (!$Public || $PublicAccess{MeetingList})) {
+  push @OtherColumns,"all <a href=\"$ListManagedDocuments\">managed documents</a>";
+}
+  
 push @OtherColumns,"<a href=\"$web_root/Static/Lists/$remote_user/FullList.html\">all documents</a>";
 
 push @Spanners,@MultiColumnDocumentLists;
@@ -108,13 +146,17 @@ push @Spanners,@MultiColumnDocumentLists;
 my $Rows = scalar(@FirstColumn);
 my $Cols = int((scalar(@OtherColumns) - 1)/scalar(@FirstColumn) + 1);
 
-print "<table>\n";
+# Print table for lists of documents
+
+print "<table cellpadding=5>\n";
 
 for (my $Index = 0; $Index < $Rows; ++$Index) {
   print "<tr>\n";
-  print "<td>&loz;&nbsp;",$FirstColumn[$Index],"</td>\n";
+  print "<td>&nbsp;&loz;&nbsp;",$FirstColumn[$Index],"</td>\n";
   for (my $ColIndex = 0; $ColIndex < $Cols; ++$ColIndex) {
-    print "<td>&loz;&nbsp;",$OtherColumns[$Index+$ColIndex*$Rows],"</td>\n";
+    unless ($Index+$ColIndex*$Rows >= scalar(@OtherColumns)) {
+      print "<td>&nbsp;&loz;&nbsp;",$OtherColumns[$Index+$ColIndex*$Rows],"</td>\n";
+    }  
   }  
   print "</tr>\n";
 }    
@@ -123,57 +165,31 @@ for (my $Index = 0; $Index < $Rows; ++$Index) {
 
 foreach my $Spanner (@Spanners) {
   print "<tr>\n";
-  print "<td colspan=$Cols>&loz;&nbsp;",$Spanner,"</td>\n";
+  print "<td colspan=$Cols>&nbsp;&loz;&nbsp;",$Spanner,"</td>\n";
   print "</tr>\n";
 }    
 
 print "</table><p>\n";
  
-print "</ul>\n";
 print "</td>\n";
-
-print "</td>\n";
-unless ($Public) {
-  print "<td valign=top>\n";
-  print "<ul style=\"line-height:2.0\">\n";
-  print "<li><b><a href=\"$HelpFile\">Get instructions</a></b>\n";
-  print "<li><b><a href=\"$SelectPrefs\">Set preferences</a></b>\n";
-  print "<li><b><a href=\"$EmailLogin\">Setup/manage a personal account</a></b>\n";
-  print "<li><b><a href=\"$Statistics\">Get statistics</a></b>\n";
-if ($Project eq "Beams") {
-  print "<li><b><a href=\"/cgi-bin/DocDB/RetrieveFile?docid=553\">Useful notes</a></b>\n";
-}
-  print "</ul>\n";
-
-  print "</td>\n";
-}
 print "</tr></table>\n";
 
 # Modified in last few days
 
 $Days = $HomeLastDays;
 
-my $revision_list = $dbh -> prepare(
-   "select DocRevID from DocumentRevision 
-    where TO_DAYS(NOW())-TO_DAYS(TimeStamp)<=?"); 
-
 my $document_list = $dbh -> prepare(
-   "select DocumentID from DocumentRevision where DocRevID=?"); 
+   "select DISTINCT(DocumentID) from DocumentRevision where TO_DAYS(NOW()) - TO_DAYS(TimeStamp) <= ?"); 
+$document_list -> execute($Days);
+$document_list -> bind_columns(undef, \($DocumentID));
 
-
-my %DocumentIDs = ();
-$revision_list -> execute($Days);
-$revision_list -> bind_columns(undef, \($DocRevID));
-
-while ($revision_list -> fetch) {
-  $document_list -> execute($DocRevID);
-  ($DocumentID) = $document_list -> fetchrow_array;
-  $DocumentIDs{$DocumentID} = 1; # Hash removes duplicates
+my @AllDocumentIDs = ();
+while ($document_list -> fetch) {
+  push @AllDocumentIDs,$DocumentID;
 }
 
 ### Get list of documents and read in the information we need from database
 
-my @AllDocumentIDs = keys %DocumentIDs;
 my @DocumentIDs = ();
 foreach my $DocumentID (@AllDocumentIDs) { # For shorter lists
   &FetchDocument($DocumentID);
@@ -190,7 +206,7 @@ foreach my $DocumentID (@AllDocumentIDs) { # For shorter lists
 ### Print summary information
 
 if ($#DocumentIDs >= $HomeMaxDocs) {
-  $#DocumentIDs = $HomeMaxDocs - 1;
+  $#DocumentIDs = $HomeMaxDocs - 1; #Truncate array
   print "<hr><center><h4>Last $HomeMaxDocs documents modified
          </h4></center>\n";
 } else {  
@@ -231,4 +247,3 @@ $EndTime  = new Benchmark;
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
-
