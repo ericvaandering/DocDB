@@ -31,10 +31,10 @@ print "<p>\n";
 print "If the above choices don't satisfy your needs, use this form to generate
        a customized document creation or update form:<p>\n";
 
+$modes{reserve}  = "Reserve document number";
 $modes{add}      = "New document";
 $modes{update}   = "Update document";
-$modes{updatedb} = "Update DB information";
-$modes{reserve}  = "Reserve document number";
+#$modes{updatedb} = "Update DB information";  # See note in ProcessDocumentAdd
 
 $uploads{http}   = "HTTP submission";
 $uploads{file}   = "Local file upload";
@@ -47,20 +47,23 @@ print $query -> start_multipart_form('POST',$DocumentAddForm);
 print "<b>Type of modification: </b>\n";
 print $query -> radio_group(-name => "mode", -values => \%modes);
 print "<p>\n";
+print "<b>Document to update (if applicable): </b>\n";
+print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
+print "<p>\n";
 print "<b>Upload method: </b>\n";
 print $query -> radio_group(-name => "upload", -values => \%uploads);
 print "<p>\n";
-print "<b>Upload type: </b>\n";
+print "<b>Upload type (not implemented): </b>\n";
 print $query -> radio_group(-name => "archive", -values => \%archives);
 print "<p>\n";
-print "<b>Number of upload fields: </b>\n";
+print "<b>Number of upload fields (not implemented): </b>\n";
 print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
 print "<p>\n";
-print "<b>Override submit date: </b>\n";
+print "<b>Override submit date (not implemented): </b>\n";
 print $query -> checkbox(-name => "overdate", -label => 'Check for yes');
 print "<p>\n";
 
-print $query -> submit (-value => "Generate Form");
+print $query -> submit (-value => "Give me the form");
 print $query -> end_multipart_form;
 
 

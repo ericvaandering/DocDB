@@ -23,8 +23,10 @@ discussed. This is optional during the reservation stage.
 fileupload
 File upload
 This field will upload a file from your local computer to the database server.
-Usually you will press the "Browse" button to select, from your local
-file system, the file to be uploaded. 
+Usually you will press the "Browse" button to select, from your local file
+system, the file to be uploaded. The base file name cannot contain a back slash
+"\" or a forward slash "/" to preserve compatibility with both Windows and
+Unix.
 #
 authors
 Authors

@@ -64,4 +64,18 @@ sub ProtectDirectory {
   }  
 }
 
+sub WindowsBaseFile {
+  my ($long_file) = @_;
+  @parts = split /\\/,$long_file;
+  my $short_file = pop @parts;
+  return $short_file;
+}  
+  
+sub UnixBaseFile {
+  my ($long_file) = @_;
+  @parts = split /\//,$long_file;
+  my $short_file = pop @parts;
+  return $short_file;
+}  
+  
 1;

@@ -2,16 +2,15 @@
 #
 # Author Eric Vaandering (ewv@fnal.gov)
 #
-# 
-#
 
-use CGI;                                                                                      
+use CGI;
 use DBI;
 
 require "ResponseElements.pm";
 require "MySQLAccess.pm";
 require "DocDBGlobals.pm";
 require "FSUtilities.pm";
+require "Debug.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
@@ -25,7 +24,11 @@ $mode = $params{mode};
 print $query->header;
 print $query->start_html(-title=>"BTeV Document Reservation Results");
 
-if ($mode ne "add" && $mode ne "reserve") {
+# Updatedb mode removed, not copying DocumentFile entries over, no easy 
+# way to handle changing security preferences from one version to the next
+# with links.
+
+if ($mode ne "add" && $mode ne "reserve" && $mode ne "update") {
   &EndPage("<p><h3>You accessed this page without 
             specifying a required parameter. 
             Don't mess with hidden fields or 
@@ -37,6 +40,9 @@ if      ($mode eq "add") {
 } elsif ($mode eq "reserve") {              
   print "<p><h3>Here are the results of your attempt to reserve a document
                 number in the BTeV document database:</h3><p>\n";
+} elsif ($mode eq "update") {              
+  print "<p><h3>Here are the results of your attempt to update a document
+                in the BTeV document database:</h3><p>\n";
 }
 
 my $document_insert = $dbh->prepare("
@@ -73,10 +79,12 @@ unless ($params{requester}) {
 unless ($params{title}) {
   push @error_stack,"You must supply a title for this document.";
 }
-unless ($params{doctype}) {
-  push @error_stack,"You must supply a document type for this document.";
+if ($mode eq "add" || $mode eq "reserve") {
+  unless ($params{doctype}) {
+    push @error_stack,"You must supply a document type for this document.";
+  }
 }
-if ($mode eq "add") {
+if ($mode eq "add" || $mode eq "update") {
   unless ($params{authors}) {
     push @error_stack,"You must supply at least one author for this document.";
   }
@@ -108,14 +116,22 @@ if (($#error_stack + 1)) {
 
 $security_list = join ',',@securities; # Ready for MySQL
 
-$document_insert -> execute($params{requester},$params{doctype});
-my $documentID = $document_insert -> {mysql_insertid}; # Works with MySQL only
+my $documentID;
+if ($mode eq "reserve" || $mode eq "add") {
+  $document_insert -> execute($params{requester},$params{doctype});
+  $documentID = $document_insert -> {mysql_insertid}; # Works with MySQL only
+} else {
+  $documentID = $params{docid};
+}  
 
 my $version;
 if      ($mode eq "reserve") {
   $version   = 0;
 } elsif ($mode eq "add") {
   $version   = 1;
+} elsif ($mode eq "update" || $mode eq "updatedb") {
+  &FetchDocument($documentID);
+  $version   = $Documents{$documentID}{NVER} + 1;
 }
 
 $doc_rev_insert -> execute($documentID,$params{requester},$params{title},
@@ -130,7 +146,15 @@ foreach $topicID (@topicIDs) {
   $rev_topic_insert -> execute($docRevID,$topicID);
 }
 
-if ($mode eq "add") { # We're adding a new document 
+if ($mode eq "updatedb") { # We're just linking the new directory to the old
+  $new_dir = &GetDirectory($documentID,$version);
+  $old_dir = &GetDirectory($documentID,$version-1);
+  chop $new_dir; chop $old_dir; # Removing trailing /
+  $command = "ln -s $old_dir $new_dir";
+  system ($command);
+}  
+
+if ($mode eq "add" || $mode eq "update") { # We're adding a new files
   
   $new_dir = &MakeDirectory($documentID,$version);
   &ProtectDirectory($documentID,$version,@securities);
@@ -138,7 +162,15 @@ if ($mode eq "add") { # We're adding a new document
   if ($params{single_upload}) { # Copy file to directory
     $short_file   = $query ->  param("single_upload");
     $short_handle = $query -> upload("single_upload");
-
+    if (grep /\\/,$short_file) {
+      $short_file = &WindowsBaseFile($short_file);
+    }  
+    if (grep /\//,$short_file) {
+      $short_file = &UnixBaseFile($short_file);
+    }  
+    
+    print "New file name $new_dir/$short_file<br>\n";
+    
     open (OUTFILE,">$new_dir/$short_file");
     while ($bytes_read = read($short_handle,$buffer,1024)) {
       print OUTFILE $buffer
@@ -168,11 +200,10 @@ if ($mode eq "add") { # We're adding a new document
 
 $full_docid = &FullDocumentID($documentID);
 
-print "You were successful. Your Document ID is <b>$full_docid</b><br> 
-       Please make a note of the document number as you will
-       need it to update your document.<br>
-       Your entry was created with the following information:
-       <p>\n"; 
+print "You were successful. Your Document ID is <b>$full_docid, version
+       $version</b><br>  Please make a note of the document number as you
+       will need it to update your document.<br> Your entry was created with
+       the following information: <p>\n"; 
 
 &RequesterByID($params{requester});
 &AuthorListByID(@authorIDs);
