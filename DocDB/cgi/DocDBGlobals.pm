@@ -107,7 +107,6 @@ $ListTopics            = $cgi_root."ListTopics";
 $ListTypes             = $cgi_root."ListTypes";
 $ListMeetings          = $cgi_root."ListMeetings";
 $ListKeywords          = $cgi_root."ListKeywords";
-$KeywordLongListing    = $cgi_root."KeywordLongListing";
 
 $AddFiles              = $cgi_root."AddFiles";
 $AddFilesForm          = $cgi_root."AddFilesForm";
