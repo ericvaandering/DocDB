@@ -20,7 +20,11 @@ sub TopicSearchScript {
 
 # This script produces a menu for topics and another for relevant subtopics
 # (i.e. selecting a topic reduces the set of subtopics). This code is 
-# adapted (ok, stolen) from Bugzilla, produced by mozilla.org
+# adapted (ok, stolen) from Bugzilla, produced by mozilla.org.
+
+# There are two major changes:
+#  1. seperate labels and values
+#  2. sort by label instead of by value
 
   print <<PREAMBLE;
 
@@ -164,12 +168,12 @@ function merge_arrays( a, b, b_is_select ) {
         aitem = a[pos_a];
 
         // smaller item in list a
-        if ( aitem.toLowerCase() < bitem.toLowerCase() ) {
+        if ( label[aitem.toLowerCase()] < label[bitem.toLowerCase()] ) {
             ret[ret.length] = aitem;
             pos_a++;
         } else {
             // smaller item in list b
-            if ( aitem.toLowerCase() > bitem.toLowerCase() ) {
+            if ( label[aitem.toLowerCase()] > label[bitem.toLowerCase()] ) {
                 ret[ret.length] = bitem;
                 pos_b++;
             } else {

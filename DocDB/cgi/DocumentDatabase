@@ -84,6 +84,8 @@ unless ($Public) {
   print "Which option do I choose?</a>)</b>\n";
   print "<ul>\n";
 
+### New upload short form
+
   print "<li>"; 
   print $query -> startform('POST',$DocumentAddForm);
   print $query -> submit (-value => "Create a new");
@@ -96,6 +98,8 @@ unless ($Public) {
   print $query -> hidden(-name => 'mode',    -default => 'add');
   print $query -> hidden(-name => 'upload',    -default => 'file');
   print $query -> endform;
+
+### New http short form
 
   print "<li>"; 
   print $query -> startform('POST',$DocumentAddForm);
@@ -110,6 +114,8 @@ unless ($Public) {
   print $query -> hidden(-name => 'upload',    -default => 'http');
   print $query -> endform;
 
+### Reserve form (button)
+
   print "<li>"; 
   print $query -> startform('POST',$DocumentAddForm);
   print $query -> submit (-value => "Reserve");
@@ -118,6 +124,8 @@ unless ($Public) {
   print $query -> hidden(-name => 'mode',    -default => 'reserve');
   print $query -> endform;
 
+### Update short form
+
   print "<li>"; 
   print $query -> startform('POST',$DocumentAddForm);
   print $query -> submit (-value => "Update");
@@ -125,6 +133,8 @@ unless ($Public) {
   print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
   print $query -> hidden(-name => 'mode',    -default => 'update');
   print $query -> endform;
+
+### Update DB short form
 
   print "<li>"; 
   print $query -> startform('POST',$DocumentAddForm);
@@ -138,6 +148,9 @@ unless ($Public) {
   print "</ul>\n";
 
   print "<p>\n";
+  
+### Customized Add/Update form creation form   
+  
   print $query -> start_multipart_form('POST',$DocumentAddForm);
 
   print "<b>If the above choices don't meet your needs,use this form to produce a
@@ -162,7 +175,7 @@ unless ($Public) {
 
   $topicmodes{multi}  = "Multiple Topic Boxes";
   $topicmodes{single} = "Single Topic List";
-  @topicmodes = ("single","multi");
+  @topicmodes = ("multi","single");
 
   $authormodes{field}  = "Text field";
   $authormodes{list} = "Selectable list";

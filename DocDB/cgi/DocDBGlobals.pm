@@ -16,7 +16,7 @@ $SSIDirectory = "/www/html/includes/";
 
 # Shell Commands
 
-$Wget   = "/home/btev1/ewv/bin/wget -O - --quiet ";
+$Wget   = "/home2/btev2/ewv/bin/wget -O - --quiet ";
 $Tar    = "/fnal/ups/prod/gtools/v2_4/bin/gtar ";
 $Unzip  = "/usr/local/bin/unzip -q ";
 
@@ -48,7 +48,7 @@ $Administrator    = "docdbadm";
 $AuthUserFile     = "/www/conf/www-btev/.htpasswd";
 
 $LastDays         = 20;        # Number of days for default in LastModified
-$MeetingWindow    = 8;         # Days before and after meeting to preselect
+$MeetingWindow    = 5;         # Days before and after meeting to preselect
 $MeetingFiles     = 3;         # Number of upload boxes on meeting short form
 
 # Override settings in this file for the test DB 

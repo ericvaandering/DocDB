@@ -57,7 +57,6 @@ sub SecurityLookup {
 
   my ($Name) = $group_name -> fetchrow_array; 
   
-  print "NU: $Name $user<br>\n";
   return $Name;
 }
 

@@ -38,6 +38,7 @@ print $query->header;
 $Special = $params{special};
 
 if ($Special eq "meeting") {$Meeting = 1;}
+if ($Special eq "othermeeting") {$OtherMeeting = 1;}
 
 $Archive   = $params{archive};
 $Overdate  = $params{overdate};
@@ -52,7 +53,7 @@ $Page      = $params{page};
 
 $Requester = $params{requester};
 
-if ($Meeting) {
+if ($Meeting || $OtherMeeting) {
   @authorIDs = ($Requester);
 } else {
   if ($params{authormanual}) {

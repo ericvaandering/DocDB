@@ -398,4 +398,59 @@ sub TypeLink {
   return $link;
 }
 
+
+sub PrintAgenda {
+  require "MiscSQL.pm";
+  my ($MeetingID) = @_; 
+  
+  my $agenda_find = $dbh -> prepare(
+    "select MAX(DocumentRevision.DocRevID) from DocumentRevision,RevisionTopic ".
+    "where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
+     "and lower(DocumentRevision.DocumentTitle) like lower(\"agenda%\") ".
+     "and RevisionTopic.MinorTopicID=32"); 
+  
+  $agenda_find -> execute();
+  my ($DocRevID) = $agenda_find -> fetchrow_array;
+  if ($DocRevID) {
+    &FetchDocRevisionByID($DocRevID); 
+    my $Files_ref  = &FetchDocFiles($DocRevID);                                                                                             
+
+    my $FirstFile = shift @{$Files_ref};
+
+    print "<h3>Agenda:</h3>\n";
+    &PrintFile($FirstFile);
+  }
+}
+
+sub PrintFile {
+  require "FSUtilities.pm";
+  my ($FileID) = @_;
+  
+  my $DocRevID      = $DocFiles{$FileID}{DOCREVID};
+  my $VersionNumber = $DocRevisions{$DocRevID}{VERSION};
+  my $DocumentID    = $DocRevisions{$DocRevID}{DOCID}  ;
+  
+  my $Directory     = &GetDirectory($DocumentID,$VersionNumber);  
+  
+  my $FileName      = $Directory.$DocFiles{$FileID}{NAME};
+    
+  if (grep /text/,`file $FileName`) {
+    open FILE,$FileName;
+    my @FileLines = <FILE>;
+    close FILE;
+
+    if (grep /html$/,$FileName) {
+      print "<div id=\"includedfile\">\n";
+      print @FileLines;
+      print "</div>\n";
+    } else {
+      print "<pre>\n";
+      print @FileLines;
+      print "</pre>\n";
+    }    
+  } else {
+    print "<b>Non-text file</b>\n";
+  }  
+    
+}
 1;
