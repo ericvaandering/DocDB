@@ -19,6 +19,7 @@ require "ResponseElements.pm";
 require "FormElements.pm";
 require "Sorts.pm";
 require "Scripts.pm";
+require "Security.pm";
 
 require "MeetingHTML.pm";
 require "MeetingSQL.pm";
@@ -111,6 +112,15 @@ if ($Mode eq "create") {
   unless ($Long) {
     push @ErrorStack,$Msg_TopicNoLong;
   }      
+}
+
+# Security checks
+
+unless (&CanCreateMeeting()) {
+  push @ErrorStack,$Msg_MeetNoCreate;
+}
+if ($ConferenceID && !CanModifyMeeting($ConferenceID)) {
+  push @ErrorStack,$Msg_MeetNoModify;
 }
  
 # Checks on input parameters 

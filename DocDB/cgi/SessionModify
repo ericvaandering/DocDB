@@ -19,6 +19,7 @@ require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 require "Sorts.pm";
 require "Scripts.pm";
+require "Security.pm";
 
 require "MeetingHTML.pm";
 require "TalkHTML.pm";
@@ -75,12 +76,18 @@ $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass
 unless ($dbh) {
   push @ErrorStack,$Msg_NoConnect;
 }      
+&EndPage(@ErrorStack);
 
-unless ($SessionID) {
+if ($SessionID) {
+  &FetchSessionByID($SessionID);
+  my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
+  unless (&CanModifyMeeting($ConferenceID)) {
+    push @ErrorStack,$Msg_MeetNoModify;
+  }
+} else {
   push @ErrorStack,"You must specify a session to modify. You probably arrived
   here by error.";
 }  
-   
 &EndPage(@ErrorStack);
 
 if ($Mode eq "modify") {

@@ -29,6 +29,13 @@ $Msg_ModEUserEmpty    = "You must select a user to modify or delete.";
 $Msg_ModTopicEmpty    = "You must select a topic to modify or delete.";
 $Msg_ModConfEmpty     = "You must select a conference to modify or delete.";
 
+# Messages for document creation, modification, display
+
+$Msg_DocNoAccess      = "Either you are not authorized to view this document 
+                         (with the username and password you supplied)  
+                         or the document does not exist.";
+
+
 # Messages for author creation, modification, display
 
 $Msg_AuthorInvalid    = "You did not select a valid author.";
@@ -41,10 +48,14 @@ $Msg_TopicShortIgnored = "Your short description of this meeting has been ".
                          "ignored. The long description will be used instead ".
                          "(because you didn't create a topic). ";
 
-# Messages for meeting/session creation/modification
+# Messages for meeting/session creation/modification/access
 
 $Msg_MeetNoSessions     = "This meeting was created with no sessions. You will have to add at least one session before adding talks.";
 $Msg_SessionBlankDelete = "Setting session titles to blank will not delete them.";
+
+$Msg_MeetNoAccess       = "You do not have permission to view this meeting.";
+$Msg_MeetNoCreate       = "You do not have permission to create or modify meetings.";
+$Msg_MeetNoModify       = "You do not have permission to modify this meeting.";
 
 # Messages for keywords, keyword groups
 

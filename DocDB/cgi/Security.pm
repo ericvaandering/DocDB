@@ -6,6 +6,8 @@
 #    Modified: 
 
 sub CanAccess { # Can the user access (with current security) this version
+  my ($documentID,$version) = @_;
+
   require "RevisionSQL.pm";
   require "SecuritySQL.pm";
   
@@ -15,7 +17,6 @@ sub CanAccess { # Can the user access (with current security) this version
     &GetSecurityGroups;
   }  
 
-  my ($documentID,$version) = @_;
   my $DocRevID = &FetchRevisionByDocumentAndVersion($documentID,$version);
   
   unless ($DocRevID) { # Document doesn't exist
@@ -155,6 +156,52 @@ sub CanAdminister { # Can the user administer the database
   }
   return $Administer;
 }
+
+# The Meeting security routines are very simple for the time being
+
+sub CanAccessMeeting ($) {
+  my ($ConferenceID) = @_;
+  
+  my $CanAccess = 0;
+  
+  unless ($Public) {
+    $CanAccess = 1;
+  }
+  
+  return $CanAccess;
+}
+
+sub CanModifyMeeting ($) {
+  my ($ConferenceID) = @_;
+  
+  my $CanModify = 0;
+  
+  if (&CanCreate) {
+    $CanModify = 1;
+  }
+  
+  if ($Public) {
+    $CanModify = 0;
+  }
+  
+  return $CanModify;
+}  
+
+sub CanCreateMeeting ($) {
+  my ($ConferenceID) = @_;
+  
+  my $CanCreate = 0;
+  
+  if (&CanCreate) {
+    $CanCreate = 1;
+  }
+  
+  if ($Public) {
+    $CanCreate = 0;
+  }
+  
+  return $CanCreate;
+}  
 
 sub LastAccess { # Highest version user can access (with current security)
   my ($DocumentID) = @_;

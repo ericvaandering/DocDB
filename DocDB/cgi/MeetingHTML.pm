@@ -381,8 +381,10 @@ sub PrintSessionHeader ($) {
   if ($Sessions{$SessionID}{Location}) {
     print "<br> Location: $Sessions{$SessionID}{Location}\n";
   }
-  print "<br>(<a href=\"$DocumentAddForm?sessionid=$SessionID\">Upload a document</a> ".
-        "or <a href=\"$SessionModify?sessionid=$SessionID\">update the agenda</a> for this session)\n";
+  if (&CanModifyMeeting($ConferenceID)) {
+    print "<br>(<a href=\"$DocumentAddForm?sessionid=$SessionID\">Upload a document</a> ".
+          "or <a href=\"$SessionModify?sessionid=$SessionID\">update the agenda</a> for this session)\n";
+  }
   print "<p></center> \n";
 }
 
@@ -436,7 +438,7 @@ sub PrintMeetingInfo($;$) {
   }
   print "<p>\n";
   
-  if ($AddTalkLink) {
+  if ($AddTalkLink && &CanModifyMeeting($ConferenceID)) {
     print "(<a href=\"$DocumentAddForm?conferenceid=$ConferenceID\">Upload a document</a> ".
           "to this meeting or conference)\n";
   }

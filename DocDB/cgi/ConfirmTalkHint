@@ -7,10 +7,15 @@ use CGI;
 use DBI;
 
 require "DocDBGlobals.pm";
+require "Messages.pm";
+
 require "ResponseElements.pm";
 require "SecuritySQL.pm";
 require "DocumentSQL.pm";
 require "RevisionSQL.pm";
+require "TalkSQL.pm";
+require "MeetingSQL.pm";
+
 require "FSUtilities.pm";
 require "HTMLUtilities.pm";
 require "Security.pm";
@@ -20,7 +25,7 @@ $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
 
-@error_stack = ();
+@ErrorStack = ();
 @warn_stack  = ();
 
 $DocumentID    = $params{documentid};
@@ -32,29 +37,42 @@ $SessionTalkID =~ s/^\s+//;
 $SessionTalkID =~ s/\s+$//;
 
 unless ($DocumentID) {
-  push @error_stack,"You are must supply a document number!";
+  push @ErrorStack,"You are must supply a document number!";
 }  
 
 unless ($SessionTalkID) {
-  push @error_stack,"You are must supply a Session Number!";
+  push @ErrorStack,"You are must supply a Session Number!";
 }  
-
-$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
-
-&FetchDocument($DocumentID);
-$Version  = $Documents{$DocumentID}{NVersions};
-$DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-
-unless ($DocRevID) { # Probably never executed since CanAccess fails.
-  push @error_stack,"This document does not exist.";
-}
 
 print $query->header;
 print $query->start_html(-title => "Confirming document match");
 
-if (@error_stack) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@error_stack);
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+unless ($dbh) {
+  push @ErrorStack,$Msg_NoConnect;
+}      
+&EndPage(@ErrorStack);
+
+&FetchDocument($DocumentID);
+$Version  = $Documents{$DocumentID}{NVersions};
+$DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+unless (&CanModify($DocumentID,$Version)) {
+  push @ErrorStack,$Msg_DocNoAccess;
 }
+
+unless ($DocRevID) { # Probably never executed since CanAccess fails.
+  push @ErrorStack,"This document does not exist.";
+}
+
+&FetchSessionTalkByID($SessionTalkID);
+my $SessionID =  $SessionTalks{$SessionTalkID}{SessionID};
+&FetchSessionByID($SessionID);
+my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
+unless (&CanModifyMeeting($ConferenceID)) {
+  push @ErrorStack,$Msg_MeetNoModify;
+}
+
+&EndPage(@ErrorStack);
 
 my $SessionTalkUpdate = $dbh -> prepare(
  "update SessionTalk set DocumentID=?, Confirmed=1 where SessionTalkID=?");

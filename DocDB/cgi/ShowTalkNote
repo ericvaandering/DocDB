@@ -14,6 +14,8 @@ require "DocDBGlobals.pm";
 require "Messages.pm";
 
 require "ResponseElements.pm";
+require "Security.pm";
+
 require "DocumentSQL.pm";
 require "RevisionSQL.pm";
 require "TalkSQL.pm";
@@ -44,6 +46,13 @@ my $Confirmed  = $SessionTalks{$SessionTalkID}{Confirmed} ;
 my $Time       = $SessionTalks{$SessionTalkID}{Time}      ;
 my $HintTitle  = $SessionTalks{$SessionTalkID}{HintTitle} ;
 my $Note       = $SessionTalks{$SessionTalkID}{Note}      ;
+
+&FetchSessionByID($SessionID);
+my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
+unless (&CanAccessMeeting($ConferenceID)) {
+  push @ErrorStack,$Msg_MeetNoAccess;
+}
+&EndPage(@ErrorStack);
 
 my $DocRevID;
 if ($DocumentID) {
