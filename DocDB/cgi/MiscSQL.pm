@@ -1,3 +1,12 @@
+#
+#        Name: MiscSQL.pm 
+# Description: Routines to access some of the more uncommon parts of the SQL 
+#              database.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
 sub GetJournals { # Creates/fills a hash $Journals{$JournalID}{} 
   my ($JournalID,$Acronym,$Abbreviation,$Name,$Publisher,$URL,$TimeStamp);                
   my $JournalQuery  = $dbh -> prepare(
@@ -39,35 +48,31 @@ sub FetchReferencesByRevision ($) {
 };
 
 sub GetDocTypes { # Creates/fills a hash $DocumentTypes{$DocTypeID}{} 
-  my $doctype_list  = $dbh -> prepare(
-     "select DocTypeID,ShortType,LongType from DocumentType");
+  my ($DocTypeID,$ShortType,$LongType);
+  my $DocTypeList  = $dbh -> prepare("select DocTypeID,ShortType,LongType from DocumentType");
   %DocumentTypes = ();
-  $doctype_list -> execute;
-  $doctype_list -> bind_columns(undef, \($DocTypeID,$ShortType,$LongType));
-  while ($doctype_list -> fetch) {
-    $DocumentTypes{$DocTypeID}{DOCTYPEID} = $DocTypeID;
+  $DocTypeList -> execute;
+  $DocTypeList -> bind_columns(undef, \($DocTypeID,$ShortType,$LongType));
+  while ($DocTypeList -> fetch) {
     $DocumentTypes{$DocTypeID}{SHORT}     = $ShortType;
     $DocumentTypes{$DocTypeID}{LONG}      = $LongType;
   }
 };
 
 sub FetchDocType { # Fetches an DocumentType by ID, adds to $DocumentTypes{$DocTypeID}{}
-  my ($docTypeID) = @_;
-  my ($DocTypeID,$ShortType,$LongType);
+  my ($DocTypeID) = @_;
+  my ($ShortType,$LongType);
 
-  my $type_fetch  = $dbh -> prepare(
-     "select DocTypeID,ShortType,LongType ". 
-     "from DocumentType ". 
-     "where DocTypeID=?");
-  if ($DocumentTypes{$docTypeID}{DOCTYPEID}) { # We already have this one
-    return $DocumentTypes{$docTypeID}{SHORT};
+  my $DocTypeFetch  = $dbh -> prepare(
+     "select ShortType,LongType from DocumentType where DocTypeID=?");
+  if ($DocumentTypes{$DocTypeID}{SHORT}) { # We already have this one
+    return $DocumentTypes{$DocTypeID}{SHORT};
   }
   
-  $type_fetch -> execute($docTypeID);
-  ($DocTypeID,$ShortType,$LongType) = $type_fetch -> fetchrow_array;
-  $DocumentTypes{$docTypeID}{DOCTYPEID} = $DocTypeID;
-  $DocumentTypes{$docTypeID}{SHORT}     = $ShortType;
-  $DocumentTypes{$docTypeID}{LONG}      = $LongType;
+  $DocTypeFetch -> execute($DocTypeID);
+  ($ShortType,$LongType) = $DocTypeFetch -> fetchrow_array;
+  $DocumentTypes{$DocTypeID}{SHORT}     = $ShortType;
+  $DocumentTypes{$DocTypeID}{LONG}      = $LongType;
   
   return $DocumentTypes{$DocTypeID}{SHORT};
 }

@@ -108,7 +108,6 @@ if      ($Action eq "Delete") { # Delete institutions
   my $JournalInsert = $dbh->prepare(
    "insert into Journal (JournalID,Name,Abbreviation,Publisher,URL,Acronym) ".
    "             values (0,?,?,?,?,?)");
-      
 
   $JournalInsert -> execute($FullName,$Abbreviation,$Publisher,$URL,$Acronym);
   $JournalID = $JournalInsert -> {mysql_insertid}; # Works with MySQL only

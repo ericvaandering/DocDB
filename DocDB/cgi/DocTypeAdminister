@@ -32,16 +32,13 @@ print $query->header;
 
 # Parameters to script 
 
-$Password     = $params{password};
-$Username     = $Administrator;
-$Action       = $params{admaction};
+$Password  = $params{password};
+$Username  = $Administrator;
+$Action    = $params{admaction};
 
-#$JournalID    = $params{journal};
-#$FullName     = $params{name};
-#$Abbreviation = $params{abbr};
-#$Acronym      = $params{acronym};
-#$Publisher    = $params{pub};
-#$URL          = $params{url};
+$DocTypeID = $params{doctype};
+$ShortName = $params{name};
+$LongName  = $params{long};
 
 unless (&CanAdminister) {
   push @ErrorStack,$Msg_AdminNoLogin;
@@ -58,42 +55,41 @@ unless ($dbh) {
 &GetDocTypes;
 
 if      ($Action eq "Delete") { # Delete institutions
-#  if (!$JournalID) {
-#    push @ErrorStack,$Msg_ModJournalEmpty;
-#  } else {
-#    my $JournalDelete = $dbh -> prepare("delete from Journal where JournalID=?");
-#    $JournalDelete -> execute($JournalID);
-#    print "<b>$Journals{$JournalID}{Name} has been deleted.</b><br>\n";
-#  }
+  if (!$DocTypeID) {
+    push @ErrorStack,$Msg_ModDocTypeEmpty;
+  } else {
+    my $DocTypeDelete = $dbh -> prepare("delete from DocumentType where DocTypeID=?");
+    $DocTypeDelete -> execute($DocTypeID);
+    print "<b>$DocumentTypes{$DocTypeID}{SHORT} has been deleted.</b><br>\n";
+  }
 } elsif ($Action eq "Modify") { # Modify journals
-#  unless ($JournalID) {
-#    push @ErrorStack,$Msg_ModJournalEmpty;
-#  }
-#  &EndPage(@ErrorStack);
+  if (!$DocTypeID) {
+    push @ErrorStack,$Msg_ModDocTypeEmpty;
+  }
+  &EndPage(@ErrorStack);
 
 # Deal with name changes     
 
-#  if ($FullName) { 
-#    print "<b>Updating journal name.</b><br>\n";
-#    my $JournalUpdate = $dbh->prepare(
-#       "update Journal set Name=? where JournalID=?");
-#    $JournalUpdate -> execute($FullName,$JournalID);
-#  }
-#  if ($Abbreviation) { 
-#    print "<b>Updating journal abbreviation.</b><br>\n";
-#    my $JournalUpdate = $dbh->prepare(
-#       "update Journal set Abbreviation=? where JournalID=?");
-#    $JournalUpdate -> execute($Abbreviation,$JournalID);
-#  }
+  if ($ShortName) { 
+    print "<b>Updating short document type description.</b><br>\n";
+    my $DocTypeUpdate = $dbh->prepare(
+       "update DocumentType set ShortType=? where DocTypeID=?");
+    $DocTypeUpdate -> execute($ShortName,$DocTypeID);
+  }
+  if ($LongName) { 
+    print "<b>Updating long document type description.</b><br>\n";
+    my $DocTypeUpdate = $dbh->prepare(
+       "update DocumentType set LongType=? where DocTypeID=?");
+    $DocTypeUpdate -> execute($LongName,$DocTypeID);
+  }
 } elsif ($Action eq "New") { # Create new journals
-#  print "<b>Adding a new journal.</b><br>\n";
-#  my $JournalInsert = $dbh->prepare(
-#   "insert into Journal (JournalID,Name,Abbreviation,Publisher,URL,Acronym) ".
-#   "             values (0,?,?,?,?,?)");
-#      
-#
-#  $JournalInsert -> execute($FullName,$Abbreviation,$Publisher,$URL,$Acronym);
-#  $JournalID = $JournalInsert -> {mysql_insertid}; # Works with MySQL only
+  print "<b>Adding a new document type.</b><br>\n";
+  my $DocTypeInsert = $dbh->prepare(
+   "insert into DocumentType (DocTypeID,ShortType,LongType) ".
+   "                  values (0,?,?)");
+
+  $DocTypeInsert -> execute($ShortName,$LongName);
+  $DocTypeID = $DocTypeInsert -> {mysql_insertid}; # Works with MySQL only
 } else {
   push @ErrorStack,"No valid action was specified.";
 }  
@@ -103,12 +99,9 @@ if      ($Action eq "Delete") { # Delete institutions
 if ($Action eq "Modify" || $Action eq "New") {
   &GetDocTypes;
   print "<p><b>Here are the results of your modification:  <br>\n";
-#  print "Name:         $Journals{$JournalID}{Name}         <br>\n";
-#  print "Abbreviation: $Journals{$JournalID}{Abbreviation} <br>\n";
-#  print "Acronym:      $Journals{$JournalID}{Acronym}      <br>\n";
-#  print "Publisher:    $Journals{$JournalID}{Publisher}    <br>\n";
-#  print "URL:          $Journals{$JournalID}{URL}          <br>\n";
-#  print "</b><p>\n";
+  print "Short Description: $DocumentTypes{$DocTypeID}{SHORT} <br>\n";
+  print "Long Description:  $DocumentTypes{$DocTypeID}{LONG}  <br>\n";
+  print "</b><p>\n";
 }  
 
 print "<p>\n";
