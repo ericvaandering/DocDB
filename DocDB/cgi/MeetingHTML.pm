@@ -56,8 +56,8 @@ sub ConferenceShowAllTalks {
 }
 
 
-sub SessionEntryForm (@) {
-  my @MeetingOrderIDs = @_; 
+sub SessionEntryForm ($@) {
+  my ($ConferenceID,@MeetingOrderIDs) = @_; 
 
   require "Scripts.pm";
   print "<b><a ";
@@ -88,7 +88,12 @@ sub SessionEntryForm (@) {
     $SessionDefaultOrder = $SessionOrder;  
     
     if (grep /n/,$MeetingOrderID) {# Erase defaults
-      $SessionDefaultDateTime    = "";
+      if ($ConferenceID) {
+        &FetchConferenceByConferenceID($ConferenceID);
+        $SessionDefaultDateTime = $Conferences{$ConferenceID}{StartDate};
+      } else {
+        $SessionDefaultDateTime = "";
+      }
       $SessionDefaultLocation    = "";
       $SessionDefaultTitle       = "";
       $SessionDefaultDescription = "";
@@ -156,6 +161,9 @@ sub SessionDateTimePullDown {
     $DefaultMonth = $Month;
     $DefaultDay   = $Day;
     $DefaultHour  = "09:00";
+  }  
+  if ($DefaultHour eq ":") {
+    $DefaultHour = "09:00";
   }  
    
   my @days = ();

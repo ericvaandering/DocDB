@@ -68,16 +68,14 @@ my @SessionDeletes       = split /\0/,$params{sessiondelete};
 my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
 my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
 
+my $StartTime,$EndTime;
+
 if ($StartDay && $StartMonth && $StartYear) {
-  my $StartTime = timelocal(0,0,0,$StartDay,$ReverseAbrvMonth{$StartMonth}-1,$StartYear);
-} else {
-  my $StartTime = time();
+  $StartTime = timelocal(0,0,0,$StartDay,$ReverseAbrvMonth{$StartMonth}-1,$StartYear);
 }
    
 if ($EndDay && $EndMonth && $EndYear) {
-  my $EndTime   = timelocal(0,0,0,$EndDay,$ReverseAbrvMonth{$EndMonth}-1,$EndYear);
-} else {
-  my $EndTime   = time();
+  $EndTime   = timelocal(0,0,0,$EndDay,$ReverseAbrvMonth{$EndMonth}-1,$EndYear);
 }
 
 if ($ShowAllTalks) {$ShowAllTalks = 1;}
@@ -503,7 +501,7 @@ my @MeetingOrderIDs     = &FetchMeetingOrdersByConferenceID($ConferenceID);
 @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs;
 
 print "<tr valign=top>\n";
-print "<td colspan=2>\n"; &SessionEntryForm(@MeetingOrderIDs);   print "</td>\n";
+print "<td colspan=2>\n"; &SessionEntryForm($ConferenceID,@MeetingOrderIDs);   print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
