@@ -92,7 +92,7 @@ tables, their elements, and the auxiliary tables are shown in
 \begin{figure}
 \begin{center}
 \includegraphics[width=6in]{DocDB_model.eps}
-\caption{The design of the document database. Indices are shown in read and the
+\caption{The design of the document database. Indices are shown in red and the
 symbols are described in the text.}
 \figlabel{db_structure}
 \end{center}
@@ -154,11 +154,60 @@ each of which can have up to 999 versions.
 
 \section{Special Types of Documents}\seclabel{extend}
 
+In addition to generic type of documents, certain documents which are
+associated with group meetings, conferences, or are published in journals. With
+small extensions to the database structure, this additional information can be
+easily captured and represented.
+
 \subsection{Group meeting talks}
+
+Up until this point, talks given at group meetings outnumber the total number
+of documents entered into the old document database. We would like to
+completely integrate the group meeting talks into the document database. They
+should receive special treatment since they will be a large fraction of the
+documents and people have certain expectations of how the information is
+presented.
+
+Associating a talk with a meeting is done by choosing, as one of the document's
+subtopics, the correct meeting. Then a search on that topic will return all the
+talks for the meeting. Additionally, meetings are sorted in reverse
+chronological order rather than alphabetically wherever they appear.
+
+Making a usuable list of meeting talks involves making a minor change to the
+listing format by listing the files associated with a talk rather than the
+modification date. 
+
+Together these changes yield an interface that is similar to what collaborators
+are used to. Combined with the instant update nature of the database and its
+indexing capabilities should make the overall experience much better.
 
 \subsection{Conference talks and proceedings}
 
+Conference talks and proceedings pose a slightly different problem. As with
+group meetings, associating a document with a conference will be done by
+choosing an appropriate sub-topic. Listing of documents will be by conference
+in reverse chronological order. 
+
+A full listing, however, should also contain information about the conference
+itself such as location, dates, a URL, etc. This will be accomplished by adding
+an additional table to the database linked to the conference's MinorTopicID.
+
+This functionality has not been implemented yet.
+
 \subsection{Journal publications}
+
+Publications in journals should have a slightly enhanced interface as well.
+While we currently have a Publication Information field in the database, what is
+placed there is completely up to the user and is intended more as a place to put
+notes rather than information in a well defined form. 
+
+To support journal publications, there will likely be additional fields added to
+the database which will contain this information in a very well defined manner
+for a set of pre-defined journals. This will allow a coherent presentation of a
+list of publications and advanced features such as links to the publisher's web
+site, automatic generation of BibTeX entries, etc.
+
+This functionality has not been implemented yet.
 
 \bibliographystyle{phaip}
 \bibliography{physjabb,abbrev,other,btev}                                                                                      

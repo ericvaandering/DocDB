@@ -26,6 +26,18 @@ storing documents in a central location. So, you should never again see a
 broken link while looking for the information you want. This distinction is
 especially important when archive uploads which are discussed later. <p>
 
+<h3>What is a document?</h3>
+
+This may sound like a stupid question, but it's not. People tend to think of a
+document as something that consists of writing and can be printed on a piece of
+paper. In our context, a document is something much more general. A document is
+any piece of information that a) you want to save and b) you want to share with
+others. So, a video of a walk-thru of C0 is a document.  A picture of a
+photo-tube is a document. A calculation on the back of an envelope and scanned
+is a document. (And it's probably a "Note," not a "Figure." The document type
+you'll choose later tells what the document <b>is</b> not what format it's
+stored in.)
+
 <h3>What do you want to do?</h3>
 
 You can add information or documents to the database in five different ways for
@@ -150,6 +162,17 @@ Unless you are submitting a document from the old database or one written
 some time ago, you should probably not select this option. By default, new documents
 are entered with the current date and time.
 
+<h3>Referring to your document</h3>
+
+To refer to your document use the form <b>BTeV-doc-XXXX</b> where XXXX is the document
+number (1 to 6 digits). You can also use the form <b>BTeV-doc-XXXX-vXX</b> to refer to
+a specific version of a document. The <b>BTeV-doc-XXXX</b> form refers to the
+latest version.
+
+You can also construct URL's that link to your document. The URL is of the form
+http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=XXXX&amp;version=XX.
+As above, you can leave off the &amp;version=XX to refer to the latest version.
+
 <h3>Getting more help</h3>
 
 You can often get more help when using the entry form and the advanced form on
@@ -159,6 +182,10 @@ explain what is going on.<p>
 If you have additional questions, suggestions, or problems with the document
 database, please send e-mail to the <a href="mailto:btev-docdb@fnal.gov">DocDB
 administrators</a>.
+
+For a more technical document on how the database works, see 
+<a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=140">
+BTeV-doc-140</a>.
 
 
 <hr>
