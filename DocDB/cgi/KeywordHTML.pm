@@ -238,7 +238,7 @@ sub KeywordLinkByID ($;%) {
 sub KeywordLink ($;%) { # FIXME: Allow parameters of short, long, full a la Lynn (use KeywordID)
   my ($Keyword,%Params) = @_;
 
-  my $Format   = $Params{-format} || "short"; # short, full
+  my $Format = $Params{-format} || "short"; # short, full
   
   my $ret = "<a href=\"$Search\?keywordsearchmode=anyword&keywordsearch=$Keyword\">";
   $ret .= "$Keyword";
@@ -249,7 +249,7 @@ sub KeywordLink ($;%) { # FIXME: Allow parameters of short, long, full a la Lynn
 sub KeywordsBox (%) {
   my (%Params) = @_; 
   
-  my $Required   = $Params{-required}   || 0;        # short, long, full
+  my $Required = $Params{-required}   || 0;
 
   print "<b><a ";
   &HelpLink("keywords");

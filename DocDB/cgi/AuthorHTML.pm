@@ -176,21 +176,24 @@ sub AuthorsTable {
   print "</table>\n";
 }
 
-sub AuthorScroll ($$$;@) {
-  my ($All,$Multiple,$ElementName,@Defaults) = @_;
-  
+sub AuthorScroll (%) {
   require "AuthorSQL.pm";
   
+  my (%Params) = @_;
+  
+  my $All       =   $Params{-showall}   || 0;
+  my $Multiple  =   $Params{-multiple}  || "true";
+  my $HelpLink  =   $Params{-helplink}  || "authors";
+  my $HelpText  =   $Params{-helptext}  || "Authors";
+  my $Required  =   $Params{-required}  || 0;
+  my $Name      =   $Params{-name}      || "authors";
+  my $Size      =   $Params{-size}      || 10;
+  my @Default   = @{$Params{-default}};
+
   unless (keys %Author) {
     &GetAuthors;
   }
-  
-  if ($Multiple) {
-    $Multiple = "true";
-  } else { 
-    $Multiple = "false";
-  }  
-  
+    
   my @AuthorIDs = sort byLastName keys %Authors;
   my %AuthorLabels = ();
   my @ActiveIDs = ();
@@ -200,6 +203,16 @@ sub AuthorScroll ($$$;@) {
       push @ActiveIDs,$ID; 
     } 
   }  
+  if ($HelpLink) {
+    print "<b><a ";
+    &HelpLink($HelpLink);
+    print "$HelpText:</a></b>";
+    if ($Required) {
+      print $RequiredMark;
+    }  
+    print "<br> \n";
+  }
+
   print $query -> scrolling_list(-name => $ElementName, -values => \@ActiveIDs, 
                                  -labels => \%AuthorLabels,
                                  -size => 10, -multiple => $Multiple,

@@ -18,7 +18,7 @@
 sub TitleBox (%) {
   my (%Params) = @_; 
   
-  my $Required   = $Params{-required}   || 0;        # short, long, full
+  my $Required   = $Params{-required}   || 0;
 
   print "<b><a ";
   &HelpLink("title");
@@ -34,7 +34,7 @@ sub TitleBox (%) {
 sub AbstractBox (%) {
   my (%Params) = @_; 
   
-  my $Required   = $Params{-required}   || 0;        # short, long, full
+  my $Required   = $Params{-required}   || 0;
 
   print "<b><a ";
   &HelpLink("abstract");
