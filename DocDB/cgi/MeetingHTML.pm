@@ -253,8 +253,8 @@ sub SessionLocation {
                              -default => $SessionDefaultLocation);
 };
 
-sub PrintSession ($;$) {
-  my ($SessionID,$AddTalkLink) = @_;
+sub PrintSession ($) {
+  my ($SessionID) = @_;
   
   require "Sorts.pm";
   require "TalkSQL.pm";
@@ -262,7 +262,7 @@ sub PrintSession ($;$) {
   require "SQLUtilities.pm";
   require "Utilities.pm";
   
-  &PrintSessionHeader($SessionID,$AddTalkLink);
+  &PrintSessionHeader($SessionID);
   print "<p>\n";
   
   my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
@@ -363,8 +363,8 @@ sub PrintSessionSeparator ($) {
   print "</center><hr width=95%>\n";   
 }
 
-sub PrintSessionHeader ($;$) {
-  my ($SessionID,$AddTalkLink) = @_;
+sub PrintSessionHeader ($) {
+  my ($SessionID) = @_;
 
   require "SQLUtilities.pm";
   require "Utilities.pm";
@@ -381,12 +381,8 @@ sub PrintSessionHeader ($;$) {
   if ($Sessions{$SessionID}{Location}) {
     print "<br> Location: $Sessions{$SessionID}{Location}\n";
   }
-  if ($AddTalkLink) {
-    print "<br>(<a href=\"$DocumentAddForm?sessionid=$SessionID\">Add a document</a> ".
-          "or <a href=\"$SessionModify?sessionid=$SessionID\">update the agenda</a> for this session)\n";
-  } else {
-    print "<br>(<a href=\"$SessionModify?sessionid=$SessionID\">Update the agenda</a> for this session)\n";
-  }       
+  print "<br>(<a href=\"$DocumentAddForm?sessionid=$SessionID\">Upload a document</a> ".
+        "or <a href=\"$SessionModify?sessionid=$SessionID\">update the agenda</a> for this session)\n";
   print "<p></center> \n";
 }
 
@@ -402,8 +398,12 @@ sub PrintMeetingInfo($;$) {
   print "<a href=\"$DisplayMeeting?conferenceid=$ConferenceID\">$Conferences{$ConferenceID}{Title}</a>\n";
   print "</big></b><br>\n";
 
-  print " held from ",&EuroDate($Conferences{$ConferenceID}{StartDate});
-  print " to ",&EuroDate($Conferences{$ConferenceID}{EndDate});
+  if ($Conferences{$ConferenceID}{StartDate} ne $Conferences{$ConferenceID}{EndDate}) {
+    print " held from ",&EuroDate($Conferences{$ConferenceID}{StartDate});
+    print " to ",&EuroDate($Conferences{$ConferenceID}{EndDate});
+  } else {
+    print " held on ",&EuroDate($Conferences{$ConferenceID}{StartDate});
+  }
   print " in $Conferences{$ConferenceID}{Location}\n";
 
   if ($Conferences{$ConferenceID}{URL}) {
@@ -437,7 +437,7 @@ sub PrintMeetingInfo($;$) {
   print "<p>\n";
   
   if ($AddTalkLink) {
-    print "(<a href=\"$DocumentAddForm?conferenceid=$ConferenceID\">Add a document</a> ".
+    print "(<a href=\"$DocumentAddForm?conferenceid=$ConferenceID\">Upload a document</a> ".
           "to this meeting or conference)\n";
   }
   
@@ -561,7 +561,7 @@ sub AllMeetingsTable (;$) {
   
   &SpecialMajorTopics;
   
-  my $NCols = 2;
+  my $NCols = 4;
   my @MajorTopicIDs = (@GatheringMajorIDs,0);
 
   my $Col   = 0;

@@ -158,7 +158,7 @@ sub TalkEntryForm (@) {
     print "</tr>\n";
     print "<tr valign=top>\n";
     print "<td colspan=3>\n"; &TalkNewSession($SessionOrderID); print "</td>\n";
-    if ($TalkDefaultDocID) {
+    if ($TalkDefaultDocID && $TalkSeparatorDefault ne "Yes") {
       my $TitleLink = &NewDocumentLink($TalkDefaultDocID,undef,"title");
       print "<td colspan=2>Match: $TitleLink</td>\n";
     } else {

@@ -69,7 +69,7 @@ sub SetFileOptions {
     $Archive = $UploadTypePref
   }  
 
-  if ($Archive eq "single") {$NumberUploads = 1;}  # Make sure
+  if ($Archive eq "single") {$NumberUploads = 3;}  # Make sure
   if ($Archive eq "multi")  {$Archive = "single";} # No real difference
   if ($Archive ne "archive" && $Archive ne "single") {
     $Archive = "single";
@@ -94,10 +94,10 @@ sub SetFileOptions {
       my @DocFiles = &FetchDocFiles($DocRevID);
       $NumberUploads = @DocFiles; # FIXME: One line with scalar
       unless ($NumberUploads) { # Gyrations to handle docs that have 0 files
-        $NumberUploads = 1;
+        $NumberUploads = 3;
       }  
     } else {
-      $NumberUploads = 1;
+      $NumberUploads = 3;
     }  
   }
 }

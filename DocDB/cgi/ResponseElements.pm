@@ -338,11 +338,12 @@ sub FullDocumentID ($;$) {
 
 sub DocumentLink { #FIXME: Make Version optional, Document URL, "title" mode 
   my ($DocumentID,$Version,$Title) = @_;
-  my $Link = "<a href=\"$ShowDocument\?docid=$DocumentID\&version=$Version\">";
+  my $DocNumber .= &FullDocumentID($DocumentID,$Version);
+  my $Link = "<a title=\"$DocNumber\" href=\"$ShowDocument\?docid=$DocumentID\&version=$Version\">";
   if ($Title) {
     $Link .= $Title;
   } else {
-    $Link .= &FullDocumentID($DocumentID,$Version);
+    $Link .= $DocNumber;
   }
   $Link .=  "</a>";
 }         

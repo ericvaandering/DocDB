@@ -10,9 +10,12 @@ sub GetAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with all authors
     if ($MiddleInitials) {
       $Authors{$AuthorID}{FULLNAME}  = "$FirstName $MiddleInitials $LastName";
       $Authors{$AuthorID}{Formal}    = "$LastName, $FirstName $MiddleInitials";
-    } else {
+    } elsif ($FirstName) {
       $Authors{$AuthorID}{FULLNAME}  = "$FirstName $LastName";
       $Authors{$AuthorID}{Formal}    = "$LastName, $FirstName";
+    } else {
+      $Authors{$AuthorID}{FULLNAME}  = "$LastName";
+      $Authors{$AuthorID}{Formal}    = "$LastName";
     }
     $Authors{$AuthorID}{LASTNAME}  =  $LastName;
     $Authors{$AuthorID}{FIRSTNAME} =  $FirstName;

@@ -72,15 +72,20 @@ sub SubmitterByID {
   print "<td>$author_link</td></tr>\n";
 }
 
-sub AuthorLink {
+sub AuthorLink ($;%) {
   require "AuthorSQL.pm";
   
-  my ($AuthorID) = @_;
+  my ($AuthorID,%Params) = @_;
+  my $Format = $Params{-format} || "full"; # full, formal
   
   &FetchAuthor($AuthorID);
   my $link;
   $link = "<a href=$ListByAuthor?authorid=$AuthorID>";
-  $link .= $Authors{$AuthorID}{FULLNAME};
+  if ($Format eq "full") {
+    $link .= $Authors{$AuthorID}{FULLNAME};
+  } elsif ($Format eq "formal") {
+    $link .= $Authors{$AuthorID}{Formal};
+  }
   $link .= "</a>";
   
   return $link;
@@ -140,7 +145,7 @@ sub AuthorsTable {
       $NThisCol = 0;
     }
     ++$NThisCol;
-    my $author_link = &AuthorLink($AuthorID);
+    my $author_link = &AuthorLink($AuthorID, -format => "formal");
     print "<li>$author_link\n";
   }  
   print "</ul></td></tr>";
