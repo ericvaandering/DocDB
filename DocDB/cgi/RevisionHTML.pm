@@ -390,21 +390,29 @@ sub OtherVersionLinks {
   print "<div id=\"OtherVersions\">\n";
   print "<b>Previous Versions:</b>\n";
   print "<ul>\n";
+  
+  my $Class = "Odd";
+  
   foreach $RevID (@RevIDs) {
     my $Version = $DocRevisions{$RevID}{VERSION};
     if ($Version == $CurrentVersion) {next;}
     unless (&CanAccess($DocumentID,$Version)) {next;}
     $link = &DocumentLink($DocumentID,$Version);
     $date = &EuroDateHM($DocRevisions{$RevID}{DATE});
-    print "<li>$link \n";
+    print "<li class=\"$Class\">$link \n";
     if ($UseSignoffs) {
       require "SignoffUtilities.pm";
       my ($ApprovalStatus,$LastApproved) = &RevisionStatus($RevID);
       unless ($ApprovalStatus eq "Unmanaged") { 
-        print " \&nbsp $ApprovalStatus";
+        print "<br/>$ApprovalStatus";
       }  
     }  
-    print " \&nbsp ($date)</li>\n";
+    if ($Class eq "Odd") {  
+      $Class = "Even";
+    } else {    
+      $Class = "Odd";
+    }  
+    print "<br/>($date)</li>\n";
   }
   print "</ul>\n";
   print "</div>\n";
