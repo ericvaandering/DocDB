@@ -185,7 +185,7 @@ sub ExistsFile($$) {
   ($DocFileID) = $file_select -> fetchrow_array;
 
   if ($DocFileID) {
-    return 1;
+    return $DocFileID;
   } else {
     return 0;
   }    

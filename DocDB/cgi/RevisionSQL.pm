@@ -160,6 +160,17 @@ sub FetchRevisionsByMinorTopic {
   return @DocRevIDs;
 }
 
+sub UpdateRevision (%) { # Later add other fields, where clause
+  my %Params = @_;
+  
+  my $DocRevID = $Params{-docrevid};
+  my $DateTime = $Params{-datetime} || &SQLNow();
+  
+   
+  my $Update = $dbh -> prepare("update DocumentRevision set RevisionDate=? where DocRevID=?");
+  $Update -> execute ($DateTime,$DocRevID);
+}  
+  
 sub InsertRevision {
   
   my %Params = @_;

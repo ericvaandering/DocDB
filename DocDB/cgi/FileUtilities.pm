@@ -34,10 +34,12 @@ sub AddFiles (%) {
   
   my %Params = @_;
   
-  my $DocRevID   =   $Params{-docrevid};   
-  my $DateTime   =   $Params{-datetime};   # Pass on, don't deal with   
-  my $OldVersion =   $Params{-oldversion}; # For copying files from old version  
-  my %Files      = %{$Params{-files}};
+  my $DocRevID   = $Params{-docrevid};   
+  my $DateTime   = $Params{-datetime}; 
+  my $ReplaceOld = $Params{-replaceold}; # Replace files of the same name  
+  my $OldVersion = $Params{-oldversion}; # For copying files from old version  
+
+  my %Files = %{$Params{-files}};
   
   push @DebugStack,"Adding files for DRI $DocRevID";
   
@@ -55,44 +57,38 @@ sub AddFiles (%) {
   my $Directory = &GetDirectory($DocumentID,$Version); 
 
   foreach my $File (@Files) {
+    my $ShortName = "";
     if ($Files{$File}{Filename} && (-e $Files{$File}{Filename})) {
       my @Parts = split /\//,$Files{$File}{Filename};
       $ShortName = pop @Parts;
-      $FileID = &InsertFile(-docrevid    => $DocRevID, -datetime => $DateTime,
-                            -filename    => $ShortName,
-                            -main        => $Files{$File}{Main},
-                            -description => $Files{$File}{Description});
-      push @FileIDs,$FileID;
       system ("cp",$Files{$File}{Filename},$Directory);
     } elsif ($Files{$File}{File}) {
       push @DebugStack,"Trying to upload $File $Files{$File}{File} Main: $Files{$File}{Main}";
-      my $ShortName = &ProcessUpload($Directory,$Files{$File}{File});
-      $FileID = &InsertFile(-docrevid    => $DocRevID, -datetime => $DateTime,
-                            -filename    => $ShortName,
-                            -main        => $Files{$File}{Main},
-                            -description => $Files{$File}{Description});
-      push @FileIDs,$FileID;
+      $ShortName = &ProcessUpload($Directory,$Files{$File}{File});
     } elsif ($Files{$File}{CopyFileID}) {
-      push @DebugStack,"Trying to Copy $File $Files{$File}{CopyFileID} Main: $Files{$File}{Main}";
-      my $ShortName = &FetchFile($Files{$File}{CopyFileID});
+      push @DebugStack,"Trying to copy $File $Files{$File}{CopyFileID} Main: $Files{$File}{Main}";
+      $ShortName = &FetchFile($Files{$File}{CopyFileID});
       &CopyFile($Directory,$ShortName,$DocumentID,$OldVersion);
-      $FileID = &InsertFile(-docrevid    => $DocRevID, -datetime => $DateTime,
-                            -filename    => $ShortName,
-                            -main        => $Files{$File}{Main},
-                            -description => $Files{$File}{Description});
-      push @FileIDs,$FileID;
-      
     } elsif ($Files{$File}{FileID}) {
       push @DebugStack,"Trying to duplicate $File $Files{$File}{CopyFileID} Main: $Files{$File}{Main}";
       my $OldFileID = $Files{$File}{FileID};
       &FetchFile($OldFileID);
-      $FileID = &InsertFile(-docrevid    => $DocRevID, -datetime => $DocFiles{$OldFileID}{Date},
-                            -filename    => $DocFiles{$OldFileID}{Name},
+      $ShortName = $DocFiles{$OldFileID}{Name};
+      $DateTime  = $DocFiles{$OldFileID}{Date};
+    } # else other methods
+    
+    if ($ReplaceOld && $ShortName) {
+      my $OldFileID = &ExistsFile($DocRevID,$ShortName);
+      &DeleteFile(-fileid => $OldFileID);
+    }
+      
+    if ($ShortName) {
+      $FileID = &InsertFile(-docrevid    => $DocRevID, -datetime => $DateTime,
+                            -filename    => $ShortName,
                             -main        => $Files{$File}{Main},
                             -description => $Files{$File}{Description});
       push @FileIDs,$FileID;
-      
-    }# else other methods
+    }  
   } 
   return @FileIDs;   
 }

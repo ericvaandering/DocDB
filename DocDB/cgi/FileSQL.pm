@@ -42,4 +42,15 @@ sub InsertFile (%) {
   return $FileID;
 }
 
+sub DeleteFile (%) {
+  my %Params = @_;
+  
+  my $FileID    = $Params{-fileid} || 0;
+  
+  if ($FileID) {
+    my $Delete = $dbh -> prepare("delete from DocumentFile where DocFileID=?");
+    $Delete -> execute($FileID);
+  }
+}
+    
 1;

@@ -315,7 +315,8 @@ sub ExtractArchive {
 
 sub DownloadURLs (%) {
   use Cwd;
-
+  require "WebUtilities.pm";
+  
   my %Params = @_;
   
   my $TmpDir = $Params{-tmpdir} || "/tmp";
@@ -329,6 +330,11 @@ sub DownloadURLs (%) {
 
   foreach my $FileKey (keys %Files) {
     if ($Files{$FileKey}{URL}) {
+      my $URL = $Files{$FileKey}{URL};
+      unless (&ValidFileURL($URL)) {
+        push @ErrorStack,"The URL <tt>$URL</tt> is not well formed. Don't forget ".
+                         "http:// on the front and a file name after the last /.";
+      }  
       my @Authentication = ();
       if ($Files{$FileKey}{User} && $Files{$FileKey}{Pass}) {
         push @DebugStack,"Using authentication";
