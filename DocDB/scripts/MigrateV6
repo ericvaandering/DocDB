@@ -1,0 +1,69 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+# Usage: MigrateV5 --u=username --p=password --a=init|migrate|delete
+
+use DBI;
+use Getopt::Long;
+
+require "CGIInclude.pm";
+
+require "DocDBGlobals.pm";
+
+&GetOptions("a=s" => \$Action,"u=s" => \$User,"p=s" => \$Password);
+
+# Here, replace Group1,Group2, etc. with the groups you want to give view or 
+# modify access to  all your existing meetings. If you make the list blank
+# "... = ()" any group that can create documents can modify all the meetings
+# and all the meetings will be publically viewable.
+
+# Deviations from this must be fixed by hand with the meeting organizer.
+
+my @DefaultViewGroups   = ("Group1","Group2");
+my @DefaultModifyGroups = ("Group1","Group2");
+
+unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate") {
+  print "Usage: MigrateV6 --u=username --p=password --a=init|migrate|delete\n\n";
+  print "This script is used to migrate from a version 5 to version 6 DB structure. \n";
+  print "Run this script in \"init\" mode first, then update the DocDB code.\n";
+  print "Then run this script again in \"migrate\" mode. \n";
+  print "You will likely want to edit the script before running in migrate mode.  \n\n";
+  print "For this upgrade there is no delete step.  \n\n";
+#  print "Run this script in \"init\" mode first, then in \"migrate\" mode.  \n\n";
+#  print "At this point you can update the CGI code and when you are comfortable  \n";
+#  print "everything is OK, run in \"delete\" mode to erase old columns and/or tables.  \n";
+ exit;
+}  
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$User,$Password);
+
+if ($Action eq "init") { # Modify existing tables and add new tables in preparation for migration 
+
+# Meeting expansion
+
+  my $EmailUserAdd  = $dbh -> prepare("alter table EmailUser add Verified int"); 
+  my $EmailUserAdd2 = $dbh -> prepare("alter table EmailUser add AuthorID int"); 
+
+  my $UsersGroupCreate = $dbh -> prepare("create table UsersGroup ".
+                   "(UsersGroupID integer auto_increment primary key,".
+                   " EmailUserID integer, GroupID integer,".
+                   " TimeStamp timestamp,".
+                   " index(EmailUserID))"); 
+
+  $EmailUserAdd             -> execute();
+  $EmailUserAdd2            -> execute();
+  $UsersGroupCreate         -> execute();
+  
+}
+
+if ($Action eq "migrate") {
+  print "No migrations necessary.\n";
+}
+
+if ($Action eq "delete") { 
+  print "No deletions necessary.\n";
+}
+
+exit;
