@@ -384,8 +384,10 @@ sub EuroDateHM($) {
 }
 
 sub OtherVersionLinks {
+  require "Sorts.pm";
+  
   my ($DocumentID,$CurrentVersion) = @_;
-  my @RevIDs   = reverse sort &FetchRevisionsByDocument($DocumentID);
+  my @RevIDs   = reverse sort RevisionByVersion &FetchRevisionsByDocument($DocumentID);
   
   unless ($#RevIDs > 0) {return;}
   print "<center>\n";

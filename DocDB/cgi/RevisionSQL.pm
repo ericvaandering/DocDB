@@ -32,7 +32,8 @@ sub FetchDocRevisionByID {
   $DocRevisions{$DocRevID}{ABSTRACT}      = $Abstract;
   $DocRevisions{$DocRevID}{DATE}          = $RevisionDate;
   $DocRevisions{$DocRevID}{TIMESTAMP}     = $TimeStamp;
-  $DocRevisions{$DocRevID}{VERSION}       = $VersionNumber;
+  $DocRevisions{$DocRevID}{VERSION}       = $VersionNumber; # FIXME: BWC
+  $DocRevisions{$DocRevID}{Version}       = $VersionNumber;
   $DocRevisions{$DocRevID}{DOCID}         = $DocumentID;
   $DocRevisions{$DocRevID}{OBSOLETE}      = $Obsolete;
   $DocRevisions{$DocRevID}{Keywords}      = $Keywords;
@@ -129,7 +130,8 @@ sub GetAllRevisions {
     $DocRevisions{$DocRevID}{SUBMITTER}     = $SubmitterID;
     $DocRevisions{$DocRevID}{TITLE}         = $DocumentTitle;
     $DocRevisions{$DocRevID}{DATE}          = $RevisionDate;
-    $DocRevisions{$DocRevID}{VERSION}       = $VersionNumber;
+    $DocRevisions{$DocRevID}{VERSION}       = $VersionNumber; # FIXME: BWC
+    $DocRevisions{$DocRevID}{Version}       = $VersionNumber;
     $DocRevisions{$DocRevID}{DOCID}         = $DocumentID;
     $DocRevisions{$DocRevID}{OBSOLETE}      = $Obsolete;
     $DocRevisions{$DocRevID}{COMPLETE}      = 0;

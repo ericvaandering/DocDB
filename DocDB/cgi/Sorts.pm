@@ -102,6 +102,42 @@ sub DocumentByRevisionDate {
     $asec <=> $bsec;            
 }
 
+sub RevisionByRevisionDate {
+
+### All revisions and documents (of interest) must be fetched before calling
+  
+  my $adt = $DocRevisions{$a}{DATE};
+  my $bdt = $DocRevisions{$b}{DATE};
+  
+  my ($adate,$atime) = split /\s+/,$adt;
+  my ($bdate,$btime) = split /\s+/,$bdt;
+  
+  my ($ayear,$amonth,$aday) = split /\-/,$adate;
+  my ($byear,$bmonth,$bday) = split /\-/,$bdate;
+  
+  my ($ahour,$amin,$asec) = split /:/,$atime;
+  my ($bhour,$bmin,$bsec) = split /:/,$btime;
+  
+   $ayear <=> $byear
+          or
+  $amonth <=> $bmonth 
+          or
+    $aday <=> $bday
+          or
+   $ahour <=> $bhour
+          or
+    $amin <=> $bmin 
+          or
+    $asec <=> $bsec;            
+}
+
+sub RevisionByVersion {
+
+### All revisions and documents (of interest) must be fetched before calling
+  
+  $DocRevisions{$a}{Version} <=> $DocRevisions{$b}{Version};
+}
+
 sub DocumentByRequester {
 
 ### All documents (of interest) must be fetched before calling
