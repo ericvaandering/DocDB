@@ -3,7 +3,23 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
-#
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 # FIXME: Unify various TopicLink, MeetingLink, NewMeetingLink, ConferenceLink, GatheringLink
 
@@ -69,8 +85,8 @@ sub SessionEntryForm ($@) {
    print "<th><b><a "; &HelpLink("meetingorder");     print "Order</a></b> or <br>\n";
    print "    <b><a "; &HelpLink("sessiondelete");    print "Delete</a></td>\n";
    print "<th><b><a "; &HelpLink("meetingseparator"); print "Break</a></th>\n";
-   print "<th><b><a "; &HelpLink("sessioninfo");      print "Location<br>Start Date and Time</a></th>\n";
    print "<th><b><a "; &HelpLink("sessioninfo");      print "Session Title & Description</a></th>\n";
+   print "<th><b><a "; &HelpLink("sessioninfo");      print "Location<br>Start Date and Time</a></th>\n";
   print "</tr>\n";
   
   # Sort session IDs by order
@@ -127,14 +143,14 @@ sub SessionEntryForm ($@) {
      print "</td>\n";
 
      print "<td align=center>\n"; &SessionSeparator($MeetingOrderID);  print "</td>\n";
-     print "<td>\n";              &SessionLocation;                    print "</td>\n";
      print "<td>\n";              &SessionTitle($SessionDefaultTitle); print "</td>\n";
+     print "<td>\n";              &SessionLocation;                    print "</td>\n";
     print "</tr>\n";
 
     print "<tr valign=top>\n";
      print "<td>&nbsp</td>\n";
-     print "<td align=right>\n";  &SessionDateTimePullDown;            print "</td>\n";
      print "<td>\n";              &SessionDescription;                 print "</td>\n";
+     print "<td align=right>\n";  &SessionDateTimePullDown;            print "</td>\n";
     print "</tr>\n";
 
     print "<tr valign=top><td colspan=4><hr width=95%></td>\n";
