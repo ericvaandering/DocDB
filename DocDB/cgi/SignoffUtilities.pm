@@ -207,6 +207,27 @@ sub UnsignRevision { # Remove all signatures from a revision
   return $Status;    
 }
 
+sub NotifySignees ($) {
+  require "SignoffSQL.pm";
+  require "MailNotification.pm";
+  
+  my ($DocRevID) = @_;
+
+  my @SignoffIDs   = &GetAllSignoffsByDocRevID($DocRevID);
+  my @EmailUserIDs = ();
+  foreach my $SignoffID (@SignoffIDs) {
+    if (&SignoffStatus($SignoffID) eq "Ready") {
+      my @SignatureIDs = &GetSignatures($SignoffID);
+      foreach my $SignatureID (@SignatureIDs) {
+        push @EmailUserIDs,$Signatures{$SignatureID}{EmailUserID};
+      }
+    } 
+  }
+  &MailNotices(-docrevid => $DocRevID, -type => "sign", -emailids => \@EmailUserIDs);
+}
+  
+}
+
 sub CopyRevisionSignoffs { # CopySignoffs from one revision to another
                            # One mode to copy with signed Signatures, 
                            # one without

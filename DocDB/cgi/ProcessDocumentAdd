@@ -495,7 +495,7 @@ print "You were successful. Your Document ID is <b>$full_docid, version
 &OtherVersionLinks($documentID,$version);
 
 if ($MailInstalled) {
-  &MailNotices($DocRevID);
+  &MailNotices(-docrevid => $DocRevID, -type => "update");
 }
 
 &DocDBNavBar();

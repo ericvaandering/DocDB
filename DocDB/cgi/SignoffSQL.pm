@@ -184,10 +184,16 @@ sub GetSignatures ($) {
   $SignatureList -> execute($SignoffID);
   $SignatureList -> bind_columns(undef, \($SignatureID));
   while ($SignatureList -> fetch) {
+    &FetchSignature($SignatureID);
     push @SignatureIDs,$SignatureID;
   }
   
   return @SignatureIDs;  
+}
+
+sub ClearSignatures {
+  $HaveAllSignatures = 0;
+  %Signatures = ();
 }
 
 sub FetchSignature ($) {

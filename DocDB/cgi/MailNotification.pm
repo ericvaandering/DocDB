@@ -3,16 +3,29 @@ sub MailNotices ($) {
   require Mail::Mailer;
 
   require "RevisionSQL.pm";
+  require "NotificationSQL.pm";
   require "ResponseElements.pm";
   
-  my ($DocRevID) = @_;
+  my (%Params) = @_;
+
+  my $DocRevID     =   $Params{-docrevid};
+  my $Type         =   $Params{-type}      || "update";
+  my @EmailUserIDs = @{$Params{-emailids}};
   
   &FetchDocRevisionByID($DocRevID);
 
 # Figure out who cares 
 
-  my @Addressees = &UsersToNotify($DocRevID,"immediate");
-
+  my @Addressees = ();
+  if ($Type eq "update") {
+    @Addressees = &UsersToNotify($DocRevID,"immediate");
+  } elsif ($Type eq "signature") {
+    foreach my $EmailUserID (@EmailUserIDs) {# Extract emails
+      &FetchEmailUser($EmailUserID);
+      push @Addressees,$EmailUser{$EmailUserID}{EmailAddress};
+    }
+  }  
+  
 # If anyone, open the mailer
 
   if (@Addressees) {
@@ -23,12 +36,29 @@ sub MailNotices ($) {
     my $FullID = &FullDocumentID($DocRevisions{$DocRevID}{DOCID},$DocRevisions{$DocRevID}{VERSION});
     my $Title  = $DocRevisions{$DocRevID}{Title};
 
+    my ($Subject,$Message,$Feedback);
+    
+    if ($Type eq "update") {
+      $Subject  = "$FullID: $Title";
+      $Message  = "The following document was added or changed ".
+                  "in the $Project Document Database:\n\n";
+      $Feedback = "<b>E-mail sent to: </b>";           
+    } elsif ($Type eq "signature") {
+      $Subject  = "Ready to sign: $FullID: $Title";
+      $Message  = "The following document ".
+                  "in the $Project Document Database ".
+                  "is ready for your signature:\n".
+                  "(Note that you may not be able so sign if you share ".
+                  "signature authority.)\n\n";
+      $Feedback = "<b>Signature(s) requested from: </b>";           
+    }  
+
     $Headers{To} = \@Addressees;
     $Headers{From} = "$Project Document Database <$DBWebMasterEmail>";
-    $Headers{Subject} = "$FullID: $Title";
+    $Headers{Subject} = $Subject;
 
     $Mailer -> open(\%Headers);    # Start mail with headers
-    print $Mailer "The following document was added or changed in the $Project Document Database:\n\n";
+    print $Mailer $Message;
     &RevisionMailBody($DocRevID);  # Write the body
     $Mailer -> close;              # Complete the message and send it
     my $Addressees = join ', ',@Addressees;
@@ -36,7 +66,7 @@ sub MailNotices ($) {
     $Addressees =~ s/</\&lt\;/g;
     $Addressees =~ s/>/\&gt\;/g;
     
-    print "<b>E-mail sent to: </b>",$Addressees,"<p>";
+    print $Feedback,$Addressees,"<p>";
   }  
 }
 

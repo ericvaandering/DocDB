@@ -120,13 +120,21 @@ print "<b>You have $SignMessage the document. The new document information is
           shown below:</b><p/>\n"; 
 print "<hr/>\n"; 
 
-# Get revision number
+# Get revision number and print updated info
 
 my $SignoffID = $Signatures{$SignatureID}{SignoffID};
 &FetchSignoff($SignoffID);
 
+&ClearSignatures;
+
 my $DocRevID  = $Signoffs{$SignoffID}{DocRevID};
 &PrintRevisionInfo($DocRevID);
+
+# Send E-mail
+
+if ($MailInstalled) {
+  &NotifySignees($DocRevID);
+}
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
