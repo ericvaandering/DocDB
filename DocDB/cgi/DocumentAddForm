@@ -171,7 +171,7 @@ if ($mode eq "add" && ($SessionID||$ConferenceID)) {
     &FetchSessionByID();
     my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
     &FetchConferenceByConferenceID($ConferenceID);
-    $MinorTopicID = $Conferences{$ConferenceID}{Minor};
+    $MinorTopicID = $Conferences{$ConferenceID}{Minor}; # FIXME: Why doesn't this work?
   } elsif ($ConferenceID) { # Build list for ConferenceID
     @CheckSessionTalkIDs = &FetchSessionTalksByConferenceID($ConferenceID);
     &FetchConferenceByConferenceID($ConferenceID);

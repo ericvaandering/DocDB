@@ -10,16 +10,18 @@ use DBI;
 $StartTime = new Benchmark;
 
 require "DocDBGlobals.pm";
-require "ResponseElements.pm";
 
 require "AuthorSQL.pm";
 require "DocumentSQL.pm";
 require "RevisionSQL.pm";
 require "SecuritySQL.pm";
 
+require "ResponseElements.pm";
+require "AuthorHTML.pm";
+
 require "HTMLUtilities.pm";
-require "Security.pm";
 require "Sorts.pm";
+require "Messages.pm";
 
 $query = new CGI;  # Global for subroutines
 
@@ -37,37 +39,23 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 print $query->header;
 &DocDBHeader("Document List by Author");
 
+&FetchAuthor($AuthorID);
+
+unless ($Authors{$AuthorID}{LASTNAME}) {
+  push @ErrorStack,$Msg_AuthorInvalid;
+}
+
+&EndPage(@ErrorStack);
+
+### Output Information
+
 print "<center><h4><font color=\"blue\">\n";
 &PrintAuthorInfo($AuthorID);
 print "</font><br>is listed as an author on the following documents:</h4></center><p>\n";
 
-### FIXME: Use GetAuthorDocuments
-
-my $revision_list = $dbh -> prepare(
-   "select DocRevID from RevisionAuthor where AuthorID=?"); 
-
-my $document_list = $dbh -> prepare(
-   "select DocumentID from DocumentRevision where DocRevID=? and Obsolete=0"); 
-
-my $DocumentID,$DocRevID;
-
-### Get all revisions with this author
-
-my %DocumentIDs = ();
-$revision_list -> execute($AuthorID);
-$revision_list -> bind_columns(undef, \($DocRevID));
-
-while ($revision_list -> fetch) {
-  &FetchDocRevisionByID($DocRevID);
-  if ($DocRevisions{$DocRevID}{OBSOLETE}) {next;}
-  $document_list -> execute($DocRevID);
-  ($DocumentID) = $document_list -> fetchrow_array;
-  $DocumentIDs{$DocumentID} = 1; # Hash removes duplicates
-}
-
 ### Get list of documents and read in the information we need from database
 
-my @DocumentIDs = keys %DocumentIDs;  # End FIXME
+my @DocumentIDs = &GetAuthorDocuments($AuthorID);  
 
 foreach my $DocumentID (@DocumentIDs) { # For shorter lists
   &FetchDocument($DocumentID);

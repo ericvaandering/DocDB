@@ -29,7 +29,11 @@ $Msg_ModEUserEmpty    = "You must select a user to modify or delete.";
 $Msg_ModTopicEmpty    = "You must select a topic to modify or delete.";
 $Msg_ModConfEmpty     = "You must select a conference to modify or delete.";
 
-# Messages for topic creation/modification
+# Messages for author creation, modification, display
+
+$Msg_AuthorInvalid    = "You did not select a valid author.";
+
+# Messages for topic creation, modification, display
 
 $Msg_TopicNoShort      = "You must supply a short description for your topic or meeting.";
 $Msg_TopicNoLong       = "You must supply a long description for your topic or meeting.";

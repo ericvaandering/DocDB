@@ -1,5 +1,11 @@
+#
+#        Name: FSUtilities.pm
+# Description: Routines to deal with files stored in the file system.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
 #  Functions in this file:
-#  
 #  
 #  FullFile
 #    Given a document ID, version number, and short file name,
@@ -67,18 +73,21 @@ sub FileSize {
   my $RawSize = (-s $File);
   my $Size;
   
-  if ($RawSize > 1024*1024*1024) {
-    $Size = sprintf "%8.1f GB",$RawSize/(1024*1024*1024);
-  } elsif ($RawSize > 1024*1024) {
-    $Size = sprintf "%8.1f MB",$RawSize/(1024*1024);
-  } elsif ($RawSize > 1024) {
-    $Size = sprintf "%8.1f kB",$RawSize/(1024);
+  if (-e $File) {
+    if ($RawSize > 1024*1024*1024) {
+      $Size = sprintf "%8.1f GB",$RawSize/(1024*1024*1024);
+    } elsif ($RawSize > 1024*1024) {
+      $Size = sprintf "%8.1f MB",$RawSize/(1024*1024);
+    } elsif ($RawSize > 1024) {
+      $Size = sprintf "%8.1f kB",$RawSize/(1024);
+    } else {
+      $Size = "$RawSize bytes";
+    }   
   } else {
-    $Size = "$RawSize bytes";
-  }   
+    $Size = "file does not exist";
+  }  
 
   return $Size;
-
 }
         
 sub GetDirectory { # Returns a directory name
