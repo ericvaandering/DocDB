@@ -190,6 +190,10 @@ $SelectEmailPrefs      = $cgi_root."SelectEmailPrefs";
 $DocDBHelp             = $cgi_root."DocDBHelp";
 $ShowTalkNote          = $cgi_root."ShowTalkNote";
 
+unless ($CSSDirectory) {
+  $CSSDirectory = $web_root."Static/css";
+}  
+
 if (!$Tar && $GTar) {
   $Tar = $GTar;
 } 

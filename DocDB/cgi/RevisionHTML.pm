@@ -118,6 +118,7 @@ sub PrintRevisionInfo {
   require "AuthorHTML.pm";
   require "FileHTML.pm";
   require "DocumentHTML.pm";
+  require "SecurityHTML.pm";
   
   my ($DocRevID,$HideButtons) = @_;
 
@@ -160,7 +161,7 @@ sub PrintRevisionInfo {
    &PrintDocNumber($DocRevID);
    &RequesterByID($Documents{$DocumentID}{REQUESTER});
    &SubmitterByID($DocRevisions{$DocRevID}{SUBMITTER});
-   &ModTimes;
+   &PrintModTimes;
   print "</dl>\n";
   print "</div>\n";
   
@@ -200,7 +201,7 @@ sub PrintRevisionInfo {
 
   if (&CanModify($DocumentID) && !$HideButtons) {
     print "<hr width=\"90%\"/>\n";
-    print "<table cellpadding=10>\n";
+    print "<center><table cellpadding=10>\n";
     print "<tr valign=top>";
     print "<td align=center width=33%>";
     &UpdateButton($DocumentID);
