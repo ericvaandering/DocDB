@@ -180,7 +180,7 @@ if (@warn_stack) {
   @warn_stack = ();
 }
 
-print "<center><table cellpadding=10 border=1>\n";
+print "<center><table cellpadding=10>\n";
 
 print "<tr>\n";
 print "<td colspan=4>\n";
