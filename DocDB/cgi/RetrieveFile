@@ -22,16 +22,19 @@ $query = new CGI;  # Global for subroutines
 @warn_stack  = ();
 
 $DocumentID = $params{docid};
+$DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
+$DocumentID =~ s/\s+$//;
+$Version    = $params{version};
+$AsOf       = $params{asof};
+$FileName   = $params{filename};
+$Extension  = $params{extension};
+
 unless ($DocumentID) {
   push @error_stack,"You are must supply a document number!";
 }  
 
-$FileName  = $params{filename};
-$Extension = $params{extension};
-$AsOf      = $params{asof};
-$Version   = $params{version};
-
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
 &GetSecurityGroups;
 
 &FetchDocument($DocumentID);
@@ -54,11 +57,12 @@ my $DocRevID;
 if (defined $Version) {
   $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 } elsif (defined $AsOf) {
-  unless (&CheckSQLDate($AsOf)) {
+  if (&CheckSQLDate($AsOf)) {
+    $DocRevID = &FetchRevisionByDocumentAndDate($DocumentID,$AsOf);
+    $Version  = $DocRevisions{$DocRevID}{VERSION};
+  } else {
     push @error_stack,"The as-of date must be specifed in the form YYYY-MM-DD.";
   }
-  $DocRevID = &FetchRevisionByDocumentAndDate($DocumentID,$AsOf);
-  $Version  = $DocRevisions{$DocRevID}{VERSION};
 }
 
 unless (&CanAccess($DocumentID,$Version)) {

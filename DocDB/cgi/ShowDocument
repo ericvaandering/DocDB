@@ -3,11 +3,8 @@
 # Author Eric Vaandering (ewv@fnal.gov)
 #
 
-use Benchmark;
 use CGI;
 use DBI;
-
-$StartTime = new Benchmark;
 
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
@@ -15,36 +12,48 @@ require "MySQLAccess.pm";
 require "FSUtilities.pm";
 require "HTMLUtilities.pm";
 require "Security.pm";
-
+require "SQLChecks.pm";
 
 $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
 
+@error_stack = ();
+@warn_stack  = ();
+
 $DocumentID = $params{docid};
 $DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
 $DocumentID =~ s/\s+$//;
+$Version    = $params{version};
+$AsOf       = $params{asof};
 
 unless ($DocumentID) {
-  print $query->header;
-  print "You are must supply a document number!<p>\n";
-  print $query->end_html; 
-  exit;
+  push @error_stack,"You are must supply a document number!";
 }  
-  
+
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
 &GetSecurityGroups;
+
 &FetchDocument($DocumentID);
 
-if ($params{version} eq "0") { # Options are undefined, 0, and non-zero.
-  $Version = 0;
-} else {
-  if ($params{version}) {
-    $Version    = $params{version};
-    $Version =~ s/^\s+//; # Remove leading and trailing spaces
-    $Version =~ s/\s+$//;
-  } else {   
-    $Version = $Documents{$DocumentID}{NVER};
+unless (defined $Version || defined $AsOf) {
+  $Version = $Documents{$DocumentID}{NVER};
+}
+
+if (defined $Version && defined $AsOf) {
+  push @error_stack,"You may not specify both a version and date.";
+}
+
+my $DocRevID;
+if (defined $Version) {
+  $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+} elsif (defined $AsOf) {
+  if (&CheckSQLDate($AsOf)) {
+    $DocRevID = &FetchRevisionByDocumentAndDate($DocumentID,$AsOf);
+    $Version  = $DocRevisions{$DocRevID}{VERSION};
+  } else {
+    push @error_stack,"The as-of date must be specifed in the form YYYY-MM-DD.";
   }
 }
 
@@ -52,27 +61,24 @@ print $query->header;
 &BTeVHeader("BTeV Document $DocumentID-v$Version");
 
 unless (&CanAccess($DocumentID,$Version)) {
-  print "<b>Either you are not authorized to view this document (with the username and password you supplied), or the document does not exist.</b><p>\n";
+  push @error_stack,"Either you are not authorized to view this document 
+                     (with the username and password you supplied), 
+                     or the document does not exist.";
   &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
-  exit;
 }  
 
-my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-
 unless ($DocRevID) { # Probably never executed since CanAccess fails.
-  print "This document does not exist.<p>\n";
+  push @error_stack,"This document does not exist.";
   &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
-  exit;
 }
-  
+
+if (@error_stack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@error_stack);
+}
 
 &PrintRevisionInfo($DocRevID);
 
 &OtherVersionLinks($DocumentID,$Version);
-
-$EndTime  = new Benchmark;
-$TimeDiff = timediff($EndTime,$StartTime);
-print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
 
 &DocDBNavBar;
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -42,19 +42,19 @@ sub FetchDocRevisionByID {
   return $DocRevID;
 }
 
-sub FetchRevisionByDocumentAndVersion { 
+sub FetchRevisionByDocumentAndVersion ($$) { 
   require "DocumentSQL.pm";
 
-  my ($documentID,$versionNumber) = @_;
-  &FetchDocument($documentID);
-  my $revision_list = $dbh->prepare(
+  my ($DocumentID,$VersionNumber) = @_;
+  &FetchDocument($DocumentID);
+  my $RevisionQuery = $dbh->prepare(
     "select DocRevID from DocumentRevision ".
     "where DocumentID=? and VersionNumber=? and Obsolete=0");
-  if ($DocRevIDs{$documentID}{$versionNumber}) {
-    return $DocRevIDs{$documentID}{$versionNumber};
+  if ($DocRevIDs{$DocumentID}{$VersionNumber}) {
+    return $DocRevIDs{$DocumentID}{$VersionNumber};
   }
-  $revision_list -> execute($documentID,$versionNumber);
-  my ($DocRevID) = $revision_list -> fetchrow_array;
+  $RevisionQuery -> execute($DocumentID,$VersionNumber);
+  my ($DocRevID) = $RevisionQuery -> fetchrow_array;
 
   &FetchDocRevisionByID($DocRevID);
 
@@ -66,13 +66,13 @@ sub FetchRevisionByDocumentAndDate ($$) {
 
   my ($DocumentID,$Date) = @_;
   &FetchDocument($DocumentID);
-  my $revision_list = $dbh->prepare(
+  my $RevisionQuery = $dbh -> prepare(
     "select MAX(DocRevID) from DocumentRevision ".
     "where DocumentID=? and RevisionDate<=? and Obsolete=0");
 
   $Date .= " 23:59:59";
-  $revision_list -> execute($DocumentID,$Date);
-  my ($DocRevID) = $revision_list -> fetchrow_array;
+  $RevisionQuery -> execute($DocumentID,$Date);
+  my ($DocRevID) = $RevisionQuery -> fetchrow_array;
 
   &FetchDocRevisionByID($DocRevID);
 
@@ -102,7 +102,7 @@ sub FetchRevisionsByDocument {
 
 sub GetAllRevisions {
   my ($Mode) = @_;
-  unless ($Mode) {$Mode = "brief"};
+  unless ($Mode) {$Mode = "brief"}; # Other modes not implemented yet
   my $revision_list = $dbh->prepare(
     "select DocRevID,SubmitterID,DocumentTitle,VersionNumber,".
            "RevisionDate,DocumentID,Obsolete ".
