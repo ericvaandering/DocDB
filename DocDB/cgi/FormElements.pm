@@ -162,8 +162,11 @@ sub SingleUploadBox {
                                  -maxlength => 128,
                                  -default => $DocFiles{$FileID}{DESCRIPTION});
     }
-    print $query -> checkbox(-name => "root", -checked => 'checked', 
-                             -value => $i, -label => '');
+    if ($DocFiles{$FileID}{ROOT}) {
+      print $query -> checkbox(-name => "root", -value => $FileID, -checked => 'checked', -label => '');
+    } else {
+      print $query -> checkbox(-name => "root", -value => $FileID, -label => '');
+    }
     print "<a "; &HelpLink("main"); print "Main?</a>\n";
     print "</td></tr>\n";
   }
@@ -198,8 +201,11 @@ sub SingleHTTPBox {
                                  -maxlength => 128,
                                  -default => $DocFiles{$FileID}{DESCRIPTION});
     }
-    print $query -> checkbox(-name  => "root", -checked => 'checked', 
-                             -value => $i,     -label   => '');
+    if ($DocFiles{$FileID}{ROOT}) {
+      print $query -> checkbox(-name => "root", -value => $FileID, -checked => 'checked', -label => '');
+    } else {
+      print $query -> checkbox(-name => "root", -value => $FileID, -label => '');
+    }
     print "<a "; &HelpLink("main"); print "Main?</a>\n";
     print "</td></tr>\n";
   }
