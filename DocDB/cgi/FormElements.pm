@@ -418,13 +418,8 @@ sub MultiTopicSelect { # Multiple scrolling selectable lists for topics
         $MatchLabels{$MinorID} = $MinorTopics{$MinorID}{SHORT};
       }  
     }
-    if (&MajorIsMeeting($MajorID)) {
-      @MatchMinorIDs = reverse sort byMeetingDate @MatchMinorIDs;
-    } elsif (&MajorIsConference($MajorID)) {
-      @MatchMinorIDs = reverse sort ConferenceByDate @MatchMinorIDs;
-    } else {
-      @MatchMinorIDs = sort byMinorTopic @MatchMinorIDs;
-    }
+    @MatchMinorIDs = sort byTopic @MatchMinorIDs;
+
     print $query -> scrolling_list(-name => "topics", 
              -values => \@MatchMinorIDs, -labels => \%MatchLabels,
              -size => 8, -multiple => 'true', -default => \@TopicDefaults);

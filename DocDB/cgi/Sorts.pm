@@ -8,49 +8,26 @@ sub byMinorTopic {
   $MinorTopics{$a}{SHORT} cmp $MinorTopics{$b}{SHORT};
 }    
 
-sub byMeetingDate {
-  ($adays,$amonth,$ayear) = split /\s+/,$MinorTopics{$a}{SHORT};
-  ($bdays,$bmonth,$byear) = split /\s+/,$MinorTopics{$b}{SHORT};
-  ($aday) = split /\-/,$adays;
-  ($bday) = split /\-/,$bdays;
-  
-                      $ayear <=> $byear
-                             or
-  $ReverseFullMonth{$amonth} <=> $ReverseFullMonth{$bmonth} 
-                             or
-                       $aday <=> $bday;            
-}    
-
 sub byTopic {
 
-  # Do reverse sort by date for Collaboration meetings, otherwise alphabetical
-  # FIXME use special topics numbering
+  # Do reverse sort by date for meetings, otherwise alphabetical
   
-  if (&MajorIsMeeting($MinorTopics{$a}{MAJOR}) &&
-      &MajorIsMeeting($MinorTopics{$b}{MAJOR})) {
-    my ($adays,$amonth,$ayear) = split /\s+/,$MinorTopics{$a}{SHORT};
-    my ($bdays,$bmonth,$byear) = split /\s+/,$MinorTopics{$b}{SHORT};
-    my ($aday) = split /\-/,$adays;
-    my ($bday) = split /\-/,$bdays;
-
-                        $byear <=> $ayear
-                               or
-    $ReverseFullMonth{$bmonth} <=> $ReverseFullMonth{$amonth} 
-                               or
-                         $bday <=> $aday;            
-  } elsif (&MajorIsConference($MinorTopics{$a}{MAJOR}) &&
-           &MajorIsConference($MinorTopics{$b}{MAJOR})) {
+  if ($MinorTopics{$a}{MAJOR} == $MinorTopics{$b}{MAJOR} &&
+      &MajorIsGathering($MinorTopics{$a}{MAJOR}) &&
+      &MajorIsGathering($MinorTopics{$b}{MAJOR}) ) {
            
     my $adate = $Conferences{$a}{StartDate}; 
     my $bdate = $Conferences{$b}{StartDate};
     my ($ayear,$amonth,$aday) = split /\-/,$adate;
     my ($byear,$bmonth,$bday) = split /\-/,$bdate;
 
-     $byear <=> $ayear
-            or
-    $bmonth <=> $amonth 
-            or
-      $bday <=> $aday
+                     $byear <=> $ayear
+                            or
+                    $bmonth <=> $amonth 
+                            or
+                      $bday <=> $aday
+                            or 
+    $MinorTopics{$a}{SHORT} cmp $MinorTopics{$b}{SHORT};
   } else {
     $MajorTopics{$MinorTopics{$a}{MAJOR}}{SHORT} cmp
     $MajorTopics{$MinorTopics{$b}{MAJOR}}{SHORT}
