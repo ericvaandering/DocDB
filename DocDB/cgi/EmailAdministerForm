@@ -38,6 +38,7 @@ require "AdministerElements.pm";
 
 require "MailNotification.pm";
 require "SecuritySQL.pm";
+require "CertificateUtilities.pm";
 require "NotificationSQL.pm";
 
 $query = new CGI;  # Global for subroutines
@@ -148,6 +149,19 @@ foreach my $EmailUserID (@EmailUserIDs) {
   print "<th>Can Sign:</th>";
   print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{CanSign}]."<br>\n"; 
   print "</td>\n";
+  print "</tr>\n";
+  print "<tr valign=top>\n";
+  
+  # Groups user belongs (or wants to belong to)
+  
+  print "<th>Groups:</th>";
+  print "<td><li>\n"; 
+  my @UserGroupIDs = &FetchSecurityGroupsByCert(-ignoreverification => 'true');
+  foreach my $UserGroupID (@UserGroupIDs) {
+    &FetchSecurityGroup($UserGroupID);
+    print "<li>$SecurityGroups{$UserGroupID}{NAME}</li>";
+  }   
+  print "</li></td>\n";
   print "</tr>\n";
   print "</table>\n";
   print "</td>\n";

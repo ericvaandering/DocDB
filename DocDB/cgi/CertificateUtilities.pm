@@ -20,13 +20,25 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-sub FetchSecurityGroupsByCert () {
+sub FetchSecurityGroupsByCert (%) {
+  my %Params = @_;
+
+  my $IgnoreVerification = $Params{-ignoreverification};
  
   my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
   my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
 
-  my $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                      "where Verified=1 and EmailAddress=? and Name=?");
+  # If we do http basic with users, this routine will function with minor modifications
+
+  my $EmailUserSelect;
+  if ($IgnoreVerification) {
+    $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
+                                     "where EmailAddress=? and Name=?");
+  } else {                                   
+    $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
+                                     "where Verified=1 and EmailAddress=? and Name=?");
+  }
+                                      
   $EmailUserSelect -> execute($CertEmail,$CertCN);
 
   my ($EmailUserID) = $EmailUserSelect -> fetchrow_array; 
