@@ -30,6 +30,7 @@ print "<li><a href=\"$DocumentAddForm?special=meeting\">Submit a talk</a> for
        the upcoming or just-past  meeting.\n";
 print "<li><a href=\"http://www-btev.fnal.gov/internal_documents/meetings.html\">Collaboration meeting listings</a> 
        pre-dating the Document Database.\n";
+print "<li> <a href=\"http://www-btev.fnal.gov/atwork/general/userinfo/meet.shtml\">Visiting Fermilab</a> for a Collaboration Meeting\n";
 print "</ul>\n";
 
 print "<h3>Meetings in the document database:</h3>\n";
