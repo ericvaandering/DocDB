@@ -1,0 +1,127 @@
+<HTML>
+  <HEAD>
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html;CHARSET=iso-8859-1">
+    <TITLE>Help for Posting a Multiple File BTeV Document</TITLE>
+
+<!--#include virtual="/styles/style_select.html"-->
+
+</head>
+<body  bgcolor="#ffffff" text="#000000" leftmargin=0 marginwidth=0
+    topmargin=00 marginheight=0 background="/styles/images/bg.gif">
+
+<center>
+<!-- note_page header starts here -->
+<!--#include virtual="/styles/note_page.html" -->
+<!-- note_page header ends here -->
+
+<table width="90%" cellpadding="0" border="0">
+<tr>
+<td><br>
+<h1>Help for posting a Multiple File BTeV Document</h1>
+
+    <P>You should already have requested a number for this Note.  
+    If you haven't, just follow the link provided to request one.
+    If a number has been assigned, but you have forgotten it or need 
+    to check the Notes database for any reason, follow the link 
+    provided for searching the database.</p>
+
+    <P>If this is a revised version of an already-posted Note, click 
+    "YES" for "Is this a revised version?". </P>
+
+    <P>Provide the full pathname for the abstract (text) file and for 
+      the tar file or gzipped tar file.
+      The files must be located on the machine where 
+      you are running your web browser. If you don't remember the filename then
+      a Browse button is provided. You must specify both and abstract file and 
+      a tar file.</P>
+
+      <h3>Preparing your tar file</h3>
+<p>The only format that is excepted for Multiple File Uploads is a tar 
+      file or a gzipped tar file if you are transferring a large
+      file. The tar files should consist of your primary document plus 
+      any supporting files. </P>
+
+      <p>The primary document must be one of the accepted types of
+      document, ps, pdf, doc, ppt, txt, html. The supporting files may 
+      be ps, pdf, doc, ppt, txt, xls, gif, jpeg, eps, jpg. They should 
+      be created with these file extensions. Other types may be added
+      on request. </P>
+
+<p>Create the tar file:<br>
+<br>
+<h4>UNIX</h4>
+
+<p>
+% tar -cvf my.tar my.doc fig1.ps fig2.ps<br>
+% gzip my.tar (this is optional)
+</P>
+
+<h4>Windows</h4><p>
+
+Launch the Tar program on your Windows machine and create the tar
+archive. 
+</P>
+
+<p>
+If you want to gzip your tar file you will need one of the compression 
+tools such as WinZip.</P>
+
+<p>
+You can now upload your tar file. You must specify the name of the
+    primary document in the tar file, this would be my.doc in the
+    example above.</P>
+
+<h3>What happens to your files?</h3>
+
+    <P>Your files will be uploaded to the BTeV webserver and checked for 
+    filetype and to make sure they are not empty files. The tar file
+      will then be
+    copied to the document area and unwound. The files will be renamed 
+      and some of them will be compressed to save space. The catalog
+      will be updated. Mail will
+    be sent to the BTEV-NOTES mailing list announcing the posting.</p>
+
+<h3>Special instructions if your primary document is an HTML file</h3>
+
+<p> You should create the main html file with file extension html. All 
+      links in the document that refer to files that you plan to
+      upload with the main html file should be relative links. This
+      means that if your file is my.html and you want to include a
+      link to fig1.ps you should specify it as &lt A HREF="fig1.ps"
+      &gt. Other external links should be made as usual.</p>
+
+<p> Create the tar file as described above. When the tar file is
+      unwound on the server it will ONLY rename the main document,
+      which means that your links will work provided you made them relative.</P>
+
+</td>
+</tr>
+</table>
+<br>
+
+<!-- footer begins here -->
+<!-- date and email info starts here -->
+<TABLE CELLPADDING="0" CELLSPACING="0" BORDER="0" width="90%"> 
+<TR> 
+<TD VALIGN="top"> 
+<P CLASS="smalltext">Send suggestions or comments to -
+<A HREF="mailto:garren@fnal.gov">The Pagemaster</A></P>
+</TD> 
+</TR> 
+</TABLE>
+                
+<!-- date and email info ends here -->
+
+<!-- legal notice bar starts here -->
+<!--#include virtual="/styles/footer.html"-->
+<!-- legal notice bar ends here -->
+
+<!-- footer ends here -->
+
+</center>
+
+  </BODY>
+</HTML>
+
+

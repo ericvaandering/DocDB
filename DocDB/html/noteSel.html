@@ -1,0 +1,212 @@
+<HTML>
+  <HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html;CHARSET=iso-8859-1">
+
+    <TITLE>BTeV Document Database Catalog Search</TITLE>
+
+<!--#include virtual="/styles/style_select.html"-->
+
+</head>
+<body  bgcolor="#ffffff" text="#000000" leftmargin=0 marginwidth=0
+    topmargin=00 marginheight=0 background="/styles/images/bg.gif">
+
+<center>
+<!-- note_page header starts here -->
+<!--#include virtual="/styles/note_page.html" -->
+<!-- note_page header ends here -->
+
+<table width="90%" cellpadding="0" border="0">
+<tr>
+<td><br>
+<h1>BTeV Document Database Catalog Search</h1>
+
+<p>Welcome to the Notes database.  You may 
+    <UL>
+      <LI> Search particular fields in the database
+      <LI> Search for a word or phrase without specifying a field
+      <LI> Use a combination of both.
+    </UL><p>
+
+<p>
+    A list of documents that match your search criteria will be returned 
+    as a list ordered by decreasing note number. 
+    If an electronic version of the document is available
+    a link to the electronic version of the 
+    document will be displayed; if there is an abstract, that will be 
+    shown also.</p>
+    
+
+  <p>If your search returns an unexpected result, try consulting 
+    <A HREF="noteSel_help.html">
+    <STRONG>helpful hints on searching</STRONG></A>.<BR>
+
+    If this doesn't help, contact 
+    <A HREF="mailto:garren@fnal.gov">garren@fnal.gov</A>.<br><br>
+
+
+    Note: a <A HREF="noteSelMin.html"><STRONG>brief version</STRONG></A>
+    of this page, to search on number and/or authors only, is also
+	      available. 
+</p>
+
+
+  <HR>
+
+  <FORM METHOD=POST ACTION="/cgi-private/docdb/noteModSel">
+
+    <INPUT TYPE=submit VALUE="start search"> 
+    <INPUT TYPE=reset VALUE="clear form">
+
+  <DL>
+    <DT>For multiple field searches, do you want to OR or AND the search 
+      	fields?  (Default is AND.)
+      <DD><INPUT TYPE=radio NAME="conj" VALUE="or">OR &#160; &#160; &#160;
+          <INPUT TYPE=radio NAME="conj" VALUE="and" CHECKED>AND
+
+    <DT>Maximum documents to be returned (default is 100): &#160; 
+      <INPUT NAME="max_docs" VALUE=100 SIZE=5>
+  </DL>
+
+  <DL>
+    <DT>Note number:
+      <DD><INPUT NAME="number" SIZE=5>
+
+    <DT>Title:
+      <DD><INPUT NAME="title" SIZE=40>
+
+    <DT>Author(s): 
+      <DD><INPUT NAME="authors" SIZE=40>
+
+    <DT>Publication information:
+      <DD><INPUT NAME="pub_info" SIZE=40>
+
+    <DT>Word or phrase search:
+      <DD><TEXTAREA NAME="pt" ROWS=2 COLS=40></TEXTAREA>
+
+    <DT>Requestor:
+      <DD><INPUT NAME="requestor" SIZE=40>
+  </DL>
+
+  <DL>
+
+Search by date. There are a number of options.  <p>
+
+<dt>	Search on date requested:
+<p>
+	    <DD>Year requested:<br>
+	      Enter year as YYYY digits (e.g., 2000)<br>
+	      Default search is =<br>
+	      
+	      <INPUT NAME="date_req_y" SIZE=4 MAXLENGTH=4>
+	      <INPUT TYPE=radio NAME="date_req_op" VALUE="=" CHECKED> =
+	      <INPUT TYPE=radio NAME="date_req_op" VALUE="&gt"> &gt
+	      <INPUT TYPE=radio NAME="date_req_op" VALUE="&lt"> &lt
+<p>
+	    <DD>Requested in last <INPUT NAME="date_req" SIZE=6> days
+</dt>
+
+<p>
+
+<dt>	Search on date posted:
+<p>
+	    <DD>Year posted:<br>
+	      Enter year as YYYY digits (e.g., 2000)<br>
+	      Default search is =<br>
+
+	      
+	      <INPUT NAME="date_fil_y" SIZE=4 MAXLENGTH=4>
+	      <INPUT TYPE=radio NAME="date_fil_op" VALUE="=" CHECKED> =
+	      <INPUT TYPE=radio NAME="date_fil_op" VALUE="&gt"> &gt
+	      <INPUT TYPE=radio NAME="date_fil_op" VALUE="&lt"> &lt
+<p>
+	    <DD>Posted in last <INPUT NAME="date_fil" SIZE=6> days
+</dt>
+
+<p>
+
+<dt>	Search on date revised:
+<p>
+	    <DD>Year revised:<br>
+	      Enter year as YYYY digits (e.g., 2000)<br>
+	      Default search is =<br>
+
+	      
+	      <INPUT NAME="date_rev_y" SIZE=4 MAXLENGTH=4>
+	      <INPUT TYPE=radio NAME="date_rev_op" VALUE="=" CHECKED> =
+	      <INPUT TYPE=radio NAME="date_rev_op" VALUE="&gt"> &gt
+	      <INPUT TYPE=radio NAME="date_rev_op" VALUE="&lt"> &lt
+<p>
+	    <DD>Revised in last <INPUT NAME="date_rev" SIZE=6> days
+</dt>
+
+    <P>
+
+      <DT>Classification: 
+        <DD><INPUT TYPE=radio NAME="class" VALUE="NOTE"> Note
+            <INPUT TYPE=radio NAME="class" VALUE="CONF"> Conference
+            <INPUT TYPE=radio NAME="class" VALUE="PUB"> Publication
+            <INPUT TYPE=radio NAME="class" VALUE="TRANS"> Transparencies
+            <INPUT TYPE=radio NAME="class" VALUE="MIN"> Minutes
+
+
+<P>
+      <DT>Category: 
+	<DD><SELECT NAME="group" MULTIPLE>
+	    <OPTION VALUE="STEEL">Physics - Charm 
+	    <OPTION VALUE="SCINT"> Physics - Beauty
+            <OPTION VALUE="SIM"> Physics - Other
+            <OPTION VALUE="COMP"> Detector
+            <OPTION VALUE="ELEC"> Computing
+            <OPTION VALUE="ANA"> Software
+            <OPTION VALUE="GEN"> General
+            <OPTION VALUE="BEAM"> Meeting
+          </SELECT>
+
+<p>
+      <DT>Distribution: 
+        <DD><INPUT TYPE=radio NAME="distribution" VALUE="PUBLIC"> Public
+          <INPUT TYPE=radio NAME="distribution" VALUE="RESTRICTED"> Restricted
+
+
+    <DT>Revision #:
+      <DD><INPUT NAME="revision" SIZE=4>
+  </DL>
+
+  <P>
+    <INPUT TYPE=submit VALUE="start search"> 
+    <INPUT TYPE=reset VALUE="clear form">
+
+  </FORM>
+
+</td>
+</tr>
+</table>
+
+<br>
+
+<!-- footer begins here -->
+<!-- date and email info starts here -->
+<TABLE CELLPADDING="0" CELLSPACING="0" BORDER="0" width="90%"> 
+<TR> 
+<TD VALIGN="top"> 
+<P CLASS="smalltext">Send suggestions or comments to -
+<A HREF="mailto:garren@fnal.gov">The Pagemaster</A></P>
+</TD> 
+</TR> 
+</TABLE>
+                
+<!-- date and email info ends here -->
+
+<!-- legal notice bar starts here -->
+<!--#include virtual="/styles/footer.html"-->
+<!-- legal notice bar ends here -->
+
+<!-- footer ends here -->
+
+</center>
+
+
+</BODY>
+</HTML>
+
+
