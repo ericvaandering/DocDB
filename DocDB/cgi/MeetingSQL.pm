@@ -184,7 +184,7 @@ sub FetchSessionTalkByID ($) {
   if ($SessionTalks{$SessionTalkID}{TimeStamp}) {
     return $SessionTalkID;
   }
-  $SessionTalkFetch -> execute($SessionITalkD);
+  $SessionTalkFetch -> execute($SessionTalkID);
   ($SessionID,$DocumentID,$Confirmed,$Time,$HintTitle,$Note,$TimeStamp) = $SessionTalkFetch -> fetchrow_array; 
   if ($TimeStamp) {
     $SessionTalks{$SessionTalkID}{SessionID}  = $SessionID;
@@ -222,7 +222,7 @@ sub FetchTalkSeparatorByID ($) {
   if ($TalkSeparators{$TalkSeparatorID}{TimeStamp}) {
     return $TalkSeparatorID;
   }
-  $TalkSeparatorFetch -> execute($TalkSeparatorD);
+  $TalkSeparatorFetch -> execute($TalkSeparatorID);
   ($SessionID,$Time,$Title,$Description,$TimeStamp) = $TalkSeparatorFetch -> fetchrow_array; 
   if ($TimeStamp) {
     $TalkSeparators{$TalkSeparatorID}{SessionID}   = $SessionID;
@@ -231,6 +231,7 @@ sub FetchTalkSeparatorByID ($) {
     $TalkSeparators{$TalkSeparatorID}{Description} = $Description;
     $TalkSeparators{$TalkSeparatorID}{TimeStamp}   = $TimeStamp;
   }
+  
   return $TalkSeparatorID;  
 }
 

@@ -201,8 +201,8 @@ sub PrintSession ($;$) {
   
   require "Sorts.pm";
   
-  print "Printing Session info for $SessionID <p>\n";
   print "<center><h4>$Sessions{$SessionID}{Title}: \n";
+  print "[ $SessionID ] \n"; # FIXME: debug
   print &EuroDateTime($Sessions{$SessionID}{StartTime});
   print "</h4></center> \n";
   print "<center> $Sessions{$SessionID}{Description} </center><p>\n";
@@ -221,14 +221,19 @@ sub PrintSession ($;$) {
 
   @SessionOrderIDs = sort SessionOrderIDByOrder @SessionOrderIDs;
   print "<table>\n";
+  print "<tr>\n";
+  print "<th>Start</th>\n";
+  print "<th>Title</th>\n";
+  print "<th>Note</th>\n";
+  print "<th>Time</th>\n";
+  print "</tr>\n";
   foreach my $SessionOrderID (@SessionOrderIDs) {
     # Accumulate time
     # Put titles in italics for unconfirmed talks
-    
     if ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) {
       my $TalkSeparatorID =  $SessionOrders{$SessionOrderID}{TalkSeparatorID};
       print "<tr>\n";
-      print "<td>$AccumulatedTime</td>\n";
+      print "<td>Sep $TalkSeparatorID $AccumulatedTime</td>\n";
       print "<td>$TalkSeparators{$TalkSeparatorID}{Title}</td>\n";
       print "<td>$TalkSeparators{$TalkSeparatorID}{Description}</td>\n";
       print "<td>$TalkSeparators{$TalkSeparatorID}{Time}</td>\n";
@@ -240,7 +245,7 @@ sub PrintSession ($;$) {
         &PrintSessionTalk($SessionTalkID,$AccumulatedTime);
       } else {
         print "<tr>\n";
-        print "<td>$AccumulatedTime</td>\n";
+        print "<td>Talk $SessionTalkID $AccumulatedTime</td>\n";
         print "<td>$SessionTalks{$SessionTalkID}{HintTitle}</td>\n";
         print "<td>$SessionTalks{$SessionTalkID}{Note}</td>\n";
         print "<td>$SessionTalks{$SessionTalkID}{Time}</td>\n";
@@ -248,7 +253,7 @@ sub PrintSession ($;$) {
       } 
     }
   }
-  print "<hr><table>\n";   
+  print "</table><hr>\n";   
 }
 
 sub PrintSessionTalk($) {

@@ -25,7 +25,7 @@ require "MeetingSQL.pm";
 $query = new CGI;  # Global for subroutines
 
 print $query -> header;
-&DocDBHeader("Modify a Session");
+&DocDBHeader("Meeting Talks");
 
 %params = $query -> Vars;
 
