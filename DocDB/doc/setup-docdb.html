@@ -49,10 +49,12 @@
          This script will make links to the private DocDB cgi area. 
 	 Edit this script as necessary.
     <li> Execute PublicInstall.csh.
+    <li> rm PublicInstall.csh  
     <li> Edit the public ProjectGlobals.pm, taking particular care 
          to be sure these definitions point <b>ONLY</b> to the 
 	 public directories.  Be sure to remove the $Administrator
-	 definition from the public ProjectGlobals.pm.
+	 definition from the public ProjectGlobals.pm.  
+	 Uncomment the "Public" lines in ProjectGlobals.pm.
     </ol>
 <li> Edit DodDB/sql/CreateDatabase.SQL to specify your own MajorTopics, 
      Institutions, and SecurityGroups.
