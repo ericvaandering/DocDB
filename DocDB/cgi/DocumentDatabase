@@ -7,7 +7,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -182,20 +182,12 @@ foreach my $Spanner (@Spanners) {
   print "</tr>\n";
 }    
 
-print "</table><p>\n";
+print "</table>\n";
  
-print "</td>\n";
-print "</tr></table>\n";
-
-
-
-
 ### Right column (wrapped around by middle column)
 
 #print "<div id=\"RightColumn3Col\">\n";
-
 #print "</div>\n";  # RightColumn3Col
-
 
 print "</div>\n";  # MainColumn3Col
 
@@ -229,13 +221,13 @@ print "</div>\n";  # DocDBHomeBody
 
 ### Print table
   
-  print "<hr/><center><h4>\n";
+  print "<hr/><h4>\n";
   if ($#DocumentIDs >= $HomeMaxDocs) {
     print "Last $HomeMaxDocs documents modified\n";
   } else {  
     print "Documents modified in the last $HomeLastDays days\n";
   }
-  print "</h4></center><p/>\n";
+  print "</h4><p/>\n";
 
   my $NumberOfDocuments = &DocumentTable(-fields  => \@Fields, -docids  => \@DocumentIDs, 
                                          -sortby  => $SortBy,  -reverse => $Reverse, 
@@ -251,7 +243,7 @@ print "</div>\n";  # DocDBHomeBody
   &DaysPulldown;
   print " days.</center>";
   print $query -> endform;
-  print "<p>&nbsp;<p>";
+  print "<p/>";
 }
 
 $EndTime  = new Benchmark;

@@ -27,7 +27,7 @@
 
 #@MultiColumnDocumentLists = ("These are added to the ways of listing",
 #                             "documents on the home page");
-#@MainPageAddendum         = ("These are added to the bold",
-#                             "stuff on the main page");
+#$ProjectMessages{Homepage}{LeftColumn} = ["These are added",
+#                                          "to the left column"]; # Was MainPageAddendum
 
 1;
