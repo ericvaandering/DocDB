@@ -1,6 +1,0 @@
-AuthType Basic
-AuthName "BTeV Document Database"
-AuthUserFile /var/www/cgi-bin/BTeV/DocDB/cgi/htpasswd
-<Limit GET POST>
-require valid-user
-</Limit>
