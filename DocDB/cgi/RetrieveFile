@@ -120,7 +120,7 @@ unless (-e $FullFile) {
 }
 
 if ($FullURL) {
-#  print $query -> redirect(-location => $FullURL, -method => 'GET');
+  print $query -> redirect(-location => $FullURL, -method => 'GET');
 } else {
   print $query -> header;
 }
