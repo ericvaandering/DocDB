@@ -1,0 +1,14 @@
+
+
+Form element parameters:
+
+The routines that generate various form elements like lists of authors, etc.,
+should use a common set of parameters. Any parameters needed by CGI.pm are
+included in these as are several others:
+
+-name            CGI.pm
+-multiple        CGI.pm
+-size            CGI.pm
+-format          long, short, full for the style of the elements in the list
+-helpkey         keyword for the help in DocDBHelp.xml file
+-helplabel       label to use for link to help above
