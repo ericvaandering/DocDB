@@ -37,6 +37,7 @@ require "Security.pm";
 require "ResponseElements.pm";
 
 require "RevisionHTML.pm";
+require "FileHTML.pm";
 
 require "HTMLUtilities.pm";
 require "Scripts.pm";
@@ -136,9 +137,9 @@ print "<tr><td><b>Files to add:</b></td></tr>";
 
 print "<tr><td>\n";
 if ($Upload eq "file") {
-  &SingleUploadBox("nodesc");
+  &SingleUploadBox(-showdesc => 0);
 } elsif ($Upload eq "http") {
-  &SingleHTTPBox("nodesc");
+  &SingleHTTPBox(-showdesc => 0);
 }  
 print "</td></tr>";
 

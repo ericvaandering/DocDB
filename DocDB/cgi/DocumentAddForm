@@ -48,6 +48,7 @@ require "SecurityHTML.pm";
 require "TalkHTML.pm";
 require "KeywordHTML.pm";
 require "SignoffHTML.pm";
+require "FileHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -401,9 +402,11 @@ if ($mode eq "add" || $mode eq "update") {
     }  
   } else {
     if ($Upload eq "file") {
-      &SingleUploadBox("",$CopyOption);
+      &SingleUploadBox(-required  => $RequiredEntries{File},
+                       -allowcopy => $CopyOption);
     } elsif ($Upload eq "http") {
-      &SingleHTTPBox("",$CopyOption);
+      &SingleHTTPBox(-required  => $RequiredEntries{File},
+                     -allowcopy => $CopyOption);
     }  
   }
   print "<br>Make sure you supply a format everyone can view (e.g. PDF) along
