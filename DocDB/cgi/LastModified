@@ -47,7 +47,8 @@ print "<center><h4>These documents have been modified in the last
        <font color=\"blue\">$Days days</font>.</h4></center><p>\n";
 
 my $revision_list = $dbh -> prepare(
-   "select DocRevID from DocumentRevision where NOW()-Timestamp<?"); 
+   "select DocRevID from DocumentRevision 
+    where TO_DAYS(NOW())-TO_DAYS(Timestamp)<=?"); 
 
 my $document_list = $dbh -> prepare(
    "select DocumentID from DocumentRevision where DocRevID=?"); 
@@ -68,7 +69,7 @@ print "<p>";
 ### Get all revisions with this topic
 
 my %DocumentIDs = ();
-$revision_list -> execute($Days*1000000);
+$revision_list -> execute($Days);
 $revision_list -> bind_columns(undef, \($DocRevID));
 
 while ($revision_list -> fetch) {

@@ -84,6 +84,8 @@ sub ConferenceLink {
   $link = "<a href=$ListByTopic?topicid=$TopicID&mode=conference>";
   if ($mode eq "short") {
     $link .= $MinorTopics{$TopicID}{SHORT};
+  } elsif ($mode eq "long") {
+    $link .= $MinorTopics{$TopicID}{LONG};
   } else {
     $link .= $MinorTopics{$TopicID}{FULL};
   }
@@ -133,7 +135,7 @@ sub ConferencesTable {
   print "<ul>\n";
   foreach my $MinorID (@MinorTopicIDs) {
     if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
-      my $topic_link = &TopicLink($MinorID,"long");
+      my $topic_link = &ConferenceLink($MinorID,"long");
       print "<li>$topic_link\n";
     }  
   }  

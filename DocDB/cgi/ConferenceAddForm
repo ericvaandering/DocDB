@@ -34,6 +34,8 @@ print "<center><table cellpadding=10>\n";
 print "<tr><td colspan=2>\n";
 print "<h4>You are about to add a conference and its associated topic to the
            BTeV document database.<br> 
+           Check the list below to make sure the conference you want to add
+           hasn't been added by someone else.<br>
            If you aren't sure what you are doing, please stop now and ask an 
            administrator to do this for you.<br>\n";
 

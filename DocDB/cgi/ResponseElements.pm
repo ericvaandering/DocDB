@@ -50,6 +50,28 @@ sub PrintPubInfo {
   }
 }
 
+sub PrintConfInfo {
+  require "TopicSQL.pm";
+  require "TopicHTML.pm";
+  &SpecialMajorTopics;
+  
+  my @topicIDs = @_;
+  foreach $topicID (@topicIDs) {
+    if ($MinorTopics{$topicID}{MAJOR} == $ConferenceMajorID) {
+      &FetchConferenceByTopicID($topicID);
+      my $ConferenceLink = &ConferenceLink($topicID,"long");
+      my $Start = &EuroDate($Conferences{$topicID}{STARTDATE});
+      my $End   = &EuroDate($Conferences{$topicID}{ENDDATE});
+      print "<dl>\n";
+      print "<dt><b>Conference Information:</b> \n";
+      print "<dd>Associated with ";
+      print "$ConferenceLink ";
+      print " held from $Start to $End \n";
+      print " in $Conferences{$topicID}{LOCATION}.</dl>\n";
+    }
+  }
+}
+
 sub SecurityListByID {
   my @GroupIDs = @_;
   
@@ -121,6 +143,7 @@ sub PrintRevisionInfo {
   print "<tr valign=top>";
   print "<td colspan=3>"; 
   &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
+  &PrintConfInfo(@TopicIDs);
   print "</td></tr>\n";
   if (&CanModify($DocumentID) && !$HideButtons) {
     print "<tr valign=top>";
@@ -267,8 +290,8 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
       my @topics = @{&GetRevisionTopics($DocRevID)};
       foreach my $topic (@topics) {
         if ($MinorTopics{$topic}{MAJOR} == $ConferenceMajorID) {
-          my $conference_link = &ConferenceLink($topic);
-          print "$conference_link\n";
+          my $conference_link = &ConferenceLink($topic,"short");
+          print "$conference_link<br>\n";
         }  
       }
       print "</td>\n";

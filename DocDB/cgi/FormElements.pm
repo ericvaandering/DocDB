@@ -495,10 +495,15 @@ sub AddFilesButton {
 }
 
 sub AuthorManual {
+  $AuthorManDefault = "";
+  my $AuthorDefaults = @AuthorDefaults[0]; 
+  foreach $AuthorID (@{$AuthorDefaults}) {
+    $AuthorManDefault .= "$Authors{$AuthorID}{FULLNAME}\n" ;
+  }  
   print "<b><a ";
   &HelpLink("authormanual");
   print "Authors:</a></b><br> \n";
-  print $query -> textarea (-name => 'authorman', -default => $AuthorManDefault,
+  print $query -> textarea (-name => 'authormanual', -default => $AuthorManDefault,
                             -columns => 20, -rows => 8);
 };
 

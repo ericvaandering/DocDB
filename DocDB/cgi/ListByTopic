@@ -73,8 +73,8 @@ if ($Mode eq "conference") {
     &FetchConferenceByTopicID($TopicID);
     print "These documents from \n";
     print "<font color=\"blue\">$MinorTopics{$TopicID}{LONG}</font>,<br>";
-    print " held from $Conferences{$TopicID}{STARTDATE}\n";
-    print " to $Conferences{$TopicID}{ENDDATE}\n";
+    print " held from ",&EuroDate($Conferences{$TopicID}{STARTDATE});
+    print " to ",&EuroDate($Conferences{$TopicID}{ENDDATE});
     print " in $Conferences{$TopicID}{LOCATION}\n";
     print " are available.<br>\n";
     print "(<a href=\"$Conferences{$TopicID}{URL}\">Conference Homepage</a>)\n";
