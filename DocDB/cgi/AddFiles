@@ -9,18 +9,17 @@ use DBI;
 
 $StartTime = new Benchmark;
 
+require "DocDBGlobals.pm";
 require "ResponseElements.pm";
 require "MySQLAccess.pm";
-require "DocDBGlobals.pm";
 require "FSUtilities.pm";
 require "WebUtilities.pm";
 require "HTMLUtilities.pm";
 require "Security.pm";
 
 $query = new CGI;  # Global for subroutines
-$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+$dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
-&GetTopics; # FIXME Replace with fetches in right place
 &GetSecurityGroups; # FIXME Replace with fetches in right place
 
 ### Set up, give user initial information
@@ -37,7 +36,10 @@ print $query->header;
 
 ### Get document and revision ID
 
-$SQL_NOW = "$year-$mon-$day $hour:$min:$sec";
+my ($sec,$min,$hour,$day,$mon,$year) = localtime(time); 
+++$mon; $year += 1900; 
+$SQL_NOW       = "$year-$mon-$day $hour:$min:$sec";
+
 my $DocumentID = $params{docid};
 my $Version    = $params{version};
 my $DocRevID;
@@ -53,6 +55,8 @@ if ($DocumentID && $Version) {
   push @error_stack,"You must supply document and version numbers to add files.";
 }
 
+my $UpdateLink = $DocumentAddForm."?mode=update&docid=$DocumentID";
+
 # FIXME: Is the user authorized to make changes to this document
 
 unless ($params{single_upload} || $params{single_http}) {
@@ -64,19 +68,6 @@ if     ($params{single_upload} && $params{single_http}) {
 
 ### Do the files to be added already exist?
 
-my $UpdateLink = $DocumentAddForm."?mode=update&docid=$DocumentID";
-
-if ($params{single_http}) {
-  my @urls = split /\0/,$params{single_http};
-  foreach my $url (@urls) {
-    if (&ExistsURL($DocRevID,$url)) {
-      push @error_stack,"The file from $url already exists. 
-       You may not add files with the same file name.<br>
-       You probably want to <a href=\"$UpdateLink\">update</a> your document, not add files.";
-    }  
-  }
-}   
-
 if ($params{single_upload}) {
   my @short_files   = $query -> param("single_upload");
   foreach my $short_file (@short_files) {
@@ -84,12 +75,11 @@ if ($params{single_upload}) {
       push @error_stack,"The file $short_file already exists. 
        You may not add files with the same file name.<br>
        You probably want to <a href=\"$UpdateLink\">update</a> your document, not add files.";
-
     }  
   }
 }
 
-### If they are URLs, do they exist?
+### If they are URLs, do they exist, not dupes, etc.
 
 if ($params{single_http}) {
   if ($params{http_user} && $params{http_pass}) {
@@ -99,6 +89,11 @@ if ($params{single_http}) {
   }  
   my @urls = split /\0/,$params{single_http};
   foreach my $url (@urls) {
+    if (&ExistsURL($DocRevID,$url)) {
+      push @error_stack,"The file from $url already exists. 
+       You may not add files with the same file name.<br>
+       You probably want to <a href=\"$UpdateLink\">update</a> your document, not add files.";
+    }  
     if (&ValidURL($url)) {
       my $command = $Wget.$Authentication.$url;
       my @url_lines = `$command`;  # FIXME: avoid fetching twice 
@@ -146,14 +141,14 @@ foreach $short_file (@short_files) {
      "       (DocFileID, DocRevID, FileName, Date, RootFile, Description) ".
      "values (0,         ?,        ?,        ?,    ?       , ?)");
 
-  $Description = shift @Descriptions;
-  $rootfile = shift @Roots;
-  if ($rootfile eq "on") {
-    $rootfile = 1;
+  my $Description = shift @Descriptions;
+  my $RootFile = shift @Roots;
+  if ($RootFile eq "on") {
+    $RootFile = 1;
   } else {
-    $rootfile = 0;
+    $RootFile = 0;
   }    
-  $file_insert -> execute($DocRevID,$short_file,$SQL_NOW,$rootfile,$Description);
+  $file_insert -> execute($DocRevID,$short_file,$SQL_NOW,$RootFile,$Description);
 }
 
 ### If we had any warnings print them out now
@@ -162,13 +157,10 @@ if (@warn_stack) {
   &WarnPage(@warn_stack);
   @warn_stack = ();
 }
-  
-# Files DB not in sync, clear it
 
-%DocFiles = ();
-@Files    = ();
+%DocFiles = (); @Files    = (); # Files DB not in sync, clear it
 
-# Output feedback to the user
+### Output feedback to the user
 
 my $full_docid = &FullDocumentID($DocumentID);
    $DocRevID   = &FetchDocRevision($DocumentID,$Version);
@@ -183,7 +175,6 @@ print "You were successful in adding files. Your entry now contains
        the following information: <p>\n"; 
 
 &PrintRevisionInfo($DocRevID);
-&OtherVersionLinks($documentID,$version);
 
 $EndTime  = new Benchmark;
 $TimeDiff = timediff($EndTime,$StartTime);

@@ -1,13 +1,19 @@
 sub FirstAuthor {
-
-# FIXME: This routine should be smarter and pick out the submitter of the
-# document IF they are in the author list.
-
   my ($DocRevID) = @_;
+
+  &FetchDocRevisionByID($DocRevID);
   my $Authors_ref = &GetRevisionAuthors($DocRevID);
   my @AuthorIDs = @{$Authors_ref};
   
   unless (@AuthorIDs) {return "None";}
+  
+  my $FirstID     = $AuthorIDs[0];
+  my $SubmitterID = $DocRevisions{$DocRevID}{SUBMITTER};
+  foreach $AuthorID (@AuthorIDs) {
+    if ($AuthorID == $SubmitterID) {
+      $FirstID = $SubmitterID;  # Submitter is in list --> first author
+    }  
+  }
   
   my $author_link = &AuthorLink($AuthorIDs[0]);
   if ($#AuthorIDs) {$author_link .= " <i>et. al.</i>";}
