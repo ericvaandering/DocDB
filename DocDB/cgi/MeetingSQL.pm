@@ -49,7 +49,7 @@ sub FetchConferenceByTopicID { # Fetches a conference by MinorTopicID
   $Conferences{$MinorTopicID}{EndDate}   = $EndDate;
   $Conferences{$MinorTopicID}{TimeStamp} = $TimeStamp;
 
-  $ConferenceForward{$ConferenceID){Minor} = $MinorTopicID; # FIXME will go away when conferences index right	
+  $ConferenceForward{$ConferenceID}{Minor} = $MinorTopicID; # FIXME will go away when conferences index right	
 
   return $Conferences{$MinorTopicID}{MINOR};
 }
