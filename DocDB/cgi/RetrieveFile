@@ -24,7 +24,8 @@ $DocumentID = $params{docid};
 unless ($DocumentID) {
   push @error_stack,"You are must supply a document number!";
 }  
-$FileName   = $params{filename};
+$FileName  = $params{filename};
+$Extension = $params{extension};
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetSecurityGroups;
@@ -53,21 +54,38 @@ unless ($DocRevID) {
 if ($FileName) {
   $FullFile = &FullFile($DocumentID,$Version,$FileName);
   $FullURL = &GetURLDir($DocumentID,$Version).CGI::escape($FileName);
+} elsif ($Extension) {
+  &FetchDocFiles($DocRevID);
+  my $NFiles = 0;
+  my $LastFile = "";
+  foreach my $DocFileID (keys %DocFiles) {
+    if ($DocFiles{$DocFileID}{DOCREVID} == $DocRevID &&
+        grep /$Extension$/,$DocFiles{$DocFileID}{NAME}) {
+      ++$NFiles;
+      $LastFile = $DocFiles{$DocFileID}{NAME};
+    } 
+  }
+  if ($NFiles == 1) {
+    $FullFile = &FullFile($DocumentID,$Version,$LastFile);
+    $FullURL = &GetURLDir($DocumentID,$Version).CGI::escape($LastFile);
+  } elsif ($NFiles > 1) {
+    push @warn_stack,"More than one file was found. Please select one below.";
+  }  
 } else {
   &FetchDocFiles($DocRevID);
-  my $NMains = 0;
-  my $LastMain = "";
+  my $NFiles = 0;
+  my $LastFile = "";
   foreach my $DocFileID (keys %DocFiles) {
     if ($DocFiles{$DocFileID}{DOCREVID} == $DocRevID &&
         $DocFiles{$DocFileID}{ROOT}) {
-      ++$NMains;
-      $LastMain = $DocFiles{$DocFileID}{NAME};
+      ++$NFiles;
+      $LastFile = $DocFiles{$DocFileID}{NAME};
     } 
   }
-  if ($NMains == 1) {
-    $FullFile = &FullFile($DocumentID,$Version,$LastMain);
-    $FullURL = &GetURLDir($DocumentID,$Version).CGI::escape($LastMain);
-  } elsif ($NMains > 1) {
+  if ($NFiles == 1) {
+    $FullFile = &FullFile($DocumentID,$Version,$LastFile);
+    $FullURL = &GetURLDir($DocumentID,$Version).CGI::escape($LastFile);
+  } elsif ($NFiles > 1) {
     push @warn_stack,"More than one file was found. Please select one below.";
   } else {
     push @warn_stack,"No files were found. Document info is below.";
