@@ -242,7 +242,9 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
     my $full_docid  = &DocumentLink($DocumentID,$Documents{$DocumentID}{NVER});
     my $DocRevID    = &FetchDocRevision($DocumentID,$Documents{$DocumentID}{NVER});
     my $title       = &DocumentLink($DocumentID,$Documents{$DocumentID}{NVER},$DocRevisions{$DocRevID}{TITLE});
-    my $Files_ref   = &FetchDocFiles($DocRevID);
+    if ($Mode eq "meeting") {
+      my $Files_ref   = &FetchDocFiles($DocRevID);
+    }
     my $rev_date    = &EuroDate($DocRevisions{$DocRevID}{DATE});
     my $author_link = &FirstAuthor($DocRevID);
     print "<tr valign=top>\n";

@@ -11,6 +11,7 @@ $StartTime = new Benchmark;
 
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
+require "FormElements.pm";
 
 require "TopicSQL.pm";
 require "DocumentSQL.pm";
@@ -25,39 +26,49 @@ $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
 
-my $TopicID = $params{topicid};
-my $Mode    = $params{mode};
+my $Days = $params{days};
+my $Mode = $params{mode};
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 &GetSecurityGroups;
-&FetchMinorTopic($TopicID);
 
 ### Set defaults
 
 unless ($Mode eq "date" or $Mode eq "meeting") {$Mode = "date";}  
+unless ($Days)                                 {$Days = 5;}  
 
 ### Start HTML
 
 print $query->header;
-&BTeVHeader("Document List by Topic");
+&BTeVHeader("Document List");
 
-print "<center><h4>These documents on <font color=\"blue\">
-       $MinorTopics{$TopicID}{FULL}</font> are
-       available:</h4></center><p>\n";
+print "<center><h4>These documents have been modified in the last 
+       <font color=\"blue\"> $Days</font> days.</h4></center><p>\n";
 
 my $revision_list = $dbh -> prepare(
-   "select DocRevID from RevisionTopic where MinorTopicID=?"); 
+   "select DocRevID from DocumentRevision where NOW()-Timestamp<?"); 
 
 my $document_list = $dbh -> prepare(
    "select DocumentID from DocumentRevision where DocRevID=?"); 
 
 my $DocumentID,$DocRevID;
 
+### Form
+
+print $query -> startform('POST',$LastModified);
+print "<center>";
+print $query -> submit (-value => "Show Documents");
+print " modified in the last ";
+&DaysPulldown;
+print " days.</center>";
+print $query -> endform;
+print "<p>";
+
 ### Get all revisions with this topic
 
 my %DocumentIDs = ();
-$revision_list -> execute($TopicID);
+$revision_list -> execute($Days*1000000);
 $revision_list -> bind_columns(undef, \($DocRevID));
 
 while ($revision_list -> fetch) {

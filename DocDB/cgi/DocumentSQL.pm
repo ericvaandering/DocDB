@@ -3,8 +3,13 @@ sub GetAllDocuments {
   my $document_list  = $dbh->prepare(
      "select DocumentID,RequesterID,RequestDate,DocumentType,TimeStamp ".
      "from Document");
-  my $max_version    = $dbh->prepare("select MAX(VersionNumber) from ".
-                                     "DocumentRevision where DocumentID=?");
+  my $max_version    = $dbh->prepare("select DocumentID,max(VersionNumber) ".
+                                     "from DocumentRevision ".
+                                     "group by DocumentID;");
+
+  my ($DocumentID,$RequesterID,$RequestDate,$DocumentType,$TimeStamp);
+  my ($MaxVersion);
+  
   $document_list -> execute;
   $document_list -> bind_columns(undef, \($DocumentID,$RequesterID,$RequestDate,$DocumentType,$TimeStamp));
   %Documents = ();
@@ -17,10 +22,13 @@ sub GetAllDocuments {
     $Documents{$DocumentID}{TIMESTAMP} = $TimeStamp;
     push @DocumentIDs,$DocumentID;
   }
-  my $document;
-  foreach $document (@DocumentIDs) {
-    $max_version -> execute($document);
-    ($Documents{$document}{NVER}) = $max_version -> fetchrow_array;
+  
+### Number of versions for each document
+  
+  $max_version -> execute;
+  $max_version -> bind_columns(undef, \($DocumentID,$MaxVersion));
+  while ($max_version -> fetch) {
+    $Documents{$DocumentID}{NVER} = $MaxVersion;
   }
 };
 

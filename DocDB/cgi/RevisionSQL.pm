@@ -34,6 +34,30 @@ sub FetchDocRevision {
   return $DocRevID;
 }
 
+sub GetAllRevisions {
+  my ($Mode) = @_;
+  unless ($Mode) {$Mode = "brief"};
+  my $revision_list = $dbh->prepare(
+    "select DocRevID,SubmitterID,DocumentTitle,VersionNumber,".
+           "RevisionDate,DocumentID,Obsolete ".
+    "from DocumentRevision ".
+    "where Obsolete=0");
+  %DocRevIDs = ();
+  %DocRevisions = ();
+  $revision_list -> execute;
+  $revision_list -> bind_columns(undef, \($DocRevID,$SubmitterID,$DocumentTitle,$VersionNumber,$RevisionDate,$DocumentID,$Obsolete));
+  while ($revision_list -> fetch) {
+    $DocRevIDs{$DocumentID}{$VersionNumber} = $DocRevID;
+    $DocRevisions{$DocRevID}{SUBMITTER}     = $SubmitterID;
+    $DocRevisions{$DocRevID}{TITLE}         = $DocumentTitle;
+    $DocRevisions{$DocRevID}{DATE}          = $RevisionDate;
+    $DocRevisions{$DocRevID}{VERSION}       = $VersionNumber;
+    $DocRevisions{$DocRevID}{DOCID}         = $DocumentID;
+    $DocRevisions{$DocRevID}{OBSOLETE}      = $Obsolete;
+    $DocRevisions{$DocRevID}{COMPLETE}      = 0;
+  }
+}
+
 sub FetchDocRevisionByID {
   # Creates two hashes:
   # $DocRevIDs{DocumentID}{Version} holds the DocumentRevision ID

@@ -40,13 +40,11 @@ sub byInstitution {
 }    
 
 sub DocumentByRevisionDate {
-  require "DocumentSQL.pm";
-  require "RevisionSQL.pm";
 
-  &FetchDocument($a);
-  &FetchDocument($b);
-  my $adr = &FetchDocRevision($a,$Documents{$a}{NVER});
-  my $bdr = &FetchDocRevision($b,$Documents{$b}{NVER});
+### All revisions and documents (of interest) must be fetched before calling
+  
+  my $adr = $DocRevIDs{$a}{$Documents{$a}{NVER}};
+  my $bdr = $DocRevIDs{$b}{$Documents{$b}{NVER}};
   
   $adt = $DocRevisions{$adr}{DATE};
   $bdt = $DocRevisions{$bdr}{DATE};
@@ -74,11 +72,11 @@ sub DocumentByRevisionDate {
 }
 
 sub DocumentByRequester {
-  require "DocumentSQL.pm";
+
+### All documents (of interest) must be fetched before calling
+
   require "AuthorSQL.pm";
 
-  &FetchDocument($a);
-  &FetchDocument($b);
   my $adr = $Documents{$a}{REQUESTER};
   my $bdr = $Documents{$b}{REQUESTER};
   &FetchAuthor($adr);

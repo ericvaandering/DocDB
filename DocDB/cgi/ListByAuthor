@@ -9,10 +9,14 @@ use DBI;
 
 $StartTime = new Benchmark;
 
-require "ResponseElements.pm";
 require "DocDBGlobals.pm";
+require "ResponseElements.pm";
+
 require "AuthorSQL.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
 require "SecuritySQL.pm";
+
 require "HTMLUtilities.pm";
 require "Security.pm";
 require "Sorts.pm";
@@ -28,8 +32,10 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetSecurityGroups;
 &GetInstitutions;
 
+### Start HTML
+
 print $query->header;
-&BTeVHeader("Document List");
+&BTeVHeader("Document List by Author");
 
 print "<center><h4><font color=\"blue\">\n";
 &PrintAuthorInfo($AuthorID);
@@ -43,6 +49,9 @@ my $document_list = $dbh -> prepare(
 
 my $DocumentID,$DocRevID;
 
+### Get all revisions with this author
+
+my %DocumentIDs = ();
 $revision_list -> execute($AuthorID);
 $revision_list -> bind_columns(undef, \($DocRevID));
 
@@ -52,7 +61,20 @@ while ($revision_list -> fetch) {
   $DocumentIDs{$DocumentID} = 1; # Hash removes duplicates
 }
 
-my @DocumentIDs = reverse sort DocumentByRevisionDate keys %DocumentIDs;  
+### Get list of documents and read in the information we need from database
+
+my @DocumentIDs = keys %DocumentIDs;
+
+foreach my $DocumentID (@DocumentIDs) { # For shorter lists
+  &FetchDocument($DocumentID);
+  &FetchDocRevision($DocumentID,$Documents{$DocumentID}{NVER});
+}
+
+### Sort
+
+@DocumentIDs = reverse sort DocumentByRevisionDate @DocumentIDs;  
+
+### Print summary information
 
 print "<center><table cellpadding=3>\n";
 
@@ -68,9 +90,7 @@ foreach $DocumentID (@DocumentIDs) {
 print "</table></center>\n";
 print "<p>\n";
 
-print "Return to the <a href=$MainPage>main page</a>.\n";
-print "<p>\n";
-
+### Finish off page
 
 $EndTime  = new Benchmark;
 $TimeDiff = timediff($EndTime,$StartTime);

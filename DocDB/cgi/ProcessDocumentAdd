@@ -57,7 +57,7 @@ if ($mode ne "add"    && $mode ne "reserve" &&
   &EndPage("<p><h3>You accessed this page without 
             specifying a required parameter. 
             Don't mess with hidden fields or 
-            try to access this page directly.</h3>\n"); 
+            try to access this page directly. Mode is $mode.</h3>\n"); 
 }  
 
 if      ($mode eq "add") {
@@ -261,11 +261,12 @@ if ($mode eq "updatedb") { # Copy DocumentFile entries
   }  
 }  
 
+#STDOUT -> autoflush;
+
 if ($mode eq "add" || $mode eq "update") { # We're adding new files
   
   $new_dir = &MakeDirectory($documentID,$version);
   &ProtectDirectory($documentID,$version,@securities);
-  
   @short_files = ();
   if ($Archive eq "single") { # The user uploaded the files themselves 
     @Descriptions = split ("\0",$params{filedesc});
@@ -273,12 +274,14 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
     if ($params{single_upload}) { # Copy file to directory
       @long_files   = $query ->  param("single_upload");
       foreach $long_file (@long_files) {
+        print "Adding file $long_file<br>\n";
         $short_file = &ProcessUpload($new_dir,$long_file);
         push @short_files,$short_file;
       }
     } elsif ($params{single_http}) {
       @urls = split /\0/,$params{single_http};
       foreach $url (@urls) {
+        print "Adding URL $url<br>\n";
         $short_file = &ProcessURL($new_dir,$url);
         push @short_files,$short_file;
       }  
@@ -290,7 +293,6 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
     if ($params{single_upload}) { # Copy tar file to directory
       $long_file = $query ->  param("single_upload"); # There can be only one
       $short_file = &ProcessUpload($new_dir,$long_file);
-      
       &ProcessArchive($new_dir,$short_file);
     } elsif ($params{single_http}) {
       $url = $params{single_http};  # There can be only one

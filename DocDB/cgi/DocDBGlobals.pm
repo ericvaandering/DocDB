@@ -77,6 +77,7 @@ $AuthorAddForm      = $cgi_root."AuthorAddForm";
 $ListByAuthor       = $cgi_root."ListByAuthor";
 $ListByTopic        = $cgi_root."ListByTopic";
 $ListByType         = $cgi_root."ListByType";
+$LastModified       = $cgi_root."LastModified";
 
 $ListAuthors        = $cgi_root."ListAuthors";
 $ListTopics         = $cgi_root."ListTopics";

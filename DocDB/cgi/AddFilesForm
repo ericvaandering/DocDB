@@ -82,17 +82,19 @@ print "If you aren't <font color=\"red\">absolutely sure</font> this is what
        you want to do, go back and read the help.<p>\n";
 
 print "The current document document information is reproduced below:</h4>\n";
-print "<p></center>\n";  
+print "</center>\n";  
 
+print "<p><hr><p>\n";
 &PrintRevisionInfo($DocRevID,1);
+print "<p><hr><p>\n";
 
+print "<center><table cellpadding=10>\n";
 print $query -> start_multipart_form('POST',$AddFiles);
 
 print $query -> hidden(-name => 'upload',  -default => 'file');
 print $query -> hidden(-name => 'version', -default => $Version);
 print $query -> hidden(-name => 'docid',   -default => $DocumentID);
 
-print "<p><center><table cellpadding=10>\n";
 print "<tr><td><b>Files to add:</b></td></tr>";
 
 print "<tr><td>\n";
@@ -107,8 +109,8 @@ print "<tr><td align=center>\n";
 print $query -> submit (-value => "Add Files");
 print "</td></tr>";
 
-print "</table></center><p>";
 print $query -> end_multipart_form;
+print "</table></center><p>";
 
 &DocDBNavBar();
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);

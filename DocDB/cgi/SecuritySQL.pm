@@ -50,6 +50,11 @@ sub ObsFetchSecurityGroup { # FIXME remove entire routine. Not used
 
 sub GetRevisionSecurityGroups {
   my ($DocRevID) = @_;
+  
+  if ($RevisionSecurities{$DocRevID}{DocRevID}) {
+    return \@{$RevisionSecurities{$DocRevID}{GROUPS}};
+  }
+    
   my @groups = ();
   my ($RevTopicID,$GroupID);
   my $group_list = $dbh->prepare(
@@ -59,7 +64,9 @@ sub GetRevisionSecurityGroups {
   while ($group_list -> fetch) {
     push @groups,$GroupID;
   }
-  return \@groups;
+  $RevisionSecurities{$DocRevID}{DocRevID} = $DocRevID;
+  $RevisionSecurities{$DocRevID}{GROUPS}   = [@groups];
+  return \@{$RevisionSecurities{$DocRevID}{GROUPS}};
 }
 
 
