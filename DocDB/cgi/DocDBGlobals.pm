@@ -56,6 +56,8 @@ $FirstYear            = 2000;  # Earliest year that documents can be created
 
 $TopicMatchThreshold    = 15;  # Threshold for matching talks in meetings with topics
 $NoTopicMatchThreshold  = 6;   # Threshold for matching talks in meetings with topics
+@MatchIgnoreWords       = ("from","with","then","than","that","what"); # Don't match on these
+  
 
 # Options
 

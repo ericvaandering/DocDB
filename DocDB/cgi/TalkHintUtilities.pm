@@ -44,7 +44,9 @@ sub ReHintTalksBySessionID ($) {
   while ($TimedList -> fetch) {
     $DocumentList -> execute($DocRevID);
     ($DocumentID) = $DocumentList -> fetchrow_array;
-    $DocumentIDs{$DocumentID} = "Timed"; 
+    if ($DocumentID) {
+      $DocumentIDs{$DocumentID} = "Timed";
+    }   
   }
 
   my $TimedList = $dbh -> prepare("select DocRevID from DocumentRevision where ABS(TO_DAYS(?)-TO_DAYS(RevisionDate))<=?"); 
@@ -54,7 +56,9 @@ sub ReHintTalksBySessionID ($) {
   while ($TimedList -> fetch) {
     $DocumentList -> execute($DocRevID);
     ($DocumentID) = $DocumentList -> fetchrow_array;
-    $DocumentIDs{$DocumentID} = "Timed"; 
+    if ($DocumentID) {
+      $DocumentIDs{$DocumentID} = "Timed"; 
+    }   
   }
 
   $TimedList -> execute($EndDate,$SearchDays);   # Within $SearchDays days of end
@@ -62,7 +66,9 @@ sub ReHintTalksBySessionID ($) {
   while ($TimedList -> fetch) {
     $DocumentList -> execute($DocRevID);
     ($DocumentID) = $DocumentList -> fetchrow_array;
-    $DocumentIDs{$DocumentID} = "Timed"; 
+    if ($DocumentID) {
+      $DocumentIDs{$DocumentID} = "Timed"; 
+    }   
   }
 
   if ($MinorTopicID) {
@@ -73,14 +79,16 @@ sub ReHintTalksBySessionID ($) {
     while ($RevisionList -> fetch) {
       $DocumentList -> execute($DocRevID);
       ($DocumentID) = $DocumentList -> fetchrow_array;
-      $DocumentIDs{$DocumentID} = "Topic"; # Hash removes duplicates
+      if ($DocumentID) {
+        $DocumentIDs{$DocumentID} = "Topic"; # Hash removes duplicates
+      }
     }
   }
 
   # Get unique document IDs
 
   my @DocumentIDs = sort keys %DocumentIDs;
-  
+
   # Remove documents already confirmed with a conference
   
   my $ConfirmedList = $dbh -> prepare("select DocumentID from SessionTalk where Confirmed=1"); 
@@ -107,8 +115,6 @@ sub ReHintTalksBySessionID ($) {
 
   # Loop over all session talk IDs
 
-  require "Debug.pm";
-  
   my %BestDocuments = ();
   foreach my $SessionTalkID (@SessionTalkIDs) { 
     &FetchSessionTalkByID($SessionTalkID);
@@ -167,8 +173,16 @@ sub ReHintTalksBySessionID ($) {
         $MethodScore = 3;
       } 
       
-      my $FuzzyScore = &FuzzyStringMatch($DocumentTitle,$HintTitle);
+      my $FuzzyScore1 = &FuzzyStringMatch($DocumentTitle,$HintTitle);
+      my $FuzzyScore2 = &FuzzyStringMatch($HintTitle,$DocumentTitle);
+      my $FuzzyScore;
       
+      if ($FuzzyScore1 > $FuzzyScore2) { # Can be different since "test" matches "testbeam," not vvs.
+        $FuzzyScore = $FuzzyScore1;
+      } else {	 
+        $FuzzyScore = $FuzzyScore2;
+      }
+            
       my $Score = $MethodScore*($AuthorMatches+1)*(2*$TopicMatches+1)+(2*$FuzzyScore+1);
       if ($Score > $BestDocuments{$SessionTalkID}{Score} && ($AuthorMatches+$TopicMatches)) {
         $BestDocuments{$SessionTalkID}{Score}      = $Score;
@@ -191,7 +205,6 @@ sub FuzzyStringMatch ($$) {
 #  use String::Approx qw(amatch);
   
   # FIXME: Look at soundex and fuzzy matching, cookbook 1.16 and 6.13
-  # FIXME: More points for matching longer words?
   
   my ($String1,$String2) = @_;
   
@@ -201,20 +214,26 @@ sub FuzzyStringMatch ($$) {
   my @Words1 = split /\s+/,$String1;
   my @Words2 = split /\s+/,$String2;
   
-  my @IgnoreWords = ("from","with","then","than","that","what"); # FIXME: global
+  @Words1 = &RemoveArray(\@Words1,@MatchIgnoreWords); 
+  @Words2 = &RemoveArray(\@Words2,@MatchIgnoreWords); 
   
-  @Words1 = &RemoveArray(\@Words1,@IgnoreWords); 
-  @Words2 = &RemoveArray(\@Words2,@IgnoreWords); 
-  
-  my $Matches    = 0;
-  my $MatchScore = 0;
+  my $Matches = 0;
   foreach my $Word (@Words1) {
-    if (length $Word < 4) {next;}
-    $Matches += grep /$Word/,@Words2;
+    my $WordLength = length $Word;
+    if ($WordLength < 4) {next;}
+    if (grep /$Word/,@Words2) {
+      if ($WordLength > 6) { # More points for matching longer words
+        $Matches += $WordLength/6;
+      } else {
+        ++$Matches;
+      }		
+    }  
   }
   
   my $NWords1 = @Words1;
   my $NWords2 = @Words2;
+  
+  # Use NWords to calculate a "fraction" of matches, restrict to 3 - 10
   
   $NWords = 3;
   
@@ -222,10 +241,10 @@ sub FuzzyStringMatch ($$) {
   if ($NWords2 > $NWords) {$NWords = $NWords2;}
   if ($NWords > 10)       {$NWords = 10;}
  
-  if ($Matches > 1) {
+  my $MatchScore = 0;
+  if ($Matches >= 1.1) {
     $MatchScore = $Matches/$NWords * 10;
   }
-  
   return $MatchScore;  
 }
 
