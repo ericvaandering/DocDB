@@ -55,17 +55,12 @@ if ($mode ne "add"    && $mode ne "reserve" &&
 
 &SetUploadMethod;
 &SetDateOverride;
-
-$Archive       = $params{archive};
-
-if ($Archive eq "single") {$NumberUploads = 1;}  # Make sure
-if ($Archive eq "multi")  {$Archive = "single";} # No real difference
-if ($Archive ne "archive" && $Archive ne "single") {
-  $Archive = "single";
-}  
-
 &SetAuthorMode;
 &SetTopicMode;
+
+if ($mode eq "add" || $mode eq "reserve") {
+  &SetAuthorDefault;
+}
 
 print $query->header;
 if      ($mode eq "add") {
@@ -117,20 +112,7 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   @SecurityDefaults = [$SecurityIDs{$User}]; 
 }  
 
-$NumberUploads = $params{numfile};
-unless ($NumberUploads) {
-  if ($Meeting  || $OtherMeeting) {
-    $NumberUploads = 3;
-  } elsif ($mode eq "update") {
-    my @DocFiles = @{&FetchDocFiles($DocRevID)};
-    $NumberUploads = $#DocFiles + 1;
-    unless ($NumberUploads) { # Gyrations to handle docs that have 0 files
-      $NumberUploads = 1;
-    }  
-  } else {
-    $NumberUploads = 1;
-  }  
-}
+&SetFileOptions($DocRevID);
 
 &HelpPopupScript;
 
