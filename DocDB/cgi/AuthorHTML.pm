@@ -51,8 +51,10 @@ sub AuthorListByID {
   require "AuthorSQL.pm";
   
   print "<div id=\"Authors\">\n";
+  print "<dl>\n";
+  print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Authors:</span></dt>\n";
+
   if (@AuthorIDs) {
-    print "<b>Authors:</b><br/>\n";
     print "<ul>\n";
     foreach my $AuthorID (@AuthorIDs) {
       &FetchAuthor($AuthorID);
@@ -61,8 +63,9 @@ sub AuthorListByID {
     }
     print "</ul>\n";
   } else {
-    print "<b>Authors:</b> none<br/>\n";
+    print "<dd>None</dd>\n";
   }
+  print "</dl>\n";
   print "</div>\n";
 }
 

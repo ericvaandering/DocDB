@@ -149,11 +149,13 @@ sub PrintRevisionInfo {
      require "SignoffUtilities.pm";
      my ($ApprovalStatus,$LastApproved) = &RevisionStatus($DocRevID);
      unless ($ApprovalStatus eq "Unmanaged") { 
-       print "<center>(Document Status: $ApprovalStatus)</center>";
+       print "<center>(Document Status: $ApprovalStatus)</center>\n";
      }  
    }  
   print "</div>\n";  # DocTitle
   print "</div>\n";  # Header3Col
+
+#  print "<div id=\"Body3Col\">\n";
 
   ### Left Column
 
@@ -166,12 +168,10 @@ sub PrintRevisionInfo {
    &SubmitterByID($DocRevisions{$DocRevID}{SUBMITTER});
    &PrintModTimes;
   print "</dl>\n";
-  print "</div>\n";
+  print "</div>\n";  # BasicDocInfo
 
   &OtherVersionLinks($DocumentID,$Version);
 
-  print "</div>\n";
-  
   print "</div>\n";  # LeftColumn3Col
 
   ### Main Column
@@ -186,16 +186,22 @@ sub PrintRevisionInfo {
   
   print "<hr/><p/>\n";
   
-  &AuthorListByID(@AuthorIDs);
   &SecurityListByID(@GroupIDs);
   &ModifyListByID(@ModifyIDs);
+  
+  if (&CanModify($DocumentID) && !$HideButtons) {
+    print "<div id=\"UpdateButtons\">\n";
+    &UpdateButton($DocumentID);
+    &UpdateDBButton($DocumentID,$Version);
+    &AddFilesButton($DocumentID,$Version);
+    print "</div>\n";
+  }  
 
   print "</div>\n";  # RightColumn3Col
-  
-
 
   &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT}); # All are called only here, so changes are OK
   &TopicListByID(@TopicIDs);
+  &AuthorListByID(@AuthorIDs);
   &PrintKeywords($DocRevisions{$DocRevID}{Keywords});
   &PrintRevisionNote($DocRevisions{$DocRevID}{Note});
   &PrintReferenceInfo($DocRevID);
@@ -208,41 +214,28 @@ sub PrintRevisionInfo {
   }  
 
   print "</div>\n";  # MainColumn3Col
+#  print "</div>\n";  # Body3Col
   
   print "<div id=\"Footer3Col\">\n";
-  if (&CanModify($DocumentID) && !$HideButtons) {
-#    print "<hr/>\n";
-    print "<center><table cellpadding=5>\n";
-    print "<tr valign=top>";
-    print "<td align=center width=33%>";
-    &UpdateButton($DocumentID);
-    print "<td align=center width=33%>";
-    &UpdateDBButton($DocumentID,$Version);
-    print "<td align=center width=33%>";
-    &AddFilesButton($DocumentID,$Version);
-    print "</td></tr>\n";
-    print "</table></center>\n"; 
-  }  
   print "</div>\n";  # Footer3Col
-
   print "</div>\n";  # RevisionInfo
 }
  
 sub PrintAbstract {
   my ($Abstract) = @_;
   
-  print "<div id=\"Abstract\">\n";
   if ($Abstract) {
     $Abstract = &URLify($Abstract);
-    $Abstract =~ s/\n\n/<p>/g;
-    $Abstract =~ s/\n/<br>/g;
-    print "<dl>\n";
-    print "<dt><b>Abstract:</b><br>\n";
-    print "<dd>$Abstract<br>\n";
-    print "</dl>\n";
+    $Abstract =~ s/\n\n/<p\/>/g;
+    $Abstract =~ s/\n/<br\/>/g;
   } else {
-    print "<b>Abstract:</b> none<br>\n";
-  }
+    $Abstract = "None";
+  }  
+  print "<div id=\"Abstract\">\n";
+  print "<dl>\n";
+  print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Abstract:</span></dt>\n";
+  print "<dd>$Abstract</dd>\n";
+  print "</dl>\n";
   print "</div>\n";
 }
 
@@ -257,7 +250,7 @@ sub PrintKeywords {
   if ($Keywords) {
     print "<div id=\"Keywords\">\n";
     print "<dl>\n";
-    print "<dt>Keywords:</dt>\n";
+    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Keywords:</span></dt>\n";
     print "<dd>\n";
     my @Keywords = split /\,*\s+/,$Keywords;
     my $Link;
@@ -280,7 +273,7 @@ sub PrintRevisionNote {
     $RevisionNote =~ s/\n\n/<p>/g;
     $RevisionNote =~ s/\n/<br>/g;
     print "<dl>\n";
-    print "<dt><b>Notes and Changes:</b><br>\n";
+    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Notes and Changes:</span></dt>\n";
     print "<dd>$RevisionNote<br>\n";
     print "</dl>\n";
     print "</div>\n";
@@ -299,7 +292,7 @@ sub PrintReferenceInfo ($) {
     &GetJournals;
     print "<div id=\"ReferenceInfo\">\n";
     print "<dl>\n";
-    print "<dt><b>References:</b> \n";
+    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">References:</span></dt>\n";
     foreach my $ReferenceID (@ReferenceIDs) {
       $JournalID = $RevisionReferences{$ReferenceID}{JournalID};
       print "<dd>Published in ";
@@ -340,7 +333,7 @@ sub PrintConfInfo {
     if (&MajorIsConference($MinorTopics{$topicID}{MAJOR})) {
       &FetchConferenceByTopicID($topicID);
       unless ($HasConference) {
-        print "<div id=\"ConfereneInfo\">\n";
+        print "<div id=\"ConferenceInfo\">\n";
         $HasConference = 1;
       }  
       my $ConferenceLink = &ConferenceLink($topicID,"long");
@@ -348,15 +341,15 @@ sub PrintConfInfo {
       my $Start = &EuroDate($Conferences{$ConferenceID}{StartDate});
       my $End   = &EuroDate($Conferences{$ConferenceID}{EndDate});
       print "<dl>\n";
-      print "<dt><b>Conference Information:</b> \n";
+      print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Conference Information:</span></dt> \n";
       print "<dd>Associated with ";
       print "$ConferenceLink ";
       print " held from $Start to $End \n";
-      print " in $Conferences{$ConferenceID}{Location}.</dl>\n";
+      print " in $Conferences{$ConferenceID}{Location}.</dd></dl>\n";
     }
   }
   if ($HasConference) {
-    print "</div>";
+    print "</div>\n";
   }  
 }
 
@@ -370,8 +363,8 @@ sub PrintPubInfo ($) {
     $pubinfo =~ s/\n\n/<p>/g;
     $pubinfo =~ s/\n/<br>/g;
     print "<dl>\n";
-    print "<dt><b>Publication Information:</b><br>\n";
-    print "<dd>$pubinfo<br>\n";
+    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Publication Information:</span></dt>\n";
+    print "<dd>$pubinfo</dd>\n";
     print "</dl>\n";
     print "</div>\n";
   }

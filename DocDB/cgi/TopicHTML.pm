@@ -13,8 +13,10 @@ sub TopicListByID {
   require "TopicSQL.pm";
   
   print "<div id=\"Topics\">\n";
+  print "<dl>\n";
+  print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Topics:</span></dt>\n";
+  
   if (@TopicIDs) {
-    print "<b>Topics:</b><br/>\n";
     print "<ul>\n";
     foreach my $TopicID (@TopicIDs) {
       &FetchMinorTopic($TopicID);
@@ -23,8 +25,9 @@ sub TopicListByID {
     }
     print "</ul>\n";
   } else {
-    print "<b>Topics:</b> none<br/>\n";
+    print "<dd>None</dd>\n";
   }
+  print "</dl>\n";
   print "</div>\n";
 }
 
