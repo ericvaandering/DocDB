@@ -90,6 +90,28 @@ sub ValidDate {
   return $ok;  
 }
   
+sub DaysInMonth {
+  my ($Month,$Year) = @_; # Month (1..12)
+  my @MaxDays = (31,29,31,30,31,30,31,31,30,31,30,31);
+  my $FebDays;
+  
+  if ($Month != 2) {
+    return $MaxDays[$Month-1];
+  } else {
+
+# Is it a leap year?
+  
+    if ($Year % 400 == 0) {
+      return 29;
+    } elsif ($Year % 100 == 0) {
+      return 28      
+    } elsif ($Year % 4 == 0) {
+      return 29      
+    } else {
+      return 28 
+    }       
+  }     
+}  
 sub NearByMeeting { # Return MinorTopicID of meeting within $MeetingWindow days
   # Our current scheme doesn't deal well with meetings that span months. 
   # Suggest in that case just to use begin date.

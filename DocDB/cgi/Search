@@ -61,8 +61,8 @@ $Afterday   = $params{afterday};
 $Aftermonth = $params{aftermonth};
 $Afteryear  = $params{afteryear};
 if ($Afteryear ne "----") { 
-  if ($Afterday   eq "--")  {$Afterday   = "1";}
   if ($Aftermonth eq "---") {$Aftermonth = "Jan";}
+  if ($Afterday   eq "--")  {$Afterday   = "1";}
   $SQLBegin   = "$Afteryear-$ReverseAbrvMonth{$Aftermonth}-$Afterday";
 }
 
@@ -70,8 +70,8 @@ $Beforeday   = $params{beforeday};
 $Beforemonth = $params{beforemonth};
 $Beforeyear  = $params{beforeyear};
 if ($Beforeyear ne "----") { 
-  if ($Beforeday   eq "--")  {$Beforeday   = "31";}
   if ($Beforemonth eq "---") {$Beforemonth = "Dec";}
+  if ($Beforeday   eq "--")  {$Beforeday   = &DaysInMonth($ReverseAbrvMonth{$Beforemonth},$Beforeyear);}
   $SQLEnd     = "$Beforeyear-$ReverseAbrvMonth{$Beforemonth}-$Beforeday";
 }
 
