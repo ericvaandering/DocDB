@@ -19,7 +19,6 @@ require "HTMLUtilities.pm";
 require "AuthorSQL.pm";
 require "AuthorHTML.pm";
 require "Messages.pm";
-require "Debug.pm"; # FIXME
 
 $query = new CGI;  # Global for subroutines
 
@@ -100,7 +99,7 @@ if      ($Action eq "Delete") { # Delete institutions
   push @ErrorStack,"No valid action was specified.";
 }  
 
-# For modify or new fetch author information and display.
+# For modify or new fetch institution information and display.
 
 if ($Action eq "Modify" || $Action eq "New") {
   &FetchInstitution($InstitutionID);

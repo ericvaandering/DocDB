@@ -1,18 +1,22 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+# Description: This provides a web form for people to add conferences, a special
+#              kind of topic.  
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
 #
 
 use CGI;                                                                                      
 use DBI;
 
+require "DocDBGlobals.pm";
 require "FormElements.pm";
 require "Scripts.pm";
-require "MySQLAccess.pm";
-require "DocDBGlobals.pm";
 require "ResponseElements.pm";
 require "HTMLUtilities.pm";
 require "MiscSQL.pm";
+require "TopicSQL.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -25,7 +29,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 # Removed updatedb mode, see note in ProcessDocumentAdd
 
-print $query->header;
+print $query -> header;
 &DocDBHeader("Add a Conference");
 
 &HelpPopupScript;
