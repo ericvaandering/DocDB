@@ -132,6 +132,29 @@ if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
   &EndPage(@ErrorStack);
 }
 
+# Set required/optional information
+
+my %RequiredEntries ();
+
+$RequiredEntries{Title}     = 1;
+$RequiredEntries{Abstract}  = 1;
+$RequiredEntries{Keyword}   = 0;
+$RequiredEntries{Note}      = 0;
+$RequiredEntries{File}      = 1;
+$RequiredEntries{Type}      = 1;
+$RequiredEntries{Requester} = 1;
+$RequiredEntries{Author}    = 1;
+$RequiredEntries{Security}  = 0;
+$RequiredEntries{Modify}    = 0;
+$RequiredEntries{Topic}     = 1;
+$RequiredEntries{Reference} = 0;
+$RequiredEntries{PubInfo}   = 0;
+$RequiredEntries{Signoff}   = 0;
+
+if ($mode eq "reserve") {
+  $RequiredEntries{Abstract}  = 0;
+}  
+
 my $DocRevID;
 
 if ($mode eq "update" || $mode eq "updatedb") {
