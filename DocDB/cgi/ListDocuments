@@ -37,6 +37,9 @@ foreach $document (@DocumentIDs) {
 print "</table></center>\n";
 print "<p>\n";
 
+print "Return to the <a href=DocumentDatabase>main page</a>.\n";
+print "<p>\n";
+
 $EndTime  = new Benchmark;
 $TimeDiff = timediff($EndTime,$StartTime);
 print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
