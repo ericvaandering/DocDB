@@ -16,8 +16,8 @@ mysql> delete from user where user="";
 mysql> create database SomeDocDB;
 mysql> grant select on SomeDocDB.* to docdbro@localhost identified by "<em>read only password</em>";
 mysql> grant select on SomeDocDB.* to docdbro@docsrv1.fnal.gov identified by "<em>read only password</em>";
-mysql> grant select,insert,update on SomeDocDB.* to docdbrw@docsrv1.fnal.gov identified by "<em>read write password</em>";
-mysql> grant select,insert,update on SomeDocDB.* to docdbrw@localhost identified by "<em>read write password</em>";
+mysql> grant select,insert,update,delete on SomeDocDB.* to docdbrw@docsrv1.fnal.gov identified by "<em>read write password</em>";
+mysql> grant select,insert,update,delete on SomeDocDB.* to docdbrw@localhost identified by "<em>read write password</em>";
 mysql> grant ALL on SomeDocDB.* to docdbadm@localhost identified by "<em>database owner password</em>";
 mysql> grant ALL on SomeDocDB.* to docdbadm@docsrv1.fnal.gov identified by "<em>database owner password</em>";
 mysql> quit
