@@ -244,7 +244,7 @@ sub ProcessUpload($$) {
   close OUTFILE;
   
   unless (-s "$new_dir/$short_file") {
-    push @WarnStack,"The file $short_file did not exist or was blank.";
+    push @WarnStack,"The file $short_file ($long_file) did not exist or was blank.";
   }  
   
   return $short_file;
@@ -254,6 +254,7 @@ sub CopyFile ($$$$) {
   my ($NewDir,$ShortFile,$OldDocID,$OldVersion) = @_;
   my $OldDir = &GetDirectory($OldDocID,$OldVersion);
   my $OldFile = $OldDir."/".$ShortFile;
+  push @DebugStack,"Copying $OldFile,$NewDir";
   system ("cp",$OldFile,$NewDir);
   return $ShortFile;
 }  

@@ -167,6 +167,21 @@ sub WarnPage { # Non-fatal errors
   }   
 }
 
+sub DebugPage (;$) { # Debugging output
+  my ($CheckPoint) = @_; 
+  if (@DebugStack && $DebugOutput) {
+    print "<b><font color=\"red\">Debugging messages: </font></b><br/>\n";
+    foreach my $Message (@DebugStack) {
+      print "<dt/>$Message<br/>\n";
+    } 
+    print "<p/>\n";
+  } elsif ($CheckPoint && $DebugOutput) {
+    print "No Debugging messages: $CheckPoint<br/>\n";
+  }  
+  @DebugStack = ();
+  return @DebugStack;
+}
+
 sub EndPage {  # Fatal errors, aborts page if present
   my @errors = @_;
   if (@errors) {

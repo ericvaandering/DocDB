@@ -607,18 +607,23 @@ sub FormElementTitle (%) {
   my $Text      = $Params{-text}      || "";
   my $NoBreak   = $Params{-nobreak}   || 0;
   my $NoBold    = $Params{-nobold}    || 0;
+  my $NoColon   = $Params{-nocolon}   || 0;
   my $Required  = $Params{-required}  || 0;
 
   my $TitleText = "";
-
+  my $Colon = "";
+  
+  unless ($NoColon) {
+    $Colon = ":";
+  }  
   unless ($NoBold) {
     $TitleText .= "<b>";
   }
   if ($HelpLink) {
     $TitleText .= "<a style=\"color: red\" href=\"Javascript:helppopupwindow(\'$DocDBHelp?term=$HelpLink\');\">";
-    $TitleText .= "$HelpText:</a>";
+    $TitleText .= "$HelpText$Colon</a>";
   } elsif ($Text) {
-    $TitleText .= "$Text:"; 
+    $TitleText .= "$Text$Colon"; 
   }
   unless ($NoBold) {
     $TitleText .= "</b>";

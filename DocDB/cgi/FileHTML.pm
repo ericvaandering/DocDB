@@ -150,25 +150,38 @@ sub ArchiveLink {
 sub FileUploadBox (%) {
   my (%Params) = @_; 
 
-  my $AllowCopy = $Params{-allowcopy} || 0;
-  my $MaxFiles  = $Params{-maxfiles}  || 0;
-  my $AddFiles  = $Params{-addfiles}  || 0;
-  my $Type      = $Params{-type}      || "file";
-  my $Required  = $Params{-required}  || 0;
-  my $FileSize  = $Params{-filesize}  || 60;
+  my $Type        = $Params{-type}        || "file";
+  my $DescOnly    = $Params{-desconly}    || 0;
+  my $AllowCopy   = $Params{-allowcopy}   || 0;
+  my $MaxFiles    = $Params{-maxfiles}    || 0;
+  my $AddFiles    = $Params{-addfiles}    || 0;
+  my $DocRevID    = $Params{-docrevid}    || 0;
+  my $Required    = $Params{-required}    || 0;
+  my $FileSize    = $Params{-filesize}    || 60;
   my $FileMaxSize = $Params{-filemaxsize} || 250;
   
   my @FileIDs = @{$Params{-fileids}};
   
-  if (@FileIDs) {
-    $MaxFiles = @FileIDs + $AddFiles;
-  } elsif ($NumberUploads) {
-    $MaxFiles = $NumberUploads;	  
-  } elsif ($UserPreferences{NumFiles}) {
-    $MaxFiles = $UserPreferences{NumFiles};
-  } else {
-    $MaxFiles = 1;   
-  }    
+  if ($DocRevID) {
+    require "MiscSQL.pm";
+    @FileIDs = &FetchDocFiles($DocRevID);
+  }
+  
+  @FileIDs = sort @FileIDs;
+  
+  unless ($MaxFiles) {
+    if (@FileIDs) {
+      $MaxFiles = @FileIDs + $AddFiles;
+    } elsif ($NumberUploads) {
+      $MaxFiles = $NumberUploads;	  
+    } elsif ($UserPreferences{NumFiles}) {
+      $MaxFiles = $UserPreferences{NumFiles};
+    } else {
+      $MaxFiles = 1;   
+    }   
+  }   
+  
+  &DebugPage("Test point");
   
   print $query -> hidden(-name => 'maxfiles', -default => $MaxFiles);
   
@@ -182,6 +195,12 @@ sub FileUploadBox (%) {
     $FileHelpLink = "localfile";
     $FileHelpText = "File";
   }
+  
+  if ($DescOnly) {
+    $HelpLink = "";
+    $HelpText = "";
+  }
+    
   $DescHelpLink = "description";
   $DescHelpText = "Description";
     
@@ -189,8 +208,10 @@ sub FileUploadBox (%) {
                                    -required => $Required);
   print $BoxTitle;
   
-  for (my $i = 1; $i < $MaxFiles; ++$i) {
-    my $FileID = shift,@FileIDs;
+  print $query -> hidden(-name => "maxfiles", -default => $MaxFiles);
+                            
+  for (my $i = 1; $i <= $MaxFiles; ++$i) {
+    my $FileID = shift @FileIDs;
     my $ElementName = "upload$i";
     my $DescName    = "filedesc$i";
     my $MainName    = "main$i";
@@ -199,17 +220,27 @@ sub FileUploadBox (%) {
     
     my $FileHelp        = &FormElementTitle(-helplink => $FileHelpLink, -helptext => $FileHelpText);
     my $DescriptionHelp = &FormElementTitle(-helplink => $DescHelpLink, -helptext => $DescHelpText);
-    my $MainHelp        = &FormElementTitle(-helplink => "main", -helptext => "Main?", -nobold => true);
+    my $MainHelp        = &FormElementTitle(-helplink => "main", -helptext => "Main?", -nocolon => true, -nobold => true);
     my $DefaultDesc = $DocFiles{$FileID}{DESCRIPTION};
     
-    print "<tr><td align=right>\n";
-    print $FileHelp;
-    print "</td>\n";
-    
-    print "<td>\n";
-    print $query -> filefield(-name      => $ElementName, -size => $FileSize,
-                              -maxlength => $FileMaxSize);
-    print "</td></tr>\n";
+    if ($DescOnly) {
+      print "<tr>\n";
+      print "<td align=right>Filename:</td>";
+      print "<td>\n";
+      print $DocFiles{$FileID}{NAME};
+      print "</td>\n";
+      print "</tr>\n";
+    } else {
+      print "<tr><td align=right>\n";
+      print $FileHelp;
+      print "</td>\n";
+
+      print "<td>\n";
+      print $query -> filefield(-name      => $ElementName, -size => $FileSize,
+                                -maxlength => $FileMaxSize);
+      print "</td>\n";
+      print "</tr>\n";
+    }  
     print "<tr><td align=right>\n";
     print $DescriptionHelp;
     print "</td>\n";
@@ -226,7 +257,7 @@ sub FileUploadBox (%) {
     
     print $MainHelp;
     print "</td></tr>\n";
-    if ($FileID && $AllowCopy) {
+    if ($FileID && $AllowCopy && !$DescOnly) {
       print "<tr><td>&nbsp;</td><td colspan=2>\n";
       print "Copy <tt>$DocFiles{$FileID}{NAME}</tt> from previous version:";
       print $query -> hidden(-name => $FileIDName, -value => $FileID);
