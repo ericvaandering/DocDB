@@ -32,149 +32,39 @@ require "RevisionHTML.pm";   #FIXME: Remove, move references to correct place
 sub PrintTitle {
   my ($Title) = @_;
   if ($Title) {
-    print "<h3>$Title</h3>\n";
+    print "<h1>$Title</h1>\n";
   } else {
-    print "<h3><b>Title:</b> none<br></h3>\n";
+    print "<h1><b>Title:</b> none<br></h1>\n";
   }
-}
-
-sub PrintDocNumber { # And type
-  my ($DocRevID) = @_;
-  print "<table>\n";
-  print "<tr><td><b>Document #:</b></td><td>";
-  print (&FullDocumentID($DocRevisions{$DocRevID}{DOCID}));
-  print "-v$DocRevisions{$DocRevID}{VERSION}";
-  print "</td></tr>\n";
-  print "<tr><td><b>Document type:</b></td><td>";
-  my $type_link = &TypeLink($Documents{$DocRevisions{$DocRevID}{DOCID}}{TYPE},"short");
-  print "$type_link</nobr><br>\n";
-  print "</td></tr>\n";
-  print "</table>\n";
-}
-
-sub PrintConfInfo {
-  require "TopicSQL.pm";
-  require "MeetingSQL.pm";
-  require "TopicHTML.pm";
-  &SpecialMajorTopics;
-  
-  my (@topicIDs) = @_;
-  foreach $topicID (@topicIDs) {
-    if (&MajorIsConference($MinorTopics{$topicID}{MAJOR})) {
-      &FetchConferenceByTopicID($topicID);
-      my $ConferenceLink = &ConferenceLink($topicID,"long");
-      my $ConferenceID = $ConferenceMinor{$topicID};
-      my $Start = &EuroDate($Conferences{$ConferenceID}{StartDate});
-      my $End   = &EuroDate($Conferences{$ConferenceID}{EndDate});
-      print "<dl>\n";
-      print "<dt><b>Conference Information:</b> \n";
-      print "<dd>Associated with ";
-      print "$ConferenceLink ";
-      print " held from $Start to $End \n";
-      print " in $Conferences{$ConferenceID}{Location}.</dl>\n";
-    }
-  }
-}
-
-sub PrintReferenceInfo ($) {
-  require "MiscSQL.pm";
-  require "ReferenceLinks.pm";
-  
-  my ($DocRevID) = @_;
-  
-  my @ReferenceIDs = &FetchReferencesByRevision($DocRevID);
-  
-  if (@ReferenceIDs) {
-    &GetJournals;
-    print "<dl>\n";
-    print "<dt><b>References:</b> \n";
-    foreach my $ReferenceID (@ReferenceIDs) {
-      $JournalID = $RevisionReferences{$ReferenceID}{JournalID};
-      print "<dd>Published in ";
-      my ($ReferenceLink,$ReferenceText) = &ReferenceLink($ReferenceID);
-      if ($ReferenceLink) {
-        print "<a href=\"$ReferenceLink\">";
-      }  
-      if ($ReferenceText) {
-        print "$ReferenceText";
-      } else {  
-        print "$Journals{$JournalID}{Abbreviation} ";
-        if ($RevisionReferences{$ReferenceID}{Volume}) {
-          print " vol. $RevisionReferences{$ReferenceID}{Volume}";
-        }
-        if ($RevisionReferences{$ReferenceID}{Page}) {
-          print " pg. $RevisionReferences{$ReferenceID}{Page}";
-        }
-      }  
-      if ($ReferenceLink) {
-        print "</a>";
-      }  
-      print ".\n";
-    }
-    print "</dl>\n";
-  }
-}
-
-sub SecurityListByID {
-  my (@GroupIDs) = @_;
-  
-  if ($EnhancedSecurity) {
-    print "<b>Viewable by:</b><br>\n";
-  } else {  
-    print "<b>Restricted to:</b><br>\n";
-  }  
-  
-  print "<ul>\n";
-  if (@GroupIDs) {
-    foreach $GroupID (@GroupIDs) {
-      print "<li>$SecurityGroups{$GroupID}{NAME}</li>\n";
-    }
-  } else {
-    print "<li>Public document</li>\n";
-  }
-  print "</ul>\n";
-}
-
-sub ModifyListByID {
-  my (@GroupIDs) = @_;
-  
-  print "<b>Modifiable by:</b><br>\n";
-  print "<ul>\n";
-  if (@GroupIDs) {
-    foreach $GroupID (@GroupIDs) {
-      print "<li>$SecurityGroups{$GroupID}{NAME}</li>\n";
-    }
-  } else {
-    print "<li>Same as Viewable by</li>\n";
-  }
-  print "</ul>\n";
 }
 
 sub WarnPage { # Non-fatal errors
   my @errors = @_;
   if (@errors) {
+    print "<dl class=\"warning\">\n"; # FIXME: Move red into style sheet
     if ($#errors) {
-      print "<b><font color=\"red\">There were non-fatal errors processing your
-             request: </font></b><br>\n";
+      print "<dt><font color=\"red\">There were non-fatal errors processing your
+             request: </font></dt>\n";
     } else {
-      print "<b><font color=\"red\">There was a non-fatal error processing your
-             request: </font></b><br>\n";
+      print "<dt><font color=\"red\">There was a non-fatal error processing your
+             request: </font></dt>\n";
     } 
     foreach $message (@errors) {
-      print "<dt><b>$message</b><br>\n";
-    } 
-    print "<p>\n";
+      print "<dd>$message</dd>\n";
+    }
+    print "</dl>\n"; 
   }   
 }
 
 sub DebugPage (;$) { # Debugging output
   my ($CheckPoint) = @_; 
   if (@DebugStack && $DebugOutput) {
-    print "<b><font color=\"red\">Debugging messages: </font>$CheckPoint</b><br/>\n";
+    print "<dl class=\"debug\">\n"; # FIXME: Move red into style sheet
+    print "<dt><font color=\"red\">Debugging messages: </font>$CheckPoint</dt>\n";
     foreach my $Message (@DebugStack) {
-      print "<dt/>$Message<br/>\n";
+      print "<dd>$Message</dt>\n";
     } 
-    print "<p/>\n";
+    print "</dl>\n";
   } elsif ($CheckPoint && $DebugOutput) {
     print "No Debugging messages: $CheckPoint<br/>\n";
   }  
@@ -185,17 +75,18 @@ sub DebugPage (;$) { # Debugging output
 sub EndPage {  # Fatal errors, aborts page if present
   my @errors = @_;
   if (@errors) {
+    print "<dl class=\"debug\">\n"; # FIXME: Move red into style sheet
     if ($#errors) {
-      print "<b><font color=\"red\">There were fatal errors processing your
-             request: </font></b><br>\n";
+      print "<dt><font color=\"red\">There were fatal errors processing your
+             request: </font></dt>\n";
     } else {
-      print "<b><font color=\"red\">There was a fatal error processing your
-             request: </font></b><br>\n";
+      print "<dt><font color=\"red\">There was a fatal error processing your
+             request: </font></dt>\n";
     } 
     foreach $message (@errors) {
-      print "<dt><b>$message</b><br>\n";
+      print "<dd>$message</dd>\n";
     }  
-    print "<p>\n";
+    print "</dl>\n";
     &DocDBNavBar();
     &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
     exit;
@@ -226,7 +117,7 @@ sub FullDocumentID ($;$) {
 sub DocumentLink { #FIXME: Make Version optional, Document URL, "title" mode 
   my ($DocumentID,$Version,$Title) = @_;
   my $DocNumber .= &FullDocumentID($DocumentID,$Version);
-  my $Link = "<a title=\"$DocNumber\" href=\"$ShowDocument\?docid=$DocumentID\&version=$Version\">";
+  my $Link = "<a title=\"$DocNumber\" href=\"$ShowDocument\?docid=$DocumentID\&amp;version=$Version\">";
   if ($Title) {
     $Link .= $Title;
   } else {
@@ -274,24 +165,11 @@ sub DocumentURL {
   my ($DocumentID,$Version) = @_;
   my $URL;
   if (defined $Version) {
-    $URL =  "$ShowDocument\?docid=$DocumentID\&version=$Version";
+    $URL =  "$ShowDocument\?docid=$DocumentID\&amp;version=$Version";
   } else {  
     $URL =  "$ShowDocument\?docid=$DocumentID";
   }  
   return $URL
-}
-
-sub ModTimes {
-  my ($DocRevID) = @_;
-  my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
-  $DocTime     = &EuroDateHM($Documents{$DocumentID}{DATE}); 
-  $RevTime     = &EuroDateHM($DocRevisions{$DocRevID}{DATE}); 
-  $VersionTime = &EuroDateHM($DocRevisions{$DocRevID}{VersionDate}); 
-  print "<table>\n";
-  print "<tr><td align=right><b>Document Created:</b></td><td>$DocTime</td></tr>\n";
-  print "<tr><td align=right><b>Contents Revised:</b></td><td>$VersionTime</td></tr>\n";
-  print "<tr><td align=right><b>DB Info Revised:</b></td><td>$RevTime</td></tr>\n";
-  print "</table>\n";
 }
 
 sub EuroDate {
@@ -330,38 +208,6 @@ sub EuroDateHM($) {
                           "Jul","Aug","Sep","Oct","Nov","Dec")[$Month-1].
                 " $Year, $Hour:$Min"; 
   return $ReturnDate;
-}
-
-sub OtherVersionLinks {
-  require "Sorts.pm";
-  
-  my ($DocumentID,$CurrentVersion) = @_;
-  my @RevIDs   = reverse sort RevisionByVersion &FetchRevisionsByDocument($DocumentID);
-  
-  unless ($#RevIDs > 0) {return;}
-  print "<center>\n";
-  print "<table><tr><td>\n";
-  print "<b>Other Versions of this document: </b>\n";
-  print "<ul>\n";
-  foreach $RevID (@RevIDs) {
-    my $Version = $DocRevisions{$RevID}{VERSION};
-    if ($Version == $CurrentVersion) {next;}
-    unless (&CanAccess($DocumentID,$Version)) {next;}
-    $link = &DocumentLink($DocumentID,$Version);
-    $date = &EuroDateTime($DocRevisions{$RevID}{DATE});
-    print "<li>$link \n";
-    if ($UseSignoffs) {
-      require "SignoffUtilities.pm";
-      my ($ApprovalStatus,$LastApproved) = &RevisionStatus($RevID);
-      unless ($ApprovalStatus eq "Unmanaged") { 
-        print " \&nbsp $ApprovalStatus";
-      }  
-    }  
-    print " \&nbsp ($date)</li>\n";
-  }
-  print "</ul>\n";
-  print "</td></tr></table>\n";
-  print "</center>\n";
 }
 
 sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
@@ -509,7 +355,7 @@ sub TypeLink {
   &FetchDocType($TypeID);
   my $link = "";
   unless ($Public) {
-    $link .= "<a href=$ListByType?typeid=$TypeID>";
+    $link .= "<a href=\"$ListByType?typeid=$TypeID\">";
   }
   if ($mode eq "short") {
     $link .= $DocumentTypes{$TypeID}{SHORT};

@@ -29,7 +29,8 @@ sub DocumentTable (%) {
   my %Params = @_;
   
   my $SortBy       =   $Params{-sortby}; 
-  my $Reverse      =   $Params{-reverse}; 
+  my $Reverse      =   $Params{-reverse};
+  my $MaxDocs      =   $Params{-maxdocs};
   my @DocumentIDs  = @{$Params{-docids}};
   my @Fields       = @{$Params{-fields}}; 
   my %FieldOptions = %{$Params{-fieldoptions}}; 
@@ -39,7 +40,7 @@ sub DocumentTable (%) {
   
 ### Write out the beginning and header of table
 
-  print "<center><table cellpadding=3>\n";
+  print "<center><table id=\"DocumentList\" class=\"Alternating\">\n";
 
   print "<tr>\n";
   foreach my $Field (@Fields) {
@@ -76,6 +77,7 @@ sub DocumentTable (%) {
 ### Loop over document IDs
 
   my $NumberOfDocuments = 0;
+  my $RowClass;
   foreach my $DocumentID (@DocumentIDs) {
   
 ### Which version (if any) can they view
@@ -84,11 +86,19 @@ sub DocumentTable (%) {
     my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
     ++$NumberOfDocuments;
 
-### Print fields requested
+    if ($MaxDocs && $NumberOfDocuments > $MaxDocs) {
+      last;
+    }
     
-    print "<tr>\n";
+### Print fields requested
+    if ($NumberOfDocuments % 2) { 
+      $RowClass = "Odd";
+    } else {
+      $RowClass = "Even";
+    }    
+    print "<tr class=\"$RowClass\">\n";
     foreach my $Field (@Fields) {
-      print "<td valign=top>";
+      print "<td>";
       if      ($Field eq "Docid") {    # Document number
         print &NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
                                  -numwithversion => true); 
@@ -145,6 +155,10 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
   }
     
   my $Link = "<a href=\"$ShowDocument\?docid=$DocumentID";
+  
+  # When adding the version number, remember to use &amp; for XHTML 
+  # or use DocumentURL
+  
   $Link .= "\">"; 
   if ($DocIDOnly) {           # Like 1234                   
     $Link .= $DocumentID;
@@ -159,7 +173,7 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
       require "SignoffUtilities.pm";
       my ($ApprovalStatus,$LastApproved) = &RevisionStatus($DocRevID);
       unless ($ApprovalStatus eq "Unmanaged") { 
-        $Link .= "<br>($ApprovalStatus";
+        $Link .= "<br/>($ApprovalStatus";
         if ($ApprovalStatus eq "Unapproved") {
           if (defined $LastApproved) {
             my $DocumentID = $DocRevisions{$LastApproved}{DOCID};
@@ -180,5 +194,17 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
   return $Link;
 }         
 
+sub PrintDocNumber { # And type
+  my ($DocRevID) = @_;
+  print "<dt>Document #:</dt>";
+  print "<dd>";
+  print (&FullDocumentID($DocRevisions{$DocRevID}{DOCID}));
+  print "-v$DocRevisions{$DocRevID}{VERSION}";
+  print "</dd>\n";
+  
+  print "<dt>Document type:</dt>";
+  my $type_link = &TypeLink($Documents{$DocRevisions{$DocRevID}{DOCID}}{TYPE},"short");
+  print "<dd>$type_link</dd>\n";
+}
 
 1;

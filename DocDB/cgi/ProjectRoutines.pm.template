@@ -109,7 +109,7 @@ sub DocDBNavBar {
 
   require "Security.pm";
 
-  print "<p><div align=\"center\">\n";
+  print "<div align=\"center\">\n";
   if ($ExtraDesc && $ExtraURL) {
     print "[&nbsp;<a href=\"$ExtraURL\"l>$ExtraDesc</a>&nbsp;]&nbsp;\n";
   } 

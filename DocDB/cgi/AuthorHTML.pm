@@ -50,8 +50,12 @@ sub AuthorListByID {
   
   require "AuthorSQL.pm";
   
+  print "<div id=\"Authors\">\n";
+  print "<dl>\n";
+  print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Authors:</span></dt>\n";
+  print "</dl>\n";
+
   if (@AuthorIDs) {
-    print "<b>Authors:</b><br/>\n";
     print "<ul>\n";
     foreach my $AuthorID (@AuthorIDs) {
       &FetchAuthor($AuthorID);
@@ -60,8 +64,9 @@ sub AuthorListByID {
     }
     print "</ul>\n";
   } else {
-    print "<b>Authors:</b> none<br/>\n";
+    print "<dd>None</dd>\n";
   }
+  print "</div>\n";
 }
 
 sub ShortAuthorListByID {
@@ -82,18 +87,18 @@ sub ShortAuthorListByID {
 
 sub RequesterByID { 
   my ($RequesterID) = @_;
-  my $author_link   = &AuthorLink($RequesterID);
   
-  print "<tr><td align=right><b>Requested by:</b></td>";
-  print "<td>$author_link</td></tr>\n";
+  my $AuthorLink   = &AuthorLink($RequesterID);
+  print "<dt>Requested by:</dt>\n";
+  print "<dd>$AuthorLink</dd>\n";
 }
 
 sub SubmitterByID { 
   my ($RequesterID) = @_;
-  my $author_link   = &AuthorLink($RequesterID);
   
-  print "<tr><td align=right><b>Updated by:</b></td>";
-  print "<td>$author_link</td></tr>\n";
+  my $AuthorLink   = &AuthorLink($RequesterID);
+  print "<dt>Updated by:</dt>\n";
+  print "<dd>$AuthorLink</dd>\n";
 }
 
 sub AuthorLink ($;%) {
@@ -104,7 +109,7 @@ sub AuthorLink ($;%) {
   
   &FetchAuthor($AuthorID);
   my $link;
-  $link = "<a href=$ListByAuthor?authorid=$AuthorID>";
+  $link = "<a href=\"$ListByAuthor?authorid=$AuthorID\">";
   if ($Format eq "full") {
     $link .= $Authors{$AuthorID}{FULLNAME};
   } elsif ($Format eq "formal") {

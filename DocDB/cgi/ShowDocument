@@ -102,9 +102,7 @@ if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
   &EndPage(@ErrorStack);
 }
 
-&PrintRevisionInfo($DocRevID);
-
-&OtherVersionLinks($DocumentID,$Version);
+&PrintRevisionInfo($DocRevID, -showversions => 1);
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -108,15 +108,23 @@ sub DocTypeButtons (%) {
 };
 
 sub PrintRevisionInfo {
-
   require "FormElements.pm";
   require "AuthorSQL.pm";
   require "SecuritySQL.pm";
   require "TopicSQL.pm";
   require "Security.pm";
  
-  my ($DocRevID,$HideButtons) = @_;
-
+  require "TopicHTML.pm";
+  require "AuthorHTML.pm";
+  require "FileHTML.pm";
+  require "DocumentHTML.pm";
+  require "SecurityHTML.pm";
+  
+  my ($DocRevID,%Params) = @_;
+  
+  my $HideButtons  = $Params{-hidebuttons}  || 0;
+  my $ShowVersions = $Params{-showversions} || 0;
+  
   &FetchDocRevisionByID($DocRevID);
   
   my $DocumentID  = $DocRevisions{$DocRevID}{DOCID};
@@ -128,94 +136,89 @@ sub PrintRevisionInfo {
   if ($EnhancedSecurity) {
     @ModifyIDs   = &GetRevisionModifyGroups($DocRevID);
   }
-  print "<center><table cellpadding=10 width=95%>\n";
-  print "<tr><td colspan=3 align=center>\n";
-  &PrintTitle($DocRevisions{$DocRevID}{Title});
-  if ($UseSignoffs) {
-    require "SignoffUtilities.pm";
-    my ($ApprovalStatus,$LastApproved) = &RevisionStatus($DocRevID);
-    unless ($ApprovalStatus eq "Unmanaged") { 
-      print "(Document Status: $ApprovalStatus)";
-    }  
-  }  
-  print "</td></tr>\n";
-  print "<tr valign=top>";
-  print "<td>";
   
-  print "<table>\n"; 
-  &RequesterByID($Documents{$DocumentID}{REQUESTER});
-  &SubmitterByID($DocRevisions{$DocRevID}{SUBMITTER});
-  print "</table>\n"; 
+  print "<div id=\"RevisionInfo\">\n";
+  
+  ### Header info
+  
+  print "<div id=\"Header3Col\">\n";
 
-  print "<td>"; 
-  &PrintDocNumber($DocRevID);
+  print "<div id=\"DocTitle\">\n";
+   &PrintTitle($DocRevisions{$DocRevID}{Title});
+   if ($UseSignoffs) {
+     require "SignoffUtilities.pm";
+     my ($ApprovalStatus,$LastApproved) = &RevisionStatus($DocRevID);
+     unless ($ApprovalStatus eq "Unmanaged") { 
+       print "<h5>(Document Status: $ApprovalStatus)</h5>\n";
+     }  
+   }  
+  print "</div>\n";  # DocTitle
+  print "</div>\n";  # Header3Col
 
-  print "<td>"; 
-  &ModTimes;
+#  print "<div id=\"Body3Col\">\n";
 
-  print "</td></tr>\n";
-  print "</table>\n";
-  print "<table cellpadding=10 width=95%>\n";
-  print "<tr valign=top>";
-  print "<td>"; 
-  &AuthorListByID(@AuthorIDs);
+  ### Left Column
 
-  print "<td>"; 
-  &TopicListByID(@TopicIDs);
+  print "<div id=\"LeftColumn3Col\">\n";
+  
+  print "<div id=\"BasicDocInfo\">\n";
+  print "<dl>\n";
+   &PrintDocNumber($DocRevID);
+   &RequesterByID($Documents{$DocumentID}{REQUESTER});
+   &SubmitterByID($DocRevisions{$DocRevID}{SUBMITTER});
+   &PrintModTimes;
+  print "</dl>\n";
+  print "</div>\n";  # BasicDocInfo
 
-  print "<td>"; 
+  &OtherVersionLinks($DocumentID,$Version);
+
+  print "</div>\n";  # LeftColumn3Col
+
+  ### Main Column
+  
+  print "<div id=\"MainColumn3Col\">\n";
+
+  ### Right column (wrapped around by middle column)
+
+  print "<div id=\"RightColumn3Col\">\n";
+  
+  &FileListByRevID($DocRevID); # All are called only here, so changes are OK
+  
+  print "<hr/><p/>\n";
+  
   &SecurityListByID(@GroupIDs);
-  if ($EnhancedSecurity) {
-    print "<td>"; 
-    &ModifyListByID(@ModifyIDs);
-  }
-  print "</td></tr>\n";
-  print "</table>\n";
-  print "<table cellpadding=10 width=95%>\n";
-  print "<tr valign=top>";
-  print "<td>"; 
-  &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT});
+  &ModifyListByID(@ModifyIDs);
+  
+  if (&CanModify($DocumentID) && !$HideButtons) {
+    print "<div id=\"UpdateButtons\">\n";
+    &UpdateButton($DocumentID);
+    &UpdateDBButton($DocumentID,$Version);
+    &AddFilesButton($DocumentID,$Version);
+    print "</div>\n";
+  }  
 
-  print "<td rowspan=3>"; 
-  &FileListByRevID($DocRevID);
+  print "</div>\n";  # RightColumn3Col
 
-  print "</td></tr>\n";
-
-  print "<tr valign=top>";
-  print "<td>"; 
+  &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT}); # All are called only here, so changes are OK
+  &TopicListByID(@TopicIDs);
+  &AuthorListByID(@AuthorIDs);
   &PrintKeywords($DocRevisions{$DocRevID}{Keywords});
-
-  print "<tr valign=top>";
-  print "<td>"; 
   &PrintRevisionNote($DocRevisions{$DocRevID}{Note});
-
-  print "<tr valign=top>";
-  print "<td>"; 
-  &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
-  &PrintConfInfo(@TopicIDs);
   &PrintReferenceInfo($DocRevID);
-  print "</td></tr>\n";
+  &PrintConfInfo(@TopicIDs);
+  &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
+  
   if ($UseSignoffs) {
     require "SignoffHTML.pm";
-    print "<tr valign=top><td colspan=2>\n";
     &PrintRevisionSignoffInfo($DocRevID);
-    print "</td></tr>\n";
-  }  
-  print "</table>\n";
-  if (&CanModify($DocumentID) && !$HideButtons) {
-    print "<hr width=\"90%\"/>\n";
-    print "<table cellpadding=10>\n";
-    print "<tr valign=top>";
-    print "<td align=center width=33%>";
-    &UpdateButton($DocumentID);
-    print "<td align=center width=33%>";
-    &UpdateDBButton($DocumentID,$Version);
-    print "<td align=center width=33%>";
-    &AddFilesButton($DocumentID,$Version);
-    print "</td></tr>\n";
-    print "</table></center>\n"; 
   }  
 
+  print "</div>\n";  # MainColumn3Col
+#  print "</div>\n";  # Body3Col
+  
+  print "<div id=\"Footer3Col\">\n";
+  print "</div>\n";  # Footer3Col
+  print "</div>\n";  # RevisionInfo
 }
  
 sub PrintAbstract {
@@ -223,15 +226,17 @@ sub PrintAbstract {
   
   if ($Abstract) {
     $Abstract = &URLify($Abstract);
-    $Abstract =~ s/\n\n/<p>/g;
-    $Abstract =~ s/\n/<br>/g;
-    print "<dl>\n";
-    print "<dt><b>Abstract:</b><br>\n";
-    print "<dd>$Abstract<br>\n";
-    print "</dl>\n";
+    $Abstract =~ s/\n\n/<p\/>/g;
+    $Abstract =~ s/\n/<br\/>/g;
   } else {
-    print "<b>Abstract:</b> none<br>\n";
-  }
+    $Abstract = "None";
+  }  
+  print "<div id=\"Abstract\">\n";
+  print "<dl>\n";
+  print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Abstract:</span></dt>\n";
+  print "<dd>$Abstract</dd>\n";
+  print "</dl>\n";
+  print "</div>\n";
 }
 
 sub PrintKeywords {
@@ -243,8 +248,9 @@ sub PrintKeywords {
   $Keywords =~ s/\s+$//;
   
   if ($Keywords) {
+    print "<div id=\"Keywords\">\n";
     print "<dl>\n";
-    print "<dt><b>Keywords:</b><br>\n";
+    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Keywords:</span></dt>\n";
     print "<dd>\n";
     my @Keywords = split /\,*\s+/,$Keywords;
     my $Link;
@@ -252,7 +258,8 @@ sub PrintKeywords {
       $Link = &KeywordLink($Keyword);
       print "$Link \n";
     }  
-    print "<br></dl>\n";
+    print "</dd></dl>\n";
+    print "</div>\n";
   }
 }
 
@@ -261,14 +268,89 @@ sub PrintRevisionNote {
 
   my ($RevisionNote) = @_;
   if ($RevisionNote) {
+    print "<div id=\"RevisionNote\">\n";
     $RevisionNote = &URLify($RevisionNote);
-    $RevisionNote =~ s/\n\n/<p>/g;
-    $RevisionNote =~ s/\n/<br>/g;
+    $RevisionNote =~ s/\n\n/<p\/>/g;
+    $RevisionNote =~ s/\n/<br\/>/g;
     print "<dl>\n";
-    print "<dt><b>Notes and Changes:</b><br>\n";
-    print "<dd>$RevisionNote<br>\n";
+    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Notes and Changes:</span></dt>\n";
+    print "<dd>$RevisionNote</dd>\n";
     print "</dl>\n";
+    print "</div>\n";
   }
+}
+
+sub PrintReferenceInfo ($) {
+  require "MiscSQL.pm";
+  require "ReferenceLinks.pm";
+  
+  my ($DocRevID) = @_;
+  
+  my @ReferenceIDs = &FetchReferencesByRevision($DocRevID);
+  
+  if (@ReferenceIDs) {
+    &GetJournals;
+    print "<div id=\"ReferenceInfo\">\n";
+    print "<dl>\n";
+    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">References:</span></dt>\n";
+    foreach my $ReferenceID (@ReferenceIDs) {
+      $JournalID = $RevisionReferences{$ReferenceID}{JournalID};
+      print "<dd>Published in ";
+      my ($ReferenceLink,$ReferenceText) = &ReferenceLink($ReferenceID);
+      if ($ReferenceLink) {
+        print "<a href=\"$ReferenceLink\">";
+      }  
+      if ($ReferenceText) {
+        print "$ReferenceText";
+      } else {  
+        print "$Journals{$JournalID}{Abbreviation} ";
+        if ($RevisionReferences{$ReferenceID}{Volume}) {
+          print " vol. $RevisionReferences{$ReferenceID}{Volume}";
+        }
+        if ($RevisionReferences{$ReferenceID}{Page}) {
+          print " pg. $RevisionReferences{$ReferenceID}{Page}";
+        }
+      }  
+      if ($ReferenceLink) {
+        print "</a>";
+      }  
+      print ".</dd>\n";
+    }
+    print "</dl>\n";
+    print "</div>\n";
+  }
+}
+
+sub PrintConfInfo {
+  require "TopicSQL.pm";
+  require "MeetingSQL.pm";
+  require "TopicHTML.pm";
+  &SpecialMajorTopics;
+  
+  my (@topicIDs) = @_;
+  my $HasConference = 0;
+  foreach $topicID (@topicIDs) {
+    if (&MajorIsConference($MinorTopics{$topicID}{MAJOR})) {
+      &FetchConferenceByTopicID($topicID);
+      unless ($HasConference) {
+        print "<div id=\"ConferenceInfo\">\n";
+        $HasConference = 1;
+      }  
+      my $ConferenceLink = &ConferenceLink($topicID,"long");
+      my $ConferenceID = $ConferenceMinor{$topicID};
+      my $Start = &EuroDate($Conferences{$ConferenceID}{StartDate});
+      my $End   = &EuroDate($Conferences{$ConferenceID}{EndDate});
+      print "<dl>\n";
+      print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Conference Information:</span></dt> \n";
+      print "<dd>Associated with ";
+      print "$ConferenceLink ";
+      print " held from $Start to $End \n";
+      print " in $Conferences{$ConferenceID}{Location}.</dd></dl>\n";
+    }
+  }
+  if ($HasConference) {
+    print "</div>\n";
+  }  
 }
 
 sub PrintPubInfo ($) {
@@ -276,14 +358,68 @@ sub PrintPubInfo ($) {
 
   my ($pubinfo) = @_;
   if ($pubinfo) {
+    print "<div id=\"PubInfo\">\n";
     $pubinfo = &URLify($pubinfo);
     $pubinfo =~ s/\n\n/<p>/g;
     $pubinfo =~ s/\n/<br>/g;
     print "<dl>\n";
-    print "<dt><b>Publication Information:</b><br>\n";
-    print "<dd>$pubinfo<br>\n";
+    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Publication Information:</span></dt>\n";
+    print "<dd>$pubinfo</dd>\n";
     print "</dl>\n";
+    print "</div>\n";
   }
+}
+
+sub PrintModTimes {
+  my ($DocRevID) = @_;
+  my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+  $DocTime     = &EuroDateHM($Documents{$DocumentID}{DATE}); 
+  $RevTime     = &EuroDateHM($DocRevisions{$DocRevID}{DATE}); 
+  $VersionTime = &EuroDateHM($DocRevisions{$DocRevID}{VersionDate}); 
+
+  print "<dt>Document Created:</dt>\n<dd>$DocTime</dd>\n";
+  print "<dt>Contents Revised:</dt>\n<dd>$VersionTime</dd>\n";
+  print "<dt>DB Info Revised:</dt>\n<dd>$RevTime</dd>\n";
+}
+
+sub OtherVersionLinks {
+  require "Sorts.pm";
+  
+  my ($DocumentID,$CurrentVersion) = @_;
+  my @RevIDs   = reverse sort RevisionByVersion &FetchRevisionsByDocument($DocumentID);
+  
+  unless ($#RevIDs > 0) {return;}
+  print "<div id=\"OtherVersions\">\n";
+  print "<b>Other Versions:</b>\n";
+  
+  print "<table id=\"OtherVersionTable\" class=\"Alternating\">\n";
+  my $RowClass = "Odd";
+  
+  foreach $RevID (@RevIDs) {
+    my $Version = $DocRevisions{$RevID}{VERSION};
+    if ($Version == $CurrentVersion) {next;}
+    unless (&CanAccess($DocumentID,$Version)) {next;}
+    $link = &DocumentLink($DocumentID,$Version);
+    $date = &EuroDateHM($DocRevisions{$RevID}{DATE});
+    print "<tr class=\"$RowClass\"><td>$link\n";
+    if ($RowClass eq "Odd") {  
+      $RowClass = "Even";
+    } else {    
+      $RowClass = "Odd";
+    }  
+    print "<br/>$date\n";
+    if ($UseSignoffs) {
+      require "SignoffUtilities.pm";
+      my ($ApprovalStatus,$LastApproved) = &RevisionStatus($RevID);
+      unless ($ApprovalStatus eq "Unmanaged") { 
+        print "<br/>$ApprovalStatus";
+      }  
+    }  
+    print "</td></tr>\n";
+  }
+
+  print "</table>\n";
+  print "</div>\n";
 }
 
 1;

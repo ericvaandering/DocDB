@@ -38,7 +38,7 @@ print $query->header;
 &DocDBHeader("Document List by Type");
 
 
-print "<center><h4>These documents of type <span class=\"highlight\">
+print "<center><h4>These documents of type <span class=\"Highlight\">
 $DocumentTypes{$TypeID}{SHORT}</span> are
 available:</h4></center><p>\n";
 

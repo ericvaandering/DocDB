@@ -469,7 +469,6 @@ print "You were successful. Your Document ID is <b>$full_docid, version
        Your entry was created with the following information: <p><hr><p>\n"; 
 
 &PrintRevisionInfo($DocRevID);
-&OtherVersionLinks($documentID,$version);
 
 # Send out e-mail to people watching this document and people who have to sign
 

@@ -44,15 +44,15 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 ### Set defaults
 
-my ($Title, $Message, $List);
-my ($SortBy, @Fields);
+my ($Title,  $Message, $List);
+my ($SortBy, $Reverse, @Fields);
 
 if ($Days) { 
 
 ### Days since last modification
 
   $Title   = "Documents from Last $Days Days";
-  $Message = "These documents have been modified in the last <span class=\"highlight\">$Days days</span>.";
+  $Message = "These documents have been modified in the last <span class=\"Highlight\">$Days days</span>.";
   $List = $dbh -> prepare("select DISTINCT(DocumentID) from DocumentRevision where Obsolete=0 and TO_DAYS(NOW())-TO_DAYS(TimeStamp)<=?");            
   $List -> execute($Days);
 } elsif ($TopicID) {
@@ -69,7 +69,7 @@ if ($Days) {
 #    unless ($Mode) {$Mode = "meeting";}
 #  }    
   $Title   = "Documents List by Topic";
-  $Message = "These documents on <span class=\"highlight\"> $MinorTopics{$TopicID}{LONG} 
+  $Message = "These documents on <span class=\"Highlight\"> $MinorTopics{$TopicID}{LONG} 
               ($MinorTopics{$TopicID}{Full})</span> are available:";
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
            "DocumentRevision,RevisionTopic where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
@@ -87,7 +87,7 @@ if ($Days) {
   &FetchMajorTopic($MajorID);
   
   $Title   = "Documents List by Topic";
-  $Message = "These documents on <span class=\"highlight\"> $MajorTopics{$MajorID}{LONG}</span> are available:";
+  $Message = "These documents on <span class=\"Highlight\"> $MajorTopics{$MajorID}{LONG}</span> are available:";
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
            "DocumentRevision,RevisionTopic,MinorTopic where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
            "and DocumentRevision.Obsolete=0 and RevisionTopic.MinorTopicID=MinorTopic.MinorTopicID and MinorTopic.MajorTopicID=?");            
@@ -138,7 +138,7 @@ if ($Days) { # Print out modified by form
 
 my $NumberOfDocuments = &DocumentTable(-fields => \@Fields, -docids  => \@DocumentIDs, 
                                        -sortby => $SortBy,  -reverse => $Reverse);
-print "<p/><b>Number of documents found: $NumberOfDocuments</b><p/>\n";
+print "<b>Number of documents found: $NumberOfDocuments</b><p/>\n";
 
 $EndTime  = new Benchmark;
 

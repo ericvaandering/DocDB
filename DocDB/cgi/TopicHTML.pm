@@ -12,8 +12,11 @@ sub TopicListByID {
   
   require "TopicSQL.pm";
   
+  print "<div id=\"Topics\">\n";
+  print "<dl>\n";
+  print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Topics:</span></dt>\n";
+  print "</dl>\n";
   if (@TopicIDs) {
-    print "<b>Topics:</b><br/>\n";
     print "<ul>\n";
     foreach my $TopicID (@TopicIDs) {
       &FetchMinorTopic($TopicID);
@@ -22,8 +25,9 @@ sub TopicListByID {
     }
     print "</ul>\n";
   } else {
-    print "<b>Topics:</b> none<br/>\n";
+    print "<dd>None</dd>\n";
   }
+  print "</div>\n";
 }
 
 sub ShortTopicListByID {
@@ -114,7 +118,7 @@ sub MeetingLink {
   
   &FetchMinorTopic($TopicID);
   my $link;
-  $link = "<a href=\"$ListByTopic?topicid=$TopicID&mode=meeting\" title=\"$MinorTopics{$TopicID}{LONG}\">";
+  $link = "<a href=\"$ListByTopic?topicid=$TopicID&amp;mode=meeting\" title=\"$MinorTopics{$TopicID}{LONG}\">";
   if ($Mode eq "short") {
     $link .= $MinorTopics{$TopicID}{SHORT};
   } else {
@@ -132,7 +136,7 @@ sub ConferenceLink {
   
   &FetchMinorTopic($TopicID);
   my $Link;
-     $Link = "<a href=$ListByTopic?topicid=$TopicID&mode=conference>";
+     $Link = "<a href=\"$ListByTopic?topicid=$TopicID&amp;mode=conference\">";
   if ($Mode eq "short" || $Mode eq "nodate") {
     $Link .= $MinorTopics{$TopicID}{SHORT};
   } elsif ($Mode eq "long") {

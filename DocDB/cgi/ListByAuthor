@@ -65,7 +65,7 @@ unless ($Authors{$AuthorID}{LASTNAME}) {
 
 ### Output Information
 
-print "<center><h4><span class=\"highlight\">\n";
+print "<center><h4><span class=\"Highlight\">\n";
 &PrintAuthorInfo($AuthorID);
 print "</span><br>is listed as an author on the following documents:</h4></center><p>\n";
 

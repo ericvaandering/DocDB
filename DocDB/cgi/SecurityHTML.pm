@@ -74,4 +74,47 @@ sub SecurityScroll (%) {
                                  -default => \@Default, $Booleans);
 };
 
+sub SecurityListByID {
+  my (@GroupIDs) = @_;
+  
+  print "<div id=\"Viewable\">\n";
+  if ($EnhancedSecurity) {
+    print "<b>Viewable by:</b><br/>\n";
+  } else {  
+    print "<b>Restricted to:</b><br/>\n";
+  }  
+  
+  print "<ul>\n";
+  if (@GroupIDs) {
+    foreach $GroupID (@GroupIDs) {
+      print "<li>$SecurityGroups{$GroupID}{NAME}</li>\n";
+    }
+  } else {
+    print "<li>Public document</li>\n";
+  }
+  print "</ul>\n";
+  print "</div>\n";
+}
+
+sub ModifyListByID {
+  my (@GroupIDs) = @_;
+  
+  unless ($EnhancedSecurity) {
+    return;
+  }
+    
+  print "<div id=\"Modifiable\">\n";
+  print "<b>Modifiable by:</b><br/>\n";
+  print "<ul>\n";
+  if (@GroupIDs) {
+    foreach $GroupID (@GroupIDs) {
+      print "<li>$SecurityGroups{$GroupID}{NAME}</li>\n";
+    }
+  } else {
+    print "<li>Same as Viewable by</li>\n";
+  }
+  print "</ul>\n";
+  print "</div>\n";
+}
+
 1;

@@ -1,24 +1,25 @@
+/* General style settings */
+
 body {
-  margin:10px 10px 10px 10px;
+  margin: 10px 10px 10px 10px;
   padding:0px;
+  margin-right: 20px;
+  
 }
-
-dd {
-  margin-left: 1em;
-}
-
-/* li, ul {
-  margin-left: 0em;
-  padding-left: 0em;
-} For IE */
 
 ul {
   padding-left: 2em;
+  margin-left:  0em;
 }
 
 dl {
   padding-top: 0em;
-  margin-top: 0em;
+  margin-top:  0em;
+}
+
+dd {
+  padding-left: 1em;
+  margin-left:  0em;
 }
 
 dt {
@@ -35,79 +36,124 @@ h1 {font-size: 150%}
 h2 {font-size: 120%}
 h3 {font-size: 100%}
 
+h5 {
+  font-size: 100%;
+  font-weight: normal;
+}
+
+/* Stuff for PrintRevisionInfo, which shows up in lots of places, hence it's here */
+
+#RevisionInfo {
+  position: relative;
+  width: 100%;
+}
+
+#Header3Col {
+  width: 100%;
+  padding: 0.5em;
+}
+	
+#Footer3Col {
+  clear: both;
+  width: 100%;
+  padding: 0.5em;
+  text-align: center;
+}
+	
 #LeftColumn3Col {
-//	width: 19%;
   width: 12.5em;
   float: left;
   background: #eee;
-  padding-left: 0.3em;
+  padding-left: 0.5em;
   padding-bottom: 0.5em;
   padding-right: 0.5em;
   padding-top: 0em;
   margin-left: 0em;
+  border: 1px solid;
 }
 
 #MainColumn3Col {
-  width: auto; /* 12 matches LeftColums */
   background: white;
   padding-bottom: 1em;
-  padding-left: 13.5em;   /* 13=12+1 matches LeftColums (can't hardcode?!?)*/
-  padding-right: 0.5em;
+  padding-left: 14em;   /* width+left/right paddings of LeftColumn plus another 0.5em*/
+  width: auto;
 }
 
 #RightColumn3Col {
-/*	width: 25%; For IE */
   width: auto;
-  max-width: 45%;
+  max-width: 45%; /* of 2nd and 3rd columns */
   background: #eee;
   float: right;
-  margin-bottom: 1em;
-  margin-left: 0.5em;
-  padding-bottom: 0.5em;
-  padding-right: 0.5em;
-  padding-left: 0.3em;
-  padding-top: 0em;
+  margin-bottom: 0.5em;
+  margin-left:   0.5em;
+  padding:      0.5em;
+  padding-top: 0.1em;
+  border: 1px solid black;
 }
 
-
-#Header3Col {
-  background: white;      
-  margin-bottom: 1.5em;
-}
-	
-
-#Footer3Col {
-  clear: both;
-  padding-bottom: 1em;
+#UpdateButtons { 
   text-align: center;
-}
-	
+}  
+
+#UpdateButtons input[type="submit"] { /* Probably not best to change all buttons */
+  background: #ddd;
+  font-weight: bold;
+  border: 1px black solid;
+  padding: 0.25em;
+  font-size: 90%;
+}  
+
+#UpdateButtons input[type="submit"] {
+  width: 12em;
+}  
+
 #Signoffs ul ul {
   padding-left: 1em;
 }
 
-/* Allow for lists with alternating colors */
-
-li.Odd {
-  background: #eee;
+#OtherVersionTable {
+  width: 100%; 
 }
 
-li.Even {
-  background: white;
-}
+#OtherVersionTable td {
+  padding: 3px;
+}  
 
-/* Allow for tables alternating color rows. 
+
+/* Allow for lists and tables with alternating color rows. 
    border-collapse gets rid of spacing between cells */
 
 table.Alternating {
   border-collapse: collapse;
 }
 
-tr.Odd {
+li.Odd, tr.Odd {
   background: #eee;
 }
 
-tr.Even {
+li.Even, tr.Even {
   background: white;
 }
 
+/* DocumentList tables show up in lots of places, hence here */
+
+#DocumentList {
+  border: 1px solid black;
+  margin-bottom: 2em;
+}
+
+#DocumentList td {
+  vertical-align: top;
+  text-align: left;
+  padding: 3px 5px 3px 5px;
+}  
+
+#DocumentList th {
+  vertical-align: bottom;
+  border-bottom: 1px solid black;
+  padding: 5px 5px 5px 5px;
+}  
+
+.Highlight {
+  color: blue;
+}  

@@ -13,6 +13,7 @@ sub FileListByRevID {
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
   my $Version    = $DocRevisions{$DocRevID}{VERSION};
 
+  print "<div id=\"Files\">\n";
   if (@FileIDs) {
     @RootFiles  = ();
     @OtherFiles = ();
@@ -42,6 +43,7 @@ sub FileListByRevID {
   } else {
     print "<b>Files in Document:</b> none<br>\n";
   }
+  print "</div>\n";
 }
 
 sub ShortFileListByRevID {
@@ -109,7 +111,7 @@ sub FileLink {
   my $file_size = &FileSize(&FullFile($documentID,$version,$shortname));
   $file_size =~ s/^\s+//; # Chop off leading spaces
   if ($description) {
-    return "<a href=\"$base_url$shortfile\" title=\"$shortname\">$description</a> ($shortname, $file_size)";
+    return "<a href=\"$base_url$shortfile\" title=\"$shortname\">$description</a><br/>($shortname, $file_size)";
   } else {
     return "<a href=\"$base_url$shortfile\" title=\"$shortname\">$shortname</a> ($file_size)";
   }
@@ -133,12 +135,13 @@ sub ArchiveLink {
   
   my @Types = ("tar.gz");
   if ($Zip) {push @Types,"zip";}
-     @Types = sort @Types;
   
-  my $link  = "<b>Retrieve archive of files as \n";
+  @Types = sort @Types;
+  
+  my $link  = "<b>Get all files as \n";
   @LinkParts = ();
   foreach my $Type (@Types) {
-    push @LinkParts,"<a href=\"$RetrieveArchive?docid=$DocumentID\&version=$Version\&type=$Type\">$Type</a>";
+    push @LinkParts,"<a href=\"$RetrieveArchive?docid=$DocumentID\&amp;version=$Version\&amp;type=$Type\">$Type</a>";
   }  
   $link .= join ', ',@LinkParts;
   $link .= ".";
