@@ -28,15 +28,15 @@ print "<p><center><h4>\n";
          and publications.\n";
 print "</h4></center>\n";
 } else {
-  print "<p><h4>\n";
-  print "<a href=\"$ModifyHome\">Create or change</a> documents. 
-         <a href=\"$HelpFile\">(Database instructions)</a></h4>\n";
-  print "</h4>\n";
+print "<p><center><h3>\n";
+  print "Welcome to the BTeV Document Database\n";
+print "</h3></center>\n";
 }
 
-print "<p><h4>Find the information you want in the database:</h4>\n";
+print "<p><h4>You can:</h4>\n";
 
 print "<ul>\n";
+  print "<li><b><a href=\"$ModifyHome\">Create or change</a> documents.</b><p>\n";
 unless ($Public) {
   print "<li><b><a href=\"$SearchForm\">Search</a> documents</b>"; 
 }
@@ -55,25 +55,38 @@ print $query -> endform;
 print "<li>"; 
 print "<b>List documents:</b>\n";
 
+print "<table><tr>\n";
+print "<td>\n";
 print "<ul>\n";
 print "<li> by <a href=\"$ListAuthors\">author</a>\n";
 print "<li> by <a href=\"$ListTopics\">topic</a>\n";
 print "<li>modified in the <a href=\"$LastModified?days=$LastDays\">last $LastDays days</a>";
+print "</ul>\n";
+print "</td>";
+
+print "<td>\n";
+print "<ul>\n";
 unless ($Public) {
   print "<li> from <a href=\"$ListMeetings\">group meetings</a>\n";
 }
 print "<li>from <a href=\"$ListByTopic?major=Conferences&mode=conference\">conferences</a>";
+print "<li><a href=\"$ListDocuments\">all documents</a>";
+print "</ul>\n";
+print "</td></tr>";
+print "<td colspan=2>\n";
+print "<ul>\n";
 if ($Public) {
   print "<li> by old number
         <a href=\"$web_root/Static/Public/OldDBTranslation.shtml\">like
          BTeV-pub-year/xx</a>. \n";
 } else {
-  print "<li><a href=\"$ListDocuments\">all documents</a>";
   print "<li> by old number like
          <a href=\"$web_root/Static/Restricted/OldDBTranslation.shtml\">BTeV-pub-year/xx</a> from the <a href=\"http://www-btev.fnal.gov/cgi-private/database/doclist.pl\">old DocDB</a>\n";
 }
 print "</ul>\n";
-
+print "</table><p>\n";
+ 
+print "<li><b>Get <a href=\"$HelpFile\">Database instructions</a></b><p>\n";
 print "</ul>\n";
 
 print "<hr><center><h4>Documents modified in the last $HomeLastDays
