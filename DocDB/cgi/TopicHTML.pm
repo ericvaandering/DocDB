@@ -49,7 +49,7 @@ sub MinorTopicLink ($;$) {
   return $link;
 }
 
-sub MajorTopicLink {
+sub MajorTopicLink ($;$) {
   my ($TopicID,$mode) = @_;
   
   require "TopicSQL.pm";

@@ -367,7 +367,7 @@ sub TopicSelectLong { # Scrolling selectable list for topics, all info
   }  
   print "<b><a ";
   &HelpLink("topics");
-  print "Topics:</a></b><br> \n";
+  print "Topics:</a></b> (Long descriptions in brackets)<br> \n";
   print $query -> scrolling_list(-name => "topics", -values => \@TopicIDs, 
                                  -labels => \%TopicLabels,
                                  -size => 10, 
