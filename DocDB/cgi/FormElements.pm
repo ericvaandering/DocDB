@@ -614,6 +614,10 @@ sub AuthorManual {
 };
 
 sub ReferenceForm {
+  require "MiscSQL.pm";
+  
+  &GetJournals;
+
   my @JournalIDs = keys %Journals;
   my %JournalLabels = ();
   foreach my $ID (@JournalIDs) {
@@ -623,21 +627,33 @@ sub ReferenceForm {
   unshift @JournalIDs,0; $JournalLabels{0} = "----"; # Null Journal
   print "<b><a ";
   &HelpLink("reference");
-  print "Reference:</a></b><br> \n";
-  print "<b>Journal: </b>\n";
-  print $query -> popup_menu(-name => "journal", -values => \@JournalIDs, 
-                                 -labels => \%JournalLabels,
-                                 -default => $JournalDefault);
- 
-  print "&nbsp;&nbsp;<b>Volume:</b> \n";
-  print $query -> textfield (-name => 'volume', 
-                             -size => 8, -maxlength => 8, 
-                             -default => $VolumeDefault);
+  print "References:</a></b><br> \n";
+  
+  my @ReferenceIDs = (@ReferenceDefaults,0);
+  
+  print "<table cellpadding=3>\n";
+  foreach my $ReferenceID (@ReferenceIDs) { 
+    print "<tr>\n";
+    my $JournalDefault = $RevisionReferences{$ReferenceID}{JournalID};
+    my $VolumeDefault  = $RevisionReferences{$ReferenceID}{Volume}   ;
+    my $PageDefault    = $RevisionReferences{$ReferenceID}{Page}     ;
+    print "<td><b>Journal: </b>\n";
+    print $query -> popup_menu(-name => "journal", -values => \@JournalIDs, 
+                                   -labels => \%JournalLabels,
+                                   -default => $JournalDefault);
 
-  print "&nbsp;&nbsp;<b>Page:</b> \n";
-  print $query -> textfield (-name => 'page', 
-                             -size => 8, -maxlength => 16, 
-                             -default => $PageDefault);
+    print "<td><b>Volume:</b> \n";
+    print $query -> textfield (-name => 'volume', 
+                               -size => 8, -maxlength => 8, 
+                               -default => $VolumeDefault);
+
+    print "<td><b>Page:</b> \n";
+    print $query -> textfield (-name => 'page', 
+                               -size => 8, -maxlength => 16, 
+                               -default => $PageDefault);
+    print "</tr>\n";                           
+  }
+  print "</table>\n";
 }
 
 1;

@@ -111,15 +111,21 @@ sub PrintReferenceInfo ($) {
   
   if (@ReferenceIDs) {
     &GetJournals;
+    print "<dl>\n";
+    print "<dt><b>References:</b> \n";
     foreach my $ReferenceID (@ReferenceIDs) {
       $JournalID = $RevisionReferences{$ReferenceID}{JournalID};
-      print "<dl>\n";
-      print "<dt><b>References:</b> \n";
       print "<dd>Published in";
-      print " $Journals{$JournalID}{Abbreviation},";
-      print " vol. $RevisionReferences{$ReferenceID}{Volume}, ";
-      print " pg. $RevisionReferences{$ReferenceID}{Page}.</dl>\n";
+      print " $Journals{$JournalID}{Abbreviation} ";
+      if ($RevisionReferences{$ReferenceID}{Volume}) {
+        print " vol. $RevisionReferences{$ReferenceID}{Volume}";
+      }
+      if ($RevisionReferences{$ReferenceID}{Page}) {
+        print " pg. $RevisionReferences{$ReferenceID}{Page}";
+      }
+      print ".\n";
     }
+    print "</dl>\n";
   }
 }
 

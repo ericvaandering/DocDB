@@ -28,7 +28,6 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetAuthors;
 &GetTopics;
 &GetSecurityGroups;
-&GetJournals;
 &GetDocTypes;
 &GetPrefsCookie;
 
@@ -124,18 +123,19 @@ if ($mode eq "update") {
 }
 
 if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
-  $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-  $TitleDefault     = $DocRevisions{$DocRevID}{TITLE};
-  $PubInfoDefault   = $DocRevisions{$DocRevID}{PUBINFO};
-  $AbstractDefault  = $DocRevisions{$DocRevID}{ABSTRACT};
-  $RequesterDefault = $DocRevisions{$DocRevID}{SUBMITTER};
-  $JournalDefault   = $DocRevisions{$DocRevID}{JournalID};
-  $VolumeDefault    = $DocRevisions{$DocRevID}{Volume};
-  $PageDefault      = $DocRevisions{$DocRevID}{Page};
-  $KeywordsDefault  = $DocRevisions{$DocRevID}{Keywords};
-  @SecurityDefaults = &GetRevisionSecurityGroups($DocRevID);
-  @AuthorDefaults   = &GetRevisionAuthors($DocRevID);
-  @TopicDefaults    = &GetRevisionTopics($DocRevID);
+  $DocRevID          = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+  $TitleDefault      = $DocRevisions{$DocRevID}{TITLE};
+  $PubInfoDefault    = $DocRevisions{$DocRevID}{PUBINFO};
+  $AbstractDefault   = $DocRevisions{$DocRevID}{ABSTRACT};
+  $RequesterDefault  = $DocRevisions{$DocRevID}{SUBMITTER};
+#  $JournalDefault    = $DocRevisions{$DocRevID}{JournalID}; # FIXME: Array
+#  $VolumeDefault     = $DocRevisions{$DocRevID}{Volume};    # FIXME: Array
+#  $PageDefault       = $DocRevisions{$DocRevID}{Page};      # FIXME: Array
+  $KeywordsDefault   = $DocRevisions{$DocRevID}{Keywords};
+  @SecurityDefaults  = &GetRevisionSecurityGroups($DocRevID);
+  @AuthorDefaults    = &GetRevisionAuthors($DocRevID);
+  @TopicDefaults     = &GetRevisionTopics($DocRevID);
+  @ReferenceDefaults = &FetchReferences ($DocRevID)
 } else {
   my $User = &SecurityLookup($remote_user);
   @SecurityDefaults = ($SecurityIDs{$User}); 

@@ -30,6 +30,7 @@ $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
 &GetTopics; 
+&GetJournals;
 &GetSecurityGroups; 
 
 ### Set up, give user initial information
@@ -49,25 +50,26 @@ if ($mode eq "reserve") {
 ### Pull info out of params into local variables
 ### FIXME: Get all the params here, too confusing later on to be using $param
 
-@error_stack = ();
+@ErrorStack = ();
+@WarnStack  = ();
 
 $Special = $params{special};
 
 if ($Special eq "meeting") {$Meeting = 1;}
 if ($Special eq "othermeeting") {$OtherMeeting = 1;}
 
-$Archive   = $params{archive};
-$Overdate  = $params{overdate};
-$Overday   = $params{overday};
-$Overmonth = $params{overmonth};
-$Overyear  = $params{overyear};
-$Overmin   = $params{overmin};
-$Overhour  = $params{overhour};
-$JournalID = $params{journal};
-$Volume    = $params{volume};
-$Page      = $params{page};
-$Keywords  = $params{keywords};
-$Requester = $params{requester};
+$Archive    = $params{archive};
+$Overdate   = $params{overdate};
+$Overday    = $params{overday};
+$Overmonth  = $params{overmonth};
+$Overyear   = $params{overyear};
+$Overmin    = $params{overmin};
+$Overhour   = $params{overhour};
+@JournalIDs = split /\0/,$params{journal};
+@Volumes    = split /\0/,$params{volume};
+@Pages      = split /\0/,$params{page};
+$Keywords   = $params{keywords};
+$Requester  = $params{requester};
 
 if ($Meeting || $OtherMeeting) {
   @authorIDs = ($Requester);
@@ -137,6 +139,11 @@ my $rev_topic_insert = $dbh->prepare(
    "       (RevTopicID, DocRevID, MinorTopicID) ".
    "values (0,          ?,        ?)");
 
+my $ReferenceInsert  = $dbh -> prepare(
+     "insert into RevisionReference ".
+     "       (ReferenceID,DocRevID,JournalID,Volume,Page)".
+     "values (0,          ?,       ?,        ?,     ?)"); 
+
 my $file_insert = $dbh->prepare(
    "insert into DocumentFile ".
    "       (DocFileID, DocRevID, FileName, Date, RootFile, Description) ".
@@ -146,50 +153,56 @@ my $file_insert = $dbh->prepare(
 
 ### Check parameters for errors
 
-@warn_stack  = ();
-
 unless (&CanCreate()) {
-  push @error_stack,"You are not allowed to modify or create documents.";
+  push @ErrorStack,"You are not allowed to modify or create documents.";
 }
 unless ($params{requester}) {
-  push @error_stack,"You must supply a requester for this document.";
+  push @ErrorStack,"You must supply a requester for this document.";
 }
 unless ($params{title}) {
-  push @error_stack,"You must supply a title for this document.";
+  push @ErrorStack,"You must supply a title for this document.";
 }
 
-if ($JournalID || $Volume || $Page) {
-  unless ($JournalID && $Volume && $Page) {
-    push @error_stack,"You must either supply all of the information for a
-    reference or none of it.";
+if (@JournalIDs || @Volumes || @Pages) {
+  my @TestJournalIDs = @JournalIDs;
+  my @TestVolumes    = @Volumes;
+  my @Pages          = @Pages;
+  foreach my $JournalID (@TestJournalIDs) {
+    my $Volume = shift @TestVolumes;
+    my $Page   = shift @TestPages;
+    if (($JournalID || $Volume || $Page) && !($JournalID && ($Volume || $Page))) {
+      push @ErrorStack,"Your reference $Journals{$JournalID}{Acronym}, vol. $Volume,
+      pg. $Page must consist of a journal plus a volume, page number, or
+      both.";
+    }
   }
 }    
     
 if ($mode eq "add" || $mode eq "reserve") {
   unless ($params{doctype}) {
-    push @error_stack,"You must supply a document type for this document.";
+    push @ErrorStack,"You must supply a document type for this document.";
   }
 }
 if ($mode eq "add" || $mode eq "update") {
 #  unless ($params{authors} || $params{authormanual}) {
-#    push @error_stack,"You must supply at least one author for this document.";
+#    push @ErrorStack,"You must supply at least one author for this document.";
 #  }
   unless ($params{topics}) {
-    push @error_stack,"You must supply at least one topic for this document.";
+    push @ErrorStack,"You must supply at least one topic for this document.";
   }
   unless ($params{abstract}) {
-    push @error_stack,"You must supply an abstract for this document.";
+    push @ErrorStack,"You must supply an abstract for this document.";
   }
   unless (grep /\w/,$params{single_upload} || grep /\w/,$params{single_http}) {
-    push @error_stack,"You must supply a file for this document.";
-    push @error_stack,"If you just want to change information about the
+    push @ErrorStack,"You must supply a file for this document.";
+    push @ErrorStack,"If you just want to change information about the
     document, choose `Update DB Info' instead.";
   }
   if     ($params{single_upload} && $params{single_http}) {
-    push @error_stack,"You may not specify both URL and file upload.";
+    push @ErrorStack,"You may not specify both URL and file upload.";
   }
   if     (!$params{mainfile} && $Archive eq "archive") {
-    push @error_stack,"You must specify a main file in the archive.";
+    push @ErrorStack,"You must specify a main file in the archive.";
   }
   
   if ($params{single_http}) {
@@ -204,10 +217,10 @@ if ($mode eq "add" || $mode eq "update") {
         my $command = $Wget.$Authentication.$url;
         my @url_lines = `$command`;
         unless (@url_lines) {
-          push @error_stack,"The URL <tt>$url</tt> was not present or was protected.";
+          push @ErrorStack,"The URL <tt>$url</tt> was not present or was protected.";
         }
       } else {
-        push @error_stack,"The URL <tt>$url</tt> is not well formed. Don't forget ".
+        push @ErrorStack,"The URL <tt>$url</tt> is not well formed. Don't forget ".
                           "http:// on the front and a file name after the last /.";
       }
     }  
@@ -216,10 +229,10 @@ if ($mode eq "add" || $mode eq "update") {
 
 if ($mode eq "update" || $mode eq "updatedb") {
   unless ($params{docid}) {
-    push @error_stack,"You must supply a document number to modify a document.";
+    push @ErrorStack,"You must supply a document number to modify a document.";
   }
   unless (&CanModify($params{docid})) {
-    push @error_stack,"You are not allowed to modify this document.";
+    push @ErrorStack,"You are not allowed to modify this document.";
   }
 }
 
@@ -230,22 +243,20 @@ if ($mode eq "update" || $mode eq "updatedb") {
 
 if ($mode eq "add" || $mode eq "update") {
   unless (@authorIDs) {
-    push @error_stack,"You must supply at least one author for this document.";
+    push @ErrorStack,"You must supply at least one author for this document.";
   }
 }
 
 if ($#securities > 0) {
   foreach my $GroupID (@securities) {
     if ($GroupID == 0) {
-      push @error_stack,"You selected \"Public\" and another form of security. ".
+      push @ErrorStack,"You selected \"Public\" and another form of security. ".
                     "You may only select \"Public\" by itself.";
     }
   }  
 }
   
-if (@error_stack) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@error_stack);
-}
+&EndPage(@ErrorStack);
 
 ### Make entry in DocumentDatabase or get document ID
 
@@ -277,7 +288,7 @@ if      ($mode eq "reserve") {
     $version = $Documents{$documentID}{NVER};
   }
   if ($version != $Documents{$documentID}{NVER}) {
-    push @warn_stack,"You have updated an old version of a document. Hope this
+    push @WarnStack,"You have updated an old version of a document. Hope this
     is what you wanted to do.";
   }
 }
@@ -299,11 +310,15 @@ my $docRevID = $doc_rev_insert -> {mysql_insertid}; # Works with MySQL only
 
 ### Add reference information if it exists
 
-if ($JournalID && $Volume && $Page) {
-  my $ReferenceUpdate = $dbh -> prepare(
-     "update DocumentRevision set JournalID=?,Volume=?,Page=? where DocRevID=?");
-  $ReferenceUpdate -> execute($JournalID,$Volume,$Page,$docRevID);
-}  
+if (@JournalIDs || @Volumes || @Pages) {
+  foreach my $JournalID (@JournalIDs) {
+    my $Volume = shift @Volumes;
+    my $Page   = shift @Pages;
+    if ($JournalID) { # Can delete references too.
+      $ReferenceInsert -> execute($docRevID,$JournalID,$Volume,$Page);
+    }  
+  }
+}    
 
 ### Add to authors, topics and securities
                            
@@ -411,10 +426,8 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
 
 ### If we had any warnings print them out now
 
-if (@warn_stack) {
-  &WarnPage(@warn_stack);
-  @warn_stack = ();
-}
+&WarnPage(@WarnStack);
+@WarnStack = ();
   
 if ($mode = "updatedb") { # Local DB not in sync, clear it
   %DocRevIDs    = ();
@@ -425,8 +438,8 @@ if ($mode = "updatedb") { # Local DB not in sync, clear it
 
 # Output feedback to the user
 
-$full_docid = &FullDocumentID($documentID);
-my $DocRevID   = &FetchRevisionByDocumentAndVersion($documentID,$version);
+$full_docid  = &FullDocumentID($documentID);
+my $DocRevID = &FetchRevisionByDocumentAndVersion($documentID,$version);
 
 unless ($DocRevID) {
   print "This document does not exist.<p>\n";
