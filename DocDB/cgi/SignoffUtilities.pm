@@ -149,9 +149,62 @@ sub RevisionStatus ($) { # Return the approval status of a revision
   return ($Status,$LastDocRevID);
 }
 
-sub UnSignRevision { # Remove all signatures from a revision
-                     # (Called when files are added to a revision)
+sub BuildSignoffDefault ($) {
+  require "SignoffSQL.pm";
+  require "NotificationSQL.pm";
+  
   my ($DocRevID) = @_;
+ 
+  # Can only handle sequential list. 
+  # Will probably convert more complicated signoffs to this
+ 
+  my @EmailUserIDs = ();
+ 
+  my ($SignoffID) = &GetRootSignoffs($DocRevID);
+  
+  while ($SignoffID) {
+    my ($SignatureID) = &GetSignatures($SignoffID);
+    &FetchSignature($SignatureID);
+    push @EmailUserIDs,$Signatures{$SignatureID}{EmailUserID};
+    my ($NewSignoffID) = &GetSubSignoffs($SignoffID);
+    $SignoffID = $NewSignoffID; 
+  }
+  
+  my $Default = "";
+  
+  foreach my $EmailUserID (@EmailUserIDs) {
+    &FetchEmailUser($EmailUserID);
+    $Default .= $EmailUser{$EmailUserID}{Name} . "\n";
+  }
+
+  return $Default;
+}
+
+sub UnsignRevision { # Remove all signatures from a revision
+                     # (Called when files are added to a revision)
+  require "SignoffSQL.pm";
+  
+  my ($DocRevID) = @_;
+  
+  my $SignatureUpdate = $dbh -> prepare("update Signature set Signed=0 where SignatureID=?");
+  
+  my @SignoffIDs = &GetAllSignoffsByDocRevID($DocRevID);
+  
+  foreach my $SignoffID (@SignoffIDs) {
+    my @SignatureIDs = &GetSignatures($SignoffID);
+    foreach my $SignatureID (@SignatureIDs) {
+      $SignatureUpdate -> execute($SignatureID); 
+    }  
+  }
+  
+  my $Status = "";
+  if (@SignoffIDs) {
+    $Status = "Unsigned";
+  } else {
+    $Status = "NoAction";
+  }
+  
+  return $Status;    
 }
 
 sub CopyRevisionSignoffs { # CopySignoffs from one revision to another

@@ -95,6 +95,23 @@ sub GetRootSignoffs ($) {
   return @RootSignoffs;  
 }
                         
+sub GetAllSignoffsByDocRevID ($) {
+  my ($DocRevID) = @_;
+  
+  my @SignoffIDs = ();
+  
+  my $SignoffList = $dbh -> prepare("select SignoffID from Signoff ".
+                                     "where DocRevID=?");
+                        
+  $SignoffList -> execute($DocRevID);
+  $SignoffList -> bind_columns(undef, \($SignoffID));
+  while ($SignoffList -> fetch) {
+    push @SignoffIDs,$SignoffID;
+  }
+  
+  return @SignoffIDs;  
+}
+                        
 sub GetSubSignoffs ($) {
   my ($PreSignoffID) = @_;
   

@@ -204,6 +204,16 @@ foreach $short_file (@short_files) {
   }
 }
 
+### Remove signatures from document if they existed
+
+if ($UseSignoffs) {
+  require "SignoffUtilities.pm";
+  $Status = &UnsignRevision($DocRevID);
+  if ($Status eq "Unsigned") {
+    push @WarnStack,"All signatures from the document have been removed.";
+  }
+}
+  
 ### If we had any warnings print them out now
 
 if (@WarnStack) {

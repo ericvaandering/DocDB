@@ -16,12 +16,16 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 sub SignoffBox { # Just a text box for now with a list of names
+  my (%Params) = @_;
+
+  my $Default  = $Params{-default}  || "";
+
   print "<b><a ";
   &HelpLink("signoffs");
   print "Signoffs:</a></b> (one/line)\n";
   print " - <a href=\"Javascript:signoffchooserwindow(\'$SignoffChooser\');\">".
         "<b>Signoff Chooser</b></a><br> \n";
-  print $query -> textarea (-name => 'signofflist', -default => $SignoffDefault,
+  print $query -> textarea (-name => 'signofflist', -default => $Default,
                             -columns => 30, -rows => 6);
 };
 

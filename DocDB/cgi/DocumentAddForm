@@ -154,6 +154,8 @@ if ($mode eq "update") {
   $Version = $Documents{$DocumentID}{NVersions};
 }
 
+my $SignoffsDefault; # FIXME: What other ones needn't be global?
+
 if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
   $DocRevID            = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   $TitleDefault        = $DocRevisions{$DocRevID}{Title};
@@ -165,7 +167,11 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   @SecurityDefaults    = &GetRevisionSecurityGroups($DocRevID);
   @AuthorDefaults      = &GetRevisionAuthors($DocRevID);
   @TopicDefaults       = &GetRevisionTopics($DocRevID);
-  @ReferenceDefaults   = &FetchReferencesByRevision($DocRevID)
+  @ReferenceDefaults   = &FetchReferencesByRevision($DocRevID);
+  if ($UseSignoffs) {
+    require "SignoffUtilities.pm";
+    $SignoffDefault     = &BuildSignoffDefault($DocRevID);
+  }
 } else {
   my $User = &SecurityLookup($remote_user);
   @SecurityDefaults = ($SecurityIDs{$User}); 
@@ -437,7 +443,9 @@ unless ($Meeting || $OtherMeeting) {
 
 if ($UseSignoffs) { # FIXME: Later may be more complicated control
   print "<tr>\n";
-  print "<td colspan=4>\n"; &SignoffBox;     print "</td>\n";
+    print "<td colspan=4>\n"; 
+      &SignoffBox(-default => $SignoffDefault); 
+    print "</td>\n";
   print "</tr>\n";
 }
 
