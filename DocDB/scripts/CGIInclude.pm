@@ -3,10 +3,11 @@
 if (-e "/var/www/cgi-bin/BTeV/DocDB/cgi/DocDBGlobals.pm") {
   use lib "/var/www/cgi-bin/BTeV/DocDB/cgi/";
   use lib ".";
-}
-
-if (-e "/www/cgi-bin/DocDB/DocDBGlobals.pm") {
+} elsif (-e "/www/cgi-bin/DocDB/DocDBGlobals.pm") {
   use lib "/www/cgi-bin/DocDB/";
+  use lib ".";
+} elsif (-e "../cgi/DocDBGlobals.pm") {
+  use lib "../cgi/";
   use lib ".";
 }
 
