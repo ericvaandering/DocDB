@@ -312,7 +312,7 @@ sub NameEntryBox (;%) {
   my $Booleans = "";
   
   if ($Disabled) {
-    $Booleans .= "-disabled";
+    $Booleans .= " -disabled";
   }  
   
   print "<table cellpadding=5><tr valign=top>\n";

@@ -256,7 +256,7 @@ sub InstitutionEntryBox (;%) {
   print "<b><a ";
   &HelpLink("instentry");
   print "Short Name:</a></b><br> \n";
-  print $query -> textfield (-name => 'short', 
+  print $query -> textfield (-name => 'shortdesc', 
                              -size => 30, -maxlength => 40,$Booleans);
   print "</td></tr>\n";
 
@@ -264,7 +264,7 @@ sub InstitutionEntryBox (;%) {
   print "<b><a ";
   &HelpLink("instentry");
   print "Long Name:</a></b><br> \n";
-  print $query -> textfield (-name => 'long', 
+  print $query -> textfield (-name => 'longdesc', 
                              -size => 40, -maxlength => 80,$Booleans);
   print "</td>\n";
   print "</tr></table>\n";
