@@ -253,8 +253,8 @@ sub SessionLocation {
                              -default => $SessionDefaultLocation);
 };
 
-sub PrintSession ($) {
-  my ($SessionID) = @_;
+sub PrintSession ($;$) {
+  my ($SessionID,$AddTalkLink) = @_;
   
   require "Sorts.pm";
   require "TalkSQL.pm";
@@ -262,7 +262,8 @@ sub PrintSession ($) {
   require "SQLUtilities.pm";
   require "Utilities.pm";
   
-  print "<center><b>Session: $Sessions{$SessionID}{Title} begins \n";
+  print "<center><b>Session: ".
+        "<a href=\"$DisplayMeeting?sessionid=$SessionID\">$Sessions{$SessionID}{Title}</a> begins \n";
   print &EuroDate($Sessions{$SessionID}{StartTime});
   print " at ";
   print &EuroTimeHM($Sessions{$SessionID}{StartTime});
@@ -273,6 +274,10 @@ sub PrintSession ($) {
   if ($Sessions{$SessionID}{Location}) {
     print "<center> Location: $Sessions{$SessionID}{Location} </center><p>\n";
   }
+  if ($AddTalkLink) {
+    print "<center>(<a href=\"$DocumentAddForm?sessionid=$SessionID\">Add a document</a> ".
+          "to this session)</center>\n";
+  }        
   print "<p>\n";
   
   my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
@@ -373,13 +378,13 @@ sub PrintSessionSeparator ($) {
   print "</center><hr width=95%>\n";   
 }
 
-sub PrintMeetingInfo($) {
-  my ($ConferenceID) = @_;
+sub PrintMeetingInfo($;$) {
+  my ($ConferenceID,$AddTalkLink) = @_;
 
   require "Utilities.pm";
 
   print "<center><h3> \n";
-  print "$Conferences{$ConferenceID}{Title}\n";
+  print "<a href=\"$DisplayMeeting?conferenceid=$ConferenceID\">$Conferences{$ConferenceID}{Title}</a>\n";
   print "</h3>\n";
 
   print " held from ",&EuroDate($Conferences{$ConferenceID}{StartDate});
@@ -396,6 +401,11 @@ sub PrintMeetingInfo($) {
   print &Paragraphize($Conferences{$ConferenceID}{Preamble}),"\n";
   print "</td></tr></table>\n";
   print "<p>\n";
+  
+  if ($AddTalkLink) {
+    print "(<a href=\"$DocumentAddForm?conferenceid=$ConferenceID\">Add a document</a> ".
+          "to this conference)\n";
+  }
   
   print "</center><hr width=95%>\n";
 }
