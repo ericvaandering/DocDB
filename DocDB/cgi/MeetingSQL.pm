@@ -181,6 +181,25 @@ sub FetchMeetingOrdersByConferenceID {
   return @MeetingOrderIDs; 
 }
 
+sub UpdateSession (%) {
+  my (%Params) = @_;
+  
+  my $SessionID   = $Params{-sessionid}   || 0;
+  my $Date        = $Params{-date}        || "";
+  my $Title       = $Params{-title}       || "";
+  my $Description = $Params{-description} || "";
+  my $Location    = $Params{-location}    || "";
+
+  my $Update = $dbh -> prepare("update Session set ".
+               "Title=?, Description=?, Location=?, StartTime=? ". 
+               "where SessionID=?");
+               
+  if ($SessionID) {
+    $Update -> execute($Title,$Description,$Location,$Date,$SessionID);
+  }
+  
+}
+
 sub DeleteSession ($) {
   my ($SessionID) = @_;
    

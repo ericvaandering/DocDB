@@ -39,6 +39,15 @@ $query = new CGI;  # Global for subroutines
 my $SessionID          = $params{sessionid};
 my $Mode               = $params{mode};
 
+my $SessionTitle       = $params{sessiontitle};
+my $SessionDescription = $params{sessiondescription};
+my $SessionLocation    = $params{sessionlocation};
+
+my $SessionDay   = $params{sessionday};
+my $SessionMonth = $params{sessionmonth};
+my $SessionYear  = $params{sessionyear};
+my $SessionHour  = $params{sessionhour};
+
 my @SessionOrderIDs = split /\0/,$params{sessionorderid};
 my @TalkOrders      = split /\0/,$params{talkorder};
 my @TalkTitles      = split /\0/,$params{talktitle};
@@ -98,6 +107,14 @@ if ($SessionID) {
 &EndPage(@ErrorStack);
 
 if ($Mode eq "modify") {
+
+  # Update Session parameters
+  my $SessionDate = "$SessionYear-$ReverseAbrvMonth{$SessionMonth}-$SessionDay $SessionHour:00";
+
+  &UpdateSession(-sessionid => $SessionID, -date => $SessionDate, 
+                 -title => $SessionTitle, -description => $SessionDescription,
+                 -location => $SessionLocation);
+
   my %TalkOrders = (); # Re-sort talk orders
   {
     foreach my $TalkOrder (@TalkOrders) {
