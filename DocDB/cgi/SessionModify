@@ -6,7 +6,23 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
-#
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 use CGI;
 use DBI;
@@ -16,20 +32,21 @@ require "Messages.pm";
 require "Cookies.pm";
 require "Defaults.pm";
 
-require "HTMLUtilities.pm";
-require "MeetingSecurityUtilities.pm";
-require "ResponseElements.pm";
 require "Sorts.pm";
 require "Scripts.pm";
 require "Security.pm";
+require "Utilities.pm";
+require "HTMLUtilities.pm";
+require "MeetingSecurityUtilities.pm";
+require "TalkHintUtilities.pm";
 
 require "FormElements.pm";
+require "ResponseElements.pm";
 require "MeetingHTML.pm";
 require "TalkHTML.pm";
 require "MeetingSQL.pm";
 require "TalkSQL.pm";
 require "TalkHintSQL.pm";
-require "TalkHintUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 
@@ -109,12 +126,14 @@ if ($SessionID) {
 
 if ($Mode eq "modify") {
 
-  # Update Session parameters
+  # Update Session parameters, refetch
   my $SessionDate = "$SessionYear-$ReverseAbrvMonth{$SessionMonth}-$SessionDay $SessionHour:00";
 
   &UpdateSession(-sessionid => $SessionID, -date => $SessionDate, 
                  -title => $SessionTitle, -description => $SessionDescription,
                  -location => $SessionLocation);
+  &ClearAllSessions;
+  &FetchSessionByID($SessionID);
 
   my %TalkOrders = (); # Re-sort talk orders
   {
@@ -275,8 +294,6 @@ my @SessionOrderIDs  = &FetchSessionOrdersBySessionID($SessionID);
 @SessionOrderIDs = sort SessionOrderIDByOrder @SessionOrderIDs;
 
 # Display all info on all talks plus a number of blanks
-
-require "Utilities.pm";
 
 &PrintSessionHeader($SessionID); 
 
