@@ -1,3 +1,24 @@
+notifyauthor
+E-mail notification authors
+Select which people you want to be notified about when they are listed as
+authors on documents.  Immediate notification will send you e-mail on each
+document as it is entered. Daily and weekly notifications send out lists of
+documents you are interested in every night or week.<p>
+
+You can select any combination of authors for each of the three
+periods.
+#
+notifykeyword
+E-mail notification keywords
+Select the keywords that you want to be notified when they are entered on
+documents. The keywords are case insensitive, but otherwise must match
+<b>exactly</b>. Immediate notification will send you e-mail on each
+document as it is entered. Daily and weekly notifications send out lists of
+documents you are interested in every night or week.<p>
+
+You can select any combination of keywords for each of the three
+periods.
+#
 notifytopic
 E-mail notification topics
 Select the topics or subtopics that you want to be notified about for the
