@@ -131,7 +131,11 @@ unless ($NumberUploads) {
   if ($Meeting  || $OtherMeeting) {
     $NumberUploads = 3;
   } elsif ($mode eq "update") {
-    $NumberUploads = $#{ &FetchDocFiles($DocRevID)} + 1;
+    my @DocFiles = @{&FetchDocFiles($DocRevID)};
+    $NumberUploads = $#DocFiles + 1;
+    unless ($NumberUploads) { # Gyrations to handle docs that have 0 files
+      $NumberUploads = 1;
+    }  
   } else {
     $NumberUploads = 1;
   }  

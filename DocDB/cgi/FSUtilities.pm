@@ -91,10 +91,22 @@ sub ProtectDirectory { # Write (or delete) correct .htaccess file in directory
   my ($documentID,$version,@GroupIDs) = @_;
 
   my @users = ();
+  my %all_users = ();
+  my @all_users = ();
   foreach $GroupID (@GroupIDs) {
     unless ($GroupID) {next;} # Skip Public if present
     push @users,$SecurityGroups{$GroupID}{NAME};
+    $all_users{$GroupID} = 1; # Add user
+    foreach $HierarchyID (keys %GroupsHierarchy) {
+      if ($GroupsHierarchy{$HierarchyID}{CHILD} == $GroupID) {
+        $all_users{$GroupsHierarchy{$HierarchyID}{PARENT}} = 1;
+      }
+    }
   }  
+
+  foreach $GroupID (keys %all_users) {
+    push @all_users,$SecurityGroups{$GroupID}{NAME}
+  }
 
   my $AuthName = join ' or ',@users;
 
@@ -106,7 +118,7 @@ sub ProtectDirectory { # Write (or delete) correct .htaccess file in directory
      print HTACCESS "AuthUserFile $AuthUserFile\n";
      print HTACCESS "<Limit GET>\n";                                                                                                                                             
      print HTACCESS "require user";
-     foreach $user (@users) { 
+     foreach $user (@all_users) { 
        $user =~ tr/[A-Z]/[a-z]/; #Make lower case
        print HTACCESS " $user";
      }
