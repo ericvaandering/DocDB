@@ -135,7 +135,11 @@ if ($Password) {
   $EmailUserID = &ValidateEmailUser($UserName,$Password);
 } elsif ($Digest) {
   $EmailUserID = &ValidateEmailUserDigest($UserName,$Digest);
-}  
+} elsif ($UserValidation eq "certificate") {
+  require "CertificateUtilities.pm";
+  $EmailUserID = &FetchEmailUserIDByCert();
+}    
+
 
 # print "Mode: $Mode<br>\n";
   
@@ -143,7 +147,7 @@ if ($EmailUserID) {
   &FetchEmailUser($EmailUserID);
   $Digest = &EmailUserDigest($EmailUserID);
 } else {
-  push @ErrorStack,"The username/password pair you entered is invalid. Please try again.";
+  push @ErrorStack,"The username/password pair or certificate you supplied is invalid. Please try again or contact and administrator.";
   &ErrorPage(@ErrorStack);
   &LoginEmailUserForm;
   print "<p>\n";

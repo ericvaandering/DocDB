@@ -48,6 +48,33 @@ sub FetchSecurityGroupsByCert (%) {
   return @UserGroupIDs;
 }
 
+sub FetchEmailUserIDByCert (%) {
+  require "SecuritySQL.pm"; 
+  my %Params = @_;
+
+  my $IgnoreVerification = $Params{-ignoreverification};
+ 
+  my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
+  my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
+
+  # If we do http basic with users, this routine will function with minor modifications
+
+  my $EmailUserSelect;
+  if ($IgnoreVerification) {
+    $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
+                                     "where EmailAddress=? and Name=?");
+  } else {                                   
+    $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
+                                     "where Verified=1 and EmailAddress=? and Name=?");
+  }
+                                      
+  $EmailUserSelect -> execute($CertEmail,$CertCN);
+
+  my ($EmailUserID) = $EmailUserSelect -> fetchrow_array; 
+  
+  return $EmailUserID;
+}
+
 sub CertificateStatus () {
 
   # This routine returns the status of the certificate the user presents. It can have
