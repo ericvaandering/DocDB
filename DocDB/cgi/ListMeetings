@@ -46,9 +46,6 @@ print "These links will disappear as meetings are moved into the document databa
 print <<OLDMEETINGS; # Following is straight from Rob/Lory page with subs
 
 <ul>
-<li> Friday, November 02 and Saturday, November 3, 2001, BTeV Collaboration Meeting
-     <a href = http://www-btev.fnal.gov/internal_documents/mtg/Nov_02_01/nov_02_01.html> links to agenda and
-     transparencies</a>
 <li> Sunday September 30, 2001, BTeV Collaboration Meeting
      <a href = http://www-btev.fnal.gov/internal_documents/mtg/Sep_30_01/sep_30_01.html> links to agenda and
      transparencies</a>

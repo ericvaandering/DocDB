@@ -3,8 +3,8 @@
 # Author Eric Vaandering (ewv@fnal.gov)
 #
 
-use CGI;                                                                                      
-use DBI;                                                                                      
+use CGI;                                                      
+use DBI;                                                      
 
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
@@ -21,21 +21,22 @@ print $query->header;
 
 &HelpPopupScript;
 
-print "<p><center><h4>\n";
 if ($Public) {
-  print "Welcome to the public portion of the BTeV Document Database,<br>the repository for all BTeV public talks,
-  proceedings, preprints, and publications.\n";
-} else {
-  print "<a href=\"$ModifyHome\">Create or change</a> documents. <a
-href=\"$HelpFile\">(Database instructions)</a></h4>\n";
-#  print "Click on any <font color=red>red link</font> for quick help.\n";
-}
+print "<p><center><h4>\n";
+  print "Welcome to the public portion of the BTeV Document Database,<br>
+         the repository for all BTeV public talks, proceedings, preprints, 
+         and publications.\n";
 print "</h4></center>\n";
+} else {
+  print "<p><h4>\n";
+  print "<a href=\"$ModifyHome\">Create or change</a> documents. 
+         <a href=\"$HelpFile\">(Database instructions)</a></h4>\n";
+  print "</h4>\n";
+}
 
-print "<p><h4>Find the information you want in the database: (<a
-href=\"$HelpFile\">Help</a>)</h4>\n";
+print "<p><h4>Find the information you want in the database:</h4>\n";
+
 print "<ul>\n";
-
 unless ($Public) {
   print "<li><b><a href=\"$SearchForm\">Search</a> documents</b>"; 
 }
@@ -53,6 +54,7 @@ print $query -> endform;
 
 print "<li>"; 
 print "<b>List documents:</b>\n";
+
 print "<ul>\n";
 print "<li> by <a href=\"$ListAuthors\">author</a>\n";
 print "<li> by <a href=\"$ListTopics\">topic</a>\n";
@@ -62,19 +64,15 @@ unless ($Public) {
 }
 print "<li>from <a href=\"$ListByTopic?major=Conferences&mode=conference\">conferences</a>";
 if ($Public) {
-  print "<li> Old documents by old number
+  print "<li> by old number
         <a href=\"$web_root/Static/Public/OldDBTranslation.shtml\">like
          BTeV-pub-year/xx</a>. \n";
 } else {
   print "<li><a href=\"$ListDocuments\">all documents</a>";
-  print "<li> Old documents by old number like
+  print "<li> by old number like
          <a href=\"$web_root/Static/Restricted/OldDBTranslation.shtml\">BTeV-pub-year/xx</a> from the <a href=\"http://www-btev.fnal.gov/cgi-private/database/doclist.pl\">old DocDB</a>\n";
 }
 print "</ul>\n";
-#unless ($Public) {
-#  print "<p>\n";
-#  print "<li><b></b>"; 
-#}
 
 print "</ul>\n";
 
@@ -140,10 +138,6 @@ foreach $DocumentID (@DocumentIDs) {
 print "</table></center>\n";
 print "<p>\n";
 
-### Statistics
-
-#print "<p><b>Number of documents found: $NumDoc</b><p>\n";
-
 {
   require "FormElements.pm";
 
@@ -156,7 +150,6 @@ print "<p>\n";
   print $query -> endform;
   print "<p>&nbsp;<p>";
 }
-
 
 &DocDBNavBar;
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
