@@ -21,13 +21,20 @@ my $Mode = $params{mode};
 &GetConferences;
 
 print $query->header;
-&DocDBHeader("List of Meetings");
 
-print "<h3>Meetings in Document Database</h3>\n";
-
+my $PageTitle;
 if ($Mode eq "modify") {
-  &AllMeetingsTable("modify");
+  $PageTitle = "Modify Meetings";
 } else {
+  $PageTitle = "List of Meetings";
+}
+     
+&DocDBHeader($PageTitle);
+if ($Mode eq "modify") {
+  print "<h3>Select a meeting to change:</h3>\n";
+  &AllMeetingsTable("modify");
+} else {  
+  print "<h3>Meetings in Document Database:</h3>\n";
   &AllMeetingsTable("display");
 }
 

@@ -323,4 +323,27 @@ sub SessionTalkPulldown {
                               -values  => \@SessionTalkIDs);
 
 }
+
+# Note on replacing NOBR. Error is in standard spec, but all implementations
+# Obey
+
+# > I strive to make XHTML files that validate. But when I have something like a
+# > phone number or social security number that I don't want the browser to
+# > break apart I have to use the <nobr> tag to do that. The <nobr> tag,
+#> however, keeps the page from validating. Unfortunately, I can't find any
+#> kind of "break" style in the CSS spec that would allow me to create a class
+#> that would tell the browser to do basically what the <nobr> tag
+#> does--something like <span class="PhoneNumber">999-999-9999</span>.
+#>
+#> Is there an alternative to the <nobr> tag
+
+#In your example, this style rule:
+#
+#.PhoneNumber { white-space: nowrap; }
+
+#> that works in all of the browsers?
+
+#That works in all browsers that support all CSS1 properties (of which there
+#are now several).
+
 1;
