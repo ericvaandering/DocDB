@@ -5,14 +5,16 @@
 
 use CGI;                                                                                      
 #use DBI;                                                                                      
+
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "SecuritySQL.pm";
 require "Scripts.pm";
 
 $query = new CGI;  # Global for subroutines
-#$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
+# %params = $query -> Vars;  # No parameters (yet?) 
+#$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 #&GetSecurityGroups;
 
 print $query->header;
@@ -20,12 +22,9 @@ print $query->header;
 
 &HelpPopupScript;
 
-# %params = $query -> Vars;  # No parameters (yet) 
-
 if ($db_name eq "BTeVDocDB") {
   print "<p><center><big><font color=red><b>
   Database is now live! All data will be saved.<br>
-  Please don't enter documents unless you are an administrator.
   </b></font></big></center>\n";
 } else {  
   print "<p><center><big><font color=red><b>Testing only! All data will be
@@ -36,13 +35,17 @@ print "<p><b><a href=\"$web_root/Help/DocDB_Help.shtml\">Help on
 using</a> the database:</b>\n";
 print "<p><b>Find the information you want in the database:</b>\n";
 print "<ul>\n";
+
 print "<li>Search documents (still coming)"; 
 print "<p>\n";
+
 print "<li>"; 
 print $query -> startform('POST',$ShowDocument);
 print $query -> submit (-value => "Show");
-print " document # "; 
+print " <b>BTeV-doc-#</b> "; 
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
+print " <b>-v</b> "; 
+print $query -> textfield(-name => "version", -size => 3, -maxlength => 3);
 print $query -> endform;
 
 print "<li>"; 
@@ -135,12 +138,13 @@ $authormodes{field}  = "Text field";
 $authormodes{list} = "Selectable list";
 @authormodes = ("list","field");
 
-
 print $query -> start_multipart_form('POST',$DocumentAddForm);
 print "<table cellpadding=5 border=5>\n";
+
 print "<tr><td align=right>\n";
 print "<a "; &HelpLink("modifytypes"); 
 print "<b>Type of modification:</b></a>\n";
+
 print "<td>\n";
  print "<table cellpadding=3><tr><td>\n";
  print $query -> radio_group(-name => "mode", -labels => \%modes, -values => \@modes, -columns => 2);
