@@ -51,7 +51,7 @@ sub AddDocument {
   my @ModifyIDs  = @{$Params{-modifyids}} ;
   my @SignoffIDs = @{$Params{-signoffids}}; # For simple signoff list, may be deprecated
   
-  my %Files      = %{$Params{-files}};      # Not used yet
+  my %Files      = %{$Params{-files}};
   my %References = %{$Params{-references}}; # Not used yet
   my %Signoffs   = %{$Params{-signoffs}};   # Not used yet
 
