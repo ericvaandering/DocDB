@@ -75,6 +75,39 @@ sub GetInstitutions { # Creates/fills a hash $Institutions{$InstitutionID}{} wit
   }
 }
 
+sub GetAuthorDocuments { # Return a list of all documents the author is associated with
+  require "RevisionSQL.pm";
+  
+  my ($AuthorID) = @_;   # FIXME: Using join, can simplify into one SQL statement?
+  my $RevisionList = $dbh -> prepare(
+     "select DocRevID from RevisionAuthor where AuthorID=?"); 
+
+  my $DocumentList = $dbh -> prepare(
+     "select DocumentID from DocumentRevision where DocRevID=? and Obsolete=0"); 
+
+  my $DocumentID,$DocRevID;
+
+### Get all revisions with this author
+
+  my %DocumentIDs = ();
+  $RevisionList -> execute($AuthorID);
+  $RevisionList -> bind_columns(undef, \($DocRevID));
+
+  while ($RevisionList -> fetch) {
+    &FetchDocRevisionByID($DocRevID);
+    if ($DocRevisions{$DocRevID}{OBSOLETE}) {next;}
+    $DocumentList -> execute($DocRevID);
+    ($DocumentID) = $DocumentList -> fetchrow_array;
+    $DocumentIDs{$DocumentID} = 1; # Hash removes duplicates
+  }
+
+### Form list of documents and return
+
+  my @DocumentIDs = keys %DocumentIDs;
+
+  return @DocumentIDs;
+}  
+
 sub ProcessManualAuthors {
   my ($author_list) = @_;
   my $AuthorID;

@@ -13,6 +13,7 @@ use DBI;
 
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
+require "Security.pm";
 require "SecuritySQL.pm";
 require "FSUtilities.pm";
 require "HTMLUtilities.pm";
@@ -28,28 +29,38 @@ print $query->header;
 $DocumentID = $params{docid};
 $DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
 $DocumentID =~ s/\s+$//;
-$Password   = $params{password};
 
+$Password   = $params{password};
 $Username   = $Administrator;
 
+@error_stack = ();
+
 unless ($DocumentID) {
-  print "You are must supply a document number!<p>\n";
-  print $query->end_html; 
-  exit;
+  push @error_stack,"You are must supply a document number to delete.";
 }  
+unless (&CanAdminister) {
+  push @error_stack,"You must be logged in as the adminstrator to delete
+  documents";
+}  
+
+if (@error_stack) {
+  &EndPage(@error_stack);
+}
 
 # Get directory and pull of version number
 
 $Directory = &GetDirectory($DocumentID);
-chop $Directory;chop $Directory;chop $Directory;chop $Directory;
+chop $Directory;chop $Directory;chop $Directory;chop $Directory; # 3 numbers plus /
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
 unless ($dbh) {
-  print "Unable to connect to the database."; 
-  print "Check the username and password.<p>\n";
-  exit;       
+  push @error_stack,"Unable to connect to the database. Check the password.";
 }         
+if (@error_stack) {
+  &EndPage(@error_stack);
+}
+
 
 
 my $revision_list   = $dbh -> prepare("select DocRevID from DocumentRevision where DocumentID=?");

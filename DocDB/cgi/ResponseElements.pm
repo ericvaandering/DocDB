@@ -233,7 +233,7 @@ sub WarnPage { # Non-fatal errors
   }   
 }
 
-sub EndPage {  # Fatal errors, aborts page
+sub EndPage {  # Fatal errors, aborts page if present
   my @errors = @_;
   if (@errors) {
     if ($#errors) {
@@ -247,10 +247,10 @@ sub EndPage {  # Fatal errors, aborts page
       print "<dt><b>$message</b><br>\n";
     }  
     print "<p>\n";
+    &DocDBNavBar();
+    &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+    exit;
   }  
-  &DocDBNavBar();
-  &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
-  exit;
 }
 
 sub ErrorPage { # Fatal errors, continues page

@@ -41,6 +41,8 @@ print "<center><h4><font color=\"blue\">\n";
 &PrintAuthorInfo($AuthorID);
 print "</font><br>is listed as an author on the following documents:</h4></center><p>\n";
 
+### FIXME: Use GetAuthorDocuments
+
 my $revision_list = $dbh -> prepare(
    "select DocRevID from RevisionAuthor where AuthorID=?"); 
 
@@ -65,7 +67,7 @@ while ($revision_list -> fetch) {
 
 ### Get list of documents and read in the information we need from database
 
-my @DocumentIDs = keys %DocumentIDs;
+my @DocumentIDs = keys %DocumentIDs;  # End FIXME
 
 foreach my $DocumentID (@DocumentIDs) { # For shorter lists
   &FetchDocument($DocumentID);

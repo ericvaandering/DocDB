@@ -12,6 +12,7 @@ use DBI;
 
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
+require "Security.pm";
 require "SecuritySQL.pm";
 require "DocumentSQL.pm";
 require "RevisionSQL.pm";
@@ -28,13 +29,20 @@ $DocumentID = $params{docid};
 $DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
 $DocumentID =~ s/\s+$//;
 
+@error_stack = ();
+
 unless ($DocumentID) {
-  print $query->header;
-  print "You are must supply a document number!<p>\n";
-  print $query->end_html; 
-  exit;
+  push @error_stack,"You are must supply a document number to delete.";
+}  
+unless (&CanAdminister) {
+  push @error_stack,"You must be logged in as the adminstrator to delete
+  documents";
 }  
   
+if (@error_stack) {
+  &EndPage(@error_stack);
+}
+
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetSecurityGroups;
 &FetchDocument($DocumentID);
@@ -42,20 +50,16 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 $Version = $Documents{$DocumentID}{NVER}; # Show latest version
 
 print $query->header;
-&DocDBHeader("Confirm Delete of Document $DocumentID");
-
-unless (&CanModify($DocumentID,$Version)) { # FIXME CanAdmin function
-  print "You are not authorized to modify this document.<p>\n";
-  &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
-  exit;
-}  
+&DocDBHeader("Confirm Deletion of Document $DocumentID");
 
 my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 
 unless ($DocRevID) {
-  print "This document does not exist.<p>\n";
-  &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
-  exit;
+  push @error_stack,"This document does not exist.";
+}
+
+if (@error_stack) {
+  &EndPage(@error_stack);
 }
 
 print "<p><center><b>To delete this document, you must supply the adminstrator 
