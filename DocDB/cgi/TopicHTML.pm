@@ -1,7 +1,7 @@
 #
 #        Name: TopicHTML.pm
 # Description: Routines to produce snippets of HTML dealing with topics 
-#              (major, minor and conferences which are special types of topics) 
+#              (major, minor and conferences which are special types of topics) 
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
@@ -82,7 +82,7 @@ sub MajorTopicLink ($;$) {
   
   &FetchMajorTopic($TopicID);
   my $link;
-  $link = "<a href=$ListByTopic?majorid=$TopicID>";
+  $link = "<a href=\"$ListByTopic?majorid=$TopicID\" title=\"$MajorTopics{$TopicID}{LONG}\">";
   if ($mode eq "short") {
     $link .= $MajorTopics{$TopicID}{SHORT};
   } elsif ($mode eq "long") {
@@ -113,7 +113,7 @@ sub MeetingLink {
   
   &FetchMinorTopic($TopicID);
   my $link;
-  $link = "<a href=$ListByTopic?topicid=$TopicID&mode=meeting>";
+  $link = "<a href=\"$ListByTopic?topicid=$TopicID&mode=meeting\" title=\"$MinorTopics{$TopicID}{LONG}\">";
   if ($Mode eq "short") {
     $link .= $MinorTopics{$TopicID}{SHORT};
   } else {
