@@ -17,7 +17,6 @@ $db_rwuser     = "docdbrw";
 $db_rwpass     = "read-write-password";
 $db_rouser     = "docdbro";
 $db_ropass     = "read-only-password";
-$Administrator = "docdbadm";
 
 # Root directories and URLs
 
@@ -70,8 +69,11 @@ $ShortProject   = "MyProject";    # This is the project used in the Document ID
 # DocDBGlobals.pm for things like $HomeLastDays, command locatations
 # (if not using Linux) etc.
 
-#$HomeLastDays     = 20;         # Number of days for last modified on home page
-#$EnchancedSecurity = 1;        # Separate lists for view, modify
+#$HomeLastDays     = 20;        # Number of days for last modified on home page
+#$EnhancedSecurity = 1;         # Separate lists for view, modify
+#$SuperiorsCanModify = 0;       # In enhanced model, a superior group can modify
+                                # a subordinate groups documents without explicit
+                                # permission
 
 
 1;

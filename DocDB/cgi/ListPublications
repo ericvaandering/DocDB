@@ -44,10 +44,11 @@ print $query->header;
 &DocDBHeader("$Project Publications");
 
 
-print "<center><h4>These refereed publications are available:</h4></center><p>\n";
+print "<center><h4>These publications are available:</h4></center><p>\n";
 
 my $document_list = $dbh -> prepare(
-   "select DocumentID from DocumentRevision where JournalID>0"); 
+   "select DocumentID from DocumentRevision,RevisionReference ".
+   "where DocumentRevision.DocRevID=RevisionReference.DocRevID and RevisionReference.JournalID>0"); 
 
 my $DocumentID;
 

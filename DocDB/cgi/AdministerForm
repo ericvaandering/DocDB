@@ -20,6 +20,7 @@ require "DocTypeHTML.pm";
 require "Scripts.pm";
 require "Security.pm";
 
+require "SecuritySQL.pm";
 require "AuthorSQL.pm";
 require "TopicSQL.pm";
 require "MiscSQL.pm";
@@ -31,13 +32,13 @@ require "Sorts.pm";
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
+&GetSecurityGroups;
 &SpecialMajorTopics;
 &GetInstitutions;
 &GetDocTypes;
 &GetAuthors;
 &GetTopics;
 &GetJournals;
-&GetConferences;
 
 print $query->header;
 &DocDBHeader("Administer $Project DocDB"); # DocDBHeader
@@ -71,17 +72,17 @@ print "Note that deleting and then re-entering with the same information is
        not the same as modifying. Everything in the DB is tied together with
        invisible ID numbers.<p>\n";
 
-print "In all cases, you must supply the <i>database</i> password for the
+print "In all cases, you must supply the <i>database</i> username and password for the
        administrator account to make any changes.<p>\n";
 
-print "<center> Modify: ";
-print "[ <a href=\"\#author\">Authors</a> ] ";
-print "[ <a href=\"\#institution\">Institutions</a> ] ";
-print "[ <a href=\"\#mintopic\">Minor Topics</a> ] ";
-print "[ <a href=\"\#majtopic\">Major Topics</a> ] ";
-print "[ <a href=\"\#doctype\">Document Types</a> ] ";
-print "[ <a href=\"\#journal\">Journals</a> ] ";
-print "[ <a href=\"\#conference\">Conferences</a> ] ";
+print "<center> <b>Modify:</b> ";
+print "[&nbsp;<a href=\"\#author\">Authors</a> ] ";
+print "[&nbsp;<a href=\"\#institution\">Institutions</a>&nbsp;] ";
+print "[&nbsp;<a href=\"\#mintopic\">Minor&nbsp;Topics</a>&nbsp;] ";
+print "[&nbsp;<a href=\"\#majtopic\">Major&nbsp;Topics</a>&nbsp;] ";
+print "[&nbsp;<a href=\"\#doctype\">Document&nbsp;Types</a>&nbsp;] ";
+print "[&nbsp;<a href=\"\#journal\">Journals</a>&nbsp;] ";
+print "[&nbsp;<a href=\"\#conference\">Meetings&nbsp;and&nbsp;Conferences</a>&nbsp;] ";
 print "</center><p>";
 print "<hr><p>\n";
 
@@ -270,10 +271,10 @@ print "<p>\n";
 
 print "<p><hr>\n";
 
-### Conference Administration
+### Conference and Meeting Administration
 
-print "<a name=\"conference\"><center><h4>Administer Conferences</h4>
-       (Dates set to the current date will not be changed)</center>\n";
+print "<a name=\"conference\"><center><h4>Administer Conferences and Meetings</h4>
+       </center>\n";
 
 print $query -> start_multipart_form('POST',"$ConferenceAdminister");
 print "<table cellpadding=10>\n";
@@ -282,42 +283,46 @@ print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
+print "<td>\n"; &MajorGatheringSelect; print "</td>\n";
+print "<td>\n"; &ConferenceSelect;     print "</td>\n";
 print "<td>\n";
-&ConferenceSelect;
+ print "<table>\n";
+ print "<tr valign=top>\n";
+ print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
+ print "<td>\n"; &LongDescriptionBox;      print "</td>\n";
+ print "</tr>\n";
+
+ print "<tr valign=top>\n";
+ print "<td>\n"; &LocationBox;          print "</td>\n";
+ print "<td>\n"; &ConferenceURLBox;     print "</td>\n";
+ print "</tr>\n";
+
+ print "<tr valign=top>\n";
+ print "<td>\n"; &StartDatePullDown;     print "</td>\n";
+ print "<td>\n"; &EndDatePullDown;       print "</td>\n";
+ print "</tr>\n";
+ print "<tr valign=top>\n";
+ print "<td colspan=2>(Dates set to the current date will not be changed)</td>\n";
+ print "</tr>\n";
+
+ print "</table>\n";
 print "</td>\n";
-print "<td><table>\n";
-print "<tr valign=top>\n";
-print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
-print "<td>\n"; &LongDescriptionBox;      print "</td>\n";
-print "</tr>\n";
-
-print "<tr valign=top>\n";
-print "<td>\n"; &LocationBox;          print "</td>\n";
-print "<td>\n"; &ConferenceURLBox;     print "</td>\n";
-print "</tr>\n";
-
-print "<tr valign=top>\n";
-print "<td>\n"; &StartDatePullDown;     print "</td>\n";
-print "<td>\n"; &EndDatePullDown;       print "</td>\n";
-print "</tr>\n";
-print "</table></td>\n";
-
 print "</tr>\n";
 
 print "<tr valign=top>\n";
 print "<td colspan=3>\n";
 &AdministratorPassword;
 print "&nbsp;";
-print $query -> submit (-value => "Change Conference Info");
+print $query -> submit (-value => "Change Meeting/Conference Info");
 print "</td>\n";
 print "</tr>\n";
 
 print "</table>\n";
 print $query -> end_multipart_form;
 
-print "<h3>Existing Conferences:</h3>\n";
+print "<center><h4>Existing Meetings and Conferences</h4></center>\n";
 
-&ConferencesTable;
+&GatheringTable;
 
 print "<p><hr>\n";
 

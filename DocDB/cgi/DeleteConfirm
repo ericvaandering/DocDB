@@ -18,10 +18,14 @@ require "DocumentSQL.pm";
 require "RevisionSQL.pm";
 
 require "HTMLUtilities.pm";
+require "AdministerElements.pm";
 require "Security.pm";
 
 
 $query = new CGI;  # Global for subroutines
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+&GetSecurityGroups;
 
 %params = $query -> Vars;
 
@@ -43,7 +47,6 @@ if (@error_stack) {
   &EndPage(@error_stack);
 }
 
-$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetSecurityGroups;
 &FetchDocument($DocumentID);
 
@@ -63,11 +66,10 @@ if (@error_stack) {
 }
 
 print "<p><center><b>To delete this document, you must supply the adminstrator 
-          password:</b>";
+          username and password:</b>";
 
 print $query -> startform('POST',$DeleteDocument);
-print "<b> Administrator password: </b>"; 
-print $query -> password_field(-name => "password", -size => 12, -maxlength => 12);
+&AdministratorPassword;
 print $query -> hidden(-name => 'docid',    -default => $DocumentID);
 print "<b> </b>"; 
 print $query -> submit (-value => "Delete Document");

@@ -31,7 +31,7 @@ print $query->header;
 # Parameters to script 
 
 $Password      = $params{password};
-$Username      = $Administrator;
+my $Username      = $params{admuser};
 $Action        = $params{admaction};
 
 @AuthorIDs     = split ("\0",$params{authors});
@@ -42,16 +42,16 @@ $InstitutionID = $params{inst};
 
 my $AuthorID;
 
-unless (&CanAdminister) {
-  push @ErrorStack,$Msg_AdminNoLogin;
-}  
-&EndPage(@ErrorStack);
-
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
 unless ($dbh) {
   push @ErrorStack,$Msg_AdminNoConnect;
 }         
+&EndPage(@ErrorStack);
+
+unless (&CanAdminister) {
+  push @ErrorStack,$Msg_AdminNoLogin;
+}  
 &EndPage(@ErrorStack);
 
 if      ($Action eq "Delete") {

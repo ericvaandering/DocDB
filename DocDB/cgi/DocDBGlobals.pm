@@ -42,19 +42,25 @@ $Zip    = "/usr/bin/zip -q -r ";  # Set to "" in ProjectGlobals if not installed
 $RemoteUsername       = $ENV{REMOTE_USER};
 $remote_user          = $ENV{REMOTE_USER};
 $remote_user          =~ tr/[A-Z]/[a-z]/;
+
+$htaccess             = ".htaccess";
+
+$LastDays             = 20;    # Number of days for default in LastModified
+$HomeLastDays         = 7;     # Number of days for last modified on home page
+$HomeMaxDocs          = 50;    # Maximum number of documents on home page
+$MeetingWindow        = 7;     # Days before and after meeting to preselect
+$MeetingFiles         = 3;     # Number of upload boxes on meeting short form
+
+$FirstYear            = 2000;  # Earliest year that documents can be created
+
+# Options
+
 $CaseInsensitiveUsers = 0;
-
-$htaccess         = ".htaccess";
-
-$LastDays          = 20;       # Number of days for default in LastModified
-$HomeLastDays      = 7;        # Number of days for last modified on home page
-$HomeMaxDocs       = 50;       # Maximum number of documents on home page
-$MeetingWindow     = 7;        # Days before and after meeting to preselect
-$MeetingFiles      = 3;        # Number of upload boxes on meeting short form
-
-$EnchancedSecurity = 0;        # Separate lists for view, modify
-$FirstYear         = 2000;     # Earliest year that documents can be created
-
+$EnhancedSecurity     = 0;     # Separate lists for view, modify
+$SuperiorsCanModify   = 0;     # In enhanced model, a superior group can modify
+                               # a subordinate groups documents without explicit
+                               # permission
+                               
 # Major topic names for "meetings" and "conferences". Each can be a list
 # The first item in the two lists are accessed by ListMeetings and ListConferences
 

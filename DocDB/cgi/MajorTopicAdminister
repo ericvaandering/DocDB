@@ -33,23 +33,23 @@ print $query -> header;
 # Parameters to script 
 
 $Password      = $params{password};
-$Username      = $Administrator;
+my $Username      = $params{admuser};
 $Action        = $params{admaction};
 
 $MajorTopicID  = $params{majortopic};
 $LongName      = $params{long};
 $ShortName     = $params{short};
 
-unless (&CanAdminister) {
-  push @ErrorStack,$Msg_AdminNoLogin;
-}  
-&EndPage(@ErrorStack);
-
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
 unless ($dbh) {
   push @ErrorStack,$Msg_AdminNoConnect;
 }         
+&EndPage(@ErrorStack);
+
+unless (&CanAdminister) {
+  push @ErrorStack,$Msg_AdminNoLogin;
+}  
 &EndPage(@ErrorStack);
 
 &GetTopics;
