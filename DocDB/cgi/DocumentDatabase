@@ -46,7 +46,7 @@ print "<table cellspacing=10><tr><td>\n";
 
 print "<ul>\n";
 unless ($Public || !&CanCreate()) {
-  print "<li><b><a href=\"$ModifyHome\">Create or change</a> documents</b><p>\n";
+  print "<li><b><a href=\"$ModifyHome\">Create or change</a> documents or metadata</b><p>\n";
 }
 print "<li><b><a href=\"$SearchForm\">Search</a> documents</b><p>\n"; 
 

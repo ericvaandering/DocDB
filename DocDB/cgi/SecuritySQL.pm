@@ -6,10 +6,9 @@ sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with 
   $group_list -> bind_columns(undef, \($GroupID,$Name,$Description,$CanCreate,$TimeStamp));
   %SecurityGroups = ();
   while ($group_list -> fetch) {
-    $SecurityGroups{$GroupID}{GROUPID}     = $GroupID;
     $SecurityGroups{$GroupID}{NAME}        = $Name;
     $SecurityGroups{$GroupID}{DESCRIPTION} = $Description;
-    $SecurityGroups{$GroupID}{CanCreate}   = $CanCreate;
+    $SecurityGroups{$GroupID}{CanCreate}   = $CanCreate; # FIXME: CanAdminister
     $SecurityGroups{$GroupID}{TIMESTAMP}   = $TimeStamp;
     $SecurityIDs{$Name} = $GroupID;
   }
@@ -21,7 +20,6 @@ sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with 
   $hierarchy_list -> bind_columns(undef, \($HierarchyID,$ChildID,$ParentID,$TimeStamp));
   %GroupsHierarchy = ();
   while ($hierarchy_list -> fetch) {
-    $GroupsHierarchy{$HierarchyID}{HIERARCHY} = $HierarchyID;
     $GroupsHierarchy{$HierarchyID}{CHILD}     = $ChildID;
     $GroupsHierarchy{$HierarchyID}{PARENT}    = $ParentID;
     $GroupsHierarchy{$HierarchyID}{TIMESTAMP} = $TimeStamp;

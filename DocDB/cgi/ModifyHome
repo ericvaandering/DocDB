@@ -55,7 +55,7 @@ print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
 print " file(s) on your <b><a "; 
 &HelpLink("uploadmethod"); 
 print "local computer</a></b> \n"; 
-print "(no need to reserve the document).\n";
+#print "(no need to reserve the document).\n";
 print $query -> hidden(-name => 'mode',    -default => 'add');
 print $query -> hidden(-name => 'upload',    -default => 'file');
 print $query -> endform;
@@ -70,7 +70,7 @@ print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
 print " file(s) on the <b><a "; 
 &HelpLink("uploadmethod"); 
 print "web</a></b> \n"; 
-print "(no need to reserve the document).\n";
+#print "(no need to reserve the document).\n";
 print $query -> hidden(-name => 'mode',    -default => 'add');
 print $query -> hidden(-name => 'upload',    -default => 'http');
 print $query -> endform;
@@ -99,7 +99,7 @@ print $query -> endform;
 
 print "<li>"; 
 print $query -> startform('POST',$DocumentAddForm);
-print $query -> submit (-value => "Update Database");
+print $query -> submit (-value => "Update DB Info");
 print " for document # "; 
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 print $query -> hidden(-name => 'mode',    -default => 'updatedb');
@@ -134,7 +134,7 @@ print "<li>Add an <a href=\"$AuthorAddForm\">author</a>\n";
 print "<li>Add a  <a href=\"$ConferenceAddForm\">conference</a>\n";
 if ($remote_user eq $Administrator) {
   print "<li>Add a <a href=\"$TopicAddForm\">topic</a>\n";
-  print "<li>Add, delete, modify <a href=\"$GroupAdministerForm\">groups</a>\n";
+  print "<li>Add, delete, or modify <a href=\"$GroupAdministerForm\">groups</a>\n";
   print "<li>Perform other <a href=\"$AdministerForm\">administration tasks</a>\n";
 }
 print "</ul>\n";
