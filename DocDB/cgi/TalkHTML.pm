@@ -142,7 +142,6 @@ sub TalkEntryForm (@) {
     print $query -> hidden(-name => 'sessionorderid', -default => $SessionOrderID);
     print $query -> hidden(-name => 'timestamp',      -default => $EntryTimeStamp);
 
-
     print "<td align=left rowspan=2>\n"; &TalkOrder; print "<br/>\n";
     &TalkConfirm($SessionOrderID);    print "<br/>\n";
     &TalkDelete($SessionOrderID);     print "</td>\n";

@@ -83,24 +83,29 @@ sub KeywordDetailedList {
 
   print "<table cellpadding=10>\n";
   print "<tr valign=top>\n";
-  foreach my $KeywordGroupIDID (@KeywordGroupIDs) {
-    my $KeywordGroupID = &KeywordGroupInfo($KeywordGroupIDID,"short");
+  foreach my $KeywordGroupID (@KeywordGroupIDs) {
+    my $KeywordGroup = &KeywordGroupInfo($KeywordGroupID,"short");
+    my $Label = $KeywordGroup;
+    $Label =~ s/\s+//;
+    
     print "  <td>\n";
-    print "  <a href=\"#$KeywordGroupID\"><b>$KeywordGroupID</b>\n";
+    print "  <a href=\"#$Label\"><b>$KeywordGroup</b>\n";
     print "  </td>\n";
   }
   print "</tr>\n";
   print "</table>\n";
 
-  print "<table cellpadding=10>\n";
+  print "<table cellpadding=3>\n";
   foreach my $KeywordGroupIDID (@KeywordGroupIDs) {
 
     my @KeywordListIDs = sort byKeyword keys %Keywords;
 
     my $KeywordGroupIDLink = &KeywordGroupInfo($KeywordGroupIDID,"short");
     print "<tr valign=top>\n";
-    print "  <td colspan=2>\n";
-    print "  <a name=$KeywordGroupIDLink>\n";
+    print "  <td colspan=3>\n";
+    my $Label = $KeywordGroupIDLink;
+    $Label =~ s/\s+//;
+    print "  <a name=$Label>\n";
     print "  <b>$KeywordGroupIDLink</b>\n";
     print "  </td>\n";
     print "</tr>\n";
@@ -109,6 +114,7 @@ sub KeywordDetailedList {
       my $Link = &KeywordLinkByID($KeyID,-format => "short");
       my $Text = &KeywordLinkByID($KeyID,-format => "long", -nolink => "true");
       print "<tr valign=top>\n";
+      print "  <td>&nbsp;</td>\n";
       print "  <td>$Link</td>\n";
       print "  <td>$Text</td>\n";
       print "</tr>\n";

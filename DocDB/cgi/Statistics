@@ -9,6 +9,7 @@ use CGI;
 use DBI;
 
 require "DocDBGlobals.pm";
+require "DocDBVersion.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 
@@ -123,6 +124,7 @@ print "    <th align=right>Average Documents per Topic:        <td align=right>$
 
 print "<tr><th colspan=4><hr></tr>\n";  
 print "</table>\n";
+print "<center>DocDB Version: $DocDBVersion</center><p>\n";  
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

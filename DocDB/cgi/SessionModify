@@ -117,7 +117,6 @@ if ($Mode eq "modify") {
     my $TalkConfirmed   = $TalkConfirmFlags{$SessionOrderID};
     my $TalkDocID       = $params{"talkdocid-$SessionOrderID"};
     my $NewSessionID    = $params{"newsessionid-$SessionOrderID"};
-    my $NewSessionID    = $params{"newsessionid-$SessionOrderID"};
     
     if (grep /n/,$SessionOrderID) { # Key on SessionOrderID to see if insert or update.	
       if ($TalkTitle || $TalkNote || $TalkDocID) {
