@@ -275,9 +275,9 @@ sub EuroDateTime {
 
 sub OtherVersionLinks {
   my ($DocumentID,$CurrentVersion) = @_;
-  my @RevIDs   = &FetchRevisionsByDocument($DocumentID);
+  my @RevIDs   = reverse sort &FetchRevisionsByDocument($DocumentID);
   
-  unless ($#RevIDs >0) {return;}
+  unless ($#RevIDs > 0) {return;}
   print "<center>\n";
   print "<table><tr><td>\n";
   print "<b>Other Versions of this document: </b>\n";
@@ -437,17 +437,9 @@ sub TypeLink {
 }
 
 sub PrintAgenda {
-  require "MiscSQL.pm";
   my ($MeetingID) = @_; 
   
-  my $agenda_find = $dbh -> prepare(
-    "select MAX(DocumentRevision.DocRevID) from DocumentRevision,RevisionTopic ".
-    "where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
-     "and lower(DocumentRevision.DocumentTitle) like lower(\"agenda%\") ".
-     "and RevisionTopic.MinorTopicID=$MeetingID"); 
-  
-  $agenda_find -> execute();
-  my ($DocRevID) = $agenda_find -> fetchrow_array;
+  my ($DocRevID) = &FindAgendaRevision($MeetingID);
   if ($DocRevID) {
     &FetchDocRevisionByID($DocRevID); 
     my @FileIDs  = &FetchDocFiles($DocRevID);                                                                                             
@@ -458,9 +450,8 @@ sub PrintAgenda {
   }
 }
 
-sub FindAgenda {
+sub FindAgendaRevision {
   require "MiscSQL.pm";
-  require "FSUtilities.pm";
   my ($MeetingID) = @_; 
   
   my $agenda_find = $dbh -> prepare(
@@ -471,6 +462,14 @@ sub FindAgenda {
   
   $agenda_find -> execute();
   my ($DocRevID) = $agenda_find -> fetchrow_array;
+}
+
+sub FindAgendaURL {
+  require "FSUtilities.pm";
+  my ($MeetingID) = @_; 
+  
+  my ($DocRevID) = &FindAgendaRevision($MeetingID);
+
   if ($DocRevID) {
     &FetchDocRevisionByID($DocRevID); 
     my @FileIDs  = &FetchDocFiles($DocRevID);                                                                                             

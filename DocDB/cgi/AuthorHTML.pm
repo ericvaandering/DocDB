@@ -115,7 +115,7 @@ sub AuthorsTable {
   my $NCols     = 4;
   my $NPerCol   = int (scalar(@AuthorIDs)/$NCols + 1);
 
-  print "<table cellpadding=10>\n";
+  print "<table>\n";
   print "<tr valign=top>\n";
   
   print "<td>\n";
@@ -136,6 +136,5 @@ sub AuthorsTable {
   print "</ul></td></tr>";
   print "</table>\n";
 }
-
 
 1;
