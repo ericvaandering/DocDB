@@ -25,7 +25,7 @@ sub FetchSecurityGroupsByCert () {
   my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
   my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
 
-  my $EmailUserSelect = $dbh->prepare("select EmailUserID from SecurityGroup ".
+  my $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
                                       "where Verified=1 and EmailAddress=? and Name=?");
   $EmailUserSelect -> execute($CertEmail,$CertCN);
 
@@ -61,7 +61,7 @@ sub CertificateStatus () {
  
   my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
   my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
-  my $EmailUserSelect = $dbh->prepare("select EmailUserID,Verified from SecurityGroup ".
+  my $EmailUserSelect = $dbh->prepare("select EmailUserID,Verified from EmailUser ".
                                       "where EmailAddress=? and Name=?");
   $EmailUserSelect -> execute($CertEmail,$CertCN);
 
@@ -77,11 +77,11 @@ sub CertificateStatus () {
     return $CertificateStatus;
   } 
    
-  my $AddressSelect = $dbh->prepare("select EmailUserID from SecurityGroup where EmailAddress=?");
+  my $AddressSelect = $dbh->prepare("select EmailUserID from EmailUser where EmailAddress=?");
      $AddressSelect -> execute($CertEmail);
   my ($AddressID) = $AddressSelect -> fetchrow_array; 
 
-  my $NameSelect = $dbh->prepare("select EmailUserID from SecurityGroup where Name=?");
+  my $NameSelect = $dbh->prepare("select EmailUserID from EmailUser where Name=?");
      $NameSelect -> execute($CertCN);
   my ($NameID) = $NameSelect -> fetchrow_array; 
     
