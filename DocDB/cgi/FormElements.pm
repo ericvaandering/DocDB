@@ -201,6 +201,7 @@ sub SingleUploadBox (;$$) {
     if ($FileID && $CopyOption) {
       print "<tr><td>&nbsp;</td><td colspan=2>\n";
       print "Copy <tt>$DocFiles{$FileID}{NAME}</tt> from previous version:";
+      print $query -> hidden(-name => 'copyfileid', -value => $FileID);
       print $query -> checkbox(-name => "copyfile", -value => $i, -label => '');
       print "</td></tr>\n";
     }  

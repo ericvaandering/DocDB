@@ -93,9 +93,10 @@ if ($Special eq "othermeeting") {$OtherMeeting = 1;}
 my $SessionTalkID = $params{sessiontalkid};
 my $RevisionNote  = $params{revisionnote};
 my $SignoffList   = $params{signofflist};
-my @Copys = split ("\0",$params{copyfile});
-
-print "C:",@Copys,"<br>\n";
+my @CopyFiles     = split ("\0",$params{copyfile});
+my @CopyFileIDs   = split ("\0",$params{copyfileid});
+my $OldVersion    = $params{oldversion};
+my $DocumentID    = $params{oldversion};
 
 if ($Meeting || $OtherMeeting) {
   @authorIDs = ($Requester);
@@ -223,7 +224,7 @@ if ($mode eq "add" || $mode eq "update") {
   unless ($params{abstract}) {
     push @ErrorStack,"You must supply an abstract for this document.";
   }
-  unless (grep /\w/,$params{single_upload} || grep /\w/,$params{single_http}) {
+  unless (@Copys || grep /\w/,$params{single_upload} || grep /\w/,$params{single_http}) {
     push @ErrorStack,"You must supply a file for this document.";
     push @ErrorStack,"If you just want to change information about the
     document, choose `Update DB Info' instead.";
@@ -433,12 +434,20 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
     my @RawRoots = split ("\0",$params{root});
     foreach my $RawRoot (@RawRoots) {  # Simulate what I thought was happening
       @Roots[$RawRoot-1] = "on"
-    } 
-    my $Counter = 0; 
-    foreach $Copy (@Copys) {
-      print "$Counter Copy: $Copy<br>\n";
-      ++$Counter;
     }
+
+# Deal with copied files
+    my @CopyRoots = ();
+    my %CopyFiles = (); 
+    foreach $CopyFile (@CopyFiles) {
+      my $Counter = $CopyFile-1;
+      $CopyFiles{$Counter} = 1;
+      print "Copy: $CopyFile $Counter<br>\n";
+      my ($NewRoot) = splice @Roots,$Counter-1,1;
+      push @CopyRoots,$NewRoot;
+    }
+    
+    print "CR:",@CopyRoots,"<br>\n";
         
     if ($params{single_upload}) { # Copy file to directory
       @long_files   = $query ->  param("single_upload");
@@ -459,6 +468,16 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
         push @short_files,$short_file;
       }  
     }
+    my $CopyCounter = 0;
+    foreach my $FileID (@CopyFileIDs) {
+      my $FileName = &FetchFile($FileID);
+      if ($CopyFiles{$CopyCounter}) {
+        print "Copying: $FileID $FileName<br>\n";
+        $short_file = &CopyFile($new_dir,$FileName,$DocumentID,$OldVersion);
+        push @short_files,$short_file;
+      }  
+      ++$CopyCounter;
+    }  
   } elsif ($Archive eq "archive") { # They uploaded a tar/zip file
     @short_files = ();
     @Descriptions = ();
@@ -473,7 +492,10 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
       &ProcessArchive($new_dir,$short_file);
     } 
   } # Archive upload
-
+  
+  
+    
+    
 ### Insert into Files database
 
   foreach $short_file (@short_files) {
