@@ -28,7 +28,7 @@ $SSIDirectory = "/www/html/includes/";
 $Wget   = "/usr/bin/wget -O - --quiet ";
 $Tar    = "/bin/tar ";
 $Unzip  = "/usr/bin/unzip -q ";
-#$Zip    = "/usr/bin/zip -q "; # Comment out if not present
+$Zip    = "/usr/bin/zip -q -r ";  # Comment out if not present
 
 # Useful stuff
 
