@@ -19,6 +19,8 @@ $query = new CGI;
 
 #Note: Remove cookie0, see if you can do this with an array and pushes
 
+# I.e. push @cookies,$query->cookie....
+
 $cookie0 = $query->cookie(-name=>'test', 
                           -value=>"$params{test}", 
 			  -expires=>'+10y',
