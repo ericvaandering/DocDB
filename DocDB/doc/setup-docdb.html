@@ -29,7 +29,7 @@
      $script_root is defined in ProjectGlobals.pm, 
      it is not an actual environmental variable.
 <li> create a .htaccess file in $script_root <br>
-     Here is a sample .htaccess file
+     Here is a sample .htaccess file:
 <pre>
        AuthType Basic
        AuthName "My Document Database"
@@ -39,7 +39,9 @@
        &lt /Limit &gt
 </pre>
      <font color="red">The .htpasswd file should not be in 
-     any web-accessable directory.</font>
+     any web-accessable directory.</font> Also, the POST option <font
+     color="red">must</font> be present or DocDB will not work (most of the form
+     posts to cgi scripts will fail). 
 <li> cp -r DocDB/html  $file_root/Static, 
      where $file_root is defined in ProjectGlobals.pm. <br>
 <li> Set permissions on $file_root. 
