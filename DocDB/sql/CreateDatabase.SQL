@@ -1,6 +1,4 @@
--- MySQL dump 9.09
-
--- This file creates the database structure for a Version 5.x installation of 
+-- This file creates the database structure for a Version 6.x installation of 
 -- DocDB.
 
 --
@@ -24,6 +22,7 @@ CREATE TABLE Author (
 --
 
 
+
 --
 -- Table structure for table `AuthorHint`
 --
@@ -42,6 +41,7 @@ CREATE TABLE AuthorHint (
 --
 
 
+
 --
 -- Table structure for table `Conference`
 --
@@ -58,12 +58,34 @@ CREATE TABLE Conference (
   Title varchar(128) default NULL,
   Epilogue text,
   ShowAllTalks int(11) default NULL,
+  SingleSession int(11) NOT NULL default '0',
   PRIMARY KEY  (ConferenceID)
 ) TYPE=MyISAM;
 
 --
 -- Dumping data for table `Conference`
 --
+
+
+
+--
+-- Table structure for table `DocXRef`
+--
+
+CREATE TABLE DocXRef (
+  DocXRefID int(11) NOT NULL auto_increment,
+  DocRevID int(11) default NULL,
+  DocumentID int(11) default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (DocXRefID),
+  KEY DocRevID (DocRevID),
+  KEY DocumentID (DocumentID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table `DocXRef`
+--
+
 
 
 --
@@ -85,6 +107,7 @@ CREATE TABLE Document (
 --
 
 
+
 --
 -- Table structure for table `DocumentFile`
 --
@@ -104,6 +127,7 @@ CREATE TABLE DocumentFile (
 --
 -- Dumping data for table `DocumentFile`
 --
+
 
 
 --
@@ -135,6 +159,7 @@ CREATE TABLE DocumentRevision (
 --
 
 
+
 --
 -- Table structure for table `DocumentType`
 --
@@ -144,12 +169,14 @@ CREATE TABLE DocumentType (
   ShortType varchar(32) default NULL,
   LongType varchar(255) default NULL,
   TimeStamp timestamp(14) NOT NULL,
+  Hide int(11) NOT NULL default '0',
   PRIMARY KEY  (DocTypeID)
 ) TYPE=MyISAM;
 
 --
 -- Dumping data for table `DocumentType`
 --
+
 
 
 --
@@ -168,6 +195,7 @@ CREATE TABLE EmailAuthorDaily (
 --
 
 
+
 --
 -- Table structure for table `EmailAuthorImmediate`
 --
@@ -184,6 +212,7 @@ CREATE TABLE EmailAuthorImmediate (
 --
 
 
+
 --
 -- Table structure for table `EmailAuthorWeekly`
 --
@@ -198,6 +227,7 @@ CREATE TABLE EmailAuthorWeekly (
 --
 -- Dumping data for table `EmailAuthorWeekly`
 --
+
 
 
 --
@@ -219,6 +249,7 @@ CREATE TABLE EmailDocumentImmediate (
 --
 
 
+
 --
 -- Table structure for table `EmailKeywordDaily`
 --
@@ -233,6 +264,7 @@ CREATE TABLE EmailKeywordDaily (
 --
 -- Dumping data for table `EmailKeywordDaily`
 --
+
 
 
 --
@@ -251,6 +283,7 @@ CREATE TABLE EmailKeywordImmediate (
 --
 
 
+
 --
 -- Table structure for table `EmailKeywordWeekly`
 --
@@ -265,6 +298,7 @@ CREATE TABLE EmailKeywordWeekly (
 --
 -- Dumping data for table `EmailKeywordWeekly`
 --
+
 
 
 --
@@ -284,6 +318,7 @@ CREATE TABLE EmailTopicDaily (
 --
 
 
+
 --
 -- Table structure for table `EmailTopicImmediate`
 --
@@ -299,6 +334,7 @@ CREATE TABLE EmailTopicImmediate (
 --
 -- Dumping data for table `EmailTopicImmediate`
 --
+
 
 
 --
@@ -318,6 +354,7 @@ CREATE TABLE EmailTopicWeekly (
 --
 
 
+
 --
 -- Table structure for table `EmailUser`
 --
@@ -331,12 +368,15 @@ CREATE TABLE EmailUser (
   PreferHTML int(11) NOT NULL default '0',
   TimeStamp timestamp(14) NOT NULL,
   CanSign int(11) default NULL,
+  Verified int(11) default NULL,
+  AuthorID int(11) default NULL,
   PRIMARY KEY  (EmailUserID)
 ) TYPE=MyISAM;
 
 --
 -- Dumping data for table `EmailUser`
 --
+
 
 
 --
@@ -356,6 +396,7 @@ CREATE TABLE GroupHierarchy (
 --
 
 
+
 --
 -- Table structure for table `GroupTopic`
 --
@@ -373,6 +414,7 @@ CREATE TABLE GroupTopic (
 --
 
 
+
 --
 -- Table structure for table `Institution`
 --
@@ -388,6 +430,7 @@ CREATE TABLE Institution (
 --
 -- Dumping data for table `Institution`
 --
+
 
 
 --
@@ -410,6 +453,7 @@ CREATE TABLE Journal (
 --
 
 
+
 --
 -- Table structure for table `Keyword`
 --
@@ -427,6 +471,7 @@ CREATE TABLE Keyword (
 --
 
 
+
 --
 -- Table structure for table `KeywordGroup`
 --
@@ -442,6 +487,7 @@ CREATE TABLE KeywordGroup (
 --
 -- Dumping data for table `KeywordGroup`
 --
+
 
 
 --
@@ -463,6 +509,7 @@ CREATE TABLE KeywordGrouping (
 --
 
 
+
 --
 -- Table structure for table `MajorTopic`
 --
@@ -482,6 +529,7 @@ CREATE TABLE MajorTopic (
 --
 
 
+
 --
 -- Table structure for table `MeetingModify`
 --
@@ -498,6 +546,7 @@ CREATE TABLE MeetingModify (
 --
 -- Dumping data for table `MeetingModify`
 --
+
 
 
 --
@@ -520,6 +569,7 @@ CREATE TABLE MeetingOrder (
 --
 
 
+
 --
 -- Table structure for table `MeetingSecurity`
 --
@@ -536,6 +586,7 @@ CREATE TABLE MeetingSecurity (
 --
 -- Dumping data for table `MeetingSecurity`
 --
+
 
 
 --
@@ -557,6 +608,7 @@ CREATE TABLE MinorTopic (
 --
 
 
+
 --
 -- Table structure for table `RevisionAuthor`
 --
@@ -573,6 +625,7 @@ CREATE TABLE RevisionAuthor (
 --
 -- Dumping data for table `RevisionAuthor`
 --
+
 
 
 --
@@ -592,6 +645,7 @@ CREATE TABLE RevisionModify (
 --
 -- Dumping data for table `RevisionModify`
 --
+
 
 
 --
@@ -615,6 +669,7 @@ CREATE TABLE RevisionReference (
 --
 
 
+
 --
 -- Table structure for table `RevisionSecurity`
 --
@@ -632,6 +687,7 @@ CREATE TABLE RevisionSecurity (
 --
 -- Dumping data for table `RevisionSecurity`
 --
+
 
 
 --
@@ -652,6 +708,7 @@ CREATE TABLE RevisionTopic (
 --
 
 
+
 --
 -- Table structure for table `SecurityGroup`
 --
@@ -669,6 +726,7 @@ CREATE TABLE SecurityGroup (
 --
 -- Dumping data for table `SecurityGroup`
 --
+
 
 
 --
@@ -693,6 +751,7 @@ CREATE TABLE Session (
 --
 
 
+
 --
 -- Table structure for table `SessionOrder`
 --
@@ -711,6 +770,7 @@ CREATE TABLE SessionOrder (
 --
 -- Dumping data for table `SessionOrder`
 --
+
 
 
 --
@@ -732,6 +792,7 @@ CREATE TABLE SessionSeparator (
 --
 -- Dumping data for table `SessionSeparator`
 --
+
 
 
 --
@@ -757,6 +818,7 @@ CREATE TABLE SessionTalk (
 --
 
 
+
 --
 -- Table structure for table `Signature`
 --
@@ -778,6 +840,7 @@ CREATE TABLE Signature (
 --
 
 
+
 --
 -- Table structure for table `Signoff`
 --
@@ -794,6 +857,7 @@ CREATE TABLE Signoff (
 --
 -- Dumping data for table `Signoff`
 --
+
 
 
 --
@@ -813,6 +877,7 @@ CREATE TABLE SignoffDependency (
 --
 -- Dumping data for table `SignoffDependency`
 --
+
 
 
 --
@@ -835,6 +900,7 @@ CREATE TABLE TalkSeparator (
 --
 
 
+
 --
 -- Table structure for table `TopicHint`
 --
@@ -852,12 +918,27 @@ CREATE TABLE TopicHint (
 -- Dumping data for table `TopicHint`
 --
 
+
+
+--
+-- Table structure for table `UsersGroup`
+--
+
+CREATE TABLE UsersGroup (
+  UsersGroupID int(11) NOT NULL auto_increment,
+  EmailUserID int(11) default NULL,
+  GroupID int(11) default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (UsersGroupID),
+  KEY EmailUserID (EmailUserID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table `UsersGroup`
+--
+
 -- This file made by "mysqldump -c -u docdbadm -p BTeVDocDB | grep -v "INSERT INTO" " and then adding the last 4 lines
 -- Set up the DocDB adminstrator account. Everything else can be done in the admin interface
 
 INSERT INTO SecurityGroup (GroupID, Name, Description, CanCreate, CanAdminister) VALUES 
                           (0,'DocDBAdm','Document Database Administrators',1,1);
-
-
-
-
