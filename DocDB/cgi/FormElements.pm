@@ -528,7 +528,7 @@ sub ReferenceForm {
   unshift @JournalIDs,0; $JournalLabels{0} = "----"; # Null Journal
   print "<b><a ";
   &HelpLink("reference");
-  print "References:</a></b><br> \n";
+  print "Journal References:</a></b><br> \n";
   
   my @ReferenceIDs = (@ReferenceDefaults,0);
   

@@ -1,3 +1,3 @@
-$DocDBVersion = "6.0.0";
+$DocDBVersion = "6.1.0";
 
 1;
