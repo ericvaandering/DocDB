@@ -1,5 +1,3 @@
-@dist_types = ["Public","Private"]; 
-
 sub TitleBox {
   print "<b>Title:</b><br> \n";
   print $query -> textfield (-name => 'title', -size => 80, -maxlength => 240);
@@ -50,12 +48,13 @@ sub DocTypeButtons {
   @values = keys %short_type;
   
   print "<b>Document type:</b><br>\n";
-  print $query -> radio_group(-name => "doctype", -values => \%short_type);
+  print $query -> radio_group(-columns => 3, -name => "doctype", -values => \%short_type);
 };
 
-sub DistributionButtons {
-  print "<b>Distribution:</b><br>\n";
-  print $query -> radio_group(-name => "dist", -values => @dist_types, -default => "Private");
+sub SecurityList {
+  print "<b>Security:</b><br>\n";
+  print $query -> scrolling_list(-name => 'security', -values => \@available_securities, 
+                                 -size => 5, -multiple => 'true', -default => 'BTeV');
 };
 
 1;

@@ -11,6 +11,7 @@ sub AuthorListByID {
   } else {
     print "<b>Authors:</b> none<br>\n";
   }
+  print "<p>\n";
 }
 
 sub RequestorByID {
@@ -18,6 +19,7 @@ sub RequestorByID {
   
   print "<b>Requested by:</b> ";
   print "$names{$requestorID}<br>\n";
+  print "<p>\n";
 }
 
 sub TopicListByID {
@@ -32,6 +34,7 @@ sub TopicListByID {
   } else {
     print "<b>Topics:</b> none<br>\n";
   }
+  print "<p>\n";
 }
 
 sub PrintAbstract {
@@ -42,6 +45,7 @@ sub PrintAbstract {
   } else {
     print "<b>Abstract:</b> none<br>\n";
   }
+  print "<p>\n";
 }
 
 sub EndPage {

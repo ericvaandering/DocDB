@@ -34,4 +34,19 @@ sub GetTopics {
   }
 };
 
+sub GetSecurities {
+  my ($field,$type);
+  my $security_list  = $dbh->prepare("describe DocumentRevision Security");
+  $security_list -> execute;
+  $security_list -> bind_columns(undef, \($field,$type,$Null,$Key,$Default,$Extra));
+  $security_list -> fetch;
+  $set_values = $type;
+
+  $set_values =~ s/set\(//g; # Parse out everything but the types
+  $set_values =~ s/\)//g;
+  $set_values =~ s/\'//g;
+  $set_values =~ s/\s+//g;
+  (@available_securities) = split /\,/,$set_values;
+};
+
 1;

@@ -24,14 +24,19 @@ $mode = $params{mode};
 print $query->header;
 print $query->start_html(-title=>"BTeV Document Reservation Results");
 
-print "Mode is $mode<p>\n";
-
 if ($mode ne "add" && $mode ne "reserve") {
   &EndPage("<p><h3>You accessed this page without 
             specifying a required parameter. 
             Don't mess with hidden fields or 
             try to access this page directly.</h3>\n"); 
 }  
+if      ($mode eq "add") {
+  print "<p><h3>Here are the results of your attempt to add a document
+                into the BTeV document database:</h3><p>\n";
+} elsif ($mode eq "reserve") {              
+  print "<p><h3>Here are the results of your attempt to reserve a document
+                number in the BTeV document database:</h3><p>\n";
+}
 
 my $document_insert = $dbh->prepare("
 insert into Document 
@@ -41,7 +46,7 @@ values (0,          ?,           NOW(),       ?)");
 my $doc_rev_insert = $dbh->prepare("
 insert into DocumentRevision 
        (DocRevID, DocumentID, SubmitterID, DocumentTitle, PublicationInfo, 
-        VersionNumber, Abstract, Private, RevisionDate) 
+        VersionNumber, Abstract, Security, RevisionDate) 
 values (0,?,?,?,?,?,?,?,NOW())");
             
 my $rev_author_insert =  $dbh->prepare("
@@ -80,6 +85,9 @@ if ($mode eq "add") {
   unless ($params{abstract}) {
     push @error_stack,"You must supply an abstract for this document.";
   }
+  unless ($params{single_upload}) {
+    push @error_stack,"You must supply a file for this document.";
+  }
 }
 
 if (($#error_stack + 1)) {
@@ -88,8 +96,11 @@ if (($#error_stack + 1)) {
 
 # OK, we've validated the inputs are all there. Now add info to database
 
-@authorIDs = split ("\0",$params{authors}); 
-@topicIDs  = split ("\0",$params{topics});
+@authorIDs  = split ("\0",$params{authors}); 
+@topicIDs   = split ("\0",$params{topics});
+@securities = split ("\0",$params{security});
+
+$security_list = join ',',@securities; # Ready for MySQL
 
 $document_insert -> execute($params{requestor},$params{doctype});
 my $documentID = $document_insert -> {insertid}; # Works with MySQL only
@@ -103,7 +114,7 @@ if      ($mode eq "reserve") {
 
 $doc_rev_insert -> execute($documentID,$params{requestor},$params{title},
                            $params{pubinfo},$version,$params{abstract},
-                           $params{private});
+                           $security_list);
 my $docRevID = $doc_rev_insert -> {insertid}; # Works with MySQL only
                            
 foreach $authorID (@authorIDs) {
@@ -144,7 +155,7 @@ if ($mode eq "add") {
 
 # Output feedback to the user
 
-print "Your Document ID is <b>BTeV-doc-$documentID</b><p> 
+print "Your Document ID is <b>BTeV-doc-$documentID</b><br> 
        which was created with the following information.<br>
        Please make a note of the document number as you will
        need it to update your document.<p>\n"; 
