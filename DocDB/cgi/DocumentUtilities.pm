@@ -24,6 +24,7 @@
 
 sub AddDocument {
   require "FileUtilities.pm";
+  require "FSUtilities.pm";
 
   require "DocumentSQL.pm";
   require "RevisionSQL.pm";
@@ -80,6 +81,10 @@ sub AddDocument {
   }
   
   if ($DocRevID) { 
+    &FetchDocRevisionByID($DocRevID);
+    my $Version    = $DocRevisions{$DocRevID}{Version};
+    &MakeDirectory($DocumentID,$Version); 
+    &ProtectDirectory($DocumentID,$Version,@ViewIDs); 
     $Count = &InsertAuthors(-docrevid => $DocRevID, -authorids => \@AuthorIDs);
 
     $Count = &InsertTopics(-docrevid => $DocRevID, -topicids => \@TopicIDs);
