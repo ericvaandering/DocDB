@@ -159,8 +159,8 @@ sub PubInfoBox {
                             -columns => 60, -rows => 3);
 };
 
-sub SingleUploadBox {
-  my ($Mode) = @_;
+sub SingleUploadBox (;$$) {
+  my ($Mode,$CopyOption) = @_;
   print "<table cellpadding=3>\n";
   print "<tr><td colspan=2><b><a ";
   &HelpLink("fileupload");
@@ -198,12 +198,19 @@ sub SingleUploadBox {
     }
     print "<a "; &HelpLink("main"); print "Main?</a>\n";
     print "</td></tr>\n";
+    if ($FileID && $CopyOption) {
+      print "<tr><td>&nbsp;</td><td colspan=2>\n";
+      print "Copy <tt>$DocFiles{$FileID}{NAME}</tt> from previous version:";
+      print $query -> checkbox(-name => "copyfile", -value => $i, -label => '');
+      print "</td></tr>\n";
+    }  
+    print "<tr><td colspan=3></td></tr>\n";
   }
   print "</table>\n";
 };
 
-sub SingleHTTPBox {
-  my ($Mode) = @_;
+sub SingleHTTPBox (;$$) {
+  my ($Mode,$CopyOption) = @_;
   print "<table cellpadding=3>\n";
   print "<tr><td colspan=4><b><a ";
   &HelpLink("httpupload");
@@ -241,6 +248,13 @@ sub SingleHTTPBox {
     }
     print "<a "; &HelpLink("main"); print "Main?</a>\n";
     print "</td></tr>\n";
+    if ($FileID && $CopyOption) {
+      print "<tr><td>&nbsp;</td><td colspan=2>\n";
+      print "Copy <tt>$DocFiles{$FileID}{NAME}</tt> from previous version:";
+      print $query -> checkbox(-name => "copyfile", -value => $i, -label => '');
+      print "</td></tr>\n";
+    }  
+    print "<tr><td colspan=3></td></tr>\n";
   }
   print "<tr><td align=right><b>User:</b></td>\n";
   print "<td>\n";

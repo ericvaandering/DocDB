@@ -264,10 +264,11 @@ if ($mode eq "add" && ($SessionID||$ConferenceID)) {
 &SetFileOptions($DocRevID);
 
 print $query -> start_multipart_form('POST',$ProcessDocumentAdd);
-print $query -> hidden(-name => 'mode',    -default => $mode);
-print $query -> hidden(-name => 'upload',  -default => 'file');
-print $query -> hidden(-name => 'archive', -default => 'single');
-print $query -> hidden(-name => 'docid',   -default => $DocumentID);
+print $query -> hidden(-name => 'mode',      -default => $mode);
+print $query -> hidden(-name => 'upload',    -default => 'file');
+print $query -> hidden(-name => 'archive',   -default => 'single');
+print $query -> hidden(-name => 'docid',     -default => $DocumentID);
+print $query -> hidden(-name => 'oldversion',-default => $Version);
 
 if ($mode eq "updatedb") { 
   if (defined $params{version}) {
@@ -352,6 +353,10 @@ print "</tr>\n";
 ### Files
 
 if ($mode eq "add" || $mode eq "update") {
+  my $CopyOption = 0;
+  if ($mode eq "update") {
+    $CopyOption = 1;
+  }  
   print "<tr><td colspan=4>\n";
   if ($Archive eq "archive") { 
     if ($Upload eq "file") {
@@ -361,9 +366,9 @@ if ($mode eq "add" || $mode eq "update") {
     }  
   } else {
     if ($Upload eq "file") {
-      &SingleUploadBox;
+      &SingleUploadBox("",$CopyOption);
     } elsif ($Upload eq "http") {
-      &SingleHTTPBox;
+      &SingleHTTPBox("",$CopyOption);
     }  
   }
   print "<br>Make sure you supply a format everyone can view (e.g. PDF) along
