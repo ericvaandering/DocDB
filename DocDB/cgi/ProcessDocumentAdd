@@ -50,7 +50,7 @@ $Overhour  = $params{overhour};
 $JournalID = $params{journal};
 $Volume    = $params{volume};
 $Page      = $params{page};
-
+$Keywords  = $params{keywords};
 $Requester = $params{requester};
 
 if ($Meeting || $OtherMeeting) {
@@ -103,8 +103,8 @@ my $document_insert = $dbh->prepare(
 my $doc_rev_insert = $dbh->prepare(
    "insert into DocumentRevision ".
    "(DocRevID, DocumentID, SubmitterID, DocumentTitle, PublicationInfo, ". 
-   " VersionNumber, Abstract, RevisionDate) ". 
-   "values (0,?,?,?,?,?,?,?)");
+   " VersionNumber, Abstract, RevisionDate,Keywords) ". 
+   "values (0,?,?,?,?,?,?,?,?)");
             
 my $rev_author_insert =  $dbh->prepare(
    "insert into RevisionAuthor ".
@@ -261,7 +261,8 @@ if ($mode eq "updatedb") { # New Document revision replaces old. Fetch
 ### Add entry to Document Revision
 
 $doc_rev_insert -> execute($documentID,$params{requester},$params{title},
-                           $params{pubinfo},$version,$params{abstract},$SQL_NOW);
+                           $params{pubinfo},$version,$params{abstract},
+                           $SQL_NOW,$Keywords);
 my $docRevID = $doc_rev_insert -> {mysql_insertid}; # Works with MySQL only
 
 ### Add reference information if it exists

@@ -9,7 +9,7 @@ sub FetchDocRevisionByID {
   my $revision_list = $dbh->prepare(
     "select DocRevID,SubmitterID,DocumentTitle,PublicationInfo,VersionNumber,".
            "Abstract,RevisionDate,TimeStamp,DocumentID,Obsolete, ".
-           "JournalID,Volume,Page ".
+           "JournalID,Volume,Page,Keywords ".
     "from DocumentRevision ".
     "where DocRevID=?");
   if ($DocRevisions{$docRevID}{DOCID} && $DocRevisions{$docRevID}{COMPLETE}) {
@@ -19,7 +19,7 @@ sub FetchDocRevisionByID {
   my ($DocRevID,$SubmitterID,$DocumentTitle,$PublicationInfo,
       $VersionNumber,$Abstract,$RevisionDate,
       $TimeStamp,$DocumentID,$Obsolete,
-      $JournalID,$Volume,$Page) = $revision_list -> fetchrow_array;
+      $JournalID,$Volume,$Page,$Keywords) = $revision_list -> fetchrow_array;
 
   #FIXME Make keys mixed-caps
   
@@ -36,6 +36,7 @@ sub FetchDocRevisionByID {
   $DocRevisions{$DocRevID}{JournalID}     = $JournalID;
   $DocRevisions{$DocRevID}{Volume}        = $Volume;
   $DocRevisions{$DocRevID}{Page}          = $Page;
+  $DocRevisions{$DocRevID}{Keywords}      = $Keywords;
   $DocRevisions{$DocRevID}{COMPLETE}      = 1;
 
   return $DocRevID;

@@ -36,6 +36,17 @@ sub PrintAbstract {
   }
 }
 
+sub PrintKeywords {
+  my ($Keywords) = @_;
+  
+  if ($Keywords) {
+    print "<dl>\n";
+    print "<dt><b>Keywords:</b><br>\n";
+    print "<dd>$Keywords<br>\n";
+    print "</dl>\n";
+  }
+}
+
 sub PrintPubInfo {
   my ($pubinfo) = @_;
   if ($pubinfo) {
@@ -151,10 +162,15 @@ sub PrintRevisionInfo {
   print "<td colspan=3>"; 
   &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT});
 
-  print "<td rowspan=2 colspan=3>"; 
+  print "<td rowspan=3 colspan=3>"; 
   &FileListByRevID($DocRevID);
 
   print "</td></tr>\n";
+
+  print "<tr valign=top>";
+  print "<td colspan=3>"; 
+  &PrintKeywords($DocRevisions{$DocRevID}{Keywords});
+
   print "<tr valign=top>";
   print "<td colspan=3>"; 
   &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});

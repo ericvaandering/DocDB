@@ -117,6 +117,7 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   $JournalDefault   = $DocRevisions{$DocRevID}{JournalID};
   $VolumeDefault    = $DocRevisions{$DocRevID}{Volume};
   $PageDefault      = $DocRevisions{$DocRevID}{Page};
+  $KeywordsDefault  = $DocRevisions{$DocRevID}{Keywords};
   @SecurityDefaults = &GetRevisionSecurityGroups($DocRevID);
   @AuthorDefaults   = &GetRevisionAuthors($DocRevID);
   @TopicDefaults    = &GetRevisionTopics($DocRevID);
@@ -185,6 +186,8 @@ print "</tr><tr>\n";
 print "<td colspan=3>\n"; &TitleBox;    print "</td>\n";
 print "</tr><tr>\n";
 print "<td colspan=3>\n"; &AbstractBox; print "</td>\n";
+print "</tr><tr>\n";
+print "<td colspan=3>\n"; &KeywordsBox; print "</td>\n";
 print "</tr>\n";
 unless ($Meeting || $OtherMeeting) {
   print "<tr>\n";

@@ -96,12 +96,20 @@ sub EndDatePullDown {
   print $query -> popup_menu (-name => 'endyear',-values => \@years, -default => $year);
 }
 
+sub KeywordsBox {
+  print "<b><a ";
+  &HelpLink("keywords");
+  print "Keywords:</a></b><br> \n";
+  print $query -> textfield (-name => 'keywords', -default => $KeywordsDefault, 
+                             -size => 70, -maxlength => 240);
+};
+
 sub TitleBox {
   print "<b><a ";
   &HelpLink("title");
   print "Title:</a></b><br> \n";
   print $query -> textfield (-name => 'title', -default => $TitleDefault, 
-                             -size => 80, -maxlength => 240);
+                             -size => 70, -maxlength => 240);
 };
 
 sub PubInfoBox {
@@ -109,7 +117,7 @@ sub PubInfoBox {
   &HelpLink("pubinfo");
   print "Publication information:</a></b><br> \n";
   print $query -> textarea (-name => 'pubinfo', -default => $PubInfoDefault,
-                            -columns => 50, -rows => 3);
+                            -columns => 60, -rows => 3);
 };
 
 sub AbstractBox {
@@ -117,7 +125,7 @@ sub AbstractBox {
   &HelpLink("abstract");
   print "Abstract:</a></b><br> \n";
   print $query -> textarea (-name => 'abstract', -default => $AbstractDefault,
-                            -columns => 50, -rows => 6);
+                            -columns => 60, -rows => 6);
 };
 
 sub SingleUploadBox {

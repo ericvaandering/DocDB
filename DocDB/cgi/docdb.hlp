@@ -1,3 +1,14 @@
+keywords
+Keywords
+Keywords are used to further classify documents below the sub-topic level. While
+there is no centrally managed list of keywords, the following groups have
+defined their own set of keywords for their documents:
+<ul>
+<li><a target="keywords" href="http://www-btev.fnal.gov/DocDB/Static/Restricted/Groups/PixelKeys.shtml">Pixel
+Detector<a/>
+</ul>
+
+#
 replacefiles
 Replace Duplicate Files
 If you select this option, any files you add which duplicate file names of
