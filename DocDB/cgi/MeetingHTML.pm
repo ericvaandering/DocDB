@@ -71,7 +71,7 @@ sub SessionEntryForm (@) {
       $SessionDefaultDateTime    = "";
       $SessionDefaultTitle       = "";
       $SessionDefaultDescription = "";
-      $SessionSeparatorDefault = "";
+      $SessionSeparatorDefault   = "";
     } else { # Key off Meeting Order IDs, do differently for Sessions and Separators
       if ($MeetingOrders{$MeetingOrderID}{SessionID}) {
         my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
@@ -79,17 +79,18 @@ sub SessionEntryForm (@) {
 	$SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
 	$SessionDefaultTitle       = $Sessions{$SessionID}{Title};
 	$SessionDefaultDescription = $Sessions{$SessionID}{Description};
-	$SessionSeparatorDefault = "No";
+	$SessionSeparatorDefault   = "No";
       } elsif ($MeetingOrders{$MeetingOrderID}{SessionSeparatorID}) {
         my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
         print "SSI: $SessionSeparatorID ";
-	$SessionDefaultDateTime    = $Sessions{$SessionSeparatorID}{StartTime};
-	$SessionDefaultTitle       = $Sessions{$SessionSeparatorID}{Title};
-	$SessionDefaultDescription = $Sessions{$SessionSeparatorID}{Description};
-	$SessionSeparatorDefault = "Yes";
+	$SessionDefaultDateTime    = $SessionSeparators{$SessionSeparatorID}{StartTime};
+	$SessionDefaultTitle       = $SessionSeparators{$SessionSeparatorID}{Title};
+	$SessionDefaultDescription = $SessionSeparators{$SessionSeparatorID}{Description};
+	$SessionSeparatorDefault   = "Yes";
       }
     } 
     $SessionOrderDefault = $SessionOrder;  
+    print "DT: $SessionDefaultDateTime  T: $SessionDefaultTitle   D: $SessionDefaultDescription S: $SessionSeparatorDefault";   
     print "</TD></TR>\n";
     print "<tr valign=top>\n";
     print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
