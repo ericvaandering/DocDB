@@ -65,19 +65,19 @@ if ($UserValidation eq "certificate") {
   if ($CertificateStatus eq "verified") {
     $PersonalAccountLink = "<a href=\"$SelectEmailPrefs\">Personal account</a>";
   } else {
-    print "<p><center><h4 class=\"Warning\">\n";
-    print "You have presented a valid certificate, but are not yet authorized to access the DocDB.<br>\n";
+    print "<p><h4 class=\"Warning\">\n";
+    print "You have presented a valid certificate, but are not yet authorized to access the DocDB.<br/>\n";
     print "</h4>\n";
     print "<h4>\n";
-    print "<a href=\"$CertificateApplyForm\">Apply for access or get more information.</a></h4></center></p>\n";
+    print "<a href=\"$CertificateApplyForm\">Apply for access or get more information.</a></h4></p>\n";
     $PersonalAccountLink = "";
   }
 }
 
 if ($WelcomeMessage) {
-  print "<p><center><h4>\n";
+  print "<p><h4>\n";
   print "$WelcomeMessage\n";
-  print "</h4></center>\n";
+  print "</h4>\n";
 }
 
 print "</div>\n";  # Header3Col
@@ -119,14 +119,14 @@ my $ShowForm  = $query -> startform('POST',$ShowDocument);
 
 print "<div class=\"HomepageMainChoice\">$ShowForm</div>\n";  
 
-print "<div class=\"HomepageMainChoice\"><strong>\n";
+print "<div class=\"HomepageMainChoice\">\n";
 print $query -> startform('POST',$ListBy);
 print $query -> submit (-value => "Show");
-print " documents modified in the last ";
+print "<strong> documents modified in the last </strong>";
 &DaysPulldown($LastDays);
-print " days.";
+print "<strong> days.</strong>";
 print $query -> endform;
-print "</strong></div>\n";  
+print "</div>\n";  
 
 # Fill arrays that print lists of documents
 
