@@ -14,7 +14,7 @@ sub DocDBHeader {
   my $NoBody = $Params{-nobody};
 
   my @ScriptParts = split /\//,$ENV{SCRIPT_NAME};
-  my $SciptName   = pop @ScriptParts;
+  my $ScriptName  = pop @ScriptParts;
 
   unless ($PageTitle) { 
     $PageTitle = $Title;
