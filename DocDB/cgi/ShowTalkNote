@@ -71,7 +71,7 @@ if ($SessionID) {
   print "<b><big>Notes for $BestTitle</big></b><p>\n";
   print "<b>This talk was entered with the following information:</b><p/>\n";
   print "<table>\n";
-  print "<tr><th align=right>Suggested Title:</th><td>$Title</td></tr>\n";
+  print "<tr><th align=right>Suggested Title:</th><td>$BestTitle</td></tr>\n";
   print "<tr><th align=right>Notes:</th><td>$Note</td></tr>\n";
   print "<tr><th align=right>Authors:</th><td>\n";
    &ShortAuthorListByID(@AuthorHintIDs);

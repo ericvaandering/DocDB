@@ -322,7 +322,7 @@ sub PrintSession ($) {
         print "<td>&nbsp</td>\n"; # Files, which can't exist
         print "<td align=right>",&TruncateSeconds($SessionTalks{$SessionTalkID}{Time}),"</td>\n";
         if ($SessionTalks{$SessionTalkID}{Note}) {
-          print "<td>",&TalkNoteLink,"</td>\n";
+          print "<td>",&TalkNoteLink($SessionTalkID),"</td>\n";
         } else {
           print "<td>&nbsp;</td>\n";
         }  
