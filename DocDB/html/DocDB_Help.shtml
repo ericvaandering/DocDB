@@ -85,7 +85,7 @@ select "Archive Upload" under "Upload Type." When you upload your archive you
 will be asked for two pieces of information. You will be asked for the filename
 of the main file in the archive and to describe that file. Through that one
 file, the user should be able to access the other files. For this reason, this
-upload method should probably be an HTML file. The pros of this method are that
+uploaded file should probably be HTML. The pros of this method are that
 you don't have to describe or enter every file in the form.
 
 When uploading via archive mode, the Main file will be marked as such and the
@@ -128,7 +128,8 @@ browser and operating system.)
 are accessible from the web, but they can be password protected (you will have
 to supply the password). You will have to specify the full URL, including the
 "http://" or "https://" at the beginning and a filename at the end (you may not
-end the URL with "/").
+end the URL with "/"). Currently "https://" (secure upload) does not work, but
+we hope this will change in the near future.
 </ol>
 
 <h3>Other options</h3>
@@ -138,13 +139,13 @@ The advanced form provides a few other options that might be useful.
 <p>
 <b>Topic Selection: </b>
 You can either select the subtopic(s) for your document from one long list (the
-default) or from a number of shorter lists split up by topic. 
+current default) or from a number of shorter lists split up by topic. 
 
 <p>
 <b>Overriding the submission date: </b>
 Use this option to set the date and time for a document written in the past.
-Unless you are submitting a document from the old database or one written a
-long time ago, you should probably not check this. By default, new documents
+Unless you are submitting a document from the old database or one written 
+some time ago, you should probably not select this option. By default, new documents
 are entered with the current date and time.
 
 <h3>Getting more help</h3>
