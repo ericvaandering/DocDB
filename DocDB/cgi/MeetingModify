@@ -148,7 +148,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
    "insert into Session ".
           "(SessionID, ConferenceID, StartTime, Title, Description) ". 
    "values (0,?,?,?,?)");
-  my $SessionModify = $dbh -> prepare(
+  my $SessionUpdate = $dbh -> prepare(
    "update Session set ".
    "StartTime=?, Title=?, Description=? ". 
    "where SessionID=?");
@@ -157,7 +157,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
    "insert into SessionSeparator ".
    "(SessionSeparatorID, ConferenceID, StartTime, Title, Description) ". 
    "values (0,?,?,?,?)");
-  my $SessionSeparatorModify = $dbh -> prepare(
+  my $SessionSeparatorUpdate = $dbh -> prepare(
    "update SessionSeparator set ".
    "StartTime=?, Title=?, Description=? ". 
    "where SessionSeparatorID=?");
