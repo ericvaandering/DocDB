@@ -27,6 +27,12 @@ sub ReHintTalksBySessionID ($) {
   my $EndDate      = $Conferences{$ConferenceID}{EndDate};
   my $MinorTopicID = $Conferences{$ConferenceID}{Minor};
 
+  if ($MinorTopicID) { 
+    $TalkMatchThreshold = $TopicMatchThreshold;
+  } else {     
+    $TalkMatchThreshold = $NoTopicMatchThreshold 
+  }	
+
   my $DocumentList = $dbh -> prepare("select DocumentID from DocumentRevision where DocRevID=? and Obsolete=0"); 
 
   # Find documents in a time window
@@ -97,20 +103,23 @@ sub ReHintTalksBySessionID ($) {
     push @DocRevIDs,$DocRevID;
   }
 
-  my $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+  my $dbh_w = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
   # Loop over all session talk IDs
 
+  require "Debug.pm";
+  
   my %BestDocuments = ();
   foreach my $SessionTalkID (@SessionTalkIDs) { 
     &FetchSessionTalkByID($SessionTalkID);
     if ($SessionTalks{$SessionTalkID}{Confirmed}) {next;} # Skip if confirmed
+    my $HintTitle = $SessionTalks{$SessionTalkID}{HintTitle};
 
     if ($SessionTalks{$SessionTalkID}{DocumentID}) { # Remove hints to confirmed documents
       my $DocumentID = $SessionTalks{$SessionTalkID}{DocumentID};
       foreach my $ConfirmedDocumentID (@ConfirmedDocumentIDs) {
         if ($DocumentID == $ConfirmedDocumentID) {
-          my $BestDocUpdate = $dbh -> prepare("update SessionTalk set DocumentID=0 where SessionTalkID=?"); 
+          my $BestDocUpdate = $dbh_w -> prepare("update SessionTalk set DocumentID=0 where SessionTalkID=?"); 
           $BestDocUpdate -> execute($SessionTalkID); # Remove hinted DocumentID
           last;  
         }
@@ -124,7 +133,7 @@ sub ReHintTalksBySessionID ($) {
       my @RevTopics  = &GetRevisionTopics($DocRevID);
       my @RevAuthors = &GetRevisionAuthors($DocRevID);
       
-      # Accumulate matches # FIXME: Look at soundex and fuzzy matching, cookbook 1.16 and 6.13
+      # Accumulate matches
       
       my $TopicMatches = 0;
       foreach my $RevTopic (@RevTopics) {
@@ -135,7 +144,7 @@ sub ReHintTalksBySessionID ($) {
           }   
         }
       }
-        
+       
       my $AuthorMatches = 0;
       foreach my $RevAuthor (@RevAuthors) {
         foreach my $AuthorHintID (@AuthorHintIDs) {
@@ -148,29 +157,76 @@ sub ReHintTalksBySessionID ($) {
 
       # Assemble a score based on hints, track maximum
       
-      my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+      my $DocumentID    = $DocRevisions{$DocRevID}{DOCID};
+      my $DocumentTitle = $DocRevisions{$DocRevID}{Title};
 
       my $MethodScore = 0;
       if ($DocumentIDs{$DocumentID} eq "Timed") { # More points for being with right meeting topic than time window
         $MethodScore = 1;
       } elsif ($DocumentIDs{$DocumentID} eq "Topic") {
-        $MethodScore = 2;
+        $MethodScore = 3;
       } 
-
-      my $Score = $MethodScore*($AuthorMatches+1)*(2*$TopicMatches+1);
+      
+      my $FuzzyScore = &FuzzyStringMatch($DocumentTitle,$HintTitle);
+      
+      my $Score = $MethodScore*($AuthorMatches+1)*(2*$TopicMatches+1)+(2*$FuzzyScore+1);
       if ($Score > $BestDocuments{$SessionTalkID}{Score} && ($AuthorMatches+$TopicMatches)) {
         $BestDocuments{$SessionTalkID}{Score}      = $Score;
         $BestDocuments{$SessionTalkID}{DocumentID} = $DocumentID;
       }
     }  
   
-    if ($BestDocuments{$SessionTalkID}{Score} > 1) {
-      my $BestDocUpdate = $dbh -> prepare("update SessionTalk set DocumentID=? where SessionTalkID=?"); 
+    if ($BestDocuments{$SessionTalkID}{Score} > $TalkMatchThreshold) {
+      my $BestDocUpdate = $dbh_w -> prepare("update SessionTalk set DocumentID=? where SessionTalkID=?"); 
       my $DocumentID    = $BestDocuments{$SessionTalkID}{DocumentID};
       $BestDocUpdate -> execute($DocumentID,$SessionTalkID); # Update database
-    }  
+    } else {
+      my $BestDocUpdate = $dbh_w -> prepare("update SessionTalk set DocumentID=? where SessionTalkID=?"); 
+      $BestDocUpdate -> execute(0,$SessionTalkID); # Update database
+    }   
   }
 }
 
+sub FuzzyStringMatch ($$) {
+#  use String::Approx qw(amatch);
+  
+  # FIXME: Look at soundex and fuzzy matching, cookbook 1.16 and 6.13
+  # FIXME: More points for matching longer words?
+  
+  my ($String1,$String2) = @_;
+  
+  $String1 =~ tr/[A-Z]/[a-z]/;
+  $String2 =~ tr/[A-Z]/[a-z]/;
+  
+  my @Words1 = split /\s+/,$String1;
+  my @Words2 = split /\s+/,$String2;
+  
+  my @IgnoreWords = ("from","with","then","than","that","what"); # FIXME: global
+  
+  @Words1 = &RemoveArray(\@Words1,@IgnoreWords); 
+  @Words2 = &RemoveArray(\@Words2,@IgnoreWords); 
+  
+  my $Matches    = 0;
+  my $MatchScore = 0;
+  foreach my $Word (@Words1) {
+    if (length $Word < 4) {next;}
+    $Matches += grep /$Word/,@Words2;
+  }
+  
+  my $NWords1 = @Words1;
+  my $NWords2 = @Words2;
+  
+  $NWords = 3;
+  
+  if ($NWords1 > $NWords) {$NWords = $NWords1;}
+  if ($NWords2 > $NWords) {$NWords = $NWords2;}
+  if ($NWords > 10)       {$NWords = 10;}
+ 
+  if ($Matches > 1) {
+    $MatchScore = $Matches/$NWords * 10;
+  }
+  
+  return $MatchScore;  
+}
 
 1;

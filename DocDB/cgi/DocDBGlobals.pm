@@ -54,6 +54,9 @@ $InitialSessions      = 5;     # Number of initial sessions when making meeting
 
 $FirstYear            = 2000;  # Earliest year that documents can be created
 
+$TopicMatchThreshold    = 15;  # Threshold for matching talks in meetings with topics
+$NoTopicMatchThreshold  = 6;   # Threshold for matching talks in meetings with topics
+
 # Options
 
 $CaseInsensitiveUsers = 0;
