@@ -1,3 +1,16 @@
+5.3.0
+
+When updating a document, a user now has the ability to copy files from the
+previous document. They can mix uploading some new documents and copying others.
+
+When filling out the new/update document form, the required fields are marked
+with an asterisk.
+
+The link to confirm a match between documents and agenda entries has been
+changed to a button. This means a web spider won't follow the links and makes it
+more clear the user is changing something.
+
+
 5.2.0
 
 ListManagedDocuments added and a link from the home page. Home page restructured
