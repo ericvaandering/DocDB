@@ -57,7 +57,9 @@ my ($NOKFiles) = $NOKFile_query -> fetchrow_array;
 my $FilePerRev = sprintf "%5.2f",$NOKFiles/$NOKRevisions;
 my $FilePerDoc = sprintf "%5.2f",$NOKFiles/$NDocuments;
 
-print "<p><center><b>This page shows statistics about the Document Database, such as how many Documents, Revisions, and Files are in the DB.</center><p>\n";
+print "<p><center><b>This page shows statistics about the Document Database,
+       such as how many Documents, Revisions, and Files are in the DB.</b>
+       </center><p>\n";
 
 print "<table cellpadding=5 align=center>\n";
 print "<tr><th colspan=4><hr></tr>\n";  
