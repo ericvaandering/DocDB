@@ -1,0 +1,59 @@
+#! /usr/bin/env perl
+#
+# Author:  Adam Bryant
+#
+
+use CGI;
+
+require "DocDBGlobals.pm";
+require "HTMLUtilities.pm";
+require "SecuritySQL.pm";
+require "Scripts.pm";
+require "ResponseElements.pm";
+require "Cookies.pm";
+
+# Start page
+
+$query = new CGI;
+%params = $query -> Vars; 
+$cookie0 = $query->cookie(-name=>'test', 
+                          -value=>"$params{test}", 
+			  -expires=>'+10y',
+                          -path=>'/');
+$cookie1 = $query->cookie(-name=>'authorid', 
+			  -value=>"$params{requester}", 
+			  -expires=>'+10y',
+			  -path=>'/');
+$cookie2 = $query->cookie(-name=>'archive', 
+			  -value=>"$params{archive}",
+ 			  -expires=>'+10y',
+			  -path=>'/');
+$cookie3 = $query->cookie(-name=>'numfile', 
+			  -value=>"$params{numfile}",
+ 			  -expires=>'+10y',
+			  -path=>'/');
+$cookie4 = $query->cookie(-name=>'upload', 
+			  -value=>"$params{upload}", 
+			  -expires=>'+10y',
+			  -path=>'/');
+$cookie5 = $query->cookie(-name=>'topicmode', 
+			  -value=>"$params{topicmode}", 
+			  -expires=>'+10y',
+			  -path=>'/');
+$cookie6 = $query->cookie(-name=>'authormode', 
+			  -value=>"$params{authormode}", 
+			  -expires=>'+10y',
+			  -path=>'/');
+$cookie7 = $query->cookie(-name=>'overdate', 
+			  -value=>"$params{overdate}", 
+			  -expires=>'+10y',
+			  -path=>'/');
+print $query->header(-cookie=>[$cookie0,$cookie1,$cookie2,$cookie3,$cookie4,$cookie5,$cookie6,$cookie7]);
+&BTeVHeader("Select Prefrences");
+
+print "<p>";
+print "Your preferences have been set.";
+print "<p>";
+
+&DocDBNavBar;
+&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);

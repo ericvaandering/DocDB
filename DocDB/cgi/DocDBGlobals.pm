@@ -106,5 +106,7 @@ $Statistics         = $cgi_root."Statistics";
 
 $HelpFile           = $web_root."Static/Restricted/DocDB_Help.shtml";
 
+$SelectPrefs        = $cgi_root."SelectPrefs";
+$SetPrefs           = $cgi_root."SetPrefs";
 
 1;
