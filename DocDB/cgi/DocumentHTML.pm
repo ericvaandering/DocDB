@@ -53,27 +53,29 @@ sub DocumentTable (%) {
   }  
   print "</tr>\n";
 
+### Fetch all documents so sorts have info
+
+  foreach my $DocumentID (@DocumentIDs) {
+    my $Version = &LastAccess($DocumentID);
+    if ($Version == -1) {next;}
+    my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+  }
+
 ### Sort document IDs, reverse from convention if needed
 
   if ($SortBy eq "docid") { 
     @DocumentIDs = sort numerically @DocumentIDs;
   } elsif ($SortBy eq "date") {
-    foreach my $DocumentID (@DocumentIDs) {
-      &FetchDocument($DocumentID);
-      my $Version  = $Documents{$DocumentID}{NVersions};
-      my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-    }
     @DocumentIDs = sort DocumentByRevisionDate @DocumentIDs; 
   }
-       
+  
   if ($Reverse) {
     @DocumentIDs = reverse @DocumentIDs;
   }
 
-  my $NumberOfDocuments = 0;
-
 ### Loop over document IDs
 
+  my $NumberOfDocuments = 0;
   foreach my $DocumentID (@DocumentIDs) {
   
 ### Which version (if any) can they view
@@ -112,6 +114,8 @@ sub DocumentTable (%) {
     print "</tr>\n";
   }  
 
+### End table, return
+
   print "</table></center>\n";
   
   return $NumberOfDocuments;
@@ -126,6 +130,7 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
   
   my $DocumentID       = $Params{-docid};
 #  my $Version          = $Params{-version}; #FIXME: Remember 0 version documents
+#  my $DocRevID         = $Params{-docrevid}; #FIXME
   my $DocIDOnly        = $Params{-docidonly}        || 0;
   my $NumWithVersion   = $Params{-numwithversion}   || 0;
   my $TitleLink        = $Params{-titlelink}        || 0;
