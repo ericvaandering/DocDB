@@ -1,0 +1,141 @@
+<title>/etc/rc.d/init.d/mysqld</title>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<center><h1>/etc/rc.d/init.d/mysqld</h1></center>
+<p>
+
+This is an example with anonymous ping disabled.
+
+<pre>
+#!/bin/bash
+#
+# mysqld	This shell script takes care of starting and stopping
+#		the MySQL subsystem (mysqld).
+#
+# chkconfig: - 64 36
+# description:	MySQL database server.
+# processname: mysqld
+# config: /etc/my.cnf
+# pidfile: /var/run/mysqld/mysqld.pid
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+
+prog="MySQL"
+
+datadir="/path/to/datadir/mysql"
+
+start(){
+	touch /var/log/mysqld.log
+	chown mysql_owner:mysql_group /var/log/mysqld.log 
+	chmod 0640 /var/log/mysqld.log
+	if [ ! -d $datadir/mysql ] ; then
+	    action $"Initializing MySQL database: " /usr/bin/mysql_install_db
+	    ret=$?
+	    chown -R mysql_owner:mysql_group $datadir
+	    if [ $ret -ne 0 ] ; then
+		return $ret;
+	    fi
+	fi
+	chown -R mysql_owner:mysql_group $datadir
+	chmod 0755 $datadir
+	/usr/bin/safe_mysqld  --defaults-file=/etc/my.cnf >/dev/null 2>&1 &
+	ret=$?
+## have no idea how to make this work if there are no anonymous users
+##	# If you've removed anonymous users, this line must be changed to
+##	# use a user that is allowed to ping mysqld.
+##	ping="/usr/bin/mysqladmin -uUNKNOWN_MYSQL_USER ping"
+##        # Spin for a maximum of ten seconds waiting for the server to come up
+	if [ $ret -eq 0 ]; then
+##            for x in 1 2 3 4 5 6 7 8 9 10; do
+##            if [ -n "`$ping 2> /dev/null`" ]; then
+##                    break;
+##            else
+##                    sleep 1;
+##            fi
+##            done
+##            if !([ -n "`$ping 2> /dev/null`" ]); then
+##                    echo "Timeout error occurred trying to start MySQL Daemon."
+##                    action $"Starting $prog: " /bin/false
+##            else
+                    action $"Starting $prog: " /bin/true
+##            fi
+	else
+    	    action $"Starting $prog: " /bin/false
+	fi
+	[ $ret -eq 0 ] && touch /var/lock/subsys/mysqld
+	return $ret
+}
+
+stop(){
+        /bin/kill `cat /var/run/mysqld/mysqld.pid  2> /dev/null ` > /dev/null 2>&1
+	ret=$?
+	if [ $ret -eq 0 ]; then
+	    action $"Stopping $prog: " /bin/true
+	else
+    	    action $"Stopping $prog: " /bin/false
+	fi
+	[ $ret -eq 0 ] && rm -f /var/lock/subsys/mysqld
+	[ $ret -eq 0 ] && rm -f $datadir/mysql.sock
+	return $ret
+}
+ 
+restart(){
+    stop
+    sleep 2
+    start
+}
+
+condrestart(){
+    [ -e /var/lock/subsys/mysqld ] && restart || :
+}
+
+# See how we were called.
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  status)
+    status mysqld
+    ;;
+  restart)
+    restart
+    ;;
+  condrestart)
+    condrestart
+    ;;
+  *)
+    echo $"Usage: $0 {start|stop|status|condrestart|restart}"
+    exit 1
+esac
+
+exit $?
+</pre>
+
+<!-- begin footer -->
+<hr>
+<h3><a href=DocDB-license.html>DocDB License</a></h3>
+<i><font size="-1">
+<script language="javascript">
+<!-- Hide from browsers that do not understand Javascript
+// print the URL and modification date of this page
+var url = document.location;
+document.write(url)  
+var dt = document.lastModified;
+document.write('<br> Last Modified:')  
+document.write(dt)  
+// end hiding --> 
+</script> 
+<br>
+<A HREF="mailto:docdb-users@fnal.gov">Document Database</A> 
+</font></i>
+</body>
+</html>
