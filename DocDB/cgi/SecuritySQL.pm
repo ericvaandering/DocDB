@@ -184,6 +184,8 @@ sub FetchUserGroupIDs ($) {
 }
   
 sub FetchEmailUSerIDsBySecurityGroup ($) {
+  require "Utilities.pm";
+
   my ($GroupID) = @_;
 
   my @EmailUserIDs = ();
@@ -197,7 +199,7 @@ sub FetchEmailUSerIDsBySecurityGroup ($) {
       push @EmailUserIDs,$EmailUserID;
     }
   }
-  
+  @EmailUserIDs = &Unique(@EmailUserIDs);
   return @EmailUserIDs;
 }
   

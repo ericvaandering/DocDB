@@ -213,7 +213,7 @@ foreach my $EmailUserID (@EmailUserIDs) {
 } 
 print "</table>\n";
 
-### Table of groups with associated names
+### List of groups with associated names
 
 my @SecurityGroups = sort keys %SecurityIDs;
 
@@ -222,7 +222,7 @@ foreach my $SecurityGroup (@SecurityGroups) {
   if (@EmailUserIDs) {
     print "<strong>$SecurityGroup has these members</strong>\n<ul>\n";
     foreach my $EmailUserID (@EmailUserIDs) {
-      print "<li>$EmailUser{$EmailUserID}{Name} ($EmailUser{$EmailUserID}{Username})</li>\n";
+      print "<li>$EmailUserID: $EmailUser{$EmailUserID}{Name} ($EmailUser{$EmailUserID}{Username})</li>\n";
     }
     print "</ul>\n";
   }     
