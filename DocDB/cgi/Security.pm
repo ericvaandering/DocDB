@@ -65,7 +65,7 @@ sub CanModify { # Can the user modify (with current security) this document
 
 sub CanCreate { # Can the user create documents 
   my $Create = 0;
-  my @GroupIDs = keys %SecurityGroups;
+  my @GroupIDs = keys %SecurityGroups; # FIXME use a hash for direct lookup
   foreach my $GroupID (@GroupIDs) { # Check auth. users vs. logged in user
     $OkUser = $SecurityGroups{$GroupID}{NAME};
     $OkUser =~ tr/[A-Z]/[a-z]/; 
@@ -73,7 +73,6 @@ sub CanCreate { # Can the user create documents
       $Create = 1;                           # User checks out
     }  
   }
-
   return $Create;
 }
 
