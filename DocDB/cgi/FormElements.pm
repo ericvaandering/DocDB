@@ -655,6 +655,8 @@ sub ReferenceForm {
 }
 
 sub TextEntryBox {
+  require "Scripts.pm";
+
   my (%Params) = @_;
   
   my $HelpLink  =   $Params{-helplink}  || "";
