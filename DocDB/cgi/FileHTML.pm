@@ -150,7 +150,7 @@ sub ArchiveLink {
 sub SingleUploadBox (%) {
   my (%Params) = @_; 
 
-  my $ShowDesc   = $Params{-showdesc}  || 1;     
+  my $NoDesc     = $Params{-nodesc}  || 0;     
   my $Required   = $Params{-required}  || 0;
   my $CopyOption = $Params{-allowcopy} || 0;
 
@@ -180,13 +180,13 @@ sub SingleUploadBox (%) {
     print "<a "; &HelpLink("description"); print "<b>Description:</b></a>\n";
     print "</td>\n";
     print "<td>\n";
-    if ($ShowDesc) {
+    if ($NoDesc) {
+      print $query -> textfield (-name => 'filedesc', -size => 60, 
+                                 -maxlength => 128);
+    } else {
       print $query -> textfield (-name => 'filedesc', -size => 60, 
                                  -maxlength => 128,
                                  -default => $DocFiles{$FileID}{DESCRIPTION});
-    } else {
-      print $query -> textfield (-name => 'filedesc', -size => 60, 
-                                 -maxlength => 128);
     }
     if ($DocFiles{$FileID}{ROOT} || $NewFiles) {
       print $query -> checkbox(-name => "root", -value => $i, -checked => 'checked', -label => '');
@@ -210,7 +210,7 @@ sub SingleUploadBox (%) {
 sub SingleHTTPBox (%) {
   my (%Params) = @_; 
 
-  my $ShowDesc   = $Params{-showdesc}  || 1;     
+  my $NoDesc     = $Params{-nodesc}  || 0;     
   my $Required   = $Params{-required}  || 0;
   my $CopyOption = $Params{-allowcopy} || 0;
 
@@ -239,13 +239,13 @@ sub SingleHTTPBox (%) {
     print "<a "; &HelpLink("description"); print "<b>Description:</b></a>\n";
     print "</td>\n";
     print "<td colspan=3>\n";
-    if ($ShowDesc) {
+    if ($NoDesc) {
+      print $query -> textfield (-name => 'filedesc', -size => 60, 
+                                 -maxlength => 128);
+    } else {
       print $query -> textfield (-name => 'filedesc', -size => 60, 
                                  -maxlength => 128,
                                  -default => $DocFiles{$FileID}{DESCRIPTION});
-    } else {
-      print $query -> textfield (-name => 'filedesc', -size => 60, 
-                                 -maxlength => 128);
     }
     if ($DocFiles{$FileID}{ROOT} || $NewFiles) {
       print $query -> checkbox(-name => "root", -value => $i, -checked => 'checked', -label => '');

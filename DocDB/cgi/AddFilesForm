@@ -137,9 +137,9 @@ print "<tr><td><b>Files to add:</b></td></tr>";
 
 print "<tr><td>\n";
 if ($Upload eq "file") {
-  &SingleUploadBox(-showdesc => 0);
+  &SingleUploadBox(-nodesc => 1);
 } elsif ($Upload eq "http") {
-  &SingleHTTPBox(-showdesc => 0);
+  &SingleHTTPBox(-nodesc => 1);
 }  
 print "</td></tr>";
 
