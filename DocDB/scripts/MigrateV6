@@ -50,7 +50,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$User,$Password);
 
 if ($Action eq "init") { # Modify existing tables and add new tables in preparation for migration 
 
-# Meeting expansion
+# User based access
 
   my $EmailUserAdd  = $dbh -> prepare("alter table EmailUser add Verified int"); 
   my $EmailUserAdd2 = $dbh -> prepare("alter table EmailUser add AuthorID int"); 
@@ -61,16 +61,23 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                    " TimeStamp timestamp,".
                    " index(EmailUserID))"); 
 
+# Cross references
+
   my $XRefCreate = $dbh -> prepare("create table DocXRef ".
                    "(DocXRefID integer auto_increment primary key,".
                    " DocRevID integer, DocumentID integer,".
                    " TimeStamp timestamp,".
                    " index(DocRevID),index(DocumentID))"); 
+		   
+# Hiding doc-types		   
+
+  my $DocTypeAdd  = $dbh -> prepare("alter table DocumentType add Hide int NOT NULL default 0"); 
 
   $EmailUserAdd     -> execute();
   $EmailUserAdd2    -> execute();
   $UsersGroupCreate -> execute();
   $XRefCreate       -> execute();
+  $DocTypeAdd       -> execute();
   
 }
 
