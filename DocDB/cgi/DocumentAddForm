@@ -355,7 +355,7 @@ if (@OpenSessionTalkIDs) {
 }
 
 print "<tr>\n";
-print "<td colspan=4>\n"; &TitleBox;        print "</td>\n";
+print "<td colspan=4>\n"; &TitleBox(-required => "true");        print "</td>\n";
 print "</tr>\n";
 print "<tr>\n";
 print "<td colspan=4>\n"; &AbstractBox;     print "</td>\n";

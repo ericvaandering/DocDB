@@ -67,6 +67,8 @@ $TopicMatchThreshold    = 25;  # Threshold for matching talks in meetings with t
 $NoTopicMatchThreshold  = 6;   # Threshold for matching talks in meetings with topics
 
 @MatchIgnoreWords       = ("from","with","then","than","that","what"); # Don't match on these
+
+$RequiredMark = "&nbsp;*&nbsp;";
   
 # Which things are publicly viewable?
 

@@ -152,7 +152,7 @@ sub TitleBox (%) {
   &HelpLink("title");
   print "Title:</a></b>";
   if ($Required) {
-    print "*";
+    print $RequiredMark;
   }  
   print "<br> \n";
   print $query -> textfield (-name => 'title', -default => $TitleDefault, 
