@@ -89,7 +89,7 @@ sub SessionEntryForm (@) {
 	$SessionSeparatorDefault   = "Yes";
       }
     } 
-    $SessionOrderDefault = $SessionOrder;  
+    $SessionDefaultOrder = $SessionOrder;  
     print "DT: $SessionDefaultDateTime  T: $SessionDefaultTitle   D: $SessionDefaultDescription S: $SessionSeparatorDefault";   
     print "</TD></TR>\n";
     print "<tr valign=top>\n";
@@ -144,16 +144,21 @@ sub SessionDateTimePullDown {
     }  
   }  
 
-  print $query -> popup_menu (-name => 'sessionday',  -values => \@days,  -value => $DefaultDay);
-  print $query -> popup_menu (-name => 'sessionmonth',-values => \@months,-value => $AbrvMonths[$DefaultMonth]);
-  print $query -> popup_menu (-name => 'sessionyear', -values => \@years, -value => $DefaultYear);
+  $query -> param('sessionday',  $DefaultDay);
+  $query -> param('sessionmonth',$AbrvMonths[$DefaultMonth]);
+  $query -> param('sessionyear', $DefaultYear);
+  $query -> param('sessionhour', $DefaultHour);
+
+  print $query -> popup_menu (-name => 'sessionday',  -values => \@days,  -default => $DefaultDay);
+  print $query -> popup_menu (-name => 'sessionmonth',-values => \@months,-default => $AbrvMonths[$DefaultMonth]);
+  print $query -> popup_menu (-name => 'sessionyear', -values => \@years, -default => $DefaultYear);
   print "<b> - </b>\n";
-  print $query -> popup_menu (-name => 'sessionhour', -values => \@hours, -value => $DefaultHour);
+  print $query -> popup_menu (-name => 'sessionhour', -values => \@hours, -default => $DefaultHour);
 }
 
 sub SessionOrder {
-  print "SOD: $SessionOrderDefault<br>\n";
-  print $query -> textfield (-name => 'sessionorder', -value => $SessionOrderDefault, 
+  $query -> param('sessionorder',$SessionDefaultOrder);
+  print $query -> textfield (-name => 'sessionorder', -value => $SessionDefaultOrder, 
                              -size => 4, -maxlength => 5);
 }
 
@@ -183,14 +188,14 @@ sub SessionDelete ($) {
 }
 
 sub SessionTitle ($) {
-  my ($DefaultTitle) = @_;
   $query -> param('sessiontitle',$SessionDefaultTitle);
   print $query -> textfield (-name => 'sessiontitle', -size => 35, -maxlength => 128, 
                              -default => $SessionDefaultTitle);
 }
 
 sub SessionDescription {
-  print $query -> textarea (-name => 'sessiondescription',-value => $SessionDescriptionDefault, 
+  $query -> param('sessiondescription',$SessionDefaultDescription);
+  print $query -> textarea (-name => 'sessiondescription',-value => $SessionDefaultDescription, 
                             -columns => 30, -rows => 3);
 }
 
