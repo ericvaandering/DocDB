@@ -120,7 +120,7 @@ if ($CertificateStatus eq "verified") {
     $Body      .= "He or she requests membership in the following groups:\n";
     foreach my $GroupID (@RequestedGroupIDs) {
       &FetchSecurityGroup($GroupID);
-      $Body .= $SecurityGroups{$GroupID}{NAME}."\n";
+      $Body .= "  ".$SecurityGroups{$GroupID}{NAME}."\n";
     }  
     $Body .= "\n";
     $Body .= "If this is correct, please visit $EmailAdministerForm, ";
