@@ -7,6 +7,7 @@
 #
 
 sub FileListByRevID {
+  require "MiscSQL.pm";
   my ($DocRevID) = @_;
 
   my @FileIDs  = &FetchDocFiles($DocRevID);
@@ -47,6 +48,7 @@ sub FileListByRevID {
 }
 
 sub ShortFileListByRevID {
+  require "MiscSQL.pm";
   my ($DocRevID) = @_;
 
   my @FileIDs  = &FetchDocFiles($DocRevID);
