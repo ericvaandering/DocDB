@@ -86,8 +86,11 @@ if ($mode eq "add") {
   unless ($params{abstract}) {
     push @error_stack,"You must supply an abstract for this document.";
   }
-  unless ($params{single_upload}) {
+  unless ($params{single_upload} || $params{single_http}) {
     push @error_stack,"You must supply a file for this document.";
+  }
+  if     ($params{single_upload} && $params{single_http}) {
+    push @error_stack,"You may not specify both URL and file upload.";
   }
 }
 
@@ -129,16 +132,26 @@ if ($mode eq "add") { # We're adding a new document
   
   $new_dir = &MakeDirectory($documentID,$version);
   &ProtectDirectory($documentID,$version,@securities);
-# Copy file to directory
 
-  $short_file   = $query ->  param("single_upload");
-  $short_handle = $query -> upload("single_upload");
+  if ($params{single_upload}) { # Copy file to directory
+    $short_file   = $query ->  param("single_upload");
+    $short_handle = $query -> upload("single_upload");
 
-  open (OUTFILE,">$new_dir/$short_file");
-  while ($bytes_read = read($short_handle,$buffer,1024)) {
-    print OUTFILE $buffer
-  }
-  close OUTFILE;
+    open (OUTFILE,">$new_dir/$short_file");
+    while ($bytes_read = read($short_handle,$buffer,1024)) {
+      print OUTFILE $buffer
+    }
+    close OUTFILE;
+  } elsif ($params{single_http}) {
+    @url_parts = split /\//,$params{single_http};
+    $short_file = pop @url_parts;
+    $command = $Wget.$params{single_http};
+    print "Command is $command<p>";
+    @lines = `$command`;
+    open (OUTFILE,">$new_dir/$short_file");
+    print OUTFILE @lines;
+    close OUTFILE;
+  } 
 
 # Insert into Files database
   $rootfile = 1;

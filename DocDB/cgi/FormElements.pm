@@ -27,6 +27,13 @@ sub SingleUploadBox {
                             -maxlength=>250);
 };
 
+sub SingleHTTPBox {
+  print "<b><a ";
+  &HelpLink("httpupload");
+  print "Upload by URL:</a></b><br> \n";
+  print $query -> textfield (-name => 'single_http', -size => 80, -maxlength => 240);
+};
+
 sub RequestorSelect { # Scrolling selectable list for requesting author
   print "<b><a ";
   &HelpLink("requestor");

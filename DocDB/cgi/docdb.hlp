@@ -23,7 +23,8 @@ fileupload
 File upload
 This field will upload a file from your local computer to the database server.
 Usually you will press the "Browse" button to select, from your local
-file system, the file to be uploaded. 
+file system, the file to be uploaded. If you choose this option, do not choose
+the Upload by URL option. 
 #
 authors
 Authors
@@ -41,6 +42,10 @@ Select which username/password pairs you want to allow access to your document.
 To select more than one pair, either click or CTRL-click on them.
 #
 doctype
-Document Type:
-Select which type of document this is.
+Document Type
+Select which kind of document this is.
 #
+httpupload
+Upload by URL
+Enter a URL for your document. The file will be fetched from this URL and stored
+on the server. If you choose this option, do not choose the File Upload option. 
