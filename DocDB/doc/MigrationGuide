@@ -28,7 +28,7 @@ version 4.x to 5.0
   Also, the LogOff function never worked and should be removed from
   DocDBNavBar.
 
-  Several changes have been made to DocDBFooter in ProjectGlobals.pm.template.
+  Several changes have been made to DocDBFooter in ProjectRoutines.pm.template.
   First, we've put a link to the DocDB home page. Also, several DocDB programs
   do benchmarking. Display of this information has been removed from those
   programs and is printed out by a few lines in the example DocDBFooter, as is

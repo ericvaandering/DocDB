@@ -55,7 +55,11 @@ previous page</a> if you haven't already.
      <li> Unlike the remainder of $file_root, the $file_root/Static directory
      tree must be owned by the document database account.
      </ul>
-<li> create the public access scripts
+<li> Create the public access scripts. The suggested way to do this is to create
+a directory where the relevant scripts (some scripts have no valid public use)
+are links to the corresponding private scripts. In this configuration, two
+additional files must be present in the public area: ProjectGlobals.pm and
+CGIInclude.pm. 
     <ol>
     <li> mkdir /www/cgi-bin/public/DocDB/, chosing an 
          appropriate directory for the public scripts.
@@ -70,6 +74,8 @@ previous page</a> if you haven't already.
 	 public directories.  Be sure to remove the $Administrator
 	 definition from the public ProjectGlobals.pm.  
 	 Uncomment the "Public" lines in ProjectGlobals.pm.
+    <li> Copy CGIInclude.pm from the scripts/ directory and edit it to point at
+         your main installation. This is needed to pick up the DocDB .pm files.
     </ol>
 <li> Edit DodDB/sql/CreateDatabase.SQL to specify your own MajorTopics, 
      Institutions, and SecurityGroups.

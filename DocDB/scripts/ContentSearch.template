@@ -5,8 +5,10 @@
 
 # This routine provides an interface to an external search engine. It is 
 # provided as an example only, since the search engine used will vary. The
-# behavior of the script is to print out document numbers of matching documents
-# one per line to STDOUT. Then the DocDB "Search" program can use the output. 
+# behavior of the script is to parse the search engine output and 
+# print out document numbers of matching documents one per line to STDOUT. 
+# Then the DocDB "Search" program can use the output. 
+# One could imagine using a wget of a Google URL for a "free" search engine.
 
 # Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -28,12 +30,8 @@
 %ENV = (); # Otherwise htsearch thinks it is being called from a form
 $HTSearch = "/www/BTEV/cgi-bin/DocDB/search-test/htsearch"; # Command line version of htsearch
 
-use DBI;
-
 require "CGIInclude.pm";
-
 require "DocDBGlobals.pm";
-require "Debug.pm";
 
 ($Mode,@Words) = @ARGV;
 
