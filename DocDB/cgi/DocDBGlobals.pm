@@ -15,6 +15,10 @@ $cgi_root    = "http://www-btev.fnal.gov/cgi-bin/DocDB/";
 $cgi_path    = "/cgi-bin/DocDB/";
 $SSIDirectory = "/www/html/includes/";
 
+# Optional components
+
+$MailInstalled = 1; # Is the Mailer::Mail module installed?
+
 # Shell Commands
 
 $Wget   = "/home2/btev2/ewv/bin/wget -O - --quiet ";

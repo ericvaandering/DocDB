@@ -17,11 +17,14 @@ require "SecuritySQL.pm";
 require "DocumentSQL.pm";
 require "RevisionSQL.pm";
 require "MiscSQL.pm";
-require "MailNotification.pm";
 require "FSUtilities.pm";
 require "WebUtilities.pm";
 require "HTMLUtilities.pm";
 require "Security.pm";
+
+if ($MailInstalled) {
+  require "MailNotification.pm";
+}
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
@@ -438,7 +441,9 @@ print "You were successful. Your Document ID is <b>$full_docid, version
 &PrintRevisionInfo($DocRevID);
 &OtherVersionLinks($documentID,$version);
 
-&MailNotices($DocRevID);
+if ($MailInstalled) {
+  &MailNotices($DocRevID);
+}
 
 $EndTime  = new Benchmark;
 $TimeDiff = timediff($EndTime,$StartTime);
