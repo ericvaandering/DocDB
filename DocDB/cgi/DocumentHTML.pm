@@ -117,6 +117,7 @@ sub DocumentTable (%) {
 sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
   require "DocumentSQL.pm";
   require "RevisionSQL.pm";
+  require "ResponseElements.pm";
   
   my %Params = @_;
   
