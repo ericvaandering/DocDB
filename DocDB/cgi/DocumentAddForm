@@ -35,6 +35,8 @@ if ($upload ne "http" && $upload ne "file") {
 }  
 
 $Archive   = $params{archive};
+$Overdate  = $params{overdate};
+
 if ($Archive eq "multi") {$Archive = "single";} # No real difference
 if ($Archive ne "archive" && $Archive ne "single") {
   $Archive = "single";
@@ -96,6 +98,7 @@ print $query -> hidden(-name => 'mode',    -default => 'reserve');
 print $query -> hidden(-name => 'upload',  -default => 'file');
 print $query -> hidden(-name => 'archive', -default => 'single');
 print $query -> hidden(-name => 'docid',   -default => $DocumentID);
+print $query -> hidden(-name => 'overdate',-default => '');
 
 print "<center><table cellpadding=10>\n";
 
@@ -163,6 +166,12 @@ if ($topicmode eq "single") {
   print "<td colspan=3 align=center>\n"; &MultiTopicSelect;     print "</td>\n";
   print "</tr><tr>\n";
 }
+
+if ($Overdate) {
+  print "<td valign=top>\n";
+  &DateTimePullDown;
+  print "</td>\n";
+}  
 
 if ($mode eq "add" || $mode eq "reserve") {
   print "<td colspan=2 valign=top>\n";

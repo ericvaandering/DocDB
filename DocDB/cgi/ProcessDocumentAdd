@@ -34,8 +34,23 @@ print $query->header;
 ### Pull info out of params into local variables
 
 $Archive   = $params{archive};
+$Overdate  = $params{overdate};
+$Overday   = $params{overday};
+$Overmonth = $params{overmonth};
+$Overyear  = $params{overyear};
+$Overmin   = $params{overmin};
+$Overhour  = $params{overhour};
+
 if ($Archive eq "multi") {$Archive = "single";} # No real difference
 
+if ($Overdate) {
+  $SQL_NOW = "$Overyear-$ReverseAbrvMonth{$Overmonth}-$Overday $Overhour:$Overmin:00";
+} else {
+  my ($sec,$min,$hour,$day,$mon,$year) = localtime(time); 
+  $year += 1900;
+  ++$mon;
+  $SQL_NOW = "$year-$mon-$day $hour:$min:$sec";
+}  
 
 if ($mode ne "add"    && $mode ne "reserve" && 
     $mode ne "update" && $mode ne "updatedb") {
@@ -61,13 +76,13 @@ if      ($mode eq "add") {
 my $document_insert = $dbh->prepare(
    "insert into Document ".
           "(DocumentID, RequesterID, RequestDate, DocumentType) ". 
-   "values (0,          ?,           NOW(),       ?)");
+   "values (0,          ?,           ?,           ?)");
             
 my $doc_rev_insert = $dbh->prepare(
    "insert into DocumentRevision ".
    "(DocRevID, DocumentID, SubmitterID, DocumentTitle, PublicationInfo, ". 
    " VersionNumber, Abstract, RevisionDate) ". 
-   "values (0,?,?,?,?,?,?,NOW())");
+   "values (0,?,?,?,?,?,?,?)");
             
 my $rev_author_insert =  $dbh->prepare(
    "insert into RevisionAuthor ".
@@ -87,7 +102,7 @@ my $rev_topic_insert = $dbh->prepare(
 my $file_insert = $dbh->prepare(
    "insert into DocumentFile ".
    "       (DocFileID, DocRevID, FileName, Date, RootFile, Description) ".
-   "values (0,         ?,        ?,        NOW(),?       , ?)");
+   "values (0,         ?,        ?,        ?,    ?       , ?)");
 
 ### Check parameters for errors
 
@@ -176,7 +191,7 @@ if ((@error_stack)) {  # The user made one or more mistakes, warn and exit
 
 my $documentID;
 if ($mode eq "reserve" || $mode eq "add") {
-  $document_insert -> execute($params{requester},$params{doctype});
+  $document_insert -> execute($params{requester},$SQL_NOW,$params{doctype});
   $documentID = $document_insert -> {mysql_insertid}; # Works with MySQL only
 } else {
   $documentID = $params{docid};
@@ -208,7 +223,7 @@ if ($mode eq "updatedb") { # New Document revision replaces old. Fetch
 ### Add entry to Document Revision
 
 $doc_rev_insert -> execute($documentID,$params{requester},$params{title},
-                           $params{pubinfo},$version,$params{abstract});
+                           $params{pubinfo},$version,$params{abstract},$SQL_NOW);
 my $docRevID = $doc_rev_insert -> {mysql_insertid}; # Works with MySQL only
 
 ### Add to authors, topics and securities
@@ -234,15 +249,11 @@ if ($mode eq "updatedb") { # Copy DocumentFile entries
 
   my $file_list = $dbh->prepare(
     "select FileName,Date,RootFile,Description from DocumentFile where DocRevID=?");
-  my $file_copyinsert = $dbh->prepare(
-    "insert into DocumentFile ".
-    "       (DocFileID, DocRevID, FileName, Date, RootFile, Description) ".
-    "values (0,         ?,        ?,        ?,    ?       , ?)");
 
   $file_list -> execute($oldRevID);
   $file_list -> bind_columns(undef, \($FileName,$Date,$RootFile,$Description));
   while ($file_list -> fetch) { # Copy
-    $file_copyinsert -> execute($docRevID,$FileName,$Date,$RootFile,$Description);
+    $file_insert -> execute($docRevID,$FileName,$Date,$RootFile,$Description);
   }  
 }  
 
@@ -365,7 +376,7 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
     } else {
       $rootfile = 0;
     }    
-    $file_insert -> execute($docRevID,$short_file,$rootfile,$Description);
+    $file_insert -> execute($docRevID,$short_file,$SQL_NOW,$rootfile,$Description);
   }
 } # File upload for "add" and "update"
 

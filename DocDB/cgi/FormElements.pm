@@ -1,3 +1,43 @@
+sub DateTimePullDown {
+  my ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
+  $year += 1900;
+  $min = (int (($min+3)/5))*5; # Nearest five minutes
+  
+  my @days = ();
+  for ($i = 1; $i<=31; ++$i) {
+    push @days,$i;
+  }  
+
+  my @months = ("Jan","Feb","Mar","Apr","May","Jun",
+             "Jul","Aug","Sep","Oct","Nov","Dec");
+
+  my @years = ();
+  for ($i = 1994; $i<=$year; ++$i) { # 1994 - current year
+    push @years,$i;
+  }  
+
+  my @hours = ();
+  for ($i = 0; $i<=24; ++$i) {
+    push @hours,$i;
+  }  
+
+  my @minutes = ();
+  for ($i = 0; $i<=55; $i=$i+5) {
+    push @minutes,$i;
+  }  
+  
+  print "<b><a ";
+  &HelpLink("date");
+  print "Date & Time:</a></b><br> \n";
+  print $query -> popup_menu (-name => 'overday',-values => \@days, -default => $day);
+  print $query -> popup_menu (-name => 'overmonth',-values => \@months, -default => $months[$mon]);
+  print $query -> popup_menu (-name => 'overyear',-values => \@years, -default => $year);
+  print "<br>\n";
+  print $query -> popup_menu (-name => 'overhour',-values => \@hours, -default => $hour);
+  print "<b> : </b>\n";
+  print $query -> popup_menu (-name => 'overmin',-values => \@minutes, -default => $min);
+}
+
 sub TitleBox {
   print "<b><a ";
   &HelpLink("title");
