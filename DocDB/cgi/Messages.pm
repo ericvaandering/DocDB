@@ -37,7 +37,8 @@ $Msg_TopicShortIgnored = "Your short description has been ignored. The long desc
 
 # Messages for meeting/session creation/modification
 
-$Msg_MeetNoSessions = "This meeting was created with no sessions. You will have to add at least one session before adding talks.";
+$Msg_MeetNoSessions     = "This meeting was created with no sessions. You will have to add at least one session before adding talks.";
+$Msg_SessionBlankDelete = "Setting session titles to blank will not delete them.";
 
 # FIXME: Add more messages from other programs
 # FIXME: Add a localizable error message inclusion

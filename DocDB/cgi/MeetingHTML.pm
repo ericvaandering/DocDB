@@ -36,7 +36,7 @@ sub ConferenceEpilogueBox {
 
 sub SessionEntryForm (@) {
   my @MeetingOrderIDs = @_; # Or do I need to dereference?
-  print "PMOI: ",@MeetingOrderIDs,"<br>\n";
+
   require "Scripts.pm";
   print "<b><a ";
   &HelpLink("sessions");
@@ -66,7 +66,6 @@ sub SessionEntryForm (@) {
     $SessionDefaultOrder = $SessionOrder;  
     
     if (grep /n/,$MeetingOrderID) {# Erase defaults
-      print "New:";
       $SessionDefaultDateTime    = "";
       $SessionDefaultTitle       = "";
       $SessionDefaultDescription = "";
@@ -74,14 +73,12 @@ sub SessionEntryForm (@) {
     } else { # Key off Meeting Order IDs, do differently for Sessions and Separators
       if ($MeetingOrders{$MeetingOrderID}{SessionID}) {
         my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
-        print "SI: $SessionID ";
 	$SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
 	$SessionDefaultTitle       = $Sessions{$SessionID}{Title};
 	$SessionDefaultDescription = $Sessions{$SessionID}{Description};
 	$SessionSeparatorDefault   = "No";
       } elsif ($MeetingOrders{$MeetingOrderID}{SessionSeparatorID}) {
         my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
-        print "SSI: $SessionSeparatorID ";
 	$SessionDefaultDateTime    = $SessionSeparators{$SessionSeparatorID}{StartTime};
 	$SessionDefaultTitle       = $SessionSeparators{$SessionSeparatorID}{Title};
 	$SessionDefaultDescription = $SessionSeparators{$SessionSeparatorID}{Description};
@@ -164,13 +161,13 @@ sub SessionSeparator ($) {
 
   if ($SessionSeparatorDefault eq "Yes") {
     # May not be needed, MeetingOrderID should tell me.
-    print $query -> hidden(-name => 'sessiontype', -default => 'Separator');
+#    print $query -> hidden(-name => 'sessiontype', -default => 'Separator');
     print "Yes\n";	      
   } elsif ($SessionSeparatorDefault eq "No") {
-    print $query -> hidden(-name => 'sessiontype', -default => 'Session');
+#    print $query -> hidden(-name => 'sessiontype', -default => 'Session');
     print "No\n";	      
   } else {
-    print $query -> hidden(-name => 'sessiontype', -default => 'Open');
+#    print $query -> hidden(-name => 'sessiontype', -default => 'Open');
     print $query -> checkbox(-name => "sessionseparator", -value => "$MeetingOrderID", -label => 'Yes');
   }
 }
