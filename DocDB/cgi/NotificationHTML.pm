@@ -19,24 +19,33 @@ sub DocNotifySignup (%) {
   my %Params     = @_;
   my $DocumentID = $Params{-docid};
   
+  my $NeedUserFields = ($UserValidation ne "certificate");
+  
   print "<div id=\"DocNotifySignup\">\n";
-  print "<hr/>\n";
+  if ($NeedUserFields) {
+    print "<hr/>\n";
+  }
   print $query -> start_multipart_form('POST',$WatchDocument);
-  print "<dl>\n";
   print $query -> hidden(-name => 'docid', -default => $DocumentID, -override => 1);
 
-  print "<dt>Username:</dt><dd>\n";
-  print $query -> textfield(-name => 'username', -size => 12, -maxlength => 32);
-  print "</dd>\n";
-  print "<dt>Password:</dt><dd>\n";
-  print $query -> password_field(-name => 'password', -size => 12, -maxlength => 32);
-  print "</dd>\n";
+  if ($NeedUserFields) {
+    print "<dl>\n";
+    print "<dt>Username:</dt><dd>\n";
+    print $query -> textfield(-name => 'username', -size => 12, -maxlength => 32);
+    print "</dd>\n";
+    print "<dt>Password:</dt><dd>\n";
+    print $query -> password_field(-name => 'password', -size => 12, -maxlength => 32);
+    print "</dd>\n";
+    print "<p>\n";
+  }
 
-  print "<p>\n";
   print $query -> submit (-value => "Watch Document");
-  print "</p>\n";
-  
-  print "</dl>\n";
+
+  if ($NeedUserFields) {
+    print "</p>\n";
+
+    print "</dl>\n";
+  }
   print $query -> end_multipart_form;
   print "</div>\n";
 }
