@@ -43,22 +43,23 @@ sub FetchDocFiles {
   # $Files{DocRevID}           holds the list of file IDs for a given DocRevID
   # $DocFiles{DocFileID}{FIELD} holds the Fields or references too them
 
-  my ($DocRevID) = @_;
-  my ($DocFileID,$FileName,$Date,$RootFile,$TimeStamp,$Description);
+  my ($docRevID) = @_;
+  my ($DocFileID,$FileName,$Date,$RootFile,$TimeStamp,$Description,$DocRevID);
   my $file_list = $dbh->prepare(
-    "select DocFileID,FileName,Date,RootFile,TimeStamp,Description ".
+    "select DocFileID,FileName,Date,RootFile,TimeStamp,Description,DocRevID ".
     "from DocumentFile where DocRevID=?");
-  if ($Files{$DocRevID}) {
-    return $Files{$DocRevID};
+  if ($Files{$docRevID}) {
+    return $Files{$docRevID};
   }
-  $file_list -> execute($DocRevID);
-  $file_list -> bind_columns(undef, \($DocFileID,$FileName,$Date,$RootFile,$TimeStamp,$Description));
+  $file_list -> execute($docRevID);
+  $file_list -> bind_columns(undef, \($DocFileID,$FileName,$Date,$RootFile,$TimeStamp,$Description,$DocRevID));
   while ($file_list -> fetch) {
     push @{ $Files{$DocRevID} },$DocFileID;
     $DocFiles{$DocFileID}{NAME}        = $FileName;
     $DocFiles{$DocFileID}{ROOT}        = $RootFile;
     $DocFiles{$DocFileID}{DESCRIPTION} = $Description;
     $DocFiles{$DocFileID}{TIMESTAMP}   = $TimeStamp;
+    $DocFiles{$DocFileID}{DOCREVID}    = $DocRevID;
   }
   return $Files{$DocRevID};
 }

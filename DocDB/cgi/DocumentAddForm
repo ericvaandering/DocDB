@@ -35,7 +35,8 @@ if ($upload ne "http" && $upload ne "file") {
 }  
 
 $Archive   = $params{archive};
-if ($Archive ne "multi" && $Archive ne "single") {
+if ($Archive eq "multi") {$Archive = "single";} # No real difference
+if ($Archive ne "archive" && $Archive ne "single") {
   $Archive = "single";
 }  
 
@@ -64,7 +65,7 @@ if ($mode eq "update" || $mode eq "updatedb") {
   }
 }
 if ($mode eq "update" || $mode eq "add") {
-  if ($Archive eq "multi" && $NumberUploads > 1) {
+  if ($Archive eq "archive" && $NumberUploads > 1) {
     push @error_stack,"You cannot upload more than one archive.";
   }
 }
@@ -130,7 +131,7 @@ print "</tr>\n";
 
 if ($mode eq "add" || $mode eq "update") {
   print "<tr><td colspan=3>\n";
-  if ($Archive eq "multi") { 
+  if ($Archive eq "archive") { 
     if ($upload eq "file") {
       &ArchiveUploadBox;
     } elsif ($upload eq "http") {

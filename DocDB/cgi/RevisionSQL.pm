@@ -102,7 +102,6 @@ sub FetchRevisionsByDocument {
   }
   
   return @DocRevList;
-
 }
 
 1;

@@ -34,6 +34,7 @@ print $query->header;
 ### Pull info out of params into local variables
 
 $Archive   = $params{archive};
+if ($Archive eq "multi") {$Archive = "single";} # No real difference
 
 
 if ($mode ne "add"    && $mode ne "reserve" && 
@@ -120,7 +121,7 @@ if ($mode eq "add" || $mode eq "update") {
   if     ($params{single_upload} && $params{single_http}) {
     push @error_stack,"You may not specify both URL and file upload.";
   }
-  if     (!$params{mainfile} && $params{archive} eq "multi") {
+  if     (!$params{mainfile} && $Archive eq "archive") {
     push @error_stack,"You must specify a main file in the archive.";
   }
   
@@ -289,7 +290,7 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
         close OUTFILE;
       }  
     }
-  } elsif ($Archive eq "multi") { # They uploaded a tar/zip file
+  } elsif ($Archive eq "archive") { # They uploaded a tar/zip file
     @short_files = ();
     @Descriptions = ();
     @Roots = ();
@@ -317,7 +318,7 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
         if (-s "$new_dir/$main_file") {
           push @short_files,$main_file;
           push @Descriptions,$params{filedesc};
-          push @Roots,1;
+          push @Roots,"on";
         } else {
           push @warn_stack,"The main file $main_file did not exist or was blank.";
         }
@@ -344,7 +345,7 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
         if (-s "$new_dir/$main_file") {
           push @short_files,$main_file;
           push @Descriptions,$params{filedesc};
-          push @Roots,1;
+          push @Roots,"on";
         } else {
           push @warn_stack,"The main file $main_file did not exist or was blank.";
         }

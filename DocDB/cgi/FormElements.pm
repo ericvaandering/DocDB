@@ -329,4 +329,24 @@ sub NameEntryBox {
   print "</tr></table>\n";
 }
 
+sub UpdateButton {
+#  unless (&CanModify) {return;}
+  my ($DocumentID) = @_;
+  print $query -> startform('POST',$DocumentAddForm);
+  print $query -> hidden(-name => 'mode',  -default => 'update');
+  print $query -> hidden(-name => 'docid', -default => $DocumentID);
+  print $query -> submit (-value => "Update Document");
+  print $query -> endform;
+}
+
+sub UpdateDBButton {
+#  unless (&CanModify) {return;}
+  my ($DocumentID) = @_;
+  print $query -> startform('POST',$DocumentAddForm);
+  print $query -> hidden(-name => 'mode',  -default => 'updatedb');
+  print $query -> hidden(-name => 'docid', -default => $DocumentID);
+  print $query -> submit (-value => "Update DB Info");
+  print $query -> endform;
+}
+
 1;

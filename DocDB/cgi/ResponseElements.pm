@@ -95,25 +95,53 @@ sub PrintPubInfo {
 
 sub FileListByRevID {
   my ($DocRevID) = @_;
+#  &FetchDocRevisionByID($DocRevID);
   my $Files_ref  = &FetchDocFiles($DocRevID);
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
   my $Version    = $DocRevisions{$DocRevID}{VERSION};
+
   if (@{$Files_ref}) {
-    print "<b>Files:</b>\n";
-    print "<ul>\n";
-    foreach $file (@{$Files_ref}) {
-      if ($DocFiles{$file}{DESCRIPTION}) {
-        $link = &FileLink($DocumentID,$Version,$DocFiles{$file}{NAME},
-                          $DocFiles{$file}{DESCRIPTION});
-      } else { 
-        $link = &FileLink($DocumentID,$Version,$DocFiles{$file}{NAME});
-      }
-      print "<li>$link</li>\n";
-    }  
-    print "</ul>\n";
+    @RootFiles  = ();
+    @OtherFiles = ();
+    foreach $File (@{$Files_ref}) {
+      if ($DocFiles{$File}{ROOT}) {
+        push @RootFiles,$File
+      } else {
+        push @OtherFiles,$File
+      }  
+    }
+    if (@RootFiles) {
+      print "<b>Files:</b>\n";
+      print "<ul>\n";
+      &FileListByFileID(@RootFiles);
+      print "</ul>\n";
+    }   
+    if (@OtherFiles) {
+      print "<b>Other Files:</b>\n";
+      print "<ul>\n";
+      &FileListByFileID(@OtherFiles);
+      print "</ul>\n";
+    }   
   } else {
     print "<b>Files:</b> none<br>\n";
   }
+}
+
+sub FileListByFileID {
+  my (@Files) = @_;
+  foreach my $file (@Files) {
+    my $DocRevID      = $DocFiles{$file}{DOCREVID};
+    my $VersionNumber = $DocRevisions{$DocRevID}{VERSION};
+    my $DocumentID    = $DocRevisions{$DocRevID}{DOCID};
+    my $link;
+    if ($DocFiles{$file}{DESCRIPTION}) {
+      $link = &FileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME},
+                        $DocFiles{$file}{DESCRIPTION});
+    } else { 
+      $link = &FileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME});
+    }
+    print "<li>$link</li>\n";
+  }  
 }
 
 sub SecurityListByID {
@@ -133,13 +161,18 @@ sub SecurityListByID {
 }
 
 sub PrintRevisionInfo {
+
+  require "FormElements.pm";
+ 
   my ($DocRevID) = @_;
+  &FetchDocRevisionByID($DocRevID);
+
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
 
   my $Authors_ref = &GetRevisionAuthors($DocRevID);
   my $Topics_ref  = &GetRevisionTopics($DocRevID);
   my $Groups_ref  = &GetRevisionSecurityGroups($DocRevID);
-  my $Files_ref  = &FetchDocFiles($DocRevID);  # FIXME: Move to FileListBy
+#  my $Files_ref  = &FetchDocFiles($DocRevID);  # FIXME: Move to FileListBy
 
   my @AuthorIDs = @{$Authors_ref};
   my @TopicIDs = @{$Topics_ref};
@@ -169,6 +202,11 @@ sub PrintRevisionInfo {
   print "<tr valign=top>";
   print "<td colspan=3>"; 
   &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
+  print "<tr valign=top>";
+  print "<td colspan=3 align=center>";
+  &UpdateButton($DocumentID);
+  print "<td colspan=3 align=center>";
+  &UpdateDBButton($DocumentID);
   print "</table></center>\n"; 
 }
  
