@@ -10,9 +10,6 @@
 use CGI;
 use DBI;
 
-require "Debug.pm";
-
-
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
@@ -46,33 +43,30 @@ unless ($dbh) {
 }         
 &EndPage(@ErrorStack);
 
-if ($SessionID) {
+if ($SessionID) { # Display a single session
   &ReHintTalksBySessionID($SessionID); 
   &ClearSessionTalks();
 
   &FetchSessionByID($SessionID);
   &FetchConferenceByConferenceID($Sessions{$SessionID}{ConferenceID});
   &PrintMeetingInfo($Sessions{$SessionID}{ConferenceID});
-  &PrintSession($SessionID); # Display a single session
+  &PrintSession($SessionID); 
   &PrintMeetingEpilogue($Sessions{$SessionID}{ConferenceID});
-} elsif ($SessionSeparatorID) {
+} elsif ($SessionSeparatorID) { # Display a single break (never called)
   &FetchSessionSeparatorByID($SessionSeparatorID);
   &FetchConferenceByConferenceID($SessionSeparators{$SessionSeparatorID}{ConferenceID});
   &PrintMeetingInfo($Sessions{$SessionID}{ConferenceID});
-  &PrintSessionSeparator($SessionSeparatorID); # Display session separator
+  &PrintSessionSeparator($SessionSeparatorID);
   &PrintMeetingEpilogue($Sessions{$SessionID}{ConferenceID});
-} elsif ($ConferenceID) {
+} elsif ($ConferenceID) { # Display meeting info or meeting with all talks
   &FetchConferenceByConferenceID($ConferenceID);
   &PrintMeetingInfo($ConferenceID);
-  
-  # Check ShowAllTalks, see if we print session summaries or all talks
-  # Loop over sessions and display them or link to them
-  # Probably a Navbar of sorts if we display all of them
-  
+    
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
-  if ($Conferences{$ConferenceID}{ShowAllTalks}) {;
-    foreach $MeetingOrderID (@MeetingOrderIDs) {
+  if ($Conferences{$ConferenceID}{ShowAllTalks}) { # Display all talks, sessions
+    # FIXME: Add a Navbar of sorts?
+    foreach $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks
       my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
       my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
       if ($SessionID) {
@@ -85,7 +79,7 @@ if ($SessionID) {
         &PrintSessionSeparator($SessionSeparatorID); # Display session separator
       }
     }   
-  } else {
+  } else { # Display links to sessions and info on separators
     print "<center><table cellpadding=5>\n";
     print "<tr><th>Session Title</th>\n";
     print "<th>Date & Time</th>\n";
@@ -98,7 +92,7 @@ if ($SessionID) {
       if ($SessionID) {
         &PrintSessionInfo($SessionID); # Session info and link to session
       } elsif ($SessionSeparatorID) {
-        &PrintSessionSeparatorInfo($SessionSeparatorID); # Session info and link to session
+        &PrintSessionSeparatorInfo($SessionSeparatorID); # SessionSeparator info 
       }
     }  
     print "</table></center><hr width=95%>\n";
@@ -118,10 +112,9 @@ if ($SessionID) {
     }
     
     # Refetch all talks
-    
     my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
     foreach $MeetingOrderID (@MeetingOrderIDs) {
-      my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
+      my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
       if ($SessionID) {
         &FetchSessionByID($SessionID);
         &FetchSessionTalksBySessionID($SessionID);
@@ -129,7 +122,6 @@ if ($SessionID) {
     }   
 
     # Flag talks which are associated with a session
-
     foreach my $SessionTalkID (keys %SessionTalks) {
       my $SessionID = $SessionTalks{$SessionTalkID}{SessionID};
       if ($Sessions{$SessionID}{ConferenceID} == $ConferenceID) {
@@ -138,9 +130,8 @@ if ($SessionID) {
         }
       }
     } 
-    
+
     # Find which ones aren't
-    
     my @UnusedDocIDs = ();
     foreach my $DocumentID (keys %DocumentIDs) {
       if ($DocumentIDs{$DocumentID}) {
@@ -148,7 +139,7 @@ if ($SessionID) {
       }  
     }
     
-    # Print out info for un-used documents
+    # Print out info for unused documents
     if (@UnusedDocIDs) {
       print "<center>\n";
       print "<b>Other talks for this meeting:</b>\n";
@@ -159,20 +150,16 @@ if ($SessionID) {
         my $Version = &LastAccess($DocumentID);
         if ($Version == -1) {next;}
         &DocumentSummary($DocumentID,"meeting",$Version);
-        print "</table></center><hr width=95%>\n";
       }
+      print "</table></center><hr width=95%>\n";
     }
   }
-  
   &PrintMeetingEpilogue($ConferenceID);
 } else {
-  #Complain that user didn't specify either
+  #Complain that user didn't specify a session, break, or conference
 }  
   
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  
 exit;
-
-  
-  

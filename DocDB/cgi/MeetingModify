@@ -9,6 +9,7 @@
 
 use CGI;
 use DBI;
+use Time::Local;
 
 require "DocDBGlobals.pm";
 require "Messages.pm";
@@ -22,6 +23,7 @@ require "Scripts.pm";
 require "MeetingHTML.pm";
 require "MeetingSQL.pm";
 require "TopicSQL.pm";
+require "WebUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 
@@ -66,6 +68,10 @@ my @SessionDeletes       = split /\0/,$params{sessiondelete};
 my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
 my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
 
+my $StartTime = timelocal(0,0,0,$StartDay,$ReverseAbrvMonth{$StartMonth}-1,$StartYear);
+my $EndTime   = timelocal(0,0,0,$EndDay,$ReverseAbrvMonth{$EndMonth}-1,$EndYear);
+
+
 if ($ShowAllTalks) {$ShowAllTalks = 1;}
 
 if ($ConferenceID || $Mode) {
@@ -100,6 +106,46 @@ if ($Mode eq "create") {
     push @ErrorStack,$Msg_TopicNoLong;
   }      
 }
+ 
+# Checks on input parameters 
+ 
+if ($URL && !(&ValidURL($URL))) {
+  push @ErrorStack,"The URL $URL is not valid.";
+}
+unless ($EndTime   && &ValidDate($EndDay,$ReverseAbrvMonth{$EndMonth},$EndYear)) {
+  push @ErrorStack,"The meeting ending date is not valid.";
+}
+unless ($StartTime && &ValidDate($StartDay,$ReverseAbrvMonth{$StartMonth},$StartYear)) {
+  push @ErrorStack,"The meeting starting date is not valid.";
+}
+if ($StartTime > $EndTime) {
+  push @ErrorStack,"The meeting starting date is after the ending date.";
+}
+
+my @CheckYears  = @SessionYears ;
+my @CheckMonths = @SessionMonths;
+my @CheckDays   = @SessionDays  ;
+my @CheckTitles = @SessionTitles;
+
+# FIXME: Here we require Title set, elsewhere or Description. Error if no Title
+
+foreach my $CheckTitle (@CheckTitles) { # Check session times
+  my $Year  = shift @CheckYears ;
+  my $Month = shift @CheckMonths;
+  my $Day   = shift @CheckDays  ;
+  if ($CheckTitle) {
+    my $Time = timelocal(0,0,0,$Day,$ReverseAbrvMonth{$Month}-1,$Year);
+    unless ($Time   && &ValidDate($Day,$ReverseAbrvMonth{$Month},$Year)) {
+      push @ErrorStack,"The starting date for $CheckTitle is not valid.";
+    }
+    if ($Time > $EndTime) {
+      push @ErrorStack,"The starting date for $CheckTitle is after the meeting ending date.";
+    }
+    if ($Time < $StartTime) {
+      push @ErrorStack,"The starting date for $CheckTitle is before the meeting starting date.";
+    }
+  }
+}  
 
 &EndPage(@ErrorStack);
 
