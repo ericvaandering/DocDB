@@ -522,7 +522,8 @@ sub FindAgendaRevision {
     "where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
      "and RevisionTopic.MinorTopicID=$MeetingID "; 
   my $agenda_find = $dbh -> prepare ($agenda_base.
-     "and lower(DocumentRevision.DocumentTitle) like lower(\"agenda%\") ");
+     "and lower(DocumentRevision.DocumentTitle) like lower(\"agenda%\") ".
+     "and DocumentRevision.Obsolete=0");
   
   my $AgendaRevID = 0;
   my $DocRevID;
@@ -539,8 +540,9 @@ sub FindAgendaRevision {
 
   unless ($AgendaRevID) {
     my $agenda_find = $dbh -> prepare ($agenda_base.
-       "and lower(DocumentRevision.DocumentTitle) like lower(\"%agenda%\") ");
-
+       "and lower(DocumentRevision.DocumentTitle) like lower(\"%agenda%\") ".
+       "and DocumentRevision.Obsolete=0");
+  
     $agenda_find -> execute();
     $agenda_find -> bind_columns(undef, \($DocRevID));
     while ($agenda_find -> fetch && !$AgendaRevID) {
@@ -563,16 +565,17 @@ sub FindAgendaURL {
 
   if ($DocRevID) {
     &FetchDocRevisionByID($DocRevID); 
-    my @FileIDs  = &FetchDocFiles($DocRevID);                                                                                             
-    my $FileID   = shift @FileIDs; #FIXME Collapse to one line
+    my @FileIDs  = &FetchDocFiles($DocRevID);  
+    foreach my $FileID (@FileIDs) {
+      unless ($DocFiles{$FileID}{ROOT}) {next;}
+      my $VersionNumber = $DocRevisions{$DocRevID}{VERSION};
+      my $DocumentID    = $DocRevisions{$DocRevID}{DOCID}  ;
 
-    my $VersionNumber = $DocRevisions{$DocRevID}{VERSION};
-    my $DocumentID    = $DocRevisions{$DocRevID}{DOCID}  ;
+      my $Directory     = &GetURLDir($DocumentID,$VersionNumber);  
 
-    my $Directory     = &GetURLDir($DocumentID,$VersionNumber);  
-
-    my $FileName      = $Directory.$DocFiles{$FileID}{NAME};
-    return $FileName;
+      my $FileName      = $Directory.$DocFiles{$FileID}{NAME};
+      return $FileName;
+    }
   } else {
     return 0;
   }  
