@@ -225,8 +225,6 @@ sub EmailUserIDsByName {
   my @NamesB = grep /^\w+$/,@PartsB;
   my $LastB  = pop @NamesB;
   
-  push @DebugStack,"From $NameA and $NameB, comparing $LastA and $LastB";
-  
   $LastA cmp $LastB;
 }  
 1;
