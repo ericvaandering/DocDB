@@ -42,24 +42,23 @@ if (@error_stack) {  # The user made one or more mistakes, warn and exit
   &EndPage(@error_stack);
 }
 
-print "Access to documents within the DocDB are controlled in several ways. A document can be
-tagged as accessible to a subset of groups. Additionally, each group may have a list of subordinate
-groups. Anything tagged as viewable by a subordinate is also viewable by the superior group.
-(This relationship does not extend to more than one generation, though.)<p>\n";
+print "<b><a ";
+&HelpLink("grouptutorial");
+print "Help on groups</a></b><p>\n";
 
-print "Each group also has a flag determining whether that group is allowed to create new 
-or modify existing documents.<p>\n";
+print "Begin by selecting an action (Modify/New/Delete). If you select
+       <b>New</b>, any selection from the first list will be ignored, but you
+       must fill in the group name, description, and any permissions  you want
+       to grant. If you select <b>Modify</b> you must make a selection from
+       the first list and any attributes you select on the right will be
+       changed. If you leave something blank, it will not be changed. If you
+       select <b>Delete</b> any selections other than from  the first list
+       will be ignored.<p>\n";
 
-print "If a group is allowed to view a document, it can change that document (assuming they
-also have the create/modify flag set).<p>\n";
-
-print "These group names must match those in the <b>.htpasswd</b> although the comparison is
-       not case sensitive.<p>\n";
-
-
-print "Note that deleting and then re-entering with the same information is not the same as
-modifying. Everything in the DB is tied together with invisible ID numbers. Be very careful about
-deleting groups; you may end up with documents not accessible to anyone.<p>\n";
+print "Note that deleting and then re-entering with the same information is
+       not the same as modifying. Everything in the DB is tied together with
+       invisible ID numbers. <b>Be very careful about deleting groups;</b> you
+       may end up with documents not accessible to anyone.<p>\n";
 
 ### Group Modification
 
@@ -101,15 +100,15 @@ foreach my $GroupID (@GroupIDs) {
   print "<tr valign=top>\n";
   print "<td><b>$SecurityGroups{$GroupID}{NAME}</b><br>($SecurityGroups{$GroupID}{DESCRIPTION})</td>\n";
   print "<td>\n";
-  print "Dominant groups:\n";
+  print "<b>Dominant groups:</b>\n";
   &PrintGroupParents($GroupID);
   print "</td>\n";
   print "<td>\n";
-  print "Subordinate groups:\n";
+  print "<b>Subordinate groups:</b>\n";
   &PrintGroupChildren($GroupID);
   print "</td>\n";
   print "<td>\n";
-  print "Permissions:\n";
+  print "<b>Permissions:</b>\n";
   &PrintGroupPermissions($GroupID);
   print "</td>\n";
   print "</tr>\n";

@@ -86,18 +86,21 @@ sub GroupEntryBox {
   print "</td></tr>\n";
 
   print "<tr><td>\n";
+  print "<b><a ";
+  &HelpLink("groupperm");
+  print "Permissions:</a></b><br> \n";
   print $query -> checkbox(-name => "remove",  
                            -value => 'remove', -label => '');
   print "<b>Remove existing permissions</b>\n";
-  print "</td></tr>\n";
+  print "<br>\n";
 
-  print "<tr><td>\n";
+#  print "<tr><td>\n";
   print $query -> checkbox(-name => "create",  
                            -value => 'create', -label => '');
   print "<b>May create documents</b>\n";
-  print "</td></tr>\n";
+  print "<br>\n";
 
-  print "<tr><td>\n";
+#  print "<tr><td>\n";
   print $query -> checkbox(-name => "admin",  
                            -value => 'admin', -label => '');
   print "<b>May administer database</b> (not implemented)\n";

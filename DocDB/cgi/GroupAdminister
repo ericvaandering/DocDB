@@ -138,6 +138,7 @@ if      ($Action eq "Delete") { # Delete institutions
 
   $GroupInsert -> execute($Name,$Description,$Create);
   $ParentID = $GroupInsert -> {mysql_insertid}; # Works with MySQL only
+
   my $HierarchyInsert = $dbh->prepare(
    "insert into GroupHierarchy (HierarchyID,ChildID,ParentID) ".
                        "values (0,?,?)");

@@ -1,3 +1,43 @@
+groupentry
+Group Name and Description
+Enter the name and description of the group. The name should be short and one
+word. The description can be longer and multiple words. 
+#
+groupperm
+Group Permissions
+Select the permissions that you want to grant to the group. If you are modifying
+a group, the checked permissions will be added, but unchecked ones will not be
+deleted unless you also check the box labeled "Remove Existing Permissions."
+#
+child
+Subordinate groups
+Select the groups you want to be subordinates of this group. This means that the
+dominant group will be able to see and change all documents that these groups
+can.
+#
+parent
+Group
+Select the group you want to delete or modify. If you want to modify, fill out
+the names and permissions that you want to change.
+#
+admaction
+Administrative actions
+Select the action you want to perform on the list. You can either modify an
+existing entry, create a new entry, or delete an entry. Then fill out the rest
+of form.
+#
+grouptutorial
+Short tutorial on groups
+Access to documents within the DocDB is controlled in several ways. A document
+may be tagged as accessible to a subset of groups. Additionally, each group may
+have a list of subordinate groups. Anything marked viewable by a subordinate
+is also viewable by its superior group. (This relationship does not extend to
+more than one generation, though.)<p> Each group also has a flag determining
+whether that group is allowed to create new  or modify existing documents. If a
+group is allowed to view a document, it can change that document (assuming they
+also have the create/modify flag set). These group names must match those in
+the <b>.htpasswd</b> file although the comparison is not case sensitive.
+#
 instentry
 Institution entry
 Fill out both the short name, (i.e. Illinois) and the long name (i.e. University
