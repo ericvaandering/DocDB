@@ -124,7 +124,7 @@ sub ReHintTalksBySessionID ($) {
       } 
 
       my $Score = $MethodScore*($AuthorMatches+1)*(2*$TopicMatches+1);
-      if ($Score > $BestDocuments{$SessionTalkID}{Score}) {
+      if ($Score > $BestDocuments{$SessionTalkID}{Score} && ($AuthorMatches+$TopicMatches)) {
         $BestDocuments{$SessionTalkID}{Score}      = $Score;
         $BestDocuments{$SessionTalkID}{DocumentID} = $DocumentID;
       }

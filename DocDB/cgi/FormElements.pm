@@ -57,8 +57,15 @@ sub DateTimePullDown {
 }
 
 sub StartDatePullDown {
-  my ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
-  $year += 1900;
+  my ($sec,$min,$hour,$day,$mon,$year);
+  
+  if ($DefaultStartDate) {
+    ($year,$mon,$day) = split /-/,$DefaultStartDate;
+    --$mon;
+  } else {
+    ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
+    $year += 1900;
+  }
   
   my @days = ();
   for ($i = 1; $i<=31; ++$i) {
@@ -82,8 +89,15 @@ sub StartDatePullDown {
 }
 
 sub EndDatePullDown {
-  my ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
-  $year += 1900;
+  my ($sec,$min,$hour,$day,$mon,$year);
+  
+  if ($DefaultStartDate) {
+    ($year,$mon,$day) = split /-/,$DefaultStartDate;
+    --$mon;
+  } else {
+    ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
+    $year += 1900;
+  }
   
   my @days = ();
   for ($i = 1; $i<=31; ++$i) {

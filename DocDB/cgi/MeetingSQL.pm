@@ -53,7 +53,8 @@ sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
     "from Conference ".
     "where ConferenceID=?");
   $ConferenceFetch -> execute($conferenceID);
-  ($ConferenceID,$MinorTopicID,$Location,$URL,$Title,$Preamble,$Epilogue,$StartDate,$EndDate,$TimeStamp) 
+ 
+($ConferenceID,$MinorTopicID,$Location,$URL,$Title,$Preamble,$Epilogue,$StartDate,$EndDate,$ShowAllTalks,$TimeStamp) 
     = $ConferenceFetch -> fetchrow_array;
   if ($ConferenceID) {
     $Conferences{$ConferenceID}{Minor}        = $MinorTopicID;
@@ -178,6 +179,45 @@ sub FetchMeetingOrdersByConferenceID {
     push @MeetingOrderIDs,$MeetingOrderID;
   }
   return @MeetingOrderIDs; 
+}
+
+sub DeleteSession ($) {
+  my ($SessionID) = @_;
+   
+  require "TalkSQL.pm";
+          
+  my $SessionDelete      = $dbh -> prepare("delete from Session where SessionID=?");
+  my $SessionTalkList    = $dbh -> prepare("select SessionTalkID from SessionTalk where SessionID=?");
+  my $TalkSeparatorList  = $dbh -> prepare("select TalkSeparatorID from TalkSeparator where SessionID=?");
+  my $MeetingOrderDelete = $dbh -> prepare("delete from MeetingOrder where SessionID=?");
+ 
+  $SessionDelete   -> execute($SessionID);
+  
+  my $SessionTalkID;
+  $SessionTalkList -> execute($SessionID);    
+  $SessionTalkList -> bind_columns(undef, \($SessionTalkID));
+  while ($SessionTalkList -> fetch) {
+    &DeleteSessionTalk($SessionTalkID);
+  }
+
+  my $TalkSeparatorID;
+  $TalkSeparatorList -> execute($SessionID);
+  $TalkSeparatorList -> bind_columns(undef, \($TalkSeparatorID));
+  while ($TalkSeparatorList -> fetch) {
+    &DeleteTalkSeparator($TalkSeparatorID);
+  }
+
+  $MeetingOrderDelete -> execute($SessionID);
+}
+
+sub DeleteSessionSeparator ($) {
+  my ($SessionSeparatorID) = @_;
+    
+  my $SessionSeparatorDelete = $dbh -> prepare("delete from SessionSeparator where SessionSeparatorID=?");
+  my $MeetingOrderDelete     = $dbh -> prepare("delete from MeetingOrder where SessionSeparatorID=?");
+  
+  $SessionDelete      -> execute($SessionSeparatorID);
+  $MeetingOrderDelete -> execute($SessionSeparatorID);
 }
 
 1;

@@ -266,7 +266,8 @@ sub MajorGatheringSelect (;$) { # Scrolling selectable list for major topics wit
     }  
   }  
   print $query -> scrolling_list(-name => "majortopic", -values => \@MeetingMajorIDs, 
-                                 -labels => \%MajorLabels,  -size => 10);
+                                 -labels => \%MajorLabels,  -size => 10,
+                                 -default => $DefaultMajorID);
 };
 
 sub ConferenceSelect {
@@ -333,16 +334,16 @@ sub ShortDescriptionBox {
   print "<b><a ";
   &HelpLink("shortdescription");
   print "Short Description:</a></b><br> \n";
-  print $query -> textfield (-name => 'short', 
-                             -size => 20, -maxlength => 40);
+  print $query -> textfield (-name => 'short', -default   => $DefaultShortDescription,
+                             -size => 20,      -maxlength => 40);
 };
 
 sub LongDescriptionBox {
   print "<b><a ";
   &HelpLink("longdescription");
   print "Long Description:</a></b><br> \n";
-  print $query -> textfield (-name => 'long', 
-                             -size => 40, -maxlength => 120);
+  print $query -> textfield (-name => 'long', -default   => $DefaultLongDescription,
+                             -size => 40,     -maxlength => 120);
 };
 
 sub FullTopicScroll ($$;@) { # Scrolling selectable list for topics, all info

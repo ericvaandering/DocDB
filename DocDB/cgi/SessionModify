@@ -11,8 +11,6 @@
 use CGI;
 use DBI;
 
-require "Debug.pm"; #FIXME: Remove 
-
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
@@ -64,8 +62,6 @@ foreach my $TalkConfirm (@TalkConfirms) {
   
 @ErrorStack = ();
 @WarnStack  = ();
-
-&HTMLPrintParams();
 
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 

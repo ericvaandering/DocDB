@@ -10,7 +10,7 @@ sub LocationBox {
   print "<b><a ";
   &HelpLink("location");
   print "Location:</a></b><br> \n";
-  print $query -> textfield (-name => 'location', 
+  print $query -> textfield (-name => 'location', -default => $MeetingDefaultLocation,
                              -size => 20, -maxlength => 64);
 };
 
@@ -19,7 +19,7 @@ sub ConferenceURLBox {
   print "<b><a ";
   &HelpLink("confurl");
   print "URL:</a></b><br> \n";
-  print $query -> textfield (-name => 'url', 
+  print $query -> textfield (-name => 'url', -default => $MeetingDefaultURL,
                              -size => 40, -maxlength => 64);
 };
 
@@ -28,7 +28,7 @@ sub ConferencePreambleBox {
   print "<b><a ";
   &HelpLink("meetpreepi");
   print "Meeting Preamble:</a></b><br> \n";
-  print $query -> textarea (-name => 'meetpreamble',
+  print $query -> textarea (-name => 'meetpreamble', -default => $MeetingDefaultPreamble,
                             -columns => 50, -rows => 5);
 };
 
@@ -37,7 +37,7 @@ sub ConferenceEpilogueBox {
   print "<b><a ";
   &HelpLink("meetpreepi");
   print "Meeting Epilogue:</a></b><br> \n";
-  print $query -> textarea (-name => 'meetepilogue',
+  print $query -> textarea (-name => 'meetepilogue', -default => $MeetingDefaultEpilogue,
                             -columns => 50, -rows => 5);
 };
 
@@ -46,7 +46,11 @@ sub ConferenceShowAllTalks {
   print "<b><a ";
   &HelpLink("meetshowall");
   print "Show All Talks?</a></b> \n";
-  print $query -> checkbox(-name => "meetshowall", -value => 1, -label => 'Yes');
+  if ($MeetingDefaultShowAllTalks) {
+    print $query -> checkbox(-name => "meetshowall", -value => 1, -label => 'Yes', -checked => 'Yes');
+  } else {
+    print $query -> checkbox(-name => "meetshowall", -value => 1, -label => 'Yes');
+  }
 }
 
 
@@ -270,7 +274,7 @@ sub PrintSession ($;$) {
   my $AccumulatedTime = &AddTime("$AccumHour:$AccumMin:$AccumSec");
   
   # Getting TopicID will depend on re-factoring Conferences Hashes
-  # my $MinorTopicID = 
+  my $MinorTopicID = $Conferences{$ConferenceID}{Minor};
   
   @IgnoreTopics = ($MinorTopicID);
   

@@ -182,7 +182,6 @@ sub TalkDelete ($) {
 sub TalkConfirm ($) {
   my ($SessionOrderID) = @_;
   
-  #FIXME Need default here
   if ($TalkSeparatorDefault eq "Yes") {
     print "&nbsp;\n";
   } elsif ($TalkDefaultConfirmed) {  

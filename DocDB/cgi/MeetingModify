@@ -10,18 +10,18 @@
 use CGI;
 use DBI;
 
-require "Debug.pm"; #FIXME: Remove 
-
 require "DocDBGlobals.pm";
 require "Messages.pm";
 
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
+require "FormElements.pm";
 require "Sorts.pm";
 require "Scripts.pm";
 
 require "MeetingHTML.pm";
 require "MeetingSQL.pm";
+require "TopicSQL.pm";
 
 $query = new CGI;  # Global for subroutines
 
@@ -63,17 +63,19 @@ my @SessionDescriptions  = split /\0/,$params{sessiondescription};
 my @MeetingOrderIDs      = split /\0/,$params{meetingorderid};
 my @SessionDeletes       = split /\0/,$params{sessiondelete};
 
-
-
 my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
 my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
 
 if ($ShowAllTalks) {$ShowAllTalks = 1;}
 
+if ($ConferenceID || $Mode) {
+  $SetMode = "modify";
+} else {
+  $SetMode = "create";
+}    
+
 @ErrorStack = ();
 @WarnStack  = ();
-
-&HTMLPrintParams(); #FIXME Remove
 
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
@@ -81,6 +83,8 @@ unless ($dbh) {
   push @ErrorStack,$Msg_NoConnect;
 }         
 &EndPage(@ErrorStack);
+
+&GetTopics;
 
 if ($Mode eq "create") {
   if ($MajorTopic) {
@@ -103,7 +107,7 @@ my $MinorTopicID;
 
 if ($ConferenceID) {
   require "MeetingSQL.pm";
-  my $ConferenceID        = &FetchConferenceByConferenceID($ConferenceID);
+                            &FetchConferenceByConferenceID($ConferenceID);
   my @SessionIDs          = &FetchSessionsByConferenceID($ConferenceID);
   my @SessionSeparatorIDs = &FetchSessionSeparatorsByConferenceID($ConferenceID);
   my @MeetingOrderIDs     = &FetchMeetingOrdersByConferenceID($ConferenceID);
@@ -111,26 +115,43 @@ if ($ConferenceID) {
 }     
 
 if ($Mode eq "create" || $Mode eq "modify") {
-  if ($MajorTopic && $Mode eq "create") { # FIXME allow for modification here
+  if ($MajorTopic && (($Mode eq "create") || 
+                      ($Mode eq "modify" && !$MinorTopicID))) { 
     my $TopicInsert = $dbh->prepare(
       "insert into MinorTopic ".
-          "(MinorTopicID, MajorTopicID, ShortDescription, LongDescription) ". 
+      "(MinorTopicID, MajorTopicID, ShortDescription, LongDescription) ". 
       "values (0,?,?,?)");
     $TopicInsert -> execute($MajorTopic,$Short,$Long);
     $MinorTopicID = $TopicInsert -> {mysql_insertid}; # Works with MySQL only
+  } elsif ($MajorTopic && $Mode eq "modify") {
+    my $TopicUpdate = $dbh -> prepare(
+      "update MinorTopic set ".
+      "MajorTopicID=?,ShortDescription=?,LongDescription=? ".
+      "where MinorTopicID=?");
+    $TopicUpdate -> execute($MajorTopic,$Short,$Long,$MinorTopicID);  
   }
   unless ($MinorTopicID) {
     $MinorTopicID = 0;
   }
-  if ($Mode eq "create") { # FIXME allow for modification here
+  if ($Mode eq "create") { 
     my $ConferenceInsert = $dbh->prepare(
      "insert into Conference ".
-            "(ConferenceID, MinorTopicID, Location, URL, ShowAllTalks, StartDate, EndDate, ".
-            " Preamble, Epilogue, Title) ". 
+     "(ConferenceID, MinorTopicID, Location, URL, ShowAllTalks, StartDate, EndDate, ".
+     " Preamble, Epilogue, Title) ". 
      "values (0,?,?,?,?,?,?,?,?,?)");
     $ConferenceInsert -> execute($MinorTopicID,$Location,$URL,$ShowAllTalks,
-                                  $StartDate,$EndDate,$MeetPreamble,$MeetEpilogue,$Long); 
+                                 $StartDate,$EndDate,$MeetPreamble,
+                                 $MeetEpilogue,$Long); 
     $ConferenceID = $ConferenceInsert -> {mysql_insertid}; # Works with MySQL only
+  } elsif ($Mode eq "modify") {
+    my $ConferenceUpdate = $dbh->prepare(
+     "update Conference set ".
+            "MinorTopicID=?, Location=?, URL=?, ShowAllTalks=?, StartDate=?, EndDate=?, ".
+            " Preamble=?, Epilogue=?, Title=? ". 
+     "where ConferenceID=?");
+    $ConferenceUpdate -> execute($MinorTopicID,$Location,$URL,$ShowAllTalks,
+                                 $StartDate,$EndDate,$MeetPreamble,
+                                 $MeetEpilogue,$Long,$ConferenceID); 
   }
 
 # Repack check boxes into hashes
@@ -214,20 +235,11 @@ if ($Mode eq "create" || $Mode eq "modify") {
       # Find out if this session is flagged for deletion
 
       if ($SessionDeleteFlags{$MeetingOrderID}) { # Delete session or separator
-        my $SessionDelete = $dbh -> prepare(
-         "delete from Session where SessionID=?");
-        my $SessionSeparatorDelete = $dbh -> prepare(
-         "delete from SessionSeparator where SessionSeparatorID=?");
-        my $MeetingOrderDelete = $dbh -> prepare(
-         "delete from MeetingOrder where MeetingOrderID=?");
-     
 	if ($SessionSeparatorID) {
-          $SessionSeparatorDelete -> execute($SessionSeparatorID);
-	} else {
-          $SessionDelete          -> execute($SessionID);
+          &DeleteSessionSeparator($SessionSeparatorID);
+	} elsif ($SessionID) {
+          &DeleteSession($SessionID);
 	}
-	$MeetingOrderDelete -> execute($MeetingOrderID);
-        #FIXME: Delete talk and talk separator entries too, and associated hints
       } elsif ($SessionTitle || $SessionDescription) {
 	++$SessionsUpdated;
 	
@@ -263,11 +275,83 @@ if ($Mode eq "create" || $Mode eq "modify") {
 # Print out forms with sessions
 
 print $query -> start_multipart_form('POST',"$MeetingModify");
-$query -> param('mode','modify');
-$query -> param('conferenceid',$ConferenceID);
-print $query -> hidden(-name => 'mode',   -default => 'modify');
-print $query -> hidden(-name => 'conferenceid',   -default => $ConferenceID);
+$query -> param('mode',$SetMode);
+print $query -> hidden(-name => 'mode',   -default => $SetMode);
+
+if ($SetMode eq "modify") {
+  print $query -> hidden(-name => 'conferenceid',   -default => $ConferenceID);
+  $query -> param('conferenceid',$ConferenceID);
+}
 print "<table cellpadding=10>\n";
+
+$DefaultMajorID = $MinorTopics{$MinorTopicID}{MAJOR};
+if ($MinorTopicID) {
+  $DefaultShortDescription = $MinorTopics{$MinorTopicID}{SHORT};
+  $DefaultLongDescription  = $MinorTopics{$MinorTopicID}{LONG};
+} else {
+  $DefaultShortDescription = "";
+  $DefaultLongDescription  = $Conferences{$ConferenceID}{Title};
+}
+$MeetingDefaultLocation     = $Conferences{$ConferenceID}{Location};
+$MeetingDefaultURL          = $Conferences{$ConferenceID}{URL};
+$MeetingDefaultPreamble     = $Conferences{$ConferenceID}{Preamble};
+$MeetingDefaultEpilogue     = $Conferences{$ConferenceID}{Epilogue};
+$MeetingDefaultShowAllTalks = $Conferences{$ConferenceID}{ShowAllTalks};
+$DefaultStartDate           = $Conferences{$ConferenceID}{StartDate};
+
+print "<tr valign=top>\n";
+print "<td>\n"; &MajorGatheringSelect; print "</td>\n";
+print "<td>\n";
+ print "<table>\n";
+ print "<tr valign=top>\n";
+ print "<td width=10>Only select a Major Topic and fill in the descriptions if
+ you want to make a new topic.\n";
+ print "<a ";
+ &HelpLink("meetingtopic");
+ print "Click for an explanation.</a>\n";
+ print "</td>\n";
+ print "</tr>\n";
+ print "<tr valign=top>\n";
+ print "<td>\n"; &LongDescriptionBox;      print "</td>\n";
+ print "</tr>\n";
+ print "<tr valign=top>\n";
+ print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
+ print "</tr>\n";
+ print "<tr valign=top>\n";
+ print "<td>\n"; &ConferenceShowAllTalks;      print "</td>\n";
+ print "</tr>\n";
+ print "</table>\n";
+print "</td>\n";
+print "<td>\n";
+ print "<table>\n";
+
+ print "<tr valign=top>\n";
+ print "<td>\n"; &LocationBox;       print "</td>\n";
+ print "</tr>\n";
+
+ print "<tr valign=top>\n";
+ print "<td>\n"; &ConferenceURLBox;  print "</td>\n";
+ print "</tr>\n";
+
+ print "<tr valign=top>\n";
+ print "<td>\n"; &StartDatePullDown; print "</td>\n";
+ print "</tr>\n";
+
+ print "<tr valign=top>\n";
+ print "<td>\n"; &EndDatePullDown;   print "</td>\n";
+ print "</tr>\n";
+
+ print "</table>\n";
+print "</td>\n";
+print "</tr>\n";
+print "</table>\n";
+
+print "<table cellpadding=10>\n";
+
+print "<tr valign=top>\n";
+print "<td>\n"; &ConferencePreambleBox; print "</td>\n";
+print "<td>\n"; &ConferenceEpilogueBox; print "</td>\n";
+print "</tr>\n";
 
 %Conferences       = ();
 %Sessions          = ();
@@ -286,7 +370,7 @@ print "<td colspan=2>\n"; &SessionEntryForm(@MeetingOrderIDs);   print "</td>\n"
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td align=center>\n";
+print "<td align=center colspan=2>\n";
 print $query -> submit (-value => "Modify Meeting and Sessions");
 print "</td>\n";
 print "</tr>\n";

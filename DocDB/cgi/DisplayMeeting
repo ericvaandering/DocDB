@@ -10,10 +10,6 @@
 use CGI;
 use DBI;
 
-#require "Debug.pm"; #FIXME: Remove 
-
-# cvs remove DisplaySession
-
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
@@ -39,8 +35,6 @@ my $ConferenceID       = $params{conferenceid};
 
 @ErrorStack = ();
 @WarnStack  = ();
-
-#&HTMLPrintParams();
 
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
@@ -86,7 +80,7 @@ if ($SessionID) {
     }   
     
   } else {
-    print "<center><table border=1 cellpadding=5>\n";
+    print "<center><table cellpadding=5>\n";
     print "<tr><th>Session Title</th>\n";
     print "<th>Date & Time</th>\n";
     print "<th>Session Information</th>\n";
@@ -96,12 +90,14 @@ if ($SessionID) {
       my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
       my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
       if ($SessionID) {
+        &ReHintTalksBySessionID($SessionID); 
+        &ClearSessionTalks();
         &PrintSessionInfo($SessionID); # Session info and link to session
       } elsif ($SessionSeparatorID) {
         # Info on session separator?
       }
     }  
-    print "</table></center>\n";
+    print "</table></center><hr width=95%>\n";
   }
   
   # FIXME: If a topic-based meeting, display talks not associated with sessions  
