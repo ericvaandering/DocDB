@@ -76,7 +76,8 @@ $ModifyHome         = $cgi_root."ModifyHome";
 $ProcessDocumentAdd = $cgi_root."ProcessDocumentAdd";
 $DocumentAddForm    = $cgi_root."DocumentAddForm";
 $ShowDocument       = $cgi_root."ShowDocument";
-$ListDocuments      = $cgi_root."ListDocuments";
+$RetrieveFile       = $cgi_root."RetrieveFile";
+$RetrieveArchive    = $cgi_root."RetrieveArchive";
 
 $Search             = $cgi_root."Search";
 $SearchForm         = $cgi_root."SearchForm";
@@ -84,6 +85,7 @@ $SearchForm         = $cgi_root."SearchForm";
 $TopicAddForm       = $cgi_root."TopicAddForm";
 $AuthorAddForm      = $cgi_root."AuthorAddForm";
 
+$ListDocuments      = $cgi_root."ListDocuments";
 $ListByAuthor       = $cgi_root."ListByAuthor";
 $ListByTopic        = $cgi_root."ListByTopic";
 $ListByType         = $cgi_root."ListByType";

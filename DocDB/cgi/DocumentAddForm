@@ -164,7 +164,7 @@ if      ($mode eq "add") {
                database. (<a href=\"$HelpFile#meeting\">Instructions</a>)<br>
                If you need something more complicated, such as multiple authors
                or more upload boxes,<br> please use one of the options from
-               the <a href=$MainPage>main page</a>.\n";
+               the <a href=$ModifyHome>change/add page</a>.\n";
   } else {  
     print "<h4>You have chosen to add a new document to the database.<br> 
                Make sure you know all the required information and

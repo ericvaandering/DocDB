@@ -27,6 +27,8 @@ sub FileListByRevID {
       &FileListByFileID(@OtherFiles);
       print "</ul>\n";
     }   
+    my $ArchiveLink = &ArchiveLink($DocumentID,$Version);
+    print "$ArchiveLink\n";
   } else {
     print "<b>Files in Document:</b> none<br>\n";
   }
@@ -116,4 +118,14 @@ sub ShortFileLink {
   }
 }  
 
+sub ArchiveLink {
+  my ($DocumentID,$Version) = @_;
+  my $link  = "<b>Retrieve files as \n";
+     $link .= "<a href=\"$RetrieveArchive?docid=$DocumentID\&version=$Version\">";
+     $link .= "a .tar.gz file</a>";
+     $link .= "</b>";
+  
+  return $link;
+}
+  
 1;

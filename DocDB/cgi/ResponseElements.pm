@@ -91,8 +91,6 @@ sub PrintConfInfo {
 }
 
 sub PrintReferenceInfo {
-#  require "TopicSQL.pm";
-#  require "TopicHTML.pm";
   require "MiscSQL.pm";
   &GetJournals;
   
@@ -407,7 +405,6 @@ sub DocDBNavBar {
 }
 
 sub TypesTable {
-
   my $NCols = 3;
   my @TypeIDs = keys %DocumentTypes;
 
