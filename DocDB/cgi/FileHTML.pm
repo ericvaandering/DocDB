@@ -95,6 +95,7 @@ sub FileLink {
   $shortfile = CGI::escape($shortfile);
   my $base_url = &GetURLDir($documentID,$version);
   my $file_size = &FileSize(&FullFile($documentID,$version,$shortname));
+  $file_size =~ s/^\s+//; # Chop off leading spaces
   if ($description) {
     return "<a href=\"$base_url$shortfile\">$description</a> ($shortname, $file_size)";
   } else {
