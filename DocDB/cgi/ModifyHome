@@ -139,7 +139,7 @@ print "<li>Organize a <a href=\"$MeetingModify\">new</a> or an
 if (&CanAdminister()) {
   print "<li>Add a <a href=\"$TopicAddForm\">topic</a>\n";
   print "<li>Add, delete, or modify <a href=\"$GroupAdministerForm\">groups</a>\n";
-  print "<li>Administer <a href=\"$KeywordForm\">keywords and keyword groups</a>\n";
+  print "<li>Administer <a href=\"$KeywordAdministerForm\">keywords and keyword groups</a>\n";
   print "<li>View/modify <a href=\"$EmailAdministerForm\">E-mail notifications</a>\n";
   print "<li>Perform other <a href=\"$AdministerForm\">administration tasks</a>\n";
 }

@@ -1,10 +1,10 @@
 #! /usr/bin/env perl
 #
-# Description: This script is called by KeywordForm and does administration
+# Description: This script is called by KeywordAdministerForm and does administration
 #              on the Keyword table in the DB. 
 #
 #      Author: Lynn Garren (garren@fnal.gov)
-#    Modified: 
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 #
 
 use CGI;
@@ -132,7 +132,7 @@ if ($Action eq "Modify" || $Action eq "New") {
 }  
 
 print "<p>\n";
-$keyadminform = "<a href=\"$KeywordForm\">Administer Keywords</a>";
+$keyadminform = "<a href=\"$KeywordAdministerForm\">Administer Keywords</a>";
 $keylist = "<a href=\"$ListKeywords\">List Keywords</a>";
 print "<center>\n";
 print "$keyadminform $keylist\n";

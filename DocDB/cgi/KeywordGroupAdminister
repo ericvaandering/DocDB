@@ -1,6 +1,6 @@
 #! /usr/bin/env perl
 #
-# Description: This script is called by KeywordForm and does administration
+# Description: This script is called by KeywordAdministerForm and does administration
 #              on Keyword Groups in the DB. This script adds, modifies and deletes
 #              these groups. It will not delete groups if there are associated
 #              keywords. 
@@ -111,7 +111,7 @@ if ($Action eq "Modify" || $Action eq "New") {
 }  
 
 print "<p>\n";
-$keyadminform = "<a href=\"$KeywordForm\">Administer Keywords</a>";
+$keyadminform = "<a href=\"$KeywordAdministerForm\">Administer Keywords</a>";
 $keylist = "<a href=\"$ListKeywords\">List Keywords</a>";
 print "<center>\n";
 print "$keyadminform $keylist\n";

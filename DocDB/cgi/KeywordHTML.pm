@@ -48,7 +48,7 @@ sub KeywordGroupInfo ($;$) {
   return $info;
 }
 
-sub GetKeywordInfo ($;$) {
+sub GetKeywordInfo ($;$) { # Isn't this similar to KeywordLink too?
   my ($KeyID,$mode) = @_;
   
   require "KeywordSQL.pm";
@@ -203,12 +203,14 @@ sub KeywordGroupSelect (%) { # Scrolling selectable list for keyword groups
   my $Format   = $Params{-format}   || "short";        # short, full
   my $Multiple = $Params{-multiple} || "";             # Any non-null text is "true"
   my $Name     = $Params{-name}     || "keywordgroup";
+  my $Delete   = $Params{-delete}   || "";
   
   print "<b><a ";
   &HelpLink("KeywordGroups");
   print "Keyword Groups:</a></b><br> \n";
   my @KeyGroupIDs = keys %KeywordGroups;
   my %GroupLabels = ();
+  
   foreach my $ID (@KeyGroupIDs) {
     if ($Format eq "full") {
       $GroupLabels{$ID} = "$KeywordGroups{$ID}{Short} [$KeywordGroups{$ID}{Long}]";
@@ -216,6 +218,12 @@ sub KeywordGroupSelect (%) { # Scrolling selectable list for keyword groups
       $GroupLabels{$ID} = $KeywordGroups{$ID}{Short};
     }  
   }  
+
+  if ($Delete) {
+    unshift @KeyGroupIDs,"-1";
+    $GroupLabels{"-1"} = "Remove existing groups";
+  }
+    
   print $query -> scrolling_list(-name => $Name, -values => \@KeyGroupIDs, 
                                  -labels => \%GroupLabels,  -size => 10, -multiple => $Multiple);
 };

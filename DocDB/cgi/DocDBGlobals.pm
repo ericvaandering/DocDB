@@ -95,7 +95,6 @@ $SearchForm            = $cgi_root."SearchForm";
 
 $TopicAddForm          = $cgi_root."TopicAddForm";
 $AuthorAddForm         = $cgi_root."AuthorAddForm";
-$KeywordForm           = $cgi_root."KeywordForm";
 
 $ListDocuments         = $cgi_root."ListDocuments";
 $ListByAuthor          = $cgi_root."ListByAuthor";
@@ -129,6 +128,8 @@ $MajorTopicAdminister  = $cgi_root."MajorTopicAdminister";
 $DocTypeAdminister     = $cgi_root."DocTypeAdminister";
 $JournalAdminister     = $cgi_root."JournalAdminister";
 $ConferenceAdminister  = $cgi_root."ConferenceAdminister";
+
+$KeywordAdministerForm  = $cgi_root."KeywordAdministerForm";
 $KeywordListAdminister  = $cgi_root."KeywordListAdminister";
 $KeywordGroupAdminister = $cgi_root."KeywordGroupAdminister";
 
