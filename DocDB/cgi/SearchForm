@@ -44,10 +44,6 @@ print $query -> start_multipart_form('POST',$Search,"name=\"queryform\"");
 print "<center><table cellpadding=10 width=80%>\n";
 print "<tr>\n";
  print "<td colspan=3>\n";
- print "This is a beta version of the BTeV Document Database search engine.<p>\n"; 
- print "The help links may be missing or wrong, but the search is believed to work correctly.  It may 
-        still have bugs. It will NOT damage any data in the Database.
-        If you find bugs or have suggestions, please <a href=\"mailto:btev-docdb\@fnal.gov\">report them</a>.<p>\n"; 
  print "<center><b>Click on any of the <font color=red>red headings</font> for help.</b></center>\n"; 
  print "</td>\n";
 print "</tr></table><p>\n";
