@@ -1,4 +1,4 @@
-sub ReHintTalks ($) {
+sub ReHintTalksBySessionID ($) {
   my ($SessionID) = @_;
 
   require "MeetingSQL.pm";
@@ -7,6 +7,7 @@ sub ReHintTalks ($) {
   require "RevisionSQL.pm";
   require "TopicSQL.pm";
   require "AuthorSQL.pm";
+  require "TalkHintSQL.pm";
   
   my $DocRevID,$DocumentID;
   my %DocumentIDs = (); 

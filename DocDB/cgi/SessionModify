@@ -21,7 +21,7 @@ require "Scripts.pm";
 
 require "TalkHTML.pm";
 require "TalkSQL.pm";
-require "TalkHintsSQL.pm";
+require "TalkHintSQL.pm";
 require "TalkHintUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
@@ -178,12 +178,10 @@ if ($Mode eq "modify") {
 
 &EndPage(@ErrorStack);
 
-#my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
-
-&ReHintTalks($SessionID); # FIXME: $ConferenceID is 0 for all right now
+&ReHintTalksBySessionID($SessionID); 
+&ClearSessionTalks();
 
 # Fetch all SessionTalks and TalkSeparators with this SessionID 
-&ClearSessionTalks();
 my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
 my @TalkSeparatorIDs = &FetchTalkSeparatorsBySessionID($SessionID);
 my @SessionOrderIDs  = &FetchSessionOrdersBySessionID($SessionID);

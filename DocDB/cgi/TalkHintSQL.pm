@@ -1,5 +1,5 @@
 #
-#        Name: TalkHintsSQL.pm 
+#        Name: TalkHintSQL.pm 
 # Description: Routines to access SQL tables related to hints for talks
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)

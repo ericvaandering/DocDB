@@ -121,7 +121,7 @@ sub FetchSessionOrdersBySessionID {
 sub DeleteSessionTalk ($) {
   my ($SessionTalkID) = @_;
 
-  require "TalkHintsSQL.pm";
+  require "TalkHintSQL.pm";
 
   my $TalkDelete  = $dbh -> prepare("delete from SessionTalk  where SessionTalkID=?"); 
   my $OrderDelete = $dbh -> prepare("delete from SessionOrder where SessionTalkID=?"); 

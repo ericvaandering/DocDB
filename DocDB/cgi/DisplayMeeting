@@ -23,6 +23,8 @@ require "Scripts.pm";
 require "MeetingHTML.pm";
 require "MeetingSQL.pm";
 
+require "TalkHintUtilities.pm";
+
 $query = new CGI;  # Global for subroutines
 
 print $query -> header;
@@ -48,6 +50,9 @@ unless ($dbh) {
 &EndPage(@ErrorStack);
 
 if ($SessionID) {
+  &ReHintTalksBySessionID($SessionID); 
+  &ClearSessionTalks();
+
   &FetchSessionByID($SessionID);
   &FetchConferenceByConferenceID($Sessions{$SessionID}{ConferenceID});
 
@@ -66,17 +71,40 @@ if ($SessionID) {
   
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
-  foreach $MeetingOrderID (@MeetingOrderIDs) {
-    my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
-    my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
-    if ($SessionID) {
-      &FetchSessionByID($SessionID);
-      &PrintSession($SessionID,0); # Display a single session
-    } elsif ($SessionSeparatorID) {
-      # Info on session separator?
-    }
+  if ($Conferences{$ConferenceID}{ShowAllTalks}) {;
+    foreach $MeetingOrderID (@MeetingOrderIDs) {
+      my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
+      my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
+      if ($SessionID) {
+        &ReHintTalksBySessionID($SessionID); 
+        &ClearSessionTalks();
+        &FetchSessionByID($SessionID);
+        &PrintSession($SessionID,0); # Display a single session
+      } elsif ($SessionSeparatorID) {
+        # Info on session separator?
+      }
+    }   
+    
+  } else {
+    print "<center><table border=1 cellpadding=5>\n";
+    print "<tr><th>Session Title</th>\n";
+    print "<th>Date & Time</th>\n";
+    print "<th>Session Information</th>\n";
+    print "<th>Location</th>\n";
+    print "</tr>\n";
+    foreach $MeetingOrderID (@MeetingOrderIDs) {
+      my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
+      my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
+      if ($SessionID) {
+        &PrintSessionInfo($SessionID); # Session info and link to session
+      } elsif ($SessionSeparatorID) {
+        # Info on session separator?
+      }
+    }  
+    print "</table></center>\n";
   }
-  # If a topic-based meeting, display talks not associated with sessions  
+  
+  # FIXME: If a topic-based meeting, display talks not associated with sessions  
   &PrintMeetingEpilogue($ConferenceID);
 } else {
   #Complain that user didn't specify either
