@@ -228,10 +228,16 @@ sub MultiTopicSelect (%) { # Multiple scrolling selectable lists for topics
     @MatchMinorIDs = sort byTopic @MatchMinorIDs;
 
     #FIXME: Use TopicScroll
-    print $query -> scrolling_list(-name => "topics", 
-             -values => \@MatchMinorIDs, -labels => \%MatchLabels,
-             -size => 8, -multiple => 'true', -default => \@TopicDefaults,
-             -disabled => $Disabled);
+    if ($Disabled) { # Doesn't scale
+      print $query -> scrolling_list(-name => "topics", 
+               -values => \@MatchMinorIDs, -labels => \%MatchLabels,
+               -size => 8, -multiple => 'true', -default => \@TopicDefaults,
+               -disabled);
+    } else {
+      print $query -> scrolling_list(-name => "topics", 
+               -values => \@MatchMinorIDs, -labels => \%MatchLabels,
+               -size => 8, -multiple => 'true', -default => \@TopicDefaults);
+    }               
     print "</td>\n";
   }  
   print "</table>\n";

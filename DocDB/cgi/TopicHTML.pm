@@ -368,7 +368,7 @@ sub ShortDescriptionBox  (;%) {
   print "Short Description:</a></b><br> \n";
   if ($Disabled) {  # Doesn't scale
     print $query -> textfield (-name => $Name,  -default   => $DefaultShortDescription,
-                               -size => $Size , -maxlength => $MaxLength, -disabled => $Disabled);
+                               -size => $Size , -maxlength => $MaxLength, -disabled);
   } else {
     print $query -> textfield (-name => $Name,  -default   => $DefaultShortDescription,
                                -size => $Size , -maxlength => $MaxLength);
@@ -393,7 +393,7 @@ sub LongDescriptionBox (;%) {
   print "Long Description:</a></b><br> \n";
   if ($Disabled) {  # Doesn't scale
     print $query -> textfield (-name => $Name,  -default   => $DefaultLongDescription,
-                               -size => $Size , -maxlength => $MaxLength, -disabled => $Disabled);
+                               -size => $Size , -maxlength => $MaxLength, -disabled);
     
     
   } else {
@@ -481,7 +481,7 @@ sub TopicScroll (%) {
   if ($Disabled) {  # Doesn't scale
     print $query -> scrolling_list(-name => $Name, -values => \@ActiveIDs, 
                                    -labels => \%TopicLabels,
-                                   -size => 10, -multiple => $Multiple, -disabled => $Disabled,
+                                   -size => 10, -multiple => $Multiple, -disabled,
                                    -default => \@Defaults);
   } else {
     print $query -> scrolling_list(-name => $Name, -values => \@ActiveIDs, 
