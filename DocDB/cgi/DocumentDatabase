@@ -34,11 +34,9 @@ print $query->header;
 
 &HelpPopupScript;
 
-if ($Public) {
+if ($WelcomeMessage) {
   print "<p><center><h4>\n";
-  print "Welcome to the public portion of the $Project Document Database,<br>
-         the repository for all $Project public talks, proceedings, preprints,
-         and publications.\n";
+  print "$WelcomeMessage\n";
   print "</h4></center>\n";
 }
 
@@ -57,7 +55,7 @@ print "<li><b><a href=\"$SearchForm\">Search</a> documents</b><p>\n";
 print "<li>"; 
 print $query -> startform('POST',$ShowDocument);
 print $query -> submit (-value => "Show");
-print " <b>$Project-doc-#</b> "; 
+print " <b>$ShortProject-doc-#</b> "; 
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 print " <b>-v</b> "; 
 print $query -> textfield(-name => "version", -size => 3, -maxlength => 3);

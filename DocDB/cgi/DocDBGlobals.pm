@@ -56,17 +56,6 @@ $MeetingFiles     = 3;         # Number of upload boxes on meeting short form
 
 require "ProjectGlobals.pm";
 
-# Override settings in this file for the test DB 
-# and the publicly accessible version
-
-if (-e "PublicGlobals.pm") {
-  require "PublicGlobals.pm";
-}  
-
-if (-e "TestGlobals.pm") {
-  require "TestGlobals.pm";
-}  
-
 # Special files (here because they use values from above)
 
 $help_file          = $script_root."docdb.hlp";

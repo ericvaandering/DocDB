@@ -268,9 +268,9 @@ sub ErrorPage { # Fatal errors, continues page
 sub FullDocumentID ($;$) {
   my ($DocumentID,$Version) = @_;
   if (defined $Version) {
-    return "$Project-doc-$DocumentID-v$Version";
+    return "$ShortProject-doc-$DocumentID-v$Version";
   } else {  
-    return "$Project-doc-$DocumentID";
+    return "$ShortProject-doc-$DocumentID";
   }  
 }  
 
