@@ -2,9 +2,10 @@
 
 CSS (Cascading Style Sheets)
 
-  DocDB now uses CSS in some places. Expect this use to grow. When updating
-  DocDB, it will probably be necessary to update the CSS files too, or things
-  may not render correctly.
+  DocDB now uses CSS in some places. Expect this use to grow as well as an
+  effort to get DocDB generated content to validate under strict XHTML 1.0.
+  When updating DocDB, it will probably be necessary to update the CSS files
+  too, or things may not render correctly.
 
   The biggest impact of this is that now the ShowDocument script will not
   render correctly without CSS. To update for CSS, go to $file_root/Static (in
@@ -37,7 +38,7 @@ CSS (Cascading Style Sheets)
   footers.       
 
   Finally, CSS may allow us to make generic HTML help files too, since I know
-  this is an issue. 
+  this is an problem. 
 
 5.4.0
 
