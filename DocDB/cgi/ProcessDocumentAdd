@@ -95,6 +95,8 @@ my $RevisionNote  = $params{revisionnote};
 my $SignoffList   = $params{signofflist};
 my @Copys = split ("\0",$params{copyfile});
 
+print "C:",@Copys,"<br>\n";
+
 if ($Meeting || $OtherMeeting) {
   @authorIDs = ($Requester);
 } else {
