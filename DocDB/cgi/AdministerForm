@@ -50,13 +50,13 @@ print "<b>This form allows you to administer lots of the lists of things within
 the database.</b><p>\n"; 
 
 print "Begin by selecting an action for what you want to administer. If you
-       select <b>New</b>, the selection on the far left will typically be
+       select <b>New</b>, the selection from the first list will typically be
        ignored, but you must fill in things like Institution and the two names
        for adding authors. If you select <b>Modify</b> you have to make a
-       selection from the list on the left and any attributes you select on the
+       selection from the first list and any attributes you select on the
        right will be changed. If you leave something blank, it will not be
-       changed. If you select <b>Delete</b> any selections on the right will be
-       ignored.<p>\n";
+       changed. If you select <b>Delete</b> any selections other than from 
+       the first list will be ignored.<p>\n";
 
 print "In all cases, you must supply the <i>database</i> password for the
 administrator account to make any changes.<p>\n";
@@ -139,7 +139,9 @@ print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td rowspan=2>\n"; &TopicSelectLong; print "</td>\n"; 
+print "<td colspan=2>\n"; &TopicSelectLong; print "</td>\n"; 
+print "</tr>\n";
+print "<tr valign=top>\n";
 print "<td rowspan=2>\n"; &MajorTopicSelect; print "</td>\n";
 print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
 print "</tr>\n";

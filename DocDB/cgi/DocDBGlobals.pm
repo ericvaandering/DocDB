@@ -102,6 +102,9 @@ $AuthorAdminister      = $cgi_root."AuthorAdminister";
 $InstitutionAdminister = $cgi_root."InstitutionAdminister";
 $TopicAdminister       = $cgi_root."TopicAdminister";
 
+$GroupAdministerForm   = $cgi_root."GroupAdministerForm";
+$GroupAdminister       = $cgi_root."GroupAdminister";
+
 $Statistics            = $cgi_root."Statistics";
 
 $HelpFile              = $web_root."Static/Restricted/DocDB_Help.shtml";

@@ -1,0 +1,109 @@
+#! /usr/bin/env perl
+#
+# Description: This script provides a form to administer groups in 
+#              the DocDB and shows the relationships between groups.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+use CGI;                                                                                      
+use DBI;
+
+require "DocDBGlobals.pm";
+require "AdministerElements.pm";
+require "FormElements.pm";
+require "Scripts.pm";
+require "Security.pm";
+require "SecuritySQL.pm";
+
+require "GroupHTML.pm";
+require "HTMLUtilities.pm";
+require "Sorts.pm";
+
+$query = new CGI;  # Global for subroutines
+$dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+#&GetInstitutions;
+#&GetAuthors;
+#&GetTopics;
+&GetSecurityGroups;
+
+print $query->header;
+&BTeVHeader("Group Administration"); # DocDBHeader
+
+&HelpPopupScript;
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+unless (&CanAdminister()) {
+  push @ErrorStack,"You are not allowed to access administrative functions.";
+}
+
+if (@error_stack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@error_stack);
+}
+
+print "Some long description about how to set the form<p>\n";
+
+print "The current groups and relationships between them are shown below.<p>\n";
+
+### Group Modification
+
+#print "<a name=\"author\"><center><h4>Administer Authors</h4></center>\n";
+
+print $query -> start_multipart_form('POST',"$GroupAdminister");
+print "<table cellpadding=10>\n";
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
+print "</tr>\n";
+
+#print "<tr valign=top>\n";
+#print "<td>\n"; &AuthorSelect; print "</td>\n";  #FIXME: No multi-select
+#print "<td>\n"; &InstitutionSelect; print "</td>\n";
+#print "<td>\n"; &NameEntryBox;      print "</td>\n";
+#print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n";
+&AdministratorPassword;
+print "&nbsp;";
+print $query -> submit (-value => "Change Group Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<p><hr>\n";
+
+### Display of existing groups
+
+my @GroupIDs = sort keys %SecurityGroups;
+
+print "<table cellpadding=10>\n";
+foreach my $GroupID (@GroupIDs) {
+  print "<tr valign=top>\n";
+  print "<td><b>$SecurityGroups{$GroupID}{NAME}</b> ($SecurityGroups{$GroupID}{DESCRIPTION})</td>\n";
+  print "<td>\n";
+  print "Dominant groups:\n";
+  &PrintGroupParents($GroupID);
+  print "</td>\n";
+  print "<td>\n";
+  print "Subordinate groups:\n";
+  &PrintGroupChildren($GroupID);
+  print "</td>\n";
+  print "<td>\n";
+  print "Permissions:\n";
+  &PrintGroupPermissions($GroupID);
+  print "</td>\n";
+  print "</tr>\n";
+} 
+print "</table>\n";
+
+
+print "<p><hr><p>\n";
+
+&DocDBNavBar();
+&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
