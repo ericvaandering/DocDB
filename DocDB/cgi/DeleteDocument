@@ -1,11 +1,13 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+# Description: This script is called by DeleteConfirm to actually delete
+#              the requested document, all associated entries in the DB, 
+#              and the actual files as well. 
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
 #
 
-# Usage: DeleteDocument -d Doc# -u admin_user -p admin_password
-
-use Benchmark;
 use CGI;
 use DBI;
 

@@ -1,9 +1,12 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+# Description: Displays the document to be deleted and requests the 
+#              admin password. Calls DeleteDocument to delete the doc. 
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
 #
 
-use Benchmark;
 use CGI;
 use DBI;
 

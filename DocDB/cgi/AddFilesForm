@@ -1,13 +1,13 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+# Description: An entry form to add files to an existing document 
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
 #
 
-use Benchmark;
 use CGI;
 use DBI;
-
-$StartTime = new Benchmark;
 
 require "DocDBGlobals.pm";
 
