@@ -19,7 +19,6 @@ require "HTMLUtilities.pm";
 require "KeywordSQL.pm";
 require "KeywordHTML.pm";
 require "Messages.pm";
-require "KeyMessages.pm";
 
 $query = new CGI;  # Global for subroutines
 
@@ -59,7 +58,7 @@ if      ($Action eq "Delete") { # Delete keyword groups
   @KeywordListIDs = &GetKeywordsByKeywordGroupID($KeywordGroupID); 
   if (!$KeywordGroupID) {
     push @ErrorStack,$Msg_ModKeyGrEmpty;
-  } elsif (@KeywordListIDs) {
+  } elsif (@KeywordListIDs) { # Not sure we want this anymore
     print "<b>This keyword group has keywords that must be deleted first:</b><br>\n";
     &KeywordsbyKeywordGroup($KeywordGroupID);
     push @ErrorStack,$Msg_DelKeyGrWKey;

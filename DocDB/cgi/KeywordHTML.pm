@@ -28,7 +28,7 @@ sub KeywordGroupInfo ($;$) {
 sub KeywordsbyKeywordGroup ($;$) {
   my ($KeywordGroupID,$Mode) = @_;
   
-  require "KeySorts.pm";
+  require "Sorts.pm";
 
   my @KeywordIDs = sort byKeyword &GetKeywordsByKeywordGroupID($KeywordGroupID);
 
@@ -51,7 +51,7 @@ sub KeywordsbyKeywordGroup ($;$) {
 sub KeywordTable {
   my ($Mode) = @_;
   
-  require "KeySorts.pm";
+  require "Sorts.pm";
 
   my $NCols = 4;
   my @KeywordGroupIDs = sort byKeywordGroup keys %KeywordGroups;
@@ -77,7 +77,7 @@ sub KeywordTable {
 }
 
 sub KeywordDetailedList {
-  require "KeySorts.pm";
+  require "Sorts.pm";
 
   my @KeywordGroupIDs = sort byKeywordGroup keys %KeywordGroups;
 

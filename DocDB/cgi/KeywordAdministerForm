@@ -22,7 +22,6 @@ require "KeywordSQL.pm";
 require "ResponseElements.pm";
 
 require "HTMLUtilities.pm";
-require "KeySorts.pm";
 require "Sorts.pm";
 
 $query = new CGI;  # Global for subroutines

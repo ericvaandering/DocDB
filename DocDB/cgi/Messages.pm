@@ -3,7 +3,7 @@
 #              programs return the same errors. 
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified: Lynn Garren (garren@fnal.gov)
 #
 
 $Msg_NoConnect        = "Unable to connect to the database. Please alert an administrator.";
@@ -45,6 +45,13 @@ $Msg_TopicShortIgnored = "Your short description of this meeting has been ".
 
 $Msg_MeetNoSessions     = "This meeting was created with no sessions. You will have to add at least one session before adding talks.";
 $Msg_SessionBlankDelete = "Setting session titles to blank will not delete them.";
+
+# Messages for keywords, keyword groups
+
+$Msg_ModKeyGrEmpty = "You must select a keyword group to modify.";
+$Msg_DelKeyGrWKey  = "You can't delete keyword groups with keywords. ".
+                     "Delete the keywords first if you want to delete the keyword group.";
+$Msg_ModKeywdEmpty = "You must select a keyword to modify or delete.";
 
 # FIXME: Add more messages from other programs
 # FIXME: Add a localizable error message inclusion
