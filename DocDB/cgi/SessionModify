@@ -107,6 +107,7 @@ if ($Mode eq "modify") {
     
     my $TalkConfirmed   = $TalkConfirmFlags{$SessionOrderID};
     my $TalkDocID       = $params{"talkdocid-$SessionOrderID"};
+    my $NewSessionID    = $params{"newsessionid-$SessionOrderID"};
     
     if (grep /n/,$SessionOrderID) { # Key on SessionOrderID to see if insert or update.	
       if ($TalkTitle || $TalkNote || $TalkDocID) {
@@ -156,6 +157,11 @@ if ($Mode eq "modify") {
            "Time=?, Title=?, Note=? ". 
            "where TalkSeparatorID=?");
           $TalkSeparatorUpdate -> execute($TalkTime,$TalkTitle,$TalkNote,$TalkSeparatorID);
+          if ($NewSessionID) { # Move to new session
+            my $TalkSeparatorMove = $dbh -> prepare(
+             "update TalkSeparator set SessionID=? where TalkSeparatorID=?");
+            $TalkSeparatorMove -> execute($NewSessionID,$TalkSeparatorID);
+          }
         } elsif ($SessionTalkID) { # Modify a talk
           my $SessionTalkUpdate = $dbh -> prepare(
            "update SessionTalk set ".
@@ -175,6 +181,11 @@ if ($Mode eq "modify") {
           }
           &InsertTopicHints($SessionTalkID,@TopicHints);
           &InsertAuthorHints($SessionTalkID,@AuthorHints);
+          if ($NewSessionID) { # Move to new session
+            my $SessionTalkMove = $dbh -> prepare(
+             "update SessionTalk set SessionID=? where SessionTalkID=?");
+            $SessionTalkMove -> execute($NewSessionID,$SessionTalkID);
+          }
         }
 
         my $SessionOrderUpdate = $dbh -> prepare(

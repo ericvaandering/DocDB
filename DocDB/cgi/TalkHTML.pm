@@ -48,7 +48,8 @@ sub PrintSessionTalk($) {
   if ($Confirmed) { # Put titles in italics for unconfirmed talks
     print "<td>$Title</td>\n";
   } else {
-    print "<td><i>$Title</i></td>\n";
+    my $SessionTalkSummary = &SessionTalkSummary($SessionTalkID);
+    print "<td><i>$Title</i> [$SessionTalkSummary]</td>\n";
   }
   print "<td><nobr>$AuthorLink</nobr></td>\n";
   print "<td>"; &ShortTopicListByID(@TopicIDs);   print "</td>\n";
@@ -92,6 +93,7 @@ sub TalkEntryForm (@) {
   
     ++$TalkOrder;
     $TalkDefaultOrder = $TalkOrder;  
+    my $EntryTimeStamp;
     
     @TalkDefaultTopicHints  = ();
     @TalkDefaultAuthorHints = ();
@@ -113,7 +115,7 @@ sub TalkEntryForm (@) {
         $TalkDefaultNote      = $SessionTalks{$SessionTalkID}{Note}       || "";
         $TalkDefaultDocID     = $SessionTalks{$SessionTalkID}{DocumentID} || "";
         $TalkSeparatorDefault = "No";
-        
+        $EntryTimeStamp       = $SessionTalks{$SessionTalkID}{TimeStamp}; 
         # Get hints and convert to format accepted by scrolling lists
         
         my @TopicHintIDs = &FetchTopicHintsBySessionTalkID($SessionTalkID);
@@ -131,18 +133,21 @@ sub TalkEntryForm (@) {
         $TalkDefaultTitle     = $TalkSeparators{$TalkSeparatorID}{Title} || "";
         $TalkDefaultNote      = $TalkSeparators{$TalkSeparatorID}{Note}  || "";
         $TalkSeparatorDefault = "Yes";
+        $EntryTimeStamp       = $TalkSeparators{$TalkSeparatorID}{TimeStamp}; 
       }
     } 
 
     print "<tr valign=top>\n";
     $query -> param('sessionorderid',$SessionOrderID);
     print $query -> hidden(-name => 'sessionorderid', -default => $SessionOrderID);
+    print $query -> hidden(-name => 'timestamp',      -default => $TimeStamp);
 
 
     print "<td align=left rowspan=3>\n"; &TalkOrder; print "<br/>\n";
-    &TalkConfirm($SessionOrderID) ; print "<br/>\n";
-    &TalkDelete($SessionOrderID) ; print "</td>\n";
-
+    &TalkConfirm($SessionOrderID);    print "<br/>\n";
+    &TalkDelete($SessionOrderID);     print "<br/>\n";
+    &TalkNewSession($SessionOrderID); print "</td>\n";
+    
     print "<td align=center rowspan=3>\n"; &TalkSeparator($SessionOrderID); print "</td>\n";
     print "<td align=center rowspan=3>\n"; &TalkDocID($SessionOrderID);                      print "</td>\n";
     print "<td>\n"; &TalkTitle($TalkDefaultTitle);            print "</td>\n";
@@ -292,6 +297,36 @@ sub TalkTopics ($) {
   }
 }
 
+sub TalkNewSession ($) {
+  my ($SessionOrderID) = @_;
+  
+  require "MeetingSQL.pm";
+
+  my $SessionTalkID   = $SessionOrders{$SessionOrderID}{SessionTalkID};
+  my $TalkSeparatorID = $SessionOrders{$SessionOrderID}{TalkSeparatorID};
+  
+  my $SessionID;
+  if ($SessionTalkID) {
+    $SessionID = $SessionTalks{$SessionTalkID}{SessionID};
+  } elsif ($TalkSeparatorID) {
+    $SessionID = $TalkSeparators{$TalkSeparatorID}{SessionID};
+  }
+
+  my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
+  
+  my @SessionIDs = &FetchSessionsByConferenceID($ConferenceID);
+
+  $SessionLabels{0} = "Move to new session?";
+  unshift @SessionIDs,"0";
+  
+  foreach my $SessionID (@SessionIDs) {
+    $SessionLabels{$SessionID} = $Sessions{$SessionID}{Title}; 
+  }
+  print $query -> popup_menu (-name    => "newsessionid-$SessionOrderID", 
+                              -labels => \%SessionLabels, 
+                              -values  => \@SessionIDs);
+}
+
 sub SessionTalkPulldown {
   my (@SessionTalkIDs) = @_;
   
@@ -301,27 +336,7 @@ sub SessionTalkPulldown {
   my %SessionTalkLabels = ();
   
   foreach my $SessionTalkID (@SessionTalkIDs) {
-    my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID); 
-    my @Authors = ();
-    foreach my $AuthorHintID (@AuthorHintIDs) {
-      my $AuthorID = $AuthorHints{$AuthorHintID}{AuthorID}; 
-      &FetchAuthor($AuthorID);
-      $Author = $Authors{$AuthorID}{FULLNAME};
-      push @Authors,$Author;
-    }
-    
-    my $Authors = join ', ',@Authors;
-    if ($SessionTalks{$SessionTalkID}{HintTitle}) {
-      $SessionTalkLabels{$SessionTalkID} = $SessionTalks{$SessionTalkID}{HintTitle};
-    } else {
-      $SessionTalkLabels{$SessionTalkID} = "Unknown";
-    }  
-    $SessionTalkLabels{$SessionTalkID} .= " -- ";
-    if (@Authors) {
-      $SessionTalkLabels{$SessionTalkID} .= $Authors;
-    } else {
-      $SessionTalkLabels{$SessionTalkID} .= "Unknown";
-    }  
+    $SessionTalkLabels{$SessionTalkID} = &SessionTalkSummary($SessionTalkID);
   }                                   
   $SessionTalkLabels{0} = "Select your talk from this list";
   unshift @SessionTalkIDs,"0";
@@ -333,6 +348,38 @@ sub SessionTalkPulldown {
                               -labels => \%SessionTalkLabels, 
                               -values  => \@SessionTalkIDs);
 
+}
+
+sub SessionTalkSummary {
+  my ($SessionTalkID) = @_;
+  
+  require "TalkHintSQL.pm";
+  require "AuthorSQL.pm";
+  
+  my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID); 
+  my @Authors = ();
+  foreach my $AuthorHintID (@AuthorHintIDs) {
+    my $AuthorID = $AuthorHints{$AuthorHintID}{AuthorID}; 
+    &FetchAuthor($AuthorID);
+    $Author = $Authors{$AuthorID}{FULLNAME};
+    push @Authors,$Author;
+  }
+  
+  my $SessionTalkSummary = "";
+  
+  my $Authors = join ', ',@Authors;
+  if ($SessionTalks{$SessionTalkID}{HintTitle}) {
+    $SessionTalkSummary = $SessionTalks{$SessionTalkID}{HintTitle};
+  } else {
+    $SessionTalkSummary = "Unknown";
+  }  
+  $SessionTalkSummary .= " - ";
+  if (@Authors) {
+    $SessionTalkSummary .= $Authors;
+  } else {
+    $SessionTalkSummary .= "Unknown";
+  }  
+  return $SessionTalkSummary;
 }
 
 # Note on replacing NOBR. Error is in standard spec, but all implementations

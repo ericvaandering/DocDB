@@ -10,6 +10,10 @@ sub ReHintTalksBySessionID ($) {
   require "TalkHintSQL.pm";
   require "Utilities.pm";
   
+  if ($Public) { # Can't write to DB
+    return;
+  }  
+
   my $DocRevID,$DocumentID;
   my %DocumentIDs = (); 
   my $SearchDays  = 5;
@@ -92,6 +96,8 @@ sub ReHintTalksBySessionID ($) {
     my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVersions});
     push @DocRevIDs,$DocRevID;
   }
+
+  my $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
   # Loop over all session talk IDs
 
