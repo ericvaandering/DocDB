@@ -355,18 +355,21 @@ sub NameEntryBox {
   print "First Name:</a></b><br> \n";
   print $query -> textfield (-name => 'first', 
                              -size => 20, -maxlength => 32);
-  print "<td>\n";
+  print "</td></tr>\n";
+  print "<tr><td>\n";
   print "<b><a ";
   &HelpLink("authorentry");
   print "Initials:</a></b><br> \n";
   print $query -> textfield (-name => 'middle', 
                              -size => 10, -maxlength => 16);
-  print "<td>\n";
+  print "</td></tr>\n";
+  print "<tr><td>\n";
   print "<b><a ";
   &HelpLink("authorentry");
   print "Last Name:</a></b><br> \n";
   print $query -> textfield (-name => 'lastname', 
                              -size => 20, -maxlength => 32);
+  print "</td>\n";
   print "</tr></table>\n";
 }
 
