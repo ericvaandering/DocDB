@@ -31,7 +31,7 @@ if ($Public) {
 
 print "<p><h4>Database options:</h4>\n";
 
-print "<ul>\n";
+print "<ul>\n"; #FIXME: Use style=line-height to remove hard <p> breaks, need better CSS support
 unless ($Public) {
   print "<li><b><a href=\"$ModifyHome\">Create or change</a> documents</b><p>\n";
 }
