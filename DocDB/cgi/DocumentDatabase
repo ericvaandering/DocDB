@@ -28,7 +28,7 @@ if ($Public) {
   print "Welcome to the public portion of the BTeV Document Database,<br>the repository for all BTeV public talks,
   proceedings, preprints, and publications.\n";
 } else {
-  print "<a href=\"$web_root/Help/DocDB_Help.shtml\">Instructions on using</a> the database. \n";
+  print "<a href=\"$HelpFile\">Instructions on using</a> the database. \n";
   print "Click on any <font color=red>red link</font> for quick help.\n";
 }
 print "</h4></center>\n";
@@ -46,8 +46,15 @@ print " <b>BTeV-doc-#</b> ";
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 print " <b>-v</b> "; 
 print $query -> textfield(-name => "version", -size => 3, -maxlength => 3);
-print "&nbsp;&nbsp;(Looking for a document <a href=\"$web_root/Help/OldDBTranslation.shtml\">like
-       BTeV-int-year/xx</a>?)\n";
+if ($Public) {
+  print "&nbsp;&nbsp;(Looking for a document 
+        <a href=\"$web_root/Static/Public/OldDBTranslation.shtml\">like
+         BTeV-int-year/xx</a>?)\n";
+} else {
+  print "&nbsp;&nbsp;(Looking for a document 
+        <a href=\"$web_root/Static/Restricted/OldDBTranslation.shtml\">like
+         BTeV-int-year/xx</a>?)\n";
+}
 print $query -> endform;
 
 

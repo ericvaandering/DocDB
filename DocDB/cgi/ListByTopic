@@ -53,6 +53,15 @@ if ($Major || $MajorID) {
   }  
 } else {  
   &FetchMinorTopic($TopicID);
+  
+### Default modes for certain topic types
+  
+  if ($MinorTopics{$TopicID}{MAJOR} == $ConferenceMajorID) {
+    unless ($Mode) {$Mode = "conference";}
+  }    
+  if ($MinorTopics{$TopicID}{MAJOR} == $CollabMeetMajorID) {
+    unless ($Mode) {$Mode = "meeting";}
+  }    
 }
 
 ### Set defaults

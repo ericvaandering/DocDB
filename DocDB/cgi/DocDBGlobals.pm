@@ -46,7 +46,7 @@ $DBWebMasterEmail = "btev-docdb\@fnal.gov";
 $DBWebMasterName  = "BTeV Document Database Administrators";
 $Administrator    = "docdbadm";
 $AuthUserFile     = "/www/conf/www-btev/.htpasswd";
-$LastDays         = 14;
+$LastDays         = 20;
 
 # Override settings in this file for the test DB 
 # and the publicly accessible version
@@ -89,7 +89,7 @@ $AddFilesForm       = $cgi_root."AddFilesForm";
 
 $ConferenceAddForm  = $cgi_root."ConferenceAddForm";
 
-$HelpFile           = $web_root."Help/DocDB_Help.shtml";
+$HelpFile           = $web_root."Static/Restricted/DocDB_Help.shtml";
 
 
 1;
