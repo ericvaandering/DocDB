@@ -68,9 +68,17 @@ my @SessionDeletes       = split /\0/,$params{sessiondelete};
 my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
 my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
 
-my $StartTime = timelocal(0,0,0,$StartDay,$ReverseAbrvMonth{$StartMonth}-1,$StartYear);
-my $EndTime   = timelocal(0,0,0,$EndDay,$ReverseAbrvMonth{$EndMonth}-1,$EndYear);
-
+if ($StartDay && $StartMonth && $StartYear) {
+  my $StartTime = timelocal(0,0,0,$StartDay,$ReverseAbrvMonth{$StartMonth}-1,$StartYear);
+} else {
+  my $StartTime = time();
+}
+   
+if ($EndDay && $EndMonth && $EndYear) {
+  my $EndTime   = timelocal(0,0,0,$EndDay,$ReverseAbrvMonth{$EndMonth}-1,$EndYear);
+} else {
+  my $EndTime   = time();
+}
 
 if ($ShowAllTalks) {$ShowAllTalks = 1;}
 
@@ -108,18 +116,20 @@ if ($Mode eq "create") {
 }
  
 # Checks on input parameters 
- 
-if ($URL && !(&ValidURL($URL))) {
-  push @ErrorStack,"The URL $URL is not valid.";
-}
-unless ($EndTime   && &ValidDate($EndDay,$ReverseAbrvMonth{$EndMonth},$EndYear)) {
-  push @ErrorStack,"The meeting ending date is not valid.";
-}
-unless ($StartTime && &ValidDate($StartDay,$ReverseAbrvMonth{$StartMonth},$StartYear)) {
-  push @ErrorStack,"The meeting starting date is not valid.";
-}
-if ($StartTime > $EndTime) {
-  push @ErrorStack,"The meeting starting date is after the ending date.";
+
+if ($Mode eq "create" || $Mode eq "modify") { 
+  if ($URL && !(&ValidURL($URL))) {
+    push @ErrorStack,"The URL $URL is not valid.";
+  }
+  unless ($EndTime   && &ValidDate($EndDay,$ReverseAbrvMonth{$EndMonth},$EndYear)) {
+    push @ErrorStack,"The meeting ending date is not valid.";
+  }
+  unless ($StartTime && &ValidDate($StartDay,$ReverseAbrvMonth{$StartMonth},$StartYear)) {
+    push @ErrorStack,"The meeting starting date is not valid.";
+  }
+  if ($StartTime > $EndTime) {
+    push @ErrorStack,"The meeting starting date is after the ending date.";
+  }
 }
 
 my @CheckYears  = @SessionYears ;

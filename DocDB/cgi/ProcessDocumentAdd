@@ -353,7 +353,7 @@ foreach $securityID (@securities) {
 }
 
 if ($SessionTalkID) { # Add link to SessionTalk
-  $SessionTalkUpdate -> update ($documentID,$SessionTalkID);
+  $SessionTalkUpdate -> execute($documentID,$SessionTalkID);
 }  
 
 if ($EnhancedSecurity) {

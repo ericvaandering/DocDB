@@ -292,7 +292,7 @@ sub PrintSession ($) {
   print "<th>Topic(s)</th>\n";
   print "<th>Files</th>\n";
   print "<th>Length</th>\n";
-  print "<th>&nbsp;</th>\n";
+  print "<th>Notes</th>\n";
   print "</tr>\n";
 
   foreach my $SessionOrderID (@SessionOrderIDs) {
@@ -319,8 +319,16 @@ sub PrintSession ($) {
         print "<td>$SessionTalks{$SessionTalkID}{HintTitle}</td>\n";
         my @TopicHintIDs  = &FetchTopicHintsBySessionTalkID($SessionTalkID);
         my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID);
-        print "<td>\n"; &ShortAuthorListByID(@AuthorHintIDs); print "</td>\n";
-        print "<td>\n"; &ShortTopicListByID(@TopicHintIDs);   print "</td>\n";
+        my @TopicIDs  = ();
+        my @AuthorIDs = (); 
+        foreach my $TopicHintID (@TopicHintIDs) {
+          push @TopicIDs,$TopicHints{$TopicHintID}{MinorTopicID};
+        }
+        foreach my $AuthorHintID (@AuthorHintIDs) {
+          push @AuthorIDs,$AuthorHints{$AuthorHintID}{AuthorID};
+        }
+        print "<td><i>\n"; &ShortAuthorListByID(@AuthorIDs); print "</i></td>\n";
+        print "<td><i>\n"; &ShortTopicListByID(@TopicIDs);   print "</i></td>\n";
         print "<td>&nbsp</td>\n"; # Files, which can't exist
         print "<td align=right>",&TruncateSeconds($SessionTalks{$SessionTalkID}{Time}),"</td>\n";
         if ($SessionTalks{$SessionTalkID}{Note}) {

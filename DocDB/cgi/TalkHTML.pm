@@ -55,9 +55,9 @@ sub PrintSessionTalk($) {
   print "<td>"; &ShortFileListByRevID($DocRevID); print "</td>\n";
   print "<td align=right>$Time</td>\n";
   if ($Note) {
-    print "<td>",&TalkNoteLink,"</td>\n";
+    print "<td><b>",&TalkNoteLink,"</b></td>\n";
   } else {
-    print "<td>&nbsp;</td>\n";
+    print "<td>",&TalkNoteLink,"</td>\n";
   }  
   print "</tr>\n";
 }

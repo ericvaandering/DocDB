@@ -28,8 +28,6 @@ require "Security.pm";
 require "SecurityHTML.pm";
 require "TalkHTML.pm";
 
-require "Debug.pm"; #FIXME Remove
-
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
@@ -209,10 +207,6 @@ if ($mode eq "add" && ($SessionID||$ConferenceID)) {
 }
 
 &Unique(@TopicDefaults) ; # Make sure this list is unique
-
-if (@OpenSessionTalkIDs) {
-  &DBPrintLine("Found some talks to display:", @OpenSessionTalkIDs);
-}  
 
 &EndPage(@error_stack); # The user may have made mistakes, warn and exit
 
