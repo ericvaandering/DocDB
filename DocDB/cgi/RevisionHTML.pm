@@ -206,8 +206,8 @@ sub PrintRevisionInfo {
   }  
 
   if (&CanModify($DocumentID) && !$HideButtons) {
-    print "<hr width=\"90%\"/>\n";
-    print "<center><table cellpadding=10>\n";
+    print "<hr/>\n";
+    print "<center><table cellpadding=5>\n";
     print "<tr valign=top>";
     print "<td align=center width=33%>";
     &UpdateButton($DocumentID);
