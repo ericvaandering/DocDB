@@ -166,6 +166,27 @@ sub ConferencesTable {
   my @MinorTopicIDs = sort byTopic keys %MinorTopics; #FIXME special sort 
 
   my ($MajorID) = @ConferenceMajorIDs; 
+  print "<table border=1>\n";
+  foreach my $MinorID (@MinorTopicIDs) {
+    print "<tr>\n";
+    if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
+      my $topic_link = &ConferenceLink($MinorID,"short");
+      print "<td>$topic_link\n";
+    }  
+    print "</tr>\n";
+  }  
+  print "</table>";
+}
+
+sub ConferencesList {
+  require "Sorts.pm";
+  require "TopicSQL.pm";
+  
+  &SpecialMajorTopics;
+
+  my @MinorTopicIDs = sort byTopic keys %MinorTopics; #FIXME special sort 
+
+  my ($MajorID) = @ConferenceMajorIDs; 
   print "<ul>\n";
   foreach my $MinorID (@MinorTopicIDs) {
     if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {

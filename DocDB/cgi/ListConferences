@@ -25,7 +25,7 @@ print "<h3>Conferences in database:</h3>\n";
 my @MajorTopicIDs = keys %MajorTopics;
 my @MinorTopicIDs = sort byTopic keys %MinorTopics;
 
-&ConferencesTable;
+&ConferencesList;
 
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

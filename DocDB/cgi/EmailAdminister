@@ -79,8 +79,6 @@ if      ($Action eq "Delete") { # Delete user
   }
   &EndPage(@ErrorStack);
 
-    
-
   if ($NewPassword) { 
     srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
 

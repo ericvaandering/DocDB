@@ -23,6 +23,7 @@ require "Security.pm";
 require "AuthorSQL.pm";
 require "TopicSQL.pm";
 require "MiscSQL.pm";
+require "ResponseElements.pm";
 
 require "HTMLUtilities.pm";
 require "Sorts.pm";
@@ -30,11 +31,13 @@ require "Sorts.pm";
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
+&SpecialMajorTopics;
 &GetInstitutions;
 &GetDocTypes;
 &GetAuthors;
 &GetTopics;
 &GetJournals;
+&GetConferences;
 
 print $query->header;
 &DocDBHeader("Administer $Project DocDB"); # DocDBHeader
@@ -78,6 +81,7 @@ print "[ <a href=\"\#mintopic\">Minor Topics</a> ] ";
 print "[ <a href=\"\#majtopic\">Major Topics</a> ] ";
 print "[ <a href=\"\#doctype\">Document Types</a> ] ";
 print "[ <a href=\"\#journal\">Journals</a> ] ";
+print "[ <a href=\"\#conference\">Conferences</a> ] ";
 print "</center><p>";
 print "<hr><p>\n";
 
@@ -266,8 +270,38 @@ print "<p>\n";
 
 print "<p><hr>\n";
 
-### FIXME: Conferences
-### FIXME: Email Users (view and reset PW, maybe other script?)
+### Conference Administration
+
+print "<a name=\"conference\"><center><h4>Administer Conferences</h4></center>\n";
+
+print $query -> start_multipart_form('POST',"$ConferenceAdminister");
+print "<table cellpadding=10>\n";
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+#print "<td>\n"; &JournalSelect("full"); print "</td>\n";
+#print "<td>\n"; &JournalEntryBox;     print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n";
+&AdministratorPassword;
+print "&nbsp;";
+print $query -> submit (-value => "Change Conference Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<h3>Existing Conferences:</h3>\n";
+
+&ConferencesTable;
+
+print "<p><hr>\n";
+
 
 print "<p>\n";
 
