@@ -61,9 +61,16 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                    " TimeStamp timestamp,".
                    " index(EmailUserID))"); 
 
-  $EmailUserAdd             -> execute();
-  $EmailUserAdd2            -> execute();
-  $UsersGroupCreate         -> execute();
+  my $XRefCreate = $dbh -> prepare("create table DocXRef ".
+                   "(DocXRefID integer auto_increment primary key,".
+                   " DocRevID integer, DocumentID integer,".
+                   " TimeStamp timestamp,".
+                   " index(DocRevID),index(DocumentID))"); 
+
+  $EmailUserAdd     -> execute();
+  $EmailUserAdd2    -> execute();
+  $UsersGroupCreate -> execute();
+  $XRefCreate       -> execute();
   
 }
 
