@@ -33,6 +33,15 @@ my $Username      = $params{admuser};
 
 @error_stack = ();
 
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
+
+unless ($dbh) {
+  push @error_stack,"Unable to connect to the database. Check the password.";
+}         
+if (@error_stack) {
+  &EndPage(@error_stack);
+}
+
 unless ($DocumentID) {
   push @error_stack,"You are must supply a document number to delete.";
 }  
@@ -49,17 +58,6 @@ if (@error_stack) {
 
 $Directory = &GetDirectory($DocumentID);
 chop $Directory;chop $Directory;chop $Directory;chop $Directory; # 3 numbers plus /
-
-$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
-
-unless ($dbh) {
-  push @error_stack,"Unable to connect to the database. Check the password.";
-}         
-if (@error_stack) {
-  &EndPage(@error_stack);
-}
-
-
 
 my $revision_list   = $dbh -> prepare("select DocRevID from DocumentRevision where DocumentID=?");
 my $document_delete = $dbh -> prepare("delete from Document         where DocumentID=?");
