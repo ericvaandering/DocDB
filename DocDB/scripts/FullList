@@ -1,49 +1,70 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+# Description: Invoke with "-u username" which will generate an HTML list of  
+#              all the documents that user is allowed to see. Redirect to a 
+#              file. This script should be run regularly by cron.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
 #
 
-use Benchmark;
 use DBI;
-
-$StartTime = new Benchmark;
+use Getopt::Long;
 
 require "CGIInclude.pm";
 
 require "DocDBGlobals.pm";
-require "Security.pm";
-require "MySQLAccess.pm";
 require "ResponseElements.pm";
+require "Security.pm";
+
+require "AuthorSQL.pm";
+require "SecuritySQL.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
+
 require "HTMLUtilities.pm";
+require "Sorts.pm";
 
-$remote_user = "btev";
+&GetOptions("u:s" => \$UserName);
+$remote_user = $UserName;
 
-&BTeVHeader("BTeV Document List","Document List");
+&DocDBHeader("$Project Document List","Document List");
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&GetAllDocuments;
 &GetAuthors;
 &GetSecurityGroups;
 
-print "<center><table cellpadding=3>\n";
-&DocumentSummary(0);
+### Get all revisions and documents
 
-foreach $document (@DocumentIDs) {
-  unless (&CanAccess($document,$Documents{$document}{NVER})) {next;}
-  &DocumentSummary($document);
+&GetAllDocuments;  # For very 
+&GetAllRevisions;  # long lists
+
+### Sort
+
+my @SortedDocuments = reverse sort DocumentByRevisionDate @DocumentIDs;
+
+### Print summary information
+
+print "<center><table cellpadding=3>\n";
+
+&DocumentSummary(0);
+my $NumDoc = 0;
+
+foreach $DocumentID (@SortedDocuments) {
+  unless ($DocumentID) {next;}
+  $Version = &LastAccess($DocumentID);
+  if ($Version == -1) {next;}
+  &DocumentSummary($DocumentID,$Mode,$Version);
+  ++$NumDoc;
 }
+
 print "</table></center>\n";
 print "<p>\n";
 
-print "Return to the <a href=DocumentDatabase>main page</a>.\n";
-print "<p>\n";
+### Statistics
 
-$EndTime  = new Benchmark;
-$TimeDiff = timediff($EndTime,$StartTime);
-print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
+print "<p><b>Number of documents found: $NumDoc</b><p>\n";
 
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
-
-
-
+&DocDBNavBar();
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
