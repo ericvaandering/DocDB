@@ -53,6 +53,13 @@ $MeetingWindow     = 7;        # Days before and after meeting to preselect
 $MeetingFiles      = 3;        # Number of upload boxes on meeting short form
 
 $EnchancedSecurity = 0;        # Separate lists for view, modify
+$FirstYear        = 2000;      # Earliest year that documents can be created
+
+# Major topic names for "meetings" and "conferences". Each can be a list
+# The first item in the two lists are accessed by ListMeetings and ListConferences
+
+@MeetingMajorTopics    = ("Collaboration Meetings","Other Meetings");
+@ConferenceMajorTopics = ("Conferences");
 
 # Major topic names for "meetings" and "conferences". Each can be a list
 # The first item in the two lists are accessed by ListMeetings and ListConferences

@@ -26,7 +26,7 @@ sub DateTimePullDown {
              "Jul","Aug","Sep","Oct","Nov","Dec");
 
   my @years = ();
-  for ($i = 1994; $i<=$year; ++$i) { # 1994 - current year
+  for ($i = $FirstYear; $i<=$year; ++$i) { # $FirstYear - current year
     push @years,$i;
   }  
 
@@ -65,7 +65,7 @@ sub StartDatePullDown {
              "Jul","Aug","Sep","Oct","Nov","Dec");
 
   my @years = ();
-  for ($i = 1994; $i<=$year+2; ++$i) { # 1994 - current year
+  for ($i = $FirstYear; $i<=$year+2; ++$i) { # $FirstYear - current year
     push @years,$i;
   }  
 
@@ -90,7 +90,7 @@ sub EndDatePullDown {
              "Jul","Aug","Sep","Oct","Nov","Dec");
 
   my @years = ();
-  for ($i = 1994; $i<=$year+2; ++$i) { # 1994 - current year
+  for ($i = $FirstYear; $i<=$year+2; ++$i) { # $FirstYear - current year
     push @years,$i;
   }  
 

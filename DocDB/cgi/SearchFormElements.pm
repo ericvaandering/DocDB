@@ -187,7 +187,7 @@ sub DateRangePullDown { # Two sets of pulldowns for defining a date range
                       "Jul","Aug","Sep","Oct","Nov","Dec");
 
   my @years = ("----");
-  for ($i = 1994; $i<=$year; ++$i) { # 1994 - current year
+  for ($i = $FirstYear; $i<=$year; ++$i) { # $FirstYear - current year
     push @years,$i;
   }  
 
