@@ -50,6 +50,7 @@ $HomeLastDays         = 7;     # Number of days for last modified on home page
 $HomeMaxDocs          = 50;    # Maximum number of documents on home page
 $MeetingWindow        = 7;     # Days before and after meeting to preselect
 $MeetingFiles         = 3;     # Number of upload boxes on meeting short form
+$InitialSession       = 5;     # Number of initial sessions when making meeting
 
 $FirstYear            = 2000;  # Earliest year that documents can be created
 
@@ -111,6 +112,10 @@ $AddFilesForm          = $cgi_root."AddFilesForm";
 
 $ConferenceAddForm     = $cgi_root."ConferenceAddForm";
 $ConferenceAdd         = $cgi_root."ConferenceAdd";
+
+$MeetingCreate         = $cgi_root."MeetingCreate";
+$MeetingView           = $cgi_root."MeetingView";
+$MeetingModify         = $cgi_root."MeetingModify";
 
 $AdministerForm        = $cgi_root."AdministerForm";
 $AuthorAdminister      = $cgi_root."AuthorAdminister";

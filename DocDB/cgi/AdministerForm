@@ -17,6 +17,8 @@ require "FormElements.pm";
 require "AuthorElements.pm";
 require "JournalHTML.pm";
 require "DocTypeHTML.pm";
+require "TopicHTML.pm";
+require "MeetingHTML.pm";
 require "Scripts.pm";
 require "Security.pm";
 

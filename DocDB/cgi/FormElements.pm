@@ -1,11 +1,14 @@
 #
 #        Name: FormElements.pm
 # Description: Various routines which supply input forms for document 
-#              addition, etc.
+#              addition, etc. This file is deprecated. Routines are 
+#              being moved out into the various *HTML.pm files.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 #
+
+require "TopicHTML.pm";
 
 sub DaysPulldown {
   my @Days = (1,2,3,5,7,10,14,20,30,45,60,90,120,180 );
@@ -486,38 +489,6 @@ sub DocTypeButtons {
   print "Document type:</a></b><br> \n";
   print $query -> radio_group(-columns => 3, -name => "doctype", 
                               -values => \%short_type, -default => "-");
-};
-
-sub ShortDescriptionBox {
-  print "<b><a ";
-  &HelpLink("shortdescription");
-  print "Short Description:</a></b><br> \n";
-  print $query -> textfield (-name => 'short', 
-                             -size => 20, -maxlength => 40);
-};
-
-sub LongDescriptionBox {
-  print "<b><a ";
-  &HelpLink("longdescription");
-  print "Long Description:</a></b><br> \n";
-  print $query -> textfield (-name => 'long', 
-                             -size => 40, -maxlength => 120);
-};
-
-sub LocationBox {
-  print "<b><a ";
-  &HelpLink("location");
-  print "Location:</a></b><br> \n";
-  print $query -> textfield (-name => 'location', 
-                             -size => 20, -maxlength => 64);
-};
-
-sub ConferenceURLBox {
-  print "<b><a ";
-  &HelpLink("confurl");
-  print "URL:</a></b><br> \n";
-  print $query -> textfield (-name => 'url', 
-                             -size => 40, -maxlength => 64);
 };
 
 sub NameEntryBox {

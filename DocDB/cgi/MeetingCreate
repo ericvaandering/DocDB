@@ -11,26 +11,109 @@ use CGI;
 use DBI;
 
 require "DocDBGlobals.pm";
+require "Scripts.pm";
+
+require "HTMLUtilities.pm";
+require "TopicHTML.pm";
+require "MeetingHTML.pm";
+require "TopicSQL.pm";
+
+require "FormElements.pm";
 
 $query = new CGI;  # Global for subroutines
 
 print $query->header;
 &DocDBHeader("Create a Meeting");
+&HelpPopupScript;
 
 # %params = $query -> Vars;
 
 # @ErrorStack = ();
 # @WarnStack  = ();
 
-#$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 #unless ($dbh) {
 #  push @ErrorStack,$Msg_AdminNoConnect;
 #}         
 #&EndPage(@ErrorStack);
 
-&WarnPage(@WarnStack);
-&EndPage(@ErrorStack);
+&GetTopics;
+
+print $query -> start_multipart_form('POST',"$MeetingModify");
+print "<table cellpadding=10 border=1>\n";
+
+
+print "<tr valign=top>\n";
+print "<td>\n"; &MajorGatheringSelect; print "</td>\n";
+print "<td width=40%>\n";
+ print "<table>\n";
+ print "<tr valign=top>\n";
+ print "<td>Only select a Major Topic and fill in the descriptions if
+ you want to make a new topic.\n";
+ print "<a ";
+ &HelpLink("meetingtopic");
+ print "Click for an explanation.</a> \n";
+ print "</td>\n";
+ print "</tr>\n";
+ print "<tr valign=top>\n";
+ print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
+ print "</tr>\n";
+ print "<tr valign=top>\n";
+ print "<td>\n"; &LongDescriptionBox;      print "</td>\n";
+ print "</tr>\n";
+ print "</table>\n";
+print "</td>\n";
+print "<td colspan=2>\n";
+ print "<table>\n";
+
+ print "<tr valign=top>\n";
+ print "<td>\n"; &LocationBox;          print "</td>\n";
+ print "</tr>\n";
+
+ print "<tr valign=top>\n";
+ print "<td>\n"; &ConferenceURLBox;     print "</td>\n";
+ print "</tr>\n";
+
+ print "<tr valign=top>\n";
+ print "<td>\n"; &StartDatePullDown;    print "</td>\n";
+ print "</tr>\n";
+
+ print "<tr valign=top>\n";
+ print "<td>\n"; &EndDatePullDown;      print "</td>\n";
+ print "</tr>\n";
+
+ print "</table>\n";
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n"; &ConferenceIntroBox;   print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n"; &SessionEntryForm;   print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n";
+print $query -> submit (-value => "Create New Meeting");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<center><h4>Existing Meetings and Conferences</h4></center>\n";
+
+&GatheringTable;
+
+print "<p><hr>\n";
+
+print "<p>\n";
+
+#&WarnPage(@WarnStack);
+#&EndPage(@ErrorStack);
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

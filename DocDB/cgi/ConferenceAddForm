@@ -13,6 +13,8 @@ use DBI;
 
 require "DocDBGlobals.pm";
 require "FormElements.pm";
+require "TopicHTML.pm";
+require "MeetingHTML.pm";
 require "Scripts.pm";
 require "ResponseElements.pm";
 require "HTMLUtilities.pm";

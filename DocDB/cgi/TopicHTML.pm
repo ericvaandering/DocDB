@@ -176,17 +176,18 @@ sub TopicsTable {
 sub GatheringTable {
   require "Sorts.pm";
   require "TopicSQL.pm";
+  require "ResponseElements.pm";
   
   my @MinorTopicIDs = sort byTopic keys %MinorTopics; #FIXME special sort 
 
   print "<table cellpadding=4>\n";
 
   print "<tr>\n";
-  print "<th>Name</th>\n";
-  print "<th>Full Name</th>\n";
+  print "<th>Description</th>\n";
+  print "<th>Long Description</th>\n";
   print "<th>Location</th>\n";
   print "<th>Dates</th>\n";
-  print "<th>Homepage</th>\n";
+  print "<th>URL</th>\n";
   print "</tr>\n";
   
   foreach my $MajorID (@GatheringMajorIDs) { 
@@ -239,6 +240,8 @@ sub ConferencesList {
 }
 
 sub MajorGatheringSelect (;$) { # Scrolling selectable list for major topics with dates
+  require "Scripts.pm";
+  
   my ($Mode) = @_; 
   
   print "<b><a ";
@@ -322,5 +325,21 @@ sub MeetingsTable {
   print "</ul></td></tr>";
   print "</table>\n";
 }
+
+sub ShortDescriptionBox {
+  print "<b><a ";
+  &HelpLink("shortdescription");
+  print "Short Description:</a></b><br> \n";
+  print $query -> textfield (-name => 'short', 
+                             -size => 20, -maxlength => 40);
+};
+
+sub LongDescriptionBox {
+  print "<b><a ";
+  &HelpLink("longdescription");
+  print "Long Description:</a></b><br> \n";
+  print $query -> textfield (-name => 'long', 
+                             -size => 40, -maxlength => 120);
+};
 
 1;
