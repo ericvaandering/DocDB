@@ -24,6 +24,8 @@
 
 sub SecurityScroll (%) {
   require "SecuritySQL.pm";
+  require "Sorts.pm";
+  require "Scripts.pm";
   
   my (%Params) = @_;
   

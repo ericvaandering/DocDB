@@ -1,6 +1,6 @@
 sub HTMLPrintEnv {
   print "<table>\n"; 
-  foreach my $key (keys %ENV) {
+  foreach my $key (sort keys %ENV) {
     print "<tr><td>$key<td>$ENV{$key}\n";
   }  
   print "</table>\n"; 
@@ -8,7 +8,7 @@ sub HTMLPrintEnv {
 
 sub HTMLPrintParams {
   print "<table>\n"; 
-  foreach my $key (keys %params) {
+  foreach my $key (sort keys %params) {
     print "<tr><td>$key<td>$params{$key}\n";
   }  
   print "</table>\n"; 
@@ -16,7 +16,7 @@ sub HTMLPrintParams {
 
 sub HTMLPrintKeys {
   print "<table>\n"; 
-  foreach my $key (keys %params) {
+  foreach my $key (sort keys %params) {
     print "<tr><td>$key\n";
   }  
   print "</table>\n"; 

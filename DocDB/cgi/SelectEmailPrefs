@@ -38,6 +38,7 @@ require "SearchFormElements.pm";
 require "TopicSQL.pm";
 require "AuthorSQL.pm";
 require "NotificationSQL.pm";
+require "SecuritySQL.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
@@ -111,14 +112,23 @@ if ($Mode eq "newuser") {
     my $Salt = ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]).
                ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]);
 
+# Insert the user and verify them
+
     my $EncryptedPassword = crypt($Password,$Salt);
     my $UserInsert        = $dbh -> prepare(
-       "insert into EmailUser (EmailUserID,Username,Password) ".
-       "values                (0,          ?,       ?)");
-       $UserInsert -> execute($UserName,$EncryptedPassword); 
+       "insert into EmailUser (EmailUserID,Username,Password,Verified) ".
+       "values                (0,          ?,       ?,       1)");
+       $UserInsert -> execute($UserName,$EncryptedPassword);
 
-    print "User <b>$UserName</b> created. Do not forget your password, there is no way to
-    retrieve it.<p>\n"; 
+# Make the user part of the group who's httpd password they've used.
+
+    my $EmailUserID =  $UserInsert -> {mysql_insertid}; # Works with MySQL only
+    my $GroupID = &FetchSecurityGroupByName($remote_user); 
+    my $EmailUserInsert = $dbh -> prepare("insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) values (0,?,?)"); 
+       $EmailUserInsert -> execute($EmailUserID,$GroupID);
+
+    print "User <b>$UserName</b> created as a member of $remote_user. 
+           Do not forget your password, there is no way to retrieve it.<p\>\n"; 
     $Mode = "update"; # Now display the form to update  
   }
 }
@@ -135,7 +145,11 @@ if ($Password) {
   $EmailUserID = &ValidateEmailUser($UserName,$Password);
 } elsif ($Digest) {
   $EmailUserID = &ValidateEmailUserDigest($UserName,$Digest);
-}  
+} elsif ($UserValidation eq "certificate") {
+  require "CertificateUtilities.pm";
+  $EmailUserID = &FetchEmailUserIDByCert();
+}    
+
 
 # print "Mode: $Mode<br>\n";
   
@@ -143,7 +157,7 @@ if ($EmailUserID) {
   &FetchEmailUser($EmailUserID);
   $Digest = &EmailUserDigest($EmailUserID);
 } else {
-  push @ErrorStack,"The username/password pair you entered is invalid. Please try again.";
+  push @ErrorStack,"The username/password pair or certificate you supplied is invalid. Please try again or contact and administrator.";
   &ErrorPage(@ErrorStack);
   &LoginEmailUserForm;
   print "<p>\n";
@@ -165,17 +179,22 @@ if (@WarnStack) {  # The user made one or more mistakes, warn and exit
 if ($Mode eq "update") {
 
 # Collect relevant parameters for user preferences
-
   my $Name     = $params{name};
   my $Email    = $params{email};
   my $HTML     = $params{html};
-  my $UpdateUserInfo = $dbh -> prepare("update EmailUser set Name=?,EmailAddress=?,PreferHTML=? where EmailUserID=?");
 
 # Update DB
 
-  $UpdateUserInfo -> execute($Name,$Email,$HTML,$EmailUserID);
+  if ($UserValidation eq "certificate") {
+    my $UpdateUserInfo = $dbh -> prepare("update EmailUser set PreferHTML=? where EmailUserID=?");
+    $UpdateUserInfo -> execute($HTML,$EmailUserID);
+  } else {
+    my $UpdateUserInfo = $dbh -> prepare("update EmailUser set Name=?,EmailAddress=?,PreferHTML=? where EmailUserID=?");
+    $UpdateUserInfo -> execute($Name,$Email,$HTML,$EmailUserID);
+  } 
 
-  if ($NewPass && $ConfNewPass && ($NewPass eq $ConfNewPass)) {
+  if ($NewPass && $ConfNewPass && ($NewPass eq $ConfNewPass) 
+               && ($UserValidation ne "certificate")) {
     srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
 
     my $Salt = ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]).

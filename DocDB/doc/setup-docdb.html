@@ -31,8 +31,10 @@ previous page</a> if you haven't already.
      it is not an actual environmental variable. (If you installed from the CVS
      repository, you can use the command <tt>cvs update</tt> to update the
      running software here.)
-<li> create a .htaccess file in $script_root <br>
-     Here is a sample .htaccess file:
+<li>If you are using HTTP Basic Authorization, create a .htaccess file in
+    $script_root. If you are using client certificate authorization, you can
+    skip this step.<br/>
+    Here is a sample .htaccess file:
 <pre>
        AuthType Basic
        AuthName "My Document Database"
@@ -45,7 +47,8 @@ previous page</a> if you haven't already.
      any web-accessable directory.</font> Also, the POST option <font
      color="red">must</font> be present or DocDB will not work (most of the form
      posts to cgi scripts will fail). 
-<li> cp -r DocDB/html  $file_root/Static, 
+<li> Setup the documentation and Cascading Style Sheets with the command <br/>
+     <tt>cp -r DocDB/html  $file_root/Static</tt><br/> 
      where $file_root is defined in ProjectGlobals.pm. <br>
 <li> Set permissions on $file_root. 
      <ul>
@@ -77,14 +80,76 @@ CGIInclude.pm.
     <li> Copy CGIInclude.pm from the scripts/ directory and edit it to point at
          your main installation. This is needed to pick up the DocDB .pm files.
     </ol>
-<li> Edit DodDB/sql/CreateDatabase.SQL to specify your own MajorTopics, 
-     Institutions, and SecurityGroups.
-<li> mysql SomeDocDB -u docdbadm -p < DodDB/sql/CreateDatabase.SQL 
+<li> mysql SomeDocDB -u docdbadm -p < DocDB/sql/CreateDatabase.SQL 
+<li>If you are using client certificate based authorization:</li>
+ <ol>
+  <li>Edit the apache config files to require a client certificate for the
+      $cgi_root/$web_root directory. (See xxxx for an explanation of
+      this.)</li>
+  <li>Make sure the client certificates you are using are from a CA you trust.</li>
+  <li>As the administrator, import your certificate into your web browser if you
+      haven't done so.</li>
+  <li>Point your web browser at <tt>$web_root/DocumentDatabase</tt>. Follow the
+      link to request access and request access in the docdbadm (or DocDBAdm)
+      group and whatever other groups you would like to access.</li>
+  <li>Now you have to verify that you are an administrator. The easiest way to
+      do this is to start mysql in shell mode (<b>mysql -h xxxx -u docdbadm -p
+      SomeDocDB</b>), then do the following:<br/>
+        <tt>mysql> select  EmailUserID,Name from EmailUser;</tt><br/>
+      and find the EmailUserID of the desired administrator (should be "1"
+      unless you've done something strange).<br/>
+        <tt>mysql> update EmailUser set Verified=1 where EmailUserID=x;</tt><br/> 
+      where "x" is the number from the previous step (1).
+  <li>Again, point your web browser at    <tt>$web_root/DocumentDatabase</tt>.
+      You should no longer see a message indicating that you are need to
+      request access. If you follow the "Create or Change Documents..." link,
+      you should have access to all adminstration functions.
+ </ol>
+<li> At this point, you can verify that DocDB is running properly. Point your
+     web browser at  <tt>$web_root/DocumentDatabase</tt> and log in as
+     administrator if necessary. From here you can follow the "Create or Change
+     Documents..." link, where you should have access to all adminstrative
+     functions. Use the administrator functions to create topics, authors,
+     other security groups, etc.
+ 
 <li> mkdir $file_root/Static/Lists
 <li> mkdir $file_root/Static/Lists/<em>group-name</em> for every 
      permission group defined in DocDB.
 <li> Setup the listing and notification 
      <a href=notification.html>cron jobs</a>
+<li> Customize CSS files:<br/>The appearance of many pages in DocDB is
+     controlled by CSS (Cascading Style Sheets). The <tt>.css</tt> files reside
+     in <tt>$file_root/Static/css</tt>. The naming scheme is as follows: 
+    
+     <table cellpadding=3>
+       <tr>
+        <td>DocDB.css</td>
+        <td>The CSS file with global and common settings for all pages.</td>    
+       </tr><tr>
+        <td>DocDB_IE.css</td>
+        <td>Changes to the master setting for Internet Explorer, which has
+            broken CSS support.</td>
+       </tr><tr>
+        <td>DocDBSomeScript.css</td>
+        <td>CSS unique to a particular page</td>
+       </tr><tr>
+        <td>DocDBSomeScript_IE.css</td>
+        <td>Changes to the CSS for a page needed by IE</td>
+       </tr>
+     </table>
+     
+     To any of these scripts you can make your own changes. Append
+     <q>MyProject</q> to the original name of the CSS file and it will be
+     included <i>after</i> the DocDB defaults, changing any settings.
+     <q>MyProject</q> is what you set $ShortProject to in ProjectGlobals.pm.
+     For example, if your project is "Joe" and you want to change the settings
+     for the IE only CSS for the ShowDocument page, create a file
+     <tt>JoeDocDBShowDocument_IE.css</tt> and place it in the
+     <tt>$file_root/Static/css</tt> directory.<p>
+     See <tt>html/css/ProjectDocDB.css.example</tt> for examples of what might
+     be changed. Note that not all pages have CSS files and that at this time,
+     and that use of CSS in DocDB is new but expanding.</li>
+             
 </ol>
 
 <p>

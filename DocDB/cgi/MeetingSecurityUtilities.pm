@@ -22,6 +22,7 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 sub CanAccessMeeting ($) {
+  require "Security.pm";
   require "SecuritySQL.pm";
   require "MeetingSecuritySQL.pm";
   
@@ -40,14 +41,17 @@ sub CanAccessMeeting ($) {
     return $CanAccessMeeting;
   }
     
-  my $SecurityGroupID = &FetchSecurityGroupByName($remote_user);
+  my @UsersGroupIDs = &FindUsersGroups();
 
-  foreach my $MeetingSecurityID (@MeetingSecurityIDs) {
-    my $MeetingGroupID = $MeetingSecurities{$MeetingSecurityID}{GroupID};
-    push @MeetingGroupIDs,$MeetingGroupID; # Needed later by subordinates
-    if ($SecurityGroupID == $MeetingGroupID) { 
-      $CanAccessMeeting = 1;
-    }  
+  foreach my $UserGroupID (@UsersGroupIDs) {
+    foreach my $MeetingSecurityID (@MeetingSecurityIDs) {
+      my $MeetingGroupID = $MeetingSecurities{$MeetingSecurityID}{GroupID};
+      push @MeetingGroupIDs,$MeetingGroupID; # Needed later by subordinates
+      if ($UserGroupID == $MeetingGroupID) { 
+	$CanAccessMeeting = 1;
+	last;
+      }  
+    }
   }
 
   if ($CanAccessMeeting) {
@@ -59,22 +63,25 @@ sub CanAccessMeeting ($) {
   &GetSecurityGroups(); # Pull out the big guns
   
   my @HierarchyIDs = keys %GroupsHierarchy;
-  foreach my $HierarchyID (@HierarchyIDs) {
-    $ParentID = $GroupsHierarchy{$HierarchyID}{Parent}; 
-    $ChildID  = $GroupsHierarchy{$HierarchyID}{Child}; 
-    if ($ParentID == $SecurityGroupID) { # I am the parent
-      foreach my $MeetingGroupID (@MeetingGroupIDs) { 
-        if ($MeetingGroupID == $ChildID) {
-          $CanAccessMeeting = 1;                           
-        }  
-      }
-    }  
+  foreach my $UserGroupID (@UsersGroupIDs) { # Groups user belongs to
+    foreach my $HierarchyID (@HierarchyIDs) {
+      $ParentID = $GroupsHierarchy{$HierarchyID}{Parent}; 
+      $ChildID  = $GroupsHierarchy{$HierarchyID}{Child}; 
+      if ($ParentID == $UserGroupID) { # I am the parent
+	foreach my $MeetingGroupID (@MeetingGroupIDs) { 
+          if ($MeetingGroupID == $ChildID) {
+            $CanAccessMeeting = 1;
+	    last;
+          }  
+	}
+      }  
+    }
   }
-
   return $CanAccessMeeting;
 }
 
 sub CanModifyMeeting ($) {
+  require "Security.pm";
   require "SecuritySQL.pm";
   require "MeetingSecuritySQL.pm";
 
@@ -97,15 +104,18 @@ sub CanModifyMeeting ($) {
     return $CanModifyMeeting;
   }
     
-  my $SecurityGroupID = &FetchSecurityGroupByName($remote_user);
+  my @UsersGroupIDs = &FindUsersGroups();
 
-  foreach my $MeetingModifyID (@MeetingModifyIDs) {
-    my $MeetingGroupID = $MeetingModify{$MeetingModifyID}{GroupID};
-    push @MeetingGroupIDs,$MeetingGroupID; # Needed later by subordinates
-    if ($SecurityGroupID == $MeetingGroupID) {
-      $CanModifyMeeting = 1;
-    }  
-  }
+  foreach my $UserGroupID (@UsersGroupIDs) { # Groups user belongs to
+    foreach my $MeetingModifyID (@MeetingModifyIDs) {
+      my $MeetingGroupID = $MeetingModify{$MeetingModifyID}{GroupID};
+      push @MeetingGroupIDs,$MeetingGroupID; # Needed later by subordinates
+      if ($UserGroupID == $MeetingGroupID) {
+	$CanModifyMeeting = 1;
+	last;
+      }  
+    }
+  }  
 
   if ($CanModifyMeeting || !($SuperiorsCanModify)) {
     return $CanModifyMeeting; # Either approved or can't be anymore
@@ -116,16 +126,19 @@ sub CanModifyMeeting ($) {
   &GetSecurityGroups(); # Pull out the big guns
   
   my @HierarchyIDs = keys %GroupsHierarchy;
-  foreach my $HierarchyID (@HierarchyIDs) {
-    $ParentID = $GroupsHierarchy{$HierarchyID}{Parent}; 
-    $ChildID  = $GroupsHierarchy{$HierarchyID}{Child}; 
-    if ($ParentID == $SecurityGroupID) { # I am the parent
-      foreach my $MeetingGroupID (@MeetingGroupIDs) { 
-        if ($MeetingGroupID == $ChildID) {
-          $CanModifyMeeting = 1;                           
-        }  
-      }
-    }  
+  foreach my $UserGroupID (@UsersGroupIDs) { # Groups user belongs to
+    foreach my $HierarchyID (@HierarchyIDs) {
+      $ParentID = $GroupsHierarchy{$HierarchyID}{Parent}; 
+      $ChildID  = $GroupsHierarchy{$HierarchyID}{Child}; 
+      if ($ParentID == $UserGroupID) { # I am the parent
+	foreach my $MeetingGroupID (@MeetingGroupIDs) { 
+          if ($MeetingGroupID == $ChildID) {
+            $CanModifyMeeting = 1;
+	    last;
+          }  
+	}
+      } 
+    }   
   }
 
   return $CanModifyMeeting;
@@ -134,7 +147,7 @@ sub CanModifyMeeting ($) {
 sub CanCreateMeeting { # Is the user allowed to create a new meeting?
   require "Security.pm";
   
-  if ($Public) {
+  if ($Public || $ReadOnly) {
     return 0; 
   }
     

@@ -351,10 +351,12 @@ it here.
 <key>description</key>
 <title>Description</title>
   <text>
-This is a short description of each file. This description will appear in the
-hyperlink in the document summary. For instance, you might describe a .ppt file
-as "PowerPoint of the conference talk" and a .ps file as "The proceedings for
-the conference." The description is optional, but recommended.
+This is a short description of each file which will be displayed alongside the
+filename. This description will appear in the hyperlink in the document
+summary. For instance, you might describe a .ppt file as "PowerPoint of the
+conference talk" and a .ps file as "The proceedings for the conference." The
+description is optional, but recommended. If you don't type a description, the
+filename will be used by itself.
   </text>
  </entry>
 
@@ -712,10 +714,9 @@ user should reset the password as soon as you have given it to them.
 
  <entry>
   <key>emailuser</key>
-  <title>Email User</title>
+  <title>Username</title>
   <text>
-This is the username of someone who has signed up to receive e-mail
-notifications.
+This is the username of someone who has signed up for a personal account.
   </text>
  </entry>
 
@@ -994,6 +995,37 @@ or may not be the same as the web username and password.
   <text>
    You cannot change the files in the document, but you can enter new descriptions
    and change which ones are listed as "Main."
+  </text>
+ </entry>
+ 
+ <entry>
+  <key>usergroups</key>
+  <title>Groups the user belongs to</title>
+  <text>
+   This is the list of groups the user belongs to. If you are using a user based 
+   authentication method such as certificates, this controls which documents a 
+   user is allowed to see, if they are allowed to create documents, or administer
+   the database. If you are using group or user authentication, it makes sure users
+   get e-mail only for documents they are allowed to access.
+  </text>
+ </entry>
+ 
+ <entry>
+  <key>reqgroups</key>
+  <title>Requested Groups</title>
+  <text>
+   Select all the groups whose documents you wish to have access to. 
+   Your request will be checked and processed by an adminstrator.
+  </text>
+ </entry>
+ 
+ <entry>
+  <key>certnote</key>
+  <title>Note for access</title>
+  <text>
+   Enter a note to the administrator. Identify yourself and your reasons for 
+   requesting access if you think you should, otherwise your request may be 
+   rejected.
   </text>
  </entry>
  

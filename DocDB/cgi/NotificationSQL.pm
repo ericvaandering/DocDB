@@ -35,7 +35,7 @@ sub FetchEmailUser($) {
   my ($EmailUserID,$Username,$Password,$Name,$EmailAddress,$PreferHTML,$CanSign);
 
   my $UserFetch   = $dbh -> prepare(
-    "select EmailUserID,Username,Password,Name,EmailAddress,PreferHTML,CanSign ".
+    "select EmailUserID,Username,Password,Name,EmailAddress,PreferHTML,CanSign,Verified,AuthorID ".
     "from EmailUser where EmailUserID=?");
   
   if ($EmailUser{$eMailUserID}{EmailUserID}) {
@@ -44,7 +44,7 @@ sub FetchEmailUser($) {
   
   $UserFetch -> execute($eMailUserID);
   
-  ($EmailUserID,$Username,$Password,$Name,$EmailAddress,$PreferHTML,$CanSign) = $UserFetch -> fetchrow_array;
+  ($EmailUserID,$Username,$Password,$Name,$EmailAddress,$PreferHTML,$CanSign,$Verified,$AuthorID) = $UserFetch -> fetchrow_array;
   
   $EmailUser{$EmailUserID}{EmailUserID}  = $EmailUserID;
   $EmailUser{$EmailUserID}{Username}     = $Username;
@@ -53,6 +53,8 @@ sub FetchEmailUser($) {
   $EmailUser{$EmailUserID}{EmailAddress} = $EmailAddress;
   $EmailUser{$EmailUserID}{PreferHTML}   = $PreferHTML;
   $EmailUser{$EmailUserID}{CanSign}      = $CanSign;
+  $EmailUser{$EmailUserID}{Verified}     = $Verified;
+  $EmailUser{$EmailUserID}{AuthorID}     = $AuthorID;
   
   return $EmailUser{$EmailUserID}{EmailUserID};
 }

@@ -19,6 +19,24 @@ File permissions must be set correctly for the webserver to download
 documents into $file_root.  
 See <a href=setup-docdb.html>customizing DocDB</a> for more.
 <p>
+
+<h2>DocDB Security Models</h2>
+
+Currently DocDB has two possible security models. You have to pick one for each
+instance. (However, two instances may share the same MySQL data and document
+files. More on this later.)<p>
+
+<h3>Group based HTTP Basic Authorization</h3>
+
+This is the easiest and simplest method of authorization. You have a number of
+<q>groups</q>
+which actually correspond to <b>users</b> in the HTTP authorization scheme.
+Access to the DocDB scripts is granted to each group with a unique password.
+DocDB controls which meta-info is shown to users based on the permissions of the
+group. Access to files within documents is controlled by requiring the username
+and password for a valid group. You should have at least two groups, one for those uploading and viewing
+documents and one for administering the database.<p/>
+
 If you are using an apache webserver, web permissions are controlled 
 with the .htaccess file.  The .htaccess file is placed in the DocDB 
 cgi-bin diretory.  
@@ -43,9 +61,41 @@ To add a user to an existing password file, use this command:
  To change the password of an existing user, use the command above.  Users
 may be copied and pasted between .xxxpasswd files.
 <p>
-All instances of DocDB maintained by the CD Web group should have the
-docdbadm and cdweb usernames.
-<p>
+
+<h3>Certificate based Authorization</h3>
+
+In this access method, access to DocDB scripts is granted not by a shared group
+password, but by an X.509 certificate you import into your web-browser. This
+certificate positively identifies you. Each user with a certificate has an
+entry, within DocDB, which determines which groups they belong too. While
+management of these certificates and user education is an additional work-load,
+there are a number of advantages too:
+<ul>
+ <li>Access can be revoked for a single user without changing a shared group
+ password.</li>
+ <li>A user can be a member of multiple groups which don't overlap (In DocDB,
+ one group can be a sub-group of another, but to get access to documents from
+ two different sub-groups without quitting the browser, a user would have to
+ know the password for a group that was the <q>master</q> group of both
+ sub-groups.</li>
+ <li>The user is positively identified and the password cannot be
+ <q>sniffed.</q></li>
+</ul>
+Read access to <b>files</b> within documents is still controlled by shared group
+passwords.  
+
+<h3>Multi-mode access</h3>
+
+Each instance must have an access method, but in the same way that you can set
+up a public area for publicly accessible documents, you can set up certificate
+and HTTP Basic areas. Either one can be made <q>read-only,</q> but in practice
+you'd want to set up the HTTP authorization as read-only. This allows you to
+require users uploading documents or changing meta-info to be authorized by a
+secure certificate, but allows users without a certificate (e.g. travelers
+using an Internet Cafe) to have read-only access to the data. 
+
+<h2>Administrators and Groups</h2>
+
 The DocDB administrator (docdbadm in our case) must then log on to the DocDB
 instance and add the users created in the .htpasswd file.  These users are
 stored in the "SecurityGroups" table of the MySQL database associated with

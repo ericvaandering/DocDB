@@ -147,18 +147,41 @@ sub SecurityLookup {
 
 sub FetchSecurityGroupByName ($) {
   my ($Name) = @_;
-  
+  if ($SecurityIDs{$Name}) {
+    return $SecurityIDs{$Name};
+  }  
+
   my $GroupSelect = $dbh->prepare("select GroupID from SecurityGroup where lower(Name) like lower(?)");
+
   $GroupSelect -> execute($Name);
 
   my ($GroupID) = $GroupSelect -> fetchrow_array;
   if ($GroupID) {
     &FetchSecurityGroup($GroupID);
+    $SecurityIDs{$Name} = $GroupID; # Case may not match with other one
   } else {
     return 0;
   }  
   return $GroupID;
 }   
+
+sub FetchUserGroupIDs ($) {
+  my ($EmailUserID) = @_;
+
+  my @UserGroupIDs = ();
+  my $UserGroupID;
+  
+  if ($EmailUserID) {
+    my $GroupList = $dbh->prepare("select GroupID from UsersGroup where EmailUserID=?");
+    $GroupList -> execute($EmailUserID);
+    $GroupList -> bind_columns(undef, \($UserGroupID));
+    while ($GroupList -> fetch) {
+      push @UserGroupIDs,$UserGroupID;
+    }
+  }
+  
+  return @UserGroupIDs;
+}
   
 sub InsertSecurity (%) {
   my %Params = @_;

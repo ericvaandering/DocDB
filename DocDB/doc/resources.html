@@ -48,9 +48,16 @@
    Note that the MySQL database is accessed by the cgi scripts but should not 
    live under any web accessable directory.
 <p>
-   The server must be able to write into the document location directory 
+   The web server process must be able to write into the document location directory 
    (e.g.,  /www/html/DocDB)
    and this directory must be web viewable.
+<p>
+   If you want to use the more secure certificate method of granting access, you
+   will need to configure and run DocDB under an SSL server. You will also need
+   to place DocDB into an area that requires a client-side certificate for
+   access. For a primer on setting up Apache in this way, see xxxxx. You will
+   also need a way to supply each user with a certificate signed by a CA
+   (Certficate Authority) you trust.
 <p>
    You should create a document database account to own the
    the DocDB cgi scripts, and the DocDB html files.  

@@ -255,7 +255,25 @@ sub ReadySignatories ($) {
       }
     } 
   }
-  return @EmailUserIDs;
+
+  my ($Status,$DocRevID) = &RevisionStatus($DocRevID);
+  if ($Status ne "Unmanaged") {
+    print "<b>Approval status: $Status</b><br>\n";
+  }
+
+  if (@EmailUserIDs) {
+    &MailNotices(-docrevid => $DocRevID, -type => "signature", -emailids => \@EmailUserIDs);
+  }
+  if ($Status eq "Approved") {
+    &MailNotices(-docrevid => $DocRevID, -type => "approved");
+  }
+}
+
+sub CopyRevisionSignoffs { # CopySignoffs from one revision to another
+                           # One mode to copy with signed Signatures, 
+                           # one without
+
+  my ($OldDocRevID,$NewDocRevID,$CopySignatures) = @_;
 }
 
 1;

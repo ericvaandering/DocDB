@@ -14,15 +14,24 @@ require "DocDBGlobals.pm";
 
 &GetOptions("a=s" => \$Action,"u=s" => \$User,"p=s" => \$Password);
 
-# Here, replace Group1,Group2, etc. with the groups you want to give view or 
-# modify access to  all your existing meetings. If you make the list blank
-# "... = ()" any group that can create documents can modify all the meetings
-# and all the meetings will be publically viewable.
+# In V6, e-mail notifications are secure, in that people won't get notified 
+# about documents from groups they don't belong to. If you use the new 
+# certificate security, it's based on what groups they request and the admins
+# confirm. For new users in the http authorization scheme, the group they 
+# belong to will be taken from the username and password they provide. 
+# For existing users, you have to supply a default group here. In any case, 
+# you can always add or change the groups a user belongs to.
+# Replace Group1,Group2, etc. with the groups you want your existing 
+# "Email Users" to belong to. If you make the list blank
+# "... = ()" no group will be selected and effectively no users will get e-mail
+# until you set up groups.
 
-# Deviations from this must be fixed by hand with the meeting organizer.
+# Also, set $VerifyAllUsers = 0 if you don't want to initially start will 
+# all of your users in the verified state (only verified users can receive 
+# e-mail).
 
-my @DefaultViewGroups   = ("Group1","Group2");
-my @DefaultModifyGroups = ("Group1","Group2");
+my @DefaultMailGroups   = ("Group1","Group2");
+my $VerifyAllUsers      = 1;
 
 unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate") {
   print "Usage: MigrateV6 --u=username --p=password --a=init|migrate|delete\n\n";
@@ -41,7 +50,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$User,$Password);
 
 if ($Action eq "init") { # Modify existing tables and add new tables in preparation for migration 
 
-# Meeting expansion
+# User based access
 
   my $EmailUserAdd  = $dbh -> prepare("alter table EmailUser add Verified int"); 
   my $EmailUserAdd2 = $dbh -> prepare("alter table EmailUser add AuthorID int"); 
@@ -52,14 +61,47 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                    " TimeStamp timestamp,".
                    " index(EmailUserID))"); 
 
-  $EmailUserAdd             -> execute();
-  $EmailUserAdd2            -> execute();
-  $UsersGroupCreate         -> execute();
+# Cross references
+
+  my $XRefCreate = $dbh -> prepare("create table DocXRef ".
+                   "(DocXRefID integer auto_increment primary key,".
+                   " DocRevID integer, DocumentID integer,".
+                   " TimeStamp timestamp,".
+                   " index(DocRevID),index(DocumentID))"); 
+		   
+# Hiding doc-types		   
+
+  my $DocTypeAdd  = $dbh -> prepare("alter table DocumentType add Hide int NOT NULL default 0"); 
+
+  $EmailUserAdd     -> execute();
+  $EmailUserAdd2    -> execute();
+  $UsersGroupCreate -> execute();
+  $XRefCreate       -> execute();
+  $DocTypeAdd       -> execute();
   
 }
 
 if ($Action eq "migrate") {
-  print "No migrations necessary.\n";
+  require "NotificationSQL.pm";
+  require "SecuritySQL.pm"; 
+  if ($VerifyAllUsers) {
+    my $EmailUserUpdate  = $dbh -> prepare("update EmailUser set Verified=1 where EmailUserID>0"); 
+    $EmailUserUpdate -> execute();
+  }
+  
+  my @EmailUserIDs = &GetEmailUserIDs();
+  my $EmailUserInsert = $dbh -> prepare("insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) values (0,?,?)"); 
+   
+  foreach my $EmailUserID (@EmailUserIDs) {
+    foreach my $Group (@DefaultMailGroups) {
+      my $GroupID = &FetchSecurityGroupByName($Group); 
+      if ($GroupID) { 
+        $EmailUserInsert -> execute($EmailUserID,$GroupID);
+      } else {
+        print "Group $Group not found. Skipping.\n";
+      }   
+    } 
+  }
 }
 
 if ($Action eq "delete") { 

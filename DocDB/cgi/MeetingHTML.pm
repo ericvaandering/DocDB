@@ -286,7 +286,7 @@ sub SessionModifyLink ($) {
   my ($MeetingOrderID) = @_;
   if ($SessionSeparatorDefault eq "No") {
     my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
-    print "<a href=\"$SessionModify?sessionid=$SessionID\">Modify session<br>agenda</a>\n";
+    print "<a href=\"$SessionModify?sessionid=$SessionID\">Modify session<br/>agenda</a>\n";
   } else {
     print "&nbsp\n";
   }
