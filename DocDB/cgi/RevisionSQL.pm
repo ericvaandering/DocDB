@@ -21,6 +21,7 @@ sub FetchDocRevisionByID {
       $TimeStamp,$DocumentID,$Obsolete,
       $JournalID,$Volume,$Page,$Keywords) = $revision_list -> fetchrow_array;
 
+
   #FIXME Make keys mixed-caps
   
   $DocRevIDs{$DocumentID}{$VersionNumber} = $DocRevID;
@@ -38,6 +39,19 @@ sub FetchDocRevisionByID {
   $DocRevisions{$DocRevID}{Page}          = $Page;
   $DocRevisions{$DocRevID}{Keywords}      = $Keywords;
   $DocRevisions{$DocRevID}{COMPLETE}      = 1;
+
+### Find earliest instance this document for content modification date
+
+  my $EarliestVersionQuery = $dbh->prepare(
+    "select DocRevID,RevisionDate ".
+    "from DocumentRevision ".
+    "where DocumentID=? and VersionNumber=? order by DocRevID");
+  $EarliestVersionQuery -> execute($DocumentID,$VersionNumber);
+  
+### Pull off first one  
+  
+  my (undef,$VersionDate) = $EarliestVersionQuery -> fetchrow_array;
+  $DocRevisions{$DocRevID}{VersionDate}   = $VersionDate;
 
   return $DocRevID;
 }
