@@ -43,14 +43,15 @@ $RemoteUsername   = $ENV{REMOTE_USER};
 $remote_user      = $ENV{REMOTE_USER};
 $remote_user      =~ tr/[A-Z]/[a-z]/;
 
-$RobotsMeta       = "none";
 $htaccess         = ".htaccess";
 
-$LastDays         = 20;        # Number of days for default in LastModified
-$HomeLastDays     = 7;         # Number of days for last modified on home page
-$HomeMaxDocs      = 50;        # Maximum number of documents on home page
-$MeetingWindow    = 7;         # Days before and after meeting to preselect
-$MeetingFiles     = 3;         # Number of upload boxes on meeting short form
+$LastDays          = 20;       # Number of days for default in LastModified
+$HomeLastDays      = 7;        # Number of days for last modified on home page
+$HomeMaxDocs       = 50;       # Maximum number of documents on home page
+$MeetingWindow     = 7;        # Days before and after meeting to preselect
+$MeetingFiles      = 3;        # Number of upload boxes on meeting short form
+
+$EnchancedSecurity = 0;        # Separate lists for view, modify
 
 # Include project specific settings
 

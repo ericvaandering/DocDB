@@ -25,8 +25,6 @@ $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetSecurityGroups;
 
-$RobotsMeta = "all";
-
 # %params = $query -> Vars;  # No parameters (yet?) 
 
 print $query->header;
