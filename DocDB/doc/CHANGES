@@ -1,3 +1,17 @@
+5.6.0
+
+New routine to get a report on who needs to sign documents. Linked from various
+places. New routine, DocumentTable, to replace DocumentSummary. Has configurable
+fields and sort orders, new field added to display next signature needed.
+
+5.5.0
+
+Copying files was not working, so the mechanisms to upload files were scrapped
+and completely re-written in a better way. As a consequence, downloading URLs
+has been made faster and more secure, but the definition of $WGet has changed in
+DocDBGlobals.pm If you changed this in ProjectGlobals.pm, you'll have to change
+it to remove all the parameters.
+
 5.4.0
 
 The big change is that in the admin interface, fields that will be ignored based
