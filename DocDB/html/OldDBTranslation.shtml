@@ -1,3 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Old Document Database to New Database translation</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="/includes/style.css" type="text/css">
+<!--#include virtual="/includes/navbar_header.html" --> <!-- Defining Javascript functions-->
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<!--#include virtual="/includes/atwork_menuload.html" --> <!-- Loads menus and images in nav bar -->
+<!--#include virtual="/includes/begin_atwork_top.html" --> <!-- Starts the table at the top -->
+      <div align="center"><font size="+2"
+      color="#003399">Translations&nbsp;to&nbsp;New&nbsp;Database</font></div>
+<!--#include virtual="/includes/end_atwork_top.html" --> <!-- Ends the table at the top -->
+<!--#include virtual="/includes/atwork_navbar.html" --> <!-- Puts in the nav bar table row entry -->
+<!--#include virtual="/includes/end_table.html" --> <!-- Ends the table -->
+<hr>
+
+
+<h3>Internal Documents</h3>
+
+<h4>Internal, 1995</h4>
 <ul>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=1">BTeV-int-1995/1  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=2">BTeV-int-1995/2  </a>
@@ -7,6 +31,9 @@
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=13">BTeV-int-1995/6  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=14">BTeV-int-1995/7  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=15">BTeV-int-1995/8  </a>
+</ul>
+<h4>Internal, 1996</h4>
+<ul>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=35">BTeV-int-1996/1  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=36">BTeV-int-1996/2  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=37">BTeV-int-1996/3  </a>
@@ -16,6 +43,9 @@
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=40">BTeV-int-1996/6  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=41">BTeV-int-1996/7  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=42">BTeV-int-1996/8  </a>
+</ul>
+<h4>Internal, 1997</h4>
+<ul>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=52">BTeV-int-1997/10 </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=53">BTeV-int-1997/11 </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=53">BTeV-int-1997/11 </a>
@@ -38,6 +68,9 @@
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=49">BTeV-int-1997/7  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=50">BTeV-int-1997/8  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=51">BTeV-int-1997/9  </a>
+</ul>
+<h4>Internal, 1998</h4>
+<ul>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=99">BTeV-int-1998/10 </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=100">BTeV-int-1998/11 </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=101">BTeV-int-1998/12 </a>
@@ -59,20 +92,10 @@
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=96">BTeV-int-1998/7  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=97">BTeV-int-1998/8  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=98">BTeV-int-1998/9  </a>
-<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=81">BTeV-int-1999/10 </a>
-<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=82">BTeV-int-1999/11 </a>
-<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=83">BTeV-int-1999/12 </a>
-<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=91">BTeV-int-1999/13 </a>
-<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=84">BTeV-int-1999/14 </a>
-<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=85">BTeV-int-1999/15 </a>
-<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=93">BTeV-int-1999/16 </a>
+</ul>
+<h4>Internal, 1999</h4>
+<ul>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=72">BTeV-int-1999/1  </a>
-<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=72">BTeV-int-1999/1  </a>
-<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=72">BTeV-int-1999/1  </a>
-<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=88">BTeV-int-1999/17 </a>
-<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=88">BTeV-int-1999/17 </a>
-<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=94">BTeV-int-1999/18 </a>
-<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=89">BTeV-int-1999/19 </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=73">BTeV-int-1999/2  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=74">BTeV-int-1999/3  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=75">BTeV-int-1999/4  </a>
@@ -81,8 +104,19 @@
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=78">BTeV-int-1999/7  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=79">BTeV-int-1999/8  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=80">BTeV-int-1999/9  </a>
-<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=80">BTeV-int-1999/9  </a>
-<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=118">BTeV-int-2000/10 </a>
+<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=81">BTeV-int-1999/10 </a>
+<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=82">BTeV-int-1999/11 </a>
+<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=83">BTeV-int-1999/12 </a>
+<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=91">BTeV-int-1999/13 </a>
+<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=84">BTeV-int-1999/14 </a>
+<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=85">BTeV-int-1999/15 </a>
+<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=93">BTeV-int-1999/16 </a>
+<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=88">BTeV-int-1999/17 </a>
+<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=94">BTeV-int-1999/18 </a>
+<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=89">BTeV-int-1999/19 </a>
+</ul>
+<h4>Internal, 2000</h4>
+<ul>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=111">BTeV-int-2000/1  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=109">BTeV-int-2000/2  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=112">BTeV-int-2000/3  </a>
@@ -92,6 +126,10 @@
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=115">BTeV-int-2000/7  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=116">BTeV-int-2000/8  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=117">BTeV-int-2000/9  </a>
+<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=118">BTeV-int-2000/10 </a>
+</ul>
+<h4>Internal, 2001</h4>
+<ul>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=119">BTeV-int-2001/11 </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=120">BTeV-int-2001/12 </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=121">BTeV-int-2001/13 </a>
@@ -105,10 +143,14 @@
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=129">BTeV-int-2001/21 </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=130">BTeV-int-2001/22 </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=131">BTeV-int-2001/23 </a>
-<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=131">BTeV-int-2001/23 </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=132">BTeV-int-2001/24 </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=133">BTeV-int-2001/25 </a>
-<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=17">BTeV-pub-1996/10 </a>
+</ul>
+
+<h3>Public Documents</h3>
+
+<h4>Public, 1996</h4>
+<ul>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=5">BTeV-pub-1996/2  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=6">BTeV-pub-1996/3  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=7">BTeV-pub-1996/4  </a>
@@ -118,12 +160,19 @@
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=10">BTeV-pub-1996/7  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=11">BTeV-pub-1996/8  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=16">BTeV-pub-1996/9  </a>
+<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=17">BTeV-pub-1996/10 </a>
+</ul>
+<h4>Public, 1997</h4>
+<ul>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=18">BTeV-pub-1997/1  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=19">BTeV-pub-1997/2  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=19">BTeV-pub-1997/2  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=20">BTeV-pub-1997/3  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=21">BTeV-pub-1997/4  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=22">BTeV-pub-1997/6  </a>
+</ul>
+<h4>Public, 1998</h4>
+<ul>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=23">BTeV-pub-1998/1  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=24">BTeV-pub-1998/2  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=25">BTeV-pub-1998/3  </a>
@@ -133,11 +182,16 @@
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=29">BTeV-pub-1998/7  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=29">BTeV-pub-1998/8  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=30">BTeV-pub-1998/9  </a>
+</ul>
+<h4>Public, 1999</h4>
+<ul>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=31">BTeV-pub-1999/1  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=32">BTeV-pub-1999/2  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=33">BTeV-pub-1999/3  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=34">BTeV-pub-1999/4  </a>
-<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=71">BTeV-pub-2000/10 </a>
+</ul>
+<h4>Public, 2000</h4>
+<ul>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=63">BTeV-pub 2000/1  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=64">BTeV-pub 2000/2  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=65">BTeV-pub-2000/3  </a>
@@ -146,4 +200,16 @@
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=68">BTeV-pub-2000/7  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=69">BTeV-pub-2000/8  </a>
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=70">BTeV-pub-2000/9  </a>
-</ul>
+<li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=71">BTeV-pub-2000/10 </a>
+</ul><hr>
+<!-- begin footer, change the webmaster info if appropriate -->
+<div align="center"> 
+<!--#include virtual="/includes/atwork_bottomnav.html"-->  <!-- Put in the bottom navigation bar-->
+</div>
+<div align="left"> 
+<i><font size="-1">
+<A HREF="mailto:btev-docdb@fnal.gov">Document Database Administrators</A> 
+</font></i></div>
+<!--#include virtual="/includes/full_fermi_footer.shtml" --> 
+</body>
+</html>
