@@ -82,5 +82,11 @@ h3 {font-size: 100%}
     padding-left: 1em;
 }
 
+li.odd {
+  background: #fff;
+}
 
+li.even {
+  background: #eee;
+}
 
