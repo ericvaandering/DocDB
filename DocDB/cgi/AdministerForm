@@ -207,19 +207,15 @@ print "<p><hr>\n";
 print "<a name=\"majtopic\"><center><h4>Administer Journals</h4></center>\n";
 
 print $query -> start_multipart_form('POST',"$JournalAdminister");
-print "<table cellpadding=10 border=1>\n";
+print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
 print "<td>\n"; &JournalSelect("full"); print "</td>\n";
-#print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
+print "<td>\n"; &JournalEntryBox;     print "</td>\n";
 print "</tr>\n";
-
-#print "<tr valign=top>\n";
-#print "<td>\n"; &LongDescriptionBox;     print "</td>\n";
-#print "</tr>\n";
 
 print "<tr valign=top>\n";
 print "<td colspan=3>\n";
