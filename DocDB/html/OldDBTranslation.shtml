@@ -18,6 +18,19 @@
 <!--#include virtual="/includes/end_table.html" --> <!-- Ends the table -->
 <hr>
 
+<h3>What is this page?</h3>
+
+You have probably come here looking for a reference in the old BTeV document database numbering scheme.
+These references look like BTeV-pub-Year/# while the numbering scheme for the new document database
+looks like BTeV-doc-####-v#. The two numbering schemes are, of course, incompatible. If you are
+searching for a document whose number you don't know or have a reference to the new style of numbering,
+go to the new <a href="http://www-btev.fnal.gov/cgi-bin/DocDB/DocumentDatabase">Document Database</a> to
+find the document.
+<p>
+
+If you have an old style number, find it in the lists here and click on it, you will be taken to the
+document in the new database. <a href="#public">Public</a> documents are at the bottom of the page.
+<p>
 
 <h3>Internal Documents</h3>
 
@@ -143,6 +156,7 @@
 <li><a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=133">BTeV-int-2001/25 </a>
 </ul>
 
+<a name="public">
 <h3>Public Documents</h3>
 
 <h4>Public, 1996</h4>
