@@ -3,6 +3,8 @@ sub FetchDocRevision {
   # $DocRevIDs{DocumentID}{Version} holds the DocumentRevision ID
   # $DocRevisions{DocRevID}{FIELD} holds the Fields or references too them
 
+  require "DocumentSQL.pm";
+
   my ($documentID,$versionNumber) = @_;
   &FetchDocument($documentID);
   my $revision_list = $dbh->prepare(

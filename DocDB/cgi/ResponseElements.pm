@@ -38,7 +38,8 @@ sub TopicListByID {
     print "<ul>\n";
     foreach $topicID (@topicIDs) {
       &FetchMinorTopic($topicID);
-      print "<li> $MinorTopics{$topicID}{FULL} </li>\n";
+      my $topic_link = &TopicLink($topicID);
+      print "<li> $topic_link </li>\n";
     }
     print "</ul>\n";
   } else {
@@ -324,8 +325,24 @@ sub AuthorLink {
   return $link;
 }
 
+sub TopicLink {
+  my ($TopicID) = @_;
+  
+  require "TopicSQL.pm";
+  
+  &FetchMinorTopic($TopicID);
+  my $link;
+  $link = "<a href=$ListByTopic?topicid=$TopicID>";
+  $link .= $MinorTopics{$TopicID}{FULL};
+  $link .= "</a>";
+  
+  return $link;
+}
+
 
 sub DocumentSummary { # One line document summary for listings
+  require "MiscSQL.pm";
+  
   my ($DocumentID) = @_;
   if ($DocumentID) {
     &FetchDocument($DocumentID);
@@ -351,6 +368,20 @@ sub DocumentSummary { # One line document summary for listings
     print "<th>Last Modified</th>\n";
     print "</tr>\n";
   } 
+}
+
+sub PrintAuthorInfo {
+
+  my ($AuthorID) = @_;
+  
+  require "AuthorSQL.pm";
+  
+  &FetchAuthor($AuthorID);
+  my $link = &AuthorLink($AuthorID);
+  
+  print "$link\n";
+  print " of ";
+  print $Institutions{$Authors{$AuthorID}{INST}}{LONG};
 }
 
 1;

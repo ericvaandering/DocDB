@@ -75,5 +75,6 @@ $TopicAddForm       = $cgi_root."TopicAddForm";
 $AuthorAddForm      = $cgi_root."AuthorAddForm";
 
 $ListByAuthor       = $cgi_root."ListByAuthor";
+$ListByTopic        = $cgi_root."ListByTopic";
 
 1;

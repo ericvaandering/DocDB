@@ -11,7 +11,7 @@ $StartTime = new Benchmark;
 
 require "ResponseElements.pm";
 require "DocDBGlobals.pm";
-require "AuthorSQL.pm";
+require "TopicSQL.pm";
 require "SecuritySQL.pm";
 require "HTMLUtilities.pm";
 require "Security.pm";
@@ -20,29 +20,29 @@ $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
 
-my $AuthorID = $params{authorid};
+my $TopicID = $params{topicid};
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 &GetSecurityGroups;
-&GetInstitutions;
 
 print $query->header;
 &BTeVHeader("Document List");
 
-print "<center><h4>\n";
-&PrintAuthorInfo($AuthorID);
-print "<br>is listed as an author on the following documents:</h4></center><p>\n";
+&FetchMinorTopic($TopicID);
+
+print "<center><h4>These documents on $MinorTopics{$TopicID}{FULL} are
+available:</h4></center><p>\n";
 
 my $revision_list = $dbh -> prepare(
-   "select DocRevID from RevisionAuthor where AuthorID=?"); 
+   "select DocRevID from RevisionTopic where MinorTopicID=?"); 
 
 my $document_list = $dbh -> prepare(
    "select DocumentID from DocumentRevision where DocRevID=?"); 
 
 my $DocumentID,$DocRevID;
 
-$revision_list -> execute($AuthorID);
+$revision_list -> execute($TopicID);
 $revision_list -> bind_columns(undef, \($DocRevID));
 
 while ($revision_list -> fetch) {

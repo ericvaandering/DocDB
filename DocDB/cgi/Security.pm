@@ -1,4 +1,6 @@
 sub CanAccess { # Can the user access (with current security) this version
+  require "RevisionSQL.pm";
+  
   my ($documentID,$version) = @_;
   my $DocRevID = &FetchDocRevision($documentID,$version);
   
@@ -46,6 +48,7 @@ sub CanAccess { # Can the user access (with current security) this version
 }
 
 sub CanModify { # Can the user modify (with current security) this docuement
+  require "DocumentSQL.pm";
   my ($documentID) = @_;
   unless ($remote_user) {return 0;} #No user logged in, can't modify 
 
