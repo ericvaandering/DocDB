@@ -46,3 +46,6 @@ grant delete on EmailKeywordWeekly    to docdbrw;
 grant delete on EmailAuthorDaily      to docdbrw;
 grant delete on EmailAuthorImmediate  to docdbrw;
 grant delete on EmailAuthorWeekly     to docdbrw;
+grant delete on EmailTopicDaily      to docdbrw;
+grant delete on EmailTopicImmediate  to docdbrw;
+grant delete on EmailTopicWeekly     to docdbrw;
