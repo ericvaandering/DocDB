@@ -69,7 +69,7 @@ $NoTopicMatchThreshold  = 6;   # Threshold for matching talks in meetings with t
 
 $CaseInsensitiveUsers = 0;
 $EnhancedSecurity     = 0;     # Separate lists for view, modify
-$SuperiorsCanModify   = 0;     # In enhanced model, a superior group can modify
+$SuperiorsCanModify   = 1;     # In enhanced model, a superior group can modify
                                # a subordinate groups documents without explicit
                                # permission
 $UseSignoffs          = 0;     # Optional sign-off system for document approval

@@ -32,17 +32,20 @@ sub CanAccessMeeting ($) {
   # Find out group IDs of those who can access this meeting and of the
   # current user
   
-  my @MeetingGroupIDs = &GetMeetingSecurityGroups($ConferenceID);
+  my @MeetingSecurityIDs = &GetMeetingSecurityGroups($ConferenceID);
+  my @MeetingGroupIDs  = ();
   
-  unless (@MeetingGroupIDs) { # There are no entries, so meeting is public
+  unless (@MeetingSecurityIDs) { # There are no entries, so meeting is public
     $CanAccessMeeting = 1;
     return $CanAccessMeeting;
   }
     
   my $SecurityGroupID = &FetchSecurityGroupByName($remote_user);
 
-  foreach my $MeetingGroupID (@MeetingGroupIDs) {
-    if ($SecurityGroupID == $MeetingGroupIDs) {
+  foreach my $MeetingSecurityID (@MeetingSecurityIDs) {
+    my $MeetingGroupID = $MeetingModify{$MeetingSecurityID}{GroupID};
+    push @MeetingGroupIDs,$MeetingGroupID; # Needed later by subordinates
+    if ($SecurityGroupID == $MeetingGroupID) { 
       $CanAccessMeeting = 1;
     }  
   }
@@ -53,7 +56,7 @@ sub CanAccessMeeting ($) {
 
   # If not approved yet, see if they are the parent to a group that is
 
-  &GetAllSecurityGroups(); # Pull out the big guns
+  &GetSecurityGroups(); # Pull out the big guns
   
   my @HierarchyIDs = keys %GroupsHierarchy;
   foreach my $HierarchyID (@HierarchyIDs) {
@@ -61,7 +64,7 @@ sub CanAccessMeeting ($) {
     $ChildID  = $GroupsHierarchy{$HierarchyID}{Child}; 
     if ($ParentID == $SecurityGroupID) { # I am the parent
       foreach my $MeetingGroupID (@MeetingGroupIDs) { 
-        if ($MeetingGroupID eq $ChildID) {
+        if ($MeetingGroupID == $ChildID) {
           $CanAccessMeeting = 1;                           
         }  
       }
@@ -72,6 +75,9 @@ sub CanAccessMeeting ($) {
 }
 
 sub CanModifyMeeting ($) {
+  require "SecuritySQL.pm";
+  require "MeetingSecuritySQL.pm";
+
   my ($ConferenceID) = @_;
   
   if ($Public || !(&CanCreateMeeting())) {
@@ -83,17 +89,20 @@ sub CanModifyMeeting ($) {
   # Find out group IDs of those who can modify this meeting and of the
   # current user
   
-  my @MeetingGroupIDs = &GetMeetingModifyGroups($ConferenceID);
+  my @MeetingModifyIDs = &GetMeetingModifyGroups($ConferenceID);
+  my @MeetingGroupIDs  = ();
   
-  unless (@MeetingGroupIDs) { # There are no entries, so meeting 
-    $CanModifyMeeting = 1;    # modifiable by all
+  unless (@MeetingModifyIDs) { # There are no entries, so meeting 
+    $CanModifyMeeting = 1;     # modifiable by all
     return $CanModifyMeeting;
   }
     
   my $SecurityGroupID = &FetchSecurityGroupByName($remote_user);
 
-  foreach my $MeetingGroupID (@MeetingGroupIDs) {
-    if ($SecurityGroupID == $MeetingGroupIDs) {
+  foreach my $MeetingModifyID (@MeetingModifyIDs) {
+    my $MeetingGroupID = $MeetingModify{$MeetingModifyID}{GroupID};
+    push @MeetingGroupIDs,$MeetingGroupID; # Needed later by subordinates
+    if ($SecurityGroupID == $MeetingGroupID) {
       $CanModifyMeeting = 1;
     }  
   }
@@ -104,7 +113,7 @@ sub CanModifyMeeting ($) {
 
   # If not approved yet, see if they are the parent to a group that is
 
-  &GetAllSecurityGroups(); # Pull out the big guns
+  &GetSecurityGroups(); # Pull out the big guns
   
   my @HierarchyIDs = keys %GroupsHierarchy;
   foreach my $HierarchyID (@HierarchyIDs) {
@@ -112,7 +121,7 @@ sub CanModifyMeeting ($) {
     $ChildID  = $GroupsHierarchy{$HierarchyID}{Child}; 
     if ($ParentID == $SecurityGroupID) { # I am the parent
       foreach my $MeetingGroupID (@MeetingGroupIDs) { 
-        if ($MeetingGroupID eq $ChildID) {
+        if ($MeetingGroupID == $ChildID) {
           $CanModifyMeeting = 1;                           
         }  
       }

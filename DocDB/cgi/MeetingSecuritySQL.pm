@@ -27,16 +27,16 @@ sub GetMeetingSecurityGroups ($) {
   my $Select = $dbh -> prepare("select MeetingSecurityID from MeetingSecurity ".
                                      "where ConferenceID=?");
   my ($MeetingSecurityID);
-  my @MeetingSecurityGroupIDs = ();
+  my @MeetingSecurityIDs = ();
   
   $Select -> execute($ConferenceID);
   $Select -> bind_columns(undef, \($MeetingSecurityID));
   while ($Select -> fetch) {
-    my $MeetingSecurityGroupID = &FetchMeetingSecurityGroup($MeetingSecurityID);
-    push @MeetingSecurityGroupIDs,$MeetingSecurityGroupID;
+    $MeetingSecurityID = &FetchMeetingSecurityGroup($MeetingSecurityID);
+    push @MeetingSecurityIDs,$MeetingSecurityID;
   }
  
-  return @MeetingSecurityGroupIDs;
+  return @MeetingSecurityIDs;
 }
 
 sub FetchMeetingSecurityGroup ($) {
@@ -53,9 +53,9 @@ sub FetchMeetingSecurityGroup ($) {
   ($ConferenceID,$GroupID,$TimeStamp) = $Select -> fetchrow_array;
   
   if ($TimeStamp) {
-    $MeetingSecurities{$MeetingSecurityID}{ConferenceID} = $DocRevID   ;
-    $MeetingSecurities{$MeetingSecurityID}{GroupID}      = $Note       ;
-    $MeetingSecurities{$MeetingSecurityID}{TimeStamp}    = $TimeStamp  ;
+    $MeetingSecurities{$MeetingSecurityID}{ConferenceID} = $ConferenceID;
+    $MeetingSecurities{$MeetingSecurityID}{GroupID}      = $GroupID     ;
+    $MeetingSecurities{$MeetingSecurityID}{TimeStamp}    = $TimeStamp   ;
     return $MeetingSecurityID;
   } else {
     return 0;
@@ -68,16 +68,16 @@ sub GetMeetingModifyGroups ($) {
   my $Select = $dbh -> prepare("select MeetingModifyID from MeetingModify ".
                                      "where ConferenceID=?");
   my ($MeetingModifyID);
-  my @MeetingModifyGroupIDs = ();
+  my @MeetingModifyIDs = ();
   
   $Select -> execute($ConferenceID);
   $Select -> bind_columns(undef, \($MeetingModifyID));
   while ($Select -> fetch) {
-    my $MeetingModifyGroupID = &FetchMeetingModifyGroup($MeetingModifyID);
-    push @MeetingModifyGroupIDs,$MeetingModifyGroupID;
+    $MeetingModifyID = &FetchMeetingModifyGroup($MeetingModifyID);
+    push @MeetingModifyIDs,$MeetingModifyID;
   }
  
-  return @MeetingModifyGroupIDs;
+  return @MeetingModifyIDs;
 }
 
 sub FetchMeetingModifyGroup ($) {
@@ -94,9 +94,9 @@ sub FetchMeetingModifyGroup ($) {
   ($ConferenceID,$GroupID,$TimeStamp) = $Select -> fetchrow_array;
   
   if ($TimeStamp) {
-    $MeetingModify{$MeetingModifyID}{ConferenceID} = $DocRevID   ;
-    $MeetingModify{$MeetingModifyID}{GroupID}      = $Note       ;
-    $MeetingModify{$MeetingModifyID}{TimeStamp}    = $TimeStamp  ;
+    $MeetingModify{$MeetingModifyID}{ConferenceID} = $ConferenceID;
+    $MeetingModify{$MeetingModifyID}{GroupID}      = $GroupID     ;
+    $MeetingModify{$MeetingModifyID}{TimeStamp}    = $TimeStamp   ;
     return $MeetingModifyID;
   } else {
     return 0;
