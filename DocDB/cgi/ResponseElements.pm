@@ -241,10 +241,13 @@ sub NewDocumentLink ($;$$) { # FIXME: Make this the default
   $Link .= "\">"; 
   if ($Mode eq "title") {
     $Link .= $DocRevisions{$DocRevID}{Title};
+  } elsif ($Mode eq "number_only") {
+    $Link .= $DocumentID."-v".$Version;
   } else {
     $Link .= &FullDocumentID($DocumentID,$Version);
   }
   $Link .=  "</a>";
+  return $Link;
 }         
   
 
@@ -358,6 +361,7 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
     unless (&CanAccess($DocumentID,$Version)) {return;}
     
     my $full_docid  = &DocumentLink($DocumentID,$Version);
+    my $short_docid = &NewDocumentLink($DocumentID,$Version,"number_only");
     my $DocRevID    = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
     my $title       = &DocumentLink($DocumentID,$Version,$DocRevisions{$DocRevID}{Title});
     if ($Mode eq "meeting") {
@@ -387,7 +391,7 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
     my $author_link = &FirstAuthor($DocRevID);
     print "<tr valign=top>\n";
     if ($Mode eq "date") {
-      print "<td><nobr>$full_docid</nobr></td>\n";
+      print "<td><nobr>$short_docid</nobr></td>\n";
       print "<td>$title</td>\n";
       print "<td><nobr>$author_link</nobr></td>\n";
       print "<td><nobr>$rev_date</nobr></td>\n";
@@ -435,7 +439,7 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
   } else { # Print header if $DocumentID = 0
     print "<tr valign=bottom>\n";
     if ($Mode eq "date") {
-      print "<th>Document #</th>\n";
+      print "<th>$ShortProject-doc-#</th>\n";
       print "<th>Title</th>\n";
       print "<th>Author</th>\n";
       print "<th>Last Updated</th>\n";

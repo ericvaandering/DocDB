@@ -304,8 +304,8 @@ sub EmailKeywordForm($$) {
   &NotifyKeywordEntry($Set);
 }
 
-sub DisplayNotification($$) {
-  my ($EmailUserID,$Set) = @_;
+sub DisplayNotification($$;$) {
+  my ($EmailUserID,$Set,$Always) = @_;
 
   require "NotificationSQL.pm";
   require "TopicHTML.pm";
@@ -319,6 +319,12 @@ sub DisplayNotification($$) {
       @NotifyAuthorIDs || @NotifyKeywords) {
     print "<li>$Set notifications:\n";  
     print "<ul>\n";  
+  } elsif ($Always) {
+    print "<li>$Set notifications:\n";  
+    print "<ul>\n";  
+    print "<li>None\n";  
+    print "</ul>\n";
+    return;
   } else {
     return;
   }

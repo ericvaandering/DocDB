@@ -367,6 +367,9 @@ sub LongDescriptionBox {
 };
 
 sub FullTopicScroll ($$;@) { # Scrolling selectable list for topics, all info
+
+  #FIXME: Use TopicScroll
+
   my ($Multiple,$ElementName,@Defaults) = @_;
 
   require "TopicSQL.pm";
@@ -392,4 +395,53 @@ sub FullTopicScroll ($$;@) { # Scrolling selectable list for topics, all info
                                  -default => \@Defaults);
 };
 
+sub TopicScroll (%) {
+  require "TopicSQL.pm";
+  
+  my (%Params) = @_;
+  
+  my $Format    =   $Params{-format}    || "full";
+  my $Multiple  =   $Params{-multiple}  || 0;
+  my $HelpLink  =   $Params{-helplink}  || "";
+  my $HelpText  =   $Params{-helptext}  || "Topics";
+  my $ExtraText =   $Params{-extratext} || "";
+  my $Required  =   $Params{-required}  || 0;
+  my $Name      =   $Params{-name}      || "topics";
+  my $Size      =   $Params{-size}      || 10;
+  my @Defaults  = @{$Params{-default}};
+
+  unless ($GotAllTopics) {
+    &GetTopics;
+  }
+  
+  my @TopicIDs = sort byTopic keys %MinorTopics;
+  my %TopicLabels = ();
+  my @ActiveIDs = @TopicIDs; # Later can select single major topics, etc.
+  
+  foreach my $ID (@ActiveIDs) {
+    if ($Format eq "full") {
+      $TopicLabels{$ID} = $MinorTopics{$ID}{Full}; 
+    } elsif ($Format eq "long") {
+      $TopicLabels{$ID} = $MinorTopics{$ID}{Full}." [$MinorTopics{$ID}{LONG}]"; 
+    } 
+  }  
+
+  if ($HelpLink) {
+    print "<b><a ";
+    &HelpLink($HelpLink);
+    print "$HelpText:</a></b>";
+    if ($Required) {
+      print $RequiredMark;
+    }  
+    if ($ExtraText) {
+      print "&nbsp;$ExtraText";
+    }  
+    print "<br/> \n";
+  }
+
+  print $query -> scrolling_list(-name => $Name, -values => \@ActiveIDs, 
+                                 -labels => \%TopicLabels,
+                                 -size => 10, -multiple => $Multiple,
+                                 -default => \@Defaults);
+}
 1;
