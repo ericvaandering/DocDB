@@ -22,6 +22,8 @@
 least the ones we feel should be asked frequently).</b><p>
 
 <dl>
+
+<a name="authorentry">
 <dt><b>Why can't I just type in the name of an author on a document?</b>
 <dd>For technical reasons which are described in 
 <a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=140">
@@ -33,6 +35,39 @@ you can assign them to have written a document. In the future, this master list
 will probably be linked with the People Database. Until then, you can 
 <a href="http://www-btev.fnal.gov/cgi-bin/DocDB/AuthorAddForm">add an
 author</a> yourself. 
+</dl>
+
+<a name="addstuff">
+<dt><b>How do I add a new author? A new topic or subtopic? A new document type.</b>
+<dd>To add a new author, you can either send e-mail to 
+<A HREF="mailto:btev-docdb@fnal.gov">btev-docdb@fnal.gov</a> or add the person
+yourself with 
+<a href="http://www-btev.fnal.gov/cgi-bin/DocDB/AuthorAddForm">the form</a>.
+Please be careful and if you make a mistake, e-mail  
+<A HREF="mailto:btev-docdb@fnal.gov">btev-docdb@fnal.gov</a>
+rather than trying to fix the mistake.<p>
+
+To have topics or document types added, e-mail  
+<A HREF="mailto:btev-docdb@fnal.gov">btev-docdb@fnal.gov</a>. Be prepared to
+have your request denied. Having a new document type or major topic added is
+hard,  since having too many of these is confusing. Be prepared to argue why the
+existing topics or document types don't fit the kind of documents you want to
+add. Having a new subtopic added is a little easier, but if you want to organize
+things below the subtopic level, use <a href="#keywords">keywords</a> instead.
+
+<a name="keywords">
+<dt><b>What are keywords? How do I use them?</b>
+<dd>Keywords are really just a text field you can type stuff in, but to make
+them useful some conventions have been adopted that you should follow:
+<ol>
+<li>Be consistent. Re-use old keywords. If your subgroup has a defined set of
+keywords, use them.
+<li>Keywords are space seperated. Don't use commas. Multi-word keywords should
+be joined with an underscore or dash. (Again, be consistent).
+<li>Don't use keywords like "pixel." There are topics for that.
+</ol>
+ 
+
 </dl>
 
 <p>
