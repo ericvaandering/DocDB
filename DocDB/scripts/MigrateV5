@@ -27,7 +27,8 @@ my @DefaultModifyGroups = ("Group1","Group2");
 unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate") {
   print "Usage: MigrateV5 --u=username --p=password --a=init|migrate|delete\n\n";
   print "This script is used to migrate from a version 4 to version 5 DB structure. \n";
-  print "Run this script in \"init\" mode first, then in \"migrate\" mode. \n";
+  print "Run this script in \"init\" mode first, then update the DocDB code.\n";
+  print "Then run this script again in \"migrate\" mode. \n";
   print "You will likely want to edit the script before running in migrate mode.  \n\n";
   print "For this upgrade there is no delete step.  \n\n";
 #  print "Run this script in \"init\" mode first, then in \"migrate\" mode.  \n\n";
