@@ -118,6 +118,7 @@ sub PrintSignatureInfo ($) {
           $ActionText = "Unsign Document"
         }  
         $SignatureText .= $query -> start_multipart_form('POST',"$SignRevision");
+        $SignatureText .= "<div>\n";
         $SignatureText .= "$SignatureLink ";
         $SignatureText .= $query -> hidden(-name => 'signatureid',   -default => $SignatureID);
         $SignatureText .= $query -> hidden(-name => 'emailuserid',   -default => $EmailUserID);
@@ -125,6 +126,7 @@ sub PrintSignatureInfo ($) {
         $SignatureText .= $query -> password_field(-name => "password-$EmailUserID", -size => 16, -maxlength => 32);
         $SignatureText .= " ";
         $SignatureText .= $query -> submit (-value => $ActionText);
+        $SignatureText .= "</div>\n";
         $SignatureText .= $query -> end_multipart_form;
       } elsif ($Status eq "NotReady") {
         $SignatureText .= "$SignatureLink (waiting for other signatures)";

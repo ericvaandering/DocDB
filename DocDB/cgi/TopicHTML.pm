@@ -118,7 +118,7 @@ sub MeetingLink {
   
   &FetchMinorTopic($TopicID);
   my $link;
-  $link = "<a href=\"$ListByTopic?topicid=$TopicID&mode=meeting\" title=\"$MinorTopics{$TopicID}{LONG}\">";
+  $link = "<a href=\"$ListByTopic?topicid=$TopicID&amp;mode=meeting\" title=\"$MinorTopics{$TopicID}{LONG}\">";
   if ($Mode eq "short") {
     $link .= $MinorTopics{$TopicID}{SHORT};
   } else {
@@ -136,7 +136,7 @@ sub ConferenceLink {
   
   &FetchMinorTopic($TopicID);
   my $Link;
-     $Link = "<a href=$ListByTopic?topicid=$TopicID&mode=conference>";
+     $Link = "<a href=\"$ListByTopic?topicid=$TopicID&amp;mode=conference\">";
   if ($Mode eq "short" || $Mode eq "nodate") {
     $Link .= $MinorTopics{$TopicID}{SHORT};
   } elsif ($Mode eq "long") {

@@ -149,7 +149,7 @@ sub PrintRevisionInfo {
      require "SignoffUtilities.pm";
      my ($ApprovalStatus,$LastApproved) = &RevisionStatus($DocRevID);
      unless ($ApprovalStatus eq "Unmanaged") { 
-       print "<center>(Document Status: $ApprovalStatus)</center>\n";
+       print "<h5>(Document Status: $ApprovalStatus)</h5>\n";
      }  
    }  
   print "</div>\n";  # DocTitle
@@ -270,11 +270,11 @@ sub PrintRevisionNote {
   if ($RevisionNote) {
     print "<div id=\"RevisionNote\">\n";
     $RevisionNote = &URLify($RevisionNote);
-    $RevisionNote =~ s/\n\n/<p>/g;
-    $RevisionNote =~ s/\n/<br>/g;
+    $RevisionNote =~ s/\n\n/<p\/>/g;
+    $RevisionNote =~ s/\n/<br\/>/g;
     print "<dl>\n";
     print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Notes and Changes:</span></dt>\n";
-    print "<dd>$RevisionNote<br>\n";
+    print "<dd>$RevisionNote</dd>\n";
     print "</dl>\n";
     print "</div>\n";
   }
@@ -314,7 +314,7 @@ sub PrintReferenceInfo ($) {
       if ($ReferenceLink) {
         print "</a>";
       }  
-      print ".\n";
+      print ".</dd>\n";
     }
     print "</dl>\n";
     print "</div>\n";
@@ -392,7 +392,7 @@ sub OtherVersionLinks {
   print "<div id=\"OtherVersions\">\n";
   print "<b>Other Versions:</b>\n";
   
-  print "<table id=\"OtherVersionTable\" cellpadding=3 class=\"Alternating\">\n";
+  print "<table id=\"OtherVersionTable\" class=\"Alternating\">\n";
   my $RowClass = "Odd";
   
   foreach $RevID (@RevIDs) {

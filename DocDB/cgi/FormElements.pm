@@ -443,10 +443,13 @@ sub UpdateButton {
   $query -> param('docid',$DocumentID);
 
   print $query -> startform('POST',$DocumentAddForm);
+  print "<div>\n";
   print $query -> hidden(-name => 'mode',  -default => 'update');
   print $query -> hidden(-name => 'docid', -default => $DocumentID);
   print $query -> submit (-value => "Update Document");
+  print "\n</div>\n";
   print $query -> endform;
+  print "\n";
 }
 
 sub UpdateDBButton {
@@ -459,11 +462,14 @@ sub UpdateDBButton {
   $query -> param('version',$Version);
   
   print $query -> startform('POST',$DocumentAddForm);
+  print "<div>\n";
   print $query -> hidden(-name =>    'mode', -default => 'updatedb');
   print $query -> hidden(-name =>   'docid', -default => $DocumentID);
   print $query -> hidden(-name => 'version', -default => $Version);
   print $query -> submit (-value => "Update DB Info");
+  print "\n</div>\n";
   print $query -> endform;
+  print "\n";
 }
 
 sub AddFilesButton {
@@ -475,10 +481,13 @@ sub AddFilesButton {
   $query -> param('version',$Version);
   
   print $query -> startform('POST',$AddFilesForm);
+  print "<div>\n";
   print $query -> hidden(-name => 'docid',   -default => $DocumentID);
   print $query -> hidden(-name => 'version', -default => $Version);
   print $query -> submit (-value => "Add Files");
+  print "\n</div>\n";
   print $query -> endform;
+  print "\n";
 }
 
 sub AuthorManual (%) { # FIXME: Special case of AuthorTextEntry

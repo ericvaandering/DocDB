@@ -155,6 +155,10 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
   }
     
   my $Link = "<a href=\"$ShowDocument\?docid=$DocumentID";
+  
+  # When adding the version number, remember to use &amp; for XHTML 
+  # or use DocumentURL
+  
   $Link .= "\">"; 
   if ($DocIDOnly) {           # Like 1234                   
     $Link .= $DocumentID;

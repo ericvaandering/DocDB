@@ -235,7 +235,7 @@ sub KeywordLinkByID ($;%) {
   my $Link;
   
   unless ($NoLink) {  
-    $Link .= "<a href=\"$Search\?keywordsearchmode=anyword&keywordsearch=$Keyword\">";
+    $Link .= "<a href=\"$Search\?keywordsearchmode=anyword&amp;keywordsearch=$Keyword\">";
   }
   
   if ($Format eq "short") { 
@@ -256,7 +256,7 @@ sub KeywordLink ($;%) { # FIXME: Allow parameters of short, long, full a la Lynn
 
   my $Format = $Params{-format} || "short"; # short, full
   
-  my $ret = "<a href=\"$Search\?keywordsearchmode=anyword&keywordsearch=$Keyword\">";
+  my $ret = "<a href=\"$Search\?keywordsearchmode=anyword&amp;keywordsearch=$Keyword\">";
   $ret .= "$Keyword";
   $ret .=  "</a>";
   return $ret;

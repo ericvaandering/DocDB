@@ -135,12 +135,13 @@ sub ArchiveLink {
   
   my @Types = ("tar.gz");
   if ($Zip) {push @Types,"zip";}
-     @Types = sort @Types;
+  
+  @Types = sort @Types;
   
   my $link  = "<b>Get all files as \n";
   @LinkParts = ();
   foreach my $Type (@Types) {
-    push @LinkParts,"<a href=\"$RetrieveArchive?docid=$DocumentID\&version=$Version\&type=$Type\">$Type</a>";
+    push @LinkParts,"<a href=\"$RetrieveArchive?docid=$DocumentID\&amp;version=$Version\&amp;type=$Type\">$Type</a>";
   }  
   $link .= join ', ',@LinkParts;
   $link .= ".";
