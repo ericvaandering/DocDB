@@ -166,7 +166,7 @@ sub DocTypeMulti { # Scrolling selectable list for doc type search
     $DocTypeLabels{$DocTypeID} = $DocumentTypes{$DocTypeID}{SHORT};
   }  
   print "<b><a ";
-  &HelpLink("doctype");
+  &HelpLink("doctypemulti");
   print "Document type:</a></b><br> \n";
   print $query -> scrolling_list(-size => 10, -name => "doctypemulti", 
                               -values => \%DocTypeLabels, -multiple => 'true');

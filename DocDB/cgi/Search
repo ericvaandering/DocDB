@@ -98,8 +98,6 @@ if ((@error_stack)) {  # The user made one or more mistakes, warn and exit
 }
 
 print "<p>\n";
-print "SQE: $SQLEnd <br>\n";
-print "SQB: $SQLBegin <br>\n";
 
 if ($TitleSearch || $AbstractSearch || $KeywordSearch || $PubInfoSearch || @RequesterSearchIDs ||
     $SQLBegin    || $SQLEnd) {
@@ -137,8 +135,6 @@ if ($TitleSearch || $AbstractSearch || $KeywordSearch || $PubInfoSearch || @Requ
   if ($StartDatePhrase) {push @RevisionPhrases,$StartDatePhrase;}
 
   $RevisionQuery .= join $OuterLogic,@RevisionPhrases;
-
-  print "RQ: $RevisionQuery<br>\n";
 
   my %RevisionDocumentIDs = ();
 

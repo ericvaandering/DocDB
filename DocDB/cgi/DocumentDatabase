@@ -36,7 +36,7 @@ print "</h4></center>\n";
 print "<p><b>Find the information you want in the database:</b>\n";
 print "<ul>\n";
 
-print "<li><a href=\"$SearchForm\">Search</a> documents (pre-alpha version)"; 
+print "<li><a href=\"$SearchForm\">Search</a> documents (beta version)"; 
 
 print "<p>\n";
 
@@ -64,7 +64,7 @@ print "List ";
 print "documents modified in the <a href=\"$LastModified?days=$LastDays\">last $LastDays days</a>, ";
 print "or by <a href=\"$ListAuthors\">author</a>, ";
 print "<a href=\"$ListTopics\">topic</a>, ";
-print "<a href=\"$ListTypes\">type</a>, ";
+#print "<a href=\"$ListTypes\">type</a>, ";
 unless ($Public) {
   print "<a href=\"$ListMeetings\">group meeting</a>, ";
 }

@@ -44,17 +44,15 @@ print $query -> start_multipart_form('POST',$Search,"name=\"queryform\"");
 print "<center><table cellpadding=10 width=80%>\n";
 print "<tr>\n";
  print "<td colspan=3>\n";
- print "This is an alpha version of the BTeV Document Database search engine.<p>\n"; 
- print "The ability to search on more fields is still coming. 
-        The help links may be missing or wrong. It may not work as expected. 
-        You may see diagnostic output on the screen from time to time.
-        It will NOT damage any data in the Database and I'm reasonably sure it won't injure your pets. 
-        At this point, please do not submit bugs.<p>\n"; 
+ print "This is a beta version of the BTeV Document Database search engine.<p>\n"; 
+ print "The help links may be missing or wrong, but the search is believed to work correctly.  It may 
+        still have bugs. It will NOT damage any data in the Database.
+        If you find bugs or have suggestions, please <a href=\"mailto:btev-docdb\@fnal.gov\">report them</a>.<p>\n"; 
  print "<center><b>Click on any of the <font color=red>red headings</font> for help.</b></center>\n"; 
  print "</td>\n";
 print "</tr></table><p>\n";
 
-print "<center><table cellpadding=10 border=1>\n";
+print "<center><table cellpadding=10 border=5><tr><td><table cellpadding=10>\n";
 print "<tr>\n";
  print "<td colspan=3 align=center>\n"; 
  print $query -> submit (-value => "Search for Documents");     
@@ -64,7 +62,7 @@ print "<tr>\n";
 print "</tr>\n";
 
 print "<tr>\n";
- print "<td colspan=3>\n";
+ print "<td colspan=3 align=center>\n";
  &LogicTypeButtons; 
  print "</td>\n";
 print "</tr>\n";
@@ -121,7 +119,7 @@ print "</tr>\n";
   print "</td>\n";
  print "</tr>\n";
 
-print "</table><p>\n";
+print "</table></td></tr></table><p>\n";
 
   
 
