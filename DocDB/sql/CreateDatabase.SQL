@@ -21,22 +21,6 @@ CREATE TABLE Author (
 ) TYPE=MyISAM;
 
 #
-# Dumping data for table 'Author'
-#
-
-INSERT INTO Author VALUES (1,'Eric','W.','Vaandering',2,1,20011205173408);
-INSERT INTO Author VALUES (2,'Kevin','M.','Stenson',2,1,20011205173408);
-INSERT INTO Author VALUES (3,'Joel','N.','Butler',1,1,20011205173408);
-INSERT INTO Author VALUES (4,'Harry','W. K.','Cheung',1,1,20011205173408);
-INSERT INTO Author VALUES (5,'Lynn','A.','Garren',1,1,20011205173408);
-INSERT INTO Author VALUES (6,'Sheldon','','Stone',3,1,20011205173408);
-INSERT INTO Author VALUES (7,'Deadbeat','','Collaborator',1,0,20011205173408);
-INSERT INTO Author VALUES (8,'Paul','D.','Sheldon',2,1,20011205173408);
-INSERT INTO Author VALUES (9,'Medford','S.','Webster',2,1,20011205173408);
-INSERT INTO Author VALUES (10,'Rob','','Kutschke',1,1,20011205173408);
-INSERT INTO Author VALUES (11,'Will','E.','Johns',2,1,20011207103019);
-
-#
 # Table structure for table 'Document'
 #
 
@@ -91,6 +75,9 @@ CREATE TABLE DocumentRevision (
   RevisionDate datetime default NULL,
   TimeStamp timestamp(14) NOT NULL,
   Obsolete tinyint(4) default '0',
+  JournalID int(11) default '0',
+  Volume int(11) default '0',
+  Page int(11) default '0',
   PRIMARY KEY (DocRevID),
   KEY DocumentID(DocumentID),
   KEY DocumentTitle(DocumentTitle),
@@ -240,41 +227,6 @@ CREATE TABLE MinorTopic (
 # Dumping data for table 'MinorTopic'
 #
 
-INSERT INTO MinorTopic VALUES (1,1,'Pixels','Pixel vertex detector',20011205173326);
-INSERT INTO MinorTopic VALUES (2,1,'Straws','Forward straw chambers',20011205173326);
-INSERT INTO MinorTopic VALUES (3,2,'Mixing','B mixing',20011205173326);
-INSERT INTO MinorTopic VALUES (4,2,'Rare B decays','Rare decays of B mesons',20011205173326);
-INSERT INTO MinorTopic VALUES (5,3,'Baryons','Charmed baryons',20011205173326);
-INSERT INTO MinorTopic VALUES (6,3,'Mixing','D Mixing',20011205173326);
-INSERT INTO MinorTopic VALUES (10,1,'EM Cal','Electromagnetic Calorimeter',20011205173326);
-INSERT INTO MinorTopic VALUES (9,1,'RICH','Ring Imaging Cherenkov',20011205173326);
-INSERT INTO MinorTopic VALUES (11,1,'Silicon','Silicon Strip Detector',20011205173326);
-INSERT INTO MinorTopic VALUES (12,1,'Muon','Muon Detector',20011205173326);
-INSERT INTO MinorTopic VALUES (13,1,'CZero','C0 Hall',20011205173326);
-INSERT INTO MinorTopic VALUES (14,2,'CP Violation','CP Violation',20011205173326);
-INSERT INTO MinorTopic VALUES (15,2,'Exotic','Exotic Decays',20011205173326);
-INSERT INTO MinorTopic VALUES (16,2,'Production','Production',20011205173326);
-INSERT INTO MinorTopic VALUES (17,2,'Other','Other Topics',20011205173326);
-INSERT INTO MinorTopic VALUES (18,3,'Other','Other Topics',20011205173326);
-INSERT INTO MinorTopic VALUES (19,3,'Rare Decays','Rare Decays',20011205173326);
-INSERT INTO MinorTopic VALUES (20,3,'Exotic','Exotic Decays',20011205173326);
-INSERT INTO MinorTopic VALUES (21,3,'Production','Production',20011205173326);
-INSERT INTO MinorTopic VALUES (22,3,'CP Violation','CP Violation',20011205173326);
-INSERT INTO MinorTopic VALUES (23,5,'DAQ','Data Acquisition',20011205173326);
-INSERT INTO MinorTopic VALUES (24,5,'Farms','Processing Farms ',20011205173326);
-INSERT INTO MinorTopic VALUES (25,7,'ES&H','Environment, Safety, and Health',20011205173326);
-INSERT INTO MinorTopic VALUES (26,7,'Budgets','Budgets',20011205173326);
-INSERT INTO MinorTopic VALUES (27,7,'Organization','Organization',20011205173326);
-INSERT INTO MinorTopic VALUES (28,7,'WBS','Work Breakdown Structure',20011205173326);
-INSERT INTO MinorTopic VALUES (29,6,'Framework','Software Framework',20011205173326);
-INSERT INTO MinorTopic VALUES (30,8,'17-18 December 2001','17-18 December 2001',20011205173326);
-INSERT INTO MinorTopic VALUES (31,4,'Electroweak','Electroweak',20011205173326);
-INSERT INTO MinorTopic VALUES (32,8,'25-26 January 2002','25-26 January 2002',20011205173326);
-INSERT INTO MinorTopic VALUES (33,8,'1-2 March 2002','1-2 March 2002',20011205173326);
-INSERT INTO MinorTopic VALUES (34,9,'Software workshop, Fall 2001','Software workshop, Fall 2001',20011205173326);
-INSERT INTO MinorTopic VALUES (35,6,'Tools','Software tools',20011205173326);
-INSERT INTO MinorTopic VALUES (36,1,'Other','Discussions of other detectors',20011205173326);
-INSERT INTO MinorTopic VALUES (37,1,'General','Documents regarding the whole BTeV detector',20011207092723);
 
 #
 # Table structure for table 'RevisionAuthor'
@@ -388,4 +340,30 @@ CREATE TABLE Conference (
   Timestamp timestamp(14) NOT NULL,
   PRIMARY KEY (ConferenceID)
 ) TYPE=MyISAM;
+
+
+#
+# Table structure for table 'Journal'
+#
+
+CREATE TABLE Journal (
+  JournalID int(11) NOT NULL auto_increment,
+  Abbreviation char(64) NOT NULL default '',
+  Name char(128) NOT NULL default '',
+  Publisher char(64) NOT NULL default '',
+  URL char(128) NOT NULL default '',
+  Timestamp timestamp(14) NOT NULL,
+  Acronym char(8) default NULL,
+  PRIMARY KEY (JournalID)
+) TYPE=MyISAM;
+
+#
+# Dumping data for table 'Journal'
+#
+
+INSERT INTO Journal VALUES (2,'Nucl. Instr. Meth. A','Nuclear Instruments and Methods in Physics Research Section A','Elsevier Science','http://www.elsevier.nl/',20020102164046,'NIMA');
+INSERT INTO Journal VALUES (7,'Eur. Phys. J. C','European Physical Journal C','Springer-Verlag','http://link.springer.de/',20020102164851,'EPJC');
+INSERT INTO Journal VALUES (4,'Phys. Lett. B','Physics Letters B','Elsevier Science','http://www.elsevier.nl/',20020102164139,'PLB');
+INSERT INTO Journal VALUES (5,'Phys. Rev. D','Physical Review D','American Physical Society','http://publish.aps.org/',20020102164339,'PRD');
+INSERT INTO Journal VALUES (6,'Phys. Rev. Lett.','Physical Review Letters','American Physical Society','http://publish.aps.org/',20020102164355,'PRL');
 
