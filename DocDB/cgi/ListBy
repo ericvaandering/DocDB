@@ -33,8 +33,12 @@ $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
 
-my $Days = $params{days} || 0;
-my $Mode = $params{mode} || "date";
+my $Days    = $params{days}    || 0;
+my $TopicID = $params{topicid} || 0;
+my $MajorID = $params{majorid} || 0;
+my $Major   = $params{major}   || "";
+
+my $Mode    = $params{mode} || "date"; # Is this needed?
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
@@ -44,17 +48,57 @@ my ($Title, $Message, $List);
 my ($SortBy, @Fields);
 
 if ($Days) { 
+
+### Days since last modification
+
   $Title   = "Documents from Last $Days Days";
   $Message = "These documents have been modified in the last <span class=\"highlight\">$Days days</span>.";
-  $List = $dbh -> prepare("select DISTINCT(DocumentID) from DocumentRevision where TO_DAYS(NOW())-TO_DAYS(TimeStamp)<=?");            
+  $List = $dbh -> prepare("select DISTINCT(DocumentID) from DocumentRevision where Obsolete=0 and TO_DAYS(NOW())-TO_DAYS(TimeStamp)<=?");            
   $List -> execute($Days);
+} elsif ($TopicID) {
+
+### Minor topic
+
+  require "TopicSQL.pm";
+  &SpecialMajorTopics;
+  &FetchMinorTopic($TopicID);
+#  if (&MajorIsConference($MinorTopics{$TopicID}{MAJOR})) {
+#    unless ($Mode) {$Mode = "conference";}
+#  }    
+#  if (&MajorIsMeeting($MinorTopics{$TopicID}{MAJOR})) {
+#    unless ($Mode) {$Mode = "meeting";}
+#  }    
+  $Title   = "Documents List by Topic";
+  $Message = "These documents on <span class=\"highlight\"> $MinorTopics{$TopicID}{LONG} 
+              ($MinorTopics{$TopicID}{Full})</span> are available:";
+  $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
+           "DocumentRevision,RevisionTopic where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
+           "and DocumentRevision.Obsolete=0 and RevisionTopic.MinorTopicID=?");            
+  $List -> execute($TopicID);
+} elsif ($Major || $MajorID) {
+
+### Major topic (either number or name)
+
+  require "TopicSQL.pm";
+  &SpecialMajorTopics;
+  if ($Major) {
+    $MajorID = &LookupMajorTopic($Major);
+  } 
+  &FetchMajorTopic($MajorID);
+  
+  $Title   = "Documents List by Topic";
+  $Message = "These documents on <span class=\"highlight\"> $MajorTopics{$MajorID}{LONG}</span> are available:";
+  $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
+           "DocumentRevision,RevisionTopic,MinorTopic where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
+           "and DocumentRevision.Obsolete=0 and RevisionTopic.MinorTopicID=MinorTopic.MinorTopicID and MinorTopic.MajorTopicID=?");            
+  $List -> execute($MajorID);
 }
 
 # Defaults, later can surround these in "unless"
 
 @Fields  = ("Docid","Title","Author","Updated"); 
 $SortBy  = "date";
-$Reverse = true;
+$Reverse = 1;
 
 # Do the fetch on the $List. "unless (@DocumentIDs)" here to do complex fetches, user specify
 

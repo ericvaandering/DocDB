@@ -111,7 +111,7 @@ if (@ReadyDocumentIDs) {
 
   &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
                  -docids => \@ReadyDocumentIDs, 
-                 -sortby => "date", -reverse => true);
+                 -sortby => "date", -reverse => 1);
 }
 
 if (@NotReadyDocumentIDs) {
@@ -119,7 +119,7 @@ if (@NotReadyDocumentIDs) {
 
   &DocumentTable(-fields => ["Docid","Title","CanSign","Updated"],
                  -docids => \@NotReadyDocumentIDs, 
-                 -sortby => "date", -reverse => true);
+                 -sortby => "date", -reverse => 1);
 }
 
 if (@SignedDocumentIDs) {
@@ -127,7 +127,7 @@ if (@SignedDocumentIDs) {
 
   &DocumentTable(-fields => ["Docid","Title","CanSign","Updated"],
                  -docids => \@SignedDocumentIDs, 
-                 -sortby => "date", -reverse => true);
+                 -sortby => "date", -reverse => 1);
 }
 
 if (@ApprovedDocumentIDs) {
@@ -135,7 +135,7 @@ if (@ApprovedDocumentIDs) {
 
   &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
                  -docids => \@ApprovedDocumentIDs, 
-                 -sortby => "date", -reverse => true);
+                 -sortby => "date", -reverse => 1);
 }
 
 
@@ -144,7 +144,7 @@ if (@OldSignatureDocumentIDs) {
 
   &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
                  -docids => \@OldSignatureDocumentIDs, 
-                 -sortby => "date", -reverse => true);
+                 -sortby => "date", -reverse => 1);
 }
 
 
