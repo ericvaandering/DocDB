@@ -55,7 +55,8 @@ sub DocDBFooter {
 # You probably want to include some version of this:
 
   print "<p><small>\n";
-  print "DocDB Version $DocDBVersion, contact \n";
+  print "<a href=\"$DocDBHome\">DocDB</a> ";
+  print "Version $DocDBVersion, contact \n";
   print "<i>\n";
   print "<A HREF=\"mailto:$WebMasterEmail\">$WebMasterName</A>\n";
   print "</i>\n";

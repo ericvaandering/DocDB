@@ -1,11 +1,16 @@
 #
 # Description: Configuration file for the DocDB. Sets default
-#              values and script names. Specific local settings are
-#              in ProjectGlobals.pm
+#              values and script names. Do not change this file,
+#              specific local settings are in ProjectGlobals.pm. 
+#              Nearly any variable here can be changed there.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 #
+
+# Advertising link for DocDB
+
+$DocDBHome = "http://cepa.fnal.gov/DocDB/";
 
 # Optional components
 
