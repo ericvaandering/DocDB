@@ -46,11 +46,9 @@ if ($Days || $Hours) {
   if ($Hours) {$TD = $Hours*10000;}
    
   my   @Queries = ();
-  push @Queries,"select DocRevID from DocumentRevision where Obsolete=0 and NOW()-Timestamp<$TD";
+  push @Queries,"select DocRevID from DocumentRevision where Obsolete=0 and NOW()-TimeStamp<$TD";
   push @Queries,"select DocRevID from RevisionSecurity where NOW()-Timestamp<$TD";
   push @Queries,"select DocRevID from DocumentFile     where NOW()-TimeStamp<$TD";
-  push @Queries,"select DocRevID from RevisionTopic    where NOW()-Timestamp<$TD";
-  push @Queries,"select DocRevID from RevisionAuthor   where NOW()-Timestamp<$TD";
 
   foreach $Query (@Queries) {
     my $revision_list = $dbh -> prepare($Query);
