@@ -17,7 +17,7 @@
         
 
 \date{27 November 2001 \\
-      Revised: 19 December 2001}
+      Revised: 31 December 2001}
 
 \maketitle
 
@@ -116,7 +116,7 @@ any documents you can't access.
 \section{Database}
 
 The database design is essentially finished, although small additions will
-probably be needed for conference presentations and publications (see
+probably be needed for refereed publications (see
 \secref{extend}).
 
 The document 
@@ -194,6 +194,11 @@ authors to a single document revision.
 \paragraph{Topics:} Topics are divided into MajorTopics and MinorTopics (or
 sub-topics). Each minor topic is associated with a single major topic. The
 document revision is associated with one or more minor topics, not major topics. 
+
+\paragraph{Conference:} For conferences, the short and long names of the
+conference are stored in MinorTopic. Additional information about the
+conference, such as location and dates are stored in the Conference table. Each
+row from conference is linked to a row from MinorTopic.
 
 \paragraph{SecurityGroups and GroupHierarchy:} Each document revision can be
 viewable by an arbitrary number of groups. A group can be the collaboration as
@@ -276,13 +281,16 @@ indexing capabilities should make the overall experience much better.
 Conference talks and proceedings pose a slightly different problem. As with
 group meetings, associating a document with a conference will be done by
 choosing an appropriate sub-topic. Listing of documents will be by conference
-in reverse chronological order. 
+date, not modification date, in reverse chronological order. 
 
 A full listing, however, should also contain information about the conference
-itself such as location, dates, a URL, etc. This will be accomplished by adding
+itself such as location, dates, a URL, etc. This was accomplished by adding
 an additional table to the database linked to the conference's MinorTopicID.
 
-This functionality has not been implemented yet.
+This functionality has been partially implemented. Listing by conference is
+possible, with slightly different options. The sort is currently done on the
+modification rather than conference date. Also, there is no extra information
+in the long view of the document about the conference.
 
 \subsection{Journal publications}
 
