@@ -289,7 +289,7 @@ sub PrintReferenceInfo ($) {
     &GetJournals;
     print "<div id=\"ReferenceInfo\">\n";
     print "<dl>\n";
-    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">References:</span></dt>\n";
+    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Journal References:</span></dt>\n";
     foreach my $ReferenceID (@ReferenceIDs) {
       $JournalID = $RevisionReferences{$ReferenceID}{JournalID};
       print "<dd>Published in ";
