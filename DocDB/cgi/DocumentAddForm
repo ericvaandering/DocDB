@@ -7,6 +7,7 @@ use CGI;
 use DBI;
 
 require "FormElements.pm";
+require "Scripts.pm";
 require "MySQLAccess.pm";
 require "DocDBGlobals.pm";
 
@@ -30,6 +31,8 @@ if      ($mode eq "add") {
   print $query->start_html(-title=>"BTeV Document Reservation");
 }
 
+&HelpPopupScript;
+
 print $query -> start_multipart_form('POST','ProcessDocumentAdd');
 print $query -> hidden(-name => 'mode', -default => 'reserve');
 
@@ -40,13 +43,14 @@ print "<td colspan=3>\n";
 if      ($mode eq "add") {
   print "<h4>You have chosen to add a new document to the database.<br> 
              Make sure you know all the required information and
-             the file is ready for uploading.</h3>\n";
+             the file is ready for uploading.<br>\n";
 } elsif ($mode eq "reserve") {
   print "<h4>You have chosen to reserve a new document document number in 
              the database. <br>
              You CANNOT upload the document using this form.<br>
-             Make sure you know all the required information.</h3>\n";
+             Make sure you know all the required information.<br>\n";
 }
+print "Click on any of the headings for help.</h4>\n";
 print "</td></tr>";
 print "<tr>\n";
 print "<td colspan=3>\n";

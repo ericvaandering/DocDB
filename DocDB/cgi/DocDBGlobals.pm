@@ -11,6 +11,7 @@ $web_root    = "http://vuhepv.phy.vanderbilt.edu/BTeV/DocDB/";
 $cgi_root    = "http://vuhepv.phy.vanderbilt.edu/cgi-bin/BTeV/DocDB/cgi/";
 
 $htaccess    = ".htaccess";
+$help_file   = $script_root."docdb.hlp";
 
 $ProcessDocumentAdd = $cgi_root."ProcessDocumentAdd";
 $DocumentAddForm    = $cgi_root."ProcessDocumentAddForm";

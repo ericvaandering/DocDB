@@ -1,0 +1,41 @@
+#! /usr/bin/perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+# 
+#
+
+use CGI;                                                                                      
+require "DocDBGlobals.pm";
+
+$query = new CGI;  # Global for subroutines
+print $query->header;
+print $query->start_html(-title=>"BTeV Document Database Help");
+
+open HELPFILE,"$help_file";
+
+while (<HELPFILE>) {
+  $key  = $_;
+  $name = <HELPFILE>;
+  chomp $key;
+  chomp $name;
+  $help{NAME}{$key} = $name;
+  while (<HELPFILE>) {
+    if ($_ eq "#\n") {last;}
+    $help{TEXT}{$key} .= $_;
+  }
+}
+
+close HELPFILE;     
+
+
+%params = $query -> Vars;
+$helpterm = $params{term};
+
+
+print "<b><big>$help{NAME}{$helpterm}:</big></b><p>\n";
+
+print "$help{TEXT}{$helpterm}\n";
+
+print $query->end_html;
+

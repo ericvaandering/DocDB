@@ -1,0 +1,46 @@
+title
+Title
+This is the initial title of of your document. This option must be supplied for
+when placing a document into the database and when reserving a document number.
+#
+requestor
+Requestor
+This is the name of the person who is requesting the document number or placing
+the document in the database. In other words, this is you. This option must be supplied for
+when placing a document into the database and when reserving a document number.
+#
+pubinfo
+Publication Information
+In this field, include any additional publication information such as FNAL
+pre-print numbers, journal references, etc. This field is optional.
+#
+abstract
+Abstract
+Include here an abstract of your document. A short description of the topic(s)
+discussed. This is optional during the reservation stage.
+#
+fileupload
+File upload
+This field will upload a file from your local computer to the database server.
+Usually you will press the "Browse" button to select, from your local
+file system, the file to be uploaded. 
+#
+authors
+Authors
+Select all the authors of the document. Either click or CTRL-click on author
+names to add them to the list.
+#
+topics
+Topics
+Select all the topics and subtopics for the document. Either click or CTRL-click
+on the topics to add them to the list.
+#
+security
+Security
+Select which username/password pairs you want to allow access to your document.
+To select more than one pair, either click or CTRL-click on them.
+#
+doctype
+Document Type:
+Select which type of document this is.
+#
