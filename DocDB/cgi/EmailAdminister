@@ -142,9 +142,9 @@ if      ($Action eq "Delete") { # Delete user
   foreach my $UsersGroupID (@UsersGroupIDs) {
     my $UsersGroupUpdate = $dbh -> prepare("insert into UsersGroup UsersGroupID,EmailUserID,GroupID ".
                                            " values (0,?,?)");
-       $UsersGroupUpdate -> execute($EmailUserID,$UserGroupID); 
-    &FetchSecurityGroup($UserGroupID);
-    print "Added user to $SecurityGroups{$UserGroupID}{NAME}<br/>";
+       $UsersGroupUpdate -> execute($EmailUserID,$UsersGroupID); 
+    &FetchSecurityGroup($UsersGroupID);
+    print "Added user to $SecurityGroups{$UsersGroupID}{NAME}<br/>";
   }                           
 } elsif ($Action eq "New") { 
   push @ErrorStack,"You can't create new users here. Do it the normal way.";
