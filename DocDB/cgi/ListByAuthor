@@ -85,10 +85,10 @@ my $NumDoc = 0;
 
 foreach $DocumentID (@DocumentIDs) {
   unless ($DocumentID) {next;}
-  unless (&CanAccess($DocumentID,$Documents{$DocumentID}{NVER})) {next;}
-  # FIXME: Need to put latest document accessible if last version isn't
+  $Version = &LastAccess($DocumentID);
+  if ($Version == -1) {next;}
+  &DocumentSummary($DocumentID,$Mode,$Version);
   ++$NumDoc;
-  &DocumentSummary($DocumentID);
 }
 
 print "</table></center>\n";

@@ -301,9 +301,10 @@ print "<center><table cellpadding=3>\n";
 
 foreach $DocumentID (@DocumentIDs) {
   unless ($DocumentID) {next;}
-  unless (&CanAccess($DocumentID,$Documents{$DocumentID}{NVER})) {next;}
-  # FIXME: Need to put latest document accessible if last version isn't
-  &DocumentSummary($DocumentID,$Mode);
+  $Version = &LastAccess($DocumentID);
+  if ($Version == -1) {next;}
+  &DocumentSummary($DocumentID,$Mode,$Version);
+  ++$NumDoc;
 }
 
 print "</table></center>\n";

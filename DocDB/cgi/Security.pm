@@ -63,8 +63,14 @@ sub CanModify { # Can the user modify (with current security) this docuement
 }
 
 sub LastAccess { # Highest version user can access (with current security)
-  my ($documentID) = @_;
-  return 999;    # Open access for now
+  my ($DocumentID) = @_;
+  my $Version = -1;
+  my $tryver = $Documents{$DocumentID}{NVER};
+  while ($Version == -1 && $tryver <=> -1) {
+    if (&CanAccess($DocumentID,$tryver)) {$Version = $tryver;}
+    --$tryver;
+  }
+  return $Version;    
 }
 
 1;
