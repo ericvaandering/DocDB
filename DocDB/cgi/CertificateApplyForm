@@ -27,6 +27,7 @@ $StartTime = new Benchmark;
 
 require "DocDBGlobals.pm";
 require "Messages.pm";
+require "HTMLUtilities.pm";
 
 require "CertificateUtilities.pm";
 
