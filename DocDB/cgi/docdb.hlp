@@ -1,3 +1,52 @@
+modifytypes
+There are currently four types of document modification:
+<ol>
+<li>Reserve a document #: Select this option if you want a number for a document
+you are going to write, but don't have a draft of the document.
+<li>New document: You have a new document ready to be put into the database that
+has not been entered before.
+<li>Update document: You have a new version of a document already in the
+database. You will also be able to change any of the information in the database
+about the document.
+<li>Update database information: The document hasn't changed, but the
+information about it has. For example, it's now published so you want to add that
+information.
+</ol>
+Select the type of modification appropriate to your situation
+#
+uploadmethod
+Upload Methods
+You can upload documents by two different methods. You can upload files from
+your local computer or by supplying a URL. In the latter case, the database
+system downloads the document from the location you specify. (In both cases the
+document is stored on the document database webserver.)
+#
+uploadtype
+Upload Types
+You can upload three different types of documents. You can upload a single file,
+which is the default. Next, you can upload a document consisting of multiple
+files, such as PowerPoint and PDF by selecting "Multiple" and filling in the "#
+of files" option with the number of files you want to upload. Finally you can
+upload an archive file containing all the files in your document. However, only
+one of those files will be directly accessible. For example, use this option to
+upload a group of linked web pages. You can upload files in .tar, .tar.gz, .tgz,
+or .zip format.
+#
+topicoption
+Topic Selection
+You can either select the subtopic(s) for your document from one long list or
+from a number of shorter lists split up by topic. 
+#
+authoroption
+Author Selection
+Help not written
+#
+dateoveride
+Overriding the submission date
+Use this option to set the date and time for a document written in the past.
+Unless you are submitting a document from the old database or one written a long
+time ago, you should not check this.
+#
 main
 Main Files
 Files that the database knows about are classified as "Main" or "Other." Main
@@ -8,7 +57,7 @@ Files."
 overdate
 Date and Time
 Use these menus to set the date and time for a document written in the past.
-Unless you are submitting a document from the old database or written a long
+Unless you are submitting a document from the old database or one written a long
 time ago, you should not check "Override date" and you will not have to use this
 control. For your convenience, the date has been set to approximately the
 current time.
