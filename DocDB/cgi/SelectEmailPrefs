@@ -266,6 +266,8 @@ print "<ul>\n";
 print "</ul>\n";
 print "</td></tr></table>\n";
 
+# FIXME: No way to delete notification on a document
+
 my @WatchDocumentIDs = &FetchEmailDocuments(-emailuserid => $EmailUserID);
 if (@WatchDocumentIDs) {
   print "<center><h4>You are also watching these documents: </h4></center><p/>\n";
