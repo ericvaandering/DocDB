@@ -152,6 +152,7 @@ sub CanCreate { # Can the user create documents
   my @GroupIDs = keys %SecurityGroups; # FIXME use a hash for direct lookup
   foreach my $UserGroupID (@UsersGroupIDs) {
     foreach my $GroupID (@GroupIDs) { # Check auth. users vs. logged in user
+      &FetchSecurityGroup($GroupID);
       if ($UserGroupID == $GroupID && $SecurityGroups{$GroupID}{CanCreate}) {
         $Create = 1;                           # User checks out
       }  
@@ -171,7 +172,8 @@ sub CanAdminister { # Can the user administer the database
   my @GroupIDs = keys %SecurityGroups; # FIXME use a hash for direct lookup
   foreach my $UserGroupID (@UsersGroupIDs) {
     foreach my $GroupID (@GroupIDs) { # Check auth. users vs. logged in user
-      if ($UserGroupID == $GroupID && $SecurityGroups{$GroupID}{CanCreate}) {
+      &FetchSecurityGroup($GroupID);
+      if ($UserGroupID == $GroupID && $SecurityGroups{$GroupID}{CanAdminister}) {
         $Administer = 1;                           # User checks out
       }  
     }  
