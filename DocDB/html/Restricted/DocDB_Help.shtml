@@ -426,7 +426,7 @@ You can often get more help when using the entry form or the advanced forms on
 the main page by clicking on the <font color="red">red terms</font> on the
 page. A small window will pop up to explain what is going on.<p>
 
-See the <a href="http://www-btev.fnal.gov/DocDB/Static/Restricted/FAQ.html">FAQ</a> if
+See the <a href="http://www-btev.fnal.gov/DocDB/Static/Restricted/FAQ.shtml">FAQ</a> if
 you still have questions. If you don't find your answer there or 
 if you have additional questions, suggestions, or problems with the document
 database, please send e-mail to the <a href="mailto:btev-docdb@fnal.gov">DocDB
@@ -435,7 +435,7 @@ administrators</a>.<p>
 For a more technical document on how the database works, see 
 <a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=140">
 BTeV-doc-140</a>. See the 
-<a href="http://www-btev.fnal.gov/DocDB/Static/Restricted/Changelog.html">change log</a>
+<a href="http://www-btev.fnal.gov/DocDB/Static/Restricted/Changelog.shtml">change log</a>
 for a chronology of changes to the code.<p>
 
 
