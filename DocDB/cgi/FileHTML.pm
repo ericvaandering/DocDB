@@ -111,7 +111,7 @@ sub FileLink {
   my $file_size = &FileSize(&FullFile($documentID,$version,$shortname));
   $file_size =~ s/^\s+//; # Chop off leading spaces
   if ($description) {
-    return "<a href=\"$base_url$shortfile\" title=\"$shortname\">$description</a> ($shortname, $file_size)";
+    return "<a href=\"$base_url$shortfile\" title=\"$shortname\">$description</a><br/>($shortname, $file_size)";
   } else {
     return "<a href=\"$base_url$shortfile\" title=\"$shortname\">$shortname</a> ($file_size)";
   }
@@ -137,7 +137,7 @@ sub ArchiveLink {
   if ($Zip) {push @Types,"zip";}
      @Types = sort @Types;
   
-  my $link  = "<b>Retrieve archive of files as \n";
+  my $link  = "<b>Get all files as \n";
   @LinkParts = ();
   foreach my $Type (@Types) {
     push @LinkParts,"<a href=\"$RetrieveArchive?docid=$DocumentID\&version=$Version\&type=$Type\">$Type</a>";

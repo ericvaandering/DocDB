@@ -400,6 +400,12 @@ sub OtherVersionLinks {
     $link = &DocumentLink($DocumentID,$Version);
     $date = &EuroDateHM($DocRevisions{$RevID}{DATE});
     print "<li class=\"$Class\">$link \n";
+    if ($Class eq "Odd") {  
+      $Class = "Even";
+    } else {    
+      $Class = "Odd";
+    }  
+    print "<br/>$date\n";
     if ($UseSignoffs) {
       require "SignoffUtilities.pm";
       my ($ApprovalStatus,$LastApproved) = &RevisionStatus($RevID);
@@ -407,12 +413,7 @@ sub OtherVersionLinks {
         print "<br/>$ApprovalStatus";
       }  
     }  
-    if ($Class eq "Odd") {  
-      $Class = "Even";
-    } else {    
-      $Class = "Odd";
-    }  
-    print "<br/>($date)</li>\n";
+    print "</li>\n";
   }
   print "</ul>\n";
   print "</div>\n";
