@@ -65,20 +65,20 @@ sub SessionEntryForm (@) {
       $SessionDefaultDateTime    = "";
       $SessionDefaultTitle       = "";
       $SessionDefaultDescription = "";
-      $SessionSepararatorDefault = "";
+      $SessionSeparatorDefault = "";
     } else { # Key off Meeting Order IDs, do differently for Sessions and Separators
       if ($MeetingOrders{$MeetingOrderID}{SessionID}) {
         my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
 	$SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
 	$SessionDefaultTitle       = $Sessions{$SessionID}{Title};
 	$SessionDefaultDescription = $Sessions{$SessionID}{Description};
-	$SessionSepararatorDefault = "No";
+	$SessionSeparatorDefault = "No";
       } elsif ($MeetingOrders{$MeetingOrderID}{SessionSeparatorID}) {
         my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
 	$SessionDefaultDateTime    = $Sessions{$SessionSeparatorID}{StartTime};
 	$SessionDefaultTitle       = $Sessions{$SessionSeparatorID}{Title};
 	$SessionDefaultDescription = $Sessions{$SessionSeparatorID}{Description};
-	$SessionSepararatorDefault = "Yes";
+	$SessionSeparatorDefault = "Yes";
       }
     } 
     $SessionOrderDefault = $SessionOrder;  
