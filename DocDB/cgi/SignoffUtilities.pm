@@ -218,18 +218,19 @@ sub NotifySignees ($) {
   
   my ($DocRevID) = @_;
 
+  my ($Status)     = &RevisionStatus($DocRevID);
   my @EmailUserIDs = &ReadySignatories($DocRevID);
 
   if (@EmailUserIDs) {
     &MailNotices(-docrevid => $DocRevID, -type => "signature", -emailids => \@EmailUserIDs);
   }
   
-  my ($Status,$DocRevID) = &RevisionStatus($DocRevID);
-  
-  print "<b>Approval status: $Status</b><br>\n";
-  
   if ($Status eq "Approved") {
     &MailNotices(-docrevid => $DocRevID, -type => "approved");
+  }
+
+  if ($Status ne "Unmanaged") {
+    print "<b>Approval status: $Status</b><br>\n";
   }
 }
 
@@ -255,18 +256,7 @@ sub ReadySignatories ($) {
       }
     } 
   }
-
-  my ($Status,$DocRevID) = &RevisionStatus($DocRevID);
-  if ($Status ne "Unmanaged") {
-    print "<b>Approval status: $Status</b><br>\n";
-  }
-
-  if (@EmailUserIDs) {
-    &MailNotices(-docrevid => $DocRevID, -type => "signature", -emailids => \@EmailUserIDs);
-  }
-  if ($Status eq "Approved") {
-    &MailNotices(-docrevid => $DocRevID, -type => "approved");
-  }
+  return @EmailUserIDs;
 }
 
 sub CopyRevisionSignoffs { # CopySignoffs from one revision to another
