@@ -350,20 +350,58 @@ sub MeetingsTable {
   print "</table>\n";
 }
 
-sub ShortDescriptionBox {
+sub ShortDescriptionBox  (;%) {
+  my (%Params) = @_;
+  
+  my $HelpLink  =   $Params{-helplink}  || "shortdescription"; #FIXME Not used, Blank might be needed later?
+  my $HelpText  =   $Params{-helptext}  || "Topics";           # Not used
+  my $ExtraText =   $Params{-extratext} || "";                 # Not used
+  my $Required  =   $Params{-required}  || 0;                  # Not used
+  my $Name      =   $Params{-name}      || "short";
+  my $Size      =   $Params{-size}      || 20;
+  my $MaxLength =   $Params{-maxlength} || 40;
+  my $Disabled  =   $Params{-disabled}  || "0";
+  my $Default   =   $Params{-default}   || "";                 # Not used
+
   print "<b><a ";
   &HelpLink("shortdescription");
   print "Short Description:</a></b><br> \n";
-  print $query -> textfield (-name => 'short', -default   => $DefaultShortDescription,
-                             -size => 20,      -maxlength => 40);
+  if ($Disabled) {  # Doesn't scale
+    print $query -> textfield (-name => $Name,  -default   => $DefaultShortDescription,
+                               -size => $Size , -maxlength => $MaxLength, -disabled => $Disabled);
+  } else {
+    print $query -> textfield (-name => $Name,  -default   => $DefaultShortDescription,
+                               -size => $Size , -maxlength => $MaxLength);
+  }                               
 };
 
-sub LongDescriptionBox {
+sub LongDescriptionBox (;%) {
+  my (%Params) = @_;
+  
+  my $HelpLink  =   $Params{-helplink}  || "longdescription";  #FIXME  Not used, Blank might be needed later?
+  my $HelpText  =   $Params{-helptext}  || "Topics";           # Not used
+  my $ExtraText =   $Params{-extratext} || "";                 # Not used
+  my $Required  =   $Params{-required}  || 0;                  # Not used
+  my $Name      =   $Params{-name}      || "long";
+  my $Size      =   $Params{-size}      || 40;
+  my $MaxLength =   $Params{-maxlength} || 120;
+  my $Disabled  =   $Params{-disabled}  || "0";
+  my $Default   =   $Params{-default}   || "";                 # Not used
+
   print "<b><a ";
   &HelpLink("longdescription");
   print "Long Description:</a></b><br> \n";
-  print $query -> textfield (-name => 'long', -default   => $DefaultLongDescription,
-                             -size => 40,     -maxlength => 120);
+  if ($Disabled) {  # Doesn't scale
+    print $query -> textfield (-name => $Name,  -default   => $DefaultLongDescription,
+                               -size => $Size , -maxlength => $MaxLength, -disabled => $Disabled);
+    
+    
+  } else {
+    print $query -> textfield (-name => $Name,  -default   => $DefaultLongDescription,
+                               -size => $Size , -maxlength => $MaxLength);
+    
+    
+  }                               
 };
 
 sub FullTopicScroll ($$;@) { # Scrolling selectable list for topics, all info
@@ -408,6 +446,7 @@ sub TopicScroll (%) {
   my $Required  =   $Params{-required}  || 0;
   my $Name      =   $Params{-name}      || "topics";
   my $Size      =   $Params{-size}      || 10;
+  my $Disabled  =   $Params{-disabled}  || "0";
   my @Defaults  = @{$Params{-default}};
 
   unless ($GotAllTopics) {
@@ -439,9 +478,17 @@ sub TopicScroll (%) {
     print "<br/> \n";
   }
 
-  print $query -> scrolling_list(-name => $Name, -values => \@ActiveIDs, 
-                                 -labels => \%TopicLabels,
-                                 -size => 10, -multiple => $Multiple,
-                                 -default => \@Defaults);
+  if ($Disabled) {  # Doesn't scale
+    print $query -> scrolling_list(-name => $Name, -values => \@ActiveIDs, 
+                                   -labels => \%TopicLabels,
+                                   -size => 10, -multiple => $Multiple, -disabled => $Disabled,
+                                   -default => \@Defaults);
+  } else {
+    print $query -> scrolling_list(-name => $Name, -values => \@ActiveIDs, 
+                                   -labels => \%TopicLabels,
+                                   -size => 10, -multiple => $Multiple,
+                                   -default => \@Defaults);
+  }                               
+  
 }
 1;

@@ -23,19 +23,38 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-sub AdministerActions {
+sub AdministerActions (%) {
   require "Scripts.pm";
-  my %Action = ();
 
-  $Action{Delete} = "Delete";
-  $Action{New}    = "New";
-  $Action{Modify} = "Modify";
+  my (%Params) = @_;
+
+  my $Form       =   $Params{-form}  || "";
+  my %Matrix     = %{$Params{-matrix}};
+
+  my %Action    = ();
+  my %Positions = ();
+
+  $Action{Delete}    = "Delete";
+  $Action{New}       = "New";
+  $Action{Modify}    = "Modify";
   
+  # Actions are a hash, can't rely on order.
+  
+  my $Position = 0;
+  foreach my $Action (keys %Action) { 
+    $Positions{$Action}    = $Position;
+    ++$Position;
+  }
+  
+  if ($Form) {
+    &AdminDisableScripts(-matrix => \%Matrix, -form => $Form, -positions => \%Positions); 
+  }  
   print "<b><a ";
   &HelpLink("admaction");
   print "Action:</a></b><br> \n";
   print $query -> radio_group(-name => "admaction", 
-                              -values => \%Action, -default => "-");
+                              -values => \%Action, -default => "-",
+                              -onClick => "disabler_$Form();");
 };
 
 sub AdministratorPassword {

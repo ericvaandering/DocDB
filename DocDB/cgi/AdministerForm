@@ -171,27 +171,41 @@ print "<p><hr>\n";
 
 print "<a name=\"mintopic\"><center><h4>Administer Minor Topics</h4></center>\n";
 
-print $query -> start_multipart_form('POST',"$TopicAdminister");
+my %Matrix = ();
+  $Matrix{topics}{Delete} = 1;
+  $Matrix{majortopic}{New} = 1;
+  $Matrix{majortopic}{Modify} = 1;
+  $Matrix{topics}{Modify} = 1;
+  $Matrix{shortdesc}{New} = 1;
+  $Matrix{shortdesc}{Modify} = 1;
+  $Matrix{longdesc}{New} = 1;
+  $Matrix{longdesc}{Modify} = 1;
+  
+
+
+
+print $query -> start_multipart_form('POST',"$TopicAdminister",
+                                    "id=\"minortopic\" name=\"minortopic\"");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
-print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
+print "<td colspan=2>\n"; &AdministerActions(-form => "minortopic", -matrix => \%Matrix);      print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
 print "<td colspan=2>\n"; 
  &TopicScroll(-helptext  => "Minor Topics", -helplink => "topics", 
               -extratext => " (Long descriptions in brackets)", 
-              -multiple  => "true", -format => "long"); 
+              -multiple  => "true", -format => "long", -disabled => "true"); 
 print "</td>\n"; 
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td rowspan=2>\n"; &MajorTopicSelect; print "</td>\n";
-print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
+print "<td rowspan=2>\n"; &MajorTopicSelect(-disabled => "true"); print "</td>\n";
+print "<td>\n"; &ShortDescriptionBox(-name => "shortdesc", -disabled => "true");     print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td>\n"; &LongDescriptionBox;     print "</td>\n";
+print "<td>\n"; &LongDescriptionBox(-name => "longdesc", -disabled => "true");     print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
@@ -218,7 +232,7 @@ print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td rowspan=2>\n"; &MajorTopicSelect("full"); print "</td>\n";
+print "<td rowspan=2>\n"; &MajorTopicSelect(-format => "full"); print "</td>\n";
 print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
 print "</tr>\n";
 

@@ -192,7 +192,8 @@ sub MultiTopicSelect (%) { # Multiple scrolling selectable lists for topics
   
   my (%Params) = @_;
   
-  my $Required  =   $Params{-required}  || 0;
+  my $Required = $Params{-required}  || 0;
+  my $Disabled = $Params{-disabled}  || "";
 
   &SpecialMajorTopics;
 
@@ -229,14 +230,18 @@ sub MultiTopicSelect (%) { # Multiple scrolling selectable lists for topics
     #FIXME: Use TopicScroll
     print $query -> scrolling_list(-name => "topics", 
              -values => \@MatchMinorIDs, -labels => \%MatchLabels,
-             -size => 8, -multiple => 'true', -default => \@TopicDefaults);
+             -size => 8, -multiple => 'true', -default => \@TopicDefaults,
+             -disabled => $Disabled);
     print "</td>\n";
   }  
   print "</table>\n";
 };
 
-sub MajorTopicSelect (;$) { # Scrolling selectable list for major topics
-  my ($Mode) = @_; 
+sub MajorTopicSelect (%) { # Scrolling selectable list for major topics
+  my (%Params) = @_;
+  
+  my $Mode     = $Params{-format}    || "short";
+  my $Disabled = $Params{-disabled}  || "0";
   
   print "<b><a ";
   &HelpLink("majortopics");
@@ -249,9 +254,16 @@ sub MajorTopicSelect (;$) { # Scrolling selectable list for major topics
     } else {  
       $MajorLabels{$ID} = $MajorTopics{$ID}{SHORT};
     }  
-  }  
-  print $query -> scrolling_list(-name => "majortopic", -values => \@MajorIDs, 
-                                 -labels => \%MajorLabels,  -size => 10);
+  } 
+  if ($Disabled) {  # Doesn't scale
+    print $query -> scrolling_list(-name => "majortopic", -values => \@MajorIDs, 
+                                   -labels => \%MajorLabels,  -size => 10,
+                                   -disabled);
+  } else {
+    print $query -> scrolling_list(-name => "majortopic", -values => \@MajorIDs, 
+                                   -labels => \%MajorLabels,  -size => 10);
+  }                               
+                                 
 };
 
 sub InstitutionSelect ($) { # Scrolling selectable list for institutions

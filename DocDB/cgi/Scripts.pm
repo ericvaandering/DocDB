@@ -447,4 +447,42 @@ sub SignoffChooserPopupScript {
   print "</script>\n";
 }
 
+sub AdminDisableScripts (%) {
+
+# Adapted from CellarTracker
+
+  my (%Params) = @_;
+  
+  my $Form       =   $Params{-form}  || "";
+  my %Matrix     = %{$Params{-matrix}};
+  my %Positions  = %{$Params{-positions}};
+ 
+ 
+  print "<script LANGUAGE=\"JavaScript\" type=\"text/javascript\">\n";
+  print "<!-- \n";
+
+  print "function disabler_",$Form,"() {\n";
+#  print "function disabler() {\n";
+  
+  foreach my $Position (keys %Positions) {
+    print "if (document.$Form.admaction[$Positions{$Position}].checked == true) {\n";
+    foreach my $Element (keys %Matrix) {
+      if ($Matrix{$Element}{$Position}) {
+        print "document.$Form.$Element.disabled = false;\n";
+      } else {  
+        print "document.$Form.$Element.disabled = true;\n";
+      }
+    }
+    print "}\n";    
+  }
+  
+  
+  
+  print "}\n";
+  
+  print "//-->\n";
+  print "</script>\n";
+}
+
+
 1;
