@@ -1,3 +1,11 @@
+#
+# Description: Routines which determine which users are allowed to view, 
+#              create, and administer documents.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
 sub CanAccess { # Can the user access (with current security) this version
   require "RevisionSQL.pm";
   
@@ -74,6 +82,17 @@ sub CanCreate { # Can the user create documents
     }  
   }
   return $Create;
+}
+
+sub CanAdminister { # Can the user administer the database
+  my $OkUser = $Administrator;
+     $OkUser =~ tr/[A-Z]/[a-z]/; 
+  
+  if ($remote_user eq $OkUser) {
+    return 1;
+  } else { 
+    return 0;
+  }    
 }
 
 sub LastAccess { # Highest version user can access (with current security)

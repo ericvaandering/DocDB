@@ -1,3 +1,10 @@
+#
+# Description: Various routines which supply format output in HTML
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
 require "AuthorHTML.pm";
 require "TopicHTML.pm";
 require "FileHTML.pm";
@@ -141,7 +148,7 @@ sub PrintRevisionInfo {
   my @TopicIDs    = &GetRevisionTopics($DocRevID);
   my @GroupIDs    = &GetRevisionSecurityGroups($DocRevID);
  
-  print "<center><table cellpadding=10 width=90%>\n";
+  print "<center><table cellpadding=10 width=95%>\n";
   print "<tr><td colspan=3 align=center>\n";
   &PrintTitle($DocRevisions{$DocRevID}{TITLE});
   print "</td></tr>\n";
@@ -161,7 +168,7 @@ sub PrintRevisionInfo {
 
   print "</td></tr>\n";
   print "</table>\n";
-  print "<table cellpadding=10 width=90%>\n";
+  print "<table cellpadding=10 width=95%>\n";
   print "<tr valign=top>";
   print "<td colspan=2>"; 
   &AuthorListByID(@AuthorIDs);
@@ -174,7 +181,7 @@ sub PrintRevisionInfo {
 
   print "</td></tr>\n";
   print "<tr valign=top>";
-  print "<td colspan=3 width=50%>"; 
+  print "<td colspan=3>"; 
   &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT});
 
   print "<td rowspan=3 colspan=3>"; 
@@ -485,14 +492,18 @@ sub TypeLink {
   require "MiscSQL.pm";
   
   &FetchDocType($TypeID);
-  my $link;
-  $link = "<a href=$ListByType?typeid=$TypeID>";
+  my $link = "";
+  unless ($Public) {
+    $link .= "<a href=$ListByType?typeid=$TypeID>";
+  }
   if ($mode eq "short") {
     $link .= $DocumentTypes{$TypeID}{SHORT};
   } else {
     $link .= $DocumentTypes{$TypeID}{LONG};
   }
-  $link .= "</a>";
+  unless ($Public) {
+    $link .= "</a>";
+  }
   
   return $link;
 }

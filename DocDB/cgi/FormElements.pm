@@ -1,3 +1,11 @@
+#
+# Description: Various routines which supply input forms for document 
+#              addition, etc.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
 sub DaysPulldown {
   my @days = (1,2,3,5,7,10,14,20,30,45,60,90);
   print $query -> popup_menu (-name => 'days',-values => \@days, 
@@ -413,7 +421,7 @@ sub InstitutionSelect { # Scrolling selectable list for institutions
     $InstLabels{$ID} = $Institutions{$ID}{SHORT};
   }  
   print $query -> scrolling_list(-name => "inst", -values => \@InstIDs,
-                                 -labels => \%InstLabels,  -size => 15);
+                                 -labels => \%InstLabels,  -size => 10);
 };
 
 sub DocTypeButtons {

@@ -1,0 +1,102 @@
+#! /usr/bin/env perl
+#
+# Description: This single form provides a number of interfaces to admin 
+#              tools, each run by a different script. 
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+use CGI;                                                                                      
+use DBI;
+
+require "DocDBGlobals.pm";
+require "FormElements.pm";
+require "AdministerElements.pm";
+require "Scripts.pm";
+require "Security.pm";
+
+require "AuthorSQL.pm";
+require "TopicSQL.pm";
+
+require "HTMLUtilities.pm";
+require "Sorts.pm";
+
+$query = new CGI;  # Global for subroutines
+$dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+&GetInstitutions;
+&GetAuthors;
+&GetTopics;
+
+print $query->header;
+&BTeVHeader("Administer $Project DocDB"); # DocDBHeader
+
+&HelpPopupScript;
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+unless (&CanAdminister()) {
+  push @ErrorStack,"You are not allowed to access administrative functions.";
+}
+
+if (@error_stack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@error_stack);
+}
+
+print "<b>Click on any of the headings for help.</b><p>\n"; 
+
+print $query -> start_multipart_form('POST',"AuthorAdminister");
+print "<table cellpadding=10>\n";
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td>\n"; &AuthorSelect; print "</td>\n";  #FIXME: No multi-select
+print "<td>\n"; &InstitutionSelect; print "</td>\n";
+print "<td>\n"; &NameEntryBox;      print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n";
+&AdministratorPassword;
+print "&nbsp;";
+print $query -> submit (-value => "Change Author Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<p><hr><p>\n";
+
+print $query -> start_multipart_form('POST',"TopicAdminister");
+print "<table cellpadding=10>\n";
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td>\n"; &TopicSelect; print "</td>\n"; #FIXME: No multi-select
+print "<td>\n"; &MajorTopicSelect; print "</td>\n";
+print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
+print "<td>\n"; &LongDescriptionBox;     print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n";
+&AdministratorPassword;
+print "&nbsp;";
+print $query -> submit (-value => "Change Topic Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<p><hr><p>\n";
+
+&DocDBNavBar();
+&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
