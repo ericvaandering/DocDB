@@ -55,3 +55,10 @@ tr.Odd {
 tr.Even {
   background: white;
 }
+
+/* Let's say you want to adjust the font size of the abstract and entire left
+column down one setting */
+
+#LeftColumn3Col, #Abstract {
+  font-size: 90%
+}  
