@@ -39,6 +39,7 @@ require "FSUtilities.pm";
 require "WebUtilities.pm";
 require "HTMLUtilities.pm";
 require "Security.pm";
+require "Scripts.pm";
 
 if ($MailInstalled) {
   require "MailNotification.pm";
@@ -64,6 +65,8 @@ if ($mode eq "reserve") {
 } elsif ($mode eq "update" || $mode eq "updatedb") {
   &DocDBHeader("$Project Document Modification Results","Document Modification Results"); 
 }
+
+&HelpPopupScript;
 
 ### Pull info out of params into local variables
 ### FIXME: Get all the params here, too confusing later on to be using $param

@@ -31,6 +31,7 @@ require "RevisionSQL.pm";
 require "FSUtilities.pm";
 require "HTMLUtilities.pm";
 require "Security.pm";
+require "Scripts.pm";
 require "SQLChecks.pm";
 
 require "RevisionHTML.pm";
