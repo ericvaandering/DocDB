@@ -109,7 +109,7 @@ print "<a name=\"keywd\"><center><h4>Administer Keywords</h4></center>\n";
 
 print $query -> start_multipart_form('POST',"$KeywordListAdminister",
                                      "id=\"keywords\" name=\"keywords\"");
-print "<table cellpadding=10>\n";
+print "<table cellpadding=10 border=1>\n";
 print "<tr valign=top>\n";
 print "<td colspan=3>\n";
  &AdministerActions(-form => "keywords", -matrix => \%EnableMatrix);
@@ -121,13 +121,14 @@ print "<td>\n";
  &KeywordSelect(-format => "full", -maxlabel => 40, -disabled => true);
 print "</td>\n"; 
 #print "</tr>\n";
-#print "<tr valign=top>\n";
 
 print "<td>\n"; 
  &KeywordGroupSelect(-format => "short", -multiple => "true", 
                      -remove => "true",  -disabled => true); 
 print "</td>\n";
 
+print "<table cellpadding=5 border=1>\n";
+print "<tr valign=top>\n";
 print "<td>\n";
  &ShortDescriptionBox(-name => 'shortdesc',-disabled => true);
 print "</td>\n";
@@ -138,6 +139,7 @@ print "<td>\n";
  &LongDescriptionBox(-name => 'shortdesc',-disabled => true);
 print "</td>\n";
 print "</tr>\n";
+print "</table>";
 
 print "<tr valign=top>\n";
 print "<td colspan=3>\n";
