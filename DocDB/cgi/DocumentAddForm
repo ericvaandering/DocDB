@@ -502,6 +502,14 @@ if ($TopicMode eq "single") {
 }
 print "</tr>\n";
 
+print "<tr>\n";
+print "<td colspan=4>\n"; 
+&TextField(-name     => 'xrefs', -size => 40,
+           -default  => $XRefDefault, 
+           -helplink => 'xrefentry', -helptext => 'Cross References');
+print "</td>\n";
+print "</tr>\n";
+
 ### References and Publication info
 
 unless ($Meeting || $OtherMeeting) {

@@ -21,4 +21,29 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+sub InsertXRefs (%) {
+  require "DocumentSQL.pm";
+  my %Params = @_;
+  
+  my $DocRevID    =   $Params{-docrevid} || "";   
+  my @DocumentIDs = @{$Params{-docids}};
+
+  my $Count = 0;
+
+  my $Insert = $dbh -> prepare("insert into DocXRef (DocXRefID, DocRevID, DocumentID) values (0,?,?)");
+                                 
+  foreach my $DocID (@DocumentIDs) {
+    if (&FetchDocument($DocID)) {
+      $Insert -> execute($DocRevID,$DocID);
+      ++$Count;
+    } else {
+      require "ResponseElements.pm";
+      my $DocumentString = &FullDocumentID($DocID);
+      push @WarnStack,"Unable to Cross-reference to $DocumentString: Does not exist";
+    }  
+  }  
+      
+  return $Count;
+}
+
 1;
