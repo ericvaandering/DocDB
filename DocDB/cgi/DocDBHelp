@@ -31,19 +31,24 @@ my $ProjectPatterns = [
   'text'        => [ qw{ -field Text -grove              } ],
 ];
 
-my $DefaultMatcher = XML::PatAct::MatchName -> new(Patterns => $DefaultPatterns);
-my $ProjectMatcher = XML::PatAct::MatchName -> new(Patterns => $ProjectPatterns);
+if (-e "ProjectHelp.xml") {
+  $ProjectHelp = 1;
+}  
 
+my $DefaultMatcher = XML::PatAct::MatchName -> new(Patterns => $DefaultPatterns);
 my $DefaultHandler = XML::PatAct::ToObjects -> new(Patterns => $DefaultPatterns,
                                                     Matcher => $DefaultMatcher);
-my $ProjectHandler = XML::PatAct::ToObjects -> new(Patterns => $ProjectPatterns,
-                                                    Matcher => $ProjectMatcher);
-
 my $DefaultParser = XML::Parser::PerlSAX -> new(Handler => $DefaultHandler);
-my $ProjectParser = XML::Parser::PerlSAX -> new(Handler => $ProjectHandler);
-
 my $DefaultSchema = $DefaultParser -> parse(Source => {SystemId => "DocDBHelp.xml"  });
-my $ProjectSchema = $ProjectParser -> parse(Source => {SystemId => "ProjectHelp.xml"});
+
+my $ProjectMatcher,$ProjectHandler,$ProjectParser,$ProjectSchema;
+if ($ProjectHelp) {
+  $ProjectMatcher = XML::PatAct::MatchName -> new(Patterns => $ProjectPatterns);
+  $ProjectHandler = XML::PatAct::ToObjects -> new(Patterns => $ProjectPatterns,
+                                                   Matcher => $ProjectMatcher);
+  $ProjectParser = XML::Parser::PerlSAX -> new(Handler => $ProjectHandler);
+  $ProjectSchema = $ProjectParser -> parse(Source => {SystemId => "ProjectHelp.xml"});
+}
 
 # Start page
 
@@ -63,12 +68,14 @@ foreach $Element (@Array) {
   }
 }
 
-@Array = @{$ProjectSchema};
-foreach $Element (@Array) {
-  if (${%{$Element}}{Key} eq $helpterm) {
-    $Action = ${%{$Element}}{Action};
-    $ProjectText = ${%{$Element}}{Text} -> as_canon_xml;
-    $ProjectTitle = ${%{$Element}}{Title};
+if ($ProjectHelp) {
+  @Array = @{$ProjectSchema};
+  foreach $Element (@Array) {
+    if (${%{$Element}}{Key} eq $helpterm) {
+      $Action = ${%{$Element}}{Action};
+      $ProjectText = ${%{$Element}}{Text} -> as_canon_xml;
+      $ProjectTitle = ${%{$Element}}{Title};
+    }
   }
 }
 
