@@ -37,30 +37,5 @@ print "<h3>Meetings in the document database:</h3>\n";
 
 &MeetingsTable;
 
-print "<h3>Meetings not yet in database:</h3>\n";
-print "These links will be removed as meetings are replicated in the document database.\n";
-
-print <<OLDMEETINGS; # Following is straight from Rob/Lory page with subs
-
-<ul>
-<li> Saturday January 27, 2001, BTeV Collaboration Meeting
-     <a href = "http://www-btev.fnal.gov/internal_documents/mtg/jan_27_01.html"> links to agenda and
-     transparencies.</a>
-<li> Saturday April 1, 2000, BTeV Collaboration Meeting
-     <a href = "http://www-btev.fnal.gov/internal_documents/mtg/apr_01_00.html">agenda with links to
-     transparencies.</a>
-<li> Saturday Dec. 18, 1999, BTeV Collaboration Meeting
-     <a href = "http://www-btev.fnal.gov/internal_documents/mtg/dec_18_99.html">agenda with links to
-     transparencies.</a>
-<li> Saturday Feb. 20, 1999, BTeV Collaboration Meeting
-     <a href = "http://www-btev.fnal.gov/internal_documents/mtg/feb_20_99/agenda.html">agenda with links to
-     transparencies.</a>
-<li> Saturday Sept. 12, 1998, BTeV Collaboration Meeting
-     <a href = "http://www-btev.fnal.gov/internal_documents/mtg/09_12_98/agenda.html">agenda with links to
-     transparencies.</a>
-</ul>
-
-OLDMEETINGS
-
 &DocDBNavBar("Add Talk","$DocumentAddForm?special=meeting");
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);

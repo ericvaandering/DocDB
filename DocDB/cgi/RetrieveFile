@@ -60,7 +60,7 @@ if ($FileName) {
   my $LastFile = "";
   foreach my $DocFileID (keys %DocFiles) {
     if ($DocFiles{$DocFileID}{DOCREVID} == $DocRevID &&
-        grep /$Extension$/,$DocFiles{$DocFileID}{NAME}) {
+        grep /$Extension$/i,$DocFiles{$DocFileID}{NAME}) {
       ++$NFiles;
       $LastFile = $DocFiles{$DocFileID}{NAME};
     } 
