@@ -123,7 +123,7 @@ sub NearByMeeting { # Return MinorTopicID of meeting within $MeetingWindow days
   my $Now       = time();
   my @MinorIDs = keys %MinorTopics;
   foreach $ID (@MinorIDs) {
-    unless ($MinorTopics{$ID}{MAJOR} == $CollabMeetMajorID) {next;}
+    unless (&MajorIsMeeting($MinorTopics{$ID}{MAJOR})) {next;}
     my ($MeetDays,$MeetMonthName,$MeetYear) = split /\s+/,$MinorTopics{$ID}{SHORT};
     my ($MeetBeginDay) = split /\-/,$MeetDays;
     my $MeetMonth = $ReverseFullMonth{$MeetMonthName} - 1;

@@ -1,0 +1,126 @@
+#! /usr/bin/env perl
+#
+# Description: This script provides a form to administer groups in 
+#              the DocDB and shows the relationships between groups.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+use CGI;                                                                                      
+use DBI;
+
+require "DocDBGlobals.pm";
+require "Scripts.pm";
+require "Security.pm";
+require "HTMLUtilities.pm";
+require "AdministerElements.pm";
+
+require "MailNotification.pm";
+require "SecuritySQL.pm";
+require "NotificationSQL.pm";
+
+$query = new CGI;  # Global for subroutines
+$dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+&GetSecurityGroups;
+
+print $query->header;
+&DocDBHeader("Email Administration"); 
+
+&HelpPopupScript;
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+unless (&CanAdminister()) {
+  push @ErrorStack,"You are not allowed to access administrative functions.";
+}
+
+if (@error_stack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@error_stack);
+}
+
+#print "<b><a ";
+#&HelpLink("grouptutorial");
+#print "Help on groups</a></b><p>\n";
+
+### Group Modification
+
+#print "<a name=\"author\"><center><h4>Administer Authors</h4></center>\n";
+
+print $query -> start_multipart_form('POST',"$GroupAdminister");
+print "<table cellpadding=10>\n";
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
+print "</tr>\n";
+
+#print "<tr valign=top>\n";
+#print "<td>\n"; &ParentSelect; print "</td>\n";  
+#print "<td>\n"; &ChildSelect; print "</td>\n";
+#print "<td>\n"; &GroupEntryBox;      print "</td>\n";
+#print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n";
+&AdministratorPassword;
+print "&nbsp;";
+print $query -> submit (-value => "Change Password");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<p>\n";
+print "<b>The users who receive e-mail and when are shown below:</b><p>\n";
+print "<p><hr>\n";
+
+### Display of existing groups
+
+my @EmailUserIDs = &GetEmailUserIDs;
+
+print "<table cellpadding=3>\n";
+foreach my $EmailUserID (@EmailUserIDs) {
+  &FetchEmailUser($EmailUserID);  
+  print "<tr valign=top>\n";
+  print "<td>\n";
+
+  print "<table>\n";
+  print "<tr>\n";
+  print "<th>Username:</th><td>$EmailUser{$EmailUserID}{Username}<br>\n"; 
+  print "</td>\n";
+  print "</tr>\n";
+  print "<tr>\n";
+  print "<th>Name:</th><td>$EmailUser{$EmailUserID}{Name}<br>\n"; 
+  print "</td>\n";
+  print "</tr>\n";
+  print "<tr valign=top>\n";
+  print "<th>E-mail:</th><td>$EmailUser{$EmailUserID}{EmailAddress}<br>\n"; 
+  print "</td>\n";
+  print "</tr>\n";
+  print "<tr valign=top>\n";
+  print "<th>HTML:</th>";
+  print "<td>".("Yes","No")[$EmailUser{$EmailUserID}{PreferHTML}]."<br>\n"; 
+  print "</td>\n";
+  print "</tr>\n";
+  print "</table>\n";
+
+  print "<td>\n";
+  &DisplayNotification($EmailUserID,"Immediate");
+  print "</td>\n";
+  print "<td>\n";
+  &DisplayNotification($EmailUserID,"Daily");
+  print "</td>\n";
+  print "<td>\n";
+  &DisplayNotification($EmailUserID,"Weekly");
+  print "</td>\n";
+  print "</tr>\n";
+  print "<tr><td colspan=5><hr width=\"95%\"></td></tr>\n";
+} 
+print "</table>\n";
+
+print "<p><hr><p>\n";
+
+&DocDBNavBar();
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

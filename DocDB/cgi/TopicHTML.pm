@@ -165,7 +165,7 @@ sub ConferencesTable {
 
   my @MinorTopicIDs = sort byTopic keys %MinorTopics; #FIXME special sort 
 
-  $MajorID = $ConferenceMajorID; 
+  my ($MajorID) = @ConferenceMajorIDs; 
   print "<ul>\n";
   foreach my $MinorID (@MinorTopicIDs) {
     if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
@@ -184,7 +184,7 @@ sub MeetingsTable {
 
   my @MeetingTopicIDs = ();
   my @MinorTopicIDs   = keys %MinorTopics; 
-  $MajorID = $CollabMeetMajorID; 
+  my ($MajorID) = @MeetingMajorIDs; 
 
   foreach my $MinorID (@MinorTopicIDs) {
     if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {

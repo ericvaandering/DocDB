@@ -37,9 +37,15 @@ $MailServer       = "smtp-server-host-name";
 # BTeV uses a welcome message for the public part of the DB, but not for the
 # private
 
+$FirstYear      = 2000;           # Earliest year that documents can be created
 $Project        = "My Project";
 $ShortProject   = "MyProject";    # This is the project used in the Document ID
 #$WelcomeMessage = "Welcome to the public portion of the $Project Document Database,<br> the repository for all $Project public talks, proceedings, preprints, and publications.";
+
+# Major topic names for "meetings" and "conferences". Each can be a list
+
+#@MeetingMajorTopics    = ("Collaboration Meetings","Other Meetings");
+#@ConferenceMajorTopics = ("Conferences");
 
 # These settings are for public version of DB. Uncomment these five lines 
 # for the version of this file you place in the public area. While only the 

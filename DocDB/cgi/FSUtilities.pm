@@ -154,7 +154,9 @@ sub ProtectDirectory { # Write (or delete) correct .htaccess file in directory
      print HTACCESS "<Limit GET>\n";                                                                                                                                             
      print HTACCESS "require user";
      foreach $user (@all_users) { 
-       $user =~ tr/[A-Z]/[a-z]/; #Make lower case
+       if ($CaseInsensitiveUsers) {
+	 $user =~ tr/[A-Z]/[a-z]/; #Make lower case
+       }
        print HTACCESS " $user";
      }
      print HTACCESS "\n";

@@ -241,6 +241,7 @@ sub DisplayNotification($$) {
 
   require "NotificationSQL.pm";
   require "TopicHTML.pm";
+  require "AuthorHTML.pm";
 
   &FetchTopicNotification($EmailUserID,$Set);
   &FetchAuthorNotification($EmailUserID,$Set);
