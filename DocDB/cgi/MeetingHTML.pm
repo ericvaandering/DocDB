@@ -26,7 +26,7 @@ sub ConferenceURLBox {
 sub ConferencePreambleBox {
   require "Scripts.pm";
   print "<b><a ";
-  &HelpLink("confreamble");
+  &HelpLink("meetpreepi");
   print "Meeting Preamble:</a></b><br> \n";
   print $query -> textarea (-name => 'meetpreamble',
                             -columns => 50, -rows => 5);
@@ -35,11 +35,20 @@ sub ConferencePreambleBox {
 sub ConferenceEpilogueBox {
   require "Scripts.pm";
   print "<b><a ";
-  &HelpLink("confepilogue");
+  &HelpLink("meetpreepi");
   print "Meeting Epilogue:</a></b><br> \n";
   print $query -> textarea (-name => 'meetepilogue',
                             -columns => 50, -rows => 5);
 };
+
+sub ConferenceShowAllTalks {
+  require "Scripts.pm";
+  print "<b><a ";
+  &HelpLink("meetshowall");
+  print "Show All Talks?</a></b> \n";
+  print $query -> checkbox(-name => "meetshowall", -value => 1, -label => 'Yes');
+}
+
 
 sub SessionEntryForm (@) {
   my @MeetingOrderIDs = @_; 
@@ -81,16 +90,16 @@ sub SessionEntryForm (@) {
       if ($MeetingOrders{$MeetingOrderID}{SessionID}) {
         my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
 	$SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
-        $SessionDefaultLocation    = $Sessions{$SessionID}{Location};
-	$SessionDefaultTitle       = $Sessions{$SessionID}{Title};
-	$SessionDefaultDescription = $Sessions{$SessionID}{Description};
+        $SessionDefaultLocation    = $Sessions{$SessionID}{Location} || "";
+	$SessionDefaultTitle       = $Sessions{$SessionID}{Title} || "";
+	$SessionDefaultDescription = $Sessions{$SessionID}{Description} || "";
 	$SessionSeparatorDefault   = "No";
       } elsif ($MeetingOrders{$MeetingOrderID}{SessionSeparatorID}) {
         my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
 	$SessionDefaultDateTime    = $SessionSeparators{$SessionSeparatorID}{StartTime};
-        $SessionDefaultLocation    = $SessionSeparators{$SessionSeparatorID}{Location};
-	$SessionDefaultTitle       = $SessionSeparators{$SessionSeparatorID}{Title};
-	$SessionDefaultDescription = $SessionSeparators{$SessionSeparatorID}{Description};
+        $SessionDefaultLocation    = $SessionSeparators{$SessionSeparatorID}{Location} || "";
+	$SessionDefaultTitle       = $SessionSeparators{$SessionSeparatorID}{Title} || "";
+	$SessionDefaultDescription = $SessionSeparators{$SessionSeparatorID}{Description} || "";
 	$SessionSeparatorDefault   = "Yes";
       }
     } 
@@ -317,6 +326,8 @@ sub PrintSession ($;$) {
 sub PrintMeetingInfo($) {
   my ($ConferenceID) = @_;
 
+  require "Utilities.pm";
+
   print "<center><h3> \n";
   print "$Conferences{$ConferenceID}{Title}\n";
   print "</h3>\n";
@@ -328,12 +339,12 @@ sub PrintMeetingInfo($) {
 
   if ($Conferences{$ConferenceID}{URL}) {
     print "(<a href=\"$Conferences{$ConferenceID}{URL}\">Conference homepage</a>)\n";
-  } else {
-    print "(Conference homepage not available)\n";
   }
-
+  
   print "<p>\n";
-  print "$Conferences{$ConferenceID}{Preamble}\n";
+  print "<table width=80%><tr><td>\n";
+  print &Paragraphize($Conferences{$ConferenceID}{Preamble}),"\n";
+  print "</td></tr></table>\n";
   print "<p>\n";
   
   print "</center><hr width=95%>\n";
@@ -341,9 +352,13 @@ sub PrintMeetingInfo($) {
 
 sub PrintMeetingEpilogue($) {
   my ($ConferenceID) = @_;
+
+  require "Utilities.pm";
   
   print "<p><center>\n";
-  print "$Conferences{$ConferenceID}{Epilogue}\n";
+  print "<table width=80%><tr><td>\n";
+  print &Paragraphize($Conferences{$ConferenceID}{Epilogue}),"\n";
+  print "</td></tr></table>\n";
   print "</center><p>\n";
   
   print "</center><hr width=95%>\n";

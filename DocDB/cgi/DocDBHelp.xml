@@ -813,6 +813,29 @@ or may not be the same as the web username and password.
  </entry>
  
  <entry>
+  <key>meetpreepi</key>
+  <title>Meeting Preamble and Epilogue</title>
+  <text>
+   These blocks of text will be displayed at the beginning and end of the
+   meeting listing. You may wish to include a welcome message, talk submission
+   directions, etc. in this way.
+  </text>
+ </entry>
+ 
+ <entry>
+  <key>meetshowall</key>
+  <title>Show All Talks for Meeting</title>
+  <text>
+   By checking this box, displaying the meeting will also display all the
+   sessions for the meeting and all the talks within that session. If this
+   is left unchecked, displaying the meeting will display <i>links</i> to the
+   individual sessions. It is suggested that this box be checked for meetings
+   with just a few sessions and left unchecked for meetings with many sessions,
+   especially parallel sessions. 
+  </text>
+ </entry>
+ 
+ <entry>
   <key>sessions</key>
   <title>Sessions</title>
   <text>

@@ -47,6 +47,7 @@ my $MeetPreamble       = $params{meetpreamble};
 my $MeetEpilogue       = $params{meetepilogue};
 my $Location           = $params{location};
 my $URL                = $params{url};
+my $ShowAllTalks       = $params{meetshowall};
 
 my @SessionYears         = split /\0/,$params{sessionyear};
 my @SessionMonths        = split /\0/,$params{sessionmonth};
@@ -64,6 +65,8 @@ my @SessionDeletes       = split /\0/,$params{sessiondelete};
 
 my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
 my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
+
+if ($ShowAllTalks) {$ShowAllTalks = 1;}
 
 @ErrorStack = ();
 @WarnStack  = ();
@@ -117,10 +120,10 @@ if ($Mode eq "create" || $Mode eq "modify") {
   if ($Mode eq "create") { # FIXME allow for modification here
     my $ConferenceInsert = $dbh->prepare(
      "insert into Conference ".
-            "(ConferenceID, MinorTopicID, Location, URL, StartDate, EndDate, ".
+            "(ConferenceID, MinorTopicID, Location, URL, ShowAllTalks, StartDate, EndDate, ".
             " Preamble, Epilogue, Title) ". 
-     "values (0,?,?,?,?,?,?,?,?)");
-    $ConferenceInsert -> execute($MinorTopicID,$Location,$URL,
+     "values (0,?,?,?,?,?,?,?,?,?)");
+    $ConferenceInsert -> execute($MinorTopicID,$Location,$URL,$ShowAllTalks,
                                   $StartDate,$EndDate,$MeetPreamble,$MeetEpilogue,$Long); 
     $ConferenceID = $ConferenceInsert -> {mysql_insertid}; # Works with MySQL only
   }
@@ -188,7 +191,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
           my $SessionInsert = $dbh -> prepare(
            "insert into Session ".
                   "(SessionID, ConferenceID, StartTime, Location, Title, Description) ". 
-           "values (0,?,?,?,?)");
+           "values (0,?,?,?,?,?)");
           $SessionInsert          -> execute($ConferenceID,$SessionDate,$SessionLocation,$SessionTitle,$SessionDescription);
           $SessionID = $SessionInsert -> {mysql_insertid}; # Works with MySQL only
 	}
