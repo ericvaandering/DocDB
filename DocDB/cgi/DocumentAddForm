@@ -484,7 +484,7 @@ if ($EnhancedSecurity) {
 } else {
   $SecurityText = "Security";
 }
-&SecurityList(-addpublic => 'true',
+&SecurityScroll(-addpublic => 'true',
               -name      => 'security', 
               -helplink  => 'security',
               -helptext  => $SecurityText,
@@ -492,7 +492,7 @@ if ($EnhancedSecurity) {
 print "</td>\n";
 if ($EnhancedSecurity) {
   print "<td colspan=1 valign=top>\n"; 
-  &SecurityList(-name      => 'modify', 
+  &SecurityScroll(-name      => 'modify', 
                 -helplink  => 'modifygroups',
                 -helptext  => 'Modify',
                 -default   => \@ModifyDefaults);

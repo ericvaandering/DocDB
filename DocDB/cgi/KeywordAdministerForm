@@ -5,7 +5,23 @@
 #
 #      Author: Lynn Garren (garren@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
-#
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 use CGI;                                                                                      
 use DBI;
@@ -72,28 +88,55 @@ print "<hr><p>\n";
 
 ### Keyword Administration
 
+my %EnableMatrix = ();
+
+$EnableMatrix{parent}{Delete} = 1;
+
+$EnableMatrix{parent}{Modify} = 1;
+$EnableMatrix{child}{Modify}  = 1;
+$EnableMatrix{name}{Modify}   = 1;
+$EnableMatrix{remove}{Modify} = 1;
+$EnableMatrix{create}{Modify} = 1;
+$EnableMatrix{admin}{Modify}  = 1;
+
+$EnableMatrix{child}{New}     = 1;
+$EnableMatrix{name}{New}      = 1;
+$EnableMatrix{remove}{New}    = 1;
+$EnableMatrix{create}{New}    = 1;
+$EnableMatrix{admin}{New}     = 1;
+
 print "<a name=\"keywd\"><center><h4>Administer Keywords</h4></center>\n";
 
-print $query -> start_multipart_form('POST',"$KeywordListAdminister");
+print $query -> start_multipart_form('POST',"$KeywordListAdminister",
+                                     "id=\"keywords\" name=\"keywords\"");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
-print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
+print "<td colspan=2>\n";
+ &AdministerActions(-form => "keywords", -matrix => \%EnableMatrix);
+print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td colspan=2>\n"; &KeywordSelect(-format => "full", -maxlabel => 40); print "</td>\n"; 
+print "<td colspan=2>\n";
+ &KeywordSelect(-format => "full", -maxlabel => 40, -disabled => true);
+print "</td>\n"; 
 print "</tr>\n";
 print "<tr valign=top>\n";
 
 print "<td rowspan=2>\n"; 
-&KeywordGroupSelect(-format => "short", -multiple => "true", -remove => "true"); 
+ &KeywordGroupSelect(-format => "short", -multiple => "true", 
+                     -remove => "true",  -disabled => true); 
 print "</td>\n";
 
-print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
+print "<td>\n";
+ &ShortDescriptionBox(-name => 'shortdesc',-disabled => true);
+print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td>\n"; &LongDescriptionBox;     print "</td>\n";
+print "<td>\n"; 
+ &LongDescriptionBox(-name => 'shortdesc',-disabled => true);
+print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";

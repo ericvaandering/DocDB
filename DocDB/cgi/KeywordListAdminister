@@ -37,8 +37,8 @@ my $Action          = $params{admaction};
 
 my $KeywordID       = $params{keywordlist};
 my @KeywordGroupIDs = split /\0/,$params{keywordgroup};
-my $LongName        = $params{long};
-my $ShortName       = $params{short};
+my $LongName        = $params{longdesc};
+my $ShortName       = $params{shortdesc};
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 

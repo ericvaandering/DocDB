@@ -543,7 +543,7 @@ print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td>\n"; &ConferencePreambleBox; print "</td>\n";
 print "<td>\n"; 
-&SecurityList(-addpublic => 'true',
+&SecurityScroll(-addpublic => 'true',
               -name      => 'meetingviewgroups', 
               -helplink  => 'meetingviewgroups',
               -helptext  => 'Viewable by',
@@ -553,7 +553,7 @@ print "</td>\n";
 print "</tr><tr valign=top>\n";
 print "<td>\n"; &ConferenceEpilogueBox; print "</td>\n";
 print "<td>\n"; 
-&SecurityList(-name      => 'meetingmodifygroups', 
+&SecurityScroll(-name      => 'meetingmodifygroups', 
               -helplink  => 'meetingmodifygroups',
               -helptext  => 'Modifiable by',
               -default   => \@MeetingModifyDefaults,

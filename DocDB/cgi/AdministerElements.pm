@@ -47,7 +47,8 @@ sub AdministerActions (%) {
   }
   
   if ($Form) {
-    &AdminDisableScripts(-matrix => \%Matrix, -form => $Form, -positions => \%Positions); 
+    &AdminDisableScripts(-matrix    => \%Matrix, -form => $Form, 
+                         -positions => \%Positions); 
   }  
   print "<b><a ";
   &HelpLink("admaction");
@@ -67,18 +68,30 @@ sub AdministratorPassword {
   print $query -> textfield(-name => "admuser", -size => 12, -maxlength => 12, 
                             -default => $remote_user);
   print "<b> Password: </b>"; 
-  print $query -> password_field(-name => "password", -size => 12, -maxlength => 12);
+  print $query -> password_field(-name      => "password", -size => 12, 
+                                 -maxlength => 12);
 };
 
-sub GroupEntryBox {
+sub GroupEntryBox (%) {
   require "Scripts.pm";
+
+  my (%Params) = @_;
+  
+  my $Disabled = $Params{-disabled}  || "0";
+  
+  my $Booleans = "";
+  
+  if ($Disabled) {
+    $Booleans .= "-disabled";
+  }  
+  
   print "<table cellpadding=5><tr valign=top>\n";
   print "<td>\n";
   print "<b><a ";
   &HelpLink("groupentry");
   print "Name:</a></b><br> \n";
   print $query -> textfield (-name => 'name', 
-                             -size => 16, -maxlength => 16);
+                             -size => 16, -maxlength => 16, $Booleans);
   print "</td></tr>\n";
 
   print "<tr><td>\n";
@@ -86,7 +99,7 @@ sub GroupEntryBox {
   &HelpLink("groupentry");
   print "Description:</a></b><br> \n";
   print $query -> textfield (-name => 'description', 
-                             -size => 40, -maxlength => 64);
+                             -size => 40, -maxlength => 64, $Booleans);
   print "</td></tr>\n";
 
   print "<tr><td>\n";
@@ -94,17 +107,17 @@ sub GroupEntryBox {
   &HelpLink("groupperm");
   print "Permissions:</a></b><br> \n";
   print $query -> checkbox(-name => "remove",  
-                           -value => 'remove', -label => '');
+                           -value => 'remove', -label => '',, $Booleans);
   print "<b>Remove existing permissions</b>\n";
   print "<br>\n";
 
   print $query -> checkbox(-name => "create",  
-                           -value => 'create', -label => '');
+                           -value => 'create', -label => '', $Booleans);
   print "<b>May create documents</b>\n";
   print "<br>\n";
 
   print $query -> checkbox(-name => "admin",  
-                           -value => 'admin', -label => '');
+                           -value => 'admin', -label => '', $Booleans);
   print "<b>May administer database</b> \n";
   print "</td></tr>\n";
   print "</table>\n";

@@ -435,7 +435,18 @@ sub NotifyKeywordEntry ($) {
   print "</td></tr>\n";
 }
 
-sub EmailUserSelect {
+sub EmailUserSelect (%) {
+
+  my (%Params) = @_;
+  
+  my $Disabled = $Params{-disabled}  || "0";
+  
+  my $Booleans = "";
+  
+  if ($Disabled) {
+    $Booleans .= "-disabled";
+  }  
+  
   my @EmailUserIDs = &GetEmailUserIDs;
   foreach my $EmailUserID (@EmailUserIDs) {
     &FetchEmailUser($EmailUserID);  
@@ -448,7 +459,7 @@ sub EmailUserSelect {
   print $query -> scrolling_list(-name => 'emailuserid', 
                                  -values => \@EmailUserIDs, 
                                  -labels => \%EmailUserLabels, 
-                                 -size => 10);
+                                 -size => 10, $Booleans);
 
 }
   

@@ -79,26 +79,44 @@ print "Note that deleting and then re-entering with the same information is
 
 ### Group Modification
 
-#print "<a name=\"author\"><center><h4>Administer Authors</h4></center>\n";
+my %EnableMatrix = ();
 
-print $query -> start_multipart_form('POST',"$GroupAdminister");
+$EnableMatrix{parent}{Delete} = 1;
+
+$EnableMatrix{parent}{Modify} = 1;
+$EnableMatrix{child}{Modify}  = 1;
+$EnableMatrix{name}{Modify}   = 1;
+$EnableMatrix{remove}{Modify} = 1;
+$EnableMatrix{create}{Modify} = 1;
+$EnableMatrix{admin}{Modify}  = 1;
+
+$EnableMatrix{child}{New}     = 1;
+$EnableMatrix{name}{New}      = 1;
+$EnableMatrix{remove}{New}    = 1;
+$EnableMatrix{create}{New}    = 1;
+$EnableMatrix{admin}{New}     = 1;
+
+print $query -> start_multipart_form('POST',"$GroupAdminister",
+                                     "id=\"groups\" name=\"groups\"");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
-print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
+print "<td colspan=2>\n";
+ &AdministerActions(-form => "groups", -matrix => \%EnableMatrix);
+print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
 print "<td>\n"; 
-&SecurityList(-name      => 'parent', 
-              -helplink  => 'parent',
-              -helptext  => 'Group');
+&SecurityScroll(-name      => 'parent', -disabled => true,
+                -helplink  => 'parent', -helptext  => 'Group');
 print "</td>\n";  
 print "<td>\n"; 
-&SecurityList(-name      => 'child', 
-              -helplink  => 'child',
-              -helptext  => 'Subordinates');
+&SecurityScroll(-name      => 'child', -disabled => true, 
+                -helplink  => 'child', -helptext  => 'Subordinates');
 print "</td>\n";
-print "<td>\n"; &GroupEntryBox;      print "</td>\n";
+print "<td>\n";
+ &GroupEntryBox(-disabled => true);
+print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";

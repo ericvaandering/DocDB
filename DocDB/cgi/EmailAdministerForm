@@ -69,19 +69,32 @@ print "Since users can modify their own data and create their own accounts,
 
 ### Email User Modification
 
-print $query -> start_multipart_form('POST',"$EmailAdminister");
+my %EnableMatrix = ();
+
+$EnableMatrix{emailuserid}{Delete} = 1;
+
+$EnableMatrix{emailuserid}{Modify} = 1;
+$EnableMatrix{resetpw}{Modify}     = 1;
+
+print $query -> start_multipart_form('POST',"$EmailAdminister",
+                                     "id=\"peraccount\" name=\"peraccount\"");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
-print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
+print "<td colspan=2>\n";
+ &AdministerActions(-form => "peraccount", -matrix => \%EnableMatrix);
+print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td>\n"; &EmailUserSelect; print "</td>\n";  
+print "<td>\n"; 
+ &EmailUserSelect(-disabled => true);
+print "</td>\n";  
 print "<td>\n";   
 print "<b><a ";
 &HelpLink("resetpassword");
 print "New Password:</a></b><br> \n";
-print $query -> textfield (-name => 'resetpw', -size => 20, -maxlength => 20);
+print $query -> textfield (-name => 'resetpw', -size => 20, 
+                           -maxlength => 20,   -disabled);
 print "</td>\n";
 print "</tr>\n";
 
@@ -97,7 +110,7 @@ print "</table>\n";
 print $query -> end_multipart_form;
 
 print "<p>\n";
-print "<b>The users who receive e-mail and when are shown below:</b><p>\n";
+print "<b>The personal accounts and when they receive e-mail are shown below:</b><p>\n";
 print "<p><hr>\n";
 
 ### Display of existing groups
