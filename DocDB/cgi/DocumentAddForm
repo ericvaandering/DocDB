@@ -468,9 +468,11 @@ print "</td>\n";
 
 unless ($Meeting || $OtherMeeting) {
   if ($AuthorMode eq "list") {
+    print "<td>\n"; 
     &AuthorScroll(-required => $RequiredEntries{Author},
                   -helplink => "author",
                   -default  => \@AuthorDefaults);
+    print "</td>\n";
   } elsif ($AuthorMode eq "field") {
     print "<td>\n"; &AuthorManual;    print "</td>\n";
   }
