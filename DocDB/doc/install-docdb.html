@@ -29,16 +29,24 @@ and the apache web server.
 <li> <a href=security.html>security considerations</a> 
 <li> <a href=mysql.html>install MySQL and start mysqld</a> <br>
 <li> <b> get DocDB</b> <br>
-    The <a href=http://cepa.fnal.gov/DocDB/DocDB-4-2-4.tar>tar ball</a> 
-    (4.2.4 - Dec. 2, 2003)
-    <br>
-    Unwind the tarball under your document database account.
-    <br>
-    <font color=red>The tarball is maintained by hand and is not always up to date.</font>
-    <br>
-    Contact the DocDB maintainers via the users mailing list 
+The best way to get DocDB is to check out the latest stable version from the CVS
+repository into a special account for the document database. Set the environment variable <b>CVSROOT</b> to
+<tt>:pserver:anony@btevsrv2.fnal.gov:/home3/cvs/doccvs/cvs</tt>
+(No password or cvs login is required.  Only DocDB is available
+in this repository.)<br/>
+
+Check out DocDB with the command <tt>cvs co -r stable DocDB</tt>.<br>
+
+We strongly recommend that you checkout the 'stable' release
+The head of the repository is
+unstable and likely to cause disfunction.<br>
+
+Updates can be performed with the command <tt>cvs update</tt> while in the same
+directory.<br>
+    If you cannot get the software via CVS, please contact the DocDB maintainers via the users mailing list 
     (<a href="mailto:docdb-users@fnal.gov">docdb-users@fnal.gov</A>)
-    if you have questions.
+    to make arrangements of if you have questions.
+
 <li> <b><a href=createdb.html>create a MySQL DocDB database</a></b>
 <li> <b><a href=setup-docdb.html>customize DocDB</a></b>
 <li>  <b> test DocDB </b> 

@@ -8,7 +8,8 @@
 <ol>
 <li> <font color="red">Login to the document database account.</font> <br>
      This account is used to administer the various DocDB scripts and html pages.
-<li> Unwind the DocDB tar file under your document database account.
+<li> Checkout DocDB from CVS as described in <a href="install-docdb.html">the
+previous page</a> if you haven't already.
 <li> cd to DocDB/cgi
     <ol>
     <li> cp ProjectGlobals.pm.template ProjectGlobals.pm
@@ -27,7 +28,9 @@
 <li> copy the files in DocDB/cgi to $script_root
      (your private DocDB cgi directory) <br>
      $script_root is defined in ProjectGlobals.pm, 
-     it is not an actual environmental variable.
+     it is not an actual environmental variable. (If you installed from the CVS
+     repository, you can use the command <tt>cvs update</tt> to update the
+     running software here.)
 <li> create a .htaccess file in $script_root <br>
      Here is a sample .htaccess file:
 <pre>
