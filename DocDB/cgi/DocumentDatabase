@@ -4,7 +4,7 @@
 #
 
 use CGI;                                                                                      
-#use DBI;                                                                                      
+use DBI;                                                                                      
 
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
@@ -15,8 +15,6 @@ require "ResponseElements.pm";
 $query = new CGI;  # Global for subroutines
 
 # %params = $query -> Vars;  # No parameters (yet?) 
-#$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
-#&GetSecurityGroups;
 
 print $query->header;
 &BTeVHeader("BTeV Document Database","Document Database");
@@ -33,11 +31,11 @@ if ($Public) {
 }
 print "</h4></center>\n";
 
-print "<p><b>Find the information you want in the database:</b>\n";
+print "<p><h4>Find the information you want in the database:</h4>\n";
 print "<ul>\n";
 
 unless ($Public) {
-  print "<li><a href=\"$SearchForm\">Search</a> documents (beta version)"; 
+  print "<li><b><a href=\"$SearchForm\">Search</a> documents</b>"; 
 }
 
 print "<p>\n";
@@ -49,33 +47,113 @@ print " <b>BTeV-doc-#</b> ";
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 print " <b>-v</b> "; 
 print $query -> textfield(-name => "version", -size => 3, -maxlength => 3);
-if ($Public) {
-  print "&nbsp;&nbsp;(Looking for a document 
-        <a href=\"$web_root/Static/Public/OldDBTranslation.shtml\">like
-         BTeV-int-year/xx</a>?)\n";
-} else {
-  print "&nbsp;&nbsp;(Looking for a document 
-        <a href=\"$web_root/Static/Restricted/OldDBTranslation.shtml\">like
-         BTeV-int-year/xx</a> from the <a href=\"http://www-btev.fnal.gov/cgi-private/database/doclist.pl\">old DocDB</a>?)\n";
-}
 print $query -> endform;
 
-
 print "<li>"; 
-print "List ";
-print "documents modified in the <a href=\"$LastModified?days=$LastDays\">last $LastDays days</a>, ";
-print "or by <a href=\"$ListAuthors\">author</a>, ";
-print "<a href=\"$ListTopics\">topic</a>, ";
-#print "<a href=\"$ListTypes\">type</a>, ";
+print "<b>List documents:</b>\n";
+print "<ul>\n";
+print "<li> by <a href=\"$ListAuthors\">author</a>\n";
+print "<li> by <a href=\"$ListTopics\">topic</a>\n";
+print "<li>modified in the <a href=\"$LastModified?days=$LastDays\">last $LastDays days</a>";
 unless ($Public) {
-  print "<a href=\"$ListMeetings\">group meeting</a>, ";
+  print "<li> by <a href=\"$ListMeetings\">group meeting</a>\n";
 }
-print "<a href=\"$ListByTopic?major=Conferences&mode=conference\">conference
-documents</a>, ";
-print "or <a href=\"$ListDocuments\">all documents</a>. ";
-print "<li><a href=\"$ModifyHome\">Create or change</a> documents"; 
+print "<li>from <a href=\"$ListByTopic?major=Conferences&mode=conference\">conferences</a>";
+if ($Public) {
+  print "<li> Old documents by old number
+        <a href=\"$web_root/Static/Public/OldDBTranslation.shtml\">like
+         BTeV-pub-year/xx</a>. \n";
+} else {
+  print "<li><a href=\"$ListDocuments\">all documents</a>";
+  print "<li> Old documents by old number like
+         <a href=\"$web_root/Static/Restricted/OldDBTranslation.shtml\">BTeV-pub-year/xx</a> from the <a href=\"http://www-btev.fnal.gov/cgi-private/database/doclist.pl\">old DocDB</a>\n";
+}
+print "</ul>\n";
+unless ($Public) {
+  print "<p>\n";
+  print "<li><b><a href=\"$ModifyHome\">Create or change</a> documents</b>"; 
+}
 
 print "</ul>\n";
+
+print "<hr><center><h4>Documents modified in the last $HomeLastDays
+days</h4></center>\n";
+
+# Modified in last few days
+
+$Days = $HomeLastDays;
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
+require "Sorts.pm";
+require "Security.pm";
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+&GetSecurityGroups;
+my $revision_list = $dbh -> prepare(
+   "select DocRevID from DocumentRevision 
+    where TO_DAYS(NOW())-TO_DAYS(Timestamp)<=?"); 
+
+my $document_list = $dbh -> prepare(
+   "select DocumentID from DocumentRevision where DocRevID=?"); 
+
+
+my %DocumentIDs = ();
+$revision_list -> execute($Days);
+$revision_list -> bind_columns(undef, \($DocRevID));
+
+while ($revision_list -> fetch) {
+  $document_list -> execute($DocRevID);
+  ($DocumentID) = $document_list -> fetchrow_array;
+  $DocumentIDs{$DocumentID} = 1; # Hash removes duplicates
+}
+
+### Get list of documents and read in the information we need from database
+
+my @DocumentIDs = keys %DocumentIDs;
+
+foreach my $DocumentID (@DocumentIDs) { # For shorter lists
+  &FetchDocument($DocumentID);
+  &FetchDocRevision($DocumentID,$Documents{$DocumentID}{NVER});
+}
+
+### Sort
+
+@DocumentIDs = reverse sort DocumentByRevisionDate @DocumentIDs;  
+
+### Print summary information
+
+print "<center><table cellpadding=3>\n";
+
+&DocumentSummary(0,$Mode); # Force table headers
+my $NumDoc = 0;
+
+foreach $DocumentID (@DocumentIDs) {
+  unless ($DocumentID) {next;}
+  unless (&CanAccess($DocumentID,$Documents{$DocumentID}{NVER})) {next;}
+  # FIXME: Need to put latest document accessible if last version isn't
+  ++$NumDoc;
+  &DocumentSummary($DocumentID,$Mode);
+}
+
+print "</table></center>\n";
+print "<p>\n";
+
+### Statistics
+
+#print "<p><b>Number of documents found: $NumDoc</b><p>\n";
+
+{
+  require "FormElements.pm";
+
+  print $query -> startform('POST',$LastModified);
+  print "<center>";
+  print $query -> submit (-value => "Show Documents");
+  print " modified in the last ";
+  &DaysPulldown;
+  print " days.</center>";
+  print $query -> endform;
+  print "<p>";
+}
 
 
 &DocDBNavBar;

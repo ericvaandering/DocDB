@@ -66,7 +66,7 @@ print " days.</center>";
 print $query -> endform;
 print "<p>";
 
-### Get all revisions with this topic
+### Get all revisions modified since $Days days ago
 
 my %DocumentIDs = ();
 $revision_list -> execute($Days);
