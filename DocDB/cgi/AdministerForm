@@ -316,17 +316,31 @@ print "<p><hr>\n";
 
 ### Document Types
 
+%EnableMatrix = ();
+
+$EnableMatrix{doctype}{Delete}  = 1;
+
+$EnableMatrix{name}{New}        = 1;
+$EnableMatrix{longdesc}{New}    = 1;
+
+$EnableMatrix{doctype}{Modify}  = 1;
+$EnableMatrix{name}{Modify}     = 1;
+$EnableMatrix{longdesc}{Modify} = 1;
+
 print "<a name=\"doctype\"><center><h4>Administer Document Types</h4></center>\n";
 
-print $query -> start_multipart_form('POST',"$DocTypeAdminister");
+print $query -> start_multipart_form('POST',"$DocTypeAdminister",
+                                    "id=\"documenttype\" name=\"documenttype\"");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
-print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
+print "<td colspan=2>\n"; 
+ &AdministerActions(-form => "documenttype", -matrix => \%EnableMatrix);
+print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td>\n"; &DocTypeSelect;   print "</td>\n";
-print "<td>\n"; &DocTypeEntryBox; print "</td>\n";
+print "<td>\n"; &DocTypeSelect(-disabled => true);   print "</td>\n";
+print "<td>\n"; &DocTypeEntryBox(-disabled => true); print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";

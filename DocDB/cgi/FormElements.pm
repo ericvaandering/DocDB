@@ -347,7 +347,7 @@ sub UpdateButton {
 
   $query -> param('mode','update'); 
   $query -> param('docid',$DocumentID);
-  
+
   print $query -> startform('POST',$DocumentAddForm);
   print $query -> hidden(-name => 'mode',  -default => 'update');
   print $query -> hidden(-name => 'docid', -default => $DocumentID);

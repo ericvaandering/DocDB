@@ -35,7 +35,7 @@ $Action    = $params{admaction};
 
 $DocTypeID = $params{doctype};
 $ShortName = $params{name};
-$LongName  = $params{long};
+$LongName  = $params{longdesc};
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
