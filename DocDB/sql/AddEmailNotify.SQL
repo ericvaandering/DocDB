@@ -10,7 +10,7 @@ CREATE TABLE EmailUsers (
 
 CREATE TABLE EmailTopicImmediate (
   ImmediateEmailID int(11) NOT NULL auto_increment,
-  EMailUserID int(11) NOT NULL ,
+  EmailUserID int(11) NOT NULL ,
   MajorTopicID int(11) NOT NULL ,
   MinorTopicID int(11) NOT NULL ,
   PRIMARY KEY (ImmediateEmailID)
@@ -18,7 +18,7 @@ CREATE TABLE EmailTopicImmediate (
 
 CREATE TABLE EmailTopicDaily (
   DailyEmailID int(11) NOT NULL auto_increment,
-  EMailUserID int(11) NOT NULL ,
+  EmailUserID int(11) NOT NULL ,
   MajorTopicID int(11) NOT NULL ,
   MinorTopicID int(11) NOT NULL ,
   PRIMARY KEY (DailyEmailID)
@@ -26,7 +26,7 @@ CREATE TABLE EmailTopicDaily (
 
 CREATE TABLE EmailTopicWeekly (
   WeeklyEmailID int(11) NOT NULL auto_increment,
-  EMailUserID int(11) NOT NULL ,
+  EmailUserID int(11) NOT NULL ,
   MajorTopicID int(11) NOT NULL ,
   MinorTopicID int(11) NOT NULL ,
   PRIMARY KEY (WeeklyEmailID)

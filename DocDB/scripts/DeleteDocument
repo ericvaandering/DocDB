@@ -20,18 +20,19 @@ require "Sorts.pm";
             "u=s" => \$Username,
             "p=s" => \$Password);
 
-$StartTime = new Benchmark;
+unless ($DocumentID) {
+  print "Document $DocumentID is invalid\n";
+  exit;
+}  
+
+# Get directory and pull of version number
 
 $Directory = &GetDirectory($DocumentID);
 chop $Directory;chop $Directory;chop $Directory;chop $Directory;
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
-unless ($DocumentID) {
-  print "Document $DocumentID is invalid\n";
-  exit;
-}  
-
+my $revision_list   = $dbh -> prepare("select DocRevID from DocumentRevision where DocumentID=?");
 my $document_delete = $dbh -> prepare("delete from Document         where DocumentID=?");
 my $revision_delete = $dbh -> prepare("delete from DocumentRevision where DocumentID=?");
 my $author_delete   = $dbh -> prepare("delete from RevisionAuthor   where DocRevID=?");
@@ -39,9 +40,8 @@ my $topic_delete    = $dbh -> prepare("delete from RevisionTopic    where DocRev
 my $file_delete     = $dbh -> prepare("delete from DocumentFile     where DocRevID=?");
 my $security_delete = $dbh -> prepare("delete from RevisionSecurity where DocRevID=?");
 
-my $revision_list = $dbh -> prepare(
-    "select DocRevID from DocumentRevision where DocumentID=?");
-    
+# Find all revisions associated with document
+
 $revision_list -> execute($DocumentID);
 $revision_list -> bind_columns(undef, \($DocRevID));
 while ($revision_list -> fetch) {
@@ -49,11 +49,12 @@ while ($revision_list -> fetch) {
 }
 
 my @Revisions = keys %Revision;
-
 unless (@Revisions) {
   print "Document $DocumentID does not exist.\n";
   exit;
 }  
+  
+# Delete stuff from files and linking tables  
   
 foreach $RevisionID (@Revisions) {
   $author_delete   -> execute($RevisionID);
@@ -61,6 +62,9 @@ foreach $RevisionID (@Revisions) {
   $file_delete     -> execute($RevisionID);
   $security_delete -> execute($RevisionID);
 }
+
+# Delete revisions and document
+
 $document_delete -> execute($DocumentID);
 $revision_delete -> execute($DocumentID);
  
@@ -70,9 +74,4 @@ $command = "rm -rf $Directory/*";
 print "Executing $command\n";
 system ($command);
  
- 
-$EndTime  = new Benchmark;
-$TimeDiff = timediff($EndTime,$StartTime);
-print "Execution time: ",timestr($TimeDiff),"\n";
-
 exit;
