@@ -42,6 +42,8 @@ print $query->header;
 
 ### Print table
 my @Fields  = ("Docid","Title","Author","Updated"); 
+my $SortBy  = "date";
+my $Reverse = 1;
 my $NumberOfDocuments = &DocumentTable(-fields => \@Fields, -docids  => \@DocumentIDs, 
                                        -sortby => $SortBy,  -reverse => $Reverse);
 print "<b>Number of documents found: $NumberOfDocuments</b><p/>\n";
