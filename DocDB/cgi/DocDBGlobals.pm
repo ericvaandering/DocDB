@@ -54,6 +54,11 @@ $InitialSessions      = 5;     # Number of initial sessions when making meeting
 
 $FirstYear            = 2000;  # Earliest year that documents can be created
 
+$TopicMatchThreshold    = 15;  # Threshold for matching talks in meetings with topics
+$NoTopicMatchThreshold  = 6;   # Threshold for matching talks in meetings with topics
+@MatchIgnoreWords       = ("from","with","then","than","that","what"); # Don't match on these
+  
+
 # Options
 
 $CaseInsensitiveUsers = 0;
@@ -106,6 +111,7 @@ $ListAuthors           = $cgi_root."ListAuthors";
 $ListTopics            = $cgi_root."ListTopics";
 $ListTypes             = $cgi_root."ListTypes";
 $ListMeetings          = $cgi_root."ListMeetings";
+$ListKeywords          = $cgi_root."ListKeywords";
 
 $AddFiles              = $cgi_root."AddFiles";
 $AddFilesForm          = $cgi_root."AddFilesForm";
@@ -126,6 +132,10 @@ $MajorTopicAdminister  = $cgi_root."MajorTopicAdminister";
 $DocTypeAdminister     = $cgi_root."DocTypeAdminister";
 $JournalAdminister     = $cgi_root."JournalAdminister";
 $ConferenceAdminister  = $cgi_root."ConferenceAdminister";
+
+$KeywordAdministerForm  = $cgi_root."KeywordAdministerForm";
+$KeywordListAdminister  = $cgi_root."KeywordListAdminister";
+$KeywordGroupAdminister = $cgi_root."KeywordGroupAdminister";
 
 $GroupAdministerForm   = $cgi_root."GroupAdministerForm";
 $GroupAdminister       = $cgi_root."GroupAdminister";

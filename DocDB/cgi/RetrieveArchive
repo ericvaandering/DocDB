@@ -69,12 +69,13 @@ unless (@error_stack) {
   my $Directory = &GetDirectory($DocumentID,$Version);
   my $URLDir    = &GetURLDir($DocumentID,$Version);
 
-  my $TmpFile   = "/tmp/$ShortFile";
   my $TarFile   = "$Directory/tmp$DocumentID-$Version.tar";
   my $TgzFile   = "$Directory/tmp$DocumentID-$Version.tgz";
   my $ZipFile   = "$Directory/tmp$DocumentID-$Version.zip";
 
   my $ShortFile = "tmp$DocumentID-$Version.$Type";
+
+  my $TmpFile   = "/tmp/$ShortFile";
   my $File      = "$Directory/$ShortFile";
      $URL       = "$URLDir/$ShortFile";
 
