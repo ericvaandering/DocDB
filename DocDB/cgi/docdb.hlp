@@ -1,3 +1,13 @@
+notifytopic
+E-mail notification topics
+Select the topics or subtopics that you want to be notified about for the
+selected time period. Immediate notification will send you e-mail on each
+document as it is entered. Daily and weekly notifications send out lists of
+documents you are interested in every night or week.<p>
+
+You can select any combination of topics and subtopics for each of the three
+periods.
+#
 overdatepref
 Override submit date
 Use this option if you want to (by default) be able to set the date and time

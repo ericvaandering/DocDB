@@ -194,7 +194,7 @@ sub PrintRevisionInfo {
   print "</table></center>\n"; 
 }
  
-sub WarnPage {
+sub WarnPage { # Non-fatal errors
   my @errors = @_;
   if (@errors) {
     print "<b><font color=\"red\">There was a non-fatal error processing your
@@ -206,7 +206,7 @@ sub WarnPage {
   }   
 }
 
-sub EndPage {
+sub EndPage {  # Fatal errors, aborts page
   my @errors = @_;
   if (@errors) {
     print "<b><font color=\"red\">There was a fatal error processing your request:
@@ -221,7 +221,7 @@ sub EndPage {
   exit;
 }
 
-sub ErrorPage {
+sub ErrorPage { # Fatal errors, continues page
   my @errors = @_;
   if (@errors) {
     print "<b><font color=\"red\">There was a fatal error processing your request:
