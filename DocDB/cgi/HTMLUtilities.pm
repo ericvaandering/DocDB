@@ -1,13 +1,13 @@
 #
-# Description: Configuration file for the DocDB. Set variables 
-#              for server names, accounts, and command paths here.
-#              This file is included in every DocDB program.
+# Description: Routines to output headers, footers, navigation bars, etc. 
+#              Should be customized for each installation
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 #
 # A global variable $Public is used to (when set) remove elements from the
-# nav-bars that the public has no interest in.
+# nav-bars that the public has no interest in. The variable is global
+# and can control the style of your headers and footers too.
 # 
 
 require "BTeVHTML.pm";
@@ -50,6 +50,33 @@ sub DocDBFooter {
 # The simplest possible routine should look something like this:
   
   print "</body></html>\n";
+}
+
+sub DocDBNavBar {
+  
+# This routine prints the navigation bar just above the footer on the
+# page. You can customize for your installation and include an optional
+# extra description and URL (for a related page, for instance). 
+
+  my ($ExtraDesc,$ExtraURL) = @_;
+
+  print "<p><div align=\"center\">\n";
+  if ($ExtraDesc && $ExtraURL) {
+    print "[&nbsp;<a href=\"$ExtraURL\"l>$ExtraDesc</a>&nbsp;]&nbsp;\n";
+  } 
+  print "[&nbsp;<a href=\"$MainPage\">DocDB&nbsp;Home</a>&nbsp;]&nbsp;\n";
+  unless ($Public) {
+    print "[&nbsp;<a href=\"$DocumentAddForm?mode=add\">New</a>&nbsp;]&nbsp;\n";
+    print "[&nbsp;<a href=\"$DocumentAddForm\">Reserve</a>&nbsp;]&nbsp;\n";
+  }
+  print "[&nbsp;<a href=\"$SearchForm\">Search</a>&nbsp;]\n";
+  print "[&nbsp;<a href=\"$LastModified?days=$LastDays\">Last&nbsp;$LastDays&nbsp;Days</a>&nbsp;]\n";
+  print "[&nbsp;<a href=\"$ListAuthors\">List&nbsp;Authors</a>&nbsp;]\n";
+  print "[&nbsp;<a href=\"$ListTopics\">List&nbsp;Topics</a>&nbsp;]\n";
+  unless ($Public) {
+    print "[&nbsp;<a href=\"$HelpFile\">Help</a>&nbsp;]\n";
+  } 
+  print "</div>\n";
 }
 
 1;
