@@ -77,7 +77,7 @@ while ($RevisionList -> fetch) {
 foreach $EmailUserID (@EmailUserIDs) {
   &FetchEmailUser($EmailUserID);
   print "Preparing mail for $EmailUser{$EmailUserID}{Name}\n";
-
+  unless ($EmailUser{$EmailUserID}{EmailAddress}) {next;}
   my @UserMinorTopics = ();
   my @UserMajorTopics = ();
 
