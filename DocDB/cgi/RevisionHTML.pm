@@ -204,7 +204,6 @@ sub PrintRevisionInfo {
     require "SignoffHTML.pm";
     &PrintRevisionSignoffInfo($DocRevID);
   }  
-  print "</div>\n";  # MainColumn3Col
 
   if (&CanModify($DocumentID) && !$HideButtons) {
     print "<hr width=\"90%\"/>\n";
@@ -219,6 +218,8 @@ sub PrintRevisionInfo {
     print "</td></tr>\n";
     print "</table></center>\n"; 
   }  
+  
+  print "</div>\n";  # MainColumn3Col
   print "</div>\n";  # RevisionInfo
 }
  
