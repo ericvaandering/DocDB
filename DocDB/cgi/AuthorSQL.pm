@@ -54,7 +54,7 @@ sub GetRevisionAuthors {
   while ($author_list -> fetch) {
     push @authors,$AuthorID;
   }
-  return \@authors;  
+  return @authors;  
 }
 
 sub GetInstitutions { # Creates/fills a hash $Institutions{$InstitutionID}{} with all Institutions

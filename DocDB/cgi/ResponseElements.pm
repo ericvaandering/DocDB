@@ -130,11 +130,11 @@ sub PrintRevisionInfo {
 
   my $DocumentID  = $DocRevisions{$DocRevID}{DOCID};
   my $Version     = $DocRevisions{$DocRevID}{VERSION};
-  my $Authors_ref = &GetRevisionAuthors($DocRevID);
+  my @AuthorIDs   = &GetRevisionAuthors($DocRevID);
   my $Topics_ref  = &GetRevisionTopics($DocRevID);
   my $Groups_ref  = &GetRevisionSecurityGroups($DocRevID);
 
-  my @AuthorIDs = @{$Authors_ref};
+#  my @AuthorIDs = @{$Authors_ref};
   my @TopicIDs  = @{$Topics_ref};
   my @GroupIDs  = @{$Groups_ref};
  

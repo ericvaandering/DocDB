@@ -322,7 +322,7 @@ sub AuthorSelect { # Scrolling selectable list for authors
   print $query -> scrolling_list(-name => "authors", -values => \@ActiveIDs, 
                                  -labels => \%AuthorLabels,
                                  -size => 10, -multiple => 'true',
-                                 -default => @AuthorDefaults);
+                                 -default => \@AuthorDefaults);
 };
 
 sub TopicSelect { # Scrolling selectable list for topics
@@ -552,8 +552,8 @@ sub AddFilesButton {
 
 sub AuthorManual {
   $AuthorManDefault = "";
-  my $AuthorDefaults = @AuthorDefaults[0]; 
-  foreach $AuthorID (@{$AuthorDefaults}) {
+#  my $AuthorDefaults = @AuthorDefaults[0]; 
+  foreach $AuthorID (@AuthorDefaults) {
     $AuthorManDefault .= "$Authors{$AuthorID}{FULLNAME}\n" ;
   }  
   print "<b><a ";

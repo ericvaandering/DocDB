@@ -4,8 +4,8 @@ sub FirstAuthor {
   my ($DocRevID) = @_;
 
   &FetchDocRevisionByID($DocRevID);
-  my $Authors_ref = &GetRevisionAuthors($DocRevID);
-  my @AuthorIDs = @{$Authors_ref};
+  my @AuthorIDs = &GetRevisionAuthors($DocRevID);
+#  my @AuthorIDs = @{$Authors_ref};
   
   unless (@AuthorIDs) {return "None";}
   
