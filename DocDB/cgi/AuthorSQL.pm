@@ -61,6 +61,31 @@ sub GetRevisionAuthors {
   return @authors;  
 }
 
+sub GetInstitutionAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with authors from institution
+  my ($InstitutionID) = @_;
+  my @AuthorIDs = ();
+  my ($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active);
+  my $PeopleList  = $dbh -> prepare(
+     "select AuthorID,FirstName,MiddleInitials,LastName,Active ".
+     "from Author where InstitutionID=?"); 
+  $PeopleList -> execute($InstitutionID);
+  $PeopleList -> bind_columns(undef, \($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active));
+  while ($PeopleList -> fetch) {
+    push @AuthorIDs,$AuthorID;
+    $Authors{$AuthorID}{AUTHORID}   =  $AuthorID;
+    if ($MiddleInitials) {
+      $Authors{$AuthorID}{FULLNAME} = "$FirstName $MiddleInitials $LastName";
+    } else {
+      $Authors{$AuthorID}{FULLNAME} = "$FirstName $LastName";
+    }
+    $Authors{$AuthorID}{LASTNAME}   =  $LastName;
+    $Authors{$AuthorID}{FIRSTNAME}  =  $FirstName;
+    $Authors{$AuthorID}{ACTIVE}     =  $Active;
+    $Authors{$AuthorID}{INST}       =  $InstitutionID;
+  }
+  return @AuthorIDs;
+}
+
 sub GetInstitutions { # Creates/fills a hash $Institutions{$InstitutionID}{} with all Institutions
   my ($InstitutionID,$ShortName,$LongName);
   my $inst_list  = $dbh -> prepare(
@@ -73,6 +98,18 @@ sub GetInstitutions { # Creates/fills a hash $Institutions{$InstitutionID}{} wit
     $Institutions{$InstitutionID}{SHORT} = $ShortName;
     $Institutions{$InstitutionID}{LONG} =  $LongName;
   }
+}
+
+sub FetchInstitution { # Creates/fills a hash $Institutions{$InstitutionID}{} with all Institutions
+  my ($InstitutionID) = @_;
+  my ($ShortName,$LongName);
+  my $InstitutionFetch  = $dbh -> prepare(
+     "select ShortName,LongName from Institution where InstitutionID=?"); 
+  $InstitutionFetch -> execute($InstitutionID);
+  ($ShortName,$LongName) = $InstitutionFetch -> fetchrow_array;
+  $Institutions{$InstitutionID}{INSTID} = $InstitutionID;
+  $Institutions{$InstitutionID}{SHORT}  = $ShortName;
+  $Institutions{$InstitutionID}{LONG}   = $LongName;
 }
 
 sub GetAuthorDocuments { # Return a list of all documents the author is associated with

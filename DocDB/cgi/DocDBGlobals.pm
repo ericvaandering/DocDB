@@ -58,57 +58,58 @@ require "ProjectGlobals.pm";
 
 # Special files (here because they use values from above)
 
-$help_file          = $script_root."docdb.hlp";
+$help_file             = $script_root."docdb.hlp";
 
 # CGI Scripts
 
-$MainPage           = $cgi_root."DocumentDatabase";
-$ModifyHome         = $cgi_root."ModifyHome";
+$MainPage              = $cgi_root."DocumentDatabase";
+$ModifyHome            = $cgi_root."ModifyHome";
 
-$DocumentAddForm    = $cgi_root."DocumentAddForm";
-$ProcessDocumentAdd = $cgi_root."ProcessDocumentAdd";
-$DeleteConfirm      = $cgi_root."DeleteConfirm";
-$DeleteDocument     = $cgi_root."DeleteDocument";
+$DocumentAddForm       = $cgi_root."DocumentAddForm";
+$ProcessDocumentAdd    = $cgi_root."ProcessDocumentAdd";
+$DeleteConfirm         = $cgi_root."DeleteConfirm";
+$DeleteDocument        = $cgi_root."DeleteDocument";
 
-$ShowDocument       = $cgi_root."ShowDocument";
-$RetrieveFile       = $cgi_root."RetrieveFile";
-$RetrieveArchive    = $cgi_root."RetrieveArchive";
+$ShowDocument          = $cgi_root."ShowDocument";
+$RetrieveFile          = $cgi_root."RetrieveFile";
+$RetrieveArchive       = $cgi_root."RetrieveArchive";
 
-$Search             = $cgi_root."Search";
-$SearchForm         = $cgi_root."SearchForm";
+$Search                = $cgi_root."Search";
+$SearchForm            = $cgi_root."SearchForm";
 
-$TopicAddForm       = $cgi_root."TopicAddForm";
-$AuthorAddForm      = $cgi_root."AuthorAddForm";
+$TopicAddForm          = $cgi_root."TopicAddForm";
+$AuthorAddForm         = $cgi_root."AuthorAddForm";
 
-$ListDocuments      = $cgi_root."ListDocuments";
-$ListByAuthor       = $cgi_root."ListByAuthor";
-$ListByTopic        = $cgi_root."ListByTopic";
-$ListByType         = $cgi_root."ListByType";
-$LastModified       = $cgi_root."LastModified";
+$ListDocuments         = $cgi_root."ListDocuments";
+$ListByAuthor          = $cgi_root."ListByAuthor";
+$ListByTopic           = $cgi_root."ListByTopic";
+$ListByType            = $cgi_root."ListByType";
+$LastModified          = $cgi_root."LastModified";
 
-$ListAuthors        = $cgi_root."ListAuthors";
-$ListTopics         = $cgi_root."ListTopics";
-$ListTypes          = $cgi_root."ListTypes";
-$ListMeetings       = $cgi_root."ListMeetings";
+$ListAuthors           = $cgi_root."ListAuthors";
+$ListTopics            = $cgi_root."ListTopics";
+$ListTypes             = $cgi_root."ListTypes";
+$ListMeetings          = $cgi_root."ListMeetings";
 
-$AddFiles           = $cgi_root."AddFiles";
-$AddFilesForm       = $cgi_root."AddFilesForm";
+$AddFiles              = $cgi_root."AddFiles";
+$AddFilesForm          = $cgi_root."AddFilesForm";
 
-$ConferenceAddForm  = $cgi_root."ConferenceAddForm";
-$ConferenceAdd      = $cgi_root."ConferenceAdd";
+$ConferenceAddForm     = $cgi_root."ConferenceAddForm";
+$ConferenceAdd         = $cgi_root."ConferenceAdd";
 
-$AdministerForm     = $cgi_root."AdministerForm";
-$AuthorAdminister   = $cgi_root."AuthorAdminister";
-$TopicAdminister    = $cgi_root."TopicAdminister";
+$AdministerForm        = $cgi_root."AdministerForm";
+$AuthorAdminister      = $cgi_root."AuthorAdminister";
+$InstitutionAdminister = $cgi_root."InstitutionAdminister";
+$TopicAdminister       = $cgi_root."TopicAdminister";
 
-$Statistics         = $cgi_root."Statistics";
+$Statistics            = $cgi_root."Statistics";
 
-$HelpFile           = $web_root."Static/Restricted/DocDB_Help.shtml";
+$HelpFile              = $web_root."Static/Restricted/DocDB_Help.shtml";
 
-$SelectPrefs        = $cgi_root."SelectPrefs";
-$SetPrefs           = $cgi_root."SetPrefs";
+$SelectPrefs           = $cgi_root."SelectPrefs";
+$SetPrefs              = $cgi_root."SetPrefs";
 
-$EmailLogin         = $cgi_root."EmailLogin";
-$SelectEmailPrefs   = $cgi_root."SelectEmailPrefs";
+$EmailLogin            = $cgi_root."EmailLogin";
+$SelectEmailPrefs      = $cgi_root."SelectEmailPrefs";
 
 1;

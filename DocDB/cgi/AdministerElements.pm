@@ -7,7 +7,6 @@
 #
 
 sub AdministerActions {
-  
   my %Action = ();
 
   $Action{Delete} = "Delete";

@@ -11,8 +11,9 @@ use CGI;
 use DBI;
 
 require "DocDBGlobals.pm";
-require "FormElements.pm";
 require "AdministerElements.pm";
+require "FormElements.pm";
+require "AuthorElements.pm";
 require "Scripts.pm";
 require "Security.pm";
 
@@ -47,6 +48,8 @@ if (@error_stack) {  # The user made one or more mistakes, warn and exit
 
 print "<b>Click on any of the headings for help.</b><p>\n"; 
 
+### Author Modification
+
 print $query -> start_multipart_form('POST',"$AuthorAdminister");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
@@ -69,6 +72,36 @@ print "</tr>\n";
 
 print "</table>\n";
 print $query -> end_multipart_form;
+
+print "<p><hr><p>\n";
+
+### Institution Administration
+
+print $query -> start_multipart_form('POST',"$InstitutionAdminister");
+print "<table cellpadding=10>\n";
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td>\n"; &InstitutionSelect("full"); print "</td>\n";
+print "<td>\n"; &InstitutionEntryBox; print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n";
+&AdministratorPassword;
+print "&nbsp;";
+print $query -> submit (-value => "Change Institution Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<p><hr><p>\n";
+
+### Topic Administration
 
 print "<p><hr><p>\n";
 

@@ -82,31 +82,21 @@ sub PrintAuthorInfo {
   print $Institutions{$Authors{$AuthorID}{INST}}{LONG};
 }
 
-sub AuthorsTableByInstitution { # Old version, lists by institution
+sub AuthorsByInstitution { 
+  my ($InstID) = @_;
   require "Sorts.pm";
 
-  my $NCols = 4;
-  my @InstIDs   = sort byInstitution keys %Institutions;
-  my @AuthorIDs = sort byLastName    keys %Authors;
+  my @AuthorIDs = sort byLastName keys %Authors;
 
-  my $Col = 0;
-  print "<table cellpadding=10>\n";
-  foreach my $InstID (@InstIDs) {
-    unless ($Col % $NCols) {
-      print "<tr valign=top>\n";
-    }
-    print "<td><b>$Institutions{$InstID}{SHORT}</b>\n";
-    ++$Col;
-    print "<ul>\n";
-    foreach my $AuthorID (@AuthorIDs) {
-      if ($InstID == $Authors{$AuthorID}{INST}) {
-        my $author_link = &AuthorLink($AuthorID);
-        print "<li>$author_link\n";
-      }  
+  print "<td><b>$Institutions{$InstID}{SHORT}</b>\n";
+  print "<ul>\n";
+  foreach my $AuthorID (@AuthorIDs) {
+    if ($InstID == $Authors{$AuthorID}{INST}) {
+      my $author_link = &AuthorLink($AuthorID);
+      print "<li>$author_link\n";
     }  
-    print "</ul>";
   }  
-  print "</table>\n";
+  print "</ul>";
 }
 
 sub AuthorsTable {

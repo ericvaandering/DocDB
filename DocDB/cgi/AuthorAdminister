@@ -16,6 +16,7 @@ require "ResponseElements.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";
 require "AuthorSQL.pm";
+require "Messages.pm";
 
 $query = new CGI;  # Global for subroutines
 
@@ -42,15 +43,14 @@ $InstitutionID = $params{inst};
 my $AuthorID;
 
 unless (&CanAdminister) {
-  push @error_stack,"You must be logged in as the adminstrator to administer
-  authors.";
+  push @ErrorStack,$Msg_AdminNoLogin;
 }  
 &EndPage(@ErrorStack);
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
 unless ($dbh) {
-  push @ErrorStack,"Unable to connect to the database. Check the password.";
+  push @ErrorStack,$Msg_AdminNoConnect;
 }         
 &EndPage(@ErrorStack);
 
@@ -131,8 +131,8 @@ if ($Action eq "Modify" || $Action eq "New") {
 
 print "<p>\n";
 
-&EndPage(@ErrorStack);
 &WarnPage(@WarnStack);
+&EndPage(@ErrorStack);
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

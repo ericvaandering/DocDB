@@ -425,15 +425,22 @@ sub MajorTopicSelect { # Scrolling selectable list for major topics
                                  -labels => \%MajorLabels,  -size => 10);
 };
 
-sub InstitutionSelect { # Scrolling selectable list for institutions
+sub InstitutionSelect ($) { # Scrolling selectable list for institutions
   require "Sorts.pm";
+  my ($Mode) = @_;
   print "<b><a ";
   &HelpLink("institution");
-  print "Institution:</a></b><br> \n";
+  print "Institution:</a></b>";
+  if ($Mode eq "full") {print " (Long descriptions in brackets)";}
+  print "<br> \n";
   my @InstIDs = sort byInstitution keys %Institutions;
   my %InstLabels = ();
   foreach my $ID (@InstIDs) {
-    $InstLabels{$ID} = $Institutions{$ID}{SHORT};
+    if ($Mode eq "full") {
+      $InstLabels{$ID} = $Institutions{$ID}{SHORT}." [".$Institutions{$ID}{LONG}."]";
+    } else {
+      $InstLabels{$ID} = $Institutions{$ID}{SHORT};
+    }
   }  
   print $query -> scrolling_list(-name => "inst", -values => \@InstIDs,
                                  -labels => \%InstLabels,  -size => 10);
