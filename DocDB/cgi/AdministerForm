@@ -169,7 +169,7 @@ print "<p><hr>\n";
 
 print "<a name=\"mintopic\"><center><h4>Administer Minor Topics</h4></center>\n";
 
-print $query -> start_multipart_form('POST',"TopicAdminister");
+print $query -> start_multipart_form('POST',"$TopicAdminister");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
@@ -204,7 +204,7 @@ print "<p><hr>\n";
 
 print "<a name=\"majtopic\"><center><h4>Administer Major Topics</h4></center>\n";
 
-print $query -> start_multipart_form('POST',"MajorTopicAdminister");
+print $query -> start_multipart_form('POST',"$MajorTopicAdminister");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";

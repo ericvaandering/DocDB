@@ -229,9 +229,5 @@ print "You were successful in adding files. Your entry now contains
 
 &PrintRevisionInfo($DocRevID);
 
-$EndTime  = new Benchmark;
-$TimeDiff = timediff($EndTime,$StartTime);
-print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
-
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

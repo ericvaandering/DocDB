@@ -46,7 +46,7 @@ print $query->header;
 
 &HelpPopupScript;
 
-print $query -> start_multipart_form('POST',"AuthorAdd");
+print $query -> start_multipart_form('POST',"$AuthorAdd");
 
 print "<center><table cellpadding=10 width=75%>\n";
 
