@@ -150,6 +150,7 @@ sub StartDatePullDown (;%) {
   my (%Params) = @_;
   
   my $Disabled = $Params{-disabled}  || 0;
+  my $Required = $Params{-required}  || 0;
   
   my $Booleans = "";
   
@@ -185,7 +186,11 @@ sub StartDatePullDown (;%) {
 
   print "<b><a ";
   &HelpLink("startdate");
-  print "Start Date:</a></b><br> \n";
+  print "Start Date:</a></b>";
+  if ($Required) {
+    print $RequiredMark;
+  }  
+  print "<br> \n";
   print $query -> popup_menu (-name => 'startday',-values => \@days, -default => $day, $Booleans);
   print $query -> popup_menu (-name => 'startmonth',-values => \@months, -default => $months[$mon], $Booleans);
   print $query -> popup_menu (-name => 'startyear',-values => \@years, -default => $year, $Booleans);
