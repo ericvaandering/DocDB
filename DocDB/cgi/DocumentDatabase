@@ -23,9 +23,15 @@ print $query->header;
 
 &HelpPopupScript;
 
-print "<p><center><h4><a href=\"$web_root/Help/DocDB_Help.shtml\">Instructions
-       on using</a> the database. Click on any <font color=red>red link</font>
-       for quick help.</h4></center>\n";
+print "<p><center><h4>\n";
+if ($Public) {
+  print "Welcome to the public portion of the BTeV Document Database,<br>the repository for all BTeV public talks,
+  proceedings, preprints, and publications.\n";
+} else {
+  print "<a href=\"$web_root/Help/DocDB_Help.shtml\">Instructions on using</a> the database. \n";
+  print "Click on any <font color=red>red link</font> for quick help.\n";
+}
+print "</h4></center>\n";
 
 print "<p><b>Find the information you want in the database:</b>\n";
 print "<ul>\n";
@@ -47,7 +53,7 @@ print $query -> endform;
 
 print "<li>"; 
 print "List ";
-print "documents <a href=\"$LastModified?days=5\">modified in the last five days</a>, ";
+print "documents <a href=\"$LastModified?days=$LastDays\">modified in the last $LastDays days</a>, ";
 print "by <a href=\"$ListAuthors\">author</a>, ";
 print "<a href=\"$ListTopics\">topic</a>, ";
 print "<a href=\"$ListTypes\">type</a>, ";
@@ -55,195 +61,197 @@ print "or <a href=\"$ListDocuments\">all documents</a>. ";
 
 print "</ul>\n";
 
-print "<p><b>Short cuts for putting information into the database: ";
-print "(<a "; &HelpLink("modifytypes"); 
-print "Which option do I choose?</a>)</b>\n";
-print "<ul>\n";
+unless ($Public) {
+  print "<p><b>Short cuts for putting information into the database: ";
+  print "(<a "; &HelpLink("modifytypes"); 
+  print "Which option do I choose?</a>)</b>\n";
+  print "<ul>\n";
 
-print "<li>"; 
-print $query -> startform('POST',$DocumentAddForm);
-print $query -> submit (-value => "Create a new");
-print " document from "; 
-print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
-print " file(s) on your <b><a "; 
-&HelpLink("uploadmethod"); 
-print "local computer</a></b> \n"; 
-print "(no need to reserve the document).\n";
-print $query -> hidden(-name => 'mode',    -default => 'add');
-print $query -> hidden(-name => 'upload',    -default => 'file');
-print $query -> endform;
+  print "<li>"; 
+  print $query -> startform('POST',$DocumentAddForm);
+  print $query -> submit (-value => "Create a new");
+  print " document from "; 
+  print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
+  print " file(s) on your <b><a "; 
+  &HelpLink("uploadmethod"); 
+  print "local computer</a></b> \n"; 
+  print "(no need to reserve the document).\n";
+  print $query -> hidden(-name => 'mode',    -default => 'add');
+  print $query -> hidden(-name => 'upload',    -default => 'file');
+  print $query -> endform;
 
-print "<li>"; 
-print $query -> startform('POST',$DocumentAddForm);
-print $query -> submit (-value => "Create a new");
-print " document from "; 
-print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
-print " file(s) on the <b><a "; 
-&HelpLink("uploadmethod"); 
-print "web</a></b> \n"; 
-print "(no need to reserve the document).\n";
-print $query -> hidden(-name => 'mode',    -default => 'add');
-print $query -> hidden(-name => 'upload',    -default => 'http');
-print $query -> endform;
+  print "<li>"; 
+  print $query -> startform('POST',$DocumentAddForm);
+  print $query -> submit (-value => "Create a new");
+  print " document from "; 
+  print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
+  print " file(s) on the <b><a "; 
+  &HelpLink("uploadmethod"); 
+  print "web</a></b> \n"; 
+  print "(no need to reserve the document).\n";
+  print $query -> hidden(-name => 'mode',    -default => 'add');
+  print $query -> hidden(-name => 'upload',    -default => 'http');
+  print $query -> endform;
 
-print "<li>"; 
-print $query -> startform('POST',$DocumentAddForm);
-print $query -> submit (-value => "Reserve");
-print " a document number\n"; 
-print "(if you don't yet have a draft of your document).\n";
-print $query -> hidden(-name => 'mode',    -default => 'reserve');
-print $query -> endform;
+  print "<li>"; 
+  print $query -> startform('POST',$DocumentAddForm);
+  print $query -> submit (-value => "Reserve");
+  print " a document number\n"; 
+  print "(if you don't yet have a draft of your document).\n";
+  print $query -> hidden(-name => 'mode',    -default => 'reserve');
+  print $query -> endform;
 
-print "<li>"; 
-print $query -> startform('POST',$DocumentAddForm);
-print $query -> submit (-value => "Update");
-print " document # "; 
-print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
-print $query -> hidden(-name => 'mode',    -default => 'update');
-print $query -> endform;
+  print "<li>"; 
+  print $query -> startform('POST',$DocumentAddForm);
+  print $query -> submit (-value => "Update");
+  print " document # "; 
+  print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
+  print $query -> hidden(-name => 'mode',    -default => 'update');
+  print $query -> endform;
 
-print "<li>"; 
-print $query -> startform('POST',$DocumentAddForm);
-print $query -> submit (-value => "Update Database");
-print " for document # "; 
-print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
-print $query -> hidden(-name => 'mode',    -default => 'updatedb');
-print $query -> endform;
-print "<li> <a href=\"#addform\">Add files</a> to a document."; 
-print "</ul>\n";
+  print "<li>"; 
+  print $query -> startform('POST',$DocumentAddForm);
+  print $query -> submit (-value => "Update Database");
+  print " for document # "; 
+  print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
+  print $query -> hidden(-name => 'mode',    -default => 'updatedb');
+  print $query -> endform;
+  print "<li> <a href=\"#addform\">Add files</a> to a document."; 
+  print "</ul>\n";
 
-print "<p>\n";
-print $query -> start_multipart_form('POST',$DocumentAddForm);
+  print "<p>\n";
+  print $query -> start_multipart_form('POST',$DocumentAddForm);
 
-print "<b>If the above choices don't meet your needs,use this form to produce a
-       customized document creation or update form. Make a selection from each
-       group.</b><p>\n";
+  print "<b>If the above choices don't meet your needs,use this form to produce a
+	 customized document creation or update form. Make a selection from each
+	 group.</b><p>\n";
 
-$modes{reserve}  = "Reserve document #";
-$modes{add}      = "New document";
-$modes{update}   = "Update existing document";
-$modes{updatedb} = "Update DB information";  # See note in ProcessDocumentAdd
+  $modes{reserve}  = "Reserve document #";
+  $modes{add}      = "New document";
+  $modes{update}   = "Update existing document";
+  $modes{updatedb} = "Update DB information";  # See note in ProcessDocumentAdd
 
-@modes = ("add","reserve","update","updatedb");
+  @modes = ("add","reserve","update","updatedb");
 
-$uploads{http}   = "HTTP submission";
-$uploads{file}   = "Local file upload";
-@uploads = ("file","http");
+  $uploads{http}   = "HTTP submission";
+  $uploads{file}   = "Local file upload";
+  @uploads = ("file","http");
 
-$archives{archive}    = "Archive (.tar/.zip) upload";
-$archives{single}   = "Single file";
-$archives{multi}   = "Multiple files";
-@archives = ("single","multi","archive");
+  $archives{archive}    = "Archive (.tar/.zip) upload";
+  $archives{single}   = "Single file";
+  $archives{multi}   = "Multiple files";
+  @archives = ("single","multi","archive");
 
-$topicmodes{multi}  = "Multiple Topic Boxes";
-$topicmodes{single} = "Single Topic List";
-@topicmodes = ("single","multi");
+  $topicmodes{multi}  = "Multiple Topic Boxes";
+  $topicmodes{single} = "Single Topic List";
+  @topicmodes = ("single","multi");
 
-$authormodes{field}  = "Text field";
-$authormodes{list} = "Selectable list";
-@authormodes = ("list","field");
+  $authormodes{field}  = "Text field";
+  $authormodes{list} = "Selectable list";
+  @authormodes = ("list","field");
 
-print "<table cellpadding=5 border=5>\n";
+  print "<table cellpadding=5 border=5>\n";
 
-print "<tr><td align=right>\n";
-print "<a "; &HelpLink("modifytypes"); 
-print "<b>Type of modification:</b></a>\n";
+  print "<tr><td align=right>\n";
+  print "<a "; &HelpLink("modifytypes"); 
+  print "<b>Type of modification:</b></a>\n";
 
-print "<td>\n";
- print "<table cellpadding=3><tr><td>\n";
- print $query -> radio_group(-name => "mode", -labels => \%modes, -values => \@modes, -columns => 2);
- print "<tr><td align=right valign=bottom>\n";
- print "<b>Update Doc #:</b>\n";
- print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
- print "&nbsp;&nbsp;&nbsp;\n";
- print "</table>\n";
+  print "<td>\n";
+   print "<table cellpadding=3><tr><td>\n";
+   print $query -> radio_group(-name => "mode", -labels => \%modes, -values => \@modes, -columns => 2);
+   print "<tr><td align=right valign=bottom>\n";
+   print "<b>Update Doc #:</b>\n";
+   print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
+   print "&nbsp;&nbsp;&nbsp;\n";
+   print "</table>\n";
 
-print "<tr><td align=right>\n";
-print "<a "; &HelpLink("uploadtype"); 
-print "<b>Upload type:</b></a>\n";
-print "<td>\n";
-print "<table cellpadding=3><tr><td>\n";
-print $query -> radio_group(-name => "archive", -values => \@archives, -labels
-                            => \%archives, -columns => 1);
-print "</td><td>\n";
-print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
-print "<b># of files</b>\n";
-print "</td></tr></table>\n";
+  print "<tr><td align=right>\n";
+  print "<a "; &HelpLink("uploadtype"); 
+  print "<b>Upload type:</b></a>\n";
+  print "<td>\n";
+  print "<table cellpadding=3><tr><td>\n";
+  print $query -> radio_group(-name => "archive", -values => \@archives, -labels
+                              => \%archives, -columns => 1);
+  print "</td><td>\n";
+  print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
+  print "<b># of files</b>\n";
+  print "</td></tr></table>\n";
 
-print "<tr><td align=right>\n";
-print "<a "; &HelpLink("uploadmethod"); 
-print "<b>Upload method:</b></a>\n";
-print "<td>\n";
-print $query -> radio_group(-name => "upload", -values => \@uploads, -labels => \%uploads);
+  print "<tr><td align=right>\n";
+  print "<a "; &HelpLink("uploadmethod"); 
+  print "<b>Upload method:</b></a>\n";
+  print "<td>\n";
+  print $query -> radio_group(-name => "upload", -values => \@uploads, -labels => \%uploads);
 
-print "<tr><td align=right>\n";
-print "<a "; &HelpLink("topicoption"); 
-print "<b>Topic Selection:</b></a>\n";
-print "<td>\n";
-print $query -> radio_group(-name => "topicmode", -values => \@topicmodes, -labels => \%topicmodes);
-#print "<tr><td align=right>\n";
-#print "<b>Author Selection:</b>\n";
-#print "<td>\n";
-#print $query -> radio_group(-name => "authormode", -values => \@authormodes, -labels => \%authormodes);
-print "<tr><td align=right>\n";
-print "<a "; &HelpLink("dateoverride"); 
-print "<b>Override submit date:</b></a>\n";
-print "<td>\n";
-print $query -> checkbox(-name => "overdate", -label => '(Check for Yes)');
-print "<tr><td align=center colspan=2>\n";
-print $query -> submit (-value => "Give me my customized form");
-print "</table><p>\n";
-print $query -> endform;
+  print "<tr><td align=right>\n";
+  print "<a "; &HelpLink("topicoption"); 
+  print "<b>Topic Selection:</b></a>\n";
+  print "<td>\n";
+  print $query -> radio_group(-name => "topicmode", -values => \@topicmodes, -labels => \%topicmodes);
+  #print "<tr><td align=right>\n";
+  #print "<b>Author Selection:</b>\n";
+  #print "<td>\n";
+  #print $query -> radio_group(-name => "authormode", -values => \@authormodes, -labels => \%authormodes);
+  print "<tr><td align=right>\n";
+  print "<a "; &HelpLink("dateoverride"); 
+  print "<b>Override submit date:</b></a>\n";
+  print "<td>\n";
+  print $query -> checkbox(-name => "overdate", -label => '(Check for Yes)');
+  print "<tr><td align=center colspan=2>\n";
+  print $query -> submit (-value => "Give me my customized form");
+  print "</table><p>\n";
+  print $query -> endform;
 
-### File addition form
+  ### File addition form
 
-$addarchives{single}   = "Single file";
-$addarchives{multi}   = "Multiple files";
-@addarchives = ("single","multi");
+  $addarchives{single}   = "Single file";
+  $addarchives{multi}   = "Multiple files";
+  @addarchives = ("single","multi");
 
-print $query -> start_multipart_form('POST',$AddFilesForm);
-print "<a name=\"addform\">\n";
-print "<b>Use this form to produce a customized file addition form. Make a
-       selection from each group.</b><p>\n";
+  print $query -> start_multipart_form('POST',$AddFilesForm);
+  print "<a name=\"addform\">\n";
+  print "<b>Use this form to produce a customized file addition form. Make a
+	 selection from each group.</b><p>\n";
 
-print "<table cellpadding=5 border=5>\n";
+  print "<table cellpadding=5 border=5>\n";
 
-print "<tr><td align=right>\n";
-print "<a "; &HelpLink("docnumber"); 
-print "<b>Update Doc #:</b></a>\n";
+  print "<tr><td align=right>\n";
+  print "<a "; &HelpLink("docnumber"); 
+  print "<b>Update Doc #:</b></a>\n";
 
-print "<td>\n";
- print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
+  print "<td>\n";
+   print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 
-print "<tr><td align=right>\n";
-print "<a "; &HelpLink("uploadtype"); 
-print "<b>Upload type:</b></a>\n";
-print "<td>\n";
-print "<table cellpadding=3><tr><td>\n";
-print $query -> radio_group(-name => "archive", -values => \@addarchives, -labels
-                            => \%addarchives, -columns => 1);
-print "</td><td valign=bottom>\n";
-print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
-print "<b># of files</b>\n";
-print "</td></tr></table>\n";
+  print "<tr><td align=right>\n";
+  print "<a "; &HelpLink("uploadtype"); 
+  print "<b>Upload type:</b></a>\n";
+  print "<td>\n";
+  print "<table cellpadding=3><tr><td>\n";
+  print $query -> radio_group(-name => "archive", -values => \@addarchives, -labels
+                              => \%addarchives, -columns => 1);
+  print "</td><td valign=bottom>\n";
+  print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
+  print "<b># of files</b>\n";
+  print "</td></tr></table>\n";
 
-print "<tr><td align=right>\n";
-print "<a "; &HelpLink("uploadmethod"); 
-print "<b>Upload method:</b></a>\n";
-print "<td>\n";
-print $query -> radio_group(-name => "upload", -values => \@uploads, -labels => \%uploads);
+  print "<tr><td align=right>\n";
+  print "<a "; &HelpLink("uploadmethod"); 
+  print "<b>Upload method:</b></a>\n";
+  print "<td>\n";
+  print $query -> radio_group(-name => "upload", -values => \@uploads, -labels => \%uploads);
 
-print "<tr><td align=center colspan=2>\n";
-print $query -> submit (-value => "Give me my customized form");
-print "</table>\n";
-print $query -> endform;
+  print "<tr><td align=center colspan=2>\n";
+  print $query -> submit (-value => "Give me my customized form");
+  print "</table>\n";
+  print $query -> endform;
 
-print "<p><b>Administrative functions:</b><ul>\n";
-if ($remote_user eq $Administrator) {
-  print "<li>Add a <a href=\"$TopicAddForm\">topic</a>\n";
-}
-print "<li>Add an <a href=\"$AuthorAddForm\">author</a>\n";
-print "</ul>\n";
+  print "<p><b>Administrative functions:</b><ul>\n";
+  if ($remote_user eq $Administrator) {
+    print "<li>Add a <a href=\"$TopicAddForm\">topic</a>\n";
+  }
+  print "<li>Add an <a href=\"$AuthorAddForm\">author</a>\n";
+  print "</ul>\n";
+} # Public
 
 &DocDBNavBar;
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -1,9 +1,17 @@
 # DB settings
-$db_name   = "BTeVDocTest";
-$db_host   = "vchipp.phy.vanderbilt.edu";
-$db_rwuser = "docadmin";
-$db_rwpass = "docadmin";
-$db_rouser = "docadmin";
-$db_ropass = "docadmin";
+$Public = 1; # (Absolute flag)
+
+$db_name   = "BTeVDocDB";
+$db_host   = "fnsimu1.fnal.gov";
+$db_rwuser = "";
+$db_rwpass = "";
+$db_rouser = "docdbro";
+$db_ropass = "abg3n1x";
+
+$script_root = "/www/cgi-bin/public/DocDB/"; 
+$cgi_root    = "http://www-btev.fnal.gov/cgi-bin/public/DocDB/";
+
+$remote_user = ""; 
+$AuthUserFile     = "";
 
 1;

@@ -286,11 +286,17 @@ sub DocDBNavBar {
     print "[&nbsp;<a href=\"$ExtraURL\"l>$ExtraDesc</a>&nbsp;]&nbsp;\n";
   } 
   print "[&nbsp;<a href=\"$MainPage\">DocDB&nbsp;Home</a>&nbsp;]&nbsp;\n";
-  print "[&nbsp;<a href=\"$DocumentAddForm?mode=add\">New&nbsp;Document</a>&nbsp;]&nbsp;\n";
-  print "[&nbsp;<a href=\"$DocumentAddForm\">Reserve</a>&nbsp;]&nbsp;\n";
+  unless ($Public) {
+    print "[&nbsp;<a href=\"$DocumentAddForm?mode=add\">New&nbsp;Document</a>&nbsp;]&nbsp;\n";
+    print "[&nbsp;<a href=\"$DocumentAddForm\">Reserve</a>&nbsp;]&nbsp;\n";
+  }
   print "[&nbsp;<a href=\"$ListAuthors\">List&nbsp;Authors</a>&nbsp;]\n";
   print "[&nbsp;<a href=\"$ListTopics\">List&nbsp;Topics</a>&nbsp;]\n";
-  print "[&nbsp;<a href=\"$HelpFile\">Help</a>&nbsp;]\n";
+  print "[&nbsp;<a href=\"$ListTypes\">List&nbsp;Types</a>&nbsp;]\n";
+  print "[&nbsp;<a href=\"$LastModified\">Last&nbsp;$LastDays&nbsp;Days</a>&nbsp;]\n";
+  unless ($Public) {
+    print "[&nbsp;<a href=\"$HelpFile\">Help</a>&nbsp;]\n";
+  } 
   print "</div>\n";
 }
 
