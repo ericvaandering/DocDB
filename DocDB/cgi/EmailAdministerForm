@@ -35,6 +35,7 @@ require "ResponseElements.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";
 require "AdministerElements.pm";
+require "SecurityHTML.pm";
 
 require "MailNotification.pm";
 require "SecuritySQL.pm";
@@ -57,6 +58,7 @@ unless (&CanAdminister()) {
 #  push @ErrorStack,"You are not allowed to access administrative functions.";
   push @WarnStack,"I've disabled admin checking in this page. FIX IT.";
   push @WarnStack,"Have to allow for listing and changing groups";
+  push @WarnStack,"Have to add help links here and for request";
 }
 
 &EndPage(@ErrorStack);
@@ -72,9 +74,9 @@ print "Since users can modify their own data and create their own accounts,
 ### Email User Modification
 
 print $query -> start_multipart_form('POST',"$EmailAdminister");
-print "<table cellpadding=10 border=4>\n";
+print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
-print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
+print "<td colspan=3>\n"; &AdministerActions;      print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
@@ -85,7 +87,9 @@ print "<b><a ";
 print "New Password:</a></b><br> \n";
 print $query -> textfield (-name => 'resetpw', -size => 20, -maxlength => 20);
 print "</td>\n";
-print "<td rowspan=5>\n"; &EmailUserSelect; print "</td>\n";  
+print "<td rowspan=5>\n"; 
+&SecurityList(-helplink => 'usergroups', -helptext => 'User\'s Groups', -name => 'usergroups'); 
+print "</td>\n";  
 print "</tr>\n";
 
 print "<tr><td>\n";
