@@ -8,6 +8,7 @@ use CGI;
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "SecuritySQL.pm";
+require "Scripts.pm";
 
 $query = new CGI;  # Global for subroutines
 #$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
@@ -102,7 +103,8 @@ $authormodes{list} = "Selectable list";
 print $query -> start_multipart_form('POST',$DocumentAddForm);
 print "<table cellpadding=5 border=5>\n";
 print "<tr><td align=right>\n";
-print "<b>Type of modification:</b>\n";
+print "<a "; &HelpLink("modifytypes"); 
+print "<b>Type of modification:</b></a>\n";
 print "<td>\n";
  print "<table cellpadding=3><tr><td>\n";
  print $query -> radio_group(-name => "mode", -labels => \%modes, -values => \@modes, -columns => 2);
