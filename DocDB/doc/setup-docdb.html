@@ -6,6 +6,8 @@
 
 <p>
 <ol>
+<li> <font color="red">Login to the document database account.</font> <br>
+     This account is used to administer the various DocDB scripts and html pages.
 <li> Unwind the DocDB tar file under your document database account.
 <li> cd to DocDB/cgi
     <ol>
@@ -39,7 +41,15 @@
      <font color="red">The .htpasswd file should not be in 
      any web-accessable directory.</font>
 <li> cp -r DocDB/html  $file_root/Static, 
-     where $file_root is defined in ProjectGlobals.pm.
+     where $file_root is defined in ProjectGlobals.pm. <br>
+<li> Set permissions on $file_root. 
+     <ul>
+     <li> $file_root must be owned by the uid/gid of the webserver process.
+     DocDB will create the necessary subdirectory structure and populate it
+     with the downloaded files when documents are created and edited.
+     <li> Unlike the remainder of $file_root, the $file_root/Static directory
+     tree must be owned by the document database account.
+     </ul>
 <li> create the public access scripts
     <ol>
     <li> mkdir /www/cgi-bin/public/DocDB/, chosing an 
