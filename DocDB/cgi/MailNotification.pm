@@ -151,7 +151,9 @@ sub UsersToNotify ($$) {
     if ($EmailUserID) {
       my $Name         = $EmailUser{$UserID}{Name}        ; # FIXME: TRYME: Have to use UserID as index for some reason
       my $EmailAddress = $EmailUser{$UserID}{EmailAddress};
-      push @Addressees,$EmailAddress;
+      if ($EmailAddress) {
+        push @Addressees,$EmailAddress;
+      }
     }
   } 
   

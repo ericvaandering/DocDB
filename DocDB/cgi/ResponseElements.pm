@@ -46,7 +46,7 @@ sub PrintKeywords {
     print "<dl>\n";
     print "<dt><b>Keywords:</b><br>\n";
     print "<dd>\n";
-    my @Keywords = split /\s+/,$Keywords;
+    my @Keywords = split /\,*\s+/,$Keywords;
     my $Link;
     foreach my $Keyword (@Keywords) {
       $Link = &KeywordLink($Keyword);
