@@ -1,6 +1,7 @@
 sub FetchDocRevisionByID {
 
-  #FIXME Change name to FetchDocumentRevision
+  # FIXME Change name to FetchDocumentRevision
+  # FIXME Doesn't fetch obsolete revisions. Can't see why this would hurt. Investigate
   # Creates two hashes:
   # $DocRevIDs{DocumentID}{Version} holds the DocumentRevision ID
   # $DocRevisions{DocRevID}{FIELD} holds the Fields or references too them
@@ -9,7 +10,7 @@ sub FetchDocRevisionByID {
   my $revision_list = $dbh->prepare(
     "select DocRevID,SubmitterID,DocumentTitle,PublicationInfo,VersionNumber,".
            "Abstract,RevisionDate,TimeStamp,DocumentID,Obsolete, ".
-           "JournalID,Volume,Page,Keywords ".
+           "Keywords ".
     "from DocumentRevision ".
     "where DocRevID=? and Obsolete=0");
   if ($DocRevisions{$docRevID}{DOCID} && $DocRevisions{$docRevID}{COMPLETE}) {
@@ -19,7 +20,7 @@ sub FetchDocRevisionByID {
   my ($DocRevID,$SubmitterID,$DocumentTitle,$PublicationInfo,
       $VersionNumber,$Abstract,$RevisionDate,
       $TimeStamp,$DocumentID,$Obsolete,
-      $JournalID,$Volume,$Page,$Keywords) = $revision_list -> fetchrow_array;
+      $Keywords) = $revision_list -> fetchrow_array;
 
 
   #FIXME Make keys mixed-caps
@@ -34,9 +35,6 @@ sub FetchDocRevisionByID {
   $DocRevisions{$DocRevID}{VERSION}       = $VersionNumber;
   $DocRevisions{$DocRevID}{DOCID}         = $DocumentID;
   $DocRevisions{$DocRevID}{OBSOLETE}      = $Obsolete;
-  $DocRevisions{$DocRevID}{JournalID}     = $JournalID;
-  $DocRevisions{$DocRevID}{Volume}        = $Volume;
-  $DocRevisions{$DocRevID}{Page}          = $Page;
   $DocRevisions{$DocRevID}{Keywords}      = $Keywords;
   $DocRevisions{$DocRevID}{COMPLETE}      = 1;
 

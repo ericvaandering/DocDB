@@ -102,18 +102,24 @@ sub PrintConfInfo {
   }
 }
 
-sub PrintReferenceInfo {
+sub PrintReferenceInfo ($) {
   require "MiscSQL.pm";
-  &GetJournals;
   
   my ($DocRevID) = @_;
-  if ($DocRevisions{$DocRevID}{JournalID}) {
-    print "<dl>\n";
-    print "<dt><b>Reference:</b> \n";
-    print "<dd>Published in";
-    print " $Journals{$DocRevisions{$DocRevID}{JournalID}}{Abbreviation},";
-    print " vol. $DocRevisions{$DocRevID}{Volume}, ";
-    print " pg. $DocRevisions{$DocRevID}{Page}.</dl>\n";
+  
+  my @ReferenceIDs = &FetchReferences($DocRevID);
+  
+  if (@ReferenceIDs) {
+    &GetJournals;
+    foreach my $ReferenceID (@ReferenceIDs) {
+      $JournalID = $RevisionReferences{$ReferenceID}{JournalID};
+      print "<dl>\n";
+      print "<dt><b>References:</b> \n";
+      print "<dd>Published in";
+      print " $Journals{$JournalID}{Abbreviation},";
+      print " vol. $RevisionReferences{$ReferenceID}{Volume}, ";
+      print " pg. $RevisionReferences{$ReferenceID}{Page}.</dl>\n";
+    }
   }
 }
 

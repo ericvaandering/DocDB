@@ -17,6 +17,27 @@ sub GetJournals { # Creates/fills a hash $Journals{$JournalID}{}
   }
 };
 
+sub FetchReferences ($) {
+  my ($DocRevID) = @_;
+  
+  my ($ReferenceID,$JournalID,$Volume,$Page,$TimeStamp);
+  my @ReferenceIDs = ();
+  
+  my $ReferenceList = $dbh -> prepare(
+   "select ReferenceID,JournalID,Volume,Page,TimeStamp ".
+   "from RevisionReference where DocRevID=?");
+  $ReferenceList -> execute($DocRevID);
+  $ReferenceList -> bind_columns(undef,\($ReferenceID,$JournalID,$Volume,$Page,$TimeStamp));
+  while ($ReferenceList -> fetch) {
+    $RevisionReferences{$ReferenceID}{JournalID} = $JournalID;
+    $RevisionReferences{$ReferenceID}{Volume}    = $Volume;
+    $RevisionReferences{$ReferenceID}{Page}      = $Page;
+    $RevisionReferences{$ReferenceID}{TimeStamp} = $TimeStamp;
+    push @ReferenceIDs,$ReferenceID;
+  }
+  return @ReferenceIDs;
+};
+
 sub GetDocTypes { # Creates/fills a hash $DocumentTypes{$DocTypeID}{} 
   my $doctype_list  = $dbh -> prepare(
      "select DocTypeID,ShortType,LongType from DocumentType");
