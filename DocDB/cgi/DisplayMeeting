@@ -24,6 +24,7 @@ require "Security.pm";
 require "MeetingSecurityUtilities.pm";
 
 require "MeetingHTML.pm";
+require "DocumentHTML.pm";
 require "MeetingSQL.pm";
 
 require "TalkHintUtilities.pm";
