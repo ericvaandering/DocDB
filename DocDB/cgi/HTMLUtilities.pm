@@ -67,13 +67,13 @@ sub BTeVHeader {
 
   print "<body bgcolor=\"#FFFFFF\" text=\"#000000\" topmargin=\"6\" leftmargin=\"6\" marginheight=\"6\" marginwidth=\"6\">\n";
 
-  &SSInclude("atwork_menuload.html");
-  &SSInclude("begin_atwork_top.html");
+  unless ($Public) {&SSInclude("atwork_menuload.html");}
+  unless ($Public) {&SSInclude("begin_atwork_top.html");}
   
   print "<div align=\"center\"><font size=\"+2\" color=\"#003399\">$page_title</font></div>\n";
-  &SSInclude("end_atwork_top.html");
-  &SSInclude("atwork_navbar.html");
-  &SSInclude("end_table.html");
+  unless ($Public) {&SSInclude("end_atwork_top.html");}
+  unless ($Public) {&SSInclude("atwork_navbar.html");}
+  unless ($Public) {&SSInclude("end_table.html");}
   print "<hr>\n";
 }
 
@@ -101,11 +101,11 @@ sub BTeVStyle { # Same as above, but no nav-bar
 
   print "<body bgcolor=\"#FFFFFF\" text=\"#000000\" topmargin=\"6\" leftmargin=\"6\" marginheight=\"6\" marginwidth=\"6\">\n";
 
-  &SSInclude("begin_atwork_top.html");
+  unless ($Public) {&SSInclude("begin_atwork_top.html");}
   
   print "<div align=\"center\"><font size=\"+2\" color=\"#003399\">$page_title</font></div>\n";
-  &SSInclude("end_atwork_top.html");
-  &SSInclude("end_table_nonav.html");
+  unless ($Public) {&SSInclude("end_atwork_top.html");}
+  unless ($Public) {&SSInclude("end_table_nonav.html");}
   print "<hr>\n";
 }
 
@@ -117,7 +117,7 @@ sub OffsiteBTeVFooter {
      
   print "<hr>\n";
   print "<div align=\"center\">\n";
-  &SSInclude("atwork_bottomnav.html");
+  unless ($Public) {&SSInclude("atwork_bottomnav.html");}
   print "</div>\n";
   print "<div align=\"left\"> <i><font size=\"-1\">\n";
   print "<A HREF=\"mailto:$WebMaster\">$WebMaster</A></font></i></div>\n";
@@ -136,7 +136,7 @@ sub BTeVFooter {
      
   print "<hr>\n";
   print "<div align=\"center\">\n";
-  &SSInclude("atwork_bottomnav.html");
+  unless ($Public) {&SSInclude("atwork_bottomnav.html");}
   print "</div>\n";
   print "<div align=\"left\"> <i><font size=\"-1\">\n";
   print "<A HREF=\"mailto:$WebMasterEmail\">$WebMasterName</A></font></i></div>\n";
