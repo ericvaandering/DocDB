@@ -111,6 +111,11 @@ $ShortProject   = "MyProject";    # This is the project used in the Document ID
                                 # a subordinate groups documents without explicit
                                 # permission
 
+#$UserValidation = "";          # || "basic" || "certificate"
+                                # Do we do group authorization like V5 and before
+			        # or do we allow .htaccess/.htpasswd users to map to groups (basic)
+			        # or require SSL certificates of users which map to groups (certificate)			       
+			       
 #$UseSignoffs          = 0;     # Sign-off system for document approval
 #$MailInstalled        = 1;     # Is the Mailer::Mail module installed?
 

@@ -123,7 +123,10 @@ sub SecurityLookup {
 
 sub FetchSecurityGroupByName ($) {
   my ($Name) = @_;
-  
+  if ($SecurityIDs{$Name}) {
+    return $SecurityIDs{$Name};
+  }  
+
   my $GroupSelect = $dbh->prepare(
     "select GroupID from SecurityGroup where lower(Name) like lower(?)");
   $GroupSelect -> execute($Name);
@@ -131,6 +134,7 @@ sub FetchSecurityGroupByName ($) {
   my ($GroupID) = $GroupSelect -> fetchrow_array;
   if ($GroupID) {
     &FetchSecurityGroup($GroupID);
+    $SecurityIDs{$Name} = $GroupID; # Case may not match with other one
   } else {
     return 0;
   }  

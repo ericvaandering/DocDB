@@ -79,6 +79,12 @@ $EnhancedSecurity     = 0;     # Separate lists for view, modify
 $SuperiorsCanModify   = 1;     # In enhanced model, a superior group can modify
                                # a subordinate groups documents without explicit
                                # permission
+			       
+$UserValidation = "";          # || "basic-user" || "certificate"
+                               # Do we do group authorization like V5 and before
+			       # or do we allow .htaccess/.htpasswd users to map to groups (basic)
+			       # or require SSL certificates of users which map to groups (certificate)			       
+			       
 $UseSignoffs          = 0;     # Optional sign-off system for document approval
 $ContentSearch        = "";    # Scripts and engine installed for searching files
 
