@@ -157,10 +157,10 @@ print "<td>\n";
 print "<table cellpadding=3><tr><td>\n";
 print $query -> radio_group(-name => "archive", -values => \@archives, -labels
                             => \%archives, -columns => 1);
-print "<td>\n";
+print "</td><td>\n";
 print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
 print "<b># of files</b>\n";
-print "</table>\n";
+print "</td></tr></table>\n";
 
 print "<tr><td align=right>\n";
 print "<a "; &HelpLink("uploadmethod"); 

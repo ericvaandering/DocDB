@@ -35,7 +35,7 @@ print "<center><table cellpadding=10 width=75%>\n";
 
 print "<tr>\n";
 print "<td colspan=3>\n";
-print "<b>You are about to add a topic to the BTeV document database.</b>
+print "<b>You are about to add an author to the BTeV document database.</b>
 Ordinarily, this function is restricted to administrators only. During the
 transition period, everyone is allowed to add authors. <b>Please be careful</b>
 and make sure to put the authors first name, last name, and middle initials

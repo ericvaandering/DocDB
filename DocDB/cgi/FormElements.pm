@@ -17,13 +17,13 @@ sub DateTimePullDown {
   }  
 
   my @hours = ();
-  for ($i = 0; $i<=24; ++$i) {
+  for ($i = 0; $i<24; ++$i) {
     push @hours,$i;
   }  
 
   my @minutes = ();
   for ($i = 0; $i<=55; $i=$i+5) {
-    push @minutes,$i;
+    push @minutes,(sprintf "%2.2d",$i);
   }  
   
   print "<b><a ";
@@ -66,15 +66,16 @@ sub SingleUploadBox {
   print "<table cellpadding=3>\n";
   print "<tr><td colspan=2><b><a ";
   &HelpLink("fileupload");
-  print "File upload:</a></b><br> \n";
+  print "File upload:</a></b><br></td></tr>\n";
   for ($i=1;$i<=$NumberUploads;++$i) {
     print "<tr><td align=right>\n";
-    print "<b>File:</b>\n";
+    print "<b>File:</b></td>\n";
     print "<td>\n";
     print $query -> filefield(-name => "single_upload", -size => 60,
                               -maxlength=>250);
+    print "</td></tr>\n";
     print "<tr><td align=right>\n";
-    print "<b>Description:</b>\n";
+    print "<b>Description:</b></td>\n";
     print "<td>\n";
     print $query -> textfield (-name => 'filedesc', -size => 60, -maxlength => 128);
     if ($i == 1) {
@@ -83,6 +84,7 @@ sub SingleUploadBox {
       print $query -> checkbox(-name => "root", -label => '');
     } 
     print "<a "; &HelpLink("main"); print "Main?</a>\n";
+    print "</td></tr>\n";
   }
   print "</table>\n";
 };
@@ -92,12 +94,14 @@ sub SingleHTTPBox {
   print "<tr><td colspan=4><b><a ";
   &HelpLink("httpupload");
   print "Upload by HTTP:</a></b><br> \n";
+  print "</td><tr>\n";
   for ($i=1;$i<=$NumberUploads;++$i) {
-    print "<tr><td align=right><b>URL:</b>\n";
+    print "<tr><td align=right><b>URL:</b></td>\n";
     print "<td colspan=3>\n";
     print $query -> textfield (-name => 'single_http', -size => 70, -maxlength => 240);
+    print "</td></tr>\n";
     print "<tr><td align=right>\n";
-    print "<b>Description:</b>\n";
+    print "<b>Description:</b></td>\n";
     print "<td colspan=3>\n";
     print $query -> textfield (-name => 'filedesc', -size => 60, -maxlength => 128);
     if ($i == 1) {
@@ -106,12 +110,13 @@ sub SingleHTTPBox {
       print $query -> checkbox(-name => "root", -label => '');
     } 
     print "<a "; &HelpLink("main"); print "Main?</a>\n";
+    print "</td></tr>\n";
   }
-  print "<tr><td align=right><b>User:</b>\n";
+  print "<tr><td align=right><b>User:</b></td>\n";
   print "<td>\n";
   print $query -> textfield (-name => 'http_user', -size => 20, -maxlength => 40);
-  print "<td align=right>\n";
-  print "<b>Password:</b>\n";
+  print "</td><td align=right>\n";
+  print "<b>Password:</b></td>\n";
   print "<td>\n";
   print $query -> password_field (-name => 'http_pass', -size => 20, -maxlength => 40);
   print "</td></tr>\n";
@@ -125,20 +130,20 @@ sub ArchiveUploadBox {
   print "Archive file upload:</a></b><br> \n";
   print "<tr><td align=right>\n";
   print "<b>Archive File:</b>\n";
-  print "<td>\n";
+  print "</td><td>\n";
   print $query -> filefield(-name => "single_upload", -size => 60,
                               -maxlength=>250);
 
   print "<tr><td align=right>\n";
   print "<b>Main file in archive:</b>\n";
-  print "<td>\n";
+  print "</td><td>\n";
   print $query -> textfield (-name => 'mainfile', -size => 70, -maxlength => 128);
 
   print "<tr><td align=right>\n";
   print "<b>Description of file:</b>\n";
-  print "<td>\n";
+  print "</td><td>\n";
   print $query -> textfield (-name => 'filedesc', -size => 70, -maxlength => 128);
-  print "</table>\n";
+  print "</td></tr></table>\n";
 };
 
 sub ArchiveHTTPBox {

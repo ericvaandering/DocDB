@@ -330,7 +330,7 @@ sub DocumentSummary { # One line document summary for listings
     print "<tr valign=bottom>\n";
     print "<th>Document Number</th>\n";
     print "<th>Title</th>\n";
-    print "<th>Primary Author</th>\n";
+    print "<th>Requested by:</th>\n";
     print "<th>Last Modified</th>\n";
     print "</tr>\n";
   } 
