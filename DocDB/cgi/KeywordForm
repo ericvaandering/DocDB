@@ -84,7 +84,11 @@ print "<tr valign=top>\n";
 print "<td colspan=2>\n"; &KeywordSelectLong; print "</td>\n"; 
 print "</tr>\n";
 print "<tr valign=top>\n";
-print "<td rowspan=2>\n"; &KeywordGroupSelect; print "</td>\n";
+
+print "<td rowspan=2>\n"; 
+&KeywordGroupSelect(-format => "short", -multiple => "true"); 
+print "</td>\n";
+
 print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
 print "</tr>\n";
 
@@ -116,7 +120,7 @@ print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td rowspan=2>\n"; &KeywordGroupSelect("full"); print "</td>\n";
+print "<td rowspan=2>\n"; &KeywordGroupSelect(-format => "full"); print "</td>\n";
 print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
 print "</tr>\n";
 

@@ -29,15 +29,15 @@ print $query->header;
 @WarnStack  = ();
 
 # Parameters to script 
+ 
+my $Password       = $params{password};
+my $Username       = $params{admuser};
+my $Action         = $params{admaction};
 
-my $Password      = $params{password};
-my $Username      = $params{admuser};
-my $Action        = $params{admaction};
-
-my $KeywordID  = $params{keywordlist};
+my $KeywordID      = $params{keywordlist};
 my $KeywordGroupID = $params{keywordgroup};
-my $LongName      = $params{long};
-my $ShortName     = $params{short};
+my $LongName       = $params{long};
+my $ShortName      = $params{short};
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 

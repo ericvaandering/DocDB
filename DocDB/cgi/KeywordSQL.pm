@@ -4,11 +4,15 @@ sub ClearKeywords {
   %Keywords = ();
   %FullKeywords       = ();
   %KeywordGroups      = ();
+  %KeywordGroupings      = ();
 }
 
 sub GetKeywords {
 
   my $KeywordList = $dbh -> prepare("select KeywordID from Keyword");
+  my ($KeywordID);
+
+  &GetKeywordGroups;
 
   $KeywordList -> execute;
   $KeywordList -> bind_columns(undef, \($KeywordID));
@@ -65,17 +69,32 @@ sub FetchKeyword { # Fetches a Keyword by ID, adds to $Keywords{$keywordID}{}
   }
 }
 
+sub GetKeywordGroups {
+
+  my $KeywordGroupList = $dbh -> prepare("select KeywordGroupID from KeywordGroup");
+  my ($KeywordGroupID,@KeywordGroupIDs);
+
+  $KeywordGroupList -> execute;
+  $KeywordGroupList -> bind_columns(undef, \($KeywordGroupID));
+  while ($KeywordGroupList -> fetch) {
+    push @KeywordGroupIDs,$KeywordGroupID;
+    &FetchKeywordGroup($KeywordGroupID);
+  }
+  return @KeywordGroupIDs;
+};
+
 sub FetchKeywordGroup { # Fetches a KeywordGroup by ID, adds to $KeywordGroups{$KeywordGroupID}{}
   my ($keywordGroupID) = @_;
+
+  if ($KeywordGroups{$keywordGroupID}{TimeStamp}) { # We already have this one
+    return $keywordGroupID;
+  }
 
   my ($KeywordGroupID,$ShortDescription,$LongDescription,$TimeStamp);
   my $keygroup_fetch   = $dbh -> prepare(
     "select KeywordGroupID,ShortDescription,LongDescription,TimeStamp ".
     "from KeywordGroup ".
     "where KeywordGroupID=?");
-  if ($KeywordGroups{$keywordGroupID}{TimeStamp}) { # We already have this one
-    return $keywordGroupID;
-  }
 
   $keygroup_fetch -> execute($keywordGroupID);
   ($KeywordGroupID,$ShortDescription,$LongDescription,$TimeStamp) = $keygroup_fetch -> fetchrow_array;
@@ -87,6 +106,65 @@ sub FetchKeywordGroup { # Fetches a KeywordGroup by ID, adds to $KeywordGroups{$
   } 
   
   return $KeywordGroupID;
+}
+
+sub GetKeywordGroupingsByKeywordID ($) {
+  my ($KeywordID) = @_;
+  
+  my ($KeywordGroupingID,@KeywordGroupingIDs);
+  
+  my $KeywordGroupingList = $dbh -> prepare(
+    "select KeywordGroupingID from KeywordGrouping where KeywordID=?");
+  $KeywordGroupingList -> execute($KeywordID);
+  $KeywordGroupingList -> bind_columns(undef, \($KeywordGroupingID));
+  while ($KeywordGroupingList -> fetch) {
+    push @KeywordGroupingIDs,$KeywordGroupingID;
+    &FetchKeywordGrouping($KeywordGroupingID);
+  }
+
+  return @KeywordGroupingIDs;
+}
+
+sub GetKeywordGroupingsByKeywordGroupID ($) {
+  my ($KeywordGroupID) = @_;
+  
+  my ($KeywordGroupingID,@KeywordGroupingIDs);
+  
+  my $KeywordGroupingList = $dbh -> prepare(
+    "select KeywordGroupingID from KeywordGrouping where KeywordGroupID=?");
+  $KeywordGroupingList -> execute($KeywordGroupID);
+  $KeywordGroupingList -> bind_columns(undef, \($KeywordGroupingID));
+  while ($KeywordGroupingList -> fetch) {
+    push @KeywordGroupingIDs,$KeywordGroupingID;
+    &FetchKeywordGrouping($KeywordGroupingID);
+  }
+
+  return @KeywordGroupingIDs;
+}
+
+sub FetchKeywordGrouping { # Fetches a Keyword-KeywordGroup relationship
+  my ($KeywordGroupingID) = @_;
+  
+  if ($KeywordGroupings{$KeywordGroupingID}{TimeStamp}) { # We already have this one
+    return $KeywordGroupingID;
+  }
+
+  my ($KeywordGroupID,$KeywordID,$TimeStamp);
+  my $KeywordGroupingFetch   = $dbh -> prepare(
+    "select KeywordGroupID,KeywordID,TimeStamp ".
+    "from KeywordGrouping where KeywordGroupingID=?");
+
+  $KeywordGroupingFetch -> execute($KeywordGroupingID);
+  ($KeywordGroupID,$KeywordID,$TimeStamp) = $KeywordGroupingFetch -> fetchrow_array;
+  if ($TimeStamp) {
+    $KeywordGroupings{$KeywordGroupingID}{KeywordGroupID} = $KeywordGroupID;
+    $KeywordGroupings{$KeywordGroupingID}{KeywordID}      = $KeywordID;
+    $KeywordGroupings{$KeywordGroupingID}{TimeStamp}      = $TimeStamp;
+  } else {
+    undef $KeywordGroupingID;
+  }
+  
+  return $KeywordGroupingID;
 }
 
 sub LookupKeywordGroup { # Returns KeywordGroupID from Keyword Group Name

@@ -202,8 +202,12 @@ sub KeywordSelectLong { # Scrolling selectable list for keywords, all info
 };
 
 
-sub KeywordGroupSelect (;$) { # Scrolling selectable list for keyword groups
-  my ($Mode) = @_; 
+sub KeywordGroupSelect (%) { # Scrolling selectable list for keyword groups
+  my (%Params) = @_; 
+  
+  my $Format   = $Params{-format}   || "short";        # short, full
+  my $Multiple = $Params{-multiple} || "";             # Any non-null text is "true"
+  my $Name     = $Params{-name}     || "keywordgroup";
   
   print "<b><a ";
   &HelpLink("KeywordGroups");
@@ -211,18 +215,20 @@ sub KeywordGroupSelect (;$) { # Scrolling selectable list for keyword groups
   my @KeyGroupIDs = keys %KeywordGroups;
   my %GroupLabels = ();
   foreach my $ID (@KeyGroupIDs) {
-    if ($Mode eq "full") {
-      $GroupLabels{$ID} = $KeywordGroups{$ID}{Full};
+    if ($Format eq "full") {
+      $GroupLabels{$ID} = "$KeywordGroups{$ID}{Short} [$KeywordGroups{$ID}{Long}]";
     } else {  
       $GroupLabels{$ID} = $KeywordGroups{$ID}{Short};
     }  
   }  
-  print $query -> scrolling_list(-name => "keywordgroup", -values => \@KeyGroupIDs, 
-                                 -labels => \%GroupLabels,  -size => 10);
+  print $query -> scrolling_list(-name => $Name, -values => \@KeyGroupIDs, 
+                                 -labels => \%GroupLabels,  -size => 10, -multiple => $Multiple);
 };
 
-sub KeywordLink { # FIXME: Allow parameters of short, long, full a la Lynn
-  my ($Keyword) = @_;
+sub KeywordLink ($;%) { # FIXME: Allow parameters of short, long, full a la Lynn (use KeywordID)
+  my ($Keyword,%Params) = @_;
+
+  my $Format   = $Params{-format} || "short"; # short, full
   
   my $ret = "<a href=\"$Search\?keywordsearchmode=anysub&keywordsearch=$Keyword\">";
   $ret .= "$Keyword";
