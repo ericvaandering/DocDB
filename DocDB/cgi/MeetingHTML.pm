@@ -112,7 +112,7 @@ sub SessionDateTimePullDown {
     my ($Hour,$Minute,undef) = split /:/,$Time;
     $Time = "$Hour:$Minute";
     $DefaultYear  = $Year;
-    $DefaultMonth = $Month;
+    $DefaultMonth = $Month-1;
     $DefaultDay   = $Day;
     $DefaultHour  = $Time;
   } else {
@@ -163,14 +163,10 @@ sub SessionSeparator ($) {
   my ($MeetingOrderID) = @_;
 
   if ($SessionSeparatorDefault eq "Yes") {
-    # May not be needed, MeetingOrderID should tell me.
-#    print $query -> hidden(-name => 'sessiontype', -default => 'Separator');
     print "Yes\n";	      
   } elsif ($SessionSeparatorDefault eq "No") {
-#    print $query -> hidden(-name => 'sessiontype', -default => 'Session');
     print "No\n";	      
   } else {
-#    print $query -> hidden(-name => 'sessiontype', -default => 'Open');
     print $query -> checkbox(-name => "sessionseparator", -value => "$MeetingOrderID", -label => 'Yes');
   }
 }
@@ -178,7 +174,8 @@ sub SessionSeparator ($) {
 sub SessionDelete ($) {
   my ($MeetingOrderID) = @_;
   if ($SessionSeparatorDefault eq "Yes" || $SessionSeparatorDefault eq "No") {
-    print $query -> checkbox(-name => "sessiondelete", -value => "$MeetingOrderID", -label => 'Yes');
+    print $query -> checkbox(-name => "sessiondelete", -value =>
+    "$MeetingOrderID", -label => 'Delete');
   } else {
     print "&nbsp\n";
   }

@@ -788,6 +788,14 @@ or may not be the same as the web username and password.
  </entry>
  
  <entry>
+  <key>sessiondelete</key>
+  <title>Deleting a Session</title>
+  <text>
+   Check this box to delete the corresponding session or separator.
+  </text>
+ </entry>
+ 
+ <entry>
   <key>meetingtopic</key>
   <title>Meetings as Topics</title>
   <text>

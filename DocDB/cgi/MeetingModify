@@ -16,6 +16,7 @@ require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 require "Sorts.pm";
+require "Scripts.pm";
 
 require "MeetingHTML.pm";
 require "MeetingSQL.pm";
@@ -24,6 +25,7 @@ $query = new CGI;  # Global for subroutines
 
 print $query->header;
 &DocDBHeader("Modify a Meeting");
+&HelpPopupScript;
 
 %params = $query -> Vars;
 
@@ -55,7 +57,7 @@ my @RawSessionSeparators = split /\0/,$params{sessionseparator};
 my @SessionTitles        = split /\0/,$params{sessiontitle};
 my @SessionDescriptions  = split /\0/,$params{sessiondescription};
 my @MeetingOrderIDs      = split /\0/,$params{meetingorderid};
-#my @SessionTypes         = split /\0/,$params{sessiontype};
+my @SessionDeletes       = split /\0/,$params{sessiondelete};
 
 my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
 my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
@@ -63,7 +65,7 @@ my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
 @ErrorStack = ();
 @WarnStack  = ();
 
-&HTMLPrintParams();
+&HTMLPrintParams(); #FIXME Remove
 
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
@@ -93,13 +95,15 @@ my $MinorTopicID;
 
 if ($ConferenceID) {
   require "MeetingSQL.pm";
-  &GetConferences; # FIXME Just fetch one
+  my $ConferenceID        = &FetchConferenceByConferenceID($ConferenceID);
+  my @SessionIDs          = &FetchSessionsByConferenceID($ConferenceID);
+  my @SessionSeparatorIDs = &FetchSessionSeparatorsByConferenceID($ConferenceID);
+  my @MeetingOrderIDs     = &FetchMeetingOrdersByConferenceID($ConferenceID);
   $MinorTopicID = $Conferences{$ConferenceID}{Minor};
-  &FetchSessionsByConferenceID($ConferenceID);
-  &FetchSessionSeparatorsByConferenceID($ConferenceID);
 }     
 
 if ($Mode eq "create" || $Mode eq "modify") {
+#  my $ConferenceID,@SessionIDs,@SessionSeparatorIDs,@MeetingOrderIDs;
   if ($MajorTopic && $Mode eq "create") { # FIXME allow for modification here
     my $TopicInsert = $dbh->prepare(
       "insert into MinorTopic ".
@@ -191,11 +195,11 @@ if ($Mode eq "create" || $Mode eq "modify") {
       if ($SessionSeparator || $SessionTitle || $SessionDescription) {
 	++$SessionsUpdated;
 	if ($SessionSeparator) {
-	  print "Creating Separator<br>";
+	  &DBPrint ("Creating Separator");
           $SessionSeparatorInsert -> execute($ConferenceID,$SessionDate,$SessionTitle,$SessionDescription);
           $SessionSeparatorID = $SessionSeparatorInsert -> {mysql_insertid}; # Works with MySQL only
 	} else {
-	  print "Creating Session<br>";
+	  &DBPrint ("Creating Session");
           $SessionInsert          -> execute($ConferenceID,$SessionDate,$SessionTitle,$SessionDescription);
           $SessionID = $SessionInsert -> {mysql_insertid}; # Works with MySQL only
 	}
@@ -204,14 +208,42 @@ if ($Mode eq "create" || $Mode eq "modify") {
     } else {
       $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
       $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
-      if ($SessionTitle || $SessionDescription) {
+
+      # Find out if this session is flagged for deletion
+
+      my $DeleteSession = 0;
+      foreach $SessionDelete (@SessionDeletes) {
+        &DBPrint ("Checking $SessionDelete vs $MeetingOrderID");
+        if ($SessionDelete == $MeetingOrderID) {
+          $DeleteSession = 1;
+        }
+      } 
+      
+      if ($DeleteSession) {
+        my $SessionDelete = $dbh -> prepare(
+         "delete from Session where SessionID=?");
+        my $SessionSeparatorDelete = $dbh -> prepare(
+         "delete from SessionSeparator where SessionSeparatorID=?");
+        my $MeetingOrderDelete = $dbh -> prepare(
+         "delete from MeetingOrder where MeetingOrderID=?");
+     
+	if ($SessionSeparatorID) {
+	  &DBPrint ("Deleteing Separator $SessionSeparatorID");
+          $SessionSeparatorDelete -> execute($SessionSeparatorID);
+	} else {
+	  &DBPrint ("Deleteing Session $SessionID");
+          $SessionDelete          -> execute($SessionID);
+	}
+	$MeetingOrderDelete -> execute($MeetingOrderID);
+      
+      } elsif ($SessionTitle || $SessionDescription) {
 	++$SessionsUpdated;
 	
 	if ($SessionSeparatorID) {
-	  print "Updating Separator<br>";
+	  &DBPrint ("Updating Separator $SessionSeparatorID");
           $SessionSeparatorUpdate -> execute($SessionDate,$SessionTitle,$SessionDescription,$SessionSeparatorID);
 	} else {
-	  print "Updating Session<br>";
+	  &DBPrint ("Updating Session $SessionID");
           $SessionUpdate          -> execute($SessionDate,$SessionTitle,$SessionDescription,$SessionID);
 	}
 	$MeetingOrderUpdate -> execute($SessionNewOrder,$MeetingOrderID);
@@ -234,23 +266,27 @@ print $query -> start_multipart_form('POST',"$MeetingModify");
 $query -> param('mode','modify');
 $query -> param('conferenceid',$ConferenceID);
 print $query -> hidden(-name => 'mode',   -default => 'modify');
-print "<table cellpadding=10 border=1>\n";
+print $query -> hidden(-name => 'conferenceid',   -default => $ConferenceID);
+print "<table cellpadding=10>\n";
 
-my @SessionIDs = &FetchSessionsByConferenceID($ConferenceID);
+%Conferences       = ();
+%Sessions          = ();
+%SessionSeparators = ();
+%MeetingOrderIDs   = ();
+
+my $ConferenceID        = &FetchConferenceByConferenceID($ConferenceID);
+my @SessionIDs          = &FetchSessionsByConferenceID($ConferenceID);
 my @SessionSeparatorIDs = &FetchSessionSeparatorsByConferenceID($ConferenceID);
-my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
+my @MeetingOrderIDs     = &FetchMeetingOrdersByConferenceID($ConferenceID);
 
 @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs;
 
-  # links to add talks to session (extend SessionEntryForm to these cases)
-  # form elements to change the session (Add delete button)
-  
 print "<tr valign=top>\n";
 print "<td colspan=2>\n"; &SessionEntryForm(@MeetingOrderIDs);   print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td>\n";
+print "<td align=center>\n";
 print $query -> submit (-value => "Modify Meeting and Sessions");
 print "</td>\n";
 print "</tr>\n";

@@ -22,4 +22,8 @@ sub HTMLPrintKeys {
   print "</table>\n"; 
 }
 
+sub DBPrint {
+  print @_,"<br>\n";
+}
+
 1;
