@@ -67,7 +67,8 @@ $EnhancedSecurity     = 0;     # Separate lists for view, modify
 $SuperiorsCanModify   = 0;     # In enhanced model, a superior group can modify
                                # a subordinate groups documents without explicit
                                # permission
-                               
+$UseSignoffs          = 0;     # Optional sign-off system for document approval
+
 # Major topic names for "meetings" and "conferences". Each can be a list
 # The first item in the two lists are accessed by ListMeetings and ListConferences
 

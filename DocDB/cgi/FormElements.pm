@@ -136,14 +136,6 @@ sub PubInfoBox {
                             -columns => 60, -rows => 3);
 };
 
-sub AbstractBox {
-  print "<b><a ";
-  &HelpLink("abstract");
-  print "Abstract:</a></b><br> \n";
-  print $query -> textarea (-name => 'abstract', -default => $AbstractDefault,
-                            -columns => 60, -rows => 6);
-};
-
 sub SingleUploadBox {
   my ($Mode) = @_;
   print "<table cellpadding=3>\n";

@@ -1,4 +1,4 @@
-sub FetchDocRevisionByID {
+sub FetchDocRevisionByID ($) {
 
   # FIXME Change name to FetchDocumentRevision
   # FIXME Doesn't fetch obsolete revisions. Can't see why this would hurt. Investigate
@@ -6,22 +6,21 @@ sub FetchDocRevisionByID {
   # $DocRevIDs{DocumentID}{Version} holds the DocumentRevision ID
   # $DocRevisions{DocRevID}{FIELD} holds the Fields or references too them
 
-  my ($docRevID) = @_;
-  my $revision_list = $dbh->prepare(
-    "select DocRevID,SubmitterID,DocumentTitle,PublicationInfo,VersionNumber,".
+  my ($DocRevID) = @_;
+  my $RevisionList = $dbh->prepare(
+    "select SubmitterID,DocumentTitle,PublicationInfo,VersionNumber,".
            "Abstract,RevisionDate,TimeStamp,DocumentID,Obsolete, ".
-           "Keywords ".
+           "Keywords,Note,Superceded ".
     "from DocumentRevision ".
     "where DocRevID=? and Obsolete=0");
-  if ($DocRevisions{$docRevID}{DOCID} && $DocRevisions{$docRevID}{COMPLETE}) {
-    return $DocRevisions{$docRevID}{DOCID};
+  if ($DocRevisions{$DocRevID}{DOCID} && $DocRevisions{$DocRevID}{Complete}) {
+    return $DocRevisions{$DocRevID}{DOCID};
   }
-  $revision_list -> execute($docRevID);
-  my ($DocRevID,$SubmitterID,$DocumentTitle,$PublicationInfo,
+  $RevisionList -> execute($DocRevID);
+  my ($SubmitterID,$DocumentTitle,$PublicationInfo,
       $VersionNumber,$Abstract,$RevisionDate,
       $TimeStamp,$DocumentID,$Obsolete,
-      $Keywords) = $revision_list -> fetchrow_array;
-
+      $Keywords,$Note,$Superceded) = $RevisionList -> fetchrow_array;
 
   #FIXME Make keys mixed-caps
   
@@ -37,7 +36,9 @@ sub FetchDocRevisionByID {
   $DocRevisions{$DocRevID}{DOCID}         = $DocumentID;
   $DocRevisions{$DocRevID}{OBSOLETE}      = $Obsolete;
   $DocRevisions{$DocRevID}{Keywords}      = $Keywords;
-  $DocRevisions{$DocRevID}{COMPLETE}      = 1;
+  $DocRevisions{$DocRevID}{Note}          = $Note;
+  $DocRevisions{$DocRevID}{Superceded}    = $Superceded;
+  $DocRevisions{$DocRevID}{Complete}      = 1;
 
 ### Find earliest instance this document for content modification date
 
@@ -134,7 +135,7 @@ sub GetAllRevisions { # FIXME: Implement full mode, flag with got all revisions
     $DocRevisions{$DocRevID}{Version}       = $VersionNumber;
     $DocRevisions{$DocRevID}{DOCID}         = $DocumentID;
     $DocRevisions{$DocRevID}{OBSOLETE}      = $Obsolete;
-    $DocRevisions{$DocRevID}{COMPLETE}      = 0;
+    $DocRevisions{$DocRevID}{Complete}      = 0;
   }
 }
 

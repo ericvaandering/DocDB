@@ -58,6 +58,8 @@ $Special = $params{special};
 if ($Special eq "meeting") {$Meeting = 1;}
 if ($Special eq "othermeeting") {$OtherMeeting = 1;}
 
+# FIXME: Any reason these can't be "my"?
+
    $Archive       = $params{archive};
    $Overdate      = $params{overdate};
    $Overday       = $params{overday};
@@ -68,9 +70,10 @@ if ($Special eq "othermeeting") {$OtherMeeting = 1;}
    @JournalIDs    = split /\0/,$params{journal};
    @Volumes       = split /\0/,$params{volume};
    @Pages         = split /\0/,$params{page};
-   $Keywords      = $params{keywords};
+   $Keywords      = $params{keywords}; 
    $Requester     = $params{requester};
 my $SessionTalkID = $params{sessiontalkid};
+my $RevisionNote  = $params{revisionnote};
 
 if ($Meeting || $OtherMeeting) {
   @authorIDs = ($Requester);
@@ -122,8 +125,8 @@ my $document_insert = $dbh->prepare(
 my $doc_rev_insert = $dbh->prepare(
    "insert into DocumentRevision ".
    "(DocRevID, DocumentID, SubmitterID, DocumentTitle, PublicationInfo, ". 
-   " VersionNumber, Abstract, RevisionDate,Keywords) ". 
-   "values (0,?,?,?,?,?,?,?,?)");
+   " VersionNumber, Abstract, RevisionDate,Keywords,Note) ". 
+   "values (0,?,?,?,?,?,?,?,?,?)");
             
 my $rev_author_insert =  $dbh->prepare(
    "insert into RevisionAuthor ".
@@ -320,7 +323,7 @@ if ($mode eq "updatedb") { # New Document revision replaces old. Fetch
 
 $doc_rev_insert -> execute($documentID,$params{requester},$params{title},
                            $params{pubinfo},$version,$params{abstract},
-                           $SQL_NOW,$Keywords);
+                           $SQL_NOW,$Keywords,$RevisionNote);
 my $docRevID = $doc_rev_insert -> {mysql_insertid}; # Works with MySQL only
 
 ### Add reference information if it exists

@@ -25,6 +25,7 @@ require "Utilities.pm";
 require "Defaults.pm";
 require "Security.pm";
 
+require "RevisionHTML.pm";
 require "SecurityHTML.pm";
 require "TalkHTML.pm";
 require "KeywordHTML.pm";
@@ -49,7 +50,8 @@ my @PreTopics    = $query -> param('pretopic');
    $mode         = $params{mode}; # FIXME: Can't be my since used in subroutines
 
 @TopicDefaults = ();
-
+my $RevisionNoteDefault; # FIXME: Add more here, do like this one
+ 
 if ($Special eq "meeting")      {$Meeting = 1;}
 if ($Special eq "othermeeting") {$OtherMeeting = 1;}
 
@@ -129,16 +131,17 @@ if ($mode eq "update") {
 }
 
 if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
-  $DocRevID          = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-  $TitleDefault      = $DocRevisions{$DocRevID}{Title};
-  $PubInfoDefault    = $DocRevisions{$DocRevID}{PUBINFO};
-  $AbstractDefault   = $DocRevisions{$DocRevID}{ABSTRACT};
-  $RequesterDefault  = $DocRevisions{$DocRevID}{SUBMITTER};
-  $KeywordsDefault   = $DocRevisions{$DocRevID}{Keywords};
-  @SecurityDefaults  = &GetRevisionSecurityGroups($DocRevID);
-  @AuthorDefaults    = &GetRevisionAuthors($DocRevID);
-  @TopicDefaults     = &GetRevisionTopics($DocRevID);
-  @ReferenceDefaults = &FetchReferencesByRevision($DocRevID)
+  $DocRevID            = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+  $TitleDefault        = $DocRevisions{$DocRevID}{Title};
+  $PubInfoDefault      = $DocRevisions{$DocRevID}{PUBINFO};
+  $AbstractDefault     = $DocRevisions{$DocRevID}{ABSTRACT};
+  $RequesterDefault    = $DocRevisions{$DocRevID}{SUBMITTER};
+  $KeywordsDefault     = $DocRevisions{$DocRevID}{Keywords};
+  $RevisionNoteDefault = $DocRevisions{$DocRevID}{Note};
+  @SecurityDefaults    = &GetRevisionSecurityGroups($DocRevID);
+  @AuthorDefaults      = &GetRevisionAuthors($DocRevID);
+  @TopicDefaults       = &GetRevisionTopics($DocRevID);
+  @ReferenceDefaults   = &FetchReferencesByRevision($DocRevID)
 } else {
   my $User = &SecurityLookup($remote_user);
   @SecurityDefaults = ($SecurityIDs{$User}); 
@@ -285,13 +288,17 @@ if (@OpenSessionTalkIDs) {
 }
 
 print "<tr>\n";
-print "<td colspan=4>\n"; &TitleBox;    print "</td>\n";
+print "<td colspan=4>\n"; &TitleBox;        print "</td>\n";
 print "</tr>\n";
 print "<tr>\n";
-print "<td colspan=4>\n"; &AbstractBox; print "</td>\n";
+print "<td colspan=4>\n"; &AbstractBox;     print "</td>\n";
 print "</tr>\n";
 print "<tr>\n";
-print "<td colspan=4>\n"; &KeywordsBox; print "</td>\n";
+print "<td colspan=4>\n"; &KeywordsBox;     print "</td>\n";
+print "</tr>\n";
+print "<tr>\n";
+print "<td colspan=4>\n"; &RevisionNoteBox(-jsinsert => $RevisionNoteDefault); 
+print "</td>\n";
 print "</tr>\n";
 
 ### Files
