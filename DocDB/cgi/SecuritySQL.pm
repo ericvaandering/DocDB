@@ -1,4 +1,3 @@
-
 # Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
@@ -170,7 +169,11 @@ sub InsertSecurity (%) {
 
   my $ViewInsert   = $dbh->prepare("insert into RevisionSecurity (RevSecurityID, DocRevID, GroupID) values (0,?,?)");
   my $ModifyInsert = $dbh->prepare("insert into RevisionModify   (RevModifyID,   DocRevID, GroupID) values (0,?,?)");
-                                 
+               
+  unless ($DocRevID) {
+    return $Count;
+  }         
+	                         
   foreach my $ViewID (@ViewIDs) {
     if ($ViewID) {
       $ViewInsert -> execute($DocRevID,$ViewID);
@@ -187,6 +190,5 @@ sub InsertSecurity (%) {
       
   return $Count;
 }
-
 
 1;
