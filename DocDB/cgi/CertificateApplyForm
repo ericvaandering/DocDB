@@ -106,8 +106,10 @@ if ($CertificateStatus eq "verified") {
                 -extratext => "(Identify yourself or other notes if needed.)",
                 -name => "certnote");    
   print "</td></tr>";
-  print "</table>\n";       
+  print "<tr><td colspan=2>\n";
   print $query -> submit (-value => "Apply for access");
+  print "</td></tr>";
+  print "</table>\n";       
   print "</center>\n";
 }
 
