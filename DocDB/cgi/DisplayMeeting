@@ -51,6 +51,15 @@ unless ($dbh) {
 }         
 &EndPage(@ErrorStack);
 
+if ($ConferenceID) { # If just one session, switch to session mode
+  my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
+  @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
+  if ($#MeetingOrderIDs == 1) {
+    $MeetingOrderID = pop @MeetingOrderIDs;
+    $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
+  }
+}    
+
 if ($SessionID) { # Display a single session
   &ReHintTalksBySessionID($SessionID); 
   &ClearSessionTalks();
