@@ -28,8 +28,8 @@ especially important when archive uploads which are discussed later. <p>
 
 <h3>What do you want to do?</h3>
 
-You can add information or documents to the database in four different ways for
-four different situations:
+You can add information or documents to the database in five different ways for
+five different situations:
 <ol>
 <li><b>Reserve a document #: </b>You want a number for a document
 you are going to write, but don't have a draft of the document.
@@ -41,10 +41,12 @@ database about the document. You must supply a document number to modify.
 <li><b>Update database information: </b>The document hasn't changed, but the
 information about it has. For example, it's now published so you want to add
 that information. You must supply a document number to modify.
+<li><b>Add files to document:</b> Perhaps you forgot a file initially, or maybe
+now you have a Postscript file to go with the Power Point and PDF files already
+present. Then, you can add a file to an existing version of a document. If the
+content has changed at all, you should use the Update, not the Add file, option.
 </ol>
-Select the type of modification appropriate to your situation. A fifth choice,
-to add a file, (one you forgot, or proceedings to go with a conference talk) is
-planned but not available yet.
+Select the type of modification appropriate to your situation. 
 
 <h3>Preparing your document for the document database</h3>
 

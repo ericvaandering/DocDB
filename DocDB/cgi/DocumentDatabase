@@ -32,8 +32,9 @@ if ($db_name eq "BTeVDocDB") {
   lost!</b></font></big></center>\n";
 }
 
-print "<p><b><a href=\"$web_root/Help/DocDB_Help.shtml\">Help on
-using</a> the database.</b>\n";
+print "<p><b><a href=\"$web_root/Help/DocDB_Help.shtml\">Instructions on
+using</a> the database. Click on any <font color=red>red link</font> for quick
+help.</b>\n";
 print "<p><b>Find the information you want in the database:</b>\n";
 print "<ul>\n";
 
@@ -115,13 +116,14 @@ print " for document # ";
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 print $query -> hidden(-name => 'mode',    -default => 'updatedb');
 print $query -> endform;
+print "<li> <a href=\"#addform\">Add files</a> to a document."; 
 print "</ul>\n";
 
 print "<p>\n";
+print $query -> start_multipart_form('POST',$DocumentAddForm);
 
 print "<b>If the above choices don't meet your needs,use this form to produce a
-customized<br> document creation or update form. Click on any term for
-help.</b><p>\n";
+       customized document creation or update form. </b><p>\n";
 
 $modes{reserve}  = "Reserve document #";
 $modes{add}      = "New document";
@@ -147,7 +149,6 @@ $authormodes{field}  = "Text field";
 $authormodes{list} = "Selectable list";
 @authormodes = ("list","field");
 
-print $query -> start_multipart_form('POST',$DocumentAddForm);
 print "<table cellpadding=5 border=5>\n";
 
 print "<tr><td align=right>\n";
@@ -195,6 +196,48 @@ print "<a "; &HelpLink("dateoverride");
 print "<b>Override submit date:</b></a>\n";
 print "<td>\n";
 print $query -> checkbox(-name => "overdate", -label => '(Check for Yes)');
+print "<tr><td align=center colspan=2>\n";
+print $query -> submit (-value => "Give me my customized form");
+print "</table>\n";
+print $query -> endform;
+
+### File addition form
+
+$addarchives{single}   = "Single file";
+$addarchives{multi}   = "Multiple files";
+@addarchives = ("single","multi");
+
+print $query -> start_multipart_form('POST',$AddFilesForm);
+print "<a name=\"addform\">\n";
+print "<b>Use this form to produce a customized file addition form.</b><p>\n";
+
+print "<table cellpadding=5 border=5>\n";
+
+print "<tr><td align=right>\n";
+print "<a "; &HelpLink("docnumber"); 
+print "<b>Update Doc #:</b></a>\n";
+
+print "<td>\n";
+ print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
+
+print "<tr><td align=right>\n";
+print "<a "; &HelpLink("uploadtype"); 
+print "<b>Upload type:</b></a>\n";
+print "<td>\n";
+print "<table cellpadding=3><tr><td>\n";
+print $query -> radio_group(-name => "archive", -values => \@addarchives, -labels
+                            => \%addarchives, -columns => 1);
+print "</td><td valign=bottom>\n";
+print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
+print "<b># of files</b>\n";
+print "</td></tr></table>\n";
+
+print "<tr><td align=right>\n";
+print "<a "; &HelpLink("uploadmethod"); 
+print "<b>Upload method:</b></a>\n";
+print "<td>\n";
+print $query -> radio_group(-name => "upload", -values => \@uploads, -labels => \%uploads);
+
 print "<tr><td align=center colspan=2>\n";
 print $query -> submit (-value => "Give me my customized form");
 print "</table>\n";

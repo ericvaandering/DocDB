@@ -45,6 +45,7 @@ $remote_user = $ENV{REMOTE_USER};
 $DBWebMasterEmail = "btev-docdb\@fnal.gov";
 $DBWebMasterName  = "BTeV Document Database Administrators";
 $Administrator    = "docdbadm";
+$AuthUserFile     = "/www/conf/www-btev/.htpasswd";
 
 # Override settings in this file for the test DB 
 # and the publicly accessible version
@@ -61,7 +62,6 @@ if (-e "TestGlobals.pm") {
 
 $htaccess     = ".htaccess";
 $help_file    = $script_root."docdb.hlp";
-$AuthUserFile = $script_root."htpasswd";
 
 # CGI Scripts
 

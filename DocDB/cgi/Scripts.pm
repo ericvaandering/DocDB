@@ -12,7 +12,7 @@ sub HelpPopupScript {
 
 sub HelpLink { #FIXME Don't hard-code link
   my ($helpterm) = @_;
-  print " href=\"Javascript:helppopupwindow(\'DocDBHelp?term=$helpterm\');\">";
+  print " style=\"color: red\" href=\"Javascript:helppopupwindow(\'DocDBHelp?term=$helpterm\');\">";
 }
 
 1;

@@ -1,3 +1,9 @@
+docnumber
+Document Number
+This is the number (six digits or less) of the document you want to act on. If
+you can supply a version number, that is always in a seperate field, don't type
+it here.
+#
 description
 Description
 This is a short description of each file. This description will appear in the
