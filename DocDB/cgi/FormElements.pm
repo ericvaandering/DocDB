@@ -412,7 +412,7 @@ sub AddFilesButton {
 #  unless (&CanModify) {return;}
 
   $query -> param('docid',$DocumentID);
-  $query -> param('docid',$Version);
+  $query -> param('version',$Version);
   
   print $query -> startform('POST',$AddFilesForm);
   print $query -> hidden(-name => 'version', -default => $Version);

@@ -64,13 +64,15 @@ if     ($params{single_upload} && $params{single_http}) {
 
 ### Do the files to be added already exist?
 
+my $UpdateLink = $DocumentAddForm."?mode=update&docid=$DocumentID";
+
 if ($params{single_http}) {
   my @urls = split /\0/,$params{single_http};
   foreach my $url (@urls) {
     if (&ExistsURL($DocRevID,$url)) {
       push @error_stack,"The file from $url already exists. 
        You may not add files with the same file name.<br>
-       You probably want to be updating your document, not adding files.";
+       You probably want to <a href=\"$UpdateLink\">update</a> your document, not add files.";
     }  
   }
 }   
@@ -81,7 +83,7 @@ if ($params{single_upload}) {
     if (&ExistsUpload($DocRevID,$short_file)) {
       push @error_stack,"The file $short_file already exists. 
        You may not add files with the same file name.<br>
-       You probably want to be updating your document, not adding files.";
+       You probably want to <a href=\"$UpdateLink\">update</a> your document, not add files.";
 
     }  
   }

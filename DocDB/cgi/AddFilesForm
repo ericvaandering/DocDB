@@ -37,6 +37,7 @@ unless ($NumberUploads)                     {$NumberUploads = 1;}
  
 
 print $query->header;
+&BTeVHeader("File Addition");
 
 @error_stack = ();
 
@@ -55,19 +56,20 @@ if ($params{version} eq "0") {
     $Version = $Documents{$DocumentID}{NVER};
   }
 }
+my $DocRevID   = &FetchDocRevision($DocumentID,$Version);
 
-
-&BTeVHeader("File Addition");
-
+my $UpdateLink = $DocumentAddForm."?mode=update&docid=$DocumentID";
 unless (&CanAccess($DocumentID,$Version)) {
   push @error_stack,"You are not authorized to view this document.";
 }  
-
-my $DocRevID   = &FetchDocRevision($DocumentID,$Version);
-
 unless ($DocRevID) {
   push @error_stack,"This document does not exist.";
 }
+unless ($Version) {
+  push @error_stack,"You cannot add files to a document which has only been
+  reserved. <a href=\"$UpdateLink\">Create a new version</a> instead. ";
+}
+
 
 if ((@error_stack)) {  # The user made one or more mistakes, warn and exit
   &EndPage(@error_stack);
@@ -77,7 +79,7 @@ print "<center><p>\n";
 print "<h4>You are adding files to a version of a document.<br>\n";
 print "These should be files forgotten earlier or a new presentation format of
 an existing document.<br>\n";
-print "If these are files with updated information, <a href=\"somewhere\">create a new
+print "If these are files with updated information, <a href=\"$UpdateLink\">create a new
 version</a> instead.<br>\n";
 print "If you aren't <font color=\"red\">absolutely sure</font> this is what you want to do, go back
 and read the help.<p>\n";

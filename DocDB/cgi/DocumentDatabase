@@ -47,7 +47,10 @@ print " <b>BTeV-doc-#</b> ";
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 print " <b>-v</b> "; 
 print $query -> textfield(-name => "version", -size => 3, -maxlength => 3);
+print "&nbsp;&nbsp;(Looking for a document <a href=\"$web_root/Help/OldDBTranslation.shtml\">like
+       BTeV-int-year/xx</a>?)\n";
 print $query -> endform;
+
 
 print "<li>"; 
 print $query -> startform('POST',$ListDocuments);
