@@ -8,9 +8,9 @@ use DBI;
 
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
-require "MySQLAccess.pm";
+require "SecuritySQL.pm";
+require "DocumentSQL.pm";
 require "FSUtilities.pm";
-require "HTMLUtilities.pm";
 require "Security.pm";
 
 $query = new CGI;  # Global for subroutines
@@ -45,20 +45,21 @@ unless ($DocRevID) {
   push @error_stack,"This document does not exist.";
 }
 
-my $status;
-my $File;      
 my $URL;       
-my $Directory; 
-
-system "mkdir $file_root/tmp";
+my $status;
 
 unless (@error_stack) {
-  $File      = "$file_root/tmp/$DocumentID-$Version.tar.gz";
-  $URL       = "$web_root/tmp/$DocumentID-$Version.tar.gz";
-  $Directory = &GetDirectory($DocumentID,$Version);
+  my $Directory = &GetDirectory($DocumentID,$Version);
+  my $URLDir    = &GetURLDir($DocumentID,$Version);
+  my $ShortFile = "tmp$DocumentID-$Version.tar.gz";
+  my $TmpFile   = "/tmp/$ShortFile";
+  my $File      = "$Directory/$ShortFile";
+     $URL       = "$URLDir/$ShortFile";
 
-  my $command = "$Tar czf  $File $Directory";
-  $status = system($command);   
+  unlink $TmpFile;
+  unlink $File;
+  $status = system("$Tar czf $TmpFile $Directory"); 
+  $status = system("mv $TmpFile $File"); 
 }
   
 if ($status) {
@@ -81,10 +82,6 @@ if (@warn_stack) {
 if (@error_stack) {  # The user made one or more mistakes, warn and exit
   &EndPage(@error_stack);
 }
-
-print "Command to execute: $command<br>\n"; 
-print "Status: $status<br>\n"; 
-#&PrintRevisionInfo($DocRevID);
 
 &DocDBNavBar;
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
