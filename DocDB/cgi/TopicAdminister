@@ -16,6 +16,7 @@ require "ResponseElements.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";
 require "TopicSQL.pm";
+require "Debug.pm"; # FIXME
 
 $query = new CGI;  # Global for subroutines
 
@@ -32,6 +33,7 @@ print $query->header;
 $Password      = $params{password};
 $Username      = $Administrator;
 $Action        = $params{admaction};
+$TopicID       = $params{topics};
 
 unless (&CanAdminister) {
   push @error_stack,"You must be logged in as the adminstrator to administer topics.";
@@ -46,21 +48,22 @@ unless ($dbh) {
 &EndPage(@ErrorStack);
 
 if      ($Action eq "Delete") {
-#  my $AuthorLink   = &AuthorLink($AuthorID);
-#  my @AuthorDocIDs = &GetAuthorDocuments($AuthorID);
+  &HTMLPrintParams;
+  my $TopicLink   = &MinorTopicLink($TopicID);
+  my @TopicDocIDs = &GetTopicDocuments($TopicID);
   
-#  # Delete AuthorID from Author, RevisionAuthor tables
+ # Delete TopicID from Author, RevisionTopic tables
   
-#  my $AuthorDelete   = $dbh -> prepare("delete from Author         where AuthorID=?");
-#  my $RevisionDelete = $dbh -> prepare("delete from RevisionAuthor where AuthorID=?");
-#  $AuthorDelete   -> execute($AuthorID);
-#  $RevisionDelete -> execute($AuthorID);
+  my $TopicDelete    = $dbh -> prepare("delete from MinorTopic    where MinorTopicID=?");
+  my $RevisionDelete = $dbh -> prepare("delete from RevisionTopic where MinorTopicID=?");
+  $TopicDelete    -> execute($TopicID);
+  $RevisionDelete -> execute($TopicID);
   
-#  print "$AuthorLink has been removed from the database.<br>\n";
-#  if (@AuthorDocIDs) {
-#    push @WarnStack,"$AuthorLink was an author on documents. These
-#                     entries have been removed.";
-#  }  
+  print "$TopicLink has been removed from the database.<br>\n";
+  if (@TopicDocIDs) {
+    push @WarnStack,"$TopicLink was a topic on some documents. These
+                     entries have been removed.";
+  }  
 } elsif ($Action eq "Modify") {
 #    ($AuthorID) = @AuthorIDs;
 

@@ -123,11 +123,11 @@ my $document_list = $dbh -> prepare(
 
 my $DocumentID,$DocRevID;
 
-### Get all revisions with this sub topic
-
 my %DocumentIDs = ();
 
-if ($TopicID) {
+### Get all revisions with this sub topic
+
+if ($TopicID) { # FIXME: Replace with GetTopicDocuments and write GetMajorTopicDocuments
   $revision_list -> execute($TopicID);
   $revision_list -> bind_columns(undef, \($DocRevID));
 
@@ -141,6 +141,7 @@ if ($TopicID) {
 }
 
 ### Get all revisions with this major topic
+
 if ($MajorID) {
   $revtopic_list -> execute;
   $revtopic_list -> bind_columns(undef, \($DocRevID,$MinorTopicID));

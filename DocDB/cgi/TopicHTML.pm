@@ -29,7 +29,7 @@ sub ShortTopicListByID {
   }
 }
 
-sub MinorTopicLink ($$) {
+sub MinorTopicLink ($;$) {
   my ($TopicID,$mode) = @_;
   
   require "TopicSQL.pm";

@@ -94,6 +94,27 @@ sub GetRevisionTopics {
   return @topics;
 }
 
+sub GetTopicDocuments {
+  my ($TopicID) = @_;
+  
+  require "RevisionSQL.pm";
+
+  my $RevisionList = $dbh -> prepare("select DocRevID from RevisionTopic where MinorTopicID=?"); 
+  my $DocumentList = $dbh -> prepare("select DocumentID from DocumentRevision where DocRevID=? and Obsolete=0"); 
+  $RevisionList -> execute($TopicID);
+  $RevisionList -> bind_columns(undef, \($DocRevID));
+
+  while ($RevisionList -> fetch) {
+    &FetchDocRevisionByID($DocRevID);
+    if ($DocRevisions{$DocRevID}{OBSOLETE}) {next;}
+    $DocumentList -> execute($DocRevID);
+    ($DocumentID) = $DocumentList -> fetchrow_array;
+    $DocumentIDs{$DocumentID} = 1; # Hash removes duplicates
+  }
+  my @DocumentIDs = keys %DocumentIDs;
+  return @DocumentIDs;
+}
+
 sub LookupMajorTopic { # Returns MajorTopicID from Topic Name
   my ($TopicName) = @_;
   my $major_fetch   = $dbh -> prepare(
