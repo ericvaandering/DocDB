@@ -12,7 +12,7 @@ sub Unique {
 sub URLify { # Adapted from Perl Cookbook, 6.21
   my ($Text) = @_;
 
-  $urls = '(http|telnet|gopher|file|wais|ftp)';
+  $urls = '(http|telnet|gopher|file|wais|ftp|https)';
   $ltrs = '\w';
   $gunk = '/#~:.?+=&%@!\-';
   $punc = '.:?\-';
@@ -35,4 +35,5 @@ sub URLify { # Adapted from Perl Cookbook, 6.21
              }{<A HREF="$1">$1</A>}igox;
   return $Text;           
 }
+
 1;
