@@ -27,7 +27,7 @@ sub DateTimePullDown {
   }  
   
   print "<b><a ";
-  &HelpLink("date");
+  &HelpLink("overdate");
   print "Date & Time:</a></b><br> \n";
   print $query -> popup_menu (-name => 'overday',-values => \@days, -default => $day);
   print $query -> popup_menu (-name => 'overmonth',-values => \@months, -default => $months[$mon]);

@@ -1,3 +1,18 @@
+main
+Main Files
+Files that the database knows about are classified as "Main" or "Other." Main
+files are typically the ones you want people to look at. As an example, the
+top file of several linked HTML files is a "Main File," the others are "Other
+Files."
+#
+overdate
+Date and Time
+Use these menus to set the date and time for a document written in the past.
+Unless you are submitting a document from the old database or written a long
+time ago, you should not check "Override date" and you will not have to use this
+control. For your convenience, the date has been set to approximately the
+current time.
+#
 title
 Title
 This is the initial title of of your document. This option must be supplied for
@@ -48,10 +63,12 @@ another account.
 #
 doctype
 Document Type
-Select which kind of document this is.
+Select which kind of document this is. This has nothing to do with the format of
+the document. I.e. a PowerPoint file isn't <i>necessarily</i> a "Talk."
 #
 httpupload
 Upload by URL
 Enter a URL for your document. The file will be fetched from this URL and stored
 on the server. If the URL is password protected, enter the username and password
 for the URL here. The username and password are NOT saved.
+
