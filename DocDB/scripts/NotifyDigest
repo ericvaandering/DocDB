@@ -8,10 +8,10 @@
 use DBI;
 use Getopt::Long;
 
+require "CGIInclude.pm";
+
 require Mail::Mailer;
 require Mail::Send;
-
-require "CGIInclude.pm";
 
 require "DocDBGlobals.pm";
 require "TopicSQL.pm";
