@@ -47,6 +47,7 @@ sub SessionEntryForm (@) {
   print "<th><b><a "; &HelpLink("sessioninfo");      print "Start Date and Time</a></td>\n";
   print "<th><b><a "; &HelpLink("sessioninfo");      print "Session Title</a></td>\n";
   print "<th><b><a "; &HelpLink("sessioninfo");      print "Description of Session</a></td>\n";
+  print "<th><b><a "; &HelpLink("sessiondelete");    print "Delete</a></td>\n";
   print "</tr>\n";
   
   # Sort session IDs by order
@@ -64,20 +65,20 @@ sub SessionEntryForm (@) {
       $SessionDefaultDateTime    = "";
       $SessionDefaultTitle       = "";
       $SessionDefaultDescription = "";
-      $SessionSeparartorDefault = "";
+      $SessionSepararatorDefault = "";
     } else { # Key off Meeting Order IDs, do differently for Sessions and Separators
       if ($MeetingOrders{$MeetingOrderID}{SessionID}) {
         my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
 	$SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
 	$SessionDefaultTitle       = $Sessions{$SessionID}{Title};
 	$SessionDefaultDescription = $Sessions{$SessionID}{Description};
-	$SessionSeparartorDefault = "No";
+	$SessionSepararatorDefault = "No";
       } elsif ($MeetingOrders{$MeetingOrderID}{SessionSeparatorID}) {
         my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
 	$SessionDefaultDateTime    = $Sessions{$SessionSeparatorID}{StartTime};
 	$SessionDefaultTitle       = $Sessions{$SessionSeparatorID}{Title};
 	$SessionDefaultDescription = $Sessions{$SessionSeparatorID}{Description};
-	$SessionSeparartorDefault = "Yes";
+	$SessionSepararatorDefault = "Yes";
       }
     } 
     $SessionOrderDefault = $SessionOrder;  
@@ -97,6 +98,8 @@ sub SessionEntryForm (@) {
 
 sub SessionDateTimePullDown {
   my $DefaultYear,$DefaultMonth,$DefaultDay,$DefaultHour;
+  my (undef,undef,undef,$Day,$Month,$Year) = localtime(time);
+  $Year += 1900;
   if ($SessionDefaultDateTime) {
     my ($Date,$Time) = split /\s+/,$SessionDefaultDateTime;
     my ($Year,$Month,$Day) = split /-/,$Date;
@@ -107,8 +110,6 @@ sub SessionDateTimePullDown {
     $DefaultDay   = $Day;
     $DefaultHour  = $Time;
   } else {
-    my (undef,undef,undef,$Day,$Month,$Year) = localtime(time);
-    $year += 1900;
     $DefaultYear  = $Year;
     $DefaultMonth = $Month;
     $DefaultDay   = $Day;
@@ -123,7 +124,7 @@ sub SessionDateTimePullDown {
   my @months = @AbrvMonths;
 
   my @years = ();
-  for ($i = $FirstYear; $i<=$year+2; ++$i) { # $FirstYear - current year
+  for ($i = $FirstYear; $i<=$Year+2; ++$i) { # $FirstYear - current year
     push @years,$i;
   }  
 

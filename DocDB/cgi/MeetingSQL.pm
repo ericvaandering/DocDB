@@ -135,7 +135,7 @@ sub FetchMeetingOrdersByConferenceID {
   my $SessionSeparatorOrderList   = $dbh -> prepare(
     "select MeetingOrder.MeetingOrderID,MeetingOrder.SessionSeparatorID,MeetingOrder.SessionID,MeetingOrder.SessionOrder ".
     "from MeetingOrder,SessionSeparator ".
-    "where MeetingOrder.SessionSeparatorID=Session.SessionSeparatorID and SessionSeparator.ConferenceID=?");
+    "where MeetingOrder.SessionSeparatorID=SessionSeparator.SessionSeparatorID and SessionSeparator.ConferenceID=?");
 
   $SessionOrderList -> execute($ConferenceID);
   $SessionOrderList -> bind_columns(undef, \($MeetingOrderID,$SessionSeparatorID,$SessionID,$SessionOrder));
