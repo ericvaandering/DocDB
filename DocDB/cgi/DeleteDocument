@@ -91,7 +91,7 @@ $revision_delete -> execute($DocumentID);
 $command = "rm -rf $Directory/*";
 system ($command);
  
-print "<b>Document $DocumentID has been deleted.<p>";
+print "<b>Document $DocumentID has been deleted.</b><p>";
 
 &DocDBNavBar;
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
