@@ -151,7 +151,6 @@ sub SecurityListByID {
     print "<b>Restricted to:</b><br>\n";
     print "<ul>\n";
     foreach $GroupID (@GroupIDs) {
-      &FetchSecurityGroup($GroupID);
       print "<li>$SecurityGroups{$GroupID}{NAME}</li>\n";
     }
     print "</ul>\n";
@@ -180,13 +179,14 @@ sub PrintRevisionInfo {
  
   print "<center><table cellpadding=10>";
   print "<tr valign=top>";
-  print "<td colspan=2>"; 
+  print "<td colspan=2 width=\"40%\">"; 
   &PrintTitle($DocRevisions{$DocRevID}{TITLE});
-  print "<td colspan=2>"; 
   &RequesterByID($Documents{$DocumentID}{REQUESTER});
   &SubmitterByID($DocRevisions{$DocRevID}{SUBMITTER});
   print "<td colspan=2>"; 
   &PrintDocNumber($DocRevID);
+  print "<td colspan=2>"; 
+  &ModTimes;
   print "<tr valign=top>";
   print "<td colspan=2>"; 
   &AuthorListByID(@AuthorIDs);
@@ -202,11 +202,13 @@ sub PrintRevisionInfo {
   print "<tr valign=top>";
   print "<td colspan=3>"; 
   &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
-  print "<tr valign=top>";
-  print "<td colspan=3 align=center>";
-  &UpdateButton($DocumentID);
-  print "<td colspan=3 align=center>";
-  &UpdateDBButton($DocumentID);
+  if (&CanModify($DocumentID)) {
+    print "<tr valign=top>";
+    print "<td colspan=3 align=center>";
+    &UpdateButton($DocumentID);
+    print "<td colspan=3 align=center>";
+    &UpdateDBButton($DocumentID);
+  }  
   print "</table></center>\n"; 
 }
  
@@ -250,6 +252,15 @@ sub DocumentLink {
   $ret = "<a href=\"$ShowDocument\?docid=$DocumentID\&version=$Version\">".
          (&FullDocumentID)."-v$Version</a>";
 }         
+
+sub ModTimes {
+  my ($DocRevID) = @_;
+  my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+  $DocTime = &EuroDate($Documents{$DocumentID}{DATE}); 
+  $RevTime = &EuroDate($DocRevisions{$DocRevID}{DATE}); 
+  print "<b>Created: </b>$DocTime<br>\n";
+  print "<b>Revised: </b>$RevTime<br>\n";
+}
 
 sub EuroDate {
   my ($sql_datetime) = @_;

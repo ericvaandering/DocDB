@@ -4,10 +4,16 @@
 #
 
 use CGI;                                                                                      
+use DBI;                                                                                      
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
+require "SecuritySQL.pm";
 
 $query = new CGI;  # Global for subroutines
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+
+&GetSecurityGroups;
+
 print $query->header;
 &BTeVHeader("BTeV Document Database","Document Database");
 
@@ -15,8 +21,25 @@ print $query->header;
 
 print "<b><big>Welcome to the BTeV Document Database. Click on any
 term for <a href=\"HelpDocument\">help.</a></big></b>\n";
-print "<p><b>From here you
-       have several options:</b>\n";
+
+print "<p><center><big><font color=red><b>Testing only! All data may be
+lost!</b></font></big></center>\n";
+
+print "<p><b>Find the information you want in the database:</b>\n";
+print "<ul>\n";
+print "<li>Search documents (still coming)"; 
+print $query -> startform('POST',$ShowDocument);
+print "<li>Show document # "; 
+print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
+print " "; 
+print $query -> submit (-value => "Show");
+print $query -> endform;
+print "<p>\n";
+print "<li><a href=ListDocuments>List</a> all documents\n"; 
+
+print "</ul>\n";
+
+print "<p><b>Short cuts for putting information into the database:</b>\n";
 print "<ul>\n";
 
 print "<li><a href=\"$DocumentAddForm\">Reserve</a> a document number\n"; 
@@ -47,17 +70,8 @@ print " ";
 print $query -> hidden(-name => 'mode',    -default => 'updatedb');
 print $query -> submit (-value => "Update DB");
 print $query -> endform;
-
-print $query -> start_multipart_form('POST',$ShowDocument);
-print "<li>Show document # "; 
-print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
-print " "; 
-print $query -> submit (-value => "Show");
-print $query -> endform;
-print "<p>\n";
-print "<li><a href=ListDocuments>List</a> all documents\n"; 
-
 print "</ul>\n";
+
 print "<p>\n";
 
 print "<b>If the above choices don't meet your needs,use this form to<br>generate

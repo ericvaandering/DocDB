@@ -5,6 +5,8 @@ $db_rwuser = "docadmin";
 $db_rwpass = "docadmin";
 $db_rouser = "docadmin";
 $db_ropass = "docadmin";
+$db_aduser = "docadmin";
+$db_adpass = "docadmin";
 
 # Root directories and URLs
 
@@ -36,5 +38,16 @@ $Unzip  = "/usr/bin/unzip -q ";
 $remote_user = $ENV{REMOTE_USER};
 $DBWebMasterEmail = "ewv\@fnal.gov,garren\@fnal.gov";
 $DBWebMasterName  = "Eric Vaandering, Lynn Garren";
+
+# Override settings in this file for the test DB 
+# and the publicly accessible version
+
+if (-e "PublicGlobals.pm") {
+  require "PublicGlobals.pm";
+}  
+
+if (-e "TestGlobals.pm") {
+  require "TestGlobals.pm";
+}  
 
 1;

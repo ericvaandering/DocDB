@@ -11,9 +11,22 @@ sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with 
     $SecurityGroups{$GroupID}{DESCRIPTION} = $Description;
     $SecurityGroups{$GroupID}{TIMESTAMP}   = $Timestamp;
   }
+  
+  my ($HierarchyID,$ChildID,$ParentID);
+  my $hierarchy_list  = $dbh -> prepare(
+     "select HierarchyID,ChildID,ParentID,Timestamp from GroupHierarchy"); 
+  $hierarchy_list -> execute;
+  $hierarchy_list -> bind_columns(undef, \($HierarchyID,$ChildID,$ParentID,$Timestamp));
+  %GroupsHierarchy = ();
+  while ($hierarchy_list -> fetch) {
+    $GroupsHierarchy{$HierarchyID}{HIERARCHY} = $HierarchyID;
+    $GroupsHierarchy{$HierarchyID}{CHILD}     = $ChildID;
+    $GroupsHierarchy{$HierarchyID}{PARENT}    = $ParentID;
+    $GroupsHierarchy{$HierarchyID}{TIMESTAMP} = $Timestamp;
+  }
 }
 
-sub FetchSecurityGroup { # Fetches an SecurityGroup by ID, adds to hash
+sub ObsFetchSecurityGroup { # FIXME remove entire routine. Not used
   my ($groupID) = @_;
   my ($GroupID,$Name,$Description,$Timestamp);
 

@@ -16,13 +16,13 @@ require "FSUtilities.pm";
 require "HTMLUtilities.pm";
 require "Security.pm";
 
+&GetSecurityGroups;
+
 $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
 
 $DocumentID = $params{docid};
-#chomp $DocumentID; 
-#$DocumentID =~ s/\s+//;
 
 unless ($DocumentID) {
   print $query->header;
@@ -44,15 +44,16 @@ print $query->header;
 &BTeVHeader("BTeV Document $DocumentID-v$Version");
 
 unless (&CanAccess($DocumentID,$Version)) {
-  print "You are not authorized to view this document. Allowed for DEBUG
-  purposes only.<p>\n";
-#  exit;
+  print "You are not authorized to view this document.<p>\n";
+  &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+  exit;
 }  
 
 my $DocRevID   = &FetchDocRevision($DocumentID,$Version);
 
 unless ($DocRevID) {
   print "This document does not exist.<p>\n";
+  &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
   exit;
 }
   

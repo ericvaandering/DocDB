@@ -10,18 +10,39 @@ sub CanAccess { # Can the user access (with current security) this version
   my @GroupIDs = @{$Groups_ref};
   
   unless (@GroupIDs) {return 1;}             # Public documents
+
+# See if current user is in the list of users who can access this document
   
   my $access = 0;
 
   foreach my $GroupID (@GroupIDs) { # Check auth. users vs. logged in user
-    &FetchSecurityGroup($GroupID);
     $ok_user = $SecurityGroups{$GroupID}{NAME};
     $ok_user =~ tr/[A-Z]/[a-z]/; 
     if ($ok_user eq $remote_user) {
       $access = 1;                           # User checks out
     }  
   }
-  return $access;     
+  if ($access) {return $access;}
+
+# See if current users children can access this document
+
+  my @HierarchyIDs = keys %GroupsHierarchy;
+  foreach $ID (@HierarchyIDs) {
+    $Parent = $SecurityGroups{$GroupsHierarchy{$ID}{PARENT}}{NAME}; 
+    $Child  = $SecurityGroups{$GroupsHierarchy{$ID}{CHILD}}{NAME}; 
+    $Parent =~ tr/[A-Z]/[a-z]/;
+    $Child  =~ tr/[A-Z]/[a-z]/;
+    if ($Parent eq $remote_user) {
+      foreach my $GroupID (@GroupIDs) { 
+        $ok_user = $SecurityGroups{$GroupID}{NAME};
+        $ok_user =~ tr/[A-Z]/[a-z]/; 
+        if ($ok_user eq $Child) {
+          $access = 1;                           
+        }  
+      }
+    }  
+  }
+  return $access;       
 }
 
 sub CanModify { # Can the user modify (with current security) this docuement
