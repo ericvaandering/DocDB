@@ -66,9 +66,24 @@ sub ReHintTalksBySessionID ($) {
     }
   }
 
-  # Convert to revisions (latest versions only)
+  # Get unique document IDs
 
   my @DocumentIDs = keys %DocumentIDs;
+  
+  # Remove documents already confirmed with a conference
+  
+  my $ConfirmedList = $dbh -> prepare("select DocumentID from SessionTalk where Confirmed=1"); 
+  my %ConfirmedDocumentIDs = ();
+  $ConfirmedList -> execute();
+  $ConfirmedList -> bind_columns(undef, \($DocumentID));
+  while ($ConfirmedList -> fetch) {
+    $ConfirmedDocumentIDs{$DocumentID}
+  }
+  my @ConfirmedDocumentIDs = keys %ConfirmedDocumentIDs;
+  @DocumentIDs = &RemoveArray(\@DocumentIDs,@ConfirmedDocumentIDs);
+  
+  # Convert to revisions (latest versions only)
+
   my @DocRevIDs   = ();
   foreach my $DocumentID (@DocumentIDs) { # For shorter lists
     &FetchDocument($DocumentID);
