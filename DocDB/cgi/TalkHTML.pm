@@ -179,17 +179,20 @@ sub TalkNote {
 
 sub TalkDelete ($) {
   my ($SessionOrderID) = @_;
+  print "<nobr>";
   if ($TalkSeparatorDefault eq "Yes" || $TalkSeparatorDefault eq "No") {
     print $query -> checkbox(-name  => "talkdelete", 
                              -value => "$SessionOrderID", -label => 'Delete');
   } else {
     print "&nbsp\n";
   }
+  print "</nobr>";
 }
 
 sub TalkConfirm ($) {
   my ($SessionOrderID) = @_;
   
+  print "<nobr>";
   if ($TalkSeparatorDefault eq "Yes") {
     print "&nbsp;\n";
   } elsif ($TalkDefaultConfirmed) {  
@@ -199,6 +202,7 @@ sub TalkConfirm ($) {
     print $query -> checkbox(-name  => "talkconfirm", 
                              -value => "$SessionOrderID", -label => 'Confirm');
   }
+  print "</nobr>";
 }
 
 sub TalkOrder {
