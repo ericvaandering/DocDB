@@ -147,7 +147,7 @@ sub FetchMeetingOrdersByConferenceID {
   }
   $SessionSeparatorOrderList -> execute($ConferenceID);
   $SessionSeparatorOrderList -> bind_columns(undef, \($MeetingOrderID,$SessionSeparatorID,$SessionID,$SessionOrder));
-  while ($SessionOrderSeparatorList -> fetch) {
+  while ($SessionSeparatorOrderList -> fetch) {
     $MeetingOrders{$MeetingOrderID}{SessionSeparatorID} = $SessionSeparatorID;
     $MeetingOrders{$MeetingOrderID}{SessionID}          = $SessionID;
     $MeetingOrders{$MeetingOrderID}{SessionOrder}       = $SessionOrder;
