@@ -60,7 +60,7 @@ sub ConferenceURLBox (;%) {
   &HelpLink("confurl");
   print "URL:</a></b><br> \n";
   print $query -> textfield (-name => 'url', -default => $MeetingDefaultURL,
-                             -size => 40, -maxlength => 64, $Booleans);
+                             -size => 40, -maxlength => 240, $Booleans);
 };
 
 sub ConferencePreambleBox {
@@ -614,19 +614,20 @@ sub OrphanMeetingList {
 
 #  my @OrphanConferenceIDs = sort byTopic keys @OrphanConferenceIDs;
 #FIXME add sort
-
-  print "<b>More Meetings</b>\n";
-  print "<ul>\n";
-  foreach my $ConferenceID (@OrphanConferenceIDs) {
-    my $MeetingLink;
-    if ($Mode eq "modify") {
-      $MeetingLink = &ModifyMeetingLink($ConferenceID);
-    } else {
-      $MeetingLink = &NewMeetingLink($ConferenceID);
-    }
-    print "<li>$MeetingLink</li>\n";
+  if (@OrphanConferenceIDs) {
+    print "<b>More Meetings</b>\n";
+    print "<ul>\n";
+    foreach my $ConferenceID (@OrphanConferenceIDs) {
+      my $MeetingLink;
+      if ($Mode eq "modify") {
+        $MeetingLink = &ModifyMeetingLink($ConferenceID);
+      } else {
+        $MeetingLink = &NewMeetingLink($ConferenceID);
+      }
+      print "<li>$MeetingLink</li>\n";
+    }  
+    print "</ul>\n";
   }  
-  print "</ul>\n";
 }
 
 sub AllMeetingsTable (;$) {
