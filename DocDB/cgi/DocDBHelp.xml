@@ -988,4 +988,35 @@ or may not be the same as the web username and password.
   </text>
  </entry>
  
+ <entry>
+  <key>usergroups</key>
+  <title>Groups the user belongs to</title>
+  <text>
+   This is the list of groups the user belongs to. If you are using a user based 
+   authentication method such as certificates, this controls which documents a 
+   user is allowed to see, if they are allowed to create documents, or administer
+   the database. If you are using group or user authentication, it makes sure users
+   get e-mail only for documents they are allowed to access.
+  </text>
+ </entry>
+ 
+ <entry>
+  <key>reqgroups</key>
+  <title>Requested Groups</title>
+  <text>
+   Select all the groups whose documents you wish to have access to. 
+   Your request will be checked and processed by an adminstrator.
+  </text>
+ </entry>
+ 
+ <entry>
+  <key>certnote</key>
+  <title>Note for access</title>
+  <text>
+   Enter a note to the administrator. Identify yourself and your reasons for 
+   requesting access if you think you should, otherwise your request may be 
+   rejected.
+  </text>
+ </entry>
+ 
 </helpfile>

@@ -55,11 +55,9 @@ my $CertificateStatus = &CertificateStatus();
 my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
 my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
 
-print "ST $CertificateStatus<br>\n";
-
 if ($CertificateStatus eq "verified") {
   print "<b>Your certificate has been verified and you have access to documents from these groups:</b>";
-  my @GroupIDs = &FetchSecurityGroupsByCert();
+  my @GroupIDs = &FindUsersGroups();
   print "<ul>\n";
   if (@GroupIDS) {
     foreach my $GroupID (@GroupIDs) {
@@ -67,7 +65,7 @@ if ($CertificateStatus eq "verified") {
       print "<li>",$SecurityGroups{$GroupID}{NAME},"</li>\n";
     }
   } else {
-    print "<li>None: Contact an adminstrator if this is incorrect</li>\n";
+    print "<li><b>None.</b> Contact an adminstrator if this is incorrect</li>\n";
   }       
   print "</ul>\n";
 } elsif ($CertificateStatus eq "unverified") {  

@@ -44,7 +44,7 @@ sub FetchSecurityGroupsByCert (%) {
 
   my ($EmailUserID) = $EmailUserSelect -> fetchrow_array; 
   
-  my @UserGroupIDs = FetchUserGroupIDs ($EmailUserID);
+  my @UserGroupIDs = &FetchUserGroupIDs($EmailUserID);
   return @UserGroupIDs;
 }
 
