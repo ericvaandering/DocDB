@@ -14,4 +14,9 @@ This page lists various gotchas that we have encountered.
      <li> <b>rm -f /usr/local/bin/*perl* </b>
      <li> make sure that no version of perl is declared current in ups
      </ul>
+<li> You may encounter an /etc/rc.d/init.d/mysqld script which does an
+     anonymous ping of mysql.  This fails when you have disabled anonymous 
+     access and I have found no way to enable it without embedding a password
+     in the script.  The workaround is to disable that part of the script.
+     See our sample <a href=mysqld.html>/etc/rc.d/init.d/mysqld</a> script.
 </ol>

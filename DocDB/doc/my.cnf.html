@@ -9,18 +9,18 @@ The file should look something like this:
 
 <pre>
 [mysqld]
-user=btevdocd
-datadir=/www/database/mysql
-socket=/www/database/mysql/mysql.sock
+user=mysql_owner
+datadir=/path/to/datadir/mysql
+socket=/path/to/datadir/mysql/mysql.sock
 skip-innodb
      
 [mysql.server]
-user=btevdocd
-basedir=/www/database
+user=mysql_owner
+basedir=/path/to/datadir
 
 [client]
-user=btevdocd
-socket=/www/database/mysql/mysql.sock
+user=mysql_owner
+socket=/path/to/datadir/mysql/mysql.sock
 
 [safe_mysqld]
 err-log=/var/log/mysqld.log
@@ -42,7 +42,7 @@ document.write(dt)
 // end hiding --> 
 </script> 
 <br>
-<A HREF="mailto:btev-docdb@fnal.gov">Document Database Administrators</A> 
+<A HREF="mailto:docdb-users@fnal.gov">Document Database</A> 
 </font></i>
 </body>
 </html>
