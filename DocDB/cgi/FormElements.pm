@@ -69,13 +69,15 @@ sub SingleUploadBox {
   print "File upload:</a></b><br></td></tr>\n";
   for ($i=1;$i<=$NumberUploads;++$i) {
     print "<tr><td align=right>\n";
-    print "<b>File:</b></td>\n";
+    print "<a "; &HelpLink("localfile"); print "<b>File:</b></a>\n";
+    print "</td>\n";
     print "<td>\n";
     print $query -> filefield(-name => "single_upload", -size => 60,
                               -maxlength=>250);
     print "</td></tr>\n";
     print "<tr><td align=right>\n";
-    print "<b>Description:</b></td>\n";
+    print "<a "; &HelpLink("description"); print "<b>Description:</b></a>\n";
+    print "</td>\n";
     print "<td>\n";
     print $query -> textfield (-name => 'filedesc', -size => 60, -maxlength => 128);
     if ($i == 1) {
@@ -96,12 +98,15 @@ sub SingleHTTPBox {
   print "Upload by HTTP:</a></b><br> \n";
   print "</td><tr>\n";
   for ($i=1;$i<=$NumberUploads;++$i) {
-    print "<tr><td align=right><b>URL:</b></td>\n";
+    print "<tr><td align=right>\n";
+    print "<a "; &HelpLink("remoteurl"); print "<b>URL:</b></a>\n";
+    print "</td>\n";
     print "<td colspan=3>\n";
     print $query -> textfield (-name => 'single_http', -size => 70, -maxlength => 240);
     print "</td></tr>\n";
     print "<tr><td align=right>\n";
-    print "<b>Description:</b></td>\n";
+    print "<a "; &HelpLink("description"); print "<b>Description:</b></a>\n";
+    print "</td>\n";
     print "<td colspan=3>\n";
     print $query -> textfield (-name => 'filedesc', -size => 60, -maxlength => 128);
     if ($i == 1) {

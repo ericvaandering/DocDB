@@ -1,4 +1,8 @@
 sub FirstAuthor {
+
+# FIXME: This routine should be smarter and pick out the submitter of the
+# document IF they are in the author list.
+
   my ($DocRevID) = @_;
   my $Authors_ref = &GetRevisionAuthors($DocRevID);
   my @AuthorIDs = @{$Authors_ref};
@@ -95,7 +99,6 @@ sub AuthorsTable {
     }  
     print "</ul>";
   }  
-
   print "</table>\n";
 }
 

@@ -1,3 +1,25 @@
+description
+Description
+This is a short description of each file. This description will appear in the
+hyperlink in the document summary. For instance, you might describe a .ppt file
+as "PowerPoint of the conference talk" and a .ps file as "The proceedings for
+the conference."
+#
+localfile
+File
+This is a file on your local computer. You can type in a full file name or press
+browse to go find the file.
+#
+remoteurl
+URL
+In this box, enter a URL available on the web. The file will be fetched from
+this URL and stored on the server. The URL must be a full URL, with http:// at
+the beginning and a file name at the end (cannot end in "/"). The https and ftp
+protocols may also work.
+<p>
+If the URL is protected, enter the username and password used to access the
+URL. The username and password are not saved.
+#
 modifytypes
 Modification Actions
 There are currently four types of document modification:

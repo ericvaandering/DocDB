@@ -275,7 +275,7 @@ sub OtherVersionLinks {
   print "</center>\n";
 }
 
-sub DocumentSummary { # One line document summary for listings
+sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
   require "MiscSQL.pm";
   
   my ($DocumentID) = @_;
@@ -295,7 +295,7 @@ sub DocumentSummary { # One line document summary for listings
     print "<td><nobr>$author_link</nobr></td>\n";
     print "<td><nobr>$rev_date</nobr></td>\n";
     print "</tr>\n";
-  } else { # Print header
+  } else { # Print header if $DocumentID = 0
     print "<tr valign=bottom>\n";
     print "<th>Document Number</th>\n";
     print "<th>Title</th>\n";
@@ -314,6 +314,5 @@ sub DocDBNavBar {
   print "[&nbsp;<a href=\"$ListTopics\">List Topics</a>&nbsp;]\n";
   print "</div>\n";
 }
-
 
 1;
