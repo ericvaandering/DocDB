@@ -15,7 +15,7 @@ sub ReferenceLink ($) {
     if ($Acronym eq "PLB" || $Acronym eq "NIMA")    {
       ($ReferenceLink,$ReferenceText) = &NPELink($Acronym,$Volume,$Page);
     }
-    if ($Acronym eq "hep-ex" || $Acronym eq "hep-ph" || $Acronym eq "hep-th") {
+    if ($Acronym eq "physics" || $Acronym eq "hep-ex" || $Acronym eq "hep-ph" || $Acronym eq "hep-th") {
       ($ReferenceLink,$ReferenceText) = &ArxivLink($Acronym,$Volume,$Page);
     }
 
