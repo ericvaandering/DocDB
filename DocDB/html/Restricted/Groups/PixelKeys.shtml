@@ -49,12 +49,6 @@ cooling.
 </dl>
 
 <hr>
-
-These parameter are probably not of as much use. They control details of what
-the entry form looks like.<p>
-
-
-<hr>
 <!-- begin footer, change the webmaster info if appropriate -->
 <div align="center"> 
 <!--#include virtual="/includes/atwork_bottomnav.html"-->  <!-- Put in the bottom navigation bar-->
