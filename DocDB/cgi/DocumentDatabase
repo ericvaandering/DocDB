@@ -26,12 +26,14 @@ if ($Public) {
   print "Welcome to the public portion of the BTeV Document Database,<br>the repository for all BTeV public talks,
   proceedings, preprints, and publications.\n";
 } else {
-  print "<a href=\"$HelpFile\">Instructions on using</a> the database. \n";
-  print "Click on any <font color=red>red link</font> for quick help.\n";
+  print "<a href=\"$ModifyHome\">Create or change</a> documents. <a
+href=\"$HelpFile\">(Database instructions)</a></h4>\n";
+#  print "Click on any <font color=red>red link</font> for quick help.\n";
 }
 print "</h4></center>\n";
 
-print "<p><h4>Find the information you want in the database:</h4>\n";
+print "<p><h4>Find the information you want in the database: (<a
+href=\"$HelpFile\">Help</a>)</h4>\n";
 print "<ul>\n";
 
 unless ($Public) {
@@ -56,7 +58,7 @@ print "<li> by <a href=\"$ListAuthors\">author</a>\n";
 print "<li> by <a href=\"$ListTopics\">topic</a>\n";
 print "<li>modified in the <a href=\"$LastModified?days=$LastDays\">last $LastDays days</a>";
 unless ($Public) {
-  print "<li> by <a href=\"$ListMeetings\">group meeting</a>\n";
+  print "<li> from <a href=\"$ListMeetings\">group meetings</a>\n";
 }
 print "<li>from <a href=\"$ListByTopic?major=Conferences&mode=conference\">conferences</a>";
 if ($Public) {
@@ -69,10 +71,10 @@ if ($Public) {
          <a href=\"$web_root/Static/Restricted/OldDBTranslation.shtml\">BTeV-pub-year/xx</a> from the <a href=\"http://www-btev.fnal.gov/cgi-private/database/doclist.pl\">old DocDB</a>\n";
 }
 print "</ul>\n";
-unless ($Public) {
-  print "<p>\n";
-  print "<li><b><a href=\"$ModifyHome\">Create or change</a> documents</b>"; 
-}
+#unless ($Public) {
+#  print "<p>\n";
+#  print "<li><b></b>"; 
+#}
 
 print "</ul>\n";
 
@@ -152,7 +154,7 @@ print "<p>\n";
   &DaysPulldown;
   print " days.</center>";
   print $query -> endform;
-  print "<p>";
+  print "<p>&nbsp;<p>";
 }
 
 
