@@ -1,0 +1,150 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Scanner Instructions</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="/includes/style.css" type="text/css">
+<!--#include virtual="/includes/navbar_header.html" --> <!-- Defining Javascript functions-->
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<!--#include virtual="/includes/atwork_menuload.html" --> <!-- Loads menus and images in nav bar -->
+<!--#include virtual="/includes/begin_atwork_top.html" --> <!-- Starts the table at the top -->
+      <div align="center"><font size="+2"
+      color="#003399">Scanner&nbsp;Instructions</font></div>
+<!--#include virtual="/includes/end_atwork_top.html" --> <!-- Ends the table at the top -->
+<!--#include virtual="/includes/atwork_navbar.html" --> <!-- Puts in the nav bar table row entry -->
+<!--#include virtual="/includes/end_table.html" --> <!-- Ends the table -->
+<hr>
+
+<p>
+<center>
+<h2> Using the Scanner on WH9W</a> </h2>
+</center>
+<p>
+
+If you create handwritten talks or other documents, they can still be placed in
+the document database by scanning them to PDF format. These are instructions for
+a scanner on WH9W, but should give an idea of how to proceed for those with
+their own scanners.<p>
+
+This scanner is located in an alcove near the mailboxes
+and across the hall from Dick Adamo's office.
+
+<ol>
+<li> Login to the account scan9nw. The password is taped to the machine.
+     Apparently normal user accounts do not have the
+     right software installed to use the scanner.
+
+<li> Place (first) original face down on the document glass.
+   If it is a transparency, back it with a sheet of white
+   paper.  There is a white backing on the scanner top
+   but using a sheet of paper gives better results.
+
+<li> Start<br>
+     -> Programs<br>
+       -> Abobe Acrobat<br>
+         -> Acrobat 4.0<br>
+
+<li> From the File menu in the Adobe Acrobat window:<br>
+      -> Import<br>
+        -> Scan<br>
+     This will pop up a dialog box; click on "scan".
+
+<li> This will prescan the document which you placed in step 2
+   and show the prescan in a new window ( HPPrecision Scan Pro ).<br>
+   If desired:<br>
+   <ol>
+    <LI> use left mouse button to select a rectangular crop area
+    <li> adjust sharpness and image type ( color / bw; density .... )
+    <li> Zoom to see the cropped area in more detail; this will rescan
+       the document.
+    </ol>
+
+<li> Put this page into the working document:<br>
+   From the HPPrecision Scan Pro window:<br>
+   File->Place Image<br>
+   When this step is finished it pops up a dialog box with options,
+   Next and Done.
+
+<li> If there is nothing more to scan, click on done and go to step 9.
+
+<li> If you wish to scan another page into the same document.<br>
+    <ol>
+    <li> remove the old original and place a new original on the glass.
+    <li> click Next.
+    <li> Repeat steps 5, 6 and (7 or 8).  Yes you need to redo the cropping
+         on every image.
+    </ol>
+
+<li> When you click done, the scanner will stop and you are left in
+   an open pdf document.  Browse the document to check that it is
+   OK.  If it is not OK, all I know how to do is to start over.
+   There are probably smarter things to do if you poke around - 
+   <a href=#hints> see the hint below</a>.
+
+<li> Save the document.  In the Adobe Acrobat window:<br>
+    File-> Save As.<br>
+    Probably just put the file in MyPictures as it suggests.
+
+<li> Exit.    In the Adobe Acrobat window:<br>
+    File->Exit.
+
+<li> I usually move the file off of the scanner and onto my
+    own machine using a floppy or a zip disk.  You can also
+    map your own Wincenter disk space onto the scanner computer
+    and copy your file to that space.  To map a newwork drive.<br>
+     <ol>
+      <li> Right click on "My Computer"
+      <li> Select "Map Network drive"
+      <li> Fill in the network name of the drive to be mapped.<br>
+         It will be something like:<br>
+               \\cdserver\username$<br>
+            or \\ppdserver\username$<br>
+         The $ is important.<br>
+         If you log into your own windows account and look at
+         MyComputer it should be clear which server is serving your files.
+      <li> Click on the: "use different username" option.
+         This will prompt you for your wincenter username and password.
+      <li> Click on finish.
+      <li> Goto the desktop and click on MyComputer.  The network mounted
+         drive should be there.  Then drag the file to your own
+         file space.
+      </ol>
+     Don't forget to clean up the MyPictures area in the scanner account
+     when you are done.  You can leave files there for a few days if
+     you want to make sure that the copy worked before deleting it.
+
+<li> <font color=red> <a name=hints> Hint: </a>  </font>
+      if you need to rescan up one or two pages in big document.
+     I bet that you do the following, although I have not tried to do it:<br>
+       <ol>
+       <li> Save the first try at the document.
+       <li> Rescan the offending pages and save it as a second document.
+       <li> Open the first document using adobe acrobat, delete the
+            offending pages and merge the replacement pages in from
+            the second file.
+       </ol>
+
+</ol>
+
+       
+<p>
+
+Originally by
+Rob Kutschke
+<A HREF="mailto:kutschke@fnal.gov">kutschke@fnal.gov</A> <p>
+
+<hr>
+<!-- begin footer, change the webmaster info if appropriate -->
+<div align="center"> 
+<!--#include virtual="/includes/atwork_bottomnav.html"-->  <!-- Put in the bottom navigation bar-->
+</div>
+<div align="left"> 
+<i><font size="-1">
+<A HREF="mailto:btev-docdb@fnal.gov">Document Database Administrators</A> 
+</font></i></div>
+<!--#include virtual="/includes/full_fermi_footer.shtml" --> 
+</body>
+</html>
