@@ -1,0 +1,53 @@
+<title>Installing MySQL for DocDB</title>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<center><h1>Installing MySQL for DocDB</h1></center>
+<p>
+You will need MySQL and Msql-Mysql-modules.
+<p>
+<center> <h2> install Msql-Mysql-modules</h2> </center>
+<p>
+Msql-Mysql-modules contains the perldbi scripts that allow you to use 
+MySQL with Perl.  We are currently using Msql-Mysql-modules-1.2216.
+<br>
+Install this next to your mysql directory.<br>
+You must first create /tmp/build-perl-xxxx:
+<ul>
+<li>   setup perl
+<li>   cd $PERL_DIR
+<li>   make build_prefix
+<li>   You need this bit so that makefiles will find perl.
+</ul>
+
+Now, you can build the perldbi modules.
+<ul>
+<li>  cd Msql-Mysql-modules-1.2216
+<li>  setup perl
+<li>  perl Makefile.pl
+    <ul>
+    <li> choose MySQL only
+    <li> do not install MysqlPerl emulation
+    <li> answer the remaining questions appropriately for your installation
+   </ul>
+<li> This creates a set of makefiles that you then "gmake".
+</ul>
+
+<!-- begin footer -->
+<hr>
+<i><font size="-1">
+<script language="javascript">
+<!-- Hide from browsers that do not understand Javascript
+// print the URL and modification date of this page
+var url = document.location;
+document.write(url)  
+var dt = document.lastModified;
+document.write('<br> Last Modified:')  
+document.write(dt)  
+// end hiding --> 
+</script> 
+<br>
+<A HREF="mailto:btev-docdb@fnal.gov">Document Database Administrators</A> 
+</font></i>
+</body>
+</html>

@@ -6,19 +6,21 @@
 <p>
    Disk space is needed for the mysql database, DocDB (both cgi and html), 
    and the documents themselves.  DocDB is only about 700 KB.
-   At this time, the BTeV document database contains 800+ documents 
-   and uses about 3 MB for the database and 2.3 GB for the document 
+   At this time, the BTeV document database contains 1400+ documents 
+   and uses about 3 MB for the database and 5 GB for the document 
    directory tree.
    <br>
    One possible file configuration is: 
    <center>
-   <table width="80%">
+   <table width="95%">
      <tr>
        <td> cgi scripts
        </td>
-       <td> /www/cgi-bin/DocDB
+       <td> 
+       /www/cgi-bin/private/DocDB <br>
+       /www/cgi-bin/public/DocDB
        </td>
-     </tr>
+    </tr>
      <tr>
        <td> MySQL database
        </td>
@@ -40,15 +42,25 @@
    </table>
    </center>
 <p>
+       The public DocDB directory contains links to selected 
+       cgi scripts in the private DocDB directory.
+  <p>
    Note that the MySQL database is accessed by the cgi scripts but should not 
-   live under any web directory.
-   <br>
+   live under any web accessable directory.
+<p>
+   The server must be able to write into the document location directory 
+   (e.g.,  /www/html/DocDB)
+   and this directory must be web viewable.
+<p>
    You should create a document database administration account to own the
-   MySQL database and the DocDB cgi scripts and html.  This account will be 
+   MySQL database, the DocDB cgi scripts, and the DocDB html files.  
+   This account will be 
    used to start the MySQL daemon.
-   <br>
-   Make sure that the machine running the web server you plan to use 
-   will support MySQL.
+<p>
+   Make sure you have a machine that will support MySQL.
+<p>
+   The MySQL database can run on any machine.  
+   It does not need to reside on the same machine as the web server.
 
 <!-- begin footer -->
 <hr>

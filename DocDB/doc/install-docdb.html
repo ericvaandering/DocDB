@@ -20,7 +20,7 @@
 <li> <a href=resources.html>identify resources</a> 
 <li> <a href=mysql.html>install MySQL and start mysqld</a> <br>
 <li> <b> get DocDB</b> <br>
-    The <a href=http://www-btev.fnal.gov/~garren/doc/stable.tar>tar ball</a> 
+    The <a href=http://home.fnal.gov/~garren/DocDB/stable.tar>tar ball</a> 
     (July 26, 2002)
     <br>
     Unwind the tarball under your docdbadm account.
@@ -28,20 +28,13 @@
     <br>
     Edit the global variables in <a href=DocDBGlobals.html>DocDBGlobals.pm</a>. 
     <br>
-    Edit the files in DocDB/cgi and DocDB/html.  Replace refereces to 
-    www-btev.fnal.gov, btev_docdb, etc.  
+    Edit the files in DocDB/cgi and DocDB/html. 
     <br>
     Edit DodDB/sql/CreateDatabase.SQL to specify your own MajorTopics, 
-    Institutions, and SecuritySettings.
+    Institutions, and SecurityGroups.
     <br>
     Once the files are customized, copy them to the appropriate directories.
-<li> <b> create a MySQL DocDB database</b>
-    <br>
-    Start by creating a test database to make sure you can work with MySQL.
-    <br>
-    Once you are comfortable with MySQL, login to your docdb mysql account
-    (e.g., mysql -u docdb), and create the DocDB database with 
-    <b>mysql CreateDatabase.SQL</b>.
+<li> <b><a href=createdb.html>create a MySQL DocDB database</a></b>
 <li>  <b> test DocDB </b> 
     <br>
     At this point DocDB should be ready to test.
