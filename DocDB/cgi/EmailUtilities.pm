@@ -25,7 +25,7 @@ sub SendEmail (%) {
   my (%Params) = @_;
   
   my %Headers = ();
-  my @Addressees   = @{$Params{-to}} || ($DBWebMasterEmail);
+  my @Addressees   = @{$Params{-to}};
 
   print "Sending mail to: ",@Addressees,"<br>\n";
 
