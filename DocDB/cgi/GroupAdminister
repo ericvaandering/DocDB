@@ -34,7 +34,7 @@ print $query->header;
 # Parameters to script 
 
 my $Password      = $params{password};
-my $Username      = $Administrator;
+my $Username      = $params{admuser};
 my $Action        = $params{admaction};
 
 my $Description = $params{description};
@@ -130,12 +130,17 @@ if      ($Action eq "Delete") { # Delete group
        "update SecurityGroup set CanCreate=1 where GroupID=?");
     $GroupUpdate -> execute($ParentID);
   }  
+  if ($Admin) {
+    my $GroupUpdate = $dbh->prepare(
+       "update SecurityGroup set CanAdminister=1 where GroupID=?");
+    $GroupUpdate -> execute($ParentID);
+  }  
      
 } elsif ($Action eq "New") { # Create new groups
   print "<b>Adding a new group.</b><br>\n";
   my $GroupInsert = $dbh->prepare(
-   "insert into SecurityGroup (GroupID,Name,Description,CanCreate) ".
-                      "values (0,?,?,?)");
+   "insert into SecurityGroup (GroupID,Name,Description,CanCreate,CanAdminister) ".
+                      "values (0,?,?,?,?)");
 
   $GroupInsert -> execute($Name,$Description,$Create);
   $ParentID = $GroupInsert -> {mysql_insertid}; # Works with MySQL only

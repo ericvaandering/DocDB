@@ -133,7 +133,12 @@ my $rev_security_insert =  $dbh->prepare(
    "insert into RevisionSecurity ".
    "       (RevSecurityID, DocRevID, GroupID) ".
    "values (0,             ?,        ?)");
-                                 
+
+my $RevModifyInsert   =  $dbh->prepare(
+   "insert into RevisionModify ".
+   "       (RevModifyID, DocRevID, GroupID) ".
+   "values (0,             ?,        ?)");
+                                  
 my $rev_topic_insert = $dbh->prepare(
    "insert into RevisionTopic ".
    "       (RevTopicID, DocRevID, MinorTopicID) ".
@@ -240,6 +245,9 @@ if ($mode eq "update" || $mode eq "updatedb") {
 
 @topicIDs   = split ("\0",$params{topics});
 @securities = split ("\0",$params{security});
+if ($EnhancedSecurity) {
+  @ModifyGroups = split ("\0",$params{modify});
+}
 
 if ($mode eq "add" || $mode eq "update" || $mode eq "updatedb") {
   unless (@authorIDs) {
@@ -254,6 +262,13 @@ if ($#securities > 0) {
                     "You may only select \"Public\" by itself.";
     }
   }  
+}
+
+if ($EnhancedSecurity) {
+  unless (@ModifyGroups) {
+    push @ErrorStack,"You must select at least one group which is allowed to 
+                      modify the document.";
+  }                    
 }
   
 &EndPage(@ErrorStack);
@@ -332,6 +347,14 @@ foreach $securityID (@securities) {
   if ($securityID) {  # Skip "0/Public" 
     $rev_security_insert -> execute($docRevID,$securityID);
   }  
+}
+
+if ($EnhancedSecurity) {
+  foreach my $GroupID (@ModifyGroups) {
+    if ($GroupID) {  # Skip "0/Public" (shouldn't happen) 
+      $RevModifyInsert -> execute($docRevID,$GroupID);
+    }  
+  }
 }
 
 ### Deal with files

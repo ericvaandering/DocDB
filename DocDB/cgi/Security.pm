@@ -28,8 +28,8 @@ sub CanAccess { # Can the user access (with current security) this version
   my $access = 0;
 
   foreach my $GroupID (@GroupIDs) { # Check auth. users vs. logged in user
-    $ok_user = $SecurityGroups{$GroupID}{NAME};
-    $ok_user =~ tr/[A-Z]/[a-z]/; 
+    my $ok_user = $SecurityGroups{$GroupID}{NAME};
+       $ok_user =~ tr/[A-Z]/[a-z]/; 
     if ($ok_user eq $remote_user) {
       $access = 1;                           # User checks out
     }  
@@ -46,8 +46,8 @@ sub CanAccess { # Can the user access (with current security) this version
     $Child  =~ tr/[A-Z]/[a-z]/;
     if ($Parent eq $remote_user) {
       foreach my $GroupID (@GroupIDs) { 
-        $ok_user = $SecurityGroups{$GroupID}{NAME};
-        $ok_user =~ tr/[A-Z]/[a-z]/; 
+        my $ok_user = $SecurityGroups{$GroupID}{NAME};
+           $ok_user =~ tr/[A-Z]/[a-z]/; 
         if ($ok_user eq $Child) {
           $access = 1;                           
         }  
@@ -61,8 +61,8 @@ sub CanModify { # Can the user modify (with current security) this document
   require "DocumentSQL.pm";
 
 ## FIXME: Use SecurityLookup  
-
   my ($DocumentID,$Version) = @_;
+  my $CanModify;
   if     ($Public)      {return 0;} # Public version of code, can't modify 
   unless ($remote_user) {return 0;} # No user logged in, can't modify 
 
@@ -70,9 +70,52 @@ sub CanModify { # Can the user modify (with current security) this document
   unless (defined $Version) { # Last version is default  
     $Version = $Documents{$DocumentID}{NVER};
   }   
-  my $Access  = &CanAccess($DocumentID,$Version); 
-  my $Create  = &CanCreate();
-  return ($Access && $Create);
+  
+  # In the enhanced security model, if no one is explictly listed as being 
+  # able to modify the document, then anyone who can view it is allowed to.
+  # This maintains backwards compatibility.
+  
+  my @ModifyGroupIDs;
+  if ($EnhancedSecurity) {
+    my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+    @ModifyGroupIDs = &GetRevisionModifyGroups($DocRevID);
+  } 
+  if (@ModifyGroupIDs && $EnhancedSecurity) {
+    foreach my $GroupID (@ModifyGroupIDs) { # Check auth. users vs. logged in user
+      my $ok_user = $SecurityGroups{$GroupID}{NAME};
+         $ok_user =~ tr/[A-Z]/[a-z]/; 
+      if ($ok_user eq $remote_user) {
+        $CanModify = 1;                           # User checks out
+      }  
+    }
+    
+    if (!$CanModify && $SuperiorsCanModify) { # We don't have a winner yet, but keep checking
+
+# See if current users children can modify this document
+
+      my @HierarchyIDs = keys %GroupsHierarchy;
+      foreach $ID (@HierarchyIDs) {
+        $Parent = $SecurityGroups{$GroupsHierarchy{$ID}{PARENT}}{NAME}; 
+        $Child  = $SecurityGroups{$GroupsHierarchy{$ID}{CHILD}}{NAME}; 
+        $Parent =~ tr/[A-Z]/[a-z]/;
+        $Child  =~ tr/[A-Z]/[a-z]/;
+        if ($Parent eq $remote_user) {
+          foreach my $GroupID (@ModifyGroupIDs) { 
+            my $ok_user = $SecurityGroups{$GroupID}{NAME};
+               $ok_user =~ tr/[A-Z]/[a-z]/; 
+            if ($ok_user eq $Child) {
+              $CanModify = 1;                           
+            }  
+          }
+        }  
+      }
+    }
+  } else {
+    my $Access  = &CanAccess($DocumentID,$Version); 
+    my $Create  = &CanCreate();
+    $CanModify = $Access && $Create;
+  } 
+  return $CanModify;
 }
 
 sub CanCreate { # Can the user create documents 
@@ -92,14 +135,18 @@ sub CanCreate { # Can the user create documents
 }
 
 sub CanAdminister { # Can the user administer the database
-  my $OkUser = $Administrator;
-     $OkUser =~ tr/[A-Z]/[a-z]/; 
-  
-  if ($remote_user eq $OkUser) {
-    return 1;
-  } else { 
-    return 0;
-  }    
+## FIXME: Use SecurityLookup  
+
+  my $Administer = 0;
+  my @GroupIDs = keys %SecurityGroups; # FIXME use a hash for direct lookup
+  foreach my $GroupID (@GroupIDs) { # Check auth. users vs. logged in user
+    $OkUser = $SecurityGroups{$GroupID}{NAME};
+    $OkUser =~ tr/[A-Z]/[a-z]/; 
+    if ($OkUser eq $remote_user && $SecurityGroups{$GroupID}{CanAdminister}) {
+      $Administer = 1;                           # User checks out
+    }  
+  }
+  return $Administer;
 }
 
 sub LastAccess { # Highest version user can access (with current security)
