@@ -103,7 +103,7 @@ sub DocumentTable (%) {
     }    
     print "<tr class=\"$RowClass\">\n";
     foreach my $Field (@Fields) {
-      print "<td>";
+      print "<td class=\"$Field\">";
       if      ($Field eq "Docid") {    # Document number
         print &NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
                                  -numwithversion => true); 
