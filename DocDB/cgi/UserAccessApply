@@ -33,8 +33,6 @@ require "SecuritySQL.pm";
 
 require "CertificateUtilities.pm";
 
-require "Debug.pm";
-
 $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
@@ -88,7 +86,6 @@ if ($CertificateStatus eq "verified") {
 
 ### Get additional parameters
 
-  &HTMLPrintParams();
   my $CertNote          = $params{certnote};
   my @RequestedGroupIDs = split /\0/,$params{reqgroups};
   my $UserName = $CertCN;
@@ -111,8 +108,23 @@ if ($CertificateStatus eq "verified") {
   }  
 
 ### Notify applicant and administrator
+
+  
+  print "You ($CertCN with e-mail address $CertEmail) have requested ";
+  print "access to $Project DocDB. ";
+  print "You have requested membership in the following groups:\n";
+  print "<ul>\n";
+  foreach my $GroupID (@RequestedGroupIDs) {
+    &FetchSecurityGroup($GroupID);
+    print "<li>",$SecurityGroups{$GroupID}{NAME},"</li>\n";
+  }  
+  print "</ul>\n";
+
   if ($MailInstalled) {
     require "EmailUtilities.pm";
+    
+    print "An e-mail has been sent to the administrators and a confirmation e-mail has been sent to you.<p/>\n";
+    
     my @To      = ($DBWebMasterEmail);
     my $Subject = "$CertCN requests access to $Project DocDB";
     my $Body    = "$CertCN with e-mail address $CertEmail has requested ";
@@ -126,8 +138,22 @@ if ($CertificateStatus eq "verified") {
     $Body .= "If this is correct, please visit $EmailAdministerForm, ";
     $Body .= "select \"Modify\", select the user, check \"Verify\", and click to Submit.\n\n";
     $Body .= "If the groups are not correct, select the correct groups before clicking Submit ";
-    
-    
+    if ($CertNote) {
+      $Body .= "The user attached this note to their application:\n";
+      $Body .= $CertNote;
+    }  
+    &SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
+
+    my @To      = ($CertEmail);
+    my $Subject = "$CertCN requests access to $Project DocDB";
+    my $Body    = "Dear $CertCN,\n\n";
+    $Body      .= "You, or someone using your e-mail address ($CertEmail) has requested ";
+    $Body      .= "access to $Project DocDB. If you did not initiate this request, ";
+    $Body      .= "please contact $DBWebMasterEmail immediately.\n\n";
+    $Body      .= "If you did request this access, please give the ";
+    $Body      .= "adminstrators a few business days to respond to your request.\n";
+    $Body      .= "Thank you.";
+
     &SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
   }    
 
