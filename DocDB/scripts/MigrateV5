@@ -3,7 +3,7 @@
 # Author Eric Vaandering (ewv@fnal.gov)
 #
 
-# Usage: MigrateV4 --u=username --p=password --a=init|migrate|delete
+# Usage: MigrateV5 --u=username --p=password --a=init|migrate|delete
 
 use DBI;
 use Getopt::Long;
@@ -17,8 +17,6 @@ require "DocDBGlobals.pm";
 unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate") {
   print "Usage: MigrateV5 --u=username --p=password --a=init|migrate|delete\n\n";
   print "This script is used to migrate from a version 4 to version 5 DB structure. \n";
-  print "Run this script in \"init\" mode.  \n\n";
-  print "At this point you can update the CGI code. Running it in the migrate or delete modes is not needed.  \n";
 #  print "Run this script in \"init\" mode first, then in \"migrate\" mode.  \n\n";
 #  print "At this point you can update the CGI code and when you are comfortable  \n";
 #  print "everything is OK, run in \"delete\" mode to erase old columns and/or tables.  \n";
@@ -33,26 +31,45 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
 
 # Meeting expansion
 
-  my $SessionAdd     = $dbh -> prepare("alter table Session add ShowAllTalks Integer"); 
+  my $SessionAdd  = $dbh -> prepare("alter table Session add ShowAllTalks Integer"); 
+  my $RevisionAdd  = $dbh -> prepare("alter table DocumentRevision add Note text"); 
+  my $RevisionAdd2 = $dbh -> prepare("alter table DocumentRevision add Superceded int"); 
+  my $KeywordDel      = $dbh -> prepare("alter table Keyword drop KeywordGroupID"); 
 
-  # Planned signoff expansion
+  my $SignoffCreate = $dbh -> prepare("create table Signoff ".
+                   "(SignoffID integer auto_increment primary key,".
+                   " DocRevID integer, Note text,".
+                   " TimeStamp timestamp,".
+                   " index(DocRevID))"); 
+
+  my $SignatureCreate = $dbh -> prepare("create table Signature ".
+                   "(SignatureID integer auto_increment primary key,".
+                   " EmailUserID integer, Note text,".
+                   " Signed integer,".
+                   " index(EmailUserID))"); 
+
+  my $SignoffDependencyCreate = $dbh -> prepare("create table SignoffDependency ".
+                   "(SignoffDependencyID integer auto_increment primary key,".
+                   " SignoffID integer, PreSignoffID integer, ".
+                   " TimeStamp timestamp,".
+                   " index(SignoffID), index(PreSignoffID))"); 
+
+  my $EmailDocImmedCreate = $dbh -> prepare("create table EmailDocumentImmediate ".
+                   "(EmailDocumentImmediateID integer auto_increment primary key,".
+                   " EmailUserID integer, DocumentID integer, ".
+                   " TimeStamp timestamp,".
+                   " index(EmailUserID), index(DocumentID))"); 
+
+  $SessionAdd               -> execute();
+  $RevisionAdd              -> execute();
+  $RevisionAdd2             -> execute();
+  $KeywordDel               -> execute();
+  $SignoffCreate            -> execute();
+  $SignatureCreate          -> execute();
+  $SignoffDependencyCreate  -> execute();
+  $EmailDocImmedCreate      -> execute();
   
-#  my $KeywordGroupCreate = $dbh -> prepare("create table KeywordGroup ".
-#                   "(KeywordGroupID integer auto_increment primary key,".
-#                   " ShortDescription varchar(32), LongDescription text, TimeStamp timestamp)"); 
   
-#  my $KeywordCreate = $dbh -> prepare("create table Keyword ".
-#                   "(KeywordID integer auto_increment primary key,".
-#                   " KeywordGroupID integer,". 
-#                   " ShortDescription varchar(32), LongDescription text, TimeStamp timestamp,". 
-#                   " index(KeywordGroupID))"); 
-  
-#  my $KeywordGroupingCreate = $dbh -> prepare("create table KeywordGrouping ".
-#                   "(KeywordGroupingID integer auto_increment primary key,".
-#                   " KeywordGroupID integer, KeywordID integer, TimeStamp timestamp,".
-#                   " index(KeywordID), index(KeywordGroupID))"); 
-  
-  $SessionAdd            -> execute();
 }
 
 if ($Action eq "migrate") {
