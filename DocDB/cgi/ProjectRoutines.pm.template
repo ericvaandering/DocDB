@@ -78,7 +78,7 @@ sub ProjectFooter {
   print "<a href=\"$DocDBHome\">DocDB</a> ";
   print "Version $DocDBVersion, contact \n";
   print "<i>\n";
-  print "<A href=\"mailto:$WebMasterEmail\">$WebMasterName</A>\n";
+  print "<a href=\"mailto:$WebMasterEmail\">$WebMasterName</A>\n";
   print "</i>\n";
   print "</small><br/>\n";
   
