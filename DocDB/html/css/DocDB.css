@@ -52,7 +52,7 @@ h3 {font-size: 100%}
 #RightColumn3Col {
 	width: auto;
         max-width: 40%;
-        min-width: 16em;
+//        min-width: 16em;
 	background: #eee;
 	float: right;
         margin-bottom: 1em;
@@ -82,11 +82,11 @@ h3 {font-size: 100%}
     padding-left: 1em;
 }
 
-li.odd {
-  background: #fff;
+li.Odd {
+  background: #eee;
 }
 
-li.even {
-  background: #eee;
+li.Even {
+  background: #fff;
 }
 
