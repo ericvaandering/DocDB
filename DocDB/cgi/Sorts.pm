@@ -40,6 +40,10 @@ sub byInstitution {
 }    
 
 sub DocumentByRevisionDate {
+
+  require "DocumentSQL.pm";
+  require "RevisionSQL.pm";
+
   &FetchDocument($a);
   &FetchDocument($b);
   my $adr = &FetchDocRevision($a,$Documents{$a}{NVER});
