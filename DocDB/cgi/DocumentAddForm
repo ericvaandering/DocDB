@@ -36,13 +36,13 @@ if ($Special eq "othermeeting") {$OtherMeeting = 1;}
 if ($Meeting) {
  require "WebUtilities.pm";
  $mode = "add";
- @TopicDefaults = (&NearByMeeting);
+ @TopicDefaults = (&NearByMeeting); #FIXME: push onto pretopics 
 }
 
 if ($OtherMeeting) {
  $mode = "add";
  @PreTopics  = $query -> param('pretopic');
- @TopicDefaults = \@PreTopics;
+ @TopicDefaults = \@PreTopics; #FIXME: Not just for meetings
 }
 
 unless ($mode) { 
@@ -53,10 +53,7 @@ if ($mode ne "add"    && $mode ne "reserve" &&
   $mode = "reserve";
 }  
 
-$upload = $params{upload};
-if ($upload ne "http" && $upload ne "file") {
-  $upload = "file";
-}  
+&SetUploadMethod;
 
 $Archive       = $params{archive};
 $Overdate      = $params{overdate};
@@ -67,14 +64,8 @@ if ($Archive ne "archive" && $Archive ne "single") {
   $Archive = "single";
 }  
 
-unless ($topicmode) {
-  $topicmode = $params{topicmode};
-}
-if ($topicmode ne "single" && $topicmode ne "multi") {
-  $topicmode = "multi";
-}  
-
 &SetAuthorMode;
+&SetTopicMode;
 
 print $query->header;
 if      ($mode eq "add") {
@@ -204,15 +195,15 @@ unless ($Meeting || $OtherMeeting) {
 if ($mode eq "add" || $mode eq "update") {
   print "<tr><td colspan=3>\n";
   if ($Archive eq "archive") { 
-    if ($upload eq "file") {
+    if ($Upload eq "file") {
       &ArchiveUploadBox;
-    } elsif ($upload eq "http") {
+    } elsif ($Upload eq "http") {
       &ArchiveHTTPBox;
     }  
   } else {
-    if ($upload eq "file") {
+    if ($Upload eq "file") {
       &SingleUploadBox;
-    } elsif ($upload eq "http") {
+    } elsif ($Upload eq "http") {
       &SingleHTTPBox;
     }  
   }
@@ -241,11 +232,11 @@ unless ($Meeting || $OtherMeeting) {
   }
 }
 
-if ($topicmode eq "single") {
+if ($TopicMode eq "single") {
   print "<td>\n"; &TopicSelect;     print "</td>\n";
   print "</tr><tr>\n";
   print "<td colspan=1 valign=top>\n"; &SecurityList; print "</td>\n";
-} elsif ($topicmode eq "multi") {
+} elsif ($TopicMode eq "multi") {
   print "<td colspan=1 valign=top>\n"; &SecurityList; print "</td>\n";
   print "</tr><tr>\n";
   print "<td colspan=3 align=center>\n"; &MultiTopicSelect;     print "</td>\n";
