@@ -453,8 +453,8 @@ print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td>\n"; &MajorGatheringSelect(-disabled => true); print "</td>\n";
 print "<td>\n"; &ConferenceSelect(-disabled => true);     print "</td>\n";
+print "<td>\n"; &MajorGatheringSelect(-disabled => true); print "</td>\n";
 print "<td>\n";
  print "<table>\n";
  print "<tr valign=top>\n";
