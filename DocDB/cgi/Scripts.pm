@@ -27,7 +27,8 @@ sub HelpPopupScript {
   print "</script>\n";
 }
 
-sub HelpLink {
+sub HelpLink { # Change this, change FormElementTitle
+               # Eventually, replace with  FormElementTitle
   my ($helpterm) = @_;
   print " style=\"color: red\" href=\"Javascript:helppopupwindow(\'$DocDBHelp?term=$helpterm\');\">";
 }

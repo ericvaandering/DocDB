@@ -476,4 +476,34 @@ sub ReferenceForm {
   print "</table>\n";
 }
 
+sub FormElementTitle (%) {  
+  my (%Params) = @_;
+  
+  my $HelpLink  =   $Params{-helplink}  || "";
+  my $HelpText  =   $Params{-helptext}  || "";
+  my $ExtraText =   $Params{-extratext} || "";
+  my $Text      =   $Params{-text}      || "";
+  my $Required  =   $Params{-required}  || 0;
+
+  my $TitleText = "";
+
+  if ($HelpLink) {
+    $TitleText .= "<b><a style=\"color: red\" href=\"Javascript:helppopupwindow(\'$DocDBHelp?term=$HelpLink\');\">";
+    $TitleText .= "$HelpText:</a></b>";
+  } elsif ($Text) {
+    $TitleText .= "<b>$Text:</b>"; 
+  }
+  
+  if ($Required) {
+    $TitleText .= $RequiredMark;
+  } 
+   
+  if ($ExtraText) {
+    $TitleText .= "&nbsp;$ExtraText";
+  }  
+  $TitleText .= "<br/> \n";
+  
+  return $TitleText;
+}
+
 1;

@@ -38,6 +38,8 @@ sub AbstractBox (%) {
   my $HelpLink = $Params{-helplink} || "abstract";
   my $HelpText = $Params{-helptext} || "Abstract";
   my $Name     = $Params{-name}     || "abstract";
+  my $Columns  = $Params{-columns}  || 60;
+  my $Rows     = $Params{-rows}     || 6;
 
   if ($HelpLink) {
     print "<b><a ";
@@ -48,8 +50,8 @@ sub AbstractBox (%) {
     }  
     print "<br> \n";
   }  
-  print $query -> textarea (-name => $Name, -default => $AbstractDefault,
-                            -columns => 60, -rows => 6);
+  print $query -> textarea (-name    => $Name, -default => $AbstractDefault,
+                            -rows    => $Rows, -columns => $Columns);
 };
 
 sub RevisionNoteBox {
