@@ -24,11 +24,11 @@ sub MailNotices ($) {
     my $Title  = $DocRevisions{$DocRevID}{TITLE};
 
     $Headers{To} = \@Addressees;
-    $Headers{From} = "BTeV Document Database <$DBWebMasterEmail>";
+    $Headers{From} = "$Project Document Database <$DBWebMasterEmail>";
     $Headers{Subject} = "$FullID: $Title";
 
     $Mailer -> open(\%Headers);    # Start mail with headers
-    print $Mailer "The following document was added to the BTeV Document Database:\n\n";
+    print $Mailer "The following document was added or changed in the $Project Document Database:\n\n";
     &RevisionMailBody($DocRevID);  # Write the body
     $Mailer -> close;              # Complete the message and send it
     my $Addressees = join ', ',@Addressees;
