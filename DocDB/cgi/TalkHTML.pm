@@ -96,12 +96,14 @@ sub TalkEntryForm (@) {
     @TalkDefaultTopicHints  = ();
     @TalkDefaultAuthorHints = ();
     if (grep /n/,$SessionOrderID) { # Erase defaults
-      $TalkDefaultTime       = "00:30";
-      $TalkDefaultConfirmed  = "";
-      $TalkDefaultTitle      = "";
-      $TalkDefaultNote       = ""; 
-      $TalkSeparatorDefault  = "";
-      $TalkDefaultDocID      = "";
+      $TalkDefaultTime        = "00:30";
+      $TalkDefaultConfirmed   = "";
+      $TalkDefaultTitle       = "";
+      $TalkDefaultNote        = "";
+      $TalkSeparatorDefault   = "";
+      $TalkDefaultDocID       = "";
+      @TalkDefaultAuthorHints = ();
+      @TalkDefaultTopicHints  = ();
     } else { # Key off Meeting Order IDs, do differently for Sessions and Separators
       if ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
         my $SessionTalkID     = $SessionOrders{$SessionOrderID}{SessionTalkID};
@@ -262,8 +264,14 @@ sub TalkAuthors ($) {
     print "&nbsp;\n";
   } else { 
     if ($AuthorMode eq "field") {
+      unless (@TalkDefaultAuthorHints) {
+        $query -> param("authortext-$SessionOrderID","");
+      }  
       &AuthorTextEntry("authortext-$SessionOrderID",@TalkDefaultAuthorHints);
     } else {
+      unless (@TalkDefaultAuthorHints) {
+        $query -> param("authors-$SessionOrderID","");
+      }  
       &AuthorScroll(0,1,"authors-$SessionOrderID",@TalkDefaultAuthorHints);
     }
   } 
@@ -277,6 +285,9 @@ sub TalkTopics ($) {
   if ($TalkSeparatorDefault eq "Yes") {
     print "&nbsp;\n";
   } else {  
+    unless (@TalkDefaultTopicHints) {
+      $query -> param("topics-$SessionOrderID","");
+    }  
     &FullTopicScroll(1,"topics-$SessionOrderID",@TalkDefaultTopicHints);
   }
 }
