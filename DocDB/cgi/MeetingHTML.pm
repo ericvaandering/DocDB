@@ -181,12 +181,25 @@ sub SessionEntryForm ($@) {
   print "</table>\n";
 }
 
-sub SessionDateTimePullDown {
+sub SessionDateTimePullDown (;%) {
+  my %Params = @_;
+
+  my $Default = $Params{-default} || 0;
+
   my $DefaultYear,$DefaultMonth,$DefaultDay,$DefaultHour;
   my (undef,undef,undef,$Day,$Month,$Year) = localtime(time);
   $Year += 1900;
   if ($SessionDefaultDateTime) {
     my ($Date,$Time) = split /\s+/,$SessionDefaultDateTime;
+    my ($Year,$Month,$Day) = split /-/,$Date;
+    my ($Hour,$Minute,undef) = split /:/,$Time;
+    $Time = "$Hour:$Minute";
+    $DefaultYear  = $Year;
+    $DefaultMonth = $Month-1;
+    $DefaultDay   = int($Day);
+    $DefaultHour  = $Time;
+  } elsif
+    my ($Date,$Time) = split /\s+/,$Default;
     my ($Year,$Month,$Day) = split /-/,$Date;
     my ($Hour,$Minute,undef) = split /:/,$Time;
     $Time = "$Hour:$Minute";
