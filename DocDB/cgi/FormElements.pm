@@ -570,7 +570,14 @@ sub TextField (%) {
   my $Default   = $Params{-default}   || "";
   my $Size      = $Params{-size}      || 40;
   my $MaxLength = $Params{-maxlength} || 240;
+  my $Disabled  = $Params{-disabled}  || FALSE;
+    
+  my $Booleans = "";
   
+  if ($Disabled) {
+    $Booleans .= "-disabled";
+  }  
+
   my $ElementTitle = &FormElementTitle(-helplink  => $HelpLink , 
                                        -helptext  => $HelpText ,
                                        -extratext => $ExtraText,
@@ -579,7 +586,7 @@ sub TextField (%) {
                                        -required  => $Required );
   print $ElementTitle,"\n";                                     
   print $query -> textfield (-name => $Name, -default   => $Default, 
-                             -size => $Size, -maxlength => $MaxLength);
+                             -size => $Size, -maxlength => $MaxLength, $Booleans);
 } 
 
 sub TextArea (%) {  
