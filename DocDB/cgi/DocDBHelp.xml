@@ -714,4 +714,20 @@ Select the name of the conference.
   </text>
  </entry>
 
+ <entry>
+  <key>viewgroups</key>
+  <title>Groups who can view document</title>
+  <text>
+This is the list of groups who may view the document.
+  </text>
+ </entry>
+
+ <entry>
+  <key>modifygroups</key>
+  <title>Groups who can modify document</title>
+  <text>
+This is the list of groups who may modify the document.
+  </text>
+ </entry>
+
 </helpfile>

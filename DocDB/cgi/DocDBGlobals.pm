@@ -52,7 +52,7 @@ $HomeMaxDocs       = 50;       # Maximum number of documents on home page
 $MeetingWindow     = 7;        # Days before and after meeting to preselect
 $MeetingFiles      = 3;        # Number of upload boxes on meeting short form
 
-$EnchancedSecurity = 0;        # Separate lists for view, modify
+$EnhancedSecurity  = 0;        # Separate lists for view, modify
 $FirstYear         = 2000;     # Earliest year that documents can be created
 
 # Major topic names for "meetings" and "conferences". Each can be a list

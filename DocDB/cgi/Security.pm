@@ -72,13 +72,13 @@ sub CanModify { # Can the user modify (with current security) this document
   }   
   my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   my @ModifyGroupIDs = &GetRevisionModifyGroups($DocRevID);
-  if (@ModifyGroupIDs && $EnchancedSecurity) {
+#  if (@ModifyGroupIDs && $EnhancedSecurity) {
   
-  } else {
+#  } else {
     my $Access  = &CanAccess($DocumentID,$Version); 
     my $Create  = &CanCreate();
     $CanModify = $Access && $Create;
-  } 
+#  } 
   return $CanModify;
 }
 
