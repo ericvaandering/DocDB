@@ -14,6 +14,7 @@ require "Security.pm";
 require "MySQLAccess.pm";
 require "ResponseElements.pm";
 require "HTMLUtilities.pm";
+require "Sorts.pm";
 
 $query = new CGI;  # Global for subroutines
 print $query->header;
@@ -30,7 +31,9 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 print "<center><table cellpadding=3>\n";
 &DocumentSummary(0);
 
-foreach $document (@DocumentIDs) {
+my @SortedDocuments = reverse sort DocumentsByRevisionDate @DocumentIDs;
+
+foreach my $document (@SortedDocuments) {
   unless (&CanAccess($document,$Documents{$document}{NVER})) {next;}
   &DocumentSummary($document);
 }

@@ -39,4 +39,35 @@ sub byInstitution {
   $Institutions{$a}{SHORT} cmp $Institutions{$b}{SHORT};
 }    
 
+sub DocumentByRevisionDate {
+  &FetchDocument($a);
+  &FetchDocument($b);
+  my $adr = &FetchDocRevision($a,$Documents{$a}{NVER});
+  my $bdr = &FetchDocRevision($b,$Documents{$b}{NVER});
+  
+  $adt = $DocRevisions{$adr}{DATE};
+  $bdt = $DocRevisions{$bdr}{DATE};
+  
+  ($adate,$atime) = split /\s+/,$adt;
+  ($bdate,$btime) = split /\s+/,$bdt;
+  
+  ($ayear,$amonth,$aday) = split /\-/,$adate;
+  ($byear,$bmonth,$bday) = split /\-/,$bdate;
+  
+  ($ahour,$amin,$asec) = split /\-/,$atime;
+  ($bhour,$bmin,$bsec) = split /\-/,$btime;
+  
+   $ayear <=> $byear
+          or
+  $amonth <=> $bmonth 
+          or
+    $aday <=> $bday
+          or
+   $ahour <=> $bhour
+          or
+    $amin <=> $bmin 
+          or
+    $asec <=> $bsec;            
+}
+
 1;
