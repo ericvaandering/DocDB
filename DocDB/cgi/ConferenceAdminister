@@ -61,6 +61,8 @@ my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
 my $StartTime = timelocal(0,0,0,$StartDay,$ReverseAbrvMonth{$StartMonth}-1,$StartYear);
 my $EndTime   = timelocal(0,0,0,$EndDay,$ReverseAbrvMonth{$EndMonth}-1,$EndYear);
 
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
+
 unless ($dbh) {
   push @ErrorStack,$Msg_AdminNoConnect;
 }         
