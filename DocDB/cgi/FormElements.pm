@@ -127,6 +127,7 @@ sub AbstractBox {
 };
 
 sub SingleUploadBox {
+  my ($Mode) = @_;
   print "<table cellpadding=3>\n";
   print "<tr><td colspan=2><b><a ";
   &HelpLink("fileupload");
@@ -145,9 +146,14 @@ sub SingleUploadBox {
     print "<a "; &HelpLink("description"); print "<b>Description:</b></a>\n";
     print "</td>\n";
     print "<td>\n";
-    print $query -> textfield (-name => 'filedesc', -size => 60, 
-                               -maxlength => 128,
-                               -default => $DocFiles{$FileID}{DESCRIPTION});
+    if ($Mode eq "nodesc") {
+      print $query -> textfield (-name => 'filedesc', -size => 60, 
+                                 -maxlength => 128);
+    } else {
+      print $query -> textfield (-name => 'filedesc', -size => 60, 
+                                 -maxlength => 128,
+                                 -default => $DocFiles{$FileID}{DESCRIPTION});
+    }
     print $query -> checkbox(-name => "root", -checked => 'checked', 
                              -value => $i, -label => '');
     print "<a "; &HelpLink("main"); print "Main?</a>\n";
@@ -157,6 +163,7 @@ sub SingleUploadBox {
 };
 
 sub SingleHTTPBox {
+  my ($Mode) = @_;
   print "<table cellpadding=3>\n";
   print "<tr><td colspan=4><b><a ";
   &HelpLink("httpupload");
@@ -175,8 +182,14 @@ sub SingleHTTPBox {
     print "<a "; &HelpLink("description"); print "<b>Description:</b></a>\n";
     print "</td>\n";
     print "<td colspan=3>\n";
-    print $query -> textfield (-name => 'filedesc', -size => 60, -maxlength => 128,
-                               -default => $DocFiles{$FileID}{DESCRIPTION});
+    if ($Mode eq "nodesc") {
+      print $query -> textfield (-name => 'filedesc', -size => 60, 
+                                 -maxlength => 128);
+    } else {
+      print $query -> textfield (-name => 'filedesc', -size => 60, 
+                                 -maxlength => 128,
+                                 -default => $DocFiles{$FileID}{DESCRIPTION});
+    }
     print $query -> checkbox(-name  => "root", -checked => 'checked', 
                              -value => $i,     -label   => '');
     print "<a "; &HelpLink("main"); print "Main?</a>\n";
