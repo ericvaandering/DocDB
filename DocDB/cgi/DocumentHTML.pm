@@ -22,6 +22,7 @@
 
 sub DocumentTable (%) {
   require "DocumentSQL.pm";
+  require "RevisionSQL.pm";
   require "Security.pm";
   require "Sorts.pm";
   
@@ -59,6 +60,8 @@ sub DocumentTable (%) {
   } elsif ($SortBy eq "date") {
     foreach my $DocumentID (@DocumentIDs) {
       &FetchDocument($DocumentID);
+      my $Version  = $Documents{$DocumentID}{NVersions};
+      my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
     }
     @DocumentIDs = sort DocumentByRevisionDate @DocumentIDs; 
   }
