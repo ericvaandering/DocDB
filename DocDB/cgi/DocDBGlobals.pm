@@ -54,8 +54,8 @@ $Unzip  = "/usr/bin/unzip -q ";
 # Other Globals
 
 $remote_user = $ENV{REMOTE_USER};
-$DBWebMasterEmail = "ewv\@fnal.gov,garren\@fnal.gov";
-$DBWebMasterName  = "Eric Vaandering, Lynn Garren";
+$DBWebMasterEmail = "btev-docdb\@fnal.gov";
+$DBWebMasterName  = "BTeV Document Database Administrators";
 
 # Override settings in this file for the test DB 
 # and the publicly accessible version

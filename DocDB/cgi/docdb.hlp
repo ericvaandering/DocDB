@@ -24,14 +24,17 @@ document is stored on the document database webserver.)
 #
 uploadtype
 Upload Types
-You can upload three different types of documents. You can upload a single file,
-which is the default. Next, you can upload a document consisting of multiple
-files, such as PowerPoint and PDF by selecting "Multiple" and filling in the "#
-of files" option with the number of files you want to upload. Finally you can
-upload an archive file containing all the files in your document. However, only
-one of those files will be directly accessible. For example, use this option to
-upload a group of linked web pages. You can upload files in .tar, .tar.gz, .tgz,
-or .zip format.
+You can upload three different types of documents. 
+<ol>
+<li>You can upload a single file, which is the default. 
+<li>You can upload a document consisting of multiple files, such as PowerPoint
+and PDF by selecting "Multiple" and filling in the "# of files" option with the
+number of files you want to upload. 
+<li>You can upload an archive file containing all the files in your document.
+However, only one of those files will be directly accessible. For example, use
+this option to upload a group of linked web pages. You can upload files in
+.tar, .tar.gz, .tgz, or .zip format.
+</ol>
 #
 topicoption
 Topic Selection
@@ -96,7 +99,8 @@ pre-print numbers, journal references, etc. This field is optional.
 abstract
 Abstract
 Include here an abstract of your document. A short description of the topic(s)
-discussed. This is optional during the reservation stage.
+discussed. This is optional during the reservation stage, but required when
+adding or updating a document.
 #
 fileupload
 File upload
@@ -104,12 +108,16 @@ This field will upload a file from your local computer to the database server.
 Usually you will press the "Browse" button to select, from your local file
 system, the file to be uploaded. The base file name cannot contain a back slash
 "\" or a forward slash "/" to preserve compatibility with both Windows and
-Unix.
+Unix. 
+<p>
+You can also enter a short description of each file, which will appear in the
+summary of the document. The description is optional.
 #
 authors
 Authors
-Select all the authors of the document. Either click or CTRL-click on author
-names to add them to the list.
+Select all the authors of the document. To select multiple authors either click
+(Netscape 4.x) or CTRL-click (Netscape 6.x, Internet Explorer) on the author
+names.
 <p>
 To have a new author added to the database please contact the <a
 href="mailto:btev-docdb@fnal.gov">DocDB administrators</a> and supply the
@@ -118,20 +126,22 @@ persons full name, with initials if desired and their institution name.
 #
 topics
 Topics
-Select all the topics and subtopics for the document. Either click or CTRL-click
-on the topics to add them to the list.
+Select all the topics and subtopics for the document. To select multiple topics
+either click (Netscape 4.x) or CTRL-click (Netscape 6.x, Internet Explorer) on
+the topic names. Note that there are two ways to enter topics, either from one
+big long list or from several shorter lists.
 <p>
-To have a new subtopic added to the database please contact the <a
-href="mailto:btev-docdb@fnal.gov">DocDB administrators</a>. Tell us what subtopic
-you would like added and which major topic it should be place under.
+To have request that a new subtopic be added to the database please contact the
+<a href="mailto:btev-docdb@fnal.gov">DocDB administrators</a>. Tell us what
+subtopic you would like added and which major topic it should be place under.
 #
 security
 Security
 Select which username/password pairs you want to allow access to your document.
-To select more than one pair, either click or CTRL-click on them. You can make a
-document public by leaving all selections blank. Selecting "Public" doesn't
-actually do anything except generate a warning if you combine "Public" with
-another account.
+To select more than one pair, either click (Netscape 4.x) or CTRL-click
+(Netscape 6.x, Internet Explorer) on them. You can make a document public by
+leaving all selections blank. Selecting "Public" doesn't actually do anything
+except generate a warning if you combine "Public" with another name.
 <p>
 To have a new group added to the database please contact the <a
 href="mailto:btev-docdb@fnal.gov">DocDB administrators</a>. 
@@ -141,12 +151,15 @@ Document Type
 Select which kind of document this is. This has nothing to do with the format of
 the document. I.e. a PowerPoint file isn't <i>necessarily</i> a "Talk."
 <p>
-To have a new document type added to the database please contact the <a
-href="mailto:btev-docdb@fnal.gov">DocDB administrators</a>. 
+To have request that a new document type be added to the database please
+contact the <a href="mailto:btev-docdb@fnal.gov">DocDB administrators</a>. 
 #
 httpupload
 Upload by URL
-Enter a URL for your document. The file will be fetched from this URL and stored
-on the server. If the URL is password protected, enter the username and password
-for the URL here. The username and password are NOT saved.
+Enter a URL for your document. The file will be fetched from this URL and
+stored on the server. If the URL is password protected, enter the username and
+password for the URL here. The username and password are NOT saved.
+<p>
+You can also enter a short description of each file, which will appear in the
+summary of the document. The description is optional.
 
