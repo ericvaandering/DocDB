@@ -104,6 +104,29 @@ print "</td>";
 
 print "<tr>\n";
 
+# Keywords
+
+  print "<td>\n";
+  print "<ul>\n";
+  print "<li>by <a href=\"$ListKeywords\">keyword</a>\n";
+  print "</ul>\n";
+  print "</td>";
+
+# All Meetings
+
+print "<td>\n";
+if ($Public) {
+  print "&nbsp;\n";
+} else {
+  print "<ul>\n";
+  print "<li> from <a href=\"$ListAllMeetings\">all meetings</a>\n";
+  print "</ul>\n";
+}
+print "</td>";
+print "</tr>";
+
+print "<tr>\n";
+
 # Last Modified
 
 print "<td>\n";
@@ -122,19 +145,6 @@ print "</ul>\n";
 print "</td>";
 
 print "</tr>\n";
-
-# All Meetings
-#CRIPPLE print "<tr>\n";
-#CRIPPLE print "<td>\n";
-#CRIPPLE if ($Public) {
-#CRIPPLE   print "&nbsp;\n";
-#CRIPPLE } else {
-#CRIPPLE   print "<ul>\n";
-#CRIPPLE   print "<li> from <a href=\"$ListAllMeetings\">all meetings</a>\n";
-#CRIPPLE   print "</ul>\n";
-#CRIPPLE }
-#CRIPPLE print "</td>";
-#CRIPPLE print "</tr>";
 
 # Old number 
 
@@ -188,7 +198,8 @@ unless ($Public) {
   print "<li><b><a href=\"$EmailLogin\">Set E-mail notification</a></b>\n";
   print "<li><b><a href=\"$Statistics\">Get statistics</a></b>\n";
 if ($Project eq "Beams") {
-  print "<li><b><a href=\"/doc/\">keyword list</a></b>\n";
+  print "<li><b><a href=\"/cgi-bin/DocDB/RetrieveFile?docid=553\">Useful notes</a></b>\n";
+  print "<li><b><a href=\"$ListKeywords\">Keyword list</a></b>\n";
 }
   print "</ul>\n";
 

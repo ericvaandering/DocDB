@@ -156,10 +156,10 @@ foreach $EmailUserID (@EmailUserIDs) {
 #    $Mailer = new Mail::Mailer 'test', Server => $MailServer;
 
     $Headers{To} = $EmailUser{$EmailUserID}{EmailAddress};
-    $Headers{From} = "BTeV Document Database <$DBWebMasterEmail>";
-    $Headers{Subject} = "$Set changes to BTeV DocDB";
+    $Headers{From} = "$Project Document Database <$DBWebMasterEmail>";
+    $Headers{Subject} = "$Set changes to $Project DocDB";
     $Mailer -> open(\%Headers);    # Start mail with headers
-    print $Mailer "The following documents were added to the BTeV Document Database ";
+    print $Mailer "The following documents were added to the $Project Document Database ";
     if ($Set eq "Daily") {
       print $Mailer "yesterday:\n\n";
     } elsif ($Set eq "Weekly") {

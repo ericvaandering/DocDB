@@ -7,8 +7,11 @@
 #    Modified: 
 #
 
+use Benchmark;
 use CGI;
 use DBI;
+
+$StartTime = new Benchmark;
 
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
@@ -174,6 +177,8 @@ if ($SessionID) {
   $NavBarURL  = "$MeetingModify?conferenceid=$ConferenceID";
 }  
   
+$EndTime  = new Benchmark;
+
 &DocDBNavBar($NavBarText,$NavBarURL);
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  
