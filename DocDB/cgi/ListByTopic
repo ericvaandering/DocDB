@@ -226,7 +226,7 @@ sub PrintAgenda {
   
   my $agenda_find = $dbh -> prepare(
     "select MAX(DocRevID) from DocumentRevision ".
-    "where lower(DocumentTitle) like lower(\"nonagenda%\")"); 
+    "where lower(DocumentTitle) like lower(\"agenda%\")"); 
   
   $agenda_find -> execute();
   my ($DocRevID) = $agenda_find -> fetchrow_array;
