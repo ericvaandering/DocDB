@@ -111,6 +111,36 @@ sub PubInfoSearchBox { # Field and mode selecter for searches on PublicationInfo
   print "</td></tr>\n";
 };
 
+sub FileNameSearchBox { # Field and mode selecter for searches on Files
+  print "<tr><th align=right><a ";
+  &HelpLink("wordsearch");
+  print "File names:</a></th> \n";
+  print "<td>\n";
+  print $query -> textfield (-name      => 'filesearch', 
+                             -size      => 40, 
+                             -maxlength => 240);
+  print "</td>\n";
+  print "<td>\n";
+  print $query -> popup_menu (-name    => 'filesearchmode', 
+                              -values  => \%SearchModes);
+  print "</td></tr>\n";
+};
+
+sub DescriptionSearchBox { # Field and mode selecter for searches on Files
+  print "<tr><th align=right><a ";
+  &HelpLink("wordsearch");
+  print "File descriptions:</a></th> \n";
+  print "<td>\n";
+  print $query -> textfield (-name      => 'filedescsearch', 
+                             -size      => 40, 
+                             -maxlength => 240);
+  print "</td>\n";
+  print "<td>\n";
+  print $query -> popup_menu (-name    => 'filedescsearchmode', 
+                              -values  => \%SearchModes);
+  print "</td></tr>\n";
+};
+
 sub RequesterSearchBox { # Scrolling selectable list for requester search
   my @AuthorIDs = sort byLastName keys %Authors;
   my %AuthorLabels = ();

@@ -45,9 +45,14 @@ $KeywordSearch      = $params{keywordsearch};
 $KeywordSearchMode  = $params{keywordsearchmode};
 $PubInfoSearch      = $params{pubinfosearch};
 $PubInfoSearchMode  = $params{pubinfosearchmode};
+$FileSearch         = $params{filesearch};
+$FileSearchMode     = $params{filesearchmode};
+$FileDescSearch     = $params{filedescsearch};
+$FileDescSearchMode = $params{filedescsearchmode};
 
 @RequesterSearchIDs = split /\0/,$params{requestersearch};
 @AuthorSearchIDs    = split /\0/,$params{authors};
+@TypeSearchIDs         = split /\0/,$params{doctypemulti};
 
 @MinorSearchIDs = split /\0/,$params{minortopic};
 @MajorSearchIDs = split /\0/,$params{majortopic};
@@ -79,9 +84,7 @@ my @DocumentIDs = ();
 my @RevisionDocumentIDs = ();
 my @TopicDocumentIDs = ();
 
-my $SearchedRevisions;
-my $SearchedTopics;
-my $SearchedAuthors;
+my ($SearchedRevisions,$SearchedTopics,$SearchedAuthors,$SearchedFiles,$SearchedTypes);
 
 unless ($InnerLogic eq "AND" || $InnerLogic eq "OR") {
   push @error_stack,"Inner logic must be either AND or OR.";
@@ -95,10 +98,6 @@ if ((@error_stack)) {  # The user made one or more mistakes, warn and exit
 }
 
 print "<p>\n";
-#print "OL: $OuterLogic<br>\n";
-#print "IL: $InnerLogic<br>\n";
-#print "MIN: @MinorSearchIDs<br>\n";
-#print "MAJ: @MajorSearchIDs<br>\n";
 print "SQE: $SQLEnd <br>\n";
 print "SQB: $SQLBegin <br>\n";
 
@@ -175,7 +174,45 @@ if (@AuthorSearchIDs) {
   @AuthorDocumentIDs = &ValidateRevisions(@AuthorRevisions);
 }
 
+### Document types (if any)
 
+if (@TypeSearchIDs) {
+  $SearchedTypes = 1;
+  @TypeDocumentIDs = &TypeSearch("OR",@TypeSearchIDs);
+}
+
+### Files (if any)
+
+if ($FileSearch || $FileDescSearch) {
+  $SearchedFiles = 1;
+### Text search matches
+  my $FilePhrase        = &TextSearch("FileName",    $FileSearchMode,    $FileSearch);
+  my $DescriptionPhrase = &TextSearch("Description", $FileDescSearchMode,$FileDescSearch);
+
+### Get Revisions from DocumentFile that match
+
+  my @FilePhrases = ();
+  my $FileQuery   = "select DocRevID from DocumentFile where ";
+
+  if ($FilePhrase       ) {push @FilePhrases,$FilePhrase       ;}
+  if ($DescriptionPhrase) {push @FilePhrases,$DescriptionPhrase;}
+
+  $FileQuery .= join $OuterLogic,@FilePhrases;
+
+  my %FileDocumentIDs = ();
+  my @FileRevisions = ();
+  my $DocRevID;
+  my $revision_list = $dbh -> prepare($FileQuery);
+     $revision_list -> execute();
+     $revision_list -> bind_columns(undef, \($DocRevID));
+
+### List of revisions found at this stage
+
+  while ($revision_list -> fetch) {
+    push @FileRevisions,$DocRevID;
+  }
+  @FileDocumentIDs = &ValidateRevisions(@FileRevisions);
+} 
 
 ### Fetch all info for documents that match all criteria
 
@@ -183,6 +220,8 @@ if ($OuterLogic eq "OR") {
   push @DocumentIDs,@RevisionDocumentIDs;
   push @DocumentIDs,@TopicDocumentIDs;
   push @DocumentIDs,@AuthorDocumentIDs;
+  push @DocumentIDs,@FileDocumentIDs;
+  push @DocumentIDs,@TypeDocumentIDs;
 } elsif ($OuterLogic eq "AND") {
   my %TotalDocumentIDs = ();
   my $TotalSearches    = 0;
@@ -204,9 +243,21 @@ if ($OuterLogic eq "OR") {
     foreach $DocID (@AuthorDocumentIDs) {
       ++$TotalDocumentIDs{$DocID};
     }
+  }  
+  if ($SearchedFiles) {
+    ++$TotalSearches;
+    foreach $DocID (@FileDocumentIDs) {
+      ++$TotalDocumentIDs{$DocID};
+    }
+  } 
+  if ($SearchedTypes) {
+    ++$TotalSearches;
+    foreach $DocID (@TypeDocumentIDs) {
+      ++$TotalDocumentIDs{$DocID};
+    }
   } 
 
-## Which ones matched everyone
+### Which ones matched every search
 
   foreach $DocID (keys %TotalDocumentIDs) {
     if ($TotalDocumentIDs{$DocID} == $TotalSearches) {
@@ -214,6 +265,8 @@ if ($OuterLogic eq "OR") {
     }
   }    
 }
+
+### Get full info on matches
 
 foreach my $DocumentID (@DocumentIDs) { 
   &FetchDocument($DocumentID);

@@ -94,7 +94,7 @@ sub AuthorSearch {
   my @Revisions = ();
   my $DocRevID;
   
-  foreach $AuthorID (@AuthorIDs) {
+  foreach my $AuthorID (@AuthorIDs) {
     $revauthor_list -> execute($AuthorID);
     $revauthor_list -> bind_columns(undef, \($DocRevID));
     while ($revauthor_list -> fetch) {
@@ -112,6 +112,35 @@ sub AuthorSearch {
   }  
   
   return @Revisions;     
+}
+
+sub TypeSearch {
+  my $document_list;
+  my ($Logic,@TypeIDs) = @_;
+  $document_list = $dbh -> prepare("select DocumentID from Document where DocumentType=?"); 
+    
+  my %Documents = ();
+  my @Documents = ();
+  my $DocumentID;
+  
+  foreach my $TypeID (@TypeIDs) {
+    $document_list -> execute($TypeID);
+    $document_list -> bind_columns(undef, \($DocumentID));
+    while ($document_list -> fetch) {
+      ++$Documents{$DocumentID};
+    }
+  }
+  if ($Logic eq "AND") {
+    foreach $DocumentID (keys %Documents) {
+      if ($Documents{$DocumentID} == $#TypeIDs+1) { # Require a match for each topic
+        push @Documents,$DocumentID;
+      }
+    }
+  } elsif ($Logic eq "OR") {
+    @Documents = keys %Documents;
+  }  
+  
+  return @Documents;     
 }
 
 sub ValidateRevisions {

@@ -58,6 +58,8 @@ print "<center><table cellpadding=10 border=1>\n";
 print "<tr>\n";
  print "<td colspan=3 align=center>\n"; 
  print $query -> submit (-value => "Search for Documents");     
+ print "&nbsp;&nbsp;&nbsp;\n";
+ print $query -> reset (-value => "Reset Search Form");     
  print "</td>\n";
 print "</tr>\n";
 
@@ -75,6 +77,8 @@ print "<tr>\n";
    &AbstractSearchBox;    
    &KeywordsSearchBox;    
    &PubInfoSearchBox;    
+   &FileNameSearchBox;    
+   &DescriptionSearchBox;    
   print "</table>\n";
 
  print "</td>\n";
@@ -90,7 +94,7 @@ print "</tr>\n";
  print "<tr>\n";
 
   print "<td valign=top>\n";
-#  &DocTypeMulti;
+  &DocTypeMulti;
   print "</td>\n";
 
   print "<td valign=top colspan=2>\n";
@@ -112,6 +116,8 @@ print "</tr>\n";
  print "<tr>\n";
   print "<td colspan=3 align=center>\n"; 
   print $query -> submit (-value => "Search for Documents");     
+  print "&nbsp;&nbsp;&nbsp;\n";
+  print $query -> reset (-value => "Reset Search Form");     
   print "</td>\n";
  print "</tr>\n";
 
