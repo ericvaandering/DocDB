@@ -1,0 +1,31 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+use DBI;
+require "CGIInclude.pm";
+
+require "DocDBGlobals.pm";
+require "TopicSQL.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
+require "MailNotification.pm";
+require "Sorts.pm";
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+my $RevisionList = $dbh -> prepare("select DocRevID from DocumentRevision where Obsolete=0 and Keywords
+my $SecurityList = $dbh -> prepare("select RevSecurityID from RevisionSecurity where GroupID=5 and DocRevID=?");
+
+$RevisionList -> execute();
+$RevisionList -> bind_columns(undef, \($DocRevID));
+while ($RevisionList -> fetch) {
+  $SecurityList -> execute($DocRevID);
+  ($RevSecurityID) = $SecurityList -> fetchrow_array;
+  if ($RevSecurityID) {
+    print "Revision $DocRevID already protected.\n";
+  } else {
+    print "Revision $DocRevID needs protection.\n";
+  }
+}  
