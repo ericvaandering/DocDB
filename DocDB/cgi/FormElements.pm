@@ -46,28 +46,54 @@ sub SingleHTTPBox {
 };
 
 sub RequesterSelect { # Scrolling selectable list for requesting author
+  my @AuthorIDs = sort byLastName keys %Authors;
+  my %AuthorLabels = ();
+  my @ActiveIDs = ();
+  foreach my $ID (@AuthorIDs) {
+    if ($Authors{$ID}{ACTIVE}) {
+      $AuthorLabels{$ID} = $Authors{$ID}{FULLNAME};
+      push @ActiveIDs,$ID; 
+    } 
+  }  
   print "<b><a ";
   &HelpLink("requester");
   print "Requester:</a></b><br> \n";
-  print $query -> scrolling_list(-name => "requester", -values => \%names, -size
-  => 15,                         -default => $RequesterDefault);
+  print $query -> scrolling_list(-name => "requester", -values => \@ActiveIDs, 
+                                 -size => 15, -labels => \%AuthorLabels,                      
+                                 -default => $RequesterDefault);
 };
 
 sub AuthorSelect { # Scrolling selectable list for authors
+  my @AuthorIDs = sort byLastName keys %Authors;
+  my %AuthorLabels = ();
+  my @ActiveIDs = ();
+  foreach my $ID (@AuthorIDs) {
+    if ($Authors{$ID}{ACTIVE}) {
+      $AuthorLabels{$ID} = $Authors{$ID}{FULLNAME};
+      push @ActiveIDs,$ID; 
+    } 
+  }  
   print "<b><a ";
   &HelpLink("authors");
   print "Authors:</a></b><br> \n";
-  print $query -> scrolling_list(-name => "authors", -values => \%names, 
+  print $query -> scrolling_list(-name => "authors", -values => \@ActiveIDs, 
+                                 -labels => \%AuthorLabels,
                                  -size => 15, -multiple => 'true',
                                  -default => @AuthorDefaults);
 };
 
 
 sub TopicSelect { # Scrolling selectable list for topics
+  my @TopicIDs = sort byTopic keys %FullTopics;
+  my %TopicLabels = ();
+  foreach my $ID (@TopicIDs) {
+    $TopicLabels{$ID} = $FullTopics{$ID}; # FIXME: get rid of FullTopics
+  }  
   print "<b><a ";
   &HelpLink("topics");
   print "Topics:</a></b><br> \n";
-  print $query -> scrolling_list(-name => "topics", -values => \%FullTopics, 
+  print $query -> scrolling_list(-name => "topics", -values => \@TopicIDs, 
+                                 -labels => \%TopicLabels,
                                  -size => 15, -multiple => 'true',
                                  -default => @TopicDefaults);
 };

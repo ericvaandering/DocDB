@@ -8,6 +8,7 @@ use DBI;
 
 require "FormElements.pm";
 require "Scripts.pm";
+require "Sorts.pm";
 require "MySQLAccess.pm";
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
@@ -36,14 +37,12 @@ if ($upload ne "http" && $upload ne "file") {
 print $query->header;
 if      ($mode eq "add") {
   &BTeVHeader("BTeV Document Addition","Document Addition");
-#  print $query->start_html(-title=>"BTeV Document Addition");
 } elsif ($mode eq "reserve") {
   &BTeVHeader("BTeV Document Reservation","Document Reservation");
-#  print $query->start_html(-title=>"BTeV Document Reservation");
 } elsif ($mode eq "update" || $mode eq "updatedb") {
   &BTeVHeader("BTeV Document Update","Document Update");
-  print $query->start_html(-title=>"BTeV Document Update");
 }
+
 my $DocumentID;
 if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
   $DocumentID = $params{docid};

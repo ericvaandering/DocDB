@@ -50,7 +50,7 @@ foreach $document (@DocumentIDs) {
   print "<td>$full_docid </td>\n";
   print "<td align=center>$Documents{$document}{NVER} </td>\n";
   print "<td>$title</td>\n";
-  print "<td>$names{$Documents{$document}{REQUESTER}}</td>\n";
+  print "<td>$Authors{$Documents{$document}{REQUESTER}}{FULLNAME}</td>\n";
   print "<td>\n";
   foreach $file (@{$Files_ref}) {
     $link = &FileLink($document,$Documents{$document}{NVER},$DocFiles{$file}{NAME});

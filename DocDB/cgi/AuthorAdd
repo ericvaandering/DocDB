@@ -10,6 +10,7 @@ require "ResponseElements.pm";
 require "MySQLAccess.pm";
 require "DocDBGlobals.pm";
 require "Security.pm";
+require "HTMLUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
@@ -17,7 +18,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 %params = $query -> Vars;
 
 print $query->header;
-print $query->start_html(-title=>"BTeV Author Addition Results");
+&BTeVStyle("Author Addition Results");
 
 print "<p><h3>Here are the results of your attempt to add an author
                 to the BTeV document database:</h3><p>\n";
@@ -44,5 +45,5 @@ my $AuthorID = $author_insert -> {mysql_insertid}; # Works with MySQL only
                            
 print "You were successful. The author you added is number <b>$AuthorID</b><br>\n"; 
 
-print $query->end_html;
+&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
 
