@@ -78,9 +78,48 @@ sub CanModifyMeeting ($) {
     return 0; # The public and those who can't create meetings can't modify meetings
   }  
   
-  my $CanModifyMeeting = &CanAccessMeeting();
-  return $CanModifyMeeting;
+  my $CanModifyMeeting = 0;
+
+  # Find out group IDs of those who can modify this meeting and of the
+  # current user
   
+  my @MeetingGroupIDs = &GetMeetingModifyGroups($ConferenceID);
+  
+  unless (@MeetingGroupIDs) { # There are no entries, so meeting 
+    $CanModifyMeeting = 1;    # modifiable by all
+    return $CanModifyMeeting;
+  }
+    
+  my $SecurityGroupID = &FetchSecurityGroupByName($remote_user);
+
+  foreach my $MeetingGroupID (@MeetingGroupIDs) {
+    if ($SecurityGroupID == $MeetingGroupIDs) {
+      $CanModifyMeeting = 1;
+    }  
+  }
+
+  if ($CanModifyMeeting || !($SuperiorsCanModify)) {
+    return $CanModifyMeeting; # Either approved or can't be anymore
+  }  
+
+  # If not approved yet, see if they are the parent to a group that is
+
+  &GetAllSecurityGroups(); # Pull out the big guns
+  
+  my @HierarchyIDs = keys %GroupsHierarchy;
+  foreach my $HierarchyID (@HierarchyIDs) {
+    $ParentID = $GroupsHierarchy{$HierarchyID}{Parent}; 
+    $ChildID  = $GroupsHierarchy{$HierarchyID}{Child}; 
+    if ($ParentID == $SecurityGroupID) { # I am the parent
+      foreach my $MeetingGroupID (@MeetingGroupIDs) { 
+        if ($MeetingGroupID eq $ChildID) {
+          $CanModifyMeeting = 1;                           
+        }  
+      }
+    }  
+  }
+
+  return $CanModifyMeeting;
 }
 
 sub CanCreateMeeting { # Is the user allowed to create a new meeting?

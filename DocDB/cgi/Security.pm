@@ -186,59 +186,6 @@ sub CanAdminister { # Can the user administer the database
   return $Administer;
 }
 
-# The Meeting security routines are very simple for the time being
-
-sub CanAccessMeeting ($) {
-  my ($ConferenceID) = @_;
-  
-#  print "CAM: $ConferenceID<br>\n";
-  my $CanAccess = 0;
-  
-  unless ($Public) {
-    $CanAccess = 1;
-  }
-  
-  unless ($ConferenceID) {
-    $CanAccess = 0;
-  }
-  
-#  print "CA: $CanAccess<br>\n";
-  return $CanAccess;
-}
-
-sub CanModifyMeeting ($) {
-  my ($ConferenceID) = @_;
-  
-#  print "CMM: $ConferenceID<br>\n";
-  
-  my $CanModify = 0;
-  
-  if (&CanCreate && $ConferenceID) {
-    $CanModify = 1;
-  }
-  
-  if ($Public) {
-    $CanModify = 0;
-  }
-  
-  return $CanModify;
-}  
-
-sub CanCreateMeeting {
-
-  my $CanCreate = 0;
-  
-  if (&CanCreate) {
-    $CanCreate = 1;
-  }
-  
-  if ($Public) {
-    $CanCreate = 0;
-  }
-  
-  return $CanCreate;
-}  
-
 sub LastAccess { # Highest version user can access (with current security)
   require "DocumentSQL.pm";
   my ($DocumentID) = @_;

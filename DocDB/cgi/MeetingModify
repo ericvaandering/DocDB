@@ -40,6 +40,8 @@ require "Security.pm";
 require "MeetingHTML.pm";
 require "SecurityHTML.pm";
 require "MeetingSQL.pm";
+require "MeetingSecuritySQL.pm";
+require "MeetingSecurityUtilities.pm";
 require "TopicSQL.pm";
 require "WebUtilities.pm";
 
@@ -68,7 +70,7 @@ my $URL                = $params{url};
 my $ShowAllTalks       = $params{meetshowall};
 
 my @MeetingViewGroupIDs   = split /\0/,$params{meetingviewgroups};
-my @MeetingModifyGroupIDs = split /\0/,$params{meetingviewgroups};
+my @MeetingModifyGroupIDs = split /\0/,$params{meetingmodifygroups};
 
 my @SessionYears         = split /\0/,$params{sessionyear};
 my @SessionMonths        = split /\0/,$params{sessionmonth};
@@ -254,7 +256,12 @@ if ($Mode eq "create" || $Mode eq "modify") {
     ++$MeetingsUpdated;
   }
 
-  # Call view/modify groups updater (delete/insert)
+  &MeetingSecurityUpdate(-mode         => 'access',
+                         -conferenceid => $ConferenceID, 
+                         -groupids     => \@MeetingViewGroupIDs);
+  &MeetingSecurityUpdate(-mode         => 'modify',
+                         -conferenceid => $ConferenceID, 
+                         -groupids     => \@MeetingModifyGroupIDs);
 
 # Repack check boxes into hashes
 

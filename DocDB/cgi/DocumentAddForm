@@ -155,6 +155,8 @@ if ($mode eq "update") {
 }
 
 my $SignoffsDefault; # FIXME: What other ones needn't be global?
+my @SecurityDefaults = ();
+my @ModifyDefaults   = ();
 
 if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
   $DocRevID            = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
@@ -415,9 +417,26 @@ unless ($Meeting || $OtherMeeting) {
     print "<td>\n"; &AuthorManual;    print "</td>\n";
   }
 }
-print "<td colspan=1 valign=top>\n"; &ViewList; print "</td>\n";
+print "<td colspan=1 valign=top>\n"; 
+my $SecurityText;
 if ($EnhancedSecurity) {
-  print "<td colspan=1 valign=top>\n"; &ModifyList;   print "</td>\n";
+  $SecurityText = "View";
+} else {
+  $SecurityText = "Security";
+}
+&SecurityList(-addpublic => 'true',
+              -name      => 'security', 
+              -helplink  => 'security',
+              -helptext  => $SecurityText,
+              -default   => \@SecurityDefaults);
+print "</td>\n";
+if ($EnhancedSecurity) {
+  print "<td colspan=1 valign=top>\n"; 
+  &SecurityList(-name      => 'modify', 
+                -helplink  => 'modifygroups',
+                -helptext  => 'Modify',
+                -default   => \@ModifyDefaults);
+  print "</td>\n";
 }
 print "</tr>\n";
 

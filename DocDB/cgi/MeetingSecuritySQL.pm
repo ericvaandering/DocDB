@@ -103,4 +103,38 @@ sub FetchMeetingModifyGroup ($) {
   }  
 }  
 
+sub MeetingSecurityUpdate (%) {  
+  my (%Params) = @_;
+  
+  my $Mode         =   $Params{-mode};
+  my $ConferenceID =   $Params{-conferenceid} || 0;
+  my @GroupIDs     = @{$Params{-groupids}};
+  
+  my $Table;
+  my $Success = 0;
+     
+  if ($Mode eq "access") {  
+    $Table = "MeetingSecurity";
+  } elsif ($Mode eq "modify") {
+    $Table = "MeetingModify";
+  }
+  
+  my $IDField = $Table."ID";
+  
+# Delete old settings, insert new ones  
+  
+  if ($Table && $ConferenceID) {
+    my $Delete = $dbh -> prepare("delete from $Table where ConferenceID=?");
+    my $Insert = $dbh -> prepare("insert into $Table ($IDField,ConferenceID,GroupID) values (0,?,?)");
+    $Delete -> execute($ConferenceID);
+    foreach my $GroupID (@GroupIDs) {
+      $Insert -> execute($ConferenceID,$GroupID);
+    }
+    $Success = 1;  
+  } 
+  
+  return $Success;
+}
+
+
 1;

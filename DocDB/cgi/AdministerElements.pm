@@ -52,7 +52,7 @@ sub AdministratorPassword {
   print $query -> password_field(-name => "password", -size => 12, -maxlength => 12);
 };
 
-sub ParentSelect {
+sub ParentSelect { #FIXME: Replace with SecurityList
   require "Scripts.pm";
 
   my @GroupIDs = keys %SecurityGroups;
@@ -74,7 +74,7 @@ sub ParentSelect {
                                  -default => \@SecurityDefaults);
 };
 
-sub ChildSelect {
+sub ChildSelect {  #FIXME: Replace with SecurityList
   require "Scripts.pm";
   my @GroupIDs = keys %SecurityGroups;
   my %GroupLabels = ();
