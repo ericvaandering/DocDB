@@ -87,7 +87,7 @@ sub AddDocument {
                              -viewids   => \@ViewIDs,
                              -modifyids => \@ModifyIDs);
     @FileIDs = &AddFiles(-docrevid  => $DocRevID, -datetime => $DateTime, -files => \%Files);
-  
+  }
   
   return $DocumentID;                                 
 
