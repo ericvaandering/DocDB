@@ -35,6 +35,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
   my $ConferenceAdd2 = $dbh -> prepare("alter table Conference add Title varchar(128)"); 
   my $ConferenceAdd3 = $dbh -> prepare("alter table Conference add Epilogue text"); 
   my $ConferenceUpd  = $dbh -> prepare("alter table Conference modify URL varchar(240)"); 
+  my $JournalUpd     = $dbh -> prepare("alter table Journal    modify URL varchar(240)"); 
 
   my $SessSepCreate = $dbh -> prepare("create table SessionSeparator ".
                    "(SessionSeparatorID integer auto_increment primary key,".
@@ -86,6 +87,8 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
   $ConferenceAdd    -> execute();
   $ConferenceAdd2   -> execute();
   $ConferenceAdd3   -> execute();
+  $ConferenceUpd    -> execute();
+  $JournalUpd       -> execute();
   $SessSepCreate    -> execute();
   $MeetOrdCreate    -> execute();
   $SessionCreate    -> execute();
