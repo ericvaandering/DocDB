@@ -1,14 +1,15 @@
 sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with all authors
   my ($GroupID,$Name,$Description,$Timestamp);
   my $group_list  = $dbh -> prepare(
-     "select GroupID,Name,Description,Timestamp from SecurityGroup"); 
+     "select GroupID,Name,Description,CanCreate,Timestamp from SecurityGroup"); 
   $group_list -> execute;
-  $group_list -> bind_columns(undef, \($GroupID,$Name,$Description,$Timestamp));
+  $group_list -> bind_columns(undef, \($GroupID,$Name,$Description,$CanCreate,$Timestamp));
   %SecurityGroups = ();
   while ($group_list -> fetch) {
     $SecurityGroups{$GroupID}{GROUPID}     = $GroupID;
     $SecurityGroups{$GroupID}{NAME}        = $Name;
     $SecurityGroups{$GroupID}{DESCRIPTION} = $Description;
+    $SecurityGroups{$GroupID}{CanCreate}   = $CanCreate;
     $SecurityGroups{$GroupID}{TIMESTAMP}   = $Timestamp;
     $SecurityIDs{$Name} = $GroupID;
   }
