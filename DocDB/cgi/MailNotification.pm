@@ -23,6 +23,7 @@ sub MailNotices (%) {
   require "NotificationSQL.pm";
   require "ResponseElements.pm";
   require "Utilities.pm";
+  require "Security.pm";
   
   my (%Params) = @_;
 
@@ -31,7 +32,9 @@ sub MailNotices (%) {
   my @EmailUserIDs = @{$Params{-emailids}};
   
   &FetchDocRevisionByID($DocRevID);
-
+  my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+  my $Version    = $DocRevisions{$DocRevID}{Version};
+  
 # Figure out who cares 
 
   my @Addressees = ();
@@ -166,6 +169,10 @@ sub UsersToNotify ($$) {
 
   &GetTopics;
 
+  &FetchDocRevisionByID($DocRevID);
+  my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+  my $Version    = $DocRevisions{$DocRevID}{Version};
+
   my $UserID;
   my $Table;
   my %UserIDs = (); # Hash to make user IDs unique (one notification per person)
@@ -267,11 +274,12 @@ sub UsersToNotify ($$) {
     }
   }  
 
-# Translate UserIDs into E-mail addresses
+# Translate UserIDs into E-mail addresses, 
+# verify user is allowed to receive notification
    
   foreach $UserID (keys %UserIDs) {
     my $EmailUserID = &FetchEmailUser($UserID);
-    if ($EmailUserID) {
+    if ($EmailUserID && &CanAccess($DocumentID,$Version,$EmailUserID)) {
       my $Name         = $EmailUser{$UserID}{Name}        ; # FIXME: TRYME: Have to use UserID as index for some reason
       my $EmailAddress = $EmailUser{$UserID}{EmailAddress};
       if ($EmailAddress) {

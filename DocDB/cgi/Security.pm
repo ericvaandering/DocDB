@@ -22,8 +22,8 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-sub CanAccess { # Can the user access (with current security) this version
-  my ($DocumentID,$Version) = @_;
+sub CanAccess ($;$$) { # Can the user access (with current security) this version
+  my ($DocumentID,$Version,$EmailUserID) = @_;
 
   require "RevisionSQL.pm";
   require "SecuritySQL.pm";
@@ -40,9 +40,15 @@ sub CanAccess { # Can the user access (with current security) this version
   my @GroupIDs = &GetRevisionSecurityGroups($DocRevID);
   unless (@GroupIDs) {return 1;}             # Public documents
 
-# See what group(s) current user belongs to
+# See what group(s) current (or assumed) user belongs to
 
-  my @UsersGroupIDs = &FindUsersGroups();
+  my @UsersGroupIDs = ();
+
+  if ($EmailUserID) {
+    @UsersGroupIDs = &FetchUserGroupIDs($EmailUserID);
+  } else {
+    @UsersGroupIDs = &FindUsersGroups();
+  }  
     
 # See if current user is in the list of groups who can access this document
 

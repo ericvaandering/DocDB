@@ -94,8 +94,8 @@ if ($CertificateStatus eq "verified") {
 ### Fill in DB tables
 
   my $UserInsert = $dbh -> prepare(
-      "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Verified) ".
-      "            values (0,?,?,?,0)");
+      "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Verified,Password) ".
+      "            values (0,?,?,?,0,'x')");
      $UserInsert -> execute($UserName,$CertCN,$CertEmail);
   my $EmailUserID = $UserInsert -> {mysql_insertid}; # Works with MySQL only
   
