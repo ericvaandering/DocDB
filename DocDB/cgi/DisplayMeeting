@@ -23,15 +23,23 @@ require "TalkHintUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 
-print $query -> header;
-&DocDBHeader("Meeting Talks");
-&TalkNotePopupScript;
-
 %params = $query -> Vars;
 
 my $SessionID          = $params{sessionid};
 my $SessionSeparatorID = $params{sessionseparatorid};
 my $ConferenceID       = $params{conferenceid};
+
+print $query -> header;
+
+if ($SessionID ) {
+  &DocDBHeader("Session and Talks");
+} elsif ($SessionSeparatorID) {
+  &DocDBHeader("Break Information");
+} else {  
+  &DocDBHeader("Meeting and Talks");
+}  
+
+&TalkNotePopupScript;
 
 @ErrorStack = ();
 @WarnStack  = ();

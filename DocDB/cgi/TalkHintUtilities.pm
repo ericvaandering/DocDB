@@ -8,6 +8,7 @@ sub ReHintTalksBySessionID ($) {
   require "TopicSQL.pm";
   require "AuthorSQL.pm";
   require "TalkHintSQL.pm";
+  require "Utilities.pm";
   
   my $DocRevID,$DocumentID;
   my %DocumentIDs = (); 
@@ -68,7 +69,7 @@ sub ReHintTalksBySessionID ($) {
 
   # Get unique document IDs
 
-  my @DocumentIDs = keys %DocumentIDs;
+  my @DocumentIDs = sort keys %DocumentIDs;
   
   # Remove documents already confirmed with a conference
   
@@ -77,10 +78,11 @@ sub ReHintTalksBySessionID ($) {
   $ConfirmedList -> execute();
   $ConfirmedList -> bind_columns(undef, \($DocumentID));
   while ($ConfirmedList -> fetch) {
-    $ConfirmedDocumentIDs{$DocumentID}
+    $ConfirmedDocumentIDs{$DocumentID} = 1;
   }
-  my @ConfirmedDocumentIDs = keys %ConfirmedDocumentIDs;
-  @DocumentIDs = &RemoveArray(\@DocumentIDs,@ConfirmedDocumentIDs);
+  my @ConfirmedDocumentIDs = sort keys %ConfirmedDocumentIDs;
+  
+  @DocumentIDs = sort &RemoveArray(\@DocumentIDs,@ConfirmedDocumentIDs);
   
   # Convert to revisions (latest versions only)
 
