@@ -29,6 +29,7 @@ require "DocDBGlobals.pm";
 require "Messages.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
+require "SecuritySQL.pm";
 
 require "CertificateUtilities.pm";
 
@@ -112,8 +113,22 @@ if ($CertificateStatus eq "verified") {
 ### Notify applicant and administrator
   if ($MailInstalled) {
     require "EmailUtilities.pm";
-    my @To = ("ewv\@fnal.gov");
-    &SendEmail(-body => 'Test message', -to => \@To);
+    my @To      = ($DBWebMasterEmail);
+    my $Subject = "$CertCN requests access to $Project DocDB";
+    my $Body    = "$CertCN with e-mail address $CertEmail has requested ";
+    $Body      .= "access to $Project DocDB. ";
+    $Body      .= "He or she requests membership in the following groups:\n";
+    foreach my $GroupID (@RequestedGroupIDs) {
+      &FetchSecurityGroup($GroupID);
+      $Body .= $SecurityGroups{$GroupID}{NAME}."\n";
+    }  
+    $Body .= "\n";
+    $Body .= "If this is correct, please visit $EmailAdministerForm, ";
+    $Body .= "select \"Modify\", select the user, check \"Verify\", and click to Submit.\n\n";
+    $Body .= "If the groups are not correct, select the correct groups before clicking Submit ";
+    
+    
+    &SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
   }    
 
 }

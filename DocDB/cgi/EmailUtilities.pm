@@ -30,7 +30,7 @@ sub SendEmail (%) {
   print "Sending mail to: ",@Addressees,"<br>\n";
 
   $Headers{To}      = \@Addressees;
-  $Headers{From}    = $Params{-from} || "$Project Document Database <$DBWebMasterEmail>";
+  $Headers{From}    = $Params{-from}    || "$Project Document Database <$DBWebMasterEmail>";
   $Headers{Subject} = $Params{-subject} || "Message from $Project DocDB";
 
   my $Body          = $Params{-body} || "";
