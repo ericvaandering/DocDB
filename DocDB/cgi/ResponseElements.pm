@@ -270,32 +270,6 @@ sub NewDocumentLink ($;$$) { # FIXME: Make this the default
   return $Link;
 }         
   
-sub NewerDocumentLink (%) { # FIXME: Make this the default
-  require "DocumentSQL.pm";
-  require "RevisionSQL.pm";
-  
-  my %Params = @_;
-  
-  my $DocumentID = $Params{-docid};
-  my $DocIDOnly  = $Params{-docidonly};
-    
-  &FetchDocument($DocumentID);
-  my $Version      = $Documents{$DocumentID}{NVersions};
-
-  my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-  unless ($DocRevID) {
-    return "";
-  }
-    
-  my $Link = "<a href=\"$ShowDocument\?docid=$DocumentID";
-  $Link .= "\">"; 
-
-  $Link .= $DocumentID;
-
-  $Link .=  "</a>";
-  return $Link;
-}         
-
 sub DocumentURL {
   my ($DocumentID,$Version) = @_;
   my $URL;

@@ -40,8 +40,11 @@ $StartTime = new Benchmark;
 require "DocDBGlobals.pm";
 
 require "SignoffSQL.pm";
+require "NotificationSQL.pm";
 
 require "ResponseElements.pm";
+require "DocumentHTML.pm";
+
 require "HTMLUtilities.pm";
 require "RevisionUtilities.pm";
 require "SignoffUtilities.pm";
@@ -58,11 +61,12 @@ my $EmailUserID = $params{emailuserid};
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
+&FetchEmailUser($EmailUserID);
 
 ### Start HTML
 
 print $query->header;
-&DocDBHeader("Signature Report for ....");
+&DocDBHeader("Signature Report for $EmailUser{$EmailUserID}{Name}");
 
 &EndPage(@ErrorStack);
 
@@ -119,9 +123,44 @@ foreach my $DocumentID (@OldSignatureDocumentIDs) {
   push @DebugStack,"OldSignature: $DocumentID";    
 }
     
-print "<p><b>Number of documents found: $NumDoc</b><p>\n";
-
 &DebugPage("End of list");
+
+if (@ReadyDocumentIDs) {
+  print "<center><h4>Documents ready to be signed by $EmailUser{$EmailUserID}{Name}:</h4></center><p>\n";
+
+  &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
+                 -docids => \@ReadyDocumentIDs, -sortby => "date", -reverse => true);
+}
+
+if (@NotReadyDocumentIDs) {
+  print "<center><h4>Documents requiring a future signature by $EmailUser{$EmailUserID}{Name}:</h4></center><p>\n";
+
+  &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
+                 -docids => \@NotReadyDocumentIDs, -sortby => "date", -reverse => true);
+}
+
+if (@SignedDocumentIDs) {
+  print "<center><h4>Documents signed by $EmailUser{$EmailUserID}{Name}, but not approved:</h4></center><p>\n";
+
+  &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
+                 -docids => \@SignedDocumentIDs, -sortby => "date", -reverse => true);
+}
+
+if (@ApprovedDocumentIDs) {
+  print "<center><h4>Approved documents signed by $EmailUser{$EmailUserID}{Name}:</h4></center><p>\n";
+
+  &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
+                 -docids => \@ApprovedDocumentIDs, -sortby => "date", -reverse => true);
+}
+
+
+if (@OldSignatureDocumentIDs) {
+  print "<center><h4>Previous versions of these documents needed to be signed by $EmailUser{$EmailUserID}{Name}:</h4></center><p>\n";
+
+  &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
+                 -docids => \@OldSignatureDocumentIDs, -sortby => "date", -reverse => true);
+}
+
 
 $EndTime  = new Benchmark;
 
