@@ -29,7 +29,7 @@ $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass
 %params = $query -> Vars;
 
 print $query->header;
-&DocDBHeader("BTeV File Addition Results","File Addition Results"); #FIXME
+&DocDBHeader("$Project File Addition Results","File Addition Results"); 
 
 ### Check parameters for errors
 

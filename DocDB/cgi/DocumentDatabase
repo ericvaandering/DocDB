@@ -12,6 +12,9 @@ require "SecuritySQL.pm";
 require "Security.pm";
 require "Scripts.pm";
 require "ResponseElements.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
+require "Sorts.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -22,14 +25,14 @@ $RobotsMeta = "all";
 # %params = $query -> Vars;  # No parameters (yet?) 
 
 print $query->header;
-&DocDBHeader("BTeV Document Database","Document Database");
+&DocDBHeader("$Project Document Database","Document Database");
 
 &HelpPopupScript;
 
 if ($Public) {
   print "<p><center><h4>\n";
-  print "Welcome to the public portion of the BTeV Document Database,<br>
-         the repository for all BTeV public talks, proceedings, preprints, 
+  print "Welcome to the public portion of the $Project Document Database,<br>
+         the repository for all $Project public talks, proceedings, preprints,
          and publications.\n";
   print "</h4></center>\n";
 }
@@ -49,7 +52,7 @@ print "<li><b><a href=\"$SearchForm\">Search</a> documents</b><p>\n";
 print "<li>"; 
 print $query -> startform('POST',$ShowDocument);
 print $query -> submit (-value => "Show");
-print " <b>BTeV-doc-#</b> "; 
+print " <b>$Project-doc-#</b> "; 
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 print " <b>-v</b> "; 
 print $query -> textfield(-name => "version", -size => 3, -maxlength => 3);
@@ -121,23 +124,28 @@ if ($Public) {
 }
 print "</td>";
 
-print "<tr>\n";
+print "</tr>\n";
 
 # Old number 
 
-print "<td colspan=2>\n";
-print "<ul>\n";
-if ($Public) {
-  print "<li> by old number
-        <a href=\"$web_root/Static/Public/OldDBTranslation.shtml\">like
-         BTeV-pub-year/xx</a>. \n";
-} else {
-  print "<li> by old number like
-         <a href=\"$web_root/Static/Restricted/OldDBTranslation.shtml\">BTeV-pub-year/xx</a> from the <a href=\"http://www-btev.fnal.gov/cgi-private/database/doclist.pl\">old DocDB</a>\n";
-}
-print "</ul>\n";
-print "</td>";
+if ($Project eq "BTeV") {
+  print "<tr>\n";
+  print "<td colspan=2>\n";
+  print "<ul>\n";
+  if ($Public) {
+    print "<li> by old number
+          <a href=\"$web_root/Static/Public/OldDBTranslation.shtml\">like
+           BTeV-pub-year/xx</a>. \n";
+  } else {
+    print "<li> by old number like
+           <a href=\"$web_root/Static/Restricted/OldDBTranslation.shtml\">BTeV-pub-year/xx</a> from the <a href=\"http://www-btev.fnal.gov/cgi-private/database/doclist.pl\">old DocDB</a>\n";
+  }
+  print "</ul>\n";
+  print "</td>";
 
+  print "</tr>\n";
+}
+ 
 print "</table><p>\n";
  
 unless ($Public) {
@@ -162,10 +170,6 @@ print "</tr></table>\n";
 # Modified in last few days
 
 $Days = $HomeLastDays;
-require "DocumentSQL.pm";
-require "RevisionSQL.pm";
-require "Sorts.pm";
-require "Security.pm";
 
 my $revision_list = $dbh -> prepare(
    "select DocRevID from DocumentRevision 

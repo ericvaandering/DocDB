@@ -72,11 +72,11 @@ if ($mode eq "add" || $mode eq "reserve") {
 
 print $query->header;
 if      ($mode eq "add") {
-  &DocDBHeader("BTeV Document Addition","Document Addition");
+  &DocDBHeader("$Project Document Addition","Document Addition");
 } elsif ($mode eq "reserve") {
-  &DocDBHeader("BTeV Document Reservation","Document Reservation");
+  &DocDBHeader("$Project Document Reservation","Document Reservation");
 } elsif ($mode eq "update" || $mode eq "updatedb") {
-  &DocDBHeader("BTeV Document Update","Document Update");
+  &DocDBHeader("$Project Document Update","Document Update");
 }
 &HelpPopupScript;
 

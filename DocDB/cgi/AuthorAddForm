@@ -31,12 +31,12 @@ print "<center><table cellpadding=10 width=75%>\n";
 
 print "<tr>\n";
 print "<td colspan=3>\n";
-print "<b>You are about to add an author to the BTeV document database.</b>
+print "<b>You are about to add an author to the $Project document database.</b>
 Everyone is allowed to add authors. <b>Please be careful</b>
 and make sure to put the authors first name, last name, and middle initials
 (with periods) in the right place. If you make a mistake, <b><font color=red>DO
 NOT</font></b> enter the author again. Contact an  <a
-href=\"mailto:btev-docdb\@fnal.gov\">adminstrator</a> and explain the
+href=\"mailto:$DBWebMasterEmail\">adminstrator</a> and explain the
 problem.<br>\n";
 
 print "<b>Click on any of the headings for help.</b>\n"; print "</td>\n";

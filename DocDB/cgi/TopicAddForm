@@ -33,7 +33,7 @@ print "<center><table cellpadding=10>\n";
 
 print "<tr>\n";
 print "<td colspan=3>\n";
-print "<h4>You are about to add a topic to the BTeV document database. This
+print "<h4>You are about to add a topic to the $Project document database. This
 function is restricted to administrators only.<br>
 If you are not an administrator,
 please stop now and ask an administrator to do this for you.<br>\n";

@@ -14,14 +14,16 @@ require "BTeVHTML.pm";
 
 sub DocDBHeader { 
   my ($Title,$PageTitle,$Search) = @_;
-  &BTeVHeader($Title,$PageTitle,$Search);
+  &BTeVHeader($Title,$PageTitle,$Search); # BTeV specific
   return;
 
 # This routine is reponsible for whatever you want to put as a header on the
 # page.
 # 
 # $Title is for the <title> element while $PageTitle is the title of the page
-# you may put in the text of the page.
+# you may put in the text of the page. For $Search == 1, its necessary to put
+# the onload event into the body tag to get the updating selection boxes
+# on the search page. 
 #
 # The simplest possible routine should look something like this:
 
@@ -38,7 +40,7 @@ sub DocDBHeader {
 
 sub DocDBFooter {
   my ($WebMasterEmail,$WebMasterName) = @_;
-  &BTeVFooter($WebMasterEmail,$WebMasterName);
+  &BTeVFooter($WebMasterEmail,$WebMasterName); # BTeV specific
   return;
 
 # This routine is reponsible for whatever you want to put as a footer on the

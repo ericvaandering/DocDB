@@ -27,7 +27,7 @@ print $query -> header;
 &DocDBHeader("Author Addition Results");
 
 print "<p><h3>Here are the results of your attempt to add an author
-                to the BTeV document database:</h3><p>\n";
+                to the $Project document database:</h3><p>\n";
 
 @error_stack = ();
 

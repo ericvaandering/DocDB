@@ -24,7 +24,7 @@ $query = new CGI;  # Global for subroutines
 ### Start HTML
 
 print $query->header;
-&DocDBHeader("BTeV Document List","Document List");
+&DocDBHeader("$Project Document List","Document List");
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 

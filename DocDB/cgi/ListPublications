@@ -41,11 +41,10 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 ### Start HTML
 
 print $query->header;
-&DocDBHeader("BTeV Publications");
+&DocDBHeader("$Project Publications");
 
 
-print "<center><h4>These refereed publications by BTeV are
-available:</h4></center><p>\n";
+print "<center><h4>These refereed publications are available:</h4></center><p>\n";
 
 my $document_list = $dbh -> prepare(
    "select DocumentID from DocumentRevision where JournalID>0"); 

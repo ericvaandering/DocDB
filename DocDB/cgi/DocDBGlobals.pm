@@ -8,14 +8,17 @@
 
 # DB settings
 
-$db_name   = "BTeVDocDB";
-$db_host   = "btevsrv1.fnal.gov";
-$db_rwuser = "docdbrw";
-$db_rwpass = "hall1burt0n";
-$db_rouser = "docdbro";
-$db_ropass = "abg3n1x";
+$db_name       = "BTeVDocDB";
+$db_host       = "btevsrv1.fnal.gov";
+$db_rwuser     = "docdbrw";
+$db_rwpass     = "hall1burt0n";
+$db_rouser     = "docdbro";
+$db_ropass     = "abg3n1x";
+$Administrator = "docdbadm";
 
 # Root directories and URLs
+
+$Project     = "BTeV";
 
 $file_root   = "/www/html/DocDB/";    
 $script_root = "/www/cgi-bin/DocDB/"; 
@@ -60,7 +63,6 @@ $DBWebMasterEmail = "btev-docdb\@fnal.gov";
 $DBWebMasterName  = "BTeV Document Database Administrators";
 $RobotsMeta       = "none";
 
-$Administrator    = "docdbadm";
 $AuthUserFile     = "/www/conf/www-btev/.htpasswd";
 $MailServer       = "smtp.fnal.gov";
 

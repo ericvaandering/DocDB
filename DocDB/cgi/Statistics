@@ -17,7 +17,7 @@ $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 print $query->header;
 
-&DocDBHeader("BTeV DocDB Statistics");
+&DocDBHeader("$Project DocDB Statistics");
 
 my $NDoc_query = $dbh -> prepare("select COUNT(DocumentID) from Document");
    $NDoc_query -> execute(); 

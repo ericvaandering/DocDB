@@ -62,7 +62,7 @@ if (defined $Version) {
 }
 
 print $query->header;
-&DocDBHeader("BTeV Document $DocumentID-v$Version");
+&DocDBHeader("$Project Document $DocumentID-v$Version");
 
 unless (&CanAccess($DocumentID,$Version)) {
   push @error_stack,"Either you are not authorized to view this document 
