@@ -284,7 +284,7 @@ print "</tr>\n";
 
 print "<tr valign=top>\n";
 print "<td>\n"; &MajorGatheringSelect; print "</td>\n";
-print "<td>\n"; &ConferenceSelect;   print "</td>\n";
+print "<td>\n"; &ConferenceSelect;     print "</td>\n";
 print "<td>\n";
  print "<table>\n";
  print "<tr valign=top>\n";

@@ -1,7 +1,7 @@
 #
 #        Name: TopicHTML.pm
 # Description: Routines to produce snippets of HTML dealing with topics 
-#              (major, minor and conferences which are special types of topics) 
+#              (major, minor and conferences which are special types of topics) 
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
