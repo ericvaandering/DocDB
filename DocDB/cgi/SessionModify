@@ -163,8 +163,16 @@ if ($Mode eq "modify") {
            "where SessionTalkID=?");
           $SessionTalkUpdate -> execute($TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote,$SessionTalkID);
 
-          my @TopicHints  = split /\0/,$params{"topics-$SessionOrderID"}; 
-          my @AuthorHints = split /\0/,$params{"authors-$SessionOrderID"}; 
+          my @TopicHints  = split /\0/,$params{"topics-$SessionOrderID"};
+          
+          my @AuthorHints = ();
+          if ($params{"authors-$SessionOrderID"}) {
+            @AuthorHints = split /\0/,$params{"authors-$SessionOrderID"};
+          } elsif ($params{"authortext-$SessionOrderID"}) { 
+            require "AuthorSQL.pm";
+            my $AuthorText = $params{"authortext-$SessionOrderID"};
+            @AuthorHints = &ProcessManualAuthors($AuthorText);
+          }
           &InsertTopicHints($SessionTalkID,@TopicHints);
           &InsertAuthorHints($SessionTalkID,@AuthorHints);
         }
