@@ -69,9 +69,6 @@ if ($Action eq "delete") { # Drop useless columns
   my $VolumeDel  = $dbh -> prepare("alter table DocumentRevision drop Volume"); 
   my $PageDel    = $dbh -> prepare("alter table DocumentRevision drop Page"); 
   
-  die "This part is not ready yet!\n";
-  
-  print "Should not see this.\n";
   $JournalDel -> execute();
   $VolumeDel  -> execute();
   $PageDel    -> execute();
