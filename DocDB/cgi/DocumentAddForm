@@ -19,9 +19,13 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 &GetSecurities;
 
 %params = $query -> Vars;
-$mode = $params{mode};
+$mode   = $params{mode};
 if ($mode ne "add" && $mode ne "reserve") {
   $mode = "reserve";
+}  
+$upload = $params{upload};
+if ($upload ne "http" && $upload ne "file") {
+  $upload = "file";
 }  
 
 print $query->header;
@@ -33,8 +37,9 @@ if      ($mode eq "add") {
 
 &HelpPopupScript;
 
-print $query -> start_multipart_form('POST','ProcessDocumentAdd');
-print $query -> hidden(-name => 'mode', -default => 'reserve');
+print $query -> start_multipart_form('POST',$ProcessDocumentAdd);
+print $query -> hidden(-name => 'mode',   -default => 'reserve');
+print $query -> hidden(-name => 'upload', -default => 'file');
 
 print "<center><table cellpadding=10>\n";
 
@@ -66,11 +71,11 @@ print "<td colspan=3>\n";
 print "</td></tr>\n";
 if ($mode eq "add") {
   print "<td colspan=3>\n";
-  &SingleUploadBox;
-  print "</td></tr>";
-  print "<tr><th colspan=3>or</th></tr>\n";
-  print "<td colspan=3>\n";
-  &SingleHTTPBox;
+  if ($upload eq "file") {
+    &SingleUploadBox;
+  } elsif ($upload eq "http") {
+    &SingleHTTPBox;
+  }  
   print "</td></tr>";
 }
 print "<tr>\n";

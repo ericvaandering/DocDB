@@ -30,8 +30,16 @@ sub SingleUploadBox {
 sub SingleHTTPBox {
   print "<b><a ";
   &HelpLink("httpupload");
-  print "Upload by URL:</a></b><br> \n";
-  print $query -> textfield (-name => 'single_http', -size => 80, -maxlength => 240);
+  print "Upload by HTTP:</a></b><br> \n";
+  print "<table cellpadding=3>\n";
+  print "<tr><td colspan=2><b>URL: </b>\n";
+  print $query -> textfield (-name => 'single_http', -size => 70, -maxlength => 240);
+  print "</td></tr><tr><td><b>User: </b>\n";
+  print $query -> textfield (-name => 'http_user', -size => 20, -maxlength => 40);
+  print "</td><td><b>Password: </b>\n";
+  print $query -> password_field (-name => 'http_pass', -size => 20, -maxlength => 40);
+  print "</td></tr>\n";
+  print "</table>\n";
 };
 
 sub RequestorSelect { # Scrolling selectable list for requesting author

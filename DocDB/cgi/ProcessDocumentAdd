@@ -94,6 +94,8 @@ if ($mode eq "add") {
   }
 }
 
+#FIXME: Check for valid URL, user, password
+
 if (($#error_stack + 1)) {
   &EndPage(@error_stack);
 }
@@ -145,8 +147,12 @@ if ($mode eq "add") { # We're adding a new document
   } elsif ($params{single_http}) {
     @url_parts = split /\//,$params{single_http};
     $short_file = pop @url_parts;
-    $command = $Wget.$params{single_http};
-    print "Command is $command<p>";
+    if ($params{http_user} && $params{http_pass}) {
+      $authentication = " --http-user $params{http_user} --http-pass $params{http_pass} ";
+    } else {
+      $authentication = "";
+    }  
+    $command = $Wget.$authentication.$params{single_http};
     @lines = `$command`;
     open (OUTFILE,">$new_dir/$short_file");
     print OUTFILE @lines;

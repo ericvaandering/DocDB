@@ -1,18 +1,18 @@
 #! /usr/bin/perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
-#
-# 
+# Author: Eric Vaandering (ewv@fnal.gov)
 #
 
 use CGI;                                                                                      
 require "DocDBGlobals.pm";
 
-$query = new CGI;  # Global for subroutines
+# Start page
+
+$query = new CGI;  
 print $query->header;
 print $query->start_html(-title=>"BTeV Document Database Help");
 
-open HELPFILE,"$help_file";
+open HELPFILE,"$help_file"; # Read in .hlp file
 
 while (<HELPFILE>) {
   $key  = $_;
@@ -28,14 +28,13 @@ while (<HELPFILE>) {
 
 close HELPFILE;     
 
-
 %params = $query -> Vars;
-$helpterm = $params{term};
+$helpterm = $params{term};   # Extract term user wants help for
 
+# Write content
 
 print "<b><big>$help{NAME}{$helpterm}:</big></b><p>\n";
-
 print "$help{TEXT}{$helpterm}\n";
 
-print $query->end_html;
+print $query->end_html;     # End page
 
