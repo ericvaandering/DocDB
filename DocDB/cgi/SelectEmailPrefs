@@ -169,17 +169,22 @@ if (@WarnStack) {  # The user made one or more mistakes, warn and exit
 if ($Mode eq "update") {
 
 # Collect relevant parameters for user preferences
-
   my $Name     = $params{name};
   my $Email    = $params{email};
   my $HTML     = $params{html};
-  my $UpdateUserInfo = $dbh -> prepare("update EmailUser set Name=?,EmailAddress=?,PreferHTML=? where EmailUserID=?");
 
 # Update DB
 
-  $UpdateUserInfo -> execute($Name,$Email,$HTML,$EmailUserID);
+  if ($UserValidation eq "certificate") {
+    my $UpdateUserInfo = $dbh -> prepare("update EmailUser set PreferHTML=? where EmailUserID=?");
+    $UpdateUserInfo -> execute($HTML,$EmailUserID);
+  } else {
+    my $UpdateUserInfo = $dbh -> prepare("update EmailUser set Name=?,EmailAddress=?,PreferHTML=? where EmailUserID=?");
+    $UpdateUserInfo -> execute($Name,$Email,$HTML,$EmailUserID);
+  } 
 
-  if ($NewPass && $ConfNewPass && ($NewPass eq $ConfNewPass)) {
+  if ($NewPass && $ConfNewPass && ($NewPass eq $ConfNewPass) 
+               && ($UserValidation ne "certificate")) {
     srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
 
     my $Salt = ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]).
