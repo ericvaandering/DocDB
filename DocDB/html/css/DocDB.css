@@ -95,7 +95,7 @@ h5 {
   text-align: center;
 }  
 
-#UpdateButtons input[type="submit"] { /* Probably not best to change all buttons */
+#LeftColumn3Col input[type="submit"] { /* Probably not best to change all buttons */
   background: #ddd;
   font-weight: bold;
   border: 1px black solid;
