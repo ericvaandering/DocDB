@@ -670,7 +670,7 @@ sub TextEntryBox {
   if ($HelpLink) {
     print "<b><a ";
     &HelpLink("$HelpLink");
-    print "$HelpText</b> $ExtraText<br>\n";
+    print "$HelpText</b></a> $ExtraText<br>\n";
   }  
   print $query -> textarea (-name    => $Name,    -default => $Default,
                             -columns => $Columns, -rows    => $Rows);
