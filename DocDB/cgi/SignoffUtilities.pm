@@ -223,7 +223,18 @@ sub NotifySignees ($) {
       }
     } 
   }
-  &MailNotices(-docrevid => $DocRevID, -type => "signature", -emailids => \@EmailUserIDs);
+
+  if (@EmailUserIDs) {
+    &MailNotices(-docrevid => $DocRevID, -type => "signature", -emailids => \@EmailUserIDs);
+  }
+  
+  my ($Status,$DocRevID) = &RevisionStatus($DocRevID);
+  
+  print "<b>Approval status: $Status</b><br>\n";
+  
+  if ($Status eq "Approved") {
+    &MailNotices(-docrevid => $DocRevID, -type => "approved");
+  }
 }
 
 sub CopyRevisionSignoffs { # CopySignoffs from one revision to another

@@ -22,6 +22,7 @@ sub MailNotices (%) {
   require "RevisionSQL.pm";
   require "NotificationSQL.pm";
   require "ResponseElements.pm";
+  require "Utilities.pm";
   
   my (%Params) = @_;
 
@@ -41,7 +42,21 @@ sub MailNotices (%) {
       &FetchEmailUser($EmailUserID);
       push @Addressees,$EmailUser{$EmailUserID}{EmailAddress};
     }
-  }  
+  } elsif ($Type eq "approved") { 
+    @Addressees = &UsersToNotify($DocRevID,"immediate");
+    my %EmailUsers = ();
+    my @SignoffIDs = &GetAllSignoffsByDocRevID($DocRevID);
+    foreach my $SignoffID (@SignoffIDs) {
+      my @SignatureIDs = &GetSignatures($SignoffID);
+      foreach my $SignatureID (@SignatureIDs) {
+        my $EmailUserID = $Signatures{$SignatureID}{EmailUserID};
+        &FetchEmailUser($EmailUserID);
+        push @Addressees,$EmailUser{$EmailUserID}{EmailAddress};
+      }  
+    }  
+  } 
+  
+  @Addressees = &Unique(@Addressees);
   
 # If anyone, open the mailer
 
@@ -68,6 +83,12 @@ sub MailNotices (%) {
                   "(Note that you may not be able to sign if you share ".
                   "signature authority with someone who has already signed.)\n\n";
       $Feedback = "<b>Signature(s) requested from: </b>";           
+    } elsif ($Type eq "approved") {
+      $Subject  = "Approved: $FullID: $Title";
+      $Message  = "The following document ".
+                  "in the $Project Document Database ".
+                  "has been approved (received all necessary signatures).\n\n";
+      $Feedback = "<b>Approval notification sent to: </b>";           
     }  
 
     $Headers{To} = \@Addressees;
