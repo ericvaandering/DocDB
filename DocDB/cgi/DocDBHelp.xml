@@ -706,4 +706,12 @@ notifications.
   </text>
  </entry>
 
+ <entry>
+  <key>conference</key>
+  <title>Conference</title>
+  <text>
+Select the name of the conference.
+  </text>
+ </entry>
+
 </helpfile>

@@ -174,7 +174,15 @@ sub ConferencesTable {
   my @MinorTopicIDs = sort byTopic keys %MinorTopics; #FIXME special sort 
 
   my ($MajorID) = @ConferenceMajorIDs; 
-  print "<table border=1>\n";
+  print "<table cellpadding=4>\n";
+
+  print "<tr>\n";
+  print "<th>Name</th>\n";
+  print "<th>Full Name</th>\n";
+  print "<th>Location</th>\n";
+  print "<th>Dates</th>\n";
+  print "<th>Conference Homepage</th>\n";
+  
   foreach my $MinorID (@MinorTopicIDs) {
     if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
       print "<tr>\n";
@@ -215,6 +223,26 @@ sub ConferencesList {
     }  
   }  
   print "</ul>";
+}
+
+sub ConferenceSelect {
+  require "TopicSQL.pm";
+  
+  my @MinorIDs           = sort byTopic keys %MinorTopics;
+  my @ConferenceTopicIDs = ();
+  my %TopicLabels        = ();
+  foreach my $MinorID (@MinorIDs) {
+    unless (&MajorIsConference($MinorTopics{$MinorID}{MAJOR})) {
+      next;
+    }  
+    push @ConferenceTopicIDs,$MinorID;
+    $TopicLabels{$MinorID} = $MinorTopics{$MinorID}{SHORT}; 
+  }  
+  print "<b><a ";
+  &HelpLink("conference");
+  print "Conferences:</a></b> <br> \n";
+  print $query -> scrolling_list(-name => "conftopic", -values => \@ConferenceTopicIDs, 
+                                 -labels => \%TopicLabels, -size => 10);
 }
 
 sub MeetingsTable {

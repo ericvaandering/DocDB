@@ -282,7 +282,9 @@ print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td>Selectable list goes here.</td>\n";
+print "<td>\n";
+&ConferenceSelect;
+print "</td>\n";
 print "<td><table>\n";
 print "<tr valign=top>\n";
 print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";

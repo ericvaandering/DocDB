@@ -18,13 +18,14 @@ require "DocDBGlobals.pm";
 require "ResponseElements.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";
-require "SecuritySQL.pm";
+require "TopicSQL.pm";
+require "MiscSQL.pm";
 require "Messages.pm";
 
 $query = new CGI;  # Global for subroutines
 
 print $query->header;
-&DocDBHeader("Modified E-mail Users");
+&DocDBHeader("Modified Conferences");
 
 %params = $query -> Vars;
 
@@ -37,8 +38,18 @@ my $Password      = $params{password};
 my $Username      = $Administrator;
 my $Action        = $params{admaction};
 
-#my $EmailUserID   = $params{emailuserid};
-#my $NewPassword   = $params{resetpw};
+my $TopicID       = $params{conftopic};
+my $LongName      = $params{long};
+my $ShortName     = $params{short};
+my $Location      = $params{location};
+my $URL           = $params{url};
+
+my $StartDay      = $params{startday};
+my $StartMonth    = $params{startmonth};
+my $StartYear     = $params{startyear};
+my $EndDay        = $params{endday};
+my $EndMonth      = $params{endmonth};
+my $EndYear       = $params{endyear};
 
 unless (&CanAdminister) {
   push @ErrorStack,$Msg_AdminNoLogin;
@@ -52,35 +63,115 @@ unless ($dbh) {
 }         
 &EndPage(@ErrorStack);
 
-&GetSecurityGroups;
+&SpecialMajorTopics;
 
-if      ($Action eq "Delete") { # Delete user
-#  if (!$EmailUserID) {
-#    push @ErrorStack,$Msg_ModEUserEmpty;
-#  } else {
-#    my $UserDelete = $dbh -> prepare("delete from EmailUser where EmailUserID=?");
-#       $UserDelete -> execute($EmailUserID);
-#
-#    my @NotifyTimes = ("Immediate","Daily","Weekly");
-#    my @NotifyTypes = ("Author","Keyword","Topic");
-#  }
-#  print "<b>The User was deleted.</b><p>\n";
+if      ($Action eq "Delete") { 
+  unless ($TopicID) {
+    push @ErrorStack,$Msg_ModConfEmpty;
+  }
+  &EndPage(@ErrorStack);
+  my $TopicLink   = &MinorTopicLink($TopicID);
+  my @TopicDocIDs = &GetTopicDocuments($TopicID);
+  
+# Delete TopicID from Topic, Conference, RevisionTopic tables
+  
+  my $TopicDelete      = $dbh -> prepare("delete from MinorTopic    where MinorTopicID=?");
+  my $ConferenceDelete = $dbh -> prepare("delete from Conference    where MinorTopicID=?");
+  my $RevisionDelete   = $dbh -> prepare("delete from RevisionTopic where MinorTopicID=?");
+  $TopicDelete      -> execute($TopicID);
+  $ConferenceDelete -> execute($TopicID);
+  $RevisionDelete   -> execute($TopicID);
+  
+  print "$TopicLink has been removed from the database.<br>\n";
+  if (@TopicDocIDs) {
+    push @WarnStack,"$TopicLink was a topic on some documents. These
+                     entries have been removed.";
+  }  
 } elsif ($Action eq "Modify") { 
-#  unless ($EmailUserID) { # Deal with password changes 
-#    push @ErrorStack,$Msg_ModEUserEmpty;
-#  }
-#  &EndPage(@ErrorStack);
+  unless ($TopicID) {
+    push @ErrorStack,$Msg_ModConfEmpty;
+  }
+  &EndPage(@ErrorStack);
 
-#  if ($NewPassword) { 
-#    srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
-#    my $UserUpdate = $dbh -> prepare("update EmailUser set Password=? where EmailUserID=?");
-#       $UserUpdate -> execute($EncryptedPassword,$EmailUserID);
-#    print "<b>The User's password was changed. $EmailUserID $EncryptedPassword They should change it again ASAP.</b><p>\n";
-#  }
-} elsif ($Action eq "New") { 
-#  push @ErrorStack,"You can't create new users here. Do it the normal way.";
+# Deal with name changes     
+
+  if ($ShortName) { 
+    print "<b>Updating short conference name.</b><br>\n";
+    my $TopicUpdate = $dbh->prepare(
+       "update MinorTopic set ShortDescription=? where MinorTopicID=?");
+    $TopicUpdate -> execute($ShortName,$TopicID);
+  }
+  if ($LongName) { 
+    print "<b>Updating long conference name.</b><br>\n";
+    my $TopicUpdate = $dbh->prepare(
+       "update MinorTopic set LongDescription=? where MinorTopicID=?");
+    $TopicUpdate -> execute($LongName,$TopicID);
+  }
+
+# Deal with location, URL changes
+
+  if ($Location) {
+    print "<b>Updating conference location.</b><br>\n";
+    my $ConferenceUpdate = $dbh->prepare(
+       "update Conference set Location=? where MinorTopicID=?");
+    $ConferenceUpdate -> execute($Location,$TopicID);
+  }
+  if ($URL) {
+    print "<b>Updating conference URL.</b><br>\n";
+    my $ConferenceUpdate = $dbh->prepare(
+       "update Conference set URL=? where MinorTopicID=?");
+    $ConferenceUpdate -> execute($URL,$TopicID);
+  }
+  
+# Deal with date changes
+
+  my (undef,undef,undef,$Day,$Month,$Year) = localtime(time); 
+  $Year += 1900;
+  if ($Day != $StartDay || $AbrvMonths[$Month] ne $StartMonth || $Year != $StartYear) {
+    print "<b>Updating conference starting date.</b><br>\n";
+    my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
+    my $ConferenceUpdate = $dbh->prepare(
+       "update Conference set StartDate=? where MinorTopicID=?");
+    $ConferenceUpdate -> execute($StartDate,$TopicID);
+  }
+  if ($Day != $EndDay || $AbrvMonths[$Month] ne $EndMonth || $Year != $EndYear) {
+    print "<b>Updating conference ending date.</b><br>\n";
+    my $EndDate = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
+    my $ConferenceUpdate = $dbh->prepare(
+       "update Conference set EndDate=? where MinorTopicID=?");
+    $ConferenceUpdate -> execute($EndDate,$TopicID);
+  }
+
+} elsif ($Action eq "New") { # FIXME: Allow conference add for completeness
+  push @ErrorStack,"You can't add conferences here. Do it with the add conference form."; 
 } else {
   push @ErrorStack,"No valid action was specified.";
+}  
+
+# For modify or new fetch information and display.
+
+if ($Action eq "Modify") { # FIXME: Allow conference add for completeness
+  &GetTopics;
+  &GetConferences;
+
+  print "<p><b>Here are the results of your modification:<br>\n";
+  my $ShortLink = &MinorTopicLink($TopicID,"short");
+  my $LongLink = &MinorTopicLink($TopicID,"long");
+  my $Start = &EuroDate($Conferences{$TopicID}{StartDate});
+  my $End   = &EuroDate($Conferences{$TopicID}{EndDate});
+  my $Link;
+  if ($Conferences{$TopicID}{URL}) {
+    $Link = "<a href=\"$Conferences{$TopicID}{URL}\">$Conferences{$TopicID}{URL}</a>";
+  } else {
+    $Link = "None entered\n";
+  }
+  print "Short description: $ShortLink<br>\n";
+  print "Long description: $LongLink<br>\n";
+  print "Location: $Conferences{$TopicID}{Location}<br>\n";
+  print "Start date: $Start<br>\n";
+  print "End date: $End<br>\n";
+  print "URL: $Link<br>\n";
+  print "</b><p>\n";
 }  
 
 print "<p>\n";

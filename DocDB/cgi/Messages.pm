@@ -20,9 +20,12 @@ $Msg_DelMajWTopics    = "You can't delete major topics with subtopics. ".
 $Msg_ModGroupEmpty    = "You must select a group to modify or delete.";
 $Msg_ModGroupNone     = "The group you selected to modify does not exist.";
 
-$Msg_ModJournalEmpty = "You must select a journal to modify or delete.";
-$Msg_ModDocTypeEmpty = "You must select a document type to modify or delete.";
-$Msg_ModEUserEmpty   = "You must select a user to modify or delete.";
+$Msg_ModJournalEmpty  = "You must select a journal to modify or delete.";
+$Msg_ModDocTypeEmpty  = "You must select a document type to modify or delete.";
+$Msg_ModEUserEmpty    = "You must select a user to modify or delete.";
+
+$Msg_ModTopicEmpty    = "You must select a topic to modify or delete.";
+$Msg_ModConfEmpty     = "You must select a conference to modify or delete.";
 
 # FIXME: Add more messages from other programs
 # FIXME: Add a localizable error message inclusion
