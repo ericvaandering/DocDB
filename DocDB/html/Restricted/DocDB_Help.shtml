@@ -428,7 +428,7 @@ detector and every week about all new documents in the database.
 <h2>E. Final Words</h2>
 
 <a name="refer">
-<h3>Referring to Your Document</h3>
+<h3>Referring to Your Document and Files</h3>
 
 To refer to your document use the form <b>BTeV-doc-XXXX</b> where XXXX is the document
 number (1 to 6 digits). You can also use the form <b>BTeV-doc-XXXX-vXX</b> to refer to
@@ -451,7 +451,12 @@ case, there is a script interface which fetches files. The URL is
 <tt>http://www-btev.fnal.gov/cgi-bin/DocDB/RetrieveFile?docid=XXXX&amp;version=XX&amp;filename=xxxxxx</tt>.
 The version number can be left off to get files from the latest version number.
 The filename can also be left off. If there is only one file marked <q>Main</q>
-that file will be retrieved. If there are more than one, the full document
+that file will be retrieved. 
+An alternate form is
+<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/RetrieveFile?docid=XXXX&amp;version=XX&amp;extension=xxx</tt>,
+so for instance you can specify PDF as the extension to retrieve the PDF file
+for a document. As above, <tt>version</tt> can be left off.
+If your request matches no files or more than one file, the full document
 information will be shown and the user will have to choose the correct file.<p>
 
 For both of these actions, if you want the result to be publicly accessible,

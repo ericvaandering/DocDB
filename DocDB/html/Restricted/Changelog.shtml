@@ -20,6 +20,19 @@
 
 <b>This page lists the changes to the document database code over time.</b><p>
 
+<b>22 July 2002</b>
+<ul>
+<li>RetrieveFile now supports retrieving files by extension.
+</ul>
+
+<b>15 July 2002</b>
+<ul>
+<li>Fixed (in stable) a problem where OBSOLETE versions of Revisions where being
+picked up.
+<li>Renamed the function FetchDocRevision to FetchRevisionByDocumentAndVersion
+</ul>
+
+
 <b>9 July 2002</b>
 <ul>
 <li>Devel version allows changing of meta-info for old documents. Warnings are
