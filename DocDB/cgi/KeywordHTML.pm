@@ -256,7 +256,9 @@ sub KeywordsBox (%) {
   print "Keywords:</a></b>";
   if ($Required) {
     print $RequiredMark;
-  }  
+  } else {
+    print " ";
+  }   
   print "(space separated) - <a href=\"Javascript:keywordchooserwindow(\'$ListKeywords?mode=chooser\');\"><b>Keyword
   Chooser</b></a><br> \n";
   print $query -> textfield (-name => 'keywords', -default => $KeywordsDefault, 

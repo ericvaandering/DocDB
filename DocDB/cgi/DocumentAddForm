@@ -343,6 +343,7 @@ if ($mode eq "add") {
              Make sure you know all the required information.<br>\n";
 }
 
+print "Required fields are marked with an asterisk (*).<br>";
 print "Click on any of the headings for help.</h4>\n"; print "</td>\n";
 print "</tr>\n";
 
@@ -394,9 +395,9 @@ if ($mode eq "add" || $mode eq "update") {
   print "<tr><td colspan=4>\n";
   if ($Archive eq "archive") { 
     if ($Upload eq "file") {
-      &ArchiveUploadBox;
+      &ArchiveUploadBox(-required => $RequiredEntries{File});
     } elsif ($Upload eq "http") {
-      &ArchiveHTTPBox;
+      &ArchiveHTTPBox(-required => $RequiredEntries{File});
     }  
   } else {
     if ($Upload eq "file") {

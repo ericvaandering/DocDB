@@ -296,11 +296,19 @@ sub FileUpdateBox {
   print "</table>\n";
 }
 
-sub ArchiveUploadBox {
+sub ArchiveUploadBox (%)  {
+  my (%Params) = @_; 
+  
+  my $Required   = $Params{-required}   || 0;        # short, long, full
+
   print "<table cellpadding=3>\n";
   print "<tr><td colspan=2><b><a ";
   &HelpLink("filearchive");
-  print "Archive file upload:</a></b><br> \n";
+  print "Archive file upload:</a></b>";
+  if ($Required) {
+    print $RequiredMark;
+  } 
+  print "<br> \n";
   print "<tr><td align=right>\n";
   print "<b>Archive File:</b>\n";
   print "</td><td>\n";
@@ -319,11 +327,19 @@ sub ArchiveUploadBox {
   print "</td></tr></table>\n";
 };
 
-sub ArchiveHTTPBox {
+sub ArchiveHTTPBox (%)  {
+  my (%Params) = @_; 
+  
+  my $Required   = $Params{-required}   || 0;        # short, long, full
+
   print "<table cellpadding=3>\n";
   print "<tr><td colspan=4><b><a ";
   &HelpLink("httparchive");
-  print "Upload Archive by HTTP:</a></b><br> \n";
+  print "Upload Archive by HTTP:</a></b>";
+  if ($Required) {
+    print $RequiredMark;
+  } 
+  print "<br> \n";
 
   print "<tr><td align=right><b>Archive URL:</b>\n";
   print "<td colspan=3>\n";
