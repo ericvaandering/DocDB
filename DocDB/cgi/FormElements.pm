@@ -426,4 +426,13 @@ sub AddFilesButton {
   print $query -> endform;
 }
 
+sub AuthorManual {
+  print "<b><a ";
+  &HelpLink("authormanual");
+  print "Authors:</a></b><br> \n";
+  print $query -> textarea (-name => 'authorman', -default => $AuthorManDefault,
+                            -columns => 20, -rows => 8);
+};
+
+
 1;

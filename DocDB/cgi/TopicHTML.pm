@@ -34,12 +34,30 @@ sub TopicLink {
   return $link;
 }
 
+sub MeetingLink {
+  my ($TopicID,$mode) = @_;
+  
+  require "TopicSQL.pm";
+  
+  &FetchMinorTopic($TopicID);
+  my $link;
+  $link = "<a href=$ListByTopic?topicid=$TopicID&mode=meeting>";
+  if ($mode eq "short") {
+    $link .= $MinorTopics{$TopicID}{SHORT};
+  } else {
+    $link .= $MinorTopics{$TopicID}{FULL};
+  }
+  $link .= "</a>";
+  
+  return $link;
+}
+
 sub TopicsTable {
   require "Sorts.pm";
 
   my $NCols = 4;
-  my @MajorTopicIDs = keys %MajorTopics;
-  my @MinorTopicIDs = keys %MinorTopics;
+  my @MajorTopicIDs = sort byMajorTopic keys %MajorTopics;
+  my @MinorTopicIDs = sort byTopic keys %MinorTopics;
 
   my $Col   = 0;
   print "<table cellpadding=10>\n";

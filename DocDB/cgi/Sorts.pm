@@ -22,11 +22,28 @@ sub byMeetingDate {
 }    
 
 sub byTopic {
-  $MajorTopics{$MinorTopics{$a}{MAJOR}}{SHORT} cmp
-  $MajorTopics{$MinorTopics{$b}{MAJOR}}{SHORT}
+
+  # Do reverse sort by date for Collaboration meetings, otherwise alphabetical
+
+  if ($MajorTopics{$MinorTopics{$a}{MAJOR}}{SHORT} eq "Collaboration Meetings" &&
+      $MajorTopics{$MinorTopics{$b}{MAJOR}}{SHORT} eq "Collaboration Meetings") {
+    ($adays,$amonth,$ayear) = split /\s+/,$MinorTopics{$a}{SHORT};
+    ($bdays,$bmonth,$byear) = split /\s+/,$MinorTopics{$b}{SHORT};
+    ($aday) = split /\-/,$adays;
+    ($bday) = split /\-/,$bdays;
+
+                        $byear <=> $ayear
+                               or
+    $ReverseFullMonth{$bmonth} <=> $ReverseFullMonth{$amonth} 
+                               or
+                         $bday <=> $aday;            
+  } else {
+    $MajorTopics{$MinorTopics{$a}{MAJOR}}{SHORT} cmp
+    $MajorTopics{$MinorTopics{$b}{MAJOR}}{SHORT}
                    or
         $MinorTopics{$a}{SHORT} cmp
         $MinorTopics{$b}{SHORT};
+  }
 }    
 
 sub byLastName {

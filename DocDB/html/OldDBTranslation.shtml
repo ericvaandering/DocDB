@@ -25,14 +25,15 @@ document database numbering scheme. These references look like BTeV-pub-Year/#
 while the numbering scheme for the new document database looks like
 BTeV-doc-####-v#. The two numbering schemes are, of course, incompatible. If
 you are searching for a document whose number you don't know or have a
-reference to the new style of numbering, go to the new <a
-href="http://www-btev.fnal.gov/cgi-bin/DocDB/DocumentDatabase">Document
-Database</a> to find the document.
-<p>
+reference to the new style of numbering, go to the new 
+<a href="http://www-btev.fnal.gov/cgi-bin/DocDB/DocumentDatabase">Document
+Database</a> to find the document. <p>
 
-If you have an old style number, find it in the lists here and click on it, you will be taken to the
-corresponding document in the new database. <a href="#public">Public</a> documents are at the bottom of the page.
-<p>
+If you have an old style number, find it in the lists here and click on it, you
+will be taken to the corresponding document in the new database. 
+<a href="#public">Public</a> documents are at the bottom of the page. The <a
+href="http://www-btev.fnal.gov/cgi-bin/">old document database</a> is still
+available in read-only mode.<p>
 
 For future reference, the old document number is also stored in the <b>Publication Info</b> field in the
 new database, so you can search directly for old documents without using this page if you wish.

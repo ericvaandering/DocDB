@@ -123,7 +123,7 @@ if ($mode eq "add" || $mode eq "reserve") {
   }
 }
 if ($mode eq "add" || $mode eq "update") {
-  unless ($params{authors}) {
+  unless ($params{authors} || $params{authormanual}) {
     push @error_stack,"You must supply at least one author for this document.";
   }
   unless ($params{topics}) {
@@ -174,7 +174,12 @@ if ($mode eq "update" || $mode eq "updatedb") {
 
 ### Final checks
 
-@authorIDs  = split ("\0",$params{authors}); 
+if ($params{authormanual}) {
+  @authorIDs = &ProcessManualAuthors($params{authormanual});
+} else {
+  @authorIDs  = split ("\0",$params{authors}); 
+}
+
 @topicIDs   = split ("\0",$params{topics});
 @securities = split ("\0",$params{security});
 

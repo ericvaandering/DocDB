@@ -71,4 +71,74 @@ sub GetInstitutions { # Creates/fills a hash $Institutions{$InstitutionID}{} wit
   }
 }
 
+sub ProcessManualAuthors {
+  my ($author_list) = @_;
+  my $AuthorID;
+  my @AuthorIDs = ();
+  my @AuthorEntries = split /\n/,$author_list;
+  foreach my $entry (@AuthorEntries) {
+    my @parts   = split /\s+/,$entry;
+    my $first   = shift @parts;
+    my $last    = pop @parts;
+    my $initial = substr($first,0,1).".";
+    
+    unless ($first && $last) {
+      push @error_stack,"Your author entry $entry did not have
+                         a first and last name.";
+      next;
+    }  
+    
+    my $author_list = $dbh -> prepare(
+       "select AuthorID from Author where FirstName=? and LastName=?"); 
+    my $fuzzy_list = $dbh -> prepare(
+       "select AuthorID from Author where FirstName like ?% and LastName=?"); 
+
+### Find exact match (initial or full name)
+
+    $author_list -> execute($first,$last);
+    $author_list -> bind_columns(undef, \($AuthorID));
+    @Matches = ();
+    while ($author_list -> fetch) {
+      push @Matches,$AuthorID;
+    }
+    if ($#Matches == 0) { # Found 1 exact match
+      push @AuthorIDs,$AuthorID;
+      next;
+    }
+    
+### Match initial if given initial or full name    
+    
+    $author_list -> execute($first,$initial);
+    $author_list -> bind_columns(undef, \($AuthorID));
+    @Matches = ();
+    while ($author_list -> fetch) {
+      push @Matches,$AuthorID;
+    }
+    if ($#Matches == 0) { # Found 1 exact match
+      push @AuthorIDs,$AuthorID;
+      next;
+    }
+    
+### Match full name if given initial
+    
+    $first =~ s/\.//g;                          # Remove dots if any     
+    $fuzzy_list -> execute($first,$first);   
+    $fuzzy_list -> bind_columns(undef, \($AuthorID));
+    @Matches = ();
+    while ($fuzzy_list -> fetch) {
+      push @Matches,$AuthorID;
+    }
+    if ($#Matches == 0) { # Found 1 exact match
+      push @AuthorIDs,$AuthorID;
+      next;
+    }
+    
+### Haven't found a match if we get down here
+
+    push @error_list,"No match was found for the the author $entry. Please go 
+                      back and try again.";   
+  }
+  return @AuthorIDs;
+}
+
 1;

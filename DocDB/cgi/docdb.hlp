@@ -1,3 +1,10 @@
+authormanual
+Authors
+Type the names of the authors here. Put each author on a new line. Use full last
+names and first names or initials. Each author entered will checked against the
+database and a match must be found for <b>all</b> authors before the document
+will be added. 
+#
 docnumber
 Document Number
 This is the number (six digits or less) of the document you want to act on. If

@@ -49,6 +49,11 @@ if ($topicmode ne "single" && $topicmode ne "multi") {
   $topicmode = "single";
 }  
 
+$AuthorMode = $params{authormode};
+if ($authormode ne "list" && $authormode ne "field") {
+  $authormode = "list";
+}  
+
 unless ($NumberUploads) {$NumberUploads = 1;}
 
 print $query->header;
@@ -151,17 +156,19 @@ if ($mode eq "add" || $mode eq "update") {
   print "</td></tr>";
 }
 
-if ($topicmode eq "single") {
-  print "<tr>\n";
-  print "<td>\n"; &RequesterSelect; print "</td>\n";
+print "<tr>\n";
+print "<td>\n"; &RequesterSelect; print "</td>\n";
+if ($AuthorMode eq "list") {
   print "<td>\n"; &AuthorSelect;    print "</td>\n";
+} elsif ($AuthorMode eq "field") {
+  print "<td>\n"; &AuthorManual;    print "</td>\n";
+}
+
+if ($topicmode eq "single") {
   print "<td>\n"; &TopicSelect;     print "</td>\n";
   print "</tr><tr>\n";
   print "<td colspan=1 valign=top>\n"; &SecurityList; print "</td>\n";
 } elsif ($topicmode eq "multi") {
-  print "<tr>\n";
-  print "<td>\n"; &RequesterSelect; print "</td>\n";
-  print "<td>\n"; &AuthorSelect;    print "</td>\n";
   print "<td colspan=1 valign=top>\n"; &SecurityList; print "</td>\n";
   print "</tr><tr>\n";
   print "<td colspan=3 align=center>\n"; &MultiTopicSelect;     print "</td>\n";
