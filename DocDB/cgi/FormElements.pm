@@ -272,9 +272,14 @@ sub MajorTopicSelect (%) { # Scrolling selectable list for major topics
                                  
 };
 
-sub InstitutionSelect ($) { # Scrolling selectable list for institutions
+sub InstitutionSelect (;%) { # Scrolling selectable list for institutions
   require "Sorts.pm";
-  my ($Mode) = @_;
+
+  my (%Params) = @_;
+  
+  my $Mode     = $Params{-format}    || "short";
+  my $Disabled = $Params{-disabled}  || "0";
+  
   print "<b><a ";
   &HelpLink("institution");
   print "Institution:</a></b>";
@@ -288,33 +293,49 @@ sub InstitutionSelect ($) { # Scrolling selectable list for institutions
     } else {
       $InstLabels{$ID} = $Institutions{$ID}{SHORT};
     }
-  }  
-  print $query -> scrolling_list(-name => "inst", -values => \@InstIDs,
-                                 -labels => \%InstLabels,  -size => 10);
+  } 
+  if ($Disabled) { 
+    print $query -> scrolling_list(-name => "inst", -values => \@InstIDs,
+                                   -labels => \%InstLabels,  -size => 10,
+                                   -disabled);
+  } else {
+    print $query -> scrolling_list(-name => "inst", -values => \@InstIDs,
+                                   -labels => \%InstLabels,  -size => 10);
+  }
 };
 
-sub NameEntryBox {
+sub NameEntryBox (;%) {
+  my (%Params) = @_;
+  
+  my $Disabled = $Params{-disabled}  || "0";
+  
+  my $Booleans = "";
+  
+  if ($Disabled) {
+    $Booleans .= "-disabled";
+  }  
+  
   print "<table cellpadding=5><tr valign=top>\n";
   print "<td>\n";
   print "<b><a ";
   &HelpLink("authorentry");
   print "First Name:</a></b><br> \n";
   print $query -> textfield (-name => 'first', 
-                             -size => 20, -maxlength => 32);
+                             -size => 20, -maxlength => 32,$Booleans);
   print "</td></tr>\n";
   print "<tr><td>\n";
   print "<b><a ";
   &HelpLink("authorentry");
   print "Middle Initial(s):</a></b><br> \n";
   print $query -> textfield (-name => 'middle', 
-                             -size => 10, -maxlength => 16);
+                             -size => 10, -maxlength => 16,$Booleans);
   print "</td></tr>\n";
   print "<tr><td>\n";
   print "<b><a ";
   &HelpLink("authorentry");
   print "Last Name:</a></b><br> \n";
   print $query -> textfield (-name => 'lastname', 
-                             -size => 20, -maxlength => 32);
+                             -size => 20, -maxlength => 32,$Booleans);
   print "</td>\n";
   print "</tr></table>\n";
 }

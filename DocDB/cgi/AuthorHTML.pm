@@ -178,7 +178,6 @@ sub AuthorsTable {
 
 sub AuthorScroll (%) {
   require "AuthorSQL.pm";
-  require "Sorts.pm";
   
   my (%Params) = @_;
   
@@ -189,6 +188,7 @@ sub AuthorScroll (%) {
   my $Required  =   $Params{-required}  || 0;
   my $Name      =   $Params{-name}      || "authors";
   my $Size      =   $Params{-size}      || 10;
+  my $Disabled  =   $Params{-disabled}  || "";
   my @Defaults  = @{$Params{-default}};
 
   unless (keys %Author) {
@@ -213,11 +213,17 @@ sub AuthorScroll (%) {
     }  
     print "<br> \n";
   }
-
-  print $query -> scrolling_list(-name => $Name, -values => \@ActiveIDs, 
-                                 -labels => \%AuthorLabels,
-                                 -size => 10, -multiple => $Multiple,
-                                 -default => \@Defaults);
+  if ($Disabled) {
+    print $query -> scrolling_list(-name => $Name, -values => \@ActiveIDs, 
+                                   -labels => \%AuthorLabels,
+                                   -size => 10, -multiple => $Multiple,
+                                   -default => \@Defaults, -disabled);
+  } else {
+    print $query -> scrolling_list(-name => $Name, -values => \@ActiveIDs, 
+                                   -labels => \%AuthorLabels,
+                                   -size => 10, -multiple => $Multiple,
+                                   -default => \@Defaults);
+  }                                   
 }
 
 sub AuthorTextEntry ($;@) {

@@ -177,7 +177,9 @@ print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td>\n"; &InstitutionSelect("full"); print "</td>\n";
+print "<td>\n"; 
+&InstitutionSelect(-format => "full", -disabled => true); 
+print "</td>\n";
 print "<td>\n"; &InstitutionEntryBox; print "</td>\n";
 print "</tr>\n";
 
