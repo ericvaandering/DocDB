@@ -97,49 +97,10 @@ sub FetchDocFiles ($) {
     $DocFiles{$DocFileID}{NAME}        = $FileName;
     $DocFiles{$DocFileID}{ROOT}        = $RootFile;
     $DocFiles{$DocFileID}{DESCRIPTION} = $Description;
-    $DocFiles{$DocFileID}{TIMESTAMP}   = $TimeStamp;
+    $DocFiles{$DocFileID}{TimeStamp}   = $TimeStamp;
     $DocFiles{$DocFileID}{DOCREVID}    = $DocRevID;
   }
   return @{$Files{$DocRevID}};
-}
-
-sub GetConferences {
-  %Conferences = ();
-  my $MinorTopicID;
-  foreach my $MajorID (@MeetingMajorIDs,@ConferenceMajorIDs) {
-    my $minor_list   = $dbh -> prepare(
-      "select MinorTopicID from MinorTopic where MajorTopicID=$MajorID");
-    $minor_list -> execute();
-    $minor_list -> bind_columns(undef, \($MinorTopicID));
-    while ($minor_list -> fetch) {
-      &FetchConferenceByTopicID($MinorTopicID);
-    }
-  }
-}
-
-sub FetchConferenceByTopicID { # Fetches a conference by MinorTopicID
-  my ($minorTopicID) = @_;
-  my ($ConferenceID,$MinorTopicID,$Location,$URL,$StartDate,$EndDate,$TimeStamp);
-  my $conference_fetch   = $dbh -> prepare(
-    "select ConferenceID,MinorTopicID,Location,URL,StartDate,EndDate,TimeStamp ".
-    "from Conference ".
-    "where MinorTopicID=?");
-  if ($Conference{$minorTopicID}{MINOR}) { # We already have this one
-    return $Conference{$minorTopicID}{MINOR};
-  }
-  
-  &FetchMinorTopic($minorTopicID);
-  $conference_fetch -> execute($minorTopicID);
-  ($ConferenceID,$MinorTopicID,$Location,$URL,$StartDate,$EndDate,$TimeStamp) 
-    = $conference_fetch -> fetchrow_array;
-  $Conferences{$MinorTopicID}{MINOR}      = $MinorTopicID;
-  $Conferences{$MinorTopicID}{Location}   = $Location;
-  $Conferences{$MinorTopicID}{URL}        = $URL;
-  $Conferences{$MinorTopicID}{StartDate}  = $StartDate;
-  $Conferences{$MinorTopicID}{EndDate}    = $EndDate;
-  $Conferences{$MinorTopicID}{TIMESTAMP}  = $TimeStamp;
-
-  return $Conferences{$MinorTopicID}{MINOR};
 }
 
 sub VersionNumbersByDocID {

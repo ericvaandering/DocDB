@@ -76,7 +76,7 @@ unless ($Mode eq "date" or $Mode eq "meeting" or $Mode eq "conference") {
 print $query->header;
 
 if ($Mode eq "conference") {
-  require "MiscSQL.pm";
+  require "MeetingSQL.pm";
   
   &DocDBHeader("Conference Documents");
   &GetConferences;

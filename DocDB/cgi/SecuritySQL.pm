@@ -10,7 +10,7 @@ sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with 
     $SecurityGroups{$GroupID}{DESCRIPTION}   = $Description;
     $SecurityGroups{$GroupID}{CanCreate}     = $CanCreate;
     $SecurityGroups{$GroupID}{CanAdminister} = $CanAdminister;
-    $SecurityGroups{$GroupID}{TIMESTAMP}     = $TimeStamp;
+    $SecurityGroups{$GroupID}{TimeStamp}     = $TimeStamp;
     $SecurityIDs{$Name} = $GroupID;
   }
   
@@ -23,7 +23,7 @@ sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with 
   while ($HierarchyList -> fetch) {
     $GroupsHierarchy{$HierarchyID}{CHILD}     = $ChildID;
     $GroupsHierarchy{$HierarchyID}{PARENT}    = $ParentID;
-    $GroupsHierarchy{$HierarchyID}{TIMESTAMP} = $TimeStamp;
+    $GroupsHierarchy{$HierarchyID}{TimeStamp} = $TimeStamp;
   }
 }
 
@@ -39,7 +39,7 @@ sub FetchSecurityGroup {
     $SecurityGroups{$GroupID}{DESCRIPTION}   = $Description;
     $SecurityGroups{$GroupID}{CanCreate}     = $CanCreate; 
     $SecurityGroups{$GroupID}{CanAdminister} = $CanAdminister;
-    $SecurityGroups{$GroupID}{TIMESTAMP}     = $TimeStamp;
+    $SecurityGroups{$GroupID}{TimeStamp}     = $TimeStamp;
     $SecurityIDs{$Name} = $GroupID;
   }
   
@@ -51,7 +51,7 @@ sub FetchSecurityGroup {
   while ($HierarchyList -> fetch) {
     $GroupsHierarchy{$HierarchyID}{CHILD}     = $ChildID;
     $GroupsHierarchy{$HierarchyID}{PARENT}    = $ParentID;
-    $GroupsHierarchy{$HierarchyID}{TIMESTAMP} = $TimeStamp;
+    $GroupsHierarchy{$HierarchyID}{TimeStamp} = $TimeStamp;
     print "$TimeStamp<br>\n";
  }
 

@@ -1,5 +1,5 @@
 sub GetTopics {
-  require "MiscSQL.pm";
+  require "MeetingSQL.pm";
   &SpecialMajorTopics;
   &GetConferences; # Needed all the time for sorts, etc.
 

@@ -20,6 +20,7 @@ require "ResponseElements.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";
 require "TopicSQL.pm";
+require "MeetingSQL.pm";
 require "MiscSQL.pm";
 require "WebUtilities.pm";
 require "Messages.pm";

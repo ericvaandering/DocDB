@@ -19,7 +19,7 @@ sub GetAllDocuments {
     $Documents{$DocumentID}{REQUESTER} = $RequesterID;
     $Documents{$DocumentID}{DATE}      = $RequestDate;
     $Documents{$DocumentID}{TYPE}      = $DocumentType;
-    $Documents{$DocumentID}{TIMESTAMP} = $TimeStamp;
+    $Documents{$DocumentID}{TimeStamp} = $TimeStamp;
     push @DocumentIDs,$DocumentID;
   }
   
@@ -50,7 +50,7 @@ sub FetchDocument {
     $Documents{$DocumentID}{REQUESTER} = $RequesterID;
     $Documents{$DocumentID}{DATE}      = $RequestDate;
     $Documents{$DocumentID}{TYPE}      = $DocumentType;
-    $Documents{$DocumentID}{TIMESTAMP} = $TimeStamp;
+    $Documents{$DocumentID}{TimeStamp} = $TimeStamp;
     push @DocumentIDs,$DocumentID;
 
     $MaxVersionQuery -> execute($DocumentID);
