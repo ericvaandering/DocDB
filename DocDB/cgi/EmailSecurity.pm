@@ -45,38 +45,39 @@ sub UserPrefForm($) {
   my $EmailAddress = $EmailUser{$EmailUserID}{EmailAddress};
   my $PreferHTML   = $EmailUser{$EmailUserID}{PreferHTML};
 
-#  print $query -> startform('POST',$SelectEmailPrefs);
-  print "<dl><dd><table cellspacing=5>";
+  print "<table cellspacing=5>";
   if ($Digest) { 
     print $query -> hidden(-name => 'username', -default => $Username);
     print $query -> hidden(-name => 'digest', -default => $Digest);
-    print "<tr><th align=right>Username:\n<td>$Username";
+    print "<tr><td align=right><b>Username:</b></td>\n<td>$Username";
   } else {
-    print "<tr><th align=right>Username:\n<td>";
+    print "<tr><td align=right><b>Username:</b></td>\n<td>";
     print $query -> textfield(-name => 'username', -default => $Username,      
                             -size => 16, -maxlength => 32);
-    print "<tr><th align=right>Password:\n<td>";
+    print "<tr><td align=right><b>Password:</b></td>\n<td>";
     print $query -> password_field(-name => 'password', 
                             -size => 16, -maxlength => 32);
   }                          
-  print "<tr><th align=right>Name:\n<td>";
+  print "<tr><td align=right><b>Name:</b></td>\n<td>";
   print $query -> textfield(-name => 'name',     -default => $Name,     
                             -size => 24, -maxlength => 128);    
-  print "<tr><th align=right>E-mail address:\n<td>";
+  print "<tr><td align=right><b>E-mail address:</b></td>\n<td>";
   print $query -> textfield(-name => 'email',    -default => $EmailAddress,     
                             -size => 24, -maxlength => 64);
-  print "<tr><th align=right>Prefer HTML e-mail:\n<td>";
+  print "<tr><td align=right><b>New password:</b></td>\n<td>";
+  print $query -> password_field(-name => 'newpass',    -default => "",     
+                            -size => 24, -maxlength => 64, -override =>1 );
+  print "<tr><td align=right><b>Confirm password:</b></td>\n<td>";
+  print $query -> password_field(-name => 'confnewpass',    -default => "",     
+                            -size => 24, -maxlength => 64, -override =>1 );
+  print "<tr><td align=right><b>Prefer HTML e-mail:</b></td>\n<td>";
   if ($PreferHTML) {
     print $query -> checkbox(-name => "html", -checked => 'checked', -value => 1, -label => '');
   } else {
     print $query -> checkbox(-name => "html", -value => 1, -label => '');
   }                             
-#  print "<tr><td colspan=2 align=center>";  
-#  print $query -> submit (-value => "Update Account Info");
 
-  print "</table></dl>\n";
-
-#  print $query -> endform;
+  print "</table>\n";
 }
 
 sub EmailUserDigest ($) {
@@ -104,11 +105,11 @@ sub NewEmailUserForm {
   print $query -> hidden(-name => 'mode', -default => "newuser", -override => 1);
 
   print "<dl><dd><table>";
-  print "<tr><th align=right>Username:\n<td>";
+  print "<tr><td align=right><b>Username:</b></td>\n<td>";
   print $query -> textfield(-name => 'username',      -size => 16, -maxlength => 32);
-  print "<tr><th align=right>Password:\n<td>";
+  print "<tr><td align=right><b>Password:</b></td>\n<td>";
   print $query -> password_field(-name => 'password', -size => 16, -maxlength => 32);
-  print "<tr><th align=right>Confirm password:\n<td>";
+  print "<tr><td align=right><b>Confirm password:</b></td>\n<td>";
   print $query -> password_field(-name => 'passconf', -size => 16, -maxlength => 32);
   print "<tr><td colspan=2 align=center>";
   print $query -> submit (-value => "Create new account");
@@ -122,9 +123,9 @@ sub LoginEmailUserForm {
   print $query -> hidden(-name => 'mode', -default => "login", -override => 1);
 
   print "<dl><dd><table>";
-  print "<tr><th align=right>Username:\n<td>";
+  print "<tr><td align=right><b>Username:</b></td>\n<td>";
   print $query -> textfield(-name => 'username',      -size => 16, -maxlength => 32);
-  print "<tr><th align=right>Password:\n<td>";
+  print "<tr><td align=right><b>Password:</b></td>\n<td>";
   print $query -> password_field(-name => 'password', -size => 16, -maxlength => 32);
   print "<tr><td colspan=2 align=center>";
   print $query -> submit (-value => "Login");

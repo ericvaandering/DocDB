@@ -93,13 +93,17 @@ sub RevisionMailBody ($) {
 }
 
 sub UsersToNotify ($$) {
+  require "NotificationSQL.pm";
   my ($DocRevID,$Mode) = @_;
 
   &GetTopics;
 
   my $UserID;
+  my $Table;
   my %UserIDs = (); # Hash to make user IDs unique (one notification per person)
   my @Addressees = ();
+
+# Notification by topics 
   
   if ($Mode eq "immediate") {
     $Table = "EmailTopicImmediate";
@@ -110,16 +114,11 @@ sub UsersToNotify ($$) {
   } else {   
     return;
   }    
-  
-  my $AllFetch   = $dbh -> prepare(
-    "select EmailUserID from $Table where MinorTopicID=0 and MajorTopicID=0");
-  my $MinorFetch   = $dbh -> prepare(
-    "select EmailUserID from $Table where MinorTopicID=?");
-  my $MajorFetch   = $dbh -> prepare(
-    "select EmailUserID from $Table where MajorTopicID=?");
 
 # Get users interested in all documents for this reporting period
 
+  my $AllFetch   = $dbh -> prepare(
+    "select EmailUserID from $Table where MinorTopicID=0 and MajorTopicID=0");
   $AllFetch -> execute();
   $AllFetch -> bind_columns(undef,\($UserID));
   while ($AllFetch -> fetch) {
@@ -127,6 +126,11 @@ sub UsersToNotify ($$) {
   }
 
 # Get users interested in major or minor topics for this reporting period
+
+  my $MinorFetch   = $dbh -> prepare(
+    "select EmailUserID from $Table where MinorTopicID=?");
+  my $MajorFetch   = $dbh -> prepare(
+    "select EmailUserID from $Table where MajorTopicID=?");
 
   my @MinorTopicIDs = &GetRevisionTopics($DocRevID);
   foreach my $MinorTopicID (@MinorTopicIDs) {
@@ -140,6 +144,57 @@ sub UsersToNotify ($$) {
     $MajorFetch -> execute($MajorTopicID);
     $MajorFetch -> bind_columns(undef,\($UserID));
     while ($MajorFetch -> fetch) {
+      $UserIDs{$UserID} = 1; 
+    }
+  }  
+
+# Notification by authors 
+  
+  if ($Mode eq "immediate") {
+    $Table = "EmailAuthorImmediate";
+  } elsif ($Mode eq "daily")  {
+    $Table = "EmailAuthorDaily";
+  } elsif ($Mode eq "weekly")  {
+    $Table = "EmailAuthorWeekly";
+  }    
+
+# Get users interested in authors for this reporting period
+
+  my $AuthorFetch   = $dbh -> prepare(
+    "select EmailUserID from $Table where AuthorID=?");
+
+  my @AuthorIDs = &GetRevisionAuthors($DocRevID);
+
+  foreach my $AuthorID (@AuthorIDs) {
+    $AuthorFetch -> execute($AuthorID);
+    $AuthorFetch -> bind_columns(undef,\($UserID));
+    while ($AuthorFetch -> fetch) {
+      $UserIDs{$UserID} = 1; 
+    }
+  }  
+
+# Notification by keywords
+  
+  if ($Mode eq "immediate") {
+    $Table = "EmailKeywordImmediate";
+  } elsif ($Mode eq "daily")  {
+    $Table = "EmailKeywordDaily";
+  } elsif ($Mode eq "weekly")  {
+    $Table = "EmailKeywordWeekly";
+  }    
+
+# Get users interested in authors for this reporting period
+
+  my $KeywordFetch   = $dbh -> prepare(
+    "select EmailUserID from $Table where Keyword=lower(?)");
+  &FetchDocRevisionByID($DocRevID);
+  my @Keywords = split /\s+/,$DocRevisions{$DocRevID}{Keywords};
+
+  foreach my $Keyword (@Keywords) {
+    $Keyword =~ tr/[A-Z]/[a-z]/;
+    $KeywordFetch -> execute($Keyword);
+    $KeywordFetch -> bind_columns(undef,\($UserID));
+    while ($KeywordFetch -> fetch) {
       $UserIDs{$UserID} = 1; 
     }
   }  
@@ -160,36 +215,73 @@ sub UsersToNotify ($$) {
   return @Addressees;
 }
 
-sub FetchEmailUser($) {
-  my ($eMailUserID) = @_;
-  my ($EmailUserID,$Username,$Password,$Name,$EmailAddress,$PreferHTML);
-
-  my $UserFetch   = $dbh -> prepare(
-    "select EmailUserID,Username,Password,Name,EmailAddress,PreferHTML ".
-    "from EmailUser where EmailUserID=?");
-  
-  if ($EmailUser{$eMailUserID}{EmailUserID}) {
-    return $EmailUser{$eMailUserID}{EmailUserID};
-  }  
-  
-  $UserFetch -> execute($eMailUserID);
-  
-  ($EmailUserID,$Username,$Password,$Name,$EmailAddress,$PreferHTML) = $UserFetch -> fetchrow_array;
-  
-  $EmailUser{$EmailUserID}{EmailUserID}  = $EmailUserID;
-  $EmailUser{$EmailUserID}{Username}     = $Username;
-  $EmailUser{$EmailUserID}{Password}     = $Password;
-  $EmailUser{$EmailUserID}{Name}         = $Name;
-  $EmailUser{$EmailUserID}{EmailAddress} = $EmailAddress;
-  $EmailUser{$EmailUserID}{PreferHTML}   = $PreferHTML;
-  
-  return $EmailUser{$EmailUserID}{EmailUserID};
+sub EmailTopicForm($$) {
+  require "NotificationSQL.pm";
+  my ($EmailUserID,$Set) = @_;
+  &FetchTopicNotification($EmailUserID,$Set);
+  &NotifyTopicSelect($Set);
 }
 
-sub EmailPrefForm($$) {
+sub EmailAuthorForm($$) {
+  require "NotificationSQL.pm";
   my ($EmailUserID,$Set) = @_;
-  &FetchNotificationPrefs($EmailUserID,$Set);
-  &NotifyTopicSelect($Set);
+  &FetchAuthorNotification($EmailUserID,$Set);
+  &NotifyAuthorSelect($Set);
+}
+
+sub EmailKeywordForm($$) {
+  require "NotificationSQL.pm";
+  my ($EmailUserID,$Set) = @_;
+  &FetchKeywordNotification($EmailUserID,$Set);
+  &NotifyKeywordEntry($Set);
+}
+
+sub DisplayNotification($$) {
+  my ($EmailUserID,$Set) = @_;
+
+  require "NotificationSQL.pm";
+  require "TopicHTML.pm";
+
+  &FetchTopicNotification($EmailUserID,$Set);
+  &FetchAuthorNotification($EmailUserID,$Set);
+  &FetchKeywordNotification($EmailUserID,$Set);
+  
+  if ($NotifyAllTopics || @NotifyMajorIDs || @NotifyMinorIDs ||
+      @NotifyAuthorIDs || @NotifyKeywords) {
+    print "<li>$Set notifications:\n";  
+    print "<ul>\n";  
+  } else {
+    return;
+  }
+  if ($NotifyAllTopics) {
+    print "<li>All documents\n";  
+  }  
+  
+  if (@NotifyMajorIDs) {
+    foreach my $MajorID (@NotifyMajorIDs) {
+      print "<li> Topic: ",&MajorTopicLink($MajorID)," ";
+    }
+  }
+    
+  if (@NotifyMinorIDs) {
+    foreach my $MinorID (@NotifyMinorIDs) {
+      print "<li> Subtopic: ",&MinorTopicLink($MinorID)," ";
+    }
+  }
+    
+  if (@NotifyAuthorIDs) {
+    foreach my $AuthorID (@NotifyAuthorIDs) {
+      print "<li> Author: ",&AuthorLink($AuthorID)," ";
+    }
+  }
+    
+  if (@NotifyKeywords) {
+    foreach my $Keyword (@NotifyKeywords) {
+      print "<li>Keyword: $Keyword  ";
+    }
+  }
+    
+  print "</ul>\n";  
 }
 
 sub NotifyTopicSelect ($) { # Check for all, boxes for major and minor topics
@@ -232,70 +324,40 @@ sub NotifyTopicSelect ($) { # Check for all, boxes for major and minor topics
   print "</td>\n";
 }
 
-sub FetchNotificationPrefs ($$) {
-  my ($EmailUserID,$Set) = @_;
+sub NotifyAuthorSelect ($) { 
+  my ($Set) = @_;
 
-  my $MajorTopicID,$MinorTopicID;
+  print "<td valign=top>\n";
+  print "<b><a ";
+  &HelpLink("notifyauthor");
+  print "$Set:</a></b><br>\n";
 
-  $Table = "EmailTopic$Set";
-  @NotifyMajorIDs = ();
-  @NotifyMinorIDs = ();
-  $NotifyAllTopics = 0;
-  
-  my $UserFetch   = $dbh -> prepare("select MajorTopicID,MinorTopicID from $Table where EmailUserID=?");
-
-# Get users interested in all documents for this reporting period
-
-  $UserFetch -> execute($EmailUserID);
-  $UserFetch -> bind_columns(undef,\($MajorTopicID,$MinorTopicID));
-  while ($UserFetch -> fetch) {
-    if ($MajorTopicID) {
-      push @NotifyMajorIDs,$MajorTopicID;
-    } elsif ($MinorTopicID) { 
-      push @NotifyMinorIDs,$MinorTopicID;
-    } else { 
-      $NotifyAllTopics = 1;
-    }  
-  }
+  my @AuthorIDs = sort byLastName keys %Authors;
+  my %AuthorLabels = ();
+  foreach my $ID (@AuthorIDs) {
+    $AuthorLabels{$ID} = $Authors{$ID}{FULLNAME};
+  }  
+  print $query -> scrolling_list(-name => "author$Set", -values => \@AuthorIDs, 
+                                 -labels => \%AuthorLabels,  
+                                 -size => 10, -default => \@NotifyAuthorIDs,
+                                 -multiple => 'true');
+  print "</td>\n";
 }
-
-sub SetEmailNotifications ($$) {
-  my ($EmailUserID,$Set) = @_;
-
-  my $Table = "EmailTopic$Set";  # Tables    for immediate, daily, weekly 
-  my $Field = $Set."EmailID";    # ID fields for immediate, daily, weekly  
   
-# Delete all old notifications  
-  
-  my $Delete = $dbh -> prepare("delete from $Table where EmailUserID=?");
-  $Delete -> execute($EmailUserID);
+sub NotifyKeywordEntry ($) { 
+  my ($Set) = @_;
 
-# Get parameters from input
+  print "<tr><td align=left>\n";
+  print "<b><a ";
+  &HelpLink("notifykeyword");
+  print "$Set:</a></b> (separate with spaces)<br>\n";
 
-  my $AllTopics = $params{"all$Set"};
-  my @MinorIDs  = split /\0/,$params{"minortopic$Set"};
-  my @MajorIDs  = split /\0/,$params{"majortopic$Set"};
-
-# Insert in relevant table
-
-  if ($AllTopics) {
-    my $AllInsert = $dbh -> prepare(
-      "insert into $Table ($Field,EmailUserID,MinorTopicID,MajorTopicID) ".
-      "            values (0,     ?,          0,           0)");
-    $AllInsert -> execute($EmailUserID); 
-  }
-  foreach my $MinorID (@MinorIDs) {
-    my $MinorInsert = $dbh -> prepare(
-      "insert into $Table ($Field,EmailUserID,MinorTopicID) ".
-      "            values (0,     ?,          ?)");
-    $MinorInsert -> execute($EmailUserID,$MinorID); 
-  }   
-  foreach my $MajorID (@MajorIDs) {
-    my $MajorInsert = $dbh -> prepare(
-      "insert into $Table ($Field,EmailUserID,MajorTopicID) ".
-      "            values (0,     ?,          ?)");
-    $MajorInsert -> execute($EmailUserID,$MajorID); 
-  }   
+  foreach my $ID (@AuthorIDs) {
+    $AuthorLabels{$ID} = $Authors{$ID}{FULLNAME};
+  }  
+  print $query -> textfield (-name => "keyword$Set", -default => $NotifyKeywords, 
+                             -size => 80, -maxlength => 240);
+  print "</td></tr>\n";
 }
   
 1;
