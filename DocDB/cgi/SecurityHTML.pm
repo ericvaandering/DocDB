@@ -30,7 +30,7 @@ sub SecurityScroll (%) {
   my $AddPublic =   $Params{-addpublic} || 0;
   my $HelpLink  =   $Params{-helplink}  || "";
   my $HelpText  =   $Params{-helptext}  || "Groups";
-  my $Multiple  =   $Params{-multiple}  || "0"; # FIXME: May not be able to set false
+  my $Multiple  =   $Params{-multiple}; # FIXME: May not be able to set false
   my $Name      =   $Params{-name}      || "groups";
   my $Size      =   $Params{-size}      || 10;
   my $Disabled  =   $Params{-disabled}  || "0";
@@ -41,9 +41,9 @@ sub SecurityScroll (%) {
   if ($Disabled) {
     $Booleans .= "disabled ";
   }  
-  if ($Multiple) {
-    $Booleans .= "multiple";
-  }  
+#  if ($Multiple) {
+#    $Booleans .= "multiple";
+#  }  
   if ($Booleans) {
     $Booleans = "-".$Booleans;
   }
@@ -73,7 +73,7 @@ sub SecurityScroll (%) {
   
   print $query -> scrolling_list(-name => $Name, -values => \@GroupIDs, 
                                  -labels => \%GroupLabels, 
-                                 -size => $Size, 
+                                 -size => $Size, -multiple => $Multiple,
                                  -default => \@Default, $Booleans);
 };
 
