@@ -1,20 +1,14 @@
 sub GetDocTypes { # Creates/fills a hash $DocumentTypes{$DocTypeID}{} 
-#  my ($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active);
-#  my $people_list  = $dbh -> prepare(
-#     "select AuthorID,FirstName,MiddleInitials,LastName,Active from Author"); 
-#  $people_list -> execute;
-#  $people_list -> bind_columns(undef, \($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active));
-#  %Authors = ();
-#  while ($people_list -> fetch) {
-#    $Authors{$AuthorID}{AUTHORID} =  $AuthorID;
-#    $Authors{$AuthorID}{FULLNAME} = "$FirstName $MiddleInitials $LastName";
-#    $Authors{$AuthorID}{LASTNAME} =  $LastName;
-#    $Authors{$AuthorID}{ACTIVE}   =  $Active;
-#    if ($Active) {
-#      $ActiveAuthors{$AuthorID}{FULLNAME} = "$FirstName $MiddleInitials $LastName";
-#      $names{$AuthorID}                   = "$FirstName $MiddleInitials $LastName"; # FIXME
-#    }
-#  }
+  my $doctype_list  = $dbh -> prepare(
+     "select DocTypeID,ShortType,LongType from DocumentType");
+  %DocumentTypes = ();
+  $doctype_list -> execute;
+  $doctype_list -> bind_columns(undef, \($DocTypeID,$ShortType,$LongType));
+  while ($doctype_list -> fetch) {
+    $DocumentTypes{$DocTypeID}{DOCTYPEID} = $DocTypeID;
+    $DocumentTypes{$DocTypeID}{SHORT}     = $ShortType;
+    $DocumentTypes{$DocTypeID}{LONG}      = $LongType;
+  }
 };
 
 sub FetchDocType { # Fetches an DocumentType by ID, adds to $DocumentTypes{$DocTypeID}{}

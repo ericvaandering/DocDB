@@ -1,4 +1,6 @@
 sub FirstAuthor {
+  require "AuthorSQL.pm";
+
   my ($DocRevID) = @_;
 
   &FetchDocRevisionByID($DocRevID);
@@ -15,7 +17,7 @@ sub FirstAuthor {
     }  
   }
   
-  my $author_link = &AuthorLink($AuthorIDs[0]);
+  my $author_link = &AuthorLink($FirstID);
   if ($#AuthorIDs) {$author_link .= " <i>et. al.</i>";}
   return $author_link; 
 }

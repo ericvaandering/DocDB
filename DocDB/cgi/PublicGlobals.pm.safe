@@ -1,0 +1,9 @@
+# DB settings
+$db_name   = "BTeVDocTest";
+$db_host   = "vchipp.phy.vanderbilt.edu";
+$db_rwuser = "docadmin";
+$db_rwpass = "docadmin";
+$db_rouser = "docadmin";
+$db_ropass = "docadmin";
+
+1;

@@ -57,7 +57,7 @@ if (-e "TestGlobals.pm") {
   require "TestGlobals.pm";
 }  
 
-# Special files (gos here because they use values from above)
+# Special files (here because they use values from above)
 
 $htaccess     = ".htaccess";
 $help_file    = $script_root."docdb.hlp";
@@ -76,13 +76,15 @@ $AuthorAddForm      = $cgi_root."AuthorAddForm";
 
 $ListByAuthor       = $cgi_root."ListByAuthor";
 $ListByTopic        = $cgi_root."ListByTopic";
+$ListByType         = $cgi_root."ListByType";
 
 $ListAuthors        = $cgi_root."ListAuthors";
 $ListTopics         = $cgi_root."ListTopics";
+$ListTypes          = $cgi_root."ListTypes";
 
 $AddFiles           = $cgi_root."AddFiles";
 $AddFilesForm       = $cgi_root."AddFilesForm";
 
-
+$HelpFile           = $web_root."Help/DocDB_Help.shtml";
 
 1;

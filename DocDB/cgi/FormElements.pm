@@ -292,7 +292,7 @@ sub InstitutionSelect { # Scrolling selectable list for institutions
 };
 
 sub DocTypeButtons {
-# FIXME move fetches to MySQLaccess
+# FIXME Get rid of fetches, make sure GetDocTypes is executed
   my ($DocTypeID,$ShortType,$LongType);
   my $doctype_list  = $dbh->prepare("select DocTypeID,ShortType,LongType from DocumentType");
   $doctype_list -> execute;

@@ -33,7 +33,7 @@ if ($db_name eq "BTeVDocDB") {
 }
 
 print "<p><b><a href=\"$web_root/Help/DocDB_Help.shtml\">Help on
-using</a> the database:</b>\n";
+using</a> the database.</b>\n";
 print "<p><b>Find the information you want in the database:</b>\n";
 print "<ul>\n";
 
@@ -53,10 +53,11 @@ print $query -> endform;
 
 
 print "<li>"; 
-print $query -> startform('POST',$ListDocuments);
-print $query -> submit (-value => "List all");
-print " documents"; 
-print $query -> endform;
+print "List documents by ";
+print "<a href=\"$ListAuthors\">author</a>, ";
+print "<a href=\"$ListTopics\">topic</a>, ";
+print "<a href=\"$ListTypes\">type</a>, ";
+print "or <a href=\"$ListDocuments\">all documents</a>. ";
 
 print "</ul>\n";
 

@@ -16,8 +16,8 @@ sub PrintDocNumber { # And type
   print (&FullDocumentID($DocRevisions{$DocRevID}{DOCID}));
   print "-v$DocRevisions{$DocRevID}{VERSION}</nobr><br>\n";
   print "<nobr><b>Document type: </b>";
-  my $doc_type = &FetchDocType($Documents{$DocRevisions{$DocRevID}{DOCID}}{TYPE});
-  print "$doc_type</nobr><br>\n";
+  my $type_link = &TypeLink($Documents{$DocRevisions{$DocRevID}{DOCID}}{TYPE},"short");
+  print "$type_link</nobr><br>\n";
 }
 
 sub PrintAbstract {
@@ -208,6 +208,8 @@ sub FullDocumentID {
 }  
 
 sub FileLink {
+  require "FSUtilities.pm";
+
   my ($documentID,$version,$shortfile,$description) = @_;
   $base_url = &GetURLDir($documentID,$version);
   if ($description) {
@@ -319,10 +321,49 @@ sub DocDBNavBar {
   } 
   print "[&nbsp;<a href=\"$MainPage\">DocDB&nbsp;Home</a>&nbsp;]&nbsp;\n";
   print "[&nbsp;<a href=\"$DocumentAddForm?mode=add\">New&nbsp;Document</a>&nbsp;]&nbsp;\n";
-  print "[&nbsp;<a href=\"$DocumentAddForm\">Reservation</a>&nbsp;]&nbsp;\n";
+  print "[&nbsp;<a href=\"$DocumentAddForm\">Reserve</a>&nbsp;]&nbsp;\n";
   print "[&nbsp;<a href=\"$ListAuthors\">List&nbsp;Authors</a>&nbsp;]\n";
   print "[&nbsp;<a href=\"$ListTopics\">List&nbsp;Topics</a>&nbsp;]\n";
+  print "[&nbsp;<a href=\"$HelpFile\">Help</a>&nbsp;]\n";
   print "</div>\n";
+}
+
+sub TypesTable {
+#  require "Sorts.pm";
+
+  my $NCols = 3;
+  my @TypeIDs = keys %DocumentTypes;
+
+  my $Col   = 0;
+  print "<table cellpadding=10>\n";
+  foreach my $TypeID (@TypeIDs) {
+    unless ($Col % $NCols) {
+      print "<tr valign=top>\n";
+    }
+    $link = &TypeLink($TypeID,"short");
+    print "<td>$link\n";
+    ++$Col;
+  }  
+
+  print "</table>\n";
+}
+
+sub TypeLink {
+  my ($TypeID,$mode) = @_;
+  
+  require "MiscSQL.pm";
+  
+  &FetchDocType($TypeID);
+  my $link;
+  $link = "<a href=$ListByType?typeid=$TypeID>";
+  if ($mode eq "short") {
+    $link .= $DocumentTypes{$TypeID}{SHORT};
+  } else {
+    $link .= $DocumentTypes{$TypeID}{LONG};
+  }
+  $link .= "</a>";
+  
+  return $link;
 }
 
 1;
