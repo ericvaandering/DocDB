@@ -97,7 +97,7 @@ sub EndDatePullDown {
 sub KeywordsBox {
   print "<b><a ";
   &HelpLink("keywords");
-  print "Keywords:</a></b><br> \n";
+  print "Keywords:</a></b> (space separated)<br> \n";
   print $query -> textfield (-name => 'keywords', -default => $KeywordsDefault, 
                              -size => 70, -maxlength => 240);
 };

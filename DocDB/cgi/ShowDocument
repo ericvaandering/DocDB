@@ -22,6 +22,8 @@ $query = new CGI;  # Global for subroutines
 %params = $query -> Vars;
 
 $DocumentID = $params{docid};
+$DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
+$DocumentID =~ s/\s+$//;
 
 unless ($DocumentID) {
   print $query->header;
@@ -39,6 +41,8 @@ if ($params{version} eq "0") { # Options are undefined, 0, and non-zero.
 } else {
   if ($params{version}) {
     $Version    = $params{version};
+    $Version =~ s/^\s+//; # Remove leading and trailing spaces
+    $Version =~ s/\s+$//;
   } else {   
     $Version = $Documents{$DocumentID}{NVER};
   }
