@@ -1,9 +1,45 @@
-  $SearchModes{anysub} = "Any words as sub-string";
-  $SearchModes{allsub} = "All words as sub-string";
+#  Functions in this file:
+#
+#
+#  TitleSearchBox
+#    A box to type words/strings and a mode selecter for text searches 
+#    on DocumentTitle
+#    
+#  AbstractSearchBox
+#    A box to type words/strings and a mode selecter for text searches 
+#    on Abstract
+#   
+#  PubInfoSearchBox
+#    A box to type words/strings and a mode selecter for text searches 
+#    on PublicationInfo
+#   
+#  RequesterSearchBox
+#    A select box for searches on the requester. Unlike entry box, this 
+#    has to be multi-selectable for ANDS/ORS
+#   
+#  DocTypeMulti
+#    A select box for searches on document type. Unlike entry buttons, 
+#    this has to be multi-selectable for ANDS/ORS
+#   
+#  DateRangePullDown
+#    Two sets of pulldowns for defining a date range. Blanks are default
+#    for tagging no search on date.
+#   
+#  MajorMinorSelect
+#    Two multi-select boxes, one for major topics, one for minor topics.
+#    These are tied together by TopicSearchScript so that when major topics
+#    are selected, the list of minor topics is reduced. When only major topics
+#    are selected, the search will be on major topic. When even a single minor
+#    topic is selected, the search will be on the minor topic(s). 
+#    
+#  LogicTypeButtons
+#    Two buttons allow the user to control whether the inner logic (multiple 
+#    members of field) and the outer logic (between fields) are done with ANDs
+#    or ORs.  
 
+require "SearchModes.pm";
 
-
-sub TitleSearchBox {
+sub TitleSearchBox { # Box and mode selecter for searches on DocumentTitle
   print "<tr><th align=right><a ";
   &HelpLink("wordsearch");
   print "Title:</a></th> \n";
@@ -20,7 +56,7 @@ sub TitleSearchBox {
   print "</td></tr>\n";
 };
 
-sub AbstractSearchBox {
+sub AbstractSearchBox { # Field and mode selecter for searches on Abstract
   print "<tr><th align=right><a ";
   &HelpLink("wordsearch");
   print "Abstract:</a></th> \n";
@@ -37,7 +73,7 @@ sub AbstractSearchBox {
   print "</td></tr>\n";
 };
 
-sub PubInfoSearchBox {
+sub PubInfoSearchBox { # Field and mode selecter for searches on PublicationInfo
   print "<tr><th align=right><a ";
   &HelpLink("wordsearch");
   print "Publication Info:</a></th> \n";
@@ -54,7 +90,7 @@ sub PubInfoSearchBox {
   print "</td></tr>\n";
 };
 
-sub RequesterSearchBox { # Scrolling selectable list for requesting author
+sub RequesterSearchBox { # Scrolling selectable list for requester search
   my @AuthorIDs = sort byLastName keys %Authors;
   my %AuthorLabels = ();
   my @ActiveIDs = ();
@@ -73,8 +109,7 @@ sub RequesterSearchBox { # Scrolling selectable list for requesting author
                                  -multiple => 'true');
 };
 
-sub DocTypeMulti {
-# FIXME Get rid of fetches, make sure GetDocTypes is executed
+sub DocTypeMulti { # Scrolling selectable list for doc type search
   my %DocTypeLabels = ();
   foreach my $DocTypeID (keys %DocumentTypes) {
     $DocTypeLabels{$DocTypeID} = $DocumentTypes{$DocTypeID}{SHORT};
@@ -86,10 +121,9 @@ sub DocTypeMulti {
                               -values => \%DocTypeLabels, -multiple => 'true');
 };
 
-sub DateRangePullDown {
+sub DateRangePullDown { # Two sets of pulldowns for defining a date range
   my ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
   $year += 1900;
-  $min = (int (($min+3)/5))*5; # Nearest five minutes
   
   my @days = ("--");
   for ($i = 1; $i<=31; ++$i) {
@@ -97,7 +131,7 @@ sub DateRangePullDown {
   }  
 
   my @months = ("---","Jan","Feb","Mar","Apr","May","Jun",
-             "Jul","Aug","Sep","Oct","Nov","Dec");
+                      "Jul","Aug","Sep","Oct","Nov","Dec");
 
   my @years = ("----");
   for ($i = 1994; $i<=$year; ++$i) { # 1994 - current year
@@ -116,7 +150,10 @@ sub DateRangePullDown {
   print " (End)\n";
 }
 
-sub MajorMinorSelect {
+sub MajorMinorSelect { # Two multi-select boxes for major and minor topics
+                       # These are tied together by TopicSearchScript so that 
+                       # when major topics are selected, the list of minor 
+                       # topics is reduced.
   print "<td>\n";
   my @MajorIDs = sort byMajorTopic keys %MajorTopics;
   my %MajorLabels = ();
@@ -143,7 +180,8 @@ sub MajorMinorSelect {
   print "</td>\n";
 }
 
-sub LogicTypeButtons {
+sub LogicTypeButtons { # Two buttons allow control whether inner and outer 
+                       # logic are done with ANDs or ORs
   my @values = ["AND","OR"];
   
   print "<b><a ";
@@ -159,7 +197,6 @@ sub LogicTypeButtons {
   print "Within Fields:</a></b> \n";
   print $query -> radio_group(-name => "innerlogic", 
                               -values => @values, -default => "OR");
-};
+}
 
-
-
+1;

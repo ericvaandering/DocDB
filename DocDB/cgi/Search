@@ -67,13 +67,13 @@ print "IL: $InnerLogic<br>\n";
 print "MIN: @MinorSearchIDs<br>\n";
 print "MAJ: @MajorSearchIDs<br>\n";
 
-# Text search matches
+### Text search matches
 
 my $TitlePhrase    = &TextSearch("DocumentTitle",  $TitleSearchMode,   $TitleSearch);
 my $AbstractPhrase = &TextSearch("Abstract",       $AbstractSearchMode,$AbstractSearch);
 my $PubInfoPhrase  = &TextSearch("PublicationInfo",$PubInfoSearchMode, $PubInfoSearch);
 
-# Get Documents from DocumentRevision that match
+### Get Documents from DocumentRevision that match
 
 my @RevisionPhrases = ();
 my $RevisionQuery   = "select DocumentID from DocumentRevision where ";
@@ -96,11 +96,11 @@ while ($document_list -> fetch) {
   $DocumentIDs{$DocumentID} = 1; # Hash removes duplicates
 }
 
-# Assemble various queries into single list
+### Assemble various queries into single list
 
 my @DocumentIDs = keys %DocumentIDs;
 
-# Fetch all info for documents that match all criteria
+### Fetch all info for documents that match all criteria
 
 foreach my $DocumentID (@DocumentIDs) { 
   &FetchDocument($DocumentID);
@@ -108,7 +108,7 @@ foreach my $DocumentID (@DocumentIDs) {
 }
 @DocumentIDs = reverse sort DocumentByRevisionDate   @DocumentIDs;  
 
-# Print out summary info for matching documents
+### Print out summary info for matching documents
 
 print "<center><table cellpadding=3>\n";
 
@@ -124,7 +124,7 @@ foreach $DocumentID (@DocumentIDs) {
 print "</table></center>\n";
 print "<p>\n";
 
-# Statistics
+### Statistics
 
 my $NumDoc = $#DocumentIDs + 1;
 print "<p><b>Number of documents found: $NumDoc</b><p>\n";

@@ -90,7 +90,10 @@ foreach $DocumentID (@DocumentIDs) {
 print "</table></center>\n";
 print "<p>\n";
 
-### Finish off page
+### Statistics
+
+my $NumDoc = $#DocumentIDs + 1;
+print "<p><b>Number of documents found: $NumDoc</b><p>\n";
 
 $EndTime  = new Benchmark;
 $TimeDiff = timediff($EndTime,$StartTime);
