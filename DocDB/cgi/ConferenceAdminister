@@ -230,17 +230,18 @@ if ($Action eq "Modify") {
   print "<p><b>Here are the results of your modification:<br>\n";
   my $ShortLink = &MinorTopicLink($TopicID,"short");
   my $LongLink = &MinorTopicLink($TopicID,"long");
-  my $Start = &EuroDate($Conferences{$TopicID}{StartDate});
-  my $End   = &EuroDate($Conferences{$TopicID}{EndDate});
+  my $ConferenceID = $ConferenceMinor{$TopicID};
+  my $Start = &EuroDate($Conferences{$ConferenceID}{StartDate});
+  my $End   = &EuroDate($Conferences{$ConferenceID}{EndDate});
   my $Link;
-  if ($Conferences{$TopicID}{URL}) {
-    $Link = "<a href=\"$Conferences{$TopicID}{URL}\">$Conferences{$TopicID}{URL}</a>";
+  if ($Conferences{$ConferenceID}{URL}) {
+    $Link = "<a href=\"$Conferences{$ConferenceID}{URL}\">$Conferences{$ConferenceID}{URL}</a>";
   } else {
     $Link = "None entered\n";
   }
   print "Short description: $ShortLink<br>\n";
   print "Long description: $LongLink<br>\n";
-  print "Location: $Conferences{$TopicID}{Location}<br>\n";
+  print "Location: $Conferences{$ConferenceID}{Location}<br>\n";
   print "Start date: $Start<br>\n";
   print "End date: $End<br>\n";
   print "URL: $Link<br>\n";

@@ -6,54 +6,68 @@
 #    Modified: 
 #
 
-# Have to re-do conferences, storing them by ConferenceID rather than topic ID. Probably 
-# a translation hash between them and making one lookup a special case of the other 
-
-
-sub GetConferences { # Probably redo this so it just gets all conferences, regardless
+sub GetConferences { 
   %Conferences = ();
-  my $MinorTopicID;
-  foreach my $MajorID (@MeetingMajorIDs,@ConferenceMajorIDs) {
-    my $MinorList   = $dbh -> prepare(
-      "select MinorTopicID from MinorTopic where MajorTopicID=$MajorID");
-    $MinorList -> execute();
-    $MinorList -> bind_columns(undef, \($MinorTopicID));
-    while ($MinorList -> fetch) {
-      &FetchConferenceByTopicID($MinorTopicID);
-    }
+
+  my @ConferenceIDs = ();
+  my $ConferenceID;
+  
+  my $ConferenceList   = $dbh -> prepare("select ConferenceID from Conference");
+  $ConferenceList -> execute();
+  $ConferenceList -> bind_columns(undef, \($ConferenceID));
+  while ($ConferenceList -> fetch) {
+    $ConferenceID = &FetchConferenceByConferenceID($ConferenceID);
+    push @ConferenceIDs,$ConferenceID;
   }
+  return @ConferenceIDs;
 }
 
 sub FetchConferenceByTopicID { # Fetches a conference by MinorTopicID
   my ($minorTopicID) = @_;
+  my ($ConferenceID,$MinorTopicID);
+  
+  my $ConferenceFetch   = $dbh -> prepare(
+    "select ConferenceID,MinorTopicID from Conference where MinorTopicID=?");
+  $ConferenceFetch -> execute($minorTopicID);
+  ($ConferenceID,$MinorTopicID) = $ConferenceFetch -> fetchrow_array;
+ 
+  $ConferenceID = &FetchConferenceByConferenceID($ConferenceID);
+
+  return $ConferenceID;
+}
+
+sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
+  my ($conferenceID) = @_;
   my ($ConferenceID,$MinorTopicID,$Location,$URL,$Title,$Preamble,$Epilogue,$StartDate,$EndDate,$ShowAllTalks,$TimeStamp);
 
-  if ($Conference{$minorTopicID}{MINOR}) { # We already have this one
-    return $Conference{$minorTopicID}{MINOR};
+  if ($Conference{$conferenceID}{MINOR}) { # We already have this one
+    return $conferenceID;
   }
   
   my $ConferenceFetch   = $dbh -> prepare(
     "select ConferenceID,MinorTopicID,Location,URL,Title,Preamble,Epilogue,StartDate,EndDate,ShowAllTalks,TimeStamp ".
     "from Conference ".
-    "where MinorTopicID=?");
-  &FetchMinorTopic($minorTopicID);
-  $ConferenceFetch -> execute($minorTopicID);
+    "where ConferenceID=?");
+#  &FetchMinorTopic($onferenceID);
+  $ConferenceFetch -> execute($conferenceID);
   ($ConferenceID,$MinorTopicID,$Location,$URL,$Title,$Preamble,$Epilogue,$StartDate,$EndDate,$TimeStamp) 
     = $ConferenceFetch -> fetchrow_array;
-  $Conferences{$MinorTopicID}{MINOR}        = $MinorTopicID;
-  $Conferences{$MinorTopicID}{Location}     = $Location;
-  $Conferences{$MinorTopicID}{URL}          = $URL;
-  $Conferences{$MinorTopicID}{Title}        = $Title;
-  $Conferences{$MinorTopicID}{Preamble}     = $Preamble;
-  $Conferences{$MinorTopicID}{Epilogue}     = $Epilogue;
-  $Conferences{$MinorTopicID}{StartDate}    = $StartDate;
-  $Conferences{$MinorTopicID}{EndDate}      = $EndDate;
-  $Conferences{$MinorTopicID}{ShowAllTalks} = $ShowAllTalks;
-  $Conferences{$MinorTopicID}{TimeStamp}    = $TimeStamp;
+  if ($ConferenceID) {
+    $Conferences{$ConferenceID}{Minor}        = $MinorTopicID;
+    $Conferences{$ConferenceID}{Location}     = $Location;
+    $Conferences{$ConferenceID}{URL}          = $URL;
+    $Conferences{$ConferenceID}{Title}        = $Title;
+    $Conferences{$ConferenceID}{Preamble}     = $Preamble;
+    $Conferences{$ConferenceID}{Epilogue}     = $Epilogue;
+    $Conferences{$ConferenceID}{StartDate}    = $StartDate;
+    $Conferences{$ConferenceID}{EndDate}      = $EndDate;
+    $Conferences{$ConferenceID}{ShowAllTalks} = $ShowAllTalks;
+    $Conferences{$ConferenceID}{TimeStamp}    = $TimeStamp;
+    	
+    $ConferenceMinor{$MinorTopicID} = $ConferenceID; # Used to index conferences with MinorTopic
+  }
 
-  $ConferenceForward{$ConferenceID}{Minor} = $MinorTopicID; # FIXME will go away when conferences index right	
-
-  return $Conferences{$MinorTopicID}{MINOR};
+  return $ConferenceID;
 }
 
 sub FetchSessionsByConferenceID ($) {

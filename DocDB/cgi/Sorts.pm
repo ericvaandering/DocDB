@@ -15,9 +15,11 @@ sub byTopic {
   if ($MinorTopics{$a}{MAJOR} == $MinorTopics{$b}{MAJOR} &&
       &MajorIsGathering($MinorTopics{$a}{MAJOR}) &&
       &MajorIsGathering($MinorTopics{$b}{MAJOR}) ) {
-           
-    my $adate = $Conferences{$a}{StartDate}; 
-    my $bdate = $Conferences{$b}{StartDate};
+    
+    my $acid = $ConferenceMinor{$a};
+    my $bcid = $ConferenceMinor{$b};
+    my $adate = $Conferences{$acid}{StartDate}; 
+    my $bdate = $Conferences{$bcid}{StartDate};
     my ($ayear,$amonth,$aday) = split /\-/,$adate;
     my ($byear,$bmonth,$bday) = split /\-/,$bdate;
 
@@ -131,7 +133,8 @@ sub DocumentByRequester {
   $Authors{$adr}{FIRSTNAME} cmp $Authors{$bdr}{FIRSTNAME}
 }
 
-sub DocumentByConferenceDate {
+sub DocumentByConferenceDate { # FIXME: Look at this and see if it can be 
+                               # simplified after re-indexing conferences
   require "TopicSQL.pm";
   
   my $adr = $DocRevIDs{$a}{$Documents{$a}{NVER}};
@@ -157,25 +160,13 @@ sub DocumentByConferenceDate {
     }
   }      
 
-  my $acid = $FirstConf{$adr};
-  my $bcid = $FirstConf{$bdr};
+  my $atid = $FirstConf{$adr};
+  my $btid = $FirstConf{$bdr};
+  my $acid = $ConferenceMinor{$atid};
+  my $bcid = $ConferenceMinor{$btid};
 
   my $adate = $Conferences{$acid}{StartDate}; 
   my $bdate = $Conferences{$bcid}{StartDate};
-  my ($ayear,$amonth,$aday) = split /\-/,$adate;
-  my ($byear,$bmonth,$bday) = split /\-/,$bdate;
-
-   $ayear <=> $byear
-          or
-  $amonth <=> $bmonth 
-          or
-    $aday <=> $bday
-}
-
-sub ConferenceByDate {
-  $MinorTopics{$a}{SHORT} cmp $MinorTopics{$b}{SHORT};
-  my $adate = $Conferences{$a}{StartDate}; 
-  my $bdate = $Conferences{$b}{StartDate};
   my ($ayear,$amonth,$aday) = split /\-/,$adate;
   my ($byear,$bmonth,$bday) = split /\-/,$bdate;
 

@@ -93,8 +93,8 @@ my $MinorTopicID;
 
 if ($ConferenceID) {
   require "MeetingSQL.pm";
-  &GetConferences;
-  $MinorTopicID = $ConferenceForward{$ConferenceID}{MINOR};
+  &GetConferences; # FIXME Just fetch one
+  $MinorTopicID = $Conferences{$ConferenceID}{Minor};
   &FetchSessionsByConferenceID($ConferenceID);
   &FetchSessionSeparatorsByConferenceID($ConferenceID);
 }     

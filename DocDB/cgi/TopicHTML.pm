@@ -122,7 +122,8 @@ sub ConferenceLink {
   }
   $Link .= "</a>";
   unless ($Mode eq "nodate") {
-    my ($Year,$Month,$Day) = split /\-/,$Conferences{$TopicID}{StartDate};
+    my $ConferenceID = $ConferenceMinor{$TopicID};
+    my ($Year,$Month,$Day) = split /\-/,$Conferences{$ConferenceID}{StartDate};
     $Link .= " (".@AbrvMonths[$Month-1]." $Year)"; 
   }
   return $Link;
@@ -201,18 +202,20 @@ sub GatheringTable {
     foreach my $MinorID (@MinorTopicIDs) {
       if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
         print "<tr>\n";
+        
+        my $ConferenceID = $ConferenceMinor{$MinorID};
         my $GatheringLink = &GatheringLink($MinorID,"short");
-        my $Start = &EuroDate($Conferences{$MinorID}{StartDate});
-        my $End   = &EuroDate($Conferences{$MinorID}{EndDate});
+        my $Start = &EuroDate($Conferences{$ConferenceID}{StartDate});
+        my $End   = &EuroDate($Conferences{$ConferenceID}{EndDate});
         my $Link;
-        if ($Conferences{$MinorID}{URL}) {
-          $Link = "<a href=\"$Conferences{$MinorID}{URL}\">$Conferences{$MinorID}{URL}</a>";
+        if ($Conferences{$ConferenceID}{URL}) {
+          $Link = "<a href=\"$Conferences{$ConferenceID}{URL}\">$Conferences{$ConferenceID}{URL}</a>";
         } else {
           $Link = "None entered\n";
         }
         print "<td>$GatheringLink</td>\n";
         print "<td>$MinorTopics{$MinorID}{LONG}</td>\n";
-        print "<td>$Conferences{$MinorID}{Location}</td>\n";
+        print "<td>$Conferences{$ConferenceID}{Location}</td>\n";
         print "<td>$Start - $End</td>\n";
         print "<td>$Link</td>\n";
         print "</tr>\n";
