@@ -6,8 +6,17 @@
 #    Modified: 
 #
 
-sub JournalSelect (;$) {
-  my ($Mode) = @_;
+sub JournalSelect (;%) {
+  my (%Params) = @_;
+  
+  my $Disabled = $Params{-disabled} || "0";
+  my $Mode     = $Params{-format}   || "0";
+ 
+  my $Booleans = "";
+  
+  if ($Disabled) {
+    $Booleans .= "-disabled";
+  }  
   
   my @JournalIDs = keys %Journals;
   my %JournalLabels = ();
@@ -21,25 +30,36 @@ sub JournalSelect (;$) {
   print "Journal:</a></b><br> \n";
   print $query -> scrolling_list(-name => "journal", -values => \@JournalIDs, 
                                  -labels => \%JournalLabels, -size => 10, 
-                                 -default => $JournalDefault);
+                                 -default => $JournalDefault, $Booleans);
 
 }
 
-sub JournalEntryBox {
+sub JournalEntryBox (;%) {
+  my (%Params) = @_;
+  
+  my $Disabled = $Params{-disabled} || "0";
+  my $Mode     = $Params{-format}   || "0";
+ 
+  my $Booleans = "";
+  
+  if ($Disabled) {
+    $Booleans .= "-disabled";
+  }  
+
   print "<table cellpadding=5><tr valign=top>\n";
   print "<td>\n";
   print "<b><a ";
   &HelpLink("journalentry");
   print "Full Name:</a></b><br> \n";
   print $query -> textfield (-name => 'name', 
-                             -size => 40, -maxlength => 128);
+                             -size => 40, -maxlength => 128, $Booleans);
   print "</td>\n";
   print "<td>\n";
   print "<b><a ";
   &HelpLink("journalentry");
   print "Publisher:</a></b><br> \n";
   print $query -> textfield (-name => 'pub', 
-                             -size => 40, -maxlength => 64);
+                             -size => 40, -maxlength => 64, $Booleans);
   print "</td></tr>\n";
 
   print "<tr><td>\n";
@@ -47,21 +67,21 @@ sub JournalEntryBox {
   &HelpLink("journalentry");
   print "Abbreviation:</a></b><br> \n";
   print $query -> textfield (-name => 'abbr', 
-                             -size => 40, -maxlength => 64);
+                             -size => 40, -maxlength => 64, $Booleans);
   print "</td>\n";
   print "<td>\n";
   print "<b><a ";
   &HelpLink("journalentry");
   print "URL:</a></b><br> \n";
   print $query -> textfield (-name => 'url', 
-                             -size => 40, -maxlength => 240);
+                             -size => 40, -maxlength => 240, $Booleans);
   print "</td></tr>\n";
   print "<tr><td>\n";
   print "<b><a ";
   &HelpLink("journalentry");
   print "Acronym:</a></b><br> \n";
   print $query -> textfield (-name => 'acronym', 
-                             -size => 8, -maxlength => 8);
+                             -size => 8, -maxlength => 8, $Booleans);
   print "</td></tr>\n";
   print "</table>\n";
 

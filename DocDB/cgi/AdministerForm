@@ -330,7 +330,7 @@ $EnableMatrix{longdesc}{Modify} = 1;
 print "<a name=\"doctype\"><center><h4>Administer Document Types</h4></center>\n";
 
 print $query -> start_multipart_form('POST',"$DocTypeAdminister",
-                                    "id=\"documenttype\" name=\"documenttype\"");
+                                     "id=\"documenttype\" name=\"documenttype\"");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td colspan=2>\n"; 
@@ -358,17 +358,39 @@ print "<p><hr>\n";
 
 ### Journal Administration
 
+%EnableMatrix = ();
+
+$EnableMatrix{journal}{Delete} = 1;
+
+$EnableMatrix{name}{New}       = 1;
+$EnableMatrix{pub}{New}        = 1;
+$EnableMatrix{abbr}{New}       = 1;
+$EnableMatrix{url}{New}        = 1;
+$EnableMatrix{acronym}{New}    = 1;
+
+$EnableMatrix{journal}{Modify} = 1;
+$EnableMatrix{name}{Modify}    = 1;
+$EnableMatrix{pub}{Modify}     = 1;
+$EnableMatrix{abbr}{Modify}    = 1;
+$EnableMatrix{url}{Modify}     = 1;
+$EnableMatrix{acronym}{Modify} = 1;
+
 print "<a name=\"journal\"><center><h4>Administer Journals</h4></center>\n";
 
-print $query -> start_multipart_form('POST',"$JournalAdminister");
+print $query -> start_multipart_form('POST',"$JournalAdminister",
+                                     "id=\"journals\" name=\"journals\"");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
-print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
+print "<td colspan=2>\n";
+ &AdministerActions(-form => "journals", -matrix => \%EnableMatrix);
+print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td>\n"; &JournalSelect("full"); print "</td>\n";
-print "<td>\n"; &JournalEntryBox;     print "</td>\n";
+print "<td>\n";
+ &JournalSelect(-disabled => true);
+print "</td>\n";
+print "<td>\n"; &JournalEntryBox(-disabled => true);     print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
