@@ -1,0 +1,83 @@
+#!/usr/bin/env perl
+
+use lib '..';
+##use lib '/www/mysql/Msql-Mysql-modules-1.2216/blib/lib';
+##use lib '/www/mysql/Msql-Mysql-modules-1.2216/blib/arch/auto/DBD/mysql';
+use CGI qw/:standard :html3/;
+use CGI::Carp qw/fatalsToBrowser/;
+use File::Copy;
+use File::Path;
+use File::Basename;
+use POSIX;
+use DBI;
+#use strict;
+
+
+# Variables - change these for your project
+
+$project = "BTeV";
+$url_number_assign = "<a href=\"http://www-btev.fnal.gov/internal_documents/docdb/
+noteReq.html\"> request a new number</a>";
+$doc_dir = "/www/html/btevdocs/";
+$DOC_URL = "http://www-btev.fnal.gov/btevdocs";
+$MAIL_LIST = "btev-notes\@fnal.gov";
+$MAILLOG = "/var/tmp/mcnoteMail.log";
+$MAIL = "/usr/ucb/Mail";
+$dsn = "DBI:mysql:btev_documents:fnsimu1";
+$user_name = "wsrvbtev";
+$passwd = "numiweb";
+$database = "btev_documents";
+$table = "notes";
+$note_prefix = "btev";
+$err_mail = "garren\@fnal.gov";
+
+# Get info from form input 
+
+
+
+$title = param('title');
+$authors = param('authors');
+$pub_info = param('pub_info');
+$requestor = param('requestor');
+$class = param('class');
+$distribution = param('distribution');
+$topic = param('topic');
+@subtopic = param('subtopic');
+@subtopic2 = param('subtopic2');
+
+
+print header();
+print start_html(-title=>"$project Document Number Request results");
+print "<BODY>\n";
+
+print "<h1>\n";
+print "You entered the following information\n";
+print "<p>\n";
+print "</h1><h2>\n";
+print "Title: $title<br>\n";
+print "Authors: $authors<br>\n";
+print "Publication Information: $pub_info<br>\n";
+print "Requestor: $requestor<br>\n";
+print "Type: $class<br>\n";
+print "This note is $distribution<br>\n";
+print "Topic: $topic<br>\n";
+print "SubTopics: \n";
+foreach $sub (@subtopic) {
+  print " $sub";
+}
+print "<br>\n";
+print "SubTopics2: \n";
+foreach $sub (@subtopic2) {
+  print " $sub";
+}
+print "<br>\n";
+
+foreach $arg ( @ARGV ) {
+   print " $arg <br>\n";
+}
+
+print "</BODY>\n";
+end_html;
+  exit;
+
+

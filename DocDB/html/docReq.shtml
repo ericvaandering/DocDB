@@ -9,6 +9,12 @@
 <script language="javascript">
 <!-- hide script from old browsers
 
+var count = 0
+function dummy()
+{
+   count = count + 1;
+}
+
 function settype()
 {
    var list = document.dform.topic;
@@ -40,12 +46,12 @@ function settype()
 	 break;
       case "other" :
 	 document.dform.subtopic.options.length = 0; 
-	 IntPath.options[IntPath.options.length] = new Option('EW','0');   
-	 IntPath.options[IntPath.options.length] = new Option('QCD','1');
-	 IntPath.options[IntPath.options.length] = new Option('exotics_searches','2');
-	 IntPath.options[IntPath.options.length] = new Option('production','3');
-	 IntPath.options[IntPath.options.length] = new Option('rare_and_forbidden_decay','4');
-	 IntPath.options[IntPath.options.length] = new Option('standard_decays','5');
+	 IntPath.options[IntPath.options.length] = new Option('EW','EW');   
+	 IntPath.options[IntPath.options.length] = new Option('QCD','QCD');
+	 IntPath.options[IntPath.options.length] = new Option('exotics_searches','exotics_searches');
+	 IntPath.options[IntPath.options.length] = new Option('production','production');
+	 IntPath.options[IntPath.options.length] = new Option('rare_and_forbidden_decay','rare_and_forbidden_decay');
+	 IntPath.options[IntPath.options.length] = new Option('standard_decays','standard_decays');
 	 break;
       case "detector" :
 	 document.dform.subtopic.options.length = 0; 
@@ -79,11 +85,7 @@ function settype()
 	 IntPath.options[IntPath.options.length] = new Option('analysis','0');   
 	 IntPath.options[IntPath.options.length] = new Option('framework','1');
 	 IntPath.options[IntPath.options.length] = new Option('overview','2');
-	 IntPath.options[IntPath.options.length] = new Option('simulation','2');
-	 IntPath.options[IntPath.options.length] = new Option('','2');
-	 IntPath.options[IntPath.options.length] = new Option('','2');
-	 IntPath.options[IntPath.options.length] = new Option('','2');
-	 IntPath.options[IntPath.options.length] = new Option('','2');
+	 IntPath.options[IntPath.options.length] = new Option('simulation','3');
 	 break;
       case "general" :
 	 document.dform.subtopic.options.length = 0; 
@@ -133,7 +135,7 @@ function settype()
 
     <HR>
 
-    <FORM name="dform" METHOD=POST ACTION="/cgi-private/DocDB/noteReq">
+    <FORM name="dform" METHOD=POST ACTION="/cgi-private/DocDB/docReq">
 
       <INPUT TYPE=submit VALUE="submit request"> 
       <INPUT TYPE=reset VALUE="clear form">
@@ -179,7 +181,116 @@ function settype()
 	    </select>
 
       <DT>
-	<DD>The "more" button goes here <p>
+	<DD><INPUT TYPE=button VALUE="more" onClick=dummy()> Click here for more options <p>
+
+     <table>
+     <tr>
+     <td>  
+         Physics - Charm  <br>
+  	    <select name="subtopic2" multiple size=5>
+	 <option value='CP_violation'>  CP_violation
+	 <option value='exotic_decays'>  exotic_decays
+	 <option value='mixing'>  mixing
+	 <option value='other_topics'>  other_topics
+	 <option value='production'>  production
+	 <option value='rare_and_forbidden_decay'>  rare_and_forbidden_decay
+	 <option value='standard_decays'>  standard_decays
+	    </select>
+     </td>
+     <td>  
+         Physics -  Beauty <br>
+  	    <select name="subtopic2" multiple size=5>
+	 <option value='CP_violation'>  CP_violation
+	 <option value='exotic_decays'>  exotic_decays
+	 <option value='mixing'>  mixing
+	 <option value='other_topics'>  other_topics
+	 <option value='production'>  production
+	 <option value='rare_and_forbidden_decay'>  rare_and_forbidden_decay
+	 <option value='standard_decays'>  standard_decays
+	    </select>
+     </td>
+     <td>  
+         Physics -  Other <br>
+  	    <select name="subtopic2" multiple size=5>
+	 <option value='EW'>  EW
+	 <option value='QCD'>  QCD
+	 <option value='exotics_searches'>  exotics_searches
+	 <option value='production'>  production
+	 <option value='rare_and_forbidden_decay'>  rare_and_forbidden_decay
+	 <option value='standard_decays'>  standard_decays
+	    </select>
+     </td>
+     </tr>
+     <tr>
+     <td>  
+          Detector <br>
+  	    <select name="subtopic2" multiple size=5>
+	 <option value='CZero'>  CZero
+	 <option value='RICH'>  RICH
+	 <option value='beams'>  beams
+	 <option value='emcal'>  emcal
+	 <option value='magnets'>  magnets
+	 <option value='muon'>  muon
+	 <option value='pixel'> pixel
+	 <option value='ssd'>  ssd
+	 <option value='straws'>  straws
+	 <option value='surveying'>  surveying
+	    </select>
+     </td>
+     <td>  
+          Computing <br>
+  	    <select name="subtopic2" multiple size=5>
+	 <option value='DAQ'>  DAQ 
+	 <option value='ctrlmontiming'> ctrlmontiming
+	 <option value='data_QA'>  data_QA
+	 <option value='data_archival'>  data_archival
+	 <option value='data_reconstruction'>  data_reconstruction
+	 <option value='detector_simulation'> detector_simulation
+	 <option value='overview'>  overview
+	 <option value='physics_simulation'>  physics_simulation
+	 <option value='trigger_level_1'>  trigger_level_1
+	 <option value='trigger_level_2'>  trigger_level_2
+	 <option value='trigger_level_3'>  trigger_level_3
+	    </select>
+     </td>
+     <td>  
+          Software <br>
+  	    <select name="subtopic2" multiple size=5>
+	 <option value='analysis'>  analysis
+	 <option value='framework'> framework
+	 <option value='overview'>  overview
+	 <option value='simulation'> simulation
+	 <option value='tools'> tools
+	    </select>
+     </td>
+     </tr>
+     <tr>
+     <td>  
+          General <br>
+  	    <select name="subtopic2" multiple size=5>
+	 <option value='ES&H'>   ES&H
+	 <option value='budgets'> budgets
+	 <option value='electrical'> electrical
+	 <option value='mechanical'> mechanical
+	 <option value='organization'>  organization
+	 <option value='policies'>  policies
+	 <option value='proposals'>  proposals
+	 <option value='schedules'>  schedules
+	 <option value='standards'>  standards
+	    </select>
+     </td>
+     <td>  
+          Meetings <br>
+  	    <select name="subtopic2" multiple size=5>
+	 <option value='December_17_2001'> December_17_2001
+	 <option value='November_3_2001'>  November_3_2001
+	 <option value='September_30_2001'>   September_30_2001
+	 <option value='August_23_2001'> August_23_2001
+	 <option value='June_27_2001'>  June_27_2001
+	    </select>
+     </td>
+     </tr>
+     </table>
 
     </DL>
 
