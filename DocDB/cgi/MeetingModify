@@ -547,6 +547,7 @@ print "<td>\n";
               -name      => 'meetingviewgroups', 
               -helplink  => 'meetingviewgroups',
               -helptext  => 'Viewable by',
+              -multiple  => true,
               -default   => \@MeetingViewDefaults,
               -size      => 8);
 print "</td>\n";
@@ -556,6 +557,7 @@ print "<td>\n";
 &SecurityScroll(-name      => 'meetingmodifygroups', 
               -helplink  => 'meetingmodifygroups',
               -helptext  => 'Modifiable by',
+              -multiple  => true,
               -default   => \@MeetingModifyDefaults,
               -size      => 8);
 print "</td>\n";

@@ -488,6 +488,7 @@ if ($EnhancedSecurity) {
               -name      => 'security', 
               -helplink  => 'security',
               -helptext  => $SecurityText,
+              -multiple  => true,
               -default   => \@SecurityDefaults);
 print "</td>\n";
 if ($EnhancedSecurity) {
@@ -495,6 +496,7 @@ if ($EnhancedSecurity) {
   &SecurityScroll(-name      => 'modify', 
                 -helplink  => 'modifygroups',
                 -helptext  => 'Modify',
+                -multiple  => true,
                 -default   => \@ModifyDefaults);
   print "</td>\n";
 }
