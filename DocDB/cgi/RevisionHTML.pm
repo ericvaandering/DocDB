@@ -183,7 +183,6 @@ sub PrintRevisionInfo {
   print "<p/>\n";
   
   &AuthorListByID(@AuthorIDs);
-  &TopicListByID(@TopicIDs);
   &SecurityListByID(@GroupIDs);
   &ModifyListByID(@ModifyIDs);
 
@@ -194,6 +193,7 @@ sub PrintRevisionInfo {
   print "<div id=\"MainColumn3Col\">\n";
 
   &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT}); # All are called only here, so changes are OK
+  &TopicListByID(@TopicIDs);
   &PrintKeywords($DocRevisions{$DocRevID}{Keywords});
   &PrintRevisionNote($DocRevisions{$DocRevID}{Note});
   &PrintReferenceInfo($DocRevID);
