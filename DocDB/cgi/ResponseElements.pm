@@ -454,14 +454,42 @@ sub FindAgendaRevision {
   require "MiscSQL.pm";
   my ($MeetingID) = @_; 
   
-  my $agenda_find = $dbh -> prepare(
-    "select MAX(DocumentRevision.DocRevID) from DocumentRevision,RevisionTopic ".
+  my $agenda_base = 
+    "select DocumentRevision.DocRevID from DocumentRevision,RevisionTopic ".
     "where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
-     "and lower(DocumentRevision.DocumentTitle) like lower(\"agenda%\") ".
-     "and RevisionTopic.MinorTopicID=$MeetingID"); 
+     "and RevisionTopic.MinorTopicID=$MeetingID "; 
+  my $agenda_find = $dbh -> prepare ($agenda_base.
+     "and lower(DocumentRevision.DocumentTitle) like lower(\"agenda%\") ");
   
+  my $AgendaRevID = 0;
+  my $DocRevID;
+
   $agenda_find -> execute();
-  my ($DocRevID) = $agenda_find -> fetchrow_array;
+  $agenda_find -> bind_columns(undef, \($DocRevID));
+  while ($agenda_find -> fetch && !$AgendaRevID) {
+    &FetchDocRevisionByID($DocRevID); 
+    if ($DocRevisions{$DocRevID}{OBSOLETE}) {next;}
+    my $DocID = &FetchDocument($DocRevisions{$DocRevID}{DOCID});
+    if ($DocRevisions{$DocRevID}{VERSION} != $Documents{$DocID}{NVER}) {next;}
+    $AgendaRevID = $DocRevID;
+  }
+
+  unless ($AgendaRevID) {
+    my $agenda_find = $dbh -> prepare ($agenda_base.
+       "and lower(DocumentRevision.DocumentTitle) like lower(\"%agenda%\") ");
+
+    $agenda_find -> execute();
+    $agenda_find -> bind_columns(undef, \($DocRevID));
+    while ($agenda_find -> fetch && !$AgendaRevID) {
+      &FetchDocRevisionByID($DocRevID); 
+      if ($DocRevisions{$DocRevID}{OBSOLETE}) {next;}
+      my $DocID = &FetchDocument($DocRevisions{$DocRevID}{DOCID});
+      if ($DocRevisions{$DocRevID}{VERSION} != $Documents{$DocID}{NVER}) {next;}
+      $AgendaRevID = $DocRevID;
+    }
+  }
+    
+  return $AgendaRevID;
 }
 
 sub FindAgendaURL {
