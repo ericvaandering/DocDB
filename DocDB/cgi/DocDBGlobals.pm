@@ -12,6 +12,7 @@ $file_root   = "/www/html/DocDB/";
 $script_root = "/www/cgi-bin/DocDB/"; 
 $web_root    = "http://www-btev.fnal.gov/DocDB/";
 $cgi_root    = "http://www-btev.fnal.gov/cgi-bin/DocDB/";
+$cgi_path    = "/cgi-bin/DocDB/";
 $SSIDirectory = "/www/html/includes/";
 
 # Shell Commands
