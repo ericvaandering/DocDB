@@ -47,7 +47,7 @@ if (@error_stack) {  # The user made one or more mistakes, warn and exit
 
 print "<b>Click on any of the headings for help.</b><p>\n"; 
 
-print $query -> start_multipart_form('POST',"AuthorAdminister");
+print $query -> start_multipart_form('POST',"$AuthorAdminister");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";

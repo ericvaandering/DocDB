@@ -130,11 +130,12 @@ print "<li>See below if these options aren't flexible enough.\n";
 print "</ul>\n";
 
 print "<p><b>Database maintenance:</b><ul>\n";
+print "<li>Add an <a href=\"$AuthorAddForm\">author</a>\n";
+print "<li>Add a  <a href=\"$ConferenceAddForm\">conference</a>\n";
 if ($remote_user eq $Administrator) {
   print "<li>Add a <a href=\"$TopicAddForm\">topic</a>\n";
+  print "<li>Perform other <a href=\"$AdministerForm\">administration tasks</a>\n";
 }
-print "<li>Add a  <a href=\"$ConferenceAddForm\">conference</a>\n";
-print "<li>Add an <a href=\"$AuthorAddForm\">author</a>\n";
 print "</ul>\n";
 
 print "<p><hr><p>\n";
