@@ -1,0 +1,38 @@
+#! /usr/bin/env perl
+#
+#        Name: MeetingCreate
+# Description: Create the shell of a meeting. Calls MeetingModify
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+use CGI;
+use DBI;
+
+require "DocDBGlobals.pm";
+
+$query = new CGI;  # Global for subroutines
+
+print $query->header;
+&DocDBHeader("Create a Meeting");
+
+# %params = $query -> Vars;
+
+# @ErrorStack = ();
+# @WarnStack  = ();
+
+#$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
+
+#unless ($dbh) {
+#  push @ErrorStack,$Msg_AdminNoConnect;
+#}         
+#&EndPage(@ErrorStack);
+
+&WarnPage(@WarnStack);
+&EndPage(@ErrorStack);
+
+&DocDBNavBar;
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+ 
+exit;
