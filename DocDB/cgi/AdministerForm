@@ -32,11 +32,13 @@ use DBI;
 require "DocDBGlobals.pm";
 require "AdministerElements.pm";
 require "FormElements.pm";
-require "AuthorElements.pm";
+
+require "AuthorHTML.pm";
 require "JournalHTML.pm";
 require "DocTypeHTML.pm";
 require "TopicHTML.pm";
 require "MeetingHTML.pm";
+
 require "Scripts.pm";
 require "Security.pm";
 
@@ -119,7 +121,7 @@ print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td>\n"; &AuthorSelect; print "</td>\n";  #FIXME: No multi-select
+print "<td>\n"; &AuthorScroll(-helplink => "author"); print "</td>\n";  
 print "<td>\n"; &InstitutionSelect; print "</td>\n";
 print "<td>\n"; &NameEntryBox;      print "</td>\n";
 print "</tr>\n";

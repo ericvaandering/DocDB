@@ -456,7 +456,6 @@ if ($Meeting || $OtherMeeting) {
 } 
 
 print "<td>\n"; 
-# &RequesterSelect; 
  my @RequesterDefaults = ($RequesterDefault);
  &AuthorScroll(-required => $RequiredEntries{Requester},
                -helplink => "requester",

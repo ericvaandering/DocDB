@@ -151,58 +151,6 @@ sub PubInfoBox {
                             -columns => 60, -rows => 3);
 };
 
-sub RequesterSelect { # Scrolling selectable list for requesting author
-  my ($Quiet) = @_;
-  
-  require "AuthorSQL.pm";
-  unless (keys %Author) {
-    &GetAuthors;
-  }
-  
-  my @AuthorIDs = sort byLastName keys %Authors;
-  my %AuthorLabels = ();
-  my @ActiveIDs = ();
-  foreach my $ID (@AuthorIDs) {
-    if ($Authors{$ID}{ACTIVE}) {
-      $AuthorLabels{$ID} = $Authors{$ID}{Formal};
-      push @ActiveIDs,$ID; 
-    } 
-  }
-  unless ($Quiet) {  
-    print "<b><a ";
-    &HelpLink("requester");
-    print "Requester:</a></b><br> \n";
-  }  
-  print $query -> scrolling_list(-name => "requester", -values => \@ActiveIDs, 
-                                 -size => 10, -labels => \%AuthorLabels,                      
-                                 -default => $RequesterDefault);
-};
-
-sub AuthorSelect { # Scrolling selectable list for authors
-                   # FIXME: Use AuthorMultipleScroll
-  require "AuthorSQL.pm";
-  unless (keys %Author) {
-    &GetAuthors;
-  }
-  
-  my @AuthorIDs = sort byLastName keys %Authors;
-  my %AuthorLabels = ();
-  my @ActiveIDs = ();
-  foreach my $ID (@AuthorIDs) {
-    if ($Authors{$ID}{ACTIVE}) {
-      $AuthorLabels{$ID} = $Authors{$ID}{Formal};
-      push @ActiveIDs,$ID; 
-    } 
-  }  
-  print "<b><a ";
-  &HelpLink("authors");
-  print "Authors:</a></b><br> \n";
-  print $query -> scrolling_list(-name => "authors", -values => \@ActiveIDs, 
-                                 -labels => \%AuthorLabels,
-                                 -size => 10, -multiple => 'true',
-                                 -default => \@AuthorDefaults);
-};
-
 sub TopicSelect { # Scrolling selectable list for topics
   my @TopicIDs = sort byTopic keys %MinorTopics;
   my %TopicLabels = ();

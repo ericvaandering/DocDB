@@ -110,8 +110,11 @@ print "</tr>\n";
 
 
  print "<tr valign=top>\n";
-  print "<td>\n"; &RequesterSearchBox; print "</td>\n";
-  print "<td>\n"; &AuthorSelect;       print "</td>\n";
+  print "<td>\n"; &RequesterSearchBox; print "</td>\n"; # FIXME: Move to AuthorScroll
+  print "<td>\n"; 
+   &AuthorScroll(-helplink => "author",
+                 -multiple => "true");
+  print "</td>\n";
   print "<td>\n"; &DocTypeMulti;       print "</td>\n";
  print "</tr>\n";
  
