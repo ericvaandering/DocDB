@@ -22,8 +22,13 @@ print $query->header;
 
 # %params = $query -> Vars;  # No parameters (yet) 
 
-print "<p><center><big><font color=red><b>Testing only! All data will be
-lost!</b></font></big></center>\n";
+if ($db_name eq "BTeVDocDB") {
+  print "<p><center><big><font color=red><b>Database is now live! All data will be
+  saved. Please don't enter documents unless you are an administrator.</b></font></big></center>\n";
+} else {  
+  print "<p><center><big><font color=red><b>Testing only! All data will be
+  lost!</b></font></big></center>\n";
+}
 
 print "<p><b><a href=\"$web_root/Help/DocDB_Help.shtml\">Help on
 using</a> the database:</b>\n";
