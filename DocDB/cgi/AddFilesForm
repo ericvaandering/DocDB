@@ -126,7 +126,7 @@ print "The current document document information is reproduced below:</h4>\n";
 print "</center>\n";  
 
 print "<p><hr><p>\n";
-&PrintRevisionInfo($DocRevID,1);
+&PrintRevisionInfo($DocRevID,-hidebuttons => TRUE, -hideversions => TRUE);
 print "<p><hr><p>\n";
 
 print "<center><table cellpadding=10>\n";

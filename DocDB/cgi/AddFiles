@@ -195,6 +195,7 @@ print "You were successful in adding files. Your entry now contains
 &PrintRevisionInfo($DocRevID);
 
 if ($MailInstalled) {
+  require "MailNotification.pm";
   &MailNotices(-docrevid => $DocRevID, -type => "update");
 }
 
