@@ -5,6 +5,7 @@ existing files will completely replace the old files (no backup will be kept). Y
 should <b>not</b> be using this option avoid creating a new version of a
 document, even if only minor changes have been made. This option is, instead,
 intended for making minor fixes to presentation formats and the like. 
+Disk space is cheap, mistakes are not.
 <p>
 Please use this option responsibly. 
 #
@@ -69,7 +70,7 @@ URL. The username and password are not saved.
 #
 modifytypes
 Modification Actions
-There are currently four types of document modification:
+There are five ways to modify a document:
 <ol>
 <li>Reserve a document #: Select this option if you want a number for a document
 you are going to write, but don't have a draft of the document.
@@ -81,6 +82,12 @@ about the document. You must supply a document number to modify.
 <li>Update database information: The document hasn't changed, but the
 information about it has. For example, it's now published so you want to add that
 information. You must supply a document number to modify.
+<li>Add/Replace files: You forgot a file that belongs with the document or
+something minor has changed in one of the files. To add or replace files, use
+the customize box at the bottom of the page.<p>Replacing files should be done
+with caution since no backup is kept. Please do not use this capability to
+avoid creating a new version of a document when that is more appropriate. Disk
+space is cheap, mistakes are not.
 </ol>
 Select the type of modification appropriate to your situation
 #

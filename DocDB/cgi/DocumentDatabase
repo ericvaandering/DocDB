@@ -164,7 +164,7 @@ unless ($Public) {
   @authormodes = ("list","field");
 
   print "<table cellpadding=5 border=5>\n";
-  print "<tr><th colspan=2><big>Customize Insert/Modify</big></th></tr>\n";
+  print "<tr><th colspan=2><big>Customized Insert/Modify</big></th></tr>\n";
   print "<tr><td align=right>\n";
   print "<a "; &HelpLink("modifytypes"); 
   print "<b>Type of modification:</b></a>\n";
@@ -229,7 +229,7 @@ unless ($Public) {
 
   print "<table cellpadding=5 border=5>\n";
 
-  print "<tr><th colspan=2><big>Customize Add/Replace Files</big></th></tr>\n";
+  print "<tr><th colspan=2><big>Customized Add/Replace Files</big></th></tr>\n";
   print "<tr><td align=right>\n";
   print "<a "; &HelpLink("docnumber"); 
   print "<b>Update Doc #:</b></a>\n";

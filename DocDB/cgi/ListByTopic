@@ -187,6 +187,11 @@ foreach $DocumentID (@DocumentIDs) {
 print "</table></center>\n";
 print "<p>\n";
 
+### Statistics
+
+my $NumDoc = $#DocumentIDs + 1;
+print "<p><b>Number of documents found: $NumDoc</b><p>\n";
+
 ### Special stuff if this is the current meeting
 
 if (&NearByMeeting == $TopicID) {
@@ -210,11 +215,6 @@ if (&NearByMeeting == $TopicID) {
   &PrintAgenda($TopicID);
 
 }
-
-### Statistics
-
-my $NumDoc = $#DocumentIDs + 1;
-print "<p><b>Number of documents found: $NumDoc</b><p>\n";
 
 $EndTime  = new Benchmark;
 $TimeDiff = timediff($EndTime,$StartTime);
