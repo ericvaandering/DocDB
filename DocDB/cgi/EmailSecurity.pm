@@ -83,7 +83,7 @@ sub UserPrefForm($) {
     print $query -> password_field(-name => 'password', 
                             -size => 16, -maxlength => 32);
   }                          
-  print "<tr><td align=right><b>Name:</b></td>\n<td>";
+  print "<tr><td align=right><b>Real name:</b></td>\n<td>";
   print $query -> textfield(-name => 'name',     -default => $Name,     
                             -size => 24, -maxlength => 128);    
   print "<tr><td align=right><b>E-mail address:</b></td>\n<td>";

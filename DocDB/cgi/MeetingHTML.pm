@@ -170,12 +170,12 @@ sub SessionDateTimePullDown {
     $Time = "$Hour:$Minute";
     $DefaultYear  = $Year;
     $DefaultMonth = $Month-1;
-    $DefaultDay   = $Day;
+    $DefaultDay   = int($Day);
     $DefaultHour  = $Time;
   } else {
     $DefaultYear  = $Year;
     $DefaultMonth = $Month;
-    $DefaultDay   = $Day;
+    $DefaultDay   = int($Day);
     $DefaultHour  = "09:00";
   }  
   if ($DefaultHour eq ":") {
