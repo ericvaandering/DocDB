@@ -33,6 +33,13 @@ mysql> insert into SecurityGroup set Name='docdbadm',Description='DocDB Administ
 </pre>
 <li> Populating the database
 <ul>
+  <li>If you just want to see how DocDB works, you can install some test data
+      with the command:<br>
+      <b>mysql -u docdbadm -p SomeDocDB < TestData.sql</b> <br/>
+      (TestData.sql is also in DocDB/sql)<br/>
+      If you decide to adopt DocDB, you should issue the command "drop database
+      SomeDocDB" and begin again with Step 3.
+
   <li>  The DocDB administration interface allows the administrator to perform
 	all administration tasks from the web pages.
   <li> If you have a lot of information to enter, 
