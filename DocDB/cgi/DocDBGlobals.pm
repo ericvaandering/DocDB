@@ -5,8 +5,7 @@ $db_rwuser = "docdbrw";
 $db_rwpass = "hall1burt0n";
 $db_rouser = "docdbro";
 $db_ropass = "abg3n1x";
-$db_aduser = "docadmin";
-$db_adpass = "docadmin";
+#$db_aduser = "docadmin";
 
 # Root directories and URLs
 
