@@ -2,8 +2,8 @@
 <html>
 <head>
 <title>Document Database Meeting Organizer</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<link rel="stylesheet" href="/includes/style.css" type="text/css">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<link rel="stylesheet" href="/includes/style.css" type="text/css"/>
 <!--#include virtual="/includes/navbar_header.html" --> <!-- Defining Javascript functions-->
 </head>
 
@@ -16,7 +16,7 @@
 <!--#include virtual="/includes/end_atwork_top.html" --> <!-- Ends the table at the top -->
 <!--#include virtual="/includes/atwork_navbar.html" --> <!-- Puts in the nav bar table row entry -->
 <!--#include virtual="/includes/end_table.html" --> <!-- Ends the table -->
-<hr>
+<hr/>
 
 <center><h1>Document Database Meeting Organizer</h1></center>
 
@@ -238,7 +238,7 @@ For very small meetings (just a few talks) moderators may wish to not use hints 
 enter the talks.<p/>
 
 
-<hr>
+<hr/>
 <!-- begin footer, change the webmaster info if appropriate -->
 <div align="center"> 
 <!--#include virtual="/includes/atwork_bottomnav.html"-->  <!-- Put in the bottom navigation bar-->
