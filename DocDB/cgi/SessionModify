@@ -21,6 +21,7 @@ require "Scripts.pm";
 
 require "TalkHTML.pm";
 require "TalkSQL.pm";
+require "TalkHintsSQL.pm";
 
 $query = new CGI;  # Global for subroutines
 
@@ -100,7 +101,6 @@ if ($Mode eq "modify") {
     my $TalkNote       = shift @TalkNotes       ;
     my $SessionOrderID = shift @SessionOrderIDs ;
     my $TalkNewOrder   = $TalkOrders{$TalkOrder};
-#    my $SessionDate        = "$SessionYear-$ReverseAbrvMonth{$SessionMonth}-$SessionDay $SessionHour:00";
 
     my $TalkSeparatorID = 0;
     my $SessionTalkID   = 0;
@@ -125,7 +125,11 @@ if ($Mode eq "modify") {
            "values (0,?,?,?,?,?,?)");
           $TalkInsert          -> execute($SessionID,$TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote);
           $SessionTalkID = $TalkInsert -> {mysql_insertid}; # Works with MySQL only
-          # FIXME: Get and insert hints
+
+          my @TopicHints  = split /\0/,$params{"topics-$SessionOrderID"}; 
+          my @AuthorHints = split /\0/,$params{"authors-$SessionOrderID"}; 
+          &InsertTopicHints($SessionTalkID,@TopicHints);
+          &InsertAuthorHints($SessionTalkID,@AuthorHints);
 	}
         my $SessionOrderInsert = $dbh -> prepare(
          "insert into SessionOrder ".
@@ -138,20 +142,11 @@ if ($Mode eq "modify") {
       $SessionTalkID   = $SessionOrders{$SessionOrderID}{SessionTalkID};
 
       if ($TalkDeleteFlags{$SessionOrderID}) { # Delete session or separator
-        my $SessionTalkDelete = $dbh -> prepare(
-         "delete from SessionTalk where SessionTalkID=?");
-        my $TalkSeparatorDelete = $dbh -> prepare(
-         "delete from TalkSeparator where TalkSeparatorID=?");
-        my $SessionOrderDelete = $dbh -> prepare(
-         "delete from SessionOrder where SessionOrderID=?");
-     
         if ($TalkSeparatorID) {
-           $TalkSeparatorDelete -> execute($TalkSeparatorID);
+          &DeleteTalkSeparator($TalkSeparatorID);
         } elsif ($SessionTalkID) {
-           $SessionTalkDelete -> execute($SessionTalkID);
-           # FIXME: Delete hints for talks
+          &DeleteSessionTalk($SessionTalkID);
         }
-        $SessionOrderDelete -> execute($SessionOrderID);
       } elsif ($TalkTitle || $TalkNote || $TalkDocID) { # We will modify existing talks
 	++$TalksUpdated;
 	
@@ -166,12 +161,16 @@ if ($Mode eq "modify") {
            "update SessionTalk set ".
            "DocumentID=?, Confirmed=?, Time=?, HintTitle=?, Note=? ". 
            "where SessionTalkID=?");
-           $SessionTalkUpdate -> execute($TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote,$SessionTalkID);
+          $SessionTalkUpdate -> execute($TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote,$SessionTalkID);
+
+          my @TopicHints  = split /\0/,$params{"topics-$SessionOrderID"}; 
+          my @AuthorHints = split /\0/,$params{"authors-$SessionOrderID"}; 
+          &InsertTopicHints($SessionTalkID,@TopicHints);
+          &InsertAuthorHints($SessionTalkID,@AuthorHints);
         }
 
         my $SessionOrderUpdate = $dbh -> prepare(
          "update SessionOrder set TalkOrder=? where SessionOrderID=?");
-
         $SessionOrderUpdate -> execute($TalkNewOrder,$SessionOrderID);
       }  
     }  

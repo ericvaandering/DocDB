@@ -113,4 +113,28 @@ sub FetchSessionOrdersBySessionID {
   return @SessionOrderIDs; 
 }
 
+sub DeleteSessionTalk ($) {
+  my ($SessionTalkID) = @_;
+
+  require "TalkHintsSQL.pm";
+
+  my $TalkDelete  = $dbh -> prepare("delete from SessionTalk  where SessionTalkID=?"); 
+  my $OrderDelete = $dbh -> prepare("delete from SessionOrder where SessionTalkID=?"); 
+
+  $TalkDelete  -> execute($SessionTalkID);
+  $OrderDelete -> execute($SessionTalkID);
+  
+  &DeleteHints($SessionTalkID);  
+}
+
+sub DeleteTalkSeparator ($) {
+  my ($TalkSeparatorID) = @_;
+
+  my $SeparatorDelete = $dbh -> prepare("delete from TalkSeparator where TalkSeparatorID=?"); 
+  my $OrderDelete     = $dbh -> prepare("delete from SessionOrder  where TalkSeparatorID=?"); 
+
+  $SeparatorDelete -> execute($TalkSeparatorID);
+  $OrderDelete     -> execute($TalkSeparatorID);
+}
+
 1;

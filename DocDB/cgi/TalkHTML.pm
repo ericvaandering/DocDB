@@ -93,13 +93,15 @@ sub TalkEntryForm (@) {
     ++$TalkOrder;
     $TalkDefaultOrder = $TalkOrder;  
     
+    @TalkDefaultTopicHints  = ();
+    @TalkDefaultAuthorHints = ();
     if (grep /n/,$SessionOrderID) { # Erase defaults
-      $TalkDefaultTime      = "00:30";
-      $TalkDefaultConfirmed = "";
-      $TalkDefaultTitle     = "";
-      $TalkDefaultNote      = ""; 
-      $TalkSeparatorDefault = "";
-      $TalkDefaultDocID     = "";
+      $TalkDefaultTime       = "00:30";
+      $TalkDefaultConfirmed  = "";
+      $TalkDefaultTitle      = "";
+      $TalkDefaultNote       = ""; 
+      $TalkSeparatorDefault  = "";
+      $TalkDefaultDocID      = "";
     } else { # Key off Meeting Order IDs, do differently for Sessions and Separators
       if ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
         my $SessionTalkID     = $SessionOrders{$SessionOrderID}{SessionTalkID};
@@ -109,6 +111,17 @@ sub TalkEntryForm (@) {
         $TalkDefaultNote      = $SessionTalks{$SessionTalkID}{Note}       || "";
         $TalkDefaultDocID     = $SessionTalks{$SessionTalkID}{DocumentID} || "";
         $TalkSeparatorDefault = "No";
+        
+        # Get hints and convert to format accepted by scrolling lists
+        
+        my @TopicHintIDs = &FetchTopicHintsBySessionTalkID($SessionTalkID);
+        foreach my $TopicHintID (@TopicHintIDs) {
+          push @TalkDefaultTopicHints,$TopicHints{$TopicHintID}{MinorTopicID};
+        }
+        my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID);
+        foreach my $AuthorHintID (@AuthorHintIDs) {
+          push @TalkDefaultAuthorHints,$AuthorHints{$AuthorHintID}{AuthorID};
+        }
       } elsif ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) {
         my $TalkSeparatorID   = $SessionOrders{$SessionOrderID}{TalkSeparatorID};
         $TalkDefaultConfirmed = "";
@@ -237,7 +250,7 @@ sub TalkAuthors ($) {
   if ($TalkSeparatorDefault eq "Yes") {
     print "&nbsp;\n";
   } else {  
-    &AuthorScroll(0,1,"authors-$SessionOrderID",@defaultauthors);
+    &AuthorScroll(0,1,"authors-$SessionOrderID",@TalkDefaultAuthorHints);
   } 
 }
 
@@ -249,7 +262,7 @@ sub TalkTopics ($) {
   if ($TalkSeparatorDefault eq "Yes") {
     print "&nbsp;\n";
   } else {  
-    &FullTopicScroll(1,"topics-$SessionOrderID",@defaulttopics);
+    &FullTopicScroll(1,"topics-$SessionOrderID",@TalkDefaultTopicHints);
   }
 }
 
