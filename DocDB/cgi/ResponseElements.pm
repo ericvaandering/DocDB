@@ -440,6 +440,8 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
   require "MiscSQL.pm";
   require "TopicSQL.pm";
   
+  require "Utilities.pm";
+  
   my ($DocumentID,$Mode,$Version) = @_;
   unless (defined $Version) {$Version = $Documents{$DocumentID}{NVER}}
   unless ($Mode) {$Mode = "date"};
@@ -465,6 +467,9 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
       print "<td><nobr>$rev_date</nobr></td>\n";
     } elsif ($Mode eq "meeting") {
       my @TopicIDs = &GetRevisionTopics($DocRevID);
+      
+# FIXME: Use @TopicIDs = &RemoveArray(@TopicIDs,@IgnoreTopics); # remove loop
+
       foreach my $ID (@IgnoreTopics) {
         my $Index = 0;
         foreach my $TopicID (@TopicIDs) {

@@ -200,7 +200,13 @@ sub PrintSession ($) {
   my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
   my @TalkSeparatorIDs = &FetchTalkSeparatorsBySessionID($SessionID);
   my @SessionOrderIDs  = &FetchSessionOrdersBySessionID($SessionID);
-
+  my $ConferenceID     = $Sessions{$SessionID}{ConferenceID};
+  
+  # Getting TopicID will depend on re-factoring Conferences Hashes
+  # my $MinorTopicID = 
+  
+  @IgnoreTopics = ($MinorTopicID);
+  
 # Sort talks and separators
 
   @SessionOrderIDs = sort SessionOrderIDByOrder @SessionOrderIDs;
@@ -238,11 +244,64 @@ sub PrintSession ($) {
 sub PrintSessionTalk($) {
   my ($SessionTalkID,$StartTime) = @_;
   
-  my $DocumentID = $SessionTalks{$SessionTalkID}{DocumentID};
-  my $Note =  $SessionTalks{$SessionTalkID}{Note};
-  my $Time =  $SessionTalks{$SessionTalkID}{Time};
+  require "Security.pm";
 
-  # See DocumentSummary in ResponseElements.pm 
+  require "RevisionSQL.pm";
+  require "DocumentSQL.pm";
+  require "TopicSQL.pm"; 
+  require "MiscSQL.pm"; 
+
+  require "AuthorHTML.pm";
+  require "TopicHTML.pm"; 
+  require "FileHTML.pm"; 
+  require "ResponseElements.pm";
+  
+  require "Utilities.pm";
+  
+  my $DocumentID = $SessionTalks{$SessionTalkID}{DocumentID};
+  my $Confirmed  = $SessionTalks{$SessionTalkID}{Confirmed};
+  my $Note       = $SessionTalks{$SessionTalkID}{Note};
+  my $Time       = $SessionTalks{$SessionTalkID}{Time};
+
+  # Selected parts of how things are done in DocumentSummary
+
+  if ($DocumentID) {
+    &FetchDocument($DocumentID);
+    unless (&CanAccess($DocumentID,$Version)) {return;}
+    my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+    my $AuthorLink = &FirstAuthor($DocRevID); 
+    #FIXME: Make Version optional, see comment in ResponseElements.pm
+    my $Title      = &DocumentLink($DocumentID,$Version,$DocRevisions{$DocRevID}{TITLE});
+    my @FileIDs    = &FetchDocFiles($DocRevID);
+    my @TopicIDs   = &GetRevisionTopics($DocRevID);
+
+    @TopicIDs = &RemoveArray(@TopicIDs,@IgnoreTopics);
+#    foreach my $ID (@IgnoreTopics) { # Move this into utility function
+#      my $Index = 0;
+#      foreach my $TopicID (@TopicIDs) {
+#        if ($TopicID == $ID) {
+#          splice @TopicIDs,$Index,1;
+#          last;
+#        }
+#        ++$Index;  
+#      }
+#    }
+
+    print "<tr>\n";
+    print "<td>$StartTime</td>\n";
+    if ($Confirmed) {  
+      print "<td>$Title</td>\n";
+    } else {
+      print "<td><i>$Title</i></td>\n";
+    }
+    print "<td><nobr>$AuthorLink</nobr></td>\n";
+    print "<td>"; &ShortTopicListByID(@TopicIDs);   print "</td>\n";
+    print "<td>"; &ShortFileListByRevID($DocRevID); print "</td>\n";
+    print "<td>$Time</td>\n";
+    print "</tr>\n";
+  } else {
+    #Print out headers here or elsewhere?
+  }
 }
 
 1;

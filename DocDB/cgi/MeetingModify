@@ -10,7 +10,7 @@
 use CGI;
 use DBI;
 
-require "Debug.pm";
+require "Debug.pm"; #FIXME: Remove 
 
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";

@@ -1,2 +1,64 @@
-# might want to have a flag per meeting to display links to sessions or actual
-sessions, since some meetings are small and some are large.
+#! /usr/bin/env perl
+#
+#        Name: DisplaySession
+# Description: Displays talks for a meeting or just a session of a meeting
+# 
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+use CGI;
+use DBI;
+
+require "Debug.pm"; #FIXME: Remove 
+
+# cvs remove DisplaySession
+
+require "DocDBGlobals.pm";
+#require "HTMLUtilities.pm";
+#require "ResponseElements.pm";
+#require "Sorts.pm";
+
+require "MeetingHTML.pm";
+require "MeetingSQL.pm";
+
+$query = new CGI;  # Global for subroutines
+
+print $query -> header;
+&DocDBHeader("Modify a Session");
+
+%params = $query -> Vars;
+
+my $SessionID          = $params{sessionid};
+my $MeetingID          = $params{meetingid};
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+&HTMLPrintParams();
+
+$dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+
+unless ($dbh) {
+  push @ErrorStack,$Msg_NoConnect;
+}         
+&EndPage(@ErrorStack);
+
+print "<h2>Put header information here</h2>\n";
+
+if ($SessionID) {
+  &PrintSession($SessionID); # Display a single session
+} elsif ($MeetingID) {
+  # Loop over sessions and display them or link to them
+} else {
+  #Complain that user didn't specify either
+}  
+  
+
+&DocDBNavBar;
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+ 
+exit;
+
+  
+  

@@ -26,28 +26,30 @@ sub GetConferences { # Probably redo this so it just gets all conferences, regar
 
 sub FetchConferenceByTopicID { # Fetches a conference by MinorTopicID
   my ($minorTopicID) = @_;
-  my ($ConferenceID,$MinorTopicID,$Location,$URL,$Title,$Preamble,$Epilogue,$StartDate,$EndDate,$TimeStamp);
-  my $ConferenceFetch   = $dbh -> prepare(
-    "select ConferenceID,MinorTopicID,Location,URL,Title,Preamble,Epilogue,StartDate,EndDate,TimeStamp ".
-    "from Conference ".
-    "where MinorTopicID=?");
+  my ($ConferenceID,$MinorTopicID,$Location,$URL,$Title,$Preamble,$Epilogue,$StartDate,$EndDate,$ShowAllTalks,$TimeStamp);
+
   if ($Conference{$minorTopicID}{MINOR}) { # We already have this one
     return $Conference{$minorTopicID}{MINOR};
   }
   
+  my $ConferenceFetch   = $dbh -> prepare(
+    "select ConferenceID,MinorTopicID,Location,URL,Title,Preamble,Epilogue,StartDate,EndDate,ShowAllTalks,TimeStamp ".
+    "from Conference ".
+    "where MinorTopicID=?");
   &FetchMinorTopic($minorTopicID);
   $ConferenceFetch -> execute($minorTopicID);
   ($ConferenceID,$MinorTopicID,$Location,$URL,$Title,$Preamble,$Epilogue,$StartDate,$EndDate,$TimeStamp) 
     = $ConferenceFetch -> fetchrow_array;
-  $Conferences{$MinorTopicID}{MINOR}     = $MinorTopicID;
-  $Conferences{$MinorTopicID}{Location}  = $Location;
-  $Conferences{$MinorTopicID}{URL}       = $URL;
-  $Conferences{$MinorTopicID}{Title}     = $Title;
-  $Conferences{$MinorTopicID}{Preamble}  = $Preamble;
-  $Conferences{$MinorTopicID}{Epilogue}  = $Epilogue;
-  $Conferences{$MinorTopicID}{StartDate} = $StartDate;
-  $Conferences{$MinorTopicID}{EndDate}   = $EndDate;
-  $Conferences{$MinorTopicID}{TimeStamp} = $TimeStamp;
+  $Conferences{$MinorTopicID}{MINOR}        = $MinorTopicID;
+  $Conferences{$MinorTopicID}{Location}     = $Location;
+  $Conferences{$MinorTopicID}{URL}          = $URL;
+  $Conferences{$MinorTopicID}{Title}        = $Title;
+  $Conferences{$MinorTopicID}{Preamble}     = $Preamble;
+  $Conferences{$MinorTopicID}{Epilogue}     = $Epilogue;
+  $Conferences{$MinorTopicID}{StartDate}    = $StartDate;
+  $Conferences{$MinorTopicID}{EndDate}      = $EndDate;
+  $Conferences{$MinorTopicID}{ShowAllTalks} = $ShowAllTalks;
+  $Conferences{$MinorTopicID}{TimeStamp}    = $TimeStamp;
 
   $ConferenceForward{$ConferenceID}{Minor} = $MinorTopicID; # FIXME will go away when conferences index right	
 

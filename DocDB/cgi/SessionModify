@@ -11,12 +11,12 @@
 use CGI;
 use DBI;
 
-require "Debug.pm";
+require "Debug.pm"; #FIXME: Remove 
 
 require "DocDBGlobals.pm";
-require "HTMLUtilities.pm";
-require "ResponseElements.pm";
-require "Sorts.pm";
+#require "HTMLUtilities.pm";
+#require "ResponseElements.pm";
+#require "Sorts.pm";
 
 require "MeetingHTML.pm";
 require "MeetingSQL.pm";
@@ -95,6 +95,12 @@ my @SessionOrderIDs  = &FetchSessionOrdersBySessionID($SessionID);
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  
 exit;
+
+#
+#
+# Remove everything form here on down in final version
+#
+#
 
 if ($ConferenceID) {
   require "MeetingSQL.pm";
