@@ -179,6 +179,9 @@ sub PrintRevisionInfo {
   print "<div id=\"RightColumn3Col\">\n";
   
   &FileListByRevID($DocRevID); # All are called only here, so changes are OK
+  
+  print "<p/>\n";
+  
   &AuthorListByID(@AuthorIDs);
   &TopicListByID(@TopicIDs);
   &SecurityListByID(@GroupIDs);
