@@ -25,7 +25,9 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 %params = $query -> Vars;
 
-$Meeting = $params{meeting};
+$Special = $params{special};
+
+if ($Special eq "meeting") {$Meeting = 1;}
 
 if ($Meeting) {
  $topicmode = "multi";
@@ -122,12 +124,12 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
 &HelpPopupScript;
 
 print $query -> start_multipart_form('POST',$ProcessDocumentAdd);
-print $query -> hidden(-name => 'mode',    -default => 'reserve');
+print $query -> hidden(-name => 'mode',    -default => $mode);
 print $query -> hidden(-name => 'upload',  -default => 'file');
 print $query -> hidden(-name => 'archive', -default => 'single');
 print $query -> hidden(-name => 'docid',   -default => $DocumentID);
 print $query -> hidden(-name => 'overdate',-default => '');
-print $query -> hidden(-name => 'meeting',-default => '');
+print $query -> hidden(-name => 'special',-default => '');
 
 print "<center><table cellpadding=10>\n";
 
@@ -196,15 +198,19 @@ if ($mode eq "add" || $mode eq "update") {
 }
 
 print "<tr valign=top>\n";
+
 if ($Meeting) {
   print "<td>&nbsp;&nbsp;&nbsp;</td>\n";
-} else {
-  print "<td>\n"; &RequesterSelect; print "</td>\n";
-}
-if ($AuthorMode eq "list") {
-  print "<td>\n"; &AuthorSelect;    print "</td>\n";
-} elsif ($AuthorMode eq "field") {
-  print "<td>\n"; &AuthorManual;    print "</td>\n";
+} 
+
+print "<td>\n"; &RequesterSelect; print "</td>\n";
+
+unless ($Meeting) {
+  if ($AuthorMode eq "list") {
+    print "<td>\n"; &AuthorSelect;    print "</td>\n";
+  } elsif ($AuthorMode eq "field") {
+    print "<td>\n"; &AuthorManual;    print "</td>\n";
+  }
 }
 
 if ($topicmode eq "single") {

@@ -16,7 +16,7 @@ sub FileListByRevID {
       }  
     }
     if (@RootFiles) {
-      print "<b>Files:</b>\n";
+      print "<b>Files in Document:</b>\n";
       print "<ul>\n";
       &FileListByFileID(@RootFiles);
       print "</ul>\n";
@@ -28,7 +28,7 @@ sub FileListByRevID {
       print "</ul>\n";
     }   
   } else {
-    print "<b>Files:</b> none<br>\n";
+    print "<b>Files in Document:</b> none<br>\n";
   }
 }
 

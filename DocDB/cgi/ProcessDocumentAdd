@@ -33,6 +33,10 @@ print $query->header;
 
 ### Pull info out of params into local variables
 
+$Special = $params{special};
+
+if ($Special eq "meeting") {$Meeting = 1;}
+
 $Archive   = $params{archive};
 $Overdate  = $params{overdate};
 $Overday   = $params{overday};
@@ -43,6 +47,18 @@ $Overhour  = $params{overhour};
 $JournalID = $params{journal};
 $Volume    = $params{volume};
 $Page      = $params{page};
+
+$Requester = $params{requester};
+
+if ($Meeting) {
+  @authorIDs = ($Requester);
+} else {
+  if ($params{authormanual}) {
+    @authorIDs = &ProcessManualAuthors($params{authormanual});
+  } else {
+    @authorIDs = split ("\0",$params{authors}); 
+  }
+}
 
 if ($Archive eq "multi") {$Archive = "single";} # No real difference
 
@@ -134,9 +150,9 @@ if ($mode eq "add" || $mode eq "reserve") {
   }
 }
 if ($mode eq "add" || $mode eq "update") {
-  unless ($params{authors} || $params{authormanual}) {
-    push @error_stack,"You must supply at least one author for this document.";
-  }
+#  unless ($params{authors} || $params{authormanual}) {
+#    push @error_stack,"You must supply at least one author for this document.";
+#  }
   unless ($params{topics}) {
     push @error_stack,"You must supply at least one topic for this document.";
   }
@@ -184,12 +200,6 @@ if ($mode eq "update" || $mode eq "updatedb") {
 }
 
 ### Final checks
-
-if ($params{authormanual}) {
-  @authorIDs = &ProcessManualAuthors($params{authormanual});
-} else {
-  @authorIDs = split ("\0",$params{authors}); 
-}
 
 @topicIDs   = split ("\0",$params{topics});
 @securities = split ("\0",$params{security});
@@ -291,8 +301,6 @@ if ($mode eq "updatedb") { # Copy DocumentFile entries
   }  
 }  
 
-#STDOUT -> autoflush;
-
 if ($mode eq "add" || $mode eq "update") { # We're adding new files
   
   $new_dir = &MakeDirectory($documentID,$version);
@@ -304,8 +312,12 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
     if ($params{single_upload}) { # Copy file to directory
       @long_files   = $query ->  param("single_upload");
       foreach $long_file (@long_files) {
-        print "Adding file $long_file<br>\n";
-        $short_file = &ProcessUpload($new_dir,$long_file);
+        if ($long_file) {
+          print "Adding file $long_file<br>\n";
+          $short_file = &ProcessUpload($new_dir,$long_file);
+        } else {
+          $short_file = "";
+        }    
         push @short_files,$short_file;
       }
     } elsif ($params{single_http}) {
@@ -340,8 +352,10 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
       $rootfile = 1;
     } else {
       $rootfile = 0;
-    }    
-    $file_insert -> execute($docRevID,$short_file,$SQL_NOW,$rootfile,$Description);
+    }  
+    if ($short_file) {  
+      $file_insert -> execute($docRevID,$short_file,$SQL_NOW,$rootfile,$Description);
+    }
   }
 } # File upload for "add" and "update"
 
