@@ -186,4 +186,14 @@ sub LookupKeywordGroup { # Returns KeywordGroupID from Keyword Group Name
   return $KeywordGroupID;
 }
 
+sub DeleteKeyword ($) {
+  my ($KeywordID) = @_;
+  
+  if ($KeywordID) {
+    my $KeywordDelete = $dbh -> prepare("delete from Keyword where KeywordID=?");
+       $KeywordDelete -> execute($KeywordID);
+    my $KeywordGroupingDelete = $dbh -> prepare("delete from KeywordGrouping where KeywordID=?");
+  }
+}
+
 1;

@@ -51,19 +51,15 @@ unless (&CanAdminister) {
 }  
 &EndPage(@ErrorStack);
 
-if      ($Action eq "Delete") {
+if ($Action eq "Delete") { 
+
   unless ($KeywordID) {
     push @ErrorStack,$Msg_ModKeywdEmpty;
   }
   &EndPage(@ErrorStack);
   my $KeywordLink   = &KeywordListLink($KeywordID);
   
-# Delete KeywordID from Keyword table
-  
-  my $KeywordDelete      = $dbh -> prepare("delete from Keyword    where KeywordID=?");
-  $KeywordDelete      -> execute($KeywordID);
-  
-  # FIXME: delete KeywordGroupings
+  &DeleteKeyword($KeywordID); # Delete KeywordID from Keyword table
   
   print "$KeywordLink has been removed from the database.<br>\n";
 } elsif ($Action eq "Modify") {
@@ -87,32 +83,32 @@ if      ($Action eq "Delete") {
     $KeywordUpdate -> execute($LongName,$KeywordID);
   }
 
-# Deal with Keyword Group changes   
+# Deal with KeywordGroup changes   
 
-  if ($KeywordGroupID) { 
-    print "<b>Updating Keyword Group for Keyword.</b><br>\n";
-    my $KeywordUpdate = $dbh->prepare(
-     "update Keyword set KeywordGroupID=? where KeywordID=?");
-    $KeywordUpdate -> execute($KeywordGroupID,$KeywordID);
-  }
+# FIXME: Should add a field to clear everything, this should check if what we 
+#        want exists, then insert if not. 
+
+#  if ($KeywordGroupID) { 
+#    print "<b>Updating Keyword Group for Keyword.</b><br>\n";
+#    my $KeywordUpdate = $dbh->prepare(
+#     "update Keyword set KeywordGroupID=? where KeywordID=?");
+#    $KeywordUpdate -> execute($KeywordGroupID,$KeywordID);
+#  }
 } elsif ($Action eq "New") {
   &EndPage(@ErrorStack);
 
+  # FIXME: Check to see if exists, if so, don't insert, warn.
+
   print "<b>Adding a new keyword.</b><br>\n";
   my $KeywordInsert = $dbh->prepare(
-   "insert into Keyword ".
-          "(KeywordID, KeywordGroupID, ShortDescription, LongDescription) ". 
-   "values (0,         ?,              ?,                ?)");
+   "insert into Keyword (KeywordID, ShortDescription, LongDescription) ". 
+   "values (0,?,?)");
 
   my $KeywordGroupingInsert = $dbh->prepare(
-   "insert into KeywordGrouping ".
-          "(KeywordGroupingID, KeywordGroupID, KeywordID) ". 
-   "values (0,                 ?,              ?)");
+   "insert into KeywordGrouping (KeywordGroupingID, KeywordGroupID, KeywordID) ". 
+   "values (0,?,?)");
 
-  # FIXME: Remove KeywordGroupID from next two lines
-
-  my ($KeywordGroupID) = @KeywordGroupIDs;
-  $KeywordInsert -> execute($KeywordGroupID,$ShortName,$LongName);
+  $KeywordInsert -> execute($ShortName,$LongName);
   $KeywordID = $KeywordInsert -> {mysql_insertid}; # Works with MySQL only
 
   foreach my $KeywordGroupID (@KeywordGroupIDs) {
