@@ -100,20 +100,20 @@ my $MaxFiles      = $params{maxfiles};
 # Fill in file hash
 
 my %Files = ();
-my $NeedURLs = 0;
+my $NeedURLs   = 0;
+my $AddNewFile = 0;
 for (my $i = 1; $i<= $MaxFiles; ++$i) {
   my $Key = $i; # Probably something better later
   if ($params{"upload$i"}) {
-    push @DebugStack,"Uploading file in slot $i";
+    $AddNewFile = 1;
     $Files{$Key}{File} = $query ->  param("upload$i");
   } elsif ($params{"url$i"}) {
     $NeedURLs = 1;
-    push @DebugStack,"Copying URL in slot $i";
-    $Files{$Key}{URL} = $params{"url$i"};
+    $AddNewFile = 1;
+    $Files{$Key}{URL}  = $params{"url$i"};
     $Files{$Key}{User} = $params{http_user};
     $Files{$Key}{Pass} = $params{http_pass};
   } elsif ($params{"copyfile$i"}) {
-    push @DebugStack,"Copying file in slot $i";
     $Files{$Key}{CopyFileID} = $params{"fileid$i"};
   } # elsif
 
@@ -147,7 +147,7 @@ if ($Overdate && $Overyear && $Overmonth && $Overday) {
   $SQL_NOW = "$year-$mon-$day $hour:$min:$sec";
 }  
 
-&DebugPage("First check");
+&DebugPage("After Parameter Collection");
 
 if ($mode ne "add"    && $mode ne "reserve" && 
     $mode ne "update" && $mode ne "updatedb") {
@@ -250,11 +250,11 @@ if ($mode eq "add" || $mode eq "update") {
   unless ($params{abstract}) {
     push @ErrorStack,"You must supply an abstract for this document.";
   }
-#  unless (@CopyFiles || grep /\w/,$params{single_upload} || grep /\w/,$params{single_http}) {
-#    push @ErrorStack,"You must supply a file for this document.";
-#    push @ErrorStack,"If you just want to change information about the
-#    document, choose `Update DB Info' instead.";
-#  }
+  unless ($AddNewFile) {
+    push @ErrorStack,"You must supply a new or changed file for this document.";
+    push @ErrorStack,"If you just want to change information about the
+    document, choose `Update DB Info' instead.";
+  }
   if     ($params{single_upload} && $params{single_http}) {
     push @ErrorStack,"You may not specify both URL and file upload.";
   }
@@ -263,32 +263,9 @@ if ($mode eq "add" || $mode eq "update") {
   }
   
   if ($NeedURLs) {
-    push @DebugStack,"Downloading files.";
     my $TmpDir = &MakeTmpSubDir();
     %Files = &DownloadURLs(-tmpdir => $TmpDir, -files => \%Files);
   }  
-  &DebugPage("After DownloadURLs");
-  
-#  if ($params{single_http}) {
-#    if ($params{http_user} && $params{http_pass}) {
-#      $Authentication = " --http-user $params{http_user} --http-pass $params{http_pass} ";
-#    } else {
-#      $Authentication = "";
-#    }  
-#    my @urls = split /\0/,$params{single_http};
-#    foreach my $url (@urls) {
-#      if (&ValidFileURL($url)) {
-#        my $command = $Wget.$Authentication.$url;
-#        my @url_lines = `$command`;
-#        unless (@url_lines) {
-#          push @ErrorStack,"The URL <tt>$url</tt> was not present or was protected.";
-#        }
-#      } else {
-#        push @ErrorStack,"The URL <tt>$url</tt> is not well formed. Don't forget ".
-#                          "http:// on the front and a file name after the last /.";
-#      }
-#    }  
-#  }  
 }
 
 if ($mode eq "update" || $mode eq "updatedb") {
@@ -329,7 +306,8 @@ if ($EnhancedSecurity) {
                       modify the document.";
   }                    
 }
-  
+
+&DebugPage("After Checks");
 &EndPage(@ErrorStack);
 
 ### Make entry in DocumentDatabase or get document ID

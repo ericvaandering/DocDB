@@ -321,7 +321,6 @@ sub DownloadURLs (%) {
   my $TmpDir = $Params{-tmpdir} || "/tmp";
   my %Files    = %{$Params{-files}}; # Documented in FileUtilities.pm
 
-  push @DebugStack,"Preparing to download files";
   my $Status;
   $CurrentDir = cwd();
   chdir $TmpDir or die "<p>Fatal error in chdir<p>\n";
@@ -330,7 +329,6 @@ sub DownloadURLs (%) {
 
   foreach my $FileKey (keys %Files) {
     if ($Files{$FileKey}{URL}) {
-      push @DebugStack,"Preparing to download $Files{$FileKey}{URL}";
       my @Authentication = ();
       if ($Files{$FileKey}{User}) {
         push @DebugStack,"Using authentication";
@@ -344,11 +342,12 @@ sub DownloadURLs (%) {
       }  
       my @URLParts = split /\//,$Files{$FileKey}{URL};
       my $Filename = pop @URLParts;
-      push @DebugStack, "Download status: $Status";
+      push @DebugStack, "Download ($Files{$FileKey}{URL}) status: $Status";
       if (-e "$TmpDir/$Filename") {
         push @Filenames,$Filename;
 	delete $Files{$FileKey}{URL};
-	$Files{$FileKey}{$Filename} =  "$TmpDir/$Filename";      			    
+	$Files{$FileKey}{Filename} =  "$TmpDir/$Filename";      			    
+        push @DebugStack, "Added $TmpDir/$Filename to file list";
       } else {
         push @WarnStack,"The URL $Files{$FileKey}{URL} did not exist, was blank,
 	                 or was not accessible.";

@@ -46,12 +46,12 @@ sub AddFiles (%) {
   my @Files = sort keys %Files;
   
   &FetchDocRevisionByID($DocRevID);
+  my $Version    = $DocRevisions{$DocRevID}{Version};
+  my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+  &MakeDirectory($DocumentID,$Version); 
+  my $Directory = &GetDirectory($DocumentID,$Version); 
 
   foreach my $File (@Files) {
-    my $Version    = $DocRevisions{$DocRevID}{Version};
-    my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
-    &MakeDirectory($DocumentID,$Version); 
-    my $Directory = &GetDirectory($DocumentID,$Version); 
     if ($Files{$File}{Filename} && (-e $Files{$File}{Filename})) {
       my @Parts = split /\//,$Files{$File}{Filename};
       $ShortName = pop @Parts;
