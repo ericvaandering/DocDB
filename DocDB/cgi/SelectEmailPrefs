@@ -35,6 +35,8 @@ require "MailNotification.pm";
 require "Scripts.pm";
 require "Sorts.pm";
 require "SearchFormElements.pm";
+require "DocumentHTML.pm";
+
 require "TopicSQL.pm";
 require "AuthorSQL.pm";
 require "NotificationSQL.pm";
@@ -264,7 +266,14 @@ print "<ul>\n";
 print "</ul>\n";
 print "</td></tr></table>\n";
 
-print "<hr><table cellspacing=10 align=center>\n";
+my @WatchDocumentIDs = &FetchEmailDocuments(-emailuserid => $EmailUserID);
+if (@WatchDocumentIDs) {
+  print "<center><h4>You are also watching these documents: </h4></center><p/>\n";
+}
+my $NDocs = &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
+                           -docids => \@WatchDocumentIDs);  
+
+print "<hr/><table cellspacing=10 align=center>\n";
 print "<tr><td>";
 print $query -> submit (-value => "Update Notification Preferences");
 print " \n";
