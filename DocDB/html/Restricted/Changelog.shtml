@@ -20,6 +20,14 @@
 
 <b>This page lists the changes to the document database code over time.</b><p>
 
+<b>3 October 2002</b>
+<ul>
+<li>Fixing some security issues. Users can now be flagged as able to view but
+not create documents (for reviewers, etc.). Also, there were some problems with
+people being able to update documents they couldn't access if they knew what
+parameters to pass in. These should be fixed.
+<ul>
+
 <b>22 July 2002</b>
 <ul>
 <li>RetrieveFile now supports retrieving files by extension.

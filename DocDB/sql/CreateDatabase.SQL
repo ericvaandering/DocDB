@@ -292,6 +292,7 @@ CREATE TABLE SecurityGroup (
   GroupID int(11) NOT NULL auto_increment,
   Name char(16) NOT NULL,
   Description char(64) default NULL,
+  CanCreate in default 0,
   Timestamp timestamp(14) NOT NULL,
   PRIMARY KEY (GroupID)
 ) TYPE=MyISAM;

@@ -24,7 +24,7 @@ print $query->header;
 &BTeVHeader("Document Modifications");
 @error_stack = ();
 
-if ($Public || !&CanCreate) {
+if ($Public || !&CanCreate()) {
   push @error_stack,"You are not allowed to modify or create documents.";
 }
 
