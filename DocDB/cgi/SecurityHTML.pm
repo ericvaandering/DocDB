@@ -30,21 +30,24 @@ sub SecurityScroll (%) {
   my $AddPublic =   $Params{-addpublic} || 0;
   my $HelpLink  =   $Params{-helplink}  || "";
   my $HelpText  =   $Params{-helptext}  || "Groups";
-  my $Multiple  =   $Params{-multiple}; # FIXME: May not be able to set false
+  my $Multiple  =   $Params{-multiple}  || false; # FIXME: May not be able to set false
   my $Name      =   $Params{-name}      || "groups";
   my $Size      =   $Params{-size}      || 10;
-  my $Disabled  =   $Params{-disabled}  || "0";
+  my $Disabled  =   $Params{-disabled}  || false;
   my @Default   = @{$Params{-default}};
 
   my $Booleans = "";
   
   if ($Disabled) {
-    $Booleans .= "-disabled ";
+    $Booleans .= "disabled ";
   }  
   if ($Multiple) {
-    $Booleans .= "-multiple";
+    $Booleans .= "multiple";
   }  
-  
+  if ($Booleans) {
+    $Booleans = "-".$Booleans;
+  }
+    
   &GetSecurityGroups;
   
   my @GroupIDs = keys %SecurityGroups;
@@ -70,7 +73,7 @@ sub SecurityScroll (%) {
   
   print $query -> scrolling_list(-name => $Name, -values => \@GroupIDs, 
                                  -labels => \%GroupLabels, 
-                                 -size => $Size, -multiple => $Multiple, 
+                                 -size => $Size, 
                                  -default => \@Default, $Booleans);
 };
 
