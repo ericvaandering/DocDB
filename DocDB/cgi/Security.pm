@@ -195,7 +195,8 @@ sub LastAccess { # Highest version user can access (with current security)
 sub FindUsersGroups () {
   my @UsersGroupIDs  = ();
   if ($UserValidation eq "certificate") {
-# Coming  
+    require "CertificateUtilities.pm";
+    @UserGroupIDs = &FetchSecurityGroupsByCert();
   } elsif ($UserValidation eq "basic-user") {
 # Coming (maybe)
   } else {
