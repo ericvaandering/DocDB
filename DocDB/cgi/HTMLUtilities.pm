@@ -62,7 +62,7 @@ sub BTeVHeader {
   print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n";
   print "<link rel=\"stylesheet\" href=\"/includes/style.css\" type=\"text/css\">\n";
  
-  &SSInclude("navbar_header.html");
+  unless ($Public) {&SSInclude("navbar_header.html");}
   print "</head>\n";
 
   print "<body bgcolor=\"#FFFFFF\" text=\"#000000\" topmargin=\"6\" leftmargin=\"6\" marginheight=\"6\" marginwidth=\"6\">\n";
