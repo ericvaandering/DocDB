@@ -52,12 +52,15 @@ if ($SessionID) {
 
   &FetchSessionByID($SessionID);
   &FetchConferenceByConferenceID($Sessions{$SessionID}{ConferenceID});
-
   &PrintMeetingInfo($Sessions{$SessionID}{ConferenceID});
-  &PrintSession($SessionID,1); # Display a single session
+  &PrintSession($SessionID); # Display a single session
   &PrintMeetingEpilogue($Sessions{$SessionID}{ConferenceID});
 } elsif ($SessionSeparatorID) {
-  # Info on session separator?
+  &FetchSessionSeparatorByID($SessionSeparatorID);
+  &FetchConferenceByConferenceID($SessionSeparators{$SessionSeparatorID}{ConferenceID});
+  &PrintMeetingInfo($Sessions{$SessionID}{ConferenceID});
+  &PrintSessionSeparator($SessionSeparatorID); # Display session separator
+  &PrintMeetingEpilogue($Sessions{$SessionID}{ConferenceID});
 } elsif ($ConferenceID) {
   &FetchConferenceByConferenceID($ConferenceID);
   &PrintMeetingInfo($ConferenceID);
@@ -76,12 +79,12 @@ if ($SessionID) {
         &ReHintTalksBySessionID($SessionID); 
         &ClearSessionTalks();
         &FetchSessionByID($SessionID);
-        &PrintSession($SessionID,0); # Display a single session
+        &PrintSession($SessionID); # Display a single session
       } elsif ($SessionSeparatorID) {
-        # Info on session separator?
+        &FetchSessionSeparatorByID($SessionSeparatorID);
+        &PrintSessionSeparator($SessionSeparatorID); # Display session separator
       }
     }   
-    
   } else {
     print "<center><table cellpadding=5>\n";
     print "<tr><th>Session Title</th>\n";
@@ -93,11 +96,9 @@ if ($SessionID) {
       my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
       my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
       if ($SessionID) {
-        &ReHintTalksBySessionID($SessionID); 
-        &ClearSessionTalks();
         &PrintSessionInfo($SessionID); # Session info and link to session
       } elsif ($SessionSeparatorID) {
-        # Info on session separator?
+        &PrintSessionSeparatorInfo($SessionSeparatorID); # Session info and link to session
       }
     }  
     print "</table></center><hr width=95%>\n";

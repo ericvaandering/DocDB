@@ -243,8 +243,8 @@ sub SessionLocation {
                              -default => $SessionDefaultLocation);
 };
 
-sub PrintSession ($;$) {
-  my ($SessionID,$IsSingle) = @_;
+sub PrintSession ($) {
+  my ($SessionID) = @_;
   
   require "Sorts.pm";
   require "TalkSQL.pm";
@@ -332,6 +332,27 @@ sub PrintSession ($;$) {
   print "</table></center><hr width=95%>\n";   
 }
 
+sub PrintSessionSeparator ($) {
+  my ($SessionSeparatorID) = @_;
+  
+  require "SQLUtilities.pm";
+  
+  print "<center><table cellpadding=5><tr valign=top>\n";
+  print "<td><dl><dt><b>$SessionSeparators{$SessionSeparatorID}{Title}</b>\n";
+  print "<dd>",&EuroDate($SessionSeparators{$SessionSeparatorID}{StartTime});
+  print " at ";
+  print &EuroTimeHM($SessionSeparators{$SessionSeparatorID}{StartTime});
+  print "</dl></td> \n";
+  if ($SessionSeparators{$SessionSeparatorID}{Location}) {
+    print "<td><dl><dt><b>Location:</b><dd>$SessionSeparators{$SessionSeparatorID}{Location}</dl></td>\n";
+  }
+  if ($SessionSeparators{$SessionSeparatorID}{Description}) {
+    print "<td width=50%><dl><dt><b>Description:</b><dd>$SessionSeparators{$SessionSeparatorID}{Description}</dl> </td>\n";
+  }
+  print "</tr></table><p>\n";
+  print "</center><hr width=95%>\n";   
+}
+
 sub PrintMeetingInfo($) {
   my ($ConferenceID) = @_;
 
@@ -376,11 +397,8 @@ sub PrintMeetingEpilogue($) {
 sub PrintSessionInfo ($) {
   my ($SessionID) = @_;
   
-  require "Sorts.pm";
   require "TalkSQL.pm";
-  require "TalkHTML.pm";
   require "SQLUtilities.pm";
-  require "Utilities.pm";
   
   &FetchSessionByID($SessionID);
   
@@ -390,6 +408,22 @@ sub PrintSessionInfo ($) {
   print "<td>",&EuroDateHM($Sessions{$SessionID}{StartTime}),"</td>\n";
   print "<td>",$Sessions{$SessionID}{Description},"</td>\n";
   print "<td>",$Sessions{$SessionID}{Location},"</td>\n";
+  print "</tr>\n";
+}
+
+sub PrintSessionSeparatorInfo ($) {
+  my ($SessionSeparatorID) = @_;
+  
+  require "TalkSQL.pm";
+  require "SQLUtilities.pm";
+  
+  &FetchSessionSeparatorByID($SessionSeparatorID);
+  
+  print "<tr valign=top>\n";
+  print "<td>$SessionSeparators{$SessionSeparatorID}{Title}</td>\n";
+  print "<td>",&EuroDateHM($SessionSeparators{$SessionSeparatorID}{StartTime}),"</td>\n";
+  print "<td>",$SessionSeparators{$SessionSeparatorID}{Description},"</td>\n";
+  print "<td>",$SessionSeparators{$SessionSeparatorID}{Location},"</td>\n";
   print "</tr>\n";
 }
 
