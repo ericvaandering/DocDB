@@ -104,10 +104,17 @@ my $NumDoc = 0;
 
 foreach $DocumentID (@DocumentIDs) {
   unless ($DocumentID) {next;}
-  unless (&CanAccess($DocumentID,$Documents{$DocumentID}{NVER})) {next;}
+  my $version = -1;
+  my $tryver = $Documents{$DocumentID}{NVER};
+  while ($version == -1 && $tryver <=> -1) {
+    if (&CanAccess($DocumentID,$tryver)) {$version = $tryver;}
+    $tryver--;
+  }
+  unless ($version <=> -1) {next;}
+#  unless (&CanAccess($DocumentID,$Documents{$DocumentID}{NVER})) {next;}
   # FIXME: Need to put latest document accessible if last version isn't
   ++$NumDoc;
-  &DocumentSummary($DocumentID,$Mode);
+  &DocumentSummary($DocumentID,$Mode,$version);
 }
 
 print "</table></center>\n";

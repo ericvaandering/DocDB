@@ -305,16 +305,17 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
   require "MiscSQL.pm";
   require "TopicSQL.pm";
   
-  my ($DocumentID,$Mode) = @_;
+  my ($DocumentID,$Mode,$version) = @_;
+  unless (defined $version) {$version = $Documents{$DocumentID}{NVER}}
   unless ($Mode) {$Mode = "date"};
   
   if ($DocumentID) {
     &FetchDocument($DocumentID);
-    unless (&CanAccess($DocumentID,$Documents{$DocumentID}{NVER})) {return;}
+    unless (&CanAccess($DocumentID,$version)) {return;}
     
-    my $full_docid  = &DocumentLink($DocumentID,$Documents{$DocumentID}{NVER});
-    my $DocRevID    = &FetchDocRevision($DocumentID,$Documents{$DocumentID}{NVER});
-    my $title       = &DocumentLink($DocumentID,$Documents{$DocumentID}{NVER},$DocRevisions{$DocRevID}{TITLE});
+    my $full_docid  = &DocumentLink($DocumentID,$version);
+    my $DocRevID    = &FetchDocRevision($DocumentID,$version);
+    my $title       = &DocumentLink($DocumentID,$version,$DocRevisions{$DocRevID}{TITLE});
     if ($Mode eq "meeting") {
       my $Files_ref   = &FetchDocFiles($DocRevID);
     }
