@@ -122,7 +122,10 @@ my $ShowForm  = $query -> startform('POST',$ShowDocument);
    $ShowForm .= $query -> endform;
 
 print "<div class=\"HomepageMainChoice\">$ShowForm</div>\n";  
-print "<div class=\"HomepageMainChoice\">Put the doc-by-days pulldown here</div>\n";  
+
+print "<div class=\"HomepageMainChoice\">\n";
+&DaysPulldown($LastDays);
+print "</div>\n";  
 
 print "<tr><td>\n"; # List of lists spans whole bottom of main table
 
