@@ -119,7 +119,7 @@ my $revision_list = $dbh -> prepare(
 my $revtopic_list = $dbh -> prepare(
    "select DocRevID,MinorTopicID from RevisionTopic"); 
 my $document_list = $dbh -> prepare(
-   "select DocumentID from DocumentRevision where DocRevID=?"); 
+   "select DocumentID from DocumentRevision where DocRevID=? and Obsolete=0"); 
 
 my $DocumentID,$DocRevID;
 

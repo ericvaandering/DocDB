@@ -45,7 +45,7 @@ my $revision_list = $dbh -> prepare(
    "select DocRevID from RevisionAuthor where AuthorID=?"); 
 
 my $document_list = $dbh -> prepare(
-   "select DocumentID from DocumentRevision where DocRevID=?"); 
+   "select DocumentID from DocumentRevision where DocRevID=? and Obsolete=0"); 
 
 my $DocumentID,$DocRevID;
 

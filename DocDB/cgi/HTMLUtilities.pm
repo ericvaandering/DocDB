@@ -51,7 +51,31 @@ sub BTeVHeader {
   my @title_parts = split /\s+/, $page_title;
   $page_title = join '&nbsp;',@title_parts;
    
-  print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
+  if ($Public) {
+    print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
+
+  # The header below activates strict mode in Netscape 6 which causes 
+  # weird reflows in the document. But, the navbar is faster. Choose wisely.
+  #
+  #  print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"\n";
+  #  print "         \"http://www.w3.org/TR/html4/loose.dtd\">\n";
+
+    print "<html>\n";
+    print "<head>\n";
+    print "<title>$title</title>\n";
+    print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n";
+    print "<link rel=\"stylesheet\" href=\"/includes/public_style.css\" type=\"text/css\">\n";
+    &SSInclude("public_navbar_header.html");
+    print "</head>\n";
+
+    &SSInclude("public_fermilab_top.html");
+    &SSInclude("public_starttitle.html");
+    print "<td align=\"center\"><font color=\"red\" size=\"6\"><strong>$page_title</strong></font></td>\n";
+    &SSInclude("public_endtitle.html");
+    &SSInclude("public_navbar_subhep.html");
+    
+  } else {
+    print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
 
 # The header below activates strict mode in Netscape 6 which causes 
 # weird reflows in the document. But, the navbar is faster. Choose wisely.
@@ -59,25 +83,27 @@ sub BTeVHeader {
 #  print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"\n";
 #  print "         \"http://www.w3.org/TR/html4/loose.dtd\">\n";
 
-  print "<html>\n";
-  print "<head>\n";
-  print "<title>$title</title>\n";
-  print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n";
-  print "<link rel=\"stylesheet\" href=\"/includes/style.css\" type=\"text/css\">\n";
- 
-  unless ($Public) {&SSInclude("navbar_header.html");}
-  print "</head>\n";
+    print "<html>\n";
+    print "<head>\n";
+    print "<title>$title</title>\n";
+    print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n";
+    print "<link rel=\"stylesheet\" href=\"/includes/style.css\" type=\"text/css\">\n";
 
-  print "<body bgcolor=\"#FFFFFF\" text=\"#000000\" topmargin=\"6\" leftmargin=\"6\" marginheight=\"6\" marginwidth=\"6\">\n";
+    &SSInclude("navbar_header.html");
+    print "</head>\n";
 
-  unless ($Public) {&SSInclude("atwork_menuload.html");}
-  unless ($Public) {&SSInclude("begin_atwork_top.html");}
-  
-  print "<div align=\"center\"><font size=\"+2\" color=\"#003399\">$page_title</font></div>\n";
-  unless ($Public) {&SSInclude("end_atwork_top.html");}
-  unless ($Public) {&SSInclude("atwork_navbar.html");}
-  unless ($Public) {&SSInclude("end_table.html");}
-  print "<hr>\n";
+    print "<body bgcolor=\"#FFFFFF\" text=\"#000000\" topmargin=\"6\" leftmargin=\"6\" marginheight=\"6\" marginwidth=\"6\">\n";
+
+    &SSInclude("atwork_menuload.html");
+    &SSInclude("begin_atwork_top.html");
+
+    print "<div align=\"center\"><font size=\"+2\" color=\"#003399\">$page_title</font></div>\n";
+    &SSInclude("end_atwork_top.html");
+    &SSInclude("atwork_navbar.html");
+    &SSInclude("end_table.html");
+    print "<hr>\n";
+
+  }
 }
 
 sub SearchHeader { 
@@ -178,11 +204,21 @@ sub BTeVFooter {
      
   print "<hr>\n";
   print "<div align=\"center\">\n";
-  unless ($Public) {&SSInclude("atwork_bottomnav.html");}
+  if ($Public) {
+    &SSInclude("public_bottomnav_hep.html");
+  } else {
+    &SSInclude("atwork_bottomnav.html");
+  }
   print "</div>\n";
-  print "<div align=\"left\"> <i><font size=\"-1\">\n";
-  print "<A HREF=\"mailto:$WebMasterEmail\">$WebMasterName</A></font></i></div>\n";
-  &SSInclude("full_fermi_footer.shtml");
+  print "<address>\n";
+  print "<i><small>\n";
+  print "<A HREF=\"mailto:$WebMasterEmail\">$WebMasterName</A>\n";
+  print "</small></i>\n";
+  if ($Public) {
+    &SSInclude("public_fermi_footer.html");
+  } else {
+    &SSInclude("full_fermi_footer.shtml");
+  }
   print "</body></html>\n";
 }
 

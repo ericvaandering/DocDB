@@ -52,14 +52,14 @@ print $query->header;
 &BTeVHeader("BTeV Document $DocumentID-v$Version");
 
 unless (&CanAccess($DocumentID,$Version)) {
-  print "You are not authorized to view this document.<p>\n";
+  print "<b>Either you are not authorized to view this document (with the username and password you supplied), or the document does not exist.</b><p>\n";
   &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
   exit;
 }  
 
 my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 
-unless ($DocRevID) {
+unless ($DocRevID) { # Probably never executed since CanAccess fails.
   print "This document does not exist.<p>\n";
   &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
   exit;
