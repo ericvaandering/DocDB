@@ -109,7 +109,7 @@ print "</tr>\n";
 
 print "<tr valign=top>\n";
 print "<td>\n"; 
-&SecurityScroll(-name      => 'parent', -disabled => true,
+&SecurityScroll(-name      => 'parent', -disabled => true, -multiple => false,
                 -helplink  => 'parent', -helptext  => 'Group');
 print "</td>\n";  
 print "<td>\n"; 
