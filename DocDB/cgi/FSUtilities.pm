@@ -237,7 +237,7 @@ sub CopyFile ($$$$) {
   my ($NewDir,$ShortFile,$OldDocID,$OldVersion) = @_;
   my $OldDir = &GetDirectory($OldDocID,$OldVersion);
   my $OldFile = $OldDir."/".$ShortFile;
-  system ("cp ",$OldFile," ",$NewDir);
+  system ("cp",$OldFile,$NewDir);
   return $ShortFile;
 }  
 

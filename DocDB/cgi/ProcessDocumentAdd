@@ -96,7 +96,6 @@ my $SignoffList   = $params{signofflist};
 my @CopyFiles     = split ("\0",$params{copyfile});
 my @CopyFileIDs   = split ("\0",$params{copyfileid});
 my $OldVersion    = $params{oldversion};
-my $DocumentID    = $params{oldversion};
 
 if ($Meeting || $OtherMeeting) {
   @authorIDs = ($Requester);
@@ -224,7 +223,7 @@ if ($mode eq "add" || $mode eq "update") {
   unless ($params{abstract}) {
     push @ErrorStack,"You must supply an abstract for this document.";
   }
-  unless (@Copys || grep /\w/,$params{single_upload} || grep /\w/,$params{single_http}) {
+  unless (@CopyFiles || grep /\w/,$params{single_upload} || grep /\w/,$params{single_http}) {
     push @ErrorStack,"You must supply a file for this document.";
     push @ErrorStack,"If you just want to change information about the
     document, choose `Update DB Info' instead.";
@@ -427,6 +426,7 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
   
   $new_dir = &MakeDirectory($documentID,$version);
   &ProtectDirectory($documentID,$version,@securities);
+  @long_files   = $query ->  param("single_upload");
   @short_files = ();
   if ($Archive eq "single") { # The user uploaded the files themselves 
     @Descriptions = split ("\0",$params{filedesc});
@@ -436,29 +436,46 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
       @Roots[$RawRoot-1] = "on"
     }
 
-# Deal with copied files
+# Deal with copied files. Complicated because we have to remove elements from 
+# @Roots (whether file is "main") and @Descriptions corresponding to copied 
+# files and then add them on at the end.
+
     my @CopyRoots = ();
-    my %CopyFiles = (); 
+    my %CopyFiles = ();
+    my $NRemoved  = 0;     # Used to keep array indices OK.
+    
     foreach $CopyFile (@CopyFiles) {
       my $Counter = $CopyFile-1;
+      if (@long_files[$Counter]) {
+        push @WarnStack,"You tried to copy and upload a file in the same spot. Copy ignored.";
+        next;
+      }  
+      
       $CopyFiles{$Counter} = 1;
-      print "Copy: $CopyFile $Counter<br>\n";
-      my ($NewRoot) = splice @Roots,$Counter-1,1;
+      
+      my ($NewRoot)         = splice @Roots,$Counter-$NRemoved,1;
+      my ($NewDescription)  = splice @Descriptions,$Counter-$NRemoved,1;
+      ++$NRemoved;
       push @CopyRoots,$NewRoot;
+      push @CopyDescriptions,$NewDescription;
     }
     
-    print "CR:",@CopyRoots,"<br>\n";
+    if (@CopyFiles) {
+      push @Roots,@CopyRoots;
+      push @Descriptions,@CopyDescriptions;
+    }  
+    
+### Add files uploaded or through HTTP
         
     if ($params{single_upload}) { # Copy file to directory
-      @long_files   = $query ->  param("single_upload");
       foreach $long_file (@long_files) {
         if ($long_file) {
 #          print "Adding file $long_file<br>\n"; # FIXME: Maybe useful with NPH
           $short_file = &ProcessUpload($new_dir,$long_file);
+          push @short_files,$short_file;
         } else {
           $short_file = "";
         }    
-        push @short_files,$short_file;
       }
     } elsif ($params{single_http}) {
       @urls = split /\0/,$params{single_http};
@@ -468,12 +485,14 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
         push @short_files,$short_file;
       }  
     }
+    
+### Copy files    
+
     my $CopyCounter = 0;
     foreach my $FileID (@CopyFileIDs) {
       my $FileName = &FetchFile($FileID);
       if ($CopyFiles{$CopyCounter}) {
-        print "Copying: $FileID $FileName<br>\n";
-        $short_file = &CopyFile($new_dir,$FileName,$DocumentID,$OldVersion);
+        $short_file = &CopyFile($new_dir,$FileName,$documentID,$OldVersion);
         push @short_files,$short_file;
       }  
       ++$CopyCounter;
