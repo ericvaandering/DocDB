@@ -1,6 +1,10 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+# Description: Adds an author into the DB list of authors.  
+#              Called by submission from AddAuthorForm 
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
 #
 
 use CGI;
