@@ -25,16 +25,30 @@ sub AuthorListByID {
   my @AuthorIDs = @_;
   
   if (@AuthorIDs) {
-    print "<b>Authors:</b><br>\n";
+    print "<b>Authors:</b><br/>\n";
     print "<ul>\n";
-    foreach $AuthorID (@AuthorIDs) {
+    foreach my $AuthorID (@AuthorIDs) {
       &FetchAuthor($AuthorID);
       my $author_link = &AuthorLink($AuthorID);
       print "<li> $author_link </li>\n";
     }
     print "</ul>\n";
   } else {
-    print "<b>Authors:</b> none<br>\n";
+    print "<b>Authors:</b> none<br/>\n";
+  }
+}
+
+sub ShortAuthorListByID {
+  my @AuthorIDs = @_;
+  
+  if (@AuthorIDs) {
+    foreach my $AuthorID (@AuthorIDs) {
+      &FetchAuthor($AuthorID);
+      my $AuthorLink = &AuthorLink($AuthorID);
+      print "$AuthorLink<br/>\n";
+    }
+  } else {
+    print "<b>None<br/>\n";
   }
 }
 

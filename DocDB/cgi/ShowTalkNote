@@ -1,5 +1,6 @@
 #! /usr/bin/env perl
 #
+#        Name: ShowTalkNote
 # Description: Usually called as a pop-up, this will look up the note for a talk
 #              and display it since it could get crowded in the normal table.
 #
@@ -10,19 +11,75 @@ use CGI;
 
 require "DocDBGlobals.pm";
 
+require "ResponseElements.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
+require "TalkSQL.pm";
 
+my $SessionTalkID = $params{sessiontalkid};   # Extract term user wants help for
+
+# Collect info
+
+&FetchSessionTalkByID($SessionTalkID);
+my $SessionID  = $SessionTalks{$SessionTalkID}{SessionID};
+my $DocumentID = $SessionTalks{$SessionTalkID}{DocumentID};
+my $Confirmed  = $SessionTalks{$SessionTalkID}{Confirmed} ;
+my $Time       = $SessionTalks{$SessionTalkID}{Time}      ;
+my $HintTitle  = $SessionTalks{$SessionTalkID}{HintTitle} ;
+my $Note       = $SessionTalks{$SessionTalkID}{Note}      ;
+
+my $DocRevID;
+if ($DocumentID) {
+  &FetchDocument($DocumentID);
+  $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVersions});
+}
+
+my $BestTitle;
+if ($Confirmed && $DocumentID) {
+  $BestTitle = $DocRevisions{$DocRevID}{TITLE};
+} else {
+  $BestTitle = $SessionTalks{$SessionTalkID}{HintTitle};    
+}
+ 
 # Start page
 
 $query = new CGI;  
 print $query->header;
-print $query->start_html(-title=>"Note for TALK TITLE HERE");
+print $query->start_html(-title=>"Notes for $BestTitle");
 %params = $query -> Vars;
-$helpterm = $params{term};   # Extract term user wants help for
 
-if ($SomeCondition) {
-  print "<b><big>Talk Title</big></b><p>\n";
-  print "The note for the talk\n";
+# Print out info
+
+if ($SessionID) {
+  my @TopicHintIDs  = &FetchTopicHintsBySessionTalkID($SessionTalkID);
+  my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID);
+
+  print "<b><big>Notes for $BestTitle</big></b><p>\n";
+  print "<b>This talk was entered with the following information:</b><p/>\n";
+  print "<table>\n";
+  print "<tr><th align=right>Suggested Title:</th><td>$Title</td></tr>\n";
+  print "<tr><th align=right>Notes:</th><td>$Note</td></tr>\n";
+  print "<tr><th align=right>Authors:</th><td>\n";
+   &ShortAuthorListByID(@AuthorHintIDs);
+   print "</td></tr>\n";
+  print "<tr><th align=right>Topics:</th><td>\n";
+   &ShortTopicListByID(@TopicHintIDs);
+   print "</td></tr>\n";
+  print "</table>\n";
+  if ($DocumentID) {
+    if ($Confirmed) {
+      print "<b>This talk is a confirmed match with this document:</b>\n";
+    } else {
+      print "<b>This talk has been matched (but not confirmed) with this document:</b>\n";
+    } 
+    print "<center><table cellpadding=3>\n";
+    &DocumentSummary($DocumentID,"meeting");
+    print "</table></center>\n";
+  } else {
+    print "<b>No document in the database has been matched to this talk.</b>\n"
+  }
 } else {
-  print "<b><big>No note for this talk</big></b><p>\n";
+  print "<b><big>No notes for this talk</big></b><p>\n";
 }  
+
 print $query->end_html;     # End page

@@ -29,10 +29,10 @@ sub ShortTopicListByID {
     foreach $topicID (@topicIDs) {
       &FetchMinorTopic($topicID);
       my $topic_link = &MinorTopicLink($topicID);
-      print "$topic_link <br>\n";
+      print "$topic_link <br/>\n";
     }
   } else {
-    print "None<br>\n";
+    print "None<br/>\n";
   }
 }
 

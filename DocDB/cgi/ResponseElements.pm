@@ -469,18 +469,8 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
     } elsif ($Mode eq "meeting") {
       my @TopicIDs = &GetRevisionTopics($DocRevID);
       
-# FIXME: Use @TopicIDs = &RemoveArray(@TopicIDs,@IgnoreTopics); # remove loop
+      @TopicIDs = &RemoveArray(\@TopicIDs,@IgnoreTopics);
 
-      foreach my $ID (@IgnoreTopics) {
-        my $Index = 0;
-        foreach my $TopicID (@TopicIDs) {
-          if ($TopicID == $ID) {
-            splice @TopicIDs,$Index,1;
-            last;
-          }
-          ++$Index;  
-        }
-      }  
       print "<td>$title</td>\n";
       print "<td><nobr>$author_link</nobr></td>\n";
       print "<td>"; &ShortTopicListByID(@TopicIDs); print "</td>\n";

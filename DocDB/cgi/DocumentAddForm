@@ -8,20 +8,24 @@ use DBI;
 
 require "DocDBGlobals.pm";
 require "Cookies.pm";
-require "FormElements.pm";
 require "Scripts.pm";
 require "Sorts.pm";
+
 require "AuthorSQL.pm";
 require "TopicSQL.pm";
 require "SecuritySQL.pm";
-require "SecurityHTML.pm";
 require "DocumentSQL.pm";
 require "RevisionSQL.pm";
 require "MiscSQL.pm";
+
 require "ResponseElements.pm";
+require "FormElements.pm";
 require "HTMLUtilities.pm";
+require "Utilities.pm";
 require "Defaults.pm";
 require "Security.pm";
+
+require "SecurityHTML.pm";
 require "TalkHTML.pm";
 
 require "Debug.pm"; #FIXME Remove
@@ -37,12 +41,13 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 %params = $query -> Vars;
 
-my $Special    = $params{special};
+my $Special      = $params{special};
 my $DocumentID   = $params{docid};
-my $ConferenceID = $params{conferenceid}; #FIXME SessionID too.
+my $ConferenceID = $params{conferenceid};
+my $SessionID    = $params{sessionid};
 my $Version      = $params{version};
 my @PreTopics    = $query -> param('pretopic');
-   $mode   = $params{mode}; # FIXME: Can't be my since used in subroutines
+   $mode         = $params{mode}; # FIXME: Can't be my since used in subroutines
 
 @TopicDefaults = ();
 
@@ -153,10 +158,42 @@ if ($EnhancedSecurity) {
 
 my @OpenSessionTalkIDs = ();
 
-# First check all preselected topics, see if they are conferences, etc. 
-# FIXME: Not SessionID
+# Explicit conference and session checks for things that aren't topics
+# FIXME: Look into modification too
 
-if ($mode eq "add" && @TopicDefaults) { # FIXME: Look into modification too
+if ($mode eq "add" && ($SessionID||$ConferenceID)) {
+  require "TalkSQL.pm";
+  require "MeetingSQL.pm";
+  
+  my @CheckSessionTalkIDs = ();
+  my $MinorTopicID;
+  
+  if ($SessionID) { # Build list for SessionID
+    @CheckSessionTalkIDs = &FetchSessionTalksBySessionID($SessionID);
+    &FetchSessionByID();
+    my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
+    &FetchConferenceByConferenceID($ConferenceID);
+    $MinorTopicID = $Conferences{$ConferenceID}{Minor};
+  } elsif ($ConferenceID) { # Build list for ConferenceID
+    @CheckSessionTalkIDs = &FetchSessionTalksByConferenceID($ConferenceID);
+    &FetchConferenceByConferenceID($ConferenceID);
+    $MinorTopicID = $Conferences{$ConferenceID}{Minor};
+  }    
+  
+  # Check list of SessionTalks
+  
+  foreach my $SessionTalkID (@CheckSessionTalkIDs) {
+    unless ($SessionTalks{$SessionTalkID}{Confirmed}) {
+      push @OpenSessionTalkIDs,$SessionTalkID;
+    } 
+  }
+  
+  # Add the topic for conference to defaults
+  
+  if ($MinorTopicID) {
+    push @TopicDefaults,$MinorTopicID;
+  }  
+} elsif ($mode eq "add" && @TopicDefaults) { # Check all preselected topics, see if they are conferences, etc. 
   require "TalkSQL.pm";
   foreach my $MinorTopicID (@TopicDefaults) {
     my $ConferenceID = &FetchConferenceByTopicID($MinorTopicID);
@@ -171,19 +208,7 @@ if ($mode eq "add" && @TopicDefaults) { # FIXME: Look into modification too
   }
 }
 
-# Explicit conference check for things that aren't topics
-# FIXME: Also sessionID instead
-
-if ($mode eq "add" && $ConferenceID) { # FIXME: Look into modification too
-  # FIXME: push onto topicdefaults, make topicdefaults unique
-  require "TalkSQL.pm";
-  my @CheckSessionTalkIDs = &FetchSessionTalksByConferenceID($ConferenceID);
-  foreach my $SessionTalkID (@CheckSessionTalkIDs) {
-    unless ($SessionTalks{$SessionTalkID}{Confirmed}) {
-      push @OpenSessionTalkIDs,$SessionTalkID;
-    } 
-  }
-}    
+&Unique(@TopicDefaults) ; # Make sure this list is unique
 
 if (@OpenSessionTalkIDs) {
   &DBPrintLine("Found some talks to display:", @OpenSessionTalkIDs);

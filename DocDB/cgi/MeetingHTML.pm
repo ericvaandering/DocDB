@@ -315,8 +315,10 @@ sub PrintSession ($) {
         print "<tr valign=top>\n";
         print "<td align=right><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";
         print "<td>$SessionTalks{$SessionTalkID}{HintTitle}</td>\n";
-        print "<td>Hint authors</td>\n";
-        print "<td>Hint topics</td>\n";
+        my @TopicHintIDs  = &FetchTopicHintsBySessionTalkID($SessionTalkID);
+        my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID);
+        print "<td>\n"; &ShortAuthorListByID(@AuthorHintIDs); print "</td>\n";
+        print "<td>\n"; &ShortTopicListByID(@TopicHintIDs);   print "</td>\n";
         print "<td>&nbsp</td>\n"; # Files, which can't exist
         print "<td align=right>",&TruncateSeconds($SessionTalks{$SessionTalkID}{Time}),"</td>\n";
         if ($SessionTalks{$SessionTalkID}{Note}) {
