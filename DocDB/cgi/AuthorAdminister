@@ -16,7 +16,6 @@ require "ResponseElements.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";
 require "AuthorSQL.pm";
-require "Debug.pm";
 
 $query = new CGI;  # Global for subroutines
 
@@ -43,8 +42,8 @@ $InstitutionID = $params{inst};
 my $AuthorID;
 
 unless (&CanAdminister) {
-  push @error_stack,"You must be logged in as the adminstrator to delete
-  authors";
+  push @error_stack,"You must be logged in as the adminstrator to administer
+  authors.";
 }  
 &EndPage(@ErrorStack);
 
@@ -135,9 +134,7 @@ print "<p>\n";
 &EndPage(@ErrorStack);
 &WarnPage(@WarnStack);
 
-
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
-
  
 exit;

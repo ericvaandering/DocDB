@@ -359,6 +359,21 @@ sub TopicSelect { # Scrolling selectable list for topics
                                  -default => \@TopicDefaults);
 };
 
+sub TopicSelectLong { # Scrolling selectable list for topics, all info
+  my @TopicIDs = sort byTopic keys %FullTopics;
+  my %TopicLabels = ();
+  foreach my $ID (@TopicIDs) {
+    $TopicLabels{$ID} = $FullTopics{$ID}." [$MinorTopics{$ID}{LONG}]"; 
+  }  
+  print "<b><a ";
+  &HelpLink("topics");
+  print "Topics:</a></b><br> \n";
+  print $query -> scrolling_list(-name => "topics", -values => \@TopicIDs, 
+                                 -labels => \%TopicLabels,
+                                 -size => 10, -multiple => 'false',
+                                 -default => \@TopicDefaults);
+};
+
 sub MultiTopicSelect { # Multiple scrolling selectable lists for topics
   my $NCols = 4;
   my @MajorIDs = sort byMajorTopic keys %MajorTopics;

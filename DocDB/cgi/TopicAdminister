@@ -1,0 +1,110 @@
+#! /usr/bin/env perl
+#
+# Description: This script is called by AdministerForm and does administration
+#              on Authors in the DB. AddAuthor is simpler and can only add
+#              authors (perhaps suitable for everyone). 
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+use CGI;
+use DBI;
+
+require "DocDBGlobals.pm";
+require "ResponseElements.pm";
+require "Security.pm";
+require "HTMLUtilities.pm";
+require "TopicSQL.pm";
+
+$query = new CGI;  # Global for subroutines
+
+print $query->header;
+&DocDBHeader("Modified List of Topics");
+
+%params = $query -> Vars;
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+# Parameters to script 
+
+$Password      = $params{password};
+$Username      = $Administrator;
+$Action        = $params{admaction};
+
+unless (&CanAdminister) {
+  push @error_stack,"You must be logged in as the adminstrator to administer topics.";
+}  
+&EndPage(@ErrorStack);
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
+
+unless ($dbh) {
+  push @ErrorStack,"Unable to connect to the database. Check the password.";
+}         
+&EndPage(@ErrorStack);
+
+if      ($Action eq "Delete") {
+#  my $AuthorLink   = &AuthorLink($AuthorID);
+#  my @AuthorDocIDs = &GetAuthorDocuments($AuthorID);
+  
+#  # Delete AuthorID from Author, RevisionAuthor tables
+  
+#  my $AuthorDelete   = $dbh -> prepare("delete from Author         where AuthorID=?");
+#  my $RevisionDelete = $dbh -> prepare("delete from RevisionAuthor where AuthorID=?");
+#  $AuthorDelete   -> execute($AuthorID);
+#  $RevisionDelete -> execute($AuthorID);
+  
+#  print "$AuthorLink has been removed from the database.<br>\n";
+#  if (@AuthorDocIDs) {
+#    push @WarnStack,"$AuthorLink was an author on documents. These
+#                     entries have been removed.";
+#  }  
+} elsif ($Action eq "Modify") {
+#    ($AuthorID) = @AuthorIDs;
+
+#    if ($FirstName && $LastName) { # Deal with name changes (first & last will update initials)     
+#      print "<b>Updating full name.</b><br>\n";
+#      my $AuthorUpdate = $dbh->prepare(
+#         "update Author set FirstName=?,MiddleInitials=?, LastName=? ".
+#         "where AuthorID=?");
+#      $AuthorUpdate -> execute($FirstName,$Middle,$LastName,$AuthorID);
+#    }
+      
+#    if ($InstitutionID) { # Deal with institution changes
+#      print "<b>Updating institution.</b><br>\n";
+#      my $AuthorUpdate = $dbh->prepare(
+#         "update Author set InstitutionID=? where AuthorID=?");
+#      $AuthorUpdate -> execute($InstitutionID,$AuthorID);
+#    }
+} elsif ($Action eq "New") {
+#  print "<b>Adding a new author.</b><br>\n";
+#  my $AuthorInsert = $dbh->prepare(
+#     "insert into Author ".
+#            "(AuthorID, FirstName, MiddleInitials, LastName, InstitutionID,Active) ". 
+#     "values (0,        ?,         ?,              ?,        ?,            1)");
+#
+#  $AuthorInsert -> execute($FirstName,$Middle,$LastName,$InstitutionID);
+#  $AuthorID = $AuthorInsert -> {mysql_insertid}; # Works with MySQL only
+} else {
+  push @ErrorStack,"No valid action was specified.";
+}  
+
+# For modify or new fetch author information and display.
+
+if ($Action eq "Modify" || $Action eq "New") {
+  print "<p><b>Here are the results of your modification:<br>\n";
+#  &PrintAuthorInfo($AuthorID);
+  print "</b><p>\n";
+}  
+
+print "<p>\n";
+
+&EndPage(@ErrorStack);
+&WarnPage(@WarnStack);
+
+&DocDBNavBar;
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+ 
+exit;
