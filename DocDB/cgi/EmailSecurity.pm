@@ -98,4 +98,38 @@ sub EmailUserDigest ($) {
   return $Digest;           
 }
 
+sub NewEmailUserForm {
+  print "<b>Create a new account:</b><p>\n";
+  print $query -> startform('POST',$SelectEmailPrefs);
+  print $query -> hidden(-name => 'mode', -default => "newuser", -override => 1);
+
+  print "<dl><dd><table>";
+  print "<tr><th align=right>Username:\n<td>";
+  print $query -> textfield(-name => 'username',      -size => 16, -maxlength => 32);
+  print "<tr><th align=right>Password:\n<td>";
+  print $query -> password_field(-name => 'password', -size => 16, -maxlength => 32);
+  print "<tr><th align=right>Confirm password:\n<td>";
+  print $query -> password_field(-name => 'passconf', -size => 16, -maxlength => 32);
+  print "<tr><td colspan=2 align=center>";
+  print $query -> submit (-value => "Create new account");
+  print "</table></dl>\n";
+  print $query -> endform;
+}
+
+sub LoginEmailUserForm {
+  print "<b>Change preferences on an existing account:</b><p>\n";
+  print $query -> startform('POST',$SelectEmailPrefs);
+  print $query -> hidden(-name => 'mode', -default => "login", -override => 1);
+
+  print "<dl><dd><table>";
+  print "<tr><th align=right>Username:\n<td>";
+  print $query -> textfield(-name => 'username',      -size => 16, -maxlength => 32);
+  print "<tr><th align=right>Password:\n<td>";
+  print $query -> password_field(-name => 'password', -size => 16, -maxlength => 32);
+  print "<tr><td colspan=2 align=center>";
+  print $query -> submit (-value => "Login");
+  print "</table></dl>\n";
+  print $query -> endform;
+}
+
 1;

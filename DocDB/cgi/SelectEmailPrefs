@@ -34,11 +34,69 @@ my $Password = $params{password};
 $UserName =~ s/\s+//g;
 $Password =~ s/\s+//g;
 
+if ($Mode eq "newuser") {
+  my $PassConf = $params{passconf};
+  $PassConf =~ s/\s+//g;
+
+# Do the passwords match, is there a password
+
+  if ($Password eq "") {
+    push @error_stack,"You may not supply an empty password. Please try again.";
+  }
+  if ($Password ne $PassConf) {
+    push @error_stack,"The passwords you entered did not match. Please try again.";
+  }
+
+# Does the username already exist?
+
+  my $UserFetch =  $dbh->prepare("select COUNT(EmailUserID) from EmailUser where Username=?");
+     $UserFetch -> execute($UserName);
+  my ($UserExists) = $UserFetch -> fetchrow_array;
+
+  if ($UserExists) {
+    push @error_stack,"The username you entered already exists. Please try again.";
+  }
+}
+
 # Start the page
    
 print $query->header;
 &BTeVHeader("Update Notification Preferences"); # Prob need specialized header
 &HelpPopupScript;
+
+# Create new user if called for
+
+if ($Mode eq "newuser") {
+  if (@error_stack) { # There's a problem, so let them try again
+    &ErrorPage(@error_stack);
+    &NewEmailUserForm;
+    print "<p>\n";
+    &LoginEmailUserForm;
+    print "<p>\n";
+    &EndPage();
+  } else { # Everything OK, lets create the user
+    srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
+
+    my $Salt = ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]).
+               ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]);
+
+    my $EncryptedPassword = crypt($Password,$Salt);
+    my $UserInsert        = $dbh -> prepare(
+       "insert into EmailUser (EmailUserID,Username,Password) ".
+       "values                (0,          ?,       ?)");
+       $UserInsert -> execute($UserName,$EncryptedPassword); 
+
+    print "User <b>$UserName</b> created. Do not forget your password, there is no way to
+    retrieve it.<p>\n"; 
+    $Mode = "update"; # Now display the form to update  
+  }
+}
+
+# Check on progress
+
+if (@error_stack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@error_stack);
+}
 
 # Check for valid user
 
@@ -54,7 +112,13 @@ if ($EmailUserID) {
   &FetchEmailUser($EmailUserID);
   $Digest = &EmailUserDigest($EmailUserID);
 } else {
-  push @error_stack,"The username/password pair you entered is invalid. Please go back and try again.";
+  push @error_stack,"The username/password pair you entered is invalid. Please try again.";
+  &ErrorPage(@error_stack);
+  &LoginEmailUserForm;
+  print "<p>\n";
+  &NewEmailUserForm;
+  print "<p>\n";
+  &EndPage();
 }
 
 # Everything is OK, display the page
@@ -91,13 +155,14 @@ if ($Mode eq "update") {
 }  
 
 print $query -> startform('POST',$SelectEmailPrefs);
-print $query -> hidden(-name => 'mode', -default => "update");
+print $query -> hidden(-name => 'mode', -default => "update", -override => 1);
 
 print "<table cellspacing=10 width=95% align=center><tr><td colspan=3>\n";
 
 print "At the top part of the page, you can change your e-mail address, name,
        and whether you prefer text or HTML e-mail. (At the present time, all e-mail
-       is text only, but your choice will be remembered). <p>
+       is text only, but your choice will be remembered for future enhancements.) 
+       <p>
        At the bottom part of the page, select the topics or subtopics you want
        to be notified of changes to, either immediately or in digests sent every
        day or week.\n";

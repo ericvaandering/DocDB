@@ -8,44 +8,18 @@ use CGI;
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
+require "EmailSecurity.pm";
 
 $query = new CGI;  # Global for subroutines
 
 print $query->header;
 &BTeVHeader("E-mail Notification Login");
 
-print "<b>Change preferences on an existing account:</b><p>\n";
-print $query -> startform('POST',$SelectEmailPrefs);
-
-print "<dl><dd><table>";
-print "<tr><th align=right>Username:\n<td>";
-print $query -> textfield(-name => 'username',      -size => 16, -maxlength => 32);
-print "<tr><th align=right>Password:\n<td>";
-print $query -> password_field(-name => 'password', -size => 16, -maxlength => 32);
-print "<tr><td colspan=2 align=center>";
-print $query -> submit (-value => "Login");
-print "</table></dl>\n";
+&LoginEmailUserForm;
 print "<p>\n";
 
-print $query -> endform;
-
-print "<b>Create a new account:</b><p>\n";
-
-print $query -> startform('POST',$EmailCreate);
-
-print "<dl><dd><table>";
-print "<tr><th align=right>Username:\n<td>";
-print $query -> textfield(-name => 'username',      -size => 16, -maxlength => 32);
-print "<tr><th align=right>Password:\n<td>";
-print $query -> password_field(-name => 'password', -size => 16, -maxlength => 32);
-print "<tr><th align=right>Confirm password:\n<td>";
-print $query -> password_field(-name => 'passconf', -size => 16, -maxlength => 32);
-print "<tr><td colspan=2 align=center>";
-print $query -> submit (-value => "Create new account");
-print "</table></dl>\n";
+&NewEmailUserForm;
 print "<p>\n";
-
-print $query -> endform;
 
 &DocDBNavBar;
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);

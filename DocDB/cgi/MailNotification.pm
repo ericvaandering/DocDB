@@ -3,7 +3,8 @@ sub MailNotices ($) {
   require Mail::Mailer;
 
   require "RevisionSQL.pm";
- 
+  require "ResponseElements.pm";
+  
   my ($DocRevID) = @_;
   
   &FetchDocRevisionByID($DocRevID);
@@ -41,14 +42,17 @@ sub MailNotices ($) {
 
 sub RevisionMailBody ($) {
   require "RevisionSQL.pm";
+  require "ResponseElements.pm";
+  require "AuthorSQL.pm";
   require "Sorts.pm";
 
   my ($DocRevID) = @_;
   &FetchDocRevisionByID($DocRevID);
   
-  my $FullID = &FullDocumentID($DocRevisions{$DocRevID}{DOCID},$DocRevisions{$DocRevID}{VERSION});
   my $Title  = $DocRevisions{$DocRevID}{TITLE};
-
+  my $FullID = &FullDocumentID($DocRevisions{$DocRevID}{DOCID},$DocRevisions{$DocRevID}{VERSION});
+  my $URL    = &DocumentURL($DocRevisions{$DocRevID}{DOCID});
+  
   &FetchAuthor($DocRevisions{$DocRevID}{SUBMITTER});
   my $Submitter = $Authors{$DocRevisions{$DocRevID}{SUBMITTER}}{FULLNAME};
 
@@ -78,6 +82,8 @@ sub RevisionMailBody ($) {
   # Construct the mail body
   
   print $Mailer "       Title: ",$DocRevisions{$DocRevID}{TITLE},"\n";
+  print $Mailer " Document ID: ",$FullID,"\n";
+  print $Mailer "         URL: ",$URL,"\n";
   print $Mailer "        Date: ",$DocRevisions{$DocRevID}{DATE},"\n";;
   print $Mailer "Requested by: ",$Submitter,"\n";;
   print $Mailer "     Authors: ",$Authors,"\n";;
