@@ -7,11 +7,8 @@
 #    Modified: 
 #
 
-use Benchmark;
 use CGI;
 use DBI;
-
-$StartTime = new Benchmark;
 
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
@@ -53,6 +50,15 @@ unless ($dbh) {
   push @ErrorStack,$Msg_NoConnect;
 }         
 &EndPage(@ErrorStack);
+
+if ($ConferenceID) { # If just one session, switch to session mode
+  my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
+  @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
+  if ($#MeetingOrderIDs == 1) {
+    $MeetingOrderID = pop @MeetingOrderIDs;
+    $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
+  }
+}
 
 if ($SessionID) { # Display a single session
   &ReHintTalksBySessionID($SessionID); 
@@ -177,8 +183,6 @@ if ($SessionID) {
   $NavBarURL  = "$MeetingModify?conferenceid=$ConferenceID";
 }  
   
-$EndTime  = new Benchmark;
-
 &DocDBNavBar($NavBarText,$NavBarURL);
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  
