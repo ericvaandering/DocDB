@@ -172,7 +172,7 @@ if (@warn_stack) {
   @warn_stack = ();
 }
 
-print "<center><table cellpadding=10>\n";
+print "<center><table cellpadding=10 border=1>\n";
 
 print "<tr>\n";
 print "<td colspan=3>\n";
@@ -207,20 +207,51 @@ if ($mode eq "add") {
 }
 
 print "Click on any of the headings for help.</h4>\n"; print "</td>\n";
-print "</tr><tr>\n";
+print "</tr>\n";
+
+### Title, abstract, and keywords
+
+print "<tr>\n";
 print "<td colspan=3>\n"; &TitleBox;    print "</td>\n";
-print "</tr><tr>\n";
+print "</tr>\n";
+print "<tr>\n";
 print "<td colspan=3>\n"; &AbstractBox; print "</td>\n";
-print "</tr><tr>\n";
+print "</tr>\n";
+print "<tr>\n";
 print "<td colspan=3>\n"; &KeywordsBox; print "</td>\n";
 print "</tr>\n";
-unless ($Meeting || $OtherMeeting) {
-  print "<tr>\n";
-  print "<td colspan=3>\n"; &ReferenceForm;  print "</td>\n";
-  print "</tr><tr>\n";
-  print "<td colspan=3>\n"; &PubInfoBox;  print "</td>\n";
-  print "</tr>\n";
+
+### Document type and date override (if present)
+
+print "<tr>\n";
+if ($Meeting || $OtherMeeting) {
+  print "<td colspan=2 valign=top>\n"; 
+  my @TypeIDs = keys %DocumentTypes;
+  foreach my $ID (@TypeIDs) {
+    if ($DocumentTypes{$ID}{SHORT} eq "Talk") {
+      $TalkTypeID = $ID;
+      last;
+    }
+  }
+  print "<b>Document Type: $DocumentTypes{$TalkTypeID}{SHORT}</b>\n";  
+  print $query -> hidden(-name => 'doctype',  -default => $TalkTypeID);
+  print "</td>\n";  
+
+} else {
+  if ($mode eq "add" || $mode eq "reserve") {
+    print "<td colspan=2 valign=top>\n";
+    &DocTypeButtons;
+    print "</td>\n";
+  }
 }
+if ($Overdate eq "Yes") {
+  print "<td valign=top>\n";
+  &DateTimePullDown;
+  print "</td>\n";
+}  
+print "</tr>\n";
+
+### Files
 
 if ($mode eq "add" || $mode eq "update") {
   print "<tr><td colspan=3>\n";
@@ -246,8 +277,9 @@ if ($mode eq "add" || $mode eq "update") {
   print "</td></tr>";
 }
 
-print "<tr valign=top>\n";
+### Requester, Authors, and security 
 
+print "<tr valign=top>\n";
 if ($Meeting || $OtherMeeting) {
   print "<td>&nbsp;&nbsp;&nbsp;</td>\n";
 } 
@@ -261,46 +293,29 @@ unless ($Meeting || $OtherMeeting) {
     print "<td>\n"; &AuthorManual;    print "</td>\n";
   }
 }
-
-if ($TopicMode eq "single") {
-  print "<td>\n"; &TopicSelect;     print "</td>\n";
-  print "</tr><tr>\n";
-  print "<td colspan=1 valign=top>\n"; &SecurityList; print "</td>\n";
-} elsif ($TopicMode eq "multi") {
-  print "<td colspan=1 valign=top>\n"; &SecurityList; print "</td>\n";
-  print "</tr><tr>\n";
-  print "<td colspan=3 align=center>\n"; &MultiTopicSelect;     print "</td>\n";
-  print "</tr><tr>\n";
-}
-
-if ($Overdate eq "Yes") {
-  print "<td valign=top>\n";
-  &DateTimePullDown;
-  print "</td>\n";
-}  
-
-if ($Meeting || $OtherMeeting) {
-  print "<td colspan=2 valign=top>\n"; 
-  my @TypeIDs = keys %DocumentTypes;
-  foreach my $ID (@TypeIDs) {
-    if ($DocumentTypes{$ID}{SHORT} eq "Talk") {
-      $TalkTypeID = $ID;
-      last;
-    }
-  }
-  print "<b>Document Type: $DocumentTypes{$TalkTypeID}{SHORT}</b>\n";  
-  print $query -> hidden(-name => 'doctype',  -default => $TalkTypeID);
-  print "</td>\n";  
-
-} else {
-  if ($mode eq "add" || $mode eq "reserve") {
-    print "<td colspan=2 valign=top>\n";
-    &DocTypeButtons;
-    print "</td>\n";
-  }
-}
-
+print "<td colspan=1 valign=top>\n"; &SecurityList; print "</td>\n";
 print "</tr>\n";
+
+### Topics
+
+print "<tr>\n";
+if ($TopicMode eq "single") {
+  print "<td colspan=3>\n"; &TopicSelect;     print "</td>\n";
+} elsif ($TopicMode eq "multi") {
+  print "<td colspan=3>\n"; &MultiTopicSelect;     print "</td>\n";
+}
+print "</tr>\n";
+
+### References and Publication info
+
+unless ($Meeting || $OtherMeeting) {
+  print "<tr>\n";
+  print "<td colspan=3>\n"; &ReferenceForm;  print "</td>\n";
+  print "</tr><tr>\n";
+  print "<td colspan=3>\n"; &PubInfoBox;  print "</td>\n";
+  print "</tr>\n";
+}
+
 print "</table><p>\n";
 
 if      ($mode eq "add") {
