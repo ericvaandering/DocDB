@@ -33,19 +33,31 @@ if ($mode ne "add" && $mode ne "reserve") {
             try to access this page directly.</h3>\n"); 
 }  
 
-my $document_insert = $dbh->prepare("insert into Document (DocumentID,
-                                      RequesterID, RequestDate, DocumentType) 
-                                      values (0,?,NOW(),?)");
-my $doc_rev_insert = $dbh->prepare("insert into DocumentRevision (DocRevID,
-                                      DocumentID, SubmitterID, DocumentTitle,
-                                      PublicationInfo, VersionNumber, Abstract, 
-                                      Private) values (0,?,?,?,?,?,?,?)");
-my $rev_author_insert = $dbh->prepare("insert into RevisionAuthor (RevAuthorID,
-                                      DocRevID, AuthorID) 
-                                      values (0,?,?)");
-my $rev_topic_insert  = $dbh->prepare("insert into RevisionTopic  (RevTopicID,
-                                      DocRevID, MinorTopicID) 
-                                      values (0,?,?)");
+my $document_insert = $dbh->prepare("
+insert into Document 
+       (DocumentID, RequesterID, RequestDate, DocumentType) 
+values (0,          ?,           NOW(),       ?)");
+            
+my $doc_rev_insert = $dbh->prepare("
+insert into DocumentRevision 
+       (DocRevID, DocumentID, SubmitterID, DocumentTitle, PublicationInfo, 
+        VersionNumber, Abstract, Private, RevisionDate) 
+values (0,?,?,?,?,?,?,?,NOW())");
+            
+my $rev_author_insert =  $dbh->prepare("
+insert into RevisionAuthor 
+       (RevAuthorID, DocRevID, AuthorID) 
+values (0,           ?,        ?)");
+                                 
+my $rev_topic_insert = $dbh->prepare("
+insert into RevisionTopic  
+       (RevTopicID, DocRevID, MinorTopicID) 
+values (0,          ?,        ?)");
+
+my $file_insert = $dbh->prepare("
+insert into DocumentFile   
+       (DocFileID, DocRevID, FileName, Date, URL, RootFile) 
+values (0,         ?,        ?,        NOW(),?,   ?)");
 
 @error_stack = ();
 
@@ -65,6 +77,9 @@ if ($mode eq "add") {
   unless ($params{topics}) {
     push @error_stack,"You must supply at least one topic for this document.";
   }
+  unless ($params{abstract}) {
+    push @error_stack,"You must supply an abstract for this document.";
+  }
 }
 
 if (($#error_stack + 1)) {
@@ -79,10 +94,11 @@ if (($#error_stack + 1)) {
 $document_insert -> execute($params{requestor},$params{doctype});
 my $documentID = $document_insert -> {insertid}; # Works with MySQL only
 
+my $version;
 if      ($mode eq "reserve") {
-  my $version   = 0;
+  $version   = 0;
 } elsif ($mode eq "add") {
-  my $version   = 1;
+  $version   = 1;
 }
 
 $doc_rev_insert -> execute($documentID,$params{requestor},$params{title},
@@ -119,16 +135,24 @@ if ($mode eq "add") {
     print OUTFILE $buffer
   }
   close OUTFILE;
+
+# Insert into database
+  $rootfile = 1;
+  $url = $web_root.$hun_dir.$sub_dir.$ver_dir.$short_file; # Not needed?
+  $file_insert -> execute($docRevID,$short_file,$url,$rootfile);
 }
 
 # Output feedback to the user
 
-print "Your Document ID is <b>BTeV-doc-$documentID</b><p> which was created with
-the following information. Please make a note of the document number as you will
-need it to update your document.\n"; 
+print "Your Document ID is <b>BTeV-doc-$documentID</b><p> 
+       which was created with the following information.<br>
+       Please make a note of the document number as you will
+       need it to update your document.<p>\n"; 
 
+&RequestorByID($params{requestor});
 &AuthorListByID(@authorIDs);
 &TopicListByID(@topicIDs);
+&PrintAbstract($params{abstract});
 
 print $query->end_html;
 

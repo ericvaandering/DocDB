@@ -5,7 +5,7 @@ $db_rwpass = "docadmin";
 $db_rouser = "docadmin";
 $db_ropass = "docadmin";
 
-$file_root = "/var/www/BTeV/DocDB/";
+$file_root = "/var/www/html/BTeV/DocDB/";
 $web_root  = "http://vuhepv.phy.vanderbilt.edu/BTeV/DocDB/";
 $cgi_root  = "http://vuhepv.phy.vanderbilt.edu/cgi-bin/BTeV/DocDB/cgi/";
 
