@@ -197,8 +197,10 @@ if (&NearByMeeting == $TopicID) {
   print "<ul>\n";
   print "<li><a href=\"$DocumentAddForm?special=meeting\">Submit a talk</a> for
          this meeting.\n";
-  print "<li><a href=\"http://www-btev.fnal.gov/internal_documents/mtg/submitting_24may01.html\">Instructions
-         and pointers</a> on submitting talks and 
+  print "<li>
+         <a href=$HelpFile#meeting>Instructions</a> for submitting talks,
+         <a href=\"http://www-btev.fnal.gov/internal_documents/mtg/submitting_24may01.html\">
+         pointers</a> on document formats, and
          <a href=\"http://www-btev.fnal.gov/internal_documents/mtg/transp_instructions.html#scanning\">instructions 
          on using the WH9W scanner</a>.\n";
   print "</ul>\n";

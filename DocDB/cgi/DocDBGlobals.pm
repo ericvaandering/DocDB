@@ -46,8 +46,9 @@ $DBWebMasterEmail = "btev-docdb\@fnal.gov";
 $DBWebMasterName  = "BTeV Document Database Administrators";
 $Administrator    = "docdbadm";
 $AuthUserFile     = "/www/conf/www-btev/.htpasswd";
-$LastDays         = 20;
-$MeetingWindow    = 8;
+$LastDays         = 20;        # Number of days for default in LastModified
+$MeetingWindow    = 8;         # Days before and after meeting to preselect
+$MeetingFiles     = 3;         # Number of upload boxes on meeting short form
 
 # Override settings in this file for the test DB 
 # and the publicly accessible version
