@@ -57,6 +57,9 @@ sub DocumentTable (%) {
   if ($SortBy eq "docid") { 
     @DocumentIDs = sort numerically @DocumentIDs;
   } elsif ($SortBy eq "date") {
+    foreach my $DocumentID (@DocumentIDs) {
+      &FetchDocument($DocumentID);
+    }
     @DocumentIDs = sort DocumentByRevisionDate @DocumentIDs; 
   }
        
