@@ -104,9 +104,6 @@ if ($mode eq "add" || $mode eq "update") {
 
 #FIXME: Check for valid URL, user, password
 
-if (($#error_stack + 1)) {
-  &EndPage(@error_stack);
-}
 
 # OK, we've validated the inputs are all there. Now add info to database
 
@@ -115,6 +112,15 @@ if (($#error_stack + 1)) {
 @securities = split ("\0",$params{security});
 
 $security_list = join ',',@securities; # Ready for MySQL
+if ($security_list eq "Public") {$security_list = "";}
+if (grep /Public/,$security_list) {
+  push @error_stack,"You selected \"Public\" and another form of security. ".
+                    "You may only select \"Public\" by itself.";
+}
+  
+if (($#error_stack + 1)) {
+  &EndPage(@error_stack);
+}
 
 my $documentID;
 if ($mode eq "reserve" || $mode eq "add") {
@@ -168,8 +174,6 @@ if ($mode eq "add" || $mode eq "update") { # We're adding a new files
     if (grep /\//,$short_file) {
       $short_file = &UnixBaseFile($short_file);
     }  
-    
-    print "New file name $new_dir/$short_file<br>\n";
     
     open (OUTFILE,">$new_dir/$short_file");
     while ($bytes_read = read($short_handle,$buffer,1024)) {

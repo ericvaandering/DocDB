@@ -46,7 +46,8 @@ sub GetSecurities {
   $set_values =~ s/\)//g;
   $set_values =~ s/\'//g;
   $set_values =~ s/\s+//g;
-  (@available_securities) = split /\,/,$set_values;
+  
+  (@available_securities) = ("Public",split /\,/,$set_values);
 };
 
 sub GetAllDocuments {

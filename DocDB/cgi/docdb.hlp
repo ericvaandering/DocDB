@@ -41,7 +41,10 @@ on the topics to add them to the list.
 security
 Security
 Select which username/password pairs you want to allow access to your document.
-To select more than one pair, either click or CTRL-click on them.
+To select more than one pair, either click or CTRL-click on them. You can make a
+document public by leaving all selections blank. Selecting "Public" doesn't
+actually do anything except generate a warning if you combine "Public" with
+another account.
 #
 doctype
 Document Type

@@ -42,7 +42,7 @@ if      ($mode eq "add") {
 }
 my $DocumentID;
 if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
-  $documentID = $params{docid};
+  $DocumentID = $params{docid};
   &FetchDocument($DocumentID);
   my $DocRevID = &FetchDocRevision($DocumentID,$Documents{$DocumentID}{NVER});
   
@@ -77,7 +77,7 @@ if      ($mode eq "add") {
              Make sure you know all the required information.<br>\n";
 } elsif ($mode eq "update") {
   $documentName = &FullDocumentID($DocumentID);
-  print "<h4>You have chosen to update $documentName.
+  print "<h4>You have chosen to update $documentName. $documentID
              Make sure you know all the required information.<br>\n";
 }
 
