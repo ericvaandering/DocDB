@@ -268,37 +268,14 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
     if ($params{single_upload}) { # Copy file to directory
       @short_files   = $query ->  param("single_upload");
       foreach $short_file (@short_files) {
-        if (grep /\\/,$short_file) {
-          $short_file = &WindowsBaseFile($short_file);
-        }  
-        if (grep /\//,$short_file) {
-          $short_file = &UnixBaseFile($short_file);
-        }  
-
-        open (OUTFILE,">$new_dir/$short_file");
-        while ($bytes_read = read($short_file,$buffer,1024)) {
-          print OUTFILE $buffer
-        }
-        close OUTFILE;
-
-        unless (-s "$new_dir/$short_file") {
-          push @warn_stack,"The file $short_file did not exist or was blank.";
-        }  
+        my $status = &ProcessUpload($new_dir,$short_file);
       }
     } elsif ($params{single_http}) {
       @urls = split /\0/,$params{single_http};
       @short_files = ();
       foreach $url (@urls) {
-        @url_parts = split /\//,$url;
-        $short_file = pop @url_parts;
+        $short_file = &ProcessURL($new_dir,$url);
         push @short_files,$short_file;
-
-        $command   = $Wget.$Authentication.$url;
-        @url_lines = `$command`;
-
-        open (OUTFILE,">$new_dir/$short_file");
-        print OUTFILE @url_lines;
-        close OUTFILE;
       }  
     }
   } elsif ($Archive eq "archive") { # They uploaded a tar/zip file
@@ -307,63 +284,14 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
     @Roots = ();
     if ($params{single_upload}) { # Copy tar file to directory
       $short_file   = $query ->  param("single_upload"); # There can be only one
-      if (grep /\\/,$short_file) {
-        $short_file = &WindowsBaseFile($short_file);
+      my $status = &ProcessUpload($new_dir,$short_file);
+      unless ($status) {
+        &ProcessArchive($new_dir,$short_file);
       }  
-      if (grep /\//,$short_file) {
-        $short_file = &UnixBaseFile($short_file);
-      }  
-
-      open (OUTFILE,">$new_dir/$short_file");
-      while ($bytes_read = read($short_file,$buffer,1024)) {
-        print OUTFILE $buffer
-      }
-      close OUTFILE;
-
-      if  (-s "$new_dir/$short_file") {
-        push @short_files,$short_file;
-        push @Descriptions,"Document Archive";
-        push @Roots,0;
-        $status = &ExtractArchive($new_dir,$short_file); # FIXME No status yet
-        $main_file = $params{mainfile};
-        if (-s "$new_dir/$main_file") {
-          push @short_files,$main_file;
-          push @Descriptions,$params{filedesc};
-          push @Roots,"on";
-        } else {
-          push @warn_stack,"The main file $main_file did not exist or was blank.";
-        }
-      } else {
-        push @warn_stack,"The archive file $short_file did not exist or was blank.";
-      }
     } elsif ($params{single_http}) {
-      $url = $params{single_http};
-      @url_parts = split /\//,$url;
-      $short_file = pop @url_parts;
-
-      $command   = $Wget.$Authentication.$url;
-      @url_lines = `$command`;
-      open (OUTFILE,">$new_dir/$short_file");
-      print OUTFILE @url_lines;
-      close OUTFILE;
-
-      if  (-s "$new_dir/$short_file") {
-        push @short_files,$short_file;
-        push @Descriptions,"Document Archive";
-        push @Roots,0;
-        $status = &ExtractArchive($new_dir,$short_file); # FIXME No status yet
-        $main_file = $params{mainfile};
-        if (-s "$new_dir/$main_file") {
-          push @short_files,$main_file;
-          push @Descriptions,$params{filedesc};
-          push @Roots,"on";
-        } else {
-          push @warn_stack,"The main file $main_file did not exist or was blank.";
-        }
-      } else {
-        push @warn_stack,"The archive file $short_file did not exist or was blank.";
-      }
-    } # HTTP & Archive
+      $short_file = &ProcessURL($new_dir,$url);
+      &ProcessArchive($new_dir,$short_file);
+    } 
   } # Archive upload
 
 ### Insert into Files database

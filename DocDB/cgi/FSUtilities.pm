@@ -83,6 +83,70 @@ sub UnixBaseFile {       # Strips off Unix directories
   my $short_file = pop @parts;
   return $short_file;
 }  
+
+sub ProcessURL($$) {
+  my ($new_dir,$url) = @_;
+  
+  my @url_parts = split /\//,$url;
+  my $short_file = pop @url_parts;
+
+  my $command   = $Wget.$Authentication.$url;
+  my @url_lines = `$command`;
+
+  open (OUTFILE,">$new_dir/$short_file");
+  print OUTFILE @url_lines;
+  close OUTFILE;
+
+  return $short_file;
+
+}
+
+sub ProcessUpload($$) {
+  my ($new_dir,$short_file) = @_;
+
+  if (grep /\\/,$short_file) {
+    $short_file = &WindowsBaseFile($short_file);
+  }  
+  if (grep /\//,$short_file) {
+    $short_file = &UnixBaseFile($short_file);
+  }  
+
+  open (OUTFILE,">$new_dir/$short_file");
+  while ($bytes_read = read($short_file,$buffer,1024)) {
+    print OUTFILE $buffer
+  }
+  close OUTFILE;
+  
+  my $status = 0;
+  unless (-s "$new_dir/$short_file") {
+    $status = 1;
+    push @warn_stack,"The file $short_file did not exist or was blank.";
+  }  
+  return $status;
+}
+
+sub ProcessArchive($$) {
+  my ($new_dir,$short_file) = @_;
+
+  if  (-s "$new_dir/$short_file") {
+    push @short_files,$short_file;
+    push @Descriptions,"Document Archive";
+    push @Roots,0;
+    $status = &ExtractArchive($new_dir,$short_file); # FIXME No status yet
+    $main_file = $params{mainfile};
+    if (-s "$new_dir/$main_file") {
+      push @short_files,$main_file;
+      push @Descriptions,$params{filedesc};
+      push @Roots,"on";
+    } else {
+      push @warn_stack,"The main file $main_file did not exist or was blank.";
+    }
+  } else {
+    push @warn_stack,"The archive file $short_file did not exist or was blank.";
+  }
+  
+  return $status;
+}
   
 sub ExtractArchive {
   my ($Directory,$File) = @_;

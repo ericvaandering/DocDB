@@ -52,4 +52,30 @@ print $query -> end_multipart_form;
 
 print "<p>\n";
 
+@MajorTopicIDs = keys %MajorTopics;
+@MinorTopicIDs = keys %MinorTopics;
+
+print "<h3>Existing Topics:</h3>\n";
+
+my $Col = 0;
+my $NCols = 4;
+
+print "<table>\n";
+foreach $MajorID (@MajorTopicIDs) {
+  unless ($Col % $NCols) {
+    print "<tr valign=top>\n";
+  }
+  print "<td><b>$MajorTopics{$MajorID}{SHORT}</b>\n";
+  ++$Col;
+  print "<ul>\n";
+  foreach $MinorID (@MinorTopicIDs) {
+    if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
+      print "<li>$MinorTopics{$MinorID}{SHORT}\n";
+    }  
+  }  
+  print "</ul>";
+}  
+
+print "</table>\n";
+
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);

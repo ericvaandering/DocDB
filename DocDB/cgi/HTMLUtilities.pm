@@ -57,13 +57,11 @@ sub BTeVStyle { # Same as above, but no nav-bar
 
   print "<body bgcolor=\"#FFFFFF\" text=\"#000000\" topmargin=\"6\" leftmargin=\"6\" marginheight=\"6\" marginwidth=\"6\">\n";
 
-  print "<center>\n";
   &SSInclude("begin_atwork_top.html");
   
   print "<div align=\"center\"><font size=\"+2\" color=\"#003399\">$page_title</font></div>\n";
   &SSInclude("end_atwork_top.html");
-  &SSInclude("end_table.html");
-  print "</center>\n";
+  &SSInclude("end_table_nonav.html");
   print "<hr>\n";
 }
 
