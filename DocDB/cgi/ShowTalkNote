@@ -68,16 +68,29 @@ if ($SessionID) {
   my @TopicHintIDs  = &FetchTopicHintsBySessionTalkID($SessionTalkID);
   my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID);
 
+  my @TopicIDs  = ();
+  my @AuthorIDs = ();
+   
+  foreach my $TopicHintID (@TopicHintIDs) {
+    my $TopicID = $TopicHints{$TopicHintID}{MinorTopicID};
+    push @TopicIDs,$TopicID;
+  } 
+
+  foreach my $AuthorHintID (@AuthorHintIDs) {
+    my $AuthorID = $AuthorHints{$AuthorHintID}{AuthorID};
+    push @AuthorIDs,$AuthorID;
+  } 
+
   print "<b><big>Notes for $BestTitle</big></b><p>\n";
   print "<b>This talk was entered with the following information:</b><p/>\n";
   print "<table>\n";
-  print "<tr><th align=right>Suggested Title:</th><td>$BestTitle</td></tr>\n";
-  print "<tr><th align=right>Notes:</th><td>$Note</td></tr>\n";
-  print "<tr><th align=right>Authors:</th><td>\n";
-   &ShortAuthorListByID(@AuthorHintIDs);
+  print "<tr><th align=right valign=top>Suggested Title:</th><td>$BestTitle</td></tr>\n";
+  print "<tr><th align=right valign=top>Notes:</th><td>$Note</td></tr>\n";
+  print "<tr><th align=right valign=top>Authors:</th><td>\n";
+   &ShortAuthorListByID(@AuthorIDs);
    print "</td></tr>\n";
-  print "<tr><th align=right>Topics:</th><td>\n";
-   &ShortTopicListByID(@TopicHintIDs);
+  print "<tr><th align=right valign=top>Topics:</th><td>\n";
+   &ShortTopicListByID(@TopicIDs);
    print "</td></tr>\n";
   print "</table><p/>\n";
   if ($DocumentID) {
