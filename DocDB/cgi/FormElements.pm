@@ -476,14 +476,40 @@ sub ReferenceForm {
   print "</table>\n";
 }
 
+sub TextField (%) {  
+  my (%Params) = @_;
+  
+  my $HelpLink  = $Params{-helplink} ;
+  my $HelpText  = $Params{-helptext} ;
+  my $ExtraText = $Params{-extratext};
+  my $Text      = $Params{-text}     ;
+  my $NoBreak   = $Params{-nobreak}  ;
+  my $Required  = $Params{-required} ;
+  my $Name      = $Params{-name}      || "";
+  my $Default   = $Params{-default}   || "";
+  my $Size      = $Params{-size}      || 40;
+  my $MaxLength = $Params{-maxlength} || 240;
+  
+  my $ElementTitle = &FormElementTitle(-helplink  => $HelpLink , 
+                                       -helptext  => $HelpText ,
+                                       -extratext => $ExtraText,
+                                       -text      => $Text     ,
+                                       -nobreak   => $NoBreak  ,
+                                       -required  => $Required );
+  print $ElementTitle,"\n";                                     
+  print $query -> textfield (-name => $Name, -default   => $Default, 
+                             -size => $Size, -maxlength => $MaxLength);
+} 
+
 sub FormElementTitle (%) {  
   my (%Params) = @_;
   
-  my $HelpLink  =   $Params{-helplink}  || "";
-  my $HelpText  =   $Params{-helptext}  || "";
-  my $ExtraText =   $Params{-extratext} || "";
-  my $Text      =   $Params{-text}      || "";
-  my $Required  =   $Params{-required}  || 0;
+  my $HelpLink  = $Params{-helplink}  || "";
+  my $HelpText  = $Params{-helptext}  || "";
+  my $ExtraText = $Params{-extratext} || "";
+  my $Text      = $Params{-text}      || "";
+  my $NoBreak   = $Params{-nobreak}   || 0;
+  my $Required  = $Params{-required}  || 0;
 
   my $TitleText = "";
 
@@ -500,8 +526,10 @@ sub FormElementTitle (%) {
    
   if ($ExtraText) {
     $TitleText .= "&nbsp;$ExtraText";
+  } 
+  unless ($NoBreak) { 
+    $TitleText .= "<br/> \n";
   }  
-  $TitleText .= "<br/> \n";
   
   return $TitleText;
 }
