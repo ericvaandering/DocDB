@@ -148,20 +148,21 @@ sub PrintReferenceInfo ($) {
 sub SecurityListByID {
   my (@GroupIDs) = @_;
   
+  if ($EnhancedSecurity) {
+    print "<b>Viewable by:</b><br>\n";
+  } else {  
+    print "<b>Restricted to:</b><br>\n";
+  }  
+  
+  print "<ul>\n";
   if (@GroupIDs) {
-    if ($EnhancedSecurity) {
-      print "<b>Viewable by:</b><br>\n";
-    } else {  
-      print "<b>Restricted to:</b><br>\n";
-    }  
-    print "<ul>\n";
     foreach $GroupID (@GroupIDs) {
       print "<li>$SecurityGroups{$GroupID}{NAME}</li>\n";
     }
-    print "</ul>\n";
   } else {
-    print "<b>Security:</b> Public document<br>\n";
+    print "<li>Public document</li>\n";
   }
+  print "</ul>\n";
 }
 
 sub ModifyListByID {
