@@ -20,12 +20,11 @@
 
 <h3>Philosophy of the BTeV Document Database</h3>
 
-While our previous document database was only a method for cataloging documents,
-the new database goes one step further. It is also a method for storing
-documents in a central location. So, you should never again see a broken link in
-looking for the information you want. This distinction is especially important
-when archive uploads which are discussed later.
-<p>
+While our previous document database was only a method for cataloging
+documents, the new database goes one step further; it is also a method for
+storing documents in a central location. So, you should never again see a
+broken link while looking for the information you want. This distinction is
+especially important when archive uploads which are discussed later. <p>
 
 <h3>What do you want to do?</h3>
 
@@ -34,14 +33,14 @@ four different situations:
 <ol>
 <li><b>Reserve a document #: </b>You want a number for a document
 you are going to write, but don't have a draft of the document.
-<li><b>New document: </b>You have a new document ready to be put into the database that
-has not been entered before.
+<li><b>New document: </b>You have a new document ready to be put into the
+database that has not been entered before.
 <li><b>Update document: </b>You have a new version of a document already in the
-database. You will also be able to change any of the information in the database
-about the document. You must supply a document number to modify.
+database. You will also be able to change any of the information in the
+database about the document. You must supply a document number to modify.
 <li><b>Update database information: </b>The document hasn't changed, but the
-information about it has. For example, it's now published so you want to add that
-information. You must supply a document number to modify.
+information about it has. For example, it's now published so you want to add
+that information. You must supply a document number to modify.
 </ol>
 Select the type of modification appropriate to your situation. A fifth choice,
 to add a file, (one you forgot, or proceedings to go with a conference talk) is
@@ -63,18 +62,24 @@ have to use the advanced form at the bottom of the Document Database web page.
 <dl>
 <dt><h4>Multiple file uploads</h4>
 
-<dd>In our example of a PowerPoint, a PDF, and a Postscript, this is probably the
-right choice. When you upload things this way, it might be a little bit more
-work, but what the end user will see is much clearer. To upload your file this
-way, select "Multiple files" under "Upload Type" and type the number of files in
-your document in the box that says "# of files." The pros of using this upload
-method are that you get to describe each of your documents and that you don't
-have to spend time preparing and archive.
+<dd>In our example of a PowerPoint, a PDF, and a Postscript, this is probably
+the right choice. When you upload things this way, it might be a little bit
+more work, but what the end user will see is usually clearer. To upload your
+file this way, select "Multiple files" under "Upload Type" and type the number
+of files in your document in the box that says "# of files." The pros of using
+this upload method are that you get to describe each of your documents and that
+you don't have to spend time preparing and archive.<p>
+
+When using multiple file upload, you should also understand the concept of Main
+and supporting files. Main files are typically the ones you want people to look
+at. As an example, the top file of several linked HTML files is a "Main" file,
+the others are "Other" files. By default, only the first file uploaded is a
+"Main" file. To mark additional files as "Main" check the appropriate boxes.
 
 <dt><h4>Archive uploads</h4>
 
-<dd>Another way to upload multiple files is to place all the files into an archive.
-Currently accepted formats are .tar (Unix tape archives), .tar.gz/.tgz
+<dd>Another way to upload multiple files is to place all the files into an
+archive. Currently accepted formats are .tar (Unix tape archives), .tar.gz/.tgz
 (compressed .tar files), and .zip (Windows ZIP files). To use this option,
 select "Archive Upload" under "Upload Type." When you upload your archive you
 will be asked for two pieces of information. You will be asked for the filename
@@ -82,6 +87,9 @@ of the main file in the archive and to describe that file. Through that one
 file, the user should be able to access the other files. For this reason, this
 upload method should probably be an HTML file. The pros of this method are that
 you don't have to describe or enter every file in the form.
+
+When uploading via archive mode, the Main file will be marked as such and the
+entire archive will be marked as an "Other" file.
 
 <dl>
 <dt><h5>Note on HTML uploads</h5>
@@ -94,7 +102,7 @@ don't do this. Upload all the files so that they <i>all</i> reside on the
 server, including images. To
 make the links in your HTML work on the server, use links like
 <pre>
-&lt;a href="myotherpage.html"&gt;
+&lt;a href="myotherpage.html"&gt; or &lt;a href="mysubdir/myotherpage.html"&gt; 
 </pre>
 rather than 
 <pre>
@@ -129,15 +137,15 @@ The advanced form provides a few other options that might be useful.
 
 <p>
 <b>Topic Selection: </b>
-You can either select the subtopic(s) for your document from one long list or
-from a number of shorter lists split up by topic. 
+You can either select the subtopic(s) for your document from one long list (the
+default) or from a number of shorter lists split up by topic. 
 
 <p>
 <b>Overriding the submission date: </b>
 Use this option to set the date and time for a document written in the past.
-Unless you are submitting a document from the old database or one written a long
-time ago, you should probably not check this. By default, new documents are
-entered with the current date and time.
+Unless you are submitting a document from the old database or one written a
+long time ago, you should probably not check this. By default, new documents
+are entered with the current date and time.
 
 <h3>Getting more help</h3>
 
@@ -157,7 +165,7 @@ administrators</a>.
 </div>
 <div align="left"> 
 <i><font size="-1">
-<A HREF="mailto:BTeVWebMaster@fnal.gov">BTeVWebMaster@fnal.gov</A> 
+<A HREF="mailto:btev-docdb@fnal.gov">Document Database Administrators</A> 
 </font></i></div>
 <!--#include virtual="/includes/full_fermi_footer.shtml" --> 
 </body>

@@ -123,7 +123,7 @@ $archives{multi}   = "Multiple files";
 
 $topicmodes{multi}  = "Multiple Topic Boxes";
 $topicmodes{single} = "Single Topic List";
-@topicmodes = ("multi","single");
+@topicmodes = ("single","multi");
 
 $authormodes{field}  = "Text field";
 $authormodes{list} = "Selectable list";
