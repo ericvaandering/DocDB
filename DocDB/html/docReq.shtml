@@ -1,0 +1,215 @@
+<HTML>
+  <HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html;CHARSET=iso-8859-1">
+
+    <TITLE>Request for a new Document number</TITLE>
+
+<!--#include virtual="/styles/style_select.html"-->
+
+<script language="javascript">
+<!-- hide script from old browsers
+
+function settype()
+{
+   var list = document.dform.topic;
+   var thistype = list.options[list.selectedIndex].value;
+
+   var IntPath = document.dform.subtopic;
+   var TheOptions = IntPath.options.length;
+   
+   switch(thistype) {
+      case "charm" :
+	 document.dform.subtopic.options.length = 0; 
+	 IntPath.options[IntPath.options.length] = new Option('CP_violation','0');   
+	 IntPath.options[IntPath.options.length] = new Option('exotic_decays','1');
+	 IntPath.options[IntPath.options.length] = new Option('mixing','2');
+	 IntPath.options[IntPath.options.length] = new Option('other_topics','3');
+	 IntPath.options[IntPath.options.length] = new Option('production','4');
+	 IntPath.options[IntPath.options.length] = new Option('rare_and_forbidden_decay','5');
+	 IntPath.options[IntPath.options.length] = new Option('standard_decays','6');
+	 break;
+      case "beauty" :
+	 document.dform.subtopic.options.length = 0; 
+	 IntPath.options[IntPath.options.length] = new Option('CP_violation','0');   
+	 IntPath.options[IntPath.options.length] = new Option('exotic_decays','1');
+	 IntPath.options[IntPath.options.length] = new Option('mixing','2');
+	 IntPath.options[IntPath.options.length] = new Option('other_topics','3');
+	 IntPath.options[IntPath.options.length] = new Option('production','4');
+	 IntPath.options[IntPath.options.length] = new Option('rare_and_forbidden_decay','5');
+	 IntPath.options[IntPath.options.length] = new Option('standard_decays','6');
+	 break;
+      case "other" :
+	 document.dform.subtopic.options.length = 0; 
+	 IntPath.options[IntPath.options.length] = new Option('EW','0');   
+	 IntPath.options[IntPath.options.length] = new Option('QCD','1');
+	 IntPath.options[IntPath.options.length] = new Option('exotics_searches','2');
+	 IntPath.options[IntPath.options.length] = new Option('production','3');
+	 IntPath.options[IntPath.options.length] = new Option('rare_and_forbidden_decay','4');
+	 IntPath.options[IntPath.options.length] = new Option('standard_decays','5');
+	 break;
+      case "detector" :
+	 document.dform.subtopic.options.length = 0; 
+	 IntPath.options[IntPath.options.length] = new Option('CZero','0');   
+	 IntPath.options[IntPath.options.length] = new Option('RICH','1');
+	 IntPath.options[IntPath.options.length] = new Option('beams','2');
+	 IntPath.options[IntPath.options.length] = new Option('emcal','3');
+	 IntPath.options[IntPath.options.length] = new Option('magnets','4');
+	 IntPath.options[IntPath.options.length] = new Option('muon','5');
+	 IntPath.options[IntPath.options.length] = new Option('pixel','6');
+	 IntPath.options[IntPath.options.length] = new Option('ssd','7');
+	 IntPath.options[IntPath.options.length] = new Option('straws','8');
+	 IntPath.options[IntPath.options.length] = new Option('surveying','9');
+	 break;
+      case "computing" :
+	 document.dform.subtopic.options.length = 0; 
+	 IntPath.options[IntPath.options.length] = new Option('DAQ','0');   
+	 IntPath.options[IntPath.options.length] = new Option('ctrlmontiming','1');
+	 IntPath.options[IntPath.options.length] = new Option('data_QA','2');
+	 IntPath.options[IntPath.options.length] = new Option('data_archival','3');
+	 IntPath.options[IntPath.options.length] = new Option('data_reconstruction','4');
+	 IntPath.options[IntPath.options.length] = new Option('detector_simulation','5');
+	 IntPath.options[IntPath.options.length] = new Option('overview','6');
+	 IntPath.options[IntPath.options.length] = new Option('physics_simulation','7');
+	 IntPath.options[IntPath.options.length] = new Option('trigger_level_1','8');
+	 IntPath.options[IntPath.options.length] = new Option('trigger_level_2','9');
+	 IntPath.options[IntPath.options.length] = new Option('trigger_level_3','10');
+	 break;
+      case "software" :
+	 document.dform.subtopic.options.length = 0; 
+	 IntPath.options[IntPath.options.length] = new Option('analysis','0');   
+	 IntPath.options[IntPath.options.length] = new Option('framework','1');
+	 IntPath.options[IntPath.options.length] = new Option('overview','2');
+	 IntPath.options[IntPath.options.length] = new Option('simulation','2');
+	 IntPath.options[IntPath.options.length] = new Option('','2');
+	 IntPath.options[IntPath.options.length] = new Option('','2');
+	 IntPath.options[IntPath.options.length] = new Option('','2');
+	 IntPath.options[IntPath.options.length] = new Option('','2');
+	 break;
+      case "general" :
+	 document.dform.subtopic.options.length = 0; 
+	 IntPath.options[IntPath.options.length] = new Option('ES&H','0');   
+	 IntPath.options[IntPath.options.length] = new Option('budgets','1');
+	 IntPath.options[IntPath.options.length] = new Option('electrical','2');
+	 IntPath.options[IntPath.options.length] = new Option('mechanical','3');
+	 IntPath.options[IntPath.options.length] = new Option('organization','4');
+	 IntPath.options[IntPath.options.length] = new Option('policies','5');
+	 IntPath.options[IntPath.options.length] = new Option('proposals','6');
+	 IntPath.options[IntPath.options.length] = new Option('schedules','7');
+	 IntPath.options[IntPath.options.length] = new Option('standards','8');
+	 break;
+      case "meeting" :
+	 document.dform.subtopic.options.length = 0; 
+	 IntPath.options[IntPath.options.length] = new Option('December_17_2001','0');   
+	 IntPath.options[IntPath.options.length] = new Option('November_3_2001','1');   
+	 IntPath.options[IntPath.options.length] = new Option('September_30_2001','2');   
+	 IntPath.options[IntPath.options.length] = new Option('August_23_2001','3');
+	 IntPath.options[IntPath.options.length] = new Option('June_27_2001','4');
+	 break;
+      default :
+	 document.dform.subtopic.options.length = 0; 
+	 IntPath.options[IntPath.options.length] = new Option('Select a document type','0');
+	 break;
+   }
+}
+
+// end hiding script from old browsers -->
+</script>
+
+</head>
+<body  bgcolor="#ffffff">
+
+<center>
+<!-- note_page header starts here -->
+<!--#include virtual="/btevincludes/intheader.html" -->
+<!-- note_page header ends here -->
+
+<table width="90%" cellpadding="0" border="0">
+<tr>
+<td><br>
+<h1>Request for a new Document number</h1>
+
+<p>    To request a number for a new Document, please fill in as much 
+      of the requested information as you know. </p>
+
+    <HR>
+
+    <FORM name="dform" METHOD=POST ACTION="/cgi-private/DocDB/noteReq">
+
+      <INPUT TYPE=submit VALUE="submit request"> 
+      <INPUT TYPE=reset VALUE="clear form">
+
+    <DL>
+      <DT>Title:
+	<DD><INPUT SIZE=40 MAXLENGTH=99 NAME="title">
+
+      <DT>Authors:
+	<DD><TEXTAREA ROWS=3 COLS=40 NAME="authors"></TEXTAREA>
+
+      <DT>Publication information:
+	<DD><TEXTAREA ROWS=2 COLS=40 NAME="pub_info"></TEXTAREA>
+
+      <DT>Requestor:
+	<DD><INPUT SIZE=40 MAXLENGTH=49 NAME="requestor">
+
+      <DT>Classification: 
+        <DD><INPUT TYPE=radio NAME="class" VALUE="NOTE"> Note
+	    <INPUT TYPE=radio NAME="class" VALUE="CONF"> Conference
+	    <INPUT TYPE=radio NAME="class" VALUE="PUB"> Publication
+	    <INPUT TYPE=radio NAME="class" VALUE="TRANS"> Transparencies
+	    <INPUT TYPE=radio NAME="class" VALUE="MIN"> Minutes
+
+      <DT>Select document type
+	<DD><select name="topic" onChange="settype()">
+	    <option selected value="default">
+	    <option value="charm">Physics - Charm 
+	    <option value="beauty"> Physics - Beauty
+            <option value="other"> Physics - Other
+            <option value="detector"> Detector
+            <option value="computing"> Computing
+            <option value="software"> Software
+            <option value="general"> General
+            <option value="meeting"> Meeting
+	    </select>
+	    <select name="subtopic" multiple size=5>
+	    <option selected> Waiting for document type
+	    </select>
+
+      <DT>Distribution: 
+	<DD><INPUT TYPE=radio NAME="distribution" VALUE="PUBLIC"> Public
+	  <INPUT TYPE=radio NAME="distribution" VALUE="RESTRICTED"> Restricted
+
+    </DL>
+
+      <INPUT TYPE=submit VALUE="submit request"> 
+      <INPUT TYPE=reset VALUE="clear form">
+
+    </FORM>
+
+</td>
+</tr>
+</table>
+
+<br>
+
+<!-- footer begins here -->
+<!-- date and email info starts here -->
+<TABLE CELLPADDING="0" CELLSPACING="0" BORDER="0" width="90%"> 
+<TR> 
+<TD VALIGN="top"> 
+<P CLASS="smalltext">Send suggestions or comments to -
+<A HREF="mailto:garren@fnal.gov">The Pagemaster</A></P>
+</TD> 
+</TR> 
+</TABLE>
+                
+<!-- date and email info ends here -->
+
+<!--#include virtual="/btevincludes/intfooter.html"-->
+
+<!-- footer ends here -->
+
+</center>
+
+
+  </BODY>
+</HTML>
