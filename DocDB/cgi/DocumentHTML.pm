@@ -68,7 +68,12 @@ sub DocumentTable (%) {
     @DocumentIDs = sort numerically @DocumentIDs;
   } elsif ($SortBy eq "date") {
     @DocumentIDs = sort DocumentByRevisionDate @DocumentIDs; 
+  } elsif ($SortBy eq "requester") {
+    @DocumentIDs = sort DocumentByRequester @DocumentIDs; 
+  } elsif ($SortBy eq "confdate") {
+    @DocumentIDs = sort DocumentByConferenceDate @DocumentIDs; 
   }
+
   
   if ($Reverse) {
     @DocumentIDs = reverse @DocumentIDs;
@@ -128,7 +133,7 @@ sub DocumentTable (%) {
         }
       } elsif ($Field eq "Topics") {  # Topics for document
         require "TopicHTML.pm";
-        require "TopicSQLpm";
+        require "TopicSQL.pm";
         my @TopicIDs = &GetRevisionTopics($DocRevID);
         &ShortTopicListByID(@TopicIDs); 
       } elsif ($Field eq "Files") {   # Files in document

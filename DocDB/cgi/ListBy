@@ -136,9 +136,12 @@ $SortBy  = "date";
 $Reverse = 1;
 
 if ($Mode eq "conference") {
-  @Fields = ("Title","Conference","Author","Files"); 
+  @Fields  = ("Title","Conference","Author","Files"); 
+  $SortBy  = "confdate";
 } elsif ($Mode eq "meeting") {
-  @Fields = ("Title","Author","Topics","Files"); 
+  @Fields  = ("Title","Author","Topics","Files");
+  $SortBy  = "requester";
+  $Reverse = 0;
 }
 
 # Do the fetch on the $List. "unless (@DocumentIDs)" here to do complex fetches, user specify
