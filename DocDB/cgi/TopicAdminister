@@ -32,7 +32,7 @@ print $query->header;
 # Parameters to script 
 
 my $Password      = $params{password};
-my $Username      = $Administrator;
+my $Username      = $params{admuser};
 my $Action        = $params{admaction};
 
 my $TopicID       = $params{topics};

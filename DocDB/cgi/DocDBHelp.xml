@@ -730,4 +730,13 @@ This is the list of groups who may modify the document.
   </text>
  </entry>
 
+ <entry>
+  <key>adminlogin</key>
+  <title>Administrator login and password</title>
+  <text>
+Enter here the SQL username and password of the administrator account. This may
+or may not be the same as the web username and password. 
+  </text>
+ </entry>
+
 </helpfile>

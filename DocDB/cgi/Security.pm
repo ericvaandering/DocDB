@@ -134,14 +134,18 @@ sub CanCreate { # Can the user create documents
 }
 
 sub CanAdminister { # Can the user administer the database
-  my $OkUser = $Administrator;
-     $OkUser =~ tr/[A-Z]/[a-z]/; 
-  
-  if ($remote_user eq $OkUser) {
-    return 1;
-  } else { 
-    return 0;
-  }    
+## FIXME: Use SecurityLookup  
+
+  my $Administer = 0;
+  my @GroupIDs = keys %SecurityGroups; # FIXME use a hash for direct lookup
+  foreach my $GroupID (@GroupIDs) { # Check auth. users vs. logged in user
+    $OkUser = $SecurityGroups{$GroupID}{NAME};
+    $OkUser =~ tr/[A-Z]/[a-z]/; 
+    if ($OkUser eq $remote_user && $SecurityGroups{$GroupID}{CanAdminister}) {
+      $Administer = 1;                           # User checks out
+    }  
+  }
+  return $Administer;
 }
 
 sub LastAccess { # Highest version user can access (with current security)

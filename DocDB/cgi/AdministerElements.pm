@@ -7,6 +7,7 @@
 #
 
 sub AdministerActions {
+  require "Scripts.pm";
   my %Action = ();
 
   $Action{Delete} = "Delete";
@@ -21,11 +22,21 @@ sub AdministerActions {
 };
 
 sub AdministratorPassword {
-  print "<b> Administrator password: </b>"; 
+  require "Scripts.pm";
+  
+  print "<b><a ";
+  &HelpLink("adminlogin");
+  print "Administrator</a> \n";
+  print "Username: </b>"; 
+  print $query -> textfield(-name => "admuser", -size => 12, -maxlength => 12, 
+                            -default => $remote_user);
+  print "<b> Password: </b>"; 
   print $query -> password_field(-name => "password", -size => 12, -maxlength => 12);
 };
 
 sub ParentSelect {
+  require "Scripts.pm";
+
   my @GroupIDs = keys %SecurityGroups;
   my %GroupLabels = ();
 
@@ -46,6 +57,7 @@ sub ParentSelect {
 };
 
 sub ChildSelect {
+  require "Scripts.pm";
   my @GroupIDs = keys %SecurityGroups;
   my %GroupLabels = ();
 
@@ -68,6 +80,7 @@ sub ChildSelect {
 };
 
 sub GroupEntryBox {
+  require "Scripts.pm";
   print "<table cellpadding=5><tr valign=top>\n";
   print "<td>\n";
   print "<b><a ";
@@ -94,16 +107,14 @@ sub GroupEntryBox {
   print "<b>Remove existing permissions</b>\n";
   print "<br>\n";
 
-#  print "<tr><td>\n";
   print $query -> checkbox(-name => "create",  
                            -value => 'create', -label => '');
   print "<b>May create documents</b>\n";
   print "<br>\n";
 
-#  print "<tr><td>\n";
   print $query -> checkbox(-name => "admin",  
                            -value => 'admin', -label => '');
-  print "<b>May administer database</b> (not implemented)\n";
+  print "<b>May administer database</b> \n";
   print "</td></tr>\n";
   print "</table>\n";
 }

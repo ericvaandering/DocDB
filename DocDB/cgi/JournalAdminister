@@ -32,7 +32,7 @@ print $query->header;
 # Parameters to script 
 
 $Password     = $params{password};
-$Username     = $Administrator;
+my $Username      = $params{admuser};
 $Action       = $params{admaction};
 
 $JournalID    = $params{journal};

@@ -28,8 +28,8 @@ $DocumentID = $params{docid};
 $DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
 $DocumentID =~ s/\s+$//;
 
-$Password   = $params{password};
-$Username   = $Administrator;
+my $Password      = $params{password};
+my $Username      = $params{admuser};
 
 @error_stack = ();
 
