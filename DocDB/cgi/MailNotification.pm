@@ -209,6 +209,17 @@ sub UsersToNotify ($$) {
   my %UserIDs = (); # Hash to make user IDs unique (one notification per person)
   my @Addressees = ();
 
+# Get users interested in this particular document (only immediate)
+ 
+  if ($Mode eq "immediate") {
+    my $DocFetch   = $dbh -> prepare("select EmailUserID from EmailDocumentImmediate where DocumentID=?");
+    $DocFetch -> execute($DocumentID);
+    $DocFetch -> bind_columns(undef,\($UserID));
+    while ($DocFetch -> fetch) {
+      $UserIDs{$UserID} = 1; 
+    }
+  }
+
 # Notification by topics 
   
   if ($Mode eq "immediate") {
