@@ -64,7 +64,7 @@ sub MinorTopicLink ($;$) {
   if ($ConferenceID && @MeetingOrderIDs && &CanAccessMeeting($ConferenceID)) {
     $URL = "$DisplayMeeting?conferenceid=$ConferenceID";
   } else {
-    $URL = "$ListByTopic?topicid=$TopicID";
+    $URL = "$ListBy?topicid=$TopicID";
   }  
     
   $link = "<a href=\"$URL\" title=\"$MinorTopics{$TopicID}{LONG}\">";
@@ -87,7 +87,7 @@ sub MajorTopicLink ($;$) {
   
   &FetchMajorTopic($TopicID);
   my $link;
-  $link = "<a href=\"$ListByTopic?majorid=$TopicID\" title=\"$MajorTopics{$TopicID}{LONG}\">";
+  $link = "<a href=\"$ListBy?majorid=$TopicID\" title=\"$MajorTopics{$TopicID}{LONG}\">";
   if ($mode eq "short") {
     $link .= $MajorTopics{$TopicID}{SHORT};
   } elsif ($mode eq "long") {
@@ -118,7 +118,7 @@ sub MeetingLink {
   
   &FetchMinorTopic($TopicID);
   my $link;
-  $link = "<a href=\"$ListByTopic?topicid=$TopicID&amp;mode=meeting\" title=\"$MinorTopics{$TopicID}{LONG}\">";
+  $link = "<a href=\"$ListBy?topicid=$TopicID&amp;mode=meeting\" title=\"$MinorTopics{$TopicID}{LONG}\">";
   if ($Mode eq "short") {
     $link .= $MinorTopics{$TopicID}{SHORT};
   } else {
@@ -133,10 +133,12 @@ sub ConferenceLink {
   my ($TopicID,$Mode) = @_;
   
   require "TopicSQL.pm";
+  require "MeetingSQL.pm";
   
   &FetchMinorTopic($TopicID);
+  &FetchConferenceByTopicID($TopicID);
   my $Link;
-     $Link = "<a href=\"$ListByTopic?topicid=$TopicID&amp;mode=conference\">";
+     $Link = "<a href=\"$ListBy?topicid=$TopicID&amp;mode=conference\">";
   if ($Mode eq "short" || $Mode eq "nodate") {
     $Link .= $MinorTopics{$TopicID}{SHORT};
   } elsif ($Mode eq "long") {

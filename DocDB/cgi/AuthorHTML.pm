@@ -109,7 +109,7 @@ sub AuthorLink ($;%) {
   
   &FetchAuthor($AuthorID);
   my $link;
-  $link = "<a href=\"$ListByAuthor?authorid=$AuthorID\">";
+  $link = "<a href=\"$ListBy?authorid=$AuthorID\">";
   if ($Format eq "full") {
     $link .= $Authors{$AuthorID}{FULLNAME};
   } elsif ($Format eq "formal") {

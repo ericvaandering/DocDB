@@ -19,7 +19,7 @@ require "DocumentSQL.pm";
 require "RevisionSQL.pm";
 
 require "HTMLUtilities.pm";
-require "Sorts.pm";
+require "DocumentHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 
@@ -40,31 +40,13 @@ print $query->header;
 &GetAllDocuments;  # For very 
 &GetAllRevisions;  # long lists
 
-### Sort
-
-my @SortedDocuments = reverse sort DocumentByRevisionDate @DocumentIDs;
-
-### Print summary information
-
-print "<center><table cellpadding=3>\n";
-
-&DocumentSummary(0); # Force table headers
-my $NumDoc = 0;
-
-foreach $DocumentID (@SortedDocuments) {
-  unless ($DocumentID) {next;}
-  $Version = &LastAccess($DocumentID);
-  if ($Version == -1) {next;}
-  &DocumentSummary($DocumentID,$Mode,$Version);
-  ++$NumDoc;
-}
-
-print "</table></center>\n";
-print "<p>\n";
-
-### Statistics
-
-print "<p><b>Number of documents found: $NumDoc</b><p>\n";
+### Print table
+my @Fields  = ("Docid","Title","Author","Updated"); 
+my $SortBy  = "date";
+my $Reverse = 1;
+my $NumberOfDocuments = &DocumentTable(-fields => \@Fields, -docids  => \@DocumentIDs, 
+                                       -sortby => $SortBy,  -reverse => $Reverse);
+print "<b>Number of documents found: $NumberOfDocuments</b><p/>\n";
 
 $EndTime  = new Benchmark;
 

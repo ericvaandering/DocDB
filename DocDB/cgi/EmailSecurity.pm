@@ -110,7 +110,16 @@ sub UserPrefForm($) {
   } else {
     print $query -> checkbox(-name => "html", -value => 1, -label => '');
   }                             
-
+  if  ($UserValidation eq "certificate") {                       
+    print "<tr><td valign=top align=right><b>Member of Groups:</b></td>\n";     
+    print "<td><ul>\n"; 
+    my @UserGroupIDs = &FetchUserGroupIDs($EmailUserID);
+    foreach my $UserGroupID (@UserGroupIDs) {
+      &FetchSecurityGroup($UserGroupID);
+      print "<li>$SecurityGroups{$UserGroupID}{NAME}</li>\n";
+    }   
+    print "</ul></td>\n";
+  }
   print "</table>\n";
 }
 

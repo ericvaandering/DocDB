@@ -513,17 +513,19 @@ sub PrintMeetingInfo($;%) {
 }
 
 sub PrintMeetingEpilogue($) {
-  my ($ConferenceID) = @_;
 
   require "Utilities.pm";
-  
-  print "<p><center>\n";
-  print "<table width=80%><tr><td>\n";
-  print &Paragraphize($Conferences{$ConferenceID}{Epilogue}),"\n";
-  print "</td></tr></table>\n";
-  print "</center><p>\n";
-  
-  print "</center><hr width=95%>\n";
+  my ($ConferenceID) = @_;
+
+  if ($Conferences{$ConferenceID}{Epilogue}) {
+    print "<p><center>\n";
+    print "<table width=80%><tr><td>\n";
+    print &Paragraphize($Conferences{$ConferenceID}{Epilogue}),"\n";
+    print "</td></tr></table>\n";
+    print "</center><p/>\n";
+
+    print "<hr width=\"95%\"/>\n";
+  }
 }
 
 sub PrintSessionInfo ($) {

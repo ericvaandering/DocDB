@@ -152,32 +152,18 @@ sub GetAuthorDocuments { # Return a list of all documents the author is associat
   require "RevisionSQL.pm";
   
   my ($AuthorID) = @_;   # FIXME: Using join, can simplify into one SQL statement?
-  my $RevisionList = $dbh -> prepare(
-     "select DocRevID from RevisionAuthor where AuthorID=?"); 
-
-  my $DocumentList = $dbh -> prepare(
-     "select DocumentID from DocumentRevision where DocRevID=? and Obsolete=0"); 
-
-  my ($DocumentID,$DocRevID);
-
-### Get all revisions with this author
-
-  my %DocumentIDs = ();
-  $RevisionList -> execute($AuthorID);
-  $RevisionList -> bind_columns(undef, \($DocRevID));
-
-  while ($RevisionList -> fetch) {
-    &FetchDocRevisionByID($DocRevID);
-    if ($DocRevisions{$DocRevID}{Obsolete}) {next;}
-    $DocumentList -> execute($DocRevID);
-    ($DocumentID) = $DocumentList -> fetchrow_array;
-    $DocumentIDs{$DocumentID} = 1; # Hash removes duplicates
+  
+  my $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
+              "DocumentRevision,RevisionAuthor where DocumentRevision.DocRevID=RevisionAuthor.DocRevID ".
+              "and DocumentRevision.Obsolete=0 and RevisionAuthor.AuthorID=?"); 
+  $List -> execute($AuthorID);
+  
+  my @DocumentIDs = ();
+  my $DocumentID;
+  $List -> bind_columns(undef, \($DocumentID));
+  while ($List -> fetch) {
+    push @DocumentIDs,$DocumentID;
   }
-
-### Form list of documents and return
-
-  my @DocumentIDs = keys %DocumentIDs;
-
   return @DocumentIDs;
 }  
 

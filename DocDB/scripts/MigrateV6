@@ -73,6 +73,10 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
 
   my $DocTypeAdd  = $dbh -> prepare("alter table DocumentType add Hide int NOT NULL default 0"); 
 
+# Single session meetings
+
+  my $ConferenceAdd  = $dbh -> prepare("alter table Conference add SingleSession int NOT NULL default 0"); 
+
   $EmailUserAdd     -> execute();
   $EmailUserAdd2    -> execute();
   $UsersGroupCreate -> execute();

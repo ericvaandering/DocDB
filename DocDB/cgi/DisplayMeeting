@@ -24,6 +24,7 @@ require "Security.pm";
 require "MeetingSecurityUtilities.pm";
 
 require "MeetingHTML.pm";
+require "DocumentHTML.pm";
 require "MeetingSQL.pm";
 
 require "TalkHintUtilities.pm";
@@ -187,17 +188,14 @@ if ($DisplayMode eq "Session") { # Display a single session
     
     # Print out info for unused documents
     if (@UnusedDocIDs) {
-      print "<center>\n";
-      print "<b>Other talks for this meeting:</b>\n";
-      print "<table cellpadding=3>\n";
-      &DocumentSummary(0,"meeting");
-      foreach my $DocumentID (@UnusedDocIDs) {
-        unless ($DocumentID) {next;}
-        my $Version = &LastAccess($DocumentID);
-        if ($Version == -1) {next;}
-        &DocumentSummary($DocumentID,"meeting",$Version);
-      }
-      print "</table></center><hr width=95%>\n";
+      my $SortBy  = "date";
+      my @Fields = ("Docid","Title","Author","Updated"); 
+      my $Reverse = 1;
+      print "<h4>Other talks for this meeting:</h4>\n";
+      my $NumberOfDocuments = &DocumentTable(-fields  => \@Fields, 
+           -docids  => \@UnusedDocIDs, -sortby  => $SortBy,  
+           -reverse => $Reverse);
+      print "<hr width=\"95%\"/>\n";
     }
   }
   

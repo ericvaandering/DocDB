@@ -32,18 +32,18 @@ use DBI;
 $StartTime = new Benchmark;
 
 require "DocDBGlobals.pm";
-require "ResponseElements.pm";
 require "TopicSQL.pm";
 require "SecuritySQL.pm";
 require "DocumentSQL.pm";
 require "RevisionSQL.pm";
 require "MiscSQL.pm";
+
 require "FSUtilities.pm";
 require "WebUtilities.pm";
 require "HTMLUtilities.pm";
 require "Security.pm";
 require "SearchAtoms.pm";
-require "Sorts.pm";
+require "DocumentHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -344,43 +344,33 @@ if ($OuterLogic eq "OR") {
   }    
 }
 
-### Get full info on matches
+### Set up fields and sorting
 
-foreach my $DocumentID (@DocumentIDs) { 
-  &FetchDocument($DocumentID);
-  &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVersions});
-}
+my @Fields = ("Docid","Title","Author","Updated");
+my $SortBy  = "date";
+my $Reverse = 1;
 
-if      ($Mode eq "meeting") {
-  @DocumentIDs  =        sort DocumentByRequester      @DocumentIDs;
-} elsif ($Mode eq "conference") {
-  @DocumentIDs = reverse sort DocumentByConferenceDate @DocumentIDs;
-} else {
-  @DocumentIDs = reverse sort DocumentByRevisionDate   @DocumentIDs;  
-}
+if ($Mode eq "conference") {
+  @Fields  = ("Title","Conference","Author","Files");
+  $SortBy  = "confdate";
+} elsif ($Mode eq "meeting") {
+  @Fields  = ("Title","Author","Topics","Files"); 
+  $SortBy  = "requester";
+  $Reverse = 0;
+} 
 
-### Print out summary info for matching documents
+### Print table
 
-print "<center><table cellpadding=3>\n";
+my $NumberOfDocuments = &DocumentTable(-fields => \@Fields, -docids  => \@DocumentIDs, 
+                                       -sortby => $SortBy,  -reverse => $Reverse);
 
-&DocumentSummary(0,$Mode); # Force table headers
+print "<b>Number of documents found: $NumberOfDocuments</b><p/>\n";
 
-foreach $DocumentID (@DocumentIDs) {
-  unless ($DocumentID) {next;}
-  $Version = &LastAccess($DocumentID);
-  if ($Version == -1) {next;}
-  &DocumentSummary($DocumentID,$Mode,$Version);
-  ++$NumDoc;
-}
-
-print "</table></center>\n";
-print "<p>\n";
-
-### Statistics
-
-print "<p><b>Number of documents found: $NumDoc</b><p>\n";
+### Print footers
 
 $EndTime  = new Benchmark;
 
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+
+exit;

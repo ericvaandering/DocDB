@@ -7,6 +7,7 @@
 #
 
 sub FileListByRevID {
+  require "MiscSQL.pm";
   my ($DocRevID) = @_;
 
   my @FileIDs  = &FetchDocFiles($DocRevID);
@@ -14,6 +15,9 @@ sub FileListByRevID {
   my $Version    = $DocRevisions{$DocRevID}{VERSION};
 
   print "<div id=\"Files\">\n";
+  print "<dl>\n";
+  print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Files in Document:</span></dt>\n";
+
   if (@FileIDs) {
     @RootFiles  = ();
     @OtherFiles = ();
@@ -25,28 +29,28 @@ sub FileListByRevID {
       }  
     }
     if (@RootFiles) {
-      print "<b>Files in Document:</b>\n";
-      print "<ul>\n";
+      print "<dd class=\"FileList\">\n";
       &FileListByFileID(@RootFiles);
-      print "</ul>\n";
+      print "</dd>\n";
     }   
     if (@OtherFiles) {
-      print "<b>Other Files:</b>\n";
-      print "<ul>\n";
+      print "<dd class=\"FileList\"><em>Other Files:</em>\n";
       &FileListByFileID(@OtherFiles);
-      print "</ul>\n";
+      print "</dd>\n";
     } 
     unless ($Public) {  
       my $ArchiveLink = &ArchiveLink($DocumentID,$Version);
-      print "$ArchiveLink\n";
+      print "<dd class=\"FileList\"><em>$ArchiveLink</em></dd>\n";
     }  
   } else {
-    print "<b>Files in Document:</b> none<br>\n";
+    print "<dd>None</dd>\n";
   }
+  print "</dl>\n";
   print "</div>\n";
 }
 
 sub ShortFileListByRevID {
+  require "MiscSQL.pm";
   my ($DocRevID) = @_;
 
   my @FileIDs  = &FetchDocFiles($DocRevID);
@@ -68,7 +72,12 @@ sub ShortFileListByRevID {
 }
 
 sub FileListByFileID {
+  require "FileUtilities.pm";
   my (@Files) = @_;
+  unless (@Files) {
+    return;
+  }  
+  print "<ul>\n";
   foreach my $file (@Files) {
     my $DocRevID      = $DocFiles{$file}{DOCREVID};
     my $VersionNumber = $DocRevisions{$DocRevID}{VERSION};
@@ -82,6 +91,7 @@ sub FileListByFileID {
     }
     print "<li>$link</li>\n";
   }  
+  print "</ul>\n";
 }
 
 sub ShortFileListByFileID {
@@ -97,7 +107,7 @@ sub ShortFileListByFileID {
     } else { 
       $link = &ShortFileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME});
     }
-    print "$link<br>\n";
+    print "$link<br/>\n";
   }  
 }
 
@@ -110,10 +120,12 @@ sub FileLink {
   my $base_url = &GetURLDir($documentID,$version);
   my $file_size = &FileSize(&FullFile($documentID,$version,$shortname));
   $file_size =~ s/^\s+//; # Chop off leading spaces
+  my $PrintedName = &AbbreviateFileName(-filename => $shortname,
+                                            -maxlength => 60, -maxext => 4);
   if ($description) {
-    return "<a href=\"$base_url$shortfile\" title=\"$shortname\">$description</a><br/>($shortname, $file_size)";
+    return "<a href=\"$base_url$shortfile\" title=\"$shortname\">$description</a> ($PrintedName, $file_size)";
   } else {
-    return "<a href=\"$base_url$shortfile\" title=\"$shortname\">$shortname</a> ($file_size)";
+    return "<a href=\"$base_url$shortfile\" title=\"$shortname\">$PrintedName</a> ($file_size)";
   }
 }  
 
@@ -138,14 +150,13 @@ sub ArchiveLink {
   
   @Types = sort @Types;
   
-  my $link  = "<b>Get all files as \n";
+  my $link  = "Get all files as \n";
   @LinkParts = ();
   foreach my $Type (@Types) {
     push @LinkParts,"<a href=\"$RetrieveArchive?docid=$DocumentID\&amp;version=$Version\&amp;type=$Type\">$Type</a>";
   }  
   $link .= join ', ',@LinkParts;
   $link .= ".";
-  $link .= "</b>";
   
   return $link;
 }

@@ -165,12 +165,19 @@ sub PrintRevisionInfo {
   print "<dl>\n";
    &PrintDocNumber($DocRevID);
    &RequesterByID($Documents{$DocumentID}{REQUESTER});
-   &SubmitterByID($DocRevisions{$DocRevID}{SUBMITTER});
+   &SubmitterByID($DocRevisions{$DocRevID}{Submitter});
    &PrintModTimes;
   print "</dl>\n";
   print "</div>\n";  # BasicDocInfo
 
-  &OtherVersionLinks($DocumentID,$Version);
+  if (&CanModify($DocumentID) && !$HideButtons) {
+    print "<div id=\"UpdateButtons\">\n";
+    &UpdateButton($DocumentID);
+    &UpdateDBButton($DocumentID,$Version);
+    &AddFilesButton($DocumentID,$Version);
+    print "</div>\n";
+  }  
+
 
   print "</div>\n";  # LeftColumn3Col
 
@@ -182,24 +189,17 @@ sub PrintRevisionInfo {
 
   print "<div id=\"RightColumn3Col\">\n";
   
-  &FileListByRevID($DocRevID); # All are called only here, so changes are OK
   
-  print "<hr/><p/>\n";
+#  print "<hr/><p/>\n";
   
   &SecurityListByID(@GroupIDs);
   &ModifyListByID(@ModifyIDs);
+  &OtherVersionLinks($DocumentID,$Version);
   
-  if (&CanModify($DocumentID) && !$HideButtons) {
-    print "<div id=\"UpdateButtons\">\n";
-    &UpdateButton($DocumentID);
-    &UpdateDBButton($DocumentID,$Version);
-    &AddFilesButton($DocumentID,$Version);
-    print "</div>\n";
-  }  
-
   print "</div>\n";  # RightColumn3Col
 
   &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT}); # All are called only here, so changes are OK
+  &FileListByRevID($DocRevID); # All are called only here, so changes are OK
   &TopicListByID(@TopicIDs);
   &AuthorListByID(@AuthorIDs);
   &PrintKeywords($DocRevisions{$DocRevID}{Keywords});

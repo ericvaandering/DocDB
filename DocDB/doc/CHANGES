@@ -1,5 +1,22 @@
 6.0
 
+Upgrading to 6.0 is more difficult than usual, but we hope this will give room
+to grow. The general steps are:
+
+1. Edit and run scripts/MigrateV6 to expand the SQL database.
+2. Update or check out the new CSS files in html/css and put them in place.
+3. Edit ProjectRoutines.pm to match the new format. See the .template file
+   for examples
+4. Very few users will want to upgrade to certificates, so instructions there
+   will come later.   
+5. If you have links like "LastModified?days=20" (like in the NavBar) please
+   change it to "ListBy?days=20" Also, any ListByType, ListByAuthor,
+   ListByTopic links should be changed to just "ListBy" since these routines
+   have been consolidated. The old ones are not CSS enabled and will be removed
+   in DocDB v 7.0. As a bonus, ListBy is often faster than the routines it
+   replaces.
+6. Link ListBy to your public site, if you have one.    
+
 CSS (Cascading Style Sheets)
 
   DocDB now uses CSS in some places. Expect this use to grow as well as an

@@ -28,15 +28,16 @@ sub DocumentTable (%) {
   
   my %Params = @_;
   
-  my $SortBy       =   $Params{-sortby}; 
-  my $Reverse      =   $Params{-reverse};
-  my $MaxDocs      =   $Params{-maxdocs};
-  my @DocumentIDs  = @{$Params{-docids}};
-  my @Fields       = @{$Params{-fields}}; 
-  my %FieldOptions = %{$Params{-fieldoptions}}; 
+  my $SortBy        =   $Params{-sortby}; 
+  my $Reverse       =   $Params{-reverse};
+  my $MaxDocs       =   $Params{-maxdocs};
+  my $SessionTalkID = $Params{-talkid};
+  my @DocumentIDs   = @{$Params{-docids}};
+  my @Fields        = @{$Params{-fields}}; 
+  my %FieldOptions  = %{$Params{-fieldoptions}}; 
   
   my %FieldTitles = (Docid   => "$ShortProject-doc-#", Updated => "Last Updated", 
-                     CanSign => "Next Signature(s)");  
+                     CanSign => "Next Signature(s)", Confirm => "Confirm?");  
   
 ### Write out the beginning and header of table
 
@@ -68,7 +69,12 @@ sub DocumentTable (%) {
     @DocumentIDs = sort numerically @DocumentIDs;
   } elsif ($SortBy eq "date") {
     @DocumentIDs = sort DocumentByRevisionDate @DocumentIDs; 
+  } elsif ($SortBy eq "requester") {
+    @DocumentIDs = sort DocumentByRequester @DocumentIDs; 
+  } elsif ($SortBy eq "confdate") {
+    @DocumentIDs = sort DocumentByConferenceDate @DocumentIDs; 
   }
+
   
   if ($Reverse) {
     @DocumentIDs = reverse @DocumentIDs;
@@ -98,7 +104,7 @@ sub DocumentTable (%) {
     }    
     print "<tr class=\"$RowClass\">\n";
     foreach my $Field (@Fields) {
-      print "<td>";
+      print "<td class=\"$Field\">";
       if      ($Field eq "Docid") {    # Document number
         print &NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
                                  -numwithversion => true); 
@@ -116,6 +122,30 @@ sub DocumentTable (%) {
         foreach my $EmailUserID (@EmailUserIDs) {
           print &SignatureLink($EmailUserID),"<br/>\n";
         }  
+      } elsif ($Field eq "Conference") {  # Conferences. Simplify in v7
+        require "TopicHTML.pm";
+        require "TopicSQL.pm";
+        my @topics = &GetRevisionTopics($DocRevID);
+        foreach my $topic (@topics) {
+          if (&MajorIsConference($MinorTopics{$topic}{MAJOR})) {
+            my $conference_link = &ConferenceLink($topic,"short");
+            print "$conference_link<br>\n";
+          }  
+        }
+      } elsif ($Field eq "Topics") {  # Topics for document
+        require "TopicHTML.pm";
+        require "TopicSQL.pm";
+        my @TopicIDs = &GetRevisionTopics($DocRevID);
+        &ShortTopicListByID(@TopicIDs); 
+      } elsif ($Field eq "Files") {   # Files in document
+        require "FileHTML.pm";
+        &ShortFileListByRevID($DocRevID); 
+      } elsif ($Field eq "Confirm") {  
+        print $query -> start_multipart_form('POST',$ConfirmTalkHint);
+        print $query -> hidden(-name => 'documentid',   -default => $DocumentID);
+        print $query -> hidden(-name => 'sessiontalkid',-default => $SessionTalkID);
+        print $query -> submit (-value => "Confirm");
+        print $query -> end_multipart_form;
       } else {
         print "Unknown field"
       }  
@@ -149,13 +179,15 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
   &FetchDocument($DocumentID);
   my $Version      = $Documents{$DocumentID}{NVersions};
 
-  my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+  my $DocRevID  = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   unless ($DocRevID) {
     return "";
   }
+  my $FullDocID = &FullDocumentID($DocumentID,$Version);
     
-  my $Link = "<a href=\"$ShowDocument\?docid=$DocumentID";
-  
+  my $Link = "<a href=\"$ShowDocument\?docid=$DocumentID\"";
+     $Link .= " title=\"$FullDocID\"";
+   
   # When adding the version number, remember to use &amp; for XHTML 
   # or use DocumentURL
   

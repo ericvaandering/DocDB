@@ -71,7 +71,7 @@ if ($WelcomeMessage) {
   print "</h4></center>\n";
 }
 
-print "<p><h4>Database options:</h4>\n";
+print "<p><h4 class=\"SectionHeading\">Database options:</h4>\n";
 
 # Fill arrays with stuff that goes in main, bold table
 
@@ -145,7 +145,7 @@ push @FirstColumn,"modified in the <a href=\"$LastModified?days=$LastDays\">last
 unless ($Public) {
   push @OtherColumns,"from <a href=\"$ListMeetings\">collaboration meetings</a>";
 }
-push @OtherColumns,"from <a href=\"$ListByTopic?major=Conferences&mode=conference\">conferences</a>";
+push @OtherColumns,"from <a href=\"$ListBy?major=Conferences&mode=conference\">conferences</a>";
 unless ($Public && !$PublicAccess{MeetingList}) {
   push @OtherColumns,"from <a href=\"$ListAllMeetings\">all meetings</a>";
 }  

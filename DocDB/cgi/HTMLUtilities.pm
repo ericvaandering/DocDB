@@ -21,13 +21,26 @@ sub DocDBHeader {
   print "<head>\n";
   print "<title>$Title</title>\n";
   
+  # Include DocDB style sheets
+  
   print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB.css\" type=\"text/css\"/>\n";
-  if (defined &ProjectHeader) {
-    &ProjectHeader($Title,$PageTitle); 
-  }
-
+  print "<!--[if IE]>\n";
+  print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB_IE.css\" type=\"text/css\" />\n";
+  print "<![endif]-->\n"; 
+   
+  # Include projects DocDB style sheets 
+   
   if (-e "$CSSDirectory/$ShortProject"."DocDB.css") {
     print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB.css\" type=\"text/css\"/>\n";
+  }
+  if (-e "$CSSDirectory/$ShortProject"."DocDB_IE.css") {
+    print "<!--[if IE]>\n";
+    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB_IE.css\" type=\"text/css\" />\n";
+    print "<![endif]-->\n"; 
+  }
+
+  if (defined &ProjectHeader) {
+    &ProjectHeader($Title,$PageTitle); 
   }
 
   print "</head>\n";

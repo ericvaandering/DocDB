@@ -63,7 +63,7 @@ sub ConfirmTalkPopupScript {
   print "</script>\n";
 }
 
-sub ConfirmTalkLink ($$) {
+sub ConfirmTalkLink ($$) { #FIXME: Make onclick optional, use in DocumentTable
   my ($SessionTalkID,$DocumentID) = @_;
   my $HTML  = "<form>";
      $HTML .= $query -> hidden(-name => 'documentid',   -default => $DocumentID);

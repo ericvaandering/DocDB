@@ -116,7 +116,7 @@ sub FullDocumentID ($;$) {
 
 sub DocumentLink { #FIXME: Make Version optional, Document URL, "title" mode 
   my ($DocumentID,$Version,$Title) = @_;
-  my $DocNumber .= &FullDocumentID($DocumentID,$Version);
+  my $DocNumber = &FullDocumentID($DocumentID,$Version);
   my $Link = "<a title=\"$DocNumber\" href=\"$ShowDocument\?docid=$DocumentID\&amp;version=$Version\">";
   if ($Title) {
     $Link .= $Title;
@@ -355,7 +355,7 @@ sub TypeLink {
   &FetchDocType($TypeID);
   my $link = "";
   unless ($Public) {
-    $link .= "<a href=\"$ListByType?typeid=$TypeID\">";
+    $link .= "<a href=\"$ListBy?typeid=$TypeID\">";
   }
   if ($mode eq "short") {
     $link .= $DocumentTypes{$TypeID}{SHORT};

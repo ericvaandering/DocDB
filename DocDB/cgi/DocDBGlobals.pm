@@ -8,6 +8,11 @@
 #    Modified: 
 #
 
+# Constants
+
+use constant TRUE  => 1;
+use constant FALSE => 0;
+
 # Advertising link for DocDB
 
 $DocDBHome = "http://cepa.fnal.gov/DocDB/";
