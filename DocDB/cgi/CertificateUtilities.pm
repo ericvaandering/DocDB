@@ -54,7 +54,8 @@ sub CertificateStatus () {
   # verified   --  certificate is valid and user has been given access to DocDB by admin
   # unverified --  certificate is valid and unique, but user has not been given access
   # mismatch   --  certificate is valid, but e-mail or CN conflicts with existing user
-  # missing    --  certificate is valid, but has never requested access
+  # noapp      --  certificate is valid, but has never requested access
+  # nocert     --  no certificate was presented (not sure if this can work)
 
   my $CertificateStatus = "";
  

@@ -181,6 +181,8 @@ $SetPrefs              = $cgi_root."SetPrefs";
 $EmailLogin            = $cgi_root."EmailLogin";
 $SelectEmailPrefs      = $cgi_root."SelectEmailPrefs";
 
+$CertificateApplyForm  = $cgi_root."CertificateApplyForm";
+
 $DocDBHelp             = $cgi_root."DocDBHelp";
 $ShowTalkNote          = $cgi_root."ShowTalkNote";
 
