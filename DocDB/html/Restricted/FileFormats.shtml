@@ -29,13 +29,17 @@ the native format. This way  your presentation is readable by the entire
 collaboration and  the full power of the native format is available to those
 who can make use of it, to extract figures for their own use, for example.</p>
 
-<p>To produce PDF files from Microsoft office (including PowerPoint), the
-solution is to print the document using the <q>printer</q>
-<q>Acrobat PDFwriter.</q> If you do not have the capability of saving your
-document or presentation as
-PDF you may get an account on the PPD WinCenter 
+<p>To produce PDF files from Microsoft Office (including PowerPoint), the
+solution is to print the document using the <q>printer</q> <q>Acrobat
+PDFwriter.</q> If you do not have the capability of saving your document or
+presentation as PDF you may get an account on the PPD WinCenter 
 (<a href="mailto:dcc@fnal.gov">mailto:dcc@fnal.gov</a>) that has the software
-to do this.  To create a PDF file from PowerPoint, print the document using
+to do this.  Adobe, the creators of PDF, has a  
+<a href="https://createpdf.adobe.com/index.pl">website</a> (free trial) where
+you can upload MS Office documents and get a PDF in return. 
+
+
+To create a PDF file from PowerPoint, print the document using
 "Acrobat PDFwriter" as your printer (this creates a PDF file).</p>
 
 <p>PowerPoint also has the option of saving a
