@@ -19,7 +19,11 @@
 <hr>
 
 
+<p>
+<center>
 <h2>PowerPoint, Postscript, PDF etc. </h2>
+</center>
+</p>
 
 <p>At the present time most of our collaborators view the web from a UNIX
 platform. This means they cannot view files in formats such as PowerPoint, MS
@@ -34,13 +38,9 @@ solution is to print the document using the <q>printer</q> <q>Acrobat
 PDFwriter.</q> If you do not have the capability of saving your document or
 presentation as PDF you may get an account on the PPD WinCenter 
 (<a href="mailto:dcc@fnal.gov">mailto:dcc@fnal.gov</a>) that has the software
-to do this.  Adobe, the creators of PDF, has a  
+to do this.  Adobe, the creator of PDF, has a  
 <a href="https://createpdf.adobe.com/index.pl">website</a> (free trial) where
-you can upload MS Office documents and get a PDF in return. 
-
-
-To create a PDF file from PowerPoint, print the document using
-"Acrobat PDFwriter" as your printer (this creates a PDF file).</p>
+you can upload MS Office documents and get a PDF in return.</p>
 
 <p>PowerPoint also has the option of saving a
 presentation as an HTML slideshow. The
@@ -56,8 +56,8 @@ about this when starting a PowerPoint document. Try converting a few test pages
 to PDF/PS and verify that your choice of font is safe.</p>
 
 Adapted from pages originally by  Rob Kutschke  
-<a href="mailto:kutschke@fnal.gov">kutschke@fnal.gov</a> and Lory Curry 
-<a href="mailto:curry@fnal.gov">curry@fnal.gov</a>.
+(<a href="mailto:kutschke@fnal.gov">kutschke@fnal.gov</a>) and Lory Curry 
+(<a href="mailto:curry@fnal.gov">curry@fnal.gov</a>).<p>
 
 <hr>
 <!-- begin footer, change the webmaster info if appropriate -->

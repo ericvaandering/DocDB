@@ -46,6 +46,10 @@
   <li><a href="#reference">Publications in Refereed Journals</a>
  </ol>
  <li><a href="#final">Final Words</a>
+ <ol type="1">
+  <li><a href="#refer">Referring to Your Document</a>
+  <li><a href="#morehelp">Getting More Help</a>
+ </ol>
 </ol>
 
 
@@ -357,7 +361,8 @@ journal added, let the database administrators know.<p>
 <a name="final">
 <h2>D. Final Words</h2>
 
-<h3>Referring to your document</h3>
+<a name="refer">
+<h3>Referring to Your Document</h3>
 
 To refer to your document use the form <b>BTeV-doc-XXXX</b> where XXXX is the document
 number (1 to 6 digits). You can also use the form <b>BTeV-doc-XXXX-vXX</b> to refer to
@@ -370,7 +375,8 @@ where the X's represent <i>just the numbers</i> of the document and version.
 (I.e. leave off the ``BTeV-doc-'' and ``-v.'') As above, you can leave off the
 <tt>&amp;version=XX</tt> to refer to the latest version.<p>
 
-<h3>Getting more help</h3>
+<a name="morehelp">
+<h3>Getting More Help</h3>
 
 You can often get more help when using the entry form or the advanced forms on
 the main page by clicking on the <font color="red">red terms</font> on the
