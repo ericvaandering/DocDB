@@ -534,15 +534,22 @@ sub FormElementTitle (%) {
   my $ExtraText = $Params{-extratext} || "";
   my $Text      = $Params{-text}      || "";
   my $NoBreak   = $Params{-nobreak}   || 0;
+  my $NoBold    = $Params{-nobold}    || 0;
   my $Required  = $Params{-required}  || 0;
 
   my $TitleText = "";
 
+  unless ($NoBold) {
+    $TitleText .= "<b>";
+  }
   if ($HelpLink) {
-    $TitleText .= "<b><a style=\"color: red\" href=\"Javascript:helppopupwindow(\'$DocDBHelp?term=$HelpLink\');\">";
-    $TitleText .= "$HelpText:</a></b>";
+    $TitleText .= "<a style=\"color: red\" href=\"Javascript:helppopupwindow(\'$DocDBHelp?term=$HelpLink\');\">";
+    $TitleText .= "$HelpText:</a>";
   } elsif ($Text) {
-    $TitleText .= "<b>$Text:</b>"; 
+    $TitleText .= "$Text:"; 
+  }
+  unless ($NoBold) {
+    $TitleText .= "</b>";
   }
   
   if ($Required) {
@@ -552,8 +559,11 @@ sub FormElementTitle (%) {
   if ($ExtraText) {
     $TitleText .= "&nbsp;$ExtraText";
   } 
-  unless ($NoBreak) { 
-    $TitleText .= "<br/> \n";
+  
+  if ($NoBreak) { 
+    $TitleText .= "\n";
+  } else {
+    $TitleText .= "<br/>\n";
   }  
   
   return $TitleText;

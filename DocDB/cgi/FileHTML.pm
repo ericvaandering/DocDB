@@ -146,7 +146,99 @@ sub ArchiveLink {
   
   return $link;
 }
+
+sub FileUploadBox (%) {
+  my (%Params) = @_; 
+
+  my $AllowCopy = $Params{-allowcopy} || 0;
+  my $MaxFiles  = $Params{-maxfiles}  || 0;
+  my $AddFiles  = $Params{-addfiles}  || 0;
+  my $Type      = $Params{-type}      || "file";
+  my $Required  = $Params{-required}  || 0;
+  my $FileSize  = $Params{-filesize}  || 60;
+  my $FileMaxSize = $Params{-filemaxsize} || 250;
   
+  my @FileIDs = @{$Params{-fileids}};
+  
+  if (@FileIDs) {
+    $MaxFiles = @FileIDs + $AddFiles;
+  } elsif ($NumberUploads) {
+    $MaxFiles = $NumberUploads;	  
+  } elsif ($UserPreferences{NumFiles}) {
+    $MaxFiles = $UserPreferences{NumFiles};
+  } else {
+    $MaxFiles = 1;   
+  }    
+  
+  print $query -> hidden(-name => 'maxfiles', -default => $MaxFiles);
+  
+  print "<table cellpadding=3>\n";
+  print "<tr><td colspan=2><b><a ";
+  
+  my $HelpLink,$HelpText,$FileHelpLink,$FileHelpText,$DescHelpLink,$DescHelpText;
+  if ($Type eq "file") {
+    $HelpLink = "fileupload";
+    $HelpText = "Local file upload";
+    $FileHelpLink = "localfile";
+    $FileHelpText = "File";
+  }
+  $DescHelpLink = "description";
+  $DescHelpText = "Description";
+    
+  my $BoxTitle = &FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText,
+                                   -required => $Required);
+  print $BoxTitle;
+  
+  for (my $i = 1; $i < $MaxFiles; ++$i) {
+    my $FileID = shift,@FileIDs;
+    my $ElementName = "upload$i";
+    my $DescName    = "filedesc$i";
+    my $MainName    = "main$i";
+    my $FileIDName  = "fileid$i";
+    my $CopyName    = "copyfile$i";
+    
+    my $FileHelp        = &FormElementTitle(-helplink => $FileHelpLink, -helptext => $FileHelpText);
+    my $DescriptionHelp = &FormElementTitle(-helplink => $DescHelpLink, -helptext => $DescHelpText);
+    my $MainHelp        = &FormElementTitle(-helplink => "main", -helptext => "Main?", -nobold => true);
+    my $DefaultDesc = $DocFiles{$FileID}{DESCRIPTION};
+    
+    print "<tr><td align=right>\n";
+    print $FileHelp;
+    print "</td>\n";
+    
+    print "<td>\n";
+    print $query -> filefield(-name      => $ElementName, -size => $FileSize,
+                              -maxlength => $FileMaxSize);
+    print "</td></tr>\n";
+    print "<tr><td align=right>\n";
+    print $DescriptionHelp;
+    print "</td>\n";
+    print "<td>\n";
+    print $query -> textfield (-name      => $DescName, -size    => 60, 
+                               -maxlength => 128,       -default => $DefaultDesc);
+
+    if ($DocFiles{$FileID}{ROOT} || !$FileID) {
+#    if ($DocFiles{$FileID}{ROOT} || $NewFiles) {
+      print $query -> checkbox(-name => $MainName, -checked => 'checked', -label => '');
+    } else {
+      print $query -> checkbox(-name => $MainName, -label => '');
+    }
+    
+    print $MainHelp;
+    print "</td></tr>\n";
+    if ($FileID && $AllowCopy) {
+      print "<tr><td>&nbsp;</td><td colspan=2>\n";
+      print "Copy <tt>$DocFiles{$FileID}{NAME}</tt> from previous version:";
+      print $query -> hidden(-name => $FileIDName, -value => $FileID);
+      print $query -> checkbox(-name => $CopyName, -label => '');
+      print "</td></tr>\n";
+    }  
+    print "<tr><td colspan=3></td></tr>\n";
+  }
+  print "</table>\n";
+}
+   
+    
 sub SingleUploadBox (%) {
   my (%Params) = @_; 
 
