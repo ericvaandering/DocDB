@@ -17,7 +17,7 @@ $SSIDirectory = "/www/html/includes/";
 # Shell Commands
 
 $Wget   = "/usr/local/bin/wget -O - --quiet ";
-$Tar    = "/fnal/ups/prod/gtools/v2_4/bin/gtar";
+$Tar    = "/fnal/ups/prod/gtools/v2_4/bin/gtar ";
 $Unzip  = "/usr/local/bin/unzip -q ";
 
 # Useful stuff

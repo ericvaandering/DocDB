@@ -191,7 +191,11 @@ needed.
 httpupload
 Upload by URL
 Enter a URL for your document. The file will be fetched from this URL and
-stored on the server. If the URL is password protected, enter the username and
+stored on the server. The URL must be a full URL, with http:// at the beginning
+and a file name at the end (cannot end in "/"). The https and ftp protocols may
+also work.
+<p>
+If the URL is password protected, enter the username and
 password for the URL here. The username and password are NOT saved.
 <p>
 You can also enter a short description of each file, which will appear in the
