@@ -5,6 +5,8 @@
 #    Modified: 
 #
 
+# FIXME: Unify various TopicLink, MeetingLink, ConferenceLink, GatheringLink
+
 sub LocationBox {
   require "Scripts.pm";
   print "<b><a ";
@@ -322,9 +324,9 @@ sub PrintSession ($) {
         print "<td>&nbsp</td>\n"; # Files, which can't exist
         print "<td align=right>",&TruncateSeconds($SessionTalks{$SessionTalkID}{Time}),"</td>\n";
         if ($SessionTalks{$SessionTalkID}{Note}) {
-          print "<td>",&TalkNoteLink($SessionTalkID),"</td>\n";
+          print "<td><b>",&TalkNoteLink($SessionTalkID),"</b></td>\n";
         } else {
-          print "<td>&nbsp;</td>\n";
+          print "<td>",&TalkNoteLink($SessionTalkID),"</td>\n";
         }  
         print "</tr>\n";
       } 
@@ -429,7 +431,7 @@ sub PrintSessionSeparatorInfo ($) {
   print "</tr>\n";
 }
 
-sub MeetingLink ($) {
+sub GatheringLink ($) {
   my ($ConferenceID) = @_;
     
   my $URL = "$DisplayMeeting?conferenceid=$ConferenceID";
@@ -457,7 +459,7 @@ sub OrphanMeetingList {
   print "<b>$More Meetings</b>\n";
   print "<ul>\n";
   foreach my $ConferenceID (@OrphanConferenceIDs) {
-    my $MeetingLink = &MeetingLink($ConferenceID);
+    my $MeetingLink = &GatheringLink($ConferenceID);
     print "<li>$MeetingLink</li>\n";
   }  
   print "</ul>\n";
