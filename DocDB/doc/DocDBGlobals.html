@@ -2,9 +2,13 @@
 
 <body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
 
-<center><h1>DocDBGlobals.pm</h1></center>
+<center><h1>ProjectGlobals.pm and DocDBGlobals.pm</h1></center>
 <p>
-DocDBGlobals.pm contains a number of useful global variables.
+ProjectGlobals.pm contains a number of useful global variables. Additional
+variables with (we think) sensible defaults are in DocDBGlobals.pm. Variables
+from both files are changed by the user in ProjectGlobals.pm (which is
+distributed as ProjectGlobals.pm.template).
+
 Pay particular attention to the variables listed below.
 
 <table>
@@ -23,6 +27,14 @@ Pay particular attention to the variables listed below.
 <tr>
 <td><b>$db_rouser</b> </td>
 <td> MySQL user name for read only access</td>
+</tr>
+<tr>
+<td><b>$Project</b> </td>
+<td> Your project name (BTeV, Beams, etc.)</td>
+</tr>
+<tr>
+<td><b>$ShortProject</b> </td>
+<td> The version of your project name used in document IDs. eg. Proj-doc-1-v1</td>
 </tr>
 <tr>
 <td><b>$file_root</b> </td>
@@ -46,10 +58,6 @@ Pay particular attention to the variables listed below.
 <td> path from server to DocDB cgi scripts</td>
 </tr>
 <tr>
-<td> <b>$SSIDirectory</b></td>
-<td> if you are using Server Side Includes, find them here </td>
-</tr>
-<tr>
 <td> <b>$Wget</b></td>
 <td> wget command - used to retrieve documents</td>
 </tr>
@@ -60,6 +68,10 @@ Pay particular attention to the variables listed below.
 <tr>
 <td><b>$Unzip</b> </td>
 <td> unzip command</td>
+</tr>
+<tr>
+<td><b>$Zip</b> </td>
+<td> zip command (optional)</td>
 </tr>
 <tr>
 <td> <b>$DBWebMasterEmail</b></td>
@@ -79,11 +91,11 @@ Pay particular attention to the variables listed below.
 </tr>
 <tr>
 <td> <b>$MailServer</b></td>
-<td> lab mailserver for outgoing email</td>
+<td> SMTP mailserver for outgoing email</td>
 </tr>
 <tr>
 <td> <b>$htaccess</b></td>
-<td> name of .htaccess file (usually .htaccess)</td>
+<td> name of .htaccess file in httpd config file (usually .htaccess)</td>
 </tr>
 </table>
 
