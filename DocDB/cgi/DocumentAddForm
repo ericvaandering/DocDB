@@ -457,17 +457,19 @@ if ($Meeting || $OtherMeeting) {
 
 print "<td>\n"; 
 # &RequesterSelect; 
- &AuthorScroll(-required => $RequiredEntries{Author},
+ &AuthorScroll(-required => $RequiredEntries{Requester},
                -helplink => "requester",
                -helptext => "Requester",
                -name     => "requester",
-               -default   => $RequesterDefault);
+               -default  => \($RequesterDefault));
                
 print "</td>\n";
 
 unless ($Meeting || $OtherMeeting) {
   if ($AuthorMode eq "list") {
-    print "<td>\n"; &AuthorSelect;    print "</td>\n";
+    &AuthorScroll(-required => $RequiredEntries{Author},
+                  -helplink => "author",
+                  -default  => \@AuthorDefaults);
   } elsif ($AuthorMode eq "field") {
     print "<td>\n"; &AuthorManual;    print "</td>\n";
   }
