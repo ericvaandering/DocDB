@@ -24,6 +24,8 @@ require "MeetingSQL.pm";
 require "TalkHintSQL.pm";
 require "TalkHintUtilities.pm";
 
+use constant true => 1;
+
 $query = new CGI;  
 %params = $query -> Vars;
 
@@ -71,8 +73,10 @@ if ($Confirmed && $DocumentID) {
  
 # Start page
 
-print $query->header;
-print $query->start_html(-title=>"Notes for $BestTitle");
+
+&DocDBHeader("Notes for $BestTitle","",-nobody => TRUE);
+#print $query->header;
+#print $query->start_html(-title=>"Notes for $BestTitle");
 
 # Print out info
 
