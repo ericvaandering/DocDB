@@ -8,22 +8,24 @@ use DBI;
 
 require "DocDBGlobals.pm";
 require "KeywordSQL.pm";
-require "KeywordRoutine.pm";
 require "ResponseElements.pm";
 require "KeywordHTML.pm";
 require "HTMLUtilities.pm";
 
+require "ProjectMessages.pm";
+
 $query = new CGI;  # Global for subroutines
 %params = $query -> Vars;
 
-my $Mode = $params{mode};
+my $Mode   = $params{mode}   || "display";
+my $Format = $params{format} || "short"  ;
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 &GetKeywordList;
 
 print $query->header;
-&DocDBHeader("Beams Division Keywords");
+&DocDBHeader("List of Keywords");
 
 if ($Mode eq "chooser") {
   require "Scripts.pm";
@@ -31,12 +33,24 @@ if ($Mode eq "chooser") {
 }
   
 print "<p>\n";
-&KeywordShortText;
+print "Please use the following keywords to facilitate searches. Note that
+spaces are NOT allowed in keywords.  To suggest additional keywords, send mail
+to an <a href=\"mailto:$DBWebMasterEmail\">adminstrator</a>. The links below
+will do a search of the database for all instances of a single keyword. Use the
+<a href=\"$SearchForm\" target=\"_blank\">search form</a>  to do a more
+complicated search.\n";
+if ($KeywordAddendumText) {
+  print "$KeywordAddendumText\n";
+}
 print "<p>\n";
 
 print "<h3>Existing Keywords:</h3>\n";
 
-&KeywordTable($Mode);
-
+if ($Format eq "short") {
+  &KeywordTable($Mode);
+} elsif ($Format eq "long") {
+  &KeywordDetailedList;
+}
+  
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

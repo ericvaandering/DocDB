@@ -5,12 +5,14 @@
 # Author Lynn Garren (garren@fnal.gov)
 #
 
+# FIXME: Replace this with ListKeywords?format=long
+
 use CGI;                                                                                      
 use DBI;
 
 require "DocDBGlobals.pm";
 require "KeywordSQL.pm";
-require "KeywordRoutine.pm";
+require "ProjectMessages.pm";
 require "ResponseElements.pm";
 require "KeywordHTML.pm";
 require "HTMLUtilities.pm";
@@ -24,10 +26,19 @@ print $query->header;
 &DocDBHeader("Keywords for Beams Division Document Database");
 
 print "<h3>Accepted Document Database Keywords:</h3>\n";
+  
+print "<p>\n";
+print "Please use the following keywords to facilitate searches. Note that
+spaces are NOT allowed in keywords.  To suggest additional keywords, send mail
+to an <a href=\"mailto:$DBWebMasterEmail\">adminstrator</a>. The links below
+will do a search of the database for all instances of a single keyword. Use the
+<a href=\"$SearchForm\" target=\"_blank\">search form</a>  to do a more
+complicated search.\n";
+if ($KeywordAddendumText) {
+  print "$KeywordAddendumText\n";
+}
+print "<p>\n";
 
-print "<p>\n";
-&KeywordLongText;
-print "<p>\n";
 print "Back to <a href=\"$ListKeywords\">short listing</a>\n";
 print "<p>\n";
 
