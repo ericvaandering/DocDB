@@ -109,7 +109,26 @@ sub ConferenceLink {
   return $link;
 }
 
-sub TopicsTable {
+sub TopicsByMajorTopic ($) {
+  my ($MajorTopicID) = @_;
+  
+  require "Sorts.pm";
+
+  my @MinorTopicIDs = sort byTopic keys %MinorTopics;
+
+  my $MajorLink = &MajorTopicLink($MajorTopicID,"short");
+  print "<b>$MajorLink</b>\n";
+  print "<ul>\n";
+  foreach my $MinorTopicID (@MinorTopicIDs) {
+    if ($MajorTopicID == $MinorTopics{$MinorTopicID}{MAJOR}) {
+      my $TopicLink = &MinorTopicLink($MinorTopicID,"short");
+      print "<li>$TopicLink\n";
+    }  
+  }  
+  print "</ul>";
+}
+
+sub TopicsTable { # FIXME: Use TopicsByMajorTopic
   require "Sorts.pm";
 
   my $NCols = 4;

@@ -412,14 +412,20 @@ sub MultiTopicSelect { # Multiple scrolling selectable lists for topics
   print "</table>\n";
 };
 
-sub MajorTopicSelect { # Scrolling selectable list for major topics
+sub MajorTopicSelect (;$) { # Scrolling selectable list for major topics
+  my ($Mode) = @_; 
+  
   print "<b><a ";
   &HelpLink("majortopics");
   print "Major Topics:</a></b><br> \n";
   my @MajorIDs = keys %MajorTopics;
   my %MajorLabels = ();
   foreach my $ID (@MajorIDs) {
-    $MajorLabels{$ID} = $MajorTopics{$ID}{SHORT};
+    if ($Mode eq "full") {
+      $MajorLabels{$ID} = $MajorTopics{$ID}{Full};
+    } else {  
+      $MajorLabels{$ID} = $MajorTopics{$ID}{SHORT};
+    }  
   }  
   print $query -> scrolling_list(-name => "majortopic", -values => \@MajorIDs, 
                                  -labels => \%MajorLabels,  -size => 10);

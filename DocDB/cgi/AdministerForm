@@ -99,8 +99,6 @@ print "</tr>\n";
 print "</table>\n";
 print $query -> end_multipart_form;
 
-print "<p><hr><p>\n";
-
 ### Topic Administration
 
 print "<p><hr><p>\n";
@@ -114,6 +112,36 @@ print "</tr>\n";
 print "<tr valign=top>\n";
 print "<td rowspan=2>\n"; &TopicSelectLong; print "</td>\n"; 
 print "<td rowspan=2>\n"; &MajorTopicSelect; print "</td>\n";
+print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td>\n"; &LongDescriptionBox;     print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n";
+&AdministratorPassword;
+print "&nbsp;";
+print $query -> submit (-value => "Change Topic Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<p><hr><p>\n";
+
+### Major Topic Administration
+
+print $query -> start_multipart_form('POST',"MajorTopicAdminister");
+print "<table cellpadding=10>\n";
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td rowspan=2>\n"; &MajorTopicSelect("full"); print "</td>\n";
 print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
 print "</tr>\n";
 

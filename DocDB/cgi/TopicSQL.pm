@@ -6,15 +6,17 @@ sub GetTopics {
   %MajorTopics = ();
   %FullTopics  = ();
 
+  my ($MinorTopicID,$MajorTopicID,$ShortDescription,$LongDescription);
+
   $major_list -> execute;
   $major_list -> bind_columns(undef, \($MajorTopicID,$ShortDescription,$LongDescription));
   while ($major_list -> fetch) {
     $MajorTopics{$MajorTopicID}{MAJOR} = $MajorTopicID;
     $MajorTopics{$MajorTopicID}{SHORT} = $ShortDescription;
     $MajorTopics{$MajorTopicID}{LONG}  = $LongDescription;
+    $MajorTopics{$MajorTopicID}{Full}  = $ShortDescription." [".$LongDescription."]";
   }
 
-  my ($MinorTopicID,$MajorTopicID,$ShortDescription,$LongDescription);
   $minor_list -> execute;
   $minor_list -> bind_columns(undef, \($MinorTopicID,$MajorTopicID,$ShortDescription,$LongDescription));
   while ($minor_list -> fetch) {
@@ -27,6 +29,20 @@ sub GetTopics {
   foreach $key (keys %MinorTopics) {
     $FullTopics{$key} =  $MinorTopics{$key}{FULL};
   }
+};
+
+sub GetSubTopics {
+  my ($MajorTopicID) = @_;
+  my @MinorTopicIDs = ();
+  my $MinorList = $dbh->prepare("select MinorTopicID from MinorTopic where MajorTopicID=?");
+
+  my ($MinorTopicID);
+  $MinorList -> execute($MajorTopicID);
+  $MinorList -> bind_columns(undef, \($MinorTopicID));
+  while ($MinorList -> fetch) {
+    push @MinorTopicIDs,$MinorTopicID;
+  }
+  return @MinorTopicIDs;
 };
 
 sub FetchMinorTopic { # Fetches an MinorTopic by ID, adds to $Topics{$TopicID}{}

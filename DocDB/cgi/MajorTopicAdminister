@@ -37,9 +37,9 @@ $Password      = $params{password};
 $Username      = $Administrator;
 $Action        = $params{admaction};
 
-#$InstitutionID = $params{inst};
-#$LongName      = $params{long};
-#$ShortName     = $params{short};
+$MajorTopicID  = $params{majortopic};
+$LongName      = $params{long};
+$ShortName     = $params{short};
 
 unless (&CanAdminister) {
   push @ErrorStack,$Msg_AdminNoLogin;
@@ -53,49 +53,51 @@ unless ($dbh) {
 }         
 &EndPage(@ErrorStack);
 
-#&GetInstitutions;
+&GetTopics;
 
-if      ($Action eq "Delete") { # Delete institutions
-#  @AuthorIDs = &GetInstitutionAuthors($InstitutionID); 
-#  if (!$InstitutionID) {
-#    push @ErrorStack,$Msg_ModInstEmpty;
-#  } elsif (@AuthorIDs) {
-#    print "<b>This institution has authors that must be deleted first:</b><br>\n";
-#    &AuthorsByInstitution($InstitutionID);
-#    push @ErrorStack,$Msg_DelInstWAuthors;
-#  } else {
-#    my $InstitutionDelete = $dbh -> prepare("delete from Institution where InstitutionID=?");
-#    $InstitutionDelete -> execute($InstitutionID);
-#    print "<b>$Institutions{$InstitutionID}{LONG} has been deleted.</b><br>\n";
-#  }
+&HTMLPrintParams;
+
+if      ($Action eq "Delete") { # Delete major topics
+  @TopicIDs = &GetSubTopics($MajorTopicID); 
+  if (!$MajorTopicID) {
+    push @ErrorStack,$Msg_ModMajEmpty;
+  } elsif (@TopicIDs) {
+    print "<b>This topic has subtopics that must be deleted first:</b><br>\n";
+    &TopicsByMajorTopic($MajorTopicID);
+    push @ErrorStack,$Msg_DelMajWTopics;
+  } else {
+    my $MajorTopicDelete = $dbh -> prepare("delete from MajorTopic where MajorTopicID=?");
+    $MajorTopicDelete -> execute($MajorTopicID);
+    print "<b>$MajorTopics{$MajorTopicID}{LONG} has been deleted.</b><br>\n";
+  }
 } elsif ($Action eq "Modify") { # Modify institutions
-#  unless ($InstitutionID) {
-#    push @ErrorStack,$Msg_ModInstEmpty;
-#  }
-#  &EndPage(@ErrorStack);
+  unless ($MajorTopicID) {
+    push @ErrorStack,$Msg_ModMajEmpty;
+  }
+  &EndPage(@ErrorStack);
 
 # Deal with name changes     
 
-#  if ($ShortName) { 
-#    print "<b>Updating short topic name.</b><br>\n";
-#    my $InstitutionUpdate = $dbh->prepare(
-#       "update Institution set ShortName=? where InstitutionID=?");
-#    $InstitutionUpdate -> execute($ShortName,$InstitutionID);
-#  }
-#  if ($LongName) { 
-#    print "<b>Updating long topic name.</b><br>\n";
-#    my $InstitutionUpdate = $dbh->prepare(
-#       "update Institution set LongName=? where InstitutionID=?");
-#    $InstitutionUpdate -> execute($LongName,$InstitutionID);
-#  }
+  if ($ShortName) { 
+    print "<b>Updating short description.</b><br>\n";
+    my $MajorTopicUpdate = $dbh->prepare(
+       "update MajorTopic set ShortDescription=? where MajorTopicID=?");
+    $MajorTopicUpdate -> execute($ShortName,$MajorTopicID);
+  }
+  if ($LongName) { 
+    print "<b>Updating long description.</b><br>\n";
+    my $MajorTopicUpdate = $dbh->prepare(
+       "update MajorTopic set LongDescription=? where MajorTopicID=?");
+    $MajorTopicUpdate -> execute($LongName,$MajorTopicID);
+  }
 
-} elsif ($Action eq "New") { # Create new institutions
-#  print "<b>Adding a new institution.</b><br>\n";
-#  my $InstitutionInsert = $dbh->prepare(
-#   "insert into Institution (InstitutionID,ShortName,LongName) values (0,?,?)");#
-#
-#  $InstitutionInsert -> execute($ShortName,$LongName);
-#  $InstitutionID = $InstitutionInsert -> {mysql_insertid}; # Works with MySQL only
+} elsif ($Action eq "New") { # Create new major topics
+  print "<b>Adding a new major topic.</b><br>\n";
+  my $MajorTopicInsert = $dbh->prepare(
+   "insert into MajorTopic (MajorTopicID,ShortDescription,LongDescription) values (0,?,?)");#
+
+  $MajorTopicInsert -> execute($ShortName,$LongName);
+  $MajorTopicID = $MajorTopicInsert -> {mysql_insertid}; # Works with MySQL only
 } else {
   push @ErrorStack,"No valid action was specified.";
 }  
@@ -103,10 +105,10 @@ if      ($Action eq "Delete") { # Delete institutions
 # For modify or new fetch information and display.
 
 if ($Action eq "Modify" || $Action eq "New") {
-#  &FetchInstitution($InstitutionID);
+  &GetTopics;
   print "<p><b>Here are the results of your modification:<br>\n";
-#  print "Short name: $Institutions{$InstitutionID}{SHORT}<br>\n";
-#  print "Long name:  $Institutions{$InstitutionID}{LONG}<br>\n";
+  print "Short description: $MajorTopics{$MajorTopicID}{SHORT}<br>\n";
+  print "Long description:  $MajorTopics{$MajorTopicID}{LONG}<br>\n";
   print "</b><p>\n";
 }  
 
