@@ -40,38 +40,40 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
 
   my $SessSepCreate = $dbh -> prepare("create table SessionSeparator ".
                    "(SessionSeparatorID integer auto_increment primary key,".
-                   " ConferenceID integer, StartTime datetime, Title varchar(128),".
+                   " ConferenceID integer, StartTime datetime,".
+                   " Location varchar(128), Title varchar(128),".
                    " Description text, TimeStamp timestamp,".
                    " index(ConferenceID))"); 
   
   my $MeetOrdCreate = $dbh -> prepare("create table MeetingOrder ".
                    "(MeetingOrderID integer auto_increment primary key,".
-                   " ConferenceID integer, SessionOrder integer, SessionID integer,".
+                   " SessionOrder integer, SessionID integer,".
                    " SessionSeparatorID integer, TimeStamp timestamp,".
                    " index(ConferenceID), index(SessionID), index(SessionSeparatorID))"); 
                    
   my $SessionCreate = $dbh -> prepare("create table Session ".
                    "(SessionID integer auto_increment primary key,".
-                   " ConferenceID integer, StartTime datetime, Title varchar(128),".
+                   " ConferenceID integer, StartTime datetime,".
+                   " Location varchar(128), Title varchar(128),".
                    " Description text, TimeStamp timestamp,".
                    " index(ConferenceID))"); 
 
   my $SessOrdCreate = $dbh -> prepare("create table SessionOrder ".
                    "(SessionOrderID integer auto_increment primary key,".
-                   " SessionID integer, TalkOrder integer, SessionTalkID integer,".
+                   " TalkOrder integer, SessionTalkID integer,".
                    " TalkSeparatorID integer, TimeStamp timestamp,".
                    " index(SessionID), index(SessionTalkID), index(TalkSeparatorID))"); 
                    
   my $TalkSepCreate = $dbh -> prepare("create table TalkSeparator ".
                    "(TalkSeparatorID integer auto_increment primary key,".
-                   " SessionID integer, Time datetime, Title varchar(128),".
-                   " Description text, TimeStamp timestamp,".
+                   " SessionID integer, Time time, Title varchar(128),".
+                   " Note text, TimeStamp timestamp,".
                    " index(SessionID))"); 
   
   my $SessTalkCreate = $dbh -> prepare("create table SessionTalk ".
                    "(SessionTalkID integer auto_increment primary key,".
                    " SessionID integer, DocumentID integer, Confirmed integer,".
-                   " Time datetime, HintTitle varchar(128),".
+                   " Time time, HintTitle varchar(128),".
                    " Note text, TimeStamp timestamp,".
                    " index(SessionID),index(DocumentID))"); 
 
@@ -82,7 +84,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
   
   my $TopicHintCreate = $dbh -> prepare("create table TopicHint ".
                    "(TopicHintID integer auto_increment primary key,".
-                   " SessionTalkID integer, TopicID integer, TimeStamp timestamp,".
+                   " SessionTalkID integer, MinorTopicID integer, TimeStamp timestamp,".
                    " index(SessionTalkID))"); 
   
   $ConferenceAdd    -> execute();
