@@ -14,6 +14,8 @@ require "Debug.pm";
 
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
+require "ResponseElements.pm";
+require "Sorts.pm";
 
 $query = new CGI;  # Global for subroutines
 
@@ -44,11 +46,18 @@ my $SessionMonth       = $params{sessionmonth};
 my $SessionDay         = $params{sessionday};
 my $SessionHour        = $params{sessionhour};
 my $SessionOrder       = $params{sessionorder};
-my $Separator          = $params{separator};
+my $SessionSeparator   = $params{sessionseparator};
 my $SessionTitle       = $params{sessiontitle};
 my $SessionDescription = $params{sessiondescription};
 
-@Separators = split /\0/,$Separator;
+my @SessionYears         = split /\0/,$SessionYear       ;
+my @SessionMonths        = split /\0/,$SessionMonth      ;
+my @SessionDays          = split /\0/,$SessionDay        ;
+my @SessionHours         = split /\0/,$SessionHour       ;
+my @SessionOrders        = split /\0/,$SessionOrder      ;
+my @RawSessionSeparators = split /\0/,$SessionSeparator         ;
+my @SessionTitles        = split /\0/,$SessionTitle      ;
+my @SessionDescriptions  = split /\0/,$SessionDescription;
 
 my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
 my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
@@ -58,7 +67,7 @@ my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
 
 &HTMLPrintParams();
 
-$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+$dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
 #unless ($dbh) {
 #  push @ErrorStack,$Msg_AdminNoConnect;
@@ -69,6 +78,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 &EndPage(@ErrorStack);
 
 my $MinorTopicID;
+my $ConferenceID;
 
 if ($Mode eq "create") {
   if ($MajorTopic) {
@@ -76,18 +86,57 @@ if ($Mode eq "create") {
       "insert into MinorTopic ".
           "(MinorTopicID, MajorTopicID, ShortDescription, LongDescription) ". 
       "values (0,?,?,?)");
-    $TopicInsert -> execute($MajorTopicID,$Short,$Long);
-    $MinorTopicID = $TopicInsert -> {mysql_insertid}; # Works with MySQL only
+#    $TopicInsert -> execute($MajorTopicID,$Short,$Long);
+#    $MinorTopicID = $TopicInsert -> {mysql_insertid}; # Works with MySQL only
   }
   my $ConferenceInsert = $dbh->prepare(
    "insert into Conference ".
           "(ConferenceID, MinorTopicID, Location, URL, StartDate, EndDate, ".
           " Preamble, Epilogue, Title) ". 
    "values (0,?,?,?,?,?,?,?,?)");
-  $ConferenceInsert -> execute($MinorTopicID,$Location,$URL,
-                                $StartDate,$EndDate); 
-  $ConferenceID = $ConferenceInsert -> {mysql_insertid}; # Works with MySQL only
+#  $ConferenceInsert -> execute($MinorTopicID,$Location,$URL,
+#                                $StartDate,$EndDate,$Preamble,$Epilogue,$Long); 
+#  $ConferenceID = $ConferenceInsert -> {mysql_insertid}; # Works with MySQL only
 
+# Repack into array of same length as others
+
+  my @SessionSeparators = ();
+  foreach my $RawSessionSeparator (@RawSessionSeparators) {  
+    $SessionSeparators[$RawSessionSeparator-1] = 1; 
+  }  
+  
+# Re-sort session orders
+
+  my %SessionOrders = ();
+  {
+    foreach my $SessionOrder (@SessionOrders) {
+      $SessionOrders{$SessionOrder} = $SessionOrder;
+    } 
+    my @OrderedOrders = sort numerically @SessionOrders;
+
+    my $NewOrder = 1;
+    foreach my $SessionOrder (@OrderedOrders) {
+      $SessionOrders{$SessionOrder} = $NewOrder;
+      ++$NewOrder;
+    } 
+  }
+  
+# Loop over sessions and insert
+    
+  foreach my $SessionOrder (@SessionOrders) {
+    my $SessionYear        = shift @SessionYears         ;
+    my $SessionMonth       = shift @SessionMonths        ;
+    my $SessionDay         = shift @SessionDays          ;
+    my $SessionHour        = shift @SessionHours         ;
+    my $SessionSeparator   = shift @SessionSeparators    ;
+    my $SessionTitle       = shift @SessionTitles        ;
+    my $SessionDescription = shift @SessionDescriptions  ;
+    my $SessionNewOrder    = $SessionOrders{$SessionOrder};
+    my $SessionDate        = "$SessionYear-$ReverseAbrvMonth{$SessionMonth}-$SessionDay $SessionHour:00";
+  
+    ## Insert sessions
+    
+  }
 }
 
 

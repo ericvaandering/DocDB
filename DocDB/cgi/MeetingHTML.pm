@@ -98,7 +98,7 @@ sub SessionOrder ($) {
 sub SessionSeparator ($) {
   my ($Order) = @_;
 #  print $query -> checkbox(-name => "separator", -value => $Order, -checked => 'checked', -label => '');
-  print $query -> checkbox(-name => "separator", -value => "s$Order", -label =>
+  print $query -> checkbox(-name => "sessionseparator", -value => "$Order", -label =>
   'Yes');
 }
 
