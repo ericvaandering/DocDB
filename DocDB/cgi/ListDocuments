@@ -21,30 +21,40 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 %params = $query -> Vars;
 
 &GetAllDocuments;
-print "<table>\n";
-print "<tr>\n";
+&GetAuthors;
+
+print "<table cellpadding=2>\n";
+print "<tr valign=bottom>\n";
 print "<th>Document<br>Number</th>\n";
 print "<th>Latest<br>Version</th>\n";
 print "<th>Title</th>\n";
+print "<th>Primary<br>Author</th>\n";
 print "<th>Files</th>\n";
+print "<th>Date<br>Requested</th>\n";
+print "<th>Date<br>Modified</th>\n";
+print "<th>Security</th>\n";
 print "</tr>\n";
 foreach $document (@documents) {
-  unless (&CanAccess($document,$documents{$document}{NVER})) {next;}
+  unless (&CanAccess($document,$Documents{$document}{NVER})) {next;}
   my $full_docid = &FullDocumentID($document);
-  my $DocRevID   = &FetchDocRevision($document,$documents{$document}{NVER});
+  my $DocRevID   = &FetchDocRevision($document,$Documents{$document}{NVER});
   my $Files_ref  = &FetchDocFiles($DocRevID);
                    
   my $title = $DocRevisions{$DocRevID}{TITLE};
-  print "<tr>\n";
+  print "<tr valign=top>\n";
   print "<td>$full_docid </td>\n";
-  print "<td>$documents{$document}{NVER} </td>\n";
+  print "<td align=center>$Documents{$document}{NVER} </td>\n";
   print "<td>$title</td>\n";
+  print "<td>$names{$Documents{$document}{REQUESTOR}}</td>\n";
   print "<td>\n";
   foreach $file (@{$Files_ref}) {
-    $link = &FileLink($document,$documents{$document}{NVER},$DocFiles{$file}{NAME});
+    $link = &FileLink($document,$Documents{$document}{NVER},$DocFiles{$file}{NAME});
     print "$link<br>\n";
   }  
   print "</td>\n";
+  print "<td>$Documents{$document}{DATE}</td>\n";
+  print "<td>$DocRevisions{$DocRevID}{DATE}</td>\n";
+  print "<td>$DocRevisions{$DocRevID}{SECURITY}</td>\n";
   print "</tr>\n";
 }
 print "</table>\n";

@@ -51,21 +51,27 @@ sub GetSecurities {
 
 sub GetAllDocuments {
   my ($DocumentID);
-  my $document_list  = $dbh->prepare("select DocumentID from Document");
-  my $max_version    = $dbh->prepare("select MAX(VersionNumber) from
-                                      DocumentRevision where DocumentID=?");
+  my $document_list  = $dbh->prepare(
+     "select DocumentID,RequesterID,RequestDate,DocumentType,TimeStamp ".
+     "from Document");
+  my $max_version    = $dbh->prepare("select MAX(VersionNumber) from ".
+                                     "DocumentRevision where DocumentID=?");
   $document_list -> execute;
-  $document_list -> bind_columns(undef, \($DocumentID));
-  %documents = ();
+  $document_list -> bind_columns(undef, \($DocumentID,$RequesterID,$RequestDate,$DocumentType,$TimeStamp));
+  %Documents = ();
   @documents = ();
   while ($document_list -> fetch) {
-    $documents{$DocumentID}{DOCID} = $DocumentID;
+    $Documents{$DocumentID}{DOCID} = $DocumentID;
+    $Documents{$DocumentID}{REQUESTOR} = $RequesterID;
+    $Documents{$DocumentID}{DATE} = $RequestDate;
+    $Documents{$DocumentID}{TYPE} = $DocumentType;
+    $Documents{$DocumentID}{TIMESTAMP} = $TimeStamp;
     push @documents,$DocumentID;
   }
-  
+  my $document;
   foreach $document (@documents) {
     $max_version -> execute($document);
-    ($documents{$document}{NVER}) = $max_version -> fetchrow_array;
+    ($Documents{$document}{NVER}) = $max_version -> fetchrow_array;
   }
 };
 
@@ -76,10 +82,10 @@ sub FetchDocRevision {
 
   my ($documentID,$versionNumber) = @_;
   my $revision_list = $dbh->prepare(
-    "select DocRevID,SubmitterID,DocumentTitle,PublicationInfo,VersionNumber,
-            Abstract,RevisionDate,Security,TimeStamp
-     from DocumentRevision 
-     where DocumentID=? and VersionNumber=?");
+    "select DocRevID,SubmitterID,DocumentTitle,PublicationInfo,VersionNumber,".
+           "Abstract,RevisionDate,Security,TimeStamp ".
+    "from DocumentRevision ".
+    "where DocumentID=? and VersionNumber=?");
   if ($DocRevIDs{$documentID}{$versionNumber}) {
     return $DocRevIDs{$documentID}{$versionNumber};
   }
@@ -90,6 +96,8 @@ sub FetchDocRevision {
   $DocRevIDs{$documentID}{$versionNumber} = $DocRevID;
   $DocRevisions{$DocRevID}{TITLE}    = $DocumentTitle;
   $DocRevisions{$DocRevID}{ABSTRACT} = $Abstract;
+  $DocRevisions{$DocRevID}{DATE}     = $RevisionDate;
+  $DocRevisions{$DocRevID}{SECURITY} = $Security;
   return $DocRevID;
 }
 
@@ -100,8 +108,8 @@ sub FetchDocFiles {
 
   my ($DocRevID) = @_;
   my $file_list = $dbh->prepare(
-    "select DocFileID,FileName,Date,RootFile,TimeStamp
-     from DocumentFile where DocRevID=?");
+    "select DocFileID,FileName,Date,RootFile,TimeStamp ".
+    "from DocumentFile where DocRevID=?");
   if ($Files{$DocRevID}) {
     return $Files{$DocRevID};
   }
