@@ -48,7 +48,7 @@ sub PrintRevisionSignoffInfo($) { # FIXME: Handle more complicated topologies?
   if (@RootSignoffIDs) {
     print "<div id=\"Signoffs\">\n";
     print "<dl>\n";
-    print "<dt><b>Signoffs:</b><br>\n";
+    print "<dt>Signoffs:</dt>\n";
     print "<ul>\n";
     foreach my $RootSignoffID (@RootSignoffIDs) {
       &PrintSignoffInfo($RootSignoffID);

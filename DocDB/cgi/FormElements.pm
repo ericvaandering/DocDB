@@ -477,7 +477,7 @@ sub AddFilesButton {
   print $query -> startform('POST',$AddFilesForm);
   print $query -> hidden(-name => 'docid',   -default => $DocumentID);
   print $query -> hidden(-name => 'version', -default => $Version);
-  print $query -> submit (-value => "Add Files to Document");
+  print $query -> submit (-value => "Add Files");
   print $query -> endform;
 }
 

@@ -17,14 +17,14 @@ sub DocDBHeader {
   print "<head>\n";
   print "<title>$title</title>\n";
   
-  print "<link rel=\"stylesheet\" href=\"$CSSDirectory/DocDB.css\" type=\"text/css\">\n";
+  print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB.css\" type=\"text/css\">\n";
 
   &ProjectHeader($Title,$PageTitle,$Search); 
   
-  if (-e "$CSSDirectory/$Project"."DocDB.css") {
-    print "<link rel=\"stylesheet\" href=\"$CSSDirectory/$Project"."DocDB.css\" type=\"text/css\">\n";
+  if (-e "$CSSDirectory/$ShortProject"."DocDB.css") {
+    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB.css\" type=\"text/css\">\n";
   }
-  print "</head>\n";
+  print "</head class=$CSSDirectory>\n";
 
   if ($Search) {
     print "<body onload=\"selectProduct(document.forms[\'queryform\']);\">\n";
