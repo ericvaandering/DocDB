@@ -56,11 +56,11 @@ sub MinorTopicLink ($;$) {
     @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
   }  
   
-  if ($ConferenceID && @MeetingOrderIDs) {
-    $URL = "$DisplayMeeting?conferenceid=$ConferenceID";
-  } else {
+#CRIPPLE   if ($ConferenceID && @MeetingOrderIDs) {
+#CRIPPLE     $URL = "$DisplayMeeting?conferenceid=$ConferenceID";
+#CRIPPLE   } else {
     $URL = "$ListByTopic?topicid=$TopicID";
-  }  
+#CRIPPLE   }  
     
   $link = "<a href=\"$URL\" title=\"$MinorTopics{$TopicID}{LONG}\">";
   if ($mode eq "short") {

@@ -92,7 +92,7 @@ sub EndDatePullDown {
   my ($sec,$min,$hour,$day,$mon,$year);
   
   if ($DefaultStartDate) {
-    ($year,$mon,$day) = split /-/,$DefaultStartDate;
+    ($year,$mon,$day) = split /-/,$DefaultEndDate;
     --$mon;
   } else {
     ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
@@ -349,7 +349,7 @@ sub RequesterSelect { # Scrolling selectable list for requesting author
   my @ActiveIDs = ();
   foreach my $ID (@AuthorIDs) {
     if ($Authors{$ID}{ACTIVE}) {
-      $AuthorLabels{$ID} = $Authors{$ID}{FULLNAME};
+      $AuthorLabels{$ID} = $Authors{$ID}{Formal};
       push @ActiveIDs,$ID; 
     } 
   }
@@ -375,7 +375,7 @@ sub AuthorSelect { # Scrolling selectable list for authors
   my @ActiveIDs = ();
   foreach my $ID (@AuthorIDs) {
     if ($Authors{$ID}{ACTIVE}) {
-      $AuthorLabels{$ID} = $Authors{$ID}{FULLNAME};
+      $AuthorLabels{$ID} = $Authors{$ID}{Formal};
       push @ActiveIDs,$ID; 
     } 
   }  

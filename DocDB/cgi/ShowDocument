@@ -46,7 +46,7 @@ if (defined $Version && defined $AsOf) {
 my $DocRevID;
 if (defined $Version) {
   if ($Version eq "") { # Still get this from form with blank version
-    $Version = $Documents{$DocumentID}{NVersion};
+    $Version = $Documents{$DocumentID}{NVersions};
   }
   $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 } elsif (defined $AsOf) {

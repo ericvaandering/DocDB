@@ -17,6 +17,7 @@ require "DocDBGlobals.pm";
 require "TopicSQL.pm";
 require "DocumentSQL.pm";
 require "RevisionSQL.pm";
+require "NotificationSQL.pm";
 require "MailNotification.pm";
 require "Sorts.pm";
 
@@ -166,8 +167,7 @@ foreach $EmailUserID (@EmailUserIDs) {
     }
     foreach my $DocumentID (@DocumentIDs) {
       &FetchDocument($DocumentID);
-      my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVER});
-
+      my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVersions});
 
       &RevisionMailBody($DocRevID);       # Write the body
       print $Mailer "\n","-" x 72,"\n\n";  # Write a divider

@@ -433,31 +433,16 @@ $MeetingDefaultPreamble     = $Conferences{$ConferenceID}{Preamble};
 $MeetingDefaultEpilogue     = $Conferences{$ConferenceID}{Epilogue};
 $MeetingDefaultShowAllTalks = $Conferences{$ConferenceID}{ShowAllTalks};
 $DefaultStartDate           = $Conferences{$ConferenceID}{StartDate};
+$DefaultEndDate             = $Conferences{$ConferenceID}{EndDate};
 
 print "<tr valign=top>\n";
-print "<td>\n"; &MajorGatheringSelect; print "</td>\n";
-print "<td>\n";
- print "<table>\n";
- print "<tr valign=top>\n";
- print "<td width=10>Only select a Major Topic and fill in the descriptions if
+ print "<td width=10 colspan=2>Only select a Major Topic and fill in the short description if
  you want to make a new topic.\n";
  print "<a ";
  &HelpLink("meetingtopic");
  print "Click for an explanation.</a>\n";
  print "</td>\n";
- print "</tr>\n";
- print "<tr valign=top>\n";
- print "<td>\n"; &LongDescriptionBox;      print "</td>\n";
- print "</tr>\n";
- print "<tr valign=top>\n";
- print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
- print "</tr>\n";
- print "<tr valign=top>\n";
- print "<td>\n"; &ConferenceShowAllTalks;      print "</td>\n";
- print "</tr>\n";
- print "</table>\n";
-print "</td>\n";
-print "<td>\n";
+print "<td rowspan=2 valign=top>\n";
  print "<table>\n";
 
  print "<tr valign=top>\n";
@@ -476,6 +461,22 @@ print "<td>\n";
  print "<td>\n"; &EndDatePullDown;   print "</td>\n";
  print "</tr>\n";
 
+ print "</table>\n";
+print "</td>\n";
+print "</tr>\n";
+print "<tr>\n";
+print "<td>\n"; &MajorGatheringSelect; print "</td>\n";
+print "<td valign=top>\n";
+ print "<table>\n";
+ print "<tr valign=top>\n";
+ print "<td>\n"; &LongDescriptionBox;     print "</td>\n";
+ print "</tr>\n";
+ print "<tr valign=top>\n";
+ print "<td>\n"; &ShortDescriptionBox;    print "</td>\n";
+ print "</tr>\n";
+ print "<tr valign=top>\n";
+ print "<td>\n"; &ConferenceShowAllTalks; print "</td>\n";
+ print "</tr>\n";
  print "</table>\n";
 print "</td>\n";
 print "</tr>\n";

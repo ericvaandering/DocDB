@@ -124,17 +124,17 @@ print "</td>";
 print "</tr>\n";
 
 # All Meetings
-print "<tr>\n";
-print "<td>\n";
-if ($Public) {
-  print "&nbsp;\n";
-} else {
-  print "<ul>\n";
-  print "<li> from <a href=\"$ListAllMeetings\">all meetings</a>\n";
-  print "</ul>\n";
-}
-print "</td>";
-print "</tr>";
+#CRIPPLE print "<tr>\n";
+#CRIPPLE print "<td>\n";
+#CRIPPLE if ($Public) {
+#CRIPPLE   print "&nbsp;\n";
+#CRIPPLE } else {
+#CRIPPLE   print "<ul>\n";
+#CRIPPLE   print "<li> from <a href=\"$ListAllMeetings\">all meetings</a>\n";
+#CRIPPLE   print "</ul>\n";
+#CRIPPLE }
+#CRIPPLE print "</td>";
+#CRIPPLE print "</tr>";
 
 # Old number 
 
