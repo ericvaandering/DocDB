@@ -226,12 +226,15 @@ sub PrintAgenda {
   my ($MeetingID) = @_; 
   
   my $agenda_find = $dbh -> prepare(
-    "select MAX(DocRevID) from DocumentRevision ".
-    "where lower(DocumentTitle) like lower(\"agenda%\")"); 
+    "select MAX(DocumentRevision.DocRevID) from DocumentRevision,RevisionTopic ".
+    "where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
+     "and lower(DocumentRevision.DocumentTitle) like lower(\"agenda%\") ".
+     "and RevisionTopic.MinorTopicID=32"); 
   
   $agenda_find -> execute();
   my ($DocRevID) = $agenda_find -> fetchrow_array;
   if ($DocRevID) {
+    &FetchDocRevisionByID($DocRevID); 
     my $Files_ref  = &FetchDocFiles($DocRevID);                                                                                             
 
     my $FirstFile = shift @{$Files_ref};
@@ -253,12 +256,16 @@ sub PrintFile {
   
   my $FileName      = $Directory.$DocFiles{$FileID}{NAME};
     
-  open FILE,$FileName;
-  my @FileLines = <FILE>;
-  close FILE;
-  
-  print "<pre>\n";
-  print @FileLines;
-  print "</pre>\n";
-  
+  if (grep /text/,`file $FileName`) {
+    open FILE,$FileName;
+    my @FileLines = <FILE>;
+    close FILE;
+
+    print "<pre>\n";
+    print @FileLines;
+    print "</pre>\n";
+  } else {
+    print "<b>Non-text file</b>\n";
+  }  
+    
 }
