@@ -42,11 +42,15 @@ sub MinorTopicLink ($;$) {
   require "TopicSQL.pm";
   require "MeetingSQL.pm";
   
-  my $URL,$link;
+  my $URL,$link,@MeetingOrderIDs;
+
   &FetchMinorTopic($TopicID);
   my $ConferenceID = &FetchConferenceByTopicID($TopicID);
-  
   if ($ConferenceID) {
+    @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
+  }  
+  
+  if ($ConferenceID && @MeetingOrderIDs) {
     $URL = "$DisplayMeeting?conferenceid=$ConferenceID";
   } else {
     $URL = "$ListByTopic?topicid=$TopicID";

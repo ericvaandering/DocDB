@@ -138,4 +138,23 @@ sub GetAllRevisions {
   }
 }
 
+sub FetchRevisionsByMinorTopic {
+  my ($MinorTopicID) = @_;
+  
+  my $DocRevID;
+  my @DocRevIDs = ();
+  
+  my $RevisionList = $dbh -> prepare("select DocRevID from RevisionTopic where MinorTopicID=?"); 
+ 
+  $RevisionList -> execute($MinorTopicID);
+  $RevisionList -> bind_columns(undef, \($DocRevID));
+
+  while ($RevisionList -> fetch) {
+    &FetchDocRevisionByID($DocRevID);
+    if ($DocRevisions{$DocRevID}{OBSOLETE}) {next;}
+    push @DocRevIDs,$DocRevID; 
+  }
+  return @DocRevIDs;
+}
+
 1;

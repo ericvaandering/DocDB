@@ -10,6 +10,9 @@
 use CGI;
 use DBI;
 
+require "Debug.pm";
+
+
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
@@ -100,7 +103,66 @@ if ($SessionID) {
     print "</table></center><hr width=95%>\n";
   }
   
-  # FIXME: If a topic-based meeting, display talks not associated with sessions  
+# If a topic-based meeting, display talks not associated with sessions  
+
+  if ($params{conferenceid} && $Conferences{$ConferenceID}{Minor}) {
+    require "RevisionSQL.pm";
+    require "DocumentSQL.pm";
+    
+    my $MinorTopicID = $Conferences{$ConferenceID}{Minor};
+    my @DocRevIDs = &FetchRevisionsByMinorTopic($MinorTopicID);
+    my %DocumentIDs = ();
+    foreach my $DocRevID (@DocRevIDs) {
+      $DocumentIDs{$DocRevisions{$DocRevID}{DOCID}} = 1;
+    }
+    
+    # Refetch all talks
+    
+    my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
+    foreach $MeetingOrderID (@MeetingOrderIDs) {
+      my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
+      if ($SessionID) {
+        &FetchSessionByID($SessionID);
+        &FetchSessionTalksBySessionID($SessionID);
+      }
+    }   
+
+    # Flag talks which are associated with a session
+
+    foreach my $SessionTalkID (keys %SessionTalks) {
+      my $SessionID = $SessionTalks{$SessionTalkID}{SessionID};
+      if ($Sessions{$SessionID}{ConferenceID} == $ConferenceID) {
+        if ($SessionTalks{$SessionTalkID}{DocumentID}) {
+          $DocumentIDs{$SessionTalks{$SessionTalkID}{DocumentID}} = 0;
+        }
+      }
+    } 
+    
+    # Find which ones aren't
+    
+    my @UnusedDocIDs = ();
+    foreach my $DocumentID (keys %DocumentIDs) {
+      if ($DocumentIDs{$DocumentID}) {
+        push @UnusedDocIDs,$DocumentID;
+      }  
+    }
+    
+    # Print out info for un-used documents
+    if (@UnusedDocIDs) {
+      print "<center>\n";
+      print "<b>Other talks for this meeting:</b>\n";
+      print "<table cellpadding=3>\n";
+      &DocumentSummary(0,"meeting");
+      foreach my $DocumentID (@UnusedDocIDs) {
+        unless ($DocumentID) {next;}
+        my $Version = &LastAccess($DocumentID);
+        if ($Version == -1) {next;}
+        &DocumentSummary($DocumentID,"meeting",$Version);
+        print "</table></center><hr width=95%>\n";
+      }
+    }
+  }
+  
   &PrintMeetingEpilogue($ConferenceID);
 } else {
   #Complain that user didn't specify either

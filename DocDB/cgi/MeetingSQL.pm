@@ -216,8 +216,8 @@ sub DeleteSessionSeparator ($) {
   my $SessionSeparatorDelete = $dbh -> prepare("delete from SessionSeparator where SessionSeparatorID=?");
   my $MeetingOrderDelete     = $dbh -> prepare("delete from MeetingOrder where SessionSeparatorID=?");
   
-  $SessionDelete      -> execute($SessionSeparatorID);
-  $MeetingOrderDelete -> execute($SessionSeparatorID);
+  $SessionSeparatorDelete -> execute($SessionSeparatorID);
+  $MeetingOrderDelete     -> execute($SessionSeparatorID);
 }
 
 1;

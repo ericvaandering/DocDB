@@ -105,6 +105,17 @@ if ($Mode eq "create") {
 
 my $MinorTopicID;
 
+my $TopicsCreated     = 0;
+my $MeetingsCreated   = 0;
+my $SessionsCreated   = 0;
+my $SeparatorsCreated = 0;
+my $TopicsUpdated     = 0;
+my $MeetingsUpdated   = 0;
+my $SessionsUpdated   = 0;
+my $SeparatorsUpdated = 0;
+my $SessionsDeleted   = 0;
+my $SeparatorsDeleted = 0;
+
 if ($ConferenceID) {
   require "MeetingSQL.pm";
                             &FetchConferenceByConferenceID($ConferenceID);
@@ -123,12 +134,14 @@ if ($Mode eq "create" || $Mode eq "modify") {
       "values (0,?,?,?)");
     $TopicInsert -> execute($MajorTopic,$Short,$Long);
     $MinorTopicID = $TopicInsert -> {mysql_insertid}; # Works with MySQL only
+    ++$TopicsCreated;
   } elsif ($MajorTopic && $Mode eq "modify") {
     my $TopicUpdate = $dbh -> prepare(
       "update MinorTopic set ".
       "MajorTopicID=?,ShortDescription=?,LongDescription=? ".
       "where MinorTopicID=?");
     $TopicUpdate -> execute($MajorTopic,$Short,$Long,$MinorTopicID);  
+    ++$TopicsUpdated;
   }
   unless ($MinorTopicID) {
     $MinorTopicID = 0;
@@ -143,6 +156,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
                                  $StartDate,$EndDate,$MeetPreamble,
                                  $MeetEpilogue,$Long); 
     $ConferenceID = $ConferenceInsert -> {mysql_insertid}; # Works with MySQL only
+    ++$MeetingsCreated;
   } elsif ($Mode eq "modify") {
     my $ConferenceUpdate = $dbh->prepare(
      "update Conference set ".
@@ -152,6 +166,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
     $ConferenceUpdate -> execute($MinorTopicID,$Location,$URL,$ShowAllTalks,
                                  $StartDate,$EndDate,$MeetPreamble,
                                  $MeetEpilogue,$Long,$ConferenceID); 
+    ++$MeetingsUpdated;
   }
 
 # Repack check boxes into hashes
@@ -183,8 +198,6 @@ if ($Mode eq "create" || $Mode eq "modify") {
   
 # Loop over sessions and insert
   
-  my $SessionsUpdated    = 0;
-
   foreach my $SessionOrder (@SessionOrders) {
     my $SessionYear        = shift @SessionYears         ;
     my $SessionMonth       = shift @SessionMonths        ;
@@ -203,7 +216,6 @@ if ($Mode eq "create" || $Mode eq "modify") {
     # Key on MeetingOrderID to see if we are going to insert or update.	
     if (grep /n/,$MeetingOrderID) {
       if ($SessionTitle || $SessionDescription) {
-	++$SessionsUpdated;
 	if ($SessionSeparatorFlags{$MeetingOrderID}) {
           # Create a new separator
           my $SessionSeparatorInsert = $dbh -> prepare(
@@ -212,6 +224,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
            "values (0,?,?,?,?,?)");
           $SessionSeparatorInsert -> execute($ConferenceID,$SessionDate,$SessionLocation,$SessionTitle,$SessionDescription);
           $SessionSeparatorID = $SessionSeparatorInsert -> {mysql_insertid}; # Works with MySQL only
+          ++$SeparatorsCreated;
 	} else {
           # Create a new session
           my $SessionInsert = $dbh -> prepare(
@@ -220,6 +233,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
            "values (0,?,?,?,?,?)");
           $SessionInsert          -> execute($ConferenceID,$SessionDate,$SessionLocation,$SessionTitle,$SessionDescription);
           $SessionID = $SessionInsert -> {mysql_insertid}; # Works with MySQL only
+          ++$SessionsCreated;
 	}
         # Insert the order of the session or separator
         my $MeetingOrderInsert = $dbh -> prepare(
@@ -237,24 +251,26 @@ if ($Mode eq "create" || $Mode eq "modify") {
       if ($SessionDeleteFlags{$MeetingOrderID}) { # Delete session or separator
 	if ($SessionSeparatorID) {
           &DeleteSessionSeparator($SessionSeparatorID);
+          ++$SeparatorsDeleted;
 	} elsif ($SessionID) {
           &DeleteSession($SessionID);
+          ++$SessionsDeleted;
 	}
       } elsif ($SessionTitle || $SessionDescription) {
-	++$SessionsUpdated;
-	
 	if ($SessionSeparatorID) {
           my $SessionSeparatorUpdate = $dbh -> prepare(
            "update SessionSeparator set ".
            "StartTime=?, Location=?, Title=?, Description=? ". 
            "where SessionSeparatorID=?");
           $SessionSeparatorUpdate -> execute($SessionDate,$SessionLocation,$SessionTitle,$SessionDescription,$SessionSeparatorID);
+	  ++$SeparatorsUpdated;
 	} else {
           my $SessionUpdate = $dbh -> prepare(
            "update Session set ".
            "StartTime=?, Location=?, Title=?, Description=? ". 
            "where SessionID=?");
           $SessionUpdate          -> execute($SessionDate,$SessionLocation,$SessionTitle,$SessionDescription,$SessionID);
+	  ++$SessionsUpdated;
 	}
         my $MeetingOrderUpdate = $dbh -> prepare(
          "update MeetingOrder set SessionOrder=? where MeetingOrderID=?");
@@ -264,7 +280,8 @@ if ($Mode eq "create" || $Mode eq "modify") {
       }  
     }  
   }
-  unless ($SessionsUpdated) {
+  unless ($SessionsCreated   || $SessionsUpdated || 
+          $SeparatorsCreated || $SeparatorsUpdated) {
     push @WarnStack,$Msg_MeetNoSessions; 
   }
 }
@@ -273,6 +290,70 @@ if ($Mode eq "create" || $Mode eq "modify") {
 &EndPage(@ErrorStack);
 
 # Print out forms with sessions
+
+if ($SessionsCreated   || $SessionsUpdated   || $SessionsDeleted   || 
+    $SeparatorsCreated || $SeparatorsUpdated || $SeparatorsDeleted ||
+    $MeetingsCreated   || $MeetingsUpdated) {
+  print "<dl>\n";
+  print "<dt><b>This meeting has been modified:</b>\n";
+  if ($MeetingsCreated) {
+    print "<dd>New meeting created";
+  }
+  if ($MeetingsUpdated) {
+    print "<dd>Meeting modified";
+  }
+  if ($SessionsCreated   || $SessionsUpdated   || $SessionsDeleted) {
+    print "<dd>";
+    my @Numbers = ();
+    my @Actions = ();
+    if ($SessionsCreated) {
+      push @Numbers,$SessionsCreated;
+      push @Actions,"created";
+    }  
+    if ($SessionsUpdated) {
+      push @Numbers,$SessionsUpdated;
+      push @Actions,"modified";
+    }  
+    if ($SessionsDeleted) {
+      push @Numbers,$SessionsDeleted;
+      push @Actions,"deleted";
+    } 
+    my $Number = shift @Numbers;
+    my $Action = shift @Actions;
+    print "$Number session(s) $Action";
+    foreach $Action (@Actions) {
+      my $Number = shift @Numbers;
+      print ", $Number $Action";
+    }  
+  }  
+  if ($SeparatorsCreated   || $SeparatorsUpdated   || $SeparatorsDeleted) {
+    print "<dd>";
+    my @Numbers = ();
+    my @Actions = ();
+    if ($SeparatorsCreated) {
+      push @Numbers,$SeparatorsCreated;
+      push @Actions,"created";
+    }  
+    if ($SeparatorsUpdated) {
+      push @Numbers,$SeparatorsUpdated;
+      push @Actions,"modified";
+    }  
+    if ($SeparatorsDeleted) {
+      push @Numbers,$SeparatorsDeleted;
+      push @Actions,"deleted";
+    } 
+    my $Number = shift @Numbers;
+    my $Action = shift @Actions;
+    print "$Number break(s) $Action";
+    foreach $Action (@Actions) {
+      my $Number = shift @Numbers;
+      print ", $Number $Action";
+    }  
+  }  
+  print "</dl>\n";
+  print "You can make more modifications, add or <b>Modify Talks</b> or <b><a href=\"$DisplayMeeting?conferenceid=$ConferenceID\">Display
+         the Meeting</a></b>\n";
+}    
 
 print $query -> start_multipart_form('POST',"$MeetingModify");
 $query -> param('mode',$SetMode);
