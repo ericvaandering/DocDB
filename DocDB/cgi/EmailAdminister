@@ -139,7 +139,7 @@ if      ($Action eq "Delete") { # Delete user
        $UserUpdate -> execute($EmailUserID);
     print "<b>The user is now verified.</b><p>\n";
   }
-  foreach my $UserGroupID (@UserGroupIDs) {
+  foreach my $UsersGroupID (@UsersGroupIDs) {
     my $UsersGroupUpdate = $dbh -> prepare("insert into UsersGroup UsersGroupID,EmailUserID,GroupID ".
                                            " values (0,?,?)");
        $UsersGroupUpdate -> execute($EmailUserID,$UserGroupID); 
