@@ -21,10 +21,11 @@
 <b>These are the frequently asked questions about the Document Database (or at
 least the ones we feel should be asked frequently).</b><p>
 
-<ul>
 
-<a name="authorentry">
-<li><b>Why can't I just type in the name of an author on a document?</b><br>
+<dl>
+
+<dt><a name="authorentry"><b>Why can't I just type in the name of an author on a document?</b>
+<dd>
 For technical reasons which are described in
 <a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=140">BTeV-doc-140</a>, the names of the authors of a document aren't stored in the
 same place as things like the title of the document. Instead, numbers are stored
@@ -33,11 +34,12 @@ each author of a document must be in the master list of authors <b>before</b>
 you can assign them to have written a document. In the future, this master list
 will probably be linked with the People Database. Until then, you can 
 <a href="http://www-btev.fnal.gov/cgi-bin/DocDB/AuthorAddForm">add an
-author</a> yourself. 
+author</a> yourself.<p>
 
-<a name="addstuff"><p>
-<li><b>How do I add a new author? A new topic or subtopic? A new document type.</b>
-<br>To add a new author, you can either send e-mail to 
+ 
+<dt><a name="addstuff"><b>How do I add a new author? A new topic or subtopic? A new document type.</b>
+<dd>
+To add a new author, you can either send e-mail to 
 <A HREF="mailto:btev-docdb@fnal.gov">btev-docdb@fnal.gov</a> or add the person
 yourself with 
 <a href="http://www-btev.fnal.gov/cgi-bin/DocDB/AuthorAddForm">the form</a>.
@@ -51,22 +53,42 @@ have your request denied. Having a new document type or major topic added is
 hard,  since having too many of these is confusing. Be prepared to argue why the
 existing topics or document types don't fit the kind of documents you want to
 add. Having a new subtopic added is a little easier, but if you want to organize
-things below the subtopic level, use <a href="#keywords">keywords</a> instead.
+things below the subtopic level, use <a href="#keywords">keywords</a>
+instead.<p>
 
-<a name="keywords"><p>
-<li><b>What are keywords? How do I use them?</b>
-<br>Keywords are really just a text field you can type stuff in, but to make
+
+
+<dt><a name="version0"><b>Why are there documents with a "Version 0"</b>
+<dd>The 0th version of a document only exists when a document is reserved,
+as opposed to being created new. A reserved document usually means one of two
+things. Either the author intends to create additional versions but wants a
+reference immediately, or the original files from the document have been lost
+before the document was migrated into the database.<p>
+
+<dt><a name="missingdoc"><b>Why are some document #'s missing?</b>
+<dd>Two possible reasons. First, it could have been deleted because of an entry
+error. The information almost certainly exists as another document. Second, the
+document might exist but you don't have priveledges to view it.<p>
+
+<dt><a name="deletedoc"><b>How do I delete a document?</b>
+<dd>This function is not available to regular users. Send an e-mail to 
+<A HREF="mailto:btev-docdb@fnal.gov">btev-docdb@fnal.gov</a> explaining the
+situatoin and they will delete the document for you.<p>
+
+<dt><a name="keywords"><b>What are keywords? How do I use them?</b>
+<dd>Keywords are really just a text field you can type stuff in, but to make
 them useful some conventions have been adopted that you should follow:
-<ol>
+<ul>
 <li>Be consistent. Re-use old keywords. If your subgroup has a defined set of
 keywords, use them.
 <li>Keywords are space seperated. Don't use commas. Multi-word keywords should
 be joined with an underscore or dash. (Again, be consistent).
 <li>Don't use keywords like "pixel." There are topics for that.
-</ol><p>
+</ul><p>
  
 <a name="passwords">
-<li><b>Why do I keep having to type in the password?</b><br>
+<dt><b>Why do I keep having to type in the password?</b>
+<dd>
 First, you should only have to type in the password one extra time for most
 uses. The reason for this is that people other than those in BTeV use the
 database too. Currently, this is just the RTES group.<p>
@@ -83,14 +105,15 @@ Using a web browser that saves passwords, like recent versions of IE, or
 Netscape 6 (which can encrypt the passwords with a master password) takes a lot
 of the headache out of this process.<p>
  
-<a name="passwords">
-<li><b>Can our sub-group use the DocDB to store documents that aren't accessible
-to the rest of the collaboration?</b><br>
+<a name="subgroups">
+<dt><b>Can our sub-group use the DocDB to store documents that aren't accessible
+to the rest of the collaboration?</b>
+<dd>
 Yes. Just ask to have another "group" set up, choose a password, and let the
-DocDB administrators know which accounts you want to allow access to your data.
+DocDB administrators know which accounts you want to allow access to your
+data.<p>
 
-
-</ul>
+</dl>
 
 <p>
 
