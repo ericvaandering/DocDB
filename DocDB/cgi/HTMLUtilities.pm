@@ -57,7 +57,13 @@ sub DocDBHeader {
 }
 
 sub DocDBFooter {
+  require "ResponseElements.pm";
+  
+  &DebugPage("At DocDBFooter");
+  
   my ($WebMasterEmail,$WebMasterName) = @_;
+  
+  
   if (defined &ProjectFooter) {
     &ProjectFooter($WebMasterEmail,$WebMasterName); 
   }

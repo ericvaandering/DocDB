@@ -49,7 +49,7 @@ sub FetchEmailUser($) {
   $EmailUser{$EmailUserID}{EmailUserID}  = $EmailUserID;
   $EmailUser{$EmailUserID}{Username}     = $Username;
   $EmailUser{$EmailUserID}{Password}     = $Password;
-  $EmailUser{$EmailUserID}{Name}         = $Name;
+  $EmailUser{$EmailUserID}{Name}         = $Name; # Construct from first/last 
   $EmailUser{$EmailUserID}{EmailAddress} = $EmailAddress;
   $EmailUser{$EmailUserID}{PreferHTML}   = $PreferHTML;
   $EmailUser{$EmailUserID}{CanSign}      = $CanSign;
