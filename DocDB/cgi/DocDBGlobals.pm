@@ -22,7 +22,7 @@ $AuthUserFile       = $script_root."htpasswd";
 # CGI Scripts
 
 $ProcessDocumentAdd = $cgi_root."ProcessDocumentAdd";
-$DocumentAddForm    = $cgi_root."ProcessDocumentAddForm";
+$DocumentAddForm    = $cgi_root."DocumentAddForm";
 
 # Shell Commands
 

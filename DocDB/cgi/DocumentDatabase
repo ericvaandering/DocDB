@@ -1,0 +1,30 @@
+#! /usr/bin/perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+# 
+#
+
+use CGI;                                                                                      
+require "DocDBGlobals.pm";
+
+$query = new CGI;  # Global for subroutines
+print $query->header;
+print $query->start_html(-title=>"BTeV Document Database Homepage");
+
+# %params = $query -> Vars;  # No parameters (yet) 
+
+print "Welcome to the homepage for the BTeV Document Database. From here you
+       have several options:\n";
+print "<ul>\n";
+print "<li><a href=\"$DocumentAddForm\">Reserve</a> a document number\n"; 
+print "(used if you don't yet have a first draft of your document).\n";
+print "<li><a href=\"$DocumentAddForm?mode=add\">Upload</a> a document you have on your local filesystem\n"; 
+print "(no need to reserve the document).\n";
+print "<li><a href=\"$DocumentAddForm?mode=add&upload=http\">Submit a URL</a>
+for a document you have on the web \n"; 
+print "(no need to reserve the document).\n";
+print "</ul>\n";
+
+print $query->end_html;
+
