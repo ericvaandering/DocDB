@@ -52,69 +52,6 @@ sub PrintDocNumber { # And type
   print "</table>\n";
 }
 
-sub PrintConfInfo {
-  require "TopicSQL.pm";
-  require "MeetingSQL.pm";
-  require "TopicHTML.pm";
-  &SpecialMajorTopics;
-  
-  my (@topicIDs) = @_;
-  foreach $topicID (@topicIDs) {
-    if (&MajorIsConference($MinorTopics{$topicID}{MAJOR})) {
-      &FetchConferenceByTopicID($topicID);
-      my $ConferenceLink = &ConferenceLink($topicID,"long");
-      my $ConferenceID = $ConferenceMinor{$topicID};
-      my $Start = &EuroDate($Conferences{$ConferenceID}{StartDate});
-      my $End   = &EuroDate($Conferences{$ConferenceID}{EndDate});
-      print "<dl>\n";
-      print "<dt><b>Conference Information:</b> \n";
-      print "<dd>Associated with ";
-      print "$ConferenceLink ";
-      print " held from $Start to $End \n";
-      print " in $Conferences{$ConferenceID}{Location}.</dl>\n";
-    }
-  }
-}
-
-sub PrintReferenceInfo ($) {
-  require "MiscSQL.pm";
-  require "ReferenceLinks.pm";
-  
-  my ($DocRevID) = @_;
-  
-  my @ReferenceIDs = &FetchReferencesByRevision($DocRevID);
-  
-  if (@ReferenceIDs) {
-    &GetJournals;
-    print "<dl>\n";
-    print "<dt><b>References:</b> \n";
-    foreach my $ReferenceID (@ReferenceIDs) {
-      $JournalID = $RevisionReferences{$ReferenceID}{JournalID};
-      print "<dd>Published in ";
-      my ($ReferenceLink,$ReferenceText) = &ReferenceLink($ReferenceID);
-      if ($ReferenceLink) {
-        print "<a href=\"$ReferenceLink\">";
-      }  
-      if ($ReferenceText) {
-        print "$ReferenceText";
-      } else {  
-        print "$Journals{$JournalID}{Abbreviation} ";
-        if ($RevisionReferences{$ReferenceID}{Volume}) {
-          print " vol. $RevisionReferences{$ReferenceID}{Volume}";
-        }
-        if ($RevisionReferences{$ReferenceID}{Page}) {
-          print " pg. $RevisionReferences{$ReferenceID}{Page}";
-        }
-      }  
-      if ($ReferenceLink) {
-        print "</a>";
-      }  
-      print ".\n";
-    }
-    print "</dl>\n";
-  }
-}
-
 sub SecurityListByID {
   my (@GroupIDs) = @_;
   

@@ -204,25 +204,11 @@ sub PrintRevisionInfo {
    &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT});
   print "</div>\n";
   
-  print "<div id=\"Keywords\">\n";
-   &PrintKeywords($DocRevisions{$DocRevID}{Keywords});
-  print "</div>\n";
-  
-  print "<div id=\"RevisionNote\">\n";
-   &PrintRevisionNote($DocRevisions{$DocRevID}{Note});
-  print "</div>\n";
-  
-  print "<div id=\"Reference\">\n";
-   &PrintReferenceInfo($DocRevID);
-  print "</div>\n";
-  
-  print "<div id=\"ConfereneInfo\">\n";
-   &PrintConfInfo(@TopicIDs);
-  print "</div>\n";
-  
-  print "<div id=\"PubInfo\">\n";
-   &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
-  print "</div>\n";
+  &PrintKeywords($DocRevisions{$DocRevID}{Keywords});
+  &PrintRevisionNote($DocRevisions{$DocRevID}{Note});
+  &PrintReferenceInfo($DocRevID);
+  &PrintConfInfo(@TopicIDs);
+  &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
   
   if ($UseSignoffs) {
     require "SignoffHTML.pm";
@@ -273,8 +259,9 @@ sub PrintKeywords {
   $Keywords =~ s/\s+$//;
   
   if ($Keywords) {
+    print "<div id=\"Keywords\">\n";
     print "<dl>\n";
-    print "<dt><b>Keywords:</b><br>\n";
+    print "<dt>Keywords:</dt>\n";
     print "<dd>\n";
     my @Keywords = split /\,*\s+/,$Keywords;
     my $Link;
@@ -282,7 +269,8 @@ sub PrintKeywords {
       $Link = &KeywordLink($Keyword);
       print "$Link \n";
     }  
-    print "<br></dl>\n";
+    print "</dd></dl>\n";
+    print "</div>\n";
   }
 }
 
@@ -291,6 +279,7 @@ sub PrintRevisionNote {
 
   my ($RevisionNote) = @_;
   if ($RevisionNote) {
+    print "<div id=\"RevisionNote\">\n";
     $RevisionNote = &URLify($RevisionNote);
     $RevisionNote =~ s/\n\n/<p>/g;
     $RevisionNote =~ s/\n/<br>/g;
@@ -298,7 +287,81 @@ sub PrintRevisionNote {
     print "<dt><b>Notes and Changes:</b><br>\n";
     print "<dd>$RevisionNote<br>\n";
     print "</dl>\n";
+    print "</div>\n";
   }
+}
+
+sub PrintReferenceInfo ($) {
+  require "MiscSQL.pm";
+  require "ReferenceLinks.pm";
+  
+  my ($DocRevID) = @_;
+  
+  my @ReferenceIDs = &FetchReferencesByRevision($DocRevID);
+  
+  if (@ReferenceIDs) {
+    &GetJournals;
+    print "<div id=\"ReferenceInfo\">\n";
+    print "<dl>\n";
+    print "<dt><b>References:</b> \n";
+    foreach my $ReferenceID (@ReferenceIDs) {
+      $JournalID = $RevisionReferences{$ReferenceID}{JournalID};
+      print "<dd>Published in ";
+      my ($ReferenceLink,$ReferenceText) = &ReferenceLink($ReferenceID);
+      if ($ReferenceLink) {
+        print "<a href=\"$ReferenceLink\">";
+      }  
+      if ($ReferenceText) {
+        print "$ReferenceText";
+      } else {  
+        print "$Journals{$JournalID}{Abbreviation} ";
+        if ($RevisionReferences{$ReferenceID}{Volume}) {
+          print " vol. $RevisionReferences{$ReferenceID}{Volume}";
+        }
+        if ($RevisionReferences{$ReferenceID}{Page}) {
+          print " pg. $RevisionReferences{$ReferenceID}{Page}";
+        }
+      }  
+      if ($ReferenceLink) {
+        print "</a>";
+      }  
+      print ".\n";
+    }
+    print "</dl>\n";
+    print "</div>\n";
+  }
+}
+
+sub PrintConfInfo {
+  require "TopicSQL.pm";
+  require "MeetingSQL.pm";
+  require "TopicHTML.pm";
+  &SpecialMajorTopics;
+  
+  my (@topicIDs) = @_;
+  my $HasConference = 0;
+  foreach $topicID (@topicIDs) {
+    if (&MajorIsConference($MinorTopics{$topicID}{MAJOR})) {
+      &FetchConferenceByTopicID($topicID);
+      unless ($HasConference) {
+        print "<div id=\"ConfereneInfo\">\n";
+        $HasConference = 1;
+      }  
+      my $ConferenceLink = &ConferenceLink($topicID,"long");
+      my $ConferenceID = $ConferenceMinor{$topicID};
+      my $Start = &EuroDate($Conferences{$ConferenceID}{StartDate});
+      my $End   = &EuroDate($Conferences{$ConferenceID}{EndDate});
+      print "<dl>\n";
+      print "<dt><b>Conference Information:</b> \n";
+      print "<dd>Associated with ";
+      print "$ConferenceLink ";
+      print " held from $Start to $End \n";
+      print " in $Conferences{$ConferenceID}{Location}.</dl>\n";
+    }
+  }
+  if ($HasConference) {
+    print "</div>";
+  }  
 }
 
 sub PrintPubInfo ($) {
@@ -306,6 +369,7 @@ sub PrintPubInfo ($) {
 
   my ($pubinfo) = @_;
   if ($pubinfo) {
+    print "<div id=\"PubInfo\">\n";
     $pubinfo = &URLify($pubinfo);
     $pubinfo =~ s/\n\n/<p>/g;
     $pubinfo =~ s/\n/<br>/g;
@@ -313,6 +377,7 @@ sub PrintPubInfo ($) {
     print "<dt><b>Publication Information:</b><br>\n";
     print "<dd>$pubinfo<br>\n";
     print "</dl>\n";
+    print "</div>\n";
   }
 }
 
