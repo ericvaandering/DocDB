@@ -338,7 +338,7 @@ sub PrintSession ($) {
 # Sort talks and separators
 
   @SessionOrderIDs = sort SessionOrderIDByOrder @SessionOrderIDs;
-  print "<center><table cellpadding=\"3\" class=\"Alternating\">\n";
+  print "<center><table class=\"Alternating\" id=\"TalkList\">\n";
 
   print "<tr>\n";
   print "<th>Start</th>\n";
@@ -354,7 +354,7 @@ sub PrintSession ($) {
   my $RowClass;
   foreach my $SessionOrderID (@SessionOrderIDs) {
     ++$TalkCounter;
-    if ($SessionOrder % 2) { 
+    if ($TalkCounter % 2) { 
       $RowClass = "Odd";
     } else {
       $RowClass = "Even";
