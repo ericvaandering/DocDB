@@ -301,7 +301,7 @@ sub OtherVersionLinks {
     if ($Version == $CurrentVersion) {next;}
     unless (&CanAccess($DocumentID,$Version)) {next;}
     $link = &DocumentLink($DocumentID,$Version);
-    $date = &EuroDate($DocRevisions{$RevID}{DATE});
+    $date = &EuroDateTime($DocRevisions{$RevID}{DATE});
     print "<li>$link \&nbsp \&nbsp ($date)</li>\n";
   }
   print "</ul>\n";

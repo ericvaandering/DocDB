@@ -34,10 +34,12 @@ if ($upload ne "http" && $upload ne "file") {
   $upload = "file";
 }  
 
-$Archive   = $params{archive};
-$Overdate  = $params{overdate};
+$NumberUploads = $params{numfile};
+$Archive       = $params{archive};
+$Overdate      = $params{overdate};
 
-if ($Archive eq "multi") {$Archive = "single";} # No real difference
+if ($Archive eq "single") {$NumberUploads = 1;}  # Make sure
+if ($Archive eq "multi")  {$Archive = "single";} # No real difference
 if ($Archive ne "archive" && $Archive ne "single") {
   $Archive = "single";
 }  
@@ -47,7 +49,6 @@ if ($topicmode ne "single" && $topicmode ne "multi") {
   $topicmode = "single";
 }  
 
-$NumberUploads = $params{numfile};
 unless ($NumberUploads) {$NumberUploads = 1;}
 
 print $query->header;

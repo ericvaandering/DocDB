@@ -29,16 +29,22 @@ print $query->header;
 
 print $query -> start_multipart_form('POST',"AuthorAdd");
 
-print "<center><table cellpadding=10>\n";
+print "<center><table cellpadding=10 width=75%>\n";
 
 print "<tr>\n";
 print "<td colspan=3>\n";
-print "<h4>You are about to add a topic to the BTeV document database. This
-function is restricted to administrators only.<br>
-If you are not an administrator,
-please stop now and ask an administrator to do this for you.<br>\n";
+print "<b>You are about to add a topic to the BTeV document database.</b>
+Ordinarily, this function is restricted to administrators only. During the
+transition period, everyone is allowed to add authors. <b>Please be careful</b>
+and make sure to put the authors first name, last name, and middle initials
+(with periods) in the right place. If you make a mistake, <b><font color=red>DO
+NOT</font></b> enter the author again. Contact an  <a
+href=\"mailto:btev-docdb\@fnal.gov\">adminstrator</a> and explain the
+problem.<br>\n";
+#If you are not an administrator,
+#please stop now and ask an administrator to do this for you.<br>
 
-print "Click on any of the headings for help.</h4>\n"; print "</td>\n";
+print "<b>Click on any of the headings for help.</b>\n"; print "</td>\n";
 print "</tr><tr valign=top>\n";
 print "<td>\n"; &InstitutionSelect;     print "</td>\n";
 print "<td>\n"; &NameEntryBox;     print "</td>\n";

@@ -28,47 +28,71 @@ lost!</b></font></big></center>\n";
 print "<p><b>Find the information you want in the database:</b>\n";
 print "<ul>\n";
 print "<li>Search documents (still coming)"; 
-print $query -> startform('POST',$ShowDocument);
-print "<li>Show document # "; 
-print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
-print " "; 
-print $query -> submit (-value => "Show");
-print $query -> endform;
 print "<p>\n";
-print "<li><a href=\"$ListDocuments\">List</a> all documents\n"; 
+print "<li>"; 
+print $query -> startform('POST',$ShowDocument);
+print $query -> submit (-value => "Show");
+print " document # "; 
+print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
+print $query -> endform;
+
+print "<li>"; 
+print $query -> startform('POST',$ListDocuments);
+print $query -> submit (-value => "List all");
+print " documents"; 
+print $query -> endform;
 
 print "</ul>\n";
 
-print "<p><b>Short cuts for putting information into the database:</b>\n";
+print "<p><b>Short cuts for putting information into the database: ";
+print "(<a "; &HelpLink("modifytypes"); 
+print "Help!</a>)</b>\n";
 print "<ul>\n";
 
-print "<li><a href=\"$DocumentAddForm\">Reserve</a> a document number\n"; 
+print "<li>"; 
+print $query -> startform('POST',$DocumentAddForm);
+print $query -> submit (-value => "Reserve");
+print " a document number\n"; 
 print "(if you don't yet have a draft of your document).\n";
-print "<p>\n";
-
-print "<li><a href=\"$DocumentAddForm?mode=add\">Upload</a> a document you have on your local filesystem\n"; 
-print "(no need to reserve the document).\n";
-print "<p>\n";
-
-print "<li><a href=\"$DocumentAddForm?mode=add&upload=http\">Submit a URL</a>
-for a document you have on the web \n"; 
-print "(no need to reserve the document).\n";
-print "<p>\n";
-
-print $query -> start_multipart_form('POST',$DocumentAddForm);
-print "<li>Update document # "; 
-print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
-print " "; 
-print $query -> hidden(-name => 'mode',    -default => 'update');
-print $query -> submit (-value => "Update");
+print $query -> hidden(-name => 'mode',    -default => 'reserve');
 print $query -> endform;
 
-print $query -> start_multipart_form('POST',$DocumentAddForm);
-print "<li>Update DB for document # "; 
+print "<li>"; 
+print $query -> startform('POST',$DocumentAddForm);
+print $query -> submit (-value => "Create a new");
+print " document from a file on your <b><a "; 
+&HelpLink("uploadmethod"); 
+print "local computer</a></b> \n"; 
+print "(no need to reserve the document).\n";
+print $query -> hidden(-name => 'mode',    -default => 'add');
+print $query -> hidden(-name => 'upload',    -default => 'file');
+print $query -> endform;
+
+print "<li>"; 
+print $query -> startform('POST',$DocumentAddForm);
+print $query -> submit (-value => "Create a new");
+print " document from a file on the <b><a "; 
+&HelpLink("uploadmethod"); 
+print "web</a></b> \n"; 
+print "(no need to reserve the document).\n";
+print $query -> hidden(-name => 'mode',    -default => 'add');
+print $query -> hidden(-name => 'upload',    -default => 'http');
+print $query -> endform;
+
+print "<li>"; 
+print $query -> startform('POST',$DocumentAddForm);
+print $query -> submit (-value => "Update");
+print " document # "; 
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
-print " "; 
+print $query -> hidden(-name => 'mode',    -default => 'update');
+print $query -> endform;
+
+print "<li>"; 
+print $query -> startform('POST',$DocumentAddForm);
+print $query -> submit (-value => "Update Database");
+print " for document # "; 
+print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 print $query -> hidden(-name => 'mode',    -default => 'updatedb');
-print $query -> submit (-value => "Update DB");
 print $query -> endform;
 print "</ul>\n";
 
@@ -150,13 +174,13 @@ print $query -> submit (-value => "Give me my customized form");
 print "</table>\n";
 print $query -> endform;
 
-if ($remote_user eq "docdbadm") {
-  print "<p><b>Administrative functions:</b><ul>\n";
+print "<p><b>Administrative functions:</b><ul>\n";
+if ($remote_user eq $Administrator) {
   print "<li>Add a <a href=\"$TopicAddForm\">topic</a>\n";
-  print "<li>Add an <a href=\"$AuthorAddForm\">author</a>\n";
-  print "<li>Eric's <a href=\"http://www.hep.vanderbilt.edu/~vondo/btev-private/DocDB-ToDo.html\">To do list</a> for the database \n";
-  print "</ul>\n";
 }
+print "<li>Add an <a href=\"$AuthorAddForm\">author</a>\n";
+print "<li>Eric's <a href=\"http://www.hep.vanderbilt.edu/~vondo/btev-private/DocDB-ToDo.html\">To do list</a> for the database \n";
+print "</ul>\n";
 
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
 

@@ -26,7 +26,7 @@ $AuthUserFile       = $script_root."htpasswd";
 $ProcessDocumentAdd = $cgi_root."ProcessDocumentAdd";
 $DocumentAddForm    = $cgi_root."DocumentAddForm";
 $ShowDocument       = $cgi_root."ShowDocument";
-$ListDocuments      = $cgi_root."ShowDocument";
+$ListDocuments      = $cgi_root."ListDocuments";
 
 $TopicAddForm       = $cgi_root."TopicAddForm";
 $AuthorAddForm       = $cgi_root."AuthorAddForm";
@@ -49,13 +49,15 @@ $Unzip  = "/usr/bin/unzip -q ";
                      Jul => 7,  Aug => 8,  Sep => 9,
                      Oct => 10, Nov => 11, Dec => 12);
 
-
+@AbrvMonths = ("Jan","Feb","Mar","Apr","May","Jun",
+               "Jul","Aug","Sep","Oct","Nov","Dec");
 
 # Other Globals
 
 $remote_user = $ENV{REMOTE_USER};
 $DBWebMasterEmail = "btev-docdb\@fnal.gov";
 $DBWebMasterName  = "BTeV Document Database Administrators";
+$Administrator    = "docdbadm";
 
 # Override settings in this file for the test DB 
 # and the publicly accessible version
