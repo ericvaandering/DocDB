@@ -1,4 +1,4 @@
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -178,6 +178,10 @@ sub PrintRevisionInfo {
     print "</div>\n";
   }  
 
+  unless ($Public) {
+    require "NotificationHTML.pm";
+    &DocNotifySignup(-docid => $DocumentID);
+  }
 
   print "</div>\n";  # LeftColumn3Col
 
