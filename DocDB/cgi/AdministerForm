@@ -297,7 +297,7 @@ print "</tr>\n";
 
 print "<tr valign=top>\n";
 print "<td>\n";
- &LongDescriptionBox(-disabled => true -name => 'longdesc');
+ &LongDescriptionBox(-disabled => true, -name => 'longdesc');
 print "</td>\n";
 print "</tr>\n";
 
