@@ -18,13 +18,15 @@
 <!--#include virtual="/includes/end_table.html" --> <!-- Ends the table -->
 <hr>
 
-<h3>Philosophy of the BTeV Document Database</h3>
+<h2>Philosophy of the BTeV Document Database</h2>
+
+<h3>Archive vs. Catalog</h3>
 
 While our previous document database was only a method for cataloging
 documents, the new database goes one step further; it is also a method for
 storing documents in a central location. So, you should never again see a
 broken link while looking for the information you want. This distinction is
-especially important when archive uploads which are discussed later. <p>
+especially important for archive uploads which are discussed later. <p>
 
 While parts of the interface may look complicated, some options can be
 left blank. Omitting a version number will give you the latest version.
@@ -43,6 +45,8 @@ photo-tube is a document. A calculation on the back of an envelope and scanned
 is a document. (And it's probably a "Note," not a "Figure." The document type
 you'll choose later tells what the document <b>is</b> not what format it's
 stored in.)
+
+<h2>Entering or updating a document in the database</h2>
 
 <h3>What do you want to do?</h3>
 
@@ -153,6 +157,54 @@ end the URL with "/"). Currently "https://" (secure upload) does not work, but
 we hope this will change in the near future.
 </ol>
 
+<h3>Filling in the form</h3>
+
+Now that you've decided what you want to do and how you want to get any required
+files from your computer into the document database, you've presumably pressed
+one of the buttons that lets you add information into the database.<p>
+
+You are now presented with an initially daunting form asking for all kinds of
+information about your document. A lot of the fields are required, but some are
+optional. You can click on any <font color="red">red link</font> to get a quick
+help window that tells you what you are being asked for. Instructions for every
+piece of information are not reproduced here, just click on the <font
+color="red">red link</font> if anything is not obvious.<p>
+
+Also, note that lots of things can have more than one selection. For
+instance, your document can have several topics selected. How this is done
+varies by browser. Internet Explorer and Netscape 6 users should hold Ctrl and
+click to make multiple selections. Netscape 4 users should just click.<p>
+
+When <b>reserving</b> a document, you must supply:
+<ul>
+ <li>A title 
+ <li>A requester (who is requesting the document?)
+ <li>A document type (talk, note, etc.)
+</ul>
+
+When <b>adding</b> a new document, you must supply all of the above plus:
+<ul>
+ <li>An abstract
+ <li>Authors (one required, multiples OK)
+ <li>Topics (one required, multiples OK)
+ <li>At least one file 
+</ul> 
+and optionally:
+<ul>
+ <li>A note explaining any publication information
+ <li>A journal reference
+ <li>Security settings (blank is the same as public, multiples OK)
+</ul>
+
+When <b>updating</b> a document, you can change all the information above.
+However, all the forms should be pre-filled for you with the information from
+the previous version. You will have to supply <i>all</i> the files you want to
+be in the new version, though.<p>
+
+Finally, <b>updating the database information</b> about the document is the same
+as updating the document except for two things. First, you can't supply new
+files. Second, a new version number <i>is not</i> created. 
+
 <h3>Other options</h3>
  
 The advanced form provides a few other options that might be useful.  
@@ -163,11 +215,102 @@ You can either select the subtopic(s) for your document from one long list (the
 current default) or from a number of shorter lists split up by topic. 
 
 <p>
+<b>Author Selection: </b>
+You can either select the author(s) for your document from a long list (the
+default) or by typing the author list into a text box. Using the second method,
+each author is checked against the master list and placing the document in the
+database will not proceed until every author you've typed in has a unique match.
+You can type in full first names or just initials, the matching is
+<i>reasonably</i> intelligent. 
+
+<p>
 <b>Overriding the submission date: </b>
 Use this option to set the date and time for a document written in the past.
 Unless you are submitting a document from the old database or one written 
 some time ago, you should probably not select this option. By default, new documents
 are entered with the current date and time.
+
+<h2>Special Cases</h2>
+
+<a name="meeting">
+<h3>Group meeting talks</h3>
+
+A group meeting talk can be entered into the database using the normal entry
+form, just make sure you choose the appropriate meeting date as one of the
+topics for your talk. <p>
+
+However, to simplify the addition of a meeting talk into the database, a  
+<a href="http://www-btev.fnal.gov/cgi-bin/DocDB/DocumentAddForm?special=meeting">simplified
+addition form</a> has been designed. (It's available from the meetings page.)
+This form pre-selects the nearest meeting, the talk type and eliminates the
+choices for publication information and authors. The author is automatically set
+to the requester. If this is too limiting, you'll have to use the regular entry
+form.<p>
+
+On this reduced form, all the information is required (including an abstract of
+some sort). As always, you can click
+on any <font color="red">red link</font> to get a quick help window that tells
+you what you are being asked for. <p>
+
+Since this will be a lot of people's first experience with adding a document
+into the document database, a little explanation is in order.<p>
+
+<b>Title</b> and <b>Abstract</b> should be obvious. One suggestion: it's better
+if you don't hit "Enter" in the abstract box unless you want to break a line or
+paragraph.<p>
+
+<b>File upload boxes:</b> Click "Browse" and use your operating systems file picker to
+select the files (PPT, PS, PDF, etc.) for your talk. You can leave boxes blank
+if you don't have as many files as you are being asked for, but you must fill in
+the first one. You should probably just leave the box marked "Main" checked.
+Finally, you can enter a short description of each file. This is helpful for
+people looking at the talk. A description like "PDF File" will be
+appreciated.<p>
+
+<b>Requester:</b> Find and select the name of the person giving the talk. (This
+is probably you.)<p>
+
+<b>Security:</b> BTeV should be checked and shouldn't be changed unless you
+really want to make your document public.<p>
+
+<b>Topics:</b> The various sub-topic are broken out into groups based on the
+main topic. You should select at least one topic in addition to the meeting
+(which should be pre-selected). You can select an arbitrary number from one or
+more of the boxes. Just click or Ctrl-click to add topics to the list.<p>
+
+That's it, you are done. Hit "Submit Document." If everything goes well, you'll
+get a message saying that and a preview of what your entry looks like in the
+database. If things don't go well, you will get (we hope) helpful messages
+explaining the problem(s).<p>
+
+<a name="conference">
+<h3>Conference Talks and Proceedings</h3>
+
+Conference documents are added just like any other document, except for two
+things. First, you probably need to 
+<a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ConferenceAddForm">add some
+information</a> into the database about your conference. Do this by following
+the link at the bottom of the 
+<a href="http://www-btev.fnal.gov/cgi-bin/DocDB/DocumentDatabase">main page</a>.
+But before you add it, make sure someone else didn't already do it for you. (At
+the bottom of the add form is the list of conferences the database knows
+about).<p>
+
+Second, when adding your document, make sure that one of the topics you select
+is the topic corresponding to your conference. This way your document is
+associated with the right conference.
+
+<a name="reference">
+<h3>Publications in Refereed Journals</h3>
+
+Below the free-form "Publication Information" field is a place to select a
+journal, volume, and page for your document if it is published. If you need a
+journal added, let the database administrators know.
+
+
+
+
+<h2>Final Words</h2>
 
 <h3>Referring to your document</h3>
 
