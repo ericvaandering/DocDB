@@ -19,9 +19,9 @@ sub MakeDirectory { # Makes a directory, safe for existing directories
   my $ver_dir = sprintf "%3.3d/",$version;
   my $new_dir = $file_root.$hun_dir.$sub_dir.$ver_dir;
 
-  mkdir  $file_root.$hun_dir;
-  mkdir  $file_root.$hun_dir.$sub_dir;
-  mkdir  $file_root.$hun_dir.$sub_dir.$ver_dir;
+  mkdir  $file_root.$hun_dir,oct 777; #FIXME something more reasonable
+  mkdir  $file_root.$hun_dir.$sub_dir,oct 777;
+  mkdir  $file_root.$hun_dir.$sub_dir.$ver_dir,oct 777;
 
   return $new_dir; # Returns directory name
 }
