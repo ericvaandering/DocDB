@@ -104,4 +104,47 @@ sub DocumentByRequester {
   $Authors{$adr}{FIRSTNAME} cmp $Authors{$bdr}{FIRSTNAME}
 }
 
+sub DocumentByConferenceDate {
+  require "TopicSQL.pm";
+  
+  my $adr = $DocRevIDs{$a}{$Documents{$a}{NVER}};
+  my $bdr = $DocRevIDs{$b}{$Documents{$b}{NVER}};
+  
+  unless ($FirstConf{$adr}) {
+    my @topics = @{&GetRevisionTopics($adr)};
+    foreach my $ID (@topics) {
+      if ($MinorTopics{$ID}{MAJOR} == $ConferenceMajorID) {
+        $FirstConf{$adr} = $ID;
+        last;
+      }
+    }
+  }      
+
+  unless ($FirstConf{$bdr}) {
+    my @topics = @{&GetRevisionTopics($bdr)};
+    foreach my $ID (@topics) {
+      if ($MinorTopics{$ID}{MAJOR} == $ConferenceMajorID) {
+        $FirstConf{$bdr} = $ID;
+        last;
+      }
+    }
+  }      
+
+  $acid = $FirstConf{$adr};
+  $bcid = $FirstConf{$bdr};
+
+  my $adate = $Conferences{$acid}{STARTDATE}; 
+  my $bdate = $Conferences{$bcid}{STARTDATE}; 
+  ($ayear,$amonth,$aday) = split /\-/,$adate;
+  ($byear,$bmonth,$bday) = split /\-/,$bdate;
+
+#  print "$a $b : $acid $bcid : $ayear $byear :  $amonth  $bmonth : $aday $bday<br>\n";
+
+   $ayear <=> $byear
+          or
+  $amonth <=> $bmonth 
+          or
+    $aday <=> $bday
+}
+
 1;

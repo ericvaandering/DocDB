@@ -75,7 +75,10 @@ unless ($Mode eq "date" or $Mode eq "meeting" or $Mode eq "conference") {
 print $query->header;
 
 if ($Mode eq "conference") {
+  require "MiscSQL.pm";
+  
   &BTeVHeader("Conference Documents");
+  &GetConferences;
   print "<center><h4>\n";
   if ($TopicID) { # This is just one conference, so we can print more info
     require "MiscSQL.pm";
@@ -156,10 +159,15 @@ foreach my $DocumentID (@DocumentIDs) { # For shorter lists
 
 ### Sort
 
-if ($Mode eq "meeting") {
-  @DocumentIDs = sort DocumentByRequester @DocumentIDs;  
+if      ($Mode eq "meeting") {
+  @DocumentIDs =         sort DocumentByRequester      @DocumentIDs;  
+} elsif ($Mode eq "conference") {
+  &SpecialMajorTopics;
+  @DocumentIDs = reverse sort DocumentByConferenceDate @DocumentIDs;
+  $docids = join ' ',@DocumentIDs;
+#  print $docids,"<br>\n";  
 } else {
-  @DocumentIDs = reverse sort DocumentByRevisionDate @DocumentIDs;  
+  @DocumentIDs = reverse sort DocumentByRevisionDate   @DocumentIDs;  
 }
 
 ### Print summary information

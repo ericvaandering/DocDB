@@ -18,15 +18,26 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetTopics;
 
 print $query->header;
-&BTeVHeader("List of Meetings");
+&BTeVHeader("Collaboration Meetings");
 
-print "<h3>Meetings in database:</h3>\n";
+print "<h3>Useful links:</h3>\n";
+print "<ul>\n";
+print "<li><a href=\"$DocumentAddForm?special=meeting\">Submit a talk</a> for
+       the upcoming or just-past  meeting.\n";
+print "<li><a href=\"http://www-btev.fnal.gov/internal_documents/mtg/submitting_24may01.html\">Instructions
+       and pointers</a> on submitting talks and 
+       <a href=\"http://www-btev.fnal.gov/internal_documents/mtg/transp_instructions.html#scanning\">instructions 
+       on using the WH9W scanner</a>.\n";
+print "<li><a href=\"http://www-btev.fnal.gov/calendar.html\">Calendar</a> of
+       upcoming meetings.\n";
 
+print "</ul>\n";
+print "<h3>Meetings in the document database:</h3>\n";
 &MeetingsTable;
 
 print "<h3>Meetings not yet in database:</h3>\n";
 
-print "These links will disappear as meetings are moved into the database.\n";
+print "These links will disappear as meetings are moved into the document database.\n";
 
 print <<OLDMEETINGS; # Following is straight from Rob/Lory page with subs
 
@@ -152,5 +163,5 @@ charges to the working groups</a> <br>
 
 OLDMEETINGS
 
-&DocDBNavBar();
+&DocDBNavBar("Add Talk","$DocumentAddForm?special=meeting");
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -89,7 +89,9 @@ sub ConferenceLink {
   } else {
     $link .= $MinorTopics{$TopicID}{FULL};
   }
+  my ($Year,$Month,$Day) = split /\-/,$Conferences{$TopicID}{STARTDATE};
   $link .= "</a>";
+  $link .= " (".@AbrvMonths[$Month-1]." $Year)"; 
   
   return $link;
 }

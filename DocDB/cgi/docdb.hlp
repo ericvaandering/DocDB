@@ -182,6 +182,8 @@ Unix.
 <p>
 You can also enter a short description of each file, which will appear in the
 summary of the document. The description is optional.
+<p>
+If there are more upload boxes than you need, just leave the last ones blank.
 #
 authors
 Authors
