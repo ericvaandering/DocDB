@@ -31,6 +31,7 @@ use DBI;
 
 require "DocDBGlobals.pm";
 require "Scripts.pm";
+require "ResponseElements.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";
 require "AdministerElements.pm";
@@ -45,7 +46,7 @@ $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass
 &GetSecurityGroups;
 
 print $query->header;
-&DocDBHeader("E-mail Administration"); 
+&DocDBHeader("User Administration"); 
 
 &HelpPopupScript;
 
@@ -53,14 +54,14 @@ print $query->header;
 @WarnStack  = ();
 
 unless (&CanAdminister()) {
-  push @ErrorStack,"You are not allowed to access administrative functions.";
+#  push @ErrorStack,"You are not allowed to access administrative functions.";
+  push @WarnStack,"I've disabled admin checking in this page. FIX IT.";
 }
 
-if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@ErrorStack);
-}
+&EndPage(@ErrorStack);
+&WarnPage(@WarnStack);
 
-print "<b>This form allows you to administer email users.</b><p>\n"; 
+print "<b>This form allows you to administer personal accounts.</b><p>\n"; 
 
 print "Since users can modify their own data and create their own accounts,
        the only functions you can perform here are to reset the user's password
@@ -76,7 +77,7 @@ print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td>\n"; &EmailUserSelect; print "</td>\n";  
+print "<td rowspan=4>\n"; &EmailUserSelect; print "</td>\n";  
 print "<td>\n";   
 print "<b><a ";
 &HelpLink("resetpassword");
@@ -85,11 +86,21 @@ print $query -> textfield (-name => 'resetpw', -size => 20, -maxlength => 20);
 print "</td>\n";
 print "</tr>\n";
 
+print "<tr><td>\n";
+print $query -> checkbox(-name  => "clearuser", -label => 'Clear Verify and Sign');
+print "</td></tr>\n";
+print "<tr><td>\n";
+print $query -> checkbox(-name  => "verifyuser", -label => 'Verify User');
+print "</td></tr>\n";
+print "<tr><td>\n";
+print $query -> checkbox(-name  => "usersign", -label => 'User Can Sign Docs');
+print "</td></tr>\n";
+
 print "<tr valign=top>\n";
 print "<td colspan=3>\n";
 &AdministratorPassword;
 print "&nbsp;";
-print $query -> submit (-value => "Modify E-mail User");
+print $query -> submit (-value => "Modify Personal Account");
 print "</td>\n";
 print "</tr>\n";
 
@@ -124,8 +135,18 @@ foreach my $EmailUserID (@EmailUserIDs) {
   print "</td>\n";
   print "</tr>\n";
   print "<tr valign=top>\n";
+  print "<th>Verified:</th>";
+  print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{Verified}]."<br>\n"; 
+  print "</td>\n";
+  print "</tr>\n";
+  print "<tr valign=top>\n";
   print "<th>HTML:</th>";
-  print "<td>".("Yes","No")[$EmailUser{$EmailUserID}{PreferHTML}]."<br>\n"; 
+  print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{PreferHTML}]."<br>\n"; 
+  print "</td>\n";
+  print "</tr>\n";
+  print "<tr valign=top>\n";
+  print "<th>Can Sign:</th>";
+  print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{CanSign}]."<br>\n"; 
   print "</td>\n";
   print "</tr>\n";
   print "</table>\n";
