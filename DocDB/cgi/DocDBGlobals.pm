@@ -19,8 +19,8 @@ $db_ropass = "abg3n1x";
 
 $file_root   = "/www/html/DocDB/";    
 $script_root = "/www/cgi-bin/DocDB/"; 
-$web_root    = "http://btevsrv1.fnal.gov/DocDB/";
-$cgi_root    = "http://btevsrv1.fnal.gov/cgi-bin/DocDB/";
+$web_root    = "http://www-btev.fnal.gov/DocDB/";
+$cgi_root    = "http://www-btev.fnal.gov/cgi-bin/DocDB/";
 $cgi_path    = "/cgi-bin/DocDB/";
 $SSIDirectory = "/www/html/includes/";
 
@@ -52,7 +52,10 @@ $Zip    = "/usr/bin/zip -q -r ";  # Comment out if not present
 
 # Other Globals
 
+$RemoteUsername   = $ENV{REMOTE_USER};
 $remote_user      = $ENV{REMOTE_USER};
+$remote_user      =~ tr/[A-Z]/[a-z]/;
+
 $DBWebMasterEmail = "btev-docdb\@fnal.gov";
 $DBWebMasterName  = "BTeV Document Database Administrators";
 $RobotsMeta       = "none";
