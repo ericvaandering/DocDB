@@ -206,6 +206,8 @@ my @SessionIDs = &FetchSessionsByConferenceID($ConferenceID);
 my @SessionSeparatorIDs = &FetchSessionSeparatorsByConferenceID($ConferenceID);
 my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
 
+@MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs;
+
 foreach $MeetingOrderID (@MeetingOrderIDs) {
   print "<tr><td>$MeetingOrderID $MeetingOrders{$MeetingOrderID}{SessionOrder} </td>\n";
   if ($MeetingOrders{$MeetingOrderID}{SessionID}) {

@@ -128,12 +128,26 @@ sub FetchMeetingOrdersByConferenceID {
   my ($ConferenceID) = @_;
   my $SessionSeparatorID,$SessionID,$MeetingOrderID,$SessionOrder;
   my @MeetingOrderIDs = ();
-  my $MeetingOrderList   = $dbh -> prepare(
-    "select MeetingOrderID,SessionSeparatorID,SessionID,SessionOrder ".
-    "from MeetingOrder where ConferenceID=? order by MeetingOrder");
-  $MeetingOrderList -> execute($ConferenceID);
-  $MeetingOrderList -> bind_columns(undef, \($MeetingOrderID,$SessionSeparatorID,$SessionID,$SessionOrder));
-  while ($MeetingOrderList -> fetch) {
+  my $SessionOrderList   = $dbh -> prepare(
+    "select MeetingOrder.MeetingOrderID,MeetingOrder.SessionSeparatorID,MeetingOrder.SessionID,MeetingOrder.SessionOrder ".
+    "from MeetingOrder,Session ".
+    "where MeetingOrder.SessionID=Session.SessionID and Session.ConferenceID=?");
+  my $SessionSeparatorOrderList   = $dbh -> prepare(
+    "select MeetingOrder.MeetingOrderID,MeetingOrder.SessionSeparatorID,MeetingOrder.SessionID,MeetingOrder.SessionOrder ".
+    "from MeetingOrder,SessionSeparator ".
+    "where MeetingOrder.SessionSeparatorID=Session.SessionSeparatorID and SessionSeparator.ConferenceID=?");
+
+  $SessionOrderList -> execute($ConferenceID);
+  $SessionOrderList -> bind_columns(undef, \($MeetingOrderID,$SessionSeparatorID,$SessionID,$SessionOrder));
+  while ($SessionOrderList -> fetch) {
+    $MeetingOrders{$MeetingOrderID}{SessionSeparatorID} = $SessionSeparatorID;
+    $MeetingOrders{$MeetingOrderID}{SessionID}          = $SessionID;
+    $MeetingOrders{$MeetingOrderID}{SessionOrder}       = $SessionOrder;
+    push @MeetingOrderIDs,$MeetingOrderID;
+  }
+  $SessionSeparatorOrderList -> execute($ConferenceID);
+  $SessionSeparatorOrderList -> bind_columns(undef, \($MeetingOrderID,$SessionSeparatorID,$SessionID,$SessionOrder));
+  while ($SessionOrderSeparatorList -> fetch) {
     $MeetingOrders{$MeetingOrderID}{SessionSeparatorID} = $SessionSeparatorID;
     $MeetingOrders{$MeetingOrderID}{SessionID}          = $SessionID;
     $MeetingOrders{$MeetingOrderID}{SessionOrder}       = $SessionOrder;
