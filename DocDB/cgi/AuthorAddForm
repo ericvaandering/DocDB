@@ -59,8 +59,8 @@ print $query -> end_multipart_form;
 
 print "<p>\n";
 
-@InstIDs = sort byInstitution keys %Institutions;
-@AuthorIDs = keys %Authors;
+@InstIDs   = sort byInstitution keys %Institutions;
+@AuthorIDs = sort byLastName    keys %Authors;
 
 print "<h3>Existing Authors: </h3>\n";
 
