@@ -56,6 +56,13 @@ if ($Format eq "short") {
 } elsif ($Format eq "long") {
   &KeywordDetailedList;
 }
-  
+
+if ($Mode eq "chooser") {
+  print "<center><form>\n";
+
+  print " <input type=\"button\" value=\"Close Window\" onClick=\"window.close()\">\n";
+  print "</form></center>";
+}
+
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
