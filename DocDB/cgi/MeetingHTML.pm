@@ -5,7 +5,7 @@
 #    Modified: 
 #
 
-# FIXME: Unify various TopicLink, MeetingLink, ConferenceLink, GatheringLink
+# FIXME: Unify various TopicLink, MeetingLink, NewMeetingLink, ConferenceLink, GatheringLink
 
 sub LocationBox {
   require "Scripts.pm";
@@ -439,11 +439,22 @@ sub PrintSessionSeparatorInfo ($) {
   print "</tr>\n";
 }
 
-sub GatheringLink ($) {
+sub NewMeetingLink ($) {
   my ($ConferenceID) = @_;
     
   my $URL = "$DisplayMeeting?conferenceid=$ConferenceID";
-  my $Link  = "<a href=$URL>";
+  my $Link  = "<a href=\"$URL\">";
+     $Link .= $Conferences{$ConferenceID}{Title};
+     $Link .= "</a>";
+        
+  return $Link;
+}
+
+sub ModifyMeetingLink ($) {
+  my ($ConferenceID) = @_;
+    
+  my $URL = "$MeetingModify?conferenceid=$ConferenceID";
+  my $Link  = "<a href=\"$URL\">";
      $Link .= $Conferences{$ConferenceID}{Title};
      $Link .= "</a>";
         
@@ -451,6 +462,8 @@ sub GatheringLink ($) {
 }
 
 sub OrphanMeetingList {
+  my ($Mode) = @_;
+  
   require "Sorts.pm";
 
   my @ConferenceIDs = keys %Conferences;
@@ -464,19 +477,31 @@ sub OrphanMeetingList {
 #  my @OrphanConferenceIDs = sort byTopic keys @OrphanConferenceIDs;
 #FIXME add sort
 
-  print "<b>$More Meetings</b>\n";
+  print "<b>More Meetings</b>\n";
   print "<ul>\n";
   foreach my $ConferenceID (@OrphanConferenceIDs) {
-    my $MeetingLink = &GatheringLink($ConferenceID);
+    my $MeetingLink;
+    if ($Mode eq "modify") {
+      $MeetingLink = &ModifyMeetingLink($ConferenceID);
+    } else {
+      $MeetingLink = &NewMeetingLink($ConferenceID);
+    }
     print "<li>$MeetingLink</li>\n";
   }  
   print "</ul>\n";
 }
 
-sub MeetingsTable {
+sub AllMeetingsTable (;$) {
+  
+  my ($Mode) = @_;
+  
   require "Sorts.pm";
-
-  my $NCols = 4;
+  require "TopicSQL.pm";
+  require "TopicHTML.pm";
+  
+  &SpecialMajorTopics;
+  
+  my $NCols = 3;
   my @MajorTopicIDs = (@GatheringMajorIDs,0);
 
   my $Col   = 0;
@@ -492,9 +517,13 @@ sub MeetingsTable {
     }
     print "<td>\n";
     if ($MajorID) {
-      &TopicsByMajorTopic($MajorID);
+      if ($Mode eq "modify") {
+        &MeetingsByMajorTopic($MajorID,"modify");
+      } else {
+        &TopicsByMajorTopic($MajorID);
+      }  
     } else {
-      &OrphanMeetingList;
+      &OrphanMeetingList($Mode);
     }  
     print "</td>\n";
     ++$Col;
@@ -502,5 +531,41 @@ sub MeetingsTable {
   print "</tr>\n";
   print "</table>\n";
 }
+
+sub MeetingsByMajorTopic ($;$) { #FIXME: Can I combine with Orphan meetings?
+  my ($MajorID,$Mode) = @_;
+  
+  require "TopicSQL.pm";
+  
+  my @ConferenceIDs = keys %Conferences;
+  my @DisplayConferenceIDs = ();
+  foreach my $ConferenceID (@ConferenceIDs) {
+    my $MinorID = $Conferences{$ConferenceID}{Minor};
+    &FetchMinorTopic($MinorID);
+    # FIXME: We should probably allow modification of conferences not fully 
+    #        setup
+    if ($MinorID && $MinorTopics{$MinorID}{MAJOR} == $MajorID &&
+        $Conferences{$ConferenceID}{Title}) { 
+      push @DisplayConferenceIDs,$ConferenceID;
+    }  
+  }
+
+#  my @OrphanConferenceIDs = sort byTopic keys @OrphanConferenceIDs;
+#FIXME add sort
+
+  print "<b>$MajorTopics{$MajorID}{SHORT}</b>\n";
+  print "<ul>\n";
+  foreach my $ConferenceID (@DisplayConferenceIDs) {
+    my $MeetingLink;
+    if ($Mode eq "modify") {
+      $MeetingLink = &ModifyMeetingLink($ConferenceID);
+    } else {
+      $MeetingLink = &NewMeetingLink($ConferenceID);
+    }
+    print "<li>$MeetingLink</li>\n";
+  }  
+  print "</ul>\n";
+}
+ 
 
 1;
