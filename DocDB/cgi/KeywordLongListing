@@ -1,0 +1,37 @@
+#! /usr/bin/env perl
+#
+#  List keywords with both short and long descriptions
+#
+# Author Lynn Garren (garren@fnal.gov)
+#
+
+use CGI;                                                                                      
+use DBI;
+
+require "DocDBGlobals.pm";
+require "KeywordSQL.pm";
+require "KeywordRoutine.pm";
+require "ResponseElements.pm";
+require "KeywordHTML.pm";
+require "HTMLUtilities.pm";
+
+$query = new CGI;  # Global for subroutines
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+&GetKeywordList;
+
+print $query->header;
+&DocDBHeader("Keywords for Beams Division Document Database");
+
+print "<h3>Accepted Document Database Keywords:</h3>\n";
+
+print "<p>\n";
+&KeywordLongText;
+print "<p>\n";
+print "Back to <a href=\"$ListKeywords\">short listing</a>\n";
+print "<p>\n";
+
+&KeywordDetailedList;
+
+&DocDBNavBar();
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -1,0 +1,33 @@
+#! /usr/bin/env perl
+#
+# Author Lynn Garren (garren@fnal.gov)
+#
+
+use CGI;                                                                                      
+use DBI;
+
+require "DocDBGlobals.pm";
+require "KeywordSQL.pm";
+require "KeywordRoutine.pm";
+require "ResponseElements.pm";
+require "KeywordHTML.pm";
+require "HTMLUtilities.pm";
+
+$query = new CGI;  # Global for subroutines
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+&GetKeywordList;
+
+print $query->header;
+&DocDBHeader("Beams Division Keywords");
+
+print "<p>\n";
+&KeywordShortText;
+print "<p>\n";
+
+print "<h3>Existing Keywords:</h3>\n";
+
+&KeywordTable;
+
+&DocDBNavBar();
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

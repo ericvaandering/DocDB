@@ -1,0 +1,138 @@
+#! /usr/bin/env perl
+#
+# Description: This script is called by KeywordForm and does administration
+#              on the Keyword table in the DB. 
+#
+#      Author: Lynn Garren (garren@fnal.gov)
+#    Modified: 
+#
+
+use CGI;
+use DBI;
+
+require "DocDBGlobals.pm";
+require "ResponseElements.pm";
+require "Security.pm";
+require "HTMLUtilities.pm";
+require "KeywordHTML.pm";
+require "KeywordSQL.pm";
+require "Messages.pm";
+
+$query = new CGI;  # Global for subroutines
+
+print $query->header;
+&DocDBHeader("Modified List of Keywords");
+
+%params = $query -> Vars;
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+# Parameters to script 
+
+my $Password      = $params{password};
+my $Username      = $params{admuser};
+my $Action        = $params{admaction};
+
+my $KeywordID  = $params{keywordlist};
+my $KeywordGroupID = $params{keywordgroup};
+my $LongName      = $params{long};
+my $ShortName     = $params{short};
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
+
+unless ($dbh) {
+  push @ErrorStack,$Msg_AdminNoConnect;
+}         
+&EndPage(@ErrorStack);
+
+unless (&CanAdminister) {
+  push @ErrorStack,$Msg_AdminNoLogin;
+}  
+&EndPage(@ErrorStack);
+
+if      ($Action eq "Delete") {
+  unless ($KeywordID) {
+    push @ErrorStack,$Msg_ModKeywdEmpty;
+  }
+  &EndPage(@ErrorStack);
+  my $KeywordLink   = &KeywordListLink($KeywordID);
+  
+# Delete KeywordID from Keyword table
+  
+  my $KeywordDelete      = $dbh -> prepare("delete from Keyword    where KeywordID=?");
+  $KeywordDelete      -> execute($KeywordID);
+  
+  print "$KeywordLink has been removed from the database.<br>\n";
+} elsif ($Action eq "Modify") {
+  unless ($KeywordID) {
+    push @ErrorStack,$Msg_ModKeywdEmpty;
+  }
+  &EndPage(@ErrorStack);
+
+# Deal with name changes     
+
+  if ($ShortName) { 
+    print "<b>Updating short keyword name.</b><br>\n";
+    my $KeywordUpdate = $dbh->prepare(
+       "update Keyword set ShortDescription=? where KeywordID=?");
+    $KeywordUpdate -> execute($ShortName,$KeywordID);
+  }
+  if ($LongName) { 
+    print "<b>Updating long keyword name.</b><br>\n";
+    my $KeywordUpdate = $dbh->prepare(
+       "update Keyword set LongDescription=? where KeywordID=?");
+    $KeywordUpdate -> execute($LongName,$KeywordID);
+  }
+
+# Deal with Keyword Group changes   
+
+  if ($KeywordGroupID) { 
+    print "<b>Updating Keyword Group for Keyword.</b><br>\n";
+    my $KeywordUpdate = $dbh->prepare(
+     "update Keyword set KeywordGroupID=? where KeywordID=?");
+    $KeywordUpdate -> execute($KeywordGroupID,$KeywordID);
+  }
+} elsif ($Action eq "New") {
+  &EndPage(@ErrorStack);
+
+  print "<b>Adding a new keyword.</b><br>\n";
+  my $KeywordInsert = $dbh->prepare(
+   "insert into Keyword ".
+          "(KeywordID, KeywordGroupID, ShortDescription, LongDescription) ". 
+   "values (0,            ?,            ?,                ?)");
+
+  $KeywordInsert -> execute($KeywordGroupID,$ShortName,$LongName);
+  $KeywordID = $KeywordInsert -> {mysql_insertid}; # Works with MySQL only
+} else {
+  push @ErrorStack,"No valid action was specified.";
+}  
+
+# For modify or new fetch information and display.
+
+if ($Action eq "Modify" || $Action eq "New") {
+  &GetKeywords;
+
+  print "<p><b>Here are the results of your modification:<br>\n";
+  my $ShortLink = &KeywordListLink($KeywordID,"short");
+  my $LongLink = &KeywordListLink($KeywordID,"long");
+  print "Short description: $ShortLink<br>\n";
+  print "Long description: $LongLink<br>\n";
+  print "</b><p>\n";
+}  
+
+print "<p>\n";
+$keyadminform = "<a href=\"$KeywordForm\">Administer Keywords</a>";
+$keylist = "<a href=\"$ListKeywords\">List Keywords</a>";
+print "<center>\n";
+print "$keyadminform $keylist\n";
+print "</center>\n";
+print "<p>\n";
+
+&WarnPage(@WarnStack);
+&EndPage(@ErrorStack);
+
+&DocDBNavBar;
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+ 
+exit;

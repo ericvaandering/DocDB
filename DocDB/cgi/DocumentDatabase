@@ -188,7 +188,8 @@ unless ($Public) {
   print "<li><b><a href=\"$EmailLogin\">Set E-mail notification</a></b>\n";
   print "<li><b><a href=\"$Statistics\">Get statistics</a></b>\n";
 if ($Project eq "Beams") {
-  print "<li><b><a href=\"/doc/\">keyword list</a></b>\n";
+  print "<li><b><a href=\"/cgi-bin/DocDB/RetrieveFile?docid=553\">Useful notes</a></b>\n";
+  print "<li><b><a href=\"$ListKeywords\">Keyword list</a></b>\n";
 }
   print "</ul>\n";
 

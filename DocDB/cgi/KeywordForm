@@ -1,0 +1,146 @@
+#! /usr/bin/env perl
+#
+# Add keywords or keyword groups to the keyword list
+# The keyword list is used indirectly to lookup approved keywords
+#
+# Author Lynn Garren (garren@fnal.gov)
+#
+
+use CGI;                                                                                      
+use DBI;
+
+require "DocDBGlobals.pm";
+require "AdministerElements.pm";
+require "FormElements.pm";
+require "KeywordFormElements.pm";	# for keyword specific elements
+require "Scripts.pm";
+require "Security.pm";
+
+require "SecuritySQL.pm";
+require "KeywordSQL.pm";
+require "ResponseElements.pm";
+
+require "HTMLUtilities.pm";
+require "KeySorts.pm";
+require "Sorts.pm";
+
+$query = new CGI;  # Global for subroutines
+$dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+&GetKeywordList;
+
+print $query->header;
+&DocDBHeader("Administer $Project DocDB Keyword List"); # DocDBHeader
+
+&HelpPopupScript;
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+unless (&CanAdminister()) {
+  push @ErrorStack,"You are not allowed to access administrative functions.";
+}
+
+if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@ErrorStack);
+}
+
+print "<b>This form allows you to administer the keyword list.</b><p>\n"; 
+
+print "Begin by selecting an action for what you want to administer. If you
+       select <b>New</b>, the selection from the first list will be
+       ignored, but you must fill in the short description.
+       If you select <b>Modify</b> you have to make a
+       selection from the first list and any attributes you select on the
+       right will be changed. If you leave something blank, it will not be
+       changed. If you select <b>Delete</b> any selections other than from 
+       the first list will be ignored.<p>\n";
+
+print "Note that deleting and then re-entering with the same information is
+       not the same as modifying. Everything in the DB is tied together with
+       invisible ID numbers.<p>\n";
+
+print "In all cases, you must supply the <i>database</i> username and password for the
+       administrator account to make any changes.<p>\n";
+
+print "<center> <b>Administer:</b> ";
+print "[&nbsp;<a href=\"\#keywd\">Keywords</a>&nbsp;] ";
+print "[&nbsp;<a href=\"\#keygroup\">Keyword&nbsp;Groups</a>&nbsp;] ";
+print "</center><p>";
+print "<hr><p>\n";
+
+
+### Keyword Administration
+
+print "<a name=\"keywd\"><center><h4>Administer Keywords</h4></center>\n";
+
+print $query -> start_multipart_form('POST',"KeywordListAdminister");
+print "<table cellpadding=10>\n";
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; &KeywordSelectLong; print "</td>\n"; 
+print "</tr>\n";
+print "<tr valign=top>\n";
+print "<td rowspan=2>\n"; &KeywordGroupSelect; print "</td>\n";
+print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td>\n"; &LongDescriptionBox;     print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n";
+&AdministratorPassword;
+print "&nbsp;";
+print $query -> submit (-value => "Change Keyword Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<p><hr>\n";
+
+### Keyword Group Administration
+
+print "<a name=\"keygroup\"><center><h4>Administer Keyword Groups</h4></center>\n";
+
+print $query -> start_multipart_form('POST',"KeywordGroupAdminister");
+print "<table cellpadding=10>\n";
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td rowspan=2>\n"; &KeywordGroupSelect("full"); print "</td>\n";
+print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td>\n"; &LongDescriptionBox;     print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n";
+&AdministratorPassword;
+print "&nbsp;";
+print $query -> submit (-value => "Change Keyword Group Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<p><hr>\n";
+
+
+### end
+
+print "<p>\n";
+
+&DocDBNavBar();
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

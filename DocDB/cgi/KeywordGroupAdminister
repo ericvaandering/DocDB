@@ -1,0 +1,127 @@
+#! /usr/bin/env perl
+#
+# Description: This script is called by KeywordForm and does administration
+#              on Keyword Groups in the DB. This script adds, modifies and deletes
+#              these groups. It will not delete groups if there are associated
+#              keywords. 
+#
+#      Author: Lynn Garren (garren@fnal.gov)
+#    Modified: 
+#
+
+use CGI;
+use DBI;
+
+require "DocDBGlobals.pm";
+require "ResponseElements.pm";
+require "Security.pm";
+require "HTMLUtilities.pm";
+require "KeywordSQL.pm";
+require "KeywordHTML.pm";
+require "Messages.pm";
+require "KeyMessages.pm";
+
+$query = new CGI;  # Global for subroutines
+
+print $query -> header;
+&DocDBHeader("Modified List of Keyword Groups");
+
+%params = $query -> Vars;
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+# Parameters to script 
+
+$Password      = $params{password};
+my $Username      = $params{admuser};
+$Action        = $params{admaction};
+
+$KeywordGroupID  = $params{keywordgroup};
+$LongName      = $params{long};
+$ShortName     = $params{short};
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
+
+unless ($dbh) {
+  push @ErrorStack,$Msg_AdminNoConnect;
+}         
+&EndPage(@ErrorStack);
+
+unless (&CanAdminister) {
+  push @ErrorStack,$Msg_AdminNoLogin;
+}  
+&EndPage(@ErrorStack);
+
+&GetKeywordList;
+
+if      ($Action eq "Delete") { # Delete keyword groups
+  @KeywordListIDs = &GetKeywords($KeywordGroupID); 
+  if (!$KeywordGroupID) {
+    push @ErrorStack,$Msg_ModKeyGrEmpty;
+  } elsif (@KeywordListIDs) {
+    print "<b>This keyword group has keywords that must be deleted first:</b><br>\n";
+    &KeywordsbyKeywordGroup($KeywordGroupID);
+    push @ErrorStack,$Msg_DelKeyGrWKey;
+  } else {
+    my $KeywordGroupDelete = $dbh -> prepare("delete from KeywordGroup where KeywordGroupID=?");
+    $KeywordGroupDelete -> execute($KeywordGroupID);
+    print "<b>$KeywordGroups{$KeywordGroupID}{LONG} has been deleted.</b><br>\n";
+  }
+} elsif ($Action eq "Modify") { # Modify keyword groups
+  unless ($KeywordGroupID) {
+    push @ErrorStack,$Msg_ModKeyGrEmpty;
+  }
+  &EndPage(@ErrorStack);
+
+# Deal with name changes     
+
+  if ($ShortName) { 
+    print "<b>Updating short description.</b><br>\n";
+    my $KeywordGroupUpdate = $dbh->prepare(
+       "update KeywordGroup set ShortDescription=? where KeywordGroupID=?");
+    $KeywordGroupUpdate -> execute($ShortName,$KeywordGroupID);
+  }
+  if ($LongName) { 
+    print "<b>Updating long description.</b><br>\n";
+    my $KeywordGroupUpdate = $dbh->prepare(
+       "update KeywordGroup set LongDescription=? where KeywordGroupID=?");
+    $KeywordGroupUpdate -> execute($LongName,$KeywordGroupID);
+  }
+
+} elsif ($Action eq "New") { # Create new keyword groups
+  print "<b>Adding a new keyword group.</b><br>\n";
+  my $KeywordGroupInsert = $dbh->prepare(
+   "insert into KeywordGroup (KeywordGroupID,ShortDescription,LongDescription) values (0,?,?)");#
+
+  $KeywordGroupInsert -> execute($ShortName,$LongName);
+  $KeywordGroupID = $KeywordGroupInsert -> {mysql_insertid}; # Works with MySQL only
+} else {
+  push @ErrorStack,"No valid action was specified.";
+}  
+
+# For modify or new fetch information and display.
+
+if ($Action eq "Modify" || $Action eq "New") {
+  &GetKeywordList;
+  print "<p><b>Here are the results of your modification:<br>\n";
+  print "Short description: $KeywordGroups{$KeywordGroupID}{SHORT}<br>\n";
+  print "Long description:  $KeywordGroups{$KeywordGroupID}{LONG}<br>\n";
+  print "</b><p>\n";
+}  
+
+print "<p>\n";
+$keyadminform = "<a href=\"$KeywordForm\">Administer Keywords</a>";
+$keylist = "<a href=\"$ListKeywords\">List Keywords</a>";
+print "<center>\n";
+print "$keyadminform $keylist\n";
+print "</center>\n";
+print "<p>\n";
+
+&WarnPage(@WarnStack);
+&EndPage(@ErrorStack);
+
+&DocDBNavBar;
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+ 
+exit;
