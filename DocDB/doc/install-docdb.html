@@ -83,14 +83,15 @@
     your system startup files (often /etc/init.d) and configure it to start
     mysqld automatically when the machine is booted.
 <li> <b> get DocDB</b> <br>
-    The <a href=ftp://www-btev.fnal.gov/~garren/doc/docdb-2.2.0.tar>tar ball</a> 
+    The <a href=http://www-btev.fnal.gov/~garren/doc/docdb-2.2.0.tar>tar ball</a> 
     <br>
     Unwind the tarball under your docdbadm account.
 <li> <b> customize DocDB</b>
     <br>
+    Edit the global variables in <a href=DocDBGlobals.html>DocDBGlobals.pm</a>. 
+    <br>
     Edit the files in DocDB/cgi and DocDB/html.  Replace refereces to 
-    www-btev.fnal.gov, btev_docdb, etc.  Many global variables 
-    defined in DocDBGlobals.pm. 
+    www-btev.fnal.gov, btev_docdb, etc.  
     <br>
     Edit DodDB/sql/CreateDatabase.SQL to specify your own MajorTopics, 
     Institutions, and SecuritySettings.
