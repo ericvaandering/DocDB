@@ -81,7 +81,7 @@ if ($Special eq "othermeeting") {$OtherMeeting = 1;}
 
 # FIXME: Any reason all of these can't be "my"?
 
-   $Archive       = $params{archive};
+my $Archive       = $params{archive};
    $Overdate      = $params{overdate};
    $Overday       = $params{overday};
    $Overmonth     = $params{overmonth};
@@ -98,6 +98,8 @@ my $RevisionNote  = $params{revisionnote};
 my $SignoffList   = $params{signofflist};
 my $OldVersion    = $params{oldversion};
 my $MaxFiles      = $params{maxfiles};
+
+if ($Archive eq "multi") {$Archive = "single";} # No real difference
 
 # Fill in file hash
 
@@ -131,6 +133,15 @@ for (my $i = 1; $i<= $MaxFiles; ++$i) {
   $Files{$Key}{Description} = $params{"filedesc$i"};
 }
 
+
+my %Archive = ();
+if ($Archive eq "archive") { # They uploaded a tar/zip file
+  $AddNewFile = 1;
+  $Archive{File} = $query ->  param("single_upload");
+  $Archive{MainFile}    = $params{"mainfile"};
+  $Archive{Description} = $params{"filedesc"};
+}
+
 if ($Meeting || $OtherMeeting) {
   @authorIDs = ($Requester);
 } else {
@@ -140,8 +151,6 @@ if ($Meeting || $OtherMeeting) {
     @authorIDs = split /\0/,$params{authors}; 
   }
 }
-
-if ($Archive eq "multi") {$Archive = "single";} # No real difference
 
 if ($Overdate && $Overyear && $Overmonth && $Overday) {
   $SQL_NOW = "$Overyear-$ReverseAbrvMonth{$Overmonth}-$Overday $Overhour:$Overmin:00";
@@ -415,50 +424,27 @@ if ($UseSignoffs && $SignoffList) {
 
 ### Deal with files
 
+my @FileIDs;
+
 if ($mode eq "updatedb") { # Copy DocumentFile entries
   &ProtectDirectory($documentID,$version,@securities); # Redo security 
-  my @FileIDs = &AddFiles(-docrevid => $DocRevID, -files => \%Files, -oldversion => $OldVersion);
+  @FileIDs = &AddFiles(-docrevid => $DocRevID, -files => \%Files, -oldversion => $OldVersion);
 }  
 
 if ($mode eq "add" || $mode eq "update") { # We're adding new files
-  
-  $new_dir = &MakeDirectory($documentID,$version);
+  my $NewDir = &MakeDirectory($documentID,$version);
   &ProtectDirectory($documentID,$version,@securities);
-  if ($Archive eq "single") { # The user uploaded the files themselves 
-    my @FileIDs = &AddFiles(-docrevid => $DocRevID, -files => \%Files, -oldversion => $OldVersion);
+  if ($Archive eq "single") { # They uploaded individual files
+    @FileIDs = &AddFiles(-docrevid => $DocRevID, -files => \%Files, -oldversion => $OldVersion);
   } elsif ($Archive eq "archive") { # They uploaded a tar/zip file
-    @short_files = ();
-    @Descriptions = ();
-    @Roots = ();
-    if ($params{single_upload}) { # Copy tar file to directory
-      $long_file = $query ->  param("single_upload"); # There can be only one
-      $short_file = &ProcessUpload($new_dir,$long_file);
-      &ProcessArchive($new_dir,$short_file);
-    } elsif ($params{single_http}) {
-      $url = $params{single_http};  # There can be only one
-      $short_file = &ProcessURL($new_dir,$url);
-      &ProcessArchive($new_dir,$short_file);
-    } 
-    foreach $short_file (@short_files) {
-      $Description = shift @Descriptions;
-      $rootfile = shift @Roots;
-      if ($rootfile eq "on") {
-        $rootfile = 1;
-      } else {
-        $rootfile = 0;
-      }  
-      if ($short_file) {  
-        $file_insert -> execute($docRevID,$short_file,$SQL_NOW,$rootfile,$Description);
-      }
-    }
-  } # Archive upload
-} # File upload for "add" and "update"
+    @FileIDs = &AddArchive(-docrevid => $DocRevID, -archive => \%Archive);
+  } 
+} 
 
 ### If we had any warnings print them out now
 
 &DebugPage("Inserts done");
-&WarnPage(@WarnStack);
-@WarnStack = ();
+&WarnPage(@WarnStack); @WarnStack = ();
   
 if ($mode = "updatedb") { # Local DB not in sync, clear it
   %DocRevIDs    = ();

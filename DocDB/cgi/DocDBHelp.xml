@@ -988,4 +988,13 @@ or may not be the same as the web username and password.
   </text>
  </entry>
  
+ <entry>
+  <key>filechar</key>
+  <title>Update File Characteristics</title>
+  <text>
+   You cannot change the files in the document, but you can enter new descriptions
+   and change which ones are listed as "Main."
+  </text>
+ </entry>
+ 
 </helpfile>

@@ -93,4 +93,51 @@ sub AddFiles (%) {
   return @FileIDs;   
 }
 
+sub AddArchive (%) {
+  require "FileSQL.pm";
+  require "FSUtilities.pm";
+  
+  my %Params = @_;
+  
+  my $DocRevID = $Params{-docrevid};   
+  my $DateTime = $Params{-datetime}; 
+
+  my %Archive = %{$Params{-archive}};
+
+  push @DebugStack,"Adding archive for DRI $DocRevID";
+  
+  my @FileIDs = (); my $FileID;
+  unless ($DocRevID) {
+    return @FileIDs;
+  }  
+
+  &FetchDocRevisionByID($DocRevID);
+  my $Version    = $DocRevisions{$DocRevID}{Version};
+  my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+  &MakeDirectory($DocumentID,$Version); 
+  my $Directory = &GetDirectory($DocumentID,$Version); 
+
+  $ShortName = &ProcessUpload($Directory,$Archive{File});
+  my $Status = &ExtractArchive($Directory,$ShortName); # FIXME No status yet
+  if ($ShortName) {
+    push @DebugStack,"Archive name: $ShortName";
+    $FileID = &InsertFile(-docrevid    => $DocRevID, -datetime => $DateTime,
+                          -filename    => $ShortName,
+                          -main        => 0,
+                          -description => "Document Archive");
+    push @FileIDs,$FileID;
+    if (-s "$Directory/$Archive{MainFile}") {
+      push @DebugStack,"Main File: $Archive{MainFile}";
+      $FileID = &InsertFile(-docrevid    => $DocRevID, -datetime => $DateTime,
+                            -filename    => $Archive{MainFile},
+                            -main        => 1,
+                            -description => $Archive{Description});
+      push @FileIDs,$FileID;
+    } else {
+      push @WarnStack,"The main file $main_file did not exist or was blank.";
+    }  
+  } 
+  return @FileIDs; 
+}
+
 1;
