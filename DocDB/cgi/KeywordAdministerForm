@@ -111,19 +111,19 @@ print $query -> start_multipart_form('POST',"$KeywordListAdminister",
                                      "id=\"keywords\" name=\"keywords\"");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
-print "<td colspan=2>\n";
+print "<td colspan=3>\n";
  &AdministerActions(-form => "keywords", -matrix => \%EnableMatrix);
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td colspan=2>\n";
+print "<td>\n";
  &KeywordSelect(-format => "full", -maxlabel => 40, -disabled => true);
 print "</td>\n"; 
-print "</tr>\n";
-print "<tr valign=top>\n";
+#print "</tr>\n";
+#print "<tr valign=top>\n";
 
-print "<td rowspan=2>\n"; 
+print "<td>\n"; 
  &KeywordGroupSelect(-format => "short", -multiple => "true", 
                      -remove => "true",  -disabled => true); 
 print "</td>\n";
