@@ -369,11 +369,23 @@ number (1 to 6 digits). You can also use the form <b>BTeV-doc-XXXX-vXX</b> to re
 a specific version of a document. The <b>BTeV-doc-XXXX</b> form refers to the
 latest version.<p>
 
+<h4>Linking to your document</h4>
+
 You can also construct URL's that link to your document. The URL is of the form
 <tt>http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=XXXX&amp;version=XX</tt>,
 where the X's represent <i>just the numbers</i> of the document and version.
 (I.e. leave off the ``BTeV-doc-'' and ``-v.'') As above, you can leave off the
 <tt>&amp;version=XX</tt> to refer to the latest version.<p>
+
+<h4>Linking to files in a document</h4>
+
+Each file for each revision has a static URL which can easily be found. In
+addition, there is a script interface which fetches files. The URL is 
+<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/RetrieveFile?docid=XXXX&amp;version=XX&amp;filename=xxxxxx</tt>.
+As above, the version number can be left off to get the latest version number.
+The filename can also be left off. If there is only one file marked <q>Main</q>
+that file will be retrieved. If there are more than one, the full document
+information will be shown and the user will have to choose the correct file.
 
 <a name="morehelp">
 <h3>Getting More Help</h3>
