@@ -180,7 +180,7 @@ sub PrintRevisionInfo {
   
   &FileListByRevID($DocRevID); # All are called only here, so changes are OK
   
-  print "<p/>\n";
+  print "<hr/><p/>\n";
   
   &AuthorListByID(@AuthorIDs);
   &SecurityListByID(@GroupIDs);
