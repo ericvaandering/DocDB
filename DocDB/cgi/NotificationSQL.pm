@@ -232,11 +232,24 @@ sub InsertEmailDocumentImmediate (%) {
                                  "(EmailDocumentImmediateID,EmailUserID,DocumentID) ".
                                  "values (0,?,?)");
     $Insert -> execute($EmailUserID,$DocumentID);
-  } else {
-  
-    push @ErrorStack, "bad parms"; 
-    print "bad parms<br>\n"; 
   }  
+}
+
+sub FetchEmailDocuments (%) {
+  my %Params = @_;
+  
+  my $EmailUserID = $Params{-emailuserid};
+  my $DocumentID;
+  my @DocumentIDs;
+  
+  my $Select = $dbh -> prepare("select DISTINCT(DocumentID) from EmailDocumentImmediate ".
+                                 "where EmailUserID=?");
+  $Select -> execute($EmailUserID);
+  $Select -> bind_columns(undef,\($DocumentID));
+  while ($Select -> fetch) {
+    push @DocumentIDs,$DocumentID; 
+  }
+  return @DocumentIDs;
 }
 
 1;

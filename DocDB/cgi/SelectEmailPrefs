@@ -262,10 +262,6 @@ print "<ul>\n";
 &DisplayNotification($EmailUserID,"Daily",true);
 &DisplayNotification($EmailUserID,"Weekly",true);
 print "</ul>\n";
-#print "<td colspan=1 align=left>";
-#print $query -> submit (-value => "Update Notification Preferences");
-#print "<p>\n";
-#print $query -> reset (-value => "Reset");
 print "</td></tr></table>\n";
 
 print "<hr><table cellspacing=10 align=center>\n";

@@ -86,7 +86,8 @@ if (@WarnStack) {  # The user made one or more mistakes, warn
 }
 my $DocumentLink = &NewerDocumentLink(-docid => $DocumentID, -noversion => TRUE);
 
-print "An e-mail will be sent to $EmailUser{$EmailUserID}{EmailAddress} when $DocumentLink changes.<p/>\n";
+print "An e-mail will be sent to $EmailUser{$EmailUserID}{Name} 
+       ($EmailUser{$EmailUserID}{EmailAddress}) when $DocumentLink changes.<p/>\n";
 
 
 &InsertEmailDocumentImmediate(-emailuserid => $EmailUserID, -docid => $DocumentID);
