@@ -76,15 +76,26 @@ sub MajorTopicLink ($;$) {
   return $link;
 }
 
+sub GatheringLink {
+  my ($TopicID,$Mode) = @_;
+  my $MajorID = $MinorTopics{$TopicID}{MAJOR};
+  my $Link;
+  if (&MajorIsConference($MajorID)) {
+    $Link = &ConferenceLink($TopicID,$Mode);
+  } elsif (&MajorIsMeeting($MajorID)) {
+    $Link = &MeetingLink($TopicID,$Mode);
+  }
+}
+
 sub MeetingLink {
-  my ($TopicID,$mode) = @_;
+  my ($TopicID,$Mode) = @_;
   
   require "TopicSQL.pm";
   
   &FetchMinorTopic($TopicID);
   my $link;
   $link = "<a href=$ListByTopic?topicid=$TopicID&mode=meeting>";
-  if ($mode eq "short") {
+  if ($Mode eq "short") {
     $link .= $MinorTopics{$TopicID}{SHORT};
   } else {
     $link .= $MinorTopics{$TopicID}{FULL};
@@ -162,7 +173,7 @@ sub TopicsTable {
   print "</table>\n";
 }
 
-sub NewMeetingsTable {
+sub GatheringTable {
   require "Sorts.pm";
   require "TopicSQL.pm";
   
@@ -170,34 +181,42 @@ sub NewMeetingsTable {
 
   print "<table cellpadding=4>\n";
 
-  foreach my $MajorID (@MeetingMajorIDs,@ConferenceMajorIDs) { 
   print "<tr>\n";
   print "<th>Name</th>\n";
   print "<th>Full Name</th>\n";
   print "<th>Location</th>\n";
   print "<th>Dates</th>\n";
-  print "<th>Conference Homepage</th>\n";
+  print "<th>Homepage</th>\n";
+  print "</tr>\n";
   
-  foreach my $MinorID (@MinorTopicIDs) {
-    if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
-      print "<tr>\n";
-      my $ConferenceLink = &ConferenceLink($MinorID,"nodate");
-      my $Start = &EuroDate($Conferences{$MinorID}{StartDate});
-      my $End   = &EuroDate($Conferences{$MinorID}{EndDate});
-      my $Link;
-      if ($Conferences{$MinorID}{URL}) {
-        $Link = "<a href=\"$Conferences{$MinorID}{URL}\">$Conferences{$MinorID}{URL}</a>";
-      } else {
-        $Link = "None entered\n";
-      }
-      print "<td>$ConferenceLink</td>\n";
-      print "<td>$MinorTopics{$MinorID}{LONG}</td>\n";
-      print "<td>$Conferences{$MinorID}{Location}</td>\n";
-      print "<td>$Start - $End</td>\n";
-      print "<td>$Link</td>\n";
-      print "</tr>\n";
+  foreach my $MajorID (@GatheringMajorIDs) { 
+    print "<tr>\n";
+    print "<th colspan=5><hr></th>\n";
+    print "</tr>\n";
+    print "<tr>\n";
+    print "<th colspan=5>$MajorTopics{$MajorID}{SHORT}</th>\n";
+    print "</tr>\n";
+
+    foreach my $MinorID (@MinorTopicIDs) {
+      if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
+        print "<tr>\n";
+        my $GatheringLink = &GatheringLink($MinorID,"short");
+        my $Start = &EuroDate($Conferences{$MinorID}{StartDate});
+        my $End   = &EuroDate($Conferences{$MinorID}{EndDate});
+        my $Link;
+        if ($Conferences{$MinorID}{URL}) {
+          $Link = "<a href=\"$Conferences{$MinorID}{URL}\">$Conferences{$MinorID}{URL}</a>";
+        } else {
+          $Link = "None entered\n";
+        }
+        print "<td>$GatheringLink</td>\n";
+        print "<td>$MinorTopics{$MinorID}{LONG}</td>\n";
+        print "<td>$Conferences{$MinorID}{Location}</td>\n";
+        print "<td>$Start - $End</td>\n";
+        print "<td>$Link</td>\n";
+        print "</tr>\n";
+      }  
     }  
-  }  
   }
   print "</table>";
 }

@@ -51,12 +51,12 @@ my $EndDay        = $params{endday};
 my $EndMonth      = $params{endmonth};
 my $EndYear       = $params{endyear};
 
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
+
 unless (&CanAdminister) {
   push @ErrorStack,$Msg_AdminNoLogin;
 }  
 &EndPage(@ErrorStack);
-
-$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
 unless ($dbh) {
   push @ErrorStack,$Msg_AdminNoConnect;
@@ -64,8 +64,9 @@ unless ($dbh) {
 &EndPage(@ErrorStack);
 
 &SpecialMajorTopics;
+&GetConferences;
 
-if      ($Action eq "Delete") { 
+if ($Action eq "Delete") { 
   unless ($TopicID) {
     push @ErrorStack,$Msg_ModConfEmpty;
   }
@@ -108,8 +109,25 @@ if      ($Action eq "Delete") {
     $TopicUpdate -> execute($LongName,$TopicID);
   }
 
-# Deal with location, URL changes
+# For backwards compatability, the row in the conferences table may not exist
+# so check and create it if it doesn't
 
+  my (undef,undef,undef,$Day,$Month,$Year) = localtime(time); 
+  $Year += 1900;
+
+  if ($Location || $URL || 
+      $Day != $StartDay || $AbrvMonths[$Month] ne $StartMonth || $Year != $StartYear ||
+      $Day != $EndDay || $AbrvMonths[$Month] ne $EndMonth || $Year != $EndYear) {
+    unless (&FetchConferenceByTopicID($TopicID)) {
+      print "<b>Creating new Meeting/Conference entry for this topic.<br>\n";
+      my $ConferenceInsert = $dbh->prepare(
+         "insert into Conference (ConferenceID,MinorTopicID) values (0,?)");
+      $ConferenceInsert -> execute($TopicID);
+    }
+  }    
+
+# Deal with location, URL changes
+      
   if ($Location) {
     print "<b>Updating conference location.</b><br>\n";
     my $ConferenceUpdate = $dbh->prepare(
@@ -125,8 +143,6 @@ if      ($Action eq "Delete") {
   
 # Deal with date changes
 
-  my (undef,undef,undef,$Day,$Month,$Year) = localtime(time); 
-  $Year += 1900;
   if ($Day != $StartDay || $AbrvMonths[$Month] ne $StartMonth || $Year != $StartYear) {
     print "<b>Updating conference starting date.</b><br>\n";
     my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
@@ -150,8 +166,9 @@ if      ($Action eq "Delete") {
 
 # For modify or new fetch information and display.
 
-if ($Action eq "Modify") { # FIXME: Allow conference add for completeness
+if ($Action eq "Modify") {
   &GetTopics;
+  &GetConferences;
 
   print "<p><b>Here are the results of your modification:<br>\n";
   my $ShortLink = &MinorTopicLink($TopicID,"short");

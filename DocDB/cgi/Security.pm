@@ -136,7 +136,9 @@ sub CanCreate { # Can the user create documents
 
 sub CanAdminister { # Can the user administer the database
 ## FIXME: Use SecurityLookup  
-
+  require "SecuritySQL.pm";
+  
+  &GetSecurityGroups;
   my $Administer = 0;
   my @GroupIDs = keys %SecurityGroups; # FIXME use a hash for direct lookup
   foreach my $GroupID (@GroupIDs) { # Check auth. users vs. logged in user

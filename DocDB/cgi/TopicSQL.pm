@@ -166,6 +166,7 @@ sub SpecialMajorTopics { # Store MajorTopicIDs for special topics
         push @MeetingMajorIDs,$MajorID;
       }
     }
+    @GatheringMajorIDs = (@MeetingMajorIDs,@ConferenceMajorIDs);
   }
 }
 
@@ -191,6 +192,18 @@ sub MajorIsConference {
     }
   }
   return $IsConference;
+}
+
+sub MajorIsGathering {
+  my ($MajorID) = @_;
+  
+  my $IsGathering = 0;
+  foreach my $CheckID (@GatheringMajorIDs) {
+    if ($CheckID == $MajorID) {
+      $IsGathering = 1;
+    }
+  }
+  return $IsGathering;
 }
 
 1;

@@ -318,7 +318,7 @@ print $query -> end_multipart_form;
 
 print "<h3>Existing Conferences:</h3>\n";
 
-&NewMeetingsTable;
+&GatheringTable;
 
 print "<p><hr>\n";
 
