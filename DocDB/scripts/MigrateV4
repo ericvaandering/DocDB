@@ -31,6 +31,8 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
 
 ### Edit the first line if you have a different admin account
 
+# Meeting expansion
+
   my $ConferenceAdd  = $dbh -> prepare("alter table Conference add Preamble text"); 
   my $ConferenceAdd2 = $dbh -> prepare("alter table Conference add Title varchar(128)"); 
   my $ConferenceAdd3 = $dbh -> prepare("alter table Conference add Epilogue text"); 
@@ -97,22 +99,42 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                    " ConferenceID integer, GroupID integer, TimeStamp timestamp,".
                    " index(ConferenceID))"); 
   
-  $ConferenceAdd      -> execute();
-  $ConferenceAdd2     -> execute();
-  $ConferenceAdd3     -> execute();
-  $ConferenceAdd4     -> execute();
-  $ConferenceUpd      -> execute();
-  $JournalUpd         -> execute();
-  $SessSepCreate      -> execute();
-  $MeetOrdCreate      -> execute();
-  $SessionCreate      -> execute();
-  $SessOrdCreate      -> execute();
-  $TalkSepCreate      -> execute();
-  $SessTalkCreate     -> execute();
-  $AuthorHintCreate   -> execute();
-  $TopicHintCreate    -> execute();
-  $MeetSecurityCreate -> execute();
-  $MeetModifyCreate   -> execute();
+  # Planned keyword expansion
+  
+  my $KeywordGroupCreate = $dbh -> prepare("create table KeywordGroup ".
+                   "(KeywordGroupID integer auto_increment primary key,".
+                   " ShortDescription varchar(32), LongDescription text, TimeStamp timestamp)"); 
+  
+  my $KeywordCreate = $dbh -> prepare("create table Keyword ".
+                   "(KeywordID integer auto_increment primary key,".
+                   " KeywordGroupID integer,". 
+                   " ShortDescription varchar(32), LongDescription text, TimeStamp timestamp,". 
+                   " index(KeywordGroupID))"); 
+  
+  my $KeywordGroupingCreate = $dbh -> prepare("create table KeywordGrouping ".
+                   "(KeywordGroupingID integer auto_increment primary key,".
+                   " KeywordGroupID integer, KeywordID integer, TimeStamp timestamp,".
+                   " index(KeywordID), index(KeywordGroupID))"); 
+  
+  $ConferenceAdd         -> execute();
+  $ConferenceAdd2        -> execute();
+  $ConferenceAdd3        -> execute();
+  $ConferenceAdd4        -> execute();
+  $ConferenceUpd         -> execute();
+  $JournalUpd            -> execute();
+  $SessSepCreate         -> execute();
+  $MeetOrdCreate         -> execute();
+  $SessionCreate         -> execute();
+  $SessOrdCreate         -> execute();
+  $TalkSepCreate         -> execute();
+  $SessTalkCreate        -> execute();
+  $AuthorHintCreate      -> execute();
+  $TopicHintCreate       -> execute();
+  $MeetSecurityCreate    -> execute();
+  $MeetModifyCreate      -> execute();
+  $KeywordGroupCreate    -> execute();
+  $KeywordCreate         -> execute();
+  $KeywordGroupingCreate -> execute();
 }
 
 if ($Action eq "migrate") {
