@@ -17,6 +17,7 @@ require "DocDBGlobals.pm";
 unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate") {
   print "Usage: MigrateV5 --u=username --p=password --a=init|migrate|delete\n\n";
   print "This script is used to migrate from a version 4 to version 5 DB structure. \n";
+  print "Run this script in \"init\" mode. For this upgrade there no migrate or delete steps.  \n\n";
 #  print "Run this script in \"init\" mode first, then in \"migrate\" mode.  \n\n";
 #  print "At this point you can update the CGI code and when you are comfortable  \n";
 #  print "everything is OK, run in \"delete\" mode to erase old columns and/or tables.  \n";
@@ -44,9 +45,9 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
 
   my $SignatureCreate = $dbh -> prepare("create table Signature ".
                    "(SignatureID integer auto_increment primary key,".
-                   " EmailUserID integer, Note text,".
-                   " Signed integer,".
-                   " index(EmailUserID))"); 
+                   " EmailUserID integer, SignoffID integer, Note text,".
+                   " Signed integer, TimeStamp timestamp,".
+                   " index(EmailUserID), index(SignoffID))"); 
 
   my $SignoffDependencyCreate = $dbh -> prepare("create table SignoffDependency ".
                    "(SignoffDependencyID integer auto_increment primary key,".
