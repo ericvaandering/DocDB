@@ -38,8 +38,8 @@ my $Password      = $params{password};
 my $Username      = $Administrator;
 my $Action        = $params{admaction};
 
-#my $Description = $params{description};
-#my $Name        = $params{name};
+my $EmailUserID   = $params{emailuserid};
+my $NewPassword   = $params{resetpw};
 
 unless (&CanAdminister) {
   push @ErrorStack,$Msg_AdminNoLogin;
@@ -55,36 +55,43 @@ unless ($dbh) {
 
 &GetSecurityGroups;
 
-if      ($Action eq "Delete") { # Delete institutions
-#  if (!$ParentID) {
-#    push @ErrorStack,$Msg_ModGroupEmpty;
-#  } elsif (!$SecurityGroups{$ParentID}{TIMESTAMP}) {
-#    push @ErrorStack,$Msg_ModGroupNone;
-#  } else {
-#    my $GroupDelete       = $dbh -> prepare("delete from SecurityGroup    where GroupID=?");
-#    my $RevSecurityDelete = $dbh -> prepare("delete from RevisionSecurity where GroupID=?");
-#    my $HierarchyDelete   = $dbh -> prepare("delete from GroupHierarchy   ".
-                                    "where ParentID=? or ChildID=?");
-#    $GroupDelete       -> execute($ParentID);
-#    $RevSecurityDelete -> execute($ParentID);
-#    $HierarchyDelete   -> execute($ParentID,$ParentID);
-#    print "<b>$SecurityGroups{$ParentID}{NAME} has been deleted.</b><br>\n";
-#  }
-} elsif ($Action eq "Modify") { # Modify institutions
-#  unless (ParentID) {
-#    push @ErrorStack,$Msg_ModGroupEmpty;
-#  }
-#  &EndPage(@ErrorStack);
+if      ($Action eq "Delete") { # Delete user
+  if (!$EmailUserID) {
+    push @ErrorStack,$Msg_ModEUserEmpty;
+  } else {
+    my $UserDelete = $dbh -> prepare("delete from EmailUser where EmailUserID=?");
+       $UserDelete -> execute($EmailUserID);
 
-# Deal with password changes     
+    my @NotifyTimes = ("Immediate","Daily","Weekly");
+    my @NotifyTypes = ("Author","Keyword","Topic");
+    foreach my $NotifyType (@NotifyTypes) {  # Loop over all tables and delete
+      foreach my $NotifyTime (@NotifyTimes) {
+        my $Table = "Email$NotifyType$NotifyTime";
+        my $NotifyDelete = $dbh -> prepare("delete from $Table where EmailUserID=?");
+           $NotifyDelete -> execute($EmailUserID);
+      }  
+    }
+  }
+  print "<b>The User was deleted.</b><p>\n";
+} elsif ($Action eq "Modify") { 
+  unless ($EmailUserID) { # Deal with password changes 
+    push @ErrorStack,$Msg_ModEUserEmpty;
+  }
+  &EndPage(@ErrorStack);
 
-#  if ($Name) { 
-#    print "<b>Updating group name.</b><br>\n";
-#    my $GroupUpdate = $dbh->prepare(
-#       "update SecurityGroup set Name=? where GroupID=?");
-#    $GroupUpdate -> execute($Name,$ParentID);
-#  }
+    
 
+  if ($NewPassword) { 
+    srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
+
+    my $Salt = ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]).
+               ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]);
+
+    my $EncryptedPassword = crypt($NewPassword,$Salt);
+    my $UserUpdate = $dbh -> prepare("update EmailUser set Password=? where EmailUserID=?");
+       $UserUpdate -> execute($EncryptedPassword,$EmailUserID);
+    print "<b>The User's password was changed. $EmailUserID $EncryptedPassword They should change it again ASAP.</b><p>\n";
+  }
 } elsif ($Action eq "New") { 
   push @ErrorStack,"You can't create new users here. Do it the normal way.";
 } else {

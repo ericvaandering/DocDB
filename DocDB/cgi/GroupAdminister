@@ -63,7 +63,7 @@ unless ($dbh) {
 
 &GetSecurityGroups;
 
-if      ($Action eq "Delete") { # Delete institutions
+if      ($Action eq "Delete") { # Delete group
   if (!$ParentID) {
     push @ErrorStack,$Msg_ModGroupEmpty;
   } elsif (!$SecurityGroups{$ParentID}{TIMESTAMP}) {
@@ -78,8 +78,8 @@ if      ($Action eq "Delete") { # Delete institutions
     $HierarchyDelete   -> execute($ParentID,$ParentID);
     print "<b>$SecurityGroups{$ParentID}{NAME} has been deleted.</b><br>\n";
   }
-} elsif ($Action eq "Modify") { # Modify institutions
-  unless (ParentID) {
+} elsif ($Action eq "Modify") { # Modify group
+  unless ($ParentID) {
     push @ErrorStack,$Msg_ModGroupEmpty;
   }
   &EndPage(@ErrorStack);
@@ -155,7 +155,6 @@ if      ($Action eq "Delete") { # Delete institutions
 # For modify or new fetch institution information and display.
 
 if ($Action eq "Modify" || $Action eq "New") {
-#  &FetchInstitution($InstitutionID);
   &GetSecurityGroups($ParentID);
   print "<p><b>Here are the results of your modification:<br>\n";
   print "<table cellpadding=10>\n";
