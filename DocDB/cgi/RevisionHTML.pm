@@ -125,7 +125,7 @@ sub PrintRevisionInfo {
   my ($DocRevID,%Params) = @_;
   
   my $HideButtons  = $Params{-hidebuttons}  || 0;
-  my $ShowVersions = $Params{-showversions} || 0;
+  my $HideVersions = $Params{-hideversions} || 0;
   
   &FetchDocRevisionByID($DocRevID);
   
@@ -195,7 +195,9 @@ sub PrintRevisionInfo {
   
   &SecurityListByID(@GroupIDs);
   &ModifyListByID(@ModifyIDs);
-  &OtherVersionLinks($DocumentID,$Version);
+  unless ($HideVersions) {
+    &OtherVersionLinks($DocumentID,$Version);
+  }
   
   print "</div>\n";  # RightColumn3Col
 
