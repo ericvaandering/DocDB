@@ -46,10 +46,15 @@
 These instructions refer to a "moderator," but this is just any user with any
 valid password who is organizing a meeting. Several people can collaborate to
 organize a meeting, but some care must be taken not to overwrite changes with the
-webforms.
+web forms.
 
-Put some text from e-mail to Ed here.
-
+The meeting organizer system provides the ability to set up meetings with
+arbitrary numbers of sessions and breaks and order those sessions and breaks.
+With each session, a moderator can set up an arbitrary number of talks and
+small breaks, discussion sessions, etc. Those talks are also ordered. Each talk
+has a running time, each session a starting time. This, creates an agenda.
+Anything from an afternoon video conference to conferences with parallel and
+plenary sessions can be organized this way.
 
 <a name="create">
 <h2>B. Creating a New Meeting</h2>
@@ -57,15 +62,52 @@ Put some text from e-mail to Ed here.
 The first step in creating a meeting is to set up the sessions in the meeting.
 You begin this process by clicking on "Create a New Meeting." Meetings can be
 created as a subtopic in the DocDB or, for smaller meetings (perhaps by small
-subgroups of people), not as a subtopic. Whether the moderator choose to create a topic or
-not, all the functionality of the meeting organizer is still available. A list
-of the topics which are designated as "meeting-like" are shown; simply select
-one of these to create the subtopic.<p>
+subgroups of people), not as a subtopic. Whether the moderator choose to create
+a topic or not, all the functionality of the meeting organizer is still
+available. A list of the topics which are designated as "meeting-like" are
+shown; simply select one of these to create the subtopic.<p/>
 
-Show all talk,  descriptions, dates, etc.  
+The "Show All Talks" selection does just that. In the default view the user
+sees, either all the talks for a meeting can be shown or just links to the
+various sessions. This should probably be checked for meetings with just a few
+sessions, but left unchecked for larger meetings.<p/>
 
-<a name="modify">
-<h2>C. Modifying an Existing Meeting</h2>
+Space is provided to provide both long and short descriptions of the meeting.
+If the meeting is being created with a topic, both of these descriptions are
+used. If a topic is not being created, only the long description is used. Also
+provided are spaces to specify a location and URL for the conference or meeting
+along with the start and stop dates.<p/>
+
+The boxes labeled Meeting Preamble and Epilogue provide a space for text which
+will be placed at the top and bottom respectively of the display of the
+meeting. <p/>
+
+An identical looking form is used for modifying meeting information.  
+
+<a name="sessions">
+<h2>C. Creating Sessions</h2>
+
+On the same form used for creating or modifying a meeting, the moderator is able
+to set up one or more sessions in the meetings. If there are not enough spaces
+for all the needed sessions, don't worry. Blank slots will be added when
+"Submit" is pressed.<p/>
+
+The order these sessions can be
+displayed in can be changed by entering new numbers in the Order column.
+Decimal numbers are OK, so entering "1.5" will place the session between those
+currently numbered "1" and "2." <p/>
+
+Sessions are designated as "Breaks" which cannot have talks associated with
+them. Breaks are used for entering meals, breaks, and other activities.<p/>
+
+Existing talks can be deleted by checking the delete box. <p/>
+
+For each session or break, a location (such as a room number) and starting time should be entered. A
+title session should also be entered and a longer description of the session
+(such as an explanation of the topics covered) may be entered.<p/>
+
+Once at least one session has been added to the meeting, talks can be associated
+with the sessions.<p/>
 
 <a name="talks">
 <h2>D. Adding and Modifying Talks in a Session</h2>
@@ -75,7 +117,7 @@ in the navigation bar on the "Display Session" page or the "Modify Talks" link
 on the "Modify Meeting" page. This allows the moderator to add as many talks or
 breaks as needed. In this context, breaks could be announcements, discussions,
 coffee breaks during a session, etc. Any activity which won't have a document
-attached to it.<p>
+attached to it.<p/>
 
 To create an agenda, the moderator should enter as much information as needed
 about each talk or break. The fields are described below. While there are a
@@ -118,7 +160,7 @@ assists the DocDB in finding the correct matches as described below.
 
 In addition to the moderator associating talks as described above, there are
 two other ways this can happen. The first way is to have the user themselves
-match the talks. The second way is to have the DocDB guess.<p>
+match the talks. The second way is to have the DocDB guess.<p/>
 
 A suggested course of action for the moderator is to first encourage users to
 match their talks as described below. Then let the DocDB guess and, as the
@@ -142,12 +184,12 @@ which document.To do this, the DocDB will construct a list of documents which
 might match the entries in the agenda. It will then compare each of those
 documents against the items in the agenda and pick what it thinks is the best
 document among them. This document becomes an unconfirmed match with the entry
-in the agenda. If it guesses right, confirm the document as mentioned above.<p>
+in the agenda. If it guesses right, confirm the document as mentioned above.<p/>
 
 The list of documents to check against comes from two sources. First documents
 with modification times in a time window around the meeting dates are
 considered. Second, if the meeting is associated with a topic (discussed
-above), documents associated with that topic are considered.<p>
+above), documents associated with that topic are considered.<p/>
 
 Documents are matched with the agenda entries using a scoring system that takes into account several
 criteria:
@@ -165,7 +207,7 @@ to documents for each author or topic that matches those suggested in the
 agenda. For each agenda entry/document pair, a score is calculated and the
 document with the highest score is entered as the unconfirmed match. When
 documents are confirmed, they are removed from consideration, which may change
-which assignments the DocDB makes.<p>
+which assignments the DocDB makes.<p/>
 
 The precise algorithm used in choosing the best match can be determined by
 looking at the DocDB code. 
