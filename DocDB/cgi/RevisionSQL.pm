@@ -42,29 +42,6 @@ sub FetchDocRevisionByID {
   return $DocRevID;
 }
 
-sub FetchDocRevision { # Retrieves a revision given the DocumentID and version
-
-  #FIXME: Remove all references to this function, 
-  #       use FetchRevisionByDocumentAndVersion
-
-  require "DocumentSQL.pm";
-
-  my ($documentID,$versionNumber) = @_;
-  &FetchDocument($documentID);
-  my $revision_list = $dbh->prepare(
-    "select DocRevID from DocumentRevision ".
-    "where DocumentID=? and VersionNumber=? and Obsolete=0");
-  if ($DocRevIDs{$documentID}{$versionNumber}) {
-    return $DocRevIDs{$documentID}{$versionNumber};
-  }
-  $revision_list -> execute($documentID,$versionNumber);
-  my ($DocRevID) = $revision_list -> fetchrow_array;
-
-  &FetchDocRevisionByID($DocRevID);
-
-  return $DocRevID;
-}
-
 sub FetchRevisionByDocumentAndVersion { 
   require "DocumentSQL.pm";
 
