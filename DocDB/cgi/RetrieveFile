@@ -82,18 +82,19 @@ if ($FullURL) {
   print $query -> redirect(-location => $FullURL, -method => 'GET');
 } else {
   print $query->header;
-  &BTeVHeader("File Retrieve Results"); 
-
-  if (@warn_stack) {
-    &WarnPage(@warn_stack);
-    @warn_stack = ();
-  }
-  if (@error_stack) {  # The user made one or more mistakes, warn and exit
-    &EndPage(@error_stack);
-  }
-
-  &PrintRevisionInfo($DocRevID);
-
-  &DocDBNavBar;
-  &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
 }
+
+&BTeVHeader("File Retrieve Results"); 
+
+if (@warn_stack) {
+  &WarnPage(@warn_stack);
+  @warn_stack = ();
+}
+if (@error_stack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@error_stack);
+}
+
+&PrintRevisionInfo($DocRevID);
+
+&DocDBNavBar;
+&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
