@@ -208,7 +208,7 @@ unless ($Public) {
   print "<ul style=\"line-height:2.0\">\n";
   print "<li><b><a href=\"$HelpFile\">Get instructions</a></b>\n";
   print "<li><b><a href=\"$SelectPrefs\">Set preferences</a></b>\n";
-  print "<li><b><a href=\"$EmailLogin\">Set E-mail notification</a></b>\n";
+  print "<li><b><a href=\"$EmailLogin\">Manage your personal account</a></b>\n";
   print "<li><b><a href=\"$Statistics\">Get statistics</a></b>\n";
 if ($Project eq "Beams") {
   print "<li><b><a href=\"/cgi-bin/DocDB/RetrieveFile?docid=553\">Useful notes</a></b>\n";

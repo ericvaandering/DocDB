@@ -150,7 +150,7 @@ documents and "By Author" is useful for meetings.
 <title>File Name</title>
   <text>
 When updating the database information on a document, you can't rename the
-files, but you can redescribe them. These are the names of the files in your
+files, but you can re-describe them. These are the names of the files in your
 document.
   </text>
  </entry>
@@ -253,7 +253,7 @@ possible, so these searches are <b>always</b> done with an OR.
 <title>Keywords</title>
   <text>
    Keywords are used to further classify documents below the sub-topic level.
-   Keywords should be seperated by spaces. Compound words should use a dash or
+   Keywords should be separated by spaces. Compound words should use a dash or
    under-score to connect words. 
   </text>
  </entry>
@@ -263,7 +263,7 @@ possible, so these searches are <b>always</b> done with an OR.
 <title>Replace Duplicate Files</title>
   <text>
 If you select this option, any files you add which duplicate file names of
-existing files will completely replace the old files (no backup will be kept). Yuu
+existing files will completely replace the old files (no backup will be kept). You
 should <b>not</b> be using this option avoid creating a new version of a
 document, even if only minor changes have been made. This option is, instead,
 intended for making minor fixes to presentation formats and the like. 
@@ -319,7 +319,7 @@ country.
 <key>confurl</key>
 <title>URL</title>
   <text>
-Type in the URL for the conference's homepage. Please include the http:// or
+Type in the URL for the conference's home page. Please include the http:// or
 https:// at the beginning.
   </text>
  </entry>
@@ -329,7 +329,7 @@ https:// at the beginning.
 <title>Document Number</title>
   <text>
 This is the number (six digits or less) of the document you want to act on. If
-you can supply a version number, that is always in a seperate field, don't type
+you can supply a version number, that is always in a separate field, don't type
 it here.
   </text>
  </entry>
@@ -406,7 +406,7 @@ your local computer </li>
 <li>You can upload files by supplying a URL. In this case, the database
 system downloads the document from the location you specify. </li>
 </ol>
-In both cases the document is ultimately stored on the document database webserver.
+In both cases the document is ultimately stored on the document database web server.
   </text>
  </entry>
 
@@ -914,7 +914,7 @@ or may not be the same as the web username and password.
   <key>authorhint</key>
   <title>Talk Author Hints</title>
   <text>
-   Select who will give the talk. Mulitple authors can be selected if the
+   Select who will give the talk. Multiple authors can be selected if the
    talk will be given by more than one person. Multiple authors can also be
    selected  if the speaker is not known. In this case, select all the people
    who may give the talk.
@@ -925,7 +925,7 @@ or may not be the same as the web username and password.
   <key>topichint</key>
   <title>Talk Topic Hints</title>
   <text>
-   Select the topic of the talk. Mulitple topics can be selected if the
+   Select the topic of the talk. Multiple topics can be selected if the
    talk will cover more than one topic. Multiple topics can also be
    selected  if the exact topic is not known. In this case, select all the 
    topics which might be entered.
