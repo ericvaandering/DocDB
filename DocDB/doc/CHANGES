@@ -1,3 +1,22 @@
+5.4.0
+
+The big change is that in the admin interface, fields that will be ignored based
+on the selection of the action (New/Modify/Delete) are greyed out. They are
+turned back on as needed. This requires Javascript. Funded by FNAL-CD
+
+There are also the beginnings of an API to allow easier insertation of documents.
+
+5.3.1
+
+Lots of cosmetic changes suggested by FNAL-CD: 
+
+Lists of documents now have project name in the header, not in each document #. 
+Completed (I think) the change from E-mail account to personal account.
+Add topic -> Add minor topic
+Create/edit meeting links are more explicit.
+Things that were in blue text are now in the default color. 
+Actually styled with class="highlight" which will be a CSS property later.
+
 5.3.0
 
 When updating a document, a user now has the ability to copy files from the
@@ -28,8 +47,9 @@ To accomodate installations where tar is standard Unix tar (which can't deal
 with compressed files) new tar variables have been introduced. $GTar should be
 set to GNU's tar (standard tar on Linux). If this doesn't exist, then $Tar
 should be set to regular tar and $GZip and $GUnzip to the GNU gzip/gunzip
-utilities. The correct defaults for Linux are set in the DocDBGlobals.pm file, so if you
-didn't modify these before, you don't need to do anything.
+utilities. The correct defaults for Linux are set in the DocDBGlobals.pm file,
+so if you didn't modify these before, you don't need to do anything. If you did
+change this and are using GTar, then change your Tar reference to GTar. 
 
 Some groups have requested that by default, new documents are marked as
 publically accessible. The variable $DefaultPublicAccess, which defaults to "0"

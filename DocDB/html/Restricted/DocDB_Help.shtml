@@ -51,6 +51,7 @@
   <li><a href="#prefs">Setting preferences</a>
   <li><a href="#email">Setting e-mail notification</a>
  </ol>
+ <li><a href="#signoff">Document Signoffs</a>
  <li><a href="#final">Final Words</a>
  <ol type="1">
   <li><a href="#refer">Referring to your document and its files</a>
@@ -428,8 +429,51 @@ can choose which documents to be notified about. So, for instance, you could
 choose to be notified immediately if a new document is created about your
 detector and every week about all new documents in the database. 
 
+<a name="signoff">
+<h2>E. Document Signoffs</h2>
+
+An optional component of DocDB is to allow some documents to be <q>signed</q>
+by a group of people before becoming <q>approved.</q> People with <b>Personal
+Accounts</b> can sign documents. The list of people needing to approve a
+document is editable by the same people that can edit the document itself. <p>
+
+To <q>freeze</q> a document and its meta-information such that only
+<q>managers</q> can modify it or unfreeze it, make the document editable only
+by the ``Executive'' group.<p>
+
+When displaying document version(s) in a list, there are obvious indications of
+which documents are approved, which are unapproved, and which are obsolete
+(even if they were approved at some time). All information about who <q>signed</q>'
+each version of each document is kept.<p>
+
+DocDB contains the ability to allow any number of approval <q>topologies.</q> 
+For instance, person A or person B might be allowed to sign at the first step,
+followed by person C at the second step. Or, person A and person B may have to
+sign (but in parallel) before person C can sign. However, the current code only
+allows one topology (an ordered list). When a document under control is
+updated, the signoff list structure is preserved, but the approvals themselves
+are cleared.<p>
+
+The signoff system provides a number of additional convieniences:
+<ul>
+  <li>Email notifications to signatories when a document is ready for their
+  signature</li>
+  <li>A way to list all controlled documents</li>
+</ul>
+
+A number of other features are planned and will be added as needed:
+<ul>
+  <li>Email reports of outstanding signatures needed (to desired signatory and
+    other signatories of documents)</li>
+  <li>List of all documents a person is a signatory (actual or requested) on</li>
+  <li>More complicated approval topolgies (OR's, parallel paths, etc.)</li>
+  <li>Reminders if a document goes unsigned for a while</li>
+  <li>Restricting the list of people who may sign documents to a sub-set of those with
+  personal accounts</li>
+</ul>
+
 <a name="final">
-<h2>E. Final Words</h2>
+<h2>F. Final Words</h2>
 
 <a name="refer">
 <h3>Referring to Your Document and Files</h3>
