@@ -193,7 +193,7 @@ if ($EnhancedSecurity) {
 
 if ($UseSignoffs && ($mode eq "update" || $mode eq "updatedb")) {
   require "SignoffUtilities.pm";
-  my $Status = &RevisionStatus($DocRevID);
+  my ($Status) = &RevisionStatus($DocRevID);
   unless ($Status eq "Unmanaged") {
     push @WarnStack,$Msg_WarnModManaged;
   }  

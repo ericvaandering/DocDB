@@ -97,7 +97,7 @@ unless ($Version) {
 
 if ($UseSignoffs) {
   require "SignoffUtilities.pm";
-  my $Status = &RevisionStatus($DocRevID);
+  my ($Status) = &RevisionStatus($DocRevID);
   unless ($Status eq "Unmanaged") {
     push @WarnStack,$Msg_WarnModManaged;
   }  
