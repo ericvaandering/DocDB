@@ -23,7 +23,11 @@ sub HTMLPrintKeys {
 }
 
 sub DBPrint {
-  print @_,"<br>\n";
+  print @_,"\n";
+}
+
+sub DBPrintLine {
+  &DBPrint(@_,"<br>");
 }
 
 1;

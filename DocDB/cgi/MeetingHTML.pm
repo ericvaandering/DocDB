@@ -335,23 +335,21 @@ sub TalkEntryForm (@) {
   my @SessionOrderIDs = @_; 
 
   require "Scripts.pm";
-  print "<b><a ";
-  &HelpLink("sessions");
-  print "Sessions:</a></b><p> \n";
-  print "<table cellpadding=3 border=1>\n";
-  print "<tr valign=top>\n";
-  print "<th><b><a "; &HelpLink("meetingorder");     print "Order</a></b> or <br>\n";
-  print "    <b><a "; &HelpLink("talkdelete");       print "Delete</a></td>\n";
+  print "<table cellpadding=3>\n";
+  print "<tr valign=bottom>\n";
+  print "<th><b><a "; &HelpLink("meetingorder");     print "Order</a></b><br/>\n";
+  print "    <b><a "; &HelpLink("talkdelete");       print "Confirm</a><br/>\n";
+  print "or  <b><a "; &HelpLink("talkdelete");       print "Delete</a></td>\n";
   print "<th><b><a "; &HelpLink("talkseparator");    print "Separator</a></th>\n";
   print "<th><b><a "; &HelpLink("talkdocid");        print "Doc. #</a></th>\n";
-  print "<th><b><a "; &HelpLink("talkinfo");         print "Talk Title & Description</a></th>\n";
-  print "<th><b><a "; &HelpLink("talkinfo");         print "Time</a></th>\n";
+  print "<th><b><a "; &HelpLink("talkinfo");         print "Talk Title & Note</a></th>\n";
+  print "<th><b><a "; &HelpLink("talktime");         print "Time</a></th>\n";
   print "</tr>\n";
   
   # Sort session IDs by order
   
-  my $ExtraTalks = $InitialTalks;
-#  if (@MeetingOrderIDs) { $ExtraTalks = 3; }
+  my $ExtraTalks = 10;
+  if (@SessionOrderIDs) { $ExtraTalks = 3; }
   for (my $Talk=1;$Talk<=$ExtraTalks;++$Talk) {
     push @SessionOrderIDs,"n$Talk";
   }
@@ -362,24 +360,26 @@ sub TalkEntryForm (@) {
     ++$TalkOrder;
     $TalkDefaultOrder = $TalkOrder;  
     
-    if (grep /n/,$MeetingOrderID) {# Erase defaults
-      $TalkDefaultDateTime    = "";
-      $TalkDefaultTitle       = "";
-#      $TalkDefaultDescription = ""; # Note?
-      $TalkSeparatorDefault   = "";
+    if (grep /n/,$SessionOrderID) {# Erase defaults
+#      $TalkDefaultTime  = "";
+      $TalkDefaultTitle     = "";
+      $TalkDefaultNote      = ""; 
+      $TalkSeparatorDefault = "";
     } else { # Key off Meeting Order IDs, do differently for Sessions and Separators
-      if ($TalkOrders{$TalkOrderID}{SessionTalkID}) {
-        my $SessionTalkID = $TalkOrders{$TalkOrderID}{SessionTalkID};
-	$TalkDefaultDateTime    = $SessionTalks{$SessionID}{StartTime};
-	$TalkDefaultTitle       = $SessionTalks{$SessionID}{Title};
-#	$TalkDefaultDescription = $SessionTalks{$SessionID}{Description};
-	$TalkSeparatorDefault   = "No";
-      } elsif ($TalkOrders{$TalkOrderID}{TalkSeparatorID}) {
-        my $TalkSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
-	$TalkDefaultDateTime    = $TalkSeparators{$SessionSeparatorID}{StartTime};
-	$TalkDefaultTitle       = $TalkSeparators{$SessionSeparatorID}{Title};
-#	$TalkDefaultDescription = $TalkSeparators{$SessionSeparatorID}{Description};
-	$TalkSeparatorDefault   = "Yes";
+      if ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
+        my $SessionTalkID     = $SessionOrders{$SessionOrderID}{SessionTalkID};
+#        $TalkDefaultTime      = $SessionTalks{$SessionTalkID}{Time};
+        $TalkDefaultTitle     = $SessionTalks{$SessionTalkID}{HintTitle} || ;
+        $TalkDefaultNote      = $SessionTalks{$SessionTalkID}{Note}      || "";
+        $TalkSeparatorDefault = "No";
+        &DBPrintLine("ST: $SessionTalkID $TalkDefaultTime $TalkDefaultTitle ");
+      } elsif ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) {
+        my $TalkSeparatorID   = $SessionOrders{$SessionOrderID}{TalkSeparatorID};
+#        $TalkDefaultTime      = $TalkSeparators{$TalkSeparatorID}{Time};
+        $TalkDefaultTitle     = $TalkSeparators{$TalkSeparatorID}{Title} || "";
+        $TalkDefaultNote      = $TalkSeparators{$TalkSeparatorID}{Note}  || "";
+        $TalkSeparatorDefault = "Yes";
+        &DBPrintLine("SS: $TalkSeparatorID $TalkDefaultTime $TalkDefaultTitle ");
       }
     } 
 
@@ -387,19 +387,22 @@ sub TalkEntryForm (@) {
     $query -> param('sessionorderid',$SessionOrderID);
     print $query -> hidden(-name => 'sessionorderid', -default => $SessionOrderID);
 
-    print "<td align=center>\n"; &TalkOrder; print "<p/>\n";
+
+    print "<td align=left rowspan=2>\n"; &TalkOrder; print "<br/>\n";
+    &TalkConfirm($SessionOrderID) ; print "<br/>\n";
     &TalkDelete($SessionOrderID) ; print "</td>\n";
 
-    print "<td align=center>\n"; &TalkSeparator($SessionOrderID); print "</td>\n";
-    print "<td align=center>\n"; &TalkDocID;                      print "</td>\n";
+    print "<td align=center rowspan=2>\n"; &TalkSeparator($SessionOrderID); print "</td>\n";
+    print "<td align=center rowspan=2>\n"; &TalkDocID;                      print "</td>\n";
     print "<td>\n"; &TalkTitle($TalkDefaultTitle);            print "</td>\n";
-#    print "</tr>\n";
-#    print "<tr valign=top>\n";
-#    print "<td>\n"; &TalkNote;      print "</td>\n";
-    print "<td align=right>\n"; &TalkTimePullDown; print "</td>\n";
+    print "<td align=right rowspan=2>\n"; &TalkTimePullDown; print "</td>\n";
+    &DBPrint("<td>",$SessionOrderID,"</td>");
     print "</tr>\n";
-#    print "<tr valign=top><td colspan=2><hr width=95%></td>\n";
-#    print "</tr>\n";
+    print "<tr valign=top>\n";
+    print "<td>\n"; &TalkNote;      print "</td>\n";
+    print "</tr>\n";
+    print "<tr valign=top><td colspan=5><hr width=95%></td>\n";
+    print "</tr>\n";
   }
   print "</table>\n";
 }
@@ -420,6 +423,16 @@ sub TalkDelete ($) {
   }
 }
 
+sub TalkConfirm ($) {
+  my ($SessionOrderID) = @_;
+  if ($TalkSeparatorDefault eq "Yes") {
+    print "&nbsp;\n";
+  } else {  
+    print $query -> checkbox(-name  => "talkconfirm", 
+                             -value => "$SessionOrderID", -label => 'Confirm');
+  }
+}
+
 sub TalkOrder {
   $query -> param('talkorder',$TalkDefaultOrder);
   print $query -> textfield (-name => 'talkorder', -value => $TalkDefaultOrder, 
@@ -431,7 +444,7 @@ sub TalkSeparator ($) {
 
   if ($TalkSeparatorDefault eq "Yes") {
     print "Yes\n";	      
-  } elsif ($SessionSeparatorDefault eq "No") {
+  } elsif ($TalkSeparatorDefault eq "No") {
     print "No\n";	      
   } else {
     print $query -> checkbox(-name => "talkseparator", -value => "$SessionOrderID", -label => 'Yes');
@@ -439,9 +452,13 @@ sub TalkSeparator ($) {
 }
 
 sub TalkDocID {
-  $query -> param('talkdocid',$TalkDefaultDocID);
-  print $query -> textfield (-name => 'talkdocid', -value => $TalkDocID, 
-                             -size => 6, -maxlength => 7);
+  if ($TalkSeparatorDefault eq "Yes") {
+    print "&nbsp;\n";
+  } else {  
+    $query -> param('talkdocid',$TalkDefaultDocID);
+    print $query -> textfield (-name => 'talkdocid', -value => $TalkDocID, 
+                               -size => 6, -maxlength => 7);
+  }
 }
 
 sub TalkTimePullDown {
@@ -453,7 +470,7 @@ sub TalkTimePullDown {
     $DefaultTime = "0:30";
   }  
 
-  my @hours = ();
+  my @hours = ("----");
   for (my $Hour = 0; $Hour<=5; ++$Hour) {
     for (my $Min = 0; $Min<=59; $Min=$Min+5) {
       push @hours,sprintf "%1.1d:%2.2d",$Hour,$Min;
@@ -463,6 +480,12 @@ sub TalkTimePullDown {
   $query -> param('talktime', $DefaultTime);
 
   print $query -> popup_menu (-name => 'sessionhour', -values => \@hours, -default => $DefaultTime);
+}
+
+sub TalkNote {
+  $query -> param('talknote', $TalkDefaultNote);
+  print $query -> textarea (-name => 'talknote',-value => $TalkDefaultNote, 
+                            -columns => 40, -rows => 3);
 }
 
 

@@ -105,7 +105,6 @@ if ($ConferenceID) {
 }     
 
 if ($Mode eq "create" || $Mode eq "modify") {
-#  my $ConferenceID,@SessionIDs,@SessionSeparatorIDs,@MeetingOrderIDs;
   if ($MajorTopic && $Mode eq "create") { # FIXME allow for modification here
     my $TopicInsert = $dbh->prepare(
       "insert into MinorTopic ".
@@ -174,8 +173,8 @@ if ($Mode eq "create" || $Mode eq "modify") {
 
   my $MeetingOrderInsert = $dbh -> prepare(
    "insert into MeetingOrder ".
-   "(MeetingOrderID, ConferenceID, SessionOrder, SessionID, SessionSeparatorID) ". 
-   "values (0,?,?,?,?)");
+   "(MeetingOrderID, SessionOrder, SessionID, SessionSeparatorID) ". 
+   "values (0,?,?,?)");
   my $MeetingOrderUpdate = $dbh -> prepare(
    "update MeetingOrder set SessionOrder=? where MeetingOrderID=?");
   
@@ -209,7 +208,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
           $SessionInsert          -> execute($ConferenceID,$SessionDate,$SessionTitle,$SessionDescription);
           $SessionID = $SessionInsert -> {mysql_insertid}; # Works with MySQL only
 	}
-	$MeetingOrderInsert -> execute($ConferenceID,$SessionNewOrder,$SessionID,$SessionSeparatorID);
+	$MeetingOrderInsert -> execute($SessionNewOrder,$SessionID,$SessionSeparatorID);
       }  
     } else {
       $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};

@@ -17,6 +17,7 @@ require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 require "Sorts.pm";
+require "Scripts.pm";
 
 require "MeetingHTML.pm";
 require "MeetingSQL.pm";
@@ -25,6 +26,7 @@ $query = new CGI;  # Global for subroutines
 
 print $query -> header;
 &DocDBHeader("Modify a Session");
+&HelpPopupScript;
 
 %params = $query -> Vars;
 
@@ -74,6 +76,9 @@ unless ($dbh) {
 
 &EndPage(@ErrorStack);
 
+# Read in Hints (subroutine)
+# Re-hint all talks (subroutine)
+
 # Fetch all SessionTalks and TalkSeparators with this SessionID 
 
 my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
@@ -84,21 +89,22 @@ my @SessionOrderIDs  = &FetchSessionOrdersBySessionID($SessionID);
 
 @SessionOrderIDs = sort SessionOrderIDByOrder @SessionOrderIDs;
 
-# Read in Hints (subroutine)
-# Re-hint all talks (subroutine)
-
 # Display all info on all talks plus a number of blanks
+
 print $query -> start_multipart_form('POST',"$SessionModify");
+
 print "<table cellpadding=10>\n";
 
 print "<tr valign=top>\n";
-print "<td colspan=2>\n"; &TalkEntryForm(@SessionOrderIDs);   print "</td>\n";
+ print "<td>\n"; 
+  &TalkEntryForm(@SessionOrderIDs);   
+ print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td align=center>\n";
-print $query -> submit (-value => "Modify Session and Talks");
-print "</td>\n";
+ print "<td align=center>\n";
+  print $query -> submit (-value => "Modify Session and Talks");
+ print "</td>\n";
 print "</tr>\n";
 
 print "</table>\n";

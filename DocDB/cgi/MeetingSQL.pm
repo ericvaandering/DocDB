@@ -229,21 +229,21 @@ sub FetchTalkSeparatorsBySessionID ($) {
 
 sub FetchTalkSeparatorByID ($) {
   my ($TalkSeparatorID) = @_;
-  my ($SessionID,$Time,$Title,$Description,$TimeStamp); 
+  my ($SessionID,$Time,$Title,$Note,$TimeStamp); 
   my $TalkSeparatorFetch = $dbh -> prepare(
-    "select SessionID,Time,Title,Description,TimeStamp ".
+    "select SessionID,Time,Title,Note,TimeStamp ".
     "from TalkSeparator where TalkSeparatorID=?");
   if ($TalkSeparators{$TalkSeparatorID}{TimeStamp}) {
     return $TalkSeparatorID;
   }
   $TalkSeparatorFetch -> execute($TalkSeparatorID);
-  ($SessionID,$Time,$Title,$Description,$TimeStamp) = $TalkSeparatorFetch -> fetchrow_array; 
+  ($SessionID,$Time,$Title,$Note,$TimeStamp) = $TalkSeparatorFetch -> fetchrow_array; 
   if ($TimeStamp) {
-    $TalkSeparators{$TalkSeparatorID}{SessionID}   = $SessionID;
-    $TalkSeparators{$TalkSeparatorID}{Time}	   = $Time;
-    $TalkSeparators{$TalkSeparatorID}{Title}       = $Title;
-    $TalkSeparators{$TalkSeparatorID}{Description} = $Description;
-    $TalkSeparators{$TalkSeparatorID}{TimeStamp}   = $TimeStamp;
+    $TalkSeparators{$TalkSeparatorID}{SessionID} = $SessionID;
+    $TalkSeparators{$TalkSeparatorID}{Time}	 = $Time;
+    $TalkSeparators{$TalkSeparatorID}{Title}     = $Title;
+    $TalkSeparators{$TalkSeparatorID}{Note}      = $Note;
+    $TalkSeparators{$TalkSeparatorID}{TimeStamp} = $TimeStamp;
   }
   
   return $TalkSeparatorID;  
