@@ -23,18 +23,15 @@ print $query->header;
 
 &HelpPopupScript;
 
-if ($db_name eq "BTeVDocDB") {
-  print "<p><center><big><font color=red><b>
-  Database is now live! All data will be saved.<br>
-  </b></font></big></center>\n";
-} else {  
-  print "<p><center><big><font color=red><b>Testing only! All data will be
-  lost!</b></font></big></center>\n";
-}
+#if ($db_name eq "BTeVDocDB") {
+  print "<p><center><h4><a href=\"$web_root/Help/DocDB_Help.shtml\">Instructions on
+  using</a> the database. Click on any <font color=red>red link</font> for quick
+  help.</h4></center>\n";
+#} else {  
+#  print "<p><center><big><font color=red><b>Testing only! All data will be
+#  lost!</b></font></big></center>\n";
+#}
 
-print "<p><b><a href=\"$web_root/Help/DocDB_Help.shtml\">Instructions on
-using</a> the database. Click on any <font color=red>red link</font> for quick
-help.</b>\n";
 print "<p><b>Find the information you want in the database:</b>\n";
 print "<ul>\n";
 
@@ -198,7 +195,7 @@ print "<td>\n";
 print $query -> checkbox(-name => "overdate", -label => '(Check for Yes)');
 print "<tr><td align=center colspan=2>\n";
 print $query -> submit (-value => "Give me my customized form");
-print "</table>\n";
+print "</table><p>\n";
 print $query -> endform;
 
 ### File addition form
@@ -248,7 +245,6 @@ if ($remote_user eq $Administrator) {
   print "<li>Add a <a href=\"$TopicAddForm\">topic</a>\n";
 }
 print "<li>Add an <a href=\"$AuthorAddForm\">author</a>\n";
-print "<li>Eric's <a href=\"http://www.hep.vanderbilt.edu/~vondo/btev-private/DocDB-ToDo.html\">To do list</a> for the database \n";
 print "</ul>\n";
 
 &DocDBNavBar;

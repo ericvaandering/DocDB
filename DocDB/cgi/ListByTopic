@@ -22,6 +22,7 @@ $query = new CGI;  # Global for subroutines
 %params = $query -> Vars;
 
 my $TopicID = $params{topicid};
+my $Mode    = $params{mode};
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
@@ -32,7 +33,14 @@ print $query->header;
 
 &FetchMinorTopic($TopicID);
 
-print "<center><h4>These documents on $MinorTopics{$TopicID}{FULL} are
+# Set defaults
+
+unless ($Mode eq "date" or $Mode eq "meeting") {
+  $Mode = "date";
+}  
+
+print "<center><h4>These documents on <font color=\"blue\">
+       $MinorTopics{$TopicID}{FULL}</font> are
 available:</h4></center><p>\n";
 
 my $revision_list = $dbh -> prepare(
@@ -56,13 +64,13 @@ my @DocumentIDs = reverse sort DocumentByRevisionDate keys %DocumentIDs;
 
 print "<center><table cellpadding=3>\n";
 
-&DocumentSummary(0); # Force table headers
+&DocumentSummary(0,$Mode); # Force table headers
 
 foreach $DocumentID (@DocumentIDs) {
   unless ($DocumentID) {next;}
   unless (&CanAccess($DocumentID,$Documents{$DocumentID}{NVER})) {next;}
   # FIXME: Need to put latest document accessible if last version isn't
-  &DocumentSummary($DocumentID);
+  &DocumentSummary($DocumentID,$Mode);
 }
 
 print "</table></center>\n";

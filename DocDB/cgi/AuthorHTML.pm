@@ -40,25 +40,25 @@ sub AuthorListByID {
 }
 
 sub RequesterByID { # Uses non HTML-4.01 <nobr> tag. 
-  my ($requesterID) = @_;
-  &FetchAuthor($requesterID);
+  my ($RequesterID) = @_;
+  my $author_link   = &AuthorLink($RequesterID);
   
   print "<nobr><b>Requested by:</b> ";
-  print "$Authors{$requesterID}{FULLNAME}</nobr><br>\n";
+  print "$author_link</nobr><br>\n";
 }
 
 sub SubmitterByID { # Uses non HTML-4.01 <nobr> tag.
-  my ($requesterID) = @_;
-  &FetchAuthor($requesterID);
+  my ($RequesterID) = @_;
+  my $author_link   = &AuthorLink($RequesterID);
   
   print "<nobr><b>Updated by:</b> ";
-  print "$Authors{$requesterID}{FULLNAME}</nobr><br>\n";
+  print "$author_link</nobr><br>\n";
 }
 
 sub AuthorLink {
-  my ($AuthorID) = @_;
-  
   require "AuthorSQL.pm";
+  
+  my ($AuthorID) = @_;
   
   &FetchAuthor($AuthorID);
   my $link;
@@ -70,10 +70,9 @@ sub AuthorLink {
 }
 
 sub PrintAuthorInfo {
+  require "AuthorSQL.pm";
 
   my ($AuthorID) = @_;
-  
-  require "AuthorSQL.pm";
   
   &FetchAuthor($AuthorID);
   my $link = &AuthorLink($AuthorID);

@@ -165,7 +165,8 @@ Topics
 Select all the topics and subtopics for the document. To select multiple topics
 either click (Netscape 4.x) or CTRL-click (Netscape 6.x, Internet Explorer) on
 the topic names. Note that there are two ways to enter topics, either from one
-big long list or from several shorter lists.
+big long list or from several shorter lists. You can select the other mode from
+the customize form on the main page.
 <p>
 To request that a new subtopic be added to the database please contact the
 <a href="mailto:btev-docdb@fnal.gov">DocDB administrators</a>. Tell us what

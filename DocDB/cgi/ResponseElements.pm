@@ -1,12 +1,13 @@
 require "AuthorHTML.pm";
 require "TopicHTML.pm";
+require "FileHTML.pm";
 
 sub PrintTitle {
   my ($Title) = @_;
   if ($Title) {
-    print "<b>Title:</b> $Title<br>\n";
+    print "<h3>$Title</h3>\n";
   } else {
-    print "<b>Title:</b> none<br>\n";
+    print "<h3><b>Title:</b> none<br></h3>\n";
   }
 }
 
@@ -49,57 +50,6 @@ sub PrintPubInfo {
   }
 }
 
-sub FileListByRevID {
-  my ($DocRevID) = @_;
-#  &FetchDocRevisionByID($DocRevID);
-  my $Files_ref  = &FetchDocFiles($DocRevID);
-  my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
-  my $Version    = $DocRevisions{$DocRevID}{VERSION};
-
-  if (@{$Files_ref}) {
-    @RootFiles  = ();
-    @OtherFiles = ();
-    foreach $File (@{$Files_ref}) {
-      if ($DocFiles{$File}{ROOT}) {
-        push @RootFiles,$File
-      } else {
-        push @OtherFiles,$File
-      }  
-    }
-    if (@RootFiles) {
-      print "<b>Files:</b>\n";
-      print "<ul>\n";
-      &FileListByFileID(@RootFiles);
-      print "</ul>\n";
-    }   
-    if (@OtherFiles) {
-      print "<b>Other Files:</b>\n";
-      print "<ul>\n";
-      &FileListByFileID(@OtherFiles);
-      print "</ul>\n";
-    }   
-  } else {
-    print "<b>Files:</b> none<br>\n";
-  }
-}
-
-sub FileListByFileID {
-  my (@Files) = @_;
-  foreach my $file (@Files) {
-    my $DocRevID      = $DocFiles{$file}{DOCREVID};
-    my $VersionNumber = $DocRevisions{$DocRevID}{VERSION};
-    my $DocumentID    = $DocRevisions{$DocRevID}{DOCID};
-    my $link;
-    if ($DocFiles{$file}{DESCRIPTION}) {
-      $link = &FileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME},
-                        $DocFiles{$file}{DESCRIPTION});
-    } else { 
-      $link = &FileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME});
-    }
-    print "<li>$link</li>\n";
-  }  
-}
-
 sub SecurityListByID {
   my @GroupIDs = @_;
   
@@ -134,10 +84,11 @@ sub PrintRevisionInfo {
   my @GroupIDs  = @{$Groups_ref};
  
   print "<center><table cellpadding=10>";
-  print "<tr valign=top>";
-
-  print "<td colspan=2 width=\"40%\">"; 
+  print "<tr><td colspan=6 align=center>\n";
   &PrintTitle($DocRevisions{$DocRevID}{TITLE});
+  print "</td></tr>\n";
+  print "<tr valign=top>";
+  print "<td colspan=2 width=\"40%\">"; 
   &RequesterByID($Documents{$DocumentID}{REQUESTER});
   &SubmitterByID($DocRevisions{$DocRevID}{SUBMITTER});
 
@@ -147,6 +98,7 @@ sub PrintRevisionInfo {
   print "<td colspan=2>"; 
   &ModTimes;
 
+  print "</td></tr>\n";
   print "<tr valign=top>";
   print "<td colspan=2>"; 
   &AuthorListByID(@AuthorIDs);
@@ -157,6 +109,7 @@ sub PrintRevisionInfo {
   print "<td colspan=2>"; 
   &SecurityListByID(@GroupIDs);
 
+  print "</td></tr>\n";
   print "<tr valign=top>";
   print "<td colspan=3>"; 
   &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT});
@@ -164,10 +117,11 @@ sub PrintRevisionInfo {
   print "<td rowspan=2 colspan=3>"; 
   &FileListByRevID($DocRevID);
 
+  print "</td></tr>\n";
   print "<tr valign=top>";
   print "<td colspan=3>"; 
   &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
-
+  print "</td></tr>\n";
   if (&CanModify($DocumentID) && !$HideButtons) {
     print "<tr valign=top>";
     print "<td colspan=2 align=center>";
@@ -176,6 +130,7 @@ sub PrintRevisionInfo {
     &UpdateDBButton($DocumentID);
     print "<td colspan=2 align=center>";
     &AddFilesButton($DocumentID,$Version);
+    print "</td></tr>\n";
   }  
 
   print "</table></center>\n"; 
@@ -207,22 +162,15 @@ sub FullDocumentID {
   return "BTeV-doc-$documentID";
 }  
 
-sub FileLink {
-  require "FSUtilities.pm";
-
-  my ($documentID,$version,$shortfile,$description) = @_;
-  $base_url = &GetURLDir($documentID,$version);
-  if ($description) {
-    return "<a href=\"$base_url$shortfile\">$description</a> ($shortfile)";
-  } else {
-    return "<a href=\"$base_url$shortfile\">$shortfile</a>";
-  }
-}  
-
 sub DocumentLink {
-  my ($DocumentID,$Version) = @_;
-  $ret = "<a href=\"$ShowDocument\?docid=$DocumentID\&version=$Version\">".
-         (&FullDocumentID)."-v$Version</a>";
+  my ($DocumentID,$Version,$Title) = @_;
+  my $ret = "<a href=\"$ShowDocument\?docid=$DocumentID\&version=$Version\">";
+  if ($Title) {
+    $ret .= $Title;
+  } else {
+    $ret .= &FullDocumentID."-v$Version";
+  }
+  $ret .=  "</a>";
 }         
 
 sub ModTimes {
@@ -284,29 +232,45 @@ sub OtherVersionLinks {
 sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
   require "MiscSQL.pm";
   
-  my ($DocumentID) = @_;
+  my ($DocumentID,$Mode) = @_;
+  unless ($Mode) {$Mode = "date"};
+  
   if ($DocumentID) {
     &FetchDocument($DocumentID);
     unless (&CanAccess($DocumentID,$Documents{$DocumentID}{NVER})) {return;}
     
-    my $full_docid = &DocumentLink($DocumentID,$Documents{$DocumentID}{NVER});
-    my $DocRevID   = &FetchDocRevision($DocumentID,$Documents{$DocumentID}{NVER});
-    my $Files_ref  = &FetchDocFiles($DocRevID);
-    my $title      = $DocRevisions{$DocRevID}{TITLE};
-    my $rev_date   = &EuroDate($DocRevisions{$DocRevID}{DATE});
+    my $full_docid  = &DocumentLink($DocumentID,$Documents{$DocumentID}{NVER});
+    my $DocRevID    = &FetchDocRevision($DocumentID,$Documents{$DocumentID}{NVER});
+    my $title       = &DocumentLink($DocumentID,$Documents{$DocumentID}{NVER},$DocRevisions{$DocRevID}{TITLE});
+    my $Files_ref   = &FetchDocFiles($DocRevID);
+    my $rev_date    = &EuroDate($DocRevisions{$DocRevID}{DATE});
+    my $author_link = &FirstAuthor($DocRevID);
     print "<tr valign=top>\n";
-    print "<td><nobr>$full_docid</nobr></td>\n";
-    print "<td>$title</td>\n";
-    my $author_link = FirstAuthor($DocRevID);
-    print "<td><nobr>$author_link</nobr></td>\n";
-    print "<td><nobr>$rev_date</nobr></td>\n";
+    if ($Mode eq "date") {
+      print "<td><nobr>$full_docid</nobr></td>\n";
+      print "<td>$title</td>\n";
+      print "<td><nobr>$author_link</nobr></td>\n";
+      print "<td><nobr>$rev_date</nobr></td>\n";
+    } elsif ($Mode eq "meeting") {
+      print "<td><nobr>$full_docid</nobr></td>\n";
+      print "<td>$title</td>\n";
+      print "<td><nobr>$author_link</nobr></td>\n";
+      print "<td>"; &ShortFileListByRevID($DocRevID); print "</td>\n";
+    }  
     print "</tr>\n";
   } else { # Print header if $DocumentID = 0
     print "<tr valign=bottom>\n";
-    print "<th>Document Number</th>\n";
-    print "<th>Title</th>\n";
-    print "<th>Author:</th>\n";
-    print "<th>Last Modified</th>\n";
+    if ($Mode eq "date") {
+      print "<th>Document Number</th>\n";
+      print "<th>Title</th>\n";
+      print "<th>Author</th>\n";
+      print "<th>Last Modified</th>\n";
+    } elsif ($Mode eq "meeting") {
+      print "<th>Document Number</th>\n";
+      print "<th>Title</th>\n";
+      print "<th>Author</th>\n";
+      print "<th>Files</th>\n";
+    }  
     print "</tr>\n";
   } 
 }

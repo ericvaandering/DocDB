@@ -32,7 +32,8 @@ print $query->header;
 
 &FetchDocType($TypeID);
 
-print "<center><h4>These documents of type $DocumentTypes{$TypeID}{SHORT} are
+print "<center><h4>These documents of type <font color=\"blue\">
+$DocumentTypes{$TypeID}{SHORT}</font> are
 available:</h4></center><p>\n";
 
 my $document_list = $dbh -> prepare(
