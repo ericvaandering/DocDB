@@ -142,6 +142,10 @@ sub SingleUploadBox {
   &HelpLink("fileupload");
   print "Local file upload:</a></b><br></td></tr>\n";
   my @FileIDs = sort keys %DocFiles;
+  my $NewFiles = 0; # FIXME: Is this the same as "nodesc"
+  unless (@FileIDs) {
+    $NewFiles = 1;
+  }
   for (my $i=1;$i<=$NumberUploads;++$i) {
     my $FileID = shift @FileIDs;
     print "<tr><td align=right>\n";
@@ -163,8 +167,11 @@ sub SingleUploadBox {
                                  -maxlength => 128,
                                  -default => $DocFiles{$FileID}{DESCRIPTION});
     }
-    print $query -> checkbox(-name => "root", -checked => 'checked', 
-                             -value => $i, -label => '');
+    if ($DocFiles{$FileID}{ROOT} || $NewFiles) {
+      print $query -> checkbox(-name => "root", -value => $i, -checked => 'checked', -label => '');
+    } else {
+      print $query -> checkbox(-name => "root", -value => $i, -label => '');
+    }
     print "<a "; &HelpLink("main"); print "Main?</a>\n";
     print "</td></tr>\n";
   }
@@ -179,6 +186,10 @@ sub SingleHTTPBox {
   print "Upload by HTTP:</a></b><br> \n";
   print "</td><tr>\n";
   my @FileIDs = sort keys %DocFiles;
+  my $NewFiles = 0; # FIXME: Is this the same as "nodesc"
+  unless (@FileIDs) {
+    $NewFiles = 1;
+  }
   for (my $i=1;$i<=$NumberUploads;++$i) {
     my $FileID = shift @FileIDs;
     print "<tr><td align=right>\n";
@@ -199,8 +210,11 @@ sub SingleHTTPBox {
                                  -maxlength => 128,
                                  -default => $DocFiles{$FileID}{DESCRIPTION});
     }
-    print $query -> checkbox(-name  => "root", -checked => 'checked', 
-                             -value => $i,     -label   => '');
+    if ($DocFiles{$FileID}{ROOT} || $NewFiles) {
+      print $query -> checkbox(-name => "root", -value => $i, -checked => 'checked', -label => '');
+    } else {
+      print $query -> checkbox(-name => "root", -value => $i, -label => '');
+    }
     print "<a "; &HelpLink("main"); print "Main?</a>\n";
     print "</td></tr>\n";
   }
@@ -404,13 +418,8 @@ sub MultiTopicSelect { # Multiple scrolling selectable lists for topics
         $MatchLabels{$MinorID} = $MinorTopics{$MinorID}{SHORT};
       }  
     }
-    if (&MajorIsMeeting($MajorID)) {
-      @MatchMinorIDs = reverse sort byMeetingDate @MatchMinorIDs;
-    } elsif (&MajorIsConference($MajorID)) {
-      @MatchMinorIDs = reverse sort ConferenceByDate @MatchMinorIDs;
-    } else {
-      @MatchMinorIDs = sort byMinorTopic @MatchMinorIDs;
-    }
+    @MatchMinorIDs = sort byTopic @MatchMinorIDs;
+
     print $query -> scrolling_list(-name => "topics", 
              -values => \@MatchMinorIDs, -labels => \%MatchLabels,
              -size => 8, -multiple => 'true', -default => \@TopicDefaults);
@@ -508,7 +517,7 @@ sub ConferenceURLBox {
   &HelpLink("confurl");
   print "URL:</a></b><br> \n";
   print $query -> textfield (-name => 'url', 
-                             -size => 40, -maxlength => 64);
+                             -size => 40, -maxlength => 240);
 };
 
 sub NameEntryBox {

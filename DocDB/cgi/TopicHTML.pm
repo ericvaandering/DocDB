@@ -1,7 +1,7 @@
 #
 #        Name: TopicHTML.pm
 # Description: Routines to produce snippets of HTML dealing with topics 
-#              (major, minor and conferences which are special types of topics) 
+#              (major, minor and conferences which are special types of topics) 
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
@@ -43,7 +43,7 @@ sub MinorTopicLink ($;$) {
   
   &FetchMinorTopic($TopicID);
   my $link;
-  $link = "<a href=$ListByTopic?topicid=$TopicID>";
+  $link = "<a href=\"$ListByTopic?topicid=$TopicID\" title=\"$MinorTopics{$TopicID}{LONG}\">";
   if ($mode eq "short") {
     $link .= $MinorTopics{$TopicID}{SHORT};
   } elsif ($mode eq "long") {
@@ -63,7 +63,7 @@ sub MajorTopicLink ($;$) {
   
   &FetchMajorTopic($TopicID);
   my $link;
-  $link = "<a href=$ListByTopic?majorid=$TopicID>";
+  $link = "<a href=\"$ListByTopic?majorid=$TopicID\" title=\"$MajorTopics{$TopicID}{LONG}\">";
   if ($mode eq "short") {
     $link .= $MajorTopics{$TopicID}{SHORT};
   } elsif ($mode eq "long") {
@@ -76,15 +76,26 @@ sub MajorTopicLink ($;$) {
   return $link;
 }
 
+sub GatheringLink {
+  my ($TopicID,$Mode) = @_;
+  my $MajorID = $MinorTopics{$TopicID}{MAJOR};
+  my $Link;
+  if (&MajorIsConference($MajorID)) {
+    $Link = &ConferenceLink($TopicID,$Mode);
+  } elsif (&MajorIsMeeting($MajorID)) {
+    $Link = &MeetingLink($TopicID,$Mode);
+  }
+}
+
 sub MeetingLink {
-  my ($TopicID,$mode) = @_;
+  my ($TopicID,$Mode) = @_;
   
   require "TopicSQL.pm";
   
   &FetchMinorTopic($TopicID);
   my $link;
-  $link = "<a href=$ListByTopic?topicid=$TopicID&mode=meeting>";
-  if ($mode eq "short") {
+  $link = "<a href=\"$ListByTopic?topicid=$TopicID&mode=meeting\" title=\"$MinorTopics{$TopicID}{LONG}\">";
+  if ($Mode eq "short") {
     $link .= $MinorTopics{$TopicID}{SHORT};
   } else {
     $link .= $MinorTopics{$TopicID}{FULL};
@@ -162,13 +173,12 @@ sub TopicsTable {
   print "</table>\n";
 }
 
-sub ConferencesTable {
+sub GatheringTable {
   require "Sorts.pm";
   require "TopicSQL.pm";
   
   my @MinorTopicIDs = sort byTopic keys %MinorTopics; #FIXME special sort 
 
-  my ($MajorID) = @ConferenceMajorIDs; 
   print "<table cellpadding=4>\n";
 
   print "<tr>\n";
@@ -176,28 +186,38 @@ sub ConferencesTable {
   print "<th>Full Name</th>\n";
   print "<th>Location</th>\n";
   print "<th>Dates</th>\n";
-  print "<th>Conference Homepage</th>\n";
+  print "<th>Homepage</th>\n";
+  print "</tr>\n";
   
-  foreach my $MinorID (@MinorTopicIDs) {
-    if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
-      print "<tr>\n";
-      my $ConferenceLink = &ConferenceLink($MinorID,"nodate");
-      my $Start = &EuroDate($Conferences{$MinorID}{StartDate});
-      my $End   = &EuroDate($Conferences{$MinorID}{EndDate});
-      my $Link;
-      if ($Conferences{$MinorID}{URL}) {
-        $Link = "<a href=\"$Conferences{$MinorID}{URL}\">$Conferences{$MinorID}{URL}</a>";
-      } else {
-        $Link = "None entered\n";
-      }
-      print "<td>$ConferenceLink</td>\n";
-      print "<td>$MinorTopics{$MinorID}{LONG}</td>\n";
-      print "<td>$Conferences{$MinorID}{Location}</td>\n";
-      print "<td>$Start - $End</td>\n";
-      print "<td>$Link</td>\n";
-      print "</tr>\n";
+  foreach my $MajorID (@GatheringMajorIDs) { 
+    print "<tr>\n";
+    print "<th colspan=5><hr></th>\n";
+    print "</tr>\n";
+    print "<tr>\n";
+    print "<th colspan=5>$MajorTopics{$MajorID}{SHORT}</th>\n";
+    print "</tr>\n";
+
+    foreach my $MinorID (@MinorTopicIDs) {
+      if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
+        print "<tr>\n";
+        my $GatheringLink = &GatheringLink($MinorID,"short");
+        my $Start = &EuroDate($Conferences{$MinorID}{StartDate});
+        my $End   = &EuroDate($Conferences{$MinorID}{EndDate});
+        my $Link;
+        if ($Conferences{$MinorID}{URL}) {
+          $Link = "<a href=\"$Conferences{$MinorID}{URL}\">$Conferences{$MinorID}{URL}</a>";
+        } else {
+          $Link = "None entered\n";
+        }
+        print "<td>$GatheringLink</td>\n";
+        print "<td>$MinorTopics{$MinorID}{LONG}</td>\n";
+        print "<td>$Conferences{$MinorID}{Location}</td>\n";
+        print "<td>$Start - $End</td>\n";
+        print "<td>$Link</td>\n";
+        print "</tr>\n";
+      }  
     }  
-  }  
+  }
   print "</table>";
 }
 
@@ -218,6 +238,31 @@ sub ConferencesList {
   print "</ul>";
 }
 
+sub MajorGatheringSelect (;$) { # Scrolling selectable list for major topics with dates
+  my ($Mode) = @_; 
+  
+  print "<b><a ";
+  &HelpLink("majortopics");
+  print "Major Topics:</a></b><br> \n";
+  my @MajorIDs = keys %MajorTopics;
+  my @MeetingMajorIDs = ();
+  foreach my $MajorID (@MajorIDs) {
+    if (&MajorIsMeeting($MajorID) || &MajorIsConference($MajorID)) {
+      push @MeetingMajorIDs,$MajorID;
+    }
+  }    
+  my %MajorLabels = ();
+  foreach my $ID (@MeetingMajorIDs) {
+    if ($Mode eq "full") {
+      $MajorLabels{$ID} = $MajorTopics{$ID}{Full};
+    } else {  
+      $MajorLabels{$ID} = $MajorTopics{$ID}{SHORT};
+    }  
+  }  
+  print $query -> scrolling_list(-name => "majortopic", -values => \@MeetingMajorIDs, 
+                                 -labels => \%MajorLabels,  -size => 10);
+};
+
 sub ConferenceSelect {
   require "TopicSQL.pm";
   
@@ -225,7 +270,7 @@ sub ConferenceSelect {
   my @ConferenceTopicIDs = ();
   my %TopicLabels        = ();
   foreach my $MinorID (@MinorIDs) {
-    unless (&MajorIsConference($MinorTopics{$MinorID}{MAJOR})) {
+    unless (&MajorIsConference($MinorTopics{$MinorID}{MAJOR}) || &MajorIsMeeting($MinorTopics{$MinorID}{MAJOR})) {
       next;
     }  
     push @ConferenceTopicIDs,$MinorID;

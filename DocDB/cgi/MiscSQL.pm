@@ -104,14 +104,16 @@ sub FetchDocFiles ($) {
 }
 
 sub GetConferences {
-  my ($MinorTopicID);
-  my ($MajorID) = @ConferenceMajorIDs;
-  my $minor_list   = $dbh -> prepare(
-    "select MinorTopicID from MinorTopic where MajorTopicID=$MajorID");
-  $minor_list -> execute();
-  $minor_list -> bind_columns(undef, \($MinorTopicID));
-  while ($minor_list -> fetch) {
-    &FetchConferenceByTopicID($MinorTopicID);
+  %Conferences = ();
+  my $MinorTopicID;
+  foreach my $MajorID (@MeetingMajorIDs,@ConferenceMajorIDs) {
+    my $minor_list   = $dbh -> prepare(
+      "select MinorTopicID from MinorTopic where MajorTopicID=$MajorID");
+    $minor_list -> execute();
+    $minor_list -> bind_columns(undef, \($MinorTopicID));
+    while ($minor_list -> fetch) {
+      &FetchConferenceByTopicID($MinorTopicID);
+    }
   }
 }
 
