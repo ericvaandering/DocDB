@@ -219,10 +219,10 @@ my @SecurityGroups = sort keys %SecurityIDs;
 
 foreach my $SecurityGroup (@SecurityGroups) {
   my @EmailUserIDs = sort EmailUserIDsByName &FetchEmailUSerIDsBySecurityGroup($SecurityIDs{$SecurityGroup});
-  if (@EmailUserIDs) {
+  if (@EmailUserIDs && $EmailUser{$EmailUserID}{Name}) {
     print "<strong>$SecurityGroup has these members</strong>\n<ul>\n";
     foreach my $EmailUserID (@EmailUserIDs) {
-      print "<li>$EmailUserID: $EmailUser{$EmailUserID}{Name} ($EmailUser{$EmailUserID}{Username})</li>\n";
+      print "<li>$EmailUser{$EmailUserID}{Name} ($EmailUser{$EmailUserID}{Username})</li>\n";
     }
     print "</ul>\n";
   }     
