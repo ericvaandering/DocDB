@@ -1,0 +1,172 @@
+<title>Customizing DocDB</title>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<center><h1>Customizing DocDB</h1></center>
+
+<p>
+<ol>
+<li> <font color="red">Login to the document database account.</font> <br>
+     This account is used to administer the various DocDB scripts and html pages.
+<li> Checkout DocDB from CVS as described in <a href="install-docdb.html">the
+previous page</a> if you haven't already.
+<li> cd to DocDB/cgi
+    <ol>
+    <li> cp ProjectGlobals.pm.template ProjectGlobals.pm
+    <li> cp ProjectMessages.pm.template ProjectMessages.pm
+    <li> cp ProjectRoutines.pm.template ProjectRoutines.pm
+    <li> cp ProjectHelp.xml.template ProjectHelp.xml
+    <li> Edit the global variables in 
+	<a href=DocDBGlobals.html>ProjectGlobals.pm</a>. 
+	You can also look at DocDBGlobals.pm
+	and put new values for those variables in ProjectGlobals.pm. 
+    <li> Customized web page headers and footers are defined in  ProjectRoutines.pm.
+    <li> If you need a customized keyword message, edit ProjectMessages.pm.
+    <li> If you need customized help instructions, edit ProjectHelp.xml
+    </ol>
+<li> Check the files in DocDB/html and edit them for your site.
+<li> copy the files in DocDB/cgi to $script_root
+     (your private DocDB cgi directory) <br>
+     $script_root is defined in ProjectGlobals.pm, 
+     it is not an actual environmental variable. (If you installed from the CVS
+     repository, you can use the command <tt>cvs update</tt> to update the
+     running software here.)
+<li>If you are using HTTP Basic Authorization, create a .htaccess file in
+    $script_root. If you are using client certificate authorization, you can
+    skip this step.<br/>
+    Here is a sample .htaccess file:
+<pre>
+       AuthType Basic
+       AuthName "My Document Database"
+       AuthUserFile  /somedir/somedir/.htpasswd
+       &lt Limit GET POST &gt
+       require valid-user
+       &lt /Limit &gt
+</pre>
+     <font color="red">The .htpasswd file should not be in 
+     any web-accessable directory.</font> Also, the POST option <font
+     color="red">must</font> be present or DocDB will not work (most of the form
+     posts to cgi scripts will fail). 
+<li> Setup the documentation and Cascading Style Sheets with the command <br/>
+     <tt>cp -r DocDB/html  $file_root/Static</tt><br/> 
+     where $file_root is defined in ProjectGlobals.pm. <br>
+<li> Set permissions on $file_root. 
+     <ul>
+     <li> $file_root must be owned by the uid/gid of the webserver process.
+     DocDB will create the necessary subdirectory structure and populate it
+     with the downloaded files when documents are created and edited.
+     <li> Unlike the remainder of $file_root, the $file_root/Static directory
+     tree must be owned by the document database account.
+     </ul>
+<li> Create the public access scripts. The suggested way to do this is to create
+a directory where the relevant scripts (some scripts have no valid public use)
+are links to the corresponding private scripts. In this configuration, two
+additional files must be present in the public area: ProjectGlobals.pm and
+CGIInclude.pm. 
+    <ol>
+    <li> mkdir /www/cgi-bin/public/DocDB/, chosing an 
+         appropriate directory for the public scripts.
+    <li> cp DocDB/scripts/PublicInstall.csh /www/cgi-bin/public/DocDB/.
+    <li> cp DocDB/cgi/ProjectGlobals.pm /www/cgi-bin/public/DocDB/. <br>
+         This script will make links to the private DocDB cgi area. 
+	 Edit this script as necessary.
+    <li> Execute PublicInstall.csh.
+    <li> rm PublicInstall.csh  
+    <li> Edit the public ProjectGlobals.pm, taking particular care 
+         to be sure these definitions point <b>ONLY</b> to the 
+	 public directories.  Be sure to remove the $Administrator
+	 definition from the public ProjectGlobals.pm.  
+	 Uncomment the "Public" lines in ProjectGlobals.pm.
+    <li> Copy CGIInclude.pm from the scripts/ directory and edit it to point at
+         your main installation. This is needed to pick up the DocDB .pm files.
+    </ol>
+<li> mysql SomeDocDB -u docdbadm -p < DocDB/sql/CreateDatabase.SQL 
+<li>If you are using client certificate based authorization:</li>
+ <ol>
+  <li>Edit the apache config files to require a client certificate for the
+      $cgi_root/$web_root directory. (See xxxx for an explanation of
+      this.)</li>
+  <li>Make sure the client certificates you are using are from a CA you trust.</li>
+  <li>As the administrator, import your certificate into your web browser if you
+      haven't done so.</li>
+  <li>Point your web browser at <tt>$web_root/DocumentDatabase</tt>. Follow the
+      link to request access and request access in the docdbadm (or DocDBAdm)
+      group and whatever other groups you would like to access.</li>
+  <li>Now you have to verify that you are an administrator. The easiest way to
+      do this is to start mysql in shell mode (<b>mysql -h xxxx -u docdbadm -p
+      SomeDocDB</b>), then do the following:<br/>
+        <tt>mysql> select  EmailUserID,Name from EmailUser;</tt><br/>
+      and find the EmailUserID of the desired administrator (should be "1"
+      unless you've done something strange).<br/>
+        <tt>mysql> update EmailUser set Verified=1 where EmailUserID=x;</tt><br/> 
+      where "x" is the number from the previous step (1).
+  <li>Again, point your web browser at    <tt>$web_root/DocumentDatabase</tt>.
+      You should no longer see a message indicating that you are need to
+      request access. If you follow the "Create or Change Documents..." link,
+      you should have access to all adminstration functions.
+ </ol>
+<li> At this point, you can verify that DocDB is running properly. Point your
+     web browser at  <tt>$web_root/DocumentDatabase</tt> and log in as
+     administrator if necessary. From here you can follow the "Create or Change
+     Documents..." link, where you should have access to all adminstrative
+     functions. Use the administrator functions to create topics, authors,
+     other security groups, etc.
+ 
+<li> mkdir $file_root/Static/Lists
+<li> mkdir $file_root/Static/Lists/<em>group-name</em> for every 
+     permission group defined in DocDB.
+<li> Setup the listing and notification 
+     <a href=notification.html>cron jobs</a>
+<li> Customize CSS files:<br/>The appearance of many pages in DocDB is
+     controlled by CSS (Cascading Style Sheets). The <tt>.css</tt> files reside
+     in <tt>$file_root/Static/css</tt>. The naming scheme is as follows: 
+    
+     <table cellpadding=3>
+       <tr>
+        <td>DocDB.css</td>
+        <td>The CSS file with global and common settings for all pages.</td>    
+       </tr><tr>
+        <td>DocDB_IE.css</td>
+        <td>Changes to the master setting for Internet Explorer, which has
+            broken CSS support.</td>
+       </tr><tr>
+        <td>DocDBSomeScript.css</td>
+        <td>CSS unique to a particular page</td>
+       </tr><tr>
+        <td>DocDBSomeScript_IE.css</td>
+        <td>Changes to the CSS for a page needed by IE</td>
+       </tr>
+     </table>
+     
+     To any of these scripts you can make your own changes. Append
+     <q>MyProject</q> to the original name of the CSS file and it will be
+     included <i>after</i> the DocDB defaults, changing any settings.
+     <q>MyProject</q> is what you set $ShortProject to in ProjectGlobals.pm.
+     For example, if your project is "Joe" and you want to change the settings
+     for the IE only CSS for the ShowDocument page, create a file
+     <tt>JoeDocDBShowDocument_IE.css</tt> and place it in the
+     <tt>$file_root/Static/css</tt> directory.<p>
+     See <tt>html/css/ProjectDocDB.css.example</tt> for examples of what might
+     be changed. Note that not all pages have CSS files and that at this time,
+     and that use of CSS in DocDB is new but expanding.</li>
+             
+</ol>
+
+<p>
+<!-- begin footer -->
+<hr>
+<h3><a href=DocDB-license.html>DocDB License</a></h3>
+<i><font size="-1">
+<script language="javascript">
+<!-- Hide from browsers that do not understand Javascript
+// print the URL and modification date of this page
+var url = document.location;
+document.write(url)  
+var dt = document.lastModified;
+document.write('<br> Last Modified:')  
+document.write(dt)  
+// end hiding --> 
+</script> 
+</font></i>
+</body>
+</html>

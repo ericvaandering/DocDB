@@ -1,0 +1,360 @@
+#! /usr/bin/env perl
+#
+#        Name: SessionModify
+# Description: Add talks to sessions of a meeting. Calls itself. 
+# In future, might also be allowed to modify certain aspects of the session.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+use CGI;
+use DBI;
+
+require "DocDBGlobals.pm";
+require "Messages.pm";
+require "Cookies.pm";
+require "Defaults.pm";
+
+require "Sorts.pm";
+require "Scripts.pm";
+require "Security.pm";
+require "Utilities.pm";
+require "HTMLUtilities.pm";
+require "MeetingSecurityUtilities.pm";
+require "TalkHintUtilities.pm";
+
+require "FormElements.pm";
+require "ResponseElements.pm";
+require "MeetingHTML.pm";
+require "TalkHTML.pm";
+require "MeetingSQL.pm";
+require "TalkSQL.pm";
+require "TalkHintSQL.pm";
+
+$query = new CGI;  # Global for subroutines
+
+&GetPrefsCookie;
+&SetAuthorMode;
+%params = $query -> Vars;
+
+my $SessionID          = $params{sessionid};
+my $Mode               = $params{mode};
+
+my $SessionTitle       = $params{sessiontitle};
+my $SessionDescription = $params{sessiondescription};
+my $SessionLocation    = $params{sessionlocation};
+
+my $SessionDay   = $params{sessionday};
+my $SessionMonth = $params{sessionmonth};
+my $SessionYear  = $params{sessionyear};
+my $SessionHour  = $params{sessionhour};
+
+my @SessionOrderIDs = split /\0/,$params{sessionorderid};
+my @TalkOrders      = split /\0/,$params{talkorder};
+my @TalkTitles      = split /\0/,$params{talktitle};
+my @TalkNotes       = split /\0/,$params{talknote};
+my @TalkTimes       = split /\0/,$params{talktime};
+my @TalkSeparators  = split /\0/,$params{talkseparator};
+my @TalkDeletes     = split /\0/,$params{talkdelete};
+my @TalkConfirms    = split /\0/,$params{talkconfirm};
+my @TimeStamps      = split /\0/,$params{timestamp};
+
+$query -> delete_all(); # Stop program from caching variable from script to script
+
+# Also have params for DocID, authors, and topics in special params with 
+# SessionID embedded
+
+# Repack checkboxes into hashes
+
+my %TalkDeleteFlags = ();
+foreach my $TalkDelete (@TalkDeletes) { 
+  $TalkDeleteFlags{$TalkDelete} = 1; 
+}  
+my %TalkSeparatorFlags = ();
+foreach my $TalkSeparator (@TalkSeparators) { 
+  $TalkSeparatorFlags{$TalkSeparator} = 1; 
+}  
+my %TalkConfirmFlags = ();
+foreach my $TalkConfirm (@TalkConfirms) { 
+  $TalkConfirmFlags{$TalkConfirm} = 1; 
+}  
+  
+@ErrorStack = ();
+@WarnStack  = ();
+
+$dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+
+unless ($dbh) {
+  push @ErrorStack,$Msg_NoConnect;
+}      
+
+print $query -> header;
+&DocDBHeader("Modify a Session");
+
+&EndPage(@ErrorStack);
+
+&HelpPopupScript;
+
+if ($SessionID) {
+  &FetchSessionByID($SessionID);
+  my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
+  unless (&CanModifyMeeting($ConferenceID)) {
+    push @ErrorStack,$Msg_MeetNoModify;
+  }
+} else {
+  push @ErrorStack,"You must specify a session to modify. You probably arrived
+  here by error.";
+}  
+&EndPage(@ErrorStack);
+
+if ($Mode eq "modify") {
+
+  # Update Session parameters, refetch
+  my $SessionDate = "$SessionYear-$ReverseAbrvMonth{$SessionMonth}-$SessionDay $SessionHour:00";
+
+  &UpdateSession(-sessionid => $SessionID, -date => $SessionDate, 
+                 -title => $SessionTitle, -description => $SessionDescription,
+                 -location => $SessionLocation);
+  &ClearSessions;
+  &FetchSessionByID($SessionID);
+
+  my %TalkOrders = (); # Re-sort talk orders
+  {
+    foreach my $TalkOrder (@TalkOrders) {
+      $TalkOrders{$TalkOrder} = $TalkOrder;
+    } 
+    my @OrderedOrders = sort numerically @TalkOrders;
+
+    my $NewOrder = 1;
+    foreach my $TalkOrder (@OrderedOrders) {
+      $TalkOrders{$TalkOrder} = $NewOrder;
+      ++$NewOrder;
+    } 
+  }
+  
+# Loop over sessions and insert
+  &FetchSessionOrdersBySessionID($SessionID);
+ 
+  my $TalksUpdated    = 0;
+
+  foreach my $TalkOrder (@TalkOrders) {
+    my $TalkTime       = shift @TalkTimes       ;
+    my $TalkTitle      = shift @TalkTitles      ;
+    my $TalkNote       = shift @TalkNotes       ;
+    my $SessionOrderID = shift @SessionOrderIDs ;
+    my $TimeStamp      = shift @TimeStamps      ;
+    my $TalkNewOrder   = $TalkOrders{$TalkOrder};
+
+    my $TalkSeparatorID = 0;
+    my $SessionTalkID   = 0;
+    
+    my $TalkConfirmed   = $TalkConfirmFlags{$SessionOrderID};
+    my $TalkDocID       = $params{"talkdocid-$SessionOrderID"};
+    my $NewSessionID    = $params{"newsessionid-$SessionOrderID"};
+    
+    if (grep /n/,$SessionOrderID) { # Key on SessionOrderID to see if insert or update.	
+      if ($TalkTitle || $TalkNote || $TalkDocID) {
+	++$TalksUpdated;
+	if ($TalkSeparatorFlags{$SessionOrderID}) {
+          my $TalkSeparatorInsert = $dbh -> prepare(
+           "insert into TalkSeparator ".
+           "(TalkSeparatorID, SessionID, Time, Title, Note) ". 
+           "values (0,?,?,?,?)");
+          $TalkSeparatorInsert -> execute($SessionID,$TalkTime,$TalkTitle,$TalkNote);
+          $TalkSeparatorID = $TalkSeparatorInsert -> {mysql_insertid}; # Works with MySQL only
+	} else {
+          my $TalkInsert = $dbh -> prepare(
+           "insert into SessionTalk ".
+           "(SessionTalkID, SessionID, DocumentID, Confirmed, Time, HintTitle, Note) ". 
+           "values (0,?,?,?,?,?,?)");
+          $TalkInsert          -> execute($SessionID,$TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote);
+          $SessionTalkID = $TalkInsert -> {mysql_insertid}; # Works with MySQL only
+
+          my @TopicHints  = split /\0/,$params{"topics-$SessionOrderID"}; 
+          my @AuthorHints = split /\0/,$params{"authors-$SessionOrderID"}; 
+          &InsertTopicHints($SessionTalkID,@TopicHints);
+          &InsertAuthorHints($SessionTalkID,@AuthorHints);
+	}
+        my $SessionOrderInsert = $dbh -> prepare(
+         "insert into SessionOrder ".
+         "(SessionOrderID, TalkOrder, SessionTalkID, TalkSeparatorID) ". 
+         "values (0,?,?,?)");
+	$SessionOrderInsert -> execute($TalkNewOrder,$SessionTalkID,$TalkSeparatorID);
+      }  
+    } else {
+      $TalkSeparatorID = $SessionOrders{$SessionOrderID}{TalkSeparatorID};
+      $SessionTalkID   = $SessionOrders{$SessionOrderID}{SessionTalkID};
+
+### Check TimeStamps from form vs. DB to detect collisions
+
+      if ($SessionTalkID) {
+        &FetchSessionTalkByID($SessionTalkID);
+        if ($TimeStamp < $SessionTalks{$SessionTalkID}{TimeStamp}) {
+          push @WarnStack,"Someone else modifed $TalkTitle while you were working. 
+                          If you tried to modify $TalkTitle too, your modifications
+                          have been discarded.";
+          next;
+        }
+      }                    
+      if ($TalkSeparatorID) {
+        &FetchTalkSeparatorByID($TalkSeparatorID);
+        if ($TimeStamp < $TalkSeparators{$TalkSeparatorID}{TimeStamp}) {
+          push @WarnStack,"Someone else modifed $TalkTitle while you were working. 
+                          If you tried to modify $TalkTitle too, your modifications
+                          have been discarded.";
+          next;
+        }
+      }                    
+        
+      if ($TalkDeleteFlags{$SessionOrderID}) { # Delete session or separator
+        if ($TalkSeparatorID) {
+          &DeleteTalkSeparator($TalkSeparatorID);
+        } elsif ($SessionTalkID) {
+          &DeleteSessionTalk($SessionTalkID);
+        }
+      } elsif ($TalkTitle || $TalkNote || $TalkDocID) { # We will modify existing talks
+	++$TalksUpdated;
+	
+        if ($TalkSeparatorID) { # Modify a talk separator
+          my $TalkSeparatorUpdate = $dbh -> prepare(
+           "update TalkSeparator set ".
+           "Time=?, Title=?, Note=? ". 
+           "where TalkSeparatorID=?");
+          $TalkSeparatorUpdate -> execute($TalkTime,$TalkTitle,$TalkNote,$TalkSeparatorID);
+          if ($NewSessionID) { # Move to new session
+            my $TalkSeparatorMove = $dbh -> prepare(
+             "update TalkSeparator set SessionID=? where TalkSeparatorID=?");
+            $TalkSeparatorMove -> execute($NewSessionID,$TalkSeparatorID);
+          }
+        } elsif ($SessionTalkID) { # Modify a talk
+          my $SessionTalkUpdate = $dbh -> prepare(
+           "update SessionTalk set ".
+           "DocumentID=?, Confirmed=?, Time=?, HintTitle=?, Note=? ". 
+           "where SessionTalkID=?");
+          $SessionTalkUpdate -> execute($TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote,$SessionTalkID);
+
+          my @TopicHints  = split /\0/,$params{"topics-$SessionOrderID"};
+          
+          my @AuthorHints = ();
+          if ($params{"authors-$SessionOrderID"}) {
+            @AuthorHints = split /\0/,$params{"authors-$SessionOrderID"};
+          } elsif ($params{"authortext-$SessionOrderID"}) { 
+            require "AuthorSQL.pm";
+            my $AuthorText = $params{"authortext-$SessionOrderID"};
+            @AuthorHints = &ProcessManualAuthors($AuthorText);
+          }
+          &InsertTopicHints($SessionTalkID,@TopicHints);
+          &InsertAuthorHints($SessionTalkID,@AuthorHints);
+          if ($NewSessionID) { # Move to new session
+            my $SessionTalkMove = $dbh -> prepare(
+             "update SessionTalk set SessionID=? where SessionTalkID=?");
+            $SessionTalkMove -> execute($NewSessionID,$SessionTalkID);
+          }
+        }
+
+        my $SessionOrderUpdate = $dbh -> prepare(
+         "update SessionOrder set TalkOrder=? where SessionOrderID=?");
+        $SessionOrderUpdate -> execute($TalkNewOrder,$SessionOrderID);
+      }  
+    }  
+  }
+}
+
+&EndPage(@ErrorStack);
+&WarnPage(@WarnStack);
+
+&ReHintTalksBySessionID($SessionID); 
+&ClearSessionTalks();
+
+# Fetch all SessionTalks and TalkSeparators with this SessionID 
+
+my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
+my @TalkSeparatorIDs = &FetchTalkSeparatorsBySessionID($SessionID);
+my @SessionOrderIDs  = &FetchSessionOrdersBySessionID($SessionID);
+
+# Sort talks and separators (subroutine)
+
+@SessionOrderIDs = sort SessionOrderIDByOrder @SessionOrderIDs;
+
+# Display all info on all talks plus a number of blanks
+
+&PrintSessionHeader($SessionID); 
+
+my $SessionDefaultTitle       = $Sessions{$SessionID}{Title};
+my $SessionDefaultDescription = $Sessions{$SessionID}{Description};
+my $SessionDefaultLocation    = $Sessions{$SessionID}{Location};
+my $SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
+
+print $query -> start_multipart_form('POST',"$SessionModify");
+$query -> param('sessionid',$SessionID);
+print $query -> hidden(-name => 'sessionid', -default => $SessionID);
+$query -> param('mode','modify');
+print $query -> hidden(-name => 'mode', -default => 'modify');
+
+print "<table cellpadding=10 align=center>\n";
+print "<tr>\n";
+ print "<td>\n";              
+  &TextField(-name      => 'sessiontitle', -size     => 40, 
+             -maxlength => 128,            -default  => $SessionDefaultTitle, 
+             -helplink  => 'sessioninfo',  -helptext => 'Session Title');
+ print "</td>\n";
+ print "<td>\n";  
+  &TextField(-name      => 'sessionlocation', -size     => 30, 
+             -maxlength => 128,            -default  => $SessionDefaultLocation, 
+             -helplink  => 'sessioninfo',  -helptext => 'Session Location');
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+ print "<td>\n";                
+  &TextArea(-name     => 'sessiondescription', -columns => 40, -rows => 4,
+            -default  => $SessionDefaultDescription, 
+            -helplink => 'sessioninfo', -helptext => 'Session Description');
+ print "</td>\n";
+ print "<td align=right>\n";  
+ my $Header = &FormElementTitle(-helptext => "Start Date and Time", -helplink  => 'sessioninfo');
+ print $Header;
+ &SessionDateTimePullDown(-default => $SessionDefaultDateTime);            
+ print "</td>\n";
+print "</tr>\n";
+print "</table>\n";
+
+print "<table cellpadding=10>\n";
+
+print "<tr valign=top>\n";
+ print "<td>\n"; 
+  &TalkEntryForm(@SessionOrderIDs);   
+ print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+ print "<td align=center>\n";
+  print $query -> submit (-value => "Modify Session and Talks");
+ print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+
+my $NavBarText = "Display&nbsp;Session";
+my $NavBarURL  = "$DisplayMeeting?sessionid=$SessionID";
+&DocDBNavBar($NavBarText,$NavBarURL);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+ 
+exit;

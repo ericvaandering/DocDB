@@ -1,0 +1,162 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+use Benchmark;
+use CGI;
+use DBI;
+
+$StartTime = new Benchmark;
+
+require "DocDBGlobals.pm";
+require "Messages.pm";
+require "HTMLUtilities.pm";
+require "ResponseElements.pm";
+require "SecuritySQL.pm";
+
+require "CertificateUtilities.pm";
+
+$query = new CGI;  # Global for subroutines
+
+%params = $query -> Vars;
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+
+### Start HTML
+
+print $query->header;
+&DocDBHeader("Certificate Application");
+
+&EndPage(@ErrorStack);
+
+### Output Information
+
+my $CertificateStatus = &CertificateStatus();
+my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
+my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
+
+if ($CertificateStatus eq "verified") {
+  print "<b>Your certificate has already been verified. A new request has NOT been generated.<br>".
+        "You have access to documents from these groups:</b>";
+  my @GroupIDs = &FetchSecurityGroupsByCert();
+  print "<ul>\n";
+  if (@GroupIDS) {
+    foreach my $GroupID (@GroupIDs) {
+      &FetchSecurityGroup($GroupID);
+      print "<li>",$SecurityGroups{$GroupID}{NAME},"</li>\n";
+    }
+  } else {
+    print "<li>None: Contact an adminstrator if this is incorrect</li>\n";
+  }       
+  print "</ul>\n";
+} elsif ($CertificateStatus eq "unverified") {  
+  print "<b>You have already applied for access to documents. A new request has not been generated.
+         If you believe your request has been misplaced or neglected, contact an administator.</b>";
+  print "The following information may be helpful:<br>\n";
+  print "<b>Certificate Common Name (CN):</b> $CertCN<br>\n";
+  print "<b>Certificate E-mail Address:</b> $CertEmail<br>\n";
+} elsif ($CertificateStatus eq "mismatch") {  
+  print "<b>Your certificate is valid but a similar certificate already exists
+         for  either your e-mail address or your name (CN). Only one
+         certificate is allowed per person. Contact an administrator if you
+         don't know what to do.</b>";
+  print "The following information may be helpful:<br>\n";
+  print "<b>Certificate Common Name (CN):</b> $CertCN<br>\n";
+  print "<b>Certificate E-mail Address:</b> $CertEmail<br>\n";
+} elsif ($CertificateStatus eq "nocert") {  
+  print "<b>You didn't present a certificate. Not sure if this can happen.</b>";
+} elsif ($CertificateStatus eq "noapp") {
+
+### Get additional parameters
+
+  my $CertNote          = $params{certnote};
+  my @RequestedGroupIDs = split /\0/,$params{reqgroups};
+  my $UserName = $CertCN;
+     $UserName =~ s/\W//g;
+     
+### Fill in DB tables
+
+  my $UserInsert = $dbh -> prepare(
+      "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Verified,Password) ".
+      "            values (0,?,?,?,0,'x')");
+     $UserInsert -> execute($UserName,$CertCN,$CertEmail);
+  my $EmailUserID = $UserInsert -> {mysql_insertid}; # Works with MySQL only
+  
+  my $UsersGroupInsert = $dbh -> prepare(
+      "insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) ".
+      "            values (0,?,?)");
+  foreach my $GroupID (@RequestedGroupIDs) {
+    $UsersGroupInsert -> execute($EmailUserID,$GroupID);
+  }  
+
+### Notify applicant and administrator
+
+  
+  print "You ($CertCN with e-mail address $CertEmail) have requested ";
+  print "access to $Project DocDB. ";
+  print "You have requested membership in the following groups:\n";
+  print "<ul>\n";
+  foreach my $GroupID (@RequestedGroupIDs) {
+    &FetchSecurityGroup($GroupID);
+    print "<li>",$SecurityGroups{$GroupID}{NAME},"</li>\n";
+  }  
+  print "</ul>\n";
+
+  if ($MailInstalled) {
+    require "EmailUtilities.pm";
+    
+    print "An e-mail has been sent to the administrators and a confirmation e-mail has been sent to you.<p/>\n";
+    
+    my @To      = ($DBWebMasterEmail);
+    my $Subject = "$CertCN requests access to $Project DocDB";
+    my $Body    = "$CertCN with e-mail address $CertEmail has requested ";
+    $Body      .= "access to $Project DocDB. ";
+    $Body      .= "He or she requests membership in the following groups:\n";
+    foreach my $GroupID (@RequestedGroupIDs) {
+      &FetchSecurityGroup($GroupID);
+      $Body .= "  ".$SecurityGroups{$GroupID}{NAME}."\n";
+    }  
+    $Body .= "\n";
+    $Body .= "If this is correct, please visit $EmailAdministerForm, ";
+    $Body .= "select \"Modify\", select the user, check \"Verify\", and click to Submit.\n\n";
+    $Body .= "If the groups are not correct, select the correct groups before clicking Submit.\n\n";
+    if ($CertNote) {
+      $Body .= "The user attached this note to their application:\n";
+      $Body .= $CertNote;
+    }  
+    &SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
+
+    my @To      = ($CertEmail);
+    my $Subject = "$CertCN requests access to $Project DocDB";
+    my $Body    = "Dear $CertCN,\n\n";
+    $Body      .= "You, or someone using your e-mail address ($CertEmail) has requested ";
+    $Body      .= "access to $Project DocDB. If you did not initiate this request, ";
+    $Body      .= "please contact the DocDB administrators at $DBWebMasterEmail immediately.\n\n";
+    $Body      .= "If you did request this access, please give the ";
+    $Body      .= "adminstrators a few business days to respond to your request.\n";
+    $Body      .= "Thank you.";
+
+    &SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
+  }    
+
+}
+
+&DocDBNavBar();
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

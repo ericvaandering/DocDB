@@ -1,0 +1,502 @@
+#! /usr/bin/env perl
+#
+#        Name: AdministerForm
+# Description: This single form provides a number of interfaces to admin 
+#              tools, each run by a different script. 
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+use CGI;                                                                                      
+use DBI;
+
+require "DocDBGlobals.pm";
+require "AdministerElements.pm";
+require "FormElements.pm";
+
+require "AuthorHTML.pm";
+require "JournalHTML.pm";
+require "DocTypeHTML.pm";
+require "TopicHTML.pm";
+require "MeetingHTML.pm";
+
+require "Scripts.pm";
+require "Security.pm";
+
+require "SecuritySQL.pm";
+require "AuthorSQL.pm";
+require "TopicSQL.pm";
+require "MiscSQL.pm";
+require "ResponseElements.pm";
+
+require "HTMLUtilities.pm";
+require "Sorts.pm";
+
+$query = new CGI;  # Global for subroutines
+$dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+&GetSecurityGroups;
+&SpecialMajorTopics;
+&GetInstitutions;
+&GetDocTypes;
+&GetAuthors;
+&GetTopics;
+&GetJournals;
+
+print $query->header;
+&DocDBHeader("Administer $Project DocDB"); # DocDBHeader
+
+&HelpPopupScript;
+
+@ErrorStack = ();
+@WarnStack  = ();
+my %EnableMatrix = ();
+
+unless (&CanAdminister()) {
+  push @ErrorStack,"You are not allowed to access administrative functions.";
+}
+
+if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@ErrorStack);
+}
+
+print "<b>This form allows you to administer the lists of things within
+the database.</b><p>\n"; 
+
+print "Begin by selecting an action for what you want to administer. If you
+       select <b>New</b>, the selection from the first list will be
+       ignored, but you must fill in things like Institution and the two names
+       for adding authors. If you select <b>Modify</b> you have to make a
+       selection from the first list and any attributes you select on the
+       right will be changed. If you leave something blank, it will not be
+       changed. If you select <b>Delete</b> any selections other than from 
+       the first list will be ignored.<p>\n";
+
+print "Note that deleting and then re-entering with the same information is
+       not the same as modifying. Everything in the DB is tied together with
+       invisible ID numbers.<p>\n";
+
+print "In all cases, you must supply the <i>database</i> username and password for the
+       administrator account to make any changes.<p>\n";
+
+print "<center> <b>Modify:</b> ";
+print "[&nbsp;<a href=\"\#author\">Authors</a> ] ";
+print "[&nbsp;<a href=\"\#institution\">Institutions</a>&nbsp;] ";
+print "[&nbsp;<a href=\"\#mintopic\">Minor&nbsp;Topics</a>&nbsp;] ";
+print "[&nbsp;<a href=\"\#majtopic\">Major&nbsp;Topics</a>&nbsp;] ";
+print "[&nbsp;<a href=\"\#doctype\">Document&nbsp;Types</a>&nbsp;] ";
+print "[&nbsp;<a href=\"\#journal\">Journals</a>&nbsp;] ";
+print "[&nbsp;<a href=\"\#conference\">Meetings&nbsp;and&nbsp;Conferences</a>&nbsp;] ";
+print "</center><p>";
+print "<hr><p>\n";
+
+### Author Modification
+
+%EnableMatrix = ();
+
+$EnableMatrix{authors}{Delete}  = 1;
+
+$EnableMatrix{inst}{Modify}     = 1;
+$EnableMatrix{authors}{Modify}  = 1;
+$EnableMatrix{first}{Modify}    = 1;
+$EnableMatrix{middle}{Modify}   = 1;
+$EnableMatrix{lastname}{Modify} = 1;
+
+$EnableMatrix{inst}{New}        = 1;
+$EnableMatrix{first}{New}       = 1;
+$EnableMatrix{middle}{New}      = 1;
+$EnableMatrix{lastname}{New}    = 1;
+  
+print "<a name=\"author\"><center><h4>Administer Authors</h4></center>\n";
+print "<center>(Changing both the first and last names will erase middle
+       initials)</center>\n";
+
+print $query -> start_multipart_form('POST',"$AuthorAdminister",
+                                     "id=\"author\" name=\"author\"");
+print "<table cellpadding=10>\n";
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; 
+ &AdministerActions(-form => "author", -matrix => \%EnableMatrix);
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td>\n";
+ &AuthorScroll(-helplink => "author", -disabled => true); 
+print "</td>\n";  
+print "<td>\n";
+ &InstitutionSelect(-disabled => true); 
+print "</td>\n";
+print "<td>\n"; 
+ &NameEntryBox(-disabled => true);      
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n";
+&AdministratorPassword;
+print "&nbsp;";
+print $query -> submit (-value => "Change Author Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<p><hr>\n";
+
+### Institution Administration
+
+%EnableMatrix = ();
+
+$EnableMatrix{inst}{Delete}      = 1;
+
+$EnableMatrix{inst}{Modify}      = 1;
+$EnableMatrix{shortdesc}{Modify} = 1;
+$EnableMatrix{longdesc}{Modify}  = 1;
+
+$EnableMatrix{shortdesc}{New}    = 1;
+$EnableMatrix{longdesc}{New}     = 1;
+  
+print "<a name=\"institution\"><center><h4>Administer Institutions</h4></center>\n";
+
+print $query -> start_multipart_form('POST',"$InstitutionAdminister",
+                                     "id=\"institution\" name=\"institution\"");
+print "<table cellpadding=10>\n";
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; 
+ &AdministerActions(-form => "institution", -matrix => \%EnableMatrix);      
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td>\n"; 
+&InstitutionSelect(-format => "full", -disabled => true); 
+print "</td>\n";
+print "<td>\n"; &InstitutionEntryBox(-disabled => true); print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n";
+&AdministratorPassword;
+print "&nbsp;";
+print $query -> submit (-value => "Change Institution Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<p><hr>\n";
+
+### Topic Administration
+
+%EnableMatrix = ();
+
+$EnableMatrix{topics}{Delete}     = 1;
+$EnableMatrix{majortopic}{New}    = 1;
+$EnableMatrix{majortopic}{Modify} = 1;
+$EnableMatrix{topics}{Modify}     = 1;
+$EnableMatrix{shortdesc}{New}     = 1;
+$EnableMatrix{shortdesc}{Modify}  = 1;
+$EnableMatrix{longdesc}{New}      = 1;
+$EnableMatrix{longdesc}{Modify}   = 1;
+  
+print "<a name=\"mintopic\"><center><h4>Administer Minor Topics</h4></center>\n";
+print $query -> start_multipart_form('POST',"$TopicAdminister",
+                                    "id=\"minortopic\" name=\"minortopic\"");
+print "<table cellpadding=10>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; 
+ &AdministerActions(-form => "minortopic", -matrix => \%EnableMatrix);      
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; 
+ &TopicScroll(-helptext  => "Minor Topics", -helplink => "topics", 
+              -extratext => " (Long descriptions in brackets)", 
+              -format    => "long", -disabled => "true"); 
+print "</td>\n"; 
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td rowspan=2>\n"; &MajorTopicSelect(-disabled => "true"); print "</td>\n";
+print "<td>\n"; &ShortDescriptionBox(-name => "shortdesc", -disabled => "true");     print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td>\n"; &LongDescriptionBox(-name => "longdesc", -disabled => "true");     print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n";
+&AdministratorPassword;
+print "&nbsp;";
+print $query -> submit (-value => "Change Topic Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<p><hr>\n";
+
+### Major Topic Administration
+
+%EnableMatrix = ();
+
+$EnableMatrix{majortopic}{Delete} = 1;
+
+$EnableMatrix{shortdesc}{New}     = 1;
+$EnableMatrix{longdesc}{New}      = 1;
+
+$EnableMatrix{majortopic}{Modify} = 1;
+$EnableMatrix{shortdesc}{Modify}  = 1;
+$EnableMatrix{longdesc}{Modify}   = 1;
+
+print "<a name=\"majtopic\"><center><h4>Administer Major Topics</h4></center>\n";
+
+print $query -> start_multipart_form('POST',"$MajorTopicAdminister",
+                                    "id=\"majortopic\" name=\"majortopic\"");
+print "<table cellpadding=10>\n";
+print "<tr valign=top>\n";
+print "<td colspan=2>\n";
+ &AdministerActions(-form => "majortopic", -matrix => \%EnableMatrix);
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td rowspan=2>\n"; 
+ &MajorTopicSelect(-disabled => true, -format => "full"); 
+print "</td>\n";
+print "<td>\n"; 
+ &ShortDescriptionBox(-disabled => true, -name => 'shortdesc');     
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td>\n";
+ &LongDescriptionBox(-disabled => true, -name => 'longdesc');
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n";
+&AdministratorPassword;
+print "&nbsp;";
+print $query -> submit (-value => "Change Topic Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<p><hr>\n";
+
+### Document Types
+
+%EnableMatrix = ();
+
+$EnableMatrix{doctype}{Delete}  = 1;
+
+$EnableMatrix{name}{New}        = 1;
+$EnableMatrix{longdesc}{New}    = 1;
+
+$EnableMatrix{doctype}{Modify}  = 1;
+$EnableMatrix{name}{Modify}     = 1;
+$EnableMatrix{longdesc}{Modify} = 1;
+
+print "<a name=\"doctype\"><center><h4>Administer Document Types</h4></center>\n";
+
+print $query -> start_multipart_form('POST',"$DocTypeAdminister",
+                                     "id=\"documenttype\" name=\"documenttype\"");
+print "<table cellpadding=10>\n";
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; 
+ &AdministerActions(-form => "documenttype", -matrix => \%EnableMatrix);
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td>\n"; &DocTypeSelect(-disabled => true);   print "</td>\n";
+print "<td>\n"; &DocTypeEntryBox(-disabled => true); print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n";
+&AdministratorPassword;
+print "&nbsp;";
+print $query -> submit (-value => "Change Document Type Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<p><hr>\n";
+
+### Journal Administration
+
+%EnableMatrix = ();
+
+$EnableMatrix{journal}{Delete} = 1;
+
+$EnableMatrix{name}{New}       = 1;
+$EnableMatrix{pub}{New}        = 1;
+$EnableMatrix{abbr}{New}       = 1;
+$EnableMatrix{url}{New}        = 1;
+$EnableMatrix{acronym}{New}    = 1;
+
+$EnableMatrix{journal}{Modify} = 1;
+$EnableMatrix{name}{Modify}    = 1;
+$EnableMatrix{pub}{Modify}     = 1;
+$EnableMatrix{abbr}{Modify}    = 1;
+$EnableMatrix{url}{Modify}     = 1;
+$EnableMatrix{acronym}{Modify} = 1;
+
+print "<a name=\"journal\"><center><h4>Administer Journals</h4></center>\n";
+
+print $query -> start_multipart_form('POST',"$JournalAdminister",
+                                     "id=\"journals\" name=\"journals\"");
+print "<table cellpadding=10>\n";
+print "<tr valign=top>\n";
+print "<td colspan=2>\n";
+ &AdministerActions(-form => "journals", -matrix => \%EnableMatrix);
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td>\n";
+ &JournalSelect(-disabled => true);
+print "</td>\n";
+print "<td>\n"; &JournalEntryBox(-disabled => true);     print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n";
+&AdministratorPassword;
+print "&nbsp;";
+print $query -> submit (-value => "Change Journal Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<p>\n";
+&JournalTable;
+
+print "<p><hr>\n";
+
+### Conference and Meeting Administration
+
+%EnableMatrix = ();
+
+$EnableMatrix{conftopic}{Delete}  = 1;
+
+$EnableMatrix{longdesc}{New}      = 1;
+$EnableMatrix{shortdesc}{New}     = 1;
+$EnableMatrix{majortopic}{New}    = 1;
+$EnableMatrix{location}{New}      = 1;
+$EnableMatrix{url}{New}           = 1;
+$EnableMatrix{startday}{New}      = 1;
+$EnableMatrix{startmonth}{New}    = 1;
+$EnableMatrix{startyear}{New}     = 1;
+$EnableMatrix{endday}{New}        = 1;
+$EnableMatrix{endmonth}{New}      = 1;
+$EnableMatrix{endyear}{New}       = 1;
+
+$EnableMatrix{conftopic}{Modify}  = 1;
+$EnableMatrix{longdesc}{Modify}   = 1;
+$EnableMatrix{shortdesc}{Modify}  = 1;
+$EnableMatrix{majortopic}{Modify} = 1;
+$EnableMatrix{location}{Modify}   = 1;
+$EnableMatrix{url}{Modify}        = 1;
+$EnableMatrix{startday}{Modify}   = 1;
+$EnableMatrix{startmonth}{Modify} = 1;
+$EnableMatrix{startyear}{Modify}  = 1;
+$EnableMatrix{endday}{Modify}     = 1;
+$EnableMatrix{endmonth}{Modify}   = 1;
+$EnableMatrix{endyear}{Modify}    = 1;
+
+print "<a name=\"conference\"><center><h4>Administer Conferences and Meetings</h4>
+       </center>\n";
+
+print $query -> start_multipart_form('POST',"$ConferenceAdminister",
+                                     "id=\"conferences\" name=\"conferences\"");
+print "<table cellpadding=10>\n";
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; 
+ &AdministerActions(-form => "conferences", -matrix => \%EnableMatrix);
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td>\n"; &ConferenceSelect(-disabled => true);     print "</td>\n";
+print "<td>\n"; &MajorGatheringSelect(-disabled => true); print "</td>\n";
+print "<td>\n";
+ print "<table>\n";
+ print "<tr valign=top>\n";
+ print "<td>\n"; &ShortDescriptionBox(-disabled => true, -name => 'shortdesc');     print "</td>\n";
+ print "<td>\n"; &LongDescriptionBox(-disabled => true, -name => 'longdesc');      print "</td>\n";
+ print "</tr>\n";
+
+ print "<tr valign=top>\n";
+ print "<td>\n"; &LocationBox(-disabled => true);          print "</td>\n";
+ print "<td>\n"; &ConferenceURLBox(-disabled => true);     print "</td>\n";
+ print "</tr>\n";
+
+ print "<tr valign=top>\n";
+ print "<td>\n"; &StartDatePullDown(-disabled => true);     print "</td>\n";
+ print "<td>\n"; &EndDatePullDown(-disabled => true);       print "</td>\n";
+ print "</tr>\n";
+ print "<tr valign=top>\n";
+ print "<td colspan=2>(Dates set to the current date will not be changed)</td>\n";
+ print "</tr>\n";
+
+ print "</table>\n";
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n";
+&AdministratorPassword;
+print "&nbsp;";
+print $query -> submit (-value => "Change Meeting/Conference Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<center><h4>Existing Meetings and Conferences</h4></center>\n";
+
+&GatheringTable;
+
+print "<p><hr>\n";
+
+print "<p>\n";
+
+&DocDBNavBar();
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

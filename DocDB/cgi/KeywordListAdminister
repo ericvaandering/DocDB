@@ -1,0 +1,161 @@
+#! /usr/bin/env perl
+#
+# Description: This script is called by KeywordAdministerForm and does administration
+#              on the Keyword table in the DB. 
+#
+#      Author: Lynn Garren (garren@fnal.gov)
+#    Modified: Eric Vaandering (ewv@fnal.gov)
+#
+
+# FIXME: Check for no groups, warn
+# FIXME: Check for duplicate keyword, warn
+
+use CGI;
+use DBI;
+
+require "DocDBGlobals.pm";
+require "Sorts.pm";
+require "ResponseElements.pm";
+require "Security.pm";
+require "HTMLUtilities.pm";
+require "KeywordHTML.pm";
+require "KeywordSQL.pm";
+require "Messages.pm";
+
+$query = new CGI;  # Global for subroutines
+
+%params = $query -> Vars;
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+# Parameters to script 
+ 
+my $Password        = $params{password};
+my $Username        = $params{admuser};
+my $Action          = $params{admaction};
+
+my $KeywordID       = $params{keywordlist};
+my @KeywordGroupIDs = split /\0/,$params{keywordgroup};
+my $LongName        = $params{longdesc};
+my $ShortName       = $params{shortdesc};
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
+
+unless ($dbh) {
+  push @ErrorStack,$Msg_AdminNoConnect;
+}         
+print $query->header;
+&DocDBHeader("Modified List of Keywords");
+
+&EndPage(@ErrorStack);
+
+unless (&CanAdminister) {
+  push @ErrorStack,$Msg_AdminNoLogin;
+}  
+&EndPage(@ErrorStack);
+
+if ($Action eq "Delete") { 
+
+  unless ($KeywordID) {
+    push @ErrorStack,$Msg_ModKeywdEmpty;
+  }
+  &EndPage(@ErrorStack);
+  &FetchKeyword($KeywordID);
+  my $KeywordLink   = &KeywordLinkByID($KeywordID);
+  
+  &DeleteKeyword($KeywordID); # Delete KeywordID from Keyword table
+  
+  print "$KeywordLink has been removed from the database.<br>\n";
+} elsif ($Action eq "Modify") {
+  unless ($KeywordID) {
+    push @ErrorStack,$Msg_ModKeywdEmpty;
+  }
+  &EndPage(@ErrorStack);
+
+# Deal with name changes     
+
+  if ($ShortName) { 
+    print "<b>Updating short keyword name.</b><br>\n";
+    my $KeywordUpdate = $dbh->prepare(
+       "update Keyword set ShortDescription=? where KeywordID=?");
+    $KeywordUpdate -> execute($ShortName,$KeywordID);
+  }
+  if ($LongName) { 
+    print "<b>Updating long keyword name.</b><br>\n";
+    my $KeywordUpdate = $dbh->prepare(
+       "update Keyword set LongDescription=? where KeywordID=?");
+    $KeywordUpdate -> execute($LongName,$KeywordID);
+  }
+
+# Deal with KeywordGroup changes   
+
+  @KeywordGroupIDs = sort numerically @KeywordGroupIDs; # Want to get -1: remove first
+  foreach my $KeywordGroupID (@KeywordGroupIDs) {
+    if ($KeywordGroupID == -1) { # Remove existing KeywordGrouping entries
+      my $GroupingDelete = $dbh -> prepare("delete from KeywordGrouping where KeywordID=?");
+      $GroupingDelete -> execute($KeywordID);
+    } elsif ($KeywordGroupID) { 
+      my $GroupingSelect = $dbh -> prepare(
+       "select KeywordGroupingID from KeywordGrouping where KeywordID=? and KeywordGroupID=?");
+      $GroupingSelect -> execute($KeywordID,$KeywordGroupID);
+      my ($KeywordGroupingID) = $GroupingSelect -> fetchrow_array;
+      unless ($KeywordGroupingID) { # Does this association exist already?
+        my $GroupingInsert = $dbh -> prepare("insert into KeywordGrouping ".
+         "(KeywordGroupingID, KeywordGroupID, KeywordID) values (0,?,?)");
+        $GroupingInsert -> execute($KeywordGroupID,$KeywordID);
+      }
+    }
+  }
+} elsif ($Action eq "New") {
+  &EndPage(@ErrorStack);
+
+  # FIXME: Check to see if exists, if so, don't insert, warn.
+
+  print "<b>Adding a new keyword.</b><br>\n";
+  my $KeywordInsert = $dbh->prepare(
+   "insert into Keyword (KeywordID, ShortDescription, LongDescription) ". 
+   "values (0,?,?)");
+
+  my $KeywordGroupingInsert = $dbh->prepare(
+   "insert into KeywordGrouping (KeywordGroupingID, KeywordGroupID, KeywordID) ". 
+   "values (0,?,?)");
+
+  $KeywordInsert -> execute($ShortName,$LongName);
+  $KeywordID = $KeywordInsert -> {mysql_insertid}; # Works with MySQL only
+
+  foreach my $KeywordGroupID (@KeywordGroupIDs) {
+    $KeywordGroupingInsert -> execute($KeywordGroupID,$KeywordID);
+  }  
+} else {
+  push @ErrorStack,"No valid action was specified.";
+}  
+
+# For modify or new fetch information and display.
+
+if ($Action eq "Modify" || $Action eq "New") {
+  &GetKeywords;
+
+  print "<p><b>Here are the results of your modification:<br>\n";
+  my $ShortLink = &KeywordLinkByID($KeywordID,-format => "short");
+  my $LongLink = &KeywordLinkByID($KeywordID,-format => "long");
+  print "Short description: $ShortLink<br>\n";
+  print "Long description: $LongLink<br>\n";
+  print "</b><p>\n";
+}  
+
+print "<p>\n";
+$keyadminform = "<a href=\"$KeywordAdministerForm\">Administer Keywords</a>";
+$keylist = "<a href=\"$ListKeywords\">List Keywords</a>";
+print "<center>\n";
+print "$keyadminform $keylist\n";
+print "</center>\n";
+print "<p>\n";
+
+&WarnPage(@WarnStack);
+&EndPage(@ErrorStack);
+
+&DocDBNavBar;
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+ 
+exit;

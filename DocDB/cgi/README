@@ -1,0 +1,51 @@
+A lot of routines in this directory date from an earlier time when we hadn't
+stabilized on any coding style. Newer routines are better organized.
+
+There are three groups of routines:
+*SQL.pm       - These deal with the underlying database
+*HTML.pm      - Provide HTML input forms and user feedback
+*Utilities.pm - Provide more general routines
+
+They are grouped by what part of the DB they deal with, so the first word is
+usually something like Document, Revision, Meeting, Author, Topic, etc.
+
+For subroutines/functions with more than a couple of input parameters (or which
+might grow beyond a couple) passing values via a hash is preferred. The function
+looks like
+
+sub MyRoutine (%) {
+  
+  my (%Params) = @_;
+  
+  my $All       =   $Params{-showall}   || 0;
+  my $Multiple  =   $Params{-multiple}  || 0;
+  my $HelpLink  =   $Params{-helplink}  || "";
+  my $HelpText  =   $Params{-helptext}  || "Authors";
+  my $Required  =   $Params{-required}  || 0;
+  my $Name      =   $Params{-name}      || "authors";
+  my $Size      =   $Params{-size}      || 10;
+  my @Defaults  = @{$Params{-default}};
+
+} 
+
+and a call looks like
+
+&MyRoutine(-required => $RequiredEntries{Requester},
+           -helplink => "requester",
+           -helptext => "Requester",
+           -name     => "requester",
+           -default  => \@RequesterDefaults);
+               
+A lot of the routines already done this way are the various routines that create
+form controls. The standardized parameters for these are
+
+ -multiple       Multiple selections are allowed
+ -helplink       The name of the DocDBHelp.xml entry for the control
+ -helptext       The text in the link for help
+ -required       If the entry is required of the user
+ -name           The HTML "input" name 
+ -default        The default value
+ -disabled       Element is grayed out, can be enabled with Javascript
+ 
+ and others. Where possible, these correspond to the underlying CGI.pm names.
+              

@@ -1,0 +1,77 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+use Benchmark;
+use CGI;
+use DBI;
+
+$StartTime = new Benchmark;
+
+require "DocDBGlobals.pm";
+
+require "SecuritySQL.pm";
+
+require "ResponseElements.pm";
+require "DocumentHTML.pm";
+
+require "HTMLUtilities.pm";
+
+$query = new CGI; # Global for subroutines
+
+%params = $query -> Vars;
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+&GetSecurityGroups;
+
+### Start HTML
+
+print $query->header;
+&DocDBHeader("Managed Documents");
+
+&EndPage(@ErrorStack);
+
+print "<center><h4>These are the managed documents in the $Project Document Database:</h4></center><p>\n";
+
+### Get list of documents with signatures
+
+my @DocumentIDs = ();
+my $DocumentID;
+
+my $Select = $dbh->prepare("select DISTINCT(DocumentRevision.DocumentID) from DocumentRevision,Signoff where DocumentRevision.DocRevID=Signoff.DocRevID and DocumentRevision.Obsolete=0");
+$Select -> execute;
+$Select -> bind_columns(undef, \($DocumentID));
+while ($Select -> fetch) {
+  push @DocumentIDs,$DocumentID;
+}
+
+### Display list of docs
+
+my $NumDoc  = &DocumentTable(-fields => ["Docid","Title","CanSign","Updated"],
+                             -docids => \@DocumentIDs,
+                             -sortby => "date", -reverse => true);
+### Statistics
+
+print "<p><b>Number of documents found: $NumDoc</b><p>\n";
+
+$EndTime  = new Benchmark;
+&DocDBNavBar();
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -1,0 +1,62 @@
+#! /usr/bin/env perl
+#
+# Description: The login form to a users e-mail notification account
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+use CGI;    
+use DBI;    
+                                                  
+require "DocDBGlobals.pm";
+require "HTMLUtilities.pm";
+require "ResponseElements.pm";
+require "EmailSecurity.pm";
+
+$query = new CGI;  # Global for subroutines
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+print $query->header;
+&DocDBHeader("Personal Account Login");
+
+print "<p/>\n";
+print "<b>This page is used to log into or create a personal $Project DocDB account. You
+          can use this account to set e-mail notifications. DocDB will e-mail
+          when you  documents you are interested in are added or change.\n";
+if ($UseSignoffs) {
+  print "A personal account is also needed for you to be able to sign documents
+         and be notified when your signature is required.\n";
+}
+print "Creating a personal account does <i>not</i> add you to the list of
+       possible authors.  To do that, fill out the form on the <a
+       href=\"$AuthorAddForm\">Add an author</a>  form.</b>\n";          
+print "<p/>\n";
+
+&LoginEmailUserForm;
+print "<p/>\n";
+
+&NewEmailUserForm;
+print "<p/>\n";
+
+&DocDBNavBar;
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+

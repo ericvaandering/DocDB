@@ -1,0 +1,111 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+use CGI;
+use DBI;
+
+require "DocDBGlobals.pm";
+require "ResponseElements.pm";
+require "SecuritySQL.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
+require "FSUtilities.pm";
+require "HTMLUtilities.pm";
+require "Security.pm";
+require "Scripts.pm";
+require "SQLChecks.pm";
+
+require "RevisionHTML.pm";
+
+$query = new CGI;  # Global for subroutines
+
+%params = $query -> Vars;
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+$DocumentID = $params{docid};
+$DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
+$DocumentID =~ s/\s+$//;
+$Version    = $params{version};
+$AsOf       = $params{asof};
+
+unless ($DocumentID) {
+  push @ErrorStack,"You are must supply a document number!";
+}  
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+&GetSecurityGroups;
+
+&FetchDocument($DocumentID);
+
+if (defined $Version && defined $AsOf) {
+  push @ErrorStack,"You may not specify both a version and date.";
+}
+
+my $DocRevID;
+if (defined $Version) {
+  if ($Version eq "") { # Still get this from form with blank version
+    $Version = $Documents{$DocumentID}{NVersions};
+  }
+  $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+} elsif (defined $AsOf) {
+  if (&CheckSQLDate($AsOf)) {
+    $DocRevID = &FetchRevisionByDocumentAndDate($DocumentID,$AsOf);
+    $Version  = $DocRevisions{$DocRevID}{VERSION};
+  } else {
+    push @ErrorStack,"The as-of date must be specifed in the form YYYY-MM-DD.";
+  }
+} else {
+  $Version = $Documents{$DocumentID}{NVersions};
+  $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+}
+
+my $PageTitle = "$ShortProject-doc-$DocumentID-v$Version: Not authorized";
+if (&CanAccess($DocumentID,$Version)) {
+  $PageTitle = "$ShortProject-doc-$DocumentID-v$Version: $DocRevisions{$DocRevID}{Title}";
+} else {
+  if ($remote_user) {
+    push @ErrorStack,"The $remote_user group is not authorized to view this document (or it does not exist).";
+  } else {
+    push @ErrorStack,"This document is not publicly accessible.";
+  }  
+} 
+
+print $query->header;
+&DocDBHeader($PageTitle,"$Project Document $DocumentID-v$Version");
+
+&HelpPopupScript;
+
+unless ($DocRevID) { # Probably never executed since CanAccess fails.
+  push @ErrorStack,"This document does not exist.";
+}
+
+if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@ErrorStack);
+}
+
+&PrintRevisionInfo($DocRevID, -showversions => 1);
+
+&DocDBNavBar;
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -1,0 +1,190 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+use Benchmark;
+use CGI;
+use DBI;
+
+$StartTime = new Benchmark;
+
+require "DocDBGlobals.pm";
+require "DocumentHTML.pm";
+require "HTMLUtilities.pm";
+
+$query = new CGI;  # Global for subroutines
+
+%params = $query -> Vars;
+
+my $Days     = $params{days}     || 0;
+my $TypeID   = $params{typeid}   || 0;
+my $AuthorID = $params{authorid} || 0;
+
+my $TopicID  = $params{topicid}  || 0;
+my $MajorID  = $params{majorid}  || 0;
+my $Major    = $params{major}    || "";
+my $AllPubs  = $params{allpubs}  || "";
+
+my $Mode     = $params{mode}     || "";
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+### Set defaults
+
+my ($Title,  $Message, $List);
+my ($SortBy, $Reverse, @Fields);
+
+my @DocumentIDs = ();
+
+if ($Days) { 
+
+### Days since last modification
+
+  $Title   = "Documents from Last $Days Days";
+  $Message = "These documents have been modified in the last <span class=\"Highlight\">$Days days</span>.";
+  $List = $dbh -> prepare("select DISTINCT(DocumentID) from DocumentRevision where Obsolete=0 and TO_DAYS(NOW())-TO_DAYS(TimeStamp)<=?");            
+  $List -> execute($Days);
+} elsif ($TopicID) {
+
+### Minor topic
+
+  require "TopicSQL.pm";
+  &SpecialMajorTopics;
+  &FetchMinorTopic($TopicID);
+
+  $Title   = "Document List by Topic";
+  $Message = "These documents on <span class=\"Highlight\">$MinorTopics{$TopicID}{LONG} 
+              ($MinorTopics{$TopicID}{Full})</span> are available:";
+  $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
+           "DocumentRevision,RevisionTopic where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
+           "and DocumentRevision.Obsolete=0 and RevisionTopic.MinorTopicID=?");            
+  $List -> execute($TopicID);
+} elsif ($AuthorID) {
+
+### Author
+  require "AuthorSQL.pm";
+  require "AuthorHTML.pm";
+
+  &GetInstitutions;
+  &FetchAuthor($AuthorID);
+  unless ($Authors{$AuthorID}{LASTNAME}) {
+    push @ErrorStack,$Msg_AuthorInvalid;
+  }
+
+  $Title   = "Document List by Author";  
+  
+  my $Link = &AuthorLink($AuthorID);
+  
+  $Message = "<span class=\"Highlight\">$Link of $Institutions{$Authors{$AuthorID}{INST}}{LONG}</span>
+              is listed as an author on the following documents:";
+  @DocumentIDs = &GetAuthorDocuments($AuthorID);  
+} elsif ($Major || $MajorID) {
+
+### Major topic (either number or name)
+
+  require "TopicSQL.pm";
+  &SpecialMajorTopics;
+  if ($Major) {
+    $MajorID = &LookupMajorTopic($Major);
+  } 
+  &FetchMajorTopic($MajorID);
+  
+  $Title   = "Document List by Topic";
+  $Message = "These documents on <span class=\"Highlight\"> $MajorTopics{$MajorID}{LONG}</span> are available:";
+  $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
+           "DocumentRevision,RevisionTopic,MinorTopic where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
+           "and DocumentRevision.Obsolete=0 and RevisionTopic.MinorTopicID=MinorTopic.MinorTopicID and MinorTopic.MajorTopicID=?");            
+  $List -> execute($MajorID);
+} elsif ($TypeID) {
+  $Title   = "Document List by Type";
+  $Message = "These documents of type <span class=\"Highlight\">
+             $DocumentTypes{$TypeID}{SHORT}</span> are available:";
+  
+  $List = $dbh -> prepare("select DISTINCT(Document.DocumentID) from ".
+           "Document where Document.DocumentType=?");            
+  $List -> execute($TypeID);
+} elsif ($AllPubs) {
+  $Title   = "$Project Publications";
+  $Message = "These publications are available:\n";
+  $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
+           "DocumentRevision,RevisionReference ".
+           "where DocumentRevision.DocRevID=RevisionReference.DocRevID and RevisionReference.JournalID>0"); 
+  $List -> execute();
+}
+
+# Defaults, later can surround these in "unless"
+
+@Fields  = ("Docid","Title","Author","Updated"); 
+$SortBy  = "date";
+$Reverse = 1;
+
+if ($Mode eq "conference") {
+  @Fields  = ("Title","Conference","Author","Files"); 
+  $SortBy  = "confdate";
+} elsif ($Mode eq "meeting") {
+  @Fields  = ("Title","Author","Topics","Files");
+  $SortBy  = "requester";
+  $Reverse = 0;
+}
+
+# Do the fetch on the $List. "unless (@DocumentIDs)" here to do complex fetches, user specify
+
+unless (@DocumentIDs) { # Some do their own
+  if ($List) {
+    my $DocumentID;
+    $List -> bind_columns(undef, \($DocumentID));
+    while ($List -> fetch) {
+      push @DocumentIDs,$DocumentID;
+    }
+  }
+}
+
+### Start HTML
+
+print $query->header;
+&DocDBHeader($Title);
+
+print "<center><h4>$Message</h4></center><p/>\n";
+
+# Special HTML for special situations
+
+if ($Days) { # Print out modified by form
+  require "FormElements.pm";
+  
+  print $query -> startform('POST',"ListBy");
+  print "<center>";
+  print $query -> submit (-value => "Show Documents");
+  print " modified in the last ";
+  &DaysPulldown;
+  print " days.</center>";
+  print $query -> endform;
+  print "<p/>";
+}
+
+### Table and Statistics
+
+my $NumberOfDocuments = &DocumentTable(-fields => \@Fields, -docids  => \@DocumentIDs, 
+                                       -sortby => $SortBy,  -reverse => $Reverse);
+print "<b>Number of documents found: $NumberOfDocuments</b><p/>\n";
+
+$EndTime  = new Benchmark;
+
+&DocDBNavBar();
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -1,0 +1,74 @@
+<title>DocDB Listing and Notification</title>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<center><h1>DocDB Listing and Notification</h1></center>
+<p>
+
+The FullList and NotifyDigest scripts run outside the CGI environment.
+<p>
+FullList creates a list of all the documents in the database for each
+permission group.  This allows faster access to the complete list of documents.
+<p>
+NotifyDigest mails notices to users who have signed up for email
+notification of document changes in the DocDB database instance.  
+<p>
+These scripts must run as cron jobs.
+<p>
+
+    <ol>
+    <li> Make a directory under your document database account to contain 
+	 the files in DocDB/scripts ( we'll call it "docdb-scripts" )
+    <li> cp DocDB/scripts/* docdb-scripts/.
+    <li> cd docdb-scripts
+    <li> Check CGIInclude.pm and edit if necessary. <br>
+         This will tell the scripts where to find ProjectGlobals.pm, 
+	 which contains the necessary database information.
+    <li> Edit DocDBHourly.csh <br>
+         This script calls FullList. <br>
+         There should be one line for every permission group.
+    <li> DocDBDaily.csh and DocDBWeekly.csh call NotifyDigest.
+    <li> Make a directory under your document database account to contain 
+	 the scripts to make the public listing ( we'll call it "DocDB-Public-scripts" )
+    <li> cp DocDB/scripts/DocDBHourly.csh DocDB-Public-scripts/.
+    <li> cd DocDB-Public-scripts
+    <li> Make some links <br>
+         ln -s ../docdb-scripts/FullList FullList <br>
+	 ln -s ../docdb-scripts/CGIInclude.pm CGIInclude.pm <br>
+	 ln -s /full/path/to/public/DocDB/ProjectGlobals.pm ProjectGlobals.pm
+    <li> Edit DocDBHourly.csh <br>
+         For the public edition, enable <b>ONLY</b> the line that 
+	 fills $file_root/Static/Lists/FullList.html
+    <li> setup cron jobs to run the scripts (use crontab -e)
+    <pre>
+    00 * * * * cd docdb-scripts; ./DocDBHourly.csh
+    15 * * * * cd DocDB-Public-scripts; ./DocDBHourly.csh
+    05 0 * * * cd docdb-scripts; ./DocDBDaily.csh  > /dev/null
+    10 0 * * 0 cd docdb-scripts; ./DocDBWeekly.csh > /dev/null
+    </pre>
+    <li> These cron jobs populate the lists used by DocDB to 
+         efficiently list all documents and provide the information 
+	 used by the e-mail notification scripts.
+    </ol>
+
+
+
+<!-- begin footer -->
+<hr>
+<h3><a href=DocDB-license.html>DocDB License</a></h3>
+<i><font size="-1">
+<script language="javascript">
+<!-- Hide from browsers that do not understand Javascript
+// print the URL and modification date of this page
+var url = document.location;
+document.write(url)  
+var dt = document.lastModified;
+document.write('<br> Last Modified:')  
+document.write(dt)  
+// end hiding --> 
+</script> 
+<br>
+<A HREF="mailto:btev-docdb@fnal.gov">Document Database Administrators</A> 
+</font></i>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<title>Identify Resources for DocDB</title>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<center><h1>Identify Resources for DocDB</h1></center>
+<p>
+   Disk space is needed for the mysql database, DocDB (both cgi and html), 
+   and the documents themselves.  The DocDB scripts require about 3 MB.
+   At this time, the BTeV document database contains 2500+ documents 
+   and uses about 5 MB for the database and 11 GB for the document 
+   directory tree.
+<p>
+   One possible file configuration is: 
+   <center>
+   <table width="95%">
+     <tr>
+       <td> cgi scripts
+       </td>
+       <td> 
+       /www/cgi-bin/private/DocDB <br>
+       /www/cgi-bin/public/DocDB
+       </td>
+    </tr>
+     <tr>
+       <td> MySQL database
+       </td>
+       <td> /local/mysql
+       </td>
+     </tr>
+     <tr>
+       <td> document location
+       </td>
+       <td> /www/html/DocDB
+       </td>
+     </tr>
+     <tr>
+       <td> html pages
+       </td>
+       <td> appropriately placed under /www/html/...
+       </td>
+     </tr>
+   </table>
+   </center>
+<p>
+       The public DocDB directory contains links to selected 
+       cgi scripts in the private DocDB directory.
+  <p>
+   Note that the MySQL database is accessed by the cgi scripts but should not 
+   live under any web accessable directory.
+<p>
+   The web server process must be able to write into the document location directory 
+   (e.g.,  /www/html/DocDB)
+   and this directory must be web viewable.
+<p>
+   If you want to use the more secure certificate method of granting access, you
+   will need to configure and run DocDB under an SSL server. You will also need
+   to place DocDB into an area that requires a client-side certificate for
+   access. For a primer on setting up Apache in this way, see xxxxx. You will
+   also need a way to supply each user with a certificate signed by a CA
+   (Certficate Authority) you trust.
+<p>
+   You should create a document database account to own the
+   the DocDB cgi scripts, and the DocDB html files.  
+<p>
+   You will need an account to own the MySQL database. 
+   This can be the  document database account.
+   This mysql account will be used to start the MySQL daemon.
+   We <b>strongly recommend</b> that the mysql account 
+   <b>not</b> be named "mysql".
+<p>
+   Make sure you have a machine that will support MySQL.
+<p>
+   The MySQL database can run on any machine.  
+   It does not need to reside on the same machine as the web server.
+
+<!-- begin footer -->
+<hr>
+<h3><a href=DocDB-license.html>DocDB License</a></h3>
+<i><font size="-1">
+<script language="javascript">
+<!-- Hide from browsers that do not understand Javascript
+// print the URL and modification date of this page
+var url = document.location;
+document.write(url)  
+var dt = document.lastModified;
+document.write('<br> Last Modified:')  
+document.write(dt)  
+// end hiding --> 
+</script> 
+<br>
+<A HREF="mailto:btev-docdb@fnal.gov">Document Database Administrators</A> 
+</font></i>
+</body>
+</html>
