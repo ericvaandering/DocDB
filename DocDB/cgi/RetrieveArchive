@@ -49,6 +49,9 @@ my $status;
 my $File;      
 my $URL;       
 my $Directory; 
+
+system "mkdir $file_root/tmp";
+
 unless (@error_stack) {
   $File      = "$file_root/tmp/$DocumentID-$Version.tar.gz";
   $URL       = "$web_root/tmp/$DocumentID-$Version.tar.gz";
