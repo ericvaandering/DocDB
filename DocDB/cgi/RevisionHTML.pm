@@ -149,7 +149,7 @@ sub PrintRevisionInfo {
      require "SignoffUtilities.pm";
      my ($ApprovalStatus,$LastApproved) = &RevisionStatus($DocRevID);
      unless ($ApprovalStatus eq "Unmanaged") { 
-       print "<h3>(Document Status: $ApprovalStatus)</h3>";
+       print "<center>(Document Status: $ApprovalStatus)</center>";
      }  
    }  
   print "</div>\n";  # DocTitle

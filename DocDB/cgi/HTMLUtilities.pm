@@ -13,18 +13,24 @@ sub DocDBHeader {
   my $Search = $Params{-search}; # Fix search page!
   my $NoBody = $Params{-nobody};
   
+  unless ($PageTitle) { 
+    $PageTitle = $Title;
+  }  
+  
   print "<html>\n";
   print "<head>\n";
-  print "<title>$title</title>\n";
+  print "<title>$Title</title>\n";
   
   print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB.css\" type=\"text/css\">\n";
+  if (defined &ProjectHeader) {
+    &ProjectHeader($Title,$PageTitle); 
+  }
 
-  &ProjectHeader($Title,$PageTitle,$Search); 
-  
   if (-e "$CSSDirectory/$ShortProject"."DocDB.css") {
     print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB.css\" type=\"text/css\">\n";
   }
-  print "</head class=$CSSDirectory>\n";
+
+  print "</head>\n";
 
   if ($Search) {
     print "<body onload=\"selectProduct(document.forms[\'queryform\']);\">\n";
@@ -32,8 +38,8 @@ sub DocDBHeader {
     print "<body>\n";
   }  
   
-  unless ($NoBody) {
-    &ProjectBodyStart($Title,$PageTitle,$Search); 
+  if (defined &ProjectBodyStart && !$NoBody) {
+    &ProjectBodyStart($Title,$PageTitle); 
   }
 }
 

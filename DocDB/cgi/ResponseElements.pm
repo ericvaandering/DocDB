@@ -41,28 +41,30 @@ sub PrintTitle {
 sub WarnPage { # Non-fatal errors
   my @errors = @_;
   if (@errors) {
+    print "<dl class=\"warning\">\n"; # FIXME: Move red into style sheet
     if ($#errors) {
-      print "<b><font color=\"red\">There were non-fatal errors processing your
-             request: </font></b><br>\n";
+      print "<dt><font color=\"red\">There were non-fatal errors processing your
+             request: </font></dt>\n";
     } else {
-      print "<b><font color=\"red\">There was a non-fatal error processing your
-             request: </font></b><br>\n";
+      print "<dt><font color=\"red\">There was a non-fatal error processing your
+             request: </font></dt>\n";
     } 
     foreach $message (@errors) {
-      print "<dt><b>$message</b><br>\n";
-    } 
-    print "<p>\n";
+      print "<dd>$message</dd>\n";
+    }
+    print "</dl>\n"; 
   }   
 }
 
 sub DebugPage (;$) { # Debugging output
   my ($CheckPoint) = @_; 
   if (@DebugStack && $DebugOutput) {
-    print "<b><font color=\"red\">Debugging messages: </font>$CheckPoint</b><br/>\n";
+    print "<dl class=\"debug\">\n"; # FIXME: Move red into style sheet
+    print "<dt><font color=\"red\">Debugging messages: </font>$CheckPoint</dt>\n";
     foreach my $Message (@DebugStack) {
-      print "<dt/>$Message<br/>\n";
+      print "<dd>$Message</dt>\n";
     } 
-    print "<p/>\n";
+    print "</dl>\n";
   } elsif ($CheckPoint && $DebugOutput) {
     print "No Debugging messages: $CheckPoint<br/>\n";
   }  
@@ -73,17 +75,18 @@ sub DebugPage (;$) { # Debugging output
 sub EndPage {  # Fatal errors, aborts page if present
   my @errors = @_;
   if (@errors) {
+    print "<dl class=\"debug\">\n"; # FIXME: Move red into style sheet
     if ($#errors) {
-      print "<b><font color=\"red\">There were fatal errors processing your
-             request: </font></b><br>\n";
+      print "<dt><font color=\"red\">There were fatal errors processing your
+             request: </font></dt>\n";
     } else {
-      print "<b><font color=\"red\">There was a fatal error processing your
-             request: </font></b><br>\n";
+      print "<dt><font color=\"red\">There was a fatal error processing your
+             request: </font></dt>\n";
     } 
     foreach $message (@errors) {
-      print "<dt><b>$message</b><br>\n";
+      print "<dd>$message</dd>\n";
     }  
-    print "<p>\n";
+    print "</dl>\n";
     &DocDBNavBar();
     &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
     exit;
