@@ -8,7 +8,10 @@ use DBI;
 
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
-require "MySQLAccess.pm";
+require "SecuritySQL.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
+require "MiscSQL.pm";
 require "FSUtilities.pm";
 require "HTMLUtilities.pm";
 require "Security.pm";
@@ -51,6 +54,9 @@ if (@error_stack) {  # The user made one or more mistakes, warn and exit
 
 my $DocRevID;
 if (defined $Version) {
+  if ($Version eq "") { # Prob can't happen now, but may in future
+    $Version = $Documents{$DocumentID}{NVER};
+  }
   $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 } elsif (defined $AsOf) {
   if (&CheckSQLDate($AsOf)) {
@@ -61,6 +67,7 @@ if (defined $Version) {
   }
 } else {
   $Version = $Documents{$DocumentID}{NVER};
+  $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 }
 
 unless (&CanAccess($DocumentID,$Version)) {
@@ -93,7 +100,7 @@ if ($FileName) {
   }
   if ($NFiles == 1) {
     $FullFile = &FullFile($DocumentID,$Version,$LastFile);
-    $FullURL = &GetURLDir($DocumentID,$Version).CGI::escape($LastFile);
+    $FullURL  = &GetURLDir($DocumentID,$Version).CGI::escape($LastFile);
   } elsif ($NFiles > 1) {
     push @warn_stack,"More than one file was found. Please select one below.";
   }  

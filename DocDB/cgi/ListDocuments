@@ -12,7 +12,10 @@ $StartTime = new Benchmark;
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
 require "Security.pm";
-require "MySQLAccess.pm";
+require "AuthorSQL.pm";
+require "SecuritySQL.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
 require "HTMLUtilities.pm";
 require "Sorts.pm";
 

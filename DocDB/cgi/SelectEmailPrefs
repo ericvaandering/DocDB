@@ -205,8 +205,8 @@ print "<b>Use this page to change your e-mail notification preferences.</b>
        If you want to change your password, type the new password in both boxes. 
        <p>
        At the bottom part of the page, select the <a href=\"#topic\">topics or 
-       subtopics</a>,  <a href=\"#author\">authors</a>, <a
-       href=\"#keyword\">keywords</a> you want to be notified of changes to,
+       subtopics</a>,  <a href=\"#author\">authors</a>, or 
+       <a href=\"#keyword\">keywords</a> you want to be notified of changes to,
        either immediately or in digests sent every day or week.\n";
 print "</td><tr></table>\n";
 

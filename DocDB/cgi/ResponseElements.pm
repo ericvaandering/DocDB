@@ -127,6 +127,9 @@ sub SecurityListByID {
 sub PrintRevisionInfo {
 
   require "FormElements.pm";
+  require "AuthorSQL.pm";
+  require "SecuritySQL.pm";
+  require "TopicSQL.pm";
  
   my ($DocRevID,$HideButtons) = @_;
 

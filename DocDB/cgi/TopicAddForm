@@ -8,7 +8,7 @@ use DBI;
 
 require "FormElements.pm";
 require "Scripts.pm";
-require "MySQLAccess.pm";
+require "TopicSQL.pm";
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
 require "HTMLUtilities.pm";

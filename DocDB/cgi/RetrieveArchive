@@ -11,6 +11,7 @@ require "ResponseElements.pm";
 require "SecuritySQL.pm";
 require "DocumentSQL.pm";
 require "FSUtilities.pm";
+require "HTMLUtilities.pm";
 require "Security.pm";
 
 $query = new CGI;  # Global for subroutines

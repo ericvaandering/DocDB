@@ -10,10 +10,15 @@ use DBI;
 $StartTime = new Benchmark;
 
 require "DocDBGlobals.pm";
-require "ResponseElements.pm";
-require "MySQLAccess.pm";
-require "HTMLUtilities.pm";
+
+require "SecuritySQL.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
+
 require "Security.pm";
+require "ResponseElements.pm";
+
+require "HTMLUtilities.pm";
 require "Scripts.pm";
 
 $query = new CGI;  # Global for subroutines
