@@ -24,7 +24,9 @@ sub ClearSecurityGroups {
 sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with all authors
   if ($HaveAllSecurityGroups) {
     return;
-  } 
+  }
+   
+  push @DebugStack,"Getting all security groups";
   
   my ($GroupID,$Name,$Description,$CanCreate,$CanAdminister,$TimeStamp);
   my $GroupList  = $dbh -> prepare(

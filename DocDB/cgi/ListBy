@@ -27,9 +27,6 @@ $StartTime = new Benchmark;
 
 require "DocDBGlobals.pm";
 require "DocumentHTML.pm";
-
-require "SecuritySQL.pm";
-
 require "HTMLUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
@@ -40,8 +37,6 @@ my $Days = $params{days} || 0;
 my $Mode = $params{mode} || "date";
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
-
-&GetSecurityGroups; # Why do we need this?
 
 ### Set defaults
 

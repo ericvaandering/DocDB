@@ -62,6 +62,7 @@ sub FetchDocument {
   }  
   $DocumentList -> execute($DocumentID);
   my ($DocumentID,$RequesterID,$RequestDate,$DocumentType,$TimeStamp) = $DocumentList -> fetchrow_array;
+  push @DebugStack,"From Database DocID: $DocumentID";
 
   if ($DocumentID) {
     $Documents{$DocumentID}{DOCID}     = $DocumentID;

@@ -77,11 +77,8 @@ sub DocumentTable (%) {
   foreach my $DocumentID (@DocumentIDs) {
   
 ### Which version (if any) can they view
-  
-    &FetchDocument($DocumentID);
     my $Version = &LastAccess($DocumentID);
     if ($Version == -1) {next;}
-    unless (&CanAccess($DocumentID,$Version)) {next;}
     my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
     ++$NumberOfDocuments;
 

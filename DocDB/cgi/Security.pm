@@ -29,10 +29,9 @@ sub CanAccess { # Can the user access (with current security) this version
   require "SecuritySQL.pm";
   
 ## FIXME: Use SecurityLookup  
+## FIXME: Allow -docrevid, or -docid and -version, same for other routines
   
-  unless (keys %SecurityGroups) {
-    &GetSecurityGroups;
-  }  
+  &GetSecurityGroups;
 
   my $DocRevID = &FetchRevisionByDocumentAndVersion($documentID,$version);
   
@@ -86,9 +85,7 @@ sub CanModify { # Can the user modify (with current security) this document
 
 ## FIXME: Use SecurityLookup  
 
-  unless (keys %SecurityGroups) {
-    &GetSecurityGroups;
-  }  
+  &GetSecurityGroups;
 
   my ($DocumentID,$Version) = @_;
   my $CanModify;
@@ -153,9 +150,7 @@ sub CanCreate { # Can the user create documents
 
 ## FIXME: Use SecurityLookup  
 
-  unless (keys %SecurityGroups) {
-    &GetSecurityGroups;
-  }  
+  &GetSecurityGroups;
 
   my $Create = 0;
   my @GroupIDs = keys %SecurityGroups; # FIXME use a hash for direct lookup

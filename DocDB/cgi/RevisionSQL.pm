@@ -69,6 +69,7 @@ sub FetchRevisionByDocumentAndVersion ($$) {
   }
   $RevisionQuery -> execute($DocumentID,$VersionNumber);
   my ($DocRevID) = $RevisionQuery -> fetchrow_array;
+  push @DebugStack,"From Database DRI: $DocRevID DI: $DocumentID V: $VersionNumber";
 
   &FetchDocRevisionByID($DocRevID);
 
