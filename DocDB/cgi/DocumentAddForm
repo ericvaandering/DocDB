@@ -128,9 +128,6 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   $PubInfoDefault    = $DocRevisions{$DocRevID}{PUBINFO};
   $AbstractDefault   = $DocRevisions{$DocRevID}{ABSTRACT};
   $RequesterDefault  = $DocRevisions{$DocRevID}{SUBMITTER};
-#  $JournalDefault    = $DocRevisions{$DocRevID}{JournalID}; # FIXME: Array
-#  $VolumeDefault     = $DocRevisions{$DocRevID}{Volume};    # FIXME: Array
-#  $PageDefault       = $DocRevisions{$DocRevID}{Page};      # FIXME: Array
   $KeywordsDefault   = $DocRevisions{$DocRevID}{Keywords};
   @SecurityDefaults  = &GetRevisionSecurityGroups($DocRevID);
   @AuthorDefaults    = &GetRevisionAuthors($DocRevID);
