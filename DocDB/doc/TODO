@@ -1,26 +1,11 @@
-A lot of adminstration tools should be created to avoid the need to fiddle with
-the DB. Currently a lot of the most infrequent stuff, means issuing SQL commands
-by hand. The idea would be to get the DB to the point where, aside from the
-mysql table, you dump in a single SQL file to populate the DocDB database and
-then can do everything else via the web.
+Database structures allow for a number of things that aren't currently supported
+by the code:
 
-* DeleteDocument should be generalized to Delete and allow deletion of 
-  authors, topics, institutions, and groups. Or maybe the modification routines
-  below should allow deletion.
+* Notifications on individual documents (EmailDocumentImmediate table)
 
-* DeleteDocument should allow the deletion of a single version of a doc and the
-  DB as a whole should deal with situations where a version number is missing. 
-  (It probably already does, but should make sure.)
-  
-* Add/Modify Group to add or modify a group plus all the relevant stuff in
-  GroupHierarchy.
+* Restricting who is allowed to sign documents (CanSign in EmailUser)
 
-* Modify an author (change name or institution). 
+* Hiding major topics from groups (GroupTopic table)
 
-* Modify topics (names, parent topic, etc.)
+* Associating an author with personal accounts (AuthorID in EmailUser)
 
-* Add institutions
-
-* Add document types
-
-  
