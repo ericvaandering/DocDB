@@ -183,12 +183,13 @@ sub SessionDelete ($) {
 }
 
 sub SessionTitle {
+  print "$SessionTitleDefault\n";
   print $query -> textfield (-name => 'sessiontitle', -default => $SessionTitleDefault, 
                              -size => 35, -maxlength => 128);
 }
 
 sub SessionDescription {
-  print $query -> textarea (-name => 'sessiondescription',-default => $SessionDescriptionDefault, 
+  print $query -> textarea (-name => 'sessiondescription',-value => $SessionDescriptionDefault, 
                             -columns => 30, -rows => 3);
 }
 
