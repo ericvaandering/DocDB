@@ -21,6 +21,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetTopics;
 &GetSecurityGroups;
 &GetJournals;
+&GetDocTypes;
 
 %params = $query -> Vars;
 
@@ -136,11 +137,12 @@ if      ($mode eq "add") {
   if ($Meeting) {
     print "<h4>You have chosen to add a new meeting talk to the database.<br> 
                Make sure you know all the required information and
-               the file is ready for uploading.<br>
-               This is a simplified form for adding information to the database.
+               the file is ready for uploading.<p>
+               This is a simplified form for adding information to the 
+               database.<br>
                If you need something more complicated, such as multiple authors
-               or more upload boxes, please use one of the options from
-               the <a href=$DocumentDatabase>main page</a>.\n";
+               or more upload boxes,<br> please use one of the options from
+               the <a href=$MainPage>main page</a>.\n";
   } else {  
     print "<h4>You have chosen to add a new document to the database.<br> 
                Make sure you know all the required information and
@@ -166,8 +168,9 @@ print "</tr><tr>\n";
 print "<td colspan=3>\n"; &TitleBox;    print "</td>\n";
 print "</tr><tr>\n";
 print "<td colspan=3>\n"; &AbstractBox; print "</td>\n";
-print "</tr><tr>\n";
+print "</tr>\n";
 unless ($Meeting) {
+  print "<tr>\n";
   print "<td colspan=3>\n"; &PubInfoBox;  print "</td>\n";
   print "</tr><tr>\n";
   print "<td colspan=3>\n"; &ReferenceForm;  print "</td>\n";
@@ -193,7 +196,9 @@ if ($mode eq "add" || $mode eq "update") {
 }
 
 print "<tr valign=top>\n";
-unless ($Meeting) {
+if ($Meeting) {
+  print "<td>&nbsp;&nbsp;&nbsp;</td>\n";
+} else {
   print "<td>\n"; &RequesterSelect; print "</td>\n";
 }
 if ($AuthorMode eq "list") {
@@ -221,15 +226,15 @@ if ($Overdate) {
 
 if ($Meeting) {
   print "<td colspan=2 valign=top>\n"; 
-  my @TypeIDs = keys %doc_type;
+  my @TypeIDs = keys %DocumentTypes;
   foreach my $ID (@TypeIDs) {
-    if ($doc_type{$ID}{SHORT} eq "Talk") {
-      print "$ID $doc_type{$ID}{SHORT} <br>\n";
+    if ($DocumentTypes{$ID}{SHORT} eq "Talk") {
       $TalkTypeID = $ID;
       last;
     }
   }
-  print "Document Type: $doc_type{$TalkTypeID}{SHORT}\n";  
+  print "<b>Document Type: $DocumentTypes{$TalkTypeID}{SHORT}</b>\n";  
+  print $query -> hidden(-name => 'doctype',  -default => $TalkTypeID);
   print "</td>\n";  
 
 } else {
