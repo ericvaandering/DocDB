@@ -37,6 +37,8 @@ sub ConferenceEpilogueBox {
 sub SessionEntryForm (@) {
   my @MeetingOrderIDs = @_; # Or do I need to dereference?
 
+  $query -> param('meetingorderid','');
+
   require "Scripts.pm";
   print "<b><a ";
   &HelpLink("sessions");
