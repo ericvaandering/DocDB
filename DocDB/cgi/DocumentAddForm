@@ -73,6 +73,7 @@ if      ($mode eq "add") {
 &HelpPopupScript;
 
 @error_stack = ();
+@warn_stack = ();
 
 if ($mode eq "update" || $mode eq "updatedb") {
   unless ($params{docid}) {
@@ -104,8 +105,11 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   &FetchDocument($DocumentID);
   if ($mode eq "update") { # Need to read in last version values and update
     $DocRevID = &FetchDocRevision($DocumentID,$Documents{$DocumentID}{NVER});
-  } elsif ($mode eq "update" || $mode eq "updatedb") {
+  } elsif ($mode eq "updatedb") {
     $DocRevID = &FetchDocRevision($DocumentID,$Version);
+    if ($Version != $Documents{$DocumentID}{NVER}) {
+      push @warn_stack,"You are about to update an old version of this document.";
+    }
   }
   
   $TitleDefault     = $DocRevisions{$DocRevID}{TITLE};
@@ -145,6 +149,11 @@ if ($Overdate eq "Yes") {
 }  
 
 print $query -> hidden(-name => 'special',-default => '');
+
+if (@warn_stack) {
+  &WarnPage(@warn_stack);
+  @warn_stack = ();
+}
 
 print "<center><table cellpadding=10>\n";
 

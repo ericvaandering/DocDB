@@ -85,7 +85,7 @@ if ($mode ne "add"    && $mode ne "reserve" &&
     $mode ne "update" && $mode ne "updatedb") {
   &EndPage("<p><h3>You accessed this page without 
             specifying a required parameter. 
-            Don't mess with hidden fields or 
+            Don't manipulate hidden fields or 
             try to access this page directly. Mode is $mode.</h3>\n"); 
 }  
 
@@ -260,6 +260,10 @@ if      ($mode eq "reserve") {
     $version = $params{version};
   } else { 
     $version = $Documents{$documentID}{NVER};
+  }
+  if ($version != $Documents{$documentID}{NVER}) {
+    push @warn_stack,"You have updated an old version of a document. Hope this
+    is what you wanted to do.";
   }
 }
 
