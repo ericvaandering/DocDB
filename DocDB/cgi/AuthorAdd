@@ -45,5 +45,7 @@ my $AuthorID = $author_insert -> {mysql_insertid}; # Works with MySQL only
                            
 print "You were successful. The author you added is number <b>$AuthorID</b><br>\n"; 
 
+print "Return to the <a href=DocumentDatabase>main page</a>.<br>\n";
+
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
 
