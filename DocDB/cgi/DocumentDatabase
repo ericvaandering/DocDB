@@ -42,6 +42,8 @@ require "DocumentSQL.pm";
 require "RevisionSQL.pm";
 require "Sorts.pm";
 
+require "ProjectMessages.pm";
+
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetSecurityGroups;
@@ -83,125 +85,50 @@ print $query -> endform;
 print "<li>"; 
 print "<b>List documents:</b>\n";
 
-print "<table><tr>\n";
+my @FirstColumn  = ();
+my @OtherColumns = ();
+my @Spanners     = ();
 
-# ListAuthors
+push @FirstColumn,"by <a href=\"$ListAuthors\">author</a>";
+push @FirstColumn,"by <a href=\"$ListTopics\">topic</a>";
+push @FirstColumn,"by <a href=\"$ListKeywords\">keyword</a>";
+push @FirstColumn,"modified in the <a href=\"$LastModified?days=$LastDays\">last $LastDays days</a>";
 
-print "<td>\n";
-print "<ul>\n";
-print "<li> by <a href=\"$ListAuthors\">author</a>\n";
-print "</ul>\n";
-print "</td>";
-
-# Conferences
-
-print "<td>\n";
-print "<ul>\n";
-print "<li>from <a href=\"$ListByTopic?major=Conferences&mode=conference\">conferences</a>";
-print "</ul>\n";
-print "</td>";
-
-print "<tr>\n";
-
-# List Topics
-
-print "<td>\n";
-print "<ul>\n";
-print "<li> by <a href=\"$ListTopics\">topic</a>\n";
-print "</ul>\n";
-print "</td>";
-
-# Meetings
-
-print "<td>\n";
-if ($Public) {
-  print "&nbsp;\n";
-} else {
-  print "<ul>\n";
-  print "<li> from <a href=\"$ListMeetings\">collaboration meetings</a>\n";
-  print "</ul>\n";
+push @OtherColumns,"from <a href=\"$ListByTopic?major=Conferences&mode=conference\">conferences</a>";
+unless ($Public) {
+  push @OtherColumns,"from <a href=\"$ListMeetings\">collaboration meetings</a>";
 }
-print "</td>";
+unless ($Public && !$PublicAccess{MeetingList}) {
+  push @OtherColumns,"from <a href=\"$ListAllMeetings\">all meetings</a>";
+}  
+push @OtherColumns,"<a href=\"$web_root/Static/Lists/$remote_user/FullList.html\">all documents</a>";
 
-print "<tr>\n";
+push @Spanners,@MultiColumnDocumentLists;
 
-# Keywords
+my $Rows = scalar(@FirstColumn);
+my $Cols = int((scalar(@OtherColumns) - 1)/scalar(@FirstColumn) + 1);
 
-  print "<td>\n";
-  print "<ul>\n";
-  print "<li>by <a href=\"$ListKeywords\">keyword</a>\n";
-  print "</ul>\n";
-  print "</td>";
+print "<table>\n";
 
-# All Meetings
-
-print "<td>\n";
-if ($Public && !$PublicAccess{MeetingList}) {
-  print "&nbsp;\n";
-} else {
-  print "<ul>\n";
-  print "<li> from <a href=\"$ListAllMeetings\">all meetings</a>\n";
-  print "</ul>\n";
-}
-print "</td>";
-print "</tr>";
-
-print "<tr>\n";
-
-# Last Modified
-
-print "<td>\n";
-print "<ul>\n";
-print "<li>modified in the <a href=\"$LastModified?days=$LastDays\">last $LastDays days</a>";
-print "</ul>\n";
-
-
-
-# All
-
-print "<td>\n";
-print "<ul>\n";
-print "<li><a href=\"$web_root/Static/Lists/$remote_user/FullList.html\">all documents</a>";
-print "</ul>\n";
-print "</td>";
-
-print "</tr>\n";
-
-# Old number 
-
-if ($Project eq "BTeV") {
+for (my $Index = 0; $Index < $Rows; ++$Index) {
   print "<tr>\n";
-  print "<td colspan=2>\n";
-  print "<ul>\n";
-  if ($Public) {
-    print "<li> by old number
-          <a href=\"$web_root/Static/Public/OldDBTranslation.shtml\">like
-           BTeV-pub-year/xx</a>. \n";
-  } else {
-    print "<li> by old number like
-           <a href=\"$web_root/Static/Restricted/OldDBTranslation.shtml\">BTeV-pub-year/xx</a> from the old DocDB\n";
-  }
-  print "</ul>\n";
-  print "</td>";
+  print "<td>&loz;&nbsp;",$FirstColumn[$Index],"</td>\n";
+  for (my $ColIndex = 0; $ColIndex < $Cols; ++$ColIndex) {
+    print "<td>&loz;&nbsp;",$OtherColumns[$Index+$ColIndex*$Rows],"</td>\n";
+  }  
+  print "</tr>\n";
+}    
 
-  print "</tr>\n";
-}
-if ($Project eq "Beams") {
+++$Cols;
+
+foreach my $Spanner (@Spanners) {
   print "<tr>\n";
-  print "<td colspan=2>\n";
-  print "<ul>\n";
-  print "<li> from  
-        <a href=\"$web_root/Static/Public/MI_Notes_Webpage.shtml\">MI Notes</a>
-	(old numbers like MI-xxxx).\n";
-  print "</ul>\n";
-  print "</td>";
+  print "<td colspan=$Cols>&loz;&nbsp;",$Spanner,"</td>\n";
   print "</tr>\n";
-}
- 
+}    
+
 print "</table><p>\n";
  
-unless ($Public) {
-}
 print "</ul>\n";
 print "</td>\n";
 

@@ -1,4 +1,5 @@
 #$KeywordAddendumText = "This message is added to the pages that list keywords.";
 
+#@MultiColumnDocumentLists = ("These are added to the home page lists","of documents");
 
 1;
