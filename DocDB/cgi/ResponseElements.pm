@@ -54,12 +54,15 @@ sub PrintTitle {
   }
 }
 
-sub PrintDocNumber {
+sub PrintDocNumber { # And type
   my ($DocRevID) = @_;
   print "<b>Document #: </b>";
   print (&FullDocumentID($DocRevisions{$DocRevID}{DOCID}));
   print ", ";
   print "version $DocRevisions{$DocRevID}{VERSION}<br>\n";
+  print "<b>Document type: </b>";
+  my $doc_type = &FetchDocType($Documents{$DocRevisions{$DocRevID}{DOCID}}{TYPE});
+  print "$doc_type<br>\n";
 }
 
 sub PrintAbstract {
@@ -90,11 +93,12 @@ sub FileListByRevID {
   my ($DocRevID) = @_;
   my $Files_ref  = &FetchDocFiles($DocRevID);
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+  my $Version    = $DocRevisions{$DocRevID}{VERSION};
   if (@{$Files_ref}) {
     print "<b>Files:</b>\n";
     print "<ul>\n";
     foreach $file (@{$Files_ref}) {
-      $link = &FileLink($DocumentID,$Documents{$DocumentID}{NVER},$DocFiles{$file}{NAME});
+      $link = &FileLink($DocumentID,$Version,$DocFiles{$file}{NAME});
       print "<li>$link</li>\n";
     }  
     print "</ul>\n";
@@ -181,7 +185,7 @@ sub FileLink {
 sub DocumentLink {
   my ($DocumentID,$Version) = @_;
   $ret = "<a href=\"$ShowDocument\?docid=$DocumentID\&version=$Version\">".
-         (&FullDocumentID)."</a>";
+         (&FullDocumentID)."-v$Version</a>";
 }         
 
 sub EuroDate {
@@ -207,6 +211,29 @@ sub EuroDateTime {
                           "Jul","Aug","Sep","Oct","Nov","Dec")[$month-1].
                  " $year"; 
   return $return_date;
+}
+
+sub OtherVersionLinks {
+  my ($DocumentID,$CurrentVersion) = @_;
+#  my @Versions = &VersionNumbersByDocID($DocumentID);
+  my @RevIDs   = &FetchRevisionsByDocument($DocumentID);
+  
+  unless ($#RevIDs >0) {return;}
+  print "<center>\n";
+  print "<table><tr><td>\n";
+  print "<b>Other Versions of this document: </b>\n";
+  print "<ul>\n";
+  foreach $RevID (@RevIDs) {
+    my $Version = $DocRevisions{$RevID}{VERSION};
+    if ($Version == $CurrentVersion) {next;}
+    unless (&CanAccess($DocumentID,$Version)) {next;}
+    $link = &DocumentLink($DocumentID,$Version);
+    $date = &EuroDate($DocRevisions{$RevID}{DATE});
+    print "<li>$link \&nbsp \&nbsp ($date)</li>\n";
+  }
+  print "</ul>\n";
+  print "</td></tr></table>\n";
+  print "</center>\n";
 }
 
 1;

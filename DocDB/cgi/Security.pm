@@ -1,6 +1,6 @@
 sub CanAccess { # Can the user access (with current security) this version
   my ($documentID,$version) = @_;
-  &FetchDocRevision($documentID,$version);
+  my $DocRevID = &FetchDocRevision($documentID,$version);
   
   if ($Documents{$documentID}{NVER} eq "") { # Bad documents (no revisions)
     return 0;
@@ -14,7 +14,6 @@ sub CanAccess { # Can the user access (with current security) this version
 
   foreach my $ok_user (@ok_users) {          # Check authorized users
     $ok_user =~ tr/[A-Z]/[a-z]/;             # vs. logged in user
-    print "$ok_user $remote_user<br>";
     if ($ok_user eq $remote_user) {
       $access = 1;                           # User checks out
     }  

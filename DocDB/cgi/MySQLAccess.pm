@@ -17,6 +17,46 @@ sub GetAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with all authors
   }
 };
 
+sub GetDocTypes { # Creates/fills a hash $DocumentTypes{$DocTypeID}{} 
+#  my ($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active);
+#  my $people_list  = $dbh -> prepare(
+#     "select AuthorID,FirstName,MiddleInitials,LastName,Active from Author"); 
+#  $people_list -> execute;
+#  $people_list -> bind_columns(undef, \($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active));
+#  %Authors = ();
+#  while ($people_list -> fetch) {
+#    $Authors{$AuthorID}{AUTHORID} =  $AuthorID;
+#    $Authors{$AuthorID}{FULLNAME} = "$FirstName $MiddleInitials $LastName";
+#    $Authors{$AuthorID}{LASTNAME} =  $LastName;
+#    $Authors{$AuthorID}{ACTIVE}   =  $Active;
+#    if ($Active) {
+#      $ActiveAuthors{$AuthorID}{FULLNAME} = "$FirstName $MiddleInitials $LastName";
+#      $names{$AuthorID}                   = "$FirstName $MiddleInitials $LastName"; # FIXME
+#    }
+#  }
+};
+
+sub FetchDocType { # Fetches an DocumentType by ID, adds to $DocumentTypes{$DocTypeID}{}
+  my ($docTypeID) = @_;
+  my ($DocTypeID,$ShortType,$LongType);
+
+  my $type_fetch  = $dbh -> prepare(
+     "select DocTypeID,ShortType,LongType ". 
+     "from DocumentType ". 
+     "where DocTypeID=?");
+  if ($DocumentTypes{$docTypeID}{DOCTYPEID}) { # We already have this one
+    return $DocumentTypes{$docTypeID}{SHORT};
+  }
+  
+  $type_fetch -> execute($docTypeID);
+  ($DocTypeID,$ShortType,$LongType) = $type_fetch -> fetchrow_array;
+  $DocumentTypes{$docTypeID}{DOCTYPEID} = $DocTypeID;
+  $DocumentTypes{$docTypeID}{SHORT}     = $ShortType;
+  $DocumentTypes{$docTypeID}{LONG}      = $LongType;
+  
+  return $DocumentTypes{$DocTypeID}{SHORT};
+}
+
 sub FetchAuthor { # Fetches an Author by ID, adds to $Authors{$AuthorID}{}
   my ($authorID) = @_;
   my ($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active);
@@ -218,6 +258,43 @@ sub FetchDocRevision {
   return $DocRevID;
 }
 
+sub FetchRevisionsByDocument {
+  my ($DocumentID) = @_;
+  &FetchDocument($DocumentID);
+  my $revision_list = $dbh->prepare(
+    "select DocRevID,SubmitterID,DocumentTitle,PublicationInfo,VersionNumber,".
+           "Abstract,RevisionDate,Security,TimeStamp,DocumentID ".
+    "from DocumentRevision ".
+    "where DocumentID=?");
+  $revision_list -> execute($DocumentID);
+  
+  $revision_list -> bind_columns(undef, \($DocRevID,$SubmitterID,$DocumentTitle,
+                                          $PublicationInfo,$VersionNumber,$Abstract,
+                                          $RevisionDate,$Security,$TimeStamp,$DocumentID));
+  my @DocRevList = ();
+  while ($revision_list -> fetch) {
+    if ($DocRevisions{$DocRevID}{DOCID}) {
+      push @DocRevList,$DocRevID;
+      next; # We did this one already
+    } 
+
+    $DocRevIDs{$DocumentID}{$VersionNumber} = $DocRevID;
+    $DocRevisions{$DocRevID}{SUBMITTER}    = $SubmitterID;
+    $DocRevisions{$DocRevID}{TITLE}    = $DocumentTitle;
+    $DocRevisions{$DocRevID}{PUBINFO}     = $PublicationInfo;
+    $DocRevisions{$DocRevID}{ABSTRACT} = $Abstract;
+    $DocRevisions{$DocRevID}{DATE}     = $RevisionDate;
+    $DocRevisions{$DocRevID}{TIMESTAMP}     = $TimeStamp;
+    $DocRevisions{$DocRevID}{VERSION}     = $VersionNumber;
+    $DocRevisions{$DocRevID}{DOCID}     = $DocumentID;
+    @{$DocRevisions{$DocRevID}{SECURITY}} = split /\,/,$Security;
+    push @DocRevList,$DocRevID;
+  }
+  
+  return @DocRevList;
+
+}
+
 sub FetchDocFiles {
   # Creates two hashes:
   # $Files{DocRevID}           holds the list of file IDs for a given DocRevID
@@ -266,4 +343,14 @@ sub GetRevisionTopics {
   return \@topics;
 }
 
+sub VersionNumbersByDocID {
+  my ($DocumentID) = @_;
+  my @DocRevList = &FetchRevisionsByDocument($DocumentID);
+  foreach my $DocRevID (@DocRevList) {
+    push @VersionList,$DocRevisions{$DocRevID}{VERSION};
+  }
+  return @VersionList;
+} 
+  
+  
 1;

@@ -45,7 +45,7 @@ sub ProtectDirectory {
   my $AuthName = join ' or ',@users;
 
   $directory = &GetDirectory($documentID,$version);
-  if (@users) {
+  if (@users && !(grep /Public/,@users)) {
     open HTACCESS,">$directory$htaccess"; 
      print HTACCESS "AuthType Basic\n";
      print HTACCESS "AuthName \"$AuthName\"\n";
