@@ -289,8 +289,11 @@ an additional table to the database linked to the conference's MinorTopicID.
 
 This functionality has been partially implemented. Listing by conference is
 possible, with slightly different options. The sort is currently done on the
-modification rather than conference date. Also, there is no extra information
-in the long view of the document about the conference.
+modification rather than conference date. 
+
+Yet to be decided is the issue of how to handle a conference talk and its
+associated proceedings. Are these filed as two documents or just one? If just
+one, what document type is to be used?
 
 \subsection{Journal publications}
 
@@ -299,13 +302,18 @@ While we currently have a Publication Information field in the database, what is
 placed there is completely up to the user and is intended more as a place to put
 notes rather than information in a well defined form. 
 
-To support journal publications, there will likely be additional fields added to
-the database which will contain this information in a very well defined manner
+The publication information field will remain to allow arbitrary notes to be
+added by the users.
+
+To support journal publications,additional fields have been added to
+the database to contain this information in a very well defined manner
 for a set of predefined journals. This will allow a coherent presentation of a
 list of publications and advanced features such as links to the publisher's web
 site, automatic generation of BibTeX entries, etc.
 
-This functionality has not been implemented yet.
+This is also partially implemented. The data is collected and stored in the
+database. It is also displayed on the full document view page, but there is no
+code written to just list public documents and their references, etc.
 
 \bibliographystyle{phaip}
 \bibliography{physjabb,abbrev,other,btev}                                                                                      
