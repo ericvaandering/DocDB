@@ -42,7 +42,7 @@ sub RequesterByID {
   my ($RequesterID) = @_;
   my $author_link   = &AuthorLink($RequesterID);
   
-  print "<tr><td><b>Requested by:</b></td>";
+  print "<tr><td align=right><b>Requested by:</b></td>";
   print "<td>$author_link</td></tr>\n";
 }
 
@@ -50,7 +50,7 @@ sub SubmitterByID {
   my ($RequesterID) = @_;
   my $author_link   = &AuthorLink($RequesterID);
   
-  print "<tr><td><b>Updated by:</b></td>";
+  print "<tr><td align=right><b>Updated by:</b></td>";
   print "<td>$author_link</td></tr>\n";
 }
 
