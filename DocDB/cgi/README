@@ -45,6 +45,7 @@ form controls. The standardized parameters for these are
  -required       If the entry is required of the user
  -name           The HTML "input" name 
  -default        The default value
+ -disabled       Element is grayed out, can be enabled with Javascript
  
  and others. Where possible, these correspond to the underlying CGI.pm names.
               
