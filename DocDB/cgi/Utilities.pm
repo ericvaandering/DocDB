@@ -12,7 +12,7 @@ sub Unique {
 sub URLify { # Adapted from Perl Cookbook, 6.21
   my ($Text) = @_;
 
-  $urls = '(http|telnet|gopher|file|wais|ftp)';
+  $urls = '(http|telnet|gopher|file|wais|ftp|https)';
   $ltrs = '\w';
   $gunk = '/#~:.?+=&%@!\-';
   $punc = '.:?\-';
