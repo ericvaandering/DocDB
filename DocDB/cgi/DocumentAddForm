@@ -276,11 +276,11 @@ print "</tr>\n";
 
 ### Title, abstract, and keywords
 
-#CRIPPLE if (@OpenSessionTalkIDs) {
-#CRIPPLE   print "<tr>\n";
-#CRIPPLE   print "<td colspan=4>\n"; &SessionTalkPulldown(@OpenSessionTalkIDs);    print "</td>\n";
-#CRIPPLE   print "</tr>\n";
-#CRIPPLE }
+if (@OpenSessionTalkIDs) {
+  print "<tr>\n";
+  print "<td colspan=4>\n"; &SessionTalkPulldown(@OpenSessionTalkIDs);    print "</td>\n";
+  print "</tr>\n";
+}
 
 print "<tr>\n";
 print "<td colspan=4>\n"; &TitleBox;    print "</td>\n";
