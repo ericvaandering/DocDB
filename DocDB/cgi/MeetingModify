@@ -206,24 +206,8 @@ my @SessionIDs = &FetchSessionsByConferenceID($ConferenceID);
 my @SessionSeparatorIDs = &FetchSessionSeparatorsByConferenceID($ConferenceID);
 my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
 
-print "MOI: ",@MeetingOrderIDs,"<br>\n";
-
 @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs;
 
-print "SMOI: ",@MeetingOrderIDs,"<br>\n";
-
-
-
-foreach $MeetingOrderID (@MeetingOrderIDs) {
-  print "<tr><td>$MeetingOrderID $MeetingOrders{$MeetingOrderID}{SessionOrder} </td>\n";
-  if ($MeetingOrders{$MeetingOrderID}{SessionID}) {
-    print "<td>$MeetingOrders{$MeetingOrderID}{SessionOrder} SI: $MeetingOrders{$MeetingOrderID}{SessionID}</td\n";
-  }
-  if ($MeetingOrders{$MeetingOrderID}{SessionSeparatorID}) {
-    print "<td>$MeetingOrders{$MeetingOrderID}{SessionOrder} SSI: $MeetingOrders{$MeetingOrderID}{SessionSeparatorID}</td>\n";
-  }
-  print "</tr>\n";
-}
   # links to add talks to session (extend SessionEntryForm to these cases)
   # form elements to change the session (Add delete button)
   

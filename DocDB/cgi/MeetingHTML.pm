@@ -61,11 +61,10 @@ sub SessionEntryForm (@) {
   
   my $SessionOrder = 0;
   foreach $MeetingOrderID (@MeetingOrderIDs) {
-    print "<TR><TD COLSPAN=10>\n";
   
     ++$SessionOrder;
+    $SessionDefaultOrder = $SessionOrder;  
     
-    print "SO: $SessionOrder ";
     if (grep /n/,$MeetingOrderID) {# Erase defaults
       print "New:";
       $SessionDefaultDateTime    = "";
@@ -89,9 +88,7 @@ sub SessionEntryForm (@) {
 	$SessionSeparatorDefault   = "Yes";
       }
     } 
-    $SessionDefaultOrder = $SessionOrder;  
-    print "DT: $SessionDefaultDateTime  T: $SessionDefaultTitle   D: $SessionDefaultDescription S: $SessionSeparatorDefault";   
-    print "</TD></TR>\n";
+
     print "<tr valign=top>\n";
     print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
     print "<td align=center>\n"; &SessionOrder; print "</td>\n";
