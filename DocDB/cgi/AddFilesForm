@@ -39,6 +39,8 @@ require "ResponseElements.pm";
 require "RevisionHTML.pm";
 require "FileHTML.pm";
 
+require "Cookies.pm";
+require "Defaults.pm";
 require "HTMLUtilities.pm";
 require "Scripts.pm";
 
@@ -46,6 +48,7 @@ $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 &GetSecurityGroups;
+&GetPrefsCookie;
 
 %params = $query -> Vars;
 
@@ -56,8 +59,8 @@ $NumberUploads = $params{numfile};
 
 # Set defaults
 
-if ($Upload ne "http" && $Upload ne "file") {$Upload        = "file";} 
-unless ($NumberUploads)                     {$NumberUploads = 1;}
+&SetUploadMethod;
+&SetFileOptions;
 
 print $query->header;
 &DocDBHeader("File Addition");
@@ -136,11 +139,7 @@ print $query -> hidden(-name => 'docid',   -default => $DocumentID);
 print "<tr><td><b>Files to add:</b></td></tr>";
 
 print "<tr><td>\n";
-if ($Upload eq "file") {
-  &SingleUploadBox(-nodesc => 1);
-} elsif ($Upload eq "http") {
-  &SingleHTTPBox(-nodesc => 1);
-}  
+&FileUploadBox(-type => $Upload);
 print "</td></tr>";
 
 print "<tr><td align=left>\n";
