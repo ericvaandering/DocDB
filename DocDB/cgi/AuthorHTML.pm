@@ -38,20 +38,20 @@ sub AuthorListByID {
   }
 }
 
-sub RequesterByID { # Uses non HTML-4.01 <nobr> tag. 
+sub RequesterByID { 
   my ($RequesterID) = @_;
   my $author_link   = &AuthorLink($RequesterID);
   
-  print "<nobr><b>Requested by:</b> ";
-  print "$author_link</nobr><br>\n";
+  print "<tr><td align=right><b>Requested by:</b></td>";
+  print "<td>$author_link</td></tr>\n";
 }
 
-sub SubmitterByID { # Uses non HTML-4.01 <nobr> tag.
+sub SubmitterByID { 
   my ($RequesterID) = @_;
   my $author_link   = &AuthorLink($RequesterID);
   
-  print "<nobr><b>Updated by:</b> ";
-  print "$author_link</nobr><br>\n";
+  print "<tr><td align=right><b>Updated by:</b></td>";
+  print "<td>$author_link</td></tr>\n";
 }
 
 sub AuthorLink {

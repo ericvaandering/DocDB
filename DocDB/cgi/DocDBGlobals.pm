@@ -52,7 +52,7 @@ $AuthUserFile     = "/www/conf/www-btev/.htpasswd";
 $MailServer       = "smtp.fnal.gov";
 
 $LastDays         = 20;        # Number of days for default in LastModified
-$HomeLastDays     = 5;         # Number of days for last modified on home page
+$HomeLastDays     = 7;         # Number of days for last modified on home page
 $HomeMaxDocs      = 50;        # Maximum number of documents on home page
 $MeetingWindow    = 7;         # Days before and after meeting to preselect
 $MeetingFiles     = 3;         # Number of upload boxes on meeting short form
