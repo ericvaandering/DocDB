@@ -127,6 +127,7 @@ print "<td>\n";
                      -remove => "true",  -disabled => true); 
 print "</td>\n";
 
+print "<td>\n"; 
 print "<table cellpadding=5 border=1>\n";
 print "<tr valign=top>\n";
 print "<td>\n";
@@ -140,6 +141,7 @@ print "<td>\n";
 print "</td>\n";
 print "</tr>\n";
 print "</table>";
+print "</td>\n";
 
 print "<tr valign=top>\n";
 print "<td colspan=3>\n";
