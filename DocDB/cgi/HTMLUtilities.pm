@@ -1,3 +1,44 @@
+#
+# Author: Eric Vaandering (ewv@fnal.gov)
+#
+# This set of perl subroutines provides a method in CGI scripts to use the
+# standard BTeV headers and footers. Since the output of CGI scripts cannot
+# use server side includes, we use perl to manually read in the files and
+# print them to standard output. 
+#
+# You must supply the variable $SSIDirectory which is the directory where 
+# the includes live.
+# 
+# This file provides 4 subroutines:
+#
+# BTeVHeader($Title,$PageTitle)
+#    Displays the full BTeV header, with nav bar. $Title is the HTML title,
+#    $PageTitle is the title above the nav bar on the page. If you don't supply
+#    $PageTitle, $Title is used in both places
+#
+# BTeVStyle($Title,$PageTitle)
+#    Same as BTeVHeader, but no nav bar
+#
+# BTeVFooter($WebMasterEmail,$WebMasterName)
+#    Prints the FNAL version of the footer. The parameters are the e-mail and
+#    name of the person responsible for the page. If omitted, they default
+#    to the BTeV webmaster
+#
+# OffsiteBTeVFooter($WebMasterEmail,$WebMasterName)
+#    The same, but without the FNAL legal disclaimer
+#
+# The simplest CGI script would then look like this: 
+#
+#  require "BTeVHeaders.pm";
+#  $SSIDirectory = "/var/www/html/includes/";
+#  print "Content-type: text/html \n";
+#  print "\n";             #End of HTTP header, now start the page
+#                                                                                                                                                    
+#  &BTeVHeader("My title");
+#  print "Some more HTML here";                                                                                                                                                  
+#  &BTeVFooter("me@wherever.edu","My name");
+#  exit;
+
 sub BTeVHeader { 
 
   my ($title,$page_title) = @_;
@@ -9,6 +50,9 @@ sub BTeVHeader {
    
   print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
 
+# The header below activates strict mode in Netscape 6 which causes 
+# weird reflows in the document. But, the navbar is faster. Choose wisely.
+#
 #  print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"\n";
 #  print "         \"http://www.w3.org/TR/html4/loose.dtd\">\n";
 

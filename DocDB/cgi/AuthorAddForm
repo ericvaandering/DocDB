@@ -12,6 +12,7 @@ require "MySQLAccess.pm";
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
 require "HTMLUtilities.pm";
+require "Sorts.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -22,7 +23,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 # %params = $query -> Vars;
 
 # Removed updatedb mode, see note in ProcessDocumentAdd
-
+ 
 print $query->header;
 &BTeVStyle("Add Authors");
 
@@ -58,10 +59,10 @@ print $query -> end_multipart_form;
 
 print "<p>\n";
 
-@InstIDs = keys %Institutions;
+@InstIDs = sort byInstitution keys %Institutions;
 @AuthorIDs = keys %Authors;
 
-print "<h3>Existing Authors:</h3>\n";
+print "<h3>Existing Authors: </h3>\n";
 
 my $Col = 0;
 my $NCols = 4;
