@@ -127,6 +127,8 @@ sub FetchDocFiles ($) {
   while ($file_list -> fetch) {
     push @{ $Files{$DocRevID} },$DocFileID; # Do I need this?
     $DocFiles{$DocFileID}{NAME}        = $FileName;
+    $DocFiles{$DocFileID}{Name}        = $FileName;
+    $DocFiles{$DocFileID}{Date}        = $Date;
     $DocFiles{$DocFileID}{ROOT}        = $RootFile;
     $DocFiles{$DocFileID}{DESCRIPTION} = $Description;
     $DocFiles{$DocFileID}{TimeStamp}   = $TimeStamp;
@@ -202,6 +204,8 @@ sub FetchFile ($) {
   $FileList -> bind_columns(undef, \($FileName,$Date,$RootFile,$TimeStamp,$Description,$DocRevID));
   while ($FileList -> fetch) {
     $DocFiles{$DocFileID}{NAME}        = $FileName;
+    $DocFiles{$DocFileID}{Name}        = $FileName;
+    $DocFiles{$DocFileID}{Date}        = $Date;
     $DocFiles{$DocFileID}{ROOT}        = $RootFile;
     $DocFiles{$DocFileID}{DESCRIPTION} = $Description;
     $DocFiles{$DocFileID}{TimeStamp}   = $TimeStamp;

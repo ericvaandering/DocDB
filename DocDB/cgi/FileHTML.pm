@@ -234,6 +234,7 @@ sub FileUploadBox (%) {
       print "<td align=right>Filename:</td>";
       print "<td>\n";
       print $DocFiles{$FileID}{NAME};
+      print $query -> hidden(-name => $FileIDName, -value => $FileID);
       print "</td>\n";
       print "</tr>\n";
     } else {

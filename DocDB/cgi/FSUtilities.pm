@@ -330,16 +330,14 @@ sub DownloadURLs (%) {
   foreach my $FileKey (keys %Files) {
     if ($Files{$FileKey}{URL}) {
       my @Authentication = ();
-      if ($Files{$FileKey}{User}) {
+      if ($Files{$FileKey}{User} && $Files{$FileKey}{Pass}) {
         push @DebugStack,"Using authentication";
         @Authentication = ("--http-user",$Files{$FileKey}{User}, 
 	                   "--http-pass",$Files{$FileKey}{Pass});
       }
-      if (@Authentication) {
-        $Status = system ($Wget,@Authentication,$Files{$FileKey}{URL});
-      } else {
-        $Status = system ($Wget,"--quiet",$Files{$FileKey}{URL});
-      }  
+
+      $Status = system ($Wget,"--quiet",@Authentication,$Files{$FileKey}{URL});
+
       my @URLParts = split /\//,$Files{$FileKey}{URL};
       my $Filename = pop @URLParts;
       push @DebugStack, "Download ($Files{$FileKey}{URL}) status: $Status";
@@ -347,10 +345,8 @@ sub DownloadURLs (%) {
         push @Filenames,$Filename;
 	delete $Files{$FileKey}{URL};
 	$Files{$FileKey}{Filename} =  "$TmpDir/$Filename";      			    
-        push @DebugStack, "Added $TmpDir/$Filename to file list";
       } else {
-        push @WarnStack,"The URL $Files{$FileKey}{URL} did not exist, was blank,
-	                 or was not accessible.";
+        push @WarnStack,"The URL $Files{$FileKey}{URL} did not exist or was not accessible.";
       }
     }
   }
