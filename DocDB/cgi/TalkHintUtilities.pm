@@ -16,7 +16,7 @@ sub ReHintTalksBySessionID ($) { # FIXME: Refactor to use GetHintDocuments and T
 
   my $DocRevID,$DocumentID;
   my %DocumentIDs = (); 
-  my $SearchDays  = 5;
+  my $SearchDays  = $TalkHintWindow;
 
   &FetchSessionByID($SessionID);
   my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
@@ -316,8 +316,12 @@ sub GetHintDocuments ($$) {
 
 sub TalkMatches ($$@) {
 
-  my ($SessionTalkID,$TalkMatchThreshold,@DocRevIDs) = @_;
-
+  my ($SessionTalkID,$TalkMatchThreshold,%DocumentIDs) = @_;
+  
+  require "Sorts.pm";
+  
+  my @DocumentIDs = keys %DocumentIDs;
+  
   %TalkMatches = ();
 
   &FetchSessionTalkByID($SessionTalkID);
@@ -326,7 +330,8 @@ sub TalkMatches ($$@) {
   my @TopicHintIDs  = &FetchTopicHintsBySessionTalkID($SessionTalkID);
   my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID); 
 
-  foreach my $DocRevID (@DocRevIDs) { # Check each document in the list
+  foreach my $DocumentID (@DocumentIDs) { # Check each document in the list
+    my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVersions});
     my @RevTopics  = &GetRevisionTopics($DocRevID);
     my @RevAuthors = &GetRevisionAuthors($DocRevID);
 
@@ -354,7 +359,6 @@ sub TalkMatches ($$@) {
 
     # Assemble a score based on hints, track maximum
 
-    my $DocumentID    = $DocRevisions{$DocRevID}{DOCID};
     my $DocumentTitle = $DocRevisions{$DocRevID}{Title};
 
     my $MethodScore = 0;
@@ -375,15 +379,16 @@ sub TalkMatches ($$@) {
     }
 
     my $Score = $MethodScore*($AuthorMatches+1)*(2*$TopicMatches+1)+(2*$FuzzyScore+1);
-    if ($Score > $Threshold && $AuthorMatches+$TopicMatches) { # Might loosen
+    my $NoMatchScore = 1*(0+1)*(2*0+1)*(2*0+1);
+    if ($Score > $Threshold && $Score > $NoMatchScore) { # Might loosen
       $TalkMatches{$DocumentID}{Score} = $Score;
     }
   }  
   
-  my @DocumentIDs = keys %TalkMatches;
-     @DocumentIDs = reverse sort DocIDsByScore @DocumentIDs; 
+  my @MatchDocumentIDs = keys %TalkMatches;
+     @MatchDocumentIDs = reverse sort DocIDsByScore @MatchDocumentIDs; 
      
-  return @DocumentIDs;   
+  return @MatchDocumentIDs;   
   
 }
 

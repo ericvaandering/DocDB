@@ -49,6 +49,7 @@ $LastDays             = 20;    # Number of days for default in LastModified
 $HomeLastDays         = 7;     # Number of days for last modified on home page
 $HomeMaxDocs          = 50;    # Maximum number of documents on home page
 $MeetingWindow        = 7;     # Days before and after meeting to preselect
+$TalkHintWindow       = 5;     # Days before and after to guess on documents
 $MeetingFiles         = 3;     # Number of upload boxes on meeting short form
 $InitialSessions      = 5;     # Number of initial sessions when making meeting
 

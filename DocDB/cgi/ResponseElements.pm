@@ -501,7 +501,23 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
       print "<td><nobr>$author_link</nobr></td>\n";
       print "<td>"; &ShortTopicListByID(@TopicIDs); print "</td>\n";
       print "<td>"; &ShortFileListByRevID($DocRevID); print "</td>\n";
-    } elsif ($Mode eq "conference") {
+    } elsif ($Mode eq "confirm") {
+      my @TopicIDs = &GetRevisionTopics($DocRevID);
+      
+      @TopicIDs = &RemoveArray(\@TopicIDs,@IgnoreTopics);
+
+      print "<td>$title</td>\n";
+      print "<td><nobr>$author_link</nobr></td>\n";
+      print "<td>"; &ShortTopicListByID(@TopicIDs); print "</td>\n";
+      print "<td>\n";
+      print $query -> start_multipart_form('POST',$ConfirmTalkHint);
+      print $query -> hidden(-name => 'documentid',   -default => $ConfirmDocID);
+      print $query -> hidden(-name => 'sessiontalkid',-default => $ConfirmSessionTalkID);
+      print $query -> submit (-value => "Confirm");
+      print $query -> end_multipart_form;
+      
+      print "</td>\n";
+   } elsif ($Mode eq "conference") {
       print "<td>$title</td>\n";
       print "<td>\n";
 
@@ -529,6 +545,11 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
       print "<th>Author</th>\n";
       print "<th>Topic(s)</th>\n";
       print "<th>Files</th>\n";
+    } elsif ($Mode eq "confirm") {
+      print "<th>Title</th>\n";
+      print "<th>Author</th>\n";
+      print "<th>Topic(s)</th>\n";
+      print "<th>Confirm?</th>\n";
     } elsif ($Mode eq "conference") {
       &GetTopics;
       print "<th>Title</th>\n";
