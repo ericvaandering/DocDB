@@ -159,9 +159,6 @@ unless ($Public) {
 }
 print "</tr></table>\n";
 
-print "<hr><center><h4>Documents modified in the last $HomeLastDays
-days</h4></center>\n";
-
 # Modified in last few days
 
 $Days = $HomeLastDays;
@@ -202,6 +199,15 @@ foreach my $DocumentID (@DocumentIDs) { # For shorter lists
 @DocumentIDs = reverse sort DocumentByRevisionDate @DocumentIDs;  
 
 ### Print summary information
+
+if ($#DocumentIDs >= $HomeMaxDocs) {
+  $#DocumentIDs = $HomeMaxDocs -1;
+  print "<hr><center><h4>Last $HomeMaxDocs documents modified
+         </h4></center>\n";
+} else {  
+  print "<hr><center><h4>Documents modified in the last $HomeLastDays
+  days</h4></center>\n";
+}
 
 print "<center><table cellpadding=3>\n";
 
