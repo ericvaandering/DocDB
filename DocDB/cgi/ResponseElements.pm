@@ -86,6 +86,7 @@ sub PrintPubInfo {
 
 sub PrintConfInfo {
   require "TopicSQL.pm";
+  require "MeetingSQL.pm";
   require "TopicHTML.pm";
   &SpecialMajorTopics;
   

@@ -144,15 +144,15 @@ sub SessionDateTimePullDown {
     }  
   }  
 
-  print $query -> popup_menu (-name => 'sessionday',  -values => \@days,  -default => $DefaultDay);
-  print $query -> popup_menu (-name => 'sessionmonth',-values => \@months,-default => $AbrvMonths[$DefaultMonth]);
-  print $query -> popup_menu (-name => 'sessionyear', -values => \@years, -default => $DefaultYear);
+  print $query -> popup_menu (-name => 'sessionday',  -values => \@days,  -value => $DefaultDay);
+  print $query -> popup_menu (-name => 'sessionmonth',-values => \@months,-value => $AbrvMonths[$DefaultMonth]);
+  print $query -> popup_menu (-name => 'sessionyear', -values => \@years, -value => $DefaultYear);
   print "<b> - </b>\n";
-  print $query -> popup_menu (-name => 'sessionhour', -values => \@hours, -default => $DefaultHour);
+  print $query -> popup_menu (-name => 'sessionhour', -values => \@hours, -value => $DefaultHour);
 }
 
 sub SessionOrder {
-  print $query -> textfield (-name => 'sessionorder', -default => $SessionOrderDefault, 
+  print $query -> textfield (-name => 'sessionorder', -value => $SessionOrderDefault, 
                              -size => 4, -maxlength => 5);
 }
 
