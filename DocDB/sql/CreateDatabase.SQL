@@ -1,373 +1,322 @@
-# MySQL dump 8.12
-#
-# Host: vchipp.phy.vanderbilt.edu    Database: BTeVDocTest
-#--------------------------------------------------------
-# Server version	3.23.32-log
+-- MySQL dump 8.22
+--
+-- Host: localhost    Database: BTeVDocDB
+---------------------------------------------------------
+-- Server version	3.23.56
 
-#
-# Table structure for table 'Author'
-#
+--
+-- Table structure for table 'Author'
+--
 
 CREATE TABLE Author (
   AuthorID int(11) NOT NULL auto_increment,
-  FirstName varchar(32) NOT NULL,
+  FirstName varchar(32) NOT NULL default '',
   MiddleInitials varchar(16) default NULL,
-  LastName varchar(32) NOT NULL,
-  InstitutionID int(11) NOT NULL,
+  LastName varchar(32) NOT NULL default '',
+  InstitutionID int(11) NOT NULL default '0',
   Active int(11) default '1',
-  Timestamp timestamp(14) NOT NULL,
-  PRIMARY KEY (AuthorID),
-  KEY Name(LastName)
-) TYPE=MyISAM;
-
-#
-# Table structure for table 'Document'
-#
-
-CREATE TABLE Document (
-  DocumentID int(11) NOT NULL auto_increment,
-  RequesterID int(11) NOT NULL,
-  RequestDate datetime default NULL,
-  DocumentType int(11) NOT NULL,
   TimeStamp timestamp(14) NOT NULL,
-  PRIMARY KEY (DocumentID),
-  KEY Requester(RequesterID)
+  PRIMARY KEY  (AuthorID),
+  KEY Name (LastName)
 ) TYPE=MyISAM;
 
-#
-# Dumping data for table 'Document'
-#
+--
+-- Dumping data for table 'Author'
+--
 
 
-#
-# Table structure for table 'DocumentFile'
-#
 
-CREATE TABLE DocumentFile (
-  DocFileID int(11) NOT NULL auto_increment,
-  DocRevID int(11) NOT NULL,
-  FileName varchar(255) NOT NULL,
-  Date datetime default NULL,
-  RootFile tinyint(4) default '1',
+--
+-- Table structure for table 'AuthorHint'
+--
+
+CREATE TABLE AuthorHint (
+  AuthorHintID int(11) NOT NULL auto_increment,
+  SessionTalkID int(11) default NULL,
+  AuthorID int(11) default NULL,
   TimeStamp timestamp(14) NOT NULL,
-  Description varchar(128) default NULL,
-  PRIMARY KEY (DocFileID),
-  KEY DocRevID(DocRevID)
+  PRIMARY KEY  (AuthorHintID),
+  KEY SessionTalkID (SessionTalkID)
 ) TYPE=MyISAM;
 
-#
-# Dumping data for table 'DocumentFile'
-#
+--
+-- Dumping data for table 'AuthorHint'
+--
 
 
-#
-# Table structure for table 'DocumentRevision'
-#
 
-CREATE TABLE DocumentRevision (
-  DocRevID int(11) NOT NULL auto_increment,
-  DocumentID int(11) NOT NULL,
-  SubmitterID int(11) NOT NULL,
-  DocumentTitle varchar(255) NOT NULL,
-  PublicationInfo text,
-  VersionNumber int(11) NOT NULL,
-  Abstract text,
-  Keywords varchar(240),
-  RevisionDate datetime default NULL,
-  TimeStamp timestamp(14) NOT NULL,
-  Obsolete tinyint(4) default '0',
-  JournalID int(11) default '0',
-  Volume int(11) default NULL,
-  Page int(11) default NULL,
-  PRIMARY KEY (DocRevID),
-  KEY DocumentID(DocumentID),
-  KEY DocumentTitle(DocumentTitle),
-  KEY VersionNumber(VersionNumber)
-) TYPE=MyISAM;
-
-#
-# Dumping data for table 'DocumentRevision'
-#
-
-#
-# Table structure for table 'GroupHierarchy'
-#
-
-CREATE TABLE GroupHierarchy (
-  HierarchyID int(11) NOT NULL auto_increment,
-  ChildID int(11) NOT NULL,
-  ParentID int(11) NOT NULL,
-  Timestamp timestamp(14) NOT NULL,
-  PRIMARY KEY (HierarchyID)
-) TYPE=MyISAM;
-
-#
-# Dumping data for table 'GroupHierarchy'
-#
-
-INSERT INTO GroupHierarchy VALUES (3,2,4,20011206164038);
-INSERT INTO GroupHierarchy VALUES (2,1,4,20011206163729);
-INSERT INTO GroupHierarchy VALUES (4,3,4,20011206164040);
-INSERT INTO GroupHierarchy VALUES (5,1,2,20011206164111);
-INSERT INTO GroupHierarchy VALUES (6,3,2,20011206164122);
-INSERT INTO GroupHierarchy VALUES (7,3,1,20011206164127);
-
-#
-# Table structure for table 'GroupTopic'
-#
-
-CREATE TABLE GroupTopic (
-  GroupTopicID int(11) NOT NULL auto_increment,
-  GroupID int(11) NOT NULL,
-  MajorTopicID int(11) NOT NULL,
-  Timestamp timestamp(14) NOT NULL,
-  PRIMARY KEY (GroupTopicID)
-) TYPE=MyISAM;
-
-#
-# Dumping data for table 'GroupTopic'
-#
-
-
-#
-# Table structure for table 'Institution'
-#
-
-CREATE TABLE Institution (
-  InstitutionID int(11) NOT NULL auto_increment,
-  ShortName varchar(40) NOT NULL,
-  LongName varchar(80) NOT NULL,
-  Timestamp timestamp(14) NOT NULL,
-  PRIMARY KEY (InstitutionID)
-) TYPE=MyISAM;
-
-#
-# Dumping data for table 'Institution'
-#
-
-INSERT INTO Institution VALUES (1,'Fermilab','Fermi National Accelerator Laboratory',20011205173606);
-INSERT INTO Institution VALUES (2,'Vanderbilt','Vanderbilt University',20011205173606);
-INSERT INTO Institution VALUES (3,'Syracuse','Syracuse University',20011205173606);
-INSERT INTO Institution VALUES (4,'Belarussian State','Belarussian State University',20011207114429);
-INSERT INTO Institution VALUES (5,'Davis','University of California at Davis',20011207114507);
-INSERT INTO Institution VALUES (6,'Colorado','University of Colorado at Boulder',20011207114521);
-INSERT INTO Institution VALUES (7,'Florida','University of Florida at Gainesville',20011207114548);
-INSERT INTO Institution VALUES (8,'Houston','University of Houston',20011207114600);
-INSERT INTO Institution VALUES (9,'IIT','Illinois Institute of Technology',20011207114631);
-INSERT INTO Institution VALUES (10,'Illinois','University of Illinois',20011207114659);
-INSERT INTO Institution VALUES (11,'Indiana','Indiana University',20011207114718);
-INSERT INTO Institution VALUES (12,'INFN-Frascati','INFN - Laboratori Nazionali di Frascati',20011207114755);
-INSERT INTO Institution VALUES (13,'INFN-Milano','INFN - Milano',20011207114816);
-INSERT INTO Institution VALUES (14,'INFN-Pavia','INFN - Pavia',20011207114824);
-INSERT INTO Institution VALUES (15,'INFN-Torino','INFN - Torino',20011207114835);
-INSERT INTO Institution VALUES (16,'IHEP-Protvino','Institute of High Energy Physics - Protvino',20011207114917);
-INSERT INTO Institution VALUES (17,'Insubria','University of Insubria in Como',20011207114942);
-INSERT INTO Institution VALUES (18,'Iowa','University of Iowa',20011207115009);
-INSERT INTO Institution VALUES (19,'Minnesota','University of Minnesota',20011207115022);
-INSERT INTO Institution VALUES (20,'Nanjing','Nanjing University',20011207115039);
-INSERT INTO Institution VALUES (21,'New Mexico State','New Mexico State University',20011207115114);
-INSERT INTO Institution VALUES (22,'Ohio State','The Ohio State University',20011207115128);
-INSERT INTO Institution VALUES (23,'Pennsylvania','University of Pennsylvania',20011207115147);
-INSERT INTO Institution VALUES (24,'Puerto Rico','University of Puerto Rico, Mayaguez',20011207115223);
-INSERT INTO Institution VALUES (25,'Science and Technology of China','University of Science and Technology of China',20011207115255);
-INSERT INTO Institution VALUES (26,'Shandong','Shandong University, China',20011207115316);
-INSERT INTO Institution VALUES (27,'Southern Methodist','Southern Methodist University',20011207115342);
-INSERT INTO Institution VALUES (28,'SUNY Albany','SUNY Albany',20011207115401);
-INSERT INTO Institution VALUES (29,'Tennessee','University of Tennessee',20011207115424);
-INSERT INTO Institution VALUES (30,'Tufts','Tufts University',20011207115439);
-INSERT INTO Institution VALUES (31,'Virginia','University of Virginia',20011207115531);
-INSERT INTO Institution VALUES (32,'Wayne State','Wayne State University',20011207115546);
-INSERT INTO Institution VALUES (33,'Wisconsin','University of Wisconsin',20011207115600);
-INSERT INTO Institution VALUES (34,'Yale','Yale University',20011207115611);
-INSERT INTO Institution VALUES (35,'York','York University',20011207115617);
-
-#
-# Table structure for table 'MajorTopic'
-#
-
-CREATE TABLE MajorTopic (
-  MajorTopicID int(11) NOT NULL auto_increment,
-  ShortDescription varchar(32) NOT NULL,
-  LongDescription text,
-  Restricted int(11) default '0',
-  Suppressed int(11) default '0',
-  Timestamp timestamp(14) NOT NULL,
-  PRIMARY KEY (MajorTopicID)
-) TYPE=MyISAM;
-
-#
-# Dumping data for table 'MajorTopic'
-#
-
-INSERT INTO MajorTopic VALUES (1,'Detectors','Information on sub-detectors',0,0,20011204141840);
-INSERT INTO MajorTopic VALUES (2,'Physics-b','Physics involving b quarks',0,0,20011204175256);
-INSERT INTO MajorTopic VALUES (3,'Physics-c','Physics involving charm quarks',0,0,20011204175302);
-INSERT INTO MajorTopic VALUES (4,'Physics-Other','Other Physics (not b or c)',0,0,20011204175311);
-INSERT INTO MajorTopic VALUES (5,'Computing','Computing and DAQ',0,0,20011204141840);
-INSERT INTO MajorTopic VALUES (6,'Software','Software',0,0,20011204141840);
-INSERT INTO MajorTopic VALUES (7,'Other Topics','Other Topics',0,0,20011204141840);
-INSERT INTO MajorTopic VALUES (8,'Collaboration Meetings','Collaboration Meetings',0,0,20011204141840);
-INSERT INTO MajorTopic VALUES (9,'Other Meetings','Other Meetings',0,0,20011204141840);
-INSERT INTO MajorTopic VALUES (10,'Conferences','Conferences',0,0,20011231100856);
-
-#
-# Table structure for table 'MinorTopic'
-#
-
-CREATE TABLE MinorTopic (
-  MinorTopicID int(11) NOT NULL auto_increment,
-  MajorTopicID int(11) NOT NULL,
-  ShortDescription varchar(32) NOT NULL,
-  LongDescription text,
-  Timestamp timestamp(14) NOT NULL,
-  PRIMARY KEY (MinorTopicID),
-  KEY Major(MajorTopicID)
-) TYPE=MyISAM;
-
-#
-# Dumping data for table 'MinorTopic'
-#
-
-
-#
-# Table structure for table 'RevisionAuthor'
-#
-
-CREATE TABLE RevisionAuthor (
-  RevAuthorID int(11) NOT NULL auto_increment,
-  DocRevID int(11) NOT NULL,
-  AuthorID int(11) NOT NULL,
-  PRIMARY KEY (RevAuthorID),
-  KEY DocRevID(DocRevID),
-  KEY AuthorID(AuthorID)
-) TYPE=MyISAM;
-
-#
-# Dumping data for table 'RevisionAuthor'
-#
-
-
-#
-# Table structure for table 'RevisionSecurity'
-#
-
-CREATE TABLE RevisionSecurity (
-  RevSecurityID int(11) NOT NULL auto_increment,
-  GroupID int(11) NOT NULL,
-  DocRevID int(11) NOT NULL,
-  Timestamp timestamp(14) NOT NULL,
-  PRIMARY KEY (RevSecurityID),
-  KEY Grp(GroupID),
-  KEY Revision(DocRevID)
-) TYPE=MyISAM;
-
-#
-# Dumping data for table 'RevisionSecurity'
-#
-
-
-#
-# Table structure for table 'RevisionTopic'
-#
-
-CREATE TABLE RevisionTopic (
-  RevTopicID int(11) NOT NULL auto_increment,
-  DocRevID int(11) NOT NULL,
-  MinorTopicID int(11) NOT NULL,
-  PRIMARY KEY (RevTopicID),
-  KEY MinorTopicID(MinorTopicID),
-  KEY DocRevID(DocRevID)
-) TYPE=MyISAM;
-
-#
-# Dumping data for table 'RevisionTopic'
-#
-
-
-#
-# Table structure for table 'SecurityGroup'
-#
-
-CREATE TABLE SecurityGroup (
-  GroupID int(11) NOT NULL auto_increment,
-  Name char(16) NOT NULL,
-  Description char(64) default NULL,
-  CanCreate in default 0,
-  Timestamp timestamp(14) NOT NULL,
-  PRIMARY KEY (GroupID)
-) TYPE=MyISAM;
-
-#
-# Dumping data for table 'SecurityGroup'
-#
-
-INSERT INTO SecurityGroup VALUES (1,'BTeV','BTeV Collaboration',20011204144115);
-INSERT INTO SecurityGroup VALUES (2,'Executive','BTeV Executive Council',20011204144130);
-INSERT INTO SecurityGroup VALUES (3,'RTES','Real Time Embedded Systems',20011204144148);
-INSERT INTO SecurityGroup VALUES (4,'DocDBAdm','Document Database Administrators',20011206160459);
-
-CREATE TABLE DocumentType (
-  DocTypeID int(11) NOT NULL auto_increment,
-  ShortType varchar(32) default NULL,
-  LongType varchar(255) default NULL,
-  Timestamp timestamp(14) NOT NULL,
-  PRIMARY KEY (DocTypeID)
-) TYPE=MyISAM;
- 
-#
-# Dumping data for table 'DocumentType'
-#
- 
-INSERT INTO DocumentType VALUES (1,'Talk','Talk Transparencies',20011205173501);
-INSERT INTO DocumentType VALUES (2,'Publication','Published materials (Papers, Proceedings, Preprints, Theses',20011205173501);
-INSERT INTO DocumentType VALUES (3,'Proceeding','Conference Proceedings',20011205173501);
-INSERT INTO DocumentType VALUES (4,'Figure/Photo','Drawings, Photographs, Plots, Figures',20011205173501);
-INSERT INTO DocumentType VALUES (5,'Note','Notes and memos',20011205173501);
-INSERT INTO DocumentType VALUES (6,'Minutes','Minutes of meetings',20011205173501);
-INSERT INTO DocumentType VALUES (10,'Other','Other Types',20011205173501);
-INSERT INTO DocumentType VALUES (8,'Audio','Audio files',20011205173501);
-INSERT INTO DocumentType VALUES (9,'Video','Video files',20011205173501);
-
-#
-# Table structure for table 'Conference'
-#
+--
+-- Table structure for table 'Conference'
+--
 
 CREATE TABLE Conference (
   ConferenceID int(11) NOT NULL auto_increment,
   MinorTopicID int(11) NOT NULL default '0',
   Location varchar(64) NOT NULL default '',
-  URL varchar(64) NOT NULL default '',
+  URL varchar(240) default NULL,
   StartDate date default NULL,
   EndDate date default NULL,
-  Timestamp timestamp(14) NOT NULL,
-  PRIMARY KEY (ConferenceID)
+  TimeStamp timestamp(14) NOT NULL,
+  Preamble text,
+  Title varchar(128) default NULL,
+  Epilogue text,
+  ShowAllTalks int(11) default NULL,
+  PRIMARY KEY  (ConferenceID)
 ) TYPE=MyISAM;
 
+--
+-- Dumping data for table 'Conference'
+--
 
-#
-# Table structure for table 'Journal'
-#
 
-CREATE TABLE Journal (
-  JournalID int(11) NOT NULL auto_increment,
-  Abbreviation char(64) NOT NULL default '',
-  Name char(128) NOT NULL default '',
-  Publisher char(64) NOT NULL default '',
-  URL char(128) NOT NULL default '',
-  Timestamp timestamp(14) NOT NULL,
-  Acronym char(8) default NULL,
-  PRIMARY KEY (JournalID)
+
+--
+-- Table structure for table 'Document'
+--
+
+CREATE TABLE Document (
+  DocumentID int(11) NOT NULL auto_increment,
+  RequesterID int(11) NOT NULL default '0',
+  RequestDate datetime default NULL,
+  DocumentType int(11) default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (DocumentID),
+  KEY Requester (RequesterID)
 ) TYPE=MyISAM;
 
-#
-# Dumping data for table 'Journal'
-#
+--
+-- Dumping data for table 'Document'
+--
 
-INSERT INTO Journal VALUES (2,'Nucl. Instr. Meth. A','Nuclear Instruments and Methods in Physics Research Section A','Elsevier Science','http://www.elsevier.nl/',20020102164046,'NIMA');
-INSERT INTO Journal VALUES (7,'Eur. Phys. J. C','European Physical Journal C','Springer-Verlag','http://link.springer.de/',20020102164851,'EPJC');
-INSERT INTO Journal VALUES (4,'Phys. Lett. B','Physics Letters B','Elsevier Science','http://www.elsevier.nl/',20020102164139,'PLB');
-INSERT INTO Journal VALUES (5,'Phys. Rev. D','Physical Review D','American Physical Society','http://publish.aps.org/',20020102164339,'PRD');
-INSERT INTO Journal VALUES (6,'Phys. Rev. Lett.','Physical Review Letters','American Physical Society','http://publish.aps.org/',20020102164355,'PRL');
+
+
+--
+-- Table structure for table 'DocumentFile'
+--
+
+CREATE TABLE DocumentFile (
+  DocFileID int(11) NOT NULL auto_increment,
+  DocRevID int(11) NOT NULL default '0',
+  FileName varchar(255) NOT NULL default '',
+  Date datetime default NULL,
+  RootFile tinyint(4) default '1',
+  TimeStamp timestamp(14) NOT NULL,
+  Description varchar(128) default NULL,
+  PRIMARY KEY  (DocFileID),
+  KEY DocRevID (DocRevID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'DocumentFile'
+--
+
+
+
+--
+-- Table structure for table 'DocumentRevision'
+--
+
+CREATE TABLE DocumentRevision (
+  DocRevID int(11) NOT NULL auto_increment,
+  DocumentID int(11) NOT NULL default '0',
+  SubmitterID int(11) NOT NULL default '0',
+  DocumentTitle varchar(255) NOT NULL default '',
+  PublicationInfo text,
+  VersionNumber int(11) NOT NULL default '0',
+  Abstract text,
+  RevisionDate datetime default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  Obsolete tinyint(4) default '0',
+  Keywords varchar(240) default NULL,
+  PRIMARY KEY  (DocRevID),
+  KEY DocumentID (DocumentID),
+  KEY DocumentTitle (DocumentTitle),
+  KEY VersionNumber (VersionNumber)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'DocumentRevision'
+--
+
+
+
+--
+-- Table structure for table 'DocumentType'
+--
+
+CREATE TABLE DocumentType (
+  DocTypeID int(11) NOT NULL auto_increment,
+  ShortType varchar(32) default NULL,
+  LongType varchar(255) default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (DocTypeID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'DocumentType'
+--
+
+
+
+--
+-- Table structure for table 'EmailAuthorDaily'
+--
+
+CREATE TABLE EmailAuthorDaily (
+  AuthorDailyID int(11) NOT NULL auto_increment,
+  EmailUserID int(11) NOT NULL default '0',
+  AuthorID int(11) NOT NULL default '0',
+  PRIMARY KEY  (AuthorDailyID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'EmailAuthorDaily'
+--
+
+
+
+--
+-- Table structure for table 'EmailAuthorImmediate'
+--
+
+CREATE TABLE EmailAuthorImmediate (
+  AuthorImmediateID int(11) NOT NULL auto_increment,
+  EmailUserID int(11) NOT NULL default '0',
+  AuthorID int(11) NOT NULL default '0',
+  PRIMARY KEY  (AuthorImmediateID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'EmailAuthorImmediate'
+--
+
+
+
+--
+-- Table structure for table 'EmailAuthorWeekly'
+--
+
+CREATE TABLE EmailAuthorWeekly (
+  AuthorWeeklyID int(11) NOT NULL auto_increment,
+  EmailUserID int(11) NOT NULL default '0',
+  AuthorID int(11) NOT NULL default '0',
+  PRIMARY KEY  (AuthorWeeklyID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'EmailAuthorWeekly'
+--
+
+
+
+--
+-- Table structure for table 'EmailKeywordDaily'
+--
+
+CREATE TABLE EmailKeywordDaily (
+  KeywordDailyID int(11) NOT NULL auto_increment,
+  EmailUserID int(11) NOT NULL default '0',
+  Keyword varchar(32) default NULL,
+  PRIMARY KEY  (KeywordDailyID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'EmailKeywordDaily'
+--
+
+
+
+--
+-- Table structure for table 'EmailKeywordImmediate'
+--
+
+CREATE TABLE EmailKeywordImmediate (
+  KeywordImmediateID int(11) NOT NULL auto_increment,
+  EmailUserID int(11) NOT NULL default '0',
+  Keyword varchar(32) default NULL,
+  PRIMARY KEY  (KeywordImmediateID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'EmailKeywordImmediate'
+--
+
+
+
+--
+-- Table structure for table 'EmailKeywordWeekly'
+--
+
+CREATE TABLE EmailKeywordWeekly (
+  KeywordWeeklyID int(11) NOT NULL auto_increment,
+  EmailUserID int(11) NOT NULL default '0',
+  Keyword varchar(32) default NULL,
+  PRIMARY KEY  (KeywordWeeklyID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'EmailKeywordWeekly'
+--
+
+
+
+--
+-- Table structure for table 'EmailTopicDaily'
+--
+
+CREATE TABLE EmailTopicDaily (
+  DailyEmailID int(11) NOT NULL auto_increment,
+  EmailUserID int(11) NOT NULL default '0',
+  MajorTopicID int(11) NOT NULL default '0',
+  MinorTopicID int(11) NOT NULL default '0',
+  PRIMARY KEY  (DailyEmailID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'EmailTopicDaily'
+--
+
+
+
+--
+-- Table structure for table 'EmailTopicImmediate'
+--
+
+CREATE TABLE EmailTopicImmediate (
+  ImmediateEmailID int(11) NOT NULL auto_increment,
+  EmailUserID int(11) NOT NULL default '0',
+  MajorTopicID int(11) NOT NULL default '0',
+  MinorTopicID int(11) NOT NULL default '0',
+  PRIMARY KEY  (ImmediateEmailID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'EmailTopicImmediate'
+--
+
+
+
+--
+-- Table structure for table 'EmailTopicWeekly'
+--
+
+CREATE TABLE EmailTopicWeekly (
+  WeeklyEmailID int(11) NOT NULL auto_increment,
+  EmailUserID int(11) NOT NULL default '0',
+  MajorTopicID int(11) NOT NULL default '0',
+  MinorTopicID int(11) NOT NULL default '0',
+  PRIMARY KEY  (WeeklyEmailID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'EmailTopicWeekly'
+--
+
+
+
+--
+-- Table structure for table 'EmailUser'
+--
 
 CREATE TABLE EmailUser (
   EmailUserID int(11) NOT NULL auto_increment,
@@ -375,40 +324,498 @@ CREATE TABLE EmailUser (
   Password char(32) NOT NULL default '',
   Name char(128) NOT NULL default '',
   EmailAddress char(64) NOT NULL default '',
-  PreferHTML int(11) NOT NULL,
-  PRIMARY KEY (EmailUserID)
+  PreferHTML int(11) NOT NULL default '0',
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (EmailUserID)
 ) TYPE=MyISAM;
 
-CREATE TABLE EmailTopicImmediate (
-  ImmediateEmailID int(11) NOT NULL auto_increment,
-  EmailUserID int(11) NOT NULL ,
-  MajorTopicID int(11) NOT NULL ,
-  MinorTopicID int(11) NOT NULL ,
-  PRIMARY KEY (ImmediateEmailID),
-  KEY Email(EMailUserID),
-  KEY Minor(MinorTopicID),
-  KEY Major(MajorTopicID)
+--
+-- Dumping data for table 'EmailUser'
+--
+
+
+
+--
+-- Table structure for table 'GroupHierarchy'
+--
+
+CREATE TABLE GroupHierarchy (
+  HierarchyID int(11) NOT NULL auto_increment,
+  ChildID int(11) NOT NULL default '0',
+  ParentID int(11) NOT NULL default '0',
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (HierarchyID)
 ) TYPE=MyISAM;
 
-CREATE TABLE EmailTopicDaily (
-  DailyEmailID int(11) NOT NULL auto_increment,
-  EmailUserID int(11) NOT NULL ,
-  MajorTopicID int(11) NOT NULL ,
-  MinorTopicID int(11) NOT NULL ,
-  PRIMARY KEY (DailyEmailID),
-  KEY Email(EMailUserID),
-  KEY Minor(MinorTopicID),
-  KEY Major(MajorTopicID)
+--
+-- Dumping data for table 'GroupHierarchy'
+--
+
+
+
+--
+-- Table structure for table 'GroupTopic'
+--
+
+CREATE TABLE GroupTopic (
+  GroupTopicID int(11) NOT NULL auto_increment,
+  GroupID int(11) NOT NULL default '0',
+  MajorTopicID int(11) NOT NULL default '0',
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (GroupTopicID)
 ) TYPE=MyISAM;
 
-CREATE TABLE EmailTopicWeekly (
-  WeeklyEmailID int(11) NOT NULL auto_increment,
-  EmailUserID int(11) NOT NULL ,
-  MajorTopicID int(11) NOT NULL ,
-  MinorTopicID int(11) NOT NULL ,
-  PRIMARY KEY (WeeklyEmailID),
-  KEY Email(EMailUserID),
-  KEY Minor(MinorTopicID),
-  KEY Major(MajorTopicID)
+--
+-- Dumping data for table 'GroupTopic'
+--
+
+
+
+--
+-- Table structure for table 'Institution'
+--
+
+CREATE TABLE Institution (
+  InstitutionID int(11) NOT NULL auto_increment,
+  ShortName varchar(40) NOT NULL default '',
+  LongName varchar(80) NOT NULL default '',
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (InstitutionID)
 ) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'Institution'
+--
+
+
+
+--
+-- Table structure for table 'Journal'
+--
+
+CREATE TABLE Journal (
+  JournalID int(11) NOT NULL auto_increment,
+  Abbreviation varchar(64) NOT NULL default '',
+  Name varchar(128) NOT NULL default '',
+  Publisher varchar(64) NOT NULL default '',
+  URL varchar(240) default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  Acronym varchar(8) default NULL,
+  PRIMARY KEY  (JournalID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'Journal'
+--
+
+
+
+--
+-- Table structure for table 'Keyword'
+--
+
+CREATE TABLE Keyword (
+  KeywordID int(11) NOT NULL auto_increment,
+  KeywordGroupID int(11) default NULL,
+  ShortDescription varchar(32) default NULL,
+  LongDescription text,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (KeywordID),
+  KEY KeywordGroupID (KeywordGroupID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'Keyword'
+--
+
+
+
+--
+-- Table structure for table 'KeywordGroup'
+--
+
+CREATE TABLE KeywordGroup (
+  KeywordGroupID int(11) NOT NULL auto_increment,
+  ShortDescription varchar(32) default NULL,
+  LongDescription text,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (KeywordGroupID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'KeywordGroup'
+--
+
+
+
+--
+-- Table structure for table 'KeywordGrouping'
+--
+
+CREATE TABLE KeywordGrouping (
+  KeywordGroupingID int(11) NOT NULL auto_increment,
+  KeywordGroupID int(11) default NULL,
+  KeywordID int(11) default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (KeywordGroupingID),
+  KEY KeywordID (KeywordID),
+  KEY KeywordGroupID (KeywordGroupID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'KeywordGrouping'
+--
+
+
+
+--
+-- Table structure for table 'MajorTopic'
+--
+
+CREATE TABLE MajorTopic (
+  MajorTopicID int(11) NOT NULL auto_increment,
+  ShortDescription varchar(32) NOT NULL default '',
+  LongDescription text,
+  Restricted int(11) default '0',
+  Suppressed int(11) default '0',
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (MajorTopicID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'MajorTopic'
+--
+
+
+
+--
+-- Table structure for table 'MeetingModify'
+--
+
+CREATE TABLE MeetingModify (
+  MeetingModifyID int(11) NOT NULL auto_increment,
+  ConferenceID int(11) default NULL,
+  GroupID int(11) default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (MeetingModifyID),
+  KEY ConferenceID (ConferenceID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'MeetingModify'
+--
+
+
+
+--
+-- Table structure for table 'MeetingOrder'
+--
+
+CREATE TABLE MeetingOrder (
+  MeetingOrderID int(11) NOT NULL auto_increment,
+  SessionOrder int(11) default NULL,
+  SessionID int(11) default NULL,
+  SessionSeparatorID int(11) default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (MeetingOrderID),
+  KEY SessionID (SessionID),
+  KEY SessionSeparatorID (SessionSeparatorID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'MeetingOrder'
+--
+
+
+
+--
+-- Table structure for table 'MeetingSecurity'
+--
+
+CREATE TABLE MeetingSecurity (
+  MeetingSecurityID int(11) NOT NULL auto_increment,
+  ConferenceID int(11) default NULL,
+  GroupID int(11) default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (MeetingSecurityID),
+  KEY ConferenceID (ConferenceID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'MeetingSecurity'
+--
+
+
+
+--
+-- Table structure for table 'MinorTopic'
+--
+
+CREATE TABLE MinorTopic (
+  MinorTopicID int(11) NOT NULL auto_increment,
+  MajorTopicID int(11) NOT NULL default '0',
+  ShortDescription varchar(32) NOT NULL default '',
+  LongDescription text,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (MinorTopicID),
+  KEY Major (MajorTopicID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'MinorTopic'
+--
+
+
+
+--
+-- Table structure for table 'RevisionAuthor'
+--
+
+CREATE TABLE RevisionAuthor (
+  RevAuthorID int(11) NOT NULL auto_increment,
+  DocRevID int(11) NOT NULL default '0',
+  AuthorID int(11) NOT NULL default '0',
+  PRIMARY KEY  (RevAuthorID),
+  KEY DocRevID (DocRevID),
+  KEY AuthorID (AuthorID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'RevisionAuthor'
+--
+
+
+
+--
+-- Table structure for table 'RevisionModify'
+--
+
+CREATE TABLE RevisionModify (
+  RevModifyID int(11) NOT NULL auto_increment,
+  GroupID int(11) default NULL,
+  DocRevID int(11) default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (RevModifyID),
+  KEY GroupID (GroupID),
+  KEY DocRevID (DocRevID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'RevisionModify'
+--
+
+
+
+--
+-- Table structure for table 'RevisionReference'
+--
+
+CREATE TABLE RevisionReference (
+  ReferenceID int(11) NOT NULL auto_increment,
+  DocRevID int(11) default NULL,
+  JournalID int(11) default NULL,
+  Volume char(32) default NULL,
+  Page char(32) default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (ReferenceID),
+  KEY JournalID (JournalID),
+  KEY DocRevID (DocRevID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'RevisionReference'
+--
+
+
+
+--
+-- Table structure for table 'RevisionSecurity'
+--
+
+CREATE TABLE RevisionSecurity (
+  RevSecurityID int(11) NOT NULL auto_increment,
+  GroupID int(11) NOT NULL default '0',
+  DocRevID int(11) NOT NULL default '0',
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (RevSecurityID),
+  KEY Grp (GroupID),
+  KEY Revision (DocRevID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'RevisionSecurity'
+--
+
+
+
+--
+-- Table structure for table 'RevisionTopic'
+--
+
+CREATE TABLE RevisionTopic (
+  RevTopicID int(11) NOT NULL auto_increment,
+  DocRevID int(11) NOT NULL default '0',
+  MinorTopicID int(11) NOT NULL default '0',
+  PRIMARY KEY  (RevTopicID),
+  KEY MinorTopicID (MinorTopicID),
+  KEY DocRevID (DocRevID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'RevisionTopic'
+--
+
+
+
+--
+-- Table structure for table 'SecurityGroup'
+--
+
+CREATE TABLE SecurityGroup (
+  GroupID int(11) NOT NULL auto_increment,
+  Name char(16) NOT NULL default '',
+  Description char(64) default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  CanCreate int(11) default '0',
+  CanAdminister int(11) default '0',
+  PRIMARY KEY  (GroupID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'SecurityGroup'
+--
+
+
+
+--
+-- Table structure for table 'Session'
+--
+
+CREATE TABLE Session (
+  SessionID int(11) NOT NULL auto_increment,
+  ConferenceID int(11) default NULL,
+  StartTime datetime default NULL,
+  Location varchar(128) default NULL,
+  Title varchar(128) default NULL,
+  Description text,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (SessionID),
+  KEY ConferenceID (ConferenceID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'Session'
+--
+
+
+
+--
+-- Table structure for table 'SessionOrder'
+--
+
+CREATE TABLE SessionOrder (
+  SessionOrderID int(11) NOT NULL auto_increment,
+  TalkOrder int(11) default NULL,
+  SessionTalkID int(11) default NULL,
+  TalkSeparatorID int(11) default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (SessionOrderID),
+  KEY SessionTalkID (SessionTalkID),
+  KEY TalkSeparatorID (TalkSeparatorID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'SessionOrder'
+--
+
+
+
+--
+-- Table structure for table 'SessionSeparator'
+--
+
+CREATE TABLE SessionSeparator (
+  SessionSeparatorID int(11) NOT NULL auto_increment,
+  ConferenceID int(11) default NULL,
+  StartTime datetime default NULL,
+  Location varchar(128) default NULL,
+  Title varchar(128) default NULL,
+  Description text,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (SessionSeparatorID),
+  KEY ConferenceID (ConferenceID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'SessionSeparator'
+--
+
+
+
+--
+-- Table structure for table 'SessionTalk'
+--
+
+CREATE TABLE SessionTalk (
+  SessionTalkID int(11) NOT NULL auto_increment,
+  SessionID int(11) default NULL,
+  DocumentID int(11) default NULL,
+  Confirmed int(11) default NULL,
+  Time time default NULL,
+  HintTitle varchar(128) default NULL,
+  Note text,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (SessionTalkID),
+  KEY SessionID (SessionID),
+  KEY DocumentID (DocumentID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'SessionTalk'
+--
+
+
+
+--
+-- Table structure for table 'TalkSeparator'
+--
+
+CREATE TABLE TalkSeparator (
+  TalkSeparatorID int(11) NOT NULL auto_increment,
+  SessionID int(11) default NULL,
+  Time time default NULL,
+  Title varchar(128) default NULL,
+  Note text,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (TalkSeparatorID),
+  KEY SessionID (SessionID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'TalkSeparator'
+--
+
+
+
+--
+-- Table structure for table 'TopicHint'
+--
+
+CREATE TABLE TopicHint (
+  TopicHintID int(11) NOT NULL auto_increment,
+  SessionTalkID int(11) default NULL,
+  MinorTopicID int(11) default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (TopicHintID),
+  KEY SessionTalkID (SessionTalkID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table 'TopicHint'
+--
+
+-- Set up the DocDB adminstrator account. Everything else can be done in the admin interface
+
+INSERT INTO SecurityGroup () VALUES (0,'DocDBAdm','Document Database Administrators',1,1);
+
 
