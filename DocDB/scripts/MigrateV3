@@ -14,7 +14,7 @@ require "DocDBGlobals.pm";
 
 &GetOptions("a=s" => \$Action,"u=s" => \$User,"p=s" => \$Password);
 
-unless ($Action eq "init" or $Set eq "delete" or $Set eq "migrate") {
+unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate") {
   print "Usage: MigrateV3 --u=username --p=password --a=init|migrate|delete\n\n";
   print "This script is used to migrate from a version 2 to version 3 DB structure. \n";
   print "It adds the administer field to the DB and new tables for multiple journal \n";
@@ -49,6 +49,19 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
   $AdminSet     -> execute();
   $ModifyCreate -> execute();               
   $RefCreate    -> execute(); 
+}
+
+if ($Action eq "delete") { # Drop useless columns 
+  my $JournalDel = $dbh -> prepare("alter table DocumentRevision drop Journal"); 
+  my $VolumeDel  = $dbh -> prepare("alter table DocumentRevision drop Volume"); 
+  my $PageDel    = $dbh -> prepare("alter table DocumentRevision drop Page"); 
+  
+  die "This part is not ready yet!\n";
+  
+  print "Should not see this.\n"
+  $JournalDel -> execute();
+  $VolumeDel  -> execute();
+  $PageDel    -> execute();
 }
 
 exit;
