@@ -7,6 +7,11 @@ dd {
   margin-left: 1em;
 }
 
+/* li, ul {
+  margin-left: 0em;
+  padding-left: 0em;
+} For IE */
+
 ul {
   padding-left: 2em;
 }
@@ -32,52 +37,53 @@ h3 {font-size: 100%}
 
 #LeftColumn3Col {
 //	width: 19%;
-        width: 12.5em;
-	float: left;
-	background: #eee;
-	padding-left: 0.3em;
-	padding-bottom: 0.5em;
-	padding-right: 0.5em;
-	padding-top: 0em;
-        margin-left: 0em;
+  width: 12.5em;
+  float: left;
+  background: #eee;
+  padding-left: 0.3em;
+  padding-bottom: 0.5em;
+  padding-right: 0.5em;
+  padding-top: 0em;
+  margin-left: 0em;
 }
 
 #MainColumn3Col {
-	width: 100%-12.5em-1em; /* 12 matches LeftColums */
-	background: white;
-	padding-bottom: 1em;
-	padding-left: 13.5em;   /* 13=12+1 matches LeftColums (can't hardcode?!?)*/
-	padding-right: 0.5em;
+  width: auto; /* 12 matches LeftColums */
+  background: white;
+  padding-bottom: 1em;
+  padding-left: 13.5em;   /* 13=12+1 matches LeftColums (can't hardcode?!?)*/
+  padding-right: 0.5em;
 }
 
 #RightColumn3Col {
-	width: auto;
-        max-width: 35%;
-	background: #eee;
-	float: right;
-        margin-bottom: 1em;
-        margin-left: 0.5em;
-	padding-bottom: 0.5em;
-	padding-right: 0.5em;
-	padding-left: 0.3em;
-	padding-top: 0em;
+/*	width: 25%; For IE */
+  width: auto;
+  max-width: 45%;
+  background: #eee;
+  float: right;
+  margin-bottom: 1em;
+  margin-left: 0.5em;
+  padding-bottom: 0.5em;
+  padding-right: 0.5em;
+  padding-left: 0.3em;
+  padding-top: 0em;
 }
 
 
 #Header3Col {
-	background: white;	
-        margin-bottom: 1.5em;
+  background: white;      
+  margin-bottom: 1.5em;
 }
 	
 
 #Footer3Col {
-	clear: both;
-	padding-bottom: 1em;
-	text-align: center;
+  clear: both;
+  padding-bottom: 1em;
+  text-align: center;
 }
 	
 #Signoffs ul ul {
-    padding-left: 1em;
+  padding-left: 1em;
 }
 
 /* Allow for lists with alternating colors */
