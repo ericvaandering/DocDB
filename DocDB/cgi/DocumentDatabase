@@ -65,6 +65,9 @@ print "<p>\n";
 print $query -> submit (-value => "Give me the form");
 print $query -> end_multipart_form;
 
-
+print "<p>Administration functions:<ul>\n";
+print "<li>Add a <a href=\"TopicAddForm\">topic</a>\n";
+print "<li>Add an <a href=\"AuthorAddForm\">author</a>\n";
+print "</ul>\n";
 print $query->end_html;
 

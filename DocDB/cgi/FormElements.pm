@@ -72,6 +72,32 @@ sub TopicSelect { # Scrolling selectable list for topics
                                  -default => @TopicDefaults);
 };
 
+sub MajorTopicSelect { # Scrolling selectable list for major topics
+  print "<b><a ";
+  &HelpLink("majortopics");
+  print "Major Topics:</a></b><br> \n";
+  my @MajorIDs = keys %MajorTopics;
+  my %MajorLabels = ();
+  foreach my $ID (@MajorIDs) {
+    $MajorLabels{$ID} = $MajorTopics{$ID}{SHORT};
+  }  
+  print $query -> scrolling_list(-name => "majortopic", -values => \@MajorIDs, 
+                                 -labels => \%MajorLabels,  -size => 10);
+};
+
+sub InstitutionSelect { # Scrolling selectable list for institutions
+  print "<b><a ";
+  &HelpLink("institution");
+  print "Institution:</a></b><br> \n";
+  my @InstIDs = sort keys %Institutions;
+  my %InstLabels = ();
+  foreach my $ID (@InstIDs) {
+    $InstLabels{$ID} = $Institutions{$ID}{SHORT};
+  }  
+  print $query -> scrolling_list(-name => "inst", -values => \@InstIDs,
+                                 -labels => \%InstLabels,  -size => 10);
+};
+
 sub DocTypeButtons {
 # FIXME move fetches to MySQLaccess
   my ($DocTypeID,$ShortType,$LongType);
@@ -101,5 +127,44 @@ sub SecurityList {
                                  -size => 5, -multiple => 'true', 
                                  -default => @SecurityDefaults);
 };
+
+sub ShortDescriptionBox {
+  print "<b><a ";
+  &HelpLink("shortdescription");
+  print "Short Description:</a></b><br> \n";
+  print $query -> textfield (-name => 'short', 
+                             -size => 20, -maxlength => 40);
+};
+
+sub LongDescriptionBox {
+  print "<b><a ";
+  &HelpLink("longdescription");
+  print "Long Description:</a></b><br> \n";
+  print $query -> textfield (-name => 'long', 
+                             -size => 40, -maxlength => 120);
+};
+
+sub NameEntryBox {
+  print "<table cellpadding=5><tr valign=top>\n";
+  print "<td>\n";
+  print "<b><a ";
+  &HelpLink("firstname");
+  print "First Name:</a></b><br> \n";
+  print $query -> textfield (-name => 'first', 
+                             -size => 20, -maxlength => 32);
+  print "<td>\n";
+  print "<b><a ";
+  &HelpLink("mi");
+  print "Initials:</a></b><br> \n";
+  print $query -> textfield (-name => 'middle', 
+                             -size => 10, -maxlength => 16);
+  print "<td>\n";
+  print "<b><a ";
+  &HelpLink("lastname");
+  print "Last Name:</a></b><br> \n";
+  print $query -> textfield (-name => 'lastname', 
+                             -size => 20, -maxlength => 32);
+  print "</tr></table>\n";
+}
 
 1;

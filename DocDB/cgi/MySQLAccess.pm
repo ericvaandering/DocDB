@@ -17,6 +17,20 @@ sub GetAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with all authors
   }
 };
 
+sub GetInstitutions { # Creates/fills a hash $Institutions{$InstitutionID}{} with all Institutions
+  my ($InstitutionID,$ShortName,$LongName);
+  my $inst_list  = $dbh -> prepare(
+     "select InstitutionID,ShortName,LongName from Institution"); 
+  $inst_list -> execute;
+  $inst_list -> bind_columns(undef, \($InstitutionID,$ShortName,$LongName));
+  %Institutions = ();
+  while ($inst_list -> fetch) {
+    $Institutions{$InstitutionID}{INSTID} =  $InstitutionID;
+    $Institutions{$InstitutionID}{SHORT} = $ShortName;
+    $Institutions{$InstitutionID}{LONG} =  $LongName;
+  }
+};
+
 sub GetDocTypes { # Creates/fills a hash $DocumentTypes{$DocTypeID}{} 
 #  my ($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active);
 #  my $people_list  = $dbh -> prepare(

@@ -32,9 +32,11 @@ close HELPFILE;
 $helpterm = $params{term};   # Extract term user wants help for
 
 # Write content
-
-print "<b><big>$help{NAME}{$helpterm}:</big></b><p>\n";
-print "$help{TEXT}{$helpterm}\n";
-
+if ($help{NAME}{$helpterm}) {
+  print "<b><big>$help{NAME}{$helpterm}:</big></b><p>\n";
+  print "$help{TEXT}{$helpterm}\n";
+} else {
+  print "<b><big>No help available on this topic.</big></b><p>\n";
+}  
 print $query->end_html;     # End page
 

@@ -1,0 +1,52 @@
+#! /usr/bin/perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+use CGI;
+use DBI;
+
+require "ResponseElements.pm";
+require "MySQLAccess.pm";
+require "DocDBGlobals.pm";
+require "Security.pm";
+
+$query = new CGI;  # Global for subroutines
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+
+%params = $query -> Vars;
+
+print $query->header;
+print $query->start_html(-title=>"BTeV Top Addition Results");
+
+# Updatedb mode removed, not copying DocumentFile entries over, no easy 
+# way to handle changing security preferences from one version to the next
+# with links.
+
+print "<p><h3>Here are the results of your attempt to add a topic
+                to the BTeV document database:</h3><p>\n";
+
+my $topic_insert = $dbh->prepare(
+   "insert into MinorTopic ".
+          "(MinorTopicID, MajorTopicID, ShortDescription, LongDescription) ". 
+   "values (0,            ?,            ?,                ?)");
+            
+
+@error_stack = ();
+
+$MajorTopicID     = $params{majortopic};
+$ShortDescription = $params{short};
+$LongDescription  = $params{long};
+
+  
+if (@error_stack) {
+  &EndPage(@error_stack);
+}
+
+$topic_insert -> execute($MajorTopicID,$ShortDescription,$LongDescription);
+my $MinorTopicID = $topic_insert -> {mysql_insertid}; # Works with MySQL only
+                           
+print "You were successful. The topic you added is number <b>$MinorTopicID</b><br>\n"; 
+
+print $query->end_html;
+
