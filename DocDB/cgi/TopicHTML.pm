@@ -40,10 +40,19 @@ sub MinorTopicLink ($;$) {
   my ($TopicID,$mode) = @_;
   
   require "TopicSQL.pm";
+  require "MeetingSQL.pm";
   
+  my $URL,$link;
   &FetchMinorTopic($TopicID);
-  my $link;
-  $link = "<a href=$ListByTopic?topicid=$TopicID>";
+  my $ConferenceID = &FetchConferenceByTopicID($TopicID);
+  
+  if ($ConferenceID) {
+    $URL = "$DisplayMeeting?conferenceid=$ConferenceID";
+  } else {
+    $URL = "$ListByTopic?topicid=$TopicID";
+  }  
+    
+  $link = "<a href=$URL>";
   if ($mode eq "short") {
     $link .= $MinorTopics{$TopicID}{SHORT};
   } elsif ($mode eq "long") {

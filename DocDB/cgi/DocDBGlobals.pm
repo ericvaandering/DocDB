@@ -113,8 +113,7 @@ $AddFilesForm          = $cgi_root."AddFilesForm";
 $ConferenceAddForm     = $cgi_root."ConferenceAddForm";
 $ConferenceAdd         = $cgi_root."ConferenceAdd";
 
-$MeetingCreate         = $cgi_root."MeetingCreate";
-$MeetingView           = $cgi_root."MeetingView";
+$DisplayMeeting        = $cgi_root."DisplayMeeting";
 $MeetingModify         = $cgi_root."MeetingModify";
 $SessionModify         = $cgi_root."SessionModify";
 
