@@ -84,6 +84,13 @@ sub GroupEntryBox {
   print $query -> textfield (-name => 'description', 
                              -size => 40, -maxlength => 64);
   print "</td></tr>\n";
+
+  print "<tr><td>\n";
+  print $query -> checkbox(-name => "remove",  
+                           -value => 'remove', -label => '');
+  print "<b>Remove existing permissions</b>\n";
+  print "</td></tr>\n";
+
   print "<tr><td>\n";
   print $query -> checkbox(-name => "create",  
                            -value => 'create', -label => '');
