@@ -134,8 +134,9 @@ if ($Mode eq "create") {
     my $SessionNewOrder    = $SessionOrders{$SessionOrder};
     my $SessionDate        = "$SessionYear-$ReverseAbrvMonth{$SessionMonth}-$SessionDay $SessionHour:00";
   
-    ## Insert sessions
-    
+    if ($SessionSeparator || $SessionTitle || $SessionDescription) {
+      ## Insert sessions
+    }  
   }
 }
 
