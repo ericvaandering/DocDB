@@ -15,6 +15,7 @@ require "TopicSQL.pm";
 require "SecuritySQL.pm";
 require "HTMLUtilities.pm";
 require "Security.pm";
+require "Sorts.pm";
 
 $query = new CGI;  # Global for subroutines
 
