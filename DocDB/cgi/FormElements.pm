@@ -370,7 +370,7 @@ sub TopicSelectLong { # Scrolling selectable list for topics, all info
   print "Topics:</a></b><br> \n";
   print $query -> scrolling_list(-name => "topics", -values => \@TopicIDs, 
                                  -labels => \%TopicLabels,
-                                 -size => 10, -multiple => 'false',
+                                 -size => 10, 
                                  -default => \@TopicDefaults);
 };
 

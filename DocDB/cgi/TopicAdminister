@@ -33,7 +33,11 @@ print $query->header;
 $Password      = $params{password};
 $Username      = $Administrator;
 $Action        = $params{admaction};
+
 $TopicID       = $params{topics};
+$MajorTopicID  = $params{majortopic};
+$LongName      = $params{long};
+$ShortName     = $params{short};
 
 unless (&CanAdminister) {
   push @error_stack,"You must be logged in as the adminstrator to administer topics.";
@@ -48,11 +52,10 @@ unless ($dbh) {
 &EndPage(@ErrorStack);
 
 if      ($Action eq "Delete") {
-  &HTMLPrintParams;
   my $TopicLink   = &MinorTopicLink($TopicID);
   my @TopicDocIDs = &GetTopicDocuments($TopicID);
   
- # Delete TopicID from Author, RevisionTopic tables
+# Delete TopicID from Author, RevisionTopic tables
   
   my $TopicDelete    = $dbh -> prepare("delete from MinorTopic    where MinorTopicID=?");
   my $RevisionDelete = $dbh -> prepare("delete from RevisionTopic where MinorTopicID=?");
@@ -65,22 +68,34 @@ if      ($Action eq "Delete") {
                      entries have been removed.";
   }  
 } elsif ($Action eq "Modify") {
-#    ($AuthorID) = @AuthorIDs;
+  &HTMLPrintParams;
+  unless ($TopicID) {
+    push @ErrorStack,"You must select a topic to modify.";
+  }
 
-#    if ($FirstName && $LastName) { # Deal with name changes (first & last will update initials)     
-#      print "<b>Updating full name.</b><br>\n";
-#      my $AuthorUpdate = $dbh->prepare(
-#         "update Author set FirstName=?,MiddleInitials=?, LastName=? ".
-#         "where AuthorID=?");
-#      $AuthorUpdate -> execute($FirstName,$Middle,$LastName,$AuthorID);
-#    }
-      
-#    if ($InstitutionID) { # Deal with institution changes
-#      print "<b>Updating institution.</b><br>\n";
-#      my $AuthorUpdate = $dbh->prepare(
-#         "update Author set InstitutionID=? where AuthorID=?");
-#      $AuthorUpdate -> execute($InstitutionID,$AuthorID);
-#    }
+# Deal with name changes     
+
+  if ($ShortName) { 
+    print "<b>Updating short topic name.</b><br>\n";
+    my $TopicUpdate = $dbh->prepare(
+       "update MinorTopic set ShortDescription=? where MinorTopicID=?");
+    $TopicUpdate -> execute($ShortName,$TopicID);
+  }
+  if ($LongName) { 
+    print "<b>Updating long topic name.</b><br>\n";
+    my $TopicUpdate = $dbh->prepare(
+       "update MinorTopic set LongDescription=? where MinorTopicID=?");
+    $TopicUpdate -> execute($LongName,$TopicID);
+  }
+
+# Deal with Major Topic changes   
+
+  if ($MajorTopicID) { 
+    print "<b>Updating Major Topic for Minor Topic.</b><br>\n";
+    my $TopicUpdate = $dbh->prepare(
+     "update MinorTopic set MajorTopicID=? where MinorTopicID=?");
+    $TopicUpdate -> execute($MajorTopicID,$TopicID);
+  }
 } elsif ($Action eq "New") {
 #  print "<b>Adding a new author.</b><br>\n";
 #  my $AuthorInsert = $dbh->prepare(
