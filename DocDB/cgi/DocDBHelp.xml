@@ -964,4 +964,15 @@ or may not be the same as the web username and password.
   </text>
  </entry>
  
+ <entry>
+  <key>signoffs</key>
+  <title>Signoff List</title>
+  <text>
+   This is the list of people who must sign the document in order, 
+   from top to bottom. Since the entered name must exactly match the name of 
+   the personal account, it's easiest to use the signoff chooser and click
+   on the names you wish to add.
+  </text>
+ </entry>
+ 
 </helpfile>
