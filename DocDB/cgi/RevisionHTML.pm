@@ -216,7 +216,7 @@ sub PrintRevisionInfo {
     print "</td></tr>\n";
     print "</table></center>\n"; 
   }  
-
+  print "</div>\n";  # RevisionInfo
 }
  
 sub PrintAbstract {
