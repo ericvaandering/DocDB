@@ -218,16 +218,8 @@ sub NotifySignees ($) {
   
   my ($DocRevID) = @_;
 
-  my @SignoffIDs   = &GetAllSignoffsByDocRevID($DocRevID);
-  my @EmailUserIDs = ();
-  foreach my $SignoffID (@SignoffIDs) {
-    if (&SignoffStatus($SignoffID) eq "Ready") {
-      my @SignatureIDs = &GetSignatures($SignoffID);
-      foreach my $SignatureID (@SignatureIDs) {
-        push @EmailUserIDs,$Signatures{$SignatureID}{EmailUserID};
-      }
-    } 
-  }
+  my @EmailUserIDs = &ReadySignatories($DocRevID);
+
   if (@EmailUserIDs) {
     &MailNotices(-docrevid => $DocRevID, -type => "signature", -emailids => \@EmailUserIDs);
   }
@@ -246,7 +238,24 @@ sub CopyRevisionSignoffs { # CopySignoffs from one revision to another
                            # one without
 
   my ($OldDocRevID,$NewDocRevID,$CopySignatures) = @_;
+}
 
+sub ReadySignatories ($) {
+  require "SignoffSQL.pm";
+
+  my ($DocRevID) = @_;
+  
+  my @SignoffIDs   = &GetAllSignoffsByDocRevID($DocRevID);
+  my @EmailUserIDs = ();
+  foreach my $SignoffID (@SignoffIDs) {
+    if (&SignoffStatus($SignoffID) eq "Ready") {
+      my @SignatureIDs = &GetSignatures($SignoffID);
+      foreach my $SignatureID (@SignatureIDs) {
+        push @EmailUserIDs,$Signatures{$SignatureID}{EmailUserID};
+      }
+    } 
+  }
+  return @EmailUserIDs;
 }
 
 1;

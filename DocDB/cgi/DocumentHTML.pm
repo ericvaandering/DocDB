@@ -33,7 +33,8 @@ sub DocumentTable (%) {
   my @Fields       = @{$Params{-fields}}; 
   my %FieldOptions = %{$Params{-fieldoptions}}; 
   
-  my %FieldTitles = (Docid => "$ShortProject-doc-#", Updated => "Last Updated");  
+  my %FieldTitles = (Docid   => "$ShortProject-doc-#", Updated => "Last Updated", 
+                     CanSign => "Next Signature(s)");  
   
 ### Write out the beginning and header of table
 
@@ -71,7 +72,7 @@ sub DocumentTable (%) {
     
     print "<tr>\n";
     foreach my $Field (@Fields) {
-      print "<td>";
+      print "<td valign=top>";
       if      ($Field eq "Docid") {
         print &NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
                                  -numwithversion => true); 
@@ -82,6 +83,13 @@ sub DocumentTable (%) {
         print &FirstAuthor($DocRevID);
       } elsif ($Field eq "Updated") {
         print &EuroDate($DocRevisions{$DocRevID}{DATE});
+      } elsif ($Field eq "CanSign") {
+        require "SignoffUtilities.pm";
+        require "SignoffHTML.pm";
+        my @EmailUserIDs = &ReadySignatories($DocRevID);
+        foreach my $EmailUserID (@EmailUserIDs) {
+          print &SignatureLink($EmailUserID),"<br/>\n";
+        }  
       } else {
         print "Unknown field"
       }  
@@ -91,7 +99,7 @@ sub DocumentTable (%) {
   }  
 
 
-  print "</table>\n";
+  print "</table></center>\n";
 }
 
 sub NewerDocumentLink (%) { # FIXME: Make this the default
@@ -104,6 +112,7 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default
   my $DocIDOnly  = $Params{-docidonly} || 0;
   my $NumWithVersion  = $Params{-numwithversion} || 0;
   my $TitleLink  = $Params{-titlelink} || 0;
+  my $NoApprovalStatus  = $Params{-noapprovalstatus} || 0;
 
   &FetchDocument($DocumentID);
   my $Version      = $Documents{$DocumentID}{NVersions};
@@ -117,14 +126,35 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default
   $Link .= "\">"; 
   if ($DocIDOnly) {
     $Link .= $DocumentID;
+    $Link .= "</a>";
   } elsif ($NumWithVersion) {
     $Link .= $DocumentID."-v".$Version;
+    $Link .= "</a>";
   } elsif ($TitleLink) {
     $Link .= $DocRevisions{$DocRevID}{Title};
+    $Link .= "</a>";
+    if ($UseSignoffs && !$NoApprovalStatus) {
+      require "SignoffUtilities.pm";
+      my ($ApprovalStatus,$LastApproved) = &RevisionStatus($DocRevID);
+      unless ($ApprovalStatus eq "Unmanaged") { 
+        $Link .= "<br>($ApprovalStatus";
+        if ($ApprovalStatus eq "Unapproved") {
+          if (defined $LastApproved) {
+            my $DocumentID = $DocRevisions{$LastApproved}{DOCID};
+            my $Version    = $DocRevisions{$LastApproved}{Version};
+            my $LastLink   = &DocumentLink($DocumentID,$Version,"version $Version");
+            $Link .= " - Last approved: $LastLink";
+          } else {
+            $Link .= " - No approved version";
+          }
+        }
+        $Link .= ")";
+      }  
+    }  
   } else {
     $Link .= &FullDocumentID($DocumentID,$Version);  
+    $Link .= "</a>";
   }
-  $Link .=  "</a>";
   return $Link;
 }         
 

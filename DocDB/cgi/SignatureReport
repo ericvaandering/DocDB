@@ -50,9 +50,6 @@ require "RevisionUtilities.pm";
 require "SignoffUtilities.pm";
 require "Utilities.pm";
 
-$DebugOutput = 1;
-
-
 $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
@@ -107,50 +104,38 @@ foreach my $SignoffID (@SignoffIDs) {
 my @CurrentDocumentIDs = (@ReadyDocumentIDs ,@NotReadyDocumentIDs,@ApprovedDocumentIDs,@SignedDocumentIDs);
 @OldSignatureDocumentIDs = &RemoveArray(\@DocumentIDs,@CurrentDocumentIDs);
     
-foreach my $DocumentID (@ReadyDocumentIDs) {
-  push @DebugStack,"Ready: $DocumentID";    
-}
-foreach my $DocumentID (@NotReadyDocumentIDs) {
-  push @DebugStack,"NotReady: $DocumentID";    
-}
-foreach my $DocumentID (@ApprovedDocumentIDs) {
-  push @DebugStack,"Approved: $DocumentID";    
-}
-foreach my $DocumentID (@SignedDocumentIDs) {
-  push @DebugStack,"Signed: $DocumentID";    
-}
-foreach my $DocumentID (@OldSignatureDocumentIDs) {
-  push @DebugStack,"OldSignature: $DocumentID";    
-}
-    
-&DebugPage("End of list");
+&DebugPage("Have created lists of documents");
 
 if (@ReadyDocumentIDs) {
-  print "<center><h4>Documents ready to be signed by $EmailUser{$EmailUserID}{Name}:</h4></center><p>\n";
+  print "<center><h4>These documents are ready to be signed by $EmailUser{$EmailUserID}{Name}:</h4></center><p>\n";
 
   &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
-                 -docids => \@ReadyDocumentIDs, -sortby => "date", -reverse => true);
+                 -docids => \@ReadyDocumentIDs, 
+                 -sortby => "date", -reverse => true);
 }
 
 if (@NotReadyDocumentIDs) {
-  print "<center><h4>Documents requiring a future signature by $EmailUser{$EmailUserID}{Name}:</h4></center><p>\n";
+  print "<center><h4>These documents may require a future signature by $EmailUser{$EmailUserID}{Name}:</h4></center><p>\n";
 
-  &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
-                 -docids => \@NotReadyDocumentIDs, -sortby => "date", -reverse => true);
+  &DocumentTable(-fields => ["Docid","Title","CanSign","Updated"],
+                 -docids => \@NotReadyDocumentIDs, 
+                 -sortby => "date", -reverse => true);
 }
 
 if (@SignedDocumentIDs) {
-  print "<center><h4>Documents signed by $EmailUser{$EmailUserID}{Name}, but not approved:</h4></center><p>\n";
+  print "<center><h4>These documents are signed by $EmailUser{$EmailUserID}{Name}, but not approved:</h4></center><p>\n";
 
-  &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
-                 -docids => \@SignedDocumentIDs, -sortby => "date", -reverse => true);
+  &DocumentTable(-fields => ["Docid","Title","CanSign","Updated"],
+                 -docids => \@SignedDocumentIDs, 
+                 -sortby => "date", -reverse => true);
 }
 
 if (@ApprovedDocumentIDs) {
-  print "<center><h4>Approved documents signed by $EmailUser{$EmailUserID}{Name}:</h4></center><p>\n";
+  print "<center><h4>These approved documents are signed by $EmailUser{$EmailUserID}{Name}:</h4></center><p>\n";
 
   &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
-                 -docids => \@ApprovedDocumentIDs, -sortby => "date", -reverse => true);
+                 -docids => \@ApprovedDocumentIDs, 
+                 -sortby => "date", -reverse => true);
 }
 
 
@@ -158,7 +143,8 @@ if (@OldSignatureDocumentIDs) {
   print "<center><h4>Previous versions of these documents needed to be signed by $EmailUser{$EmailUserID}{Name}:</h4></center><p>\n";
 
   &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
-                 -docids => \@OldSignatureDocumentIDs, -sortby => "date", -reverse => true);
+                 -docids => \@OldSignatureDocumentIDs, 
+                 -sortby => "date", -reverse => true);
 }
 
 
