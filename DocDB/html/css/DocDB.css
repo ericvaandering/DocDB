@@ -21,11 +21,66 @@ dt {
 }
  
 h1, h2, h3, h5, p, img {
-  margin: 0 12px 0 12px;
+  margin: 0 1em 0 1em;
   text-align: center;
 }
 
-h1 {
-  margin-bottom: 12px;
+h1 {font-size: 150%}
+h2 {font-size: 120%}
+h3 {font-size: 100%}
+
+#LeftColumn3Col {
+	width: 19%;
+        min-width: 12em;
+	float: left;
+	background: #ddd;
+	padding-left: 0.25%;
+	padding-bottom: 0.5em;
+	padding-right: 0.25%;
+	padding-top: 0em;
+        margin-left: 0em;
 }
+
+#MainColumn3Col {
+	width: 100%-13em;
+	background: #fff;
+	padding-bottom: 1em;
+	padding-left: 13em;
+	padding-right: 0.5%;
+}
+
+#RightColumn3Col {
+	width: auto;
+        max-width: 40%;
+        min-width: 16em;
+	background: #ddd;
+	float: right;
+        margin-bottom: 1em;
+        margin-left: 0.5em;
+	padding-bottom: 0.5em;
+	padding-right: 0.5em;
+	padding-left: 0.5em;
+	padding-top: 0em;
+}
+
+
+#Header3Col {
+	background: #fff;	
+        margin-bottom: 1em;
+
+}
+	
+
+#Footer3Col {
+	clear: both;
+	padding-bottom: 1em;
+	border-top: 1px solid #333;
+	text-align: center;
+}
+	
+#Signoffs ul ul {
+    padding-left: 1em;
+}
+
+
 
