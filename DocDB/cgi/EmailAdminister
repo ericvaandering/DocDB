@@ -1,0 +1,102 @@
+#! /usr/bin/env perl
+#
+#        Name: EmailAdminister 
+# Description: This script is called by EmailAdministerForm and does 
+#              administration on users who have signed up for email from the
+#              DB. Since users can change almost everything, it really just
+#              deletes users and changes their passwords in case they forget.
+#              It also displays all the users and their notification 
+#              preferences.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+use CGI;
+use DBI;
+
+require "DocDBGlobals.pm";
+require "ResponseElements.pm";
+require "Security.pm";
+require "HTMLUtilities.pm";
+require "SecuritySQL.pm";
+require "Messages.pm";
+
+$query = new CGI;  # Global for subroutines
+
+print $query->header;
+&DocDBHeader("Modified E-mail Users");
+
+%params = $query -> Vars;
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+# Parameters to script 
+
+my $Password      = $params{password};
+my $Username      = $Administrator;
+my $Action        = $params{admaction};
+
+#my $Description = $params{description};
+#my $Name        = $params{name};
+
+unless (&CanAdminister) {
+  push @ErrorStack,$Msg_AdminNoLogin;
+}  
+&EndPage(@ErrorStack);
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
+
+unless ($dbh) {
+  push @ErrorStack,$Msg_AdminNoConnect;
+}         
+&EndPage(@ErrorStack);
+
+&GetSecurityGroups;
+
+if      ($Action eq "Delete") { # Delete institutions
+#  if (!$ParentID) {
+#    push @ErrorStack,$Msg_ModGroupEmpty;
+#  } elsif (!$SecurityGroups{$ParentID}{TIMESTAMP}) {
+#    push @ErrorStack,$Msg_ModGroupNone;
+#  } else {
+#    my $GroupDelete       = $dbh -> prepare("delete from SecurityGroup    where GroupID=?");
+#    my $RevSecurityDelete = $dbh -> prepare("delete from RevisionSecurity where GroupID=?");
+#    my $HierarchyDelete   = $dbh -> prepare("delete from GroupHierarchy   ".
+                                    "where ParentID=? or ChildID=?");
+#    $GroupDelete       -> execute($ParentID);
+#    $RevSecurityDelete -> execute($ParentID);
+#    $HierarchyDelete   -> execute($ParentID,$ParentID);
+#    print "<b>$SecurityGroups{$ParentID}{NAME} has been deleted.</b><br>\n";
+#  }
+} elsif ($Action eq "Modify") { # Modify institutions
+#  unless (ParentID) {
+#    push @ErrorStack,$Msg_ModGroupEmpty;
+#  }
+#  &EndPage(@ErrorStack);
+
+# Deal with password changes     
+
+#  if ($Name) { 
+#    print "<b>Updating group name.</b><br>\n";
+#    my $GroupUpdate = $dbh->prepare(
+#       "update SecurityGroup set Name=? where GroupID=?");
+#    $GroupUpdate -> execute($Name,$ParentID);
+#  }
+
+} elsif ($Action eq "New") { 
+  push @ErrorStack,"You can't create new users here. Do it the normal way.";
+} else {
+  push @ErrorStack,"No valid action was specified.";
+}  
+
+print "<p>\n";
+
+&WarnPage(@WarnStack);
+&EndPage(@ErrorStack);
+
+&DocDBNavBar;
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+ 
+exit;
