@@ -53,8 +53,9 @@ sub ConfirmTalkPopupScript {
   print "<script LANGUAGE=\"JavaScript\" type=\"text/javascript\">\n";
   print "<!-- \n";
 
-  print "function confirmtalkpopupwindow(page){\n";
-  print "window.open(page,\"confirmtalk\",\"width=400,height=350,menubar=0,resizable=1,scrollbars=1,status=0,titlebar=0,toolbar=0,left=0,top=0\");\n";
+  print "function confirmtalkpopupwindow(theForm){\n";
+  print "var oUrl=\"$ConfirmTalkHint?documentid=\"+theForm.documentid.value+\"&sessiontalkid=\"+theForm.sessiontalkid.value;\n";
+  print "window.open(oUrl,\"confirmtalk\",\"width=400,height=350,menubar=0,resizable=1,scrollbars=1,status=0,titlebar=0,toolbar=0,left=0,top=0\");\n";
   print "}\n";
 
   print "//-->\n";
@@ -63,7 +64,13 @@ sub ConfirmTalkPopupScript {
 
 sub ConfirmTalkLink ($$) {
   my ($SessionTalkID,$DocumentID) = @_;
-  return "<a href=\"Javascript:confirmtalkpopupwindow(\'$ConfirmTalkHint?sessiontalkid=$SessionTalkID&documentid=$DocumentID\');\">Confirm</a>";
+  my $HTML  = "<form>";
+     $HTML .= $query -> hidden(-name => 'documentid',   -default => $DocumentID);
+     $HTML .= $query -> hidden(-name => 'sessiontalkid',-default => $SessionTalkID);
+     $HTML .= $query -> button(-value => "Confirm Match", 
+                               -onClick => "confirmtalkpopupwindow(this.form)");
+     $HTML .= "</form>";
+  return $HTML;
 }
 
 sub TopicSearchScript {

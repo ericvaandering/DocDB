@@ -62,9 +62,7 @@ sub PrintSessionTalk($) {
     my $SessionTalkSummary = &SessionTalkSummary($SessionTalkID);
     print "<td><i>$Title</i> [$SessionTalkSummary]\n";
     if (&CanModifyMeeting($ConferenceID)) {
-      print " - <b>";
       print &ConfirmTalkLink($SessionTalkID,$DocumentID);
-      print "</b>";
     }
     print "</td>\n";
   }
