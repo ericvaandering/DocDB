@@ -91,9 +91,9 @@ if ($Mode eq "conference") {
     print " in $Conferences{$ConferenceID}{Location}\n";
     print " are available.<br>\n";
     if ($Conferences{$ConferenceID}{URL}) {
-      print "(<a href=\"$Conferences{$ConferenceID}{URL}\">Conference homepage</a>)\n";
+      print "(<a href=\"$Conferences{$ConferenceID}{URL}\">$MinorTopics{$TopicID}{LONG} homepage</a>)\n";
     } else {
-      print "(Conference homepage not available)\n";
+      print "(No homepage available)\n";
     }
     print "</center>\n";
   }
@@ -210,10 +210,6 @@ print "<p>\n";
 ### Statistics
 
 print "<p><b>Number of documents found: $NumDoc</b><p>\n";
-
-$EndTime  = new Benchmark;
-$TimeDiff = timediff($EndTime,$StartTime);
-print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
 
 ### Special stuff if this is the current meeting
 

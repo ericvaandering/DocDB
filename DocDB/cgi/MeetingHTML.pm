@@ -211,7 +211,7 @@ sub SessionSeparator ($) {
   } elsif ($SessionSeparatorDefault eq "No") {
     print "No\n";	      
   } else {
-    print $query -> checkbox(-name => "sessionseparator", -value => "$MeetingOrderID", -label => 'Yes');
+    print $query -> checkbox(-name => "sessionseparator", -value => "$MeetingOrderID", -label => 'Break');
   }
 }
 
@@ -377,9 +377,6 @@ sub PrintSessionHeader ($) {
   print " at ";
   print &EuroTimeHM($Sessions{$SessionID}{StartTime});
   print "</b>\n";
-  if ($Sessions{$SessionID}{Description}) {
-    print "<br> $Sessions{$SessionID}{Description}\n";
-  }
   if ($Sessions{$SessionID}{Location}) {
     print "<br> Location: $Sessions{$SessionID}{Location}\n";
   }
@@ -387,16 +384,26 @@ sub PrintSessionHeader ($) {
     print "<br>(<a href=\"$DocumentAddForm?sessionid=$SessionID\">Upload a document</a> ".
           "or <a href=\"$SessionModify?sessionid=$SessionID\">update the agenda</a> for this session)\n";
   }
+  if ($Sessions{$SessionID}{Description}) {
+    my $Description = $Sessions{$SessionID}{Description};
+    $Description =~ s/\n\s*\n/<p>/;
+    $Description =~ s/\n/<br>/;
+    
+    print "<p> ",&URLify($Description),"\n";
+  }
   print "<p></center> \n";
 }
 
-sub PrintMeetingInfo($;$) {
-  my ($ConferenceID,$IsSingle) = @_;
+sub PrintMeetingInfo($;%) {
+  my ($ConferenceID,%Params) = @_;
 
   require "Utilities.pm";
 
-  my $AddTalkLink = $IsSingle; # FIXME: May want to make these 
-  my $AddNavBar   = $IsSingle; # parameters in a hash
+  my $AddTalkLink = $Params{-talklink} || "";	     # short, long, full
+  my $AddNavBar   = $Params{-navbar}   || "";		  # Any non-null text is "true"
+
+#  my $AddTalkLink = $IsSingle; # FIXME: May want to make these 
+#  my $AddNavBar   = $IsSingle; # parameters in a hash
 
   print "<center><b><big> \n";
   print "<a href=\"$DisplayMeeting?conferenceid=$ConferenceID\">$Conferences{$ConferenceID}{Title}</a>\n";
@@ -412,11 +419,11 @@ sub PrintMeetingInfo($;$) {
 
   if ($Conferences{$ConferenceID}{URL}) {
     print "<br>\n";
-    print "(<a href=\"$Conferences{$ConferenceID}{URL}\">Conference homepage</a>)\n";
+    print "(<a href=\"$Conferences{$ConferenceID}{URL}\">$Conferences{$ConferenceID}{Title} homepage</a>)\n";
   }
   
   if ($AddNavBar) {
-    print "<br>\n";
+    print "<p>\n";
     my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
     @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
     foreach $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks

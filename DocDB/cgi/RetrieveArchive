@@ -24,14 +24,14 @@ $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
 
-@error_stack = ();
-@warn_stack  = ();
+@ErrorStack = ();
+@WarnStack  = ();
 
 my $Type       = $params{type} ;
 my $DocumentID = $params{docid};
 
 unless ($DocumentID) {
-  push @error_stack,"You are must supply a document number!";
+  push @ErrorStack,"You are must supply a document number!";
 }  
 
 unless ($Type eq "zip" || $Type eq "tar.gz" || $Type eq ".tar") {
@@ -49,23 +49,23 @@ if (defined $params{version}) {
 }
 
 unless (&CanAccess($DocumentID,$Version)) {
-  push @error_stack,"You are not authorized to view this document.";
+  push @ErrorStack,"You are not authorized to view this document.";
 }  
 
 if ($Type eq "zip" && !$Zip) {
-  push @error_stack,"You asked for a type of archive this system can't produce.";
+  push @ErrorStack,"You asked for a type of archive this system can't produce.";
 }
 
 my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 
 unless ($DocRevID) {
-  push @error_stack,"This document does not exist.";
+  push @ErrorStack,"This document does not exist.";
 }
 
 my $URL;       
 my $Status;
 
-unless (@error_stack) { 
+unless (@ErrorStack) { 
   my $Directory = &GetDirectory($DocumentID,$Version);
   my $URLDir    = &GetURLDir($DocumentID,$Version);
 
@@ -97,11 +97,11 @@ unless (@error_stack) {
 }
   
 if ($Status) {
-  push @error_stack,"There was a problem creating the archive. Please contact an
+  push @ErrorStack,"There was a problem creating the archive. Please contact an
                      administrator.";
 }
 
-if (@error_stack) {
+if (@ErrorStack) {
   print $query->header;
 } else {
   print $query -> redirect(-location => $URL, -method => 'GET');
@@ -109,12 +109,12 @@ if (@error_stack) {
 
 &DocDBHeader("File Retrieve Results"); 
 
-if (@warn_stack) {
-  &WarnPage(@warn_stack);
-  @warn_stack = ();
+if (@WarnStack) {
+  &WarnPage(@WarnStack);
+  @WarnStack = ();
 }
-if (@error_stack) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@error_stack);
+if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@ErrorStack);
 }
 
 &DocDBNavBar;

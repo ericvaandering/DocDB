@@ -74,7 +74,7 @@ print "<hr><p>\n";
 
 print "<a name=\"keywd\"><center><h4>Administer Keywords</h4></center>\n";
 
-print $query -> start_multipart_form('POST',"KeywordListAdminister");
+print $query -> start_multipart_form('POST',"$KeywordListAdminister");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
@@ -113,7 +113,7 @@ print "<p><hr>\n";
 
 print "<a name=\"keygroup\"><center><h4>Administer Keyword Groups</h4></center>\n";
 
-print $query -> start_multipart_form('POST',"KeywordGroupAdminister");
+print $query -> start_multipart_form('POST',"$KeywordGroupAdminister");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";

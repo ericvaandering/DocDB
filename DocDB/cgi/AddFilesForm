@@ -6,6 +6,24 @@
 #    Modified: 
 #
 
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
 use CGI;
 use DBI;
 
@@ -42,10 +60,10 @@ print $query->header;
 &DocDBHeader("File Addition");
 &HelpPopupScript;
 
-@error_stack = ();
+@ErrorStack = ();
 
 unless ($DocumentID) {
-  push @error_stack,"You are must supply a document number.";
+  push @ErrorStack,"You are must supply a document number.";
 }  
   
 &FetchDocument($DocumentID);
@@ -63,19 +81,19 @@ my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 
 my $UpdateLink = $DocumentAddForm."?mode=update&docid=$DocumentID";
 unless (&CanModify($DocumentID,$Version)) {
-  push @error_stack,"You are not authorized to modify this document.";
+  push @ErrorStack,"You are not authorized to modify this document.";
 }  
 unless ($DocRevID) {
-  push @error_stack,"This document does not exist.";
+  push @ErrorStack,"This document does not exist.";
 }
 unless ($Version) {
-  push @error_stack,"You cannot add files to a document that has only been
+  push @ErrorStack,"You cannot add files to a document that has only been
   reserved. <a href=\"$UpdateLink\">Create a new version</a> instead. ";
 }
 
 
-if ((@error_stack)) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@error_stack);
+if ((@ErrorStack)) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@ErrorStack);
 }
 
 print "<center><p>\n";  

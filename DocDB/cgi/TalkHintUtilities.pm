@@ -208,6 +208,9 @@ sub FuzzyStringMatch ($$) {
   
   my ($String1,$String2) = @_;
   
+  $String1 =~ s/\W//g; # FIXME: Should be better way to ignore ()'s
+  $String2 =~ s/\W//g;
+ 
   $String1 =~ tr/[A-Z]/[a-z]/;
   $String2 =~ tr/[A-Z]/[a-z]/;
   
@@ -219,7 +222,6 @@ sub FuzzyStringMatch ($$) {
   
   my $Matches = 0;
   foreach my $Word (@Words1) {
-    $Word =~ s/\W//;
     my $WordLength = length $Word;
     if ($WordLength < 4) {next;}
     if (grep /$Word/,@Words2) {

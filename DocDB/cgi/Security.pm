@@ -223,8 +223,10 @@ sub CanCreateMeeting {
 }  
 
 sub LastAccess { # Highest version user can access (with current security)
+  require "DocumentSQL.pm";
   my ($DocumentID) = @_;
   my $Version = -1;
+  &FetchDocument($DocumentID);
   my $tryver = $Documents{$DocumentID}{NVersions};
   while ($Version == -1 && $tryver <=> -1) {
     if (&CanAccess($DocumentID,$tryver)) {$Version = $tryver;}

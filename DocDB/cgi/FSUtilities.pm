@@ -204,7 +204,7 @@ sub ProcessURL($$) {
   close OUTFILE;
 
   unless (-s "$new_dir/$short_file") {
-    push @warn_stack,"The file $short_file did not exist or was blank.";
+    push @WarnStack,"The file $short_file did not exist or was blank.";
   }  
   
   return $short_file;
@@ -227,7 +227,7 @@ sub ProcessUpload($$) {
   close OUTFILE;
   
   unless (-s "$new_dir/$short_file") {
-    push @warn_stack,"The file $short_file did not exist or was blank.";
+    push @WarnStack,"The file $short_file did not exist or was blank.";
   }  
   
   return $short_file;
@@ -247,10 +247,10 @@ sub ProcessArchive($$) {
       push @Descriptions,$params{filedesc};
       push @Roots,"on";
     } else {
-      push @warn_stack,"The main file $main_file did not exist or was blank.";
+      push @WarnStack,"The main file $main_file did not exist or was blank.";
     }
   } else {
-    push @warn_stack,"The archive file $short_file did not exist or was blank.";
+    push @WarnStack,"The archive file $short_file did not exist or was blank.";
   }
   
   return $status;

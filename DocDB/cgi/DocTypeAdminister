@@ -22,9 +22,6 @@ require "Messages.pm";
 
 $query = new CGI;  # Global for subroutines
 
-print $query->header;
-&DocDBHeader("Modified List of Document Types");
-
 %params = $query -> Vars;
 
 @ErrorStack = ();
@@ -46,6 +43,9 @@ unless ($dbh) {
   push @ErrorStack,$Msg_AdminNoConnect;
 }         
 &EndPage(@ErrorStack);
+
+print $query->header;
+&DocDBHeader("Modified List of Document Types");
 
 unless (&CanAdminister) {
   push @ErrorStack,$Msg_AdminNoLogin;

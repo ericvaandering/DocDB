@@ -27,7 +27,7 @@ print $query->header;
 
 &HelpPopupScript;
 
-print $query -> start_multipart_form('POST',"TopicAdd");
+print $query -> start_multipart_form('POST',"$TopicAdd");
 
 print "<center><table cellpadding=10>\n";
 

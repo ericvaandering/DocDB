@@ -1,7 +1,28 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+# Description: Adds downloaded files to the database and filesystem
 #
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 
 use Benchmark;
 use CGI;
@@ -33,8 +54,8 @@ print $query->header;
 
 ### Check parameters for errors
 
-@error_stack = ();
-@warn_stack  = ();
+@ErrorStack = ();
+@WarnStack  = ();
 
 ### Get document and revision ID
 
@@ -52,13 +73,13 @@ my $DocRevID;
 if ($DocumentID && $Version) {
   $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   unless ($DocRevID) {
-    push @error_stack,"No such document exists.";
+    push @ErrorStack,"No such document exists.";
   }
   unless (&CanModify($DocumentID,$Version)) {
-    push @error_stack,"You are not authorized to modify this document.";
+    push @ErrorStack,"You are not authorized to modify this document.";
   }
 } else {
-  push @error_stack,"You must supply document and version numbers to add files.";
+  push @ErrorStack,"You must supply document and version numbers to add files.";
 }
 
 my $UpdateLink = $DocumentAddForm."?mode=update&docid=$DocumentID";
@@ -66,10 +87,10 @@ my $UpdateLink = $DocumentAddForm."?mode=update&docid=$DocumentID";
 # FIXME: Is the user authorized to make changes to this document
 
 unless ($params{single_upload} || $params{single_http}) {
-  push @error_stack,"You must supply a file for this document.";
+  push @ErrorStack,"You must supply a file for this document.";
 }
 if     ($params{single_upload} && $params{single_http}) {
-  push @error_stack,"You may not specify both URL and file upload.";
+  push @ErrorStack,"You may not specify both URL and file upload.";
 }
 
 ### Do the files to be added already exist?
@@ -79,10 +100,10 @@ if ($params{single_upload}) {
   foreach my $short_file (@short_files) {
     if (&ExistsUpload($DocRevID,$short_file)) {
       if ($Replace) {
-        push @warn_stack,"The file $short_file already existed and has been
+        push @WarnStack,"The file $short_file already existed and has been
                           replaced with a new version.";
       } else {
-        push @error_stack,"The file $short_file already exists. 
+        push @ErrorStack,"The file $short_file already exists. 
          You may not add files with the same file name.<br>
          You probably want to <a href=\"$UpdateLink\">update</a> your document, 
          not add files.";
@@ -103,10 +124,10 @@ if ($params{single_http}) {
   foreach my $url (@urls) {
     if (&ExistsURL($DocRevID,$url)) {
       if ($Replace) {
-        push @warn_stack,"The file $short_file already existed and has been
+        push @WarnStack,"The file $short_file already existed and has been
                           replaced with a new version.";
       } else {
-        push @error_stack,"The file $short_file already exists. 
+        push @ErrorStack,"The file $short_file already exists. 
          You may not add files with the same file name.<br>
          You probably want to <a href=\"$UpdateLink\">update</a> your document, 
          not add files.";
@@ -116,10 +137,10 @@ if ($params{single_http}) {
       my $command = $Wget.$Authentication.$url;
       my @url_lines = `$command`;  # FIXME: avoid fetching twice 
       unless (@url_lines) {
-        push @error_stack,"The URL <tt>$url</tt> was not present or was protected.";
+        push @ErrorStack,"The URL <tt>$url</tt> was not present or was protected.";
       }
     } else {
-      push @error_stack,"The URL <tt>$url</tt> is not well formed. Don't forget ".
+      push @ErrorStack,"The URL <tt>$url</tt> is not well formed. Don't forget ".
                         "http:// on the front and a file name after the last /.";
     }
   }  
@@ -127,8 +148,8 @@ if ($params{single_http}) {
 
 ### Abort if there were errors
 
-if ((@error_stack)) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@error_stack);
+if ((@ErrorStack)) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@ErrorStack);
 }
 
 ### Put files in filesystem
@@ -183,9 +204,9 @@ foreach $short_file (@short_files) {
 
 ### If we had any warnings print them out now
 
-if (@warn_stack) {
-  &WarnPage(@warn_stack);
-  @warn_stack = ();
+if (@WarnStack) {
+  &WarnPage(@WarnStack);
+  @WarnStack = ();
 }
 
 %DocFiles = (); @Files    = (); # Files DB not in sync, clear it
@@ -205,10 +226,6 @@ print "You were successful in adding files. Your entry now contains
        the following information: <p>\n"; 
 
 &PrintRevisionInfo($DocRevID);
-
-$EndTime  = new Benchmark;
-$TimeDiff = timediff($EndTime,$StartTime);
-print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
 
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
