@@ -32,10 +32,10 @@ sub GetEmailUserIDs {
 
 sub FetchEmailUser($) {
   my ($eMailUserID) = @_;
-  my ($EmailUserID,$Username,$Password,$Name,$EmailAddress,$PreferHTML);
+  my ($EmailUserID,$Username,$Password,$Name,$EmailAddress,$PreferHTML,$CanSign);
 
   my $UserFetch   = $dbh -> prepare(
-    "select EmailUserID,Username,Password,Name,EmailAddress,PreferHTML ".
+    "select EmailUserID,Username,Password,Name,EmailAddress,PreferHTML,CanSign ".
     "from EmailUser where EmailUserID=?");
   
   if ($EmailUser{$eMailUserID}{EmailUserID}) {
@@ -44,7 +44,7 @@ sub FetchEmailUser($) {
   
   $UserFetch -> execute($eMailUserID);
   
-  ($EmailUserID,$Username,$Password,$Name,$EmailAddress,$PreferHTML) = $UserFetch -> fetchrow_array;
+  ($EmailUserID,$Username,$Password,$Name,$EmailAddress,$PreferHTML,$CanSign) = $UserFetch -> fetchrow_array;
   
   $EmailUser{$EmailUserID}{EmailUserID}  = $EmailUserID;
   $EmailUser{$EmailUserID}{Username}     = $Username;
@@ -52,6 +52,7 @@ sub FetchEmailUser($) {
   $EmailUser{$EmailUserID}{Name}         = $Name;
   $EmailUser{$EmailUserID}{EmailAddress} = $EmailAddress;
   $EmailUser{$EmailUserID}{PreferHTML}   = $PreferHTML;
+  $EmailUser{$EmailUserID}{CanSign}      = $CanSign;
   
   return $EmailUser{$EmailUserID}{EmailUserID};
 }
