@@ -37,7 +37,13 @@ sub PrintSessionTalk($) {
 
   &FetchDocument($DocumentID);
   my $Version = $Documents{$DocumentID}{NVersions};
-  unless (&CanAccess($DocumentID,$Version)) {return;}
+  unless (&CanAccess($DocumentID,$Version)) {
+    print "<tr valign=top>\n";
+    print "<td align=right><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";  
+    print "<td colspan=6>Not authorized to view</td>\n";
+    print "</tr>\n";
+    return;
+  }
   
   my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   my $AuthorLink = &FirstAuthor($DocRevID); 
@@ -237,7 +243,7 @@ sub TalkSeparator ($) {
     print "No\n";	      
   } else {
     $query -> param('talkseparator', "");
-    print $query -> checkbox(-name => "talkseparator", -value => "$SessionOrderID", -label => 'Yes');
+    print $query -> checkbox(-name => "talkseparator", -value => "$SessionOrderID", -label => 'Break');
   }
 }
 

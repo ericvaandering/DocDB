@@ -28,9 +28,9 @@ require "Sorts.pm";
 &GetOptions("u:s" => \$UserName);
 $remote_user = $UserName;
 
-&DocDBHeader("$Project Document List","Document List");
-
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+&DocDBHeader("$Project Document List","Document List");
 
 &GetAuthors;
 &GetSecurityGroups;

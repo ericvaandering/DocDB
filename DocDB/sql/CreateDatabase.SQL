@@ -817,6 +817,5 @@ CREATE TABLE TopicHint (
 -- This file made by "mysqldump -u docdbadm -p BTeVDocDB | grep -v "INSERT INTO" " and then adding the last 4 lines
 -- Set up the DocDB adminstrator account. Everything else can be done in the admin interface
 
-INSERT INTO SecurityGroup () VALUES (0,'DocDBAdm','Document Database Administrators',1,1);
-
+INSERT INTO SecurityGroup (GroupID,Name,Description,CanCreate,CanAdminister) VALUES (0,'DocDBAdm','Document Database Administrators',1,1);
 
