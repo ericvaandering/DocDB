@@ -1,3 +1,11 @@
+#
+# Description: Configuration file for the DocDB. Set variables 
+#              for server names, accounts, and command paths here.
+#              This file is included in every DocDB program.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+
 # DB settings
 $db_name   = "BTeVDocDB";
 $db_host   = "btevsrv1.fnal.gov";
