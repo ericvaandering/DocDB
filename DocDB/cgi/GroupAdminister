@@ -142,7 +142,7 @@ if      ($Action eq "Delete") { # Delete group
    "insert into SecurityGroup (GroupID,Name,Description,CanCreate,CanAdminister) ".
                       "values (0,?,?,?,?)");
 
-  $GroupInsert -> execute($Name,$Description,$Create);
+  $GroupInsert -> execute($Name,$Description,$Create,$Admin);
   $ParentID = $GroupInsert -> {mysql_insertid}; # Works with MySQL only
 
   my $HierarchyInsert = $dbh->prepare(

@@ -78,11 +78,12 @@ sub DocDBNavBar {
   print "[&nbsp;<a href=\"$ListTopics\">List&nbsp;Topics</a>&nbsp;]\n";
   unless ($Public) {
     print "[&nbsp;<a href=\"$HelpFile\">Help</a>&nbsp;]\n";
+    print "[&nbsp;<a href=\"logout/LogOut\">Log Out</a>&nbsp;]\n";
   } 
   print "</div>\n";
 }
 
-sub ProjectReferenceLink ($$$$) {
+sub ProjectReferenceLink (;$$$$) {
   my ($Acronym,$Volume,$Page,$ReferenceID) = @_;
 
 # This routine is used to add links to and optionally replace the text of 
