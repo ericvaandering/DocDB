@@ -55,7 +55,7 @@ print "<b>Name:</b></a>\n";
 
 print "<td>\n";
  print "<table cellpadding=3><tr><td>\n";
- $RequesterDefault = ($AuthorIDPref);
+ $RequesterDefault = $AuthorIDPref;
  &RequesterSelect;
  print "<tr><td align=right valign=bottom>\n";
  print "</table>\n";
