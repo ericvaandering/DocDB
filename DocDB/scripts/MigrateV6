@@ -69,6 +69,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
 
 if ($Action eq "migrate") {
   require "NotificationSQL.pm";
+  require "SecuritySQL.pm"; 
   if ($VerifyAllUsers) {
     my $EmailUserUpdate  = $dbh -> prepare("update EmailUser set Verified=1 where EmailUserID>0"); 
     $EmailUserUpdate -> execute();
