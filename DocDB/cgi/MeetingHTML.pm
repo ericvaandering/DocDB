@@ -34,8 +34,8 @@ sub ConferenceEpilogueBox {
                             -columns => 50, -rows => 5);
 };
 
-sub SessionEntryForm (;@) {
-  my @SessionIDs = @_; # Or do I need to dereference?
+sub SessionEntryForm (@) {
+  my @MeetingOrderIDs = @_; # Or do I need to dereference?
   require "Scripts.pm";
   print "<b><a ";
   &HelpLink("sessions");
@@ -52,39 +52,69 @@ sub SessionEntryForm (;@) {
   # Sort session IDs by order
   
   my $ExtraSessions = $InitialSessions;
-  if (@SessionIDs) { $ExtraSessions = 1; }
+  if (@MeetingOrderIDs) { $ExtraSessions = 1; }
   for (my $Session=1;$Session<=$ExtraSessions;++$Session) {
-    push @SessionIDs,0;
+    push @MeetingOrderIDs,"n$Session";
   }
   
   my $SessionOrder = 0;
-  foreach $SessionID (@SessionIDs) {
+  foreach $MeetingOrderID (@MeetingOrderIDs) {
     ++$SessionOrder;
-    if ($SessionID) { # Set defaults
-      $SessionDefaultDateTime = $Sessions{$SessionID}{StartTime};
-      $SessionDefaultTitle    = $Sessions{$SessionID}{Title};
-      $SessionDefaultTitle    = $Sessions{$SessionID}{Description};
-    } else { # Erase defaults
-      $SessionID = "n$SessionOrder";
-      $SessionDefaultDateTime = "";
-      $SessionDefaultTitle    = "";
-      $SessionDefaultTitle    = "";
-    }   
+    if (grep /n/,$MeetingOrderID) {# Erase defaults
+      $SessionDefaultDateTime    = "";
+      $SessionDefaultTitle       = "";
+      $SessionDefaultDescription = "";
+      $SessionSeparartorDefault = "";
+    } else { # Key off Meeting Order IDs, do differently for Sessions and Separators
+      if ($MeetingOrders{$MeetingOrderID}{SessionID}) {
+        my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
+	$SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
+	$SessionDefaultTitle       = $Sessions{$SessionID}{Title};
+	$SessionDefaultDescription = $Sessions{$SessionID}{Description};
+	$SessionSeparartorDefault = "No";
+      } elsif ($MeetingOrders{$MeetingOrderID}{SessionSeparatorID}) {
+        my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
+	$SessionDefaultDateTime    = $Sessions{$SessionSeparatorID}{StartTime};
+	$SessionDefaultTitle       = $Sessions{$SessionSeparatorID}{Title};
+	$SessionDefaultDescription = $Sessions{$SessionSeparatorID}{Description};
+	$SessionSeparartorDefault = "Yes";
+      }
+    } 
+    $SessionOrderDefault = $SessionOrder;  
+    
     print "<tr valign=top>\n";
-    print "<td align=center>\n"; &SessionOrder($SessionOrder) ; print "</td>\n";
-    print "<td align=center>\n"; &SessionSeparator($SessionID) ; print "</td>\n";
+    print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
+    print "<td align=center>\n"; &SessionOrder; print "</td>\n";
+    print "<td align=center>\n"; &SessionSeparator($MeetingOrderID) ; print "</td>\n";
     print "<td>\n"; &SessionDateTimePullDown; print "</td>\n";
     print "<td>\n"; &SessionTitle;            print "</td>\n";
     print "<td>\n"; &SessionDescription;      print "</td>\n";
+    print "<td align=center>\n"; &SessionDelete($MeetingOrderID) ; print "</td>\n";
     print "</tr>\n";
   }
   print "</table>\n";
 }
 
 sub SessionDateTimePullDown {
-  my (undef,undef,undef,$day,$mon,$year) = localtime(time);
-  $year += 1900;
-  
+  my $DefaultYear,$DefaultMonth,$DefaultDay,$DefaultHour;
+  if ($SessionDefaultDateTime) {
+    my ($Date,$Time) = split /\s+/,$SessionDefaultDateTime;
+    my ($Year,$Month,$Day) = split /-/,$Date;
+    my ($Hour,$Minute,undef) = split /:/,$Time;
+    $Time = "$Hour:$Minute";
+    $DefaultYear  = $Year;
+    $DefaultMonth = $Month;
+    $DefaultDay   = $Day;
+    $DefaultHour  = $Time;
+  } else {
+    my (undef,undef,undef,$Day,$Month,$Year) = localtime(time);
+    $year += 1900;
+    $DefaultYear  = $Year;
+    $DefaultMonth = $Month;
+    $DefaultDay   = $Day;
+    $DefaultHour  = "09:00";
+  }  
+   
   my @days = ();
   for ($i = 1; $i<=31; ++$i) {
     push @days,$i;
@@ -104,24 +134,42 @@ sub SessionDateTimePullDown {
     }  
   }  
 
-  print $query -> popup_menu (-name => 'sessionday',  -values => \@days,  -default => $day);
-  print $query -> popup_menu (-name => 'sessionmonth',-values => \@months,-default => $AbrvMonths[$mon]);
-  print $query -> popup_menu (-name => 'sessionyear', -values => \@years, -default => $year);
+  print $query -> popup_menu (-name => 'sessionday',  -values => \@days,  -default => $DefaultDay);
+  print $query -> popup_menu (-name => 'sessionmonth',-values => \@months,-default => $AbrvMonths[$DefaultMonth]);
+  print $query -> popup_menu (-name => 'sessionyear', -values => \@years, -default => $DefaultYear);
   print "<b> - </b>\n";
-  print $query -> popup_menu (-name => 'sessionhour', -values => \@hours, -default => $hour);
+  print $query -> popup_menu (-name => 'sessionhour', -values => \@hours, -default => $DefaultHour);
 }
 
-sub SessionOrder ($) {
-  my ($SessionOrderDefault) = @_;
+sub SessionOrder {
   print $query -> textfield (-name => 'sessionorder', -default => $SessionOrderDefault, 
-                             -size => 3, -maxlength => 4);
+                             -size => 4, -maxlength => 5);
 }
 
 sub SessionSeparator ($) {
-  my ($Order) = @_;
-#  print $query -> checkbox(-name => "separator", -value => $Order, -checked => 'checked', -label => '');
-  print $query -> checkbox(-name => "sessionseparator", -value => "$Order", -label =>
-  'Yes');
+  my ($MeetingOrderID) = @_;
+
+  if ($SessionSeparatorDefault eq "Yes") {
+    # May not be needed, MeetingOrderID should tell me.
+    print $query -> hidden(-name => 'sessiontype', -default => 'Separator');
+    print "Yes\n";	      
+  } elsif ($SessionSeparatorDefault eq "No") {
+    print $query -> hidden(-name => 'sessiontype', -default => 'Session');
+    print "No\n";	      
+  } else {
+    print $query -> hidden(-name => 'sessiontype', -default => 'Open');
+    print $query -> checkbox(-name => "sessionseparator", -value => "$MeetingOrderID", -label => 'Yes');
+  }
+}
+
+sub SessionDelete ($) {
+  my ($MeetingOrderID) = @_;
+
+  if ($SessionSeparatorDefault) {
+    print "&nbsp\n";
+  } else {
+    print $query -> checkbox(-name => "sessiondelete", -value => "$MeetingOrderID", -label => 'Yes');
+  }
 }
 
 sub SessionTitle {

@@ -44,23 +44,25 @@ my $MeetEpilogue       = $params{meetepilogue};
 my $Location           = $params{location};
 my $URL                = $params{url};
 
-my $SessionYear        = $params{sessionyear};
-my $SessionMonth       = $params{sessionmonth};
-my $SessionDay         = $params{sessionday};
-my $SessionHour        = $params{sessionhour};
-my $SessionOrder       = $params{sessionorder};
-my $SessionSeparator   = $params{sessionseparator};
-my $SessionTitle       = $params{sessiontitle};
-my $SessionDescription = $params{sessiondescription};
+#my $SessionYear        = $params{sessionyear};
+#my $SessionMonth       = $params{sessionmonth};
+#my $SessionDay         = $params{sessionday};
+#my $SessionHour        = $params{sessionhour};
+#my $SessionOrder       = $params{sessionorder};
+#my $SessionSeparator   = $params{sessionseparator};
+#my $SessionTitle       = $params{sessiontitle};
+#my $SessionDescription = $params{sessiondescription};
 
-my @SessionYears         = split /\0/,$SessionYear       ;
-my @SessionMonths        = split /\0/,$SessionMonth      ;
-my @SessionDays          = split /\0/,$SessionDay        ;
-my @SessionHours         = split /\0/,$SessionHour       ;
-my @SessionOrders        = split /\0/,$SessionOrder      ;
-my @RawSessionSeparators = split /\0/,$SessionSeparator         ;
-my @SessionTitles        = split /\0/,$SessionTitle      ;
-my @SessionDescriptions  = split /\0/,$SessionDescription;
+my @SessionYears         = split /\0/,$params{sessionyear};
+my @SessionMonths        = split /\0/,$params{sessionmonth};
+my @SessionDays          = split /\0/,$params{sessionday};
+my @SessionHours         = split /\0/,$params{sessionhour};
+my @SessionOrders        = split /\0/,$params{sessionorder};
+my @RawSessionSeparators = split /\0/,$params{sessionseparator};
+my @SessionTitles        = split /\0/,$params{sessiontitle};
+my @SessionDescriptions  = split /\0/,$params{sessiondescription};
+my @MeetingOrderIDs      = split /\0/,$params{meetingorderid};
+my @SessionTypes         = split /\0/,$params{sessiontype};
 
 my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
 my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
@@ -165,13 +167,15 @@ if ($Mode eq "create") {
     my $SessionSeparator   = shift @SessionSeparators    ;
     my $SessionTitle       = shift @SessionTitles        ;
     my $SessionDescription = shift @SessionDescriptions  ;
+    my $MeetingOrderID     = shift @MeetingOrderIDs ;
     my $SessionNewOrder    = $SessionOrders{$SessionOrder};
     my $SessionDate        = "$SessionYear-$ReverseAbrvMonth{$SessionMonth}-$SessionDay $SessionHour:00";
-  
-  
+
     my $SessionSeparatorID = 0;
     my $SessionID          = 0;
-    
+
+    # Key on MeetingOrderID to see if we are going to insert or update.	
+
     if ($SessionSeparator || $SessionTitle || $SessionDescription) {
       ++$SessionsCreated;
       if ($SessionSeparator) {
