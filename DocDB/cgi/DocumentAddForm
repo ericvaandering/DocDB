@@ -120,7 +120,13 @@ print $query -> hidden(-name => 'mode',    -default => $mode);
 print $query -> hidden(-name => 'upload',  -default => 'file');
 print $query -> hidden(-name => 'archive', -default => 'single');
 print $query -> hidden(-name => 'docid',   -default => $DocumentID);
-print $query -> hidden(-name => 'overdate',-default => '');
+
+if ($Overdate eq "Yes") {
+  print $query -> hidden(-name => 'overdate',-default => 'Yes');
+} else {
+  print $query -> hidden(-name => 'overdate',-default => '');
+}  
+
 print $query -> hidden(-name => 'special',-default => '');
 
 print "<center><table cellpadding=10>\n";
