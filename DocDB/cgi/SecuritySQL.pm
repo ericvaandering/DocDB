@@ -10,6 +10,7 @@ sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with 
     $SecurityGroups{$GroupID}{NAME}        = $Name;
     $SecurityGroups{$GroupID}{DESCRIPTION} = $Description;
     $SecurityGroups{$GroupID}{TIMESTAMP}   = $Timestamp;
+    $SecurityIDs{$Name} = $GroupID;
   }
   
   my ($HierarchyID,$ChildID,$ParentID);
@@ -24,28 +25,6 @@ sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with 
     $GroupsHierarchy{$HierarchyID}{PARENT}    = $ParentID;
     $GroupsHierarchy{$HierarchyID}{TIMESTAMP} = $Timestamp;
   }
-}
-
-sub ObsFetchSecurityGroup { # FIXME remove entire routine. Not used
-  my ($groupID) = @_;
-  my ($GroupID,$Name,$Description,$Timestamp);
-
-  my $security_fetch  = $dbh -> prepare(
-     "select GroupID,Name,Description,Timestamp ". 
-     "from SecurityGroup ". 
-     "where GroupID=?");
-  if ($SecurityGroups{$groupID}{GROUPID}) { # We already have this one
-    return $SecurityGroups{$groupID}{GROUPID};
-  }
-  
-  $security_fetch -> execute($groupID);
-  ($GroupID,$Name,$Description,$Timestamp) = $security_fetch -> fetchrow_array;
-  $SecurityGroups{$GroupID}{GROUPID}     = $GroupID;
-  $SecurityGroups{$GroupID}{NAME}        = $Name;
-  $SecurityGroups{$GroupID}{DESCRIPTION} = $Description;
-  $SecurityGroups{$GroupID}{TIMESTAMP}   = $Timestamp;
-  
-  return $SecurityGroups{$GroupID}{GROUPID};
 }
 
 sub GetRevisionSecurityGroups {
