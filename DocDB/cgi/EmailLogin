@@ -13,7 +13,7 @@ require "EmailSecurity.pm";
 $query = new CGI;  # Global for subroutines
 
 print $query->header;
-&BTeVHeader("E-mail Notification Login");
+&DocDBHeader("E-mail Notification Login");
 
 &LoginEmailUserForm;
 print "<p>\n";
@@ -22,5 +22,5 @@ print "<p>\n";
 print "<p>\n";
 
 &DocDBNavBar;
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 

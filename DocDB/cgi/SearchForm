@@ -11,7 +11,10 @@ require "FormElements.pm";
 require "SearchFormElements.pm";
 require "Scripts.pm";
 require "Sorts.pm";
-require "MySQLAccess.pm";
+require "AuthorSQL.pm";
+require "TopicSQL.pm";
+require "SecuritySQL.pm";
+require "MiscSQL.pm";
 require "ResponseElements.pm";
 require "HTMLUtilities.pm";
 
@@ -28,7 +31,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 print $query->header;
   
-&SearchHeader("BTeV Document Database Search","Document Database Search");
+&DocDBHeader("$Project Document Database Search","Document Database Search",1);
 &HelpPopupScript;
 &TopicSearchScript;
 
@@ -122,4 +125,4 @@ print "</center><p>";
 print $query -> end_multipart_form;
 
 &DocDBNavBar();
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

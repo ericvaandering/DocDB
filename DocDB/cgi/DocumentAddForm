@@ -11,7 +11,12 @@ require "Cookies.pm";
 require "FormElements.pm";
 require "Scripts.pm";
 require "Sorts.pm";
-require "MySQLAccess.pm";
+require "AuthorSQL.pm";
+require "TopicSQL.pm";
+require "SecuritySQL.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
+require "MiscSQL.pm";
 require "ResponseElements.pm";
 require "HTMLUtilities.pm";
 require "Defaults.pm";
@@ -67,11 +72,11 @@ if ($mode eq "add" || $mode eq "reserve") {
 
 print $query->header;
 if      ($mode eq "add") {
-  &BTeVHeader("BTeV Document Addition","Document Addition");
+  &DocDBHeader("$Project Document Addition","Document Addition");
 } elsif ($mode eq "reserve") {
-  &BTeVHeader("BTeV Document Reservation","Document Reservation");
+  &DocDBHeader("$Project Document Reservation","Document Reservation");
 } elsif ($mode eq "update" || $mode eq "updatedb") {
-  &BTeVHeader("BTeV Document Update","Document Update");
+  &DocDBHeader("$Project Document Update","Document Update");
 }
 &HelpPopupScript;
 
@@ -309,4 +314,4 @@ print "</center><p>";
 print $query -> end_multipart_form;
 
 &DocDBNavBar();
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -8,7 +8,10 @@ use DBI;
 
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
-require "MySQLAccess.pm";
+require "SecuritySQL.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
+require "MiscSQL.pm";
 require "FSUtilities.pm";
 require "HTMLUtilities.pm";
 require "Security.pm";
@@ -45,7 +48,7 @@ if (defined $Version && defined $AsOf) {
 
 if (@error_stack) {  # The user made one or more mistakes, warn and exit
   print $query -> header;
-  &BTeVHeader("File Retrieve Results"); 
+  &DocDBHeader("File Retrieve Results"); 
   &EndPage(@error_stack);
 }
 
@@ -68,6 +71,7 @@ if (defined $Version) {
 }
 
 unless (&CanAccess($DocumentID,$Version)) {
+ 
   push @error_stack,"You are not authorized to view this document.";
 }  
 unless ($DocRevID) {
@@ -76,7 +80,7 @@ unless ($DocRevID) {
 
 if (@error_stack) {  # The user made one or more mistakes, warn and exit
   print $query -> header;
-  &BTeVHeader("File Retrieve Results"); 
+  &DocDBHeader("File Retrieve Results"); 
   &EndPage(@error_stack);
 }
 
@@ -130,7 +134,7 @@ if ($FullURL) {
 } else {
   print $query -> header;
 }
-&BTeVHeader("File Retrieve Results"); 
+&DocDBHeader("File Retrieve Results"); 
 
 if (@warn_stack) {
   &WarnPage(@warn_stack);
@@ -143,4 +147,4 @@ if (@error_stack) {  # The user made one or more mistakes, warn and exit
 &PrintRevisionInfo($DocRevID);
 
 &DocDBNavBar;
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -7,9 +7,9 @@ use CGI;
 use DBI;
 use Time::Local;
 
-require "ResponseElements.pm";
-require "MySQLAccess.pm";
 require "DocDBGlobals.pm";
+require "ResponseElements.pm";
+require "TopicSQL.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";
 require "WebUtilities.pm";
@@ -20,10 +20,10 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 %params = $query -> Vars;
 
 print $query->header;
-&BTeVStyle("BTeV Conference Addition Results");
+&DocDBHeader("$Project Conference Addition Results");
 
 print "<p><h3>Here are the results of your attempt to add a conference
-                to the BTeV document database:</h3><p>\n";
+                to the $Project document database:</h3><p>\n";
 
 my $topic_insert = $dbh->prepare(
    "insert into MinorTopic ".
@@ -106,5 +106,5 @@ if ($MinorTopicID) {
 }
 
 &DocDBNavBar("Add&nbsp;Conference",$ConferenceAddForm);
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 

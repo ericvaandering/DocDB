@@ -21,7 +21,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetSecurityGroups;
 
 print $query->header;
-&BTeVHeader("Document Modifications");
+&DocDBHeader("Document Modifications");
 @error_stack = ();
 
 if ($Public || !&CanCreate()) {
@@ -272,5 +272,5 @@ print "</table>\n";
 print $query -> endform;
 
 &DocDBNavBar;
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 

@@ -1,6 +1,11 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+# Description: The Document Database homepage. Give the user various ways to  
+#              view documents, a link to ways to change documents, and a list 
+#              of the most recently updated documents.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
 #
 
 use CGI;                                                      
@@ -12,6 +17,9 @@ require "SecuritySQL.pm";
 require "Security.pm";
 require "Scripts.pm";
 require "ResponseElements.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
+require "Sorts.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -22,15 +30,13 @@ $RobotsMeta = "all";
 # %params = $query -> Vars;  # No parameters (yet?) 
 
 print $query->header;
-&BTeVHeader("BTeV Document Database","Document Database");
+&DocDBHeader("$Project Document Database","Document Database");
 
 &HelpPopupScript;
 
-if ($Public) {
+if ($WelcomeMessage) {
   print "<p><center><h4>\n";
-  print "Welcome to the public portion of the BTeV Document Database,<br>
-         the repository for all BTeV public talks, proceedings, preprints, 
-         and publications.\n";
+  print "$WelcomeMessage\n";
   print "</h4></center>\n";
 }
 
@@ -49,7 +55,7 @@ print "<li><b><a href=\"$SearchForm\">Search</a> documents</b><p>\n";
 print "<li>"; 
 print $query -> startform('POST',$ShowDocument);
 print $query -> submit (-value => "Show");
-print " <b>BTeV-doc-#</b> "; 
+print " <b>$ShortProject-doc-#</b> "; 
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 print " <b>-v</b> "; 
 print $query -> textfield(-name => "version", -size => 3, -maxlength => 3);
@@ -112,32 +118,33 @@ print "</ul>\n";
 # All
 
 print "<td>\n";
-if ($Public) {
-  print "&nbsp;\n";
-} else {
-  print "<ul>\n";
-  print "<li><a href=\"$ListDocuments\">all documents</a>";
-  print "</ul>\n";
-}
-print "</td>";
-
-print "<tr>\n";
-
-# Old number 
-
-print "<td colspan=2>\n";
 print "<ul>\n";
-if ($Public) {
-  print "<li> by old number
-        <a href=\"$web_root/Static/Public/OldDBTranslation.shtml\">like
-         BTeV-pub-year/xx</a>. \n";
-} else {
-  print "<li> by old number like
-         <a href=\"$web_root/Static/Restricted/OldDBTranslation.shtml\">BTeV-pub-year/xx</a> from the <a href=\"http://www-btev.fnal.gov/cgi-private/database/doclist.pl\">old DocDB</a>\n";
-}
+print "<li><a href=\"$web_root/Static/Lists/$remote_user/FullList.html\">all documents</a>";
 print "</ul>\n";
 print "</td>";
 
+print "</tr>\n";
+
+# Old number 
+
+if ($Project eq "BTeV") {
+  print "<tr>\n";
+  print "<td colspan=2>\n";
+  print "<ul>\n";
+  if ($Public) {
+    print "<li> by old number
+          <a href=\"$web_root/Static/Public/OldDBTranslation.shtml\">like
+           BTeV-pub-year/xx</a>. \n";
+  } else {
+    print "<li> by old number like
+           <a href=\"$web_root/Static/Restricted/OldDBTranslation.shtml\">BTeV-pub-year/xx</a> from the old DocDB\n";
+  }
+  print "</ul>\n";
+  print "</td>";
+
+  print "</tr>\n";
+}
+ 
 print "</table><p>\n";
  
 unless ($Public) {
@@ -162,14 +169,10 @@ print "</tr></table>\n";
 # Modified in last few days
 
 $Days = $HomeLastDays;
-require "DocumentSQL.pm";
-require "RevisionSQL.pm";
-require "Sorts.pm";
-require "Security.pm";
 
 my $revision_list = $dbh -> prepare(
    "select DocRevID from DocumentRevision 
-    where TO_DAYS(NOW())-TO_DAYS(Timestamp)<=?"); 
+    where TO_DAYS(NOW())-TO_DAYS(TimeStamp)<=?"); 
 
 my $document_list = $dbh -> prepare(
    "select DocumentID from DocumentRevision where DocRevID=?"); 
@@ -187,11 +190,14 @@ while ($revision_list -> fetch) {
 
 ### Get list of documents and read in the information we need from database
 
-my @DocumentIDs = keys %DocumentIDs;
-
-foreach my $DocumentID (@DocumentIDs) { # For shorter lists
+my @AllDocumentIDs = keys %DocumentIDs;
+my @DocumentIDs = ();
+foreach my $DocumentID (@AllDocumentIDs) { # For shorter lists
   &FetchDocument($DocumentID);
-  &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVER});
+  unless (&LastAccess($DocumentID) == -1) {;
+    push @DocumentIDs,$DocumentID;
+    &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVER});
+  }
 }
 
 ### Sort
@@ -201,7 +207,7 @@ foreach my $DocumentID (@DocumentIDs) { # For shorter lists
 ### Print summary information
 
 if ($#DocumentIDs >= $HomeMaxDocs) {
-  $#DocumentIDs = $HomeMaxDocs -1;
+  $#DocumentIDs = $HomeMaxDocs - 1;
   print "<hr><center><h4>Last $HomeMaxDocs documents modified
          </h4></center>\n";
 } else {  
@@ -239,5 +245,5 @@ print "<p>\n";
 }
 
 &DocDBNavBar;
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 

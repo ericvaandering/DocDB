@@ -12,7 +12,12 @@ $StartTime = new Benchmark;
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
 require "Security.pm";
-require "MySQLAccess.pm";
+
+require "AuthorSQL.pm";
+require "SecuritySQL.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
+
 require "HTMLUtilities.pm";
 require "Sorts.pm";
 
@@ -21,7 +26,7 @@ $query = new CGI;  # Global for subroutines
 ### Start HTML
 
 print $query->header;
-&BTeVHeader("BTeV Document List","Document List");
+&DocDBHeader("$Project Document List","Document List");
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
@@ -66,4 +71,4 @@ $TimeDiff = timediff($EndTime,$StartTime);
 print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
 
 &DocDBNavBar();
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -47,7 +47,7 @@ if ($UserExists) {
 # Start the page
    
 print $query->header;
-&BTeVHeader("Notification Account Creation");
+&DocDBHeader("Notification Account Creation");
 
 # Everything is OK, create the account
 
@@ -73,5 +73,5 @@ if (@error_stack) {  # The user made one or more mistakes, warn and exit
 
 
 &DocDBNavBar;
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 

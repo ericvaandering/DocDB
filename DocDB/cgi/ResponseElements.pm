@@ -1,6 +1,14 @@
-require "AuthorHTML.pm";
-require "TopicHTML.pm";
-require "FileHTML.pm";
+#
+# Description: Subroutines to provide various parts of HTML about documents
+#              and linking to other docs, etc.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+require "AuthorHTML.pm"; #FIXME: Remove, move references to correct place
+require "TopicHTML.pm";  #FIXME: Remove, move references to correct place
+require "FileHTML.pm";   #FIXME: Remove, move references to correct place
 
 sub PrintTitle {
   my ($Title) = @_;
@@ -127,6 +135,9 @@ sub SecurityListByID {
 sub PrintRevisionInfo {
 
   require "FormElements.pm";
+  require "AuthorSQL.pm";
+  require "SecuritySQL.pm";
+  require "TopicSQL.pm";
  
   my ($DocRevID,$HideButtons) = @_;
 
@@ -138,25 +149,27 @@ sub PrintRevisionInfo {
   my @TopicIDs    = &GetRevisionTopics($DocRevID);
   my @GroupIDs    = &GetRevisionSecurityGroups($DocRevID);
  
-  print "<center><table cellpadding=10>";
-  print "<tr><td colspan=6 align=center>\n";
+  print "<center><table cellpadding=10 width=95%>\n";
+  print "<tr><td colspan=3 align=center>\n";
   &PrintTitle($DocRevisions{$DocRevID}{TITLE});
   print "</td></tr>\n";
   print "<tr valign=top>";
-  print "<td colspan=2>";
+  print "<td>";
   
   print "<table>\n"; 
   &RequesterByID($Documents{$DocumentID}{REQUESTER});
   &SubmitterByID($DocRevisions{$DocRevID}{SUBMITTER});
   print "</table>\n"; 
 
-  print "<td colspan=2>"; 
+  print "<td>"; 
   &PrintDocNumber($DocRevID);
 
-  print "<td colspan=2>"; 
+  print "<td>"; 
   &ModTimes;
 
   print "</td></tr>\n";
+  print "</table>\n";
+  print "<table cellpadding=10 width=95%>\n";
   print "<tr valign=top>";
   print "<td colspan=2>"; 
   &AuthorListByID(@AuthorIDs);
@@ -187,13 +200,15 @@ sub PrintRevisionInfo {
   &PrintConfInfo(@TopicIDs);
   &PrintReferenceInfo($DocRevID);
   print "</td></tr>\n";
+  print "</table>\n";
+  print "<table cellpadding=10>\n";
   if (&CanModify($DocumentID) && !$HideButtons) {
     print "<tr valign=top>";
-    print "<td colspan=2 align=center>";
+    print "<td align=center width=33%>";
     &UpdateButton($DocumentID);
-    print "<td colspan=2 align=center>";
+    print "<td align=center width=33%>";
     &UpdateDBButton($DocumentID,$Version);
-    print "<td colspan=2 align=center>";
+    print "<td align=center width=33%>";
     &AddFilesButton($DocumentID,$Version);
     print "</td></tr>\n";
   }  
@@ -234,7 +249,7 @@ sub EndPage {  # Fatal errors, aborts page
     print "<p>\n";
   }  
   &DocDBNavBar();
-  &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+  &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
   exit;
 }
 
@@ -253,9 +268,9 @@ sub ErrorPage { # Fatal errors, continues page
 sub FullDocumentID ($;$) {
   my ($DocumentID,$Version) = @_;
   if (defined $Version) {
-    return "BTeV-doc-$DocumentID-v$Version";
+    return "$ShortProject-doc-$DocumentID-v$Version";
   } else {  
-    return "BTeV-doc-$DocumentID";
+    return "$ShortProject-doc-$DocumentID";
   }  
 }  
 
@@ -292,9 +307,9 @@ sub KeywordLink {
 sub ModTimes {
   my ($DocRevID) = @_;
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
-  $DocTime     = &EuroDate($Documents{$DocumentID}{DATE}); 
-  $RevTime     = &EuroDate($DocRevisions{$DocRevID}{DATE}); 
-  $VersionTime = &EuroDate($DocRevisions{$DocRevID}{VersionDate}); 
+  $DocTime     = &EuroDateHM($Documents{$DocumentID}{DATE}); 
+  $RevTime     = &EuroDateHM($DocRevisions{$DocRevID}{DATE}); 
+  $VersionTime = &EuroDateHM($DocRevisions{$DocRevID}{VersionDate}); 
   print "<table>\n";
   print "<tr><td align=right><b>Document Created:</b></td><td>$DocTime</td></tr>\n";
   print "<tr><td align=right><b>Contents Revised:</b></td><td>$VersionTime</td></tr>\n";
@@ -325,6 +340,19 @@ sub EuroDateTime {
                           "Jul","Aug","Sep","Oct","Nov","Dec")[$month-1].
                  " $year"; 
   return $return_date;
+}
+
+sub EuroDateHM($) {
+  my ($SQLDatetime) = @_;
+  unless ($SQLDatetime) {return "";}
+  
+  my ($Date,$Time) = split /\s+/,$SQLDatetime;
+  my ($Year,$Month,$Day) = split /\-/,$Date;
+  my ($Hour,$Min,$Sec) = split /:/,$Time;
+  $ReturnDate = "$Day ".("Jan","Feb","Mar","Apr","May","Jun",
+                          "Jul","Aug","Sep","Oct","Nov","Dec")[$Month-1].
+                " $Year, $Hour:$Min"; 
+  return $ReturnDate;
 }
 
 sub OtherVersionLinks {
@@ -431,29 +459,6 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
   } 
 }
 
-sub DocDBNavBar {
-  
-  my ($ExtraDesc,$ExtraURL) = @_;
-
-  print "<p><div align=\"center\">\n";
-  if ($ExtraDesc && $ExtraURL) {
-    print "[&nbsp;<a href=\"$ExtraURL\"l>$ExtraDesc</a>&nbsp;]&nbsp;\n";
-  } 
-  print "[&nbsp;<a href=\"$MainPage\">DocDB&nbsp;Home</a>&nbsp;]&nbsp;\n";
-  unless ($Public) {
-    print "[&nbsp;<a href=\"$DocumentAddForm?mode=add\">New</a>&nbsp;]&nbsp;\n";
-    print "[&nbsp;<a href=\"$DocumentAddForm\">Reserve</a>&nbsp;]&nbsp;\n";
-  }
-  print "[&nbsp;<a href=\"$SearchForm\">Search</a>&nbsp;]\n";
-  print "[&nbsp;<a href=\"$LastModified?days=$LastDays\">Last&nbsp;$LastDays&nbsp;Days</a>&nbsp;]\n";
-  print "[&nbsp;<a href=\"$ListAuthors\">List&nbsp;Authors</a>&nbsp;]\n";
-  print "[&nbsp;<a href=\"$ListTopics\">List&nbsp;Topics</a>&nbsp;]\n";
-  unless ($Public) {
-    print "[&nbsp;<a href=\"$HelpFile\">Help</a>&nbsp;]\n";
-  } 
-  print "</div>\n";
-}
-
 sub TypesTable {
   my $NCols = 3;
   my @TypeIDs = keys %DocumentTypes;
@@ -478,14 +483,18 @@ sub TypeLink {
   require "MiscSQL.pm";
   
   &FetchDocType($TypeID);
-  my $link;
-  $link = "<a href=$ListByType?typeid=$TypeID>";
+  my $link = "";
+  unless ($Public) {
+    $link .= "<a href=$ListByType?typeid=$TypeID>";
+  }
   if ($mode eq "short") {
     $link .= $DocumentTypes{$TypeID}{SHORT};
   } else {
     $link .= $DocumentTypes{$TypeID}{LONG};
   }
-  $link .= "</a>";
+  unless ($Public) {
+    $link .= "</a>";
+  }
   
   return $link;
 }

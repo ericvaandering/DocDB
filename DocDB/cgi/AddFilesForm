@@ -10,10 +10,15 @@ use DBI;
 $StartTime = new Benchmark;
 
 require "DocDBGlobals.pm";
-require "ResponseElements.pm";
-require "MySQLAccess.pm";
-require "HTMLUtilities.pm";
+
+require "SecuritySQL.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
+
 require "Security.pm";
+require "ResponseElements.pm";
+
+require "HTMLUtilities.pm";
 require "Scripts.pm";
 
 $query = new CGI;  # Global for subroutines
@@ -34,7 +39,7 @@ if ($Upload ne "http" && $Upload ne "file") {$Upload        = "file";}
 unless ($NumberUploads)                     {$NumberUploads = 1;}
 
 print $query->header;
-&BTeVHeader("File Addition");
+&DocDBHeader("File Addition");
 &HelpPopupScript;
 
 @error_stack = ();
@@ -121,6 +126,6 @@ print $query -> end_multipart_form;
 print "</table></center><p>";
 
 &DocDBNavBar();
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 
 exit;

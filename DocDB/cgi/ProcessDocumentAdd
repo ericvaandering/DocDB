@@ -9,14 +9,22 @@ use DBI;
 
 $StartTime = new Benchmark;
 
-require "ResponseElements.pm";
-require "MySQLAccess.pm";
 require "DocDBGlobals.pm";
-require "MailNotification.pm";
+require "ResponseElements.pm";
+require "AuthorSQL.pm";
+require "TopicSQL.pm";
+require "SecuritySQL.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
+require "MiscSQL.pm";
 require "FSUtilities.pm";
 require "WebUtilities.pm";
 require "HTMLUtilities.pm";
 require "Security.pm";
+
+if ($MailInstalled) {
+  require "MailNotification.pm";
+}
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
@@ -31,11 +39,11 @@ $mode = $params{mode};
 
 print $query->header;
 if ($mode eq "reserve") {
-  &BTeVHeader("BTeV Document Reservation Results","Document Reservation Results"); 
+  &DocDBHeader("$Project Document Reservation Results","Document Reservation Results"); 
 } elsif ($mode eq "add") {
-  &BTeVHeader("BTeV Document Addition Results","Document Addition Results"); 
+  &DocDBHeader("$Project Document Addition Results","Document Addition Results"); 
 } elsif ($mode eq "update" || $mode eq "updatedb") {
-  &BTeVHeader("BTeV Document Modification Results","Document Modification Results"); 
+  &DocDBHeader("$Project Document Modification Results","Document Modification Results"); 
 }
 
 ### Pull info out of params into local variables
@@ -92,13 +100,13 @@ if ($mode ne "add"    && $mode ne "reserve" &&
 
 if      ($mode eq "add") {
   print "<p><h3>Here are the results of your attempt to add a document
-                into the BTeV document database:</h3><p>\n";
+                into the $Project document database:</h3><p>\n";
 } elsif ($mode eq "reserve") {              
   print "<p><h3>Here are the results of your attempt to reserve a document
-                number in the BTeV document database:</h3><p>\n";
+                number in the $Project document database:</h3><p>\n";
 } elsif ($mode eq "update" || $mode eq "updatedb") {              
   print "<p><h3>Here are the results of your attempt to update a document
-                in the BTeV document database:</h3><p>\n";
+                in the $Project document database:</h3><p>\n";
 }
 
 ### Database insert templates
@@ -433,11 +441,13 @@ print "You were successful. Your Document ID is <b>$full_docid, version
 &PrintRevisionInfo($DocRevID);
 &OtherVersionLinks($documentID,$version);
 
-&MailNotices($DocRevID);
+if ($MailInstalled) {
+  &MailNotices($DocRevID);
+}
 
 $EndTime  = new Benchmark;
 $TimeDiff = timediff($EndTime,$StartTime);
 print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
 
 &DocDBNavBar();
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

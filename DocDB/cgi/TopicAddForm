@@ -8,7 +8,7 @@ use DBI;
 
 require "FormElements.pm";
 require "Scripts.pm";
-require "MySQLAccess.pm";
+require "TopicSQL.pm";
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
 require "HTMLUtilities.pm";
@@ -23,7 +23,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 # Removed updatedb mode, see note in ProcessDocumentAdd
 
 print $query->header;
-&BTeVStyle("Add Topics");
+&DocDBHeader("Add Topics");
 
 &HelpPopupScript;
 
@@ -33,7 +33,7 @@ print "<center><table cellpadding=10>\n";
 
 print "<tr>\n";
 print "<td colspan=3>\n";
-print "<h4>You are about to add a topic to the BTeV document database. This
+print "<h4>You are about to add a topic to the $Project document database. This
 function is restricted to administrators only.<br>
 If you are not an administrator,
 please stop now and ask an administrator to do this for you.<br>\n";
@@ -58,4 +58,4 @@ print "<h3>Existing Topics:</h3>\n";
 &TopicsTable;
 
 &DocDBNavBar();
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

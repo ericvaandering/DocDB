@@ -1,13 +1,19 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+# Description: Intended as a homepage for collaboration meetings. The  
+#              list of meetings is presented, along with some special links
+#              for adding talks to meetings via an abbreviated form and other
+#              collaboration specific information.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
 #
 
 use CGI;                                                                                      
 use DBI;
 
-require "MySQLAccess.pm";
 require "DocDBGlobals.pm";
+require "TopicSQL.pm";
 require "ResponseElements.pm";
 require "HTMLUtilities.pm";
 require "Sorts.pm";
@@ -18,19 +24,23 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetTopics;
 
 print $query->header;
-&BTeVHeader("Collaboration Meetings");
+&DocDBHeader("Collaboration Meetings");
 
 print "<h3>Useful links:</h3>\n";
 print "<ul>\n";
-print "<li><a href=\"http://www-btev.fnal.gov/public/hep/general/calendar/index.shtml\">Upcoming Meetings</a>\n";
+if ($Project eq "BTeV") {
+  print "<li><a href=\"http://www-btev.fnal.gov/public/hep/general/calendar/index.shtml\">Upcoming Meetings</a>\n";
+}
 print "<li><a href=\"$DocumentAddForm?special=meeting\">Submit a talk</a> for
        the upcoming or just-past  meeting\n";
-print "<li>
-       <a href=\"$HelpFile#meeting\">Instructions</a> for submitting talks and
-       <a href=\"$HelpFile#formats\">pointers</a> on document formats\n";
-print "<li> <a href=\"http://www-btev.fnal.gov/atwork/general/userinfo/meet.shtml\">Visiting Fermilab</a> for a Collaboration Meeting\n";
-print "<li><a href=\"http://www-btev.fnal.gov/internal_documents/meetings.html\">Collaboration meeting listings</a> 
-       pre-dating the Document Database\n";
+
+if ($Project eq "BTeV") {
+  print "<li>
+         <a href=\"$HelpFile#meeting\">Instructions</a> for submitting talks and
+         <a href=\"$HelpFile#formats\">pointers</a> on document formats\n";
+  print "<li> <a href=\"http://www-btev.fnal.gov/atwork/general/userinfo/meet.shtml\">Visiting Fermilab</a> for a Collaboration Meeting\n";
+}
+
 print "</ul>\n";
 
 print "<h3>Meetings in the document database:</h3>\n";
@@ -38,4 +48,4 @@ print "<h3>Meetings in the document database:</h3>\n";
 &MeetingsTable;
 
 &DocDBNavBar("Add Talk","$DocumentAddForm?special=meeting");
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

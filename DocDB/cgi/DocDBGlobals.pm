@@ -1,25 +1,22 @@
-# DB settings
-$db_name   = "BTeVDocDB";
-$db_host   = "fnsimu1.fnal.gov";
-$db_rwuser = "docdbrw";
-$db_rwpass = "hall1burt0n";
-$db_rouser = "docdbro";
-$db_ropass = "abg3n1x";
+#
+# Description: Configuration file for the DocDB. Sets default
+#              values and script names. Specific local settings are
+#              in ProjectGlobals.pm
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
 
-# Root directories and URLs
+# Optional components
 
-$file_root   = "/www/html/DocDB/";    
-$script_root = "/www/cgi-bin/DocDB/"; 
-$web_root    = "http://www-btev.fnal.gov/DocDB/";
-$cgi_root    = "http://www-btev.fnal.gov/cgi-bin/DocDB/";
-$cgi_path    = "/cgi-bin/DocDB/";
-$SSIDirectory = "/www/html/includes/";
+$MailInstalled = 1; # Is the Mailer::Mail module installed?
 
 # Shell Commands
 
-$Wget   = "/home2/btev2/ewv/bin/wget -O - --quiet ";
-$Tar    = "/fnal/ups/prod/gtools/v2_4/bin/gtar ";
-$Unzip  = "/usr/local/bin/unzip -q ";
+$Wget   = "/usr/bin/wget -O - --quiet ";
+$Tar    = "/bin/tar ";
+$Unzip  = "/usr/bin/unzip -q ";
+$Zip    = "/usr/bin/zip -q -r ";         # Comment out if not present
 
 # Useful stuff
 
@@ -36,20 +33,18 @@ $Unzip  = "/usr/local/bin/unzip -q ";
 @AbrvMonths = ("Jan","Feb","Mar","Apr","May","Jun",
                "Jul","Aug","Sep","Oct","Nov","Dec");
 
-@FullMonths = ("January","February","March","April",
-               "May","June","July","August",
-               "September","October","November","December");
+@FullMonths = ("January",  "February","March",   "April",
+               "May",      "June",    "July",    "August",
+               "September","October", "November","December");
 
 # Other Globals
 
-$remote_user = $ENV{REMOTE_USER};
-$DBWebMasterEmail = "btev-docdb\@fnal.gov";
-$DBWebMasterName  = "BTeV Document Database Administrators";
-$RobotsMeta       = "none";
+$RemoteUsername   = $ENV{REMOTE_USER};
+$remote_user      = $ENV{REMOTE_USER};
+$remote_user      =~ tr/[A-Z]/[a-z]/;
 
-$Administrator    = "docdbadm";
-$AuthUserFile     = "/www/conf/www-btev/.htpasswd";
-$MailServer       = "smtp.fnal.gov";
+$RobotsMeta       = "none";
+$htaccess         = ".htaccess";
 
 $LastDays         = 20;        # Number of days for default in LastModified
 $HomeLastDays     = 7;         # Number of days for last modified on home page
@@ -57,21 +52,13 @@ $HomeMaxDocs      = 50;        # Maximum number of documents on home page
 $MeetingWindow    = 7;         # Days before and after meeting to preselect
 $MeetingFiles     = 3;         # Number of upload boxes on meeting short form
 
-# Override settings in this file for the test DB 
-# and the publicly accessible version
+# Include project specific settings
 
-if (-e "PublicGlobals.pm") {
-  require "PublicGlobals.pm";
-}  
-
-if (-e "TestGlobals.pm") {
-  require "TestGlobals.pm";
-}  
+require "ProjectGlobals.pm";
 
 # Special files (here because they use values from above)
 
-$htaccess     = ".htaccess";
-$help_file    = $script_root."docdb.hlp";
+$help_file          = $script_root."docdb.hlp";
 
 # CGI Scripts
 

@@ -9,7 +9,9 @@ use DBI;
 
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
-require "MySQLAccess.pm";
+require "SecuritySQL.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
 require "FSUtilities.pm";
 require "HTMLUtilities.pm";
 require "Security.pm";
@@ -37,11 +39,11 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 $Version = $Documents{$DocumentID}{NVER}; # Show latest version
 
 print $query->header;
-&BTeVHeader("Confirm Delete of Document $DocumentID");
+&DocDBHeader("Confirm Delete of Document $DocumentID");
 
 unless (&CanModify($DocumentID,$Version)) { # FIXME CanAdmin function
   print "You are not authorized to modify this document.<p>\n";
-  &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+  &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
   exit;
 }  
 
@@ -49,7 +51,7 @@ my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 
 unless ($DocRevID) {
   print "This document does not exist.<p>\n";
-  &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+  &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
   exit;
 }
 
@@ -69,4 +71,4 @@ print "</center><p>";
 &PrintRevisionInfo($DocRevID,1);
 
 &DocDBNavBar;
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -6,26 +6,22 @@
 use CGI;                                                                                      
 use DBI;
 
+require "DocDBGlobals.pm";
 require "FormElements.pm";
 require "Scripts.pm";
-require "MySQLAccess.pm";
-require "DocDBGlobals.pm";
+require "AuthorSQL.pm";
 require "ResponseElements.pm";
 require "HTMLUtilities.pm";
 require "Sorts.pm";
 
 $query = new CGI;  # Global for subroutines
-$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+$dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 &GetInstitutions;
 &GetAuthors;
 
-# %params = $query -> Vars;
-
-# Removed updatedb mode, see note in ProcessDocumentAdd
- 
 print $query->header;
-&BTeVStyle("Add Authors");
+&DocDBHeader("Add Authors");
 
 &HelpPopupScript;
 
@@ -35,34 +31,29 @@ print "<center><table cellpadding=10 width=75%>\n";
 
 print "<tr>\n";
 print "<td colspan=3>\n";
-print "<b>You are about to add an author to the BTeV document database.</b>
-Ordinarily, this function is restricted to administrators only. During the
-transition period, everyone is allowed to add authors. <b>Please be careful</b>
+print "<b>You are about to add an author to the $Project document database.</b>
+Everyone is allowed to add authors. <b>Please be careful</b>
 and make sure to put the authors first name, last name, and middle initials
 (with periods) in the right place. If you make a mistake, <b><font color=red>DO
 NOT</font></b> enter the author again. Contact an  <a
-href=\"mailto:btev-docdb\@fnal.gov\">adminstrator</a> and explain the
+href=\"mailto:$DBWebMasterEmail\">adminstrator</a> and explain the
 problem.<br>\n";
-#If you are not an administrator,
-#please stop now and ask an administrator to do this for you.<br>
 
 print "<b>Click on any of the headings for help.</b>\n"; print "</td>\n";
 print "</tr><tr valign=top>\n";
-print "<td>\n"; &InstitutionSelect;     print "</td>\n";
-print "<td>\n"; &NameEntryBox;     print "</td>\n";
+print "<td>\n"; &InstitutionSelect; print "</td>\n";
+print "<td>\n"; &NameEntryBox;      print "</td>\n";
 print "</tr>\n";
 print "</table><p>\n";
 
 print $query -> submit (-value => "Add Author");
 print "</center><p>\n";
 print $query -> end_multipart_form;
-
 print "<p>\n";
-
 
 print "<h3>Existing Authors: </h3>\n";
 
 &AuthorsTable;
 
 &DocDBNavBar;
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
