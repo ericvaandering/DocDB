@@ -63,7 +63,11 @@ sub AddDocument {
                    -pubinfo     => $PubInfo,     -abstract => $Abstract,
                    -version     => 'bump',       -datetime => $DateTime,
                    -keywords    => $Keywords,    -note     => $Note);
+
+    # Deal with SessionTalkID
+
   }
+  
   if ($DocRevID) { 
     $Status     = &InsertAuthors(-docrevid  => $DocRevID, 
                                  -authorids => \@AuthorIDs);

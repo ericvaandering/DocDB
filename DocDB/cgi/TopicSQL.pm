@@ -231,4 +231,24 @@ sub MajorIsGathering {
   return $IsGathering;
 }
 
+sub InsertTopics (%) {
+  my %Params = @_;
+  
+  my $DocRevID =   $Params{-title}      || "";   
+  my @TopicIDs = @{$Params{-topicids}} || ();
+
+  my $Count = 0;
+
+  my $Insert = $dbh -> prepare("insert into RevisionTopic (RevTopicID, DocRevID, MinorTopicID) values (0,?,?)");
+                                 
+  foreach my $TopicID (@TopicIDs) {
+    if ($TopicID) {
+      $Insert -> execute($DocRevID,$TopicID);
+      ++$Count;
+    }
+  }  
+      
+  return $Count;
+}
+
 1;

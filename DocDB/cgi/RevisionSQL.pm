@@ -160,4 +160,46 @@ sub FetchRevisionsByMinorTopic {
   return @DocRevIDs;
 }
 
+sub InsertRevision {
+  
+  my %Params = @_;
+  
+  my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
+
+  my $DocumentID    = $Params{-docid}         || "";
+  my $SubmitterID   = $Params{-submitterid}   || 0;
+  my $Title         = $Params{-title}         || "";
+  my $Abstract      = $Params{-abstract}      || "";
+  my $Keywords      = $Params{-keywords}      || "";
+  my $Note          = $Params{-note}          || "";
+  my $PubInfo       = $Params{-pubinfo}       || "";
+  my $DateTime      = $Params{-datetime}      || "$Year-$Mon-$Day $Hour:$Min:$Sec";
+  my $Version       = $Params{-version}       || 0;
+  
+  if ($Version eq "bump" || $Version eq "same") {
+    &FetchDocument($DocumentID);
+    $Version = $Documents{$DocumentID}{NVersions};
+    if ($Version eq "bump") {
+      ++$Version;
+    }
+  }
+  
+  my $DocRevID = 0;
+  
+  my $Insert = $dbh -> prepare("insert into DocumentRevision ".
+     "(DocRevID, DocumentID, SubmitterID, DocumentTitle, PublicationInfo, ". 
+     " VersionNumber, Abstract, RevisionDate,Keywords,Note) ". 
+     "values (0,?,?,?,?,?,?,?,?,?)");
+  
+  if ($DocumentID) {
+    $Insert -> execute($DocumentID,$SubmitterID,$Title,$PubInfo,$Version, 
+                       $Abstract,$DateTime,$Keywords,$Note);
+                               
+    $DocRevID = $Insert -> {mysql_insertid}; # Works with MySQL only
+  }
+  
+  return $DocRevID;  
+
+}
+
 1;

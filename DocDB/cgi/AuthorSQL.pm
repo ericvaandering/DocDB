@@ -257,5 +257,24 @@ sub ProcessManualAuthors {
   return @AuthorIDs;
 }
 
+sub InsertAuthors (%) {
+  my %Params = @_;
+  
+  my $DocRevID  =   $Params{-title}      || "";   
+  my @AuthorIDs = @{$Params{-authorids}} || ();
+
+  my $Count = 0;
+
+  my $Insert = $dbh->prepare("insert into RevisionAuthor (RevAuthorID, DocRevID, AuthorID) values (0,?,?)");
+                                 
+  foreach my $AuthorID (@AuthorIDs) {
+    if ($AuthorID) {
+      $Insert -> execute($DocRevID,$AuthorID);
+      ++$Count;
+    }
+  }  
+      
+  return $Count;
+}
 
 1;

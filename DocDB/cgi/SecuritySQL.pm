@@ -143,4 +143,34 @@ sub FetchSecurityGroupByName ($) {
   return $GroupID;
 }   
   
+sub InsertSecurity (%) {
+  my %Params = @_;
+  
+  my $DocRevID =   $Params{-title}       || "";   
+  my @ViewIDs   = @{$Params{-viewids}}   || ();
+  my @ModifyIDs = @{$Params{-modifyids}} || ();
+
+  my $Count = 0;
+
+  my $ViewInsert   = $dbh->prepare("insert into RevisionSecurity (RevSecurityID, DocRevID, GroupID) values (0,?,?)");
+  my $ModifyInsert = $dbh->prepare("insert into RevisionModify   (RevModifyID,   DocRevID, GroupID) values (0,?,?)");
+                                 
+  foreach my $ViewID (@ViewIDs) {
+    if ($ViewID) {
+      $ViewInsert -> execute($DocRevID,$ViewID);
+      ++$Count;
+    }
+  }  
+      
+  foreach my $ModifyID (@ModifyIDs) {
+    if ($ModifyID) {
+      $ModifyInsert -> execute($DocRevID,$ModifyID);
+      ++$Count;
+    }
+  }  
+      
+  return $Count;
+}
+
+
 1;
