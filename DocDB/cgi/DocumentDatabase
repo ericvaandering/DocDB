@@ -25,8 +25,7 @@ print $query->header;
 print "<p><center><big><font color=red><b>Testing only! All data will be
 lost!</b></font></big></center>\n";
 
-print "<p><b><a
-href=\"http://vuhepv.phy.vanderbilt.edu/BTeV/DocDB/DocDB_Help.shtml\">Help on
+print "<p><b><a href=\"$web_root/Help/DocDB_Help.shtml\">Help on
 using</a> the database:</b>\n";
 print "<p><b>Find the information you want in the database:</b>\n";
 print "<ul>\n";

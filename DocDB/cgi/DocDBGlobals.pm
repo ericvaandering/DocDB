@@ -8,10 +8,10 @@ $db_ropass = "abg3n1x";
 
 # Root directories and URLs
 
-$file_root   = "/www/html/BTeV/DocDB/";    # Change
-$script_root = "/www/cgi-bin/BTeV/DocDB/cgi/"; # Change
-$web_root    = "http://www-btev.fnal.gov/BTeV/DocDB/";# Change
-$cgi_root    = "http://www-btev.fnal.gov/cgi-bin/BTeV/DocDB/cgi/";
+$file_root   = "/www/html/DocumentDB/";    # Change
+$script_root = "/www/cgi-bin/DocDB/cgi/"; # Change
+$web_root    = "http://www-btev.fnal.gov/DocumentDB/";# Change
+$cgi_root    = "http://www-btev.fnal.gov/cgi-bin/DocDB/cgi/";
 $SSIDirectory = "/www/html/includes/";
 
 # Shell Commands
