@@ -222,7 +222,8 @@ sub NotifySignees ($) {
   my @EmailUserIDs = &ReadySignatories($DocRevID);
 
   if (@EmailUserIDs) {
-    &MailNotices(-docrevid => $DocRevID, -type => "signature", -emailids => \@EmailUserIDs);
+    &MailNotices(-docrevid => $DocRevID, -type => "signature", 
+                 -emailids => \@EmailUserIDs);
   }
   
   if ($Status eq "Approved") {
