@@ -48,5 +48,6 @@ print "You were successful. The author you added is number <b>$AuthorID</b><br>\
 print "Add another <a href=AuthorAddForm>author</a>.<br>\n";
 print "Return to the <a href=DocumentDatabase>main page</a>.<br>\n";
 
+&DocDBNavBar;
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
 

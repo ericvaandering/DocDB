@@ -199,5 +199,6 @@ print "<li>Add an <a href=\"$AuthorAddForm\">author</a>\n";
 print "<li>Eric's <a href=\"http://www.hep.vanderbilt.edu/~vondo/btev-private/DocDB-ToDo.html\">To do list</a> for the database \n";
 print "</ul>\n";
 
+&DocDBNavBar;
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
 

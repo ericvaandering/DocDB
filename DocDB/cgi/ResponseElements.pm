@@ -1,51 +1,5 @@
-sub AuthorListByID {
-  my @AuthorIDs = @_;
-  
-  if (@AuthorIDs) {
-    print "<b>Authors:</b><br>\n";
-    print "<ul>\n";
-    foreach $AuthorID (@AuthorIDs) {
-      &FetchAuthor($AuthorID);
-      my $author_link = &AuthorLink($AuthorID);
-      print "<li> $author_link </li>\n";
-    }
-    print "</ul>\n";
-  } else {
-    print "<b>Authors:</b> none<br>\n";
-  }
-}
-
-sub RequesterByID { # Uses non HTML-4.01 <nobr> tag. 
-  my ($requesterID) = @_;
-  &FetchAuthor($requesterID);
-  
-  print "<nobr><b>Requested by:</b> ";
-  print "$Authors{$requesterID}{FULLNAME}</nobr><br>\n";
-}
-
-sub SubmitterByID { # Uses non HTML-4.01 <nobr> tag.
-  my ($requesterID) = @_;
-  &FetchAuthor($requesterID);
-  
-  print "<nobr><b>Updated by:</b> ";
-  print "$Authors{$requesterID}{FULLNAME}</nobr><br>\n";
-}
-
-sub TopicListByID {
-  my @topicIDs = @_;
-  if (@topicIDs) {
-    print "<b>Topics:</b><br>\n";
-    print "<ul>\n";
-    foreach $topicID (@topicIDs) {
-      &FetchMinorTopic($topicID);
-      my $topic_link = &TopicLink($topicID);
-      print "<li> $topic_link </li>\n";
-    }
-    print "</ul>\n";
-  } else {
-    print "<b>Topics:</b> none<br>\n";
-  }
-}
+require "AuthorHTML.pm";
+require "TopicHTML.pm";
 
 sub PrintTitle {
   my ($Title) = @_;
@@ -166,44 +120,53 @@ sub PrintRevisionInfo {
   require "FormElements.pm";
  
   my ($DocRevID) = @_;
+
   &FetchDocRevisionByID($DocRevID);
 
-  my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
-
+  my $DocumentID  = $DocRevisions{$DocRevID}{DOCID};
   my $Authors_ref = &GetRevisionAuthors($DocRevID);
   my $Topics_ref  = &GetRevisionTopics($DocRevID);
   my $Groups_ref  = &GetRevisionSecurityGroups($DocRevID);
-#  my $Files_ref  = &FetchDocFiles($DocRevID);  # FIXME: Move to FileListBy
 
   my @AuthorIDs = @{$Authors_ref};
-  my @TopicIDs = @{$Topics_ref};
-  my @GroupIDs = @{$Groups_ref};
+  my @TopicIDs  = @{$Topics_ref};
+  my @GroupIDs  = @{$Groups_ref};
  
   print "<center><table cellpadding=10>";
   print "<tr valign=top>";
+
   print "<td colspan=2 width=\"40%\">"; 
   &PrintTitle($DocRevisions{$DocRevID}{TITLE});
   &RequesterByID($Documents{$DocumentID}{REQUESTER});
   &SubmitterByID($DocRevisions{$DocRevID}{SUBMITTER});
+
   print "<td colspan=2>"; 
   &PrintDocNumber($DocRevID);
+
   print "<td colspan=2>"; 
   &ModTimes;
+
   print "<tr valign=top>";
   print "<td colspan=2>"; 
   &AuthorListByID(@AuthorIDs);
+
   print "<td colspan=2>"; 
   &TopicListByID(@TopicIDs);
+
   print "<td colspan=2>"; 
   &SecurityListByID(@GroupIDs);
+
   print "<tr valign=top>";
   print "<td colspan=3>"; 
   &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT});
+
   print "<td rowspan=2 colspan=3>"; 
   &FileListByRevID($DocRevID);
+
   print "<tr valign=top>";
   print "<td colspan=3>"; 
   &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
+
   if (&CanModify($DocumentID)) {
     print "<tr valign=top>";
     print "<td colspan=3 align=center>";
@@ -211,6 +174,7 @@ sub PrintRevisionInfo {
     print "<td colspan=3 align=center>";
     &UpdateDBButton($DocumentID);
   }  
+
   print "</table></center>\n"; 
 }
  
@@ -311,35 +275,6 @@ sub OtherVersionLinks {
   print "</center>\n";
 }
 
-sub AuthorLink {
-  my ($AuthorID) = @_;
-  
-  require "AuthorSQL.pm";
-  
-  &FetchAuthor($AuthorID);
-  my $link;
-  $link = "<a href=$ListByAuthor?authorid=$AuthorID>";
-  $link .= $Authors{$AuthorID}{FULLNAME};
-  $link .= "</a>";
-  
-  return $link;
-}
-
-sub TopicLink {
-  my ($TopicID) = @_;
-  
-  require "TopicSQL.pm";
-  
-  &FetchMinorTopic($TopicID);
-  my $link;
-  $link = "<a href=$ListByTopic?topicid=$TopicID>";
-  $link .= $MinorTopics{$TopicID}{FULL};
-  $link .= "</a>";
-  
-  return $link;
-}
-
-
 sub DocumentSummary { # One line document summary for listings
   require "MiscSQL.pm";
   
@@ -370,18 +305,15 @@ sub DocumentSummary { # One line document summary for listings
   } 
 }
 
-sub PrintAuthorInfo {
-
-  my ($AuthorID) = @_;
-  
-  require "AuthorSQL.pm";
-  
-  &FetchAuthor($AuthorID);
-  my $link = &AuthorLink($AuthorID);
-  
-  print "$link\n";
-  print " of ";
-  print $Institutions{$Authors{$AuthorID}{INST}}{LONG};
+sub DocDBNavBar {
+  print "<p><div align=\"center\">\n";
+  print "[&nbsp;<a href=\"$MainPage\">DocDB&nbsp;Home</a>&nbsp;]&nbsp;\n";
+  print "[&nbsp;<a href=\"$DocumentAddForm?mode=add\"l>New Document</a>&nbsp;]&nbsp;\n";
+  print "[&nbsp;<a href=\"$DocumentAddForm\">Reservation</a>&nbsp;]&nbsp;\n";
+  print "[&nbsp;<a href=\"$ListAuthors\">List Authors</a>&nbsp;]\n";
+  print "[&nbsp;<a href=\"$ListTopics\">List Topics</a>&nbsp;]\n";
+  print "</div>\n";
 }
+
 
 1;

@@ -44,7 +44,7 @@ my $MinorTopicID = $topic_insert -> {mysql_insertid}; # Works with MySQL only
 print "You were successful. The topic you added is number <b>$MinorTopicID</b><br>\n"; 
 
 print "Add another <a href=TopicAddForm>topic</a>.<br>\n";
-print "Return to the <a href=DocumentDatabase>main page</a>.<br>\n";
 
+&DocDBNavBar;
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
 

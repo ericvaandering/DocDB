@@ -59,30 +59,10 @@ print $query -> end_multipart_form;
 
 print "<p>\n";
 
-@InstIDs   = sort byInstitution keys %Institutions;
-@AuthorIDs = sort byLastName    keys %Authors;
 
 print "<h3>Existing Authors: </h3>\n";
 
-my $Col = 0;
-my $NCols = 4;
+&AuthorsTable;
 
-print "<table cellpadding=10>\n";
-foreach $InstID (@InstIDs) {
-  unless ($Col % $NCols) {
-    print "<tr valign=top>\n";
-  }
-  print "<td><b>$Institutions{$InstID}{SHORT}</b>\n";
-  ++$Col;
-  print "<ul>\n";
-  foreach $AuthorID (@AuthorIDs) {
-    if ($InstID == $Authors{$AuthorID}{INST}) {
-      print "<li>$Authors{$AuthorID}{FULLNAME}\n";
-    }  
-  }  
-  print "</ul>";
-}  
-
-print "</table>\n";
-
+&DocDBNavBar;
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
