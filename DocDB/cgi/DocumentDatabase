@@ -50,13 +50,18 @@ print $query->header;
 
 &HelpPopupScript;
 
-my $PersonalAccountLink = "<a href=\"$EmailLogin\">Setup/manage a personal account</a>";
+print "<div id=\"DocDBHomeBody\">\n";
+my $PersonalAccountLink = "<a href=\"$EmailLogin\">Personal account</a>";
+
+### Header info
+
+print "<div id=\"Header3Col\">\n";
 
 if ($UserValidation eq "certificate") {
   require "CertificateUtilities.pm";
   my $CertificateStatus = &CertificateStatus();
   if ($CertificateStatus eq "verified") {
-    $PersonalAccountLink = "<a href=\"$SelectEmailPrefs\">Manage your personal account</a>";
+    $PersonalAccountLink = "<a href=\"$SelectEmailPrefs\">Personal account</a>";
   } else {
     print "<p><center><h4><font color=\"red\">\n";
     print "You have presented a valid certificate, but are not yet authorized to access the DocDB.<br>\n";
@@ -73,9 +78,27 @@ if ($WelcomeMessage) {
   print "</h4></center>\n";
 }
 
-print "<p><h4 class=\"SectionHeading\">Database options:</h4>\n";
 
-# Fill arrays with stuff that goes in main, bold table
+print "</div>\n";  # Header3Col
+
+### Left Column
+
+print "<div id=\"LeftColumn3Col\">\n";
+unless ($Public) {
+  print "<b><a href=\"$HelpFile\">Instructions</a></b>";
+  print "<b><a href=\"$SelectPrefs\">Preferences</a></b>";
+  if ($PersonalAccountLink) {
+    print "<b>$PersonalAccountLink</b>";
+  }  
+  print "<b><a href=\"$Statistics\">Statistics</a></b>";
+}
+
+
+print "</div>\n";  # LeftColumn3Col
+
+### Main Column
+
+print "<div id=\"MainColumn3Col\">\n";
 
 my @MainFirstColumn  = ();
 my @MainOtherColumns = ();
@@ -97,14 +120,6 @@ my $ShowForm  = $query -> startform('POST',$ShowDocument);
 push @MainFirstColumn,$ShowForm; 
 push @MainFirstColumn,"<b>List documents:</b>";
 
-unless ($Public) {
-  push @MainOtherColumns,"<b><a href=\"$HelpFile\">Get instructions</a></b>";
-  push @MainOtherColumns,"<b><a href=\"$SelectPrefs\">Set preferences</a></b>";
-  if ($PersonalAccountLink) {
-    push @MainOtherColumns,"<b>$PersonalAccountLink</b>";
-  }  
-  push @MainOtherColumns,"<b><a href=\"$Statistics\">Get statistics</a></b>";
-}
 push @MainOtherColumns,@MainPageAddendum;
 
 my $Rows = scalar(@MainFirstColumn);
@@ -189,6 +204,27 @@ print "</table><p>\n";
  
 print "</td>\n";
 print "</tr></table>\n";
+
+
+
+
+### Right column (wrapped around by middle column)
+
+print "<div id=\"RightColumn3Col\">\n";
+
+print "</div>\n";  # RightColumn3Col
+
+
+print "</div>\n";  # MainColumn3Col
+
+print "<div id=\"Footer3Col\">\n"; # Must have to keep NavBar on true bottom
+print "</div>\n";  # Footer3Col
+print "</div>\n";  # DocDBHomeBody
+
+
+print "<p><h4 class=\"SectionHeading\">Database options:</h4>\n";
+
+# Fill arrays with stuff that goes in main, bold table
 
 # Modified in last few days
 
