@@ -1,0 +1,31 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+use CGI;                                                                                      
+use DBI;
+
+require "MySQLAccess.pm";
+require "DocDBGlobals.pm";
+require "ResponseElements.pm";
+require "HTMLUtilities.pm";
+require "Sorts.pm";
+
+$query = new CGI;  # Global for subroutines
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+&GetTopics;
+
+print $query->header;
+&BTeVHeader("List of Conferences");
+
+print "<h3>Conferences in database:</h3>\n";
+
+my @MajorTopicIDs = keys %MajorTopics;
+my @MinorTopicIDs = sort byTopic keys %MinorTopics;
+
+&ConferencesTable;
+
+&DocDBNavBar();
+&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);

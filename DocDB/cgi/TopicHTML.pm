@@ -26,8 +26,30 @@ sub TopicLink {
   $link = "<a href=$ListByTopic?topicid=$TopicID>";
   if ($mode eq "short") {
     $link .= $MinorTopics{$TopicID}{SHORT};
+  } elsif ($mode eq "long") {
+    $link .= $MinorTopics{$TopicID}{LONG};
   } else {
     $link .= $MinorTopics{$TopicID}{FULL};
+  }
+  $link .= "</a>";
+  
+  return $link;
+}
+
+sub MajorTopicLink {
+  my ($TopicID,$mode) = @_;
+  
+  require "TopicSQL.pm";
+  
+  &FetchMajorTopic($TopicID);
+  my $link;
+  $link = "<a href=$ListByTopic?majorid=$TopicID>";
+  if ($mode eq "short") {
+    $link .= $MajorTopics{$TopicID}{SHORT};
+  } elsif ($mode eq "long") {
+    $link .= $MajorTopics{$TopicID}{LONG};
+  } else {
+    $link .= $MajorTopics{$TopicID}{SHORT};
   }
   $link .= "</a>";
   
@@ -52,6 +74,24 @@ sub MeetingLink {
   return $link;
 }
 
+sub ConferenceLink {
+  my ($TopicID,$mode) = @_;
+  
+  require "TopicSQL.pm";
+  
+  &FetchMinorTopic($TopicID);
+  my $link;
+  $link = "<a href=$ListByTopic?topicid=$TopicID&mode=conference>";
+  if ($mode eq "short") {
+    $link .= $MinorTopics{$TopicID}{SHORT};
+  } else {
+    $link .= $MinorTopics{$TopicID}{FULL};
+  }
+  $link .= "</a>";
+  
+  return $link;
+}
+
 sub TopicsTable {
   require "Sorts.pm";
 
@@ -65,7 +105,8 @@ sub TopicsTable {
     unless ($Col % $NCols) {
       print "<tr valign=top>\n";
     }
-    print "<td><b>$MajorTopics{$MajorID}{SHORT}</b>\n";
+    my $major_link = &MajorTopicLink($MajorID,"short");
+    print "<td><b>$major_link</b>\n";
     ++$Col;
     print "<ul>\n";
     foreach my $MinorID (@MinorTopicIDs) {
@@ -78,6 +119,44 @@ sub TopicsTable {
   }  
 
   print "</table>\n";
+}
+
+sub ConferencesTable {
+  require "Sorts.pm";
+  require "TopicSQL.pm";
+  
+  &SpecialMajorTopics;
+
+  my @MinorTopicIDs = sort byTopic keys %MinorTopics; #FIXME special sort 
+
+  $MajorID = $ConferenceMajorID; 
+  print "<ul>\n";
+  foreach my $MinorID (@MinorTopicIDs) {
+    if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
+      my $topic_link = &TopicLink($MinorID,"long");
+      print "<li>$topic_link\n";
+    }  
+  }  
+  print "</ul>";
+}
+
+sub MeetingsTable {
+  require "Sorts.pm";
+  require "TopicSQL.pm";
+  
+  &SpecialMajorTopics;
+
+  my @MinorTopicIDs = sort byTopic keys %MinorTopics; #FIXME special sort 
+
+  $MajorID = $CollabMeetMajorID; 
+  print "<ul>\n";
+  foreach my $MinorID (@MinorTopicIDs) {
+    if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
+      my $topic_link = &TopicLink($MinorID,"short");
+      print "<li>$topic_link\n";
+    }  
+  }  
+  print "</ul>";
 }
 
 1;

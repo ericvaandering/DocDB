@@ -88,4 +88,26 @@ sub GetRevisionTopics {
   return \@topics;
 }
 
+sub LookupMajorTopic { # Returns MajorTopicID from Topic Name
+  my ($TopicName) = @_;
+  my $major_fetch   = $dbh -> prepare(
+    "select MajorTopicID from MajorTopic where ShortDescription=?");
+
+  $major_fetch -> execute($TopicName);
+  my $MajorTopicID = $major_fetch -> fetchrow_array;
+  &FetchMajorTopic($MajorTopicID);
+  
+  return $MajorTopicID;
+}
+
+sub SpecialMajorTopics { # Store MajorTopicID for special topics
+  unless ($SpecialMajorsFound) {
+    $SpecialMajorsFound = 1;
+    $ConferenceMajorID  = &LookupMajorTopic("Conferences");
+    $CollabMeetMajorID  = &LookupMajorTopic("Collaboration Meetings");
+    $OtherMeetMajorID   = &LookupMajorTopic("Other Meetings");
+  }
+}
+
+
 1;

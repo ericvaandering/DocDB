@@ -43,6 +43,58 @@ sub DateTimePullDown {
   print $query -> popup_menu (-name => 'overmin',-values => \@minutes, -default => $min);
 }
 
+sub StartDatePullDown {
+  my ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
+  $year += 1900;
+  $min = (int (($min+3)/5))*5; # Nearest five minutes
+  
+  my @days = ();
+  for ($i = 1; $i<=31; ++$i) {
+    push @days,$i;
+  }  
+
+  my @months = ("Jan","Feb","Mar","Apr","May","Jun",
+             "Jul","Aug","Sep","Oct","Nov","Dec");
+
+  my @years = ();
+  for ($i = 1994; $i<=$year+2; ++$i) { # 1994 - current year
+    push @years,$i;
+  }  
+
+  print "<b><a ";
+  &HelpLink("startdate");
+  print "Start Date:</a></b><br> \n";
+  print $query -> popup_menu (-name => 'startday',-values => \@days, -default => $day);
+  print $query -> popup_menu (-name => 'startmonth',-values => \@months, -default => $months[$mon]);
+  print $query -> popup_menu (-name => 'startyear',-values => \@years, -default => $year);
+}
+
+sub EndDatePullDown {
+  my ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
+  $year += 1900;
+  $min = (int (($min+3)/5))*5; # Nearest five minutes
+  
+  my @days = ();
+  for ($i = 1; $i<=31; ++$i) {
+    push @days,$i;
+  }  
+
+  my @months = ("Jan","Feb","Mar","Apr","May","Jun",
+             "Jul","Aug","Sep","Oct","Nov","Dec");
+
+  my @years = ();
+  for ($i = 1994; $i<=$year+2; ++$i) { # 1994 - current year
+    push @years,$i;
+  }  
+
+  print "<b><a ";
+  &HelpLink("enddate");
+  print "End Date:</a></b><br> \n";
+  print $query -> popup_menu (-name => 'endday',-values => \@days, -default => $day);
+  print $query -> popup_menu (-name => 'endmonth',-values => \@months, -default => $months[$mon]);
+  print $query -> popup_menu (-name => 'endyear',-values => \@years, -default => $year);
+}
+
 sub TitleBox {
   print "<b><a ";
   &HelpLink("title");
@@ -355,6 +407,22 @@ sub LongDescriptionBox {
                              -size => 40, -maxlength => 120);
 };
 
+sub LocationBox {
+  print "<b><a ";
+  &HelpLink("location");
+  print "Location:</a></b><br> \n";
+  print $query -> textfield (-name => 'location', 
+                             -size => 20, -maxlength => 64);
+};
+
+sub ConferenceURLBox {
+  print "<b><a ";
+  &HelpLink("confurl");
+  print "URL:</a></b><br> \n";
+  print $query -> textfield (-name => 'url', 
+                             -size => 40, -maxlength => 64);
+};
+
 sub NameEntryBox {
   print "<table cellpadding=5><tr valign=top>\n";
   print "<td>\n";
@@ -433,6 +501,5 @@ sub AuthorManual {
   print $query -> textarea (-name => 'authorman', -default => $AuthorManDefault,
                             -columns => 20, -rows => 8);
 };
-
 
 1;

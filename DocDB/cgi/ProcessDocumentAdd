@@ -177,11 +177,17 @@ if ($mode eq "update" || $mode eq "updatedb") {
 if ($params{authormanual}) {
   @authorIDs = &ProcessManualAuthors($params{authormanual});
 } else {
-  @authorIDs  = split ("\0",$params{authors}); 
+  @authorIDs = split ("\0",$params{authors}); 
 }
 
 @topicIDs   = split ("\0",$params{topics});
 @securities = split ("\0",$params{security});
+
+if ($mode eq "add" || $mode eq "update") {
+  unless (@authorIDs) {
+    push @error_stack,"You must supply at least one author for this document.";
+  }
+}
 
 if ($#securities > 0) {
   foreach my $GroupID (@securities) {

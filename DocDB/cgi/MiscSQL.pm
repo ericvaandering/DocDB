@@ -58,6 +58,31 @@ sub FetchDocFiles {
   return $Files{$DocRevID};
 }
 
+sub FetchConferenceByTopicID { # Fetches a conference by MinorTopicID
+  my ($minorTopicID) = @_;
+  my ($ConferenceID,$MinorTopicID,$Location,$URL,$StartDate,$EndDate,$Timestamp);
+  my $conference_fetch   = $dbh -> prepare(
+    "select ConferenceID,MinorTopicID,Location,URL,StartDate,EndDate,Timestamp ".
+    "from Conference ".
+    "where MinorTopicID=?");
+  if ($Conference{$minorTopicID}{MINOR}) { # We already have this one
+    return $Conference{$minorTopicID}{MINOR};
+  }
+  
+  &FetchMinorTopic($minorTopicID);
+  $conference_fetch -> execute($minorTopicID);
+  ($ConferenceID,$MinorTopicID,$Location,$URL,$StartDate,$EndDate,$Timestamp) 
+    = $conference_fetch -> fetchrow_array;
+  $Conferences{$MinorTopicID}{MINOR}      = $MinorTopicID;
+  $Conferences{$MinorTopicID}{LOCATION}   = $Location;
+  $Conferences{$MinorTopicID}{URL}        = $URL;
+  $Conferences{$MinorTopicID}{STARTDATE}  = $StartDate;
+  $Conferences{$MinorTopicID}{ENDDATE}    = $EndDate;
+  $Conferences{$MinorTopicID}{TIMESTAMP}  = $Timestamp;
+
+  return $Conferences{$MinorTopicID}{MINOR};
+}
+
 sub VersionNumbersByDocID {
   my ($DocumentID) = @_;
   my @DocRevList = &FetchRevisionsByDocument($DocumentID);

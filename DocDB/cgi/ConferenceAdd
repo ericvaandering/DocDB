@@ -18,9 +18,9 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 %params = $query -> Vars;
 
 print $query->header;
-&BTeVStyle("BTeV Topic Addition Results");
+&BTeVStyle("BTeV Conference Addition Results");
 
-print "<p><h3>Here are the results of your attempt to add a topic
+print "<p><h3>Here are the results of your attempt to add a conference
                 to the BTeV document database:</h3><p>\n";
 
 my $topic_insert = $dbh->prepare(
@@ -28,16 +28,29 @@ my $topic_insert = $dbh->prepare(
           "(MinorTopicID, MajorTopicID, ShortDescription, LongDescription) ". 
    "values (0,            ?,            ?,                ?)");
 
+my $conference_insert = $dbh->prepare(
+   "insert into Conference ".
+          "(ConferenceID, MinorTopicID, Location, URL, StartDate, EndDate) ". 
+   "values (0,            ?,            ?,        ?,   ?,         ?)");
+
 @error_stack = ();
 
-$MajorTopicID     = $params{majortopic};
-$ShortDescription = $params{short};
-$LongDescription  = $params{long};
+my $MajorTopicID     = &LookupMajorTopic("Conferences"); 
+my $ShortDescription = $params{short};
+my $LongDescription  = $params{long};
+my $Location         = $params{location};
+my $URL              = $params{url};
 
-if ($MajorTopicID == &LookupMajorTopic("Conferences")) {
-  push @error_stack,"You cannot add conferences with this form, use the 
-       <a href=\"$ConferenceAddForm\">Conference Add</a> form instead.";
-}       
+my $Startday   = $params{startday};
+my $Startmonth = $params{startmonth};
+my $Startyear  = $params{startyear};
+
+my $Endday     = $params{endday};
+my $Endmonth   = $params{endmonth};
+my $Endyear    = $params{endyear};
+
+my $StartDate = "$Startyear-$ReverseAbrvMonth{$Startmonth}-$Startday";
+my $EndDate   = "$Endyear-$ReverseAbrvMonth{$Endmonth}-$Endday";
 
 if (@error_stack) {
   &EndPage(@error_stack);
@@ -45,7 +58,10 @@ if (@error_stack) {
 
 $topic_insert -> execute($MajorTopicID,$ShortDescription,$LongDescription);
 my $MinorTopicID = $topic_insert -> {mysql_insertid}; # Works with MySQL only
-                           
+if ($MinorTopicID) {
+  $conference_insert -> execute($MinorTopicID,$Location,$URL,
+                                $StartDate,$EndDate); 
+}                   
 if ($MinorTopicID) {
   print "You were successful. The topic you added is number <b>$MinorTopicID</b><br>\n"; 
 } else {

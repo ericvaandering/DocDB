@@ -53,8 +53,8 @@ print $query -> endform;
 
 print "<li>"; 
 print "List ";
-print "documents <a href=\"$LastModified?days=$LastDays\">modified in the last $LastDays days</a>, ";
-print "by <a href=\"$ListAuthors\">author</a>, ";
+print "documents modified in the <a href=\"$LastModified?days=$LastDays\">last $LastDays days</a>, ";
+print "or by <a href=\"$ListAuthors\">author</a>, ";
 print "<a href=\"$ListTopics\">topic</a>, ";
 print "<a href=\"$ListTypes\">type</a>, ";
 print "or <a href=\"$ListDocuments\">all documents</a>. ";
@@ -189,7 +189,8 @@ unless ($Public) {
   print "<td>\n";
   print $query -> radio_group(-name => "topicmode", -values => \@topicmodes, -labels => \%topicmodes);
   print "<tr><td align=right>\n";
-  print "<b>Author Selection:</b>\n";
+  print "<a "; &HelpLink("authoroption"); 
+  print "<b>Author Selection:</b></a>\n";
   print "<td>\n";
   print $query -> radio_group(-name => "authormode", -values => \@authormodes, -labels => \%authormodes);
   print "<tr><td align=right>\n";
@@ -245,10 +246,11 @@ unless ($Public) {
   print "</table>\n";
   print $query -> endform;
 
-  print "<p><b>Administrative functions:</b><ul>\n";
+  print "<p><b>Maintenance functions:</b><ul>\n";
   if ($remote_user eq $Administrator) {
     print "<li>Add a <a href=\"$TopicAddForm\">topic</a>\n";
   }
+  print "<li>Add a  <a href=\"$ConferenceAddForm\">conference</a>\n";
   print "<li>Add an <a href=\"$AuthorAddForm\">author</a>\n";
   print "</ul>\n";
 } # Public

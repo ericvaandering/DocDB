@@ -50,6 +50,7 @@ sub CanAccess { # Can the user access (with current security) this version
 sub CanModify { # Can the user modify (with current security) this docuement
   require "DocumentSQL.pm";
   my ($documentID) = @_;
+  if     ($Public)      {return 0;} #Public version, can't modify 
   unless ($remote_user) {return 0;} #No user logged in, can't modify 
 
 # If they can access last version they can modify the document    

@@ -2,6 +2,17 @@
 #
 # Author Eric Vaandering (ewv@fnal.gov)
 #
+# Inputs: 
+#  Three ways of getting information 
+#    1) topicid=? gives all documents with that MinorTopicID
+#    2) majorid=? gives all documents with that MajorTopicID
+#    3) major=?   gives all documents with the MajorTopicID 
+#                 with that ShortDescription
+#
+#  Three modes of presenting information:
+#    1) mode=date (default, sorted by reverse date, modification date given)
+#    2) mode=meeting (sorted by author, files are listed)
+#    3) mode=conference (sorted by reverse date, conference fields shown)
 
 use Benchmark;
 use CGI;
@@ -26,44 +37,99 @@ $query = new CGI;  # Global for subroutines
 %params = $query -> Vars;
 
 my $TopicID = $params{topicid};
+my $MajorID = $params{majorid};
+my $Major   = $params{major};
 my $Mode    = $params{mode};
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 &GetSecurityGroups;
-&FetchMinorTopic($TopicID);
+&SpecialMajorTopics;
+
+if ($Major || $MajorID) {
+  &GetTopics;
+  if ($Major) {
+    $MajorID = &LookupMajorTopic($Major);
+  }  
+} else {  
+  &FetchMinorTopic($TopicID);
+}
 
 ### Set defaults
 
-unless ($Mode eq "date" or $Mode eq "meeting") {$Mode = "date";}  
+unless ($Mode eq "date" or $Mode eq "meeting" or $Mode eq "conference") {
+  $Mode = "date";
+}  
 
 ### Start HTML
 
 print $query->header;
-&BTeVHeader("Document List by Topic");
 
-print "<center><h4>These documents on <font color=\"blue\">
-       $MinorTopics{$TopicID}{FULL}</font> are
-       available:</h4></center><p>\n";
+if ($Mode eq "conference") {
+  &BTeVHeader("Conference Documents");
+  print "<center><h4>\n";
+  if ($TopicID) { # This is just one conference, so we can print more info
+    require "MiscSQL.pm";
+    &FetchConferenceByTopicID($TopicID);
+    print "These documents from \n";
+    print "<font color=\"blue\">$MinorTopics{$TopicID}{LONG}</font>,<br>";
+    print " held from $Conferences{$TopicID}{STARTDATE}\n";
+    print " to $Conferences{$TopicID}{ENDDATE}\n";
+    print " in $Conferences{$TopicID}{LOCATION}\n";
+    print " are available.<br>\n";
+    print "(<a href=\"$Conferences{$TopicID}{URL}\">Conference Homepage</a>)\n";
+    print "</center>\n";
+  }
+} else {
+  &BTeVHeader("Document List by Topic");
+  print "<center><h4>\n";
+
+  print "These documents on <font color=\"blue\">\n";
+  if ($MajorID) {
+    print $MajorTopics{$MajorID}{SHORT},"\n";
+  } else {
+    print $MinorTopics{$TopicID}{FULL},"\n";
+  }
+  print "</font> are available:\n";
+}
+print "</h4></center><p>\n";
 
 my $revision_list = $dbh -> prepare(
    "select DocRevID from RevisionTopic where MinorTopicID=?"); 
-
+my $revtopic_list = $dbh -> prepare(
+   "select DocRevID,MinorTopicID from RevisionTopic"); 
 my $document_list = $dbh -> prepare(
    "select DocumentID from DocumentRevision where DocRevID=?"); 
 
 my $DocumentID,$DocRevID;
 
-### Get all revisions with this topic
+### Get all revisions with this sub topic
 
 my %DocumentIDs = ();
-$revision_list -> execute($TopicID);
-$revision_list -> bind_columns(undef, \($DocRevID));
 
-while ($revision_list -> fetch) {
-  $document_list -> execute($DocRevID);
-  ($DocumentID) = $document_list -> fetchrow_array;
-  $DocumentIDs{$DocumentID} = 1; # Hash removes duplicates
+if ($TopicID) {
+  $revision_list -> execute($TopicID);
+  $revision_list -> bind_columns(undef, \($DocRevID));
+
+  while ($revision_list -> fetch) {
+    $document_list -> execute($DocRevID);
+    ($DocumentID) = $document_list -> fetchrow_array;
+    $DocumentIDs{$DocumentID} = 1; # Hash removes duplicates
+  }
+}
+
+### Get all revisions with this major topic
+if ($MajorID) {
+  $revtopic_list -> execute;
+  $revtopic_list -> bind_columns(undef, \($DocRevID,$MinorTopicID));
+
+  while ($revtopic_list -> fetch) {
+    if ($MinorTopics{$MinorTopicID}{MAJOR} == $MajorID) {
+      $document_list -> execute($DocRevID);
+      ($DocumentID) = $document_list -> fetchrow_array;
+      $DocumentIDs{$DocumentID} = 1; # Hash removes duplicates
+    }
+  }
 }
 
 ### Get list of documents and read in the information we need from database

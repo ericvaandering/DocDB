@@ -2,6 +2,37 @@ authormanual
 Authors
 Type the names of the authors here. Put each author on a new line. Use full last
 names and first names or initials. Each author entered will checked against the
+database and a <b>unique</b> match must be found for <b>all</b> authors before the document
+will be added. Requiring a unique match means that for people who share a last
+name, the first name must be fully specified. Entered middle initials are
+ignored.
+<p>
+If you would prefer to select the author names from a list, select "Selectable
+List" as the author selection mode from the advanced form on the document DB
+home page.
+#
+startdate
+Start Date
+Select the date of the start of the conference.
+#
+enddate
+End Date
+Select the date of the end of the conference.
+#
+location
+Location
+Type in the location of the conference. City, state (if in the USA), and
+country.
+#
+confurl
+URL
+Type in the URL for the conference's homepage. Please include the http:// or
+https:// at the beginning.
+#
+authormanual
+Authors
+Type the names of the authors here. Put each author on a new line. Use full last
+names and first names or initials. Each author entered will checked against the
 database and a match must be found for <b>all</b> authors before the document
 will be added. 
 #
@@ -162,10 +193,13 @@ Select all the authors of the document. To select multiple authors either click
 (Netscape 4.x) or CTRL-click (Netscape 6.x, Internet Explorer) on the author
 names.
 <p>
+If you would prefer to type in the author names individually, select "Text
+Field" as the author selection mode from the advanced form on the document DB
+home page.
+<p>
 To have a new author added to the database please contact the <a
 href="mailto:btev-docdb@fnal.gov">DocDB administrators</a> and supply the
 persons full name, with initials if desired and their institution name.
- 
 #
 topics
 Topics
@@ -205,15 +239,21 @@ entering. New major topics can currently only be entered into the database
 directly (there is no web form).
 #
 shortdescription
-Short Description of Subtopic
+Short Description of Subtopic or Conference
 This is the text that appears in the selectable boxes and in the ShowDocument
 script.
+<p>
+For conferences, this should be the short name of the conference, like "High
+Energy 6."
 #
 longdescription
-Long Description of Subtopic
+Long Description of Subtopic or Conference
 This is a longer description of the topic, if needed. If not, it should be the
 same as the short description. While this isn't used now, it might be in the
 future.
+<p>
+For conferences, this should be the full name of the conference, like "The Sixth
+International Conference of Interactions at High Energy."
 #
 institution
 Institution

@@ -231,6 +231,7 @@ sub OtherVersionLinks {
 
 sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
   require "MiscSQL.pm";
+  require "TopicSQL.pm";
   
   my ($DocumentID,$Mode) = @_;
   unless ($Mode) {$Mode = "date"};
@@ -245,6 +246,7 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
     if ($Mode eq "meeting") {
       my $Files_ref   = &FetchDocFiles($DocRevID);
     }
+
     my $rev_date    = &EuroDate($DocRevisions{$DocRevID}{DATE});
     my $author_link = &FirstAuthor($DocRevID);
     print "<tr valign=top>\n";
@@ -258,18 +260,38 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
       print "<td>$title</td>\n";
       print "<td><nobr>$author_link</nobr></td>\n";
       print "<td>"; &ShortFileListByRevID($DocRevID); print "</td>\n";
+    } elsif ($Mode eq "conference") {
+      print "<td>$title</td>\n";
+      print "<td>\n";
+
+      my @topics = @{&GetRevisionTopics($DocRevID)};
+      foreach my $topic (@topics) {
+        if ($MinorTopics{$topic}{MAJOR} == $ConferenceMajorID) {
+          my $conference_link = &ConferenceLink($topic);
+          print "$conference_link\n";
+        }  
+      }
+      print "</td>\n";
+      print "<td><nobr>$author_link</nobr></td>\n";
+      print "<td>"; &ShortFileListByRevID($DocRevID); print "</td>\n";
     }  
     print "</tr>\n";
   } else { # Print header if $DocumentID = 0
     print "<tr valign=bottom>\n";
     if ($Mode eq "date") {
-      print "<th>Document Number</th>\n";
+      print "<th>Document #</th>\n";
       print "<th>Title</th>\n";
       print "<th>Author</th>\n";
       print "<th>Last Modified</th>\n";
     } elsif ($Mode eq "meeting") {
-      print "<th>Document Number</th>\n";
+      print "<th>Document #</th>\n";
       print "<th>Title</th>\n";
+      print "<th>Author</th>\n";
+      print "<th>Files</th>\n";
+    } elsif ($Mode eq "conference") {
+      &GetTopics;
+      print "<th>Title</th>\n";
+      print "<th>Conference</th>\n";
       print "<th>Author</th>\n";
       print "<th>Files</th>\n";
     }  
@@ -293,7 +315,7 @@ sub DocDBNavBar {
   print "[&nbsp;<a href=\"$ListAuthors\">List&nbsp;Authors</a>&nbsp;]\n";
   print "[&nbsp;<a href=\"$ListTopics\">List&nbsp;Topics</a>&nbsp;]\n";
   print "[&nbsp;<a href=\"$ListTypes\">List&nbsp;Types</a>&nbsp;]\n";
-  print "[&nbsp;<a href=\"$LastModified\">Last&nbsp;$LastDays&nbsp;Days</a>&nbsp;]\n";
+  print "[&nbsp;<a href=\"$LastModified?days=$LastDays\">Last&nbsp;$LastDays&nbsp;Days</a>&nbsp;]\n";
   unless ($Public) {
     print "[&nbsp;<a href=\"$HelpFile\">Help</a>&nbsp;]\n";
   } 
@@ -301,7 +323,6 @@ sub DocDBNavBar {
 }
 
 sub TypesTable {
-#  require "Sorts.pm";
 
   my $NCols = 3;
   my @TypeIDs = keys %DocumentTypes;

@@ -50,8 +50,8 @@ if ($topicmode ne "single" && $topicmode ne "multi") {
 }  
 
 $AuthorMode = $params{authormode};
-if ($authormode ne "list" && $authormode ne "field") {
-  $authormode = "list";
+if ($AuthorMode ne "list" && $AuthorMode ne "field") {
+  $AuthorMode = "list";
 }  
 
 unless ($NumberUploads) {$NumberUploads = 1;}
