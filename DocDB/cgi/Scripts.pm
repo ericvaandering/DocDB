@@ -27,7 +27,7 @@ sub TalkNotePopupScript {
   print "</script>\n";
 }
 
-sub TalkNoteLink {s
+sub TalkNoteLink {
   my ($SessionTalkID) = @_;
   return "<a href=\"Javascript:notepopupwindow(\'$ShowTalkNote?sessiontalkid=$SessionTalkID\');\">Note</a>";
 }
@@ -37,9 +37,9 @@ sub TopicSearchScript {
 
 # This script produces a menu for topics and another for relevant subtopics
 # (i.e. selecting a topic reduces the set of subtopics). This code is 
-# adapted from Bugzilla, produced by mozilla.org.
+# adapted (ok, stolen) from Bugzilla, produced by mozilla.org.
 
-# There are two major changes to the Bugzilla code:
+# There are two major changes:
 #  1. seperate labels and values
 #  2. sort by label instead of by value
 
@@ -47,8 +47,6 @@ sub TopicSearchScript {
 
 <script language="JavaScript" type="text/javascript">
 <!--
-
-// This code is adapted from Bugzilla, produced by mozilla.org.
 
 var first_load = 1; // is this the first time we load the page?
 var last_sel = []; // caches last selection
@@ -315,5 +313,4 @@ function selectProduct( f ) {
 ENDSCRIPT
 
 } 
-
 1;
