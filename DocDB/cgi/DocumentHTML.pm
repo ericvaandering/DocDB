@@ -64,11 +64,15 @@ sub DocumentTable (%) {
     @DocumentIDs = reverse @DocumentIDs;
   }
 
+  my $NumberDocuments = 0;
+
   foreach my $DocumentID (@DocumentIDs) {
     &FetchDocument($DocumentID);
-    my $Version = $Documents{$DocumentID}{NVersions};
+    my $Version = &LastAccess($DocumentID);
+    if ($Version == -1) {next;}
     unless (&CanAccess($DocumentID,$Version)) {next;}
     my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+    ++$NumberDocuments;
     
     print "<tr>\n";
     foreach my $Field (@Fields) {
@@ -98,8 +102,9 @@ sub DocumentTable (%) {
     print "</tr>\n";
   }  
 
-
   print "</table></center>\n";
+  
+  return $NumberDocuments;
 }
 
 sub NewerDocumentLink (%) { # FIXME: Make this the default
