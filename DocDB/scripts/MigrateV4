@@ -87,20 +87,26 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                    " SessionTalkID integer, MinorTopicID integer, TimeStamp timestamp,".
                    " index(SessionTalkID))"); 
   
-  $ConferenceAdd    -> execute();
-  $ConferenceAdd2   -> execute();
-  $ConferenceAdd3   -> execute();
-  $ConferenceAdd4   -> execute();
-  $ConferenceUpd    -> execute();
-  $JournalUpd       -> execute();
-  $SessSepCreate    -> execute();
-  $MeetOrdCreate    -> execute();
-  $SessionCreate    -> execute();
-  $SessOrdCreate    -> execute();
-  $TalkSepCreate    -> execute();
-  $SessTalkCreate   -> execute();               
-  $AuthorHintCreate -> execute(); 
-  $TopicHintCreate  -> execute(); 
+  my $MeetSecurityCreate = $dbh -> prepare("create table MeetingSecurity ".
+                   "(MeetingSecurityID integer auto_increment primary key,".
+                   " ConferenceID integer, GroupID integer, TimeStamp timestamp,".
+                   " index(ConferenceID))"); 
+  
+  $ConferenceAdd      -> execute();
+  $ConferenceAdd2     -> execute();
+  $ConferenceAdd3     -> execute();
+  $ConferenceAdd4     -> execute();
+  $ConferenceUpd      -> execute();
+  $JournalUpd         -> execute();
+  $SessSepCreate      -> execute();
+  $MeetOrdCreate      -> execute();
+  $SessionCreate      -> execute();
+  $SessOrdCreate      -> execute();
+  $TalkSepCreate      -> execute();
+  $SessTalkCreate     -> execute();
+  $AuthorHintCreate   -> execute();
+  $TopicHintCreate    -> execute();
+  $MeetSecurityCreate -> execute();
 }
 
 if ($Action eq "migrate") {
@@ -108,7 +114,7 @@ if ($Action eq "migrate") {
 }
 
 if ($Action eq "delete") { 
-  print "No delete necessary.\n";
+  print "No deletions necessary.\n";
 }
 
 exit;
