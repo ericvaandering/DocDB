@@ -1,6 +1,11 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+# Description: The Document Database homepage. Give the user various ways to  
+#              view documents, a link to ways to change documents, and a list 
+#              of the most recently updated documents.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
 #
 
 use CGI;                                                      
@@ -112,13 +117,9 @@ print "</ul>\n";
 # All
 
 print "<td>\n";
-if ($Public) {
-  print "&nbsp;\n";
-} else {
-  print "<ul>\n";
-  print "<li><a href=\"$ListDocuments\">all documents</a>";
-  print "</ul>\n";
-}
+print "<ul>\n";
+print "<li><a href=\"$web_root/Static/Lists/$remote_user/FullList.html\">all documents</a>";
+print "</ul>\n";
 print "</td>";
 
 print "<tr>\n";
@@ -133,7 +134,7 @@ if ($Public) {
          BTeV-pub-year/xx</a>. \n";
 } else {
   print "<li> by old number like
-         <a href=\"$web_root/Static/Restricted/OldDBTranslation.shtml\">BTeV-pub-year/xx</a> from the <a href=\"http://www-btev.fnal.gov/cgi-private/database/doclist.pl\">old DocDB</a>\n";
+         <a href=\"$web_root/Static/Restricted/OldDBTranslation.shtml\">BTeV-pub-year/xx</a> from the old DocDB\n";
 }
 print "</ul>\n";
 print "</td>";
