@@ -21,13 +21,12 @@
 <b>These are the frequently asked questions about the Document Database (or at
 least the ones we feel should be asked frequently).</b><p>
 
-<dl>
+<ul>
 
 <a name="authorentry">
-<dt><b>Why can't I just type in the name of an author on a document?</b>
-<dd>For technical reasons which are described in 
-<a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=140">
-BTeV-doc-140</a>, the names of the authors of a document aren't stored in the
+<li><b>Why can't I just type in the name of an author on a document?</b><br>
+For technical reasons which are described in
+<a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=140">BTeV-doc-140</a>, the names of the authors of a document aren't stored in the
 same place as things like the title of the document. Instead, numbers are stored
 in the database that link the authors with a particular document. This means
 each author of a document must be in the master list of authors <b>before</b>
@@ -35,11 +34,10 @@ you can assign them to have written a document. In the future, this master list
 will probably be linked with the People Database. Until then, you can 
 <a href="http://www-btev.fnal.gov/cgi-bin/DocDB/AuthorAddForm">add an
 author</a> yourself. 
-</dl>
 
-<a name="addstuff">
-<dt><b>How do I add a new author? A new topic or subtopic? A new document type.</b>
-<dd>To add a new author, you can either send e-mail to 
+<a name="addstuff"><p>
+<li><b>How do I add a new author? A new topic or subtopic? A new document type.</b>
+<br>To add a new author, you can either send e-mail to 
 <A HREF="mailto:btev-docdb@fnal.gov">btev-docdb@fnal.gov</a> or add the person
 yourself with 
 <a href="http://www-btev.fnal.gov/cgi-bin/DocDB/AuthorAddForm">the form</a>.
@@ -55,9 +53,9 @@ existing topics or document types don't fit the kind of documents you want to
 add. Having a new subtopic added is a little easier, but if you want to organize
 things below the subtopic level, use <a href="#keywords">keywords</a> instead.
 
-<a name="keywords">
-<dt><b>What are keywords? How do I use them?</b>
-<dd>Keywords are really just a text field you can type stuff in, but to make
+<a name="keywords"><p>
+<li><b>What are keywords? How do I use them?</b>
+<br>Keywords are really just a text field you can type stuff in, but to make
 them useful some conventions have been adopted that you should follow:
 <ol>
 <li>Be consistent. Re-use old keywords. If your subgroup has a defined set of
@@ -65,11 +63,11 @@ keywords, use them.
 <li>Keywords are space seperated. Don't use commas. Multi-word keywords should
 be joined with an underscore or dash. (Again, be consistent).
 <li>Don't use keywords like "pixel." There are topics for that.
-</ol>
+</ol><p>
  
 <a name="passwords">
-<dt><b>Why do I keep having to type in the password?</b>
-<dd>First, you should only have to type in the password one extra time for most
+<li><b>Why do I keep having to type in the password?</b><br>
+First, you should only have to type in the password one extra time for most
 uses. The reason for this is that people other than those in BTeV use the
 database too. Currently, this is just the RTES group.<p>
 
@@ -83,16 +81,16 @@ so you will need to type an accepted password again.<p>
 
 Using a web browser that saves passwords, like recent versions of IE, or
 Netscape 6 (which can encrypt the passwords with a master password) takes a lot
-of the headache out of this process.
+of the headache out of this process.<p>
  
 <a name="passwords">
-<dt><b>Can our sub-group use the DocDB to store documents that aren't accessible
-to the rest of the collaboration?</b>
-<dd>Yes. Just ask to have another "group" set up, choose a password, and let the
+<li><b>Can our sub-group use the DocDB to store documents that aren't accessible
+to the rest of the collaboration?</b><br>
+Yes. Just ask to have another "group" set up, choose a password, and let the
 DocDB administrators know which accounts you want to allow access to your data.
 
 
-</dl>
+</ul>
 
 <p>
 
