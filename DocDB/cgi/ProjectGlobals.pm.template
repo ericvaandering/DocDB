@@ -25,7 +25,7 @@ $file_root   = "/www/html/DocDB/";
 $script_root = "/www/cgi-bin/DocDB/"; 
 $web_root    = "http://web-server-host-and-domain/DocDB/";
 $cgi_root    = "http://web-server-host-and-domain/cgi-bin/DocDB/";
-$cgi_path    = "/cgi-bin/DocDB/";
+$cgi_path    = "/cgi-bin/DocDB/"; # Used for cookies
 
 $DBWebMasterEmail = "docdb\@mail-gateway";
 $DBWebMasterName  = "Document Database Administrators";
@@ -39,8 +39,17 @@ $MailServer       = "smtp-server-host-name";
 
 $Project        = "My Project";
 $ShortProject   = "MyProject";    # This is the project used in the Document ID
-$WelcomeMessage = "Welcome to the public portion of the $Project Document Database,<br>
-         the repository for all $Project public talks, proceedings, preprints,
-         and publications.";
+#$WelcomeMessage = "Welcome to the public portion of the $Project Document Database,<br> the repository for all $Project public talks, proceedings, preprints, and publications.";
 
+# These settings are for public version of DB. Uncomment these five lines 
+# for the version of this file you place in the public area. While only the 
+# first is probably necessary, as a precaution its wise to do the other 4 as 
+# well.
+
+#$Public           = 1;
+#$remote_user      = ""; # Just to be safe
+#$RemoteUsername   = ""; # Just to be safe
+#$db_rwuser        = ""; # Just to be safe
+#$db_rwpass        = ""; # Just to be safe
+ 
 1;
