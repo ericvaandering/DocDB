@@ -1,10 +1,10 @@
 # DB settings
 $db_name   = "BTeVDocTest";
 $db_host   = "vchipp.phy.vanderbilt.edu";
-$db_rwuser = "docadmin";
-$db_rwpass = "docadmin";
-$db_rouser = "docadmin";
-$db_ropass = "docadmin";
+$db_rwuser = "docdbrw";
+$db_rwpass = "hall1burt0n";
+$db_rouser = "docdbro";
+$db_ropass = "abg3n1x";
 $db_aduser = "docadmin";
 $db_adpass = "docadmin";
 
@@ -29,7 +29,7 @@ $ShowDocument       = $cgi_root."ShowDocument";
 $ListDocuments      = $cgi_root."ListDocuments";
 
 $TopicAddForm       = $cgi_root."TopicAddForm";
-$AuthorAddForm       = $cgi_root."AuthorAddForm";
+$AuthorAddForm      = $cgi_root."AuthorAddForm";
 
 # Shell Commands
 
