@@ -100,8 +100,7 @@ sub BTeVFooter {
 
 sub SSInclude {
   my ($file) = @_;
-  my $directory = "/var/www/html/includes/";
-  open SSI,"$directory$file";
+  open SSI,"$SSIDirectory$file";
   my @SSI_lines = <SSI>;
   close SSI;
   print @SSI_lines;
