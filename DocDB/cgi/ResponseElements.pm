@@ -134,7 +134,6 @@ sub PrintRevisionInfo {
   my @TopicIDs    = &GetRevisionTopics($DocRevID);
   my $Groups_ref  = &GetRevisionSecurityGroups($DocRevID);
 
-#  my @TopicIDs  = @{$Topics_ref};
   my @GroupIDs  = @{$Groups_ref};
  
   print "<center><table cellpadding=10>";
