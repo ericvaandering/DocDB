@@ -27,13 +27,19 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 $Special = $params{special};
 
-if ($Special eq "meeting") {$Meeting = 1;}
+if ($Special eq "meeting")      {$Meeting = 1;}
+if ($Special eq "othermeeting") {$OtherMeeting = 1;}
 
 if ($Meeting) {
  require "WebUtilities.pm";
- $topicmode = "multi";
  $mode = "add";
  @TopicDefaults = (&NearByMeeting);
+}
+
+if ($OtherMeeting) {
+ $mode = "add";
+ @PreTopics  = $query -> param('pretopic');
+ @TopicDefaults = \@PreTopics;
 }
 
 unless ($mode) { 
@@ -62,7 +68,7 @@ unless ($topicmode) {
   $topicmode = $params{topicmode};
 }
 if ($topicmode ne "single" && $topicmode ne "multi") {
-  $topicmode = "single";
+  $topicmode = "multi";
 }  
 
 $AuthorMode = $params{authormode};
@@ -115,12 +121,13 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   @AuthorDefaults   = &GetRevisionAuthors($DocRevID);
   @TopicDefaults    = &GetRevisionTopics($DocRevID);
 } else {
-  @SecurityDefaults = [$SecurityIDs{"BTeV"}]; # FIXME: Replace with logged-in user 
+  my $User = &SecurityLookup($remote_user);
+  @SecurityDefaults = [$SecurityIDs{$User}]; 
 }  
 
 $NumberUploads = $params{numfile};
 unless ($NumberUploads) {
-  if ($Meeting) {
+  if ($Meeting  || $OtherMeeting) {
     $NumberUploads = 3;
   } elsif ($mode eq "update") {
     $NumberUploads = $#{ &FetchDocFiles($DocRevID)} + 1;
@@ -144,7 +151,7 @@ print "<center><table cellpadding=10>\n";
 print "<tr>\n";
 print "<td colspan=3>\n";
 if      ($mode eq "add") {
-  if ($Meeting) {
+  if ($Meeting || $OtherMeeting) {
     print "<h4>You have chosen to add a new meeting talk to the database.<br> 
                Make sure you know all the required information and
                the file is ready for uploading.<p>
@@ -179,7 +186,7 @@ print "<td colspan=3>\n"; &TitleBox;    print "</td>\n";
 print "</tr><tr>\n";
 print "<td colspan=3>\n"; &AbstractBox; print "</td>\n";
 print "</tr>\n";
-unless ($Meeting) {
+unless ($Meeting || $OtherMeeting) {
   print "<tr>\n";
   print "<td colspan=3>\n"; &PubInfoBox;  print "</td>\n";
   print "</tr><tr>\n";
@@ -209,13 +216,13 @@ if ($mode eq "add" || $mode eq "update") {
 
 print "<tr valign=top>\n";
 
-if ($Meeting) {
+if ($Meeting || $OtherMeeting) {
   print "<td>&nbsp;&nbsp;&nbsp;</td>\n";
 } 
 
 print "<td>\n"; &RequesterSelect; print "</td>\n";
 
-unless ($Meeting) {
+unless ($Meeting || $OtherMeeting) {
   if ($AuthorMode eq "list") {
     print "<td>\n"; &AuthorSelect;    print "</td>\n";
   } elsif ($AuthorMode eq "field") {
@@ -240,7 +247,7 @@ if ($Overdate) {
   print "</td>\n";
 }  
 
-if ($Meeting) {
+if ($Meeting || $OtherMeeting) {
   print "<td colspan=2 valign=top>\n"; 
   my @TypeIDs = keys %DocumentTypes;
   foreach my $ID (@TypeIDs) {

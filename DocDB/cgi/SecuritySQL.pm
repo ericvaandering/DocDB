@@ -48,5 +48,18 @@ sub GetRevisionSecurityGroups {
   return \@{$RevisionSecurities{$DocRevID}{GROUPS}};
 }
 
+sub SecurityLookup {
+  my ($user) = @_;
+  
+  my $group_name = $dbh->prepare(
+    "select Name from SecurityGroup where lower(Name) like lower(?)");
+  $group_name -> execute($user);
+
+  my ($Name) = $group_name -> fetchrow_array; 
+  
+  print "NU: $Name $user<br>\n";
+  return $Name;
+}
+
 
 1;
