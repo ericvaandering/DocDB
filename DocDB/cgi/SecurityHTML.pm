@@ -39,7 +39,10 @@ sub SecurityScroll (%) {
   my $Booleans = "";
   
   if ($Disabled) {
-    $Booleans .= "-disabled";
+    $Booleans .= "-disabled ";
+  }  
+  if ($Multiple) {
+    $Booleans .= "-multiple";
   }  
   
   &GetSecurityGroups;
