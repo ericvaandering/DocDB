@@ -38,7 +38,7 @@ $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
 
-$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
 ### Start HTML
 
@@ -48,6 +48,7 @@ print $query->header;
 &EndPage(@ErrorStack);
 
 ### Output Information
+
 my $CertificateStatus = &CertificateStatus();
 my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
 my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
@@ -83,8 +84,33 @@ if ($CertificateStatus eq "verified") {
 } elsif ($CertificateStatus eq "nocert") {  
   print "<b>You didn't present a certificate. Not sure if this can happen.</b>";
 } elsif ($CertificateStatus eq "noapp") {
-  # Get additional parameters and fill in DB tables.
+
+### Get additional parameters
+
   &HTMLPrintParams();
+  my $CertNote          = $params{certnote};
+  my @RequestedGroupIDs = split /\0/,$params{reqgroups};
+  my $UserName = $CertCN;
+     $UserName =~ s/\W//;
+     
+### Fill in DB tables
+
+  my $UserInsert = $dbh -> prepare(
+      "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Verified) ".
+      "            values (0,?,?,?,0)");
+     $UserInsert -> execute($UserName,$CertCN,$CertEmail);
+  my $EmailUserID = $UserInsert -> {mysql_insertid}; # Works with MySQL only
+  
+  my $UsersGroupInsert = $dbh -> prepare(
+      "insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) ".
+      "            values (0,?,?)");
+  foreach my $GroupID (@RequestedGroupIDs) {
+    print "Asking for $GroupID<br>";
+    $UsersGroupInsert -> execute($EmailUserID,$GroupID);
+  }  
+
+### Notify applicant and administrator
+
 }
 
 &DocDBNavBar();
