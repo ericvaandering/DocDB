@@ -50,6 +50,8 @@ if ($SessionID) { # Display a single session
   &FetchSessionByID($SessionID);
   &FetchConferenceByConferenceID($Sessions{$SessionID}{ConferenceID});
   &PrintMeetingInfo($Sessions{$SessionID}{ConferenceID});
+  print "<center><a href=\"$DocumentAddForm?sessionid=$SessionID\">Add a document</a> ".
+        "to this session.</center>\n";
   &PrintSession($SessionID); 
   &PrintMeetingEpilogue($Sessions{$SessionID}{ConferenceID});
 } elsif ($SessionSeparatorID) { # Display a single break (never called)
@@ -61,6 +63,8 @@ if ($SessionID) { # Display a single session
 } elsif ($ConferenceID) { # Display meeting info or meeting with all talks
   &FetchConferenceByConferenceID($ConferenceID);
   &PrintMeetingInfo($ConferenceID);
+  print "<center><a href=\"$DocumentAddForm?conferenceid=$ConferenceID\">Add a document</a> ".
+        "to this conference.</center>\n";
     
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
@@ -111,30 +115,24 @@ if ($SessionID) { # Display a single session
       $DocumentIDs{$DocRevisions{$DocRevID}{DOCID}} = 1;
     }
     
-    # Refetch all talks
+    # Refetch all talks, flag talks which are associated with a session
     my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
     foreach $MeetingOrderID (@MeetingOrderIDs) {
       my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
       if ($SessionID) {
-        &FetchSessionByID($SessionID);
-        &FetchSessionTalksBySessionID($SessionID);
+        my @SessionTalkIDs = &FetchSessionTalksBySessionID($SessionID);
+        foreach my $SessionTalkID (@SessionTalkIDs) {
+          if ($SessionTalks{$SessionTalkID}{DocumentID}) {
+            $DocumentIDs{$SessionTalks{$SessionTalkID}{DocumentID}} = 0;
+          }
+        } 
       }
     }   
-
-    # Flag talks which are associated with a session
-    foreach my $SessionTalkID (keys %SessionTalks) {
-      my $SessionID = $SessionTalks{$SessionTalkID}{SessionID};
-      if ($Sessions{$SessionID}{ConferenceID} == $ConferenceID) {
-        if ($SessionTalks{$SessionTalkID}{DocumentID}) {
-          $DocumentIDs{$SessionTalks{$SessionTalkID}{DocumentID}} = 0;
-        }
-      }
-    } 
 
     # Find which ones aren't
     my @UnusedDocIDs = ();
     foreach my $DocumentID (keys %DocumentIDs) {
-      if ($DocumentIDs{$DocumentID}) {
+      unless ($DocumentIDs{$DocumentID}) {
         push @UnusedDocIDs,$DocumentID;
       }  
     }
@@ -154,12 +152,25 @@ if ($SessionID) { # Display a single session
       print "</table></center><hr width=95%>\n";
     }
   }
+  
+# Finish off meeting display  
+  
   &PrintMeetingEpilogue($ConferenceID);
 } else {
   #Complain that user didn't specify a session, break, or conference
 }  
+
+my $NavBarText = ""
+my $NavBarURL  = "";  
+if ($SessionID) {
+  $NavBarText = "Modify&nbsp;Session";
+  $NavBarURL  = "$SessionModify?sessionid=$SessionID";
+} elsif ($ConferenceID) {
+  $NavBarText = "Modify&nbsp;Meeting";
+  $NavBarURL  = "$MeetingModify?conferenceid=$ConferenceID";
+}  
   
-&DocDBNavBar;
+&DocDBNavBar($NavBarText,$NavBarURL);
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  
 exit;

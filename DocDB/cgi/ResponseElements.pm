@@ -332,7 +332,7 @@ sub FullDocumentID ($;$) {
   }  
 }  
 
-sub DocumentLink { #FIXME: Make Version optional, Document URL 
+sub DocumentLink { #FIXME: Make Version optional, Document URL, "title" mode 
   my ($DocumentID,$Version,$Title) = @_;
   my $Link = "<a href=\"$ShowDocument\?docid=$DocumentID\&version=$Version\">";
   if ($Title) {
@@ -342,6 +342,34 @@ sub DocumentLink { #FIXME: Make Version optional, Document URL
   }
   $Link .=  "</a>";
 }         
+
+sub NewDocumentLink ($;$$) { # FIXME: Make this the default
+  #FIXME: Figure out how to do modes like CGI.pm
+  my ($DocumentID,$Version,$Mode) = @_;
+  
+  require "DocumentSQL.pm";
+  require "RevisionSQL.pm";
+  
+  &FetchDocument($DocumentID);
+  my $GivenVersion = false;
+  unless (defined $Version) {
+    $Version      = $Documents{$DocumentID}{NVersions};
+    $GivenVersion = true;
+  }
+  my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+  my $Link = "<a href=\"$ShowDocument\?docid=$DocumentID";
+  if ($GivenVersion) {
+    $Link .= "&version=$Version";
+  }
+  $Link .= "\">"; 
+  if ($Mode eq "title") {
+    $Link .= $DocRevisions{$DocRevID}{TITLE};
+  } else {
+    $Link .= &FullDocumentID($DocumentID,$Version);
+  }
+  $Link .=  "</a>";
+}         
+  
 
 sub DocumentURL {
   my ($DocumentID,$Version) = @_;

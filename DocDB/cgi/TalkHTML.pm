@@ -151,6 +151,12 @@ sub TalkEntryForm (@) {
     print "<tr valign=top>\n";
     print "<td>\n"; &TalkNote;      print "</td>\n";
     print "</tr>\n";
+    if ($TalkDefaultDocID) {
+      my $TitleLink = &NewDocumentLink($DocumentID);
+      print "<tr valign=top>\n";
+      print "<td>Matches: $TitleLink</td>\n";
+      print "</tr>\n";
+    }
     print "<tr valign=top><td colspan=7><hr width=95%></td>\n";
     print "</tr>\n";
   }
