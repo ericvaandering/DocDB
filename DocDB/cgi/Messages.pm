@@ -64,6 +64,10 @@ $Msg_DelKeyGrWKey  = "You can't delete keyword groups with keywords. ".
                      "Delete the keywords first if you want to delete the keyword group.";
 $Msg_ModKeywdEmpty = "You must select a keyword to modify or delete.";
 
+# Signoff Messages
+
+$Msg_WarnModManaged = "Warning: You are about to modify a managed document. This will clear all the signatures on the document.";
+
 # FIXME: Add more messages from other programs
 # FIXME: Add a localizable error message inclusion
 

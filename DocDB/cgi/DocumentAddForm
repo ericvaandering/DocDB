@@ -27,6 +27,7 @@ require "DocDBGlobals.pm";
 require "Cookies.pm";
 require "Scripts.pm";
 require "Sorts.pm";
+require "Messages.pm";
 
 require "AuthorSQL.pm";
 require "TopicSQL.pm";
@@ -180,6 +181,16 @@ if ($EnhancedSecurity) {
   }    
 }
 
+# Warn the user if they are about to modify a controlled document
+
+if ($UseSignoffs && ($mode eq "update" || $mode eq "updatedb")) {
+  require "SignoffUtilities.pm";
+  my $Status = &RevisionStatus($DocRevID);
+  unless ($Status eq "Unmanaged") {
+    push @WarnStack,$Msg_WarnModManaged;
+  }  
+}
+
 # Find SessionTalks that the user might choose and display
 
 my @OpenSessionTalkIDs = ();
@@ -260,10 +271,7 @@ if ($Overdate eq "Yes") {
 
 print $query -> hidden(-name => 'special',-default => '');
 
-if (@WarnStack) {
-  &WarnPage(@WarnStack);
-  @WarnStack = ();
-}
+&WarnPage(@WarnStack); @WarnStack = ();
 
 print "<center><table cellpadding=10>\n";
 

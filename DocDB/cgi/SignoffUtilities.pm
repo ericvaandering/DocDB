@@ -119,4 +119,17 @@ sub RevisionStatus ($) { # Return the approval status of a revision
   return ($Status,$LastVersion);
 }
 
+sub UnSignRevision { # Remove all signatures from a revision
+                     # (Called when files are added to a revision)
+  my ($DocRevID) = @_;
+}
+
+sub CopyRevisionSignoffs { # CopySignoffs from one revision to another
+                           # One mode to copy with signed Signatures, 
+                           # one without
+
+  my ($OldDocRevID,$NewDocRevID,$CopySignatures) = @_;
+
+}
+
 1;

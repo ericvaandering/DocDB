@@ -27,6 +27,7 @@ use CGI;
 use DBI;
 
 require "DocDBGlobals.pm";
+require "Messages.pm";
 
 require "SecuritySQL.pm";
 require "DocumentSQL.pm";
@@ -92,6 +93,17 @@ unless ($Version) {
   reserved. <a href=\"$UpdateLink\">Create a new version</a> instead. ";
 }
 
+# Warn the user if they are about to modify a controlled document
+
+if ($UseSignoffs) {
+  require "SignoffUtilities.pm";
+  my $Status = &RevisionStatus($DocRevID);
+  unless ($Status eq "Unmanaged") {
+    push @WarnStack,$Msg_WarnModManaged;
+  }  
+}
+
+&WarnPage(@WarnStack); @WarnStack = ();
 
 if ((@ErrorStack)) {  # The user made one or more mistakes, warn and exit
   &EndPage(@ErrorStack);

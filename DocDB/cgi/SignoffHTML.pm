@@ -30,6 +30,8 @@ sub PrintRevisionSignoffInfo($) { # FIXME: Handle more complicated topologies?
 
   my ($DocRevID) = @_;
 
+  if ($Public) { return; }  
+  
   my @RootSignoffIDs = &GetRootSignoffs($DocRevID);
   if (@RootSignoffIDs) {
     print "<dl>\n";
@@ -48,6 +50,8 @@ sub PrintSignoffInfo ($) {
   
   my ($SignoffID) = @_;
 
+  if ($Public) { return; }  
+  
   my @SubSignoffIDs = &GetSubSignoffs($SignoffID);
   print "<li>";
   &PrintSignatureInfo($SignoffID);
@@ -69,6 +73,8 @@ sub PrintSignatureInfo ($) {
   
   my ($SignoffID) = @_;
 
+  if ($Public) { return; }  
+  
   my @SignatureIDs = &GetSignatures($SignoffID); 
   
   my @SignatureSnippets = ();
