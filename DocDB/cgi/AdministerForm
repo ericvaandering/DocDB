@@ -411,33 +411,65 @@ print "<p><hr>\n";
 
 ### Conference and Meeting Administration
 
+%EnableMatrix = ();
+
+$EnableMatrix{conftopic}{Delete}  = 1;
+
+$EnableMatrix{longdesc}{New}      = 1;
+$EnableMatrix{shortdesc}{New}     = 1;
+$EnableMatrix{majortopic}{New}    = 1;
+$EnableMatrix{location}{New}      = 1;
+$EnableMatrix{url}{New}           = 1;
+$EnableMatrix{startday}{New}      = 1;
+$EnableMatrix{startmonth}{New}    = 1;
+$EnableMatrix{startyear}{New}     = 1;
+$EnableMatrix{endday}{New}        = 1;
+$EnableMatrix{endmonth}{New}      = 1;
+$EnableMatrix{endyear}{New}       = 1;
+
+$EnableMatrix{conftopic}{Modify}  = 1;
+$EnableMatrix{longdesc}{Modify}   = 1;
+$EnableMatrix{shortdesc}{Modify}  = 1;
+$EnableMatrix{majortopic}{Modify} = 1;
+$EnableMatrix{location}{Modify}   = 1;
+$EnableMatrix{url}{Modify}        = 1;
+$EnableMatrix{startday}{Modify}   = 1;
+$EnableMatrix{startmonth}{Modify} = 1;
+$EnableMatrix{startyear}{Modify}  = 1;
+$EnableMatrix{endday}{Modify}     = 1;
+$EnableMatrix{endmonth}{Modify}   = 1;
+$EnableMatrix{endyear}{Modify}    = 1;
+
 print "<a name=\"conference\"><center><h4>Administer Conferences and Meetings</h4>
        </center>\n";
 
-print $query -> start_multipart_form('POST',"$ConferenceAdminister");
+print $query -> start_multipart_form('POST',"$ConferenceAdminister",
+                                     "id=\"conferences\" name=\"conferences\"");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
-print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
+print "<td colspan=2>\n"; 
+ &AdministerActions(-form => "conferences", -matrix => \%EnableMatrix);
+print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td>\n"; &MajorGatheringSelect; print "</td>\n";
-print "<td>\n"; &ConferenceSelect;     print "</td>\n";
+print "<td>\n"; &MajorGatheringSelect(-disabled => true); print "</td>\n";
+print "<td>\n"; &ConferenceSelect(-disabled => true);     print "</td>\n";
 print "<td>\n";
  print "<table>\n";
  print "<tr valign=top>\n";
- print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
- print "<td>\n"; &LongDescriptionBox;      print "</td>\n";
+ print "<td>\n"; &ShortDescriptionBox(-disabled => true, -name => 'shortdesc');     print "</td>\n";
+ print "<td>\n"; &LongDescriptionBox(-disabled => true, -name => 'longdesc');      print "</td>\n";
  print "</tr>\n";
 
  print "<tr valign=top>\n";
- print "<td>\n"; &LocationBox;          print "</td>\n";
- print "<td>\n"; &ConferenceURLBox;     print "</td>\n";
+ print "<td>\n"; &LocationBox(-disabled => true);          print "</td>\n";
+ print "<td>\n"; &ConferenceURLBox(-disabled => true);     print "</td>\n";
  print "</tr>\n";
 
  print "<tr valign=top>\n";
- print "<td>\n"; &StartDatePullDown;     print "</td>\n";
- print "<td>\n"; &EndDatePullDown;       print "</td>\n";
+ print "<td>\n"; &StartDatePullDown(-disabled => true);     print "</td>\n";
+ print "<td>\n"; &EndDatePullDown(-disabled => true);       print "</td>\n";
  print "</tr>\n";
  print "<tr valign=top>\n";
  print "<td colspan=2>(Dates set to the current date will not be changed)</td>\n";

@@ -73,7 +73,18 @@ sub DateTimePullDown {
   print $query -> popup_menu (-name => 'overmin',-values => \@minutes, -default => $min);
 }
 
-sub StartDatePullDown {
+sub StartDatePullDown (;%) {
+
+  my (%Params) = @_;
+  
+  my $Disabled = $Params{-disabled}  || "0";
+  
+  my $Booleans = "";
+  
+  if ($Disabled) {
+    $Booleans .= "-disabled";
+  }  
+  
   my ($sec,$min,$hour,$day,$mon,$year);
   
   if ($DefaultStartDate) {
@@ -103,12 +114,23 @@ sub StartDatePullDown {
   print "<b><a ";
   &HelpLink("startdate");
   print "Start Date:</a></b><br> \n";
-  print $query -> popup_menu (-name => 'startday',-values => \@days, -default => $day);
-  print $query -> popup_menu (-name => 'startmonth',-values => \@months, -default => $months[$mon]);
-  print $query -> popup_menu (-name => 'startyear',-values => \@years, -default => $year);
+  print $query -> popup_menu (-name => 'startday',-values => \@days, -default => $day, $Booleans);
+  print $query -> popup_menu (-name => 'startmonth',-values => \@months, -default => $months[$mon], $Booleans);
+  print $query -> popup_menu (-name => 'startyear',-values => \@years, -default => $year, $Booleans);
 }
 
-sub EndDatePullDown {
+sub EndDatePullDown (;%) {
+
+  my (%Params) = @_;
+  
+  my $Disabled = $Params{-disabled}  || "0";
+  
+  my $Booleans = "";
+  
+  if ($Disabled) {
+    $Booleans .= "-disabled";
+  }  
+  
   my ($sec,$min,$hour,$day,$mon,$year);
   
   if ($DefaultStartDate) {
@@ -138,9 +160,9 @@ sub EndDatePullDown {
   print "<b><a ";
   &HelpLink("enddate");
   print "End Date:</a></b><br> \n";
-  print $query -> popup_menu (-name => 'endday',-values => \@days, -default => $day);
-  print $query -> popup_menu (-name => 'endmonth',-values => \@months, -default => $months[$mon]);
-  print $query -> popup_menu (-name => 'endyear',-values => \@years, -default => $year);
+  print $query -> popup_menu (-name => 'endday',-values => \@days, -default => $day, $Booleans);
+  print $query -> popup_menu (-name => 'endmonth',-values => \@months, -default => $months[$mon], $Booleans);
+  print $query -> popup_menu (-name => 'endyear',-values => \@years, -default => $year, $Booleans);
 }
 
 sub PubInfoBox {

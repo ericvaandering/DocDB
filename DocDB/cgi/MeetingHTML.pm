@@ -23,22 +23,44 @@
 
 # FIXME: Unify various TopicLink, MeetingLink, NewMeetingLink, ConferenceLink, GatheringLink
 
-sub LocationBox {
+sub LocationBox (;%) {
   require "Scripts.pm";
+
+  my (%Params) = @_;
+  
+  my $Disabled = $Params{-disabled}  || "0";
+  
+  my $Booleans = "";
+  
+  if ($Disabled) {
+    $Booleans .= "-disabled";
+  }  
+  
   print "<b><a ";
   &HelpLink("location");
   print "Location:</a></b><br> \n";
   print $query -> textfield (-name => 'location', -default => $MeetingDefaultLocation,
-                             -size => 20, -maxlength => 64);
+                             -size => 20, -maxlength => 64, $Booleans);
 };
 
-sub ConferenceURLBox {
+sub ConferenceURLBox (;%) {
   require "Scripts.pm";
+
+  my (%Params) = @_;
+  
+  my $Disabled = $Params{-disabled}  || "0";
+  
+  my $Booleans = "";
+  
+  if ($Disabled) {
+    $Booleans .= "-disabled";
+  }  
+  
   print "<b><a ";
   &HelpLink("confurl");
   print "URL:</a></b><br> \n";
   print $query -> textfield (-name => 'url', -default => $MeetingDefaultURL,
-                             -size => 40, -maxlength => 64);
+                             -size => 40, -maxlength => 64, $Booleans);
 };
 
 sub ConferencePreambleBox {

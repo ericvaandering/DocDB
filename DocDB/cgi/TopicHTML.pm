@@ -262,10 +262,19 @@ sub ConferencesList {
   print "</ul>";
 }
 
-sub MajorGatheringSelect (;$) { # Scrolling selectable list for major topics with dates
+sub MajorGatheringSelect (;%) { # Scrolling selectable list for major topics with dates
   require "Scripts.pm";
+
+  my (%Params) = @_;
   
-  my ($Mode) = @_; 
+  my $Disabled = $Params{-disabled}  || "0";
+  my $Mode     = $Params{-format}    || "short";
+  
+  my $Booleans = "";
+  
+  if ($Disabled) {
+    $Booleans .= "-disabled";
+  }  
   
   print "<b><a ";
   &HelpLink("majortopics");
@@ -287,11 +296,21 @@ sub MajorGatheringSelect (;$) { # Scrolling selectable list for major topics wit
   }  
   print $query -> scrolling_list(-name => "majortopic", -values => \@MeetingMajorIDs, 
                                  -labels => \%MajorLabels,  -size => 10,
-                                 -default => $DefaultMajorID);
+                                 -default => $DefaultMajorID, $Booleans);
 };
 
 sub ConferenceSelect {
   require "TopicSQL.pm";
+  
+  my (%Params) = @_;
+  
+  my $Disabled = $Params{-disabled}  || "0";
+  
+  my $Booleans = "";
+  
+  if ($Disabled) {
+    $Booleans .= "-disabled";
+  }  
   
   my @MinorIDs           = sort byTopic keys %MinorTopics;
   my @ConferenceTopicIDs = ();
@@ -307,7 +326,7 @@ sub ConferenceSelect {
   &HelpLink("conference");
   print "Conferences:</a></b> <br> \n";
   print $query -> scrolling_list(-name => "conftopic", -values => \@ConferenceTopicIDs, 
-                                 -labels => \%TopicLabels, -size => 10);
+                                 -labels => \%TopicLabels, -size => 10, $Booleans);
 }
 
 sub MeetingsTable {
