@@ -20,20 +20,32 @@ sub ConferenceIntroBox {
   require "Scripts.pm";
   print "<b><a ";
   &HelpLink("confintro");
-  print "Introductory Text:</a></b><br> \n";
+  print "Meeting Preamble:</a></b><br> \n";
   print $query -> textarea (-name => 'introtext',
-                            -columns => 80, -rows => 5);
+                            -columns => 50, -rows => 5);
+};
+
+sub ConferenceDiscBox {
+  require "Scripts.pm";
+  print "<b><a ";
+  &HelpLink("confdisc");
+  print "Meeting Epilog:</a></b><br> \n";
+  print $query -> textarea (-name => 'disctext',
+                            -columns => 50, -rows => 5);
 };
 
 sub SessionEntryForm {
   require "Scripts.pm";
-  print "<table cellpadding=3 border=1>\n";
+  print "<b><a ";
+  &HelpLink("sessions");
+  print "Sessions:</a></b><p> \n";
+  print "<table cellpadding=3>\n";
   print "<tr valign=top>\n";
-  print "<th>Order</td>\n";
-  print "<th>Separator</td>\n";
-  print "<th>Start Date and Time</td>\n";
-  print "<th>Session Title</td>\n";
-  print "<th>Description of Session</td>\n";
+  print "<th><b><a "; &HelpLink("meetingorder");     print "Order</a></td>\n";
+  print "<th><b><a "; &HelpLink("meetingseparator"); print "Separator</a></td>\n";
+  print "<th><b><a "; &HelpLink("sessioninfo");      print "Start Date and Time</a></td>\n";
+  print "<th><b><a "; &HelpLink("sessioninfo");      print "Session Title</a></td>\n";
+  print "<th><b><a "; &HelpLink("sessioninfo");      print "Description of Session</a></td>\n";
   print "</tr>\n";
   for (my $Session=1;$Session<=$InitialSession;++$Session) {
     print "<tr valign=top>\n";

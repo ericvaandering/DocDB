@@ -614,8 +614,8 @@ the document. I.e. a PowerPoint file isn't <i>necessarily</i> a "Talk."
   <title>Major Topics</title>
   <text>
 Select the Major topic which is the parent of the minor, or subtopic you are
-entering. New major topics can currently only be entered into the database
-directly (there is no web form).
+entering. New major topics can only be entered into the database
+by the administrators.
   </text>
  </entry>
 
@@ -739,4 +739,76 @@ or may not be the same as the web username and password.
   </text>
  </entry>
 
+ <entry>
+  <key>confintro</key>
+  <title>Meeting preamble</title>
+  <text>
+   You can put any text here that you would like to appear at the top of your
+   meeting listing.
+  </text>
+ </entry>
+
+ <entry>
+  <key>confdisc</key>
+  <title>Meeting epilog</title>
+  <text>
+   You can put any text here that you would like to appear at the bottom of your
+   meeting listing, such as instructions for attending.
+  </text>
+ </entry>
+
+ <entry>
+  <key>meetingorder</key>
+  <title>Order</title>
+  <text>
+   Change the numbers here to reorder your sessions within a meeting or your
+   talks within the session. You can use floating point numbers if you like.
+  </text>
+ </entry>
+
+ <entry>
+  <key>meetingseparator</key>
+  <title>Separators</title>
+  <text>
+   Check this box if your entry is a separator. Separators cannot have talks or
+   documents associated with them. You might use a separator between sessions to
+   denote a meal or other activity. Use separators between talks to indicate
+   breaks in the agenda for lunch or coffee.
+  </text>
+ </entry>
+
+ <entry>
+  <key>sessioninfo</key>
+  <title>Session Information</title>
+  <text>
+   Here fill out the starting date and time for the session, a short title for
+   the session, and a longer note, room assignment, etc. in the Description
+   field.
+  </text>
+ </entry>
+ 
+ <entry>
+  <key>meetingtopic</key>
+  <title>Meetings as Topics</title>
+  <text>
+   Meetings can be designated as their own topics or can be organized  without
+   such a designation. If you choose to create a topic for your meeting, you
+   must select a Major Topic from the list. These topics are designated as a
+   special meeting-like topic. You should also supply a short and long title
+   (description) for your meeting.<p/>
+   If you don't choose to create a new topic, you should still fill out the
+   long description, location, URL, and date fields.
+  </text>
+ </entry>
+ <entry>
+  <key>sessions</key>
+  <title>Sessions</title>
+  <text>
+   Fill out the information for as many sessions as you need. If there are not
+   enough blank sessions, don't worry, you'll be able to add additional sessions
+   later. After this is done, you'll be able to populate each session with
+   talks.<p/>You can also create separators between sessions for meals or
+   activities.
+  </text>
+ </entry>
 </helpfile>

@@ -46,14 +46,18 @@ print "<table cellpadding=10 border=1>\n";
 
 print "<tr valign=top>\n";
 print "<td>\n"; &MajorGatheringSelect; print "</td>\n";
-print "<td width=40%>\n";
+print "<td>\n";
  print "<table>\n";
  print "<tr valign=top>\n";
- print "<td>Only select a Major Topic and fill in the descriptions if
+ print "<td width=10>Only select a Major Topic and fill in the descriptions if
  you want to make a new topic.\n";
  print "<a ";
  &HelpLink("meetingtopic");
- print "Click for an explanation.</a> \n";
+ print "Click for an explanation.</a>\n";
+ print "</td>\n";
+ print "</tr>\n";
+ print "<tr>\n";
+ print "<td>&nbsp;\n";
  print "</td>\n";
  print "</tr>\n";
  print "<tr valign=top>\n";
@@ -64,39 +68,41 @@ print "<td width=40%>\n";
  print "</tr>\n";
  print "</table>\n";
 print "</td>\n";
-print "<td colspan=2>\n";
+print "<td>\n";
  print "<table>\n";
 
  print "<tr valign=top>\n";
- print "<td>\n"; &LocationBox;          print "</td>\n";
+ print "<td>\n"; &LocationBox;       print "</td>\n";
  print "</tr>\n";
 
  print "<tr valign=top>\n";
- print "<td>\n"; &ConferenceURLBox;     print "</td>\n";
+ print "<td>\n"; &ConferenceURLBox;  print "</td>\n";
  print "</tr>\n";
 
  print "<tr valign=top>\n";
- print "<td>\n"; &StartDatePullDown;    print "</td>\n";
+ print "<td>\n"; &StartDatePullDown; print "</td>\n";
  print "</tr>\n";
 
  print "<tr valign=top>\n";
- print "<td>\n"; &EndDatePullDown;      print "</td>\n";
+ print "<td>\n"; &EndDatePullDown;   print "</td>\n";
  print "</tr>\n";
 
  print "</table>\n";
 print "</td>\n";
 print "</tr>\n";
-
+print "</table>\n";
+print "<table cellpadding=10 border=1>\n";
 print "<tr valign=top>\n";
-print "<td colspan=3>\n"; &ConferenceIntroBox;   print "</td>\n";
+print "<td>\n"; &ConferenceIntroBox; print "</td>\n";
+print "<td>\n"; &ConferenceDiscBox;  print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td colspan=3>\n"; &SessionEntryForm;   print "</td>\n";
+print "<td colspan=2>\n"; &SessionEntryForm;   print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td colspan=3>\n";
+print "<td colspan=2>\n";
 print $query -> submit (-value => "Create New Meeting");
 print "</td>\n";
 print "</tr>\n";
