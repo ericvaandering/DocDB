@@ -1,7 +1,30 @@
 #! /usr/bin/env perl
 #
-# Author Lynn Garren (garren@fnal.gov)
+#        Name: ListKeywords
+# Description: Lists the managed keywords. 
+#              In the first mode, links perform a search
+#              In chooser mode, links insert the keyword into the 
+#              form on the calling page
 #
+#      Author: Lynn Garren (garren@fnal.gov)
+#    Modified: Eric Vaandering (ewv@fnal.gov)
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 use CGI;                                                                                      
 use DBI;
@@ -35,7 +58,7 @@ if ($Mode eq "chooser") {
   
 
 if ($Mode eq "chooser") {
-  print "Click on keywords to insert them into keyword box on the document form.<p>\n";
+  print "Click on keywords to insert them into the keyword box on the document form.<p>\n";
 } else {
   print "<p>\n";
   print "Please use the following keywords to facilitate searches. Note that

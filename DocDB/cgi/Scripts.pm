@@ -405,6 +405,29 @@ ENDSCRIPT
 
 }
 
+sub SignatureInsertScript {
+  
+  # Adapted from KochSuite, a German-authored Cookbook by 
+  # Michael Lestinsky <michael@zaphod.rhein-neckar.de>
+  
+  print <<ENDSCRIPT;
+
+  <script language="JavaScript1.2">
+  <!--
+    function InsertSignature ( name ) {
+      if ( opener.document.forms[0].signofflist.value == '' ) {
+        opener.document.forms[0].signofflist.value = name;
+      } else {
+        opener.document.forms[0].signofflist.value += '\\n' + name;
+      }
+    }
+  //-->
+  </script>
+
+ENDSCRIPT
+
+}
+
 sub SignoffChooserPopupScript {
   print "<script LANGUAGE=\"JavaScript\" type=\"text/javascript\">\n";
   print "<!-- \n";
