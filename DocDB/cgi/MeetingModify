@@ -87,7 +87,7 @@ my @SessionDeletes       = split /\0/,$params{sessiondelete};
 my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
 my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
 
-my $StartTime,$EndTime;
+my ($StartTime,$EndTime);
 
 if ($StartDay && $StartMonth && $StartYear) {
   $StartTime = timelocal(0,0,0,$StartDay,$ReverseAbrvMonth{$StartMonth}-1,$StartYear);

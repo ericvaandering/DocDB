@@ -1,0 +1,154 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+# Get DocumentIDs of documents user has signed
+
+#select DocumentRevision.DocumentID from Signature,Signoff,DocumentRevision
+#where Signature.EmailUserID=? and Signoff.SignoffID=Signature.SignoffID and
+#Signoff.DocRevID=DocumentRevision.DocRevID and Signature.Signed=1
+
+# Get DocumentIDs of documents user hasn't signed
+
+#select DocumentRevision.DocumentID from Signature,Signoff,DocumentRevision
+#where Signature.EmailUserID=1 and Signoff.SignoffID=Signature.SignoffID and
+#Signoff.DocRevID=DocumentRevision.DocRevID and Signature.Signed=0
+
+use Benchmark;
+use CGI;
+use DBI;
+
+$StartTime = new Benchmark;
+
+require "DocDBGlobals.pm";
+
+require "SignoffSQL.pm";
+require "NotificationSQL.pm";
+
+require "ResponseElements.pm";
+require "DocumentHTML.pm";
+
+require "HTMLUtilities.pm";
+require "RevisionUtilities.pm";
+require "SignoffUtilities.pm";
+require "Utilities.pm";
+
+$query = new CGI;  # Global for subroutines
+
+%params = $query -> Vars;
+
+my $EmailUserID = $params{emailuserid};
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+&FetchEmailUser($EmailUserID);
+
+### Start HTML
+
+print $query->header;
+&DocDBHeader("Signature Report for $EmailUser{$EmailUserID}{Name}");
+
+&EndPage(@ErrorStack);
+
+my @DocumentIDs = &GetSignoffDocumentIDs(-emailuserid => $EmailUserID);
+#my @DocRevIDs   = &GetSignoffDocRevIDs(-emailuserid => $EmailUserID);
+my @SignoffIDs  = &GetSignoffIDs(-emailuserid => $EmailUserID);
+
+my @ReadyDocumentIDs        = (); # Ready for persons signature
+my @NotReadyDocumentIDs     = (); # Signature ready in future
+my @ApprovedDocumentIDs     = (); # Fully approved documents
+my @SignedDocumentIDs       = (); # Signed but not approved
+my @OldSignatureDocumentIDs = (); # No signature on current version
+
+foreach my $SignoffID (@SignoffIDs) {
+  $SignoffID = &FetchSignoff($SignoffID);
+  if ($SignoffID) {
+    my $DocRevID = $Signoffs{$SignoffID}{DocRevID};
+    if (&RevisionIsLatest($DocRevID)) {
+      &FetchDocRevisionByID($DocRevID);
+      my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+      my $Status = &SignoffStatus ($SignoffID);
+      if ($Status eq "Ready") {
+        push @ReadyDocumentIDs,$DocumentID;
+      } elsif ($Status eq "NotReady") { 
+        push @NotReadyDocumentIDs,$DocumentID;
+      } elsif ($Status eq "Signed") { 
+        my ($RevisionStatus) = &RevisionStatus($DocRevID);
+        if ($RevisionStatus eq "Approved") {
+          push @ApprovedDocumentIDs,$DocumentID;
+        } elsif ($RevisionStatus eq "Unapproved") {
+          push @SignedDocumentIDs,$DocumentID;
+        }      
+      }
+    }
+  }    
+}
+    
+my @CurrentDocumentIDs = (@ReadyDocumentIDs ,@NotReadyDocumentIDs,@ApprovedDocumentIDs,@SignedDocumentIDs);
+@OldSignatureDocumentIDs = &RemoveArray(\@DocumentIDs,@CurrentDocumentIDs);
+    
+&DebugPage("Have created lists of documents");
+
+if (@ReadyDocumentIDs) {
+  print "<center><h4>These documents are ready to be signed by $EmailUser{$EmailUserID}{Name}:</h4></center><p>\n";
+
+  &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
+                 -docids => \@ReadyDocumentIDs, 
+                 -sortby => "date", -reverse => true);
+}
+
+if (@NotReadyDocumentIDs) {
+  print "<center><h4>These documents may require a future signature by $EmailUser{$EmailUserID}{Name}:</h4></center><p>\n";
+
+  &DocumentTable(-fields => ["Docid","Title","CanSign","Updated"],
+                 -docids => \@NotReadyDocumentIDs, 
+                 -sortby => "date", -reverse => true);
+}
+
+if (@SignedDocumentIDs) {
+  print "<center><h4>These documents are signed by $EmailUser{$EmailUserID}{Name}, but not approved:</h4></center><p>\n";
+
+  &DocumentTable(-fields => ["Docid","Title","CanSign","Updated"],
+                 -docids => \@SignedDocumentIDs, 
+                 -sortby => "date", -reverse => true);
+}
+
+if (@ApprovedDocumentIDs) {
+  print "<center><h4>These approved documents are signed by $EmailUser{$EmailUserID}{Name}:</h4></center><p>\n";
+
+  &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
+                 -docids => \@ApprovedDocumentIDs, 
+                 -sortby => "date", -reverse => true);
+}
+
+
+if (@OldSignatureDocumentIDs) {
+  print "<center><h4>Previous versions of these documents needed to be signed by $EmailUser{$EmailUserID}{Name}:</h4></center><p>\n";
+
+  &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
+                 -docids => \@OldSignatureDocumentIDs, 
+                 -sortby => "date", -reverse => true);
+}
+
+
+$EndTime  = new Benchmark;
+
+&DocDBNavBar();
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

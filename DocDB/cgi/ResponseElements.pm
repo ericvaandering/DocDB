@@ -167,6 +167,21 @@ sub WarnPage { # Non-fatal errors
   }   
 }
 
+sub DebugPage (;$) { # Debugging output
+  my ($CheckPoint) = @_; 
+  if (@DebugStack && $DebugOutput) {
+    print "<b><font color=\"red\">Debugging messages: </font>$CheckPoint</b><br/>\n";
+    foreach my $Message (@DebugStack) {
+      print "<dt/>$Message<br/>\n";
+    } 
+    print "<p/>\n";
+  } elsif ($CheckPoint && $DebugOutput) {
+    print "No Debugging messages: $CheckPoint<br/>\n";
+  }  
+  @DebugStack = ();
+  return @DebugStack;
+}
+
 sub EndPage {  # Fatal errors, aborts page if present
   my @errors = @_;
   if (@errors) {
@@ -234,6 +249,11 @@ sub NewDocumentLink ($;$$) { # FIXME: Make this the default
     $GivenVersion = true;
   }
   my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+  
+  unless ($DocRevID && $DocumentID) {
+    return "";
+  }
+    
   my $Link = "<a href=\"$ShowDocument\?docid=$DocumentID";
   if ($GivenVersion) {
     $Link .= "&version=$Version";
@@ -250,7 +270,6 @@ sub NewDocumentLink ($;$$) { # FIXME: Make this the default
   return $Link;
 }         
   
-
 sub DocumentURL {
   my ($DocumentID,$Version) = @_;
   my $URL;
@@ -537,7 +556,7 @@ sub FindAgendaRevision {
   $agenda_find -> bind_columns(undef, \($DocRevID));
   while ($agenda_find -> fetch && !$AgendaRevID) {
     &FetchDocRevisionByID($DocRevID); 
-    if ($DocRevisions{$DocRevID}{OBSOLETE}) {next;}
+    if ($DocRevisions{$DocRevID}{Obsolete}) {next;}
     my $DocID = &FetchDocument($DocRevisions{$DocRevID}{DOCID});
     if ($DocRevisions{$DocRevID}{VERSION} != $Documents{$DocID}{NVersions}) {next;}
     $AgendaRevID = $DocRevID;
@@ -552,7 +571,7 @@ sub FindAgendaRevision {
     $agenda_find -> bind_columns(undef, \($DocRevID));
     while ($agenda_find -> fetch && !$AgendaRevID) {
       &FetchDocRevisionByID($DocRevID); 
-      if ($DocRevisions{$DocRevID}{OBSOLETE}) {next;}
+      if ($DocRevisions{$DocRevID}{Obsolete}) {next;}
       my $DocID = &FetchDocument($DocRevisions{$DocRevID}{DOCID});
       if ($DocRevisions{$DocRevID}{VERSION} != $Documents{$DocID}{NVersions}) {next;}
       $AgendaRevID = $DocRevID;

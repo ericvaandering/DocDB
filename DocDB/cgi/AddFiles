@@ -33,9 +33,11 @@ require "ResponseElements.pm";
 require "SecuritySQL.pm";
 require "RevisionSQL.pm";
 require "MiscSQL.pm";
+
 require "FSUtilities.pm";
 require "WebUtilities.pm";
 require "HTMLUtilities.pm";
+require "FileUtilities.pm";
 require "Security.pm";
 
 require "RevisionHTML.pm";
@@ -59,13 +61,11 @@ print $query->header;
 
 ### Get document and revision ID
 
-my ($sec,$min,$hour,$day,$mon,$year) = localtime(time); 
-++$mon; $year += 1900; 
-$SQL_NOW       = "$year-$mon-$day $hour:$min:$sec";
-
 my $DocumentID = $params{docid};
 my $Version    = $params{version};
 my $Replace    = $params{replace};
+my $MaxFiles   = $params{maxfiles};
+
 my $DocRevID;
 
 ### Check for user errors
@@ -84,21 +84,35 @@ if ($DocumentID && $Version) {
 
 my $UpdateLink = $DocumentAddForm."?mode=update&docid=$DocumentID";
 
-# FIXME: Is the user authorized to make changes to this document
+# Fill in file hash
 
-unless ($params{single_upload} || $params{single_http}) {
-  push @ErrorStack,"You must supply a file for this document.";
-}
-if     ($params{single_upload} && $params{single_http}) {
-  push @ErrorStack,"You may not specify both URL and file upload.";
-}
+my %Files = ();
+my $NeedURLs   = 0;
+my $AddNewFile = 0;
 
-### Do the files to be added already exist?
-
-if ($params{single_upload}) {
-  my @short_files   = $query -> param("single_upload");
-  foreach my $short_file (@short_files) {
-    if (&ExistsUpload($DocRevID,$short_file)) {
+for (my $i = 1; $i<= $MaxFiles; ++$i) {
+  my $Key = $i; # Probably something better later
+  if ($params{"upload$i"}) {
+    $AddNewFile = 1;
+    $Files{$Key}{File} = $query ->  param("upload$i");
+    if (&ExistsUpload($DocRevID,$Files{$Key}{File})) {
+      if ($Replace) {
+        push @WarnStack,"The file $short_file already existed and has been
+                         replaced with a new version.";
+      } else {
+        push @ErrorStack,"The file $short_file already exists.  You may not add
+             files with the same file name.<br>
+             You probably want to <a href=\"$UpdateLink\">update</a> your
+             document,  not add files.";
+      }
+    }  
+  } elsif ($params{"url$i"}) {
+    $NeedURLs = 1;
+    $AddNewFile = 1;
+    $Files{$Key}{URL}  = $params{"url$i"};
+    $Files{$Key}{User} = $params{http_user};
+    $Files{$Key}{Pass} = $params{http_pass};
+    if (&ExistsURL($DocRevID,$Files{$Key}{URL})) {
       if ($Replace) {
         push @WarnStack,"The file $short_file already existed and has been
                           replaced with a new version.";
@@ -110,40 +124,25 @@ if ($params{single_upload}) {
       }
     }  
   }
+  
+  if ($params{"main$i"}) {
+    $Files{$Key}{Main} = 1;
+  } else {
+    $Files{$Key}{Main} = 0;
+  }          
+
+  $Files{$Key}{Description} = $params{"filedesc$i"};
 }
 
-### If they are URLs, do they exist, not dupes, etc.
+unless ($AddNewFile) {
+  push @ErrorStack,"You must supply a file for this document.";
+}
 
-if ($params{single_http}) {
-  if ($params{http_user} && $params{http_pass}) {
-    $Authentication = " --http-user $params{http_user} --http-pass $params{http_pass} ";
-  } else {
-    $Authentication = "";
-  }  
-  my @urls = split /\0/,$params{single_http};
-  foreach my $url (@urls) {
-    if (&ExistsURL($DocRevID,$url)) {
-      if ($Replace) {
-        push @WarnStack,"The file $short_file already existed and has been
-                          replaced with a new version.";
-      } else {
-        push @ErrorStack,"The file $short_file already exists. 
-         You may not add files with the same file name.<br>
-         You probably want to <a href=\"$UpdateLink\">update</a> your document, 
-         not add files.";
-      }
-    }  
-    if (&ValidFileURL($url)) {
-      my $command = $Wget.$Authentication.$url;
-      my @url_lines = `$command`;  # FIXME: avoid fetching twice 
-      unless (@url_lines) {
-        push @ErrorStack,"The URL <tt>$url</tt> was not present or was protected.";
-      }
-    } else {
-      push @ErrorStack,"The URL <tt>$url</tt> is not well formed. Don't forget ".
-                        "http:// on the front and a file name after the last /.";
-    }
-  }  
+# Download HTTP files (generates it's own warnings)
+ 
+if ($NeedURLs) {
+  my $TmpDir = &MakeTmpSubDir();
+  %Files = &DownloadURLs(-tmpdir => $TmpDir, -files => \%Files);
 }  
 
 ### Abort if there were errors
@@ -156,51 +155,12 @@ if ((@ErrorStack)) {  # The user made one or more mistakes, warn and exit
 
 $new_dir = &MakeDirectory($DocumentID,$Version);
 
-@Descriptions = split ("\0",$params{filedesc});
-@Roots = ();
-my @RawRoots = split ("\0",$params{root});
-foreach my $RawRoot (@RawRoots) {  # Simulate what I thought was happening
-  @Roots[$RawRoot-1] = "on"        # with roots
-}  
+my @FileIDs = &AddFiles(-docrevid   => $DocRevID, -files => \%Files, 
+                        -replaceold => $Replace);
 
-if ($params{single_upload}) { # Copy file to directory
-  @short_files   = $query ->  param("single_upload");
-  foreach $short_file (@short_files) {
-    my $status = &ProcessUpload($new_dir,$short_file);
-  }
-} elsif ($params{single_http}) {
-  @urls = split /\0/,$params{single_http};
-  @short_files = ();
-  foreach $url (@urls) {
-    $short_file = &ProcessURL($new_dir,$url);
-    push @short_files,$short_file;
-  }  
-}
+### Touch document
 
-### Insert into Files database
-
-foreach $short_file (@short_files) {
-  my $file_insert = $dbh->prepare(
-     "insert into DocumentFile ".
-     "       (DocFileID, DocRevID, FileName, Date, RootFile, Description) ".
-     "values (0,         ?,        ?,        ?,    ?       , ?)");
-  my $file_update = $dbh->prepare(
-     "update DocumentFile set Date=?,RootFile=?,Description=? ".
-     "where DocRevID=? and FileName=?");
-
-  my $Description = shift @Descriptions;
-  my $RootFile = shift @Roots;
-  if ($RootFile eq "on") {
-    $RootFile = 1;
-  } else {
-    $RootFile = 0;
-  }
-  if (&ExistsUpload($DocRevID,$short_file)) {
-    $file_update -> execute($SQL_NOW,$RootFile,$Description,$DocRevID,$short_file);
-  } else {   
-    $file_insert -> execute($DocRevID,$short_file,$SQL_NOW,$RootFile,$Description);
-  }
-}
+&UpdateRevision(-docrevid => $DocRevID);
 
 ### Remove signatures from document if they existed
 
@@ -214,10 +174,7 @@ if ($UseSignoffs) {
   
 ### If we had any warnings print them out now
 
-if (@WarnStack) {
-  &WarnPage(@WarnStack);
-  @WarnStack = ();
-}
+&WarnPage(@WarnStack); @WarnStack = ();
 
 %DocFiles = (); @Files    = (); # Files DB not in sync, clear it
 
@@ -236,6 +193,10 @@ print "You were successful in adding files. Your entry now contains
        the following information: <p>\n"; 
 
 &PrintRevisionInfo($DocRevID);
+
+if ($MailInstalled) {
+  &MailNotices(-docrevid => $DocRevID, -type => "update");
+}
 
 if ($MailInstalled && $UseSignoffs) { 
   &ClearSignatures; 

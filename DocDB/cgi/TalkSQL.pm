@@ -121,7 +121,7 @@ sub FetchTalkSeparatorByID ($) {
 
 sub FetchSessionOrdersBySessionID {
   my ($SessionID) = @_;
-  my $TalkSeparatorID,$SessionTalkID,$SessionOrderID,$TalkOrder;
+  my ($TalkSeparatorID,$SessionTalkID,$SessionOrderID,$TalkOrder);
   my @SessionOrderIDs = ();
   my $SessionTalkOrderList   = $dbh -> prepare(
     "select SessionOrder.SessionOrderID,SessionOrder.TalkSeparatorID,SessionOrder.SessionTalkID,SessionOrder.TalkOrder ".

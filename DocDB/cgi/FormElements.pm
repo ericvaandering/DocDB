@@ -33,6 +33,78 @@ sub DaysPulldown {
                               -default => $Days,  -onChange => "submit()");
 }
 
+sub DateTimePulldown (%) { # Note capitalization
+  my (%Params) = @_;
+  
+  my $Name        = $Params{-name}        || "date";
+  my $Disabled    = $Params{-disabled}    || 0;
+  my $DateOnly    = $Params{-dateonly}    || 0; 
+  my $TimeOnly    = $Params{-timeonly}    || 0; 
+  my $OneTime     = $Params{-onetime}     || 0; # Not Used (do like 5:45 in one pulldown)
+  my $OneLine     = $Params{-oneline}     || 0;
+  my $Granularity = $Params{-granularity} || 5; # Not Used
+  
+  my @Defaults = @{$Params{-default}}; # Not Used
+
+  my $HelpLink  = $Params{-helplink}  || "";
+  my $HelpText  = $Params{-helptext}  || "Date & Time";
+  my $Required  = $Params{-required}  || 0;
+  my $NoBreak   = $Params{-nobreak}  ;
+  my $ExtraText = $Params{-extratext};
+   
+  my $Booleans = "";
+  
+  if ($Disabled) {
+    $Booleans .= "-disabled";
+  }  
+  
+  my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
+  $Year += 1900;
+  $Min = (int (($Min+($Granularity/2))/$Granularity))*$Granularity; # Nearest $Granularity minutes
+
+  my @Years = ();
+  for (my $i = $FirstYear; $i<=$Year; ++$i) { # $FirstYear - current year
+    push @Years,$i;
+  }  
+
+  my @Days = ();
+  for (my $i = 1; $i<=31; ++$i) { # $FirstYear - current year
+    push @Days,$i;
+  }  
+
+  my @Hours = ();
+  for (my $i = 0; $i<24; ++$i) {
+    push @Hours,$i;
+  }  
+
+  my @Minutes = ();
+  for (my $i = 0; $i<=55; $i=$i+5) {
+    push @Minutes,(sprintf "%2.2d",$i);
+  }  
+  
+  my $ElementTitle = &FormElementTitle(-helplink  => $HelpLink , 
+                                       -helptext  => $HelpText ,
+                                       -extratext => $ExtraText,
+                                       -text      => $Text     ,
+                                       -nobreak   => $NoBreak  ,
+                                       -required  => $Required );
+  print $ElementTitle,"\n";                                     
+
+  unless ($TimeOnly) {
+    print $query -> popup_menu (-name => $Name."day",-values => \@Days, -default => $Day, $Booleans);
+    print $query -> popup_menu (-name => $Name."month",-values => \@AbrvMonths, -default => $AbrvMonths[$Mon], $Booleans);
+    print $query -> popup_menu (-name => $Name."year",-values => \@Years, -default => $Year, $Booleans);
+  }
+  unless ($OneLine || $DateOnly || $TimeOnly) {
+    print "<br>\n";
+  }  
+  unless ($DateOnly) {
+    print $query -> popup_menu (-name => $Name."hour",-values => \@Hours, -default => $Hour, $Booleans);
+    print "<b> : </b>\n";
+    print $query -> popup_menu (-name => $Name."min",-values => \@Minutes, -default => $Min, $Booleans);
+  }
+}
+
 sub DateTimePullDown {
   my ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
   $year += 1900;
@@ -77,7 +149,7 @@ sub StartDatePullDown (;%) {
 
   my (%Params) = @_;
   
-  my $Disabled = $Params{-disabled}  || "0";
+  my $Disabled = $Params{-disabled}  || 0;
   
   my $Booleans = "";
   
@@ -123,7 +195,7 @@ sub EndDatePullDown (;%) {
 
   my (%Params) = @_;
   
-  my $Disabled = $Params{-disabled}  || "0";
+  my $Disabled = $Params{-disabled}  || 0;
   
   my $Booleans = "";
   
@@ -534,15 +606,27 @@ sub FormElementTitle (%) {
   my $ExtraText = $Params{-extratext} || "";
   my $Text      = $Params{-text}      || "";
   my $NoBreak   = $Params{-nobreak}   || 0;
+  my $NoBold    = $Params{-nobold}    || 0;
+  my $NoColon   = $Params{-nocolon}   || 0;
   my $Required  = $Params{-required}  || 0;
 
   my $TitleText = "";
-
+  my $Colon = "";
+  
+  unless ($NoColon) {
+    $Colon = ":";
+  }  
+  unless ($NoBold) {
+    $TitleText .= "<b>";
+  }
   if ($HelpLink) {
-    $TitleText .= "<b><a style=\"color: red\" href=\"Javascript:helppopupwindow(\'$DocDBHelp?term=$HelpLink\');\">";
-    $TitleText .= "$HelpText:</a></b>";
+    $TitleText .= "<a style=\"color: red\" href=\"Javascript:helppopupwindow(\'$DocDBHelp?term=$HelpLink\');\">";
+    $TitleText .= "$HelpText$Colon</a>";
   } elsif ($Text) {
-    $TitleText .= "<b>$Text:</b>"; 
+    $TitleText .= "$Text$Colon"; 
+  }
+  unless ($NoBold) {
+    $TitleText .= "</b>";
   }
   
   if ($Required) {
@@ -552,8 +636,11 @@ sub FormElementTitle (%) {
   if ($ExtraText) {
     $TitleText .= "&nbsp;$ExtraText";
   } 
-  unless ($NoBreak) { 
-    $TitleText .= "<br/> \n";
+  
+  if ($NoBreak) { 
+    $TitleText .= "\n";
+  } else {
+    $TitleText .= "<br/>\n";
   }  
   
   return $TitleText;

@@ -158,7 +158,7 @@ sub GetAuthorDocuments { # Return a list of all documents the author is associat
   my $DocumentList = $dbh -> prepare(
      "select DocumentID from DocumentRevision where DocRevID=? and Obsolete=0"); 
 
-  my $DocumentID,$DocRevID;
+  my ($DocumentID,$DocRevID);
 
 ### Get all revisions with this author
 
@@ -168,7 +168,7 @@ sub GetAuthorDocuments { # Return a list of all documents the author is associat
 
   while ($RevisionList -> fetch) {
     &FetchDocRevisionByID($DocRevID);
-    if ($DocRevisions{$DocRevID}{OBSOLETE}) {next;}
+    if ($DocRevisions{$DocRevID}{Obsolete}) {next;}
     $DocumentList -> execute($DocRevID);
     ($DocumentID) = $DocumentList -> fetchrow_array;
     $DocumentIDs{$DocumentID} = 1; # Hash removes duplicates
