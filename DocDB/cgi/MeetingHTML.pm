@@ -43,12 +43,11 @@ sub SessionEntryForm (@) {
   print "Sessions:</a></b><p> \n";
   print "<table cellpadding=3>\n";
   print "<tr valign=top>\n";
-  print "<th><b><a "; &HelpLink("meetingorder");     print "Order</a></td>\n";
-  print "<th><b><a "; &HelpLink("meetingseparator"); print "Separator</a></td>\n";
-  print "<th><b><a "; &HelpLink("sessioninfo");      print "Start Date and Time</a></td>\n";
-  print "<th><b><a "; &HelpLink("sessioninfo");      print "Session Title</a></td>\n";
-  print "<th><b><a "; &HelpLink("sessioninfo");      print "Description of Session</a></td>\n";
-  print "<th><b><a "; &HelpLink("sessiondelete");    print "Delete</a></td>\n";
+  print "<th><b><a "; &HelpLink("meetingorder");     print "Order</a></b> or <br>\n";
+  print "    <b><a "; &HelpLink("sessiondelete");    print "Delete</a></td>\n";
+  print "<th><b><a "; &HelpLink("meetingseparator"); print "Separator</a></th>\n";
+  print "<th><b><a "; &HelpLink("sessioninfo");      print "Start Date and Time</a></th>\n";
+  print "<th><b><a "; &HelpLink("sessioninfo");      print "Session Title & Description</a></th>\n";
   print "</tr>\n";
   
   # Sort session IDs by order
@@ -91,10 +90,13 @@ sub SessionEntryForm (@) {
     print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
     print "<td align=center>\n"; &SessionOrder; print "</td>\n";
     print "<td align=center>\n"; &SessionSeparator($MeetingOrderID) ; print "</td>\n";
-    print "<td>\n"; &SessionDateTimePullDown; print "</td>\n";
+    print "<td rowspan=2 align=right>\n"; &SessionDateTimePullDown; print "</td>\n";
     print "<td>\n"; &SessionTitle($SessionDefaultTitle);            print "</td>\n";
-    print "<td>\n"; &SessionDescription;      print "</td>\n";
+    print "</tr>\n";
+    print "<tr valign=top>\n";
     print "<td align=center>\n"; &SessionDelete($MeetingOrderID) ; print "</td>\n";
+    print "<td colspan=2>&nbsp</td>\n";
+    print "<td>\n"; &SessionDescription;      print "</td>\n";
     print "</tr>\n";
   }
   print "</table>\n";
@@ -147,7 +149,7 @@ sub SessionDateTimePullDown {
   print $query -> popup_menu (-name => 'sessionday',  -values => \@days,  -default => $DefaultDay);
   print $query -> popup_menu (-name => 'sessionmonth',-values => \@months,-default => $AbrvMonths[$DefaultMonth]);
   print $query -> popup_menu (-name => 'sessionyear', -values => \@years, -default => $DefaultYear);
-  print "<b> - </b>\n";
+  print "<p> at &nbsp;\n";
   print $query -> popup_menu (-name => 'sessionhour', -values => \@hours, -default => $DefaultHour);
 }
 
@@ -184,19 +186,27 @@ sub SessionDelete ($) {
 
 sub SessionTitle ($) {
   $query -> param('sessiontitle',$SessionDefaultTitle);
-  print $query -> textfield (-name => 'sessiontitle', -size => 35, -maxlength => 128, 
+  print $query -> textfield (-name => 'sessiontitle', -size => 40, -maxlength => 128, 
                              -default => $SessionDefaultTitle);
 }
 
 sub SessionDescription {
   $query -> param('sessiondescription',$SessionDefaultDescription);
   print $query -> textarea (-name => 'sessiondescription',-value => $SessionDefaultDescription, 
-                            -columns => 30, -rows => 3);
+                            -columns => 40, -rows => 3);
 }
 
-sub PrintSession ($) {
-  my ($SessionID) = @_;
+sub PrintSession ($;$) {
+  my ($SessionID,$IsSingle) = @_;
   
+  require "Sorts.pm";
+  
+  print "Printing Session info for $SessionID <p>\n";
+  print "<center><h4>$Sessions{$SessionID}{Title}: \n";
+  print &EuroDateTime($Sessions{$SessionID}{StartTime});
+  print "</h4></center> \n";
+  print "<center> $Sessions{$SessionID}{Description} </center><p>\n";
+
   my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
   my @TalkSeparatorIDs = &FetchTalkSeparatorsBySessionID($SessionID);
   my @SessionOrderIDs  = &FetchSessionOrdersBySessionID($SessionID);
@@ -238,7 +248,7 @@ sub PrintSession ($) {
       } 
     }
   }
-  print "<table>\n";   
+  print "<hr><table>\n";   
 }
 
 sub PrintSessionTalk($) {

@@ -1,6 +1,6 @@
 #! /usr/bin/env perl
 #
-#        Name: DisplaySession
+#        Name: DisplayMeeting
 # Description: Displays talks for a meeting or just a session of a meeting
 # 
 #      Author: Eric Vaandering (ewv@fnal.gov)
@@ -15,9 +15,9 @@ require "Debug.pm"; #FIXME: Remove
 # cvs remove DisplaySession
 
 require "DocDBGlobals.pm";
-#require "HTMLUtilities.pm";
-#require "ResponseElements.pm";
-#require "Sorts.pm";
+require "HTMLUtilities.pm";
+require "ResponseElements.pm";
+require "Sorts.pm";
 
 require "MeetingHTML.pm";
 require "MeetingSQL.pm";
@@ -46,10 +46,27 @@ unless ($dbh) {
 
 print "<h2>Put header information here</h2>\n";
 
+
+
 if ($SessionID) {
-  &PrintSession($SessionID); # Display a single session
+  &PrintSession($SessionID,1); # Display a single session
 } elsif ($MeetingID) {
+  # Fetch meeting, check ShowAllTalks
   # Loop over sessions and display them or link to them
+  my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($MeetingID);
+  @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
+  foreach $MeetingOrderID (@MeetingOrderIDs) {
+    my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
+    my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
+    if ($SessionID) {
+      &FetchSessionByID($SessionID);
+      &PrintSession($SessionID,0); # Display a single session
+    } elsif ($SessionSeparatorID) {
+      # Info on session separator?
+    }
+  }  
+} elsif ($SessionSeparatorID) {
+  # Info on session separator?
 } else {
   #Complain that user didn't specify either
 }  

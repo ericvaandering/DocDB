@@ -164,8 +164,8 @@ if ($Mode eq "create" || $Mode eq "modify") {
 
   my $MeetingOrderInsert = $dbh -> prepare(
    "insert into MeetingOrder ".
-   "(MeetingOrderID, SessionOrder, SessionID, SessionSeparatorID) ". 
-   "values (0,?,?,?)");
+   "(MeetingOrderID, ConferenceID, SessionOrder, SessionID, SessionSeparatorID) ". 
+   "values (0,?,?,?,?)");
   my $MeetingOrderUpdate = $dbh -> prepare(
    "update MeetingOrder set SessionOrder=? where MeetingOrderID=?");
   
@@ -199,7 +199,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
           $SessionInsert          -> execute($ConferenceID,$SessionDate,$SessionTitle,$SessionDescription);
           $SessionID = $SessionInsert -> {mysql_insertid}; # Works with MySQL only
 	}
-	$MeetingOrderInsert -> execute($SessionNewOrder,$SessionID,$SessionSeparatorID);
+	$MeetingOrderInsert -> execute($ConferenceID,$SessionNewOrder,$SessionID,$SessionSeparatorID);
       }  
     } else {
       $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
