@@ -162,15 +162,15 @@ sub TopicsTable {
   print "</table>\n";
 }
 
-sub ConferencesTable {
+sub NewMeetingsTable {
   require "Sorts.pm";
   require "TopicSQL.pm";
   
   my @MinorTopicIDs = sort byTopic keys %MinorTopics; #FIXME special sort 
 
-  my ($MajorID) = @ConferenceMajorIDs; 
   print "<table cellpadding=4>\n";
 
+  foreach my $MajorID (@MeetingMajorIDs,@ConferenceMajorIDs) { 
   print "<tr>\n";
   print "<th>Name</th>\n";
   print "<th>Full Name</th>\n";
@@ -198,6 +198,7 @@ sub ConferencesTable {
       print "</tr>\n";
     }  
   }  
+  }
   print "</table>";
 }
 
@@ -218,6 +219,31 @@ sub ConferencesList {
   print "</ul>";
 }
 
+sub MajorMeetingSelect (;$) { # Scrolling selectable list for major topics with dates
+  my ($Mode) = @_; 
+  
+  print "<b><a ";
+  &HelpLink("majortopics");
+  print "Major Topics:</a></b><br> \n";
+  my @MajorIDs = keys %MajorTopics;
+  my @MeetingMajorIDs = ();
+  foreach my $MajorID (@MajorIDs) {
+    if (&MajorIsMeeting($MajorID) || &MajorIsConference($MajorID)) {
+      push @MeetingMajorIDs,$MajorID;
+    }
+  }    
+  my %MajorLabels = ();
+  foreach my $ID (@MeetingMajorIDs) {
+    if ($Mode eq "full") {
+      $MajorLabels{$ID} = $MajorTopics{$ID}{Full};
+    } else {  
+      $MajorLabels{$ID} = $MajorTopics{$ID}{SHORT};
+    }  
+  }  
+  print $query -> scrolling_list(-name => "majortopic", -values => \@MeetingMajorIDs, 
+                                 -labels => \%MajorLabels,  -size => 10);
+};
+
 sub ConferenceSelect {
   require "TopicSQL.pm";
   
@@ -225,7 +251,7 @@ sub ConferenceSelect {
   my @ConferenceTopicIDs = ();
   my %TopicLabels        = ();
   foreach my $MinorID (@MinorIDs) {
-    unless (&MajorIsConference($MinorTopics{$MinorID}{MAJOR})) {
+    unless (&MajorIsConference($MinorTopics{$MinorID}{MAJOR}) || &MajorIsMeeting($MinorTopics{$MinorID}{MAJOR})) {
       next;
     }  
     push @ConferenceTopicIDs,$MinorID;
