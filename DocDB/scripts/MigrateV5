@@ -14,10 +14,22 @@ require "DocDBGlobals.pm";
 
 &GetOptions("a=s" => \$Action,"u=s" => \$User,"p=s" => \$Password);
 
+# Here, replace Group1,Group2, etc. with the groups you want to give view or 
+# modify access to  all your existing meetings. If you make the list blank
+# "... = ()" any group that can create documents can modify all the meetings
+# and all the meetings will be publically viewable.
+
+# Deviations from this must be fixed by hand with the meeting organizer.
+
+my @DefaultViewGroups   = ("Group1","Group2");
+my @DefaultModifyGroups = ("Group1","Group2");
+
 unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate") {
   print "Usage: MigrateV5 --u=username --p=password --a=init|migrate|delete\n\n";
   print "This script is used to migrate from a version 4 to version 5 DB structure. \n";
-  print "Run this script in \"init\" mode. For this upgrade there no migrate or delete steps.  \n\n";
+  print "Run this script in \"init\" mode first, then in \"migrate\" mode. \n";
+  print "You will likely want to edit the script before running in migrate mode.  \n\n";
+  print "For this upgrade there is no delete step.  \n\n";
 #  print "Run this script in \"init\" mode first, then in \"migrate\" mode.  \n\n";
 #  print "At this point you can update the CGI code and when you are comfortable  \n";
 #  print "everything is OK, run in \"delete\" mode to erase old columns and/or tables.  \n";
@@ -75,7 +87,40 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
 }
 
 if ($Action eq "migrate") {
-  print "No migration necessary.\n";
+  require "SecuritySQL.pm"; 
+  my @ViewGroupIDs = ();
+  foreach my $Group (@DefaultViewGroups) {
+    my $GroupID = &FetchSecurityGroupByName($Group); 
+    if ($GroupID) { 
+      push @ViewGroupIDs,$GroupID;  
+    } else {
+      print "Group $Group not found. Skipping.\n";
+    }   
+  } 
+  my @ModifyGroupIDs = ();
+  foreach my $Group (@DefaultModifyGroups) {
+    my $GroupID = &FetchSecurityGroupByName($Group); 
+    if ($GroupID) { 
+      push @ModifyGroupIDs,$GroupID;  
+    } else {
+      print "Group $Group not found. Skipping.\n";
+    }   
+  } 
+  
+  my $ConferenceID;
+  my $ConferenceSelect = $dbh -> prepare("select ConferenceID from Conference");
+  my $ViewInsert       = $dbh -> prepare("insert into MeetingSecurity (MeetingSecurityID,ConferenceID,GroupID) values (0,?,?)");
+  my $ModifyInsert     = $dbh -> prepare("insert into MeetingModify   (MeetingModifyID,ConferenceID,GroupID)   values (0,?,?)");
+     $ConferenceSelect -> execute();
+     $ConferenceSelect -> bind_columns(undef, \($ConferenceID));
+  while ($ConferenceSelect -> fetch) {
+    foreach my $GroupID (@ViewGroupIDs) { 
+      $ViewInsert -> execute ($ConferenceID,$GroupID);
+    }  
+    foreach my $ModGroupID (@ModifyGroupIDs) { 
+      $ModifyInsert -> execute ($ConferenceID,$ModGroupID);
+    }  
+  }
 }
 
 if ($Action eq "delete") { 
