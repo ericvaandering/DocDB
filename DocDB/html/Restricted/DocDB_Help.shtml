@@ -42,14 +42,19 @@
  </ol>
  <li><a href="#special">Special Cases</a>
  <ol type="1">
-  <li><a href="#meeting">Group Meeting Talks</a>
-  <li><a href="#conference">Conference Talks and Proceedings</a>
-  <li><a href="#reference">Publications in Refereed Journals</a>
+  <li><a href="#meeting">Group meeting talks</a>
+  <li><a href="#conference">Conference talks and proceedings</a>
+  <li><a href="#reference">Publications in refereed journals</a>
+ </ol>
+ <li><a href="#prefs">Preferences and E-mail Notification</a>
+ <ol type="1">
+  <li><a href="#prefs">Setting preferences</a>
+  <li><a href="#email">Setting e-mail notification</a>
  </ol>
  <li><a href="#final">Final Words</a>
  <ol type="1">
-  <li><a href="#refer">Referring to Your Document</a>
-  <li><a href="#morehelp">Getting More Help</a>
+  <li><a href="#refer">Referring to your document and its files</a>
+  <li><a href="#morehelp">Getting more help</a>
  </ol>
 </ol>
 
@@ -385,8 +390,42 @@ Below the free-form "Publication Information" field is a place to select a
 journal, volume, and page for your document if it is published. If you need a
 journal added, let the database administrators know.<p>
 
+<h2>D. Preferences and E-mail Notification</h2>
+
+<a name="prefs">
+<h3>Setting preferences</h3>
+
+Setting preferences with the Document Database allows you to configure the
+default entry
+forms to your liking and to save some typing by telling the database who you
+are. <p>
+
+Once the database knows who you are, your name will be pre-selected as the requester and
+author of new documents. You can, of course, change this setting to enter
+documents by people other than (or in addition to) yourself.<p>
+
+You can also set your document entry preferences, so for instance if you often
+find yourself submitting URLs instead of files, you may wish to select HTTP
+submission as your default file submission method. You can always use the
+<q>Customized Insert/Modify</q> form to over-ride any preferences.<p>
+
+To set your preferences, follow the link from the main Document Database page.
+Also, make sure your browser will accept cookies, at least for the BTeV web
+server.
+
+<a name="email">
+<h3>Setting e-mail notification</h3>
+
+By following the link for "E-mail Notification" from the main page, you can
+request to be notified of new documents or documents that change. You are
+notified only for documents on topics that you select. You can choose to be
+notified immediately, once a day, and/or once a week. For each time period, you
+can choose which documents to be notified about. So, for instance, you could
+choose to be notified immediately if a new document is created about your
+detector and every week about all new documents in the database. 
+
 <a name="final">
-<h2>D. Final Words</h2>
+<h2>E. Final Words</h2>
 
 <a name="refer">
 <h3>Referring to Your Document</h3>
