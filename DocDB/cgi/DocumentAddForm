@@ -24,6 +24,13 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 %params = $query -> Vars;
 
+$Meeting = $params{meeting};
+$Meeting = 1;
+
+if ($Meeting) {
+ $topicmode = "multi";
+}
+
 $mode   = $params{mode};
 if ($mode ne "add"    && $mode ne "reserve" && 
     $mode ne "update" && $mode ne "updatedb") {
@@ -36,6 +43,14 @@ if ($upload ne "http" && $upload ne "file") {
 }  
 
 $NumberUploads = $params{numfile};
+unless ($NumberUploads) {
+  if ($Meeting) {
+    $NumberUploads = 2;
+  } else {
+    $NumberUploads = 1;
+  }  
+}
+
 $Archive       = $params{archive};
 $Overdate      = $params{overdate};
 
@@ -45,7 +60,9 @@ if ($Archive ne "archive" && $Archive ne "single") {
   $Archive = "single";
 }  
 
-$topicmode = $params{topicmode};
+unless ($topicmode) {
+  $topicmode = $params{topicmode};
+}
 if ($topicmode ne "single" && $topicmode ne "multi") {
   $topicmode = "single";
 }  
@@ -54,8 +71,6 @@ $AuthorMode = $params{authormode};
 if ($AuthorMode ne "list" && $AuthorMode ne "field") {
   $AuthorMode = "list";
 }  
-
-unless ($NumberUploads) {$NumberUploads = 1;}
 
 print $query->header;
 if      ($mode eq "add") {
@@ -109,6 +124,7 @@ print $query -> hidden(-name => 'upload',  -default => 'file');
 print $query -> hidden(-name => 'archive', -default => 'single');
 print $query -> hidden(-name => 'docid',   -default => $DocumentID);
 print $query -> hidden(-name => 'overdate',-default => '');
+print $query -> hidden(-name => 'meeting',-default => '');
 
 print "<center><table cellpadding=10>\n";
 
@@ -139,10 +155,12 @@ print "<td colspan=3>\n"; &TitleBox;    print "</td>\n";
 print "</tr><tr>\n";
 print "<td colspan=3>\n"; &AbstractBox; print "</td>\n";
 print "</tr><tr>\n";
-print "<td colspan=3>\n"; &PubInfoBox;  print "</td>\n";
-print "</tr><tr>\n";
-print "<td colspan=3>\n"; &ReferenceForm;  print "</td>\n";
-print "</tr>\n";
+unless ($Meeting) {
+  print "<td colspan=3>\n"; &PubInfoBox;  print "</td>\n";
+  print "</tr><tr>\n";
+  print "<td colspan=3>\n"; &ReferenceForm;  print "</td>\n";
+  print "</tr>\n";
+}
 
 if ($mode eq "add" || $mode eq "update") {
   print "<tr><td colspan=3>\n";
@@ -163,7 +181,9 @@ if ($mode eq "add" || $mode eq "update") {
 }
 
 print "<tr valign=top>\n";
-print "<td>\n"; &RequesterSelect; print "</td>\n";
+unless ($Meeting) {
+  print "<td>\n"; &RequesterSelect; print "</td>\n";
+}
 if ($AuthorMode eq "list") {
   print "<td>\n"; &AuthorSelect;    print "</td>\n";
 } elsif ($AuthorMode eq "field") {
