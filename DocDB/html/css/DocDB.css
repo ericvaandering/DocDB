@@ -44,7 +44,7 @@ h3 {font-size: 100%}
 
 #MainColumn3Col {
 	width: 100%-12.5em-1em; /* 12 matches LeftColums */
-	background: #fff;
+	background: white;
 	padding-bottom: 1em;
 	padding-left: 13.5em;   /* 13=12+1 matches LeftColums (can't hardcode?!?)*/
 	padding-right: 0.5em;
@@ -65,7 +65,7 @@ h3 {font-size: 100%}
 
 
 #Header3Col {
-	background: #fff;	
+	background: white;	
         margin-bottom: 1.5em;
 }
 	
@@ -73,7 +73,6 @@ h3 {font-size: 100%}
 #Footer3Col {
 	clear: both;
 	padding-bottom: 1em;
-//	border-top: 1px solid #333;
 	text-align: center;
 }
 	
@@ -81,11 +80,28 @@ h3 {font-size: 100%}
     padding-left: 1em;
 }
 
+/* Allow for lists with alternating colors */
+
 li.Odd {
   background: #eee;
 }
 
 li.Even {
-  background: #fff;
+  background: white;
+}
+
+/* Allow for tables alternating color rows. 
+   border-collapse gets rid of spacing between cells */
+
+table.Alternating {
+  border-collapse: collapse;
+}
+
+tr.Odd {
+  background: #eee;
+}
+
+tr.Even {
+  background: white;
 }
 
