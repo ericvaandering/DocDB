@@ -47,7 +47,6 @@ sub DateTimePullDown {
 sub StartDatePullDown {
   my ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
   $year += 1900;
-  $min = (int (($min+3)/5))*5; # Nearest five minutes
   
   my @days = ();
   for ($i = 1; $i<=31; ++$i) {
@@ -73,7 +72,6 @@ sub StartDatePullDown {
 sub EndDatePullDown {
   my ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
   $year += 1900;
-  $min = (int (($min+3)/5))*5; # Nearest five minutes
   
   my @days = ();
   for ($i = 1; $i<=31; ++$i) {
@@ -552,7 +550,7 @@ sub AddFilesButton {
 
 sub AuthorManual {
   $AuthorManDefault = "";
-#  my $AuthorDefaults = @AuthorDefaults[0]; 
+
   foreach $AuthorID (@AuthorDefaults) {
     $AuthorManDefault .= "$Authors{$AuthorID}{FULLNAME}\n" ;
   }  
@@ -561,8 +559,7 @@ sub AuthorManual {
   print "Authors:</a></b><br> \n";
   print $query -> textarea (-name    => 'authormanual', 
                             -default => $AuthorManDefault,
-                            -columns => 20, 
-                            -rows    => 8);
+                            -columns => 20, -rows    => 8);
 };
 
 sub ReferenceForm {

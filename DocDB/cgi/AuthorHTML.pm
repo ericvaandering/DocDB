@@ -5,7 +5,6 @@ sub FirstAuthor {
 
   &FetchDocRevisionByID($DocRevID);
   my @AuthorIDs = &GetRevisionAuthors($DocRevID);
-#  my @AuthorIDs = @{$Authors_ref};
   
   unless (@AuthorIDs) {return "None";}
   

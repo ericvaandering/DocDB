@@ -134,7 +134,6 @@ sub PrintRevisionInfo {
   my $Topics_ref  = &GetRevisionTopics($DocRevID);
   my $Groups_ref  = &GetRevisionSecurityGroups($DocRevID);
 
-#  my @AuthorIDs = @{$Authors_ref};
   my @TopicIDs  = @{$Topics_ref};
   my @GroupIDs  = @{$Groups_ref};
  
@@ -522,6 +521,6 @@ sub PrintFile {
   } else {
     print "<b>Non-text file</b>\n";
   }  
-    
 }
+    
 1;
