@@ -156,7 +156,7 @@ sub PrintRevisionInfo {
     &AddFilesButton($DocumentID,$Version);
     print "</td></tr>\n";
     print "<tr><td colspan=3 align=center>\n";
-    print "<th><b><a "; &HelpLink("modifytypes"); print "Explain these options</a></th>\n";
+    print "<b><a "; &HelpLink("modifytypes"); print "Explain these options</a>\n";
     print "</td></tr>\n";
 
     print "</table></center>\n"; 
