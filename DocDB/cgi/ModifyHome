@@ -135,6 +135,7 @@ print "<li>Add a  <a href=\"$ConferenceAddForm\">conference</a>\n";
 if ($remote_user eq $Administrator) {
   print "<li>Add a <a href=\"$TopicAddForm\">topic</a>\n";
   print "<li>Add, delete, or modify <a href=\"$GroupAdministerForm\">groups</a>\n";
+  print "<li>View/modify <a href=\"$EmailAdministerForm\">E-mail notifications</a>\n";
   print "<li>Perform other <a href=\"$AdministerForm\">administration tasks</a>\n";
 }
 print "</ul>\n";

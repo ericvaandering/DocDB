@@ -266,10 +266,8 @@ print "<p>\n";
 
 print "<p><hr>\n";
 
-
-
 ### FIXME: Conferences
-### FIXME: Email Users
+### FIXME: Email Users (view and reset PW, maybe other script?)
 
 print "<p>\n";
 

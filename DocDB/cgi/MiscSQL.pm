@@ -59,7 +59,7 @@ sub GetDocTypes { # Creates/fills a hash $DocumentTypes{$DocTypeID}{}
   }
 };
 
-sub FetchDocType { # Fetches an DocumentType by ID, adds to $DocumentTypes{$DocTypeID}{}
+sub FetchDocType ($) { # Fetches an DocumentType by ID, adds to $DocumentTypes{$DocTypeID}{}
   my ($DocTypeID) = @_;
   my ($ShortType,$LongType);
 
@@ -77,7 +77,7 @@ sub FetchDocType { # Fetches an DocumentType by ID, adds to $DocumentTypes{$DocT
   return $DocumentTypes{$DocTypeID}{SHORT};
 }
 
-sub FetchDocFiles {
+sub FetchDocFiles ($) {
   # Creates two hashes:
   # $Files{DocRevID}           holds the list of file IDs for a given DocRevID
   # $DocFiles{DocFileID}{FIELD} holds the Fields or references too them

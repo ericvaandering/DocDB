@@ -123,6 +123,8 @@ $DocTypeAdminister     = $cgi_root."DocTypeAdminister";
 $GroupAdministerForm   = $cgi_root."GroupAdministerForm";
 $GroupAdminister       = $cgi_root."GroupAdminister";
 
+$EmailAdministerForm   = $cgi_root."EmailAdministerForm";
+
 $Statistics            = $cgi_root."Statistics";
 
 $HelpFile              = $web_root."Static/Restricted/DocDB_Help.shtml";
