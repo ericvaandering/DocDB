@@ -87,7 +87,7 @@ sub RequesterByID {
   
   my $AuthorLink   = &AuthorLink($RequesterID);
   print "<dt>Requested by:</dt>\n";
-  print "<dl>$AuthorLink</dl>\n";
+  print "<dd>$AuthorLink</dd>\n";
 }
 
 sub SubmitterByID { 
@@ -95,7 +95,7 @@ sub SubmitterByID {
   
   my $AuthorLink   = &AuthorLink($RequesterID);
   print "<dt>Updated by:</dt>\n";
-  print "<dl>$AuthorLink</dl>\n";
+  print "<dd>$AuthorLink</dd>\n";
 }
 
 sub AuthorLink ($;%) {
