@@ -32,7 +32,7 @@ require "ResponseElements.pm";
 
 require "CertificateUtilities.pm";
 
-
+require "Debug.pm";
 
 $query = new CGI;  # Global for subroutines
 
@@ -43,7 +43,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 ### Start HTML
 
 print $query->header;
-&DocDBHeader("Certificate Status and Application");
+&DocDBHeader("Certificate Application");
 
 &EndPage(@ErrorStack);
 
@@ -52,10 +52,9 @@ my $CertificateStatus = &CertificateStatus();
 my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
 my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
 
-print "ST $CertificateStatus<br>\n";
-
 if ($CertificateStatus eq "verified") {
-  print "<b>Your certificate has been verified and you have access to documents from these groups:</b>";
+  print "<b>Your certificate has already been verified. A new request has NOT been generated.<br>".
+        "You have access to documents from these groups:</b>";
   my @GroupIDs = &FetchSecurityGroupsByCert();
   print "<ul>\n";
   if (@GroupIDS) {
@@ -68,7 +67,7 @@ if ($CertificateStatus eq "verified") {
   }       
   print "</ul>\n";
 } elsif ($CertificateStatus eq "unverified") {  
-  print "<b>Your certificate is valid and you have applied for access to documents. 
+  print "<b>You have already applied for access to documents. A new request has not been generated.
          If you believe your request has been misplaced or neglected, contact an administator.</b>";
   print "The following information may be helpful:<br>\n";
   print "<b>Certificate Common Name (CN):</b> $CertCN<br>\n";
@@ -84,33 +83,8 @@ if ($CertificateStatus eq "verified") {
 } elsif ($CertificateStatus eq "nocert") {  
   print "<b>You didn't present a certificate. Not sure if this can happen.</b>";
 } elsif ($CertificateStatus eq "noapp") {
-  require "SecurityHTML.pm";
-  require "FormElements.pm";
-  print "<b>Your certificate is valid but you have never applied for access to
-         documents.<br/>Fill out the form below to apply for access.</b><p>";
-  print "<center>\n";
-  print $query -> start_multipart_form('POST',$CertificateApply);
-  print "<table cellpadding=5>\n";
-  print "<tr>\n";
-  print "<td valign=top><b>Your name (Certificate CN):</b><br>&nbsp;&nbsp;$CertCN<p/>\n";
-  print "<b>Your e-mail:</b><br>&nbsp;&nbsp;$CertEmail\n";
-  print "</td>\n";
-  print "<td>\n";
-  &SecurityList(-helplink => "reqgroups", -helptext => "Requested<br>Groups",
-                -name => "reqgroups");
-  print "</td></tr>\n";
-  print "<tr>\n";
-  print "</td></tr>\n";
-  print "<tr><td colspan=2>\n";
-  &TextEntryBox(-helplink => "certnote", -helptext => "Notes", 
-                -extratext => "(Identify yourself or other notes if needed.)",
-                -name => "certnote");    
-  print "</td></tr>";
-  print "<tr><td colspan=2 align=center>\n";
-  print $query -> submit (-value => "Apply for access");
-  print "</td></tr>";
-  print "</table>\n";       
-  print "</center>\n";
+  # Get additional parameters and fill in DB tables.
+  &HTMLPrintParams();
 }
 
 &DocDBNavBar();

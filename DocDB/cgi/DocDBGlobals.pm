@@ -182,7 +182,7 @@ $EmailLogin            = $cgi_root."EmailLogin";
 $SelectEmailPrefs      = $cgi_root."SelectEmailPrefs";
 
 $CertificateApplyForm  = $cgi_root."CertificateApplyForm";
-$CertificateApply      = $cgi_root."CertificateApply";
+$UserAccessApply       = $cgi_root."UserAccessApply";
 
 $DocDBHelp             = $cgi_root."DocDBHelp";
 $ShowTalkNote          = $cgi_root."ShowTalkNote";
