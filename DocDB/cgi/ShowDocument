@@ -62,7 +62,7 @@ if (defined $Version) {
 }
 
 print $query->header;
-&BTeVHeader("BTeV Document $DocumentID-v$Version");
+&DocDBHeader("BTeV Document $DocumentID-v$Version");
 
 unless (&CanAccess($DocumentID,$Version)) {
   push @error_stack,"Either you are not authorized to view this document 
@@ -83,4 +83,4 @@ if (@error_stack) {  # The user made one or more mistakes, warn and exit
 &OtherVersionLinks($DocumentID,$Version);
 
 &DocDBNavBar;
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

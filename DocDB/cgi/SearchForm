@@ -125,4 +125,4 @@ print "</center><p>";
 print $query -> end_multipart_form;
 
 &DocDBNavBar();
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

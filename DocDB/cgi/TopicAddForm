@@ -58,4 +58,4 @@ print "<h3>Existing Topics:</h3>\n";
 &TopicsTable;
 
 &DocDBNavBar();
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -21,7 +21,7 @@ $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass
 &GetAuthors;
 
 print $query->header;
-&BTeVHeader("Add Authors");
+&DocDBHeader("Add Authors");
 
 &HelpPopupScript;
 
@@ -56,4 +56,4 @@ print "<h3>Existing Authors: </h3>\n";
 &AuthorsTable;
 
 &DocDBNavBar;
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

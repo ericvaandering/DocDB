@@ -41,7 +41,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 ### Start HTML
 
 print $query->header;
-&BTeVHeader("BTeV Publications");
+&DocDBHeader("BTeV Publications");
 
 
 print "<center><h4>These refereed publications by BTeV are
@@ -106,4 +106,4 @@ $TimeDiff = timediff($EndTime,$StartTime);
 print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
 
 &DocDBNavBar();
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

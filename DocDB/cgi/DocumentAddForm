@@ -72,11 +72,11 @@ if ($mode eq "add" || $mode eq "reserve") {
 
 print $query->header;
 if      ($mode eq "add") {
-  &BTeVHeader("BTeV Document Addition","Document Addition");
+  &DocDBHeader("BTeV Document Addition","Document Addition");
 } elsif ($mode eq "reserve") {
-  &BTeVHeader("BTeV Document Reservation","Document Reservation");
+  &DocDBHeader("BTeV Document Reservation","Document Reservation");
 } elsif ($mode eq "update" || $mode eq "updatedb") {
-  &BTeVHeader("BTeV Document Update","Document Update");
+  &DocDBHeader("BTeV Document Update","Document Update");
 }
 &HelpPopupScript;
 
@@ -314,4 +314,4 @@ print "</center><p>";
 print $query -> end_multipart_form;
 
 &DocDBNavBar();
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -32,7 +32,7 @@
 # 
 # The simplest CGI script would then look like this: 
 #
-#  require "BTeVHeaders.pm";
+#  require "BTeVHTML.pm";
 #  $SSIDirectory = "/var/www/html/includes/";
 #  print "Content-type: text/html \n";
 #  print "\n";             #End of HTTP header, now start the page

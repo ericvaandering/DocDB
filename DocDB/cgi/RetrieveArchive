@@ -93,7 +93,7 @@ if (@error_stack) {
   print $query -> redirect(-location => $URL, -method => 'GET');
 }
 
-&BTeVHeader("File Retrieve Results"); 
+&DocDBHeader("File Retrieve Results"); 
 
 if (@warn_stack) {
   &WarnPage(@warn_stack);
@@ -104,4 +104,4 @@ if (@error_stack) {  # The user made one or more mistakes, warn and exit
 }
 
 &DocDBNavBar;
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

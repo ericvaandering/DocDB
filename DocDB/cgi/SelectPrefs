@@ -22,7 +22,7 @@ $query = new CGI;
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetAuthors;
 print $query->header;
-&BTeVHeader("Select Preferences");
+&DocDBHeader("Select Preferences");
 &HelpPopupScript;
 
 print $query -> start_multipart_form('POST',$SetPrefs);
@@ -108,4 +108,4 @@ print "</table>\n";
 print $query -> endform;
 
 &DocDBNavBar;
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

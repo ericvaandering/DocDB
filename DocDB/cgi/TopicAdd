@@ -54,5 +54,5 @@ if ($MinorTopicID) {
 }
 
 &DocDBNavBar("Add&nbsp;Topic",$TopicAddForm);
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 

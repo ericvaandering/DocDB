@@ -20,7 +20,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 %params = $query -> Vars;
 
 print $query->header;
-&BTeVHeader("BTeV Conference Addition Results");
+&DocDBHeader("BTeV Conference Addition Results");
 
 print "<p><h3>Here are the results of your attempt to add a conference
                 to the BTeV document database:</h3><p>\n";
@@ -106,5 +106,5 @@ if ($MinorTopicID) {
 }
 
 &DocDBNavBar("Add&nbsp;Conference",$ConferenceAddForm);
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 

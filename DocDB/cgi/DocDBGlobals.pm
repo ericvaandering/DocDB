@@ -22,7 +22,6 @@ $script_root = "/www/cgi-bin/DocDB/";
 $web_root    = "http://btevsrv1.fnal.gov/DocDB/";
 $cgi_root    = "http://btevsrv1.fnal.gov/cgi-bin/DocDB/";
 $cgi_path    = "/cgi-bin/DocDB/";
-$SSIDirectory = "/www/html/includes/";
 
 # Optional components
 

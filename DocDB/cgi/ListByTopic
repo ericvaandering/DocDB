@@ -78,7 +78,7 @@ print $query->header;
 if ($Mode eq "conference") {
   require "MiscSQL.pm";
   
-  &BTeVHeader("Conference Documents");
+  &DocDBHeader("Conference Documents");
   &GetConferences;
   print "<center><h4>\n";
   if ($TopicID) { # This is just one conference, so we can print more info
@@ -98,7 +98,7 @@ if ($Mode eq "conference") {
     print "</center>\n";
   }
 } else {
-  &BTeVHeader("Document List by Topic");
+  &DocDBHeader("Document List by Topic");
   print "<center><h4>\n";
   if ($MajorID || &FetchMinorTopic($TopicID)) {
     print "These documents on <font color=\"blue\">\n";
@@ -241,6 +241,6 @@ if ($Mode eq "meeting" && !$Public) {
   &DocDBNavBar();
 }
 
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 
 exit;

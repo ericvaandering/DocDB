@@ -22,7 +22,7 @@ $RobotsMeta = "all";
 # %params = $query -> Vars;  # No parameters (yet?) 
 
 print $query->header;
-&BTeVHeader("BTeV Document Database","Document Database");
+&DocDBHeader("BTeV Document Database","Document Database");
 
 &HelpPopupScript;
 
@@ -239,5 +239,5 @@ print "<p>\n";
 }
 
 &DocDBNavBar;
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 

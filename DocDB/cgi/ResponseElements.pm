@@ -249,7 +249,7 @@ sub EndPage {  # Fatal errors, aborts page
     print "<p>\n";
   }  
   &DocDBNavBar();
-  &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+  &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
   exit;
 }
 

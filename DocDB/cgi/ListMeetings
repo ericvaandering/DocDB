@@ -18,7 +18,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetTopics;
 
 print $query->header;
-&BTeVHeader("Collaboration Meetings");
+&DocDBHeader("Collaboration Meetings");
 
 print "<h3>Useful links:</h3>\n";
 print "<ul>\n";
@@ -38,4 +38,4 @@ print "<h3>Meetings in the document database:</h3>\n";
 &MeetingsTable;
 
 &DocDBNavBar("Add Talk","$DocumentAddForm?special=meeting");
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

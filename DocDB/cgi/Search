@@ -40,7 +40,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 %params = $query -> Vars;
 
 print $query->header;
-&BTeVHeader("BTeV Document Search Results","Search Results");
+&DocDBHeader("BTeV Document Search Results","Search Results");
 
 ### Pull info out of params into local variables
 
@@ -348,4 +348,4 @@ $TimeDiff = timediff($EndTime,$StartTime);
 print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
 
 &DocDBNavBar();
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
