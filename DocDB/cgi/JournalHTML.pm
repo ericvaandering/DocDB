@@ -80,7 +80,7 @@ sub JournalTable (;$) {
   print "<th>Publisher</td>\n";
   print "<th>Website URL</td>\n";
   print "</tr>\n";
-  my @JournalIDs = sort keys %Journals;#FIXME Sort by abbreviation
+  my @JournalIDs = sort keys %Journals; #FIXME Sort by abbreviation
   foreach my $ID (@JournalIDs) {
     print "<tr>\n";
     print "<td>$Journals{$ID}{Name}</td>\n";

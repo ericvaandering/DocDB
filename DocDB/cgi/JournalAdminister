@@ -1,0 +1,116 @@
+#! /usr/bin/env perl
+#
+# Description: This script is called by AdministerForm and does administration
+#              on journals in the DB. This script adds, modifies and deletes
+#              journals. 
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+use CGI;
+use DBI;
+
+require "DocDBGlobals.pm";
+require "ResponseElements.pm";
+require "Security.pm";
+require "HTMLUtilities.pm";
+require "AuthorSQL.pm";
+require "AuthorHTML.pm";
+require "Messages.pm";
+
+$query = new CGI;  # Global for subroutines
+
+print $query->header;
+&DocDBHeader("Modified List of Institutions");
+
+%params = $query -> Vars;
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+# Parameters to script 
+
+$Password     = $params{password};
+$Username     = $Administrator;
+$Action       = $params{admaction};
+
+$JournalID    = $params{journal};
+$FullName     = $params{name};
+$Abbreviation = $params{abbrev};
+$Acronym      = $params{acronym};
+$Publisher    = $params{pub};
+$URL          = $params{url};
+
+unless (&CanAdminister) {
+  push @ErrorStack,$Msg_AdminNoLogin;
+}  
+&EndPage(@ErrorStack);
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
+
+unless ($dbh) {
+  push @ErrorStack,$Msg_AdminNoConnect;
+}         
+&EndPage(@ErrorStack);
+
+&GetJournals;
+
+if      ($Action eq "Delete") { # Delete institutions
+#  @AuthorIDs = &GetInstitutionAuthors($InstitutionID); 
+#  if (!$InstitutionID) {
+#    push @ErrorStack,$Msg_ModInstEmpty;
+#  } elsif (@AuthorIDs) {
+#    print "<b>This institution has authors that must be deleted first:</b><br>\n";
+#    &AuthorsByInstitution($InstitutionID);
+#    push @ErrorStack,$Msg_DelInstWAuthors;
+#  } else {
+#    my $InstitutionDelete = $dbh -> prepare("delete from Institution where InstitutionID=?");
+#    $InstitutionDelete -> execute($InstitutionID);
+#    print "<b>$Institutions{$InstitutionID}{LONG} has been deleted.</b><br>\n";
+#  }
+} elsif ($Action eq "Modify") { # Modify journals
+#  unless ($InstitutionID) {
+#    push @ErrorStack,$Msg_ModInstEmpty;
+#  }
+#  &EndPage(@ErrorStack);
+
+# Deal with name changes     
+
+#  if ($ShortName) { 
+#    print "<b>Updating short topic name.</b><br>\n";
+#    my $InstitutionUpdate = $dbh->prepare(
+#       "update Institution set ShortName=? where InstitutionID=?");
+#    $InstitutionUpdate -> execute($ShortName,$InstitutionID);
+#  }
+
+} elsif ($Action eq "New") { # Create new journals
+#  print "<b>Adding a new institution.</b><br>\n";
+#  my $InstitutionInsert = $dbh->prepare(
+#   "insert into Institution (InstitutionID,ShortName,LongName) values (0,?,?)");
+
+#  $InstitutionInsert -> execute($ShortName,$LongName);
+#  $InstitutionID = $InstitutionInsert -> {mysql_insertid}; # Works with MySQL only
+} else {
+  push @ErrorStack,"No valid action was specified.";
+}  
+
+# For modify or new fetch institution information and display.
+
+if ($Action eq "Modify" || $Action eq "New") {
+#  &FetchInstitution($InstitutionID);
+#  print "<p><b>Here are the results of your modification:<br>\n";
+#  print "Short name: $Institutions{$InstitutionID}{SHORT}<br>\n";
+#  print "Long name:  $Institutions{$InstitutionID}{LONG}<br>\n";
+#  print "</b><p>\n";
+}  
+
+print "<p>\n";
+
+&WarnPage(@WarnStack);
+&EndPage(@ErrorStack);
+
+&DocDBNavBar;
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+ 
+exit;
