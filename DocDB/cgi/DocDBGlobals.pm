@@ -58,7 +58,10 @@ $Zip    = "/usr/bin/zip -q -r ";  # Comment out if not present
 
 # Other Globals
 
+$RemoteUsername   = $ENV{REMOTE_USER};
 $remote_user      = $ENV{REMOTE_USER};
+$remote_user      =~ tr/[A-Z]/[a-z]/;
+
 $DBWebMasterEmail = "btev-docdb\@fnal.gov";
 $DBWebMasterName  = "BTeV Document Database Administrators";
 $RobotsMeta       = "none";
