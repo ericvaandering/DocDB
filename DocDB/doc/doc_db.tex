@@ -19,26 +19,31 @@
         
 
 \date{27 November 2001 \\
-      Revised: 28 November 2001}
+      Revised: 11 December 2001}
 
 \maketitle
 
 \begin{abstract} 
-We describe the design and implementation of the BTeV document
-database.\end{abstract}
+In this memo, we describe the design and implementation of the BTeV document
+database.
+\end{abstract}
 
 \section{Design considerations}
 
-We wanted a document database that satisfies a number of requirements:
+We needed a document database that satisfies a number of requirements:
 \begin{itemize}
-\item{Multiple revisions per document, old versions still available}
-\item{Multiple files per document. Multiple file types (source and 
-presentable) and/or child files (especially useful for trees of HTML 
-documents)}
+\item{Each document can have multiple revisions, and old versions are still
+available}
+\item{Each revision of each document can have multiple files. This accomodates
+multiple file types (source and  presentable) and/or child files (especially
+useful for trees of HTML  documents)}
 \item{All documents are kept on the BTeV web server, not local copies 
-so we don't suffer from link-rot}
+so we don't suffer from link rot}
 \item{The ability to upload documents by browser upload or forcing the 
 document database to download via http.}
+\item{The ability of a single database to store talks from group meetings,
+conference talks and proceedings, and publications \emph{and} to present these
+special cases in a way that makes sense for that special case.}
 \end{itemize}
 
 There are several security issues we want to resolve too:
@@ -55,29 +60,54 @@ documents, from restricted to public and vice-versa.}
 
 \section{Interface}
 
-The document database is accessible via web forms and CGI scripts which 
-handle all accesses to the underlying database engines. Currently only 
-the scripts to reserve a document number or to place the initial 
-version of a document in the database are in place. Additionally, these 
-scripts only support browser upload of a single file. They need to be 
-extended to support http download and multiple files.
+The document database is completely accessible via the web. HTML and HTML forms
+provide the user interface and CGI scripts 
+handle all accesses to the underlying database. 
+
+While a search engine is not yet included in the product, one is planned.
 
 These scripts are all written in Perl using the Perl::CGI package and 
-the Perl::DBI database access modules. There is no reason certain 
-additional scripts can't be written using PHP, C++, or any other 
+the Perl::DBI database access modules. There is no reason 
+additional access programs can't be written using PHP, C++, or any other 
 language. 
 
 \section{Database}
 
-The database design is believed to be basically finished. The document 
+The database design is essentialy finished, although small additions will
+probably be needed for conference presentations. (See \secref{extend}).
+
+The document 
 database is implemented as a number of different tables. Because each 
 document can have multiple revisions and each revision can have 
 multiple files (and authors and topics), there are three main tables 
 Document, DocumentRevision, and DocumentFile. The hierarchy of these 
 tables, their elements, and the auxiliary tables are shown in figref.
 
-This database is implemented using MySQL. Currently the server is 
-running on \url{vuhepv.phy.vanderbilt.edu}.  
+The database design we are using is in the ``third normal form.'' For a longer
+discussion of what this means and how a database is properly designed
+see~\cite{YargerReeseKing:1999}. Essentially it boils down to three requirements:
+\begin{enumerate}
+\item{Each field of a database contains only one piece of information}
+\item{Any field which has values in common across multiple entries should use a
+unique identifier and another table}
+\item{No two fields in a table should depend on eachother}
+\end{enumerate}
+To take a simple example, the field containing the document type should contain
+a unique identifier, not the name of the type because the name might have been
+mis-spelled (rule 2). The institution of the person who wrote the document
+something is not a property of the document, but of the person (rule 3).
+
+Fields shown in red are indexed for fast look up. Other fields must be searched
+on which is more time consuming. Each index takes up some  amount of disk
+space, so the number of indices should be kept to a minimum. The ``tree''-like
+symbols indicate the one-to-many relationships within the database. For
+instance, there can (and will) be many revisions of a  single document.  Rule 1
+mandates that there can be no ``trees'' with branches on both ends. The ID
+numbers in each entry indicate what other entries they are associated with. In
+addition, each table has a timestamp which is not shown.
+
+This database is implemented using MySQL; the server is running on
+\url{fnsimu1.fnal.gov}.  
 
 \section{File system and security}
 
@@ -100,6 +130,8 @@ contains one file, text.ps. Then the file tree looks like this:
 
 As you can see, the file system is designed for up to 999,999 documents 
 each of which can have up to 999 versions.
+
+\section{Planned Extensions}\seclabel{extend}
 
 \end{document}
 
