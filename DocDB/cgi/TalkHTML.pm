@@ -299,6 +299,9 @@ sub SessionTalkPulldown {
   $SessionTalkLabels{0} = "Select your talk from this list";
   unshift @SessionTalkIDs,"0";
   
+  print "<b><a ";
+  &HelpLink("talkfromagenda");
+  print "Talk from Agenda:</a></b><br> \n";
   print $query -> popup_menu (-name    => 'sessiontalkid', 
                               -labels => \%SessionTalkLabels, 
                               -values  => \@SessionTalkIDs);

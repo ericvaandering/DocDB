@@ -846,4 +846,18 @@ or may not be the same as the web username and password.
    activities.
   </text>
  </entry>
+ 
+ <entry>
+  <key>talkfromagenda</key>
+  <title>Talk from Agenda</title>
+  <text>
+   You are entering a document that is probably related to a meeting for which
+   an agenda has already been entered. Select your talk from the
+   list. Any title, topics, or authors listed are <i>guesses</i> by the
+   organizer(s) and need not be the same as what you enter.<p/>
+   If you don't find your agenda entry, just leave the selector on "Select your
+   talk..."
+  </text>
+ </entry>
+ 
 </helpfile>
