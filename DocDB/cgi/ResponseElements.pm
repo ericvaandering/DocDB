@@ -62,7 +62,7 @@ sub DebugPage (;$) { # Debugging output
     print "<dl class=\"debug\">\n"; # FIXME: Move red into style sheet
     print "<dt><font color=\"red\">Debugging messages: </font>$CheckPoint</dt>\n";
     foreach my $Message (@DebugStack) {
-      print "<dd>$Message</dt>\n";
+      print "<dd>$Message</dd>\n";
     } 
     print "</dl>\n";
   } elsif ($CheckPoint && $DebugOutput) {

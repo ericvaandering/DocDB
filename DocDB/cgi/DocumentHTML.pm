@@ -204,7 +204,7 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
   # When adding the version number, remember to use &amp; for XHTML 
   # or use DocumentURL
   
-  $Link .= "\">"; 
+  $Link .= ">"; 
   if ($DocIDOnly) {           # Like 1234                   
     $Link .= $DocumentID;
     $Link .= "</a>";

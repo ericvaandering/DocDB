@@ -74,19 +74,19 @@ sub ProjectFooter {
 
 # You probably want to include some version of this:
 
-  print "<p><small>\n";
+  print "<p/><small>\n";
   print "<a href=\"$DocDBHome\">DocDB</a> ";
   print "Version $DocDBVersion, contact \n";
   print "<i>\n";
-  print "<A HREF=\"mailto:$WebMasterEmail\">$WebMasterName</A>\n";
+  print "<A href=\"mailto:$WebMasterEmail\">$WebMasterName</A>\n";
   print "</i>\n";
-  print "</small><br>\n";
+  print "</small><br/>\n";
   
 # This prints benchmark info for pages that have it  
   
   if ($EndTime && $StartTime) {
     my $TimeDiff = timediff($EndTime,$StartTime);
-    print "<small><b>Execution time: </b>",timestr($TimeDiff),"</small><br>\n";
+    print "<small><b>Execution time: </b>",timestr($TimeDiff),"</small><br/>\n";
   }
 
 # Do not print the </body> and </html> tags, DocDB does that now.
