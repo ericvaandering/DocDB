@@ -9,6 +9,7 @@ use CGI;
 use DBI;
 
 require "DocDBGlobals.pm";
+require "DocDBVersion.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 
@@ -83,7 +84,7 @@ my $NRevAuth_query = $dbh -> prepare("select COUNT(AuthorID) from RevisionAuthor
 my ($NRevisionAuthors) = $NRevAuth_query -> fetchrow_array;
 
 my $AuthPerRev = sprintf "%5.2f",$NRevisionAuthors/$NRevisions;
-my $DocPerAuth = sprintf "%5.2f",$NDocuments/$NUniqAuth;
+my $DocPerAuth = sprintf "%5.2f",$NDocuments/$NUniqAuth*$AuthPerRev;
 
 my $NTopic_query = $dbh -> prepare("select COUNT(MinorTopicID) from MinorTopic");
    $NTopic_query -> execute(); 
@@ -104,7 +105,7 @@ my $NRevTopic_query = $dbh -> prepare("select COUNT(MinorTopicID) from RevisionT
 my ($NRevisionTopics) = $NRevTopic_query -> fetchrow_array;
 
 my $TopicPerRev = sprintf "%5.2f",$NRevisionTopics/$NRevisions;
-my $DocPerTopic = sprintf "%5.2f",$NDocuments/$NUniqTopics;
+my $DocPerTopic = sprintf "%5.2f",$NDocuments/$NUniqTopics*$TopicPerRev;
 
 print "<tr><th align=right>Number of registered Authors:       <td align=right>$NAuthors\n";  
 print " <th align=right>Number of possible Topics:             <td align=right>$NTopics</tr>\n";  
@@ -123,6 +124,7 @@ print "    <th align=right>Average Documents per Topic:        <td align=right>$
 
 print "<tr><th colspan=4><hr></tr>\n";  
 print "</table>\n";
+print "<center>DocDB Version: $DocDBVersion</center><p>\n";  
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -27,6 +27,7 @@ require "Security.pm";
 
 require "SecurityHTML.pm";
 require "TalkHTML.pm";
+require "KeywordHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -82,6 +83,7 @@ if      ($mode eq "add") {
   &DocDBHeader("$Project Document Update","Document Update");
 }
 &HelpPopupScript;
+&KeywordChooserPopupScript;
 
 @error_stack = ();
 @warn_stack = ();
@@ -168,7 +170,7 @@ if ($mode eq "add" && ($SessionID||$ConferenceID)) {
   
   if ($SessionID) { # Build list for SessionID
     @CheckSessionTalkIDs = &FetchSessionTalksBySessionID($SessionID);
-    &FetchSessionByID();
+    &FetchSessionByID($SessionID);
     my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
     &FetchConferenceByConferenceID($ConferenceID);
     $MinorTopicID = $Conferences{$ConferenceID}{Minor}; # FIXME: Why doesn't this work?
@@ -276,11 +278,11 @@ print "</tr>\n";
 
 ### Title, abstract, and keywords
 
-#CRIPPLE if (@OpenSessionTalkIDs) {
-#CRIPPLE   print "<tr>\n";
-#CRIPPLE   print "<td colspan=4>\n"; &SessionTalkPulldown(@OpenSessionTalkIDs);    print "</td>\n";
-#CRIPPLE   print "</tr>\n";
-#CRIPPLE }
+if (@OpenSessionTalkIDs) {
+  print "<tr>\n";
+  print "<td colspan=4>\n"; &SessionTalkPulldown(@OpenSessionTalkIDs);    print "</td>\n";
+  print "</tr>\n";
+}
 
 print "<tr>\n";
 print "<td colspan=4>\n"; &TitleBox;    print "</td>\n";
