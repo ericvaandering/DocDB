@@ -45,6 +45,8 @@ $Unzip  = "/usr/local/bin/unzip -q ";
 $remote_user = $ENV{REMOTE_USER};
 $DBWebMasterEmail = "btev-docdb\@fnal.gov";
 $DBWebMasterName  = "BTeV Document Database Administrators";
+$RobotsMeta       = "none";
+
 $Administrator    = "docdbadm";
 $AuthUserFile     = "/www/conf/www-btev/.htpasswd";
 $MailServer       = "smtp.fnal.gov";

@@ -14,6 +14,8 @@ require "ResponseElements.pm";
 
 $query = new CGI;  # Global for subroutines
 
+$RobotsMeta = "all";
+
 # %params = $query -> Vars;  # No parameters (yet?) 
 
 print $query->header;

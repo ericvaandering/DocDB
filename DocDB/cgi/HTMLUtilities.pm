@@ -64,6 +64,9 @@ sub BTeVHeader {
     print "<head>\n";
     print "<title>$title</title>\n";
     print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n";
+    if ($RobotsMeta) {
+      print "<meta name=\"robots\" content=\"$RobotsMeta\">\n";
+    }  
     print "<link rel=\"stylesheet\" href=\"/includes/public_style.css\" type=\"text/css\">\n";
     &SSInclude("public_navbar_header.html");
     print "</head>\n";
@@ -87,6 +90,9 @@ sub BTeVHeader {
     print "<head>\n";
     print "<title>$title</title>\n";
     print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n";
+    if ($RobotsMeta) {
+      print "<meta name=\"robots\" content=\"$RobotsMeta\">\n";
+    }  
     print "<link rel=\"stylesheet\" href=\"/includes/style.css\" type=\"text/css\">\n";
 
     &SSInclude("navbar_header.html");
@@ -127,6 +133,9 @@ sub SearchHeader {
   print "<head>\n";
   print "<title>$title</title>\n";
   print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n";
+  if ($RobotsMeta) {
+    print "<meta name=\"robots\" content=\"$RobotsMeta\">\n";
+  }  
   print "<link rel=\"stylesheet\" href=\"/includes/style.css\" type=\"text/css\">\n";
  
   unless ($Public) {&SSInclude("navbar_header.html");}
@@ -163,6 +172,9 @@ sub BTeVStyle { # Same as above, but no nav-bar
   print "<head>\n";
   print "<title>$title</title>\n";
   print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n";
+  if ($RobotsMeta) {
+    print "<meta name=\"robots\" content=\"$RobotsMeta\">\n";
+  }  
   print "<link rel=\"stylesheet\" href=\"/includes/style.css\" type=\"text/css\">\n";
  
   print "</head>\n";
