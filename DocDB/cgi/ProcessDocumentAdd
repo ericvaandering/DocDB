@@ -104,6 +104,8 @@ my $file_insert = $dbh->prepare(
    "       (DocFileID, DocRevID, FileName, Date, RootFile, Description) ".
    "values (0,         ?,        ?,        ?,    ?       , ?)");
 
+# FIXME: Build links for other document actions to use below
+
 ### Check parameters for errors
 
 @error_stack = ();
@@ -132,6 +134,8 @@ if ($mode eq "add" || $mode eq "update") {
   }
   unless ($params{single_upload} || $params{single_http}) {
     push @error_stack,"You must supply a file for this document.";
+    push @error_stack,"If you just want to change information about the
+    document, choose `Update DB Info' instead.";
   }
   if     ($params{single_upload} && $params{single_http}) {
     push @error_stack,"You may not specify both URL and file upload.";
@@ -262,17 +266,18 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
   $new_dir = &MakeDirectory($documentID,$version);
   &ProtectDirectory($documentID,$version,@securities);
   
+  @short_files = ();
   if ($Archive eq "single") { # The user uploaded the files themselves 
     @Descriptions = split ("\0",$params{filedesc});
     @Roots = split ("\0",$params{root});
     if ($params{single_upload}) { # Copy file to directory
-      @short_files   = $query ->  param("single_upload");
-      foreach $short_file (@short_files) {
-        my $status = &ProcessUpload($new_dir,$short_file);
+      @long_files   = $query ->  param("single_upload");
+      foreach $long_file (@long_files) {
+        $short_file = &ProcessUpload($new_dir,$long_file);
+        push @short_files,$short_file;
       }
     } elsif ($params{single_http}) {
       @urls = split /\0/,$params{single_http};
-      @short_files = ();
       foreach $url (@urls) {
         $short_file = &ProcessURL($new_dir,$url);
         push @short_files,$short_file;
@@ -283,12 +288,12 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
     @Descriptions = ();
     @Roots = ();
     if ($params{single_upload}) { # Copy tar file to directory
-      $short_file   = $query ->  param("single_upload"); # There can be only one
-      my $status = &ProcessUpload($new_dir,$short_file);
-      unless ($status) {
-        &ProcessArchive($new_dir,$short_file);
-      }  
+      $long_file = $query ->  param("single_upload"); # There can be only one
+      $short_file = &ProcessUpload($new_dir,$long_file);
+      
+      &ProcessArchive($new_dir,$short_file);
     } elsif ($params{single_http}) {
+      $url = $params{single_http};  # There can be only one
       $short_file = &ProcessURL($new_dir,$url);
       &ProcessArchive($new_dir,$short_file);
     } 
@@ -345,5 +350,5 @@ $EndTime  = new Benchmark;
 $TimeDiff = timediff($EndTime,$StartTime);
 print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
 
-&DocDBNavBar;
+&DocDBNavBar();
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);

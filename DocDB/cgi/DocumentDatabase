@@ -23,14 +23,9 @@ print $query->header;
 
 &HelpPopupScript;
 
-#if ($db_name eq "BTeVDocDB") {
-  print "<p><center><h4><a href=\"$web_root/Help/DocDB_Help.shtml\">Instructions on
-  using</a> the database. Click on any <font color=red>red link</font> for quick
-  help.</h4></center>\n";
-#} else {  
-#  print "<p><center><big><font color=red><b>Testing only! All data will be
-#  lost!</b></font></big></center>\n";
-#}
+print "<p><center><h4><a href=\"$web_root/Help/DocDB_Help.shtml\">Instructions
+       on using</a> the database. Click on any <font color=red>red link</font>
+       for quick help.</h4></center>\n";
 
 print "<p><b>Find the information you want in the database:</b>\n";
 print "<ul>\n";
@@ -51,8 +46,9 @@ print $query -> endform;
 
 
 print "<li>"; 
-print "List documents by ";
-print "<a href=\"$ListAuthors\">author</a>, ";
+print "List ";
+print "documents <a href=\"$LastModified?days=5\">modified in the last five days</a>, ";
+print "by <a href=\"$ListAuthors\">author</a>, ";
 print "<a href=\"$ListTopics\">topic</a>, ";
 print "<a href=\"$ListTypes\">type</a>, ";
 print "or <a href=\"$ListDocuments\">all documents</a>. ";
@@ -120,7 +116,8 @@ print "<p>\n";
 print $query -> start_multipart_form('POST',$DocumentAddForm);
 
 print "<b>If the above choices don't meet your needs,use this form to produce a
-       customized document creation or update form. </b><p>\n";
+       customized document creation or update form. Make a selection from each
+       group.</b><p>\n";
 
 $modes{reserve}  = "Reserve document #";
 $modes{add}      = "New document";
@@ -206,7 +203,8 @@ $addarchives{multi}   = "Multiple files";
 
 print $query -> start_multipart_form('POST',$AddFilesForm);
 print "<a name=\"addform\">\n";
-print "<b>Use this form to produce a customized file addition form.</b><p>\n";
+print "<b>Use this form to produce a customized file addition form. Make a
+       selection from each group.</b><p>\n";
 
 print "<table cellpadding=5 border=5>\n";
 
