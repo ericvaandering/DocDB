@@ -3,7 +3,7 @@
 # Author Eric Vaandering (ewv@fnal.gov)
 #
 
-# Usage: MigrateV3
+# Usage: MigrateV4 --u=username --p=password --a=init|migrate|delete
 
 use DBI;
 use Getopt::Long;
@@ -67,7 +67,8 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
   
   my $SessTalkCreate = $dbh -> prepare("create table SessionTalk ".
                    "(SessionTalkID integer auto_increment primary key,".
-                   " SessionID integer, DocumentID integer, Time datetime, HintTitle varchar(128),".
+                   " SessionID integer, DocumentID integer, Confirmed integer,".
+                   " Time datetime, HintTitle varchar(128),".
                    " Note text, TimeStamp timestamp,".
                    " index(SessionID),index(DocumentID))"); 
 
