@@ -24,4 +24,15 @@ sub SQLDateTime {
   return ($Sec,$Min,$Hour,$Day,$Mon,$Year);
 }
 
+sub EuroTimeHM($) {
+  my ($SQLDatetime) = @_;
+  unless ($SQLDatetime) {return "";}
+  
+  my ($Date,$Time) = split /\s+/,$SQLDatetime;
+  my ($Year,$Month,$Day) = split /\-/,$Date;
+  my ($Hour,$Min,$Sec) = split /:/,$Time;
+  $ReturnDate = "$Hour:$Min"; 
+  return $ReturnDate;
+}
+
 1;

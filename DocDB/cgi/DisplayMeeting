@@ -32,7 +32,8 @@ print $query -> header;
 %params = $query -> Vars;
 
 my $SessionID          = $params{sessionid};
-my $MeetingID          = $params{meetingid};
+my $SessionSeparatorID = $params{sessionseparatorid};
+my $ConferenceID       = $params{conferenceid};
 
 @ErrorStack = ();
 @WarnStack  = ();
@@ -46,17 +47,24 @@ unless ($dbh) {
 }         
 &EndPage(@ErrorStack);
 
-print "<h2>Put header information here</h2>\n";
-
-
-
 if ($SessionID) {
   &FetchSessionByID($SessionID);
+  &FetchConferenceByConferenceID($Sessions{$SessionID}{ConferenceID});
+
+  &PrintMeetingInfo($Sessions{$SessionID}{ConferenceID});
   &PrintSession($SessionID,1); # Display a single session
-} elsif ($MeetingID) {
-  # Fetch meeting, check ShowAllTalks
+  &PrintMeetingEpilogue($Sessions{$SessionID}{ConferenceID});
+} elsif ($SessionSeparatorID) {
+  # Info on session separator?
+} elsif ($ConferenceID) {
+  &FetchConferenceByConferenceID($ConferenceID);
+  &PrintMeetingInfo($ConferenceID);
+  
+  # Check ShowAllTalks, see if we print session summaries or all talks
   # Loop over sessions and display them or link to them
-  my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($MeetingID);
+  # Probably a Navbar of sorts if we display all of them
+  
+  my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
   foreach $MeetingOrderID (@MeetingOrderIDs) {
     my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
@@ -68,8 +76,7 @@ if ($SessionID) {
       # Info on session separator?
     }
   }  
-} elsif ($SessionSeparatorID) {
-  # Info on session separator?
+  &PrintMeetingEpilogue($ConferenceID);
 } else {
   #Complain that user didn't specify either
 }  

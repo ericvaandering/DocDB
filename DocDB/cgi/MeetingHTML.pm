@@ -224,10 +224,11 @@ sub PrintSession ($;$) {
   require "SQLUtilities.pm";
   require "Utilities.pm";
   
-  print "<center><h4>$Sessions{$SessionID}{Title}: \n";
-  print "[ $SessionID ] \n"; # FIXME: debug
-  print &EuroDateTime($Sessions{$SessionID}{StartTime});
-  print "</h4></center> \n";
+  print "<center><b>Session: $Sessions{$SessionID}{Title} on \n";
+  print &EuroDate($Sessions{$SessionID}{StartTime});
+  print " at ";
+  print &EuroTimeHM($Sessions{$SessionID}{StartTime});
+  print "</b></center> \n";
   print "<center> $Sessions{$SessionID}{Description} </center><p>\n";
 
   my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
@@ -247,6 +248,7 @@ sub PrintSession ($;$) {
 
   @SessionOrderIDs = sort SessionOrderIDByOrder @SessionOrderIDs;
   print "<center><table cellpadding=3>\n";
+
   print "<tr>\n";
   print "<th>Start</th>\n";
   print "<th>Title</th>\n";
@@ -256,36 +258,79 @@ sub PrintSession ($;$) {
   print "<th>Length</th>\n";
   print "<th>&nbsp;</th>\n";
   print "</tr>\n";
+
   foreach my $SessionOrderID (@SessionOrderIDs) {
-    # Accumulate time
-    if ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) {
+    if ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) { # TalkSeparator
       my $TalkSeparatorID =  $SessionOrders{$SessionOrderID}{TalkSeparatorID};
+
       print "<tr valign=top>\n";
       print "<td align=right>",&TruncateSeconds($AccumulatedTime),"</td>\n";
       print "<td>$TalkSeparators{$TalkSeparatorID}{Title}</td>\n";
       print "<td colspan=3>$TalkSeparators{$TalkSeparatorID}{Note}</td>\n";
       print "<td align=right>",&TruncateSeconds($TalkSeparators{$TalkSeparatorID}{Time}),"</td>\n";
       print "</tr>\n";
+
       $AccumulatedTime = &AddTime($AccumulatedTime,$TalkSeparators{$TalkSeparatorID}{Time});
     } elsif ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
       my $SessionTalkID =  $SessionOrders{$SessionOrderID}{SessionTalkID};
-      # One thing for confirmed talks, one thing for hinted, one thing for no idea
-      if ($SessionTalks{$SessionTalkID}{DocumentID}) {
+
+      if ($SessionTalks{$SessionTalkID}{DocumentID}) { # Talk with DocID (confirmed or not)
         &PrintSessionTalk($SessionTalkID,$AccumulatedTime);
-      } else {
+      } else { # Talk where only hints exist
+        # FIXME add output for for topic and author hints
         print "<tr valign=top>\n";
         print "<td align=right>",&TruncateSeconds($AccumulatedTime),"</td>\n";
         print "<td>$SessionTalks{$SessionTalkID}{HintTitle}</td>\n";
-        print "<td>$SessionTalks{$SessionTalkID}{Note}</td>\n";
-        print "<td align=right>$SessionTalks{$SessionTalkID}{Time}</td>\n";
+        print "<td>Hint authors</td>\n";
+        print "<td>Hint topics</td>\n";
+        print "<td>&nbsp</td>\n"; # Files, which can't exist
+        print "<td align=right>",&TruncateSeconds($SessionTalks{$SessionTalkID}{Time}),"</td>\n";
+        if ($SessionTalks{$SessionTalkID}{Note}) {
+          print "<td>",&TalkNoteLink,"</td>\n";
+        } else {
+          print "<td>&nbsp;</td>\n";
+        }  
         print "</tr>\n";
       } 
       $AccumulatedTime = &AddTime($AccumulatedTime,$SessionTalks{$SessionTalkID}{Time});
-    } else {
-      &DBPrint("<tr><td>No SessionTalk or TalkSep</td></tr>\n");
     }
+  } # End Separator/Talk distinction
+  print "</table></center><hr width=95%>\n";   
+}
+
+sub PrintMeetingInfo($) {
+  my ($ConferenceID) = @_;
+
+  print "<center><h3> \n";
+  print "$Conferences{$ConferenceID}{Title}\n";
+  print "</h3>\n";
+
+  print " held from ",&EuroDate($Conferences{$ConferenceID}{StartDate});
+  print " to ",&EuroDate($Conferences{$ConferenceID}{EndDate});
+  print " in $Conferences{$ConferenceID}{Location}\n";
+  print "<br>\n";
+
+  if ($Conferences{$ConferenceID}{URL}) {
+    print "(<a href=\"$Conferences{$ConferenceID}{URL}\">Conference homepage</a>)\n";
+  } else {
+    print "(Conference homepage not available)\n";
   }
-  print "</table></center><hr>\n";   
+
+  print "<p>\n";
+  print "$Conferences{$ConferenceID}{Preamble}\n";
+  print "<p>\n";
+  
+  print "</center><hr width=95%>\n";
+}
+
+sub PrintMeetingEpilogue($) {
+  my ($ConferenceID) = @_;
+  
+  print "<p><center>\n";
+  print "$Conferences{$ConferenceID}{Epilogue}\n";
+  print "</center><p>\n";
+  
+  print "</center><hr width=95%>\n";
 }
 
 1;
