@@ -23,6 +23,7 @@ require "Sorts.pm";
 require "Scripts.pm";
 require "Security.pm";
 
+require "FormElements.pm";
 require "MeetingHTML.pm";
 require "TalkHTML.pm";
 require "MeetingSQL.pm";
@@ -279,13 +280,18 @@ require "Utilities.pm";
 
 &PrintSessionHeader($SessionID); 
 
+my $SessionDefaultTitle       = $Sessions{$SessionID}{Title};
+my $SessionDefaultDescription = $Sessions{$SessionID}{Description};
+my $SessionDefaultLocation    = $Sessions{$SessionID}{Location};
+my $SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
+
 print $query -> start_multipart_form('POST',"$SessionModify");
 $query -> param('sessionid',$SessionID);
 print $query -> hidden(-name => 'sessionid', -default => $SessionID);
 $query -> param('mode','modify');
 print $query -> hidden(-name => 'mode', -default => 'modify');
 
-print "<table cellpadding=10>\n";
+print "<table cellpadding=10 align=center>\n";
 print "<tr>\n";
  print "<td>\n";              
   &TextField(-name      => 'sessiontitle', -size     => 40, 
@@ -301,14 +307,14 @@ print "</tr>\n";
 
 print "<tr valign=top>\n";
  print "<td>\n";                
-  &TextField(-name     => 'sessiondescription', -columns => 40, -rows => 4,
-             -default  => $SessionDefaultDescription, 
-             -helplink => 'sessioninfo', -helptext => 'Session Description');
+  &TextArea(-name     => 'sessiondescription', -columns => 40, -rows => 4,
+            -default  => $SessionDefaultDescription, 
+            -helplink => 'sessioninfo', -helptext => 'Session Description');
  print "</td>\n";
  print "<td align=right>\n";  
  my $Header = &FormElementTitle(-helptext => "Start Date and Time", -helplink  => 'sessioninfo');
  print $Header;
- &SessionDateTimePullDown;            
+ &SessionDateTimePullDown(-default => $SessionDefaultDateTime);            
  print "</td>\n";
 print "</tr>\n";
 print "</table>\n";
