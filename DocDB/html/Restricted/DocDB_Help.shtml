@@ -245,10 +245,10 @@ help window that tells you what you are being asked for. Instructions for every
 piece of information are not reproduced here, just click on the <font
 color="red">red link</font> if anything is not obvious.<p>
 
-Also, note that lots of things can have more than one selection. For
-instance, your document can have several topics selected. How this is done
-varies by browser. Internet Explorer and Netscape 6 users should hold Ctrl and
-click to make multiple selections. Netscape 4 users should just click.<p>
+Also, note that lots of things can have more than one selection. For instance,
+your document can have several topics selected. How this is done varies by
+browser; some browsers require holding Ctrl and clicking to make multiple
+selections, others just click to select and deselect.<p>
 
 When <b>reserving</b> a document, you must supply:
 <ul>
