@@ -81,7 +81,7 @@ print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td colspan=2>\n"; &KeywordSelectLong; print "</td>\n"; 
+print "<td colspan=2>\n"; &KeywordSelect(-format => "full", -maxlabel => 40); print "</td>\n"; 
 print "</tr>\n";
 print "<tr valign=top>\n";
 

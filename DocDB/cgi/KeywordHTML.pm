@@ -161,42 +161,41 @@ sub KeywordDetailedList {
   print "</table>\n";
 }
 
-sub KeywordSelect { # Scrolling selectable list for keywords
-  my @KeywordListIDs = sort byKeyword keys %FullKeywords;
+sub KeywordSelect (%) { # Scrolling selectable list for keyword groups
+  my (%Params) = @_; 
+  
+  my $Format   = $Params{-format}   || "short";        # short, long, full
+  my $Multiple = $Params{-multiple} || "";             # Any non-null text is "true"
+  my $Name     = $Params{-name}     || "keywordlist";
+  my $MaxLabel = $Params{-maxlabel} || 0;
+
+# Scrolling selectable list for keywords
+  my @KeywordIDs = sort byKeyword keys %Keywords;
   my %KeywordLabels = ();
-  foreach my $ID (@KeywordListIDs) {
-    $KeywordLabels{$ID} = $FullKeywords{$ID}; # FIXME: get rid of FullKeywords
+  foreach my $ID (@KeywordIDs) {
+    if ($Format eq "short") {
+      $KeywordLabels{$ID} = $Keywords{$ID}{Short}; 
+    } elsif ($Format eq "long") {
+      $KeywordLabels{$ID} = $Keywords{$ID}{Long}; 
+    } elsif ($Format eq "full") {
+      $KeywordLabels{$ID} = $Keywords{$ID}{Short}." [";
+      if ($MaxLabel) {
+        if ( (length $Keywords{$ID}{Long}) > $MaxLabel) {
+          $KeywordLabels{$ID} .= substr($Keywords{$ID}{Long},0,$MaxLabel)." ...";
+        } else {
+          $KeywordLabels{$ID} .= $Keywords{$ID}{Long};
+        }
+        $KeywordLabels{$ID} .= "]"; 
+      }  
+    }
   }  
   print "<b><a ";
   &HelpLink("keywords");
   print "Keywords:</a></b><br> \n";
-  print $query -> scrolling_list(-name => "keywordlist", -values => \@KeywordListIDs, 
+  print $query -> scrolling_list(-name => "keywordlist", -values => \@KeywordIDs, 
                                  -labels => \%KeywordLabels,
-                                 -size => 10, -multiple => 'true' );
+                                 -size => 10, -multiple => $Multiple );
 };
-
-sub KeywordSelectLong { # Scrolling selectable list for keywords, all info
-  my @KeywordListIDs = sort byKeyword keys %FullKeywords;
-  my %KeywordLabels = ();
-  foreach my $ID (@KeywordListIDs) {
-    ##$KeywordLabels{$ID} = $FullKeywords{$ID}." [$Keywords{$ID}{Long}]"; 
-    my $descr = $Keywords{$ID}{Long};
-    my $long;
-    if ( (length $descr ) > 40 ) {
-      $long = substr($descr,0,40)." ...";
-    } else {
-      $long = $descr;
-    }
-    $KeywordLabels{$ID} = $FullKeywords{$ID}." [$long]"; 
-  }
-  print "<b><a ";
-  &HelpLink("keywords");
-  print "Keywords:</a></b> (Long descriptions in brackets)<br> \n";
-  print $query -> scrolling_list(-name => "keywordlist", -values => \@KeywordListIDs, 
-                                 -labels => \%KeywordLabels,
-                                 -size => 15 );
-};
-
 
 sub KeywordGroupSelect (%) { # Scrolling selectable list for keyword groups
   my (%Params) = @_; 
