@@ -740,7 +740,7 @@ or may not be the same as the web username and password.
  </entry>
 
  <entry>
-  <key>confintro</key>
+  <key>confpreamble</key>
   <title>Meeting preamble</title>
   <text>
    You can put any text here that you would like to appear at the top of your
@@ -749,7 +749,7 @@ or may not be the same as the web username and password.
  </entry>
 
  <entry>
-  <key>confdisc</key>
+  <key>confepilogue</key>
   <title>Meeting epilog</title>
   <text>
    You can put any text here that you would like to appear at the bottom of your

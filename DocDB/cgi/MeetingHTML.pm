@@ -16,20 +16,20 @@ sub ConferenceURLBox {
                              -size => 40, -maxlength => 64);
 };
 
-sub ConferenceIntroBox {
+sub ConferencePreambleBox {
   require "Scripts.pm";
   print "<b><a ";
-  &HelpLink("confintro");
+  &HelpLink("confreamble");
   print "Meeting Preamble:</a></b><br> \n";
   print $query -> textarea (-name => 'introtext',
                             -columns => 50, -rows => 5);
 };
 
-sub ConferenceDiscBox {
+sub ConferenceEpilogueBox {
   require "Scripts.pm";
   print "<b><a ";
-  &HelpLink("confdisc");
-  print "Meeting Epilog:</a></b><br> \n";
+  &HelpLink("confepilogue");
+  print "Meeting Epilogue:</a></b><br> \n";
   print $query -> textarea (-name => 'disctext',
                             -columns => 50, -rows => 5);
 };
