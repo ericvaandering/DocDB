@@ -406,18 +406,20 @@ where the X's represent <i>just the numbers</i> of the document and version.
 
 <h4>Linking to files in a document</h4>
 
-Each file for each revision has a static URL which can easily be found. In
-addition, there is a script interface which fetches files. The URL is 
+Each file for each revision has a static URL which can easily be found. However,
+often times linking to a file that may be updated is what is wanted. For that
+case, there is a script interface which fetches files. The URL is 
 <tt>http://www-btev.fnal.gov/cgi-bin/DocDB/RetrieveFile?docid=XXXX&amp;version=XX&amp;filename=xxxxxx</tt>.
-As above, the version number can be left off to get the latest version number.
+The version number can be left off to get files from the latest version number.
 The filename can also be left off. If there is only one file marked <q>Main</q>
 that file will be retrieved. If there are more than one, the full document
 information will be shown and the user will have to choose the correct file.<p>
 
-For both of these actions, if you want the result to be publically accessible,
+For both of these actions, if you want the result to be publicly accessible,
 put "public" between "cgi-bin" and "DocDB".  I.e. use
 <tt>http://www-btev.fnal.gov/cgi-bin/public/DocDB/ShowDocument</tt> instead of
-the normal version.
+the normal version. The document must also be publicly accessible for this to
+work.
 
 <a name="morehelp">
 <h3>Getting More Help</h3>
