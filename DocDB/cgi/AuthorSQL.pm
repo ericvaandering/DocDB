@@ -1,15 +1,16 @@
 sub GetAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with all authors
-  my ($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active);
+  my ($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active,$InstitutionID);
   my $people_list  = $dbh -> prepare(
-     "select AuthorID,FirstName,MiddleInitials,LastName,Active from Author"); 
+     "select AuthorID,FirstName,MiddleInitials,LastName,Active,InstitutionID from Author"); 
   $people_list -> execute;
-  $people_list -> bind_columns(undef, \($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active));
+  $people_list -> bind_columns(undef, \($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active,$InstitutionID));
   %Authors = ();
   while ($people_list -> fetch) {
     $Authors{$AuthorID}{AUTHORID} =  $AuthorID;
     $Authors{$AuthorID}{FULLNAME} = "$FirstName $MiddleInitials $LastName";
     $Authors{$AuthorID}{LASTNAME} =  $LastName;
     $Authors{$AuthorID}{ACTIVE}   =  $Active;
+    $Authors{$AuthorID}{INST}     =  $InstitutionID;
     if ($Active) {
       $ActiveAuthors{$AuthorID}{FULLNAME} = "$FirstName $MiddleInitials $LastName";
       $names{$AuthorID}                   = "$FirstName $MiddleInitials $LastName"; # FIXME
@@ -19,10 +20,10 @@ sub GetAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with all authors
 
 sub FetchAuthor { # Fetches an Author by ID, adds to $Authors{$AuthorID}{}
   my ($authorID) = @_;
-  my ($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active);
+  my ($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active,$InstitutionID);
 
   my $author_fetch  = $dbh -> prepare(
-     "select AuthorID,FirstName,MiddleInitials,LastName,Active ". 
+     "select AuthorID,FirstName,MiddleInitials,LastName,Active,InstitutionID ". 
      "from Author ". 
      "where AuthorID=?");
   if ($Authors{$authorID}{AUTHORID}) { # We already have this one
@@ -30,11 +31,12 @@ sub FetchAuthor { # Fetches an Author by ID, adds to $Authors{$AuthorID}{}
   }
   
   $author_fetch -> execute($authorID);
-  ($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active) = $author_fetch -> fetchrow_array;
+  ($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active,$InstitutionID) = $author_fetch -> fetchrow_array;
   $Authors{$AuthorID}{AUTHORID} =  $AuthorID;
   $Authors{$AuthorID}{FULLNAME} = "$FirstName $MiddleInitials $LastName";
   $Authors{$AuthorID}{LASTNAME} =  $LastName;
   $Authors{$AuthorID}{ACTIVE}   =  $Active;
+  $Authors{$AuthorID}{INST}     =  $InstitutionID;
   
   return $Authors{$AuthorID}{AUTHORID};
 }

@@ -60,7 +60,7 @@ print "<h3>Existing Topics:</h3>\n";
 my $Col = 0;
 my $NCols = 4;
 
-print "<table>\n";
+print "<table cellpadding=10>\n";
 foreach $MajorID (@MajorTopicIDs) {
   unless ($Col % $NCols) {
     print "<tr valign=top>\n";

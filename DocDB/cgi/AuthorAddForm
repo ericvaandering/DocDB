@@ -17,6 +17,7 @@ $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 &GetInstitutions;
+&GetAuthors;
 
 # %params = $query -> Vars;
 
@@ -57,8 +58,30 @@ print $query -> end_multipart_form;
 
 print "<p>\n";
 
-foreach $key (keys %FullTopics) {
-  print "$FullTopics{$key} ";
-}
+@InstIDs = keys %Institutions;
+@AuthorIDs = keys %Authors;
+
+print "<h3>Existing Authors:</h3>\n";
+
+my $Col = 0;
+my $NCols = 4;
+
+print "<table cellpadding=10>\n";
+foreach $InstID (@InstIDs) {
+  unless ($Col % $NCols) {
+    print "<tr valign=top>\n";
+  }
+  print "<td><b>$Institutions{$InstID}{SHORT}</b>\n";
+  ++$Col;
+  print "<ul>\n";
+  foreach $AuthorID (@AuthorIDs) {
+    if ($InstID == $Authors{$AuthorID}{INST}) {
+      print "<li>$Authors{$AuthorID}{FULLNAME}\n";
+    }  
+  }  
+  print "</ul>";
+}  
+
+print "</table>\n";
 
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
