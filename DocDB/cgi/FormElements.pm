@@ -350,19 +350,19 @@ sub NameEntryBox {
   print "<table cellpadding=5><tr valign=top>\n";
   print "<td>\n";
   print "<b><a ";
-  &HelpLink("firstname");
+  &HelpLink("authorentry");
   print "First Name:</a></b><br> \n";
   print $query -> textfield (-name => 'first', 
                              -size => 20, -maxlength => 32);
   print "<td>\n";
   print "<b><a ";
-  &HelpLink("mi");
+  &HelpLink("authorentry");
   print "Initials:</a></b><br> \n";
   print $query -> textfield (-name => 'middle', 
                              -size => 10, -maxlength => 16);
   print "<td>\n";
   print "<b><a ";
-  &HelpLink("lastname");
+  &HelpLink("authorentry");
   print "Last Name:</a></b><br> \n";
   print $query -> textfield (-name => 'lastname', 
                              -size => 20, -maxlength => 32);

@@ -17,16 +17,20 @@ Select the type of modification appropriate to your situation
 #
 uploadmethod
 Upload Methods
-You can upload documents by two different methods. You can upload files from
-your local computer or by supplying a URL. In the latter case, the database
-system downloads the document from the location you specify. (In both cases the
-document is stored on the document database webserver.)
+You can upload documents by two different methods. 
+<ol>
+<li>You can upload files from
+your local computer 
+<li>You can upload files by supplying a URL. In this case, the database
+system downloads the document from the location you specify. 
+</ol>
+In both cases the document is ultimately stored on the document database webserver.
 #
 uploadtype
 Upload Types
 You can upload three different types of documents. 
 <ol>
-<li>You can upload a single file, which is the default. 
+<li>You can upload a single file. This is the default. 
 <li>You can upload a document consisting of multiple files, such as PowerPoint
 and PDF by selecting "Multiple" and filling in the "# of files" option with the
 number of files you want to upload. 
@@ -40,6 +44,10 @@ topicoption
 Topic Selection
 You can either select the subtopic(s) for your document from one long list or
 from a number of shorter lists split up by topic. 
+<p>
+To request that a new subtopic be added to the database please contact the
+<a href="mailto:btev-docdb@fnal.gov">DocDB administrators</a>. Tell us what
+subtopic you would like added and which major topic it should be place under.
 #
 authoroption
 Author Selection
@@ -47,7 +55,7 @@ There are two methods of entering the authors for a document. The first is
 selecting the authors from a list of all possible authors. The second is to type
 into a form the names of the authors. <i>However</i> for your document to be
 accepted, every author that you entered must successfully match with an author
-in the database. 
+in the database. The second method has not been implemented.
 <p>
 To have a new author added to the database please contact the <a
 href="mailto:btev-docdb@fnal.gov">DocDB administrators</a> and supply the
@@ -131,7 +139,7 @@ either click (Netscape 4.x) or CTRL-click (Netscape 6.x, Internet Explorer) on
 the topic names. Note that there are two ways to enter topics, either from one
 big long list or from several shorter lists.
 <p>
-To have request that a new subtopic be added to the database please contact the
+To request that a new subtopic be added to the database please contact the
 <a href="mailto:btev-docdb@fnal.gov">DocDB administrators</a>. Tell us what
 subtopic you would like added and which major topic it should be place under.
 #
@@ -143,7 +151,7 @@ To select more than one pair, either click (Netscape 4.x) or CTRL-click
 leaving all selections blank. Selecting "Public" doesn't actually do anything
 except generate a warning if you combine "Public" with another name.
 <p>
-To have a new group added to the database please contact the <a
+To request that a new group be added to the database please contact the <a
 href="mailto:btev-docdb@fnal.gov">DocDB administrators</a>. 
 #
 doctype
@@ -151,8 +159,34 @@ Document Type
 Select which kind of document this is. This has nothing to do with the format of
 the document. I.e. a PowerPoint file isn't <i>necessarily</i> a "Talk."
 <p>
-To have request that a new document type be added to the database please
+To request that a new document type be added to the database please
 contact the <a href="mailto:btev-docdb@fnal.gov">DocDB administrators</a>. 
+#
+majortopics
+Major Topics
+Select the Major topic which is the parent of the minor, or subtopic you are
+entering. New major topics can currently only be entered into the database
+directly (there is no web form).
+#
+shortdescription
+Short Description of Subtopic
+This is the text that appears in the selectable boxes and in the ShowDocument
+script.
+#
+longdescription
+Long Description of Subtopic
+This is a longer description of the topic, if needed. If not, it should be the
+same as the short description. While this isn't used now, it might be in the
+future.
+#
+institution
+Institution
+The institution the author you are entering is associated with.
+#
+authorentry
+Entering the Author's Name
+Fill in the fields for first and last name as well as the middle initials, if
+needed. 
 #
 httpupload
 Upload by URL
