@@ -47,6 +47,7 @@ my @TalkTimes       = split /\0/,$params{talktime};
 my @TalkSeparators  = split /\0/,$params{talkseparator};
 my @TalkDeletes     = split /\0/,$params{talkdelete};
 my @TalkConfirms    = split /\0/,$params{talkconfirm};
+my @TimeStamps      = split /\0/,$params{timestamp};
 
 # Also have params for DocID, authors, and topics in special params with 
 # SessionID embedded
@@ -73,7 +74,13 @@ $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass
 
 unless ($dbh) {
   push @ErrorStack,$Msg_NoConnect;
-}         
+}      
+
+unless ($SessionID) {
+  push @ErrorStack,"You must specify a session to modify. You probably arrived
+  here by error.";
+}  
+   
 &EndPage(@ErrorStack);
 
 if ($Mode eq "modify") {
@@ -101,6 +108,7 @@ if ($Mode eq "modify") {
     my $TalkTitle      = shift @TalkTitles      ;
     my $TalkNote       = shift @TalkNotes       ;
     my $SessionOrderID = shift @SessionOrderIDs ;
+    my $TimeStamp      = shift @TimeStamps      ;
     my $TalkNewOrder   = $TalkOrders{$TalkOrder};
 
     my $TalkSeparatorID = 0;
@@ -108,6 +116,7 @@ if ($Mode eq "modify") {
     
     my $TalkConfirmed   = $TalkConfirmFlags{$SessionOrderID};
     my $TalkDocID       = $params{"talkdocid-$SessionOrderID"};
+    my $NewSessionID    = $params{"newsessionid-$SessionOrderID"};
     my $NewSessionID    = $params{"newsessionid-$SessionOrderID"};
     
     if (grep /n/,$SessionOrderID) { # Key on SessionOrderID to see if insert or update.	
@@ -143,6 +152,31 @@ if ($Mode eq "modify") {
       $TalkSeparatorID = $SessionOrders{$SessionOrderID}{TalkSeparatorID};
       $SessionTalkID   = $SessionOrders{$SessionOrderID}{SessionTalkID};
 
+### Check TimeStamps from form vs. DB to detect collisions
+
+      if ($SessionTalkID) {
+        &FetchSessionTalkByID($SessionTalkID);
+        
+        if ($TimeStamp < $SessionTalks{$SessionTalkID}{TimeStamp}) {
+          push @WarnStack,"Your attempt to modify $TalkTitle failed. Your
+                          modification collided with another. (Please ignore
+                          this message if you didn't actually try to change
+                          anything for that agenda entry.)";
+          next;
+        }
+      }                    
+      if ($TalkSeparatorID) {
+        &FetchTalkSeparatorByID($TalkSeparatorID);
+        
+        if ($TimeStamp < $TalkSeparators{$TalkSeparatorID}{TimeStamp}) {
+          push @WarnStack,"Your attempt to modify $TalkTitle failed. Your
+                          modification collided with another. (Please ignore
+                          this message if you didn't actually try to change
+                          anything for that agenda entry.)";
+          next;
+        }
+      }                    
+        
       if ($TalkDeleteFlags{$SessionOrderID}) { # Delete session or separator
         if ($TalkSeparatorID) {
           &DeleteTalkSeparator($TalkSeparatorID);
@@ -198,11 +232,13 @@ if ($Mode eq "modify") {
 }
 
 &EndPage(@ErrorStack);
+&WarnPage(@WarnStack);
 
 &ReHintTalksBySessionID($SessionID); 
 &ClearSessionTalks();
 
 # Fetch all SessionTalks and TalkSeparators with this SessionID 
+
 my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
 my @TalkSeparatorIDs = &FetchTalkSeparatorsBySessionID($SessionID);
 my @SessionOrderIDs  = &FetchSessionOrdersBySessionID($SessionID);

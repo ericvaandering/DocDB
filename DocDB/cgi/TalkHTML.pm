@@ -140,7 +140,7 @@ sub TalkEntryForm (@) {
     print "<tr valign=top>\n";
     $query -> param('sessionorderid',$SessionOrderID);
     print $query -> hidden(-name => 'sessionorderid', -default => $SessionOrderID);
-    print $query -> hidden(-name => 'timestamp',      -default => $TimeStamp);
+    print $query -> hidden(-name => 'timestamp',      -default => $EntryTimeStamp);
 
 
     print "<td align=left rowspan=2>\n"; &TalkOrder; print "<br/>\n";
@@ -314,13 +314,22 @@ sub TalkNewSession ($) {
 
   my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
   
-  my @SessionIDs = &FetchSessionsByConferenceID($ConferenceID);
-  unshift @SessionIDs,"0";
+  &FetchSessionsByConferenceID($ConferenceID); # Get names of all sessions
 
-  foreach my $SessionID (@SessionIDs) {
-    $SessionLabels{$SessionID} = $Sessions{$SessionID}{Title}; 
-  }
+  my @SessionIDs = ("0");
   $SessionLabels{0} = "Move to new session?";
+
+# To get them all in order, have to use MeetingOrderIDs
+
+  my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
+  @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
+  foreach my $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks
+    my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
+    if ($SessionID) {
+      push @SessionIDs,$SessionID;
+      $SessionLabels{$SessionID} = $Sessions{$SessionID}{Title}; 
+    }
+  }
   
   print $query -> popup_menu (-name    => "newsessionid-$SessionOrderID", 
                               -labels => \%SessionLabels, 
