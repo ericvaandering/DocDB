@@ -17,9 +17,10 @@ $SSIDirectory = "/www/html/includes/";
 
 # Shell Commands
 
-$Wget   = "/home2/btev2/ewv/bin/wget -O - --quiet ";
-$Tar    = "/fnal/ups/prod/gtools/v2_4/bin/gtar ";
-$Unzip  = "/usr/local/bin/unzip -q ";
+$Wget   = "/usr/bin/wget -O - --quiet ";
+$Tar    = "/bin/tar ";
+$Unzip  = "/usr/bin/unzip -q ";
+#$Zip    = "/usr/bin/zip -q "; # Comment out if not present
 
 # Useful stuff
 

@@ -1,30 +1,30 @@
 sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with all authors
-  my ($GroupID,$Name,$Description,$Timestamp);
+  my ($GroupID,$Name,$Description,$TimeStamp);
   my $group_list  = $dbh -> prepare(
-     "select GroupID,Name,Description,CanCreate,Timestamp from SecurityGroup"); 
+     "select GroupID,Name,Description,CanCreate,TimeStamp from SecurityGroup"); 
   $group_list -> execute;
-  $group_list -> bind_columns(undef, \($GroupID,$Name,$Description,$CanCreate,$Timestamp));
+  $group_list -> bind_columns(undef, \($GroupID,$Name,$Description,$CanCreate,$TimeStamp));
   %SecurityGroups = ();
   while ($group_list -> fetch) {
     $SecurityGroups{$GroupID}{GROUPID}     = $GroupID;
     $SecurityGroups{$GroupID}{NAME}        = $Name;
     $SecurityGroups{$GroupID}{DESCRIPTION} = $Description;
     $SecurityGroups{$GroupID}{CanCreate}   = $CanCreate;
-    $SecurityGroups{$GroupID}{TIMESTAMP}   = $Timestamp;
+    $SecurityGroups{$GroupID}{TIMESTAMP}   = $TimeStamp;
     $SecurityIDs{$Name} = $GroupID;
   }
   
   my ($HierarchyID,$ChildID,$ParentID);
   my $hierarchy_list  = $dbh -> prepare(
-     "select HierarchyID,ChildID,ParentID,Timestamp from GroupHierarchy"); 
+     "select HierarchyID,ChildID,ParentID,TimeStamp from GroupHierarchy"); 
   $hierarchy_list -> execute;
-  $hierarchy_list -> bind_columns(undef, \($HierarchyID,$ChildID,$ParentID,$Timestamp));
+  $hierarchy_list -> bind_columns(undef, \($HierarchyID,$ChildID,$ParentID,$TimeStamp));
   %GroupsHierarchy = ();
   while ($hierarchy_list -> fetch) {
     $GroupsHierarchy{$HierarchyID}{HIERARCHY} = $HierarchyID;
     $GroupsHierarchy{$HierarchyID}{CHILD}     = $ChildID;
     $GroupsHierarchy{$HierarchyID}{PARENT}    = $ParentID;
-    $GroupsHierarchy{$HierarchyID}{TIMESTAMP} = $Timestamp;
+    $GroupsHierarchy{$HierarchyID}{TIMESTAMP} = $TimeStamp;
   }
 }
 
