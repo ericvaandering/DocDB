@@ -32,10 +32,11 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
 
 # Meeting expansion
 
-  my $SessionAdd  = $dbh -> prepare("alter table Session add ShowAllTalks Integer"); 
+  my $SessionAdd   = $dbh -> prepare("alter table Session add ShowAllTalks Integer"); 
   my $RevisionAdd  = $dbh -> prepare("alter table DocumentRevision add Note text"); 
-  my $RevisionAdd2 = $dbh -> prepare("alter table DocumentRevision add Superceded int"); 
-  my $KeywordDel      = $dbh -> prepare("alter table Keyword drop KeywordGroupID"); 
+  my $RevisionAdd2 = $dbh -> prepare("alter table DocumentRevision add Demanaged int"); 
+  my $KeywordDel   = $dbh -> prepare("alter table Keyword drop KeywordGroupID"); 
+  my $EmailUserAdd = $dbh -> prepare("alter table EmailUser add CanSign int"); 
 
   my $SignoffCreate = $dbh -> prepare("create table Signoff ".
                    "(SignoffID integer auto_increment primary key,".
@@ -69,7 +70,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
   $SignatureCreate          -> execute();
   $SignoffDependencyCreate  -> execute();
   $EmailDocImmedCreate      -> execute();
-  
+  $EmailUserAdd             -> execute();
   
 }
 
