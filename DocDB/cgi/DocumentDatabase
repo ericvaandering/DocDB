@@ -24,7 +24,41 @@ print "(no need to reserve the document).\n";
 print "<li><a href=\"$DocumentAddForm?mode=add&upload=http\">Submit a URL</a>
 for a document you have on the web \n"; 
 print "(no need to reserve the document).\n";
+print "<li><a href=ListDocuments>List</a> all documents\n"; 
 print "</ul>\n";
+print "<p>\n";
+
+print "If the above choices don't satisfy your needs, use this form to generate
+       a customized document creation or update form:<p>\n";
+
+$modes{add}      = "New document";
+$modes{update}   = "Update document";
+$modes{updatedb} = "Update DB information";
+
+$uploads{http}   = "HTTP submission";
+$uploads{file}   = "Local file upload";
+
+$archives{multi}   = "Single file";
+$archives{singe}   = "Archive (multi-file) upload";
+
+print $query -> start_multipart_form('POST',$DocumentAddForm);
+
+print "<b>Type of modification: </b>\n";
+print $query -> radio_group(-name => "mode", -values => \%modes);
+print "<p>\n";
+print "<b>Upload method: </b>\n";
+print $query -> radio_group(-name => "upload", -values => \%uploads);
+print "<p>\n";
+print "<b>Upload type: </b>\n";
+print $query -> radio_group(-name => "archive", -values => \%archives);
+print "<p>\n";
+print "<b>Number of upload fields: </b>\n";
+print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
+print "<p>\n";
+
+print $query -> submit (-value => "Generate Form");
+print $query -> end_multipart_form;
+
 
 print $query->end_html;
 

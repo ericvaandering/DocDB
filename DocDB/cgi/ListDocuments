@@ -1,0 +1,55 @@
+#! /usr/bin/perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+use CGI;                                                                                      
+use DBI;
+
+require "DocDBGlobals.pm";
+require "Security.pm";
+require "Sorts.pm";
+require "MySQLAccess.pm";
+require "ResponseElements.pm";
+require "FSUtilities.pm";
+
+$query = new CGI;  # Global for subroutines
+print $query->header;
+print $query->start_html(-title=>"BTeV Document List");
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+
+%params = $query -> Vars;
+
+&GetAllDocuments;
+print "<table>\n";
+print "<tr>\n";
+print "<th>Document<br>Number</th>\n";
+print "<th>Latest<br>Version</th>\n";
+print "<th>Title</th>\n";
+print "<th>Files</th>\n";
+print "</tr>\n";
+foreach $document (@documents) {
+  unless (&CanAccess($document,$documents{$document}{NVER})) {next;}
+  my $full_docid = &FullDocumentID($document);
+  my $DocRevID   = &FetchDocRevision($document,$documents{$document}{NVER});
+  my $Files_ref  = &FetchDocFiles($DocRevID);
+                   
+  my $title = $DocRevisions{$DocRevID}{TITLE};
+  print "<tr>\n";
+  print "<td>$full_docid </td>\n";
+  print "<td>$documents{$document}{NVER} </td>\n";
+  print "<td>$title</td>\n";
+  print "<td>\n";
+  foreach $file (@{$Files_ref}) {
+    $link = &FileLink($document,$documents{$document}{NVER},$DocFiles{$file}{NAME});
+    print "$link<br>\n";
+  }  
+  print "</td>\n";
+  print "</tr>\n";
+}
+print "</table>\n";
+print "<p>\n";
+
+print $query->end_html; 
+
+

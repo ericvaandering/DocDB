@@ -49,7 +49,7 @@ sub PrintAbstract {
 }
 
 sub EndPage {
-  @errors = @_;
+  my @errors = @_;
   print "<b>There was an error processing your request:</b><br>\n";
   foreach $message (@errors) {
     print "<dt><b>$message </b>\n";
@@ -57,5 +57,16 @@ sub EndPage {
   print $query->end_html;
   exit;
 }
+
+sub FullDocumentID {
+  my ($documentID) = @_;
+  return "BTeV-doc-$documentID";
+}  
+
+sub FileLink {
+  my ($documentID,$version,$shortfile) = @_;
+  $base_url = &GetURLDir($documentID,$version);
+  return "<a href=\"$base_url$shortfile\">$shortfile</a>";
+}  
 
 1;

@@ -62,8 +62,8 @@ values (0,          ?,        ?)");
 
 my $file_insert = $dbh->prepare("
 insert into DocumentFile   
-       (DocFileID, DocRevID, FileName, Date, URL, RootFile) 
-values (0,         ?,        ?,        NOW(),?,   ?)");
+       (DocFileID, DocRevID, FileName, Date, RootFile) 
+values (0,         ?,        ?,        NOW(),?)");
 
 @error_stack = ();
 
@@ -161,13 +161,14 @@ if ($mode eq "add") { # We're adding a new document
 
 # Insert into Files database
   $rootfile = 1;
-  $url = $web_root.$hun_dir.$sub_dir.$ver_dir.$short_file; # Not needed?
-  $file_insert -> execute($docRevID,$short_file,$url,$rootfile);
+  $file_insert -> execute($docRevID,$short_file,$rootfile);
 }
 
 # Output feedback to the user
 
-print "You were successful. Your Document ID is <b>BTeV-doc-$documentID</b><br> 
+$full_docid = &FullDocumentID($documentID);
+
+print "You were successful. Your Document ID is <b>$full_docid</b><br> 
        Please make a note of the document number as you will
        need it to update your document.<br>
        Your entry was created with the following information:

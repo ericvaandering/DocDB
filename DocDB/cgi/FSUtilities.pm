@@ -1,7 +1,7 @@
 sub GetDirectory { # Returns a directory name
   my ($documentID,$version) = @_;
   
-  # Any change in formats must be made in MakeDirectory too
+  # Any change in formats must be made in GetURLDir too
   
   my $hun_dir = sprintf "%4.4d/",int($documentID/100);
   my $sub_dir = sprintf "%6.6d/",$documentID;
@@ -24,6 +24,19 @@ sub MakeDirectory { # Makes a directory, safe for existing directories
   mkdir  $file_root.$hun_dir.$sub_dir.$ver_dir;
 
   return $new_dir; # Returns directory name
+}
+
+sub GetURLDir { # Returns a directory name
+  my ($documentID,$version) = @_;
+  
+  # Any change in formats must be made in MakeDirectory too
+  
+  my $hun_dir = sprintf "%4.4d/",int($documentID/100);
+  my $sub_dir = sprintf "%6.6d/",$documentID;
+  my $ver_dir = sprintf "%3.3d/",$version;
+  my $new_dir = $web_root.$hun_dir.$sub_dir.$ver_dir;
+
+  return $new_dir;
 }
 
 sub ProtectDirectory {

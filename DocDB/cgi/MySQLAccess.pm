@@ -49,4 +49,71 @@ sub GetSecurities {
   (@available_securities) = split /\,/,$set_values;
 };
 
+sub GetAllDocuments {
+  my ($DocumentID);
+  my $document_list  = $dbh->prepare("select DocumentID from Document");
+  my $max_version    = $dbh->prepare("select MAX(VersionNumber) from
+                                      DocumentRevision where DocumentID=?");
+  $document_list -> execute;
+  $document_list -> bind_columns(undef, \($DocumentID));
+  %documents = ();
+  @documents = ();
+  while ($document_list -> fetch) {
+    $documents{$DocumentID}{DOCID} = $DocumentID;
+    push @documents,$DocumentID;
+  }
+  
+  foreach $document (@documents) {
+    $max_version -> execute($document);
+    ($documents{$document}{NVER}) = $max_version -> fetchrow_array;
+  }
+};
+
+sub FetchDocRevision {
+  # Creates two hashes:
+  # $DocRevIDs{DocumentID}{Version} holds the DocumentRevision ID
+  # $DocRevisions{DocRevID}{FIELD} holds the Fields or references too them
+
+  my ($documentID,$versionNumber) = @_;
+  my $revision_list = $dbh->prepare(
+    "select DocRevID,SubmitterID,DocumentTitle,PublicationInfo,VersionNumber,
+            Abstract,RevisionDate,Security,TimeStamp
+     from DocumentRevision 
+     where DocumentID=? and VersionNumber=?");
+  if ($DocRevIDs{$documentID}{$versionNumber}) {
+    return $DocRevIDs{$documentID}{$versionNumber};
+  }
+  $revision_list -> execute($documentID,$versionNumber);
+  ($DocRevID,$SubmitterID,$DocumentTitle,$PublicationInfo,$VersionNumber,
+   $Abstract,$RevisionDate,$Security) = $revision_list -> fetchrow_array;
+
+  $DocRevIDs{$documentID}{$versionNumber} = $DocRevID;
+  $DocRevisions{$DocRevID}{TITLE}    = $DocumentTitle;
+  $DocRevisions{$DocRevID}{ABSTRACT} = $Abstract;
+  return $DocRevID;
+}
+
+sub FetchDocFiles {
+  # Creates two hashes:
+  # $Files{DocRevID}           holds the list of file IDs for a given DocRevID
+  # $DocFiles{DocFileID}{FIELD} holds the Fields or references too them
+
+  my ($DocRevID) = @_;
+  my $file_list = $dbh->prepare(
+    "select DocFileID,FileName,Date,RootFile,TimeStamp
+     from DocumentFile where DocRevID=?");
+  if ($Files{$DocRevID}) {
+    return $Files{$DocRevID};
+  }
+  $file_list -> execute($DocRevID);
+  $file_list -> bind_columns(undef, \($DocFileID,$FileName,$Date,$RootFile,$TimeStamp));
+  while ($file_list -> fetch) {
+    push @{ $Files{$DocRevID} },$DocFileID;
+    $DocFiles{$DocFileID}{NAME} = $FileName;
+    $DocFiles{$DocFileID}{ROOT} = $RootFile;
+  }
+  return $Files{$DocRevID};
+}
+
+
 1;

@@ -28,4 +28,8 @@ $DocumentAddForm    = $cgi_root."DocumentAddForm";
 
 $Wget = "/usr/bin/wget -O - --quiet ";
 
+# Other Globals
+
+$remote_user = $ENV{REMOTE_USER};
+
 1;
