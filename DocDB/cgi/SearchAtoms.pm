@@ -68,9 +68,13 @@ sub TopicSearch {
   foreach $TopicID (@TopicIDs) {
     $revtopic_list -> execute($TopicID );
     $revtopic_list -> bind_columns(undef, \($DocRevID));
-    while ($revtopic_list -> fetch) {
-      ++$Revisions{$DocRevID};
+    my %TopicRevisions = ();
+    while ($revtopic_list -> fetch) { # Make sure each topic only matches once
+      ++$TopicRevisions{$DocRevID};
     }
+    foreach $DocRevID (keys %TopicRevisions) {
+      ++$Revisions{$DocRevID};
+    }  
   }
   if ($Logic eq "AND") {
     foreach $DocRevID (keys %Revisions) {

@@ -162,15 +162,33 @@ if ($TitleSearch || $AbstractSearch || $KeywordSearch || $PubInfoSearch || @Requ
 
 ### Topics (if any)
 
-if (@MinorSearchIDs || @MajorSearchIDs) {
-  $SearchedTopics = 1;
-  if (@MinorSearchIDs) { 
-    @TopicRevisions = &TopicSearch($InnerLogic,"minor",@MinorSearchIDs);
-  } else {
-    @TopicRevisions = &TopicSearch($InnerLogic,"major",@MajorSearchIDs);
-  }  
-  @TopicDocumentIDs = &ValidateRevisions(@TopicRevisions);
+if (@MinorSearchIDs && @MajorSearchIDs) { # Remove major topic if one 
+  my %MajorSearchIDs = ();                # minor topics is selected
+  foreach $MajorSearchID (@MajorSearchIDs) {
+    $MajorSearchIDs{$MajorSearchID} = 1;
+  } 
+  foreach $MinorSearchID (@MinorSearchIDs) {
+    $MajorSearchIDs{$MinorTopics{$MinorSearchID}{MAJOR}} = 0;
+  } 
+  @MajorSearchIDs = ();
+  foreach $MajorSearchID (keys %MajorSearchIDs) {
+    if ($MajorSearchIDs{$MajorSearchID} == 1) {
+      push @MajorSearchIDs, $MajorSearchID;
+    }
+  } 
 }
+
+if (@MinorSearchIDs) { 
+  $SearchedMinor = 1;
+  @MinorRevisions = &TopicSearch($InnerLogic,"minor",@MinorSearchIDs);
+  @MinorDocumentIDs = &ValidateRevisions(@MinorRevisions);
+} 
+
+if (@MajorSearchIDs)  {
+  $SearchedMajor = 1;
+  @MajorRevisions = &TopicSearch($InnerLogic,"major",@MajorSearchIDs);
+  @MajorDocumentIDs = &ValidateRevisions(@MajorRevisions);
+}  
 
 ### Authors (if any)
 
@@ -238,9 +256,15 @@ if ($OuterLogic eq "OR") {
       ++$TotalDocumentIDs{$DocID};
     }
   }    
-  if ($SearchedTopics) {
+  if ($SearchedMinor) {
     ++$TotalSearches;
-    foreach $DocID (@TopicDocumentIDs) {
+    foreach $DocID (@MinorDocumentIDs) {
+      ++$TotalDocumentIDs{$DocID};
+    }
+  } 
+  if ($SearchedMajor) {
+    ++$TotalSearches;
+    foreach $DocID (@MajorDocumentIDs) {
       ++$TotalDocumentIDs{$DocID};
     }
   } 
