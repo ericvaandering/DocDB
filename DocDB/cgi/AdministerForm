@@ -168,16 +168,14 @@ print "<p><hr>\n";
 
 %EnableMatrix = ();
 
-$EnableMatrix{inst}{Delete}  = 1;
+$EnableMatrix{inst}{Delete}      = 1;
 
-$EnableMatrix{inst}{Modify}     = 1;
-$EnableMatrix{shortdesc}{Modify}  = 1;
-$EnableMatrix{longdesc}{Modify}    = 1;
-$EnableMatrix{middle}{Modify}   = 1;
-$EnableMatrix{lastname}{Modify} = 1;
+$EnableMatrix{inst}{Modify}      = 1;
+$EnableMatrix{shortdesc}{Modify} = 1;
+$EnableMatrix{longdesc}{Modify}  = 1;
 
-$EnableMatrix{shortdesc}{New}     = 1;
-$EnableMatrix{longdesc}{New}       = 1;
+$EnableMatrix{shortdesc}{New}    = 1;
+$EnableMatrix{longdesc}{New}     = 1;
   
 print "<a name=\"institution\"><center><h4>Administer Institutions</h4></center>\n";
 
