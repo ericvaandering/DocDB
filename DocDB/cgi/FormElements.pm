@@ -146,7 +146,8 @@ sub SingleUploadBox {
     print "</td>\n";
     print "<td>\n";
     print $query -> textfield (-name => 'filedesc', -size => 60, -maxlength => 128);
-    print $query -> checkbox(-name => "root", -checked => 'checked', -label => '');
+    print $query -> checkbox(-name => "root", -checked => 'checked', 
+                             -value => $i, -label => '');
     print "<a "; &HelpLink("main"); print "Main?</a>\n";
     print "</td></tr>\n";
   }
@@ -171,7 +172,8 @@ sub SingleHTTPBox {
     print "</td>\n";
     print "<td colspan=3>\n";
     print $query -> textfield (-name => 'filedesc', -size => 60, -maxlength => 128);
-    print $query -> checkbox(-name => "root", -checked => 'checked', -label => '');
+    print $query -> checkbox(-name  => "root", -checked => 'checked', 
+                             -value => $i,     -label   => '');
     print "<a "; &HelpLink("main"); print "Main?</a>\n";
     print "</td></tr>\n";
   }
@@ -185,6 +187,42 @@ sub SingleHTTPBox {
   print "</td></tr>\n";
   print "</table>\n";
 };
+
+sub FileUpdateBox {
+  my ($DocRevID) = @_; 
+  my @FileIDs = @{&FetchDocFiles($DocRevID)};
+
+  print "<table cellpadding=3>\n";
+  print "<tr>";
+   print "<td align=left>\n";
+   print "<a "; &HelpLink("filename"); print "<b>File Name</b></a>\n";
+   print "</td>\n";
+   print "<td align=left>\n";
+   print "<a "; &HelpLink("description"); print "<b>Description</b></a>\n";
+   print "</td>\n";
+   print "<td align=left>\n";
+   print "<a "; &HelpLink("main"); print "<b>Main</b></a>\n";
+   print "</td>\n";  
+  print "</tr>\n";
+  foreach my $FileID (@FileIDs) {
+    print "<tr><td align=right>\n";
+    print "$DocFiles{$FileID}{NAME}\n";
+    print "</td>\n";
+    print "<td>\n";
+    print $query -> hidden (-name => 'fileid', -default => $FileID);
+    print $query -> textfield (-name => 'filedesc', -size => 60, -maxlength => 128, 
+                               -default => $DocFiles{$FileID}{DESCRIPTION});
+    print "</td>\n";
+    print "<td>\n";
+    if ($DocFiles{$FileID}{ROOT}) {
+      print $query -> checkbox(-name => "root", -value => $FileID, -checked => 'checked', -label => '');
+    } else {
+      print $query -> checkbox(-name => "root", -value => $FileID, -label => '');
+    }
+    print "</td></tr>\n";
+  }
+  print "</table>\n";
+}
 
 sub ArchiveUploadBox {
   print "<table cellpadding=3>\n";

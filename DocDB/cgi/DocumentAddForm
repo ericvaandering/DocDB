@@ -219,6 +219,10 @@ if ($mode eq "add" || $mode eq "update") {
   print "<br>Make sure you supply a format everyone can view (e.g. PDF) along
   with source formats.<br>\n"; 
   print "</td></tr>";
+} elsif ($mode eq "updatedb") {
+  print "<tr><td colspan=3>\n";
+  &FileUpdateBox($DocRevID);
+  print "</td></tr>";
 }
 
 print "<tr valign=top>\n";

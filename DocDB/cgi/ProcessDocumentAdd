@@ -294,12 +294,23 @@ if ($mode eq "updatedb") { # Copy DocumentFile entries
  
   my ($FileName,$Date,$RootFile,$Description);
 
-  my $file_list = $dbh->prepare(
-    "select FileName,Date,RootFile,Description from DocumentFile where DocRevID=?");
+  my @FileIDs      = split ("\0",$params{fileid});
+  my @Descriptions = split ("\0",$params{filedesc});
+  my @Roots        = split ("\0",$params{root});
 
-  $file_list -> execute($oldRevID);
-  $file_list -> bind_columns(undef, \($FileName,$Date,$RootFile,$Description));
-  while ($file_list -> fetch) { # Copy
+  my $file_list = $dbh->prepare(
+    "select FileName,Date from DocumentFile where DocFileID=?");
+
+  foreach my $FileID (@FileIDs) {
+    $file_list -> execute($FileID);
+    ($FileName,$Date) = $file_list -> fetchrow_array;
+    $Description = shift @Descriptions; 
+    $RootFile = 0;
+    foreach my $Root (@Roots) {
+      if ($Root == $FileID) { 
+        $RootFile = 1;
+      }
+    }
     $file_insert -> execute($docRevID,$FileName,$Date,$RootFile,$Description);
   }  
 }  
@@ -311,7 +322,11 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
   @short_files = ();
   if ($Archive eq "single") { # The user uploaded the files themselves 
     @Descriptions = split ("\0",$params{filedesc});
-    @Roots = split ("\0",$params{root});
+    @Roots = ();
+    my @RawRoots = split ("\0",$params{root});
+    foreach my $RawRoot (@RawRoots) {
+      @Roots[$RawRoot-1] = "on"
+    }  
     if ($params{single_upload}) { # Copy file to directory
       @long_files   = $query ->  param("single_upload");
       foreach $long_file (@long_files) {

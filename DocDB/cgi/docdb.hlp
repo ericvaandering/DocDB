@@ -1,3 +1,9 @@
+filename
+File Name
+When updating the database information on a document, you can't rename the
+files, but you can redescribe them. These are the names of the files in your
+document.
+#
 dynamictopic
 Topics
 Using this control you can select either topics or sub-topics for the
