@@ -88,11 +88,18 @@ $ShortProject   = "MyProject";    # This is the project used in the Document ID
 #$InitialSessions      = 5;     # Number of initial sessions when making meeting
 
 #$Wget   = "/usr/bin/wget -O - --quiet ";
-#$Tar    = "/bin/tar ";
+#$Tar    = "";                     # Set this if you don't have GNU tar
+#$GTar   = "/bin/tar ";            # Set this if you do have GNU tar (e.g. Linux)
+#$GZip   = "/bin/gzip ";           # Currently only needed if non-GNU tar
+#$GUnzip = "/bin/gunzip ";         # Currently only needed if non-GNU tar
 #$Unzip  = "/usr/bin/unzip -q ";
 #$Zip    = "/usr/bin/zip -q -r ";  # Set to "" in ProjectGlobals if not installed
 
 
+# Which things are publicly viewable?
+
+#$PublicAccess{MeetingList} = 0;  
+  
 # ----- These are some options for extra features of the DocDB that can be 
 # ----- enabled. Values shown are defaults, change 0 -> 1 to enable a feature.
 
@@ -105,8 +112,11 @@ $ShortProject   = "MyProject";    # This is the project used in the Document ID
                                 # permission
 
 #$UseSignoffs          = 0;     # Sign-off system for document approval
-
 #$MailInstalled        = 1;     # Is the Mailer::Mail module installed?
 
+#$ContentSearch        = "cd /path/to/search/script; ./ContentSearch";    
+                         # Scripts and engine installed for searching files
+
+#$DefaultPublicAccess  = 0;     # New documents are public by default
 
 1;

@@ -77,6 +77,8 @@ $FileSearch             = $params{filesearch};
 $FileSearchMode         = $params{filesearchmode};
 $FileDescSearch         = $params{filedescsearch};
 $FileDescSearchMode     = $params{filedescsearchmode};
+$FileContSearch         = $params{filecontsearch};
+$FileContSearchMode     = $params{filecontsearchmode};
 
 @RequesterSearchIDs = split /\0/,$params{requestersearch};
 @AuthorSearchIDs    = split /\0/,$params{authors};
@@ -116,8 +118,9 @@ unless ($Mode eq "date" or $Mode eq "meeting" or $Mode eq "conference") {
 my @DocumentIDs = ();
 my @RevisionDocumentIDs = ();
 my @TopicDocumentIDs = ();
+my @ContentDocumentIDs = ();
 
-my ($SearchedRevisions,$SearchedTopics,$SearchedAuthors,$SearchedFiles,$SearchedTypes);
+my ($SearchedRevisions,$SearchedTopics,$SearchedAuthors,$SearchedFiles,$SearchedTypes,$SearchedContent);
 
 unless ($InnerLogic eq "AND" || $InnerLogic eq "OR") {
   push @ErrorStack,"Inner logic must be either AND or OR.";
@@ -263,6 +266,19 @@ if ($FileSearch || $FileDescSearch) {
   @FileDocumentIDs = &ValidateRevisions(@FileRevisions);
 } 
 
+if ($ContentSearch && $FileContSearch) {
+  $SearchedContent = 1;
+  my %ContentDocumentIDs = ();
+  open SEARCH,"$ContentSearch $FileContSearchMode $FileContSearch |";
+  while (my $line = <SEARCH>) {
+    chomp $line;
+    my $DocumentID = int($line);
+    $ContentDocumentIDs{$DocumentID} = 1;
+  } 
+  close SEARCH; 
+  @ContentDocumentIDs = keys %ContentDocumentIDs;
+}  
+
 ### Fetch all info for documents that match all criteria
 
 if ($OuterLogic eq "OR") {
@@ -271,6 +287,7 @@ if ($OuterLogic eq "OR") {
   push @DocumentIDs,@AuthorDocumentIDs;
   push @DocumentIDs,@FileDocumentIDs;
   push @DocumentIDs,@TypeDocumentIDs;
+  push @DocumentIDs,@ContentDocumentIDs;
 } elsif ($OuterLogic eq "AND") {
   my %TotalDocumentIDs = ();
   my $TotalSearches    = 0;
@@ -308,6 +325,12 @@ if ($OuterLogic eq "OR") {
   if ($SearchedTypes) {
     ++$TotalSearches;
     foreach $DocID (@TypeDocumentIDs) {
+      ++$TotalDocumentIDs{$DocID};
+    }
+  } 
+  if ($SearchedContent) {
+    ++$TotalSearches;
+    foreach $DocID (@ContentDocumentIDs) {
       ++$TotalDocumentIDs{$DocID};
     }
   } 

@@ -56,7 +56,7 @@ unless (&CanAccess($DocumentID,$Version)) {
   }  
 }  
 
-if ($Type eq "zip" && !$Zip) {
+if (($Type eq "zip" && !$Zip)) {
   push @ErrorStack,"You asked for a type of archive this system can't produce.";
 }
 
@@ -82,7 +82,8 @@ unless (@ErrorStack) {
   my $TmpFile   = "/tmp/$ShortFile";
   my $File      = "$Directory/$ShortFile";
      $URL       = "$URLDir/$ShortFile";
-
+     $Directory =~ s/\/+$//g;
+     
   unlink $TmpFile;
   unlink $TarFile;
   unlink $TgzFile;
@@ -90,7 +91,11 @@ unless (@ErrorStack) {
   unlink $File;
   
   if ($Type eq "tar.gz") {
-    $Status = system("$Tar czf $TmpFile $Directory"); 
+    if ($GTar) { 
+      $Status = system("$GTar czf $TmpFile $Directory"); 
+    } elsif ($Tar && $GZip) {
+      $Status = system("$Tar cf - $Directory | $GZip > $TmpFile");
+    }
   } elsif ($Type eq "tar") {
     $Status = system("$Tar cf $TmpFile $Directory"); 
   } elsif ($Type eq "zip") {

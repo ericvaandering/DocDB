@@ -61,12 +61,12 @@ sub MailNotices (%) {
                   "in the $Project Document Database:\n\n";
       $Feedback = "<b>E-mail sent to: </b>";           
     } elsif ($Type eq "signature") {
-      $Subject  = "Ready to sign: $FullID: $Title";
+      $Subject  = "Ready for signature: $FullID: $Title";
       $Message  = "The following document ".
                   "in the $Project Document Database ".
                   "is ready for your signature:\n".
-                  "(Note that you may not be able so sign if you share ".
-                  "signature authority.)\n\n";
+                  "(Note that you may not be able to sign if you share ".
+                  "signature authority with someone who has already signed.)\n\n";
       $Feedback = "<b>Signature(s) requested from: </b>";           
     }  
 

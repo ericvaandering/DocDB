@@ -41,9 +41,6 @@ require "Messages.pm";
 
 $query = new CGI;  # Global for subroutines
 
-print $query->header;
-&DocDBHeader("Modified E-mail Users");
-
 %params = $query -> Vars;
 
 @ErrorStack = ();
@@ -63,6 +60,9 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 unless ($dbh) {
   push @ErrorStack,$Msg_AdminNoConnect;
 }         
+
+print $query->header;
+&DocDBHeader("Modified E-mail Users");
 
 &EndPage(@ErrorStack);
 

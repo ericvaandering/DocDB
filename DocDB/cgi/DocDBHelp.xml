@@ -223,7 +223,20 @@ The following modes are used to search for information:
  <li><b>All words as sub-string: </b>The information you enter is broken into
  words (delimited by spaces) and the field you are searching in is required to
  match all of these words as substrings (in any order).</li> 
+ <li><b>Any or all words as words: </b>Like the searches above, but spaces are 
+ require to delimit words (<i>lock</i> will not match <i>block</i>).</li> 
 </ul> 
+  </text>
+ </entry>
+
+<entry>
+ <key>contentsearch</key>
+ <title>File content search</title>
+ <text>
+  This field uses an external search engine to search for strings in the files 
+  in the document. Whether it matches sub-strings or whole words is a function 
+  of the external search engine. Note that not all document formats are 
+  searchable. (Searches in text and HTML files will be most reliable.)
   </text>
  </entry>
 
