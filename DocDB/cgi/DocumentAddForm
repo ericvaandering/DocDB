@@ -25,13 +25,15 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 %params = $query -> Vars;
 
 $Meeting = $params{meeting};
-$Meeting = 1;
 
 if ($Meeting) {
  $topicmode = "multi";
+ $mode = "add";
 }
 
-$mode   = $params{mode};
+unless ($mode) { 
+  $mode   = $params{mode};
+}
 if ($mode ne "add"    && $mode ne "reserve" && 
     $mode ne "update" && $mode ne "updatedb") {
   $mode = "reserve";
