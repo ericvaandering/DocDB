@@ -321,7 +321,6 @@ print "<h3>Existing Conferences:</h3>\n";
 
 print "<p><hr>\n";
 
-
 print "<p>\n";
 
 &DocDBNavBar();
