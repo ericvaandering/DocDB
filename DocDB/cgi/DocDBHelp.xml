@@ -570,9 +570,8 @@ Field" as the author selection mode from the advanced form on the document DB
 home page.<p/>
 If searching for a document, select the authors appropriately for your setting
 of <b>Within Fields</b>.<p/>
-To select multiple authors either click
-(Netscape 4.x) or CTRL-click (Netscape 6.x, Internet Explorer) on the author
-names.
+To select multiple authors either click or CTRL-click (depending on your
+browser) on the author names.
   </text>
  </entry>
 
@@ -581,7 +580,8 @@ names.
   <title>Topics</title>
   <text>
 Select all the topics and subtopics for the document. To select multiple topics
-either click (Netscape 4.x) or CTRL-click (Netscape 6.x, Internet Explorer) on
+either click or CTRL-click (depending on your
+browser) on
 the topic names. Note that there are two ways to enter topics, either from one
 big long list or from several shorter lists. You can select the other mode from
 the customize form on the main page.
@@ -593,8 +593,8 @@ the customize form on the main page.
   <title>Security</title>
   <text>
 Select which username/password pairs you want to allow access to your document.
-To select more than one pair, either click (Netscape 4.x) or CTRL-click
-(Netscape 6.x, Internet Explorer) on them. You can make a document public by
+To select more than one pair, either click or CTRL-click (depending on your
+browser) on them. You can make a document public by
 leaving all selections blank. Selecting "Public" doesn't actually do anything
 except generate a warning if you combine "Public" with another name.
   </text>
@@ -711,6 +711,31 @@ notifications.
   <title>Conference</title>
   <text>
 Select the name of the conference.
+  </text>
+ </entry>
+
+ <entry>
+  <key>viewgroups</key>
+  <title>Groups who can view document</title>
+  <text>
+This is the list of groups who may view the document.
+  </text>
+ </entry>
+
+ <entry>
+  <key>modifygroups</key>
+  <title>Groups who can modify document</title>
+  <text>
+This is the list of groups who may modify the document.
+  </text>
+ </entry>
+
+ <entry>
+  <key>adminlogin</key>
+  <title>Administrator login and password</title>
+  <text>
+Enter here the SQL username and password of the administrator account. This may
+or may not be the same as the web username and password. 
   </text>
  </entry>
 
