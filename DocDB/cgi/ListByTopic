@@ -85,7 +85,7 @@ if ($Mode eq "conference") {
     require "MiscSQL.pm";
     my $ConferenceID = &FetchConferenceByTopicID($TopicID);
     print "These documents from \n";
-    print "<font color=\"blue\">$MinorTopics{$TopicID}{LONG}</font>,<br>";
+    print "<span class=\"highlight\">$MinorTopics{$TopicID}{LONG}</span>,<br>";
     print " held from ",&EuroDate($Conferences{$ConferenceID}{StartDate});
     print " to ",&EuroDate($Conferences{$ConferenceID}{EndDate});
     print " in $Conferences{$ConferenceID}{Location}\n";
@@ -101,14 +101,14 @@ if ($Mode eq "conference") {
   &DocDBHeader("Document List by Topic");
   print "<center><h4>\n";
   if ($MajorID || &FetchMinorTopic($TopicID)) {
-    print "These documents on <font color=\"blue\">\n";
+    print "These documents on <span class=\"highlight\">\n";
     if ($MajorID) {
       print $MajorTopics{$MajorID}{SHORT},"\n";
     } else {
       print $MinorTopics{$TopicID}{LONG}," \n";
       print "(",$MinorTopics{$TopicID}{Full},")\n";
     }
-    print "</font> are available:\n";
+    print "</span> are available:\n";
   } else {
     print "The requested topic does not exist.\n";
   }  

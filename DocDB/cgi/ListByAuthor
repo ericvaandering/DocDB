@@ -49,9 +49,9 @@ unless ($Authors{$AuthorID}{LASTNAME}) {
 
 ### Output Information
 
-print "<center><h4><font color=\"blue\">\n";
+print "<center><h4><span class=\"highlight\">\n";
 &PrintAuthorInfo($AuthorID);
-print "</font><br>is listed as an author on the following documents:</h4></center><p>\n";
+print "</span><br>is listed as an author on the following documents:</h4></center><p>\n";
 
 ### Get list of documents and read in the information we need from database
 
