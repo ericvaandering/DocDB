@@ -501,6 +501,31 @@ sub TextField (%) {
                              -size => $Size, -maxlength => $MaxLength);
 } 
 
+sub TextArea (%) {  
+  my (%Params) = @_;
+  
+  my $HelpLink  = $Params{-helplink} ;
+  my $HelpText  = $Params{-helptext} ;
+  my $ExtraText = $Params{-extratext};
+  my $Text      = $Params{-text}     ;
+  my $NoBreak   = $Params{-nobreak}  ;
+  my $Required  = $Params{-required} ;
+  my $Name      = $Params{-name}      || "";
+  my $Default   = $Params{-default}   || "";
+  my $Columns   = $Params{-columns}   || 40;
+  my $Rows      = $Params{-rows}      || 6;
+  
+  my $ElementTitle = &FormElementTitle(-helplink  => $HelpLink , 
+                                       -helptext  => $HelpText ,
+                                       -extratext => $ExtraText,
+                                       -text      => $Text     ,
+                                       -nobreak   => $NoBreak  ,
+                                       -required  => $Required );
+  print $ElementTitle,"\n";                                     
+  print $query -> textarea (-name    => $Name,    -default   => $Default, 
+                            -columns => $Columns, -rows      => $Rows);
+} 
+
 sub FormElementTitle (%) {  
   my (%Params) = @_;
   
