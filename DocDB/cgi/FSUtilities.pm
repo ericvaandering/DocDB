@@ -1,6 +1,13 @@
 #  Functions in this file:
 #  
 #  
+#  FullFile
+#    Given a document ID, version number, and short file name,
+#    returns the full path of the file.
+#    
+#  FileSize
+#    Returns the size of a file in human readable format
+#    
 #  GetDirectory
 #    Given a document ID and a version number, returns the name of the
 #    directory where the document files are stored.
@@ -39,12 +46,40 @@
 #  ProcessArchive  
 #    Retrieves an archive and places it in the correct place in the file 
 #    system. Calls ExtractArchive to do the extraction.   
-
+#
 #  ExtractArchive  
 #    Detects the type of archive and extracts it into the correct 
 #    location on the file system. Does NOT protect against archives 
 #    with files that have /../ in the directory name, so files can,
 #    in theory, leak into other documents and/or revisions.
+
+sub FullFile {
+  my ($DocumentID,$Version,$ShortFile) = @_;
+  
+  my $FullFile = &GetDirectory($DocumentID,$Version).$ShortFile;
+  
+  return $FullFile;
+}
+
+sub FileSize {
+  my ($File) = @_;
+  
+  my $RawSize = (-s $File);
+  my $Size;
+  
+  if ($RawSize > 1024*1024*1024) {
+    $Size = sprintf "%8.1f GB",$RawSize/(1024*1024*1024);
+  } elsif ($RawSize > 1024*1024) {
+    $Size = sprintf "%8.1f MB",$RawSize/(1024*1024);
+  } elsif ($RawSize > 1024) {
+    $Size = sprintf "%8.1f kB",$RawSize/(1024);
+  } else {
+    $Size = "$RawSize bytes";
+  }   
+
+  return $Size;
+
+}
         
 sub GetDirectory { # Returns a directory name
   my ($documentID,$version) = @_;

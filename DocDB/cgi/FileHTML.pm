@@ -91,13 +91,14 @@ sub FileLink {
   require "FSUtilities.pm";
 
   my ($documentID,$version,$shortfile,$description) = @_;
-  $shortname = $shortfile;
+  my $shortname = $shortfile;
   $shortfile = CGI::escape($shortfile);
-  $base_url = &GetURLDir($documentID,$version);
+  my $base_url = &GetURLDir($documentID,$version);
+  my $file_size = &FileSize(&FullFile($documentID,$version,$shortname));
   if ($description) {
-    return "<a href=\"$base_url$shortfile\">$description</a> ($shortname)";
+    return "<a href=\"$base_url$shortfile\">$description</a> ($shortname, $file_size)";
   } else {
-    return "<a href=\"$base_url$shortfile\">$shortfile</a>";
+    return "<a href=\"$base_url$shortfile\">$shortfile</a> ($file_size)";
   }
 }  
 
