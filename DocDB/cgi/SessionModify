@@ -90,20 +90,8 @@ if ($Mode eq "modify") {
   }
   
 # Loop over sessions and insert
-  
-#  my $SessionUpdate = $dbh -> prepare(
-#   "update Session set ".
-#   "StartTime=?, Title=?, Description=? ". 
-#   "where SessionID=?");
-
-#  my $SessionSeparatorUpdate = $dbh -> prepare(
-#   "update SessionSeparator set ".
-#   "StartTime=?, Title=?, Description=? ". 
-#   "where SessionSeparatorID=?");
-
-#  my $MeetingOrderUpdate = $dbh -> prepare(
-#   "update MeetingOrder set SessionOrder=? where MeetingOrderID=?");
-
+  &FetchSessionOrdersBySessionID($SessionID);
+ 
   my $TalksUpdated    = 0;
 
   foreach my $TalkOrder (@TalkOrders) {
@@ -120,13 +108,12 @@ if ($Mode eq "modify") {
     my $TalkConfirmed   = $TalkConfirmFlags{$SessionOrderID};
     my $TalkDocID       = $params{"talkdocid-$SessionOrderID"};
     
-    &DBPrintLine ("Evaluating $TalkOrder $SessionOrderID");
-    # Key on SessionOrderID to see if we are going to insert or update.	
-    if (grep /n/,$SessionOrderID) {
-      if ($TalkTitle || $TalkNote) {
+    &DBPrintLine ("Checking SOID $SessionOrderID");
+    
+    if (grep /n/,$SessionOrderID) { # Key on SessionOrderID to see if insert or update.	
+      if ($TalkTitle || $TalkNote || $TalkDocID) {
 	++$TalksUpdated;
 	if ($TalkSeparatorFlags{$SessionOrderID}) {
-          &DBPrintLine ("Creating Talk Separator");
           my $TalkSeparatorInsert = $dbh -> prepare(
            "insert into TalkSeparator ".
            "(TalkSeparatorID, SessionID, Time, Title, Note) ". 
@@ -134,15 +121,13 @@ if ($Mode eq "modify") {
           $TalkSeparatorInsert -> execute($SessionID,$TalkTime,$TalkTitle,$TalkNote);
           $TalkSeparatorID = $TalkSeparatorInsert -> {mysql_insertid}; # Works with MySQL only
 	} else {
-          # FIXME: Get DocumentID
-	  &DBPrintLine ("Creating Talk Entry");
           my $TalkInsert = $dbh -> prepare(
            "insert into SessionTalk ".
            "(SessionTalkID, SessionID, DocumentID, Confirmed, Time, HintTitle, Note) ". 
            "values (0,?,?,?,?,?,?)");
           $TalkInsert          -> execute($SessionID,$TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote);
           $SessionTalkID = $TalkInsert -> {mysql_insertid}; # Works with MySQL only
-          # FIXME Get and insert hints
+          # FIXME: Get and insert hints
 	}
         my $SessionOrderInsert = $dbh -> prepare(
          "insert into SessionOrder ".
@@ -150,40 +135,52 @@ if ($Mode eq "modify") {
          "values (0,?,?,?)");
 	$SessionOrderInsert -> execute($TalkNewOrder,$SessionTalkID,$TalkSeparatorID);
       }  
-#    } else {
-#      $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
-#      $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
+    } else {
+      $TalkSeparatorID = $SessionOrders{$SessionOrderID}{TalkSeparatorID};
+      $SessionTalkID   = $SessionOrders{$SessionOrderID}{SessionTalkID};
 
-      # Find out if this session is flagged for deletion
-
-#      if ($SessionDeleteFlags{$MeetingOrderID}) { # Delete session or separator
-#        my $SessionDelete = $dbh -> prepare(
-#         "delete from Session where SessionID=?");
-#        my $SessionSeparatorDelete = $dbh -> prepare(
-#         "delete from SessionSeparator where SessionSeparatorID=?");
-#        my $MeetingOrderDelete = $dbh -> prepare(
-#         "delete from MeetingOrder where MeetingOrderID=?");
+      if ($TalkDeleteFlags{$SessionOrderID}) { # Delete session or separator
+        &DBPrintLine ("Deleting Talk Separator $TalkSeparatorID or $SessionTalkID");
+        my $SessionTalkDelete = $dbh -> prepare(
+         "delete from SessionTalk where SessionTalkID=?");
+        my $TalkSeparatorDelete = $dbh -> prepare(
+         "delete from TalkSeparator where TalkSeparatorID=?");
+        my $SessionOrderDelete = $dbh -> prepare(
+         "delete from SessionOrder where SessionOrderID=?");
      
-#	if ($SessionSeparatorID) {
-#          $SessionSeparatorDelete -> execute($SessionSeparatorID);
-#	} else {
-#          $SessionDelete          -> execute($SessionID);
-#	}
-#	$MeetingOrderDelete -> execute($MeetingOrderID);
-#      } elsif ($SessionTitle || $SessionDescription) {
-#	++$SessionsUpdated;
-#	
-#	if ($SessionSeparatorID) {
-#         &DBPrint ("Updating Separator $SessionSeparatorID");
-#          $SessionSeparatorUpdate -> execute($SessionDate,$SessionTitle,$SessionDescription,$SessionSeparatorID);
-#	} else {
-#         &DBPrint ("Updating Session $SessionID");
-#          $SessionUpdate          -> execute($SessionDate,$SessionTitle,$SessionDescription,$SessionID);
-#	}
-#	$MeetingOrderUpdate -> execute($SessionNewOrder,$MeetingOrderID);
+        if ($TalkSeparatorID) {
+           $TalkSeparatorDelete -> execute($TalkSeparatorID);
+        } elsif ($SessionTalkID) {
+           $SessionTalkDelete -> execute($SessionTalkID);
+           # FIXME: Delete hints for talks
+        }
+        $SessionOrderDelete -> execute($SessionOrderID);
+      } elsif ($TalkTitle || $TalkNote || $TalkDocID) { # We will modify existing talks
+	++$TalksUpdated;
+	
+        if ($TalkSeparatorID) {
+          &DBPrintLine ("Updating Talk Separator $TalkSeparatorID");
+          my $TalkSeparatorUpdate = $dbh -> prepare(
+           "update TalkSeparator set ".
+           "Time=?, Title=?, Note=? ". 
+           "where TalkSeparatorID=?");
+          $TalkSeparatorUpdate -> execute($TalkTime,$TalkTitle,$TalkNote,$TalkSeparatorID);
+        } elsif ($SessionTalkID) {
+          &DBPrintLine ("Updating Talk $SessionTalkID");
+          my $SessionTalkUpdate = $dbh -> prepare(
+           "update SessionTalk set ".
+           "DocumentID=?, Confirmed=?, Time=?, HintTitle=?, Note=? ". 
+           "where SessionTalkID=?");
+           $SessionTalkUpdate -> execute($TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote,$SessionTalkID);
+        }
+
+        my $SessionOrderUpdate = $dbh -> prepare(
+         "update SessionOrder set TalkOrder=? where SessionOrderID=?");
+
+        $SessionOrderUpdate -> execute($TalkNewOrder,$SessionOrderID);
 #      } else {
 #        push @WarnStack,$Msg_SessionBlankDelete;
-#      }  
+      }  
     }  
   }
   unless ($TalksUpdated) {

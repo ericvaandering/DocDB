@@ -219,6 +219,7 @@ sub PrintSession ($;$) {
   my ($SessionID,$IsSingle) = @_;
   
   require "Sorts.pm";
+  require "TalkSQL.pm";
   require "TalkHTML.pm";
   
   print "<center><h4>$Sessions{$SessionID}{Title}: \n";
