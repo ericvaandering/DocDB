@@ -78,7 +78,7 @@ sub ProjectFooter {
   print "<a href=\"$DocDBHome\">DocDB</a> ";
   print "Version $DocDBVersion, contact \n";
   print "<i>\n";
-  print "<a href=\"mailto:$WebMasterEmail\">$WebMasterName</A>\n";
+  print "<a href=\"mailto:$WebMasterEmail\">$WebMasterName</a>\n";
   print "</i>\n";
   print "</small><br/>\n";
   
@@ -104,7 +104,7 @@ sub DocDBNavBar {
 
   require "Security.pm";
 
-  print "<div align=\"center\">\n";
+  print "<div class=\"DocDBNavBar\">\n";
   if ($ExtraDesc && $ExtraURL) {
     print "[&nbsp;<a href=\"$ExtraURL\"l>$ExtraDesc</a>&nbsp;]&nbsp;\n";
   } 

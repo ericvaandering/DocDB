@@ -41,13 +41,13 @@ sub PrintTitle {
 sub WarnPage { # Non-fatal errors
   my @errors = @_;
   if (@errors) {
-    print "<dl class=\"warning\">\n"; # FIXME: Move red into style sheet
+    print "<dl class=\"warning\">\n";
     if ($#errors) {
-      print "<dt><font color=\"red\">There were non-fatal errors processing your
-             request: </font></dt>\n";
+      print "<dt class=\"Warning\">There were non-fatal errors processing your
+             request: </dt>\n";
     } else {
-      print "<dt><font color=\"red\">There was a non-fatal error processing your
-             request: </font></dt>\n";
+      print "<dt class=\"Warning\">There was a non-fatal error processing your
+             request: </dt>\n";
     } 
     foreach $message (@errors) {
       print "<dd>$message</dd>\n";
@@ -59,8 +59,8 @@ sub WarnPage { # Non-fatal errors
 sub DebugPage (;$) { # Debugging output
   my ($CheckPoint) = @_; 
   if (@DebugStack && $DebugOutput) {
-    print "<dl class=\"debug\">\n"; # FIXME: Move red into style sheet
-    print "<dt><font color=\"red\">Debugging messages: </font>$CheckPoint</dt>\n";
+    print "<dl class=\"debug\">\n";
+    print "<dt class=\"Warning\">Debugging messages: $CheckPoint</dt>\n";
     foreach my $Message (@DebugStack) {
       print "<dd>$Message</dd>\n";
     } 
@@ -73,20 +73,9 @@ sub DebugPage (;$) { # Debugging output
 }
 
 sub EndPage {  # Fatal errors, aborts page if present
-  my @errors = @_;
-  if (@errors) {
-    print "<dl class=\"debug\">\n"; # FIXME: Move red into style sheet
-    if ($#errors) {
-      print "<dt><font color=\"red\">There were fatal errors processing your
-             request: </font></dt>\n";
-    } else {
-      print "<dt><font color=\"red\">There was a fatal error processing your
-             request: </font></dt>\n";
-    } 
-    foreach $message (@errors) {
-      print "<dd>$message</dd>\n";
-    }  
-    print "</dl>\n";
+  my @Errors = @_;
+  if (@Errors) { 
+    &ErrorPage(@Errors);
     &DocDBNavBar();
     &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
     exit;
@@ -96,12 +85,19 @@ sub EndPage {  # Fatal errors, aborts page if present
 sub ErrorPage { # Fatal errors, continues page
   my @errors = @_;
   if (@errors) {
-    print "<b><font color=\"red\">There was a fatal error processing your request:
-    </font></b><br>\n";
+    print "<dl class=\"error\">\n";
+    if ($#errors) {
+      print "<dt class=\"Error\">There were fatal errors processing your
+             request: </font></dt>\n";
+    } else {
+      print "<dt class=\"Error\">There was a fatal error processing your
+             request: </font></dt>\n";
+    } 
     foreach $message (@errors) {
-      print "<dt><b>$message</b><br>\n";
+      print "<dd>$message</dd>\n";
     }  
-    print "<p>\n";
+    print "</dl>\n";
+    print "<p/>\n";
   }  
 }
 

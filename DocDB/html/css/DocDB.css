@@ -161,3 +161,7 @@ li.Even, tr.Even {
 .Error, .Warning {
   color: red;
 }  
+
+.DocDBNavBar {
+  text-align: center;
+}  
