@@ -142,6 +142,22 @@ if ($Project eq "BTeV") {
 
   print "</tr>\n";
 }
+if ($Project eq "Beams") {
+  print "<tr>\n";
+  print "<td colspan=2>\n";
+  print "<ul>\n";
+  if ($Public) {
+    print "<li> by old number
+          <a href=\"$web_root/Static/Public/OldDBTranslation.shtml\">like
+           MI-xxxx</a>. \n";
+  } else {
+    print "<li> by old number like
+           <a href=\"$web_root/Static/Restricted/OldDBTranslation.shtml\">MI-xxxx</a> from the <a href=\"http://www-fmi.fnal.gov/Notes_Index.html\">old MI Notes</a>\n";
+  }
+  print "</ul>\n";
+  print "</td>";
+  print "</tr>\n";
+}
  
 print "</table><p>\n";
  
@@ -158,6 +174,9 @@ unless ($Public) {
   print "<li><b><a href=\"$SelectPrefs\">Set preferences</a></b>\n";
   print "<li><b><a href=\"$EmailLogin\">Set E-mail notification</a></b>\n";
   print "<li><b><a href=\"$Statistics\">Get statistics</a></b>\n";
+if ($Project eq "Beams") {
+  print "<li><b><a href=\"/doc/\">keyword list</a></b>\n";
+}
   print "</ul>\n";
 
   print "</td>\n";

@@ -130,38 +130,35 @@ sub TopicsByMajorTopic ($) {
   foreach my $MinorTopicID (@MinorTopicIDs) {
     if ($MajorTopicID == $MinorTopics{$MinorTopicID}{MAJOR}) {
       my $TopicLink = &MinorTopicLink($MinorTopicID,"short");
-      print "<li>$TopicLink\n";
+      print "<li>$TopicLink</li>\n";
     }  
   }  
-  print "</ul>";
+  print "</ul>\n";
 }
 
-sub TopicsTable { # FIXME: Use TopicsByMajorTopic
+sub TopicsTable {
   require "Sorts.pm";
 
   my $NCols = 4;
   my @MajorTopicIDs = sort byMajorTopic keys %MajorTopics;
-  my @MinorTopicIDs = sort byTopic keys %MinorTopics;
 
   my $Col   = 0;
+  my $Row   = 0;
   print "<table cellpadding=10>\n";
   foreach my $MajorID (@MajorTopicIDs) {
     unless ($Col % $NCols) {
-      print "<tr valign=top>\n";
-    }
-    my $major_link = &MajorTopicLink($MajorID,"short");
-    print "<td><b>$major_link</b>\n";
-    ++$Col;
-    print "<ul>\n";
-    foreach my $MinorID (@MinorTopicIDs) {
-      if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
-        my $topic_link = &MinorTopicLink($MinorID,"short");
-        print "<li>$topic_link\n";
+      if ($Row) {
+        print "</tr>\n";
       }  
-    }  
-    print "</ul>";
+      print "<tr valign=top>\n";
+      ++$Row;
+    }
+    print "<td>\n";
+    &TopicsByMajorTopic($MajorID);
+    print "</td>\n";
+    ++$Col;
   }  
-
+  print "</tr>\n";
   print "</table>\n";
 }
 
@@ -169,8 +166,6 @@ sub ConferencesTable {
   require "Sorts.pm";
   require "TopicSQL.pm";
   
-  &SpecialMajorTopics;
-
   my @MinorTopicIDs = sort byTopic keys %MinorTopics; #FIXME special sort 
 
   my ($MajorID) = @ConferenceMajorIDs; 
@@ -210,8 +205,6 @@ sub ConferencesList {
   require "Sorts.pm";
   require "TopicSQL.pm";
   
-  &SpecialMajorTopics;
-
   my @MinorTopicIDs = sort byTopic keys %MinorTopics; #FIXME special sort 
 
   my ($MajorID) = @ConferenceMajorIDs; 
@@ -249,8 +242,6 @@ sub MeetingsTable {
   require "Sorts.pm";
   require "TopicSQL.pm";
   
-  &SpecialMajorTopics;
-
   my @MeetingTopicIDs = ();
   my @MinorTopicIDs   = keys %MinorTopics; 
   my ($MajorID) = @MeetingMajorIDs; 

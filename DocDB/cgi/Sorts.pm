@@ -28,16 +28,29 @@ sub byTopic {
   
   if (&MajorIsMeeting($MinorTopics{$a}{MAJOR}) &&
       &MajorIsMeeting($MinorTopics{$b}{MAJOR})) {
-    ($adays,$amonth,$ayear) = split /\s+/,$MinorTopics{$a}{SHORT};
-    ($bdays,$bmonth,$byear) = split /\s+/,$MinorTopics{$b}{SHORT};
-    ($aday) = split /\-/,$adays;
-    ($bday) = split /\-/,$bdays;
+    my ($adays,$amonth,$ayear) = split /\s+/,$MinorTopics{$a}{SHORT};
+    my ($bdays,$bmonth,$byear) = split /\s+/,$MinorTopics{$b}{SHORT};
+    my ($aday) = split /\-/,$adays;
+    my ($bday) = split /\-/,$bdays;
 
                         $byear <=> $ayear
                                or
     $ReverseFullMonth{$bmonth} <=> $ReverseFullMonth{$amonth} 
                                or
                          $bday <=> $aday;            
+  } elsif (&MajorIsConference($MinorTopics{$a}{MAJOR}) &&
+           &MajorIsConference($MinorTopics{$b}{MAJOR})) {
+           
+    my $adate = $Conferences{$a}{StartDate}; 
+    my $bdate = $Conferences{$b}{StartDate};
+    my ($ayear,$amonth,$aday) = split /\-/,$adate;
+    my ($byear,$bmonth,$bday) = split /\-/,$bdate;
+
+     $byear <=> $ayear
+            or
+    $bmonth <=> $amonth 
+            or
+      $bday <=> $aday
   } else {
     $MajorTopics{$MinorTopics{$a}{MAJOR}}{SHORT} cmp
     $MajorTopics{$MinorTopics{$b}{MAJOR}}{SHORT}
@@ -89,6 +102,42 @@ sub DocumentByRevisionDate {
     $asec <=> $bsec;            
 }
 
+sub RevisionByRevisionDate {
+
+### All revisions and documents (of interest) must be fetched before calling
+  
+  my $adt = $DocRevisions{$a}{DATE};
+  my $bdt = $DocRevisions{$b}{DATE};
+  
+  my ($adate,$atime) = split /\s+/,$adt;
+  my ($bdate,$btime) = split /\s+/,$bdt;
+  
+  my ($ayear,$amonth,$aday) = split /\-/,$adate;
+  my ($byear,$bmonth,$bday) = split /\-/,$bdate;
+  
+  my ($ahour,$amin,$asec) = split /:/,$atime;
+  my ($bhour,$bmin,$bsec) = split /:/,$btime;
+  
+   $ayear <=> $byear
+          or
+  $amonth <=> $bmonth 
+          or
+    $aday <=> $bday
+          or
+   $ahour <=> $bhour
+          or
+    $amin <=> $bmin 
+          or
+    $asec <=> $bsec;            
+}
+
+sub RevisionByVersion {
+
+### All revisions and documents (of interest) must be fetched before calling
+  
+  $DocRevisions{$a}{Version} <=> $DocRevisions{$b}{Version};
+}
+
 sub DocumentByRequester {
 
 ### All documents (of interest) must be fetched before calling
@@ -131,21 +180,34 @@ sub DocumentByConferenceDate {
     }
   }      
 
-  $acid = $FirstConf{$adr};
-  $bcid = $FirstConf{$bdr};
+  my $acid = $FirstConf{$adr};
+  my $bcid = $FirstConf{$bdr};
 
   my $adate = $Conferences{$acid}{StartDate}; 
   my $bdate = $Conferences{$bcid}{StartDate};
-  ($ayear,$amonth,$aday) = split /\-/,$adate;
-  ($byear,$bmonth,$bday) = split /\-/,$bdate;
-
-#  print "$a $b : $acid $bcid : $ayear $byear :  $amonth  $bmonth : $aday $bday<br>\n";
+  my ($ayear,$amonth,$aday) = split /\-/,$adate;
+  my ($byear,$bmonth,$bday) = split /\-/,$bdate;
 
    $ayear <=> $byear
           or
   $amonth <=> $bmonth 
           or
     $aday <=> $bday
+}
+
+sub ConferenceByDate {
+  $MinorTopics{$a}{SHORT} cmp $MinorTopics{$b}{SHORT};
+  my $adate = $Conferences{$a}{StartDate}; 
+  my $bdate = $Conferences{$b}{StartDate};
+  my ($ayear,$amonth,$aday) = split /\-/,$adate;
+  my ($byear,$bmonth,$bday) = split /\-/,$bdate;
+
+   $ayear <=> $byear
+          or
+  $amonth <=> $bmonth 
+          or
+    $aday <=> $bday
+
 }
 
 1;
