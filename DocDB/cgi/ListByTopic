@@ -60,7 +60,11 @@ while ($revision_list -> fetch) {
   $DocumentIDs{$DocumentID} = 1; # Hash removes duplicates
 }
 
-my @DocumentIDs = reverse sort DocumentByRevisionDate keys %DocumentIDs;  
+if ($Mode eq "meeting") {
+  my @DocumentIDs = sort DocumentByRequester keys %DocumentIDs;  
+} else {
+  my @DocumentIDs = reverse sort DocumentByRevisionDate keys %DocumentIDs;  
+}
 
 print "<center><table cellpadding=3>\n";
 

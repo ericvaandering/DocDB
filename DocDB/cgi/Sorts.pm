@@ -74,4 +74,20 @@ sub DocumentByRevisionDate {
     $asec <=> $bsec;            
 }
 
+sub DocumentByRequester {
+
+  require "DocumentSQL.pm";
+  require "AuthorSQL.pm";
+
+  &FetchDocument($a);
+  &FetchDocument($b);
+  my $adr = $Documents{$a}{REQUESTER};
+  my $bdr = $Documents{$b}{REQUESTER};
+  &FetchAuthor($adr);
+  &FetchAuthor($bdr);
+    
+   $Authors{$adr}{LASTNAME} cmp $Authors{$bdr}{LASTNAME}
+                            or
+  $Authors{$adr}{FIRSTNAME} cmp $Authors{$bdr}{FIRSTNAME}
+}
 1;

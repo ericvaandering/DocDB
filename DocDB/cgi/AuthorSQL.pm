@@ -6,11 +6,12 @@ sub GetAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with all authors
   $people_list -> bind_columns(undef, \($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active,$InstitutionID));
   %Authors = ();
   while ($people_list -> fetch) {
-    $Authors{$AuthorID}{AUTHORID} =  $AuthorID;
-    $Authors{$AuthorID}{FULLNAME} = "$FirstName $MiddleInitials $LastName";
-    $Authors{$AuthorID}{LASTNAME} =  $LastName;
-    $Authors{$AuthorID}{ACTIVE}   =  $Active;
-    $Authors{$AuthorID}{INST}     =  $InstitutionID;
+    $Authors{$AuthorID}{AUTHORID}  =  $AuthorID;
+    $Authors{$AuthorID}{FULLNAME}  = "$FirstName $MiddleInitials $LastName";
+    $Authors{$AuthorID}{LASTNAME}  =  $LastName;
+    $Authors{$AuthorID}{FIRSTNAME} =  $FirstName;
+    $Authors{$AuthorID}{ACTIVE}    =  $Active;
+    $Authors{$AuthorID}{INST}      =  $InstitutionID;
     if ($Active) {
       $ActiveAuthors{$AuthorID}{FULLNAME} = "$FirstName $MiddleInitials $LastName";
       $names{$AuthorID}                   = "$FirstName $MiddleInitials $LastName"; # FIXME
@@ -32,11 +33,12 @@ sub FetchAuthor { # Fetches an Author by ID, adds to $Authors{$AuthorID}{}
   
   $author_fetch -> execute($authorID);
   ($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active,$InstitutionID) = $author_fetch -> fetchrow_array;
-  $Authors{$AuthorID}{AUTHORID} =  $AuthorID;
-  $Authors{$AuthorID}{FULLNAME} = "$FirstName $MiddleInitials $LastName";
-  $Authors{$AuthorID}{LASTNAME} =  $LastName;
-  $Authors{$AuthorID}{ACTIVE}   =  $Active;
-  $Authors{$AuthorID}{INST}     =  $InstitutionID;
+  $Authors{$AuthorID}{AUTHORID}  =  $AuthorID;
+  $Authors{$AuthorID}{FULLNAME}  = "$FirstName $MiddleInitials $LastName";
+  $Authors{$AuthorID}{LASTNAME}  =  $LastName;
+  $Authors{$AuthorID}{FIRSTNAME} =  $FirstName;
+  $Authors{$AuthorID}{ACTIVE}    =  $Active;
+  $Authors{$AuthorID}{INST}      =  $InstitutionID;
   
   return $Authors{$AuthorID}{AUTHORID};
 }
