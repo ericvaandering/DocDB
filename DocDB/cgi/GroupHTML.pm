@@ -30,8 +30,12 @@ sub PrintGroupPermissions ($) {
   my ($GroupID) = @_;
 
   print "<ul>\n";
+  print "<li>View\n";
   if ($SecurityGroups{$GroupID}{CanCreate}) {
-    print "<li>Create\n";
+    print "<li>Create/Modify\n";
+  }  
+  if ($SecurityGroups{$GroupID}{CanAdminister}) { # Doesn't exist yet
+    print "<li>Administer\n";
   }  
   print "</ul>\n";
 }
