@@ -28,6 +28,7 @@ $StartTime = new Benchmark;
 require "DocDBGlobals.pm";
 require "Messages.pm";
 require "HTMLUtilities.pm";
+require "ResponseElements.pm";
 
 require "CertificateUtilities.pm";
 
@@ -48,6 +49,8 @@ print $query->header;
 
 ### Output Information
 my $CertificateStatus = &CertificateStatus();
+
+print "ST $CertificateStatus<br>\n";
 
 if ($CertificateStatus eq "verified") {
   print "Your certificate has been verified and you have access to documents from these groups:";

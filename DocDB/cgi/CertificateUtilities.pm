@@ -88,7 +88,7 @@ sub CertificateStatus () {
   if ($NameID || $AddressID) {
     $CertificateStatus = "mismatch";
   } else {
-    $CertificateStatus = "missing";
+    $CertificateStatus = "noapp";
   }
   return $CertificateStatus;
 }
