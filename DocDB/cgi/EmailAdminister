@@ -37,8 +37,8 @@ require "ResponseElements.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";
 require "SecuritySQL.pm";
+require "NotificationSQL.pm";
 require "Messages.pm";
-require "Debug.pm"; # Remove
 
 $query = new CGI;  # Global for subroutines
 
@@ -106,6 +106,8 @@ if      ($Action eq "Delete") { # Delete user
   }
   &EndPage(@ErrorStack);
 
+  &FetchEmailUser($EmailUserID);
+
   if ($NewPassword) { 
     srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
 
@@ -136,6 +138,18 @@ if      ($Action eq "Delete") { # Delete user
     my $UserUpdate = $dbh -> prepare("update EmailUser set Verified=1 where EmailUserID=?");
        $UserUpdate -> execute($EmailUserID);
     print "<b>The user is now verified.</b><p>\n";
+    
+    if ($MailInstalled && $UserValidation eq "certificate") {
+      require "EmailUtilities.pm";
+
+      my @To      = ($EmailUser{$EmailUserID}{EmailAddress});
+      my $Subject = "Your DocDB account is activated";
+      my $Body    = "An adminstrator has approved your request for ";
+      $Body      .= "access to $Project DocDB. ";
+      $Body      .= "If you did not request access to $Project DocDB, ";
+      $Body      .= "please contact $DBWebMasterEmail immediately.";
+      &SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
+    }
   }
   foreach my $UsersGroupID (@UsersGroupIDs) {
     my $UsersGroupUpdate = $dbh -> prepare("insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) ".
