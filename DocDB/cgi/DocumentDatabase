@@ -46,7 +46,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 # %params = $query -> Vars;  # No parameters (yet?) 
 
-my $PersonalAccountLink = "<a href=\"$EmailLogin\">Personal account</a>";
+my $PersonalAccountLink = "<a href=\"$EmailLogin\">Your account</a>";
 
 print $query->header;
 &DocDBHeader("$Project Document Database","Document Database");
@@ -63,7 +63,7 @@ if ($UserValidation eq "certificate") {
   require "CertificateUtilities.pm";
   my $CertificateStatus = &CertificateStatus();
   if ($CertificateStatus eq "verified") {
-    $PersonalAccountLink = "<a href=\"$SelectEmailPrefs\">Personal account</a>";
+    $PersonalAccountLink = "<a href=\"$SelectEmailPrefs\">Your account</a>";
   } else {
     print "<p><h4 class=\"Warning\">\n";
     print "You have presented a valid certificate, but are not yet authorized to access the DocDB.<br/>\n";
@@ -86,12 +86,12 @@ print "</div>\n";  # Header3Col
 
 print "<div id=\"LeftColumn3Col\">\n";
 unless ($Public) {
-  print "<p><strong><a href=\"$HelpFile\">Instructions</a></strong></p>\n";
-  print "<p><strong><a href=\"$SelectPrefs\">Preferences</a></strong></p>\n";
+  print "<p><strong><a href=\"$HelpFile\">DocDB Instructions</a></strong></p>\n";
   if ($PersonalAccountLink) {
     print "<p><strong>$PersonalAccountLink</strong></p>\n";
   }  
-  print "<p><strong><a href=\"$Statistics\">Statistics</a></strong></p>\n";
+  print "<p><strong><a href=\"$SelectPrefs\">Your Preferences</a></strong></p>\n";
+  print "<p><strong><a href=\"$Statistics\">DocDB Statistics</a></strong></p>\n";
 }
 
 foreach my $Text (@{ $ProjectMessages{Homepage}{LeftColumn} }) {
