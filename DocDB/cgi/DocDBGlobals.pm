@@ -12,6 +12,7 @@ $file_root   = "/www/html/BTeV/DocDB/";    # Change
 $script_root = "/www/cgi-bin/BTeV/DocDB/cgi/"; # Change
 $web_root    = "http://www-btev.fnal.gov/BTeV/DocDB/";# Change
 $cgi_root    = "http://www-btev.fnal.gov/cgi-bin/BTeV/DocDB/cgi/";
+$SSIDirectory = "/www/html/includes/";
 
 # Shell Commands
 
