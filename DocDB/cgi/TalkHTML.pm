@@ -24,7 +24,7 @@
 
 sub PrintSessionTalk($) {
 
-  my ($SessionTalkID,$AccumulatedTime) = @_;
+  my ($SessionTalkID,$AccumulatedTime,$RowClass) = @_;
   
   require "Security.pm";
 
@@ -55,8 +55,8 @@ sub PrintSessionTalk($) {
   &FetchDocument($DocumentID);
   my $Version = $Documents{$DocumentID}{NVersions};
   unless (&CanAccess($DocumentID,$Version)) {
-    print "<tr valign=top>\n";
-    print "<td align=right><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";  
+    print "<tr valign=\"top\" class=\"$RowClass\">\n";
+    print "<td align=\"right\"><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";  
     print "<td colspan=6>Not authorized to view</td>\n";
     print "</tr>\n";
     return;
@@ -71,7 +71,7 @@ sub PrintSessionTalk($) {
 
   @TopicIDs = &RemoveArray(\@TopicIDs,@IgnoreTopics);
 
-  print "<tr valign=top>\n";
+  print "<tr valign=\"top\" class=\"$RowClass\">\n";
   print "<td align=right><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";  
   if ($Confirmed) { # Put titles in italics for unconfirmed talks
     print "<td>$Title</td>\n";

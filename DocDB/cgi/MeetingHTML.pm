@@ -338,7 +338,7 @@ sub PrintSession ($) {
 # Sort talks and separators
 
   @SessionOrderIDs = sort SessionOrderIDByOrder @SessionOrderIDs;
-  print "<center><table cellpadding=3>\n";
+  print "<center><table class=\"Alternating\" id=\"TalkList\">\n";
 
   print "<tr>\n";
   print "<th>Start</th>\n";
@@ -350,11 +350,19 @@ sub PrintSession ($) {
   print "<th>Notes</th>\n";
   print "</tr>\n";
 
+  my $TalkCounter = 0;
+  my $RowClass;
   foreach my $SessionOrderID (@SessionOrderIDs) {
+    ++$TalkCounter;
+    if ($TalkCounter % 2) { 
+      $RowClass = "Odd";
+    } else {
+      $RowClass = "Even";
+    }    
     if ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) { # TalkSeparator
       my $TalkSeparatorID =  $SessionOrders{$SessionOrderID}{TalkSeparatorID};
 
-      print "<tr valign=top>\n";
+      print "<tr valign=\"top\" class=\"$RowClass\">\n";
       print "<td align=right><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";
       print "<td>$TalkSeparators{$TalkSeparatorID}{Title}</td>\n";
       print "<td colspan=3>$TalkSeparators{$TalkSeparatorID}{Note}</td>\n";
@@ -366,10 +374,10 @@ sub PrintSession ($) {
       my $SessionTalkID =  $SessionOrders{$SessionOrderID}{SessionTalkID};
 
       if ($SessionTalks{$SessionTalkID}{DocumentID}) { # Talk with DocID (confirmed or not)
-        &PrintSessionTalk($SessionTalkID,$AccumulatedTime);
+        &PrintSessionTalk($SessionTalkID,$AccumulatedTime,$RowClass);
       } else { # Talk where only hints exist
         # FIXME add output for for topic and author hints
-        print "<tr valign=top>\n";
+        print "<tr valign=\"top\" class=\"$RowClass\">\n";
         print "<td align=right><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";
         print "<td>$SessionTalks{$SessionTalkID}{HintTitle}</td>\n";
         my @TopicHintIDs  = &FetchTopicHintsBySessionTalkID($SessionTalkID);

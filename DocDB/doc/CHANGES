@@ -1,5 +1,8 @@
 6.0
 
+This version adds support for client certificates and support for changing the
+look-and-feel of DocDB with Cascading Style Sheets.
+
 Upgrading to 6.0 is more difficult than usual, but we hope this will give room
 to grow. The general steps are:
 
@@ -7,9 +10,9 @@ to grow. The general steps are:
 2. Update or check out the new CSS files in html/css and put them in place.
 3. Edit ProjectRoutines.pm to match the new format. See the .template file
    for examples
-4. Very few users will want to upgrade to certificates, so instructions there
-   will come later.   
-5. If you have links like "LastModified?days=20" (like in the NavBar) please
+4. Very few users will want to upgrade to certificates, so detailed instructions
+   for this will come later.   
+5. If you have links like "LastModified?days=20" (e.g. in the NavBar) please
    change it to "ListBy?days=20" Also, any ListByType, ListByAuthor,
    ListByTopic links should be changed to just "ListBy" since these routines
    have been consolidated. The old ones are not CSS enabled and will be removed
@@ -56,6 +59,18 @@ CSS (Cascading Style Sheets)
 
   Finally, CSS may allow us to make generic HTML help files too, since I know
   this is an problem. 
+  
+Client Certificates
+  
+  This is a different, more secure method of authenticating users (rather than
+  shared group passwords). Access to meta-data and permission to upload files
+  requires the user to have a valid client certificate from a CA that you trust.
+  The admin interface is used to grant those people membership in the various
+  groups in DocDB. Access to files within a document is still controlled by
+  group passwords.
+  
+  For instructions on setting up a web server to use SSL and require client
+  certificates, see http://www.fnal.gov/docs/products/apache/SSLNotes.html 
 
 5.6.0
 
