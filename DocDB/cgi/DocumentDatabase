@@ -85,12 +85,12 @@ print "</div>\n";  # Header3Col
 
 print "<div id=\"LeftColumn3Col\">\n";
 unless ($Public) {
-  print "<b><a href=\"$HelpFile\">Instructions</a></b>";
-  print "<b><a href=\"$SelectPrefs\">Preferences</a></b>";
+  print "<p><strong><a href=\"$HelpFile\">Instructions</a></strong></p>";
+  print "<p><strong><a href=\"$SelectPrefs\">Preferences</a></strong></p>";
   if ($PersonalAccountLink) {
-    print "<b>$PersonalAccountLink</b>";
+    print "<p><strong>$PersonalAccountLink</strong></p>";
   }  
-  print "<b><a href=\"$Statistics\">Statistics</a></b>";
+  print "<p><strong><a href=\"$Statistics\">Statistics</a></strong></p>";
 }
 
 
