@@ -133,7 +133,7 @@ print "<center><table cellpadding=10>\n";
 
 print "<tr>\n";
 print "<td colspan=3>\n";
-if      ($mode eq "add") {
+if ($mode eq "add") {
   if ($Meeting || $OtherMeeting) {
     print "<h4>You have chosen to add a new meeting talk to the database.<br> 
                Make sure you know all the required information and

@@ -76,6 +76,9 @@ sub FetchMajorTopic { # Fetches an MajorTopic by ID, adds to $Topics{$TopicID}{}
 
 sub GetRevisionTopics {
   my ($DocRevID) = @_;
+  
+  require "Utilities.pm";
+  
   my @topics = ();
   my ($RevTopicID,$MinorTopicID);
   my $topic_list = $dbh->prepare(
@@ -85,6 +88,7 @@ sub GetRevisionTopics {
   while ($topic_list -> fetch) {
     push @topics,$MinorTopicID;
   }
+  @topics = &Unique(@topics);
   return @topics;
 }
 
