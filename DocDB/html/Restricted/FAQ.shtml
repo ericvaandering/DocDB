@@ -67,6 +67,30 @@ be joined with an underscore or dash. (Again, be consistent).
 <li>Don't use keywords like "pixel." There are topics for that.
 </ol>
  
+<a name="passwords">
+<dt><b>Why do I keep having to type in the password?</b>
+<dd>First, you should only have to type in the password one extra time for most
+uses. The reason for this is that people other than those in BTeV use the
+database too. Currently, this is just the RTES group.<p>
+
+To get technical, because the DocDB can be accessed with more user/password
+combinations than just BTeV, the Document Database scripts use a different
+authorization realm. The authorization realm for BTeV only documents matches the
+realm for the BTeV internal web pages.<p>
+
+However, for documents protected for sub-groups, the realm is different again,
+so you will need to type an accepted password again.<p>
+
+Using a web browser that saves passwords, like recent versions of IE, or
+Netscape 6 (which can encrypt the passwords with a master password) takes a lot
+of the headache out of this process.
+ 
+<a name="passwords">
+<dt><b>Can our sub-group use the DocDB to store documents that aren't accessible
+to the rest of the collaboration?</b>
+<dd>Yes. Just ask to have another "group" set up, choose a password, and let the
+DocDB administrators know which accounts you want to allow access to your data.
+
 
 </dl>
 
