@@ -67,7 +67,7 @@ sub SingleUploadBox {
   print "<tr><td colspan=2><b><a ";
   &HelpLink("fileupload");
   print "File upload:</a></b><br></td></tr>\n";
-  for ($i=1;$i<=$NumberUploads;++$i) {
+  for (my $i=1;$i<=$NumberUploads;++$i) {
     print "<tr><td align=right>\n";
     print "<a "; &HelpLink("localfile"); print "<b>File:</b></a>\n";
     print "</td>\n";
@@ -80,11 +80,7 @@ sub SingleUploadBox {
     print "</td>\n";
     print "<td>\n";
     print $query -> textfield (-name => 'filedesc', -size => 60, -maxlength => 128);
-    if ($i == 1) {
-      print $query -> checkbox(-name => "root", -checked => 'checked', -label => '');
-    } else {
-      print $query -> checkbox(-name => "root", -label => '');
-    } 
+    print $query -> checkbox(-name => "root", -checked => 'checked', -label => '');
     print "<a "; &HelpLink("main"); print "Main?</a>\n";
     print "</td></tr>\n";
   }
@@ -97,7 +93,7 @@ sub SingleHTTPBox {
   &HelpLink("httpupload");
   print "Upload by HTTP:</a></b><br> \n";
   print "</td><tr>\n";
-  for ($i=1;$i<=$NumberUploads;++$i) {
+  for (my $i=1;$i<=$NumberUploads;++$i) {
     print "<tr><td align=right>\n";
     print "<a "; &HelpLink("remoteurl"); print "<b>URL:</b></a>\n";
     print "</td>\n";
@@ -109,11 +105,7 @@ sub SingleHTTPBox {
     print "</td>\n";
     print "<td colspan=3>\n";
     print $query -> textfield (-name => 'filedesc', -size => 60, -maxlength => 128);
-    if ($i == 1) {
-      print $query -> checkbox(-name => "root", -checked => 'checked', -label => '');
-    } else {
-      print $query -> checkbox(-name => "root", -label => '');
-    } 
+    print $query -> checkbox(-name => "root", -checked => 'checked', -label => '');
     print "<a "; &HelpLink("main"); print "Main?</a>\n";
     print "</td></tr>\n";
   }
@@ -411,6 +403,21 @@ sub UpdateDBButton {
   print $query -> hidden(-name => 'mode',  -default => 'updatedb');
   print $query -> hidden(-name => 'docid', -default => $DocumentID);
   print $query -> submit (-value => "Update DB Info");
+  print $query -> endform;
+}
+
+sub AddFilesButton {
+  my ($DocumentID,$Version) = @_;
+
+#  unless (&CanModify) {return;}
+
+  $query -> param('docid',$DocumentID);
+  $query -> param('docid',$Version);
+  
+  print $query -> startform('POST',$AddFilesForm);
+  print $query -> hidden(-name => 'version', -default => $Version);
+  print $query -> hidden(-name => 'docid',   -default => $DocumentID);
+  print $query -> submit (-value => "Add Files to Document");
   print $query -> endform;
 }
 

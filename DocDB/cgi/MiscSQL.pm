@@ -73,4 +73,49 @@ sub VersionNumbersByDocID {
   return @VersionList;
 } 
 
+sub ExistsUpload($$) {
+  require "FSUtilities.pm";
+  
+  my ($DocRevID,$short_file) = @_;
+
+  if (grep /\\/,$short_file) {
+    $short_file = &WindowsBaseFile($short_file);
+  }  
+  if (grep /\//,$short_file) {
+    $short_file = &UnixBaseFile($short_file);
+  }  
+
+  my $status = &ExistsFile($DocRevID,$short_file);
+  return $status;
+}
+
+sub ExistsURL($$) {
+  my ($DocRevID,$url) = @_;
+  
+  my @url_parts = split /\//,$url;
+  my $short_file = pop @url_parts;
+
+  my $status = &ExistsFile($DocRevID,$short_file);
+  return $status;
+}
+
+sub ExistsFile($$) {
+  my ($DocRevID,$File) = @_;
+
+  $File =~ s/^\s+//;
+  $File =~ s/\s+$//;
+
+  my $file_select = $dbh -> prepare(
+   "select DocFileID from DocumentFile where DocRevID=? and FileName=?");
+
+  $file_select -> execute($DocRevID,$File);
+  ($DocFileID) = $file_select -> fetchrow_array;
+
+  if ($DocFileID) {
+    return 1;
+  } else {
+    return 0;
+  }    
+}
+
 1;

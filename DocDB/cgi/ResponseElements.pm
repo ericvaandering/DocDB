@@ -119,11 +119,12 @@ sub PrintRevisionInfo {
 
   require "FormElements.pm";
  
-  my ($DocRevID) = @_;
+  my ($DocRevID,$HideButtons) = @_;
 
   &FetchDocRevisionByID($DocRevID);
 
   my $DocumentID  = $DocRevisions{$DocRevID}{DOCID};
+  my $Version     = $DocRevisions{$DocRevID}{VERSION};
   my $Authors_ref = &GetRevisionAuthors($DocRevID);
   my $Topics_ref  = &GetRevisionTopics($DocRevID);
   my $Groups_ref  = &GetRevisionSecurityGroups($DocRevID);
@@ -167,12 +168,14 @@ sub PrintRevisionInfo {
   print "<td colspan=3>"; 
   &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
 
-  if (&CanModify($DocumentID)) {
+  if (&CanModify($DocumentID) && !$HideButtons) {
     print "<tr valign=top>";
-    print "<td colspan=3 align=center>";
+    print "<td colspan=2 align=center>";
     &UpdateButton($DocumentID);
-    print "<td colspan=3 align=center>";
+    print "<td colspan=2 align=center>";
     &UpdateDBButton($DocumentID);
+    print "<td colspan=2 align=center>";
+    &AddFilesButton($DocumentID,$Version);
   }  
 
   print "</table></center>\n"; 
@@ -194,6 +197,7 @@ sub EndPage {
   foreach $message (@errors) {
     print "<dt><b>$message </b>\n";
   }  
+  &DocDBNavBar;
   &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
   exit;
 }

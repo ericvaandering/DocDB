@@ -1,0 +1,191 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+use Benchmark;
+use CGI;
+use DBI;
+
+$StartTime = new Benchmark;
+
+require "ResponseElements.pm";
+require "MySQLAccess.pm";
+require "DocDBGlobals.pm";
+require "FSUtilities.pm";
+require "WebUtilities.pm";
+require "HTMLUtilities.pm";
+require "Security.pm";
+
+$query = new CGI;  # Global for subroutines
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+
+&GetTopics; # FIXME Replace with fetches in right place
+&GetSecurityGroups; # FIXME Replace with fetches in right place
+
+### Set up, give user initial information
+
+%params = $query -> Vars;
+
+print $query->header;
+&BTeVHeader("BTeV File Addition Results","File Addition Results"); #FIXME
+
+### Check parameters for errors
+
+@error_stack = ();
+@warn_stack  = ();
+
+### Get document and revision ID
+
+$SQL_NOW = "$year-$mon-$day $hour:$min:$sec";
+my $DocumentID = $params{docid};
+my $Version    = $params{version};
+my $DocRevID;
+
+### Check for user errors
+
+if ($DocumentID && $Version) {
+  $DocRevID = &FetchDocRevision($DocumentID,$Version);
+  unless ($DocRevID) {
+    push @error_stack,"No such document exists.";
+  }
+} else {
+  push @error_stack,"You must supply document and version numbers to add files.";
+}
+
+# FIXME: Is the user authorized to make changes to this document
+
+unless ($params{single_upload} || $params{single_http}) {
+  push @error_stack,"You must supply a file for this document.";
+}
+if     ($params{single_upload} && $params{single_http}) {
+  push @error_stack,"You may not specify both URL and file upload.";
+}
+
+### Do the files to be added already exist?
+
+if ($params{single_http}) {
+  my @urls = split /\0/,$params{single_http};
+  foreach my $url (@urls) {
+    if (&ExistsURL($DocRevID,$url)) {
+      push @error_stack,"The file from $url already exists. 
+       You may not add files with the same file name.<br>
+       You probably want to be updating your document, not adding files.";
+    }  
+  }
+}   
+
+if ($params{single_upload}) {
+  my @short_files   = $query -> param("single_upload");
+  foreach my $short_file (@short_files) {
+    if (&ExistsUpload($DocRevID,$short_file)) {
+      push @error_stack,"The file $short_file already exists. 
+       You may not add files with the same file name.<br>
+       You probably want to be updating your document, not adding files.";
+
+    }  
+  }
+}
+
+### If they are URLs, do they exist?
+
+if ($params{single_http}) {
+  if ($params{http_user} && $params{http_pass}) {
+    $Authentication = " --http-user $params{http_user} --http-pass $params{http_pass} ";
+  } else {
+    $Authentication = "";
+  }  
+  my @urls = split /\0/,$params{single_http};
+  foreach my $url (@urls) {
+    if (&ValidURL($url)) {
+      my $command = $Wget.$Authentication.$url;
+      my @url_lines = `$command`;  # FIXME: avoid fetching twice 
+      unless (@url_lines) {
+        push @error_stack,"The URL <tt>$url</tt> was not present or was protected.";
+      }
+    } else {
+      push @error_stack,"The URL <tt>$url</tt> is not well formed. Don't forget ".
+                        "http:// on the front and a file name after the last /.";
+    }
+  }  
+}  
+
+### Abort if there were errors
+
+if ((@error_stack)) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@error_stack);
+}
+
+### Put files in filesystem
+
+$new_dir = &MakeDirectory($DocumentID,$Version);
+
+@Descriptions = split ("\0",$params{filedesc});
+@Roots = split ("\0",$params{root});
+if ($params{single_upload}) { # Copy file to directory
+  @short_files   = $query ->  param("single_upload");
+  foreach $short_file (@short_files) {
+    my $status = &ProcessUpload($new_dir,$short_file);
+  }
+} elsif ($params{single_http}) {
+  @urls = split /\0/,$params{single_http};
+  @short_files = ();
+  foreach $url (@urls) {
+    $short_file = &ProcessURL($new_dir,$url);
+    push @short_files,$short_file;
+  }  
+}
+
+### Insert into Files database
+
+foreach $short_file (@short_files) {
+  my $file_insert = $dbh->prepare(
+     "insert into DocumentFile ".
+     "       (DocFileID, DocRevID, FileName, Date, RootFile, Description) ".
+     "values (0,         ?,        ?,        ?,    ?       , ?)");
+
+  $Description = shift @Descriptions;
+  $rootfile = shift @Roots;
+  if ($rootfile eq "on") {
+    $rootfile = 1;
+  } else {
+    $rootfile = 0;
+  }    
+  $file_insert -> execute($DocRevID,$short_file,$SQL_NOW,$rootfile,$Description);
+}
+
+### If we had any warnings print them out now
+
+if (@warn_stack) {
+  &WarnPage(@warn_stack);
+  @warn_stack = ();
+}
+  
+# Files DB not in sync, clear it
+
+%DocFiles = ();
+@Files    = ();
+
+# Output feedback to the user
+
+my $full_docid = &FullDocumentID($DocumentID);
+   $DocRevID   = &FetchDocRevision($DocumentID,$Version);
+
+unless ($DocRevID) {
+  print "This document does not exist.<p>\n";
+  exit;
+  print $query->end_html;
+}
+
+print "You were successful in adding files. Your entry now contains
+       the following information: <p>\n"; 
+
+&PrintRevisionInfo($DocRevID);
+&OtherVersionLinks($documentID,$version);
+
+$EndTime  = new Benchmark;
+$TimeDiff = timediff($EndTime,$StartTime);
+print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
+
+&DocDBNavBar;
+&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -10,6 +10,7 @@ require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "SecuritySQL.pm";
 require "Scripts.pm";
+require "ResponseElements.pm";
 
 $query = new CGI;  # Global for subroutines
 

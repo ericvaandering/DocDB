@@ -80,4 +80,9 @@ $ListByTopic        = $cgi_root."ListByTopic";
 $ListAuthors        = $cgi_root."ListAuthors";
 $ListTopics         = $cgi_root."ListTopics";
 
+$AddFiles           = $cgi_root."AddFiles";
+$AddFilesForm       = $cgi_root."AddFilesForm";
+
+
+
 1;
