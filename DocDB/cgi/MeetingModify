@@ -92,7 +92,7 @@ my ($StartTime,$EndTime);
 my %RequiredEntries = ();
    $RequiredEntries{StartDate}       = TRUE;
    $RequiredEntries{EndDate}         = TRUE;
-   $RequiredEntries{LongDescription} = TRUE;
+   $RequiredEntries{LongDescription} = 1;
    
 if ($StartDay && $StartMonth && $StartYear) {
   $StartTime = timelocal(0,0,0,$StartDay,$ReverseAbrvMonth{$StartMonth}-1,$StartYear);
