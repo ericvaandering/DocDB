@@ -130,8 +130,9 @@ there is no centrally managed list of keywords, the following groups have
 defined their own set of keywords for their documents:
 <ul>
 <li><a target="keywords" href="http://www-btev.fnal.gov/atwork/detector/pixel/meetings.shtml">Pixel
-Detector<a/>
-</ul>
+Detector</a>
+<li><a target="keywords" href="http://www-btev.fnal.gov/atwork/detector/muon/memos.shtml#docdb">Muon
+Detector</a></ul>
 If other groups have done the same, let the <a
 href="mailto:btev-docdb@fnal.gov">DocDB adminstrators</a> know so we can include
 a link to your set of keywords here too.
