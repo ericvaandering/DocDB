@@ -3,16 +3,7 @@ sub byKeywordGroup {
 }    
 
 sub byKeyword {
-  $KeywordLists{$a}{Short} cmp $KeywordLists{$b}{Short};
-}    
-
-sub byKey {
-  
-    $KeywordGroups{$KeywordLists{$a}{KeywordGroupID}}{Short} cmp
-    $KeywordGroups{$KeywordLists{$b}{KeywordGroupID}}{Short}
-                   or
-        $KeywordLists{$a}{Short} cmp
-        $KeywordLists{$b}{Short};
+  $Keywords{$a}{Short} cmp $Keywords{$b}{Short};
 }    
 
 1;

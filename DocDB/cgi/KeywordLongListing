@@ -7,8 +7,11 @@
 
 # FIXME: Replace this with ListKeywords?format=long
 
+use Benchmark;
 use CGI;                                                                                      
 use DBI;
+
+$StartTime = new Benchmark;
 
 require "DocDBGlobals.pm";
 require "KeywordSQL.pm";
@@ -44,6 +47,8 @@ print "Back to <a href=\"$ListKeywords\">short listing</a>\n";
 print "<p>\n";
 
 &KeywordDetailedList;
+
+$EndTime  = new Benchmark;
 
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -87,7 +87,7 @@ print "</tr>\n";
 print "<tr valign=top>\n";
 
 print "<td rowspan=2>\n"; 
-&KeywordGroupSelect(-format => "short", -multiple => "true", -delete => "true"); 
+&KeywordGroupSelect(-format => "short", -multiple => "true", -remove => "true"); 
 print "</td>\n";
 
 print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";

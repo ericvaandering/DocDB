@@ -11,6 +11,7 @@ use CGI;
 use DBI;
 
 require "DocDBGlobals.pm";
+require "Sorts.pm";
 require "ResponseElements.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";
@@ -57,7 +58,8 @@ if ($Action eq "Delete") {
     push @ErrorStack,$Msg_ModKeywdEmpty;
   }
   &EndPage(@ErrorStack);
-  my $KeywordLink   = &KeywordListLink($KeywordID);
+  &FetchKeyword($KeywordID);
+  my $KeywordLink   = &KeywordLinkByID($KeywordID);
   
   &DeleteKeyword($KeywordID); # Delete KeywordID from Keyword table
   
@@ -85,15 +87,23 @@ if ($Action eq "Delete") {
 
 # Deal with KeywordGroup changes   
 
-# FIXME: Should add a field to clear everything, this should check if what we 
-#        want exists, then insert if not. 
-
-#  if ($KeywordGroupID) { 
-#    print "<b>Updating Keyword Group for Keyword.</b><br>\n";
-#    my $KeywordUpdate = $dbh->prepare(
-#     "update Keyword set KeywordGroupID=? where KeywordID=?");
-#    $KeywordUpdate -> execute($KeywordGroupID,$KeywordID);
-#  }
+  @KeywordGroupIDs = sort numerically @KeywordGroupIDs; # Want to get -1: remove first
+  foreach my $KeywordGroupID (@KeywordGroupIDs) {
+    if ($KeywordGroupID == -1) { # Remove existing KeywordGrouping entries
+      my $GroupingDelete = $dbh -> prepare("delete from KeywordGrouping where KeywordID=?");
+      $GroupingDelete -> execute($KeywordID);
+    } elsif ($KeywordGroupID) { 
+      my $GroupingSelect = $dbh -> prepare(
+       "select KeywordGroupingID from KeywordGrouping where KeywordID=? and KeywordGroupID=?");
+      $GroupingSelect -> execute($KeywordID,$KeywordGroupID);
+      my ($KeywordGroupingID) = $GroupingSelect -> fetchrow_array;
+      unless ($KeywordGroupingID) { # Does this association exist already?
+        my $GroupingInsert = $dbh -> prepare("insert into KeywordGrouping ".
+         "(KeywordGroupingID, KeywordGroupID, KeywordID) values (0,?,?)");
+        $GroupingInsert -> execute($KeywordGroupID,$KeywordID);
+      }
+    }
+  }
 } elsif ($Action eq "New") {
   &EndPage(@ErrorStack);
 
@@ -124,8 +134,8 @@ if ($Action eq "Modify" || $Action eq "New") {
   &GetKeywords;
 
   print "<p><b>Here are the results of your modification:<br>\n";
-  my $ShortLink = &KeywordListLink($KeywordID,"short");
-  my $LongLink = &KeywordListLink($KeywordID,"long");
+  my $ShortLink = &KeywordLinkByID($KeywordID,-format => "short");
+  my $LongLink = &KeywordLinkByID($KeywordID,-format => "long");
   print "Short description: $ShortLink<br>\n";
   print "Long description: $LongLink<br>\n";
   print "</b><p>\n";

@@ -7,29 +7,6 @@
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 #
 
-sub KeywordListLink ($;$) {
-  my ($KeyID,$mode) = @_;
-  
-  require "KeywordSQL.pm";
-  
-  &FetchKeyword($KeyID);
-  my $link;
-  ##$link = " "; # FIXME: Use KeywordLink after uses parameters
-  $link = "<a href=\"$Search?innerlogic=AND&outerlogic=AND&keywordsearchmode=anysub&keywordsearch=$Keywords{$KeyID}{Short}\">";
-  if ($mode eq "short") {
-    $link .= $Keywords{$KeyID}{Short};
-  } elsif ($mode eq "long") {
-    $link .= $Keywords{$KeyID}{Long};
-  } else {
-    $link .= $Keywords{$KeyID}{Full};
-  }
-  ##$link .= " ";
-  $link .= "</a>";
-  
-  return $link;
-}
-
-
 sub KeywordGroupInfo ($;$) {
   my ($KeyID,$mode) = @_;
   
@@ -48,30 +25,12 @@ sub KeywordGroupInfo ($;$) {
   return $info;
 }
 
-sub GetKeywordInfo ($;$) { # Isn't this similar to KeywordLink too?
-  my ($KeyID,$mode) = @_;
-  
-  require "KeywordSQL.pm";
-  
-  &FetchKeyword($KeyID);
-  my $link;
-  if ($mode eq "short") {
-    $link = $Keywords{$KeyID}{Short};
-  } elsif ($mode eq "long") {
-    $link = $Keywords{$KeyID}{Long};
-  } else {
-    $link = $Keywords{$KeyID}{Full};
-  }
-  
-  return $link;
-}
-
 sub KeywordsbyKeywordGroup ($;$) {
   my ($KeywordGroupID,$Mode) = @_;
   
   require "KeySorts.pm";
 
-  my @KeywordIDs = sort byKey &GetKeywordsByKeywordGroupID($KeywordGroupID);
+  my @KeywordIDs = sort byKeyword &GetKeywordsByKeywordGroupID($KeywordGroupID);
 
   my $KeywordGroupIDLink = &KeywordGroupInfo($KeywordGroupID,"short");
   print "<b>$KeywordGroupIDLink</b>\n";
@@ -82,7 +41,7 @@ sub KeywordsbyKeywordGroup ($;$) {
       $KeyLink = "<a href=\"\"$ListKeywords?mode=chooser\"\"
       onClick=\"InsertKeyword('$Keywords{$KeywordID}{Short}');\">$Keywords{$KeywordID}{Short}</a>";
     } else {
-      $KeyLink = &KeywordListLink($KeywordID,"short");
+      $KeyLink = &KeywordLinkByID($KeywordID,-format => "short");
     }
     print "<li>$KeyLink</li>\n";
   }  
@@ -136,7 +95,7 @@ sub KeywordDetailedList {
   print "<table cellpadding=10>\n";
   foreach my $KeywordGroupIDID (@KeywordGroupIDs) {
 
-    my @KeywordListIDs = sort byKey keys %Keywords;
+    my @KeywordListIDs = sort byKeyword keys %Keywords;
 
     my $KeywordGroupIDLink = &KeywordGroupInfo($KeywordGroupIDID,"short");
     print "<tr valign=top>\n";
@@ -145,16 +104,14 @@ sub KeywordDetailedList {
     print "  <b>$KeywordGroupIDLink</b>\n";
     print "  </td>\n";
     print "</tr>\n";
+    my @KeywordListIDs = sort byKeyword &GetKeywordsByKeywordGroupID($KeywordGroupIDID);
     foreach my $KeyID (@KeywordListIDs) {
-      if ($KeywordGroupIDID == $Keywords{$KeyID}{KeywordGroupID}) {
-	my $KeyWd = &GetKeywordInfo($KeyID,"short");
-	my $LongLink = &GetKeywordInfo($KeyID,"long");
-	$link = "<a href=\"$Search?innerlogic=AND&outerlogic=AND&keywordsearchmode=anysub&keywordsearch=$KeyWd\">";
-        print "<tr valign=top>\n";
-	print "  <td>$link$KeyWd</a></td>\n";
-	print "  <td>$LongLink</td>\n";
-        print "</tr>\n";
-      }  
+      my $Link = &KeywordLinkByID($KeyID,-format => "short");
+      my $Text = &KeywordLinkByID($KeyID,-format => "long", -nolink => "true");
+      print "<tr valign=top>\n";
+      print "  <td>$Link</td>\n";
+      print "  <td>$Text</td>\n";
+      print "</tr>\n";
     }  
 
   }  
@@ -203,7 +160,7 @@ sub KeywordGroupSelect (%) { # Scrolling selectable list for keyword groups
   my $Format   = $Params{-format}   || "short";        # short, full
   my $Multiple = $Params{-multiple} || "";             # Any non-null text is "true"
   my $Name     = $Params{-name}     || "keywordgroup";
-  my $Delete   = $Params{-delete}   || "";
+  my $Remove   = $Params{-remove}   || "";
   
   print "<b><a ";
   &HelpLink("KeywordGroups");
@@ -219,7 +176,7 @@ sub KeywordGroupSelect (%) { # Scrolling selectable list for keyword groups
     }  
   }  
 
-  if ($Delete) {
+  if ($Remove) {
     unshift @KeyGroupIDs,"-1";
     $GroupLabels{"-1"} = "Remove existing groups";
   }
@@ -227,6 +184,33 @@ sub KeywordGroupSelect (%) { # Scrolling selectable list for keyword groups
   print $query -> scrolling_list(-name => $Name, -values => \@KeyGroupIDs, 
                                  -labels => \%GroupLabels,  -size => 10, -multiple => $Multiple);
 };
+
+sub KeywordLinkByID ($;%) {
+  my ($KeywordID,%Params) = @_;
+  
+  my $Format = $Params{-format} || "short"; # short, long
+  my $NoLink = $Params{-nolink} || "";      # will just return information
+
+  &FetchKeyword($KeywordID);
+  my $Keyword = $Keywords{$KeywordID}{Short};
+  my $Link;
+  
+  unless ($NoLink) {  
+    $Link .= "<a href=\"$Search\?keywordsearchmode=anysub&keywordsearch=$Keyword\">";
+  }
+  
+  if ($Format eq "short") { 
+    $Link .= $Keywords{$KeywordID}{Short};
+  } elsif ($Format eq "long") {
+    $Link .= $Keywords{$KeywordID}{Long};
+  }  
+
+  unless ($NoLink) {  
+    $Link .=  "</a>";
+  }
+  
+  return $Link;
+}
 
 sub KeywordLink ($;%) { # FIXME: Allow parameters of short, long, full a la Lynn (use KeywordID)
   my ($Keyword,%Params) = @_;
