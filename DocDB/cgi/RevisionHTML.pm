@@ -174,6 +174,10 @@ sub PrintRevisionInfo {
   
   print "</div>\n";  # LeftColumn3Col
 
+  ### Main Column
+  
+  print "<div id=\"MainColumn3Col\">\n";
+
   ### Right column (wrapped around by middle column)
 
   print "<div id=\"RightColumn3Col\">\n";
@@ -188,9 +192,7 @@ sub PrintRevisionInfo {
 
   print "</div>\n";  # RightColumn3Col
   
-  ### Main Column
-  
-  print "<div id=\"MainColumn3Col\">\n";
+
 
   &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT}); # All are called only here, so changes are OK
   &TopicListByID(@TopicIDs);
@@ -396,9 +398,9 @@ sub OtherVersionLinks {
   unless ($#RevIDs > 0) {return;}
   print "<div id=\"OtherVersions\">\n";
   print "<b>Other Versions:</b>\n";
-  print "<ul>\n";
   
-  my $Class = "Odd";
+  print "<table id=\"OtherVersionTable\" cellpadding=3 class=\"Alternating\">\n";
+  my $RowClass = "Odd";
   
   foreach $RevID (@RevIDs) {
     my $Version = $DocRevisions{$RevID}{VERSION};
@@ -406,11 +408,11 @@ sub OtherVersionLinks {
     unless (&CanAccess($DocumentID,$Version)) {next;}
     $link = &DocumentLink($DocumentID,$Version);
     $date = &EuroDateHM($DocRevisions{$RevID}{DATE});
-    print "<li class=\"$Class\">$link \n";
-    if ($Class eq "Odd") {  
-      $Class = "Even";
+    print "<tr class=\"$RowClass\"><td>$link\n";
+    if ($RowClass eq "Odd") {  
+      $RowClass = "Even";
     } else {    
-      $Class = "Odd";
+      $RowClass = "Odd";
     }  
     print "<br/>$date\n";
     if ($UseSignoffs) {
@@ -420,9 +422,10 @@ sub OtherVersionLinks {
         print "<br/>$ApprovalStatus";
       }  
     }  
-    print "</li>\n";
+    print "</td></tr>\n";
   }
-  print "</ul>\n";
+
+  print "</table>\n";
   print "</div>\n";
 }
 
