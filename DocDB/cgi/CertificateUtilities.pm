@@ -37,6 +37,8 @@ sub FetchEmailUserIDByCert (%) {
   my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
   my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
 
+  push @DebugStack,"Finding EmailUserID by certificate";
+
   # If we do http basic with users, this routine will function with minor modifications
 
   my $EmailUserSelect;
@@ -82,8 +84,11 @@ sub CertificateStatus () {
   my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
   my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
   
+  push @DebugStack,"Finding Status by certificate";
+  
   unless (($CertEmail && $CertCN) || ($CertCN && $Preferences{Security}{Certificates}{UseCNOnly}) {
     $CertificateStatus = "nocert";
+    push @DebugStack,"Certificate Status: $CertificateStatus";
     return $CertificateStatus;
   } 
     
