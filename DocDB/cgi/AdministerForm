@@ -73,6 +73,7 @@ print "[ <a href=\"\#author\">Authors</a> ] ";
 print "[ <a href=\"\#institution\">Institutions</a> ] ";
 print "[ <a href=\"\#mintopic\">Minor Topics</a> ] ";
 print "[ <a href=\"\#majtopic\">Major Topics</a> ] ";
+print "[ <a href=\"\#journal\">Journals</a> ] ";
 print "</center><p>";
 print "<hr><p>\n";
 
@@ -204,7 +205,7 @@ print "<p><hr>\n";
 
 ### Journal Administration
 
-print "<a name=\"majtopic\"><center><h4>Administer Journals</h4></center>\n";
+print "<a name=\"journal\"><center><h4>Administer Journals</h4></center>\n";
 
 print $query -> start_multipart_form('POST',"$JournalAdminister");
 print "<table cellpadding=10>\n";
