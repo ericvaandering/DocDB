@@ -36,7 +36,9 @@ print "</h4></center>\n";
 print "<p><b>Find the information you want in the database:</b>\n";
 print "<ul>\n";
 
-print "<li><a href=\"$SearchForm\">Search</a> documents (beta version)"; 
+unless ($Public) {
+  print "<li><a href=\"$SearchForm\">Search</a> documents (beta version)"; 
+}
 
 print "<p>\n";
 

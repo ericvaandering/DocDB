@@ -179,7 +179,9 @@ if      ($Mode eq "meeting") {
 if ($Mode eq "meeting" && !$Public) {
 
   my $AgendaFile = &FindAgenda($TopicID);
-  print "<p><center><a href=\"$AgendaFile\"><b>Agenda for this meeting</b></a></center><p>\n";
+  if ($AgendaFile) {
+    print "<p><center><a href=\"$AgendaFile\"><b>Agenda for this meeting</b></a></center><p>\n";
+  }
   %DocFiles = ();  # Stupid caching problem
   %Files    = ();  # FIXME, please
 }

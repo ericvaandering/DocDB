@@ -422,7 +422,7 @@ sub PrintAgenda {
     "select MAX(DocumentRevision.DocRevID) from DocumentRevision,RevisionTopic ".
     "where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
      "and lower(DocumentRevision.DocumentTitle) like lower(\"agenda%\") ".
-     "and RevisionTopic.MinorTopicID=32"); 
+     "and RevisionTopic.MinorTopicID=$MeetingID"); 
   
   $agenda_find -> execute();
   my ($DocRevID) = $agenda_find -> fetchrow_array;
@@ -446,7 +446,7 @@ sub FindAgenda {
     "select MAX(DocumentRevision.DocRevID) from DocumentRevision,RevisionTopic ".
     "where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
      "and lower(DocumentRevision.DocumentTitle) like lower(\"agenda%\") ".
-     "and RevisionTopic.MinorTopicID=32"); 
+     "and RevisionTopic.MinorTopicID=$MeetingID"); 
   
   $agenda_find -> execute();
   my ($DocRevID) = $agenda_find -> fetchrow_array;
