@@ -433,6 +433,7 @@ $MeetingDefaultPreamble     = $Conferences{$ConferenceID}{Preamble};
 $MeetingDefaultEpilogue     = $Conferences{$ConferenceID}{Epilogue};
 $MeetingDefaultShowAllTalks = $Conferences{$ConferenceID}{ShowAllTalks};
 $DefaultStartDate           = $Conferences{$ConferenceID}{StartDate};
+$DefaultEndDate             = $Conferences{$ConferenceID}{EndDate};
 
 print "<tr valign=top>\n";
 print "<td>\n"; &MajorGatheringSelect; print "</td>\n";
