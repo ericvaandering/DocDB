@@ -179,13 +179,15 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
   &FetchDocument($DocumentID);
   my $Version      = $Documents{$DocumentID}{NVersions};
 
-  my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+  my $DocRevID  = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   unless ($DocRevID) {
     return "";
   }
+  my $FullDocID = &FullDocumentID($DocumentID,$Version);
     
   my $Link = "<a href=\"$ShowDocument\?docid=$DocumentID";
-  
+  my $Link .= " title=\"$FullDocID\"";
+   
   # When adding the version number, remember to use &amp; for XHTML 
   # or use DocumentURL
   
