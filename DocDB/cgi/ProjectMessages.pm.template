@@ -4,6 +4,9 @@
 # contact the developers. Chances are we're happy to insert hooks for your 
 # project. 
 
+# DocDBGlobals should always be included before this, which allows you to
+# customize your messages with statements like:
+# "if ($Public) { }" and "if ($remote_user eq "Group1) {} " etc. 
 
 # Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
 

@@ -9,3 +9,5 @@ by the code:
 
 * Associating an author with personal accounts (AuthorID in EmailUser)
 
+* Cross referencing documents (DocRevID -> DocumentID allows the target to move
+  without being updated.)

@@ -1,3 +1,8 @@
+5.2.0
+
+ListManagedDocuments added and a link from the home page. Home page restructured
+to add things from ProjectMessages and BTeV/Beams specific code removed.
+
 5.1.3
 
 Send e-mail when a document is approved to everyone who is signed up for
