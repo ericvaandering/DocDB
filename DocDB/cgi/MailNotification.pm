@@ -75,7 +75,7 @@ sub RevisionMailBody ($) {
   }
   @TopicIDs = sort byTopic @TopicIDs;
   foreach $TopicID (@TopicIDs) {
-    push @Topics,$MinorTopics{$TopicID}{FULL};
+    push @Topics,$MinorTopics{$TopicID}{Full};
   }
   my $Topics = join ', ',@Topics;
   
@@ -315,7 +315,7 @@ sub NotifyTopicSelect ($) { # Check for all, boxes for major and minor topics
   my @MinorIDs = sort byTopic keys %MinorTopics;
   my %MinorLabels = ();
   foreach my $ID (@MinorIDs) {
-    $MinorLabels{$ID} = $MinorTopics{$ID}{FULL};
+    $MinorLabels{$ID} = $MinorTopics{$ID}{Full};
   }  
   
   print $query -> scrolling_list(-name => "minortopic$Set", -values => \@MinorIDs, 

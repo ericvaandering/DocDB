@@ -19,8 +19,8 @@ require "ResponseElements.pm";
 require "Sorts.pm";
 require "Scripts.pm";
 
-require "MeetingHTML.pm";
-require "MeetingSQL.pm";
+require "TalkHTML.pm";
+require "TalkSQL.pm";
 
 $query = new CGI;  # Global for subroutines
 

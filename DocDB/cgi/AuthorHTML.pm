@@ -129,4 +129,28 @@ sub AuthorsTable {
   print "</table>\n";
 }
 
+sub AuthorMultipleScroll ($$;@) {
+  my ($All,$ElementName,@Defaults) = @_;
+  
+  require "AuthorSQL.pm";
+  
+  unless (keys %Author) {
+    &GetAuthors;
+  }
+  
+  my @AuthorIDs = sort byLastName keys %Authors;
+  my %AuthorLabels = ();
+  my @ActiveIDs = ();
+  foreach my $ID (@AuthorIDs) {
+    if ($Authors{$ID}{ACTIVE} || $All) {
+      $AuthorLabels{$ID} = $Authors{$ID}{FULLNAME};
+      push @ActiveIDs,$ID; 
+    } 
+  }  
+  print $query -> scrolling_list(-name => $ElementName, -values => \@ActiveIDs, 
+                                 -labels => \%AuthorLabels,
+                                 -size => 10, -multiple => 'true',
+                                 -default => \@Defaults);
+}
+
 1;

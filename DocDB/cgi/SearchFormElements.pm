@@ -227,7 +227,7 @@ sub MajorMinorSelect { # Two multi-select boxes for major and minor topics
   my @MinorIDs = sort byTopic keys %MinorTopics;
   my %MinorLabels = ();
   foreach my $ID (@MinorIDs) {
-    $MinorLabels{$ID} = $MinorTopics{$ID}{FULL};
+    $MinorLabels{$ID} = $MinorTopics{$ID}{Full};
   }  
   print $query -> scrolling_list(-name => "minortopic", -values => \@MinorIDs, 
                                  -labels => \%MinorLabels,  

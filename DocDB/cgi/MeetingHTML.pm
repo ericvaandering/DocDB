@@ -1,3 +1,10 @@
+#        Name: MeetingHTML.pm
+# Description: FIXME
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
 sub LocationBox {
   require "Scripts.pm";
   print "<b><a ";
@@ -212,6 +219,7 @@ sub PrintSession ($;$) {
   my ($SessionID,$IsSingle) = @_;
   
   require "Sorts.pm";
+  require "TalkHTML.pm";
   
   print "<center><h4>$Sessions{$SessionID}{Title}: \n";
   print "[ $SessionID ] \n"; # FIXME: debug
@@ -247,7 +255,7 @@ sub PrintSession ($;$) {
       print "<tr>\n";
       print "<td>Sep $TalkSeparatorID $AccumulatedTime</td>\n";
       print "<td>$TalkSeparators{$TalkSeparatorID}{Title}</td>\n";
-      print "<td>$TalkSeparators{$TalkSeparatorID}{Description}</td>\n";
+      print "<td>$TalkSeparators{$TalkSeparatorID}{Note}</td>\n";
       print "<td>$TalkSeparators{$TalkSeparatorID}{Time}</td>\n";
       print "</tr>\n";
     } elsif ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
@@ -267,226 +275,5 @@ sub PrintSession ($;$) {
   }
   print "</table><hr>\n";   
 }
-
-sub PrintSessionTalk($) {
-  my ($SessionTalkID,$StartTime) = @_;
-  
-  require "Security.pm";
-
-  require "RevisionSQL.pm";
-  require "DocumentSQL.pm";
-  require "TopicSQL.pm"; 
-  require "MiscSQL.pm"; 
-
-  require "AuthorHTML.pm";
-  require "TopicHTML.pm"; 
-  require "FileHTML.pm"; 
-  require "ResponseElements.pm";
-  
-  require "Utilities.pm";
-  
-  my $DocumentID = $SessionTalks{$SessionTalkID}{DocumentID};
-  my $Confirmed  = $SessionTalks{$SessionTalkID}{Confirmed};
-  my $Note       = $SessionTalks{$SessionTalkID}{Note};
-  my $Time       = $SessionTalks{$SessionTalkID}{Time};
-
-  # Selected parts of how things are done in DocumentSummary
-
-  if ($DocumentID) {
-    &FetchDocument($DocumentID);
-    unless (&CanAccess($DocumentID,$Version)) {return;}
-    my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-    my $AuthorLink = &FirstAuthor($DocRevID); 
-    #FIXME: Make Version optional, see comment in ResponseElements.pm
-    my $Title      = &DocumentLink($DocumentID,$Version,$DocRevisions{$DocRevID}{TITLE});
-    my @FileIDs    = &FetchDocFiles($DocRevID);
-    my @TopicIDs   = &GetRevisionTopics($DocRevID);
-
-    @TopicIDs = &RemoveArray(@TopicIDs,@IgnoreTopics);
-#    foreach my $ID (@IgnoreTopics) { # Move this into utility function
-#      my $Index = 0;
-#      foreach my $TopicID (@TopicIDs) {
-#        if ($TopicID == $ID) {
-#          splice @TopicIDs,$Index,1;
-#          last;
-#        }
-#        ++$Index;  
-#      }
-#    }
-
-    print "<tr>\n";
-    print "<td>$StartTime</td>\n";
-    if ($Confirmed) {  
-      print "<td>$Title</td>\n";
-    } else {
-      print "<td><i>$Title</i></td>\n";
-    }
-    print "<td><nobr>$AuthorLink</nobr></td>\n";
-    print "<td>"; &ShortTopicListByID(@TopicIDs);   print "</td>\n";
-    print "<td>"; &ShortFileListByRevID($DocRevID); print "</td>\n";
-    print "<td>$Time</td>\n";
-    print "</tr>\n";
-  } else {
-    #Print out headers here or elsewhere?
-  }
-}
-
-sub TalkEntryForm (@) {
-  my @SessionOrderIDs = @_; 
-
-  require "Scripts.pm";
-  print "<table cellpadding=3>\n";
-  print "<tr valign=bottom>\n";
-  print "<th><b><a "; &HelpLink("meetingorder");     print "Order</a></b><br/>\n";
-  print "    <b><a "; &HelpLink("talkdelete");       print "Confirm</a><br/>\n";
-  print "or  <b><a "; &HelpLink("talkdelete");       print "Delete</a></td>\n";
-  print "<th><b><a "; &HelpLink("talkseparator");    print "Separator</a></th>\n";
-  print "<th><b><a "; &HelpLink("talkdocid");        print "Doc. #</a></th>\n";
-  print "<th><b><a "; &HelpLink("talkinfo");         print "Talk Title & Note</a></th>\n";
-  print "<th><b><a "; &HelpLink("talktime");         print "Time</a></th>\n";
-  print "</tr>\n";
-  
-  # Sort session IDs by order
-  
-  my $ExtraTalks = 10;
-  if (@SessionOrderIDs) { $ExtraTalks = 3; }
-  for (my $Talk=1;$Talk<=$ExtraTalks;++$Talk) {
-    push @SessionOrderIDs,"n$Talk";
-  }
-  
-  my $TalkOrder = 0;
-  foreach $SessionOrderID (@SessionOrderIDs) {
-  
-    ++$TalkOrder;
-    $TalkDefaultOrder = $TalkOrder;  
-    
-    if (grep /n/,$SessionOrderID) {# Erase defaults
-#      $TalkDefaultTime  = "";
-      $TalkDefaultTitle     = "";
-      $TalkDefaultNote      = ""; 
-      $TalkSeparatorDefault = "";
-    } else { # Key off Meeting Order IDs, do differently for Sessions and Separators
-      if ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
-        my $SessionTalkID     = $SessionOrders{$SessionOrderID}{SessionTalkID};
-#        $TalkDefaultTime      = $SessionTalks{$SessionTalkID}{Time};
-        $TalkDefaultTitle     = $SessionTalks{$SessionTalkID}{HintTitle} || ;
-        $TalkDefaultNote      = $SessionTalks{$SessionTalkID}{Note}      || "";
-        $TalkSeparatorDefault = "No";
-        &DBPrintLine("ST: $SessionTalkID $TalkDefaultTime $TalkDefaultTitle ");
-      } elsif ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) {
-        my $TalkSeparatorID   = $SessionOrders{$SessionOrderID}{TalkSeparatorID};
-#        $TalkDefaultTime      = $TalkSeparators{$TalkSeparatorID}{Time};
-        $TalkDefaultTitle     = $TalkSeparators{$TalkSeparatorID}{Title} || "";
-        $TalkDefaultNote      = $TalkSeparators{$TalkSeparatorID}{Note}  || "";
-        $TalkSeparatorDefault = "Yes";
-        &DBPrintLine("SS: $TalkSeparatorID $TalkDefaultTime $TalkDefaultTitle ");
-      }
-    } 
-
-    print "<tr valign=top>\n";
-    $query -> param('sessionorderid',$SessionOrderID);
-    print $query -> hidden(-name => 'sessionorderid', -default => $SessionOrderID);
-
-
-    print "<td align=left rowspan=2>\n"; &TalkOrder; print "<br/>\n";
-    &TalkConfirm($SessionOrderID) ; print "<br/>\n";
-    &TalkDelete($SessionOrderID) ; print "</td>\n";
-
-    print "<td align=center rowspan=2>\n"; &TalkSeparator($SessionOrderID); print "</td>\n";
-    print "<td align=center rowspan=2>\n"; &TalkDocID;                      print "</td>\n";
-    print "<td>\n"; &TalkTitle($TalkDefaultTitle);            print "</td>\n";
-    print "<td align=right rowspan=2>\n"; &TalkTimePullDown; print "</td>\n";
-    &DBPrint("<td>",$SessionOrderID,"</td>");
-    print "</tr>\n";
-    print "<tr valign=top>\n";
-    print "<td>\n"; &TalkNote;      print "</td>\n";
-    print "</tr>\n";
-    print "<tr valign=top><td colspan=5><hr width=95%></td>\n";
-    print "</tr>\n";
-  }
-  print "</table>\n";
-}
-
-sub TalkTitle ($) {
-  $query -> param('talktitle',$TalkDefaultTitle);
-  print $query -> textfield (-name => 'talktitle', -size => 40, -maxlength => 128, 
-                             -default => $TalkDefaultTitle);
-}
-
-sub TalkDelete ($) {
-  my ($SessionOrderID) = @_;
-  if ($TalkSeparatorDefault eq "Yes" || $TalkSeparatorDefault eq "No") {
-    print $query -> checkbox(-name  => "talkdelete", 
-                             -value => "$SessionOrderID", -label => 'Delete');
-  } else {
-    print "&nbsp\n";
-  }
-}
-
-sub TalkConfirm ($) {
-  my ($SessionOrderID) = @_;
-  if ($TalkSeparatorDefault eq "Yes") {
-    print "&nbsp;\n";
-  } else {  
-    print $query -> checkbox(-name  => "talkconfirm", 
-                             -value => "$SessionOrderID", -label => 'Confirm');
-  }
-}
-
-sub TalkOrder {
-  $query -> param('talkorder',$TalkDefaultOrder);
-  print $query -> textfield (-name => 'talkorder', -value => $TalkDefaultOrder, 
-                             -size => 4, -maxlength => 5);
-}
-
-sub TalkSeparator ($) {
-  my ($SessionOrderID) = @_;
-
-  if ($TalkSeparatorDefault eq "Yes") {
-    print "Yes\n";	      
-  } elsif ($TalkSeparatorDefault eq "No") {
-    print "No\n";	      
-  } else {
-    print $query -> checkbox(-name => "talkseparator", -value => "$SessionOrderID", -label => 'Yes');
-  }
-}
-
-sub TalkDocID {
-  if ($TalkSeparatorDefault eq "Yes") {
-    print "&nbsp;\n";
-  } else {  
-    $query -> param('talkdocid',$TalkDefaultDocID);
-    print $query -> textfield (-name => 'talkdocid', -value => $TalkDocID, 
-                               -size => 6, -maxlength => 7);
-  }
-}
-
-sub TalkTimePullDown {
-  my $DefaultTime;
-
-  if ($TalkDefaultTime) {
-    $DefaultTime = $TalkDefaultTime;
-  } else {
-    $DefaultTime = "0:30";
-  }  
-
-  my @hours = ("----");
-  for (my $Hour = 0; $Hour<=5; ++$Hour) {
-    for (my $Min = 0; $Min<=59; $Min=$Min+5) {
-      push @hours,sprintf "%1.1d:%2.2d",$Hour,$Min;
-    }  
-  }  
-
-  $query -> param('talktime', $DefaultTime);
-
-  print $query -> popup_menu (-name => 'sessionhour', -values => \@hours, -default => $DefaultTime);
-}
-
-sub TalkNote {
-  $query -> param('talknote', $TalkDefaultNote);
-  print $query -> textarea (-name => 'talknote',-value => $TalkDefaultNote, 
-                            -columns => 40, -rows => 3);
-}
-
 
 1;

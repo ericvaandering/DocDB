@@ -1,3 +1,12 @@
+#
+#        Name: TopicSQL.pm
+# Description: Routines to do DB accesses related to topics 
+#              (major, minor and conferences which are special types of topics) 
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
 sub GetTopics {
   require "MeetingSQL.pm";
   &SpecialMajorTopics;
@@ -8,7 +17,6 @@ sub GetTopics {
 
   %MinorTopics = ();
   %MajorTopics = ();
-  %FullTopics  = ();
 
   my ($MinorTopicID,$MajorTopicID,$ShortDescription,$LongDescription);
 
@@ -28,10 +36,7 @@ sub GetTopics {
     $MinorTopics{$MinorTopicID}{MAJOR} = $MajorTopicID;
     $MinorTopics{$MinorTopicID}{SHORT} = $ShortDescription;
     $MinorTopics{$MinorTopicID}{LONG}  = $LongDescription;
-    $MinorTopics{$MinorTopicID}{FULL}  = $MajorTopics{$MajorTopicID}{SHORT}.":".$ShortDescription;
-  }
-  foreach $key (keys %MinorTopics) {
-    $FullTopics{$key} =  $MinorTopics{$key}{FULL};
+    $MinorTopics{$MinorTopicID}{Full}  = $MajorTopics{$MajorTopicID}{SHORT}.":".$ShortDescription;
   }
 };
 
@@ -67,9 +72,7 @@ sub FetchMinorTopic { # Fetches an MinorTopic by ID, adds to $Topics{$TopicID}{}
   $MinorTopics{$MinorTopicID}{MAJOR} = $MajorTopicID;
   $MinorTopics{$MinorTopicID}{SHORT} = $ShortDescription;
   $MinorTopics{$MinorTopicID}{LONG}  = $LongDescription;
-  $MinorTopics{$MinorTopicID}{FULL}  = $MajorTopics{$MajorTopicID}{SHORT}.":".$ShortDescription;
-
-  $FullTopics{$MinorTopicID} = $MinorTopics{$MinorTopicID}{FULL};
+  $MinorTopics{$MinorTopicID}{Full}  = $MajorTopics{$MajorTopicID}{SHORT}.":".$ShortDescription;
 
   return $MinorTopics{$MinorTopicID}{MINOR};
 }

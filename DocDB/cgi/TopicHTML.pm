@@ -1,7 +1,7 @@
 #
 #        Name: TopicHTML.pm
 # Description: Routines to produce snippets of HTML dealing with topics 
-#              (major, minor and conferences which are special types of topics) 
+#              (major, minor and conferences which are special types of topics) 
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
@@ -49,7 +49,7 @@ sub MinorTopicLink ($;$) {
   } elsif ($mode eq "long") {
     $link .= $MinorTopics{$TopicID}{LONG};
   } else {
-    $link .= $MinorTopics{$TopicID}{FULL};
+    $link .= $MinorTopics{$TopicID}{Full};
   }
   $link .= "</a>";
   
@@ -98,7 +98,7 @@ sub MeetingLink {
   if ($Mode eq "short") {
     $link .= $MinorTopics{$TopicID}{SHORT};
   } else {
-    $link .= $MinorTopics{$TopicID}{FULL};
+    $link .= $MinorTopics{$TopicID}{Full};
   }
   $link .= "</a>";
   
@@ -118,7 +118,7 @@ sub ConferenceLink {
   } elsif ($Mode eq "long") {
     $Link .= $MinorTopics{$TopicID}{LONG};
   } else {
-    $Link .= $MinorTopics{$TopicID}{FULL};
+    $Link .= $MinorTopics{$TopicID}{Full};
   }
   $Link .= "</a>";
   unless ($Mode eq "nodate") {
@@ -343,6 +343,26 @@ sub LongDescriptionBox {
   print "Long Description:</a></b><br> \n";
   print $query -> textfield (-name => 'long', 
                              -size => 40, -maxlength => 120);
+};
+
+sub FullTopicMultipleScroll ($;@) { # Scrolling selectable list for topics, all info
+  my ($ElementName,@Defaults) = @_;
+
+  require "TopicSQL.pm";
+  
+  unless (keys %MinorTopics) {
+    &GetTopics;
+  }
+  
+  my @TopicIDs = sort byTopic keys %MinorTopics;
+  my %TopicLabels = ();
+  foreach my $ID (@TopicIDs) {
+    $TopicLabels{$ID} = $MinorTopics{$ID}{Full}; 
+  }  
+  print $query -> scrolling_list(-name => $ElementName, -values => \@TopicIDs, 
+                                 -labels => \%TopicLabels,
+                                 -size => 10, -multiple => 'true',
+                                 -default => \@Defaults);
 };
 
 1;

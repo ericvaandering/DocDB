@@ -105,7 +105,7 @@ if ($Mode eq "conference") {
     if ($MajorID) {
       print $MajorTopics{$MajorID}{SHORT},"\n";
     } else {
-      print $MinorTopics{$TopicID}{FULL},"\n";
+      print $MinorTopics{$TopicID}{Full},"\n";
     }
     print "</font> are available:\n";
   } else {

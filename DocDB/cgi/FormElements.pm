@@ -324,6 +324,12 @@ sub ArchiveHTTPBox {
 
 sub RequesterSelect { # Scrolling selectable list for requesting author
   my ($Quiet) = @_;
+  
+  require "AuthorSQL.pm";
+  unless (keys %Author) {
+    &GetAuthors;
+  }
+  
   my @AuthorIDs = sort byLastName keys %Authors;
   my %AuthorLabels = ();
   my @ActiveIDs = ();
@@ -344,6 +350,12 @@ sub RequesterSelect { # Scrolling selectable list for requesting author
 };
 
 sub AuthorSelect { # Scrolling selectable list for authors
+                   # FIXME: Use AuthorMultipleScroll
+  require "AuthorSQL.pm";
+  unless (keys %Author) {
+    &GetAuthors;
+  }
+  
   my @AuthorIDs = sort byLastName keys %Authors;
   my %AuthorLabels = ();
   my @ActiveIDs = ();
@@ -363,11 +375,10 @@ sub AuthorSelect { # Scrolling selectable list for authors
 };
 
 sub TopicSelect { # Scrolling selectable list for topics
-  my @TopicIDs = sort byTopic keys %FullTopics;
+  my @TopicIDs = sort byTopic keys %MinorTopics;
   my %TopicLabels = ();
   foreach my $ID (@TopicIDs) {
-    $TopicLabels{$ID} = $FullTopics{$ID}; # FIXME: get rid of FullTopics
-  }  
+    $TopicLabels{$ID} = $MinorTopics{$MinorTopicID}{Full};
   print "<b><a ";
   &HelpLink("topics");
   print "Topics:</a></b><br> \n";
@@ -378,10 +389,10 @@ sub TopicSelect { # Scrolling selectable list for topics
 };
 
 sub TopicSelectLong { # Scrolling selectable list for topics, all info
-  my @TopicIDs = sort byTopic keys %FullTopics;
+  my @TopicIDs = sort byTopic keys %MinorTopics;
   my %TopicLabels = ();
   foreach my $ID (@TopicIDs) {
-    $TopicLabels{$ID} = $FullTopics{$ID}." [$MinorTopics{$ID}{LONG}]"; 
+    $TopicLabels{$ID} = $MinorTopics{$MinorTopicID}{Full}." [$MinorTopics{$ID}{LONG}]"; 
   }  
   print "<b><a ";
   &HelpLink("topics");
