@@ -14,6 +14,10 @@ require "KeywordHTML.pm";
 require "HTMLUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
+%params = $query -> Vars;
+
+my $Mode = $params{mode};
+
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 &GetKeywordList;
@@ -21,13 +25,18 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 print $query->header;
 &DocDBHeader("Beams Division Keywords");
 
+if ($Mode eq "chooser") {
+  require "Scripts.pm";
+  &KeywordInsertScript;
+}
+  
 print "<p>\n";
 &KeywordShortText;
 print "<p>\n";
 
 print "<h3>Existing Keywords:</h3>\n";
 
-&KeywordTable;
+&KeywordTable($Mode);
 
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

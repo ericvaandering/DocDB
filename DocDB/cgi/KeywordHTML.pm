@@ -68,8 +68,8 @@ sub GetKeywordInfo ($;$) {
   return $link;
 }
 
-sub KeywordsbyKeywordGroup ($) {
-  my ($KeywordGroupID) = @_;
+sub KeywordsbyKeywordGroup ($;$) {
+  my ($KeywordGroupID,$Mode) = @_;
   
   require "KeySorts.pm";
 
@@ -80,7 +80,13 @@ sub KeywordsbyKeywordGroup ($) {
   print "<ul>\n";
   foreach my $KeyID (@KeywordListIDs) {
     if ($KeywordGroupID == $KeywordListEntries{$KeyID}{KeywordGroupID}) {
-      my $KeyLink = &KeywordListLink($KeyID,"short");
+      my $KeyLink;
+      if ($Mode eq "chooser") {
+        $KeyLink = "<a href=\"\"$ListKeywords?mode=chooser\"\"
+        onClick=\"InsertKeyword('$KeywordListEntries{$KeyID}{Short}');\">$KeywordListEntries{$KeyID}{Short}</a>";
+      } else {
+        $KeyLink = &KeywordListLink($KeyID,"short");
+      }
       print "<li>$KeyLink</li>\n";
     }  
   }  
@@ -88,6 +94,8 @@ sub KeywordsbyKeywordGroup ($) {
 }
 
 sub KeywordTable {
+  my ($Mode) = @_;
+  
   require "KeySorts.pm";
 
   my $NCols = 4;
@@ -96,7 +104,7 @@ sub KeywordTable {
   my $Col   = 0;
   my $Row   = 0;
   print "<table cellpadding=10>\n";
-  foreach my $KeywordGroupIDID (@KeywordGroupIDs) {
+  foreach my $KeywordGroupID (@KeywordGroupIDs) {
     unless ($Col % $NCols) {
       if ($Row) {
         print "</tr>\n";
@@ -105,7 +113,7 @@ sub KeywordTable {
       ++$Row;
     }
     print "<td>\n";
-    &KeywordsbyKeywordGroup($KeywordGroupIDID);
+    &KeywordsbyKeywordGroup($KeywordGroupID,$Mode);
     print "</td>\n";
     ++$Col;
   }  
@@ -221,5 +229,15 @@ sub KeywordLink { # FIXME: Allow parameters of short, long, full a la Lynn
   $ret .=  "</a>";
   return $ret;
 }         
+
+sub KeywordsBox {
+  print "<b><a ";
+  &HelpLink("keywords");
+  print "Keywords:</a></b> (space separated)\n";
+  print " (<a href=\"$ListKeywords?mode=chooser\" target=\"_blank\">Keyword
+  Chooser</a>)<br> \n";
+  print $query -> textfield (-name => 'keywords', -default => $KeywordsDefault, 
+                             -size => 70, -maxlength => 240);
+};
 
 1;
