@@ -43,11 +43,11 @@ sub AddDocument {
   my $DateTime      = $Params{-datetime};
   my $SessionTalkID = $Params{-sessiontalkid} || 0; # Not used yet
   
-  my @AuthorIDs  = @{$Params{-authorids}}  || ();
-  my @TopicIDs   = @{$Params{-topicids}}   || ();
-  my @ViewIDs    = @{$Params{-viewids}}    || ();
-  my @ModifyIDs  = @{$Params{-modifyids}}  || ();
-  my @SignoffIDs = @{$Params{-signoffids}} || (); # For simple signoff list, may be deprecated
+  my @AuthorIDs  = @{$Params{-authorids}} ;
+  my @TopicIDs   = @{$Params{-topicids}}  ;
+  my @ViewIDs    = @{$Params{-viewids}}   ;
+  my @ModifyIDs  = @{$Params{-modifyids}} ;
+  my @SignoffIDs = @{$Params{-signoffids}}; # For simple signoff list, may be deprecated
   
   my %Files      = %{$Params{-files}};      # Not used yet
   my %References = %{$Params{-references}}; # Not used yet
@@ -60,33 +60,30 @@ sub AddDocument {
     $DateTime = "$Year-$Mon-$Day $Hour:$Min:$Sec";
   } 
 
-  my $DocumentID,$DocRevID,$Status;
+  my $DocumentID,$DocRevID,$Count;
 
   $DocumentID = &InsertDocument(-typeid => $TypeID, 
                  -requesterid => $RequesterID, -datetime => $DateTime);
                  
-  print "DT: $DateTime <br>\n";               
   if ($DocumentID) {                                 
-    $DocRevID   = &InsertRevision(-docid => $DocumentID, 
-                   -submitterid => $RequesterID, -title    => $Title,
-                   -pubinfo     => $PubInfo,     -abstract => $Abstract,
-                   -version     => 'bump',       -datetime => $DateTime,
-                   -keywords    => $Keywords,    -note     => $Note);
+    $DocRevID = &InsertRevision(-docid => $DocumentID, 
+                 -submitterid => $RequesterID, -title    => $Title,
+                 -pubinfo     => $PubInfo,     -abstract => $Abstract,
+                 -version     => 'bump',       -datetime => $DateTime,
+                 -keywords    => $Keywords,    -note     => $Note);
 
     # Deal with SessionTalkID
 
   }
   
   if ($DocRevID) { 
-    $Status     = &InsertAuthors(-docrevid  => $DocRevID, 
-                                 -authorids => \@AuthorIDs);
+    $Count = &InsertAuthors(-docrevid => $DocRevID, -authorids => \@AuthorIDs);
 
-    $Status     = &InsertTopics(-docrevid => $DocRevID, 
-                                -topicids => \@TopicIDs);
+    $Count = &InsertTopics(-docrevid => $DocRevID, -topicids => \@TopicIDs);
 
-    $Status     = &InsertSecurity(-docrevid  => $DocRevID, 
-                                  -viewids   => \@ViewIDs,
-                                  -modifyids => \@ModifyIDs);
+    $Count = &InsertSecurity(-docrevid  => $DocRevID, 
+                             -viewids   => \@ViewIDs,
+                             -modifyids => \@ModifyIDs);
   }
   
   return $DocumentID;                                 

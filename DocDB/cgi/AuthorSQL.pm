@@ -260,8 +260,8 @@ sub ProcessManualAuthors {
 sub InsertAuthors (%) {
   my %Params = @_;
   
-  my $DocRevID  =   $Params{-title}      || "";   
-  my @AuthorIDs = @{$Params{-authorids}} || ();
+  my $DocRevID  =   $Params{-docrevid}   || "";   
+  my @AuthorIDs = @{$Params{-authorids}};
 
   my $Count = 0;
 

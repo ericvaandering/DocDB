@@ -146,9 +146,9 @@ sub FetchSecurityGroupByName ($) {
 sub InsertSecurity (%) {
   my %Params = @_;
   
-  my $DocRevID =   $Params{-title}       || "";   
-  my @ViewIDs   = @{$Params{-viewids}}   || ();
-  my @ModifyIDs = @{$Params{-modifyids}} || ();
+  my $DocRevID  =   $Params{-docrevid}   || "";   
+  my @ViewIDs   = @{$Params{-viewids}}  ;
+  my @ModifyIDs = @{$Params{-modifyids}};
 
   my $Count = 0;
 

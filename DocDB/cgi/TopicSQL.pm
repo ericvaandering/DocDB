@@ -234,8 +234,8 @@ sub MajorIsGathering {
 sub InsertTopics (%) {
   my %Params = @_;
   
-  my $DocRevID =   $Params{-title}      || "";   
-  my @TopicIDs = @{$Params{-topicids}} || ();
+  my $DocRevID  =   $Params{-docrevid} || "";   
+  my @TopicIDs = @{$Params{-topicids}};
 
   my $Count = 0;
 
