@@ -13,6 +13,7 @@ sub FileListByRevID {
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
   my $Version    = $DocRevisions{$DocRevID}{VERSION};
 
+  print "<div id=\"Files\">\n";
   if (@FileIDs) {
     @RootFiles  = ();
     @OtherFiles = ();
@@ -42,6 +43,7 @@ sub FileListByRevID {
   } else {
     print "<b>Files in Document:</b> none<br>\n";
   }
+  print "</div>\n";
 }
 
 sub ShortFileListByRevID {

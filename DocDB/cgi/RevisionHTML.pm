@@ -108,13 +108,17 @@ sub DocTypeButtons (%) {
 };
 
 sub PrintRevisionInfo {
-
   require "FormElements.pm";
   require "AuthorSQL.pm";
   require "SecuritySQL.pm";
   require "TopicSQL.pm";
   require "Security.pm";
  
+  require "TopicHTML.pm";
+  require "AuthorHTML.pm";
+  require "FileHTML.pm";
+  require "DocumentHTML.pm";
+  
   my ($DocRevID,$HideButtons) = @_;
 
   &FetchDocRevisionByID($DocRevID);
@@ -150,17 +154,14 @@ sub PrintRevisionInfo {
   ### Left Column
 
   print "<div id=\"LeftColumn3Col\">\n";
-  print "<div id=\"DocumentID\">\n";
-   &PrintDocNumber($DocRevID);
-  print "</div>\n";
   
-  print "<div id=\"Requester\">\n";
+  print "<div id=\"BasicDocInfo\">\n";
+  print "<dl>\n";
+   &PrintDocNumber($DocRevID);
    &RequesterByID($Documents{$DocumentID}{REQUESTER});
    &SubmitterByID($DocRevisions{$DocRevID}{SUBMITTER});
-  print "</div>\n";
-
-  print "<div id=\"BasicDocInfo\">\n";
    &ModTimes;
+  print "</dl>\n";
   print "</div>\n";
   
   print "<div id=\"OtherVersions\">\n";
@@ -172,27 +173,11 @@ sub PrintRevisionInfo {
 
   print "<div id=\"RightColumn3Col\">\n";
   
-  print "<div id=\"Files\">\n";
-   &FileListByRevID($DocRevID);
-  print "</div>\n";
-  
-  print "<div id=\"Authors\">\n";
-   &AuthorListByID(@AuthorIDs);
-  print "</div>\n";
-
-  print "<div id=\"Topics\">\n";
-   &TopicListByID(@TopicIDs);
-  print "</div>\n";
-
-  print "<div id=\"Viewable\">\n";
-   &SecurityListByID(@GroupIDs);
-  print "</div>\n";
-
-  if ($EnhancedSecurity) {
-    print "<div id=\"Modifiable\">\n";
-     &ModifyListByID(@ModifyIDs);
-    print "</div>\n";
-  }
+  &FileListByRevID($DocRevID); # All are called only here, so changes are OK
+  &AuthorListByID(@AuthorIDs);
+  &TopicListByID(@TopicIDs);
+  &SecurityListByID(@GroupIDs);
+  &ModifyListByID(@ModifyIDs);
 
   print "</div>\n";  # RightColumn3Col
   
@@ -200,10 +185,7 @@ sub PrintRevisionInfo {
   
   print "<div id=\"MainColumn3Col\">\n";
 
-  print "<div id=\"Abstract\">\n";
-   &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT});
-  print "</div>\n";
-  
+  &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT}); # All are called only here, so changes are OK
   &PrintKeywords($DocRevisions{$DocRevID}{Keywords});
   &PrintRevisionNote($DocRevisions{$DocRevID}{Note});
   &PrintReferenceInfo($DocRevID);
@@ -212,9 +194,7 @@ sub PrintRevisionInfo {
   
   if ($UseSignoffs) {
     require "SignoffHTML.pm";
-    print "<div id=\"Signoffs\">\n";
     &PrintRevisionSignoffInfo($DocRevID);
-    print "</div>\n";
   }  
   print "</div>\n";  # MainColumn3Col
 
@@ -237,6 +217,7 @@ sub PrintRevisionInfo {
 sub PrintAbstract {
   my ($Abstract) = @_;
   
+  print "<div id=\"Abstract\">\n";
   if ($Abstract) {
     $Abstract = &URLify($Abstract);
     $Abstract =~ s/\n\n/<p>/g;
@@ -248,6 +229,7 @@ sub PrintAbstract {
   } else {
     print "<b>Abstract:</b> none<br>\n";
   }
+  print "</div>\n";
 }
 
 sub PrintKeywords {
@@ -380,5 +362,18 @@ sub PrintPubInfo ($) {
     print "</div>\n";
   }
 }
+
+sub PrintModTimes {
+  my ($DocRevID) = @_;
+  my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+  $DocTime     = &EuroDateHM($Documents{$DocumentID}{DATE}); 
+  $RevTime     = &EuroDateHM($DocRevisions{$DocRevID}{DATE}); 
+  $VersionTime = &EuroDateHM($DocRevisions{$DocRevID}{VersionDate}); 
+
+  print "<dt>Document Created:</dt>\n<dd>$DocTime</dd>\n";
+  print "<dt>Contents Revised:</dt>\n<dd>$VersionTime</dd>\n";
+  print "<dt>DB Info Revised:</dt>\n<dd>$RevTime</dd>\n";
+}
+
 
 1;

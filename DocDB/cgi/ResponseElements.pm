@@ -38,55 +38,6 @@ sub PrintTitle {
   }
 }
 
-sub PrintDocNumber { # And type
-  my ($DocRevID) = @_;
-  print "<table>\n";
-  print "<tr><td><b>Document #:</b></td><td>";
-  print (&FullDocumentID($DocRevisions{$DocRevID}{DOCID}));
-  print "-v$DocRevisions{$DocRevID}{VERSION}";
-  print "</td></tr>\n";
-  print "<tr><td><b>Document type:</b></td><td>";
-  my $type_link = &TypeLink($Documents{$DocRevisions{$DocRevID}{DOCID}}{TYPE},"short");
-  print "$type_link</nobr><br>\n";
-  print "</td></tr>\n";
-  print "</table>\n";
-}
-
-sub SecurityListByID {
-  my (@GroupIDs) = @_;
-  
-  if ($EnhancedSecurity) {
-    print "<b>Viewable by:</b><br>\n";
-  } else {  
-    print "<b>Restricted to:</b><br>\n";
-  }  
-  
-  print "<ul>\n";
-  if (@GroupIDs) {
-    foreach $GroupID (@GroupIDs) {
-      print "<li>$SecurityGroups{$GroupID}{NAME}</li>\n";
-    }
-  } else {
-    print "<li>Public document</li>\n";
-  }
-  print "</ul>\n";
-}
-
-sub ModifyListByID {
-  my (@GroupIDs) = @_;
-  
-  print "<b>Modifiable by:</b><br>\n";
-  print "<ul>\n";
-  if (@GroupIDs) {
-    foreach $GroupID (@GroupIDs) {
-      print "<li>$SecurityGroups{$GroupID}{NAME}</li>\n";
-    }
-  } else {
-    print "<li>Same as Viewable by</li>\n";
-  }
-  print "</ul>\n";
-}
-
 sub WarnPage { # Non-fatal errors
   my @errors = @_;
   if (@errors) {
@@ -216,19 +167,6 @@ sub DocumentURL {
     $URL =  "$ShowDocument\?docid=$DocumentID";
   }  
   return $URL
-}
-
-sub ModTimes {
-  my ($DocRevID) = @_;
-  my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
-  $DocTime     = &EuroDateHM($Documents{$DocumentID}{DATE}); 
-  $RevTime     = &EuroDateHM($DocRevisions{$DocRevID}{DATE}); 
-  $VersionTime = &EuroDateHM($DocRevisions{$DocRevID}{VersionDate}); 
-  print "<table>\n";
-  print "<tr><td align=right><b>Document Created:</b></td><td>$DocTime</td></tr>\n";
-  print "<tr><td align=right><b>Contents Revised:</b></td><td>$VersionTime</td></tr>\n";
-  print "<tr><td align=right><b>DB Info Revised:</b></td><td>$RevTime</td></tr>\n";
-  print "</table>\n";
 }
 
 sub EuroDate {

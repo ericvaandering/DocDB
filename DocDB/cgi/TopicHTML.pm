@@ -12,6 +12,7 @@ sub TopicListByID {
   
   require "TopicSQL.pm";
   
+  print "<div id=\"Topics\">\n";
   if (@TopicIDs) {
     print "<b>Topics:</b><br/>\n";
     print "<ul>\n";
@@ -24,6 +25,7 @@ sub TopicListByID {
   } else {
     print "<b>Topics:</b> none<br/>\n";
   }
+  print "</div>\n";
 }
 
 sub ShortTopicListByID {

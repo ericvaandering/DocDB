@@ -50,6 +50,7 @@ sub AuthorListByID {
   
   require "AuthorSQL.pm";
   
+  print "<div id=\"Authors\">\n";
   if (@AuthorIDs) {
     print "<b>Authors:</b><br/>\n";
     print "<ul>\n";
@@ -62,6 +63,7 @@ sub AuthorListByID {
   } else {
     print "<b>Authors:</b> none<br/>\n";
   }
+  print "</div>\n";
 }
 
 sub ShortAuthorListByID {
@@ -82,18 +84,18 @@ sub ShortAuthorListByID {
 
 sub RequesterByID { 
   my ($RequesterID) = @_;
-  my $author_link   = &AuthorLink($RequesterID);
   
-  print "<tr><td align=right><b>Requested by:</b></td>";
-  print "<td>$author_link</td></tr>\n";
+  my $AuthorLink   = &AuthorLink($RequesterID);
+  print "<dt>Requested by:</dt>\n";
+  print "<dl>$AuthorLink</dl>\n";
 }
 
 sub SubmitterByID { 
   my ($RequesterID) = @_;
-  my $author_link   = &AuthorLink($RequesterID);
   
-  print "<tr><td align=right><b>Updated by:</b></td>";
-  print "<td>$author_link</td></tr>\n";
+  my $AuthorLink   = &AuthorLink($RequesterID);
+  print "<dt>Updated by:</dt>\n";
+  print "<dl>$AuthorLink</dl>\n";
 }
 
 sub AuthorLink ($;%) {

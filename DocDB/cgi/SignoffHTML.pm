@@ -46,6 +46,7 @@ sub PrintRevisionSignoffInfo($) { # FIXME: Handle more complicated topologies?
   
   my @RootSignoffIDs = &GetRootSignoffs($DocRevID);
   if (@RootSignoffIDs) {
+    print "<div id=\"Signoffs\">\n";
     print "<dl>\n";
     print "<dt><b>Signoffs:</b><br>\n";
     print "<ul>\n";
@@ -54,6 +55,7 @@ sub PrintRevisionSignoffInfo($) { # FIXME: Handle more complicated topologies?
     }
     print "</ul>\n";
     print "</dl>\n";
+    print "</div>\n";
   }  
 }
 
