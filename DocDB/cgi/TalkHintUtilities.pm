@@ -219,6 +219,7 @@ sub FuzzyStringMatch ($$) {
   
   my $Matches = 0;
   foreach my $Word (@Words1) {
+    $Word =~ s/\W//;
     my $WordLength = length $Word;
     if ($WordLength < 4) {next;}
     if (grep /$Word/,@Words2) {

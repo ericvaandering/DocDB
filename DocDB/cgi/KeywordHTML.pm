@@ -38,7 +38,7 @@ sub KeywordsbyKeywordGroup ($;$) {
   foreach my $KeywordID (@KeywordIDs) {
     my $KeyLink;
     if ($Mode eq "chooser") {
-      $KeyLink = "<a href=\"\"$ListKeywords?mode=chooser\"\"
+      $KeyLink = "<a href=\"$ListKeywords?mode=chooser\"
       onClick=\"InsertKeyword('$Keywords{$KeywordID}{Short}');\">$Keywords{$KeywordID}{Short}</a>";
     } else {
       $KeyLink = &KeywordLinkByID($KeywordID,-format => "short");
