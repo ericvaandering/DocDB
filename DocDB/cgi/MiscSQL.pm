@@ -17,7 +17,7 @@ sub GetJournals { # Creates/fills a hash $Journals{$JournalID}{}
   }
 };
 
-sub FetchReferences ($) {
+sub FetchReferencesByRevision ($) {
   my ($DocRevID) = @_;
   
   my ($ReferenceID,$JournalID,$Volume,$Page,$TimeStamp);

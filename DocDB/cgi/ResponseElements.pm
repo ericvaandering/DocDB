@@ -104,10 +104,11 @@ sub PrintConfInfo {
 
 sub PrintReferenceInfo ($) {
   require "MiscSQL.pm";
+  require "ReferenceLinks.pm";
   
   my ($DocRevID) = @_;
   
-  my @ReferenceIDs = &FetchReferences($DocRevID);
+  my @ReferenceIDs = &FetchReferencesByRevision($DocRevID);
   
   if (@ReferenceIDs) {
     &GetJournals;
@@ -115,14 +116,25 @@ sub PrintReferenceInfo ($) {
     print "<dt><b>References:</b> \n";
     foreach my $ReferenceID (@ReferenceIDs) {
       $JournalID = $RevisionReferences{$ReferenceID}{JournalID};
-      print "<dd>Published in";
-      print " $Journals{$JournalID}{Abbreviation} ";
-      if ($RevisionReferences{$ReferenceID}{Volume}) {
-        print " vol. $RevisionReferences{$ReferenceID}{Volume}";
-      }
-      if ($RevisionReferences{$ReferenceID}{Page}) {
-        print " pg. $RevisionReferences{$ReferenceID}{Page}";
-      }
+      print "<dd>Published in ";
+      my ($ReferenceLink,$ReferenceText) = &ReferenceLink($ReferenceID);
+      if ($ReferenceLink) {
+        print "<a href=\"$ReferenceLink\">";
+      }  
+      if ($ReferenceText) {
+        print "$ReferenceText";
+      } else {  
+        print "$Journals{$JournalID}{Abbreviation} ";
+        if ($RevisionReferences{$ReferenceID}{Volume}) {
+          print " vol. $RevisionReferences{$ReferenceID}{Volume}";
+        }
+        if ($RevisionReferences{$ReferenceID}{Page}) {
+          print " pg. $RevisionReferences{$ReferenceID}{Page}";
+        }
+      }  
+      if ($ReferenceLink) {
+        print "</a>";
+      }  
       print ".\n";
     }
     print "</dl>\n";

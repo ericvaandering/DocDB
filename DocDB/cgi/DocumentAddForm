@@ -135,7 +135,7 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   @SecurityDefaults  = &GetRevisionSecurityGroups($DocRevID);
   @AuthorDefaults    = &GetRevisionAuthors($DocRevID);
   @TopicDefaults     = &GetRevisionTopics($DocRevID);
-  @ReferenceDefaults = &FetchReferences ($DocRevID)
+  @ReferenceDefaults = &FetchReferencesByRevision($DocRevID)
 } else {
   my $User = &SecurityLookup($remote_user);
   @SecurityDefaults = ($SecurityIDs{$User}); 

@@ -81,5 +81,18 @@ sub DocDBNavBar {
   } 
   print "</div>\n";
 }
+
+sub ProjectReferenceLink ($$$$) {
+  my ($Acronym,$Volume,$Page,$ReferenceID) = @_;
+
+# This routine is used to add links to and optionally replace the text of 
+# references specific to the project.
+# See ReferenceLink in ReferenceLinks.pm for examples.
+
+  my $ReferenceLink = "";
+  my $ReferenceText = "";
+
+  return ($ReferenceLink,$ReferenceText);
+}
   
 1;
