@@ -376,7 +376,7 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
             my $LastLink   = &DocumentLink($DocumentID,$Version,"version $Version");
             $title .= " - Last approved: $LastLink";
           } else {
-            $title .= " - None approved";
+            $title .= " - No approved version";
           }
         }
         $title .= ")";
