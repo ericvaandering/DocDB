@@ -57,4 +57,24 @@ sub URLify { # Adapted from Perl Cookbook, 6.21
   return $Text;           
 }
 
+sub AddTime ($$) {
+  my ($TimeA,$TimeB) = @_;
+  
+  use Time::Local;
+
+  my ($HourA,$MinA,$SecA) = split /:/,$TimeA;
+  my ($HourB,$MinB,$SecB) = split /:/,$TimeB;
+  
+  $TimeA = timelocal($SecA,$MinA,$HourA,1,0,0);
+  $TimeB = timelocal($SecB,$MinB,$HourB,1,0,0)-timelocal(0,0,0,1,0,0);
+  
+  my $Time = $TimeA + $TimeB;
+
+  my ($Sec,$Min,$Hour) = localtime($Time);
+  
+  my $TimeString = sprintf "%2d:%2.2d:%2.2d",$Hour,$Min,$Sec;
+
+  return $TimeString; 
+}
+
 1;

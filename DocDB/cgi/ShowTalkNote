@@ -1,0 +1,28 @@
+#! /usr/bin/env perl
+#
+# Description: Usually called as a pop-up, this will look up the note for a talk
+#              and display it since it could get crowded in the normal table.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+
+use CGI;                                                                                      
+
+require "DocDBGlobals.pm";
+
+
+# Start page
+
+$query = new CGI;  
+print $query->header;
+print $query->start_html(-title=>"Note for TALK TITLE HERE");
+%params = $query -> Vars;
+$helpterm = $params{term};   # Extract term user wants help for
+
+if ($SomeCondition) {
+  print "<b><big>Talk Title</big></b><p>\n";
+  print "The note for the talk\n";
+} else {
+  print "<b><big>No note for this talk</big></b><p>\n";
+}  
+print $query->end_html;     # End page

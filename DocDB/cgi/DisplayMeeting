@@ -18,6 +18,7 @@ require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 require "Sorts.pm";
+require "Scripts.pm";
 
 require "MeetingHTML.pm";
 require "MeetingSQL.pm";
@@ -26,6 +27,7 @@ $query = new CGI;  # Global for subroutines
 
 print $query -> header;
 &DocDBHeader("Meeting Talks");
+&TalkNotePopupScript;
 
 %params = $query -> Vars;
 
@@ -49,6 +51,7 @@ print "<h2>Put header information here</h2>\n";
 
 
 if ($SessionID) {
+  &FetchSessionByID($SessionID);
   &PrintSession($SessionID,1); # Display a single session
 } elsif ($MeetingID) {
   # Fetch meeting, check ShowAllTalks

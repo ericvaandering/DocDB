@@ -750,7 +750,7 @@ or may not be the same as the web username and password.
 
  <entry>
   <key>confepilogue</key>
-  <title>Meeting epilog</title>
+  <title>Meeting epilogue</title>
   <text>
    You can put any text here that you would like to appear at the bottom of your
    meeting listing, such as instructions for attending.
@@ -768,13 +768,16 @@ or may not be the same as the web username and password.
 
  <entry>
   <key>meetingseparator</key>
-  <title>Separators</title>
+  <title>Breaks and Events</title>
   <text>
-   Check this box if your entry is a separator. Separators cannot have talks or
-   documents associated with them. You might use a separator between sessions to
-   denote a meal or other activity. Use separators between talks to indicate
-   breaks in the agenda for lunch or coffee.
-  </text>
+   Check this box if your entry is a break between sessions. These
+   <q>sessions</q> cannot have talks or documents associated with them. You
+   might use such a separator between sessions to denote a coffee break, a
+   meal, or another activity. <p/>
+   There are also separators you can use between <i>talks</i> to indicate
+   breaks in the agenda for lunch or coffee. (These are inserted as you
+   designate talks <i>within</i> a session.) Which type to use where depends on
+   the organization of your meeting. </text>
  </entry>
 
  <entry>
@@ -808,6 +811,7 @@ or may not be the same as the web username and password.
    long description, location, URL, and date fields.
   </text>
  </entry>
+ 
  <entry>
   <key>sessions</key>
   <title>Sessions</title>

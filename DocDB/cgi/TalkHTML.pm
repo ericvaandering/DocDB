@@ -6,7 +6,7 @@
 #
 
 sub PrintSessionTalk($) {
-  my ($SessionTalkID,$StartTime) = @_;
+  my ($SessionTalkID,$AccumulatedTime) = @_;
   
   require "Security.pm";
 
@@ -22,6 +22,7 @@ sub PrintSessionTalk($) {
   
   require "SQLUtilities.pm";
   require "Utilities.pm";
+  require "Scripts.pm";
   
   my $DocumentID = $SessionTalks{$SessionTalkID}{DocumentID};
   my $Confirmed  = $SessionTalks{$SessionTalkID}{Confirmed};
@@ -43,7 +44,7 @@ sub PrintSessionTalk($) {
   @TopicIDs = &RemoveArray(\@TopicIDs,@IgnoreTopics);
 
   print "<tr valign=top>\n";
-  print "<td>$StartTime</td>\n";
+  print "<td align=right>",&TruncateSeconds($AccumulatedTime),"</td>\n";  
   if ($Confirmed) { # Put titles in italics for unconfirmed talks
     print "<td>$Title</td>\n";
   } else {
@@ -52,7 +53,12 @@ sub PrintSessionTalk($) {
   print "<td><nobr>$AuthorLink</nobr></td>\n";
   print "<td>"; &ShortTopicListByID(@TopicIDs);   print "</td>\n";
   print "<td>"; &ShortFileListByRevID($DocRevID); print "</td>\n";
-  print "<td>$Time</td>\n";
+  print "<td align=right>$Time</td>\n";
+  if ($Note) {
+    print "<td>",&TalkNoteLink,"</td>\n";
+  } else {
+    print "<td>&nbsp;</td>\n";
+  }  
   print "</tr>\n";
 }
 
@@ -65,7 +71,7 @@ sub TalkEntryForm (@) {
   print "<th><b><a "; &HelpLink("sessionorder");  print "Order,</a></b><br/>\n";
   print "    <b><a "; &HelpLink("talkconfirm");   print "Confirm</a><br/>\n";
   print "or  <b><a "; &HelpLink("talkdelete");    print "Delete</a></td>\n";
-  print "<th><b><a "; &HelpLink("talkseparator"); print "Separator</a></th>\n";
+  print "<th><b><a "; &HelpLink("talkseparator"); print "Break</a></th>\n";
   print "<th><b><a "; &HelpLink("talkdocid");     print "Doc. #</a></th>\n";
   print "<th><b><a "; &HelpLink("talkinfo");      print "Talk Title & Note</a></th>\n";
   print "<th><b><a "; &HelpLink("talktime");      print "Time</a></th>\n";

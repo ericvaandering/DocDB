@@ -143,4 +143,7 @@ $SetPrefs              = $cgi_root."SetPrefs";
 $EmailLogin            = $cgi_root."EmailLogin";
 $SelectEmailPrefs      = $cgi_root."SelectEmailPrefs";
 
+$DocDBHelp             = $cgi_root."DocDBHelp";
+$ShowTalkNote          = $cgi_root."ShowTalkNote";
+
 1;

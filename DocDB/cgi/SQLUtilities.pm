@@ -13,4 +13,15 @@ sub TruncateSeconds ($) { # Strip of seconds (from SQL) if present
   return $NewTime;
 }
 
+sub SQLDateTime {
+  my ($SQLDateTime) = @_;
+  unless ($SQLDateTime) {return "";}
+  
+  my ($Date,$Time)     = split /\s+/,$SQLDateTime;
+  my ($Year,$Mon,$Day) = split /\-/,$Date;
+  my ($Hour,$Min,$Sec) = split /\:/,$Time;
+
+  return ($Sec,$Min,$Hour,$Day,$Mon,$Year);
+}
+
 1;

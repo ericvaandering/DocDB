@@ -52,7 +52,7 @@ sub SessionEntryForm (@) {
   print "<tr valign=top>\n";
   print "<th><b><a "; &HelpLink("meetingorder");     print "Order</a></b> or <br>\n";
   print "    <b><a "; &HelpLink("sessiondelete");    print "Delete</a></td>\n";
-  print "<th><b><a "; &HelpLink("meetingseparator"); print "Separator</a></th>\n";
+  print "<th><b><a "; &HelpLink("meetingseparator"); print "Break</a></th>\n";
   print "<th><b><a "; &HelpLink("sessioninfo");      print "Start Date and Time</a></th>\n";
   print "<th><b><a "; &HelpLink("sessioninfo");      print "Session Title & Description</a></th>\n";
   print "</tr>\n";
@@ -221,6 +221,8 @@ sub PrintSession ($;$) {
   require "Sorts.pm";
   require "TalkSQL.pm";
   require "TalkHTML.pm";
+  require "SQLUtilities.pm";
+  require "Utilities.pm";
   
   print "<center><h4>$Sessions{$SessionID}{Title}: \n";
   print "[ $SessionID ] \n"; # FIXME: debug
@@ -233,6 +235,9 @@ sub PrintSession ($;$) {
   my @SessionOrderIDs  = &FetchSessionOrdersBySessionID($SessionID);
   my $ConferenceID     = $Sessions{$SessionID}{ConferenceID};
   
+  my ($AccumSec,$AccumMin,$AccumHour) = &SQLDateTime($Sessions{$SessionID}{StartTime});
+  my $AccumulatedTime = &AddTime("$AccumHour:$AccumMin:$AccumSec");
+  
   # Getting TopicID will depend on re-factoring Conferences Hashes
   # my $MinorTopicID = 
   
@@ -241,24 +246,27 @@ sub PrintSession ($;$) {
 # Sort talks and separators
 
   @SessionOrderIDs = sort SessionOrderIDByOrder @SessionOrderIDs;
-  print "<table border=1>\n";
+  print "<center><table cellpadding=3>\n";
   print "<tr>\n";
   print "<th>Start</th>\n";
   print "<th>Title</th>\n";
-  print "<th>Note</th>\n";
-  print "<th>Time</th>\n";
+  print "<th>Author</th>\n";
+  print "<th>Topic(s)</th>\n";
+  print "<th>Files</th>\n";
+  print "<th>Length</th>\n";
+  print "<th>&nbsp;</th>\n";
   print "</tr>\n";
   foreach my $SessionOrderID (@SessionOrderIDs) {
-#    &DBPrint("<tr><td>$SessionOrderID</td></tr>\n");
     # Accumulate time
     if ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) {
       my $TalkSeparatorID =  $SessionOrders{$SessionOrderID}{TalkSeparatorID};
       print "<tr valign=top>\n";
-      print "<td>Sep $TalkSeparatorID $AccumulatedTime</td>\n";
+      print "<td align=right>",&TruncateSeconds($AccumulatedTime),"</td>\n";
       print "<td>$TalkSeparators{$TalkSeparatorID}{Title}</td>\n";
-      print "<td>$TalkSeparators{$TalkSeparatorID}{Note}</td>\n";
-      print "<td>$TalkSeparators{$TalkSeparatorID}{Time}</td>\n";
+      print "<td colspan=3>$TalkSeparators{$TalkSeparatorID}{Note}</td>\n";
+      print "<td align=right>",&TruncateSeconds($TalkSeparators{$TalkSeparatorID}{Time}),"</td>\n";
       print "</tr>\n";
+      $AccumulatedTime = &AddTime($AccumulatedTime,$TalkSeparators{$TalkSeparatorID}{Time});
     } elsif ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
       my $SessionTalkID =  $SessionOrders{$SessionOrderID}{SessionTalkID};
       # One thing for confirmed talks, one thing for hinted, one thing for no idea
@@ -266,17 +274,18 @@ sub PrintSession ($;$) {
         &PrintSessionTalk($SessionTalkID,$AccumulatedTime);
       } else {
         print "<tr valign=top>\n";
-        print "<td>Talk $SessionTalkID $AccumulatedTime</td>\n";
+        print "<td align=right>",&TruncateSeconds($AccumulatedTime),"</td>\n";
         print "<td>$SessionTalks{$SessionTalkID}{HintTitle}</td>\n";
         print "<td>$SessionTalks{$SessionTalkID}{Note}</td>\n";
-        print "<td>$SessionTalks{$SessionTalkID}{Time}</td>\n";
+        print "<td align=right>$SessionTalks{$SessionTalkID}{Time}</td>\n";
         print "</tr>\n";
       } 
+      $AccumulatedTime = &AddTime($AccumulatedTime,$SessionTalks{$SessionTalkID}{Time});
     } else {
       &DBPrint("<tr><td>No SessionTalk or TalkSep</td></tr>\n");
     }
   }
-  print "</table><hr>\n";   
+  print "</table></center><hr>\n";   
 }
 
 1;
