@@ -12,7 +12,6 @@ sub AuthorListByID {
   } else {
     print "<b>Authors:</b> none<br>\n";
   }
-  print "<p>\n";
 }
 
 sub RequesterByID {
@@ -21,7 +20,14 @@ sub RequesterByID {
   
   print "<b>Requested by:</b> ";
   print "$Authors{$requesterID}{FULLNAME}<br>\n";
-  print "<p>\n";
+}
+
+sub SubmitterByID {
+  my ($requesterID) = @_;
+  &FetchAuthor($requesterID);
+  
+  print "<b>Updated by:</b> ";
+  print "$Authors{$requesterID}{FULLNAME}<br>\n";
 }
 
 sub TopicListByID {
@@ -37,19 +43,119 @@ sub TopicListByID {
   } else {
     print "<b>Topics:</b> none<br>\n";
   }
-  print "<p>\n";
+}
+
+sub PrintTitle {
+  my ($Title) = @_;
+  if ($Title) {
+    print "<b>Title:</b> $Title<br>\n";
+  } else {
+    print "<b>Title:</b> none<br>\n";
+  }
+}
+
+sub PrintDocNumber {
+  my ($DocRevID) = @_;
+  print "<b>Document #: </b>";
+  print (&FullDocumentID($DocRevisions{$DocRevID}{DOCID}));
+  print ", ";
+  print "version $DocRevisions{$DocRevID}{VERSION}<br>\n";
 }
 
 sub PrintAbstract {
   my ($abstract) = @_;
   if ($abstract) {
-    print "<b>Abstract:</b><br>\n";
-    print "$abstract<br>\n";
+    print "<dl>\n";
+    print "<dt><b>Abstract:</b><br>\n";
+    print "<dd>$abstract<br>\n";
+    print "</dl>\n";
   } else {
     print "<b>Abstract:</b> none<br>\n";
   }
-  print "<p>\n";
 }
+
+sub PrintPubInfo {
+  my ($pubinfo) = @_;
+  if ($pubinfo) {
+    print "<dl>\n";
+    print "<dt><b>Publication Information:</b><br>\n";
+    print "<dd>$pubinfo<br>\n";
+    print "</dl>\n";
+  } else {
+    print "<b>Publication Information:</b> none<br>\n";
+  }
+}
+
+sub FileListByRevID {
+  my ($DocRevID) = @_;
+  my $Files_ref  = &FetchDocFiles($DocRevID);
+  my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+  if (@{$Files_ref}) {
+    print "<b>Files:</b>\n";
+    print "<ul>\n";
+    foreach $file (@{$Files_ref}) {
+      $link = &FileLink($DocumentID,$Documents{$DocumentID}{NVER},$DocFiles{$file}{NAME});
+      print "<li>$link</li>\n";
+    }  
+    print "</ul>\n";
+  } else {
+    print "<b>Files:</b> none<br>\n";
+  }
+}
+
+sub SecurityListByRevID {
+  my ($DocRevID) = @_;
+  @SecurityList = @{$DocRevisions{$DocRevID}{SECURITY}};
+  if (@SecurityList) {
+    print "<b>Restricted to:</b>\n";
+    print "<ul>\n";
+    foreach $security (@SecurityList) {
+      print "<li>$security</li>\n";
+    }  
+    print "</ul>\n";
+  } else {
+    print "<b>Security:</b> Public document<br>\n";
+  }
+    
+}
+sub PrintRevisionInfo {
+  my ($DocRevID) = @_;
+  my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+
+  my $Authors_ref = &GetRevisionAuthors($DocRevID);
+  my $Topics_ref  = &GetRevisionTopics($DocRevID);
+  my $Files_ref  = &FetchDocFiles($DocRevID);
+
+  @AuthorIDs = @{$Authors_ref};
+  @TopicIDs = @{$Topics_ref};
+ 
+  print "<center><table cellpadding=10>";
+  print "<tr valign=top>";
+  print "<td>"; 
+  &PrintTitle($DocRevisions{$DocRevID}{TITLE});
+  print "<td align=center>"; 
+  &RequesterByID($Documents{$DocumentID}{REQUESTER});
+  &SubmitterByID($DocRevisions{$DocRevID}{SUBMITTER});
+  print "<td>"; 
+  &PrintDocNumber($DocRevID);
+  print "<tr valign=top>";
+  print "<td>"; 
+  &AuthorListByID(@AuthorIDs);
+  print "<td>"; 
+  &TopicListByID(@TopicIDs);
+  print "<td>"; 
+  &SecurityListByRevID($DocRevID);
+  print "<tr valign=top>";
+  print "<td colspan=2>"; 
+  &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT});
+  print "<td rowspan=2>"; 
+  &FileListByRevID($DocRevID);
+  print "<tr valign=top>";
+  print "<td colspan=2>"; 
+  &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
+  print "</table></center>\n"; 
+}
+ 
 
 sub EndPage {
   my @errors = @_;
@@ -71,6 +177,12 @@ sub FileLink {
   $base_url = &GetURLDir($documentID,$version);
   return "<a href=\"$base_url$shortfile\">$shortfile</a>";
 }  
+
+sub DocumentLink {
+  my ($DocumentID,$Version) = @_;
+  $ret = "<a href=\"$ShowDocument\?docid=$DocumentID\&version=$Version\">".
+         (&FullDocumentID)."</a>";
+}         
 
 sub EuroDate {
   my ($sql_datetime) = @_;

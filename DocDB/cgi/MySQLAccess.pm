@@ -193,15 +193,16 @@ sub FetchDocRevision {
   &FetchDocument($documentID);
   my $revision_list = $dbh->prepare(
     "select DocRevID,SubmitterID,DocumentTitle,PublicationInfo,VersionNumber,".
-           "Abstract,RevisionDate,Security,TimeStamp ".
+           "Abstract,RevisionDate,Security,TimeStamp,DocumentID ".
     "from DocumentRevision ".
     "where DocumentID=? and VersionNumber=?");
   if ($DocRevIDs{$documentID}{$versionNumber}) {
     return $DocRevIDs{$documentID}{$versionNumber};
   }
   $revision_list -> execute($documentID,$versionNumber);
-  my ($DocRevID,$SubmitterID,$DocumentTitle,$PublicationInfo,$VersionNumber,
-      $Abstract,$RevisionDate,$Security) = $revision_list -> fetchrow_array;
+  my ($DocRevID,$SubmitterID,$DocumentTitle,$PublicationInfo,
+      $VersionNumber,$Abstract,$RevisionDate,$Security,
+      $TimeStamp,$DocumentID) = $revision_list -> fetchrow_array;
 
   $DocRevIDs{$documentID}{$versionNumber} = $DocRevID;
   $DocRevisions{$DocRevID}{SUBMITTER}    = $SubmitterID;
@@ -209,6 +210,9 @@ sub FetchDocRevision {
   $DocRevisions{$DocRevID}{PUBINFO}     = $PublicationInfo;
   $DocRevisions{$DocRevID}{ABSTRACT} = $Abstract;
   $DocRevisions{$DocRevID}{DATE}     = $RevisionDate;
+  $DocRevisions{$DocRevID}{TIMESTAMP}     = $TimeStamp;
+  $DocRevisions{$DocRevID}{VERSION}     = $VersionNumber;
+  $DocRevisions{$DocRevID}{DOCID}     = $DocumentID;
   @{$DocRevisions{$DocRevID}{SECURITY}} = split /\,/,$Security;
 
   return $DocRevID;
@@ -261,4 +265,5 @@ sub GetRevisionTopics {
   }
   return \@topics;
 }
+
 1;

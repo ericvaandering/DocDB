@@ -13,36 +13,28 @@ require "FSUtilities.pm";
 require "Security.pm";
 
 $query = new CGI;  # Global for subroutines
-print $query->header;
-print $query->start_html(-title=>"BTeV Document");
-$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
 %params = $query -> Vars;
 
 $DocumentID = $params{docid};
-$Version    = $params{version}; #FIXME allow leaving off version number
+$Version    = $params{version}; 
 
-$DocumentID = 79;
-$Version = 1;
+print $query->header;
+print $query->start_html(-title=>"BTeV Document $DocumentID, v$Version");
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+
+
+unless ($DocumentID) {$DocumentID = 79;}
 
 unless (&CanAccess($DocumentID,$Version)) {
   print "You are not authorized to view this document.<p>\n";
 #  exit;
 }
 &FetchDocument($DocumentID);
+unless ($Version) {$Version = $Documents{$DocumentID}{NVER}}
+
 my $DocRevID   = &FetchDocRevision($DocumentID,$Version);
-my $Files_ref  = &FetchDocFiles($DocRevID);
 
-my $Authors_ref = &GetRevisionAuthors($DocRevID);
-my $Topics_ref  = &GetRevisionTopics($DocRevID);
-
-@AuthorIDs = @{$Authors_ref};
-@TopicIDs = @{$Topics_ref};
-
-&RequesterByID($Documents{$DocumentID}{REQUESTER});
-&RequesterByID($DocRevisions{$DocRevID}{SUBMITTER});
-&AuthorListByID(@AuthorIDs);
-&TopicListByID(@TopicIDs);
-
+&PrintRevisionInfo($DocRevID);
 
 print $query->end_html; 

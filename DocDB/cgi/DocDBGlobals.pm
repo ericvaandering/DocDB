@@ -23,6 +23,7 @@ $AuthUserFile       = $script_root."htpasswd";
 
 $ProcessDocumentAdd = $cgi_root."ProcessDocumentAdd";
 $DocumentAddForm    = $cgi_root."DocumentAddForm";
+$ShowDocument       = $cgi_root."ShowDocument";
 
 # Shell Commands
 

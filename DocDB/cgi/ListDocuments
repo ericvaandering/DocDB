@@ -36,7 +36,7 @@ print "<th>Security</th>\n";
 print "</tr>\n";
 foreach $document (@DocumentIDs) {
   unless (&CanAccess($document,$Documents{$document}{NVER})) {next;}
-  my $full_docid = &FullDocumentID($document);
+  my $full_docid = &DocumentLink($document,$Documents{$document}{NVER});
   my $DocRevID   = &FetchDocRevision($document,$Documents{$document}{NVER});
   my $Files_ref  = &FetchDocFiles($DocRevID);
                    
