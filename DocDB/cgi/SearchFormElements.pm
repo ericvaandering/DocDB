@@ -181,6 +181,9 @@ sub MajorMinorSelect { # Two multi-select boxes for major and minor topics
   foreach my $ID (@MajorIDs) {
     $MajorLabels{$ID} = $MajorTopics{$ID}{SHORT};
   }  
+  print "<b><a ";
+  &HelpLink("dynamictopic");
+  print "Topics:</a></b><br>\n";
   print $query -> scrolling_list(-name => "majortopic", -values => \@MajorIDs, 
                                  -labels => \%MajorLabels,  
                                  -size => 10, 

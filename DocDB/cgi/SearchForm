@@ -26,7 +26,6 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 %params = $query -> Vars;
 
-
 print $query->header;
   
 &SearchHeader("BTeV Document Database Search","Document Database Search");
@@ -41,14 +40,21 @@ if ((@error_stack)) {  # The user made one or more mistakes, warn and exit
 
 print $query -> start_multipart_form('POST',$Search,"name=\"queryform\"");
 
-print "<center><table cellpadding=10 border=1>\n";
 
+print "<center><table cellpadding=10 width=80%>\n";
 print "<tr>\n";
  print "<td colspan=3>\n";
- print "<h4>Click on any of the headings for help.</h4>\n"; 
+ print "This is an alpha version of the search engine for the BTeV Document Database.<p>\n"; 
+ print "The ability to search on more fields is still coming. 
+        The help links may be missing or wrong. It may not work as expected. 
+        You may see diagnostic output on the screen from time to time.
+        It will NOT damage any data in the Database and I'm reasonably sure it won't injure your pets. 
+        At this point, please do not submit bugs.<p>\n"; 
+ print "<center><b>Click on any of the <font color=red>red headings</font> for help.</b></center>\n"; 
  print "</td>\n";
-print "</tr>\n";
+print "</tr></table><p>\n";
 
+print "<center><table cellpadding=10 border=1>\n";
 print "<tr>\n";
  print "<td colspan=3 align=center>\n"; 
  print $query -> submit (-value => "Search for Documents");     
@@ -99,7 +105,7 @@ print "</tr>\n";
 
 # print "</tr>\n";
 
- print "<tr>\n";
+ print "<tr valign=bottom>\n";
   &MajorMinorSelect;
  print "</tr>\n";
 
