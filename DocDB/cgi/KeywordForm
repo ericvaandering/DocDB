@@ -12,7 +12,7 @@ use DBI;
 require "DocDBGlobals.pm";
 require "AdministerElements.pm";
 require "FormElements.pm";
-require "KeywordFormElements.pm";	# for keyword specific elements
+require "KeywordHTML.pm";	# for keyword specific elements
 require "Scripts.pm";
 require "Security.pm";
 
