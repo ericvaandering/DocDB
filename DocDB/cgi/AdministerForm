@@ -236,7 +236,7 @@ print "<tr valign=top>\n";
 print "<td colspan=2>\n"; 
  &TopicScroll(-helptext  => "Minor Topics", -helplink => "topics", 
               -extratext => " (Long descriptions in brackets)", 
-              -multiple  => "true", -format => "long", -disabled => "true"); 
+              -format    => "long", -disabled => "true"); 
 print "</td>\n"; 
 print "</tr>\n";
 

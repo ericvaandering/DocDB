@@ -72,8 +72,7 @@ my $EndYear       = $params{endyear};
 my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
 my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
 
-my $StartTime = timelocal(0,0,0,$StartDay,$ReverseAbrvMonth{$StartMonth}-1,$StartYear);
-my $EndTime   = timelocal(0,0,0,$EndDay,$ReverseAbrvMonth{$EndMonth}-1,$EndYear);
+my $StartTime,$EndTime;
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
@@ -117,6 +116,8 @@ if ($Action eq "Delete") {
                      entries have been removed.";
   }  
 } elsif ($Action eq "Modify") { 
+  $StartTime = timelocal(0,0,0,$StartDay,$ReverseAbrvMonth{$StartMonth}-1,$StartYear);
+  $EndTime   = timelocal(0,0,0,$EndDay,$ReverseAbrvMonth{$EndMonth}-1,$EndYear);
   unless ($TopicID) {
     push @ErrorStack,$Msg_ModConfEmpty;
   }
@@ -187,6 +188,8 @@ if ($Action eq "Delete") {
   }
 
 } elsif ($Action eq "New") { # FIXME: Allow conference add for completeness
+  $StartTime = timelocal(0,0,0,$StartDay,$ReverseAbrvMonth{$StartMonth}-1,$StartYear);
+  $EndTime   = timelocal(0,0,0,$EndDay,$ReverseAbrvMonth{$EndMonth}-1,$EndYear);
   # Check inputs
 
   unless ($ShortName && $LongName && $Location) {
