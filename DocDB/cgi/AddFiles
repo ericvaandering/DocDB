@@ -131,7 +131,12 @@ if ((@error_stack)) {  # The user made one or more mistakes, warn and exit
 $new_dir = &MakeDirectory($DocumentID,$Version);
 
 @Descriptions = split ("\0",$params{filedesc});
-@Roots = split ("\0",$params{root});
+@Roots = ();
+my @RawRoots = split ("\0",$params{root});
+foreach my $RawRoot (@RawRoots) {  # Simulate what I thought was happening
+  @Roots[$RawRoot-1] = "on"        # with roots
+}  
+
 if ($params{single_upload}) { # Copy file to directory
   @short_files   = $query ->  param("single_upload");
   foreach $short_file (@short_files) {
