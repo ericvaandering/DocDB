@@ -442,7 +442,7 @@ sub SecurityList {
   print $query -> scrolling_list(-name => 'security', -values => \@GroupIDs, 
                                  -labels => \%GroupLabels, 
                                  -size => 10, -multiple => 'true', 
-                                 -default => @SecurityDefaults);
+                                 -default => \@SecurityDefaults);
 };
 
 sub ShortDescriptionBox {

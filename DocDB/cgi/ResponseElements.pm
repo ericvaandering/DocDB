@@ -132,9 +132,7 @@ sub PrintRevisionInfo {
   my $Version     = $DocRevisions{$DocRevID}{VERSION};
   my @AuthorIDs   = &GetRevisionAuthors($DocRevID);
   my @TopicIDs    = &GetRevisionTopics($DocRevID);
-  my $Groups_ref  = &GetRevisionSecurityGroups($DocRevID);
-
-  my @GroupIDs  = @{$Groups_ref};
+  my @GroupIDs    = &GetRevisionSecurityGroups($DocRevID);
  
   print "<center><table cellpadding=10>";
   print "<tr><td colspan=6 align=center>\n";

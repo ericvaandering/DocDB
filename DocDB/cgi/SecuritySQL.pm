@@ -31,7 +31,7 @@ sub GetRevisionSecurityGroups {
   my ($DocRevID) = @_;
   
   if ($RevisionSecurities{$DocRevID}{DocRevID}) {
-    return \@{$RevisionSecurities{$DocRevID}{GROUPS}};
+    return @{$RevisionSecurities{$DocRevID}{GROUPS}};
   }
     
   my @groups = ();
@@ -45,7 +45,7 @@ sub GetRevisionSecurityGroups {
   }
   $RevisionSecurities{$DocRevID}{DocRevID} = $DocRevID;
   $RevisionSecurities{$DocRevID}{GROUPS}   = [@groups];
-  return \@{$RevisionSecurities{$DocRevID}{GROUPS}};
+  return @{$RevisionSecurities{$DocRevID}{GROUPS}};
 }
 
 sub SecurityLookup {
