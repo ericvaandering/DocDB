@@ -33,8 +33,6 @@ sub InsertFile (%) {
     $DateTime = "$Year-$Mon-$Day $Hour:$Min:$Sec";
   } 
   
-  print "Truing to insert $Filename<br>\n";
-  
   my $Insert = $dbh -> prepare("insert into DocumentFile ".
      "(DocFileID, DocRevID, FileName, Date, RootFile, Description) ".
      "values (0,?,?,?,?,?)");

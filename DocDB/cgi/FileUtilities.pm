@@ -46,8 +46,6 @@ sub AddFiles (%) {
   &FetchDocRevisionByID($DocRevID);
 
   foreach my $File (@Files) {
-    print "Key: $File<br>\n";
-    print "Checking ",$Files{$File}{Filename},"<br>\n";
     if ($Files{$File}{Filename} && (-e $Files{$File}{Filename})) {
       my @Parts = split /\//,$Files{$File}{Filename};
       $ShortName = pop @Parts;
@@ -60,7 +58,6 @@ sub AddFiles (%) {
       my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
       &MakeDirectory($DocumentID,$Version); 
       my $Directory = &GetDirectory($DocumentID,$Version); 
-      print "Dir: $Directory<br>\n";
       system ("cp",$Files{$File}{Filename},$Directory);
 
     } # else other methods
