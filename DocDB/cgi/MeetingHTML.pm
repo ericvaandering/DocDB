@@ -97,7 +97,7 @@ sub SessionEntryForm (@) {
     print "<td align=center>\n"; &SessionOrder; print "</td>\n";
     print "<td align=center>\n"; &SessionSeparator($MeetingOrderID) ; print "</td>\n";
     print "<td>\n"; &SessionDateTimePullDown; print "</td>\n";
-    print "<td>\n"; &SessionTitle;            print "</td>\n";
+    print "<td>\n"; &SessionTitle($SessionDefaultTitle);            print "</td>\n";
     print "<td>\n"; &SessionDescription;      print "</td>\n";
     print "<td align=center>\n"; &SessionDelete($MeetingOrderID) ; print "</td>\n";
     print "</tr>\n";
@@ -182,7 +182,9 @@ sub SessionDelete ($) {
   }
 }
 
-sub SessionTitle {
+sub SessionTitle ($) {
+  my ($DefaultTitle) = @_;
+  $query -> param('sessiontitle',$SessionDefaultTitle);
   print $query -> textfield (-name => 'sessiontitle', -size => 35, -maxlength => 128, 
                              -default => $SessionDefaultTitle);
 }
