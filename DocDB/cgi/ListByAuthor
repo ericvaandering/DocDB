@@ -60,7 +60,7 @@ print "<center><table cellpadding=3>\n";
 
 foreach $DocumentID (@DocumentIDs) {
   unless ($DocumentID) {next;}
-  unless (&CanAccess($dDocumentID,$Documents{$DocumentID}{NVER})) {next;}
+  unless (&CanAccess($DocumentID,$Documents{$DocumentID}{NVER})) {next;}
   # FIXME: Need to put latest document accessible if last version isn't
   &DocumentSummary($DocumentID);
 }
