@@ -213,7 +213,7 @@ sub AuthorScroll (%) {
     print "<br> \n";
   }
 
-  print $query -> scrolling_list(-name => $ElementName, -values => \@ActiveIDs, 
+  print $query -> scrolling_list(-name => $Name, -values => \@ActiveIDs, 
                                  -labels => \%AuthorLabels,
                                  -size => 10, -multiple => $Multiple,
                                  -default => \@Defaults);
