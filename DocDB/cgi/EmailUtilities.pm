@@ -43,3 +43,5 @@ sub SendEmail (%) {
 
   return 1;
 }
+
+1;
