@@ -25,6 +25,9 @@ print $query->header;
 print "<p><center><big><font color=red><b>Testing only! All data may be
 lost!</b></font></big></center>\n";
 
+print "<p><b><a
+href=\"http://vuhepv.phy.vanderbilt.edu/BTeV/DocDB/DocDB_Help.shtml\">Help on
+using</a> the database:</b>\n";
 print "<p><b>Find the information you want in the database:</b>\n";
 print "<ul>\n";
 print "<li>Search documents (still coming)"; 
@@ -98,8 +101,9 @@ print "</ul>\n";
 
 print "<p>\n";
 
-print "<b>If the above choices don't meet your needs,use this form to produce a customized<br>
-       document creation or update form. Click on any term for <a href=\"HelpDocument\">help.</a></b><p>\n";
+print "<b>If the above choices don't meet your needs,use this form to produce a
+customized<br> document creation or update form. Click on any term for
+help.</b><p>\n";
 
 $modes{reserve}  = "Reserve document #";
 $modes{add}      = "New document";
@@ -139,22 +143,25 @@ print "<td>\n";
  print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
  print "&nbsp;&nbsp;&nbsp;\n";
  print "</table>\n";
+
+print "<tr><td align=right>\n";
+print "<a "; &HelpLink("uploadtype"); 
+print "<b>Upload type:</b></a>\n";
+print "<td>\n";
+print "<table cellpadding=3><tr><td>\n";
+print $query -> radio_group(-name => "archive", -values => \@archives, -labels
+                            => \%archives, -columns => 1);
+print "<td>\n";
+print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
+print "<b># of files</b>\n";
+print "</table>\n";
+
 print "<tr><td align=right>\n";
 print "<a "; &HelpLink("uploadmethod"); 
 print "<b>Upload method:</b></a>\n";
 print "<td>\n";
 print $query -> radio_group(-name => "upload", -values => \@uploads, -labels => \%uploads);
-print "<tr><td align=right>\n";
-print "<a "; &HelpLink("uploadtype"); 
-print "<b>Upload type:</b></a>\n";
-print "<td>\n";
- print "<table cellpadding=3><tr><td>\n";
- print $query -> radio_group(-name => "archive", -values => \@archives, -labels
-                             => \%archives, -columns => 1);
- print "<td>\n";
- print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
- print "<b># of files</b>\n";
- print "</table>\n";
+
 print "<tr><td align=right>\n";
 print "<a "; &HelpLink("topicoption"); 
 print "<b>Topic Selection:</b></a>\n";

@@ -275,16 +275,17 @@ sub MajorTopicSelect { # Scrolling selectable list for major topics
 };
 
 sub InstitutionSelect { # Scrolling selectable list for institutions
+  require "Sorts.pm";
   print "<b><a ";
   &HelpLink("institution");
   print "Institution:</a></b><br> \n";
-  my @InstIDs = sort keys %Institutions;
+  my @InstIDs = sort byInstitution keys %Institutions;
   my %InstLabels = ();
   foreach my $ID (@InstIDs) {
     $InstLabels{$ID} = $Institutions{$ID}{SHORT};
   }  
   print $query -> scrolling_list(-name => "inst", -values => \@InstIDs,
-                                 -labels => \%InstLabels,  -size => 10);
+                                 -labels => \%InstLabels,  -size => 15);
 };
 
 sub DocTypeButtons {

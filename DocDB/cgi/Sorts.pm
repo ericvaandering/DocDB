@@ -35,4 +35,8 @@ sub byLastName {
   $Authors{$a}{FIRSTNAME} cmp $Authors{$b}{FIRSTNAME};
 }    
 
+sub byInstitution {
+  $Institutions{$a}{SHORT} cmp $Institutions{$b}{SHORT};
+}    
+
 1;
