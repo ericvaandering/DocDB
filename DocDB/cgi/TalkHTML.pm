@@ -20,42 +20,40 @@ sub PrintSessionTalk($) {
   require "FileHTML.pm"; 
   require "ResponseElements.pm";
   
+  require "SQLUtilities.pm";
   require "Utilities.pm";
   
   my $DocumentID = $SessionTalks{$SessionTalkID}{DocumentID};
   my $Confirmed  = $SessionTalks{$SessionTalkID}{Confirmed};
   my $Note       = $SessionTalks{$SessionTalkID}{Note};
-  my $Time       = $SessionTalks{$SessionTalkID}{Time};
-
+  my $Time       = &TruncateSeconds($SessionTalks{$SessionTalkID}{Time});
   # Selected parts of how things are done in DocumentSummary
 
-  if ($DocumentID) {
-    &FetchDocument($DocumentID);
-    unless (&CanAccess($DocumentID,$Version)) {return;}
-    my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-    my $AuthorLink = &FirstAuthor($DocRevID); 
-    #FIXME: Make Version optional, see comment in ResponseElements.pm
-    my $Title      = &DocumentLink($DocumentID,$Version,$DocRevisions{$DocRevID}{TITLE});
-    my @FileIDs    = &FetchDocFiles($DocRevID);
-    my @TopicIDs   = &GetRevisionTopics($DocRevID);
+  &FetchDocument($DocumentID);
+  my $Version = $Documents{$DocumentID}{NVER};
+  unless (&CanAccess($DocumentID,$Version)) {return;}
+  
+  my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+  my $AuthorLink = &FirstAuthor($DocRevID); 
+  #FIXME: Make Version optional, see comment in ResponseElements.pm
+  my $Title      = &DocumentLink($DocumentID,$Version,$DocRevisions{$DocRevID}{TITLE});
+  my @FileIDs    = &FetchDocFiles($DocRevID);
+  my @TopicIDs   = &GetRevisionTopics($DocRevID);
 
-    @TopicIDs = &RemoveArray(\@TopicIDs,@IgnoreTopics);
+  @TopicIDs = &RemoveArray(\@TopicIDs,@IgnoreTopics);
 
-    print "<tr>\n";
-    print "<td>$StartTime</td>\n";
-    if ($Confirmed) {  
-      print "<td>$Title</td>\n";
-    } else {
-      print "<td><i>$Title</i></td>\n";
-    }
-    print "<td><nobr>$AuthorLink</nobr></td>\n";
-    print "<td>"; &ShortTopicListByID(@TopicIDs);   print "</td>\n";
-    print "<td>"; &ShortFileListByRevID($DocRevID); print "</td>\n";
-    print "<td>$Time</td>\n";
-    print "</tr>\n";
+  print "<tr valign=top>\n";
+  print "<td>$StartTime</td>\n";
+  if ($Confirmed) { # Put titles in italics for unconfirmed talks
+    print "<td>$Title</td>\n";
   } else {
-    #Print out headers here or elsewhere?
+    print "<td><i>$Title</i></td>\n";
   }
+  print "<td><nobr>$AuthorLink</nobr></td>\n";
+  print "<td>"; &ShortTopicListByID(@TopicIDs);   print "</td>\n";
+  print "<td>"; &ShortFileListByRevID($DocRevID); print "</td>\n";
+  print "<td>$Time</td>\n";
+  print "</tr>\n";
 }
 
 sub TalkEntryForm (@) {

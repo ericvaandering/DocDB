@@ -7,8 +7,13 @@
 
 sub CanAccess { # Can the user access (with current security) this version
   require "RevisionSQL.pm";
+  require "SecuritySQL.pm";
   
 ## FIXME: Use SecurityLookup  
+  
+  unless (keys %SecurityGroups) {
+    &GetSecurityGroups;
+  }  
 
   my ($documentID,$version) = @_;
   my $DocRevID = &FetchRevisionByDocumentAndVersion($documentID,$version);

@@ -241,7 +241,7 @@ sub PrintSession ($;$) {
 # Sort talks and separators
 
   @SessionOrderIDs = sort SessionOrderIDByOrder @SessionOrderIDs;
-  print "<table>\n";
+  print "<table border=1>\n";
   print "<tr>\n";
   print "<th>Start</th>\n";
   print "<th>Title</th>\n";
@@ -249,11 +249,11 @@ sub PrintSession ($;$) {
   print "<th>Time</th>\n";
   print "</tr>\n";
   foreach my $SessionOrderID (@SessionOrderIDs) {
+#    &DBPrint("<tr><td>$SessionOrderID</td></tr>\n");
     # Accumulate time
-    # Put titles in italics for unconfirmed talks
     if ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) {
       my $TalkSeparatorID =  $SessionOrders{$SessionOrderID}{TalkSeparatorID};
-      print "<tr>\n";
+      print "<tr valign=top>\n";
       print "<td>Sep $TalkSeparatorID $AccumulatedTime</td>\n";
       print "<td>$TalkSeparators{$TalkSeparatorID}{Title}</td>\n";
       print "<td>$TalkSeparators{$TalkSeparatorID}{Note}</td>\n";
@@ -265,13 +265,15 @@ sub PrintSession ($;$) {
       if ($SessionTalks{$SessionTalkID}{DocumentID}) {
         &PrintSessionTalk($SessionTalkID,$AccumulatedTime);
       } else {
-        print "<tr>\n";
+        print "<tr valign=top>\n";
         print "<td>Talk $SessionTalkID $AccumulatedTime</td>\n";
         print "<td>$SessionTalks{$SessionTalkID}{HintTitle}</td>\n";
         print "<td>$SessionTalks{$SessionTalkID}{Note}</td>\n";
         print "<td>$SessionTalks{$SessionTalkID}{Time}</td>\n";
         print "</tr>\n";
       } 
+    } else {
+      &DBPrint("<tr><td>No SessionTalk or TalkSep</td></tr>\n");
     }
   }
   print "</table><hr>\n";   
