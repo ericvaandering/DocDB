@@ -27,10 +27,14 @@
 
 require "TopicHTML.pm";
 
-sub DaysPulldown {
+sub DaysPulldown (;$) {
+  my ($DefaultDays) = @_;
+  unless ($DefaultDays) { 
+    $DefaultDays = $LastDays;
+  }  
   my @Days = (1,2,3,5,7,10,14,20,30,45,60,90,120,180 );
   print $query -> popup_menu (-name    => 'days', -values   => \@Days,
-                              -default => $Days,  -onChange => "submit()");
+                              -default => $DefaultDays,  -onChange => "submit()");
 }
 
 sub DateTimePulldown (%) { # Note capitalization

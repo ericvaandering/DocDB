@@ -36,6 +36,7 @@ require "ResponseElements.pm";
 require "SecuritySQL.pm";
 require "Security.pm";
 require "Scripts.pm";
+require "FormElements.pm";
 
 require "ProjectMessages.pm";
 
@@ -211,7 +212,6 @@ print "<p><h4 class=\"SectionHeading\">Database options:</h4>\n";
 
 {
   require "DocumentHTML.pm";
-  require "FormElements.pm";
 
 ### Get list of documents
 

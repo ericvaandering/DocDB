@@ -172,7 +172,7 @@ if ($Days) { # Print out modified by form
   print "<center>";
   print $query -> submit (-value => "Show Documents");
   print " modified in the last ";
-  &DaysPulldown;
+  &DaysPulldown($Days);
   print " days.</center>";
   print $query -> endform;
   print "<p/>";
