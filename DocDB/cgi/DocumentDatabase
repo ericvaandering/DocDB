@@ -115,7 +115,7 @@ if ($Public) {
   print "&nbsp;\n";
 } else {
   print "<ul>\n";
-  print "<li> from <a href=\"$ListMeetings\">group meetings</a>\n";
+  print "<li> from <a href=\"$ListMeetings\">collaboration meetings</a>\n";
   print "</ul>\n";
 }
 print "</td>";
