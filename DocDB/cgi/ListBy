@@ -138,7 +138,7 @@ if ($Days) { # Print out modified by form
 
 my $NumberOfDocuments = &DocumentTable(-fields => \@Fields, -docids  => \@DocumentIDs, 
                                        -sortby => $SortBy,  -reverse => $Reverse);
-print "<p/><b>Number of documents found: $NumberOfDocuments</b><p/>\n";
+print "<b>Number of documents found: $NumberOfDocuments</b><p/>\n";
 
 $EndTime  = new Benchmark;
 
