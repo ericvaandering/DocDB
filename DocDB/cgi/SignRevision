@@ -30,6 +30,13 @@ use DBI;
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "Scripts.pm";
+require "Debug.pm";  # Remove!!!!!!!!
+
+require "ResponseElements.pm";
+
+require "NotificationSQL.pm";
+require "SignoffSQL.pm";
+require "EmailSecurity.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
@@ -42,7 +49,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 my $Action      = $params{action};
 my $EmailUserID = $params{emailuserid};
 my $SignatureID = $params{signatureid};
-my $Password    = $params{password-$EmailUserID};
+my $Password    = $params{"password-$EmailUserID"};
 
 $Password =~ s/\s+//g;
 
@@ -54,22 +61,58 @@ print $query->header;
 
 # Check for valid user
 
+print "EUID: $EmailUserID <br>\n";
+print "PW: $Password  <br>\n";
+
+&HTMLPrintParams();
+
 # Fetch mail user by ID, set username, and validate
+
+&FetchEmailUser($EmailUserID);
+my $UserName = $EmailUser{$EmailUserID}{Username};
+$EmailUserID = 0;
 
 if ($Password) { 
   $EmailUserID = &ValidateEmailUser($UserName,$Password);
 }  
 
+print "EUID: $EmailUserID <br>\n";
+
 unless ($EmailUserID) {
-  push @ErrorStack,"The password you entered is invalid. Please try again.";
+  push @ErrorStack,"The password you entered is invalid.";
 }
 
+&FetchSignature($SignatureID);
+
+unless ($Signatures{$SignatureID}{EmailUserID} == $EmailUserID) {
+  push @ErrorStack,"You are not authorized to sign in this slot.";
+}  
+if ($Action eq "sign" && $Signatures{$SignatureID}{Signed}) {
+  push @ErrorStack,"This signature slot is already signed. You can't sign again.";
+}  
+if ($Action eq "unsign" && !$Signatures{$SignatureID}{Signed}) {
+  push @ErrorStack,"This signature slot is not signed. You can't remove the signature.";
+}  
+if ($Action ne "unsign" && $Action ne "sign") {
+  push @ErrorStack,"The action is not recognized. Must be either sign or unsign.";
+}  
+  
 # Standard warnings/errors on exit
 
 &WarnPage(@WarnStack);
 &EndPage(@ErrorStack);
 
-# Sign/unsign Document
+# Sign or unsign Document
+
+my $SignatureUpdate = $dbh -> prepare("update Signature set Signed=? where SignatureID=?");
+
+if ($Action eq "sign") {
+  $SignatureUpdate -> execute(1,$SignatureID);
+  print "You have signed the document\n"; 
+} elsif ($Action eq "unsign") {
+  $SignatureUpdate -> execute(0,$SignatureID);
+  print "You have removed your signature from the document\n"; 
+}
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -64,9 +64,6 @@ unless ($dbh) {
   push @ErrorStack,$Msg_AdminNoConnect;
 }         
 
-print $query->header;
-&DocDBHeader("Modified E-mail Users");
-
 &EndPage(@ErrorStack);
 
 unless (&CanAdminister) {
@@ -109,7 +106,7 @@ if      ($Action eq "Delete") { # Delete user
     my $EncryptedPassword = crypt($NewPassword,$Salt);
     my $UserUpdate = $dbh -> prepare("update EmailUser set Password=? where EmailUserID=?");
        $UserUpdate -> execute($EncryptedPassword,$EmailUserID);
-    print "<b>The User's password was changed. $EmailUserID $EncryptedPassword They should change it again ASAP.</b><p>\n";
+    print "<b>The User's password was changed. They should change it again ASAP.</b><p>\n";
   }
 } elsif ($Action eq "New") { 
   push @ErrorStack,"You can't create new users here. Do it the normal way.";
