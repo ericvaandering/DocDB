@@ -1,7 +1,27 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+# Description: Creates a new e-mail notification account
 #
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 use CGI;    
 use DBI;
@@ -12,7 +32,7 @@ require "ResponseElements.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
-@error_stack = ();
+@ErrorStack = ();
 
 %params = $query -> Vars;
 
@@ -28,10 +48,10 @@ $PassConf =~ s/\s+//g;
 # Do the passwords match, is there a password
 
 if ($Password eq "") {
-  push @error_stack,"You may not supply an empty password. Please go back and try again.";
+  push @ErrorStack,"You may not supply an empty password. Please go back and try again.";
 }
 if ($Password ne $PassConf) {
-  push @error_stack,"The passwords you entered did not match. Please go back and try again.";
+  push @ErrorStack,"The passwords you entered did not match. Please go back and try again.";
 }
 
 # Does the username already exist?
@@ -41,7 +61,7 @@ my $UserFetch =  $dbh->prepare("select COUNT(EmailUserID) from EmailUser where U
 my ($UserExists) = $UserFetch -> fetchrow_array;
 
 if ($UserExists) {
-  push @error_stack,"The username you entered already exists. Please go back and try again.";
+  push @ErrorStack,"The username you entered already exists. Please go back and try again.";
 }
 
 # Start the page
@@ -51,7 +71,7 @@ print $query->header;
 
 # Everything is OK, create the account
 
-unless (@error_stack) {
+unless (@ErrorStack) {
   srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
   
   my $Salt = ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]).
@@ -67,8 +87,8 @@ unless (@error_stack) {
   retrieve it.<p>\n";   
 }
 
-if (@error_stack) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@error_stack);
+if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@ErrorStack);
 }
 
 

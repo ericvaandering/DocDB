@@ -1,3 +1,27 @@
+#
+# Description: SQL access routings for authors and institutions
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 sub GetAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with all authors
   my ($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active,$InstitutionID);
   my $people_list  = $dbh -> prepare(
@@ -172,7 +196,7 @@ sub ProcessManualAuthors {
     my $initial = substr($first,0,1).".";
     
     unless ($first && $last) {
-      push @error_stack,"Your author entry $entry did not have
+      push @ErrorStack,"Your author entry $entry did not have
                          a first and last name.";
       next;
     }  
@@ -227,7 +251,7 @@ sub ProcessManualAuthors {
 
 # FIXME: Remove error_stack when modifications done. 
 
-    push @error_stack,"No match was found for the the author $entry. Please go 
+    push @ErrorStack,"No match was found for the the author $entry. Please go 
                       back and try again.";   
     push @ErrorStack,"No match was found for the the author $entry. Please go 
                       back and try again.";   

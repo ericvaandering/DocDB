@@ -41,7 +41,9 @@ $Project        = "My Project";
 $ShortProject   = "MyProject";    # This is the project used in the Document ID
 #$WelcomeMessage = "Welcome to the public portion of the $Project Document Database,<br> the repository for all $Project public talks, proceedings, preprints, and publications.";
 
-# Major topic names for "meetings" and "conferences". Each can be a list
+# Major topic names for "meetings" and "conferences". Each can be a list. 
+# These topics must be entered into the DB separately and must appear here
+# exactly as they appear in the Database listings. (This is just for lookup.)
 
 #@MeetingMajorTopics    = ("Collaboration Meetings","Other Meetings");
 #@ConferenceMajorTopics = ("Conferences");

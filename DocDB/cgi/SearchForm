@@ -35,10 +35,10 @@ print $query->header;
 &HelpPopupScript;
 &TopicSearchScript;
 
-@error_stack = ();
+@ErrorStack = ();
 
-if ((@error_stack)) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@error_stack);
+if ((@ErrorStack)) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@ErrorStack);
 }
 
 print $query -> start_multipart_form('POST',$Search,"name=\"queryform\"");
