@@ -9,10 +9,13 @@ use DBI;
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "SecuritySQL.pm";
+require "Security.pm";
 require "Scripts.pm";
 require "ResponseElements.pm";
 
 $query = new CGI;  # Global for subroutines
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+&GetSecurityGroups;
 
 $RobotsMeta = "all";
 
@@ -36,7 +39,7 @@ print "<p><h4>Database options:</h4>\n";
 print "<table cellspacing=10><tr><td>\n";
 
 print "<ul>\n";
-unless ($Public) {
+unless ($Public || !&CanCreate()) {
   print "<li><b><a href=\"$ModifyHome\">Create or change</a> documents</b><p>\n";
 }
 print "<li><b><a href=\"$SearchForm\">Search</a> documents</b><p>\n"; 
@@ -167,8 +170,6 @@ require "RevisionSQL.pm";
 require "Sorts.pm";
 require "Security.pm";
 
-$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
-&GetSecurityGroups;
 my $revision_list = $dbh -> prepare(
    "select DocRevID from DocumentRevision 
     where TO_DAYS(NOW())-TO_DAYS(Timestamp)<=?"); 

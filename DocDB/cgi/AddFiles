@@ -52,6 +52,9 @@ if ($DocumentID && $Version) {
   unless ($DocRevID) {
     push @error_stack,"No such document exists.";
   }
+  unless (&CanModify($DocumentID,$Version)) {
+    push @error_stack,"You are not authorized to modify this document.";
+  }
 } else {
   push @error_stack,"You must supply document and version numbers to add files.";
 }

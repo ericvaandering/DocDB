@@ -15,6 +15,7 @@ require "MySQLAccess.pm";
 require "ResponseElements.pm";
 require "HTMLUtilities.pm";
 require "Defaults.pm";
+require "Security.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -75,6 +76,9 @@ if      ($mode eq "add") {
 @error_stack = ();
 @warn_stack = ();
 
+unless (&CanCreate()) {
+  push @error_stack,"You are not allowed to modify or create documents.";
+}
 if ($mode eq "update" || $mode eq "updatedb") {
   unless ($params{docid}) {
     push @error_stack,"You must supply a document number to modify a document.";
@@ -103,6 +107,9 @@ if ($mode eq "updatedb") {
 if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
   $DocumentID = $params{docid};
   &FetchDocument($DocumentID);
+  unless (&CanModify($DocumentID)) {
+    push @error_stack,"You are not allowed to modify this document.";
+  }
   if ($mode eq "update") { # Need to read in last version values and update
     $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVER});
   } elsif ($mode eq "updatedb") {
@@ -127,6 +134,10 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   my $User = &SecurityLookup($remote_user);
   @SecurityDefaults = ($SecurityIDs{$User}); 
 }  
+
+if (@error_stack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@error_stack);
+}
 
 &SetFileOptions($DocRevID);
 

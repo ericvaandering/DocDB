@@ -4,6 +4,7 @@
 #
 
 use CGI;                                                                                      
+use DBI;
 
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
@@ -11,15 +12,27 @@ require "SecuritySQL.pm";
 require "Scripts.pm";
 require "ResponseElements.pm";
 require "Cookies.pm";
+require "Security.pm";
+require "SecuritySQL.pm";
 
 $query = new CGI;  # Global for subroutines
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+&GetSecurityGroups;
 
 print $query->header;
 &BTeVHeader("Document Modifications");
+@error_stack = ();
 
-if ($Public) {exit;}
+if ($Public || !&CanCreate) {
+  push @error_stack,"You are not allowed to modify or create documents.";
+}
 
 &HelpPopupScript;
+
+if (@error_stack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@error_stack);
+}
 
 print "<p><center><h4>\n";
  print "Click any <font color=red>red link</font> for quick help, or <a

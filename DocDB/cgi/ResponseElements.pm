@@ -197,8 +197,13 @@ sub PrintRevisionInfo {
 sub WarnPage { # Non-fatal errors
   my @errors = @_;
   if (@errors) {
-    print "<b><font color=\"red\">There was a non-fatal error processing your
-    request: </font></b><br>\n";
+    if ($#errors) {
+      print "<b><font color=\"red\">There were non-fatal errors processing your
+             request: </font></b><br>\n";
+    } else {
+      print "<b><font color=\"red\">There was a non-fatal error processing your
+             request: </font></b><br>\n";
+    } 
     foreach $message (@errors) {
       print "<dt><b>$message</b><br>\n";
     } 
@@ -209,8 +214,13 @@ sub WarnPage { # Non-fatal errors
 sub EndPage {  # Fatal errors, aborts page
   my @errors = @_;
   if (@errors) {
-    print "<b><font color=\"red\">There was a fatal error processing your request:
-    </font></b><br>\n";
+    if ($#errors) {
+      print "<b><font color=\"red\">There were fatal errors processing your
+             request: </font></b><br>\n";
+    } else {
+      print "<b><font color=\"red\">There was a fatal error processing your
+             request: </font></b><br>\n";
+    } 
     foreach $message (@errors) {
       print "<dt><b>$message</b><br>\n";
     }  

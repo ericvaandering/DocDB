@@ -39,6 +39,7 @@ if ($mode eq "reserve") {
 }
 
 ### Pull info out of params into local variables
+### FIXME: Get all the params here, too confusing later on to be using $param
 
 @error_stack = ();
 
@@ -139,6 +140,9 @@ my $file_insert = $dbh->prepare(
 
 @warn_stack  = ();
 
+unless (&CanCreate()) {
+  push @error_stack,"You are not allowed to modify or create documents.";
+}
 unless ($params{requester}) {
   push @error_stack,"You must supply a requester for this document.";
 }
@@ -205,6 +209,9 @@ if ($mode eq "add" || $mode eq "update") {
 if ($mode eq "update" || $mode eq "updatedb") {
   unless ($params{docid}) {
     push @error_stack,"You must supply a document number to modify a document.";
+  }
+  unless (&CanModify($params{docid})) {
+    push @error_stack,"You are not allowed to modify this document.";
   }
 }
 

@@ -50,14 +50,14 @@ sub CanAccess { # Can the user access (with current security) this version
 
 sub CanModify { # Can the user modify (with current security) this document
   require "DocumentSQL.pm";
-  my ($DocumentID) = @_;
+  my ($DocumentID,$Version) = @_;
   if     ($Public)      {return 0;} #Public version, can't modify 
   unless ($remote_user) {return 0;} #No user logged in, can't modify 
 
-# If they can access last version they can modify the document    
-
   &FetchDocument($DocumentID);
-  my $Version = $Documents{$DocumentID}{NVER}; 
+  unless (defined $Version) { # Last version is default  
+    $Version = $Documents{$DocumentID}{NVER};
+  }   
   my $Access  = &CanAccess($DocumentID,$Version); 
   my $Create  = &CanCreate();
   return ($Access && $Create);
