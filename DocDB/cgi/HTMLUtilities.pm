@@ -22,12 +22,21 @@ sub DocDBHeader {
   print "<title>$Title</title>\n";
   
   print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB.css\" type=\"text/css\"/>\n";
+  print "<!--[if IE]>\n";
+  print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB_IE.css\" type=\"text/css\" />\n";
+  print "<![endif]-->\n"; 
+   
   if (defined &ProjectHeader) {
     &ProjectHeader($Title,$PageTitle); 
   }
 
   if (-e "$CSSDirectory/$ShortProject"."DocDB.css") {
     print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB.css\" type=\"text/css\"/>\n";
+  }
+  if (-e "$CSSDirectory/$ShortProject"."DocDB_IE.css") {
+    print "<!--[if IE]>\n";
+    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB_IE.css\" type=\"text/css\" />\n";
+    print "<![endif]-->\n"; 
   }
 
   print "</head>\n";
