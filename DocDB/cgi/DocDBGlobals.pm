@@ -61,12 +61,6 @@ $FirstYear         = 2000;     # Earliest year that documents can be created
 @MeetingMajorTopics    = ("Collaboration Meetings","Other Meetings");
 @ConferenceMajorTopics = ("Conferences");
 
-# Major topic names for "meetings" and "conferences". Each can be a list
-# The first item in the two lists are accessed by ListMeetings and ListConferences
-
-@MeetingMajorTopics    = ("Collaboration Meetings","Other Meetings");
-@ConferenceMajorTopics = ("Conferences");
-
 # Include project specific settings
 
 require "ProjectGlobals.pm";
