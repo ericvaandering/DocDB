@@ -33,7 +33,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
 
   my $ConferenceAdd  = $dbh -> prepare("alter table Conference add Preamble text"); 
   my $ConferenceAdd2 = $dbh -> prepare("alter table Conference add Title varchar(128)"); 
-  my $ConferenceAdd3 = $dbh -> prepare("alter table Conference add Epilog text"); 
+  my $ConferenceAdd3 = $dbh -> prepare("alter table Conference add Epilogue text"); 
 
   my $SessSepCreate = $dbh -> prepare("create table SessionSeparator ".
                    "(SessionSeparatorID integer auto_increment primary key,".
