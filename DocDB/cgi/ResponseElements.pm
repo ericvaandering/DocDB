@@ -340,6 +340,14 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
       my @FileIDs   = &FetchDocFiles($DocRevID);
     }
 
+    if ($UseSignoffs) {
+      require "SignoffUtilities.pm";
+      my ($ApprovalStatus,$LastApproved) = &RevisionStatus($DocRevID);
+      unless ($ApprovalStatus eq "Unmanaged") { 
+        $title .= "<br>($ApprovalStatus)";
+      }  
+    }  
+    
     my $rev_date    = &EuroDate($DocRevisions{$DocRevID}{DATE});
     my $author_link = &FirstAuthor($DocRevID);
     print "<tr valign=top>\n";

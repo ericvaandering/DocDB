@@ -71,6 +71,13 @@ sub PrintRevisionInfo {
   print "<center><table cellpadding=10 width=95%>\n";
   print "<tr><td colspan=3 align=center>\n";
   &PrintTitle($DocRevisions{$DocRevID}{Title});
+  if ($UseSignoffs) {
+    require "SignoffUtilities.pm";
+    my ($ApprovalStatus,$LastApproved) = &RevisionStatus($DocRevID);
+    unless ($ApprovalStatus eq "Unmanaged") { 
+      print "(Document Status: $ApprovalStatus)";
+    }  
+  }  
   print "</td></tr>\n";
   print "<tr valign=top>";
   print "<td>";

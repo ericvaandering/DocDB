@@ -10,7 +10,7 @@ sub FetchDocRevisionByID ($) {
   my $RevisionList = $dbh->prepare(
     "select SubmitterID,DocumentTitle,PublicationInfo,VersionNumber,".
            "Abstract,RevisionDate,TimeStamp,DocumentID,Obsolete, ".
-           "Keywords,Note,Superceded ".
+           "Keywords,Note,Demanaged ".
     "from DocumentRevision ".
     "where DocRevID=? and Obsolete=0");
   if ($DocRevisions{$DocRevID}{DOCID} && $DocRevisions{$DocRevID}{Complete}) {
@@ -20,7 +20,7 @@ sub FetchDocRevisionByID ($) {
   my ($SubmitterID,$DocumentTitle,$PublicationInfo,
       $VersionNumber,$Abstract,$RevisionDate,
       $TimeStamp,$DocumentID,$Obsolete,
-      $Keywords,$Note,$Superceded) = $RevisionList -> fetchrow_array;
+      $Keywords,$Note,$Demanaged) = $RevisionList -> fetchrow_array;
 
   #FIXME Make keys mixed-caps
   
@@ -37,7 +37,7 @@ sub FetchDocRevisionByID ($) {
   $DocRevisions{$DocRevID}{OBSOLETE}      = $Obsolete;
   $DocRevisions{$DocRevID}{Keywords}      = $Keywords;
   $DocRevisions{$DocRevID}{Note}          = $Note;
-  $DocRevisions{$DocRevID}{Superceded}    = $Superceded;
+  $DocRevisions{$DocRevID}{Demanaged}    = $Demanaged;
   $DocRevisions{$DocRevID}{Complete}      = 1;
 
 ### Find earliest instance this document for content modification date

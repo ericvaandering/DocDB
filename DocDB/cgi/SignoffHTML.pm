@@ -15,7 +15,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-sub SignoffBox {
+sub SignoffBox { # Just a text box for now with a list of names
   print "<b><a ";
   &HelpLink("signoffs");
   print "Signoffs:</a></b> (one/line)\n";
@@ -82,6 +82,10 @@ sub PrintSignatureInfo ($) {
       my $SignoffID = $Signatures{$SignatureID}{SignoffID};
       my $Status = &SignoffStatus($SignoffID);
       
+      # If the Signoff is ready for a signature, put a password field
+      # If signed, allow rescinding the signature
+      # Otherwise, note that it's waiting
+      
       my $SignatureText  = "";
       
       if ($Status eq "Ready" || $Status eq "Signed") { 
@@ -105,13 +109,11 @@ sub PrintSignatureInfo ($) {
       } else {
         $SignatureText .= "$EmailUser{$EmailUserID}{Name} (unknown status)";
       }    
-      
       push @SignatureSnippets,$SignatureText;
-    }
-  }
+    } # if ($SignatureIDOK) 
+  } # foreach (@SignatureIDs) 
   
   my $SignoffText = join ' or <br>',@SignatureSnippets;
-
   print "$SignoffText\n";
 }
 

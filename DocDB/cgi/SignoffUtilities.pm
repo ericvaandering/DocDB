@@ -22,6 +22,8 @@ sub SignoffStatus ($) {
   
   my $Status = "Ready";
   
+  # Check to see if there is already a signature for this signoff
+  
   my @SignatureIDs = &GetSignatures($SignoffID);
   foreach my $SignatureID (@SignatureIDs) {  # Loop over signatures
     &FetchSignature($SignatureID);
@@ -31,9 +33,11 @@ sub SignoffStatus ($) {
     }
   }    
     
+  # Now check to see if all prerequisites are signed?  
+    
   my @PreSignoffIDs = &GetPreSignoffs($SignoffID);
   foreach my $PreSignoffID (@PreSignoffIDs) { # Loop over PreSignoffs
-    if (!$PreSignoffID) { # Is zero for root signatures)
+    if (!$PreSignoffID) { # Is zero for root signatures
       $SignedOff = 1;
     } else {  
       $SignedOff = 0;
@@ -53,6 +57,66 @@ sub SignoffStatus ($) {
   
   return $Status;        
   
+}
+
+sub RecurseSignoffStatus ($) {
+  require "SignoffSQL.pm";
+  
+  my ($SignoffID) = @_;
+  
+  my $Status = "Approved";
+ 
+  my $SignoffStatus = &SignoffStatus($SignoffID);
+  if ($SignoffStatus eq "Signed") { # Check status of this signoff
+
+# Find signoffs that depend on this, if any
+
+    my @SubSignoffIDs = &GetSubSignoffs($SignoffID);
+    foreach my $SubSignoffID (@SubSignoffIDs) { # Check these
+      my $SignoffStatus =  &RecurseSignoffStatus($SubSignoffID);
+      unless ($SignoffStatus eq "Approved") {
+        $Status = "Unapproved";
+        last;
+      }
+    }    
+  } else {
+    $Status = "Unapproved";
+  }  
+  return $Status; 
+}
+
+sub RevisionStatus ($) { # Return the approval status of a revision
+                         # and the last approved version (if exists)
+                         # Status can be approved, unapproved, unmanaged, demanaged
+  require "SignoffSQL.pm";
+  require "RevisionSQL.pm";
+  
+  my ($DocRevID) = @_;
+  &FetchDocRevisionByID($DocRevID);
+  
+  my $Status      = "Approved";
+  my $LastVersion = undef;
+  
+  my @RootSignoffIDs = &GetRootSignoffs($DocRevID);
+  if (@RootSignoffIDs) {
+    foreach my $SignoffID (@RootSignoffIDs) {
+      my $SignoffStatus = &RecurseSignoffStatus($SignoffID);
+      unless ($SignoffStatus eq "Approved") {
+        $Status = "Unapproved";
+        last;
+      }  
+    }
+  } else {
+    $Status = "Unmanaged";
+  }  
+
+  if ($DocRevisions{$DocRevID}{Demanaged}) {
+    $Status = "Demanaged";
+  }
+
+  # Find last approved version
+
+  return ($Status,$LastVersion);
 }
 
 1;
