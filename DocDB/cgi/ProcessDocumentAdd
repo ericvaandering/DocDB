@@ -137,9 +137,9 @@ for (my $i = 1; $i<= $MaxFiles; ++$i) {
 my %Archive = ();
 if ($Archive eq "archive") { # They uploaded a tar/zip file
   $AddNewFile = 1;
-  $Archive{File} = $query ->  param("upload1");
+  $Archive{File} = $query ->  param("single_upload");
   $Archive{MainFile}    = $params{"mainfile"};
-  $Archive{Description} = $params{"filedesc1"};
+  $Archive{Description} = $params{"filedesc"};
 }
 
 if ($Meeting || $OtherMeeting) {
@@ -424,18 +424,20 @@ if ($UseSignoffs && $SignoffList) {
 
 ### Deal with files
 
+my @FileIDs;
+
 if ($mode eq "updatedb") { # Copy DocumentFile entries
   &ProtectDirectory($documentID,$version,@securities); # Redo security 
-  my @FileIDs = &AddFiles(-docrevid => $DocRevID, -files => \%Files, -oldversion => $OldVersion);
+  @FileIDs = &AddFiles(-docrevid => $DocRevID, -files => \%Files, -oldversion => $OldVersion);
 }  
 
 if ($mode eq "add" || $mode eq "update") { # We're adding new files
-  $new_dir = &MakeDirectory($documentID,$version);
+  my $NewDir = &MakeDirectory($documentID,$version);
   &ProtectDirectory($documentID,$version,@securities);
-  if ($Archive eq "single") { # The user uploaded the files themselves 
-    my @FileIDs = &AddFiles(-docrevid => $DocRevID, -files => \%Files, -oldversion => $OldVersion);
+  if ($Archive eq "single") { # They uploaded individual files
+    @FileIDs = &AddFiles(-docrevid => $DocRevID, -files => \%Files, -oldversion => $OldVersion);
   } elsif ($Archive eq "archive") { # They uploaded a tar/zip file
-    my @FileIDs = &AddArchive(-docrevid => $DocRevID, -archive => \%Archive);
+    @FileIDs = &AddArchive(-docrevid => $DocRevID, -archive => \%Archive);
   } 
 } 
 

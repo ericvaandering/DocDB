@@ -390,35 +390,21 @@ print "</tr>\n";
 
 if ($mode eq "add" || $mode eq "update") {
   my $CopyOption = ($mode eq "update");
-#  if ($mode eq "update") {
-#    $CopyOption = 1;
-#  }  
+
   print "<tr><td colspan=4>\n";
   if ($Archive eq "archive") { 
-    if ($Upload eq "file") {
-      &ArchiveUploadBox(-required => $RequiredEntries{File});
-    } elsif ($Upload eq "http") {
-      &ArchiveHTTPBox(-required => $RequiredEntries{File});
-    }  
+    &ArchiveUploadBox(-required => $RequiredEntries{File});
   } else {
     &FileUploadBox(-allowcopy => $CopyOption, -type => $Upload, -docrevid => $DocRevID,
                    -addfiles => 1, -required  => $RequiredEntries{File}, -fileids => \@FileIDs);
-#    if ($Upload eq "file") {
-#      &SingleUploadBox(-required  => $RequiredEntries{File},
-#                       -allowcopy => $CopyOption);
-#    } elsif ($Upload eq "http") {
-#      &SingleHTTPBox(-required  => $RequiredEntries{File},
-#                     -allowcopy => $CopyOption);
-#    }  
   }
   print "<br/>Make sure you supply a format everyone can view (e.g. PDF) along
   with source formats.<br/>\n"; 
   print "</td></tr>";
 } elsif ($mode eq "updatedb") {
   print "<tr><td colspan=4>\n";
-    &FileUploadBox(-desconly => true, -docrevid => $DocRevID,
-                   -fileids => \@FileIDs);
-#  &FileUpdateBox($DocRevID);
+  &FileUploadBox(-desconly => true, -docrevid => $DocRevID,
+                 -fileids  => \@FileIDs);
   print "</td></tr>";
 }
 

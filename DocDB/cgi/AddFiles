@@ -33,9 +33,11 @@ require "ResponseElements.pm";
 require "SecuritySQL.pm";
 require "RevisionSQL.pm";
 require "MiscSQL.pm";
+
 require "FSUtilities.pm";
 require "WebUtilities.pm";
 require "HTMLUtilities.pm";
+require "FileUtilities.pm";
 require "Security.pm";
 
 require "RevisionHTML.pm";

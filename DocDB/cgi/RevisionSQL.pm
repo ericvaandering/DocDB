@@ -161,6 +161,8 @@ sub FetchRevisionsByMinorTopic {
 }
 
 sub UpdateRevision (%) { # Later add other fields, where clause
+  require "SQLUtilities.pm";
+  
   my %Params = @_;
   
   my $DocRevID = $Params{-docrevid};

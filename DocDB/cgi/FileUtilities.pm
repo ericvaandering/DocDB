@@ -120,12 +120,14 @@ sub AddArchive (%) {
   $ShortName = &ProcessUpload($Directory,$Archive{File});
   my $Status = &ExtractArchive($Directory,$ShortName); # FIXME No status yet
   if ($ShortName) {
+    push @DebugStack,"Archive name: $ShortName";
     $FileID = &InsertFile(-docrevid    => $DocRevID, -datetime => $DateTime,
                           -filename    => $ShortName,
                           -main        => 0,
                           -description => "Document Archive");
     push @FileIDs,$FileID;
     if (-s "$Directory/$Archive{MainFile}") {
+      push @DebugStack,"Main File: $Archive{MainFile}";
       $FileID = &InsertFile(-docrevid    => $DocRevID, -datetime => $DateTime,
                             -filename    => $Archive{MainFile},
                             -main        => 1,

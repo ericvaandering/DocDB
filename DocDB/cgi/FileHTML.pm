@@ -202,8 +202,8 @@ sub FileUploadBox (%) {
   }
   
   if ($DescOnly) {
-    $HelpLink = "";
-    $HelpText = "";
+    $HelpLink = "filechar";
+    $HelpText = "Update File Characteristics";
   }
     
   $DescHelpLink = "description";
