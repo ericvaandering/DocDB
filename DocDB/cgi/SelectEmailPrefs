@@ -53,12 +53,13 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
 # Collect parameters
 
-my $Mode        = $params{mode};
-my $UserName    = $params{username};
-my $Password    = $params{password};
-my $NewPass     = $params{newpass};
-my $ConfNewPass = $params{confnewpass};
-   $Digest      = $params{digest};
+my $Mode         = $params{mode};
+my $UserName     = $params{username};
+my $Password     = $params{password};
+my $NewPass      = $params{newpass};
+my $ConfNewPass  = $params{confnewpass};
+   $Digest       = $params{digest};
+my $ClearWatched = $params{clearwatched};
 
 $UserName =~ s/\s+//g;
 $Password =~ s/\s+//g;
@@ -216,6 +217,13 @@ if ($Mode eq "update") {
 
   $EmailUser{$EmailUserID}{EmailUserID} = 0; 
   &FetchEmailUser($EmailUserID);
+
+# Delete individual documents if asked
+    
+  if ($ClearWatched && $EmailUserID) {
+    my $Delete = $dbh -> prepare("delete from EmailDocumentImmediate where EmailUserID=?"); 
+    $Delete -> execute($EmailUserID);
+  }      
     
 # Delete old and Insert new notifications
 
@@ -266,11 +274,13 @@ print "<ul>\n";
 print "</ul>\n";
 print "</td></tr></table>\n";
 
-# FIXME: No way to delete notification on a document
+# FIXME: No way to delete notification on a single document
 
 my @WatchDocumentIDs = &FetchEmailDocuments(-emailuserid => $EmailUserID);
 if (@WatchDocumentIDs) {
-  print "<center><h4>You are also watching these documents: </h4></center><p/>\n";
+  print "<center><h4>You are watching these individual documents: </h4>\n";
+  print $query -> checkbox(-name => "clearwatched", -value => 1, -label => 'Clear Watched Documents');
+  print "<p/></center><p/>\n";
 }
 my $NDocs = &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
                            -docids => \@WatchDocumentIDs);  
