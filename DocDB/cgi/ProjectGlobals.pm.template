@@ -51,5 +51,13 @@ $ShortProject   = "MyProject";    # This is the project used in the Document ID
 #$RemoteUsername   = ""; # Just to be safe
 #$db_rwuser        = ""; # Just to be safe
 #$db_rwpass        = ""; # Just to be safe
+
+# At this point you can also change any of the other variables in
+# DocDBGlobals.pm for things like $HomeLastDays, command locatations
+# (if not using Linux) etc.
+
+#$HomeLastDays     = 20;         # Number of days for last modified on home page
+
+
  
 1;
