@@ -84,4 +84,23 @@ sub UnixBaseFile {       # Strips off Unix directories
   return $short_file;
 }  
   
+sub ExtractArchive {
+  my ($Directory,$File) = @_;
+  chdir $Directory or die "<p>Fatal error in chdir<p>\n";
+  
+  my $Extract;
+  chomp $File;
+  if      (grep /\.tar$/,$File) {
+    $Extract = $Tar." xf ";
+  } elsif ((grep /\.tgz$/,$File) || (grep /\.tar\.gz$/,$File)) {
+    $Extract = $Tar." xfz ";
+  } elsif (grep /\.zip$/,$File) {
+    $Extract = $Unzip." ";
+  }  
+  
+  $Command = $Extract.$File;
+  print "Unpacking the archive with the command <tt>$Command</tt> <br>\n";
+  system ($Command);
+}  
+
 1;

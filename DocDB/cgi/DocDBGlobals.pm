@@ -27,7 +27,9 @@ $ShowDocument       = $cgi_root."ShowDocument";
 
 # Shell Commands
 
-$Wget = "/usr/bin/wget -O - --quiet ";
+$Wget   = "/usr/bin/wget -O - --quiet ";
+$Tar    = "/bin/tar ";
+$Unzip  = "/usr/bin/unzip -q ";
 
 # Other Globals
 

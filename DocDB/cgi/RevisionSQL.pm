@@ -7,7 +7,7 @@ sub FetchDocRevision {
   &FetchDocument($documentID);
   my $revision_list = $dbh->prepare(
     "select DocRevID,SubmitterID,DocumentTitle,PublicationInfo,VersionNumber,".
-           "Abstract,RevisionDate,Security,TimeStamp,DocumentID,Obsolete ".
+           "Abstract,RevisionDate,TimeStamp,DocumentID,Obsolete ".
     "from DocumentRevision ".
     "where DocumentID=? and VersionNumber=? and Obsolete=0");
   if ($DocRevIDs{$documentID}{$versionNumber}) {
@@ -15,7 +15,7 @@ sub FetchDocRevision {
   }
   $revision_list -> execute($documentID,$versionNumber);
   my ($DocRevID,$SubmitterID,$DocumentTitle,$PublicationInfo,
-      $VersionNumber,$Abstract,$RevisionDate,$Security,
+      $VersionNumber,$Abstract,$RevisionDate,
       $TimeStamp,$DocumentID,$Obsolete) = $revision_list -> fetchrow_array;
 
   $DocRevIDs{$documentID}{$versionNumber} = $DocRevID;
@@ -28,7 +28,6 @@ sub FetchDocRevision {
   $DocRevisions{$DocRevID}{VERSION}       = $VersionNumber;
   $DocRevisions{$DocRevID}{DOCID}         = $DocumentID;
   $DocRevisions{$DocRevID}{OBSOLETE}      = $Obsolete;
-  @{$DocRevisions{$DocRevID}{SECURITY}}   = split /\,/,$Security;
 
   return $DocRevID;
 }
@@ -41,7 +40,7 @@ sub FetchDocRevisionByID {
   my ($docRevID) = @_;
   my $revision_list = $dbh->prepare(
     "select DocRevID,SubmitterID,DocumentTitle,PublicationInfo,VersionNumber,".
-           "Abstract,RevisionDate,Security,TimeStamp,DocumentID,Obsolete ".
+           "Abstract,RevisionDate,TimeStamp,DocumentID,Obsolete ".
     "from DocumentRevision ".
     "where DocRevID=?");
   if ($DocRevisions{$docRevID}{DOCID}) {
@@ -49,7 +48,7 @@ sub FetchDocRevisionByID {
   }
   $revision_list -> execute($docRevID);
   my ($DocRevID,$SubmitterID,$DocumentTitle,$PublicationInfo,
-      $VersionNumber,$Abstract,$RevisionDate,$Security,
+      $VersionNumber,$Abstract,$RevisionDate,
       $TimeStamp,$DocumentID,$Obsolete) = $revision_list -> fetchrow_array;
 
   $DocRevIDs{$DocumentID}{$VersionNumber} = $DocRevID;
@@ -62,7 +61,6 @@ sub FetchDocRevisionByID {
   $DocRevisions{$DocRevID}{VERSION}       = $VersionNumber;
   $DocRevisions{$DocRevID}{DOCID}         = $DocumentID;
   $DocRevisions{$DocRevID}{OBSOLETE}      = $Obsolete;
-  @{$DocRevisions{$DocRevID}{SECURITY}}   = split /\,/,$Security;
 
   return $DocRevID;
 }
@@ -72,14 +70,14 @@ sub FetchRevisionsByDocument {
   &FetchDocument($DocumentID);
   my $revision_list = $dbh->prepare(
     "select DocRevID,SubmitterID,DocumentTitle,PublicationInfo,VersionNumber,".
-           "Abstract,RevisionDate,Security,TimeStamp,DocumentID,Obsolete ".
+           "Abstract,RevisionDate,TimeStamp,DocumentID,Obsolete ".
     "from DocumentRevision ".
     "where DocumentID=?");
   $revision_list -> execute($DocumentID);
   
   $revision_list -> bind_columns(undef, \($DocRevID,$SubmitterID,$DocumentTitle,
                                           $PublicationInfo,$VersionNumber,$Abstract,
-                                          $RevisionDate,$Security,$TimeStamp,
+                                          $RevisionDate,$TimeStamp,
                                           $DocumentID,$Obsolete));
   my @DocRevList = ();
   while ($revision_list -> fetch) {
@@ -98,7 +96,6 @@ sub FetchRevisionsByDocument {
     $DocRevisions{$DocRevID}{VERSION}       = $VersionNumber;
     $DocRevisions{$DocRevID}{DOCID}         = $DocumentID;
     $DocRevisions{$DocRevID}{OBSOLETE}      = $Obsolete;
-    @{$DocRevisions{$DocRevID}{SECURITY}}   = split /\,/,$Security;
     unless ($Obsolete) {
       push @DocRevList,$DocRevID;
     }  

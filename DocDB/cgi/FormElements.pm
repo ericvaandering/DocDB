@@ -78,6 +78,60 @@ sub SingleHTTPBox {
   print "</table>\n";
 };
 
+sub ArchiveUploadBox {
+  print "<table cellpadding=3>\n";
+  print "<tr><td colspan=2><b><a ";
+  &HelpLink("filearchive");
+  print "Archive file upload:</a></b><br> \n";
+  print "<tr><td align=right>\n";
+  print "<b>Archive File:</b>\n";
+  print "<td>\n";
+  print $query -> filefield(-name => "single_upload", -size => 60,
+                              -maxlength=>250);
+
+  print "<tr><td align=right>\n";
+  print "<b>Main file in archive:</b>\n";
+  print "<td>\n";
+  print $query -> textfield (-name => 'mainfile', -size => 70, -maxlength => 128);
+
+  print "<tr><td align=right>\n";
+  print "<b>Description of file:</b>\n";
+  print "<td>\n";
+  print $query -> textfield (-name => 'filedesc', -size => 70, -maxlength => 128);
+  print "</table>\n";
+};
+
+sub ArchiveHTTPBox {
+  print "<table cellpadding=3>\n";
+  print "<tr><td colspan=4><b><a ";
+  &HelpLink("httparchive");
+  print "Upload Archive by HTTP:</a></b><br> \n";
+
+  print "<tr><td align=right><b>Archive URL:</b>\n";
+  print "<td colspan=3>\n";
+  print $query -> textfield (-name => 'single_http', -size => 70, -maxlength => 240);
+
+  print "<tr><td align=right>\n";
+  print "<b>Main file in archive:</b>\n";
+  print "<td colspan=3>\n";
+  print $query -> textfield (-name => 'mainfile', -size => 70, -maxlength => 128);
+
+  print "<tr><td align=right>\n";
+  print "<b>Description of file:</b>\n";
+  print "<td colspan=3>\n";
+  print $query -> textfield (-name => 'filedesc', -size => 70, -maxlength => 128);
+
+  print "<tr><td align=right><b>User:</b>\n";
+  print "<td>\n";
+  print $query -> textfield (-name => 'http_user', -size => 20, -maxlength => 40);
+  print "<td align=right>\n";
+  print "<b>Password:</b>\n";
+  print "<td>\n";
+  print $query -> password_field (-name => 'http_pass', -size => 20, -maxlength => 40);
+  print "</td></tr>\n";
+  print "</table>\n";
+};
+
 sub RequesterSelect { # Scrolling selectable list for requesting author
   my @AuthorIDs = sort byLastName keys %Authors;
   my %AuthorLabels = ();

@@ -44,8 +44,8 @@ $modes{updatedb} = "Update DB information";  # See note in ProcessDocumentAdd
 $uploads{http}   = "HTTP submission";
 $uploads{file}   = "Local file upload";
 
-$archives{multi}   = "Single file";
-$archives{singe}   = "Archive (multi-file) upload";
+$archives{multi}    = "Archive (multi-file) upload";
+$archives{single}   = "Single file";
 
 $topicmodes{multi}  = "Multiple Topic Boxes";
 $topicmodes{single} = "Single Topic List";
@@ -68,7 +68,7 @@ print "<p>\n";
 print "<b>Upload type (not implemented): </b>\n";
 print $query -> radio_group(-name => "archive", -values => \%archives);
 print "<p>\n";
-print "<b>Number of upload fields (not implemented): </b>\n";
+print "<b>Number of upload fields: </b>\n";
 print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
 print "<p>\n";
 print "<b>Override submit date (not implemented): </b>\n";

@@ -29,7 +29,12 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 $mode = $params{mode};
 
 print $query->header;
-&BTeVHeader("BTeV Document Reservation Results","Reservation Results");
+&BTeVHeader("BTeV Document Reservation Results","Reservation Results"); #FIXME
+
+### Pull info out of params into local variables
+
+$Archive   = $params{archive};
+
 
 if ($mode ne "add"    && $mode ne "reserve" && 
     $mode ne "update" && $mode ne "updatedb") {
@@ -60,8 +65,8 @@ my $document_insert = $dbh->prepare(
 my $doc_rev_insert = $dbh->prepare(
    "insert into DocumentRevision ".
    "(DocRevID, DocumentID, SubmitterID, DocumentTitle, PublicationInfo, ". 
-   " VersionNumber, Abstract, Security, RevisionDate) ". 
-   "values (0,?,?,?,?,?,?,?,NOW())");
+   " VersionNumber, Abstract, RevisionDate) ". 
+   "values (0,?,?,?,?,?,?,NOW())");
             
 my $rev_author_insert =  $dbh->prepare(
    "insert into RevisionAuthor ".
@@ -115,6 +120,10 @@ if ($mode eq "add" || $mode eq "update") {
   if     ($params{single_upload} && $params{single_http}) {
     push @error_stack,"You may not specify both URL and file upload.";
   }
+  if     (!$params{mainfile} && $params{archive} eq "multi") {
+    push @error_stack,"You must specify a main file in the archive.";
+  }
+  
   if ($params{single_http}) {
     if ($params{http_user} && $params{http_pass}) {
       $Authentication = " --http-user $params{http_user} --http-pass $params{http_pass} ";
@@ -187,11 +196,10 @@ if      ($mode eq "reserve") {
   $version   = $Documents{$documentID}{NVER};
 }
 
-if ($mode eq "updatedb") { # New Document revision replaces old
- # Fetch old DocumentRevision
+if ($mode eq "updatedb") { # New Document revision replaces old. Fetch 
+                           # old DocumentRevision and mark it obsolete
   $oldRevID = &FetchDocRevision($documentID,$version);
- # Mark it obsolete
-  my $obsolete_revision = $dbh->prepare(
+  my $obsolete_revision = $dbh -> prepare(
      "update DocumentRevision set Obsolete=1 where DocRevID=?");
   $obsolete_revision -> execute($oldRevID); 
 }  
@@ -199,8 +207,7 @@ if ($mode eq "updatedb") { # New Document revision replaces old
 ### Add entry to Document Revision
 
 $doc_rev_insert -> execute($documentID,$params{requester},$params{title},
-                           $params{pubinfo},$version,$params{abstract},
-                           $security_list);
+                           $params{pubinfo},$version,$params{abstract});
 my $docRevID = $doc_rev_insert -> {mysql_insertid}; # Works with MySQL only
 
 ### Add to authors, topics and securities
@@ -216,6 +223,8 @@ foreach $securityID (@securities) {
     $rev_security_insert -> execute($docRevID,$securityID);
   }  
 }
+
+### Deal with files
 
 if ($mode eq "updatedb") { # Copy DocumentFile entries
   &ProtectDirectory($documentID,$version,@securities); # Redo security 
@@ -241,9 +250,51 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
   $new_dir = &MakeDirectory($documentID,$version);
   &ProtectDirectory($documentID,$version,@securities);
   
-  if ($params{single_upload}) { # Copy file to directory
-    @short_files   = $query ->  param("single_upload");
-    foreach $short_file (@short_files) {
+  if ($Archive eq "single") { # The user uploaded the files themselves 
+    @Descriptions = split ("\0",$params{filedesc});
+    @Roots = split ("\0",$params{root});
+    if ($params{single_upload}) { # Copy file to directory
+      @short_files   = $query ->  param("single_upload");
+      foreach $short_file (@short_files) {
+        if (grep /\\/,$short_file) {
+          $short_file = &WindowsBaseFile($short_file);
+        }  
+        if (grep /\//,$short_file) {
+          $short_file = &UnixBaseFile($short_file);
+        }  
+
+        open (OUTFILE,">$new_dir/$short_file");
+        while ($bytes_read = read($short_file,$buffer,1024)) {
+          print OUTFILE $buffer
+        }
+        close OUTFILE;
+
+        unless (-s "$new_dir/$short_file") {
+          push @warn_stack,"The file $short_file did not exist or was blank.";
+        }  
+      }
+    } elsif ($params{single_http}) {
+      @urls = split /\0/,$params{single_http};
+      @short_files = ();
+      foreach $url (@urls) {
+        @url_parts = split /\//,$url;
+        $short_file = pop @url_parts;
+        push @short_files,$short_file;
+
+        $command   = $Wget.$Authentication.$url;
+        @url_lines = `$command`;
+
+        open (OUTFILE,">$new_dir/$short_file");
+        print OUTFILE @url_lines;
+        close OUTFILE;
+      }  
+    }
+  } elsif ($Archive eq "multi") { # They uploaded a tar/zip file
+    @short_files = ();
+    @Descriptions = ();
+    @Roots = ();
+    if ($params{single_upload}) { # Copy tar file to directory
+      $short_file   = $query ->  param("single_upload"); # There can be only one
       if (grep /\\/,$short_file) {
         $short_file = &WindowsBaseFile($short_file);
       }  
@@ -257,30 +308,54 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
       }
       close OUTFILE;
 
-      unless (-s "$new_dir/$short_file") {
-        push @warn_stack,"The file $short_file did not exist or was blank.";
-      }  
-    }
-  } elsif ($params{single_http}) {
-    @urls = split /\0/,$params{single_http};
-    @short_files = ();
-    foreach $url (@urls) {
+      if  (-s "$new_dir/$short_file") {
+        push @short_files,$short_file;
+        push @Descriptions,"Document Archive";
+        push @Roots,0;
+        $status = &ExtractArchive($new_dir,$short_file); # FIXME No status yet
+        $main_file = $params{mainfile};
+        if (-s "$new_dir/$main_file") {
+          push @short_files,$main_file;
+          push @Descriptions,$params{filedesc};
+          push @Roots,1;
+        } else {
+          push @warn_stack,"The main file $main_file did not exist or was blank.";
+        }
+      } else {
+        push @warn_stack,"The archive file $short_file did not exist or was blank.";
+      }
+    } elsif ($params{single_http}) {
+      $url = $params{single_http};
       @url_parts = split /\//,$url;
       $short_file = pop @url_parts;
-      push @short_files,$short_file;
 
       $command   = $Wget.$Authentication.$url;
       @url_lines = `$command`;
-
       open (OUTFILE,">$new_dir/$short_file");
       print OUTFILE @url_lines;
       close OUTFILE;
-    }  
-  } 
 
-# Insert into Files database
-  @Descriptions = split ("\0",$params{filedesc});
-  @Roots = split ("\0",$params{root});
+      if  (-s "$new_dir/$short_file") {
+        push @short_files,$short_file;
+        push @Descriptions,"Document Archive";
+        push @Roots,0;
+        $status = &ExtractArchive($new_dir,$short_file); # FIXME No status yet
+        $main_file = $params{mainfile};
+        if (-s "$new_dir/$main_file") {
+          push @short_files,$main_file;
+          push @Descriptions,$params{filedesc};
+          push @Roots,1;
+        } else {
+          push @warn_stack,"The main file $main_file did not exist or was blank.";
+        }
+      } else {
+        push @warn_stack,"The archive file $short_file did not exist or was blank.";
+      }
+    } # HTTP & Archive
+  } # Archive upload
+
+### Insert into Files database
+
   foreach $short_file (@short_files) {
     $Description = shift @Descriptions;
     $rootfile = shift @Roots;
@@ -291,7 +366,9 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
     }    
     $file_insert -> execute($docRevID,$short_file,$rootfile,$Description);
   }
-}
+} # File upload for "add" and "update"
+
+### If we had any warnings print them out now
 
 if (@warn_stack) {
   &WarnPage(@warn_stack);

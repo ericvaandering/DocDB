@@ -34,6 +34,11 @@ if ($upload ne "http" && $upload ne "file") {
   $upload = "file";
 }  
 
+$Archive   = $params{archive};
+if ($Archive ne "multi" && $Archive ne "single") {
+  $Archive = "single";
+}  
+
 $topicmode = $params{topicmode};
 if ($topicmode ne "single" && $topicmode ne "multi") {
   $topicmode = "single";
@@ -58,11 +63,15 @@ if ($mode eq "update" || $mode eq "updatedb") {
     push @error_stack,"You must supply a document number to modify a document.";
   }
 }
+if ($mode eq "update" || $mode eq "add") {
+  if ($Archive eq "multi" && $NumberUploads > 1) {
+    push @error_stack,"You cannot upload more than one archive.";
+  }
+}
 
 if ((@error_stack)) {  # The user made one or more mistakes, warn and exit
   &EndPage(@error_stack);
 }
-
 
 my $DocumentID;
 if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
@@ -82,9 +91,10 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
 &HelpPopupScript;
 
 print $query -> start_multipart_form('POST',$ProcessDocumentAdd);
-print $query -> hidden(-name => 'mode',   -default => 'reserve');
-print $query -> hidden(-name => 'upload', -default => 'file');
-print $query -> hidden(-name => 'docid', -default => $DocumentID);
+print $query -> hidden(-name => 'mode',    -default => 'reserve');
+print $query -> hidden(-name => 'upload',  -default => 'file');
+print $query -> hidden(-name => 'archive', -default => 'single');
+print $query -> hidden(-name => 'docid',   -default => $DocumentID);
 
 print "<center><table cellpadding=10>\n";
 
@@ -120,11 +130,19 @@ print "</tr>\n";
 
 if ($mode eq "add" || $mode eq "update") {
   print "<tr><td colspan=3>\n";
-  if ($upload eq "file") {
-    &SingleUploadBox;
-  } elsif ($upload eq "http") {
-    &SingleHTTPBox;
-  }  
+  if ($Archive eq "multi") { 
+    if ($upload eq "file") {
+      &ArchiveUploadBox;
+    } elsif ($upload eq "http") {
+      &ArchiveHTTPBox;
+    }  
+  } else {
+    if ($upload eq "file") {
+      &SingleUploadBox;
+    } elsif ($upload eq "http") {
+      &SingleHTTPBox;
+    }  
+  }
   print "</td></tr>";
 }
 
