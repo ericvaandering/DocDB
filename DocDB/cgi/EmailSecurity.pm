@@ -64,6 +64,12 @@ sub UserPrefForm($) {
   print "<tr><td align=right><b>E-mail address:</b></td>\n<td>";
   print $query -> textfield(-name => 'email',    -default => $EmailAddress,     
                             -size => 24, -maxlength => 64);
+  print "<tr><td align=right><b>New password:</b></td>\n<td>";
+  print $query -> password_field(-name => 'newpass',    -default => "",     
+                            -size => 24, -maxlength => 64, -override =>1 );
+  print "<tr><td align=right><b>Confirm password:</b></td>\n<td>";
+  print $query -> password_field(-name => 'confnewpass',    -default => "",     
+                            -size => 24, -maxlength => 64, -override =>1 );
   print "<tr><td align=right><b>Prefer HTML e-mail:</b></td>\n<td>";
   if ($PreferHTML) {
     print $query -> checkbox(-name => "html", -checked => 'checked', -value => 1, -label => '');

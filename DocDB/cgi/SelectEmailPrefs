@@ -29,13 +29,20 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
 # Collect parameters
 
-my $Mode     = $params{mode};
-my $UserName = $params{username};
-my $Password = $params{password};
-   $Digest   = $params{digest};
+my $Mode        = $params{mode};
+my $UserName    = $params{username};
+my $Password    = $params{password};
+my $NewPass     = $params{newpass};
+my $ConfNewPass = $params{confnewpass};
+   $Digest      = $params{digest};
 
 $UserName =~ s/\s+//g;
 $Password =~ s/\s+//g;
+
+if (($NewPass || $ConfNewPass) && ($NewPass ne $ConfNewPass)) {
+  push @warn_stack,"The passwords you entered did not match. Password not
+  changed.";
+}
 
 if ($Mode eq "newuser") {
   my $PassConf = $params{passconf};
@@ -124,10 +131,14 @@ if ($EmailUserID) {
   &EndPage();
 }
 
-# Everything is OK, display the page
-
 if (@error_stack) {  # The user made one or more mistakes, warn and exit
   &EndPage(@error_stack);
+}
+
+# Everything is OK, display the page
+
+if (@warn_stack) {  # The user made one or more mistakes, warn and exit
+  &WarnPage(@warn_stack);
 }
 
 if ($Mode eq "update") {
@@ -142,6 +153,22 @@ if ($Mode eq "update") {
 # Update DB
 
   $UpdateUserInfo -> execute($Name,$Email,$HTML,$EmailUserID);
+
+  if ($NewPass && $ConfNewPass && ($NewPass eq $ConfNewPass)) {
+    srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
+
+    my $Salt = ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]).
+               ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]);
+
+    my $EncryptedPassword = crypt($NewPass,$Salt);
+    my $UpdatePassword = $dbh -> prepare("update EmailUser set Password=? where EmailUserID=?");
+       $UpdatePassword -> execute($EncryptedPassword,$EmailUserID);
+    push @warn_stack,"Your password has been changed.";
+  }  
+
+  if (@warn_stack) {  # The user made one or more mistakes, warn and exit
+    &WarnPage(@warn_stack);
+  }
 
 # Clear and refetch user
 
@@ -175,6 +202,7 @@ print "<b>Use this page to change your e-mail notification preferences.</b>
        At the top part of the page, you can change your e-mail address, name,
        and whether you prefer text or HTML e-mail. (At the present time, all e-mail
        is text only, but your choice will be remembered for future enhancements.) 
+       If you want to change your password, type the new password in both boxes. 
        <p>
        At the bottom part of the page, select the <a href=\"#topic\">topics or 
        subtopics</a>,  <a href=\"#author\">authors</a>, <a
