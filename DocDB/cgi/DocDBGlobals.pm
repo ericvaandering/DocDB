@@ -128,6 +128,7 @@ $ListDocuments         = $cgi_root."ListDocuments";
 $ListByAuthor          = $cgi_root."ListByAuthor";
 $ListByTopic           = $cgi_root."ListByTopic";
 $ListByType            = $cgi_root."ListByType";
+$ListManagedDocuments  = $cgi_root."ListManagedDocuments";
 $LastModified          = $cgi_root."LastModified";
 
 $ListAuthors           = $cgi_root."ListAuthors";
