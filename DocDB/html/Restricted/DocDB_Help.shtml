@@ -54,7 +54,7 @@
  <li><a href="#final">Final Words</a>
  <ol type="1">
   <li><a href="#refer">Referring to your document and its files</a>
-  <li><a href="#group">Referring groups of documents</a>
+  <li><a href="#group">Referring to groups of documents</a>
   <li><a href="#morehelp">Getting more help</a>
  </ol>
 </ol>
@@ -480,11 +480,13 @@ work.
 Any simple search can be embedded into a URL for reference from a web page.
 The most useful searches are by topic, keyword, conference, or meeting.
 <p>
-To link to a topic, you must first find out the topic ID number.  
+To link to a topic, you must first find out the topic ID number. 
 The easiest way to do this is to simply click on that topic from the 
 <a href=http://www-btev.fnal.gov/cgi-bin/DocDB/ListTopics>list by topic</a> page.
 The URL for a single topic will be 
-<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/ListByTopic?topicid=xxx</tt>.
+<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/ListByTopic?topicid=xxx</tt>. 
+Similarly, links to documents by authors are most easily found by the 
+<a href=http://www-btev.fnal.gov/cgi-bin/DocDB/ListAuthors>list by author</a> page.
 <p>
 Use the search form to link to a keyword: 
 <tt>http://www-btev.fnal.gov/cgi-bin/DocDB/Search?keywordsearchmode=anysub&keywordsearch=xxxxxxx</tt>.
@@ -495,9 +497,62 @@ Conferences and meetings are topics, but have special display capabilities:
 <p>
 If your links are from a public page, be sure to use 
 <tt>http://www-btev.fnal.gov/cgi-bin/public/DocDB</tt> instead of 
-<tt>http://www-btev.fnal.gov/cgi-bin/DocDB</tt>.
+<tt>http://www-btev.fnal.gov/cgi-bin/DocDB</tt>. 
+Only publicly accessible documents will be listed.
+<p>
+
+<h4>More complicated combinations</h4>
+
+By using the search capabilities, more complicated combinations of documents can be shown. Producing these kinds of
+searches requires an understanding of two additional parameters, <tt>innerlogic</tt> and <tt>outerlogic</tt>, both of
+which can have values of <tt>AND</tt> and <tt>OR</tt>. For instance, if you specify two authors, <tt>innerlogic=OR</tt>
+will return documents by <i>either</i> author while <tt>AND</tt> will require the document to be authored by <i>both</i>
+people. To understand <tt>outerlogic</tt>, take the example of searching for an author and a topic. 
+<tt>outerlogic=OR</tt> will require a document to either have the correct author or the correct topic, while <tt>AND</tt>
+will require both. Both options can be specified at the same time. <tt>outerlogic</tt> defaults to <tt>AND</tt> and
+<tt>innerlogic</tt> defaults to <tt>OR</tt>. But, this could change in the future, so specify these values if you want to
+be absolutely sure.<p>
+
+Here is a complete list of search parameters that can be specified:
+<ul>
+ <li>Title: <tt>titlesearch</tt> (text) and <tt>titlesearchmode</tt> (see search string modes)
+ <li>Abstract: <tt>abstractsearch</tt> (text) and <tt>abstractsearchmode</tt> (see search string modes)
+ <li>Keywords: <tt>keywordsearch</tt> (text) and <tt>keywordsearchmode</tt> (see search string modes)
+ <li>Publication info: <tt>pubinfosearch</tt> (text) and <tt>pubinfosearchmode</tt> (see search string modes)
+ <li>File names: <tt>filesearch</tt> (text) and <tt>filesearchmode</tt> (see search string modes). (Can be used to search
+ for file names or extensions.)
+ <li>File descriptions: <tt>filedescsearch</tt> (text) and <tt>filedescsearchmode</tt> (see search string modes). 
+ <li>Topics: <tt>minortopic</tt> (numbers found with List Topics)
+ <li>Requester and authors: <tt>requestersearch</tt> and <tt>authors</tt> (numbers found with List Authors)
+ <li>Document type: <tt>doctypemulti</tt> (numbers, look at the HTML source for SearchForm to find) 
+ <li>Modification date ranges: Look at the HTML source for SearchForm to find the parameters and values
+</ul>
+
+For titles, abstracts, keywords, publication info, file names and file descriptions, you should specify the
+<q>searchmode</q> also. Currently there are two modes:
+<ul>
+ <li><tt>searchmode=anysub</tt> case-insensitive, word must be found as a substring (as opposed to a full word), and if
+ more than one are specified, <i>only one</i> word must be found
+ <li><tt>searchmode=allsub</tt> as above, but <i>all</i> words must be found
+</ul> 
+More modes can easily be added if required. To search for more than one word, place the code for a space (%20) between
+them.  <p>
+
+To search for more than one author, topic, etc. (fields with numbers) you can specify more than one in the URL (see the
+examples).<p>
+
+Examples:
+<ul>
+ <li>Search for documents a keyword and an author:
+  <tt>http://www-btev.fnal.gov/cgi-bin/DocDB/Search?keywordsearchmode=anysub&outerlogic=AND&keywordsearch=test&authors=1</tt></li>
+ <li>Search for documents by two authors:
+  <tt>http://www-btev.fnal.gov/cgi-bin/DocDB/Search?authors=1&authors=2&innerlogic=AND</tt></li>
+ <li>Search for documents by an author on a topic:
+  <tt>http://www-btev.fnal.gov/cgi-bin/DocDB/Search?authors=1&minortopic=2&outerlogic=AND</tt></li>
+</ul>
 
 <a name="morehelp">
+
 <h3>Getting More Help</h3>
 
 You can often get more help when using the entry form or the advanced forms on
