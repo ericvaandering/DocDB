@@ -60,6 +60,9 @@ sub PrintXRefInfo ($) {
     foreach my $DocXRefID (@DocXRefIDs) {
       my $DocRevID = $DocXRefs{$DocXRefID}{DocRevID};
       &FetchDocRevisionByID($DocRevID);
+      if ($DocRevisions{$DocRevID}{Obsolete}) {
+        next;
+      }
       my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
       if ($DocumentID && !$SeenDocument{$DocumentID}) {
         my $DocumentLink  = &FullDocumentID($DocumentID).": ";

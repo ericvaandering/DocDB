@@ -161,7 +161,7 @@ sub ValidateRevisions {
   
   foreach my $RevID (@RevisionIDs) {
     &FetchDocRevisionByID($RevID);
-    unless ($DocRevisions{$RevID}{OBSOLETE}) {
+    unless ($DocRevisions{$RevID}{Obsolete}) {
       $DocumentIDs{$DocRevisions{$RevID}{DOCID}} = 1;
     }
   }
