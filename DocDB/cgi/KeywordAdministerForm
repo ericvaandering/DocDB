@@ -177,9 +177,11 @@ print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td rowspan=2>\n"; &KeywordGroupSelect(-format => "full"); print "</td>\n";
+print "<td rowspan=2>\n"; 
+ &KeywordGroupSelect(-format => "full", -disabled => true);
+print "</td>\n";
 print "<td>\n";
- &ShortDescriptionBox(-name => 'shortdesc',-disabled => true);
+ &ShortDescriptionBox(-name => 'shortdesc', -disabled => true);
 print "</td>\n";
 print "</tr>\n";
 
