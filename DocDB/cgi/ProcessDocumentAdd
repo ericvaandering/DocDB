@@ -192,9 +192,6 @@ if ($mode eq "add" || $mode eq "reserve") {
   }
 }
 if ($mode eq "add" || $mode eq "update") {
-  unless ($params{authors} || $params{authormanual}) {
-    push @ErrorStack,"You must supply at least one author for this document.";
-  }
   unless ($params{topics}) {
     push @ErrorStack,"You must supply at least one topic for this document.";
   }
