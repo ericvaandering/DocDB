@@ -205,8 +205,11 @@ sub PrintRevisionInfo {
     &PrintRevisionSignoffInfo($DocRevID);
   }  
 
+  print "</div>\n";  # MainColumn3Col
+  
+  print "<div id=\"Footer3Col\">\n";
   if (&CanModify($DocumentID) && !$HideButtons) {
-    print "<hr/>\n";
+#    print "<hr/>\n";
     print "<center><table cellpadding=5>\n";
     print "<tr valign=top>";
     print "<td align=center width=33%>";
@@ -218,11 +221,8 @@ sub PrintRevisionInfo {
     print "</td></tr>\n";
     print "</table></center>\n"; 
   }  
-  
-  print "</div>\n";  # MainColumn3Col
-  
-  print "<div id=\"Footer3Col\"></div>\n";
-  
+  print "</div>\n";  # Footer3Col
+
   print "</div>\n";  # RevisionInfo
 }
  
