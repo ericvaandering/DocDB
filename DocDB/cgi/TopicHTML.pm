@@ -62,7 +62,7 @@ sub MinorTopicLink ($;$) {
     $URL = "$ListByTopic?topicid=$TopicID";
   }  
     
-  $link = "<a href=$URL>";
+  $link = "<a href=\"$URL\" title=\"$MinorTopics{$TopicID}{LONG}\">";
   if ($mode eq "short") {
     $link .= $MinorTopics{$TopicID}{SHORT};
   } elsif ($mode eq "long") {
