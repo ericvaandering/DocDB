@@ -38,7 +38,6 @@ require "AdministerElements.pm";
 
 require "MailNotification.pm";
 require "SecuritySQL.pm";
-require "CertificateUtilities.pm";
 require "NotificationSQL.pm";
 
 $query = new CGI;  # Global for subroutines
@@ -157,7 +156,7 @@ foreach my $EmailUserID (@EmailUserIDs) {
   
   print "<th>Groups:</th>";
   print "<td><li>\n"; 
-  my @UserGroupIDs = &FetchSecurityGroupsByCert(-ignoreverification => 'true');
+  my @UserGroupIDs = &FetchUserGroupIDs($EmailUserID);
   foreach my $UserGroupID (@UserGroupIDs) {
     &FetchSecurityGroup($UserGroupID);
     print "<li>$SecurityGroups{$UserGroupID}{NAME}</li>";

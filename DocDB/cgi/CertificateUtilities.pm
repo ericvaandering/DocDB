@@ -21,6 +21,7 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 sub FetchSecurityGroupsByCert (%) {
+  require "SecuritySQL.pm"; 
   my %Params = @_;
 
   my $IgnoreVerification = $Params{-ignoreverification};
@@ -43,18 +44,7 @@ sub FetchSecurityGroupsByCert (%) {
 
   my ($EmailUserID) = $EmailUserSelect -> fetchrow_array; 
   
-  my @UserGroupIDs = ();
-  my $UserGroupID;
-  
-  if ($EmailUserID) {
-    my $GroupList = $dbh->prepare("select GroupID from UsersGroup where EmailUserID=?");
-    $GroupList -> execute($EmailUserID);
-    $GroupList -> bind_columns(undef, \($UserGroupID));
-    while ($GroupList -> fetch) {
-      push @UserGroupIDs,$UserGroupID;
-    }
-  }
-  
+  my @UserGroupIDs = FetchUserGroupIDs ($EmailUserID);
   return @UserGroupIDs;
 }
 

@@ -140,5 +140,23 @@ sub FetchSecurityGroupByName ($) {
   }  
   return $GroupID;
 }   
+
+sub FetchUserGroupIDs ($)
+  my ($EmailUserID) = @_;
+
+  my @UserGroupIDs = ();
+  my $UserGroupID;
+  
+  if ($EmailUserID) {
+    my $GroupList = $dbh->prepare("select GroupID from UsersGroup where EmailUserID=?");
+    $GroupList -> execute($EmailUserID);
+    $GroupList -> bind_columns(undef, \($UserGroupID));
+    while ($GroupList -> fetch) {
+      push @UserGroupIDs,$UserGroupID;
+    }
+  }
+  
+  return @UserGroupIDs;
+}
   
 1;
