@@ -78,7 +78,7 @@ $EnableMatrix{emailuserid}{Delete} = 1;
 
 $EnableMatrix{emailuserid}{Modify} = 1;
 $EnableMatrix{resetpw}{Modify}     = 1;
-
+$EnableMatrix{usergroups}{Modify}  = 1;
 print $query -> start_multipart_form('POST',"$EmailAdminister",
                                      "id=\"peraccount\" name=\"peraccount\"");
 print "<table cellpadding=10>\n";
@@ -104,7 +104,8 @@ print $query -> textfield (-name => 'resetpw', -size => 20,
                            -maxlength => 20,   -disabled);
 print "</td>\n";
 print "<td rowspan=5>\n"; 
-&SecurityList(-helplink => 'usergroups', -helptext => 'User\'s Groups', -name => 'usergroups'); 
+&SecurityScroll(-helplink => 'usergroups', -helptext => 'User\'s Groups', 
+                -name     => 'usergroups', -disabled => TRUE); 
 print "</td>\n";  
 print "</tr>\n";
 

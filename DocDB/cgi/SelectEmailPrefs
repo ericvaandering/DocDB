@@ -237,18 +237,20 @@ print $query -> hidden(-name => 'mode', -default => "update", -override => 1);
 
 print "<table cellspacing=10 width=90% align=center><tr><td>\n";
 
-print "<b>Use this page to change your e-mail notification preferences.</b>
-       <p>
-       At the top part of the page, you can change your e-mail address, name,
-       and whether you prefer text or HTML e-mail. (At the present time, all e-mail
-       is text only, but your choice will be remembered for future enhancements.) 
-       If you want to change your password, type the new password in both boxes. 
-       <p>
-       At the bottom part of the page, select the <a href=\"#topic\">topics or 
-       subtopics</a>,  <a href=\"#author\">authors</a>, or 
-       <a href=\"#keyword\">keywords</a> you want to be notified of changes to,
-       either immediately or in digests sent every day or week.\n";
-print "</td><tr></table>\n";
+print "<p><b>Use this page to change your e-mail notification
+       preferences.</b></p> <p> At the top part of the page, you can change
+       your e-mail address, name, and whether you prefer text or HTML e-mail.
+       (At the present time, all e-mail is text only, but your choice will be
+       remembered for future enhancements.)\n";
+unless ($UserValidation eq "certificate") {
+  print "If you want to change your password, type the new password in both boxes.\n"; 
+}
+print "</p><p> At the bottom part of the page, select the <a
+       href=\"#topic\">topics or  subtopics</a>,  <a
+       href=\"#author\">authors</a>, or  <a href=\"#keyword\">keywords</a> you
+       want to be notified of changes to, either immediately or in digests sent
+       every day or week.</p>\n";
+print "</td></tr></table>\n";
 
 print "<table cellspacing=10><tr><td>\n";
 print "<tr><td colspan=2 valign=top>\n";
