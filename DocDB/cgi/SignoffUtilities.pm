@@ -90,12 +90,13 @@ sub RevisionStatus ($) { # Return the approval status of a revision
                          # Status can be approved, unapproved, unmanaged, demanaged
   require "SignoffSQL.pm";
   require "RevisionSQL.pm";
+  require "Sorts.pm";
   
   my ($DocRevID) = @_;
   &FetchDocRevisionByID($DocRevID);
   
-  my $Status      = "Approved";
-  my $LastVersion = undef;
+  my $Status       = "Approved";
+  my $LastDocRevID = undef;
   
   my @RootSignoffIDs = &GetRootSignoffs($DocRevID);
   if (@RootSignoffIDs) {
@@ -115,8 +116,37 @@ sub RevisionStatus ($) { # Return the approval status of a revision
   }
 
   # Find last approved version
+  if ($Status eq "Approved") {
+    $LastDocRevID = $DocRevID;
+  } elsif ($Status eq "Unapproved") {
+    my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+    my @DocRevIDs   = reverse sort RevisionByVersion &FetchRevisionsByDocument($DocumentID);
+    foreach my $CheckRevID (@DocRevIDs) {
+      &FetchDocRevisionByID($CheckRevID);
+      my $Status         = "Approved";
+      my @RootSignoffIDs = &GetRootSignoffs($CheckRevID);
+      if (@RootSignoffIDs) {
+        foreach my $SignoffID (@RootSignoffIDs) {
+          my $SignoffStatus = &RecurseSignoffStatus($SignoffID);
+          unless ($SignoffStatus eq "Approved") {
+            $Status = "Unapproved";
+            last;
+          }  
+        }
+      } else {
+        $Status = "Unmanaged";
+      }  
 
-  return ($Status,$LastVersion);
+      if ($DocRevisions{$CheckRevID}{Demanaged}) {
+        $Status = "Demanaged";
+      }
+      if ($Status eq "Approved") {
+        $LastDocRevID = $CheckRevID;
+        last;
+      }  
+    } 
+  }  
+  return ($Status,$LastDocRevID);
 }
 
 sub UnSignRevision { # Remove all signatures from a revision
