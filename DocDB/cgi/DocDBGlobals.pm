@@ -47,6 +47,7 @@ $DBWebMasterEmail = "btev-docdb\@fnal.gov";
 $DBWebMasterName  = "BTeV Document Database Administrators";
 $Administrator    = "docdbadm";
 $AuthUserFile     = "/www/conf/www-btev/.htpasswd";
+$MailServer       = "smtp.fnal.gov";
 
 $LastDays         = 20;        # Number of days for default in LastModified
 $HomeLastDays     = 5;         # Number of days for last modified on home page
@@ -112,5 +113,10 @@ $HelpFile           = $web_root."Static/Restricted/DocDB_Help.shtml";
 
 $SelectPrefs        = $cgi_root."SelectPrefs";
 $SetPrefs           = $cgi_root."SetPrefs";
+
+$EmailLogin         = $cgi_root."EmailLogin";
+$EmailCreate        = $cgi_root."EmailCreate";
+$SelectEmailPrefs   = $cgi_root."SelectEmailPrefs";
+$SetEmailPrefs      = $cgi_root."SetEmailPrefs";
 
 1;

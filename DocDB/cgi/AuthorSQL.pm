@@ -7,13 +7,17 @@ sub GetAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with all authors
   %Authors = ();
   while ($people_list -> fetch) {
     $Authors{$AuthorID}{AUTHORID}  =  $AuthorID;
-    $Authors{$AuthorID}{FULLNAME}  = "$FirstName $MiddleInitials $LastName";
+    if ($MiddleInitials) {
+      $Authors{$AuthorID}{FULLNAME}  = "$FirstName $MiddleInitials $LastName";
+    } else {
+      $Authors{$AuthorID}{FULLNAME}  = "$FirstName $LastName";
+    }
     $Authors{$AuthorID}{LASTNAME}  =  $LastName;
     $Authors{$AuthorID}{FIRSTNAME} =  $FirstName;
     $Authors{$AuthorID}{ACTIVE}    =  $Active;
     $Authors{$AuthorID}{INST}      =  $InstitutionID;
     if ($Active) {
-      $ActiveAuthors{$AuthorID}{FULLNAME} = "$FirstName $MiddleInitials $LastName";
+      $ActiveAuthors{$AuthorID}{FULLNAME} = $Authors{$AuthorID}{FULLNAME};
       $names{$AuthorID}                   = "$FirstName $MiddleInitials $LastName"; # FIXME
     }
   }
@@ -34,7 +38,11 @@ sub FetchAuthor { # Fetches an Author by ID, adds to $Authors{$AuthorID}{}
   $author_fetch -> execute($authorID);
   ($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active,$InstitutionID) = $author_fetch -> fetchrow_array;
   $Authors{$AuthorID}{AUTHORID}  =  $AuthorID;
-  $Authors{$AuthorID}{FULLNAME}  = "$FirstName $MiddleInitials $LastName";
+  if ($MiddleInitials) {
+    $Authors{$AuthorID}{FULLNAME}  = "$FirstName $MiddleInitials $LastName";
+  } else {
+    $Authors{$AuthorID}{FULLNAME}  = "$FirstName $LastName";
+  }
   $Authors{$AuthorID}{LASTNAME}  =  $LastName;
   $Authors{$AuthorID}{FIRSTNAME} =  $FirstName;
   $Authors{$AuthorID}{ACTIVE}    =  $Active;

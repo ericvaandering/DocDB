@@ -215,9 +215,13 @@ sub EndPage {
   exit;
 }
 
-sub FullDocumentID {
-  my ($documentID) = @_;
-  return "BTeV-doc-$documentID";
+sub FullDocumentID ($;$) {
+  my ($DocumentID,$Version) = @_;
+  if ($Version) {
+    return "BTeV-doc-$DocumentID-v$Version";
+  } else {  
+    return "BTeV-doc-$DocumentID";
+  }  
 }  
 
 sub DocumentLink {
@@ -226,7 +230,7 @@ sub DocumentLink {
   if ($Title) {
     $ret .= $Title;
   } else {
-    $ret .= &FullDocumentID."-v$Version";
+    $ret .= &FullDocumentID($DocumentID,$Version);
   }
   $ret .=  "</a>";
 }         

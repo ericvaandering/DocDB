@@ -1,0 +1,77 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+use CGI;    
+use DBI;
+                                                  
+require "DocDBGlobals.pm";
+require "HTMLUtilities.pm";
+require "ResponseElements.pm";
+
+$query = new CGI;  # Global for subroutines
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+@error_stack = ();
+
+%params = $query -> Vars;
+
+# Collect parameters
+
+my $UserName = $params{username};
+my $Password = $params{password};
+my $PassConf = $params{passconf};
+$UserName =~ s/\s+//g;
+$Password =~ s/\s+//g;
+$PassConf =~ s/\s+//g;
+
+# Do the passwords match, is there a password
+
+if ($Password eq "") {
+  push @error_stack,"You may not supply an empty password. Please go back and try again.";
+}
+if ($Password ne $PassConf) {
+  push @error_stack,"The passwords you entered did not match. Please go back and try again.";
+}
+
+# Does the username already exist?
+
+my $UserFetch =  $dbh->prepare("select COUNT(EmailUserID) from EmailUser where Username=?");
+   $UserFetch -> execute($UserName);
+my ($UserExists) = $UserFetch -> fetchrow_array;
+
+if ($UserExists) {
+  push @error_stack,"The username you entered already exists. Please go back and try again.";
+}
+
+# Start the page
+   
+print $query->header;
+&BTeVHeader("Notification Account Creation");
+
+# Everything is OK, create the account
+
+unless (@error_stack) {
+  srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
+  
+  my $Salt = ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]).
+             ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]);
+
+  my $EncryptedPassword = crypt($Password,$Salt);
+  my $UserInsert        = $dbh -> prepare(
+     "insert into EmailUser (EmailUserID,Username,Password) ".
+     "values                (0,          ?,       ?)");
+     $UserInsert -> execute($UserName,$EncryptedPassword); 
+     
+  print "User <b>$UserName</b> created. Do not forget your password, there is no way to
+  retrieve it.<p>\n";   
+}
+
+if (@error_stack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@error_stack);
+}
+
+
+&DocDBNavBar;
+&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+

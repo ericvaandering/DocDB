@@ -12,6 +12,7 @@ $StartTime = new Benchmark;
 require "ResponseElements.pm";
 require "MySQLAccess.pm";
 require "DocDBGlobals.pm";
+require "MailNotification.pm";
 require "FSUtilities.pm";
 require "WebUtilities.pm";
 require "HTMLUtilities.pm";
@@ -227,7 +228,7 @@ if ($#securities > 0) {
   }  
 }
   
-if ((@error_stack)) {  # The user made one or more mistakes, warn and exit
+if (@error_stack) {  # The user made one or more mistakes, warn and exit
   &EndPage(@error_stack);
 }
 
@@ -414,6 +415,8 @@ print "You were successful. Your Document ID is <b>$full_docid, version
 
 &PrintRevisionInfo($DocRevID);
 &OtherVersionLinks($documentID,$version);
+
+&MailNotices($DocRevID);
 
 $EndTime  = new Benchmark;
 $TimeDiff = timediff($EndTime,$StartTime);

@@ -1,0 +1,124 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+use CGI;    
+use DBI;
+                                                  
+require "DocDBGlobals.pm";
+require "HTMLUtilities.pm";
+require "ResponseElements.pm";
+require "EmailSecurity.pm";
+require "MailNotification.pm";
+require "Scripts.pm";
+require "Sorts.pm";
+require "SearchFormElements.pm";
+require "TopicSQL.pm";
+
+$query = new CGI;  # Global for subroutines
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+@error_stack = ();
+
+&GetTopics;
+
+%params = $query -> Vars;
+
+# Collect parameters
+
+my $Mode     = $params{mode};
+my $UserName = $params{username};
+my $Password = $params{password};
+   $Digest   = $params{digest};
+
+$UserName =~ s/\s+//g;
+$Password =~ s/\s+//g;
+
+# Start the page
+   
+print $query->header;
+&BTeVHeader("Update Notification Preferences"); # Prob need specialized header
+&HelpPopupScript;
+
+# Check for valid user
+
+if ($Password) { 
+  $EmailUserID = &ValidateEmailUser($UserName,$Password);
+} elsif ($Digest) {
+  $EmailUserID = &ValidateEmailUserDigest($UserName,$Digest);
+}  
+
+# print "Mode: $Mode<br>\n";
+  
+if ($EmailUserID) {
+  &FetchEmailUser($EmailUserID);
+  $Digest = &EmailUserDigest($EmailUserID);
+} else {
+  push @error_stack,"The username/password pair you entered is invalid. Please go back and try again.";
+}
+
+# Everything is OK, display the page
+
+if (@error_stack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@error_stack);
+}
+
+if ($Mode eq "update") {
+
+# Collect relevant parameters for user preferences
+
+  my $Name     = $params{name};
+  my $Email    = $params{email};
+  my $HTML     = $params{html};
+  my $UpdateUserInfo = $dbh -> prepare("update EmailUser set Name=?,EmailAddress=?,PreferHTML=? where EmailUserID=?");
+
+# Update DB
+
+  $UpdateUserInfo -> execute($Name,$Email,$HTML,$EmailUserID);
+
+# Clear and refetch user
+
+  $EmailUser{$EmailUserID}{EmailUserID} = 0; 
+  &FetchEmailUser($EmailUserID);
+    
+# Delete old and Insert new notifications
+
+  &SetEmailNotifications($EmailUserID,"Immediate");  
+  &SetEmailNotifications($EmailUserID,"Daily");  
+  &SetEmailNotifications($EmailUserID,"Weekly");  
+
+# Clear and refetch if needed
+}  
+
+print $query -> startform('POST',$SelectEmailPrefs);
+print $query -> hidden(-name => 'mode', -default => "update");
+
+print "<table cellspacing=10 width=95% align=center><tr><td colspan=3>\n";
+
+print "At the top part of the page, you can change your e-mail address, name,
+       and whether you prefer text or HTML e-mail. (At the present time, all e-mail
+       is text only, but your choice will be remembered). <p>
+       At the bottom part of the page, select the topics or subtopics you want
+       to be notified of changes to, either immediately or in digests sent every
+       day or week.\n";
+
+print "<tr><td colspan=3>\n";
+&UserPrefForm($EmailUserID);
+
+print "<tr valign=bottom>";
+&EmailPrefForm($EmailUserID,"Immediate");
+print "<tr valign=bottom>";
+&EmailPrefForm($EmailUserID,"Daily");
+print "<tr valign=bottom>";
+&EmailPrefForm($EmailUserID,"Weekly");
+print "<tr><td colspan=3 align=center>";
+print $query -> submit (-value => "Update Notification Preferences");
+print " \n";
+print $query -> reset (-value => "Reset");
+print "</table>\n";
+print $query -> endform;
+print "<p>\n";
+
+&DocDBNavBar;
+&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+
