@@ -240,14 +240,24 @@ sub AuthorTextEntry ($;@) {
                             -columns => 20, -rows    => 8);
 };
 
-sub InstitutionEntryBox {
+sub InstitutionEntryBox (;%) {
+  my (%Params) = @_;
+  
+  my $Disabled = $Params{-disabled}  || "0";
+  
+  my $Booleans = "";
+  
+  if ($Disabled) {
+    $Booleans .= " -disabled";
+  }  
+  
   print "<table cellpadding=5><tr valign=top>\n";
   print "<td>\n";
   print "<b><a ";
   &HelpLink("instentry");
   print "Short Name:</a></b><br> \n";
   print $query -> textfield (-name => 'short', 
-                             -size => 30, -maxlength => 40);
+                             -size => 30, -maxlength => 40,$Booleans);
   print "</td></tr>\n";
 
   print "<tr><td>\n";
@@ -255,7 +265,7 @@ sub InstitutionEntryBox {
   &HelpLink("instentry");
   print "Long Name:</a></b><br> \n";
   print $query -> textfield (-name => 'long', 
-                             -size => 40, -maxlength => 80);
+                             -size => 40, -maxlength => 80,$Booleans);
   print "</td>\n";
   print "</tr></table>\n";
 }
