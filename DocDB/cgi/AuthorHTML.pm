@@ -81,7 +81,7 @@ sub PrintAuthorInfo {
   print $Institutions{$Authors{$AuthorID}{INST}}{LONG};
 }
 
-sub AuthorsTable {
+sub AuthorsTableByInstitution { # Old version, lists by institution
   require "Sorts.pm";
 
   my $NCols = 4;
@@ -105,6 +105,35 @@ sub AuthorsTable {
     }  
     print "</ul>";
   }  
+  print "</table>\n";
+}
+
+sub AuthorsTable {
+  require "Sorts.pm";
+
+  my @AuthorIDs = sort byLastName    keys %Authors;
+  my $NCols     = 4;
+  my $NPerCol   = int (scalar(@AuthorIDs)/$NCols + 1);
+
+  print "<table cellpadding=10>\n";
+  print "<tr valign=top>\n";
+  
+  print "<td>\n";
+  print "<ul>\n";
+  
+  foreach my $AuthorID (@AuthorIDs) {
+
+    if ($NThisCol >= $NPerCol) {
+      print "</ul></td>\n";
+      print "<td>\n";
+      print "<ul>\n";
+      $NThisCol = 0;
+    }
+    ++$NThisCol;
+    my $author_link = &AuthorLink($AuthorID);
+    print "<li>$author_link\n";
+  }  
+  print "</ul></td></tr>";
   print "</table>\n";
 }
 
