@@ -54,6 +54,7 @@
  <li><a href="#final">Final Words</a>
  <ol type="1">
   <li><a href="#refer">Referring to your document and its files</a>
+  <li><a href="#group">Referring groups of documents</a>
   <li><a href="#morehelp">Getting more help</a>
  </ol>
 </ol>
@@ -472,6 +473,29 @@ put "public" between "cgi-bin" and "DocDB".  I.e. use
 <tt>http://www-btev.fnal.gov/cgi-bin/public/DocDB/ShowDocument</tt> instead of
 the normal version. The document must also be publicly accessible for this to
 work.
+
+<a name="group">
+<h3>Referring to Groups of Documents</h3>
+
+Any simple search can be embedded into a URL for reference from a web page.
+The most useful searches are by topic, keyword, conference, or meeting.
+<p>
+To link to a topic, you must first find out the topic ID number.  
+The easiest way to do this is to simply click on that topic from the 
+<a href=http://www-btev.fnal.gov/cgi-bin/DocDB/ListTopics>list by topic</a> page.
+The URL for a single topic will be 
+<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/ListByTopic?topicid=xxx</tt>.
+<p>
+Use the search form to link to a keyword: 
+<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/Search?keywordsearchmode=anysub&keywordsearch=xxxxxxx</tt>.
+<p>
+Conferences and meetings are topics, but have special display capabilities:
+<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/ListByTopic?topicid=xxx&mode=conference</tt> or
+<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/DisplayMeeting?conferenceid=xxx</tt>.
+<p>
+If your links are from a public page, be sure to use 
+<tt>http://www-btev.fnal.gov/cgi-bin/public/DocDB</tt> instead of 
+<tt>http://www-btev.fnal.gov/cgi-bin/DocDB</tt>.
 
 <a name="morehelp">
 <h3>Getting More Help</h3>
