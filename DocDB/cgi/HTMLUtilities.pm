@@ -12,7 +12,10 @@ sub DocDBHeader {
   
   my $Search = $Params{-search}; # Fix search page!
   my $NoBody = $Params{-nobody};
-  
+
+  my @ScriptParts = split /\//,$ENV{SCRIPT_NAME};
+  my $SciptName   = pop @ScriptParts;
+
   unless ($PageTitle) { 
     $PageTitle = $Title;
   }  
@@ -27,6 +30,7 @@ sub DocDBHeader {
   print "<!--[if IE]>\n";
   print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB_IE.css\" type=\"text/css\" />\n";
   print "<![endif]-->\n"; 
+  print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB$ScriptName.css\" type=\"text/css\"/>\n";
    
   # Include projects DocDB style sheets 
    
@@ -38,6 +42,7 @@ sub DocDBHeader {
     print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB_IE.css\" type=\"text/css\" />\n";
     print "<![endif]-->\n"; 
   }
+    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB".$ScriptName.".css\" type=\"text/css\"/>\n";
 
   if (defined &ProjectHeader) {
     &ProjectHeader($Title,$PageTitle); 
