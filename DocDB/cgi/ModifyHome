@@ -198,7 +198,7 @@ print "<tr><td align=right>\n";
 print "<a "; &HelpLink("dateoverride"); 
 print "<b>Override submit date:</b></a>\n";
 print "<td>\n";
-print $query -> radio_group(-name => "overdate", -values => ['Yes','No'],
+print $query -> radio_group(-name => "overdate", -values => ['No','Yes'],
                             -default => $DateOverridePref);
 print "<tr><td align=center colspan=2>\n";
 print $query -> submit (-value => "Give me my customized form");

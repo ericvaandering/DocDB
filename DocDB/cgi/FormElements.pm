@@ -279,6 +279,7 @@ sub ArchiveHTTPBox {
 };
 
 sub RequesterSelect { # Scrolling selectable list for requesting author
+  my ($Quiet) = @_;
   my @AuthorIDs = sort byLastName keys %Authors;
   my %AuthorLabels = ();
   my @ActiveIDs = ();
@@ -287,10 +288,12 @@ sub RequesterSelect { # Scrolling selectable list for requesting author
       $AuthorLabels{$ID} = $Authors{$ID}{FULLNAME};
       push @ActiveIDs,$ID; 
     } 
+  }
+  unless ($Quiet) {  
+    print "<b><a ";
+    &HelpLink("requester");
+    print "Requester:</a></b><br> \n";
   }  
-  print "<b><a ";
-  &HelpLink("requester");
-  print "Requester:</a></b><br> \n";
   print $query -> scrolling_list(-name => "requester", -values => \@ActiveIDs, 
                                  -size => 10, -labels => \%AuthorLabels,                      
                                  -default => $RequesterDefault);

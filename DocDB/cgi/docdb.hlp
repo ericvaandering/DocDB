@@ -1,3 +1,14 @@
+overdatepref
+Override submit date
+Use this option if you want to (by default) be able to set the date and time
+for documents written in the past. This is useful mainly for those entering
+lots of old documents.
+#
+namepref
+Name
+Select your name from the list. When you create a new document, you will be
+automatically selected as the requester and author.
+#
 displaymode
 Sort by
 This controls how the list of documents is sorted and what is shown on the
