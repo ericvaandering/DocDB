@@ -141,7 +141,7 @@ sub FetchSecurityGroupByName ($) {
   return $GroupID;
 }   
 
-sub FetchUserGroupIDs ($)
+sub FetchUserGroupIDs ($) {
   my ($EmailUserID) = @_;
 
   my @UserGroupIDs = ();
