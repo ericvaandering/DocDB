@@ -784,9 +784,9 @@ or may not be the same as the web username and password.
   <key>sessioninfo</key>
   <title>Session Information</title>
   <text>
-   Here fill out the starting date and time for the session, a short title for
-   the session, and a longer note, room assignment, etc. in the Description
-   field.
+   Here fill out the location of the session, its starting date and time, a
+   short title for the session, and a longer note, such as instructions, in the
+   description field.
   </text>
  </entry>
  

@@ -44,7 +44,7 @@ sub PrintSessionTalk($) {
   @TopicIDs = &RemoveArray(\@TopicIDs,@IgnoreTopics);
 
   print "<tr valign=top>\n";
-  print "<td align=right>",&TruncateSeconds($AccumulatedTime),"</td>\n";  
+  print "<td align=right><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";  
   if ($Confirmed) { # Put titles in italics for unconfirmed talks
     print "<td>$Title</td>\n";
   } else {

@@ -54,6 +54,7 @@ my @SessionDays          = split /\0/,$params{sessionday};
 my @SessionHours         = split /\0/,$params{sessionhour};
 my @SessionOrders        = split /\0/,$params{sessionorder};
 my @RawSessionSeparators = split /\0/,$params{sessionseparator};
+my @SessionLocations     = split /\0/,$params{sessionlocation};
 my @SessionTitles        = split /\0/,$params{sessiontitle};
 my @SessionDescriptions  = split /\0/,$params{sessiondescription};
 my @MeetingOrderIDs      = split /\0/,$params{meetingorderid};
@@ -153,19 +154,6 @@ if ($Mode eq "create" || $Mode eq "modify") {
   
 # Loop over sessions and insert
   
-  my $SessionUpdate = $dbh -> prepare(
-   "update Session set ".
-   "StartTime=?, Title=?, Description=? ". 
-   "where SessionID=?");
-
-  my $SessionSeparatorUpdate = $dbh -> prepare(
-   "update SessionSeparator set ".
-   "StartTime=?, Title=?, Description=? ". 
-   "where SessionSeparatorID=?");
-
-  my $MeetingOrderUpdate = $dbh -> prepare(
-   "update MeetingOrder set SessionOrder=? where MeetingOrderID=?");
-  
   my $SessionsUpdated    = 0;
 
   foreach my $SessionOrder (@SessionOrders) {
@@ -173,6 +161,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
     my $SessionMonth       = shift @SessionMonths        ;
     my $SessionDay         = shift @SessionDays          ;
     my $SessionHour        = shift @SessionHours         ;
+    my $SessionLocation    = shift @SessionLocations     ;
     my $SessionTitle       = shift @SessionTitles        ;
     my $SessionDescription = shift @SessionDescriptions  ;
     my $MeetingOrderID     = shift @MeetingOrderIDs ;
@@ -190,17 +179,17 @@ if ($Mode eq "create" || $Mode eq "modify") {
 	  &DBPrint ("Creating Separator");
           my $SessionSeparatorInsert = $dbh -> prepare(
            "insert into SessionSeparator ".
-           "(SessionSeparatorID, ConferenceID, StartTime, Title, Description) ". 
-           "values (0,?,?,?,?)");
-          $SessionSeparatorInsert -> execute($ConferenceID,$SessionDate,$SessionTitle,$SessionDescription);
+           "(SessionSeparatorID, ConferenceID, StartTime, Location, Title, Description) ". 
+           "values (0,?,?,?,?,?)");
+          $SessionSeparatorInsert -> execute($ConferenceID,$SessionDate,$SessionLocation,$SessionTitle,$SessionDescription);
           $SessionSeparatorID = $SessionSeparatorInsert -> {mysql_insertid}; # Works with MySQL only
 	} else {
 	  &DBPrint ("Creating Session");
           my $SessionInsert = $dbh -> prepare(
            "insert into Session ".
-                  "(SessionID, ConferenceID, StartTime, Title, Description) ". 
+                  "(SessionID, ConferenceID, StartTime, Location, Title, Description) ". 
            "values (0,?,?,?,?)");
-          $SessionInsert          -> execute($ConferenceID,$SessionDate,$SessionTitle,$SessionDescription);
+          $SessionInsert          -> execute($ConferenceID,$SessionDate,$SessionLocation,$SessionTitle,$SessionDescription);
           $SessionID = $SessionInsert -> {mysql_insertid}; # Works with MySQL only
 	}
         my $MeetingOrderInsert = $dbh -> prepare(
@@ -234,12 +223,20 @@ if ($Mode eq "create" || $Mode eq "modify") {
 	++$SessionsUpdated;
 	
 	if ($SessionSeparatorID) {
-#         &DBPrint ("Updating Separator $SessionSeparatorID");
-          $SessionSeparatorUpdate -> execute($SessionDate,$SessionTitle,$SessionDescription,$SessionSeparatorID);
+          my $SessionSeparatorUpdate = $dbh -> prepare(
+           "update SessionSeparator set ".
+           "StartTime=?, Location=?, Title=?, Description=? ". 
+           "where SessionSeparatorID=?");
+          $SessionSeparatorUpdate -> execute($SessionDate,$SessionLocation,$SessionTitle,$SessionDescription,$SessionSeparatorID);
 	} else {
-#         &DBPrint ("Updating Session $SessionID");
-          $SessionUpdate          -> execute($SessionDate,$SessionTitle,$SessionDescription,$SessionID);
+          my $SessionUpdate = $dbh -> prepare(
+           "update Session set ".
+           "StartTime=?, Location=?, Title=?, Description=? ". 
+           "where SessionID=?");
+          $SessionUpdate          -> execute($SessionDate,$SessionLocation,$SessionTitle,$SessionDescription,$SessionID);
 	}
+        my $MeetingOrderUpdate = $dbh -> prepare(
+         "update MeetingOrder set SessionOrder=? where MeetingOrderID=?");
 	$MeetingOrderUpdate -> execute($SessionNewOrder,$MeetingOrderID);
       } else {
         push @WarnStack,$Msg_SessionBlankDelete;

@@ -38,17 +38,20 @@ sub FetchConferenceByTopicID { # Fetches a conference by MinorTopicID
 
 sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
   my ($conferenceID) = @_;
-  my ($ConferenceID,$MinorTopicID,$Location,$URL,$Title,$Preamble,$Epilogue,$StartDate,$EndDate,$ShowAllTalks,$TimeStamp);
-
+  
+  require "TopicSQL.pm";
+  
   if ($Conference{$conferenceID}{MINOR}) { # We already have this one
     return $conferenceID;
   }
   
+  my ($ConferenceID,$MinorTopicID,$Location,$URL,$Title,$Preamble,
+      $Epilogue,$StartDate,$EndDate,$ShowAllTalks,$TimeStamp);
+
   my $ConferenceFetch   = $dbh -> prepare(
     "select ConferenceID,MinorTopicID,Location,URL,Title,Preamble,Epilogue,StartDate,EndDate,ShowAllTalks,TimeStamp ".
     "from Conference ".
     "where ConferenceID=?");
-#  &FetchMinorTopic($onferenceID);
   $ConferenceFetch -> execute($conferenceID);
   ($ConferenceID,$MinorTopicID,$Location,$URL,$Title,$Preamble,$Epilogue,$StartDate,$EndDate,$TimeStamp) 
     = $ConferenceFetch -> fetchrow_array;
@@ -65,6 +68,7 @@ sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
     $Conferences{$ConferenceID}{TimeStamp}    = $TimeStamp;
     	
     $ConferenceMinor{$MinorTopicID} = $ConferenceID; # Used to index conferences with MinorTopic
+    &FetchMinorTopic($MinorTopicID);
   }
 
   return $ConferenceID;
@@ -87,18 +91,19 @@ sub FetchSessionsByConferenceID ($) {
 
 sub FetchSessionByID ($) {
   my ($SessionID) = @_;
-  my ($ConferenceID,$StartTime,$Title,$Description,$TimeStamp); 
+  my ($ConferenceID,$StartTime,$Location,$Title,$Description,$TimeStamp); 
   my $SessionFetch = $dbh -> prepare(
-    "select ConferenceID,StartTime,Title,Description,TimeStamp ".
+    "select ConferenceID,StartTime,Location,Title,Description,TimeStamp ".
     "from Session where SessionID=?");
   if ($Sessions{$SessionID}{TimeStamp}) {
     return $SessionID;
   }
   $SessionFetch -> execute($SessionID);
-  ($ConferenceID,$StartTime,$Title,$Description,$TimeStamp) = $SessionFetch -> fetchrow_array; 
+  ($ConferenceID,$StartTime,$Location,$Title,$Description,$TimeStamp) = $SessionFetch -> fetchrow_array; 
   if ($TimeStamp) {
     $Sessions{$SessionID}{ConferenceID} = $ConferenceID;
     $Sessions{$SessionID}{StartTime}    = $StartTime;
+    $Sessions{$SessionID}{Location}     = $Location;
     $Sessions{$SessionID}{Title}        = $Title;
     $Sessions{$SessionID}{Description}  = $Description;
     $Sessions{$SessionID}{TimeStamp}    = $TimeStamp;
@@ -123,18 +128,19 @@ sub FetchSessionSeparatorsByConferenceID ($) {
 
 sub FetchSessionSeparatorByID ($) {
   my ($SessionSeparatorID) = @_;
-  my ($ConferenceID,$StartTime,$Title,$Description,$TimeStamp); 
+  my ($ConferenceID,$StartTime,$Location,$Title,$Description,$TimeStamp); 
   my $SessionSeparatorFetch = $dbh -> prepare(
-    "select ConferenceID,StartTime,Title,Description,TimeStamp ".
+    "select ConferenceID,StartTime,Location,Title,Description,TimeStamp ".
     "from SessionSeparator where SessionSeparatorID=?");
   if ($SessionSeparators{$SessionSeparatorID}{TimeStamp}) {
     return $SessionSeparatorID;
   }
   $SessionSeparatorFetch -> execute($SessionSeparatorID);
-  ($ConferenceID,$StartTime,$Title,$Description,$TimeStamp) = $SessionSeparatorFetch -> fetchrow_array; 
+  ($ConferenceID,$StartTime,$Location,$Title,$Description,$TimeStamp) = $SessionSeparatorFetch -> fetchrow_array; 
   if ($TimeStamp) {
     $SessionSeparators{$SessionSeparatorID}{ConferenceID} = $ConferenceID;
     $SessionSeparators{$SessionSeparatorID}{StartTime}    = $StartTime;
+    $SessionSeparators{$SessionSeparatorID}{Location}     = $Location;
     $SessionSeparators{$SessionSeparatorID}{Title}        = $Title;
     $SessionSeparators{$SessionSeparatorID}{Description}  = $Description;
     $SessionSeparators{$SessionSeparatorID}{TimeStamp}    = $TimeStamp;

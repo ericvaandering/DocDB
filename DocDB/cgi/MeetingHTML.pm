@@ -49,11 +49,11 @@ sub SessionEntryForm (@) {
   &HelpLink("sessions");
   print "Sessions:</a></b><p> \n";
   print "<table cellpadding=3>\n";
-  print "<tr valign=top>\n";
+  print "<tr valign=bottom>\n";
   print "<th><b><a "; &HelpLink("meetingorder");     print "Order</a></b> or <br>\n";
   print "    <b><a "; &HelpLink("sessiondelete");    print "Delete</a></td>\n";
   print "<th><b><a "; &HelpLink("meetingseparator"); print "Break</a></th>\n";
-  print "<th><b><a "; &HelpLink("sessioninfo");      print "Start Date and Time</a></th>\n";
+  print "<th><b><a "; &HelpLink("sessioninfo");      print "Location<br>Start Date and Time</a></th>\n";
   print "<th><b><a "; &HelpLink("sessioninfo");      print "Session Title & Description</a></th>\n";
   print "</tr>\n";
   
@@ -73,6 +73,7 @@ sub SessionEntryForm (@) {
     
     if (grep /n/,$MeetingOrderID) {# Erase defaults
       $SessionDefaultDateTime    = "";
+      $SessionDefaultLocation    = "";
       $SessionDefaultTitle       = "";
       $SessionDefaultDescription = "";
       $SessionSeparatorDefault   = "";
@@ -80,12 +81,14 @@ sub SessionEntryForm (@) {
       if ($MeetingOrders{$MeetingOrderID}{SessionID}) {
         my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
 	$SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
+        $SessionDefaultLocation    = $Sessions{$SessionID}{Location};
 	$SessionDefaultTitle       = $Sessions{$SessionID}{Title};
 	$SessionDefaultDescription = $Sessions{$SessionID}{Description};
 	$SessionSeparatorDefault   = "No";
       } elsif ($MeetingOrders{$MeetingOrderID}{SessionSeparatorID}) {
         my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
 	$SessionDefaultDateTime    = $SessionSeparators{$SessionSeparatorID}{StartTime};
+        $SessionDefaultLocation    = $SessionSeparators{$SessionSeparatorID}{Location};
 	$SessionDefaultTitle       = $SessionSeparators{$SessionSeparatorID}{Title};
 	$SessionDefaultDescription = $SessionSeparators{$SessionSeparatorID}{Description};
 	$SessionSeparatorDefault   = "Yes";
@@ -101,11 +104,12 @@ sub SessionEntryForm (@) {
     &SessionDelete($MeetingOrderID) ; print "</td>\n";
 
     print "<td align=center>\n"; &SessionSeparator($MeetingOrderID) ; print "</td>\n";
-    print "<td rowspan=2 align=right>\n"; &SessionDateTimePullDown; print "</td>\n";
+    print "<td>\n"; &SessionLocation; print "</td>\n";
     print "<td>\n"; &SessionTitle($SessionDefaultTitle);            print "</td>\n";
     print "</tr>\n";
     print "<tr valign=top>\n";
-    print "<td colspan=2>&nbsp</td>\n";
+    print "<td>&nbsp</td>\n";
+    print "<td align=right>\n"; &SessionDateTimePullDown; print "</td>\n";
     print "<td>\n"; &SessionDescription;      print "</td>\n";
     print "</tr>\n";
     print "<tr valign=top><td colspan=4><hr width=95%></td>\n";
@@ -215,6 +219,12 @@ sub SessionDescription {
                             -columns => 40, -rows => 3);
 }
 
+sub SessionLocation {
+  $query -> param('sessionlocation',$SessionDefaultLocation);
+  print $query -> textfield (-name => 'sessionlocation', -size => 30, -maxlength => 128, 
+                             -default => $SessionDefaultLocation);
+};
+
 sub PrintSession ($;$) {
   my ($SessionID,$IsSingle) = @_;
   
@@ -224,13 +234,19 @@ sub PrintSession ($;$) {
   require "SQLUtilities.pm";
   require "Utilities.pm";
   
-  print "<center><b>Session: $Sessions{$SessionID}{Title} on \n";
+  print "<center><b>Session: $Sessions{$SessionID}{Title} begins \n";
   print &EuroDate($Sessions{$SessionID}{StartTime});
   print " at ";
   print &EuroTimeHM($Sessions{$SessionID}{StartTime});
   print "</b></center> \n";
-  print "<center> $Sessions{$SessionID}{Description} </center><p>\n";
-
+  if ($Sessions{$SessionID}{Description}) {
+    print "<center> $Sessions{$SessionID}{Description} </center>\n";
+  }
+  if ($Sessions{$SessionID}{Location}) {
+    print "<center> Location: $Sessions{$SessionID}{Location} </center><p>\n";
+  }
+  print "<p>\n";
+  
   my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
   my @TalkSeparatorIDs = &FetchTalkSeparatorsBySessionID($SessionID);
   my @SessionOrderIDs  = &FetchSessionOrdersBySessionID($SessionID);
@@ -264,7 +280,7 @@ sub PrintSession ($;$) {
       my $TalkSeparatorID =  $SessionOrders{$SessionOrderID}{TalkSeparatorID};
 
       print "<tr valign=top>\n";
-      print "<td align=right>",&TruncateSeconds($AccumulatedTime),"</td>\n";
+      print "<td align=right><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";
       print "<td>$TalkSeparators{$TalkSeparatorID}{Title}</td>\n";
       print "<td colspan=3>$TalkSeparators{$TalkSeparatorID}{Note}</td>\n";
       print "<td align=right>",&TruncateSeconds($TalkSeparators{$TalkSeparatorID}{Time}),"</td>\n";
@@ -279,7 +295,7 @@ sub PrintSession ($;$) {
       } else { # Talk where only hints exist
         # FIXME add output for for topic and author hints
         print "<tr valign=top>\n";
-        print "<td align=right>",&TruncateSeconds($AccumulatedTime),"</td>\n";
+        print "<td align=right><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";
         print "<td>$SessionTalks{$SessionTalkID}{HintTitle}</td>\n";
         print "<td>Hint authors</td>\n";
         print "<td>Hint topics</td>\n";
