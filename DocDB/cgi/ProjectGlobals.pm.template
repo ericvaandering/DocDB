@@ -11,7 +11,7 @@
 
 # DB settings
 
-$db_name       = "BTeVDocDB";               # Database name
+$db_name       = "DocDB";               # Database name
 $db_host       = "db-server-host-and-domain";
 $db_rwuser     = "docdbrw";
 $db_rwpass     = "read-write-password";
