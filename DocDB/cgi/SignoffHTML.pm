@@ -98,9 +98,10 @@ sub PrintSignatureInfo ($) {
         }  
         $SignatureText .= $query -> start_multipart_form('POST',"$SignRevision");
         $SignatureText .= "$EmailUser{$EmailUserID}{Name} ";
+        $SignatureText .= $query -> hidden(-name => 'signatureid',   -default => $SignatureID);
         $SignatureText .= $query -> hidden(-name => 'emailuserid',   -default => $EmailUserID);
         $SignatureText .= $query -> hidden(-name => 'action',   -default => $Action);
-        $SignatureText .= $query -> password_field(-name => 'password', -size => 16, -maxlength => 32);
+        $SignatureText .= $query -> password_field(-name => "password-$EmailUserID", -size => 16, -maxlength => 32);
         $SignatureText .= " ";
         $SignatureText .= $query -> submit (-value => $ActionText);
         $SignatureText .= $query -> end_multipart_form;

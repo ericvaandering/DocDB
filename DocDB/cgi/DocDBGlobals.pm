@@ -133,6 +133,7 @@ $ListAllMeetings       = $cgi_root."ListAllMeetings"; # FIXME: Remove later
 $ConfirmTalkHint       = $cgi_root."ConfirmTalkHint";
 
 $SignoffChooser        = $cgi_root."SignoffChooser";
+$SignRevision          = $cgi_root."SignRevision";
 
 $AdministerForm        = $cgi_root."AdministerForm";
 $AuthorAdminister      = $cgi_root."AuthorAdminister";
