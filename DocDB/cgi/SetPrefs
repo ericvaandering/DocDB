@@ -16,6 +16,9 @@ require "Cookies.pm";
 
 $query = new CGI;
 %params = $query -> Vars; 
+
+#Note: Remove cookie0, see if you can do this with an array and pushes
+
 $cookie0 = $query->cookie(-name=>'test', 
                           -value=>"$params{test}", 
 			  -expires=>'+10y',
@@ -48,8 +51,17 @@ $cookie7 = $query->cookie(-name=>'overdate',
 			  -value=>"$params{overdate}", 
 			  -expires=>'+10y',
 			  -path=>'/');
+                          
+# Note: Trick will come here, -cookie probably needs a reference to an array                          
+                          
 print $query->header(-cookie=>[$cookie0,$cookie1,$cookie2,$cookie3,$cookie4,$cookie5,$cookie6,$cookie7]);
-&BTeVHeader("Select Prefrences");
+
+# Note: Redirect as part of the header, redirect to $DocumentDatabase.
+# See RetrieveArchive/RetrieveFile except this redirect should have a delay,
+# a notice that the redirect is happening, and a link to go to $DocumentDatabase
+# instantly. 
+
+&BTeVHeader("Select Preferences");
 
 print "<p>";
 print "Your preferences have been set.";

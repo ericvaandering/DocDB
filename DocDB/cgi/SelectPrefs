@@ -4,7 +4,6 @@
 #
 
 use CGI;
-
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -23,7 +22,7 @@ $query = new CGI;
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetAuthors;
 print $query->header;
-&BTeVHeader("Select Prefrences");
+&BTeVHeader("Select Preferences");
 
 print $query -> start_multipart_form('POST',$SetPrefs);
 
@@ -31,8 +30,8 @@ $uploads{http}   = "HTTP submission";
 $uploads{file}   = "Local file upload";
 @uploads = ("file","http");
 
-$archives{archive}    = "Archive (.tar/.zip) upload";
-$archives{single}   = "Single file";
+$archives{archive} = "Archive (.tar/.zip) upload";
+$archives{single}  = "Single file";
 $archives{multi}   = "Multiple files";
 @archives = ("single","multi","archive");
 
@@ -40,8 +39,8 @@ $topicmodes{multi}  = "Multiple Topic Boxes";
 $topicmodes{single} = "Single Topic List";
 @topicmodes = ("multi","single");
 
-$authormodes{field}  = "Text field";
-$authormodes{list} = "Selectable list";
+$authormodes{field} = "Text field";
+$authormodes{list}  = "Selectable list";
 @authormodes = ("list","field");
 
 &GetPrefsCookie;
@@ -92,10 +91,9 @@ print "<a "; &HelpLink("dateoverride");
 print "<b>Override submit date:</b></a>\n";
 print "<td>\n";
 if ($DateOverridePref) {
-    print $query -> checkbox(-name => "overdate", -checked => 'checked', -label => '(Check for Yes)');
-}
-else {
-    print $query -> checkbox(-name => "overdate", -label => '(Check for Yes)');
+  print $query -> checkbox(-name => "overdate", -checked => 'checked', -label => '(Check for Yes)');
+} else {
+  print $query -> checkbox(-name => "overdate", -label => '(Check for Yes)');
 }
 print "<tr><td align=center colspan=2>\n";
 print $query -> submit (-value => "Set Preferences");
