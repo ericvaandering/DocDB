@@ -266,8 +266,10 @@ When <b>adding</b> a new document, you must supply all of the above plus:
 </ul> 
 and optionally:
 <ul>
+ <li>Keywords: These can be anything, but check with your group and/or subgroups
+     as standards may exist.
  <li>A note explaining any publication information
- <li>A journal reference
+ <li>A journal reference (you can add more later)
  <li>Security settings (blank is the same as public, multiples OK)
 </ul><p>
 
@@ -286,8 +288,9 @@ files. Second, a new version number <i>is not</i> created.<p>
 The advanced form provides a few other options that might be useful.<p> 
 
 <b>Topic Selection: </b>
-You can either select the subtopic(s) for your document from one long list (the
-current default) or from a number of shorter lists split up by topic.<p> 
+You can either select the subtopic(s) for your document from a number of
+shorter lists split up by topic (the current default) or from one long
+list.<p> 
 
 <b>Author Selection: </b> You can either select the author(s) for your document
 from a long list (the default) or by typing the author list into a text box.
@@ -313,7 +316,7 @@ form, just make sure you choose the appropriate meeting date as one of the
 topics for your talk. <p>
 
 However, to simplify the addition of a meeting talk into the database, a  
-<a href="http://www-btev.fnal.gov/cgi-bin/DocDB/DocumentAddForm?special=meeting">simplified
+<a href="/cgi-bin/DocDB/DocumentAddForm?special=meeting">simplified
 addition form</a> has been designed. (It's also available from the meetings page.)
 This form pre-selects the nearest meeting, the talk type and eliminates the
 choices for publication information and authors. The author is automatically set
@@ -339,7 +342,7 @@ the first one. You should probably just leave the box marked "Main" checked.
 Finally, you should enter a short description of each file. This is helpful for
 people looking at the talk. A description like "PDF File" will be
 appreciated. If you need more than 3 input boxes, you should use links from the 
-<a href="http://www-btev.fnal.gov/cgi-bin/DocDB/DocumentDatabase">main page</a>.
+<a href="/cgi-bin/DocDB/DocumentDatabase">main page</a>.
 (If speakers commonly need additional upload boxes, we can add more to this
 page.)<p>
 
@@ -363,7 +366,7 @@ explaining the problem(s).<p>
 
 If for some reason you need more options that this short form gives you, use 
 a regular document entry form available from the 
-<a href="http://www-btev.fnal.gov/cgi-bin/DocDB/DocumentDatabase">DocDB main 
+<a href="/DocDB/DocumentDatabase">DocDB main 
 page</a>, making sure to select the right meeting as one of your topics.<p>
 
 <a name="conference">
@@ -371,10 +374,10 @@ page</a>, making sure to select the right meeting as one of your topics.<p>
 
 Conference documents are added just like any other document, except for two
 things. First, you probably need to 
-<a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ConferenceAddForm">add some
+<a href="/cgi-bin/DocDB/ConferenceAddForm">add some
 information</a> into the database about your conference. Do this by following
 the link at the bottom of the 
-<a href="http://www-btev.fnal.gov/cgi-bin/DocDB/DocumentDatabase">main page</a>.
+<a href="/cgi-bin/DocDB/DocumentDatabase">main page</a>.
 But before you add it, make sure someone else didn't already do it for you. (At
 the bottom of the add form is the list of conferences the database knows
 about).<p>
@@ -477,7 +480,7 @@ You can often get more help when using the entry form or the advanced forms on
 the main page by clicking on the <font color="red">red terms</font> on the
 page. A small window will pop up to explain what is going on.<p>
 
-See the <a href="http://www-btev.fnal.gov/DocDB/Static/Restricted/FAQ.shtml">FAQ</a> if
+See the <a href="/DocDB/Static/Restricted/FAQ.shtml">FAQ</a> if
 you still have questions. If you don't find your answer there or 
 if you have additional questions, suggestions, or problems with the document
 database, please send e-mail to the <a href="mailto:btev-docdb@fnal.gov">DocDB
@@ -486,7 +489,7 @@ administrators</a>.<p>
 For a more technical document on how the database works, see 
 <a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=140">
 BTeV-doc-140</a>. See the 
-<a href="http://www-btev.fnal.gov/DocDB/Static/Restricted/Changelog.shtml">change log</a>
+<a href="/DocDB/Static/Restricted/Changelog.shtml">change log</a>
 for a chronology of changes to the code.<p>
 
 
