@@ -93,6 +93,7 @@ if ($Special eq "othermeeting") {$OtherMeeting = 1;}
 my $SessionTalkID = $params{sessiontalkid};
 my $RevisionNote  = $params{revisionnote};
 my $SignoffList   = $params{signofflist};
+my @Copys = split ("\0",$params{copyfile});
 
 if ($Meeting || $OtherMeeting) {
   @authorIDs = ($Requester);
@@ -430,7 +431,13 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
     my @RawRoots = split ("\0",$params{root});
     foreach my $RawRoot (@RawRoots) {  # Simulate what I thought was happening
       @Roots[$RawRoot-1] = "on"
-    }  
+    } 
+    my $Counter = 0; 
+    foreach $Copy (@Copys) {
+      print "$Counter Copy: $Copy<br>\n";
+      ++$Counter;
+    }
+        
     if ($params{single_upload}) { # Copy file to directory
       @long_files   = $query ->  param("single_upload");
       foreach $long_file (@long_files) {
