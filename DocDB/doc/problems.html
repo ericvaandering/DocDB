@@ -1,0 +1,17 @@
+<title>Common Problems for DocDB</title>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<center><h1>Common Problems for DocDB</h1></center>
+<p>
+This page lists various gotchas that we have encountered.
+<p>
+<ol>
+<li> At Fermilab, many Linux machines have a ups perl product installed.
+     This product does not contain all the modules required by DocDB.
+     The solution has two parts: 
+     <ul>
+     <li> <b>rm -f /usr/local/bin/*perl* </b>
+     <li> make sure that no version of perl is declared current in ups
+     </ul>
+</ol>
