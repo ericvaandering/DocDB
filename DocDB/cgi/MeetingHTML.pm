@@ -472,8 +472,16 @@ sub ModifyMeetingLink ($) {
   my ($ConferenceID) = @_;
     
   my $URL = "$MeetingModify?conferenceid=$ConferenceID";
+  my $Title;
+  if ($Conferences{$ConferenceID}{Title}) {
+    $Title = $Conferences{$ConferenceID}{Title};
+  } else {
+    my $MinorTopicID = $Conferences{$ConferenceID}{Minor};  
+    $Title = $MinorTopics{$MinorTopicID}{LONG};
+  }  
+  
   my $Link  = "<a href=\"$URL\">";
-     $Link .= $Conferences{$ConferenceID}{Title};
+     $Link .= $Title;
      $Link .= "</a>";
         
   return $Link;
@@ -519,7 +527,7 @@ sub AllMeetingsTable (;$) {
   
   &SpecialMajorTopics;
   
-  my $NCols = 3;
+  my $NCols = 2;
   my @MajorTopicIDs = (@GatheringMajorIDs,0);
 
   my $Col   = 0;
@@ -554,6 +562,7 @@ sub MeetingsByMajorTopic ($;$) { #FIXME: Can I combine with Orphan meetings?
   my ($MajorID,$Mode) = @_;
   
   require "TopicSQL.pm";
+  require "Sorts.pm";
   
   my @ConferenceIDs = keys %Conferences;
   my @DisplayConferenceIDs = ();
@@ -563,12 +572,12 @@ sub MeetingsByMajorTopic ($;$) { #FIXME: Can I combine with Orphan meetings?
     # FIXME: We should probably allow modification of conferences not fully 
     #        setup
     if ($MinorID && $MinorTopics{$MinorID}{MAJOR} == $MajorID &&
-        $Conferences{$ConferenceID}{Title}) { 
+        ($Conferences{$ConferenceID}{Title} || $Mode eq "modify")) { 
       push @DisplayConferenceIDs,$ConferenceID;
     }  
   }
 
-#  my @OrphanConferenceIDs = sort byTopic keys @OrphanConferenceIDs;
+  @DisplayConferenceIDs = sort ConferenceIDByDate @DisplayConferenceIDs;
 #FIXME add sort
 
   print "<b>$MajorTopics{$MajorID}{SHORT}</b>\n";
