@@ -349,7 +349,7 @@ sub RequesterSelect { # Scrolling selectable list for requesting author
   my @ActiveIDs = ();
   foreach my $ID (@AuthorIDs) {
     if ($Authors{$ID}{ACTIVE}) {
-      $AuthorLabels{$ID} = $Authors{$ID}{FULLNAME};
+      $AuthorLabels{$ID} = $Authors{$ID}{Formal};
       push @ActiveIDs,$ID; 
     } 
   }
@@ -375,7 +375,7 @@ sub AuthorSelect { # Scrolling selectable list for authors
   my @ActiveIDs = ();
   foreach my $ID (@AuthorIDs) {
     if ($Authors{$ID}{ACTIVE}) {
-      $AuthorLabels{$ID} = $Authors{$ID}{FULLNAME};
+      $AuthorLabels{$ID} = $Authors{$ID}{Formal};
       push @ActiveIDs,$ID; 
     } 
   }  

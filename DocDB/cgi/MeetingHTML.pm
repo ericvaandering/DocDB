@@ -383,28 +383,30 @@ sub PrintMeetingInfo($;$) {
 
   require "Utilities.pm";
 
-  print "<center><h3> \n";
+  print "<center><b><big> \n";
   print "<a href=\"$DisplayMeeting?conferenceid=$ConferenceID\">$Conferences{$ConferenceID}{Title}</a>\n";
-  print "</h3>\n";
+  print "</big></b><br>\n";
 
   print " held from ",&EuroDate($Conferences{$ConferenceID}{StartDate});
   print " to ",&EuroDate($Conferences{$ConferenceID}{EndDate});
   print " in $Conferences{$ConferenceID}{Location}\n";
-  print "<br>\n";
 
   if ($Conferences{$ConferenceID}{URL}) {
+    print "<br>\n";
     print "(<a href=\"$Conferences{$ConferenceID}{URL}\">Conference homepage</a>)\n";
   }
   
-  print "<p>\n";
-  print "<table width=80%><tr><td>\n";
-  print &Paragraphize($Conferences{$ConferenceID}{Preamble}),"\n";
-  print "</td></tr></table>\n";
+  if ($Conferences{$ConferenceID}{Preamble}) {
+    print "<p>\n";
+    print "<table width=80%><tr><td>\n";
+    print &Paragraphize($Conferences{$ConferenceID}{Preamble}),"\n";
+    print "</td></tr></table>\n";
+  }
   print "<p>\n";
   
   if ($AddTalkLink) {
     print "(<a href=\"$DocumentAddForm?conferenceid=$ConferenceID\">Add a document</a> ".
-          "to this conference)\n";
+          "to this meeting or conference)\n";
   }
   
   print "</center><hr width=95%>\n";

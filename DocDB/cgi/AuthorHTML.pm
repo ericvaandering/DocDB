@@ -167,7 +167,7 @@ sub AuthorScroll ($$$;@) {
   my @ActiveIDs = ();
   foreach my $ID (@AuthorIDs) {
     if ($Authors{$ID}{ACTIVE} || $All) {
-      $AuthorLabels{$ID} = $Authors{$ID}{FULLNAME};
+      $AuthorLabels{$ID} = $Authors{$ID}{Formal};
       push @ActiveIDs,$ID; 
     } 
   }  

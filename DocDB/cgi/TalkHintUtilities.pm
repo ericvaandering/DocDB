@@ -118,7 +118,7 @@ sub ReHintTalksBySessionID ($) {
       my @RevTopics  = &GetRevisionTopics($DocRevID);
       my @RevAuthors = &GetRevisionAuthors($DocRevID);
       
-      # Accumulate matches
+      # Accumulate matches # FIXME: Look at soundex and fuzzy matching, cookbook 1.16 and 6.13
       
       my $TopicMatches = 0;
       foreach my $RevTopic (@RevTopics) {

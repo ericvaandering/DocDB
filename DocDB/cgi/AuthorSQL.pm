@@ -9,8 +9,10 @@ sub GetAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with all authors
     $Authors{$AuthorID}{AUTHORID}  =  $AuthorID;
     if ($MiddleInitials) {
       $Authors{$AuthorID}{FULLNAME}  = "$FirstName $MiddleInitials $LastName";
+      $Authors{$AuthorID}{Formal}    = "$LastName, $FirstName $MiddleInitials";
     } else {
       $Authors{$AuthorID}{FULLNAME}  = "$FirstName $LastName";
+      $Authors{$AuthorID}{Formal}    = "$LastName, $FirstName";
     }
     $Authors{$AuthorID}{LASTNAME}  =  $LastName;
     $Authors{$AuthorID}{FIRSTNAME} =  $FirstName;
@@ -36,8 +38,10 @@ sub FetchAuthor { # Fetches an Author by ID, adds to $Authors{$AuthorID}{}
   $Authors{$AuthorID}{AUTHORID}  =  $AuthorID;
   if ($MiddleInitials) {
     $Authors{$AuthorID}{FULLNAME}  = "$FirstName $MiddleInitials $LastName";
+    $Authors{$AuthorID}{Formal}    = "$LastName, $FirstName $MiddleInitials";
   } else {
     $Authors{$AuthorID}{FULLNAME}  = "$FirstName $LastName";
+    $Authors{$AuthorID}{Formal}    = "$LastName, $FirstName";
   }
   $Authors{$AuthorID}{LASTNAME}  =  $LastName;
   $Authors{$AuthorID}{FIRSTNAME} =  $FirstName;
@@ -63,6 +67,9 @@ sub GetRevisionAuthors {
 
 sub GetInstitutionAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with authors from institution
   my ($InstitutionID) = @_;
+  
+  #FIXME: Make it call GetAuthor
+  
   my @AuthorIDs = ();
   my ($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active);
   my $PeopleList  = $dbh -> prepare(
@@ -75,8 +82,10 @@ sub GetInstitutionAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with au
     $Authors{$AuthorID}{AUTHORID}   =  $AuthorID;
     if ($MiddleInitials) {
       $Authors{$AuthorID}{FULLNAME} = "$FirstName $MiddleInitials $LastName";
+      $Authors{$AuthorID}{Formal}   = "$LastName, $FirstName $MiddleInitials";
     } else {
       $Authors{$AuthorID}{FULLNAME} = "$FirstName $LastName";
+      $Authors{$AuthorID}{Formal}   = "$LastName, $FirstName";
     }
     $Authors{$AuthorID}{LASTNAME}   =  $LastName;
     $Authors{$AuthorID}{FIRSTNAME}  =  $FirstName;
@@ -95,8 +104,8 @@ sub GetInstitutions { # Creates/fills a hash $Institutions{$InstitutionID}{} wit
   %Institutions = ();
   while ($inst_list -> fetch) {
     $Institutions{$InstitutionID}{INSTID} =  $InstitutionID;
-    $Institutions{$InstitutionID}{SHORT} = $ShortName;
-    $Institutions{$InstitutionID}{LONG} =  $LongName;
+    $Institutions{$InstitutionID}{SHORT}  = $ShortName;
+    $Institutions{$InstitutionID}{LONG}   =  $LongName;
   }
 }
 
@@ -147,6 +156,9 @@ sub GetAuthorDocuments { # Return a list of all documents the author is associat
 
 sub ProcessManualAuthors {
   my ($author_list) = @_;
+  
+  # FIXME: Handle authors in Smith, John format too
+  
   my $AuthorID;
   my @AuthorIDs = ();
   my @AuthorEntries = split /\n/,$author_list;
@@ -210,7 +222,11 @@ sub ProcessManualAuthors {
     
 ### Haven't found a match if we get down here
 
+# FIXME: Remove error_stack when modifications done. 
+
     push @error_stack,"No match was found for the the author $entry. Please go 
+                      back and try again.";   
+    push @ErrorStack,"No match was found for the the author $entry. Please go 
                       back and try again.";   
   }
   return @AuthorIDs;
