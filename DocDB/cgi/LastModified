@@ -60,7 +60,7 @@ print $query->header;
 &DocDBHeader("Document List");
 
 print "<center><h4>These documents have been modified in the last 
-       <span class=\"highlight\">$Days days</span>.</h4></center><p>\n";
+       <span class=\"Highlight\">$Days days</span>.</h4></center><p>\n";
 
 my $revision_list = $dbh -> prepare(
    "select DocRevID from DocumentRevision 
