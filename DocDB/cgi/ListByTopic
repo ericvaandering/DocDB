@@ -222,6 +222,7 @@ print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
 exit;
 
 sub PrintAgenda {
+  require "MiscSQL.pm";
   my ($MeetingID) = @_; 
   
   my $agenda_find = $dbh -> prepare(
@@ -241,6 +242,7 @@ sub PrintAgenda {
 }
 
 sub PrintFile {
+  require "FSUtilities.pm";
   my ($FileID) = @_;
   
   my $DocRevID      = $DocFiles{$FileID}{DOCREVID};
