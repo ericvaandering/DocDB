@@ -11,6 +11,7 @@ use DBI;
 require "ResponseElements.pm";
 require "MySQLAccess.pm";
 require "DocDBGlobals.pm";
+require "FSUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
@@ -103,7 +104,7 @@ if (($#error_stack + 1)) {
 $security_list = join ',',@securities; # Ready for MySQL
 
 $document_insert -> execute($params{requestor},$params{doctype});
-my $documentID = $document_insert -> {insertid}; # Works with MySQL only
+my $documentID = $document_insert -> {mysql_insertid}; # Works with MySQL only
 
 my $version;
 if      ($mode eq "reserve") {
@@ -115,7 +116,7 @@ if      ($mode eq "reserve") {
 $doc_rev_insert -> execute($documentID,$params{requestor},$params{title},
                            $params{pubinfo},$version,$params{abstract},
                            $security_list);
-my $docRevID = $doc_rev_insert -> {insertid}; # Works with MySQL only
+my $docRevID = $doc_rev_insert -> {mysql_insertid}; # Works with MySQL only
                            
 foreach $authorID (@authorIDs) {
   $rev_author_insert -> execute($docRevID,$authorID);
@@ -124,18 +125,10 @@ foreach $topicID (@topicIDs) {
   $rev_topic_insert -> execute($docRevID,$topicID);
 }
 
-# Figure out directory names and make directories
-
-if ($mode eq "add") {
-  $hun_dir = sprintf "%4.4d/",int($documentID/100);
-  $sub_dir = sprintf "%6.6d/",$documentID;
-  $ver_dir = sprintf "%3.3d/",$version;
-  $new_dir = $file_root.$hun_dir.$sub_dir.$ver_dir;
-
-  mkdir  $file_root.$hun_dir;
-  mkdir  $file_root.$hun_dir.$sub_dir;
-  mkdir  $file_root.$hun_dir.$sub_dir.$ver_dir;
-
+if ($mode eq "add") { # We're adding a new document 
+  
+  $new_dir = &MakeDirectory($documentID,$version);
+  &ProtectDirectory($documentID,$version,@securities);
 # Copy file to directory
 
   $short_file   = $query ->  param("single_upload");
@@ -147,7 +140,7 @@ if ($mode eq "add") {
   }
   close OUTFILE;
 
-# Insert into database
+# Insert into Files database
   $rootfile = 1;
   $url = $web_root.$hun_dir.$sub_dir.$ver_dir.$short_file; # Not needed?
   $file_insert -> execute($docRevID,$short_file,$url,$rootfile);
@@ -155,10 +148,11 @@ if ($mode eq "add") {
 
 # Output feedback to the user
 
-print "Your Document ID is <b>BTeV-doc-$documentID</b><br> 
-       which was created with the following information.<br>
+print "You were successful. Your Document ID is <b>BTeV-doc-$documentID</b><br> 
        Please make a note of the document number as you will
-       need it to update your document.<p>\n"; 
+       need it to update your document.<br>
+       Your entry was created with the following information:
+       <p>\n"; 
 
 &RequestorByID($params{requestor});
 &AuthorListByID(@authorIDs);
