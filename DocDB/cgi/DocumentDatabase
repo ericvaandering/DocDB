@@ -114,7 +114,6 @@ unless ($Public || !&CanCreate()) {
 print "<div class=\"HomepageMainChoice\"><strong><a href=\"$SearchForm\">Search</a> for documents</strong></div>\n"; 
 
 my $ShowForm  = $query -> startform('POST',$ShowDocument);
-   $ShowForm .= "&bull;&nbsp;";
    $ShowForm .= $query -> submit (-value => "Show");
    $ShowForm .= " <strong>$ShortProject-doc-#</strong> "; 
    $ShowForm .= $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
@@ -125,7 +124,13 @@ my $ShowForm  = $query -> startform('POST',$ShowDocument);
 print "<div class=\"HomepageMainChoice\">$ShowForm</div>\n";  
 
 print "<div class=\"HomepageMainChoice\">\n";
+print $query -> startform('POST',$ListBy);
+print $query -> submit (-value => "Show Documents");
+print " modified in the last ";
+$Days = $HomeLastDays; # FIXME: Global variable
 &DaysPulldown($LastDays);
+print " days.";
+print $query -> endform;
 print "</div>\n";  
 
 print "<tr><td>\n"; # List of lists spans whole bottom of main table
