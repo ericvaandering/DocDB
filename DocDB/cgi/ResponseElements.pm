@@ -14,20 +14,20 @@ sub AuthorListByID {
   }
 }
 
-sub RequesterByID {
+sub RequesterByID { # Uses non HTML-4.01 <nobr> tag. 
   my ($requesterID) = @_;
   &FetchAuthor($requesterID);
   
-  print "<b>Requested by:</b> ";
-  print "$Authors{$requesterID}{FULLNAME}<br>\n";
+  print "<nobr><b>Requested by:</b> ";
+  print "$Authors{$requesterID}{FULLNAME}</nobr><br>\n";
 }
 
-sub SubmitterByID {
+sub SubmitterByID { # Uses non HTML-4.01 <nobr> tag.
   my ($requesterID) = @_;
   &FetchAuthor($requesterID);
   
-  print "<b>Updated by:</b> ";
-  print "$Authors{$requesterID}{FULLNAME}<br>\n";
+  print "<nobr><b>Updated by:</b> ";
+  print "$Authors{$requesterID}{FULLNAME}</nobr><br>\n";
 }
 
 sub TopicListByID {
@@ -56,13 +56,12 @@ sub PrintTitle {
 
 sub PrintDocNumber { # And type
   my ($DocRevID) = @_;
-  print "<b>Document #: </b>";
+  print "<nobr><b>Document #: </b>";
   print (&FullDocumentID($DocRevisions{$DocRevID}{DOCID}));
-  print ", ";
-  print "version $DocRevisions{$DocRevID}{VERSION}<br>\n";
-  print "<b>Document type: </b>";
+  print "-v$DocRevisions{$DocRevID}{VERSION}</nobr><br>\n";
+  print "<nobr><b>Document type: </b>";
   my $doc_type = &FetchDocType($Documents{$DocRevisions{$DocRevID}{DOCID}}{TYPE});
-  print "$doc_type<br>\n";
+  print "$doc_type</nobr><br>\n";
 }
 
 sub PrintAbstract {
@@ -160,10 +159,19 @@ sub PrintRevisionInfo {
   print "</table></center>\n"; 
 }
  
+sub WarnPage {
+  my @errors = @_;
+  print "<b><font color=\"red\">There was a non-fatal error processing your
+  request: </font></b><br>\n";
+  foreach $message (@errors) {
+    print "<dt><b>$message </b><p>\n";
+  }  
+}
 
 sub EndPage {
   my @errors = @_;
-  print "<b>There was an error processing your request:</b><br>\n";
+  print "<b><font color=\"red\">There was a fatal error processing your request:
+  </font></b><br>\n";
   foreach $message (@errors) {
     print "<dt><b>$message </b>\n";
   }  

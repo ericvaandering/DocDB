@@ -11,6 +11,7 @@ require "Scripts.pm";
 require "MySQLAccess.pm";
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
+require "HTMLUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -22,7 +23,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 # Removed updatedb mode, see note in ProcessDocumentAdd
 
 print $query->header;
-print $query->start_html(-title=>"Add Topics");
+&BTeVStyle("Add Topics");
 
 &HelpPopupScript;
 
@@ -51,8 +52,4 @@ print $query -> end_multipart_form;
 
 print "<p>\n";
 
-foreach $key (keys %FullTopics) {
-  print "$FullTopics{$key} ";
-}
-
-print $query->end_html; 
+&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);

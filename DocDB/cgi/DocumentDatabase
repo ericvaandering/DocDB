@@ -5,10 +5,11 @@
 
 use CGI;                                                                                      
 require "DocDBGlobals.pm";
+require "HTMLUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 print $query->header;
-print $query->start_html(-title=>"BTeV Document Database Homepage");
+&BTeVHeader("BTeV Document Database","Document Database");
 
 # %params = $query -> Vars;  # No parameters (yet) 
 
@@ -68,6 +69,8 @@ print $query -> end_multipart_form;
 print "<p>Administration functions:<ul>\n";
 print "<li>Add a <a href=\"TopicAddForm\">topic</a>\n";
 print "<li>Add an <a href=\"AuthorAddForm\">author</a>\n";
+print "<li>Eric's <a href=\"http://www.hep.vanderbilt.edu/~vondo/btev-private/DocDB-ToDo.html\">To do list</a> for the database \n";
 print "</ul>\n";
-print $query->end_html;
+
+&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
 

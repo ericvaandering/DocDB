@@ -32,5 +32,7 @@ $Wget = "/usr/bin/wget -O - --quiet ";
 # Other Globals
 
 $remote_user = $ENV{REMOTE_USER};
+$DBWebMasterEmail = "ewv\@fnal.gov,garren\@fnal.gov";
+$DBWebMasterName  = "Eric Vaandering, Lynn Garren";
 
 1;

@@ -3,19 +3,24 @@
 # Author Eric Vaandering (ewv@fnal.gov)
 #
 
+use Benchmark;
 use CGI;                                                                                      
 use DBI;
+
+$StartTime = new Benchmark;
 
 require "DocDBGlobals.pm";
 require "Security.pm";
 require "Sorts.pm";
 require "MySQLAccess.pm";
 require "ResponseElements.pm";
+require "HTMLUtilities.pm";
 require "FSUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 print $query->header;
-print $query->start_html(-title=>"BTeV Document List");
+&BTeVHeader("BTeV Document List","Document List");
+
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
 %params = $query -> Vars;
@@ -63,6 +68,10 @@ foreach $document (@DocumentIDs) {
 print "</table>\n";
 print "<p>\n";
 
-print $query->end_html; 
+$EndTime  = new Benchmark;
+$TimeDiff = timediff($EndTime,$StartTime);
+print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
+
+&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
 
 

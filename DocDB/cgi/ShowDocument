@@ -3,13 +3,17 @@
 # Author Eric Vaandering (ewv@fnal.gov)
 #
 
+use Benchmark;
 use CGI;
 use DBI;
+
+$StartTime = new Benchmark;
 
 require "ResponseElements.pm";
 require "MySQLAccess.pm";
 require "DocDBGlobals.pm";
 require "FSUtilities.pm";
+require "HTMLUtilities.pm";
 require "Security.pm";
 
 $query = new CGI;  # Global for subroutines
@@ -18,15 +22,14 @@ $query = new CGI;  # Global for subroutines
 
 $DocumentID = $params{docid};
 
-print $query->header;
-print $query->start_html(-title=>"BTeV Document $DocumentID-v$Version");
-$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
-
 unless ($DocumentID) {
+  print $query->header;
   print "You are must supply a document number!<p>\n";
+  print $query->end_html; 
   exit;
 }  
   
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 &FetchDocument($DocumentID);
 
 if (defined $params{version}) {
@@ -35,12 +38,14 @@ if (defined $params{version}) {
   $Version = $Documents{$DocumentID}{NVER};
 }
 
+print $query->header;
+&BTeVHeader("BTeV Document $DocumentID-v$Version");
+
 unless (&CanAccess($DocumentID,$Version)) {
   print "You are not authorized to view this document. Allowed for DEBUG
   purposes only.<p>\n";
 #  exit;
 }  
-  
 
 my $DocRevID   = &FetchDocRevision($DocumentID,$Version);
 
@@ -54,5 +59,8 @@ unless ($DocRevID) {
 
 &OtherVersionLinks($DocumentID,$Version);
 
+$EndTime  = new Benchmark;
+$TimeDiff = timediff($EndTime,$StartTime);
+print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
 
-print $query->end_html; 
+&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
