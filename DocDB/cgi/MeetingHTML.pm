@@ -194,4 +194,55 @@ sub SessionDescription {
                             -columns => 30, -rows => 3);
 }
 
+sub PrintSession ($) {
+  my ($SessionID) = @_;
+  
+  my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
+  my @TalkSeparatorIDs = &FetchTalkSeparatorsBySessionID($SessionID);
+  my @SessionOrderIDs  = &FetchSessionOrdersBySessionID($SessionID);
+
+# Sort talks and separators
+
+  @SessionOrderIDs = sort SessionOrderIDByOrder @SessionOrderIDs;
+  print "<table>\n";
+  foreach my $SessionOrderID (@SessionOrderIDs) {
+    # Accumulate time
+    # Put titles in italics for unconfirmed talks
+    
+    if ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) {
+      my $TalkSeparatorID =  $SessionOrders{$SessionOrderID}{TalkSeparatorID};
+      print "<tr>\n";
+      print "<td>$AccumulatedTime</td>\n";
+      print "<td>$TalkSeparators{$TalkSeparatorID}{Title}</td>\n";
+      print "<td>$TalkSeparators{$TalkSeparatorID}{Description}</td>\n";
+      print "<td>$TalkSeparators{$TalkSeparatorID}{Time}</td>\n";
+      print "</tr>\n";
+    } elsif ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
+      my $SessionTalkID =  $SessionOrders{$SessionOrderID}{SessionTalkID};
+      # One thing for confirmed talks, one thing for hinted, one thing for no idea
+      if ($SessionTalks{$SessionTalkID}{DocumentID}) {
+        &PrintSessionTalk($SessionTalkID,$AccumulatedTime);
+      } else {
+        print "<tr>\n";
+        print "<td>$AccumulatedTime</td>\n";
+        print "<td>$SessionTalks{$SessionTalkID}{HintTitle}</td>\n";
+        print "<td>$SessionTalks{$SessionTalkID}{Note}</td>\n";
+        print "<td>$SessionTalks{$SessionTalkID}{Time}</td>\n";
+        print "</tr>\n";
+      } 
+    }
+  }
+  print "<table>\n";   
+}
+
+sub PrintSessionTalk($) {
+  my ($SessionTalkID,$StartTime) = @_;
+  
+  my $DocumentID = $SessionTalks{$SessionTalkID}{DocumentID};
+  my $Note =  $SessionTalks{$SessionTalkID}{Note};
+  my $Time =  $SessionTalks{$SessionTalkID}{Time};
+
+  # See DocumentSummary in ResponseElements.pm 
+}
+
 1;

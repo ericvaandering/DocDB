@@ -1,0 +1,269 @@
+#! /usr/bin/env perl
+#
+#        Name: SessionModify
+# Description: Add talks to sessions of a meeting. Might also be allowed to
+# modify certain aspects of the session? Calls itself
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+use CGI;
+use DBI;
+
+require "Debug.pm";
+
+require "DocDBGlobals.pm";
+require "HTMLUtilities.pm";
+require "ResponseElements.pm";
+require "Sorts.pm";
+
+require "MeetingHTML.pm";
+require "MeetingSQL.pm";
+
+$query = new CGI;  # Global for subroutines
+
+print $query -> header;
+&DocDBHeader("Modify a Session");
+
+%params = $query -> Vars;
+
+my $Mode               = $params{mode};
+
+my $SessionID          = $params{sessionid};
+
+#my $StartYear          = $params{startyear};
+#my $StartMonth         = $params{startmonth};
+#my $StartDay           = $params{startday};
+#my $EndYear            = $params{endyear};
+#my $EndMonth           = $params{endmonth};
+#my $EndDay             = $params{endday};
+#my $MeetPreamble       = $params{meetpreamble};
+#my $MeetEpilogue       = $params{meetepilogue};
+#my $Location           = $params{location};
+#my $URL                = $params{url};
+
+#my @SessionYears         = split /\0/,$params{sessionyear};
+#my @SessionMonths        = split /\0/,$params{sessionmonth};
+#my @SessionDays          = split /\0/,$params{sessionday};
+#my @SessionHours         = split /\0/,$params{sessionhour};
+#my @SessionOrders        = split /\0/,$params{sessionorder};
+#my @RawSessionSeparators = split /\0/,$params{sessionseparator};
+#my @SessionTitles        = split /\0/,$params{sessiontitle};
+#my @SessionDescriptions  = split /\0/,$params{sessiondescription};
+#my @MeetingOrderIDs      = split /\0/,$params{meetingorderid};
+#my @SessionTypes         = split /\0/,$params{sessiontype};
+
+#my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
+#my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+&HTMLPrintParams();
+
+$dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+
+unless ($dbh) {
+  push @ErrorStack,$Msg_NoConnect;
+}         
+&EndPage(@ErrorStack);
+
+#if ($Mode eq "create") {
+#}
+
+&EndPage(@ErrorStack);
+
+# Fetch all SessionTalks and TalkSeparators with this SessionID 
+
+my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
+my @TalkSeparatorIDs = &FetchTalkSeparatorsBySessionID($SessionID);
+my @SessionOrderIDs  = &FetchSessionOrdersBySessionID($SessionID);
+
+# Sort talks and separators (subroutine)
+
+@SessionOrderIDs = sort SessionOrderIDByOrder @SessionOrderIDs;
+
+# Read in Hints (subroutine)
+# Re-hint all talks (subroutine)
+
+# Display all info on all talks plus a number of blanks
+# Submit button
+
+
+&DocDBNavBar;
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+ 
+exit;
+
+if ($ConferenceID) {
+  require "MeetingSQL.pm";
+  &GetConferences;
+  $MinorTopicID = $ConferenceForward{$ConferenceID}{MINOR};
+  &FetchSessionsByConferenceID($ConferenceID);
+  &FetchSessionSeparatorsByConferenceID($ConferenceID);
+}     
+
+if ($Mode eq "create" || $Mode eq "modify") {
+  if ($MajorTopic && $Mode eq "create") { # FIXME allow for modification here
+    my $TopicInsert = $dbh->prepare(
+      "insert into MinorTopic ".
+          "(MinorTopicID, MajorTopicID, ShortDescription, LongDescription) ". 
+      "values (0,?,?,?)");
+    $TopicInsert -> execute($MajorTopic,$Short,$Long);
+    $MinorTopicID = $TopicInsert -> {mysql_insertid}; # Works with MySQL only
+  }
+  if ($Mode eq "create") { # FIXME allow for modification here
+    my $ConferenceInsert = $dbh->prepare(
+     "insert into Conference ".
+            "(ConferenceID, MinorTopicID, Location, URL, StartDate, EndDate, ".
+            " Preamble, Epilogue, Title) ". 
+     "values (0,?,?,?,?,?,?,?,?)");
+    $ConferenceInsert -> execute($MinorTopicID,$Location,$URL,
+                                  $StartDate,$EndDate,$MeetPreamble,$MeetEpilogue,$Long); 
+    $ConferenceID = $ConferenceInsert -> {mysql_insertid}; # Works with MySQL only
+  }
+# Repack into array of same length as others
+
+  my @SessionSeparators = ();
+  foreach my $RawSessionSeparator (@RawSessionSeparators) { 
+    $RawSessionSeparator =~ s/n//; 
+    $SessionSeparators[$RawSessionSeparator-1] = 1; 
+  }  
+  
+# Re-sort session orders
+
+  my %SessionOrders = ();
+  {
+    foreach my $SessionOrder (@SessionOrders) {
+      $SessionOrders{$SessionOrder} = $SessionOrder;
+    } 
+    my @OrderedOrders = sort numerically @SessionOrders;
+
+    my $NewOrder = 1;
+    foreach my $SessionOrder (@OrderedOrders) {
+      $SessionOrders{$SessionOrder} = $NewOrder;
+      ++$NewOrder;
+    } 
+  }
+  
+# Loop over sessions and insert
+  
+  my $SessionInsert = $dbh -> prepare(
+   "insert into Session ".
+          "(SessionID, ConferenceID, StartTime, Title, Description) ". 
+   "values (0,?,?,?,?)");
+  my $SessionUpdate = $dbh -> prepare(
+   "update Session set ".
+   "StartTime=?, Title=?, Description=? ". 
+   "where SessionID=?");
+
+  my $SessionSeparatorInsert = $dbh -> prepare(
+   "insert into SessionSeparator ".
+   "(SessionSeparatorID, ConferenceID, StartTime, Title, Description) ". 
+   "values (0,?,?,?,?)");
+  my $SessionSeparatorUpdate = $dbh -> prepare(
+   "update SessionSeparator set ".
+   "StartTime=?, Title=?, Description=? ". 
+   "where SessionSeparatorID=?");
+
+  my $MeetingOrderInsert = $dbh -> prepare(
+   "insert into MeetingOrder ".
+   "(MeetingOrderID, SessionOrder, SessionID, SessionSeparatorID) ". 
+   "values (0,?,?,?)");
+  my $MeetingOrderUpdate = $dbh -> prepare(
+   "update MeetingOrder set SessionOrder=? where MeetingOrderID=?");
+  
+  my $SessionsUpdated    = 0;
+
+  foreach my $SessionOrder (@SessionOrders) {
+    my $SessionYear        = shift @SessionYears         ;
+    my $SessionMonth       = shift @SessionMonths        ;
+    my $SessionDay         = shift @SessionDays          ;
+    my $SessionHour        = shift @SessionHours         ;
+    my $SessionSeparator   = shift @SessionSeparators    ;
+    my $SessionTitle       = shift @SessionTitles        ;
+    my $SessionDescription = shift @SessionDescriptions  ;
+    my $MeetingOrderID     = shift @MeetingOrderIDs ;
+    my $SessionNewOrder    = $SessionOrders{$SessionOrder};
+    my $SessionDate        = "$SessionYear-$ReverseAbrvMonth{$SessionMonth}-$SessionDay $SessionHour:00";
+
+    my $SessionSeparatorID = 0;
+    my $SessionID          = 0;
+
+    # Key on MeetingOrderID to see if we are going to insert or update.	
+    if (grep /n/,$MeetingOrderID) {
+      if ($SessionSeparator || $SessionTitle || $SessionDescription) {
+	++$SessionsUpdated;
+	if ($SessionSeparator) {
+	  print "Creating Separator<br>";
+          $SessionSeparatorInsert -> execute($ConferenceID,$SessionDate,$SessionTitle,$SessionDescription);
+          $SessionSeparatorID = $SessionSeparatorInsert -> {mysql_insertid}; # Works with MySQL only
+	} else {
+	  print "Creating Session<br>";
+          $SessionInsert          -> execute($ConferenceID,$SessionDate,$SessionTitle,$SessionDescription);
+          $SessionID = $SessionInsert -> {mysql_insertid}; # Works with MySQL only
+	}
+	$MeetingOrderInsert -> execute($SessionNewOrder,$SessionID,$SessionSeparatorID);
+      }  
+    } else {
+      $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
+      $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
+      if ($SessionTitle || $SessionDescription) {
+	++$SessionsUpdated;
+	
+	if ($SessionSeparatorID) {
+	  print "Updating Separator<br>";
+          $SessionSeparatorUpdate -> execute($SessionDate,$SessionTitle,$SessionDescription,$SessionSeparatorID);
+	} else {
+	  print "Updating Session<br>";
+          $SessionUpdate          -> execute($SessionDate,$SessionTitle,$SessionDescription,$SessionID);
+	}
+	$MeetingOrderUpdate -> execute($SessionNewOrder,$MeetingOrderID);
+      } else {
+        push @WarnStack,$Msg_SessionBlankDelete;
+      }  
+    }  
+  }
+  unless ($SessionsUpdated) {
+    push @WarnStack,$Msg_MeetNoSessions;
+  }
+}
+
+&WarnPage(@WarnStack);
+&EndPage(@ErrorStack);
+
+# Print out forms with sessions
+
+print $query -> start_multipart_form('POST',"$MeetingModify");
+$query -> param('mode','modify');
+$query -> param('conferenceid',$ConferenceID);
+print $query -> hidden(-name => 'mode',   -default => 'modify');
+print "<table cellpadding=10 border=1>\n";
+
+my @SessionIDs = &FetchSessionsByConferenceID($ConferenceID);
+my @SessionSeparatorIDs = &FetchSessionSeparatorsByConferenceID($ConferenceID);
+my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
+
+@MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs;
+
+  # links to add talks to session (extend SessionEntryForm to these cases)
+  # form elements to change the session (Add delete button)
+  
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; &SessionEntryForm(@MeetingOrderIDs);   print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td>\n";
+print $query -> submit (-value => "Modify Meeting and Sessions");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+&DocDBNavBar;
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+ 
+exit;

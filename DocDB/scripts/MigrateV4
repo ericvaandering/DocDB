@@ -34,6 +34,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
   my $ConferenceAdd  = $dbh -> prepare("alter table Conference add Preamble text"); 
   my $ConferenceAdd2 = $dbh -> prepare("alter table Conference add Title varchar(128)"); 
   my $ConferenceAdd3 = $dbh -> prepare("alter table Conference add Epilogue text"); 
+  my $ConferenceAdd4 = $dbh -> prepare("alter table Conference add ShowAllTalks Integer"); 
   my $ConferenceUpd  = $dbh -> prepare("alter table Conference modify URL varchar(240)"); 
   my $JournalUpd     = $dbh -> prepare("alter table Journal    modify URL varchar(240)"); 
 
@@ -57,7 +58,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
 
   my $SessOrdCreate = $dbh -> prepare("create table SessionOrder ".
                    "(SesionOrderID integer auto_increment primary key,".
-                   " SessionID integer, TalkOrder integer, TalkID integer,".
+                   " SessionID integer, TalkOrder integer, SessionTalkID integer,".
                    " TalkSeparatorID integer, TimeStamp timestamp,".
                    " index(SessionID), index(TalkID), index(TalkSeparatorID))"); 
                    
@@ -87,6 +88,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
   $ConferenceAdd    -> execute();
   $ConferenceAdd2   -> execute();
   $ConferenceAdd3   -> execute();
+  $ConferenceAdd4   -> execute();
   $ConferenceUpd    -> execute();
   $JournalUpd       -> execute();
   $SessSepCreate    -> execute();
@@ -100,21 +102,11 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
 }
 
 if ($Action eq "migrate") {
-#  my ($DocRevID,$JournalID,$Volume,$Page);
-#  my $RevisionList  = $dbh -> prepare(
-#     "select DocRevID,JournalID,Volume,Page from DocumentRevision where JournalID>0"); 
-#  my $ReferenceInsert  = $dbh -> prepare(
-#     "insert into RevisionReference (ReferenceID,DocRevID,JournalID,Volume,Page) values (0,?,?,?,?)"); 
-#  $RevisionList -> execute;
-#  $RevisionList -> bind_columns(undef, \($DocRevID,$JournalID,$Volume,$Page));
-#  while ($RevisionList -> fetch) {
-#    $ReferenceInsert -> execute($DocRevID,$JournalID,$Volume,$Page);
-#  }
+  print "No migration necessary.\n";
 }
 
-if ($Action eq "delete") { # Drop useless columns 
-#  my $JournalDel = $dbh -> prepare("alter table DocumentRevision drop JournalID"); 
-#  $JournalDel -> execute();
+if ($Action eq "delete") { 
+  print "No delete necessary.\n";
 }
 
 exit;

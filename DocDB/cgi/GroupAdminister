@@ -104,7 +104,7 @@ if      ($Action eq "Delete") { # Delete group
   if (@ChildIDs) {
     print "<b>Deleting all subordinates.</b><br>\n";
     my $HierarchyDelete = $dbh -> prepare("delete from GroupHierarchy   ".
-                                    "where ParentID=? or ChildID=?");
+                                    "where ParentID=?");
        $HierarchyDelete -> execute($ParentID,$ParentID);
 
     my $HierarchyInsert = $dbh->prepare(

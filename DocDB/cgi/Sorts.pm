@@ -190,4 +190,8 @@ sub MeetingOrderIDByOrder { # Sort lists of Sessions, SessionSeparators
   $MeetingOrders{$a}{SessionOrder} <=> $MeetingOrders{$b}{SessionOrder}
 }
 
+sub SessionOrderIDByOrder { # Sort lists of SessionTalks, TalkSeparators 
+  $SessionOrders{$a}{TalkOrder} <=> $SessionOrders{$b}{TalkOrder}
+}
+
 1;
