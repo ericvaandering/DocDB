@@ -21,4 +21,18 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+sub SetXRefDefault ($) {
+  require "XRefSQL.pm"; 
+  
+  my ($DocRevID) = @_;
+  my @DocXRefIDs = &FetchXRefs(-docrevid => $DocRevID);
+  my $Text = "";
+  foreach my $DocXRefID (@DocXRefIDs) {
+    my $DocumentID = $DocXRefs{$DocXRefID}{DocumentID};
+    $Text .= "$DocumentID ";
+  }
+
+  return $Text;
+}  
+
 1;

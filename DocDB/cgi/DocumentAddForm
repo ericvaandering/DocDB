@@ -42,13 +42,14 @@ require "HTMLUtilities.pm";
 require "Utilities.pm";
 require "Defaults.pm";
 require "Security.pm";
+require "XRefUtilities.pm";
 
+require "FileHTML.pm";
+require "KeywordHTML.pm";
 require "RevisionHTML.pm";
 require "SecurityHTML.pm";
-require "TalkHTML.pm";
-require "KeywordHTML.pm";
 require "SignoffHTML.pm";
-require "FileHTML.pm";
+require "TalkHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -70,7 +71,6 @@ my @PreTopics    = $query -> param('pretopic');
    $mode         = $params{mode}; # FIXME: Can't be my since used in subroutines
 
 @TopicDefaults = ();
-my $RevisionNoteDefault; # FIXME: Add more here, do like this one
  
 if ($Special eq "meeting")      {$Meeting = 1;}
 if ($Special eq "othermeeting") {$OtherMeeting = 1;}
@@ -181,6 +181,8 @@ if ($mode eq "update") {
 my $SignoffsDefault; # FIXME: What other ones needn't be global?
 my @SecurityDefaults = ();
 my @ModifyDefaults   = ();
+my $RevisionNoteDefault; 
+my $XRefDefault;
 
 if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
   $DocRevID            = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
@@ -194,6 +196,7 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   @AuthorDefaults      = &GetRevisionAuthors($DocRevID);
   @TopicDefaults       = &GetRevisionTopics($DocRevID);
   @ReferenceDefaults   = &FetchReferencesByRevision($DocRevID);
+  $XRefDefault         = &SetXRefDefault($DocRevID);
   if ($UseSignoffs) {
     require "SignoffUtilities.pm";
     $SignoffDefault     = &BuildSignoffDefault($DocRevID);

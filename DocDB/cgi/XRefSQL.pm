@@ -25,7 +25,7 @@ sub InsertXRefs (%) {
   require "DocumentSQL.pm";
   my %Params = @_;
   
-  my $DocRevID    =   $Params{-docrevid} || "";   
+  my $DocRevID    =   $Params{-docrevid} || 0;   
   my @DocumentIDs = @{$Params{-docids}};
 
   my $Count = 0;
@@ -33,7 +33,7 @@ sub InsertXRefs (%) {
   my $Insert = $dbh -> prepare("insert into DocXRef (DocXRefID, DocRevID, DocumentID) values (0,?,?)");
                                  
   foreach my $DocID (@DocumentIDs) {
-    if (&FetchDocument($DocID)) {
+    if (&FetchDocument($DocID) && $DocRevID) {
       $Insert -> execute($DocRevID,$DocID);
       ++$Count;
     } else {
@@ -45,5 +45,40 @@ sub InsertXRefs (%) {
       
   return $Count;
 }
+
+sub FetchXRefs (%) { # For now, no single version
+  my %Params = (@_);
+  
+  my $DocRevID   = $Params{-docrevid} || 0;   
+  my $DocumentID = $Params{-docid}    || 0;
+  
+  my @DocXRefIDs = ();
+     %DocXRefs   = ();
+  
+  my $List;
+
+  if ($DocRevID) {
+    $List = $dbh -> prepare("select DocXRefID,DocRevID,DocumentID,TimeStamp ".
+             "from DocXRef where DocRevID=?");
+    $List -> execute($DocRevID);  
+  } elsif ($DocumentID) {
+    $List = $dbh -> prepare("select DocXRefID,DocRevID,DocumentID,TimeStamp ".
+             "from DocXRef where DocumentID=?");
+    $List -> execute($DocumentID);  
+  }        
+  if ($List) {
+    my ($DocXRefID,$DocRevID,$DocumentID,$TimeStamp);
+    $List-> bind_columns(undef, \($DocXRefID,$DocRevID,$DocumentID,$TimeStamp));
+
+    while ($List -> fetch) {
+      push @DocXRefIDs,$DocXRefID;
+      $DocXRefs{$DocXRefID}{DocRevID}   = $DocRevID;
+      $DocXRefs{$DocXRefID}{DocumentID} = $DocumentID;
+      $DocXRefs{$DocXRefID}{TimeStamp}  = $TimeStamp;
+    }
+  }
+   
+  return @DocXRefIDs;
+}  
 
 1;

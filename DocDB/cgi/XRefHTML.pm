@@ -21,4 +21,57 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+sub PrintXRefInfo ($) {
+  require "XRefSQL.pm"; 
+  require "DocumentHTML.pm";
+  require "RevisionSQL.pm";
+  
+  my ($DocRevID) = @_;
+  
+### Find and print documents this revision links to  
+  
+  my @DocXRefIDs = &FetchXRefs(-docrevid => $DocRevID);
+  if (@DocXRefIDs) {
+    print "<div id=\"XRefs\">\n";
+    print "<dl>\n";
+    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Cross-References:</span></dt>\n";
+    print "</dl>\n";
+    print "<ul>\n";
+    foreach my $DocXRefID (@DocXRefIDs) {
+      my $DocumentID = $DocXRefs{$DocXRefID}{DocumentID};
+      my $DocumentLink =  &FullDocumentID($DocumentID).": ";
+         $DocumentLink .= &NewerDocumentLink(-docid => $DocumentID, -titlelink => TRUE);
+      print "<li>$DocumentLink</li>\n";
+    }
+    print "</ul>\n";
+    print "</div>\n";
+  }
+
+### Find and print documents which link to this one
+
+  my @DocXRefIDs = &FetchXRefs(-docid => $DocRevisions{$DocRevID}{DOCID});
+  if (@DocXRefIDs) {
+    print "<div id=\"XReffedBy\">\n";
+    print "<dl>\n";
+    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Referenced by:</span></dt>\n";
+    print "</dl>\n";
+    print "<ul>\n";
+    my %SeenDocument = ();
+    foreach my $DocXRefID (@DocXRefIDs) {
+      my $DocRevID = $DocXRefs{$DocXRefID}{DocRevID};
+      &FetchDocRevisionByID($DocRevID);
+      my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+      if ($DocumentID && !$SeenDocument{$DocumentID}) {
+        my $DocumentLink  = &FullDocumentID($DocumentID).": ";
+           $DocumentLink .= &NewerDocumentLink(-docid => $DocumentID, -titlelink => TRUE);
+        print "<li>$DocumentLink</li>\n";
+        $SeenDocument{$DocumentID} = TRUE;
+      }
+    }
+    print "</ul>\n";
+    print "</div>\n";
+  }
+
+}
+
 1;
