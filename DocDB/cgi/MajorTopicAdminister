@@ -67,7 +67,7 @@ if      ($Action eq "Delete") { # Delete major topics
     $MajorTopicDelete -> execute($MajorTopicID);
     print "<b>$MajorTopics{$MajorTopicID}{LONG} has been deleted.</b><br>\n";
   }
-} elsif ($Action eq "Modify") { # Modify institutions
+} elsif ($Action eq "Modify") { # Modify major topics
   unless ($MajorTopicID) {
     push @ErrorStack,$Msg_ModMajEmpty;
   }
