@@ -53,7 +53,7 @@ my $revision_list = $dbh -> prepare(
 my $document_list = $dbh -> prepare(
    "select DocumentID from DocumentRevision where DocRevID=?"); 
 
-my $DocumentID,$DocRevID;
+my ($DocumentID,$DocRevID);
 
 ### Form
 

@@ -125,8 +125,10 @@ sub FetchDocFiles ($) {
   $file_list -> execute($docRevID);
   $file_list -> bind_columns(undef, \($DocFileID,$FileName,$Date,$RootFile,$TimeStamp,$Description,$DocRevID));
   while ($file_list -> fetch) {
-    push @{ $Files{$DocRevID} },$DocFileID;
+    push @{ $Files{$DocRevID} },$DocFileID; # Do I need this?
     $DocFiles{$DocFileID}{NAME}        = $FileName;
+    $DocFiles{$DocFileID}{Name}        = $FileName;
+    $DocFiles{$DocFileID}{Date}        = $Date;
     $DocFiles{$DocFileID}{ROOT}        = $RootFile;
     $DocFiles{$DocFileID}{DESCRIPTION} = $Description;
     $DocFiles{$DocFileID}{TimeStamp}   = $TimeStamp;
@@ -183,7 +185,7 @@ sub ExistsFile($$) {
   ($DocFileID) = $file_select -> fetchrow_array;
 
   if ($DocFileID) {
-    return 1;
+    return $DocFileID;
   } else {
     return 0;
   }    
@@ -202,6 +204,8 @@ sub FetchFile ($) {
   $FileList -> bind_columns(undef, \($FileName,$Date,$RootFile,$TimeStamp,$Description,$DocRevID));
   while ($FileList -> fetch) {
     $DocFiles{$DocFileID}{NAME}        = $FileName;
+    $DocFiles{$DocFileID}{Name}        = $FileName;
+    $DocFiles{$DocFileID}{Date}        = $Date;
     $DocFiles{$DocFileID}{ROOT}        = $RootFile;
     $DocFiles{$DocFileID}{DESCRIPTION} = $Description;
     $DocFiles{$DocFileID}{TimeStamp}   = $TimeStamp;

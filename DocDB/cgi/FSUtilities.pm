@@ -244,7 +244,7 @@ sub ProcessUpload($$) {
   close OUTFILE;
   
   unless (-s "$new_dir/$short_file") {
-    push @WarnStack,"The file $short_file did not exist or was blank.";
+    push @WarnStack,"The file $short_file ($long_file) did not exist or was blank.";
   }  
   
   return $short_file;
@@ -254,6 +254,7 @@ sub CopyFile ($$$$) {
   my ($NewDir,$ShortFile,$OldDocID,$OldVersion) = @_;
   my $OldDir = &GetDirectory($OldDocID,$OldVersion);
   my $OldFile = $OldDir."/".$ShortFile;
+  push @DebugStack,"Copying $OldFile,$NewDir";
   system ("cp",$OldFile,$NewDir);
   return $ShortFile;
 }  
@@ -310,6 +311,64 @@ sub ExtractArchive {
     <a href=\"mailto:$DBWebMasterEmail\">adminstrator</a>. <br>\n";
   } 
   chdir $current_dir;
+}  
+
+sub DownloadURLs (%) {
+  use Cwd;
+  require "WebUtilities.pm";
+  
+  my %Params = @_;
+  
+  my $TmpDir = $Params{-tmpdir} || "/tmp";
+  my %Files    = %{$Params{-files}}; # Documented in FileUtilities.pm
+
+  my $Status;
+  $CurrentDir = cwd();
+  chdir $TmpDir or die "<p>Fatal error in chdir<p>\n";
+
+  my @Filenames = ();
+
+  foreach my $FileKey (keys %Files) {
+    if ($Files{$FileKey}{URL}) {
+      my $URL = $Files{$FileKey}{URL};
+      unless (&ValidFileURL($URL)) {
+        push @ErrorStack,"The URL <tt>$URL</tt> is not well formed. Don't forget ".
+                         "http:// on the front and a file name after the last /.";
+      }  
+      my @Authentication = ();
+      if ($Files{$FileKey}{User} && $Files{$FileKey}{Pass}) {
+        push @DebugStack,"Using authentication";
+        @Authentication = ("--http-user",$Files{$FileKey}{User}, 
+	                   "--http-pass",$Files{$FileKey}{Pass});
+      }
+
+      $Status = system ($Wget,"--quiet",@Authentication,$Files{$FileKey}{URL});
+
+      my @URLParts = split /\//,$Files{$FileKey}{URL};
+      my $Filename = pop @URLParts;
+      push @DebugStack, "Download ($Files{$FileKey}{URL}) status: $Status";
+      if (-e "$TmpDir/$Filename") {
+        push @Filenames,$Filename;
+	delete $Files{$FileKey}{URL};
+	$Files{$FileKey}{Filename} =  "$TmpDir/$Filename";      			    
+      } else {
+        push @WarnStack,"The URL $Files{$FileKey}{URL} did not exist or was not accessible.";
+      }
+    }
+  }
+          
+  unless (@Filenames) {
+    push @ErrorStack,"No files were downloaded.";
+  }   
+      
+  chdir $CurrentDir;
+  return %Files;
+}
+
+sub MakeTmpSubDir {
+  my $TmpSubDir = $TmpDir."/".(time ^ $$ ^ unpack "%32L*", `ps axww`);
+  mkdir $TmpSubDir, oct 755 or die "Could not make temporary directory";
+  return $TmpSubDir;
 }  
 
 1;

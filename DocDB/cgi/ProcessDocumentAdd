@@ -36,6 +36,7 @@ require "RevisionSQL.pm";
 require "SignoffSQL.pm";
 require "MiscSQL.pm";
 require "FSUtilities.pm";
+require "FileUtilities.pm";
 require "WebUtilities.pm";
 require "HTMLUtilities.pm";
 require "Security.pm";
@@ -54,14 +55,15 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 ### Set up, give user initial information
 
 %params = $query -> Vars;
-$mode = $params{mode};
+$mode = $params{mode}; #FIXME: Remove
+$Mode = $params{mode};
 
 print $query->header;
-if ($mode eq "reserve") {
+if ($Mode eq "reserve") {
   &DocDBHeader("$Project Document Reservation Results","Document Reservation Results"); 
-} elsif ($mode eq "add") {
+} elsif ($Mode eq "add") {
   &DocDBHeader("$Project Document Addition Results","Document Addition Results"); 
-} elsif ($mode eq "update" || $mode eq "updatedb") {
+} elsif ($Mode eq "update" || $mode eq "updatedb") {
   &DocDBHeader("$Project Document Modification Results","Document Modification Results"); 
 }
 
@@ -70,6 +72,7 @@ if ($mode eq "reserve") {
 
 @ErrorStack = ();
 @WarnStack  = ();
+@DebugStack = ();
 
 $Special = $params{special};
 
@@ -93,9 +96,40 @@ if ($Special eq "othermeeting") {$OtherMeeting = 1;}
 my $SessionTalkID = $params{sessiontalkid};
 my $RevisionNote  = $params{revisionnote};
 my $SignoffList   = $params{signofflist};
-my @CopyFiles     = split ("\0",$params{copyfile});
-my @CopyFileIDs   = split ("\0",$params{copyfileid});
 my $OldVersion    = $params{oldversion};
+my $MaxFiles      = $params{maxfiles};
+
+# Fill in file hash
+
+my %Files = ();
+my $NeedURLs   = 0;
+my $AddNewFile = 0;
+for (my $i = 1; $i<= $MaxFiles; ++$i) {
+  my $Key = $i; # Probably something better later
+  if ($params{"upload$i"}) {
+    $AddNewFile = 1;
+    $Files{$Key}{File} = $query ->  param("upload$i");
+  } elsif ($params{"url$i"}) {
+    $NeedURLs = 1;
+    $AddNewFile = 1;
+    $Files{$Key}{URL}  = $params{"url$i"};
+    $Files{$Key}{User} = $params{http_user};
+    $Files{$Key}{Pass} = $params{http_pass};
+  } elsif ($params{"copyfile$i"}) {
+    $Files{$Key}{CopyFileID} = $params{"fileid$i"};
+  } elsif ($Mode eq "updatedb") {
+    $Files{$Key}{FileID} = $params{"fileid$i"};
+    push @DebugStack,"Duplicating in slot $i, $Files{$Key}{FileID}";
+  }
+  
+  if ($params{"main$i"}) {
+    $Files{$Key}{Main} = 1;
+  } else {
+    $Files{$Key}{Main} = 0;
+  }          
+
+  $Files{$Key}{Description} = $params{"filedesc$i"};
+}
 
 if ($Meeting || $OtherMeeting) {
   @authorIDs = ($Requester);
@@ -117,6 +151,8 @@ if ($Overdate && $Overyear && $Overmonth && $Overday) {
   ++$mon;
   $SQL_NOW = "$year-$mon-$day $hour:$min:$sec";
 }  
+
+&DebugPage("After Parameter Collection");
 
 if ($mode ne "add"    && $mode ne "reserve" && 
     $mode ne "update" && $mode ne "updatedb") {
@@ -175,11 +211,6 @@ my $ReferenceInsert  = $dbh -> prepare(
      "       (ReferenceID,DocRevID,JournalID,Volume,Page)".
      "values (0,          ?,       ?,        ?,     ?)"); 
 
-my $file_insert = $dbh->prepare(
-   "insert into DocumentFile ".
-   "       (DocFileID, DocRevID, FileName, Date, RootFile, Description) ".
-   "values (0,         ?,        ?,        ?,    ?       , ?)");
-
 my $SessionTalkUpdate = $dbh -> prepare("update SessionTalk set DocumentID=?,Confirmed=1 where SessionTalkID=?");
 
 # FIXME: Build links for other document actions to use below
@@ -216,6 +247,7 @@ if ($mode eq "add" || $mode eq "reserve") {
     push @ErrorStack,"You must supply a document type for this document.";
   }
 }
+
 if ($mode eq "add" || $mode eq "update") {
   unless ($params{topics}) {
     push @ErrorStack,"You must supply at least one topic for this document.";
@@ -223,10 +255,10 @@ if ($mode eq "add" || $mode eq "update") {
   unless ($params{abstract}) {
     push @ErrorStack,"You must supply an abstract for this document.";
   }
-  unless (@CopyFiles || grep /\w/,$params{single_upload} || grep /\w/,$params{single_http}) {
-    push @ErrorStack,"You must supply a file for this document.";
-    push @ErrorStack,"If you just want to change information about the
-    document, choose `Update DB Info' instead.";
+  unless ($AddNewFile) {
+    push @ErrorStack,"You must supply a new or changed file for this document.
+                      If you just want to change information about the
+                      document, choose `Update DB Info' instead.";
   }
   if     ($params{single_upload} && $params{single_http}) {
     push @ErrorStack,"You may not specify both URL and file upload.";
@@ -235,25 +267,9 @@ if ($mode eq "add" || $mode eq "update") {
     push @ErrorStack,"You must specify a main file in the archive.";
   }
   
-  if ($params{single_http}) {
-    if ($params{http_user} && $params{http_pass}) {
-      $Authentication = " --http-user $params{http_user} --http-pass $params{http_pass} ";
-    } else {
-      $Authentication = "";
-    }  
-    my @urls = split /\0/,$params{single_http};
-    foreach my $url (@urls) {
-      if (&ValidFileURL($url)) {
-        my $command = $Wget.$Authentication.$url;
-        my @url_lines = `$command`;
-        unless (@url_lines) {
-          push @ErrorStack,"The URL <tt>$url</tt> was not present or was protected.";
-        }
-      } else {
-        push @ErrorStack,"The URL <tt>$url</tt> is not well formed. Don't forget ".
-                          "http:// on the front and a file name after the last /.";
-      }
-    }  
+  if ($NeedURLs) {
+    my $TmpDir = &MakeTmpSubDir();
+    %Files = &DownloadURLs(-tmpdir => $TmpDir, -files => \%Files);
   }  
 }
 
@@ -295,7 +311,9 @@ if ($EnhancedSecurity) {
                       modify the document.";
   }                    
 }
-  
+
+&DebugPage("After Checks");
+&WarnPage(@WarnStack); @WarnStack = ();
 &EndPage(@ErrorStack);
 
 ### Make entry in DocumentDatabase or get document ID
@@ -347,6 +365,7 @@ $doc_rev_insert -> execute($documentID,$params{requester},$params{title},
                            $params{pubinfo},$version,$params{abstract},
                            $SQL_NOW,$Keywords,$RevisionNote);
 my $docRevID = $doc_rev_insert -> {mysql_insertid}; # Works with MySQL only
+my $DocRevID = $docRevID; # FIXME
 
 ### Add reference information if it exists
 
@@ -398,105 +417,15 @@ if ($UseSignoffs && $SignoffList) {
 
 if ($mode eq "updatedb") { # Copy DocumentFile entries
   &ProtectDirectory($documentID,$version,@securities); # Redo security 
- 
-  my ($FileName,$Date,$RootFile,$Description);
-
-  my @FileIDs      = split ("\0",$params{fileid});
-  my @Descriptions = split ("\0",$params{filedesc});
-  my @Roots        = split ("\0",$params{root});
-
-  my $file_list = $dbh->prepare(
-    "select FileName,Date from DocumentFile where DocFileID=?");
-
-  foreach my $FileID (@FileIDs) {
-    $file_list -> execute($FileID);
-    ($FileName,$Date) = $file_list -> fetchrow_array;
-    $Description = shift @Descriptions; 
-    $RootFile = 0;
-    foreach my $Root (@Roots) {
-      if ($Root == $FileID) { 
-        $RootFile = 1;
-      }
-    }
-    $file_insert -> execute($docRevID,$FileName,$Date,$RootFile,$Description);
-  }  
+  my @FileIDs = &AddFiles(-docrevid => $DocRevID, -files => \%Files, -oldversion => $OldVersion);
 }  
 
 if ($mode eq "add" || $mode eq "update") { # We're adding new files
   
   $new_dir = &MakeDirectory($documentID,$version);
   &ProtectDirectory($documentID,$version,@securities);
-  @long_files   = $query ->  param("single_upload");
-  @short_files = ();
   if ($Archive eq "single") { # The user uploaded the files themselves 
-    @Descriptions = split ("\0",$params{filedesc});
-    @Roots = ();
-    my @RawRoots = split ("\0",$params{root});
-    foreach my $RawRoot (@RawRoots) {  # Simulate what I thought was happening
-      @Roots[$RawRoot-1] = "on"
-    }
-
-# Deal with copied files. Complicated because we have to remove elements from 
-# @Roots (whether file is "main") and @Descriptions corresponding to copied 
-# files and then add them on at the end.
-
-    my @CopyRoots = ();
-    my %CopyFiles = ();
-    my $NRemoved  = 0;     # Used to keep array indices OK.
-    
-    foreach $CopyFile (@CopyFiles) {
-      my $Counter = $CopyFile-1;
-      if (@long_files[$Counter]) {
-        push @WarnStack,"You tried to copy and upload a file in the same spot. Copy ignored.";
-        next;
-      }  
-      
-      $CopyFiles{$Counter} = 1;
-      
-      my ($NewRoot)         = splice @Roots,$Counter-$NRemoved,1;
-      my ($NewDescription)  = splice @Descriptions,$Counter-$NRemoved,1;
-      ++$NRemoved;
-      push @CopyRoots,$NewRoot;
-      push @CopyDescriptions,$NewDescription;
-    }
-    
-    if (@CopyFiles) {
-      push @Roots,@CopyRoots;
-      push @Descriptions,@CopyDescriptions;
-    }  
-    
-### Add files uploaded or through HTTP
-        
-    if ($params{single_upload}) { # Copy file to directory
-      foreach $long_file (@long_files) {
-        if ($long_file) {
-#          print "Adding file $long_file<br>\n"; # FIXME: Maybe useful with NPH
-          $short_file = &ProcessUpload($new_dir,$long_file);
-          push @short_files,$short_file;
-        } else {
-          $short_file = "";
-        }    
-      }
-    } elsif ($params{single_http}) {
-      @urls = split /\0/,$params{single_http};
-      foreach $url (@urls) {
-#        print "Adding URL $url<br>\n"; # FIXME: Maybe useful with NPH
-        $short_file = &ProcessURL($new_dir,$url);
-        push @short_files,$short_file;
-      }  
-    }
-    
-### Copy files    
-
-    my $CopyCounter = 0;
-    foreach my $FileID (@CopyFileIDs) {
-      my $FileName = &FetchFile($FileID);
-      if ($CopyFiles{$CopyCounter}) {
-        $short_file = &CopyFile($new_dir,$FileName,$documentID,$OldVersion);
-        push @short_files,$short_file;
-      }  
-      ++$CopyCounter;
-    }  
+    my @FileIDs = &AddFiles(-docrevid => $DocRevID, -files => \%Files, -oldversion => $OldVersion);
   } elsif ($Archive eq "archive") { # They uploaded a tar/zip file
     @short_files = ();
     @Descriptions = ();
@@ -510,29 +439,24 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
       $short_file = &ProcessURL($new_dir,$url);
       &ProcessArchive($new_dir,$short_file);
     } 
-  } # Archive upload
-  
-  
-    
-    
-### Insert into Files database
-
-  foreach $short_file (@short_files) {
-    $Description = shift @Descriptions;
-    $rootfile = shift @Roots;
-    if ($rootfile eq "on") {
-      $rootfile = 1;
-    } else {
-      $rootfile = 0;
-    }  
-    if ($short_file) {  
-      $file_insert -> execute($docRevID,$short_file,$SQL_NOW,$rootfile,$Description);
+    foreach $short_file (@short_files) {
+      $Description = shift @Descriptions;
+      $rootfile = shift @Roots;
+      if ($rootfile eq "on") {
+        $rootfile = 1;
+      } else {
+        $rootfile = 0;
+      }  
+      if ($short_file) {  
+        $file_insert -> execute($docRevID,$short_file,$SQL_NOW,$rootfile,$Description);
+      }
     }
-  }
+  } # Archive upload
 } # File upload for "add" and "update"
 
 ### If we had any warnings print them out now
 
+&DebugPage("Inserts done");
 &WarnPage(@WarnStack);
 @WarnStack = ();
   
@@ -565,11 +489,12 @@ print "You were successful. Your Document ID is <b>$full_docid, version
 
 if ($MailInstalled) {
   &MailNotices(-docrevid => $DocRevID, -type => "update");
-  if ($UseSignoffs) {
-    &ClearSignatures; 
-    &NotifySignees($DocRevID);
-  }   
 }
+
+if ($UseSignoffs) {
+  &ClearSignatures; 
+  &NotifySignees($DocRevID);
+}   
 
 $EndTime  = new Benchmark;
 

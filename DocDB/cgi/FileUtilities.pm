@@ -19,10 +19,12 @@
 # The %Files hash has the following possible fields:
 
 #  Filename    -- The name of the file, already on the file system to be inserted
-#  File        -- Contains actual file contents (from CGI, presumably) -- not implemented
-#  URL         -- URL of the file -- not implemented
-#  Pass        -- Password for wget -- not implemented
-#  User        -- Username for wget -- not implemented
+#  File        -- Contains file handle from CGI
+#  CopyFileID  -- Copy physical file from a previous version
+#  FileID      -- Duplicate file id entry from a previous version
+#  URL         -- URL of the file  
+#  Pass        -- Password for wget 
+#  User        -- Username for wget 
 #  Description -- Description of the file
 #  Main        -- Boolean, is it a "main" file
 
@@ -32,10 +34,15 @@ sub AddFiles (%) {
   
   my %Params = @_;
   
-  my $DocRevID =   $Params{-docrevid}; # Pass on, don't deal with    
-  my $DateTime =   $Params{-datetime}; # Pass on, don't deal with   
-  my %Files    = %{$Params{-files}};
+  my $DocRevID   = $Params{-docrevid};   
+  my $DateTime   = $Params{-datetime}; 
+  my $ReplaceOld = $Params{-replaceold}; # Replace files of the same name  
+  my $OldVersion = $Params{-oldversion}; # For copying files from old version  
 
+  my %Files = %{$Params{-files}};
+  
+  push @DebugStack,"Adding files for DRI $DocRevID";
+  
   my @FileIDs = (); my $FileID;
   unless ($DocRevID) {
     return @FileIDs;
@@ -44,23 +51,44 @@ sub AddFiles (%) {
   my @Files = sort keys %Files;
   
   &FetchDocRevisionByID($DocRevID);
+  my $Version    = $DocRevisions{$DocRevID}{Version};
+  my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+  &MakeDirectory($DocumentID,$Version); 
+  my $Directory = &GetDirectory($DocumentID,$Version); 
 
   foreach my $File (@Files) {
+    my $ShortName = "";
     if ($Files{$File}{Filename} && (-e $Files{$File}{Filename})) {
       my @Parts = split /\//,$Files{$File}{Filename};
       $ShortName = pop @Parts;
+      system ("cp",$Files{$File}{Filename},$Directory);
+    } elsif ($Files{$File}{File}) {
+      push @DebugStack,"Trying to upload $File $Files{$File}{File} Main: $Files{$File}{Main}";
+      $ShortName = &ProcessUpload($Directory,$Files{$File}{File});
+    } elsif ($Files{$File}{CopyFileID}) {
+      push @DebugStack,"Trying to copy $File $Files{$File}{CopyFileID} Main: $Files{$File}{Main}";
+      $ShortName = &FetchFile($Files{$File}{CopyFileID});
+      &CopyFile($Directory,$ShortName,$DocumentID,$OldVersion);
+    } elsif ($Files{$File}{FileID}) {
+      push @DebugStack,"Trying to duplicate $File $Files{$File}{CopyFileID} Main: $Files{$File}{Main}";
+      my $OldFileID = $Files{$File}{FileID};
+      &FetchFile($OldFileID);
+      $ShortName = $DocFiles{$OldFileID}{Name};
+      $DateTime  = $DocFiles{$OldFileID}{Date};
+    } # else other methods
+    
+    if ($ReplaceOld && $ShortName) {
+      my $OldFileID = &ExistsFile($DocRevID,$ShortName);
+      &DeleteFile(-fileid => $OldFileID);
+    }
+      
+    if ($ShortName) {
       $FileID = &InsertFile(-docrevid    => $DocRevID, -datetime => $DateTime,
                             -filename    => $ShortName,
                             -main        => $Files{$File}{Main},
                             -description => $Files{$File}{Description});
       push @FileIDs,$FileID;
-      my $Version    = $DocRevisions{$DocRevID}{Version};
-      my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
-      &MakeDirectory($DocumentID,$Version); 
-      my $Directory = &GetDirectory($DocumentID,$Version); 
-      system ("cp",$Files{$File}{Filename},$Directory);
-
-    } # else other methods
+    }  
   } 
   return @FileIDs;   
 }

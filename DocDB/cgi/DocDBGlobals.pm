@@ -16,15 +16,17 @@ $DocDBHome = "http://cepa.fnal.gov/DocDB/";
 
 $MailInstalled = 1; # Is the Mailer::Mail module installed?
 
-# Shell Commands
+# Shell Commands, FS details
 
-$Wget   = "/usr/bin/wget -O - --quiet ";
+$Wget   = "/usr/bin/wget";
 $Tar    = "";
 $GTar   = "/bin/tar ";
 $GZip   = "/bin/gzip ";
 $GUnzip = "/bin/gunzip ";
 $Unzip  = "/usr/bin/unzip -q ";
 $Zip    = "/usr/bin/zip -q -r ";  # Set to "" in ProjectGlobals if not installed
+
+$TmpDir = "/tmp/";
 
 # Useful stuff
 

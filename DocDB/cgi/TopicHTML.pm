@@ -49,7 +49,7 @@ sub MinorTopicLink ($;$) {
   require "MeetingSQL.pm";
   require "MeetingSecurityUtilities.pm";
   
-  my $URL,$link,@MeetingOrderIDs;
+  my ($URL,$link,@MeetingOrderIDs);
 
   &FetchMinorTopic($TopicID);
   my $ConferenceID = &FetchConferenceByTopicID($TopicID);

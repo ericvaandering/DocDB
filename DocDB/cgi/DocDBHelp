@@ -41,7 +41,7 @@ my $DefaultHandler = XML::PatAct::ToObjects -> new(Patterns => $DefaultPatterns,
 my $DefaultParser = XML::Parser::PerlSAX -> new(Handler => $DefaultHandler);
 my $DefaultSchema = $DefaultParser -> parse(Source => {SystemId => "DocDBHelp.xml"  });
 
-my $ProjectMatcher,$ProjectHandler,$ProjectParser,$ProjectSchema;
+my ($ProjectMatcher,$ProjectHandler,$ProjectParser,$ProjectSchema);
 if ($ProjectHelp) {
   $ProjectMatcher = XML::PatAct::MatchName -> new(Patterns => $ProjectPatterns);
   $ProjectHandler = XML::PatAct::ToObjects -> new(Patterns => $ProjectPatterns,

@@ -186,7 +186,7 @@ sub SessionDateTimePullDown (;%) {
 
   my $Default = $Params{-default} || 0;
 
-  my $DefaultYear,$DefaultMonth,$DefaultDay,$DefaultHour;
+  my ($DefaultYear,$DefaultMonth,$DefaultDay,$DefaultHour);
   my (undef,undef,undef,$Day,$Month,$Year) = localtime(time);
   $Year += 1900;
   if ($SessionDefaultDateTime) {

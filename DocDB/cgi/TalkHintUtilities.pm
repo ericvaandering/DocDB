@@ -38,7 +38,7 @@ sub ReHintTalksBySessionID ($) { # FIXME: Refactor to use GetHintDocuments and T
     return;
   }  
 
-  my $DocRevID,$DocumentID;
+  my ($DocRevID,$DocumentID);
   my %DocumentIDs = (); 
   my $SearchDays  = $TalkHintWindow;
 

@@ -30,6 +30,13 @@ sub GetPrefsCookie {
   $TopicModePref    = $query -> cookie('topicmode');
   $AuthorModePref   = $query -> cookie('authormode');
   $DateOverridePref = $query -> cookie('overdate');
+  $UserPreferences{AuthorID}     = $UserIDPref      ;
+  $UserPreferences{UploadType}   = $UploadTypePref  ;
+  $UserPreferences{NumFiles}     = $NumFilesPref    ;
+  $UserPreferences{UploadMethod} = $UploadMethodPref;
+  $UserPreferences{TopicMode}    = $TopicModePref   ;
+  $UserPreferences{AuthorMode}   = $AuthorModePref  ;
+  $UserPreferences{DateOverride} = $DateOverridePref;
 }
 
 1;

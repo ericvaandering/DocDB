@@ -35,4 +35,12 @@ sub EuroTimeHM($) {
   return $ReturnDate;
 }
 
+sub SQLNow {
+  my ($sec,$min,$hour,$day,$mon,$year) = localtime(time); 
+  ++$mon; $year += 1900; 
+  my $SQL_NOW       = "$year-$mon-$day $hour:$min:$sec";
+  return $SQL_NOW;
+}
+
+
 1;
