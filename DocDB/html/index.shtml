@@ -36,23 +36,23 @@
 
 Welcome to the WWW interface to the BTeV Document Database
 <p>
-	<LI><A HREF="noteSelMin.html">Search the Notes catalog</A>. 
+	<LI><A HREF="docSelMin.shtml">Search the Documents catalog</A>. 
 		  (Brief version--search on number and/or authors only.) 
-		  Search for a note or group of notes, and retrieve the abstract or 
+		  Search for a document or group of documents, and retrieve the abstract or 
 		  postscript/PDF file(s)/html/text etc, if they exist electronically.
 		  <p>
-		<LI><A HREF="noteSel.html">Search the Notes catalog</A>. 
+		<LI><A HREF="docSel.shtml">Search the Documents catalog</A>. 
 		  (Long version--more fields to search and more options.)
 		  <p>
-		<LI><A HREF="noteReq.html">Request a new Note number</A> 
-		  and enter information in the Notes catalog.
+		<LI><A HREF="docReq.shtml">Request a new Document number</A> 
+		  and enter information in the Documents catalog.
 		  <p>
-		<LI><A HREF="notePost.html">Post a Note</A> electronically.
+		<LI><A HREF="docPost.shtml">Post a Document</A> electronically.
 		  <p>
-		<LI><A HREF="noteMod.html">Change the Notes catalog entry</A> 
-		  for a specified Note.
+		<LI><A HREF="docMod.shtml">Change the Documents catalog entry</A> 
+		  for a specified Document.
 		  <p>
-		<LI><a href="/cgi-private/docdb/note1LinePrint">List of notes with title, authors and a link to the document (if available)</a>
+		<LI><a href="/cgi-private/DocDB/doc1LinePrint">List of documents with title, authors and a link to the document (if available)</a>
 				  </UL>
 
 
