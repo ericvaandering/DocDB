@@ -97,7 +97,7 @@ sub CertificateStatus () {
     $EmailUserSelect = $dbh->prepare("select EmailUserID,Verified from EmailUser ".
                                        "where Name=?");
     $EmailUserSelect -> execute($CertCN);
-    push @DebugStack,"Checking user $CertCN";
+    push @DebugStack,"Checking user $CertCN by CN";
   } else {
     $EmailUserSelect = $dbh->prepare("select EmailUserID,Verified from EmailUser ".
                                        "where EmailAddress=? and Name=?");
