@@ -74,6 +74,9 @@ $DocumentAddForm    = $cgi_root."DocumentAddForm";
 $ShowDocument       = $cgi_root."ShowDocument";
 $ListDocuments      = $cgi_root."ListDocuments";
 
+$Search             = $cgi_root."Search";
+$SearchForm         = $cgi_root."SearchForm";
+
 $TopicAddForm       = $cgi_root."TopicAddForm";
 $AuthorAddForm      = $cgi_root."AuthorAddForm";
 

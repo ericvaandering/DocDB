@@ -80,6 +80,45 @@ sub BTeVHeader {
   print "<hr>\n";
 }
 
+sub SearchHeader { 
+
+  my ($title,$page_title) = @_;
+  unless ($page_title) {
+    $page_title = $title;
+  }
+  my @title_parts = split /\s+/, $page_title;
+  $page_title = join '&nbsp;',@title_parts;
+   
+  print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n";
+
+# The header below activates strict mode in Netscape 6 which causes 
+# weird reflows in the document. But, the navbar is faster. Choose wisely.
+#
+#  print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"\n";
+#  print "         \"http://www.w3.org/TR/html4/loose.dtd\">\n";
+
+  print "<html>\n";
+  print "<head>\n";
+  print "<title>$title</title>\n";
+  print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=iso-8859-1\">\n";
+  print "<link rel=\"stylesheet\" href=\"/includes/style.css\" type=\"text/css\">\n";
+ 
+  unless ($Public) {&SSInclude("navbar_header.html");}
+  print "</head>\n";
+
+  print "<body bgcolor=\"#FFFFFF\" text=\"#000000\" topmargin=\"6\" leftmargin=\"6\" marginheight=\"6\" marginwidth=\"6\" 
+          onload=\"selectProduct(document.forms[\'queryform\']);\">\n";
+
+  unless ($Public) {&SSInclude("atwork_menuload.html");}
+  unless ($Public) {&SSInclude("begin_atwork_top.html");}
+  
+  print "<div align=\"center\"><font size=\"+2\" color=\"#003399\">$page_title</font></div>\n";
+  unless ($Public) {&SSInclude("end_atwork_top.html");}
+  unless ($Public) {&SSInclude("atwork_navbar.html");}
+  unless ($Public) {&SSInclude("end_table.html");}
+  print "<hr>\n";
+}
+
 sub BTeVStyle { # Same as above, but no nav-bar
 
   my ($title,$page_title) = @_;

@@ -24,7 +24,8 @@ sub byMeetingDate {
 sub byTopic {
 
   # Do reverse sort by date for Collaboration meetings, otherwise alphabetical
-
+  # FIXME use special topics numbering
+  
   if ($MajorTopics{$MinorTopics{$a}{MAJOR}}{SHORT} eq "Collaboration Meetings" &&
       $MajorTopics{$MinorTopics{$b}{MAJOR}}{SHORT} eq "Collaboration Meetings") {
     ($adays,$amonth,$ayear) = split /\s+/,$MinorTopics{$a}{SHORT};

@@ -91,28 +91,29 @@ sub DateRangePullDown {
   $year += 1900;
   $min = (int (($min+3)/5))*5; # Nearest five minutes
   
-  my @days = ();
+  my @days = ("--");
   for ($i = 1; $i<=31; ++$i) {
     push @days,$i;
   }  
 
-  my @months = ("Jan","Feb","Mar","Apr","May","Jun",
+  my @months = ("---","Jan","Feb","Mar","Apr","May","Jun",
              "Jul","Aug","Sep","Oct","Nov","Dec");
 
-  my @years = ();
-  for ($i = 1994; $i<=$year+2; ++$i) { # 1994 - current year
+  my @years = ("----");
+  for ($i = 1994; $i<=$year; ++$i) { # 1994 - current year
     push @years,$i;
   }  
 
-  print $query -> popup_menu (-name => 'afterday',-values => \@days,    -default => 1);    
-  print $query -> popup_menu (-name => 'aftermonth',-values => \@months,-default => "Jan");
-  print $query -> popup_menu (-name => 'afteryear',-values => \@years,  -default => 1994); 
+  print $query -> popup_menu (-name => 'afterday',-values => \@days);    
+  print $query -> popup_menu (-name => 'aftermonth',-values => \@months);
+  print $query -> popup_menu (-name => 'afteryear',-values => \@years); 
+  print " (Start)\n";
+  print "<br><b><big>&nbsp;</big>&nbsp;and</b><br>\n";
 
-  print "<br><b>&nbsp;&nbsp;and</b><br>\n";
-
-  print $query -> popup_menu (-name => 'beforeday',-values => \@days,     -default => $day);
-  print $query -> popup_menu (-name => 'beforemonth',-values => \@months, -default => $months[$mon]);
-  print $query -> popup_menu (-name => 'beforeyear',-values => \@years,   -default => $year);
+  print $query -> popup_menu (-name => 'beforeday',-values => \@days);
+  print $query -> popup_menu (-name => 'beforemonth',-values => \@months);
+  print $query -> popup_menu (-name => 'beforeyear',-values => \@years);
+  print " (End)\n";
 }
 
 sub MajorMinorSelect {

@@ -380,8 +380,7 @@ sub SecurityList {
   push @GroupIDs,$ID; 
   $GroupLabels{$ID} = "Public";  
   @GroupIDs = sort numerically @GroupIDs;
-  
-  unless (@SecurityDefaults) {@SecurityDefaults = [1];}  # BTeV (hardcoded-bad)
+
   print "<b><a ";
   &HelpLink("security");
   print "Security:</a></b><br> \n";

@@ -1,0 +1,137 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+use Benchmark;
+use CGI;
+use DBI;
+
+$StartTime = new Benchmark;
+
+require "ResponseElements.pm";
+require "MySQLAccess.pm";
+require "DocDBGlobals.pm";
+require "FSUtilities.pm";
+require "WebUtilities.pm";
+require "HTMLUtilities.pm";
+require "Security.pm";
+require "SearchAtoms.pm";
+require "Sorts.pm";
+
+$query = new CGI;  # Global for subroutines
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+&GetTopics;         
+&GetSecurityGroups; 
+
+### Set up, give user initial information
+
+%params = $query -> Vars;
+
+print $query->header;
+&BTeVHeader("BTeV Document Search Results","Search Results");
+
+### Pull info out of params into local variables
+
+$InnerLogic  = $params{innerlogic};
+$OuterLogic  = $params{outerlogic};
+$TitleSearch = $params{titlesearch};
+$TitleSearchMode = $params{titlesearchmode};
+$AbstractSearch = $params{abstractsearch};
+$AbstractSearchMode = $params{abstractsearchmode};
+$PubInfoSearch = $params{pubinfosearch};
+$PubInfoSearchMode = $params{pubinfosearchmode};
+@MinorSearchIDs = split /\0/,$params{minortopic};
+@MajorSearchIDs = split /\0/,$params{majortopic};
+
+### Check parameters for errors
+
+@error_stack = ();
+@warn_stack  = ();
+
+unless ($InnerLogic eq "AND" || $InnerLogic eq "OR") {
+  push @error_stack,"Inner logic must be either AND or OR.";
+}   
+unless ($OuterLogic eq "AND" || $OuterLogic eq "OR") {
+  push @error_stack,"Outer logic must be either AND or OR.";
+}   
+
+if ((@error_stack)) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@error_stack);
+}
+
+print "<p>\n";
+print "OL: $OuterLogic<br>\n";
+print "IL: $InnerLogic<br>\n";
+print "MIN: @MinorSearchIDs<br>\n";
+print "MAJ: @MajorSearchIDs<br>\n";
+
+# Text search matches
+
+my $TitlePhrase    = &TextSearch("DocumentTitle",  $TitleSearchMode,   $TitleSearch);
+my $AbstractPhrase = &TextSearch("Abstract",       $AbstractSearchMode,$AbstractSearch);
+my $PubInfoPhrase  = &TextSearch("PublicationInfo",$PubInfoSearchMode, $PubInfoSearch);
+
+# Get Documents from DocumentRevision that match
+
+my @RevisionPhrases = ();
+my $RevisionQuery   = "select DocumentID from DocumentRevision where ";
+
+if ($TitlePhrase   ) {push @RevisionPhrases,$TitlePhrase   ;}
+if ($AbstractPhrase) {push @RevisionPhrases,$AbstractPhrase;}
+if ($PubInfoPhrase ) {push @RevisionPhrases,$PubInfoPhrase ;}
+
+$RevisionQuery .= join $OuterLogic,@RevisionPhrases;
+
+print "RQ: $RevisionQuery<br>\n";
+
+my %DocumentIDs = ();
+
+my $document_list = $dbh -> prepare($RevisionQuery);
+$document_list -> execute();
+$document_list -> bind_columns(undef, \($DocumentID));
+
+while ($document_list -> fetch) {
+  $DocumentIDs{$DocumentID} = 1; # Hash removes duplicates
+}
+
+# Assemble various queries into single list
+
+my @DocumentIDs = keys %DocumentIDs;
+
+# Fetch all info for documents that match all criteria
+
+foreach my $DocumentID (@DocumentIDs) { 
+  &FetchDocument($DocumentID);
+  &FetchDocRevision($DocumentID,$Documents{$DocumentID}{NVER});
+}
+@DocumentIDs = reverse sort DocumentByRevisionDate   @DocumentIDs;  
+
+# Print out summary info for matching documents
+
+print "<center><table cellpadding=3>\n";
+
+&DocumentSummary(0,$Mode); # Force table headers
+
+foreach $DocumentID (@DocumentIDs) {
+  unless ($DocumentID) {next;}
+  unless (&CanAccess($DocumentID,$Documents{$DocumentID}{NVER})) {next;}
+  # FIXME: Need to put latest document accessible if last version isn't
+  &DocumentSummary($DocumentID,$Mode);
+}
+
+print "</table></center>\n";
+print "<p>\n";
+
+# Statistics
+
+my $NumDoc = $#DocumentIDs + 1;
+print "<p><b>Number of documents found: $NumDoc</b><p>\n";
+
+$EndTime  = new Benchmark;
+$TimeDiff = timediff($EndTime,$StartTime);
+print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
+
+&DocDBNavBar();
+&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);

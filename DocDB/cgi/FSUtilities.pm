@@ -1,3 +1,51 @@
+#  Functions in this file:
+#  
+#  
+#  GetDirectory
+#    Given a document ID and a version number, returns the name of the
+#    directory where the document files are stored.
+#    
+#  MakeDirectory  
+#    Given a document ID and a version number, makes the directory
+#    where the document files are stored and any parent directories 
+#    that haven't been created. Safe to call on existing directories.
+#    
+#  GetURLDir
+#    The counterpart to GetDirectory, this function returns the base URL 
+#    where document files are stored
+#    
+#  ProtectDirectory
+#    Given a document ID, version number and the ID numbers of authorized
+#    groups, this function will protect a directory from unauthorized
+#    web access. (Writes and appropriate .htaccess file.) If no users IDs
+#    are specified, it removes .htaccess (for public documents).
+#    
+#  WindowsBaseFile
+#    Windows browsers will upload files with C: and back-slashes. This routine
+#    removes these and gives just the actual file name.
+#    
+#  UnixBaseFile    
+#    Like WindowsBaseFile, but removes Unix-style directory names. It's not
+#    clear this ever needs to be done.
+#    
+#  ProcessURL
+#    Using wget, fetches a URL and places the resulting file in the correct 
+#    place in the file system
+#    
+#  ProcessUpload
+#    Retrieves a file uploaded by the user's browser and places the resulting 
+#    file in the correct place in the file system   
+#    
+#  ProcessArchive  
+#    Retrieves an archive and places it in the correct place in the file 
+#    system. Calls ExtractArchive to do the extraction.   
+
+#  ExtractArchive  
+#    Detects the type of archive and extracts it into the correct 
+#    location on the file system. Does NOT protect against archives 
+#    with files that have /../ in the directory name, so files can,
+#    in theory, leak into other documents and/or revisions.
+        
 sub GetDirectory { # Returns a directory name
   my ($documentID,$version) = @_;
   
@@ -97,6 +145,10 @@ sub ProcessURL($$) {
   print OUTFILE @url_lines;
   close OUTFILE;
 
+  unless (-s "$new_dir/$short_file") {
+    push @warn_stack,"The file $short_file did not exist or was blank.";
+  }  
+  
   return $short_file;
 }
 
@@ -117,7 +169,6 @@ sub ProcessUpload($$) {
   close OUTFILE;
   
   unless (-s "$new_dir/$short_file") {
-    print "PATH: $new_dir/$short_file";
     push @warn_stack,"The file $short_file did not exist or was blank.";
   }  
   
