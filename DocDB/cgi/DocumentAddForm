@@ -30,8 +30,10 @@ $Special = $params{special};
 if ($Special eq "meeting") {$Meeting = 1;}
 
 if ($Meeting) {
+ require "WebUtilities.pm";
  $topicmode = "multi";
  $mode = "add";
+ @TopicDefaults = (&NearByMeeting);
 }
 
 unless ($mode) { 

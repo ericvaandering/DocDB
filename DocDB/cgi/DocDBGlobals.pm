@@ -47,6 +47,7 @@ $DBWebMasterName  = "BTeV Document Database Administrators";
 $Administrator    = "docdbadm";
 $AuthUserFile     = "/www/conf/www-btev/.htpasswd";
 $LastDays         = 20;
+$MeetingWindow    = 8;
 
 # Override settings in this file for the test DB 
 # and the publicly accessible version

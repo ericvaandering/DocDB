@@ -90,4 +90,27 @@ sub ValidDate {
   return $ok;  
 }
   
+sub NearByMeeting { # Return MinorTopicID of meeting within $MeetingWindow days
+  # Our current scheme doesn't deal well with meetings that span months. 
+  # Suggest in that case just to use begin date.
+  use Time::Local;
+  
+  require "TopicSQL.pm";
+  &SpecialMajorTopics;
+  
+  my $Now       = time();
+  my @MinorIDs = keys %MinorTopics;
+  foreach $ID (@MinorIDs) {
+    unless ($MinorTopics{$ID}{MAJOR} == $CollabMeetMajorID) {next;}
+    my ($MeetDays,$MeetMonthName,$MeetYear) = split /\s+/,$MinorTopics{$ID}{SHORT};
+    my ($MeetBeginDay) = split /\-/,$MeetDays;
+    my $MeetMonth = $ReverseFullMonth{$MeetMonthName} - 1;
+    $MeetYear  = $MeetYear - 1900;
+    my $MeetTime  = timelocal(0,0,0,$MeetBeginDay,$MeetMonth,$MeetYear);
+    if (abs($MeetTime - $Now) < $MeetingWindow*24*60*60) {
+      return $ID;
+    }  
+  }   
+}  
+  
 1;

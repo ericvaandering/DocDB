@@ -55,8 +55,8 @@ my $Endyear    = $params{endyear};
 my $StartDate = "$Startyear-$ReverseAbrvMonth{$Startmonth}-$Startday";
 my $EndDate   = "$Endyear-$ReverseAbrvMonth{$Endmonth}-$Endday";
 
-my $StartTime = timelocal(0,0,0,$Startday,$ReverseAbrvMonth{$Startmonth},$Startyear);
-my $EndTime   = timelocal(0,0,0,$Endday,$ReverseAbrvMonth{$Endmonth},$Endyear);
+my $StartTime = timelocal(0,0,0,$Startday,$ReverseAbrvMonth{$Startmonth}-1,$Startyear);
+my $EndTime   = timelocal(0,0,0,$Endday,$ReverseAbrvMonth{$Endmonth}-1,$Endyear);
 
 # Check inputs
 
