@@ -86,7 +86,7 @@ sub CertificateStatus () {
   
   push @DebugStack,"Finding Status by certificate";
   
-  unless (($CertEmail && $CertCN) || ($CertCN && $Preferences{Security}{Certificates}{UseCNOnly}) {
+  unless (($CertEmail && $CertCN) || ($CertCN && $Preferences{Security}{Certificates}{UseCNOnly})) {
     $CertificateStatus = "nocert";
     push @DebugStack,"Certificate Status: $CertificateStatus";
     return $CertificateStatus;
