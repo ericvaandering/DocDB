@@ -1,4 +1,11 @@
-# Routines to produce snippets of HTML dealing with topics (major and minor)
+#
+#        Name: TopicHTML.pm
+# Description: Routines to produce snippets of HTML dealing with topics 
+#              (major, minor and conferences which are special types of topics) 
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
 
 sub TopicListByID {
   my @topicIDs = @_;
@@ -88,25 +95,26 @@ sub MeetingLink {
 }
 
 sub ConferenceLink {
-  my ($TopicID,$mode) = @_;
+  my ($TopicID,$Mode) = @_;
   
   require "TopicSQL.pm";
   
   &FetchMinorTopic($TopicID);
-  my $link;
-  $link = "<a href=$ListByTopic?topicid=$TopicID&mode=conference>";
-  if ($mode eq "short") {
-    $link .= $MinorTopics{$TopicID}{SHORT};
-  } elsif ($mode eq "long") {
-    $link .= $MinorTopics{$TopicID}{LONG};
+  my $Link;
+     $Link = "<a href=$ListByTopic?topicid=$TopicID&mode=conference>";
+  if ($Mode eq "short" || $Mode eq "nodate") {
+    $Link .= $MinorTopics{$TopicID}{SHORT};
+  } elsif ($Mode eq "long") {
+    $Link .= $MinorTopics{$TopicID}{LONG};
   } else {
-    $link .= $MinorTopics{$TopicID}{FULL};
+    $Link .= $MinorTopics{$TopicID}{FULL};
   }
-  my ($Year,$Month,$Day) = split /\-/,$Conferences{$TopicID}{STARTDATE};
-  $link .= "</a>";
-  $link .= " (".@AbrvMonths[$Month-1]." $Year)"; 
-  
-  return $link;
+  $Link .= "</a>";
+  unless ($Mode eq "nodate") {
+    my ($Year,$Month,$Day) = split /\-/,$Conferences{$TopicID}{StartDate};
+    $Link .= " (".@AbrvMonths[$Month-1]." $Year)"; 
+  }
+  return $Link;
 }
 
 sub TopicsByMajorTopic ($) {
@@ -166,6 +174,47 @@ sub ConferencesTable {
   my @MinorTopicIDs = sort byTopic keys %MinorTopics; #FIXME special sort 
 
   my ($MajorID) = @ConferenceMajorIDs; 
+  print "<table cellpadding=4>\n";
+
+  print "<tr>\n";
+  print "<th>Name</th>\n";
+  print "<th>Full Name</th>\n";
+  print "<th>Location</th>\n";
+  print "<th>Dates</th>\n";
+  print "<th>Conference Homepage</th>\n";
+  
+  foreach my $MinorID (@MinorTopicIDs) {
+    if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
+      print "<tr>\n";
+      my $ConferenceLink = &ConferenceLink($MinorID,"nodate");
+      my $Start = &EuroDate($Conferences{$MinorID}{StartDate});
+      my $End   = &EuroDate($Conferences{$MinorID}{EndDate});
+      my $Link;
+      if ($Conferences{$MinorID}{URL}) {
+        $Link = "<a href=\"$Conferences{$MinorID}{URL}\">$Conferences{$MinorID}{URL}</a>";
+      } else {
+        $Link = "None entered\n";
+      }
+      print "<td>$ConferenceLink</td>\n";
+      print "<td>$MinorTopics{$MinorID}{LONG}</td>\n";
+      print "<td>$Conferences{$MinorID}{Location}</td>\n";
+      print "<td>$Start - $End</td>\n";
+      print "<td>$Link</td>\n";
+      print "</tr>\n";
+    }  
+  }  
+  print "</table>";
+}
+
+sub ConferencesList {
+  require "Sorts.pm";
+  require "TopicSQL.pm";
+  
+  &SpecialMajorTopics;
+
+  my @MinorTopicIDs = sort byTopic keys %MinorTopics; #FIXME special sort 
+
+  my ($MajorID) = @ConferenceMajorIDs; 
   print "<ul>\n";
   foreach my $MinorID (@MinorTopicIDs) {
     if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
@@ -174,6 +223,26 @@ sub ConferencesTable {
     }  
   }  
   print "</ul>";
+}
+
+sub ConferenceSelect {
+  require "TopicSQL.pm";
+  
+  my @MinorIDs           = sort byTopic keys %MinorTopics;
+  my @ConferenceTopicIDs = ();
+  my %TopicLabels        = ();
+  foreach my $MinorID (@MinorIDs) {
+    unless (&MajorIsConference($MinorTopics{$MinorID}{MAJOR})) {
+      next;
+    }  
+    push @ConferenceTopicIDs,$MinorID;
+    $TopicLabels{$MinorID} = $MinorTopics{$MinorID}{SHORT}; 
+  }  
+  print "<b><a ";
+  &HelpLink("conference");
+  print "Conferences:</a></b> <br> \n";
+  print $query -> scrolling_list(-name => "conftopic", -values => \@ConferenceTopicIDs, 
+                                 -labels => \%TopicLabels, -size => 10);
 }
 
 sub MeetingsTable {

@@ -1,5 +1,6 @@
 #! /usr/bin/env perl
 #
+#        Name: ConferenceAddForm 
 # Description: This provides a web form for people to add conferences, a special
 #              kind of topic.  
 #
@@ -75,10 +76,9 @@ print $query -> end_multipart_form;
 
 print "<p>\n";
 
-
 print "<h3>Existing Conferences:</h3>\n";
 
-&ConferencesTable;
+&ConferencesList;
 
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

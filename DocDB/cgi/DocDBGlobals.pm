@@ -39,9 +39,10 @@ $Zip    = "/usr/bin/zip -q -r ";  # Set to "" in ProjectGlobals if not installed
 
 # Other Globals
 
-$RemoteUsername   = $ENV{REMOTE_USER};
-$remote_user      = $ENV{REMOTE_USER};
-$remote_user      =~ tr/[A-Z]/[a-z]/;
+$RemoteUsername       = $ENV{REMOTE_USER};
+$remote_user          = $ENV{REMOTE_USER};
+$remote_user          =~ tr/[A-Z]/[a-z]/;
+$CaseInsensitiveUsers = 0;
 
 $htaccess         = ".htaccess";
 
@@ -52,6 +53,13 @@ $MeetingWindow     = 7;        # Days before and after meeting to preselect
 $MeetingFiles      = 3;        # Number of upload boxes on meeting short form
 
 $EnchancedSecurity = 0;        # Separate lists for view, modify
+$FirstYear         = 2000;     # Earliest year that documents can be created
+
+# Major topic names for "meetings" and "conferences". Each can be a list
+# The first item in the two lists are accessed by ListMeetings and ListConferences
+
+@MeetingMajorTopics    = ("Collaboration Meetings","Other Meetings");
+@ConferenceMajorTopics = ("Conferences");
 
 # Include project specific settings
 
@@ -102,9 +110,16 @@ $AdministerForm        = $cgi_root."AdministerForm";
 $AuthorAdminister      = $cgi_root."AuthorAdminister";
 $InstitutionAdminister = $cgi_root."InstitutionAdminister";
 $TopicAdminister       = $cgi_root."TopicAdminister";
+$MajorTopicAdminister  = $cgi_root."MajorTopicAdminister";
+$DocTypeAdminister     = $cgi_root."DocTypeAdminister";
+$JournalAdminister     = $cgi_root."JournalAdminister";
+$ConferenceAdminister  = $cgi_root."ConferenceAdminister";
 
 $GroupAdministerForm   = $cgi_root."GroupAdministerForm";
 $GroupAdminister       = $cgi_root."GroupAdminister";
+
+$EmailAdministerForm   = $cgi_root."EmailAdministerForm";
+$EmailAdminister       = $cgi_root."EmailAdminister";
 
 $Statistics            = $cgi_root."Statistics";
 
