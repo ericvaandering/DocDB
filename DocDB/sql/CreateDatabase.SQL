@@ -369,7 +369,7 @@ INSERT INTO Journal VALUES (4,'Phys. Lett. B','Physics Letters B','Elsevier Scie
 INSERT INTO Journal VALUES (5,'Phys. Rev. D','Physical Review D','American Physical Society','http://publish.aps.org/',20020102164339,'PRD');
 INSERT INTO Journal VALUES (6,'Phys. Rev. Lett.','Physical Review Letters','American Physical Society','http://publish.aps.org/',20020102164355,'PRL');
 
-CREATE TABLE EmailUsers (
+CREATE TABLE EmailUser (
   EmailUserID int(11) NOT NULL auto_increment,
   Username char(32) NOT NULL default '',
   Password char(32) NOT NULL default '',

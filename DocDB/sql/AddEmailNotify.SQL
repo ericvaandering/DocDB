@@ -1,4 +1,4 @@
-CREATE TABLE EmailUsers (
+CREATE TABLE EmailUser (
   EmailUserID int(11) NOT NULL auto_increment,
   Username char(32) NOT NULL default '',
   Password char(32) NOT NULL default '',
