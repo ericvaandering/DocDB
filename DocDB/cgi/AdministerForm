@@ -291,13 +291,13 @@ print "<td rowspan=2>\n";
  &MajorTopicSelect(-disabled => true, -format => "full"); 
 print "</td>\n";
 print "<td>\n"; 
- &ShortDescriptionBox(-disabled => true);     
+ &ShortDescriptionBox(-disabled => true, -name => 'shortdesc');     
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
 print "<td>\n";
- &LongDescriptionBox(-disabled => true);
+ &LongDescriptionBox(-disabled => true -name => 'longdesc');
 print "</td>\n";
 print "</tr>\n";
 
