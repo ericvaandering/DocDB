@@ -1,0 +1,108 @@
+\documentclass[12pt]{article}
+
+\input{memo_setup}
+\input{abbrev}
+\usepackage{ewv_environ}      %   %% Define some new environements                            
+
+%\graphicspath{{sigmac_0999/}}
+
+\begin{document}                                                 
+
+\title{BTeV Document Database Design and Interface}
+
+\author{
+        Eric W. Vaandering\\  
+        Vanderbilt University\\
+        \\
+        {\small\url{http://www.hep.vanderbilt.edu/~somewhere}}
+       }
+        
+
+\date{27 November 2001 \\
+      Revised: 28 November 2001}
+
+\maketitle
+
+\begin{abstract} 
+We describe the design and implementation of the BTeV document
+database.\end{abstract}
+
+\section{Design considerations}
+
+We wanted a document database that satisfies a number of requirements:
+\begin{itemize}
+\item{Multiple revisions per document, old versions still available}
+\item{Multiple files per document. Multiple file types (source and 
+presentable) and/or child files (especially useful for trees of HTML 
+documents)}
+\item{All documents are kept on the BTeV web server, not local copies 
+so we don't suffer from link-rot}
+\item{The ability to upload documents by browser upload or forcing the 
+document database to download via http.}
+\end{itemize}
+
+There are several security issues we want to resolve too:
+\begin{itemize}
+\item{The ability to not only have public/private documents but also 
+documents that are accessible to subgroups (like RTES) which don't know 
+the BTeV password. We also want to have documents that are only 
+accessible to sub-groups (like the executive council).}
+\item{Users should only know that a document exists if they have 
+privileges to view it.}
+\item{The ability to easily move documents, or just certain versions of 
+documents, from restricted to public and vice-versa.}
+\end{itemize}
+
+\section{Interface}
+
+The document database is accessible via web forms and CGI scripts which 
+handle all accesses to the underlying database engines. Currently only 
+the scripts to reserve a document number or to place the initial 
+version of a document in the database are in place. Additionally, these 
+scripts only support browser upload of a single file. They need to be 
+extended to support http download and multiple files.
+
+These scripts are all written in Perl using the Perl::CGI package and 
+the Perl::DBI database access modules. There is no reason certain 
+additional scripts can't be written using PHP, C++, or any other 
+language. 
+
+\section{Database}
+
+The database design is believed to be basically finished. The document 
+database is implemented as a number of different tables. Because each 
+document can have multiple revisions and each revision can have 
+multiple files (and authors and topics), there are three main tables 
+Document, DocumentRevision, and DocumentFile. The hierarchy of these 
+tables, their elements, and the auxiliary tables are shown in figref.
+
+This database is implemented using MySQL. Currently the server is 
+running on \url{vuhepv.phy.vanderbilt.edu}.  
+
+\section{File system and security}
+
+All documents are placed into a single directory tree. There is no 
+division based on security or topic since these are fluid designations 
+(and each document can have multiple values for these settings). The 
+file system is arranged only by document number. Each revision of each 
+document is placed in its own directory, which means that most 
+directories will only have a small number of files. However, the 
+advantage of this scheme is two-fold. First, each of the files of a 
+particular revision need not be renamed. Second, access to each 
+revision can be controlled with a potentially unique .htaccess file.
+
+To avoid possible issues with large numbers of files in a single 
+directory, the document directories are further divided into groups of 
+100. For example, imagine that the 3rd revision of the 1029th document 
+contains one file, text.ps. Then the file tree looks like this:
+
+\texttt{\$DOCROOT/0010/001029/003/text.ps}
+
+As you can see, the file system is designed for up to 999,999 documents 
+each of which can have up to 999 versions.
+
+\end{document}
+
+
+
+
