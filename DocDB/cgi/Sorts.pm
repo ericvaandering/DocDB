@@ -53,8 +53,8 @@ sub DocumentByRevisionDate {
 
 ### All revisions and documents (of interest) must be fetched before calling
   
-  my $adr = $DocRevIDs{$a}{$Documents{$a}{NVER}};
-  my $bdr = $DocRevIDs{$b}{$Documents{$b}{NVER}};
+  my $adr = $DocRevIDs{$a}{$Documents{$a}{NVersions}};
+  my $bdr = $DocRevIDs{$b}{$Documents{$b}{NVersions}};
   
   $adt = $DocRevisions{$adr}{DATE};
   $bdt = $DocRevisions{$bdr}{DATE};
@@ -137,8 +137,8 @@ sub DocumentByConferenceDate { # FIXME: Look at this and see if it can be
                                # simplified after re-indexing conferences
   require "TopicSQL.pm";
   
-  my $adr = $DocRevIDs{$a}{$Documents{$a}{NVER}};
-  my $bdr = $DocRevIDs{$b}{$Documents{$b}{NVER}};
+  my $adr = $DocRevIDs{$a}{$Documents{$a}{NVersions}};
+  my $bdr = $DocRevIDs{$b}{$Documents{$b}{NVersions}};
   
   unless ($FirstConf{$adr}) {
     my @topics = &GetRevisionTopics($adr);

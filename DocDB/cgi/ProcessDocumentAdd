@@ -294,15 +294,15 @@ if      ($mode eq "reserve") {
   $version   = 1;
 } elsif ($mode eq "update") {
   &FetchDocument($documentID);
-  $version   = $Documents{$documentID}{NVER} + 1;
+  $version   = $Documents{$documentID}{NVersions} + 1;
 } elsif ($mode eq "updatedb") {
   &FetchDocument($documentID);
   if  (defined $params{version}) {
     $version = $params{version};
   } else { 
-    $version = $Documents{$documentID}{NVER};
+    $version = $Documents{$documentID}{NVersions};
   }
-  if ($version != $Documents{$documentID}{NVER}) {
+  if ($version != $Documents{$documentID}{NVersions}) {
     push @WarnStack,"You have updated an old version of a document. Hope this
     is what you wanted to do.";
   }

@@ -444,7 +444,7 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
   require "Utilities.pm";
   
   my ($DocumentID,$Mode,$Version) = @_;
-  unless (defined $Version) {$Version = $Documents{$DocumentID}{NVER}}
+  unless (defined $Version) {$Version = $Documents{$DocumentID}{NVersions}}
   unless ($Mode) {$Mode = "date"};
   
   if ($DocumentID) {
@@ -599,7 +599,7 @@ sub FindAgendaRevision {
     &FetchDocRevisionByID($DocRevID); 
     if ($DocRevisions{$DocRevID}{OBSOLETE}) {next;}
     my $DocID = &FetchDocument($DocRevisions{$DocRevID}{DOCID});
-    if ($DocRevisions{$DocRevID}{VERSION} != $Documents{$DocID}{NVER}) {next;}
+    if ($DocRevisions{$DocRevID}{VERSION} != $Documents{$DocID}{NVersions}) {next;}
     $AgendaRevID = $DocRevID;
   }
 
@@ -614,7 +614,7 @@ sub FindAgendaRevision {
       &FetchDocRevisionByID($DocRevID); 
       if ($DocRevisions{$DocRevID}{OBSOLETE}) {next;}
       my $DocID = &FetchDocument($DocRevisions{$DocRevID}{DOCID});
-      if ($DocRevisions{$DocRevID}{VERSION} != $Documents{$DocID}{NVER}) {next;}
+      if ($DocRevisions{$DocRevID}{VERSION} != $Documents{$DocID}{NVersions}) {next;}
       $AgendaRevID = $DocRevID;
     }
   }

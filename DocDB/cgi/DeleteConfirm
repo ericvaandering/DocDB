@@ -50,7 +50,7 @@ if (@error_stack) {
 &GetSecurityGroups;
 &FetchDocument($DocumentID);
 
-$Version = $Documents{$DocumentID}{NVER}; # Show latest version
+$Version = $Documents{$DocumentID}{NVersions}; # Show latest version
 
 print $query->header;
 &DocDBHeader("Confirm Deletion of Document $DocumentID");

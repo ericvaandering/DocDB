@@ -112,15 +112,15 @@ if ($mode eq "update" || $mode eq "updatedb") {
 
 if ($mode eq "updatedb") { 
   unless (defined $Version) {
-    $Version = $Documents{$DocumentID}{NVER};
+    $Version = $Documents{$DocumentID}{NVersions};
   }  
-  if ($Version != $Documents{$DocumentID}{NVER}) {
+  if ($Version != $Documents{$DocumentID}{NVersions}) {
     push @warn_stack,"You are about to update an old version of this document.";
   }
 }    
 
 if ($mode eq "update") {
-  $Version = $Documents{$DocumentID}{NVER};
+  $Version = $Documents{$DocumentID}{NVersions};
 }
 
 if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update

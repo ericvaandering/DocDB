@@ -56,7 +56,7 @@ if ($params{version} eq "0") {
   if ($params{version}) {
     $Version = $params{version};
   } else {   
-    $Version = $Documents{$DocumentID}{NVER};
+    $Version = $Documents{$DocumentID}{NVersions};
   }
 }
 my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);

@@ -21,7 +21,7 @@ sub CanAccess { # Can the user access (with current security) this version
   unless ($DocRevID) { # Document doesn't exist
     return 0;
   }
-  if ($Documents{$documentID}{NVER} eq "") { # Bad documents (no revisions)
+  if ($Documents{$documentID}{NVersions} eq "") { # Bad documents (no revisions)
     return 0;
   } 
   
@@ -73,7 +73,7 @@ sub CanModify { # Can the user modify (with current security) this document
 
   &FetchDocument($DocumentID);
   unless (defined $Version) { # Last version is default  
-    $Version = $Documents{$DocumentID}{NVER};
+    $Version = $Documents{$DocumentID}{NVersions};
   }   
   
   # In the enhanced security model, if no one is explictly listed as being 
@@ -159,7 +159,7 @@ sub CanAdminister { # Can the user administer the database
 sub LastAccess { # Highest version user can access (with current security)
   my ($DocumentID) = @_;
   my $Version = -1;
-  my $tryver = $Documents{$DocumentID}{NVER};
+  my $tryver = $Documents{$DocumentID}{NVersions};
   while ($Version == -1 && $tryver <=> -1) {
     if (&CanAccess($DocumentID,$tryver)) {$Version = $tryver;}
     --$tryver;

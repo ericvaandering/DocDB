@@ -31,7 +31,7 @@ sub PrintSessionTalk($) {
   # Selected parts of how things are done in DocumentSummary
 
   &FetchDocument($DocumentID);
-  my $Version = $Documents{$DocumentID}{NVER};
+  my $Version = $Documents{$DocumentID}{NVersions};
   unless (&CanAccess($DocumentID,$Version)) {return;}
   
   my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);

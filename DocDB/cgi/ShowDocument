@@ -46,7 +46,7 @@ if (defined $Version && defined $AsOf) {
 my $DocRevID;
 if (defined $Version) {
   if ($Version eq "") { # Still get this from form with blank version
-    $Version = $Documents{$DocumentID}{NVER};
+    $Version = $Documents{$DocumentID}{NVersion};
   }
   $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 } elsif (defined $AsOf) {
@@ -57,7 +57,7 @@ if (defined $Version) {
     push @error_stack,"The as-of date must be specifed in the form YYYY-MM-DD.";
   }
 } else {
-  $Version = $Documents{$DocumentID}{NVER};
+  $Version = $Documents{$DocumentID}{NVersions};
   $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 }
 

@@ -213,7 +213,7 @@ foreach my $DocumentID (@AllDocumentIDs) { # For shorter lists
   &FetchDocument($DocumentID);
   unless (&LastAccess($DocumentID) == -1) {;
     push @DocumentIDs,$DocumentID;
-    &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVER});
+    &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVersions});
   }
 }
 

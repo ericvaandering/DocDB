@@ -28,7 +28,7 @@ sub GetAllDocuments {
   $MaxVersionQuery -> execute;
   $MaxVersionQuery -> bind_columns(undef, \($DocumentID,$MaxVersion));
   while ($MaxVersionQuery -> fetch) {
-    $Documents{$DocumentID}{NVER} = $MaxVersion;
+    $Documents{$DocumentID}{NVersions} = $MaxVersion;
   }
 };
 
@@ -54,7 +54,7 @@ sub FetchDocument {
     push @DocumentIDs,$DocumentID;
 
     $MaxVersionQuery -> execute($DocumentID);
-    ($Documents{$DocumentID}{NVER}) = $MaxVersionQuery -> fetchrow_array;
+    ($Documents{$DocumentID}{NVersions}) = $MaxVersionQuery -> fetchrow_array;
     return $Documents{$DocumentID}{DOCID};
   } else {
     return 0;
