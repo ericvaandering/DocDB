@@ -178,8 +178,13 @@ print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td colspan=2>\n"; &TopicSelectLong; print "</td>\n"; 
+print "<td colspan=2>\n"; 
+ &TopicScroll(-helptext  => "Minor Topics", -helplink => "topics", 
+              -extratext => " (Long descriptions in brackets)", 
+              -multiple  => "true", -format => "long"); 
+print "</td>\n"; 
 print "</tr>\n";
+
 print "<tr valign=top>\n";
 print "<td rowspan=2>\n"; &MajorTopicSelect; print "</td>\n";
 print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";

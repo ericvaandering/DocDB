@@ -152,6 +152,7 @@ sub PubInfoBox {
 };
 
 sub TopicSelect { # Scrolling selectable list for topics
+  #FIXME: Use TopicScroll
   my @TopicIDs = sort byTopic keys %MinorTopics;
   my %TopicLabels = ();
   foreach my $ID (@TopicIDs) {
@@ -171,6 +172,7 @@ sub TopicSelect { # Scrolling selectable list for topics
 };
 
 sub TopicSelectLong { # Scrolling selectable list for topics, all info
+  #FIXME: Use TopicScroll
   my @TopicIDs = sort byTopic keys %MinorTopics;
   my %TopicLabels = ();
   foreach my $ID (@TopicIDs) {
@@ -224,6 +226,7 @@ sub MultiTopicSelect (%) { # Multiple scrolling selectable lists for topics
     }
     @MatchMinorIDs = sort byTopic @MatchMinorIDs;
 
+    #FIXME: Use TopicScroll
     print $query -> scrolling_list(-name => "topics", 
              -values => \@MatchMinorIDs, -labels => \%MatchLabels,
              -size => 8, -multiple => 'true', -default => \@TopicDefaults);
@@ -284,7 +287,7 @@ sub NameEntryBox {
   print "<tr><td>\n";
   print "<b><a ";
   &HelpLink("authorentry");
-  print "Initials:</a></b><br> \n";
+  print "Middle Initial(s):</a></b><br> \n";
   print $query -> textfield (-name => 'middle', 
                              -size => 10, -maxlength => 16);
   print "</td></tr>\n";

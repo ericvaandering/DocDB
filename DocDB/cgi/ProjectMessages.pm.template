@@ -26,8 +26,8 @@
 #$KeywordAddendumText = "This message is added to the pages that list keywords.";
 
 #@MultiColumnDocumentLists = ("These are added to the ways of listing",
-                              "documents on the home page");
+#                             "documents on the home page");
 #@MainPageAddendum         = ("These are added to the bold",
-                              "stuff on the main page");
+#                             "stuff on the main page");
 
 1;

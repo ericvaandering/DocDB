@@ -36,13 +36,26 @@ $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 print $query->header;
-&DocDBHeader("E-mail Notification Login");
+&DocDBHeader("Personal Account Login");
+
+print "<p/>\n";
+print "<b>This page is used to log into or create a personal $Project DocDB account. You
+          can use this account to set e-mail notifications. DocDB will e-mail
+          when you  documents you are interested in are added or change.\n";
+if ($UseSignoffs) {
+  print "A personal account is also needed for you to be able to sign documents
+         and be notified when your signature is required.\n";
+}
+print "Creating a personal account does <i>not</i> add you to the list of
+       possible authors.  To do that, fill out the form on the <a
+       href=\"$AuthorAddForm\">Add an author</a>  form.</b>\n";          
+print "<p/>\n";
 
 &LoginEmailUserForm;
-print "<p>\n";
+print "<p/>\n";
 
 &NewEmailUserForm;
-print "<p>\n";
+print "<p/>\n";
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

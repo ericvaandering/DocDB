@@ -38,8 +38,8 @@ print $query->header;
 &DocDBHeader("Document List by Type");
 
 
-print "<center><h4>These documents of type <font color=\"blue\">
-$DocumentTypes{$TypeID}{SHORT}</font> are
+print "<center><h4>These documents of type <span class=\"highlight\">
+$DocumentTypes{$TypeID}{SHORT}</span> are
 available:</h4></center><p>\n";
 
 my $document_list = $dbh -> prepare(
