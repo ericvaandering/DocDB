@@ -588,10 +588,13 @@ print "</tr>\n";
 print "</table>\n";
 print $query -> end_multipart_form;
 
-my $NavBarText = "Display&nbsp;Meeting";
-my $NavBarURL  = "$DisplayMeeting?conferenceid=$ConferenceID";
-&DocDBNavBar($NavBarText,$NavBarURL);
+my ($NavBarText,$NavBarURL);
+if ($ConferenceID) { # Only put modify link in if meeting already exists
+  $NavBarText = "Display&nbsp;Meeting";
+  $NavBarURL  = "$DisplayMeeting?conferenceid=$ConferenceID";
+}  
 
+&DocDBNavBar($NavBarText,$NavBarURL);
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  
 exit;

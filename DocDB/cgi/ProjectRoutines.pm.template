@@ -7,7 +7,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 #
-# A global variable $Public is used to (when set) remove elements from the
+# A global variable $Public is used (when set) to remove elements from the
 # nav-bars that the public has no interest in. The variable is global
 # and can control the style of your headers and footers too.
 # 
@@ -16,7 +16,11 @@ sub DocDBHeader {
   my ($Title,$PageTitle,$Search) = @_;
   
 # This routine is reponsible for whatever you want to put as a header on the
-# page.
+# page. You can embed style sheets, project headers, navigation bars, etc.
+# Basically you can use DocDBHeader, DocDBStyle, and DocDBFooter to make DocDB 
+# web pages just like the web pages for the rest of your project.
+# If you don't want to do any customization or just want to test DocDB, these
+# routines work as-is.
 # 
 # $Title is for the <title> element while $PageTitle is the title of the page
 # you may put in the text of the page. For $Search == 1, its necessary to put
@@ -39,6 +43,25 @@ sub DocDBHeader {
     print "<body>\n";
   }
   print "<center>$PageTitle</center><p>\n";  
+}
+
+sub DocDBStyle { 
+  my ($Title,$PageTitle,$Search) = @_;
+  
+# This routine is reponsible for setting the web page style for windows
+# that are popped-up. (Help, Keyword chooser, signoff chooser (if used)).
+# 
+# $Title is for the <title> element. 
+#
+# If you really want your project's normal header on these pages, just
+# &DocDBHeader($Title,$PageTitle,$Search); 
+# Otherwise something like this is more appropriate
+
+  print "<html>\n";
+  print "<head>\n";
+  print "<title>$Title</title>\n";
+  print "</head>\n";
+
 }
 
 sub DocDBFooter {

@@ -21,6 +21,7 @@ require "ResponseElements.pm";
 require "Sorts.pm";
 require "Scripts.pm";
 require "Security.pm";
+require "MeetingSecurityUtilities.pm";
 
 require "MeetingHTML.pm";
 require "MeetingSQL.pm";

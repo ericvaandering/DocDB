@@ -17,6 +17,7 @@ require "Cookies.pm";
 require "Defaults.pm";
 
 require "HTMLUtilities.pm";
+require "MeetingSecurityUtilities.pm";
 require "ResponseElements.pm";
 require "Sorts.pm";
 require "Scripts.pm";
