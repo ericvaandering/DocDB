@@ -1,13 +1,17 @@
 keywords
 Keywords
-Keywords are used to further classify documents below the sub-topic level. While
+Keywords are used to further classify documents below the sub-topic level.
+Keywords should be seperated by spaces. Compound words should use a dash or
+under-score to connect words. While
 there is no centrally managed list of keywords, the following groups have
 defined their own set of keywords for their documents:
 <ul>
 <li><a target="keywords" href="http://www-btev.fnal.gov/DocDB/Static/Restricted/Groups/PixelKeys.shtml">Pixel
 Detector<a/>
 </ul>
-
+If other groups have done the same, let the <a
+href="mailto:btev-docdb@fnal.gov">DocDB adminstrators</a> know so we can include
+your set of keywords here too.
 #
 replacefiles
 Replace Duplicate Files

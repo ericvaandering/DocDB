@@ -18,14 +18,14 @@
 <!--#include virtual="/includes/end_table.html" --> <!-- Ends the table -->
 <hr>
 
-Document add form generates, based on a number of input parameters, the forms
+<b>DocumentAddForm</b> generates, based on a number of input parameters, the forms
 used to Reserve, Add, or Update documents and the form used to update the
 database information about a document.<p> 
 
 Reading through the code to figure out what all the input variables do can be a
 little difficult, so this guide is offered for those who might like to construct
 custom links to DocumentAddForm. These links should be of the form
-<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/DocumentAddForm?param1=value1&amp;param2=value2</tt>.
+<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/DocumentAddForm?param1=value1&amp;param2=value2...</tt>
 <p>
 
 These parameters are most likely to be of interest:<p>
@@ -33,6 +33,7 @@ These parameters are most likely to be of interest:<p>
 <dl>
 <dt><b>mode</b>
 <dd>The most important setting, for example <tt>&amp;mode=add</tt>. Possible
+    values:
   <dl>
   <dt><b>reserve</b>
   <dd>Used to reserve a new document, but not upload the actual document. No
@@ -40,7 +41,7 @@ These parameters are most likely to be of interest:<p>
   are optional.
   <dt><b>add</b>
   <dd>Used to add a brand new document. By default, one upload field is
-  supplied, the created version number is 1, and only a few selections
+  supplied. The created version number is 1, and only a few selections
   are optional.
   <dt><b>update</b>
   <dd>Used to update an existing document. The number of upload fields provided
@@ -63,17 +64,17 @@ These parameters are most likely to be of interest:<p>
 BTeV-doc-140.)
 
 <dt><b>pretopic</b>
-<dd>One or more settings of pretopic with MinorTopicIDs selects these
+<dd>Used to supply one more more topics by MinorTopicIDs which are selected
 automatically in the form. This is intended to make entering documents for
 sub-groups or for meetings that aren't collaboration meetings a little easier
-for non-experts by following links that give pre-filled forms. 
-(For example <tt>&amp;pretopic=45&amp;pretopic=25</tt> will preselect two topics.)
+for non-experts by following links that give pre-filled forms.  (For example
+<tt>&amp;pretopic=45&amp;pretopic=25</tt> will preselect two topics.)
 
 <dt><b>special</b>
 <dd>Activates a special mode of document entry, for example <tt>special=meeting</tt>. Possible values are:
   <dl>
   <dt><b>meeting</b>
-  <dd>Used for entering group meeting talk entry mode. This is a restricted mode
+  <dd>Used for entering group meeting talks. This is a restricted mode
   and also pre-selects the nearest group meeting if the meetings start date is within
   <tt>$MeetingWindow</tt> days of the current date.
   <dt><b>othermeeting</b>
@@ -84,7 +85,7 @@ for non-experts by following links that give pre-filled forms.
 
 <hr>
 
-These parameter are probably not of as much use. They control details of what
+These parameter are probably not of as much use. They control the finer details of what
 the entry form looks like.<p>
 
 
