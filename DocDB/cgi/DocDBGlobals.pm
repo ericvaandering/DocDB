@@ -1,5 +1,5 @@
 # DB settings
-$db_name   = "BTeVDocTest";
+$db_name   = "BTeVDocDB";
 $db_host   = "fnsimu1.fnal.gov";
 $db_rwuser = "docdbrw";
 $db_rwpass = "hall1burt0n";
