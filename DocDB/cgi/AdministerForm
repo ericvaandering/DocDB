@@ -206,4 +206,4 @@ print "<p><hr>\n";
 print "<p>\n";
 
 &DocDBNavBar();
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
