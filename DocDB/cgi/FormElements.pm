@@ -92,7 +92,7 @@ sub EndDatePullDown {
   my ($sec,$min,$hour,$day,$mon,$year);
   
   if ($DefaultStartDate) {
-    ($year,$mon,$day) = split /-/,$DefaultEndDate;
+    ($year,$mon,$day) = split /-/,$DefaultStartDate;
     --$mon;
   } else {
     ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
