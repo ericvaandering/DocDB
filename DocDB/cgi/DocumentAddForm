@@ -220,15 +220,17 @@ if ($Overdate) {
 }  
 
 if ($Meeting) {
+  print "<td colspan=2 valign=top>\n"; 
   my @TypeIDs = keys %doc_type;
   foreach my $ID (@TypeIDs) {
     if ($doc_type{$ID}{SHORT} eq "Talk") {
+      print "$ID $doc_type{$ID}{SHORT} <br>\n";
       $TalkTypeID = $ID;
       last;
     }
   }
-  print "<td colspan=2 valign=top>Document Type: 
-  $doc_type{$TalkTypeID}{SHORT}</td>\n";  
+  print "Document Type: $doc_type{$TalkTypeID}{SHORT}\n";  
+  print "</td>\n";  
 
 } else {
   if ($mode eq "add" || $mode eq "reserve") {
