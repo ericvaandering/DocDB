@@ -34,7 +34,8 @@ sub ConferenceEpilogueBox {
                             -columns => 50, -rows => 5);
 };
 
-sub SessionEntryForm {
+sub SessionEntryForm (;@) {
+  my @SessionIDs = @_; # Or do I need to dereference?
   require "Scripts.pm";
   print "<b><a ";
   &HelpLink("sessions");
@@ -47,10 +48,31 @@ sub SessionEntryForm {
   print "<th><b><a "; &HelpLink("sessioninfo");      print "Session Title</a></td>\n";
   print "<th><b><a "; &HelpLink("sessioninfo");      print "Description of Session</a></td>\n";
   print "</tr>\n";
-  for (my $Session=1;$Session<=$InitialSession;++$Session) {
+  
+  # Sort session IDs by order
+  
+  my $ExtraSessions = $InitialSessions;
+  if (@SessionIDs) { $ExtraSessions = 1; }
+  for (my $Session=1;$Session<=$ExtraSessions;++$Session) {
+    push @SessionIDs,0;
+  }
+  
+  my $SessionOrder = 0;
+  foreach $SessionID (@SessionIDs) {
+    ++$SessionOrder;
+    if ($SessionID) { # Set defaults
+      $SessionDefaultDateTime = $Sessions{$SessionID}{StartTime};
+      $SessionDefaultTitle    = $Sessions{$SessionID}{Title};
+      $SessionDefaultTitle    = $Sessions{$SessionID}{Description};
+    } else { # Erase defaults
+      $SessionID = "n$SessionOrder";
+      $SessionDefaultDateTime = "";
+      $SessionDefaultTitle    = "";
+      $SessionDefaultTitle    = "";
+    }   
     print "<tr valign=top>\n";
-    print "<td align=center>\n"; &SessionOrder($Session) ; print "</td>\n";
-    print "<td align=center>\n"; &SessionSeparator($Session) ; print "</td>\n";
+    print "<td align=center>\n"; &SessionOrder($SessionOrder) ; print "</td>\n";
+    print "<td align=center>\n"; &SessionSeparator($SessionID) ; print "</td>\n";
     print "<td>\n"; &SessionDateTimePullDown; print "</td>\n";
     print "<td>\n"; &SessionTitle;            print "</td>\n";
     print "<td>\n"; &SessionDescription;      print "</td>\n";

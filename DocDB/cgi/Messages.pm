@@ -6,6 +6,8 @@
 #    Modified: 
 #
 
+$Msg_NoConnect        = "Unable to connect to the database. Please alert an administrator.";
+
 $Msg_AdminNoConnect   = "Unable to connect to the database. Make sure you use the correct password.";
 $Msg_AdminNoLogin     = "You must be logged in as the adminstrator to perform this action.";
 
@@ -26,6 +28,16 @@ $Msg_ModEUserEmpty    = "You must select a user to modify or delete.";
 
 $Msg_ModTopicEmpty    = "You must select a topic to modify or delete.";
 $Msg_ModConfEmpty     = "You must select a conference to modify or delete.";
+
+# Messages for topic creation/modification
+
+$Msg_TopicNoShort      = "You must supply a short description for your topic or meeting.";
+$Msg_TopicNoLong       = "You must supply a long description for your topic or meeting.";
+$Msg_TopicShortIgnored = "Your short description has been ignored. The long description will be used instead.";
+
+# Messages for meeting/session creation/modification
+
+$Msg_MeetNoSessions = "This meeting was created with no sessions. You will have to add at least one session before adding talks.";
 
 # FIXME: Add more messages from other programs
 # FIXME: Add a localizable error message inclusion

@@ -52,6 +52,40 @@ sub FetchConferenceByTopicID { # Fetches a conference by MinorTopicID
   return $Conferences{$MinorTopicID}{MINOR};
 }
 
+sub FetchSessionsByConferenceID ($) {
+  my ($ConferenceID) = @_;
+  my $SessionID;
+  my @SessionIDs = ();
+  my $SessionList   = $dbh -> prepare(
+    "select SessionID from Session where ConferenceID=?");
+  $SessionList -> execute($ConferenceID);
+  $SessionList -> bind_columns(undef, \($SessionID));
+  while ($SessionList -> fetch) {
+    $SessionID = &FetchSessionByID($SessionID);
+    push @SessionIDs,$SessionID;
+  }
+  return @SessionIDs; 
+}
 
+sub FetchSessionByID ($) {
+  my ($SessionID) = @_;
+  my ($ConferenceID,$StartTime,$Title,$Description,$TimeStamp); 
+  my $SessionFetch = $dbh -> prepare(
+    "select ConferenceID,StartTime,Title,Description,TimeStamp ".
+    "from Session where SessionID=?";
+  if ($Sessions{$SessionID}{TimeStamp}) {
+    return $SessionID;
+  }
+  $SessionFetch -> execute($SessionID);
+  ($ConferenceID,$StartTime,$Title,$Description,$TimeStamp) = $SessionFetch -> fetchrow_array; 
+  if ($TimeStamp) {
+    $Sessions{$SessionID}{ConferenceID} = $ConferenceID;
+    $Sessions{$SessionID}{StartTime}    = $StartTime;
+    $Sessions{$SessionID}{Title}        = $Title;
+    $Sessions{$SessionID}{Description}  = $Description;
+    $Sessions{$SessionID}{TimeStamp}    = $TimeStamp;
+  }
+  return $SessionID;  
+}
 
 1;
