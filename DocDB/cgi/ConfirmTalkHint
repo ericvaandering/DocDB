@@ -37,6 +37,7 @@ require "DocumentSQL.pm";
 require "RevisionSQL.pm";
 require "TalkSQL.pm";
 require "MeetingSQL.pm";
+require "MeetingSecurityUtilities.pm";
 
 require "FSUtilities.pm";
 require "HTMLUtilities.pm";
