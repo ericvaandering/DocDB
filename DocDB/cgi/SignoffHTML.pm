@@ -64,6 +64,7 @@ sub PrintSignoffInfo ($) {
 
 sub PrintSignatureInfo ($) {
   require "SignoffSQL.pm";
+  require "SignoffUtilities.pm";
   require "NotificationSQL.pm";
   
   my ($SignoffID) = @_;
@@ -78,14 +79,38 @@ sub PrintSignatureInfo ($) {
       my $EmailUserID = $Signatures{$SignatureID}{EmailUserID};
       &FetchEmailUser($EmailUserID);
       
-      my $SignatureText = $EmailUser{$EmailUserID}{Name};
+      my $SignoffID = $Signatures{$SignatureID}{SignoffID};
+      my $Status = &SignoffStatus($SignoffID);
       
+      my $SignatureText  = "";
+      
+      if ($Status eq "Ready" || $Status eq "Signed") { 
+        if ($Status eq "Ready") {
+          $Action = "sign";
+          $ActionText = "Sign Document"
+        } else {
+          $Action = "unsign";
+          $ActionText = "Unsign Document"
+        }  
+        $SignatureText .= $query -> start_multipart_form('POST',"$SignRevision");
+        $SignatureText .= "$EmailUser{$EmailUserID}{Name} ";
+        $SignatureText .= $query -> hidden(-name => 'emailuserid',   -default => $EmailUserID);
+        $SignatureText .= $query -> hidden(-name => 'action',   -default => $Action);
+        $SignatureText .= $query -> password_field(-name => 'password', -size => 16, -maxlength => 32);
+        $SignatureText .= " ";
+        $SignatureText .= $query -> submit (-value => $ActionText);
+        $SignatureText .= $query -> end_multipart_form;
+      } elsif ($Status eq "NotReady") {
+        $SignatureText .= "$EmailUser{$EmailUserID}{Name} (waiting for other signatures)";
+      } else {
+        $SignatureText .= "$EmailUser{$EmailUserID}{Name} (unknown status)";
+      }    
       
       push @SignatureSnippets,$SignatureText;
     }
   }
   
-  my $SignoffText = join 'or <br>\n',@SignatureSnippets;
+  my $SignoffText = join ' or <br>',@SignatureSnippets;
 
   print "$SignoffText\n";
 }

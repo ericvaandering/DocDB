@@ -216,6 +216,4 @@ sub PrintPubInfo ($) {
   }
 }
 
-
-
 1;

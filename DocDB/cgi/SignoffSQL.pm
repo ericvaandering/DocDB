@@ -101,9 +101,8 @@ sub GetSubSignoffs ($) {
   my $SignoffID;
   my @SubSignoffIDs = ();
   
-  my $SignoffList = $dbh -> prepare("select Signoff.SignoffID from Signoff,SignoffDependency ".
-                                     "where SignoffDependency.PreSignoffID=? ".
-                                      "and SignoffDependency.SignoffID=Signoff.SignoffID");
+  my $SignoffList = $dbh -> prepare("select SignoffID from SignoffDependency ".
+                                     "where PreSignoffID=?");
                         
   $SignoffList -> execute($PreSignoffID);
   $SignoffList -> bind_columns(undef, \($SignoffID));
@@ -112,6 +111,24 @@ sub GetSubSignoffs ($) {
   }
   
   return @SubSignoffIDs;  
+}
+                        
+sub GetPreSignoffs ($) {
+  my ($SignoffID) = @_;
+  
+  my $PreSignoffID;
+  my @PreSignoffIDs = ();
+  
+  my $SignoffList = $dbh -> prepare("select PreSignoffID from SignoffDependency ".
+                                     "where SignoffID=?");
+                        
+  $SignoffList -> execute($SignoffID);
+  $SignoffList -> bind_columns(undef, \($PreSignoffID));
+  while ($SignoffList -> fetch) {
+    push @PreSignoffIDs,$PreSignoffID;
+  }
+  
+  return @PreSignoffIDs;  
 }
                         
 sub GetSignatures ($) {
