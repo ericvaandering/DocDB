@@ -39,7 +39,7 @@ sub DocumentTable (%) {
   
 ### Write out the beginning and header of table
 
-  print "<center><table cellpadding=3 id=\"DocumentList\" class=\"Alternating\">\n";
+  print "<center><table cellpadding=\"3\" id=\"DocumentList\" class=\"Alternating\">\n";
 
   print "<tr>\n";
   foreach my $Field (@Fields) {
@@ -93,7 +93,7 @@ sub DocumentTable (%) {
     }    
     print "<tr class=\"$RowClass\">\n";
     foreach my $Field (@Fields) {
-      print "<td valign=top>";
+      print "<td valign=\"top\">";
       if      ($Field eq "Docid") {    # Document number
         print &NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
                                  -numwithversion => true); 
@@ -164,7 +164,7 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
       require "SignoffUtilities.pm";
       my ($ApprovalStatus,$LastApproved) = &RevisionStatus($DocRevID);
       unless ($ApprovalStatus eq "Unmanaged") { 
-        $Link .= "<br>($ApprovalStatus";
+        $Link .= "<br/>($ApprovalStatus";
         if ($ApprovalStatus eq "Unapproved") {
           if (defined $LastApproved) {
             my $DocumentID = $DocRevisions{$LastApproved}{DOCID};

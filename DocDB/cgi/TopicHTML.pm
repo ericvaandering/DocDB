@@ -15,7 +15,7 @@ sub TopicListByID {
   print "<div id=\"Topics\">\n";
   print "<dl>\n";
   print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Topics:</span></dt>\n";
-  
+  print "</dl>\n";
   if (@TopicIDs) {
     print "<ul>\n";
     foreach my $TopicID (@TopicIDs) {
@@ -27,7 +27,6 @@ sub TopicListByID {
   } else {
     print "<dd>None</dd>\n";
   }
-  print "</dl>\n";
   print "</div>\n";
 }
 

@@ -53,6 +53,7 @@ sub AuthorListByID {
   print "<div id=\"Authors\">\n";
   print "<dl>\n";
   print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Authors:</span></dt>\n";
+  print "</dl>\n";
 
   if (@AuthorIDs) {
     print "<ul>\n";
@@ -65,7 +66,6 @@ sub AuthorListByID {
   } else {
     print "<dd>None</dd>\n";
   }
-  print "</dl>\n";
   print "</div>\n";
 }
 
@@ -109,7 +109,7 @@ sub AuthorLink ($;%) {
   
   &FetchAuthor($AuthorID);
   my $link;
-  $link = "<a href=$ListByAuthor?authorid=$AuthorID>";
+  $link = "<a href=\"$ListByAuthor?authorid=$AuthorID\">";
   if ($Format eq "full") {
     $link .= $Authors{$AuthorID}{FULLNAME};
   } elsif ($Format eq "formal") {

@@ -49,12 +49,13 @@ sub PrintRevisionSignoffInfo($) { # FIXME: Handle more complicated topologies?
     print "<div id=\"Signoffs\">\n";
     print "<dl>\n";
     print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Signoffs:</span></dt>\n";
+    print "</dl>\n";
+
     print "<ul>\n";
     foreach my $RootSignoffID (@RootSignoffIDs) {
       &PrintSignoffInfo($RootSignoffID);
     }
     print "</ul>\n";
-    print "</dl>\n";
     print "</div>\n";
   }  
 }
@@ -69,7 +70,6 @@ sub PrintSignoffInfo ($) {
   my @SubSignoffIDs = &GetSubSignoffs($SignoffID);
   print "<li>";
   &PrintSignatureInfo($SignoffID);
-  print "</li>\n";
   if (@SubSignoffIDs) {
     print "<ul>\n";
     foreach my $SubSignoffID (@SubSignoffIDs) {
@@ -77,6 +77,7 @@ sub PrintSignoffInfo ($) {
     }
     print "</ul>\n";
   }
+  print "</li>\n";
   return;
 }
 
