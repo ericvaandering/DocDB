@@ -117,5 +117,7 @@ print "<p>\n";
 
 print "<p><b>Number of documents found: $NumDoc</b><p>\n";
 
+$EndTime  = new Benchmark;
+
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

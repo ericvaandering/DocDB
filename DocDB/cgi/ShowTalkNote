@@ -15,6 +15,7 @@ require "Messages.pm";
 
 require "ResponseElements.pm";
 require "Security.pm";
+require "MeetingSecurityUtilities.pm";
 
 require "DocumentSQL.pm";
 require "RevisionSQL.pm";

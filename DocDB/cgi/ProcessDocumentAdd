@@ -521,5 +521,7 @@ if ($MailInstalled) {
   }   
 }
 
+$EndTime  = new Benchmark;
+
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

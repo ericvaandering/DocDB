@@ -6,7 +6,7 @@
 # then delete it.
 
 # Set-up few required .pm files
-cvs update ProjectGlobals.pm.template
+
 echo "cp ProjectGlobals.pm.template ProjectGlobals.pm and edit the file."
 
 ln -sf ../../DocDB/DocDBGlobals.pm  .
@@ -30,9 +30,10 @@ ln -sf ../../DocDB/RetrieveFile  .
 ln -sf ../../DocDB/SearchForm  . # Could be optional
 ln -sf ../../DocDB/Search  .     # Could be optional
 
+ln -sf ../../DocDB/DisplayMeeting . # Could be optional
+
 ln -sf ../../DocDB/DocDBHelp .
 ln -sf ../../DocDB/DocDBHelp.xml .
-ln -sf ../../DocDB/docdb.hlp .   # Soon to be obsolete
 
 #ln -sf ../../DocDB/ProjectHelp.xml . # Project help may be different for public
 
