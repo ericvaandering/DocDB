@@ -88,15 +88,20 @@ sub SessionEntryForm (@) {
     print "<tr valign=top>\n";
     $query -> param('meetingorderid',$MeetingOrderID);
     print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
-    print "<td align=center>\n"; &SessionOrder; print "</td>\n";
+
+    print "<td align=center rowspan=2>\n"; &SessionOrder; print "<p/>\n";
+    &SessionModifyLink($MeetingOrderID) ; print "<p/>\n";
+    &SessionDelete($MeetingOrderID) ; print "</td>\n";
+
     print "<td align=center>\n"; &SessionSeparator($MeetingOrderID) ; print "</td>\n";
     print "<td rowspan=2 align=right>\n"; &SessionDateTimePullDown; print "</td>\n";
     print "<td>\n"; &SessionTitle($SessionDefaultTitle);            print "</td>\n";
     print "</tr>\n";
     print "<tr valign=top>\n";
-    print "<td align=center>\n"; &SessionDelete($MeetingOrderID) ; print "</td>\n";
     print "<td colspan=2>&nbsp</td>\n";
     print "<td>\n"; &SessionDescription;      print "</td>\n";
+    print "</tr>\n";
+    print "<tr valign=top><td colspan=4><hr width=95%></td>\n";
     print "</tr>\n";
   }
   print "</table>\n";
@@ -176,6 +181,16 @@ sub SessionDelete ($) {
   if ($SessionSeparatorDefault eq "Yes" || $SessionSeparatorDefault eq "No") {
     print $query -> checkbox(-name => "sessiondelete", -value =>
     "$MeetingOrderID", -label => 'Delete');
+  } else {
+    print "&nbsp\n";
+  }
+}
+
+sub SessionModifyLink ($) {
+  my ($MeetingOrderID) = @_;
+  if ($SessionSeparatorDefault eq "No") {
+    my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
+    print "<a href=\"$SessionModify?sessionid=$SessionID\">Modify Talks</a>\n";
   } else {
     print "&nbsp\n";
   }

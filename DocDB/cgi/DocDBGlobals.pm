@@ -116,6 +116,7 @@ $ConferenceAdd         = $cgi_root."ConferenceAdd";
 $MeetingCreate         = $cgi_root."MeetingCreate";
 $MeetingView           = $cgi_root."MeetingView";
 $MeetingModify         = $cgi_root."MeetingModify";
+$SessionModify         = $cgi_root."SessionModify";
 
 $AdministerForm        = $cgi_root."AdministerForm";
 $AuthorAdminister      = $cgi_root."AuthorAdminister";
