@@ -1,40 +1,23 @@
 # DB settings
 $db_name   = "BTeVDocTest";
-$db_host   = "vchipp.phy.vanderbilt.edu";
+$db_host   = "fnsimu1.fnal.gov";
 $db_rwuser = "docdbrw";
 $db_rwpass = "hall1burt0n";
 $db_rouser = "docdbro";
 $db_ropass = "abg3n1x";
-#$db_aduser = "docadmin";
 
 # Root directories and URLs
 
-$file_root   = "/var/www/html/BTeV/DocDB/";
-$script_root = "/var/www/cgi-bin/BTeV/DocDB/cgi/";
-$web_root    = "http://vuhepv.phy.vanderbilt.edu/BTeV/DocDB/";
-$cgi_root    = "http://vuhepv.phy.vanderbilt.edu/cgi-bin/BTeV/DocDB/cgi/";
-
-# Special files
-
-$htaccess    = ".htaccess";
-$help_file   = $script_root."docdb.hlp";
-$AuthUserFile       = $script_root."htpasswd";
-
-# CGI Scripts
-
-$ProcessDocumentAdd = $cgi_root."ProcessDocumentAdd";
-$DocumentAddForm    = $cgi_root."DocumentAddForm";
-$ShowDocument       = $cgi_root."ShowDocument";
-$ListDocuments      = $cgi_root."ListDocuments";
-
-$TopicAddForm       = $cgi_root."TopicAddForm";
-$AuthorAddForm      = $cgi_root."AuthorAddForm";
+$file_root   = "/www/html/BTeV/DocDB/";    # Change
+$script_root = "/www/cgi-bin/BTeV/DocDB/cgi/"; # Change
+$web_root    = "http://www-btev.fnal.gov/BTeV/DocDB/";# Change
+$cgi_root    = "http://www-btev.fnal.gov/cgi-bin/BTeV/DocDB/cgi/";
 
 # Shell Commands
 
-$Wget   = "/usr/bin/wget -O - --quiet ";
-$Tar    = "/bin/tar ";
-$Unzip  = "/usr/bin/unzip -q ";
+$Wget   = "/usr/local/bin/wget -O - --quiet ";
+$Tar    = "/usr/local/bin/tar ";
+$Unzip  = "/usr/local/bin/unzip -q ";
 
 # Useful stuff
 
@@ -50,6 +33,10 @@ $Unzip  = "/usr/bin/unzip -q ";
 
 @AbrvMonths = ("Jan","Feb","Mar","Apr","May","Jun",
                "Jul","Aug","Sep","Oct","Nov","Dec");
+
+@FullMonths = ("January","February","March","April",
+               "May","June","July","August",
+               "September","October","November","December");
 
 # Other Globals
 
@@ -68,5 +55,21 @@ if (-e "PublicGlobals.pm") {
 if (-e "TestGlobals.pm") {
   require "TestGlobals.pm";
 }  
+
+# Special files (go here because it uses values from above)
+
+$htaccess     = ".htaccess";
+$help_file    = $script_root."docdb.hlp";
+$AuthUserFile = $script_root."htpasswd";
+
+# CGI Scripts
+
+$ProcessDocumentAdd = $cgi_root."ProcessDocumentAdd";
+$DocumentAddForm    = $cgi_root."DocumentAddForm";
+$ShowDocument       = $cgi_root."ShowDocument";
+$ListDocuments      = $cgi_root."ListDocuments";
+
+$TopicAddForm       = $cgi_root."TopicAddForm";
+$AuthorAddForm      = $cgi_root."AuthorAddForm";
 
 1;

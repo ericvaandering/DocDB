@@ -258,8 +258,8 @@ sub ModTimes {
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
   $DocTime = &EuroDate($Documents{$DocumentID}{DATE}); 
   $RevTime = &EuroDate($DocRevisions{$DocRevID}{DATE}); 
-  print "<b>Created: </b>$DocTime<br>\n";
-  print "<b>Revised: </b>$RevTime<br>\n";
+  print "<nobr><b>Created: </b>$DocTime</nobr><br>\n";
+  print "<nobr><b>Revised: </b>$RevTime</nobr><br>\n";
 }
 
 sub EuroDate {
