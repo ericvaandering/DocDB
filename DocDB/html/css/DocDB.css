@@ -22,6 +22,12 @@ dd {
   margin-left:  0em;
 }
 
+dd.FileList {
+  padding-top:  0.5em;
+  padding-left: 0em;
+  margin-left:  0em;
+}
+
 dt {
   font-weight: bold;
 }
@@ -80,8 +86,7 @@ h5 {
 }
 
 #RightColumn3Col {
-  width: auto;
-  max-width: 45%; /* of 2nd and 3rd columns */
+  width: 12.5em; 
   background: #eee;
   float: right;
   margin-bottom: 0.5em;
@@ -96,17 +101,17 @@ h5 {
 }  
 
 #UpdateButtons input[type="submit"] { /* Probably not best to change all buttons */
-  background: #ddd;
-  font-weight: bold;
-  border: 1px black solid;
-  padding: 0.25em;
+/*  background: #ddd; 
+  font-weight: bold;*/
+/*  border: 1px black solid;
+  padding: 0.25em; */
   font-size: 90%;
 }  
-
+/*
 #UpdateButtons input[type="submit"] {
   width: 12em;
 }  
-
+*/
 #Signoffs ul ul {
   padding-left: 1em;
 }
