@@ -20,7 +20,7 @@ dt {
   font-weight: bold;
 }
  
-h1, h2, h3, h5, p, img {
+h1, h2, h3, h4, h5, p, img {
   margin: 0 1em 0 1em;
   text-align: center;
 }
@@ -30,13 +30,13 @@ h2 {font-size: 120%}
 h3 {font-size: 100%}
 
 #LeftColumn3Col {
-	width: 19%;
-        min-width: 12em;
+//	width: 19%;
+        width: 12em;
 	float: left;
 	background: #ddd;
 	padding-left: 0.25%;
 	padding-bottom: 0.5em;
-	padding-right: 0.25%;
+	padding-right: 0.5em;
 	padding-top: 0em;
         margin-left: 0em;
 }
