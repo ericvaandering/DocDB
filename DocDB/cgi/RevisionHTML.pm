@@ -85,7 +85,7 @@ sub PrintRevisionInfo {
   
   print "<table>\n"; 
   &RequesterByID($Documents{$DocumentID}{REQUESTER});
-  &SubmitterByID($DocRevisions{$DocRevID}{SUBMITTER});
+  &SubmitterByID($DocRevisions{$DocRevID}{Submitter});
   print "</table>\n"; 
 
   print "<td>"; 

@@ -25,7 +25,7 @@ sub FetchDocRevisionByID ($) {
   #FIXME Make keys mixed-caps
   
   $DocRevIDs{$DocumentID}{$VersionNumber} = $DocRevID;
-  $DocRevisions{$DocRevID}{SUBMITTER}     = $SubmitterID;
+  $DocRevisions{$DocRevID}{Submitter}     = $SubmitterID;
   $DocRevisions{$DocRevID}{Title}         = $DocumentTitle;
   $DocRevisions{$DocRevID}{PUBINFO}       = $PublicationInfo;
   $DocRevisions{$DocRevID}{ABSTRACT}      = $Abstract;
@@ -130,7 +130,7 @@ sub GetAllRevisions { # FIXME: Implement full mode, flag with got all revisions
   $revision_list -> bind_columns(undef, \($DocRevID,$SubmitterID,$DocumentTitle,$VersionNumber,$RevisionDate,$DocumentID,$Obsolete));
   while ($revision_list -> fetch) {
     $DocRevIDs{$DocumentID}{$VersionNumber} = $DocRevID;
-    $DocRevisions{$DocRevID}{SUBMITTER}     = $SubmitterID;
+    $DocRevisions{$DocRevID}{Submitter}     = $SubmitterID;
     $DocRevisions{$DocRevID}{Title}         = $DocumentTitle;
     $DocRevisions{$DocRevID}{DATE}          = $RevisionDate;
     $DocRevisions{$DocRevID}{VERSION}       = $VersionNumber; # FIXME: BWC

@@ -100,8 +100,8 @@ sub RevisionMailBody ($) {
   my $FullID = &FullDocumentID($DocRevisions{$DocRevID}{DOCID},$DocRevisions{$DocRevID}{VERSION});
   my $URL    = &DocumentURL($DocRevisions{$DocRevID}{DOCID});
   
-  &FetchAuthor($DocRevisions{$DocRevID}{SUBMITTER});
-  my $Submitter = $Authors{$DocRevisions{$DocRevID}{SUBMITTER}}{FULLNAME};
+  &FetchAuthor($DocRevisions{$DocRevID}{Submitter});
+  my $Submitter = $Authors{$DocRevisions{$DocRevID}{Submitter}}{FULLNAME};
 
   my @AuthorIDs = &GetRevisionAuthors($DocRevID);
   my @TopicIDs  = &GetRevisionTopics($DocRevID);

@@ -33,7 +33,7 @@ sub FirstAuthor {
   unless (@AuthorIDs) {return "None";}
   
   my $FirstID     = $AuthorIDs[0];
-  my $SubmitterID = $DocRevisions{$DocRevID}{SUBMITTER};
+  my $SubmitterID = $DocRevisions{$DocRevID}{Submitter};
   foreach $AuthorID (@AuthorIDs) {
     if ($AuthorID == $SubmitterID) {
       $FirstID = $SubmitterID;  # Submitter is in list --> first author
