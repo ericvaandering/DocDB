@@ -32,7 +32,7 @@ h3 {font-size: 100%}
 
 #LeftColumn3Col {
 //	width: 19%;
-        width: 12em;
+        width: 12.5em;
 	float: left;
 	background: #eee;
 	padding-left: 0.3em;
@@ -43,10 +43,10 @@ h3 {font-size: 100%}
 }
 
 #MainColumn3Col {
-	width: 100%-12em-1em; /* 12 matches LeftColums */
+	width: 100%-12.5em-1em; /* 12 matches LeftColums */
 	background: #fff;
 	padding-bottom: 1em;
-	padding-left: 13em;   /* 13=12+1 matches LeftColums (can't hardcode?!?)*/
+	padding-left: 13.5em;   /* 13=12+1 matches LeftColums (can't hardcode?!?)*/
 	padding-right: 0.5em;
 }
 
