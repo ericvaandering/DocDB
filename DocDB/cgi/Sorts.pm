@@ -40,7 +40,6 @@ sub byInstitution {
 }    
 
 sub DocumentByRevisionDate {
-
   require "DocumentSQL.pm";
   require "RevisionSQL.pm";
 
@@ -75,7 +74,6 @@ sub DocumentByRevisionDate {
 }
 
 sub DocumentByRequester {
-
   require "DocumentSQL.pm";
   require "AuthorSQL.pm";
 
@@ -90,4 +88,5 @@ sub DocumentByRequester {
                             or
   $Authors{$adr}{FIRSTNAME} cmp $Authors{$bdr}{FIRSTNAME}
 }
+
 1;

@@ -98,31 +98,30 @@ sub ProcessURL($$) {
   close OUTFILE;
 
   return $short_file;
-
 }
 
 sub ProcessUpload($$) {
-  my ($new_dir,$short_file) = @_;
-
-  if (grep /\\/,$short_file) {
-    $short_file = &WindowsBaseFile($short_file);
+  my ($new_dir,$long_file) = @_;
+  $short_file = $long_file;
+  if (grep /\\/,$long_file) {
+    $short_file = &WindowsBaseFile($long_file);
   }  
-  if (grep /\//,$short_file) {
-    $short_file = &UnixBaseFile($short_file);
+  if (grep /\//,$long_file) {
+    $short_file = &UnixBaseFile($long_file);
   }  
 
   open (OUTFILE,">$new_dir/$short_file");
-  while ($bytes_read = read($short_file,$buffer,1024)) {
+  while ($bytes_read = read($long_file,$buffer,1024)) {
     print OUTFILE $buffer
   }
   close OUTFILE;
   
-  my $status = 0;
   unless (-s "$new_dir/$short_file") {
-    $status = 1;
+    print "PATH: $new_dir/$short_file";
     push @warn_stack,"The file $short_file did not exist or was blank.";
   }  
-  return $status;
+  
+  return $short_file;
 }
 
 sub ProcessArchive($$) {
