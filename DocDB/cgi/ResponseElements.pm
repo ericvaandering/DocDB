@@ -94,14 +94,14 @@ sub PrintConfInfo {
     if (&MajorIsConference($MinorTopics{$topicID}{MAJOR})) {
       &FetchConferenceByTopicID($topicID);
       my $ConferenceLink = &ConferenceLink($topicID,"long");
-      my $Start = &EuroDate($Conferences{$topicID}{STARTDATE});
-      my $End   = &EuroDate($Conferences{$topicID}{ENDDATE});
+      my $Start = &EuroDate($Conferences{$topicID}{StartDate});
+      my $End   = &EuroDate($Conferences{$topicID}{EndDate});
       print "<dl>\n";
       print "<dt><b>Conference Information:</b> \n";
       print "<dd>Associated with ";
       print "$ConferenceLink ";
       print " held from $Start to $End \n";
-      print " in $Conferences{$topicID}{LOCATION}.</dl>\n";
+      print " in $Conferences{$topicID}{Location}.</dl>\n";
     }
   }
 }

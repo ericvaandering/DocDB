@@ -134,8 +134,8 @@ sub DocumentByConferenceDate {
   $acid = $FirstConf{$adr};
   $bcid = $FirstConf{$bdr};
 
-  my $adate = $Conferences{$acid}{STARTDATE}; 
-  my $bdate = $Conferences{$bcid}{STARTDATE}; 
+  my $adate = $Conferences{$acid}{StartDate}; 
+  my $bdate = $Conferences{$bcid}{StartDate};
   ($ayear,$amonth,$aday) = split /\-/,$adate;
   ($byear,$bmonth,$bday) = split /\-/,$bdate;
 

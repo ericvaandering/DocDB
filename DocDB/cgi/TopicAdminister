@@ -58,10 +58,12 @@ if      ($Action eq "Delete") {
   
 # Delete TopicID from Author, RevisionTopic tables
   
-  my $TopicDelete    = $dbh -> prepare("delete from MinorTopic    where MinorTopicID=?");
-  my $RevisionDelete = $dbh -> prepare("delete from RevisionTopic where MinorTopicID=?");
-  $TopicDelete    -> execute($TopicID);
-  $RevisionDelete -> execute($TopicID);
+  my $TopicDelete      = $dbh -> prepare("delete from MinorTopic    where MinorTopicID=?");
+  my $ConferenceDelete = $dbh -> prepare("delete from Conference    where MinorTopicID=?");
+  my $RevisionDelete   = $dbh -> prepare("delete from RevisionTopic where MinorTopicID=?");
+  $TopicDelete      -> execute($TopicID);
+  $ConferenceDelete -> execute($TopicID);
+  $RevisionDelete   -> execute($TopicID);
   
   print "$TopicLink has been removed from the database.<br>\n";
   if (@TopicDocIDs) {

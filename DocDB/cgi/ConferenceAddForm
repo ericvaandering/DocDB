@@ -76,7 +76,6 @@ print $query -> end_multipart_form;
 
 print "<p>\n";
 
-
 print "<h3>Existing Conferences:</h3>\n";
 
 &ConferencesList;

@@ -1,4 +1,11 @@
-# Routines to produce snippets of HTML dealing with topics (major and minor)
+#
+#        Name: TopicHTML.pm
+# Description: Routines to produce snippets of HTML dealing with topics 
+#              (major, minor and conferences which are special types of topics) 
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
 
 sub TopicListByID {
   my @topicIDs = @_;
@@ -88,25 +95,26 @@ sub MeetingLink {
 }
 
 sub ConferenceLink {
-  my ($TopicID,$mode) = @_;
+  my ($TopicID,$Mode) = @_;
   
   require "TopicSQL.pm";
   
   &FetchMinorTopic($TopicID);
-  my $link;
-  $link = "<a href=$ListByTopic?topicid=$TopicID&mode=conference>";
-  if ($mode eq "short") {
-    $link .= $MinorTopics{$TopicID}{SHORT};
-  } elsif ($mode eq "long") {
-    $link .= $MinorTopics{$TopicID}{LONG};
+  my $Link;
+     $Link = "<a href=$ListByTopic?topicid=$TopicID&mode=conference>";
+  if ($Mode eq "short" || $Mode eq "nodate") {
+    $Link .= $MinorTopics{$TopicID}{SHORT};
+  } elsif ($Mode eq "long") {
+    $Link .= $MinorTopics{$TopicID}{LONG};
   } else {
-    $link .= $MinorTopics{$TopicID}{FULL};
+    $Link .= $MinorTopics{$TopicID}{FULL};
   }
-  my ($Year,$Month,$Day) = split /\-/,$Conferences{$TopicID}{STARTDATE};
-  $link .= "</a>";
-  $link .= " (".@AbrvMonths[$Month-1]." $Year)"; 
-  
-  return $link;
+  $Link .= "</a>";
+  unless ($Mode eq "nodate") {
+    my ($Year,$Month,$Day) = split /\-/,$Conferences{$TopicID}{StartDate};
+    $Link .= " (".@AbrvMonths[$Month-1]." $Year)"; 
+  }
+  return $Link;
 }
 
 sub TopicsByMajorTopic ($) {
@@ -168,12 +176,24 @@ sub ConferencesTable {
   my ($MajorID) = @ConferenceMajorIDs; 
   print "<table border=1>\n";
   foreach my $MinorID (@MinorTopicIDs) {
-    print "<tr>\n";
     if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
-      my $topic_link = &ConferenceLink($MinorID,"short");
-      print "<td>$topic_link\n";
+      print "<tr>\n";
+      my $ConferenceLink = &ConferenceLink($MinorID,"nodate");
+      my $Start = &EuroDate($Conferences{$MinorID}{StartDate});
+      my $End   = &EuroDate($Conferences{$MinorID}{EndDate});
+      my $Link;
+      if ($Conferences{$MinorID}{URL}) {
+        $Link = "<a href=\"$Conferences{$MinorID}{URL}\">$Conferences{$MinorID}{URL}</a>";
+      } else {
+        $Link = "None entered\n";
+      }
+      print "<td>$ConferenceLink</td>\n";
+      print "<td>$MinorTopics{$MinorID}{LONG}</td>\n";
+      print "<td>$Conferences{$MinorID}{Location}</td>\n";
+      print "<td>$Start - $End</td>\n";
+      print "<td>$Link</td>\n";
+      print "</tr>\n";
     }  
-    print "</tr>\n";
   }  
   print "</table>";
 }

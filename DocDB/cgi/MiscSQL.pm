@@ -131,10 +131,10 @@ sub FetchConferenceByTopicID { # Fetches a conference by MinorTopicID
   ($ConferenceID,$MinorTopicID,$Location,$URL,$StartDate,$EndDate,$TimeStamp) 
     = $conference_fetch -> fetchrow_array;
   $Conferences{$MinorTopicID}{MINOR}      = $MinorTopicID;
-  $Conferences{$MinorTopicID}{LOCATION}   = $Location;
+  $Conferences{$MinorTopicID}{Location}   = $Location;
   $Conferences{$MinorTopicID}{URL}        = $URL;
-  $Conferences{$MinorTopicID}{STARTDATE}  = $StartDate;
-  $Conferences{$MinorTopicID}{ENDDATE}    = $EndDate;
+  $Conferences{$MinorTopicID}{StartDate}  = $StartDate;
+  $Conferences{$MinorTopicID}{EndDate}    = $EndDate;
   $Conferences{$MinorTopicID}{TIMESTAMP}  = $TimeStamp;
 
   return $Conferences{$MinorTopicID}{MINOR};

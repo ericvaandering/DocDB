@@ -272,7 +272,8 @@ print "<p><hr>\n";
 
 ### Conference Administration
 
-print "<a name=\"conference\"><center><h4>Administer Conferences</h4></center>\n";
+print "<a name=\"conference\"><center><h4>Administer Conferences</h4>
+       (Dates set to the current date will not be changed)</center>\n";
 
 print $query -> start_multipart_form('POST',"$ConferenceAdminister");
 print "<table cellpadding=10>\n";
@@ -281,8 +282,24 @@ print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-#print "<td>\n"; &JournalSelect("full"); print "</td>\n";
-#print "<td>\n"; &JournalEntryBox;     print "</td>\n";
+print "<td>Selectable list goes here.</td>\n";
+print "<td><table>\n";
+print "<tr valign=top>\n";
+print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
+print "<td>\n"; &LongDescriptionBox;      print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td>\n"; &LocationBox;          print "</td>\n";
+print "<td>\n"; &ConferenceURLBox;     print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td>\n"; &StartDatePullDown;     print "</td>\n";
+print "<td>\n"; &EndDatePullDown;       print "</td>\n";
+print "</tr>\n";
+print "</table></td>\n";
+
 print "</tr>\n";
 
 print "<tr valign=top>\n";
