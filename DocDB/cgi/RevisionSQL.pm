@@ -85,7 +85,7 @@ sub FetchRevisionByDocumentAndDate ($$) {
     "where DocumentID=? and RevisionDate<=?");
 
   $Date .= " 23:59:59";
-  $RevisionQuery -> execute($Version,$Date);
+  $RevisionQuery -> execute($DocumentID,$Date);
   my ($Version) = $RevisionQuery -> fetchrow_array;
 
   my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);

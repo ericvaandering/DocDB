@@ -7,7 +7,7 @@ sub TopicListByID {
     print "<ul>\n";
     foreach $topicID (@topicIDs) {
       &FetchMinorTopic($topicID);
-      my $topic_link = &TopicLink($topicID);
+      my $topic_link = &MinorTopicLink($topicID);
       print "<li> $topic_link </li>\n";
     }
     print "</ul>\n";
@@ -21,7 +21,7 @@ sub ShortTopicListByID {
   if (@topicIDs) {
     foreach $topicID (@topicIDs) {
       &FetchMinorTopic($topicID);
-      my $topic_link = &TopicLink($topicID);
+      my $topic_link = &MinorTopicLink($topicID);
       print "$topic_link <br>\n";
     }
   } else {
@@ -29,7 +29,7 @@ sub ShortTopicListByID {
   }
 }
 
-sub TopicLink {
+sub MinorTopicLink ($$) {
   my ($TopicID,$mode) = @_;
   
   require "TopicSQL.pm";
@@ -128,7 +128,7 @@ sub TopicsTable {
     print "<ul>\n";
     foreach my $MinorID (@MinorTopicIDs) {
       if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
-        my $topic_link = &TopicLink($MinorID,"short");
+        my $topic_link = &MinorTopicLink($MinorID,"short");
         print "<li>$topic_link\n";
       }  
     }  
@@ -192,7 +192,7 @@ sub MeetingsTable {
       $NThisCol = 0;
     }
     ++$NThisCol;
-    my $topic_link = &TopicLink($MinorID,"short");
+    my $topic_link = &MinorTopicLink($MinorID,"short");
     print "<li>$topic_link\n";
   }  
   print "</ul></td></tr>";

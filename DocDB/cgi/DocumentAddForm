@@ -29,7 +29,9 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 %params = $query -> Vars;
 
-$Special = $params{special};
+my $Special    = $params{special};
+my $DocumentID = $params{docid};
+my $Version    = $params{version};
 
 if ($Special eq "meeting")      {$Meeting = 1;}
 if ($Special eq "othermeeting") {$OtherMeeting = 1;}
@@ -94,31 +96,30 @@ if (@error_stack) {  # The user made one or more mistakes, warn and exit
   &EndPage(@error_stack);
 }
 
-my $DocumentID;
 my $DocRevID;
 
-if ($mode eq "updatedb") { 
-  if (defined $params{version}) {
-    $Version = $params{version};
-    print $query -> hidden(-name => 'version',   -default => $Version);
-  }
-}    
-
-if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
-  $DocumentID = $params{docid};
+if ($mode eq "update" || $mode eq "updatedb") {
   &FetchDocument($DocumentID);
   unless (&CanModify($DocumentID)) {
     push @error_stack,"You are not allowed to modify this document.";
   }
-  if ($mode eq "update") { # Need to read in last version values and update
-    $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVER});
-  } elsif ($mode eq "updatedb") {
-    $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-    if ($Version != $Documents{$DocumentID}{NVER}) {
-      push @warn_stack,"You are about to update an old version of this document.";
-    }
+}
+
+if ($mode eq "updatedb") { 
+  unless (defined $Version) {
+    $Version = $Documents{$DocumentID}{NVER};
+  }  
+  if ($Version != $Documents{$DocumentID}{NVER}) {
+    push @warn_stack,"You are about to update an old version of this document.";
   }
-  
+}    
+
+if ($mode eq "update") {
+  $Version = $Documents{$DocumentID}{NVER};
+}
+
+if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
+  $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   $TitleDefault     = $DocRevisions{$DocRevID}{TITLE};
   $PubInfoDefault   = $DocRevisions{$DocRevID}{PUBINFO};
   $AbstractDefault  = $DocRevisions{$DocRevID}{ABSTRACT};

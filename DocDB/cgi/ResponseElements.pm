@@ -143,7 +143,7 @@ sub PrintRevisionInfo {
   &PrintTitle($DocRevisions{$DocRevID}{TITLE});
   print "</td></tr>\n";
   print "<tr valign=top>";
-  print "<td colspan=2 width=\"40%\">";
+  print "<td colspan=2>";
   
   print "<table>\n"; 
   &RequesterByID($Documents{$DocumentID}{REQUESTER});
@@ -169,7 +169,7 @@ sub PrintRevisionInfo {
 
   print "</td></tr>\n";
   print "<tr valign=top>";
-  print "<td colspan=3>"; 
+  print "<td colspan=3 width=50%>"; 
   &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT});
 
   print "<td rowspan=3 colspan=3>"; 
