@@ -13,12 +13,16 @@ sub PrintTitle {
 
 sub PrintDocNumber { # And type
   my ($DocRevID) = @_;
-  print "<nobr><b>Document #: </b>";
+  print "<table>\n";
+  print "<tr><td><b>Document #:</b></td><td>";
   print (&FullDocumentID($DocRevisions{$DocRevID}{DOCID}));
-  print "-v$DocRevisions{$DocRevID}{VERSION}</nobr><br>\n";
-  print "<nobr><b>Document type: </b>";
+  print "-v$DocRevisions{$DocRevID}{VERSION}";
+  print "</td></tr>\n";
+  print "<tr><td><b>Document type:</b></td><td>";
   my $type_link = &TypeLink($Documents{$DocRevisions{$DocRevID}{DOCID}}{TYPE},"short");
   print "$type_link</nobr><br>\n";
+  print "</td></tr>\n";
+  print "</table>\n";
 }
 
 sub PrintAbstract {
@@ -139,9 +143,12 @@ sub PrintRevisionInfo {
   &PrintTitle($DocRevisions{$DocRevID}{TITLE});
   print "</td></tr>\n";
   print "<tr valign=top>";
-  print "<td colspan=2 width=\"40%\">"; 
+  print "<td colspan=2 width=\"40%\">";
+  
+  print "<table>\n"; 
   &RequesterByID($Documents{$DocumentID}{REQUESTER});
   &SubmitterByID($DocRevisions{$DocRevID}{SUBMITTER});
+  print "</table>\n"; 
 
   print "<td colspan=2>"; 
   &PrintDocNumber($DocRevID);
@@ -285,10 +292,14 @@ sub KeywordLink {
 sub ModTimes {
   my ($DocRevID) = @_;
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
-  $DocTime = &EuroDate($Documents{$DocumentID}{DATE}); 
-  $RevTime = &EuroDate($DocRevisions{$DocRevID}{DATE}); 
-  print "<nobr><b>Created: </b>$DocTime</nobr><br>\n";
-  print "<nobr><b>Revised: </b>$RevTime</nobr><br>\n";
+  $DocTime     = &EuroDate($Documents{$DocumentID}{DATE}); 
+  $RevTime     = &EuroDate($DocRevisions{$DocRevID}{DATE}); 
+  $VersionTime = &EuroDate($DocRevisions{$DocRevID}{VersionDate}); 
+  print "<table>\n";
+  print "<tr><td align=right><b>Document Created:</b></td><td>$DocTime</td></tr>\n";
+  print "<tr><td align=right><b>Contents Revised:</b></td><td>$VersionTime</td></tr>\n";
+  print "<tr><td align=right><b>DB Info Revised:</b></td><td>$RevTime</td></tr>\n";
+  print "</table>\n";
 }
 
 sub EuroDate {
