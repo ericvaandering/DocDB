@@ -1,97 +1,92 @@
 # FIXME: Get timestamps
 
-sub GetKeywordList {
-
-  my $keyword_list   = $dbh->prepare("select KeywordID,KeywordGroupID,ShortDescription,LongDescription from Keyword");
-  my $keywordgroup_list   = $dbh->prepare("select KeywordGroupID,ShortDescription,LongDescription from KeywordGroup");
-
+sub ClearKeywords {
   %KeywordListEntries = ();
-  %KeywordGroups = ();
-  %FullKeywords  = ();
-
-  my ($KeywordID,$KeywordGroupID,$ShortDescription,$LongDescription);
-
-  $keywordgroup_list -> execute;
-  $keywordgroup_list -> bind_columns(undef, \($KeywordGroupID,$ShortDescription,$LongDescription));
-  while ($keywordgroup_list -> fetch) {
-    $KeywordGroups{$KeywordGroupID}{KeywordGroupID} = $KeywordGroupID;
-    $KeywordGroups{$KeywordGroupID}{Short} = $ShortDescription;
-    $KeywordGroups{$KeywordGroupID}{Long}  = $LongDescription;
-    $KeywordGroups{$KeywordGroupID}{Full}  = $ShortDescription." [".$LongDescription."]";
-  }
-
-  $keyword_list -> execute;
-  $keyword_list -> bind_columns(undef, \($KeywordID,$KeywordGroupID,$ShortDescription,$LongDescription));
-  while ($keyword_list -> fetch) {
-    $KeywordListEntries{$KeywordID}{KeywordGroupID} = $KeywordGroupID;
-    $KeywordListEntries{$KeywordID}{Short} = $ShortDescription;
-    $KeywordListEntries{$KeywordID}{Long}  = $LongDescription;
-    $KeywordListEntries{$KeywordID}{Full}  = $KeywordGroups{$KeywordGroupID}{Short}.":".$ShortDescription;
-  }
-  foreach $key (keys %KeywordListEntries) {
-    $FullKeywords{$key} =  $KeywordListEntries{$key}{Full};
-  }
-};
+  %FullKeywords       = ();
+  %KeywordGroups      = ();
+}
 
 sub GetKeywords {
+
+  my $KeywordList = $dbh -> prepare("select KeywordID from Keyword");
+
+  $KeywordList -> execute;
+  $KeywordList -> bind_columns(undef, \($KeywordID));
+  while ($KeywordList -> fetch) {
+    push @KeywordListIDs,$KeywordID;
+    &FetchKeyword($KeywordID);
+  }
+  return @KeywordListIDs;
+};
+
+sub GetKeywordsByKeywordGroupID { # FIXME: Rename GetKeywords by KeywordGroupID
   my ($KeywordGroupID) = @_;
   my @KeywordListIDs = ();
-  my $KeyList = $dbh->prepare("select KeywordID from Keyword where KeywordGroupID=?");
+  my $KeyList = $dbh -> prepare("select KeywordID from Keyword where KeywordGroupID=?");
 
   my ($KeywordID);
   $KeyList -> execute($KeywordGroupID);
   $KeyList -> bind_columns(undef, \($KeywordID));
   while ($KeyList -> fetch) {
     push @KeywordListIDs,$KeywordID;
+    &FetchKeyword($KeywordID);
   }
   return @KeywordListIDs;
 };
 
-sub FetchKeyword { # Fetches a Keyword by ID, adds to $KeywordListEntries{$KeyListID}{}
+sub FetchKeyword { # Fetches a Keyword by ID, adds to $KeywordListEntries{$keywordID}{}
 
-  # FIXME: KeyListID is really KeywordID
+  my ($keywordID) = @_;
 
-  my ($KeyListID) = @_;
-  my ($KeywordID,$KeywordGroupID,$ShortDescription,$LongDescription);
-  my $keyword_fetch   = $dbh -> prepare(
-    "select KeywordID,KeywordGroupID,ShortDescription,LongDescription ".
+  my ($KeywordID,$KeywordGroupID,$ShortDescription,$LongDescription,$TimeStamp);
+  my $KeywordFetch   = $dbh -> prepare(
+    "select KeywordID,KeywordGroupID,ShortDescription,LongDescription,TimeStamp ".
     "from Keyword ".
     "where KeywordID=?");
-  if ($KeywordListEntries{$KeyListID}{Short}) { # FIXME: Change to timestamps # We already have this one
-    return $KeywordListEntries{$KeyListID}{Short};
+  if ($KeywordListEntries{$keywordID}{TimeStamp}) { # We already have this one
+    return $KeywordListEntries{$keywordID}{Short};
   }
   
-  $keyword_fetch -> execute($KeyListID);
-  ($KeywordID,$KeywordGroupID,$ShortDescription,$LongDescription) = $keyword_fetch -> fetchrow_array;
-  &FetchKeywordGroup($KeywordGroupID);
-  $KeywordListEntries{$KeyListID}{KeywordGroupID} = $KeywordGroupID;
-  $KeywordListEntries{$KeyListID}{Short} = $ShortDescription;
-  $KeywordListEntries{$KeyListID}{Long}  = $LongDescription;
-  $KeywordListEntries{$KeyListID}{Full}  = $KeywordGroups{$KeywordGroupID}{Short}.":".$ShortDescription;
+  $KeywordFetch -> execute($keywordID);
+  ($KeywordID,$KeywordGroupID,$ShortDescription,$LongDescription,$TimeStamp) = $KeywordFetch -> fetchrow_array;
 
-  $FullKeywords{$KeyListID} = $KeywordListEntries{$KeyListID}{Full};
+  if ($KeywordID) {
+    &FetchKeywordGroup($KeywordGroupID); # Do we need this?
+    $KeywordListEntries{$KeywordID}{KeywordGroupID} = $KeywordGroupID; # FIXME: Will go away
+    $KeywordListEntries{$KeywordID}{Short}          = $ShortDescription;
+    $KeywordListEntries{$KeywordID}{Long}           = $LongDescription;
+    $KeywordListEntries{$KeywordID}{TimeStamp}      = $TimeStamp;
+    $KeywordListEntries{$KeywordID}{Full}           = $KeywordGroups{$KeywordGroupID}{Short}.":".$ShortDescription;
 
-  return $KeywordListEntries{$KeyListID}{Short};
+    $FullKeywords{$KeywordID} = $KeywordListEntries{$keywordID}{Full};
+    return $KeywordListEntries{$KeywordID}{Short};
+  } else {
+    return "";
+  }
 }
 
 sub FetchKeywordGroup { # Fetches a KeywordGroup by ID, adds to $KeywordListEntries{$KeywordID}{}
-  my ($KeywordGroupID) = @_;
-  my ($KeywordGroupID,$ShortDescription,$LongDescription);
+  my ($keywordGroupID) = @_;
+
+  my ($KeywordGroupID,$ShortDescription,$LongDescription,$TimeStamp);
   my $keygroup_fetch   = $dbh -> prepare(
-    "select KeywordGroupID,ShortDescription,LongDescription ".
+    "select KeywordGroupID,ShortDescription,LongDescription,TimeStamp ".
     "from KeywordGroup ".
     "where KeywordGroupID=?");
-  if ($KeywordGroups{$KeywordGroupID}{KeywordGroupID}) { # We already have this one
-    return $KeywordGroups{$KeywordGroupID}{KeywordGroupID};
+  if ($KeywordGroups{$keywordGroupID}{TimeStamp}) { # We already have this one
+    return $keywordGroupID;
   }
 
-  $keygroup_fetch -> execute($KeywordGroupID);
-  ($KeywordGroupID,$ShortDescription,$LongDescription) = $keygroup_fetch -> fetchrow_array;
-  $KeywordGroups{$KeywordGroupID}{KeywordGroupID} = $KeywordGroupID;
-  $KeywordGroups{$KeywordGroupID}{Short} = $ShortDescription;
-  $KeywordGroups{$KeywordGroupID}{Long}  = $LongDescription;
-
-  return $KeywordGroups{$KeywordGroupID}{KeywordGroupID};
+  $keygroup_fetch -> execute($keywordGroupID);
+  ($KeywordGroupID,$ShortDescription,$LongDescription,$TimeStamp) = $keygroup_fetch -> fetchrow_array;
+  if ($KeywordGroupID) {
+    $KeywordGroups{$KeywordGroupID}{KeywordGroupID} = $KeywordGroupID; # FIXME: Remove
+    $KeywordGroups{$KeywordGroupID}{Short}          = $ShortDescription;
+    $KeywordGroups{$KeywordGroupID}{Long}           = $LongDescription;
+    $KeywordGroups{$KeywordGroupID}{TimeStamp}      = $TimeStamp;
+  } 
+  
+  return $KeywordGroupID;
 }
 
 sub LookupKeywordGroup { # Returns KeywordGroupID from Keyword Group Name

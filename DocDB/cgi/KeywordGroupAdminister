@@ -53,10 +53,10 @@ unless (&CanAdminister) {
 }  
 &EndPage(@ErrorStack);
 
-&GetKeywordList;
+&GetKeywords;
 
 if      ($Action eq "Delete") { # Delete keyword groups
-  @KeywordListIDs = &GetKeywords($KeywordGroupID); 
+  @KeywordListIDs = &GetKeywordsByKeywordGroupID($KeywordGroupID); 
   if (!$KeywordGroupID) {
     push @ErrorStack,$Msg_ModKeyGrEmpty;
   } elsif (@KeywordListIDs) {
@@ -103,7 +103,7 @@ if      ($Action eq "Delete") { # Delete keyword groups
 # For modify or new fetch information and display.
 
 if ($Action eq "Modify" || $Action eq "New") {
-  &GetKeywordList;
+  &GetKeywords;
   print "<p><b>Here are the results of your modification:<br>\n";
   print "Short description: $KeywordGroups{$KeywordGroupID}{Short}<br>\n";
   print "Long description:  $KeywordGroups{$KeywordGroupID}{Long}<br>\n";

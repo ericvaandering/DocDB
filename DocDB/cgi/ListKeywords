@@ -22,10 +22,11 @@ my $Format = $params{format} || "short"  ;
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&GetKeywordList;
 
 print $query->header;
 &DocDBHeader("List of Keywords");
+
+&GetKeywords;
 
 if ($Mode eq "chooser") {
   require "Scripts.pm";
