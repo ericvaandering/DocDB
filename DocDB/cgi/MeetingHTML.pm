@@ -369,6 +369,8 @@ sub PrintSessionHeader ($) {
   require "SQLUtilities.pm";
   require "Utilities.pm";
 
+  my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
+
   print "<center><a name=\"$SessionID\"><b>Session: ".
         "<a href=\"$DisplayMeeting?sessionid=$SessionID\">$Sessions{$SessionID}{Title}</a> begins \n";
   print &EuroDate($Sessions{$SessionID}{StartTime});

@@ -65,8 +65,14 @@ sub CanAccess { # Can the user access (with current security) this version
 
 sub CanModify { # Can the user modify (with current security) this document
   require "DocumentSQL.pm";
+  require "SecuritySQL.pm";
 
 ## FIXME: Use SecurityLookup  
+
+  unless (keys %SecurityGroups) {
+    &GetSecurityGroups;
+  }  
+
   my ($DocumentID,$Version) = @_;
   my $CanModify;
   if     ($Public)      {return 0;} # Public version of code, can't modify 
@@ -126,7 +132,13 @@ sub CanModify { # Can the user modify (with current security) this document
 
 sub CanCreate { # Can the user create documents 
 
+  require "SecuritySQL.pm";
+
 ## FIXME: Use SecurityLookup  
+
+  unless (keys %SecurityGroups) {
+    &GetSecurityGroups;
+  }  
 
   my $Create = 0;
   my @GroupIDs = keys %SecurityGroups; # FIXME use a hash for direct lookup
@@ -162,21 +174,29 @@ sub CanAdminister { # Can the user administer the database
 sub CanAccessMeeting ($) {
   my ($ConferenceID) = @_;
   
+#  print "CAM: $ConferenceID<br>\n";
   my $CanAccess = 0;
   
   unless ($Public) {
     $CanAccess = 1;
   }
   
+  unless ($ConferenceID) {
+    $CanAccess = 0;
+  }
+  
+#  print "CA: $CanAccess<br>\n";
   return $CanAccess;
 }
 
 sub CanModifyMeeting ($) {
   my ($ConferenceID) = @_;
   
+#  print "CMM: $ConferenceID<br>\n";
+  
   my $CanModify = 0;
   
-  if (&CanCreate) {
+  if (&CanCreate && $ConferenceID) {
     $CanModify = 1;
   }
   
@@ -187,9 +207,8 @@ sub CanModifyMeeting ($) {
   return $CanModify;
 }  
 
-sub CanCreateMeeting ($) {
-  my ($ConferenceID) = @_;
-  
+sub CanCreateMeeting {
+
   my $CanCreate = 0;
   
   if (&CanCreate) {

@@ -19,6 +19,7 @@ require "Security.pm";
 require "DocumentSQL.pm";
 require "RevisionSQL.pm";
 require "TalkSQL.pm";
+require "MeetingSQL.pm";
 require "TalkHintSQL.pm";
 require "TalkHintUtilities.pm";
 
@@ -120,21 +121,23 @@ if ($SessionID) {
   print "<b><big>No notes for this talk</big></b><p>\n";
 }  
 
-my $SearchDays  = $TalkHintWindow;
+if (&CanModifyMeeting($ConferenceID)) {
+  my $SearchDays  = $TalkHintWindow;
 
-my %CheckDocumentIDs = &GetHintDocuments($SessionID,$SearchDays);
-my @MatchedDocIDs    = &TalkMatches($SessionTalkID,0,%CheckDocumentIDs);
+  my %CheckDocumentIDs = &GetHintDocuments($SessionID,$SearchDays);
+  my @MatchedDocIDs    = &TalkMatches($SessionTalkID,0,%CheckDocumentIDs);
 
-print "<b>The following documents are possible matches for this talk (best
-first):\n";
+  print "<p/><b>The following documents are possible matches for this talk (best
+  first):\n";
 
-print "<p/><center><table cellpadding=3>\n";
-&DocumentSummary(0,"confirm");
-foreach my $MatchedDocumentID (@MatchedDocIDs) {
-  $ConfirmDocID         = $MatchedDocumentID;
-  $ConfirmSessionTalkID = $SessionTalkID;
-  &DocumentSummary($MatchedDocumentID,"confirm");
+  print "<p/><center><table cellpadding=3>\n";
+  &DocumentSummary(0,"confirm");
+  foreach my $MatchedDocumentID (@MatchedDocIDs) {
+    $ConfirmDocID         = $MatchedDocumentID;
+    $ConfirmSessionTalkID = $SessionTalkID;
+    &DocumentSummary($MatchedDocumentID,"confirm");
+  }
+  print "</table></center>\n";
 }
-print "</table></center>\n";
 
 print $query->end_html;     # End page

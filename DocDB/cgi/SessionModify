@@ -12,6 +12,7 @@ use CGI;
 use DBI;
 
 require "DocDBGlobals.pm";
+require "Messages.pm";
 require "Cookies.pm";
 require "Defaults.pm";
 
@@ -23,6 +24,7 @@ require "Security.pm";
 
 require "MeetingHTML.pm";
 require "TalkHTML.pm";
+require "MeetingSQL.pm";
 require "TalkSQL.pm";
 require "TalkHintSQL.pm";
 require "TalkHintUtilities.pm";

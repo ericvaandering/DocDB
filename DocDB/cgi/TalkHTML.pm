@@ -29,6 +29,10 @@ sub PrintSessionTalk($) {
   my $Confirmed  = $SessionTalks{$SessionTalkID}{Confirmed};
   my $Note       = $SessionTalks{$SessionTalkID}{Note};
   my $Time       = &TruncateSeconds($SessionTalks{$SessionTalkID}{Time});
+  my $SessionID  = $SessionTalks{$SessionTalkID}{SessionID};
+  &FetchSessionByID($SessionID);
+  my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
+
   # Selected parts of how things are done in DocumentSummary
 
   &FetchDocument($DocumentID);
@@ -50,9 +54,13 @@ sub PrintSessionTalk($) {
     print "<td>$Title</td>\n";
   } else {
     my $SessionTalkSummary = &SessionTalkSummary($SessionTalkID);
-    print "<td><i>$Title</i> [$SessionTalkSummary] - <b>\n";
-    print &ConfirmTalkLink($SessionTalkID,$DocumentID);
-    print "</b></td>\n";
+    print "<td><i>$Title</i> [$SessionTalkSummary]\n";
+    if (&CanModifyMeeting($ConferenceID)) {
+      print " - <b>";
+      print &ConfirmTalkLink($SessionTalkID,$DocumentID);
+      print "</b>";
+    }
+    print "</td>\n";
   }
   print "<td><nobr>$AuthorLink</nobr></td>\n";
   print "<td>"; &ShortTopicListByID(@TopicIDs);   print "</td>\n";

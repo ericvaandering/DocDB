@@ -91,10 +91,11 @@ if ($SessionID) { # Display a single session
   &ClearSessionTalks();
 
   &FetchSessionByID($SessionID);
-  &FetchConferenceByConferenceID($Sessions{$SessionID}{ConferenceID});
-  &PrintMeetingInfo($Sessions{$SessionID}{ConferenceID});
+  $ConferenceID = $Sessions{$SessionID}{ConferenceID};
+  &FetchConferenceByConferenceID($ConferenceID);
+  &PrintMeetingInfo($ConferenceID);
   &PrintSession($SessionID,true); 
-  &PrintMeetingEpilogue($Sessions{$SessionID}{ConferenceID});
+  &PrintMeetingEpilogue($ConferenceID);
 } elsif ($SessionSeparatorID) { # Display a single break (never called)
   &FetchSessionSeparatorByID($SessionSeparatorID);
   &FetchConferenceByConferenceID($SessionSeparators{$SessionSeparatorID}{ConferenceID});
@@ -213,13 +214,15 @@ if ($SessionID) { # Display a single session
 
 my $NavBarText = "";
 my $NavBarURL  = "";  
-if ($SessionID) {
-  $NavBarText = "Modify&nbsp;Session";
-  $NavBarURL  = "$SessionModify?sessionid=$SessionID";
-} elsif ($ConferenceID) {
-  $NavBarText = "Modify&nbsp;Meeting";
-  $NavBarURL  = "$MeetingModify?conferenceid=$ConferenceID";
-}  
+if (&CanModifyMeeting($ConferenceID)) {
+  if ($SessionID) {
+    $NavBarText = "Modify&nbsp;Session";
+    $NavBarURL  = "$SessionModify?sessionid=$SessionID";
+  } elsif ($ConferenceID) {
+    $NavBarText = "Modify&nbsp;Meeting";
+    $NavBarURL  = "$MeetingModify?conferenceid=$ConferenceID";
+  }  
+}
   
 $EndTime  = new Benchmark;
 
