@@ -56,7 +56,7 @@ print $query->header;
 if ($UserValidation eq "certificate") {
   require "CertificateUtilities.pm";
   my $CertificateStatus = &CertificateStatus();
-  unless ($CertificateStats eq "verified") {
+  unless ($CertificateStatus eq "verified") {
     print "<p><center><h4><font color=\"red\">\n";
     print "You have presented a valid certificate, but are not yet authorized to access the DocDB.<br>\n";
     print "</font>\n";

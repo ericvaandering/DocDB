@@ -151,11 +151,9 @@ sub CanCreate { # Can the user create documents
   my $Create = 0;
   my @GroupIDs = keys %SecurityGroups; # FIXME use a hash for direct lookup
   foreach my $UserGroupID (@UsersGroupIDs) {
-    foreach my $GroupID (@GroupIDs) { # Check auth. users vs. logged in user
-      &FetchSecurityGroup($GroupID);
-      if ($UserGroupID == $GroupID && $SecurityGroups{$GroupID}{CanCreate}) {
-        $Create = 1;                           # User checks out
-      }  
+    &FetchSecurityGroup($UserGroupID);
+    if ($SecurityGroups{$UserGroupID}{CanCreate}) {
+      $Create = 1;                           # User checks out
     }  
   }
   return $Create;
@@ -171,11 +169,9 @@ sub CanAdminister { # Can the user administer the database
   my $Administer = 0;
   my @GroupIDs = keys %SecurityGroups; # FIXME use a hash for direct lookup
   foreach my $UserGroupID (@UsersGroupIDs) {
-    foreach my $GroupID (@GroupIDs) { # Check auth. users vs. logged in user
-      &FetchSecurityGroup($GroupID);
-      if ($UserGroupID == $GroupID && $SecurityGroups{$GroupID}{CanAdminister}) {
-        $Administer = 1;                           # User checks out
-      }  
+    &FetchSecurityGroup($UserGroupID);
+    if ($SecurityGroups{$UserGroupID}{CanAdminister}) {
+      $Administer = 1;                           # User checks out
     }  
   }
   return $Administer;
@@ -198,7 +194,7 @@ sub FindUsersGroups () {
   my @UsersGroupIDs  = ();
   if ($UserValidation eq "certificate") {
     require "CertificateUtilities.pm";
-    @UserGroupIDs = &FetchSecurityGroupsByCert();
+    @UsersGroupIDs = &FetchSecurityGroupsByCert();
   } elsif ($UserValidation eq "basic-user") {
 # Coming (maybe)
   } else {

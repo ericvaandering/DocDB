@@ -74,11 +74,9 @@ print $query->header;
 &EndPage(@ErrorStack);
 
 unless (&CanAdminister) {
-#  push @ErrorStack,$Msg_AdminNoLogin;
-  push @WarnStack,"I've disabled admin checking in this page. FIX IT.";
+  push @ErrorStack,$Msg_AdminNoLogin;
 }  
 &EndPage(@ErrorStack);
-&WarnPage(@WarnStack);
 
 &GetSecurityGroups;
 
@@ -154,8 +152,8 @@ if      ($Action eq "Delete") { # Delete user
 
 print "<p>\n";
 
-&WarnPage(@WarnStack);
 &EndPage(@ErrorStack);
+&WarnPage(@WarnStack);
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -30,6 +30,7 @@ require "Messages.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 require "Scripts.pm";
+require "Security.pm";
 
 require "CertificateUtilities.pm";
 
@@ -59,7 +60,7 @@ if ($CertificateStatus eq "verified") {
   print "<b>Your certificate has been verified and you have access to documents from these groups:</b>";
   my @GroupIDs = &FindUsersGroups();
   print "<ul>\n";
-  if (@GroupIDS) {
+  if (@GroupIDs) {
     foreach my $GroupID (@GroupIDs) {
       &FetchSecurityGroup($GroupID);
       print "<li>",$SecurityGroups{$GroupID}{NAME},"</li>\n";
