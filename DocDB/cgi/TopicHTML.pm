@@ -238,7 +238,7 @@ sub ConferencesList {
   print "</ul>";
 }
 
-sub MajorMeetingSelect (;$) { # Scrolling selectable list for major topics with dates
+sub MajorGatheringSelect (;$) { # Scrolling selectable list for major topics with dates
   my ($Mode) = @_; 
   
   print "<b><a ";

@@ -283,7 +283,7 @@ print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td>\n"; &MajorMeetingSelect; print "</td>\n";
+print "<td>\n"; &MajorGatheringSelect; print "</td>\n";
 print "<td>\n"; &ConferenceSelect;   print "</td>\n";
 print "<td>\n";
  print "<table>\n";
