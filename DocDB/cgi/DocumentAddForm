@@ -355,20 +355,31 @@ if (@OpenSessionTalkIDs) {
 }
 
 print "<tr>\n";
-print "<td colspan=4>\n"; &TitleBox(-required => "true");        print "</td>\n";
+print "<td colspan=4>\n"; 
+ &TitleBox(-required => $RequiredEntries{Title});        
+print "</td>\n";
 print "</tr>\n";
+
 print "<tr>\n";
-print "<td colspan=4>\n"; &AbstractBox;     print "</td>\n";
+print "<td colspan=4>\n";
+ &AbstractBox(-required => $RequiredEntries{Abstract});     
+print "</td>\n";
 print "</tr>\n";
+
 print "<tr>\n";
-print "<td colspan=4>\n"; &KeywordsBox;     print "</td>\n";
+print "<td colspan=4>\n"; 
+ &KeywordsBox(-required => $RequiredEntries{Keyword});     
+print "</td>\n";
 print "</tr>\n";
+
 print "<tr>\n"; 
 print "<td colspan=4>\n"; 
 if ($mode eq "update") {
-  &RevisionNoteBox(-jsinsert => $RevisionNoteDefault); 
+  &RevisionNoteBox(-jsinsert => $RevisionNoteDefault, 
+                   -required => $RequiredEntries{Note}); 
 } else {
-  &RevisionNoteBox(-default => $RevisionNoteDefault); 
+  &RevisionNoteBox(-default  => $RevisionNoteDefault,  
+                   -required => $RequiredEntries{Note}); 
 }  
 print "</td>\n";
 print "</tr>\n";

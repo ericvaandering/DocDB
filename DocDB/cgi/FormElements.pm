@@ -143,22 +143,6 @@ sub EndDatePullDown {
   print $query -> popup_menu (-name => 'endyear',-values => \@years, -default => $year);
 }
 
-sub TitleBox (%) {
-  my (%Params) = @_; 
-  
-  my $Required   = $Params{-required}   || 0;        # short, long, full
-
-  print "<b><a ";
-  &HelpLink("title");
-  print "Title:</a></b>";
-  if ($Required) {
-    print $RequiredMark;
-  }  
-  print "<br> \n";
-  print $query -> textfield (-name => 'title', -default => $TitleDefault, 
-                             -size => 70, -maxlength => 240);
-};
-
 sub PubInfoBox {
   print "<b><a ";
   &HelpLink("pubinfo");

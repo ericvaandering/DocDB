@@ -15,10 +15,34 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-sub AbstractBox {
+sub TitleBox (%) {
+  my (%Params) = @_; 
+  
+  my $Required   = $Params{-required}   || 0;        # short, long, full
+
+  print "<b><a ";
+  &HelpLink("title");
+  print "Title:</a></b>";
+  if ($Required) {
+    print $RequiredMark;
+  }  
+  print "<br> \n";
+  print $query -> textfield (-name => 'title', -default => $TitleDefault, 
+                             -size => 70, -maxlength => 240);
+};
+
+sub AbstractBox (%) {
+  my (%Params) = @_; 
+  
+  my $Required   = $Params{-required}   || 0;        # short, long, full
+
   print "<b><a ";
   &HelpLink("abstract");
-  print "Abstract:</a></b><br> \n";
+  print "Abstract:</a></b>";
+  if ($Required) {
+    print $RequiredMark;
+  }  
+  print "<br> \n";
   print $query -> textarea (-name => 'abstract', -default => $AbstractDefault,
                             -columns => 60, -rows => 6);
 };

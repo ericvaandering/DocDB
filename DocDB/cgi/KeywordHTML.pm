@@ -246,13 +246,18 @@ sub KeywordLink ($;%) { # FIXME: Allow parameters of short, long, full a la Lynn
   return $ret;
 }         
 
-sub KeywordsBox {
+sub KeywordsBox (%) {
+  my (%Params) = @_; 
+  
+  my $Required   = $Params{-required}   || 0;        # short, long, full
+
   print "<b><a ";
   &HelpLink("keywords");
-  print "Keywords:</a></b> (space separated)\n";
-  print " - <a
- 
-href=\"Javascript:keywordchooserwindow(\'$ListKeywords?mode=chooser\');\"><b>Keyword
+  print "Keywords:</a></b>";
+  if ($Required) {
+    print $RequiredMark;
+  }  
+  print "(space separated) - <a href=\"Javascript:keywordchooserwindow(\'$ListKeywords?mode=chooser\');\"><b>Keyword
   Chooser</b></a><br> \n";
   print $query -> textfield (-name => 'keywords', -default => $KeywordsDefault, 
                              -size => 70, -maxlength => 240);
