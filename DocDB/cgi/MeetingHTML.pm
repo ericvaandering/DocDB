@@ -152,6 +152,7 @@ sub SessionDateTimePullDown {
 }
 
 sub SessionOrder {
+  print "SOD: $SessionOrderDefault<br>\n";
   print $query -> textfield (-name => 'sessionorder', -value => $SessionOrderDefault, 
                              -size => 4, -maxlength => 5);
 }
@@ -174,18 +175,16 @@ sub SessionSeparator ($) {
 
 sub SessionDelete ($) {
   my ($MeetingOrderID) = @_;
-
-  if ($SessionSeparatorDefault) {
-    print "&nbsp\n";
-  } else {
+  if ($SessionSeparatorDefault eq "Yes" || $SessionSeparatorDefault eq "No") {
     print $query -> checkbox(-name => "sessiondelete", -value => "$MeetingOrderID", -label => 'Yes');
+  } else {
+    print "&nbsp\n";
   }
 }
 
 sub SessionTitle {
-  print "$SessionTitleDefault\n";
-  print $query -> textfield (-name => 'sessiontitle', -default => $SessionTitleDefault, 
-                             -size => 35, -maxlength => 128);
+  print $query -> textfield (-name => 'sessiontitle', -size => 35, -maxlength => 128, 
+                             -default => $SessionDefaultTitle);
 }
 
 sub SessionDescription {
