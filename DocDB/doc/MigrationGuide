@@ -1,6 +1,6 @@
 version 2.x to 3.0
 
-  A number of things have changed starting with version 3:
+  A number of things have changed starting with version 3.0:
   
      The first step in migration is to redo the database structure. This has to be
   done BEFORE the CGI code is upgraded. A script, MigrateV3, has been
@@ -31,11 +31,20 @@ version 2.x to 3.0
   additional help that overrides, prepends, or appends to the default help
   text.
   
+     The third change regards administration priveledges. Currently the account
+  name of the administrator is hard coded and must agree between the SQL DB and
+  the wegb/.htaccess users. In the new scheme, the ability to administer is
+  stored in the DB itself, so any web/.htaccess account can administer (assuming
+  the user knows the MySQL admin name and password.) If the web admin user is
+  docdbadm (case insensitive) this is take care of for you. If it is something
+  else, you need to edit the MigrateV3 script. 
+  
+     The v3.0 code does not use this new mechanism, but 3.1 will.    
+  
   There are many other things changed in version 3 of DocDB, but those do not
   require intervention. 
   
   Several new configuration variables have been added to DocDB:
-    $EnchancedSecurity = 0;        # Separate lists for view, modify
     $FirstYear         = 2000;     # Earliest year that documents can be created
     @MeetingMajorTopics    = ("Collaboration Meetings","Other Meetings");
     @ConferenceMajorTopics = ("Conferences");
