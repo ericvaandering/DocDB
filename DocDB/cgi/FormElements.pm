@@ -164,7 +164,9 @@ sub SingleHTTPBox {
   &HelpLink("httpupload");
   print "Upload by HTTP:</a></b><br> \n";
   print "</td><tr>\n";
+  my @FileIDs = sort keys %DocFiles;
   for (my $i=1;$i<=$NumberUploads;++$i) {
+    my $FileID = shift @FileIDs;
     print "<tr><td align=right>\n";
     print "<a "; &HelpLink("remoteurl"); print "<b>URL:</b></a>\n";
     print "</td>\n";
@@ -175,7 +177,8 @@ sub SingleHTTPBox {
     print "<a "; &HelpLink("description"); print "<b>Description:</b></a>\n";
     print "</td>\n";
     print "<td colspan=3>\n";
-    print $query -> textfield (-name => 'filedesc', -size => 60, -maxlength => 128);
+    print $query -> textfield (-name => 'filedesc', -size => 60, -maxlength => 128,
+                               -default => $DocFiles{$FileID}{DESCRIPTION});
     print $query -> checkbox(-name  => "root", -checked => 'checked', 
                              -value => $i,     -label   => '');
     print "<a "; &HelpLink("main"); print "Main?</a>\n";
@@ -283,6 +286,7 @@ sub ArchiveHTTPBox {
 };
 
 sub RequesterSelect { # Scrolling selectable list for requesting author
+  my ($Quiet) = @_;
   my @AuthorIDs = sort byLastName keys %Authors;
   my %AuthorLabels = ();
   my @ActiveIDs = ();
@@ -291,10 +295,12 @@ sub RequesterSelect { # Scrolling selectable list for requesting author
       $AuthorLabels{$ID} = $Authors{$ID}{FULLNAME};
       push @ActiveIDs,$ID; 
     } 
+  }
+  unless ($Quiet) {  
+    print "<b><a ";
+    &HelpLink("requester");
+    print "Requester:</a></b><br> \n";
   }  
-  print "<b><a ";
-  &HelpLink("requester");
-  print "Requester:</a></b><br> \n";
   print $query -> scrolling_list(-name => "requester", -values => \@ActiveIDs, 
                                  -size => 10, -labels => \%AuthorLabels,                      
                                  -default => $RequesterDefault);

@@ -10,6 +10,7 @@ require "HTMLUtilities.pm";
 require "SecuritySQL.pm";
 require "Scripts.pm";
 require "ResponseElements.pm";
+require "Cookies.pm";
 
 $query = new CGI;  # Global for subroutines
 
@@ -113,7 +114,6 @@ if ($remote_user eq $Administrator) {
 }
 print "<li>Add a  <a href=\"$ConferenceAddForm\">conference</a>\n";
 print "<li>Add an <a href=\"$AuthorAddForm\">author</a>\n";
-print "<li><a href=\"$Statistics\">Statistics</a> on the database\n";
 print "</ul>\n";
 
 print "<p><hr><p>\n";
@@ -146,6 +146,8 @@ $authormodes{field}  = "Text field";
 $authormodes{list} = "Selectable list";
 @authormodes = ("list","field");
 
+&GetPrefsCookie;
+
 print "<table cellpadding=5 border=5 align=center>\n";
 print "<tr><td colspan=2 align=center><big>Customized Insert/Modify</big><br>
        Use this form to produce a
@@ -169,10 +171,10 @@ print "<a "; &HelpLink("uploadtype");
 print "<b>Upload type:</b></a>\n";
 print "<td>\n";
 print "<table cellpadding=3><tr><td>\n";
-print $query -> radio_group(-name => "archive", -values => \@archives, -labels
+print $query -> radio_group(-name => "archive", -values => \@archives, -default => $UploadTypePref, -labels
                             => \%archives, -columns => 1);
 print "</td><td>\n";
-print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
+print $query -> textfield(-name => "numfile", -default => $NumFilesPref, -size => 2, -maxlength => 2);
 print "<b># of files</b>\n";
 print "</td></tr></table>\n";
 
@@ -180,23 +182,24 @@ print "<tr><td align=right>\n";
 print "<a "; &HelpLink("uploadmethod"); 
 print "<b>Upload method:</b></a>\n";
 print "<td>\n";
-print $query -> radio_group(-name => "upload", -values => \@uploads, -labels => \%uploads);
+print $query -> radio_group(-name => "upload", -values => \@uploads, -default => $UploadMethodPref, -labels => \%uploads);
 
 print "<tr><td align=right>\n";
 print "<a "; &HelpLink("topicoption"); 
 print "<b>Topic Selection:</b></a>\n";
 print "<td>\n";
-print $query -> radio_group(-name => "topicmode", -values => \@topicmodes, -labels => \%topicmodes);
+print $query -> radio_group(-name => "topicmode", -values => \@topicmodes, -default => $TopicModePref, -labels => \%topicmodes);
 print "<tr><td align=right>\n";
 print "<a "; &HelpLink("authoroption"); 
 print "<b>Author Selection:</b></a>\n";
 print "<td>\n";
-print $query -> radio_group(-name => "authormode", -values => \@authormodes, -labels => \%authormodes);
+print $query -> radio_group(-name => "authormode", -values => \@authormodes, -default => $AuthorModePref, -labels => \%authormodes);
 print "<tr><td align=right>\n";
 print "<a "; &HelpLink("dateoverride"); 
 print "<b>Override submit date:</b></a>\n";
 print "<td>\n";
-print $query -> checkbox(-name => "overdate", -label => '(Check for Yes)');
+print $query -> radio_group(-name => "overdate", -values => ['No','Yes'],
+                            -default => $DateOverridePref);
 print "<tr><td align=center colspan=2>\n";
 print $query -> submit (-value => "Give me my customized form");
 print "</table>\n";
