@@ -23,7 +23,6 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-
 sub AdministerActions {
   require "Scripts.pm";
   my %Action = ();
@@ -50,51 +49,6 @@ sub AdministratorPassword {
                             -default => $remote_user);
   print "<b> Password: </b>"; 
   print $query -> password_field(-name => "password", -size => 12, -maxlength => 12);
-};
-
-sub ParentSelect { #FIXME: Replace with SecurityList
-  require "Scripts.pm";
-
-  my @GroupIDs = keys %SecurityGroups;
-  my %GroupLabels = ();
-
-  foreach my $ID (@GroupIDs) {
-    $GroupLabels{$ID} = $SecurityGroups{$ID}{NAME}." [".
-                        $SecurityGroups{$ID}{DESCRIPTION}."]";
-  }  
-  
-  @GroupIDs = sort numerically @GroupIDs;
-
-  print "<b><a ";
-  &HelpLink("parent");
-  print "Group:</a></b><br> \n";
-  print $query -> scrolling_list(-name => 'parent', -values => \@GroupIDs, 
-                                 -labels => \%GroupLabels, 
-                                 -size => 10, 
-                                 -default => \@SecurityDefaults);
-};
-
-sub ChildSelect {  #FIXME: Replace with SecurityList
-  require "Scripts.pm";
-  my @GroupIDs = keys %SecurityGroups;
-  my %GroupLabels = ();
-
-  foreach my $ID (@GroupIDs) {
-    $GroupLabels{$ID} = $SecurityGroups{$ID}{NAME};
-  }  
-  
-  $ID = 0; # Add dummy security code "Remove"
-  push @GroupIDs,$ID; 
-  $GroupLabels{$ID} = "Remove all";  
-  @GroupIDs = sort numerically @GroupIDs;
-
-  print "<b><a ";
-  &HelpLink("child");
-  print "Subordinates:</a></b><br> \n";
-  print $query -> scrolling_list(-name => 'child', -values => \@GroupIDs, 
-                                 -labels => \%GroupLabels, 
-                                 -size => 10, -multiple => 'true', 
-                                 -default => \@SecurityDefaults);
 };
 
 sub GroupEntryBox {
