@@ -87,20 +87,27 @@ if ($CertificateStatus eq "verified") {
   require "SecurityHTML.pm";
   require "FormElements.pm";
   print "<b>Your certificate is valid but you have never applied for access to
-         documents. Fill out the form below to apply for access.</b>";
+         documents.<br/>Fill out the form below to apply for access.</b><p>";
+  print "<center>\n";
+  
   print "<table cellpadding=5>\n";
   print "<tr>\n";
-  print "<td><b>Your name (Certificate CN):</b> $CertCN</td>\n";
-  print "<td rowspan=2>\n";
-  &SecurityList(-helplink => "reqgroups", -helptext => "Requested Groups",
+  print "<td valign=top><b>Your name (Certificate CN):</b><br>&nbsp;&nbsp;$CertCN<p/>\n";
+  print "<b>Your e-mail:</b><br>&nbsp;&nbsp;$CertEmail\n";
+  print "</td>\n";
+  print "<td>\n";
+  &SecurityList(-helplink => "reqgroups", -helptext => "Requested<br>Groups",
                 -name => "reqgroups");
+  print "</td></tr>\n";
+  print "<tr>\n";
   print "</td></tr>\n";
   print "<tr><td colspan=2>\n";
   &TextEntryBox(-helplink => "certnote", -helptext => "Notes", 
-                -extratext => "(Identify yourself or other explanations if needed.)",
+                -extratext => "(Identify yourself or other notes if needed.)",
                 -name => "certnote");    
   print "</td></tr>";
   print "</table>\n";       
+  print "</center>\n";
 }
 
 &DocDBNavBar();
