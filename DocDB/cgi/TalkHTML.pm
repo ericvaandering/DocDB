@@ -291,7 +291,8 @@ sub TalkAuthors ($) {
       unless (@TalkDefaultAuthorHints) {
         $query -> param("authors-$SessionOrderID","");
       }  
-      &AuthorScroll(-name => "authors-$SessionOrderID", -default => \@TalkDefaultAuthorHints);
+      &AuthorScroll(-helplink => "", -name => "authors-$SessionOrderID", 
+                    -default  => \@TalkDefaultAuthorHints);
     }
   } 
 }

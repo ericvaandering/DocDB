@@ -436,7 +436,7 @@ if ($Meeting || $OtherMeeting) {
 } else {
   if ($mode eq "add" || $mode eq "reserve") {
     print "<td colspan=2 valign=top>\n";
-    &DocTypeButtons;
+    &DocTypeButtons(-required => $RequiredEntries{Type});
     print "</td>\n";
   }
 }
@@ -455,7 +455,16 @@ if ($Meeting || $OtherMeeting) {
   print "<td>&nbsp;&nbsp;&nbsp;</td>\n";
 } 
 
-print "<td>\n"; &RequesterSelect; print "</td>\n";
+print "<td>\n"; 
+# &RequesterSelect; 
+ &AuthorScroll(-required => $RequiredEntries{Author},
+               -helplink => "requester",
+               -helptext => "Requester",
+               -multiple => "false",
+               -name     => "requester",
+               -default   => $RequesterDefault);
+               
+print "</td>\n";
 
 unless ($Meeting || $OtherMeeting) {
   if ($AuthorMode eq "list") {

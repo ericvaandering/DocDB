@@ -188,7 +188,7 @@ sub AuthorScroll (%) {
   my $Required  =   $Params{-required}  || 0;
   my $Name      =   $Params{-name}      || "authors";
   my $Size      =   $Params{-size}      || 10;
-  my @Default   = @{$Params{-default}};
+  my @Defaults  = @{$Params{-default}};
 
   unless (keys %Author) {
     &GetAuthors;
