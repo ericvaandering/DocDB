@@ -152,7 +152,6 @@ if      ($Action eq "Delete") {
 
 if ($Action eq "Modify") { # FIXME: Allow conference add for completeness
   &GetTopics;
-  &GetConferences;
 
   print "<p><b>Here are the results of your modification:<br>\n";
   my $ShortLink = &MinorTopicLink($TopicID,"short");

@@ -28,16 +28,29 @@ sub byTopic {
   
   if (&MajorIsMeeting($MinorTopics{$a}{MAJOR}) &&
       &MajorIsMeeting($MinorTopics{$b}{MAJOR})) {
-    ($adays,$amonth,$ayear) = split /\s+/,$MinorTopics{$a}{SHORT};
-    ($bdays,$bmonth,$byear) = split /\s+/,$MinorTopics{$b}{SHORT};
-    ($aday) = split /\-/,$adays;
-    ($bday) = split /\-/,$bdays;
+    my ($adays,$amonth,$ayear) = split /\s+/,$MinorTopics{$a}{SHORT};
+    my ($bdays,$bmonth,$byear) = split /\s+/,$MinorTopics{$b}{SHORT};
+    my ($aday) = split /\-/,$adays;
+    my ($bday) = split /\-/,$bdays;
 
                         $byear <=> $ayear
                                or
     $ReverseFullMonth{$bmonth} <=> $ReverseFullMonth{$amonth} 
                                or
                          $bday <=> $aday;            
+  } elsif (&MajorIsConference($MinorTopics{$a}{MAJOR}) &&
+           &MajorIsConference($MinorTopics{$b}{MAJOR})) {
+           
+    my $adate = $Conferences{$a}{StartDate}; 
+    my $bdate = $Conferences{$b}{StartDate};
+    my ($ayear,$amonth,$aday) = split /\-/,$adate;
+    my ($byear,$bmonth,$bday) = split /\-/,$bdate;
+
+     $byear <=> $ayear
+            or
+    $bmonth <=> $amonth 
+            or
+      $bday <=> $aday
   } else {
     $MajorTopics{$MinorTopics{$a}{MAJOR}}{SHORT} cmp
     $MajorTopics{$MinorTopics{$b}{MAJOR}}{SHORT}
@@ -131,21 +144,34 @@ sub DocumentByConferenceDate {
     }
   }      
 
-  $acid = $FirstConf{$adr};
-  $bcid = $FirstConf{$bdr};
+  my $acid = $FirstConf{$adr};
+  my $bcid = $FirstConf{$bdr};
 
   my $adate = $Conferences{$acid}{StartDate}; 
   my $bdate = $Conferences{$bcid}{StartDate};
-  ($ayear,$amonth,$aday) = split /\-/,$adate;
-  ($byear,$bmonth,$bday) = split /\-/,$bdate;
-
-#  print "$a $b : $acid $bcid : $ayear $byear :  $amonth  $bmonth : $aday $bday<br>\n";
+  my ($ayear,$amonth,$aday) = split /\-/,$adate;
+  my ($byear,$bmonth,$bday) = split /\-/,$bdate;
 
    $ayear <=> $byear
           or
   $amonth <=> $bmonth 
           or
     $aday <=> $bday
+}
+
+sub ConferenceByDate {
+  $MinorTopics{$a}{SHORT} cmp $MinorTopics{$b}{SHORT};
+  my $adate = $Conferences{$a}{StartDate}; 
+  my $bdate = $Conferences{$b}{StartDate};
+  my ($ayear,$amonth,$aday) = split /\-/,$adate;
+  my ($byear,$bmonth,$bday) = split /\-/,$bdate;
+
+   $ayear <=> $byear
+          or
+  $amonth <=> $bmonth 
+          or
+    $aday <=> $bday
+
 }
 
 1;

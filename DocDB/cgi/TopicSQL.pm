@@ -1,4 +1,8 @@
 sub GetTopics {
+  require "MiscSQL.pm";
+  &SpecialMajorTopics;
+  &GetConferences; # Needed all the time for sorts, etc.
+
   my $minor_list   = $dbh->prepare("select MinorTopicID,MajorTopicID,ShortDescription,LongDescription from MinorTopic");
   my $major_list   = $dbh->prepare("select MajorTopicID,ShortDescription,LongDescription from MajorTopic");
 

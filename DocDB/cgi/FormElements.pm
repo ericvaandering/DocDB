@@ -405,6 +405,8 @@ sub MultiTopicSelect { # Multiple scrolling selectable lists for topics
     }
     if (&MajorIsMeeting($MajorID)) {
       @MatchMinorIDs = reverse sort byMeetingDate @MatchMinorIDs;
+    } elsif (&MajorIsConference($MajorID)) {
+      @MatchMinorIDs = reverse sort ConferenceByDate @MatchMinorIDs;
     } else {
       @MatchMinorIDs = sort byMinorTopic @MatchMinorIDs;
     }
