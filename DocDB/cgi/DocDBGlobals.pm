@@ -70,6 +70,8 @@ $help_file    = $script_root."docdb.hlp";
 # CGI Scripts
 
 $MainPage           = $cgi_root."DocumentDatabase";
+$ModifyHome         = $cgi_root."ModifyHome";
+
 $ProcessDocumentAdd = $cgi_root."ProcessDocumentAdd";
 $DocumentAddForm    = $cgi_root."DocumentAddForm";
 $ShowDocument       = $cgi_root."ShowDocument";

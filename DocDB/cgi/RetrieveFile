@@ -52,7 +52,7 @@ unless ($DocRevID) {
   
 if ($FileName) {
   $FullFile = &FullFile($DocumentID,$Version,$FileName);
-  $FullURL = &GetURLDir($DocumentID,$Version).$FileName;
+  $FullURL = &GetURLDir($DocumentID,$Version).CGI::escape($FileName);
 } else {
   &FetchDocFiles($DocRevID);
   my $NMains = 0;
@@ -66,7 +66,7 @@ if ($FileName) {
   }
   if ($NMains == 1) {
     $FullFile = &FullFile($DocumentID,$Version,$LastMain);
-    $FullURL = &GetURLDir($DocumentID,$Version).$LastMain;
+    $FullURL = &GetURLDir($DocumentID,$Version).CGI::escape($LastMain);
   } elsif ($NMains > 1) {
     push @warn_stack,"More than one file was found. Please select one below.";
   } else {
