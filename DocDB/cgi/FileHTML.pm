@@ -281,9 +281,7 @@ sub FileUploadBox (%) {
     print "<tr><td align=right><b>User:</b></td>\n";
     print "<td>\n";
     print $query -> textfield (-name => 'http_user', -size => 20, -maxlength => 40);
-    print "</td><td align=right>\n";
-    print "<b>Password:</b></td>\n";
-    print "<td>\n";
+    print "<b>&nbsp;&nbsp;&nbsp;&nbsp;Password:</b>\n";
     print $query -> password_field (-name => 'http_pass', -size => 20, -maxlength => 40);
     print "</td></tr>\n";
   }
