@@ -185,8 +185,8 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
   }
   my $FullDocID = &FullDocumentID($DocumentID,$Version);
     
-  my $Link = "<a href=\"$ShowDocument\?docid=$DocumentID";
-  my $Link .= " title=\"$FullDocID\"";
+  my $Link = "<a href=\"$ShowDocument\?docid=$DocumentID\"";
+     $Link .= " title=\"$FullDocID\"";
    
   # When adding the version number, remember to use &amp; for XHTML 
   # or use DocumentURL

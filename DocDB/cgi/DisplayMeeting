@@ -193,8 +193,8 @@ if ($DisplayMode eq "Session") { # Display a single session
       my $Reverse = 1;
       print "<h4>Other talks for this meeting:</h4>\n";
       my $NumberOfDocuments = &DocumentTable(-fields  => \@Fields, 
-           -docids  => \@DocumentIDs, -sortby  => $SortBy,  
-           -reverse => $Reverse,      -maxdocs => $HomeMaxDocs);
+           -docids  => \@UnusedDocIDs, -sortby  => $SortBy,  
+           -reverse => $Reverse);
       print "<hr width=\"95%\"/>\n";
     }
   }

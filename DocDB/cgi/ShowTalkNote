@@ -16,6 +16,7 @@ require "Messages.pm";
 require "ResponseElements.pm";
 require "Security.pm";
 require "MeetingSecurityUtilities.pm";
+require "HTMLUtilities.pm";
 
 require "DocumentSQL.pm";
 require "RevisionSQL.pm";
@@ -24,7 +25,7 @@ require "MeetingSQL.pm";
 require "TalkHintSQL.pm";
 require "TalkHintUtilities.pm";
 
-use constant true => 1;
+require "DocumentHTML.pm";
 
 $query = new CGI;  
 %params = $query -> Vars;
@@ -73,10 +74,8 @@ if ($Confirmed && $DocumentID) {
  
 # Start page
 
-
+print $query->header;
 &DocDBHeader("Notes for $BestTitle","",-nobody => TRUE);
-#print $query->header;
-#print $query->start_html(-title=>"Notes for $BestTitle");
 
 # Print out info
 
@@ -115,10 +114,10 @@ if ($SessionID) {
     } else {
       print "<b>This talk has been matched (but not confirmed) with this document:</b>\n";
     } 
-    print "<p/><center><table cellpadding=3>\n";
-    &DocumentSummary(0,"meeting");
-    &DocumentSummary($DocumentID,"meeting");
-    print "</table></center>\n";
+    print "<p/>\n";
+    my @DocumentIDs = ($DocumentID);
+    my @Fields = ("Title","Author","Topics","Files"); 
+    &DocumentTable(-fields => \@Fields, -docids  => \@DocumentIDs);
   } else {
     print "<b>No document in the database has been matched to this talk.</b>\n"
   }
@@ -131,18 +130,13 @@ if (&CanModifyMeeting($ConferenceID)) {
 
   my %CheckDocumentIDs = &GetHintDocuments($SessionID,$SearchDays);
   my @MatchedDocIDs    = &TalkMatches($SessionTalkID,0,%CheckDocumentIDs);
+  if (@MatchedDocIDs) {
+    print "<p/><b>The following documents are possible matches for this talk (best
+    first):<p/>\n";
 
-  print "<p/><b>The following documents are possible matches for this talk (best
-  first):\n";
-
-  print "<p/><center><table cellpadding=3>\n";
-  &DocumentSummary(0,"confirm");
-  foreach my $MatchedDocumentID (@MatchedDocIDs) {
-    $ConfirmDocID         = $MatchedDocumentID;
-    $ConfirmSessionTalkID = $SessionTalkID;
-    &DocumentSummary($MatchedDocumentID,"confirm");
-  }
-  print "</table></center>\n";
+    my @Fields = ("Title","Author","Topics","Confirm"); 
+    &DocumentTable(-fields => \@Fields, -docids  => \@MatchedDocIDs, -talkid => $SessionTalkID);
+  }  
 }
 
 print $query->end_html;     # End page
