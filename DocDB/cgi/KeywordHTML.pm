@@ -16,7 +16,7 @@ sub KeywordListLink ($;$) {
   
   &FetchKeyword($KeyID);
   my $link;
-  ##$link = " "; # FIXME: Use KeywordLink?
+  ##$link = " "; # FIXME: Use KeywordLink after uses parameters
   $link = "<a href=\"$Search?innerlogic=AND&outerlogic=AND&keywordsearchmode=anysub&keywordsearch=$KeywordListEntries{$KeyID}{Short}\">";
   if ($mode eq "short") {
     $link .= $KeywordListEntries{$KeyID}{Short};
@@ -212,5 +212,14 @@ sub KeywordGroupSelect (;$) { # Scrolling selectable list for keyword groups
   print $query -> scrolling_list(-name => "keywordgroup", -values => \@KeyGroupIDs, 
                                  -labels => \%GroupLabels,  -size => 10);
 };
+
+sub KeywordLink { # FIXME: Allow parameters of short, long, full a la Lynn
+  my ($Keyword) = @_;
+  
+  my $ret = "<a href=\"$Search\?keywordsearchmode=anysub&keywordsearch=$Keyword\">";
+  $ret .= "$Keyword";
+  $ret .=  "</a>";
+  return $ret;
+}         
 
 1;
