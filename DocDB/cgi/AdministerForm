@@ -79,9 +79,12 @@ print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td>\n"; &TopicSelect; print "</td>\n"; #FIXME: No multi-select
-print "<td>\n"; &MajorTopicSelect; print "</td>\n";
+print "<td rowspan=2>\n"; &TopicSelect; print "</td>\n"; #FIXME: No multi-select
+print "<td rowspan=2>\n"; &MajorTopicSelect; print "</td>\n";
 print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
 print "<td>\n"; &LongDescriptionBox;     print "</td>\n";
 print "</tr>\n";
 

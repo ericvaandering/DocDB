@@ -1,6 +1,10 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+# Description: Create an archive (.zip, .tar, etc.) file of the document 
+#              and redirect the user to download it.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
 #
 
 use CGI;
@@ -21,9 +25,14 @@ $query = new CGI;  # Global for subroutines
 @error_stack = ();
 @warn_stack  = ();
 
-$DocumentID = $params{docid};
+my $Type       = $params{type} ;
+my $DocumentID = $params{docid};
+
 unless ($DocumentID) {
   push @error_stack,"You are must supply a document number!";
+}  
+unless ($Type eq "zip" || $Type eq "tar.gz") {
+  $Type = "tar.gz";
 }  
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -40,6 +49,10 @@ unless (&CanAccess($DocumentID,$Version)) {
   push @error_stack,"You are not authorized to view this document.";
 }  
 
+if ($Type eq "zip" && !$Zip) {
+  push @error_stack,"You asked for a type of archive this system can't produce.";
+}
+
 my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 
 unless ($DocRevID) {
@@ -49,17 +62,23 @@ unless ($DocRevID) {
 my $URL;       
 my $status;
 
-unless (@error_stack) {
+unless (@error_stack) { 
   my $Directory = &GetDirectory($DocumentID,$Version);
   my $URLDir    = &GetURLDir($DocumentID,$Version);
-  my $ShortFile = "tmp$DocumentID-$Version.tar.gz";
+  my $ShortFile = "tmp$DocumentID-$Version.$Type";
   my $TmpFile   = "/tmp/$ShortFile";
   my $File      = "$Directory/$ShortFile";
      $URL       = "$URLDir/$ShortFile";
 
+#FIXME: zip request won't clear tar.gz request, vice versa
+
   unlink $TmpFile;
   unlink $File;
-  $status = system("$Tar czf $TmpFile $Directory"); 
+  if ($Type eq "tar.gz") {
+    $status = system("$Tar czf $TmpFile $Directory"); 
+  } elsif ($Type eq "zip") {
+    $status = system("$Zip $TmpFile $Directory/*"); 
+  }  
   $status = system("mv $TmpFile $File"); 
 }
   

@@ -1,14 +1,15 @@
 #
-# Description: Routines which determine which users are allowed to view, 
-#              create, and administer documents.
+# Description: Routines to determine various levels of access to documents 
+#              and the database based on usernames, doc numbers, etc.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
-#
 
 sub CanAccess { # Can the user access (with current security) this version
   require "RevisionSQL.pm";
   
+## FIXME: Use SecurityLookup  
+
   my ($documentID,$version) = @_;
   my $DocRevID = &FetchRevisionByDocumentAndVersion($documentID,$version);
   
@@ -58,9 +59,12 @@ sub CanAccess { # Can the user access (with current security) this version
 
 sub CanModify { # Can the user modify (with current security) this document
   require "DocumentSQL.pm";
+
+## FIXME: Use SecurityLookup  
+
   my ($DocumentID,$Version) = @_;
-  if     ($Public)      {return 0;} #Public version, can't modify 
-  unless ($remote_user) {return 0;} #No user logged in, can't modify 
+  if     ($Public)      {return 0;} # Public version of code, can't modify 
+  unless ($remote_user) {return 0;} # No user logged in, can't modify 
 
   &FetchDocument($DocumentID);
   unless (defined $Version) { # Last version is default  
@@ -72,6 +76,9 @@ sub CanModify { # Can the user modify (with current security) this document
 }
 
 sub CanCreate { # Can the user create documents 
+
+## FIXME: Use SecurityLookup  
+
   my $Create = 0;
   my @GroupIDs = keys %SecurityGroups; # FIXME use a hash for direct lookup
   foreach my $GroupID (@GroupIDs) { # Check auth. users vs. logged in user

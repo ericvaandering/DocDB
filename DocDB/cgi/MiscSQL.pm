@@ -1,11 +1,11 @@
 sub GetJournals { # Creates/fills a hash $Journals{$JournalID}{} 
-  my ($JournalID,$Acronym,$Abbreviation,$Name,$Publisher,$URL,$Timestamp);                
+  my ($JournalID,$Acronym,$Abbreviation,$Name,$Publisher,$URL,$TimeStamp);                
   my $JournalQuery  = $dbh -> prepare(
-     "select JournalID,Acronym,Abbreviation,Name,Publisher,URL,Timestamp "
+     "select JournalID,Acronym,Abbreviation,Name,Publisher,URL,TimeStamp "
     ."from Journal");
   %Journals = ();
   $JournalQuery -> execute;
-  $JournalQuery -> bind_columns(undef, \($JournalID,$Acronym,$Abbreviation,$Name,$Publisher,$URL,$Timestamp));
+  $JournalQuery -> bind_columns(undef, \($JournalID,$Acronym,$Abbreviation,$Name,$Publisher,$URL,$TimeStamp));
   while ($JournalQuery -> fetch) {
     $Journals{$JournalID}{JournalID}     = $JournalID;
     $Journals{$JournalID}{Acronym}       = $Acronym;
@@ -13,7 +13,7 @@ sub GetJournals { # Creates/fills a hash $Journals{$JournalID}{}
     $Journals{$JournalID}{Name}          = $Name;
     $Journals{$JournalID}{Publisher}     = $Publisher;
     $Journals{$JournalID}{URL}           = $URL;
-    $Journals{$JournalID}{Timestamp}     = $Timestamp;
+    $Journals{$JournalID}{TimeStamp}     = $TimeStamp;
   }
 };
 
@@ -90,9 +90,9 @@ sub GetConferences {
 
 sub FetchConferenceByTopicID { # Fetches a conference by MinorTopicID
   my ($minorTopicID) = @_;
-  my ($ConferenceID,$MinorTopicID,$Location,$URL,$StartDate,$EndDate,$Timestamp);
+  my ($ConferenceID,$MinorTopicID,$Location,$URL,$StartDate,$EndDate,$TimeStamp);
   my $conference_fetch   = $dbh -> prepare(
-    "select ConferenceID,MinorTopicID,Location,URL,StartDate,EndDate,Timestamp ".
+    "select ConferenceID,MinorTopicID,Location,URL,StartDate,EndDate,TimeStamp ".
     "from Conference ".
     "where MinorTopicID=?");
   if ($Conference{$minorTopicID}{MINOR}) { # We already have this one
@@ -101,14 +101,14 @@ sub FetchConferenceByTopicID { # Fetches a conference by MinorTopicID
   
   &FetchMinorTopic($minorTopicID);
   $conference_fetch -> execute($minorTopicID);
-  ($ConferenceID,$MinorTopicID,$Location,$URL,$StartDate,$EndDate,$Timestamp) 
+  ($ConferenceID,$MinorTopicID,$Location,$URL,$StartDate,$EndDate,$TimeStamp) 
     = $conference_fetch -> fetchrow_array;
   $Conferences{$MinorTopicID}{MINOR}      = $MinorTopicID;
   $Conferences{$MinorTopicID}{LOCATION}   = $Location;
   $Conferences{$MinorTopicID}{URL}        = $URL;
   $Conferences{$MinorTopicID}{STARTDATE}  = $StartDate;
   $Conferences{$MinorTopicID}{ENDDATE}    = $EndDate;
-  $Conferences{$MinorTopicID}{TIMESTAMP}  = $Timestamp;
+  $Conferences{$MinorTopicID}{TIMESTAMP}  = $TimeStamp;
 
   return $Conferences{$MinorTopicID}{MINOR};
 }

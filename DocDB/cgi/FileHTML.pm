@@ -1,8 +1,15 @@
+#
+# Description: Subroutines to provide links for files, groups of 
+#              files and archives.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
 sub FileListByRevID {
   my ($DocRevID) = @_;
-#  &FetchDocRevisionByID($DocRevID);
+
   my @FileIDs  = &FetchDocFiles($DocRevID);
-#  my $Files_ref  = &FetchDocFiles($DocRevID);
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
   my $Version    = $DocRevisions{$DocRevID}{VERSION};
 
@@ -39,7 +46,7 @@ sub FileListByRevID {
 
 sub ShortFileListByRevID {
   my ($DocRevID) = @_;
-#  &FetchDocRevisionByID($DocRevID);
+
   my @FileIDs  = &FetchDocFiles($DocRevID);
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
   my $Version    = $DocRevisions{$DocRevID}{VERSION};
@@ -123,10 +130,19 @@ sub ShortFileLink {
 
 sub ArchiveLink {
   my ($DocumentID,$Version) = @_;
-  my $link  = "<b>Retrieve files as \n";
-     $link .= "<a href=\"$RetrieveArchive?docid=$DocumentID\&version=$Version\">";
-     $link .= "a .tar.gz file</a>";
-     $link .= "</b>";
+  
+  my @Types = ("tar.gz");
+  if ($Zip) {push @Types,"zip";}
+     @Types = sort @Types;
+  
+  my $link  = "<b>Retrieve archive of files as \n";
+  @LinkParts = ();
+  foreach my $Type (@Types) {
+    push @LinkParts,"<a href=\"$RetrieveArchive?docid=$DocumentID\&version=$Version\&type=$Type\">$Type</a>";
+  }  
+  $link .= join ', ',@LinkParts;
+  $link .= ".";
+  $link .= "</b>";
   
   return $link;
 }

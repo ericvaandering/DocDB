@@ -1,7 +1,9 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+# Description: Gather and display aggregate statistics on DocDB
 #
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
 
 use CGI;
 use DBI;
@@ -66,10 +68,15 @@ my $NAuth_query = $dbh -> prepare("select COUNT(AuthorID) from Author");
    $NAuth_query -> execute(); 
 my ($NAuthors) = $NAuth_query -> fetchrow_array;
 
-my $NUniqAuth_query = $dbh -> prepare("select DISTINCT(AuthorID) from RevisionAuthor");
+my $NUniqAuth_query = $dbh -> prepare("select COUNT(DISTINCT(AuthorID)) from RevisionAuthor");
    $NUniqAuth_query -> execute(); 
-   $MatrixRef = $NUniqAuth_query -> fetchall_arrayref; # Use COUNT(DISTINCT()) with newer MySQL
-my $NUniqAuth = scalar(@{$MatrixRef});
+my ($NUniqAuth) = $NUniqAuth_query -> fetchrow_array;
+
+# For older versions of MySQL, use these lines rather than preceding 3
+#my $NUniqAuth_query = $dbh -> prepare("select DISTINCT(AuthorID) from RevisionAuthor");
+#   $NUniqAuth_query -> execute(); 
+#   $MatrixRef = $NUniqAuth_query -> fetchall_arrayref; 
+#my $NUniqAuth = scalar(@{$MatrixRef});
 
 my $NRevAuth_query = $dbh -> prepare("select COUNT(AuthorID) from RevisionAuthor");
    $NRevAuth_query -> execute(); 
@@ -82,10 +89,15 @@ my $NTopic_query = $dbh -> prepare("select COUNT(MinorTopicID) from MinorTopic")
    $NTopic_query -> execute(); 
 my ($NTopics) = $NTopic_query -> fetchrow_array;
 
-my $NUniqTopic_query = $dbh -> prepare("select DISTINCT(MinorTopicID) from RevisionTopic");
+my $NUniqTopic_query = $dbh -> prepare("select COUNT(DISTINCT(MinorTopicID)) from RevisionTopic");
    $NUniqTopic_query -> execute(); 
-   $MatrixRef = $NUniqTopic_query -> fetchall_arrayref; # Use COUNT(DISTINCT()) with newer MySQL
-my $NUniqTopics = scalar(@{$MatrixRef});
+my ($NUniqTopics) = $NUniqTopic_query -> fetchrow_array;
+
+# For older versions of MySQL, use these lines rather than preceding 3
+#my $NUniqTopic_query = $dbh -> prepare("select DISTINCT(MinorTopicID) from RevisionTopic");
+#   $NUniqTopic_query -> execute(); 
+#   $MatrixRef = $NUniqTopic_query -> fetchall_arrayref; # Use COUNT(DISTINCT()) with newer MySQL
+#my $NUniqTopics = scalar(@{$MatrixRef});
 
 my $NRevTopic_query = $dbh -> prepare("select COUNT(MinorTopicID) from RevisionTopic");
    $NRevTopic_query -> execute(); 
@@ -94,20 +106,20 @@ my ($NRevisionTopics) = $NRevTopic_query -> fetchrow_array;
 my $TopicPerRev = sprintf "%5.2f",$NRevisionTopics/$NRevisions;
 my $DocPerTopic = sprintf "%5.2f",$NDocuments/$NUniqTopics;
 
-print "<tr><th align=right>Number of registered Authors:         <td align=right>$NAuthors\n";  
-print " <th align=right>Number of possible Topics:         <td align=right>$NTopics</tr>\n";  
+print "<tr><th align=right>Number of registered Authors:       <td align=right>$NAuthors\n";  
+print " <th align=right>Number of possible Topics:             <td align=right>$NTopics</tr>\n";  
 
-print "<tr><th align=right>Authors of one or more Documents: <td align=right>$NUniqAuth\n";  
-print " <th align=right>Number of Topics used:             <td align=right>$NUniqTopics</tr>\n";  
+print "<tr><th align=right>Authors of one or more Documents:   <td align=right>$NUniqAuth\n";  
+print "    <th align=right>Number of Topics used:              <td align=right>$NUniqTopics</tr>\n";  
 
-print "<tr><th align=right>Number of Authors on all Revisions:   <td align=right>$NRevisionAuthors\n";  
-print " <th align=right>Number of Topics on all Revisions:   <td align=right>$NRevisionTopics</tr>\n";  
+print "<tr><th align=right>Number of Authors on all Revisions: <td align=right>$NRevisionAuthors\n";  
+print "    <th align=right>Number of Topics on all Revisions:  <td align=right>$NRevisionTopics</tr>\n";  
 
-print "<tr><th align=right>Average Authors per Revision:         <td align=right>$AuthPerRev\n";  
-print " <th align=right>Average Topics per Revision:         <td align=right>$TopicPerRev</tr>\n";  
+print "<tr><th align=right>Average Authors per Revision:       <td align=right>$AuthPerRev\n";  
+print "    <th align=right>Average Topics per Revision:        <td align=right>$TopicPerRev</tr>\n";  
 
-print "<tr><th align=right>Average Documents per Author:         <td align=right>$DocPerAuth\n";  
-print " <th align=right>Average Documents per Topic:         <td align=right>$DocPerTopic</tr>\n";  
+print "<tr><th align=right>Average Documents per Author:       <td align=right>$DocPerAuth\n";  
+print "    <th align=right>Average Documents per Topic:        <td align=right>$DocPerTopic</tr>\n";  
 
 print "<tr><th colspan=4><hr></tr>\n";  
 print "</table>\n";

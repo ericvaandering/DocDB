@@ -1,13 +1,14 @@
 #
-# Description: Various routines which supply format output in HTML
+# Description: Subroutines to provide various parts of HTML about documents
+#              and linking to other docs, etc.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 #
 
-require "AuthorHTML.pm";
-require "TopicHTML.pm";
-require "FileHTML.pm";
+require "AuthorHTML.pm"; #FIXME: Remove, move references to correct place
+require "TopicHTML.pm";  #FIXME: Remove, move references to correct place
+require "FileHTML.pm";   #FIXME: Remove, move references to correct place
 
 sub PrintTitle {
   my ($Title) = @_;
@@ -306,9 +307,9 @@ sub KeywordLink {
 sub ModTimes {
   my ($DocRevID) = @_;
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
-  $DocTime     = &EuroDate($Documents{$DocumentID}{DATE}); 
-  $RevTime     = &EuroDate($DocRevisions{$DocRevID}{DATE}); 
-  $VersionTime = &EuroDate($DocRevisions{$DocRevID}{VersionDate}); 
+  $DocTime     = &EuroDateHM($Documents{$DocumentID}{DATE}); 
+  $RevTime     = &EuroDateHM($DocRevisions{$DocRevID}{DATE}); 
+  $VersionTime = &EuroDateHM($DocRevisions{$DocRevID}{VersionDate}); 
   print "<table>\n";
   print "<tr><td align=right><b>Document Created:</b></td><td>$DocTime</td></tr>\n";
   print "<tr><td align=right><b>Contents Revised:</b></td><td>$VersionTime</td></tr>\n";
@@ -339,6 +340,19 @@ sub EuroDateTime {
                           "Jul","Aug","Sep","Oct","Nov","Dec")[$month-1].
                  " $year"; 
   return $return_date;
+}
+
+sub EuroDateHM($) {
+  my ($SQLDatetime) = @_;
+  unless ($SQLDatetime) {return "";}
+  
+  my ($Date,$Time) = split /\s+/,$SQLDatetime;
+  my ($Year,$Month,$Day) = split /\-/,$Date;
+  my ($Hour,$Min,$Sec) = split /:/,$Time;
+  $ReturnDate = "$Day ".("Jan","Feb","Mar","Apr","May","Jun",
+                          "Jul","Aug","Sep","Oct","Nov","Dec")[$Month-1].
+                " $Year, $Hour:$Min"; 
+  return $ReturnDate;
 }
 
 sub OtherVersionLinks {

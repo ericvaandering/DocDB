@@ -1,6 +1,15 @@
+#
+# Description: Configuration file for the DocDB. Set variables 
+#              for server names, accounts, and command paths here.
+#              This file is included in every DocDB program.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+
 # DB settings
+
 $db_name   = "BTeVDocDB";
-$db_host   = "fnsimu1.fnal.gov";
+$db_host   = "btevsrv1.fnal.gov";
 $db_rwuser = "docdbrw";
 $db_rwpass = "hall1burt0n";
 $db_rouser = "docdbro";
@@ -17,9 +26,10 @@ $SSIDirectory = "/www/html/includes/";
 
 # Shell Commands
 
-$Wget   = "/home2/btev2/ewv/bin/wget -O - --quiet ";
-$Tar    = "/fnal/ups/prod/gtools/v2_4/bin/gtar ";
-$Unzip  = "/usr/local/bin/unzip -q ";
+$Wget   = "/usr/bin/wget -O - --quiet ";
+$Tar    = "/bin/tar ";
+$Unzip  = "/usr/bin/unzip -q ";
+$Zip    = "/usr/bin/zip -q -r ";  # Comment out if not present
 
 # Useful stuff
 
@@ -36,13 +46,16 @@ $Unzip  = "/usr/local/bin/unzip -q ";
 @AbrvMonths = ("Jan","Feb","Mar","Apr","May","Jun",
                "Jul","Aug","Sep","Oct","Nov","Dec");
 
-@FullMonths = ("January","February","March","April",
-               "May","June","July","August",
-               "September","October","November","December");
+@FullMonths = ("January",  "February","March",   "April",
+               "May",      "June",    "July",    "August",
+               "September","October", "November","December");
 
 # Other Globals
 
-$remote_user = $ENV{REMOTE_USER};
+$RemoteUsername   = $ENV{REMOTE_USER};
+$remote_user      = $ENV{REMOTE_USER};
+$remote_user      =~ tr/[A-Z]/[a-z]/;
+
 $DBWebMasterEmail = "btev-docdb\@fnal.gov";
 $DBWebMasterName  = "BTeV Document Database Administrators";
 $RobotsMeta       = "none";
