@@ -46,6 +46,7 @@ require "RevisionHTML.pm";
 require "SecurityHTML.pm";
 require "TalkHTML.pm";
 require "KeywordHTML.pm";
+require "SignoffHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -105,7 +106,10 @@ if      ($mode eq "add") {
 &HelpPopupScript;
 &KeywordChooserPopupScript;
 &RevisionNoteInsertScript;
-
+if ($UseSignoffs) {
+  &SignoffChooserPopupScript;
+}
+  
 @ErrorStack = ();
 @WarnStack = ();
 
@@ -420,6 +424,12 @@ unless ($Meeting || $OtherMeeting) {
   print "<td colspan=4>\n"; &ReferenceForm;  print "</td>\n";
   print "</tr><tr>\n";
   print "<td colspan=4>\n"; &PubInfoBox;  print "</td>\n";
+  print "</tr>\n";
+}
+
+if ($UseSignoffs) { # FIXME: Later may be more complicated control
+  print "<tr>\n";
+  print "<td colspan=4>\n"; &SignoffBox;     print "</td>\n";
   print "</tr>\n";
 }
 

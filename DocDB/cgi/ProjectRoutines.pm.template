@@ -42,6 +42,8 @@ sub DocDBHeader {
 }
 
 sub DocDBFooter {
+  require "DocDBVersion.pm";
+
   my ($WebMasterEmail,$WebMasterName) = @_;
 
 # This routine is reponsible for whatever you want to put as a footer on the

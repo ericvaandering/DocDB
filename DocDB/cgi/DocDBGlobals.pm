@@ -129,6 +129,8 @@ $SessionModify         = $cgi_root."SessionModify";
 $ListAllMeetings       = $cgi_root."ListAllMeetings"; # FIXME: Remove later
 $ConfirmTalkHint       = $cgi_root."ConfirmTalkHint";
 
+$SignoffChooser        = $cgi_root."SignoffChooser";
+
 $AdministerForm        = $cgi_root."AdministerForm";
 $AuthorAdminister      = $cgi_root."AuthorAdminister";
 $InstitutionAdminister = $cgi_root."InstitutionAdminister";
