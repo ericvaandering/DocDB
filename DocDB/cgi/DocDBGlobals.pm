@@ -118,6 +118,7 @@ $GroupAdministerForm   = $cgi_root."GroupAdministerForm";
 $GroupAdminister       = $cgi_root."GroupAdminister";
 
 $EmailAdministerForm   = $cgi_root."EmailAdministerForm";
+$EmailAdminister       = $cgi_root."EmailAdminister";
 
 $Statistics            = $cgi_root."Statistics";
 

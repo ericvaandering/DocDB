@@ -688,4 +688,22 @@ Proceeding") is not used in the current software.
   </text>
  </entry>
 
+ <entry>
+  <key>resetpassword</key>
+  <title>New User Password</title>
+  <text>
+Type the user's new password here. The password is entered as clear text, so the
+user should reset the password as soon as you have given it to them.
+  </text>
+ </entry>
+
+ <entry>
+  <key>emailuser</key>
+  <title>Email User</title>
+  <text>
+This is the username of someone who has signed up to receive e-mail
+notifications.
+  </text>
+ </entry>
+
 </helpfile>

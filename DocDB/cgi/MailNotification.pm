@@ -241,6 +241,7 @@ sub DisplayNotification($$) {
 
   require "NotificationSQL.pm";
   require "TopicHTML.pm";
+  require "AuthorHTML.pm";
 
   &FetchTopicNotification($EmailUserID,$Set);
   &FetchAuthorNotification($EmailUserID,$Set);
@@ -358,6 +359,23 @@ sub NotifyKeywordEntry ($) {
   print $query -> textfield (-name => "keyword$Set", -default => $NotifyKeywords, 
                              -size => 80, -maxlength => 240);
   print "</td></tr>\n";
+}
+
+sub EmailUserSelect {
+  my @EmailUserIDs = &GetEmailUserIDs;
+  foreach my $EmailUserID (@EmailUserIDs) {
+    &FetchEmailUser($EmailUserID);  
+    $EmailUserLabels{$EmailUserID} = $EmailUser{$EmailUserID}{Username};
+  }  
+  
+  print "<b><a ";
+  &HelpLink("emailuser");
+  print "Email User:</a></b><br> \n";
+  print $query -> scrolling_list(-name => 'emailuserid', 
+                                 -values => \@EmailUserIDs, 
+                                 -labels => \%EmailUserLabels, 
+                                 -size => 10);
+
 }
   
 1;

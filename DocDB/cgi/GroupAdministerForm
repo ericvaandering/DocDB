@@ -38,8 +38,8 @@ unless (&CanAdminister()) {
   push @ErrorStack,"You are not allowed to access administrative functions.";
 }
 
-if (@error_stack) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@error_stack);
+if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@ErrorStack);
 }
 
 print "<b><a ";
