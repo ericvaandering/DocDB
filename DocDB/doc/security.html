@@ -15,38 +15,14 @@ Security for DocDB is determined by three sets of permissions:
 </ol>
 
 <p>
-Generally, for CD websites, to administer DocDB you need to have rlidwka for
-the Nicholls:www_cd_docdb group in AFS space.  Files will need rwxr-xr-x
-(755) permissions to be executable by the web server.
-
+File permissions must be set correctly for the webserver to download 
+documents into $file_root.  
+See <a href=setup-docdb.html>customizing DocDB</a> for more.
 <p>
-
-
-Web permissions are controlled using the .htaccess file method.  The
-.htaccess fiel is placed in the same cgi-bin diretory from which the DocDB
-scripts are executed.  In our implementation, that
-is ./docdb/cgi-bin/xxx-private, where xxx is the DocDB instance name.  The
-contents of the .htaccess file should be as follows:
-<p>
-
-AuthType Basic <br>
-
-AuthName "PasswordRequired" <br>
-
-AuthUserFile <br>
-
-"afs/fnal.gov/files/expwww/computing/home/docdb/auth/.htpasswd" <br>
-
-Require valid-user <br>
-
-<p>
-
-
-Note the AuthUserFile location.  To allow independent instances to have
-their own security, another filename may be used, i.e., .osgpasswd."  In
-that case, a .htaccess file must be placed in the xxx_private directory of
-the instance, replacing the symbolic link, and the AuthUserFile filename
-must be changed to match.
+If you are using an apache webserver, web permissions are controlled 
+with the .htaccess file.  The .htaccess file is placed in the DocDB 
+cgi-bin diretory.  
+See <a href=setup-docdb.html>customizing DocDB</a> for more.
 <p>
 The htpassword command may be found at:
 /afs/fnal.gov/files/expwww/computing/home/docdb/auth/htpasswd/bin/htpasswd.
@@ -130,8 +106,6 @@ interface for DocDB and the MySQL database.  They DO NOT HAVE TO BE THE
 SAME.  However, more typing would be required when using the administrator
 account.
 <p>
-
-
 
 <!-- begin footer -->
 <hr>
