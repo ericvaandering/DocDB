@@ -174,7 +174,7 @@ sub FetchSessionSeparatorByID ($) {
 
 sub FetchMeetingOrdersByConferenceID {
   my ($ConferenceID) = @_;
-  my $SessionSeparatorID,$SessionID,$MeetingOrderID,$SessionOrder;
+  my ($SessionSeparatorID,$SessionID,$MeetingOrderID,$SessionOrder);
   my @MeetingOrderIDs = ();
   my $SessionOrderList   = $dbh -> prepare(
     "select MeetingOrder.MeetingOrderID,MeetingOrder.SessionSeparatorID,MeetingOrder.SessionID,MeetingOrder.SessionOrder ".

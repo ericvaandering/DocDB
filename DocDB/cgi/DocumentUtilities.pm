@@ -64,7 +64,7 @@ sub AddDocument {
     $DateTime = "$Year-$Mon-$Day $Hour:$Min:$Sec";
   } 
 
-  my $DocumentID,$DocRevID,$Count,@FileIDs;
+  my ($DocumentID,$DocRevID,$Count,@FileIDs);
 
   $DocumentID = &InsertDocument(-typeid => $TypeID, 
                  -requesterid => $RequesterID, -datetime => $DateTime);

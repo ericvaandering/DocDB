@@ -72,7 +72,7 @@ my $EndYear       = $params{endyear};
 my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
 my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
 
-my $StartTime,$EndTime;
+my ($StartTime,$EndTime);
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 

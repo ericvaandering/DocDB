@@ -110,7 +110,7 @@ sub EmailUserDigest ($) {
   my ($EmailUserID) = @_;
   &FetchEmailUser($EmailUserID);
   
-  my $day,$mon,$yr;
+  my ($day,$mon,$yr);
   my $Digest;
   (undef,undef,undef,$day,$mon,$yr) = localtime(time);
   if ($EmailUser{$EmailUserID}{Username}) {

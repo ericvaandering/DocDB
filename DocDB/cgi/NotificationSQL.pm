@@ -60,7 +60,7 @@ sub FetchEmailUser($) {
 sub FetchTopicNotification ($$) {
   my ($EmailUserID,$Set) = @_;
 
-  my $MajorTopicID,$MinorTopicID;
+  my ($MajorTopicID,$MinorTopicID);
 
   $Table = "EmailTopic$Set";
   @NotifyMajorIDs = ();
