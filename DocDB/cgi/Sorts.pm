@@ -184,7 +184,10 @@ sub ConferenceByDate {
   $amonth <=> $bmonth 
           or
     $aday <=> $bday
+}
 
+sub MeetingOrderIDByOrder { # Sort lists of Sessions, SessionSeparators 
+  $MeetingOrders{$a}{SessionOrder} <=> $MeetingOrders{$b}{SessionOrder}
 }
 
 1;

@@ -17,6 +17,9 @@ require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 require "Sorts.pm";
 
+require "MeetingHTML.pm";
+require "MeetingSQL.pm";
+
 $query = new CGI;  # Global for subroutines
 
 print $query->header;
@@ -115,7 +118,8 @@ if ($Mode eq "create") {
 # Repack into array of same length as others
 
   my @SessionSeparators = ();
-  foreach my $RawSessionSeparator (@RawSessionSeparators) {  
+  foreach my $RawSessionSeparator (@RawSessionSeparators) { 
+    $RawSessionSeparator =~ s/n//; 
     $SessionSeparators[$RawSessionSeparator-1] = 1; 
   }  
   
@@ -194,10 +198,19 @@ print $query -> start_multipart_form('POST',"$MeetingModify");
 print $query -> hidden(-name => 'mode',   -default => 'modify');
 print "<table cellpadding=10 border=1>\n";
 
-@SessionIDs = &FetchSessionsByConferenceID($ConferenceID);
+my @SessionIDs = &FetchSessionsByConferenceID($ConferenceID);
+my @SessionSeparatorIDs = &FetchSessionSeparatorsByConferenceID($ConferenceID);
+my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
 
-foreach my $SessionID (@SessionIDs) {
-  print "<tr><td>SI: $SessionID</td></tr>\n";
+foreach $MeetingOrderID (@MeetingOrderIDs) {
+  print "<tr><td>$MeetingOrderID $MeetingOrders{$MeetingOrderID}{SessionOrder} </td>\n";
+  if ($MeetingOrders{$MeetingOrderID}{SessionID}) {
+    print "<td>$MeetingOrders{$MeetingOrderID}{SessionOrder} SI: $MeetingOrders{$MeetingOrderID}{SessionID}</td\n";
+  }
+  if ($MeetingOrders{$MeetingOrderID}{SessionSeparatorID}) {
+    print "<td>$MeetingOrders{$MeetingOrderID}{SessionOrder} SSI: $MeetingOrders{$MeetingOrderID}{SessionSeparatorID}</td>\n";
+  }
+  print "</tr>\n";
 }
   # links to add talks to session (extend SessionEntryForm to these cases)
   # form elements to change the session (Add delete button)

@@ -72,7 +72,7 @@ sub FetchSessionByID ($) {
   my ($ConferenceID,$StartTime,$Title,$Description,$TimeStamp); 
   my $SessionFetch = $dbh -> prepare(
     "select ConferenceID,StartTime,Title,Description,TimeStamp ".
-    "from Session where SessionID=?";
+    "from Session where SessionID=?");
   if ($Sessions{$SessionID}{TimeStamp}) {
     return $SessionID;
   }
@@ -86,6 +86,60 @@ sub FetchSessionByID ($) {
     $Sessions{$SessionID}{TimeStamp}    = $TimeStamp;
   }
   return $SessionID;  
+}
+
+sub FetchSessionSeparatorsByConferenceID ($) {
+  my ($ConferenceID) = @_;
+  my $SessionSeparatorID;
+  my @SessionSeparatorIDs = ();
+  my $SessionSeparatorList   = $dbh -> prepare(
+    "select SessionSeparatorID from SessionSeparator where ConferenceID=?");
+  $SessionSeparatorList -> execute($ConferenceID);
+  $SessionSeparatorList -> bind_columns(undef, \($SessionSeparatorID));
+  while ($SessionSeparatorList -> fetch) {
+    $SessionSeparatorID = &FetchSessionSeparatorByID($SessionSeparatorID);
+    push @SessionSeparatorIDs,$SessionSeparatorID;
+  }
+  return @SessionSeparatorIDs; 
+}
+
+sub FetchSessionSeparatorByID ($) {
+  my ($SessionSeparatorID) = @_;
+  my ($ConferenceID,$StartTime,$Title,$Description,$TimeStamp); 
+  my $SessionSeparatorFetch = $dbh -> prepare(
+    "select ConferenceID,StartTime,Title,Description,TimeStamp ".
+    "from SessionSeparator where SessionSeparatorID=?");
+  if ($SessionSeparators{$SessionSeparatorID}{TimeStamp}) {
+    return $SessionSeparatorID;
+  }
+  $SessionSeparatorFetch -> execute($SessionSeparatorID);
+  ($ConferenceID,$StartTime,$Title,$Description,$TimeStamp) = $SessionSeparatorFetch -> fetchrow_array; 
+  if ($TimeStamp) {
+    $SessionSeparators{$SessionSeparatorID}{ConferenceID} = $ConferenceID;
+    $SessionSeparators{$SessionSeparatorID}{StartTime}    = $StartTime;
+    $SessionSeparators{$SessionSeparatorID}{Title}        = $Title;
+    $SessionSeparators{$SessionSeparatorID}{Description}  = $Description;
+    $SessionSeparators{$SessionSeparatorID}{TimeStamp}    = $TimeStamp;
+  }
+  return $SessionSeparatorID;  
+}
+
+sub FetchMeetingOrdersByConferenceID {
+  my ($ConferenceID) = @_;
+  my $SessionSeparatorID,$SessionID,$MeetingOrderID,$SessionOrder;
+  my @MeetingOrderIDs = ();
+  my $MeetingOrderList   = $dbh -> prepare(
+    "select MeetingOrderID,SessionSeparatorID,SessionID,SessionOrder ".
+    "from MeetingOrder where ConferenceID=? order by MeetingOrder");
+  $MeetingOrderList -> execute($ConferenceID);
+  $MeetingOrderList -> bind_columns(undef, \($MeetingOrderID,$SessionSeparatorID,$SessionID,$SessionOrder));
+  while ($MeetingOrderList -> fetch) {
+    $MeetingOrders{$MeetingOrderID}{SessionSeparatorID} = $SessionSeparatorID;
+    $MeetingOrders{$MeetingOrderID}{SessionID}          = $SessionID;
+    $MeetingOrders{$MeetingOrderID}{SessionOrder}       = $SessionOrder;
+    push @MeetingOrderIDs,$MeetingOrderID;
+  }
+  return @MeetingOrderIDs; 
 }
 
 1;
