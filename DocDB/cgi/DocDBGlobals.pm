@@ -86,8 +86,6 @@ require "ProjectGlobals.pm";
 
 # Special files (here because they use values from above)
 
-$help_file             = $script_root."docdb.hlp";
-
 # CGI Scripts
 
 $MainPage              = $cgi_root."DocumentDatabase";

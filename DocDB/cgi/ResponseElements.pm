@@ -311,7 +311,15 @@ sub OtherVersionLinks {
     unless (&CanAccess($DocumentID,$Version)) {next;}
     $link = &DocumentLink($DocumentID,$Version);
     $date = &EuroDateTime($DocRevisions{$RevID}{DATE});
-    print "<li>$link \&nbsp \&nbsp ($date)</li>\n";
+    print "<li>$link \n";
+    if ($UseSignoffs) {
+      require "SignoffUtilities.pm";
+      my ($ApprovalStatus,$LastApproved) = &RevisionStatus($RevID);
+      unless ($ApprovalStatus eq "Unmanaged") { 
+        print " \&nbsp $ApprovalStatus";
+      }  
+    }  
+    print " \&nbsp ($date)</li>\n";
   }
   print "</ul>\n";
   print "</td></tr></table>\n";

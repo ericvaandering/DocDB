@@ -106,7 +106,7 @@ if      ($Action eq "Delete") { # Delete group
     print "<b>Deleting all subordinates.</b><br>\n";
     my $HierarchyDelete = $dbh -> prepare("delete from GroupHierarchy   ".
                                     "where ParentID=?");
-       $HierarchyDelete -> execute($ParentID,$ParentID);
+       $HierarchyDelete -> execute($ParentID);
 
     my $HierarchyInsert = $dbh->prepare(
      "insert into GroupHierarchy (HierarchyID,ChildID,ParentID) ".
@@ -119,7 +119,7 @@ if      ($Action eq "Delete") { # Delete group
     }     
   }
 
-# Update permissions # FIXME add CanAdmin
+# Update permissions 
   
   if ($NoPerm) {
     my $GroupUpdate = $dbh->prepare(
