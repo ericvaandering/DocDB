@@ -221,4 +221,35 @@ sub SetAuthorNotifications ($$) {
   }   
 }
 
+sub InsertEmailDocumentImmediate (%) {
+  my %Params = @_;
+  
+  my $EmailUserID = $Params{-emailuserid};
+  my $DocumentID  = $Params{-docid};
+  
+  if ($DocumentID && $EmailUserID) {
+    my $Insert = $dbh -> prepare("insert into EmailDocumentImmediate ".
+                                 "(EmailDocumentImmediateID,EmailUserID,DocumentID) ".
+                                 "values (0,?,?)");
+    $Insert -> execute($EmailUserID,$DocumentID);
+  }  
+}
+
+sub FetchEmailDocuments (%) {
+  my %Params = @_;
+  
+  my $EmailUserID = $Params{-emailuserid};
+  my $DocumentID;
+  my @DocumentIDs;
+  
+  my $Select = $dbh -> prepare("select DISTINCT(DocumentID) from EmailDocumentImmediate ".
+                                 "where EmailUserID=?");
+  $Select -> execute($EmailUserID);
+  $Select -> bind_columns(undef,\($DocumentID));
+  while ($Select -> fetch) {
+    push @DocumentIDs,$DocumentID; 
+  }
+  return @DocumentIDs;
+}
+
 1;

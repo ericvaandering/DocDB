@@ -31,7 +31,8 @@ sub DocumentTable (%) {
   my $SortBy        =   $Params{-sortby}; 
   my $Reverse       =   $Params{-reverse};
   my $MaxDocs       =   $Params{-maxdocs};
-  my $SessionTalkID = $Params{-talkid};
+  my $NoneBehavior  =   $Params{-nonebehavior} || "skip";  # skip|
+  my $SessionTalkID =   $Params{-talkid};
   my @DocumentIDs   = @{$Params{-docids}};
   my @Fields        = @{$Params{-fields}}; 
   my %FieldOptions  = %{$Params{-fieldoptions}}; 
@@ -39,9 +40,20 @@ sub DocumentTable (%) {
   my %FieldTitles = (Docid   => "$ShortProject-doc-#", Updated => "Last Updated", 
                      CanSign => "Next Signature(s)", Confirm => "Confirm?");  
   
+  unless (@DocumentIDs) {
+    if ($NoneBehavior eq "skip") {
+      return;
+    }
+  }     
+
+# FIXME: For XHTML/CSS compliance: 
+#        id has to be settable (should be unique, can have more than one per page)
+#        should enclose in <div> </div>, get rid of center
+#        and should allow a "title" to be placed here rather than calling routine
+
 ### Write out the beginning and header of table
 
-  print "<center><table id=\"DocumentList\" class=\"Alternating\">\n";
+  print "<center><table id=\"DocumentList\" class=\"Alternating\">\n"; 
 
   print "<tr>\n";
   foreach my $Field (@Fields) {
@@ -173,6 +185,7 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
 #  my $DocRevID         = $Params{-docrevid}; #FIXME
   my $DocIDOnly        = $Params{-docidonly}        || 0;
   my $NumWithVersion   = $Params{-numwithversion}   || 0;
+  my $NoVersion        = $Params{-noversion}        || 0;
   my $TitleLink        = $Params{-titlelink}        || 0;
   my $NoApprovalStatus = $Params{-noapprovalstatus} || 0;
 
@@ -219,6 +232,9 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
         $Link .= ")";
       }  
     }  
+  } elsif ($NoVersion) {      # Like Project-doc-1234
+    $Link .= &FullDocumentID($DocumentID);  
+    $Link .= "</a>";
   } else {                    # Like Project-doc-1234-v56
     $Link .= &FullDocumentID($DocumentID,$Version);  
     $Link .= "</a>";
