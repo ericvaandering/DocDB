@@ -29,47 +29,54 @@ sub AddDocument {
   require "AuthorSQL.pm";
   require "SecuritySQL.pm";
   
-  my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
-
   my %Params = @_;
   
-  my $Title       = $Params{-title}       || "";
-  my $Abstract    = $Params{-abstract}    || "";
-  my $Keywords    = $Params{-keywords}    || "";
-  my $TypeID      = $Params{-typeid}      || 0;
-  my $RequesterID = $Params{-requesterid} || 0;
-  my $Note        = $Params{-note}        || "";
-  my $PubInfo     = $Params{-pubinfo}     || "";
-  my $DateTime    = $Params{-datetime}    || "$Year-$Mon-$Day $Hour:$Min:$Sec";
+  my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
+
+  my $Title         = $Params{-title}         || "";
+  my $Abstract      = $Params{-abstract}      || "";
+  my $Keywords      = $Params{-keywords}      || "";
+  my $TypeID        = $Params{-typeid}        || 0;
+  my $RequesterID   = $Params{-requesterid}   || 0;
+  my $Note          = $Params{-note}          || "";
+  my $PubInfo       = $Params{-pubinfo}       || "";
+  my $DateTime      = $Params{-datetime}      || "$Year-$Mon-$Day $Hour:$Min:$Sec";
+  my $SessionTalkID = $Params{-sessiontalkid} || 0; # Not used yet
   
-  my @AuthorIDs = @{$Params{-authorids}};
-  my @TopicIDs  = @{$Params{-topicids}};
-  my @ViewIDs   = @{$Params{-viewids}};
-  my @ModifyIDs = @{$Params{-modifyids}};
+  my @AuthorIDs  = @{$Params{-authorids}}  || ();
+  my @TopicIDs   = @{$Params{-topicids}}   || ();
+  my @ViewIDs    = @{$Params{-viewids}}    || ();
+  my @ModifyIDs  = @{$Params{-modifyids}}  || ();
+  my @SignoffIDs = @{$Params{-signoffids}} || (); # For simple signoff list, may be deprecated
   
   my %Files      = %{$Params{-files}};      # Not used yet
   my %References = %{$Params{-references}}; # Not used yet
   my %Signoffs   = %{$Params{-signoffs}};   # Not used yet
 
-  my $DocumentID = &InsertDocument(-typeid => $TypeID, 
-                    -requesterid => $RequesterID, -datetime => $DateTime);
-                                   
-  my $DocRevID   = &InsertDocRevision(-docid => $DocumentID, 
-                    -submitterid => $RequesterID, -title    => $Title,
-                    -pubinfo     => $PubInfo,     -abstract => $Abstract,
-                    -version     => 'bump',       -datetime => $DateTime,
-                    -keywords    => $Keywords,    -note     => $Note);
-          
-  my $Status     = &InsertAuthors(-docrevid  => $DocRevID, 
-                                  -authorids => \@AuthorIDs);
-                                                 
-  my $Status     = &InsertTopics(-docrevid => $DocRevID, 
-                                 -topicids => \@TopicIDs);
-                                   
-  my $Status     = &InsertSecurity(-docrevid  => $DocRevID, 
-                                   -viewids   => \@ViewIDs,
-                                   -modifyids => \@ModifyIDs);
-                                   
+  my $DocumentID,$DocRevID,$Status;
+
+  $DocumentID = &InsertDocument(-typeid => $TypeID, 
+                 -requesterid => $RequesterID, -datetime => $DateTime);
+  if ($DocumentID) {                                 
+    $DocRevID   = &InsertDocRevision(-docid => $DocumentID, 
+                   -submitterid => $RequesterID, -title    => $Title,
+                   -pubinfo     => $PubInfo,     -abstract => $Abstract,
+                   -version     => 'bump',       -datetime => $DateTime,
+                   -keywords    => $Keywords,    -note     => $Note);
+  }
+  if ($DocRevID) { 
+    $Status     = &InsertAuthors(-docrevid  => $DocRevID, 
+                                 -authorids => \@AuthorIDs);
+
+    $Status     = &InsertTopics(-docrevid => $DocRevID, 
+                                -topicids => \@TopicIDs);
+
+    $Status     = &InsertSecurity(-docrevid  => $DocRevID, 
+                                  -viewids   => \@ViewIDs,
+                                  -modifyids => \@ModifyIDs);
+  }
+  
+  return $DocumentID;                                 
 
 }
 
