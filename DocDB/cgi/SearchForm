@@ -44,7 +44,7 @@ print $query -> start_multipart_form('POST',$Search,"name=\"queryform\"");
 print "<center><table cellpadding=10 width=80%>\n";
 print "<tr>\n";
  print "<td colspan=3>\n";
- print "This is an alpha version of the search engine for the BTeV Document Database.<p>\n"; 
+ print "This is an alpha version of the BTeV Document Database search engine.<p>\n"; 
  print "The ability to search on more fields is still coming. 
         The help links may be missing or wrong. It may not work as expected. 
         You may see diagnostic output on the screen from time to time.
@@ -87,23 +87,23 @@ print "</tr>\n";
   print "<td>\n"; &AuthorSelect;    print "</td>\n";
  print "</tr>\n";
  
-# print "<tr>\n";
-#
-#  print "<td valign=top>\n";
+ print "<tr>\n";
+
+  print "<td valign=top>\n";
 #  &DocTypeMulti;
-#  print "</td>\n";
+  print "</td>\n";
 
-#  print "<td valign=top colspan=2>\n";
-#  print "<dl>\n";
-#  print "<dt><b><a ";
-#  &HelpLink("beforeafterdate");
-#  print "Last Modified Between:</a></b><p>\n";
-#  print "<dd>\n";
-#  &DateRangePullDown;
-#  print "</dl>\n";
-#  print "</td>\n";
+  print "<td valign=top colspan=2>\n";
+  print "<dl>\n";
+  print "<dt><b><a ";
+  &HelpLink("beforeafterdate");
+  print "Last Modified Between:</a></b><p>\n";
+  print "<dd>\n";
+  &DateRangePullDown;
+  print "</dl>\n";
+  print "</td>\n";
 
-# print "</tr>\n";
+ print "</tr>\n";
 
  print "<tr valign=bottom>\n";
   &MajorMinorSelect;

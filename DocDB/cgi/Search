@@ -52,6 +52,24 @@ $PubInfoSearchMode  = $params{pubinfosearchmode};
 @MinorSearchIDs = split /\0/,$params{minortopic};
 @MajorSearchIDs = split /\0/,$params{majortopic};
 
+$Afterday   = $params{afterday};
+$Aftermonth = $params{aftermonth};
+$Afteryear  = $params{afteryear};
+if ($Afteryear ne "----") { 
+  if ($Afterday   eq "--")  {$Afterday   = "1";}
+  if ($Aftermonth eq "---") {$Aftermonth = "Jan";}
+  $SQLBegin   = "$Afteryear-$ReverseAbrvMonth{$Aftermonth}-$Afterday";
+}
+
+$Beforeday   = $params{beforeday};
+$Beforemonth = $params{beforemonth};
+$Beforeyear  = $params{beforeyear};
+if ($Beforeyear ne "----") { 
+  if ($Beforeday   eq "--")  {$Beforeday   = "31";}
+  if ($Beforemonth eq "---") {$Beforemonth = "Dec";}
+  $SQLEnd     = "$Beforeyear-$ReverseAbrvMonth{$Beforemonth}-$Beforeday";
+}
+
 ### Check parameters for errors
 
 @error_stack = ();
@@ -81,9 +99,11 @@ print "<p>\n";
 #print "IL: $InnerLogic<br>\n";
 #print "MIN: @MinorSearchIDs<br>\n";
 #print "MAJ: @MajorSearchIDs<br>\n";
+print "SQE: $SQLEnd <br>\n";
+print "SQB: $SQLBegin <br>\n";
 
-
-if ($TitleSearch || $AbstractSearch || $KeywordSearch || $PubInfoSearch || @RequesterSearchIDs) {
+if ($TitleSearch || $AbstractSearch || $KeywordSearch || $PubInfoSearch || @RequesterSearchIDs ||
+    $SQLBegin    || $SQLEnd) {
   $SearchedRevisions = 1;
 ### Text search matches
   my $TitlePhrase    = &TextSearch("DocumentTitle",  $TitleSearchMode,   $TitleSearch);
@@ -95,6 +115,15 @@ if ($TitleSearch || $AbstractSearch || $KeywordSearch || $PubInfoSearch || @Requ
 
   my $RequesterPhrase = &IDSearch("DocumentRevision","SubmitterID","OR",@RequesterSearchIDs);
 
+  my $EndDatePhrase;
+  my $StartDatePhrase;
+  if ($SQLEnd) {
+    $EndDatePhrase   = " RevisionDate<\"$SQLEnd\" ";
+  }
+  if ($SQLBegin) {
+    $StartDatePhrase = " RevisionDate>\"$SQLBegin\" ";
+  }
+  
 ### Get Documents from DocumentRevision that match
 
   my @RevisionPhrases = ();
@@ -105,6 +134,8 @@ if ($TitleSearch || $AbstractSearch || $KeywordSearch || $PubInfoSearch || @Requ
   if ($KeywordPhrase  ) {push @RevisionPhrases,$KeywordPhrase  ;}
   if ($PubInfoPhrase  ) {push @RevisionPhrases,$PubInfoPhrase  ;}
   if ($RequesterPhrase) {push @RevisionPhrases,$RequesterPhrase;}
+  if ($EndDatePhrase  ) {push @RevisionPhrases,$EndDatePhrase  ;}
+  if ($StartDatePhrase) {push @RevisionPhrases,$StartDatePhrase;}
 
   $RevisionQuery .= join $OuterLogic,@RevisionPhrases;
 

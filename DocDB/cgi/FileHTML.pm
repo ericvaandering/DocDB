@@ -91,9 +91,11 @@ sub FileLink {
   require "FSUtilities.pm";
 
   my ($documentID,$version,$shortfile,$description) = @_;
+  $shortname = $shortfile;
+  $shortfile = CGI::escape($shortfile);
   $base_url = &GetURLDir($documentID,$version);
   if ($description) {
-    return "<a href=\"$base_url$shortfile\">$description</a> ($shortfile)";
+    return "<a href=\"$base_url$shortfile\">$description</a> ($shortname)";
   } else {
     return "<a href=\"$base_url$shortfile\">$shortfile</a>";
   }
@@ -103,11 +105,13 @@ sub ShortFileLink {
   require "FSUtilities.pm";
 
   my ($documentID,$version,$shortfile,$description) = @_;
+  $shortname = $shortfile;
+  $shortfile = CGI::escape($shortfile);
   $base_url = &GetURLDir($documentID,$version);
   if ($description) {
     return "<a href=\"$base_url$shortfile\">$description</a>";
   } else {
-    return "<a href=\"$base_url$shortfile\">$shortfile</a>";
+    return "<a href=\"$base_url$shortfile\">$shortname</a>";
   }
 }  
 
