@@ -206,22 +206,6 @@ sub FetchSecurityGroup { # Fetches an SecurityGroup by ID, adds to hash
   return $SecurityGroups{$GroupID}{GROUPID};
 }
 
-sub ObsGetSecurities {
-  my ($field,$type);
-  my $security_list = $dbh->prepare("describe DocumentRevision Security");
-  $security_list -> execute;
-  $security_list -> bind_columns(undef, \($field,$type,$Null,$Key,$Default,$Extra));
-  $security_list -> fetch;
-  my $set_values = $type;
-
-  $set_values =~ s/set\(//g; # Parse out everything but the types
-  $set_values =~ s/\)//g;
-  $set_values =~ s/\'//g;
-  $set_values =~ s/\s+//g;
-  
-  (@available_securities) = ("Public",split /\,/,$set_values);
-};
-
 sub GetAllDocuments {
   my ($DocumentID);
   my $document_list  = $dbh->prepare(
@@ -316,7 +300,6 @@ sub FetchDocRevisionByID {
   # $DocRevisions{DocRevID}{FIELD} holds the Fields or references too them
 
   my ($docRevID) = @_;
-#  &FetchDocument($documentID);
   my $revision_list = $dbh->prepare(
     "select DocRevID,SubmitterID,DocumentTitle,PublicationInfo,VersionNumber,".
            "Abstract,RevisionDate,Security,TimeStamp,DocumentID,Obsolete ".
