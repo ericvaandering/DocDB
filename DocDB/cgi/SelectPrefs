@@ -16,6 +16,8 @@ require "FormElements.pm";
 require "Sorts.pm";
 require "AuthorSQL.pm";
 
+require "AuthorHTML.pm";
+
 # Start page
 
 $query = new CGI;
@@ -63,8 +65,10 @@ print "<table align=center>\n";
  print "</td>\n";
 
  print "<td>\n";
- $RequesterDefault = $UserIDPref;
- &RequesterSelect(1);
+ my @RequesterDefaults = ($UserIDPref);
+ &AuthorScroll(-helplink => "",
+               -name     => "requester",
+               -default  => \@RequesterDefaults);
  print "</td></tr>\n";
 
  print "<tr><td align=right>\n";
