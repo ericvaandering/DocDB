@@ -135,17 +135,17 @@ if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
 
 # Set required/optional information
 
-my %RequiredEntries = ();
+my %RequiredEntries = (); 
 
-$RequiredEntries{Title}     = 1;
-$RequiredEntries{Abstract}  = 1;
-$RequiredEntries{Keyword}   = 0;
-$RequiredEntries{Note}      = 0;
-$RequiredEntries{File}      = 1;
-$RequiredEntries{Type}      = 1;
-$RequiredEntries{Requester} = 1;
-$RequiredEntries{Author}    = 1;
-$RequiredEntries{Security}  = 0;
+$RequiredEntries{Title}     = 1;   # Note that this isn't completely
+$RequiredEntries{Abstract}  = 1;   # functional. Some of these variables
+$RequiredEntries{Keyword}   = 0;   # aren't passed, and of those that are
+$RequiredEntries{Note}      = 0;   # some may be ignored.
+$RequiredEntries{File}      = 1;   #
+$RequiredEntries{Type}      = 1;   # After the defaults are set a hook could
+$RequiredEntries{Requester} = 1;   # be installed to change these based on
+$RequiredEntries{Author}    = 1;   # site policy. (And then enforced in
+$RequiredEntries{Security}  = 0;   # ProcessDocumentAdd).
 $RequiredEntries{Modify}    = 0;
 $RequiredEntries{Topic}     = 1;
 $RequiredEntries{Reference} = 0;
@@ -475,7 +475,7 @@ unless ($Meeting || $OtherMeeting) {
                   -default  => \@AuthorDefaults);
     print "</td>\n";
   } elsif ($AuthorMode eq "field") {
-    print "<td>\n"; &AuthorManual;    print "</td>\n";
+    print "<td>\n"; &AuthorManual(-required => $RequiredEntries{Author});    print "</td>\n";
   }
 }
 print "<td colspan=1 valign=top>\n"; 
@@ -505,9 +505,9 @@ print "</tr>\n";
 
 print "<tr>\n";
 if ($TopicMode eq "single") {
-  print "<td colspan=4>\n"; &TopicSelect;     print "</td>\n";
+  print "<td colspan=4>\n"; &TopicSelect(-required => $RequiredEntries{Author});     print "</td>\n";
 } elsif ($TopicMode eq "multi") {
-  print "<td colspan=4>\n"; &MultiTopicSelect;     print "</td>\n";
+  print "<td colspan=4>\n"; &MultiTopicSelect(-required => $RequiredEntries{Author});     print "</td>\n";
 }
 print "</tr>\n";
 

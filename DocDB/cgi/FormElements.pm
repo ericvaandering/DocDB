@@ -211,7 +211,11 @@ sub TopicSelect { # Scrolling selectable list for topics
   }
   print "<b><a ";
   &HelpLink("topics");
-  print "Topics:</a></b><br> \n";
+  print "Topics:</a></b>";
+  if ($Required) {
+    print $RequiredMark;
+  }  
+  print "<br> \n";
   print $query -> scrolling_list(-name => "topics", -values => \@TopicIDs, 
                                  -labels => \%TopicLabels,
                                  -size => 10, -multiple => 'true',
@@ -233,9 +237,13 @@ sub TopicSelectLong { # Scrolling selectable list for topics, all info
                                  -default => \@TopicDefaults);
 };
 
-sub MultiTopicSelect { # Multiple scrolling selectable lists for topics
+sub MultiTopicSelect (%) { # Multiple scrolling selectable lists for topics
   require "TopicSQL.pm";
   
+  my (%Params) = @_;
+  
+  my $Required  =   $Params{-required}  || 0;
+
   &SpecialMajorTopics;
 
   my $NCols = 4;
@@ -246,7 +254,11 @@ sub MultiTopicSelect { # Multiple scrolling selectable lists for topics
   print "<tr><td colspan=$NCols align=center>\n";
   print "<b><a ";
   &HelpLink("topics");
-  print "Topics:</a></b><br> \n";
+  print "Topics:</a></b>";
+  if ($Required) {
+    print $RequiredMark;
+  }  
+  print "<br> \n";
   my $Col = 0;
   foreach $MajorID (@MajorIDs) {
     unless ($Col % $NCols) {
@@ -385,15 +397,25 @@ sub AddFilesButton {
   print $query -> endform;
 }
 
-sub AuthorManual { # FIXME: Special case of AuthorTextEntry
+sub AuthorManual (%) { # FIXME: Special case of AuthorTextEntry
+  my (%Params) = @_;
+  
+  my $Required  =   $Params{-required}  || 0;
+
   $AuthorManDefault = "";
 
   foreach $AuthorID (@AuthorDefaults) {
     $AuthorManDefault .= "$Authors{$AuthorID}{FULLNAME}\n" ;
-  }  
+  }
+    
   print "<b><a ";
   &HelpLink("authormanual");
-  print "Authors:</a></b><br> \n";
+  print "Authors:</a></b>";
+  if ($Required) {
+    print $RequiredMark;
+  }  
+  print "<br> \n";
+  
   print $query -> textarea (-name    => 'authormanual', 
                             -default => $AuthorManDefault,
                             -columns => 20, -rows    => 8);
