@@ -267,8 +267,8 @@ sub MajorGatheringSelect (;%) { # Scrolling selectable list for major topics wit
 
   my (%Params) = @_;
   
-  my $Disabled = $Params{-disabled}  || "0";
-  my $Mode     = $Params{-format}    || "short";
+  my $Disabled = $Params{-disabled} || "0";
+  my $Mode     = $Params{-format}   || "short";
   
   my $Booleans = "";
   

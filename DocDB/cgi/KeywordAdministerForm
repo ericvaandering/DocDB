@@ -90,26 +90,22 @@ print "<hr><p>\n";
 
 my %EnableMatrix = ();
 
-$EnableMatrix{parent}{Delete} = 1;
+$EnableMatrix{keywordlist}{Delete}  = 1;
 
-$EnableMatrix{parent}{Modify} = 1;
-$EnableMatrix{child}{Modify}  = 1;
-$EnableMatrix{name}{Modify}   = 1;
-$EnableMatrix{remove}{Modify} = 1;
-$EnableMatrix{create}{Modify} = 1;
-$EnableMatrix{admin}{Modify}  = 1;
+$EnableMatrix{keywordlist}{Modify}  = 1;
+$EnableMatrix{keywordgroup}{Modify} = 1;
+$EnableMatrix{shortdesc}{Modify}    = 1;
+$EnableMatrix{longdesc}{Modify}     = 1;
 
-$EnableMatrix{child}{New}     = 1;
-$EnableMatrix{name}{New}      = 1;
-$EnableMatrix{remove}{New}    = 1;
-$EnableMatrix{create}{New}    = 1;
-$EnableMatrix{admin}{New}     = 1;
+$EnableMatrix{keywordgroup}{New}    = 1;
+$EnableMatrix{shortdesc}{New}       = 1;
+$EnableMatrix{longdesc}{New}        = 1;
 
 print "<a name=\"keywd\"><center><h4>Administer Keywords</h4></center>\n";
 
 print $query -> start_multipart_form('POST',"$KeywordListAdminister",
                                      "id=\"keywords\" name=\"keywords\"");
-print "<table cellpadding=10 border=1>\n";
+print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td colspan=3>\n";
  &AdministerActions(-form => "keywords", -matrix => \%EnableMatrix);
@@ -128,7 +124,7 @@ print "<td>\n";
 print "</td>\n";
 
 print "<td>\n"; 
-print "<table cellpadding=5 border=1>\n";
+print "<table cellpadding=5>\n";
 print "<tr valign=top>\n";
 print "<td>\n";
  &ShortDescriptionBox(-name => 'shortdesc',-disabled => true);
@@ -137,7 +133,7 @@ print "</tr>\n";
 
 print "<tr valign=top>\n";
 print "<td>\n"; 
- &LongDescriptionBox(-name => 'shortdesc',-disabled => true);
+ &LongDescriptionBox(-name => 'longdesc',-disabled => true);
 print "</td>\n";
 print "</tr>\n";
 print "</table>";

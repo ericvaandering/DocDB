@@ -466,7 +466,7 @@ sub AdminDisableScripts (%) {
 #  print "function disabler() {\n";
   
   foreach my $Position (keys %Positions) {
-    print "if (document.$Form.admaction[$Positions{$Position}].checked == true) {\n";
+    print " if (document.$Form.admaction[$Positions{$Position}].checked == true) {\n";
     foreach my $Element (keys %Matrix) {
       if ($Matrix{$Element}{$Position}) {
         print "  document.$Form.$Element.disabled = false;\n";
@@ -474,7 +474,7 @@ sub AdminDisableScripts (%) {
         print "  document.$Form.$Element.disabled = true;\n";
       }
     }
-    print "}\n";    
+    print " }\n";    
   }
   
   

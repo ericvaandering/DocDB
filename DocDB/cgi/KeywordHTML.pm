@@ -148,7 +148,14 @@ sub KeywordSelect (%) { # Scrolling selectable list for keyword groups
   my $Multiple = $Params{-multiple} || "";             # Any non-null text is "true"
   my $Name     = $Params{-name}     || "keywordlist";
   my $MaxLabel = $Params{-maxlabel} || 0;
+  my $Disabled = $Params{-disabled} || "0";
 
+  my $Booleans = "";
+  
+  if ($Disabled) {
+    $Booleans .= "-disabled";
+  }  
+  
 # Scrolling selectable list for keywords
   my @KeywordIDs = sort byKeyword keys %Keywords;
   my %KeywordLabels = ();
@@ -174,7 +181,7 @@ sub KeywordSelect (%) { # Scrolling selectable list for keyword groups
   print "Keywords:</a></b><br> \n";
   print $query -> scrolling_list(-name => "keywordlist", -values => \@KeywordIDs, 
                                  -labels => \%KeywordLabels,
-                                 -size => 10, -multiple => $Multiple );
+                                 -size => 10, -multiple => $Multiple, $Booleans );
 };
 
 sub KeywordGroupSelect (%) { # Scrolling selectable list for keyword groups
@@ -184,6 +191,13 @@ sub KeywordGroupSelect (%) { # Scrolling selectable list for keyword groups
   my $Multiple = $Params{-multiple} || "";             # Any non-null text is "true"
   my $Name     = $Params{-name}     || "keywordgroup";
   my $Remove   = $Params{-remove}   || "";
+  my $Disabled = $Params{-disabled} || "0";
+  
+  my $Booleans = "";
+  
+  if ($Disabled) {
+    $Booleans .= "-disabled";
+  }  
   
   print "<b><a ";
   &HelpLink("KeywordGroups");
@@ -204,8 +218,10 @@ sub KeywordGroupSelect (%) { # Scrolling selectable list for keyword groups
     $GroupLabels{"-1"} = "Remove existing groups";
   }
     
-  print $query -> scrolling_list(-name => $Name, -values => \@KeyGroupIDs, 
-                                 -labels => \%GroupLabels,  -size => 10, -multiple => $Multiple);
+  print $query -> scrolling_list(-name => $Name, 
+                                 -values => \@KeyGroupIDs, 
+                                 -labels => \%GroupLabels, -size => 10, 
+                                 -multiple => $Multiple, $Booleans);
 };
 
 sub KeywordLinkByID ($;%) {
