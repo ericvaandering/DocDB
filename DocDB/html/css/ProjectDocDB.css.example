@@ -67,3 +67,14 @@ tr.Even {
   font-size: 90%
 }  
 
+/* This changes the "Update Document" type buttons so they no longer really look
+like buttons */
+
+#UpdateButtons input[type="submit"] { /* Probably not best to change all buttons */
+  background: #ddd; 
+  font-weight: bold;
+  border: 1px black solid;
+  padding: 0.25em; */
+  font-size: 90%;
+  width: 12em;
+}  
