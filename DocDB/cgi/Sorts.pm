@@ -73,8 +73,8 @@ sub DocumentByRevisionDate {
   ($ayear,$amonth,$aday) = split /\-/,$adate;
   ($byear,$bmonth,$bday) = split /\-/,$bdate;
   
-  ($ahour,$amin,$asec) = split /\-/,$atime;
-  ($bhour,$bmin,$bsec) = split /\-/,$btime;
+  ($ahour,$amin,$asec) = split /:/,$atime;
+  ($bhour,$bmin,$bsec) = split /:/,$btime;
   
    $ayear <=> $byear
           or

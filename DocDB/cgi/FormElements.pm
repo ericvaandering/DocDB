@@ -1,6 +1,7 @@
 sub DaysPulldown {
   my @days = (1,2,3,5,7,10,14,20,30,45,60,90);
-  print $query -> popup_menu (-name => 'days',-values => \@days, -default => $Days);
+  print $query -> popup_menu (-name => 'days',-values => \@days, 
+                              -default => $Days,-onChange => "submit()");
 }
 
 sub DateTimePullDown {

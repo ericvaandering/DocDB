@@ -45,8 +45,6 @@ sub PrintPubInfo {
     print "<dt><b>Publication Information:</b><br>\n";
     print "<dd>$pubinfo<br>\n";
     print "</dl>\n";
-  } else {
-    print "<b>Publication Information:</b> none<br>\n";
   }
 }
 

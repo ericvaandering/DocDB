@@ -36,7 +36,12 @@ print "</h4></center>\n";
 print "<p><b>Find the information you want in the database:</b>\n";
 print "<ul>\n";
 
-print "<li>Search documents (still coming)"; 
+if ($Test) {
+  print "<li><a href=\"$SearchForm\">Search</a> documents"; 
+} else {
+  print "<li>Search documents (still coming)"; 
+}
+
 print "<p>\n";
 
 print "<li>"; 

@@ -49,15 +49,6 @@ if ($upload ne "http" && $upload ne "file") {
   $upload = "file";
 }  
 
-$NumberUploads = $params{numfile};
-unless ($NumberUploads) {
-  if ($Meeting) {
-    $NumberUploads = 3;
-  } else {
-    $NumberUploads = 1;
-  }  
-}
-
 $Archive       = $params{archive};
 $Overdate      = $params{overdate};
 
@@ -106,10 +97,12 @@ if ((@error_stack)) {  # The user made one or more mistakes, warn and exit
 }
 
 my $DocumentID;
+my $DocRevID;
+
 if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
   $DocumentID = $params{docid};
   &FetchDocument($DocumentID);
-  my $DocRevID = &FetchDocRevision($DocumentID,$Documents{$DocumentID}{NVER});
+  $DocRevID = &FetchDocRevision($DocumentID,$Documents{$DocumentID}{NVER});
   
   $TitleDefault     = $DocRevisions{$DocRevID}{TITLE};
   $PubInfoDefault   = $DocRevisions{$DocRevID}{PUBINFO};
@@ -124,6 +117,17 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
 } else {
   @SecurityDefaults = [$SecurityIDs{"BTeV"}]; # FIXME: Replace with logged-in user 
 }  
+
+$NumberUploads = $params{numfile};
+unless ($NumberUploads) {
+  if ($Meeting) {
+    $NumberUploads = 3;
+  } elsif ($mode eq "update") {
+    $NumberUploads = $#{ &FetchDocFiles($DocRevID)} + 1;
+  } else {
+    $NumberUploads = 1;
+  }  
+}
 
 &HelpPopupScript;
 

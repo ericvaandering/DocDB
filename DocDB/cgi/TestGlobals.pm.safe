@@ -24,4 +24,8 @@ $Unzip  = "/usr/bin/unzip -q ";
 
 # Other Globals
 
+$AuthUserFile = $script_root."htpasswd";
+
+$Test = 1;
+
 1;
