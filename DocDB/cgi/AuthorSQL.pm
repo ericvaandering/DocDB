@@ -16,10 +16,6 @@ sub GetAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with all authors
     $Authors{$AuthorID}{FIRSTNAME} =  $FirstName;
     $Authors{$AuthorID}{ACTIVE}    =  $Active;
     $Authors{$AuthorID}{INST}      =  $InstitutionID;
-    if ($Active) {
-      $ActiveAuthors{$AuthorID}{FULLNAME} = $Authors{$AuthorID}{FULLNAME};
-      $names{$AuthorID}                   = "$FirstName $MiddleInitials $LastName"; # FIXME
-    }
   }
 }
 
