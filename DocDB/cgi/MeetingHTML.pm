@@ -101,7 +101,7 @@ sub SessionEntryForm ($@) {
   print "<b><a ";
   &HelpLink("sessions");
   print "Sessions:</a></b><p> \n";
-  print "<table cellpadding=3>\n";
+  print "<table cellpadding=3 id=\"SessionEntry\" class=\"Alternating\">\n";
 
   print "<tr valign=bottom>\n";
    print "<th><b><a "; &HelpLink("meetingorder");     print "Order</a></b> or <br>\n";
@@ -120,9 +120,15 @@ sub SessionEntryForm ($@) {
   }
   
   my $SessionOrder = 0;
+  my $RowClass;
   foreach $MeetingOrderID (@MeetingOrderIDs) {
-  
     ++$SessionOrder;
+    if ($SessionOrder % 2) { 
+      $RowClass = "Odd";
+    } else {
+      $RowClass = "Even";
+    }    
+    
     $SessionDefaultOrder = $SessionOrder;  
     
     if (grep /n/,$MeetingOrderID) {# Erase defaults
@@ -154,7 +160,7 @@ sub SessionEntryForm ($@) {
       }
     } 
 
-    print "<tr valign=top>\n";
+    print "<tr valign=top class=\"$RowClass\">\n";
     
      $query -> param('meetingorderid',$MeetingOrderID);
      print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
@@ -169,13 +175,13 @@ sub SessionEntryForm ($@) {
      print "<td>\n";              &SessionLocation;                    print "</td>\n";
     print "</tr>\n";
 
-    print "<tr valign=top>\n";
+    print "<tr valign=top class=\"$RowClass\">\n";
      print "<td>&nbsp</td>\n";
      print "<td>\n";              &SessionDescription;                 print "</td>\n";
      print "<td align=right>\n";  &SessionDateTimePullDown;            print "</td>\n";
     print "</tr>\n";
 
-    print "<tr valign=top><td colspan=4><hr width=95%></td>\n";
+    print "<tr valign=top class=\"$RowClass\"><td colspan=4>&nbsp;</td>\n";
     print "</tr>\n";
   }
   print "</table>\n";

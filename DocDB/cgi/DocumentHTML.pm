@@ -39,7 +39,7 @@ sub DocumentTable (%) {
   
 ### Write out the beginning and header of table
 
-  print "<center><table cellpadding=3>\n";
+  print "<center><table cellpadding=3 id=\"DocumentList\" class=\"Alternating\">\n";
 
   print "<tr>\n";
   foreach my $Field (@Fields) {
@@ -76,6 +76,7 @@ sub DocumentTable (%) {
 ### Loop over document IDs
 
   my $NumberOfDocuments = 0;
+  my $RowClass;
   foreach my $DocumentID (@DocumentIDs) {
   
 ### Which version (if any) can they view
@@ -85,8 +86,12 @@ sub DocumentTable (%) {
     ++$NumberOfDocuments;
 
 ### Print fields requested
-    
-    print "<tr>\n";
+    if ($NumberOfDocuments % 2) { 
+      $RowClass = "Odd";
+    } else {
+      $RowClass = "Even";
+    }    
+    print "<tr class=\"$RowClass\">\n";
     foreach my $Field (@Fields) {
       print "<td valign=top>";
       if      ($Field eq "Docid") {    # Document number

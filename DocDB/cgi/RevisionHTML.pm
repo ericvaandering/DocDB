@@ -395,7 +395,7 @@ sub OtherVersionLinks {
   
   unless ($#RevIDs > 0) {return;}
   print "<div id=\"OtherVersions\">\n";
-  print "<b>Previous Versions:</b>\n";
+  print "<b>Other Versions:</b>\n";
   print "<ul>\n";
   
   my $Class = "Odd";
