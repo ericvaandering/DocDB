@@ -39,11 +39,20 @@ sub PrintAbstract {
 sub PrintKeywords {
   my ($Keywords) = @_;
   
+  $Keywords =~ s/^\s+//;
+  $Keywords =~ s/\s+$//;
+  
   if ($Keywords) {
     print "<dl>\n";
     print "<dt><b>Keywords:</b><br>\n";
-    print "<dd>$Keywords<br>\n";
-    print "</dl>\n";
+    print "<dd>\n";
+    my @Keywords = split /\s+/,$Keywords;
+    my $Link;
+    foreach my $Keyword (@Keywords) {
+      $Link = &KeywordLink($Keyword);
+      print "$Link \n";
+    }  
+    print "<br></dl>\n";
   }
 }
 
@@ -226,6 +235,14 @@ sub DocumentLink {
     $ret .= &FullDocumentID."-v$Version";
   }
   $ret .=  "</a>";
+}         
+
+sub KeywordLink {
+  my ($Keyword) = @_;
+  my $ret = "<a href=\"$Search\?innerlogic=AND&outerlogic=AND&keywordsearchmode=anysub&keywordsearch=$Keyword\">";
+  $ret .= "$Keyword";
+  $ret .=  "</a>";
+  return $ret;
 }         
 
 sub ModTimes {
