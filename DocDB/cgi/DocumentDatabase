@@ -46,8 +46,9 @@ print $query -> endform;
 
 
 print "<li>"; 
-print "List documents by ";
-print "<a href=\"$ListAuthors\">author</a>, ";
+print "List ";
+print "documents <a href=\"$LastModified?days=5\">modified in the last five days</a>, ";
+print "by <a href=\"$ListAuthors\">author</a>, ";
 print "<a href=\"$ListTopics\">topic</a>, ";
 print "<a href=\"$ListTypes\">type</a>, ";
 print "or <a href=\"$ListDocuments\">all documents</a>. ";
