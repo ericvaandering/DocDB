@@ -2,7 +2,7 @@
 #
 # Host: vchipp.phy.vanderbilt.edu    Database: BTeVDocTest
 #--------------------------------------------------------
-# Server version	3.23.32
+# Server version	3.23.32-log
 
 #
 # Table structure for table 'Author'
@@ -15,8 +15,26 @@ CREATE TABLE Author (
   LastName varchar(32) default NULL,
   InstitutionID int(11) default NULL,
   Active int(11) default '1',
-  PRIMARY KEY (AuthorID)
+  Timestamp timestamp(14) NOT NULL,
+  PRIMARY KEY (AuthorID),
+  KEY Name(LastName)
 ) TYPE=MyISAM;
+
+#
+# Dumping data for table 'Author'
+#
+
+INSERT INTO Author VALUES (1,'Eric','W.','Vaandering',2,1,20011205173408);
+INSERT INTO Author VALUES (2,'Kevin','M.','Stenson',2,1,20011205173408);
+INSERT INTO Author VALUES (3,'Joel','N.','Butler',1,1,20011205173408);
+INSERT INTO Author VALUES (4,'Harry','W. K.','Cheung',1,1,20011205173408);
+INSERT INTO Author VALUES (5,'Lynn','A.','Garren',1,1,20011205173408);
+INSERT INTO Author VALUES (6,'Sheldon','','Stone',3,1,20011205173408);
+INSERT INTO Author VALUES (7,'Deadbeat','','Collaborator',1,0,20011205173408);
+INSERT INTO Author VALUES (8,'Paul','D.','Sheldon',2,1,20011205173408);
+INSERT INTO Author VALUES (9,'Medford','S.','Webster',2,1,20011205173408);
+INSERT INTO Author VALUES (10,'Rob','','Kutschke',1,1,20011205173408);
+INSERT INTO Author VALUES (11,'Will','E.','Johns',2,1,20011207103019);
 
 #
 # Table structure for table 'Document'
@@ -28,8 +46,14 @@ CREATE TABLE Document (
   RequestDate datetime default NULL,
   DocumentType varchar(16) default NULL,
   TimeStamp timestamp(14) NOT NULL,
-  PRIMARY KEY (DocumentID)
+  PRIMARY KEY (DocumentID),
+  KEY Requester(RequesterID)
 ) TYPE=MyISAM;
+
+#
+# Dumping data for table 'Document'
+#
+
 
 #
 # Table structure for table 'DocumentFile'
@@ -42,9 +66,15 @@ CREATE TABLE DocumentFile (
   Date datetime default NULL,
   RootFile tinyint(4) default NULL,
   TimeStamp timestamp(14) NOT NULL,
+  Description varchar(128) default NULL,
   PRIMARY KEY (DocFileID),
   KEY DocRevID(DocRevID)
 ) TYPE=MyISAM;
+
+#
+# Dumping data for table 'DocumentFile'
+#
+
 
 #
 # Table structure for table 'DocumentRevision'
@@ -59,8 +89,8 @@ CREATE TABLE DocumentRevision (
   VersionNumber int(11) default NULL,
   Abstract text,
   RevisionDate datetime default NULL,
-  Security set('BTeV','Executive','RTES') default NULL,
   TimeStamp timestamp(14) NOT NULL,
+  Obsolete tinyint(4) default '0',
   PRIMARY KEY (DocRevID),
   KEY DocumentID(DocumentID),
   KEY DocumentTitle(DocumentTitle),
@@ -68,15 +98,100 @@ CREATE TABLE DocumentRevision (
 ) TYPE=MyISAM;
 
 #
-# Table structure for table 'DocumentType'
+# Dumping data for table 'DocumentRevision'
 #
 
-CREATE TABLE DocumentType (
-  DocTypeID int(11) NOT NULL auto_increment,
-  ShortType varchar(32) default NULL,
-  LongType varchar(255) default NULL,
-  PRIMARY KEY (DocTypeID)
+#
+# Table structure for table 'GroupHierarchy'
+#
+
+CREATE TABLE GroupHierarchy (
+  HierarchyID int(11) NOT NULL auto_increment,
+  ChildID int(11) default NULL,
+  ParentID int(11) default NULL,
+  Timestamp timestamp(14) NOT NULL,
+  PRIMARY KEY (HierarchyID)
 ) TYPE=MyISAM;
+
+#
+# Dumping data for table 'GroupHierarchy'
+#
+
+INSERT INTO GroupHierarchy VALUES (3,2,4,20011206164038);
+INSERT INTO GroupHierarchy VALUES (2,1,4,20011206163729);
+INSERT INTO GroupHierarchy VALUES (4,3,4,20011206164040);
+INSERT INTO GroupHierarchy VALUES (5,1,2,20011206164111);
+INSERT INTO GroupHierarchy VALUES (6,3,2,20011206164122);
+INSERT INTO GroupHierarchy VALUES (7,3,1,20011206164127);
+
+#
+# Table structure for table 'GroupTopic'
+#
+
+CREATE TABLE GroupTopic (
+  GroupTopicID int(11) NOT NULL auto_increment,
+  GroupID int(11) default NULL,
+  MajorTopicID int(11) default NULL,
+  Timestamp timestamp(14) NOT NULL,
+  PRIMARY KEY (GroupTopicID)
+) TYPE=MyISAM;
+
+#
+# Dumping data for table 'GroupTopic'
+#
+
+
+#
+# Table structure for table 'Institution'
+#
+
+CREATE TABLE Institution (
+  InstitutionID int(11) NOT NULL auto_increment,
+  ShortName varchar(40) default NULL,
+  LongName varchar(80) default NULL,
+  Timestamp timestamp(14) NOT NULL,
+  PRIMARY KEY (InstitutionID)
+) TYPE=MyISAM;
+
+#
+# Dumping data for table 'Institution'
+#
+
+INSERT INTO Institution VALUES (1,'Fermilab','Fermi National Accelerator Laboratory',20011205173606);
+INSERT INTO Institution VALUES (2,'Vanderbilt','Vanderbilt University',20011205173606);
+INSERT INTO Institution VALUES (3,'Syracuse','Syracuse University',20011205173606);
+INSERT INTO Institution VALUES (4,'Belarussian State','Belarussian State University',20011207114429);
+INSERT INTO Institution VALUES (5,'Davis','University of California at Davis',20011207114507);
+INSERT INTO Institution VALUES (6,'Colorado','University of Colorado at Boulder',20011207114521);
+INSERT INTO Institution VALUES (7,'Florida','University of Florida at Gainesville',20011207114548);
+INSERT INTO Institution VALUES (8,'Houston','University of Houston',20011207114600);
+INSERT INTO Institution VALUES (9,'IIT','Illinois Institute of Technology',20011207114631);
+INSERT INTO Institution VALUES (10,'Illinois','University of Illinois',20011207114659);
+INSERT INTO Institution VALUES (11,'Indiana','Indiana University',20011207114718);
+INSERT INTO Institution VALUES (12,'INFN-Frascati','INFN - Laboratori Nazionali di Frascati',20011207114755);
+INSERT INTO Institution VALUES (13,'INFN-Milano','INFN - Milano',20011207114816);
+INSERT INTO Institution VALUES (14,'INFN-Pavia','INFN - Pavia',20011207114824);
+INSERT INTO Institution VALUES (15,'INFN-Torino','INFN - Torino',20011207114835);
+INSERT INTO Institution VALUES (16,'IHEP-Protvino','Institute of High Energy Physics - Protvino',20011207114917);
+INSERT INTO Institution VALUES (17,'Insubria','University of Insubria in Como',20011207114942);
+INSERT INTO Institution VALUES (18,'Iowa','University of Iowa',20011207115009);
+INSERT INTO Institution VALUES (19,'Minnesota','University of Minnesota',20011207115022);
+INSERT INTO Institution VALUES (20,'Nanjing','Nanjing University',20011207115039);
+INSERT INTO Institution VALUES (21,'New Mexico State','New Mexico State University',20011207115114);
+INSERT INTO Institution VALUES (22,'Ohio State','The Ohio State University',20011207115128);
+INSERT INTO Institution VALUES (23,'Pennsylvania','University of Pennsylvania',20011207115147);
+INSERT INTO Institution VALUES (24,'Puerto Rico','University of Puerto Rico, Mayaguez',20011207115223);
+INSERT INTO Institution VALUES (25,'Science and Technology of China','University of Science and Technology of China',20011207115255);
+INSERT INTO Institution VALUES (26,'Shandong','Shandong University, China',20011207115316);
+INSERT INTO Institution VALUES (27,'Southern Methodist','Southern Methodist University',20011207115342);
+INSERT INTO Institution VALUES (28,'SUNY Albany','SUNY Albany',20011207115401);
+INSERT INTO Institution VALUES (29,'Tennessee','University of Tennessee',20011207115424);
+INSERT INTO Institution VALUES (30,'Tufts','Tufts University',20011207115439);
+INSERT INTO Institution VALUES (31,'Virginia','University of Virginia',20011207115531);
+INSERT INTO Institution VALUES (32,'Wayne State','Wayne State University',20011207115546);
+INSERT INTO Institution VALUES (33,'Wisconsin','University of Wisconsin',20011207115600);
+INSERT INTO Institution VALUES (34,'Yale','Yale University',20011207115611);
+INSERT INTO Institution VALUES (35,'York','York University',20011207115617);
 
 #
 # Table structure for table 'MajorTopic'
@@ -86,8 +201,25 @@ CREATE TABLE MajorTopic (
   MajorTopicID int(11) NOT NULL auto_increment,
   ShortDescription varchar(32) default NULL,
   LongDescription text,
+  Restricted int(11) default '0',
+  Suppressed int(11) default '0',
+  Timestamp timestamp(14) NOT NULL,
   PRIMARY KEY (MajorTopicID)
 ) TYPE=MyISAM;
+
+#
+# Dumping data for table 'MajorTopic'
+#
+
+INSERT INTO MajorTopic VALUES (1,'Detectors','Information on sub-detectors',0,0,20011204141840);
+INSERT INTO MajorTopic VALUES (2,'Physics-b','Physics involving b quarks',0,0,20011204175256);
+INSERT INTO MajorTopic VALUES (3,'Physics-c','Physics involving charm quarks',0,0,20011204175302);
+INSERT INTO MajorTopic VALUES (4,'Physics-Other','Other Physics (not b or c)',0,0,20011204175311);
+INSERT INTO MajorTopic VALUES (5,'Computing','Computing and DAQ',0,0,20011204141840);
+INSERT INTO MajorTopic VALUES (6,'Software','Software',0,0,20011204141840);
+INSERT INTO MajorTopic VALUES (7,'Other Topics','Other Topics',0,0,20011204141840);
+INSERT INTO MajorTopic VALUES (8,'Collaboration Meetings','Collaboration Meetings',0,0,20011204141840);
+INSERT INTO MajorTopic VALUES (9,'Other Meetings','Other Meetings',0,0,20011204141840);
 
 #
 # Table structure for table 'MinorTopic'
@@ -98,8 +230,50 @@ CREATE TABLE MinorTopic (
   MajorTopicID int(11) default NULL,
   ShortDescription varchar(32) default NULL,
   LongDescription text,
-  PRIMARY KEY (MinorTopicID)
+  Timestamp timestamp(14) NOT NULL,
+  PRIMARY KEY (MinorTopicID),
+  KEY Major(MajorTopicID)
 ) TYPE=MyISAM;
+
+#
+# Dumping data for table 'MinorTopic'
+#
+
+INSERT INTO MinorTopic VALUES (1,1,'Pixels','Pixel vertex detector',20011205173326);
+INSERT INTO MinorTopic VALUES (2,1,'Straws','Forward straw chambers',20011205173326);
+INSERT INTO MinorTopic VALUES (3,2,'Mixing','B mixing',20011205173326);
+INSERT INTO MinorTopic VALUES (4,2,'Rare B decays','Rare decays of B mesons',20011205173326);
+INSERT INTO MinorTopic VALUES (5,3,'Baryons','Charmed baryons',20011205173326);
+INSERT INTO MinorTopic VALUES (6,3,'Mixing','D Mixing',20011205173326);
+INSERT INTO MinorTopic VALUES (10,1,'EM Cal','Electromagnetic Calorimeter',20011205173326);
+INSERT INTO MinorTopic VALUES (9,1,'RICH','Ring Imaging Cherenkov',20011205173326);
+INSERT INTO MinorTopic VALUES (11,1,'Silicon','Silicon Strip Detector',20011205173326);
+INSERT INTO MinorTopic VALUES (12,1,'Muon','Muon Detector',20011205173326);
+INSERT INTO MinorTopic VALUES (13,1,'CZero','C0 Hall',20011205173326);
+INSERT INTO MinorTopic VALUES (14,2,'CP Violation','CP Violation',20011205173326);
+INSERT INTO MinorTopic VALUES (15,2,'Exotic','Exotic Decays',20011205173326);
+INSERT INTO MinorTopic VALUES (16,2,'Production','Production',20011205173326);
+INSERT INTO MinorTopic VALUES (17,2,'Other','Other Topics',20011205173326);
+INSERT INTO MinorTopic VALUES (18,3,'Other','Other Topics',20011205173326);
+INSERT INTO MinorTopic VALUES (19,3,'Rare Decays','Rare Decays',20011205173326);
+INSERT INTO MinorTopic VALUES (20,3,'Exotic','Exotic Decays',20011205173326);
+INSERT INTO MinorTopic VALUES (21,3,'Production','Production',20011205173326);
+INSERT INTO MinorTopic VALUES (22,3,'CP Violation','CP Violation',20011205173326);
+INSERT INTO MinorTopic VALUES (23,5,'DAQ','Data Acquisition',20011205173326);
+INSERT INTO MinorTopic VALUES (24,5,'Farms','Processing Farms ',20011205173326);
+INSERT INTO MinorTopic VALUES (25,7,'ES&H','Environment, Safety, and Health',20011205173326);
+INSERT INTO MinorTopic VALUES (26,7,'Budgets','Budgets',20011205173326);
+INSERT INTO MinorTopic VALUES (27,7,'Organization','Organization',20011205173326);
+INSERT INTO MinorTopic VALUES (28,7,'WBS','Work Breakdown Structure',20011205173326);
+INSERT INTO MinorTopic VALUES (29,6,'Framework','Software Framework',20011205173326);
+INSERT INTO MinorTopic VALUES (30,8,'17-18 December 2001','17-18 December 2001',20011205173326);
+INSERT INTO MinorTopic VALUES (31,4,'Electroweak','Electroweak',20011205173326);
+INSERT INTO MinorTopic VALUES (32,8,'25-26 January 2002','25-26 January 2002',20011205173326);
+INSERT INTO MinorTopic VALUES (33,8,'1-2 March 2002','1-2 March 2002',20011205173326);
+INSERT INTO MinorTopic VALUES (34,9,'Software workshop, Fall 2001','Software workshop, Fall 2001',20011205173326);
+INSERT INTO MinorTopic VALUES (35,6,'Tools','Software tools',20011205173326);
+INSERT INTO MinorTopic VALUES (36,1,'Other','Discussions of other detectors',20011205173326);
+INSERT INTO MinorTopic VALUES (37,1,'General','Documents regarding the whole BTeV detector',20011207092723);
 
 #
 # Table structure for table 'RevisionAuthor'
@@ -115,6 +289,30 @@ CREATE TABLE RevisionAuthor (
 ) TYPE=MyISAM;
 
 #
+# Dumping data for table 'RevisionAuthor'
+#
+
+
+#
+# Table structure for table 'RevisionSecurity'
+#
+
+CREATE TABLE RevisionSecurity (
+  RevSecurityID int(11) NOT NULL auto_increment,
+  GroupID int(11) default NULL,
+  DocRevID int(11) default NULL,
+  Timestamp timestamp(14) NOT NULL,
+  PRIMARY KEY (RevSecurityID),
+  KEY Grp(GroupID),
+  KEY Revision(DocRevID)
+) TYPE=MyISAM;
+
+#
+# Dumping data for table 'RevisionSecurity'
+#
+
+
+#
 # Table structure for table 'RevisionTopic'
 #
 
@@ -126,4 +324,30 @@ CREATE TABLE RevisionTopic (
   KEY MinorTopicID(MinorTopicID),
   KEY DocRevID(DocRevID)
 ) TYPE=MyISAM;
+
+#
+# Dumping data for table 'RevisionTopic'
+#
+
+
+#
+# Table structure for table 'SecurityGroup'
+#
+
+CREATE TABLE SecurityGroup (
+  GroupID int(11) NOT NULL auto_increment,
+  Name char(16) default NULL,
+  Description char(64) default NULL,
+  Timestamp timestamp(14) NOT NULL,
+  PRIMARY KEY (GroupID)
+) TYPE=MyISAM;
+
+#
+# Dumping data for table 'SecurityGroup'
+#
+
+INSERT INTO SecurityGroup VALUES (1,'BTeV','BTeV Collaboration',20011204144115);
+INSERT INTO SecurityGroup VALUES (2,'Executive','BTeV Executive Council',20011204144130);
+INSERT INTO SecurityGroup VALUES (3,'RTES','Real Time Embedded Systems',20011204144148);
+INSERT INTO SecurityGroup VALUES (4,'DocDBAdm','Document Database Administrators',20011206160459);
 
