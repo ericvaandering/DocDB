@@ -5,12 +5,14 @@
 
 use CGI;
 use DBI;
+use Time::Local;
 
 require "ResponseElements.pm";
 require "MySQLAccess.pm";
 require "DocDBGlobals.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";
+require "WebUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
@@ -52,6 +54,31 @@ my $Endyear    = $params{endyear};
 my $StartDate = "$Startyear-$ReverseAbrvMonth{$Startmonth}-$Startday";
 my $EndDate   = "$Endyear-$ReverseAbrvMonth{$Endmonth}-$Endday";
 
+my $StartTime = timelocal(0,0,0,$Startday,$ReverseAbrvMonth{$Startmonth},$Startyear);
+my $EndTime   = timelocal(0,0,0,$Endday,$ReverseAbrvMonth{$Endmonth},$Endyear);
+
+# Check inputs
+
+unless ($ShortDescription && $LongDescription && $Location && $URL) {
+  push @error_stack,"You must fill in all the fields.";
+}
+
+unless (&ValidURL($URL)) {
+  push @error_stack,"The URL $URL is not valid.";
+}
+
+unless ($EndTime && &ValidDate($Endday,$ReverseAbrvMonth{$Endmonth},$Endyear)) {
+  push @error_stack,"The ending date is not valid.";
+}
+  
+unless ($StartTime && &ValidDate($Startday,$ReverseAbrvMonth{$Startmonth},$Startyear)) {
+  push @error_stack,"The starting date is not valid.";
+}
+
+if ($StartTime > $EndTime) {
+  push @error_stack,"The starting date is after the ending date.";
+}
+  
 if (@error_stack) {
   &EndPage(@error_stack);
 }
@@ -69,6 +96,6 @@ if ($MinorTopicID) {
          problem still exists, contact an administrator.\n"; 
 }
 
-&DocDBNavBar("Add&nbsp;Topic",$TopicAddForm);
+&DocDBNavBar();
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
 

@@ -160,8 +160,11 @@ persons full name, with initials if desired and their institution name.
 #
 pubinfo
 Publication Information
-In this field, include any additional publication information such as FNAL
-pre-print numbers, journal references, etc. This field is optional.
+In this field, include any additional publication information such as FNAL or
+hep-ex pre-print numbers, journal references, etc. This field is optional.
+<p>
+If the document is published in a refereed journal, you should also fill in the
+Reference information below.
 #
 abstract
 Abstract

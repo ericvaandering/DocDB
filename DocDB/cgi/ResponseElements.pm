@@ -55,7 +55,7 @@ sub PrintConfInfo {
   require "TopicHTML.pm";
   &SpecialMajorTopics;
   
-  my @topicIDs = @_;
+  my (@topicIDs) = @_;
   foreach $topicID (@topicIDs) {
     if ($MinorTopics{$topicID}{MAJOR} == $ConferenceMajorID) {
       &FetchConferenceByTopicID($topicID);
@@ -72,8 +72,25 @@ sub PrintConfInfo {
   }
 }
 
+sub PrintReferenceInfo {
+#  require "TopicSQL.pm";
+#  require "TopicHTML.pm";
+  require "MiscSQL.pm";
+  &GetJournals;
+  
+  my ($DocRevID) = @_;
+  if ($DocRevisions{$DocRevID}{JournalID}) {
+    print "<dl>\n";
+    print "<dt><b>Reference:</b> \n";
+    print "<dd>Published in";
+    print " $Journals{$DocRevisions{$DocRevID}{JournalID}}{Abbreviation},";
+    print " vol. $DocRevisions{$DocRevID}{Volume}, ";
+    print " pg. $DocRevisions{$DocRevID}{Page}.</dl>\n";
+  }
+}
+
 sub SecurityListByID {
-  my @GroupIDs = @_;
+  my (@GroupIDs) = @_;
   
   if (@GroupIDs) {
     print "<b>Restricted to:</b><br>\n";
@@ -144,6 +161,7 @@ sub PrintRevisionInfo {
   print "<td colspan=3>"; 
   &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
   &PrintConfInfo(@TopicIDs);
+  &PrintReferenceInfo($DocRevID);
   print "</td></tr>\n";
   if (&CanModify($DocumentID) && !$HideButtons) {
     print "<tr valign=top>";
@@ -332,13 +350,13 @@ sub DocDBNavBar {
   } 
   print "[&nbsp;<a href=\"$MainPage\">DocDB&nbsp;Home</a>&nbsp;]&nbsp;\n";
   unless ($Public) {
-    print "[&nbsp;<a href=\"$DocumentAddForm?mode=add\">New&nbsp;Document</a>&nbsp;]&nbsp;\n";
+    print "[&nbsp;<a href=\"$DocumentAddForm?mode=add\">New</a>&nbsp;]&nbsp;\n";
     print "[&nbsp;<a href=\"$DocumentAddForm\">Reserve</a>&nbsp;]&nbsp;\n";
   }
+  print "[&nbsp;<a href=\"$LastModified?days=$LastDays\">Last&nbsp;$LastDays&nbsp;Days</a>&nbsp;]\n";
   print "[&nbsp;<a href=\"$ListAuthors\">List&nbsp;Authors</a>&nbsp;]\n";
   print "[&nbsp;<a href=\"$ListTopics\">List&nbsp;Topics</a>&nbsp;]\n";
   print "[&nbsp;<a href=\"$ListTypes\">List&nbsp;Types</a>&nbsp;]\n";
-  print "[&nbsp;<a href=\"$LastModified?days=$LastDays\">Last&nbsp;$LastDays&nbsp;Days</a>&nbsp;]\n";
   unless ($Public) {
     print "[&nbsp;<a href=\"$HelpFile\">Help</a>&nbsp;]\n";
   } 

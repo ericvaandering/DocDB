@@ -40,6 +40,9 @@ $Overmonth = $params{overmonth};
 $Overyear  = $params{overyear};
 $Overmin   = $params{overmin};
 $Overhour  = $params{overhour};
+$JournalID = $params{journal};
+$Volume    = $params{volume};
+$Page      = $params{page};
 
 if ($Archive eq "multi") {$Archive = "single";} # No real difference
 
@@ -117,6 +120,14 @@ unless ($params{requester}) {
 unless ($params{title}) {
   push @error_stack,"You must supply a title for this document.";
 }
+
+if ($JournalID || $Volume || $Page) {
+  unless ($JournalID && $Volume && $Page) {
+    push @error_stack,"You must either supply all of the information for a
+    reference or none of it.";
+  }
+}    
+    
 if ($mode eq "add" || $mode eq "reserve") {
   unless ($params{doctype}) {
     push @error_stack,"You must supply a document type for this document.";
@@ -152,7 +163,7 @@ if ($mode eq "add" || $mode eq "update") {
     }  
     my @urls = split /\0/,$params{single_http};
     foreach my $url (@urls) {
-      if (&ValidURL($url)) {
+      if (&ValidFileURL($url)) {
         my $command = $Wget.$Authentication.$url;
         my @url_lines = `$command`;
         unless (@url_lines) {
@@ -240,6 +251,14 @@ if ($mode eq "updatedb") { # New Document revision replaces old. Fetch
 $doc_rev_insert -> execute($documentID,$params{requester},$params{title},
                            $params{pubinfo},$version,$params{abstract},$SQL_NOW);
 my $docRevID = $doc_rev_insert -> {mysql_insertid}; # Works with MySQL only
+
+### Add reference information if it exists
+
+if ($JournalID && $Volume && $Page) {
+  my $ReferenceUpdate = $dbh -> prepare(
+     "update DocumentRevision set JournalID=?,Volume=?,Page=? where DocRevID=?");
+  $ReferenceUpdate -> execute($JournalID,$Volume,$Page,$docRevID);
+}  
 
 ### Add to authors, topics and securities
                            

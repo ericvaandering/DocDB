@@ -94,7 +94,7 @@ if ($params{single_http}) {
        You may not add files with the same file name.<br>
        You probably want to <a href=\"$UpdateLink\">update</a> your document, not add files.";
     }  
-    if (&ValidURL($url)) {
+    if (&ValidFileURL($url)) {
       my $command = $Wget.$Authentication.$url;
       my @url_lines = `$command`;  # FIXME: avoid fetching twice 
       unless (@url_lines) {

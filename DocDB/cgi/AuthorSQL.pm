@@ -91,7 +91,7 @@ sub ProcessManualAuthors {
     my $author_list = $dbh -> prepare(
        "select AuthorID from Author where FirstName=? and LastName=?"); 
     my $fuzzy_list = $dbh -> prepare(
-       "select AuthorID from Author where FirstName like ?% and LastName=?"); 
+       "select AuthorID from Author where FirstName like ? and LastName=?"); 
 
 ### Find exact match (initial or full name)
 
@@ -108,7 +108,7 @@ sub ProcessManualAuthors {
     
 ### Match initial if given initial or full name    
     
-    $author_list -> execute($first,$initial);
+    $author_list -> execute($initial,$last);
     $author_list -> bind_columns(undef, \($AuthorID));
     @Matches = ();
     while ($author_list -> fetch) {
@@ -121,8 +121,9 @@ sub ProcessManualAuthors {
     
 ### Match full name if given initial
     
-    $first =~ s/\.//g;                          # Remove dots if any     
-    $fuzzy_list -> execute($first,$first);   
+    $first =~ s/\.//g;    # Remove dots if any  
+    $first .= "%";        # Add SQL wildcard                    
+    $fuzzy_list -> execute($first,$last);   
     $fuzzy_list -> bind_columns(undef, \($AuthorID));
     @Matches = ();
     while ($fuzzy_list -> fetch) {
@@ -135,7 +136,7 @@ sub ProcessManualAuthors {
     
 ### Haven't found a match if we get down here
 
-    push @error_list,"No match was found for the the author $entry. Please go 
+    push @error_stack,"No match was found for the the author $entry. Please go 
                       back and try again.";   
   }
   return @AuthorIDs;

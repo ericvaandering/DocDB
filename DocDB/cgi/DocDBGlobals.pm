@@ -83,6 +83,7 @@ $LastModified       = $cgi_root."LastModified";
 $ListAuthors        = $cgi_root."ListAuthors";
 $ListTopics         = $cgi_root."ListTopics";
 $ListTypes          = $cgi_root."ListTypes";
+$ListMeetings       = $cgi_root."ListMeetings";
 
 $AddFiles           = $cgi_root."AddFiles";
 $AddFilesForm       = $cgi_root."AddFilesForm";

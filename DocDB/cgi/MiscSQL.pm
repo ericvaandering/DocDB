@@ -1,3 +1,22 @@
+sub GetJournals { # Creates/fills a hash $Journals{$JournalID}{} 
+  my ($JournalID,$Acronym,$Abbreviation,$Name,$Publisher,$URL,$Timestamp);                
+  my $JournalQuery  = $dbh -> prepare(
+     "select JournalID,Acronym,Abbreviation,Name,Publisher,URL,Timestamp "
+    ."from Journal");
+  %Journals = ();
+  $JournalQuery -> execute;
+  $JournalQuery -> bind_columns(undef, \($JournalID,$Acronym,$Abbreviation,$Name,$Publisher,$URL,$Timestamp));
+  while ($JournalQuery -> fetch) {
+    $Journals{$JournalID}{JournalID}     = $JournalID;
+    $Journals{$JournalID}{Acronym}       = $Acronym;
+    $Journals{$JournalID}{Abbreviation}  = $Abbreviation;
+    $Journals{$JournalID}{Name}          = $Name;
+    $Journals{$JournalID}{Publisher}     = $Publisher;
+    $Journals{$JournalID}{URL}           = $URL;
+    $Journals{$JournalID}{Timestamp}     = $Timestamp;
+  }
+};
+
 sub GetDocTypes { # Creates/fills a hash $DocumentTypes{$DocTypeID}{} 
   my $doctype_list  = $dbh -> prepare(
      "select DocTypeID,ShortType,LongType from DocumentType");

@@ -64,6 +64,9 @@ print "documents modified in the <a href=\"$LastModified?days=$LastDays\">last $
 print "or by <a href=\"$ListAuthors\">author</a>, ";
 print "<a href=\"$ListTopics\">topic</a>, ";
 print "<a href=\"$ListTypes\">type</a>, ";
+#print "<a href=\"$ListMeetings\">meeting</a>, ";
+print "<a href=\"$ListByTopic?major=Conferences&mode=conference\">conference
+documents</a>, ";
 print "or <a href=\"$ListDocuments\">all documents</a>. ";
 
 print "</ul>\n";

@@ -503,8 +503,37 @@ sub AuthorManual {
   print "<b><a ";
   &HelpLink("authormanual");
   print "Authors:</a></b><br> \n";
-  print $query -> textarea (-name => 'authormanual', -default => $AuthorManDefault,
-                            -columns => 20, -rows => 8);
+  print $query -> textarea (-name    => 'authormanual', 
+                            -default => $AuthorManDefault,
+                            -columns => 20, 
+                            -rows    => 8);
 };
+
+sub ReferenceForm {
+  my @JournalIDs = keys %Journals;
+  my %JournalLabels = ();
+  foreach my $ID (@JournalIDs) {
+    $JournalLabels{$ID} = $Journals{$ID}{Acronym};
+  }
+  @JournalIDs = sort @JournalIDs;  #FIXME Sort by acronym
+  unshift @JournalIDs,0; $JournalLabels{0} = "----"; # Null Journal
+  print "<b><a ";
+  &HelpLink("reference");
+  print "Reference:</a></b><br> \n";
+  print "<b>Journal: </b>\n";
+  print $query -> popup_menu(-name => "journal", -values => \@JournalIDs, 
+                                 -labels => \%JournalLabels,
+                                 -default => $JournalDefault);
+ 
+  print "&nbsp;&nbsp;<b>Volume:</b> \n";
+  print $query -> textfield (-name => 'volume', 
+                             -size => 8, -maxlength => 8, 
+                             -default => $VolumeDefault);
+
+  print "&nbsp;&nbsp;<b>Page:</b> \n";
+  print $query -> textfield (-name => 'page', 
+                             -size => 8, -maxlength => 16, 
+                             -default => $PageDefault);
+}
 
 1;
