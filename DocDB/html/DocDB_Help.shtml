@@ -26,6 +26,12 @@ storing documents in a central location. So, you should never again see a
 broken link while looking for the information you want. This distinction is
 especially important when archive uploads which are discussed later. <p>
 
+While the interface may sometimes look complicated, sometimes options can be
+left blank. Omitting a version number will give you the latest version. Omitting
+the number of files means "one file." We've tried to simplify the use of the
+most common options. Of course, if you have a suggestion on how to make things
+easier, please let us know.
+
 <h3>What is a document?</h3>
 
 This may sound like a stupid question, but it's not. People tend to think of a
@@ -46,7 +52,7 @@ five different situations:
 <li><b>Reserve a document #: </b>You want a number for a document
 you are going to write, but don't have a draft of the document.
 <li><b>New document: </b>You have a new document ready to be put into the
-database that has not been entered before.
+database. This document has not been entered or reserved before.
 <li><b>Update document: </b>You have a new version of a document already in the
 database. You will also be able to change any of the information in the
 database about the document. You must supply a document number to modify.
@@ -55,14 +61,14 @@ information about it has. For example, it's now published so you want to add
 that information. You must supply a document number to modify.
 <li><b>Add files to document:</b> Perhaps you forgot a file initially, or maybe
 now you have a Postscript file to go with the Power Point and PDF files already
-present. Then, you can add a file to an existing version of a document. If the
+present. You can add these files to an existing version of a document. If the
 content has changed at all, you should use the Update, not the Add file, option.
 </ol>
 Select the type of modification appropriate to your situation. 
 
 <h3>Preparing your document for the document database</h3>
 
-If your document just consists of one file, say a PDF, and its on the computer
+If your document just consists of one file, say a PDF, and it is on the computer
 you are using or accessible by the web, you are prepared. Better yet, you will
 probably be able to use one of the shortcuts in the middle of the page. Skip
 ahead to the next section.
@@ -70,19 +76,20 @@ ahead to the next section.
 If your document is in several pieces, say a bunch of HTML files or a
 PowerPoint, a PDF, and a Postscript, you have a decision to make. Do you want
 to specify each file you want to upload or do you want to make everything into
-an archive (like a .tar or .zip file) and upload that? In either case, you'll
-have to use the advanced form at the bottom of the Document Database web page.
-
+an archive (like a .tar or .zip file) and upload that? In either case, you might
+have to use the advanced form in the middle of the Document Database web page.
+(The short cuts allow you to upload multiple files if you don't want to choose
+any other advanced options.)
 <dl>
 <dt><h4>Multiple file uploads</h4>
 
 <dd>In our example of a PowerPoint, a PDF, and a Postscript, this is probably
-the right choice. When you upload things this way, it might be a little bit
-more work, but what the end user will see is usually clearer. To upload your
-file this way, select "Multiple files" under "Upload Type" and type the number
-of files in your document in the box that says "# of files." The pros of using
-this upload method are that you get to describe each of your documents and that
-you don't have to spend time preparing and archive.<p>
+the best choice. When you upload things this way, it might be a little bit more
+work, but what the end user will see is usually clearer. To upload your file
+this way, select "Multiple files" under "Upload Type" and type the number of
+files in your document in the box that says "# of files." The pros of using
+this upload method are that you (optionally) get to describe each of your files
+in the document and that you don't have to spend time preparing an archive.<p>
 
 When using multiple file upload, you should also understand the concept of Main
 and supporting files. Main files are typically the ones you want people to look
@@ -170,8 +177,8 @@ a specific version of a document. The <b>BTeV-doc-XXXX</b> form refers to the
 latest version.
 
 You can also construct URL's that link to your document. The URL is of the form
-http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=XXXX&amp;version=XX.
-As above, you can leave off the &amp;version=XX to refer to the latest version.
+<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=XXXX&amp;version=XX</tt>.
+As above, you can leave off the <tt>&amp;version=XX</tt> to refer to the latest version.
 
 <h3>Getting more help</h3>
 
@@ -181,7 +188,7 @@ explain what is going on.<p>
 
 If you have additional questions, suggestions, or problems with the document
 database, please send e-mail to the <a href="mailto:btev-docdb@fnal.gov">DocDB
-administrators</a>.
+administrators</a>.<p>
 
 For a more technical document on how the database works, see 
 <a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=140">
