@@ -64,7 +64,7 @@ sub MinorTopicLink ($;$) {
   if ($ConferenceID && @MeetingOrderIDs && &CanAccessMeeting($ConferenceID)) {
     $URL = "$DisplayMeeting?conferenceid=$ConferenceID";
   } else {
-    $URL = "$ListByTopic?topicid=$TopicID";
+    $URL = "$ListBy?topicid=$TopicID";
   }  
     
   $link = "<a href=\"$URL\" title=\"$MinorTopics{$TopicID}{LONG}\">";
