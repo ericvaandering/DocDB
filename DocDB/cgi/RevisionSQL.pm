@@ -67,14 +67,14 @@ sub FetchRevisionByDocumentAndDate ($$) {
   my ($DocumentID,$Date) = @_;
   &FetchDocument($DocumentID);
   my $RevisionQuery = $dbh -> prepare(
-    "select MAX(DocRevID) from DocumentRevision ".
-    "where DocumentID=? and RevisionDate<=? and Obsolete=0");
+    "select MAX(VersionNumber) from DocumentRevision ".
+    "where DocumentID=? and RevisionDate<=?");
 
   $Date .= " 23:59:59";
-  $RevisionQuery -> execute($DocumentID,$Date);
-  my ($DocRevID) = $RevisionQuery -> fetchrow_array;
+  $RevisionQuery -> execute($Version,$Date);
+  my ($Version) = $RevisionQuery -> fetchrow_array;
 
-  &FetchDocRevisionByID($DocRevID);
+  my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 
   return $DocRevID;
 }
