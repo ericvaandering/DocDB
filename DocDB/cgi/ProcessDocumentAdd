@@ -161,7 +161,7 @@ if ($mode eq "add" || $mode eq "update") {
   unless ($params{abstract}) {
     push @error_stack,"You must supply an abstract for this document.";
   }
-  unless ($params{single_upload} || $params{single_http}) {
+  unless (grep /\w/,$params{single_upload} || grep /\w/,$params{single_http}) {
     push @error_stack,"You must supply a file for this document.";
     push @error_stack,"If you just want to change information about the
     document, choose `Update DB Info' instead.";
