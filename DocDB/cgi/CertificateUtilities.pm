@@ -40,13 +40,13 @@ sub FetchEmailUserIDByCert (%) {
   # If we do http basic with users, this routine will function with minor modifications
 
   my $EmailUserSelect;
-  if ($Preferences{Security}{Certificates}{UseCN}) {  
+  if ($Preferences{Security}{Certificates}{UseCNOnly}) {  
     if ($IgnoreVerification) {
       $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                       "where EmailAddress=? and Name=?");
+                                       "where Name=?");
     } else {                                   
       $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                       "where Verified=1 and EmailAddress=? and Name=?");
+                                       "where Verified=1 and Name=?");
     }
     $EmailUserSelect -> execute($CertCN);
   } else {
@@ -81,14 +81,21 @@ sub CertificateStatus () {
   my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
   my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
   
-  unless ($CertEmail && $CertCN) {
+  unless (($CertEmail && $CertCN) || ($CertCN && $Preferences{Security}{Certificates}{UseCNOnly}) {
     $CertificateStatus = "nocert";
     return $CertificateStatus;
   } 
     
-  my $EmailUserSelect = $dbh->prepare("select EmailUserID,Verified from EmailUser ".
-                                      "where EmailAddress=? and Name=?");
-  $EmailUserSelect -> execute($CertEmail,$CertCN);
+  my $EmailUserSelect;
+  if ($Preferences{Security}{Certificates}{UseCNOnly}) {  
+    $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
+                                       "where Name=?");
+    $EmailUserSelect -> execute($CertCN);
+  } else {
+    $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
+                                       "where EmailAddress=? and Name=?");
+    $EmailUserSelect -> execute($CertEmail,$CertCN);
+  }                                    
 
   my ($EmailUserID,$Verified) = $EmailUserSelect -> fetchrow_array; 
   
@@ -102,6 +109,10 @@ sub CertificateStatus () {
     return $CertificateStatus;
   } 
   
+  if ($Preferences{Security}{Certificates}{UseCNOnly}) { # Can't do mismatch check
+    $CertificateStatus = "noapp";
+    return $CertificateStatus;
+  } 
    
   my $AddressSelect = $dbh->prepare("select EmailUserID from EmailUser where EmailAddress=?");
      $AddressSelect -> execute($CertEmail);

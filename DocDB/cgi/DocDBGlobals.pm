@@ -76,7 +76,7 @@ $remote_user          =~ tr/[A-Z]/[a-z]/;
 
 # Preferences
 
-$Preferences{Security}{Certificates}{UseCN} = FALSE; # Use CN instead of E (E-mail) to distinguish
+$Preferences{Security}{Certificates}{UseCNOnly} = FALSE; # Use CN instead of E (E-mail) to distinguish
 
 $htaccess             = ".htaccess";
 
