@@ -188,12 +188,17 @@ sub FileUploadBox (%) {
   print "<table cellpadding=3>\n";
   print "<tr><td colspan=2><b><a ";
   
-  my $HelpLink,$HelpText,$FileHelpLink,$FileHelpText,$DescHelpLink,$DescHelpText;
+  my ($HelpLink,$HelpText,$FileHelpLink,$FileHelpText,$DescHelpLink,$DescHelpText);
   if ($Type eq "file") {
     $HelpLink = "fileupload";
     $HelpText = "Local file upload";
     $FileHelpLink = "localfile";
     $FileHelpText = "File";
+  } elsif ($Type eq "http") {
+    $HelpLink = "httpupload";
+    $HelpText = "Upload by HTTP";
+    $FileHelpLink = "remoteurl";
+    $FileHelpText = "URL";
   }
   
   if ($DescOnly) {
@@ -217,7 +222,8 @@ sub FileUploadBox (%) {
     my $MainName    = "main$i";
     my $FileIDName  = "fileid$i";
     my $CopyName    = "copyfile$i";
-    
+    my $URLName     = "url$i";
+   
     my $FileHelp        = &FormElementTitle(-helplink => $FileHelpLink, -helptext => $FileHelpText);
     my $DescriptionHelp = &FormElementTitle(-helplink => $DescHelpLink, -helptext => $DescHelpText);
     my $MainHelp        = &FormElementTitle(-helplink => "main", -helptext => "Main?", -nocolon => true, -nobold => true);
@@ -236,8 +242,13 @@ sub FileUploadBox (%) {
       print "</td>\n";
 
       print "<td>\n";
-      print $query -> filefield(-name      => $ElementName, -size => $FileSize,
-                                -maxlength => $FileMaxSize);
+      if ($Type eq "file") {
+        print $query -> filefield(-name      => $ElementName, -size => $FileSize,
+                                  -maxlength => $FileMaxSize);
+      } elsif ($Type eq "http") {
+        print $query -> textfield(-name      => $URLName, -size => $FileSize, 
+                                  -maxlength => $FileMaxSize);
+      }
       print "</td>\n";
       print "</tr>\n";
     }  
@@ -265,6 +276,16 @@ sub FileUploadBox (%) {
       print "</td></tr>\n";
     }  
     print "<tr><td colspan=3></td></tr>\n";
+  }
+  if ($Type eq "http") {
+    print "<tr><td align=right><b>User:</b></td>\n";
+    print "<td>\n";
+    print $query -> textfield (-name => 'http_user', -size => 20, -maxlength => 40);
+    print "</td><td align=right>\n";
+    print "<b>Password:</b></td>\n";
+    print "<td>\n";
+    print $query -> password_field (-name => 'http_pass', -size => 20, -maxlength => 40);
+    print "</td></tr>\n";
   }
   print "</table>\n";
 }
