@@ -412,7 +412,12 @@ addition, there is a script interface which fetches files. The URL is
 As above, the version number can be left off to get the latest version number.
 The filename can also be left off. If there is only one file marked <q>Main</q>
 that file will be retrieved. If there are more than one, the full document
-information will be shown and the user will have to choose the correct file.
+information will be shown and the user will have to choose the correct file.<p>
+
+For both of these actions, if you want the result to be publically accessible,
+put "public" between "cgi-bin" and "DocDB".  I.e. use
+<tt>http://www-btev.fnal.gov/cgi-bin/public/DocDB/ShowDocument</tt> instead of
+the normal version.
 
 <a name="morehelp">
 <h3>Getting More Help</h3>
