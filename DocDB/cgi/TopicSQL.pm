@@ -96,6 +96,23 @@ sub FetchMinorTopic { # Fetches an MinorTopic by ID, adds to $Topics{$TopicID}{}
   return $MinorTopics{$MinorTopicID}{MINOR};
 }
 
+sub FetchMinorTopicByInfo (%) { # Can eventually add short/long, major topics
+  my %Params = @_;
+  
+  my $Short = $Params{-short}; 
+  
+  my $Select = $dbh -> prepare("select MinorTopicID from MinorTopic where lower(ShortDescription) like lower(?)");
+  $Select -> execute($Short);
+  my ($MinorTopicID) = $Select -> fetchrow_array;
+  
+  if ($MinorTopicID) {
+    &FetchMinorTopic($MinorTopicID);
+  } else {
+    return 0;
+  }  
+  return $MinorTopicID;
+}
+
 sub FetchMajorTopic { # Fetches an MajorTopic by ID, adds to $Topics{$TopicID}{}
   my ($majorTopicID) = @_;
   my ($MajorTopicID,$ShortDescription,$LongDescription);
@@ -234,7 +251,7 @@ sub MajorIsGathering {
 sub InsertTopics (%) {
   my %Params = @_;
   
-  my $DocRevID  =   $Params{-docrevid} || "";   
+  my $DocRevID =   $Params{-docrevid} || "";   
   my @TopicIDs = @{$Params{-topicids}};
 
   my $Count = 0;

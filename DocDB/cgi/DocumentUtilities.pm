@@ -23,6 +23,8 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 sub AddDocument {
+  require "FileUtilities.pm";
+
   require "DocumentSQL.pm";
   require "RevisionSQL.pm";
   require "TopicSQL.pm";

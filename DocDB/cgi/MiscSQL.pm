@@ -7,6 +7,23 @@
 #    Modified: 
 #
 
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 sub GetJournals { # Creates/fills a hash $Journals{$JournalID}{} 
   my ($JournalID,$Acronym,$Abbreviation,$Name,$Publisher,$URL,$TimeStamp);                
   my $JournalQuery  = $dbh -> prepare(
@@ -77,7 +94,7 @@ sub FetchDocType ($) { # Fetches an DocumentType by ID, adds to $DocumentTypes{$
   return $DocumentTypes{$DocTypeID}{SHORT};
 }
 
-sub FetchDocTypeByName ($) { # Fetches an DocumentType by ID, adds to $DocumentTypes{$DocTypeID}{}
+sub FetchDocTypeByName ($) {
   my ($Name) = @_;
   
   my $Select = $dbh -> prepare("select DocTypeID from DocumentType where lower(ShortType) like lower(?)");
