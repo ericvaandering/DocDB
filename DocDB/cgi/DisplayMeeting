@@ -58,35 +58,34 @@ unless ($dbh) {
 }         
 &EndPage(@ErrorStack);
 
+my $DisplayMode = "";
+my $SingleSessionMeeting;
+
 if ($ConferenceID) {
-  unless (&CanAccessMeeting($ConferenceID)) {
-    push @ErrorStack,$Msg_MeetNoAccess;
-  }
-} elsif ($SessionID) {
-  &FetchSessionByID($SessionID);
-  my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
-  unless (&CanAccessMeeting($ConferenceID)) {
-    push @ErrorStack,$Msg_MeetNoAccess;
-  }
-} elsif ($SessionSeparatorID) {
-  &FetchSessionSeparatorByID($SessionSeparatorID);
-  my $ConferenceID = $SessionSeparators{$SessionSeparatorID}{ConferenceID};
-  unless (&CanAccessMeeting($ConferenceID)) {
-    push @ErrorStack,$Msg_MeetNoAccess;
-  }
-}
-&EndPage(@ErrorStack);
-  
-if ($ConferenceID) { 
+  $DisplayMode = "Conference";
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
   if ($#MeetingOrderIDs == 0) { # If just one session, switch to session mode
+    $SingleSessionMeeting = 1
     $MeetingOrderID = pop @MeetingOrderIDs;
     $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
   }
+} elsif ($SessionID) {
+  $DisplayMode = "Session";
+  &FetchSessionByID($SessionID);
+  $ConferenceID = $Sessions{$SessionID}{ConferenceID};
+} elsif ($SessionSeparatorID) {
+  $DisplayMode = "Separator";
+  &FetchSessionSeparatorByID($SessionSeparatorID);
+  $ConferenceID = $SessionSeparators{$SessionSeparatorID}{ConferenceID};
 }
 
-if ($SessionID) { # Display a single session
+unless (&CanAccessMeeting($ConferenceID)) {
+  push @ErrorStack,$Msg_MeetNoAccess;
+}
+&EndPage(@ErrorStack);
+  
+if ($DisplayMode eq "Session") { # Display a single session
   &ReHintTalksBySessionID($SessionID); 
   &ClearSessionTalks();
 
@@ -96,24 +95,19 @@ if ($SessionID) { # Display a single session
   &PrintMeetingInfo($ConferenceID);
   &PrintSession($SessionID,true); 
   &PrintMeetingEpilogue($ConferenceID);
-} elsif ($SessionSeparatorID) { # Display a single break (never called)
+} elsif ($DisplayMode eq "Separator") { # Display a single break (never called)
   &FetchSessionSeparatorByID($SessionSeparatorID);
   &FetchConferenceByConferenceID($SessionSeparators{$SessionSeparatorID}{ConferenceID});
   &PrintMeetingInfo($Sessions{$SessionID}{ConferenceID});
   &PrintSessionSeparator($SessionSeparatorID);
   &PrintMeetingEpilogue($Sessions{$SessionID}{ConferenceID});
-} elsif ($ConferenceID) { # Display meeting info or meeting with all talks
+} elsif ($DisplayMode eq "Conference") { # Display meeting info or meeting with all talks
 
   &FetchConferenceByConferenceID($ConferenceID);
     
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
 
-  my $SingleSessionMeeting = 0;
-  if ($#MeetingOrderIDs == 0) {
-    $SingleSessionMeeting = 1;
-  }
-  
   if ($SingleSessionMeeting) {
     &PrintMeetingInfo($ConferenceID,0);
   } else {  
@@ -156,7 +150,7 @@ if ($SessionID) { # Display a single session
   
 # If a topic-based meeting, display talks not associated with sessions  
 
-  if ($params{conferenceid} && $Conferences{$ConferenceID}{Minor}) {
+  if ($Conferences{$ConferenceID}{Minor}) {
     require "RevisionSQL.pm";
     require "DocumentSQL.pm";
     
