@@ -1,7 +1,7 @@
 #! /usr/bin/perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
-#
+# Author: Eric Vaandering (ewv@fnal.gov)
+# Date:   2001-11-06
 # 
 #
 #@doc_types  = ["Talk","Proceeding","Publication","Note","Minutes","Figure/Photo"]; 
