@@ -31,8 +31,9 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
 
 ### Edit the first line if you have a different admin account
 
-  my $ConferenceAdd  = $dbh -> prepare("alter table Conference add IntroText text"); 
+  my $ConferenceAdd  = $dbh -> prepare("alter table Conference add Preamble text"); 
   my $ConferenceAdd2 = $dbh -> prepare("alter table Conference add Title varchar(128)"); 
+  my $ConferenceAdd3 = $dbh -> prepare("alter table Conference add Epilog text"); 
 
   my $SessSepCreate = $dbh -> prepare("create table SessionSeparator ".
                    "(SessionSeparatorID integer auto_increment primary key,".
@@ -82,6 +83,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
   
   $ConferenceAdd    -> execute();
   $ConferenceAdd2   -> execute();
+  $ConferenceAdd3   -> execute();
   $SessSepCreate    -> execute();
   $MeetOrdCreate    -> execute();
   $SessionCreate    -> execute();
