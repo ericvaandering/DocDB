@@ -92,6 +92,11 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                    " ConferenceID integer, GroupID integer, TimeStamp timestamp,".
                    " index(ConferenceID))"); 
   
+  my $MeetModifyCreate = $dbh -> prepare("create table MeetingModify ".
+                   "(MeetingModifyID integer auto_increment primary key,".
+                   " ConferenceID integer, GroupID integer, TimeStamp timestamp,".
+                   " index(ConferenceID))"); 
+  
   $ConferenceAdd      -> execute();
   $ConferenceAdd2     -> execute();
   $ConferenceAdd3     -> execute();
@@ -107,6 +112,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
   $AuthorHintCreate   -> execute();
   $TopicHintCreate    -> execute();
   $MeetSecurityCreate -> execute();
+  $MeetModifyCreate   -> execute();
 }
 
 if ($Action eq "migrate") {
