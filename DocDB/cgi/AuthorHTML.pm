@@ -2,6 +2,9 @@ sub FirstAuthor {
   my ($DocRevID) = @_;
   my $Authors_ref = &GetRevisionAuthors($DocRevID);
   my @AuthorIDs = @{$Authors_ref};
+  
+  unless (@AuthorIDs) {return "None";}
+  
   my $author_link = &AuthorLink($AuthorIDs[0]);
   if ($#AuthorIDs) {$author_link .= " <i>et. al.</i>";}
   return $author_link; 
