@@ -86,7 +86,9 @@ sub GetRevisionTopics {
   $topic_list -> execute($DocRevID);
   $topic_list -> bind_columns(undef, \($RevTopicID,$MinorTopicID));
   while ($topic_list -> fetch) {
-    push @topics,$MinorTopicID;
+    if (&FetchMinorTopic($MinorTopicID)) {
+      push @topics,$MinorTopicID;
+    }  
   }
   @topics = &Unique(@topics);
   return @topics;
