@@ -37,12 +37,17 @@ require "Debug.pm";
 
 ($Mode,@Words) = @ARGV;
 
+my $HTMethod = "and";
+if ($Mode eq "anysub" || $Mode eq "anyword") {
+  $HTMethod = "or";
+}  
+
 $Words = join '+',@Words; # May not even be necessary
 
 # Build parameters for htdig. Change matches/page, since we only get one page. 
 # Restrict to $web_root so the only matches are to DocDB documents.
 
-$HTPhrase = "\"matchesperpage=500&restrict=$web_root&format=builtin-short&words=$Words\"";
+$HTPhrase = "\"matchesperpage=500&method=$HTMethod&restrict=$web_root&format=builtin-short&words=$Words\"";
 
 open SEARCH,"$HTSearch $HTPhrase |";
 while ($line = <SEARCH>) {
