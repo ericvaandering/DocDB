@@ -4,8 +4,8 @@
 if (-e "/var/www/cgi-bin/DocDB/DocDBGlobals.pm") {
   use lib "/var/www/cgi-bin/DocDB/";
   use lib ".";
-} elsif (-e "/www/cgi-bin/DocDB/DocDBGlobals.pm") {
-  use lib "/www/cgi-bin/DocDB/";
+} elsif (-e "/www/BTEV/cgi-bin/DocDB/DocDBGlobals.pm") {
+  use lib "/www/BTEV/cgi-bin/DocDB/";
   use lib ".";
 } elsif (-e "../cgi/DocDBGlobals.pm") {
   use lib "../cgi/";

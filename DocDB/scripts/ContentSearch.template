@@ -1,0 +1,63 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+# This routine provides an interface to an external search engine. It is 
+# provided as an example only, since the search engine used will vary. The
+# behavior of the script is to print out document numbers of matching documents
+# one per line to STDOUT. Then the DocDB "Search" program can use the output. 
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+%ENV = (); # Otherwise htsearch thinks it is being called from a form
+$HTSearch = "/www/BTEV/cgi-bin/DocDB/search-test/htsearch"; # Command line version of htsearch
+
+use DBI;
+
+require "CGIInclude.pm";
+
+require "DocDBGlobals.pm";
+require "Debug.pm";
+
+($Mode,@Words) = @ARGV;
+
+$Words = join '+',@Words; # May not even be necessary
+
+# Build parameters for htdig. Change matches/page, since we only get one page. 
+# Restrict to $web_root so the only matches are to DocDB documents.
+
+$HTPhrase = "\"matchesperpage=500&restrict=$web_root&format=builtin-short&words=$Words\"";
+
+open SEARCH,"$HTSearch $HTPhrase |";
+while ($line = <SEARCH>) {
+  if (grep /$web_root/,$line) {
+    @parts = split /\s*\"\s*/,$line;
+    foreach $part (@parts) {
+      if (grep /$web_root/,$part) {
+        ($major,$doc,$ver) = ($part =~ /(\d{4})\/(\d{6})\/(\d{3})\//); # Search for 1234/123456/789, DocDB pattern 
+        if ($doc) {
+          print int($doc),"\n"; # Print to STDOUT to return to calling program
+        }  
+      } 
+    } 
+  }  
+} 
+close SEARCH; 
+
+exit;
