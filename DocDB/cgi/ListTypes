@@ -23,5 +23,5 @@ print "<h3>Types of Documents:</h3>\n";
 
 &TypesTable;
 
-&DocDBNavBar;
+&DocDBNavBar();
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -24,5 +24,5 @@ print "<h3>All Existing Authors: </h3>\n";
 
 &AuthorsTable;
 
-&DocDBNavBar;
+&DocDBNavBar();
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);

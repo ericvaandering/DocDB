@@ -193,5 +193,5 @@ if      ($mode eq "add") {
 print "</center><p>";
 print $query -> end_multipart_form;
 
-&DocDBNavBar;
+&DocDBNavBar();
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);

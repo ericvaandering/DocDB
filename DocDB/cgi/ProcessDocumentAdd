@@ -104,6 +104,8 @@ my $file_insert = $dbh->prepare(
    "       (DocFileID, DocRevID, FileName, Date, RootFile, Description) ".
    "values (0,         ?,        ?,        ?,    ?       , ?)");
 
+# FIXME: Build links for other document actions to use below
+
 ### Check parameters for errors
 
 @error_stack = ();
@@ -132,6 +134,8 @@ if ($mode eq "add" || $mode eq "update") {
   }
   unless ($params{single_upload} || $params{single_http}) {
     push @error_stack,"You must supply a file for this document.";
+    push @error_stack,"If you just want to change information about the
+    document, choose `Update DB Info' instead.";
   }
   if     ($params{single_upload} && $params{single_http}) {
     push @error_stack,"You may not specify both URL and file upload.";
@@ -345,5 +349,5 @@ $EndTime  = new Benchmark;
 $TimeDiff = timediff($EndTime,$StartTime);
 print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
 
-&DocDBNavBar;
+&DocDBNavBar();
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);

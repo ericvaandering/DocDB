@@ -152,7 +152,7 @@ sub EndPage {
   foreach $message (@errors) {
     print "<dt><b>$message </b>\n";
   }  
-  &DocDBNavBar;
+  &DocDBNavBar();
   &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
   exit;
 }
