@@ -53,7 +53,7 @@ five different situations:
 you are going to write, but don't have a draft of the document.
 <li><b>New document: </b>You have a new document ready to be put into the
 database. This document has not been entered or reserved before.
-<li><b>Update document: </b>You have a new version of a document already in the
+<li><b>Update document: </b>You want to upload a new version of a document that is already in the
 database. You will also be able to change any of the information in the
 database about the document. You must supply a document number to modify.
 <li><b>Update database information: </b>The document hasn't changed, but the
@@ -62,7 +62,7 @@ that information. You must supply a document number to modify.
 <li><b>Add files to document:</b> Perhaps you forgot a file initially, or maybe
 now you have a Postscript file to go with the Power Point and PDF files already
 present. You can add these files to an existing version of a document. If the
-content has changed at all, you should use the Update, not the Add file, option.
+content has changed at all, you should use the Update, not the Add File, option.
 </ol>
 Select the type of modification appropriate to your situation. 
 
@@ -94,8 +94,8 @@ in the document and that you don't have to spend time preparing an archive.<p>
 When using multiple file upload, you should also understand the concept of Main
 and supporting files. Main files are typically the ones you want people to look
 at. As an example, the top file of several linked HTML files is a "Main" file,
-the others are "Other" files. By default, only the first file uploaded is a
-"Main" file. To mark additional files as "Main" check the appropriate boxes.
+the others are "Other" files. By default, all files are "Main" files. To mark
+additional files as "Other" un-check the appropriate boxes.
 
 <dt><h4>Archive uploads</h4>
 
@@ -103,11 +103,11 @@ the others are "Other" files. By default, only the first file uploaded is a
 archive. Currently accepted formats are .tar (Unix tape archives), .tar.gz/.tgz
 (compressed .tar files), and .zip (Windows ZIP files). To use this option,
 select "Archive Upload" under "Upload Type." When you upload your archive you
-will be asked for two pieces of information. You will be asked for the filename
-of the main file in the archive and to describe that file. Through that one
-file, the user should be able to access the other files. For this reason, this
-uploaded file should probably be HTML. The pros of this method are that
-you don't have to describe or enter every file in the form.
+will be asked for two additional pieces of information. You will be asked for
+the filename of the main file in the archive and to describe that file. Through
+that one file, the user should be able to access the other files. For this
+reason, this uploaded file should probably be HTML. The pros of this method are
+that you don't have to describe or enter every file in the form.
 
 When uploading via archive mode, the Main file will be marked as such and the
 entire archive will be marked as an "Other" file.
@@ -117,7 +117,7 @@ entire archive will be marked as an "Other" file.
 
 <dd>Remember that the purpose of the document database is to store your
 <i>complete</i> document. If you have a number of HTML pages all linked
-together, things will appear to "work" just fine if you only upload the first
+together, things may appear to "work" just fine if you only upload the first
 one. There is no mechanism to prevent you from doing this. However, please
 don't do this. Upload all the files so that they <i>all</i> reside on the
 server, including images. To
@@ -184,9 +184,9 @@ where the X's represent <i>just the numbers</i> of the document and version.
 
 <h3>Getting more help</h3>
 
-You can often get more help when using the entry form and the advanced form on
-the main page by clicking on the terms in the form. A window will pop up to
-explain what is going on.<p>
+You can often get more help when using the entry form or the advanced forms on
+the main page by clicking on the <font color="red">red terms</font> on the
+page. A small window will pop up to explain what is going on.<p>
 
 If you have additional questions, suggestions, or problems with the document
 database, please send e-mail to the <a href="mailto:btev-docdb@fnal.gov">DocDB
