@@ -36,14 +36,19 @@ print $query->header;
 
 $InnerLogic  = $params{innerlogic};
 $OuterLogic  = $params{outerlogic};
-$TitleSearch = $params{titlesearch};
-$TitleSearchMode = $params{titlesearchmode};
-$AbstractSearch = $params{abstractsearch};
+
+$TitleSearch        = $params{titlesearch};
+$TitleSearchMode    = $params{titlesearchmode};
+$AbstractSearch     = $params{abstractsearch};
 $AbstractSearchMode = $params{abstractsearchmode};
-$KeywordSearch = $params{keywordsearch};
-$KeywordSearchMode = $params{keywordsearchmode};
-$PubInfoSearch = $params{pubinfosearch};
-$PubInfoSearchMode = $params{pubinfosearchmode};
+$KeywordSearch      = $params{keywordsearch};
+$KeywordSearchMode  = $params{keywordsearchmode};
+$PubInfoSearch      = $params{pubinfosearch};
+$PubInfoSearchMode  = $params{pubinfosearchmode};
+
+@RequesterSearchIDs = split /\0/,$params{requestersearch};
+@AuthorSearchIDs    = split /\0/,$params{authors};
+
 @MinorSearchIDs = split /\0/,$params{minortopic};
 @MajorSearchIDs = split /\0/,$params{majortopic};
 
@@ -58,6 +63,7 @@ my @TopicDocumentIDs = ();
 
 my $SearchedRevisions;
 my $SearchedTopics;
+my $SearchedAuthors;
 
 unless ($InnerLogic eq "AND" || $InnerLogic eq "OR") {
   push @error_stack,"Inner logic must be either AND or OR.";
@@ -77,7 +83,7 @@ print "<p>\n";
 #print "MAJ: @MajorSearchIDs<br>\n";
 
 
-if ($TitleSearch || $AbstractSearch || $KeywordSearch || $PubInfoSearch) {
+if ($TitleSearch || $AbstractSearch || $KeywordSearch || $PubInfoSearch || @RequesterSearchIDs) {
   $SearchedRevisions = 1;
 ### Text search matches
   my $TitlePhrase    = &TextSearch("DocumentTitle",  $TitleSearchMode,   $TitleSearch);
@@ -85,19 +91,24 @@ if ($TitleSearch || $AbstractSearch || $KeywordSearch || $PubInfoSearch) {
   my $KeywordPhrase  = &TextSearch("Keywords",       $KeywordSearchMode, $KeywordSearch);
   my $PubInfoPhrase  = &TextSearch("PublicationInfo",$PubInfoSearchMode, $PubInfoSearch);
 
+### Other matches
+
+  my $RequesterPhrase = &IDSearch("DocumentRevision","SubmitterID","OR",@RequesterSearchIDs);
+
 ### Get Documents from DocumentRevision that match
 
   my @RevisionPhrases = ();
   my $RevisionQuery   = "select DocumentID from DocumentRevision where Obsolete=0 and ";
 
-  if ($TitlePhrase   ) {push @RevisionPhrases,$TitlePhrase   ;}
-  if ($AbstractPhrase) {push @RevisionPhrases,$AbstractPhrase;}
-  if ($KeywordPhrase ) {push @RevisionPhrases,$KeywordPhrase ;}
-  if ($PubInfoPhrase ) {push @RevisionPhrases,$PubInfoPhrase ;}
+  if ($TitlePhrase    ) {push @RevisionPhrases,$TitlePhrase    ;}
+  if ($AbstractPhrase ) {push @RevisionPhrases,$AbstractPhrase ;}
+  if ($KeywordPhrase  ) {push @RevisionPhrases,$KeywordPhrase  ;}
+  if ($PubInfoPhrase  ) {push @RevisionPhrases,$PubInfoPhrase  ;}
+  if ($RequesterPhrase) {push @RevisionPhrases,$RequesterPhrase;}
 
   $RevisionQuery .= join $OuterLogic,@RevisionPhrases;
 
-#  print "RQ: $RevisionQuery<br>\n";
+  print "RQ: $RevisionQuery<br>\n";
 
   my %RevisionDocumentIDs = ();
 
@@ -125,6 +136,14 @@ if (@MinorSearchIDs || @MajorSearchIDs) {
   @TopicDocumentIDs = &ValidateRevisions(@TopicRevisions);
 }
 
+### Authors (if any)
+
+if (@AuthorSearchIDs) {
+  $SearchedAuthors = 1;
+  @AuthorRevisions = &AuthorSearch($InnerLogic,@AuthorSearchIDs);
+  @AuthorDocumentIDs = &ValidateRevisions(@AuthorRevisions);
+}
+
 
 
 ### Fetch all info for documents that match all criteria
@@ -132,6 +151,7 @@ if (@MinorSearchIDs || @MajorSearchIDs) {
 if ($OuterLogic eq "OR") {
   push @DocumentIDs,@RevisionDocumentIDs;
   push @DocumentIDs,@TopicDocumentIDs;
+  push @DocumentIDs,@AuthorDocumentIDs;
 } elsif ($OuterLogic eq "AND") {
   my %TotalDocumentIDs = ();
   my $TotalSearches    = 0;
@@ -148,6 +168,15 @@ if ($OuterLogic eq "OR") {
       ++$TotalDocumentIDs{$DocID};
     }
   } 
+  if ($SearchedAuthors) {
+    ++$TotalSearches;
+    foreach $DocID (@AuthorDocumentIDs) {
+      ++$TotalDocumentIDs{$DocID};
+    }
+  } 
+
+## Which ones matched everyone
+
   foreach $DocID (keys %TotalDocumentIDs) {
     if ($TotalDocumentIDs{$DocID} == $TotalSearches) {
       push @DocumentIDs,$DocID;

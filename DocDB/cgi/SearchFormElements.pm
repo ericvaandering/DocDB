@@ -122,7 +122,7 @@ sub RequesterSearchBox { # Scrolling selectable list for requester search
     } 
   }  
   print "<b><a ";
-  &HelpLink("requester");
+  &HelpLink("requestersearch");
   print "Requester:</a></b><br> \n";
   print $query -> scrolling_list(-name => "requestersearch", -values => \@ActiveIDs, 
                                  -size => 10, -labels => \%AuthorLabels,                      

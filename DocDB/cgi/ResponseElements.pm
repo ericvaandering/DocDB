@@ -337,7 +337,7 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
       print "<th>Document #</th>\n";
       print "<th>Title</th>\n";
       print "<th>Author</th>\n";
-      print "<th>Last Modified</th>\n";
+      print "<th>Last Updated</th>\n";
     } elsif ($Mode eq "meeting") {
       print "<th>Document #</th>\n";
       print "<th>Title</th>\n";

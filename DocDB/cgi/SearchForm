@@ -76,10 +76,10 @@ print "<tr>\n";
 print "</tr>\n";
 
 
-# print "<tr valign=top>\n";
-#  print "<td>\n"; &RequesterSearchBox; print "</td>\n";
-#  print "<td>\n"; &AuthorSelect;    print "</td>\n";
-# print "</tr>\n";
+ print "<tr valign=top>\n";
+  print "<td>\n"; &RequesterSearchBox; print "</td>\n";
+  print "<td>\n"; &AuthorSelect;    print "</td>\n";
+ print "</tr>\n";
  
 # print "<tr>\n";
 #
