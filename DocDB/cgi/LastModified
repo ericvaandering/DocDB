@@ -48,7 +48,7 @@ print "<center><h4>These documents have been modified in the last
 
 my $revision_list = $dbh -> prepare(
    "select DocRevID from DocumentRevision 
-    where TO_DAYS(NOW())-TO_DAYS(Timestamp)<=?"); 
+    where TO_DAYS(NOW())-TO_DAYS(TimeStamp)<=?"); 
 
 my $document_list = $dbh -> prepare(
    "select DocumentID from DocumentRevision where DocRevID=?"); 

@@ -12,15 +12,11 @@ if (-e "/www/cgi-bin/DocDB/DocDBGlobals.pm") {
 
 $Public = 1; # (Absolute flag)
 
-$db_name   = "BTeVDocDB";
-$db_host   = "fnsimu1.fnal.gov";
 $db_rwuser = "";
 $db_rwpass = "";
-$db_rouser = "docdbro";
-$db_ropass = "abg3n1x";
 
 $script_root = "/www/cgi-bin/public/DocDB/"; 
-$cgi_root    = "http://www-btev.fnal.gov/cgi-bin/public/DocDB/";
+$cgi_root    = "http://btevsrv1.fnal.gov/cgi-bin/public/DocDB/";
 
 $remote_user = ""; 
 $AuthUserFile     = "";
