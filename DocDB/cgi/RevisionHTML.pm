@@ -72,6 +72,34 @@ sub RevisionNoteBox {
                             -columns => 60, -rows => 6);
 };
 
+sub DocTypeButtons (%) {
+# FIXME Get rid of fetches, make sure GetDocTypes is executed
+  my (%Params) = @_; 
+  
+  my $Required   = $Params{-required}   || 0;
+
+  my ($DocTypeID,$ShortType,$LongType);
+  my $doctype_list  = $dbh->prepare("select DocTypeID,ShortType,LongType from DocumentType");
+  $doctype_list -> execute;
+  $doctype_list -> bind_columns(undef, \($DocTypeID,$ShortType,$LongType));
+  while ($doctype_list -> fetch) {
+    $doc_type{$DocTypeID}{SHORT} = $ShortType;
+    $short_type{$DocTypeID}      = $ShortType;
+    $doc_type{$DocTypeID}{LONG}  = $LongType;
+  }
+  @values = keys %short_type;
+  
+  print "<b><a ";
+  &HelpLink("doctype");
+  print "Document type:</a></b>";
+  if ($Required) {
+    print $RequiredMark;
+  }  
+  print "<br> \n";
+  print $query -> radio_group(-columns => 3, -name => "doctype", 
+                              -values => \%short_type, -default => "-");
+};
+
 sub PrintRevisionInfo {
 
   require "FormElements.pm";

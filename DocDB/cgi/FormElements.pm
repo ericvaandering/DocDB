@@ -312,26 +312,6 @@ sub InstitutionSelect ($) { # Scrolling selectable list for institutions
                                  -labels => \%InstLabels,  -size => 10);
 };
 
-sub DocTypeButtons {
-# FIXME Get rid of fetches, make sure GetDocTypes is executed
-  my ($DocTypeID,$ShortType,$LongType);
-  my $doctype_list  = $dbh->prepare("select DocTypeID,ShortType,LongType from DocumentType");
-  $doctype_list -> execute;
-  $doctype_list -> bind_columns(undef, \($DocTypeID,$ShortType,$LongType));
-  while ($doctype_list -> fetch) {
-    $doc_type{$DocTypeID}{SHORT} = $ShortType;
-    $short_type{$DocTypeID}      = $ShortType;
-    $doc_type{$DocTypeID}{LONG}  = $LongType;
-  }
-  @values = keys %short_type;
-  
-  print "<b><a ";
-  &HelpLink("doctype");
-  print "Document type:</a></b><br> \n";
-  print $query -> radio_group(-columns => 3, -name => "doctype", 
-                              -values => \%short_type, -default => "-");
-};
-
 sub NameEntryBox {
   print "<table cellpadding=5><tr valign=top>\n";
   print "<td>\n";
