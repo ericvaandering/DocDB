@@ -24,6 +24,8 @@ sub FirstAuthor {
 sub AuthorListByID {
   my @AuthorIDs = @_;
   
+  require "AuthorSQL.pm";
+  
   if (@AuthorIDs) {
     print "<b>Authors:</b><br/>\n";
     print "<ul>\n";
@@ -40,6 +42,8 @@ sub AuthorListByID {
 
 sub ShortAuthorListByID {
   my @AuthorIDs = @_;
+  
+  require "AuthorSQL.pm";
   
   if (@AuthorIDs) {
     foreach my $AuthorID (@AuthorIDs) {

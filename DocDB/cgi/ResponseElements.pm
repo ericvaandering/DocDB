@@ -442,6 +442,7 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
   require "TopicSQL.pm";
   
   require "Utilities.pm";
+  require "Security.pm";
   
   my ($DocumentID,$Mode,$Version) = @_;
   unless (defined $Version) {$Version = $Documents{$DocumentID}{NVersions}}

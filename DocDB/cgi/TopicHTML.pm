@@ -8,28 +8,34 @@
 #
 
 sub TopicListByID {
-  my @topicIDs = @_;
-  if (@topicIDs) {
-    print "<b>Topics:</b><br>\n";
+  my @TopicIDs = @_;
+  
+  require "TopicSQL.pm";
+  
+  if (@TopicIDs) {
+    print "<b>Topics:</b><br/>\n";
     print "<ul>\n";
-    foreach $topicID (@topicIDs) {
-      &FetchMinorTopic($topicID);
-      my $topic_link = &MinorTopicLink($topicID);
-      print "<li> $topic_link </li>\n";
+    foreach my $TopicID (@TopicIDs) {
+      &FetchMinorTopic($TopicID);
+      my $TopicLink = &MinorTopicLink($TopicID);
+      print "<li>$TopicLink</li>\n";
     }
     print "</ul>\n";
   } else {
-    print "<b>Topics:</b> none<br>\n";
+    print "<b>Topics:</b> none<br/>\n";
   }
 }
 
 sub ShortTopicListByID {
-  my @topicIDs = @_;
-  if (@topicIDs) {
-    foreach $topicID (@topicIDs) {
-      &FetchMinorTopic($topicID);
-      my $topic_link = &MinorTopicLink($topicID);
-      print "$topic_link <br/>\n";
+  my @TopicIDs = @_;
+
+  require "TopicSQL.pm";
+  
+  if (@TopicIDs) {
+    foreach my $TopicID (@TopicIDs) {
+      &FetchMinorTopic($TopicID);
+      my $TopicLink = &MinorTopicLink($TopicID);
+      print "$TopicLink<br/>\n";
     }
   } else {
     print "None<br/>\n";

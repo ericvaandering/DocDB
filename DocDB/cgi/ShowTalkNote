@@ -8,15 +8,31 @@
 #    Modified: 
 
 use CGI;                                                                                      
+use DBI;
 
 require "DocDBGlobals.pm";
+require "Messages.pm";
 
 require "ResponseElements.pm";
 require "DocumentSQL.pm";
 require "RevisionSQL.pm";
 require "TalkSQL.pm";
+require "TalkHintSQL.pm";
+
+$query = new CGI;  
+%params = $query -> Vars;
 
 my $SessionTalkID = $params{sessiontalkid};   # Extract term user wants help for
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+$dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+
+unless ($dbh) {
+  push @ErrorStack,$Msg_NoConnect;
+}         
+&EndPage(@ErrorStack);
 
 # Collect info
 
@@ -43,10 +59,8 @@ if ($Confirmed && $DocumentID) {
  
 # Start page
 
-$query = new CGI;  
 print $query->header;
 print $query->start_html(-title=>"Notes for $BestTitle");
-%params = $query -> Vars;
 
 # Print out info
 
@@ -65,14 +79,15 @@ if ($SessionID) {
   print "<tr><th align=right>Topics:</th><td>\n";
    &ShortTopicListByID(@TopicHintIDs);
    print "</td></tr>\n";
-  print "</table>\n";
+  print "</table><p/>\n";
   if ($DocumentID) {
     if ($Confirmed) {
       print "<b>This talk is a confirmed match with this document:</b>\n";
     } else {
       print "<b>This talk has been matched (but not confirmed) with this document:</b>\n";
     } 
-    print "<center><table cellpadding=3>\n";
+    print "<p/><center><table cellpadding=3>\n";
+    &DocumentSummary(0,"meeting");
     &DocumentSummary($DocumentID,"meeting");
     print "</table></center>\n";
   } else {
