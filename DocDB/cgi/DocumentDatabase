@@ -18,6 +18,8 @@ $query = new CGI;  # Global for subroutines
 print $query->header;
 &BTeVHeader("BTeV Document Database","Document Database");
 
+&HelpPopupScript;
+
 # %params = $query -> Vars;  # No parameters (yet) 
 
 print "<p><center><big><font color=red><b>Testing only! All data may be
