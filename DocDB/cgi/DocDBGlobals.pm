@@ -52,9 +52,13 @@ $HomeMaxDocs       = 50;       # Maximum number of documents on home page
 $MeetingWindow     = 7;        # Days before and after meeting to preselect
 $MeetingFiles      = 3;        # Number of upload boxes on meeting short form
 
-$EnhancedSecurity  = 0;        # Separate lists for view, modify
 $FirstYear         = 2000;     # Earliest year that documents can be created
 
+$EnhancedSecurity   = 0;       # Separate lists for view, modify
+$SuperiorsCanModify = 0;       # In enhanced model, a superior group can modify
+                               # a subordinate groups documents without explicit
+                               # permission
+                               
 # Major topic names for "meetings" and "conferences". Each can be a list
 # The first item in the two lists are accessed by ListMeetings and ListConferences
 

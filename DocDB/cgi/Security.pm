@@ -28,8 +28,8 @@ sub CanAccess { # Can the user access (with current security) this version
   my $access = 0;
 
   foreach my $GroupID (@GroupIDs) { # Check auth. users vs. logged in user
-    $ok_user = $SecurityGroups{$GroupID}{NAME};
-    $ok_user =~ tr/[A-Z]/[a-z]/; 
+    my $ok_user = $SecurityGroups{$GroupID}{NAME};
+       $ok_user =~ tr/[A-Z]/[a-z]/; 
     if ($ok_user eq $remote_user) {
       $access = 1;                           # User checks out
     }  
@@ -46,8 +46,8 @@ sub CanAccess { # Can the user access (with current security) this version
     $Child  =~ tr/[A-Z]/[a-z]/;
     if ($Parent eq $remote_user) {
       foreach my $GroupID (@GroupIDs) { 
-        $ok_user = $SecurityGroups{$GroupID}{NAME};
-        $ok_user =~ tr/[A-Z]/[a-z]/; 
+        my $ok_user = $SecurityGroups{$GroupID}{NAME};
+           $ok_user =~ tr/[A-Z]/[a-z]/; 
         if ($ok_user eq $Child) {
           $access = 1;                           
         }  
@@ -70,15 +70,50 @@ sub CanModify { # Can the user modify (with current security) this document
   unless (defined $Version) { # Last version is default  
     $Version = $Documents{$DocumentID}{NVER};
   }   
-  my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-  my @ModifyGroupIDs = &GetRevisionModifyGroups($DocRevID);
-#  if (@ModifyGroupIDs && $EnhancedSecurity) {
   
-#  } else {
+  # In the enhanced security model, if no one is explictly listed as being 
+  # able to modify the document, then anyone who can view it is allowed to.
+  # This maintains backwards compatibility.
+  
+  if ($EnhancedSecurity) {
+    my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+    my @ModifyGroupIDs = &GetRevisionModifyGroups($DocRevID);
+  } 
+  if (@ModifyGroupIDs && $EnhancedSecurity) {
+    foreach my $GroupID (@ModifyGroupIDs) { # Check auth. users vs. logged in user
+      my $ok_user = $SecurityGroups{$GroupID}{NAME};
+         $ok_user =~ tr/[A-Z]/[a-z]/; 
+      if ($ok_user eq $remote_user) {
+        $CanModify = 1;                           # User checks out
+      }  
+    }
+    
+    if (!$CanModify && $SuperiorsCanModify) { # We don't have a winner yet, but keep checking
+
+# See if current users children can modify this document
+
+      my @HierarchyIDs = keys %GroupsHierarchy;
+      foreach $ID (@HierarchyIDs) {
+        $Parent = $SecurityGroups{$GroupsHierarchy{$ID}{PARENT}}{NAME}; 
+        $Child  = $SecurityGroups{$GroupsHierarchy{$ID}{CHILD}}{NAME}; 
+        $Parent =~ tr/[A-Z]/[a-z]/;
+        $Child  =~ tr/[A-Z]/[a-z]/;
+        if ($Parent eq $remote_user) {
+          foreach my $GroupID (@ModifyGroupIDs) { 
+            my $ok_user = $SecurityGroups{$GroupID}{NAME};
+               $ok_user =~ tr/[A-Z]/[a-z]/; 
+            if ($ok_user eq $Child) {
+              $CanModify = 1;                           
+            }  
+          }
+        }  
+      }
+    }
+  } else {
     my $Access  = &CanAccess($DocumentID,$Version); 
     my $Create  = &CanCreate();
     $CanModify = $Access && $Create;
-#  } 
+  } 
   return $CanModify;
 }
 
