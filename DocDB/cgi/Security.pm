@@ -59,6 +59,7 @@ sub CanAccess { # Can the user access (with current security) this version
 
 # See if current users child groups can access this document
 
+  &GetSecurityGroups(); # Pull out the big guns
   my @HierarchyIDs = keys %GroupsHierarchy;
   foreach my $UserGroupID (@UsersGroupIDs) { # Groups user belongs to
     foreach my $ID (@HierarchyIDs) {         # All Hierarchy entries
@@ -117,6 +118,7 @@ sub CanModify { # Can the user modify (with current security) this document
     }
     
     if (!$CanModify && $SuperiorsCanModify) {    # We don't have a winner yet, but keep checking
+      &GetSecurityGroups(); # Pull out the big guns
       my @HierarchyIDs = keys %GroupsHierarchy;  # See if current users children can modify this document
       foreach my $UserGroupID (@UsersGroupIDs) { # Groups user belongs to
         foreach my $ID (@HierarchyIDs) {         # All Hierarchy entries
