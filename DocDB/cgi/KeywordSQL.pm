@@ -1,7 +1,7 @@
 # FIXME: Get timestamps
 
 sub ClearKeywords {
-  %KeywordListEntries = ();
+  %Keywords = ();
   %FullKeywords       = ();
   %KeywordGroups      = ();
 }
@@ -34,7 +34,7 @@ sub GetKeywordsByKeywordGroupID { # FIXME: Rename GetKeywords by KeywordGroupID
   return @KeywordListIDs;
 };
 
-sub FetchKeyword { # Fetches a Keyword by ID, adds to $KeywordListEntries{$keywordID}{}
+sub FetchKeyword { # Fetches a Keyword by ID, adds to $Keywords{$keywordID}{}
 
   my ($keywordID) = @_;
 
@@ -43,8 +43,8 @@ sub FetchKeyword { # Fetches a Keyword by ID, adds to $KeywordListEntries{$keywo
     "select KeywordID,KeywordGroupID,ShortDescription,LongDescription,TimeStamp ".
     "from Keyword ".
     "where KeywordID=?");
-  if ($KeywordListEntries{$keywordID}{TimeStamp}) { # We already have this one
-    return $KeywordListEntries{$keywordID}{Short};
+  if ($Keywords{$keywordID}{TimeStamp}) { # We already have this one
+    return $Keywords{$keywordID}{Short};
   }
   
   $KeywordFetch -> execute($keywordID);
@@ -52,20 +52,20 @@ sub FetchKeyword { # Fetches a Keyword by ID, adds to $KeywordListEntries{$keywo
 
   if ($KeywordID) {
     &FetchKeywordGroup($KeywordGroupID); # Do we need this?
-    $KeywordListEntries{$KeywordID}{KeywordGroupID} = $KeywordGroupID; # FIXME: Will go away
-    $KeywordListEntries{$KeywordID}{Short}          = $ShortDescription;
-    $KeywordListEntries{$KeywordID}{Long}           = $LongDescription;
-    $KeywordListEntries{$KeywordID}{TimeStamp}      = $TimeStamp;
-    $KeywordListEntries{$KeywordID}{Full}           = $KeywordGroups{$KeywordGroupID}{Short}.":".$ShortDescription;
+    $Keywords{$KeywordID}{KeywordGroupID} = $KeywordGroupID; # FIXME: Will go away
+    $Keywords{$KeywordID}{Short}          = $ShortDescription;
+    $Keywords{$KeywordID}{Long}           = $LongDescription;
+    $Keywords{$KeywordID}{TimeStamp}      = $TimeStamp;
+    $Keywords{$KeywordID}{Full}           = $KeywordGroups{$KeywordGroupID}{Short}.":".$ShortDescription;
 
-    $FullKeywords{$KeywordID} = $KeywordListEntries{$keywordID}{Full};
-    return $KeywordListEntries{$KeywordID}{Short};
+    $FullKeywords{$KeywordID} = $Keywords{$keywordID}{Full};
+    return $Keywords{$KeywordID}{Short};
   } else {
     return "";
   }
 }
 
-sub FetchKeywordGroup { # Fetches a KeywordGroup by ID, adds to $KeywordListEntries{$KeywordID}{}
+sub FetchKeywordGroup { # Fetches a KeywordGroup by ID, adds to $KeywordGroups{$KeywordGroupID}{}
   my ($keywordGroupID) = @_;
 
   my ($KeywordGroupID,$ShortDescription,$LongDescription,$TimeStamp);
