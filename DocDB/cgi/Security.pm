@@ -75,9 +75,10 @@ sub CanModify { # Can the user modify (with current security) this document
   # able to modify the document, then anyone who can view it is allowed to.
   # This maintains backwards compatibility.
   
+  my @ModifyGroupIDs;
   if ($EnhancedSecurity) {
     my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-    my @ModifyGroupIDs = &GetRevisionModifyGroups($DocRevID);
+    @ModifyGroupIDs = &GetRevisionModifyGroups($DocRevID);
   } 
   if (@ModifyGroupIDs && $EnhancedSecurity) {
     foreach my $GroupID (@ModifyGroupIDs) { # Check auth. users vs. logged in user

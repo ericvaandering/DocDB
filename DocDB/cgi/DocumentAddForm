@@ -141,10 +141,8 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
 
 if ($EnhancedSecurity) {
   @ModifyDefaults  = &GetRevisionModifyGroups($DocRevID);
-  print "MDI: ",@ModifyDefaults,"<br>\n";
   unless (@ModifyDefaults) {
     @ModifyDefaults  = @SecurityDefaults;
-    print "MDM: ",@ModifyDefaults,"<br>\n";
   }
   unless (@ModifyDefaults) { # A public doc with no list of who can modify
     $AllCanModifyPublic = 1;

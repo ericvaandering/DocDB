@@ -149,7 +149,26 @@ sub SecurityListByID {
   my (@GroupIDs) = @_;
   
   if (@GroupIDs) {
-    print "<b>Restricted to:</b><br>\n";
+    if ($EnhancedSecurity) {
+      print "<b>Viewable by:</b><br>\n";
+    } else {  
+      print "<b>Restricted to:</b><br>\n";
+    }  
+    print "<ul>\n";
+    foreach $GroupID (@GroupIDs) {
+      print "<li>$SecurityGroups{$GroupID}{NAME}</li>\n";
+    }
+    print "</ul>\n";
+  } else {
+    print "<b>Security:</b> Public document<br>\n";
+  }
+}
+
+sub ModifyListByID {
+  my (@GroupIDs) = @_;
+  
+  if (@GroupIDs) {
+    print "<b>Modifiable by:</b><br>\n";
     print "<ul>\n";
     foreach $GroupID (@GroupIDs) {
       print "<li>$SecurityGroups{$GroupID}{NAME}</li>\n";
@@ -176,7 +195,10 @@ sub PrintRevisionInfo {
   my @AuthorIDs   = &GetRevisionAuthors($DocRevID);
   my @TopicIDs    = &GetRevisionTopics($DocRevID);
   my @GroupIDs    = &GetRevisionSecurityGroups($DocRevID);
- 
+  my @ModifyIDs;
+  if ($EnhancedSecurity) {
+    @ModifyIDs   = &GetRevisionModifyGroups($DocRevID);
+  }
   print "<center><table cellpadding=10 width=95%>\n";
   print "<tr><td colspan=3 align=center>\n";
   &PrintTitle($DocRevisions{$DocRevID}{TITLE});
@@ -199,31 +221,36 @@ sub PrintRevisionInfo {
   print "</table>\n";
   print "<table cellpadding=10 width=95%>\n";
   print "<tr valign=top>";
-  print "<td colspan=2>"; 
+  print "<td>"; 
   &AuthorListByID(@AuthorIDs);
 
-  print "<td colspan=2>"; 
+  print "<td>"; 
   &TopicListByID(@TopicIDs);
 
-  print "<td colspan=2>"; 
+  print "<td>"; 
   &SecurityListByID(@GroupIDs);
-
+  if ($EnhancedSecurity) {
+    print "<td>"; 
+    &ModifyListByID(@ModifyIDs);
+  }
   print "</td></tr>\n";
+  print "</table>\n";
+  print "<table cellpadding=10 width=95%>\n";
   print "<tr valign=top>";
-  print "<td colspan=3>"; 
+  print "<td>"; 
   &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT});
 
-  print "<td rowspan=3 colspan=3>"; 
+  print "<td rowspan=3>"; 
   &FileListByRevID($DocRevID);
 
   print "</td></tr>\n";
 
   print "<tr valign=top>";
-  print "<td colspan=3>"; 
+  print "<td>"; 
   &PrintKeywords($DocRevisions{$DocRevID}{Keywords});
 
   print "<tr valign=top>";
-  print "<td colspan=3>"; 
+  print "<td>"; 
   &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
   &PrintConfInfo(@TopicIDs);
   &PrintReferenceInfo($DocRevID);
