@@ -29,7 +29,13 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 $mode = $params{mode};
 
 print $query->header;
-&BTeVHeader("BTeV Document Reservation Results","Reservation Results"); #FIXME
+if ($mode eq "reserve") {
+  &BTeVHeader("BTeV Document Reservation Results","Document Reservation Results"); 
+} elsif ($mode eq "add") {
+  &BTeVHeader("BTeV Document Addition Results","Document Addition Results"); 
+} elsif ($mode eq "update" || $mode eq "update") {
+  &BTeVHeader("BTeV Document Modification Results","Document Modification Results"); 
+}
 
 ### Pull info out of params into local variables
 
@@ -331,7 +337,7 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
       @long_files   = $query ->  param("single_upload");
       foreach $long_file (@long_files) {
         if ($long_file) {
-          print "Adding file $long_file<br>\n";
+#          print "Adding file $long_file<br>\n"; # FIXME: Maybe useful with NPH
           $short_file = &ProcessUpload($new_dir,$long_file);
         } else {
           $short_file = "";
@@ -341,7 +347,7 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
     } elsif ($params{single_http}) {
       @urls = split /\0/,$params{single_http};
       foreach $url (@urls) {
-        print "Adding URL $url<br>\n";
+#        print "Adding URL $url<br>\n"; # FIXME: Maybe useful with NPH
         $short_file = &ProcessURL($new_dir,$url);
         push @short_files,$short_file;
       }  
@@ -403,9 +409,8 @@ unless ($DocRevID) {
 }
 
 print "You were successful. Your Document ID is <b>$full_docid, version
-       $version</b><br>  Please make a note of the document number as you
-       will need it to update your document.<br> Your entry was created with
-       the following information: <p>\n"; 
+       $version</b>.<br>
+       Your entry was created with the following information: <p><hr><p>\n"; 
 
 &PrintRevisionInfo($DocRevID);
 &OtherVersionLinks($documentID,$version);

@@ -133,7 +133,9 @@ sub SingleUploadBox {
   print "<tr><td colspan=2><b><a ";
   &HelpLink("fileupload");
   print "File upload:</a></b><br></td></tr>\n";
+  my @FileIDs = sort keys %DocFiles;
   for (my $i=1;$i<=$NumberUploads;++$i) {
+    my $FileID = shift @FileIDs;
     print "<tr><td align=right>\n";
     print "<a "; &HelpLink("localfile"); print "<b>File:</b></a>\n";
     print "</td>\n";
@@ -145,7 +147,9 @@ sub SingleUploadBox {
     print "<a "; &HelpLink("description"); print "<b>Description:</b></a>\n";
     print "</td>\n";
     print "<td>\n";
-    print $query -> textfield (-name => 'filedesc', -size => 60, -maxlength => 128);
+    print $query -> textfield (-name => 'filedesc', -size => 60, 
+                               -maxlength => 128,
+                               -default => $DocFiles{$FileID}{DESCRIPTION});
     print $query -> checkbox(-name => "root", -checked => 'checked', 
                              -value => $i, -label => '');
     print "<a "; &HelpLink("main"); print "Main?</a>\n";
