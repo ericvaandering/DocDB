@@ -86,16 +86,12 @@ print "</tr>\n";
 
  print "<tr valign=top>\n";
   print "<td>\n"; &RequesterSearchBox; print "</td>\n";
-  print "<td>\n"; &AuthorSelect;    print "</td>\n";
+  print "<td>\n"; &AuthorSelect;       print "</td>\n";
+  print "<td>\n"; &DocTypeMulti;       print "</td>\n";
  print "</tr>\n";
  
  print "<tr>\n";
-
-  print "<td valign=top>\n";
-  &DocTypeMulti;
-  print "</td>\n";
-
-  print "<td valign=top colspan=2>\n";
+  print "<td valign=top colspan=3>\n";
   print "<dl>\n";
   print "<dt><b><a ";
   &HelpLink("beforeafterdate");
@@ -104,7 +100,6 @@ print "</tr>\n";
   &DateRangePullDown;
   print "</dl>\n";
   print "</td>\n";
-
  print "</tr>\n";
 
  print "<tr valign=bottom>\n";

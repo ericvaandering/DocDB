@@ -324,7 +324,7 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
     @Descriptions = split ("\0",$params{filedesc});
     @Roots = ();
     my @RawRoots = split ("\0",$params{root});
-    foreach my $RawRoot (@RawRoots) {
+    foreach my $RawRoot (@RawRoots) {  # Simulate what I thought was happening
       @Roots[$RawRoot-1] = "on"
     }  
     if ($params{single_upload}) { # Copy file to directory
