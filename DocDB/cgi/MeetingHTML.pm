@@ -374,7 +374,7 @@ sub PrintSession ($) {
       my $SessionTalkID =  $SessionOrders{$SessionOrderID}{SessionTalkID};
 
       if ($SessionTalks{$SessionTalkID}{DocumentID}) { # Talk with DocID (confirmed or not)
-        &PrintSessionTalk($SessionTalkID,$AccumulatedTime);
+        &PrintSessionTalk($SessionTalkID,$AccumulatedTime,$RowClass);
       } else { # Talk where only hints exist
         # FIXME add output for for topic and author hints
         print "<tr valign=\"top\" class=\"$RowClass\">\n";
