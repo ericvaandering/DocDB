@@ -100,6 +100,17 @@ sub ReHintTalksBySessionID ($) {
     &FetchSessionTalkByID($SessionTalkID);
     if ($SessionTalks{$SessionTalkID}{Confirmed}) {next;} # Skip if confirmed
 
+    if ($SessionTalks{$SessionTalkID}{DocumentID}) { # Remove hints to confirmed documents
+      my $DocumentID = $SessionTalks{$SessionTalkID}{DocumentID};
+      foreach my $ConfirmedDocumentID (@ConfirmedDocumentIDs) {
+        if ($DocumentID == $ConfirmedDocumentID) {
+          my $BestDocUpdate = $dbh -> prepare("update SessionTalk set DocumentID=0 where SessionTalkID=?"); 
+          $BestDocUpdate -> execute($SessionTalkID); # Remove hinted DocumentID
+          last;  
+        }
+      }
+    }
+          
     my @TopicHintIDs  = &FetchTopicHintsBySessionTalkID($SessionTalkID);
     my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID); 
     
@@ -149,7 +160,7 @@ sub ReHintTalksBySessionID ($) {
   
     if ($BestDocuments{$SessionTalkID}{Score} > 1) {
       my $BestDocUpdate = $dbh -> prepare("update SessionTalk set DocumentID=? where SessionTalkID=?"); 
-      my $DocumentID    =  $BestDocuments{$SessionTalkID}{DocumentID};
+      my $DocumentID    = $BestDocuments{$SessionTalkID}{DocumentID};
       $BestDocUpdate -> execute($DocumentID,$SessionTalkID); # Update database
     }  
   }
