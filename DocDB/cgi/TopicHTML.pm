@@ -350,7 +350,7 @@ sub FullTopicScroll ($$;@) { # Scrolling selectable list for topics, all info
 
   require "TopicSQL.pm";
   
-  unless (keys %MinorTopics) {
+  unless ($GotAllTopics) {
     &GetTopics;
   }
   

@@ -15,8 +15,9 @@ sub GetTopics {
   my $minor_list   = $dbh->prepare("select MinorTopicID,MajorTopicID,ShortDescription,LongDescription from MinorTopic");
   my $major_list   = $dbh->prepare("select MajorTopicID,ShortDescription,LongDescription from MajorTopic");
 
-  %MinorTopics = ();
-  %MajorTopics = ();
+  %MinorTopics  = ();
+  %MajorTopics  = ();
+  $GotAllTopics = 0;
 
   my ($MinorTopicID,$MajorTopicID,$ShortDescription,$LongDescription);
 
@@ -38,6 +39,7 @@ sub GetTopics {
     $MinorTopics{$MinorTopicID}{LONG}  = $LongDescription;
     $MinorTopics{$MinorTopicID}{Full}  = $MajorTopics{$MajorTopicID}{SHORT}.":".$ShortDescription;
   }
+  $GotAllTopics = 1;
 };
 
 sub GetSubTopics {

@@ -6,6 +6,11 @@
 #    Modified: 
 #
 
+sub ClearSessionTalks {
+  %SessionTalks       = ();
+  $GotAllSessionTalks = 0;
+}
+
 sub FetchSessionTalksBySessionID ($) {
   my ($SessionID) = @_;
   my $SessionTalkID;

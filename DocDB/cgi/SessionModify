@@ -22,6 +22,7 @@ require "Scripts.pm";
 require "TalkHTML.pm";
 require "TalkSQL.pm";
 require "TalkHintsSQL.pm";
+require "TalkHintUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 
@@ -74,9 +75,7 @@ unless ($dbh) {
 &EndPage(@ErrorStack);
 
 if ($Mode eq "modify") {
-# Re-sort talk orders
-
-  my %TalkOrders = ();
+  my %TalkOrders = (); # Re-sort talk orders
   {
     foreach my $TalkOrder (@TalkOrders) {
       $TalkOrders{$TalkOrder} = $TalkOrder;
@@ -179,11 +178,12 @@ if ($Mode eq "modify") {
 
 &EndPage(@ErrorStack);
 
-# Read in Hints (subroutine)
-# Re-hint all talks (subroutine)
+#my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
+
+&ReHintTalks($SessionID); # FIXME: $ConferenceID is 0 for all right now
 
 # Fetch all SessionTalks and TalkSeparators with this SessionID 
-
+&ClearSessionTalks();
 my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
 my @TalkSeparatorIDs = &FetchTalkSeparatorsBySessionID($SessionID);
 my @SessionOrderIDs  = &FetchSessionOrdersBySessionID($SessionID);
