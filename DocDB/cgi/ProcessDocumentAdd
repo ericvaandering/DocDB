@@ -157,6 +157,7 @@ if ($mode eq "add" || $mode eq "update") {
       } else {
         push @error_stack,"The URL <tt>$url</tt> is not well formed. Don't forget ".
                           "http:// on the front and a file name after the last /.";
+                          "  Also, trailing whitespace is not allowed.";
       }
     }  
   }  
