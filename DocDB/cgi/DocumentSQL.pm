@@ -52,14 +52,15 @@ sub GetAllDocuments {
 
 sub FetchDocument {
   my ($DocumentID) = @_;
-  my $DocumentList  = $dbh->prepare(
-     "select DocumentID,RequesterID,RequestDate,DocumentType,TimeStamp ".
-     "from Document where DocumentID=?");
-  my $MaxVersionQuery    = $dbh->prepare("select MAX(VersionNumber) from ".
-                                     "DocumentRevision where DocumentID=?");
-  if ($Documents{$DocumentID}{DOCID} && $Documents{$DocumentID}{NVersions}) { # Already fetched
-    return $Documents{$DocumentID}{DOCID};
+
+  if ($Documents{$DocumentID}{DOCID} && $Documents{$DocumentID}{NVersions}) { 
+    return $DocumentID;  # Already fetched
   }  
+
+  my $DocumentList    = $dbh -> prepare("select DocumentID,RequesterID,RequestDate,DocumentType,TimeStamp ".
+                                        "from Document where DocumentID=?");
+  my $MaxVersionQuery = $dbh -> prepare("select MAX(VersionNumber) from ".
+                                        "DocumentRevision where DocumentID=?");
   $DocumentList -> execute($DocumentID);
   my ($DocumentID,$RequesterID,$RequestDate,$DocumentType,$TimeStamp) = $DocumentList -> fetchrow_array;
   push @DebugStack,"From Database DocID: $DocumentID";
@@ -74,7 +75,7 @@ sub FetchDocument {
 
     $MaxVersionQuery -> execute($DocumentID);
     ($Documents{$DocumentID}{NVersions}) = $MaxVersionQuery -> fetchrow_array;
-    return $Documents{$DocumentID}{DOCID};
+    return $DocumentID;
   } else {
     return 0;
   }  
