@@ -114,8 +114,6 @@ if ($remote_user eq $Administrator) {
 }
 print "<li>Add a  <a href=\"$ConferenceAddForm\">conference</a>\n";
 print "<li>Add an <a href=\"$AuthorAddForm\">author</a>\n";
-print "<li><a href=\"$Statistics\">Statistics</a> on the database\n";
-print "<li><a href=\"$SelectPrefs\">Select preferences</a>\n";
 print "</ul>\n";
 
 print "<p><hr><p>\n";

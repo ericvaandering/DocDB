@@ -31,9 +31,11 @@ if ($Public) {
 
 print "<p><h4>Database options:</h4>\n";
 
+print "<table cellspacing=10><tr><td>\n";
+
 print "<ul>\n";
 unless ($Public) {
-  print "<li><b><a href=\"$ModifyHome\">Create or change</a> documents.</b><p>\n";
+  print "<li><b><a href=\"$ModifyHome\">Create or change</a> documents</b><p>\n";
 }
 unless ($Public) { # FIXME, should be public
   print "<li><b><a href=\"$SearchForm\">Search</a> documents</b><p>\n"; 
@@ -101,7 +103,8 @@ print "<td>\n";
 print "<ul>\n";
 print "<li>modified in the <a href=\"$LastModified?days=$LastDays\">last $LastDays days</a>";
 print "</ul>\n";
-print "</td>";
+
+
 
 # All
 
@@ -135,9 +138,22 @@ print "</td>";
 print "</table><p>\n";
  
 unless ($Public) {
-  print "<li><b>Get <a href=\"$HelpFile\">Database instructions</a></b><p>\n";
 }
 print "</ul>\n";
+print "</td>\n";
+
+print "</td>\n";
+unless ($Public) {
+  print "<td valign=top>\n";
+  print "<ul style=\"line-height:2.0\">\n";
+  print "<li><b><a href=\"$HelpFile\">Get instructions</a></b>\n";
+  print "<li><b><a href=\"$SelectPrefs\">Set preferences</a></b>\n";
+  print "<li><b><a href=\"$Statistics\">Get statistics</a></b>\n";
+  print "</ul>\n";
+
+  print "</td>\n";
+}
+print "</tr></table>\n";
 
 print "<hr><center><h4>Documents modified in the last $HomeLastDays
 days</h4></center>\n";
