@@ -109,16 +109,18 @@ sub DocTypeButtons (%) {
 
 sub PrintRevisionInfo {
   require "FormElements.pm";
+  require "Security.pm";
+
   require "AuthorSQL.pm";
   require "SecuritySQL.pm";
   require "TopicSQL.pm";
-  require "Security.pm";
  
-  require "TopicHTML.pm";
   require "AuthorHTML.pm";
-  require "FileHTML.pm";
   require "DocumentHTML.pm";
+  require "FileHTML.pm";
   require "SecurityHTML.pm";
+  require "TopicHTML.pm";
+  require "XRefHTML.pm";
   
   my ($DocRevID,%Params) = @_;
   
@@ -155,8 +157,6 @@ sub PrintRevisionInfo {
   print "</div>\n";  # DocTitle
   print "</div>\n";  # Header3Col
 
-#  print "<div id=\"Body3Col\">\n";
-
   ### Left Column
 
   print "<div id=\"LeftColumn3Col\">\n";
@@ -189,9 +189,6 @@ sub PrintRevisionInfo {
 
   print "<div id=\"RightColumn3Col\">\n";
   
-  
-#  print "<hr/><p/>\n";
-  
   &SecurityListByID(@GroupIDs);
   &ModifyListByID(@ModifyIDs);
   &OtherVersionLinks($DocumentID,$Version);
@@ -204,6 +201,7 @@ sub PrintRevisionInfo {
   &AuthorListByID(@AuthorIDs);
   &PrintKeywords($DocRevisions{$DocRevID}{Keywords});
   &PrintRevisionNote($DocRevisions{$DocRevID}{Note});
+  &PrintXRefInfo($DocRevID);
   &PrintReferenceInfo($DocRevID);
   &PrintConfInfo(@TopicIDs);
   &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
@@ -214,9 +212,8 @@ sub PrintRevisionInfo {
   }  
 
   print "</div>\n";  # MainColumn3Col
-#  print "</div>\n";  # Body3Col
   
-  print "<div id=\"Footer3Col\">\n";
+  print "<div id=\"Footer3Col\">\n"; # Must have to keep NavBar on true bottom
   print "</div>\n";  # Footer3Col
   print "</div>\n";  # RevisionInfo
 }
@@ -292,7 +289,7 @@ sub PrintReferenceInfo ($) {
     &GetJournals;
     print "<div id=\"ReferenceInfo\">\n";
     print "<dl>\n";
-    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">References:</span></dt>\n";
+    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Journal References:</span></dt>\n";
     foreach my $ReferenceID (@ReferenceIDs) {
       $JournalID = $RevisionReferences{$ReferenceID}{JournalID};
       print "<dd>Published in ";

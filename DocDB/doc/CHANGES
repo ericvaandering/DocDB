@@ -1,3 +1,10 @@
+6.1 
+
+Adds a new field to the document entry and display, cross-references. The user
+can type in a space or comma separated list of document numbers, which are then
+linked to the document display. A list of documents linking to a displayed
+document is also shown.
+
 6.0
 
 This version adds support for client certificates and support for changing the
