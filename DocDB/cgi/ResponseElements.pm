@@ -34,14 +34,15 @@ sub PrintDocNumber { # And type
 }
 
 sub PrintAbstract {
-  my ($abstract) = @_;
+  my ($Abstract) = @_;
   
-  if ($abstract) {
-    $abstract =~ s/\n\n/<p>/g;
-    $abstract =~ s/\n/<br>/g;
+  if ($Abstract) {
+    $Abstract = &URLify($Abstract);
+    $Abstract =~ s/\n\n/<p>/g;
+    $Abstract =~ s/\n/<br>/g;
     print "<dl>\n";
     print "<dt><b>Abstract:</b><br>\n";
-    print "<dd>$abstract<br>\n";
+    print "<dd>$Abstract<br>\n";
     print "</dl>\n";
   } else {
     print "<b>Abstract:</b> none<br>\n";
@@ -69,8 +70,11 @@ sub PrintKeywords {
 }
 
 sub PrintPubInfo {
+  require "Utilities.pm";
+
   my ($pubinfo) = @_;
   if ($pubinfo) {
+    $pubinfo = &URLify($pubinfo);
     $pubinfo =~ s/\n\n/<p>/g;
     $pubinfo =~ s/\n/<br>/g;
     print "<dl>\n";

@@ -9,8 +9,11 @@ sub ReferenceLink ($) {
     my $Page      = $RevisionReferences{$ReferenceID}{Page};
     my $Acronym   = $Journals{$JournalID}{Acronym};
     
-    if ($Acronym eq "PLB")    {
-      ($ReferenceLink,$ReferenceText) = &PLBLink($Acronym,$Volume,$Page);
+    if ($Acronym eq "PRL" || $Acronym eq "PRD")    {
+      ($ReferenceLink,$ReferenceText) = &APSLink($Acronym,$Volume,$Page);
+    }
+    if ($Acronym eq "PLB" || $Acronym eq "NIMA")    {
+      ($ReferenceLink,$ReferenceText) = &NPELink($Acronym,$Volume,$Page);
     }
     if ($Acronym eq "hep-ex" || $Acronym eq "hep-ph" || $Acronym eq "hep-th") {
       ($ReferenceLink,$ReferenceText) = &ArxivLink($Acronym,$Volume,$Page);
@@ -23,13 +26,36 @@ sub ReferenceLink ($) {
   return $ReferenceLink,$ReferenceText;
 }
 
-sub PLBLink ($$$) {
+sub APSLink ($$$) {
+
+#http://link.aps.org/abstract/PRL/V88/E161801
   my ($Acronym,$Volume,$Page) = @_;
 
+#  my %PubNumber       = ();
+#     $PubNumber{PLB}  = "03702693";
+#     $PubNumber{NIMA} = "01689002";
+
   ($Page) = split /\D/,$Page; # Remove any trailing non-digits 
-  $Volume =~ split s/\D//;    # Remove any non-digits 
-  
-  my $ReferenceLink = "http://www.elsevier.com/IVP/03702693/$Volume/$Page/";
+  $Volume =~ s/\D//;    # Remove any non-digits 
+
+  my $ReferenceLink = "http://link.aps.org/abstract/$Acronym/V$Volume/E$Page/";
+  my $ReferenceText = "";
+
+  return $ReferenceLink,$ReferenceText;
+
+}
+
+sub NPELink ($$$) {
+  my ($Acronym,$Volume,$Page) = @_;
+
+  my %PubNumber       = ();
+     $PubNumber{PLB}  = "03702693";
+     $PubNumber{NIMA} = "01689002";
+
+  ($Page) = split /\D/,$Page; # Remove any trailing non-digits 
+  $Volume =~ s/\D//;    # Remove any non-digits 
+
+  my $ReferenceLink = "http://www.elsevier.com/IVP/$PubNumber{$Acronym}/$Volume/$Page/";
   my $ReferenceText = "";
 
   return $ReferenceLink,$ReferenceText;
