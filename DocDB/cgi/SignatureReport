@@ -103,7 +103,7 @@ foreach my $SignoffID (@SignoffIDs) {
     
 my @CurrentDocumentIDs = (@ReadyDocumentIDs ,@NotReadyDocumentIDs,@ApprovedDocumentIDs,@SignedDocumentIDs);
 @OldSignatureDocumentIDs = &RemoveArray(\@DocumentIDs,@CurrentDocumentIDs);
-    
+
 &DebugPage("Have created lists of documents");
 
 if (@ReadyDocumentIDs) {
