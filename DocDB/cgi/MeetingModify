@@ -33,6 +33,8 @@ my $MajorTopic         = $params{majortopic};
 my $Short              = $params{short};
 my $Long               = $params{long};
 
+my $ConferenceID       = $params{conferenceid};
+
 my $StartYear          = $params{startyear};
 my $StartMonth         = $params{startmonth};
 my $StartDay           = $params{startday};
@@ -88,7 +90,14 @@ if ($Mode eq "create") {
 &EndPage(@ErrorStack);
 
 my $MinorTopicID;
-my $ConferenceID;
+
+if ($ConferenceID) {
+  require "MeetingSQL.pm";
+  &GetConferences;
+  $MinorTopicID = $ConferenceForward{$ConferenceID}{MINOR};
+  &FetchSessionsByConferenceID($ConferenceID);
+  &FetchSessionSeparatorsByConferenceID($ConferenceID);
+}     
 
 if ($Mode eq "create" || $Mode eq "modify") {
   if ($MajorTopic && $Mode eq "create") { # FIXME allow for modification here
@@ -222,6 +231,8 @@ if ($Mode eq "create" || $Mode eq "modify") {
 # Print out forms with sessions
 
 print $query -> start_multipart_form('POST',"$MeetingModify");
+$query -> param('mode','modify');
+$query -> param('conferenceid',$ConferenceID);
 print $query -> hidden(-name => 'mode',   -default => 'modify');
 print "<table cellpadding=10 border=1>\n";
 
