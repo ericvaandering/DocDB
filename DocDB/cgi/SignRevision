@@ -1,0 +1,141 @@
+#! /usr/bin/env perl
+#
+# Description: Change preferences for what/when to be notified of document
+#              changes in e-mail.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+use CGI;    
+use DBI;
+                                                  
+require "DocDBGlobals.pm";
+require "HTMLUtilities.pm";
+require "Scripts.pm";
+
+require "ResponseElements.pm";
+
+require "NotificationSQL.pm";
+require "SignoffSQL.pm";
+require "SecuritySQL.pm";
+require "RevisionSQL.pm";
+require "RevisionHTML.pm";
+require "EmailSecurity.pm";
+
+$query = new CGI;  # Global for subroutines
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+@ErrorStack = ();
+
+%params = $query -> Vars;
+
+# Collect parameters
+
+my $Action      = $params{action};
+my $EmailUserID = $params{emailuserid};
+my $SignatureID = $params{signatureid};
+my $Password    = $params{"password-$EmailUserID"};
+
+$Password =~ s/\s+//g;
+
+# Start the page
+   
+print $query->header;
+&DocDBHeader("Document Signature");
+&HelpPopupScript;
+
+&GetSecurityGroups;
+
+
+# Check for valid user
+
+# Fetch mail user by ID, set username, and validate
+# Convoluted just because ValidateEmailUser wants a name, not an ID
+
+&FetchEmailUser($EmailUserID);
+my $UserName = $EmailUser{$EmailUserID}{Username};
+$EmailUserID = 0;
+
+if ($Password) { 
+  $EmailUserID = &ValidateEmailUser($UserName,$Password);
+}  
+
+unless ($EmailUserID) {
+  push @ErrorStack,"The password you entered is invalid.";
+}
+
+# Check Signature Status
+
+&FetchSignature($SignatureID);
+
+unless ($Signatures{$SignatureID}{EmailUserID} == $EmailUserID) {
+  push @ErrorStack,"You are not authorized to sign in this slot.";
+}  
+if ($Action eq "sign" && $Signatures{$SignatureID}{Signed}) {
+  push @ErrorStack,"This signature slot is already signed. You can't sign again.";
+}  
+if ($Action eq "unsign" && !$Signatures{$SignatureID}{Signed}) {
+  push @ErrorStack,"This signature slot is not signed. You can't remove the signature.";
+}  
+if ($Action ne "unsign" && $Action ne "sign") {
+  push @ErrorStack,"The action is not recognized. Must be either sign or unsign.";
+}  
+  
+# Standard warnings/errors on exit
+
+&WarnPage(@WarnStack);
+&EndPage(@ErrorStack);
+
+# Sign or unsign Document
+
+my $SignatureUpdate = $dbh -> prepare("update Signature set Signed=? where SignatureID=?");
+my $SignMessage = "";
+
+if ($Action eq "sign") {
+  $SignatureUpdate -> execute(1,$SignatureID);
+  $SignMessage = "signed";
+} elsif ($Action eq "unsign") {
+  $SignatureUpdate -> execute(0,$SignatureID);
+  $SignMessage = "removed your signature from";
+}
+
+print "<b>You have $SignMessage the document. The new document information is
+          shown below:</b><p/>\n"; 
+print "<hr/>\n"; 
+
+# Get revision number and print updated info
+
+my $SignoffID = $Signatures{$SignatureID}{SignoffID};
+&FetchSignoff($SignoffID);
+
+&ClearSignatures;
+
+my $DocRevID  = $Signoffs{$SignoffID}{DocRevID};
+&PrintRevisionInfo($DocRevID);
+
+# Send E-mail
+
+if ($MailInstalled) {
+  &NotifySignees($DocRevID);
+}
+
+&DocDBNavBar;
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+

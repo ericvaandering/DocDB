@@ -1,0 +1,130 @@
+#! /usr/bin/env perl
+#
+# Description: Create an archive (.zip, .tar, .tar.gz) file of the document 
+#              and redirect the user to download it.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+# FIXME: No links ask for .tar (might change)
+
+use CGI;
+use DBI;
+
+require "DocDBGlobals.pm";
+require "ResponseElements.pm";
+require "SecuritySQL.pm";
+require "DocumentSQL.pm";
+require "FSUtilities.pm";
+require "HTMLUtilities.pm";
+require "Security.pm";
+
+$query = new CGI;  # Global for subroutines
+
+%params = $query -> Vars;
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+my $Type       = $params{type} ;
+my $DocumentID = $params{docid};
+
+unless ($DocumentID) {
+  push @ErrorStack,"You are must supply a document number!";
+}  
+
+unless ($Type eq "zip" || $Type eq "tar.gz" || $Type eq ".tar") {
+  $Type = "tar.gz";
+}  
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+&GetSecurityGroups;
+&FetchDocument($DocumentID);
+
+if (defined $params{version}) { 
+  $Version = $params{version};
+} else {
+  $Version = $Documents{$DocumentID}{NVersions};
+}
+
+unless (&CanAccess($DocumentID,$Version)) {
+  if ($remote_user) {
+    push @ErrorStack,"The $remote_user group is not authorized to view this document (or it does not exist).";
+  } else {
+    push @ErrorStack,"This document is not publicly accessible.";
+  }  
+}  
+
+if (($Type eq "zip" && !$Zip)) {
+  push @ErrorStack,"You asked for a type of archive this system can't produce.";
+}
+
+my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+
+unless ($DocRevID) {
+  push @ErrorStack,"This document does not exist.";
+}
+
+my $URL;       
+my $Status;
+
+unless (@ErrorStack) { 
+  my $Directory = &GetDirectory($DocumentID,$Version);
+  my $URLDir    = &GetURLDir($DocumentID,$Version);
+
+  my $TarFile   = "$Directory/tmp$DocumentID-$Version.tar";
+  my $TgzFile   = "$Directory/tmp$DocumentID-$Version.tgz";
+  my $ZipFile   = "$Directory/tmp$DocumentID-$Version.zip";
+
+  my $ShortFile = "tmp$DocumentID-$Version.$Type";
+
+  my $TmpFile   = "/tmp/$ShortFile";
+  my $File      = "$Directory/$ShortFile";
+     $URL       = "$URLDir/$ShortFile";
+     $Directory =~ s/\/+$//g;
+     
+  unlink $TmpFile;
+  unlink $TarFile;
+  unlink $TgzFile;
+  unlink $ZipFile;
+  unlink $File;
+  
+  if ($Type eq "tar.gz") {
+    if ($GTar) { 
+      $Status = system("$GTar czf $TmpFile $Directory"); 
+    } elsif ($Tar && $GZip) {
+      $Status = system("$Tar cf - $Directory | $GZip > $TmpFile");
+    }
+  } elsif ($Type eq "tar") {
+    $Status = system("$Tar cf $TmpFile $Directory"); 
+  } elsif ($Type eq "zip") {
+    $Status = system("$Zip $TmpFile $Directory/*"); 
+  }  
+  
+  $Status = system("mv $TmpFile $File"); 
+}
+  
+if ($Status) {
+  push @ErrorStack,"There was a problem creating the archive. Please contact an
+                     administrator.";
+}
+
+if (@ErrorStack) {
+  print $query->header;
+} else {
+  print $query -> redirect(-location => $URL, -method => 'GET');
+}
+
+&DocDBHeader("File Retrieve Results"); 
+
+if (@WarnStack) {
+  &WarnPage(@WarnStack);
+  @WarnStack = ();
+}
+if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@ErrorStack);
+}
+
+&DocDBNavBar;
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

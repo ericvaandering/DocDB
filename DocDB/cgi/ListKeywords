@@ -1,0 +1,98 @@
+#! /usr/bin/env perl
+#
+#        Name: ListKeywords
+# Description: Lists the managed keywords. 
+#              In the first mode, links perform a search
+#              In chooser mode, links insert the keyword into the 
+#              form on the calling page
+#
+#      Author: Lynn Garren (garren@fnal.gov)
+#    Modified: Eric Vaandering (ewv@fnal.gov)
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+use CGI;                                                                                      
+use DBI;
+
+require "DocDBGlobals.pm";
+require "KeywordSQL.pm";
+require "ResponseElements.pm";
+require "KeywordHTML.pm";
+require "HTMLUtilities.pm";
+
+require "ProjectMessages.pm";
+
+$query = new CGI;  # Global for subroutines
+%params = $query -> Vars;
+
+my $Mode   = $params{mode}   || "display";
+my $Format = $params{format} || "short"  ;
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+
+print $query->header;
+&DocDBHeader("List of Keywords");
+
+&GetKeywords;
+
+if ($Mode eq "chooser") {
+  require "Scripts.pm";
+  &KeywordInsertScript;
+}
+  
+
+if ($Mode eq "chooser") {
+  print "Click on keywords to insert them into the keyword box on the document form.<p>\n";
+} else {
+  print "<p>\n";
+  print "Please use the following keywords to facilitate searches. Note that
+  spaces are NOT allowed in keywords.  To suggest additional keywords, send mail
+  to an <a href=\"mailto:$DBWebMasterEmail\">adminstrator</a>. The links below
+  will search the database for all instances of a single keyword. Use the
+  <a href=\"$SearchForm\" target=\"_blank\">search form</a>  to do a more
+  complicated search.<p>\n";
+  if ($Format eq "short") {
+    print "A more <a href=\"$ListKeywords?format=long\">detailed listing</a>
+    explains each keyword.\n<p>";
+  } elsif ($Format eq "long") {
+    print "The <a href=\"$ListKeywords?format=short\">abbreviated listing</a>
+    lists all the keywords compactly.\n<p>";
+  }  
+  if ($KeywordAddendumText) {
+    print "$KeywordAddendumText\n";
+  }
+  print "<p>\n";
+  print "<a name=\"KeywordTable\"><h3>Existing Keywords:</h3>\n";
+}
+
+if ($Format eq "short") {
+  &KeywordTable($Mode);
+} elsif ($Format eq "long") {
+  &KeywordDetailedList;
+}
+
+if ($Mode eq "chooser") {
+  print "<center><form>\n";
+
+  print " <input type=\"button\" value=\"Close Window\" onClick=\"window.close()\">\n";
+  print "</form></center>";
+}
+
+&DocDBNavBar();
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

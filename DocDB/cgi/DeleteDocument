@@ -1,0 +1,108 @@
+#! /usr/bin/env perl
+#
+# Description: This script is called by DeleteConfirm to actually delete
+#              the requested document, all associated entries in the DB, 
+#              and the actual files as well. 
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+use CGI;
+use DBI;
+
+require "DocDBGlobals.pm";
+require "ResponseElements.pm";
+require "Security.pm";
+require "FSUtilities.pm";
+require "HTMLUtilities.pm";
+
+$query = new CGI;  # Global for subroutines
+
+%params = $query -> Vars;
+
+$DocumentID = $params{docid};
+$DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
+$DocumentID =~ s/\s+$//;
+
+my $Password      = $params{password};
+my $Username      = $params{admuser};
+
+@ErrorStack = ();
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
+
+unless ($dbh) {
+  push @ErrorStack,"Unable to connect to the database. Check the password.";
+}         
+
+print $query->header;
+&DocDBHeader("Deleting Document $DocumentID");
+
+&EndPage(@ErrorStack);
+
+unless ($DocumentID) {
+  push @ErrorStack,"You are must supply a document number to delete.";
+}  
+unless (&CanAdminister) {
+  push @ErrorStack,"You must be logged in as the adminstrator to delete
+  documents";
+}  
+
+if (@ErrorStack) {
+  &EndPage(@ErrorStack);
+}
+
+# Get directory and pull of version number
+
+$Directory = &GetDirectory($DocumentID);
+chop $Directory;chop $Directory;chop $Directory;chop $Directory; # 3 numbers plus /
+
+my $revision_list   = $dbh -> prepare("select DocRevID from DocumentRevision where DocumentID=?");
+my $document_delete = $dbh -> prepare("delete from Document         where DocumentID=?");
+my $revision_delete = $dbh -> prepare("delete from DocumentRevision where DocumentID=?");
+my $author_delete   = $dbh -> prepare("delete from RevisionAuthor   where DocRevID=?");
+my $topic_delete    = $dbh -> prepare("delete from RevisionTopic    where DocRevID=?");
+my $file_delete     = $dbh -> prepare("delete from DocumentFile     where DocRevID=?");
+my $security_delete = $dbh -> prepare("delete from RevisionSecurity where DocRevID=?");
+
+# Find all revisions associated with document
+
+$revision_list -> execute($DocumentID);
+$revision_list -> bind_columns(undef, \($DocRevID));
+while ($revision_list -> fetch) {
+  $Revision{$DocRevID}{DocRevID}      = $DocRevID;
+}
+
+my @Revisions = keys %Revision;
+unless (@Revisions) {
+  print "Document $DocumentID does not exist.\n";
+  exit;
+}  
+  
+# Delete stuff from files and linking tables  
+  
+foreach $RevisionID (@Revisions) {
+  $author_delete   -> execute($RevisionID);
+  $topic_delete    -> execute($RevisionID);
+  $file_delete     -> execute($RevisionID);
+  $security_delete -> execute($RevisionID);
+}
+
+# Delete revisions and document
+
+$document_delete -> execute($DocumentID);
+$revision_delete -> execute($DocumentID);
+ 
+# Delete stuff from file system
+
+$command = "rm -rf $Directory/*";
+system ($command);
+ 
+print "<b>Document $DocumentID has been deleted.</b><p>";
+
+&DocDBNavBar;
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+
+ 
+exit;

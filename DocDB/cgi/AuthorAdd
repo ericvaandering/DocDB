@@ -1,0 +1,83 @@
+#! /usr/bin/env perl
+#
+# Description: Adds an author into the DB list of authors.  
+#              Called by submission from AddAuthorForm 
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+use CGI;
+use DBI;
+
+require "DocDBGlobals.pm";
+require "ResponseElements.pm";
+require "SecuritySQL.pm";
+require "Security.pm";
+require "HTMLUtilities.pm";
+
+$query = new CGI;  # Global for subroutines
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+
+&GetSecurityGroups;
+
+%params = $query -> Vars;
+
+print $query -> header;
+&DocDBHeader("Author Addition Results");
+
+print "<p><h3>Here are the results of your attempt to add an author
+                to the $Project document database:</h3><p>\n";
+
+@ErrorStack = ();
+
+unless (&CanCreate()) {
+  push @ErrorStack,"You are not allowed to add authors to the DocDB.";
+}
+
+$InstitutionID     = $params{inst};
+$FirstName = $params{first};
+$MiddleInitials  = $params{middle};
+$LastName = $params{lastname};
+  
+if (@ErrorStack) {
+  &EndPage(@ErrorStack);
+}
+
+my $AuthorInsert = $dbh->prepare(
+   "insert into Author ".
+          "(AuthorID, FirstName, MiddleInitials, LastName, InstitutionID,Active) ". 
+   "values (0,        ?,         ?,              ?,        ?,            1)");
+            
+$AuthorInsert -> execute($FirstName,$MiddleInitials,$LastName,$InstitutionID);
+my $AuthorID = $AuthorInsert -> {mysql_insertid}; # Works with MySQL only
+                           
+if ($AuthorID) {
+  print "You were successful. $FirstName $MiddleInitials $LastName has been
+         added as an author.<br>\n"; 
+} else {
+  print "Something went wrong. Make sure you did everything right. If the
+         problem still exists, contact an administrator.\n"; 
+}
+
+&DocDBNavBar("Add&nbsp;Author",$AuthorAddForm);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+

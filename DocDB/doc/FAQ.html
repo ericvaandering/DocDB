@@ -1,0 +1,65 @@
+<title>DocDB FAQ</title>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<center><h1>DocDB FAQ</h1></center>
+<p>
+<ol>
+<li> <a href=#topic>What is the difference between topics and Keywords?</a>
+<li> <a href=#keyword>What is the difference between Keywords and Keyword Groups?</a>
+<li> <a href=#server>Web server configuration?</a>
+</ol>
+<p>
+<a name=topic></a>
+What is the difference between topics and Keywords?
+<p>
+Keywords are intended as a search mechanism across all documents, but may in
+practice apply to only documents within a certain group. Keywords are to
+allow quick searches of the database to obtain all documents that are
+associated with that keyword. Topics are more of an organizational tool. We
+sort the documents into related groups based on their "topic". Both topics
+and keywords can be used to find documents.
+<p>
+<a name=keyword></a>
+What is the difference between Keywords and Keyword Groups?
+<p>
+Keywords can be entered by anyone however, only keywords entered by
+administrators show up in the keyword list.  Sorting can only be done on
+keywords entered by administrators, but keyword searches will yield results
+with keywords entered by users as well as administrators. Keyword groups are
+not valid search terms. They have no meaning except to group similar
+keywords for the user to be able to more easily identify valid keywords.
+<p>
+<a name=server></a>
+Web server configuration?
+<p>
+Basically, the web server executes the DocDB cgi scripts which make calls to
+the MySQL database and place the documents in the appropriate space where
+the web server may access them. The searching is done by the MySQL server.
+The Web server simply reports the results and downloads the actual document
+(compressed) when the user requests it. It does not have to display the
+actual documents. We can simply place the DocDB scripts in a directory in
+the current web site. The web files reside in AFS space, which is our goal
+for the DocDB documents anyway. We would simply need another volume served
+by the existing web server.
+<p>
+
+<!-- begin footer -->
+<hr>
+<h3><a href=DocDB-license.html>DocDB License</a></h3>
+<i><font size="-1">
+<script language="javascript">
+<!-- Hide from browsers that do not understand Javascript
+// print the URL and modification date of this page
+var url = document.location;
+document.write(url)  
+var dt = document.lastModified;
+document.write('<br> Last Modified:')  
+document.write(dt)  
+// end hiding --> 
+</script> 
+<br>
+<A HREF="mailto:btev-docdb@fnal.gov">Document Database Administrators</A> 
+</font></i>
+</body>
+</html>

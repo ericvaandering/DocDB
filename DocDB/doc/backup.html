@@ -1,0 +1,55 @@
+<title>Backup Considerations</title>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<center><h1>Backup Considerations</h1></center>
+<p>
+
+
+13    Appendix G - Backing up the MySQL Database
+
+
+  1.. Log in with your username and password on flxd01.fnal.gov.
+
+
+  2.. cd to /usr/mysqldb/xxx_DocDB, where xxx is your instance of the MySQL
+database.
+
+
+  3.. cd to BACKUP.  The database is dumped daily to this directory.  In
+log.txt, you should see that the old backup from the day before was removed
+and a new one created.???
+
+
+  4.. If the database crashes, you will need to create a new database and
+input the backup file.  To do this, type the following command:
+
+
+Mysql -u docdbadm -p -P 3311 -S /usr/mysqldb/DocDB/mysql.sock5 xxx_DocDB <
+dumpfile.
+
+
+
+Core Servers and Infrastructure (CSI) is backing up the dump file and
+rotates the tapes.
+
+
+<!-- begin footer -->
+<hr>
+<h3><a href=DocDB-license.html>DocDB License</a></h3>
+<i><font size="-1">
+<script language="javascript">
+<!-- Hide from browsers that do not understand Javascript
+// print the URL and modification date of this page
+var url = document.location;
+document.write(url)  
+var dt = document.lastModified;
+document.write('<br> Last Modified:')  
+document.write(dt)  
+// end hiding --> 
+</script> 
+<br>
+<A HREF="mailto:btev-docdb@fnal.gov">Document Database Administrators</A> 
+</font></i>
+</body>
+</html>

@@ -1,0 +1,112 @@
+#! /usr/bin/env perl
+#
+# Description: Script to confirm a match between a talk entered in the agenda 
+#              and a document
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+use CGI;
+use DBI;
+
+require "DocDBGlobals.pm";
+require "Messages.pm";
+
+require "ResponseElements.pm";
+require "SecuritySQL.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
+require "TalkSQL.pm";
+require "MeetingSQL.pm";
+require "MeetingSecurityUtilities.pm";
+
+require "FSUtilities.pm";
+require "HTMLUtilities.pm";
+require "Security.pm";
+require "SQLChecks.pm";
+
+$query = new CGI;  # Global for subroutines
+
+%params = $query -> Vars;
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+$DocumentID    = $params{documentid};
+$SessionTalkID = $params{sessiontalkid};
+
+$DocumentID    =~ s/^\s+//; # Remove leading and trailing spaces
+$DocumentID    =~ s/\s+$//;
+$SessionTalkID =~ s/^\s+//;
+$SessionTalkID =~ s/\s+$//;
+
+unless ($DocumentID) {
+  push @ErrorStack,"You are must supply a document number!";
+}  
+
+unless ($SessionTalkID) {
+  push @ErrorStack,"You are must supply a Session Number!";
+}  
+
+print $query->header;
+print $query->start_html(-title => "Confirming document match");
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+unless ($dbh) {
+  push @ErrorStack,$Msg_NoConnect;
+}      
+&EndPage(@ErrorStack);
+
+&FetchDocument($DocumentID);
+$Version  = $Documents{$DocumentID}{NVersions};
+$DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+unless (&CanModify($DocumentID,$Version)) {
+  push @ErrorStack,$Msg_DocNoAccess;
+}
+
+unless ($DocRevID) { # Probably never executed since CanAccess fails.
+  push @ErrorStack,"This document does not exist.";
+}
+
+&FetchSessionTalkByID($SessionTalkID);
+my $SessionID =  $SessionTalks{$SessionTalkID}{SessionID};
+&FetchSessionByID($SessionID);
+my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
+unless (&CanModifyMeeting($ConferenceID)) {
+  push @ErrorStack,$Msg_MeetNoModify;
+}
+
+&EndPage(@ErrorStack);
+
+my $SessionTalkUpdate = $dbh -> prepare(
+ "update SessionTalk set DocumentID=?, Confirmed=1 where SessionTalkID=?");
+$SessionTalkUpdate -> execute($DocumentID,$SessionTalkID);
+
+
+print "<b>The match has been confirmed.<br>Press the button below to reload the
+original page.</b><p>\n";
+
+print "<center><form>\n";
+print " <input type=\"button\" value=\"Close Window and Reload\" onClick=\"opener.location.reload(1); window.close()\">\n";
+print "</form></center>";
+
+print $query->end_html;     # End page

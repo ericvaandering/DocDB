@@ -1,0 +1,130 @@
+#! /usr/bin/env perl
+#
+# Description: Gather and display aggregate statistics on DocDB
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+
+use CGI;
+use DBI;
+
+require "DocDBGlobals.pm";
+require "DocDBVersion.pm";
+require "HTMLUtilities.pm";
+require "ResponseElements.pm";
+
+$query = new CGI;  # Global for subroutines
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+print $query->header;
+
+&DocDBHeader("$Project DocDB Statistics");
+
+my $NDoc_query = $dbh -> prepare("select COUNT(DocumentID) from Document");
+   $NDoc_query -> execute(); 
+my ($NDocuments) = $NDoc_query -> fetchrow_array;
+
+my $NRev_query = $dbh -> prepare("select COUNT(DocRevID) from DocumentRevision");
+   $NRev_query -> execute(); 
+my ($NRevisions) = $NRev_query -> fetchrow_array;
+
+my $NOKRev_query = $dbh -> prepare("select COUNT(DocRevID) from DocumentRevision where Obsolete=0");
+   $NOKRev_query -> execute(); 
+my ($NOKRevisions) = $NOKRev_query -> fetchrow_array;
+
+my $RevPerDoc = sprintf "%5.2f",$NOKRevisions/$NDocuments;
+
+my $NFile_query = $dbh -> prepare("select COUNT(DocFileID) from DocumentFile");
+   $NFile_query -> execute(); 
+my ($NFiles) = $NFile_query -> fetchrow_array;
+
+my $NOKFile_query = $dbh -> prepare(
+   "select COUNT(DocFileID) from DocumentFile,DocumentRevision".
+   " where DocumentFile.DocRevID=DocumentRevision.DocRevID".
+   " and DocumentRevision.Obsolete=0");
+   $NOKFile_query -> execute(); 
+my ($NOKFiles) = $NOKFile_query -> fetchrow_array;
+
+my $FilePerRev = sprintf "%5.2f",$NOKFiles/$NOKRevisions;
+my $FilePerDoc = sprintf "%5.2f",$NOKFiles/$NDocuments;
+
+print "<p><center><b>This page shows statistics about the Document Database,
+       such as how many Documents, Revisions, and Files are in the DB.</b>
+       </center><p>\n";
+
+print "<table cellpadding=5 align=center>\n";
+print "<tr><th colspan=4><hr></tr>\n";  
+print "<tr><th align=right>Total number of Documents:      <td align=right>$NDocuments</tr>\n";  
+print "<tr><th align=right>Total number of Revisions:<td align=right>$NRevisions\n";  
+print " <th align=right>Number of File Entries:      <td align=right>$NFiles</tr>\n";  
+print "<tr><th align=right>Total Active Revisions:   <td align=right>$NOKRevisions\n";  
+print " <th align=right>Actual number of Files:      <td align=right>$NOKFiles</tr>\n";  
+print "<tr><th align=right>Average Versions per Document:   <td align=right>$RevPerDoc\n";  
+print " <th align=right>Average Files per Revision:   <td align=right>$FilePerRev</tr>\n";  
+print "<tr><td><td><th align=right>Average Files per Document:   <td align=right>$FilePerDoc</tr>\n";  
+
+print "<tr><th colspan=4><hr></th></tr>\n";  
+
+my $NAuth_query = $dbh -> prepare("select COUNT(AuthorID) from Author");
+   $NAuth_query -> execute(); 
+my ($NAuthors) = $NAuth_query -> fetchrow_array;
+
+my $NUniqAuth_query = $dbh -> prepare("select COUNT(DISTINCT(AuthorID)) from RevisionAuthor");
+   $NUniqAuth_query -> execute(); 
+my ($NUniqAuth) = $NUniqAuth_query -> fetchrow_array;
+
+# For older versions of MySQL, use these lines rather than preceding 3
+#my $NUniqAuth_query = $dbh -> prepare("select DISTINCT(AuthorID) from RevisionAuthor");
+#   $NUniqAuth_query -> execute(); 
+#   $MatrixRef = $NUniqAuth_query -> fetchall_arrayref; 
+#my $NUniqAuth = scalar(@{$MatrixRef});
+
+my $NRevAuth_query = $dbh -> prepare("select COUNT(AuthorID) from RevisionAuthor");
+   $NRevAuth_query -> execute(); 
+my ($NRevisionAuthors) = $NRevAuth_query -> fetchrow_array;
+
+my $AuthPerRev = sprintf "%5.2f",$NRevisionAuthors/$NRevisions;
+my $DocPerAuth = sprintf "%5.2f",$NDocuments/$NUniqAuth*$AuthPerRev;
+
+my $NTopic_query = $dbh -> prepare("select COUNT(MinorTopicID) from MinorTopic");
+   $NTopic_query -> execute(); 
+my ($NTopics) = $NTopic_query -> fetchrow_array;
+
+my $NUniqTopic_query = $dbh -> prepare("select COUNT(DISTINCT(MinorTopicID)) from RevisionTopic");
+   $NUniqTopic_query -> execute(); 
+my ($NUniqTopics) = $NUniqTopic_query -> fetchrow_array;
+
+# For older versions of MySQL, use these lines rather than preceding 3
+#my $NUniqTopic_query = $dbh -> prepare("select DISTINCT(MinorTopicID) from RevisionTopic");
+#   $NUniqTopic_query -> execute(); 
+#   $MatrixRef = $NUniqTopic_query -> fetchall_arrayref; # Use COUNT(DISTINCT()) with newer MySQL
+#my $NUniqTopics = scalar(@{$MatrixRef});
+
+my $NRevTopic_query = $dbh -> prepare("select COUNT(MinorTopicID) from RevisionTopic");
+   $NRevTopic_query -> execute(); 
+my ($NRevisionTopics) = $NRevTopic_query -> fetchrow_array;
+
+my $TopicPerRev = sprintf "%5.2f",$NRevisionTopics/$NRevisions;
+my $DocPerTopic = sprintf "%5.2f",$NDocuments/$NUniqTopics*$TopicPerRev;
+
+print "<tr><th align=right>Number of registered Authors:       <td align=right>$NAuthors\n";  
+print " <th align=right>Number of possible Topics:             <td align=right>$NTopics</tr>\n";  
+
+print "<tr><th align=right>Authors of one or more Documents:   <td align=right>$NUniqAuth\n";  
+print "    <th align=right>Number of Topics used:              <td align=right>$NUniqTopics</tr>\n";  
+
+print "<tr><th align=right>Number of Authors on all Revisions: <td align=right>$NRevisionAuthors\n";  
+print "    <th align=right>Number of Topics on all Revisions:  <td align=right>$NRevisionTopics</tr>\n";  
+
+print "<tr><th align=right>Average Authors per Revision:       <td align=right>$AuthPerRev\n";  
+print "    <th align=right>Average Topics per Revision:        <td align=right>$TopicPerRev</tr>\n";  
+
+print "<tr><th align=right>Average Documents per Author:       <td align=right>$DocPerAuth\n";  
+print "    <th align=right>Average Documents per Topic:        <td align=right>$DocPerTopic</tr>\n";  
+
+print "<tr><th colspan=4><hr></tr>\n";  
+print "</table>\n";
+print "<center>DocDB Version: $DocDBVersion</center><p>\n";  
+
+&DocDBNavBar;
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
