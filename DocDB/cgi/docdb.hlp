@@ -13,7 +13,9 @@ child
 Subordinate groups
 Select the groups you want to be subordinates of this group. This means that the
 dominant group will be able to see and change all documents that these groups
-can.
+can. Selecting any subordinate groups will clear all old subordinate groups and
+create a new list. To remove all subordinate groups on an existing group, select
+"Remove all."
 #
 parent
 Group
