@@ -141,25 +141,27 @@ sub PrintRevisionInfo {
   my @TopicIDs    = &GetRevisionTopics($DocRevID);
   my @GroupIDs    = &GetRevisionSecurityGroups($DocRevID);
  
-  print "<center><table cellpadding=10>";
-  print "<tr><td colspan=6 align=center>\n";
+  print "<center><table cellpadding=10 width=90%>\n";
+  print "<tr><td colspan=3 align=center>\n";
   &PrintTitle($DocRevisions{$DocRevID}{TITLE});
   print "</td></tr>\n";
   print "<tr valign=top>";
-  print "<td colspan=2>";
+  print "<td>";
   
   print "<table>\n"; 
   &RequesterByID($Documents{$DocumentID}{REQUESTER});
   &SubmitterByID($DocRevisions{$DocRevID}{SUBMITTER});
   print "</table>\n"; 
 
-  print "<td colspan=2>"; 
+  print "<td>"; 
   &PrintDocNumber($DocRevID);
 
-  print "<td colspan=2>"; 
+  print "<td>"; 
   &ModTimes;
 
   print "</td></tr>\n";
+  print "</table>\n";
+  print "<table cellpadding=10 width=90%>\n";
   print "<tr valign=top>";
   print "<td colspan=2>"; 
   &AuthorListByID(@AuthorIDs);
@@ -190,13 +192,15 @@ sub PrintRevisionInfo {
   &PrintConfInfo(@TopicIDs);
   &PrintReferenceInfo($DocRevID);
   print "</td></tr>\n";
+  print "</table>\n";
+  print "<table cellpadding=10>\n";
   if (&CanModify($DocumentID) && !$HideButtons) {
     print "<tr valign=top>";
-    print "<td colspan=2 align=center>";
+    print "<td align=center width=33%>";
     &UpdateButton($DocumentID);
-    print "<td colspan=2 align=center>";
+    print "<td align=center width=33%>";
     &UpdateDBButton($DocumentID,$Version);
-    print "<td colspan=2 align=center>";
+    print "<td align=center width=33%>";
     &AddFilesButton($DocumentID,$Version);
     print "</td></tr>\n";
   }  
