@@ -860,4 +860,15 @@ or may not be the same as the web username and password.
   </text>
  </entry>
  
+ <entry>
+  <key>revisionnote</key>
+  <title>Notes and Changes</title>
+  <text>
+   This field is for notes and changes from version to version of your document. When just updating
+   the database information, this information is filled in by default (but you can still change it). When
+   updating the document itself, this information is not pre-filled. If you want to preserve
+   the notes from the previous version, click on the link <q>Insert notes from previous version</q>.
+  </text>
+ </entry>
+ 
 </helpfile>

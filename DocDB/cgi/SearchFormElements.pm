@@ -1,3 +1,20 @@
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 #  Functions in this file:
 #
 #
@@ -10,6 +27,10 @@
 #    on Abstract
 #   
 #  KeywordSearchBox
+#    A box to type words/strings and a mode selecter for text searches 
+#    on Keywords
+#   
+#  RevisionNoteSearchBox
 #    A box to type words/strings and a mode selecter for text searches 
 #    on Keywords
 #   
@@ -53,13 +74,11 @@ sub TitleSearchBox { # Box and mode selecter for searches on DocumentTitle
   print "Title:</a></th> \n";
   print "<td>\n";
   print $query -> textfield (-name      => 'titlesearch', 
-#                             -default   => $TitleSearchDefault, 
                              -size      => 40, 
                              -maxlength => 240);
   print "</td>\n";
   print "<td>\n";
   print $query -> popup_menu (-name    => 'titlesearchmode', 
-#                              -default => $TitleSearchModeDefault, 
                               -values  => \%SearchModes);
   print "</td></tr>\n";
 };
@@ -75,7 +94,6 @@ sub AbstractSearchBox { # Field and mode selecter for searches on Abstract
   print "</td>\n";
   print "<td>\n";
   print $query -> popup_menu (-name    => 'abstractsearchmode', 
-#                              -default => $TitleSearchModeDefault, 
                               -values  => \%SearchModes);
   print "</td></tr>\n";
 };
@@ -91,7 +109,21 @@ sub KeywordsSearchBox { # Field and mode selecter for searches on Keywords
   print "</td>\n";
   print "<td>\n";
   print $query -> popup_menu (-name    => 'keywordsearchmode', 
-#                              -default => $TitleSearchModeDefault, 
+                              -values  => \%SearchModes);
+  print "</td></tr>\n";
+};
+
+sub RevisionNoteSearchBox { # Field and mode selecter for searches on Note
+  print "<tr><th align=right><a ";
+  &HelpLink("wordsearch");
+  print "Notes and Changes:</a></th> \n";
+  print "<td>\n";
+  print $query -> textfield (-name      => 'revisionnotesearch', 
+                             -size      => 40, 
+                             -maxlength => 240);
+  print "</td>\n";
+  print "<td>\n";
+  print $query -> popup_menu (-name    => 'revisionnotesearchmode', 
                               -values  => \%SearchModes);
   print "</td></tr>\n";
 };
@@ -102,13 +134,11 @@ sub PubInfoSearchBox { # Field and mode selecter for searches on PublicationInfo
   print "Publication Info:</a></th> \n";
   print "<td>\n";
   print $query -> textfield (-name      => 'pubinfosearch', 
-#                             -default   => $TitleSearchDefault, 
                              -size      => 40, 
                              -maxlength => 240);
   print "</td>\n";
   print "<td>\n";
   print $query -> popup_menu (-name    => 'pubinfosearchmode', 
-#                              -default => $TitleSearchModeDefault, 
                               -values  => \%SearchModes);
   print "</td></tr>\n";
 };
