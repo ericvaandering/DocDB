@@ -220,6 +220,9 @@ sub PrintRevisionInfo {
   }  
   
   print "</div>\n";  # MainColumn3Col
+  
+  print "<div id=\"Footer3Col\"><hr/></div>\n";
+  
   print "</div>\n";  # RevisionInfo
 }
  
