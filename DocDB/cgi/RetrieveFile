@@ -48,7 +48,7 @@ if (defined $Version && defined $AsOf) {
 
 if (@error_stack) {  # The user made one or more mistakes, warn and exit
   print $query -> header;
-  &BTeVHeader("File Retrieve Results"); 
+  &DocDBHeader("File Retrieve Results"); 
   &EndPage(@error_stack);
 }
 
@@ -80,7 +80,7 @@ unless ($DocRevID) {
 
 if (@error_stack) {  # The user made one or more mistakes, warn and exit
   print $query -> header;
-  &BTeVHeader("File Retrieve Results"); 
+  &DocDBHeader("File Retrieve Results"); 
   &EndPage(@error_stack);
 }
 
@@ -134,7 +134,7 @@ if ($FullURL) {
 } else {
   print $query -> header;
 }
-&BTeVHeader("File Retrieve Results"); 
+&DocDBHeader("File Retrieve Results"); 
 
 if (@warn_stack) {
   &WarnPage(@warn_stack);
@@ -147,4 +147,4 @@ if (@error_stack) {  # The user made one or more mistakes, warn and exit
 &PrintRevisionInfo($DocRevID);
 
 &DocDBNavBar;
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -78,7 +78,7 @@ print $query->header;
 if ($Mode eq "conference") {
   require "MiscSQL.pm";
   
-  &BTeVHeader("Conference Documents");
+  &DocDBHeader("Conference Documents");
   &GetConferences;
   print "<center><h4>\n";
   if ($TopicID) { # This is just one conference, so we can print more info
@@ -98,7 +98,7 @@ if ($Mode eq "conference") {
     print "</center>\n";
   }
 } else {
-  &BTeVHeader("Document List by Topic");
+  &DocDBHeader("Document List by Topic");
   print "<center><h4>\n";
   if ($MajorID || &FetchMinorTopic($TopicID)) {
     print "These documents on <font color=\"blue\">\n";
@@ -223,16 +223,15 @@ if (&NearByMeeting == $TopicID && $Mode eq "meeting" && !$Public) {
   print "<ul>\n";
   print "<li><a href=\"$DocumentAddForm?special=meeting\">Submit a talk</a> for
          this meeting.\n";
-  print "<li>
-         <a href=$HelpFile#meeting>Instructions</a> for submitting talks,
-         <a href=\"http://www-btev.fnal.gov/internal_documents/mtg/submitting_24may01.html\">
-         pointers</a> on document formats, and
-         <a href=\"http://www-btev.fnal.gov/internal_documents/mtg/transp_instructions.html#scanning\">instructions 
-         on using the WH9W scanner</a>.\n";
+  if ($Project eq "BTeV") {
+    print "<li>
+           <a href=$HelpFile#meeting>Instructions</a> for submitting talks,
+           <a href=\"http://www-btev.fnal.gov/internal_documents/mtg/submitting_24may01.html\">
+           pointers</a> on document formats, and
+           <a href=\"http://www-btev.fnal.gov/internal_documents/mtg/transp_instructions.html#scanning\">instructions 
+           on using the WH9W scanner</a>.\n";
+  }
   print "</ul>\n";
-
-#  print "<hr>\n";
-#  &PrintAgenda($TopicID);
 }
 
 if ($Mode eq "meeting" && !$Public) {
@@ -241,6 +240,6 @@ if ($Mode eq "meeting" && !$Public) {
   &DocDBNavBar();
 }
 
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 
 exit;

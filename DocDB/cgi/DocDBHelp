@@ -1,7 +1,11 @@
 #! /usr/bin/env perl
 #
-# Author: Eric Vaandering (ewv@fnal.gov)
+# Description: Usually called as a pop-up, this looks up in docdb.hlp
+#              the information on a specific topic. 
 #
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#       FIXME: Think about XML and project/global help files
 
 use CGI;                                                                                      
 require "DocDBGlobals.pm";
@@ -10,7 +14,7 @@ require "DocDBGlobals.pm";
 
 $query = new CGI;  
 print $query->header;
-print $query->start_html(-title=>"BTeV Document Database Help");
+print $query->start_html(-title=>"$Project Document Database Help");
 
 open HELPFILE,"$help_file"; # Read in .hlp file
 

@@ -17,7 +17,7 @@ $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 print $query->header;
 
-&BTeVHeader("BTeV DocDB Statistics");
+&DocDBHeader("$Project DocDB Statistics");
 
 my $NDoc_query = $dbh -> prepare("select COUNT(DocumentID) from Document");
    $NDoc_query -> execute(); 
@@ -125,4 +125,4 @@ print "<tr><th colspan=4><hr></tr>\n";
 print "</table>\n";
 
 &DocDBNavBar;
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

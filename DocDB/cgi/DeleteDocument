@@ -19,7 +19,7 @@ require "Sorts.pm";
 $query = new CGI;  # Global for subroutines
 
 print $query->header;
-&BTeVHeader("Deleting Document $DocumentID");
+&DocDBHeader("Deleting Document $DocumentID");
 
 %params = $query -> Vars;
 
@@ -94,7 +94,7 @@ system ($command);
 print "<b>Document $DocumentID has been deleted.</b><p>";
 
 &DocDBNavBar;
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 
  
 exit;

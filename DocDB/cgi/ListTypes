@@ -17,11 +17,11 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetDocTypes;
 
 print $query->header;
-&BTeVHeader("List of Document Types");
+&DocDBHeader("List of Document Types");
 
 print "<h3>Types of Documents:</h3>\n";
 
 &TypesTable;
 
 &DocDBNavBar();
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

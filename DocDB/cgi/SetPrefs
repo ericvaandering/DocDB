@@ -54,7 +54,7 @@ push @cookies, $query->cookie(-name=>'overdate',
 print $query->header(-cookie=>\@cookies);
 print "<meta http-equiv=\"Refresh\" content=\"10; URL=$MainPage\">"; ### generates improper html but works for now
 
-&BTeVHeader("Setting Preferences");
+&DocDBHeader("Setting Preferences");
 
 print "<p>";
 print "<b>Your preferences have been saved.</b> 
@@ -65,4 +65,4 @@ print "<b>Your preferences have been saved.</b>
 print "<p>";
 
 &DocDBNavBar;
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

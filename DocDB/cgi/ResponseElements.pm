@@ -249,7 +249,7 @@ sub EndPage {  # Fatal errors, aborts page
     print "<p>\n";
   }  
   &DocDBNavBar();
-  &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+  &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
   exit;
 }
 
@@ -268,9 +268,9 @@ sub ErrorPage { # Fatal errors, continues page
 sub FullDocumentID ($;$) {
   my ($DocumentID,$Version) = @_;
   if (defined $Version) {
-    return "BTeV-doc-$DocumentID-v$Version";
+    return "$ShortProject-doc-$DocumentID-v$Version";
   } else {  
-    return "BTeV-doc-$DocumentID";
+    return "$ShortProject-doc-$DocumentID";
   }  
 }  
 
@@ -457,29 +457,6 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
     }  
     print "</tr>\n";
   } 
-}
-
-sub DocDBNavBar {
-  
-  my ($ExtraDesc,$ExtraURL) = @_;
-
-  print "<p><div align=\"center\">\n";
-  if ($ExtraDesc && $ExtraURL) {
-    print "[&nbsp;<a href=\"$ExtraURL\"l>$ExtraDesc</a>&nbsp;]&nbsp;\n";
-  } 
-  print "[&nbsp;<a href=\"$MainPage\">DocDB&nbsp;Home</a>&nbsp;]&nbsp;\n";
-  unless ($Public) {
-    print "[&nbsp;<a href=\"$DocumentAddForm?mode=add\">New</a>&nbsp;]&nbsp;\n";
-    print "[&nbsp;<a href=\"$DocumentAddForm\">Reserve</a>&nbsp;]&nbsp;\n";
-  }
-  print "[&nbsp;<a href=\"$SearchForm\">Search</a>&nbsp;]\n";
-  print "[&nbsp;<a href=\"$LastModified?days=$LastDays\">Last&nbsp;$LastDays&nbsp;Days</a>&nbsp;]\n";
-  print "[&nbsp;<a href=\"$ListAuthors\">List&nbsp;Authors</a>&nbsp;]\n";
-  print "[&nbsp;<a href=\"$ListTopics\">List&nbsp;Topics</a>&nbsp;]\n";
-  unless ($Public) {
-    print "[&nbsp;<a href=\"$HelpFile\">Help</a>&nbsp;]\n";
-  } 
-  print "</div>\n";
 }
 
 sub TypesTable {

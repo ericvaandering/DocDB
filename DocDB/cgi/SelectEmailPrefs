@@ -71,7 +71,7 @@ if ($Mode eq "newuser") {
 # Start the page
    
 print $query->header;
-&BTeVHeader("Update Notification Preferences"); # Prob need specialized header
+&DocDBHeader("Update Notification Preferences"); # Prob need specialized header
 &HelpPopupScript;
 
 # Create new user if called for
@@ -268,5 +268,5 @@ print $query -> endform;
 print "<hr><p>\n";
 
 &DocDBNavBar;
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 

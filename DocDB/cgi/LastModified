@@ -41,7 +41,7 @@ unless ($Days)                                 {$Days = $LastDays;}
 ### Start HTML
 
 print $query->header;
-&BTeVHeader("Document List");
+&DocDBHeader("Document List");
 
 print "<center><h4>These documents have been modified in the last 
        <font color=\"blue\">$Days days</font>.</h4></center><p>\n";
@@ -122,4 +122,4 @@ $TimeDiff = timediff($EndTime,$StartTime);
 print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
 
 &DocDBNavBar();
-&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

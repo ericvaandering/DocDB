@@ -1,0 +1,46 @@
+#
+# Description: Configuration file for your projects DocDB settings. 
+#              Set variables  for server names, accounts, and command 
+#              paths here.
+#              Rename as ProjectGlobals.pm
+#              This file is included in every DocDB program.
+#              You can override any settings in DocDBGlobals.pm here.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+
+# DB settings
+
+$db_name       = "DocDB";               # Database name
+$db_host       = "db-server-host-and-domain";
+$db_rwuser     = "docdbrw";
+$db_rwpass     = "read-write-password";
+$db_rouser     = "docdbro";
+$db_ropass     = "read-only-password";
+$Administrator = "docdbadm";
+
+# Root directories and URLs
+
+$file_root   = "/www/html/DocDB/";    
+$script_root = "/www/cgi-bin/DocDB/"; 
+$web_root    = "http://web-server-host-and-domain/DocDB/";
+$cgi_root    = "http://web-server-host-and-domain/cgi-bin/DocDB/";
+$cgi_path    = "/cgi-bin/DocDB/";
+
+$DBWebMasterEmail = "docdb\@mail-gateway";
+$DBWebMasterName  = "Document Database Administrators";
+
+$AuthUserFile     = "/full/path/to/.htpasswd";
+$MailServer       = "smtp-server-host-name";
+
+# Text customization. Leave $WelcomeMessage blank for no message on top of DB
+# BTeV uses a welcome message for the public part of the DB, but not for the
+# private
+
+$Project        = "My Project";
+$ShortProject   = "MyProject";    # This is the project used in the Document ID
+$WelcomeMessage = "Welcome to the public portion of the $Project Document Database,<br>
+         the repository for all $Project public talks, proceedings, preprints,
+         and publications.";
+
+1;
