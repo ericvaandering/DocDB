@@ -538,10 +538,12 @@ sub UpdateDBButton {
 
   $query -> param('mode','updatedb');
   $query -> param('docid',$DocumentID);
+  $query -> param('version',$Version);
   
   print $query -> startform('POST',$DocumentAddForm);
-  print $query -> hidden(-name => 'mode',  -default => 'updatedb');
-  print $query -> hidden(-name => 'docid', -default => $DocumentID);
+  print $query -> hidden(-name => 'mode',    -default => 'updatedb');
+  print $query -> hidden(-name => 'docid',   -default => $DocumentID);
+  print $query -> hidden(-name => 'version', -default => $Version);
   print $query -> submit (-value => "Update DB Info");
   print $query -> endform;
 }
@@ -555,8 +557,8 @@ sub AddFilesButton {
   $query -> param('version',$Version);
   
   print $query -> startform('POST',$AddFilesForm);
-  print $query -> hidden(-name => 'version', -default => $Version);
   print $query -> hidden(-name => 'docid',   -default => $DocumentID);
+  print $query -> hidden(-name => 'version', -default => $Version);
   print $query -> submit (-value => "Add Files to Document");
   print $query -> endform;
 }

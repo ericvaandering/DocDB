@@ -242,7 +242,9 @@ if ($mode eq "reserve" || $mode eq "add") {
   $documentID = $params{docid};
 }  
 
-### Set version number
+### Set version number. For reservations, it is "0", for new documents "1". For
+### updates, increment by one, and for DB info updates, either the latest
+### version or the one being updated
 
 my $version;
 if      ($mode eq "reserve") {
@@ -254,7 +256,11 @@ if      ($mode eq "reserve") {
   $version   = $Documents{$documentID}{NVER} + 1;
 } elsif ($mode eq "updatedb") {
   &FetchDocument($documentID);
-  $version   = $Documents{$documentID}{NVER};
+  if  (defined $params{version}) {
+    $version = $params{version};
+  } else { 
+    $version = $Documents{$documentID}{NVER};
+  }
 }
 
 if ($mode eq "updatedb") { # New Document revision replaces old. Fetch 

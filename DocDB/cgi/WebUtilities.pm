@@ -128,7 +128,7 @@ sub NearByMeeting { # Return MinorTopicID of meeting within $MeetingWindow days
     my ($MeetBeginDay) = split /\-/,$MeetDays;
     my $MeetMonth = $ReverseFullMonth{$MeetMonthName} - 1;
     $MeetYear  = $MeetYear - 1900;
-    if ($MeetBeginDay > 0 && $MeetMonth >= 0 $MeetYear > 0) { 
+    if ($MeetBeginDay > 0 && $MeetMonth >= 0 && $MeetYear > 0) { 
       my $MeetTime  = timelocal(0,0,0,$MeetBeginDay,$MeetMonth,$MeetYear);
       if (abs($MeetTime - $Now) < $MeetingWindow*24*60*60) {
         return $ID;
