@@ -41,10 +41,13 @@ if (@error_stack) {
 $topic_insert -> execute($MajorTopicID,$ShortDescription,$LongDescription);
 my $MinorTopicID = $topic_insert -> {mysql_insertid}; # Works with MySQL only
                            
-print "You were successful. The topic you added is number <b>$MinorTopicID</b><br>\n"; 
+if ($MinorTopicID) {
+  print "You were successful. The topic you added is number <b>$MinorTopicID</b><br>\n"; 
+} else {
+  print "Something went wrong. Make sure you did everything right. If the
+         problem still exists, contact an administrator.\n"; 
+}
 
-print "Add another <a href=TopicAddForm>topic</a>.<br>\n";
-
-&DocDBNavBar;
+&DocDBNavBar("Add&nbsp;Topic",$TopicAddForm);
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
 

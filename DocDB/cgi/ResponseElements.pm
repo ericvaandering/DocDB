@@ -306,12 +306,18 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
 }
 
 sub DocDBNavBar {
+  
+  my ($ExtraDesc,$ExtraURL) = @_;
+
   print "<p><div align=\"center\">\n";
   print "[&nbsp;<a href=\"$MainPage\">DocDB&nbsp;Home</a>&nbsp;]&nbsp;\n";
-  print "[&nbsp;<a href=\"$DocumentAddForm?mode=add\"l>New Document</a>&nbsp;]&nbsp;\n";
+  if ($ExtraDesc && $ExtraURL) {
+    print "[&nbsp;<a href=\"$ExtraURL\"l>$ExtraDesc</a>&nbsp;]&nbsp;\n";
+  } 
+  print "[&nbsp;<a href=\"$DocumentAddForm?mode=add\"l>New&nbsp;Document</a>&nbsp;]&nbsp;\n";
   print "[&nbsp;<a href=\"$DocumentAddForm\">Reservation</a>&nbsp;]&nbsp;\n";
-  print "[&nbsp;<a href=\"$ListAuthors\">List Authors</a>&nbsp;]\n";
-  print "[&nbsp;<a href=\"$ListTopics\">List Topics</a>&nbsp;]\n";
+  print "[&nbsp;<a href=\"$ListAuthors\">List&nbsp;Authors</a>&nbsp;]\n";
+  print "[&nbsp;<a href=\"$ListTopics\">List&nbsp;Topics</a>&nbsp;]\n";
   print "</div>\n";
 }
 

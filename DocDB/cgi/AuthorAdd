@@ -43,11 +43,14 @@ if (@error_stack) {
 $author_insert -> execute($FirstName,$MiddleInitials,$LastName,$InstitutionID);
 my $AuthorID = $author_insert -> {mysql_insertid}; # Works with MySQL only
                            
-print "You were successful. The author you added is number <b>$AuthorID</b><br>\n"; 
+if ($AuthorID) {
+  print "You were successful. The author you added is number
+         <b>$AuthorID</b><br>\n"; 
+} else {
+  print "Something went wrong. Make sure you did everything right. If the
+         problem still exists, contact an administrator.\n"; 
+}
 
-print "Add another <a href=AuthorAddForm>author</a>.<br>\n";
-print "Return to the <a href=DocumentDatabase>main page</a>.<br>\n";
-
-&DocDBNavBar;
+&DocDBNavBar("Add&nbsp;Author",$AuthorAddForm);
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
 
