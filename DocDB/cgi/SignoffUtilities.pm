@@ -229,8 +229,9 @@ sub NotifySignees ($) {
   }
   
   my ($Status,$DocRevID) = &RevisionStatus($DocRevID);
-  
-  print "<b>Approval status: $Status</b><br>\n";
+  if ($Status ne "Unmanaged") {
+    print "<b>Approval status: $Status</b><br>\n";
+  }
   
   if ($Status eq "Approved") {
     &MailNotices(-docrevid => $DocRevID, -type => "approved");
