@@ -8,10 +8,10 @@ you are going to write, but don't have a draft of the document.
 has not been entered before.
 <li>Update document: You have a new version of a document already in the
 database. You will also be able to change any of the information in the database
-about the document.
+about the document. You must supply a document number to modify.
 <li>Update database information: The document hasn't changed, but the
 information about it has. For example, it's now published so you want to add that
-information.
+information. You must supply a document number to modify.
 </ol>
 Select the type of modification appropriate to your situation
 #
