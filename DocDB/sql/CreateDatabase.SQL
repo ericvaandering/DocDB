@@ -1,11 +1,10 @@
--- MySQL dump 8.22
---
--- Host: localhost    Database: BTeVDocDB
----------------------------------------------------------
--- Server version	3.23.56
+-- MySQL dump 9.09
+
+-- This file creates the database structure for a Version 5.x installation of 
+-- DocDB.
 
 --
--- Table structure for table 'Author'
+-- Table structure for table `Author`
 --
 
 CREATE TABLE Author (
@@ -21,13 +20,12 @@ CREATE TABLE Author (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'Author'
+-- Dumping data for table `Author`
 --
 
 
-
 --
--- Table structure for table 'AuthorHint'
+-- Table structure for table `AuthorHint`
 --
 
 CREATE TABLE AuthorHint (
@@ -40,13 +38,12 @@ CREATE TABLE AuthorHint (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'AuthorHint'
+-- Dumping data for table `AuthorHint`
 --
 
 
-
 --
--- Table structure for table 'Conference'
+-- Table structure for table `Conference`
 --
 
 CREATE TABLE Conference (
@@ -65,13 +62,12 @@ CREATE TABLE Conference (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'Conference'
+-- Dumping data for table `Conference`
 --
 
 
-
 --
--- Table structure for table 'Document'
+-- Table structure for table `Document`
 --
 
 CREATE TABLE Document (
@@ -85,13 +81,12 @@ CREATE TABLE Document (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'Document'
+-- Dumping data for table `Document`
 --
 
 
-
 --
--- Table structure for table 'DocumentFile'
+-- Table structure for table `DocumentFile`
 --
 
 CREATE TABLE DocumentFile (
@@ -107,13 +102,12 @@ CREATE TABLE DocumentFile (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'DocumentFile'
+-- Dumping data for table `DocumentFile`
 --
 
 
-
 --
--- Table structure for table 'DocumentRevision'
+-- Table structure for table `DocumentRevision`
 --
 
 CREATE TABLE DocumentRevision (
@@ -128,6 +122,8 @@ CREATE TABLE DocumentRevision (
   TimeStamp timestamp(14) NOT NULL,
   Obsolete tinyint(4) default '0',
   Keywords varchar(240) default NULL,
+  Note text,
+  Demanaged int(11) default NULL,
   PRIMARY KEY  (DocRevID),
   KEY DocumentID (DocumentID),
   KEY DocumentTitle (DocumentTitle),
@@ -135,13 +131,12 @@ CREATE TABLE DocumentRevision (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'DocumentRevision'
+-- Dumping data for table `DocumentRevision`
 --
 
 
-
 --
--- Table structure for table 'DocumentType'
+-- Table structure for table `DocumentType`
 --
 
 CREATE TABLE DocumentType (
@@ -153,13 +148,12 @@ CREATE TABLE DocumentType (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'DocumentType'
+-- Dumping data for table `DocumentType`
 --
 
 
-
 --
--- Table structure for table 'EmailAuthorDaily'
+-- Table structure for table `EmailAuthorDaily`
 --
 
 CREATE TABLE EmailAuthorDaily (
@@ -170,13 +164,12 @@ CREATE TABLE EmailAuthorDaily (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'EmailAuthorDaily'
+-- Dumping data for table `EmailAuthorDaily`
 --
 
 
-
 --
--- Table structure for table 'EmailAuthorImmediate'
+-- Table structure for table `EmailAuthorImmediate`
 --
 
 CREATE TABLE EmailAuthorImmediate (
@@ -187,13 +180,12 @@ CREATE TABLE EmailAuthorImmediate (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'EmailAuthorImmediate'
+-- Dumping data for table `EmailAuthorImmediate`
 --
 
 
-
 --
--- Table structure for table 'EmailAuthorWeekly'
+-- Table structure for table `EmailAuthorWeekly`
 --
 
 CREATE TABLE EmailAuthorWeekly (
@@ -204,13 +196,31 @@ CREATE TABLE EmailAuthorWeekly (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'EmailAuthorWeekly'
+-- Dumping data for table `EmailAuthorWeekly`
 --
 
 
+--
+-- Table structure for table `EmailDocumentImmediate`
+--
+
+CREATE TABLE EmailDocumentImmediate (
+  EmailDocumentImmediateID int(11) NOT NULL auto_increment,
+  EmailUserID int(11) default NULL,
+  DocumentID int(11) default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (EmailDocumentImmediateID),
+  KEY EmailUserID (EmailUserID),
+  KEY DocumentID (DocumentID)
+) TYPE=MyISAM;
 
 --
--- Table structure for table 'EmailKeywordDaily'
+-- Dumping data for table `EmailDocumentImmediate`
+--
+
+
+--
+-- Table structure for table `EmailKeywordDaily`
 --
 
 CREATE TABLE EmailKeywordDaily (
@@ -221,13 +231,12 @@ CREATE TABLE EmailKeywordDaily (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'EmailKeywordDaily'
+-- Dumping data for table `EmailKeywordDaily`
 --
 
 
-
 --
--- Table structure for table 'EmailKeywordImmediate'
+-- Table structure for table `EmailKeywordImmediate`
 --
 
 CREATE TABLE EmailKeywordImmediate (
@@ -238,13 +247,12 @@ CREATE TABLE EmailKeywordImmediate (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'EmailKeywordImmediate'
+-- Dumping data for table `EmailKeywordImmediate`
 --
 
 
-
 --
--- Table structure for table 'EmailKeywordWeekly'
+-- Table structure for table `EmailKeywordWeekly`
 --
 
 CREATE TABLE EmailKeywordWeekly (
@@ -255,13 +263,12 @@ CREATE TABLE EmailKeywordWeekly (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'EmailKeywordWeekly'
+-- Dumping data for table `EmailKeywordWeekly`
 --
 
 
-
 --
--- Table structure for table 'EmailTopicDaily'
+-- Table structure for table `EmailTopicDaily`
 --
 
 CREATE TABLE EmailTopicDaily (
@@ -273,13 +280,12 @@ CREATE TABLE EmailTopicDaily (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'EmailTopicDaily'
+-- Dumping data for table `EmailTopicDaily`
 --
 
 
-
 --
--- Table structure for table 'EmailTopicImmediate'
+-- Table structure for table `EmailTopicImmediate`
 --
 
 CREATE TABLE EmailTopicImmediate (
@@ -291,13 +297,12 @@ CREATE TABLE EmailTopicImmediate (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'EmailTopicImmediate'
+-- Dumping data for table `EmailTopicImmediate`
 --
 
 
-
 --
--- Table structure for table 'EmailTopicWeekly'
+-- Table structure for table `EmailTopicWeekly`
 --
 
 CREATE TABLE EmailTopicWeekly (
@@ -309,13 +314,12 @@ CREATE TABLE EmailTopicWeekly (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'EmailTopicWeekly'
+-- Dumping data for table `EmailTopicWeekly`
 --
 
 
-
 --
--- Table structure for table 'EmailUser'
+-- Table structure for table `EmailUser`
 --
 
 CREATE TABLE EmailUser (
@@ -326,17 +330,17 @@ CREATE TABLE EmailUser (
   EmailAddress char(64) NOT NULL default '',
   PreferHTML int(11) NOT NULL default '0',
   TimeStamp timestamp(14) NOT NULL,
+  CanSign int(11) default NULL,
   PRIMARY KEY  (EmailUserID)
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'EmailUser'
+-- Dumping data for table `EmailUser`
 --
 
 
-
 --
--- Table structure for table 'GroupHierarchy'
+-- Table structure for table `GroupHierarchy`
 --
 
 CREATE TABLE GroupHierarchy (
@@ -348,13 +352,12 @@ CREATE TABLE GroupHierarchy (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'GroupHierarchy'
+-- Dumping data for table `GroupHierarchy`
 --
 
 
-
 --
--- Table structure for table 'GroupTopic'
+-- Table structure for table `GroupTopic`
 --
 
 CREATE TABLE GroupTopic (
@@ -366,13 +369,12 @@ CREATE TABLE GroupTopic (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'GroupTopic'
+-- Dumping data for table `GroupTopic`
 --
 
 
-
 --
--- Table structure for table 'Institution'
+-- Table structure for table `Institution`
 --
 
 CREATE TABLE Institution (
@@ -384,13 +386,12 @@ CREATE TABLE Institution (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'Institution'
+-- Dumping data for table `Institution`
 --
 
 
-
 --
--- Table structure for table 'Journal'
+-- Table structure for table `Journal`
 --
 
 CREATE TABLE Journal (
@@ -405,33 +406,29 @@ CREATE TABLE Journal (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'Journal'
+-- Dumping data for table `Journal`
 --
 
 
-
 --
--- Table structure for table 'Keyword'
+-- Table structure for table `Keyword`
 --
 
 CREATE TABLE Keyword (
   KeywordID int(11) NOT NULL auto_increment,
-  KeywordGroupID int(11) default NULL,
   ShortDescription varchar(32) default NULL,
   LongDescription text,
   TimeStamp timestamp(14) NOT NULL,
-  PRIMARY KEY  (KeywordID),
-  KEY KeywordGroupID (KeywordGroupID)
+  PRIMARY KEY  (KeywordID)
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'Keyword'
+-- Dumping data for table `Keyword`
 --
 
 
-
 --
--- Table structure for table 'KeywordGroup'
+-- Table structure for table `KeywordGroup`
 --
 
 CREATE TABLE KeywordGroup (
@@ -443,13 +440,12 @@ CREATE TABLE KeywordGroup (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'KeywordGroup'
+-- Dumping data for table `KeywordGroup`
 --
 
 
-
 --
--- Table structure for table 'KeywordGrouping'
+-- Table structure for table `KeywordGrouping`
 --
 
 CREATE TABLE KeywordGrouping (
@@ -463,13 +459,12 @@ CREATE TABLE KeywordGrouping (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'KeywordGrouping'
+-- Dumping data for table `KeywordGrouping`
 --
 
 
-
 --
--- Table structure for table 'MajorTopic'
+-- Table structure for table `MajorTopic`
 --
 
 CREATE TABLE MajorTopic (
@@ -483,13 +478,12 @@ CREATE TABLE MajorTopic (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'MajorTopic'
+-- Dumping data for table `MajorTopic`
 --
 
 
-
 --
--- Table structure for table 'MeetingModify'
+-- Table structure for table `MeetingModify`
 --
 
 CREATE TABLE MeetingModify (
@@ -502,13 +496,12 @@ CREATE TABLE MeetingModify (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'MeetingModify'
+-- Dumping data for table `MeetingModify`
 --
 
 
-
 --
--- Table structure for table 'MeetingOrder'
+-- Table structure for table `MeetingOrder`
 --
 
 CREATE TABLE MeetingOrder (
@@ -523,13 +516,12 @@ CREATE TABLE MeetingOrder (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'MeetingOrder'
+-- Dumping data for table `MeetingOrder`
 --
 
 
-
 --
--- Table structure for table 'MeetingSecurity'
+-- Table structure for table `MeetingSecurity`
 --
 
 CREATE TABLE MeetingSecurity (
@@ -542,13 +534,12 @@ CREATE TABLE MeetingSecurity (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'MeetingSecurity'
+-- Dumping data for table `MeetingSecurity`
 --
 
 
-
 --
--- Table structure for table 'MinorTopic'
+-- Table structure for table `MinorTopic`
 --
 
 CREATE TABLE MinorTopic (
@@ -562,13 +553,12 @@ CREATE TABLE MinorTopic (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'MinorTopic'
+-- Dumping data for table `MinorTopic`
 --
 
 
-
 --
--- Table structure for table 'RevisionAuthor'
+-- Table structure for table `RevisionAuthor`
 --
 
 CREATE TABLE RevisionAuthor (
@@ -581,13 +571,12 @@ CREATE TABLE RevisionAuthor (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'RevisionAuthor'
+-- Dumping data for table `RevisionAuthor`
 --
 
 
-
 --
--- Table structure for table 'RevisionModify'
+-- Table structure for table `RevisionModify`
 --
 
 CREATE TABLE RevisionModify (
@@ -601,13 +590,12 @@ CREATE TABLE RevisionModify (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'RevisionModify'
+-- Dumping data for table `RevisionModify`
 --
 
 
-
 --
--- Table structure for table 'RevisionReference'
+-- Table structure for table `RevisionReference`
 --
 
 CREATE TABLE RevisionReference (
@@ -623,13 +611,12 @@ CREATE TABLE RevisionReference (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'RevisionReference'
+-- Dumping data for table `RevisionReference`
 --
 
 
-
 --
--- Table structure for table 'RevisionSecurity'
+-- Table structure for table `RevisionSecurity`
 --
 
 CREATE TABLE RevisionSecurity (
@@ -643,13 +630,12 @@ CREATE TABLE RevisionSecurity (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'RevisionSecurity'
+-- Dumping data for table `RevisionSecurity`
 --
 
 
-
 --
--- Table structure for table 'RevisionTopic'
+-- Table structure for table `RevisionTopic`
 --
 
 CREATE TABLE RevisionTopic (
@@ -662,13 +648,12 @@ CREATE TABLE RevisionTopic (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'RevisionTopic'
+-- Dumping data for table `RevisionTopic`
 --
 
 
-
 --
--- Table structure for table 'SecurityGroup'
+-- Table structure for table `SecurityGroup`
 --
 
 CREATE TABLE SecurityGroup (
@@ -682,13 +667,12 @@ CREATE TABLE SecurityGroup (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'SecurityGroup'
+-- Dumping data for table `SecurityGroup`
 --
 
 
-
 --
--- Table structure for table 'Session'
+-- Table structure for table `Session`
 --
 
 CREATE TABLE Session (
@@ -699,18 +683,18 @@ CREATE TABLE Session (
   Title varchar(128) default NULL,
   Description text,
   TimeStamp timestamp(14) NOT NULL,
+  ShowAllTalks int(11) default NULL,
   PRIMARY KEY  (SessionID),
   KEY ConferenceID (ConferenceID)
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'Session'
+-- Dumping data for table `Session`
 --
 
 
-
 --
--- Table structure for table 'SessionOrder'
+-- Table structure for table `SessionOrder`
 --
 
 CREATE TABLE SessionOrder (
@@ -725,13 +709,12 @@ CREATE TABLE SessionOrder (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'SessionOrder'
+-- Dumping data for table `SessionOrder`
 --
 
 
-
 --
--- Table structure for table 'SessionSeparator'
+-- Table structure for table `SessionSeparator`
 --
 
 CREATE TABLE SessionSeparator (
@@ -747,13 +730,12 @@ CREATE TABLE SessionSeparator (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'SessionSeparator'
+-- Dumping data for table `SessionSeparator`
 --
 
 
-
 --
--- Table structure for table 'SessionTalk'
+-- Table structure for table `SessionTalk`
 --
 
 CREATE TABLE SessionTalk (
@@ -771,13 +753,70 @@ CREATE TABLE SessionTalk (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'SessionTalk'
+-- Dumping data for table `SessionTalk`
 --
 
 
+--
+-- Table structure for table `Signature`
+--
+
+CREATE TABLE Signature (
+  SignatureID int(11) NOT NULL auto_increment,
+  EmailUserID int(11) default NULL,
+  SignoffID int(11) default NULL,
+  Note text,
+  Signed int(11) default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (SignatureID),
+  KEY EmailUserID (EmailUserID),
+  KEY SignoffID (SignoffID)
+) TYPE=MyISAM;
 
 --
--- Table structure for table 'TalkSeparator'
+-- Dumping data for table `Signature`
+--
+
+
+--
+-- Table structure for table `Signoff`
+--
+
+CREATE TABLE Signoff (
+  SignoffID int(11) NOT NULL auto_increment,
+  DocRevID int(11) default NULL,
+  Note text,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (SignoffID),
+  KEY DocRevID (DocRevID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table `Signoff`
+--
+
+
+--
+-- Table structure for table `SignoffDependency`
+--
+
+CREATE TABLE SignoffDependency (
+  SignoffDependencyID int(11) NOT NULL auto_increment,
+  SignoffID int(11) default NULL,
+  PreSignoffID int(11) default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (SignoffDependencyID),
+  KEY SignoffID (SignoffID),
+  KEY PreSignoffID (PreSignoffID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table `SignoffDependency`
+--
+
+
+--
+-- Table structure for table `TalkSeparator`
 --
 
 CREATE TABLE TalkSeparator (
@@ -792,13 +831,12 @@ CREATE TABLE TalkSeparator (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'TalkSeparator'
+-- Dumping data for table `TalkSeparator`
 --
 
 
-
 --
--- Table structure for table 'TopicHint'
+-- Table structure for table `TopicHint`
 --
 
 CREATE TABLE TopicHint (
@@ -811,13 +849,15 @@ CREATE TABLE TopicHint (
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table 'TopicHint'
+-- Dumping data for table `TopicHint`
 --
 
--- This file made by "mysqldump -u docdbadm -p BTeVDocDB | grep -v "INSERT INTO" " and then adding the last 4 lines
+-- This file made by "mysqldump -c -u docdbadm -p BTeVDocDB | grep -v "INSERT INTO" " and then adding the last 4 lines
 -- Set up the DocDB adminstrator account. Everything else can be done in the admin interface
 
 INSERT INTO SecurityGroup (GroupID, Name, Description, CanCreate, CanAdminister) VALUES 
                           (0,'DocDBAdm','Document Database Administrators',1,1);
+
+
 
 
