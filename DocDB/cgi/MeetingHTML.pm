@@ -36,6 +36,7 @@ sub ConferenceEpilogueBox {
 
 sub SessionEntryForm (@) {
   my @MeetingOrderIDs = @_; # Or do I need to dereference?
+  print "PMOI: ",@MeetingOrderIDs,"<br>\n";
   require "Scripts.pm";
   print "<b><a ";
   &HelpLink("sessions");
@@ -60,8 +61,13 @@ sub SessionEntryForm (@) {
   
   my $SessionOrder = 0;
   foreach $MeetingOrderID (@MeetingOrderIDs) {
+    print "<TR><TD COLSPAN=10>\n";
+  
     ++$SessionOrder;
+    
+    print "SO: $SessionOrder ";
     if (grep /n/,$MeetingOrderID) {# Erase defaults
+      print "New:";
       $SessionDefaultDateTime    = "";
       $SessionDefaultTitle       = "";
       $SessionDefaultDescription = "";
@@ -69,12 +75,14 @@ sub SessionEntryForm (@) {
     } else { # Key off Meeting Order IDs, do differently for Sessions and Separators
       if ($MeetingOrders{$MeetingOrderID}{SessionID}) {
         my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
+        print "SI: $SessionID ";
 	$SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
 	$SessionDefaultTitle       = $Sessions{$SessionID}{Title};
 	$SessionDefaultDescription = $Sessions{$SessionID}{Description};
 	$SessionSeparatorDefault = "No";
       } elsif ($MeetingOrders{$MeetingOrderID}{SessionSeparatorID}) {
         my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
+        print "SSI: $SessionSeparatorID ";
 	$SessionDefaultDateTime    = $Sessions{$SessionSeparatorID}{StartTime};
 	$SessionDefaultTitle       = $Sessions{$SessionSeparatorID}{Title};
 	$SessionDefaultDescription = $Sessions{$SessionSeparatorID}{Description};
@@ -82,7 +90,7 @@ sub SessionEntryForm (@) {
       }
     } 
     $SessionOrderDefault = $SessionOrder;  
-    
+    print "</TD></TR>\n";
     print "<tr valign=top>\n";
     print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
     print "<td align=center>\n"; &SessionOrder; print "</td>\n";
