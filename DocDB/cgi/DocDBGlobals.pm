@@ -100,7 +100,9 @@ $Search                = $cgi_root."Search";
 $SearchForm            = $cgi_root."SearchForm";
 
 $TopicAddForm          = $cgi_root."TopicAddForm";
+$TopicAdd              = $cgi_root."TopicAdd";
 $AuthorAddForm         = $cgi_root."AuthorAddForm";
+$AuthorAdd             = $cgi_root."AuthorAdd";
 
 $ListDocuments         = $cgi_root."ListDocuments";
 $ListByAuthor          = $cgi_root."ListByAuthor";

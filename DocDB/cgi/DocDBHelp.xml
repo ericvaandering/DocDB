@@ -274,19 +274,19 @@ Please use this option responsibly.
  </entry>
 
  <entry>
-<key>authormanual</key>
-<title>Authors</title>
+  <key>authormanual</key>
+  <title>Authors</title>
   <text>
-Type the names of the authors here. Put each author on a new line. Use full last
-names and first names or initials. Each author entered will checked against the
-database and a <b>unique</b> match must be found for <b>all</b> authors before the document
-will be added. Requiring a unique match means that for people who share a last
-name, the first name must be fully specified. Entered middle initials are
-ignored.
-<p/>
-If you would prefer to select the author names from a list, select "Selectable
-List" as the author selection mode from the advanced form on the document DB
-home page.
+     Type the names of the authors here. Put each author on a new line. Use
+     full last names and first names or initials. Each author entered will
+     checked against the database and a <b>unique</b> match must be found for
+     <b>all</b> authors before the document will be added. Requiring a unique
+     match means that for people who share a last name, the first name must
+     be fully specified. Entered middle initials are ignored.
+     <p/>
+     If you would prefer to select the author names from a list, select
+     "Selectable List" as the author selection mode from the advanced form on
+     the document DB home page.
   </text>
  </entry>
 
@@ -759,10 +759,11 @@ or may not be the same as the web username and password.
 
  <entry>
   <key>meetingorder</key>
-  <title>Order</title>
+  <title>Order of Sessions in a Meeting</title>
   <text>
-   Change the numbers here to reorder your sessions within a meeting or your
-   talks within the session. You can use floating point numbers if you like.
+   Change the numbers here to reorder your sessions within a meeting. Using
+   floating point numbers like 2.5 will put this session between those
+   currently numbered 2 and 3.  
   </text>
  </entry>
 
@@ -773,19 +774,20 @@ or may not be the same as the web username and password.
    Check this box if your entry is a break between sessions. These
    <q>sessions</q> cannot have talks or documents associated with them. You
    might use such a separator between sessions to denote a coffee break, a
-   meal, or another activity. <p/>
+   meal, or another activity. 
+   <p/>
    There are also separators you can use between <i>talks</i> to indicate
    breaks in the agenda for lunch or coffee. (These are inserted as you
-   designate talks <i>within</i> a session.) Which type to use where depends on
-   the organization of your meeting. </text>
+   designate talks <i>within</i> a session.) Which type to use where depends
+   on the organization of your meeting. </text>
  </entry>
 
  <entry>
   <key>sessioninfo</key>
   <title>Session Information</title>
   <text>
-   Here fill out the location of the session, its starting date and time, a
-   short title for the session, and a longer note, such as instructions, in the
+   Fill out the location of the session, its starting date and time, a short
+   title for the session, and a longer note, such as instructions, in the
    description field.
   </text>
  </entry>
@@ -802,11 +804,12 @@ or may not be the same as the web username and password.
   <key>meetingtopic</key>
   <title>Meetings as Topics</title>
   <text>
-   Meetings can be designated as their own topics or can be organized  without
-   such a designation. If you choose to create a topic for your meeting, you
-   must select a Major Topic from the list. These topics are designated as a
-   special meeting-like topic. You should also supply a short and long title
-   (description) for your meeting.<p/>
+   Meetings can be designated as their own topics or can be organized 
+   without such a designation. If you choose to create a topic for your
+   meeting, you must select a Major Topic from the list. These topics are
+   designated as a special meeting-like topic. You should also supply a short
+   and long title (description) for your meeting.
+   <p/>
    If you don't choose to create a new topic, you should still fill out the
    long description, location, URL, and date fields.
   </text>
@@ -827,11 +830,11 @@ or may not be the same as the web username and password.
   <title>Show All Talks for Meeting</title>
   <text>
    By checking this box, displaying the meeting will also display all the
-   sessions for the meeting and all the talks within that session. If this
-   is left unchecked, displaying the meeting will display <i>links</i> to the
+   sessions for the meeting and all the talks within that session. If this is
+   left unchecked, displaying the meeting will display <i>links</i> to the
    individual sessions. It is suggested that this box be checked for meetings
-   with just a few sessions and left unchecked for meetings with many sessions,
-   especially parallel sessions. 
+   with just a few sessions and left unchecked for meetings with many
+   sessions, especially parallel sessions. 
   </text>
  </entry>
  
@@ -839,11 +842,11 @@ or may not be the same as the web username and password.
   <key>sessions</key>
   <title>Sessions</title>
   <text>
-   Fill out the information for as many sessions as you need. If there are not
-   enough blank sessions, don't worry, you'll be able to add additional sessions
-   later. After this is done, you'll be able to populate each session with
-   talks.<p/>You can also create separators between sessions for meals or
-   activities.
+   Fill out the information for as many sessions as you need. If there are
+   not enough blank sessions, don't worry, you'll be able to add additional
+   sessions later. After this is done, you'll be able to populate each
+   session with talks.<p/>You can also create separators between sessions for
+   meals or activities.
   </text>
  </entry>
  
@@ -851,12 +854,81 @@ or may not be the same as the web username and password.
   <key>talkfromagenda</key>
   <title>Talk from Agenda</title>
   <text>
-   You are entering a document that is probably related to a meeting for which
-   an agenda has already been entered. Select your talk from the
-   list. Any title, topics, or authors listed are <i>guesses</i> by the
-   organizer(s) and need not be the same as what you enter.<p/>
-   If you don't find your agenda entry, just leave the selector on "Select your
-   talk..."
+   You are entering a document that is probably related to a meeting for
+   which an agenda has already been entered. Select your talk from the list.
+   Any title, topics, or authors listed are <i>guesses</i> by the
+   organizer(s) and need not be the same as what you enter.<p/> If you don't
+   find your agenda entry, just leave the selector on "Select your talk..."
+  </text>
+ </entry>
+ 
+ <entry>
+  <key>sessionorder</key>
+  <title>Order of Talks in a Session</title>
+  <text>
+   Change the numbers here to reorder the talks within a session. Using
+   floating point numbers like 2.5 will put this talk between those currently
+   numbered 2 and 3.
+  </text>
+ </entry>
+ 
+ <entry>
+  <key>talkconfirm</key>
+  <title>Confirming a Talk</title>
+  <text>
+   Check this box if DocDB has guessed the talk correctly based on the agenda
+   information. Also check this box if you manually enter a document number
+   in the "Doc. #" box. If you fail to do this, DocDB will guess again, 
+   possibly erasing your change.
+  </text>
+ </entry>
+ 
+ <entry>
+  <key>talkdelete</key>
+  <title>Deleting a Talk</title>
+  <text>
+   Check this box to delete a talk from the agenda. A document associated with
+   the talk (if any) will <b>not</b> be deleted, just the agenda entry.
+  </text>
+ </entry>
+ 
+ <entry>
+  <key>talkinfo</key>
+  <title>Talk Information</title>
+  <text>
+   Fill out the title for the talk, and a note, if needed. This title will
+   be matched against the titles of documents in the database, so being 
+   accurate helps.
+  </text>
+ </entry>
+ 
+ <entry>
+  <key>talktime</key>
+  <title>Talk Duration</title>
+  <text>
+   Select how long the talk is scheduled to last.
+  </text>
+ </entry>
+ 
+ <entry>
+  <key>authorhint</key>
+  <title>Talk Author Hints</title>
+  <text>
+   Select who will give the talk. Mulitple authors can be selected if the
+   talk will be given by more than one person. Multiple authors can also be
+   selected  if the speaker is not known. In this case, select all the people
+   who may give the talk.
+  </text>
+ </entry>
+ 
+ <entry>
+  <key>topichint</key>
+  <title>Talk Topic Hints</title>
+  <text>
+   Select the topic of the talk. Mulitple topics can be selected if the
+   talk will cover more than one topic. Multiple topics can also be
+   selected  if the exact topic is not known. In this case, select all the 
+   topics which might be entered.
   </text>
  </entry>
  

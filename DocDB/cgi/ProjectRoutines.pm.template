@@ -49,8 +49,24 @@ sub DocDBFooter {
 #
 # Parameters are supplied for the name and e-mail address of the person
 # responsible for the pages
-#
-# The simplest possible routine should look something like this:
+
+# You probably want to include some version of this:
+
+  print "<p><small>\n";
+  print "DocDB Version $DocDBVersion, contact \n";
+  print "<i>\n";
+  print "<A HREF=\"mailto:$WebMasterEmail\">$WebMasterName</A>\n";
+  print "</i>\n";
+  print "</small><br>\n";
+  
+# This prints benchmark info for pages that have it  
+  
+  if ($EndTime && $StartTime) {
+    my $TimeDiff = timediff($EndTime,$StartTime);
+    print "<br><small><b>Execution time: </b>",timestr($TimeDiff),"</small><br>\n";
+  }
+
+# while the simplest possible routine is just this:
   
   print "</body></html>\n";
 }
@@ -58,19 +74,22 @@ sub DocDBFooter {
 sub DocDBNavBar {
   
 # This routine prints the navigation bar just above the footer on the
-# page. You can customize for your installation and include an optional
-# extra description and URL (for a related page, for instance). 
+# page. 
+# This provides a good default, but you can customize for your installation 
+# and include an optional extra description and URL (e.g. for a related page).
+
 
   my ($ExtraDesc,$ExtraURL) = @_;
+
+  require "Security.pm";
 
   print "<p><div align=\"center\">\n";
   if ($ExtraDesc && $ExtraURL) {
     print "[&nbsp;<a href=\"$ExtraURL\"l>$ExtraDesc</a>&nbsp;]&nbsp;\n";
   } 
   print "[&nbsp;<a href=\"$MainPage\">DocDB&nbsp;Home</a>&nbsp;]&nbsp;\n";
-  unless ($Public) {
+  if (&CanCreate()) {
     print "[&nbsp;<a href=\"$DocumentAddForm?mode=add\">New</a>&nbsp;]&nbsp;\n";
-    print "[&nbsp;<a href=\"$DocumentAddForm?mode=reserve\">Reserve</a>&nbsp;]&nbsp;\n";
   }
   print "[&nbsp;<a href=\"$SearchForm\">Search</a>&nbsp;]\n";
   print "[&nbsp;<a href=\"$LastModified?days=$LastDays\">Last&nbsp;$LastDays&nbsp;Days</a>&nbsp;]\n";
@@ -95,5 +114,16 @@ sub ProjectReferenceLink (;$$$$) {
 
   return ($ReferenceLink,$ReferenceText);
 }
+
+# Often times groups may have CSS or other files that are used in Server
+# Side Includes. This function replicates that functionality
   
+#sub SSInclude {
+#  my ($file) = @_;
+#  open SSI,"$SSIDirectory$file";
+#  my @SSI_lines = <SSI>;
+#  close SSI;
+#  print @SSI_lines;
+#}
+
 1;

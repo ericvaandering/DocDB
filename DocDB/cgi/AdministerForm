@@ -8,6 +8,24 @@
 #    Modified: 
 #
 
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
 use CGI;                                                                                      
 use DBI;
 
@@ -151,7 +169,7 @@ print "<p><hr>\n";
 
 print "<a name=\"mintopic\"><center><h4>Administer Minor Topics</h4></center>\n";
 
-print $query -> start_multipart_form('POST',"TopicAdminister");
+print $query -> start_multipart_form('POST',"$TopicAdminister");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
@@ -186,7 +204,7 @@ print "<p><hr>\n";
 
 print "<a name=\"majtopic\"><center><h4>Administer Major Topics</h4></center>\n";
 
-print $query -> start_multipart_form('POST',"MajorTopicAdminister");
+print $query -> start_multipart_form('POST',"$MajorTopicAdminister");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";

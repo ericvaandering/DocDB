@@ -85,25 +85,25 @@ if      ($mode eq "add") {
 &HelpPopupScript;
 &KeywordChooserPopupScript;
 
-@error_stack = ();
-@warn_stack = ();
+@ErrorStack = ();
+@WarnStack = ();
 
 unless (&CanCreate()) {
-  push @error_stack,"You are not allowed to modify or create documents.";
+  push @ErrorStack,"You are not allowed to modify or create documents.";
 }
 if ($mode eq "update" || $mode eq "updatedb") {
   unless ($params{docid}) {
-    push @error_stack,"You must supply a document number to modify a document.";
+    push @ErrorStack,"You must supply a document number to modify a document.";
   }
 }
 if ($mode eq "update" || $mode eq "add") {
   if ($Archive eq "archive" && $NumberUploads > 1) {
-    push @error_stack,"You cannot upload more than one archive.";
+    push @ErrorStack,"You cannot upload more than one archive.";
   }
 }
 
-if (@error_stack) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@error_stack);
+if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@ErrorStack);
 }
 
 my $DocRevID;
@@ -111,7 +111,7 @@ my $DocRevID;
 if ($mode eq "update" || $mode eq "updatedb") {
   &FetchDocument($DocumentID);
   unless (&CanModify($DocumentID)) {
-    push @error_stack,"You are not allowed to modify this document.";
+    push @ErrorStack,"You are not allowed to modify this document.";
   }
 }
 
@@ -120,7 +120,7 @@ if ($mode eq "updatedb") {
     $Version = $Documents{$DocumentID}{NVersions};
   }  
   if ($Version != $Documents{$DocumentID}{NVersions}) {
-    push @warn_stack,"You are about to update an old version of this document.";
+    push @WarnStack,"You are about to update an old version of this document.";
   }
 }    
 
@@ -210,7 +210,7 @@ if ($mode eq "add" && ($SessionID||$ConferenceID)) {
 
 &Unique(@TopicDefaults) ; # Make sure this list is unique
 
-&EndPage(@error_stack); # The user may have made mistakes, warn and exit
+&EndPage(@ErrorStack); # The user may have made mistakes, warn and exit
 
 &SetFileOptions($DocRevID);
 
@@ -234,9 +234,9 @@ if ($Overdate eq "Yes") {
 
 print $query -> hidden(-name => 'special',-default => '');
 
-if (@warn_stack) {
-  &WarnPage(@warn_stack);
-  @warn_stack = ();
+if (@WarnStack) {
+  &WarnPage(@WarnStack);
+  @WarnStack = ();
 }
 
 print "<center><table cellpadding=10>\n";

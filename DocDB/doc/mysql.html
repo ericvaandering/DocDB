@@ -17,6 +17,8 @@
     <li> MySQL rpms are available with the standard RedHat or 
          FermiRedHat installation (e.g., ftp://linux.fnal.gov/linux/711/i386/RedHat/RPMS/).
     <li> install the <a href=rpms.html>appropriate rpms</a>
+    <li> <font color="red">We strongly advise you to change the default 
+         mysql username and database location.</font>
     <li> if you don't plan to use the default mysql username or database
          location, take the following actions:
        <ul>
@@ -29,8 +31,10 @@
     <li> chkconfig mysqld on
     <li> as the database owner, run <b>/usr/bin/mysql_install_db</b> <br>
          <font color="red">This script uses the information in /etc/my.cnf.</font>
-    <li> start MySQL with "<b>/usr/bin/safe_mysqld &</b>" or 
+    <li> start MySQL with  
         "<b>/etc/rc.d/init.d/mysqld start</b>"
+    <li> Create a mysql root administrator account with: <br>
+	 <b>mysqladmin -u root password <em>some password</em> </b>
     </ul>
   <li> other UNIX
     <ul>
@@ -45,16 +49,17 @@
 	 and configure it to start
          mysqld automatically when the machine is booted
     <li> start MySQL with 
-         "<b>cd <your mysql directory>; mysql/bin/safe_mysqld &</b>" or 
+         "<b>cd <em>your mysql directory</em>; mysql/bin/safe_mysqld &</b>" or 
            "<b>/etc/rc.d/init.d/mysqld start</b>"
+    <li> Create a mysql root administrator account with: <br>
+	 <b>mysqladmin -u root password <em>some password</em> </b>
     </ul>
-  <li> Create a mysql root administrator account with: <br>
-       <b>mysqladmin -u root password <em>some password</em> </b>
   </ul>
 <p>
 
 <!-- begin footer -->
 <hr>
+<h3><a href=DocDB-license.html>DocDB License</a></h3>
 <i><font size="-1">
 <script language="javascript">
 <!-- Hide from browsers that do not understand Javascript

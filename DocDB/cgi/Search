@@ -91,8 +91,8 @@ unless ($Mode eq "date" or $Mode eq "meeting" or $Mode eq "conference") {
 
 ### Check parameters for errors
 
-@error_stack = ();
-@warn_stack  = ();
+@ErrorStack = ();
+@WarnStack  = ();
 
 my @DocumentIDs = ();
 my @RevisionDocumentIDs = ();
@@ -101,14 +101,14 @@ my @TopicDocumentIDs = ();
 my ($SearchedRevisions,$SearchedTopics,$SearchedAuthors,$SearchedFiles,$SearchedTypes);
 
 unless ($InnerLogic eq "AND" || $InnerLogic eq "OR") {
-  push @error_stack,"Inner logic must be either AND or OR.";
+  push @ErrorStack,"Inner logic must be either AND or OR.";
 }   
 unless ($OuterLogic eq "AND" || $OuterLogic eq "OR") {
-  push @error_stack,"Outer logic must be either AND or OR.";
+  push @ErrorStack,"Outer logic must be either AND or OR.";
 }   
 
-if ((@error_stack)) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@error_stack);
+if ((@ErrorStack)) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@ErrorStack);
 }
 
 print "<p>\n";
@@ -335,10 +335,6 @@ print "<p>\n";
 ### Statistics
 
 print "<p><b>Number of documents found: $NumDoc</b><p>\n";
-
-$EndTime  = new Benchmark;
-$TimeDiff = timediff($EndTime,$StartTime);
-print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
 
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -1,0 +1,83 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+# Usage: MigrateV5 --u=username --p=password --a=init|migrate|delete
+
+use DBI;
+use Getopt::Long;
+
+require "CGIInclude.pm";
+
+require "DocDBGlobals.pm";
+
+&GetOptions("a=s" => \$Action,"u=s" => \$User,"p=s" => \$Password);
+
+unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate") {
+  print "Usage: MigrateV5 --u=username --p=password --a=init|migrate|delete\n\n";
+  print "This script is used to migrate from a version 4 to version 5 DB structure. \n";
+#  print "Run this script in \"init\" mode first, then in \"migrate\" mode.  \n\n";
+#  print "At this point you can update the CGI code and when you are comfortable  \n";
+#  print "everything is OK, run in \"delete\" mode to erase old columns and/or tables.  \n";
+ exit;
+}  
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$User,$Password);
+
+if ($Action eq "init") { # Modify existing tables and add new tables in preparation for migration 
+
+### Edit the first line if you have a different admin account
+
+# Meeting expansion
+
+  my $SessionAdd  = $dbh -> prepare("alter table Session add ShowAllTalks Integer"); 
+  my $RevisionAdd  = $dbh -> prepare("alter table DocumentRevision add Note text"); 
+  my $RevisionAdd2 = $dbh -> prepare("alter table DocumentRevision add Superceded int"); 
+  my $KeywordDel      = $dbh -> prepare("alter table Keyword drop KeywordGroupID"); 
+
+  my $SignoffCreate = $dbh -> prepare("create table Signoff ".
+                   "(SignoffID integer auto_increment primary key,".
+                   " DocRevID integer, Note text,".
+                   " TimeStamp timestamp,".
+                   " index(DocRevID))"); 
+
+  my $SignatureCreate = $dbh -> prepare("create table Signature ".
+                   "(SignatureID integer auto_increment primary key,".
+                   " EmailUserID integer, Note text,".
+                   " Signed integer,".
+                   " index(EmailUserID))"); 
+
+  my $SignoffDependencyCreate = $dbh -> prepare("create table SignoffDependency ".
+                   "(SignoffDependencyID integer auto_increment primary key,".
+                   " SignoffID integer, PreSignoffID integer, ".
+                   " TimeStamp timestamp,".
+                   " index(SignoffID), index(PreSignoffID))"); 
+
+  my $EmailDocImmedCreate = $dbh -> prepare("create table EmailDocumentImmediate ".
+                   "(EmailDocumentImmediateID integer auto_increment primary key,".
+                   " EmailUserID integer, DocumentID integer, ".
+                   " TimeStamp timestamp,".
+                   " index(EmailUserID), index(DocumentID))"); 
+
+  $SessionAdd               -> execute();
+  $RevisionAdd              -> execute();
+  $RevisionAdd2             -> execute();
+  $KeywordDel               -> execute();
+  $SignoffCreate            -> execute();
+  $SignatureCreate          -> execute();
+  $SignoffDependencyCreate  -> execute();
+  $EmailDocImmedCreate      -> execute();
+  
+  
+}
+
+if ($Action eq "migrate") {
+  print "No migration necessary.\n";
+}
+
+if ($Action eq "delete") { 
+  print "No deletions necessary.\n";
+}
+
+exit;

@@ -28,17 +28,17 @@ my $topic_insert = $dbh->prepare(
           "(MinorTopicID, MajorTopicID, ShortDescription, LongDescription) ". 
    "values (0,            ?,            ?,                ?)");
 
-@error_stack = ();
+@ErrorStack = ();
 
 $MajorTopicID     = $params{majortopic};
 $ShortDescription = $params{short};
 $LongDescription  = $params{long};
 
 if (&MajorIsGathering($MajorTopicID)) {
-  push @error_stack,"You cannot add conferences or meetings with this form, use the 
+  push @ErrorStack,"You cannot add conferences or meetings with this form, use the 
        <a href=\"$AdministerForm\">Administration</a> form instead.";
 }       
-&EndPage(@error_stack);
+&EndPage(@ErrorStack);
 
 $topic_insert -> execute($MajorTopicID,$ShortDescription,$LongDescription);
 my $MinorTopicID = $topic_insert -> {mysql_insertid}; # Works with MySQL only

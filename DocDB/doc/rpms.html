@@ -6,14 +6,25 @@
 <p>
 Install the following rpms (needed by various parts of DocDB)
  <ul>
- <li>mysql-devel
- <li>mysql-server
+ <li> MySQL rpms if you will have a local database
+     <ul>
+     <li>mysql-devel
+     <li>mysql-server
+     <li>mysql
+     <li>mysql-client
+     </ul>
+ <li> MySQL rpms if the database is located on another machine
+     <ul>
+     <li>mysql
+     <li>mysql-client
+     </ul>
  <li>libdbi
  <li>libdbi-dbd-mysql
  <li>libdbi-devel
  <li>perl-DBI
  <li>perl-DBD-MySQL
  <li>perl-DBD-Pg
+ <li>perl-XML-Grove
  <li>perl-MailTools <br>
      (downloaded from 
      <a href=http://www.rpmfind.net/linux/RPM/contrib/noarch/>http://www.rpmfind.net/linux/RPM/contrib/noarch/</a>)
@@ -23,9 +34,11 @@ Install the following rpms (needed by various parts of DocDB)
  <li>macutils
  <li>zip
  </ul>
+<p>
 
 <!-- begin footer -->
 <hr>
+<h3><a href=DocDB-license.html>DocDB License</a></h3>
 <i><font size="-1">
 <script language="javascript">
 <!-- Hide from browsers that do not understand Javascript

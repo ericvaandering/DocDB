@@ -1,0 +1,114 @@
+<title>Customizing DocDB</title>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<center><h1>Customizing DocDB</h1></center>
+
+<p>
+<ol>
+<li> <font color="red">Login to the document database account.</font> <br>
+     This account is used to administer the various DocDB scripts and html pages.
+<li> Unwind the DocDB tar file under your document database account.
+<li> cd to DocDB/cgi
+    <ol>
+    <li> cp ProjectGlobals.pm.template ProjectGlobals.pm
+    <li> cp ProjectMessages.pm.template ProjectMessages.pm
+    <li> cp ProjectRoutines.pm.template ProjectRoutines.pm
+    <li> cp ProjectHelp.xml.template ProjectHelp.xml
+    <li> Edit the global variables in 
+	<a href=DocDBGlobals.html>ProjectGlobals.pm</a>. 
+	You can also look at DocDBGlobals.pm
+	and put new values for those variables in ProjectGlobals.pm. 
+    <li> Customized web page headers and footers are defined in  ProjectRoutines.pm.
+    <li> If you need a customized keyword message, edit ProjectMessages.pm.
+    <li> If you need customized help instructions, edit ProjectHelp.xml
+    </ol>
+<li> Check the files in DocDB/html and edit them for your site.
+<li> copy the files in DocDB/cgi to $script_root
+     (your private DocDB cgi directory) <br>
+     $script_root is defined in ProjectGlobals.pm, 
+     it is not an actual environmental variable.
+<li> create a .htaccess file in $script_root <br>
+     Here is a sample .htaccess file
+<pre>
+       AuthType Basic
+       AuthName "My Document Database"
+       AuthUserFile  /somedir/somedir/.htpasswd
+       &lt Limit GET POST &gt
+       require valid-user
+       &lt /Limit &gt
+</pre>
+     <font color="red">The .htpasswd file should not be in 
+     any web-accessable directory.</font>
+<li> cp -r DocDB/html  $file_root/Static, 
+     where $file_root is defined in ProjectGlobals.pm. <br>
+<li> Set permissions on $file_root. 
+     <ul>
+     <li> $file_root must be owned by the uid/gid of the webserver process.
+     DocDB will create the necessary subdirectory structure and populate it
+     with the downloaded files when documents are created and edited.
+     <li> Unlike the remainder of $file_root, the $file_root/Static directory
+     tree must be owned by the document database account.
+     </ul>
+<li> create the public access scripts
+    <ol>
+    <li> mkdir /www/cgi-bin/public/DocDB/, chosing an 
+         appropriate directory for the public scripts.
+    <li> cp DocDB/scripts/PublicInstall.csh /www/cgi-bin/public/DocDB/.
+    <li> cp DocDB/cgi/ProjectGlobals.pm /www/cgi-bin/public/DocDB/. <br>
+         This script will make links to the private DocDB cgi area. 
+	 Edit this script as necessary.
+    <li> Execute PublicInstall.csh.
+    <li> rm PublicInstall.csh  
+    <li> Edit the public ProjectGlobals.pm, taking particular care 
+         to be sure these definitions point <b>ONLY</b> to the 
+	 public directories.  Be sure to remove the $Administrator
+	 definition from the public ProjectGlobals.pm.  
+	 Uncomment the "Public" lines in ProjectGlobals.pm.
+    </ol>
+<li> Edit DodDB/sql/CreateDatabase.SQL to specify your own MajorTopics, 
+     Institutions, and SecurityGroups.
+<li> mysql SomeDocDB -u docdbadm -p < DodDB/sql/CreateDatabase.SQL 
+<li> mkdir $file_root/Static/Lists
+<li> mkdir $file_root/Static/Lists/<em>group-name</em> for every 
+     permission group defined in DocDB.
+<li> cron jobs
+    <ol>
+    <li> Make a directory under your document database account to contain 
+	 the files in DocDB/scripts ( we'll call it "docdb-scripts" )
+    <li> cp DocDB/scripts/* docdb-scripts/.
+    <li> cd docdb-scripts
+    <li> Check CGIInclude.pm and edit if necessary.
+    <li> Edit DocDBHourly.csh <br>
+         There should be one line for every permission group.
+    <li> setup cron jobs to run the scripts (use crontab -e)
+    <pre>
+    00 * * * * cd docdb-scripts; ./DocDBHourly.csh
+    15 * * * * cd DocDB-Public-scripts; ./DocDBHourly.csh
+    05 0 * * * cd docdb-scripts; ./DocDBDaily.csh  > /dev/null
+    10 0 * * 0 cd docdb-scripts; ./DocDBWeekly.csh > /dev/null
+    </pre>
+    <li> These cron jobs populate the lists used by DocDB to 
+         efficiently list all documents and provide the information 
+	 used by the e-mail notification scripts.
+    </ol>
+</ol>
+
+<p>
+<!-- begin footer -->
+<hr>
+<h3><a href=DocDB-license.html>DocDB License</a></h3>
+<i><font size="-1">
+<script language="javascript">
+<!-- Hide from browsers that do not understand Javascript
+// print the URL and modification date of this page
+var url = document.location;
+document.write(url)  
+var dt = document.lastModified;
+document.write('<br> Last Modified:')  
+document.write(dt)  
+// end hiding --> 
+</script> 
+</font></i>
+</body>
+</html>

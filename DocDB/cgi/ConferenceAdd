@@ -1,7 +1,27 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+# Description: Called by ConferenceAddForm, adds conference info into the DB
 #
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 use CGI;
 use DBI;
@@ -37,8 +57,8 @@ my $conference_insert = $dbh->prepare(
           "(ConferenceID, MinorTopicID, Location, URL, StartDate, EndDate) ". 
    "values (0,            ?,            ?,        ?,   ?,         ?)");
 
-@error_stack = ();
-@warn_stack = ();
+@ErrorStack = ();
+@WarnStack = ();
 
 my ($MajorTopicID)   = @ConferenceMajorIDs; 
 my $ShortDescription = $params{short};
@@ -63,35 +83,35 @@ my $EndTime   = timelocal(0,0,0,$Endday,$ReverseAbrvMonth{$Endmonth}-1,$Endyear)
 # Check inputs
 
 unless ($ShortDescription && $LongDescription && $Location) {
-  push @error_stack,"You must fill in all the fields.";
+  push @ErrorStack,"You must fill in all the fields.";
 }
 
 if ($URL) {
   unless (&ValidURL($URL)) {
-    push @error_stack,"The URL $URL is not valid.";
+    push @ErrorStack,"The URL $URL is not valid.";
   }
 } else {
-  push @warn_stack,"No URL was supplied for this conference. If this was a
+  push @WarnStack,"No URL was supplied for this conference. If this was a
   mistake, do not re-enter the conference. Contact an adminstrator.";
 }  
 
 unless ($EndTime && &ValidDate($Endday,$ReverseAbrvMonth{$Endmonth},$Endyear)) {
-  push @error_stack,"The ending date is not valid.";
+  push @ErrorStack,"The ending date is not valid.";
 }
   
 unless ($StartTime && &ValidDate($Startday,$ReverseAbrvMonth{$Startmonth},$Startyear)) {
-  push @error_stack,"The starting date is not valid.";
+  push @ErrorStack,"The starting date is not valid.";
 }
 
 if ($StartTime > $EndTime) {
-  push @error_stack,"The starting date is after the ending date.";
+  push @ErrorStack,"The starting date is after the ending date.";
 }
   
-if (@error_stack) {
-  &EndPage(@error_stack);
+if (@ErrorStack) {
+  &EndPage(@ErrorStack);
 }
-if (@warn_stack) {
-  &WarnPage(@warn_stack);
+if (@WarnStack) {
+  &WarnPage(@WarnStack);
 }
 
 $topic_insert -> execute($MajorTopicID,$ShortDescription,$LongDescription);

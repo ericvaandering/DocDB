@@ -28,10 +28,6 @@ require "WebUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 
-print $query->header;
-&DocDBHeader("Modify a Meeting");
-&HelpPopupScript;
-
 %params = $query -> Vars;
 
 my $Mode               = $params{mode};
@@ -95,7 +91,12 @@ $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass
 unless ($dbh) {
   push @ErrorStack,$Msg_NoConnect;
 }         
+
+print $query->header;
+&DocDBHeader("Modify a Meeting");
 &EndPage(@ErrorStack);
+
+&HelpPopupScript;
 
 &GetTopics;
 
@@ -446,7 +447,7 @@ $DefaultStartDate           = $Conferences{$ConferenceID}{StartDate};
 $DefaultEndDate             = $Conferences{$ConferenceID}{EndDate};
 
 print "<tr valign=top>\n";
- print "<td width=10 colspan=2>Only select a Major Topic and fill in the short description if
+ print "<td colspan=2>Only select a Major Topic and fill in the short description if
  you want to make a new topic.\n";
  print "<a ";
  &HelpLink("meetingtopic");

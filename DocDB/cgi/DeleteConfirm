@@ -33,18 +33,18 @@ $DocumentID = $params{docid};
 $DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
 $DocumentID =~ s/\s+$//;
 
-@error_stack = ();
+@ErrorStack = ();
 
 unless ($DocumentID) {
-  push @error_stack,"You are must supply a document number to delete.";
+  push @ErrorStack,"You are must supply a document number to delete.";
 }  
 unless (&CanAdminister) {
-  push @error_stack,"You must be logged in as the adminstrator to delete
+  push @ErrorStack,"You must be logged in as the adminstrator to delete
   documents";
 }  
   
-if (@error_stack) {
-  &EndPage(@error_stack);
+if (@ErrorStack) {
+  &EndPage(@ErrorStack);
 }
 
 &GetSecurityGroups;
@@ -58,11 +58,11 @@ print $query->header;
 my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 
 unless ($DocRevID) {
-  push @error_stack,"This document does not exist.";
+  push @ErrorStack,"This document does not exist.";
 }
 
-if (@error_stack) {
-  &EndPage(@error_stack);
+if (@ErrorStack) {
+  &EndPage(@ErrorStack);
 }
 
 print "<p><center><b>To delete this document, you must supply the adminstrator 

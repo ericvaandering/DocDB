@@ -9,8 +9,10 @@
 # a group of cookies, one for each preference.
 
 use CGI;
+use DBI;
 
 require "DocDBGlobals.pm";
+require "Messages.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 require "Cookies.pm";
@@ -54,7 +56,13 @@ push @cookies, $query->cookie(-name=>'overdate',
 print $query->header(-cookie=>\@cookies);
 print "<meta http-equiv=\"Refresh\" content=\"10; URL=$MainPage\">"; ### generates improper html but works for now
 
+$dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rowuser,$db_ropass);
+
+unless ($dbh) {
+  push @ErrorStack,$Msg_NoConnect;
+}      
 &DocDBHeader("Setting Preferences");
+&EndPage(@ErrorStack);
 
 print "<p>";
 print "<b>Your preferences have been saved.</b> 

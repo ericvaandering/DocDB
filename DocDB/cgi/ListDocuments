@@ -23,12 +23,12 @@ require "Sorts.pm";
 
 $query = new CGI;  # Global for subroutines
 
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
 ### Start HTML
 
 print $query->header;
 &DocDBHeader("$Project Document List","Document List");
-
-$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 %params = $query -> Vars;
 
@@ -65,10 +65,6 @@ print "<p>\n";
 ### Statistics
 
 print "<p><b>Number of documents found: $NumDoc</b><p>\n";
-
-$EndTime  = new Benchmark;
-$TimeDiff = timediff($EndTime,$StartTime);
-print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
 
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

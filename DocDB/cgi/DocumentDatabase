@@ -8,6 +8,24 @@
 #    Modified: 
 #
 
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
 use CGI;                                                      
 use DBI;                                                      
 
@@ -97,7 +115,7 @@ if ($Public) {
   print "&nbsp;\n";
 } else {
   print "<ul>\n";
-  print "<li> from <a href=\"$ListMeetings\">group meetings</a>\n";
+  print "<li> from <a href=\"$ListMeetings\">collaboration meetings</a>\n";
   print "</ul>\n";
 }
 print "</td>";
@@ -169,14 +187,9 @@ if ($Project eq "Beams") {
   print "<tr>\n";
   print "<td colspan=2>\n";
   print "<ul>\n";
-  if ($Public) {
-    print "<li> by old number
-          <a href=\"$web_root/Static/Public/OldDBTranslation.shtml\">like
-           MI-xxxx</a>. \n";
-  } else {
-    print "<li> by old number like
-           <a href=\"$web_root/Static/Restricted/OldDBTranslation.shtml\">MI-xxxx</a> from the <a href=\"http://www-fmi.fnal.gov/Notes_Index.html\">old MI Notes</a>\n";
-  }
+  print "<li> from  
+        <a href=\"$web_root/Static/Public/MI_Notes_Webpage.shtml\">MI Notes</a>
+	(old numbers like MI-xxxx).\n";
   print "</ul>\n";
   print "</td>";
   print "</tr>\n";
@@ -199,7 +212,6 @@ unless ($Public) {
   print "<li><b><a href=\"$Statistics\">Get statistics</a></b>\n";
 if ($Project eq "Beams") {
   print "<li><b><a href=\"/cgi-bin/DocDB/RetrieveFile?docid=553\">Useful notes</a></b>\n";
-  print "<li><b><a href=\"$ListKeywords\">Keyword list</a></b>\n";
 }
   print "</ul>\n";
 
