@@ -127,7 +127,7 @@ if ($Mode eq "newuser") {
     my $EmailUserInsert = $dbh -> prepare("insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) values (0,?,?)"); 
        $EmailUserInsert -> execute($EmailUserID,$GroupID);
 
-    print "User <b>$UserName</b> created as a member of $remote_user. 
+    print "User <b>$UserName</b> created as a member of <b>$remote_user</b> group. 
            Do not forget your password, there is no way to retrieve it.<p\>\n"; 
     $Mode = "update"; # Now display the form to update  
   }

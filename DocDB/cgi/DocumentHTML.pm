@@ -173,6 +173,7 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
 #  my $DocRevID         = $Params{-docrevid}; #FIXME
   my $DocIDOnly        = $Params{-docidonly}        || 0;
   my $NumWithVersion   = $Params{-numwithversion}   || 0;
+  my $NoVersion        = $Params{-noversion}        || 0;
   my $TitleLink        = $Params{-titlelink}        || 0;
   my $NoApprovalStatus = $Params{-noapprovalstatus} || 0;
 
@@ -219,6 +220,9 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
         $Link .= ")";
       }  
     }  
+  } elsif ($NoVersion) {      # Like Project-doc-1234
+    $Link .= &FullDocumentID($DocumentID);  
+    $Link .= "</a>";
   } else {                    # Like Project-doc-1234-v56
     $Link .= &FullDocumentID($DocumentID,$Version);  
     $Link .= "</a>";

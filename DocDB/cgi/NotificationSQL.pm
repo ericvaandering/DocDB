@@ -221,4 +221,22 @@ sub SetAuthorNotifications ($$) {
   }   
 }
 
+sub InsertEmailDocumentImmediate (%) {
+  my %Params = @_;
+  
+  my $EmailUserID = $Params{-emailuserid};
+  my $DocumentID  = $Params{-docid};
+  
+  if ($DocumentID && $EmailUserID) {
+    my $Insert = $dbh -> prepare("insert into EmailDocumentImmediate ".
+                                 "(EmailDocumentImmediateID,EmailUserID,DocumentID) ".
+                                 "values (0,?,?)");
+    $Insert -> execute($EmailUserID,$DocumentID);
+  } else {
+  
+    push @ErrorStack, "bad parms"; 
+    print "bad parms<br>\n"; 
+  }  
+}
+
 1;
