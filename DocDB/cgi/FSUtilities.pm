@@ -39,7 +39,7 @@ sub GetURLDir { # Returns a directory name
   return $new_dir;
 }
 
-sub ProtectDirectory {
+sub ProtectDirectory { # Write (or delete) correct .htaccess file in directory
   my ($documentID,$version,@users) = @_;
 
   my $AuthName = join ' or ',@users;
@@ -60,18 +60,18 @@ sub ProtectDirectory {
      print HTACCESS "</Limit>\n";                                                                                                                                             
     close HTACCESS; 
   } else {
-    unlink "$directory$htaccess"; # Not tested
+    unlink "$directory$htaccess"; # No users or public, remove .htaccess
   }  
 }
 
-sub WindowsBaseFile {
+sub WindowsBaseFile {    # Strips off Windows directories
   my ($long_file) = @_;
   @parts = split /\\/,$long_file;
   my $short_file = pop @parts;
   return $short_file;
 }  
   
-sub UnixBaseFile {
+sub UnixBaseFile {       # Strips off Unix directories
   my ($long_file) = @_;
   @parts = split /\//,$long_file;
   my $short_file = pop @parts;

@@ -33,7 +33,7 @@ print "If the above choices don't satisfy your needs, use this form to generate
 $modes{reserve}  = "Reserve document number";
 $modes{add}      = "New document";
 $modes{update}   = "Update existing document";
-#$modes{updatedb} = "Update DB information";  # See note in ProcessDocumentAdd
+$modes{updatedb} = "Update DB information";  # See note in ProcessDocumentAdd
 
 $uploads{http}   = "HTTP submission";
 $uploads{file}   = "Local file upload";
