@@ -57,7 +57,7 @@ sub FetchDocument {
      "from Document where DocumentID=?");
   my $MaxVersionQuery    = $dbh->prepare("select MAX(VersionNumber) from ".
                                      "DocumentRevision where DocumentID=?");
-  if ($Documents{$DocumentID}{DOCID}) { # Already fetched
+  if ($Documents{$DocumentID}{DOCID} && $Documents{$DocumentID}{NVersions}) { # Already fetched
     return $Documents{$DocumentID}{DOCID};
   }  
   $DocumentList -> execute($DocumentID);

@@ -1,0 +1,129 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+# Get DocumentIDs of documents user has signed
+
+#select DocumentRevision.DocumentID from Signature,Signoff,DocumentRevision
+#where Signature.EmailUserID=? and Signoff.SignoffID=Signature.SignoffID and
+#Signoff.DocRevID=DocumentRevision.DocRevID and Signature.Signed=1
+
+# Get DocumentIDs of documents user hasn't signed
+
+#select DocumentRevision.DocumentID from Signature,Signoff,DocumentRevision
+#where Signature.EmailUserID=1 and Signoff.SignoffID=Signature.SignoffID and
+#Signoff.DocRevID=DocumentRevision.DocRevID and Signature.Signed=0
+
+use Benchmark;
+use CGI;
+use DBI;
+
+$StartTime = new Benchmark;
+
+require "DocDBGlobals.pm";
+
+require "SignoffSQL.pm";
+
+require "ResponseElements.pm";
+require "HTMLUtilities.pm";
+require "RevisionUtilities.pm";
+require "SignoffUtilities.pm";
+require "Utilities.pm";
+
+$DebugOutput = 1;
+
+
+$query = new CGI;  # Global for subroutines
+
+%params = $query -> Vars;
+
+my $EmailUserID = $params{emailuserid};
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+
+### Start HTML
+
+print $query->header;
+&DocDBHeader("Signature Report for ....");
+
+&EndPage(@ErrorStack);
+
+my @DocumentIDs = &GetSignoffDocumentIDs(-emailuserid => $EmailUserID);
+#my @DocRevIDs   = &GetSignoffDocRevIDs(-emailuserid => $EmailUserID);
+my @SignoffIDs  = &GetSignoffIDs(-emailuserid => $EmailUserID);
+
+my @ReadyDocumentIDs        = (); # Ready for persons signature
+my @NotReadyDocumentIDs     = (); # Signature ready in future
+my @ApprovedDocumentIDs     = (); # Fully approved documents
+my @SignedDocumentIDs       = (); # Signed but not approved
+my @OldSignatureDocumentIDs = (); # No signature on current version
+
+foreach my $SignoffID (@SignoffIDs) {
+  $SignoffID = &FetchSignoff($SignoffID);
+  if ($SignoffID) {
+    my $DocRevID = $Signoffs{$SignoffID}{DocRevID};
+    if (&RevisionIsLatest($DocRevID)) {
+      &FetchDocRevisionByID($DocRevID);
+      my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+      my $Status = &SignoffStatus ($SignoffID);
+      if ($Status eq "Ready") {
+        push @ReadyDocumentIDs,$DocumentID;
+      } elsif ($Status eq "NotReady") { 
+        push @NotReadyDocumentIDs,$DocumentID;
+      } elsif ($Status eq "Signed") { 
+        my ($RevisionStatus) = &RevisionStatus($DocRevID);
+        if ($RevisionStatus eq "Approved") {
+          push @ApprovedDocumentIDs,$DocumentID;
+        } elsif ($RevisionStatus eq "Unapproved") {
+          push @SignedDocumentIDs,$DocumentID;
+        }      
+      }
+    }
+  }    
+}
+    
+my @CurrentDocumentIDs = (@ReadyDocumentIDs ,@NotReadyDocumentIDs,@ApprovedDocumentIDs,@SignedDocumentIDs);
+@OldSignatureDocumentIDs = &RemoveArray(\@DocumentIDs,@CurrentDocumentIDs);
+    
+foreach my $DocumentID (@ReadyDocumentIDs) {
+  push @DebugStack,"Ready: $DocumentID";    
+}
+foreach my $DocumentID (@NotReadyDocumentIDs) {
+  push @DebugStack,"NotReady: $DocumentID";    
+}
+foreach my $DocumentID (@ApprovedDocumentIDs) {
+  push @DebugStack,"Approved: $DocumentID";    
+}
+foreach my $DocumentID (@SignedDocumentIDs) {
+  push @DebugStack,"Signed: $DocumentID";    
+}
+foreach my $DocumentID (@OldSignatureDocumentIDs) {
+  push @DebugStack,"OldSignature: $DocumentID";    
+}
+    
+print "<p><b>Number of documents found: $NumDoc</b><p>\n";
+
+&DebugPage("End of list");
+
+$EndTime  = new Benchmark;
+
+&DocDBNavBar();
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

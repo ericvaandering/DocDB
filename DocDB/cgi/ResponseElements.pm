@@ -582,7 +582,7 @@ sub FindAgendaRevision {
   $agenda_find -> bind_columns(undef, \($DocRevID));
   while ($agenda_find -> fetch && !$AgendaRevID) {
     &FetchDocRevisionByID($DocRevID); 
-    if ($DocRevisions{$DocRevID}{OBSOLETE}) {next;}
+    if ($DocRevisions{$DocRevID}{Obsolete}) {next;}
     my $DocID = &FetchDocument($DocRevisions{$DocRevID}{DOCID});
     if ($DocRevisions{$DocRevID}{VERSION} != $Documents{$DocID}{NVersions}) {next;}
     $AgendaRevID = $DocRevID;
@@ -597,7 +597,7 @@ sub FindAgendaRevision {
     $agenda_find -> bind_columns(undef, \($DocRevID));
     while ($agenda_find -> fetch && !$AgendaRevID) {
       &FetchDocRevisionByID($DocRevID); 
-      if ($DocRevisions{$DocRevID}{OBSOLETE}) {next;}
+      if ($DocRevisions{$DocRevID}{Obsolete}) {next;}
       my $DocID = &FetchDocument($DocRevisions{$DocRevID}{DOCID});
       if ($DocRevisions{$DocRevID}{VERSION} != $Documents{$DocID}{NVersions}) {next;}
       $AgendaRevID = $DocRevID;

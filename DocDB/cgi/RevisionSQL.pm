@@ -34,7 +34,7 @@ sub FetchDocRevisionByID ($) {
   $DocRevisions{$DocRevID}{VERSION}       = $VersionNumber; # FIXME: BWC
   $DocRevisions{$DocRevID}{Version}       = $VersionNumber;
   $DocRevisions{$DocRevID}{DOCID}         = $DocumentID;
-  $DocRevisions{$DocRevID}{OBSOLETE}      = $Obsolete;
+  $DocRevisions{$DocRevID}{Obsolete}      = $Obsolete;
   $DocRevisions{$DocRevID}{Keywords}      = $Keywords;
   $DocRevisions{$DocRevID}{Note}          = $Note;
   $DocRevisions{$DocRevID}{Demanaged}    = $Demanaged;
@@ -109,7 +109,7 @@ sub FetchRevisionsByDocument {
   my @DocRevList = ();
   while ($revision_list -> fetch) {
     &FetchDocRevisionByID($DocRevID);
-    unless ($DocRevisions{$DocRevID}{OBSOLETE}) {
+    unless ($DocRevisions{$DocRevID}{Obsolete}) {
       push @DocRevList,$DocRevID;
     }  
   }
@@ -136,7 +136,7 @@ sub GetAllRevisions { # FIXME: Implement full mode, flag with got all revisions
     $DocRevisions{$DocRevID}{VERSION}       = $VersionNumber; # FIXME: BWC
     $DocRevisions{$DocRevID}{Version}       = $VersionNumber;
     $DocRevisions{$DocRevID}{DOCID}         = $DocumentID;
-    $DocRevisions{$DocRevID}{OBSOLETE}      = $Obsolete;
+    $DocRevisions{$DocRevID}{Obsolete}      = $Obsolete;
     $DocRevisions{$DocRevID}{Complete}      = 0;
   }
 }
@@ -154,7 +154,7 @@ sub FetchRevisionsByMinorTopic {
 
   while ($RevisionList -> fetch) {
     &FetchDocRevisionByID($DocRevID);
-    if ($DocRevisions{$DocRevID}{OBSOLETE}) {next;}
+    if ($DocRevisions{$DocRevID}{Obsolete}) {next;}
     push @DocRevIDs,$DocRevID; 
   }
   return @DocRevIDs;

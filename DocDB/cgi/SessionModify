@@ -132,7 +132,7 @@ if ($Mode eq "modify") {
   &UpdateSession(-sessionid => $SessionID, -date => $SessionDate, 
                  -title => $SessionTitle, -description => $SessionDescription,
                  -location => $SessionLocation);
-  &ClearAllSessions;
+  &ClearSessions;
   &FetchSessionByID($SessionID);
 
   my %TalkOrders = (); # Re-sort talk orders

@@ -155,6 +155,7 @@ $ConfirmTalkHint       = $cgi_root."ConfirmTalkHint";
 
 $SignoffChooser        = $cgi_root."SignoffChooser";
 $SignRevision          = $cgi_root."SignRevision";
+$SignatureReport       = $cgi_root."SignatureReport";
 
 $AdministerForm        = $cgi_root."AdministerForm";
 $AuthorAdminister      = $cgi_root."AuthorAdminister";

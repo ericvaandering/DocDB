@@ -104,8 +104,8 @@ sub PrintSignatureInfo ($) {
       # If signed, allow rescinding the signature
       # Otherwise, note that it's waiting
       
-      my $SignatureText  = "";
-      
+      my $SignatureText = "";
+      my $SignatureLink = &SignatureLink($EmailUserID);
       if ($Status eq "Ready" || $Status eq "Signed") { 
         if ($Status eq "Ready") {
           $Action = "sign";
@@ -115,7 +115,7 @@ sub PrintSignatureInfo ($) {
           $ActionText = "Unsign Document"
         }  
         $SignatureText .= $query -> start_multipart_form('POST',"$SignRevision");
-        $SignatureText .= "$EmailUser{$EmailUserID}{Name} ";
+        $SignatureText .= "$SignatureLink ";
         $SignatureText .= $query -> hidden(-name => 'signatureid',   -default => $SignatureID);
         $SignatureText .= $query -> hidden(-name => 'emailuserid',   -default => $EmailUserID);
         $SignatureText .= $query -> hidden(-name => 'action',   -default => $Action);
@@ -124,9 +124,9 @@ sub PrintSignatureInfo ($) {
         $SignatureText .= $query -> submit (-value => $ActionText);
         $SignatureText .= $query -> end_multipart_form;
       } elsif ($Status eq "NotReady") {
-        $SignatureText .= "$EmailUser{$EmailUserID}{Name} (waiting for other signatures)";
+        $SignatureText .= "$SignatureLink (waiting for other signatures)";
       } else {
-        $SignatureText .= "$EmailUser{$EmailUserID}{Name} (unknown status)";
+        $SignatureText .= "$SignatureLink (unknown status)";
       }    
       push @SignatureSnippets,$SignatureText;
     } # if ($SignatureIDOK) 
@@ -136,4 +136,14 @@ sub PrintSignatureInfo ($) {
   print "$SignoffText\n";
 }
 
+sub SignatureLink ($) {
+  require "NotificationSQL.pm";
+  my ($EmailUserID) = @_;
+  
+  &FetchEmailUser($EmailUserID);
+  my $Link = "<a href=\"$SignatureReport?emailuserid=$EmailUserID\">";
+     $Link .= $EmailUser{$EmailUserID}{Name};
+     $Link .= "</a>";
+  return $Link;
+}
 1;

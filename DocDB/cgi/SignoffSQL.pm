@@ -118,6 +118,82 @@ sub GetAllSignoffsByDocRevID ($) {
   return @SignoffIDs;  
 }
 
+sub GetSignoffDocumentIDs (%) {
+  my %Params = @_;
+  
+  my $EmailUserID = $Params{-emailuserid} || 0;
+  
+  my @DocumentIDs = ();
+  my $List;
+
+  if ($EmailUserID) {
+    $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from Signature,Signoff,DocumentRevision
+            where Signature.EmailUserID=? and Signoff.SignoffID=Signature.SignoffID and
+            Signoff.DocRevID=DocumentRevision.DocRevID");
+    $List -> execute($EmailUserID);
+  }  
+
+  if ($List) {
+    my $DocumentID;
+    $List -> bind_columns(undef, \($DocumentID));
+    while ($List -> fetch) {
+      push @DocumentIDs,$DocumentID;
+    }
+  }  
+  
+  return @DocumentIDs;
+}
+
+sub GetSignoffDocRevIDs (%) {
+  my %Params = @_;
+  
+  my $EmailUserID = $Params{-emailuserid} || 0;
+  
+  my @DocRevIDs = ();
+  my $List;
+
+  if ($EmailUserID) {
+    $List = $dbh -> prepare("select DISTINCT(Signoff.DocRevID) from Signature,Signoff
+            where Signature.EmailUserID=? and Signoff.SignoffID=Signature.SignoffID");
+    $List -> execute($EmailUserID);
+  }  
+
+  if ($List) {
+    my $DocRevID;
+    $List -> bind_columns(undef, \($DocRevID));
+    while ($List -> fetch) {
+      push @DocRevIDs,$DocRevID;
+    }
+  }  
+  
+  return @DocRevIDs;
+}
+
+sub GetSignoffIDs (%) {
+  my %Params = @_;
+  
+  my $EmailUserID = $Params{-emailuserid} || 0;
+  
+  my @SignoffIDs = ();
+  my $List;
+
+  if ($EmailUserID) {
+    $List = $dbh -> prepare("select DISTINCT(Signature.SignoffID) from Signature
+            where Signature.EmailUserID=?");
+    $List -> execute($EmailUserID);
+  }  
+
+  if ($List) {
+    my $SignoffID;
+    $List -> bind_columns(undef, \($SignoffID));
+    while ($List -> fetch) {
+      push @SignoffIDs,$SignoffID;
+    }
+  }  
+  
+  return @SignoffIDs;
+}
+
 sub FetchSignoff ($) {
   my ($SignoffID) = @_;
 
