@@ -131,7 +131,7 @@ sub SingleUploadBox {
   print "<table cellpadding=3>\n";
   print "<tr><td colspan=2><b><a ";
   &HelpLink("fileupload");
-  print "File upload:</a></b><br></td></tr>\n";
+  print "Local file upload:</a></b><br></td></tr>\n";
   my @FileIDs = sort keys %DocFiles;
   for (my $i=1;$i<=$NumberUploads;++$i) {
     my $FileID = shift @FileIDs;

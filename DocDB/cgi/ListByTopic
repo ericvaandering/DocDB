@@ -209,6 +209,10 @@ print "<p>\n";
 
 print "<p><b>Number of documents found: $NumDoc</b><p>\n";
 
+$EndTime  = new Benchmark;
+$TimeDiff = timediff($EndTime,$StartTime);
+print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
+
 ### Special stuff if this is the current meeting
 
 if (&NearByMeeting == $TopicID && $Mode eq "meeting" && !$Public) {
@@ -227,14 +231,9 @@ if (&NearByMeeting == $TopicID && $Mode eq "meeting" && !$Public) {
          on using the WH9W scanner</a>.\n";
   print "</ul>\n";
 
-  print "<hr>\n";
-
-  &PrintAgenda($TopicID);
+#  print "<hr>\n";
+#  &PrintAgenda($TopicID);
 }
-
-$EndTime  = new Benchmark;
-$TimeDiff = timediff($EndTime,$StartTime);
-print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
 
 if ($Mode eq "meeting" && !$Public) {
   &DocDBNavBar("List&nbsp;Meetings",$ListMeetings);
