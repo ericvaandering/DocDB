@@ -10,10 +10,10 @@
 
 CREATE TABLE Author (
   AuthorID int(11) NOT NULL auto_increment,
-  FirstName varchar(32) default NULL,
+  FirstName varchar(32) NOT NULL,
   MiddleInitials varchar(16) default NULL,
-  LastName varchar(32) default NULL,
-  InstitutionID int(11) default NULL,
+  LastName varchar(32) NOT NULL,
+  InstitutionID int(11) NOT NULL,
   Active int(11) default '1',
   Timestamp timestamp(14) NOT NULL,
   PRIMARY KEY (AuthorID),
@@ -42,9 +42,9 @@ INSERT INTO Author VALUES (11,'Will','E.','Johns',2,1,20011207103019);
 
 CREATE TABLE Document (
   DocumentID int(11) NOT NULL auto_increment,
-  RequesterID int(11) default NULL,
+  RequesterID int(11) NOT NULL,
   RequestDate datetime default NULL,
-  DocumentType varchar(16) default NULL,
+  DocumentType varchar(16) NOT NULL,
   TimeStamp timestamp(14) NOT NULL,
   PRIMARY KEY (DocumentID),
   KEY Requester(RequesterID)
@@ -61,10 +61,10 @@ CREATE TABLE Document (
 
 CREATE TABLE DocumentFile (
   DocFileID int(11) NOT NULL auto_increment,
-  DocRevID int(11) default NULL,
-  FileName varchar(255) default NULL,
+  DocRevID int(11) NOT NULL,
+  FileName varchar(255) NOT NULL,
   Date datetime default NULL,
-  RootFile tinyint(4) default NULL,
+  RootFile tinyint(4) default '1',
   TimeStamp timestamp(14) NOT NULL,
   Description varchar(128) default NULL,
   PRIMARY KEY (DocFileID),
@@ -82,11 +82,11 @@ CREATE TABLE DocumentFile (
 
 CREATE TABLE DocumentRevision (
   DocRevID int(11) NOT NULL auto_increment,
-  DocumentID int(11) default NULL,
-  SubmitterID int(11) default NULL,
-  DocumentTitle varchar(255) default NULL,
+  DocumentID int(11) NOT NULL,
+  SubmitterID int(11) NOT NULL,
+  DocumentTitle varchar(255) NOT NULL,
   PublicationInfo text,
-  VersionNumber int(11) default NULL,
+  VersionNumber int(11) NOT NULL,
   Abstract text,
   RevisionDate datetime default NULL,
   TimeStamp timestamp(14) NOT NULL,
@@ -107,8 +107,8 @@ CREATE TABLE DocumentRevision (
 
 CREATE TABLE GroupHierarchy (
   HierarchyID int(11) NOT NULL auto_increment,
-  ChildID int(11) default NULL,
-  ParentID int(11) default NULL,
+  ChildID int(11) NOT NULL,
+  ParentID int(11) NOT NULL,
   Timestamp timestamp(14) NOT NULL,
   PRIMARY KEY (HierarchyID)
 ) TYPE=MyISAM;
@@ -130,8 +130,8 @@ INSERT INTO GroupHierarchy VALUES (7,3,1,20011206164127);
 
 CREATE TABLE GroupTopic (
   GroupTopicID int(11) NOT NULL auto_increment,
-  GroupID int(11) default NULL,
-  MajorTopicID int(11) default NULL,
+  GroupID int(11) NOT NULL,
+  MajorTopicID int(11) NOT NULL,
   Timestamp timestamp(14) NOT NULL,
   PRIMARY KEY (GroupTopicID)
 ) TYPE=MyISAM;
@@ -147,8 +147,8 @@ CREATE TABLE GroupTopic (
 
 CREATE TABLE Institution (
   InstitutionID int(11) NOT NULL auto_increment,
-  ShortName varchar(40) default NULL,
-  LongName varchar(80) default NULL,
+  ShortName varchar(40) NOT NULL,
+  LongName varchar(80) NOT NULL,
   Timestamp timestamp(14) NOT NULL,
   PRIMARY KEY (InstitutionID)
 ) TYPE=MyISAM;
@@ -199,7 +199,7 @@ INSERT INTO Institution VALUES (35,'York','York University',20011207115617);
 
 CREATE TABLE MajorTopic (
   MajorTopicID int(11) NOT NULL auto_increment,
-  ShortDescription varchar(32) default NULL,
+  ShortDescription varchar(32) NOT NULL,
   LongDescription text,
   Restricted int(11) default '0',
   Suppressed int(11) default '0',
@@ -227,8 +227,8 @@ INSERT INTO MajorTopic VALUES (9,'Other Meetings','Other Meetings',0,0,200112041
 
 CREATE TABLE MinorTopic (
   MinorTopicID int(11) NOT NULL auto_increment,
-  MajorTopicID int(11) default NULL,
-  ShortDescription varchar(32) default NULL,
+  MajorTopicID int(11) NOT NULL,
+  ShortDescription varchar(32) NOT NULL,
   LongDescription text,
   Timestamp timestamp(14) NOT NULL,
   PRIMARY KEY (MinorTopicID),
@@ -281,8 +281,8 @@ INSERT INTO MinorTopic VALUES (37,1,'General','Documents regarding the whole BTe
 
 CREATE TABLE RevisionAuthor (
   RevAuthorID int(11) NOT NULL auto_increment,
-  DocRevID int(11) default NULL,
-  AuthorID int(11) default NULL,
+  DocRevID int(11) NOT NULL,
+  AuthorID int(11) NOT NULL,
   PRIMARY KEY (RevAuthorID),
   KEY DocRevID(DocRevID),
   KEY AuthorID(AuthorID)
@@ -299,8 +299,8 @@ CREATE TABLE RevisionAuthor (
 
 CREATE TABLE RevisionSecurity (
   RevSecurityID int(11) NOT NULL auto_increment,
-  GroupID int(11) default NULL,
-  DocRevID int(11) default NULL,
+  GroupID int(11) NOT NULL,
+  DocRevID int(11) NOT NULL,
   Timestamp timestamp(14) NOT NULL,
   PRIMARY KEY (RevSecurityID),
   KEY Grp(GroupID),
@@ -318,8 +318,8 @@ CREATE TABLE RevisionSecurity (
 
 CREATE TABLE RevisionTopic (
   RevTopicID int(11) NOT NULL auto_increment,
-  DocRevID int(11) default NULL,
-  MinorTopicID int(11) default NULL,
+  DocRevID int(11) NOT NULL,
+  MinorTopicID int(11) NOT NULL,
   PRIMARY KEY (RevTopicID),
   KEY MinorTopicID(MinorTopicID),
   KEY DocRevID(DocRevID)
@@ -336,7 +336,7 @@ CREATE TABLE RevisionTopic (
 
 CREATE TABLE SecurityGroup (
   GroupID int(11) NOT NULL auto_increment,
-  Name char(16) default NULL,
+  Name char(16) NOT NULL,
   Description char(64) default NULL,
   Timestamp timestamp(14) NOT NULL,
   PRIMARY KEY (GroupID)
