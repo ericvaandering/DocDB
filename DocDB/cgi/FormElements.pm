@@ -121,7 +121,7 @@ sub TitleBox {
 sub PubInfoBox {
   print "<b><a ";
   &HelpLink("pubinfo");
-  print "Publication information:</a></b><br> \n";
+  print "Other publication information:</a></b><br> \n";
   print $query -> textarea (-name => 'pubinfo', -default => $PubInfoDefault,
                             -columns => 60, -rows => 3);
 };

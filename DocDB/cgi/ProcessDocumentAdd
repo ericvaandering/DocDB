@@ -241,7 +241,7 @@ if ($mode eq "update" || $mode eq "updatedb") {
 @topicIDs   = split ("\0",$params{topics});
 @securities = split ("\0",$params{security});
 
-if ($mode eq "add" || $mode eq "update") {
+if ($mode eq "add" || $mode eq "update" || $mode eq "updatedb") {
   unless (@authorIDs) {
     push @ErrorStack,"You must supply at least one author for this document.";
   }

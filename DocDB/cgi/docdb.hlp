@@ -361,11 +361,22 @@ persons full name, with initials if desired and their institution name.
 #
 pubinfo
 Publication Information
-In this field, include any additional publication information such as FNAL or
-hep-ex pre-print numbers, journal references, etc. This field is optional.
+In this field, include any additional publication information that can't be
+placed in the boxes above. This field is optional.
 <p>
-If the document is published in a refereed journal, you should also fill in the
-Reference information below.
+If your document is in a journal or preprint archive that you feel should be
+added to the list in the DocDB, please contact an administrator.
+#
+reference
+References
+In this space, add any references to journals or archives for your
+document. If the journal or archive does not exist and you feel should be
+added to the list in the DocDB, please contact an administrator.
+<p>
+If you already have more than one reference for your document, add the first one
+now. When the document is entered, select Update DB Info and add the other ones.
+Each time you "Update DB Info" you are given the chance to add one additional
+reference.
 #
 abstract
 Abstract

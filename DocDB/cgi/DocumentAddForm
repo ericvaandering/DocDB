@@ -216,9 +216,9 @@ print "<td colspan=3>\n"; &KeywordsBox; print "</td>\n";
 print "</tr>\n";
 unless ($Meeting || $OtherMeeting) {
   print "<tr>\n";
-  print "<td colspan=3>\n"; &PubInfoBox;  print "</td>\n";
-  print "</tr><tr>\n";
   print "<td colspan=3>\n"; &ReferenceForm;  print "</td>\n";
+  print "</tr><tr>\n";
+  print "<td colspan=3>\n"; &PubInfoBox;  print "</td>\n";
   print "</tr>\n";
 }
 
