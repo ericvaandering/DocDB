@@ -4,6 +4,7 @@ CREATE TABLE EmailUsers (
   Password char(32) NOT NULL default '',
   Name char(128) NOT NULL default '',
   EmailAddress char(64) NOT NULL default '',
+  PreferHTML int(11) NOT NULL,
   PRIMARY KEY (EmailUserID)
 ) TYPE=MyISAM;
 

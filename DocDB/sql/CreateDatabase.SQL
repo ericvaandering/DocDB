@@ -374,6 +374,7 @@ CREATE TABLE EmailUsers (
   Password char(32) NOT NULL default '',
   Name char(128) NOT NULL default '',
   EmailAddress char(64) NOT NULL default '',
+  PreferHTML int(11) NOT NULL,
   PRIMARY KEY (EmailUserID)
 ) TYPE=MyISAM;
 
@@ -382,7 +383,10 @@ CREATE TABLE EmailTopicImmediate (
   EMailUserID int(11) NOT NULL ,
   MajorTopicID int(11) NOT NULL ,
   MinorTopicID int(11) NOT NULL ,
-  PRIMARY KEY (ImmediateEmailID)
+  PRIMARY KEY (ImmediateEmailID),
+  KEY Email(EMailUserID),
+  KEY Minor(MinorTopicID),
+  KEY Major(MajorTopicID)
 ) TYPE=MyISAM;
 
 CREATE TABLE EmailTopicDaily (
@@ -390,7 +394,10 @@ CREATE TABLE EmailTopicDaily (
   EMailUserID int(11) NOT NULL ,
   MajorTopicID int(11) NOT NULL ,
   MinorTopicID int(11) NOT NULL ,
-  PRIMARY KEY (DailyEmailID)
+  PRIMARY KEY (DailyEmailID),
+  KEY Email(EMailUserID),
+  KEY Minor(MinorTopicID),
+  KEY Major(MajorTopicID)
 ) TYPE=MyISAM;
 
 CREATE TABLE EmailTopicWeekly (
@@ -398,6 +405,9 @@ CREATE TABLE EmailTopicWeekly (
   EMailUserID int(11) NOT NULL ,
   MajorTopicID int(11) NOT NULL ,
   MinorTopicID int(11) NOT NULL ,
-  PRIMARY KEY (WeeklyEmailID)
+  PRIMARY KEY (WeeklyEmailID),
+  KEY Email(EMailUserID),
+  KEY Minor(MinorTopicID),
+  KEY Major(MajorTopicID)
 ) TYPE=MyISAM;
 
