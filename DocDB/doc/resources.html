@@ -5,11 +5,11 @@
 <center><h1>Identify Resources for DocDB</h1></center>
 <p>
    Disk space is needed for the mysql database, DocDB (both cgi and html), 
-   and the documents themselves.  DocDB is only about 700 KB.
-   At this time, the BTeV document database contains 1400+ documents 
-   and uses about 3 MB for the database and 5 GB for the document 
+   and the documents themselves.  The DocDB scripts require about 3 MB.
+   At this time, the BTeV document database contains 2500+ documents 
+   and uses about 5 MB for the database and 11 GB for the document 
    directory tree.
-   <br>
+<p>
    One possible file configuration is: 
    <center>
    <table width="95%">
@@ -52,10 +52,14 @@
    (e.g.,  /www/html/DocDB)
    and this directory must be web viewable.
 <p>
-   You should create a document database administration account to own the
-   MySQL database, the DocDB cgi scripts, and the DocDB html files.  
-   This account will be 
-   used to start the MySQL daemon.
+   You should create a document database account to own the
+   the DocDB cgi scripts, and the DocDB html files.  
+<p>
+   You will need an account to own the MySQL database. 
+   This can be the  document database account.
+   This mysql account will be used to start the MySQL daemon.
+   We <b>strongly recommend</b> that the mysql account 
+   <b>not</b> be named "mysql".
 <p>
    Make sure you have a machine that will support MySQL.
 <p>

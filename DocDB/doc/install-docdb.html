@@ -20,32 +20,24 @@ and the apache web server.
      When a document is submitted to DocDB, the document is copied 
      (from either local disk or an html address) to a directory located 
      on the web server.  Documents may be composed of several files.
+     <br>
+     Please see <a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=140">BTeV-doc-140</a>
+     for a complete description of DocDB.
 <li> <a href=resources.html>identify resources</a> 
 <li> <a href=mysql.html>install MySQL and start mysqld</a> <br>
 <li> <b> get DocDB</b> <br>
     The <a href=http://cepa.fnal.gov/DocDB/DocDB-4-1-1.tar>tar ball</a> 
     (4.1.1 - Sept. 17, 2003)
     <br>
-    Unwind the tarball under your docdbadm account.
+    Unwind the tarball under your document database account.
     <br>
     <font color=red>The tarball is maintained by hand and is not always up to date.</font>
     <br>
     Contact the DocDB maintainers via the users mailing list 
     (<a href="mailto:docdb-users@fnal.gov">docdb-users@fnal.gov</A>)
     if you have questions.
-<li> <b> customize DocDB</b>
-    <br>
-    Rename ProjectGlobals.pm.template as ProjectGlobals.pm. Edit the global variables in 
-    <a href=DocDBGlobals.html>the file</a>. You can also look at DocDBGlobals.pm
-    and put new values for those variables in ProjectGlobals.pm. 
-    <br>
-    Edit the files in DocDB/cgi and DocDB/html. 
-    <br>
-    Edit DodDB/sql/CreateDatabase.SQL to specify your own MajorTopics, 
-    Institutions, and SecurityGroups.
-    <br>
-    Once the files are customized, copy them to the appropriate directories.
 <li> <b><a href=createdb.html>create a MySQL DocDB database</a></b>
+<li> <b><a href=setup-docdb.html>customize DocDB</a></b>
 <li>  <b> test DocDB </b> 
     <br>
     At this point DocDB should be ready to test.
