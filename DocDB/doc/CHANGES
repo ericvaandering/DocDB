@@ -2,6 +2,7 @@
 
 When updating a document, a user now has the ability to copy files from the
 previous document. They can mix uploading some new documents and copying others.
+The user will see a checkbox on updating that allows copying the file.
 
 When filling out the new/update document form, the required fields are marked
 with an asterisk.
