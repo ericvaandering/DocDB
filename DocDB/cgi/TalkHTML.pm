@@ -156,7 +156,9 @@ sub TalkEntryForm (@) {
       print "<tr valign=top>\n";
       print "<td colspan=2>Match: $TitleLink</td>\n";
       print "</tr>\n";
-    }
+    } else {
+      print "<tr><td colspan=2>&nbsp;</td></tr>\n";
+    }    
     print "<tr valign=top><td colspan=7><hr width=95%></td>\n";
     print "</tr>\n";
   }
@@ -255,12 +257,11 @@ sub TalkAuthors ($) {
   if ($TalkSeparatorDefault eq "Yes") {
     print "&nbsp;\n";
   } else { 
-    if ($AuthorMode eq "list") {
+    if ($AuthorMode eq "field") {
+      &AuthorTextEntry("authortext-$SessionOrderID",@TalkDefaultAuthorHints);
+    } else {
       &AuthorScroll(0,1,"authors-$SessionOrderID",@TalkDefaultAuthorHints);
-    } elsif ($AuthorMode eq "field") {
-      &AuthorTextEntry("authortext$SessionOrderID",@TalkDefaultAuthorHints);
     }
- 
   } 
 }
 

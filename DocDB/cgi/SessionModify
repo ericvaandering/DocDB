@@ -2,7 +2,7 @@
 #
 #        Name: SessionModify
 # Description: Add talks to sessions of a meeting. Calls itself. 
-# Might also be allowed to modify certain aspects of the session? 
+# In future, might also be allowed to modify certain aspects of the session.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
@@ -13,6 +13,7 @@ use DBI;
 
 require "DocDBGlobals.pm";
 require "Cookies.pm";
+require "Defaults.pm";
 
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
@@ -29,8 +30,9 @@ $query = new CGI;  # Global for subroutines
 print $query -> header;
 &DocDBHeader("Modify a Session");
 &HelpPopupScript;
-&GetPrefsCookie;
 
+&GetPrefsCookie;
+&SetAuthorMode;
 %params = $query -> Vars;
 
 my $SessionID          = $params{sessionid};

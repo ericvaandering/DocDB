@@ -177,7 +177,7 @@ sub AuthorScroll ($$$;@) {
                                  -default => \@Defaults);
 }
 
-sub AuthorTextEntry ($;@)) {
+sub AuthorTextEntry ($;@) {
   my ($ElementName,@Defaults) = @_;
   
   my $AuthorManDefault = "";
