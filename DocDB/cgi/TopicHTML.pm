@@ -133,8 +133,10 @@ sub ConferenceLink {
   my ($TopicID,$Mode) = @_;
   
   require "TopicSQL.pm";
+  require "MeetingSQL.pm";
   
   &FetchMinorTopic($TopicID);
+  &FetchConferenceByTopicID($TopicID);
   my $Link;
      $Link = "<a href=\"$ListBy?topicid=$TopicID&amp;mode=conference\">";
   if ($Mode eq "short" || $Mode eq "nodate") {

@@ -355,7 +355,7 @@ sub TypeLink {
   &FetchDocType($TypeID);
   my $link = "";
   unless ($Public) {
-    $link .= "<a href=\"$ListByType?typeid=$TypeID\">";
+    $link .= "<a href=\"$ListBy?typeid=$TypeID\">";
   }
   if ($mode eq "short") {
     $link .= $DocumentTypes{$TypeID}{SHORT};

@@ -34,10 +34,13 @@ $query = new CGI;  # Global for subroutines
 %params = $query -> Vars;
 
 my $Days     = $params{days}     || 0;
-my $TopicID  = $params{topicid}  || 0;
+my $TypeID   = $params{typeid}   || 0;
 my $AuthorID = $params{authorid} || 0;
+
+my $TopicID  = $params{topicid}  || 0;
 my $MajorID  = $params{majorid}  || 0;
 my $Major    = $params{major}    || "";
+my $AllPubs  = $params{allpubs}  || "";
 
 my $Mode     = $params{mode}     || "";
 
@@ -103,12 +106,27 @@ if ($Days) {
   } 
   &FetchMajorTopic($MajorID);
   
-  $Title   = "Documents List by Topic";
+  $Title   = "Document List by Topic";
   $Message = "These documents on <span class=\"Highlight\"> $MajorTopics{$MajorID}{LONG}</span> are available:";
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
            "DocumentRevision,RevisionTopic,MinorTopic where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
            "and DocumentRevision.Obsolete=0 and RevisionTopic.MinorTopicID=MinorTopic.MinorTopicID and MinorTopic.MajorTopicID=?");            
   $List -> execute($MajorID);
+} elsif ($TypeID) {
+  $Title   = "Document List by Type";
+  $Message = "These documents of type <span class=\"Highlight\">
+             $DocumentTypes{$TypeID}{SHORT}</span> are available:";
+  
+  $List = $dbh -> prepare("select DISTINCT(Document.DocumentID) from ".
+           "Document where Document.DocumentType=?");            
+  $List -> execute($TypeID);
+} elsif ($AllPubs) {
+  $Title   = "$Project Publications";
+  $Message = "These publications are available:\n";
+  $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
+           "DocumentRevision,RevisionReference ".
+           "where DocumentRevision.DocRevID=RevisionReference.DocRevID and RevisionReference.JournalID>0"); 
+  $List -> execute();
 }
 
 # Defaults, later can surround these in "unless"
