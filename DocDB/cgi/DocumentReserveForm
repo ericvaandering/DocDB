@@ -1,0 +1,163 @@
+#! /usr/bin/perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+# 
+#
+#@doc_types  = ["Talk","Proceeding","Publication","Note","Minutes","Figure/Photo"]; 
+@dist_types = ["Public","Private"]; 
+
+use CGI;                                                                                      
+use DBI;
+
+$query = new CGI;  # Global for subroutines
+$dbh   = DBI->connect('DBI:mysql:BTeVDocTest:vchipp.phy.vanderbilt.edu','docadmin','docadmin');
+
+&GetAuthors;
+&GetTopics;
+
+
+
+print $query->header;
+print $query->start_html(-title=>"BTeV Document Reservation");
+
+print $query -> start_multipart_form('POST','ProcessDocumentReservation');
+
+print "<center><table cellpadding=10>\n";
+
+print "<tr>\n";
+print "<td colspan=3>\n";
+&TitleBox;
+print "</td></tr>";
+print "<tr>\n";
+print "<td colspan=3>\n";
+&PubInfoBox;
+print "</td></tr>";
+print "<tr>\n";
+print "<td colspan=3>\n";
+&AbstractBox;
+print "</td></tr>";
+print "<tr>\n";
+print "<td>\n";
+&RequestorSelect;
+print "</td>\n";
+print "<td>\n";
+&AuthorSelect;
+print "</td>\n";
+print "<td>\n";
+&TopicSelect;
+print "</td></tr>";
+print "<tr>\n";
+print "<td colspan=3>\n";
+&DocTypeButtons;
+print "</td></tr>";
+print "<tr>\n";
+print "<td colspan=3>\n";
+&DistributionButtons;
+print "</td></tr>";
+print "</table><p>";
+
+
+print $query -> submit (-value => "Request document ID");
+print "</center><p>";
+print $query -> end_multipart_form;
+
+print $query->end_html;
+
+sub TitleBox {
+  print "<b>Title:</b><br> \n";
+  print $query -> textfield (-name => 'title', -size => 80, -maxlength => 240);
+};
+
+
+sub PubInfoBox {
+  print "<b>Publication information:</b><br>  \n";
+  print $query -> textarea (-name => 'pubinfo', -columns => 50, -rows => 3);
+};
+
+sub AbstractBox {
+  print "<b>Abstract:</b><br>  \n";
+  print $query -> textarea (-name => 'abstract', -columns => 50, -rows => 6);
+};
+
+
+sub RequestorSelect {
+# Scrolling selectable list for authors
+
+  print "<b>Requestor:</b><br>\n";
+  print $query -> scrolling_list(-name => "requestor", -values => \%names, -size => 15);
+};
+
+sub AuthorSelect {
+# Scrolling selectable list for authors
+
+  print "<b>Authors:</b><br>\n";
+  print $query -> scrolling_list(-name => "authors", -values => \%names, -size => 15, -multiple => 'true');
+};
+
+
+sub TopicSelect {
+# Scrolling selectable list for topics
+
+  print "<b>Topics:</b><br>\n";
+  print $query -> scrolling_list(-name => "topics", -values => \%full_topics, -size => 15, -multiple => 'true');
+};
+
+sub DocTypeButtons {
+  my ($DocTypeID,$ShortType,$LongType);
+  my $doctype_list  = $dbh->prepare("select DocTypeID,ShortType,LongType from DocumentType");
+  $doctype_list -> execute;
+  $doctype_list -> bind_columns(undef, \($DocTypeID,$ShortType,$LongType));
+  while ($doctype_list -> fetch) {
+    $doc_type{$DocTypeID}{SHORT} = $ShortType;
+    $short_type{$DocTypeID}      = $ShortType;
+    $doc_type{$DocTypeID}{LONG}  = $LongType;
+  }
+  @values = keys %short_type;
+  
+  print "<b>Document type:</b><br>\n";
+  print $query -> radio_group(-name => "doctype", -values => \%short_type);
+};
+
+sub DistributionButtons {
+  print "<b>Distribution:</b><br>\n";
+  print $query -> radio_group(-name => "dist", -values => @dist_types, -default => "Private");
+};
+
+
+
+sub GetAuthors {
+  my ($AuthorID,$FirstName,$MiddleInitials,$LastName);
+  my $people_list  = $dbh->prepare("select AuthorID,FirstName,MiddleInitials,LastName,Active from Author order by LastName");
+  $people_list -> execute;
+  $people_list -> bind_columns(undef, \($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active));
+  while ($people_list -> fetch) {
+    if ($Active) {
+      $names{$AuthorID} = "$FirstName $MiddleInitials $LastName";
+    }
+  }
+};
+
+sub GetTopics {
+  my $minor_list   = $dbh->prepare("select MinorTopicID,MajorTopicID,ShortDescription,LongDescription from MinorTopic");
+  my $major_list   = $dbh->prepare("select MajorTopicID,ShortDescription,LongDescription from MajorTopic");
+  $major_list -> execute;
+  $major_list -> bind_columns(undef, \($MajorTopicID,$ShortDescription,$LongDescription));
+  while ($major_list -> fetch) {
+    $major_topics{$MajorTopicID}{SHORT} = $ShortDescription;
+    $major_topics{$MajorTopicID}{LONG}  = $LongDescription;
+  }
+
+  my ($MinorTopicID,$MajorTopicID,$ShortDescription,$LongDescription);
+  $minor_list -> execute;
+  $minor_list -> bind_columns(undef, \($MinorTopicID,$MajorTopicID,$ShortDescription,$LongDescription));
+  while ($minor_list -> fetch) {
+    $minor_topics{$MinorTopicID}{MAJOR} = $MajorTopicID;
+    $minor_topics{$MinorTopicID}{SHORT} = $ShortDescription;
+    $minor_topics{$MinorTopicID}{LONG}  = $LongDescription;
+    $minor_topics{$MinorTopicID}{FULL}  = $major_topics{$MajorTopicID}{SHORT}.":".$ShortDescription;
+  }
+  foreach $key (keys %minor_topics) {
+    $full_topics{$key} =  $minor_topics{$key}{FULL};
+  }
+};
