@@ -212,8 +212,10 @@ print "</tr>\n";
 
 print "</table>\n";
 
+my $NavBarText = "Display&nbsp;Session";
+my $NavBarURL  = "$DisplayMeeting?sessionid=$SessionID";
+&DocDBNavBar($NavBarText,$NavBarURL);
 
-&DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  
 exit;

@@ -37,7 +37,7 @@ sub TopicSearchScript {
 
 # This script produces a menu for topics and another for relevant subtopics
 # (i.e. selecting a topic reduces the set of subtopics). This code is 
-# adapted (ok, stolen) from Bugzilla, produced by mozilla.org.
+# adapted from Bugzilla, produced by mozilla.org.
 
 # There are two major changes:
 #  1. seperate labels and values

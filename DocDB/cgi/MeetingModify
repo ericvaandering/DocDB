@@ -515,7 +515,10 @@ print "</tr>\n";
 print "</table>\n";
 print $query -> end_multipart_form;
 
-&DocDBNavBar;
+my $NavBarText = "Display&nbsp;Meeting";
+my $NavBarURL  = "$DisplayMeeting?conferenceid=$ConferenceID";
+&DocDBNavBar($NavBarText,$NavBarURL);
+
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  
 exit;

@@ -137,24 +137,24 @@ sub TalkEntryForm (@) {
     print $query -> hidden(-name => 'sessionorderid', -default => $SessionOrderID);
 
 
-    print "<td align=left rowspan=2>\n"; &TalkOrder; print "<br/>\n";
+    print "<td align=left rowspan=3>\n"; &TalkOrder; print "<br/>\n";
     &TalkConfirm($SessionOrderID) ; print "<br/>\n";
     &TalkDelete($SessionOrderID) ; print "</td>\n";
 
-    print "<td align=center rowspan=2>\n"; &TalkSeparator($SessionOrderID); print "</td>\n";
-    print "<td align=center rowspan=2>\n"; &TalkDocID($SessionOrderID);                      print "</td>\n";
+    print "<td align=center rowspan=3>\n"; &TalkSeparator($SessionOrderID); print "</td>\n";
+    print "<td align=center rowspan=3>\n"; &TalkDocID($SessionOrderID);                      print "</td>\n";
     print "<td>\n"; &TalkTitle($TalkDefaultTitle);            print "</td>\n";
     print "<td rowspan=2>\n"; &TalkTimePullDown; print "</td>\n";
-    print "<td rowspan=2>\n"; &TalkAuthors($SessionOrderID); print "</td>\n";
-    print "<td rowspan=2>\n"; &TalkTopics($SessionOrderID); print "</td>\n";
+    print "<td rowspan=3>\n"; &TalkAuthors($SessionOrderID); print "</td>\n";
+    print "<td rowspan=3>\n"; &TalkTopics($SessionOrderID); print "</td>\n";
     print "</tr>\n";
     print "<tr valign=top>\n";
     print "<td>\n"; &TalkNote;      print "</td>\n";
     print "</tr>\n";
     if ($TalkDefaultDocID) {
-      my $TitleLink = &NewDocumentLink($DocumentID);
+      my $TitleLink = &NewDocumentLink($TalkDefaultDocID,undef,"title");
       print "<tr valign=top>\n";
-      print "<td>Matches: $TitleLink</td>\n";
+      print "<td colspan=2>Match: $TitleLink</td>\n";
       print "</tr>\n";
     }
     print "<tr valign=top><td colspan=7><hr width=95%></td>\n";

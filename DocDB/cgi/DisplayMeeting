@@ -49,9 +49,9 @@ if ($SessionID) { # Display a single session
 
   &FetchSessionByID($SessionID);
   &FetchConferenceByConferenceID($Sessions{$SessionID}{ConferenceID});
-  &PrintMeetingInfo($Sessions{$SessionID}{ConferenceID});
   print "<center><a href=\"$DocumentAddForm?sessionid=$SessionID\">Add a document</a> ".
         "to this session.</center>\n";
+  &PrintMeetingInfo($Sessions{$SessionID}{ConferenceID});
   &PrintSession($SessionID); 
   &PrintMeetingEpilogue($Sessions{$SessionID}{ConferenceID});
 } elsif ($SessionSeparatorID) { # Display a single break (never called)
@@ -62,9 +62,9 @@ if ($SessionID) { # Display a single session
   &PrintMeetingEpilogue($Sessions{$SessionID}{ConferenceID});
 } elsif ($ConferenceID) { # Display meeting info or meeting with all talks
   &FetchConferenceByConferenceID($ConferenceID);
-  &PrintMeetingInfo($ConferenceID);
   print "<center><a href=\"$DocumentAddForm?conferenceid=$ConferenceID\">Add a document</a> ".
         "to this conference.</center>\n";
+  &PrintMeetingInfo($ConferenceID);
     
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
@@ -114,7 +114,7 @@ if ($SessionID) { # Display a single session
     foreach my $DocRevID (@DocRevIDs) {
       $DocumentIDs{$DocRevisions{$DocRevID}{DOCID}} = 1;
     }
-    
+        
     # Refetch all talks, flag talks which are associated with a session
     my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
     foreach $MeetingOrderID (@MeetingOrderIDs) {
@@ -132,7 +132,7 @@ if ($SessionID) { # Display a single session
     # Find which ones aren't
     my @UnusedDocIDs = ();
     foreach my $DocumentID (keys %DocumentIDs) {
-      unless ($DocumentIDs{$DocumentID}) {
+      if ($DocumentIDs{$DocumentID}) {
         push @UnusedDocIDs,$DocumentID;
       }  
     }
@@ -160,7 +160,7 @@ if ($SessionID) { # Display a single session
   #Complain that user didn't specify a session, break, or conference
 }  
 
-my $NavBarText = ""
+my $NavBarText = "";
 my $NavBarURL  = "";  
 if ($SessionID) {
   $NavBarText = "Modify&nbsp;Session";
