@@ -590,7 +590,7 @@ sub AddFilesButton {
   print $query -> endform;
 }
 
-sub AuthorManual {
+sub AuthorManual { # FIXME: Special case of AuthorTextEntry
   $AuthorManDefault = "";
 
   foreach $AuthorID (@AuthorDefaults) {

@@ -254,8 +254,13 @@ sub TalkAuthors ($) {
 
   if ($TalkSeparatorDefault eq "Yes") {
     print "&nbsp;\n";
-  } else {  
-    &AuthorScroll(0,1,"authors-$SessionOrderID",@TalkDefaultAuthorHints);
+  } else { 
+    if ($AuthorMode eq "list") {
+      &AuthorScroll(0,1,"authors-$SessionOrderID",@TalkDefaultAuthorHints);
+    } elsif ($AuthorMode eq "field") {
+      &AuthorTextEntry("authortext$SessionOrderID",@TalkDefaultAuthorHints);
+    }
+ 
   } 
 }
 

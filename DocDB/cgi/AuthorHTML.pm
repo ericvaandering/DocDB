@@ -177,4 +177,19 @@ sub AuthorScroll ($$$;@) {
                                  -default => \@Defaults);
 }
 
+sub AuthorTextEntry ($;@)) {
+  my ($ElementName,@Defaults) = @_;
+  
+  my $AuthorManDefault = "";
+
+  foreach $AuthorID (@Defaults) {
+    &FetchAuthor($AuthorID);
+    $AuthorManDefault .= "$Authors{$AuthorID}{FULLNAME}\n" ;
+  }  
+  print $query -> textarea (-name    => $ElementName, 
+                            -default => $AuthorManDefault,
+                            -columns => 20, -rows    => 8);
+};
+
+
 1;

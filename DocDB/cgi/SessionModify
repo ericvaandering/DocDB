@@ -12,6 +12,8 @@ use CGI;
 use DBI;
 
 require "DocDBGlobals.pm";
+require "Cookies.pm";
+
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 require "Sorts.pm";
@@ -27,6 +29,7 @@ $query = new CGI;  # Global for subroutines
 print $query -> header;
 &DocDBHeader("Modify a Session");
 &HelpPopupScript;
+&GetPrefsCookie;
 
 %params = $query -> Vars;
 
