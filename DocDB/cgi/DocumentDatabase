@@ -35,10 +35,6 @@ require "HTMLUtilities.pm";
 require "SecuritySQL.pm";
 require "Security.pm";
 require "Scripts.pm";
-require "ResponseElements.pm";
-require "DocumentSQL.pm";
-require "RevisionSQL.pm";
-require "Sorts.pm";
 
 require "ProjectMessages.pm";
 
@@ -176,67 +172,47 @@ print "</tr></table>\n";
 
 # Modified in last few days
 
-$Days = $HomeLastDays;
-
-my $document_list = $dbh -> prepare(
-   "select DISTINCT(DocumentID) from DocumentRevision where TO_DAYS(NOW()) - TO_DAYS(TimeStamp) <= ?"); 
-$document_list -> execute($Days);
-$document_list -> bind_columns(undef, \($DocumentID));
-
-my @AllDocumentIDs = ();
-while ($document_list -> fetch) {
-  push @AllDocumentIDs,$DocumentID;
-}
-
-### Get list of documents and read in the information we need from database
-
-my @DocumentIDs = ();
-foreach my $DocumentID (@AllDocumentIDs) { # For shorter lists
-  &FetchDocument($DocumentID);
-  unless (&LastAccess($DocumentID) == -1) {;
-    push @DocumentIDs,$DocumentID;
-    &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVersions});
-  }
-}
-
-### Sort
-
-@DocumentIDs = reverse sort DocumentByRevisionDate @DocumentIDs;  
-
-### Print summary information
-
-if ($#DocumentIDs >= $HomeMaxDocs) {
-  $#DocumentIDs = $HomeMaxDocs - 1; #Truncate array
-  print "<hr><center><h4>Last $HomeMaxDocs documents modified
-         </h4></center>\n";
-} else {  
-  print "<hr><center><h4>Documents modified in the last $HomeLastDays
-  days</h4></center>\n";
-}
-
-print "<center><table cellpadding=3>\n";
-
-&DocumentSummary(0,$Mode); # Force table headers
-my $NumDoc = 0;
-
-foreach $DocumentID (@DocumentIDs) {
-  unless ($DocumentID) {next;}
-  $Version = &LastAccess($DocumentID);
-  if ($Version == -1) {next;}
-  &DocumentSummary($DocumentID,$Mode,$Version);
-  ++$NumDoc;
-}
-
-print "</table></center>\n";
-print "<p>\n";
-
 {
+  require "DocumentHTML.pm";
   require "FormElements.pm";
 
-  print $query -> startform('POST',$LastModified);
+### Get list of documents
+
+  my $SortBy  = "date";
+  my @Fields = ("Docid","Title","Author","Updated"); 
+  my $Reverse = 1;
+
+  my $List = $dbh -> prepare("select DISTINCT(DocumentID) from DocumentRevision where Obsolete=0 and TO_DAYS(NOW())-TO_DAYS(TimeStamp)<=?");
+     $List -> execute($HomeLastDays);
+
+  my @DocumentIDs = ();
+  my $DocumentID;
+  $List -> bind_columns(undef, \($DocumentID));
+  while ($List -> fetch) {
+    push @DocumentIDs,$DocumentID;
+  }
+
+### Print table
+  
+  print "<hr/><center><h4>\n";
+  if ($#DocumentIDs >= $HomeMaxDocs) {
+    print "Last $HomeMaxDocs documents modified\n";
+  } else {  
+    print "Documents modified in the last $HomeLastDays days\n";
+  }
+  print "</h4></center><p/>\n";
+
+  my $NumberOfDocuments = &DocumentTable(-fields  => \@Fields, -docids  => \@DocumentIDs, 
+                                         -sortby  => $SortBy,  -reverse => $Reverse, 
+                                         -maxdocs => $HomeMaxDocs);
+
+### Print Pulldown
+
+  print $query -> startform('POST',$ListBy);
   print "<center>";
   print $query -> submit (-value => "Show Documents");
   print " modified in the last ";
+  $Days = $HomeLastDays; # FIXME: Global variable
   &DaysPulldown;
   print " days.</center>";
   print $query -> endform;

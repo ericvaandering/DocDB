@@ -45,6 +45,9 @@ sub DocDBHeader {
 
 sub DocDBFooter {
   my ($WebMasterEmail,$WebMasterName) = @_;
+  if (defined &ProjectFooter) {
+    &ProjectFooter($WebMasterEmail,$WebMasterName); 
+  }
   print "</body></html>\n";
 }
 

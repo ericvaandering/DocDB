@@ -29,7 +29,8 @@ sub DocumentTable (%) {
   my %Params = @_;
   
   my $SortBy       =   $Params{-sortby}; 
-  my $Reverse      =   $Params{-reverse}; 
+  my $Reverse      =   $Params{-reverse};
+  my $MaxDocs      =   $Params{-maxdocs};
   my @DocumentIDs  = @{$Params{-docids}};
   my @Fields       = @{$Params{-fields}}; 
   my %FieldOptions = %{$Params{-fieldoptions}}; 
@@ -39,7 +40,7 @@ sub DocumentTable (%) {
   
 ### Write out the beginning and header of table
 
-  print "<center><table cellpadding=\"3\" id=\"DocumentList\" class=\"Alternating\">\n";
+  print "<center><table id=\"DocumentList\" class=\"Alternating\">\n";
 
   print "<tr>\n";
   foreach my $Field (@Fields) {
@@ -85,6 +86,10 @@ sub DocumentTable (%) {
     my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
     ++$NumberOfDocuments;
 
+    if ($MaxDocs && $NumberOfDocuments > $MaxDocs) {
+      last;
+    }
+    
 ### Print fields requested
     if ($NumberOfDocuments % 2) { 
       $RowClass = "Odd";
@@ -93,7 +98,7 @@ sub DocumentTable (%) {
     }    
     print "<tr class=\"$RowClass\">\n";
     foreach my $Field (@Fields) {
-      print "<td valign=\"top\">";
+      print "<td>";
       if      ($Field eq "Docid") {    # Document number
         print &NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
                                  -numwithversion => true); 
