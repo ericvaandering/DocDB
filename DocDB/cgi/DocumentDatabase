@@ -22,7 +22,7 @@ print $query->header;
 
 # %params = $query -> Vars;  # No parameters (yet) 
 
-print "<p><center><big><font color=red><b>Testing only! All data may be
+print "<p><center><big><font color=red><b>Testing only! All data will be
 lost!</b></font></big></center>\n";
 
 print "<p><b><a
@@ -49,16 +49,8 @@ print "</ul>\n";
 
 print "<p><b>Short cuts for putting information into the database: ";
 print "(<a "; &HelpLink("modifytypes"); 
-print "Help!</a>)</b>\n";
+print "Which option do I choose?</a>)</b>\n";
 print "<ul>\n";
-
-print "<li>"; 
-print $query -> startform('POST',$DocumentAddForm);
-print $query -> submit (-value => "Reserve");
-print " a document number\n"; 
-print "(if you don't yet have a draft of your document).\n";
-print $query -> hidden(-name => 'mode',    -default => 'reserve');
-print $query -> endform;
 
 print "<li>"; 
 print $query -> startform('POST',$DocumentAddForm);
@@ -80,6 +72,14 @@ print "web</a></b> \n";
 print "(no need to reserve the document).\n";
 print $query -> hidden(-name => 'mode',    -default => 'add');
 print $query -> hidden(-name => 'upload',    -default => 'http');
+print $query -> endform;
+
+print "<li>"; 
+print $query -> startform('POST',$DocumentAddForm);
+print $query -> submit (-value => "Reserve");
+print " a document number\n"; 
+print "(if you don't yet have a draft of your document).\n";
+print $query -> hidden(-name => 'mode',    -default => 'reserve');
 print $query -> endform;
 
 print "<li>"; 
