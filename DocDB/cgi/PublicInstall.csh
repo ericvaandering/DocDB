@@ -21,9 +21,13 @@ ln -sf ../../DocDB/ListTypes  .
 
 ln -sf ../../DocDB/ListByTopic  .
 ln -sf ../../DocDB/ListByAuthor  .
-ln -sf ../../DocDB/ListByType  .
+#ln -sf ../../DocDB/ListTypes  .  # Optional
 
 ln -sf ../../DocDB/ListDocuments .
+
+ln -sf ../../DocDB/RetrieveFile  .
+ln -sf ../../DocDB/SearchForm  .
+ln -sf ../../DocDB/Search  .
 
 echo "If no errors were reported, things are safe for public access now."
 
