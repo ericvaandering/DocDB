@@ -32,6 +32,22 @@ sub TalkNoteLink {
   return "<a href=\"Javascript:notepopupwindow(\'$ShowTalkNote?sessiontalkid=$SessionTalkID\');\">Note</a>";
 }
 
+sub ConfirmTalkPopupScript {
+  print "<script LANGUAGE=\"JavaScript\" type=\"text/javascript\">\n";
+  print "<!-- \n";
+
+  print "function confirmtalkpopupwindow(page){\n";
+  print "window.open(page,\"confirmtalk\",\"width=400,height=350,menubar=0,resizable=1,scrollbars=1,status=0,titlebar=0,toolbar=0,left=0,top=0\");\n";
+  print "}\n";
+
+  print "//-->\n";
+  print "</script>\n";
+}
+
+sub ConfirmTalkLink ($$) {
+  my ($SessionTalkID,$DocumentID) = @_;
+  return "<a href=\"Javascript:confirmtalkpopupwindow(\'$ConfirmTalkHint?sessiontalkid=$SessionTalkID&documentid=$DocumentID\');\">Confirm</a>";
+}
 
 sub TopicSearchScript {
 

@@ -123,6 +123,7 @@ $DisplayMeeting        = $cgi_root."DisplayMeeting";
 $MeetingModify         = $cgi_root."MeetingModify";
 $SessionModify         = $cgi_root."SessionModify";
 $ListAllMeetings       = $cgi_root."ListAllMeetings"; # FIXME: Remove later
+$ConfirmTalkHint       = $cgi_root."ConfirmTalkHint";
 
 $AdministerForm        = $cgi_root."AdministerForm";
 $AuthorAdminister      = $cgi_root."AuthorAdminister";

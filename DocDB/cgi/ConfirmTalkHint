@@ -1,0 +1,71 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+use CGI;
+use DBI;
+
+require "DocDBGlobals.pm";
+require "ResponseElements.pm";
+require "SecuritySQL.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
+require "FSUtilities.pm";
+require "HTMLUtilities.pm";
+require "Security.pm";
+require "SQLChecks.pm";
+
+$query = new CGI;  # Global for subroutines
+
+%params = $query -> Vars;
+
+@error_stack = ();
+@warn_stack  = ();
+
+$DocumentID    = $params{documentid};
+$SessionTalkID = $params{sessiontalkid};
+
+$DocumentID    =~ s/^\s+//; # Remove leading and trailing spaces
+$DocumentID    =~ s/\s+$//;
+$SessionTalkID =~ s/^\s+//;
+$SessionTalkID =~ s/\s+$//;
+
+unless ($DocumentID) {
+  push @error_stack,"You are must supply a document number!";
+}  
+
+unless ($SessionTalkID) {
+  push @error_stack,"You are must supply a Session Number!";
+}  
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+
+&FetchDocument($DocumentID);
+$Version  = $Documents{$DocumentID}{NVersions};
+$DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+
+unless ($DocRevID) { # Probably never executed since CanAccess fails.
+  push @error_stack,"This document does not exist.";
+}
+
+print $query->header;
+print $query->start_html(-title => "Confirming document match");
+
+if (@error_stack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@error_stack);
+}
+
+my $SessionTalkUpdate = $dbh -> prepare(
+ "update SessionTalk set DocumentID=?, Confirmed=1 where SessionTalkID=?");
+$SessionTalkUpdate -> execute($DocumentID,$SessionTalkID);
+
+
+print "<b>The match has been confirmed.<br>Press the button below to reload the
+original page.</b><p>\n";
+
+print "<center><form>\n";
+print " <input type=\"button\" value=\"Close Window and Reload\" onClick=\"opener.location.reload(1); window.close()\">\n";
+print "</form></center>";
+
+print $query->end_html;     # End page

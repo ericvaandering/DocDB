@@ -6,6 +6,7 @@
 #
 
 sub PrintSessionTalk($) {
+
   my ($SessionTalkID,$AccumulatedTime) = @_;
   
   require "Security.pm";
@@ -49,7 +50,9 @@ sub PrintSessionTalk($) {
     print "<td>$Title</td>\n";
   } else {
     my $SessionTalkSummary = &SessionTalkSummary($SessionTalkID);
-    print "<td><i>$Title</i> [$SessionTalkSummary]</td>\n";
+    print "<td><i>$Title</i> [$SessionTalkSummary] - <b>\n";
+    print &ConfirmTalkLink($SessionTalkID,$DocumentID);
+    print "</b></td>\n";
   }
   print "<td><nobr>$AuthorLink</nobr></td>\n";
   print "<td>"; &ShortTopicListByID(@TopicIDs);   print "</td>\n";
