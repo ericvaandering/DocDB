@@ -61,8 +61,8 @@ sub CanModify { # Can the user modify (with current security) this document
   require "DocumentSQL.pm";
 
 ## FIXME: Use SecurityLookup  
-
   my ($DocumentID,$Version) = @_;
+  my $CanModify;
   if     ($Public)      {return 0;} # Public version of code, can't modify 
   unless ($remote_user) {return 0;} # No user logged in, can't modify 
 
@@ -70,9 +70,16 @@ sub CanModify { # Can the user modify (with current security) this document
   unless (defined $Version) { # Last version is default  
     $Version = $Documents{$DocumentID}{NVER};
   }   
-  my $Access  = &CanAccess($DocumentID,$Version); 
-  my $Create  = &CanCreate();
-  return ($Access && $Create);
+  my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+  my @ModifyGroupIDs = &GetRevisionModifyGroups($DocRevID);
+  if (@ModifyGroupIDs && $EnchancedSecurity) {
+  
+  } else {
+    my $Access  = &CanAccess($DocumentID,$Version); 
+    my $Create  = &CanCreate();
+    $CanModify = $Access && $Create;
+  } 
+  return $CanModify;
 }
 
 sub CanCreate { # Can the user create documents 

@@ -63,17 +63,38 @@ sub GetRevisionSecurityGroups {
   }
     
   my @groups = ();
-  my ($RevTopicID,$GroupID);
+  my ($RevSecurityID,$GroupID);
   my $GroupList = $dbh->prepare(
     "select RevSecurityID,GroupID from RevisionSecurity where DocRevID=?");
   $GroupList -> execute($DocRevID);
-  $GroupList -> bind_columns(undef, \($RevTopicID,$GroupID));
+  $GroupList -> bind_columns(undef, \($RevSecurityID,$GroupID));
   while ($GroupList -> fetch) {
     push @groups,$GroupID;
   }
   $RevisionSecurities{$DocRevID}{DocRevID} = $DocRevID;
   $RevisionSecurities{$DocRevID}{GROUPS}   = [@groups];
   return @{$RevisionSecurities{$DocRevID}{GROUPS}};
+}
+
+sub GetRevisionModifyGroups {
+  my ($DocRevID) = @_;
+  
+  if ($RevisionModifies{$DocRevID}{DocRevID}) {
+    return @{$RevisionModifies{$DocRevID}{GROUPS}};
+  }
+    
+  my @groups = ();
+  my ($RevModifyID,$GroupID);
+  my $GroupList = $dbh->prepare(
+    "select RevModifyID,GroupID from RevisionModify where DocRevID=?");
+  $GroupList -> execute($DocRevID);
+  $GroupList -> bind_columns(undef, \($RevModifyID,$GroupID));
+  while ($GroupList -> fetch) {
+    push @groups,$GroupID;
+  }
+  $RevisionModifies{$DocRevID}{DocRevID} = $DocRevID;
+  $RevisionModifies{$DocRevID}{GROUPS}   = [@groups];
+  return @{$RevisionModifies{$DocRevID}{GROUPS}};
 }
 
 sub SecurityLookup {
