@@ -14,10 +14,8 @@ use DBI;
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
 require "Security.pm";
-require "SecuritySQL.pm";
 require "FSUtilities.pm";
 require "HTMLUtilities.pm";
-require "Sorts.pm";
 
 $query = new CGI;  # Global for subroutines
 

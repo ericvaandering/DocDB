@@ -16,7 +16,7 @@ require "Security.pm";
 require "SecuritySQL.pm";
 require "DocumentSQL.pm";
 require "RevisionSQL.pm";
-require "FSUtilities.pm";
+
 require "HTMLUtilities.pm";
 require "Security.pm";
 
