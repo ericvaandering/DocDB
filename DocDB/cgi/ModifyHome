@@ -104,6 +104,14 @@ print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 #print $query -> hidden(-name => 'mode',    -default => 'updatedb');
 print $query -> endform;
 
+if ($remote_user eq $Administrator) {
+  print "<li>"; 
+  print $query -> startform('POST',$DeleteConfirm);
+  print $query -> submit (-value => "Delete");
+  print " document #"; 
+  print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
+  print $query -> endform;
+}
 print "<li>See below if these options aren't flexible enough.\n";
 
 print "</ul>\n";

@@ -70,7 +70,6 @@ sub AbstractSearchBox { # Field and mode selecter for searches on Abstract
   print "Abstract:</a></th> \n";
   print "<td>\n";
   print $query -> textfield (-name      => 'abstractsearch', 
-#                             -default   => $TitleSearchDefault, 
                              -size      => 40, 
                              -maxlength => 240);
   print "</td>\n";
@@ -87,7 +86,6 @@ sub KeywordsSearchBox { # Field and mode selecter for searches on Keywords
   print "Keywords:</a></th> \n";
   print "<td>\n";
   print $query -> textfield (-name      => 'keywordsearch', 
-#                             -default   => $TitleSearchDefault, 
                              -size      => 40, 
                              -maxlength => 240);
   print "</td>\n";

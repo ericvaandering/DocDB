@@ -1,0 +1,74 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+use Benchmark;
+use CGI;
+use DBI;
+
+require "DocDBGlobals.pm";
+require "ResponseElements.pm";
+require "MySQLAccess.pm";
+require "FSUtilities.pm";
+require "HTMLUtilities.pm";
+require "Security.pm";
+
+
+$query = new CGI;  # Global for subroutines
+
+%params = $query -> Vars;
+
+$DocumentID = $params{docid};
+$DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
+$DocumentID =~ s/\s+$//;
+
+unless ($DocumentID) {
+  print $query->header;
+  print "You are must supply a document number!<p>\n";
+  print $query->end_html; 
+  exit;
+}  
+  
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+&GetSecurityGroups;
+&FetchDocument($DocumentID);
+
+$Version = $Documents{$DocumentID}{NVER}; # Show latest version
+
+print $query->header;
+&BTeVHeader("Confirm Delete of Document $DocumentID");
+
+unless (&CanModify($DocumentID,$Version)) { # FIXME CanAdmin function
+  print "You are not authorized to modify this document.<p>\n";
+  &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+  exit;
+}  
+
+my $DocRevID   = &FetchDocRevision($DocumentID,$Version);
+
+unless ($DocRevID) {
+  print "This document does not exist.<p>\n";
+  &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+  exit;
+}
+
+print "<p><center><b>To delete this document, you must supply the adminstrator username and
+          password:</b>";
+
+print $query -> startform('POST',$DeleteDocument);
+print "<b>Admin username: </b>"; 
+print $query -> textfield(-name => "username", -size => 12, -maxlength => 12);
+print "<b> Admin password: </b>"; 
+print $query -> password_field(-name => "password", -size => 12, -maxlength => 12);
+print $query -> hidden(-name => 'docid',    -default => $DocumentID);
+print "<b> </b>"; 
+print $query -> submit (-value => "Delete Document");
+print $query -> endform;
+
+print "</center><p>";
+
+&PrintRevisionInfo($DocRevID,1);
+
+&DocDBNavBar;
+&BTeVFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -74,8 +74,11 @@ $help_file    = $script_root."docdb.hlp";
 $MainPage           = $cgi_root."DocumentDatabase";
 $ModifyHome         = $cgi_root."ModifyHome";
 
-$ProcessDocumentAdd = $cgi_root."ProcessDocumentAdd";
 $DocumentAddForm    = $cgi_root."DocumentAddForm";
+$ProcessDocumentAdd = $cgi_root."ProcessDocumentAdd";
+$DeleteConfirm      = $cgi_root."DeleteConfirm";
+$DeleteDocument     = $cgi_root."DeleteDocument";
+
 $ShowDocument       = $cgi_root."ShowDocument";
 $RetrieveFile       = $cgi_root."RetrieveFile";
 $RetrieveArchive    = $cgi_root."RetrieveArchive";
