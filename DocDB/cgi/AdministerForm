@@ -264,21 +264,41 @@ print "<p><hr>\n";
 
 ### Major Topic Administration
 
+%EnableMatrix = ();
+
+$EnableMatrix{majortopic}{Delete} = 1;
+
+$EnableMatrix{shortdesc}{New}     = 1;
+$EnableMatrix{longdesc}{New}      = 1;
+
+$EnableMatrix{majortopic}{Modify} = 1;
+$EnableMatrix{shortdesc}{Modify}  = 1;
+$EnableMatrix{longdesc}{Modify}   = 1;
+
 print "<a name=\"majtopic\"><center><h4>Administer Major Topics</h4></center>\n";
 
-print $query -> start_multipart_form('POST',"$MajorTopicAdminister");
+print $query -> start_multipart_form('POST',"$MajorTopicAdminister",
+                                    "id=\"majortopic\" name=\"majortopic\"");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
-print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
+print "<td colspan=2>\n";
+ &AdministerActions(-form => "majortopic", -matrix => \%EnableMatrix);
+print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td rowspan=2>\n"; &MajorTopicSelect(-format => "full"); print "</td>\n";
-print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
+print "<td rowspan=2>\n"; 
+ &MajorTopicSelect(-disabled => true, -format => "full"); 
+print "</td>\n";
+print "<td>\n"; 
+ &ShortDescriptionBox(-disabled => true);     
+print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td>\n"; &LongDescriptionBox;     print "</td>\n";
+print "<td>\n";
+ &LongDescriptionBox(-disabled => true);
+print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
