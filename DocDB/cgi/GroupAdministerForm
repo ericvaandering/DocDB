@@ -97,7 +97,7 @@ print "<p><hr>\n";
 
 ### Display of existing groups
 
-my @GroupIDs = sort keys %SecurityGroups;
+my @GroupIDs = sort numerically keys %SecurityGroups;
 
 print "<table cellpadding=10>\n";
 foreach my $GroupID (@GroupIDs) {

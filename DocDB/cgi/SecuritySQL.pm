@@ -1,11 +1,11 @@
 sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with all authors
-  my ($GroupID,$Name,$Description,$TimeStamp);
-  my $group_list  = $dbh -> prepare(
+  my ($GroupID,$Name,$Description,$CanCreate,$TimeStamp);
+  my $GroupList  = $dbh -> prepare(
      "select GroupID,Name,Description,CanCreate,TimeStamp from SecurityGroup"); 
-  $group_list -> execute;
-  $group_list -> bind_columns(undef, \($GroupID,$Name,$Description,$CanCreate,$TimeStamp));
+  $GroupList -> execute;
+  $GroupList -> bind_columns(undef, \($GroupID,$Name,$Description,$CanCreate,$TimeStamp));
   %SecurityGroups = ();
-  while ($group_list -> fetch) {
+  while ($GroupList -> fetch) {
     $SecurityGroups{$GroupID}{NAME}        = $Name;
     $SecurityGroups{$GroupID}{DESCRIPTION} = $Description;
     $SecurityGroups{$GroupID}{CanCreate}   = $CanCreate; # FIXME: CanAdminister
@@ -14,16 +14,45 @@ sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with 
   }
   
   my ($HierarchyID,$ChildID,$ParentID);
-  my $hierarchy_list  = $dbh -> prepare(
+  my $HierarchyList  = $dbh -> prepare(
      "select HierarchyID,ChildID,ParentID,TimeStamp from GroupHierarchy"); 
-  $hierarchy_list -> execute;
-  $hierarchy_list -> bind_columns(undef, \($HierarchyID,$ChildID,$ParentID,$TimeStamp));
+  $HierarchyList -> execute;
+  $HierarchyList -> bind_columns(undef, \($HierarchyID,$ChildID,$ParentID,$TimeStamp));
   %GroupsHierarchy = ();
-  while ($hierarchy_list -> fetch) {
+  while ($HierarchyList -> fetch) {
     $GroupsHierarchy{$HierarchyID}{CHILD}     = $ChildID;
     $GroupsHierarchy{$HierarchyID}{PARENT}    = $ParentID;
     $GroupsHierarchy{$HierarchyID}{TIMESTAMP} = $TimeStamp;
   }
+}
+
+sub FetchSecurityGroup {
+  my ($GroupID) = @_;
+  my ($Name,$Description,$CanCreate,$TimeStamp);
+  my $GroupList  = $dbh -> prepare(
+     "select Name,Description,CanCreate,TimeStamp from SecurityGroup where GroupID=?"); 
+  $GroupList -> execute($GroupID);
+  $GroupList -> bind_columns(undef, \($Name,$Description,$CanCreate,$TimeStamp));
+  while ($GroupList -> fetch) {
+    $SecurityGroups{$GroupID}{NAME}        = $Name;
+    $SecurityGroups{$GroupID}{DESCRIPTION} = $Description;
+    $SecurityGroups{$GroupID}{CanCreate}   = $CanCreate; # FIXME: CanAdminister
+    $SecurityGroups{$GroupID}{TIMESTAMP}   = $TimeStamp;
+    $SecurityIDs{$Name} = $GroupID;
+  }
+  
+  my ($HierarchyID,$ChildID,$ParentID);
+  my $HierarchyList  = $dbh -> prepare(
+     "select HierarchyID,ChildID,ParentID,TimeStamp from GroupHierarchy where ParentID=? or ChildID=?"); 
+  $HierarchyList -> execute($GroupID,$GroupID);
+  $HierarchyList -> bind_columns(undef, \($HierarchyID,$ChildID,$ParentID,$TimeStamp));
+  while ($HierarchyList -> fetch) {
+    $GroupsHierarchy{$HierarchyID}{CHILD}     = $ChildID;
+    $GroupsHierarchy{$HierarchyID}{PARENT}    = $ParentID;
+    $GroupsHierarchy{$HierarchyID}{TIMESTAMP} = $TimeStamp;
+    print "$TimeStamp<br>\n";
+ }
+
 }
 
 sub GetRevisionSecurityGroups {
@@ -35,11 +64,11 @@ sub GetRevisionSecurityGroups {
     
   my @groups = ();
   my ($RevTopicID,$GroupID);
-  my $group_list = $dbh->prepare(
+  my $GroupList = $dbh->prepare(
     "select RevSecurityID,GroupID from RevisionSecurity where DocRevID=?");
-  $group_list -> execute($DocRevID);
-  $group_list -> bind_columns(undef, \($RevTopicID,$GroupID));
-  while ($group_list -> fetch) {
+  $GroupList -> execute($DocRevID);
+  $GroupList -> bind_columns(undef, \($RevTopicID,$GroupID));
+  while ($GroupList -> fetch) {
     push @groups,$GroupID;
   }
   $RevisionSecurities{$DocRevID}{DocRevID} = $DocRevID;

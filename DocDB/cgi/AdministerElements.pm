@@ -41,7 +41,7 @@ sub ParentSelect {
   print "Group:</a></b><br> \n";
   print $query -> scrolling_list(-name => 'parent', -values => \@GroupIDs, 
                                  -labels => \%GroupLabels, 
-                                 -size => 10, -multiple => 'true', 
+                                 -size => 10, 
                                  -default => \@SecurityDefaults);
 };
 
@@ -87,13 +87,13 @@ sub GroupEntryBox {
   print "<tr><td>\n";
   print $query -> checkbox(-name => "create",  
                            -value => 'create', -label => '');
-  print "<b>May create documents?</b>\n";
+  print "<b>May create documents</b>\n";
   print "</td></tr>\n";
 
   print "<tr><td>\n";
-  print $query -> checkbox(-name => "create",  
-                           -value => 'create', -label => '');
-  print "<b>May administer database?</b> (not implemented)\n";
+  print $query -> checkbox(-name => "admin",  
+                           -value => 'admin', -label => '');
+  print "<b>May administer database</b> (not implemented)\n";
   print "</td></tr>\n";
   print "</table>\n";
 }
