@@ -1,5 +1,5 @@
 body {
-  margin:10px 10px 0px 10px;
+  margin:10px 10px 10px 10px;
   padding:0px;
 }
 
@@ -20,10 +20,11 @@ dt {
   font-weight: bold;
 }
  
-h1, h2, h3, h4, h5, p, img {
+h1, h2, h3, h4, h5 {
   margin: 0 1em 0 1em;
   text-align: center;
 }
+
 
 h1 {font-size: 150%}
 h2 {font-size: 120%}
@@ -34,7 +35,7 @@ h3 {font-size: 100%}
         width: 12em;
 	float: left;
 	background: #eee;
-	padding-left: 0.25%;
+	padding-left: 0.3em;
 	padding-bottom: 0.5em;
 	padding-right: 0.5em;
 	padding-top: 0em;
@@ -42,32 +43,30 @@ h3 {font-size: 100%}
 }
 
 #MainColumn3Col {
-	width: 100%-13em;
+	width: 100%-12em-1em; /* 12 matches LeftColums */
 	background: #fff;
 	padding-bottom: 1em;
-	padding-left: 13em;
-	padding-right: 0.5%;
+	padding-left: 13em;   /* 13=12+1 matches LeftColums (can't hardcode?!?)*/
+	padding-right: 0.5em;
 }
 
 #RightColumn3Col {
 	width: auto;
         max-width: 35%;
-//        min-width: 16em;
 	background: #eee;
 	float: right;
         margin-bottom: 1em;
         margin-left: 0.5em;
 	padding-bottom: 0.5em;
 	padding-right: 0.5em;
-	padding-left: 0.5em;
+	padding-left: 0.3em;
 	padding-top: 0em;
 }
 
 
 #Header3Col {
 	background: #fff;	
-        margin-bottom: 1em;
-
+        margin-bottom: 1.5em;
 }
 	
 
