@@ -28,10 +28,6 @@ require "WebUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 
-print $query->header;
-&DocDBHeader("Modify a Meeting");
-&HelpPopupScript;
-
 %params = $query -> Vars;
 
 my $Mode               = $params{mode};
@@ -95,7 +91,12 @@ $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass
 unless ($dbh) {
   push @ErrorStack,$Msg_NoConnect;
 }         
+
+print $query->header;
+&DocDBHeader("Modify a Meeting");
 &EndPage(@ErrorStack);
+
+&HelpPopupScript;
 
 &GetTopics;
 

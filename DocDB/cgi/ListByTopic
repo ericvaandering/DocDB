@@ -91,9 +91,9 @@ if ($Mode eq "conference") {
     print " in $Conferences{$ConferenceID}{Location}\n";
     print " are available.<br>\n";
     if ($Conferences{$ConferenceID}{URL}) {
-      print "(<a href=\"$Conferences{$ConferenceID}{URL}\">Conference homepage</a>)\n";
+      print "(<a href=\"$Conferences{$ConferenceID}{URL}\">$Conferences{$ConferenceID}{Title} homepage</a>)\n";
     } else {
-      print "(Conference homepage not available)\n";
+      print "(No homepage available)\n";
     }
     print "</center>\n";
   }

@@ -23,12 +23,12 @@ require "Sorts.pm";
 
 $query = new CGI;  # Global for subroutines
 
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
 ### Start HTML
 
 print $query->header;
 &DocDBHeader("$Project Document List","Document List");
-
-$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 %params = $query -> Vars;
 

@@ -378,7 +378,11 @@ sub PrintSessionHeader ($) {
   print &EuroTimeHM($Sessions{$SessionID}{StartTime});
   print "</b>\n";
   if ($Sessions{$SessionID}{Description}) {
-    print "<br> $Sessions{$SessionID}{Description}\n";
+    my $Description = $Sessions{$SessionID}{Description};
+    $Description =~ s/\n\s*\n/<p>/;
+    $Description =~ s/\n/<br>/;
+    
+    print "<br> ",&URLify($Description),"\n";
   }
   if ($Sessions{$SessionID}{Location}) {
     print "<br> Location: $Sessions{$SessionID}{Location}\n";
@@ -412,11 +416,11 @@ sub PrintMeetingInfo($;$) {
 
   if ($Conferences{$ConferenceID}{URL}) {
     print "<br>\n";
-    print "(<a href=\"$Conferences{$ConferenceID}{URL}\">Conference homepage</a>)\n";
+    print "(<a href=\"$Conferences{$ConferenceID}{URL}\">$Conferences{$ConferenceID}{Title} homepage</a>)\n";
   }
   
   if ($AddNavBar) {
-    print "<br>\n";
+    print "<p>\n";
     my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
     @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
     foreach $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks
