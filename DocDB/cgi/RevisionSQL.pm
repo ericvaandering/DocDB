@@ -70,6 +70,7 @@ sub FetchRevisionByDocumentAndDate ($$) {
     "select MAX(DocRevID) from DocumentRevision ".
     "where DocumentID=? and RevisionDate<=? and Obsolete=0");
 
+  $Date .= " 23:59:59";
   $revision_list -> execute($DocumentID,$Date);
   my ($DocRevID) = $revision_list -> fetchrow_array;
 
