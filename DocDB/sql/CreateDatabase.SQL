@@ -44,7 +44,7 @@ CREATE TABLE Document (
   DocumentID int(11) NOT NULL auto_increment,
   RequesterID int(11) NOT NULL,
   RequestDate datetime default NULL,
-  DocumentType varchar(16) NOT NULL,
+  DocumentType int(11) NOT NULL,
   TimeStamp timestamp(14) NOT NULL,
   PRIMARY KEY (DocumentID),
   KEY Requester(RequesterID)
