@@ -36,6 +36,11 @@ h1 {font-size: 150%}
 h2 {font-size: 120%}
 h3 {font-size: 100%}
 
+h5 {
+  font-size: 100%;
+  font-weight: normal;
+}
+
 /* Stuff for PrintRevisionInfo, which shows up in lots of places, hence it's here */
 
 #RevisionInfo {
@@ -109,6 +114,11 @@ h3 {font-size: 100%}
 #OtherVersionTable {
   width: 100%; 
 }
+
+#OtherVersionTable td {
+  padding: 3px;
+}  
+
 
 /* Allow for lists and tables with alternating color rows. 
    border-collapse gets rid of spacing between cells */
