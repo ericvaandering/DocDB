@@ -115,8 +115,6 @@ $SelectPrefs        = $cgi_root."SelectPrefs";
 $SetPrefs           = $cgi_root."SetPrefs";
 
 $EmailLogin         = $cgi_root."EmailLogin";
-$EmailCreate        = $cgi_root."EmailCreate";
 $SelectEmailPrefs   = $cgi_root."SelectEmailPrefs";
-$SetEmailPrefs      = $cgi_root."SetEmailPrefs";
 
 1;

@@ -196,44 +196,73 @@ sub PrintRevisionInfo {
  
 sub WarnPage {
   my @errors = @_;
-  print "<b><font color=\"red\">There was a non-fatal error processing your
-  request: </font></b><br>\n";
-  foreach $message (@errors) {
-    print "<dt><b>$message </b><p>\n";
-  }  
+  if (@errors) {
+    print "<b><font color=\"red\">There was a non-fatal error processing your
+    request: </font></b><br>\n";
+    foreach $message (@errors) {
+      print "<dt><b>$message</b><br>\n";
+    } 
+    print "<p>\n";
+  }   
 }
 
 sub EndPage {
   my @errors = @_;
-  print "<b><font color=\"red\">There was a fatal error processing your request:
-  </font></b><br>\n";
-  foreach $message (@errors) {
-    print "<dt><b>$message </b>\n";
+  if (@errors) {
+    print "<b><font color=\"red\">There was a fatal error processing your request:
+    </font></b><br>\n";
+    foreach $message (@errors) {
+      print "<dt><b>$message</b><br>\n";
+    }  
+    print "<p>\n";
   }  
   &DocDBNavBar();
   &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
   exit;
 }
 
+sub ErrorPage {
+  my @errors = @_;
+  if (@errors) {
+    print "<b><font color=\"red\">There was a fatal error processing your request:
+    </font></b><br>\n";
+    foreach $message (@errors) {
+      print "<dt><b>$message</b><br>\n";
+    }  
+    print "<p>\n";
+  }  
+}
+
 sub FullDocumentID ($;$) {
   my ($DocumentID,$Version) = @_;
-  if ($Version) {
+  if (defined $Version) {
     return "BTeV-doc-$DocumentID-v$Version";
   } else {  
     return "BTeV-doc-$DocumentID";
   }  
 }  
 
-sub DocumentLink {
+sub DocumentLink { #FIXME: Make Version optional, Document URL 
   my ($DocumentID,$Version,$Title) = @_;
-  my $ret = "<a href=\"$ShowDocument\?docid=$DocumentID\&version=$Version\">";
+  my $Link = "<a href=\"$ShowDocument\?docid=$DocumentID\&version=$Version\">";
   if ($Title) {
-    $ret .= $Title;
+    $Link .= $Title;
   } else {
-    $ret .= &FullDocumentID($DocumentID,$Version);
+    $Link .= &FullDocumentID($DocumentID,$Version);
   }
-  $ret .=  "</a>";
+  $Link .=  "</a>";
 }         
+
+sub DocumentURL {
+  my ($DocumentID,$Version) = @_;
+  my $URL;
+  if (defined $Version) {
+    $URL =  "$ShowDocument\?docid=$DocumentID\&version=$Version";
+  } else {  
+    $URL =  "$ShowDocument\?docid=$DocumentID";
+  }  
+  return $URL
+}
 
 sub KeywordLink {
   my ($Keyword) = @_;
