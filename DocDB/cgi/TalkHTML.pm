@@ -143,29 +143,29 @@ sub TalkEntryForm (@) {
     print $query -> hidden(-name => 'timestamp',      -default => $TimeStamp);
 
 
-    print "<td align=left rowspan=3>\n"; &TalkOrder; print "<br/>\n";
+    print "<td align=left rowspan=2>\n"; &TalkOrder; print "<br/>\n";
     &TalkConfirm($SessionOrderID);    print "<br/>\n";
-    &TalkDelete($SessionOrderID);     print "<br/>\n";
-    &TalkNewSession($SessionOrderID); print "</td>\n";
+    &TalkDelete($SessionOrderID);     print "</td>\n";
     
-    print "<td align=center rowspan=3>\n"; &TalkSeparator($SessionOrderID); print "</td>\n";
-    print "<td align=center rowspan=3>\n"; &TalkDocID($SessionOrderID);                      print "</td>\n";
-    print "<td>\n"; &TalkTitle($TalkDefaultTitle);            print "</td>\n";
-    print "<td rowspan=2>\n"; &TalkTimePullDown; print "</td>\n";
+    print "<td align=center rowspan=2>\n"; &TalkSeparator($SessionOrderID); print "</td>\n";
+    print "<td align=center rowspan=2>\n"; &TalkDocID($SessionOrderID);     print "</td>\n";
+    print "<td>\n";           &TalkTitle($TalkDefaultTitle); print "</td>\n";
+    print "<td rowspan=3>\n"; &TalkTimePullDown;             print "</td>\n";
     print "<td rowspan=3>\n"; &TalkAuthors($SessionOrderID); print "</td>\n";
-    print "<td rowspan=3>\n"; &TalkTopics($SessionOrderID); print "</td>\n";
+    print "<td rowspan=3>\n"; &TalkTopics($SessionOrderID);  print "</td>\n";
     print "</tr>\n";
     print "<tr valign=top>\n";
-    print "<td>\n"; &TalkNote;      print "</td>\n";
+    print "<td>\n"; &TalkNote; print "</td>\n";
     print "</tr>\n";
+    print "<tr valign=top>\n";
+    print "<td colspan=3>\n"; &TalkNewSession($SessionOrderID); print "</td>\n";
     if ($TalkDefaultDocID) {
       my $TitleLink = &NewDocumentLink($TalkDefaultDocID,undef,"title");
-      print "<tr valign=top>\n";
       print "<td colspan=2>Match: $TitleLink</td>\n";
-      print "</tr>\n";
     } else {
-      print "<tr><td colspan=2>&nbsp;</td></tr>\n";
+      print "<td colspan=2>&nbsp;</td>\n";
     }    
+    print "</tr>\n";
     print "<tr valign=top><td colspan=7><hr width=95%></td>\n";
     print "</tr>\n";
   }
@@ -315,13 +315,13 @@ sub TalkNewSession ($) {
   my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
   
   my @SessionIDs = &FetchSessionsByConferenceID($ConferenceID);
-
-  $SessionLabels{0} = "Move to new session?";
   unshift @SessionIDs,"0";
-  
+
   foreach my $SessionID (@SessionIDs) {
     $SessionLabels{$SessionID} = $Sessions{$SessionID}{Title}; 
   }
+  $SessionLabels{0} = "Move to new session?";
+  
   print $query -> popup_menu (-name    => "newsessionid-$SessionOrderID", 
                               -labels => \%SessionLabels, 
                               -values  => \@SessionIDs);

@@ -262,22 +262,7 @@ sub PrintSession ($;$) {
   require "SQLUtilities.pm";
   require "Utilities.pm";
   
-  print "<center><b>Session: ".
-        "<a href=\"$DisplayMeeting?sessionid=$SessionID\">$Sessions{$SessionID}{Title}</a> begins \n";
-  print &EuroDate($Sessions{$SessionID}{StartTime});
-  print " at ";
-  print &EuroTimeHM($Sessions{$SessionID}{StartTime});
-  print "</b></center> \n";
-  if ($Sessions{$SessionID}{Description}) {
-    print "<center> $Sessions{$SessionID}{Description} </center>\n";
-  }
-  if ($Sessions{$SessionID}{Location}) {
-    print "<center> Location: $Sessions{$SessionID}{Location} </center><p>\n";
-  }
-  if ($AddTalkLink) {
-    print "<center>(<a href=\"$DocumentAddForm?sessionid=$SessionID\">Add a document</a> ".
-          "to this session)</center>\n";
-  }        
+  &PrintSessionHeader($SessionID,$AddTalkLink);
   print "<p>\n";
   
   my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
@@ -376,6 +361,30 @@ sub PrintSessionSeparator ($) {
   }
   print "</tr></table><p>\n";
   print "</center><hr width=95%>\n";   
+}
+
+sub PrintSessionHeader ($;$) {
+  my ($SessionID,$AddTalkLink) = @_;
+
+  require "SQLUtilities.pm";
+  require "Utilities.pm";
+
+  print "<center><b>Session: ".
+        "<a href=\"$DisplayMeeting?sessionid=$SessionID\">$Sessions{$SessionID}{Title}</a> begins \n";
+  print &EuroDate($Sessions{$SessionID}{StartTime});
+  print " at ";
+  print &EuroTimeHM($Sessions{$SessionID}{StartTime});
+  print "</b></center> \n";
+  if ($Sessions{$SessionID}{Description}) {
+    print "<center> $Sessions{$SessionID}{Description} </center>\n";
+  }
+  if ($Sessions{$SessionID}{Location}) {
+    print "<center> Location: $Sessions{$SessionID}{Location} </center><p>\n";
+  }
+  if ($AddTalkLink) {
+    print "<center>(<a href=\"$DocumentAddForm?sessionid=$SessionID\">Add a document</a> ".
+          "to this session)</center>\n";
+  }        
 }
 
 sub PrintMeetingInfo($;$) {

@@ -20,6 +20,7 @@ require "ResponseElements.pm";
 require "Sorts.pm";
 require "Scripts.pm";
 
+require "MeetingHTML.pm";
 require "TalkHTML.pm";
 require "TalkSQL.pm";
 require "TalkHintSQL.pm";
@@ -213,6 +214,8 @@ my @SessionOrderIDs  = &FetchSessionOrdersBySessionID($SessionID);
 # Display all info on all talks plus a number of blanks
 
 require "Utilities.pm";
+
+&PrintSessionHeader($SessionID); 
 
 print $query -> start_multipart_form('POST',"$SessionModify");
 $query -> param('sessionid',$SessionID);
