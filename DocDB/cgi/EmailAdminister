@@ -59,6 +59,8 @@ my $ClearGroups   = ($params{cleargroups} eq "on");
 my $ClearUser     = ($params{clearuser}   eq "on");
 my $UserSign      = ($params{usersign}    eq "on");
 my $VerifyUser    = ($params{verifyuser}  eq "on");
+my @UsersGroupIDs = split /\0/,$params{usergroups};
+
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
 @WarnStack  = ();
@@ -79,8 +81,6 @@ unless (&CanAdminister) {
 &WarnPage(@WarnStack);
 
 &GetSecurityGroups;
-&HTMLPrintParams;
-print "CG: $ClearGroups<br>\n";
 
 if      ($Action eq "Delete") { # Delete user
   if (!$EmailUserID) {
@@ -139,6 +139,13 @@ if      ($Action eq "Delete") { # Delete user
        $UserUpdate -> execute($EmailUserID);
     print "<b>The user is now verified.</b><p>\n";
   }
+  foreach my $UserGroupID (@UserGroupIDs) {
+    my $UsersGroupUpdate = $dbh -> prepare("insert into UsersGroup UsersGroupID,EmailUserID,GroupID ".
+                                           " values (0,?,?)");
+       $UsersGroupUpdate -> execute($EmailUserID,$UserGroupID); 
+    &FetchSecurityGroup($UserGroupID);
+    print "Added user to $SecurityGroups{$UserGroupID}{NAME}<br/>";
+  }                           
 } elsif ($Action eq "New") { 
   push @ErrorStack,"You can't create new users here. Do it the normal way.";
 } else {
