@@ -74,6 +74,10 @@ $RemoteUsername       = $ENV{REMOTE_USER};
 $remote_user          = $ENV{REMOTE_USER};
 $remote_user          =~ tr/[A-Z]/[a-z]/;
 
+# Preferences
+
+$Preferences{Security}{Certificates}{UseCN} = FALSE; # Use CN instead of E (E-mail) to distinguish
+
 $htaccess             = ".htaccess";
 
 $LastDays             = 20;    # Number of days for default in LastModified

@@ -23,27 +23,7 @@
 sub FetchSecurityGroupsByCert (%) {
   require "SecuritySQL.pm"; 
   my %Params = @_;
-
-  my $IgnoreVerification = $Params{-ignoreverification};
- 
-  my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
-  my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
-
-  # If we do http basic with users, this routine will function with minor modifications
-
-  my $EmailUserSelect;
-  if ($IgnoreVerification) {
-    $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                     "where EmailAddress=? and Name=?");
-  } else {                                   
-    $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                     "where Verified=1 and EmailAddress=? and Name=?");
-  }
-                                      
-  $EmailUserSelect -> execute($CertEmail,$CertCN);
-
-  my ($EmailUserID) = $EmailUserSelect -> fetchrow_array; 
-  
+  my $EmailUserID  = &FetchEmailUserIDByCert(%Params);
   my @UserGroupIDs = &FetchUserGroupIDs($EmailUserID);
   return @UserGroupIDs;
 }
@@ -60,15 +40,25 @@ sub FetchEmailUserIDByCert (%) {
   # If we do http basic with users, this routine will function with minor modifications
 
   my $EmailUserSelect;
-  if ($IgnoreVerification) {
-    $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                     "where EmailAddress=? and Name=?");
-  } else {                                   
-    $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                     "where Verified=1 and EmailAddress=? and Name=?");
-  }
-                                      
-  $EmailUserSelect -> execute($CertEmail,$CertCN);
+  if ($Preferences{Security}{Certificates}{UseCN}) {  
+    if ($IgnoreVerification) {
+      $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
+                                       "where EmailAddress=? and Name=?");
+    } else {                                   
+      $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
+                                       "where Verified=1 and EmailAddress=? and Name=?");
+    }
+    $EmailUserSelect -> execute($CertCN);
+  } else {
+    if ($IgnoreVerification) {
+      $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
+                                       "where EmailAddress=? and Name=?");
+    } else {                                   
+      $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
+                                       "where Verified=1 and EmailAddress=? and Name=?");
+    }
+    $EmailUserSelect -> execute($CertEmail,$CertCN);
+  }                                    
 
   my ($EmailUserID) = $EmailUserSelect -> fetchrow_array; 
   
