@@ -163,7 +163,7 @@ if (&CanAdminister()) {
   print "<li>Add a <a href=\"$TopicAddForm\">topic</a>\n";
   print "<li>Administer <a href=\"$GroupAdministerForm\">groups</a> of users\n";
   print "<li>Administer <a href=\"$KeywordAdministerForm\">keywords and keyword groups</a>\n";
-  print "<li>Administer <a href=\"$EmailAdministerForm\">E-mail notifications</a>\n";
+  print "<li>Administer <a href=\"$EmailAdministerForm\">personal accounts</a>\n";
   print "<li>Administer <a href=\"$AdministerForm\">authors, institutions, topics</a>, and all other lists\n";
   print "</ul>\n";
 }

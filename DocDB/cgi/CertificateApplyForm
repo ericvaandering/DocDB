@@ -34,8 +34,6 @@ require "Security.pm";
 
 require "CertificateUtilities.pm";
 
-require "Debug.pm"; # REMOVE
-
 $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
