@@ -313,4 +313,40 @@ function selectProduct( f ) {
 ENDSCRIPT
 
 } 
+
+sub KeywordChooserPopupScript {
+  print "<script LANGUAGE=\"JavaScript\" type=\"text/javascript\">\n";
+  print "<!-- \n";
+
+  print "function keywordchooserwindow(page){\n";
+  print "window.open(page,\"KeywordChooser\",\"width=800,height=600,menubar=0,resizable=1,scrollbars=1,status=0,titlebar=0,toolbar=0,left=0,top=0\");\n";
+  print "}\n";
+
+  print "//-->\n";
+  print "</script>\n";
+}
+
+sub KeywordInsertScript {
+  
+  # Adapted from KochSuite, a German-authored Cookbook by 
+  # Michael Lestinsky <michael@zaphod.rhein-neckar.de>
+  
+  print <<ENDSCRIPT;
+
+  <script language="JavaScript1.2">
+  <!--
+    function InsertKeyword ( name ) {
+      if ( opener.document.forms[0].keywords.value == '' ) {
+        opener.document.forms[0].keywords.value = name;
+      } else {
+        opener.document.forms[0].keywords.value += ' ' + name;
+      }
+    }
+  //-->
+  </script>
+
+ENDSCRIPT
+
+}
+
 1;
