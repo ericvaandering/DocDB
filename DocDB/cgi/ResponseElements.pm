@@ -321,10 +321,10 @@ sub DocumentSummary { # One line document summary for listings
     my $title      = $DocRevisions{$DocRevID}{TITLE};
     my $rev_date   = &EuroDate($DocRevisions{$DocRevID}{DATE});
     print "<tr valign=top>\n";
-    print "<td><nobr>$full_docid</nobr></td>\n";
+    print "<td>$full_docid </td>\n";
     print "<td>$title</td>\n";
-    print "<td><nobr>$Authors{$Documents{$DocumentID}{REQUESTER}}{FULLNAME}</nobr></td>\n";
-    print "<td><nobr>$rev_date</nobr></td>\n";
+    print "<td>$Authors{$Documents{$DocumentID}{REQUESTER}}{FULLNAME}</td>\n";
+    print "<td>$rev_date</td>\n";
     print "</tr>\n";
   } else { # Print header
     print "<tr valign=bottom>\n";
