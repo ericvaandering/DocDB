@@ -157,8 +157,12 @@ function settype()
 	    <INPUT TYPE=radio NAME="class" VALUE="PUB"> Publication
 	    <INPUT TYPE=radio NAME="class" VALUE="TRANS"> Transparencies
 	    <INPUT TYPE=radio NAME="class" VALUE="MIN"> Minutes
+	
+      <DT>Distribution: 
+	<DD><INPUT TYPE=radio NAME="distribution" VALUE="PUBLIC"> Public
+	  <INPUT TYPE=radio NAME="distribution" VALUE="RESTRICTED"> Restricted
 
-      <DT>Select document type
+      <DT>Select document topic(s):
 	<DD><select name="topic" onChange="settype()">
 	    <option selected value="default">
 	    <option value="charm">Physics - Charm 
@@ -174,9 +178,8 @@ function settype()
 	    <option selected> Waiting for document type
 	    </select>
 
-      <DT>Distribution: 
-	<DD><INPUT TYPE=radio NAME="distribution" VALUE="PUBLIC"> Public
-	  <INPUT TYPE=radio NAME="distribution" VALUE="RESTRICTED"> Restricted
+      <DT>
+	<DD>The "more" button goes here <p>
 
     </DL>
 
