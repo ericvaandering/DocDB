@@ -57,10 +57,10 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                    " index(ConferenceID))"); 
 
   my $SessOrdCreate = $dbh -> prepare("create table SessionOrder ".
-                   "(SesionOrderID integer auto_increment primary key,".
+                   "(SessionOrderID integer auto_increment primary key,".
                    " SessionID integer, TalkOrder integer, SessionTalkID integer,".
                    " TalkSeparatorID integer, TimeStamp timestamp,".
-                   " index(SessionID), index(TalkID), index(TalkSeparatorID))"); 
+                   " index(SessionID), index(SessionTalkID), index(TalkSeparatorID))"); 
                    
   my $TalkSepCreate = $dbh -> prepare("create table TalkSeparator ".
                    "(TalkSeparatorID integer auto_increment primary key,".
