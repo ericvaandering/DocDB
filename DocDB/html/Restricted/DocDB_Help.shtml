@@ -443,6 +443,10 @@ where the X's represent <i>just the numbers</i> of the document and version.
 (I.e. leave off the ``BTeV-doc-'' and ``-v.'') As above, you can leave off the
 <tt>&amp;version=XX</tt> to refer to the latest version.<p>
 
+<b>Using "as of" instead of version number:</b>: Instead of specifying a version
+number, you can specify <tt>&asof=2002-12-25</tt> which will give you the
+version of this document current as of December 25, 2002. 
+
 <h4>Linking to files in a document</h4>
 
 Each file for each revision has a static URL which can easily be found. However,
@@ -455,7 +459,8 @@ that file will be retrieved.
 An alternate form is
 <tt>http://www-btev.fnal.gov/cgi-bin/DocDB/RetrieveFile?docid=XXXX&amp;version=XX&amp;extension=xxx</tt>,
 so for instance you can specify PDF as the extension to retrieve the PDF file
-for a document. As above, <tt>version</tt> can be left off.
+for a document. As above, <tt>version</tt> can be left off or <tt>asof</tt> can
+be specified.
 If your request matches no files or more than one file, the full document
 information will be shown and the user will have to choose the correct file.<p>
 

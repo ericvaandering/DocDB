@@ -20,6 +20,19 @@
 
 <b>This page lists the changes to the document database code over time.</b><p>
 
+<b>7 October 2002</b>
+<ul>
+<li>ShowDocument uses the "asof" parameter. Probably won't do the same for
+RetrieveArchive
+<ul>
+
+<b>4 October 2002</b>
+<ul>
+<li>Requesting files from a document by the date of modification is now
+possible. The "asof" parameter will pick the current version as of a date. I.e.
+asof=2002-06-01. Still have to do the same for ShowDocument and RetrieveArchive
+<ul>
+
 <b>3 October 2002</b>
 <ul>
 <li>Fixing some security issues. Users can now be flagged as able to view but
