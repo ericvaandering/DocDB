@@ -57,7 +57,6 @@ print $query->header;
 unless (&CanAdminister()) {
 #  push @ErrorStack,"You are not allowed to access administrative functions.";
   push @WarnStack,"I've disabled admin checking in this page. FIX IT.";
-  push @WarnStack,"Have to allow for listing and changing groups";
   push @WarnStack,"Have to add help links here and for request";
 }
 
