@@ -19,10 +19,10 @@
 <hr>
 
 <b>These are the frequently asked questions about the Document Database (or at
-least the ones we feel should be asked frequently).</b<p>
+least the ones we feel should be asked frequently).</b><p>
 
 <dl>
-<dt>Why can't I just type in the name of an author on a document?
+<dt><b>Why can't I just type in the name of an author on a document?</b>
 <dd>For technical reasons which are described in 
 <a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=140">
 BTeV-doc-140</a>, the names of the authors of a document aren't stored in the
@@ -33,7 +33,9 @@ you can assign them to have written a document. In the future, this master list
 will probably be linked with the People Database. Until then, you can 
 <a href="http://www-btev.fnal.gov/cgi-bin/DocDB/AuthorAddForm">add an
 author</a> yourself. 
+</dl>
 
+<p>
 
 <hr>
 <!-- begin footer, change the webmaster info if appropriate -->
