@@ -108,7 +108,7 @@ if ($remote_user eq $Administrator) {
   print "<li>"; 
   print $query -> startform('POST',$DeleteConfirm);
   print $query -> submit (-value => "Delete");
-  print " document #"; 
+  print " document # "; 
   print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
   print $query -> endform;
 }

@@ -26,8 +26,9 @@ print $query->header;
 $DocumentID = $params{docid};
 $DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
 $DocumentID =~ s/\s+$//;
-$Username   = $params{username};
 $Password   = $params{password};
+
+$Username   = $Administrator;
 
 unless ($DocumentID) {
   print "You are must supply a document number!<p>\n";

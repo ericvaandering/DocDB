@@ -53,13 +53,11 @@ unless ($DocRevID) {
   exit;
 }
 
-print "<p><center><b>To delete this document, you must supply the adminstrator username and
+print "<p><center><b>To delete this document, you must supply the adminstrator 
           password:</b>";
 
 print $query -> startform('POST',$DeleteDocument);
-print "<b>Admin username: </b>"; 
-print $query -> textfield(-name => "username", -size => 12, -maxlength => 12);
-print "<b> Admin password: </b>"; 
+print "<b> Administrator password: </b>"; 
 print $query -> password_field(-name => "password", -size => 12, -maxlength => 12);
 print $query -> hidden(-name => 'docid',    -default => $DocumentID);
 print "<b> </b>"; 

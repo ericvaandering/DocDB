@@ -100,14 +100,17 @@ if ($Mode eq "conference") {
 } else {
   &BTeVHeader("Document List by Topic");
   print "<center><h4>\n";
-
-  print "These documents on <font color=\"blue\">\n";
-  if ($MajorID) {
-    print $MajorTopics{$MajorID}{SHORT},"\n";
+  if ($MajorID || &FetchMinorTopic($TopicID)) {
+    print "These documents on <font color=\"blue\">\n";
+    if ($MajorID) {
+      print $MajorTopics{$MajorID}{SHORT},"\n";
+    } else {
+      print $MinorTopics{$TopicID}{FULL},"\n";
+    }
+    print "</font> are available:\n";
   } else {
-    print $MinorTopics{$TopicID}{FULL},"\n";
-  }
-  print "</font> are available:\n";
+    print "The requested topic does not exist.\n";
+  }  
 }
 print "</h4></center><p>\n";
 
