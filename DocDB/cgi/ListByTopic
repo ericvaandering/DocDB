@@ -129,6 +129,8 @@ if ($TopicID) {
   $revision_list -> bind_columns(undef, \($DocRevID));
 
   while ($revision_list -> fetch) {
+    &FetchDocRevisionByID($DocRevID);
+    if ($DocRevisions{$DocRevID}{OBSOLETE}) {next;}
     $document_list -> execute($DocRevID);
     ($DocumentID) = $document_list -> fetchrow_array;
     $DocumentIDs{$DocumentID} = 1; # Hash removes duplicates
@@ -142,6 +144,8 @@ if ($MajorID) {
 
   while ($revtopic_list -> fetch) {
     if ($MinorTopics{$MinorTopicID}{MAJOR} == $MajorID) {
+      &FetchDocRevisionByID($DocRevID);
+      if ($DocRevisions{$DocRevID}{OBSOLETE}) {next;}
       $document_list -> execute($DocRevID);
       ($DocumentID) = $document_list -> fetchrow_array;
       $DocumentIDs{$DocumentID} = 1; # Hash removes duplicates
@@ -213,7 +217,6 @@ if (&NearByMeeting == $TopicID) {
   print "<hr>\n";
 
   &PrintAgenda($TopicID);
-
 }
 
 $EndTime  = new Benchmark;
@@ -224,52 +227,3 @@ print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
 
 exit;
-
-sub PrintAgenda {
-  require "MiscSQL.pm";
-  my ($MeetingID) = @_; 
-  
-  my $agenda_find = $dbh -> prepare(
-    "select MAX(DocumentRevision.DocRevID) from DocumentRevision,RevisionTopic ".
-    "where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
-     "and lower(DocumentRevision.DocumentTitle) like lower(\"agenda%\") ".
-     "and RevisionTopic.MinorTopicID=32"); 
-  
-  $agenda_find -> execute();
-  my ($DocRevID) = $agenda_find -> fetchrow_array;
-  if ($DocRevID) {
-    &FetchDocRevisionByID($DocRevID); 
-    my $Files_ref  = &FetchDocFiles($DocRevID);                                                                                             
-
-    my $FirstFile = shift @{$Files_ref};
-
-    print "<h3>Agenda:</h3>\n";
-    &PrintFile($FirstFile);
-  }
-}
-
-sub PrintFile {
-  require "FSUtilities.pm";
-  my ($FileID) = @_;
-  
-  my $DocRevID      = $DocFiles{$FileID}{DOCREVID};
-  my $VersionNumber = $DocRevisions{$DocRevID}{VERSION};
-  my $DocumentID    = $DocRevisions{$DocRevID}{DOCID}  ;
-  
-  my $Directory     = &GetDirectory($DocumentID,$VersionNumber);  
-  
-  my $FileName      = $Directory.$DocFiles{$FileID}{NAME};
-    
-  if (grep /text/,`file $FileName`) {
-    open FILE,$FileName;
-    my @FileLines = <FILE>;
-    close FILE;
-
-    print "<pre>\n";
-    print @FileLines;
-    print "</pre>\n";
-  } else {
-    print "<b>Non-text file</b>\n";
-  }  
-    
-}
