@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Document Database FAQ</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="/includes/style.css" type="text/css">
+<!--#include virtual="/includes/navbar_header.html" --> <!-- Defining Javascript functions-->
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<!--#include virtual="/includes/atwork_menuload.html" --> <!-- Loads menus and images in nav bar -->
+<!--#include virtual="/includes/begin_atwork_top.html" --> <!-- Starts the table at the top -->
+      <div align="center"><font size="+2"
+      color="#003399">Document&nbsp;Database&nbsp;FAQ</font></div>
+<!--#include virtual="/includes/end_atwork_top.html" --> <!-- Ends the table at the top -->
+<!--#include virtual="/includes/atwork_navbar.html" --> <!-- Puts in the nav bar table row entry -->
+<!--#include virtual="/includes/end_table.html" --> <!-- Ends the table -->
+<hr>
+
+<b>These are the frequently asked questions about the Document Database (or at
+least the ones we feel should be asked frequently).</b<p>
+
+<dl>
+<dt>Why can't I just type in the name of an author on a document?
+<dd>For technical reasons which are described in 
+<a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=140">
+BTeV-doc-140</a>, the names of the authors of a document aren't stored in the
+same place as things like the title of the document. Instead, numbers are stored
+in the database that link the authors with a particular document. This means
+each author of a document must be in the master list of authors <b>before</b>
+you can assign them to have written a document. In the future, this master list
+will probably be linked with the People Database. Until then, you can 
+<a href="http://www-btev.fnal.gov/cgi-bin/DocDB/AuthorAddForm">add an
+author</a> yourself. 
+
+
+<hr>
+<!-- begin footer, change the webmaster info if appropriate -->
+<div align="center"> 
+<!--#include virtual="/includes/atwork_bottomnav.html"-->  <!-- Put in the bottom navigation bar-->
+</div>
+<div align="left"> 
+<i><font size="-1">
+<A HREF="mailto:btev-docdb@fnal.gov">Document Database Administrators</A> 
+</font></i></div>
+<!--#include virtual="/includes/full_fermi_footer.shtml" --> 
+</body>
+</html>
