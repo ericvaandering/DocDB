@@ -161,7 +161,8 @@ if      ($Action eq "Delete") { # Delete group
 # For modify or new fetch institution information and display.
 
 if ($Action eq "Modify" || $Action eq "New") {
-  &GetSecurityGroups($ParentID);
+  &ClearSecurityGroups;
+  &GetSecurityGroups;
   print "<p><b>Here are the results of your modification:<br>\n";
   print "<table cellpadding=10>\n";
   print "<tr valign=top>\n";

@@ -1,3 +1,9 @@
+sub ClearSecurityGroups {
+  $HaveAllSecurityGroups = 0;
+  %SecurityGroups = ();
+  %GroupsHierarchy = ();
+}
+
 sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with all authors
   if ($HaveAllSecurityGroups) {
     return;
