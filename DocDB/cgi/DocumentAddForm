@@ -460,7 +460,6 @@ print "<td>\n";
  &AuthorScroll(-required => $RequiredEntries{Author},
                -helplink => "requester",
                -helptext => "Requester",
-               -multiple => "false",
                -name     => "requester",
                -default   => $RequesterDefault);
                

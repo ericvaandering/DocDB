@@ -182,8 +182,8 @@ sub AuthorScroll (%) {
   my (%Params) = @_;
   
   my $All       =   $Params{-showall}   || 0;
-  my $Multiple  =   $Params{-multiple}  || "true";
-  my $HelpLink  =   $Params{-helplink}  || "authors";
+  my $Multiple  =   $Params{-multiple}  || 0;
+  my $HelpLink  =   $Params{-helplink}  || "";
   my $HelpText  =   $Params{-helptext}  || "Authors";
   my $Required  =   $Params{-required}  || 0;
   my $Name      =   $Params{-name}      || "authors";
