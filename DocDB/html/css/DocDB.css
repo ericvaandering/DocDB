@@ -1,0 +1,31 @@
+body {
+  margin:10px 10px 0px 10px;
+  padding:0px;
+}
+
+dd {
+  margin-left: 1em;
+}
+
+ul {
+  padding-left: 2em;
+}
+
+dl {
+  padding-top: 0em;
+  margin-top: 0em;
+}
+
+dt {
+  font-weight: bold;
+}
+ 
+h1, h2, h3, h5, p, img {
+  margin: 0 12px 0 12px;
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 12px;
+}
+
