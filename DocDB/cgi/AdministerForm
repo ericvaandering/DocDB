@@ -31,7 +31,7 @@ $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass
 &GetTopics;
 
 print $query->header;
-&BTeVHeader("Administer $Project DocDB"); # DocDBHeader
+&DocDBHeader("Administer $Project DocDB"); # DocDBHeader
 
 &HelpPopupScript;
 
@@ -58,8 +58,12 @@ print "Begin by selecting an action for what you want to administer. If you
        changed. If you select <b>Delete</b> any selections other than from 
        the first list will be ignored.<p>\n";
 
+print "Note that deleting and then re-entering with the same information is
+       not the same as modifying. Everything in the DB is tied together with
+       invisible ID numbers.<p>\n";
+
 print "In all cases, you must supply the <i>database</i> password for the
-administrator account to make any changes.<p>\n";
+       administrator account to make any changes.<p>\n";
 
 print "<center> Modify: ";
 print "[ <a href=\"\#author\">Authors</a> ] ";
