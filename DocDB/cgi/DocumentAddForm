@@ -52,7 +52,7 @@ if ($upload ne "http" && $upload ne "file") {
 $NumberUploads = $params{numfile};
 unless ($NumberUploads) {
   if ($Meeting) {
-    $NumberUploads = 2;
+    $NumberUploads = 3;
   } else {
     $NumberUploads = 1;
   }  
