@@ -72,26 +72,8 @@
 <li> mkdir $file_root/Static/Lists
 <li> mkdir $file_root/Static/Lists/<em>group-name</em> for every 
      permission group defined in DocDB.
-<li> cron jobs
-    <ol>
-    <li> Make a directory under your document database account to contain 
-	 the files in DocDB/scripts ( we'll call it "docdb-scripts" )
-    <li> cp DocDB/scripts/* docdb-scripts/.
-    <li> cd docdb-scripts
-    <li> Check CGIInclude.pm and edit if necessary.
-    <li> Edit DocDBHourly.csh <br>
-         There should be one line for every permission group.
-    <li> setup cron jobs to run the scripts (use crontab -e)
-    <pre>
-    00 * * * * cd docdb-scripts; ./DocDBHourly.csh
-    15 * * * * cd DocDB-Public-scripts; ./DocDBHourly.csh
-    05 0 * * * cd docdb-scripts; ./DocDBDaily.csh  > /dev/null
-    10 0 * * 0 cd docdb-scripts; ./DocDBWeekly.csh > /dev/null
-    </pre>
-    <li> These cron jobs populate the lists used by DocDB to 
-         efficiently list all documents and provide the information 
-	 used by the e-mail notification scripts.
-    </ol>
+<li> Setup the listing and notification 
+     <a href=notification.html>cron jobs</a>
 </ol>
 
 <p>

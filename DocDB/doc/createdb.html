@@ -15,13 +15,28 @@ mysql> select * from user;
 mysql> delete from user where user="";
 mysql> create database SomeDocDB;
 mysql> grant select on SomeDocDB.* to docdbro@localhost identified by "<em>read only password</em>";
-mysql> grant select on SomeDocDB.* to docdbro@docsrv1.fnal.gov identified by "<em>read only password</em>";
-mysql> grant select,insert,update,delete on SomeDocDB.* to docdbrw@docsrv1.fnal.gov identified by "<em>read write password</em>";
+mysql> grant select on SomeDocDB.* to docdbro@mydocs.fnal.gov identified by "<em>read only password</em>";
+mysql> grant select,insert,update,delete on SomeDocDB.* to docdbrw@mydocs.fnal.gov identified by "<em>read write password</em>";
 mysql> grant select,insert,update,delete on SomeDocDB.* to docdbrw@localhost identified by "<em>read write password</em>";
 mysql> grant ALL on SomeDocDB.* to docdbadm@localhost identified by "<em>database owner password</em>";
-mysql> grant ALL on SomeDocDB.* to docdbadm@docsrv1.fnal.gov identified by "<em>database owner password</em>";
+mysql> grant ALL on SomeDocDB.* to docdbadm@mydocs.fnal.gov identified by "<em>database owner password</em>";
 mysql> quit
 </pre>
+<li>  MySQL accounts (choose your own names)
+    <ul>
+    <li> docdbadm - administrative account with full MySQL access
+    <li> docdbrw - for trusted user read/write access to MySQL
+    <li> docdbro - for public or other non-trusted read-only access to MySQL
+    </ul>
+<li>  Definition of MySQL access restrictions:
+    <ul>
+    <li> localhost - only access from the MySQL server machine.
+    <li> mydocs.fnal.gov - only access from this machine
+    <li> %.fnal.gov - access restricted to machines in the fnal.gov domain. 
+         (not recommended)
+    <li> % - access allowed from any domain.
+         (don't even <em>consider</em> doing this)
+    </ul>
 <li>  Create the DocDB tables: <br>
       <b>mysql -u docdbadm -p SomeDocDB < CreateDatabase.SQL</b> <br>
       (CreateDatabase.SQL is in DocDB/sql)
@@ -63,7 +78,7 @@ mysql> insert into SecurityGroup set Name='docdbadm',Description='DocDB Administ
     (1,'Minor Topic','some minor topic description'); 
 </pre>
   </ul>
-<li>  The web interface allow the database administrator to perform
+<li>  The web interface allows the database administrator to perform
       administrative tasks, such as adding Major and Minor Topics.
       Access to the administrative links is restricted to database administrators.
       You will not see the links unless you use the database administrator 
