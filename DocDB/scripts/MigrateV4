@@ -17,11 +17,13 @@ require "DocDBGlobals.pm";
 unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate") {
   print "Usage: MigrateV4 --u=username --p=password --a=init|migrate|delete\n\n";
   print "This script is used to migrate from a version 3 to version 4 DB structure. \n";
-  print "It adds the IntroText field to the Conference table and new tables for \n";
-  print "organizing meetings. \n\n";
-  print "Run this script in \"init\" mode first, then in \"migrate\" mode.  \n\n";
-  print "At this point you can update the CGI code and when you are comfortable  \n";
-  print "everything is OK, run in \"delete\" mode to erase old columns and/or tables.  \n";
+  print "It adds the several fields to the Conference table and new tables for \n";
+  print "organizing meetings and a planned keyword enhancement. \n\n";
+  print "Run this script in \"init\" mode.  \n\n";
+  print "At this point you can update the CGI code. Running it in the migrate or delete modes is not needed.  \n";
+#  print "Run this script in \"init\" mode first, then in \"migrate\" mode.  \n\n";
+#  print "At this point you can update the CGI code and when you are comfortable  \n";
+#  print "everything is OK, run in \"delete\" mode to erase old columns and/or tables.  \n";
  exit;
 }  
 
