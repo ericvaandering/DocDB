@@ -103,7 +103,6 @@ if ($CertificateStatus eq "verified") {
       "insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) ".
       "            values (0,?,?)");
   foreach my $GroupID (@RequestedGroupIDs) {
-    print "Asking for $GroupID<br>";
     $UsersGroupInsert -> execute($EmailUserID,$GroupID);
   }  
 
@@ -137,7 +136,7 @@ if ($CertificateStatus eq "verified") {
     $Body .= "\n";
     $Body .= "If this is correct, please visit $EmailAdministerForm, ";
     $Body .= "select \"Modify\", select the user, check \"Verify\", and click to Submit.\n\n";
-    $Body .= "If the groups are not correct, select the correct groups before clicking Submit ";
+    $Body .= "If the groups are not correct, select the correct groups before clicking Submit.\n\n";
     if ($CertNote) {
       $Body .= "The user attached this note to their application:\n";
       $Body .= $CertNote;
@@ -149,7 +148,7 @@ if ($CertificateStatus eq "verified") {
     my $Body    = "Dear $CertCN,\n\n";
     $Body      .= "You, or someone using your e-mail address ($CertEmail) has requested ";
     $Body      .= "access to $Project DocDB. If you did not initiate this request, ";
-    $Body      .= "please contact $DBWebMasterEmail immediately.\n\n";
+    $Body      .= "please contact the DocDB administrators at $DBWebMasterEmail immediately.\n\n";
     $Body      .= "If you did request this access, please give the ";
     $Body      .= "adminstrators a few business days to respond to your request.\n";
     $Body      .= "Thank you.";

@@ -712,10 +712,9 @@ user should reset the password as soon as you have given it to them.
 
  <entry>
   <key>emailuser</key>
-  <title>Email User</title>
+  <title>Username</title>
   <text>
-This is the username of someone who has signed up to receive e-mail
-notifications.
+This is the username of someone who has signed up for a personal account.
   </text>
  </entry>
 

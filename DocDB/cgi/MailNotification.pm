@@ -438,7 +438,7 @@ sub EmailUserSelect {
   
   print "<b><a ";
   &HelpLink("emailuser");
-  print "Email User:</a></b><br> \n";
+  print "Username:</a></b><br> \n";
   print $query -> scrolling_list(-name => 'emailuserid', 
                                  -values => \@EmailUserIDs, 
                                  -labels => \%EmailUserLabels, 
