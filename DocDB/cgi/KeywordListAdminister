@@ -7,6 +7,9 @@
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 #
 
+# FIXME: Check for no groups, warn
+# FIXME: Check for duplicate keyword, warn
+
 use CGI;
 use DBI;
 
