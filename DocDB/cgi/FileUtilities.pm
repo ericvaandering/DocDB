@@ -140,4 +140,33 @@ sub AddArchive (%) {
   return @FileIDs; 
 }
 
+sub AbbreviateFileName {
+
+# Try to intelligently abbreivate a filename. Keep the extension if possible.
+
+  my %Params = @_;
+  
+  my $FileName  = $Params{-filename};   
+  my $MaxLength = $Params{-maxlength};   
+  my $MaxExt    = $Params{-maxext}; 
+
+  my $ReturnString = $FileName;
+  
+  if (length($FileName) > $MaxLength) {
+    my @Parts = split /\./,$FileName;
+    my $Extension = pop @Parts;
+    my $BaseFile = join '.',@Parts;
+    if (length($Extension) > 0 && length($Extension) < 4) {
+      $ReturnString  = substr $BaseFile,0,($MaxLength-length($Extension)-3);
+      $ReturnString .= "...";
+      $ReturnString .= $Extension;
+    } else {
+      my $StartString = substr $FileName,0,($MaxLength-$MaxExt-3);
+      my $EndString   = substr $FileName,-$MaxExt,$MaxExt;
+      $ReturnString = $StartString."...".$EndString;
+    }   
+  }
+  
+  return $ReturnString;
+}  
 1;

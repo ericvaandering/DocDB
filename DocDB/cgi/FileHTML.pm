@@ -68,6 +68,7 @@ sub ShortFileListByRevID {
 }
 
 sub FileListByFileID {
+  require "FileUtilities.pm";
   my (@Files) = @_;
   foreach my $file (@Files) {
     my $DocRevID      = $DocFiles{$file}{DOCREVID};
@@ -110,10 +111,12 @@ sub FileLink {
   my $base_url = &GetURLDir($documentID,$version);
   my $file_size = &FileSize(&FullFile($documentID,$version,$shortname));
   $file_size =~ s/^\s+//; # Chop off leading spaces
+  my $PrintedName = &AbbreviateFileName(-filename => $shortname,
+                                            -maxlength => 16, -maxext => 4);
   if ($description) {
-    return "<a href=\"$base_url$shortfile\" title=\"$shortname\">$description</a><br/>($shortname, $file_size)";
+    return "<a href=\"$base_url$shortfile\" title=\"$shortname\">$description</a><br/>($PrintedName, $file_size)";
   } else {
-    return "<a href=\"$base_url$shortfile\" title=\"$shortname\">$shortname</a> ($file_size)";
+    return "<a href=\"$base_url$shortfile\" title=\"$shortname\">$PrintedName</a> ($file_size)";
   }
 }  
 

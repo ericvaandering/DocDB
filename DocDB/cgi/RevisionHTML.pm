@@ -165,7 +165,7 @@ sub PrintRevisionInfo {
   print "<dl>\n";
    &PrintDocNumber($DocRevID);
    &RequesterByID($Documents{$DocumentID}{REQUESTER});
-   &SubmitterByID($DocRevisions{$DocRevID}{SUBMITTER});
+   &SubmitterByID($DocRevisions{$DocRevID}{Submitter});
    &PrintModTimes;
   print "</dl>\n";
   print "</div>\n";  # BasicDocInfo
