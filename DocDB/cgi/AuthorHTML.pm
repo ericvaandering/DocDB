@@ -74,6 +74,7 @@ sub PrintAuthorInfo {
   my ($AuthorID) = @_;
   
   &FetchAuthor($AuthorID);
+  &GetInstitutions; # FIXME: Can use FetchInstitution when exists
   my $link = &AuthorLink($AuthorID);
   
   print "$link\n";

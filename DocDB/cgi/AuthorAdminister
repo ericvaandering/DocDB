@@ -40,6 +40,8 @@ $Middle        = $params{middle};
 $LastName      = $params{lastname};
 $InstitutionID = $params{inst};
 
+my $AuthorID;
+
 unless (&CanAdminister) {
   push @error_stack,"You must be logged in as the adminstrator to delete
   authors";
@@ -108,12 +110,25 @@ if      ($Action eq "Delete") {
     }
   }
 } elsif ($Action eq "New") {
-  print "Adding author <p>\n";
+  print "<b>Adding a new author.</b><br>\n";
+  my $AuthorInsert = $dbh->prepare(
+     "insert into Author ".
+            "(AuthorID, FirstName, MiddleInitials, LastName, InstitutionID,Active) ". 
+     "values (0,        ?,         ?,              ?,        ?,            1)");
+
+  $AuthorInsert -> execute($FirstName,$Middle,$LastName,$InstitutionID);
+  $AuthorID = $AuthorInsert -> {mysql_insertid}; # Works with MySQL only
 } else {
   push @ErrorStack,"No valid action was specified.";
 }  
 
 # For modify or new fetch author information and display.
+
+if ($Action eq "Modify" || $Action eq "New") {
+  print "<p><b>Here are the results of your modification:<br>\n";
+  &PrintAuthorInfo($AuthorID);
+  print "</b><p>\n";
+}  
 
 print "<p>\n";
 
