@@ -120,11 +120,12 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
   
   my %Params = @_;
   
-  my $DocumentID = $Params{-docid};
-  my $DocIDOnly  = $Params{-docidonly} || 0;
-  my $NumWithVersion  = $Params{-numwithversion} || 0;
-  my $TitleLink  = $Params{-titlelink} || 0;
-  my $NoApprovalStatus  = $Params{-noapprovalstatus} || 0;
+  my $DocumentID       = $Params{-docid};
+#  my $Version          = $Params{-version}; #FIXME: Remember 0 version documents
+  my $DocIDOnly        = $Params{-docidonly}        || 0;
+  my $NumWithVersion   = $Params{-numwithversion}   || 0;
+  my $TitleLink        = $Params{-titlelink}        || 0;
+  my $NoApprovalStatus = $Params{-noapprovalstatus} || 0;
 
   &FetchDocument($DocumentID);
   my $Version      = $Documents{$DocumentID}{NVersions};
@@ -136,16 +137,16 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
     
   my $Link = "<a href=\"$ShowDocument\?docid=$DocumentID";
   $Link .= "\">"; 
-  if ($DocIDOnly) {
+  if ($DocIDOnly) {           # Like 1234                   
     $Link .= $DocumentID;
     $Link .= "</a>";
-  } elsif ($NumWithVersion) {
+  } elsif ($NumWithVersion) { # Like 1234-v56
     $Link .= $DocumentID."-v".$Version;
     $Link .= "</a>";
-  } elsif ($TitleLink) {
+  } elsif ($TitleLink) {      # Use the document Title
     $Link .= $DocRevisions{$DocRevID}{Title};
     $Link .= "</a>";
-    if ($UseSignoffs && !$NoApprovalStatus) {
+    if ($UseSignoffs && !$NoApprovalStatus) { # Put document status on next line
       require "SignoffUtilities.pm";
       my ($ApprovalStatus,$LastApproved) = &RevisionStatus($DocRevID);
       unless ($ApprovalStatus eq "Unmanaged") { 
@@ -154,7 +155,7 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
           if (defined $LastApproved) {
             my $DocumentID = $DocRevisions{$LastApproved}{DOCID};
             my $Version    = $DocRevisions{$LastApproved}{Version};
-            my $LastLink   = &DocumentLink($DocumentID,$Version,"version $Version");
+            my $LastLink   = &DocumentLink($DocumentID,$Version,"version $Version"); # Will Recurse
             $Link .= " - Last approved: $LastLink";
           } else {
             $Link .= " - No approved version";
@@ -163,7 +164,7 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
         $Link .= ")";
       }  
     }  
-  } else {
+  } else {                    # Like Project-doc-1234-v56
     $Link .= &FullDocumentID($DocumentID,$Version);  
     $Link .= "</a>";
   }
