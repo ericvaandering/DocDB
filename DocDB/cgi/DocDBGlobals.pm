@@ -5,6 +5,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
+#
 
 # Optional components
 
@@ -15,7 +16,7 @@ $MailInstalled = 1; # Is the Mailer::Mail module installed?
 $Wget   = "/usr/bin/wget -O - --quiet ";
 $Tar    = "/bin/tar ";
 $Unzip  = "/usr/bin/unzip -q ";
-$Zip    = "/usr/bin/zip -q -r ";  # Comment out if not present
+$Zip    = "/usr/bin/zip -q -r ";         # Comment out if not present
 
 # Useful stuff
 
@@ -68,7 +69,7 @@ if (-e "TestGlobals.pm") {
 
 # Special files (here because they use values from above)
 
-$help_file    = $script_root."docdb.hlp";
+$help_file          = $script_root."docdb.hlp";
 
 # CGI Scripts
 
