@@ -2,6 +2,8 @@
 # Description: Subroutines to provide various parts of HTML about documents
 #              and linking to other docs, etc.
 #
+#              THIS FILE IS DEPRECATED. DO NOT PUT NEW ROUTINES HERE, USE *HTML
+#
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 #
@@ -51,6 +53,8 @@ sub PrintAbstract {
 
 sub PrintKeywords {
   my ($Keywords) = @_;
+  
+  require "KeywordHTML.pm";
   
   $Keywords =~ s/^\s+//;
   $Keywords =~ s/\s+$//;
@@ -334,11 +338,12 @@ sub FullDocumentID ($;$) {
 
 sub DocumentLink { #FIXME: Make Version optional, Document URL, "title" mode 
   my ($DocumentID,$Version,$Title) = @_;
-  my $Link = "<a href=\"$ShowDocument\?docid=$DocumentID\&version=$Version\">";
+  my $DocNumber .= &FullDocumentID($DocumentID,$Version);
+  my $Link = "<a title=\"$DocNumber\" href=\"$ShowDocument\?docid=$DocumentID\&version=$Version\">";
   if ($Title) {
     $Link .= $Title;
   } else {
-    $Link .= &FullDocumentID($DocumentID,$Version);
+    $Link .= $DocNumber;
   }
   $Link .=  "</a>";
 }         
@@ -381,14 +386,6 @@ sub DocumentURL {
   }  
   return $URL
 }
-
-sub KeywordLink {
-  my ($Keyword) = @_;
-  my $ret = "<a href=\"$Search\?innerlogic=AND&outerlogic=AND&keywordsearchmode=anysub&keywordsearch=$Keyword\">";
-  $ret .= "$Keyword";
-  $ret .=  "</a>";
-  return $ret;
-}         
 
 sub ModTimes {
   my ($DocRevID) = @_;

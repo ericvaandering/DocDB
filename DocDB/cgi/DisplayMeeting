@@ -7,8 +7,11 @@
 #    Modified: 
 #
 
+use Benchmark;
 use CGI;
 use DBI;
+
+$StartTime = new Benchmark;
 
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
@@ -67,12 +70,24 @@ if ($SessionID) { # Display a single session
   &PrintSessionSeparator($SessionSeparatorID);
   &PrintMeetingEpilogue($Sessions{$SessionID}{ConferenceID});
 } elsif ($ConferenceID) { # Display meeting info or meeting with all talks
+
   &FetchConferenceByConferenceID($ConferenceID);
-  &PrintMeetingInfo($ConferenceID,true);
     
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
-  if ($Conferences{$ConferenceID}{ShowAllTalks}) { # Display all talks, sessions
+
+  my $SingleSessionMeeting = 0;
+  if ($#MeetingOrderIDs == 0) {
+    $SingleSessionMeeting = 1;
+  }
+  
+  if ($SingleSessionMeeting) {
+    &PrintMeetingInfo($ConferenceID,0);
+  } else {  
+    &PrintMeetingInfo($ConferenceID,1);
+  }
+  
+  if ($Conferences{$ConferenceID}{ShowAllTalks} || $SingleSessionMeeting) { # Display all talks, sessions
     # FIXME: Add a Navbar of sorts?
     foreach $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks
       my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
@@ -174,6 +189,8 @@ if ($SessionID) {
   $NavBarURL  = "$MeetingModify?conferenceid=$ConferenceID";
 }  
   
+$EndTime  = new Benchmark;
+
 &DocDBNavBar($NavBarText,$NavBarURL);
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  

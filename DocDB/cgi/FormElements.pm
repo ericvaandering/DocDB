@@ -120,14 +120,6 @@ sub EndDatePullDown {
   print $query -> popup_menu (-name => 'endyear',-values => \@years, -default => $year);
 }
 
-sub KeywordsBox {
-  print "<b><a ";
-  &HelpLink("keywords");
-  print "Keywords:</a></b> (space separated)<br> \n";
-  print $query -> textfield (-name => 'keywords', -default => $KeywordsDefault, 
-                             -size => 70, -maxlength => 240);
-};
-
 sub TitleBox {
   print "<b><a ";
   &HelpLink("title");
@@ -407,7 +399,7 @@ sub TopicSelectLong { # Scrolling selectable list for topics, all info
   my @TopicIDs = sort byTopic keys %MinorTopics;
   my %TopicLabels = ();
   foreach my $ID (@TopicIDs) {
-    $TopicLabels{$ID} = $MinorTopics{$MinorTopicID}{Full}." [$MinorTopics{$ID}{LONG}]"; 
+    $TopicLabels{$ID} = $MinorTopics{$ID}{Full}." [$MinorTopics{$ID}{LONG}]"; 
   }  
   print "<b><a ";
   &HelpLink("topics");
