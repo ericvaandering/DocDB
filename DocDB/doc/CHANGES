@@ -1,0 +1,5 @@
+4.2.6
+
+Removed execution time from various scripts, should advise people to put in
+footer (with version). Example placed in ProjectRoutines.pm
+
