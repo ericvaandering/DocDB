@@ -54,9 +54,9 @@ sub SetDateOverride {
 }
 
 sub SetAuthorDefault {
-  if ($AuthorIDPref) {
-    @AuthorDefaults = ($AuthorIDPref); #FIXME: Doesn't work for text field, ref thing
-    $RequesterDefault = ($AuthorIDPref);
+  if ($UserIDPref) {
+    @AuthorDefaults = ($UserIDPref); #FIXME: Doesn't work for text field, ref thing
+    $RequesterDefault = ($UserIDPref);
   }
 }
 

@@ -20,53 +20,44 @@ $query = new CGI;
 #Note: Remove cookie0, see if you can do this with an array and pushes
 
 # I.e. push @cookies,$query->cookie....
+@cookies = ();
 
-$cookie0 = $query->cookie(-name=>'test', 
-                          -value=>"$params{test}", 
-			  -expires=>'+10y',
-                          -path=>'/');
-$cookie1 = $query->cookie(-name=>'authorid', 
+push @cookies, $query->cookie(-name=>'userid', 
 			  -value=>"$params{requester}", 
 			  -expires=>'+10y',
 			  -path=>'/');
-$cookie2 = $query->cookie(-name=>'archive', 
+push @cookies, $query->cookie(-name=>'archive', 
 			  -value=>"$params{archive}",
  			  -expires=>'+10y',
 			  -path=>'/');
-$cookie3 = $query->cookie(-name=>'numfile', 
+push @cookies, $query->cookie(-name=>'numfile', 
 			  -value=>"$params{numfile}",
  			  -expires=>'+10y',
 			  -path=>'/');
-$cookie4 = $query->cookie(-name=>'upload', 
+push @cookies, $query->cookie(-name=>'upload', 
 			  -value=>"$params{upload}", 
 			  -expires=>'+10y',
 			  -path=>'/');
-$cookie5 = $query->cookie(-name=>'topicmode', 
+push @cookies, $query->cookie(-name=>'topicmode', 
 			  -value=>"$params{topicmode}", 
 			  -expires=>'+10y',
 			  -path=>'/');
-$cookie6 = $query->cookie(-name=>'authormode', 
+push @cookies, $query->cookie(-name=>'authormode', 
 			  -value=>"$params{authormode}", 
 			  -expires=>'+10y',
 			  -path=>'/');
-$cookie7 = $query->cookie(-name=>'overdate', 
+push @cookies, $query->cookie(-name=>'overdate', 
 			  -value=>"$params{overdate}", 
 			  -expires=>'+10y',
 			  -path=>'/');
                           
-# Note: Trick will come here, -cookie probably needs a reference to an array                          
-                          
-print $query->header(-cookie=>[$cookie0,$cookie1,$cookie2,$cookie3,$cookie4,$cookie5,$cookie6,$cookie7]);
+print $query->header(-cookie=>\@cookies);
+print "<meta http-equiv=\"Refresh\" content=\"10; URL=$MainPage\">"; ### generates improper html but works for now
 
-# Note: Redirect as part of the header, redirect to $DocumentDatabase.
-# See RetrieveArchive/RetrieveFile except this redirect should have a delay,
-# a notice that the redirect is happening, and a link to go to $DocumentDatabase
-# instantly. 
-
-&BTeVHeader("Select Preferences");
+&BTeVHeader("Setting Preferences");
 
 print "<p>";
-print "Your preferences have been set.";
+print "Your preferences have been set. You will be redirected to the document database <a href=\"$MainPage\">home page</a> in 10 seconds.";
 print "<p>";
 
 &DocDBNavBar;

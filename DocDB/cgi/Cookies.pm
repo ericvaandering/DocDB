@@ -1,5 +1,5 @@
 sub GetPrefsCookie {
-  $AuthorIDPref     = $query -> cookie('authorid'); # Maybe UserIDPref instead
+  $UserIDPref     = $query -> cookie('userid');
   $UploadTypePref   = $query -> cookie('archive');
   $NumFilesPref     = $query -> cookie('numfile');
   $UploadMethodPref = $query -> cookie('upload');
