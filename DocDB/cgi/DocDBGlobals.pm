@@ -1,11 +1,16 @@
 #
 # Description: Configuration file for the DocDB. Sets default
-#              values and script names. Specific local settings are
-#              in ProjectGlobals.pm
+#              values and script names. Do not change this file,
+#              specific local settings are in ProjectGlobals.pm. 
+#              Nearly any variable here can be changed there.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 #
+
+# Advertising link for DocDB
+
+$DocDBHome = "http://cepa.fnal.gov/DocDB/";
 
 # Optional components
 
@@ -14,7 +19,10 @@ $MailInstalled = 1; # Is the Mailer::Mail module installed?
 # Shell Commands
 
 $Wget   = "/usr/bin/wget -O - --quiet ";
-$Tar    = "/bin/tar ";
+$Tar    = "";
+$GTar   = "/bin/tar ";
+$GZip   = "/bin/gzip ";
+$GUnzip = "/bin/gunzip ";
 $Unzip  = "/usr/bin/unzip -q ";
 $Zip    = "/usr/bin/zip -q -r ";  # Set to "" in ProjectGlobals if not installed
 
@@ -42,18 +50,39 @@ $Zip    = "/usr/bin/zip -q -r ";  # Set to "" in ProjectGlobals if not installed
 $RemoteUsername       = $ENV{REMOTE_USER};
 $remote_user          = $ENV{REMOTE_USER};
 $remote_user          =~ tr/[A-Z]/[a-z]/;
+
+$htaccess             = ".htaccess";
+
+$LastDays             = 20;    # Number of days for default in LastModified
+$HomeLastDays         = 7;     # Number of days for last modified on home page
+$HomeMaxDocs          = 50;    # Maximum number of documents on home page
+$MeetingWindow        = 7;     # Days before and after meeting to preselect
+$TalkHintWindow       = 7;     # Days before and after to guess on documents
+$MeetingFiles         = 3;     # Number of upload boxes on meeting short form
+$InitialSessions      = 5;     # Number of initial sessions when making meeting
+
+$FirstYear            = 2000;  # Earliest year that documents can be created
+
+$TopicMatchThreshold    = 25;  # Threshold for matching talks in meetings with topics
+$NoTopicMatchThreshold  = 6;   # Threshold for matching talks in meetings with topics
+
+@MatchIgnoreWords       = ("from","with","then","than","that","what"); # Don't match on these
+  
+# Which things are publicly viewable?
+
+$PublicAccess{MeetingList} = 0;  
+  
+# Options
+
 $CaseInsensitiveUsers = 0;
+$EnhancedSecurity     = 0;     # Separate lists for view, modify
+$SuperiorsCanModify   = 1;     # In enhanced model, a superior group can modify
+                               # a subordinate groups documents without explicit
+                               # permission
+$UseSignoffs          = 0;     # Optional sign-off system for document approval
+$ContentSearch        = "";    # Scripts and engine installed for searching files
 
-$htaccess         = ".htaccess";
-
-$LastDays          = 20;       # Number of days for default in LastModified
-$HomeLastDays      = 7;        # Number of days for last modified on home page
-$HomeMaxDocs       = 50;       # Maximum number of documents on home page
-$MeetingWindow     = 7;        # Days before and after meeting to preselect
-$MeetingFiles      = 3;        # Number of upload boxes on meeting short form
-
-$EnchancedSecurity = 0;        # Separate lists for view, modify
-$FirstYear         = 2000;     # Earliest year that documents can be created
+$DefaultPublicAccess  = 0;     # New documents are public by default
 
 # Major topic names for "meetings" and "conferences". Each can be a list
 # The first item in the two lists are accessed by ListMeetings and ListConferences
@@ -66,8 +95,6 @@ $FirstYear         = 2000;     # Earliest year that documents can be created
 require "ProjectGlobals.pm";
 
 # Special files (here because they use values from above)
-
-$help_file             = $script_root."docdb.hlp";
 
 # CGI Scripts
 
@@ -87,7 +114,9 @@ $Search                = $cgi_root."Search";
 $SearchForm            = $cgi_root."SearchForm";
 
 $TopicAddForm          = $cgi_root."TopicAddForm";
+$TopicAdd              = $cgi_root."TopicAdd";
 $AuthorAddForm         = $cgi_root."AuthorAddForm";
+$AuthorAdd             = $cgi_root."AuthorAdd";
 
 $ListDocuments         = $cgi_root."ListDocuments";
 $ListByAuthor          = $cgi_root."ListByAuthor";
@@ -99,12 +128,22 @@ $ListAuthors           = $cgi_root."ListAuthors";
 $ListTopics            = $cgi_root."ListTopics";
 $ListTypes             = $cgi_root."ListTypes";
 $ListMeetings          = $cgi_root."ListMeetings";
+$ListKeywords          = $cgi_root."ListKeywords";
 
 $AddFiles              = $cgi_root."AddFiles";
 $AddFilesForm          = $cgi_root."AddFilesForm";
 
 $ConferenceAddForm     = $cgi_root."ConferenceAddForm";
 $ConferenceAdd         = $cgi_root."ConferenceAdd";
+
+$DisplayMeeting        = $cgi_root."DisplayMeeting";
+$MeetingModify         = $cgi_root."MeetingModify";
+$SessionModify         = $cgi_root."SessionModify";
+$ListAllMeetings       = $cgi_root."ListAllMeetings"; # FIXME: Remove later
+$ConfirmTalkHint       = $cgi_root."ConfirmTalkHint";
+
+$SignoffChooser        = $cgi_root."SignoffChooser";
+$SignRevision          = $cgi_root."SignRevision";
 
 $AdministerForm        = $cgi_root."AdministerForm";
 $AuthorAdminister      = $cgi_root."AuthorAdminister";
@@ -114,6 +153,10 @@ $MajorTopicAdminister  = $cgi_root."MajorTopicAdminister";
 $DocTypeAdminister     = $cgi_root."DocTypeAdminister";
 $JournalAdminister     = $cgi_root."JournalAdminister";
 $ConferenceAdminister  = $cgi_root."ConferenceAdminister";
+
+$KeywordAdministerForm  = $cgi_root."KeywordAdministerForm";
+$KeywordListAdminister  = $cgi_root."KeywordListAdminister";
+$KeywordGroupAdminister = $cgi_root."KeywordGroupAdminister";
 
 $GroupAdministerForm   = $cgi_root."GroupAdministerForm";
 $GroupAdminister       = $cgi_root."GroupAdminister";
@@ -130,5 +173,12 @@ $SetPrefs              = $cgi_root."SetPrefs";
 
 $EmailLogin            = $cgi_root."EmailLogin";
 $SelectEmailPrefs      = $cgi_root."SelectEmailPrefs";
+
+$DocDBHelp             = $cgi_root."DocDBHelp";
+$ShowTalkNote          = $cgi_root."ShowTalkNote";
+
+if (!$Tar && $GTar) {
+  $Tar = $GTar;
+} 
 
 1;

@@ -1,18 +1,48 @@
-sub MailNotices ($) {
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+sub MailNotices (%) {
   require Mail::Send;
   require Mail::Mailer;
 
   require "RevisionSQL.pm";
+  require "NotificationSQL.pm";
   require "ResponseElements.pm";
   
-  my ($DocRevID) = @_;
+  my (%Params) = @_;
+
+  my $DocRevID     =   $Params{-docrevid};
+  my $Type         =   $Params{-type}      || "update";
+  my @EmailUserIDs = @{$Params{-emailids}};
   
   &FetchDocRevisionByID($DocRevID);
 
 # Figure out who cares 
 
-  my @Addressees = &UsersToNotify($DocRevID,"immediate");
-
+  my @Addressees = ();
+  if ($Type eq "update") {
+    @Addressees = &UsersToNotify($DocRevID,"immediate");
+  } elsif ($Type eq "signature") {
+    foreach my $EmailUserID (@EmailUserIDs) {# Extract emails
+      &FetchEmailUser($EmailUserID);
+      push @Addressees,$EmailUser{$EmailUserID}{EmailAddress};
+    }
+  }  
+  
 # If anyone, open the mailer
 
   if (@Addressees) {
@@ -21,14 +51,31 @@ sub MailNotices ($) {
     my %Headers = ();
 
     my $FullID = &FullDocumentID($DocRevisions{$DocRevID}{DOCID},$DocRevisions{$DocRevID}{VERSION});
-    my $Title  = $DocRevisions{$DocRevID}{TITLE};
+    my $Title  = $DocRevisions{$DocRevID}{Title};
+
+    my ($Subject,$Message,$Feedback);
+    
+    if ($Type eq "update") {
+      $Subject  = "$FullID: $Title";
+      $Message  = "The following document was added or changed ".
+                  "in the $Project Document Database:\n\n";
+      $Feedback = "<b>E-mail sent to: </b>";           
+    } elsif ($Type eq "signature") {
+      $Subject  = "Ready for signature: $FullID: $Title";
+      $Message  = "The following document ".
+                  "in the $Project Document Database ".
+                  "is ready for your signature:\n".
+                  "(Note that you may not be able to sign if you share ".
+                  "signature authority with someone who has already signed.)\n\n";
+      $Feedback = "<b>Signature(s) requested from: </b>";           
+    }  
 
     $Headers{To} = \@Addressees;
     $Headers{From} = "$Project Document Database <$DBWebMasterEmail>";
-    $Headers{Subject} = "$FullID: $Title";
+    $Headers{Subject} = $Subject;
 
     $Mailer -> open(\%Headers);    # Start mail with headers
-    print $Mailer "The following document was added or changed in the $Project Document Database:\n\n";
+    print $Mailer $Message;
     &RevisionMailBody($DocRevID);  # Write the body
     $Mailer -> close;              # Complete the message and send it
     my $Addressees = join ', ',@Addressees;
@@ -36,7 +83,7 @@ sub MailNotices ($) {
     $Addressees =~ s/</\&lt\;/g;
     $Addressees =~ s/>/\&gt\;/g;
     
-    print "<b>E-mail sent to: </b>",$Addressees,"<p>";
+    print $Feedback,$Addressees,"<p>";
   }  
 }
 
@@ -49,7 +96,7 @@ sub RevisionMailBody ($) {
   my ($DocRevID) = @_;
   &FetchDocRevisionByID($DocRevID);
   
-  my $Title  = $DocRevisions{$DocRevID}{TITLE};
+  my $Title  = $DocRevisions{$DocRevID}{Title};
   my $FullID = &FullDocumentID($DocRevisions{$DocRevID}{DOCID},$DocRevisions{$DocRevID}{VERSION});
   my $URL    = &DocumentURL($DocRevisions{$DocRevID}{DOCID});
   
@@ -75,13 +122,13 @@ sub RevisionMailBody ($) {
   }
   @TopicIDs = sort byTopic @TopicIDs;
   foreach $TopicID (@TopicIDs) {
-    push @Topics,$MinorTopics{$TopicID}{FULL};
+    push @Topics,$MinorTopics{$TopicID}{Full};
   }
   my $Topics = join ', ',@Topics;
   
   # Construct the mail body
   
-  print $Mailer "       Title: ",$DocRevisions{$DocRevID}{TITLE},"\n";
+  print $Mailer "       Title: ",$DocRevisions{$DocRevID}{Title},"\n";
   print $Mailer " Document ID: ",$FullID,"\n";
   print $Mailer "         URL: ",$URL,"\n";
   print $Mailer "        Date: ",$DocRevisions{$DocRevID}{DATE},"\n";;
@@ -315,7 +362,7 @@ sub NotifyTopicSelect ($) { # Check for all, boxes for major and minor topics
   my @MinorIDs = sort byTopic keys %MinorTopics;
   my %MinorLabels = ();
   foreach my $ID (@MinorIDs) {
-    $MinorLabels{$ID} = $MinorTopics{$ID}{FULL};
+    $MinorLabels{$ID} = $MinorTopics{$ID}{Full};
   }  
   
   print $query -> scrolling_list(-name => "minortopic$Set", -values => \@MinorIDs, 
