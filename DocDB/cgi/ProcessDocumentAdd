@@ -80,8 +80,8 @@ my $rev_topic_insert = $dbh->prepare(
 
 my $file_insert = $dbh->prepare(
    "insert into DocumentFile ".
-   "       (DocFileID, DocRevID, FileName, Date, RootFile) ".
-   "values (0,         ?,        ?,        NOW(),?)");
+   "       (DocFileID, DocRevID, FileName, Date, RootFile, Description) ".
+   "values (0,         ?,        ?,        NOW(),?       , ?)");
 
 ### Check parameters for errors
 
@@ -115,9 +115,25 @@ if ($mode eq "add" || $mode eq "update") {
   if     ($params{single_upload} && $params{single_http}) {
     push @error_stack,"You may not specify both URL and file upload.";
   }
-  if ($params{single_http} && !&ValidURL($params{single_http})) {
-    push @error_stack,"The URL you entered is not well formed. Don't forget ".
-                      "http:// on the front and a file after the last /.";
+  if ($params{single_http}) {
+    if ($params{http_user} && $params{http_pass}) {
+      $Authentication = " --http-user $params{http_user} --http-pass $params{http_pass} ";
+    } else {
+      $Authentication = "";
+    }  
+    my @urls = split /\0/,$params{single_http};
+    foreach my $url (@urls) {
+      if (&ValidURL($url)) {
+        my $command = $Wget.$Authentication.$url;
+        my @url_lines = `$command`;
+        unless (@url_lines) {
+          push @error_stack,"The URL <tt>$url</tt> was not present or was protected.";
+        }
+      } else {
+        push @error_stack,"The URL <tt>$url</tt> is not well formed. Don't forget ".
+                          "http:// on the front and a file name after the last /.";
+      }
+    }  
   }  
 }
 
@@ -127,30 +143,12 @@ if ($mode eq "update" || $mode eq "updatedb") {
   }
 }
 
-if ($params{single_http} && &ValidURL($params{single_http})) {
-  if ($params{http_user} && $params{http_pass}) {
-    $authentication = " --http-user $params{http_user} --http-pass $params{http_pass} ";
-  } else {
-    $authentication = "";
-  }  
-  $command = $Wget.$authentication.$params{single_http};
-  @url_lines = `$command`;
-  unless (@url_lines) {
-    push @error_stack,"The URL you entered was not present or was protected.";
-  }
-} 
-
 ### Final checks
 
 @authorIDs  = split ("\0",$params{authors}); 
 @topicIDs   = split ("\0",$params{topics});
 @securities = split ("\0",$params{security});
 
-# Put security sanity check back in
-
-#$security_list = join ',',@securities; # Now in MySQL format
-#if ($security_list eq "Public") {$security_list = "";}
-#if (grep /Public/,$security_list) {
 if ($#securities > 0) {
   foreach my $GroupID (@securities) {
     if ($GroupID == 0) {
@@ -221,18 +219,20 @@ foreach $securityID (@securities) {
 
 if ($mode eq "updatedb") { # Copy DocumentFile entries
   &ProtectDirectory($documentID,$version,@securities); # Redo security 
+ 
+  my ($FileName,$Date,$RootFile,$Description);
 
   my $file_list = $dbh->prepare(
-    "select FileName,Date,RootFile from DocumentFile where DocRevID=?");
+    "select FileName,Date,RootFile,Description from DocumentFile where DocRevID=?");
   my $file_copyinsert = $dbh->prepare(
     "insert into DocumentFile ".
-    "       (DocFileID, DocRevID, FileName, Date, RootFile) ".
-    "values (0,         ?,        ?,        ?,    ?)");
+    "       (DocFileID, DocRevID, FileName, Date, RootFile, Description) ".
+    "values (0,         ?,        ?,        ?,    ?       , ?)");
 
   $file_list -> execute($oldRevID);
-  $file_list -> bind_columns(undef, \($FileName,$Date,$RootFile));
+  $file_list -> bind_columns(undef, \($FileName,$Date,$RootFile,$Description));
   while ($file_list -> fetch) { # Copy
-    $file_copyinsert -> execute($docRevID,$FileName,$Date,$RootFile);
+    $file_copyinsert -> execute($docRevID,$FileName,$Date,$RootFile,$Description);
   }  
 }  
 
@@ -240,41 +240,64 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
   
   $new_dir = &MakeDirectory($documentID,$version);
   &ProtectDirectory($documentID,$version,@securities);
-
+  
   if ($params{single_upload}) { # Copy file to directory
-    $short_file   = $query ->  param("single_upload");
-    $short_handle = $query -> upload("single_upload");
-    if (grep /\\/,$short_file) {
-      $short_file = &WindowsBaseFile($short_file);
-    }  
-    if (grep /\//,$short_file) {
-      $short_file = &UnixBaseFile($short_file);
-    }  
-    
-    open (OUTFILE,">$new_dir/$short_file");
-    while ($bytes_read = read($short_handle,$buffer,1024)) {
-      print OUTFILE $buffer
+    @short_files   = $query ->  param("single_upload");
+    foreach $short_file (@short_files) {
+      if (grep /\\/,$short_file) {
+        $short_file = &WindowsBaseFile($short_file);
+      }  
+      if (grep /\//,$short_file) {
+        $short_file = &UnixBaseFile($short_file);
+      }  
+
+      open (OUTFILE,">$new_dir/$short_file");
+      while ($bytes_read = read($short_file,$buffer,1024)) {
+        print OUTFILE $buffer
+      }
+      close OUTFILE;
+
+      unless (-s "$new_dir/$short_file") {
+        push @warn_stack,"The file $short_file did not exist or was blank.";
+      }  
     }
-    close OUTFILE;
-    
-    unless (-s "$new_dir/$short_file") {
-     #system "rm -rf $new_dir/$short_file";
-      push @error_stack,"The file you uploaded did not exist or was blank.";
-      &WarnPage(@error_stack);
-    }  
   } elsif ($params{single_http}) {
-    @url_parts = split /\//,$params{single_http};
-    $short_file = pop @url_parts;
-    open (OUTFILE,">$new_dir/$short_file");
-    print OUTFILE @url_lines;
-    close OUTFILE;
+    @urls = split /\0/,$params{single_http};
+    @short_files = ();
+    foreach $url (@urls) {
+      @url_parts = split /\//,$url;
+      $short_file = pop @url_parts;
+      push @short_files,$short_file;
+
+      $command   = $Wget.$Authentication.$url;
+      @url_lines = `$command`;
+
+      open (OUTFILE,">$new_dir/$short_file");
+      print OUTFILE @url_lines;
+      close OUTFILE;
+    }  
   } 
 
 # Insert into Files database
-  $rootfile = 1;
-  $file_insert -> execute($docRevID,$short_file,$rootfile);
+  @Descriptions = split ("\0",$params{filedesc});
+  @Roots = split ("\0",$params{root});
+  foreach $short_file (@short_files) {
+    $Description = shift @Descriptions;
+    $rootfile = shift @Roots;
+    if ($rootfile eq "on") {
+      $rootfile = 1;
+    } else {
+      $rootfile = 0;
+    }    
+    $file_insert -> execute($docRevID,$short_file,$rootfile,$Description);
+  }
 }
 
+if (@warn_stack) {
+  &WarnPage(@warn_stack);
+  @warn_stack = ();
+}
+  
 if ($mode = "updatedb") { # Local DB not in sync, clear it
   %DocRevIDs    = ();
   %DocRevisions = ();

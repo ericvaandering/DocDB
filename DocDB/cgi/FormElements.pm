@@ -23,23 +23,56 @@ sub AbstractBox {
 };
 
 sub SingleUploadBox {
-  print "<b><a ";
+  print "<table cellpadding=3>\n";
+  print "<tr><td colspan=2><b><a ";
   &HelpLink("fileupload");
   print "File upload:</a></b><br> \n";
-  print $query -> filefield(-name => "single_upload", -size=>60,
-                            -maxlength=>250);
+  for ($i=1;$i<=$NumberUploads;++$i) {
+    print "<tr><td align=right>\n";
+    print "<b>File:</b>\n";
+    print "<td>\n";
+    print $query -> filefield(-name => "single_upload", -size => 60,
+                              -maxlength=>250);
+    print "<tr><td align=right>\n";
+    print "<b>Description:</b>\n";
+    print "<td>\n";
+    print $query -> textfield (-name => 'filedesc', -size => 60, -maxlength => 128);
+    if ($i == 1) {
+      print $query -> checkbox(-name => "root", -checked => 'checked', -label => '');
+    } else {
+      print $query -> checkbox(-name => "root", -label => '');
+    } 
+    print "<a "; &HelpLink("main"); print "Main?</a>\n";
+  }
+  print "</table>\n";
 };
 
 sub SingleHTTPBox {
-  print "<b><a ";
+  print "<table cellpadding=3>\n";
+  print "<tr><td colspan=4><b><a ";
   &HelpLink("httpupload");
   print "Upload by HTTP:</a></b><br> \n";
-  print "<table cellpadding=3>\n";
-  print "<tr><td colspan=2><b>URL: </b>\n";
-  print $query -> textfield (-name => 'single_http', -size => 70, -maxlength => 240);
-  print "</td></tr><tr><td><b>User: </b>\n";
+  for ($i=1;$i<=$NumberUploads;++$i) {
+    print "<tr><td align=right><b>URL:</b>\n";
+    print "<td colspan=3>\n";
+    print $query -> textfield (-name => 'single_http', -size => 70, -maxlength => 240);
+    print "<tr><td align=right>\n";
+    print "<b>Description:</b>\n";
+    print "<td colspan=3>\n";
+    print $query -> textfield (-name => 'filedesc', -size => 60, -maxlength => 128);
+    if ($i == 1) {
+      print $query -> checkbox(-name => "root", -checked => 'checked', -label => '');
+    } else {
+      print $query -> checkbox(-name => "root", -label => '');
+    } 
+    print "<a "; &HelpLink("main"); print "Main?</a>\n";
+  }
+  print "<tr><td align=right><b>User:</b>\n";
+  print "<td>\n";
   print $query -> textfield (-name => 'http_user', -size => 20, -maxlength => 40);
-  print "</td><td><b>Password: </b>\n";
+  print "<td align=right>\n";
+  print "<b>Password:</b>\n";
+  print "<td>\n";
   print $query -> password_field (-name => 'http_pass', -size => 20, -maxlength => 40);
   print "</td></tr>\n";
   print "</table>\n";
@@ -199,16 +232,6 @@ sub SecurityList {
   print "Security:</a></b><br> \n";
   print $query -> scrolling_list(-name => 'security', -values => \@GroupIDs, 
                                  -labels => \%GroupLabels, 
-                                 -size => 10, -multiple => 'true', 
-                                 -default => @SecurityDefaults);
-};
-
-sub ObsSecurityList { # Obsolete
-  unless (@SecurityDefaults) {@SecurityDefaults = ['BTeV'];} 
-  print "<b><a ";
-  &HelpLink("security");
-  print "Security:</a></b><br> \n";
-  print $query -> scrolling_list(-name => 'security', -values => \@available_securities, 
                                  -size => 10, -multiple => 'true', 
                                  -default => @SecurityDefaults);
 };

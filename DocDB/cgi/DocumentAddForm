@@ -39,6 +39,9 @@ if ($topicmode ne "single" && $topicmode ne "multi") {
   $topicmode = "single";
 }  
 
+$NumberUploads = $params{numfile};
+unless ($NumberUploads) {$NumberUploads = 1;}
+
 print $query->header;
 if      ($mode eq "add") {
   &BTeVHeader("BTeV Document Addition","Document Addition");

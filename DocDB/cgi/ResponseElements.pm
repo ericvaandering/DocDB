@@ -66,7 +66,10 @@ sub PrintDocNumber { # And type
 
 sub PrintAbstract {
   my ($abstract) = @_;
+  
   if ($abstract) {
+    $abstract =~ s/\n\n/<p>/g;
+    $abstract =~ s/\n/<br>/g;
     print "<dl>\n";
     print "<dt><b>Abstract:</b><br>\n";
     print "<dd>$abstract<br>\n";
@@ -79,6 +82,8 @@ sub PrintAbstract {
 sub PrintPubInfo {
   my ($pubinfo) = @_;
   if ($pubinfo) {
+    $pubinfo =~ s/\n\n/<p>/g;
+    $pubinfo =~ s/\n/<br>/g;
     print "<dl>\n";
     print "<dt><b>Publication Information:</b><br>\n";
     print "<dd>$pubinfo<br>\n";
@@ -97,7 +102,12 @@ sub FileListByRevID {
     print "<b>Files:</b>\n";
     print "<ul>\n";
     foreach $file (@{$Files_ref}) {
-      $link = &FileLink($DocumentID,$Version,$DocFiles{$file}{NAME});
+      if ($DocFiles{$file}{DESCRIPTION}) {
+        $link = &FileLink($DocumentID,$Version,$DocFiles{$file}{NAME},
+                          $DocFiles{$file}{DESCRIPTION});
+      } else { 
+        $link = &FileLink($DocumentID,$Version,$DocFiles{$file}{NAME});
+      }
       print "<li>$link</li>\n";
     }  
     print "</ul>\n";
@@ -137,27 +147,27 @@ sub PrintRevisionInfo {
  
   print "<center><table cellpadding=10>";
   print "<tr valign=top>";
-  print "<td>"; 
+  print "<td colspan=2>"; 
   &PrintTitle($DocRevisions{$DocRevID}{TITLE});
-  print "<td align=center>"; 
+  print "<td colspan=2>"; 
   &RequesterByID($Documents{$DocumentID}{REQUESTER});
   &SubmitterByID($DocRevisions{$DocRevID}{SUBMITTER});
-  print "<td>"; 
+  print "<td colspan=2>"; 
   &PrintDocNumber($DocRevID);
   print "<tr valign=top>";
-  print "<td>"; 
+  print "<td colspan=2>"; 
   &AuthorListByID(@AuthorIDs);
-  print "<td>"; 
+  print "<td colspan=2>"; 
   &TopicListByID(@TopicIDs);
-  print "<td>"; 
+  print "<td colspan=2>"; 
   &SecurityListByID(@GroupIDs);
   print "<tr valign=top>";
-  print "<td colspan=2>"; 
+  print "<td colspan=3>"; 
   &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT});
-  print "<td rowspan=2>"; 
+  print "<td rowspan=2 colspan=3>"; 
   &FileListByRevID($DocRevID);
   print "<tr valign=top>";
-  print "<td colspan=2>"; 
+  print "<td colspan=3>"; 
   &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
   print "</table></center>\n"; 
 }
@@ -188,9 +198,13 @@ sub FullDocumentID {
 }  
 
 sub FileLink {
-  my ($documentID,$version,$shortfile) = @_;
+  my ($documentID,$version,$shortfile,$description) = @_;
   $base_url = &GetURLDir($documentID,$version);
-  return "<a href=\"$base_url$shortfile\">$shortfile</a>";
+  if ($description) {
+    return "<a href=\"$base_url$shortfile\">$description</a> ($shortfile)";
+  } else {
+    return "<a href=\"$base_url$shortfile\">$shortfile</a>";
+  }
 }  
 
 sub DocumentLink {
@@ -226,7 +240,6 @@ sub EuroDateTime {
 
 sub OtherVersionLinks {
   my ($DocumentID,$CurrentVersion) = @_;
-#  my @Versions = &VersionNumbersByDocID($DocumentID);
   my @RevIDs   = &FetchRevisionsByDocument($DocumentID);
   
   unless ($#RevIDs >0) {return;}
@@ -245,6 +258,33 @@ sub OtherVersionLinks {
   print "</ul>\n";
   print "</td></tr></table>\n";
   print "</center>\n";
+}
+
+sub DocumentSummary { # One line document summary for listings
+  my ($DocumentID) = @_;
+  if ($DocumentID) {
+    &FetchDocument($DocumentID);
+    unless (&CanAccess($DocumentID,$Documents{$DocumentID}{NVER})) {return;}
+    
+    my $full_docid = &DocumentLink($DocumentID,$Documents{$DocumentID}{NVER});
+    my $DocRevID   = &FetchDocRevision($DocumentID,$Documents{$DocumentID}{NVER});
+    my $Files_ref  = &FetchDocFiles($DocRevID);
+    my $title      = $DocRevisions{$DocRevID}{TITLE};
+    my $rev_date   = &EuroDate($DocRevisions{$DocRevID}{DATE});
+    print "<tr valign=top>\n";
+    print "<td>$full_docid </td>\n";
+    print "<td>$title</td>\n";
+    print "<td>$Authors{$Documents{$DocumentID}{REQUESTER}}{FULLNAME}</td>\n";
+    print "<td>$rev_date</td>\n";
+    print "</tr>\n";
+  } else { # Print header
+    print "<tr valign=bottom>\n";
+    print "<th>Document Number</th>\n";
+    print "<th>Title</th>\n";
+    print "<th>Primary Author</th>\n";
+    print "<th>Last Modified</th>\n";
+    print "</tr>\n";
+  } 
 }
 
 1;

@@ -11,11 +11,11 @@ $StartTime = new Benchmark;
 
 require "DocDBGlobals.pm";
 require "Security.pm";
-require "Sorts.pm";
+#require "Sorts.pm";
 require "MySQLAccess.pm";
 require "ResponseElements.pm";
 require "HTMLUtilities.pm";
-require "FSUtilities.pm";
+#require "FSUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 print $query->header;
@@ -28,43 +28,14 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 &GetAllDocuments;
 &GetAuthors;
 
-print "<table cellpadding=2>\n";
-print "<tr valign=bottom>\n";
-print "<th>Document<br>Number</th>\n";
-print "<th>Latest<br>Version</th>\n";
-print "<th>Title</th>\n";
-print "<th>Primary<br>Author</th>\n";
-print "<th>Files</th>\n";
-print "<th>Date Requested</th>\n";
-print "<th>Date Modified</th>\n";
-print "</tr>\n";
+print "<center><table cellpadding=3>\n";
+&DocumentSummary(0);
 
 foreach $document (@DocumentIDs) {
   unless (&CanAccess($document,$Documents{$document}{NVER})) {next;}
-  my $full_docid = &DocumentLink($document,$Documents{$document}{NVER});
-  my $DocRevID   = &FetchDocRevision($document,$Documents{$document}{NVER});
-  my $Files_ref  = &FetchDocFiles($DocRevID);
-  #FIXME put this printing stuff in a sub, call with 0 to get header                 
-  my $title = $DocRevisions{$DocRevID}{TITLE};
-  print "<tr valign=top>\n";
-  print "<td>$full_docid </td>\n";
-  print "<td align=center>$Documents{$document}{NVER} </td>\n";
-  print "<td>$title</td>\n";
-  print "<td>$Authors{$Documents{$document}{REQUESTER}}{FULLNAME}</td>\n";
-  print "<td>\n";
-  foreach $file (@{$Files_ref}) {
-    $link = &FileLink($document,$Documents{$document}{NVER},$DocFiles{$file}{NAME});
-    print "$link<br>\n";
-  }  
-  print "</td>\n";
-  $res_date = &EuroDate($Documents{$document}{DATE});
-  $rev_date = &EuroDateTime($DocRevisions{$DocRevID}{DATE});
-  print "<td>$res_date</td>\n";
-  print "<td>$rev_date</td>\n";
-  print "<td>$sec_string</td>\n";
-  print "</tr>\n";
+  &DocumentSummary($document);
 }
-print "</table>\n";
+print "</table></center>\n";
 print "<p>\n";
 
 $EndTime  = new Benchmark;

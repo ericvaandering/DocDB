@@ -13,15 +13,19 @@ sub CanAccess { # Can the user access (with current security) this version
   
   my $access = 0;
 
-  foreach my $GroupID (@GroupIDs) {          # Check authorized users
-    &FetchSecurityGroup($GroupID);           # vs. logged in user
+  foreach my $GroupID (@GroupIDs) { # Check auth. users vs. logged in user
+    &FetchSecurityGroup($GroupID);
     $ok_user = $SecurityGroups{$GroupID}{NAME};
-    $ok_user =~ tr/[A-Z]/[a-z]/;             
+    $ok_user =~ tr/[A-Z]/[a-z]/; 
     if ($ok_user eq $remote_user) {
       $access = 1;                           # User checks out
     }  
   }
   return $access;     
+}
+
+sub CanModify { # Can the user modify (with current security) this docuement
+
 }
 
 sub LastAccess { # Highest version user can access (with current security)
