@@ -36,6 +36,7 @@ my $conference_insert = $dbh->prepare(
    "values (0,            ?,            ?,        ?,   ?,         ?)");
 
 @error_stack = ();
+@warn_stack = ();
 
 my $MajorTopicID     = &LookupMajorTopic("Conferences"); 
 my $ShortDescription = $params{short};
@@ -59,13 +60,18 @@ my $EndTime   = timelocal(0,0,0,$Endday,$ReverseAbrvMonth{$Endmonth},$Endyear);
 
 # Check inputs
 
-unless ($ShortDescription && $LongDescription && $Location && $URL) {
+unless ($ShortDescription && $LongDescription && $Location) {
   push @error_stack,"You must fill in all the fields.";
 }
 
-unless (&ValidURL($URL)) {
-  push @error_stack,"The URL $URL is not valid.";
-}
+if ($URL) {
+  unless (&ValidURL($URL)) {
+    push @error_stack,"The URL $URL is not valid.";
+  }
+} else {
+  push @warn_stack,"No URL was supplied for this conference. If this was a
+  mistake, do not re-enter the conference. Contact an adminstrator.";
+}  
 
 unless ($EndTime && &ValidDate($Endday,$ReverseAbrvMonth{$Endmonth},$Endyear)) {
   push @error_stack,"The ending date is not valid.";
@@ -82,6 +88,9 @@ if ($StartTime > $EndTime) {
 if (@error_stack) {
   &EndPage(@error_stack);
 }
+if (@warn_stack) {
+  &WarnPage(@warn_stack);
+}
 
 $topic_insert -> execute($MajorTopicID,$ShortDescription,$LongDescription);
 my $MinorTopicID = $topic_insert -> {mysql_insertid}; # Works with MySQL only
@@ -96,6 +105,6 @@ if ($MinorTopicID) {
          problem still exists, contact an administrator.\n"; 
 }
 
-&DocDBNavBar();
+&DocDBNavBar("Add&nbsp;Conference",$ConferenceAddForm);
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
 

@@ -86,7 +86,11 @@ if ($Mode eq "conference") {
     print " to ",&EuroDate($Conferences{$TopicID}{ENDDATE});
     print " in $Conferences{$TopicID}{LOCATION}\n";
     print " are available.<br>\n";
-    print "(<a href=\"$Conferences{$TopicID}{URL}\">Conference Homepage</a>)\n";
+    if ($Conferences{$TopicID}{URL}) {
+      print "(<a href=\"$Conferences{$TopicID}{URL}\">Conference homepage</a>)\n";
+    } else {
+      print "(Conference homepage not available)\n";
+    }
     print "</center>\n";
   }
 } else {
