@@ -84,6 +84,13 @@ $UserValidation = "";          # || "basic-user" || "certificate"
                                # Do we do group authorization like V5 and before
 			       # or do we allow .htaccess/.htpasswd users to map to groups (basic)
 			       # or require SSL certificates of users which map to groups (certificate)			       
+$ReadOnly       = 0;           # Can be used in conjunction with individual
+                               # authorization methods to set up a group-like
+                               # area with group passwords which can view
+                               # but not change any info
+$ReadOnlyAdmin  = 0;           # Allows administration from the read-only 
+                               # area. Only suggested for boot-strapping until
+                               # you have an individual selected as admin                               
 			       
 $UseSignoffs          = 0;     # Optional sign-off system for document approval
 $ContentSearch        = "";    # Scripts and engine installed for searching files

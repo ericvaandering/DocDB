@@ -147,7 +147,7 @@ sub CanModifyMeeting ($) {
 sub CanCreateMeeting { # Is the user allowed to create a new meeting?
   require "Security.pm";
   
-  if ($Public) {
+  if ($Public || $ReadOnly) {
     return 0; 
   }
     

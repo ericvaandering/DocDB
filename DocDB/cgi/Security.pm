@@ -150,11 +150,16 @@ sub CanModify { # Can the user modify (with current security) this document
 sub CanCreate { # Can the user create documents 
   require "SecuritySQL.pm";
 
+  my $Create = 0;
+  
+  if ($Public || $ReadOnly) {
+    return $Create;
+  }
+
 # See what group(s) current user belongs to
 
   my @UsersGroupIDs = &FindUsersGroups();
 
-  my $Create = 0;
   my @GroupIDs = keys %SecurityGroups; # FIXME use a hash for direct lookup
   foreach my $UserGroupID (@UsersGroupIDs) {
     &FetchSecurityGroup($UserGroupID);
@@ -173,6 +178,12 @@ sub CanAdminister { # Can the user administer the database
   my @UsersGroupIDs = &FindUsersGroups();
 
   my $Administer = 0;
+  
+  if ($Public || ($ReadOnly && !$ReadOnlyAdmin)) {
+    return $Administer;
+  }
+  
+  
   my @GroupIDs = keys %SecurityGroups; # FIXME use a hash for direct lookup
   foreach my $UserGroupID (@UsersGroupIDs) {
     &FetchSecurityGroup($UserGroupID);
