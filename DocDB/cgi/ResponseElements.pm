@@ -414,7 +414,6 @@ sub TypeLink {
   return $link;
 }
 
-
 sub PrintAgenda {
   require "MiscSQL.pm";
   my ($MeetingID) = @_; 
@@ -436,6 +435,36 @@ sub PrintAgenda {
     print "<h3>Agenda:</h3>\n";
     &PrintFile($FirstFile);
   }
+}
+
+sub FindAgenda {
+  require "MiscSQL.pm";
+  require "FSUtilities.pm";
+  my ($MeetingID) = @_; 
+  
+  my $agenda_find = $dbh -> prepare(
+    "select MAX(DocumentRevision.DocRevID) from DocumentRevision,RevisionTopic ".
+    "where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
+     "and lower(DocumentRevision.DocumentTitle) like lower(\"agenda%\") ".
+     "and RevisionTopic.MinorTopicID=32"); 
+  
+  $agenda_find -> execute();
+  my ($DocRevID) = $agenda_find -> fetchrow_array;
+  if ($DocRevID) {
+    &FetchDocRevisionByID($DocRevID); 
+    my $Files_ref  = &FetchDocFiles($DocRevID);                                                                                             
+
+    my $FileID = shift @{$Files_ref};
+    my $VersionNumber = $DocRevisions{$DocRevID}{VERSION};
+    my $DocumentID    = $DocRevisions{$DocRevID}{DOCID}  ;
+
+    my $Directory     = &GetURLDir($DocumentID,$VersionNumber);  
+
+    my $FileName      = $Directory.$DocFiles{$FileID}{NAME};
+    return $FileName;
+  } else {
+    return 0;
+  }  
 }
 
 sub PrintFile {

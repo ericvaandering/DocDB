@@ -177,6 +177,12 @@ if      ($Mode eq "meeting") {
 
 ### Print summary information
 
+if ($Mode eq "meeting" && !$Public) {
+
+  my $AgendaFile = &FindAgenda($TopicID);
+  print "<p><center><a href=\"$AgendaFile\"><b>Agenda for this meeting</b></a></center><p>\n";
+}
+
 print "<center><table cellpadding=3>\n";
 
 &DocumentSummary(0,$Mode); # Force table headers
@@ -198,7 +204,7 @@ print "<p><b>Number of documents found: $NumDoc</b><p>\n";
 
 ### Special stuff if this is the current meeting
 
-if (&NearByMeeting == $TopicID) {
+if (&NearByMeeting == $TopicID && $Mode eq "meeting" && !$Public) {
 
   print "<hr>\n";
 
