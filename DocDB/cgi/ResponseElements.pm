@@ -106,31 +106,34 @@ sub FileListByRevID {
   }
 }
 
-sub SecurityListByRevID {
-  my ($DocRevID) = @_;
-  @SecurityList = @{$DocRevisions{$DocRevID}{SECURITY}};
-  if (@SecurityList) {
-    print "<b>Restricted to:</b>\n";
+sub SecurityListByID {
+  my @GroupIDs = @_;
+  
+  if (@GroupIDs) {
+    print "<b>Restricted to:</b><br>\n";
     print "<ul>\n";
-    foreach $security (@SecurityList) {
-      print "<li>$security</li>\n";
-    }  
+    foreach $GroupID (@GroupIDs) {
+      &FetchSecurityGroup($GroupID);
+      print "<li>$SecurityGroups{$GroupID}{NAME}</li>\n";
+    }
     print "</ul>\n";
   } else {
     print "<b>Security:</b> Public document<br>\n";
   }
-    
 }
+
 sub PrintRevisionInfo {
   my ($DocRevID) = @_;
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
 
   my $Authors_ref = &GetRevisionAuthors($DocRevID);
   my $Topics_ref  = &GetRevisionTopics($DocRevID);
-  my $Files_ref  = &FetchDocFiles($DocRevID);
+  my $Groups_ref  = &GetRevisionSecurityGroups($DocRevID);
+  my $Files_ref  = &FetchDocFiles($DocRevID);  # FIXME: Move to FileListBy
 
-  @AuthorIDs = @{$Authors_ref};
-  @TopicIDs = @{$Topics_ref};
+  my @AuthorIDs = @{$Authors_ref};
+  my @TopicIDs = @{$Topics_ref};
+  my @GroupIDs = @{$Groups_ref};
  
   print "<center><table cellpadding=10>";
   print "<tr valign=top>";
@@ -147,7 +150,7 @@ sub PrintRevisionInfo {
   print "<td>"; 
   &TopicListByID(@TopicIDs);
   print "<td>"; 
-  &SecurityListByRevID($DocRevID);
+  &SecurityListByID(@GroupIDs);
   print "<tr valign=top>";
   print "<td colspan=2>"; 
   &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT});
@@ -175,7 +178,7 @@ sub EndPage {
   foreach $message (@errors) {
     print "<dt><b>$message </b>\n";
   }  
-  print $query->end_html;
+  &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
   exit;
 }
 

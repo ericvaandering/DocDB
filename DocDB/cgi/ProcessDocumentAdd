@@ -21,6 +21,7 @@ $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
 &GetTopics; # FIXME Replace with fetches in right place
+&GetSecurityGroups; # FIXME Replace with fetches in right place
 
 ### Set up, give user initial information
 
@@ -66,6 +67,11 @@ my $rev_author_insert =  $dbh->prepare(
    "insert into RevisionAuthor ".
    "       (RevAuthorID, DocRevID, AuthorID) ".
    "values (0,           ?,        ?)");
+                                 
+my $rev_security_insert =  $dbh->prepare(
+   "insert into RevisionSecurity ".
+   "       (RevSecurityID, DocRevID, GroupID) ".
+   "values (0,             ?,        ?)");
                                  
 my $rev_topic_insert = $dbh->prepare(
    "insert into RevisionTopic ".
@@ -115,6 +121,12 @@ if ($mode eq "add" || $mode eq "update") {
   }  
 }
 
+if ($mode eq "update" || $mode eq "updatedb") {
+  unless ($params{docid}) {
+    push @error_stack,"You must supply a document number to modify a document.";
+  }
+}
+
 if ($params{single_http} && &ValidURL($params{single_http})) {
   if ($params{http_user} && $params{http_pass}) {
     $authentication = " --http-user $params{http_user} --http-pass $params{http_pass} ";
@@ -134,11 +146,18 @@ if ($params{single_http} && &ValidURL($params{single_http})) {
 @topicIDs   = split ("\0",$params{topics});
 @securities = split ("\0",$params{security});
 
-$security_list = join ',',@securities; # Now in MySQL format
-if ($security_list eq "Public") {$security_list = "";}
-if (grep /Public/,$security_list) {
-  push @error_stack,"You selected \"Public\" and another form of security. ".
+# Put security sanity check back in
+
+#$security_list = join ',',@securities; # Now in MySQL format
+#if ($security_list eq "Public") {$security_list = "";}
+#if (grep /Public/,$security_list) {
+if ($#securities > 0) {
+  foreach my $GroupID (@securities) {
+    if ($GroupID == 0) {
+      push @error_stack,"You selected \"Public\" and another form of security. ".
                     "You may only select \"Public\" by itself.";
+    }
+  }  
 }
   
 if ((@error_stack)) {  # The user made one or more mistakes, warn and exit
@@ -186,13 +205,18 @@ $doc_rev_insert -> execute($documentID,$params{requester},$params{title},
                            $security_list);
 my $docRevID = $doc_rev_insert -> {mysql_insertid}; # Works with MySQL only
 
-### Add to authors and topics
+### Add to authors, topics and securities
                            
 foreach $authorID (@authorIDs) {
   $rev_author_insert -> execute($docRevID,$authorID);
 }
 foreach $topicID (@topicIDs) {
   $rev_topic_insert -> execute($docRevID,$topicID);
+}
+foreach $securityID (@securities) {
+  if ($securityID) {  # Skip "0/Public" 
+    $rev_security_insert -> execute($docRevID,$securityID);
+  }  
 }
 
 if ($mode eq "updatedb") { # Copy DocumentFile entries

@@ -122,7 +122,7 @@ sub MultiTopicSelect { # Multiple scrolling selectable lists for topics
         $MatchLabels{$MinorID} = $MinorTopics{$MinorID}{SHORT};
       }  
     }
-    if ($MajorTopics{$MajorID}{SHORT} eq "Meetings") {
+    if ($MajorTopics{$MajorID}{SHORT} eq "Collaboration Meetings") {
       @MatchMinorIDs = reverse sort byMeetingDate @MatchMinorIDs;
     } else {
       @MatchMinorIDs = sort byMinorTopic @MatchMinorIDs;
@@ -181,6 +181,29 @@ sub DocTypeButtons {
 };
 
 sub SecurityList {
+  my @GroupIDs = keys %SecurityGroups;
+  my %GroupLabels = ();
+
+  foreach my $ID (@GroupIDs) {
+    $GroupLabels{$ID} = $SecurityGroups{$ID}{NAME};
+  }  
+  
+  $ID = 0; # Add dummy security code "Public"
+  push @GroupIDs,$ID; 
+  $GroupLabels{$ID} = "Public";  
+  @GroupIDs = sort numerically @GroupIDs;
+  
+  unless (@SecurityDefaults) {@SecurityDefaults = [1];}  # BTeV (hardcoded-bad)
+  print "<b><a ";
+  &HelpLink("security");
+  print "Security:</a></b><br> \n";
+  print $query -> scrolling_list(-name => 'security', -values => \@GroupIDs, 
+                                 -labels => \%GroupLabels, 
+                                 -size => 10, -multiple => 'true', 
+                                 -default => @SecurityDefaults);
+};
+
+sub ObsSecurityList { # Obsolete
   unless (@SecurityDefaults) {@SecurityDefaults = ['BTeV'];} 
   print "<b><a ";
   &HelpLink("security");

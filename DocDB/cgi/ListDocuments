@@ -37,7 +37,6 @@ print "<th>Primary<br>Author</th>\n";
 print "<th>Files</th>\n";
 print "<th>Date Requested</th>\n";
 print "<th>Date Modified</th>\n";
-print "<th>Security</th>\n";
 print "</tr>\n";
 
 foreach $document (@DocumentIDs) {
@@ -60,7 +59,6 @@ foreach $document (@DocumentIDs) {
   print "</td>\n";
   $res_date = &EuroDate($Documents{$document}{DATE});
   $rev_date = &EuroDateTime($DocRevisions{$DocRevID}{DATE});
-  $sec_string = join ',',@{$DocRevisions{$DocRevID}{SECURITY}};
   print "<td>$res_date</td>\n";
   print "<td>$rev_date</td>\n";
   print "<td>$sec_string</td>\n";

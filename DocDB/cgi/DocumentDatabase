@@ -24,7 +24,12 @@ print "<li><a href=\"$DocumentAddForm?mode=add&upload=http\">Submit a URL</a>
 for a document you have on the web \n"; 
 print "(no need to reserve the document).\n";
 print "<li><a href=ListDocuments>List</a> all documents\n"; 
-print "<li><a href=ShowDocument>Show</a> a document\n"; 
+print $query -> start_multipart_form('POST',$ShowDocument);
+print "<li>Show document # "; 
+print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
+print " "; 
+print $query -> submit (-value => "Execute");
+print $query -> endform;
 print "</ul>\n";
 print "<p>\n";
 
@@ -71,7 +76,7 @@ print $query -> checkbox(-name => "overdate", -label => 'Check for yes');
 print "<p>\n";
 
 print $query -> submit (-value => "Give me the form");
-print $query -> end_multipart_form;
+print $query -> endform;
 
 print "<p>Administration functions:<ul>\n";
 print "<li>Add a <a href=\"TopicAddForm\">topic</a>\n";

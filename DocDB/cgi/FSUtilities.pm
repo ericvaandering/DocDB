@@ -40,12 +40,18 @@ sub GetURLDir { # Returns a directory name
 }
 
 sub ProtectDirectory { # Write (or delete) correct .htaccess file in directory
-  my ($documentID,$version,@users) = @_;
+  my ($documentID,$version,@GroupIDs) = @_;
+
+  my @users = ();
+  foreach $GroupID (@GroupIDs) {
+    unless ($GroupID) {next;} # Skip Public if present
+    push @users,$SecurityGroups{$GroupID}{NAME};
+  }  
 
   my $AuthName = join ' or ',@users;
 
-  $directory = &GetDirectory($documentID,$version);
-  if (@users && !(grep /Public/,@users)) {
+  my $directory = &GetDirectory($documentID,$version);
+  if (@users) {
     open HTACCESS,">$directory$htaccess"; 
      print HTACCESS "AuthType Basic\n";
      print HTACCESS "AuthName \"$AuthName\"\n";

@@ -58,6 +58,7 @@ sub BTeVStyle { # Same as above, but no nav-bar
   print "</center>\n";
   print "<hr>\n";
 }
+
 sub OffsiteBTeVFooter {
   my ($WebMaster) = @_;
   unless ($WebMaster) {

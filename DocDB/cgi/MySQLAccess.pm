@@ -169,7 +169,44 @@ sub FetchMajorTopic { # Fetches an MajorTopic by ID, adds to $Topics{$TopicID}{}
   return $MajorTopics{$MajorTopicID}{MAJOR};
 }
 
-sub GetSecurities {
+sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with all authors
+  my ($GroupID,$Name,$Description,$Timestamp);
+  my $group_list  = $dbh -> prepare(
+     "select GroupID,Name,Description,Timestamp from SecurityGroup"); 
+  $group_list -> execute;
+  $group_list -> bind_columns(undef, \($GroupID,$Name,$Description,$Timestamp));
+  %SecurityGroups = ();
+  while ($group_list -> fetch) {
+    $SecurityGroups{$GroupID}{GROUPID}     = $GroupID;
+    $SecurityGroups{$GroupID}{NAME}        = $Name;
+    $SecurityGroups{$GroupID}{DESCRIPTION} = $Description;
+    $SecurityGroups{$GroupID}{TIMESTAMP}   = $Timestamp;
+  }
+};
+
+sub FetchSecurityGroup { # Fetches an SecurityGroup by ID, adds to hash
+  my ($groupID) = @_;
+  my ($GroupID,$Name,$Description,$Timestamp);
+
+  my $security_fetch  = $dbh -> prepare(
+     "select GroupID,Name,Description,Timestamp ". 
+     "from SecurityGroup ". 
+     "where GroupID=?");
+  if ($SecurityGroups{$groupID}{GROUPID}) { # We already have this one
+    return $SecurityGroups{$groupID}{GROUPID};
+  }
+  
+  $security_fetch -> execute($groupID);
+  ($GroupID,$Name,$Description,$Timestamp) = $security_fetch -> fetchrow_array;
+  $SecurityGroups{$GroupID}{GROUPID}     = $GroupID;
+  $SecurityGroups{$GroupID}{NAME}        = $Name;
+  $SecurityGroups{$GroupID}{DESCRIPTION} = $Description;
+  $SecurityGroups{$GroupID}{TIMESTAMP}   = $Timestamp;
+  
+  return $SecurityGroups{$GroupID}{GROUPID};
+}
+
+sub ObsGetSecurities {
   my ($field,$type);
   my $security_list = $dbh->prepare("describe DocumentRevision Security");
   $security_list -> execute;
@@ -273,6 +310,41 @@ sub FetchDocRevision {
   return $DocRevID;
 }
 
+sub FetchDocRevisionByID {
+  # Creates two hashes:
+  # $DocRevIDs{DocumentID}{Version} holds the DocumentRevision ID
+  # $DocRevisions{DocRevID}{FIELD} holds the Fields or references too them
+
+  my ($docRevID) = @_;
+#  &FetchDocument($documentID);
+  my $revision_list = $dbh->prepare(
+    "select DocRevID,SubmitterID,DocumentTitle,PublicationInfo,VersionNumber,".
+           "Abstract,RevisionDate,Security,TimeStamp,DocumentID,Obsolete ".
+    "from DocumentRevision ".
+    "where DocRevID=?");
+  if ($DocRevisions{$docRevID}{DOCID}) {
+    return $DocRevisions{$docRevID}{DOCID};
+  }
+  $revision_list -> execute($docRevID);
+  my ($DocRevID,$SubmitterID,$DocumentTitle,$PublicationInfo,
+      $VersionNumber,$Abstract,$RevisionDate,$Security,
+      $TimeStamp,$DocumentID,$Obsolete) = $revision_list -> fetchrow_array;
+
+  $DocRevIDs{$DocumentID}{$VersionNumber} = $DocRevID;
+  $DocRevisions{$DocRevID}{SUBMITTER}     = $SubmitterID;
+  $DocRevisions{$DocRevID}{TITLE}         = $DocumentTitle;
+  $DocRevisions{$DocRevID}{PUBINFO}       = $PublicationInfo;
+  $DocRevisions{$DocRevID}{ABSTRACT}      = $Abstract;
+  $DocRevisions{$DocRevID}{DATE}          = $RevisionDate;
+  $DocRevisions{$DocRevID}{TIMESTAMP}     = $TimeStamp;
+  $DocRevisions{$DocRevID}{VERSION}       = $VersionNumber;
+  $DocRevisions{$DocRevID}{DOCID}         = $DocumentID;
+  $DocRevisions{$DocRevID}{OBSOLETE}      = $Obsolete;
+  @{$DocRevisions{$DocRevID}{SECURITY}}   = split /\,/,$Security;
+
+  return $DocRevID;
+}
+
 sub FetchRevisionsByDocument {
   my ($DocumentID) = @_;
   &FetchDocument($DocumentID);
@@ -339,6 +411,7 @@ sub FetchDocFiles {
 sub GetRevisionAuthors {
   my ($DocRevID) = @_;
   my @authors = ();
+  my ($RevAuthorID,$AuthorID);
   my $author_list = $dbh->prepare(
     "select RevAuthorID,AuthorID from RevisionAuthor where DocRevID=?");
   $author_list -> execute($DocRevID);
@@ -352,6 +425,7 @@ sub GetRevisionAuthors {
 sub GetRevisionTopics {
   my ($DocRevID) = @_;
   my @topics = ();
+  my ($RevTopicID,$MinorTopicID);
   my $topic_list = $dbh->prepare(
     "select RevTopicID,MinorTopicID from RevisionTopic where DocRevID=?");
   $topic_list -> execute($DocRevID);
@@ -360,6 +434,20 @@ sub GetRevisionTopics {
     push @topics,$MinorTopicID;
   }
   return \@topics;
+}
+
+sub GetRevisionSecurityGroups {
+  my ($DocRevID) = @_;
+  my @groups = ();
+  my ($RevTopicID,$GroupID);
+  my $group_list = $dbh->prepare(
+    "select RevSecurityID,GroupID from RevisionSecurity where DocRevID=?");
+  $group_list -> execute($DocRevID);
+  $group_list -> bind_columns(undef, \($RevTopicID,$GroupID));
+  while ($group_list -> fetch) {
+    push @groups,$GroupID;
+  }
+  return \@groups;
 }
 
 sub VersionNumbersByDocID {

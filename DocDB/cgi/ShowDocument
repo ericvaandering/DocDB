@@ -21,6 +21,8 @@ $query = new CGI;  # Global for subroutines
 %params = $query -> Vars;
 
 $DocumentID = $params{docid};
+#chomp $DocumentID; 
+#$DocumentID =~ s/\s+//;
 
 unless ($DocumentID) {
   print $query->header;

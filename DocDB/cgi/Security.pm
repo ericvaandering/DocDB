@@ -5,15 +5,18 @@ sub CanAccess { # Can the user access (with current security) this version
   if ($Documents{$documentID}{NVER} eq "") { # Bad documents (no revisions)
     return 0;
   } 
-
-  my @ok_users = @{$DocRevisions{$DocRevID}{SECURITY}};
+  my $Groups_ref = &GetRevisionSecurityGroups($DocRevID);
   
-  unless (@ok_users) {return 1;}             # Public documents
+  my @GroupIDs = @{$Groups_ref};
+  
+  unless (@GroupIDs) {return 1;}             # Public documents
   
   my $access = 0;
 
-  foreach my $ok_user (@ok_users) {          # Check authorized users
-    $ok_user =~ tr/[A-Z]/[a-z]/;             # vs. logged in user
+  foreach my $GroupID (@GroupIDs) {          # Check authorized users
+    &FetchSecurityGroup($GroupID);           # vs. logged in user
+    $ok_user = $SecurityGroups{$GroupID}{NAME};
+    $ok_user =~ tr/[A-Z]/[a-z]/;             
     if ($ok_user eq $remote_user) {
       $access = 1;                           # User checks out
     }  
