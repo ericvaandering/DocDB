@@ -143,14 +143,50 @@ sub LookupMajorTopic { # Returns MajorTopicID from Topic Name
   return $MajorTopicID;
 }
 
-sub SpecialMajorTopics { # Store MajorTopicID for special topics
+sub SpecialMajorTopics { # Store MajorTopicIDs for special topics
   unless ($SpecialMajorsFound) {
     $SpecialMajorsFound = 1;
-    $ConferenceMajorID  = &LookupMajorTopic("Conferences");
-    $CollabMeetMajorID  = &LookupMajorTopic("Collaboration Meetings");
-    $OtherMeetMajorID   = &LookupMajorTopic("Other Meetings");
+    @ConferenceMajorIDs = ();
+    @MeetingMajorIDs    = ();
+    
+    my $TopicName;
+    foreach $TopicName (@ConferenceMajorTopics) {
+      my $MajorID  = &LookupMajorTopic($TopicName);
+      if ($MajorID) {
+        push @ConferenceMajorIDs,$MajorID;
+      }
+    }
+    foreach $TopicName (@MeetingMajorTopics) {
+      my $MajorID  = &LookupMajorTopic($TopicName);
+      if ($MajorID) {
+        push @MeetingMajorIDs,$MajorID;
+      }
+    }
   }
 }
 
+sub MajorIsMeeting {
+  my ($MajorID) = @_;
+  
+  my $IsMeeting = 0;
+  foreach my $CheckID (@MeetingMajorIDs) {
+    if ($CheckID == $MajorID) {
+      $IsMeeting = 1;
+    }
+  }
+  return $IsMeeting; 
+}
+
+sub MajorIsConference {
+  my ($MajorID) = @_;
+  
+  my $IsConference = 0;
+  foreach my $CheckID (@ConferenceMajorIDs) {
+    if ($CheckID == $MajorID) {
+      $IsConference = 1;
+    }
+  }
+  return $IsConference;
+}
 
 1;

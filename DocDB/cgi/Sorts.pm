@@ -26,8 +26,8 @@ sub byTopic {
   # Do reverse sort by date for Collaboration meetings, otherwise alphabetical
   # FIXME use special topics numbering
   
-  if ($MajorTopics{$MinorTopics{$a}{MAJOR}}{SHORT} eq "Collaboration Meetings" &&
-      $MajorTopics{$MinorTopics{$b}{MAJOR}}{SHORT} eq "Collaboration Meetings") {
+  if (&MajorIsMeeting($MinorTopics{$a}{MAJOR}) &&
+      &MajorIsMeeting($MinorTopics{$b}{MAJOR})) {
     ($adays,$amonth,$ayear) = split /\s+/,$MinorTopics{$a}{SHORT};
     ($bdays,$bmonth,$byear) = split /\s+/,$MinorTopics{$b}{SHORT};
     ($aday) = split /\-/,$adays;
@@ -114,7 +114,7 @@ sub DocumentByConferenceDate {
   unless ($FirstConf{$adr}) {
     my @topics = &GetRevisionTopics($adr);
     foreach my $ID (@topics) {
-      if ($MinorTopics{$ID}{MAJOR} == $ConferenceMajorID) {
+      if (&MajorIsConference($MinorTopics{$ID}{MAJOR})) {
         $FirstConf{$adr} = $ID;
         last;
       }
@@ -124,7 +124,7 @@ sub DocumentByConferenceDate {
   unless ($FirstConf{$bdr}) {
     my @topics = &GetRevisionTopics($bdr);
     foreach my $ID (@topics) {
-      if ($MinorTopics{$ID}{MAJOR} == $ConferenceMajorID) {
+      if (&MajorIsConference($MinorTopics{$ID}{MAJOR})) {
         $FirstConf{$bdr} = $ID;
         last;
       }

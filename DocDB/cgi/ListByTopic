@@ -57,10 +57,10 @@ if ($Major || $MajorID) {
   
 ### Default modes for certain topic types
   
-  if ($MinorTopics{$TopicID}{MAJOR} == $ConferenceMajorID) {
+  if (&MajorIsConference($MinorTopics{$TopicID}{MAJOR})) {
     unless ($Mode) {$Mode = "conference";}
   }    
-  if ($MinorTopics{$TopicID}{MAJOR} == $CollabMeetMajorID) {
+  if (&MajorIsMeeting($MinorTopics{$TopicID}{MAJOR})) {
     unless ($Mode) {$Mode = "meeting";}
   }    
 }

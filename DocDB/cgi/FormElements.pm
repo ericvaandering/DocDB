@@ -375,6 +375,10 @@ sub TopicSelectLong { # Scrolling selectable list for topics, all info
 };
 
 sub MultiTopicSelect { # Multiple scrolling selectable lists for topics
+  require "TopicSQL.pm";
+  
+  &SpecialMajorTopics;
+
   my $NCols = 4;
   my @MajorIDs = sort byMajorTopic keys %MajorTopics;
   my @MinorIDs = keys %MinorTopics;
@@ -399,7 +403,7 @@ sub MultiTopicSelect { # Multiple scrolling selectable lists for topics
         $MatchLabels{$MinorID} = $MinorTopics{$MinorID}{SHORT};
       }  
     }
-    if ($MajorTopics{$MajorID}{SHORT} eq "Collaboration Meetings") {
+    if (&MajorIsMeeting($MajorID)) {
       @MatchMinorIDs = reverse sort byMeetingDate @MatchMinorIDs;
     } else {
       @MatchMinorIDs = sort byMinorTopic @MatchMinorIDs;

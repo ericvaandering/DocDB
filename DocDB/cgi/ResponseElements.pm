@@ -91,7 +91,7 @@ sub PrintConfInfo {
   
   my (@topicIDs) = @_;
   foreach $topicID (@topicIDs) {
-    if ($MinorTopics{$topicID}{MAJOR} == $ConferenceMajorID) {
+    if (&MajorIsConference($MinorTopics{$topicID}{MAJOR})) {
       &FetchConferenceByTopicID($topicID);
       my $ConferenceLink = &ConferenceLink($topicID,"long");
       my $Start = &EuroDate($Conferences{$topicID}{STARTDATE});
@@ -454,7 +454,7 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
 
       my @topics = &GetRevisionTopics($DocRevID);
       foreach my $topic (@topics) {
-        if ($MinorTopics{$topic}{MAJOR} == $ConferenceMajorID) {
+        if (&MajorIsConference($MinorTopics{$topic}{MAJOR})) {
           my $conference_link = &ConferenceLink($topic,"short");
           print "$conference_link<br>\n";
         }  

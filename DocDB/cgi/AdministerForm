@@ -14,11 +14,13 @@ require "DocDBGlobals.pm";
 require "AdministerElements.pm";
 require "FormElements.pm";
 require "AuthorElements.pm";
+require "JournalHTML.pm";
 require "Scripts.pm";
 require "Security.pm";
 
 require "AuthorSQL.pm";
 require "TopicSQL.pm";
+require "MiscSQL.pm";
 
 require "HTMLUtilities.pm";
 require "Sorts.pm";
@@ -29,6 +31,7 @@ $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass
 &GetInstitutions;
 &GetAuthors;
 &GetTopics;
+&GetJournals;
 
 print $query->header;
 &DocDBHeader("Administer $Project DocDB"); # DocDBHeader
@@ -199,8 +202,42 @@ print $query -> end_multipart_form;
 
 print "<p><hr>\n";
 
+### Journal Administration
+
+print "<a name=\"majtopic\"><center><h4>Administer Journals</h4></center>\n";
+
+print $query -> start_multipart_form('POST',"$JournalAdminister");
+print "<table cellpadding=10 border=1>\n";
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td>\n"; &JournalSelect("full"); print "</td>\n";
+#print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
+print "</tr>\n";
+
+#print "<tr valign=top>\n";
+#print "<td>\n"; &LongDescriptionBox;     print "</td>\n";
+#print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n";
+&AdministratorPassword;
+print "&nbsp;";
+print $query -> submit (-value => "Change Journal Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<p>\n";
+&JournalTable;
+
+print "<p><hr>\n";
+
 ### FIXME: Conferences
-### FIXME: Journals (wait for new publicatoin model)
 ### FIXME: Email Users
 
 print "<p>\n";
