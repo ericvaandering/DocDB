@@ -1,10 +1,16 @@
-# FIXME: Get timestamps
+#
+#        Name: KeywordSQL.pm
+# Description: Routines to extract keyword related information from SQL database 
+#
+#      Author: Lynn Garren (garren@fnal.gov)
+#    Modified: Eric Vaandering (ewv@fnal.gov)
+#
 
 sub ClearKeywords {
-  %Keywords = ();
-  %FullKeywords       = ();
-  %KeywordGroups      = ();
-  %KeywordGroupings      = ();
+  %Keywords         = ();
+  %FullKeywords     = (); # FIXME: Get rid of this
+  %KeywordGroups    = ();
+  %KeywordGroupings = ();
 }
 
 sub GetKeywords {
@@ -26,7 +32,8 @@ sub GetKeywords {
 sub GetKeywordsByKeywordGroupID { # FIXME: Rename GetKeywords by KeywordGroupID
   my ($KeywordGroupID) = @_;
   my @KeywordListIDs = ();
-  my $KeyList = $dbh -> prepare("select KeywordID from Keyword where KeywordGroupID=?");
+  my $KeyList = $dbh -> prepare("select Keyword.KeywordID from Keyword,KeywordGrouping ".
+                                "where KeywordGrouping.KeywordGroupID=? and Keyword.KeywordID=KeywordGrouping.KeywordID");
 
   my ($KeywordID);
   $KeyList -> execute($KeywordGroupID);
@@ -56,7 +63,7 @@ sub FetchKeyword { # Fetches a Keyword by ID, adds to $Keywords{$keywordID}{}
 
   if ($KeywordID) {
     &FetchKeywordGroup($KeywordGroupID); # Do we need this?
-    $Keywords{$KeywordID}{KeywordGroupID} = $KeywordGroupID; # FIXME: Will go away
+#    $Keywords{$KeywordID}{KeywordGroupID} = $KeywordGroupID; # FIXME: Will go away
     $Keywords{$KeywordID}{Short}          = $ShortDescription;
     $Keywords{$KeywordID}{Long}           = $LongDescription;
     $Keywords{$KeywordID}{TimeStamp}      = $TimeStamp;

@@ -30,14 +30,14 @@ print $query->header;
 
 # Parameters to script 
  
-my $Password       = $params{password};
-my $Username       = $params{admuser};
-my $Action         = $params{admaction};
+my $Password        = $params{password};
+my $Username        = $params{admuser};
+my $Action          = $params{admaction};
 
-my $KeywordID      = $params{keywordlist};
-my $KeywordGroupID = $params{keywordgroup};
-my $LongName       = $params{long};
-my $ShortName      = $params{short};
+my $KeywordID       = $params{keywordlist};
+my @KeywordGroupIDs = split /\0/,$params{keywordgroup};
+my $LongName        = $params{long};
+my $ShortName       = $params{short};
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
@@ -62,6 +62,8 @@ if      ($Action eq "Delete") {
   
   my $KeywordDelete      = $dbh -> prepare("delete from Keyword    where KeywordID=?");
   $KeywordDelete      -> execute($KeywordID);
+  
+  # FIXME: delete KeywordGroupings
   
   print "$KeywordLink has been removed from the database.<br>\n";
 } elsif ($Action eq "Modify") {
@@ -100,10 +102,22 @@ if      ($Action eq "Delete") {
   my $KeywordInsert = $dbh->prepare(
    "insert into Keyword ".
           "(KeywordID, KeywordGroupID, ShortDescription, LongDescription) ". 
-   "values (0,            ?,            ?,                ?)");
+   "values (0,         ?,              ?,                ?)");
 
+  my $KeywordGroupingInsert = $dbh->prepare(
+   "insert into KeywordGrouping ".
+          "(KeywordGroupingID, KeywordGroupID, KeywordID) ". 
+   "values (0,                 ?,              ?)");
+
+  # FIXME: Remove KeywordGroupID from next two lines
+
+  my ($KeywordGroupID) = @KeywordGroupIDs;
   $KeywordInsert -> execute($KeywordGroupID,$ShortName,$LongName);
   $KeywordID = $KeywordInsert -> {mysql_insertid}; # Works with MySQL only
+
+  foreach my $KeywordGroupID (@KeywordGroupIDs) {
+    $KeywordGroupingInsert -> execute($KeywordGroupID,$KeywordID);
+  }  
 } else {
   push @ErrorStack,"No valid action was specified.";
 }  

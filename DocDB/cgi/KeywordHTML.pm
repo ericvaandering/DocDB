@@ -4,10 +4,8 @@
 #              dealing with keywords 
 #
 #      Author: Lynn Garren (garren@fnal.gov)
-#    Modified: Eric Vaandering (ewv@fnal.gov) # KeywordFormElements merged
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 #
-
-
 
 sub KeywordListLink ($;$) {
   my ($KeyID,$mode) = @_;
@@ -73,22 +71,20 @@ sub KeywordsbyKeywordGroup ($;$) {
   
   require "KeySorts.pm";
 
-  my @KeywordListIDs = sort byKey keys %Keywords;
+  my @KeywordIDs = sort byKey &GetKeywordsByKeywordGroupID($KeywordGroupID);
 
   my $KeywordGroupIDLink = &KeywordGroupInfo($KeywordGroupID,"short");
   print "<b>$KeywordGroupIDLink</b>\n";
   print "<ul>\n";
-  foreach my $KeyID (@KeywordListIDs) {
-    if ($KeywordGroupID == $Keywords{$KeyID}{KeywordGroupID}) {
-      my $KeyLink;
-      if ($Mode eq "chooser") {
-        $KeyLink = "<a href=\"\"$ListKeywords?mode=chooser\"\"
-        onClick=\"InsertKeyword('$Keywords{$KeyID}{Short}');\">$Keywords{$KeyID}{Short}</a>";
-      } else {
-        $KeyLink = &KeywordListLink($KeyID,"short");
-      }
-      print "<li>$KeyLink</li>\n";
-    }  
+  foreach my $KeywordID (@KeywordIDs) {
+    my $KeyLink;
+    if ($Mode eq "chooser") {
+      $KeyLink = "<a href=\"\"$ListKeywords?mode=chooser\"\"
+      onClick=\"InsertKeyword('$Keywords{$KeywordID}{Short}');\">$Keywords{$KeywordID}{Short}</a>";
+    } else {
+      $KeyLink = &KeywordListLink($KeywordID,"short");
+    }
+    print "<li>$KeyLink</li>\n";
   }  
   print "</ul>\n";
 }
