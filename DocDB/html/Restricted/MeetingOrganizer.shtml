@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Document Database Meeting Organizer</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="/includes/style.css" type="text/css">
+<!--#include virtual="/includes/navbar_header.html" --> <!-- Defining Javascript functions-->
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<!--#include virtual="/includes/atwork_menuload.html" --> <!-- Loads menus and images in nav bar -->
+<!--#include virtual="/includes/begin_atwork_top.html" --> <!-- Starts the table at the top -->
+      <div align="center"><font size="+2"
+      color="#003399">DocDB&nbsp;Meeting&nbsp;Organizer</font></div>
+<!--#include virtual="/includes/end_atwork_top.html" --> <!-- Ends the table at the top -->
+<!--#include virtual="/includes/atwork_navbar.html" --> <!-- Puts in the nav bar table row entry -->
+<!--#include virtual="/includes/end_table.html" --> <!-- Ends the table -->
+<hr>
+
+<center><h1>Document Database Meeting Organizer</h1></center>
+
+<h2>Table of Contents</h2>
+<ol type="A">
+ <li><a href="#intro">Introduction</a>
+ <li><a href="#create">Creating a New Meeting</a>
+ <li><a href="#modify">Modifying an Existing Meeting</a>
+ <li><a href="#talks">Adding and Modifying Talks in a Session</a>
+ <ol type="1">
+  <li><a href="#makeagenda">Creating an agenda</a>
+  <li><a href="#order">Ordering the talks</a>
+  <li><a href="#confirm">Specifying and confirming documents</a>
+  <li><a href="#hints">Giving hints about the talks</a>
+ </ol>
+ <li><a href="#matching">How the DocDB matches your entries with documents</a>
+ <ol type="1">
+  <li><a href="#userentry">User selects the talk</a>
+  <li><a href="#hinting">DocDB selects based on hints</a>
+ </ol>
+</ol>
+
+
+<a name="intro">
+<h2>A. Introduction</h2>
+
+Put some text from e-mail to Ed here.
+
+<a name="create">
+<h2>B. Creating a New Meeting</h2>
+
+
+<a name="modify">
+<h2>C. Modifying an Existing Meeting</h2>
+
+<a name="talks">
+<h2>D. Adding and Modifying Talks in a Session</h2>
+
+
+<a name="makeagenda">
+<h3>1. Creating an agenda</h3>
+
+<a name="order">
+<h3>2. Ordering the talks</h3>
+
+<a name="confirm">
+<h3>3. Specifying and confirming documents</h3>
+
+<a name="hints">
+<h3>4. Giving hints about the talks</h3>
+
+<a name="matching">
+<h2>E. How the DocDB matches your entries with documents</h2>
+
+In addition to the moderator associating talks as described above, there are two other ways this can
+happen. The first way is to have the user themselves match the talks. The second way is to have the
+DocDB guess.<p>
+
+A suggested course of action for the moderator is to first encourage users to match their talks as
+described below. Then let the DocDB guess and, as the moderator, confirm its correct guesses, let it
+guess again, and only then confirm its correct guesses or correct its incorrect ones. 
+
+<a name="userentry">
+<h3>1. User selects the talk</h3>
+
+When a user follows the link at the top of a session or meeting display that says "Add a talk to this
+meeting of conference," they will see a document entry form with one small addition: A menu to select
+his or her talk from the list of talks for that meeting or session that have not yet been entered.
+When the user selects his or her talk from this list, it is entered into the agenda as a confirmed
+talk, just as if the moderator had followed the instructions above.
+
+<a name="hinting">
+<h3>2. DocDB selects based on hints</h3>
+
+As a last resort the DocDB will try to figure out which agenda entry matches which document.To do
+this, the DocDB will construct a list of documents which might match the entries in the agenda. It
+will then compare each of those documents against the items in the agenda and pick what it thinks is
+the best document among them. This document becomes an unconfirmed match with the entry in the
+agenda. If it guesses right, confirm the document as mentioned above.<p>
+
+The list of documents to check against comes from two sources. First documents with modification
+times in a time window around the meeting dates are considered. Second, if the meeting is associated
+with a topic (discussed above), documents associated with that topic are considered.<p>
+
+Documents are matched with the agenda entries using a scoring system that takes into account several
+criteria:
+<ul>
+<li>Whether the document is associated with the meeting topic</li>
+<li>If the document's topics match those in the agenda</li>
+<li>If the document's authors match those in the agenda</li>
+<li>How well the title of the document matches the suggested title in the agenda (not yet
+implemented)</li>
+<ul>
+ 
+So, documents that are associated with the meeting topic receive a bonus over documents that just
+happen to fall in the time window. Points are also assigned to documents for each author or topic
+that matches those suggested in the agenda. For each agenda entry/document pair, a score is
+calculated and the document with the highest score is entered as the unconfirmed match. When
+documents are confirmed, they are removed from consideration, which may change which assignments the
+DocDB makes.<p>
+
+The precise algorithm used in choosing the best match can be determined by looking at the DocDB code. 
+
+
+<hr>
+<!-- begin footer, change the webmaster info if appropriate -->
+<div align="center"> 
+<!--#include virtual="/includes/atwork_bottomnav.html"-->  <!-- Put in the bottom navigation bar-->
+</div>
+<div align="left"> 
+<i><font size="-1">
+<A HREF="mailto:btev-docdb@fnal.gov">Document Database Administrators</A> 
+</font></i></div>
+<!--#include virtual="/includes/full_fermi_footer.shtml" --> 
+</body>
+</html>
