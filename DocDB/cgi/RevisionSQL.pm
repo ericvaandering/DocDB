@@ -163,8 +163,6 @@ sub FetchRevisionsByMinorTopic {
 sub InsertRevision {
   
   my %Params = @_;
-  
-  my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
 
   my $DocumentID    = $Params{-docid}         || "";
   my $SubmitterID   = $Params{-submitterid}   || 0;
@@ -173,14 +171,22 @@ sub InsertRevision {
   my $Keywords      = $Params{-keywords}      || "";
   my $Note          = $Params{-note}          || "";
   my $PubInfo       = $Params{-pubinfo}       || "";
-  my $DateTime      = $Params{-datetime}      || "$Year-$Mon-$Day $Hour:$Min:$Sec";
+  my $DateTime      = $Params{-datetime}           ;
   my $Version       = $Params{-version}       || 0;
+
+  unless ($DateTime) {
+    my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
+    $Year += 1900;
+    ++$Mon;
+    $DateTime = "$Year-$Mon-$Day $Hour:$Min:$Sec";
+  } 
+  $NewVersion = $Version;
   
   if ($Version eq "bump" || $Version eq "same") {
-    &FetchDocument($DocumentID);
-    $Version = $Documents{$DocumentID}{NVersions};
+    my $Found = &FetchDocument($DocumentID);
+    $NewVersion = int($Documents{$DocumentID}{NVersions});
     if ($Version eq "bump") {
-      ++$Version;
+      ++$NewVersion;
     }
   }
   
@@ -192,7 +198,7 @@ sub InsertRevision {
      "values (0,?,?,?,?,?,?,?,?,?)");
   
   if ($DocumentID) {
-    $Insert -> execute($DocumentID,$SubmitterID,$Title,$PubInfo,$Version, 
+    $Insert -> execute($DocumentID,$SubmitterID,$Title,$PubInfo,$NewVersion, 
                        $Abstract,$DateTime,$Keywords,$Note);
                                
     $DocRevID = $Insert -> {mysql_insertid}; # Works with MySQL only

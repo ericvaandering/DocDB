@@ -40,7 +40,7 @@ sub AddDocument {
   my $RequesterID   = $Params{-requesterid}   || 0;
   my $Note          = $Params{-note}          || "";
   my $PubInfo       = $Params{-pubinfo}       || "";
-  my $DateTime      = $Params{-datetime}      || "$Year-$Mon-$Day $Hour:$Min:$Sec";
+  my $DateTime      = $Params{-datetime};
   my $SessionTalkID = $Params{-sessiontalkid} || 0; # Not used yet
   
   my @AuthorIDs  = @{$Params{-authorids}}  || ();
@@ -53,12 +53,21 @@ sub AddDocument {
   my %References = %{$Params{-references}}; # Not used yet
   my %Signoffs   = %{$Params{-signoffs}};   # Not used yet
 
+  unless ($DateTime) {
+    my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
+    $Year += 1900;
+    ++$Mon;
+    $DateTime = "$Year-$Mon-$Day $Hour:$Min:$Sec";
+  } 
+
   my $DocumentID,$DocRevID,$Status;
 
   $DocumentID = &InsertDocument(-typeid => $TypeID, 
                  -requesterid => $RequesterID, -datetime => $DateTime);
+                 
+  print "DT: $DateTime <br>\n";               
   if ($DocumentID) {                                 
-    $DocRevID   = &InsertDocRevision(-docid => $DocumentID, 
+    $DocRevID   = &InsertRevision(-docid => $DocumentID, 
                    -submitterid => $RequesterID, -title    => $Title,
                    -pubinfo     => $PubInfo,     -abstract => $Abstract,
                    -version     => 'bump',       -datetime => $DateTime,

@@ -77,6 +77,21 @@ sub FetchDocType ($) { # Fetches an DocumentType by ID, adds to $DocumentTypes{$
   return $DocumentTypes{$DocTypeID}{SHORT};
 }
 
+sub FetchDocTypeByName ($) { # Fetches an DocumentType by ID, adds to $DocumentTypes{$DocTypeID}{}
+  my ($Name) = @_;
+  
+  my $Select = $dbh -> prepare("select DocTypeID from DocumentType where lower(ShortType) like lower(?)");
+  $Select -> execute($Name);
+  my ($DocTypeID) = $Select -> fetchrow_array;
+  
+  if ($DocTypeID) {
+    &FetchDocType($DocTypeID);
+  } else {
+    return 0;
+  }  
+  return $DocTypeID;
+}
+
 sub FetchDocFiles ($) {
   # Creates two hashes:
   # $Files{DocRevID}           holds the list of file IDs for a given DocRevID

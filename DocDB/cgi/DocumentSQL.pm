@@ -66,8 +66,14 @@ sub InsertDocument (%) {
 
   my $TypeID        = $Params{-typeid}        || 0;
   my $RequesterID   = $Params{-requesterid}   || 0;
-  my $DateTime      = $Params{-datetime}      || "$Year-$Mon-$Day $Hour:$Min:$Sec";
-  
+  my $DateTime      = $Params{-datetime};
+
+  unless ($DateTime) {
+    my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
+    $Year += 1900;
+    ++$Mon;
+    $DateTime = "$Year-$Mon-$Day $Hour:$Min:$Sec";
+  } 
 
   my $Insert = $dbh -> prepare( "insert into Document (DocumentID, RequesterID, RequestDate, DocumentType) values (0,?,?,?)");
   
