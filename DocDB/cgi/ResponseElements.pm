@@ -1,11 +1,12 @@
 sub AuthorListByID {
-  my @authorIDs = @_;
+  my @AuthorIDs = @_;
   
-  if ($#authorIDs + 1) {
+  if (@AuthorIDs) {
     print "<b>Authors:</b><br>\n";
     print "<ul>\n";
-    foreach $authorID (@authorIDs) {
-      print "<li> $names{$authorID} </li>\n";
+    foreach $AuthorID (@AuthorIDs) {
+      &FetchAuthor($AuthorID);
+      print "<li> $Authors{$AuthorID}{FULLNAME} </li>\n";
     }
     print "</ul>\n";
   } else {
@@ -16,19 +17,21 @@ sub AuthorListByID {
 
 sub RequesterByID {
   my ($requesterID) = @_;
+  &FetchAuthor($requesterID);
   
   print "<b>Requested by:</b> ";
-  print "$names{$requesterID}<br>\n";
+  print "$Authors{$requesterID}{FULLNAME}<br>\n";
   print "<p>\n";
 }
 
 sub TopicListByID {
   my @topicIDs = @_;
-  if ($#topicIDs + 1) {
+  if (@topicIDs) {
     print "<b>Topics:</b><br>\n";
     print "<ul>\n";
     foreach $topicID (@topicIDs) {
-      print "<li> $minor_topics{$topicID}{FULL} </li>\n";
+      &FetchMinorTopic($topicID);
+      print "<li> $MinorTopics{$topicID}{FULL} </li>\n";
     }
     print "</ul>\n";
   } else {

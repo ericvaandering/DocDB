@@ -67,7 +67,7 @@ sub TopicSelect { # Scrolling selectable list for topics
   print "<b><a ";
   &HelpLink("topics");
   print "Topics:</a></b><br> \n";
-  print $query -> scrolling_list(-name => "topics", -values => \%full_topics, 
+  print $query -> scrolling_list(-name => "topics", -values => \%FullTopics, 
                                  -size => 15, -multiple => 'true',
                                  -default => @TopicDefaults);
 };
@@ -88,7 +88,8 @@ sub DocTypeButtons {
   print "<b><a ";
   &HelpLink("doctype");
   print "Document type:</a></b><br> \n";
-  print $query -> radio_group(-columns => 3, -name => "doctype", -values => \%short_type);
+  print $query -> radio_group(-columns => 3, -name => "doctype", 
+                              -values => \%short_type, -default => "-");
 };
 
 sub SecurityList {

@@ -2,8 +2,6 @@
 #
 # Author Eric Vaandering (ewv@fnal.gov)
 #
-# 
-#
 
 use CGI;                                                                                      
 require "DocDBGlobals.pm";
@@ -25,6 +23,7 @@ print "<li><a href=\"$DocumentAddForm?mode=add&upload=http\">Submit a URL</a>
 for a document you have on the web \n"; 
 print "(no need to reserve the document).\n";
 print "<li><a href=ListDocuments>List</a> all documents\n"; 
+print "<li><a href=ShowDocument>Show</a> a document\n"; 
 print "</ul>\n";
 print "<p>\n";
 

@@ -1,38 +1,119 @@
-sub GetAuthors {
-  my ($AuthorID,$FirstName,$MiddleInitials,$LastName);
-  my $people_list  = $dbh->prepare("select AuthorID,FirstName,MiddleInitials,LastName,Active from Author order by LastName");
+sub GetAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with all authors
+  my ($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active);
+  my $people_list  = $dbh -> prepare(
+     "select AuthorID,FirstName,MiddleInitials,LastName,Active from Author"); 
   $people_list -> execute;
   $people_list -> bind_columns(undef, \($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active));
+  %Authors = ();
   while ($people_list -> fetch) {
+    $Authors{$AuthorID}{AUTHORID} =  $AuthorID;
+    $Authors{$AuthorID}{FULLNAME} = "$FirstName $MiddleInitials $LastName";
+    $Authors{$AuthorID}{LASTNAME} =  $LastName;
+    $Authors{$AuthorID}{ACTIVE}   =  $Active;
     if ($Active) {
-      $names{$AuthorID} = "$FirstName $MiddleInitials $LastName";
+      $ActiveAuthors{$AuthorID}{FULLNAME} = "$FirstName $MiddleInitials $LastName";
+      $names{$AuthorID}                   = "$FirstName $MiddleInitials $LastName"; # FIXME
     }
   }
 };
 
+sub FetchAuthor { # Fetches an Author by ID, adds to $Authors{$AuthorID}{}
+  my ($authorID) = @_;
+  my ($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active);
+
+  my $author_fetch  = $dbh -> prepare(
+     "select AuthorID,FirstName,MiddleInitials,LastName,Active ". 
+     "from Author ". 
+     "where AuthorID=?");
+  if ($Authors{$authorID}{AUTHORID}) { # We already have this one
+    return $Authors{$authorID}{AUTHORID};
+  }
+  
+  $author_fetch -> execute($authorID);
+  ($AuthorID,$FirstName,$MiddleInitials,$LastName,$Active) = $author_fetch -> fetchrow_array;
+  $Authors{$AuthorID}{AUTHORID} =  $AuthorID;
+  $Authors{$AuthorID}{FULLNAME} = "$FirstName $MiddleInitials $LastName";
+  $Authors{$AuthorID}{LASTNAME} =  $LastName;
+  $Authors{$AuthorID}{ACTIVE}   =  $Active;
+  
+  return $Authors{$AuthorID}{AUTHORID};
+}
+
 sub GetTopics {
   my $minor_list   = $dbh->prepare("select MinorTopicID,MajorTopicID,ShortDescription,LongDescription from MinorTopic");
   my $major_list   = $dbh->prepare("select MajorTopicID,ShortDescription,LongDescription from MajorTopic");
+
+  %MinorTopics = ();
+  %MajorTopics = ();
+  %FullTopics  = ();
+
   $major_list -> execute;
   $major_list -> bind_columns(undef, \($MajorTopicID,$ShortDescription,$LongDescription));
   while ($major_list -> fetch) {
-    $major_topics{$MajorTopicID}{SHORT} = $ShortDescription;
-    $major_topics{$MajorTopicID}{LONG}  = $LongDescription;
+    $MajorTopics{$MajorTopicID}{MAJOR} = $MajorTopicID;
+    $MajorTopics{$MajorTopicID}{SHORT} = $ShortDescription;
+    $MajorTopics{$MajorTopicID}{LONG}  = $LongDescription;
   }
 
   my ($MinorTopicID,$MajorTopicID,$ShortDescription,$LongDescription);
   $minor_list -> execute;
   $minor_list -> bind_columns(undef, \($MinorTopicID,$MajorTopicID,$ShortDescription,$LongDescription));
   while ($minor_list -> fetch) {
-    $minor_topics{$MinorTopicID}{MAJOR} = $MajorTopicID;
-    $minor_topics{$MinorTopicID}{SHORT} = $ShortDescription;
-    $minor_topics{$MinorTopicID}{LONG}  = $LongDescription;
-    $minor_topics{$MinorTopicID}{FULL}  = $major_topics{$MajorTopicID}{SHORT}.":".$ShortDescription;
+    $MinorTopics{$MinorTopicID}{MINOR} = $MinorTopicID;
+    $MinorTopics{$MinorTopicID}{MAJOR} = $MajorTopicID;
+    $MinorTopics{$MinorTopicID}{SHORT} = $ShortDescription;
+    $MinorTopics{$MinorTopicID}{LONG}  = $LongDescription;
+    $MinorTopics{$MinorTopicID}{FULL}  = $MajorTopics{$MajorTopicID}{SHORT}.":".$ShortDescription;
   }
-  foreach $key (keys %minor_topics) {
-    $full_topics{$key} =  $minor_topics{$key}{FULL};
+  foreach $key (keys %MinorTopics) {
+    $FullTopics{$key} =  $MinorTopics{$key}{FULL};
   }
 };
+
+sub FetchMinorTopic { # Fetches an MinorTopic by ID, adds to $Topics{$TopicID}{}
+  my ($minorTopicID) = @_;
+  my ($MinorTopicID,$MajorTopicID,$ShortDescription,$LongDescription);
+  my $minor_fetch   = $dbh -> prepare(
+    "select MinorTopicID,MajorTopicID,ShortDescription,LongDescription ".
+    "from MinorTopic ".
+    "where MinorTopicID=?");
+  if ($MinorTopics{$minorTopicID}{MINOR}) { # We already have this one
+    return $MinorTopics{$minorTopicID}{MINOR};
+  }
+  
+  $minor_fetch -> execute($minorTopicID);
+  ($MinorTopicID,$MajorTopicID,$ShortDescription,$LongDescription) = $minor_fetch -> fetchrow_array;
+  &FetchMajorTopic($MajorTopicID);
+  $MinorTopics{$MinorTopicID}{MINOR} = $MinorTopicID;
+  $MinorTopics{$MinorTopicID}{MAJOR} = $MajorTopicID;
+  $MinorTopics{$MinorTopicID}{SHORT} = $ShortDescription;
+  $MinorTopics{$MinorTopicID}{LONG}  = $LongDescription;
+  $MinorTopics{$MinorTopicID}{FULL}  = $MajorTopics{$MajorTopicID}{SHORT}.":".$ShortDescription;
+
+  $FullTopics{$MinorTopicID} = $MinorTopics{$MinorTopicID}{FULL};
+
+  return $MinorTopics{$MinorTopicID}{MINOR};
+}
+
+sub FetchMajorTopic { # Fetches an MajorTopic by ID, adds to $Topics{$TopicID}{}
+  my ($majorTopicID) = @_;
+  my ($MajorTopicID,$ShortDescription,$LongDescription);
+  my $major_fetch   = $dbh -> prepare(
+    "select MajorTopicID,ShortDescription,LongDescription ".
+    "from MajorTopic ".
+    "where MajorTopicID=?");
+  if ($MajorTopics{$majorTopicID}{MAJOR}) { # We already have this one
+    return $MajorTopics{$majorTopicID}{MAJOR};
+  }
+
+  $major_fetch -> execute($majorTopicID);
+  ($MajorTopicID,$ShortDescription,$LongDescription) = $major_fetch -> fetchrow_array;
+  $MajorTopics{$MajorTopicID}{MAJOR} = $MajorTopicID;
+  $MajorTopics{$MajorTopicID}{SHORT} = $ShortDescription;
+  $MajorTopics{$MajorTopicID}{LONG}  = $LongDescription;
+
+  return $MajorTopics{$MajorTopicID}{MAJOR};
+}
 
 sub GetSecurities {
   my ($field,$type);
@@ -100,6 +181,7 @@ sub FetchDocument {
   
   $max_version -> execute($DocumentID);
   ($Documents{$DocumentID}{NVER}) = $max_version -> fetchrow_array;
+  return $Documents{$DocumentID}{DOCID};
 }
 
 sub FetchDocRevision {
@@ -108,6 +190,7 @@ sub FetchDocRevision {
   # $DocRevisions{DocRevID}{FIELD} holds the Fields or references too them
 
   my ($documentID,$versionNumber) = @_;
+  &FetchDocument($documentID);
   my $revision_list = $dbh->prepare(
     "select DocRevID,SubmitterID,DocumentTitle,PublicationInfo,VersionNumber,".
            "Abstract,RevisionDate,Security,TimeStamp ".

@@ -10,12 +10,11 @@ require "ResponseElements.pm";
 require "MySQLAccess.pm";
 require "DocDBGlobals.pm";
 require "FSUtilities.pm";
-require "Debug.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
-&GetAuthors;
+#&GetAuthors;
 &GetTopics;
 
 %params = $query -> Vars;
@@ -45,31 +44,31 @@ if      ($mode eq "add") {
                 in the BTeV document database:</h3><p>\n";
 }
 
-my $document_insert = $dbh->prepare("
-insert into Document 
-       (DocumentID, RequesterID, RequestDate, DocumentType) 
-values (0,          ?,           NOW(),       ?)");
+my $document_insert = $dbh->prepare(
+   "insert into Document ".
+          "(DocumentID, RequesterID, RequestDate, DocumentType) ". 
+   "values (0,          ?,           NOW(),       ?)");
             
-my $doc_rev_insert = $dbh->prepare("
-insert into DocumentRevision 
-       (DocRevID, DocumentID, SubmitterID, DocumentTitle, PublicationInfo, 
-        VersionNumber, Abstract, Security, RevisionDate) 
-values (0,?,?,?,?,?,?,?,NOW())");
+my $doc_rev_insert = $dbh->prepare(
+   "insert into DocumentRevision ".
+   "(DocRevID, DocumentID, SubmitterID, DocumentTitle, PublicationInfo, ". 
+   " VersionNumber, Abstract, Security, RevisionDate) ". 
+   "values (0,?,?,?,?,?,?,?,NOW())");
             
-my $rev_author_insert =  $dbh->prepare("
-insert into RevisionAuthor 
-       (RevAuthorID, DocRevID, AuthorID) 
-values (0,           ?,        ?)");
+my $rev_author_insert =  $dbh->prepare(
+   "insert into RevisionAuthor ".
+   "       (RevAuthorID, DocRevID, AuthorID) ".
+   "values (0,           ?,        ?)");
                                  
-my $rev_topic_insert = $dbh->prepare("
-insert into RevisionTopic  
-       (RevTopicID, DocRevID, MinorTopicID) 
-values (0,          ?,        ?)");
+my $rev_topic_insert = $dbh->prepare(
+   "insert into RevisionTopic ".
+   "       (RevTopicID, DocRevID, MinorTopicID) ".
+   "values (0,          ?,        ?)");
 
-my $file_insert = $dbh->prepare("
-insert into DocumentFile   
-       (DocFileID, DocRevID, FileName, Date, RootFile) 
-values (0,         ?,        ?,        NOW(),?)");
+my $file_insert = $dbh->prepare(
+   "insert into DocumentFile ".
+   "       (DocFileID, DocRevID, FileName, Date, RootFile) ".
+   "values (0,         ?,        ?,        NOW(),?)");
 
 @error_stack = ();
 
