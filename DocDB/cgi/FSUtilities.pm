@@ -321,6 +321,8 @@ sub DownloadURLs (%) {
   my $TmpDir = $Params{-tmpdir} || "/tmp";
   my %Files    = %{$Params{-files}}; # Documented in FileUtilities.pm
 
+  push @DebugStack,"Preparing to download files";
+  my $Status;
   $CurrentDir = cwd();
   chdir $TmpDir or die "<p>Fatal error in chdir<p>\n";
 
@@ -328,14 +330,21 @@ sub DownloadURLs (%) {
 
   foreach my $FileKey (keys %Files) {
     if ($Files{$FileKey}{URL}) {
+      push @DebugStack,"Preparing to download $Files{$FileKey}{URL}";
       my @Authentication = ();
       if ($Files{$FileKey}{User}) {
+        push @DebugStack,"Using authentication";
         @Authentication = ("--http-user",$Files{$FileKey}{User}, 
 	                   "--http-pass",$Files{$FileKey}{Pass});
       }
-      system ($Wget,@Authentication,$Files{$FileKey}{URL});
+      if (@Authentication) {
+        $Status = system ($Wget,@Authentication,$Files{$FileKey}{URL});
+      } else {
+        $Status = system ($Wget,"--quiet",$Files{$FileKey}{URL});
+      }  
       my @URLParts = split /\//,$Files{$FileKey}{URL};
       my $Filename = pop @URLParts;
+      push @DebugStack, "Download status: $Status";
       if (-e "$TmpDir/$Filename") {
         push @Filenames,$Filename;
 	delete $Files{$FileKey}{URL};
@@ -357,7 +366,7 @@ sub DownloadURLs (%) {
 
 sub MakeTmpSubDir {
   my $TmpSubDir = $TmpDir."/".(time ^ $$ ^ unpack "%32L*", `ps axww`);
-  mkdir $TmpSubDir, oct 700 or die "Could not make temporary directory";
+  mkdir $TmpSubDir, oct 755 or die "Could not make temporary directory";
   return $TmpSubDir;
 }  
 

@@ -106,6 +106,12 @@ for (my $i = 1; $i<= $MaxFiles; ++$i) {
   if ($params{"upload$i"}) {
     push @DebugStack,"Uploading file in slot $i";
     $Files{$Key}{File} = $query ->  param("upload$i");
+  } elsif ($params{"url$i"}) {
+    $NeedURLs = 1;
+    push @DebugStack,"Copying URL in slot $i";
+    $Files{$Key}{URL} = $params{"url$i"};
+    $Files{$Key}{User} = $params{http_user};
+    $Files{$Key}{Pass} = $params{http_pass};
   } elsif ($params{"copyfile$i"}) {
     push @DebugStack,"Copying file in slot $i";
     $Files{$Key}{CopyFileID} = $params{"fileid$i"};
@@ -255,6 +261,13 @@ if ($mode eq "add" || $mode eq "update") {
   if     (!$params{mainfile} && $Archive eq "archive") {
     push @ErrorStack,"You must specify a main file in the archive.";
   }
+  
+  if ($NeedURLs) {
+    push @DebugStack,"Downloading files.";
+    my $TmpDir = &MakeTmpSubDir();
+    %Files = &DownloadURLs(-tmpdir => $TmpDir, -files => \%Files);
+  }  
+  &DebugPage("After DownloadURLs");
   
 #  if ($params{single_http}) {
 #    if ($params{http_user} && $params{http_pass}) {

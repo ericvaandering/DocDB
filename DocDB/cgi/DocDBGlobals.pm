@@ -18,7 +18,7 @@ $MailInstalled = 1; # Is the Mailer::Mail module installed?
 
 # Shell Commands, FS details
 
-$Wget   = "/usr/bin/wget -O - --quiet ";
+$Wget   = "/usr/bin/wget";
 $Tar    = "";
 $GTar   = "/bin/tar ";
 $GZip   = "/bin/gzip ";
