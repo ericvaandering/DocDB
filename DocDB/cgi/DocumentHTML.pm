@@ -28,15 +28,16 @@ sub DocumentTable (%) {
   
   my %Params = @_;
   
-  my $SortBy       =   $Params{-sortby}; 
-  my $Reverse      =   $Params{-reverse};
-  my $MaxDocs      =   $Params{-maxdocs};
-  my @DocumentIDs  = @{$Params{-docids}};
-  my @Fields       = @{$Params{-fields}}; 
-  my %FieldOptions = %{$Params{-fieldoptions}}; 
+  my $SortBy        =   $Params{-sortby}; 
+  my $Reverse       =   $Params{-reverse};
+  my $MaxDocs       =   $Params{-maxdocs};
+  my $SessionTalkID = $Params{-talkid};
+  my @DocumentIDs   = @{$Params{-docids}};
+  my @Fields        = @{$Params{-fields}}; 
+  my %FieldOptions  = %{$Params{-fieldoptions}}; 
   
   my %FieldTitles = (Docid   => "$ShortProject-doc-#", Updated => "Last Updated", 
-                     CanSign => "Next Signature(s)");  
+                     CanSign => "Next Signature(s)", Confirm => "Confirm?");  
   
 ### Write out the beginning and header of table
 
@@ -139,6 +140,12 @@ sub DocumentTable (%) {
       } elsif ($Field eq "Files") {   # Files in document
         require "FileHTML.pm";
         &ShortFileListByRevID($DocRevID); 
+      } elsif ($Field eq "Confirm") {  
+        print $query -> start_multipart_form('POST',$ConfirmTalkHint);
+        print $query -> hidden(-name => 'documentid',   -default => $DocumentID);
+        print $query -> hidden(-name => 'sessiontalkid',-default => $SessionTalkID);
+        print $query -> submit (-value => "Confirm");
+        print $query -> end_multipart_form;
       } else {
         print "Unknown field"
       }  
