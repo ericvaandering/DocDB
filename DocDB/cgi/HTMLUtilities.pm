@@ -26,23 +26,23 @@ sub DocDBHeader {
   
   # Include DocDB style sheets
   
-  print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB.css\" type=\"text/css\"/>\n";
+  print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB.css\" type=\"text/css\" />\n";
   print "<!--[if IE]>\n";
   print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB_IE.css\" type=\"text/css\" />\n";
   print "<![endif]-->\n"; 
-  print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB$ScriptName.css\" type=\"text/css\"/>\n";
+  print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB$ScriptName.css\" type=\"text/css\" />\n";
    
   # Include projects DocDB style sheets 
    
   if (-e "$CSSDirectory/$ShortProject"."DocDB.css") {
-    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB.css\" type=\"text/css\"/>\n";
+    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB.css\" type=\"text/css\" />\n";
   }
   if (-e "$CSSDirectory/$ShortProject"."DocDB_IE.css") {
     print "<!--[if IE]>\n";
     print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB_IE.css\" type=\"text/css\" />\n";
     print "<![endif]-->\n"; 
   }
-    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB".$ScriptName.".css\" type=\"text/css\"/>\n";
+    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB".$ScriptName.".css\" type=\"text/css\" />\n";
 
   if (defined &ProjectHeader) {
     &ProjectHeader($Title,$PageTitle); 
