@@ -9,10 +9,10 @@ sub ValidURL { # Returns a directory name
   unless ($service && $address) {
     return $ok;
   }
-  unless (grep /^[a-zA-z]+$/,$service) {
+  unless (grep /^\s*[a-zA-z]+$/,$service) {
     return $ok;
   }    
-  unless (grep /^[\-\w\~\;\/\?\=\&\$\.\+\!\*\'\(\)\,]+$/, $address) { # no :,@
+  unless (grep /^[\-\w\~\;\/\?\=\&\$\.\+\!\*\'\(\)\,]+\s*$/, $address) { # no :,@
     return $ok;
   }  
   if (grep /\/$/,$address) {
