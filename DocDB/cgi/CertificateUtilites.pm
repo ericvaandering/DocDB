@@ -22,10 +22,12 @@
 
 sub FetchSecurityGroupsByCert () {
  
-  my $CertEmail = $ENV{whatever};
+  my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
+  my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
 
-  my $EmailUserSelect = $dbh->prepare("select EmailUserID from SecurityGroup where Verified = 1 and EmailAddress = ?");
-  $EmailUserSelect -> execute($CertEmail);
+  my $EmailUserSelect = $dbh->prepare("select EmailUserID from SecurityGroup ".
+                                      "where Verified=1 and EmailAddress=? and Name=?");
+  $EmailUserSelect -> execute($CertEmail,$CertCN);
 
   my ($EmailUserID) = $EmailUserSelect -> fetchrow_array; 
   
@@ -44,5 +46,50 @@ sub FetchSecurityGroupsByCert () {
   return @UserGroupIDs;
 }
 
+sub CertificateStatus () {
+
+  # This routine returns the status of the certificate the user presents. It can have
+  # one of several values:
+  #
+  # verified   --  certificate is valid and user has been given access to DocDB by admin
+  # unverified --  certificate is valid and unique, but user has not been given access
+  # mismatch   --  certificate is valid, but e-mail or CN conflicts with existing user
+  # missing    --  certificate is valid, but has never requested access
+
+  my $CertificateStatus = "";
+ 
+  my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
+  my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
+  my $EmailUserSelect = $dbh->prepare("select EmailUserID,Verified from SecurityGroup ".
+                                      "where EmailAddress=? and Name=?");
+  $EmailUserSelect -> execute($CertEmail,$CertCN);
+
+  my ($EmailUserID,$Verified) = $EmailUserSelect -> fetchrow_array; 
+  
+  if ($Verified) {
+    $CertificateStatus = "verified";
+    return $CertificateStatus;
+  } 
+  
+  if ($EmailUserID) {
+    $CertificateStatus = "unverified";
+    return $CertificateStatus;
+  } 
+   
+  my $AddressSelect = $dbh->prepare("select EmailUserID from SecurityGroup where EmailAddress=?");
+     $AddressSelect -> execute($CertEmail);
+  my ($AddressID) = $AddressSelect -> fetchrow_array; 
+
+  my $NameSelect = $dbh->prepare("select EmailUserID from SecurityGroup where Name=?");
+     $NameSelect -> execute($CertCN);
+  my ($NameID) = $NameSelect -> fetchrow_array; 
+    
+  if ($NameID || $AddressID) {
+    $CertificateStatus = "mismatch";
+  } else {
+    $CertificateStatus = "missing";
+  }
+  return $CertificateStatus;
+}
 
 1;

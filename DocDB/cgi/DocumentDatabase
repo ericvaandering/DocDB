@@ -53,6 +53,14 @@ print $query->header;
 
 &HelpPopupScript;
 
+if ($UserValidation eq "certificate") {
+  require "CertificateUtilities.pm";
+  my $CertificateStatus = &CertificateStatus();
+  print "<p><center><h4>\n";
+  print "Status: $CertificateStatus\n";
+  print "</h4></center>\n";
+}  
+
 if ($WelcomeMessage) {
   print "<p><center><h4>\n";
   print "$WelcomeMessage\n";
