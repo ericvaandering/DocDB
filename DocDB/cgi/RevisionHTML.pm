@@ -178,7 +178,7 @@ sub PrintRevisionInfo {
     print "</div>\n";
   }  
 
-  unless ($Public) {
+  unless ($Public || $HideButtons) {
     require "NotificationHTML.pm";
     &DocNotifySignup(-docid => $DocumentID);
   }
