@@ -35,7 +35,7 @@ if ($Set eq "Weekly") {
   $Days = 1;
 }
 
-$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 &GetTopics;
 
@@ -70,13 +70,13 @@ while ($RevisionList -> fetch) {
   $AllMajorTopics{$DocRevID} = [keys %MajorRevTopics];
 }
 
-print "Modified Revisions: ",join ' ',@AllDocRevIDs,"\n";
+#print "Modified Revisions: ",join ' ',@AllDocRevIDs,"\n";
 
 # Build a personal E-mail for each user
 
 foreach $EmailUserID (@EmailUserIDs) {
   &FetchEmailUser($EmailUserID);
-  print "Checking user $EmailUserID\n";
+  print "Preparing mail for $EmailUser{$EmailUserID}{Name}\n";
 
   my @UserMinorTopics = ();
   my @UserMajorTopics = ();
@@ -102,10 +102,7 @@ foreach $EmailUserID (@EmailUserIDs) {
   while ($MajorFetch -> fetch) {
     push @UserMajorTopics,$MajorID;
   }
-  
-  print "User $EmailUserID wants minor topics ",join ' ',@UserMinorTopics,"\n";
-  print "User $EmailUserID wants major topics ",join ' ',@UserMajorTopics,"\n";
-  
+    
 # Do they want them all
   
   my $AllFetch   = $dbh -> prepare(
@@ -113,15 +110,10 @@ foreach $EmailUserID (@EmailUserIDs) {
   $AllFetch -> execute($EmailUserID);
   my ($NotifyAll) = $AllFetch -> fetchrow_array;
 
-  if ($NotifyAll) {
-    print "User $EmailUserID wants all topics\n";
-  }    
-
   my %SelectDocRevIDs = ();
   foreach $DocRevID (@AllDocRevIDs) {
     if ($NotifyAll) {
       $SelectDocRevIDs{$DocRevID} = 1; # They want them all
-      print "All: flagging revision $DocRevID for user $EmailUserID \n";
       next;
     }
     foreach my $RevMinorTopic (@{$AllMinorTopics{$DocRevID}}) {
@@ -140,12 +132,10 @@ foreach $EmailUserID (@EmailUserIDs) {
     }
   }
 
-# We now have all the DocRevIDs, convert to Documents  
-
   my @SelectDocRevIDs = keys %SelectDocRevIDs;
 
-  print "User $EmailUserID will receive mails on revisions ",join ' ',@SelectDocRevIDs,"\n";
-  
+# We now have all the DocRevIDs, convert to Documents  
+
   my %DocumentIDs     = ();
   my $DocumentList = $dbh -> prepare(
    "select DocumentID from DocumentRevision where DocRevID=?"); 
@@ -157,7 +147,7 @@ foreach $EmailUserID (@EmailUserIDs) {
   
   my @DocumentIDs = sort numerically keys %DocumentIDs;
   if (@DocumentIDs) {
-    print "User $EmailUserID will receive mails on documents ",join ' ',@DocumentIDs,"\n";
+    print "$EmailUser{$EmailUserID}{Name} will receive mails on documents ",join ' ',@DocumentIDs,"\n";
 
 # Write the mail
   
@@ -182,7 +172,6 @@ foreach $EmailUserID (@EmailUserIDs) {
       &RevisionMailBody($DocRevID);       # Write the body
       print $Mailer "\n","-" x 72,"\n\n";  # Write a divider
     } 
-    print "Closing, server: $MailServer\n";
     $Mailer -> close;              # Complete the message and send it
   }
 }
