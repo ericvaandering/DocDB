@@ -251,9 +251,7 @@ sub ProcessManualAuthors {
 
 # FIXME: Remove error_stack when modifications done. 
 
-    push @ErrorStack,"No match was found for the the author $entry. Please go 
-                      back and try again.";   
-    push @ErrorStack,"No match was found for the the author $entry. Please go 
+    push @ErrorStack,"No match was found for the author $entry. Please go 
                       back and try again.";   
   }
   return @AuthorIDs;

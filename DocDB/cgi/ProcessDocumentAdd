@@ -16,6 +16,7 @@ require "TopicSQL.pm";
 require "SecuritySQL.pm";
 require "DocumentSQL.pm";
 require "RevisionSQL.pm";
+require "SignoffSQL.pm";
 require "MiscSQL.pm";
 require "FSUtilities.pm";
 require "WebUtilities.pm";
@@ -58,7 +59,7 @@ $Special = $params{special};
 if ($Special eq "meeting") {$Meeting = 1;}
 if ($Special eq "othermeeting") {$OtherMeeting = 1;}
 
-# FIXME: Any reason these can't be "my"?
+# FIXME: Any reason all of these can't be "my"?
 
    $Archive       = $params{archive};
    $Overdate      = $params{overdate};
@@ -74,6 +75,7 @@ if ($Special eq "othermeeting") {$OtherMeeting = 1;}
    $Requester     = $params{requester};
 my $SessionTalkID = $params{sessiontalkid};
 my $RevisionNote  = $params{revisionnote};
+my $SignoffList   = $params{signofflist};
 
 if ($Meeting || $OtherMeeting) {
   @authorIDs = ($Requester);
@@ -363,6 +365,14 @@ if ($EnhancedSecurity) {
     }  
   }
 }
+
+my @SignoffIDs;
+if ($UseSignoffs && $SignoffList) {
+  @SignoffIDs = &ProcessSignoffList($SignoffList);
+  if (@SignoffIDs) {
+    &InsertSignoffList($docRevID,@SignoffIDs);
+  }  
+}  
 
 ### Deal with files
 
