@@ -17,73 +17,11 @@
      When a document is submitted to DocDB, the document is copied 
      (from either local disk or an html address) to a directory located 
      on the web server.  Documents may be composed of several files.
-<li> <b> identify resources</b> <br>
-   Disk space is needed for the mysql database, DocDB (both cgi and html), 
-   and the documents themselves.  DocDB is only about 700 KB.
-   At this time, the BTeV document database contains 800+ documents 
-   and uses about 3 MB for the database and 2.3 GB for the document 
-   directory tree.
-   <br>
-   One possible file configuration is: 
-   <center>
-   <table>
-     <tr>
-       <td> cgi scripts
-       </td>
-       <td> /www/cgi-bin/DocDB
-       </td>
-     </tr>
-     <tr>
-       <td> MySQL database
-       </td>
-       <td> /local/mysql
-       </td>
-     </tr>
-     <tr>
-       <td> document location
-       </td>
-       <td> /www/html/DocDB
-       </td>
-     </tr>
-     <tr>
-       <td> html pages
-       </td>
-       <td> appropriately placed under /www/html/...
-       </td>
-     </tr>
-   </table>
-   </center>
-   Note that the MySQL database is accessed by the cgi scripts but should not 
-   live under any web directory.
-   <br>
-   You should create a document database administration account to own the
-   MySQL database and the DocDB cgi scripts and html.  This account will be 
-   used to start the MySQL daemon.
-   <br>
-   Make sure that the machine running the web server you plan to use 
-   will support MySQL.
-<li> <b> install MySQL</b> <br>
-   We are currently using MySQL 3.22.30, but you should install the latest 
-   available release.  If your server is a Linux machine, MySQL rpms are 
-   available with the standard RedHat or FermiRedHat installation
-   (e.g., ftp://linux.fnal.gov/linux/711/i386/RedHat/RPMS/).
-   Otherwise, get MySQL from <a href=http://www.mysql.com/>http://www.mysql.com/</a>.
-   We recommend downloading a pre-compiled release of MySQL.
-    <br>
-    Edit mysql/bin/mysqlaccess to point to the appropriate bin directory.
-    <br>
-    Run the mysql scripts/mysql_install_db script.
-    This is where you decide where the database will reside.
-    <br>
-    Note that you will need to create a mysql root account for administration.
-    You will also need a mysql account for the database.
-<li> <b> start mysqld</b> <br>
-    Mysqld may be started interactively by running mysql/bin/safe_mysqld.
-    However, you will want to copy mysql/support-files/mysql.server into
-    your system startup files (often /etc/init.d) and configure it to start
-    mysqld automatically when the machine is booted.
+<li> <a href=resources.html>identify resources</a> 
+<li> <a href=mysql.html>install MySQL and start mysqld</a> <br>
 <li> <b> get DocDB</b> <br>
-    The <a href=http://www-btev.fnal.gov/~garren/doc/docdb-2.2.0.tar>tar ball</a> 
+    The <a href=http://www-btev.fnal.gov/~garren/doc/stable.tar>tar ball</a> 
+    (July 26, 2002)
     <br>
     Unwind the tarball under your docdbadm account.
 <li> <b> customize DocDB</b>

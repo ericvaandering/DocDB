@@ -1,0 +1,77 @@
+<title>Installing MySQL for DocDB</title>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<center><h1>Installing MySQL for DocDB</h1></center>
+<p>
+You will need MySQL and Msql-Mysql-modules.
+<p>
+<center> <h2> install MySQL</h2> </center>
+<p>
+   We are currently using MySQL 3.22.30, but you should install the latest 
+   available release.  If your server is a Linux machine, MySQL rpms are 
+   available with the standard RedHat or FermiRedHat installation
+   (e.g., ftp://linux.fnal.gov/linux/711/i386/RedHat/RPMS/).
+   Otherwise, get MySQL from <a href=http://www.mysql.com/>http://www.mysql.com/</a>.
+   We recommend downloading a pre-compiled release of MySQL.
+    <br>
+    Edit mysql/bin/mysqlaccess to point to the appropriate bin directory.
+    <br>
+    Run the mysql scripts/mysql_install_db script.
+    This is where you decide where the database will reside.
+    <br>
+    Note that you will need to create a mysql root account for administration.
+    You will also need a mysql account for the database.
+<p>
+<center> <h2> install Msql-Mysql-modules</h2> </center>
+<p>
+Msql-Mysql-modules contains the perldbi scripts that allow you to use 
+MySQL with Perl.  We are currently using Msql-Mysql-modules-1.2216.
+<br>
+Install this next to your mysql directory.<br>
+You must first create /tmp/build-perl-xxxx:
+<ul>
+<li>   setup perl
+<li>   cd $PERL_DIR
+<li>   make build_prefix
+<li>   You need this bit so that makefiles will find perl.
+</ul>
+
+Now, you can build the perldbi modules.
+<ul>
+<li>  cd Msql-Mysql-modules-1.2216
+<li>  setup perl
+<li>  perl Makefile.pl
+    <ul>
+    <li> choose MySQL only
+    <li> do not install MysqlPerl emulation
+    <li> answer the remaining questions appropriately for your installation
+   </ul>
+<li> This creates a set of makefiles that you then "gmake".
+</ul>
+<p>
+<center> <h2> start mysqld</h2> </center>
+<p>
+    Mysqld may be started interactively by running <b>mysql/bin/safe_mysqld</b>.
+    However, you will want to copy <b>mysql/support-files/mysql.server</b> into
+    your system startup files (often /etc/init.d) and configure it to start
+    mysqld automatically when the machine is booted.
+
+<!-- begin footer -->
+<hr>
+<i><font size="-1">
+<script language="javascript">
+<!-- Hide from browsers that do not understand Javascript
+// print the URL and modification date of this page
+var url = document.location;
+document.write(url)  
+var dt = document.lastModified;
+document.write('<br> Last Modified:')  
+document.write(dt)  
+// end hiding --> 
+</script> 
+<br>
+<A HREF="mailto:btev-docdb@fnal.gov">Document Database Administrators</A> 
+</font></i>
+</body>
+</html>
