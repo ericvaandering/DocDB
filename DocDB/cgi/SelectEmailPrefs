@@ -242,7 +242,6 @@ print "<tr valign=bottom>";
 &EmailTopicForm($EmailUserID,"Daily");
 print "<tr valign=bottom>";
 &EmailTopicForm($EmailUserID,"Weekly");
-print "<tr valign=bottom>";
 print "</table>\n";
 
 print "<hr><a name=\"author\"><center><h3>Notification by Authors</h3></center>\n";
