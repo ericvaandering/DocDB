@@ -127,6 +127,10 @@ sub PrintRevisionInfo {
   &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
   &PrintConfInfo(@TopicIDs);
   &PrintReferenceInfo($DocRevID);
+  if ($UseSignoffs) {
+    require "SignoffHTML.pm";
+    &PrintRevisionSignoffInfo($DocRevID);
+  }  
   print "</td></tr>\n";
   print "</table>\n";
   print "<table cellpadding=10>\n";
@@ -197,7 +201,7 @@ sub PrintRevisionNote {
   }
 }
 
-sub PrintPubInfo {
+sub PrintPubInfo ($) {
   require "Utilities.pm";
 
   my ($pubinfo) = @_;

@@ -76,4 +76,82 @@ sub InsertSignoffList (@) {
   return $FirstSignoffID;                                       
 }
 
+sub GetRootSignoffs ($) {
+  my ($DocRevID) = @_;
+  
+  my @RootSignoffs = ();
+  
+  my $SignoffList = $dbh -> prepare("select Signoff.SignoffID from Signoff,SignoffDependency ".
+                                     "where SignoffDependency.PreSignoffID=0 ".
+                                      "and SignoffDependency.SignoffID=Signoff.SignoffID ".
+                                      "and Signoff.DocRevID=?");
+                        
+  $SignoffList -> execute($DocRevID);
+  $SignoffList -> bind_columns(undef, \($SignoffID));
+  while ($SignoffList -> fetch) {
+    push @RootSignoffs,$SignoffID;
+  }
+  
+  return @RootSignoffs;  
+}
+                        
+sub GetSubSignoffs ($) {
+  my ($PreSignoffID) = @_;
+  
+  my $SignoffID;
+  my @SubSignoffIDs = ();
+  
+  my $SignoffList = $dbh -> prepare("select Signoff.SignoffID from Signoff,SignoffDependency ".
+                                     "where SignoffDependency.PreSignoffID=? ".
+                                      "and SignoffDependency.SignoffID=Signoff.SignoffID");
+                        
+  $SignoffList -> execute($PreSignoffID);
+  $SignoffList -> bind_columns(undef, \($SignoffID));
+  while ($SignoffList -> fetch) {
+    push @SubSignoffIDs,$SignoffID;
+  }
+  
+  return @SubSignoffIDs;  
+}
+                        
+sub GetSignatures ($) {
+  my ($SignoffID) = @_;
+  
+  my $SignatureID;
+  my @SignatureIDs = ();
+  
+  my $SignatureList = $dbh -> prepare("select SignatureID from Signature ".
+                                     "where SignoffID=?");
+                        
+  $SignatureList -> execute($SignoffID);
+  $SignatureList -> bind_columns(undef, \($SignatureID));
+  while ($SignatureList -> fetch) {
+    push @SignatureIDs,$SignatureID;
+  }
+  
+  return @SignatureIDs;  
+}
+
+sub FetchSignature ($) {
+  my ($SignatureID) = @_;
+  
+  my ($EmailUserID,$SignoffID,$Note,$Signed,$TimeStamp);
+  my $SignatureFetch = $dbh -> prepare("select EmailUserID,SignoffID,Note,Signed,TimeStamp from Signature ".
+                                     "where SignatureID=?");
+
+  $SignatureFetch -> execute($SignatureID);
+  ($EmailUserID,$SignoffID,$Note,$Signed,$TimeStamp) = $SignatureFetch -> fetchrow_array;
+  
+  if ($TimeStamp) {
+    $Signatures{$SignatureID}{EmailUserID} = $EmailUserID;
+    $Signatures{$SignatureID}{SignoffID}   = $SignoffID  ;
+    $Signatures{$SignatureID}{Note}        = $Note       ;
+    $Signatures{$SignatureID}{Signed}      = $Signed     ;
+    $Signatures{$SignatureID}{TimeStamp}   = $TimeStamp  ;
+    return $SignatureID;
+  } else {
+    return 0;
+  }  
+}
+                        
 1;

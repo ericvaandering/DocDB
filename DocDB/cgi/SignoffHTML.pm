@@ -25,4 +25,69 @@ sub SignoffBox {
                             -columns => 30, -rows => 6);
 };
 
+sub PrintRevisionSignoffInfo($) { # FIXME: Handle more complicated topologies?
+  require "SignoffSQL.pm";
+
+  my ($DocRevID) = @_;
+
+  my @RootSignoffIDs = &GetRootSignoffs($DocRevID);
+  if (@RootSignoffIDs) {
+    print "<dl>\n";
+    print "<dt><b>Signoffs:</b><br>\n";
+    print "<ul>\n";
+    foreach my $RootSignoffID (@RootSignoffIDs) {
+      &PrintSignoffInfo($RootSignoffID);
+    }
+    print "</ul>\n";
+    print "</dl>\n";
+  }  
+}
+
+sub PrintSignoffInfo ($) {
+  require "SignoffSQL.pm";
+  
+  my ($SignoffID) = @_;
+
+  my @SubSignoffIDs = &GetSubSignoffs($SignoffID);
+  print "<li>";
+  &PrintSignatureInfo($SignoffID);
+  print "</li>\n";
+  if (@SubSignoffIDs) {
+    print "<ul>\n";
+    foreach my $SubSignoffID (@SubSignoffIDs) {
+      &PrintSignoffInfo($SubSignoffID);
+    }
+    print "</ul>\n";
+  }
+  return;
+}
+
+sub PrintSignatureInfo ($) {
+  require "SignoffSQL.pm";
+  require "NotificationSQL.pm";
+  
+  my ($SignoffID) = @_;
+
+  my @SignatureIDs = &GetSignatures($SignoffID); 
+  
+  my @SignatureSnippets = ();
+  
+  foreach my $SignatureID (@SignatureIDs) {
+    my $SignatureIDOK = &FetchSignature($SignatureID);
+    if ($SignatureIDOK) {
+      my $EmailUserID = $Signatures{$SignatureID}{EmailUserID};
+      &FetchEmailUser($EmailUserID);
+      
+      my $SignatureText = $EmailUser{$EmailUserID}{Name};
+      
+      
+      push @SignatureSnippets,$SignatureText;
+    }
+  }
+  
+  my $SignoffText = join 'or <br>\n',@SignatureSnippets;
+
+  print "$SignoffText\n";
+}
+
 1;
