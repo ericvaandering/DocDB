@@ -291,7 +291,7 @@ sub DocumentSummary { # One line document summary for listings
     print "<tr valign=top>\n";
     print "<td><nobr>$full_docid</nobr></td>\n";
     print "<td>$title</td>\n";
-    my $author_link = AuthorLink($Documents{$DocumentID}{REQUESTER});
+    my $author_link = FirstAuthor($DocRevID);
     print "<td><nobr>$author_link</nobr></td>\n";
     print "<td><nobr>$rev_date</nobr></td>\n";
     print "</tr>\n";
@@ -299,7 +299,7 @@ sub DocumentSummary { # One line document summary for listings
     print "<tr valign=bottom>\n";
     print "<th>Document Number</th>\n";
     print "<th>Title</th>\n";
-    print "<th>Requested by:</th>\n";
+    print "<th>Author:</th>\n";
     print "<th>Last Modified</th>\n";
     print "</tr>\n";
   } 

@@ -34,7 +34,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetSecurityGroups;
 &FetchDocument($DocumentID);
 
-if ($params{version} eq "0") {
+if ($params{version} eq "0") { # Options are undefined, 0, and non-zero.
   $Version = 0;
 } else {
   if ($params{version}) {
