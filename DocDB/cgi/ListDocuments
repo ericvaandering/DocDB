@@ -44,11 +44,13 @@ my @SortedDocuments = reverse sort DocumentByRevisionDate @DocumentIDs;
 print "<center><table cellpadding=3>\n";
 
 &DocumentSummary(0); # Force table headers
+my $NumDoc = 0;
 
 foreach $DocumentID (@SortedDocuments) {
   unless ($DocumentID) {next;}
   unless (&CanAccess($DocumentID,$Documents{$DocumentID}{NVER})) {next;}
   # FIXME: Need to put latest document accessible if last version isn't
+  ++$NumDoc;
   &DocumentSummary($DocumentID);
 }
 
@@ -57,7 +59,6 @@ print "<p>\n";
 
 ### Statistics
 
-my $NumDoc = $#DocumentIDs + 1;
 print "<p><b>Number of documents found: $NumDoc</b><p>\n";
 
 $EndTime  = new Benchmark;

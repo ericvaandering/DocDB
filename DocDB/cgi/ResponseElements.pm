@@ -477,7 +477,7 @@ sub PrintFile {
   
   my $Directory     = &GetDirectory($DocumentID,$VersionNumber);  
   
-  my $FileName      = $Directory.$DocFiles{$FileID}{NAME};
+  my $FileName      = $Directory.$DocFiles{$FileID}{NAME};  
     
   if (grep /text/,`file $FileName`) {
     open FILE,$FileName;

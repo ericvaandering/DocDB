@@ -55,7 +55,9 @@ PREAMBLE
   }
 
   foreach $MinorID (sort byTopic keys %MinorTopics) { #FIXME use join
-    print "label[\'$MinorID\'] = \'$MinorTopics{$MinorID}{FULL}\';\n"; 
+    my $label = $MinorTopics{$MinorID}{FULL};
+    $label =~ s/\'/\\\'/; # Escape single quotes
+    print "label[\'$MinorID\'] = \'$label\';\n"; 
   }   
 
   print <<ENDSCRIPT;

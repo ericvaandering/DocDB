@@ -48,7 +48,7 @@ $Administrator    = "docdbadm";
 $AuthUserFile     = "/www/conf/www-btev/.htpasswd";
 
 $LastDays         = 20;        # Number of days for default in LastModified
-$MeetingWindow    = 5;         # Days before and after meeting to preselect
+$MeetingWindow    = 10;         # Days before and after meeting to preselect
 $MeetingFiles     = 3;         # Number of upload boxes on meeting short form
 
 # Override settings in this file for the test DB 

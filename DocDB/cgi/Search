@@ -52,6 +52,13 @@ $PubInfoSearchMode = $params{pubinfosearchmode};
 @error_stack = ();
 @warn_stack  = ();
 
+my @DocumentIDs = ();
+my @RevisionDocumentIDs = ();
+my @TopicDocumentIDs = ();
+
+my $SearchedRevisions;
+my $SearchedTopics;
+
 unless ($InnerLogic eq "AND" || $InnerLogic eq "OR") {
   push @error_stack,"Inner logic must be either AND or OR.";
 }   
@@ -69,42 +76,84 @@ print "<p>\n";
 #print "MIN: @MinorSearchIDs<br>\n";
 #print "MAJ: @MajorSearchIDs<br>\n";
 
-### Text search matches
 
-my $TitlePhrase    = &TextSearch("DocumentTitle",  $TitleSearchMode,   $TitleSearch);
-my $AbstractPhrase = &TextSearch("Abstract",       $AbstractSearchMode,$AbstractSearch);
-my $KeywordPhrase  = &TextSearch("Keywords",       $KeywordSearchMode, $KeywordSearch);
-my $PubInfoPhrase  = &TextSearch("PublicationInfo",$PubInfoSearchMode, $PubInfoSearch);
+if ($TitleSearch || $AbstractSearch || $KeywordSearch || $PubInfoSearch) {
+  $SearchedRevisions = 1;
+### Text search matches
+  my $TitlePhrase    = &TextSearch("DocumentTitle",  $TitleSearchMode,   $TitleSearch);
+  my $AbstractPhrase = &TextSearch("Abstract",       $AbstractSearchMode,$AbstractSearch);
+  my $KeywordPhrase  = &TextSearch("Keywords",       $KeywordSearchMode, $KeywordSearch);
+  my $PubInfoPhrase  = &TextSearch("PublicationInfo",$PubInfoSearchMode, $PubInfoSearch);
 
 ### Get Documents from DocumentRevision that match
 
-my @RevisionPhrases = ();
-my $RevisionQuery   = "select DocumentID from DocumentRevision where ";
+  my @RevisionPhrases = ();
+  my $RevisionQuery   = "select DocumentID from DocumentRevision where Obsolete=0 and ";
 
-if ($TitlePhrase   ) {push @RevisionPhrases,$TitlePhrase   ;}
-if ($AbstractPhrase) {push @RevisionPhrases,$AbstractPhrase;}
-if ($KeywordPhrase ) {push @RevisionPhrases,$KeywordPhrase ;}
-if ($PubInfoPhrase ) {push @RevisionPhrases,$PubInfoPhrase ;}
+  if ($TitlePhrase   ) {push @RevisionPhrases,$TitlePhrase   ;}
+  if ($AbstractPhrase) {push @RevisionPhrases,$AbstractPhrase;}
+  if ($KeywordPhrase ) {push @RevisionPhrases,$KeywordPhrase ;}
+  if ($PubInfoPhrase ) {push @RevisionPhrases,$PubInfoPhrase ;}
 
-$RevisionQuery .= join $OuterLogic,@RevisionPhrases;
+  $RevisionQuery .= join $OuterLogic,@RevisionPhrases;
 
-#print "RQ: $RevisionQuery<br>\n";
+#  print "RQ: $RevisionQuery<br>\n";
 
-my %DocumentIDs = ();
+  my %RevisionDocumentIDs = ();
 
-my $document_list = $dbh -> prepare($RevisionQuery);
-$document_list -> execute();
-$document_list -> bind_columns(undef, \($DocumentID));
+  my $document_list = $dbh -> prepare($RevisionQuery);
+     $document_list -> execute();
+     $document_list -> bind_columns(undef, \($DocumentID));
 
-while ($document_list -> fetch) {
-  $DocumentIDs{$DocumentID} = 1; # Hash removes duplicates
+### List of documents found at this stage
+
+  while ($document_list -> fetch) {
+    $RevisionDocumentIDs{$DocumentID} = 1; # Hash removes duplicates
+  }
+  @RevisionDocumentIDs = keys %RevisionDocumentIDs;
+} 
+
+### Topics (if any)
+
+if (@MinorSearchIDs || @MajorSearchIDs) {
+  $SearchedTopics = 1;
+  if (@MinorSearchIDs) { 
+    @TopicRevisions = &TopicSearch($InnerLogic,"minor",@MinorSearchIDs);
+  } else {
+    @TopicRevisions = &TopicSearch($InnerLogic,"major",@MajorSearchIDs);
+  }  
+  @TopicDocumentIDs = &ValidateRevisions(@TopicRevisions);
 }
 
-### Assemble various queries into single list
 
-my @DocumentIDs = keys %DocumentIDs;
 
 ### Fetch all info for documents that match all criteria
+
+if ($OuterLogic eq "OR") {
+  push @DocumentIDs,@RevisionDocumentIDs;
+  push @DocumentIDs,@TopicDocumentIDs;
+} elsif ($OuterLogic eq "AND") {
+  my %TotalDocumentIDs = ();
+  my $TotalSearches    = 0;
+  my $DocID;
+  if ($SearchedRevisions) {
+    ++$TotalSearches;
+    foreach $DocID (@RevisionDocumentIDs) {
+      ++$TotalDocumentIDs{$DocID};
+    }
+  }    
+  if ($SearchedTopics) {
+    ++$TotalSearches;
+    foreach $DocID (@TopicDocumentIDs) {
+      ++$TotalDocumentIDs{$DocID};
+    }
+  } 
+  foreach $DocID (keys %TotalDocumentIDs) {
+    if ($TotalDocumentIDs{$DocID} == $TotalSearches) {
+      push @DocumentIDs,$DocID;
+    }
+  }    
+}
 
 foreach my $DocumentID (@DocumentIDs) { 
   &FetchDocument($DocumentID);

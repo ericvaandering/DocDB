@@ -27,4 +27,68 @@ sub TextSearch {
   return $Phrase;
 }
 
+#sub MajorTopicSearch {
+#  my ($Logic,@TopicIDs
+#  my $revtopic_list = $dbh -> prepare(
+#    "select DocRevID from RevisionTopic,MinorTopic ".
+#    "where RevisionTopic.MinorTopicID=MinorTopic.MinorTopicID ".
+#    "and MinorTopic.MajorTopicID=?";
+# 
+#
+#}
+
+sub TopicSearch {
+  my $revtopic_list;
+  my ($Logic,$Type,@TopicIDs) = @_;
+  if ($Type eq "minor") {
+    $revtopic_list = $dbh -> prepare(
+     "select DocRevID from RevisionTopic where MinorTopicID=?"); 
+  } elsif ($Type eq "major") {
+    $revtopic_list = $dbh -> prepare(
+      "select DocRevID from RevisionTopic,MinorTopic ".
+      "where RevisionTopic.MinorTopicID=MinorTopic.MinorTopicID ".
+      "and MinorTopic.MajorTopicID=?");
+  }  
+    
+  my %Revisions = ();
+  my @Revisions = ();
+  my $DocRevID;
+  
+  foreach $TopicID (@TopicIDs) {
+    $revtopic_list -> execute($TopicID );
+    $revtopic_list -> bind_columns(undef, \($DocRevID));
+    while ($revtopic_list -> fetch) {
+      ++$Revisions{$DocRevID};
+    }
+  }
+  if ($Logic eq "AND") {
+    foreach $DocRevID (keys %Revisions) {
+      if ($Revisions{$DocRevID} == $#TopicIDs+1) { # Require a match for each topic
+        push @Revisions,$DocRevID;
+      }
+    }
+  } elsif ($Logic eq "OR") {
+    @Revisions = keys %Revisions;
+  }  
+  
+  return @Revisions;     
+}
+
+sub ValidateRevisions {
+  require "RevisionSQL.pm";
+  
+  my (@RevisionIDs) = @_;
+  my %DocumentIDs = ();
+  my @DocumentIDs = ();
+  
+  foreach my $RevID (@RevisionIDs) {
+    &FetchDocRevisionByID($RevID);
+    unless ($DocRevisions{$RevID}{OBSOLETE}) {
+      $DocumentIDs{$DocRevisions{$RevID}{DOCID}} = 1;
+    }
+  }
+  @DocumentIDs = keys %DocumentIDs;
+  return @DocumentIDs;
+}
+
 1;

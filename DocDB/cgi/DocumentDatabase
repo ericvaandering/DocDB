@@ -54,7 +54,7 @@ if ($Public) {
 } else {
   print "&nbsp;&nbsp;(Looking for a document 
         <a href=\"$web_root/Static/Restricted/OldDBTranslation.shtml\">like
-         BTeV-int-year/xx</a>?)\n";
+         BTeV-int-year/xx</a> from the <a href=\"http://www-btev.fnal.gov/cgi-private/database/doclist.pl\">old DocDB</a>?)\n";
 }
 print $query -> endform;
 

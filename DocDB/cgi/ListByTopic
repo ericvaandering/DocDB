@@ -170,7 +170,6 @@ if      ($Mode eq "meeting") {
   &SpecialMajorTopics;
   @DocumentIDs = reverse sort DocumentByConferenceDate @DocumentIDs;
   $docids = join ' ',@DocumentIDs;
-#  print $docids,"<br>\n";  
 } else {
   @DocumentIDs = reverse sort DocumentByRevisionDate   @DocumentIDs;  
 }
@@ -181,16 +180,20 @@ if ($Mode eq "meeting" && !$Public) {
 
   my $AgendaFile = &FindAgenda($TopicID);
   print "<p><center><a href=\"$AgendaFile\"><b>Agenda for this meeting</b></a></center><p>\n";
+  %DocFiles = ();  # Stupid caching problem
+  %Files    = ();  # FIXME, please
 }
 
 print "<center><table cellpadding=3>\n";
 
 &DocumentSummary(0,$Mode); # Force table headers
+my $NumDoc = 0;
 
 foreach $DocumentID (@DocumentIDs) {
   unless ($DocumentID) {next;}
   unless (&CanAccess($DocumentID,$Documents{$DocumentID}{NVER})) {next;}
   # FIXME: Need to put latest document accessible if last version isn't
+  ++$NumDoc;
   &DocumentSummary($DocumentID,$Mode);
 }
 
@@ -199,7 +202,6 @@ print "<p>\n";
 
 ### Statistics
 
-my $NumDoc = $#DocumentIDs + 1;
 print "<p><b>Number of documents found: $NumDoc</b><p>\n";
 
 ### Special stuff if this is the current meeting
@@ -229,7 +231,7 @@ $EndTime  = new Benchmark;
 $TimeDiff = timediff($EndTime,$StartTime);
 print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
 
-&DocDBNavBar();
+&DocDBNavBar("List&nbsp;Meetings",$ListMeetings);
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
 
 exit;

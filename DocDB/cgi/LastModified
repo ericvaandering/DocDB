@@ -100,11 +100,13 @@ if ($Mode eq "meeting") {
 print "<center><table cellpadding=3>\n";
 
 &DocumentSummary(0,$Mode); # Force table headers
+my $NumDoc = 0;
 
 foreach $DocumentID (@DocumentIDs) {
   unless ($DocumentID) {next;}
   unless (&CanAccess($DocumentID,$Documents{$DocumentID}{NVER})) {next;}
   # FIXME: Need to put latest document accessible if last version isn't
+  ++$NumDoc;
   &DocumentSummary($DocumentID,$Mode);
 }
 
@@ -113,7 +115,6 @@ print "<p>\n";
 
 ### Statistics
 
-my $NumDoc = $#DocumentIDs + 1;
 print "<p><b>Number of documents found: $NumDoc</b><p>\n";
 
 $EndTime  = new Benchmark;

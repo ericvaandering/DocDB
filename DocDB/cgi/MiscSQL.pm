@@ -61,9 +61,9 @@ sub FetchDocFiles {
   my $file_list = $dbh->prepare(
     "select DocFileID,FileName,Date,RootFile,TimeStamp,Description,DocRevID ".
     "from DocumentFile where DocRevID=?");
-#  if ($Files{$docRevID}) {
-#    return $Files{$docRevID};  # Caching not working for some reason
-#  }
+  if ($Files{$docRevID}) {
+    return $Files{$docRevID};  # Caching not working for some reason
+  }
   $file_list -> execute($docRevID);
   $file_list -> bind_columns(undef, \($DocFileID,$FileName,$Date,$RootFile,$TimeStamp,$Description,$DocRevID));
   while ($file_list -> fetch) {
