@@ -74,7 +74,7 @@ sub CanAccessMeeting ($) {
 sub CanModifyMeeting ($) {
   my ($ConferenceID) = @_;
   
-  if ($Public || !(&CanCreateMeeting()) {
+  if ($Public || !(&CanCreateMeeting())) {
     return 0; # The public and those who can't create meetings can't modify meetings
   }  
   
