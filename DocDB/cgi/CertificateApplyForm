@@ -89,7 +89,7 @@ if ($CertificateStatus eq "verified") {
   print "<b>Your certificate is valid but you have never applied for access to
          documents.<br/>Fill out the form below to apply for access.</b><p>";
   print "<center>\n";
-  
+  print $query -> start_multipart_form('POST',$CertificateApply);
   print "<table cellpadding=5>\n";
   print "<tr>\n";
   print "<td valign=top><b>Your name (Certificate CN):</b><br>&nbsp;&nbsp;$CertCN<p/>\n";
@@ -107,6 +107,7 @@ if ($CertificateStatus eq "verified") {
                 -name => "certnote");    
   print "</td></tr>";
   print "</table>\n";       
+  print $query -> submit (-value => "Apply for access");
   print "</center>\n";
 }
 
