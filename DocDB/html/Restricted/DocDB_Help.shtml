@@ -213,22 +213,20 @@ The advanced form provides a few other options that might be useful.
 <b>Topic Selection: </b>
 You can either select the subtopic(s) for your document from one long list (the
 current default) or from a number of shorter lists split up by topic. 
+<p> 
 
-<p>
-<b>Author Selection: </b>
-You can either select the author(s) for your document from a long list (the
-default) or by typing the author list into a text box. Using the second method,
-each author is checked against the master list and placing the document in the
-database will not proceed until every author you've typed in has a unique match.
-You can type in full first names or just initials, the matching is
-<i>reasonably</i> intelligent. 
+<b>Author Selection: </b> You can either select the author(s) for your document
+from a long list (the default) or by typing the author list into a text box.
+Using the second method, each author is checked against the master list and the
+document will not be placed in the database until every author you've typed in
+has a unique match. You can type in full first names or first initials (middle initials
+are ignored), the matching is <i>reasonably</i> intelligent.<p>
 
-<p>
-<b>Overriding the submission date: </b>
-Use this option to set the date and time for a document written in the past.
-Unless you are submitting a document from the old database or one written 
-some time ago, you should probably not select this option. By default, new documents
-are entered with the current date and time.
+<b>Overriding the submission date: </b> Using this option will give you another
+control on the entry form to set the date and time for a document written in
+the past. Unless you are submitting a document from the old database or one
+written  some time ago, you should probably not select this option. By default,
+new documents are entered with the current date and time.
 
 <h2>Special Cases</h2>
 
@@ -265,7 +263,10 @@ if you don't have as many files as you are being asked for, but you must fill in
 the first one. You should probably just leave the box marked "Main" checked.
 Finally, you can enter a short description of each file. This is helpful for
 people looking at the talk. A description like "PDF File" will be
-appreciated.<p>
+appreciated. If you need more than 3 input boxes, you should use links from the 
+<a href="http://www-btev.fnal.gov/cgi-bin/DocDB/DocumentDatabase">main page</a>.
+(If speakers commonly need additional upload boxes, we can add more to this
+page.)<p>
 
 <b>Requester:</b> Find and select the name of the person giving the talk. (This
 is probably you.)<p>

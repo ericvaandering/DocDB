@@ -27,6 +27,9 @@
 # OffsiteBTeVFooter($WebMasterEmail,$WebMasterName)
 #    The same, but without the FNAL legal disclaimer
 #
+# A global variable $Public is used to (when set) remove elements from the
+# nav-bars that the public has no interest in.
+# 
 # The simplest CGI script would then look like this: 
 #
 #  require "BTeVHeaders.pm";
