@@ -532,14 +532,17 @@ sub UpdateButton {
 }
 
 sub UpdateDBButton {
-  my ($DocumentID) = @_;
-  my ($Version);
+  my ($DocumentID,$Version) = @_;
   
 #  unless (&CanModify) {return;}
 
   $query -> param('mode',   'updatedb');
-  $query -> param('docid',  $DocumentID);
-  $query -> param('version',$Version);
+  unless (defined $DocumentID) {
+    $query -> param('docid',  $DocumentID);
+  }
+  unless (defined $Version) {
+    $query -> param('version',$Version);
+  }
   
   print $query -> startform('POST',$DocumentAddForm);
   print $query -> hidden(-name =>    'mode', -default => 'updatedb');

@@ -185,7 +185,7 @@ sub PrintRevisionInfo {
     print "<td colspan=2 align=center>";
     &UpdateButton($DocumentID);
     print "<td colspan=2 align=center>";
-    &UpdateDBButton($DocumentID);
+    &UpdateDBButton($DocumentID,$Version);
     print "<td colspan=2 align=center>";
     &AddFilesButton($DocumentID,$Version);
     print "</td></tr>\n";
