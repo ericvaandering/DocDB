@@ -178,6 +178,7 @@ sub AuthorsTable {
 
 sub AuthorScroll (%) {
   require "AuthorSQL.pm";
+  require "Sorts.pm";
   
   my (%Params) = @_;
   
