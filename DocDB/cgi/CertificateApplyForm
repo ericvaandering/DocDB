@@ -29,10 +29,11 @@ require "DocDBGlobals.pm";
 require "Messages.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
+require "Scripts.pm";
 
 require "CertificateUtilities.pm";
 
-
+require "Debug.pm"; # REMOVE
 
 $query = new CGI;  # Global for subroutines
 
@@ -43,6 +44,8 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 ### Start HTML
 
 print $query->header;
+&HelpPopupScript;
+
 &DocDBHeader("Certificate Status and Application");
 
 &EndPage(@ErrorStack);
@@ -89,7 +92,7 @@ if ($CertificateStatus eq "verified") {
   print "<b>Your certificate is valid but you have never applied for access to
          documents.<br/>Fill out the form below to apply for access.</b><p>";
   print "<center>\n";
-  print $query -> start_multipart_form('POST',$CertificateApply);
+  print $query -> start_multipart_form('POST',$$UserAccessApply);
   print "<table cellpadding=5>\n";
   print "<tr>\n";
   print "<td valign=top><b>Your name (Certificate CN):</b><br>&nbsp;&nbsp;$CertCN<p/>\n";
