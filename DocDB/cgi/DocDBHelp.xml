@@ -678,4 +678,14 @@ summary of the document. The description is optional.
   </text>
  </entry>
 
+ <entry>
+  <key>doctypeentry</key>
+  <title>Document Type Entry</title>
+  <text>
+Enter a long and short name for the document type. Generally, only the short
+name (such as "Proceeding") is seen while the long name ("Conference
+Proceeding") is not used in the current software.
+  </text>
+ </entry>
+
 </helpfile>

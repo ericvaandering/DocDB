@@ -1,5 +1,6 @@
 #! /usr/bin/env perl
 #
+#        Name: AdministerForm
 # Description: This single form provides a number of interfaces to admin 
 #              tools, each run by a different script. 
 #
@@ -15,6 +16,7 @@ require "AdministerElements.pm";
 require "FormElements.pm";
 require "AuthorElements.pm";
 require "JournalHTML.pm";
+require "DocTypeHTML.pm";
 require "Scripts.pm";
 require "Security.pm";
 
@@ -29,6 +31,7 @@ $query = new CGI;  # Global for subroutines
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 &GetInstitutions;
+&GetDocTypes;
 &GetAuthors;
 &GetTopics;
 &GetJournals;
@@ -233,6 +236,36 @@ print "<p>\n";
 &JournalTable;
 
 print "<p><hr>\n";
+
+### Document Types
+
+print "<a name=\"journal\"><center><h4>Administer Journals</h4></center>\n";
+
+print $query -> start_multipart_form('POST',"$DocTypeAdminister");
+print "<table cellpadding=10>\n";
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td>\n"; &DocTypeSelect;   print "</td>\n";
+print "<td>\n"; &DocTypeEntryBox; print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n";
+&AdministratorPassword;
+print "&nbsp;";
+print $query -> submit (-value => "Change Document Type Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<p><hr>\n";
+
+
 
 ### FIXME: Conferences
 ### FIXME: Email Users

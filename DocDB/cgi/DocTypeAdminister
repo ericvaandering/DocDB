@@ -1,0 +1,122 @@
+#! /usr/bin/env perl
+#
+#        Name: DocTypeAdminister.pm
+# Description: This script is called by AdministerForm and does administration 
+#              on document types in the DB. This script adds, modifies and
+#              deletes document types.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+use CGI;
+use DBI;
+
+require "DocDBGlobals.pm";
+require "ResponseElements.pm";
+require "Security.pm";
+require "HTMLUtilities.pm";
+require "MiscSQL.pm";
+require "DocTypeHTML.pm";
+require "Messages.pm";
+
+$query = new CGI;  # Global for subroutines
+
+print $query->header;
+&DocDBHeader("Modified List of Document Types");
+
+%params = $query -> Vars;
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+# Parameters to script 
+
+$Password     = $params{password};
+$Username     = $Administrator;
+$Action       = $params{admaction};
+
+#$JournalID    = $params{journal};
+#$FullName     = $params{name};
+#$Abbreviation = $params{abbr};
+#$Acronym      = $params{acronym};
+#$Publisher    = $params{pub};
+#$URL          = $params{url};
+
+unless (&CanAdminister) {
+  push @ErrorStack,$Msg_AdminNoLogin;
+}  
+&EndPage(@ErrorStack);
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
+
+unless ($dbh) {
+  push @ErrorStack,$Msg_AdminNoConnect;
+}         
+&EndPage(@ErrorStack);
+
+&GetDocTypes;
+
+if      ($Action eq "Delete") { # Delete institutions
+#  if (!$JournalID) {
+#    push @ErrorStack,$Msg_ModJournalEmpty;
+#  } else {
+#    my $JournalDelete = $dbh -> prepare("delete from Journal where JournalID=?");
+#    $JournalDelete -> execute($JournalID);
+#    print "<b>$Journals{$JournalID}{Name} has been deleted.</b><br>\n";
+#  }
+} elsif ($Action eq "Modify") { # Modify journals
+#  unless ($JournalID) {
+#    push @ErrorStack,$Msg_ModJournalEmpty;
+#  }
+#  &EndPage(@ErrorStack);
+
+# Deal with name changes     
+
+#  if ($FullName) { 
+#    print "<b>Updating journal name.</b><br>\n";
+#    my $JournalUpdate = $dbh->prepare(
+#       "update Journal set Name=? where JournalID=?");
+#    $JournalUpdate -> execute($FullName,$JournalID);
+#  }
+#  if ($Abbreviation) { 
+#    print "<b>Updating journal abbreviation.</b><br>\n";
+#    my $JournalUpdate = $dbh->prepare(
+#       "update Journal set Abbreviation=? where JournalID=?");
+#    $JournalUpdate -> execute($Abbreviation,$JournalID);
+#  }
+} elsif ($Action eq "New") { # Create new journals
+#  print "<b>Adding a new journal.</b><br>\n";
+#  my $JournalInsert = $dbh->prepare(
+#   "insert into Journal (JournalID,Name,Abbreviation,Publisher,URL,Acronym) ".
+#   "             values (0,?,?,?,?,?)");
+#      
+#
+#  $JournalInsert -> execute($FullName,$Abbreviation,$Publisher,$URL,$Acronym);
+#  $JournalID = $JournalInsert -> {mysql_insertid}; # Works with MySQL only
+} else {
+  push @ErrorStack,"No valid action was specified.";
+}  
+
+# For modify or new fetch institution information and display.
+
+if ($Action eq "Modify" || $Action eq "New") {
+  &GetDocTypes;
+  print "<p><b>Here are the results of your modification:  <br>\n";
+#  print "Name:         $Journals{$JournalID}{Name}         <br>\n";
+#  print "Abbreviation: $Journals{$JournalID}{Abbreviation} <br>\n";
+#  print "Acronym:      $Journals{$JournalID}{Acronym}      <br>\n";
+#  print "Publisher:    $Journals{$JournalID}{Publisher}    <br>\n";
+#  print "URL:          $Journals{$JournalID}{URL}          <br>\n";
+#  print "</b><p>\n";
+}  
+
+print "<p>\n";
+
+&WarnPage(@WarnStack);
+&EndPage(@ErrorStack);
+
+&DocDBNavBar;
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+ 
+exit;

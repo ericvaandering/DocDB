@@ -118,6 +118,7 @@ $InstitutionAdminister = $cgi_root."InstitutionAdminister";
 $TopicAdminister       = $cgi_root."TopicAdminister";
 $MajorTopicAdminister  = $cgi_root."MajorTopicAdminister";
 $JournalAdminister     = $cgi_root."JournalAdminister";
+$DocTypeAdminister     = $cgi_root."DocTypeAdminister";
 
 $GroupAdministerForm   = $cgi_root."GroupAdministerForm";
 $GroupAdminister       = $cgi_root."GroupAdminister";
