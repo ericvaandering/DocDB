@@ -4,8 +4,8 @@ sub PrintGroupParents ($) {
   print "<ul>\n";
   my @HierarchyIDs = keys %GroupsHierarchy;
   foreach $HierarchyID (@HierarchyIDs) {
-    if ($GroupID == $GroupsHierarchy{$HierarchyID}{CHILD}) {
-      my $ParentID = $GroupsHierarchy{$HierarchyID}{PARENT};
+    if ($GroupID == $GroupsHierarchy{$HierarchyID}{Child}) {
+      my $ParentID = $GroupsHierarchy{$HierarchyID}{Parent};
       print "<li>$SecurityGroups{$ParentID}{NAME}\n";
     }  
   }
@@ -18,8 +18,8 @@ sub PrintGroupChildren ($) {
   print "<ul>\n";
   my @HierarchyIDs = keys %GroupsHierarchy;
   foreach $HierarchyID (@HierarchyIDs) {
-    if ($GroupID == $GroupsHierarchy{$HierarchyID}{PARENT}) {
-      my $ParentID = $GroupsHierarchy{$HierarchyID}{CHILD};
+    if ($GroupID == $GroupsHierarchy{$HierarchyID}{Parent}) {
+      my $ParentID = $GroupsHierarchy{$HierarchyID}{Child};
       print "<li>$SecurityGroups{$ParentID}{NAME}\n";
     }  
   }

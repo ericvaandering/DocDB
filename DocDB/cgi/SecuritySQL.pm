@@ -1,4 +1,8 @@
 sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with all authors
+  if ($HaveAllSecurityGroups) {
+    return;
+  } 
+  
   my ($GroupID,$Name,$Description,$CanCreate,$CanAdminister,$TimeStamp);
   my $GroupList  = $dbh -> prepare(
      "select GroupID,Name,Description,CanCreate,CanAdminister,TimeStamp from SecurityGroup"); 
@@ -21,17 +25,24 @@ sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with 
   $HierarchyList -> bind_columns(undef, \($HierarchyID,$ChildID,$ParentID,$TimeStamp));
   %GroupsHierarchy = ();
   while ($HierarchyList -> fetch) {
-    $GroupsHierarchy{$HierarchyID}{CHILD}     = $ChildID;
-    $GroupsHierarchy{$HierarchyID}{PARENT}    = $ParentID;
+    $GroupsHierarchy{$HierarchyID}{Child}     = $ChildID;
+    $GroupsHierarchy{$HierarchyID}{Parent}    = $ParentID;
     $GroupsHierarchy{$HierarchyID}{TimeStamp} = $TimeStamp;
   }
+  
+  $HaveAllSecurityGroups = 1;
 }
 
-sub FetchSecurityGroup {
+sub FetchSecurityGroup ($) {
   my ($GroupID) = @_;
   my ($Name,$Description,$CanCreate,$CanAdminister,$TimeStamp);
   my $GroupList  = $dbh -> prepare(
      "select Name,Description,CanCreate,CanAdminister,TimeStamp from SecurityGroup where GroupID=?"); 
+  
+  if ($SecurityGroups{$GroupID}{TimeStamp}) { 
+    return;
+  }
+    
   $GroupList -> execute($GroupID);
   $GroupList -> bind_columns(undef, \($Name,$Description,$CanCreate,$CanAdminister,$TimeStamp));
   while ($GroupList -> fetch) {
@@ -49,10 +60,9 @@ sub FetchSecurityGroup {
   $HierarchyList -> execute($GroupID,$GroupID);
   $HierarchyList -> bind_columns(undef, \($HierarchyID,$ChildID,$ParentID,$TimeStamp));
   while ($HierarchyList -> fetch) {
-    $GroupsHierarchy{$HierarchyID}{CHILD}     = $ChildID;
-    $GroupsHierarchy{$HierarchyID}{PARENT}    = $ParentID;
+    $GroupsHierarchy{$HierarchyID}{Child}     = $ChildID;
+    $GroupsHierarchy{$HierarchyID}{Parent}    = $ParentID;
     $GroupsHierarchy{$HierarchyID}{TimeStamp} = $TimeStamp;
-    print "$TimeStamp<br>\n";
  }
 
 }
@@ -100,16 +110,31 @@ sub GetRevisionModifyGroups {
 }
 
 sub SecurityLookup {
-  my ($user) = @_;
+  my ($User) = @_;
   
-  my $group_name = $dbh->prepare(
+  my $GroupName = $dbh->prepare(
     "select Name from SecurityGroup where lower(Name) like lower(?)");
-  $group_name -> execute($user);
+  $GroupName -> execute($User);
 
-  my ($Name) = $group_name -> fetchrow_array; 
+  my ($Name) = $GroupName -> fetchrow_array; 
   
   return $Name;
 }
 
+sub FetchSecurityGroupByName ($) {
+  my ($Name) = @_;
+  
+  my $GroupSelect = $dbh->prepare(
+    "select GroupID from SecurityGroup where lower(Name) like lower(?)");
+  $GroupSelect -> execute($Name);
 
+  my ($GroupID) = $GroupSelect -> fetchrow_array;
+  if ($GroupID) {
+    &FetchSecurityGroup($GroupID);
+  } else {
+    return 0;
+  }  
+  return $GroupID;
+}   
+  
 1;

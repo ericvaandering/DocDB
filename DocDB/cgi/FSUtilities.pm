@@ -142,8 +142,8 @@ sub ProtectDirectory { # Write (or delete) correct .htaccess file in directory
     push @users,$SecurityGroups{$GroupID}{NAME};
     $all_users{$GroupID} = 1; # Add user
     foreach $HierarchyID (keys %GroupsHierarchy) {
-      if ($GroupsHierarchy{$HierarchyID}{CHILD} == $GroupID) {
-        $all_users{$GroupsHierarchy{$HierarchyID}{PARENT}} = 1;
+      if ($GroupsHierarchy{$HierarchyID}{Child} == $GroupID) {
+        $all_users{$GroupsHierarchy{$HierarchyID}{Parent}} = 1;
       }
     }
   }  
