@@ -758,7 +758,7 @@ or may not be the same as the web username and password.
   <title>Meeting preamble</title>
   <text>
    You can put any text here that you would like to appear at the top of your
-   meeting listing.
+   meeting listing. URLs entered here will be linked.
   </text>
  </entry>
 
@@ -767,7 +767,7 @@ or may not be the same as the web username and password.
   <title>Meeting epilogue</title>
   <text>
    You can put any text here that you would like to appear at the bottom of your
-   meeting listing, such as instructions for attending.
+   meeting listing, such as instructions for attending. URLs entered here will be linked.
   </text>
  </entry>
 
@@ -802,7 +802,7 @@ or may not be the same as the web username and password.
   <text>
    Fill out the location of the session, its starting date and time, a short
    title for the session, and a longer note, such as instructions, in the
-   description field.
+   description field. URLs entered here will be linked.
   </text>
  </entry>
  
@@ -835,7 +835,7 @@ or may not be the same as the web username and password.
   <text>
    These blocks of text will be displayed at the beginning and end of the
    meeting listing. You may wish to include a welcome message, talk submission
-   directions, etc. in this way.
+   directions, etc. in this way. URLs entered here will be linked.
   </text>
  </entry>
  

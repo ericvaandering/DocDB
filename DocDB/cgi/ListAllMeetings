@@ -24,17 +24,16 @@ print $query->header;
 
 my $PageTitle;
 if ($Mode eq "modify") {
-  $PageTitle = "Modify Meetings";
+  $PageTitle = "Modify Events";
 } else {
-  $PageTitle = "List of Meetings";
+  $PageTitle = "List of Events";
 }
      
 &DocDBHeader($PageTitle);
 if ($Mode eq "modify") {
-  print "<h3>Select a meeting to change:</h3>\n";
+  print "<h3>Select an event to change:</h3>\n";
   &AllMeetingsTable("modify");
 } else {  
-  print "<h3>Meetings in Document Database:</h3>\n";
   &AllMeetingsTable("display");
 }
 

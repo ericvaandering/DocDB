@@ -9,7 +9,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -38,6 +38,7 @@ require "AdministerElements.pm";
 require "SecurityHTML.pm";
 
 require "MailNotification.pm";
+require "Sorts.pm";
 require "SecuritySQL.pm";
 require "NotificationSQL.pm";
 
@@ -97,15 +98,19 @@ print "<td>\n";
 print "</td>\n";  
 
 print "<td>\n";   
-print "<b><a ";
-&HelpLink("resetpassword");
-print "New Password:</a></b><br> \n";
-print $query -> textfield (-name => 'resetpw', -size => 20, 
-                           -maxlength => 20,   -disabled);
+if ($UserValidation eq "certificate") {
+  print "&nbsp;\n";
+} else {  
+  print "<b><a ";
+  &HelpLink("resetpassword");
+  print "New Password:</a></b><br> \n";
+  print $query -> textfield (-name => 'resetpw', -size => 20, 
+                             -maxlength => 20,   -disabled);
+}
 print "</td>\n";
 print "<td rowspan=5>\n"; 
 &SecurityScroll(-helplink => 'usergroups', -helptext => 'User\'s Groups', 
-                -name     => 'usergroups', -disabled => TRUE); 
+                -name     => 'usergroups', -disabled => TRUE, -multiple => TRUE); 
 print "</td>\n";  
 print "</tr>\n";
 
@@ -139,7 +144,7 @@ print "<p><hr>\n";
 
 ### Display of existing groups
 
-my @EmailUserIDs = &GetEmailUserIDs;
+my @EmailUserIDs = sort EmailUserIDsByName &GetEmailUserIDs;
 
 print "<table cellpadding=3>\n";
 foreach my $EmailUserID (@EmailUserIDs) {
@@ -208,7 +213,24 @@ foreach my $EmailUserID (@EmailUserIDs) {
 } 
 print "</table>\n";
 
-print "<p><hr><p>\n";
+### List of groups with associated names
+
+my @SecurityGroups = sort keys %SecurityIDs;
+
+foreach my $SecurityGroup (@SecurityGroups) {
+  my @EmailUserIDs = sort EmailUserIDsByName &FetchEmailUSerIDsBySecurityGroup($SecurityIDs{$SecurityGroup});
+  if (@EmailUserIDs) {
+    print "<strong>$SecurityGroup has these members:</strong>\n<ul>\n";
+    foreach my $EmailUserID (@EmailUserIDs) {
+      if ($EmailUser{$EmailUserID}{Name}) { 
+        print "<li>$EmailUser{$EmailUserID}{Name} ($EmailUser{$EmailUserID}{Username}, $EmailUser{$EmailUserID}{EmailAddress})</li>\n";
+      }
+    }
+    print "</ul>\n";
+  }     
+}
+
+print "<p/><hr/><p/>\n";
 
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

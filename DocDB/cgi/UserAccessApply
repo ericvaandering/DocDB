@@ -50,6 +50,16 @@ print $query->header;
 
 my $CertificateStatus = &CertificateStatus();
 my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
+if ($Preferences{Security}{Certificates}{UseCNOnly} && !$CertEmail) {
+  $CertEmail = $params{email};
+}
+
+unless ($CertEmail) { 
+  push @WarnStack,"Your certificate has no e-mail address and you didn't supply one.";
+}
+
+&WarnPage(@WarnStack); @WarnStack = ();    
+    
 my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
 
 if ($CertificateStatus eq "verified") {

@@ -1,3 +1,13 @@
+6.3.0 
+
+By default, certificate authorization uses the e-mail address in a client
+certificate to determine if it is unique. Some certificate providers don't
+encode an e-mail address. In that case, you can set
+$Preferences{Security}{Certificates}{UseCNOnly} = TRUE to use the CN instead.
+
+Also, adds indicators of required fields to the meeting entry form and fixes a
+few small bugs discovered by FNAL-CD.
+
 6.2 
 
 Allows people with personal accounts to monitor specific documents, not just
