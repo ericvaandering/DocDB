@@ -144,6 +144,7 @@ sub PrintRevisionInfo {
   }  
   print "</table>\n";
   if (&CanModify($DocumentID) && !$HideButtons) {
+    require "Scripts.pm";
     print "<hr width=\"90%\"/>\n";
     print "<table cellpadding=10>\n";
     print "<tr valign=top>";
@@ -154,6 +155,10 @@ sub PrintRevisionInfo {
     print "<td align=center width=33%>";
     &AddFilesButton($DocumentID,$Version);
     print "</td></tr>\n";
+    print "<tr><td colspan=3 align=center>\n"
+    print "<th><b><a "; &HelpLink("modifytypes"); print "Explain these options</a></th>\n";
+    print "</td></tr>\n";
+
     print "</table></center>\n"; 
   }  
 

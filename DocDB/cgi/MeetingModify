@@ -115,7 +115,12 @@ unless ($dbh) {
 }         
 
 print $query->header;
-&DocDBHeader("Modify a Meeting");
+if ($SetMode eq "create") {
+  &DocDBHeader("Create a New Meeting");
+} else {
+  &DocDBHeader("Modify a Meeting");
+}
+  
 &EndPage(@ErrorStack);
 
 &HelpPopupScript;
@@ -445,7 +450,7 @@ if ($SessionsCreated   || $SessionsUpdated   || $SessionsDeleted   ||
     }  
   }  
   print "</dl>\n";
-  print "You can make more modifications, add or <b>Modify Talks</b> or <b><a href=\"$DisplayMeeting?conferenceid=$ConferenceID\">Display
+  print "You can make more modifications, <b>modify session agendas</b> or <b><a href=\"$DisplayMeeting?conferenceid=$ConferenceID\">Display
          the Meeting</a></b>\n";
 }    
 

@@ -351,10 +351,12 @@ it here.
 <key>description</key>
 <title>Description</title>
   <text>
-This is a short description of each file. This description will appear in the
-hyperlink in the document summary. For instance, you might describe a .ppt file
-as "PowerPoint of the conference talk" and a .ps file as "The proceedings for
-the conference." The description is optional, but recommended.
+This is a short description of each file which will be displayed alongside the
+filename. This description will appear in the hyperlink in the document
+summary. For instance, you might describe a .ppt file as "PowerPoint of the
+conference talk" and a .ps file as "The proceedings for the conference." The
+description is optional, but recommended. If you don't type a description, the
+filename will be used by itself.
   </text>
  </entry>
 

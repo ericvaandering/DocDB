@@ -152,8 +152,8 @@ print "<p><b>Database maintenance:</b><ul>\n";
 print "<li>Add an <a href=\"$AuthorAddForm\">author</a>\n";
 print "<li>Add a  <a href=\"$ConferenceAddForm\">conference</a>\n";
 if (&CanCreateMeeting()) {
-  print "<li>Organize a <a href=\"$MeetingModify\">new</a> or an 
-             <a href=\"$ListAllMeetings?mode=modify\">existing</a> meeting 
+  print "<li>Create a <a href=\"$MeetingModify\">new meeting</a> or modify an 
+             <a href=\"$ListAllMeetings?mode=modify\">existing meeting</a>
              (with talks)\n";
 }
 print "</ul>\n";
