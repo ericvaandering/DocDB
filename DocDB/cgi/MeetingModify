@@ -10,7 +10,10 @@
 use CGI;
 use DBI;
 
+require "Debug.pm";
+
 require "DocDBGlobals.pm";
+require "HTMLUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 
@@ -19,10 +22,43 @@ print $query->header;
 
 %params = $query -> Vars;
 
+my $Mode               = $params{mode};
+
+my $MajorTopic         = $params{majortopic};
+my $Short              = $params{short};
+my $Long               = $params{long};
+
+my $StartYear          = $params{startyear};
+my $StartMonth         = $params{startmonth};
+my $StartDay           = $params{startday};
+my $EndYear            = $params{endyear};
+my $EndMonth           = $params{endmonth};
+my $EndDay             = $params{endday};
+my $MeetPreamble       = $params{meetpreamble};
+my $MeetEpilogue       = $params{meetepilogue};
+my $Location           = $params{location};
+my $URL                = $params{url};
+
+my $SessionYear        = $params{sessionyear};
+my $SessionMonth       = $params{sessionmonth};
+my $SessionDay         = $params{sessionday};
+my $SessionHour        = $params{sessionhour};
+my $SessionOrder       = $params{sessionorder};
+my $Separator          = $params{separator};
+my $SessionTitle       = $params{sessiontitle};
+my $SessionDescription = $params{sessiondescription};
+
+@Separators = split /\0/,$Separator;
+
+my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
+my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
+
 @ErrorStack = ();
 @WarnStack  = ();
 
-#$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
+&HTMLPrintParams();
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
 #unless ($dbh) {
 #  push @ErrorStack,$Msg_AdminNoConnect;
@@ -31,6 +67,29 @@ print $query->header;
 
 &WarnPage(@WarnStack);
 &EndPage(@ErrorStack);
+
+my $MinorTopicID;
+
+if ($Mode eq "create") {
+  if ($MajorTopic) {
+    my $TopicInsert = $dbh->prepare(
+      "insert into MinorTopic ".
+          "(MinorTopicID, MajorTopicID, ShortDescription, LongDescription) ". 
+      "values (0,?,?,?)");
+    $TopicInsert -> execute($MajorTopicID,$Short,$Long);
+    $MinorTopicID = $TopicInsert -> {mysql_insertid}; # Works with MySQL only
+  }
+  my $ConferenceInsert = $dbh->prepare(
+   "insert into Conference ".
+          "(ConferenceID, MinorTopicID, Location, URL, StartDate, EndDate, ".
+          " Preamble, Epilogue, Title) ". 
+   "values (0,?,?,?,?,?,?,?,?)");
+  $ConferenceInsert -> execute($MinorTopicID,$Location,$URL,
+                                $StartDate,$EndDate); 
+  $ConferenceID = $ConferenceInsert -> {mysql_insertid}; # Works with MySQL only
+
+}
+
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -14,4 +14,12 @@ sub HTMLPrintParams {
   print "</table>\n"; 
 }
 
+sub HTMLPrintKeys {
+  print "<table>\n"; 
+  foreach my $key (keys %params) {
+    print "<tr><td>$key\n";
+  }  
+  print "</table>\n"; 
+}
+
 1;

@@ -21,7 +21,7 @@ sub ConferencePreambleBox {
   print "<b><a ";
   &HelpLink("confreamble");
   print "Meeting Preamble:</a></b><br> \n";
-  print $query -> textarea (-name => 'introtext',
+  print $query -> textarea (-name => 'meetpreamble',
                             -columns => 50, -rows => 5);
 };
 
@@ -30,7 +30,7 @@ sub ConferenceEpilogueBox {
   print "<b><a ";
   &HelpLink("confepilogue");
   print "Meeting Epilogue:</a></b><br> \n";
-  print $query -> textarea (-name => 'disctext',
+  print $query -> textarea (-name => 'meetepilogue',
                             -columns => 50, -rows => 5);
 };
 
@@ -98,7 +98,7 @@ sub SessionOrder ($) {
 sub SessionSeparator ($) {
   my ($Order) = @_;
 #  print $query -> checkbox(-name => "separator", -value => $Order, -checked => 'checked', -label => '');
-  print $query -> checkbox(-name => "separator", -value => $Order, -label =>
+  print $query -> checkbox(-name => "separator", -value => "s$Order", -label =>
   'Yes');
 }
 
