@@ -72,19 +72,20 @@ print "Since users can modify their own data and create their own accounts,
 ### Email User Modification
 
 print $query -> start_multipart_form('POST',"$EmailAdminister");
-print "<table cellpadding=10>\n";
+print "<table cellpadding=10 border=4>\n";
 print "<tr valign=top>\n";
 print "<td colspan=2>\n"; &AdministerActions;      print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td rowspan=4>\n"; &EmailUserSelect; print "</td>\n";  
+print "<td rowspan=5>\n"; &EmailUserSelect; print "</td>\n";  
 print "<td>\n";   
 print "<b><a ";
 &HelpLink("resetpassword");
 print "New Password:</a></b><br> \n";
 print $query -> textfield (-name => 'resetpw', -size => 20, -maxlength => 20);
 print "</td>\n";
+print "<td rowspan=5>\n"; &EmailUserSelect; print "</td>\n";  
 print "</tr>\n";
 
 print "<tr><td>\n";
@@ -95,6 +96,9 @@ print $query -> checkbox(-name  => "verifyuser", -label => 'Verify User');
 print "</td></tr>\n";
 print "<tr><td>\n";
 print $query -> checkbox(-name  => "usersign", -label => 'User Can Sign Docs');
+print "</td></tr>\n";
+print "<tr><td>\n";
+print $query -> checkbox(-name  => "cleargroups", -label => 'Clear User\'s Groups');
 print "</td></tr>\n";
 
 print "<tr valign=top>\n";
@@ -155,13 +159,13 @@ foreach my $EmailUserID (@EmailUserIDs) {
   # Groups user belongs (or wants to belong to)
   
   print "<th>Groups:</th>";
-  print "<td><li>\n"; 
+  print "<td><ul>\n"; 
   my @UserGroupIDs = &FetchUserGroupIDs($EmailUserID);
   foreach my $UserGroupID (@UserGroupIDs) {
     &FetchSecurityGroup($UserGroupID);
     print "<li>$SecurityGroups{$UserGroupID}{NAME}</li>";
   }   
-  print "</li></td>\n";
+  print "</ul></td>\n";
   print "</tr>\n";
   print "</table>\n";
   print "</td>\n";
