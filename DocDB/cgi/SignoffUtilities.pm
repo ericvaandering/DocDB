@@ -208,6 +208,11 @@ sub UnsignRevision { # Remove all signatures from a revision
 }
 
 sub NotifySignees ($) {
+  
+  unless ($UseSignoffs) { 
+    return;
+  }  
+  
   require "SignoffSQL.pm";
   require "MailNotification.pm";
   
