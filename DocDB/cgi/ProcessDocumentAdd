@@ -58,18 +58,19 @@ $Special = $params{special};
 if ($Special eq "meeting") {$Meeting = 1;}
 if ($Special eq "othermeeting") {$OtherMeeting = 1;}
 
-$Archive    = $params{archive};
-$Overdate   = $params{overdate};
-$Overday    = $params{overday};
-$Overmonth  = $params{overmonth};
-$Overyear   = $params{overyear};
-$Overmin    = $params{overmin};
-$Overhour   = $params{overhour};
-@JournalIDs = split /\0/,$params{journal};
-@Volumes    = split /\0/,$params{volume};
-@Pages      = split /\0/,$params{page};
-$Keywords   = $params{keywords};
-$Requester  = $params{requester};
+   $Archive       = $params{archive};
+   $Overdate      = $params{overdate};
+   $Overday       = $params{overday};
+   $Overmonth     = $params{overmonth};
+   $Overyear      = $params{overyear};
+   $Overmin       = $params{overmin};
+   $Overhour      = $params{overhour};
+   @JournalIDs    = split /\0/,$params{journal};
+   @Volumes       = split /\0/,$params{volume};
+   @Pages         = split /\0/,$params{page};
+   $Keywords      = $params{keywords};
+   $Requester     = $params{requester};
+my $SessionTalkID = $params{sessiontalkid};
 
 if ($Meeting || $OtherMeeting) {
   @authorIDs = ($Requester);
@@ -77,7 +78,7 @@ if ($Meeting || $OtherMeeting) {
   if ($params{authormanual}) {
     @authorIDs = &ProcessManualAuthors($params{authormanual});
   } else {
-    @authorIDs = split ("\0",$params{authors}); 
+    @authorIDs = split /\0/,$params{authors}; 
   }
 }
 
@@ -154,6 +155,8 @@ my $file_insert = $dbh->prepare(
    "       (DocFileID, DocRevID, FileName, Date, RootFile, Description) ".
    "values (0,         ?,        ?,        ?,    ?       , ?)");
 
+my $SessionTalkUpdate = $dbh -> prepare("update SessionTalk set DocumentID=? where SessionTalkID=?");
+
 # FIXME: Build links for other document actions to use below
 
 ### Check parameters for errors
@@ -189,9 +192,9 @@ if ($mode eq "add" || $mode eq "reserve") {
   }
 }
 if ($mode eq "add" || $mode eq "update") {
-#  unless ($params{authors} || $params{authormanual}) {
-#    push @ErrorStack,"You must supply at least one author for this document.";
-#  }
+  unless ($params{authors} || $params{authormanual}) {
+    push @ErrorStack,"You must supply at least one author for this document.";
+  }
   unless ($params{topics}) {
     push @ErrorStack,"You must supply at least one topic for this document.";
   }
@@ -348,6 +351,10 @@ foreach $securityID (@securities) {
     $rev_security_insert -> execute($docRevID,$securityID);
   }  
 }
+
+if ($SessionTalkID) { # Add link to SessionTalk
+  $SessionTalkUpdate -> update ($documentID,$SessionTalkID);
+}  
 
 if ($EnhancedSecurity) {
   foreach my $GroupID (@ModifyGroups) {

@@ -427,4 +427,68 @@ sub PrintSessionSeparatorInfo ($) {
   print "</tr>\n";
 }
 
+sub MeetingLink ($) {
+  my ($ConferenceID) = @_;
+    
+  my $URL = "$DisplayMeeting?conferenceid=$ConferenceID";
+  my $Link  = "<a href=$URL>";
+     $Link .= $Conferences{$ConferenceID}{Title};
+     $Link .= "</a>";
+        
+  return $Link;
+}
+
+sub OrphanMeetingList {
+  require "Sorts.pm";
+
+  my @ConferenceIDs = keys %Conferences;
+  my @OrphanConferenceIDs = ();
+  foreach my $ConferenceID (@ConferenceIDs) {
+    unless ($Conferences{$ConferenceID}{Minor}) {
+      push @OrphanConferenceIDs,$ConferenceID;
+    }  
+  }
+
+#  my @OrphanConferenceIDs = sort byTopic keys @OrphanConferenceIDs;
+#FIXME add sort
+
+  print "<b>$More Meetings</b>\n";
+  print "<ul>\n";
+  foreach my $ConferenceID (@OrphanConferenceIDs) {
+    my $MeetingLink = &MeetingLink($ConferenceID);
+    print "<li>$MeetingLink</li>\n";
+  }  
+  print "</ul>\n";
+}
+
+sub MeetingsTable {
+  require "Sorts.pm";
+
+  my $NCols = 4;
+  my @MajorTopicIDs = (@GatheringMajorIDs,0);
+
+  my $Col   = 0;
+  my $Row   = 0;
+  print "<table cellpadding=10>\n";
+  foreach my $MajorID (@MajorTopicIDs) {
+    unless ($Col % $NCols) {
+      if ($Row) {
+        print "</tr>\n";
+      }  
+      print "<tr valign=top>\n";
+      ++$Row;
+    }
+    print "<td>\n";
+    if ($MajorID) {
+      &TopicsByMajorTopic($MajorID);
+    } else {
+      &OrphanMeetingList;
+    }  
+    print "</td>\n";
+    ++$Col;
+  }  
+  print "</tr>\n";
+  print "</table>\n";
+}
+
 1;

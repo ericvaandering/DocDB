@@ -272,6 +272,10 @@ sub SessionTalkPulldown {
   require "AuthorSQL.pm";
   
   my %SessionTalkLabels = ();
+  
+  $SessionTalkLabels{0} = "Select your talk from this list";
+  unshift @SessionTalkIDs,0;
+  
   foreach my $SessionTalkID (@SessionTalkIDs) {
     my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID); 
     my @Authors = ();
