@@ -80,14 +80,19 @@ if (defined $Version) {
   $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 }
 
-print $query->header;
-&DocDBHeader("$Project Document $DocumentID-v$Version");
+my $PageTitle = "$ShortProject-doc-$DocumentID-v$Version: Not authorized";
+if (&CanAccess($DocumentID,$Version)) {
+  $PageTitle = "$ShortProject-doc-$DocumentID-v$Version: $DocRevisions{$DocRevID}{Title}";
+} else {
+  if ($remote_user) {
+    push @ErrorStack,"The $remote_user group is not authorized to view this document (or it does not exist).";
+  } else {
+    push @ErrorStack,"This document is not publicly accessible.";
+  }  
+} 
 
-unless (&CanAccess($DocumentID,$Version)) {
-  push @ErrorStack,"Either you are not authorized to view this document 
-                     (with the username and password you supplied)  
-                     or the document does not exist.";
-}  
+print $query->header;
+&DocDBHeader($PageTitle,"$Project Document $DocumentID-v$Version");
 
 unless ($DocRevID) { # Probably never executed since CanAccess fails.
   push @ErrorStack,"This document does not exist.";

@@ -263,19 +263,27 @@ sub ExtractArchive {
   $current_dir = cwd();
   chdir $Directory or die "<p>Fatal error in chdir<p>\n";
   
-  my $Extract;
+  my $Command = "";
   chomp $File;
   if      (grep /\.tar$/,$File) {
-    $Extract = $Tar." xf ";
+    $Command = $Tar." xf ".$File;
   } elsif ((grep /\.tgz$/,$File) || (grep /\.tar\.gz$/,$File)) {
-    $Extract = $Tar." xfz ";
+    if ($GTar) {
+      $Command = $GTar." xfz ".$File;
+    } elsif ($Tar && $GZip) {
+      $Command = $GUnzip." -c ".$File." | ".$Tar." xf -";
+    }  
   } elsif (grep /\.zip$/,$File) {
-    $Extract = $Unzip." ";
+    $Command = $Unzip." ".$File;
   }  
   
-  $Command = $Extract.$File;
-  print "Unpacking the archive with the command <tt>$Command</tt> <br>\n";
-  system ($Command);
+  if ($Command) {
+    print "Unpacking the archive with the command <tt>$Command</tt> <br>\n";
+    system ($Command);
+  } else {
+    print "Could not unpack the archive; contact an 
+    <a href=\"mailto:$DBWebMasterEmail\">adminstrator</a>. <br>\n";
+  } 
   chdir $current_dir;
 }  
 

@@ -175,8 +175,12 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
     $SignoffDefault     = &BuildSignoffDefault($DocRevID);
   }
 } else {
-  my $User = &SecurityLookup($remote_user);
-  @SecurityDefaults = ($SecurityIDs{$User}); 
+  if ($DefaultPublicAccess) {
+    @SecurityDefaults = (0);
+  } else {
+    my $User = &SecurityLookup($remote_user);
+    @SecurityDefaults = ($SecurityIDs{$User}); 
+  }
 }  
 
 if ($EnhancedSecurity) {

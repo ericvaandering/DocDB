@@ -7,6 +7,23 @@
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 #
 
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 sub KeywordGroupInfo ($;$) {
   my ($KeyID,$mode) = @_;
   
@@ -202,7 +219,7 @@ sub KeywordLinkByID ($;%) {
   my $Link;
   
   unless ($NoLink) {  
-    $Link .= "<a href=\"$Search\?keywordsearchmode=anysub&keywordsearch=$Keyword\">";
+    $Link .= "<a href=\"$Search\?keywordsearchmode=anyword&keywordsearch=$Keyword\">";
   }
   
   if ($Format eq "short") { 
@@ -223,7 +240,7 @@ sub KeywordLink ($;%) { # FIXME: Allow parameters of short, long, full a la Lynn
 
   my $Format   = $Params{-format} || "short"; # short, full
   
-  my $ret = "<a href=\"$Search\?keywordsearchmode=anysub&keywordsearch=$Keyword\">";
+  my $ret = "<a href=\"$Search\?keywordsearchmode=anyword&keywordsearch=$Keyword\">";
   $ret .= "$Keyword";
   $ret .=  "</a>";
   return $ret;

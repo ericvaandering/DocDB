@@ -19,7 +19,10 @@ $MailInstalled = 1; # Is the Mailer::Mail module installed?
 # Shell Commands
 
 $Wget   = "/usr/bin/wget -O - --quiet ";
-$Tar    = "/bin/tar ";
+$Tar    = "";
+$GTar   = "/bin/tar ";
+$GZip   = "/bin/gzip ";
+$GUnzip = "/bin/gunzip ";
 $Unzip  = "/usr/bin/unzip -q ";
 $Zip    = "/usr/bin/zip -q -r ";  # Set to "" in ProjectGlobals if not installed
 
@@ -65,6 +68,10 @@ $NoTopicMatchThreshold  = 6;   # Threshold for matching talks in meetings with t
 
 @MatchIgnoreWords       = ("from","with","then","than","that","what"); # Don't match on these
   
+# Which things are publicly viewable?
+
+$PublicAccess{MeetingList} = 0;  
+  
 # Options
 
 $CaseInsensitiveUsers = 0;
@@ -73,6 +80,9 @@ $SuperiorsCanModify   = 1;     # In enhanced model, a superior group can modify
                                # a subordinate groups documents without explicit
                                # permission
 $UseSignoffs          = 0;     # Optional sign-off system for document approval
+$ContentSearch        = "";    # Scripts and engine installed for searching files
+
+$DefaultPublicAccess  = 0;     # New documents are public by default
 
 # Major topic names for "meetings" and "conferences". Each can be a list
 # The first item in the two lists are accessed by ListMeetings and ListConferences
@@ -166,5 +176,9 @@ $SelectEmailPrefs      = $cgi_root."SelectEmailPrefs";
 
 $DocDBHelp             = $cgi_root."DocDBHelp";
 $ShowTalkNote          = $cgi_root."ShowTalkNote";
+
+if (!$Tar && $GTar) {
+  $Tar = $GTar;
+} 
 
 1;

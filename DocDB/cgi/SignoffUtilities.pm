@@ -220,11 +220,20 @@ sub NotifySignees ($) {
       my @SignatureIDs = &GetSignatures($SignoffID);
       foreach my $SignatureID (@SignatureIDs) {
         push @EmailUserIDs,$Signatures{$SignatureID}{EmailUserID};
-#        print "Notifying $Signatures{$SignatureID}{EmailUserID}<br>\n";
       }
     } 
   }
-  &MailNotices(-docrevid => $DocRevID, -type => "sign", -emailids => \@EmailUserIDs);
+  if (@EmailUserIDs) {
+    &MailNotices(-docrevid => $DocRevID, -type => "signature", -emailids => \@EmailUserIDs);
+  }
+  
+  my ($Status,$DocRevID) = &RevisionStatus($DocRevID);
+  
+  print "<b>Approval Status: $Status</b><br>\n";
+  
+  if ($Status eq "Approved") {
+    &MailNotices(-docrevid => $DocRevID, -type => "approved");
+  }
 }
 
 sub CopyRevisionSignoffs { # CopySignoffs from one revision to another

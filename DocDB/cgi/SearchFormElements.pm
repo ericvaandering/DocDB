@@ -173,6 +173,21 @@ sub DescriptionSearchBox { # Field and mode selecter for searches on Files
   print "</td></tr>\n";
 };
 
+sub ContentSearchBox { # Field and mode selecter for searches on Files
+  print "<tr><th align=right><a ";
+  &HelpLink("contentsearch");
+  print "File contents:</a></th> \n";
+  print "<td>\n";
+  print $query -> textfield (-name      => 'filecontsearch', 
+                             -size      => 40, 
+                             -maxlength => 240);
+  print "</td>\n";
+  print "<td>\n";
+  print $query -> popup_menu (-name    => 'filecontsearchmode', 
+                              -values  => \%SearchModes);
+  print "</td></tr>\n";
+};
+
 sub RequesterSearchBox { # Scrolling selectable list for requester search
   my @AuthorIDs = sort byLastName keys %Authors;
   my %AuthorLabels = ();

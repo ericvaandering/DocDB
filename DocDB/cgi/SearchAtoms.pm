@@ -6,17 +6,22 @@ sub TextSearch {
   my $Delimit;
   my @Atoms = ();
   
-  if ($Mode eq "anysub" || $Mode eq "allsub") {
+  if ($Mode eq "anysub" || $Mode eq "allsub" || $Mode eq "anyword" || $Mode eq "allword") {
     my @Words = split /\s+/,$Words;
     foreach $Word (@Words) {
-      $Word =~ tr/[A-Z]/[a-z]/;
-      push @Atoms,"LOWER($Field) like \"%$Word%\"";
-    }  
+      if ($Mode eq "anysub" || $Mode eq "allsub") {
+        $Word =~ tr/[A-Z]/[a-z]/;
+        push @Atoms,"LOWER($Field) like \"%$Word%\"";
+      } elsif ($Mode eq "anyword" || $Mode eq "allword") {
+        $Word =~ tr/[A-Z]/[a-z]/;
+        push @Atoms,"LOWER($Field) REGEXP \"\[\[:<:\]\]$Word\[\[:>:\]\]\"";
+      }
+    }    
   }
 
-  if      ($Mode eq "anysub") {
+  if      ($Mode eq "anysub" || $Mode eq "anyword") {
     $Join = " OR ";
-  } elsif ($Mode eq "allsub") {
+  } elsif ($Mode eq "allsub" || $Mode eq "allword") {
     $Join = " AND ";
   }
 

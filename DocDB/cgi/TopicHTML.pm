@@ -57,7 +57,7 @@ sub MinorTopicLink ($;$) {
     @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
   }  
   
-  if ($ConferenceID && @MeetingOrderIDs && (!$Public)) {
+  if ($ConferenceID && @MeetingOrderIDs && &CanAccessMeeting($ConferenceID)) {
     $URL = "$DisplayMeeting?conferenceid=$ConferenceID";
   } else {
     $URL = "$ListByTopic?topicid=$TopicID";

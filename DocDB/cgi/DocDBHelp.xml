@@ -223,7 +223,20 @@ The following modes are used to search for information:
  <li><b>All words as sub-string: </b>The information you enter is broken into
  words (delimited by spaces) and the field you are searching in is required to
  match all of these words as substrings (in any order).</li> 
+ <li><b>Any or all words as words: </b>Like the searches above, but spaces are 
+ require to delimit words (<i>lock</i> will not match <i>block</i>).</li> 
 </ul> 
+  </text>
+ </entry>
+
+<entry>
+ <key>contentsearch</key>
+ <title>File content search</title>
+ <text>
+  This field uses an external search engine to search for strings in the files 
+  in the document. Whether it matches sub-strings or whole words is a function 
+  of the external search engine. Note that not all document formats are 
+  searchable. (Searches in text and HTML files will be most reliable.)
   </text>
  </entry>
 
@@ -961,6 +974,17 @@ or may not be the same as the web username and password.
    Select the groups you want to be able to modify the meeting and the agendas
    for the sessions in the meeting.  By default this is chosen to be the group
    you logged into. 
+  </text>
+ </entry>
+ 
+ <entry>
+  <key>signoffs</key>
+  <title>Signoff List</title>
+  <text>
+   This is the list of people who must sign the document in order, 
+   from top to bottom. Since the entered name must exactly match the name of 
+   the personal account, it's easiest to use the signoff chooser and click
+   on the names you wish to add.
   </text>
  </entry>
  
