@@ -1,18 +1,43 @@
 6.0
 
-DocDB now uses CSS in some places. Expect this use to grow. When updating DocDB,
-it will probably be necessary to update the CSS files too, or things may not
-render correctly.
+CSS (Cascading Style Sheets)
 
-The biggest impact of this is that now the ShowDocument script will not render
-correctly without CSS. To update for CSS, go to $file_root/Static (in the
-standard setup) and do "cvs update -d". This will create a "css" directory with
-the default CSS files for the installation. You can also create CSS files just
-for your project(s) which are included if they exist so you can change the
-DocDB defaults. See ProjectDocDB.css.example for an explanation. 
+  DocDB now uses CSS in some places. Expect this use to grow. When updating
+  DocDB, it will probably be necessary to update the CSS files too, or things
+  may not render correctly.
 
-CSS may allow us to make generic HTML help files too, since I know this is an
-issue. 
+  The biggest impact of this is that now the ShowDocument script will not
+  render correctly without CSS. To update for CSS, go to $file_root/Static (in
+  the standard setup) and do "cvs update -d". This will create a "css"
+  directory with the default CSS files for the installation. You can also
+  create CSS files just for your project(s) which are included if they exist so
+  you can change the DocDB defaults. See ProjectDocDB.css.example for an
+  explanation. 
+
+  To accommodate the CSS changes, changes were made to what is expected in 
+  ProjectRoutines.pm. DocDB now takes care of loading the default CSS files,
+  beginning and ending the <HEAD> and the <BODY> and a few other things. There
+  are now three hook routines instead of two:
+  
+  o ProjectHeader is called at the end of the section of the page between
+    <HEAD> and </HEAD> which allows you to include your own CSS (if you don't
+    use the mechanism above), Javascript for menus, etc.  
+  o ProjectBodyStart is called just after the <BODY> tag and allows you to print
+    out a header on the page.
+  o ProjectBodyEnd is called just before </BODY> and allows you to print a
+    footer on the page.
+    
+  Take a look at the examples in ProjectRoutines.pm.template. What you used to
+  have in DocDBHeader is now expected to be in ProjectHeader and
+  ProjectBodyStart, but there are lots of things you don't need either.
+  Likewise for DocDBFooter and ProjectBodyEnd. Also, be aware that for pop-ups
+  like the keyword chooser, help tips, etc. ProjectHeader will be called, but
+  not the other two routines. This allows the style of those windows to be
+  consistent with the others without the real estate of headers and
+  footers.       
+
+  Finally, CSS may allow us to make generic HTML help files too, since I know
+  this is an issue. 
 
 5.4.0
 
