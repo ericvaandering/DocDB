@@ -204,7 +204,7 @@ sub PrintRevisionInfo {
   }
   print "<center><table cellpadding=10 width=95%>\n";
   print "<tr><td colspan=3 align=center>\n";
-  &PrintTitle($DocRevisions{$DocRevID}{TITLE});
+  &PrintTitle($DocRevisions{$DocRevID}{Title});
   print "</td></tr>\n";
   print "<tr valign=top>";
   print "<td>";
@@ -363,7 +363,7 @@ sub NewDocumentLink ($;$$) { # FIXME: Make this the default
   }
   $Link .= "\">"; 
   if ($Mode eq "title") {
-    $Link .= $DocRevisions{$DocRevID}{TITLE};
+    $Link .= $DocRevisions{$DocRevID}{Title};
   } else {
     $Link .= &FullDocumentID($DocumentID,$Version);
   }
@@ -482,7 +482,7 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
     
     my $full_docid  = &DocumentLink($DocumentID,$Version);
     my $DocRevID    = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-    my $title       = &DocumentLink($DocumentID,$Version,$DocRevisions{$DocRevID}{TITLE});
+    my $title       = &DocumentLink($DocumentID,$Version,$DocRevisions{$DocRevID}{Title});
     if ($Mode eq "meeting") {
       my @FileIDs   = &FetchDocFiles($DocRevID);
     }

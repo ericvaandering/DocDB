@@ -128,7 +128,7 @@ if ($mode eq "update") {
 
 if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
   $DocRevID          = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-  $TitleDefault      = $DocRevisions{$DocRevID}{TITLE};
+  $TitleDefault      = $DocRevisions{$DocRevID}{Title};
   $PubInfoDefault    = $DocRevisions{$DocRevID}{PUBINFO};
   $AbstractDefault   = $DocRevisions{$DocRevID}{ABSTRACT};
   $RequesterDefault  = $DocRevisions{$DocRevID}{SUBMITTER};

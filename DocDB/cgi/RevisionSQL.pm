@@ -27,7 +27,7 @@ sub FetchDocRevisionByID {
   
   $DocRevIDs{$DocumentID}{$VersionNumber} = $DocRevID;
   $DocRevisions{$DocRevID}{SUBMITTER}     = $SubmitterID;
-  $DocRevisions{$DocRevID}{TITLE}         = $DocumentTitle;
+  $DocRevisions{$DocRevID}{Title}         = $DocumentTitle;
   $DocRevisions{$DocRevID}{PUBINFO}       = $PublicationInfo;
   $DocRevisions{$DocRevID}{ABSTRACT}      = $Abstract;
   $DocRevisions{$DocRevID}{DATE}          = $RevisionDate;
@@ -113,7 +113,7 @@ sub FetchRevisionsByDocument {
   return @DocRevList;
 }
 
-sub GetAllRevisions {
+sub GetAllRevisions { # FIXME: Implement full mode, flag with got all revisions
   my ($Mode) = @_;
   unless ($Mode) {$Mode = "brief"}; # Other modes not implemented yet
   my $revision_list = $dbh->prepare(
@@ -128,7 +128,7 @@ sub GetAllRevisions {
   while ($revision_list -> fetch) {
     $DocRevIDs{$DocumentID}{$VersionNumber} = $DocRevID;
     $DocRevisions{$DocRevID}{SUBMITTER}     = $SubmitterID;
-    $DocRevisions{$DocRevID}{TITLE}         = $DocumentTitle;
+    $DocRevisions{$DocRevID}{Title}         = $DocumentTitle;
     $DocRevisions{$DocRevID}{DATE}          = $RevisionDate;
     $DocRevisions{$DocRevID}{VERSION}       = $VersionNumber; # FIXME: BWC
     $DocRevisions{$DocRevID}{Version}       = $VersionNumber;

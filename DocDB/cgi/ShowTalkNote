@@ -52,7 +52,7 @@ if ($DocumentID) {
 
 my $BestTitle;
 if ($Confirmed && $DocumentID) {
-  $BestTitle = $DocRevisions{$DocRevID}{TITLE};
+  $BestTitle = $DocRevisions{$DocRevID}{Title};
 } else {
   $BestTitle = $SessionTalks{$SessionTalkID}{HintTitle};    
 }

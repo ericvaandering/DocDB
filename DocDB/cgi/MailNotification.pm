@@ -21,7 +21,7 @@ sub MailNotices ($) {
     my %Headers = ();
 
     my $FullID = &FullDocumentID($DocRevisions{$DocRevID}{DOCID},$DocRevisions{$DocRevID}{VERSION});
-    my $Title  = $DocRevisions{$DocRevID}{TITLE};
+    my $Title  = $DocRevisions{$DocRevID}{Title};
 
     $Headers{To} = \@Addressees;
     $Headers{From} = "$Project Document Database <$DBWebMasterEmail>";
@@ -49,7 +49,7 @@ sub RevisionMailBody ($) {
   my ($DocRevID) = @_;
   &FetchDocRevisionByID($DocRevID);
   
-  my $Title  = $DocRevisions{$DocRevID}{TITLE};
+  my $Title  = $DocRevisions{$DocRevID}{Title};
   my $FullID = &FullDocumentID($DocRevisions{$DocRevID}{DOCID},$DocRevisions{$DocRevID}{VERSION});
   my $URL    = &DocumentURL($DocRevisions{$DocRevID}{DOCID});
   
@@ -81,7 +81,7 @@ sub RevisionMailBody ($) {
   
   # Construct the mail body
   
-  print $Mailer "       Title: ",$DocRevisions{$DocRevID}{TITLE},"\n";
+  print $Mailer "       Title: ",$DocRevisions{$DocRevID}{Title},"\n";
   print $Mailer " Document ID: ",$FullID,"\n";
   print $Mailer "         URL: ",$URL,"\n";
   print $Mailer "        Date: ",$DocRevisions{$DocRevID}{DATE},"\n";;

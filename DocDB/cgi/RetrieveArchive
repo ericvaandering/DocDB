@@ -1,11 +1,13 @@
 #! /usr/bin/env perl
 #
-# Description: Create an archive (.zip, .tar, etc.) file of the document 
+# Description: Create an archive (.zip, .tar, .tar.gz) file of the document 
 #              and redirect the user to download it.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 #
+
+# FIXME: No links ask for .tar (might change)
 
 use CGI;
 use DBI;
@@ -31,7 +33,8 @@ my $DocumentID = $params{docid};
 unless ($DocumentID) {
   push @error_stack,"You are must supply a document number!";
 }  
-unless ($Type eq "zip" || $Type eq "tar.gz") {
+
+unless ($Type eq "zip" || $Type eq "tar.gz" || $Type eq ".tar") {
   $Type = "tar.gz";
 }  
 
@@ -60,29 +63,39 @@ unless ($DocRevID) {
 }
 
 my $URL;       
-my $status;
+my $Status;
 
 unless (@error_stack) { 
   my $Directory = &GetDirectory($DocumentID,$Version);
   my $URLDir    = &GetURLDir($DocumentID,$Version);
-  my $ShortFile = "tmp$DocumentID-$Version.$Type";
+
   my $TmpFile   = "/tmp/$ShortFile";
+  my $TarFile   = "$Directory/tmp$DocumentID-$Version.tar";
+  my $TgzFile   = "$Directory/tmp$DocumentID-$Version.tgz";
+  my $ZipFile   = "$Directory/tmp$DocumentID-$Version.zip";
+
+  my $ShortFile = "tmp$DocumentID-$Version.$Type";
   my $File      = "$Directory/$ShortFile";
      $URL       = "$URLDir/$ShortFile";
 
-#FIXME: zip request won't clear tar.gz request, vice versa
-
   unlink $TmpFile;
+  unlink $TarFile;
+  unlink $TgzFile;
+  unlink $ZipFile;
   unlink $File;
+  
   if ($Type eq "tar.gz") {
-    $status = system("$Tar czf $TmpFile $Directory"); 
+    $Status = system("$Tar czf $TmpFile $Directory"); 
+  } elsif ($Type eq "tar") {
+    $Status = system("$Tar cf $TmpFile $Directory"); 
   } elsif ($Type eq "zip") {
-    $status = system("$Zip $TmpFile $Directory/*"); 
+    $Status = system("$Zip $TmpFile $Directory/*"); 
   }  
-  $status = system("mv $TmpFile $File"); 
+  
+  $Status = system("mv $TmpFile $File"); 
 }
   
-if ($status) {
+if ($Status) {
   push @error_stack,"There was a problem creating the archive. Please contact an
                      administrator.";
 }

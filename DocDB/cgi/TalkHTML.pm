@@ -37,7 +37,7 @@ sub PrintSessionTalk($) {
   my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   my $AuthorLink = &FirstAuthor($DocRevID); 
   #FIXME: Make Version optional, see comment in ResponseElements.pm
-  my $Title      = &DocumentLink($DocumentID,$Version,$DocRevisions{$DocRevID}{TITLE});
+  my $Title      = &DocumentLink($DocumentID,$Version,$DocRevisions{$DocRevID}{Title});
   my @FileIDs    = &FetchDocFiles($DocRevID);
   my @TopicIDs   = &GetRevisionTopics($DocRevID);
 
