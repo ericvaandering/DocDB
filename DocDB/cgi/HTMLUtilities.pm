@@ -10,7 +10,7 @@ require "ProjectRoutines.pm";
 sub DocDBHeader { 
   my ($Title,$PageTitle,%Params) = @_;
   
-  my $Search = $Params{-search};
+  my $Search = $Params{-search}; # Fix search page!
   my $NoBody = $Params{-nobody};
   
   print "<html>\n";

@@ -120,8 +120,11 @@ sub PrintRevisionInfo {
   require "DocumentHTML.pm";
   require "SecurityHTML.pm";
   
-  my ($DocRevID,$HideButtons) = @_;
-
+  my ($DocRevID,%Params) = @_;
+  
+  my $HideButtons  = $Params{-hidebuttons}  || 0;
+  my $ShowVersions = $Params{-showversions} || 0;
+  
   &FetchDocRevisionByID($DocRevID);
   
   my $DocumentID  = $DocRevisions{$DocRevID}{DOCID};
@@ -164,8 +167,9 @@ sub PrintRevisionInfo {
    &PrintModTimes;
   print "</dl>\n";
   print "</div>\n";
-  
-  print "<div id=\"OtherVersions\">\n";
+
+  &OtherVersionLinks($DocumentID,$Version);
+
   print "</div>\n";
   
   print "</div>\n";  # LeftColumn3Col
@@ -376,5 +380,34 @@ sub PrintModTimes {
   print "<dt>DB Info Revised:</dt>\n<dd>$RevTime</dd>\n";
 }
 
+sub OtherVersionLinks {
+  require "Sorts.pm";
+  
+  my ($DocumentID,$CurrentVersion) = @_;
+  my @RevIDs   = reverse sort RevisionByVersion &FetchRevisionsByDocument($DocumentID);
+  
+  unless ($#RevIDs > 0) {return;}
+  print "<div id=\"OtherVersions\">\n";
+  print "<dl>\n";
+  print "<dt>Previous Versions:</dt>\n";
+  foreach $RevID (@RevIDs) {
+    my $Version = $DocRevisions{$RevID}{VERSION};
+    if ($Version == $CurrentVersion) {next;}
+    unless (&CanAccess($DocumentID,$Version)) {next;}
+    $link = &DocumentLink($DocumentID,$Version);
+    $date = &EuroDateTime($DocRevisions{$RevID}{DATE});
+    print "<dd>$link \n";
+    if ($UseSignoffs) {
+      require "SignoffUtilities.pm";
+      my ($ApprovalStatus,$LastApproved) = &RevisionStatus($RevID);
+      unless ($ApprovalStatus eq "Unmanaged") { 
+        print " \&nbsp $ApprovalStatus";
+      }  
+    }  
+    print " \&nbsp ($date)</dd>\n";
+  }
+  print "</dl>\n";
+  print "</div>\n";
+}
 
 1;

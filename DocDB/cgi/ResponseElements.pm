@@ -207,38 +207,6 @@ sub EuroDateHM($) {
   return $ReturnDate;
 }
 
-sub OtherVersionLinks {
-  require "Sorts.pm";
-  
-  my ($DocumentID,$CurrentVersion) = @_;
-  my @RevIDs   = reverse sort RevisionByVersion &FetchRevisionsByDocument($DocumentID);
-  
-  unless ($#RevIDs > 0) {return;}
-  print "<center>\n";
-  print "<table><tr><td>\n";
-  print "<b>Other Versions of this document: </b>\n";
-  print "<ul>\n";
-  foreach $RevID (@RevIDs) {
-    my $Version = $DocRevisions{$RevID}{VERSION};
-    if ($Version == $CurrentVersion) {next;}
-    unless (&CanAccess($DocumentID,$Version)) {next;}
-    $link = &DocumentLink($DocumentID,$Version);
-    $date = &EuroDateTime($DocRevisions{$RevID}{DATE});
-    print "<li>$link \n";
-    if ($UseSignoffs) {
-      require "SignoffUtilities.pm";
-      my ($ApprovalStatus,$LastApproved) = &RevisionStatus($RevID);
-      unless ($ApprovalStatus eq "Unmanaged") { 
-        print " \&nbsp $ApprovalStatus";
-      }  
-    }  
-    print " \&nbsp ($date)</li>\n";
-  }
-  print "</ul>\n";
-  print "</td></tr></table>\n";
-  print "</center>\n";
-}
-
 sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
   require "MiscSQL.pm";
   require "TopicSQL.pm";
