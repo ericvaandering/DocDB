@@ -1,9 +1,10 @@
 #! /usr/bin/env perl
 #
-# Description: This script is called by AdministerForm and does administration
-#              on Institutions in the DB. This script adds, modifies and deletes
-#              institutions. It will not delete institutions if there are authors
-#              associated with that institution. 
+#        Name: GroupAdminister 
+# Description: This script is called by GroupAdministerForm and does 
+#              administration on Groups in the DB. This script adds, modifies 
+#              and deletes groups. It also displays all the groups and their
+#              relationships since this can be difficult to understand. 
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
@@ -62,7 +63,7 @@ unless ($dbh) {
 
 &GetSecurityGroups;
 
-if      ($Action eq "Delete") { # Delete institutions
+if      ($Action eq "Delete") { # Delete group
   if (!$ParentID) {
     push @ErrorStack,$Msg_ModGroupEmpty;
   } elsif (!$SecurityGroups{$ParentID}{TIMESTAMP}) {
@@ -77,8 +78,8 @@ if      ($Action eq "Delete") { # Delete institutions
     $HierarchyDelete   -> execute($ParentID,$ParentID);
     print "<b>$SecurityGroups{$ParentID}{NAME} has been deleted.</b><br>\n";
   }
-} elsif ($Action eq "Modify") { # Modify institutions
-  unless (ParentID) {
+} elsif ($Action eq "Modify") { # Modify group
+  unless ($ParentID) {
     push @ErrorStack,$Msg_ModGroupEmpty;
   }
   &EndPage(@ErrorStack);
@@ -154,7 +155,6 @@ if      ($Action eq "Delete") { # Delete institutions
 # For modify or new fetch institution information and display.
 
 if ($Action eq "Modify" || $Action eq "New") {
-#  &FetchInstitution($InstitutionID);
   &GetSecurityGroups($ParentID);
   print "<p><b>Here are the results of your modification:<br>\n";
   print "<table cellpadding=10>\n";

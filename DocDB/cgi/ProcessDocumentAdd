@@ -166,7 +166,7 @@ unless ($params{title}) {
 if (@JournalIDs || @Volumes || @Pages) {
   my @TestJournalIDs = @JournalIDs;
   my @TestVolumes    = @Volumes;
-  my @Pages          = @Pages;
+  my @TestPages      = @Pages;
   foreach my $JournalID (@TestJournalIDs) {
     my $Volume = shift @TestVolumes;
     my $Page   = shift @TestPages;

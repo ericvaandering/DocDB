@@ -34,14 +34,15 @@ sub PrintDocNumber { # And type
 }
 
 sub PrintAbstract {
-  my ($abstract) = @_;
+  my ($Abstract) = @_;
   
-  if ($abstract) {
-    $abstract =~ s/\n\n/<p>/g;
-    $abstract =~ s/\n/<br>/g;
+  if ($Abstract) {
+    $Abstract = &URLify($Abstract);
+    $Abstract =~ s/\n\n/<p>/g;
+    $Abstract =~ s/\n/<br>/g;
     print "<dl>\n";
     print "<dt><b>Abstract:</b><br>\n";
-    print "<dd>$abstract<br>\n";
+    print "<dd>$Abstract<br>\n";
     print "</dl>\n";
   } else {
     print "<b>Abstract:</b> none<br>\n";
@@ -69,8 +70,11 @@ sub PrintKeywords {
 }
 
 sub PrintPubInfo {
+  require "Utilities.pm";
+
   my ($pubinfo) = @_;
   if ($pubinfo) {
+    $pubinfo = &URLify($pubinfo);
     $pubinfo =~ s/\n\n/<p>/g;
     $pubinfo =~ s/\n/<br>/g;
     print "<dl>\n";
@@ -90,24 +94,25 @@ sub PrintConfInfo {
     if (&MajorIsConference($MinorTopics{$topicID}{MAJOR})) {
       &FetchConferenceByTopicID($topicID);
       my $ConferenceLink = &ConferenceLink($topicID,"long");
-      my $Start = &EuroDate($Conferences{$topicID}{STARTDATE});
-      my $End   = &EuroDate($Conferences{$topicID}{ENDDATE});
+      my $Start = &EuroDate($Conferences{$topicID}{StartDate});
+      my $End   = &EuroDate($Conferences{$topicID}{EndDate});
       print "<dl>\n";
       print "<dt><b>Conference Information:</b> \n";
       print "<dd>Associated with ";
       print "$ConferenceLink ";
       print " held from $Start to $End \n";
-      print " in $Conferences{$topicID}{LOCATION}.</dl>\n";
+      print " in $Conferences{$topicID}{Location}.</dl>\n";
     }
   }
 }
 
 sub PrintReferenceInfo ($) {
   require "MiscSQL.pm";
+  require "ReferenceLinks.pm";
   
   my ($DocRevID) = @_;
   
-  my @ReferenceIDs = &FetchReferences($DocRevID);
+  my @ReferenceIDs = &FetchReferencesByRevision($DocRevID);
   
   if (@ReferenceIDs) {
     &GetJournals;
@@ -115,14 +120,25 @@ sub PrintReferenceInfo ($) {
     print "<dt><b>References:</b> \n";
     foreach my $ReferenceID (@ReferenceIDs) {
       $JournalID = $RevisionReferences{$ReferenceID}{JournalID};
-      print "<dd>Published in";
-      print " $Journals{$JournalID}{Abbreviation} ";
-      if ($RevisionReferences{$ReferenceID}{Volume}) {
-        print " vol. $RevisionReferences{$ReferenceID}{Volume}";
-      }
-      if ($RevisionReferences{$ReferenceID}{Page}) {
-        print " pg. $RevisionReferences{$ReferenceID}{Page}";
-      }
+      print "<dd>Published in ";
+      my ($ReferenceLink,$ReferenceText) = &ReferenceLink($ReferenceID);
+      if ($ReferenceLink) {
+        print "<a href=\"$ReferenceLink\">";
+      }  
+      if ($ReferenceText) {
+        print "$ReferenceText";
+      } else {  
+        print "$Journals{$JournalID}{Abbreviation} ";
+        if ($RevisionReferences{$ReferenceID}{Volume}) {
+          print " vol. $RevisionReferences{$ReferenceID}{Volume}";
+        }
+        if ($RevisionReferences{$ReferenceID}{Page}) {
+          print " pg. $RevisionReferences{$ReferenceID}{Page}";
+        }
+      }  
+      if ($ReferenceLink) {
+        print "</a>";
+      }  
       print ".\n";
     }
     print "</dl>\n";

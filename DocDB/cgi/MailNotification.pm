@@ -360,5 +360,22 @@ sub NotifyKeywordEntry ($) {
                              -size => 80, -maxlength => 240);
   print "</td></tr>\n";
 }
+
+sub EmailUserSelect {
+  my @EmailUserIDs = &GetEmailUserIDs;
+  foreach my $EmailUserID (@EmailUserIDs) {
+    &FetchEmailUser($EmailUserID);  
+    $EmailUserLabels{$EmailUserID} = $EmailUser{$EmailUserID}{Username};
+  }  
+  
+  print "<b><a ";
+  &HelpLink("emailuser");
+  print "Email User:</a></b><br> \n";
+  print $query -> scrolling_list(-name => 'emailuserid', 
+                                 -values => \@EmailUserIDs, 
+                                 -labels => \%EmailUserLabels, 
+                                 -size => 10);
+
+}
   
 1;

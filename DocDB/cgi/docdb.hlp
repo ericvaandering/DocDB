@@ -362,7 +362,7 @@ persons full name, with initials if desired and their institution name.
 pubinfo
 Publication Information
 In this field, include any additional publication information that can't be
-placed in the boxes above. This field is optional.
+placed in the boxes above. Valid URLs entered here will be linked for the user. This field is optional.
 <p>
 If your document is in a journal or preprint archive that you feel should be
 added to the list in the DocDB, please contact an administrator.

@@ -1,3 +1,12 @@
+#
+#        Name: MiscSQL.pm 
+# Description: Routines to access some of the more uncommon parts of the SQL 
+#              database.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
 sub GetJournals { # Creates/fills a hash $Journals{$JournalID}{} 
   my ($JournalID,$Acronym,$Abbreviation,$Name,$Publisher,$URL,$TimeStamp);                
   my $JournalQuery  = $dbh -> prepare(
@@ -17,7 +26,7 @@ sub GetJournals { # Creates/fills a hash $Journals{$JournalID}{}
   }
 };
 
-sub FetchReferences ($) {
+sub FetchReferencesByRevision ($) {
   my ($DocRevID) = @_;
   
   my ($ReferenceID,$JournalID,$Volume,$Page,$TimeStamp);
@@ -39,40 +48,36 @@ sub FetchReferences ($) {
 };
 
 sub GetDocTypes { # Creates/fills a hash $DocumentTypes{$DocTypeID}{} 
-  my $doctype_list  = $dbh -> prepare(
-     "select DocTypeID,ShortType,LongType from DocumentType");
+  my ($DocTypeID,$ShortType,$LongType);
+  my $DocTypeList  = $dbh -> prepare("select DocTypeID,ShortType,LongType from DocumentType");
   %DocumentTypes = ();
-  $doctype_list -> execute;
-  $doctype_list -> bind_columns(undef, \($DocTypeID,$ShortType,$LongType));
-  while ($doctype_list -> fetch) {
-    $DocumentTypes{$DocTypeID}{DOCTYPEID} = $DocTypeID;
+  $DocTypeList -> execute;
+  $DocTypeList -> bind_columns(undef, \($DocTypeID,$ShortType,$LongType));
+  while ($DocTypeList -> fetch) {
     $DocumentTypes{$DocTypeID}{SHORT}     = $ShortType;
     $DocumentTypes{$DocTypeID}{LONG}      = $LongType;
   }
 };
 
-sub FetchDocType { # Fetches an DocumentType by ID, adds to $DocumentTypes{$DocTypeID}{}
-  my ($docTypeID) = @_;
-  my ($DocTypeID,$ShortType,$LongType);
+sub FetchDocType ($) { # Fetches an DocumentType by ID, adds to $DocumentTypes{$DocTypeID}{}
+  my ($DocTypeID) = @_;
+  my ($ShortType,$LongType);
 
-  my $type_fetch  = $dbh -> prepare(
-     "select DocTypeID,ShortType,LongType ". 
-     "from DocumentType ". 
-     "where DocTypeID=?");
-  if ($DocumentTypes{$docTypeID}{DOCTYPEID}) { # We already have this one
-    return $DocumentTypes{$docTypeID}{SHORT};
+  my $DocTypeFetch  = $dbh -> prepare(
+     "select ShortType,LongType from DocumentType where DocTypeID=?");
+  if ($DocumentTypes{$DocTypeID}{SHORT}) { # We already have this one
+    return $DocumentTypes{$DocTypeID}{SHORT};
   }
   
-  $type_fetch -> execute($docTypeID);
-  ($DocTypeID,$ShortType,$LongType) = $type_fetch -> fetchrow_array;
-  $DocumentTypes{$docTypeID}{DOCTYPEID} = $DocTypeID;
-  $DocumentTypes{$docTypeID}{SHORT}     = $ShortType;
-  $DocumentTypes{$docTypeID}{LONG}      = $LongType;
+  $DocTypeFetch -> execute($DocTypeID);
+  ($ShortType,$LongType) = $DocTypeFetch -> fetchrow_array;
+  $DocumentTypes{$DocTypeID}{SHORT}     = $ShortType;
+  $DocumentTypes{$DocTypeID}{LONG}      = $LongType;
   
   return $DocumentTypes{$DocTypeID}{SHORT};
 }
 
-sub FetchDocFiles {
+sub FetchDocFiles ($) {
   # Creates two hashes:
   # $Files{DocRevID}           holds the list of file IDs for a given DocRevID
   # $DocFiles{DocFileID}{FIELD} holds the Fields or references too them
@@ -126,10 +131,10 @@ sub FetchConferenceByTopicID { # Fetches a conference by MinorTopicID
   ($ConferenceID,$MinorTopicID,$Location,$URL,$StartDate,$EndDate,$TimeStamp) 
     = $conference_fetch -> fetchrow_array;
   $Conferences{$MinorTopicID}{MINOR}      = $MinorTopicID;
-  $Conferences{$MinorTopicID}{LOCATION}   = $Location;
+  $Conferences{$MinorTopicID}{Location}   = $Location;
   $Conferences{$MinorTopicID}{URL}        = $URL;
-  $Conferences{$MinorTopicID}{STARTDATE}  = $StartDate;
-  $Conferences{$MinorTopicID}{ENDDATE}    = $EndDate;
+  $Conferences{$MinorTopicID}{StartDate}  = $StartDate;
+  $Conferences{$MinorTopicID}{EndDate}    = $EndDate;
   $Conferences{$MinorTopicID}{TIMESTAMP}  = $TimeStamp;
 
   return $Conferences{$MinorTopicID}{MINOR};
