@@ -11,10 +11,7 @@ sub CanAccess { # Can the user access (with current security) this version
     return 0;
   } 
   
-  my $Groups_ref = &GetRevisionSecurityGroups($DocRevID);
-  
-  my @GroupIDs = @{$Groups_ref};
-  
+  my @GroupIDs = &GetRevisionSecurityGroups($DocRevID);
   unless (@GroupIDs) {return 1;}             # Public documents
 
 # See if current user is in the list of users who can access this document

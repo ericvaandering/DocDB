@@ -130,13 +130,9 @@ sub PrintRevisionInfo {
 
   my $DocumentID  = $DocRevisions{$DocRevID}{DOCID};
   my $Version     = $DocRevisions{$DocRevID}{VERSION};
-  my $Authors_ref = &GetRevisionAuthors($DocRevID);
-  my $Topics_ref  = &GetRevisionTopics($DocRevID);
-  my $Groups_ref  = &GetRevisionSecurityGroups($DocRevID);
-
-  my @AuthorIDs = @{$Authors_ref};
-  my @TopicIDs  = @{$Topics_ref};
-  my @GroupIDs  = @{$Groups_ref};
+  my @AuthorIDs   = &GetRevisionAuthors($DocRevID);
+  my @TopicIDs    = &GetRevisionTopics($DocRevID);
+  my @GroupIDs    = &GetRevisionSecurityGroups($DocRevID);
  
   print "<center><table cellpadding=10>";
   print "<tr><td colspan=6 align=center>\n";
@@ -315,7 +311,7 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
     my $DocRevID    = &FetchDocRevision($DocumentID,$Version);
     my $title       = &DocumentLink($DocumentID,$Version,$DocRevisions{$DocRevID}{TITLE});
     if ($Mode eq "meeting") {
-      my $Files_ref   = &FetchDocFiles($DocRevID);
+      my @FileIDs   = &FetchDocFiles($DocRevID);
     }
 
     my $rev_date    = &EuroDate($DocRevisions{$DocRevID}{DATE});
@@ -327,7 +323,7 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
       print "<td><nobr>$author_link</nobr></td>\n";
       print "<td><nobr>$rev_date</nobr></td>\n";
     } elsif ($Mode eq "meeting") {
-      my @TopicIDs = @{&GetRevisionTopics($DocRevID)};
+      my @TopicIDs = &GetRevisionTopics($DocRevID);
       foreach my $ID (@IgnoreTopics) {
         my $Index = 0;
         foreach my $TopicID (@TopicIDs) {
@@ -346,7 +342,7 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
       print "<td>$title</td>\n";
       print "<td>\n";
 
-      my @topics = @{&GetRevisionTopics($DocRevID)};
+      my @topics = &GetRevisionTopics($DocRevID);
       foreach my $topic (@topics) {
         if ($MinorTopics{$topic}{MAJOR} == $ConferenceMajorID) {
           my $conference_link = &ConferenceLink($topic,"short");
@@ -454,9 +450,8 @@ sub PrintAgenda {
   my ($DocRevID) = $agenda_find -> fetchrow_array;
   if ($DocRevID) {
     &FetchDocRevisionByID($DocRevID); 
-    my $Files_ref  = &FetchDocFiles($DocRevID);                                                                                             
-
-    my $FirstFile = shift @{$Files_ref};
+    my @FileIDs  = &FetchDocFiles($DocRevID);                                                                                             
+    my $FirstFile = shift @FileIDs;   #FIXME: Collapse to one line
 
     print "<h3>Agenda:</h3>\n";
     &PrintFile($FirstFile);
@@ -478,9 +473,9 @@ sub FindAgenda {
   my ($DocRevID) = $agenda_find -> fetchrow_array;
   if ($DocRevID) {
     &FetchDocRevisionByID($DocRevID); 
-    my $Files_ref  = &FetchDocFiles($DocRevID);                                                                                             
+    my @FileIDs  = &FetchDocFiles($DocRevID);                                                                                             
+    my $FileID   = shift @FileIDs; #FIXME Collapse to one line
 
-    my $FileID = shift @{$Files_ref};
     my $VersionNumber = $DocRevisions{$DocRevID}{VERSION};
     my $DocumentID    = $DocRevisions{$DocRevID}{DOCID}  ;
 
@@ -522,6 +517,6 @@ sub PrintFile {
   } else {
     print "<b>Non-text file</b>\n";
   }  
-    
 }
+    
 1;

@@ -42,7 +42,7 @@ if ($Meeting) {
 if ($OtherMeeting) {
  $mode = "add";
  @PreTopics  = $query -> param('pretopic');
- @TopicDefaults = \@PreTopics; #FIXME: Not just for meetings
+ @TopicDefaults = @PreTopics; #FIXME: Not just for meetings
 }
 
 unless ($mode) { 
@@ -70,6 +70,7 @@ if      ($mode eq "add") {
 } elsif ($mode eq "update" || $mode eq "updatedb") {
   &BTeVHeader("BTeV Document Update","Document Update");
 }
+&HelpPopupScript;
 
 @error_stack = ();
 
@@ -84,7 +85,7 @@ if ($mode eq "update" || $mode eq "add") {
   }
 }
 
-if ((@error_stack)) {  # The user made one or more mistakes, warn and exit
+if (@error_stack) {  # The user made one or more mistakes, warn and exit
   &EndPage(@error_stack);
 }
 
@@ -109,12 +110,10 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   @TopicDefaults    = &GetRevisionTopics($DocRevID);
 } else {
   my $User = &SecurityLookup($remote_user);
-  @SecurityDefaults = [$SecurityIDs{$User}]; 
+  @SecurityDefaults = ($SecurityIDs{$User}); 
 }  
 
 &SetFileOptions($DocRevID);
-
-&HelpPopupScript;
 
 print $query -> start_multipart_form('POST',$ProcessDocumentAdd);
 print $query -> hidden(-name => 'mode',    -default => $mode);

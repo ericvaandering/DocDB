@@ -47,7 +47,6 @@ sub DateTimePullDown {
 sub StartDatePullDown {
   my ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
   $year += 1900;
-  $min = (int (($min+3)/5))*5; # Nearest five minutes
   
   my @days = ();
   for ($i = 1; $i<=31; ++$i) {
@@ -73,7 +72,6 @@ sub StartDatePullDown {
 sub EndDatePullDown {
   my ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
   $year += 1900;
-  $min = (int (($min+3)/5))*5; # Nearest five minutes
   
   my @days = ();
   for ($i = 1; $i<=31; ++$i) {
@@ -129,6 +127,7 @@ sub AbstractBox {
 };
 
 sub SingleUploadBox {
+  my ($Mode) = @_;
   print "<table cellpadding=3>\n";
   print "<tr><td colspan=2><b><a ";
   &HelpLink("fileupload");
@@ -147,9 +146,14 @@ sub SingleUploadBox {
     print "<a "; &HelpLink("description"); print "<b>Description:</b></a>\n";
     print "</td>\n";
     print "<td>\n";
-    print $query -> textfield (-name => 'filedesc', -size => 60, 
-                               -maxlength => 128,
-                               -default => $DocFiles{$FileID}{DESCRIPTION});
+    if ($Mode eq "nodesc") {
+      print $query -> textfield (-name => 'filedesc', -size => 60, 
+                                 -maxlength => 128);
+    } else {
+      print $query -> textfield (-name => 'filedesc', -size => 60, 
+                                 -maxlength => 128,
+                                 -default => $DocFiles{$FileID}{DESCRIPTION});
+    }
     print $query -> checkbox(-name => "root", -checked => 'checked', 
                              -value => $i, -label => '');
     print "<a "; &HelpLink("main"); print "Main?</a>\n";
@@ -159,6 +163,7 @@ sub SingleUploadBox {
 };
 
 sub SingleHTTPBox {
+  my ($Mode) = @_;
   print "<table cellpadding=3>\n";
   print "<tr><td colspan=4><b><a ";
   &HelpLink("httpupload");
@@ -177,8 +182,14 @@ sub SingleHTTPBox {
     print "<a "; &HelpLink("description"); print "<b>Description:</b></a>\n";
     print "</td>\n";
     print "<td colspan=3>\n";
-    print $query -> textfield (-name => 'filedesc', -size => 60, -maxlength => 128,
-                               -default => $DocFiles{$FileID}{DESCRIPTION});
+    if ($Mode eq "nodesc") {
+      print $query -> textfield (-name => 'filedesc', -size => 60, 
+                                 -maxlength => 128);
+    } else {
+      print $query -> textfield (-name => 'filedesc', -size => 60, 
+                                 -maxlength => 128,
+                                 -default => $DocFiles{$FileID}{DESCRIPTION});
+    }
     print $query -> checkbox(-name  => "root", -checked => 'checked', 
                              -value => $i,     -label   => '');
     print "<a "; &HelpLink("main"); print "Main?</a>\n";
@@ -197,7 +208,7 @@ sub SingleHTTPBox {
 
 sub FileUpdateBox {
   my ($DocRevID) = @_; 
-  my @FileIDs = @{&FetchDocFiles($DocRevID)};
+  my @FileIDs = &FetchDocFiles($DocRevID);
 
   print "<table cellpadding=3>\n";
   print "<tr>";
@@ -322,7 +333,7 @@ sub AuthorSelect { # Scrolling selectable list for authors
   print $query -> scrolling_list(-name => "authors", -values => \@ActiveIDs, 
                                  -labels => \%AuthorLabels,
                                  -size => 10, -multiple => 'true',
-                                 -default => @AuthorDefaults);
+                                 -default => \@AuthorDefaults);
 };
 
 sub TopicSelect { # Scrolling selectable list for topics
@@ -337,7 +348,7 @@ sub TopicSelect { # Scrolling selectable list for topics
   print $query -> scrolling_list(-name => "topics", -values => \@TopicIDs, 
                                  -labels => \%TopicLabels,
                                  -size => 10, -multiple => 'true',
-                                 -default => @TopicDefaults);
+                                 -default => \@TopicDefaults);
 };
 
 sub MultiTopicSelect { # Multiple scrolling selectable lists for topics
@@ -372,7 +383,7 @@ sub MultiTopicSelect { # Multiple scrolling selectable lists for topics
     }
     print $query -> scrolling_list(-name => "topics", 
              -values => \@MatchMinorIDs, -labels => \%MatchLabels,
-             -size => 8, -multiple => 'true', -default => @TopicDefaults);
+             -size => 8, -multiple => 'true', -default => \@TopicDefaults);
     print "</td>\n";
   }  
   print "</table>\n";
@@ -444,7 +455,7 @@ sub SecurityList {
   print $query -> scrolling_list(-name => 'security', -values => \@GroupIDs, 
                                  -labels => \%GroupLabels, 
                                  -size => 10, -multiple => 'true', 
-                                 -default => @SecurityDefaults);
+                                 -default => \@SecurityDefaults);
 };
 
 sub ShortDescriptionBox {
@@ -552,8 +563,8 @@ sub AddFilesButton {
 
 sub AuthorManual {
   $AuthorManDefault = "";
-  my $AuthorDefaults = @AuthorDefaults[0]; 
-  foreach $AuthorID (@{$AuthorDefaults}) {
+
+  foreach $AuthorID (@AuthorDefaults) {
     $AuthorManDefault .= "$Authors{$AuthorID}{FULLNAME}\n" ;
   }  
   print "<b><a ";
@@ -561,8 +572,7 @@ sub AuthorManual {
   print "Authors:</a></b><br> \n";
   print $query -> textarea (-name    => 'authormanual', 
                             -default => $AuthorManDefault,
-                            -columns => 20, 
-                            -rows    => 8);
+                            -columns => 20, -rows    => 8);
 };
 
 sub ReferenceForm {

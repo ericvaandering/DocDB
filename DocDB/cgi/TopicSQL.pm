@@ -85,7 +85,7 @@ sub GetRevisionTopics {
   while ($topic_list -> fetch) {
     push @topics,$MinorTopicID;
   }
-  return \@topics;
+  return @topics;
 }
 
 sub LookupMajorTopic { # Returns MajorTopicID from Topic Name
