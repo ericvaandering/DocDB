@@ -33,7 +33,7 @@ h3 {font-size: 100%}
 //	width: 19%;
         width: 12em;
 	float: left;
-	background: #ddd;
+	background: #eee;
 	padding-left: 0.25%;
 	padding-bottom: 0.5em;
 	padding-right: 0.5em;
@@ -53,7 +53,7 @@ h3 {font-size: 100%}
 	width: auto;
         max-width: 40%;
         min-width: 16em;
-	background: #ddd;
+	background: #eee;
 	float: right;
         margin-bottom: 1em;
         margin-left: 0.5em;
