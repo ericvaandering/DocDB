@@ -32,9 +32,9 @@ require "RevisionHTML.pm";   #FIXME: Remove, move references to correct place
 sub PrintTitle {
   my ($Title) = @_;
   if ($Title) {
-    print "<h3>$Title</h3>\n";
+    print "<h1>$Title</h1>\n";
   } else {
-    print "<h3><b>Title:</b> none<br></h3>\n";
+    print "<h1><b>Title:</b> none<br></h1>\n";
   }
 }
 
