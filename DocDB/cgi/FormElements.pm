@@ -654,4 +654,25 @@ sub ReferenceForm {
   print "</table>\n";
 }
 
+sub TextEntryBox {
+  my (%Params) = @_;
+  
+  my $HelpLink  =   $Params{-helplink}  || "";
+  my $HelpText  =   $Params{-helptext}  || "";
+  my $ExtraText =   $Params{-extratext} || "";
+  my $Name      =   $Params{-name}      || "note";
+  my $Columns   =   $Params{-columns}   || 60;
+  my $Rows      =   $Params{-rows}      || 6;
+  my $Default   =   $Params{-default} ;
+
+  if ($HelpLink) {
+    print "<b><a ";
+    &HelpLink("$HelpLink");
+    print "$HelpText</b> $ExtraText<br>\n";
+  }  
+  print $query -> textarea (-name    => $Name,    -default => $Default,
+                            -columns => $Columns, -rows    => $Rows);
+};
+
+
 1;

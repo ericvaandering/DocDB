@@ -49,11 +49,13 @@ print $query->header;
 
 ### Output Information
 my $CertificateStatus = &CertificateStatus();
+my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
+my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
 
 print "ST $CertificateStatus<br>\n";
 
 if ($CertificateStatus eq "verified") {
-  print "Your certificate has been verified and you have access to documents from these groups:";
+  print "<b>Your certificate has been verified and you have access to documents from these groups:</b>";
   my @GroupIDs = &FetchSecurityGroupsByCert();
   print "<ul>\n";
   if (@GroupIDS) {
@@ -66,17 +68,40 @@ if ($CertificateStatus eq "verified") {
   }       
   print "</ul>\n";
 } elsif ($CertificateStatus eq "unverified") {  
-  print "Your certificate has been verified and you have applied for access to documents. 
-         If you believe your request has been misplaced or neglected, contact an administator.";
+  print "<b>Your certificate is valid and you have applied for access to documents. 
+         If you believe your request has been misplaced or neglected, contact an administator.</b>";
+  print "The following information may be helpful:<br>\n";
+  print "<b>Certificate Common Name (CN):</b> $CertCN<br>\n";
+  print "<b>Certificate E-mail Address:</b> $CertEmail<br>\n";
 } elsif ($CertificateStatus eq "mismatch") {  
-  print "Your certificate is valid but a similar certificate already exists for 
-         either your e-mail address or your name (CN). Only one certificate is allowed
-         per person. Contact an administrator if you don't know what to do.";
+  print "<b>Your certificate is valid but a similar certificate already exists
+         for  either your e-mail address or your name (CN). Only one
+         certificate is allowed per person. Contact an administrator if you
+         don't know what to do.</b>";
+  print "The following information may be helpful:<br>\n";
+  print "<b>Certificate Common Name (CN):</b> $CertCN<br>\n";
+  print "<b>Certificate E-mail Address:</b> $CertEmail<br>\n";
 } elsif ($CertificateStatus eq "nocert") {  
-  print "You didn't present a certificate. Not sure if this can happen.";
+  print "<b>You didn't present a certificate. Not sure if this can happen.</b>";
 } elsif ($CertificateStatus eq "noapp") {
-  print "Your certificate is valid but you have never applied for access to documents. Fill out the form below to apply for access.";
-
+  require "SecurityHTML.pm";
+  require "FormElements.pm";
+  print "<b>Your certificate is valid but you have never applied for access to
+         documents. Fill out the form below to apply for access.</b>";
+  print "<table cellpadding=5>\n";
+  print "<tr>\n";
+  print "<td><b>Your name (Certificate CN):</b> $CertCN</td>\n";
+  print "<td rowspan=2>\n";
+  &SecurityList(-helplink => "reqgroups", -helptext => "Requested Groups",
+                -name => "reqgroups");
+  print "</td></tr>\n";
+  print "<tr><td colspan=2>\n";
+  &TextEntryBox(-helplink => "certnote", -helptext => "Notes", 
+                -extratext => "(Identify yourself or other explanations if needed.)",
+                -name => "certnote");    
+  print "</td></tr>";
+  print "</table>\n";       
 }
+
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
