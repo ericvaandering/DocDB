@@ -64,30 +64,37 @@ sub DocumentTable (%) {
     @DocumentIDs = reverse @DocumentIDs;
   }
 
-  my $NumberDocuments = 0;
+  my $NumberOfDocuments = 0;
+
+### Loop over document IDs
 
   foreach my $DocumentID (@DocumentIDs) {
+  
+### Which version (if any) can they view
+  
     &FetchDocument($DocumentID);
     my $Version = &LastAccess($DocumentID);
     if ($Version == -1) {next;}
     unless (&CanAccess($DocumentID,$Version)) {next;}
     my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-    ++$NumberDocuments;
+    ++$NumberOfDocuments;
+
+### Print fields requested
     
     print "<tr>\n";
     foreach my $Field (@Fields) {
       print "<td valign=top>";
-      if      ($Field eq "Docid") {
+      if      ($Field eq "Docid") {    # Document number
         print &NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
                                  -numwithversion => true); 
-      } elsif ($Field eq "Title") {
+      } elsif ($Field eq "Title") {    # Document title
         print &NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
                                  -titlelink => true); 
-      } elsif ($Field eq "Author") {
+      } elsif ($Field eq "Author") {   # Single author (et. al.)
         print &FirstAuthor($DocRevID);
-      } elsif ($Field eq "Updated") {
+      } elsif ($Field eq "Updated") {  # Date of last update
         print &EuroDate($DocRevisions{$DocRevID}{DATE});
-      } elsif ($Field eq "CanSign") {
+      } elsif ($Field eq "CanSign") {  # Who can sign document
         require "SignoffUtilities.pm";
         require "SignoffHTML.pm";
         my @EmailUserIDs = &ReadySignatories($DocRevID);
@@ -104,10 +111,10 @@ sub DocumentTable (%) {
 
   print "</table></center>\n";
   
-  return $NumberDocuments;
+  return $NumberOfDocuments;
 }
 
-sub NewerDocumentLink (%) { # FIXME: Make this the default
+sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
   require "DocumentSQL.pm";
   require "RevisionSQL.pm";
   
