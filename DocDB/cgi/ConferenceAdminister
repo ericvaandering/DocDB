@@ -13,6 +13,7 @@
 
 use CGI;
 use DBI;
+use Time::Local;
 
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
@@ -20,6 +21,7 @@ require "Security.pm";
 require "HTMLUtilities.pm";
 require "TopicSQL.pm";
 require "MiscSQL.pm";
+require "WebUtilities.pm";
 require "Messages.pm";
 
 $query = new CGI;  # Global for subroutines
@@ -39,6 +41,7 @@ my $Username      = $params{admuser};
 my $Action        = $params{admaction};
 
 my $TopicID       = $params{conftopic};
+my $MajorTopicID  = $params{majortopic};
 my $LongName      = $params{long};
 my $ShortName     = $params{short};
 my $Location      = $params{location};
@@ -50,6 +53,12 @@ my $StartYear     = $params{startyear};
 my $EndDay        = $params{endday};
 my $EndMonth      = $params{endmonth};
 my $EndYear       = $params{endyear};
+
+my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
+my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
+
+my $StartTime = timelocal(0,0,0,$StartDay,$ReverseAbrvMonth{$StartMonth}-1,$StartYear);
+my $EndTime   = timelocal(0,0,0,$EndDay,$ReverseAbrvMonth{$EndMonth}-1,$EndYear);
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
@@ -119,7 +128,7 @@ if ($Action eq "Delete") {
       $Day != $StartDay || $AbrvMonths[$Month] ne $StartMonth || $Year != $StartYear ||
       $Day != $EndDay || $AbrvMonths[$Month] ne $EndMonth || $Year != $EndYear) {
     unless (&FetchConferenceByTopicID($TopicID)) {
-      print "<b>Creating new Meeting/Conference entry for this topic.<br>\n";
+      print "<b>Creating new Meeting/Conference entry for this topic.</b><br>\n";
       my $ConferenceInsert = $dbh->prepare(
          "insert into Conference (ConferenceID,MinorTopicID) values (0,?)");
       $ConferenceInsert -> execute($TopicID);
@@ -159,7 +168,56 @@ if ($Action eq "Delete") {
   }
 
 } elsif ($Action eq "New") { # FIXME: Allow conference add for completeness
-  push @ErrorStack,"You can't add conferences here. Do it with the add conference form."; 
+  # Check inputs
+
+  unless ($ShortName && $LongName && $Location) {
+    push @ErrorStack,"You must fill in all the fields.";
+  }
+
+  if ($URL) {
+    unless (&ValidURL($URL)) {
+      push @ErrorStack,"The URL $URL is not valid.";
+    }
+  } else {
+    push @WarnStack,"No URL was supplied for this conference. If this was a
+    mistake, do not re-enter the conference. Contact an adminstrator.";
+  }  
+
+  unless ($EndTime && &ValidDate($EndDay,$ReverseAbrvMonth{$EndMonth},$EndYear)) {
+    push @ErrorStack,"The ending date is not valid.";
+  }
+
+  unless ($StartTime && &ValidDate($StartDay,$ReverseAbrvMonth{$StartMonth},$StartYear)) {
+    push @ErrorStack,"The starting date is not valid.";
+  }
+
+  if ($StartTime > $EndTime) {
+    push @ErrorStack,"The starting date is after the ending date.";
+  }
+
+  unless ($MajorTopicID) {
+    push @ErrorStack,"You must select one of the major topics.";
+  }
+
+  &EndPage(@ErrorStack);
+
+  my $TopicInsert = $dbh->prepare(
+   "insert into MinorTopic ".
+          "(MinorTopicID, MajorTopicID, ShortDescription, LongDescription) ". 
+   "values (0,            ?,            ?,                ?)");
+
+  my $ConferenceInsert = $dbh->prepare(
+   "insert into Conference ".
+          "(ConferenceID, MinorTopicID, Location, URL, StartDate, EndDate) ". 
+   "values (0,            ?,            ?,        ?,   ?,         ?)");
+
+  $TopicInsert -> execute($MajorTopicID,$ShortName,$LongName);
+  my $MinorTopicID = $TopicInsert -> {mysql_insertid}; # Works with MySQL only
+  if ($MinorTopicID) {
+    $ConferenceInsert -> execute($MinorTopicID,$Location,$URL,
+                                 $StartDate,$EndDate); 
+  }
+
 } else {
   push @ErrorStack,"No valid action was specified.";
 }  
