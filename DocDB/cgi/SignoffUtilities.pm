@@ -235,13 +235,6 @@ sub NotifySignees ($) {
   }
 }
 
-sub CopyRevisionSignoffs { # CopySignoffs from one revision to another
-                           # One mode to copy with signed Signatures, 
-                           # one without
-
-  my ($OldDocRevID,$NewDocRevID,$CopySignatures) = @_;
-}
-
 sub ReadySignatories ($) {
   require "SignoffSQL.pm";
 
