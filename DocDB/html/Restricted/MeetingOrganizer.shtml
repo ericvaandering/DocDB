@@ -27,7 +27,7 @@
  <li><a href="#modify">Modifying an Existing Meeting</a>
  <li><a href="#talks">Adding and Modifying Talks in a Session</a>
  <ol type="1">
-  <li><a href="#makeagenda">Creating an agenda</a>
+  <li><a href="#basicinfo">Ordering the talks</a>
   <li><a href="#order">Ordering the talks</a>
   <li><a href="#confirm">Specifying and confirming documents</a>
   <li><a href="#hints">Giving hints about the talks</a>
@@ -43,11 +43,26 @@
 <a name="intro">
 <h2>A. Introduction</h2>
 
+These instructions refer to a "moderator," but this is just any user with any
+valid password who is organizing a meeting. Several people can collaborate to
+organize a meeting, but some care must be taken not to overwrite changes with the
+webforms.
+
 Put some text from e-mail to Ed here.
+
 
 <a name="create">
 <h2>B. Creating a New Meeting</h2>
 
+The first step in creating a meeting is to set up the sessions in the meeting.
+You begin this process by clicking on "Create a New Meeting." Meetings can be
+created as a subtopic in the DocDB or, for smaller meetings (perhaps by small
+subgroups of people), not as a subtopic. Whether the moderator choose to create a topic or
+not, all the functionality of the meeting organizer is still available. A list
+of the topics which are designated as "meeting-like" are shown; simply select
+one of these to create the subtopic.<p>
+
+Show all talk,  descriptions, dates, etc.  
 
 <a name="modify">
 <h2>C. Modifying an Existing Meeting</h2>
@@ -55,29 +70,60 @@ Put some text from e-mail to Ed here.
 <a name="talks">
 <h2>D. Adding and Modifying Talks in a Session</h2>
 
+To modify the talks in a session, either click on the "Modify Session" link
+in the navigation bar on the "Display Session" page or the "Modify Talks" link
+on the "Modify Meeting" page. This allows the moderator to add as many talks or
+breaks as needed. In this context, breaks could be announcements, discussions,
+coffee breaks during a session, etc. Any activity which won't have a document
+attached to it.<p>
 
-<a name="makeagenda">
-<h3>1. Creating an agenda</h3>
+To create an agenda, the moderator should enter as much information as needed
+about each talk or break. The fields are described below. While there are a
+finite number of open slots for talks, more are added each time "Submit" is
+pressed.
+
+<a name="basicinfo">
+<h3>1. Entering basic talk information</h3>
+
+For each talk, at least a suggested title, and time (length) should be entered.
+A note on each talk can also be entered, but these are only visible when
+clicking on the "Note" link in the meeting or session displays. 
 
 <a name="order">
 <h3>2. Ordering the talks</h3>
 
+On the far left is the document order within the session. To reorder talks
+within the session, just input new numbers and press "Submit." Decimal numbers
+are allowed, so entering "1.5" will place that talk between current talks "1"
+and "2." 
+
 <a name="confirm">
-<h3>3. Specifying and confirming documents</h3>
+<h3>3. Specifying, deleting, and confirming documents</h3>
+
+On the form there are places to enter the document number of a talk if the
+moderator already knows it, to confirm a suggestion by the DocDB, and to delete
+the entry for a talk entirely. (This will NOT delete the document from the
+database, just the entry for the meeting.)
 
 <a name="hints">
 <h3>4. Giving hints about the talks</h3>
 
+Finally, the moderator may enter the suggested authors and topics for the talks
+to be given. This has two purposes. First, before documents are entered into
+the DocDB, attendees can see what the proposed agenda is. Secondly, this
+assists the DocDB in finding the correct matches as described below.
+
 <a name="matching">
 <h2>E. How the DocDB matches your entries with documents</h2>
 
-In addition to the moderator associating talks as described above, there are two other ways this can
-happen. The first way is to have the user themselves match the talks. The second way is to have the
-DocDB guess.<p>
+In addition to the moderator associating talks as described above, there are
+two other ways this can happen. The first way is to have the user themselves
+match the talks. The second way is to have the DocDB guess.<p>
 
-A suggested course of action for the moderator is to first encourage users to match their talks as
-described below. Then let the DocDB guess and, as the moderator, confirm its correct guesses, let it
-guess again, and only then confirm its correct guesses or correct its incorrect ones. 
+A suggested course of action for the moderator is to first encourage users to
+match their talks as described below. Then let the DocDB guess and, as the
+moderator, confirm its correct guesses, let it guess again, and only then
+confirm its correct guesses or correct its incorrect ones. 
 
 <a name="userentry">
 <h3>1. User selects the talk</h3>
@@ -91,15 +137,17 @@ talk, just as if the moderator had followed the instructions above.
 <a name="hinting">
 <h3>2. DocDB selects based on hints</h3>
 
-As a last resort the DocDB will try to figure out which agenda entry matches which document.To do
-this, the DocDB will construct a list of documents which might match the entries in the agenda. It
-will then compare each of those documents against the items in the agenda and pick what it thinks is
-the best document among them. This document becomes an unconfirmed match with the entry in the
-agenda. If it guesses right, confirm the document as mentioned above.<p>
+As a last resort the DocDB will try to figure out which agenda entry matches
+which document.To do this, the DocDB will construct a list of documents which
+might match the entries in the agenda. It will then compare each of those
+documents against the items in the agenda and pick what it thinks is the best
+document among them. This document becomes an unconfirmed match with the entry
+in the agenda. If it guesses right, confirm the document as mentioned above.<p>
 
-The list of documents to check against comes from two sources. First documents with modification
-times in a time window around the meeting dates are considered. Second, if the meeting is associated
-with a topic (discussed above), documents associated with that topic are considered.<p>
+The list of documents to check against comes from two sources. First documents
+with modification times in a time window around the meeting dates are
+considered. Second, if the meeting is associated with a topic (discussed
+above), documents associated with that topic are considered.<p>
 
 Documents are matched with the agenda entries using a scoring system that takes into account several
 criteria:
@@ -107,19 +155,20 @@ criteria:
 <li>Whether the document is associated with the meeting topic</li>
 <li>If the document's topics match those in the agenda</li>
 <li>If the document's authors match those in the agenda</li>
-<li>How well the title of the document matches the suggested title in the agenda (not yet
-implemented)</li>
+<li>How well the title of the document matches the suggested title in the
+agenda (not yet implemented)</li>
 <ul>
  
-So, documents that are associated with the meeting topic receive a bonus over documents that just
-happen to fall in the time window. Points are also assigned to documents for each author or topic
-that matches those suggested in the agenda. For each agenda entry/document pair, a score is
-calculated and the document with the highest score is entered as the unconfirmed match. When
-documents are confirmed, they are removed from consideration, which may change which assignments the
-DocDB makes.<p>
+So, documents that are associated with the meeting topic receive a bonus over
+documents that just happen to fall in the time window. Points are also assigned
+to documents for each author or topic that matches those suggested in the
+agenda. For each agenda entry/document pair, a score is calculated and the
+document with the highest score is entered as the unconfirmed match. When
+documents are confirmed, they are removed from consideration, which may change
+which assignments the DocDB makes.<p>
 
-The precise algorithm used in choosing the best match can be determined by looking at the DocDB code. 
-
+The precise algorithm used in choosing the best match can be determined by
+looking at the DocDB code. 
 
 <hr>
 <!-- begin footer, change the webmaster info if appropriate -->
