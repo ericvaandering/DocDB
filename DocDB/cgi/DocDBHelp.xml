@@ -252,20 +252,9 @@ possible, so these searches are <b>always</b> done with an OR.
 <key>keywords</key>
 <title>Keywords</title>
   <text>
-Keywords are used to further classify documents below the sub-topic level.
-Keywords should be seperated by spaces. Compound words should use a dash or
-under-score to connect words. While
-there is no centrally managed list of keywords, the following groups have
-defined their own set of keywords for their documents:
-<ul>
-<li><a target="keywords" href="http://www-btev.fnal.gov/atwork/detector/pixel/meetings.shtml">Pixel
-Detector</a></li>
-<li><a target="keywords" href="http://www-btev.fnal.gov/atwork/detector/muon/memos.shtml#docdb">Muon
-Detector</a></li>
-If other groups have done the same, let the <a
-href="mailto:btev-docdb@fnal.gov">DocDB adminstrators</a> know so we can include
-a link to your set of keywords here too.
-</ul>
+   Keywords are used to further classify documents below the sub-topic level.
+   Keywords should be seperated by spaces. Compound words should use a dash or
+   under-score to connect words. 
   </text>
  </entry>
 
@@ -445,10 +434,6 @@ this option to upload a group of linked web pages. You can upload files in
   <text>
 You can either select the subtopic(s) for your document from one long list or
 from a number of shorter lists split up by topic. 
-<p/>
-To request that a new subtopic be added to the database please contact the
-<a href="mailto:btev-docdb@fnal.gov">DocDB administrators</a>. Tell us what
-subtopic you would like added and which major topic it should be place under.
   </text>
  </entry>
 
@@ -461,10 +446,6 @@ selecting the authors from a list of all possible authors. The second is to type
 into a form the names of the authors. <i>However</i> for your document to be
 accepted, every author that you entered must successfully match with an author
 in the database. The second method has not been implemented.
-<p/>
-To have a new author added to the database please contact the <a
-href="mailto:btev-docdb@fnal.gov">DocDB administrators</a> and supply the
-persons full name, with initials if desired and their institution name.
   </text>
  </entry>
 
@@ -519,10 +500,6 @@ This is the name of the person who is requesting the document number or placing
 the document in the database. In other words, this is you. This option must be 
 supplied when reserving a document number, placing a document into the database,
 or updating a document.
-<p/>
-To have a new author added to the database please contact the <a
-href="mailto:btev-docdb@fnal.gov">DocDB administrators</a> and supply the
-persons full name, with initials if desired and their institution name.
   </text>
  </entry>
 
@@ -596,10 +573,6 @@ of <b>Within Fields</b>.<p/>
 To select multiple authors either click
 (Netscape 4.x) or CTRL-click (Netscape 6.x, Internet Explorer) on the author
 names.
-<p/>
-To have a new author added to the database please contact the <a
-href="mailto:btev-docdb@fnal.gov">DocDB administrators</a> and supply the
-persons full name, with initials if desired and their institution name.
   </text>
  </entry>
 
@@ -612,10 +585,6 @@ either click (Netscape 4.x) or CTRL-click (Netscape 6.x, Internet Explorer) on
 the topic names. Note that there are two ways to enter topics, either from one
 big long list or from several shorter lists. You can select the other mode from
 the customize form on the main page.
-<p/>
-To request that a new subtopic be added to the database please contact the
-<a href="mailto:btev-docdb@fnal.gov">DocDB administrators</a>. Tell us what
-subtopic you would like added and which major topic it should be place under.
   </text>
  </entry>
 
@@ -628,9 +597,6 @@ To select more than one pair, either click (Netscape 4.x) or CTRL-click
 (Netscape 6.x, Internet Explorer) on them. You can make a document public by
 leaving all selections blank. Selecting "Public" doesn't actually do anything
 except generate a warning if you combine "Public" with another name.
-<p/>
-To request that a new group be added to the database please contact the <a
-href="mailto:btev-docdb@fnal.gov">DocDB administrators</a>. 
   </text>
  </entry>
 
@@ -640,9 +606,6 @@ href="mailto:btev-docdb@fnal.gov">DocDB administrators</a>.
   <text>
 Select which kind of document this is. This has nothing to do with the format of
 the document. I.e. a PowerPoint file isn't <i>necessarily</i> a "Talk."
-<p/>
-To request that a new document type be added to the database please
-contact the <a href="mailto:btev-docdb@fnal.gov">DocDB administrators</a>. 
   </text>
  </entry>
 

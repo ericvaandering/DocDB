@@ -5,42 +5,101 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
-#       FIXME: Think about XML and project/global help files
 
 use CGI;                                                                                      
+use XML::Parser::PerlSAX;
+use XML::PatAct::MatchName;
+use XML::PatAct::ToObjects;
+use XML::Grove::AsString;
+use XML::Grove::AsCanonXML;
+
 require "DocDBGlobals.pm";
+
+my $DefaultPatterns = [
+  'helpfile'    => [ qw{ -holder                                  } ],
+  'entry'       => [ -make => Schema::Entry                  ],
+  'key'         => [ qw{ -field Key -as-string                   } ],
+  'title'       => [ qw{ -field Title -as-string                } ],
+  'text'        => [ qw{ -field Text -grove                } ],
+];
+
+my $ProjectPatterns = [
+  'helpfile'    => [ qw{ -holder                                  } ],
+  'entry'       => [ -make => Schema::Entry, -args => 'Action => %{action}'                  ],
+  'key'         => [ qw{ -field Key -as-string                   } ],
+  'title'       => [ qw{ -field Title -as-string                } ],
+  'text'        => [ qw{ -field Text -grove              } ],
+];
+
+my $DefaultMatcher = XML::PatAct::MatchName -> new(Patterns => $DefaultPatterns);
+my $ProjectMatcher = XML::PatAct::MatchName -> new(Patterns => $ProjectPatterns);
+
+my $DefaultHandler = XML::PatAct::ToObjects -> new(Patterns => $DefaultPatterns,
+                                                    Matcher => $DefaultMatcher);
+my $ProjectHandler = XML::PatAct::ToObjects -> new(Patterns => $ProjectPatterns,
+                                                    Matcher => $ProjectMatcher);
+
+my $DefaultParser = XML::Parser::PerlSAX -> new(Handler => $DefaultHandler);
+my $ProjectParser = XML::Parser::PerlSAX -> new(Handler => $ProjectHandler);
+
+my $DefaultSchema = $DefaultParser -> parse(Source => {SystemId => "DocDBHelp.xml"  });
+my $ProjectSchema = $ProjectParser -> parse(Source => {SystemId => "ProjectHelp.xml"});
 
 # Start page
 
 $query = new CGI;  
 print $query->header;
 print $query->start_html(-title=>"$Project Document Database Help");
-
-open HELPFILE,"$help_file"; # Read in .hlp file
-
-while (<HELPFILE>) {
-  $key  = $_;
-  $name = <HELPFILE>;
-  chomp $key;
-  chomp $name;
-  $help{NAME}{$key} = $name;
-  while (<HELPFILE>) {
-    if ($_ eq "#\n") {last;}
-    $help{TEXT}{$key} .= $_;
-  }
-}
-
-close HELPFILE;     
-
 %params = $query -> Vars;
 $helpterm = $params{term};   # Extract term user wants help for
 
-# Write content
-if ($help{NAME}{$helpterm}) {
-  print "<b><big>$help{NAME}{$helpterm}:</big></b><p>\n";
-  print "$help{TEXT}{$helpterm}\n";
+# Parse XML into hashes, pull out desired text
+
+@Array = @{$DefaultSchema};
+foreach $Element (@Array) {
+  if (${%{$Element}}{Key} eq $helpterm) {
+    $DefaultText  = ${%{$Element}}{Text} -> as_canon_xml;
+    $DefaultTitle = ${%{$Element}}{Title};
+  }
+}
+
+@Array = @{$ProjectSchema};
+foreach $Element (@Array) {
+  if (${%{$Element}}{Key} eq $helpterm) {
+    $Action = ${%{$Element}}{Action};
+    $ProjectText = ${%{$Element}}{Text} -> as_canon_xml;
+    $ProjectTitle = ${%{$Element}}{Title};
+  }
+}
+
+# Remove line breaks and XML element tags
+
+$DefaultText =~ s/&#10;/ /g;
+$ProjectText =~ s/&#10;/ /g;
+$DefaultText =~ s/<text>//g;
+$ProjectText =~ s/<text>//g;
+$DefaultText =~ s/<\/text>//g;
+$ProjectText =~ s/<\/text>//g;
+
+# Print out help for user
+
+if ($DefaultText || $ProjectText) {
+  if ($Action eq "append" || !$Action) {
+    print "<b><big>$DefaultTitle:</big></b><p>\n";
+    print $DefaultText;
+    print $ProjectText;
+    print "\n";
+  } elsif ($Action eq "prepend") {
+    print "<b><big>$ProjectTitle:</big></b><p>\n";
+    print $ProjectText;
+    print $DefaultText;
+    print "\n";
+  } elsif ($Action eq "replace") {
+    print "<b><big>$ProjectTitle:</big></b><p>\n";
+    print $ProjectText;
+    print "\n";
+  }
 } else {
   print "<b><big>No help available on this topic.</big></b><p>\n";
 }  
 print $query->end_html;     # End page
-
