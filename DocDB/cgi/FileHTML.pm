@@ -1,14 +1,15 @@
 sub FileListByRevID {
   my ($DocRevID) = @_;
 #  &FetchDocRevisionByID($DocRevID);
-  my $Files_ref  = &FetchDocFiles($DocRevID);
+  my @FileIDs  = &FetchDocFiles($DocRevID);
+#  my $Files_ref  = &FetchDocFiles($DocRevID);
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
   my $Version    = $DocRevisions{$DocRevID}{VERSION};
 
-  if (@{$Files_ref}) {
+  if (@FileIDs) {
     @RootFiles  = ();
     @OtherFiles = ();
-    foreach $File (@{$Files_ref}) {
+    foreach $File (@FileIDs) {
       if ($DocFiles{$File}{ROOT}) {
         push @RootFiles,$File
       } else {
@@ -39,12 +40,12 @@ sub FileListByRevID {
 sub ShortFileListByRevID {
   my ($DocRevID) = @_;
 #  &FetchDocRevisionByID($DocRevID);
-  my $Files_ref  = &FetchDocFiles($DocRevID);
+  my @FileIDs  = &FetchDocFiles($DocRevID);
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
   my $Version    = $DocRevisions{$DocRevID}{VERSION};
 
   @RootFiles  = ();
-  foreach $File (@{$Files_ref}) {
+  foreach $File (@FileIDs) {
     if ($DocFiles{$File}{ROOT}) {
       push @RootFiles,$File
     }  

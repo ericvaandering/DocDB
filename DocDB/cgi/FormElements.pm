@@ -195,7 +195,7 @@ sub SingleHTTPBox {
 
 sub FileUpdateBox {
   my ($DocRevID) = @_; 
-  my @FileIDs = @{&FetchDocFiles($DocRevID)};
+  my @FileIDs = &FetchDocFiles($DocRevID);
 
   print "<table cellpadding=3>\n";
   print "<tr>";

@@ -313,7 +313,7 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
     my $DocRevID    = &FetchDocRevision($DocumentID,$Version);
     my $title       = &DocumentLink($DocumentID,$Version,$DocRevisions{$DocRevID}{TITLE});
     if ($Mode eq "meeting") {
-      my $Files_ref   = &FetchDocFiles($DocRevID);
+      my @FileIDs   = &FetchDocFiles($DocRevID);
     }
 
     my $rev_date    = &EuroDate($DocRevisions{$DocRevID}{DATE});
@@ -452,9 +452,8 @@ sub PrintAgenda {
   my ($DocRevID) = $agenda_find -> fetchrow_array;
   if ($DocRevID) {
     &FetchDocRevisionByID($DocRevID); 
-    my $Files_ref  = &FetchDocFiles($DocRevID);                                                                                             
-
-    my $FirstFile = shift @{$Files_ref};
+    my @FileIDs  = &FetchDocFiles($DocRevID);                                                                                             
+    my $FirstFile = shift @FileIDs;   #FIXME: Collapse to one line
 
     print "<h3>Agenda:</h3>\n";
     &PrintFile($FirstFile);
@@ -476,9 +475,9 @@ sub FindAgenda {
   my ($DocRevID) = $agenda_find -> fetchrow_array;
   if ($DocRevID) {
     &FetchDocRevisionByID($DocRevID); 
-    my $Files_ref  = &FetchDocFiles($DocRevID);                                                                                             
+    my @FileIDs  = &FetchDocFiles($DocRevID);                                                                                             
+    my $FileID   = shift @FileIDs; #FIXME Collapse to one line
 
-    my $FileID = shift @{$Files_ref};
     my $VersionNumber = $DocRevisions{$DocRevID}{VERSION};
     my $DocumentID    = $DocRevisions{$DocRevID}{DOCID}  ;
 

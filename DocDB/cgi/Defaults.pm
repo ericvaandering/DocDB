@@ -91,8 +91,8 @@ sub SetFileOptions {
     if ($Meeting  || $OtherMeeting) {
       $NumberUploads = 3;
     } elsif ($mode eq "update") {
-      my @DocFiles = @{&FetchDocFiles($DocRevID)};
-      $NumberUploads = @DocFiles;
+      my @DocFiles = &FetchDocFiles($DocRevID);
+      $NumberUploads = @DocFiles; # FIXME: One line with scalar
       unless ($NumberUploads) { # Gyrations to handle docs that have 0 files
         $NumberUploads = 1;
       }  
