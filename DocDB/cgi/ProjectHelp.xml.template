@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+
+<helpfile>
+ <entry action="append">
+  <key>appendkey</key>
+  <title>Title is ignored</title>
+  <text>
+   <p/>With action "append", this text will be appended to the default text.
+   For instance, you might want to have something like the following appended
+   with the key name "topics":
+   
+   To request that a new subtopic be added to the database please contact the
+   DocDB administrators. Tell us what subtopic you would like added and which
+   major topic it should be place under.
+  </text>
+ </entry>
+
+ <entry action="prepend">
+  <key>prependkey</key>
+  <title>New Title</title>
+  <text>
+   With action "prepend", this text will come before the default text and the
+   title in this file will replace the title in the default description.<p/>
+  </text>
+ </entry>
+
+ <entry action="replace">
+  <key>replacekey</key>
+  <title>Short tutorial on groups</title>
+  <title>New Title</title>
+  <text>
+   With action "replace", this text will completely replace the default text
+   and the title in this file will replace the default title.<p/>
+  </text>
+ </entry>
+</helpfile>
