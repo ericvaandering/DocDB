@@ -58,12 +58,13 @@ sub SessionEntryForm (@) {
   &HelpLink("sessions");
   print "Sessions:</a></b><p> \n";
   print "<table cellpadding=3>\n";
+
   print "<tr valign=bottom>\n";
-  print "<th><b><a "; &HelpLink("meetingorder");     print "Order</a></b> or <br>\n";
-  print "    <b><a "; &HelpLink("sessiondelete");    print "Delete</a></td>\n";
-  print "<th><b><a "; &HelpLink("meetingseparator"); print "Break</a></th>\n";
-  print "<th><b><a "; &HelpLink("sessioninfo");      print "Location<br>Start Date and Time</a></th>\n";
-  print "<th><b><a "; &HelpLink("sessioninfo");      print "Session Title & Description</a></th>\n";
+   print "<th><b><a "; &HelpLink("meetingorder");     print "Order</a></b> or <br>\n";
+   print "    <b><a "; &HelpLink("sessiondelete");    print "Delete</a></td>\n";
+   print "<th><b><a "; &HelpLink("meetingseparator"); print "Break</a></th>\n";
+   print "<th><b><a "; &HelpLink("sessioninfo");      print "Location<br>Start Date and Time</a></th>\n";
+   print "<th><b><a "; &HelpLink("sessioninfo");      print "Session Title & Description</a></th>\n";
   print "</tr>\n";
   
   # Sort session IDs by order
@@ -90,37 +91,41 @@ sub SessionEntryForm (@) {
       if ($MeetingOrders{$MeetingOrderID}{SessionID}) {
         my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
 	$SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
-        $SessionDefaultLocation    = $Sessions{$SessionID}{Location} || "";
-	$SessionDefaultTitle       = $Sessions{$SessionID}{Title} || "";
+        $SessionDefaultLocation    = $Sessions{$SessionID}{Location}    || "";
+	$SessionDefaultTitle       = $Sessions{$SessionID}{Title}       || "";
 	$SessionDefaultDescription = $Sessions{$SessionID}{Description} || "";
 	$SessionSeparatorDefault   = "No";
       } elsif ($MeetingOrders{$MeetingOrderID}{SessionSeparatorID}) {
         my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
 	$SessionDefaultDateTime    = $SessionSeparators{$SessionSeparatorID}{StartTime};
-        $SessionDefaultLocation    = $SessionSeparators{$SessionSeparatorID}{Location} || "";
-	$SessionDefaultTitle       = $SessionSeparators{$SessionSeparatorID}{Title} || "";
+        $SessionDefaultLocation    = $SessionSeparators{$SessionSeparatorID}{Location}    || "";
+	$SessionDefaultTitle       = $SessionSeparators{$SessionSeparatorID}{Title}       || "";
 	$SessionDefaultDescription = $SessionSeparators{$SessionSeparatorID}{Description} || "";
 	$SessionSeparatorDefault   = "Yes";
       }
     } 
 
     print "<tr valign=top>\n";
-    $query -> param('meetingorderid',$MeetingOrderID);
-    print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
+    
+     $query -> param('meetingorderid',$MeetingOrderID);
+     print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
 
-    print "<td align=center rowspan=2>\n"; &SessionOrder; print "<p/>\n";
-    &SessionModifyLink($MeetingOrderID) ; print "<p/>\n";
-    &SessionDelete($MeetingOrderID) ; print "</td>\n";
+     print "<td align=center rowspan=2>"; &SessionOrder;                       print "<p/>\n";
+                                          &SessionModifyLink($MeetingOrderID); print "<p/>\n";
+                                          &SessionDelete($MeetingOrderID);     
+     print "</td>\n";
 
-    print "<td align=center>\n"; &SessionSeparator($MeetingOrderID) ; print "</td>\n";
-    print "<td>\n"; &SessionLocation; print "</td>\n";
-    print "<td>\n"; &SessionTitle($SessionDefaultTitle);            print "</td>\n";
+     print "<td align=center>\n"; &SessionSeparator($MeetingOrderID);  print "</td>\n";
+     print "<td>\n";              &SessionLocation;                    print "</td>\n";
+     print "<td>\n";              &SessionTitle($SessionDefaultTitle); print "</td>\n";
     print "</tr>\n";
+
     print "<tr valign=top>\n";
-    print "<td>&nbsp</td>\n";
-    print "<td align=right>\n"; &SessionDateTimePullDown; print "</td>\n";
-    print "<td>\n"; &SessionDescription;      print "</td>\n";
+     print "<td>&nbsp</td>\n";
+     print "<td align=right>\n";  &SessionDateTimePullDown;            print "</td>\n";
+     print "<td>\n";              &SessionDescription;                 print "</td>\n";
     print "</tr>\n";
+
     print "<tr valign=top><td colspan=4><hr width=95%></td>\n";
     print "</tr>\n";
   }

@@ -108,8 +108,6 @@ if ($Mode eq "modify") {
     my $TalkConfirmed   = $TalkConfirmFlags{$SessionOrderID};
     my $TalkDocID       = $params{"talkdocid-$SessionOrderID"};
     
-    &DBPrintLine ("Checking SOID $SessionOrderID");
-    
     if (grep /n/,$SessionOrderID) { # Key on SessionOrderID to see if insert or update.	
       if ($TalkTitle || $TalkNote || $TalkDocID) {
 	++$TalksUpdated;
@@ -140,7 +138,6 @@ if ($Mode eq "modify") {
       $SessionTalkID   = $SessionOrders{$SessionOrderID}{SessionTalkID};
 
       if ($TalkDeleteFlags{$SessionOrderID}) { # Delete session or separator
-        &DBPrintLine ("Deleting Talk Separator $TalkSeparatorID or $SessionTalkID");
         my $SessionTalkDelete = $dbh -> prepare(
          "delete from SessionTalk where SessionTalkID=?");
         my $TalkSeparatorDelete = $dbh -> prepare(
@@ -158,15 +155,13 @@ if ($Mode eq "modify") {
       } elsif ($TalkTitle || $TalkNote || $TalkDocID) { # We will modify existing talks
 	++$TalksUpdated;
 	
-        if ($TalkSeparatorID) {
-          &DBPrintLine ("Updating Talk Separator $TalkSeparatorID");
+        if ($TalkSeparatorID) { # Modify a talk separator
           my $TalkSeparatorUpdate = $dbh -> prepare(
            "update TalkSeparator set ".
            "Time=?, Title=?, Note=? ". 
            "where TalkSeparatorID=?");
           $TalkSeparatorUpdate -> execute($TalkTime,$TalkTitle,$TalkNote,$TalkSeparatorID);
-        } elsif ($SessionTalkID) {
-          &DBPrintLine ("Updating Talk $SessionTalkID");
+        } elsif ($SessionTalkID) { # Modify a talk
           my $SessionTalkUpdate = $dbh -> prepare(
            "update SessionTalk set ".
            "DocumentID=?, Confirmed=?, Time=?, HintTitle=?, Note=? ". 
@@ -178,13 +173,8 @@ if ($Mode eq "modify") {
          "update SessionOrder set TalkOrder=? where SessionOrderID=?");
 
         $SessionOrderUpdate -> execute($TalkNewOrder,$SessionOrderID);
-#      } else {
-#        push @WarnStack,$Msg_SessionBlankDelete;
       }  
     }  
-  }
-  unless ($TalksUpdated) {
-    push @WarnStack,$Msg_MeetNoTalks; #FIXME Define
   }
 }
 

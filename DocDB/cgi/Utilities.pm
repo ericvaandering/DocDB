@@ -79,8 +79,8 @@ sub AddTime ($$) {
 
 sub Paragraphize {
   my ($Text) = @_;
-  $Text =~ s/\s+\n\s+\n\s+/<p>/g;
-#  $Text =~ s/\s+\n/<br>\n/g;
+  $Text =~ s/\s*\n\s*\n\s*/<p>/g; # Replace two new lines and any space with <p>
+#  $Text =~ s/\s*\n\s*/<br>\n/g;
   $Text =~ s/<p>/<p>\n/g;
   return $Text;
 }

@@ -13,6 +13,8 @@ use DBI;
 require "Debug.pm"; #FIXME: Remove 
 
 require "DocDBGlobals.pm";
+require "Messages.pm";
+
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 require "Sorts.pm";
@@ -117,6 +119,9 @@ if ($Mode eq "create" || $Mode eq "modify") {
     $TopicInsert -> execute($MajorTopic,$Short,$Long);
     $MinorTopicID = $TopicInsert -> {mysql_insertid}; # Works with MySQL only
   }
+  unless ($MinorTopicID) {
+    $MinorTopicID = 0;
+  }
   if ($Mode eq "create") { # FIXME allow for modification here
     my $ConferenceInsert = $dbh->prepare(
      "insert into Conference ".
@@ -179,7 +184,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
       if ($SessionTitle || $SessionDescription) {
 	++$SessionsUpdated;
 	if ($SessionSeparatorFlags{$MeetingOrderID}) {
-	  &DBPrint ("Creating Separator");
+          # Create a new separator
           my $SessionSeparatorInsert = $dbh -> prepare(
            "insert into SessionSeparator ".
            "(SessionSeparatorID, ConferenceID, StartTime, Location, Title, Description) ". 
@@ -187,7 +192,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
           $SessionSeparatorInsert -> execute($ConferenceID,$SessionDate,$SessionLocation,$SessionTitle,$SessionDescription);
           $SessionSeparatorID = $SessionSeparatorInsert -> {mysql_insertid}; # Works with MySQL only
 	} else {
-	  &DBPrint ("Creating Session");
+          # Create a new session
           my $SessionInsert = $dbh -> prepare(
            "insert into Session ".
                   "(SessionID, ConferenceID, StartTime, Location, Title, Description) ". 
@@ -195,6 +200,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
           $SessionInsert          -> execute($ConferenceID,$SessionDate,$SessionLocation,$SessionTitle,$SessionDescription);
           $SessionID = $SessionInsert -> {mysql_insertid}; # Works with MySQL only
 	}
+        # Insert the order of the session or separator
         my $MeetingOrderInsert = $dbh -> prepare(
          "insert into MeetingOrder ".
          "(MeetingOrderID, SessionOrder, SessionID, SessionSeparatorID) ". 
@@ -247,7 +253,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
     }  
   }
   unless ($SessionsUpdated) {
-    push @WarnStack,$Msg_MeetNoSessions; #FIXME Define?
+    push @WarnStack,$Msg_MeetNoSessions; 
   }
 }
 

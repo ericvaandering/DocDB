@@ -75,13 +75,13 @@ if ($SessionID) {
     } elsif ($SessionSeparatorID) {
       # Info on session separator?
     }
-  }  
+  }
+  # If a topic-based meeting, display talks not associated with sessions  
   &PrintMeetingEpilogue($ConferenceID);
 } else {
   #Complain that user didn't specify either
 }  
   
-
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  

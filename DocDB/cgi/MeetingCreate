@@ -11,6 +11,9 @@ use CGI;
 use DBI;
 
 require "DocDBGlobals.pm";
+require "ResponseElements.pm";
+
+require "Messages.pm";
 require "Scripts.pm";
 
 require "HTMLUtilities.pm";
@@ -28,22 +31,21 @@ print $query->header;
 
 # %params = $query -> Vars;
 
-# @ErrorStack = ();
-# @WarnStack  = ();
+@ErrorStack = ();
+@WarnStack  = ();
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-#unless ($dbh) {
-#  push @ErrorStack,$Msg_AdminNoConnect;
-#}         
-#&EndPage(@ErrorStack);
+unless ($dbh) {
+  push @ErrorStack,$Msg_NoConnect;
+}         
+&EndPage(@ErrorStack);
 
 &GetTopics;
 
 print $query -> start_multipart_form('POST',"$MeetingModify");
 print $query -> hidden(-name => 'mode',   -default => 'create');
 print "<table cellpadding=10>\n";
-
 
 print "<tr valign=top>\n";
 print "<td>\n"; &MajorGatheringSelect; print "</td>\n";
@@ -103,7 +105,7 @@ print "<td colspan=2>\n"; &SessionEntryForm;   print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td colspan=2>\n";
+print "<td colspan=2 align=center>\n";
 print $query -> submit (-value => "Create New Meeting");
 print "</td>\n";
 print "</tr>\n";

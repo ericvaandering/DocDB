@@ -33,7 +33,9 @@ $Msg_ModConfEmpty     = "You must select a conference to modify or delete.";
 
 $Msg_TopicNoShort      = "You must supply a short description for your topic or meeting.";
 $Msg_TopicNoLong       = "You must supply a long description for your topic or meeting.";
-$Msg_TopicShortIgnored = "Your short description has been ignored. The long description will be used instead.";
+$Msg_TopicShortIgnored = "Your short description of this meeting has been ".
+                         "ignored. The long description will be used instead ".
+                         "(because you didn't create a topic). ";
 
 # Messages for meeting/session creation/modification
 
