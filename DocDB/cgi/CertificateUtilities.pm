@@ -61,6 +61,7 @@ sub FetchEmailUserIDByCert (%) {
   }                                    
 
   my ($EmailUserID) = $EmailUserSelect -> fetchrow_array; 
+  push @DebugStack,"Found e-mail user: $EmailUserID";
   
   return $EmailUserID;
 }
@@ -91,6 +92,7 @@ sub CertificateStatus () {
     $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
                                        "where Name=?");
     $EmailUserSelect -> execute($CertCN);
+    push @DebugStack,"Checking user $CertCN";
   } else {
     $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
                                        "where EmailAddress=? and Name=?");
@@ -101,16 +103,19 @@ sub CertificateStatus () {
   
   if ($Verified) {
     $CertificateStatus = "verified";
+    push @DebugStack,"Certificate Status: $CertificateStatus";
     return $CertificateStatus;
   } 
   
   if ($EmailUserID) {
     $CertificateStatus = "unverified";
+    push @DebugStack,"Certificate Status: $CertificateStatus";
     return $CertificateStatus;
   } 
   
   if ($Preferences{Security}{Certificates}{UseCNOnly}) { # Can't do mismatch check
     $CertificateStatus = "noapp";
+    push @DebugStack,"Certificate Status: $CertificateStatus";
     return $CertificateStatus;
   } 
    
@@ -127,6 +132,7 @@ sub CertificateStatus () {
   } else {
     $CertificateStatus = "noapp";
   }
+  push @DebugStack,"Certificate Status: $CertificateStatus";
   return $CertificateStatus;
 }
 
