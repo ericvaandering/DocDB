@@ -47,7 +47,7 @@ sub ConferencePreambleBox {
   &HelpLink("meetpreepi");
   print "Meeting Preamble:</a></b><br> \n";
   print $query -> textarea (-name => 'meetpreamble', -default => $MeetingDefaultPreamble,
-                            -columns => 50, -rows => 5);
+                            -columns => 50, -rows => 7);
 };
 
 sub ConferenceEpilogueBox {
@@ -56,7 +56,7 @@ sub ConferenceEpilogueBox {
   &HelpLink("meetpreepi");
   print "Meeting Epilogue:</a></b><br> \n";
   print $query -> textarea (-name => 'meetepilogue', -default => $MeetingDefaultEpilogue,
-                            -columns => 50, -rows => 5);
+                            -columns => 50, -rows => 7);
 };
 
 sub ConferenceShowAllTalks {

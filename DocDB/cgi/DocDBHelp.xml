@@ -943,4 +943,25 @@ or may not be the same as the web username and password.
   </text>
  </entry>
  
+ <entry>
+  <key>meetingviewgroups</key>
+  <title>Meeting Viewable by</title>
+  <text>
+   Select the groups you want to be able to view the meeting and the agendas
+   for the sessions in the meeting.  By default this is chosen to be the group
+   you logged into. Groups that have permission to view a subordinate groups'
+   documents will also be view  meetings viewable by that group.
+  </text>
+ </entry>
+ 
+ <entry>
+  <key>meetingmodifygroups</key>
+  <title>Meeting Viewable by</title>
+  <text>
+   Select the groups you want to be able to modify the meeting and the agendas
+   for the sessions in the meeting.  By default this is chosen to be the group
+   you logged into. 
+  </text>
+ </entry>
+ 
 </helpfile>

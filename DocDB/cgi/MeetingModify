@@ -38,6 +38,7 @@ require "Scripts.pm";
 require "Security.pm";
 
 require "MeetingHTML.pm";
+require "SecurityHTML.pm";
 require "MeetingSQL.pm";
 require "TopicSQL.pm";
 require "WebUtilities.pm";
@@ -65,6 +66,9 @@ my $MeetEpilogue       = $params{meetepilogue};
 my $Location           = $params{location};
 my $URL                = $params{url};
 my $ShowAllTalks       = $params{meetshowall};
+
+my @MeetingViewGroupIDs   = split /\0/,$params{meetingviewgroups};
+my @MeetingModifyGroupIDs = split /\0/,$params{meetingviewgroups};
 
 my @SessionYears         = split /\0/,$params{sessionyear};
 my @SessionMonths        = split /\0/,$params{sessionmonth};
@@ -249,6 +253,8 @@ if ($Mode eq "create" || $Mode eq "modify") {
                                  $MeetEpilogue,$Long,$ConferenceID); 
     ++$MeetingsUpdated;
   }
+
+  # Call view/modify groups updater (delete/insert)
 
 # Repack check boxes into hashes
 
@@ -461,6 +467,8 @@ $MeetingDefaultEpilogue     = $Conferences{$ConferenceID}{Epilogue};
 $MeetingDefaultShowAllTalks = $Conferences{$ConferenceID}{ShowAllTalks};
 $DefaultStartDate           = $Conferences{$ConferenceID}{StartDate};
 $DefaultEndDate             = $Conferences{$ConferenceID}{EndDate};
+my @MeetingViewDefaults     = &GetMeetingSecurityGroups($ConferenceID);
+my @MeetingModifyDefaults   = &GetMeetingModifyGroups($ConferenceID);
 
 print "<tr valign=top>\n";
  print "<td colspan=2>Only select a Major Topic and fill in the short description if
@@ -513,8 +521,26 @@ print "<table cellpadding=10>\n";
 
 print "<tr valign=top>\n";
 print "<td>\n"; &ConferencePreambleBox; print "</td>\n";
+print "<td>\n"; 
+&SecurityList(-addpublic => 'true',
+              -name      => 'meetingviewgroups', 
+              -helplink  => 'meetingviewgroups',
+              -helptext  => 'Viewable by',
+              -default   => \@MeetingViewDefaults,
+              -size      => 8);
+print "</td>\n";
+print "</tr><tr valign=top>\n";
 print "<td>\n"; &ConferenceEpilogueBox; print "</td>\n";
+print "<td>\n"; 
+&SecurityList(-name      => 'meetingmodifygroups', 
+              -helplink  => 'meetingmodifygroups',
+              -helptext  => 'Modifiable by',
+              -default   => \@MeetingModifyDefaults,
+              -size      => 8);
+print "</td>\n";
 print "</tr>\n";
+print "</table>\n";
+print "<table cellpadding=10>\n";
 
 %Conferences       = ();
 %Sessions          = ();

@@ -415,7 +415,7 @@ unless ($Meeting || $OtherMeeting) {
     print "<td>\n"; &AuthorManual;    print "</td>\n";
   }
 }
-print "<td colspan=1 valign=top>\n"; &SecurityList; print "</td>\n";
+print "<td colspan=1 valign=top>\n"; &ViewList; print "</td>\n";
 if ($EnhancedSecurity) {
   print "<td colspan=1 valign=top>\n"; &ModifyList;   print "</td>\n";
 }
