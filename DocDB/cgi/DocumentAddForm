@@ -1,0 +1,332 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+use CGI;                                                                                      
+use DBI;
+
+require "DocDBGlobals.pm";
+require "Cookies.pm";
+require "FormElements.pm";
+require "Scripts.pm";
+require "Sorts.pm";
+require "AuthorSQL.pm";
+require "TopicSQL.pm";
+require "SecuritySQL.pm";
+require "DocumentSQL.pm";
+require "RevisionSQL.pm";
+require "MiscSQL.pm";
+require "ResponseElements.pm";
+require "HTMLUtilities.pm";
+require "Defaults.pm";
+require "Security.pm";
+
+$query = new CGI;  # Global for subroutines
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+&GetAuthors;
+&GetTopics;
+&GetSecurityGroups;
+&GetDocTypes;
+&GetPrefsCookie;
+
+%params = $query -> Vars;
+
+my $Special    = $params{special};
+my $DocumentID = $params{docid};
+my $Version    = $params{version};
+
+if ($Special eq "meeting")      {$Meeting = 1;}
+if ($Special eq "othermeeting") {$OtherMeeting = 1;}
+
+if ($Meeting) {
+ require "WebUtilities.pm";
+ $mode = "add";
+ @TopicDefaults = (&NearByMeeting); #FIXME: push onto pretopics 
+}
+
+if ($OtherMeeting) {
+ $mode = "add";
+ @PreTopics  = $query -> param('pretopic');
+ @TopicDefaults = @PreTopics; #FIXME: Not just for meetings
+}
+
+unless ($mode) { 
+  $mode   = $params{mode};
+}
+if ($mode ne "add"    && $mode ne "reserve" && 
+    $mode ne "update" && $mode ne "updatedb") {
+  $mode = "reserve";
+}  
+
+&SetUploadMethod;
+&SetDateOverride;
+&SetAuthorMode;
+&SetTopicMode;
+
+if ($mode eq "add" || $mode eq "reserve") {
+  &SetAuthorDefault;
+}
+
+print $query->header;
+if      ($mode eq "add") {
+  &DocDBHeader("$Project Document Addition","Document Addition");
+} elsif ($mode eq "reserve") {
+  &DocDBHeader("$Project Document Reservation","Document Reservation");
+} elsif ($mode eq "update" || $mode eq "updatedb") {
+  &DocDBHeader("$Project Document Update","Document Update");
+}
+&HelpPopupScript;
+
+@error_stack = ();
+@warn_stack = ();
+
+unless (&CanCreate()) {
+  push @error_stack,"You are not allowed to modify or create documents.";
+}
+if ($mode eq "update" || $mode eq "updatedb") {
+  unless ($params{docid}) {
+    push @error_stack,"You must supply a document number to modify a document.";
+  }
+}
+if ($mode eq "update" || $mode eq "add") {
+  if ($Archive eq "archive" && $NumberUploads > 1) {
+    push @error_stack,"You cannot upload more than one archive.";
+  }
+}
+
+if (@error_stack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@error_stack);
+}
+
+my $DocRevID;
+
+if ($mode eq "update" || $mode eq "updatedb") {
+  &FetchDocument($DocumentID);
+  unless (&CanModify($DocumentID)) {
+    push @error_stack,"You are not allowed to modify this document.";
+  }
+}
+
+if ($mode eq "updatedb") { 
+  unless (defined $Version) {
+    $Version = $Documents{$DocumentID}{NVER};
+  }  
+  if ($Version != $Documents{$DocumentID}{NVER}) {
+    push @warn_stack,"You are about to update an old version of this document.";
+  }
+}    
+
+if ($mode eq "update") {
+  $Version = $Documents{$DocumentID}{NVER};
+}
+
+if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
+  $DocRevID          = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+  $TitleDefault      = $DocRevisions{$DocRevID}{TITLE};
+  $PubInfoDefault    = $DocRevisions{$DocRevID}{PUBINFO};
+  $AbstractDefault   = $DocRevisions{$DocRevID}{ABSTRACT};
+  $RequesterDefault  = $DocRevisions{$DocRevID}{SUBMITTER};
+#  $JournalDefault    = $DocRevisions{$DocRevID}{JournalID}; # FIXME: Array
+#  $VolumeDefault     = $DocRevisions{$DocRevID}{Volume};    # FIXME: Array
+#  $PageDefault       = $DocRevisions{$DocRevID}{Page};      # FIXME: Array
+  $KeywordsDefault   = $DocRevisions{$DocRevID}{Keywords};
+  @SecurityDefaults  = &GetRevisionSecurityGroups($DocRevID);
+  @AuthorDefaults    = &GetRevisionAuthors($DocRevID);
+  @TopicDefaults     = &GetRevisionTopics($DocRevID);
+  @ReferenceDefaults = &FetchReferences ($DocRevID)
+} else {
+  my $User = &SecurityLookup($remote_user);
+  @SecurityDefaults = ($SecurityIDs{$User}); 
+}  
+
+if (@error_stack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@error_stack);
+}
+
+&SetFileOptions($DocRevID);
+
+print $query -> start_multipart_form('POST',$ProcessDocumentAdd);
+print $query -> hidden(-name => 'mode',    -default => $mode);
+print $query -> hidden(-name => 'upload',  -default => 'file');
+print $query -> hidden(-name => 'archive', -default => 'single');
+print $query -> hidden(-name => 'docid',   -default => $DocumentID);
+
+if ($mode eq "updatedb") { 
+  if (defined $params{version}) {
+    print $query -> hidden(-name => 'version',   -default => $Version);
+  }
+}    
+
+if ($Overdate eq "Yes") {
+  print $query -> hidden(-name => 'overdate',-default => 'Yes');
+} else {
+  print $query -> hidden(-name => 'overdate',-default => '');
+}  
+
+print $query -> hidden(-name => 'special',-default => '');
+
+if (@warn_stack) {
+  &WarnPage(@warn_stack);
+  @warn_stack = ();
+}
+
+print "<center><table cellpadding=10>\n";
+
+print "<tr>\n";
+print "<td colspan=3>\n";
+if ($mode eq "add") {
+  if ($Meeting || $OtherMeeting) {
+    print "<h4>You have chosen to add a new meeting talk to the database.<br> 
+               Make sure you know all the required information and
+               the file is ready for uploading.<p>
+               This is a simplified form for adding information to the 
+               database. (<a href=\"$HelpFile#meeting\">Instructions</a>)<br>
+               If you need something more complicated, such as multiple authors
+               or more upload boxes,<br> please use one of the options from
+               the <a href=$ModifyHome>change/add page</a>.\n";
+  } else {  
+    print "<h4>You have chosen to add a new document to the database.<br> 
+               Make sure you know all the required information and
+               the file is ready for uploading.<br>\n";
+  } 
+} elsif ($mode eq "reserve") {
+  print "<h4>You have chosen to reserve a new document document number in 
+             the database. <br>
+             You CANNOT upload the document using this form.<br>
+             Make sure you know all the required information.<br>\n";
+} elsif ($mode eq "update") {
+  $documentName = &FullDocumentID($DocumentID);
+  print "<h4>You have chosen to update $documentName. 
+             Make sure you know all the required information.<br>\n";
+} elsif ($mode eq "updatedb") {
+  $documentName = &FullDocumentID($DocumentID,$Version);
+  print "<h4>You have chosen to update the database for $documentName. 
+             Make sure you know all the required information.<br>\n";
+}
+
+print "Click on any of the headings for help.</h4>\n"; print "</td>\n";
+print "</tr>\n";
+
+### Title, abstract, and keywords
+
+print "<tr>\n";
+print "<td colspan=3>\n"; &TitleBox;    print "</td>\n";
+print "</tr>\n";
+print "<tr>\n";
+print "<td colspan=3>\n"; &AbstractBox; print "</td>\n";
+print "</tr>\n";
+print "<tr>\n";
+print "<td colspan=3>\n"; &KeywordsBox; print "</td>\n";
+print "</tr>\n";
+
+### Files
+
+if ($mode eq "add" || $mode eq "update") {
+  print "<tr><td colspan=3>\n";
+  if ($Archive eq "archive") { 
+    if ($Upload eq "file") {
+      &ArchiveUploadBox;
+    } elsif ($Upload eq "http") {
+      &ArchiveHTTPBox;
+    }  
+  } else {
+    if ($Upload eq "file") {
+      &SingleUploadBox;
+    } elsif ($Upload eq "http") {
+      &SingleHTTPBox;
+    }  
+  }
+  print "<br>Make sure you supply a format everyone can view (e.g. PDF) along
+  with source formats.<br>\n"; 
+  print "</td></tr>";
+} elsif ($mode eq "updatedb") {
+  print "<tr><td colspan=3>\n";
+  &FileUpdateBox($DocRevID);
+  print "</td></tr>";
+}
+
+### Document type and date override (if present)
+
+print "<tr>\n";
+if ($Meeting || $OtherMeeting) {
+  print "<td colspan=2 valign=top>\n"; 
+  my @TypeIDs = keys %DocumentTypes;
+  foreach my $ID (@TypeIDs) {
+    if ($DocumentTypes{$ID}{SHORT} eq "Talk") {
+      $TalkTypeID = $ID;
+      last;
+    }
+  }
+  print "<b>Document type is: $DocumentTypes{$TalkTypeID}{SHORT}</b>\n";  
+  print $query -> hidden(-name => 'doctype',  -default => $TalkTypeID);
+  print "</td>\n";  
+} else {
+  if ($mode eq "add" || $mode eq "reserve") {
+    print "<td colspan=2 valign=top>\n";
+    &DocTypeButtons;
+    print "</td>\n";
+  }
+}
+
+if ($Overdate eq "Yes") {
+  print "<td valign=top>\n";
+  &DateTimePullDown;
+  print "</td>\n";
+}  
+print "</tr>\n";
+
+### Requester, Authors, and security 
+
+print "<tr valign=top>\n";
+if ($Meeting || $OtherMeeting) {
+  print "<td>&nbsp;&nbsp;&nbsp;</td>\n";
+} 
+
+print "<td>\n"; &RequesterSelect; print "</td>\n";
+
+unless ($Meeting || $OtherMeeting) {
+  if ($AuthorMode eq "list") {
+    print "<td>\n"; &AuthorSelect;    print "</td>\n";
+  } elsif ($AuthorMode eq "field") {
+    print "<td>\n"; &AuthorManual;    print "</td>\n";
+  }
+}
+print "<td colspan=1 valign=top>\n"; &SecurityList; print "</td>\n";
+print "</tr>\n";
+
+### Topics
+
+print "<tr>\n";
+if ($TopicMode eq "single") {
+  print "<td colspan=3>\n"; &TopicSelect;     print "</td>\n";
+} elsif ($TopicMode eq "multi") {
+  print "<td colspan=3>\n"; &MultiTopicSelect;     print "</td>\n";
+}
+print "</tr>\n";
+
+### References and Publication info
+
+unless ($Meeting || $OtherMeeting) {
+  print "<tr>\n";
+  print "<td colspan=3>\n"; &ReferenceForm;  print "</td>\n";
+  print "</tr><tr>\n";
+  print "<td colspan=3>\n"; &PubInfoBox;  print "</td>\n";
+  print "</tr>\n";
+}
+
+print "</table><p>\n";
+
+if      ($mode eq "add") {
+  print $query -> submit (-value => "Submit document");
+} elsif ($mode eq "reserve") {
+  print $query -> submit (-value => "Request document ID");
+} elsif ($mode eq "update" || $mode eq "updatedb") {
+  print $query -> submit (-value => "Update document");
+}
+print "</center><p>";
+print $query -> end_multipart_form;
+
+&DocDBNavBar();
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -1,0 +1,71 @@
+#
+# Description: Configuration file for your projects DocDB settings. 
+#              Set variables  for server names, accounts, and command 
+#              paths here.
+#              Rename as ProjectGlobals.pm
+#              This file is included in every DocDB program.
+#              You can override any settings in DocDBGlobals.pm here.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+
+# DB settings
+
+$db_name       = "DocDB";               # Database name
+$db_host       = "db-server-host-and-domain";
+$db_rwuser     = "docdbrw";
+$db_rwpass     = "read-write-password";
+$db_rouser     = "docdbro";
+$db_ropass     = "read-only-password";
+$Administrator = "docdbadm";
+
+# Root directories and URLs
+
+$file_root   = "/www/html/DocDB/";    
+$script_root = "/www/cgi-bin/DocDB/"; 
+$web_root    = "http://web-server-host-and-domain/DocDB/";
+$cgi_root    = "http://web-server-host-and-domain/cgi-bin/DocDB/";
+$cgi_path    = "/cgi-bin/DocDB/"; # Used for cookies
+
+$DBWebMasterEmail = "docdb\@mail-gateway";
+$DBWebMasterName  = "Document Database Administrators";
+
+$AuthUserFile     = "/full/path/to/.htpasswd";
+$MailServer       = "smtp-server-host-name";
+
+# Text customization. Leave $WelcomeMessage blank for no message on top of DB
+# BTeV uses a welcome message for the public part of the DB, but not for the
+# private
+
+$Project        = "My Project";
+$ShortProject   = "MyProject";    # This is the project used in the Document ID
+#$WelcomeMessage = "Welcome to the public portion of the $Project Document Database,<br> the repository for all $Project public talks, proceedings, preprints, and publications.";
+
+# These settings are for public version of DB. Uncomment these five lines 
+# for the version of this file you place in the public area. While only the 
+# first is probably necessary, as a precaution its wise to do the other 4 as 
+# well.
+
+#$Public           = 1;
+#$remote_user      = ""; # Just to be safe
+#$RemoteUsername   = ""; # Just to be safe
+#$db_rwuser        = ""; # Just to be safe
+#$db_rwpass        = ""; # Just to be safe
+
+# If you are just linking executables for the public version of the database
+# you need to include lines like these three to pick up the .pm files from 
+# the default location. Replace /www/cgi-bin/DocDB with your path.
+
+#if (-e "/www/cgi-bin/DocDB/DocDBGlobals.pm") {
+#  use lib "/www/cgi-bin/DocDB/";
+#}
+
+# At this point you can also change any of the other variables in
+# DocDBGlobals.pm for things like $HomeLastDays, command locatations
+# (if not using Linux) etc.
+
+#$HomeLastDays     = 20;         # Number of days for last modified on home page
+#$EnchancedSecurity = 1;        # Separate lists for view, modify
+
+
+1;
