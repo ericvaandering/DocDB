@@ -140,7 +140,8 @@ li.Even, tr.Even {
 #DocumentList {
   border: 1px solid black;
   margin-bottom: 2em;
-  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 #DocumentList td {
