@@ -1,3 +1,11 @@
+#
+# Description: Subroutines to provide links for files, groups of 
+#              files and archives.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
 sub FileListByRevID {
   my ($DocRevID) = @_;
 

@@ -1,6 +1,10 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+# Description: Create an archive (.zip, .tar, etc.) file of the document 
+#              and redirect the user to download it.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
 #
 
 use CGI;
@@ -58,13 +62,15 @@ unless ($DocRevID) {
 my $URL;       
 my $status;
 
-unless (@error_stack) {
+unless (@error_stack) { 
   my $Directory = &GetDirectory($DocumentID,$Version);
   my $URLDir    = &GetURLDir($DocumentID,$Version);
   my $ShortFile = "tmp$DocumentID-$Version.$Type";
   my $TmpFile   = "/tmp/$ShortFile";
   my $File      = "$Directory/$ShortFile";
      $URL       = "$URLDir/$ShortFile";
+
+#FIXME: zip request won't clear tar.gz request, vice versa
 
   unlink $TmpFile;
   unlink $File;

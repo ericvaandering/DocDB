@@ -7,6 +7,7 @@
 #    Modified: 
 
 # DB settings
+
 $db_name   = "BTeVDocDB";
 $db_host   = "btevsrv1.fnal.gov";
 $db_rwuser = "docdbrw";
@@ -45,13 +46,13 @@ $Zip    = "/usr/bin/zip -q -r ";  # Comment out if not present
 @AbrvMonths = ("Jan","Feb","Mar","Apr","May","Jun",
                "Jul","Aug","Sep","Oct","Nov","Dec");
 
-@FullMonths = ("January","February","March","April",
-               "May","June","July","August",
-               "September","October","November","December");
+@FullMonths = ("January",  "February","March",   "April",
+               "May",      "June",    "July",    "August",
+               "September","October", "November","December");
 
 # Other Globals
 
-$remote_user = $ENV{REMOTE_USER};
+$remote_user      = $ENV{REMOTE_USER};
 $DBWebMasterEmail = "btev-docdb\@fnal.gov";
 $DBWebMasterName  = "BTeV Document Database Administrators";
 $RobotsMeta       = "none";
