@@ -378,10 +378,10 @@ sub DocDBNavBar {
     print "[&nbsp;<a href=\"$DocumentAddForm?mode=add\">New</a>&nbsp;]&nbsp;\n";
     print "[&nbsp;<a href=\"$DocumentAddForm\">Reserve</a>&nbsp;]&nbsp;\n";
   }
+  print "[&nbsp;<a href=\"$SearchForm\">Search</a>&nbsp;]\n";
   print "[&nbsp;<a href=\"$LastModified?days=$LastDays\">Last&nbsp;$LastDays&nbsp;Days</a>&nbsp;]\n";
   print "[&nbsp;<a href=\"$ListAuthors\">List&nbsp;Authors</a>&nbsp;]\n";
   print "[&nbsp;<a href=\"$ListTopics\">List&nbsp;Topics</a>&nbsp;]\n";
-  print "[&nbsp;<a href=\"$ListTypes\">List&nbsp;Types</a>&nbsp;]\n";
   unless ($Public) {
     print "[&nbsp;<a href=\"$HelpFile\">Help</a>&nbsp;]\n";
   } 

@@ -60,7 +60,7 @@ $FileDescSearchMode = $params{filedescsearchmode};
 $Afterday   = $params{afterday};
 $Aftermonth = $params{aftermonth};
 $Afteryear  = $params{afteryear};
-if ($Afteryear ne "----") { 
+if ($Afteryear && $Afteryear ne "----") { 
   if ($Aftermonth eq "---") {$Aftermonth = "Jan";}
   if ($Afterday   eq "--")  {$Afterday   = "1";}
   $SQLBegin   = "$Afteryear-$ReverseAbrvMonth{$Aftermonth}-$Afterday";
@@ -69,7 +69,7 @@ if ($Afteryear ne "----") {
 $Beforeday   = $params{beforeday};
 $Beforemonth = $params{beforemonth};
 $Beforeyear  = $params{beforeyear};
-if ($Beforeyear ne "----") { 
+if ($Beforeyear && $Beforeyear ne "----") { 
   if ($Beforemonth eq "---") {$Beforemonth = "Dec";}
   if ($Beforeday   eq "--")  {$Beforeday   = &DaysInMonth($ReverseAbrvMonth{$Beforemonth},$Beforeyear);}
   $SQLEnd     = "$Beforeyear-$ReverseAbrvMonth{$Beforemonth}-$Beforeday";
