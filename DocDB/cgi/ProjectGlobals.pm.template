@@ -17,7 +17,6 @@ $db_rwuser     = "docdbrw";
 $db_rwpass     = "read-write-password";
 $db_rouser     = "docdbro";
 $db_ropass     = "read-only-password";
-$Administrator = "docdbadm";
 
 # Root directories and URLs
 
