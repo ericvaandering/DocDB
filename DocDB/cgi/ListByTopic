@@ -165,7 +165,8 @@ foreach my $DocumentID (@DocumentIDs) { # For shorter lists
 ### Sort
 
 if      ($Mode eq "meeting") {
-  @DocumentIDs =         sort DocumentByRequester      @DocumentIDs;  
+  @DocumentIDs  =        sort DocumentByRequester      @DocumentIDs;
+  @IgnoreTopics = ($TopicID);  
 } elsif ($Mode eq "conference") {
   &SpecialMajorTopics;
   @DocumentIDs = reverse sort DocumentByConferenceDate @DocumentIDs;

@@ -16,6 +16,19 @@ sub TopicListByID {
   }
 }
 
+sub ShortTopicListByID {
+  my @topicIDs = @_;
+  if (@topicIDs) {
+    foreach $topicID (@topicIDs) {
+      &FetchMinorTopic($topicID);
+      my $topic_link = &TopicLink($topicID);
+      print "$topic_link <br>\n";
+    }
+  } else {
+    print "None<br>\n";
+  }
+}
+
 sub TopicLink {
   my ($TopicID,$mode) = @_;
   

@@ -311,9 +311,20 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
       print "<td><nobr>$author_link</nobr></td>\n";
       print "<td><nobr>$rev_date</nobr></td>\n";
     } elsif ($Mode eq "meeting") {
-      print "<td><nobr>$full_docid</nobr></td>\n";
+      my @TopicIDs = @{&GetRevisionTopics($DocRevID)};
+      foreach my $ID (@IgnoreTopics) {
+        my $Index = 0;
+        foreach my $TopicID (@TopicIDs) {
+          if ($TopicID == $ID) {
+            splice @TopicIDs,$Index,1;
+            last;
+          }
+          ++$Index;  
+        }
+      }  
       print "<td>$title</td>\n";
       print "<td><nobr>$author_link</nobr></td>\n";
+      print "<td>"; &ShortTopicListByID(@TopicIDs); print "</td>\n";
       print "<td>"; &ShortFileListByRevID($DocRevID); print "</td>\n";
     } elsif ($Mode eq "conference") {
       print "<td>$title</td>\n";
@@ -339,9 +350,9 @@ sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
       print "<th>Author</th>\n";
       print "<th>Last Updated</th>\n";
     } elsif ($Mode eq "meeting") {
-      print "<th>Document #</th>\n";
       print "<th>Title</th>\n";
       print "<th>Author</th>\n";
+      print "<th>Topic(s)</th>\n";
       print "<th>Files</th>\n";
     } elsif ($Mode eq "conference") {
       &GetTopics;
