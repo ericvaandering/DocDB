@@ -5,7 +5,6 @@ sub TitleBox {
   print $query -> textfield (-name => 'title', -size => 80, -maxlength => 240);
 };
 
-
 sub PubInfoBox {
   print "<b>Publication information:</b><br>  \n";
   print $query -> textarea (-name => 'pubinfo', -columns => 50, -rows => 3);
@@ -16,25 +15,24 @@ sub AbstractBox {
   print $query -> textarea (-name => 'abstract', -columns => 50, -rows => 6);
 };
 
+sub SingleUploadBox {
+  print "<b>File upload:</b><br>  \n";
+  print $query -> filefield(-name => "single_upload", -size=>60,
+                            -maxlength=>250);
+};
 
-sub RequestorSelect {
-# Scrolling selectable list for authors
-
+sub RequestorSelect { # Scrolling selectable list for requesting author
   print "<b>Requestor:</b><br>\n";
   print $query -> scrolling_list(-name => "requestor", -values => \%names, -size => 15);
 };
 
-sub AuthorSelect {
-# Scrolling selectable list for authors
-
+sub AuthorSelect { # Scrolling selectable list for authors
   print "<b>Authors:</b><br>\n";
   print $query -> scrolling_list(-name => "authors", -values => \%names, -size => 15, -multiple => 'true');
 };
 
 
-sub TopicSelect {
-# Scrolling selectable list for topics
-
+sub TopicSelect { # Scrolling selectable list for topics
   print "<b>Topics:</b><br>\n";
   print $query -> scrolling_list(-name => "topics", -values => \%full_topics, -size => 15, -multiple => 'true');
 };

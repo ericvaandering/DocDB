@@ -18,9 +18,9 @@ $dbh   = DBI->connect('DBI:mysql:BTeVDocTest:vchipp.phy.vanderbilt.edu','docadmi
 
 
 print $query->header;
-print $query->start_html(-title=>"BTeV Document Reservation");
+print $query->start_html(-title=>"BTeV Document Addition");
 
-print $query -> start_multipart_form('POST','ProcessDocumentReservation');
+print $query -> start_multipart_form('POST','ProcessDocumentAdd');
 
 print "<center><table cellpadding=10>\n";
 
@@ -35,6 +35,9 @@ print "</td></tr>";
 print "<tr>\n";
 print "<td colspan=3>\n";
 &AbstractBox;
+print "</td></tr>";
+print "<td colspan=3>\n";
+&SingleUploadBox;
 print "</td></tr>";
 print "<tr>\n";
 print "<td>\n";

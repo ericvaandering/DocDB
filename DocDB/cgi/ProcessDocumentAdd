@@ -8,17 +8,21 @@
 use CGI;                                                                                      
 use DBI;
 
+require "ResponseElements.pm";
+require "MySQLAccess.pm";
+require "DocDBGlobals.pm";
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 $query = new CGI;  # Global for subroutines
-$dbh   = DBI->connect('DBI:mysql:BTeVDocTest:vchipp.phy.vanderbilt.edu','docadmin','docadmin');
+
+&GetAuthors;
+&GetTopics;
 
 %params = $query -> Vars;
 
 print $query->header;
 print $query->start_html(-title=>"BTeV Document Reservation Results");
 
-foreach $key (keys %params) {
-  print "$key $params{$key} <p>\n";
-}
 my $document_insert = $dbh->prepare("insert into Document (DocumentID,
                                       RequesterID, RequestDate, DocumentType) 
                                       values (0,?,NOW(),?)");
@@ -33,16 +37,42 @@ my $rev_topic_insert  = $dbh->prepare("insert into RevisionTopic  (RevTopicID,
                                       DocRevID, MinorTopicID) 
                                       values (0,?,?)");
 
+#foreach $key (keys %params) {
+#  print "$key $params{$key} <p>\n";
+#}
+
+#$single_handle = $query->upload("single_upload");
+#while (<$single_handle>) {
+# print;
+#}
+
+@error_stack = ();
+
 unless ($params{requestor}) {
-  &EndPage("You must supply a requestor for this document.");
+  push @error_stack,"You must supply a requestor for this document.";
+}
+unless ($params{authors}) {
+  push @error_stack,"You must supply at least one author for this document.";
+}
+unless ($params{topics}) {
+  push @error_stack,"You must supply at least one topic for this document.";
 }
 unless ($params{title}) {
-  &EndPage("You must supply a title for this document.");
+  push @error_stack,"You must supply a title for this document.";
 }
 
 unless ($params{doctype}) {
-  &EndPage("You must supply a document type for this document.");
+  push @error_stack,"You must supply a document type for this document.";
 }
+
+if (($#error_stack + 1)) {
+  &EndPage(@error_stack);
+}
+
+@authorIDs = split ("\0",$params{authors}); #Later below dropouts
+@topicIDs  = split ("\0",$params{topics});
+
+
 
 
 $document_insert -> execute($params{requestor},$params{doctype});
@@ -53,8 +83,6 @@ $doc_rev_insert -> execute($documentID,$params{requestor},$params{title},
                            $params{private});
 my $docRevID = $doc_rev_insert -> {insertid}; # Works with MySQL only
                            
-@authorIDs = split ("\0",$params{authors});
-@topicIDs  = split ("\0",$params{topics});
 
 foreach $authorID (@authorIDs) {
   $rev_author_insert -> execute($docRevID,$authorID);
@@ -63,13 +91,18 @@ foreach $topicID (@topicIDs) {
   $rev_topic_insert -> execute($docRevID,$topicID);
 }
    
-print "Your Document ID is: $documentID"; 
+print "Your Document ID is: <b>BTeV-doc-$documentID</b><p>\n"; 
+
+&AuthorListByID(@authorIDs);
+&TopicListByID(@topicIDs);
 
 print $query->end_html;
 
 sub EndPage {
-  ($message) = @_;
-  print "<b>There was an error processing your request:<br>\n";
-  print "<dt>$message </b>\n";
+  @errors = @_;
+  print "<b>There was an error processing your request:</b><br>\n";
+  foreach $message (@errors) {
+    print "<dt><b>$message </b>\n";
+  }  
   exit;
 }
