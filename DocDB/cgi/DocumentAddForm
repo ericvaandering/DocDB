@@ -121,7 +121,9 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   @SecurityDefaults = &GetRevisionSecurityGroups($DocRevID);
   @AuthorDefaults   = &GetRevisionAuthors($DocRevID);
   @TopicDefaults    = &GetRevisionTopics($DocRevID);
-}
+} else {
+  @SecurityDefaults = [$SecurityIDs{"BTeV"}]; # FIXME: Replace with logged-in user 
+}  
 
 &HelpPopupScript;
 
@@ -196,6 +198,8 @@ if ($mode eq "add" || $mode eq "update") {
       &SingleHTTPBox;
     }  
   }
+  print "<br>Make sure you supply a format everyone can view (e.g. PDF) along
+  with source formats.<br>\n"; 
   print "</td></tr>";
 }
 

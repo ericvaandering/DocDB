@@ -29,6 +29,7 @@ require "RevisionSQL.pm";
 require "SecuritySQL.pm";
 
 require "HTMLUtilities.pm";
+require "WebUtilities.pm";
 require "Security.pm";
 require "Sorts.pm";
 
@@ -186,6 +187,29 @@ foreach $DocumentID (@DocumentIDs) {
 print "</table></center>\n";
 print "<p>\n";
 
+### Special stuff if this is the current meeting
+
+if (&NearByMeeting == $TopicID) {
+
+  print "<hr>\n";
+
+  print "<h3>Useful links:</h3>\n";
+  print "<ul>\n";
+  print "<li><a href=\"$DocumentAddForm?special=meeting\">Submit a talk</a> for
+         this meeting.\n";
+  print "<li><a href=\"http://www-btev.fnal.gov/internal_documents/mtg/submitting_24may01.html\">Instructions
+         and pointers</a> on submitting talks and 
+         <a href=\"http://www-btev.fnal.gov/internal_documents/mtg/transp_instructions.html#scanning\">instructions 
+         on using the WH9W scanner</a>.\n";
+  print "</ul>\n";
+
+  print "<hr>\n";
+
+  &PrintAgenda($TopicID);
+
+}
+
+
 ### Finish off page
 
 $EndTime  = new Benchmark;
@@ -194,3 +218,45 @@ print "<p><b>Execution time: </b>",timestr($TimeDiff),"<p>\n";
 
 &DocDBNavBar();
 &BTeVFooter($DBWebMasterEmail,$DBWebMasterName);
+
+exit;
+
+sub PrintAgenda {
+  my ($MeetingID) = @_; 
+  
+  my $agenda_find = $dbh -> prepare(
+    "select MAX(DocRevID) from DocumentRevision ".
+    "where lower(DocumentTitle) like lower(\"nonagenda%\")"); 
+  
+  $agenda_find -> execute();
+  my ($DocRevID) = $agenda_find -> fetchrow_array;
+  if ($DocRevID) {
+    my $Files_ref  = &FetchDocFiles($DocRevID);                                                                                             
+
+    my $FirstFile = shift @{$Files_ref};
+
+    print "<h3>Agenda:</h3>\n";
+    &PrintFile($FirstFile);
+  }
+}
+
+sub PrintFile {
+  my ($FileID) = @_;
+  
+  my $DocRevID      = $DocFiles{$FileID}{DOCREVID};
+  my $VersionNumber = $DocRevisions{$DocRevID}{VERSION};
+  my $DocumentID    = $DocRevisions{$DocRevID}{DOCID}  ;
+  
+  my $Directory     = &GetDirectory($DocumentID,$VersionNumber);  
+  
+  my $FileName      = $Directory.$DocFiles{$FileID}{NAME};
+    
+  open FILE,$FileName;
+  my @FileLines = <FILE>;
+  close FILE;
+  
+  print "<pre>\n";
+  print @FileLines;
+  print "</pre>\n";
+  
+}
