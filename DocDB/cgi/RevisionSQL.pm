@@ -94,6 +94,8 @@ sub FetchRevisionByDocumentAndDate ($$) {
 }
 
 sub FetchRevisionsByDocument {
+  require "DocumentSQL.pm";
+
   my ($DocumentID) = @_;
   &FetchDocument($DocumentID);
   my $revision_list = $dbh->prepare(

@@ -54,6 +54,7 @@ sub PrintRevisionInfo {
   require "AuthorSQL.pm";
   require "SecuritySQL.pm";
   require "TopicSQL.pm";
+  require "Security.pm";
  
   my ($DocRevID,$HideButtons) = @_;
 
@@ -134,14 +135,17 @@ sub PrintRevisionInfo {
   &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
   &PrintConfInfo(@TopicIDs);
   &PrintReferenceInfo($DocRevID);
+  print "</td></tr>\n";
   if ($UseSignoffs) {
     require "SignoffHTML.pm";
+    print "<tr valign=top><td colspan=2>\n";
     &PrintRevisionSignoffInfo($DocRevID);
+    print "</td></tr>\n";
   }  
-  print "</td></tr>\n";
   print "</table>\n";
-  print "<table cellpadding=10>\n";
   if (&CanModify($DocumentID) && !$HideButtons) {
+    print "<hr width=\"90%\"/>\n";
+    print "<table cellpadding=10>\n";
     print "<tr valign=top>";
     print "<td align=center width=33%>";
     &UpdateButton($DocumentID);
@@ -150,9 +154,9 @@ sub PrintRevisionInfo {
     print "<td align=center width=33%>";
     &AddFilesButton($DocumentID,$Version);
     print "</td></tr>\n";
+    print "</table></center>\n"; 
   }  
 
-  print "</table></center>\n"; 
 }
  
 sub PrintAbstract {

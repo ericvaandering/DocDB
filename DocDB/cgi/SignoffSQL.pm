@@ -111,6 +111,30 @@ sub GetAllSignoffsByDocRevID ($) {
   
   return @SignoffIDs;  
 }
+
+sub FetchSignoff ($) {
+  my ($SignoffID) = @_;
+
+  my ($DocRevID,$Note,$TimeStamp);
+  my $SignoffFetch = $dbh -> prepare("select DocRevID,Note,TimeStamp from Signoff ".
+                                     "where SignoffID=?");
+
+  if ($Signoffs{$SignoffID}{TimeStamp}) {
+    return $SignoffID;
+  }
+  
+  $SignoffFetch -> execute($SignoffID);
+  ($DocRevID,$Note,$TimeStamp) = $SignoffFetch -> fetchrow_array;
+  
+  if ($TimeStamp) {
+    $Signoffs{$SignoffID}{DocRevID}    = $DocRevID   ;
+    $Signoffs{$SignoffID}{Note}        = $Note       ;
+    $Signoffs{$SignoffID}{TimeStamp}   = $TimeStamp  ;
+    return $SignoffID;
+  } else {
+    return 0;
+  }  
+}
                         
 sub GetSubSignoffs ($) {
   my ($PreSignoffID) = @_;
@@ -173,6 +197,10 @@ sub FetchSignature ($) {
   my $SignatureFetch = $dbh -> prepare("select EmailUserID,SignoffID,Note,Signed,TimeStamp from Signature ".
                                      "where SignatureID=?");
 
+  if ($Signatures{$SignatureID}{TimeStamp}) {
+    return $SignatureID;
+  }
+  
   $SignatureFetch -> execute($SignatureID);
   ($EmailUserID,$SignoffID,$Note,$Signed,$TimeStamp) = $SignatureFetch -> fetchrow_array;
   

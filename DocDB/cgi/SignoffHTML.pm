@@ -31,10 +31,18 @@ sub SignoffBox { # Just a text box for now with a list of names
 
 sub PrintRevisionSignoffInfo($) { # FIXME: Handle more complicated topologies?
   require "SignoffSQL.pm";
+  require "Security.pm";
 
   my ($DocRevID) = @_;
-
-  if ($Public) { return; }  
+  my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+  my $Version    = $DocRevisions{$DocRevID}{Version};
+  
+  # Don't display anything unless the user is logged into a group that can 
+  # modify the DB. Maybe we want to display but not provide signature boxes?
+  
+  unless (&CanModify($DocumentID,$Version)) { 
+    return; 
+  }  
   
   my @RootSignoffIDs = &GetRootSignoffs($DocRevID);
   if (@RootSignoffIDs) {

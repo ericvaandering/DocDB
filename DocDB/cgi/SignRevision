@@ -30,12 +30,14 @@ use DBI;
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "Scripts.pm";
-require "Debug.pm";  # Remove!!!!!!!!
 
 require "ResponseElements.pm";
 
 require "NotificationSQL.pm";
 require "SignoffSQL.pm";
+require "SecuritySQL.pm";
+require "RevisionSQL.pm";
+require "RevisionHTML.pm";
 require "EmailSecurity.pm";
 
 $query = new CGI;  # Global for subroutines
@@ -59,14 +61,13 @@ print $query->header;
 &DocDBHeader("Document Signature");
 &HelpPopupScript;
 
+&GetSecurityGroups;
+
+
 # Check for valid user
 
-print "EUID: $EmailUserID <br>\n";
-print "PW: $Password  <br>\n";
-
-&HTMLPrintParams();
-
 # Fetch mail user by ID, set username, and validate
+# Convoluted just because ValidateEmailUser wants a name, not an ID
 
 &FetchEmailUser($EmailUserID);
 my $UserName = $EmailUser{$EmailUserID}{Username};
@@ -76,11 +77,11 @@ if ($Password) {
   $EmailUserID = &ValidateEmailUser($UserName,$Password);
 }  
 
-print "EUID: $EmailUserID <br>\n";
-
 unless ($EmailUserID) {
   push @ErrorStack,"The password you entered is invalid.";
 }
+
+# Check Signature Status
 
 &FetchSignature($SignatureID);
 
@@ -105,14 +106,27 @@ if ($Action ne "unsign" && $Action ne "sign") {
 # Sign or unsign Document
 
 my $SignatureUpdate = $dbh -> prepare("update Signature set Signed=? where SignatureID=?");
+my $SignMessage = "";
 
 if ($Action eq "sign") {
   $SignatureUpdate -> execute(1,$SignatureID);
-  print "You have signed the document\n"; 
+  $SignMessage = "signed";
 } elsif ($Action eq "unsign") {
   $SignatureUpdate -> execute(0,$SignatureID);
-  print "You have removed your signature from the document\n"; 
+  $SignMessage = "removed your signature from";
 }
+
+print "<b>You have $SignMessage the document. The new document information is
+          shown below:</b><p/>\n"; 
+print "<hr/>\n"; 
+
+# Get revision number
+
+my $SignoffID = $Signatures{$SignatureID}{SignoffID};
+&FetchSignoff($SignoffID);
+
+my $DocRevID  = $Signoffs{$SignoffID}{DocRevID};
+&PrintRevisionInfo($DocRevID);
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
