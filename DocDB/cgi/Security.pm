@@ -4,9 +4,13 @@ sub CanAccess { # Can the user access (with current security) this version
   my ($documentID,$version) = @_;
   my $DocRevID = &FetchDocRevision($documentID,$version);
   
+  unless ($DocRevID) { # Document doesn't exist
+    return 0;
+  }
   if ($Documents{$documentID}{NVER} eq "") { # Bad documents (no revisions)
     return 0;
   } 
+  
   my $Groups_ref = &GetRevisionSecurityGroups($DocRevID);
   
   my @GroupIDs = @{$Groups_ref};

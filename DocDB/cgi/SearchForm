@@ -6,12 +6,12 @@
 use CGI;                                                                                      
 use DBI;
 
+require "DocDBGlobals.pm";
 require "FormElements.pm";
 require "SearchFormElements.pm";
 require "Scripts.pm";
 require "Sorts.pm";
 require "MySQLAccess.pm";
-require "DocDBGlobals.pm";
 require "ResponseElements.pm";
 require "HTMLUtilities.pm";
 

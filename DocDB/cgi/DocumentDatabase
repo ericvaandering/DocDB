@@ -33,11 +33,9 @@ print "<p><h4>Database options:</h4>\n";
 
 print "<ul>\n";
 unless ($Public) {
-  print "<li><b><a href=\"$ModifyHome\">Create or change</a> documents.</b><p>\n";
+  print "<li><b><a href=\"$ModifyHome\">Create or change</a> documents</b><p>\n";
 }
-unless ($Public) { # FIXME, should be public
-  print "<li><b><a href=\"$SearchForm\">Search</a> documents</b><p>\n"; 
-}
+print "<li><b><a href=\"$SearchForm\">Search</a> documents</b><p>\n"; 
 
 # Show document
 

@@ -14,9 +14,9 @@ use DBI;
 
 $StartTime = new Benchmark;
 
+require "DocDBGlobals.pm";
 require "ResponseElements.pm";
 require "MySQLAccess.pm";
-require "DocDBGlobals.pm";
 require "FSUtilities.pm";
 require "WebUtilities.pm";
 require "HTMLUtilities.pm";

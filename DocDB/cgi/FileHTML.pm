@@ -26,9 +26,11 @@ sub FileListByRevID {
       print "<ul>\n";
       &FileListByFileID(@OtherFiles);
       print "</ul>\n";
-    }   
-    my $ArchiveLink = &ArchiveLink($DocumentID,$Version);
-    print "$ArchiveLink\n";
+    } 
+    unless ($Public) {  
+      my $ArchiveLink = &ArchiveLink($DocumentID,$Version);
+      print "$ArchiveLink\n";
+    }  
   } else {
     print "<b>Files in Document:</b> none<br>\n";
   }
