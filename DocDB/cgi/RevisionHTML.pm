@@ -34,16 +34,21 @@ sub TitleBox (%) {
 sub AbstractBox (%) {
   my (%Params) = @_; 
   
-  my $Required   = $Params{-required}   || 0;
+  my $Required = $Params{-required} || 0;
+  my $HelpLink = $Params{-helplink} || "abstract";
+  my $HelpText = $Params{-helptext} || "Abstract";
+  my $Name     = $Params{-name}     || "abstract";
 
-  print "<b><a ";
-  &HelpLink("abstract");
-  print "Abstract:</a></b>";
-  if ($Required) {
-    print $RequiredMark;
+  if ($HelpLink) {
+    print "<b><a ";
+    &HelpLink($HelpLink);
+    print "$HelpText</a></b>";
+    if ($Required) {
+      print $RequiredMark;
+    }  
+    print "<br> \n";
   }  
-  print "<br> \n";
-  print $query -> textarea (-name => 'abstract', -default => $AbstractDefault,
+  print $query -> textarea (-name => $Name, -default => $AbstractDefault,
                             -columns => 60, -rows => 6);
 };
 
