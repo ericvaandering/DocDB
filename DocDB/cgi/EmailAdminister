@@ -38,6 +38,7 @@ require "Security.pm";
 require "HTMLUtilities.pm";
 require "SecuritySQL.pm";
 require "Messages.pm";
+require "Debug.pm"; # Remove
 
 $query = new CGI;  # Global for subroutines
 
@@ -72,6 +73,7 @@ unless (&CanAdminister) {
 &EndPage(@ErrorStack);
 
 &GetSecurityGroups;
+&HTMLPrintParams;
 
 if      ($Action eq "Delete") { # Delete user
   if (!$EmailUserID) {

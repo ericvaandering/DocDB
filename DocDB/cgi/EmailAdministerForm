@@ -93,13 +93,13 @@ print "</td>\n";
 print "</tr>\n";
 
 print "<tr><td>\n";
-print $query -> checkbox(-name  => "clearuser", -label => 'Clear Verify and Sign');
-print "</td></tr>\n";
-print "<tr><td>\n";
 print $query -> checkbox(-name  => "verifyuser", -label => 'Verify User');
 print "</td></tr>\n";
 print "<tr><td>\n";
 print $query -> checkbox(-name  => "usersign", -label => 'User Can Sign Docs');
+print "</td></tr>\n";
+print "<tr><td>\n";
+print $query -> checkbox(-name  => "clearuser", -label => 'Clear Verify and Sign');
 print "</td></tr>\n";
 print "<tr><td>\n";
 print $query -> checkbox(-name  => "cleargroups", -label => 'Clear User\'s Groups');
