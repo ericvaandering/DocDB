@@ -26,11 +26,11 @@ storing documents in a central location. So, you should never again see a
 broken link while looking for the information you want. This distinction is
 especially important when archive uploads which are discussed later. <p>
 
-While the interface may sometimes look complicated, sometimes options can be
-left blank. Omitting a version number will give you the latest version. Omitting
-the number of files means "one file." We've tried to simplify the use of the
-most common options. Of course, if you have a suggestion on how to make things
-easier, please let us know.
+While parts of the interface may look complicated, some options can be
+left blank. Omitting a version number will give you the latest version.
+Omitting the number of files means "one file." We've tried to simplify the use
+of the most common options. Of course, if you have a suggestion on how to make
+things easier, please let us know.
 
 <h3>What is a document?</h3>
 

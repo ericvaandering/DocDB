@@ -4,8 +4,6 @@
 \input{abbrev}
 \usepackage{ewv_environ}      %   %% Define some new environements                            
 
-%\graphicspath{{sigmac_0999/}}
-
 \begin{document}                                                 
 
 \title{BTeV Document Database Design and Interface}
@@ -32,18 +30,18 @@ database.
 
 BTeV needs a document database that satisfies a number of requirements:
 \begin{itemize}
+\item{The ability of a single database to store talks from group meetings,
+conference talks and proceedings, and publications \emph{and} to present these
+special cases in ways that makes sense for those special case.}
+\item{All documents are kept on the BTeV web server, not personal machines 
+so we don't suffer from link rot}
 \item{Each document can have multiple revisions and old revisions are still
 available.}
 \item{Each revision of each document can have multiple files. This accomodates
 multiple file types (source and  presentable) and/or child files (especially
 useful for trees of HTML  documents)}
-\item{All documents are kept on the BTeV web server, not personal machines 
-so we don't suffer from link rot}
 \item{The ability to upload documents by browser upload or forcing the 
 document database to download via http.}
-\item{The ability of a single database to store talks from group meetings,
-conference talks and proceedings, and publications \emph{and} to present these
-special cases in ways that makes sense for those special case.}
 \end{itemize}
 
 There are several security issues we want to resolve too:
@@ -58,10 +56,10 @@ privileges to view it.}
 documents, from restricted to public and vice-versa.}
 \end{itemize}
 
-The document database system consists of three pieces which work together: a web-based
-user interface, a relational database server to store information about the documents,
-and a file system to store the documents. Additionally, the BTeV webserver serves
-files from the file system to the users.
+The document database system consists of three pieces which work together: a
+web-based user interface, a relational database server to store information
+about the documents, and a file system to store the documents. 
+The BTeV webserver serves files from the file system to the users.
 
 \section{Interface}
 
@@ -112,40 +110,50 @@ a unique identifier, not the name of the type because the name might have been
 mis-spelled (rule 2). The institution of the person who wrote the document
 something is not a property of the document, but of the person (rule 3).
 
-The ``tree''-like
-symbols indicate the one-to-many relationships within the database. For
-instance, there can (and will) be many revisions of a  single document.  Rule 1
-mandates that there can be no ``trees'' with branches on both ends. For example,
-because each document revision can have multiple authors and an author can be associated with
-multiple documents, an intermediate table RevisionAuthor is used. There is one entry
-in this table for each author of each document revision.
+The ``tree''-like symbols indicate the one-to-many relationships within the
+database. For instance, there can (and will) be many revisions of a  single
+document.  Rule 1 mandates that there can be no ``trees'' with branches on both
+ends. For example, because each document revision can have multiple authors and
+an author can be associated with multiple documents, an intermediate table
+RevisionAuthor is used. There is one entry in this table for each author of
+each document revision.
 
 Fields shown in red are indexed for fast look up. Other fields must be searched
 on which is more time consuming. Each index takes up some  amount of disk
-space, so the number of indices should be kept to a minimum. The ID
+space, so the number of indices should be kept to a reasonable number. The ID
 numbers in each entry indicate what other entries they are associated with. In
 addition, each table has a timestamp which is not shown.
 
-This database is implemented using MySQL; the server is running on
-\url{fnsimu1.fnal.gov}.  The use of non-standard SQL features in the interface has
-been kept to a minimum to ease porting to another another database if needed.
+This database is implemented using a MySQL server running on
+\url{fnsimu1.fnal.gov}.  The use of non-standard SQL features in the interface
+has been kept to a minimum to ease porting to another another database if
+needed. (MySQL has a very useful but non-standard function last\_insertid which returns the
+unique identifier of the last item inserted into the database. We use this
+because it is safer and more elegant than keeping track of all these numbers in
+a seperate table.)
 
 \section{File system and security}
 
-All documents are placed into a single directory tree. There is no 
-division based on security or topic since these are fluid designations 
-(and each document can have multiple values for these settings). The 
-file system is arranged only by document number. Each revision of each 
-document is placed in its own directory, which means that most 
-directories will only have a small number of files. However, the 
-advantage of this scheme is two-fold. First, each of the files of a 
-particular revision need not be renamed. Second, web access to each 
-revision can be controlled with a potentially unique .htaccess file.
+All documents are placed into a single directory tree. There is no  division
+based on security or topic since these are fluid designations  (and each
+document can have multiple values for these settings). The  file system is
+arranged only by document number. Each revision of each  document is placed in
+its own directory, which means that most  directories will only have a small
+number of files. While this is somewhat inefficient, the  advantage of this
+scheme is two-fold. First, each of the files of a  particular revision need not
+be renamed. Second, web access to each  revision is controlled with a
+potentially unique .htaccess file. (These .htaccess files are written by the
+interface software at the time files placed in the file system.)
+
+Once the database system has placed a document in the file system, it has no
+further interaction with the file. (It never checks to make sure it is still
+there.) From this point on, sending the actual files to the user is the sole
+responsibility of the web server.
 
 To avoid possible issues with large numbers of files in a single 
 directory, the document directories are further divided into groups of 
 100. For example, imagine that the 3rd revision of the 1029th document 
-contains one file, text.ps. Then the full path looks like this:
+contains one file, text.ps. Then the full path of the file is:
 
 \texttt{\$DOCROOT/0010/001029/003/text.ps}
 
