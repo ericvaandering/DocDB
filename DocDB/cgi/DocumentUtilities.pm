@@ -30,6 +30,7 @@ sub AddDocument {
   require "TopicSQL.pm";
   require "AuthorSQL.pm";
   require "SecuritySQL.pm";
+  require "SignoffSQL.pm";
   
   my %Params = @_;
   
@@ -49,7 +50,7 @@ sub AddDocument {
   my @TopicIDs   = @{$Params{-topicids}}  ;
   my @ViewIDs    = @{$Params{-viewids}}   ;
   my @ModifyIDs  = @{$Params{-modifyids}} ;
-  my @SignoffIDs = @{$Params{-signoffids}}; # For simple signoff list, may be deprecated
+  my @SignOffIDs = @{$Params{-signoffids}}; # For simple signoff list, may be deprecated
   
   my %Files      = %{$Params{-files}};
   my %References = %{$Params{-references}}; # Not used yet
@@ -87,6 +88,9 @@ sub AddDocument {
                              -viewids   => \@ViewIDs,
                              -modifyids => \@ModifyIDs);
     @FileIDs = &AddFiles(-docrevid  => $DocRevID, -datetime => $DateTime, -files => \%Files);
+    if (@SignOffIDs) {
+      &InsertSignoffList($DocRevID,@SignOffIDs);
+    }  
   }
   
   return $DocumentID;                                 

@@ -24,9 +24,15 @@ sub ProcessSignoffList ($) {
   my @EmailUserIDs = ();
   my @SignatoryEntries = split /\n/,$SignoffList;
   foreach my $Entry (@SignatoryEntries) {
+    chomp $Entry;
     $Entry =~ s/^\s+//g;
     $Entry =~ s/\s+$//g;
     
+    if (grep /\,/, $Entry) {
+      @Parts = split /\,\s+/, $Entry,2;
+      $Entry = join ' ',@Parts[1],@Parts[0];
+    }  
+
     my $EmailUserList = $dbh -> prepare("select EmailUserID from EmailUser where Name=?"); 
 
 ### Find exact match (initial or full name)
