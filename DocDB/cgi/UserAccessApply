@@ -110,6 +110,11 @@ if ($CertificateStatus eq "verified") {
   }  
 
 ### Notify applicant and administrator
+  if ($MailInstalled) {
+    require "EmailUtilities.pm";
+    my @To = ("ewv\@fnal.gov");
+    &SendEmail(-body => 'Test message', -to => \@To);
+  }    
 
 }
 

@@ -61,6 +61,12 @@ sub CertificateStatus () {
  
   my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
   my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
+  
+  unless ($CertEmail && $CertCN) {
+    $CertificateStatus = "nocert";
+    return $CertificateStatus;
+  } 
+    
   my $EmailUserSelect = $dbh->prepare("select EmailUserID,Verified from EmailUser ".
                                       "where EmailAddress=? and Name=?");
   $EmailUserSelect -> execute($CertEmail,$CertCN);
@@ -76,6 +82,7 @@ sub CertificateStatus () {
     $CertificateStatus = "unverified";
     return $CertificateStatus;
   } 
+  
    
   my $AddressSelect = $dbh->prepare("select EmailUserID from EmailUser where EmailAddress=?");
      $AddressSelect -> execute($CertEmail);
