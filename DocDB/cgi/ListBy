@@ -1,0 +1,107 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+
+# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+use Benchmark;
+use CGI;
+use DBI;
+
+$StartTime = new Benchmark;
+
+require "DocDBGlobals.pm";
+require "DocumentHTML.pm";
+
+require "SecuritySQL.pm";
+
+require "HTMLUtilities.pm";
+
+$query = new CGI;  # Global for subroutines
+
+%params = $query -> Vars;
+
+my $Days = $params{days} || 0;
+my $Mode = $params{mode} || "date";
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+&GetSecurityGroups; # Why do we need this?
+
+### Set defaults
+
+my ($Title, $Message, $List);
+my ($SortBy, @Fields);
+
+if ($Days) { 
+  $Title   = "Documents from Last $Days Days";
+  $Message = "These documents have been modified in the last <span class=\"highlight\">$Days days</span>.";
+  $List = $dbh -> prepare("select DISTINCT(DocumentID) from DocumentRevision where TO_DAYS(NOW())-TO_DAYS(TimeStamp)<=?");            
+  $List -> execute($Days);
+}
+
+# Defaults, later can surround these in "unless"
+
+@Fields  = ("Docid","Title","Author","Updated"); 
+$SortBy  = "date";
+$Reverse = true;
+
+# Do the fetch on the $List. "unless (@DocumentIDs)" here to do complex fetches, user specify
+
+my @DocumentIDs = ();
+
+if ($List) {
+  my $DocumentID;
+  $List -> bind_columns(undef, \($DocumentID));
+  while ($List -> fetch) {
+    push @DocumentIDs,$DocumentID;
+  }
+}
+
+### Start HTML
+
+print $query->header;
+&DocDBHeader($Title);
+
+print "<center><h4>$Message</h4></center><p/>\n";
+
+# Special HTML for special situations
+
+if ($Days) { # Print out modified by form
+  require "FormElements.pm";
+  
+  print $query -> startform('POST',"ListBy");
+  print "<center>";
+  print $query -> submit (-value => "Show Documents");
+  print " modified in the last ";
+  &DaysPulldown;
+  print " days.</center>";
+  print $query -> endform;
+  print "<p/>";
+}
+
+### Table and Statistics
+
+my $NumberOfDocuments = &DocumentTable(-fields => \@Fields, -docids  => \@DocumentIDs, 
+                                       -sortby => $SortBy,  -reverse => $Reverse);
+print "<p/><b>Number of documents found: $NumberOfDocuments</b><p/>\n";
+
+$EndTime  = new Benchmark;
+
+&DocDBNavBar();
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
