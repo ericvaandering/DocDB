@@ -157,4 +157,26 @@ sub ExistsFile($$) {
   }    
 }
 
+sub FetchFile ($) {
+  my ($DocFileID) = @_;
+  
+  my $FileList = $dbh->prepare(
+    "select FileName,Date,RootFile,TimeStamp,Description,DocRevID ".
+    "from DocumentFile where DocFileID=?");
+  if ($DocFiles{$DocFileID}) {
+    return $DocFiles{$DocFileID}{NAME}; 
+  }
+  $FileList -> execute($DocFileID);
+  $FileList -> bind_columns(undef, \($FileName,$Date,$RootFile,$TimeStamp,$Description,$DocRevID));
+  while ($FileList -> fetch) {
+    $DocFiles{$DocFileID}{NAME}        = $FileName;
+    $DocFiles{$DocFileID}{ROOT}        = $RootFile;
+    $DocFiles{$DocFileID}{DESCRIPTION} = $Description;
+    $DocFiles{$DocFileID}{TimeStamp}   = $TimeStamp;
+    $DocFiles{$DocFileID}{DOCREVID}    = $DocRevID;
+  }
+  return $FileName;
+}
+
+
 1;
