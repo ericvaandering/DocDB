@@ -351,3 +351,24 @@ INSERT INTO SecurityGroup VALUES (2,'Executive','BTeV Executive Council',2001120
 INSERT INTO SecurityGroup VALUES (3,'RTES','Real Time Embedded Systems',20011204144148);
 INSERT INTO SecurityGroup VALUES (4,'DocDBAdm','Document Database Administrators',20011206160459);
 
+CREATE TABLE DocumentType (
+  DocTypeID int(11) NOT NULL auto_increment,
+  ShortType varchar(32) default NULL,
+  LongType varchar(255) default NULL,
+  Timestamp timestamp(14) NOT NULL,
+  PRIMARY KEY (DocTypeID)
+) TYPE=MyISAM;
+ 
+#
+# Dumping data for table 'DocumentType'
+#
+ 
+INSERT INTO DocumentType VALUES (1,'Talk','Talk Transparencies',20011205173501);
+INSERT INTO DocumentType VALUES (2,'Publication','Published materials (Papers, Proceedings, Preprints, Theses',20011205173501);
+INSERT INTO DocumentType VALUES (3,'Proceeding','Conference Proceedings',20011205173501);
+INSERT INTO DocumentType VALUES (4,'Figure/Photo','Drawings, Photographs, Plots, Figures',20011205173501);
+INSERT INTO DocumentType VALUES (5,'Note','Notes and memos',20011205173501);
+INSERT INTO DocumentType VALUES (6,'Minutes','Minutes of meetings',20011205173501);
+INSERT INTO DocumentType VALUES (10,'Other','Other Types',20011205173501);
+INSERT INTO DocumentType VALUES (8,'Audio','Audio files',20011205173501);
+INSERT INTO DocumentType VALUES (9,'Video','Video files',20011205173501);

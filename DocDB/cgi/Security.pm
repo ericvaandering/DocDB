@@ -46,7 +46,16 @@ sub CanAccess { # Can the user access (with current security) this version
 }
 
 sub CanModify { # Can the user modify (with current security) this docuement
+  my ($documentID) = @_;
+  unless ($remote_user) {return 0;} #No user logged in, can't modify 
 
+# If they can access last version they can modify the document    
+
+  &FetchDocument($documentID);
+  my $version = $Documents{$documentID}{NVER}; 
+  my $access = &CanAccess($documentID,$version); 
+  
+  return $access;
 }
 
 sub LastAccess { # Highest version user can access (with current security)
