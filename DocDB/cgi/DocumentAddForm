@@ -42,7 +42,7 @@ if ($Meeting) {
 if ($OtherMeeting) {
  $mode = "add";
  @PreTopics  = $query -> param('pretopic');
- @TopicDefaults = \@PreTopics; #FIXME: Not just for meetings
+ @TopicDefaults = @PreTopics; #FIXME: Not just for meetings
 }
 
 unless ($mode) { 

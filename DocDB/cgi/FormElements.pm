@@ -335,7 +335,7 @@ sub TopicSelect { # Scrolling selectable list for topics
   print $query -> scrolling_list(-name => "topics", -values => \@TopicIDs, 
                                  -labels => \%TopicLabels,
                                  -size => 10, -multiple => 'true',
-                                 -default => @TopicDefaults);
+                                 -default => \@TopicDefaults);
 };
 
 sub MultiTopicSelect { # Multiple scrolling selectable lists for topics
@@ -370,7 +370,7 @@ sub MultiTopicSelect { # Multiple scrolling selectable lists for topics
     }
     print $query -> scrolling_list(-name => "topics", 
              -values => \@MatchMinorIDs, -labels => \%MatchLabels,
-             -size => 8, -multiple => 'true', -default => @TopicDefaults);
+             -size => 8, -multiple => 'true', -default => \@TopicDefaults);
     print "</td>\n";
   }  
   print "</table>\n";

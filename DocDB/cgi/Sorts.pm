@@ -112,7 +112,7 @@ sub DocumentByConferenceDate {
   my $bdr = $DocRevIDs{$b}{$Documents{$b}{NVER}};
   
   unless ($FirstConf{$adr}) {
-    my @topics = @{&GetRevisionTopics($adr)};
+    my @topics = &GetRevisionTopics($adr);
     foreach my $ID (@topics) {
       if ($MinorTopics{$ID}{MAJOR} == $ConferenceMajorID) {
         $FirstConf{$adr} = $ID;
@@ -122,7 +122,7 @@ sub DocumentByConferenceDate {
   }      
 
   unless ($FirstConf{$bdr}) {
-    my @topics = @{&GetRevisionTopics($bdr)};
+    my @topics = &GetRevisionTopics($bdr);
     foreach my $ID (@topics) {
       if ($MinorTopics{$ID}{MAJOR} == $ConferenceMajorID) {
         $FirstConf{$bdr} = $ID;
