@@ -6,8 +6,8 @@
 use CGI;                                                                                      
 use DBI;
 
-require "MySQLAccess.pm";
 require "DocDBGlobals.pm";
+require "MySQLAccess.pm";
 require "ResponseElements.pm";
 require "HTMLUtilities.pm";
 
