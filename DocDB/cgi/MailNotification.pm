@@ -61,12 +61,12 @@ sub MailNotices (%) {
                   "in the $Project Document Database:\n\n";
       $Feedback = "<b>E-mail sent to: </b>";           
     } elsif ($Type eq "signature") {
-      $Subject  = "Ready for signature: $FullID: $Title";
+      $Subject  = "Ready to sign: $FullID: $Title";
       $Message  = "The following document ".
                   "in the $Project Document Database ".
                   "is ready for your signature:\n".
-                  "(Note that you may not be able to sign if you share ".
-                  "signature authority with someone who has already signed.)\n\n";
+                  "(Note that you may not be able so sign if you share ".
+                  "signature authority.)\n\n";
       $Feedback = "<b>Signature(s) requested from: </b>";           
     }  
 
@@ -127,17 +127,30 @@ sub RevisionMailBody ($) {
   my $Topics = join ', ',@Topics;
   
   # Construct the mail body
-  
-  print $Mailer "       Title: ",$DocRevisions{$DocRevID}{Title},"\n";
-  print $Mailer " Document ID: ",$FullID,"\n";
-  print $Mailer "         URL: ",$URL,"\n";
-  print $Mailer "        Date: ",$DocRevisions{$DocRevID}{DATE},"\n";;
-  print $Mailer "Requested by: ",$Submitter,"\n";;
-  print $Mailer "     Authors: ",$Authors,"\n";;
-  print $Mailer "      Topics: ",$Topics,"\n";;
-  print $Mailer "    Keywords: ",$DocRevisions{$DocRevID}{Keywords},"\n";;
-  print $Mailer "    Abstract: ",$DocRevisions{$DocRevID}{ABSTRACT},"\n";;
+  # Next line added by JMF
+  my $Mailer_handle = $Mailer->GetHandle();
+
+# ---- Start changes by JMF----
+#  print $Mailer "       Title: ",$DocRevisions{$DocRevID}{Title},"\n";
+#  print $Mailer " Document ID: ",$FullID,"\n";
+#  print $Mailer "         URL: ",$URL,"\n";
+#  print $Mailer "        Date: ",$DocRevisions{$DocRevID}{DATE},"\n";;
+#  print $Mailer "Requested by: ",$Submitter,"\n";;
+#  print $Mailer "     Authors: ",$Authors,"\n";;
+#  print $Mailer "      Topics: ",$Topics,"\n";;
+#  print $Mailer "    Keywords: ",$DocRevisions{$DocRevID}{Keywords},"\n";;
+#  print $Mailer "    Abstract: ",$DocRevisions{$DocRevID}{ABSTRACT},"\n";;
+  print $Mailer_handle "       Title: ",$DocRevisions{$DocRevID}{Title},"\n";
+  print $Mailer_handle " Document ID: ",$FullID,"\n";
+  print $Mailer_handle "         URL: ",$URL,"\n";
+  print $Mailer_handle "        Date: ",$DocRevisions{$DocRevID}{DATE},"\n";;
+  print $Mailer_handle "Requested by: ",$Submitter,"\n";;
+  print $Mailer_handle "     Authors: ",$Authors,"\n";;
+  print $Mailer_handle "      Topics: ",$Topics,"\n";;
+  print $Mailer_handle "    Keywords: ",$DocRevisions{$DocRevID}{Keywords},"\n";;
+  print $Mailer_handle "    Abstract: ",$DocRevisions{$DocRevID}{ABSTRACT},"\n";;
 }
+# ---- End changes by JMF----
 
 sub UsersToNotify ($$) {
   require "NotificationSQL.pm";

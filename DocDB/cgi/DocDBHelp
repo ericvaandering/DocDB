@@ -6,14 +6,19 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-use CGI;                                                                                      
+#3/14/04 Jim Fromm add next line to fix parser problem
+use DocDBGlobals;
+
+
+use CGI;
 use XML::Parser::PerlSAX;
 use XML::PatAct::MatchName;
 use XML::PatAct::ToObjects;
 use XML::Grove::AsString;
 use XML::Grove::AsCanonXML;
 
-require "DocDBGlobals.pm";
+#3/14/04 Jim Fromm Comment out next line
+#require "DocDBGlobals.pm";
 
 my $DefaultPatterns = [
   'helpfile'    => [ qw{ -holder                                  } ],

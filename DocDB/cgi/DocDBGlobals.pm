@@ -14,6 +14,27 @@ $DocDBHome = "http://cepa.fnal.gov/DocDB/";
 
 # Optional components
 
+
+#
+# The following block of code was added to force using the correct
+# perl. perl_dbd_mysql v2_9003 requires perl v5_8, so an implicit 
+# setup is done for that.  All of the mysql and XML modules are in 
+# these two packages.  Also turn off warning messages($^W=0;) to 
+# avoid spewing benign messages.
+#
+#    --------------Start change by JMF here-----------------
+#
+
+BEGIN {
+    require "/afs/fnal/ups/etc/setups.pl";
+    ups::use_prod("perl_dbd_mysql","v2_9003","SETUP_PERL_DBD_MYSQL");
+    $^W=0;
+}
+
+use DBD::mysql;
+#    --------------End change by JMF here-----------------
+
+
 $MailInstalled = 1; # Is the Mailer::Mail module installed?
 
 # Shell Commands
@@ -70,8 +91,8 @@ $NoTopicMatchThreshold  = 6;   # Threshold for matching talks in meetings with t
   
 # Which things are publicly viewable?
 
-$PublicAccess{MeetingList} = 0;  
-  
+$PublicAccess{MeetingList} = 0;
+
 # Options
 
 $CaseInsensitiveUsers = 0;
@@ -179,6 +200,6 @@ $ShowTalkNote          = $cgi_root."ShowTalkNote";
 
 if (!$Tar && $GTar) {
   $Tar = $GTar;
-} 
+}
 
 1;
