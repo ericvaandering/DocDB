@@ -15,12 +15,21 @@ $dbh   = DBI->connect('DBI:mysql:BTeVDocTest:vchipp.phy.vanderbilt.edu','docadmi
 &GetAuthors;
 &GetTopics;
 
-
+%params = $query -> Vars;
+$mode = $params{mode};
+if ($mode ne "add" && $mode ne "reserve") {
+  $mode = "reserve";
+}  
 
 print $query->header;
-print $query->start_html(-title=>"BTeV Document Addition");
+if      ($mode eq "add") {
+  print $query->start_html(-title=>"BTeV Document Addition");
+} elsif ($mode eq "reserve") {
+  print $query->start_html(-title=>"BTeV Document Reservation");
+}
 
 print $query -> start_multipart_form('POST','ProcessDocumentAdd');
+print $query -> hidden(-name => 'mode', -default => 'reserve');
 
 print "<center><table cellpadding=10>\n";
 
@@ -36,9 +45,11 @@ print "<tr>\n";
 print "<td colspan=3>\n";
 &AbstractBox;
 print "</td></tr>";
-print "<td colspan=3>\n";
-&SingleUploadBox;
-print "</td></tr>";
+if ($mode eq "add") {
+  print "<td colspan=3>\n";
+  &SingleUploadBox;
+  print "</td></tr>";
+}
 print "<tr>\n";
 print "<td>\n";
 &RequestorSelect;
