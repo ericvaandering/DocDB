@@ -65,7 +65,7 @@ print "or by <a href=\"$ListAuthors\">author</a>, ";
 print "<a href=\"$ListTopics\">topic</a>, ";
 print "<a href=\"$ListTypes\">type</a>, ";
 unless ($Public) {
-  print "<a href=\"$ListMeetings\">group meeting</a>, ";
+#  print "<a href=\"$ListMeetings\">group meeting</a>, ";
 }
 print "<a href=\"$ListByTopic?major=Conferences&mode=conference\">conference
 documents</a>, ";
