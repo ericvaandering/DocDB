@@ -270,12 +270,19 @@ print $query -> hidden(-name => 'mode', -default => 'modify');
 
 print "<table cellpadding=10>\n";
 print "<tr>\n";
- print "<td>\n";              &SessionTitle($SessionDefaultTitle); print "</td>\n";
- print "<td>\n";              &SessionLocation;                    print "</td>\n";
+ print "<td>\n";              
+  &TextField(-name      => 'sessiontitle', -size     => 40, 
+             -maxlength => 128,            -default  => $SessionDefaultTitle, 
+             -helplink  => 'sessioninfo',  -helptext => 'Session Title');
+ print "</td>\n";
+ print "<td>\n";  
+  &TextField(-name      => 'sessionlocation', -size     => 30, 
+             -maxlength => 128,            -default  => $SessionDefaultLocation, 
+             -helplink  => 'sessioninfo',  -helptext => 'Session Location');
+print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
- print "<td>&nbsp</td>\n";
  print "<td>\n";              &SessionDescription;                 print "</td>\n";
  print "<td align=right>\n";  &SessionDateTimePullDown;            print "</td>\n";
 print "</tr>\n";
