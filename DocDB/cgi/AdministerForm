@@ -133,7 +133,7 @@ print "<center>(Changing both the first and last names will erase middle
        initials)</center>\n";
 
 print $query -> start_multipart_form('POST',"$AuthorAdminister",
-                                     "id=\"author\" name=\"author\""););
+                                     "id=\"author\" name=\"author\"");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td colspan=2>\n"; 
