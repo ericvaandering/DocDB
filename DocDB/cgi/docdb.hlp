@@ -44,7 +44,9 @@ There are two methods of entering the authors for a document. The first is
 selecting the authors from a list of all possible authors. The second is to type
 into a form the names of the authors. <i>However</i> for your document to be
 accepted, every author that you entered must successfully match with an author
-in the database. To have a new author added to the database please contact the <a
+in the database. 
+<p>
+To have a new author added to the database please contact the <a
 href="mailto:btev-docdb@fnal.gov">DocDB administrators</a> and supply the
 persons full name, with initials if desired and their institution name.
 #
@@ -81,6 +83,10 @@ This is the name of the person who is requesting the document number or placing
 the document in the database. In other words, this is you. This option must be 
 supplied when reserving a document number, placing a document into the database,
 or updating a document.
+<p>
+To have a new author added to the database please contact the <a
+href="mailto:btev-docdb@fnal.gov">DocDB administrators</a> and supply the
+persons full name, with initials if desired and their institution name.
 #
 pubinfo
 Publication Information
@@ -104,6 +110,11 @@ authors
 Authors
 Select all the authors of the document. Either click or CTRL-click on author
 names to add them to the list.
+<p>
+To have a new author added to the database please contact the <a
+href="mailto:btev-docdb@fnal.gov">DocDB administrators</a> and supply the
+persons full name, with initials if desired and their institution name.
+ 
 #
 topics
 Topics
