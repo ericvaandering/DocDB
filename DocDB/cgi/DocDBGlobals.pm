@@ -57,7 +57,7 @@ if (-e "TestGlobals.pm") {
   require "TestGlobals.pm";
 }  
 
-# Special files (go here because it uses values from above)
+# Special files (gos here because they use values from above)
 
 $htaccess     = ".htaccess";
 $help_file    = $script_root."docdb.hlp";

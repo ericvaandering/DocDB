@@ -86,6 +86,9 @@ sub UnixBaseFile {       # Strips off Unix directories
   
 sub ExtractArchive {
   my ($Directory,$File) = @_;
+
+  use Cwd;
+  $current_dir = cwd();
   chdir $Directory or die "<p>Fatal error in chdir<p>\n";
   
   my $Extract;
@@ -101,6 +104,7 @@ sub ExtractArchive {
   $Command = $Extract.$File;
   print "Unpacking the archive with the command <tt>$Command</tt> <br>\n";
   system ($Command);
+  chdir $current_dir;
 }  
 
 1;
