@@ -1,30 +1,10 @@
 #
-# Description: Configuration file for the DocDB. Set variables 
-#              for server names, accounts, and command paths here.
-#              This file is included in every DocDB program.
+# Description: Configuration file for the DocDB. Sets default
+#              values and script names. Specific local settings are
+#              in ProjectGlobals.pm
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
-
-# DB settings
-
-$db_name       = "BTeVDocDB";
-$db_host       = "btevsrv1.fnal.gov";
-$db_rwuser     = "docdbrw";
-$db_rwpass     = "hall1burt0n";
-$db_rouser     = "docdbro";
-$db_ropass     = "abg3n1x";
-$Administrator = "docdbadm";
-
-# Root directories and URLs
-
-$Project     = "BTeV";
-
-$file_root   = "/www/html/DocDB/";    
-$script_root = "/www/cgi-bin/DocDB/"; 
-$web_root    = "http://btevsrv1.fnal.gov/DocDB/";
-$cgi_root    = "http://btevsrv1.fnal.gov/cgi-bin/DocDB/";
-$cgi_path    = "/cgi-bin/DocDB/";
 
 # Optional components
 
@@ -62,18 +42,18 @@ $RemoteUsername   = $ENV{REMOTE_USER};
 $remote_user      = $ENV{REMOTE_USER};
 $remote_user      =~ tr/[A-Z]/[a-z]/;
 
-$DBWebMasterEmail = "btev-docdb\@fnal.gov";
-$DBWebMasterName  = "BTeV Document Database Administrators";
 $RobotsMeta       = "none";
-
-$AuthUserFile     = "/www/conf/www-btev/.htpasswd";
-$MailServer       = "smtp.fnal.gov";
+$htaccess         = ".htaccess";
 
 $LastDays         = 20;        # Number of days for default in LastModified
 $HomeLastDays     = 7;         # Number of days for last modified on home page
 $HomeMaxDocs      = 50;        # Maximum number of documents on home page
 $MeetingWindow    = 7;         # Days before and after meeting to preselect
 $MeetingFiles     = 3;         # Number of upload boxes on meeting short form
+
+# Include project specific settings
+
+require "ProjectGlobals.pm";
 
 # Override settings in this file for the test DB 
 # and the publicly accessible version
@@ -88,7 +68,6 @@ if (-e "TestGlobals.pm") {
 
 # Special files (here because they use values from above)
 
-$htaccess     = ".htaccess";
 $help_file    = $script_root."docdb.hlp";
 
 # CGI Scripts
