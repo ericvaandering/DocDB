@@ -495,9 +495,9 @@ Conferences and meetings are topics, but have special display capabilities:
 <tt>http://www-btev.fnal.gov/cgi-bin/DocDB/ListByTopic?topicid=xxx&mode=conference</tt> or
 <tt>http://www-btev.fnal.gov/cgi-bin/DocDB/DisplayMeeting?conferenceid=xxx</tt>.
 <p>
-If your links are from a public page, be sure to use 
+<font color="red">If your links are from a public page, be sure to use 
 <tt>http://www-btev.fnal.gov/cgi-bin/public/DocDB</tt> instead of 
-<tt>http://www-btev.fnal.gov/cgi-bin/DocDB</tt>. 
+<tt>http://www-btev.fnal.gov/cgi-bin/DocDB</tt>.</font> 
 Only publicly accessible documents will be listed.
 <p>
 
