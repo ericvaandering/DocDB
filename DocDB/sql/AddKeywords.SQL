@@ -21,6 +21,8 @@ CREATE TABLE KeywordGrouping (
   KeywordGroupID int(11) NOT NULL default '0',
   KeywordID int(11) NOT NULL default '0',
   TimeStamp timestamp(14) NOT NULL,
-  PRIMARY KEY  (KeywordGroupingID)
+  PRIMARY KEY  (KeywordGroupingID),
+  KEY KeywordGroupID(KeywordGroupID),
+  KEY KeywordID(KeywordID)
 ) TYPE=MyISAM;
 
