@@ -220,6 +220,7 @@ INSERT INTO MajorTopic VALUES (6,'Software','Software',0,0,20011204141840);
 INSERT INTO MajorTopic VALUES (7,'Other Topics','Other Topics',0,0,20011204141840);
 INSERT INTO MajorTopic VALUES (8,'Collaboration Meetings','Collaboration Meetings',0,0,20011204141840);
 INSERT INTO MajorTopic VALUES (9,'Other Meetings','Other Meetings',0,0,20011204141840);
+INSERT INTO MajorTopic VALUES (10,'Conferences','Conferences',0,0,20011231100856);
 
 #
 # Table structure for table 'MinorTopic'
@@ -372,3 +373,19 @@ INSERT INTO DocumentType VALUES (6,'Minutes','Minutes of meetings',2001120517350
 INSERT INTO DocumentType VALUES (10,'Other','Other Types',20011205173501);
 INSERT INTO DocumentType VALUES (8,'Audio','Audio files',20011205173501);
 INSERT INTO DocumentType VALUES (9,'Video','Video files',20011205173501);
+
+#
+# Table structure for table 'Conference'
+#
+
+CREATE TABLE Conference (
+  ConferenceID int(11) NOT NULL auto_increment,
+  MinorTopicID int(11) NOT NULL default '0',
+  Location varchar(64) NOT NULL default '',
+  URL varchar(64) NOT NULL default '',
+  StartDate date default NULL,
+  EndDate date default NULL,
+  Timestamp timestamp(14) NOT NULL,
+  PRIMARY KEY (ConferenceID)
+) TYPE=MyISAM;
+
