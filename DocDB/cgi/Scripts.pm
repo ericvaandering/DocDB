@@ -469,9 +469,9 @@ sub AdminDisableScripts (%) {
     print "if (document.$Form.admaction[$Positions{$Position}].checked == true) {\n";
     foreach my $Element (keys %Matrix) {
       if ($Matrix{$Element}{$Position}) {
-        print "document.$Form.$Element.disabled = false;\n";
+        print "  document.$Form.$Element.disabled = false;\n";
       } else {  
-        print "document.$Form.$Element.disabled = true;\n";
+        print "  document.$Form.$Element.disabled = true;\n";
       }
     }
     print "}\n";    
