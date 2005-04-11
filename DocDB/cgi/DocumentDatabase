@@ -86,17 +86,18 @@ print "</div>\n";  # Header3Col
 
 print "<div id=\"LeftColumn3Col\">\n";
 unless ($Public) {
-  print "<p><strong><a href=\"$HelpFile\">DocDB Instructions</a></strong></p>\n";
+  print "<p><strong><a href=\"$HelpFile\">Instructions</a></strong></p>\n";
   if ($PersonalAccountLink) {
     print "<p><strong>$PersonalAccountLink</strong></p>\n";
   }  
-  print "<p><strong><a href=\"$SelectPrefs\">Your Preferences</a></strong></p>\n";
+  print "<p><strong><a href=\"$SelectPrefs\">Preferences</a></strong></p>\n";
   print "<p><strong><a href=\"$Statistics\">DocDB Statistics</a></strong></p>\n";
 }
 
 foreach my $Text (@{ $ProjectMessages{Homepage}{LeftColumn} }) {
   print "<p><strong>$Text</strong></p>\n";
 }
+print "<p><strong><a href=\"$DocDBHome\">About DocDB</a></strong></p>\n";
 
 print "</div>\n";  # LeftColumn3Col
 
@@ -138,22 +139,21 @@ my @FirstColumn  = ();
 my @OtherColumns = ();
 my @Spanners     = ();
 
-push @FirstColumn,"by <a href=\"$ListAuthors\">author</a>";
-push @FirstColumn,"by <a href=\"$ListTopics\">topic</a>";
-push @FirstColumn,"by <a href=\"$ListKeywords\">keyword</a>";
+push @FirstColumn,"<a href=\"$ListAuthors\">Authors</a>";
+push @FirstColumn,"<a href=\"$ListTopics\">Topics</a>";
+push @FirstColumn,"<a href=\"$ListKeywords\">Keywords</a>";
 unless ($Public && !$PublicAccess{MeetingList}) {
-  push @FirstColumn,"by <a href=\"$ListAllMeetings\">meeting</a>";
+  push @FirstColumn,"<a href=\"$ListAllMeetings\">Meetings</a>";
 }  
 
 unless ($Public) {
-  push @OtherColumns,"from <a href=\"$ListMeetings\">collaboration meetings</a>";
+  push @OtherColumns,"<a href=\"$ListMeetings\">Collaboration meetings</a>";
 }
-push @OtherColumns,"from <a href=\"$ListBy?major=Conferences&amp;mode=conference\">conferences</a>";
+push @OtherColumns,"<a href=\"$ListBy?major=Conferences&amp;mode=conference\">Conferences</a>";
 if ($UseSignoffs && (!$Public || $PublicAccess{MeetingList})) {
-  push @OtherColumns,"all <a href=\"$ListManagedDocuments\">managed documents</a>";
+  push @OtherColumns,"<a href=\"$ListManagedDocuments\">Managed documents</a>";
 }
-push @OtherColumns,"<a href=\"$web_root/Static/Lists/$remote_user/FullList.html\">all documents</a>";
-  
+push @OtherColumns,"<a href=\"$web_root/Static/Lists/$remote_user/FullList.html\">All documents</a>";
 
 push @Spanners,@MultiColumnDocumentLists;
 
@@ -162,7 +162,7 @@ my $Cols = int((scalar(@OtherColumns) - 1)/scalar(@FirstColumn) + 1);
 
 # Print table for lists of documents
 
-print "<strong>Find Documents:</strong>\n";
+print "<strong>List:</strong>\n";
 
 print "<table id=\"DocListMethods\">\n";
 
