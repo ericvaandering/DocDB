@@ -53,9 +53,9 @@ if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
 }
 
 print "<p><center><h4>\n";
- print "Click any <font color=red>red link</font> for quick help, or <a
- href=\"$MainPage\">view documents</a> in the database.\n";
- print "(<a href=\"$HelpFile\">Database instructions</a>) \n";
+ print "Click any <font color=red>red link</font> for quick help.<br/>\n";
+ print "(<a href=\"$MainPage\">Main menu</a> or \n";
+ print "<a href=\"$HelpFile\">Instructions</a>.) \n";
 print "</h4></center>\n";
 
 print "<p><b>Short cuts for putting information into the database: ";
