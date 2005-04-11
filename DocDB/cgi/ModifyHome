@@ -58,7 +58,7 @@ print "<p><center><h4>\n";
  print "<a href=\"$HelpFile\">Instructions</a>.) \n";
 print "</h4></center>\n";
 
-print "<p><b>Short cuts for putting information into the database: ";
+print "<p><b>Shortcuts for putting information into the database: ";
 print "(<a "; &HelpLink("modifytypes"); 
 print "Which option do I choose?</a>)</b>\n";
 print "<ul>\n";
