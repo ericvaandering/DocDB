@@ -1,0 +1,19 @@
+#TalkList {
+  border: 1px solid black;
+  margin-bottom: 2em;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+#TalkList td {
+  vertical-align: top;
+  text-align: left;
+  padding: 3px 5px 3px 5px;
+}  
+
+#TalkList th {
+  vertical-align: bottom;
+  border-bottom: 1px solid black;
+  padding: 5px 5px 5px 5px;
+}  
+
