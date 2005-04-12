@@ -3,13 +3,13 @@
 <html>
 <!-- this is a simple index file - edit for your site -->
 <head>
-<title>DocDB</title>
+<title>About DocDB</title>
 </head>
 
 <body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
 
 <p>
-      <div align="center"><font size="+2" color="#003399">DocDB</font></div>
+      <div align="center"><font size="+2" color="#003399">About DocDB</font></div>
 <p>
 <hr>
 <!--#include virtual="index-text.html" -->

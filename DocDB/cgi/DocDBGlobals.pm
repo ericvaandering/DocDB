@@ -31,7 +31,7 @@ use constant FALSE => 0;
 
 # Advertising link for DocDB
 
-$DocDBHome = "http://cepa.fnal.gov/DocDB/";
+$DocDBHome = "http://docdb.fnal.gov/doc/";
 
 # Optional components
 
