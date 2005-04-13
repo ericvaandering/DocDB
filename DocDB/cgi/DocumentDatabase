@@ -153,7 +153,13 @@ push @OtherColumns,"<a href=\"$ListBy?major=Conferences&amp;mode=conference\">Co
 if ($UseSignoffs && (!$Public || $PublicAccess{MeetingList})) {
   push @OtherColumns,"<a href=\"$ListManagedDocuments\">Managed documents</a>";
 }
-push @OtherColumns,"<a href=\"$web_root/Static/Lists/$remote_user/FullList.html\">All documents</a>";
+if ($UserValidation eq "certificate" || 
+    (!$Preferences{Options}{DynamicFullList}{Private}) || 
+    ($Public &&$Preferences{Options}{DynamicFullList}{Public})) {
+  push @OtherColumns,"<a href=\"$ListBy?alldocs=1\">All documents</a>";
+} else {
+  push @OtherColumns,"<a href=\"$web_root/Static/Lists/$remote_user/FullList.html\">All documents</a>";
+}
 
 push @Spanners,@MultiColumnDocumentLists;
 
