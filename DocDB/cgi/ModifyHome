@@ -48,23 +48,33 @@ if ($Public || !&CanCreate()) {
 
 &HelpPopupScript;
 
+print "<div id=\"ModifyHomeBody\">\n";
+
 if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
   &EndPage(@ErrorStack);
 }
 
-print "<p><center><h4>\n";
- print "Click any <font color=red>red link</font> for quick help.<br/>\n";
- print "(<a href=\"$MainPage\">Main menu</a> or \n";
- print "<a href=\"$HelpFile\">Instructions</a>.) \n";
-print "</h4></center>\n";
+print "<div id=\"Header3Col\">\n";
+print "<p><h4>\n";
+print "Click any <span class=\"Help\">red link</span> for quick help.\n";
+print "</h4>\n";
+print "</div>\n";  # Header3Col
 
-print "<p><b>Shortcuts for putting information into the database: ";
+print "<div id=\"LeftColumn3Col\">\n";
+print "<p><strong><a href=\"$MainPage\">Main menu</a></strong></p>\n";
+print "<p><strong><a href=\"$HelpFile\">Instructions</a</strong></p>\n";
+print "<p><strong><a href=\"#customcreate\">Customized<br/>create/modify</a></strong></p>\n";
+print "<p><strong><a href=\"#addform\">Customized<br/>add files</a></strong></p>\n";
+print "</div>\n";  # LeftColumn3Col
+
+print "<div id=\"MainColumn3Col\">\n";
+print "<p><strong>Shortcuts for putting information into the database: ";
 print "(<a "; &HelpLink("modifytypes"); 
-print "Which option do I choose?</a>)</b>\n";
-print "<ul>\n";
+print "Which option do I choose?</a>)</strong>\n";
 
 ### New upload short form
 
+print "<ul>\n";
 print "<li>"; 
 print $query -> startform('POST',$DocumentAddForm);
 print $query -> submit (-value => "Create a new");
@@ -77,6 +87,7 @@ print "local computer</a></b> \n";
 print $query -> hidden(-name => 'mode',    -default => 'add');
 print $query -> hidden(-name => 'upload',    -default => 'file');
 print $query -> endform;
+print "</li>"; 
 
 ### New http short form
 
@@ -92,6 +103,7 @@ print "web</a></b> \n";
 print $query -> hidden(-name => 'mode',    -default => 'add');
 print $query -> hidden(-name => 'upload',    -default => 'http');
 print $query -> endform;
+print "</li>"; 
 
 ### Reserve form (button)
 
@@ -102,6 +114,7 @@ print " a document number\n";
 print "(if you don't yet have a draft of your document).\n";
 print $query -> hidden(-name => 'mode',    -default => 'reserve');
 print $query -> endform;
+print "</li>"; 
 
 ### Update short form
 
@@ -112,6 +125,7 @@ print " document # ";
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 print $query -> hidden(-name => 'mode',    -default => 'update');
 print $query -> endform;
+print "</li>"; 
 
 ### Update DB short form
 
@@ -122,6 +136,7 @@ print " for document # ";
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 print $query -> hidden(-name => 'mode',    -default => 'updatedb');
 print $query -> endform;
+print "</li>"; 
 
 ### File Add short form
 
@@ -134,18 +149,17 @@ print " file(s) to document # ";
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 #print $query -> hidden(-name => 'mode',    -default => 'updatedb');
 print $query -> endform;
+print "</li>"; 
 
-if (&CanAdminister()) {
+if (&CanAdminister()) { # Delete Form
   print "<li>"; 
   print $query -> startform('POST',$DeleteConfirm);
   print $query -> submit (-value => "Delete");
   print " document # "; 
   print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
   print $query -> endform;
+  print "</li>"; 
 }
-print "<li>See below if you need more flexibility in <a href=\"#customcreate\">modifying</a>
-           documents or <a href=\"#addform\">adding</a> files.\n";
-
 print "</ul>\n";
 
 print "<p><b>Database maintenance:</b><ul>\n";
@@ -303,6 +317,16 @@ print "<tr><td align=center colspan=2>\n";
 print $query -> submit (-value => "Give me my customized form");
 print "</table>\n";
 print $query -> endform;
+### Right column (wrapped around by middle column)
+
+#print "<div id=\"RightColumn3Col\">\n";
+#print "</div>\n";  # RightColumn3Col
+
+print "</div>\n";  # MainColumn3Col
+
+print "<div id=\"Footer3Col\">\n"; # Must have to keep NavBar on true bottom
+print "</div>\n";  # Footer3Col
+print "</div>\n";  # ModifyHomeBody
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

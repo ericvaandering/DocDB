@@ -204,7 +204,6 @@ print "<div id=\"Footer3Col\">\n"; # Must have to keep NavBar on true bottom
 print "</div>\n";  # Footer3Col
 print "</div>\n";  # DocDBHomeBody
 
-
 # Fill arrays with stuff that goes in main, bold table
 
 # Modified in last few days
