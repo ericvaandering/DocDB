@@ -16,7 +16,7 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 sub HelpPopupScript {
-  print "<script LANGUAGE=\"JavaScript\" type=\"text/javascript\">\n";
+  print "<script language=\"JavaScript\" type=\"text/javascript\">\n";
   print "<!-- \n";
 
   print "function helppopupwindow(page){\n";
@@ -34,7 +34,7 @@ sub HelpLink { # Change this, change FormElementTitle
 }
 
 sub TalkNotePopupScript {
-  print "<script LANGUAGE=\"JavaScript\" type=\"text/javascript\">\n";
+  print "<script language=\"JavaScript\" type=\"text/javascript\">\n";
   print "<!-- \n";
 
   print "function notepopupwindow(page){\n";
@@ -51,7 +51,7 @@ sub TalkNoteLink {
 }
 
 sub ConfirmTalkPopupScript {
-  print "<script LANGUAGE=\"JavaScript\" type=\"text/javascript\">\n";
+  print "<script language=\"JavaScript\" type=\"text/javascript\">\n";
   print "<!-- \n";
 
   print "function confirmtalkpopupwindow(theForm){\n";
@@ -356,7 +356,7 @@ ENDSCRIPT
 } 
 
 sub KeywordChooserPopupScript {
-  print "<script LANGUAGE=\"JavaScript\" type=\"text/javascript\">\n";
+  print "<script language=\"JavaScript\" type=\"text/javascript\">\n";
   print "<!-- \n";
 
   print "function keywordchooserwindow(page){\n";
@@ -437,7 +437,7 @@ ENDSCRIPT
 }
 
 sub SignoffChooserPopupScript {
-  print "<script LANGUAGE=\"JavaScript\" type=\"text/javascript\">\n";
+  print "<script language=\"JavaScript\" type=\"text/javascript\">\n";
   print "<!-- \n";
 
   print "function signoffchooserwindow(page){\n";
@@ -459,7 +459,7 @@ sub AdminDisableScripts (%) {
   my %Positions  = %{$Params{-positions}};
  
  
-  print "<script LANGUAGE=\"JavaScript\" type=\"text/javascript\">\n";
+  print "<script language=\"JavaScript\" type=\"text/javascript\">\n";
   print "<!-- \n";
 
   print "function disabler_",$Form,"() {\n";

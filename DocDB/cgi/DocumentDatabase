@@ -7,7 +7,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -34,8 +34,10 @@ require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 require "SecuritySQL.pm";
+require "SecurityHTML.pm";
 require "Security.pm";
 require "Scripts.pm";
+require "FormElements.pm";
 
 require "ProjectMessages.pm";
 
@@ -48,90 +50,86 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 print $query->header;
 &DocDBHeader("$Project Document Database","Document Database");
 
+my $PersonalAccountLink = &PersonalAccountLink();
+
 &HelpPopupScript;
 
-my $PersonalAccountLink = "<a href=\"$EmailLogin\">Setup/manage a personal account</a>";
+print "<div id=\"DocDBHomeBody\">\n";
+
+### Header info
+
+print "<div id=\"Header3Col\">\n";
 
 if ($UserValidation eq "certificate") {
   require "CertificateUtilities.pm";
   my $CertificateStatus = &CertificateStatus();
-  if ($CertificateStatus eq "verified") {
-    $PersonalAccountLink = "<a href=\"$SelectEmailPrefs\">Manage your personal account</a>";
-  } else {
-    print "<p><center><h4><font color=\"red\">\n";
-    print "You have presented a valid certificate, but are not yet authorized to access the DocDB.<br>\n";
-    print "</font>\n";
-    print "<a href=\"$CertificateApplyForm\">Apply for access or get more information.</a></h4></center>\n";
-    $PersonalAccountLink = "";
+  if ($CertificateStatus ne "verified") {
+    print "<p><h4 class=\"Warning\">\n";
+    print "You have presented a valid certificate, but are not yet authorized to access the DocDB.<br/>\n";
+    print "</h4>\n";
+    print "<h4>\n";
+    print "<a href=\"$CertificateApplyForm\">Apply for access or get more information.</a></h4></p>\n";
   }
 }
-&DebugPage("Certificate check:");
 
 if ($WelcomeMessage) {
-  print "<p><center><h4>\n";
+  print "<p><h4>\n";
   print "$WelcomeMessage\n";
-  print "</h4></center>\n";
+  print "</h4>\n";
 }
 
-print "<p><h4 class=\"SectionHeading\">Database options:</h4>\n";
+print "</div>\n";  # Header3Col
 
-# Fill arrays with stuff that goes in main, bold table
+### Left Column
 
-my @MainFirstColumn  = ();
-my @MainOtherColumns = ();
+print "<div id=\"LeftColumn3Col\">\n";
+unless ($Public) {
+  print "<p><strong><a href=\"$HelpFile\">Instructions</a></strong></p>\n";
+  if ($PersonalAccountLink) {
+    print "<p><strong>$PersonalAccountLink</strong></p>\n";
+  }  
+  print "<p><strong><a href=\"$SelectPrefs\">Preferences</a></strong></p>\n";
+}
+print "<p><strong><a href=\"$Statistics\">DocDB Statistics</a></strong></p>\n";
+
+foreach my $Text (@{ $ProjectMessages{Homepage}{LeftColumn} }) {
+  print "<p><strong>$Text</strong></p>\n";
+}
+print "<p><strong><a href=\"$DocDBHome\">About DocDB</a></strong></p>\n";
+
+print "</div>\n";  # LeftColumn3Col
+
+### Main Column
+
+print "<div id=\"MainColumn3Col\">\n";
 
 unless ($Public || !&CanCreate()) {
-  push @MainFirstColumn,"<b><a href=\"$ModifyHome\">Create or change</a> documents or metadata</b>";
+  print "<div class=\"HomepageMainChoice\"><strong><a href=\"$ModifyHome\">Create or change documents or other information</a></strong></div>\n";
 }
-push @MainFirstColumn,"<b><a href=\"$SearchForm\">Search</a> documents</b>"; 
+print "<div class=\"HomepageMainChoice\"><strong><a href=\"$SearchForm\">Search</a> for documents</strong></div>\n"; 
 
 my $ShowForm  = $query -> startform('POST',$ShowDocument);
-   $ShowForm .= "&bull;&nbsp;";
+   $ShowForm .= "<div>\n";
    $ShowForm .= $query -> submit (-value => "Show");
-   $ShowForm .= " <b>$ShortProject-doc-#</b> "; 
+   $ShowForm .= " <strong>$ShortProject-doc-#</strong> "; 
    $ShowForm .= $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
-   $ShowForm .= " <b>-v</b> "; 
+   $ShowForm .= " <strong>-v</strong> "; 
    $ShowForm .= $query -> textfield(-name => "version", -size => 3, -maxlength => 3);
+   $ShowForm .= "\n</div>\n";
    $ShowForm .= $query -> endform;
 
-push @MainFirstColumn,$ShowForm; 
-push @MainFirstColumn,"<b>List documents:</b>";
+print "<div class=\"HomepageMainChoice\">$ShowForm</div>\n";  
 
-unless ($Public) {
-  push @MainOtherColumns,"<b><a href=\"$HelpFile\">Get instructions</a></b>";
-  push @MainOtherColumns,"<b><a href=\"$SelectPrefs\">Set preferences</a></b>";
-  if ($PersonalAccountLink) {
-    push @MainOtherColumns,"<b>$PersonalAccountLink</b>";
-  }  
-  push @MainOtherColumns,"<b><a href=\"$Statistics\">Get statistics</a></b>";
-}
-push @MainOtherColumns,@MainPageAddendum;
-
-my $Rows = scalar(@MainFirstColumn);
-my $Cols = int((scalar(@MainOtherColumns) - 1)/scalar(@MainFirstColumn) + 1);
-
-# Display main table
-
-print "<table cellspacing=15 width=90%>\n";
-
-for (my $Index = 0; $Index < $Rows; ++$Index) {
-  print "<tr>\n";
-  print "<td>";
-  unless (grep /\&bull/,$MainFirstColumn[$Index]) {
-    print "&bull;&nbsp;";
-  }  
-  print $MainFirstColumn[$Index],"</td>\n";
-  for (my $ColIndex = 0; $ColIndex < $Cols; ++$ColIndex) {
-    unless ($Index+$ColIndex*$Rows >= scalar(@MainOtherColumns)) {
-      print "<td>&bull;&nbsp;",$MainOtherColumns[$Index+$ColIndex*$Rows],"</td>\n";
-    }  
-  }  
-  print "</tr>\n";
-}    
-
-++$Cols;
-
-print "<tr><td colspan=$Cols>\n"; # List of lists spans whole bottom of main table
+print "<div class=\"HomepageMainChoice\">\n";
+print $query -> startform('POST',$ListBy);
+print "<div>\n";
+print $query -> submit (-value => "Show");
+print "<strong> documents modified in the last </strong>";
+&DaysPulldown($LastDays);
+print "<strong> days.</strong>";
+print "</div>\n";
+print $query -> endform;
+print "</div>\n";  
 
 # Fill arrays that print lists of documents
 
@@ -139,23 +137,27 @@ my @FirstColumn  = ();
 my @OtherColumns = ();
 my @Spanners     = ();
 
-push @FirstColumn,"by <a href=\"$ListAuthors\">author</a>";
-push @FirstColumn,"by <a href=\"$ListTopics\">topic</a>";
-push @FirstColumn,"by <a href=\"$ListKeywords\">keyword</a>";
-push @FirstColumn,"modified in the <a href=\"$LastModified?days=$LastDays\">last $LastDays days</a>";
+push @FirstColumn,"<a href=\"$ListAuthors\">Authors</a>";
+push @FirstColumn,"<a href=\"$ListTopics\">Topics</a>";
+push @FirstColumn,"<a href=\"$ListKeywords\">Keywords</a>";
+unless ($Public && !$PublicAccess{MeetingList}) {
+  push @FirstColumn,"<a href=\"$ListAllMeetings\">Meetings</a>";
+}  
 
 unless ($Public) {
-  push @OtherColumns,"from <a href=\"$ListMeetings\">collaboration meetings</a>";
+  push @OtherColumns,"<a href=\"$ListMeetings\">Collaboration meetings</a>";
 }
-push @OtherColumns,"from <a href=\"$ListBy?major=Conferences&mode=conference\">conferences</a>";
-unless ($Public && !$PublicAccess{MeetingList}) {
-  push @OtherColumns,"from <a href=\"$ListAllMeetings\">all meetings</a>";
-}  
+push @OtherColumns,"<a href=\"$ListBy?major=Conferences&amp;mode=conference\">Conferences</a>";
 if ($UseSignoffs && (!$Public || $PublicAccess{MeetingList})) {
-  push @OtherColumns,"all <a href=\"$ListManagedDocuments\">managed documents</a>";
+  push @OtherColumns,"<a href=\"$ListManagedDocuments\">Managed documents</a>";
 }
-  
-push @OtherColumns,"<a href=\"$web_root/Static/Lists/$remote_user/FullList.html\">all documents</a>";
+if ($UserValidation eq "certificate" || 
+    (!$Public && $Preferences{Options}{DynamicFullList}{Private}) || 
+    ( $Public && $Preferences{Options}{DynamicFullList}{Public})) {
+  push @OtherColumns,"<a href=\"$ListBy?alldocs=1\">All documents</a>";
+} else {
+  push @OtherColumns,"<a href=\"$web_root/Static/Lists/$remote_user/FullList.html\">All documents</a>";
+}
 
 push @Spanners,@MultiColumnDocumentLists;
 
@@ -164,7 +166,9 @@ my $Cols = int((scalar(@OtherColumns) - 1)/scalar(@FirstColumn) + 1);
 
 # Print table for lists of documents
 
-print "<table cellpadding=5>\n";
+print "<strong>List:</strong>\n";
+
+print "<table id=\"DocListMethods\">\n";
 
 for (my $Index = 0; $Index < $Rows; ++$Index) {
   print "<tr>\n";
@@ -181,20 +185,29 @@ for (my $Index = 0; $Index < $Rows; ++$Index) {
 
 foreach my $Spanner (@Spanners) {
   print "<tr>\n";
-  print "<td colspan=$Cols>&nbsp;&loz;&nbsp;",$Spanner,"</td>\n";
+  print "<td colspan=\"$Cols\">&nbsp;&loz;&nbsp;",$Spanner,"</td>\n";
   print "</tr>\n";
 }    
 
-print "</table><p>\n";
+print "</table>\n";
  
-print "</td>\n";
-print "</tr></table>\n";
+### Right column (wrapped around by middle column)
+
+#print "<div id=\"RightColumn3Col\">\n";
+#print "</div>\n";  # RightColumn3Col
+
+print "</div>\n";  # MainColumn3Col
+
+print "<div id=\"Footer3Col\">\n"; # Must have to keep NavBar on true bottom
+print "</div>\n";  # Footer3Col
+print "</div>\n";  # DocDBHomeBody
+
+# Fill arrays with stuff that goes in main, bold table
 
 # Modified in last few days
 
 {
   require "DocumentHTML.pm";
-  require "FormElements.pm";
 
 ### Get list of documents
 
@@ -213,30 +226,20 @@ print "</tr></table>\n";
   }
 
 ### Print table
-  
-  print "<hr/><center><h4>\n";
-  if ($#DocumentIDs >= $HomeMaxDocs) {
-    print "Last $HomeMaxDocs documents modified\n";
-  } else {  
-    print "Documents modified in the last $HomeLastDays days\n";
-  }
-  print "</h4></center><p/>\n";
 
+  if (@DocumentIDs) { ### FIXME: Move both kinds of titles into DocumentTable  
+    print "<hr/><h4>\n";
+    if ($#DocumentIDs >= $HomeMaxDocs) {
+      print "Last $HomeMaxDocs documents modified\n";
+    } else {  
+      print "Documents modified in the last $HomeLastDays days\n";
+    }
+    print "</h4><p/>\n";
+  }
+  
   my $NumberOfDocuments = &DocumentTable(-fields  => \@Fields, -docids  => \@DocumentIDs, 
                                          -sortby  => $SortBy,  -reverse => $Reverse, 
                                          -maxdocs => $HomeMaxDocs);
-
-### Print Pulldown
-
-  print $query -> startform('POST',$ListBy);
-  print "<center>";
-  print $query -> submit (-value => "Show Documents");
-  print " modified in the last ";
-  $Days = $HomeLastDays; # FIXME: Global variable
-  &DaysPulldown;
-  print " days.</center>";
-  print $query -> endform;
-  print "<p>&nbsp;<p>";
 }
 
 $EndTime  = new Benchmark;

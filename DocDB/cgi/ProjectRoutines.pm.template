@@ -78,17 +78,18 @@ sub ProjectFooter {
   print "<a href=\"$DocDBHome\">DocDB</a> ";
   print "Version $DocDBVersion, contact \n";
   print "<i>\n";
-  print "<A HREF=\"mailto:$WebMasterEmail\">$WebMasterName</A>\n";
+  print "<a href=\"mailto:$WebMasterEmail\">$WebMasterName</a>\n";
   print "</i>\n";
-  print "</small><br>\n";
+  print "</small><br/>\n";
   
 # This prints benchmark info for pages that have it  
   
   if ($EndTime && $StartTime) {
     my $TimeDiff = timediff($EndTime,$StartTime);
-    print "<small><b>Execution time: </b>",timestr($TimeDiff),"</small><br>\n";
+    print "<small><b>Execution time: </b>",timestr($TimeDiff),"</small>\n";
   }
-
+  print "</p>\n";
+  
 # Do not print the </body> and </html> tags, DocDB does that now.
 }
 
@@ -104,7 +105,7 @@ sub DocDBNavBar {
 
   require "Security.pm";
 
-  print "<div align=\"center\">\n";
+  print "<div class=\"DocDBNavBar\">\n";
   if ($ExtraDesc && $ExtraURL) {
     print "[&nbsp;<a href=\"$ExtraURL\"l>$ExtraDesc</a>&nbsp;]&nbsp;\n";
   } 

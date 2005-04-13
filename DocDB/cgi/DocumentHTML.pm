@@ -53,7 +53,7 @@ sub DocumentTable (%) {
 
 ### Write out the beginning and header of table
 
-  print "<center><table id=\"DocumentList\" class=\"Alternating\">\n"; 
+  print "<table id=\"DocumentList\" class=\"Alternating\">\n"; 
 
   print "<tr>\n";
   foreach my $Field (@Fields) {
@@ -168,7 +168,7 @@ sub DocumentTable (%) {
 
 ### End table, return
 
-  print "</table></center>\n";
+  print "</table>\n";
   
   return $NumberOfDocuments;
 }
@@ -204,7 +204,7 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
   # When adding the version number, remember to use &amp; for XHTML 
   # or use DocumentURL
   
-  $Link .= "\">"; 
+  $Link .= ">"; 
   if ($DocIDOnly) {           # Like 1234                   
     $Link .= $DocumentID;
     $Link .= "</a>";

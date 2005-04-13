@@ -174,7 +174,9 @@ sub PrintRevisionInfo {
     print "<div id=\"UpdateButtons\">\n";
     &UpdateButton($DocumentID);
     &UpdateDBButton($DocumentID,$Version);
-    &AddFilesButton($DocumentID,$Version);
+    if ($Version) {
+      &AddFilesButton($DocumentID,$Version);
+    }  
     print "</div>\n";
   }  
 

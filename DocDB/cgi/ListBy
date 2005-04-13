@@ -41,6 +41,7 @@ my $TopicID  = $params{topicid}  || 0;
 my $MajorID  = $params{majorid}  || 0;
 my $Major    = $params{major}    || "";
 my $AllPubs  = $params{allpubs}  || "";
+my $AllDocs  = $params{alldocs}  || "";
 
 my $Mode     = $params{mode}     || "";
 
@@ -127,6 +128,12 @@ if ($Days) {
            "DocumentRevision,RevisionReference ".
            "where DocumentRevision.DocRevID=RevisionReference.DocRevID and RevisionReference.JournalID>0"); 
   $List -> execute();
+} elsif ($AllDocs) {
+  $Title   = "All $Project Documents";
+  $Message = "";
+  $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
+           "DocumentRevision"); 
+  $List -> execute();
 }
 
 # Defaults, later can surround these in "unless"
@@ -172,7 +179,7 @@ if ($Days) { # Print out modified by form
   print "<center>";
   print $query -> submit (-value => "Show Documents");
   print " modified in the last ";
-  &DaysPulldown;
+  &DaysPulldown($Days);
   print " days.</center>";
   print $query -> endform;
   print "<p/>";
