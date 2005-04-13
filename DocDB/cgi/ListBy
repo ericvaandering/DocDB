@@ -41,6 +41,7 @@ my $TopicID  = $params{topicid}  || 0;
 my $MajorID  = $params{majorid}  || 0;
 my $Major    = $params{major}    || "";
 my $AllPubs  = $params{allpubs}  || "";
+my $AllDocs  = $params{alldocs}  || "";
 
 my $Mode     = $params{mode}     || "";
 
@@ -126,6 +127,12 @@ if ($Days) {
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
            "DocumentRevision,RevisionReference ".
            "where DocumentRevision.DocRevID=RevisionReference.DocRevID and RevisionReference.JournalID>0"); 
+  $List -> execute();
+} elsif ($AllDocs) {
+  $Title   = "All $Project Documents";
+  $Message = "";
+  $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
+           "DocumentRevision"); 
   $List -> execute();
 }
 

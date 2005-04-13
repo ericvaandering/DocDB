@@ -223,15 +223,17 @@ print "</div>\n";  # DocDBHomeBody
   }
 
 ### Print table
-  
-  print "<hr/><h4>\n";
-  if ($#DocumentIDs >= $HomeMaxDocs) {
-    print "Last $HomeMaxDocs documents modified\n";
-  } else {  
-    print "Documents modified in the last $HomeLastDays days\n";
-  }
-  print "</h4><p/>\n";
 
+  if (@DocumentIDs) { ### FIXME: Move both kinds of titles into DocumentTable  
+    print "<hr/><h4>\n";
+    if ($#DocumentIDs >= $HomeMaxDocs) {
+      print "Last $HomeMaxDocs documents modified\n";
+    } else {  
+      print "Documents modified in the last $HomeLastDays days\n";
+    }
+    print "</h4><p/>\n";
+  }
+  
   my $NumberOfDocuments = &DocumentTable(-fields  => \@Fields, -docids  => \@DocumentIDs, 
                                          -sortby  => $SortBy,  -reverse => $Reverse, 
                                          -maxdocs => $HomeMaxDocs);
