@@ -148,6 +148,8 @@ li.Even, tr.Even {
 #TalkList,#DocumentList {
   border: 1px solid black;
   margin-bottom: 2em;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 #TalkList td,#DocumentList td {
@@ -164,6 +166,10 @@ li.Even, tr.Even {
 
 .Highlight {
   color: blue;
+}  
+
+.Error, .Warning, .Help {
+  color: red;
 }  
 
 .Updated {
