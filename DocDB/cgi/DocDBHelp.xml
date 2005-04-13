@@ -400,8 +400,7 @@ about the document. You must supply a document number to modify.</li>
 information about it has. For example, it's now published so you want to add that
 information. You must supply a document number to modify.</li>
 <li>Add/Replace files: You forgot a file that belongs with the document or
-something minor has changed in one of the files. To add or replace files, use
-the customize box at the bottom of the page.<p/>Replacing files should be done
+something minor has changed in one of the files.<p/>Replacing files should be done
 with caution since no backup is kept. Please do not use this capability to
 avoid creating a new version of a document when that is more appropriate. Disk
 space is cheap, mistakes are not.</li>
