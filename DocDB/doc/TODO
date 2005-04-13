@@ -19,15 +19,9 @@ by the code:
 
 5. A mailto link to DocDB administrators in order to get sign off or security group membership changed.
 
-* Remove add files button on reserved ShowDocument
-
 * Remove "None" from topics, files in meeting list(?)
 
-* Remove "Documents modified in last ...." from homepage if no documents...
-
 * Login popup if certifcate is more than one group. Can choose groups to use.
-
-* Move certificate version over to ListBy, others with preference
 
 * Cut new stable, notify Lynn and others of LeftColumn change.
 

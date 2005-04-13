@@ -160,7 +160,7 @@ li.Even, tr.Even {
   color: blue;
 }  
 
-.Error, .Warning {
+.Error, .Warning, .Help {
   color: red;
 }  
 
