@@ -119,4 +119,23 @@ sub ModifyListByID {
   print "</div>\n";
 }
 
+sub PersonalAccountLink () {
+  my $PersonalAccountLink = "<a href=\"$EmailLogin\">Your Account</a>";
+  if ($UserValidation eq "certificate") {
+    require "CertificateUtilities.pm";
+    my $CertificateStatus = &CertificateStatus();
+    if ($CertificateStatus eq "verified") {
+      $PersonalAccountLink = "<a href=\"$SelectEmailPrefs\">Your Account</a>";
+    } else {
+      $PersonalAccountLink = "";
+    }
+  }
+  if ($Public) {
+    $PersonalAccountLink = "";
+  }
+  return $PersonalAccountLink;
+}
+
+
+
 1;

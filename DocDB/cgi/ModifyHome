@@ -31,6 +31,7 @@ require "ResponseElements.pm";
 require "Cookies.pm";
 require "Security.pm";
 require "SecuritySQL.pm";
+require "SecurityHTML.pm";
 require "MeetingSecurityUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
@@ -45,6 +46,8 @@ print $query->header;
 if ($Public || !&CanCreate()) {
   push @ErrorStack,"You are not allowed to modify or create documents.";
 }
+
+my $PersonalAccountLink = &PersonalAccountLink();
 
 &HelpPopupScript;
 
@@ -63,8 +66,15 @@ print "</div>\n";  # Header3Col
 print "<div id=\"LeftColumn3Col\">\n";
 print "<p><strong><a href=\"$MainPage\">Main menu</a></strong></p>\n";
 print "<p><strong><a href=\"$HelpFile\">Instructions</a</strong></p>\n";
+if ($PersonalAccountLink) {
+  print "<p><strong>$PersonalAccountLink</strong></p>\n";
+}  
 print "<p><strong><a href=\"#customcreate\">Customized<br/>create/modify</a></strong></p>\n";
 print "<p><strong><a href=\"#addform\">Customized<br/>add files</a></strong></p>\n";
+foreach my $Text (@{ $ProjectMessages{Homepage}{LeftColumn} }) {
+  print "<p><strong>$Text</strong></p>\n";
+}
+print "<p><strong><a href=\"$DocDBHome\">About DocDB</a></strong></p>\n";
 print "</div>\n";  # LeftColumn3Col
 
 print "<div id=\"MainColumn3Col\">\n";
