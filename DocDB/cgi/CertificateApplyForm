@@ -102,7 +102,7 @@ if ($CertificateStatus eq "verified") {
   print "</td>\n";
   print "<td>\n";
   &SecurityScroll(-helplink => "reqgroups", -helptext => "Requested<br/>Groups",
-                -name => "reqgroups");
+                -name => "reqgroups", -multiple => TRUE);
   print "</td></tr>\n";
   print "<tr>\n";
   print "</td></tr>\n";

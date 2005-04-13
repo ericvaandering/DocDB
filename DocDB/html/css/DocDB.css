@@ -22,6 +22,12 @@ dd {
   margin-left:  0em;
 }
 
+dd.FileList {
+  padding-top:  0.5em;
+  padding-left: 0em;
+  margin-left:  0em;
+}
+
 dt {
   font-weight: bold;
 }
@@ -31,6 +37,9 @@ h1, h2, h3, h4, h5 {
   text-align: center;
 }
 
+.SectionHeading {
+  text-align: left;
+}
 
 h1 {font-size: 150%}
 h2 {font-size: 120%}
@@ -80,8 +89,7 @@ h5 {
 }
 
 #RightColumn3Col {
-  width: auto;
-  max-width: 45%; /* of 2nd and 3rd columns */
+  width: 12.5em; 
   background: #eee;
   float: right;
   margin-bottom: 0.5em;
@@ -95,18 +103,18 @@ h5 {
   text-align: center;
 }  
 
-#LeftColumn3Col input[type="submit"] { /* Probably not best to change all buttons */
-  background: #ddd;
-  font-weight: bold;
-  border: 1px black solid;
-  padding: 0.25em;
+#UpdateButtons input[type="submit"] { /* Probably not best to change all buttons */
+/*  background: #ddd; 
+  font-weight: bold;*/
+/*  border: 1px black solid;
+  padding: 0.25em; */
   font-size: 90%;
 }  
-
+/*
 #UpdateButtons input[type="submit"] {
   width: 12em;
 }  
-
+*/
 #Signoffs ul ul {
   padding-left: 1em;
 }
@@ -137,20 +145,18 @@ li.Even, tr.Even {
 
 /* DocumentList tables show up in lots of places, hence here */
 
-#DocumentList {
+#TalkList,#DocumentList {
   border: 1px solid black;
   margin-bottom: 2em;
-  margin-right: auto;
-  margin-left: auto;
 }
 
-#DocumentList td {
+#TalkList td,#DocumentList td {
   vertical-align: top;
   text-align: left;
   padding: 3px 5px 3px 5px;
 }  
 
-#DocumentList th {
+#TalkList th,#DocumentList th {
   vertical-align: bottom;
   border-bottom: 1px solid black;
   padding: 5px 5px 5px 5px;
@@ -160,10 +166,6 @@ li.Even, tr.Even {
   color: blue;
 }  
 
-.Error, .Warning, .Help {
-  color: red;
-}  
-
-.DocDBNavBar {
-  text-align: center;
+.Updated {
+  white-space: nowrap;
 }  
