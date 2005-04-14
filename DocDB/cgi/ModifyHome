@@ -282,7 +282,7 @@ print $query -> radio_group(-name => "overdate", -values => ['No','Yes'],
 print "<tr><td align=center colspan=2>\n";
 print $query -> submit (-value => "Give me my customized form");
 print "</table>\n";
-print $query -> endform;
+print $query -> end_multipart_form;
 
 print "<p>&nbsp;<p>\n";
 ### File addition form
@@ -327,7 +327,7 @@ print $query -> radio_group(-name => "upload", -values => \@uploads, -labels => 
 print "<tr><td align=center colspan=2>\n";
 print $query -> submit (-value => "Give me my customized form");
 print "</table></p>\n";
-print $query -> endform;
+print $query -> end_multipart_form;
 ### Right column (wrapped around by middle column)
 
 #print "<div id=\"RightColumn3Col\">\n";
