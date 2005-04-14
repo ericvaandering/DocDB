@@ -87,7 +87,7 @@ print "Which option do I choose?</a>)</strong>\n";
 
 print "<ul>\n";
 print "<li>"; 
-print $query -> startform('POST',$DocumentAddForm);
+print "\n",$query -> startform('POST',$DocumentAddForm),"\n";
 print $query -> submit (-value => "Create a new");
 print " document from "; 
 print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
@@ -97,13 +97,13 @@ print "local computer</a></b> \n";
 #print "(no need to reserve the document).\n";
 print $query -> hidden(-name => 'mode',    -default => 'add');
 print $query -> hidden(-name => 'upload',    -default => 'file');
-print $query -> endform;
+print "\n",$query -> endform,"\n\n";
 print "</li>"; 
 
 ### New http short form
 
 print "<li>"; 
-print $query -> startform('POST',$DocumentAddForm);
+print "\n",$query -> startform('POST',$DocumentAddForm),"\n";
 print $query -> submit (-value => "Create a new");
 print " document from "; 
 print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
@@ -113,53 +113,53 @@ print "web</a></b> \n";
 #print "(no need to reserve the document).\n";
 print $query -> hidden(-name => 'mode',    -default => 'add');
 print $query -> hidden(-name => 'upload',    -default => 'http');
-print $query -> endform;
+print "\n",$query -> endform,"\n\n";
 print "</li>"; 
 
 ### Reserve form (button)
 
 print "<li>"; 
-print $query -> startform('POST',$DocumentAddForm);
+print "\n",$query -> startform('POST',$DocumentAddForm),"\n";
 print $query -> submit (-value => "Reserve");
 print " a document number\n"; 
 print "(if you don't yet have a draft of your document).\n";
 print $query -> hidden(-name => 'mode',    -default => 'reserve');
-print $query -> endform;
+print "\n",$query -> endform,"\n\n";
 print "</li>"; 
 
 ### Update short form
 
 print "<li>"; 
-print $query -> startform('POST',$DocumentAddForm);
+print "\n",$query -> startform('POST',$DocumentAddForm),"\n";
 print $query -> submit (-value => "Update");
 print " document # "; 
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 print $query -> hidden(-name => 'mode',    -default => 'update');
-print $query -> endform;
+print "\n",$query -> endform,"\n\n";
 print "</li>"; 
 
 ### Update DB short form
 
 print "<li>"; 
-print $query -> startform('POST',$DocumentAddForm);
+print "\n",$query -> startform('POST',$DocumentAddForm),"\n";
 print $query -> submit (-value => "Update DB Info");
 print " for document # "; 
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 print $query -> hidden(-name => 'mode',    -default => 'updatedb');
-print $query -> endform;
+print "\n",$query -> endform,"\n\n";
 print "</li>"; 
 
 ### File Add short form
 
 print "<li>"; 
-print $query -> startform('POST',$AddFilesForm);
+print "\n",$query -> startform('POST',$AddFilesForm),"\n";
 print $query -> submit (-value => "Add");
 print " "; 
 print $query -> textfield(-name => "numfile", -size => 3, -maxlength => 2);
 print " file(s) to document # "; 
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 #print $query -> hidden(-name => 'mode',    -default => 'updatedb');
-print $query -> endform;
+print "\n",$query -> endform,"\n\n";
 print "</li>"; 
 
 if (&CanAdminister()) { # Delete Form
@@ -168,7 +168,7 @@ if (&CanAdminister()) { # Delete Form
   print $query -> submit (-value => "Delete");
   print " document # "; 
   print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
-  print $query -> endform;
+  print "\n",$query -> endform,"\n\n";
   print "</li>"; 
 }
 print "</ul>\n";
