@@ -283,6 +283,7 @@ print "<tr><td align=center colspan=2>\n";
 print $query -> submit (-value => "Give me my customized form");
 print "</table>\n";
 print $query -> end_multipart_form;
+print "\n\n";
 
 print "<p>&nbsp;<p>\n";
 ### File addition form
@@ -304,7 +305,7 @@ print "<a "; &HelpLink("docnumber");
 print "<b>Update Doc #:</b></a>\n";
 
 print "<td>\n";
- print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
+print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 
 print "<tr><td align=right>\n";
 print "<a "; &HelpLink("uploadtype"); 
@@ -328,6 +329,8 @@ print "<tr><td align=center colspan=2>\n";
 print $query -> submit (-value => "Give me my customized form");
 print "</table></p>\n";
 print $query -> end_multipart_form;
+print "\n\n";
+
 ### Right column (wrapped around by middle column)
 
 #print "<div id=\"RightColumn3Col\">\n";
