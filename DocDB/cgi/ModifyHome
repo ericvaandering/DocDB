@@ -199,7 +199,7 @@ print "</p><hr/><p>\n";
 
 print "<a name=\"customcreate\">\n";
   
-print $query -> start_multipart_form('POST',$DocumentAddForm);
+print $query -> startform('POST',$DocumentAddForm);
 
 $modes{reserve}  = "Reserve document #";
 $modes{add}      = "New document";
@@ -282,7 +282,7 @@ print $query -> radio_group(-name => "overdate", -values => ['No','Yes'],
 print "<tr><td align=center colspan=2>\n";
 print $query -> submit (-value => "Give me my customized form");
 print "</table>\n";
-print $query -> end_multipart_form;
+print $query -> endform;
 print "\n\n";
 
 print "<p>&nbsp;<p>\n";
@@ -292,7 +292,7 @@ $addarchives{single}   = "Single file";
 $addarchives{multi}   = "Multiple files";
 @addarchives = ("single","multi");
 
-print $query -> start_multipart_form('POST',$AddFilesForm);
+print $query -> startform('POST',$AddFilesForm);
 print "<a name=\"addform\">\n";
 
 print "<table cellpadding=5 border=5 align=center>\n";
@@ -328,7 +328,7 @@ print $query -> radio_group(-name => "upload", -values => \@uploads, -labels => 
 print "<tr><td align=center colspan=2>\n";
 print $query -> submit (-value => "Give me my customized form");
 print "</table></p>\n";
-print $query -> end_multipart_form;
+print $query -> endform;
 print "\n\n";
 
 ### Right column (wrapped around by middle column)
