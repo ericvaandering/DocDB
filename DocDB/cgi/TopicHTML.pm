@@ -413,10 +413,17 @@ sub LongDescriptionBox (;%) {
   my $Disabled  =   $Params{-disabled}  || FALSE;
   my $Default   =   $Params{-default}   || "";                 # Not used
 
-  &TextField(-name     => $Name,                   -helptext  => $HelpText, 
-             -helplink => $HelpLink,               -required  => $Required, 
-             -size     => $Size,                   -maxlength => $MaxLength,
-             -default  => $DefaultLongDescription, -disabled  => $Disabled);
+  if ($Disabled) {  # Doesn't scale
+    &TextField(-name     => $Name,                   -helptext  => $HelpText, 
+               -helplink => $HelpLink,               -required  => $Required, 
+               -size     => $Size,                   -maxlength => $MaxLength,
+               -default  => $DefaultLongDescription, -disabled);
+  } else {
+    &TextField(-name     => $Name,                   -helptext  => $HelpText, 
+               -helplink => $HelpLink,               -required  => $Required, 
+               -size     => $Size,                   -maxlength => $MaxLength,
+               -default  => $DefaultLongDescription);
+  }
 };
 
 sub FullTopicScroll ($$;@) { # Scrolling selectable list for topics, all info
