@@ -592,6 +592,7 @@ sub TextField (%) {
     $Booleans .= "-disabled";
   }  
 
+  print "TF: $Disabled ";
   my $ElementTitle = &FormElementTitle(-helplink  => $HelpLink , 
                                        -helptext  => $HelpText ,
                                        -extratext => $ExtraText,
