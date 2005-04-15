@@ -584,7 +584,7 @@ sub TextField (%) {
   my $Default   = $Params{-default}   || "";
   my $Size      = $Params{-size}      || 40;
   my $MaxLength = $Params{-maxlength} || 240;
-  my $Disabled  = $Params{-disabled}  || FALSE;
+  my $Disabled  = $Params{-disabled}  || 0;
     
   my $Booleans = "";
   

@@ -416,8 +416,10 @@ sub LongDescriptionBox (;%) {
   my $Name      =   $Params{-name}      || "long";
   my $Size      =   $Params{-size}      || 40;
   my $MaxLength =   $Params{-maxlength} || 120;
-  my $Disabled  =   $Params{-disabled}  || FALSE;
+  my $Disabled  =   $Params{-disabled}  || 0;
   my $Default   =   $Params{-default}   || "";                 # Not used
+
+  print "LD: $Disabled ";
 
   &TextField(-name     => $Name,                   -helptext  => $HelpText, 
              -helplink => $HelpLink,               -required  => $Required, 
