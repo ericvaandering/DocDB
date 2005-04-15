@@ -55,7 +55,7 @@ my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
 my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
 
 if ($CertificateStatus eq "verified") {
-  print "<b>Your certificate has been verified and you have access to documents from these groups:</b>";
+  print "<h4>Your certificate has been verified and you have access to documents from these groups:</h4>";
   my @GroupIDs = &FindUsersGroups();
   print "<ul>\n";
   if (@GroupIDs) {
@@ -68,54 +68,51 @@ if ($CertificateStatus eq "verified") {
   }       
   print "</ul>\n";
 } elsif ($CertificateStatus eq "unverified") {  
-  print "<b>Your certificate is valid and you have applied for access to documents. 
-         If you believe your request has been misplaced or neglected, contact an administator.</b><p/>";
-  print "The following information may be helpful:<br>\n";
-  print "<b>Certificate Common Name (CN):</b> $CertCN<br>\n";
-  print "<b>Certificate E-mail Address:</b> $CertEmail<br>\n";
+  print "<h4>Your certificate is valid and you have applied for access to documents.
+         You have not been granted access yet.
+         If you believe your request has been misplaced or neglected, contact an administator.</h4>";
+  print "The following information may be helpful:\n";
+  print "<dl><dt><strong>Certificate Common Name (CN):</strong></dt><dd>$CertCN</dd></dl>\n";
+  print "<dl><dt><strong>Certificate E-mail Address:</strong></dt><dd>$CertEmail</dd></dl>\n";
 } elsif ($CertificateStatus eq "mismatch") {  
-  print "<b>Your certificate is valid but a similar certificate already exists
+  print "<h4>Your certificate is valid but a similar certificate already exists
          for  either your e-mail address or your name (CN). Only one
          certificate is allowed per person. Contact an administrator if you
-         don't know what to do.</b><p/>";
-  print "The following information may be helpful:<br>\n";
-  print "<b>Certificate Common Name (CN):</b> $CertCN<br>\n";
-  print "<b>Certificate E-mail Address:</b> $CertEmail<br>\n";
+         don't know what to do.</h4>";
+  print "The following information may be helpful:\n";
+  print "<dl><dt><strong>Certificate Common Name (CN):</strong></dt><dd>$CertCN</dd></dl>\n";
+  print "<dl><dt><strong>Certificate E-mail Address:</strong></dt><dd>$CertEmail</dd></dl>\n";
 } elsif ($CertificateStatus eq "nocert") {  
-  print "<b>You didn't present a certificate. Not sure if this can happen.</b><p/>";
+  print "<h4>You didn't present a certificate. Contact an administrator.</h4>";
 } elsif ($CertificateStatus eq "noapp") {
   require "SecurityHTML.pm";
   require "FormElements.pm";
-  print "<b>Your certificate is valid but you have never applied for access to
-         documents.<br/>Fill out the form below to apply for access.</b><p/>";
-  print "<center>\n";
+  print "<h4>Your certificate is valid but you have never applied for access to
+         documents.<br/>Fill out the form below to apply for access.</h4>";
   print $query -> start_multipart_form('POST',$UserAccessApply);
-  print "<table cellpadding=5>\n";
+  print "<table id=\"CertApplyTable\">\n";
   print "<tr>\n";
-  print "<td valign=top><b>Your name (Certificate CN):</b><br>&nbsp;&nbsp;$CertCN<p/>\n";
+  print "<td><dl><dt>Your certificate Common Name (CN):</dt>\n<dd>$CertCN</dd></dl>\n";
   if ($Preferences{Security}{Certificates}{UseCNOnly}) {
-    &TextField(-name => "email", -helplink => "email", -helptext => "Your E-mail",
+    &TextField(-name => "email", -helplink => "email", -helptext => "Enter your e-mail address",
                -size => 20, -maxlength => 64);
   } else {
-    print "<b>Your e-mail:</b><br>&nbsp;&nbsp;$CertEmail\n";
+    print "<dl><dt>Your certificate e-mail address:</dt>\n<dd>$CertEmail</dd></dl>\n";
   }  
   print "</td>\n";
   print "<td>\n";
-  &SecurityScroll(-helplink => "reqgroups", -helptext => "Requested<br/>Groups",
+  &SecurityScroll(-helplink => "reqgroups", -helptext => "Requested Groups",
                 -name => "reqgroups", -multiple => TRUE);
   print "</td></tr>\n";
-  print "<tr>\n";
-  print "</td></tr>\n";
   print "<tr><td colspan=2>\n";
-  &TextArea(-helplink  => "certnote", -helptext => "Notes", 
-            -extratext => "(Identify yourself or other notes if needed.)",
+  &TextArea(-helplink  => "certnote", -helptext => "Note to adminstrators", 
+            -extratext => "(Identify yourself or other comments.)",
             -name      => "certnote");    
   print "</td></tr>";
-  print "<tr><td colspan=2 align=center>\n";
+  print "<tr><th colspan=\"2\">\n";
   print $query -> submit (-value => "Apply for access");
-  print "</td></tr>";
+  print "</th></tr>";
   print "</table>\n";       
-  print "</center>\n";
 }
 
 &DocDBNavBar();
