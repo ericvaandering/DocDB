@@ -388,6 +388,12 @@ sub ShortDescriptionBox  (;%) {
   my $Disabled  =   $Params{-disabled}  || "0";
   my $Default   =   $Params{-default}   || "";                 # Not used
 
+  my $Booleans = "";
+  
+  if ($Disabled) {
+    $Booleans .= "-disabled";
+  }  
+  
   print "<b><a ";
   &HelpLink("shortdescription");
   print "Short Description:</a></b><br> \n";
@@ -410,7 +416,7 @@ sub LongDescriptionBox (;%) {
   my $Name      =   $Params{-name}      || "long";
   my $Size      =   $Params{-size}      || 40;
   my $MaxLength =   $Params{-maxlength} || 120;
-  my $Disabled  =   $Params{-disabled}  || "0";
+  my $Disabled  =   $Params{-disabled}  || 0;
   my $Default   =   $Params{-default}   || "";                 # Not used
 
   &TextField(-name     => $Name,                   -helptext  => $HelpText, 

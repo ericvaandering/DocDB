@@ -23,13 +23,22 @@ by the code:
 
 * Remove "None" from topics, files in meeting list(?)
 
-* Remove "Documents modified in last ...." from homepage if no documents...
-
 * Login popup if certifcate is more than one group. Can choose groups to use.
 
-* Move certificate version over to ListBy, others with preference
+* Move ListDocuments in scripts area to DocumentTable
 
-* Cut new stable, notify Lynn and others of LeftColumn change.
+* SelectEmailPrefs problems
 
-* Redo ModifyHome in XHTML/CSS
+2. SelectEmailPrefs - once I hit Update, I just go back to the top of the page
+(when I expect to get a page that says my update was successful like I do for
+most DocDB operations) - not a big deal.
+
+2b.  Hmmm. I did get email about changes, but my notification preferences
+aren't showing up under my account.
+
+* Display preferences
+ * Columns in DocumentType selection
+ * TopicColumns for Addition
+ * Topic columns for list
+ * Author Columns
  

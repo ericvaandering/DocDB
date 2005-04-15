@@ -1,3 +1,14 @@
+6.4.0
+
+The main page and the main modification page have been re-styled to look more
+like ShowDocument with a sidebar on the left. There are also a lot of minor
+polish changes suggested by CD.
+
+To upgrade, do a cvs update on both the scripts as well as the CSS files. Also,
+if you were using @MainPageAddendum in ProjectMessages.pm, you should now use
+$ProjectMessages{Homepage}{LeftColumn} instead. See ProjectMessages.pm.template
+for an example. These lines will be placed in the left column of the page.
+
 6.3.0 
 
 By default, certificate authorization uses the e-mail address in a client
