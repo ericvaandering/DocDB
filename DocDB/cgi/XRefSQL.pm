@@ -64,7 +64,7 @@ sub FetchXRefs (%) { # For now, no single version
   } elsif ($DocumentID) {
     $List = $dbh -> prepare("select DocXRef.DocXRefID,DocXRef.DocRevID,DocXRef.DocumentID,DocXRef.TimeStamp ".
              "from DocXRef,DocumentRevision where DocXRef.DocumentID=? and ".
-             "DocumentRevision.DocumentID=DocXRef.DocumentID and DocumentRevision.Obsolete=0");
+             "DocumentRevision.DocRevID=DocXRef.DocRevID and DocumentRevision.Obsolete=0");
     $List -> execute($DocumentID);  
   }        
   if ($List) {
