@@ -185,7 +185,7 @@ sub StreamFile (%) {
     my @Parts = split /\//,$File;
     my $ShortFile = pop @Parts;
     select STDOUT;
-    $| = 4;
+    $| = 1;
     print "Content-Type: $MimeType\n", # Print header
           "Content-Disposition: filename=$ShortFile\n", 
           "Content-Length: $Size\n\n"; 
