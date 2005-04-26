@@ -123,7 +123,7 @@ sub FileLink {
   my $PrintedName = &AbbreviateFileName(-filename => $shortname,
                                             -maxlength => 60, -maxext => 4);
   my $URL = $base_url.$shortfile;
-  if ($UserValidation eq "certificate") {                                          
+  if ($UserValidation eq "certificate" || $Preferences{Options}{AlwaysRetrieveFile}) {                                          
     $URL = $RetrieveFile."?docid=".$DocumentID."&amp;version=".$Version."&amp;filename=".$shortfile;
   }
   if ($description) {
@@ -140,7 +140,7 @@ sub ShortFileLink { #FIXME: Make option of FileLink
   my $shortfile = CGI::escape($shortname);
   $base_url = &GetURLDir($documentID,$version);
   my $URL = $base_url.$shortfile;
-  if ($UserValidation eq "certificate") {                                          
+  if ($UserValidation eq "certificate" || $Preferences{Options}{AlwaysRetrieveFile}) {                                          
     $URL = $RetrieveFile."?docid=".$documentID."&amp;version=".$version."&amp;filename=".$shortfile;
   }
   if ($description) {
