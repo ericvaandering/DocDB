@@ -46,7 +46,7 @@ $GZip   = "/bin/gzip ";
 $GUnzip = "/bin/gunzip ";
 $Unzip  = "/usr/bin/unzip -q ";
 $Zip    = "/usr/bin/zip -q -r ";  # Set to "" in ProjectGlobals if not installed
-
+$FileMagic = "/usr/bin/file";
 $TmpDir = "/tmp/";
 
 # Useful stuff
