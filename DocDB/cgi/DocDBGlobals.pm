@@ -46,6 +46,8 @@ $GZip   = "/bin/gzip ";
 $GUnzip = "/bin/gunzip ";
 $Unzip  = "/usr/bin/unzip -q ";
 $Zip    = "/usr/bin/zip -q -r ";  # Set to "" in ProjectGlobals if not installed
+$File   = "/usr/bin/file";        # Look up mime type of file using magic
+
 
 $TmpDir = "/tmp/";
 

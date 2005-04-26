@@ -169,4 +169,43 @@ sub AbbreviateFileName {
   
   return $ReturnString;
 }  
+
+sub StreamFile (%) {
+  my %Params = @_;
+  
+  my $File = $Params{-file};
+  
+  my $MimeType;
+  
+  if (-e $File) {
+    my $Size = (stat $File)[7];
+    $MimeType = `$File -ib $File`; # Use magic
+    select STDOUT;
+    $| = 1;
+    print "Content-Type: $MimeType\n", # Print header
+          "Content-Length: $Size\n\n"; 
+
+    open OUT, "<$File" or die "Cannot open File\n";
+    binmode OUT if -B $File;
+    my $BlockSize = (stat OUT)[11] || 16384;
+
+    while (my $Length = sysread OUT, my $Buffer, $BlockSize) {
+      next unless defined $Length;
+
+      my $Offset = 0;
+      while ($Length) {
+        my $Written = syswrite STDOUT, $Buffer, $Length, $Offset;
+        $Length -= $Written;
+        $Offset += $Written;
+      }
+    }
+    close OUT;
+  } else {
+    print $query -> header;
+    print $query -> start_html,
+          "There was a problem",
+          $query -> end_html;
+  }        
+}
+
 1;
