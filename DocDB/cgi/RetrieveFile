@@ -152,7 +152,10 @@ unless (-e $FullFile) {
   push @WarnStack,"No appropriate file was found.";
 }
 
-if ($FullURL) {
+if ($FullFile) {
+  require "FileUtilities.pm";
+  &StreamFile(-file => $FullFile);
+} elsif ($FullURL) {
   print $query -> redirect(-location => $FullURL, -method => 'GET');
 } else {
   print $query -> header;
