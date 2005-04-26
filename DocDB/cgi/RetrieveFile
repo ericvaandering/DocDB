@@ -152,7 +152,7 @@ unless (-e $FullFile) {
   push @WarnStack,"No appropriate file was found.";
 }
 
-if ($FullFile) {
+if ($FullFile && ($UserValidation eq "certificate" || $Preferences{Options}{AlwaysRetrieveFile})) {
   require "FileUtilities.pm";
   &StreamFile(-file => $FullFile);
 } elsif ($FullURL) {
