@@ -99,6 +99,22 @@ Pay particular attention to the variables listed below.
 </tr>
 </table>
 
+<font size=+1 color=red>
+Additional variables must be set if you run a secure server
+and require certificate based authentication.
+</font>
+<table>
+<tr>
+<td> <b>$UserValidation</b></td>
+<td> set this to "certificate" for certificate based authentication<br>
+     Access is password based ("basic") by default.</td>
+</tr>
+<tr>
+<td> <b>$Preferences{Security}{Certificates}{UseCNOnly} = TRUE;</b></td>
+<td> this line must be added to ProjectGlobals.pm</td>
+</tr>
+</table>
+
 
 <!-- begin footer -->
 <hr>
