@@ -152,22 +152,25 @@ unless (-e $FullFile) {
   push @WarnStack,"No appropriate file was found.";
 }
 
-if ($FullURL) {
+if ($FullFile && ($UserValidation eq "certificate" || $Preferences{Options}{AlwaysRetrieveFile})) {
+  require "FileUtilities.pm";
+  &StreamFile(-file => $FullFile);
+} elsif ($FullURL) {
   print $query -> redirect(-location => $FullURL, -method => 'GET');
 } else {
   print $query -> header;
-}
-&DocDBHeader("File Retrieve Results"); 
+  &DocDBHeader("File Retrieve Results"); 
 
-if (@WarnStack) {
-  &WarnPage(@WarnStack);
-  @WarnStack = ();
-}
-if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@ErrorStack);
-}
+  if (@WarnStack) {
+    &WarnPage(@WarnStack);
+    @WarnStack = ();
+  }
+  if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
+    &EndPage(@ErrorStack);
+  }
 
-&PrintRevisionInfo($DocRevID);
+  &PrintRevisionInfo($DocRevID);
 
-&DocDBNavBar;
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+  &DocDBNavBar;
+  &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+}

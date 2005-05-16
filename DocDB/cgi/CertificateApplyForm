@@ -101,8 +101,8 @@ if ($CertificateStatus eq "verified") {
   }  
   print "</td>\n";
   print "<td>\n";
-  &SecurityScroll(-helplink => "reqgroups", -helptext => "Requested Groups",
-                -name => "reqgroups", -multiple => TRUE);
+  &SecurityScroll(-helplink => "reqgroups", -helptext => "Requested<br/>Groups",
+                  -name     => "reqgroups", -multiple => TRUE);
   print "</td></tr>\n";
   print "<tr><td colspan=2>\n";
   &TextArea(-helplink  => "certnote", -helptext => "Note to adminstrators", 

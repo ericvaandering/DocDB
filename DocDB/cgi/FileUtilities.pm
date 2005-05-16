@@ -169,4 +169,48 @@ sub AbbreviateFileName {
   
   return $ReturnString;
 }  
+
+sub StreamFile (%) {
+  my %Params = @_;
+  
+  my $File = $Params{-file};
+  
+  my $MimeType;
+  
+  if (-e $File) {
+    my $Size = (stat $File)[7];
+    $MimeType = `$FileMagic -ib \"$File\"`; # Use magic
+    chomp $MimeType;
+    
+    my @Parts = split /\//,$File;
+    my $ShortFile = pop @Parts;
+    select STDOUT;
+    $| = 1;
+    print "Content-Type: $MimeType\n", # Print header
+          "Content-Disposition: filename=\"$ShortFile\"\n", 
+          "Content-Length: $Size\n\n"; 
+
+    open OUT, "<$File" or die "Cannot open File\n";
+    binmode OUT if -B $File;
+    my $BlockSize = (stat OUT)[11] || 16384;
+
+    while (my $Length = sysread OUT, my $Buffer, $BlockSize) {
+      next unless defined $Length;
+
+      my $Offset = 0;
+      while ($Length) {
+        my $Written = syswrite STDOUT, $Buffer, $Length, $Offset;
+        $Length -= $Written;
+        $Offset += $Written;
+      }
+    }
+    close OUT;
+  } else {
+    print $query -> header;
+    print $query -> start_html,
+          "There was a problem. File $File does not exist.",
+          $query -> end_html;
+  }        
+}
+
 1;
