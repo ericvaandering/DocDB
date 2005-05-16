@@ -81,7 +81,7 @@ $Preferences{Security}{Certificates}{UseCNOnly} = FALSE; # Use CN instead of E (
 $Preferences{Options}{DynamicFullList}{Private} = FALSE; # Generate Full document list by dynamically for private db
 $Preferences{Options}{DynamicFullList}{Public}  = FALSE; # Generate Full document list by dynamically for public db
 
-$Preferences{Options}{AlwaysRetrieveFile}       = FALSE; # Always use RetrieveFile instead of FileLinks
+$Preferences{Options}{AlwaysRetrieveFile}       = FALSE; # Always use RetrieveFile instead of File Links
 
 $htaccess             = ".htaccess";
 

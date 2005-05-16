@@ -187,7 +187,7 @@ sub StreamFile (%) {
     select STDOUT;
     $| = 1;
     print "Content-Type: $MimeType\n", # Print header
-          "Content-Disposition: filename=$ShortFile\n", 
+          "Content-Disposition: filename=\"$ShortFile\"\n", 
           "Content-Length: $Size\n\n"; 
 
     open OUT, "<$File" or die "Cannot open File\n";
