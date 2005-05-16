@@ -1,7 +1,7 @@
 #! /usr/bin/env perl
 #
 # Description: Create an archive (.zip, .tar, .tar.gz) file of the document 
-#              and redirect the user to download it.
+#              and stream it to the user.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
@@ -18,6 +18,7 @@ require "SecuritySQL.pm";
 require "DocumentSQL.pm";
 require "FSUtilities.pm";
 require "HTMLUtilities.pm";
+require "FileUtilities.pm";
 require "Security.pm";
 
 $query = new CGI;  # Global for subroutines
@@ -66,30 +67,26 @@ unless ($DocRevID) {
   push @ErrorStack,"This document does not exist.";
 }
 
-my $URL;       
 my $Status;
+my $TmpFile;
 
 unless (@ErrorStack) { 
   my $Directory = &GetDirectory($DocumentID,$Version);
-  my $URLDir    = &GetURLDir($DocumentID,$Version);
+
+### Get rid of files left over from old (< v6.5.0) versions
 
   my $TarFile   = "$Directory/tmp$DocumentID-$Version.tar";
   my $TgzFile   = "$Directory/tmp$DocumentID-$Version.tgz";
   my $ZipFile   = "$Directory/tmp$DocumentID-$Version.zip";
-
-  my $ShortFile = "tmp$DocumentID-$Version.$Type";
-
-  my $TmpFile   = "/tmp/$ShortFile";
-  my $File      = "$Directory/$ShortFile";
-     $URL       = "$URLDir/$ShortFile";
-     $Directory =~ s/\/+$//g;
-     
-  unlink $TmpFile;
   unlink $TarFile;
   unlink $TgzFile;
   unlink $ZipFile;
-  unlink $File;
-  
+
+  my $ShortFile = "tmp$DocumentID-$Version.$Type";
+
+  $TmpFile   = "/tmp/$ShortFile";
+  $Directory =~ s/\/+$//g;
+     
   if ($Type eq "tar.gz") {
     if ($GTar) { 
       $Status = system("$GTar czf $TmpFile $Directory"); 
@@ -101,30 +98,24 @@ unless (@ErrorStack) {
   } elsif ($Type eq "zip") {
     $Status = system("$Zip $TmpFile $Directory/*"); 
   }  
-  
-  $Status = system("mv $TmpFile $File"); 
+  if ($Status) {
+    push @ErrorStack,"There was a problem creating the archive. Please contact an administrator.";
+  }
 }
   
-if ($Status) {
-  push @ErrorStack,"There was a problem creating the archive. Please contact an
-                     administrator.";
-}
-
-if (@ErrorStack) {
+if (@ErrorStack || @WarnStack) { # There was a problem. Warn the user.
   print $query->header;
+  &DocDBHeader("File Retrieve Results"); 
+  if (@WarnStack) {
+    &WarnPage(@WarnStack);
+    @WarnStack = ();
+  }
+  if (@ErrorStack) {  
+    &EndPage(@ErrorStack);
+  }
+  &DocDBNavBar;
+  &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 } else {
-  print $query -> redirect(-location => $URL, -method => 'GET');
+  &StreamFile(-file => $TmpFile);
 }
 
-&DocDBHeader("File Retrieve Results"); 
-
-if (@WarnStack) {
-  &WarnPage(@WarnStack);
-  @WarnStack = ();
-}
-if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@ErrorStack);
-}
-
-&DocDBNavBar;
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

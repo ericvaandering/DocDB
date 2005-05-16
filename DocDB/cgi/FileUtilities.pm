@@ -179,7 +179,7 @@ sub StreamFile (%) {
   
   if (-e $File) {
     my $Size = (stat $File)[7];
-    $MimeType = `$FileMagic -ib $File`; # Use magic
+    $MimeType = `$FileMagic -ib \"$File\"`; # Use magic
     chomp $MimeType;
     
     my @Parts = split /\//,$File;
@@ -208,7 +208,7 @@ sub StreamFile (%) {
   } else {
     print $query -> header;
     print $query -> start_html,
-          "There was a problem",
+          "There was a problem. File $File does not exist.",
           $query -> end_html;
   }        
 }
