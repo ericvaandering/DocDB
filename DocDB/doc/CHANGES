@@ -1,3 +1,11 @@
+6.5.0
+
+In certificate mode or optionally, by setting
+$Preferences{Options}{AlwaysRetrieveFile} all files are retrieved via
+RetrieveFile which streams the file directly to the user. This has the benefit
+of not requiring separate passwords from the user while probably being a little
+slower. 
+
 6.3.0 
 
 By default, certificate authorization uses the e-mail address in a client
