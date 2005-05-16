@@ -179,10 +179,15 @@ sub StreamFile (%) {
   
   if (-e $File) {
     my $Size = (stat $File)[7];
-    $MimeType = `$File -ib $File`; # Use magic
+    $MimeType = `$FileMagic -ib \"$File\"`; # Use magic
+    chomp $MimeType;
+    
+    my @Parts = split /\//,$File;
+    my $ShortFile = pop @Parts;
     select STDOUT;
     $| = 1;
     print "Content-Type: $MimeType\n", # Print header
+          "Content-Disposition: filename=$ShortFile\n", 
           "Content-Length: $Size\n\n"; 
 
     open OUT, "<$File" or die "Cannot open File\n";
@@ -203,7 +208,7 @@ sub StreamFile (%) {
   } else {
     print $query -> header;
     print $query -> start_html,
-          "There was a problem",
+          "There was a problem. File $File does not exist.",
           $query -> end_html;
   }        
 }

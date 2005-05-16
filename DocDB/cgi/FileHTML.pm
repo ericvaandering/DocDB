@@ -114,27 +114,35 @@ sub ShortFileListByFileID {
 sub FileLink {
   require "FSUtilities.pm";
 
-  my ($documentID,$version,$shortname,$description) = @_;
+  my ($DocumentID,$Version,$shortname,$description) = @_;
   
   my $shortfile = CGI::escape($shortname);
-  my $base_url = &GetURLDir($documentID,$version);
-  my $file_size = &FileSize(&FullFile($documentID,$version,$shortname));
+  my $base_url = &GetURLDir($DocumentID,$Version);
+  my $file_size = &FileSize(&FullFile($DocumentID,$Version,$shortname));
   $file_size =~ s/^\s+//; # Chop off leading spaces
   my $PrintedName = &AbbreviateFileName(-filename => $shortname,
                                             -maxlength => 60, -maxext => 4);
+  my $URL = $base_url.$shortfile;
+  if ($UserValidation eq "certificate" || $Preferences{Options}{AlwaysRetrieveFile}) {                                          
+    $URL = $RetrieveFile."?docid=".$DocumentID."&amp;version=".$Version."&amp;filename=".$shortfile;
+  }
   if ($description) {
-    return "<a href=\"$base_url$shortfile\" title=\"$shortname\">$description</a> ($PrintedName, $file_size)";
+    return "<a href=\"$URL\" title=\"$shortname\">$description</a> ($PrintedName, $file_size)";
   } else {
-    return "<a href=\"$base_url$shortfile\" title=\"$shortname\">$PrintedName</a> ($file_size)";
+    return "<a href=\"$URL\" title=\"$shortname\">$PrintedName</a> ($file_size)";
   }
 }  
 
-sub ShortFileLink {
+sub ShortFileLink { #FIXME: Make option of FileLink
   require "FSUtilities.pm";
 
   my ($documentID,$version,$shortname,$description) = @_;
   my $shortfile = CGI::escape($shortname);
   $base_url = &GetURLDir($documentID,$version);
+  my $URL = $base_url.$shortfile;
+  if ($UserValidation eq "certificate" || $Preferences{Options}{AlwaysRetrieveFile}) {                                          
+    $URL = $RetrieveFile."?docid=".$documentID."&amp;version=".$version."&amp;filename=".$shortfile;
+  }
   if ($description) {
     return "<a href=\"$base_url$shortfile\" title=\"$shortname\">$description</a>";
   } else {

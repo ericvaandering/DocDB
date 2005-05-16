@@ -46,8 +46,7 @@ $GZip   = "/bin/gzip ";
 $GUnzip = "/bin/gunzip ";
 $Unzip  = "/usr/bin/unzip -q ";
 $Zip    = "/usr/bin/zip -q -r ";  # Set to "" in ProjectGlobals if not installed
-$File   = "/usr/bin/file";        # Look up mime type of file using magic
-
+$FileMagic = "/usr/bin/file";
 
 $TmpDir = "/tmp/";
 
@@ -81,6 +80,8 @@ $remote_user          =~ tr/[A-Z]/[a-z]/;
 $Preferences{Security}{Certificates}{UseCNOnly} = FALSE; # Use CN instead of E (E-mail) to distinguish
 $Preferences{Options}{DynamicFullList}{Private} = FALSE; # Generate Full document list by dynamically for private db
 $Preferences{Options}{DynamicFullList}{Public}  = FALSE; # Generate Full document list by dynamically for public db
+
+$Preferences{Options}{AlwaysRetrieveFile}       = FALSE; # Always use RetrieveFile instead of FileLinks
 
 $htaccess             = ".htaccess";
 
