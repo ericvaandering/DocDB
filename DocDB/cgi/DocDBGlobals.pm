@@ -228,6 +228,7 @@ $CertificateApplyForm  = $cgi_root."CertificateApplyForm";
 $UserAccessApply       = $cgi_root."UserAccessApply";
 
 $DocDBHelp             = $cgi_root."DocDBHelp";
+$DocDBInstructions     = $cgi_root."DocDBInstructions";
 $ShowTalkNote          = $cgi_root."ShowTalkNote";
 
 unless ($CSSDirectory && $CSSURLPath) {
