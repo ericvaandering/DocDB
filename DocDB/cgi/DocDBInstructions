@@ -58,6 +58,606 @@ print "</div>\n";  # LeftColumn3Col
 
 print "<div id=\"MainColumn3Col\">\n";
 
+print <<HTML;
+
+<center><h1>BTeV Document Database Help</h1></center>
+
+<h2>Table of Contents</h2>
+<ol type="A">
+ <li><a href="#philosophy">Philosophy of the Document Database</a>
+ <ol type="1">
+  <li><a href="#archive">Archive vs. Catalog</a>
+  <li><a href="#whatis">What is a document?</a>
+  <li><a href="#formats">Notes on file formats</a>
+ </ol>
+ <li><a href="#entering">Entering or updating a document in the database</a>
+ <ol type="1">
+  <li><a href="#modtypes">What do you want to do?</a>
+  <li><a href="#prepare">Preparing your document for upload</a>
+  <ol type="a">
+   <li>Multiple file uploads
+   <li>Archive uploads
+  </ol>
+  <li><a href="#upload">Upload methods</a>
+  <li><a href="#filling">Filling in the form</a>
+  <li><a href="#advanced">Advanced options</a>
+ </ol>
+ <li><a href="#special">Special Cases</a>
+ <ol type="1">
+  <li><a href="#meeting">Group meeting talks</a>
+  <li><a href="#conference">Conference talks and proceedings</a>
+  <li><a href="#reference">Publications in refereed journals</a>
+ </ol>
+ <li><a href="#prefs">Preferences and E-mail Notification</a>
+ <ol type="1">
+  <li><a href="#prefs">Setting preferences</a>
+  <li><a href="#email">Setting e-mail notification</a>
+ </ol>
+ <li><a href="#signoff">Document Signoffs</a>
+ <li><a href="#final">Final Words</a>
+ <ol type="1">
+  <li><a href="#refer">Referring to your document and its files</a>
+  <li><a href="#group">Referring to groups of documents</a>
+  <li><a href="#morehelp">Getting more help</a>
+ </ol>
+</ol>
+
+
+<a name="philosophy">
+<h2>A. Philosophy of the Document Database</h2>
+
+<a name="archive">
+<h3>1. Archive vs. Catalog</h3>
+
+While our previous document database was only a method for cataloging
+documents, the new database goes one step further; it is also a method for
+storing documents in a central location. So, you should never again see a
+broken link while looking for the information you want. This distinction is
+especially important for archive uploads which are discussed later. <p>
+
+While parts of the interface may look complicated, some options can be
+left blank. Omitting a version number will give you the latest version.
+Omitting the number of files means "one file." We've tried to simplify the use
+of the most common options. Of course, if you have a suggestion on how to make
+things easier, please let us know.
+
+<a name="whatis">
+<h3>2. What is a document?</h3>
+
+This may sound like a stupid question, but it's not. People tend to think of a
+document as something that consists of writing and can be printed on a piece of
+paper. In our context, a document is something much more general. A document is
+any piece of information that a) you want to save and b) you want to share with
+others. So, a video of a walk-thru of C0 is a document.  A picture of a
+photo-tube is a document. A calculation on the back of an envelope and scanned
+is a document. (And it's probably a "Note," not a "Figure." The document type
+you'll choose later tells what the document <b>is</b> not what format it's
+stored in.)<p>
+
+<a name="formats">
+<h3>3. File formats (PowerPoint, Postscript, PDF etc.)</h3>
+
+
+Many of our collaborators view the web from a UNIX platform. This means they
+cannot view files in formats such as PowerPoint, MS Word, and Excel. The two
+file formats that everyone can read are Postscript and PDF. PDF is easiest for
+Windows users.  Please save your
+document in one of these formats as well as in the native format. (If your
+document is in Latex, you are encouraged to place that in the database as well.)<p>
+
+If you do not have the capability of saving your Windows formatted documents as PDF
+you may get an account on the PPD WinCenter (E-mail <a
+href="mailto:dcc@fnal.gov">dcc@fnal.gov</a>) that has the
+software to do this.  To create a PDF file from PowerPoint, print the document
+using "Acrobat PDFwriter" as your printer (this creates a PDF file).<p>
+
+Also be aware that some Windows or PowerPoint fonts do not appear at all in
+PDF and/or postscript.  There are other fonts that make unreadable marks on
+the paper.  There are also fonts that work in one size but not others.  Please
+be careful about this when starting a PowerPoint document.  Try converting a
+few test pages to PDF/PS and verify that your choice of font is safe.<p>
+
+(This section adapted from material by Rob Kutschke 
+(<a href=mailto:"kutschke@fnal.gov">kutschke@fnal.gov</a>.)<p>
+
+<a name="entering">
+<h2>B. Entering or updating a document in the database</h2>
+
+<a name="modtypes">
+<h3>1. What do you want to do?</h3>
+
+You can add information or documents to the database in five different ways for
+five different situations:
+<ol>
+<li><b>Reserve a document #: </b>You want a number for a document
+you are going to write, but don't have a draft of the document.
+<li><b>New document: </b>You have a new document ready to be put into the
+database. This document has not been entered or reserved before.
+<li><b>Update document: </b>You want to upload a new version of a document that is already in the
+database. You will also be able to change any of the information in the
+database about the document. You must supply a document number to modify.
+<li><b>Update database information: </b>The document hasn't changed, but the
+information about it has. For example, it's now published so you want to add
+that information. You must supply a document number to modify.
+<li><b>Add files to document:</b> Perhaps you forgot a file initially, or maybe
+now you have a Postscript file to go with the Power Point and PDF files already
+present. You can add these files to an existing version of a document. If the
+content has changed at all, you should use the Update, not the Add File, option.
+</ol>
+Select the type of modification appropriate to your situation. 
+
+<a name="prepare">
+<h3>2. Preparing your document for the document database</h3>
+
+If your document just consists of one file, say a PDF, and it is on the computer
+you are using or accessible by the web, you are prepared. Better yet, you will
+probably be able to use one of the shortcuts in the middle of the page. Skip
+ahead to the next section.
+<p>
+If your document is in several pieces, say a bunch of HTML files or a
+PowerPoint, a PDF, and a Postscript, you have a decision to make. Do you want
+to specify each file you want to upload or do you want to make everything into
+an archive (like a .tar or .zip file) and upload that? In either case, you might
+have to use the advanced form in the middle of the Document Database web page.
+(The short cuts allow you to upload multiple files if you don't want to choose
+any other advanced options.)
+<dl>
+<dt><h4>a. Multiple file uploads</h4>
+
+<dd>In our example of a PowerPoint, a PDF, and a Postscript, this is probably
+the best choice. When you upload things this way, it might be a little bit more
+work, but what the end user will see is usually clearer. To upload your file
+this way, select "Multiple files" under "Upload Type" and type the number of
+files in your document in the box that says "# of files." The pros of using
+this upload method are that you (optionally) get to describe each of your files
+in the document and that you don't have to spend time preparing an archive.<p>
+
+When using multiple file upload, you should also understand the concept of Main
+and supporting files. Main files are typically the ones you want people to look
+at. As an example, the top file of several linked HTML files is a "Main" file,
+the others are "Other" files. By default, all files are "Main" files. To mark
+additional files as "Other" un-check the appropriate boxes.
+
+<dt><h4>b. Archive uploads</h4>
+
+<dd>Another way to upload multiple files is to place all the files into an
+archive. Currently accepted formats are .tar (Unix tape archives), .tar.gz/.tgz
+(compressed .tar files), and .zip (Windows ZIP files). To use this option,
+select "Archive Upload" under "Upload Type." When you upload your archive you
+will be asked for two additional pieces of information. You will be asked for
+the filename of the main file in the archive and to describe that file. Through
+that one file, the user should be able to access the other files. For this
+reason, this uploaded file should probably be HTML. The pros of this method are
+that you don't have to describe or enter every file in the form.
+
+When uploading via archive mode, the Main file will be marked as such and the
+entire archive will be marked as an "Other" file.
+
+<dl>
+<dt><h5>Note on HTML uploads</h5>
+
+<dd>Remember that the purpose of the document database is to store your
+<i>complete</i> document. If you have a number of HTML pages all linked
+together, things may appear to "work" just fine if you only upload the first
+one. There is no mechanism to prevent you from doing this. However, please
+don't do this. Upload all the files so that they <i>all</i> reside on the
+server, including images. To
+make the links in your HTML work on the server, use links like
+<pre>
+&lt;a href="myotherpage.html"&gt; or &lt;a href="mysubdir/myotherpage.html"&gt; 
+</pre>
+rather than 
+<pre>
+&lt;a href="http://www-btev.fnal.gov/myotherpage.html"&gt;
+</pre>
+since in the second form, your document will still point outside of the database
+server to files which may disappear.
+</dl>
+
+</dl>
+
+<a name="upload">
+<h3>3. Upload methods</h3>
+ 
+Once your document is prepared, you have one more decision to make. How do you
+want to get the file(s) to the document database? You have two choices:
+
+<ol>
+<li>You can upload files from your local computer. In this case, you will get
+boxes to type the file names into and (probably) a "Browse" button that will
+allow you to pick the file from a list. (How this happens depends on your
+browser and operating system.) 
+<li>You can upload files by supplying a URL. You have to make sure the files
+are accessible from the web, but they can be password protected (you will have
+to supply the password). You will have to specify the full URL, including the
+"http://" or "https://" at the beginning and a filename at the end (you may not
+end the URL with "/"). Currently "https://" (secure upload) does not work, but
+we hope this will change in the near future.
+</ol>
+
+<a name="filling">
+<h3>4. Filling in the form</h3>
+
+Now that you've decided what you want to do and how you want to get any required
+files from your computer into the document database, you've presumably pressed
+one of the buttons that lets you add information into the database.<p>
+
+You are now presented with an initially daunting form asking for all kinds of
+information about your document. A lot of the fields are required, but some are
+optional. You can click on any <font color="red">red link</font> to get a quick
+help window that tells you what you are being asked for. Instructions for every
+piece of information are not reproduced here, just click on the <font
+color="red">red link</font> if anything is not obvious.<p>
+
+Also, note that lots of things can have more than one selection. For instance,
+your document can have several topics selected. How this is done varies by
+browser; some browsers require holding Ctrl and clicking to make multiple
+selections, others just click to select and deselect.<p>
+
+When <b>reserving</b> a document, you must supply:
+<ul>
+ <li>A title 
+ <li>A requester (who is requesting the document?)
+ <li>A document type (talk, note, etc.)
+</ul><p>
+
+When <b>adding</b> a new document, you must supply all of the above plus:
+<ul>
+ <li>An abstract
+ <li>Authors (one required, multiples OK)
+ <li>Topics (one required, multiples OK)
+ <li>At least one file 
+</ul> 
+and optionally:
+<ul>
+ <li>Keywords: These can be anything, but check with your group and/or subgroups
+     as standards may exist.
+ <li>A note explaining any publication information
+ <li>A journal reference (you can add more later)
+ <li>Security settings (blank is the same as public, multiples OK)
+</ul><p>
+
+When <b>updating</b> a document, you can change all the information above.
+However, all the forms should be pre-filled for you with the information from
+the previous version. You will have to supply <i>all</i> the files you want to
+be in the new version, though.<p>
+
+Finally, <b>updating the database information</b> about the document is the same
+as updating the document except for two things. First, you can't supply new
+files. Second, a new version number <i>is not</i> created.<p>
+
+<a name="advanced">
+<h3>5. Advanced options</h3>
+ 
+The advanced form provides a few other options that might be useful.<p> 
+
+<b>Topic Selection: </b>
+You can either select the subtopic(s) for your document from a number of
+shorter lists split up by topic (the current default) or from one long
+list.<p> 
+
+<b>Author Selection: </b> You can either select the author(s) for your document
+from a long list (the default) or by typing the author list into a text box.
+Using the second method, each author is checked against the master list and the
+document will not be placed in the database until every author you've typed in
+has a unique match. You can type in full first names or first initials (middle initials
+are ignored), the matching is <i>reasonably</i> intelligent.<p>
+
+<b>Overriding the submission date: </b> Using this option will give you another
+control on the entry form to set the date and time for a document written in
+the past. Unless you are submitting a document from the old database or one
+written  some time ago, you should probably not select this option. By default,
+new documents are entered with the current date and time.<p>
+
+<a name="special">
+<h2>C. Special Cases</h2>
+
+<a name="meeting">
+<h3>1. Group Meeting Talks</h3>
+
+A group meeting talk can be entered into the database using the normal entry
+form, just make sure you choose the appropriate meeting date as one of the
+topics for your talk. <p>
+
+However, to simplify the addition of a meeting talk into the database, a  
+<a href="/cgi-bin/DocDB/DocumentAddForm?special=meeting">simplified
+addition form</a> has been designed. (It's also available from the meetings page.)
+This form pre-selects the nearest meeting, the talk type and eliminates the
+choices for publication information and authors. The author is automatically set
+to the requester. If this is too limiting, you'll have to use the regular entry
+form.<p>
+
+On this reduced form, all the information is required (including an abstract of
+some sort). As always, you can click
+on any <font color="red">red link</font> to get a quick help window that tells
+you what you are being asked for. <p>
+
+Since this will be a lot of people's first experience with adding a document
+into the document database, a little explanation is in order.<p>
+
+<b>Title</b> and <b>Abstract</b> should be obvious. One suggestion: it's better
+if you don't hit "Enter" in the abstract box unless you want to break a line or
+paragraph.<p>
+
+<b>File upload boxes:</b> Click "Browse" and use your operating systems file picker to
+select the files (PPT, PS, PDF, etc.) for your talk. You can leave boxes blank
+if you don't have as many files as you are being asked for, but you must fill in
+the first one. You should probably just leave the box marked "Main" checked.
+Finally, you should enter a short description of each file. This is helpful for
+people looking at the talk. A description like "PDF File" will be
+appreciated. If you need more than 3 input boxes, you should use links from the 
+<a href="/cgi-bin/DocDB/DocumentDatabase">main page</a>.
+(If speakers commonly need additional upload boxes, we can add more to this
+page.)<p>
+
+Remember that we need companion Postscript or PDF for PowerPoint talks.<p>
+
+<b>Requester:</b> Find and select the name of the person giving the talk. (This
+is probably you.)<p>
+
+<b>Security:</b> BTeV should be checked and shouldn't be changed unless you
+really want to make your document public.<p>
+
+<b>Topics:</b> The various sub-topic are broken out into groups based on the
+main topic. You should select at least one topic in addition to the meeting
+(which should be pre-selected). You can select an arbitrary number from one or
+more of the boxes. Just click or Ctrl-click to add topics to the list.<p>
+
+That's it, you are done. Hit "Submit Document." If everything goes well, you'll
+get a message saying that and a preview of what your entry looks like in the
+database. If things don't go well, you will get (we hope) helpful messages
+explaining the problem(s).<p>
+
+If for some reason you need more options that this short form gives you, use 
+a regular document entry form available from the 
+<a href="/DocDB/DocumentDatabase">DocDB main 
+page</a>, making sure to select the right meeting as one of your topics.<p>
+
+<a name="conference">
+<h3>2. Conference Talks and Proceedings</h3>
+
+Conference documents are added just like any other document, except for two
+things. First, you probably need to 
+<a href="/cgi-bin/DocDB/ConferenceAddForm">add some
+information</a> into the database about your conference. Do this by following
+the link at the bottom of the 
+<a href="/cgi-bin/DocDB/DocumentDatabase">main page</a>.
+But before you add it, make sure someone else didn't already do it for you. (At
+the bottom of the add form is the list of conferences the database knows
+about).<p>
+
+Second, when adding your document, make sure that one of the topics you select
+is the topic corresponding to your conference. This way your document is
+associated with the right conference.<p>
+
+<a name="reference">
+<h3>3. Publications in Refereed Journals</h3>
+
+Below the free-form "Publication Information" field is a place to select a
+journal, volume, and page for your document if it is published. If you need a
+journal added, let the database administrators know.<p>
+
+<h2>D. Preferences and E-mail Notification</h2>
+
+<a name="prefs">
+<h3>Setting preferences</h3>
+
+Setting preferences with the Document Database allows you to configure the
+default entry
+forms to your liking and to save some typing by telling the database who you
+are. <p>
+
+Once the database knows who you are, your name will be pre-selected as the requester and
+author of new documents. You can, of course, change this setting to enter
+documents by people other than (or in addition to) yourself.<p>
+
+You can also set your document entry preferences, so for instance if you often
+find yourself submitting URLs instead of files, you may wish to select HTTP
+submission as your default file submission method. You can always use the
+<q>Customized Insert/Modify</q> form to over-ride any preferences.<p>
+
+To set your preferences, follow the link from the main Document Database page.
+Also, make sure your browser will accept cookies, at least for the BTeV web
+server.
+
+<a name="email">
+<h3>Setting e-mail notification</h3>
+
+By following the link for "E-mail Notification" from the main page, you can
+request to be notified of new documents or documents that change. You are
+notified only for documents on topics that you select. You can choose to be
+notified immediately, once a day, and/or once a week. For each time period, you
+can choose which documents to be notified about. So, for instance, you could
+choose to be notified immediately if a new document is created about your
+detector and every week about all new documents in the database. 
+
+<a name="signoff">
+<h2>E. Document Signoffs</h2>
+
+An optional component of DocDB is to allow some documents to be <q>signed</q>
+by a group of people before becoming <q>approved.</q> People with <b>Personal
+Accounts</b> can sign documents. The list of people needing to approve a
+document is editable by the same people that can edit the document itself. <p>
+
+To <q>freeze</q> a document and its meta-information such that only
+<q>managers</q> can modify it or unfreeze it, make the document editable only
+by the ``Executive'' group.<p>
+
+When displaying document version(s) in a list, there are obvious indications of
+which documents are approved, which are unapproved, and which are obsolete
+(even if they were approved at some time). All information about who <q>signed</q>'
+each version of each document is kept.<p>
+
+DocDB contains the ability to allow any number of approval <q>topologies.</q> 
+For instance, person A or person B might be allowed to sign at the first step,
+followed by person C at the second step. Or, person A and person B may have to
+sign (but in parallel) before person C can sign. However, the current code only
+allows one topology (an ordered list). When a document under control is
+updated, the signoff list structure is preserved, but the approvals themselves
+are cleared.<p>
+
+The signoff system provides a number of additional convieniences:
+<ul>
+  <li>Email notifications to signatories when a document is ready for their
+  signature</li>
+  <li>A way to list all controlled documents</li>
+</ul>
+
+A number of other features are planned and will be added as needed:
+<ul>
+  <li>Email reports of outstanding signatures needed (to desired signatory and
+    other signatories of documents)</li>
+  <li>List of all documents a person is a signatory (actual or requested) on</li>
+  <li>More complicated approval topolgies (OR's, parallel paths, etc.)</li>
+  <li>Reminders if a document goes unsigned for a while</li>
+  <li>Restricting the list of people who may sign documents to a sub-set of those with
+  personal accounts</li>
+</ul>
+
+<a name="final">
+<h2>F. Final Words</h2>
+
+<a name="refer">
+<h3>Referring to Your Document and Files</h3>
+
+To refer to your document use the form <b>BTeV-doc-XXXX</b> where XXXX is the document
+number (1 to 6 digits). You can also use the form <b>BTeV-doc-XXXX-vXX</b> to refer to
+a specific version of a document. The <b>BTeV-doc-XXXX</b> form refers to the
+latest version.<p>
+
+<h4>Linking to your document</h4>
+
+You can also construct URL's that link to your document. The URL is of the form
+<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=XXXX&amp;version=XX</tt>,
+where the X's represent <i>just the numbers</i> of the document and version.
+(I.e. leave off the ``BTeV-doc-'' and ``-v.'') As above, you can leave off the
+<tt>&amp;version=XX</tt> to refer to the latest version.<p>
+
+<b>Using "as of" instead of version number:</b>: Instead of specifying a version
+number, you can specify <tt>&asof=2002-12-25</tt> which will give you the
+version of this document current as of December 25, 2002. 
+
+<h4>Linking to files in a document</h4>
+
+Each file for each revision has a static URL which can easily be found. However,
+often times linking to a file that may be updated is what is wanted. For that
+case, there is a script interface which fetches files. The URL is 
+<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/RetrieveFile?docid=XXXX&amp;version=XX&amp;filename=xxxxxx</tt>.
+The version number can be left off to get files from the latest version number.
+The filename can also be left off. If there is only one file marked <q>Main</q>
+that file will be retrieved. 
+An alternate form is
+<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/RetrieveFile?docid=XXXX&amp;version=XX&amp;extension=xxx</tt>,
+so for instance you can specify PDF as the extension to retrieve the PDF file
+for a document. As above, <tt>version</tt> can be left off or <tt>asof</tt> can
+be specified.
+If your request matches no files or more than one file, the full document
+information will be shown and the user will have to choose the correct file.<p>
+
+For both of these actions, if you want the result to be publicly accessible,
+put "public" between "cgi-bin" and "DocDB".  I.e. use
+<tt>http://www-btev.fnal.gov/cgi-bin/public/DocDB/ShowDocument</tt> instead of
+the normal version. The document must also be publicly accessible for this to
+work.
+
+<a name="group">
+<h3>Referring to Groups of Documents</h3>
+
+Any simple search can be embedded into a URL for reference from a web page.
+The most useful searches are by topic, keyword, conference, or meeting.
+<p>
+To link to a topic, you must first find out the topic ID number. 
+The easiest way to do this is to simply click on that topic from the 
+<a href=http://www-btev.fnal.gov/cgi-bin/DocDB/ListTopics>list by topic</a> page.
+The URL for a single topic will be 
+<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/ListByTopic?topicid=xxx</tt>. 
+Similarly, links to documents by authors are most easily found by the 
+<a href=http://www-btev.fnal.gov/cgi-bin/DocDB/ListAuthors>list by author</a> page.
+<p>
+Use the search form to link to a keyword: 
+<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/Search?keywordsearchmode=anysub&keywordsearch=xxxxxxx</tt>.
+<p>
+Conferences and meetings are topics, but have special display capabilities:
+<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/ListByTopic?topicid=xxx&mode=conference</tt> or
+<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/DisplayMeeting?conferenceid=xxx</tt>.
+<p>
+<font color="red">If your links are from a public page, be sure to use 
+<tt>http://www-btev.fnal.gov/cgi-bin/public/DocDB</tt> instead of 
+<tt>http://www-btev.fnal.gov/cgi-bin/DocDB</tt>.</font> 
+Only publicly accessible documents will be listed.
+<p>
+
+<h4>More complicated combinations</h4>
+
+By using the search capabilities, more complicated combinations of documents can be shown. Producing these kinds of
+searches requires an understanding of two additional parameters, <tt>innerlogic</tt> and <tt>outerlogic</tt>, both of
+which can have values of <tt>AND</tt> and <tt>OR</tt>. For instance, if you specify two authors, <tt>innerlogic=OR</tt>
+will return documents by <i>either</i> author while <tt>AND</tt> will require the document to be authored by <i>both</i>
+people. To understand <tt>outerlogic</tt>, take the example of searching for an author and a topic. 
+<tt>outerlogic=OR</tt> will require a document to either have the correct author or the correct topic, while <tt>AND</tt>
+will require both. Both options can be specified at the same time. <tt>outerlogic</tt> defaults to <tt>AND</tt> and
+<tt>innerlogic</tt> defaults to <tt>OR</tt>. But, this could change in the future, so specify these values if you want to
+be absolutely sure.<p>
+
+Here is a complete list of search parameters that can be specified:
+<ul>
+ <li>Title: <tt>titlesearch</tt> (text) and <tt>titlesearchmode</tt> (see search string modes)
+ <li>Abstract: <tt>abstractsearch</tt> (text) and <tt>abstractsearchmode</tt> (see search string modes)
+ <li>Keywords: <tt>keywordsearch</tt> (text) and <tt>keywordsearchmode</tt> (see search string modes)
+ <li>Publication info: <tt>pubinfosearch</tt> (text) and <tt>pubinfosearchmode</tt> (see search string modes)
+ <li>File names: <tt>filesearch</tt> (text) and <tt>filesearchmode</tt> (see search string modes). (Can be used to search
+ for file names or extensions.)
+ <li>File descriptions: <tt>filedescsearch</tt> (text) and <tt>filedescsearchmode</tt> (see search string modes). 
+ <li>Topics: <tt>minortopic</tt> (numbers found with List Topics)
+ <li>Requester and authors: <tt>requestersearch</tt> and <tt>authors</tt> (numbers found with List Authors)
+ <li>Document type: <tt>doctypemulti</tt> (numbers, look at the HTML source for SearchForm to find) 
+ <li>Modification date ranges: Look at the HTML source for SearchForm to find the parameters and values
+</ul>
+
+For titles, abstracts, keywords, publication info, file names and file descriptions, you should specify the
+<q>searchmode</q> also. Currently there are two modes:
+<ul>
+ <li><tt>searchmode=anysub</tt> case-insensitive, word must be found as a substring (as opposed to a full word), and if
+ more than one are specified, <i>only one</i> word must be found
+ <li><tt>searchmode=allsub</tt> as above, but <i>all</i> words must be found
+</ul> 
+More modes can easily be added if required. To search for more than one word, place the code for a space (%20) between
+them.  <p>
+
+To search for more than one author, topic, etc. (fields with numbers) you can specify more than one in the URL (see the
+examples).<p>
+
+Examples:
+<ul>
+ <li>Search for documents a keyword and an author:
+  <tt>http://www-btev.fnal.gov/cgi-bin/DocDB/Search?keywordsearchmode=anysub&outerlogic=AND&keywordsearch=test&authors=1</tt></li>
+ <li>Search for documents by two authors:
+  <tt>http://www-btev.fnal.gov/cgi-bin/DocDB/Search?authors=1&authors=2&innerlogic=AND</tt></li>
+ <li>Search for documents by an author on a topic:
+  <tt>http://www-btev.fnal.gov/cgi-bin/DocDB/Search?authors=1&minortopic=2&outerlogic=AND</tt></li>
+</ul>
+
+<a name="morehelp">
+
+<h3>Getting More Help</h3>
+
+You can often get more help when using the entry form or the advanced forms on
+the main page by clicking on the <font color="red">red terms</font> on the
+page. A small window will pop up to explain what is going on.<p>
+
+See the <a href="/DocDB/Static/Restricted/FAQ.shtml">FAQ</a> if
+you still have questions. If you don't find your answer there or 
+if you have additional questions, suggestions, or problems with the document
+database, please send e-mail to the <a href="mailto:btev-docdb@fnal.gov">DocDB
+administrators</a>.<p>
+
+For a more technical document on how the database works, see 
+<a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=140">
+BTeV-doc-140</a>. See the 
+<a href="/DocDB/Static/Restricted/Changelog.shtml">change log</a>
+for a chronology of changes to the code.<p>
+
+HTML
  
 ### Right column (wrapped around by middle column)
 
