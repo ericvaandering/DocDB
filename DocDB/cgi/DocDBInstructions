@@ -1,8 +1,9 @@
 #! /usr/bin/env perl
 #
-# Description: The Document Database homepage. Give the user various ways to  
-#              view documents, a link to ways to change documents, and a list 
-#              of the most recently updated documents.
+# Description: The instructions for DocDB. This is mostly HTML, but making 
+#              it a script allows us to eliminate parts of it that we don't want
+#              and get it following everyone's style, and allows groups to add
+#              to it with ProjectMessages.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
@@ -520,7 +521,7 @@ A number of other features are planned and will be added as needed:
 <a name="refer">
 <h3>Referring to Your Document and Files</h3>
 
-To refer to your document use the form <b>BTeV-doc-XXXX</b> where XXXX is the document
+To refer to your document use the syntax <b>BTeV-doc-XXXX</b> where XXXX is the document
 number (1 to 6 digits). You can also use the form <b>BTeV-doc-XXXX-vXX</b> to refer to
 a specific version of a document. The <b>BTeV-doc-XXXX</b> form refers to the
 latest version.<p>
