@@ -55,7 +55,7 @@ print $query -> popup_menu (-name   => 'filecontsearchmode',
                             -labels => \%Labels);
 print "</td></tr><tr><td colspan=\"2\">\n";
 
-print $query -> submit (-value => "Show");
+print $query -> submit (-value => "Limit Groups");
 print "</td></tr></table>\n";
 print $query -> endform;
 

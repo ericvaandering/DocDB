@@ -225,8 +225,8 @@ $HelpFile              = $web_root."Static/Restricted/DocDB_Help.shtml";
 $SelectPrefs           = $cgi_root."SelectPrefs";
 $SetPrefs              = $cgi_root."SetPrefs";
 
-$SelectPrefs           = $cgi_root."SelectGroups";
-$SetPrefs              = $cgi_root."SetGroups";
+$SelectGroups          = $cgi_root."SelectGroups";
+$SetGroups             = $cgi_root."SetGroups";
 
 $EmailLogin            = $cgi_root."EmailLogin";
 $SelectEmailPrefs      = $cgi_root."SelectEmailPrefs";
