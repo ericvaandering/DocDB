@@ -46,7 +46,7 @@ my %Labels = ("session" => "This session",
                      30 => "One month",
                     365 => "One year");
 
-print "<strong>Limit for:<br/></strong>\n";
+print "<strong>Limit for:<br/>\n"
                     
 print $query -> popup_menu (-name   => 'filecontsearchmode', 
                             -values => \@Times,
@@ -58,4 +58,4 @@ print "</td></tr></table>\n";
 print $query -> endform;
 
 &DocDBNavBar;
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName,-nobody => $TRUE);

@@ -77,17 +77,20 @@ sub DocDBHeader {
   }
 }
 
-sub DocDBFooter {
+sub DocDBFooter ($$;%) {
   require "ResponseElements.pm";
   
+  my ($WebMasterEmail,$WebMasterName,%Params) = @_;
+  
+  my $NoBody = $Params{-nobody};
+
   &DebugPage("At DocDBFooter");
   
-  my ($WebMasterEmail,$WebMasterName) = @_;
-  
-  
-  if (defined &ProjectFooter) {
-    &ProjectFooter($WebMasterEmail,$WebMasterName); 
-  }
+  unless ($NoBody) { 
+    if (defined &ProjectFooter) {
+      &ProjectFooter($WebMasterEmail,$WebMasterName); 
+    }
+  }  
   print "</body></html>\n";
 }
 
