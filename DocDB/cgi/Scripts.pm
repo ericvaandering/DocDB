@@ -63,7 +63,7 @@ sub GroupLimitPopupScript {
 }
 
 sub GroupLimitLink {
-  return "<a href=\"Javascript:notepopupwindow(\'$SelectGroups\');\">Limit Groups</a>";
+  return "<a href=\"Javascript:grouplimitpopupwindow(\'$SelectGroups\');\">Limit Groups</a>";
 }
 
 sub ConfirmTalkPopupScript {
