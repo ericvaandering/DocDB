@@ -39,5 +39,11 @@ sub GetPrefsCookie {
   $UserPreferences{DateOverride} = $DateOverridePref;
 }
 
+sub GetGroupsCookie {
+  my $GroupIDs = $query -> cookie('groupids');
+  my @GroupIDs = split /,/,$GroupIDs;
+  return @GroupIDs;
+}  
+
 1;
  
