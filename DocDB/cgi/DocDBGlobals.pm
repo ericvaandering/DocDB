@@ -169,12 +169,12 @@ $TopicAdd              = $cgi_root."TopicAdd";
 $AuthorAddForm         = $cgi_root."AuthorAddForm";
 $AuthorAdd             = $cgi_root."AuthorAdd";
 
-$ListDocuments         = $cgi_root."ListDocuments";
-$ListByAuthor          = $cgi_root."ListByAuthor";
-$ListByTopic           = $cgi_root."ListByTopic";
-$ListByType            = $cgi_root."ListByType";
+$ListDocuments         = $cgi_root."ListDocuments"; # FIXME: Remove later
+$ListByAuthor          = $cgi_root."ListByAuthor";  # FIXME: Remove later
+$ListByTopic           = $cgi_root."ListByTopic";   # FIXME: Remove later
+$ListByType            = $cgi_root."ListByType";    # FIXME: Remove later
 $ListManagedDocuments  = $cgi_root."ListManagedDocuments";
-$LastModified          = $cgi_root."LastModified";
+$LastModified          = $cgi_root."LastModified";  # FIXME: Remove later
 
 $ListAuthors           = $cgi_root."ListAuthors";
 $ListTopics            = $cgi_root."ListTopics";

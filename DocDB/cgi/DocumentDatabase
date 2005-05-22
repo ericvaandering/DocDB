@@ -89,6 +89,9 @@ unless ($Public) {
     print "<p><strong>$PersonalAccountLink</strong></p>\n";
   }  
   print "<p><strong><a href=\"$SelectPrefs\">Preferences</a></strong></p>\n";
+  if ($UserValidation eq "certificate") {
+  
+  }
 }
 print "<p><strong><a href=\"$Statistics\">DocDB Statistics</a></strong></p>\n";
 
