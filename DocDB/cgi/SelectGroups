@@ -35,16 +35,18 @@ print "<table id=\"SelectGroups\">\n";
 print "<tr><td>\n";
 my @RawGroupIDs = &FindUsersGroups(-ignorecookie => $TRUE);
 
-&SecurityScroll(-helptext  => 'Use Groups', -multiple => $TRUE, -groupids => \@RawGroupIDs, -default => \@RawGroupIDs);
+&SecurityScroll(-helptext  => 'Use Groups', -helplink => 'limitgroups', -multiple => $TRUE, -groupids => \@RawGroupIDs, -default => \@RawGroupIDs);
 
 print "</td><td>\n";
 
 my @Times = ("session",1,7,30,365);
-my %Labels = ("session" => "During this session", 
+my %Labels = ("session" => "This session", 
                       1 => "One day",
                       7 => "One week",
                      30 => "One month",
                     365 => "One year");
+
+print "<strong>Limit for:<br/></strong>\n"
                     
 print $query -> popup_menu (-name   => 'filecontsearchmode', 
                             -values => \@Times,
