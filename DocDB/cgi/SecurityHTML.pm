@@ -29,13 +29,13 @@ sub SecurityScroll (%) {
   
   my (%Params) = @_;
   
-  my $AddPublic =   $Params{-addpublic} || 0;
+  my $AddPublic =   $Params{-addpublic} || $FALSE;
   my $HelpLink  =   $Params{-helplink}  || "";
   my $HelpText  =   $Params{-helptext}  || "Groups";
   my $Multiple  =   $Params{-multiple}; 
   my $Name      =   $Params{-name}      || "groups";
   my $Size      =   $Params{-size}      || 10;
-  my $Disabled  =   $Params{-disabled}  || "0";
+  my $Disabled  =   $Params{-disabled}  || $FALSE;
   my @GroupIDs  = @{$Params{-groupids}};
   my @Default   = @{$Params{-default}};
 

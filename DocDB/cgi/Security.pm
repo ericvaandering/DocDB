@@ -215,7 +215,10 @@ sub LastAccess { # Highest version user can access (with current security)
   return $Version;    
 }
 
-sub FindUsersGroups () {
+sub FindUsersGroups (;%) {
+  my (%Params) = @_;
+  my $IgnoreCookie = $Params{-ignorecookie} || $FALSE;
+
   my @UsersGroupIDs  = ();
   if ($UserValidation eq "certificate") {
     require "CertificateUtilities.pm";

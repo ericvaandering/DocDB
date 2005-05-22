@@ -26,8 +26,11 @@
 
 # Constants
 
-use constant TRUE  => 1;
+use constant TRUE  => 1; #Doesn't span other files.
 use constant FALSE => 0;
+
+$TRUE  = 1;
+$FALSE = 0;
 
 # Advertising link for DocDB
 
