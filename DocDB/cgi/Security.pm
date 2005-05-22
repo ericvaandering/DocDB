@@ -237,7 +237,7 @@ sub FindUsersGroups (;%) {
   push @DebugStack,@UsersGroupIDs;
   my @LimitedGroupIDs = &GetGroupsCookie();
   if (@LimitedGroupIDs) {
-    push @DebugStack,"Limiting Groups";
+    push @DebugStack,"Limiting Groups",@LimitedGroupIDs;
     @UsersGroupIDs = &Union(@LimitedGroupIDs,@UsersGroupIDs);
   }
   push @DebugStack,"Groups after cookie check";
