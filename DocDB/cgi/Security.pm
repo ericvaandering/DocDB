@@ -218,6 +218,7 @@ sub LastAccess { # Highest version user can access (with current security)
 sub FindUsersGroups (;%) {
 
   require "Utilities.pm";
+  require "Cookies.pm";
 
   my (%Params) = @_;
   my $IgnoreCookie = $Params{-ignorecookie} || $FALSE;
@@ -232,6 +233,14 @@ sub FindUsersGroups (;%) {
     @UsersGroupIDs = (&FetchSecurityGroupByName ($remote_user));
   }
   @UsersGroupIDs = &Unique(@UsersGroupIDs);
+  push @DebugStack,"Groups before cookie check";
+  push @DebugStack,@UsersGroupIDs;
+  my @LimitedGroupIDs = &GetGroupsCookie();
+  if (@LimitedGroupIDs) {
+    @UsersGroupIDs = &Union(@LimitedGroupIDs,@UsersGroupIDs);
+  }
+  push @DebugStack,"Groups after cookie check";
+  push @DebugStack,@UsersGroupIDs;
   return @UsersGroupIDs;
 }
 

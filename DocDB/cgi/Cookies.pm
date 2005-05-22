@@ -40,8 +40,11 @@ sub GetPrefsCookie {
 }
 
 sub GetGroupsCookie {
+  my @GroupIDs = ();
   my $GroupIDs = $query -> cookie('groupids');
-  my @GroupIDs = split /,/,$GroupIDs;
+  if ($GroupIDs) {
+    @GroupIDs = split /,/,$GroupIDs;
+  }  
   return @GroupIDs;
 }  
 
