@@ -9,6 +9,9 @@
 use CGI;
 use DBI;
 
+use constant TRUE  => 1;
+use constant FALSE => 0;
+
 require "DocDBGlobals.pm";
 require "Messages.pm";
 require "HTMLUtilities.pm";
@@ -27,7 +30,9 @@ print $query->header;
 &DocDBHeader(-nobody => 1);
 &EndPage(@ErrorStack);
 
-&SecurityScroll();
+my @RawGroupIDs = (1,3,4);
+
+&SecurityScroll(-multiple => 1, -groupids => \@RawGroupIDs);
 
 my @Times = ("session",1,7,30,365);
 my %Labels = ("session" => "During this session", 
