@@ -18,6 +18,7 @@ require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 require "SecurityHTML.pm";
 require "Security.pm";
+require "Scripts.pm";
 
 # Start page
 $query  = new CGI;
@@ -26,6 +27,7 @@ $dbh    = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropas
 
 print $query->header;
 &DocDBHeader("Limit Groups","",-nobody => $TRUE);
+&HelpPopupScript;
 &EndPage(@ErrorStack);
 
 print "<h3>Using this page, you can remove groups whose permissions you don't want to use</h3>\n";
@@ -57,5 +59,4 @@ print $query -> submit (-value => "Show");
 print "</td></tr></table>\n";
 print $query -> endform;
 
-&DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName,-nobody => $TRUE);
