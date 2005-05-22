@@ -23,7 +23,7 @@ $dbh    = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropas
 push @DebugStack,"Value of FALSE",FALSE;
 push @DebugStack,"Value of TRUE",TRUE;
 
-
+print $query->header;
 &DocDBHeader(-nobody => 1);
 &EndPage(@ErrorStack);
 
