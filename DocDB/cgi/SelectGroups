@@ -25,12 +25,19 @@ $query  = new CGI;
 $dbh    = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 print $query->header;
-&DocDBHeader(-nobody => $TRUE);
+&DocDBHeader("Limit Groups","",-nobody => $TRUE);
 &EndPage(@ErrorStack);
 
+print "<h3>Using this page, you can remove groups whose permissions you don't want to use</h3>\n";
+ 
+print $query -> startform('POST',$SetGroups);
+print "<table id=\"SelectGroups\">\n";
+print "<tr><td>\n";
 my @RawGroupIDs = &FindUsersGroups(-ignorecookie => $TRUE);
 
-&SecurityScroll(-multiple => $TRUE, -groupids => \@RawGroupIDs);
+&SecurityScroll(-helptext  => 'Use Groups', -multiple => $TRUE, -groupids => \@RawGroupIDs, -default => \@RawGroupIDs);
+
+print "</td><td>\n";
 
 my @Times = ("session",1,7,30,365);
 my %Labels = ("session" => "During this session", 
@@ -42,6 +49,11 @@ my %Labels = ("session" => "During this session",
 print $query -> popup_menu (-name   => 'filecontsearchmode', 
                             -values => \@Times,
                             -labels => \%Labels);
+print "</td></tr><tr><td colspan=\"2\">\n";
+
+print $query -> submit (-value => "Show");
+print "</td></tr></table>\n";
+print $query -> endform;
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
