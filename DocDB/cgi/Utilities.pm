@@ -26,6 +26,29 @@ sub Unique {
   return @UniqueElements;
 }
 
+sub Union (\@@) {
+  my ($Array_ref,@A2) = @_;
+
+  my @A1 = @{$Array_ref};
+
+  @A1 = &Unique(@A1);
+  @A2 = &Unique(@A2);
+  
+  push @A1,@A2; # Concat arrays into A1
+  my @UnionElements  = ();
+  
+  my %Hash = ();
+  foreach my $Element (@A1) {
+    if ($Hash{$Element} > 0) {
+      push @UnionElements,$Element;
+    } else {  
+      ++$Hash{$Element};
+    }  
+  }
+  
+  return @UnionElements;
+}
+
 sub RemoveArray (\@@) { # Removes elements of one array from another
                         # Call &RemoveArray(\@Array1,@Array2)
                         # FIXME: Figure out how to do like push, no reference
