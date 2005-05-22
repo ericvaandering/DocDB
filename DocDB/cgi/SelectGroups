@@ -50,7 +50,7 @@ my %Labels = ("session" => "This session",
 
 print "<strong>Limit for:<br/>\n";
                     
-print $query -> popup_menu (-name   => 'filecontsearchmode', 
+print $query -> popup_menu (-name   => 'duration', 
                             -values => \@Times,
                             -labels => \%Labels);
 print "</td></tr><tr><td colspan=\"2\">\n";

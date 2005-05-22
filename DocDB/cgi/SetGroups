@@ -1,18 +1,33 @@
 #! /usr/bin/env perl
 #
-#        Author:  Adam Bryant
-#          Date:  24 March 2002
-#   Modified by:  Eric Vaandering
-# Last Modified:  27 March 2002
+#        Author:  Eric Vaandering
+#          Date:  22 May 2005
 #
-# Reads form parameters from SelectPrefs and stores user's selections in
-# a group of cookies, one for each preference.
+# Allow a user to choose to limit their membership to certain groups 
+# for a period of time
+
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 
 use CGI;
 use DBI;
 
 require "DocDBGlobals.pm";
-require "Messages.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 require "Cookies.pm";
@@ -22,31 +37,42 @@ require "Cookies.pm";
 $query = new CGI;
 %params = $query -> Vars; 
 
-@cookies = ();
+my @cookies = ();
 
-push @cookies, $query->cookie(-name=>'userid', 
-			  -value=>"$params{requester}", 
-			  -expires=>'+30y',
-			  -path=>$cgi_path);
+my $Duration = $params{duration};
+my @GroupIDs = split /\0/,$params{groups};
+my $GroupIDs = join ',',@GroupIDs;
+
+if ($Duration eq "session") {
+  push @cookies, $query -> cookie(-name  => 'groupids', 
+			          -value => $GroupIDs, 
+			          -path  => $cgi_path);
+} else {
+  my $Expires = "+".int($Duration)."d";
+  push @cookies, $query -> cookie(-name    => 'groupids', 
+			          -value   => $GroupIDs, 
+			          -expires => $Expires,
+			          -path    => $cgi_path);
+}
 
 print $query->header(-cookie=>\@cookies);
-print "<meta http-equiv=\"Refresh\" content=\"10; URL=$MainPage\">"; ### generates improper html but works for now
 
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
-
 unless ($dbh) {
   push @ErrorStack,$Msg_NoConnect;
 }      
-&DocDBHeader("Setting Preferences");
+
+&DocDBHeader("Setting Groups","",-nobody => $TRUE);
 &EndPage(@ErrorStack);
 
 print "<p>";
-print "<b>Your preferences have been saved.</b> 
-          You will be sent to the Document Database <a href=\"$MainPage\">home
-          page</a> in 10 seconds.<br> 
-          If your  preferences havn't been properly set, make sure your web
+print "<strong>You are limited to the groups you selected.</strong> 
+          If your  groups havn't been properly set, make sure your web
           browser is  accepting cookies.";
-print "<p>";
+print "</p>";
+print "<p><form>\n";
+print " <input type=\"button\" value=\"Close Window and Reload\" onClick=\"opener.location.reload(1); window.close()\">\n";
+print "</form></p>";
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
