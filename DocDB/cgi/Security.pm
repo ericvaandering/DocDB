@@ -235,11 +235,12 @@ sub FindUsersGroups (;%) {
   @UsersGroupIDs = &Unique(@UsersGroupIDs);
   push @DebugStack,"Groups before cookie check";
   push @DebugStack,@UsersGroupIDs;
-  my @LimitedGroupIDs = &GetGroupsCookie();
-  if (@LimitedGroupIDs) {
-    push @DebugStack,"Limiting Groups",@LimitedGroupIDs;
-    @UsersGroupIDs = &Union(\@LimitedGroupIDs,@UsersGroupIDs);
-  }
+  unless ($IgnoreCookie) {
+    my @LimitedGroupIDs = &GetGroupsCookie();
+    if (@LimitedGroupIDs) {
+      @UsersGroupIDs = &Union(\@LimitedGroupIDs,@UsersGroupIDs);
+    }
+  }  
   push @DebugStack,"Groups after cookie check";
   push @DebugStack,@UsersGroupIDs;
   return @UsersGroupIDs;

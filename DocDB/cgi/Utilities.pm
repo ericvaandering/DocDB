@@ -33,11 +33,7 @@ sub Union (\@@) {
 
   @A1 = &Unique(@A1);
   @A2 = &Unique(@A2);
-  
-  push @DebugStack,"A1",@A1,"A2",@A2;
-  
   push @A1,@A2; # Concat arrays into A1
-  push @DebugStack,"A1 New ",@A1;
   my @UnionElements = ();
   
   my %Hash = ();
@@ -49,7 +45,6 @@ sub Union (\@@) {
     }  
   }
   
-  push @DebugStack,"Union ",@UnionElements;
   return @UnionElements;
 }
 
