@@ -36,7 +36,10 @@ sub SecurityScroll (%) {
   my $Name      =   $Params{-name}      || "groups";
   my $Size      =   $Params{-size}      || 10;
   my $Disabled  =   $Params{-disabled}  || "0";
+  my @GroupIDs  = @{$Params{-groupids}};
   my @Default   = @{$Params{-default}};
+
+  #TODO: Don't we do this with arrays and join?
 
   my $Booleans = "";
   
@@ -49,7 +52,10 @@ sub SecurityScroll (%) {
     
   &GetSecurityGroups;
   
-  my @GroupIDs = keys %SecurityGroups;
+  unless (@GroupIDs) {
+    @GroupIDs = keys %SecurityGroups;
+  }
+    
   my %GroupLabels = ();
 
   foreach my $GroupID (@GroupIDs) {

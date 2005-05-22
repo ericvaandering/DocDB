@@ -1,0 +1,44 @@
+#! /usr/bin/env perl
+#
+#        Author:  Eric Vaandering
+#          Date:  22 May 2005
+#
+# Allow a user to choose to limit their membership to certain groups 
+# for a period of time
+
+use CGI;
+use DBI;
+
+require "DocDBGlobals.pm";
+require "Messages.pm";
+require "HTMLUtilities.pm";
+require "ResponseElements.pm";
+require "SecurityHTML.pm";
+
+# Start page
+$query  = new CGI;
+%params = $query -> Vars; 
+$dbh    = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+push @DebugStack,"Value of FALSE",FALSE;
+push @DebugStack,"Value of TRUE",TRUE;
+
+
+&DocDBHeader(-nobody => 1);
+&EndPage(@ErrorStack);
+
+&SecurityScroll();
+
+my @Times = ("session",1,7,30,365);
+my %Labels = ("session" => "During this session", 
+                      1 => "One day",
+                      7 => "One week",
+                     30 => "One month",
+                    365 => "One year");
+                    
+print $query -> popup_menu (-name   => 'filecontsearchmode', 
+                            -values => \@Times,
+                            -labels => \%Labels);
+
+&DocDBNavBar;
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

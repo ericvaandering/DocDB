@@ -77,7 +77,9 @@ $remote_user          =~ tr/[A-Z]/[a-z]/;
 
 # Preferences
 
-$Preferences{Security}{Certificates}{UseCNOnly} = FALSE; # Use CN instead of E (E-mail) to distinguish
+$Preferences{Security}{Certificates}{UseCNOnly}   = FALSE; # Use CN instead of E (E-mail) to distinguish
+$Preferences{Security}{Certificates}{LimitCookie} = FALSE; # Allow users to limit which groups they belong to with cookies
+
 $Preferences{Options}{DynamicFullList}{Private} = FALSE; # Generate Full document list by dynamically for private db
 $Preferences{Options}{DynamicFullList}{Public}  = FALSE; # Generate Full document list by dynamically for public db
 

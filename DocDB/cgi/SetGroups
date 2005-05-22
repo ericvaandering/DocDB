@@ -1,0 +1,52 @@
+#! /usr/bin/env perl
+#
+#        Author:  Adam Bryant
+#          Date:  24 March 2002
+#   Modified by:  Eric Vaandering
+# Last Modified:  27 March 2002
+#
+# Reads form parameters from SelectPrefs and stores user's selections in
+# a group of cookies, one for each preference.
+
+use CGI;
+use DBI;
+
+require "DocDBGlobals.pm";
+require "Messages.pm";
+require "HTMLUtilities.pm";
+require "ResponseElements.pm";
+require "Cookies.pm";
+
+# Start page
+
+$query = new CGI;
+%params = $query -> Vars; 
+
+@cookies = ();
+
+push @cookies, $query->cookie(-name=>'userid', 
+			  -value=>"$params{requester}", 
+			  -expires=>'+30y',
+			  -path=>$cgi_path);
+
+print $query->header(-cookie=>\@cookies);
+print "<meta http-equiv=\"Refresh\" content=\"10; URL=$MainPage\">"; ### generates improper html but works for now
+
+$dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+unless ($dbh) {
+  push @ErrorStack,$Msg_NoConnect;
+}      
+&DocDBHeader("Setting Preferences");
+&EndPage(@ErrorStack);
+
+print "<p>";
+print "<b>Your preferences have been saved.</b> 
+          You will be sent to the Document Database <a href=\"$MainPage\">home
+          page</a> in 10 seconds.<br> 
+          If your  preferences havn't been properly set, make sure your web
+          browser is  accepting cookies.";
+print "<p>";
+
+&DocDBNavBar;
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
