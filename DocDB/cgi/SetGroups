@@ -74,5 +74,4 @@ print "<p><form>\n";
 print " <input type=\"button\" value=\"Close Window and Reload\" onClick=\"opener.location.reload(1); window.close()\">\n";
 print "</form></p>";
 
-&DocDBNavBar;
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName,-nobody => $TRUE);

@@ -216,7 +216,6 @@ sub LastAccess { # Highest version user can access (with current security)
 }
 
 sub FindUsersGroups (;%) {
-
   require "Utilities.pm";
   require "Cookies.pm";
 
@@ -228,21 +227,17 @@ sub FindUsersGroups (;%) {
     require "CertificateUtilities.pm";
     @UsersGroupIDs = &FetchSecurityGroupsByCert();
   } elsif ($UserValidation eq "basic-user") {
-# Coming (maybe)
+    # Coming (maybe)
   } else {
     @UsersGroupIDs = (&FetchSecurityGroupByName ($remote_user));
   }
   @UsersGroupIDs = &Unique(@UsersGroupIDs);
-  push @DebugStack,"Groups before cookie check";
-  push @DebugStack,@UsersGroupIDs;
   unless ($IgnoreCookie) {
     my @LimitedGroupIDs = &GetGroupsCookie();
     if (@LimitedGroupIDs) {
       @UsersGroupIDs = &Union(\@LimitedGroupIDs,@UsersGroupIDs);
     }
   }  
-  push @DebugStack,"Groups after cookie check";
-  push @DebugStack,@UsersGroupIDs;
   return @UsersGroupIDs;
 }
 
