@@ -15,12 +15,39 @@
      with <b>/etc/httpd/conf/httpd.conf</b>.
 <li> Create a directory for trusted certificate authorities:
      <b>mkdir /full/path/to/TrustedCAs</b>
-<li> Download public keys into this directory. <br>
-     Fermilab <a href=http://computing.fnal.gov/security/pki/>public keys</a><br>
-     You will need at least the self-signed FNAL KCA certificate and the
-     FNAL Top Level CA signing policy.
+    <ul>
+    <li> Download public keys into this directory from
+	 Fermilab <a href=http://computing.fnal.gov/security/pki/>public keys</a><br>
+    <li> Download DOEGrid keys: 
+         <ul>
+         <li> Go to <a href=http://www.doegrids.org/ target="_blank">DOEGrids</a>.
+	 <li> Click "certificate service" on the left.
+	 <li> Click the top tab that says "Retrieval".
+	 <li> On the left, click "Import CA Certificate Chain"
+	 <li> At the bottom, click 
+	      "Display certificates in the CA certificate chain for importing individually into a server"
+	      and then "submit"
+	 <li> On the next page, you will find 2 certificates.  
+	      Cut and paste each certificate into a separate file.  
+	      You want the stuff starting with "begin certificate" and 
+	      ending with "end certificate".  
+	      You will want to include the begin and end lines.
+	 <li> Use a temporary file name (<em>temp.cert</em>).
+	 <li> <b>openssl x509 -hash -noout -in <em>temp.cert</em></b> <br>
+	      This will return a hashed CA name something like  <em>1c3f2ca8</em>
+	 <li> <b>mv <em>temp.cert</em> <em>1c3f2ca8.0</em></b> <br>
+	      If you already have a <em>1c3f2ca8.0</em> file, call your new CA
+	      <em>1c3f2ca8.1</em>.   
+	 <li> Either rename the temporary file, or give the file a useful name and
+	      create a symbolic link for the hashed name.
+	 <li> Rename or link each certificate you download.  
+         </ul>
+    </ul>
 <li> Modify httpd.conf:
     <ul>
+    <li> Some distributions of apache have a separate ssl.conf file.  
+         You can either maintain the separate file or merge everything into 
+	 httpd.conf.
     <li> Your httpd.conf needs to contain the following lines in the main body: <br>
 	 <b>Listen your.ip.address:80</b><br>
 	 <b>Listen your.ip.address:443</b><br>
@@ -41,15 +68,15 @@
 	 &nbsp;&nbsp;&nbsp;&nbsp; SSLEngine on<br>
 	 &nbsp;&nbsp;&nbsp;&nbsp; ErrorLog logs/ssl_error_log<br>
 	 &nbsp;&nbsp;&nbsp;&nbsp; TransferLog logs/ssl_access_log<br>
-	 &nbsp;&nbsp;&nbsp;&nbsp; SSLCACertificatePath full/path/to/TrustedCAs<br>
+	 &nbsp;&nbsp;&nbsp;&nbsp; SSLCACertificatePath /full/path/to/TrustedCAs<br>
 	 &nbsp;&nbsp;&nbsp;&nbsp; SSLCertificateFile /full/path/to/certs/yourserver.cert.cert<br>
 	 &nbsp;&nbsp;&nbsp;&nbsp; SSLCertificateKeyFile /full/path/to/certs/yourserver.cert.key<br>
 	 &nbsp;&nbsp;&nbsp;&nbsp; SSLVerifyClient require<br>
 	 &nbsp;&nbsp;&nbsp;&nbsp; SSLVerifyDepth  2<br>
 	 &nbsp;&nbsp;&nbsp;&nbsp; SSLOptions +StdEnvVars<br>
 	 &nbsp;&nbsp;&nbsp;&nbsp; SetEnvIf User-Agent ".*MSIE.*" \<br>
-	 &nbsp;&nbsp;&nbsp;&nbsp;	  nokeepalive ssl-unclean-shutdown \<br>
-	 &nbsp;&nbsp;&nbsp;&nbsp;	  downgrade-1.0 force-response-1.0<br>
+	 &nbsp;&nbsp;&nbsp;&nbsp;	&nbsp;&nbsp;&nbsp;&nbsp;  nokeepalive ssl-unclean-shutdown \<br>
+	 &nbsp;&nbsp;&nbsp;&nbsp;	&nbsp;&nbsp;&nbsp;&nbsp;  downgrade-1.0 force-response-1.0<br>
 	 &nbsp;&nbsp;&nbsp;&nbsp; ....<br>
 	 &lt;/VirtualHost&gt;
 	 </b>
