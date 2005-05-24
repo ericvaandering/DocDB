@@ -1,0 +1,75 @@
+<title>DOEGrid Certificates</title>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<center><h1>DOEGrid Certificates</h1></center>
+
+<p>
+<ol>
+<li>  Do this work in <b>/full/path/to/certs</b>
+     (defined in <a href=sslconf.html>Configure SSL</a>)
+<li> If you are at Fermilab, use 
+     <a href=https://computing.fnal.gov/security/pki/Get-DOEGrids-Cert.html>these instructions</a>.
+<li> <b>openssl req -new > new.cert.csr</b>  <br>
+     <font color=red>Your answers to the questions are crucial.</font> <br>
+     DOE will simply reject the request if it does not recognize the 
+     organization and organizational unit. (The OU is probably "Services".)<br>
+     Please check with your institution. <br>
+     The "Common Name" is the name of your webserver 
+     (e.g., <em>myserver.some.domain</em>).<br>
+     <pre>
+     Generating a 1024 bit RSA private key
+     ...++++++
+     ...................................++++++
+     writing new private key to 'privkey.pem'
+     Enter PEM pass phrase:
+     Verifying - Enter PEM pass phrase:
+     -----
+     You are about to be asked to enter information that will be incorporated
+     into your certificate request.
+     What you are about to enter is what is called a Distinguished Name or a DN.
+     There are quite a few fields but you can leave some blank
+     For some fields there will be a default value,
+     If you enter '.', the field will be left blank.
+     -----
+     Country Name (2 letter code) [GB]: My Country
+     State or Province Name (full name) [Berkshire]: My State
+     Locality Name (eg, city) [Newbury]: My Town
+     Organization Name (eg, company) [My Company Ltd]: FOLLOW YOUR INSTITUTION'S INSTRUCTIONS
+     Organizational Unit Name (eg, section) []: Services
+     Common Name (eg, your name or your server's hostname) []: myserver.some.domain
+     Email Address []: myemail@some.domain
+
+     Please enter the following 'extra' attributes
+     to be sent with your certificate request
+     A challenge password []:  EMPTY FOR DOE
+     An optional company name []:
+     </pre>
+<li> The previous step creates both <b>new.cert.csr</b> and <b>privkey.pem</b>.
+<li>  Remove the passphrase from the key: <br>
+     <b> openssl rsa -in privkey.pem -out new.cert.key</b>
+<li>  Go to the
+      <a href=http://pki1.doegrids.org/ target="_blank">DOEgrids Certificate Manager</a>
+<li>  Click on the "Grid or SSL Server" link
+<li>  Cut & paste the new.cert.csr data into the "PKCS #10 Request" field on the form.
+      Fill out the rest of the information and submit.
+</ol>
+
+<p>
+<!-- begin footer -->
+<hr>
+<h3><a href=DocDB-license.html>DocDB License</a></h3>
+<i><font size="-1">
+<script language="javascript">
+<!-- Hide from browsers that do not understand Javascript
+// print the URL and modification date of this page
+var url = document.location;
+document.write(url)  
+var dt = document.lastModified;
+document.write('<br> Last Modified:')  
+document.write(dt)  
+// end hiding --> 
+</script> 
+</font></i>
+</body>
+</html>

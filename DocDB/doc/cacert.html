@@ -1,0 +1,60 @@
+<title>Getting CA Certificates</title>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<center><h1>Getting CA Certificates</h1></center>
+
+<p>
+<ol>
+<li> Create a directory for trusted certificate authorities:
+     <b>mkdir /full/path/to/TrustedCAs</b> <br>
+     There is nothing magic about the directory name (it can be anything), 
+     but you probably want it in the same directory tree as <b>httpd.conf</b>.
+<li> If this is a Fermilab server, download public keys for 
+     Kerberos (KCA) certificates into this directory from
+     Fermilab <a href=http://computing.fnal.gov/security/pki/>public keys</a><br>
+<li> Download DOEGrid CA keys: 
+     <ul>
+     <li> Go to <a href=http://www.doegrids.org/ target="_blank">DOEGrids</a>.
+     <li> Click "certificate service" on the left.
+     <li> Click the top tab that says "Retrieval".
+     <li> On the left, click "Import CA Certificate Chain"
+     <li> At the bottom, click 
+	  "Display certificates in the CA certificate chain for importing individually into a server"
+	  and then "submit"
+     <li> On the next page, you will find 2 certificates.  
+	  Cut and paste each certificate into a separate file.  
+	  You want the stuff starting with "begin certificate" and 
+	  ending with "end certificate".  
+	  You will want to include the begin and end lines.
+     <li> Use a temporary file name (<em>temp.cert</em>).
+     <li> <b>openssl x509 -hash -noout -in <em>temp.cert</em></b> <br>
+	  This will return a hashed CA name something like  <em>1c3f2ca8</em>
+     <li> <b>mv <em>temp.cert</em> <em>1c3f2ca8.0</em></b> <br>
+	  If you already have a <em>1c3f2ca8.0</em> file, call your new CA
+	  <em>1c3f2ca8.1</em>.   
+     <li> Either rename the temporary file, or give the file a useful name and
+	  create a symbolic link for the hashed name.
+     <li> Rename or link each certificate you download.  
+     </ul>
+<li> You may also choose to use a self-signed certificate or some other CA.
+</ol>
+
+<p>
+<!-- begin footer -->
+<hr>
+<h3><a href=DocDB-license.html>DocDB License</a></h3>
+<i><font size="-1">
+<script language="javascript">
+<!-- Hide from browsers that do not understand Javascript
+// print the URL and modification date of this page
+var url = document.location;
+document.write(url)  
+var dt = document.lastModified;
+document.write('<br> Last Modified:')  
+document.write(dt)  
+// end hiding --> 
+</script> 
+</font></i>
+</body>
+</html>
