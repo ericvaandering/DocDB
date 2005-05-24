@@ -12,6 +12,8 @@
       You may need to install the openssl rpm.
 <li> At any point, openssl can be used to view certificate information: <br>
     <b>openssl req -noout -text -in some.cert.file</b>
+<li>  Do this work in <b>/full/path/to/certs</b>
+     (defined in <a href=sslconf.html>Configure SSL</a>)
 <li> DOEGrid certificates:
     <ul>
     <li> Generic <a href=doesrvcert.html>DOEGrid certificate instructions</a>
@@ -22,7 +24,7 @@
     <li> You may have to cut and paste to download your certificate into some file.
     <li> Save the "Base 64 encoded certificate" as <em>doehostcert.pem</em>.
     <li> Your httpd.conf or ssl.conf file will contain <br>
-	  <b>SSLCertificateFile /etc/httpd/conf/certs/doehostcert.pem</b> <br>
+	  <b>SSLCertificateFile /full/path/to/certs/doehostcert.pem</b> <br>
 	 (See <a href=sslconf.html>Configure SSL</a>)
     </ul>
 <li> Getting a self-signed Kerberos certificate
@@ -68,7 +70,7 @@
      <li> If you want to view your key: 
           <b>openssl req -noout -text -in new.cert.key</b>
      <li> Add the following line to <a href=sslconf.html>httpd.conf</a> <br>
-          <b>SSLCertificateKeyFile /etc/httpd/conf/certs/epp.cert.key</b>
+          <b>SSLCertificateKeyFile /full/path/to/certs/epp.cert.key</b>
      </ul> 
 </ol>
 
