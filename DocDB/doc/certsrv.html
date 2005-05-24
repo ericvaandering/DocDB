@@ -43,18 +43,18 @@
      For some fields there will be a default value,
      If you enter '.', the field will be left blank.
      -----
-     Country Name (2 letter code) [GB]:US
-     State or Province Name (full name) [Berkshire]:Illinois
-     Locality Name (eg, city) [Newbury]:Batavia
-     Organization Name (eg, company) [My Company Ltd]:Fermilab
-     Organizational Unit Name (eg, section) []:CEPA
-     Common Name (eg, your name or your server's hostname) []:epp.fnal.gov
-     Email Address []:garren@fnal.gov
+     Country Name (2 letter code) [GB]: My Country
+     State or Province Name (full name) [Berkshire]: My State
+     Locality Name (eg, city) [Newbury]: My Town
+     Organization Name (eg, company) [My Company Ltd]: My Lab
+     Organizational Unit Name (eg, section) []: My Department
+     Common Name (eg, your name or your server's hostname) []: myserver.some.domain
+     Email Address []: myemail@some.domain
 
      Please enter the following 'extra' attributes
      to be sent with your certificate request
      A challenge password []:
-     An optional company name []:FNAL
+     An optional company name []:
      </pre>
      <li> The previous step creates both <b>new.cert.csr</b> and <b>privkey.pem</b>.
      <li> <b>openssl rsa -in privkey.pem -out new.cert.key</b>
