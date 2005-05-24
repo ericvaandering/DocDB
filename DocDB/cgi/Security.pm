@@ -225,6 +225,11 @@ sub FindUsersGroups () {
   } else {
     @UsersGroupIDs = (&FetchSecurityGroupByName ($remote_user));
   }
+  
+  unless (@UsersGroupIDs) {
+    $Public = 1;
+  }  
+  
   return @UsersGroupIDs;
 }
 
