@@ -1,0 +1,46 @@
+<title>DOEGrid Certificates</title>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<center><h1>DOEGrid Certificates</h1></center>
+
+<p>
+<ol>
+<li>  Do this work in <b>/full/path/to/certs</b>
+     (defined in <a href=sslconf.html>Configure SSL</a>)
+<li>   <b>openssl req -new > new.cert.csr</b>  <br>
+     <font color=red>Your answers to the questions are crucial.</font> <br>
+     DOE will simply reject the request if it does not recognize the 
+     organization and organizational unit. (The OU is probably "Services".)<br>
+     Please check with your institution. <br>
+     The "Common Name" is the name of your webserver 
+     (e.g., <em>myserver.some.domain</em>).<br>
+     Fermilab specific instructions are 
+     <a href=https://computing.fnal.gov/security/pki/Get-DOEGrids-Cert.html>here</a>.
+<li>  Remove the passphrase from the key: <br>
+     <b> openssl rsa -in privkey.pem -out new.cert.key</b>
+<li>  Go to the
+      <a href=http://pki1.doegrids.org/ target="_blank">DOEgrids Certificate Manager</a>
+<li>  Click on the "Grid or SSL Server" link
+<li>  Cut & paste the new.cert.csr data into the "PKCS #10 Request" field on the form.
+      Fill out the rest of the information and submit.
+</ol>
+
+<p>
+<!-- begin footer -->
+<hr>
+<h3><a href=DocDB-license.html>DocDB License</a></h3>
+<i><font size="-1">
+<script language="javascript">
+<!-- Hide from browsers that do not understand Javascript
+// print the URL and modification date of this page
+var url = document.location;
+document.write(url)  
+var dt = document.lastModified;
+document.write('<br> Last Modified:')  
+document.write(dt)  
+// end hiding --> 
+</script> 
+</font></i>
+</body>
+</html>
