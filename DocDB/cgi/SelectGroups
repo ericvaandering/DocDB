@@ -46,6 +46,7 @@ print $query->header;
 
 print "<h3>Using this page, you can remove groups whose permissions you don't want to use</h3>\n";
  
+print "<div>\n";
 print $query -> startform('POST',$SetGroups);
 print "<div>\n";
 print "<table id=\"SelectGroups\">\n";
@@ -74,5 +75,6 @@ print $query -> submit (-value => "Limit Groups");
 print "</td></tr></table>\n";
 print "</div>\n";
 print $query -> endform;
+print "</div>\n";
 
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName,-nobody => $TRUE);
