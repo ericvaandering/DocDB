@@ -1,0 +1,12 @@
+table {
+  padding: 3px 3px 3px 3px;
+}
+
+#SelectGroups {
+  text-align: center;
+}
+
+#SelectGroups td {
+  vertical-align: top;
+}
+

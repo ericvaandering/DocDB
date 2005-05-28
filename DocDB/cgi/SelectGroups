@@ -68,11 +68,12 @@ print "<strong>Limit for:</strong><br/>\n";
 print $query -> popup_menu (-name   => 'duration', 
                             -values => \@Times,
                             -labels => \%Labels);
-print "</td></tr><tr><td colspan=\"2\">\n";
+print "</td></tr><tr><td colspan=\"2\" id=\"SubmitCell\">\n";
 
 print $query -> submit (-value => "Limit Groups");
 print "</td></tr></table>\n";
 print "</div>\n";
 print $query -> endform;
+print "\n";
 
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName,-nobody => $TRUE);
