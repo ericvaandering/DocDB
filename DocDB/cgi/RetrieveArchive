@@ -76,7 +76,7 @@ unless (@ErrorStack) {
 ### Get rid of files left over from old (< v6.5.0) versions
 
   my $TarFile   = "$Directory/tmp$DocumentID-$Version.tar";
-  my $TgzFile   = "$Directory/tmp$DocumentID-$Version.tgz";
+  my $TgzFile   = "$Directory/tmp$DocumentID-$Version.tar.gz";
   my $ZipFile   = "$Directory/tmp$DocumentID-$Version.zip";
   unlink $TarFile;
   unlink $TgzFile;
