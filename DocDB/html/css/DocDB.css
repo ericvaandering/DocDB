@@ -12,6 +12,11 @@ ul {
   margin-left:  0em;
 }
 
+ol li {
+  padding-left: 0em;
+  margin-left:  2em;
+}
+
 dl {
   padding-top: 0em;
   margin-top:  0em;
@@ -104,17 +109,9 @@ h5 {
 }  
 
 #UpdateButtons input[type="submit"] { /* Probably not best to change all buttons */
-/*  background: #ddd; 
-  font-weight: bold;*/
-/*  border: 1px black solid;
-  padding: 0.25em; */
   font-size: 90%;
 }  
-/*
-#UpdateButtons input[type="submit"] {
-  width: 12em;
-}  
-*/
+
 #Signoffs ul ul {
   padding-left: 1em;
 }
