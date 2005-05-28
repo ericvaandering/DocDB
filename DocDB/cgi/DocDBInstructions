@@ -107,7 +107,7 @@ print <<HTML;
 <h2>Entering or updating a document in the database</h2>
 
 <a name="modtypes">
-<p><strong>What do you want to do?</strong>
+<p><h3>What do you want to do?</h3>
 
 You can add information or documents to the database in five different ways for
 five different situations:
@@ -132,7 +132,7 @@ Select the type of modification appropriate to your situation.
 
 <p>
 <a name="prepare">
-<strong>Preparing your document for the document database</strong>
+<h3>Preparing your document for the document database</h3>
 
 If your document just consists of one file, say a PDF, and it is on the computer
 you are using or accessible by the web, you are prepared. Better yet, you will
@@ -209,7 +209,7 @@ server to files which may disappear.
 </p>
 
 <a name="upload">
-<strong>Upload methods</strong>
+<h3>Upload methods</h3>
  
 Once your document is prepared, you have one more decision to make. How do you
 want to get the file(s) to the document database? You have two choices:
@@ -228,7 +228,7 @@ we hope this will change in the near future.
 </ol>
 
 <a name="filling">
-<strong>Filling in the form</strong>
+<h3>Filling in the form</h3>
 
 Now that you've decided what you want to do and how you want to get any required
 files from your computer into the document database, you've presumably pressed
@@ -279,7 +279,7 @@ as updating the document except for two things. First, you can't supply new
 files. Second, a new version number <i>is not</i> created.<p>
 
 <a name="advanced">
-<strong>Advanced options</strong>
+<h3>Advanced options</h3>
  
 The advanced form provides a few other options that might be useful.<p> 
 
@@ -302,10 +302,10 @@ written  some time ago, you should probably not select this option. By default,
 new documents are entered with the current date and time.<p>
 
 <a name="special">
-<h2>C. Special Cases</h2>
+<h2>Special Cases</h2>
 
 <a name="meeting">
-<strong>Group Meeting Talks</strong>
+<h3>Group Meeting Talks</h3>
 
 A group meeting talk can be entered into the database using the normal entry
 form, just make sure you choose the appropriate meeting date as one of the
@@ -366,7 +366,7 @@ a regular document entry form available from the
 page</a>, making sure to select the right meeting as one of your topics.<p>
 
 <a name="conference">
-<strong>Conference Talks and Proceedings</strong>
+<h3>Conference Talks and Proceedings</h3>
 
 Conference documents are added just like any other document, except for two
 things. First, you probably need to 
@@ -383,16 +383,16 @@ is the topic corresponding to your conference. This way your document is
 associated with the right conference.<p>
 
 <a name="reference">
-<strong>Publications in Refereed Journals</strong>
+<h3>Publications in Refereed Journals</h3>
 
 Below the free-form "Publication Information" field is a place to select a
 journal, volume, and page for your document if it is published. If you need a
 journal added, let the database administrators know.<p>
 
-<h2>D. Preferences and E-mail Notification</h2>
+<h2>Preferences and E-mail Notification</h2>
 
 <a name="prefs">
-<strong>Setting preferences</strong>
+<h3>Setting preferences</h3>
 
 Setting preferences with the Document Database allows you to configure the
 default entry
@@ -413,7 +413,7 @@ Also, make sure your browser will accept cookies, at least for the BTeV web
 server.
 
 <a name="email">
-<strong>Setting e-mail notification</strong>
+<h3>Setting e-mail notification</h3>
 
 By following the link for "E-mail Notification" from the main page, you can
 request to be notified of new documents or documents that change. You are
@@ -424,7 +424,7 @@ choose to be notified immediately if a new document is created about your
 detector and every week about all new documents in the database. 
 
 <a name="signoff">
-<h2>E. Document Signoffs</h2>
+<h2>Document Signoffs</h2>
 
 An optional component of DocDB is to allow some documents to be <q>signed</q>
 by a group of people before becoming <q>approved.</q> People with <b>Personal
@@ -467,10 +467,10 @@ A number of other features are planned and will be added as needed:
 </ul>
 
 <a name="final">
-<h2>F. Final Words</h2>
+<h2>Final Words</h2>
 
 <a name="refer">
-<strong>Referring to Your Document and Files</strong>
+<h3>Referring to Your Document and Files</h3>
 
 To refer to your document use the syntax <b>BTeV-doc-XXXX</b> where XXXX is the document
 number (1 to 6 digits). You can also use the form <b>BTeV-doc-XXXX-vXX</b> to refer to
@@ -513,7 +513,7 @@ the normal version. The document must also be publicly accessible for this to
 work.
 
 <a name="group">
-<strong>Referring to Groups of Documents</strong>
+<h3>Referring to Groups of Documents</h3>
 
 Any simple search can be embedded into a URL for reference from a web page.
 The most useful searches are by topic, keyword, conference, or meeting.
@@ -591,7 +591,7 @@ Examples:
 
 <a name="morehelp">
 
-<strong>Getting More Help</strong>
+<h3>Getting More Help</h3>
 
 You can often get more help when using the entry form or the advanced forms on
 the main page by clicking on the <font color="red">red terms</font> on the
@@ -610,10 +610,10 @@ BTeV-doc-140</a>. See the
 for a chronology of changes to the code.<p>
 
 <a name="philosophy">
-<h2>A. Philosophy of the Document Database</h2>
+<h2>Philosophy of the Document Database</h2>
 
 <a name="archive">
-<strong>Archive vs. Catalog</strong>
+<h3>Archive vs. Catalog</h3>
 
 While our previous document database was only a method for cataloging
 documents, the new database goes one step further; it is also a method for
@@ -628,7 +628,7 @@ of the most common options. Of course, if you have a suggestion on how to make
 things easier, please let us know.
 
 <a name="whatis">
-<strong>What is a document?</strong>
+<h3>What is a document?</h3>
 
 This may sound like a stupid question, but it's not. People tend to think of a
 document as something that consists of writing and can be printed on a piece of
@@ -641,7 +641,7 @@ you'll choose later tells what the document <b>is</b> not what format it's
 stored in.)<p>
 
 <a name="formats">
-<strong>File formats (PowerPoint, Postscript, PDF etc.)</strong>
+<h3>File formats (PowerPoint, Postscript, PDF etc.)</h3>
 
 
 Many of our collaborators view the web from a UNIX platform. This means they
