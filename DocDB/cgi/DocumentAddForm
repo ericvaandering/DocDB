@@ -323,7 +323,7 @@ if ($mode eq "add") {
                Make sure you know all the required information and
                the file is ready for uploading.<p>
                This is a simplified form for adding information to the 
-               database. (<a href=\"$HelpFile#meeting\">Instructions</a>)<br>
+               database.<br/>
                If you need something more complicated, such as multiple authors
                or more upload boxes,<br> please use one of the options from
                the <a href=$ModifyHome>change/add page</a>.\n";
