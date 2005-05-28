@@ -5,7 +5,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -26,6 +26,7 @@ sub SecurityScroll (%) {
   require "SecuritySQL.pm";
   require "Sorts.pm";
   require "Scripts.pm";
+  require "FormElements.pm";
   
   my (%Params) = @_;
   
@@ -70,10 +71,9 @@ sub SecurityScroll (%) {
       
   @GroupIDs = sort numerically @GroupIDs;
 
-  if ($HelpLink) {
-    print "<b><a ";
-    &HelpLink($HelpLink);
-    print "$HelpText:</a></b><br> \n";
+  if ($HelpLink) {  
+    my $BoxTitle = &FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText);
+    print $BoxTitle;
   }
   
   print $query -> scrolling_list(-name => $Name, -values => \@GroupIDs, 
