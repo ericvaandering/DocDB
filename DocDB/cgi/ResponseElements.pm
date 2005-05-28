@@ -66,7 +66,7 @@ sub DebugPage (;$) { # Debugging output
     } 
     print "</dl>\n";
   } elsif ($CheckPoint && $DebugOutput) {
-    print "No Debugging messages: $CheckPoint<br/>\n";
+    print "<div>No Debugging messages: $CheckPoint<br/></div>\n";
   }  
   @DebugStack = ();
   return @DebugStack;
