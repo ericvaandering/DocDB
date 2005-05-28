@@ -120,7 +120,7 @@ page. A small window will pop up to explain what is going on.<p>
 
 If you don't find your answer in the pop-up or 
 if you have additional questions, suggestions, or problems with the document
-database, please send e-mail to the <a href="$DBWebMasterEmail">DocDB
+database, please send e-mail to the <a href="mailto:$DBWebMasterEmail">DocDB
 administrators</a>.<p>
 
 For a more technical document on how the database works, see 
@@ -286,7 +286,7 @@ one of the buttons that lets you add information into the database.<p>
 
 You are now presented with an initially daunting form asking for all kinds of
 information about your document. A lot of the fields are required, but some are
-optional. You can click on any <font color="red">red link</font> to get a quick
+optional. The required fields are indicated. You can click on any <font color="red">red link</font> to get a quick
 help window that tells you what you are being asked for. Instructions for every
 piece of information are not reproduced here, just click on the <font
 color="red">red link</font> if anything is not obvious.<p>
@@ -314,9 +314,10 @@ and optionally:
 <ul>
  <li>Keywords: These can be anything, but check with your group and/or subgroups
      as standards may exist.
- <li>A note explaining any publication information
- <li>A journal reference (you can add more later)
+ <li>Notes and changes: What changed in this version?
  <li>Security settings (blank is the same as public, multiples OK)
+ <li>A journal reference (you can add more later)
+ <li>A note explaining any publication information
 </ul><p>
 
 When <b>updating</b> a document, you can change all the information above.
@@ -343,7 +344,7 @@ from a long list (the default) or by typing the author list into a text box.
 Using the second method, each author is checked against the master list and the
 document will not be placed in the database until every author you've typed in
 has a unique match. You can type in full first names or first initials (middle initials
-are ignored), the matching is <i>reasonably</i> intelligent.<p>
+are ignored); the matching is <i>reasonably</i> intelligent.<p>
 
 <b>Overriding the submission date: </b> Using this option will give you another
 control on the entry form to set the date and time for a document written in
@@ -355,75 +356,21 @@ new documents are entered with the current date and time.<p>
 <h2>Special Cases</h2>
 
 <a name="meeting">
-<h3>Group Meeting Talks</h3>
+<h3>Documents for Events</h3>
 
-A group meeting talk can be entered into the database using the normal entry
-form, just make sure you choose the appropriate meeting date as one of the
+These can be entered into the database using the normal entry
+form, just make sure you choose the appropriate event as one of the
 topics for your talk. <p>
-
-However, to simplify the addition of a meeting talk into the database, a  
-<a href="/cgi-bin/DocDB/DocumentAddForm?special=meeting">simplified
-addition form</a> has been designed. (It's also available from the meetings page.)
-This form pre-selects the nearest meeting, the talk type and eliminates the
-choices for publication information and authors. The author is automatically set
-to the requester. If this is too limiting, you'll have to use the regular entry
-form.<p>
-
-On this reduced form, all the information is required (including an abstract of
-some sort). As always, you can click
-on any <font color="red">red link</font> to get a quick help window that tells
-you what you are being asked for. <p>
-
-Since this will be a lot of people's first experience with adding a document
-into the document database, a little explanation is in order.<p>
-
-<b>Title</b> and <b>Abstract</b> should be obvious. One suggestion: it's better
-if you don't hit "Enter" in the abstract box unless you want to break a line or
-paragraph.<p>
-
-<b>File upload boxes:</b> Click "Browse" and use your operating systems file picker to
-select the files (PPT, PS, PDF, etc.) for your talk. You can leave boxes blank
-if you don't have as many files as you are being asked for, but you must fill in
-the first one. You should probably just leave the box marked "Main" checked.
-Finally, you should enter a short description of each file. This is helpful for
-people looking at the talk. A description like "PDF File" will be
-appreciated. If you need more than 3 input boxes, you should use links from the 
-<a href="/cgi-bin/DocDB/DocumentDatabase">main page</a>.
-(If speakers commonly need additional upload boxes, we can add more to this
-page.)<p>
-
-Remember that we need companion Postscript or PDF for PowerPoint talks.<p>
-
-<b>Requester:</b> Find and select the name of the person giving the talk. (This
-is probably you.)<p>
-
-<b>Security:</b> BTeV should be checked and shouldn't be changed unless you
-really want to make your document public.<p>
-
-<b>Topics:</b> The various sub-topic are broken out into groups based on the
-main topic. You should select at least one topic in addition to the meeting
-(which should be pre-selected). You can select an arbitrary number from one or
-more of the boxes. Just click or Ctrl-click to add topics to the list.<p>
-
-That's it, you are done. Hit "Submit Document." If everything goes well, you'll
-get a message saying that and a preview of what your entry looks like in the
-database. If things don't go well, you will get (we hope) helpful messages
-explaining the problem(s).<p>
-
-If for some reason you need more options that this short form gives you, use 
-a regular document entry form available from the 
-<a href="/DocDB/DocumentDatabase">DocDB main 
-page</a>, making sure to select the right meeting as one of your topics.<p>
 
 <a name="conference">
 <h3>Conference Talks and Proceedings</h3>
 
 Conference documents are added just like any other document, except for two
 things. First, you probably need to 
-<a href="/cgi-bin/DocDB/ConferenceAddForm">add some
+<a href="$ConferenceAddForm">add some
 information</a> into the database about your conference. Do this by following
 the link at the bottom of the 
-<a href="/cgi-bin/DocDB/DocumentDatabase">main page</a>.
+<a href="$ModifyHome">Create or Change</a> page.
 But before you add it, make sure someone else didn't already do it for you. (At
 the bottom of the add form is the list of conferences the database knows
 about).<p>
@@ -435,7 +382,7 @@ associated with the right conference.<p>
 <a name="reference">
 <h3>Publications in Refereed Journals</h3>
 
-Below the free-form "Publication Information" field is a place to select a
+Above the free-form "Publication Information" field is a place to select a
 journal, volume, and page for your document if it is published. If you need a
 journal added, let the database administrators know.<p>
 
@@ -459,13 +406,13 @@ submission as your default file submission method. You can always use the
 <q>Customized Insert/Modify</q> form to over-ride any preferences.<p>
 
 To set your preferences, follow the link from the main Document Database page.
-Also, make sure your browser will accept cookies, at least for the BTeV web
+Also, make sure your browser will accept cookies, at least for the DocDB web
 server.
 
 <a name="email">
 <h3>Setting e-mail notification</h3>
 
-By following the link for "E-mail Notification" from the main page, you can
+By following the link for "Your Account" from the main page, you can
 request to be notified of new documents or documents that change. You are
 notified only for documents on topics that you select. You can choose to be
 notified immediately, once a day, and/or once a week. For each time period, you
@@ -473,66 +420,71 @@ can choose which documents to be notified about. So, for instance, you could
 choose to be notified immediately if a new document is created about your
 detector and every week about all new documents in the database. 
 
-<a name="signoff">
-<h2>Document Signoffs</h2>
+HTML
 
-An optional component of DocDB is to allow some documents to be <q>signed</q>
-by a group of people before becoming <q>approved.</q> People with <b>Personal
-Accounts</b> can sign documents. The list of people needing to approve a
-document is editable by the same people that can edit the document itself. <p>
+if ($UseSignoffs) {
+ print "<a name=\"signoff\"><h2>Document Signoffs</h2>\n";
 
-To <q>freeze</q> a document and its meta-information such that only
-<q>managers</q> can modify it or unfreeze it, make the document editable only
-by the ``Executive'' group.<p>
+ print "An optional component of DocDB is to allow some documents to be <q>signed</q>
+ by a group of people before becoming <q>approved.</q> People with <b>Personal
+ Accounts</b> can sign documents. The list of people needing to approve a
+ document is editable by the same people that can edit the document itself. <p>
+ To <q>freeze</q> a document and its meta-information such that only
+ <q>managers</q> can modify it or unfreeze it, ask the 
+ <a href=\"mailto:$DBWebMasterEmail\">DocDB
+ administrators</a> for the procedure.<p>\n";
 
-When displaying document version(s) in a list, there are obvious indications of
+ print "When displaying document version(s) in a list, there are obvious indications of
 which documents are approved, which are unapproved, and which are obsolete
 (even if they were approved at some time). All information about who <q>signed</q>'
-each version of each document is kept.<p>
+each version of each document is kept.<p>\n";
 
-DocDB contains the ability to allow any number of approval <q>topologies.</q> 
+ print "DocDB contains the ability to allow any number of approval <q>topologies.</q> 
 For instance, person A or person B might be allowed to sign at the first step,
 followed by person C at the second step. Or, person A and person B may have to
 sign (but in parallel) before person C can sign. However, the current code only
 allows one topology (an ordered list). When a document under control is
 updated, the signoff list structure is preserved, but the approvals themselves
-are cleared.<p>
+are cleared.<p>\n";
 
-The signoff system provides a number of additional convieniences:
+ print "The signoff system provides a number of additional convieniences:
 <ul>
   <li>Email notifications to signatories when a document is ready for their
   signature</li>
   <li>A way to list all controlled documents</li>
-</ul>
+  <li>List of all documents a person is a signatory (actual or requested) on</li>
+</ul>\n";
 
-A number of other features are planned and will be added as needed:
+ print "A number of other features are planned and will be added as needed:
 <ul>
   <li>Email reports of outstanding signatures needed (to desired signatory and
     other signatories of documents)</li>
-  <li>List of all documents a person is a signatory (actual or requested) on</li>
   <li>More complicated approval topolgies (OR's, parallel paths, etc.)</li>
   <li>Reminders if a document goes unsigned for a while</li>
   <li>Restricting the list of people who may sign documents to a sub-set of those with
   personal accounts</li>
-</ul>
+</ul>\n";
+}
+
+print <<HTML;
 
 <a name="final">
-<h2>Final Words</h2>
+<h2>Notes for Advanced Users</h2>
 
 <a name="refer">
 <h3>Referring to Your Document and Files</h3>
 
-To refer to your document use the syntax <b>BTeV-doc-XXXX</b> where XXXX is the document
-number (1 to 6 digits). You can also use the form <b>BTeV-doc-XXXX-vXX</b> to refer to
-a specific version of a document. The <b>BTeV-doc-XXXX</b> form refers to the
+To refer to your document use the syntax <b>$ShortProject-doc-XXXX</b> where XXXX is the document
+number (1 to 6 digits). You can also use the form <b>$ShortProject-doc-XXXX-vXX</b> to refer to
+a specific version of a document. The <b>$ShortProject-doc-XXXX</b> form refers to the
 latest version.<p>
 
 <h4>Linking to your document</h4>
 
 You can also construct URL's that link to your document. The URL is of the form
-<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=XXXX&amp;version=XX</tt>,
+<tt>$ShowDocument?docid=XXXX&amp;version=XX</tt>,
 where the X's represent <i>just the numbers</i> of the document and version.
-(I.e. leave off the ``BTeV-doc-'' and ``-v.'') As above, you can leave off the
+(I.e. leave off the ``$ShortProject-doc-'' and ``-v.'') As above, you can leave off the
 <tt>&amp;version=XX</tt> to refer to the latest version.<p>
 
 <b>Using "as of" instead of version number:</b>: Instead of specifying a version
@@ -544,12 +496,12 @@ version of this document current as of December 25, 2002.
 Each file for each revision has a static URL which can easily be found. However,
 often times linking to a file that may be updated is what is wanted. For that
 case, there is a script interface which fetches files. The URL is 
-<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/RetrieveFile?docid=XXXX&amp;version=XX&amp;filename=xxxxxx</tt>.
+<tt>$RetrieveFile?docid=XXXX&amp;version=XX&amp;filename=xxxxxx</tt>.
 The version number can be left off to get files from the latest version number.
 The filename can also be left off. If there is only one file marked <q>Main</q>
 that file will be retrieved. 
 An alternate form is
-<tt>http://www-btev.fnal.gov/cgi-bin/DocDB/RetrieveFile?docid=XXXX&amp;version=XX&amp;extension=xxx</tt>,
+<tt>$RetrieveFile?docid=XXXX&amp;version=XX&amp;extension=xxx</tt>,
 so for instance you can specify PDF as the extension to retrieve the PDF file
 for a document. As above, <tt>version</tt> can be left off or <tt>asof</tt> can
 be specified.
@@ -557,10 +509,8 @@ If your request matches no files or more than one file, the full document
 information will be shown and the user will have to choose the correct file.<p>
 
 For both of these actions, if you want the result to be publicly accessible,
-put "public" between "cgi-bin" and "DocDB".  I.e. use
-<tt>http://www-btev.fnal.gov/cgi-bin/public/DocDB/ShowDocument</tt> instead of
-the normal version. The document must also be publicly accessible for this to
-work.
+use the URLs that point to the publicly viewable database. The document must
+also be publicly accessible for this to work.
 
 <a name="group">
 <h3>Referring to Groups of Documents</h3>
