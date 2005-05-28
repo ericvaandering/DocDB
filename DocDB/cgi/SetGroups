@@ -24,7 +24,7 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
-use CGI;
+use CGI qw(-nosticky);
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -70,8 +70,8 @@ print "<strong>You are limited to the groups you selected.</strong>
           If your  groups havn't been properly set, make sure your web
           browser is  accepting cookies.";
 print "</p>";
-print "<p><form>\n";
+print "<p><form><div>\n";
 print " <input type=\"button\" value=\"Close Window and Reload\" onClick=\"opener.location.reload(1); window.close()\">\n";
-print "</form></p>";
+print "</div></form></p>";
 
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName,-nobody => $TRUE);
