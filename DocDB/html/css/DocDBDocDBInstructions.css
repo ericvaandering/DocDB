@@ -1,0 +1,16 @@
+/* General style settings */
+
+#LeftColumn3Col {
+  width: 30%;
+  padding-left: 1.5em;
+  padding-top: 0.5em;
+  margin-right: 1em;
+}
+
+#LeftColumn3Col ul {
+  padding-left: 1em;
+}
+
+#MainColumn3Col h2 {
+  text-align: left;
+}
