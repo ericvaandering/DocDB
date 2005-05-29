@@ -1,4 +1,5 @@
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -14,6 +15,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 
 sub HelpPopupScript {
   print "<script language=\"JavaScript\" type=\"text/javascript\">\n";
@@ -48,6 +50,22 @@ sub TalkNotePopupScript {
 sub TalkNoteLink {
   my ($SessionTalkID) = @_;
   return "<a href=\"Javascript:notepopupwindow(\'$ShowTalkNote?sessiontalkid=$SessionTalkID\');\">Note</a>";
+}
+
+sub GroupLimitPopupScript {
+  print "<script language=\"JavaScript\" type=\"text/javascript\">\n";
+  print "<!-- \n";
+
+  print "function grouplimitpopupwindow(page){\n";
+  print "window.open(page,\"grouplimit\",\"width=450,height=350,menubar=0,resizable=1,scrollbars=1,status=0,titlebar=0,toolbar=0,left=0,top=0\");\n";
+  print "}\n";
+
+  print "//-->\n";
+  print "</script>\n";
+}
+
+sub GroupLimitLink {
+  return "<a href=\"Javascript:grouplimitpopupwindow(\'$SelectGroups\');\">Limit Groups</a>";
 }
 
 sub ConfirmTalkPopupScript {

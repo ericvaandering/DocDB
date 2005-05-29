@@ -1039,4 +1039,15 @@ or may not be the same as the web username and password.
   </text>
  </entry>
  
+ <entry>
+  <key>limitgroups</key>
+  <title>Limit Groups</title>
+  <text>
+   Select which groups you would like to be considered a member of. 
+   A cookie will be set for the duration you select to limit your membership 
+   to the groups you specify. This can be useful to temporarily remove 
+   administration permissions.
+  </text>
+ </entry>
+ 
 </helpfile>

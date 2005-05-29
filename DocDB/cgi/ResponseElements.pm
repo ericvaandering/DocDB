@@ -7,7 +7,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -66,7 +66,7 @@ sub DebugPage (;$) { # Debugging output
     } 
     print "</dl>\n";
   } elsif ($CheckPoint && $DebugOutput) {
-    print "No Debugging messages: $CheckPoint<br/>\n";
+    print "<div>No Debugging messages: $CheckPoint<br/></div>\n";
   }  
   @DebugStack = ();
   return @DebugStack;

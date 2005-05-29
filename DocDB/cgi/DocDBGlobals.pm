@@ -26,8 +26,11 @@
 
 # Constants
 
-use constant TRUE  => 1;
+use constant TRUE  => 1; #Doesn't span other files.
 use constant FALSE => 0;
+
+$TRUE  = 1;
+$FALSE = 0;
 
 # Advertising link for DocDB
 
@@ -77,7 +80,9 @@ $remote_user          =~ tr/[A-Z]/[a-z]/;
 
 # Preferences
 
-$Preferences{Security}{Certificates}{UseCNOnly} = FALSE; # Use CN instead of E (E-mail) to distinguish
+$Preferences{Security}{Certificates}{UseCNOnly}        = FALSE; # Use CN instead of E (E-mail) to distinguish
+$Preferences{Security}{Certificates}{PopupLimitCookie} = FALSE; # Unused, encourage users to limit which groups they belong to with cookies
+
 $Preferences{Options}{DynamicFullList}{Private} = FALSE; # Generate Full document list by dynamically for private db
 $Preferences{Options}{DynamicFullList}{Public}  = FALSE; # Generate Full document list by dynamically for public db
 
@@ -164,12 +169,12 @@ $TopicAdd              = $cgi_root."TopicAdd";
 $AuthorAddForm         = $cgi_root."AuthorAddForm";
 $AuthorAdd             = $cgi_root."AuthorAdd";
 
-$ListDocuments         = $cgi_root."ListDocuments";
-$ListByAuthor          = $cgi_root."ListByAuthor";
-$ListByTopic           = $cgi_root."ListByTopic";
-$ListByType            = $cgi_root."ListByType";
+$ListDocuments         = $cgi_root."ListDocuments"; # FIXME: Remove later
+$ListByAuthor          = $cgi_root."ListByAuthor";  # FIXME: Remove later
+$ListByTopic           = $cgi_root."ListByTopic";   # FIXME: Remove later
+$ListByType            = $cgi_root."ListByType";    # FIXME: Remove later
 $ListManagedDocuments  = $cgi_root."ListManagedDocuments";
-$LastModified          = $cgi_root."LastModified";
+$LastModified          = $cgi_root."LastModified";  # FIXME: Remove later
 
 $ListAuthors           = $cgi_root."ListAuthors";
 $ListTopics            = $cgi_root."ListTopics";
@@ -217,6 +222,9 @@ $Statistics            = $cgi_root."Statistics";
 
 $SelectPrefs           = $cgi_root."SelectPrefs";
 $SetPrefs              = $cgi_root."SetPrefs";
+
+$SelectGroups          = $cgi_root."SelectGroups";
+$SetGroups             = $cgi_root."SetGroups";
 
 $EmailLogin            = $cgi_root."EmailLogin";
 $SelectEmailPrefs      = $cgi_root."SelectEmailPrefs";

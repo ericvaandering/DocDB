@@ -161,6 +161,10 @@ li.Even, tr.Even {
   padding: 5px 5px 5px 5px;
 }  
 
+#SubmitCell {
+  text-align: center;
+}  
+
 .Highlight {
   color: blue;
 }  

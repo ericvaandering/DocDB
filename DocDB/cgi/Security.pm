@@ -5,7 +5,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -215,21 +215,35 @@ sub LastAccess { # Highest version user can access (with current security)
   return $Version;    
 }
 
-sub FindUsersGroups () {
+sub FindUsersGroups (;%) {
+  require "Utilities.pm";
+  require "Cookies.pm";
+
+  my (%Params) = @_;
+  my $IgnoreCookie = $Params{-ignorecookie} || $FALSE;
+
   my @UsersGroupIDs  = ();
   if ($UserValidation eq "certificate") {
     require "CertificateUtilities.pm";
     @UsersGroupIDs = &FetchSecurityGroupsByCert();
   } elsif ($UserValidation eq "basic-user") {
-# Coming (maybe)
+    # Coming (maybe)
   } else {
     @UsersGroupIDs = (&FetchSecurityGroupByName ($remote_user));
   }
-  
+
   unless (@UsersGroupIDs) {
     $Public = 1;
   }  
   
+  @UsersGroupIDs = &Unique(@UsersGroupIDs);
+  unless ($IgnoreCookie) {
+    my @LimitedGroupIDs = &GetGroupsCookie();
+    if (@LimitedGroupIDs) {
+      @UsersGroupIDs = &Union(\@LimitedGroupIDs,@UsersGroupIDs);
+    }
+  }  
+
   return @UsersGroupIDs;
 }
 

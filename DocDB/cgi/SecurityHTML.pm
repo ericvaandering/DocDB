@@ -5,7 +5,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -26,17 +26,21 @@ sub SecurityScroll (%) {
   require "SecuritySQL.pm";
   require "Sorts.pm";
   require "Scripts.pm";
+  require "FormElements.pm";
   
   my (%Params) = @_;
   
-  my $AddPublic =   $Params{-addpublic} || 0;
+  my $AddPublic =   $Params{-addpublic} || $FALSE;
   my $HelpLink  =   $Params{-helplink}  || "";
   my $HelpText  =   $Params{-helptext}  || "Groups";
   my $Multiple  =   $Params{-multiple}; 
   my $Name      =   $Params{-name}      || "groups";
   my $Size      =   $Params{-size}      || 10;
-  my $Disabled  =   $Params{-disabled}  || "0";
+  my $Disabled  =   $Params{-disabled}  || $FALSE;
+  my @GroupIDs  = @{$Params{-groupids}};
   my @Default   = @{$Params{-default}};
+
+  #TODO: Don't we do this with arrays and join?
 
   my $Booleans = "";
   
@@ -49,7 +53,10 @@ sub SecurityScroll (%) {
     
   &GetSecurityGroups;
   
-  my @GroupIDs = keys %SecurityGroups;
+  unless (@GroupIDs) {
+    @GroupIDs = keys %SecurityGroups;
+  }
+    
   my %GroupLabels = ();
 
   foreach my $GroupID (@GroupIDs) {
@@ -64,10 +71,9 @@ sub SecurityScroll (%) {
       
   @GroupIDs = sort numerically @GroupIDs;
 
-  if ($HelpLink) {
-    print "<b><a ";
-    &HelpLink($HelpLink);
-    print "$HelpText:</a></b><br> \n";
+  if ($HelpLink) {  
+    my $BoxTitle = &FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText);
+    print $BoxTitle;
   }
   
   print $query -> scrolling_list(-name => $Name, -values => \@GroupIDs, 

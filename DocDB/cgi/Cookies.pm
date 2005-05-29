@@ -5,7 +5,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -38,6 +38,15 @@ sub GetPrefsCookie {
   $UserPreferences{AuthorMode}   = $AuthorModePref  ;
   $UserPreferences{DateOverride} = $DateOverridePref;
 }
+
+sub GetGroupsCookie {
+  my @GroupIDs = ();
+  my $GroupIDs = $query -> cookie('groupids');
+  if ($GroupIDs) {
+    @GroupIDs = split /,/,$GroupIDs;
+  }  
+  return @GroupIDs;
+}  
 
 1;
  
