@@ -84,7 +84,7 @@ print "</div>\n";  # Header3Col
 
 print "<div id=\"LeftColumn3Col\">\n";
 unless ($Public) {
-  print "<p><strong><a href=\"$HelpFile\">Instructions</a></strong></p>\n";
+  print "<p><strong><a href=\"$DocDBInstructions\">Instructions</a></strong></p>\n";
   if ($PersonalAccountLink) {
     print "<p><strong>$PersonalAccountLink</strong></p>\n";
   }  

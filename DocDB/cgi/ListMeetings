@@ -28,19 +28,8 @@ print $query->header;
 
 print "<h3 class=\"SectionHeading\">Useful links:</h3>\n";
 print "<ul>\n";
-if ($Project eq "BTeV") {
-  print "<li><a href=\"http://www-btev.fnal.gov/public/hep/general/calendar/index.shtml\">Upcoming Meetings</a>\n";
-}
 print "<li><a href=\"$DocumentAddForm?special=meeting\">Submit a talk</a> for
        the upcoming or just-past  meeting\n";
-
-if ($Project eq "BTeV") {
-  print "<li>
-         <a href=\"$HelpFile#meeting\">Instructions</a> for submitting talks and
-         <a href=\"$HelpFile#formats\">pointers</a> on document formats\n";
-  print "<li> <a href=\"http://www-btev.fnal.gov/atwork/general/userinfo/meet.shtml\">Visiting Fermilab</a> for a Collaboration Meeting\n";
-}
-
 print "</ul>\n";
 
 print "<h3 class=\"SectionHeading\">Meetings in the document database:</h3>\n";
