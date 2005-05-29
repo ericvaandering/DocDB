@@ -71,8 +71,7 @@ print <<TOC;
  </ul>
  <li><a href="#special">Special Cases</a></li>
  <ul>
-  <li><a href="#meeting">Group meeting talks</a></li>
-  <li><a href="#conference">Conference talks and proceedings</a></li>
+  <li><a href="#meeting">Documents for Events</a></li>
   <li><a href="#reference">Publications in refereed journals</a></li>
  </ul>
  <li><a href="#prefs">Preferences and E-mail Notification</a></li>
@@ -80,7 +79,11 @@ print <<TOC;
   <li><a href="#prefs">Setting preferences</a></li>
   <li><a href="#email">Setting e-mail notification</a></li>
  </ul>
- <li><a href="#signoff">Document Signoffs</a></li>
+TOC
+if ($UseSignoffs) {
+ print "<li><a href=\"#signoff\">Document Signoffs</a></li>\n";
+} 
+print <<TOC;
  <li><a href="#final">Final Words</a></li>
  <ul>
   <li><a href="#refer">Referring to your document and its files</a></li>
@@ -106,7 +109,7 @@ print <<HTML;
 <a name="entering">
 <h2>Entering or updating a document in the database</h2>
 
-Placing a document into DocDB will be most users first experience with the program. 
+Creating a document will be most users first experience with DocDB. 
 Read the next few sections to help you get an idea of what you can do and how 
 to proceed. Follow the link to "Create or change documents or other information" 
 to begin. 
@@ -118,10 +121,9 @@ to begin.
 You can often get more help when using DocDB by clicking on <span class="Help">red terms</span> on the
 page. A small window will pop up to explain what is going on.<p>
 
-If you don't find your answer in the pop-up or 
-if you have additional questions, suggestions, or problems with the document
-database, please send e-mail to the <a href="mailto:$DBWebMasterEmail">DocDB
-administrators</a>.<p>
+If you don't find your answer in the pop-up or  if you have additional
+questions or problems with the DocDB, please send e-mail to the <a
+href="mailto:$DBWebMasterEmail">DocDB administrators</a>.<p>
 
 For a more technical document on how the database works, see 
 <a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=140">
@@ -133,17 +135,17 @@ BTeV-doc-140</a>.
 You can add information or documents to the database in five different ways for
 five different situations:
 <ol>
-<li><b>Reserve a document #: </b>You want a number for a document
+<li><strong>Reserve a document #: </strong>You want a number for a document
 you are going to write, but don't have a draft of the document.</li>
-<li><b>New document: </b>You have a new document ready to be put into the
+<li><strong>New document: </strong>You have a new document ready to be put into the
 database. This document has not been entered or reserved before.</li>
-<li><b>Update document: </b>You want to upload a new version of a document that is already in the
+<li><strong>Update document: </strong>You want to upload a new version of a document that is already in the
 database. You will also be able to change any of the information in the
 database about the document. You must supply a document number to modify.</li>
-<li><b>Update database information: </b>The document hasn't changed, but the
+<li><strong>Update database information: </strong>The document hasn't changed, but the
 information about it has. For example, it's now published so you want to add
 that information. You must supply a document number to modify.</li>
-<li><b>Add files to document:</b> Perhaps you forgot a file initially, or maybe
+<li><strong>Add files to document:</strong> Perhaps you forgot a file initially, or maybe
 now you have a PDF file to go with the PowerPoint file already
 present. You can add these files to an existing version of a document. If the
 content has changed at all, you should use the Update, not the Add File, option.</li>
@@ -168,10 +170,8 @@ an archive (like a .tar or .zip file) and upload that? In either case, you might
 have to use the advanced form in the middle of the "Create or Change" web page.
 (The short cuts allow you to upload multiple files if you don't want to choose
 any other advanced options.)
-<dl>
-<dt>Multiple file uploads</dt>
-
-<dd><p>
+<p>
+<strong>Multiple file uploads:</strong>
 When you upload things this way, it might be a little bit more
 work, but what the end user will see is usually clearer. To upload your file
 this way, select "Multiple files" under "Upload Type" and type the number of
@@ -186,16 +186,14 @@ and supporting files. Main files are typically the ones you want people to look
 at. As an example, the top file of several linked HTML files is a "Main" file,
 the others are "Other" files. By default, all files are "Main" files. To mark
 additional files as "Other" un-check the appropriate boxes.
-</p></dd>
+</p>
 
 HTML
 
 if ($Preferences{Options}{AlwaysRetrieveFile} || $UserValidation eq "certificate") {
 
 print <<HTML;
-<dt>Note on HTML uploads</dt>
-
-<dd><p>
+<p><strong>Note on HTML uploads:</strong>
 Remember that the purpose of the document database is to store your
 <i>complete</i> document. If you have a number of HTML pages all linked
 together, things may appear to "work" just fine if you only upload the first
@@ -204,7 +202,7 @@ don't do this. Upload all the files so that they <i>all</i> reside on the
 server, including images. To
 make the links in your HTML work on the server, use  RetrieveFile links as described
 in the <a href="#refer">Referring to your document and its files</a> section.
-</dd>
+</p>
 HTML
 
 } else {
@@ -212,9 +210,7 @@ HTML
   print <<HTML;
 
 
-<dt>Archive uploads</dt>
-
-<dd><p>
+<p><strong>Archive uploads:</strong>
 Another way to upload multiple files is to place all the files into an
 archive. Currently accepted formats are .tar (Unix tape archives), .tar.gz/.tgz
 (compressed .tar files), and .zip (Windows ZIP files). To use this option,
@@ -229,9 +225,7 @@ When uploading via archive mode, the Main file will be marked as such and the
 entire archive will be marked as an "Other" file.
 </p>
 
-<dt>Note on HTML uploads</dt>
-
-<dd><p>
+<p><strong>Note on HTML uploads:</strong>
 Remember that the purpose of the document database is to store your
 <i>complete</i> document. If you have a number of HTML pages all linked
 together, things may appear to "work" just fine if you only upload the first
@@ -248,15 +242,12 @@ rather than
 </pre>
 since in the second form, your document will still point outside of the database
 server to files which may disappear.
-</p></dd>
+</p>
 HTML
 
 }
 
 print <<HTML;
-
-</dl>
-</p>
 
 <a name="upload">
 <h3>Upload methods</h3>
@@ -298,35 +289,36 @@ selections, others just click to select and deselect.<p>
 
 When <b>reserving</b> a document, you must supply:
 <ul>
- <li>A title 
- <li>A requester (who is requesting the document?)
- <li>A document type (talk, note, etc.)
+ <li>A title </li> 
+ <li>A requester (who is requesting the document?)</li> 
+ <li>A document type (talk, note, etc.)</li> 
 </ul><p>
 
 When <b>adding</b> a new document, you must supply all of the above plus:
 <ul>
- <li>An abstract
- <li>Authors (one required, multiples OK)
- <li>Topics (one required, multiples OK)
- <li>At least one file 
+ <li>An abstract</li> 
+ <li>Authors (one required, multiples OK)</li> 
+ <li>Topics (one required, multiples OK)</li> 
+ <li>At least one file</li> 
 </ul> 
 and optionally:
 <ul>
  <li>Keywords: These can be anything, but check with your group and/or subgroups
-     as standards may exist.
- <li>Notes and changes: What changed in this version?
- <li>Security settings (blank is the same as public, multiples OK)
- <li>A journal reference (you can add more later)
- <li>A note explaining any publication information
+     as standards may exist.</li> 
+ <li>Meetings, conferences, or other events</li>    
+ <li>Notes and changes: What changed in this version?</li> 
+ <li>Security settings (blank is the same as public, multiples OK)</li> 
+ <li>A journal reference (you can add more later)</li> 
+ <li>A note explaining any publication information</li> 
 </ul><p>
 
 When <b>updating</b> a document, you can change all the information above.
 However, all the forms should be pre-filled for you with the information from
-the previous version. You will have to supply <i>all</i> the files you want to
-be in the new version, though.<p>
+the previous version. You will either have to supply <i>all</i> the files you want to
+be in the new version, or choose to have unchanged files copied to the next version.<p>
 
-Finally, <b>updating the database information</b> about the document is the same
-as updating the document except for two things. First, you can't supply new
+Finally, <b>updating the database information</b> about the document is similar to
+updating the document except for two things. First, you can't supply new
 files. Second, a new version number <i>is not</i> created.<p>
 
 <a name="advanced">
@@ -336,7 +328,7 @@ The advanced form provides a few other options that might be useful.<p>
 
 <b>Topic Selection: </b>
 You can either select the subtopic(s) for your document from a number of
-shorter lists split up by topic (the current default) or from one long
+shorter lists split up by topic (the default) or from one long
 list.<p> 
 
 <b>Author Selection: </b> You can either select the author(s) for your document
@@ -428,7 +420,8 @@ if ($UseSignoffs) {
  print "An optional component of DocDB is to allow some documents to be <q>signed</q>
  by a group of people before becoming <q>approved.</q> People with <b>Personal
  Accounts</b> can sign documents. The list of people needing to approve a
- document is editable by the same people that can edit the document itself. <p>
+ document is editable by the same groups that can edit the document itself. 
+ <p>
  To <q>freeze</q> a document and its meta-information such that only
  <q>managers</q> can modify it or unfreeze it, ask the 
  <a href=\"mailto:$DBWebMasterEmail\">DocDB
@@ -441,8 +434,8 @@ each version of each document is kept.<p>\n";
 
  print "DocDB contains the ability to allow any number of approval <q>topologies.</q> 
 For instance, person A or person B might be allowed to sign at the first step,
-followed by person C at the second step. Or, person A and person B may have to
-sign (but in parallel) before person C can sign. However, the current code only
+followed by person C at the second step. Or, person A and person B may both have to
+sign (but in parallel) before person C can sign. However, the current DocDB code only
 allows one topology (an ordered list). When a document under control is
 updated, the signoff list structure is preserved, but the approvals themselves
 are cleared.<p>\n";
@@ -493,9 +486,7 @@ version of this document current as of December 25, 2002.
 
 <h4>Linking to files in a document</h4>
 
-Each file for each revision has a static URL which can easily be found. However,
-often times linking to a file that may be updated is what is wanted. For that
-case, there is a script interface which fetches files. The URL is 
+There is a script interface which fetches files from DocDB. The URL is 
 <tt>$RetrieveFile?docid=XXXX&amp;version=XX&amp;filename=xxxxxx</tt>.
 The version number can be left off to get files from the latest version number.
 The filename can also be left off. If there is only one file marked <q>Main</q>
@@ -516,7 +507,7 @@ also be publicly accessible for this to work.
 <h3>Referring to Groups of Documents</h3>
 
 Any simple search can be embedded into a URL for reference from a web page.
-The most useful searches are by topic, keyword, conference, or meeting.
+The most useful searches are by author, topic, keyword, or events.
 <p>
 To link to a topic, you must first find out the topic ID number. 
 The easiest way to do this is to simply click on that topic from the 
@@ -552,25 +543,27 @@ be absolutely sure.<p>
 
 Here is a complete list of search parameters that can be specified:
 <ul>
- <li>Title: <tt>titlesearch</tt> (text) and <tt>titlesearchmode</tt> (see search string modes)
- <li>Abstract: <tt>abstractsearch</tt> (text) and <tt>abstractsearchmode</tt> (see search string modes)
- <li>Keywords: <tt>keywordsearch</tt> (text) and <tt>keywordsearchmode</tt> (see search string modes)
- <li>Publication info: <tt>pubinfosearch</tt> (text) and <tt>pubinfosearchmode</tt> (see search string modes)
+ <li>Title: <tt>titlesearch</tt> (text) and <tt>titlesearchmode</tt> (see search string modes)</li>
+ <li>Abstract: <tt>abstractsearch</tt> (text) and <tt>abstractsearchmode</tt> (see search string modes)</li>
+ <li>Keywords: <tt>keywordsearch</tt> (text) and <tt>keywordsearchmode</tt> (see search string modes)</li>
+ <li>Notes and changes: <tt>revisionnotesearch</tt> (text) and <tt>revisionnotesearchmode</tt> (see search string modes)</li>
+ <li>Publication info: <tt>pubinfosearch</tt> (text) and <tt>pubinfosearchmode</tt> (see search string modes)</li>
  <li>File names: <tt>filesearch</tt> (text) and <tt>filesearchmode</tt> (see search string modes). (Can be used to search
- for file names or extensions.)
- <li>File descriptions: <tt>filedescsearch</tt> (text) and <tt>filedescsearchmode</tt> (see search string modes). 
- <li>Topics: <tt>minortopic</tt> (numbers found with List Topics)
- <li>Requester and authors: <tt>requestersearch</tt> and <tt>authors</tt> (numbers found with List Authors)
- <li>Document type: <tt>doctypemulti</tt> (numbers, look at the HTML source for SearchForm to find) 
- <li>Modification date ranges: Look at the HTML source for SearchForm to find the parameters and values
+ for file names or extensions.)</li>
+ <li>File descriptions: <tt>filedescsearch</tt> (text) and <tt>filedescsearchmode</tt> (see search string modes). </li>
+ <li>Topics: <tt>minortopic</tt> (numbers found with List Topics)</li>
+ <li>Requester and authors: <tt>requestersearch</tt> and <tt>authors</tt> (numbers found with List Authors)</li>
+ <li>Document type: <tt>doctypemulti</tt> (numbers, look at the HTML source for <a href="$SearchForm">SearchForm</a> to find) </li>
+ <li>Modification date ranges: Look at the HTML source for <a href="$SearchForm">SearchForm</a> to find the parameters and values</li>
 </ul>
 
 For titles, abstracts, keywords, publication info, file names and file descriptions, you should specify the
 <q>searchmode</q> also. Currently there are two modes:
 <ul>
  <li><tt>searchmode=anysub</tt> case-insensitive, word must be found as a substring (as opposed to a full word), and if
- more than one are specified, <i>only one</i> word must be found
- <li><tt>searchmode=allsub</tt> as above, but <i>all</i> words must be found
+ more than one are specified, <i>only one</i> word must be found</li>
+ <li><tt>searchmode=allsub</tt> as above, but <i>all</i> words must be found</li>
+ <li><tt>searchmode=anyword</tt> or <tt>allword</tt> like above, but the word must be found surrounded by spaces</li>
 </ul> 
 More modes can easily be added if required. To search for more than one word, place the code for a space (%20) between
 them.  <p>
@@ -580,7 +573,7 @@ examples).<p>
 
 Examples:
 <ul>
- <li>Search for documents a keyword and an author:
+ <li>Search for documents by a keyword and an author:
   <tt>$Search?keywordsearchmode=anysub&outerlogic=AND&keywordsearch=test&authors=1</tt></li>
  <li>Search for documents by two authors:
   <tt>$Search?authors=1&authors=2&innerlogic=AND</tt></li>
