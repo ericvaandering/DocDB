@@ -35,7 +35,6 @@ require "ProjectMessages.pm";
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 #&GetSecurityGroups;
-#$Preferences{Options}{AlwaysRetrieveFile} = 1;
 # %params = $query -> Vars;  # No parameters (yet?) 
 
 print $query->header;
@@ -292,7 +291,7 @@ browser; some browsers require holding Ctrl and clicking to make multiple
 selections, others just click to select and deselect.</p>
 
 <p>
-When <b>reserving</b> a document, you must supply:</p>
+When <strong>reserving</strong> a document, you must supply:</p>
 <ul>
  <li>A title </li> 
  <li>A requester (who is requesting the document?)</li> 
@@ -300,7 +299,7 @@ When <b>reserving</b> a document, you must supply:</p>
 </ul>
 
 <p>
-When <b>adding</b> a new document, you must supply all of the above plus:</p>
+When <strong>adding</strong> a new document, you must supply all of the above plus:</p>
 <ul>
  <li>An abstract</li> 
  <li>Authors (one required, multiples OK)</li> 
@@ -319,13 +318,13 @@ When <b>adding</b> a new document, you must supply all of the above plus:</p>
 </ul>
 
 <p>
-When <b>updating</b> a document, you can change all the information above.
+When <strong>updating</strong> a document, you can change all the information above.
 However, all the forms should be pre-filled for you with the information from
 the previous version. You will either have to supply <i>all</i> the files you want to
 be in the new version, or choose to have unchanged files copied to the next version.</p>
 
 <p>
-Finally, <b>updating the database information</b> about the document is similar to
+Finally, <strong>updating the database information</strong> about the document is similar to
 updating the document except for two things. First, you can't supply new
 files. Second, a new version number <i>is not</i> created.</p>
 
@@ -336,20 +335,20 @@ files. Second, a new version number <i>is not</i> created.</p>
 The advanced form provides a few other options that might be useful.</p> 
 
 <p>
-<b>Topic Selection: </b>
+<strong>Topic Selection: </strong>
 You can either select the subtopic(s) for your document from a number of
 shorter lists split up by topic (the default) or from one long
 list.</p> 
 
 <p>
-<b>Author Selection: </b> You can either select the author(s) for your document
+<strong>Author Selection: </strong> You can either select the author(s) for your document
 from a long list (the default) or by typing the author list into a text box.
 Using the second method, each author is checked against the master list and the
 document will not be placed in the database until every author you've typed in
 has a unique match. You can type in full first names or first initials (middle initials
 are ignored); the matching is <i>reasonably</i> intelligent.</p>
 
-<p><b>Overriding the submission date: </b> Using this option will give you another
+<p><strong>Overriding the submission date: </strong> Using this option will give you another
 control on the entry form to set the date and time for a document written in
 the past. Unless you are submitting a document from the old database or one
 written  some time ago, you should probably not select this option. By default,
@@ -429,8 +428,8 @@ if ($UseSignoffs) {
  print "<a name=\"signoff\" /><h1>Document Signoffs</h1>\n";
 
  print "<p>An optional component of DocDB is to allow some documents to be <q>signed</q>
- by a group of people before becoming <q>approved.</q> People with <b>Personal
- Accounts</b> can sign documents. The list of people needing to approve a
+ by a group of people before becoming <q>approved.</q> People with <strong>Personal
+ Accounts</strong> can sign documents. The list of people needing to approve a
  document is editable by the same groups that can edit the document itself.</p> 
  <p>
  To <q>freeze</q> a document and its meta-information such that only
@@ -478,9 +477,9 @@ print <<HTML;
 <a name="refer" />
 <h2>Referring to Your Document and Files</h2>
 
-<p>To refer to your document use the syntax <b>$ShortProject-doc-XXXX</b> where XXXX is the document
-number (1 to 6 digits). You can also use the form <b>$ShortProject-doc-XXXX-vXX</b> to refer to
-a specific version of a document. The <b>$ShortProject-doc-XXXX</b> form refers to the
+<p>To refer to your document use the syntax <strong>$ShortProject-doc-XXXX</strong> where XXXX is the document
+number (1 to 6 digits). You can also use the form <strong>$ShortProject-doc-XXXX-vXX</strong> to refer to
+a specific version of a document. The <strong>$ShortProject-doc-XXXX</strong> form refers to the
 latest version.</p>
 
 <h4>Linking to your document</h4>
@@ -491,7 +490,7 @@ where the X's represent <i>just the numbers</i> of the document and version.
 (I.e. leave off the ``$ShortProject-doc-'' and ``-v.'') As above, you can leave off the
 <tt>&amp;version=XX</tt> to refer to the latest version.</p>
 
-<p><b>Using "as of" instead of version number:</b>: Instead of specifying a version
+<p><strong>Using "as of" instead of version number:</strong>: Instead of specifying a version
 number, you can specify <tt>&amp;asof=2002-12-25</tt> which will give you the
 version of this document current as of December 25, 2002. </p>
 
@@ -627,7 +626,7 @@ to share with others. So, a video can be a document.  A
 picture is a document. A calculation on the back of an
 envelope and scanned is a document. (And it's probably a "Note," not a
 "Figure." The document type you  choose tells people what the document
-<b>is</b> not what format it's stored in.)</p>
+<strong>is</strong> not what format it's stored in.)</p>
 
 <a name="formats" />
 <h2>File formats (PowerPoint, Postscript, PDF etc.)</h2>
