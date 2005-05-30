@@ -56,45 +56,45 @@ print "<div id=\"LeftColumn3Col\">\n";
 print <<TOC;
 <h2>Contents</h2>
 <ul>
- <li><a href="#entering">Entering or updating a document in the database</a></li>
+ <li><a href="#entering">Entering or updating a document in the database</a>
  <ul>
   <li><a href="#morehelp">Getting more help</a></li>
   <li><a href="#modtypes">What do you want to do?</a></li>
-  <li><a href="#prepare">Preparing your document for upload</a></li>
+  <li><a href="#prepare">Preparing your document for upload</a>
   <ul>
    <li>Multiple file uploads</li>
    <li>Archive uploads</li>
-  </ul>
+  </ul></li>
   <li><a href="#upload">Upload methods</a></li>
   <li><a href="#filling">Filling in the form</a></li>
   <li><a href="#advanced">Advanced options</a></li>
- </ul>
- <li><a href="#special">Special Cases</a></li>
+ </ul></li>
+ <li><a href="#special">Special Cases</a>
  <ul>
   <li><a href="#meeting">Documents for Events</a></li>
   <li><a href="#reference">Publications in refereed journals</a></li>
- </ul>
- <li><a href="#prefs">Preferences and E-mail Notification</a></li>
+ </ul></li>
+ <li><a href="#prefs">Preferences and E-mail Notification</a>
  <ul>
   <li><a href="#prefs">Setting preferences</a></li>
   <li><a href="#email">Setting e-mail notification</a></li>
- </ul>
+ </ul></li>
 TOC
 if ($UseSignoffs) {
  print "<li><a href=\"#signoff\">Document Signoffs</a></li>\n";
 } 
 print <<TOC;
- <li><a href="#final">Final Words</a></li>
+ <li><a href="#final">Final Words</a>
  <ul>
   <li><a href="#refer">Referring to your document and its files</a></li>
   <li><a href="#group">Referring to groups of documents</a></li>
-  <li><a href="#philosophy">Final Words</a></li>
+  <li><a href="#philosophy">Final Words</a>
   <ul>
    <li><a href="#archive">Archive vs. Catalog</a></li>
    <li><a href="#whatis">What is a document?</a></li>
    <li><a href="#formats">Notes on file formats</a></li>
-  </ul>
- </ul>
+  </ul></li>
+ </ul></li>
 </ul>
 TOC
 
@@ -106,7 +106,7 @@ print "<div id=\"MainColumn3Col\">\n";
 
 print <<HTML;
 
-<a name="entering">
+<a name="entering" />
 <h1>Entering or updating a document in the database</h1>
 
 Creating a document will be most users first experience with DocDB. 
@@ -114,25 +114,25 @@ Read the next few sections to help you get an idea of what you can do and how
 to proceed. Follow the link to "Create or change documents or other information" 
 to begin. 
 
-<a name="morehelp">
+<a name="morehelp" />
 
 <h2>Getting More Help</h2>
 
-You can often get more help when using DocDB by clicking on <span class="Help">red terms</span> on the
-page. A small window will pop up to explain what is going on.<p>
+<p>You can often get more help when using DocDB by clicking on <span class="Help">red terms</span> on the
+page. A small window will pop up to explain what is going on.</p>
 
-If you don't find your answer in the pop-up or  if you have additional
+<p>If you don't find your answer in the pop-up or  if you have additional
 questions or problems with the DocDB, please send e-mail to the <a
-href="mailto:$DBWebMasterEmail">DocDB administrators</a>.<p>
+href="mailto:$DBWebMasterEmail">DocDB administrators</a>.</p>
 
-For a more technical document on how the database works, see 
+<p>For a more technical document on how the database works, see 
 <a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=140">
-BTeV-doc-140</a>. 
+BTeV-doc-140</a>.</p> 
 
-<a name="modtypes">
-<p><h2>What do you want to do?</h2>
+<a name="modtypes" />
+<h2>What do you want to do?</h2>
 
-You can add information or documents to the database in five different ways for
+<p>You can add information or documents to the database in five different ways for
 five different situations:
 <ol>
 <li><strong>Reserve a document #: </strong>You want a number for a document
@@ -153,15 +153,15 @@ content has changed at all, you should use the Update, not the Add File, option.
 Select the type of modification appropriate to your situation. 
 </p>
 
-<p>
-<a name="prepare">
+<a name="prepare" />
 <h2>Preparing your document for the document database</h2>
 
+<p>
 If your document just consists of just a few files, say a PDF and PowerPoint, and 
 they are on the computer
 you are using or accessible by the web, you are prepared. Better yet, you will
 probably be able to use one of the shortcuts at the top of the page. Skip
-ahead to the next section.
+ahead to the next section.</p>
 <p>
 If your document is in a lot of pieces, say a bunch of HTML files, 
 you have a decision to make. Do you want
@@ -169,7 +169,7 @@ to specify each file you want to upload or do you want to make everything into
 an archive (like a .tar or .zip file) and upload that? In either case, you might
 have to use the advanced form in the middle of the "Create or Change" web page.
 (The short cuts allow you to upload multiple files if you don't want to choose
-any other advanced options.)
+any other advanced options.)</p>
 <p>
 <strong>Multiple file uploads:</strong>
 When you upload things this way, it might be a little bit more
@@ -220,7 +220,9 @@ the filename of the main file in the archive and to describe that file. Through
 that one file, the user should be able to access the other files. For this
 reason, this uploaded file should probably be HTML. The pros of this method are
 that you don't have to describe or enter every file in the form.
-</p><p>
+</p>
+
+<p>
 When uploading via archive mode, the Main file will be marked as such and the
 entire archive will be marked as an "Other" file.
 </p>
@@ -249,7 +251,7 @@ HTML
 
 print <<HTML;
 
-<a name="upload">
+<a name="upload" />
 <h2>Upload methods</h2>
  
 Once your document is prepared, you have one more decision to make. How do you
@@ -268,32 +270,34 @@ end the URL with "/"). Currently "https://" (secure upload) does not work, but
 we hope this will change in the near future.
 </ol>
 
-<a name="filling">
+<a name="filling" />
 <h2>Filling in the form</h2>
 
-Now that you've decided what you want to do and how you want to get any required
+<p>Now that you've decided what you want to do and how you want to get any required
 files from your computer into the document database, you've presumably pressed
-one of the buttons that lets you add information into the database.<p>
+one of the buttons that lets you add information into the database.</p>
 
-You are now presented with an initially daunting form asking for all kinds of
+<p>You are now presented with an initially daunting form asking for all kinds of
 information about your document. A lot of the fields are required, but some are
 optional. The required fields are indicated. You can click on any <font color="red">red link</font> to get a quick
 help window that tells you what you are being asked for. Instructions for every
 piece of information are not reproduced here, just click on the <font
-color="red">red link</font> if anything is not obvious.<p>
+color="red">red link</font> if anything is not obvious.</p>
 
-Also, note that lots of things can have more than one selection. For instance,
+<p>Also, note that lots of things can have more than one selection. For instance,
 your document can have several topics selected. How this is done varies by
 browser; some browsers require holding Ctrl and clicking to make multiple
-selections, others just click to select and deselect.<p>
+selections, others just click to select and deselect.</p>
 
+<p>
 When <b>reserving</b> a document, you must supply:
 <ul>
  <li>A title </li> 
  <li>A requester (who is requesting the document?)</li> 
  <li>A document type (talk, note, etc.)</li> 
-</ul><p>
+</ul></p>
 
+<p>
 When <b>adding</b> a new document, you must supply all of the above plus:
 <ul>
  <li>An abstract</li> 
@@ -310,54 +314,59 @@ and optionally:
  <li>Security settings (blank is the same as public, multiples OK)</li> 
  <li>A journal reference (you can add more later)</li> 
  <li>A note explaining any publication information</li> 
-</ul><p>
+</ul></p>
 
+<p>
 When <b>updating</b> a document, you can change all the information above.
 However, all the forms should be pre-filled for you with the information from
 the previous version. You will either have to supply <i>all</i> the files you want to
-be in the new version, or choose to have unchanged files copied to the next version.<p>
+be in the new version, or choose to have unchanged files copied to the next version.</p>
 
+<p>
 Finally, <b>updating the database information</b> about the document is similar to
 updating the document except for two things. First, you can't supply new
-files. Second, a new version number <i>is not</i> created.<p>
+files. Second, a new version number <i>is not</i> created.</p>
 
-<a name="advanced">
+<a name="advanced" />
 <h2>Advanced options</h2>
- 
-The advanced form provides a few other options that might be useful.<p> 
 
+<p> 
+The advanced form provides a few other options that might be useful.</p> 
+
+<p>
 <b>Topic Selection: </b>
 You can either select the subtopic(s) for your document from a number of
 shorter lists split up by topic (the default) or from one long
-list.<p> 
+list.</p> 
 
+<p>
 <b>Author Selection: </b> You can either select the author(s) for your document
 from a long list (the default) or by typing the author list into a text box.
 Using the second method, each author is checked against the master list and the
 document will not be placed in the database until every author you've typed in
 has a unique match. You can type in full first names or first initials (middle initials
-are ignored); the matching is <i>reasonably</i> intelligent.<p>
+are ignored); the matching is <i>reasonably</i> intelligent.</p>
 
-<b>Overriding the submission date: </b> Using this option will give you another
+<p><b>Overriding the submission date: </b> Using this option will give you another
 control on the entry form to set the date and time for a document written in
 the past. Unless you are submitting a document from the old database or one
 written  some time ago, you should probably not select this option. By default,
-new documents are entered with the current date and time.<p>
+new documents are entered with the current date and time.</p>
 
-<a name="special">
+<a name="special" />
 <h1>Special Cases</h1>
 
-<a name="meeting">
+<a name="meeting" />
 <h2>Documents for Events</h2>
 
-These can be entered into the database using the normal entry
+<p>These can be entered into the database using the normal entry
 form, just make sure you choose the appropriate event as one of the
-topics for your talk. <p>
+topics for your talk. </p>
 
-<a name="conference">
+<a name="conference" />
 <h2>Conference Talks and Proceedings</h2>
 
-Conference documents are added just like any other document, except for two
+<p>Conference documents are added just like any other document, except for two
 things. First, you probably need to 
 <a href="$ConferenceAddForm">add some
 information</a> into the database about your conference. Do this by following
@@ -365,59 +374,59 @@ the link at the bottom of the
 <a href="$ModifyHome">Create or Change</a> page.
 But before you add it, make sure someone else didn't already do it for you. (At
 the bottom of the add form is the list of conferences the database knows
-about).<p>
+about).</p>
 
-Second, when adding your document, make sure that one of the topics you select
+<p>Second, when adding your document, make sure that one of the topics you select
 is the topic corresponding to your conference. This way your document is
-associated with the right conference.<p>
+associated with the right conference.</p>
 
-<a name="reference">
+<a name="reference" />
 <h2>Publications in Refereed Journals</h2>
 
-Above the free-form "Publication Information" field is a place to select a
+<p>Above the free-form "Publication Information" field is a place to select a
 journal, volume, and page for your document if it is published. If you need a
-journal added, let the database administrators know.<p>
+journal added, let the database administrators know.</p>
 
 <h1>Preferences and E-mail Notification</h1>
 
-<a name="prefs">
+<a name="prefs" />
 <h2>Setting preferences</h2>
 
-Setting preferences with the Document Database allows you to configure the
+<p>Setting preferences with the Document Database allows you to configure the
 default entry
 forms to your liking and to save some typing by telling the database who you
-are. <p>
+are. </p>
 
-Once the database knows who you are, your name will be pre-selected as the requester and
+<p>Once the database knows who you are, your name will be pre-selected as the requester and
 author of new documents. You can, of course, change this setting to enter
-documents by people other than (or in addition to) yourself.<p>
+documents by people other than (or in addition to) yourself.</p>
 
-You can also set your document entry preferences, so for instance if you often
+<p>You can also set your document entry preferences, so for instance if you often
 find yourself submitting URLs instead of files, you may wish to select HTTP
 submission as your default file submission method. You can always use the
-<q>Customized Insert/Modify</q> form to over-ride any preferences.<p>
+<q>Customized Insert/Modify</q> form to over-ride any preferences.</p>
 
-To set your preferences, follow the link from the main Document Database page.
+<p>To set your preferences, follow the link from the main Document Database page.
 Also, make sure your browser will accept cookies, at least for the DocDB web
-server.
+server.</p>
 
-<a name="email">
+<a name="email" />
 <h2>Setting e-mail notification</h2>
 
-By following the link for "Your Account" from the main page, you can
+<p>By following the link for "Your Account" from the main page, you can
 request to be notified of new documents or documents that change. You are
 notified only for documents on topics that you select. You can choose to be
 notified immediately, once a day, and/or once a week. For each time period, you
 can choose which documents to be notified about. So, for instance, you could
 choose to be notified immediately if a new document is created about your
-detector and every week about all new documents in the database. 
+detector and every week about all new documents in the database.</p> 
 
 HTML
 
 if ($UseSignoffs) {
- print "<a name=\"signoff\"><h1>Document Signoffs</h1>\n";
+ print "<a name=\"signoff\" /><h1>Document Signoffs</h1>\n";
 
- print "An optional component of DocDB is to allow some documents to be <q>signed</q>
+ print "<p>An optional component of DocDB is to allow some documents to be <q>signed</q>
  by a group of people before becoming <q>approved.</q> People with <b>Personal
  Accounts</b> can sign documents. The list of people needing to approve a
  document is editable by the same groups that can edit the document itself. 
@@ -425,30 +434,30 @@ if ($UseSignoffs) {
  To <q>freeze</q> a document and its meta-information such that only
  <q>managers</q> can modify it or unfreeze it, ask the 
  <a href=\"mailto:$DBWebMasterEmail\">DocDB
- administrators</a> for the procedure.<p>\n";
+ administrators</a> for the procedure.</p>\n";
 
- print "When displaying document version(s) in a list, there are obvious indications of
+ print "<p>When displaying document version(s) in a list, there are obvious indications of
 which documents are approved, which are unapproved, and which are obsolete
 (even if they were approved at some time). All information about who <q>signed</q>'
-each version of each document is kept.<p>\n";
+each version of each document is kept.</p>\n";
 
- print "DocDB contains the ability to allow any number of approval <q>topologies.</q> 
+ print "<p>DocDB contains the ability to allow any number of approval <q>topologies.</q> 
 For instance, person A or person B might be allowed to sign at the first step,
 followed by person C at the second step. Or, person A and person B may both have to
 sign (but in parallel) before person C can sign. However, the current DocDB code only
 allows one topology (an ordered list). When a document under control is
 updated, the signoff list structure is preserved, but the approvals themselves
-are cleared.<p>\n";
+are cleared.</p>\n";
 
- print "The signoff system provides a number of additional convieniences:
+ print "<p>The signoff system provides a number of additional convieniences:
 <ul>
   <li>Email notifications to signatories when a document is ready for their
   signature</li>
   <li>A way to list all controlled documents</li>
   <li>List of all documents a person is a signatory (actual or requested) on</li>
-</ul>\n";
+</ul></p>\n";
 
- print "A number of other features are planned and will be added as needed:
+ print "<p>A number of other features are planned and will be added as needed:
 <ul>
   <li>Email reports of outstanding signatures needed (to desired signatory and
     other signatories of documents)</li>
@@ -456,37 +465,37 @@ are cleared.<p>\n";
   <li>Reminders if a document goes unsigned for a while</li>
   <li>Restricting the list of people who may sign documents to a sub-set of those with
   personal accounts</li>
-</ul>\n";
+</ul></p>\n";
 }
 
 print <<HTML;
 
-<a name="final">
+<a name="final" />
 <h1>Notes for Advanced Users</h1>
 
-<a name="refer">
+<a name="refer" />
 <h2>Referring to Your Document and Files</h2>
 
-To refer to your document use the syntax <b>$ShortProject-doc-XXXX</b> where XXXX is the document
+<p>To refer to your document use the syntax <b>$ShortProject-doc-XXXX</b> where XXXX is the document
 number (1 to 6 digits). You can also use the form <b>$ShortProject-doc-XXXX-vXX</b> to refer to
 a specific version of a document. The <b>$ShortProject-doc-XXXX</b> form refers to the
 latest version.<p>
 
 <h4>Linking to your document</h4>
 
-You can also construct URL's that link to your document. The URL is of the form
+<p>You can also construct URL's that link to your document. The URL is of the form
 <tt>$ShowDocument?docid=XXXX&amp;version=XX</tt>,
 where the X's represent <i>just the numbers</i> of the document and version.
 (I.e. leave off the ``$ShortProject-doc-'' and ``-v.'') As above, you can leave off the
-<tt>&amp;version=XX</tt> to refer to the latest version.<p>
+<tt>&amp;version=XX</tt> to refer to the latest version.</p>
 
-<b>Using "as of" instead of version number:</b>: Instead of specifying a version
+<p><b>Using "as of" instead of version number:</b>: Instead of specifying a version
 number, you can specify <tt>&asof=2002-12-25</tt> which will give you the
-version of this document current as of December 25, 2002. 
+version of this document current as of December 25, 2002. </p>
 
 <h4>Linking to files in a document</h4>
 
-There is a script interface which fetches files from DocDB. The URL is 
+<p>There is a script interface which fetches files from DocDB. The URL is 
 <tt>$RetrieveFile?docid=XXXX&amp;version=XX&amp;filename=xxxxxx</tt>.
 The version number can be left off to get files from the latest version number.
 The filename can also be left off. If there is only one file marked <q>Main</q>
@@ -497,17 +506,18 @@ so for instance you can specify PDF as the extension to retrieve the PDF file
 for a document. As above, <tt>version</tt> can be left off or <tt>asof</tt> can
 be specified.
 If your request matches no files or more than one file, the full document
-information will be shown and the user will have to choose the correct file.<p>
+information will be shown and the user will have to choose the correct file.</p>
 
-For both of these actions, if you want the result to be publicly accessible,
+<p>For both of these actions, if you want the result to be publicly accessible,
 use the URLs that point to the publicly viewable database. The document must
-also be publicly accessible for this to work.
+also be publicly accessible for this to work.</p>
 
-<a name="group">
+<a name="group" />
 <h2>Referring to Groups of Documents</h2>
 
-Any simple search can be embedded into a URL for reference from a web page.
-The most useful searches are by author, topic, keyword, or events.
+<p>Any simple search can be embedded into a URL for reference from a web page.
+The most useful searches are by author, topic, keyword, or events.</p>
+
 <p>
 To link to a topic, you must first find out the topic ID number. 
 The easiest way to do this is to simply click on that topic from the 
@@ -516,22 +526,25 @@ The URL for a single topic will be
 <tt>$ListBy?topicid=xxx</tt>. 
 Similarly, links to documents by authors are most easily found by the 
 <a href="$ListAuthors">list by author</a> page.
+</p>
 <p>
 Use the search form to link to a keyword: 
 <tt>$Search?keywordsearchmode=anysub&keywordsearch=xxxxxxx</tt>.
+</p>
 <p>
 Conferences and meetings are topics, but have special display capabilities:
 <tt>$ListByTopic?topicid=xxx&mode=conference</tt> or
 <tt>$DisplayMeeting?conferenceid=xxx</tt>.
+</p>
 <p>
 If your links are from a public page, be sure to use  the links for the
 publicly accessible DocDB.  Only publicly accessible documents will be
 listed.
-<p>
+</p>
 
 <h4>More complicated searches</h4>
 
-By using the search capabilities, more complicated combinations of documents can be shown. Producing these kinds of
+<p>By using the search capabilities, more complicated combinations of documents can be shown. Producing these kinds of
 searches requires an understanding of two additional parameters, <tt>innerlogic</tt> and <tt>outerlogic</tt>, both of
 which can have values of <tt>AND</tt> and <tt>OR</tt>. For instance, if you specify two authors, <tt>innerlogic=OR</tt>
 will return documents by <i>either</i> author while <tt>AND</tt> will require the document to be authored by <i>both</i>
@@ -539,9 +552,9 @@ people. To understand <tt>outerlogic</tt>, take the example of searching for an 
 <tt>outerlogic=OR</tt> will require a document to either have the correct author or the correct topic, while <tt>AND</tt>
 will require both. Both options can be specified at the same time. <tt>outerlogic</tt> defaults to <tt>AND</tt> and
 <tt>innerlogic</tt> defaults to <tt>OR</tt>. But, this could change in the future, so specify these values if you want to
-be absolutely sure.<p>
+be absolutely sure.</p>
 
-Here is a complete list of search parameters that can be specified:
+<p>Here is a complete list of search parameters that can be specified:
 <ul>
  <li>Title: <tt>titlesearch</tt> (text) and <tt>titlesearchmode</tt> (see search string modes)</li>
  <li>Abstract: <tt>abstractsearch</tt> (text) and <tt>abstractsearchmode</tt> (see search string modes)</li>
@@ -556,8 +569,9 @@ Here is a complete list of search parameters that can be specified:
  <li>Document type: <tt>doctypemulti</tt> (numbers, look at the HTML source for <a href="$SearchForm">SearchForm</a> to find) </li>
  <li>Modification date ranges: Look at the HTML source for <a href="$SearchForm">SearchForm</a> to find the parameters and values</li>
 </ul>
+</p>
 
-For titles, abstracts, keywords, publication info, file names and file descriptions, you should specify the
+<p>For titles, abstracts, keywords, publication info, file names and file descriptions, you should specify the
 <q>searchmode</q> also. Currently there are two modes:
 <ul>
  <li><tt>searchmode=anysub</tt> case-insensitive, word must be found as a substring (as opposed to a full word), and if
@@ -566,12 +580,12 @@ For titles, abstracts, keywords, publication info, file names and file descripti
  <li><tt>searchmode=anyword</tt> or <tt>allword</tt> like above, but the word must be found surrounded by spaces</li>
 </ul> 
 More modes can easily be added if required. To search for more than one word, place the code for a space (%20) between
-them.  <p>
+them.  </p>
 
-To search for more than one author, topic, etc. (fields with numbers) you can specify more than one in the URL (see the
-examples).<p>
+<p>To search for more than one author, topic, etc. (fields with numbers) you can specify more than one in the URL (see the
+examples).</p>
 
-Examples:
+<p>Examples:
 <ul>
  <li>Search for documents by a keyword and an author:
   <tt>$Search?keywordsearchmode=anysub&outerlogic=AND&keywordsearch=test&authors=1</tt></li>
@@ -580,29 +594,30 @@ Examples:
  <li>Search for documents by an author on a topic:
   <tt>$Search?authors=1&minortopic=2&outerlogic=AND</tt></li>
 </ul>
+</p>
 
-<a name="philosophy">
+<a name="philosophy" />
 <h1>Final Words</h1>
 
-<a name="archive">
+<a name="archive" />
 <h2>Archive vs. Catalog</h2>
 
-Some other document databases are only a method for cataloging
+<p>Some other document databases are only a method for cataloging
 documents. DocDB goes one step further; it is also a method for
 storing documents in a central location. So, you should never again see a
 broken link while looking for the information you want. This distinction is
-especially important for archive uploads as discussed above. <p>
+especially important for archive uploads as discussed above. </p>
 
-While parts of the interface may look complicated, some options can be
+<p>While parts of the interface may look complicated, some options can be
 left blank. Omitting a version number will give you the latest version.
 We've tried to simplify the use
 of the most common options. Of course, if you have a suggestion on how to make
-things easier, please let us know.
+things easier, please let us know.</p>
 
-<a name="whatis">
+<a name="whatis" />
 <h2>What is a document?</h2>
 
-This may sound like a stupid question, but it's not. People tend to think of
+<p>This may sound like a stupid question, but it's not. People tend to think of
 a document as something that consists of writing and can be printed on a
 piece of paper. In our context, a document is something much more general. A
 document is any piece of information that a) you want to save and b) you want
@@ -610,18 +625,18 @@ to share with others. So, a video can be a document.  A
 picture is a document. A calculation on the back of an
 envelope and scanned is a document. (And it's probably a "Note," not a
 "Figure." The document type you  choose tells people what the document
-<b>is</b> not what format it's stored in.)<p>
+<b>is</b> not what format it's stored in.)</p>
 
-<a name="formats">
+<a name="formats" />
 <h2>File formats (PowerPoint, Postscript, PDF etc.)</h2>
 
 
-People view the web with many different OS/Software combinations. 
+<p>People view the web with many different OS/Software combinations. 
 This means they
 may not be able to view files in formats such as PowerPoint, MS Word, and Excel. The two
 file formats that everyone can read are Postscript and PDF. PDF is easiest for
 Windows users.  Please save your
-document in one of these formats as well as in the native formats.<p>
+document in one of these formats as well as in the native formats.</p>
 
 HTML
  
