@@ -132,6 +132,11 @@ table.Alternating {
   border-collapse: collapse;
 }
 
+table.CenteredTable {
+  margin-right: auto;
+  margin-left: auto;
+}
+
 li.Odd, tr.Odd {
   background: #eee;
 }
