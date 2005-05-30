@@ -35,7 +35,7 @@ require "ProjectMessages.pm";
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 #&GetSecurityGroups;
-
+#$Preferences{Options}{AlwaysRetrieveFile} = 1;
 # %params = $query -> Vars;  # No parameters (yet?) 
 
 print $query->header;
@@ -281,10 +281,10 @@ one of the buttons that lets you add information into the database.</p>
 
 <p>You are now presented with an initially daunting form asking for all kinds of
 information about your document. A lot of the fields are required, but some are
-optional. The required fields are indicated. You can click on any <font color="red">red link</font> to get a quick
+optional. The required fields are indicated. You can click on any <span class="Help">red link</span> to get a quick
 help window that tells you what you are being asked for. Instructions for every
-piece of information are not reproduced here, just click on the <font
-color="red">red link</font> if anything is not obvious.</p>
+piece of information are not reproduced here, just click on the <span class="Help">red link</span> 
+if anything is not obvious.</p>
 
 <p>Also, note that lots of things can have more than one selection. For instance,
 your document can have several topics selected. How this is done varies by
