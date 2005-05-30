@@ -1,16 +1,25 @@
 /* General style settings */
 
 #LeftColumn3Col {
-  width: 30%;
-  padding-left: 1.5em;
-  padding-top: 0.5em;
+  width: 17em;
   margin-right: 1em;
+  float: left;
+}
+
+#MainColumn3Col {
+  padding-left: 1.5em;   /* width+left/right paddings of LeftColumn plus another 0.5em*/
 }
 
 #LeftColumn3Col ul {
   padding-left: 1em;
 }
 
-#MainColumn3Col h2, #MainColumn3Col h3, #MainColumn3Col h4 {
+#MainColumn3Col h2, #MainColumn3Col h3 {
   text-align: left;
+  margin-left: 0px;
 }
+
+#MainColumn3Col p {
+  margin-top: 3px; /* Put top near headers */
+}
+
