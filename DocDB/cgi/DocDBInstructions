@@ -133,7 +133,7 @@ BTeV-doc-140</a>.</p>
 <h2>What do you want to do?</h2>
 
 <p>You can add information or documents to the database in five different ways for
-five different situations:
+five different situations:</p>
 <ol>
 <li><strong>Reserve a document #: </strong>You want a number for a document
 you are going to write, but don't have a draft of the document.</li>
@@ -150,6 +150,7 @@ now you have a PDF file to go with the PowerPoint file already
 present. You can add these files to an existing version of a document. If the
 content has changed at all, you should use the Update, not the Add File, option.</li>
 </ol>
+<p>
 Select the type of modification appropriate to your situation. 
 </p>
 
@@ -234,14 +235,15 @@ together, things may appear to "work" just fine if you only upload the first
 one. There is no mechanism to prevent you from doing this. However, please
 don't do this. Upload all the files so that they <i>all</i> reside on the
 server, including images. To
-make the links in your HTML work on the server, use links like
+make the links in your HTML work on the server, use links like</p>
 <pre>
 &lt;a href="myotherpage.html"&gt; or &lt;a href="mysubdir/myotherpage.html"&gt; 
 </pre>
-rather than 
+<p>rather than</p> 
 <pre>
 &lt;a href="http://some.server.com/myotherpage.html"&gt;
 </pre>
+<p>
 since in the second form, your document will still point outside of the database
 server to files which may disappear.
 </p>
@@ -261,13 +263,13 @@ want to get the file(s) to the document database? You have two choices:
 <li>You can upload files from your local computer. In this case, you will get
 boxes to type the file names into and (probably) a "Browse" button that will
 allow you to pick the file from a list. (How this happens depends on your
-browser and operating system.) 
+browser and operating system.)</li> 
 <li>You can upload files by supplying a URL. You have to make sure the files
 are accessible from the web, but they can be password protected (you will have
 to supply the password). You will have to specify the full URL, including the
 "http://" or "https://" at the beginning and a filename at the end (you may not
 end the URL with "/"). Currently "https://" (secure upload) does not work, but
-we hope this will change in the near future.
+we hope this will change in the near future.</li> 
 </ol>
 
 <a name="filling" />
@@ -290,22 +292,22 @@ browser; some browsers require holding Ctrl and clicking to make multiple
 selections, others just click to select and deselect.</p>
 
 <p>
-When <b>reserving</b> a document, you must supply:
+When <b>reserving</b> a document, you must supply:</p>
 <ul>
  <li>A title </li> 
  <li>A requester (who is requesting the document?)</li> 
  <li>A document type (talk, note, etc.)</li> 
-</ul></p>
+</ul>
 
 <p>
-When <b>adding</b> a new document, you must supply all of the above plus:
+When <b>adding</b> a new document, you must supply all of the above plus:</p>
 <ul>
  <li>An abstract</li> 
  <li>Authors (one required, multiples OK)</li> 
  <li>Topics (one required, multiples OK)</li> 
  <li>At least one file</li> 
 </ul> 
-and optionally:
+<p>and optionally:</p>
 <ul>
  <li>Keywords: These can be anything, but check with your group and/or subgroups
      as standards may exist.</li> 
@@ -314,7 +316,7 @@ and optionally:
  <li>Security settings (blank is the same as public, multiples OK)</li> 
  <li>A journal reference (you can add more later)</li> 
  <li>A note explaining any publication information</li> 
-</ul></p>
+</ul>
 
 <p>
 When <b>updating</b> a document, you can change all the information above.
@@ -429,7 +431,7 @@ if ($UseSignoffs) {
  print "<p>An optional component of DocDB is to allow some documents to be <q>signed</q>
  by a group of people before becoming <q>approved.</q> People with <b>Personal
  Accounts</b> can sign documents. The list of people needing to approve a
- document is editable by the same groups that can edit the document itself. 
+ document is editable by the same groups that can edit the document itself.</p> 
  <p>
  To <q>freeze</q> a document and its meta-information such that only
  <q>managers</q> can modify it or unfreeze it, ask the 
@@ -449,15 +451,15 @@ allows one topology (an ordered list). When a document under control is
 updated, the signoff list structure is preserved, but the approvals themselves
 are cleared.</p>\n";
 
- print "<p>The signoff system provides a number of additional convieniences:
+ print "<p>The signoff system provides a number of additional convieniences:</p>
 <ul>
   <li>Email notifications to signatories when a document is ready for their
   signature</li>
   <li>A way to list all controlled documents</li>
   <li>List of all documents a person is a signatory (actual or requested) on</li>
-</ul></p>\n";
+</ul>\n";
 
- print "<p>A number of other features are planned and will be added as needed:
+ print "<p>A number of other features are planned and will be added as needed:</p>
 <ul>
   <li>Email reports of outstanding signatures needed (to desired signatory and
     other signatories of documents)</li>
@@ -465,7 +467,7 @@ are cleared.</p>\n";
   <li>Reminders if a document goes unsigned for a while</li>
   <li>Restricting the list of people who may sign documents to a sub-set of those with
   personal accounts</li>
-</ul></p>\n";
+</ul>\n";
 }
 
 print <<HTML;
@@ -479,7 +481,7 @@ print <<HTML;
 <p>To refer to your document use the syntax <b>$ShortProject-doc-XXXX</b> where XXXX is the document
 number (1 to 6 digits). You can also use the form <b>$ShortProject-doc-XXXX-vXX</b> to refer to
 a specific version of a document. The <b>$ShortProject-doc-XXXX</b> form refers to the
-latest version.<p>
+latest version.</p>
 
 <h4>Linking to your document</h4>
 
@@ -490,7 +492,7 @@ where the X's represent <i>just the numbers</i> of the document and version.
 <tt>&amp;version=XX</tt> to refer to the latest version.</p>
 
 <p><b>Using "as of" instead of version number:</b>: Instead of specifying a version
-number, you can specify <tt>&asof=2002-12-25</tt> which will give you the
+number, you can specify <tt>&amp;asof=2002-12-25</tt> which will give you the
 version of this document current as of December 25, 2002. </p>
 
 <h4>Linking to files in a document</h4>
@@ -529,11 +531,11 @@ Similarly, links to documents by authors are most easily found by the
 </p>
 <p>
 Use the search form to link to a keyword: 
-<tt>$Search?keywordsearchmode=anysub&keywordsearch=xxxxxxx</tt>.
+<tt>$Search?keywordsearchmode=anysub&amp;keywordsearch=xxxxxxx</tt>.
 </p>
 <p>
 Conferences and meetings are topics, but have special display capabilities:
-<tt>$ListByTopic?topicid=xxx&mode=conference</tt> or
+<tt>$ListByTopic?topicid=xxx&amp;mode=conference</tt> or
 <tt>$DisplayMeeting?conferenceid=xxx</tt>.
 </p>
 <p>
@@ -554,7 +556,7 @@ will require both. Both options can be specified at the same time. <tt>outerlogi
 <tt>innerlogic</tt> defaults to <tt>OR</tt>. But, this could change in the future, so specify these values if you want to
 be absolutely sure.</p>
 
-<p>Here is a complete list of search parameters that can be specified:
+<p>Here is a complete list of search parameters that can be specified:</p>
 <ul>
  <li>Title: <tt>titlesearch</tt> (text) and <tt>titlesearchmode</tt> (see search string modes)</li>
  <li>Abstract: <tt>abstractsearch</tt> (text) and <tt>abstractsearchmode</tt> (see search string modes)</li>
@@ -569,32 +571,32 @@ be absolutely sure.</p>
  <li>Document type: <tt>doctypemulti</tt> (numbers, look at the HTML source for <a href="$SearchForm">SearchForm</a> to find) </li>
  <li>Modification date ranges: Look at the HTML source for <a href="$SearchForm">SearchForm</a> to find the parameters and values</li>
 </ul>
-</p>
+
 
 <p>For titles, abstracts, keywords, publication info, file names and file descriptions, you should specify the
-<q>searchmode</q> also. Currently there are two modes:
+<q>searchmode</q> also. Currently there are two modes:</p>
 <ul>
  <li><tt>searchmode=anysub</tt> case-insensitive, word must be found as a substring (as opposed to a full word), and if
  more than one are specified, <i>only one</i> word must be found</li>
  <li><tt>searchmode=allsub</tt> as above, but <i>all</i> words must be found</li>
  <li><tt>searchmode=anyword</tt> or <tt>allword</tt> like above, but the word must be found surrounded by spaces</li>
 </ul> 
+<p>
 More modes can easily be added if required. To search for more than one word, place the code for a space (%20) between
 them.  </p>
 
 <p>To search for more than one author, topic, etc. (fields with numbers) you can specify more than one in the URL (see the
 examples).</p>
 
-<p>Examples:
+<p>Examples:</p>
 <ul>
  <li>Search for documents by a keyword and an author:
-  <tt>$Search?keywordsearchmode=anysub&outerlogic=AND&keywordsearch=test&authors=1</tt></li>
+  <tt>$Search?keywordsearchmode=anysub&amp;outerlogic=AND&amp;keywordsearch=test&amp;authors=1</tt></li>
  <li>Search for documents by two authors:
-  <tt>$Search?authors=1&authors=2&innerlogic=AND</tt></li>
+  <tt>$Search?authors=1&amp;authors=2&amp;innerlogic=AND</tt></li>
  <li>Search for documents by an author on a topic:
-  <tt>$Search?authors=1&minortopic=2&outerlogic=AND</tt></li>
+  <tt>$Search?authors=1&amp;minortopic=2&amp;outerlogic=AND</tt></li>
 </ul>
-</p>
 
 <a name="philosophy" />
 <h1>Final Words</h1>
