@@ -338,7 +338,7 @@ sub PrintSession ($) {
 # Sort talks and separators
 
   @SessionOrderIDs = sort SessionOrderIDByOrder @SessionOrderIDs;
-  print "<center><table class=\"Alternating\" id=\"TalkList\">\n";
+  print "<center><table class=\"Alternating\" class=\"CenteredTable\" id=\"TalkList\">\n";
 
   print "<tr>\n";
   print "<th>Start</th>\n";
