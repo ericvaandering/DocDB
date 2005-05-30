@@ -55,7 +55,7 @@ print "<div id=\"LeftColumn3Col\">\n";
 print <<TOC;
 <h2>Contents</h2>
 <ul>
- <li><a href="#entering">Entering or updating a document in the database</a>
+ <li><a href="#entering">Entering or Updating a Document</a>
  <ul>
   <li><a href="#morehelp">Getting more help</a></li>
   <li><a href="#modtypes">What do you want to do?</a></li>
@@ -70,10 +70,11 @@ print <<TOC;
  </ul></li>
  <li><a href="#special">Special Cases</a>
  <ul>
-  <li><a href="#meeting">Documents for Events</a></li>
+  <li><a href="#meeting">Documents for events</a></li>
+  <li><a href="#conference">Conference talks and proceedings</a></li>
   <li><a href="#reference">Publications in refereed journals</a></li>
  </ul></li>
- <li><a href="#prefs">Preferences and E-mail Notification</a>
+ <li><a href="#prefsandemail">Preferences and E-mail Notification</a>
  <ul>
   <li><a href="#prefs">Setting preferences</a></li>
   <li><a href="#email">Setting e-mail notification</a></li>
@@ -83,16 +84,16 @@ if ($UseSignoffs) {
  print "<li><a href=\"#signoff\">Document Signoffs</a></li>\n";
 } 
 print <<TOC;
- <li><a href="#final">Final Words</a>
+ <li><a href="#final">Advanced Users</a>
  <ul>
   <li><a href="#refer">Referring to your document and its files</a></li>
   <li><a href="#group">Referring to groups of documents</a></li>
-  <li><a href="#philosophy">Final Words</a>
-  <ul>
-   <li><a href="#archive">Archive vs. Catalog</a></li>
-   <li><a href="#whatis">What is a document?</a></li>
-   <li><a href="#formats">Notes on file formats</a></li>
-  </ul></li>
+ </ul></li>
+ <li><a href="#philosophy">Final Words</a>
+ <ul>
+  <li><a href="#archive">Archive vs. Catalog</a></li>
+  <li><a href="#whatis">What is a document?</a></li>
+  <li><a href="#formats">Notes on file formats</a></li>
  </ul></li>
 </ul>
 TOC
@@ -108,10 +109,10 @@ print <<HTML;
 <a name="entering" />
 <h1>Entering or updating a document in the database</h1>
 
-Creating a document will be most users first experience with DocDB. 
+<p>Creating a document will be most users first experience with DocDB. 
 Read the next few sections to help you get an idea of what you can do and how 
 to proceed. Follow the link to "Create or change documents or other information" 
-to begin. 
+to begin.</p> 
 
 <a name="morehelp" />
 
@@ -133,7 +134,9 @@ BTeV-doc-140</a>.</p>
 
 <p>You can add information or documents to the database in five different ways for
 five different situations:</p>
-<ol>
+
+<div>
+<ol class="IEWrap">
 <li><strong>Reserve a document #: </strong>You want a number for a document
 you are going to write, but don't have a draft of the document.</li>
 <li><strong>New document: </strong>You have a new document ready to be put into the
@@ -149,12 +152,14 @@ now you have a PDF file to go with the PowerPoint file already
 present. You can add these files to an existing version of a document. If the
 content has changed at all, you should use the Update, not the Add File, option.</li>
 </ol>
+</div>
+
 <p>
 Select the type of modification appropriate to your situation. 
 </p>
 
 <a name="prepare" />
-<h2>Preparing your document for the document database</h2>
+<h2>Preparing your document for upload</h2>
 
 <p>
 If your document just consists of just a few files, say a PDF and PowerPoint, and 
@@ -388,6 +393,7 @@ associated with the right conference.</p>
 journal, volume, and page for your document if it is published. If you need a
 journal added, let the database administrators know.</p>
 
+<a name="prefsandemail" />
 <h1>Preferences and E-mail Notification</h1>
 
 <a name="prefs" />
@@ -482,7 +488,7 @@ number (1 to 6 digits). You can also use the form <strong>$ShortProject-doc-XXXX
 a specific version of a document. The <strong>$ShortProject-doc-XXXX</strong> form refers to the
 latest version.</p>
 
-<h4>Linking to your document</h4>
+<h3>Linking to your document</h3>
 
 <p>You can also construct URL's that link to your document. The URL is of the form
 <tt>$ShowDocument?docid=XXXX&amp;version=XX</tt>,
@@ -494,7 +500,7 @@ where the X's represent <i>just the numbers</i> of the document and version.
 number, you can specify <tt>&amp;asof=2002-12-25</tt> which will give you the
 version of this document current as of December 25, 2002. </p>
 
-<h4>Linking to files in a document</h4>
+<h3>Linking to files in a document</h3>
 
 <p>There is a script interface which fetches files from DocDB. The URL is 
 <tt>$RetrieveFile?docid=XXXX&amp;version=XX&amp;filename=xxxxxx</tt>.
@@ -543,7 +549,7 @@ publicly accessible DocDB.  Only publicly accessible documents will be
 listed.
 </p>
 
-<h4>More complicated searches</h4>
+<h3>More complicated searches</h3>
 
 <p>By using the search capabilities, more complicated combinations of documents can be shown. Producing these kinds of
 searches requires an understanding of two additional parameters, <tt>innerlogic</tt> and <tt>outerlogic</tt>, both of
