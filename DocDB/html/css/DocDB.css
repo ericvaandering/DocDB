@@ -181,3 +181,7 @@ li.Even, tr.Even {
 .Updated {
   white-space: nowrap;
 }  
+
+.DocDBNavBar {
+  text-align: center;
+}  
