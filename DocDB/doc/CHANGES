@@ -1,3 +1,16 @@
+6.6.0
+
+Two major changes: First, the instructions are now printed with a script rather
+than HTML. If you have $HelpFile defined in ProjectGlobals, please remove it, 
+it is no longer necessary. The instructions will now also include your project 
+name, point at your URLs, etc. They should not need to be edited.
+
+The second change applies to certificate based authentication only. There is a new 
+option in the left "menu" of both the main page and the "Change" page that allows a 
+user to only act as certain groups that they belong to. In other words, if your 
+certificate lets you act as an administrator and a normal user, you can turn off the 
+admin abilities until you need them.
+
 6.5.0
 
 In certificate mode or optionally, by setting
