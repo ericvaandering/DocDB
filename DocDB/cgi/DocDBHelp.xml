@@ -583,11 +583,11 @@ Insert/Modify functions to select your type of upload.
 would prefer to type in the author names individually, select "Text Field" as
 the author selection mode from the advanced form on the document DB home
 page.
-<p/>
+</p>
 <p>
 If searching for a document, select the authors appropriately for your setting
 of <b>Within Fields</b>.
-<p/>
+</p>
 <p>
 To select multiple authors either click or CTRL-click (depending on your
 browser) on the author names. If a document has multiple authors, the requester
