@@ -513,7 +513,8 @@ when placing a document into the database and when reserving a document number.
 This is the name of the person who is requesting the document number or placing
 the document in the database. In other words, this is you. This option must be 
 supplied when reserving a document number, placing a document into the database,
-or updating a document.
+or updating a document. If a document has multiple authors, the requester will be
+listed as the first author if the requester is one of the authors.
   </text>
  </entry>
 
@@ -578,14 +579,20 @@ Insert/Modify functions to select your type of upload.
   <key>authors</key>
   <title>Authors</title>
   <text>
-If entering a new document, select all the authors of the document. 
-If you would prefer to type in the author names individually, select "Text
-Field" as the author selection mode from the advanced form on the document DB
-home page.<p/>
+<p>If entering a new document, select all the authors of the document.  If you
+would prefer to type in the author names individually, select "Text Field" as
+the author selection mode from the advanced form on the document DB home
+page.
+<p/>
+<p>
 If searching for a document, select the authors appropriately for your setting
-of <b>Within Fields</b>.<p/>
+of <b>Within Fields</b>.
+<p/>
+<p>
 To select multiple authors either click or CTRL-click (depending on your
-browser) on the author names.
+browser) on the author names. If a document has multiple authors, the requester
+will be listed as the first author if the requester is one of the authors.
+</p>
   </text>
  </entry>
 
