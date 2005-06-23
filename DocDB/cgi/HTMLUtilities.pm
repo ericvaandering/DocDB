@@ -85,9 +85,13 @@ sub DocDBHeader {
   print "</head>\n";
 
   if ($Search) {
-    print "<body onload=\"selectProduct(document.forms[\'queryform\']);\">\n";
+    print "<body class=\"Normal\" onload=\"selectProduct(document.forms[\'queryform\']);\">\n";
   } else {
-    print "<body>\n";
+    if ($NoBody) {
+      print "<body class=\"PopUp\">\n";
+    } else {  
+      print "<body class=\"Normal\">\n";
+    }  
   }  
   
   if (defined &ProjectBodyStart && !$NoBody) {
