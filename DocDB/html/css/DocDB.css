@@ -166,7 +166,7 @@ li.Even, tr.Even {
   padding: 5px 5px 5px 5px;
 }  
 
-#SubmitCell {
+#SubmitCell { // Should be ".SubmitCell"
   text-align: center;
 }  
 
