@@ -37,6 +37,8 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 #&GetSecurityGroups;
 # %params = $query -> Vars;  # No parameters (yet?) 
 
+$Public = 1;
+
 print $query->header;
 &DocDBHeader("$Project DocDB Instructions","DocDB Instructions");
 
@@ -52,57 +54,102 @@ print "</div>\n";  # Header3Col
 
 print "<div id=\"LeftColumn3Col\">\n";
 
-print <<TOC;
-<h2>Contents</h2>
-<ul>
- <li><a href="#entering">Entering or Updating a Document</a>
- <ul>
-  <li><a href="#morehelp">Getting more help</a></li>
-  <li><a href="#modtypes">What do you want to do?</a></li>
-  <li><a href="#prepare">Preparing your document for upload</a>
+if ($Public) {
+  print <<TOC;
+  <h2>Contents</h2>
   <ul>
-   <li>Multiple file uploads</li>
-   <li>Archive uploads</li>
-  </ul></li>
-  <li><a href="#upload">Upload methods</a></li>
-  <li><a href="#filling">Filling in the form</a></li>
-  <li><a href="#advanced">Advanced options</a></li>
- </ul></li>
- <li><a href="#special">Special Cases</a>
- <ul>
-  <li><a href="#meeting">Documents for events</a></li>
-  <li><a href="#conference">Conference talks and proceedings</a></li>
-  <li><a href="#reference">Publications in refereed journals</a></li>
- </ul></li>
- <li><a href="#prefsandemail">Preferences and E-mail Notification</a>
- <ul>
-  <li><a href="#prefs">Setting preferences</a></li>
-  <li><a href="#email">Setting e-mail notification</a></li>
- </ul></li>
+   <li><a href="#about">About DocDB</a></li>
+   <li><a href="#find">Finding Documents</a></li>
+   <li><a href="#more">More Information</a></li>
+  </ul>
 TOC
-if ($UseSignoffs) {
- print "<li><a href=\"#signoff\">Document Signoffs</a></li>\n";
-} 
-print <<TOC;
- <li><a href="#final">Advanced Users</a>
- <ul>
-  <li><a href="#refer">Referring to your document and its files</a></li>
-  <li><a href="#group">Referring to groups of documents</a></li>
- </ul></li>
- <li><a href="#philosophy">Final Words</a>
- <ul>
-  <li><a href="#archive">Archive vs. Catalog</a></li>
-  <li><a href="#whatis">What is a document?</a></li>
-  <li><a href="#formats">Notes on file formats</a></li>
- </ul></li>
-</ul>
-TOC
+} else {
 
+  print <<TOC;
+  <h2>Contents</h2>
+  <ul>
+   <li><a href="#entering">Entering or Updating a Document</a>
+   <ul>
+    <li><a href="#morehelp">Getting more help</a></li>
+    <li><a href="#modtypes">What do you want to do?</a></li>
+    <li><a href="#prepare">Preparing your document for upload</a>
+    <ul>
+     <li>Multiple file uploads</li>
+     <li>Archive uploads</li>
+    </ul></li>
+    <li><a href="#upload">Upload methods</a></li>
+    <li><a href="#filling">Filling in the form</a></li>
+    <li><a href="#advanced">Advanced options</a></li>
+   </ul></li>
+   <li><a href="#special">Special Cases</a>
+   <ul>
+    <li><a href="#meeting">Documents for events</a></li>
+    <li><a href="#conference">Conference talks and proceedings</a></li>
+    <li><a href="#reference">Publications in refereed journals</a></li>
+   </ul></li>
+   <li><a href="#prefsandemail">Preferences and E-mail Notification</a>
+   <ul>
+    <li><a href="#prefs">Setting preferences</a></li>
+    <li><a href="#email">Setting e-mail notification</a></li>
+   </ul></li>
+  TOC
+  if ($UseSignoffs) {
+   print "<li><a href=\"#signoff\">Document Signoffs</a></li>\n";
+  } 
+  print <<TOC;
+   <li><a href="#final">Advanced Users</a>
+   <ul>
+    <li><a href="#refer">Referring to your document and its files</a></li>
+    <li><a href="#group">Referring to groups of documents</a></li>
+   </ul></li>
+   <li><a href="#philosophy">Final Words</a>
+   <ul>
+    <li><a href="#archive">Archive vs. Catalog</a></li>
+    <li><a href="#whatis">What is a document?</a></li>
+    <li><a href="#formats">Notes on file formats</a></li>
+   </ul></li>
+  </ul>
+TOC
+}
 print "</div>\n";  # LeftColumn3Col
 
 ### Main Column
 
 print "<div id=\"MainColumn3Col\">\n";
+
+if ($Public) {
+
+print <<HTML;
+
+<a name="about" />
+<h1>About DocDB</h1>
+
+<p>Only some of the documents in DocDB are publically accessible. 
+If you try to access documents that are not visible to the public, 
+you will receive an error. Also, all the machinery for creating new documents
+is hidden from you. A <q>document</q> consists of a number of files along with 
+additional information about the document.</p> 
+
+<a name="find" />
+<h1>Finding Documents</h1>
+
+<p>If you are looking for a specific document and know its document number, 
+the easiest thing is to just enter the number in the box on the <a href="$DocumentDatabase">home page</a>.
+If you are looking for documents by a certain person or on a certain topic,
+you might want to see the <a href="$ListTopics">list of topics</a> or 
+<a href="$ListAuthors">list of authors</a>. 
+A full fledged <a href="$SearchForm">search engine</a> is also available.
+</p> 
+
+
+<a name="more" />
+<h1>More Information</h1>
+
+<p>If you want more information about how DocDB works or would like to use it for
+your own project, please visit the <a href="$DocDBHome">DocDB homepage.</a></p> 
+
+
+} else {
 
 print <<HTML;
 
@@ -646,6 +693,8 @@ Windows users.  Please save your
 document in one of these formats as well as in the native formats.</p>
 
 HTML
+
+}
  
 ### Right column (wrapped around by middle column)
 

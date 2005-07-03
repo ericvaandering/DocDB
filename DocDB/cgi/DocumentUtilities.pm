@@ -80,6 +80,7 @@ sub AddDocument {
 
   }
   
+  my $Count;
   if ($DocRevID) { 
     &FetchDocRevisionByID($DocRevID);
     my $Version    = $DocRevisions{$DocRevID}{Version};
