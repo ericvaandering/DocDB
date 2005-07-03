@@ -37,8 +37,6 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 #&GetSecurityGroups;
 # %params = $query -> Vars;  # No parameters (yet?) 
 
-$Public = 1;
-
 print $query->header;
 &DocDBHeader("$Project DocDB Instructions","DocDB Instructions");
 
@@ -124,7 +122,7 @@ print <<HTML;
 <a name="about" />
 <h1>About DocDB</h1>
 
-<p>Only some of the documents in DocDB are publically accessible. 
+<p>Only some of the documents in DocDB are publicly accessible. 
 If you try to access documents that are not visible to the public, 
 you will receive an error. Also, all the machinery for creating new documents
 is hidden from you. A <q>document</q> consists of a number of files along with 
@@ -134,7 +132,7 @@ additional information about the document.</p>
 <h1>Finding Documents</h1>
 
 <p>If you are looking for a specific document and know its document number, 
-the easiest thing is to just enter the number in the box on the <a href="$DocumentDatabase">home page</a>.
+the easiest thing is to just enter the number in the box on the <a href="$MainPage">home page</a>.
 If you are looking for documents by a certain person or on a certain topic,
 you might want to see the <a href="$ListTopics">list of topics</a> or 
 <a href="$ListAuthors">list of authors</a>. 
