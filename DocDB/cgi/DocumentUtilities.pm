@@ -37,6 +37,7 @@ sub AddDocument {
   
   my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
 
+  my $DocumentID    = $Params{-docid}         || 0;
   my $Title         = $Params{-title}         || "";
   my $Abstract      = $Params{-abstract}      || "";
   my $Keywords      = $Params{-keywords}      || "";
@@ -64,9 +65,9 @@ sub AddDocument {
     $DateTime = "$Year-$Mon-$Day $Hour:$Min:$Sec";
   } 
 
-  my ($DocumentID,$DocRevID,$Count,@FileIDs);
+  my ($DocRevID,$Count,@FileIDs);
 
-  $DocumentID = &InsertDocument(-typeid => $TypeID, 
+  $DocumentID = &InsertDocument(-docid => $DocumentID, -typeid => $TypeID, 
                  -requesterid => $RequesterID, -datetime => $DateTime);
                  
   if ($DocumentID) {                                 
@@ -99,7 +100,7 @@ sub AddDocument {
     }  
   }
   
-  return $DocumentID;                                 
+  return ($DocumentID,$DocRevID);                                 
 
 }
 
