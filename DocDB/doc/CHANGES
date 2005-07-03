@@ -1,3 +1,14 @@
+6.6.2
+
+Instructions for Public (need to make link to DocDBInstructions in public
+instance)
+
+Apply style to DocDBHelp (help popups)
+
+Changed AddDocument API, now returns ($DocumentID,$DocRevisionID). Use
+"($DocumentID) = " rather than "$DocumentID = " now.
+
+
 6.6.0
 
 Two major changes: First, the instructions are now printed with a script rather
