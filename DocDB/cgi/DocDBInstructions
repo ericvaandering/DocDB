@@ -148,6 +148,7 @@ A full fledged <a href="$SearchForm">search engine</a> is also available.
 <p>If you want more information about how DocDB works or would like to use it for
 your own project, please visit the <a href="$DocDBHome">DocDB homepage.</a></p> 
 
+HTML
 
 } else {
 
