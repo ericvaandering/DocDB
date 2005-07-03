@@ -1,12 +1,14 @@
 6.6.2
 
-Instructions for Public (need to make link to DocDBInstructions in public
+There are now basic instructions for the Public (you need to make link to DocDBInstructions in public
 instance)
 
-Apply style to DocDBHelp (help popups)
+Apply style to DocDBHelp (help popups). Popups have "class=PopUp" and normal
+pages have "class=normal" so that you can apply different CSS files to both.
 
 Changed AddDocument API, now returns ($DocumentID,$DocRevisionID). Use
-"($DocumentID) = " rather than "$DocumentID = " now.
+"($DocumentID) = " rather than "$DocumentID = " now. Can also specify Document #
+with "-docid => $id"
 
 
 6.6.0
