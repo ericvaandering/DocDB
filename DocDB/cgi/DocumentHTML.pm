@@ -119,10 +119,10 @@ sub DocumentTable (%) {
       print "<td class=\"$Field\">";
       if      ($Field eq "Docid") {    # Document number
         print &NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
-                                 -numwithversion => true); 
+                                 -numwithversion => $TRUE); 
       } elsif ($Field eq "Title") {    # Document title
         print &NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
-                                 -titlelink => true); 
+                                 -titlelink => $TRUE); 
       } elsif ($Field eq "Author") {   # Single author (et. al.)
         print &FirstAuthor($DocRevID);
       } elsif ($Field eq "Updated") {  # Date of last update
@@ -181,7 +181,6 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
   my %Params = @_;
   
   my $DocumentID       = $Params{-docid};
-#  my $Version          = $Params{-version}; #FIXME: Remember 0 version documents
 #  my $DocRevID         = $Params{-docrevid}; #FIXME
   my $DocIDOnly        = $Params{-docidonly}        || 0;
   my $NumWithVersion   = $Params{-numwithversion}   || 0;
@@ -189,22 +188,32 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
   my $TitleLink        = $Params{-titlelink}        || 0;
   my $NoApprovalStatus = $Params{-noapprovalstatus} || 0;
 
-  &FetchDocument($DocumentID);
-  my $Version      = $Documents{$DocumentID}{NVersions};
+# Treat Version special since v0 is valid and we don't know the last version # until later
 
+  my $Version = "latest";
+  if (defined $Params{-version}) {
+    $Version = $Params{-version};
+  }  
+
+  &FetchDocument($DocumentID);
+  if ($Version eq "latest") {  
+    $Version      = $Documents{$DocumentID}{NVersions};
+  }
+  
   my $DocRevID  = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   unless ($DocRevID) {
     return "";
   }
   my $FullDocID = &FullDocumentID($DocumentID,$Version);
     
-  my $Link = "<a href=\"$ShowDocument\?docid=$DocumentID\"";
-     $Link .= " title=\"$FullDocID\"";
-   
-  # When adding the version number, remember to use &amp; for XHTML 
-  # or use DocumentURL
-  
+  my $Link = "<a href=\"$ShowDocument\?docid=$DocumentID";
+  if ($Version != $Documents{$DocumentID}{NVersions}) { # For other than last one
+    $Link .= "&amp;version=$Version";
+  }
+  $Link .= "\"";
+  $Link .= " title=\"$FullDocID\"";
   $Link .= ">"; 
+
   if ($DocIDOnly) {           # Like 1234                   
     $Link .= $DocumentID;
     $Link .= "</a>";
