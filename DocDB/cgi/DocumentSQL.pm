@@ -19,24 +19,24 @@
 sub GetAllDocuments {
   my ($DocumentID);
   my $DocumentList    = $dbh->prepare(
-     "select DocumentID,RequesterID,RequestDate,DocumentType,TimeStamp ".
+     "select DocumentID,RequesterID,RequestDate,TimeStamp ".
      "from Document");
   my $MaxVersionQuery = $dbh->prepare("select DocumentID,max(VersionNumber) ".
                                      "from DocumentRevision ".
                                      "group by DocumentID;");
 
-  my ($DocumentID,$RequesterID,$RequestDate,$DocumentType,$TimeStamp);
+  my ($DocumentID,$RequesterID,$RequestDate,$TimeStamp);
   my ($MaxVersion);
   
   $DocumentList -> execute;
-  $DocumentList -> bind_columns(undef, \($DocumentID,$RequesterID,$RequestDate,$DocumentType,$TimeStamp));
+  $DocumentList -> bind_columns(undef, \($DocumentID,$RequesterID,$RequestDate,$TimeStamp));
   %Documents = ();
   @DocumentIDs = ();
   while ($DocumentList -> fetch) {
     $Documents{$DocumentID}{DOCID}     = $DocumentID;
     $Documents{$DocumentID}{REQUESTER} = $RequesterID;
     $Documents{$DocumentID}{DATE}      = $RequestDate;
-    $Documents{$DocumentID}{TYPE}      = $DocumentType;
+#    $Documents{$DocumentID}{TYPE}      = $DocumentType;
     $Documents{$DocumentID}{TimeStamp} = $TimeStamp;
     push @DocumentIDs,$DocumentID;
   }
@@ -57,19 +57,19 @@ sub FetchDocument {
     return $DocumentID;  # Already fetched
   }  
 
-  my $DocumentList    = $dbh -> prepare("select DocumentID,RequesterID,RequestDate,DocumentType,TimeStamp ".
+  my $DocumentList    = $dbh -> prepare("select DocumentID,RequesterID,RequestDate,TimeStamp ".
                                         "from Document where DocumentID=?");
   my $MaxVersionQuery = $dbh -> prepare("select MAX(VersionNumber) from ".
                                         "DocumentRevision where DocumentID=?");
   $DocumentList -> execute($DocumentID);
-  my ($DocumentID,$RequesterID,$RequestDate,$DocumentType,$TimeStamp) = $DocumentList -> fetchrow_array;
+  my ($DocumentID,$RequesterID,$RequestDate,$TimeStamp) = $DocumentList -> fetchrow_array;
   push @DebugStack,"From Database DocID: $DocumentID";
 
   if ($DocumentID) {
     $Documents{$DocumentID}{DOCID}     = $DocumentID;
     $Documents{$DocumentID}{REQUESTER} = $RequesterID;
     $Documents{$DocumentID}{DATE}      = $RequestDate;
-    $Documents{$DocumentID}{TYPE}      = $DocumentType;
+#    $Documents{$DocumentID}{TYPE}      = $DocumentType;
     $Documents{$DocumentID}{TimeStamp} = $TimeStamp;
     push @DocumentIDs,$DocumentID;
 
@@ -85,7 +85,7 @@ sub InsertDocument (%) {
   my %Params = @_;
 
   my $DocumentID    = $Params{-docid}         || 0;
-  my $TypeID        = $Params{-typeid}        || 0;
+#  my $TypeID        = $Params{-typeid}        || 0;
   my $RequesterID   = $Params{-requesterid}   || 0;
   my $DateTime      = $Params{-datetime};
 
@@ -96,9 +96,9 @@ sub InsertDocument (%) {
     $DateTime = "$Year-$Mon-$Day $Hour:$Min:$Sec";
   } 
 
-  my $Insert = $dbh -> prepare( "insert into Document (DocumentID, RequesterID, RequestDate, DocumentType) values (?,?,?,?)");
+  my $Insert = $dbh -> prepare( "insert into Document (DocumentID, RequesterID, RequestDate) values (?,?,?)");
   
-  $Insert -> execute($DocumentID,$RequesterID,$DateTime,$TypeID);
+  $Insert -> execute($DocumentID,$RequesterID,$DateTime);
   $DocumentID = $Insert -> {mysql_insertid}; # Works with MySQL only
   
   return $DocumentID;        

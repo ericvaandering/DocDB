@@ -256,11 +256,11 @@ sub PrintDocNumber { # And type
   print "<dt>Document #:</dt>";
   print "<dd>";
   print (&FullDocumentID($DocRevisions{$DocRevID}{DOCID}));
-  print "-v$DocRevisions{$DocRevID}{VERSION}";
+  print "-v$DocRevisions{$DocRevID}{Version}";
   print "</dd>\n";
   
   print "<dt>Document type:</dt>";
-  my $type_link = &TypeLink($Documents{$DocRevisions{$DocRevID}{DOCID}}{TYPE},"short");
+  my $type_link = &TypeLink($DocRevisions{$DocRevID}{DocTypeID},"short");
   print "<dd>$type_link</dd>\n";
 }
 
