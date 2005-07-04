@@ -1,0 +1,69 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+# Usage: MigrateV5 --u=username --p=password --a=init|migrate|delete
+
+use DBI;
+use Getopt::Long;
+
+require "CGIInclude.pm";
+
+require "DocDBGlobals.pm";
+
+&GetOptions("a=s" => \$Action,"u=s" => \$User,"p=s" => \$Password);
+
+# In V7
+
+
+unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate") {
+  print "Usage: MigrateV7 --u=username --p=password --a=init|migrate|delete\n\n";
+  print "This script is used to migrate from a version 6 to version 7 DB structure. \n";
+  print "Run this script in \"init\" mode first, then update the DocDB code.\n";
+  print "Then run this script again in \"migrate\" mode. \n";
+  print "At this point you can update the CGI code and when you are comfortable  \n";
+  print "everything is OK, run in \"delete\" mode to erase old columns and/or tables.  \n";
+ exit;
+}  
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$User,$Password);
+
+if ($Action eq "init") { # Modify existing tables and add new tables in preparation for migration 
+
+# User based access
+
+  my $RevisionAdd  = $dbh -> prepare("alter table DocumentRevision add DocTypeID int"); 
+
+  $RevisionAdd      -> execute();
+}
+
+if ($Action eq "migrate") {
+  require "DocumentSQL.pm";
+  &GetAllDocuments;
+
+  my @DocumentIDs = keys %Documents;
+  my $RevisionUpdate  = $dbh -> prepare("update DocumentRevision set DocTypeID=? where DocumentID=?"); 
+  
+  foreach my $DocumentID (@DocumentIDs) {
+    print "Updating Document $DocumentID\n";
+    $RevisionUpdate -> execute($Documents{$DocumentID}{TYPE},$DocumentID);
+  }  
+}
+
+if ($Action eq "undo") { # Undo modifications
+
+# User based access
+
+  my $RevisionDrop  = $dbh -> prepare("alter table DocumentRevision drop DocTypeID int"); 
+
+  $RevisionDrop      -> execute();
+}
+
+if ($Action eq "delete") { 
+#  my $DocTypeDel    = $dbh -> prepare("alter table Document drop DocumentType"); 
+  
+#  $DocTypeDel -> execute();
+}
+
+exit;
