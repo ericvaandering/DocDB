@@ -126,7 +126,7 @@ sub AuthorSearch {
 sub TypeSearch {
   my $document_list;
   my ($Logic,@TypeIDs) = @_;
-  $document_list = $dbh -> prepare("select DocumentID from Document where DocumentType=?"); 
+  $document_list = $dbh -> prepare("select UNIQUE(DocumentID) from DocumentRevision where DocTypeID=?"); 
     
   my %Documents = ();
   my @Documents = ();
@@ -141,7 +141,7 @@ sub TypeSearch {
   }
   if ($Logic eq "AND") {
     foreach $DocumentID (keys %Documents) {
-      if ($Documents{$DocumentID} == $#TypeIDs+1) { # Require a match for each topic
+      if ($Documents{$DocumentID} == $#TypeIDs+1) { # Require a match for each type
         push @Documents,$DocumentID;
       }
     }

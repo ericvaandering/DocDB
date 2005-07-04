@@ -189,11 +189,14 @@ if      ($mode eq "add") {
 
 ### Database insert templates
 
+### DocType: Move to DocumentInsert or even DocumentAdd
+
 my $document_insert = $dbh->prepare(
    "insert into Document ".
           "(DocumentID, RequesterID, RequestDate, DocumentType) ". 
    "values (0,          ?,           ?,           ?)");
             
+### DocType: Move to DocumentInsert or even DocumentAdd
 my $doc_rev_insert = $dbh->prepare(
    "insert into DocumentRevision ".
    "(DocRevID, DocumentID, SubmitterID, DocumentTitle, PublicationInfo, ". 
@@ -331,6 +334,7 @@ if ($EnhancedSecurity) {
 &EndPage(@ErrorStack);
 
 ### Make entry in DocumentDatabase or get document ID
+### DocType: Move to DocumentInsert or even DocumentAdd
 
 my $documentID;
 if ($mode eq "reserve" || $mode eq "add") {
@@ -374,6 +378,7 @@ if ($mode eq "updatedb") { # New Document revision replaces old. Fetch
 }  
 
 ### Add entry to Document Revision
+### DocType: Move to DocumentInsert or even DocumentAdd
 
 $doc_rev_insert -> execute($documentID,$params{requester},$params{title},
                            $params{pubinfo},$version,$params{abstract},
