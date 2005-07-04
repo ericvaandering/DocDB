@@ -10,7 +10,7 @@ sub FetchDocRevisionByID ($) {
   my $RevisionList = $dbh->prepare(
     "select SubmitterID,DocumentTitle,PublicationInfo,VersionNumber,".
            "Abstract,RevisionDate,TimeStamp,DocumentID,Obsolete, ".
-           "Keywords,Note,Demanaged,DocTypeID ".
+           "Keywords,Note,Demanaged ".
     "from DocumentRevision ".
     "where DocRevID=? and Obsolete=0");
   if ($DocRevisions{$DocRevID}{DOCID} && $DocRevisions{$DocRevID}{Complete}) {
@@ -20,7 +20,7 @@ sub FetchDocRevisionByID ($) {
   my ($SubmitterID,$DocumentTitle,$PublicationInfo,
       $VersionNumber,$Abstract,$RevisionDate,
       $TimeStamp,$DocumentID,$Obsolete,
-      $Keywords,$Note,$Demanaged,$DocTypeID) = $RevisionList -> fetchrow_array;
+      $Keywords,$Note,$Demanaged) = $RevisionList -> fetchrow_array;
 
   #FIXME Make keys mixed-caps
   
@@ -37,8 +37,7 @@ sub FetchDocRevisionByID ($) {
   $DocRevisions{$DocRevID}{Obsolete}      = $Obsolete;
   $DocRevisions{$DocRevID}{Keywords}      = $Keywords;
   $DocRevisions{$DocRevID}{Note}          = $Note;
-  $DocRevisions{$DocRevID}{Demanaged}     = $Demanaged;
-  $DocRevisions{$DocRevID}{DocTypeID}     = $DocTypeID;
+  $DocRevisions{$DocRevID}{Demanaged}    = $Demanaged;
   $DocRevisions{$DocRevID}{Complete}      = 1;
 
 ### Find earliest instance this document for content modification date
@@ -188,7 +187,6 @@ sub InsertRevision {
   my $PubInfo       = $Params{-pubinfo}       || "";
   my $DateTime      = $Params{-datetime}           ;
   my $Version       = $Params{-version}       || 0;
-  my $DocTypeID     = $Params{-doctypeid}     || 0;
 
   unless ($DateTime) {
     my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
@@ -210,12 +208,12 @@ sub InsertRevision {
   
   my $Insert = $dbh -> prepare("insert into DocumentRevision ".
      "(DocRevID, DocumentID, SubmitterID, DocumentTitle, PublicationInfo, ". 
-     " VersionNumber, Abstract, RevisionDate,Keywords,Note,DocTypeID) ". 
-     "values (0,?,?,?,?,?,?,?,?,?,?)");
+     " VersionNumber, Abstract, RevisionDate,Keywords,Note) ". 
+     "values (0,?,?,?,?,?,?,?,?,?)");
   
   if ($DocumentID) {
     $Insert -> execute($DocumentID,$SubmitterID,$Title,$PubInfo,$NewVersion, 
-                       $Abstract,$DateTime,$Keywords,$Note,$DocTypeID);
+                       $Abstract,$DateTime,$Keywords,$Note);
                                
     $DocRevID = $Insert -> {mysql_insertid}; # Works with MySQL only
   }
