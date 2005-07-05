@@ -90,7 +90,7 @@ TOC
     <li><a href="#prefs">Setting preferences</a></li>
     <li><a href="#email">Setting e-mail notification</a></li>
    </ul></li>
-  TOC
+TOC
   if ($UseSignoffs) {
    print "<li><a href=\"#signoff\">Document Signoffs</a></li>\n";
   } 
