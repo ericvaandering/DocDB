@@ -14,7 +14,6 @@ ln -sf ../../DocDB/DocDBGlobals.pm  .
 # Set-up only needed scripts
 
 ln -sf ../../DocDB/DocumentDatabase . 
-ln -sf ../../DocDB/LastModified  .
 ln -sf ../../DocDB/ShowDocument  .
 
 ln -sf ../../DocDB/ListConferences  .
@@ -23,9 +22,7 @@ ln -sf ../../DocDB/ListAuthors  .
 ln -sf ../../DocDB/ListTypes  . # Optional
 
 ln -sf ../../DocDB/ListBy .
-ln -sf ../../DocDB/ListByTopic  .
-ln -sf ../../DocDB/ListByAuthor  .
-ln -sf ../../DocDB/ListByType  .  # Optional
+ln -sf ../../DocDB/DocDBInstructions .
 
 ln -sf ../../DocDB/RetrieveFile  .
 ln -sf ../../DocDB/SearchForm  . # Could be optional
