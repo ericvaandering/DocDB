@@ -67,15 +67,17 @@ sub AddDocument {
 
   my ($DocRevID,$Count,@FileIDs);
 
-  $DocumentID = &InsertDocument(-docid => $DocumentID, -typeid => $TypeID, 
-                 -requesterid => $RequesterID, -datetime => $DateTime);
+  $DocumentID = &InsertDocument(
+                 -docid    => $DocumentID, -requesterid => $RequesterID, 
+                 -datetime => $DateTime);
                  
   if ($DocumentID) {                                 
-    $DocRevID = &InsertRevision(-docid => $DocumentID, 
-                 -submitterid => $RequesterID, -title    => $Title,
-                 -pubinfo     => $PubInfo,     -abstract => $Abstract,
-                 -version     => 'bump',       -datetime => $DateTime,
-                 -keywords    => $Keywords,    -note     => $Note);
+    $DocRevID = &InsertRevision(
+                 -docid       => $DocumentID,  -doctypeid => $TypeID, 
+                 -submitterid => $RequesterID, -title     => $Title,
+                 -pubinfo     => $PubInfo,     -abstract  => $Abstract,
+                 -version     => 'bump',       -datetime  => $DateTime,
+                 -keywords    => $Keywords,    -note      => $Note);
 
     # Deal with SessionTalkID
 

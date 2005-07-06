@@ -85,6 +85,10 @@ if ($Special eq "othermeeting") {$OtherMeeting = 1;}
 # FIXME: Any reason all of these can't be "my"?
 
 my $Archive       = $params{archive};
+my $DocTypeID     = $params{doctype};
+my $Title         = $params{title};
+my $Abstract      = $params{abstract};
+my $PubInfo       = $params{pubinfo};
    $Overdate      = $params{overdate};
    $Overday       = $params{overday};
    $Overmonth     = $params{overmonth};
@@ -95,7 +99,8 @@ my $Archive       = $params{archive};
    @Volumes       = split /\0/,$params{volume};
    @Pages         = split /\0/,$params{page};
    $Keywords      = $params{keywords}; 
-   $Requester     = $params{requester};
+   $Requester     = $params{requester}; #FIXME: Replace with RequesterID
+my $RequesterID   = $params{requester};
 my $SessionTalkID = $params{sessiontalkid};
 my $RevisionNote  = $params{revisionnote};
 my $SignoffList   = $params{signofflist};
@@ -187,51 +192,6 @@ if      ($mode eq "add") {
                 in the $Project document database:</h3><p>\n";
 }
 
-### Database insert templates
-
-### DocType: Move to DocumentInsert or even DocumentAdd
-
-my $document_insert = $dbh->prepare(
-   "insert into Document ".
-          "(DocumentID, RequesterID, RequestDate, DocumentType) ". 
-   "values (0,          ?,           ?,           ?)");
-            
-### DocType: Move to DocumentInsert or even DocumentAdd
-my $doc_rev_insert = $dbh->prepare(
-   "insert into DocumentRevision ".
-   "(DocRevID, DocumentID, SubmitterID, DocumentTitle, PublicationInfo, ". 
-   " VersionNumber, Abstract, RevisionDate,Keywords,Note) ". 
-   "values (0,?,?,?,?,?,?,?,?,?)");
-            
-my $rev_author_insert =  $dbh->prepare(
-   "insert into RevisionAuthor ".
-   "       (RevAuthorID, DocRevID, AuthorID) ".
-   "values (0,           ?,        ?)");
-                                 
-my $rev_security_insert =  $dbh->prepare(
-   "insert into RevisionSecurity ".
-   "       (RevSecurityID, DocRevID, GroupID) ".
-   "values (0,             ?,        ?)");
-
-my $RevModifyInsert   =  $dbh->prepare(
-   "insert into RevisionModify ".
-   "       (RevModifyID, DocRevID, GroupID) ".
-   "values (0,             ?,        ?)");
-                                  
-my $rev_topic_insert = $dbh->prepare(
-   "insert into RevisionTopic ".
-   "       (RevTopicID, DocRevID, MinorTopicID) ".
-   "values (0,          ?,        ?)");
-
-my $ReferenceInsert  = $dbh -> prepare(
-     "insert into RevisionReference ".
-     "       (ReferenceID,DocRevID,JournalID,Volume,Page)".
-     "values (0,          ?,       ?,        ?,     ?)"); 
-
-my $SessionTalkUpdate = $dbh -> prepare("update SessionTalk set DocumentID=?,Confirmed=1 where SessionTalkID=?");
-
-# FIXME: Build links for other document actions to use below
-
 ### Check parameters for errors
 
 unless (&CanCreate()) {
@@ -259,10 +219,8 @@ if (@JournalIDs || @Volumes || @Pages) {
   }
 }    
     
-if ($mode eq "add" || $mode eq "reserve") {
-  unless ($params{doctype}) {
-    push @ErrorStack,"You must supply a document type for this document.";
-  }
+unless ($DocTypeID) {
+  push @ErrorStack,"You must supply a document type for this document.";
 }
 
 if ($mode eq "add" || $mode eq "update") {
@@ -334,12 +292,11 @@ if ($EnhancedSecurity) {
 &EndPage(@ErrorStack);
 
 ### Make entry in DocumentDatabase or get document ID
-### DocType: Move to DocumentInsert or even DocumentAdd
+### FIXME: Should be able to move all this into an enhanced AddDocument
 
 my $documentID;
 if ($mode eq "reserve" || $mode eq "add") {
-  $document_insert -> execute($params{requester},$SQL_NOW,$params{doctype});
-  $documentID = $document_insert -> {mysql_insertid}; # Works with MySQL only
+  $documentID = &InsertDocument(-requesterid => $RequesterID, -datetime => $SQL_NOW);
 } else {
   $documentID = $params{docid};
 }  
@@ -372,28 +329,30 @@ if      ($mode eq "reserve") {
 if ($mode eq "updatedb") { # New Document revision replaces old. Fetch 
                            # old DocumentRevision and mark it obsolete
   my $OldRevID = &FetchRevisionByDocumentAndVersion($documentID,$version);
-  my $obsolete_revision = $dbh -> prepare(
-     "update DocumentRevision set Obsolete=1 where DocRevID=?");
-  $obsolete_revision -> execute($OldRevID); 
+  my $ObsoleteRevision = $dbh -> prepare("update DocumentRevision set Obsolete=1 where DocRevID=?");
+  $ObsoleteRevision -> execute($OldRevID); 
 }  
 
 ### Add entry to Document Revision
-### DocType: Move to DocumentInsert or even DocumentAdd
 
-$doc_rev_insert -> execute($documentID,$params{requester},$params{title},
-                           $params{pubinfo},$version,$params{abstract},
-                           $SQL_NOW,$Keywords,$RevisionNote);
-my $docRevID = $doc_rev_insert -> {mysql_insertid}; # Works with MySQL only
-my $DocRevID = $docRevID; # FIXME
+my $DocRevID = &InsertRevision(
+                 -docid       => $documentID,  -doctypeid => $DocTypeID, 
+                 -submitterid => $RequesterID, -title     => $Title,
+                 -pubinfo     => $PubInfo,     -abstract  => $Abstract,
+                 -version     => $version,     -datetime  => $SQL_NOW,
+                 -keywords    => $Keywords,    -note      => $RevisionNote);
 
 ### Add reference information if it exists
 
 if (@JournalIDs || @Volumes || @Pages) {
+  my $ReferenceInsert  = $dbh -> prepare(
+    "insert into RevisionReference (ReferenceID,DocRevID,JournalID,Volume,Page) ".
+    "values (0,?,?,?,?)"); 
   foreach my $JournalID (@JournalIDs) {
     my $Volume = shift @Volumes;
     my $Page   = shift @Pages;
     if ($JournalID) { # Can delete references too.
-      $ReferenceInsert -> execute($docRevID,$JournalID,$Volume,$Page);
+      $ReferenceInsert -> execute($DocRevID,$JournalID,$Volume,$Page);
     }  
   }
 }    
@@ -407,35 +366,27 @@ if (@XRefs) {
 
 ### Add to authors, topics and securities
                            
-foreach $authorID (@authorIDs) {
-  $rev_author_insert -> execute($docRevID,$authorID);
-}
-foreach $topicID (@topicIDs) {
-  $rev_topic_insert -> execute($docRevID,$topicID);
-}
-foreach $securityID (@securities) {
-  if ($securityID) {  # Skip "0/Public" 
-    $rev_security_insert -> execute($docRevID,$securityID);
-  }  
-}
+my $Count;
+$Count = &InsertAuthors(-docrevid => $DocRevID, -authorids => \@authorIDs);
+$Count = &InsertTopics(-docrevid => $DocRevID, -topicids => \@topicIDs);
+$Count = &InsertSecurity(-docrevid  => $DocRevID, 
+                         -viewids   => \@securities,
+                         -modifyids => \@ModifyGroups);
 
-if ($SessionTalkID) { # Add link to SessionTalk
+### Add link to SessionTalk                         
+
+if ($SessionTalkID) { 
+  my $SessionTalkUpdate = $dbh -> prepare("update SessionTalk set DocumentID=?,Confirmed=1 where SessionTalkID=?");
   $SessionTalkUpdate -> execute($documentID,$SessionTalkID);
 }  
 
-if ($EnhancedSecurity) {
-  foreach my $GroupID (@ModifyGroups) {
-    if ($GroupID) {  # Skip "0/Public" (shouldn't happen) 
-      $RevModifyInsert -> execute($docRevID,$GroupID);
-    }  
-  }
-}
+### Add Signoffs
 
 my @SignoffIDs;
 if ($UseSignoffs && $SignoffList) {
   @SignoffIDs = &ProcessSignoffList($SignoffList);
   if (@SignoffIDs) {
-    &InsertSignoffList($docRevID,@SignoffIDs);
+    &InsertSignoffList($DocRevID,@SignoffIDs);
   }  
 }  
 
@@ -472,8 +423,8 @@ if ($mode = "updatedb") { # Local DB not in sync, clear it
 
 # Output feedback to the user
 
-$full_docid  = &FullDocumentID($documentID);
-my $DocRevID = &FetchRevisionByDocumentAndVersion($documentID,$version);
+$full_docid = &FullDocumentID($documentID);
+$DocRevID   = &FetchRevisionByDocumentAndVersion($documentID,$version);
 
 unless ($DocRevID) {
   print "This document does not exist.<p>\n";
