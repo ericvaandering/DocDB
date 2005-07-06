@@ -38,7 +38,7 @@ sub DocumentTable (%) {
   my %FieldOptions  = %{$Params{-fieldoptions}}; 
   
   my %FieldTitles = (Docid   => "$ShortProject-doc-#", Updated => "Last Updated", 
-                     CanSign => "Next Signature(s)", Confirm => "Confirm?");  
+                     CanSign => "Next Signature(s)",   Confirm => "Confirm?");  
   
   unless (@DocumentIDs) {
     if ($NoneBehavior eq "skip") {
@@ -48,7 +48,7 @@ sub DocumentTable (%) {
 
 # FIXME: For XHTML/CSS compliance: 
 #        id has to be settable (should be unique, can have more than one per page)
-#        should enclose in <div> </div>, get rid of center
+#        should enclose in <div> </div>, 
 #        and should allow a "title" to be placed here rather than calling routine
 
 ### Write out the beginning and header of table

@@ -404,7 +404,7 @@ if ($mode eq "add" || $mode eq "update") {
   print "<br/>Make sure you supply a format everyone can view (e.g. PDF) along
   with source formats.<br/>\n"; 
   print "</td></tr>";
-} elsif ($mode eq "updatedb") {
+} elsif ($mode eq "updatedb" && $Version) { # v0 can't have files
   print "<tr><td colspan=4>\n";
   &FileUploadBox(-desconly => true, -docrevid => $DocRevID,
                  -fileids  => \@FileIDs);
