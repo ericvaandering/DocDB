@@ -81,10 +81,11 @@ sub RevisionNoteBox {
 
 sub DocTypeButtons (%) {
 # FIXME Get rid of fetches, make sure GetDocTypes is executed
-  my (%Params) = @_; 
+  my (%Params) = @_;
   
-  my $Required   = $Params{-required}   || 0;
-
+  my $Required = $Params{-required} || 0;
+  my $Default  = $Params{-default}  || 0;
+  
   my ($DocTypeID,$ShortType,$LongType);
   my $doctype_list  = $dbh->prepare("select DocTypeID,ShortType,LongType from DocumentType");
   $doctype_list -> execute;
@@ -104,7 +105,7 @@ sub DocTypeButtons (%) {
   }  
   print "<br> \n";
   print $query -> radio_group(-columns => 3, -name => "doctype", 
-                              -values => \%short_type, -default => "-");
+                              -values => \%short_type, -default => $Default);
 };
 
 sub PrintRevisionInfo {
