@@ -17,7 +17,7 @@ require "DocDBGlobals.pm";
 # In V7
 
 
-unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate") {
+unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate" or $Action eq "undo") {
   print "Usage: MigrateV7 --u=username --p=password --a=init|migrate|delete\n\n";
   print "This script is used to migrate from a version 6 to version 7 DB structure. \n";
   print "Run this script in \"init\" mode first, then update the DocDB code.\n";
@@ -42,12 +42,26 @@ if ($Action eq "migrate") {
   require "DocumentSQL.pm";
   &GetAllDocuments;
 
-  my @DocumentIDs = keys %Documents;
-  my $RevisionUpdate  = $dbh -> prepare("update DocumentRevision set DocTypeID=? where DocumentID=?"); 
-  
+  my @DocumentIDs = sort keys %Documents;
+  my $RevisionUpdate = $dbh -> prepare("update DocumentRevision set DocTypeID=?,TimeStamp=? where DocRevID=?"); 
+  my $RevisionSelect = $dbh -> prepare("select DocRevID,Timestamp from DocumentRevision where DocumentID=?");  
+  my $DocumentSelect = $dbh -> prepare("select DocumentType from Document where DocumentID=?");  
   foreach my $DocumentID (@DocumentIDs) {
-    print "Updating Document $DocumentID\n";
-    $RevisionUpdate -> execute($Documents{$DocumentID}{TYPE},$DocumentID);
+    unless ($DocumentID) {next;} # Null documentID in test DB
+    my ($DocRevID,$TimeStamp);
+    $DocumentSelect -> execute($DocumentID);
+    my ($DocTypeID) = $DocumentSelect -> fetchrow_array;
+    
+    unless ($DocumentID % 100) {
+      print "Updating Document $DocumentID, DocTypeID $DocTypeID\n";
+    }   
+    # Do revision by revision to keep TimeStamps in sync
+    
+    $RevisionSelect -> execute($DocumentID);
+    $RevisionSelect -> bind_columns(undef, \($DocRevID,$TimeStamp));
+    while ($RevisionSelect -> fetch) {
+      $RevisionUpdate -> execute($DocTypeID,$TimeStamp,$DocRevID);
+    }
   }  
 }
 
@@ -55,7 +69,7 @@ if ($Action eq "undo") { # Undo modifications
 
 # User based access
 
-  my $RevisionDrop  = $dbh -> prepare("alter table DocumentRevision drop DocTypeID int"); 
+  my $RevisionDrop  = $dbh -> prepare("alter table DocumentRevision drop DocTypeID"); 
 
   $RevisionDrop      -> execute();
 }
