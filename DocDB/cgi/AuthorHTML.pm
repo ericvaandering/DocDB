@@ -108,8 +108,10 @@ sub AuthorLink ($;%) {
   my $Format = $Params{-format} || "full"; # full, formal
   
   &FetchAuthor($AuthorID);
+  &FetchInstitution($Authors{$AuthorID}{InstitutionID});
+  my $InstitutionName = $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG};
   my $link;
-  $link = "<a href=\"$ListBy?authorid=$AuthorID\">";
+  $link = "<a href=\"$ListBy?authorid=$AuthorID\" title=\"$InstitutionName\">";
   if ($Format eq "full") {
     $link .= $Authors{$AuthorID}{FULLNAME};
   } elsif ($Format eq "formal") {
@@ -126,12 +128,12 @@ sub PrintAuthorInfo {
   my ($AuthorID) = @_;
   
   &FetchAuthor($AuthorID);
-  &GetInstitutions; # FIXME: Can use FetchInstitution when exists
+  &FetchInstitution($Authors{$AuthorID}{InstitutionID});
   my $link = &AuthorLink($AuthorID);
   
   print "$link\n";
   print " of ";
-  print $Institutions{$Authors{$AuthorID}{INST}}{LONG};
+  print $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG};
 }
 
 sub AuthorsByInstitution { 
@@ -143,7 +145,7 @@ sub AuthorsByInstitution {
   print "<td><b>$Institutions{$InstID}{SHORT}</b>\n";
   print "<ul>\n";
   foreach my $AuthorID (@AuthorIDs) {
-    if ($InstID == $Authors{$AuthorID}{INST}) {
+    if ($InstID == $Authors{$AuthorID}{InstitutionID}) {
       my $author_link = &AuthorLink($AuthorID);
       print "<li>$author_link\n";
     }  

@@ -41,10 +41,10 @@ sub GetAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with all authors
       $Authors{$AuthorID}{FULLNAME}  = "$LastName";
       $Authors{$AuthorID}{Formal}    = "$LastName";
     }
-    $Authors{$AuthorID}{LASTNAME}  =  $LastName;
-    $Authors{$AuthorID}{FIRSTNAME} =  $FirstName;
-    $Authors{$AuthorID}{ACTIVE}    =  $Active;
-    $Authors{$AuthorID}{INST}      =  $InstitutionID;
+    $Authors{$AuthorID}{LASTNAME}      = $LastName;
+    $Authors{$AuthorID}{FIRSTNAME}     = $FirstName;
+    $Authors{$AuthorID}{ACTIVE}        = $Active;
+    $Authors{$AuthorID}{InstitutionID} = $InstitutionID;
   }
 }
 
@@ -70,10 +70,10 @@ sub FetchAuthor { # Fetches an Author by ID, adds to $Authors{$AuthorID}{}
     $Authors{$AuthorID}{FULLNAME}  = "$FirstName $LastName";
     $Authors{$AuthorID}{Formal}    = "$LastName, $FirstName";
   }
-  $Authors{$AuthorID}{LASTNAME}  =  $LastName;
-  $Authors{$AuthorID}{FIRSTNAME} =  $FirstName;
-  $Authors{$AuthorID}{ACTIVE}    =  $Active;
-  $Authors{$AuthorID}{INST}      =  $InstitutionID;
+  $Authors{$AuthorID}{LASTNAME}      = $LastName;
+  $Authors{$AuthorID}{FIRSTNAME}     = $FirstName;
+  $Authors{$AuthorID}{ACTIVE}        = $Active;
+  $Authors{$AuthorID}{InstitutionID} = $InstitutionID;
   
   return $Authors{$AuthorID}{AUTHORID};
 }
@@ -114,15 +114,19 @@ sub GetInstitutionAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with au
       $Authors{$AuthorID}{FULLNAME} = "$FirstName $LastName";
       $Authors{$AuthorID}{Formal}   = "$LastName, $FirstName";
     }
-    $Authors{$AuthorID}{LASTNAME}   =  $LastName;
-    $Authors{$AuthorID}{FIRSTNAME}  =  $FirstName;
-    $Authors{$AuthorID}{ACTIVE}     =  $Active;
-    $Authors{$AuthorID}{INST}       =  $InstitutionID;
+    $Authors{$AuthorID}{LASTNAME}      =  $LastName;
+    $Authors{$AuthorID}{FIRSTNAME}     =  $FirstName;
+    $Authors{$AuthorID}{ACTIVE}        =  $Active;
+    $Authors{$AuthorID}{InstitutionID} =  $InstitutionID;
   }
   return @AuthorIDs;
 }
 
 sub GetInstitutions { # Creates/fills a hash $Institutions{$InstitutionID}{} with all Institutions
+  if ($HaveAllInstitutions) {
+    return;
+  }  
+
   my ($InstitutionID,$ShortName,$LongName);
   my $inst_list  = $dbh -> prepare(
      "select InstitutionID,ShortName,LongName from Institution"); 
@@ -130,22 +134,27 @@ sub GetInstitutions { # Creates/fills a hash $Institutions{$InstitutionID}{} wit
   $inst_list -> bind_columns(undef, \($InstitutionID,$ShortName,$LongName));
   %Institutions = ();
   while ($inst_list -> fetch) {
-    $Institutions{$InstitutionID}{INSTID} =  $InstitutionID;
-    $Institutions{$InstitutionID}{SHORT}  = $ShortName;
-    $Institutions{$InstitutionID}{LONG}   =  $LongName;
+    $Institutions{$InstitutionID}{InstitutionID} = $InstitutionID;
+    $Institutions{$InstitutionID}{SHORT}         = $ShortName;
+    $Institutions{$InstitutionID}{LONG}          =  $LongName;
   }
+  $HaveAllInstitutions = 1;
 }
 
 sub FetchInstitution { # Creates/fills a hash $Institutions{$InstitutionID}{} with all Institutions
   my ($InstitutionID) = @_;
+  if ($Institutions{$InstitutionID}{InstitutionID}) {
+    return;
+  }  
+  
   my ($ShortName,$LongName);
   my $InstitutionFetch  = $dbh -> prepare(
      "select ShortName,LongName from Institution where InstitutionID=?"); 
   $InstitutionFetch -> execute($InstitutionID);
   ($ShortName,$LongName) = $InstitutionFetch -> fetchrow_array;
-  $Institutions{$InstitutionID}{INSTID} = $InstitutionID;
-  $Institutions{$InstitutionID}{SHORT}  = $ShortName;
-  $Institutions{$InstitutionID}{LONG}   = $LongName;
+  $Institutions{$InstitutionID}{InstitutionID} = $InstitutionID;
+  $Institutions{$InstitutionID}{SHORT}         = $ShortName;
+  $Institutions{$InstitutionID}{LONG}          =  $LongName;
 }
 
 sub GetAuthorDocuments { # Return a list of all documents the author is associated with

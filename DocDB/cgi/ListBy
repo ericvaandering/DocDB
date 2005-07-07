@@ -93,7 +93,7 @@ if ($Days) {
   
   my $Link = &AuthorLink($AuthorID);
   
-  $Message = "<span class=\"Highlight\">$Link of $Institutions{$Authors{$AuthorID}{INST}}{LONG}</span>
+  $Message = "<span class=\"Highlight\">$Link of $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG}</span>
               is listed as an author on the following documents:";
   @DocumentIDs = &GetAuthorDocuments($AuthorID);  
 } elsif ($Major || $MajorID) {
