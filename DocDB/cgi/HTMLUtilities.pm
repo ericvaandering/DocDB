@@ -28,8 +28,9 @@ require "ProjectRoutines.pm";
 sub DocDBHeader { 
   my ($Title,$PageTitle,%Params) = @_;
   
-  my $Search = $Params{-search}; # Fix search page!
-  my $NoBody = $Params{-nobody};
+  my $Search  = $Params{-search}; # Fix search page!
+  my $NoBody  = $Params{-nobody};
+  my @Scripts = @{$Params{-scripts}};
 
   my @ScriptParts = split /\//,$ENV{SCRIPT_NAME};
   my $ScriptName  = pop @ScriptParts;
@@ -77,6 +78,10 @@ sub DocDBHeader {
   if (-e "$CSSDirectory/$ShortProject"."DocDB".$ScriptName.".css") {
     print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB".$ScriptName.".css\" type=\"text/css\" />\n";
   }
+
+  foreach my $Script (@Scripts) {
+    print "<script type=\"text/javascript\" language=\"javascript\" src=\"$JSURLPath/$Script.".js\" />\n";
+  }  
 
   if (defined &ProjectHeader) {
     &ProjectHeader($Title,$PageTitle); 
