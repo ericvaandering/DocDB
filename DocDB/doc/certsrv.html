@@ -16,20 +16,26 @@
      (defined in <a href=sslconf.html>Configure SSL</a>)
 <li> DOEGrid certificates:
     <ul>
+    <li> <font color="red">IMPORTANT:  You will need both a certificate and a key file</font>
     <li> Generic <a href=doesrvcert.html>DOEGrid certificate instructions</a>
     <li> Getting a DOEGrid Server Certificate for a
 	 <a href=https://computing.fnal.gov/security/pki/Get-DOEGrids-Cert.html>Fermilab server</a>
     <li> You will get a request ID that you can use to download your 
          certificate, usually the next business day.
     <li> You may have to cut and paste to download your certificate into some file.
-    <li> Save the "Base 64 encoded certificate" as <em>doehostcert.pem</em>.
-    <li> Your httpd.conf or ssl.conf file will contain <br>
-	  <b>SSLCertificateFile /full/path/to/certs/doehostcert.pem</b> <br>
+    <li> Save the "Base 64 encoded certificate" as <em>doehostcert.cert</em>.
+    <li> As part of generating your request for a certificate, 
+         you also generated a pem keyfile, perhaps named <em>privkey.pem</em>.
+	 You must strip the password from this file to use it with apache: <br>
+	 <b>openssl rsa -in privkey.pem -out doe.cert.key</b>
+    <li> Your httpd.conf or ssl.conf file will need both the certificate and key file: <br>
+	  <b>SSLCertificateFile /full/path/to/certs/doehostcert.cert</b> <br>
+	  <b>SSLCertificateKeyFile /full/path/to/certs/doe.cert.key</b> <br>
 	 (See <a href=sslconf.html>Configure SSL</a>)
     </ul>
 <li> Getting a self-signed Kerberos certificate
      <ul> 
-     <li> <b>openssl req -new -out new.cert.csr</b>
+     <li> <b>openssl req -new -out myhost.cert.csr</b>
      <pre>
      Generating a 1024 bit RSA private key
      ...++++++
@@ -58,19 +64,19 @@
      A challenge password []:
      An optional company name []:
      </pre>
-     <li> The previous step creates both <b>new.cert.csr</b> and <b>privkey.pem</b>.
-     <li> <b>openssl rsa -in privkey.pem -out new.cert.key</b>
+     <li> The previous step creates both <b>myhost.cert.csr</b> and <b>privkey.pem</b>.
+     <li> <b>openssl rsa -in privkey.pem -out myhost.cert.key</b>
      <pre>
      Enter pass phrase for privkey.pem:
      writing RSA key
      </pre>
-     <li> <b>openssl x509 -in new.cert.csr -out new.cert.cert -req -signkey new.cert.key -days 365</b>
+     <li> <b>openssl x509 -in myhost.cert.csr -out myhost.cert.cert -req -signkey myhost.cert.key -days 365</b>
      <li> If you want to view the certificate request: 
-          <b>openssl req -noout -text -in new.cert.csr</b>
+          <b>openssl req -noout -text -in myhost.cert.csr</b>
      <li> If you want to view your key: 
-          <b>openssl req -noout -text -in new.cert.key</b>
+          <b>openssl req -noout -text -in myhost.cert.key</b>
      <li> Add the following line to <a href=sslconf.html>httpd.conf</a> <br>
-          <b>SSLCertificateKeyFile /full/path/to/certs/epp.cert.key</b>
+          <b>SSLCertificateKeyFile /full/path/to/certs/myhost.cert.key</b>
      </ul> 
 </ol>
 
