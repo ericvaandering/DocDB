@@ -98,15 +98,13 @@ if ($mode eq "add" || $mode eq "reserve") {
 
 print $query->header;
 if      ($mode eq "add") {
-  &DocDBHeader("$Project Document Addition","Document Addition", -scripts => ["PopUps"]);
+  &DocDBHeader("$Project Document Addition","Document Addition", -scripts => ["PopUps","InsertRevisionNote"]);
 } elsif ($mode eq "reserve") {
-  &DocDBHeader("$Project Document Reservation","Document Reservation", -scripts => ["PopUps"]);
+  &DocDBHeader("$Project Document Reservation","Document Reservation", -scripts => ["PopUps","InsertRevisionNote"]);
 } elsif ($mode eq "update" || $mode eq "updatedb") {
-  &DocDBHeader("$Project Document Update","Document Update", -scripts => ["PopUps"]);
+  &DocDBHeader("$Project Document Update","Document Update", -scripts => ["PopUps","InsertRevisionNote"]);
 }
 
-&RevisionNoteInsertScript;
-  
 @ErrorStack = ();
 @WarnStack = ();
 
