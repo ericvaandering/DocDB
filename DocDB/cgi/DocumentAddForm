@@ -105,12 +105,7 @@ if      ($mode eq "add") {
   &DocDBHeader("$Project Document Update","Document Update", -scripts => ["PopUps"]);
 }
 
-&HelpPopupScript;
-&KeywordChooserPopupScript;
 &RevisionNoteInsertScript;
-if ($UseSignoffs) {
-  &SignoffChooserPopupScript;
-}
   
 @ErrorStack = ();
 @WarnStack = ();
