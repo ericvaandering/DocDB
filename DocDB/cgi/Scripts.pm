@@ -114,7 +114,7 @@ sub TopicSearchScript {
 
   print <<PREAMBLE;
 
-<script language="JavaScript" type="text/javascript">
+<script language="javascript" type="text/javascript">
 <!--
 
 var first_load = 1; // is this the first time we load the page?
