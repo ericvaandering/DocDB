@@ -104,8 +104,7 @@ sub AdminDisableScripts (%) {
   print "<!-- \n";
 
   print "function disabler_",$Form,"() {\n";
-#  print "function disabler() {\n";
-  
+
   foreach my $Position (keys %Positions) {
     print " if (document.$Form.admaction[$Positions{$Position}].checked == true) {\n";
     foreach my $Element (keys %Matrix) {
@@ -117,9 +116,6 @@ sub AdminDisableScripts (%) {
     }
     print " }\n";    
   }
-  
-  
-  
   print "}\n";
   
   print "//-->\n";
