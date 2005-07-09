@@ -94,16 +94,6 @@ sub ConfirmTalkLink ($$) { #FIXME: Make onclick optional, use in DocumentTable
 
 sub TopicSearchScript {
 
-# Embed script with 
-# <script>
-# <!--
-# <![CDATA[
-#  source
-# ]]>
-# //-->
-# </script>
-
-
 # This script produces a menu for topics and another for relevant subtopics
 # (i.e. selecting a topic reduces the set of subtopics). This code is 
 # adapted from Bugzilla, produced by mozilla.org.
@@ -114,7 +104,7 @@ sub TopicSearchScript {
 
   print <<PREAMBLE;
 
-<script language="javascript" type="text/javascript">
+<script language="JavaScript" type="text/javascript">
 <!--
 
 var first_load = 1; // is this the first time we load the page?
