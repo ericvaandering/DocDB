@@ -83,8 +83,8 @@ sub DocDBHeader {
     if ($Script eq "TopicChooser") { # Get global variables in right place
       require "Scripts.pm";
       &TopicSearchScript;
-    }  
-    print "<script type=\"text/javascript\" language=\"javascript\" src=\"$JSURLPath/$Script.js\" />\n";
+    } 
+    print "<script type=\"text/javascript\" language=\"javascript\" src=\"$JSURLPath/$Script.js\"></script>\n";
   }  
 
   if (defined &ProjectHeader) {
