@@ -52,32 +52,51 @@ sub DocDBHeader {
   
   # Include DocDB style sheets
   
-  print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB.css\" type=\"text/css\" />\n";
-  if (-e "$CSSDirectory/DocDB_IE.css") {
-    print "<!--[if IE]>\n";
-    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB_IE.css\" type=\"text/css\" />\n";
-    print "<![endif]-->\n"; 
+  foreach my $ProjectCSS ("",$ShortProject) {
+    foreach my $ScriptCSS ("",$ScriptName) {
+      foreach my $PublicCSS ("","Public") {
+        foreach my $BrowserCSS ("","_IE") {
+          my $CSSFile = $CSSDirectory."/".$ProjectCSS.$PublicCSS."DocDB".$ScriptCSS.".css";
+          my $CSSURL  =   $CSSURLPath."/".$ProjectCSS.$PublicCSS."DocDB".$ScriptCSS.".css";
+          if (-e $CSSFile) {
+            if ($BrowserCSS eq "_IE") {
+              print "<!--[if IE]>\n";
+              print "<link rel=\"stylesheet\" href=\"$CSSURL\" type=\"text/css\" />\n";
+              print "<![endif]-->\n"; 
+            } else {
+              print "<link rel=\"stylesheet\" href=\"$CSSURL\" type=\"text/css\" />\n";
+            }
+          }
+        }
+      }
+    }
   }
-  if (-e "$CSSDirectory/DocDB$ScriptName.css") {
-    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB$ScriptName.css\" type=\"text/css\" />\n";
-  }
-  if (-e "$CSSDirectory/DocDB$ScriptName"."_IE.css") {
-    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB$ScriptName\_IE.css\" type=\"text/css\" />\n";
-  }
+#  print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB.css\" type=\"text/css\" />\n";
+#  if (-e "$CSSDirectory/DocDB_IE.css") {
+#    print "<!--[if IE]>\n";
+#    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB_IE.css\" type=\"text/css\" />\n";
+#    print "<![endif]-->\n"; 
+#  }
+#  if (-e "$CSSDirectory/DocDB$ScriptName.css") {
+#    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB$ScriptName.css\" type=\"text/css\" />\n";
+#  }
+#  if (-e "$CSSDirectory/DocDB$ScriptName"."_IE.css") {
+#    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB$ScriptName\_IE.css\" type=\"text/css\" />\n";
+#  }
    
   # Include projects DocDB style sheets 
    
-  if (-e "$CSSDirectory/$ShortProject"."DocDB.css") {
-    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB.css\" type=\"text/css\" />\n";
-  }
-  if (-e "$CSSDirectory/$ShortProject"."DocDB_IE.css") {
-    print "<!--[if IE]>\n";
-    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB_IE.css\" type=\"text/css\" />\n";
-    print "<![endif]-->\n"; 
-  }
-  if (-e "$CSSDirectory/$ShortProject"."DocDB".$ScriptName.".css") {
-    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB".$ScriptName.".css\" type=\"text/css\" />\n";
-  }
+#  if (-e "$CSSDirectory/$ShortProject"."DocDB.css") {
+#    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB.css\" type=\"text/css\" />\n";
+#  }
+#  if (-e "$CSSDirectory/$ShortProject"."DocDB_IE.css") {
+#    print "<!--[if IE]>\n";
+#    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB_IE.css\" type=\"text/css\" />\n";
+#    print "<![endif]-->\n"; 
+#  }
+#  if (-e "$CSSDirectory/$ShortProject"."DocDB".$ScriptName.".css") {
+#    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB".$ScriptName.".css\" type=\"text/css\" />\n";
+#  }
 
   foreach my $Script (@Scripts) {
     if ($Script eq "TopicChooser") { # Get global variables in right place

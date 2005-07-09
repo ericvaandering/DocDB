@@ -243,7 +243,7 @@ sub AdminDisableScripts (%) {
   my %Positions  = %{$Params{-positions}};
  
  
-  print "<script language=\"JavaScript\" type=\"text/javascript\">\n";
+  print "<script type=\"text/javascript\" language=\"javascript\">\n";
   print "<!-- \n";
 
   print "function disabler_",$Form,"() {\n";
