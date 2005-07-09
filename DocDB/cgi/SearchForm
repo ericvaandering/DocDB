@@ -48,9 +48,10 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 %params = $query -> Vars;
 
 print $query->header;
-
+  
 &DocDBHeader("$Project Document Database Search","Document Database Search",
-             -search => $TRUE, -scripts => ["PopUps","TopicChooser"]);
+             -search => $TRUE, -scripts => ["PopUps"]);
+&TopicSearchScript;
 
 @ErrorStack = ();
 
