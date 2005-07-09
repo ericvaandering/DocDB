@@ -47,15 +47,9 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 
 print $query->header;
-&DocDBHeader("List of Keywords");
+&DocDBHeader("List of Keywords","", -scripts => ["PopUps","InsertKeyword"]);
 
 &GetKeywords;
-
-if ($Mode eq "chooser") {
-  require "Scripts.pm";
-  &KeywordInsertScript;
-}
-  
 
 if ($Mode eq "chooser") {
   print "Click on keywords to insert them into the keyword box on the document form.<p>\n";
