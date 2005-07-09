@@ -80,6 +80,10 @@ sub DocDBHeader {
   }
 
   foreach my $Script (@Scripts) {
+    if ($Script eq "TopicChooser") { # Get global variables in right place
+      require "Scripts.pm";
+      &TopicSearchScript;
+    }  
     print "<script type=\"text/javascript\" language=\"javascript\" src=\"$JSURLPath/$Script.js\" />\n";
   }  
 

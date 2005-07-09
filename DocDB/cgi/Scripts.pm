@@ -116,7 +116,6 @@ sub TopicSearchScript {
 
 <script language="JavaScript" type="text/javascript">
 <!--
-<![CDATA[
 
 var first_load = 1; // is this the first time we load the page?
 var last_sel = []; // caches last selection
@@ -147,7 +146,7 @@ PREAMBLE
     print "label[\'$MinorID\'] = \'$label\';\n"; 
   }   
 
-  print "]]>\n// -->\n</script>\n";
+  print "// -->\n</script>\n";
 
 } 
 
