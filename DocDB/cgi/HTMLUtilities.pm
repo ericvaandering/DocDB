@@ -80,7 +80,7 @@ sub DocDBHeader {
   }
 
   foreach my $Script (@Scripts) {
-    print "<script type=\"text/javascript\" language=\"javascript\" src=\"$JSURLPath/$Script.".js\" />\n";
+    print "<script type=\"text/javascript\" language=\"javascript\" src=\"$JSURLPath/$Script.js\" />\n";
   }  
 
   if (defined &ProjectHeader) {
