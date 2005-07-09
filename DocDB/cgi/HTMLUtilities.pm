@@ -56,8 +56,8 @@ sub DocDBHeader {
   }
   
   foreach my $ProjectCSS ("",$ShortProject) {
-    foreach my $ScriptCSS ("",$ScriptName) {
-      foreach my $PublicCSS (@PublicCSS) {
+    foreach my $PublicCSS (@PublicCSS) {
+      foreach my $ScriptCSS ("",$ScriptName) {
         foreach my $BrowserCSS ("","_IE") {
           my $CSSFile = $CSSDirectory."/".$ProjectCSS.$PublicCSS."DocDB".$ScriptCSS.".css";
           my $CSSURL  =   $CSSURLPath."/".$ProjectCSS.$PublicCSS."DocDB".$ScriptCSS.".css";
