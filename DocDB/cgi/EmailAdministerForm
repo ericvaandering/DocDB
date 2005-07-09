@@ -48,9 +48,7 @@ $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass
 &GetSecurityGroups;
 
 print $query->header;
-&DocDBHeader("User Administration"); 
-
-&HelpPopupScript;
+&DocDBHeader("User Administration","",-scripts => ["PopUps"]); 
 
 @ErrorStack = ();
 @WarnStack  = ();

@@ -58,11 +58,9 @@ $Password =~ s/\s+//g;
 # Start the page
    
 print $query->header;
-&DocDBHeader("Document Signature");
-&HelpPopupScript;
+&DocDBHeader("Document Signature","",-scripts => ["PopUps"]);
 
 &GetSecurityGroups;
-
 
 # Check for valid user
 

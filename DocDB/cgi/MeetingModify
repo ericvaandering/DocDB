@@ -121,14 +121,12 @@ unless ($dbh) {
 
 print $query->header;
 if ($SetMode eq "create") {
-  &DocDBHeader("Create a New Meeting");
+  &DocDBHeader("Create a New Meeting","",-scripts => ["PopUps"]);
 } else {
-  &DocDBHeader("Modify a Meeting");
+  &DocDBHeader("Modify a Meeting","",-scripts => ["PopUps"]);
 }
   
 &EndPage(@ErrorStack);
-
-&HelpPopupScript;
 
 &GetTopics;
 

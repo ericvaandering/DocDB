@@ -48,12 +48,9 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 # %params = $query -> Vars;  # No parameters (yet?) 
 
 print $query->header;
-&DocDBHeader("$Project Document Database","Document Database");
+&DocDBHeader("$Project Document Database","Document Database",-scripts => ["PopUps"]);
 
 my $PersonalAccountLink = &PersonalAccountLink();
-
-&HelpPopupScript;
-&GroupLimitPopupScript;
 
 print "<div id=\"DocDBHomeBody\">\n";
 

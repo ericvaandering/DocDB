@@ -40,8 +40,8 @@ $query  = new CGI;
 $dbh    = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 print $query->header;
-&DocDBHeader("Limit Groups","",-nobody => $TRUE);
-&HelpPopupScript;
+&DocDBHeader("Limit Groups","",-nobody => $TRUE,-scripts => ["PopUps"]);
+
 &EndPage(@ErrorStack);
 
 print "<h3>Using this page, you can remove groups whose permissions you don't want to use</h3>\n";

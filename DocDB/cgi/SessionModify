@@ -106,11 +106,9 @@ unless ($dbh) {
 }      
 
 print $query -> header;
-&DocDBHeader("Modify a Session");
+&DocDBHeader("Modify a Session","",-scripts => ["PopUps"]);
 
 &EndPage(@ErrorStack);
-
-&HelpPopupScript;
 
 if ($SessionID) {
   &FetchSessionByID($SessionID);

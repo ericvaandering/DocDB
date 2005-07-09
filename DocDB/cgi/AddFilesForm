@@ -63,8 +63,7 @@ $NumberUploads = $params{numfile};
 &SetFileOptions;
 
 print $query->header;
-&DocDBHeader("File Addition");
-&HelpPopupScript;
+&DocDBHeader("File Addition","",-scripts => ["PopUps"]);
 
 @ErrorStack = ();
 
