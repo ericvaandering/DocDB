@@ -87,7 +87,7 @@ sub ConfirmTalkLink ($$) { #FIXME: Make onclick optional, use in DocumentTable
      $HTML .= $query -> hidden(-name => 'documentid',   -default => $DocumentID);
      $HTML .= $query -> hidden(-name => 'sessiontalkid',-default => $SessionTalkID);
      $HTML .= $query -> button(-value => "Confirm Match", 
-                               -onClick => "confirmtalkpopupwindow(this.form)");
+                               -onclick => "confirmtalkpopupwindow(this.form,\"$ConfirmTalkHint\")");
      $HTML .= "</form>";
   return $HTML;
 }

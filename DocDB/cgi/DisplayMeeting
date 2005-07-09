@@ -45,11 +45,11 @@ $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass
 print $query -> header;
 
 if ($SessionID ) {
-  &DocDBHeader("Session and Talks", -scripts => ["PopUps"]);
+  &DocDBHeader("Session and Talks", "", -scripts => ["PopUps"]);
 } elsif ($SessionSeparatorID) {
-  &DocDBHeader("Break Information", -scripts => ["PopUps"]);
+  &DocDBHeader("Break Information", "", -scripts => ["PopUps"]);
 } else {  
-  &DocDBHeader("Meeting and Talks", -scripts => ["PopUps"]);
+  &DocDBHeader("Meeting and Talks", "", -scripts => ["PopUps"]);
 }  
 
 #&TalkNotePopupScript;
