@@ -46,7 +46,7 @@ $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass
 &GetKeywords;
 
 print $query->header;
-&DocDBHeader("Administer $Project DocDB Keyword List","",-scripts => ["PopUps"]); # DocDBHeader
+&DocDBHeader("Administer $Project DocDB Keyword List","",-scripts => ["PopUps","KeywordAdminDisable"]); # DocDBHeader
 
 @ErrorStack = ();
 @WarnStack  = ();
@@ -86,19 +86,6 @@ print "<hr><p>\n";
 
 ### Keyword Administration
 
-my %EnableMatrix = ();
-
-$EnableMatrix{keywordlist}{Delete}  = 1;
-
-$EnableMatrix{keywordlist}{Modify}  = 1;
-$EnableMatrix{keywordgroup}{Modify} = 1;
-$EnableMatrix{shortdesc}{Modify}    = 1;
-$EnableMatrix{longdesc}{Modify}     = 1;
-
-$EnableMatrix{keywordgroup}{New}    = 1;
-$EnableMatrix{shortdesc}{New}       = 1;
-$EnableMatrix{longdesc}{New}        = 1;
-
 print "<a name=\"keywd\"><center><h4>Administer Keywords</h4></center>\n";
 
 print $query -> start_multipart_form('POST',"$KeywordListAdminister",
@@ -106,7 +93,7 @@ print $query -> start_multipart_form('POST',"$KeywordListAdminister",
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td colspan=3>\n";
- &AdministerActions(-form => "keywords", -matrix => \%EnableMatrix);
+ &AdministerActions(-form => "keywords");
 print "</td>\n";
 print "</tr>\n";
 
@@ -152,17 +139,6 @@ print "<p><hr>\n";
 
 ### Keyword Group Administration
 
-my %EnableMatrix = ();
-
-$EnableMatrix{keywordgroup}{Delete}  = 1;
-
-$EnableMatrix{keywordgroup}{Modify} = 1;
-$EnableMatrix{shortdesc}{Modify}    = 1;
-$EnableMatrix{longdesc}{Modify}     = 1;
-
-$EnableMatrix{shortdesc}{New}       = 1;
-$EnableMatrix{longdesc}{New}        = 1;
-
 print "<a name=\"keygroup\"><center><h4>Administer Keyword Groups</h4></center>\n";
 
 print $query -> start_multipart_form('POST',"$KeywordGroupAdminister",
@@ -170,7 +146,7 @@ print $query -> start_multipart_form('POST',"$KeywordGroupAdminister",
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td colspan=2>\n"; 
- &AdministerActions(-form => "keygroups", -matrix => \%EnableMatrix);
+ &AdministerActions(-form => "keygroups");
 print "</td>\n";
 print "</tr>\n";
 
