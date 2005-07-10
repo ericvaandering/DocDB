@@ -84,7 +84,7 @@ if ($Format eq "short") {
 if ($Mode eq "chooser") {
   print "<center><form>\n";
 
-  print " <input type=\"button\" value=\"Close Window\" onClick=\"window.close()\">\n";
+  print " <input type=\"button\" value=\"Close Window\" onclick=\"window.close()\">\n";
   print "</form></center>";
 }
 

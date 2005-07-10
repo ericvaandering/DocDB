@@ -71,7 +71,7 @@ print "<strong>You are limited to the groups you selected.</strong><br/>
           browser is  accepting cookies.";
 print "</td></tr>";
 print "<tr><td id=\"SubmitCell\">\n<form action=\"\"><div>\n";
-print " <input type=\"button\" value=\"Close Window and Reload\" onClick=\"opener.location.reload(1); window.close()\" />\n";
+print " <input type=\"button\" value=\"Close Window and Reload\" onclick=\"opener.location.reload(1); window.close()\" />\n";
 print "</div></form>\n</td></tr></table>";
 
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName,-nobody => $TRUE);

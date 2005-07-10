@@ -55,7 +55,7 @@ sub AdministerActions (%) {
   print "Action:</a></b><br> \n";
   print $query -> radio_group(-name => "admaction", 
                               -values => \%Action, -default => "-",
-                              -onClick => "disabler_$Form();");
+                              -onclick => "disabler_$Form();");
 };
 
 sub AdministratorPassword {

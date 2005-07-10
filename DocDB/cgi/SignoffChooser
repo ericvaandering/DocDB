@@ -56,12 +56,12 @@ print "Click on names to insert them into keyword box on the document form.<p>\n
 print "<a name=\"list\">\n";
 foreach $EmailUserID (@EmailUserIDs) {
   my $Name = $EmailUser{$EmailUserID}{Name};
-  print "<a href=\"#list\" onClick=\"InsertSignature('$Name');\">$Name</a><br>";
+  print "<a href=\"#list\" onclick=\"InsertSignature('$Name');\">$Name</a><br>";
 }
 
 print "<center><form>\n";
 
-print " <input type=\"button\" value=\"Close Window\" onClick=\"window.close()\">\n";
+print " <input type=\"button\" value=\"Close Window\" onclick=\"window.close()\">\n";
 print "</form></center>";
 
 &DocDBNavBar();
