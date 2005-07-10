@@ -65,7 +65,7 @@ unless ($dbh) {
 &DocDBHeader("Setting Groups","",-nobody => $TRUE);
 &EndPage(@ErrorStack);
 
-print "<table><tr><td>\n";
+print "<table class=\"LowPaddedTable\"><tr><td>\n";
 print "<strong>You are limited to the groups you selected.</strong><br/> 
           If your  groups havn't been properly set, make sure your web
           browser is  accepting cookies.";

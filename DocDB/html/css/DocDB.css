@@ -55,7 +55,18 @@ h5 {
   font-weight: normal;
 }
 
+.UnPaddedTable   td, .UnPaddedTable   th {padding: 0px; }
+.LowPaddedTable  td, .LowPaddedTable  th {padding: 3px; }
+.MedPaddedTable  td, .MedPaddedTable  th {padding: 5px; }
+.HighPaddedTable td, .HighPaddedTable th {padding: 10px;}
+
+td {vertical-align: top;    }
+th {vertical-align: bottom; }
+
+.LeftHeader {text-align: right;}  
+
 /* Stuff for PrintRevisionInfo, which shows up in lots of places, hence it's here */
+
 
 #RevisionInfo {
   position: relative;
@@ -119,11 +130,6 @@ h5 {
 #OtherVersionTable {
   width: 100%; 
 }
-
-#OtherVersionTable td {
-  padding: 3px;
-}  
-
 
 /* Allow for lists and tables with alternating color rows. 
    border-collapse gets rid of spacing between cells */

@@ -48,7 +48,7 @@ print "<h3>Using this page, you can remove groups whose permissions you don't wa
  
 print $query -> startform('POST',$SetGroups);
 print "<div>\n";
-print "<table id=\"SelectGroups\" class=\"CenteredTable\">\n";
+print "<table id=\"SelectGroups\" class=\"CenteredTable MedPaddedTable\">\n";
 print "<tr><td>\n";
 my @RawGroupIDs = &FindUsersGroups(-ignorecookie => $TRUE);
 

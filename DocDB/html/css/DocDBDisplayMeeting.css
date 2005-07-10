@@ -4,13 +4,11 @@
 }
 
 #TalkList td {
-  vertical-align: top;
   text-align: left;
   padding: 3px 5px 3px 5px;
 }  
 
 #TalkList th {
-  vertical-align: bottom;
   border-bottom: 1px solid black;
   padding: 5px 5px 5px 5px;
 }  

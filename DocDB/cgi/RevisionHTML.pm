@@ -397,7 +397,7 @@ sub OtherVersionLinks {
   print "<div id=\"OtherVersions\">\n";
   print "<b>Other Versions:</b>\n";
   
-  print "<table id=\"OtherVersionTable\" class=\"Alternating\">\n";
+  print "<table id=\"OtherVersionTable\" class=\"Alternating LowPaddedTable\">\n";
   my $RowClass = "Odd";
   
   foreach $RevID (@RevIDs) {
