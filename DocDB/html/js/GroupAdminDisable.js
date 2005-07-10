@@ -1,3 +1,5 @@
+// All disabler scripts adapted from CellarTracker (cellartracker.com)
+
 function disabler_groups() {
   if (document.groups.admaction[0].checked == true) {
     document.groups.admin.disabled = false;
