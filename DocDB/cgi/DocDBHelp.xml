@@ -1037,11 +1037,11 @@ or may not be the same as the web username and password.
  
  <entry>
   <key>xrefentry</key>
-  <title>Cross-References</title>
+  <title>Related Documents</title>
   <text>
    Enter the document #'s of documents which are referred to by or related to
    this document. These documents will be listed in the display of this one,
-   and this document will be listed in  the display of the entered documents.
+   and this document will be listed in the display of the entered documents.
    Document numbers can be separated by spaces or commas.
   </text>
  </entry>

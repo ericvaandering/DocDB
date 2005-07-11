@@ -68,7 +68,7 @@ unless ($SessionTalkID) {
 }  
 
 print $query->header;
-print $query->start_html(-title => "Confirming document match");
+&DocDBHeader("Confirming document match","",-nobody => $TRUE);
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 unless ($dbh) {
@@ -102,11 +102,11 @@ my $SessionTalkUpdate = $dbh -> prepare(
 $SessionTalkUpdate -> execute($DocumentID,$SessionTalkID);
 
 
-print "<b>The match has been confirmed.<br>Press the button below to reload the
-original page.</b><p>\n";
+print "<p><b>The match has been confirmed.<br/>
+             Press the button below to reload the original page.</b></p>\n";
 
 print "<center><form>\n";
 print " <input type=\"button\" value=\"Close Window and Reload\" onClick=\"opener.location.reload(1); window.close()\">\n";
 print "</form></center>";
 
-print $query->end_html;     # End page
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName,-nobody => $TRUE);

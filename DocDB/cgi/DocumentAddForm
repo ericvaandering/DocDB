@@ -511,7 +511,7 @@ print "<tr>\n";
 print "<td colspan=4>\n"; 
 &TextField(-name     => 'xrefs', -size => 40,
            -default  => $XRefDefault, 
-           -helplink => 'xrefentry', -helptext => 'Cross-References');
+           -helplink => 'xrefentry', -helptext => 'Related Documents');
 print "</td>\n";
 print "</tr>\n";
 

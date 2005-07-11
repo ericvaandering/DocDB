@@ -139,4 +139,4 @@ if (&CanModifyMeeting($ConferenceID)) {
   }  
 }
 
-print $query->end_html;     # End page
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName,-nobody => $TRUE);
