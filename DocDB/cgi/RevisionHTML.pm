@@ -72,7 +72,7 @@ sub RevisionNoteBox {
     $JSInsert =~ s/\"/\\\'/g; # FIXME: See if there is a way to insert double quotes
                               #        Bad HTML/JS interaction, I think
 
-    print "<a href=\"#RevisionNote\" onClick=\"InsertRevisionNote('$JSInsert');\">(Insert notes from previous version)</a>";
+    print "<a href=\"#RevisionNote\" onclick=\"InsertRevisionNote('$JSInsert');\">(Insert notes from previous version)</a>";
   }
   print "<br>\n";
   print $query -> textarea (-name => 'revisionnote', -default => $Default,

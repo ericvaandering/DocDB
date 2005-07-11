@@ -63,13 +63,11 @@ $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass
 &GetJournals;
 
 print $query->header;
-&DocDBHeader("Administer $Project DocDB"); # DocDBHeader
-
-&HelpPopupScript;
+&DocDBHeader("Administer $Project DocDB","",
+             -scripts => ["PopUps","AuthorAdminDisable","MiscAdminDisable","TopicAdminDisable"]); 
 
 @ErrorStack = ();
 @WarnStack  = ();
-my %EnableMatrix = ();
 
 unless (&CanAdminister()) {
   push @ErrorStack,"You are not allowed to access administrative functions.";
@@ -111,21 +109,6 @@ print "<hr><p>\n";
 
 ### Author Modification
 
-%EnableMatrix = ();
-
-$EnableMatrix{authors}{Delete}  = 1;
-
-$EnableMatrix{inst}{Modify}     = 1;
-$EnableMatrix{authors}{Modify}  = 1;
-$EnableMatrix{first}{Modify}    = 1;
-$EnableMatrix{middle}{Modify}   = 1;
-$EnableMatrix{lastname}{Modify} = 1;
-
-$EnableMatrix{inst}{New}        = 1;
-$EnableMatrix{first}{New}       = 1;
-$EnableMatrix{middle}{New}      = 1;
-$EnableMatrix{lastname}{New}    = 1;
-  
 print "<a name=\"author\"><center><h4>Administer Authors</h4></center>\n";
 print "<center>(Changing both the first and last names will erase middle
        initials)</center>\n";
@@ -135,7 +118,7 @@ print $query -> start_multipart_form('POST',"$AuthorAdminister",
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td colspan=2>\n"; 
- &AdministerActions(-form => "author", -matrix => \%EnableMatrix);
+ &AdministerActions(-form => "author");
 print "</td>\n";
 print "</tr>\n";
 
@@ -166,17 +149,6 @@ print "<p><hr>\n";
 
 ### Institution Administration
 
-%EnableMatrix = ();
-
-$EnableMatrix{inst}{Delete}      = 1;
-
-$EnableMatrix{inst}{Modify}      = 1;
-$EnableMatrix{shortdesc}{Modify} = 1;
-$EnableMatrix{longdesc}{Modify}  = 1;
-
-$EnableMatrix{shortdesc}{New}    = 1;
-$EnableMatrix{longdesc}{New}     = 1;
-  
 print "<a name=\"institution\"><center><h4>Administer Institutions</h4></center>\n";
 
 print $query -> start_multipart_form('POST',"$InstitutionAdminister",
@@ -184,7 +156,7 @@ print $query -> start_multipart_form('POST',"$InstitutionAdminister",
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td colspan=2>\n"; 
- &AdministerActions(-form => "institution", -matrix => \%EnableMatrix);      
+ &AdministerActions(-form => "institution");      
 print "</td>\n";
 print "</tr>\n";
 
@@ -210,17 +182,6 @@ print "<p><hr>\n";
 
 ### Topic Administration
 
-%EnableMatrix = ();
-
-$EnableMatrix{topics}{Delete}     = 1;
-$EnableMatrix{majortopic}{New}    = 1;
-$EnableMatrix{majortopic}{Modify} = 1;
-$EnableMatrix{topics}{Modify}     = 1;
-$EnableMatrix{shortdesc}{New}     = 1;
-$EnableMatrix{shortdesc}{Modify}  = 1;
-$EnableMatrix{longdesc}{New}      = 1;
-$EnableMatrix{longdesc}{Modify}   = 1;
-  
 print "<a name=\"mintopic\"><center><h4>Administer Minor Topics</h4></center>\n";
 print $query -> start_multipart_form('POST',"$TopicAdminister",
                                     "id=\"minortopic\" name=\"minortopic\"");
@@ -228,7 +189,7 @@ print "<table cellpadding=10>\n";
 
 print "<tr valign=top>\n";
 print "<td colspan=2>\n"; 
- &AdministerActions(-form => "minortopic", -matrix => \%EnableMatrix);      
+ &AdministerActions(-form => "minortopic");      
 print "</td>\n";
 print "</tr>\n";
 
@@ -264,17 +225,6 @@ print "<p><hr>\n";
 
 ### Major Topic Administration
 
-%EnableMatrix = ();
-
-$EnableMatrix{majortopic}{Delete} = 1;
-
-$EnableMatrix{shortdesc}{New}     = 1;
-$EnableMatrix{longdesc}{New}      = 1;
-
-$EnableMatrix{majortopic}{Modify} = 1;
-$EnableMatrix{shortdesc}{Modify}  = 1;
-$EnableMatrix{longdesc}{Modify}   = 1;
-
 print "<a name=\"majtopic\"><center><h4>Administer Major Topics</h4></center>\n";
 
 print $query -> start_multipart_form('POST',"$MajorTopicAdminister",
@@ -282,7 +232,7 @@ print $query -> start_multipart_form('POST',"$MajorTopicAdminister",
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td colspan=2>\n";
- &AdministerActions(-form => "majortopic", -matrix => \%EnableMatrix);
+ &AdministerActions(-form => "majortopic");
 print "</td>\n";
 print "</tr>\n";
 
@@ -316,17 +266,6 @@ print "<p><hr>\n";
 
 ### Document Types
 
-%EnableMatrix = ();
-
-$EnableMatrix{doctype}{Delete}  = 1;
-
-$EnableMatrix{name}{New}        = 1;
-$EnableMatrix{longdesc}{New}    = 1;
-
-$EnableMatrix{doctype}{Modify}  = 1;
-$EnableMatrix{name}{Modify}     = 1;
-$EnableMatrix{longdesc}{Modify} = 1;
-
 print "<a name=\"doctype\"><center><h4>Administer Document Types</h4></center>\n";
 
 print $query -> start_multipart_form('POST',"$DocTypeAdminister",
@@ -334,7 +273,7 @@ print $query -> start_multipart_form('POST',"$DocTypeAdminister",
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td colspan=2>\n"; 
- &AdministerActions(-form => "documenttype", -matrix => \%EnableMatrix);
+ &AdministerActions(-form => "documenttype");
 print "</td>\n";
 print "</tr>\n";
 
@@ -358,23 +297,6 @@ print "<p><hr>\n";
 
 ### Journal Administration
 
-%EnableMatrix = ();
-
-$EnableMatrix{journal}{Delete} = 1;
-
-$EnableMatrix{name}{New}       = 1;
-$EnableMatrix{pub}{New}        = 1;
-$EnableMatrix{abbr}{New}       = 1;
-$EnableMatrix{url}{New}        = 1;
-$EnableMatrix{acronym}{New}    = 1;
-
-$EnableMatrix{journal}{Modify} = 1;
-$EnableMatrix{name}{Modify}    = 1;
-$EnableMatrix{pub}{Modify}     = 1;
-$EnableMatrix{abbr}{Modify}    = 1;
-$EnableMatrix{url}{Modify}     = 1;
-$EnableMatrix{acronym}{Modify} = 1;
-
 print "<a name=\"journal\"><center><h4>Administer Journals</h4></center>\n";
 
 print $query -> start_multipart_form('POST',"$JournalAdminister",
@@ -382,7 +304,7 @@ print $query -> start_multipart_form('POST',"$JournalAdminister",
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td colspan=2>\n";
- &AdministerActions(-form => "journals", -matrix => \%EnableMatrix);
+ &AdministerActions(-form => "journals");
 print "</td>\n";
 print "</tr>\n";
 
@@ -411,35 +333,6 @@ print "<p><hr>\n";
 
 ### Conference and Meeting Administration
 
-%EnableMatrix = ();
-
-$EnableMatrix{conftopic}{Delete}  = 1;
-
-$EnableMatrix{longdesc}{New}      = 1;
-$EnableMatrix{shortdesc}{New}     = 1;
-$EnableMatrix{majortopic}{New}    = 1;
-$EnableMatrix{location}{New}      = 1;
-$EnableMatrix{url}{New}           = 1;
-$EnableMatrix{startday}{New}      = 1;
-$EnableMatrix{startmonth}{New}    = 1;
-$EnableMatrix{startyear}{New}     = 1;
-$EnableMatrix{endday}{New}        = 1;
-$EnableMatrix{endmonth}{New}      = 1;
-$EnableMatrix{endyear}{New}       = 1;
-
-$EnableMatrix{conftopic}{Modify}  = 1;
-$EnableMatrix{longdesc}{Modify}   = 1;
-$EnableMatrix{shortdesc}{Modify}  = 1;
-$EnableMatrix{majortopic}{Modify} = 1;
-$EnableMatrix{location}{Modify}   = 1;
-$EnableMatrix{url}{Modify}        = 1;
-$EnableMatrix{startday}{Modify}   = 1;
-$EnableMatrix{startmonth}{Modify} = 1;
-$EnableMatrix{startyear}{Modify}  = 1;
-$EnableMatrix{endday}{Modify}     = 1;
-$EnableMatrix{endmonth}{Modify}   = 1;
-$EnableMatrix{endyear}{Modify}    = 1;
-
 print "<a name=\"conference\"><center><h4>Administer Conferences and Meetings</h4>
        </center>\n";
 
@@ -448,7 +341,7 @@ print $query -> start_multipart_form('POST',"$ConferenceAdminister",
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td colspan=2>\n"; 
- &AdministerActions(-form => "conferences", -matrix => \%EnableMatrix);
+ &AdministerActions(-form => "conferences");
 print "</td>\n";
 print "</tr>\n";
 

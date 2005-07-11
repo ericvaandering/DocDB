@@ -48,9 +48,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 # Removed updatedb mode, see note in ProcessDocumentAdd
 
 print $query -> header;
-&DocDBHeader("Add a Conference");
-
-&HelpPopupScript;
+&DocDBHeader("Add a Conference","",-scripts => ["PopUps"]);
 
 print $query -> start_multipart_form('POST',"$ConferenceAdd");
 

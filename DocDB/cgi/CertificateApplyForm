@@ -43,9 +43,8 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 ### Start HTML
 
 print $query->header;
-&HelpPopupScript;
 
-&DocDBHeader("Certificate Status and Application");
+&DocDBHeader("Certificate Status and Application","",-scripts => ["PopUps"]);
 
 &EndPage(@ErrorStack);
 

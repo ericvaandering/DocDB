@@ -93,9 +93,7 @@ if (&CanAccess($DocumentID,$Version)) {
 } 
 
 print $query->header;
-&DocDBHeader($PageTitle,"$Project Document $DocumentID-v$Version");
-
-&HelpPopupScript;
+&DocDBHeader($PageTitle,"$Project Document $DocumentID-v$Version",-scripts => ["PopUps"]);
 
 unless ($DocRevID) { # Probably never executed since CanAccess fails.
   push @ErrorStack,"This document does not exist.";

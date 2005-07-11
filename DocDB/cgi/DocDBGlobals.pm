@@ -237,6 +237,11 @@ unless ($CSSDirectory && $CSSURLPath) {
   $CSSURLPath   = $web_root."Static/css";
 }  
 
+unless ($JSDirectory && $JSURLPath) {
+  $JSDirectory = $file_root."Static/js";
+  $JSURLPath   = $web_root."Static/js";
+}  
+
 if (!$Tar && $GTar) {
   $Tar = $GTar;
 } 

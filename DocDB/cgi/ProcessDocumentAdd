@@ -61,14 +61,12 @@ $Mode = $params{mode};
 
 print $query->header;
 if ($Mode eq "reserve") {
-  &DocDBHeader("$Project Document Reservation Results","Document Reservation Results"); 
+  &DocDBHeader("$Project Document Reservation Results","Document Reservation Results",-scripts => ["PopUps"]); 
 } elsif ($Mode eq "add") {
-  &DocDBHeader("$Project Document Addition Results","Document Addition Results"); 
+  &DocDBHeader("$Project Document Addition Results","Document Addition Results",-scripts => ["PopUps"]); 
 } elsif ($Mode eq "update" || $mode eq "updatedb") {
-  &DocDBHeader("$Project Document Modification Results","Document Modification Results"); 
+  &DocDBHeader("$Project Document Modification Results","Document Modification Results",-scripts => ["PopUps"]); 
 }
-
-&HelpPopupScript;
 
 ### Pull info out of params into local variables
 ### FIXME: Get all the params here, too confusing later on to be using $param

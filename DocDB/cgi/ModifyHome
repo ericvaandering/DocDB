@@ -41,7 +41,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetSecurityGroups;
 
 print $query->header;
-&DocDBHeader("Document Modifications");
+&DocDBHeader("Document Modifications","",-scripts => ["PopUps"]);
 @ErrorStack = ();
 
 if ($Public || !&CanCreate()) {
@@ -49,8 +49,6 @@ if ($Public || !&CanCreate()) {
 }
 
 my $PersonalAccountLink = &PersonalAccountLink();
-
-&HelpPopupScript;
 
 print "<div id=\"ModifyHomeBody\">\n";
 
