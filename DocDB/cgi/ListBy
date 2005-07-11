@@ -2,7 +2,7 @@
 #
 # Author Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -118,8 +118,8 @@ if ($Days) {
   $Message = "These documents of type <span class=\"Highlight\">
              $DocumentTypes{$TypeID}{SHORT}</span> are available:";
   
-  $List = $dbh -> prepare("select DISTINCT(Document.DocumentID) from ".
-           "Document where Document.DocumentType=?");            
+  $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
+           "DocumentRevision where DocumentRevision.DocTypeID=?");            
   $List -> execute($TypeID);
 } elsif ($AllPubs) {
   $Title   = "$Project Publications";

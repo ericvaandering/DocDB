@@ -183,7 +183,8 @@ my @SecurityDefaults = ();
 my @ModifyDefaults   = ();
 my $RevisionNoteDefault; 
 my $XRefDefault;
-
+my $DocTypeIDDefault;
+ 
 if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
   $DocRevID            = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   $TitleDefault        = $DocRevisions{$DocRevID}{Title};
@@ -192,6 +193,7 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   $RequesterDefault    = $DocRevisions{$DocRevID}{Submitter};
   $KeywordsDefault     = $DocRevisions{$DocRevID}{Keywords};
   $RevisionNoteDefault = $DocRevisions{$DocRevID}{Note};
+  $DocTypeIDDefault    = $DocRevisions{$DocRevID}{DocTypeID};
   @SecurityDefaults    = &GetRevisionSecurityGroups($DocRevID);
   @AuthorDefaults      = &GetRevisionAuthors($DocRevID);
   @TopicDefaults       = &GetRevisionTopics($DocRevID);
@@ -427,11 +429,10 @@ if ($Meeting || $OtherMeeting) {
   print $query -> hidden(-name => 'doctype',  -default => $TalkTypeID);
   print "</td>\n";  
 } else {
-  if ($mode eq "add" || $mode eq "reserve") {
-    print "<td colspan=2 valign=top>\n";
-    &DocTypeButtons(-required => $RequiredEntries{Type});
-    print "</td>\n";
-  }
+  print "<td colspan=2 valign=top>\n";
+  &DocTypeButtons(-required => $RequiredEntries{Type}, 
+                  -default  => $DocTypeIDDefault);
+  print "</td>\n";
 }
 
 if ($Overdate eq "Yes") {

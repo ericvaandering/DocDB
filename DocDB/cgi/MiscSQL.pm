@@ -7,7 +7,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -65,6 +65,10 @@ sub FetchReferencesByRevision ($) {
 };
 
 sub GetDocTypes { # Creates/fills a hash $DocumentTypes{$DocTypeID}{} 
+  if ($HaveAllDocTypes) {
+    return;
+  }  
+
   my ($DocTypeID,$ShortType,$LongType);
   my $DocTypeList  = $dbh -> prepare("select DocTypeID,ShortType,LongType from DocumentType");
   %DocumentTypes = ();
@@ -74,6 +78,8 @@ sub GetDocTypes { # Creates/fills a hash $DocumentTypes{$DocTypeID}{}
     $DocumentTypes{$DocTypeID}{SHORT}     = $ShortType;
     $DocumentTypes{$DocTypeID}{LONG}      = $LongType;
   }
+  $HaveAllDocTypes = 1;
+  return;
 };
 
 sub FetchDocType ($) { # Fetches an DocumentType by ID, adds to $DocumentTypes{$DocTypeID}{}

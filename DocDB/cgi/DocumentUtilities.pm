@@ -5,7 +5,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -67,15 +67,17 @@ sub AddDocument {
 
   my ($DocRevID,$Count,@FileIDs);
 
-  $DocumentID = &InsertDocument(-docid => $DocumentID, -typeid => $TypeID, 
-                 -requesterid => $RequesterID, -datetime => $DateTime);
+  $DocumentID = &InsertDocument(
+                 -docid    => $DocumentID, -requesterid => $RequesterID, 
+                 -datetime => $DateTime);
                  
   if ($DocumentID) {                                 
-    $DocRevID = &InsertRevision(-docid => $DocumentID, 
-                 -submitterid => $RequesterID, -title    => $Title,
-                 -pubinfo     => $PubInfo,     -abstract => $Abstract,
-                 -version     => 'bump',       -datetime => $DateTime,
-                 -keywords    => $Keywords,    -note     => $Note);
+    $DocRevID = &InsertRevision(
+                 -docid       => $DocumentID,  -doctypeid => $TypeID, 
+                 -submitterid => $RequesterID, -title     => $Title,
+                 -pubinfo     => $PubInfo,     -abstract  => $Abstract,
+                 -version     => 'bump',       -datetime  => $DateTime,
+                 -keywords    => $Keywords,    -note      => $Note);
 
     # Deal with SessionTalkID
 

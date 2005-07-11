@@ -80,31 +80,25 @@ sub RevisionNoteBox {
 };
 
 sub DocTypeButtons (%) {
-# FIXME Get rid of fetches, make sure GetDocTypes is executed
-  my (%Params) = @_; 
+  my (%Params) = @_;
   
-  my $Required   = $Params{-required}   || 0;
+  my $Required = $Params{-required} || 0;
+  my $Default  = $Params{-default}  || 0;
+  
+  &GetDocTypes();
+  my @DocTypeIDs = keys %DocumentTypes;
+  my %ShortTypes = ();
 
-  my ($DocTypeID,$ShortType,$LongType);
-  my $doctype_list  = $dbh->prepare("select DocTypeID,ShortType,LongType from DocumentType");
-  $doctype_list -> execute;
-  $doctype_list -> bind_columns(undef, \($DocTypeID,$ShortType,$LongType));
-  while ($doctype_list -> fetch) {
-    $doc_type{$DocTypeID}{SHORT} = $ShortType;
-    $short_type{$DocTypeID}      = $ShortType;
-    $doc_type{$DocTypeID}{LONG}  = $LongType;
+  foreach my $DocTypeID (@DocTypeIDs) {
+    $ShortTypes{$DocTypeID} = $DocumentTypes{$DocTypeID}{SHORT};
   }
-  @values = keys %short_type;
   
-  print "<b><a ";
-  &HelpLink("doctype");
-  print "Document type:</a></b>";
-  if ($Required) {
-    print $RequiredMark;
-  }  
-  print "<br> \n";
-  print $query -> radio_group(-columns => 3, -name => "doctype", 
-                              -values => \%short_type, -default => "-");
+  my $ElementTitle = &FormElementTitle(-helplink  => "doctype" , 
+                                       -helptext  => "Document type" ,
+                                       -required  => $Required );
+  print $ElementTitle,"\n";                                     
+  print $query -> radio_group(-columns => 3,           -name    => "doctype", 
+                              -values => \%ShortTypes, -default => $Default);
 };
 
 sub PrintRevisionInfo {

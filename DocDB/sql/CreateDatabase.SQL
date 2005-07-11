@@ -96,7 +96,6 @@ CREATE TABLE Document (
   DocumentID int(11) NOT NULL auto_increment,
   RequesterID int(11) NOT NULL default '0',
   RequestDate datetime default NULL,
-  DocumentType int(11) default NULL,
   TimeStamp timestamp(14) NOT NULL,
   PRIMARY KEY  (DocumentID),
   KEY Requester (RequesterID)
@@ -138,6 +137,7 @@ CREATE TABLE DocumentRevision (
   DocRevID int(11) NOT NULL auto_increment,
   DocumentID int(11) NOT NULL default '0',
   SubmitterID int(11) NOT NULL default '0',
+  DocTypeID int(11) default NULL,
   DocumentTitle varchar(255) NOT NULL default '',
   PublicationInfo text,
   VersionNumber int(11) NOT NULL default '0',

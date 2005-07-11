@@ -8,7 +8,7 @@
 #    2) mode=meeting (sorted by author, files are listed)
 #    3) mode=conference (sorted by reverse date, conference fields shown)
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
