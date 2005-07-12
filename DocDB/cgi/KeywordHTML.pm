@@ -264,19 +264,16 @@ sub KeywordLink ($;%) { # FIXME: Allow parameters of short, long, full a la Lynn
 
 sub KeywordsBox (%) {
   my (%Params) = @_; 
+  #FIXME: Get rid of global default
   
   my $Required = $Params{-required}   || 0;
 
-  print "<b><a ";
-  &HelpLink("keywords");
-  print "Keywords:</a></b>";
-  if ($Required) {
-    print $RequiredMark;
-  } else {
-    print " ";
-  }   
-  print "(space separated) - <a href=\"Javascript:keywordchooserwindow(\'$ListKeywords?mode=chooser\');\"><b>Keyword
-  Chooser</b></a><br> \n";
+  my $ElementTitle = &FormElementTitle(-helplink  => "keywords" , 
+                                       -helptext  => "Keywords" ,
+                                       -extratext => "(space separated) - <a href=\"Javascript:keywordchooserwindow(\'$ListKeywords?mode=chooser\');\"><b>Keyword
+  Chooser</b></a>",
+                                       -required  => $Required );
+  print $ElementTitle,"\n";                                     
   print $query -> textfield (-name => 'keywords', -default => $KeywordsDefault, 
                              -size => 70, -maxlength => 240);
 };

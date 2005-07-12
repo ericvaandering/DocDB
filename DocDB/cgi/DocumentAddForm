@@ -308,41 +308,41 @@ print $query -> hidden(-name => 'special',-default => '');
 
 &WarnPage(@WarnStack); @WarnStack = ();
 
-print "<center><table cellpadding=10>\n";
+print "<table class=\"CenteredTable HighPaddedTable\">\n";
 
 print "<tr>\n";
-print "<td colspan=4>\n";
+print "<td colspan=\"4\">\n";
 if ($mode eq "add") {
   if ($Meeting || $OtherMeeting) {
-    print "<h4>You have chosen to add a new meeting talk to the database.<br> 
+    print "<h4>You have chosen to add a new meeting talk to the database.<br/> 
                Make sure you know all the required information and
-               the file is ready for uploading.<p>
+               the file is ready for uploading.<br/>
                This is a simplified form for adding information to the 
                database.<br/>
                If you need something more complicated, such as multiple authors
                or more upload boxes,<br> please use one of the options from
                the <a href=$ModifyHome>change/add page</a>.\n";
   } else {  
-    print "<h4>You have chosen to add a new document to the database.<br> 
+    print "<h4>You have chosen to add a new document to the database.<br/> 
                Make sure you know all the required information and
-               the file is ready for uploading.<br>\n";
+               the file is ready for uploading.<br/>\n";
   } 
 } elsif ($mode eq "reserve") {
   print "<h4>You have chosen to reserve a new document document number in 
-             the database. <br>
-             You CANNOT upload the document using this form.<br>
-             Make sure you know all the required information.<br>\n";
+             the database. <br/>
+             You CANNOT upload the document using this form.<br/>
+             Make sure you know all the required information.<br/>\n";
 } elsif ($mode eq "update") {
   $documentName = &FullDocumentID($DocumentID);
   print "<h4>You have chosen to update $documentName. 
-             Make sure you know all the required information.<br>\n";
+             Make sure you know all the required information.<br/>\n";
 } elsif ($mode eq "updatedb") {
   $documentName = &FullDocumentID($DocumentID,$Version);
   print "<h4>You have chosen to update the database for $documentName. 
-             Make sure you know all the required information.<br>\n";
+             Make sure you know all the required information.<br/>\n";
 }
 
-print "Required fields are marked with an asterisk (*).<br>";
+print "Required fields are marked with an asterisk (*).<br/>";
 print "Click on any of the headings for help.</h4>\n"; print "</td>\n";
 print "</tr>\n";
 
@@ -400,7 +400,7 @@ if ($mode eq "add" || $mode eq "update") {
   with source formats.<br/>\n"; 
   print "</td></tr>";
 } elsif ($mode eq "updatedb") {
-  print "<tr><td colspan=4>\n";
+  print "<tr><td colspan=\"4\">\n";
   &FileUploadBox(-desconly => true, -docrevid => $DocRevID,
                  -fileids  => \@FileIDs);
   print "</td></tr>";
@@ -410,7 +410,7 @@ if ($mode eq "add" || $mode eq "update") {
 
 print "<tr>\n";
 if ($Meeting || $OtherMeeting) {
-  print "<td colspan=2 valign=top>\n"; 
+  print "<td colspan=\"2\">\n"; 
   my @TypeIDs = keys %DocumentTypes;
   foreach my $ID (@TypeIDs) {
     if ($DocumentTypes{$ID}{SHORT} eq "Talk") {
@@ -422,14 +422,14 @@ if ($Meeting || $OtherMeeting) {
   print $query -> hidden(-name => 'doctype',  -default => $TalkTypeID);
   print "</td>\n";  
 } else {
-  print "<td colspan=2 valign=top>\n";
+  print "<td colspan=\"2\">\n";
   &DocTypeButtons(-required => $RequiredEntries{Type}, 
                   -default  => $DocTypeIDDefault);
   print "</td>\n";
 }
 
 if ($Overdate eq "Yes") {
-  print "<td colspan=2 valign=top>\n";
+  print "<td colspan=\"2\">\n";
   &DateTimePullDown;
   print "</td>\n";
 }  
@@ -437,7 +437,7 @@ print "</tr>\n";
 
 ### Requester, Authors, and security 
 
-print "<tr valign=top>\n";
+print "<tr>\n";
 if ($Meeting || $OtherMeeting) {
   print "<td>&nbsp;&nbsp;&nbsp;</td>\n";
 } 
@@ -464,7 +464,7 @@ unless ($Meeting || $OtherMeeting) {
     print "<td>\n"; &AuthorManual(-required => $RequiredEntries{Author});    print "</td>\n";
   }
 }
-print "<td colspan=1 valign=top>\n"; 
+print "<td>\n"; 
 my $SecurityText;
 if ($EnhancedSecurity) {
   $SecurityText = "View";
@@ -479,7 +479,7 @@ if ($EnhancedSecurity) {
                 -default   => \@SecurityDefaults);
 print "</td>\n";
 if ($EnhancedSecurity) {
-  print "<td colspan=1 valign=top>\n"; 
+  print "<td>\n"; 
   &SecurityScroll(-name      => 'modify', 
                   -helplink  => 'modifygroups',
                   -helptext  => 'Modify',
@@ -493,16 +493,16 @@ print "</tr>\n";
 
 print "<tr>\n";
 if ($TopicMode eq "single") {
-  print "<td colspan=4>\n"; &TopicSelect(-required => $RequiredEntries{Author});     print "</td>\n";
+  print "<td colspan=\"4\">\n"; &TopicSelect(-required => $RequiredEntries{Author});     print "</td>\n";
 } elsif ($TopicMode eq "multi") {
-  print "<td colspan=4>\n"; &MultiTopicSelect(-required => $RequiredEntries{Author});     print "</td>\n";
+  print "<td colspan=\"4\">\n"; &MultiTopicSelect(-required => $RequiredEntries{Author});     print "</td>\n";
 }
 print "</tr>\n";
 
 ### Cross-references to other documents
 
 print "<tr>\n";
-print "<td colspan=4>\n"; 
+print "<td colspan=\"4\">\n"; 
 &TextField(-name     => 'xrefs', -size => 40,
            -default  => $XRefDefault, 
            -helplink => 'xrefentry', -helptext => 'Related Documents');
@@ -513,22 +513,21 @@ print "</tr>\n";
 
 unless ($Meeting || $OtherMeeting) {
   print "<tr>\n";
-  print "<td colspan=4>\n"; &ReferenceForm;  print "</td>\n";
+  print "<td colspan=\"4\">\n"; &ReferenceForm;  print "</td>\n";
   print "</tr><tr>\n";
-  print "<td colspan=4>\n"; &PubInfoBox;  print "</td>\n";
+  print "<td colspan=\"4\">\n"; &PubInfoBox;  print "</td>\n";
   print "</tr>\n";
 }
 
 if ($UseSignoffs) { # FIXME: Later may be more complicated control
   print "<tr>\n";
-    print "<td colspan=4>\n"; 
+    print "<td colspan=\"4\">\n"; 
       &SignoffBox(-default => $SignoffDefault); 
     print "</td>\n";
   print "</tr>\n";
 }
 
-print "</table><p>\n";
-
+print "<tr>\n<td colspan=\"4\" class=\"SubmitCell\">\n"; 
 if      ($mode eq "add") {
   print $query -> submit (-value => "Submit document");
 } elsif ($mode eq "reserve") {
@@ -536,7 +535,10 @@ if      ($mode eq "add") {
 } elsif ($mode eq "update" || $mode eq "updatedb") {
   print $query -> submit (-value => "Update document");
 }
-print "</center><p>";
+print "</td>\n</tr>\n";
+print "</table>\n";
+
+print "<p>";
 print $query -> end_multipart_form;
 
 &DocDBNavBar();

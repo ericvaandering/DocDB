@@ -211,15 +211,12 @@ sub AuthorScroll (%) {
     } 
   }  
   if ($HelpLink) {
-    print "<b><a ";
-    &HelpLink($HelpLink);
-    print "$HelpText:</a></b>";
-    if ($Required) {
-      print $RequiredMark;
-    }  
-    print "<br> \n";
+    my $ElementTitle = &FormElementTitle(-helplink  => $HelpLink, 
+                                         -helptext  => $HelpText,
+                                         -required  => $Required );
+    print $ElementTitle,"\n";                                     
   }
-  if ($Disabled) {
+  if ($Disabled) { # FIXME: Use Booleans
     print $query -> scrolling_list(-name => $Name, -values => \@ActiveIDs, 
                                    -labels => \%AuthorLabels,
                                    -size => 10, -multiple => $Multiple,

@@ -221,12 +221,10 @@ sub FileUploadBox (%) {
     }   
   }   
   
-  &DebugPage("Test point");
-  
   print $query -> hidden(-name => 'maxfiles', -default => $MaxFiles);
   
-  print "<table cellpadding=3>\n";
-  print "<tr><td colspan=2><b><a ";
+  print "<table class=\"LowPaddedTable\">\n";
+  print "<tr><td colspan=\"2\">";
   
   my ($HelpLink,$HelpText,$FileHelpLink,$FileHelpText,$DescHelpLink,$DescHelpText);
   if ($Type eq "file") {

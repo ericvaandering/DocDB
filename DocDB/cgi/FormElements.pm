@@ -252,27 +252,28 @@ sub EndDatePullDown (;%) {
 }
 
 sub PubInfoBox {
-  print "<b><a ";
-  &HelpLink("pubinfo");
-  print "Other publication information:</a></b><br> \n";
+  my $ElementTitle = &FormElementTitle(-helplink  => "pubinfo", 
+                                       -helptext  => "Other publication information");
+  print $ElementTitle,"\n";                                     
+
   print $query -> textarea (-name => 'pubinfo', -default => $PubInfoDefault,
                             -columns => 60, -rows => 3);
 };
 
 sub TopicSelect { # Scrolling selectable list for topics
+  my (%Params) = @_;
+  
+  my $Required = $Params{-required} || 0;
   #FIXME: Use TopicScroll
   my @TopicIDs = sort byTopic keys %MinorTopics;
   my %TopicLabels = ();
   foreach my $ID (@TopicIDs) {
     $TopicLabels{$ID} = $MinorTopics{$ID}{Full};
   }
-  print "<b><a ";
-  &HelpLink("topics");
-  print "Topics:</a></b>";
-  if ($Required) {
-    print $RequiredMark;
-  }  
-  print "<br> \n";
+  my $ElementTitle = &FormElementTitle(-helplink  => "topics", 
+                                       -helptext  => "Topics",
+                                       -required  => $Required );
+  print $ElementTitle,"\n";                                     
   print $query -> scrolling_list(-name => "topics", -values => \@TopicIDs, 
                                  -labels => \%TopicLabels,
                                  -size => 10, -multiple => 'true',
@@ -311,19 +312,16 @@ sub MultiTopicSelect (%) { # Multiple scrolling selectable lists for topics
 
   print "<table cellpadding=5>\n";
   print "<tr><td colspan=$NCols align=center>\n";
-  print "<b><a ";
-  &HelpLink("topics");
-  print "Topics:</a></b>";
-  if ($Required) {
-    print $RequiredMark;
-  }  
-  print "<br> \n";
+  my $ElementTitle = &FormElementTitle(-helplink  => "topics", 
+                                       -helptext  => "Topics",
+                                       -required  => $Required );
+  print $ElementTitle,"\n";                                     
   my $Col = 0;
   foreach $MajorID (@MajorIDs) {
     unless ($Col % $NCols) {
       print "<tr valign=top>\n";
     }
-    print "<td><b>$MajorTopics{$MajorID}{SHORT}</b><br>\n";
+    print "<td><b>$MajorTopics{$MajorID}{SHORT}</b><br/>\n";
     ++$Col;
     my @MatchMinorIDs = ();
     my %MatchLabels = ();
@@ -544,10 +542,10 @@ sub ReferenceForm {
   }
   @JournalIDs = sort @JournalIDs;  #FIXME Sort by acronym
   unshift @JournalIDs,0; $JournalLabels{0} = "----"; # Null Journal
-  print "<b><a ";
-  &HelpLink("reference");
-  print "Journal References:</a></b><br> \n";
-  
+  my $ElementTitle = &FormElementTitle(-helplink  => "reference", 
+                                       -helptext  => "Journal References");
+  print $ElementTitle,"\n";                                     
+
   my @ReferenceIDs = (@ReferenceDefaults,0);
   
   print "<table cellpadding=3>\n";

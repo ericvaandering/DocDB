@@ -17,22 +17,21 @@
 
 sub TitleBox (%) {
   my (%Params) = @_; 
+  #FIXME: Get rid of global default
   
   my $Required   = $Params{-required}   || 0;
 
-  print "<b><a ";
-  &HelpLink("title");
-  print "Title:</a></b>";
-  if ($Required) {
-    print $RequiredMark;
-  }  
-  print "<br> \n";
+  my $ElementTitle = &FormElementTitle(-helplink  => "title" , 
+                                       -helptext  => "Title" ,
+                                       -required  => $Required );
+  print $ElementTitle,"\n";                                     
   print $query -> textfield (-name => 'title', -default => $TitleDefault, 
                              -size => 70, -maxlength => 240);
 };
 
 sub AbstractBox (%) {
   my (%Params) = @_; 
+  #FIXME: Get rid of global default
   
   my $Required = $Params{-required} || 0;
   my $HelpLink = $Params{-helplink} || "abstract";
@@ -41,15 +40,10 @@ sub AbstractBox (%) {
   my $Columns  = $Params{-columns}  || 60;
   my $Rows     = $Params{-rows}     || 6;
 
-  if ($HelpLink) {
-    print "<b><a ";
-    &HelpLink($HelpLink);
-    print "$HelpText</a></b>";
-    if ($Required) {
-      print $RequiredMark;
-    }  
-    print "<br> \n";
-  }  
+  my $ElementTitle = &FormElementTitle(-helplink  => $HelpLink , 
+                                       -helptext  => $HelpText ,
+                                       -required  => $Required );
+  print $ElementTitle,"\n";                                     
   print $query -> textarea (-name    => $Name, -default => $AbstractDefault,
                             -rows    => $Rows, -columns => $Columns);
 };
@@ -58,11 +52,10 @@ sub RevisionNoteBox {
   my (%Params) = @_;
   my $Default  = $Params{-default}  || "";
   my $JSInsert = $Params{-jsinsert} || "";
-  print "<a name=\"RevisionNote\">";
-  print "<b><a ";
-  &HelpLink("revisionnote");
-  print "Notes and Changes:</a> </b>\n";
-
+  print "<a name=\"RevisionNote\" />";
+  
+  my $ExtraText = "";
+  
   # Convert text string w/ control characters to JS literal
 
   if ($JSInsert) {
@@ -71,10 +64,14 @@ sub RevisionNoteBox {
     $JSInsert =~ s/\'/\\\'/g;
     $JSInsert =~ s/\"/\\\'/g; # FIXME: See if there is a way to insert double quotes
                               #        Bad HTML/JS interaction, I think
-
-    print "<a href=\"#RevisionNote\" onclick=\"InsertRevisionNote('$JSInsert');\">(Insert notes from previous version)</a>";
+    $ExtraText = "<a href=\"#RevisionNote\" onclick=\"InsertRevisionNote('$JSInsert');\">(Insert notes from previous version)</a>";
   }
-  print "<br>\n";
+  
+  my $ElementTitle = &FormElementTitle(-helplink  => "revisionnote", 
+                                       -helptext  => "Notes and Changes",
+                                       -extratext => $ExtraText,
+                                       -required  => $Required );
+  print $ElementTitle,"\n";                                     
   print $query -> textarea (-name => 'revisionnote', -default => $Default,
                             -columns => 60, -rows => 6);
 };

@@ -20,11 +20,13 @@ sub SignoffBox { # Just a text box for now with a list of names
 
   my $Default  = $Params{-default}  || "";
 
-  print "<b><a ";
-  &HelpLink("signoffs");
-  print "Signoffs:</a></b> (one/line)\n";
-  print " - <a href=\"Javascript:signoffchooserwindow(\'$SignoffChooser\');\">".
-        "<b>Signoff Chooser</b></a><br> \n";
+  my $ChooserLink  = "- <a href=\"Javascript:signoffchooserwindow(\'$SignoffChooser\');\">".
+        "<b>Signoff Chooser</b></a>";
+  my $ElementTitle = &FormElementTitle(-helplink  => "signoffs", 
+                                       -helptext  => "Signoffs",
+                                       -extratext => $ChooserLink);
+  print $ElementTitle,"\n";                                     
+
   print $query -> textarea (-name => 'signofflist', -default => $Default,
                             -columns => 30, -rows => 6);
 };
