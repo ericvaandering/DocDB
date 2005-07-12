@@ -309,7 +309,6 @@ $addarchives{single}   = "Single file";
 $addarchives{multi}   = "Multiple files";
 @addarchives = ("single","multi");
 
-print "<p/>\n";
 print "<a name=\"addform\" />\n";
 
 print $query -> startform('POST',$AddFilesForm);

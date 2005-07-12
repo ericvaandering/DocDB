@@ -40,10 +40,12 @@ sub DocDBHeader {
   }  
   
   # FIXME: Do Hash lookup for scripts as they are certified XHTML?
-  
-  print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"
-        \"http://www.w3.org/TR/html4/loose.dtd\">";
-
+  if ($DOCTYPE) {
+    print $DOCTYPE;
+  } else {
+    print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"
+          \"http://www.w3.org/TR/html4/loose.dtd\">\n";
+  }
   print "<html>\n";
   print "<head>\n";
   print "<title>$Title</title>\n";
@@ -59,8 +61,8 @@ sub DocDBHeader {
     foreach my $PublicCSS (@PublicCSS) {
       foreach my $ScriptCSS ("",$ScriptName) {
         foreach my $BrowserCSS ("","_IE") {
-          my $CSSFile = $CSSDirectory."/".$ProjectCSS.$PublicCSS."DocDB".$ScriptCSS.".css";
-          my $CSSURL  =   $CSSURLPath."/".$ProjectCSS.$PublicCSS."DocDB".$ScriptCSS.".css";
+          my $CSSFile = $CSSDirectory."/".$ProjectCSS.$PublicCSS."DocDB".$ScriptCSS.$BrowserCSS.".css";
+          my $CSSURL  =   $CSSURLPath."/".$ProjectCSS.$PublicCSS."DocDB".$ScriptCSS.$BrowserCSS.".css";
           if (-e $CSSFile) {
             if ($BrowserCSS eq "_IE") {
               print "<!--[if IE]>\n";
@@ -82,7 +84,7 @@ sub DocDBHeader {
       require "Scripts.pm";
       &TopicSearchScript;
     } 
-    print "<script type=\"text/javascript\" language=\"javascript\" src=\"$JSURLPath/$Script.js\"></script>\n";
+    print "<script type=\"text/javascript\" src=\"$JSURLPath/$Script.js\"></script>\n";
   }  
 
   if (defined &ProjectHeader) {

@@ -388,11 +388,15 @@ sub InstitutionSelect (;%) { # Scrolling selectable list for institutions
   my $Mode     = $Params{-format}    || "short";
   my $Disabled = $Params{-disabled}  || "0";
   
-  print "<b><a ";
-  &HelpLink("institution");
-  print "Institution:</a></b>";
-  if ($Mode eq "full") {print " (Long descriptions in brackets)";}
-  print "<br> \n";
+  my $ExtraText;
+  if ($Mode eq "full") {$ExtraText = "(Long descriptions in brackets)";}
+  
+  
+  my $ElementTitle = &FormElementTitle(-helplink  => "institution", 
+                                       -helptext  => "Institution",
+                                       -extratext => $ExtraText);
+  print $ElementTitle,"\n";                                     
+
   my @InstIDs = sort byInstitution keys %Institutions;
   my %InstLabels = ();
   foreach my $ID (@InstIDs) {
@@ -423,25 +427,25 @@ sub NameEntryBox (;%) {
     $Booleans .= "-disabled";
   }  
   
-  print "<table cellpadding=5><tr valign=top>\n";
+  print "<table class=\"MedPaddedTable\"><tr>\n";
   print "<td>\n";
-  print "<b><a ";
-  &HelpLink("authorentry");
-  print "First Name:</a></b><br> \n";
+  my $ElementTitle = &FormElementTitle(-helplink  => "authorentry", 
+                                       -helptext  => "First Name");
+  print $ElementTitle,"\n";                                     
   print $query -> textfield (-name => 'first', 
                              -size => 20, -maxlength => 32,$Booleans);
   print "</td></tr>\n";
   print "<tr><td>\n";
-  print "<b><a ";
-  &HelpLink("authorentry");
-  print "Middle Initial(s):</a></b><br> \n";
+  $ElementTitle = &FormElementTitle(-helplink  => "authorentry", 
+                                    -helptext  => "Middle Initial(s)");
+  print $ElementTitle,"\n";                                     
   print $query -> textfield (-name => 'middle', 
                              -size => 10, -maxlength => 16,$Booleans);
   print "</td></tr>\n";
   print "<tr><td>\n";
-  print "<b><a ";
-  &HelpLink("authorentry");
-  print "Last Name:</a></b><br> \n";
+  $ElementTitle = &FormElementTitle(-helplink  => "authorentry", 
+                                    -helptext  => "Last Name");
+  print $ElementTitle,"\n";                                     
   print $query -> textfield (-name => 'lastname', 
                              -size => 20, -maxlength => 32,$Booleans);
   print "</td>\n";

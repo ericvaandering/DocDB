@@ -160,7 +160,7 @@ sub AuthorsTable {
   my $NThisCol  = 0;
 
   print "<table>\n";
-  print "<tr valign=top>\n";
+  print "<tr>\n";
   
   print "<td>\n";
   print "<ul>\n";
@@ -175,7 +175,7 @@ sub AuthorsTable {
     }
     ++$NThisCol;
     my $author_link = &AuthorLink($AuthorID, -format => "formal");
-    print "<li>$author_link\n";
+    print "<li>$author_link</li>\n";
   }  
   print "</ul></td></tr>";
   print "</table>\n";
