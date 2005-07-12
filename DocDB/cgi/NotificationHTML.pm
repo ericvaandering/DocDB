@@ -22,10 +22,11 @@ sub DocNotifySignup (%) {
   my $NeedUserFields = ($UserValidation ne "certificate");
   
   print "<div id=\"DocNotifySignup\">\n";
+  print $query -> start_multipart_form('POST',$WatchDocument);
+  print "<div class=\"InputWrapper\">\n";
   if ($NeedUserFields) {
     print "<hr/>\n";
   }
-  print $query -> start_multipart_form('POST',$WatchDocument);
   print $query -> hidden(-name => 'docid', -default => $DocumentID, -override => 1);
 
   if ($NeedUserFields) {
@@ -36,16 +37,12 @@ sub DocNotifySignup (%) {
     print "<dt>Password:</dt><dd>\n";
     print $query -> password_field(-name => 'password', -size => 12, -maxlength => 32);
     print "</dd>\n";
-    print "<p>\n";
-  }
-
-  print $query -> submit (-value => "Watch Document");
-
-  if ($NeedUserFields) {
-    print "</p>\n";
-
     print "</dl>\n";
   }
+  print "<div class=\"SubmitCell\">\n";
+  print $query -> submit (-value => "Watch Document");
+  print "</div>\n";
+  print "</div>\n";
   print $query -> end_multipart_form;
   print "</div>\n";
 }
