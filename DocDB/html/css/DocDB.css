@@ -119,7 +119,7 @@ th {vertical-align: bottom; }
   text-align: center;
 }  
 
-#UpdateButtons input[type="submit"] { /* Probably not best to change all buttons */
+#DocNotifySignup input[type="submit"], #UpdateButtons input[type="submit"] { /* Probably not best to change all buttons */
   font-size: 90%;
 }  
 
@@ -173,6 +173,10 @@ li.Even, tr.Even {
 }  
 
 #SubmitCell { /* Should be ".SubmitCell" */
+  text-align: center;
+}  
+
+.SubmitCell { /* Should be ".SubmitCell" */
   text-align: center;
 }  
 
