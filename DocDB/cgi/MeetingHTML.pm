@@ -176,7 +176,7 @@ sub SessionEntryForm ($@) {
     print "</tr>\n";
 
     print "<tr valign=top class=\"$RowClass\">\n";
-     print "<td>&nbsp</td>\n";
+     print "<td>&nbsp;</td>\n";
      print "<td>\n";              &SessionDescription;                 print "</td>\n";
      print "<td align=right>\n";  &SessionDateTimePullDown;            print "</td>\n";
     print "</tr>\n";
@@ -278,7 +278,7 @@ sub SessionDelete ($) {
     print $query -> checkbox(-name => "sessiondelete", -value =>
     "$MeetingOrderID", -label => 'Delete');
   } else {
-    print "&nbsp\n";
+    print "&nbsp;\n";
   }
 }
 
@@ -288,7 +288,7 @@ sub SessionModifyLink ($) {
     my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
     print "<a href=\"$SessionModify?sessionid=$SessionID\">Modify session<br/>agenda</a>\n";
   } else {
-    print "&nbsp\n";
+    print "&nbsp;\n";
   }
 }
 
@@ -392,7 +392,7 @@ sub PrintSession ($) {
         }
         print "<td><i>\n"; &ShortAuthorListByID(@AuthorIDs); print "</i></td>\n";
         print "<td><i>\n"; &ShortTopicListByID(@TopicIDs);   print "</i></td>\n";
-        print "<td>&nbsp</td>\n"; # Files, which can't exist
+        print "<td>&nbsp;</td>\n"; # Files, which can't exist
         print "<td align=right>",&TruncateSeconds($SessionTalks{$SessionTalkID}{Time}),"</td>\n";
         if ($SessionTalks{$SessionTalkID}{Note}) {
           print "<td><b>",&TalkNoteLink($SessionTalkID),"</b></td>\n";

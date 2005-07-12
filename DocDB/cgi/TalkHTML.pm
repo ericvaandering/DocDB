@@ -222,7 +222,7 @@ sub TalkDelete ($) {
     print $query -> checkbox(-name  => "talkdelete", 
                              -value => "$SessionOrderID", -label => 'Delete');
   } else {
-    print "&nbsp\n";
+    print "&nbsp;\n";
   }
   print "</nobr>";
 }
