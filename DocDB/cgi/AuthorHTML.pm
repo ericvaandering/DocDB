@@ -110,6 +110,9 @@ sub AuthorLink ($;%) {
   &FetchAuthor($AuthorID);
   &FetchInstitution($Authors{$AuthorID}{InstitutionID});
   my $InstitutionName = $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG};
+  unless ($Authors{$AuthorID}{FULLNAME}) {
+    return "Unknown";
+  }  
   my $link;
   $link = "<a href=\"$ListBy?authorid=$AuthorID\" title=\"$InstitutionName\">";
   if ($Format eq "full") {
