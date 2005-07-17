@@ -138,7 +138,7 @@ if ($Action eq "migrate") {
       $RevisionList -> execute($MinorID);
       $RevisionList -> bind_columns(undef, \($DocRevID));
       while ($RevisionList -> fetch) {
-        $RevisionEventInsert -> execute(0,$DocRevID,$ConferenceID);
+        $RevisionEventInsert -> execute($DocRevID,$ConferenceID);
       }
     } 
   }                                
