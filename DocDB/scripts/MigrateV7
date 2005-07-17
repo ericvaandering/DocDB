@@ -3,7 +3,9 @@
 # Author Eric Vaandering (ewv@fnal.gov)
 #
 
-# Usage: MigrateV5 --u=username --p=password --a=init|migrate|delete
+# Must run in a v6 environment
+
+# Usage: MigrateV7 --u=username --p=password --a=init|migrate|delete
 
 use DBI;
 use Getopt::Long;
@@ -34,11 +36,27 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
 # User based access
 
   my $RevisionAdd  = $dbh -> prepare("alter table DocumentRevision add DocTypeID int"); 
+  my $EventGroupCreate  = $dbh -> prepare(
+                         "CREATE TABLE EventGroup (
+                          EventGroupID int(11) NOT NULL auto_increment,
+                          ShortDescription varchar(32) NOT NULL default '',
+                          LongDescription text,
+                          TimeStamp timestamp(14) NOT NULL,
+                          PRIMARY KEY  (EventGroupID))");
+  my $ConferenceAdd1  = $dbh -> prepare("alter table Conference add EventGroupID int"); 
+  my $ConferenceAdd2  = $dbh -> prepare("alter table Conference add LongDescription text"); 
+
 
   $RevisionAdd      -> execute();
-}
+  $EventGroupCreate -> execute();
+  $ConferenceAdd1   -> execute();
+  $ConferenceAdd2   -> execute();
+ }
 
 if ($Action eq "migrate") {
+
+### Migrate DocType from Document to Revision
+
   require "DocumentSQL.pm";
   &GetAllDocuments;
 
@@ -63,21 +81,85 @@ if ($Action eq "migrate") {
       $RevisionUpdate -> execute($DocTypeID,$TimeStamp,$DocRevID);
     }
   }  
+  
+### Migrate SpecialTopic Major topics to event groups  
+  
+  require "TopicSQL.pm";
+  &GetTopics;
+  &SpecialMajorTopics;
+  &GetConferences;
+  
+  print "Migrating event-like topics to true events\n";
+  
+  foreach my $MajorID (@GatheringMajorIDs) {
+    &FetchMajorTopic($MajorID);
+    my $Insert = $dbh -> prepare("insert into EventGroup (ShortDescription,LongDescription) values (?,?)"); 
+    print "Migrating $MajorTopics{$MajorID}{SHORT}\n";
+    $Insert -> execute($MajorTopics{$MajorID}{SHORT},$MajorTopics{$MajorID}{LONG});
+    my $EventGroupID = $Insert -> {mysql_insertid};
+    # Now deal with three cases: MinorTopics which are conferences
+    #                            MinorTopics which are not conferences
+    #                            Conferences which are not MinorTopics   
+    foreach my $MinorID (keys %MinorTopics) { 
+      unless ($MinorTopics{$MinorID}{MAJOR} == $MajorID) {
+        next;
+      }
+      my $ConferenceID = &FetchConferenceByTopicID($MinorID);
+      if ($ConferenceID) {
+        my $ConferenceUpdate = $dbh -> prepare("update Conference set EventGroupID=?,
+                                                 LongDescription=? where ConferenceID=?");
+        $ConferenceUpdate - execute($EventGroupID,$MinorTopics{$MinorID}{LONG},$ConferenceID);
+      } else {
+        my $ConferenceInsert = $dbh -> prepare("insert into Conference 
+                               (ConferenceID,EventGroupID,LongDescription,StartDate,EndDate,Title,ShowAllTalks)  
+                               values (0,$EventGroupID,$MinorTopics{$MinorID}{LONG},NOW(),NOW(),$MinorTopics{$MinorID}{SHORT},1)");
+        print "Warning: Event $MinorTopics{$MinorID}{SHORT} ($MinorTopics{$MinorID}{LONG}) created without true dates\n";
+      }                
+    } 
+  }                                
+  my $Insert = $dbh -> prepare("insert into EventGroup (ShortDescription,LongDescription) values (?,?)"); 
+  print "Migrating Orphan Events (if any)\n";
+  $Insert -> execute("Orphans","Orphans");
+  $EventGroupID = $Insert -> {mysql_insertid};
+  foreach my $ConferenceID (keys %Conferences) {
+    if ($Conferences{$ConferenceID}{Minor}) {
+      next;
+    }  
+    my $ConferenceUpdate = $dbh -> prepare("update Conference set EventGroupID=?,
+                                            LongDescription=? where ConferenceID=?");
+    print "Orphan Event found: $Conferences{$ConferenceID}{Title}\n";                                       
+    $ConferenceUpdate - execute($EventGroupID,$Conferences{$ConferenceID}{Title},$ConferenceID);                                         
+  }
+  print "If no orphan events were reported, remove the Event Group \"Orphans\"\n";  
 }
 
 if ($Action eq "undo") { # Undo modifications
-
-# User based access
-
-  my $RevisionDrop  = $dbh -> prepare("alter table DocumentRevision drop DocTypeID"); 
+  my $RevisionDrop    = $dbh -> prepare("alter table DocumentRevision drop DocTypeID"); 
+  my $ConferenceDrop1 = $dbh -> prepare("alter table DocumentRevision drop EventGroupID"); 
+  my $ConferenceDrop2 = $dbh -> prepare("alter table DocumentRevision drop LongDescription"); 
+  my $EventGroupDrop  = $dbh -> prepare("drop  table EventGroup"); 
 
   $RevisionDrop      -> execute();
+  $ConferenceDrop1   -> execute();
+  $ConferenceDrop2   -> execute();
+  $EventGroupDrop    -> execute();
 }
 
 if ($Action eq "delete") { 
-#  my $DocTypeDel    = $dbh -> prepare("alter table Document drop DocumentType"); 
+
+  exit;
+
+  my $DocTypeDel    = $dbh -> prepare("alter table Document drop DocumentType"); 
+  my $MajorTopicDel1    = $dbh -> prepare("alter table MajorTopic drop Restricted "); 
+  my $MajorTopicDel2    = $dbh -> prepare("alter table MajorTopic drop Suppressed "); 
+  my $ConferenenceDel1   = $dbh -> prepare("alter table Conference drop MinorTopicID "); 
+  my $ConferenenceDel2   = $dbh -> prepare("alter table Conference drop SingleSession "); 
   
-#  $DocTypeDel -> execute();
+  $DocTypeDel       -> execute();
+  $MajorTopicDel1   -> execute();
+  $MajorTopicDel2   -> execute();
+  $ConferenenceDel1 -> execute();
+  $ConferenenceDel2 -> execute();
 }
 
 exit;
