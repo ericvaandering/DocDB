@@ -504,7 +504,7 @@ print "</tr>\n";
 
 print "<tr>\n";
 print "<td colspan=\"4\">\n";
- &EventSelect(-required => $FALSE, -format => "full");
+ &EventSelect(-required => $FALSE, -format => "full", -multiple => $TRUE);
 print "</td>\n";
 print "</tr>\n";
 

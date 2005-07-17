@@ -725,12 +725,16 @@ sub EventSelect (;%) {
   my (%Params) = @_;
 
   my $Disabled = $Params{-disabled} || "0";
+  my $Multiple = $Params{-multiple} || "0";
   my $Format   = $Params{-format}   || "full";
 
   my $Booleans = "";
   
   if ($Disabled) {
     $Booleans .= "-disabled";
+  }  
+  if ($Multiple) {
+    $Booleans .= "-multiple";
   }  
 
   &GetConferences; 
