@@ -569,7 +569,7 @@ sub PrintSessionSeparatorInfo ($) {
   print "</tr>\n";
 }
 
-sub NewMeetingLink ($) {
+sub NewMeetingLink ($) { # v7 rename as EventLink, get rid of other similar things
   my ($ConferenceID) = @_;
     
   my $URL = "$DisplayMeeting?conferenceid=$ConferenceID";

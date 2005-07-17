@@ -26,8 +26,8 @@
 
 sub GetTopics {
   require "MeetingSQL.pm";
-  &SpecialMajorTopics;
-  &GetConferences; # Needed all the time for sorts, etc.
+  &SpecialMajorTopics; # Remove v7
+  &GetConferences;     # Remove v7
 
   my $minor_list   = $dbh->prepare("select MinorTopicID,MajorTopicID,ShortDescription,LongDescription from MinorTopic");
   my $major_list   = $dbh->prepare("select MajorTopicID,ShortDescription,LongDescription from MajorTopic");
@@ -158,6 +158,10 @@ sub GetTopicDocuments {
   
   require "RevisionSQL.pm";
 
+  my $DocumentID;
+  my $DocRevID;
+  my %DocumentIDs;
+
   my $RevisionList = $dbh -> prepare("select DocRevID from RevisionTopic where MinorTopicID=?"); 
   my $DocumentList = $dbh -> prepare("select DocumentID from DocumentRevision where DocRevID=? and Obsolete=0"); 
   $RevisionList -> execute($TopicID);
@@ -186,7 +190,7 @@ sub LookupMajorTopic { # Returns MajorTopicID from Topic Name
   return $MajorTopicID;
 }
 
-sub SpecialMajorTopics { # Store MajorTopicIDs for special topics
+sub SpecialMajorTopics { # Remove v7
   unless ($SpecialMajorsFound) {
     $SpecialMajorsFound = 1;
     @ConferenceMajorIDs = ();
@@ -209,7 +213,7 @@ sub SpecialMajorTopics { # Store MajorTopicIDs for special topics
   }
 }
 
-sub MajorIsMeeting {
+sub MajorIsMeeting { # Remove v7
   my ($MajorID) = @_;
   
   &SpecialMajorTopics;
@@ -222,7 +226,7 @@ sub MajorIsMeeting {
   return $IsMeeting; 
 }
 
-sub MajorIsConference {
+sub MajorIsConference { # Remove v7
   my ($MajorID) = @_;
   
   &SpecialMajorTopics;
@@ -235,7 +239,7 @@ sub MajorIsConference {
   return $IsConference;
 }
 
-sub MajorIsGathering {
+sub MajorIsGathering { # Remove v7
   my ($MajorID) = @_;
   
   &SpecialMajorTopics;

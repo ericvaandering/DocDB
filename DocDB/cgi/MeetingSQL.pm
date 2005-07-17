@@ -38,7 +38,7 @@ sub GetConferences {
   return @ConferenceIDs;
 }
 
-sub FetchConferenceByTopicID { # Fetches a conference by MinorTopicID
+sub FetchConferenceByTopicID { # Fetches a conference by MinorTopicID: Remove v7
   my ($minorTopicID) = @_;
   my ($ConferenceID,$MinorTopicID);
   
@@ -51,6 +51,27 @@ sub FetchConferenceByTopicID { # Fetches a conference by MinorTopicID
 
   return $ConferenceID;
 }
+
+sub GetRevisionEvents ($) { # Get the events associated with a revision
+  my ($DocRevID) = @_;
+  
+  require "Utilities.pm";
+  
+  my @ConferenceIDs = ();
+  my ($ConferenceID);
+  my $EventList = $dbh->prepare("select ConferenceID from RevisionEvent where DocRevID=?");
+  $EventList -> execute($DocRevID);
+  $EventList -> bind_columns(undef, \($ConferenceID));
+  while ($EventList -> fetch) {
+    if (&FetchConferenceByConferenceID($ConferenceID)) {
+      push @ConferenceIDs,$ConferenceID;
+    }  
+  }
+  @ConferenceIDs = &Unique(@ConferenceIDs);
+  return @ConferenceIDs;
+}
+
+
 
 sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
   my ($conferenceID) = @_;
@@ -73,7 +94,7 @@ sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
 ($ConferenceID,$MinorTopicID,$Location,$URL,$Title,$Preamble,$Epilogue,$StartDate,$EndDate,$ShowAllTalks,$TimeStamp) 
     = $ConferenceFetch -> fetchrow_array;
   if ($ConferenceID) {
-    $Conferences{$ConferenceID}{Minor}        = $MinorTopicID;
+    $Conferences{$ConferenceID}{Minor}        = $MinorTopicID; # Remove v7 (all)
     $Conferences{$ConferenceID}{Location}     = $Location;
     $Conferences{$ConferenceID}{URL}          = $URL;
     $Conferences{$ConferenceID}{Title}        = $Title;
