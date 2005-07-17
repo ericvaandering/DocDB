@@ -55,6 +55,8 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
 
 if ($Action eq "migrate") {
 
+  print "\nMigrating doctypes to document revisions.\n";
+  
 ### Migrate DocType from Document to Revision
 
   require "DocumentSQL.pm";
@@ -70,7 +72,7 @@ if ($Action eq "migrate") {
     $DocumentSelect -> execute($DocumentID);
     my ($DocTypeID) = $DocumentSelect -> fetchrow_array;
     
-    unless ($DocumentID % 100) {
+    unless (($DocumentID-1) % 100) {
       print "Updating Document $DocumentID, DocTypeID $DocTypeID\n";
     }   
     # Do revision by revision to keep TimeStamps in sync
@@ -85,11 +87,13 @@ if ($Action eq "migrate") {
 ### Migrate SpecialTopic Major topics to event groups  
   
   require "TopicSQL.pm";
+  require "MeetingSQL.pm";
+  
   &GetTopics;
   &SpecialMajorTopics;
   &GetConferences;
   
-  print "Migrating event-like topics to true events\n";
+  print "\nMigrating event-like topics to true events\n";
   
   foreach my $MajorID (@GatheringMajorIDs) {
     &FetchMajorTopic($MajorID);
@@ -149,9 +153,9 @@ if ($Action eq "delete") {
 
   exit;
 
-  my $DocTypeDel    = $dbh -> prepare("alter table Document drop DocumentType"); 
-  my $MajorTopicDel1    = $dbh -> prepare("alter table MajorTopic drop Restricted "); 
-  my $MajorTopicDel2    = $dbh -> prepare("alter table MajorTopic drop Suppressed "); 
+  my $DocTypeDel         = $dbh -> prepare("alter table Document   drop DocumentType"); 
+  my $MajorTopicDel1     = $dbh -> prepare("alter table MajorTopic drop Restricted "); 
+  my $MajorTopicDel2     = $dbh -> prepare("alter table MajorTopic drop Suppressed "); 
   my $ConferenenceDel1   = $dbh -> prepare("alter table Conference drop MinorTopicID "); 
   my $ConferenenceDel2   = $dbh -> prepare("alter table Conference drop SingleSession "); 
   
