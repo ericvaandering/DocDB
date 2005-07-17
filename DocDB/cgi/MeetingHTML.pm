@@ -735,12 +735,13 @@ sub EventSelect (;%) {
   }  
 
   &GetConferences; 
+  &GetAllEventGroups; 
 
   my @ConferenceIDs = sort keys %Conferences; # Add sort
   my %Labels        = ();
   foreach my $ConferenceID (@ConferenceIDs) {
     if ($Format eq "full") {
-      $Labels{$ConferenceID} = $Conferences{$ConferenceID}{EventGroupID}.":".$Conferences{$ConferenceID}{Title}; 
+      $Labels{$ConferenceID} = $EventGroups{$Conferences{$ConferenceID}{EventGroupID}}{ShortDescription}.":".$Conferences{$ConferenceID}{Title}; 
     }
   }      
   

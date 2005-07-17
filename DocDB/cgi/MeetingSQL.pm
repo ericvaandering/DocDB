@@ -71,7 +71,44 @@ sub GetRevisionEvents ($) { # Get the events associated with a revision
   return @ConferenceIDs;
 }
 
+sub GetAllEventGroups () {
+  if ($HaveAllEventGroups) {
+    return;
+  }
+  
+  %EventGroups = ();
+  my @EventGroupIDs = ();
+  my ($EventGroupID);
 
+  my $List = $dbh->prepare("select EventGroupID from EventGroup");
+  $List -> execute();
+  $List -> bind_columns(undef, \($EventGroupID));
+  while ($List -> fetch) {
+    if (&FetchEventGroup($EventGroupID)) {
+      push @EventGroupIDs,$EventGroupID;
+    }  
+  }
+  return @EventGroupIDs;  
+}
+
+sub FetchEventGroup ($) {
+  my ($EventGroupID) = @_;
+  unless ($EventGroupID) {
+    return 0;
+  }
+    
+  my $Fetch = $dbh->prepare("select ShortDescription,LongDescription,TimeStamp from EventGroupID=?");
+  $Fetch -> execute($EventGroupID);
+ 
+  ($ShortDescription,$LongDescription,$TimeStamp) = $Fetch -> fetchrow_array;
+  if ($TimeStamp) {
+    $EventGroups{$EventGroupID}{ShortDescription} = $ShortDescription;
+    $EventGroups{$EventGroupID}{LongDescription}  = $LongDescription; 
+    $EventGroups{$EventGroupID}{TimeStamp}        = $TimeStamp; 
+  } 
+  
+  return $EventGroupID;  
+} 
 
 sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
   my ($conferenceID) = @_;
@@ -91,8 +128,9 @@ sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
     "where ConferenceID=?");
   $ConferenceFetch -> execute($conferenceID);
  
-($ConferenceID,$EventGroupID,$MinorTopicID,$Location,$URL,$Title,$LongDescription,$Preamble,$Epilogue,$StartDate,$EndDate,$ShowAllTalks,$TimeStamp) 
-    = $ConferenceFetch -> fetchrow_array;
+  ($ConferenceID,$EventGroupID,$MinorTopicID,$Location,$URL,$Title,
+   $LongDescription,$Preamble,$Epilogue,$StartDate,$EndDate,$ShowAllTalks,
+   $TimeStamp) = $ConferenceFetch -> fetchrow_array;
   if ($ConferenceID) {
     $Conferences{$ConferenceID}{Minor}        = $MinorTopicID; # Remove v7 (all)
     $Conferences{$ConferenceID}{EventGroupID}     = $EventGroupID;
