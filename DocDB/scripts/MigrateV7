@@ -112,7 +112,7 @@ if ($Action eq "migrate") {
       if ($ConferenceID) {
         my $ConferenceUpdate = $dbh -> prepare("update Conference set EventGroupID=?,
                                                  LongDescription=? where ConferenceID=?");
-        $ConferenceUpdate - execute($EventGroupID,$MinorTopics{$MinorID}{LONG},$ConferenceID);
+        $ConferenceUpdate -> execute($EventGroupID,$MinorTopics{$MinorID}{LONG},$ConferenceID);
       } else {
         my $ConferenceInsert = $dbh -> prepare("insert into Conference 
                                (ConferenceID,EventGroupID,LongDescription,StartDate,EndDate,Title,ShowAllTalks)  
