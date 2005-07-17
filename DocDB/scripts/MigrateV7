@@ -127,8 +127,9 @@ if ($Action eq "migrate") {
       } else {
         my $ConferenceInsert = $dbh -> prepare("insert into Conference 
                                (ConferenceID,EventGroupID,LongDescription,StartDate,EndDate,Title,ShowAllTalks)  
-                               values (0,$EventGroupID,$MinorTopics{$MinorID}{LONG},NOW(),NOW(),$MinorTopics{$MinorID}{SHORT},1)");
+                               values (0,?,NOW(),NOW(),?,1)");
         print "Warning: Event $MinorTopics{$MinorID}{SHORT} ($MinorTopics{$MinorID}{LONG}) created without true dates\n";
+        $ConferenceInsert  -> execute($EventGroupID,$MinorTopics{$MinorID}{LONG},$MinorTopics{$MinorID}{SHORT});
         $ConferenceID = $ConferenceInsert -> {mysql_insertid};
       }
           
