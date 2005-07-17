@@ -326,14 +326,16 @@ sub InsertEvents (%) {
   my %Params = @_;
   
   my $DocRevID =   $Params{-docrevid} || "";   
-  my @EventIDs = @{$Params{-topicids}};
+  my @EventIDs = @{$Params{-eventids}};
 
   my $Count = 0;
 
   my $Insert = $dbh -> prepare("insert into RevisionEvent (RevEventID, DocRevID, ConferenceID) values (0,?,?)");
                                  
   foreach my $EventID (@EventIDs) {
+    push @DebugStack,"Checking $EventID";
     if (int $EventID) {
+      push @DebugStack,"Inserting $EventID";
       $Insert -> execute($DocRevID,$EventID);
       ++$Count;
     }
