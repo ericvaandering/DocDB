@@ -88,7 +88,6 @@ sub GetAllEventGroups () {
       push @EventGroupIDs,$EventGroupID;
     }  
   }
-  push @DebugStack,@EventGroupIDs;
   return @EventGroupIDs;  
 }
 
@@ -107,8 +106,6 @@ sub FetchEventGroup ($) {
     $EventGroups{$EventGroupID}{LongDescription}  = $LongDescription; 
     $EventGroups{$EventGroupID}{TimeStamp}        = $TimeStamp; 
   } 
-  push @DebugStack,"EVI: $EventGroupID $ShortDescription";
-  
   return $EventGroupID;  
 } 
 
@@ -324,5 +321,26 @@ sub DeleteSessionSeparator ($) {
   $SessionSeparatorDelete -> execute($SessionSeparatorID);
   $MeetingOrderDelete     -> execute($SessionSeparatorID);
 }
+
+sub InsertEvents (%) {
+  my %Params = @_;
+  
+  my $DocRevID =   $Params{-docrevid} || "";   
+  my @EventIDs = @{$Params{-topicids}};
+
+  my $Count = 0;
+
+  my $Insert = $dbh -> prepare("insert into RevisionEvent (RevEventID, DocRevID, ConferenceID) values (0,?,?)");
+                                 
+  foreach my $EventID (@EventIDs) {
+    if (int $EventID) {
+      $Insert -> execute($DocRevID,$EventID);
+      ++$Count;
+    }
+  }  
+      
+  return $Count;
+}
+
 
 1;

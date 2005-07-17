@@ -105,7 +105,7 @@ my $SignoffList   = $params{signofflist};
 my $OldVersion    = $params{oldversion};
 my $MaxFiles      = $params{maxfiles};
 my @XRefs         = split /\D+/,$params{xrefs}; # Can be comma or space separated
-
+my @EventIDs      = $query -> param('events');
 
 if ($Archive eq "multi") {$Archive = "single";} # No real difference
 
@@ -366,11 +366,16 @@ if (@XRefs) {
                            
 my $Count;
 $Count = &InsertAuthors(-docrevid => $DocRevID, -authorids => \@authorIDs);
-$Count = &InsertTopics(-docrevid => $DocRevID, -topicids => \@topicIDs);
+$Count = &InsertTopics( -docrevid => $DocRevID, -topicids  => \@topicIDs);
 $Count = &InsertSecurity(-docrevid  => $DocRevID, 
                          -viewids   => \@securities,
                          -modifyids => \@ModifyGroups);
 
+### Add events
+if (@EventIDs) {
+  require "MeetingSQL.pm";
+  $Count = &InsertEvents(-docrevid => $DocRevID, -eventids => \@EventIDs);
+}
 ### Add link to SessionTalk                         
 
 if ($SessionTalkID) { 

@@ -30,6 +30,7 @@ sub AddDocument {
   require "RevisionSQL.pm";
   require "TopicSQL.pm";
   require "AuthorSQL.pm";
+  require "MeetingSQL.pm";
   require "SecuritySQL.pm";
   require "SignoffSQL.pm";
   
@@ -50,6 +51,7 @@ sub AddDocument {
   
   my @AuthorIDs  = @{$Params{-authorids}} ;
   my @TopicIDs   = @{$Params{-topicids}}  ;
+  my @EventIDs   = @{$Params{-eventids}}  ;
   my @ViewIDs    = @{$Params{-viewids}}   ;
   my @ModifyIDs  = @{$Params{-modifyids}} ;
   my @SignOffIDs = @{$Params{-signoffids}}; # For simple signoff list, may be deprecated
@@ -89,13 +91,10 @@ sub AddDocument {
     my $Version    = $DocRevisions{$DocRevID}{Version};
     &MakeDirectory($DocumentID,$Version); 
     &ProtectDirectory($DocumentID,$Version,@ViewIDs); 
-    $Count = &InsertAuthors(-docrevid => $DocRevID, -authorids => \@AuthorIDs);
-
-    $Count = &InsertTopics(-docrevid => $DocRevID, -topicids => \@TopicIDs);
-
-    $Count = &InsertSecurity(-docrevid  => $DocRevID, 
-                             -viewids   => \@ViewIDs,
-                             -modifyids => \@ModifyIDs);
+    $Count = &InsertAuthors(-docrevid   => $DocRevID, -authorids => \@AuthorIDs);
+    $Count = &InsertTopics(-docrevid    => $DocRevID, -topicids  => \@TopicIDs);
+    $Count = &InsertEvents(-docrevid    => $DocRevID, -eventids  => \@EventIDs);
+    $Count = &InsertSecurity(-docrevid  => $DocRevID, -viewids   => \@ViewIDs, -modifyids => \@ModifyIDs);
     @FileIDs = &AddFiles(-docrevid  => $DocRevID, -datetime => $DateTime, -files => \%Files);
     if (@SignOffIDs) {
       &InsertSignoffList($DocRevID,@SignOffIDs);
