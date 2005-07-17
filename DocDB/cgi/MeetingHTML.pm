@@ -728,15 +728,19 @@ sub EventSelect (;%) {
   my $Multiple = $Params{-multiple} || "0";
   my $Format   = $Params{-format}   || "full";
 
-  my $Booleans = "";
+  my @Booleans = ();
+  my $Booleans;
   
   if ($Disabled) {
-    $Booleans .= "-disabled";
+    push @Booleans,"-disabled";
   }  
   if ($Multiple) {
-    $Booleans .= "-multiple";
+    push @Booleans,"-multiple";
   }  
-
+  if (@Booleans) {
+    $Booleans = join ' ',@Booleans;
+  }
+    
   &GetConferences; 
 
   my @ConferenceIDs = sort keys %Conferences; # Add sort
