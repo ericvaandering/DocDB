@@ -88,6 +88,7 @@ sub GetAllEventGroups () {
       push @EventGroupIDs,$EventGroupID;
     }  
   }
+  push @DebugStack,@EventGroupIDs;
   return @EventGroupIDs;  
 }
 
@@ -106,6 +107,7 @@ sub FetchEventGroup ($) {
     $EventGroups{$EventGroupID}{LongDescription}  = $LongDescription; 
     $EventGroups{$EventGroupID}{TimeStamp}        = $TimeStamp; 
   } 
+  push @DebugStack,"$EventGroupID $ShortDescription";
   
   return $EventGroupID;  
 } 
