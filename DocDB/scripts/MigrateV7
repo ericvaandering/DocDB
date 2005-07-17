@@ -138,6 +138,7 @@ if ($Action eq "migrate") {
       $RevisionList -> execute($MinorID);
       $RevisionList -> bind_columns(undef, \($DocRevID));
       while ($RevisionList -> fetch) {
+        unless ($ConferenceID) {print "We have a blank CID\n";}
         $RevisionEventInsert -> execute($DocRevID,$ConferenceID);
       }
     } 
