@@ -728,19 +728,12 @@ sub EventSelect (;%) {
   my $Multiple = $Params{-multiple} || "0";
   my $Format   = $Params{-format}   || "full";
 
-  my @Booleans = ();
-  my $Booleans;
+  my $Booleans = "";
   
   if ($Disabled) {
-    push @Booleans,"-disabled";
+    $Booleans .= "-disabled";
   }  
-  if ($Multiple) {
-    push @Booleans,"-multiple";
-  }  
-  if (@Booleans) {
-    $Booleans = join ' ',@Booleans;
-  }
-    
+
   &GetConferences; 
 
   my @ConferenceIDs = sort keys %Conferences; # Add sort
@@ -754,9 +747,9 @@ sub EventSelect (;%) {
   my $ElementTitle = &FormElementTitle(-helplink => "events", -helptext => "Events");
 
   print $ElementTitle;
-  print $query -> scrolling_list(-name   => "events", -values => \@ConferenceIDs, 
-                                 -labels => \%Labels, -size   => 10, $Booleans);
-   
+  print $query -> scrolling_list(-name     => "events", -values => \@ConferenceIDs, 
+                                 -labels   => \%Labels, -size   => 10, 
+                                 -multiple => $Multiple, $Booleans);
 }
 
 1;
