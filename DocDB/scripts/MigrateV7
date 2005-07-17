@@ -132,7 +132,7 @@ if ($Action eq "migrate") {
     my $ConferenceUpdate = $dbh -> prepare("update Conference set EventGroupID=?,
                                             LongDescription=? where ConferenceID=?");
     print "Orphan Event found: $Conferences{$ConferenceID}{Title}\n";                                       
-    $ConferenceUpdate - execute($EventGroupID,$Conferences{$ConferenceID}{Title},$ConferenceID);                                         
+    $ConferenceUpdate -> execute($EventGroupID,$Conferences{$ConferenceID}{Title},$ConferenceID);                                         
   }
   print "If no orphan events were reported, remove the Event Group \"Orphans\"\n";  
 }
