@@ -71,7 +71,7 @@ if ($Action eq "migrate") {
     my ($DocRevID,$TimeStamp);
     $DocumentSelect -> execute($DocumentID);
     my ($DocTypeID) = $DocumentSelect -> fetchrow_array;
-    
+    unless ($DocTypeID) {next;}  # Don't overwrite v7 docs
     unless (($DocumentID-1) % 100) {
       print "Updating Document $DocumentID, DocTypeID $DocTypeID\n";
     }   
