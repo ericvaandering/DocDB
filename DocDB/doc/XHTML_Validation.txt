@@ -1,5 +1,6 @@
                     XHTML 1.0   XHTML 1.0   XHTML 1.1     
                       Trans      Strict
 -------------------------------------------------------------------
-DocumentDatabase
-ModifyHome              X
+DocumentDatabase                    x
+ModifyHome                          X
+AuthorAddForm                       X
