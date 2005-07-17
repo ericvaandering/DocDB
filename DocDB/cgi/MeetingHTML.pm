@@ -727,7 +727,8 @@ sub EventSelect (;%) {
   my $Disabled = $Params{-disabled} || "0";
   my $Multiple = $Params{-multiple} || "0";
   my $Format   = $Params{-format}   || "full";
-
+  my @Defaults = @{$Params{-default}};
+  
   my $Booleans = "";
   
   if ($Disabled) {
@@ -737,7 +738,7 @@ sub EventSelect (;%) {
   &GetConferences; 
   &GetAllEventGroups; 
 
-  my @ConferenceIDs = sort keys %Conferences; # Add sort
+  my @ConferenceIDs = reverse sort EventsByDate keys %Conferences;
   my %Labels        = ();
   foreach my $ConferenceID (@ConferenceIDs) {
     if ($Format eq "full") {
@@ -748,9 +749,10 @@ sub EventSelect (;%) {
   my $ElementTitle = &FormElementTitle(-helplink => "events", -helptext => "Events");
 
   print $ElementTitle;
-  print $query -> scrolling_list(-name     => "events", -values => \@ConferenceIDs, 
-                                 -labels   => \%Labels, -size   => 10, 
-                                 -multiple => $Multiple, $Booleans);
+  print $query -> scrolling_list(-name     => "events",  -values  => \@ConferenceIDs, 
+                                 -labels   => \%Labels,  -size    => 10, 
+                                 -multiple => $Multiple, -default => \@Defaults,
+                                 $Booleans);
 }
 
 1;

@@ -245,4 +245,21 @@ sub EmailUserIDsByName {
   
   $LastA cmp $LastB;
 }  
+
+sub EventsByDate {
+
+  # Do reverse sort by date 
+  
+  my $adate = $Conferences{$a}{StartDate}; 
+  my $bdate = $Conferences{$b}{StartDate};
+  my ($ayear,$amonth,$aday) = split /\-/,$adate;
+  my ($byear,$bmonth,$bday) = split /\-/,$bdate;
+
+                   $ayear <=> $byear
+                          or
+                  $amonth <=> $bmonth 
+                          or
+                    $aday <=> $bday
+}    
+
 1;

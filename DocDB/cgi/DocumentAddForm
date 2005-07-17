@@ -30,11 +30,12 @@ require "Sorts.pm";
 require "Messages.pm";
 
 require "AuthorSQL.pm";
-require "TopicSQL.pm";
-require "SecuritySQL.pm";
 require "DocumentSQL.pm";
-require "RevisionSQL.pm";
+require "MeetingSQL.pm";
 require "MiscSQL.pm";
+require "RevisionSQL.pm";
+require "SecuritySQL.pm";
+require "TopicSQL.pm";
 
 require "ResponseElements.pm";
 require "FormElements.pm";
@@ -46,11 +47,11 @@ require "XRefUtilities.pm";
 
 require "FileHTML.pm";
 require "KeywordHTML.pm";
+require "MeetingHTML.pm";
 require "RevisionHTML.pm";
 require "SecurityHTML.pm";
 require "SignoffHTML.pm";
 require "TalkHTML.pm";
-require "MeetingHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -175,6 +176,7 @@ if ($mode eq "update") {
 my $SignoffsDefault; # FIXME: What other ones needn't be global?
 my @SecurityDefaults = ();
 my @ModifyDefaults   = ();
+my @EventDefaults    = ();
 my $RevisionNoteDefault; 
 my $XRefDefault;
 my $DocTypeIDDefault;
@@ -191,6 +193,7 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   @SecurityDefaults    = &GetRevisionSecurityGroups($DocRevID);
   @AuthorDefaults      = &GetRevisionAuthors($DocRevID);
   @TopicDefaults       = &GetRevisionTopics($DocRevID);
+  @EventDefaults       = &GetRevisionEvents($DocRevID);
   @ReferenceDefaults   = &FetchReferencesByRevision($DocRevID);
   $XRefDefault         = &SetXRefDefault($DocRevID);
   if ($UseSignoffs) {
@@ -490,7 +493,7 @@ if ($EnhancedSecurity) {
 }
 print "</tr>\n";
 
-### Topics
+### Topics # FIXME: Use non-global defaults
 
 print "<tr>\n";
 if ($TopicMode eq "single") {
@@ -504,7 +507,8 @@ print "</tr>\n";
 
 print "<tr>\n";
 print "<td colspan=\"4\">\n";
- &EventSelect(-required => $FALSE, -format => "full", -multiple => $TRUE);
+ &EventSelect(-required => $FALSE,          -format   => "full", 
+              -default  => \@EventDefaults, -multiple => $TRUE);
 print "</td>\n";
 print "</tr>\n";
 
