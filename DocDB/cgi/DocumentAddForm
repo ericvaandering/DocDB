@@ -50,6 +50,7 @@ require "RevisionHTML.pm";
 require "SecurityHTML.pm";
 require "SignoffHTML.pm";
 require "TalkHTML.pm";
+require "MeetingHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -497,6 +498,14 @@ if ($TopicMode eq "single") {
 } elsif ($TopicMode eq "multi") {
   print "<td colspan=\"4\">\n"; &MultiTopicSelect(-required => $RequiredEntries{Author});     print "</td>\n";
 }
+print "</tr>\n";
+
+### Events
+
+print "<tr>\n";
+print "<td colspan=\"4\">\n";
+ &EventSelect(-required => $FALSE, -format => "false");
+print "</td>\n";
 print "</tr>\n";
 
 ### Cross-references to other documents
