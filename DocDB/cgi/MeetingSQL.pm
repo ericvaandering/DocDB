@@ -98,7 +98,7 @@ sub FetchEventGroup ($) {
     return 0;
   }
     
-  my $Fetch = $dbh->prepare("select ShortDescription,LongDescription,TimeStamp from EventGroupID=?");
+  my $Fetch = $dbh->prepare("select ShortDescription,LongDescription,TimeStamp from EventGroup where EventGroupID=?");
   $Fetch -> execute($EventGroupID);
  
   ($ShortDescription,$LongDescription,$TimeStamp) = $Fetch -> fetchrow_array;
@@ -107,7 +107,7 @@ sub FetchEventGroup ($) {
     $EventGroups{$EventGroupID}{LongDescription}  = $LongDescription; 
     $EventGroups{$EventGroupID}{TimeStamp}        = $TimeStamp; 
   } 
-  push @DebugStack,"$EventGroupID $ShortDescription";
+  push @DebugStack,"EVI: $EventGroupID $ShortDescription";
   
   return $EventGroupID;  
 } 
