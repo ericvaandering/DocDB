@@ -320,6 +320,7 @@ sub PrintReferenceInfo ($) {
 
 sub PrintEventInfo {
   require "MeetingSQL.pm";
+  require "MeetingHTML.pm";
   
   my ($DocRevID) = @_;
   my @ConferenceIDs = &GetRevisionEvents($DocRevID);
