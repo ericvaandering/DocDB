@@ -43,18 +43,29 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                           LongDescription text,
                           TimeStamp timestamp(14) NOT NULL,
                           PRIMARY KEY  (EventGroupID))");
+  my $RevisionEventCreate  = $dbh -> prepare(
+                         "CREATE TABLE RevisionEvent (
+                          RevEventID int(11) NOT NULL auto_increment,
+                          DocRevID int(11) NOT NULL default '0',
+                          ConferenceID int(11) NOT NULL default '0',
+                          TimeStamp timestamp(14) NOT NULL,
+                          PRIMARY KEY  (RevEventID),
+                          KEY MinorTopicID (ConferenceID),
+                          KEY DocRevID (DocRevID))");
+                          
   my $ConferenceAdd1  = $dbh -> prepare("alter table Conference add EventGroupID int"); 
   my $ConferenceAdd2  = $dbh -> prepare("alter table Conference add LongDescription text"); 
 
 
-  $RevisionAdd      -> execute();
-  $EventGroupCreate -> execute();
-  $ConferenceAdd1   -> execute();
-  $ConferenceAdd2   -> execute();
+  $RevisionAdd         -> execute();
+  $EventGroupCreate    -> execute();
+  $RevisionEventCreate -> execute();
+  $ConferenceAdd1      -> execute();
+  $ConferenceAdd2      -> execute();
  }
 
 if ($Action eq "migrate") {
-
+  my $RevisionEventInsert = $dbh -> prepare("insert into RevisionEvent (RevEventID,DocRevID,ConferenceID) values (0,?,?)");
   print "\nMigrating doctypes to document revisions.\n";
   
 ### Migrate DocType from Document to Revision
@@ -118,7 +129,17 @@ if ($Action eq "migrate") {
                                (ConferenceID,EventGroupID,LongDescription,StartDate,EndDate,Title,ShowAllTalks)  
                                values (0,$EventGroupID,$MinorTopics{$MinorID}{LONG},NOW(),NOW(),$MinorTopics{$MinorID}{SHORT},1)");
         print "Warning: Event $MinorTopics{$MinorID}{SHORT} ($MinorTopics{$MinorID}{LONG}) created without true dates\n";
-      }                
+        $ConferenceID = $ConferenceInsert -> {mysql_insertid};
+      }
+          
+      # Find revisions with this MinorID, add to RevisionEvent table
+      my $DocRevID;
+      my $RevisionList = $dbh -> prepare("select DocRevID from RevisionTopic where MinorTopicID=?"); 
+      $RevisionList -> execute($MinorID);
+      $RevisionList -> bind_columns(undef, \($DocRevID));
+      while ($RevisionList -> fetch) {
+        $RevisionEventInsert -> execute(0,$DocRevID,$ConferenceID);
+      }
     } 
   }                                
   my $Insert = $dbh -> prepare("insert into EventGroup (ShortDescription,LongDescription) values (?,?)"); 
@@ -132,7 +153,8 @@ if ($Action eq "migrate") {
     my $ConferenceUpdate = $dbh -> prepare("update Conference set EventGroupID=?,
                                             LongDescription=? where ConferenceID=?");
     print "Orphan Event found: $Conferences{$ConferenceID}{Title}\n";                                       
-    $ConferenceUpdate -> execute($EventGroupID,$Conferences{$ConferenceID}{Title},$ConferenceID);                                         
+    $ConferenceUpdate -> execute($EventGroupID,$Conferences{$ConferenceID}{Title},$ConferenceID);
+    # Should figure out how to associate documents with these too                                         
   }
   print "If no orphan events were reported, remove the Event Group \"Orphans\"\n";  
 }
