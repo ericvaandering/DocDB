@@ -1057,4 +1057,12 @@ or may not be the same as the web username and password.
   </text>
  </entry>
  
+ <entry>
+  <key>events</key>
+  <title>Events</title>
+  <text>
+   Select which events (meetings, conferences, etc.) the document is associated with.
+  </text>
+ </entry>
+ 
 </helpfile>
