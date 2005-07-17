@@ -116,7 +116,7 @@ sub MajorTopicLink ($;$) {
   return $link;
 }
 
-sub GatheringLink {
+sub GatheringLink { # v7 replace with EventLink
   my ($TopicID,$Mode) = @_;
   my $MajorID = $MinorTopics{$TopicID}{MAJOR};
   my $Link;
@@ -127,7 +127,7 @@ sub GatheringLink {
   }
 }
 
-sub MeetingLink {
+sub MeetingLink { # v7 replace with EventLink
   my ($TopicID,$Mode) = @_;
   
   require "TopicSQL.pm";
@@ -145,7 +145,7 @@ sub MeetingLink {
   return $link;
 }
 
-sub ConferenceLink {
+sub ConferenceLink { # v7 replace with EventLink
   my ($TopicID,$Mode) = @_;
   
   require "TopicSQL.pm";
@@ -284,7 +284,7 @@ sub ConferencesList {
   print "</ul>";
 }
 
-sub MajorGatheringSelect (;%) { # Scrolling selectable list for major topics with dates
+sub MajorGatheringSelect (;%) { # v7 remove Scrolling selectable list for major topics with dates
   require "Scripts.pm";
 
   my (%Params) = @_;
@@ -321,7 +321,7 @@ sub MajorGatheringSelect (;%) { # Scrolling selectable list for major topics wit
                                  -default => $DefaultMajorID, $Booleans);
 };
 
-sub ConferenceSelect {
+sub ConferenceSelect { # v7 remove
   require "TopicSQL.pm";
   
   my (%Params) = @_;

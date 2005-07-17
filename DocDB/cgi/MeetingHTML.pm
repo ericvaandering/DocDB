@@ -600,7 +600,7 @@ sub ModifyMeetingLink ($) {
   return $Link;
 }
 
-sub OrphanMeetingList {
+sub OrphanMeetingList { # remove v7
   my ($Mode) = @_;
   
   require "Sorts.pm";
@@ -708,5 +708,47 @@ sub MeetingsByMajorTopic ($;$) { #FIXME: Can I combine with Orphan meetings?
   print "</ul>\n";
 }
  
+sub EventGroupSelect (;%) {
+  require "FormElements.pm";
+ 
+  my (%Params) = @_;
+
+  my $Disabled = $Params{-disabled} || "0";
+  my $Mode     = $Params{-format}   || "short";
+  
+  # Finish
+}
+
+sub EventSelect (;%) {
+  require "FormElements.pm";
+  require "MeetingSQL.pm";
+  my (%Params) = @_;
+
+  my $Disabled = $Params{-disabled} || "0";
+  my $Format   = $Params{-format}   || "full";
+
+  my $Booleans = "";
+  
+  if ($Disabled) {
+    $Booleans .= "-disabled";
+  }  
+
+  &GetConferences; 
+
+  my @ConferenceIDs = sort keys %Conferences; # Add sort
+  my %Labels        = ();
+  foreach my $ConferenceID (@ConferenceIDs) {
+    if ($Format eq "full") {
+      $Labels{$ConferenceID} = $Conferences{$ConferenceID}{EventGroupID}.":".$Conferences{$ConferenceID}{Short}; 
+    }
+  }      
+  
+  my $ElementTitle = &FormElementTitle(-helplink => "events", -helptext => "Events");
+
+  print $ElementTitle;
+  print $query -> scrolling_list(-name   => "events", -values => \@ConferenceIDs, 
+                                 -labels => \%Labels, -size   => 10, $Booleans);
+   
+}
 
 1;

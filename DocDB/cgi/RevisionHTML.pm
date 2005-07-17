@@ -365,7 +365,7 @@ sub PrintConfInfo { # Remove v7
       my $Start = &EuroDate($Conferences{$ConferenceID}{StartDate});
       my $End   = &EuroDate($Conferences{$ConferenceID}{EndDate});
       print "<dl>\n";
-      print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Associated with Events:</span></dt> \n";
+      print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Associated with Conferences:</span></dt> \n";
       print "<dd>";
       print "$ConferenceLink ";
       if ($Start && $End) {
