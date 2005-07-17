@@ -571,7 +571,8 @@ sub PrintSessionSeparatorInfo ($) {
 
 sub NewMeetingLink ($) { # v7 rename as EventLink, get rid of other similar things
   my ($ConferenceID) = @_;
-    
+  
+  &FetchConferenceByConferenceID($ConferenceID);
   my $URL = "$DisplayMeeting?conferenceid=$ConferenceID";
   my $Link  = "<a href=\"$URL\">";
      $Link .= $Conferences{$ConferenceID}{Title};
