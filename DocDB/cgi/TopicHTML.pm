@@ -35,7 +35,6 @@ sub TopicListByID {
   if (@TopicIDs) {
     print "<ul>\n";
     foreach my $TopicID (@TopicIDs) {
-      &FetchMinorTopic($TopicID);
       my $TopicLink = &MinorTopicLink($TopicID);
       print "<li>$TopicLink</li>\n";
     }
@@ -53,7 +52,6 @@ sub ShortTopicListByID {
   
   if (@TopicIDs) {
     foreach my $TopicID (@TopicIDs) {
-      &FetchMinorTopic($TopicID);
       my $TopicLink = &MinorTopicLink($TopicID);
       print "$TopicLink<br/>\n";
     }
@@ -66,34 +64,24 @@ sub MinorTopicLink ($;$) {
   my ($TopicID,$mode) = @_;
   
   require "TopicSQL.pm";
-  require "MeetingSQL.pm";
-  require "MeetingSecurityUtilities.pm";
   
-  my ($URL,$link,@MeetingOrderIDs);
+  my ($URL,$Link);
 
   &FetchMinorTopic($TopicID);
-  my $ConferenceID = &FetchConferenceByTopicID($TopicID);
-  if ($ConferenceID && &CanAccessMeeting($ConferenceID)) {
-    @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
-  }  
-  
-  if ($ConferenceID && @MeetingOrderIDs && &CanAccessMeeting($ConferenceID)) {
-    $URL = "$DisplayMeeting?conferenceid=$ConferenceID";
-  } else {
-    $URL = "$ListBy?topicid=$TopicID";
-  }  
+
+  $URL = "$ListBy?topicid=$TopicID";
     
-  $link = "<a href=\"$URL\" title=\"$MinorTopics{$TopicID}{LONG}\">";
+  $Link = "<a href=\"$URL\" title=\"$MinorTopics{$TopicID}{LONG}\">";
   if ($mode eq "short") {
-    $link .= $MinorTopics{$TopicID}{SHORT};
+    $Link .= $MinorTopics{$TopicID}{SHORT};
   } elsif ($mode eq "long") {
-    $link .= $MinorTopics{$TopicID}{LONG};
+    $Link .= $MinorTopics{$TopicID}{LONG};
   } else {
-    $link .= $MinorTopics{$TopicID}{Full};
+    $Link .= $MinorTopics{$TopicID}{Full};
   }
-  $link .= "</a>";
+  $Link .= "</a>";
   
-  return $link;
+  return $Link;
 }
 
 sub MajorTopicLink ($;$) {
@@ -114,61 +102,6 @@ sub MajorTopicLink ($;$) {
   $link .= "</a>";
   
   return $link;
-}
-
-sub GatheringLink { # v7 replace with EventLink
-  my ($TopicID,$Mode) = @_;
-  my $MajorID = $MinorTopics{$TopicID}{MAJOR};
-  my $Link;
-  if (&MajorIsConference($MajorID)) {
-    $Link = &ConferenceLink($TopicID,$Mode);
-  } elsif (&MajorIsMeeting($MajorID)) {
-    $Link = &MeetingLink($TopicID,$Mode);
-  }
-}
-
-sub MeetingLink { # v7 replace with EventLink
-  my ($TopicID,$Mode) = @_;
-  
-  require "TopicSQL.pm";
-  
-  &FetchMinorTopic($TopicID);
-  my $link;
-  $link = "<a href=\"$ListBy?topicid=$TopicID&amp;mode=meeting\" title=\"$MinorTopics{$TopicID}{LONG}\">";
-  if ($Mode eq "short") {
-    $link .= $MinorTopics{$TopicID}{SHORT};
-  } else {
-    $link .= $MinorTopics{$TopicID}{Full};
-  }
-  $link .= "</a>";
-  
-  return $link;
-}
-
-sub ConferenceLink { # v7 replace with EventLink
-  my ($TopicID,$Mode) = @_;
-  
-  require "TopicSQL.pm";
-  require "MeetingSQL.pm";
-  
-  &FetchMinorTopic($TopicID);
-  &FetchConferenceByTopicID($TopicID);
-  my $Link;
-     $Link = "<a href=\"$ListBy?topicid=$TopicID&amp;mode=conference\">";
-  if ($Mode eq "short" || $Mode eq "nodate") {
-    $Link .= $MinorTopics{$TopicID}{SHORT};
-  } elsif ($Mode eq "long") {
-    $Link .= $MinorTopics{$TopicID}{LONG};
-  } else {
-    $Link .= $MinorTopics{$TopicID}{Full};
-  }
-  $Link .= "</a>";
-  unless ($Mode eq "nodate") {
-    my $ConferenceID = $ConferenceMinor{$TopicID};
-    my ($Year,$Month,$Day) = split /\-/,$Conferences{$ConferenceID}{StartDate};
-    $Link .= " (".@AbrvMonths[$Month-1]." $Year)"; 
-  }
-  return $Link;
 }
 
 sub TopicsByMajorTopic ($) {
@@ -216,7 +149,7 @@ sub TopicsTable {
   print "</table>\n";
 }
 
-sub GatheringTable {
+sub GatheringTable { # v7 redo, rename as event table?
   require "Sorts.pm";
   require "TopicSQL.pm";
   require "ResponseElements.pm";
@@ -246,7 +179,7 @@ sub GatheringTable {
         print "<tr>\n";
         
         my $ConferenceID = $ConferenceMinor{$MinorID};
-        my $GatheringLink = &GatheringLink($MinorID,"short");
+        my $EventLink = &EventLink(-eventid => $ConferenceID);
         my $Start = &EuroDate($Conferences{$ConferenceID}{StartDate});
         my $End   = &EuroDate($Conferences{$ConferenceID}{EndDate});
         my $Link;
@@ -255,7 +188,7 @@ sub GatheringTable {
         } else {
           $Link = "None entered\n";
         }
-        print "<td>$GatheringLink</td>\n";
+        print "<td>$EventLink</td>\n";
         print "<td>$MinorTopics{$MinorID}{LONG}</td>\n";
         print "<td>$Conferences{$ConferenceID}{Location}</td>\n";
         print "<td>$Start - $End</td>\n";
@@ -267,7 +200,7 @@ sub GatheringTable {
   print "</table>";
 }
 
-sub ConferencesList {
+sub ConferencesList { # remove v7
   require "Sorts.pm";
   require "TopicSQL.pm";
   
@@ -277,7 +210,7 @@ sub ConferencesList {
   print "<ul>\n";
   foreach my $MinorID (@MinorTopicIDs) {
     if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
-      my $topic_link = &ConferenceLink($MinorID,"long");
+      my $topic_link = &EventLink(-eventid => $ConferenceID, -format => "long");
       print "<li>$topic_link\n";
     }  
   }  

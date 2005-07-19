@@ -140,7 +140,7 @@ sub DocumentTable (%) {
         my @topics = &GetRevisionTopics($DocRevID);
         foreach my $topic (@topics) {
           if (&MajorIsConference($MinorTopics{$topic}{MAJOR})) {
-            my $conference_link = &ConferenceLink($topic,"short");
+            my $conference_link = &EventLink(-eventid => $ConferenceID);
             print "$conference_link<br>\n";
           }  
         }

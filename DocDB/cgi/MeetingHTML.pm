@@ -21,7 +21,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-# FIXME: Unify various TopicLink, MeetingLink, NewMeetingLink, ConferenceLink, GatheringLink
+# FIXME: Unify various ConferenceLink
 
 sub LocationBox (;%) {
   require "Scripts.pm";
@@ -92,7 +92,6 @@ sub ConferenceShowAllTalks {
     print $query -> checkbox(-name => "meetshowall", -value => 1, -label => 'Yes');
   }
 }
-
 
 sub SessionEntryForm ($@) {
   my ($ConferenceID,@MeetingOrderIDs) = @_; 
@@ -569,14 +568,29 @@ sub PrintSessionSeparatorInfo ($) {
   print "</tr>\n";
 }
 
-sub NewMeetingLink ($) { # v7 rename as EventLink, get rid of other similar things
-  my ($ConferenceID) = @_;
+sub EventLink (%) {
+  my %Params = @_;
+  my $EventID = $Params{-eventid} || 0;
+  my $Format  = $Params{-format}  || "short";
+  my $LinkTo  = $Params{-linkto}  || "agenda";
   
-  &FetchConferenceByConferenceID($ConferenceID);
-  my $URL = "$DisplayMeeting?conferenceid=$ConferenceID";
-  my $Link  = "<a href=\"$URL\">";
-     $Link .= $Conferences{$ConferenceID}{Title};
-     $Link .= "</a>";
+  &FetchConferenceByConferenceID($EventID);
+  my $URL;
+  if ($LinkTo eq "listby") {
+    $URL = "$ListBy?topicid=$TopicID&amp;mode=meeting";
+  } else {  
+    $URL = "$DisplayMeeting?conferenceid=$EventID";
+  }  
+  
+  my $ToolTip = $Conferences{$EventID}{LongDescription};
+  
+  my $Link  = "<a href=\"$URL\" title=\"$ToolTip\">";
+  if ($Format eq "long") {
+    $Link .=$Conferences{$EventID}{LongDescription};
+  } else {  
+    $Link .= $Conferences{$EventID}{Title};
+  }  
+  $Link .= "</a>";
         
   return $Link;
 }
@@ -623,7 +637,7 @@ sub OrphanMeetingList { # remove v7
       if ($Mode eq "modify") {
         $MeetingLink = &ModifyMeetingLink($ConferenceID);
       } else {
-        $MeetingLink = &NewMeetingLink($ConferenceID);
+        $MeetingLink = &EventLink(-eventid => $ConferenceID);
       }
       print "<li>$MeetingLink</li>\n";
     }  
@@ -672,7 +686,7 @@ sub AllMeetingsTable (;$) {
   print "</table>\n";
 }
 
-sub MeetingsByMajorTopic ($;$) { #FIXME: Can I combine with Orphan meetings?
+sub MeetingsByMajorTopic ($;$) { # v7 replace #FIXME: Can I combine with Orphan meetings?
   my ($MajorID,$Mode) = @_;
   
   require "TopicSQL.pm";
@@ -692,7 +706,6 @@ sub MeetingsByMajorTopic ($;$) { #FIXME: Can I combine with Orphan meetings?
   }
 
   @DisplayConferenceIDs = sort ConferenceIDByDate @DisplayConferenceIDs;
-#FIXME add sort
 
   print "<b>$MajorTopics{$MajorID}{SHORT}</b>\n";
   print "<ul>\n";
@@ -701,7 +714,7 @@ sub MeetingsByMajorTopic ($;$) { #FIXME: Can I combine with Orphan meetings?
     if ($Mode eq "modify") {
       $MeetingLink = &ModifyMeetingLink($ConferenceID);
     } else {
-      $MeetingLink = &NewMeetingLink($ConferenceID);
+      $MeetingLink = &EventLink(-eventid => $ConferenceID);
     }
     print "<li>$MeetingLink</li>\n";
   }  

@@ -323,23 +323,26 @@ sub PrintEventInfo {
   require "MeetingHTML.pm";
   
   my ($DocRevID) = @_;
-  my @ConferenceIDs = &GetRevisionEvents($DocRevID);
+  my @EventIDs = &GetRevisionEvents($DocRevID);
 
-  if (@ConferenceIDs) {
+  if (@EventIDs) {
     print "<div id=\"EventInfo\">\n";
     print "<dl>\n";
     print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Associated with Events:</span></dt> \n";
-    foreach my $ConferenceID (@ConferenceIDs) {
-      my $ConferenceLink = &NewMeetingLink($ConferenceID,"long"); #FIX ConferenceLink
-      my $Start = &EuroDate($Conferences{$ConferenceID}{StartDate});
-      my $End   = &EuroDate($Conferences{$ConferenceID}{EndDate});
+    foreach my $EventID (@EventIDs) {
+      my $EventLink = &EventLink(-eventid => $EventID);
+      my $Start = &EuroDate($Conferences{$EventID}{StartDate});
+      my $End   = &EuroDate($Conferences{$EventID}{EndDate});
       print "<dd>";
-      print "$ConferenceLink ";
-      if ($Start && $End) {
+      print "$EventLink ";
+      if ($Start && $End && ($Start ne $End)) {
         print " held from $Start to $End ";
       }  
-      if ($Conferences{$ConferenceID}{Location}) {
-        print " in $Conferences{$ConferenceID}{Location}";
+      if ($Start && $End && ($Start eq $End)) {
+        print " held on $Start ";
+      }  
+      if ($Conferences{$EventID}{Location}) {
+        print " in $Conferences{$EventID}{Location}";
       }
       print "</dd>\n";
     }
@@ -361,7 +364,7 @@ sub PrintConfInfo { # Remove v7
         print "<div id=\"ConferenceInfo\">\n";
         $HasConference = 1;
       }  
-      my $ConferenceLink = &ConferenceLink($topicID,"long");
+      my $ConferenceLink = &EventLink(-eventid => $ConferenceID, -format => "long");
       my $ConferenceID = $ConferenceMinor{$topicID};
       my $Start = &EuroDate($Conferences{$ConferenceID}{StartDate});
       my $End   = &EuroDate($Conferences{$ConferenceID}{EndDate});

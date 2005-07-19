@@ -131,16 +131,16 @@ sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
    $LongDescription,$Preamble,$Epilogue,$StartDate,$EndDate,$ShowAllTalks,
    $TimeStamp) = $ConferenceFetch -> fetchrow_array;
   if ($ConferenceID) {
-    $Conferences{$ConferenceID}{Minor}        = $MinorTopicID; # Remove v7 (all)
-    $Conferences{$ConferenceID}{EventGroupID}     = $EventGroupID;
-    $Conferences{$ConferenceID}{Location}     = $Location;
-    $Conferences{$ConferenceID}{URL}          = $URL;
-    $Conferences{$ConferenceID}{Title}        = $Title;
-    $Conferences{$ConferenceID}{Preamble}     = $Preamble;
+    $Conferences{$ConferenceID}{Minor}           = $MinorTopicID; # Remove v7 (all references)
+    $Conferences{$ConferenceID}{EventGroupID}    = $EventGroupID;
+    $Conferences{$ConferenceID}{Location}        = $Location;
+    $Conferences{$ConferenceID}{URL}             = $URL;
+    $Conferences{$ConferenceID}{Title}           = $Title;
+    $Conferences{$ConferenceID}{Preamble}        = $Preamble;
     $Conferences{$ConferenceID}{LongDescription} = $LongDescription;
-    $Conferences{$ConferenceID}{Epilogue}     = $Epilogue;
-    $Conferences{$ConferenceID}{StartDate}    = $StartDate;
-    $Conferences{$ConferenceID}{EndDate}      = $EndDate;
+    $Conferences{$ConferenceID}{Epilogue}        = $Epilogue;
+    $Conferences{$ConferenceID}{StartDate}       = $StartDate;
+    $Conferences{$ConferenceID}{EndDate}         = $EndDate;
     $Conferences{$ConferenceID}{ShowAllTalks} = $ShowAllTalks;
     $Conferences{$ConferenceID}{TimeStamp}    = $TimeStamp;
     	
