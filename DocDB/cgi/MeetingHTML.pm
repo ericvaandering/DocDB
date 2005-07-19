@@ -753,7 +753,8 @@ sub EventSelect (;%) {
   my %Labels        = ();
   foreach my $ConferenceID (@ConferenceIDs) {
     if ($Format eq "full") {
-      $Labels{$ConferenceID} = $EventGroups{$Conferences{$ConferenceID}{EventGroupID}}{ShortDescription}.":".$Conferences{$ConferenceID}{Title}; 
+      $Labels{$ConferenceID} = $EventGroups{$Conferences{$ConferenceID}{EventGroupID}}{ShortDescription}.":".
+                               $Conferences{$ConferenceID}{Title}; 
     }
   }      
   
