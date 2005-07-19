@@ -74,8 +74,8 @@ if ($Day && $Month && $Year) {
   &PrintCalendar(-year => $Year, -month => $Month);
 } elsif ($Year) {
   print "<table class=\"Calendar WholeYear\">\n";
-  my $PrevLink = &CalendarLink(-year => $Year - 1, -text => $Year - 1);
-  my $NextLink = &CalendarLink(-year => $Year + 1, -text => $Year + 1);
+  my $PrevLink = &CalendarLink(-year => $Year - 1, -text => "&laquo;".($Year - 1));
+  my $NextLink = &CalendarLink(-year => $Year + 1, -text => ($Year + 1)."&raquo;");
   
   print "<tr class=\"MonthNav\">\n
          <th>$PrevLink</th>\n

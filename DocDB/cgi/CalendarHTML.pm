@@ -24,9 +24,13 @@ sub CalendarLink (%) {
   my $Year  = $Params{-year}  || 0;
   my $Day   = $Params{-day}   || 0;
   my $Text  = $Params{-text}  || "Calendar";
-  my $Link;
+  my $Class = $Params{-class} || "";
   
-  $Link = "<a class=\"Date\" href=\"".$ShowCalendar;
+  my $Link = "<a ";
+  if ($Class) {
+    $Link .= "class=\"Date\" ";
+  }
+  $Link .= "href=\"".$ShowCalendar;
                  
   if ($Day && $Month && $Year) {
     $Link .= "?year=$Year&amp;month=$Month&amp;day=$Day\">";
@@ -36,9 +40,6 @@ sub CalendarLink (%) {
     $Link .= "?year=$Year\">";
   }  
   $Link .= $Text."</a>";  
-
-  
-
 }
 
 sub PrintCalendar {
@@ -79,8 +80,8 @@ sub PrintCalendar {
     my $NextYear  = $NextMonth -> year(); 
     
     my $CurrLink = "$MonthName <a href=\"ShowCalendar?year=$Year\">$Year</a>";
-    my $PrevLink = "<a href=\"ShowCalendar?year=$PrevYear&amp;month=$PrevMNum\">$PrevName $PrevYear</a>";
-    my $NextLink = "<a href=\"ShowCalendar?year=$NextYear&amp;month=$NextMNum\">$NextName $NextYear</a>";
+    my $PrevLink = &CalendarLink(-year => $PrevYear, -month => $PrevMNum, -text => "&laquo;$PrevName $PrevYear");
+    my $NextLink = &CalendarLink(-year => $NextYear, -month => $NextMNum, -text => "$NextName $NextYear&raquo;");
     print "<tr class=\"MonthNav\">\n
             <th>$PrevLink</th>\n
             <th colspan=\"5\"><h1>$CurrLink</h1></th>\n
