@@ -165,12 +165,16 @@ sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
     $Conferences{$ConferenceID}{Epilogue}        = $Epilogue;
     $Conferences{$ConferenceID}{StartDate}       = $StartDate;
     $Conferences{$ConferenceID}{EndDate}         = $EndDate;
-    $Conferences{$ConferenceID}{ShowAllTalks} = $ShowAllTalks;
-    $Conferences{$ConferenceID}{TimeStamp}    = $TimeStamp;
+    $Conferences{$ConferenceID}{ShowAllTalks}    = $ShowAllTalks;
+    $Conferences{$ConferenceID}{TimeStamp}       = $TimeStamp;
     	
-    $ConferenceMinor{$MinorTopicID} = $ConferenceID; # Used to index conferences with MinorTopic
-    &FetchMinorTopic($MinorTopicID);
+    &FetchEventGroup($EventGroupID);
+    $Conferences{$ConferenceID}{Full}  = $EventGroups{$EventGroupID}{LongDescription}.":".$Title;
+    $ConferenceMinor{$MinorTopicID} = $ConferenceID; #  Remove v7 Used to index conferences with MinorTopic
+    &FetchMinorTopic($MinorTopicID);#  Remove v7 
   }
+
+  
 
   return $ConferenceID;
 }

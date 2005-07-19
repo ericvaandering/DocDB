@@ -21,8 +21,6 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-# FIXME: Unify various ConferenceLink
-
 sub LocationBox (;%) {
   require "Scripts.pm";
 
@@ -582,7 +580,7 @@ sub EventLink (%) {
     $URL = "$DisplayMeeting?conferenceid=$EventID";
   }  
   
-  my $ToolTip = $Conferences{$EventID}{LongDescription};
+  my $ToolTip = $Conferences{$EventID}{Full};
   
   my $Link  = "<a href=\"$URL\" title=\"$ToolTip\">";
   if ($Format eq "long") {

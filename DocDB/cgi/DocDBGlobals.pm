@@ -183,8 +183,9 @@ $AddFilesForm          = $cgi_root."AddFilesForm";
 $DisplayMeeting        = $cgi_root."DisplayMeeting";
 $MeetingModify         = $cgi_root."MeetingModify";
 $SessionModify         = $cgi_root."SessionModify";
-$ListAllMeetings       = $cgi_root."ListAllMeetings"; # FIXME: Remove later
+$ListAllMeetings       = $cgi_root."ListAllMeetings"; 
 $ConfirmTalkHint       = $cgi_root."ConfirmTalkHint";
+$ShowCalendar          = $cgi_root."ShowCalendar";
 
 $SignoffChooser        = $cgi_root."SignoffChooser";
 $SignRevision          = $cgi_root."SignRevision";

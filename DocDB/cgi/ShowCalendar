@@ -28,6 +28,7 @@ require "DocDBGlobals.pm";
 require "DBUtilities.pm";
 require "HTMLUtilities.pm";
 
+require "CalendarHTML.pm";
 require "MeetingHTML.pm";
 
 require "MeetingSQL.pm";
@@ -48,28 +49,26 @@ print $query->header;
 require "Sorts.pm";
 
 # Use last_day_of_month
+my $Year = 2002;
 
-
-for (my $Year = 2000; $Year <= 2006; ++$Year) {
-  my $DateTime = DateTime -> new(year => $Year, month => 1, day => 1) || 0;
-  my $DaysInYear = 365;
-  if ($DateTime -> is_leap_year()) {
-    $DaysInYear = 366;
-  }  
-  for  (my $Day = 1; $Day <= $DaysInYear; ++$Day) {
-    $SQLDate = $DateTime -> ymd(); 
-    my @EventIDs = sort numerically &GetEventsByDate(-on => $SQLDate);
-    if (@EventIDs) {
-      print "EI: $SQLDate @EventIDs<br/>\n";
-      foreach my $EventID (@EventIDs) {
-        print &EventLink(-eventid => $EventID, -format => "full"),"<br/>";
-      }  
-    }  
-    $DateTime -> add(days => 1);
+print "<table class=\"Calendar WholeYear\">\n";
+for my $Month (1 .. 12) {
+  unless (($Month-1) % 4) {
+    print "<tr>\n";
   }
-}      
+  print "<td class=\"Month\">";   
+  &PrintCalendar(-year => $Year, -month => $Month, -type => "year");
+  print "</td>";   
+  unless ($Month % 4) {
+    print "</tr>\n";
+  }
+}
+print "</table>\n";
 
+# Print a single month
 
+my $Month = 6;
+&PrintCalendar(-year => $Year, -month => $Month);
 
 $EndTime  = new Benchmark;
 
