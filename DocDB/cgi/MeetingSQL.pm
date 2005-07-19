@@ -52,13 +52,37 @@ sub FetchConferenceByTopicID { # Fetches a conference by MinorTopicID: Remove v7
   return $ConferenceID;
 }
 
+sub GetEventsByDate (%) {
+  require "SQLUtilities.pm";
+  require "Utilities.pm";
+  my %Params = @_;
+  
+#  my $From = $Params{-from} || "";
+#  my $To   = $Params{-to}   || "";
+  my $On   = $Params{-on} || &SQLNow(-dateonly => $TRUE);
+
+  my $List = $dbh->prepare("select ConferenceID from Conference where StartDate<=? and EndDate>=?");
+  $List -> execute($On,$On);
+  
+  my $EventID;
+  my @EventIDs;
+  $List -> bind_columns(undef, \($EventID));
+  while ($List -> fetch) {
+    if (&FetchConferenceByConferenceID($EventID)) {
+      push @EventIDs,$EventID;
+    }  
+  }
+  @EventIDs = &Unique(@EventIDs);
+  return @EventIDs;
+}
+
 sub GetRevisionEvents ($) { # Get the events associated with a revision
   my ($DocRevID) = @_;
   
   require "Utilities.pm";
   
   my @ConferenceIDs = ();
-  my ($ConferenceID);
+  my $ConferenceID;
   my $EventList = $dbh->prepare("select ConferenceID from RevisionEvent where DocRevID=?");
   $EventList -> execute($DocRevID);
   $EventList -> bind_columns(undef, \($ConferenceID));

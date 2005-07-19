@@ -1,0 +1,77 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+use Benchmark; $StartTime = new Benchmark;
+use CGI;
+use DBI;
+use DateTime;
+
+require "DocDBGlobals.pm";
+require "DBUtilities.pm";
+require "HTMLUtilities.pm";
+
+require "MeetingHTML.pm";
+
+require "MeetingSQL.pm";
+
+$query = new CGI;  # Global for subroutines
+
+my %Params = $query -> Vars;
+
+# my $Days         = $Params{days}         || 0;
+
+&CreateConnection();
+
+### Start HTML
+
+print $query->header;
+&DocDBHeader("Calendar for xxx");
+
+require "Sorts.pm";
+
+# Use last_day_of_month
+
+
+for (my $Year = 2000; $Year <= 2006; ++$Year) {
+  my $DateTime = DateTime -> new(year => $Year, month => 1, day => 1) || 0;
+  my $DaysInYear = 365;
+  if ($DateTime -> is_leap_year()) {
+    $DaysInYear = 366;
+  }  
+  for  (my $Day = 1; $Day <= $DaysInYear; ++$Day) {
+    $SQLDate = $DateTime -> ymd(); 
+    my @EventIDs = sort numerically &GetEventsByDate(-on => $SQLDate);
+    if (@EventIDs) {
+      print "EI: $SQLDate @EventIDs<br/>\n";
+      foreach my $EventID (@EventIDs) {
+        print &EventLink(-eventid => $EventID, -format => "full"),"<br/>";
+      }  
+    }  
+    $DateTime -> add(days => 1);
+  }
+}      
+
+
+
+$EndTime  = new Benchmark;
+
+&DocDBNavBar();
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
