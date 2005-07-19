@@ -1,5 +1,49 @@
+# Author Eric Vaandering (ewv@fnal.gov)
+
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+sub CalendarLink (%) {
+  my %Params = @_;
+  
+  my $Month = $Params{-month} || 0;
+  my $Year  = $Params{-year}  || 0;
+  my $Day   = $Params{-day}   || 0;
+  my $Text  = $Params{-text}  || "Calendar";
+  my $Link;
+  
+  $Link = "<a class=\"Date\" href=\"".$ShowCalendar;
+                 
+  if ($Day && $Month && $Year) {
+    $Link .= "?year=$Year&amp;month=$Month&amp;day=$Day\">";
+  } elsif ($Month && $Year) {
+    $Link .= "?year=$Year&amp;month=$Month\">";
+  } elsif ($Year) {
+    $Link .= "?year=$Year\">";
+  }  
+  $Link .= $Text."</a>";  
+
+  
+
+}
+
 sub PrintCalendar {
   use DateTime;
+  require "Sorts.pm";
   
   my %Params = @_;
   
@@ -19,9 +63,30 @@ sub PrintCalendar {
   
   print "<table class=\"Calendar $Class\">";
 
-  if ($Type eq "year") {  
-      print "<tr><th colspan=\"7\">$MonthName</th>\n</tr>\n";
-  }    
+  if ($Type eq "year") {
+    my $MonthLink = "<a href=\"ShowCalendar?year=$Year&amp;month=$Month\">$MonthName</a>";
+    print "<tr><th colspan=\"7\">$MonthLink</th></tr>\n";
+  } elsif ($Type eq "month") {
+    my $PrevMonth = $FirstDay -> clone();
+       $PrevMonth -> add(months => -1);
+    my $PrevMNum  = $PrevMonth -> month(); 
+    my $PrevName  = $PrevMonth -> month_name(); 
+    my $PrevYear  = $PrevMonth -> year(); 
+    my $NextMonth = $FirstDay -> clone();
+       $NextMonth -> add(months => 1);
+    my $NextMNum  = $NextMonth -> month(); 
+    my $NextName  = $NextMonth -> month_name(); 
+    my $NextYear  = $NextMonth -> year(); 
+    
+    my $CurrLink = "$MonthName <a href=\"ShowCalendar?year=$Year\">$Year</a>";
+    my $PrevLink = "<a href=\"ShowCalendar?year=$PrevYear&amp;month=$PrevMNum\">$PrevName $PrevYear</a>";
+    my $NextLink = "<a href=\"ShowCalendar?year=$NextYear&amp;month=$NextMNum\">$NextName $NextYear</a>";
+    print "<tr class=\"MonthNav\">\n
+            <th>$PrevLink</th>\n
+            <th colspan=\"5\"><h1>$CurrLink</h1></th>\n
+            <th>$NextLink</th>\n
+          </tr>\n";
+  } 
   print "<tr>\n";
   foreach my $DayName ("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday") {
     if ($Type eq "year") {  

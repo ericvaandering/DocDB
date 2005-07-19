@@ -27,6 +27,7 @@ use DateTime;
 require "DocDBGlobals.pm";
 require "DBUtilities.pm";
 require "HTMLUtilities.pm";
+require "ResponseElements.pm";
 
 require "CalendarHTML.pm";
 require "MeetingHTML.pm";
@@ -37,38 +38,64 @@ $query = new CGI;  # Global for subroutines
 
 my %Params = $query -> Vars;
 
-# my $Days         = $Params{days}         || 0;
+my $Day         = $Params{day}         || 0;
+my $Month       = $Params{month}         || 0;
+my $Year        = $Params{year}         || 0;
 
 &CreateConnection();
 
 ### Start HTML
 
 print $query->header;
-&DocDBHeader("Calendar for xxx");
 
-require "Sorts.pm";
+my $TitleDate;
 
-# Use last_day_of_month
-my $Year = 2002;
+if ($Day && $Month && $Year) {
+  my $Date = DateTime -> new(year => $Year, month => $Month, day => $Day);
+  $TitleDate = $Day." ".$Date -> month_name()." ".$Year;
+} elsif ($Month && $Year) {
+  my $Date = DateTime -> new(year => $Year, month => $Month, day => 1);
+  $TitleDate = $Date -> month_name()." ".$Year;
+} elsif ($Year) {
+  $TitleDate = $Year;
+} else {
+  my $Date = DateTime -> now();
+  $Month =  $Date -> month();
+  $Year =  $Date -> year();
+  $TitleDate = $Date -> month_name()." ".$Year;
+}  
+  
+&DocDBHeader("Calendar for $TitleDate");
+&EndPage(@ErrorStack);
 
-print "<table class=\"Calendar WholeYear\">\n";
-for my $Month (1 .. 12) {
-  unless (($Month-1) % 4) {
-    print "<tr>\n";
+if ($Day && $Month && $Year) {
+  print "<p>Showing just a day is not done yet.</p>\n";
+} elsif ($Month && $Year) {
+  &PrintCalendar(-year => $Year, -month => $Month);
+} elsif ($Year) {
+  print "<table class=\"Calendar WholeYear\">\n";
+  my $PrevLink = &CalendarLink(-year => $Year - 1, -text => $Year - 1);
+  my $NextLink = &CalendarLink(-year => $Year + 1, -text => $Year + 1);
+  
+  print "<tr class=\"MonthNav\">\n
+         <th>$PrevLink</th>\n
+         <th colspan=\"2\"><h1>$Year</h1></th>\n
+         <th>$NextLink</th>\n
+         </tr>\n";
+         
+  for $Month (1 .. 12) {
+    unless (($Month-1) % 4) {
+      print "<tr>\n";
+    }
+    print "<td class=\"Month\">";   
+    &PrintCalendar(-year => $Year, -month => $Month, -type => "year");
+    print "</td>";   
+    unless ($Month % 4) {
+      print "</tr>\n";
+    }
   }
-  print "<td class=\"Month\">";   
-  &PrintCalendar(-year => $Year, -month => $Month, -type => "year");
-  print "</td>";   
-  unless ($Month % 4) {
-    print "</tr>\n";
-  }
+  print "</table>\n";
 }
-print "</table>\n";
-
-# Print a single month
-
-my $Month = 6;
-&PrintCalendar(-year => $Year, -month => $Month);
 
 $EndTime  = new Benchmark;
 
