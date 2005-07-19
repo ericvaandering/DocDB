@@ -645,15 +645,13 @@ sub OrphanMeetingList { # remove v7
   }  
 }
 
-sub AllMeetingsTable (;$) {
+sub AllMeetingsTable (;$) { # v7 redo
   
   my ($Mode) = @_;
   
   require "Sorts.pm";
   require "TopicSQL.pm";
   require "TopicHTML.pm";
-  
-  &SpecialMajorTopics;
   
   my $NCols = 3;
   my @MajorTopicIDs = (@GatheringMajorIDs,0);

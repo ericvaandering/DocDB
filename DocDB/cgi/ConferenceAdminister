@@ -28,6 +28,8 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+# v7 revamp
+
 use CGI;
 use DBI;
 use Time::Local;
@@ -89,9 +91,6 @@ unless (&CanAdminister) {
   push @ErrorStack,$Msg_AdminNoLogin;
 }  
 &EndPage(@ErrorStack);
-
-&SpecialMajorTopics;
-&GetConferences;
 
 if ($Action eq "Delete") { 
   unless ($TopicID) {
@@ -248,7 +247,6 @@ if ($Action eq "Delete") {
 
 if ($Action eq "Modify") {
   &GetTopics;
-  &GetConferences;
 
   print "<p><b>Here are the results of your modification:<br>\n";
   my $ShortLink = &MinorTopicLink($TopicID,"short");

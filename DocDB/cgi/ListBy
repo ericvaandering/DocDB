@@ -71,7 +71,6 @@ if ($Days) {
 ### Minor topic
 
   require "TopicSQL.pm";
-  &SpecialMajorTopics;
   &FetchMinorTopic($TopicID);
 
   $Title   = "Document List by Topic";
@@ -105,7 +104,6 @@ if ($Days) {
 ### Major topic (either number or name)
 
   require "TopicSQL.pm";
-  &SpecialMajorTopics;
   if ($Major) {
     $MajorID = &LookupMajorTopic($Major);
   } 

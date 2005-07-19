@@ -26,8 +26,6 @@
 
 sub GetTopics {
   require "MeetingSQL.pm";
-  &SpecialMajorTopics; # Remove v7
-  &GetConferences;     # Remove v7
 
   my $minor_list   = $dbh->prepare("select MinorTopicID,MajorTopicID,ShortDescription,LongDescription from MinorTopic");
   my $major_list   = $dbh->prepare("select MajorTopicID,ShortDescription,LongDescription from MajorTopic");
@@ -188,10 +186,6 @@ sub LookupMajorTopic { # Returns MajorTopicID from Topic Name
   &FetchMajorTopic($MajorTopicID);
   
   return $MajorTopicID;
-}
-
-sub SpecialMajorTopics { # Remove v7
-  return;
 }
 
 sub MajorIsMeeting { # Remove v7

@@ -129,13 +129,14 @@ sub DaysInMonth {
     }       
   }     
 }  
-sub NearByMeeting { # Return MinorTopicID of meeting within $MeetingWindow days
+
+sub NearByMeeting { v7 fixme or remove
+  # Return MinorTopicID of meeting within $MeetingWindow days
   # Our current scheme doesn't deal well with meetings that span months. 
   # Suggest in that case just to use begin date.
   use Time::Local;
   
   require "TopicSQL.pm";
-  &SpecialMajorTopics;
   
   my $Now       = time();
   my @MinorIDs = keys %MinorTopics;

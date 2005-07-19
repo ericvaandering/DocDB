@@ -304,8 +304,6 @@ sub MultiTopicSelect (%) { # Multiple scrolling selectable lists for topics
   my $Required = $Params{-required}  || 0;
   my $Disabled = $Params{-disabled}  || "";
 
-  &SpecialMajorTopics;
-
   my $NCols = 4;
   my @MajorIDs = sort byMajorTopic keys %MajorTopics;
   my @MinorIDs = keys %MinorTopics;
