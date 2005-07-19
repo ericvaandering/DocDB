@@ -200,59 +200,9 @@ sub GatheringTable { # v7 redo, rename as event table?
   print "</table>";
 }
 
-sub ConferencesList { # remove v7
-  require "Sorts.pm";
-  require "TopicSQL.pm";
-  
-  my @MinorTopicIDs = sort byTopic keys %MinorTopics; #FIXME special sort 
-
-  my ($MajorID) = @ConferenceMajorIDs; 
-  print "<ul>\n";
-  foreach my $MinorID (@MinorTopicIDs) {
-    if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
-      my $topic_link = &EventLink(-eventid => $ConferenceID, -format => "long");
-      print "<li>$topic_link\n";
-    }  
-  }  
-  print "</ul>";
+sub MajorGatheringSelect (;%) { # v7 remove 
+  print "<p>Routine is obsolete, replace it</p>\n";
 }
-
-sub MajorGatheringSelect (;%) { # v7 remove Scrolling selectable list for major topics with dates
-  require "Scripts.pm";
-
-  my (%Params) = @_;
-  
-  my $Disabled = $Params{-disabled} || "0";
-  my $Mode     = $Params{-format}   || "short";
-  
-  my $Booleans = "";
-  
-  if ($Disabled) {
-    $Booleans .= "-disabled";
-  }  
-  
-  print "<b><a ";
-  &HelpLink("majortopics");
-  print "Major Topics:</a></b><br> \n";
-  my @MajorIDs = keys %MajorTopics;
-  my @MeetingMajorIDs = ();
-  foreach my $MajorID (@MajorIDs) {
-    if (&MajorIsMeeting($MajorID) || &MajorIsConference($MajorID)) {
-      push @MeetingMajorIDs,$MajorID;
-    }
-  }    
-  my %MajorLabels = ();
-  foreach my $ID (@MeetingMajorIDs) {
-    if ($Mode eq "full") {
-      $MajorLabels{$ID} = $MajorTopics{$ID}{Full};
-    } else {  
-      $MajorLabels{$ID} = $MajorTopics{$ID}{SHORT};
-    }  
-  }  
-  print $query -> scrolling_list(-name => "majortopic", -values => \@MeetingMajorIDs, 
-                                 -labels => \%MajorLabels,  -size => 10,
-                                 -default => $DefaultMajorID, $Booleans);
-};
 
 sub ConferenceSelect { # v7 remove
   require "TopicSQL.pm";
@@ -282,46 +232,6 @@ sub ConferenceSelect { # v7 remove
   print "Conferences:</a></b> <br> \n";
   print $query -> scrolling_list(-name => "conftopic", -values => \@ConferenceTopicIDs, 
                                  -labels => \%TopicLabels, -size => 10, $Booleans);
-}
-
-sub MeetingsTable {
-  require "Sorts.pm";
-  require "TopicSQL.pm";
-  
-  my @MeetingTopicIDs = ();
-  my @MinorTopicIDs   = keys %MinorTopics; 
-  my ($MajorID) = @MeetingMajorIDs; 
-
-  foreach my $MinorID (@MinorTopicIDs) {
-    if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
-      push @MeetingTopicIDs,$MinorID;
-    }  
-  }  
-
-  @MeetingTopicIDs = sort byTopic @MeetingTopicIDs; 
-
-  my $NCols     = 3;
-  my $NPerCol   = int (scalar(@MeetingTopicIDs)/$NCols + 1);
-  my $NThisCol  = 0;
-
-  print "<table>\n";
-  print "<tr valign=top>\n";
-  
-  print "<td>\n";
-  print "<ul>\n";
-  foreach my $MinorID (@MeetingTopicIDs) {
-    if ($NThisCol >= $NPerCol) {
-      print "</ul></td>\n";
-      print "<td>\n";
-      print "<ul>\n";
-      $NThisCol = 0;
-    }
-    ++$NThisCol;
-    my $topic_link = &MinorTopicLink($MinorID,"short");
-    print "<li>$topic_link\n";
-  }  
-  print "</ul></td></tr>";
-  print "</table>\n";
 }
 
 sub ShortDescriptionBox  (;%) {

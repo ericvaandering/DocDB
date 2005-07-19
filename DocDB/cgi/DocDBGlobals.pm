@@ -174,15 +174,11 @@ $ListManagedDocuments  = $cgi_root."ListManagedDocuments";
 $ListAuthors           = $cgi_root."ListAuthors";
 $ListTopics            = $cgi_root."ListTopics";
 $ListTypes             = $cgi_root."ListTypes";
-$ListMeetings          = $cgi_root."ListMeetings";
 $ListKeywords          = $cgi_root."ListKeywords";
 $ListBy                = $cgi_root."ListBy";
 
 $AddFiles              = $cgi_root."AddFiles";
 $AddFilesForm          = $cgi_root."AddFilesForm";
-
-$ConferenceAddForm     = $cgi_root."ConferenceAddForm";
-$ConferenceAdd         = $cgi_root."ConferenceAdd";
 
 $DisplayMeeting        = $cgi_root."DisplayMeeting";
 $MeetingModify         = $cgi_root."MeetingModify";

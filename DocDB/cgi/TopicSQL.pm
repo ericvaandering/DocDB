@@ -191,65 +191,19 @@ sub LookupMajorTopic { # Returns MajorTopicID from Topic Name
 }
 
 sub SpecialMajorTopics { # Remove v7
-  unless ($SpecialMajorsFound) {
-    $SpecialMajorsFound = 1;
-    @ConferenceMajorIDs = ();
-    @MeetingMajorIDs    = ();
-    
-    my $TopicName;
-    foreach $TopicName (@ConferenceMajorTopics) {
-      my $MajorID  = &LookupMajorTopic($TopicName);
-      if ($MajorID) {
-        push @ConferenceMajorIDs,$MajorID;
-      }
-    }
-    foreach $TopicName (@MeetingMajorTopics) {
-      my $MajorID  = &LookupMajorTopic($TopicName);
-      if ($MajorID) {
-        push @MeetingMajorIDs,$MajorID;
-      }
-    }
-    @GatheringMajorIDs = (@MeetingMajorIDs,@ConferenceMajorIDs);
-  }
+  return;
 }
 
 sub MajorIsMeeting { # Remove v7
-  my ($MajorID) = @_;
-  
-  &SpecialMajorTopics;
-  my $IsMeeting = 0;
-  foreach my $CheckID (@MeetingMajorIDs) {
-    if ($CheckID == $MajorID) {
-      $IsMeeting = 1;
-    }
-  }
-  return $IsMeeting; 
+  return 0; 
 }
 
 sub MajorIsConference { # Remove v7
-  my ($MajorID) = @_;
-  
-  &SpecialMajorTopics;
-  my $IsConference = 0;
-  foreach my $CheckID (@ConferenceMajorIDs) {
-    if ($CheckID == $MajorID) {
-      $IsConference = 1;
-    }
-  }
-  return $IsConference;
+  return 0;
 }
 
 sub MajorIsGathering { # Remove v7
-  my ($MajorID) = @_;
-  
-  &SpecialMajorTopics;
-  my $IsGathering = 0;
-  foreach my $CheckID (@GatheringMajorIDs) {
-    if ($CheckID == $MajorID) {
-      $IsGathering = 1;
-    }
-  }
-  return $IsGathering;
+  return 0;
 }
 
 sub InsertTopics (%) {
