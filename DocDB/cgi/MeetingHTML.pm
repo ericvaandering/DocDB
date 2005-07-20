@@ -593,17 +593,21 @@ sub EventLink (%) {
   return $Link;
 }
 
-sub ModifyMeetingLink ($) {
-  my ($ConferenceID) = @_;
+sub ModifyEventLink ($) {
+  require "EventUtilities.pm";
+  
+  my ($EventID) = @_;
     
-  my $URL = "$MeetingModify?conferenceid=$ConferenceID";
-  my $Title;
-  if ($Conferences{$ConferenceID}{Title}) {
-    $Title = $Conferences{$ConferenceID}{Title};
-  } else {
-    my $MinorTopicID = $Conferences{$ConferenceID}{Minor};  
-    $Title = $MinorTopics{$MinorTopicID}{LONG};
-  }  
+  my $URL;
+  
+  if (&SessionCountByEventID($EventID) == 1) {
+    $URL = "$SessionModify?conferenceid=$EventID";
+  } else {  
+    $URL = "$MeetingModify?conferenceid=$EventID";
+  }
+  
+  my $Title = $Conferences{$EventID}{Title};
+  my $ToolTip = $Conferences{$EventID}{Full};
   
   my $Link  = "<a href=\"$URL\">";
      $Link .= $Title;
@@ -653,25 +657,25 @@ sub EventsByGroup (%) { # v7 replace #FIXME: Can I combine with Orphan meetings?
   my $Mode         = $Params{-mode}   || "display";
   my $EventGroupID = $Params{-groupid};
 
-  my @ConferenceIDs = keys %Conferences;
-  my @DisplayConferenceIDs = ();
-  foreach my $ConferenceID (@ConferenceIDs) {
-    if ($Conferences{$ConferenceID}{EventGroupID} == $EventGroupID) { 
-      push @DisplayConferenceIDs,$ConferenceID;
+  my @EventIDs = keys %Conferences;
+  my @DisplayEventIDs = ();
+  foreach my $EventID (@EventIDs) {
+    if ($Conferences{$EventID}{EventGroupID} == $EventGroupID) { 
+      push @DisplayEventIDs,$EventID;
     }  
   }
 
-  @DisplayConferenceIDs = reverse sort EventsByDate @DisplayConferenceIDs;
+  @DisplayEventIDs = reverse sort EventsByDate @DisplayEventIDs;
   &FetchEventGroup($EventGroupID);
   
   print "<strong>$EventGroups{$EventGroupID}{ShortDescription}</strong>\n"; #v7 add link, truncate list?
   print "<ul>\n";
-  foreach my $ConferenceID (@DisplayConferenceIDs) {
+  foreach my $EventID (@DisplayEventIDs) {
     my $MeetingLink;
     if ($Mode eq "modify") {
-      $MeetingLink = &ModifyMeetingLink($ConferenceID);
+      $MeetingLink = &ModifyEventLink($EventID);
     } else {
-      $MeetingLink = &EventLink(-eventid => $ConferenceID);
+      $MeetingLink = &EventLink(-eventid => $EventID);
     }
     print "<li>$MeetingLink</li>\n";
   }  
