@@ -5,6 +5,10 @@ table.Calendar {
   margin-right: auto;
 }
 
+table.Calendar td.Sunday, table.Calendar td.Saturday{
+  background: #eee;
+}
+
 .AddEvent {
   text-decoration: none;
   display: block;
@@ -17,6 +21,25 @@ table.Calendar {
   font-weight: bold;
   vertical-align: top;
 }
+
+/* For table showing a whole month in detail */
+
+table.ByMonth {
+  width: 95%;
+  border-collapse: collapse; 
+}
+
+table.ByMonth td {
+  width: 14%;
+  height: 7em; /* Works like min-height on mozilla, should use min-height? */
+  border: 1px solid black;
+  padding: 0px;
+}  
+
+table.ByMonth th {
+  border: 1px solid black;
+  padding: 3px;
+}  
 
 table.ByMonth .Date {
   border-right: 1px solid black;
@@ -37,24 +60,6 @@ table.ByMonth .Event {
   display: block;
 }
 
-table.ByMonth {
-  width: 95%;
-  border-collapse: collapse; 
-}
-
-table.ByMonth td {
-  width: 14%;
-  height: 7em; /* Works like min-height on mozilla, should use min-height? */
-  border: 1px solid black;
-  padding: 0px;
-/*  padding: 3px */;
-}  
-
-table.ByMonth th {
-  border: 1px solid black;
-  padding: 3px;
-}  
-
 table.ByMonth td.Today {
   border: 3px solid black;
 }  
@@ -65,6 +70,8 @@ tr.MonthNav th {
   border-top: 0px;
   vertical-align: middle;
 }  
+
+/* For month tables in a year calendar */
 
 table.InYear {
   border-collapse: collapse; 
@@ -89,6 +96,8 @@ th.InYearDays {
   border-bottom: 1px solid;
 }  
 
+/* For table showing a whole year (cells are InYear tables) */
+
 table.WholeYear {
   border-collapse: collapse; 
 }  
@@ -96,7 +105,3 @@ table.WholeYear {
 table.WholeYear td.Month {
   border: 1px solid;
 }  
-
-table.Calendar td.Sunday, table.Calendar td.Saturday{
-  background: #eee;
-}
