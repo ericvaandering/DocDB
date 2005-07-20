@@ -55,7 +55,7 @@ sub PrintCalendar {
   my $DaysInMonth = DateTime -> last_day_of_month(year => $Year, month => $Month) -> day();
   my $FirstDay    = DateTime -> new(year => $Year, month => $Month, day => 1);
   my $MonthName   = $FirstDay -> month_name();
-  
+  my $Today       = DateTime ->today();
 
   my $Class = "ByMonth";
   if ($Type eq "year") {  
@@ -123,8 +123,12 @@ sub PrintCalendar {
       print "<tr>\n";
       $RowOpen = $TRUE;
     }
+    my $TDClass = "$DayName";
+    if ($DateTime == $Today) {
+      $TDClass .= " Today";
+    }  
     my @EventIDs = sort numerically &GetEventsByDate(-on => $SQLDate);
-    print "<td class=\"$DayName\">\n";
+    print "<td class=\"$TDClass\">\n";
     my $DayLink = "<a class=\"Date\" href=\"".$ShowCalendar."?year=$Year&amp;month=$Month&amp;day=$Day\">".
                   $DateTime -> day()."</a>";
     if ($Type eq "year") {
@@ -135,13 +139,15 @@ sub PrintCalendar {
       }
     }
     if ($Type eq "month") {
-      my $AddLink = "<span class=\"AddEvent\">[<a href=\"".$ShowCalendar."?year=$Year&amp;month=$Month&amp;day=$Day\">+</a>]</span>";            
+      my $AddLink = "<a class=\"AddEvent\" href=\"".$ShowCalendar."?year=$Year&amp;month=$Month&amp;day=$Day\">+</a>";            
       print $DayLink,"\n"; 
       print $AddLink,"\n";
-      print "<br/>\n"; 
       if (@EventIDs) {
         foreach my $EventID (@EventIDs) {
-          print &EventLink(-eventid => $EventID, -format => "full"),"<br/>";
+          my $EventLink = &EventLink(-eventid => $EventID, -format => "full");
+          if ($EventLink) {
+            print $EventLink;
+          }  
         }  
       }  
     }  

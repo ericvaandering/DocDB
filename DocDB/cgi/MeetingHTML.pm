@@ -567,12 +567,19 @@ sub PrintSessionSeparatorInfo ($) {
 }
 
 sub EventLink (%) {
+  require "MeetingSecurityUtilities.pm";
+  
   my %Params = @_;
   my $EventID = $Params{-eventid} || 0;
   my $Format  = $Params{-format}  || "short";
   my $LinkTo  = $Params{-linkto}  || "agenda";
+  my $Class   = $Params{-class}   || "Event";
   
   &FetchConferenceByConferenceID($EventID);
+  unless (&CanAccessMeeting($EventID)) {
+    return "";
+  }  
+
   my $URL;
   if ($LinkTo eq "listby") {
     $URL = "$ListBy?topicid=$TopicID&amp;mode=meeting";
@@ -582,7 +589,7 @@ sub EventLink (%) {
   
   my $ToolTip = $Conferences{$EventID}{Full};
   
-  my $Link  = "<a href=\"$URL\" title=\"$ToolTip\">";
+  my $Link  = "<a href=\"$URL\" class=\"$Class\" title=\"$ToolTip\">";
   if ($Format eq "long") {
     $Link .=$Conferences{$EventID}{LongDescription};
   } else {  

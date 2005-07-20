@@ -55,6 +55,8 @@ sub FetchConferenceByTopicID { # Fetches a conference by MinorTopicID: Remove v7
 sub GetEventsByDate (%) {
   require "SQLUtilities.pm";
   require "Utilities.pm";
+  require "MeetingSecurityUtilities.pm";
+
   my %Params = @_;
   
 #  my $From = $Params{-from} || "";
@@ -69,7 +71,9 @@ sub GetEventsByDate (%) {
   $List -> bind_columns(undef, \($EventID));
   while ($List -> fetch) {
     if (&FetchConferenceByConferenceID($EventID)) {
-      push @EventIDs,$EventID;
+      if (&CanAccessMeeting($EventID)) {
+        push @EventIDs,$EventID;
+      }  
     }  
   }
   @EventIDs = &Unique(@EventIDs);
