@@ -32,4 +32,27 @@ sub SessionCountByEventID ($) {
   my $Count = scalar(@SessionIDs) + scalar(@SeperatIDs);
 }  
 
+sub SessionEndTime ($) { # Can eventually use EndTime? no need to order these
+  require "MeetingSQL.pm";
+  require "TalkSQL.pm";
+  
+  my ($SessionID) = @_;
+  &FetchSessionByID ($SessionID);
+  my @TalkIDs      = &FetchSessionTalksBySessionID($SessionID);
+  my @SeparatorIDs = &FetchTalkSeparatorsBySessionID($SessionID);
+   
+  my ($AccumSec,$AccumMin,$AccumHour) = &SQLDateTime($Sessions{$SessionID}{StartTime});
+  my $AccumulatedTime = &AddTime("$AccumHour:$AccumMin:$AccumSec");
+
+  foreach my $TalkID (@TalkIDs) {
+    $AccumulatedTime = &AddTime($AccumulatedTime,$SessionTalks{$TalkID}{Time});
+  }
+
+  foreach my $SeparatorID (@SeparatorIDs) {
+    $AccumulatedTime = &AddTime($AccumulatedTime,$TalkSeparators{$SeparatorID}{Time});
+  }
+ 
+  return $AccumulatedTime;
+}
+
 1;

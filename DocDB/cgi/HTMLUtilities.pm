@@ -64,7 +64,7 @@ sub DocDBHeader {
           my $CSSFile = $CSSDirectory."/".$ProjectCSS.$PublicCSS."DocDB".$ScriptCSS.$BrowserCSS.".css";
           my $CSSURL  =   $CSSURLPath."/".$ProjectCSS.$PublicCSS."DocDB".$ScriptCSS.$BrowserCSS.".css";
           if (-e $CSSFile) {
-            if ($BrowserCSS eq "_IE") {
+            if ($BrowserCSS eq "_IE") { # Use IE format for including. Hopefully we can not give these to IE7
               print "<!--[if IE]>\n";
               print "<link rel=\"stylesheet\" href=\"$CSSURL\" type=\"text/css\" />\n";
               print "<![endif]-->\n"; 

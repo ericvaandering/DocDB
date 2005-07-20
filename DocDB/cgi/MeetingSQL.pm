@@ -178,8 +178,6 @@ sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
     &FetchMinorTopic($MinorTopicID);#  Remove v7 
   }
 
-  
-
   return $ConferenceID;
 }
 

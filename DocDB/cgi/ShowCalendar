@@ -69,7 +69,37 @@ if ($Day && $Month && $Year) {
 &EndPage(@ErrorStack);
 
 if ($Day && $Month && $Year) {
-  print "<p>Showing just a day is not done yet.</p>\n";
+  
+  my $Today = DateTime -> new(year => $Year, month => $Month, day => $Day);
+
+  my $PrevDay = $Today -> clone();
+     $PrevDay -> add(days => -1);
+  my $PrevDNum  = $PrevDay -> day(); 
+  my $PrevMNum  = $PrevDay -> month(); 
+  my $PrevName  = $PrevDay -> month_name(); 
+  my $PrevYear  = $PrevDay -> year(); 
+
+  my $NextDay = $Today -> clone();
+     $NextDay -> add(days => 1);
+  my $NextDNum  = $NextDay -> day(); 
+  my $NextMNum  = $NextDay -> month(); 
+  my $NextName  = $NextDay -> month_name(); 
+  my $NextYear  = $NextDay -> year(); 
+
+  print "<p class=\"DayNav\">\n";
+  print &CalendarLink(-year => $PrevYear, -month => $PrevMNum, -day => $PrevDNum, 
+                      -text => "&laquo; $PrevDNum $PrevName $PrevYear");
+  print "<span class=\"CurrDate\">$Day ";
+  print &CalendarLink(-year => $Year, -month => $Month,
+                      -text => $Today -> month_name());
+  print " ";                    
+  print &CalendarLink(-year => $Year, -text => "$Year");
+  print "</span>\n";
+  print &CalendarLink(-year => $NextYear, -month => $NextMNum, -day => $NextDNum, 
+                      -text => "$NextDNum $NextName $NextYear &raquo;");
+  print "</p>\n";
+  
+  &PrintDayEvents(-year => $Year, -month => $Month, -day => $Day);
 } elsif ($Month && $Year) {
   &PrintCalendar(-year => $Year, -month => $Month);
 } elsif ($Year) {

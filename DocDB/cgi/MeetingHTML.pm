@@ -308,6 +308,27 @@ sub SessionLocation {
                              -default => $SessionDefaultLocation);
 };
 
+sub SessionLink (%) {
+  my %Params = @_;
+  
+  my $SessionID = $Params{-sessionid};
+  my $Format    = $Params{-format} || "short";
+
+  my $URL = "$DisplayMeeting?sessionid=$SessionID";
+  
+  my $Text;
+  my $ToolTip;
+  if ($Format eq "full") {
+    $Text = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title}.":".$Sessions{$SessionID}{Title};
+  } else {
+    $Text = $Sessions{$SessionID}{Title};
+  }
+  
+  my $Link = "<a href=\"$URL\">$Text</a>";
+  
+  return $Link;
+}   
+
 sub PrintSession ($) {
   my ($SessionID) = @_;
   
