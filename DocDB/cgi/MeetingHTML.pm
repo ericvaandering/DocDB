@@ -317,14 +317,14 @@ sub SessionLink (%) {
   my $URL = "$DisplayMeeting?sessionid=$SessionID";
   
   my $Text;
-  my $ToolTip;
+  my $ToolTip = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title}.":".$Sessions{$SessionID}{Title};
   if ($Format eq "full") {
     $Text = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title}.":".$Sessions{$SessionID}{Title};
   } else {
     $Text = $Sessions{$SessionID}{Title};
   }
   
-  my $Link = "<a href=\"$URL\">$Text</a>";
+  my $Link = "<a href=\"$URL\" title=\"$ToolTip\">$Text</a>";
   
   return $Link;
 }   

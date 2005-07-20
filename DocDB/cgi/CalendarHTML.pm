@@ -143,14 +143,15 @@ sub PrintCalendar {
       my $AddLink = "<a class=\"AddEvent\" href=\"".$ShowCalendar."?year=$Year&amp;month=$Month&amp;day=$Day\">+</a>";            
       print $DayLink,"\n"; 
       print $AddLink,"\n";
-      if (@EventIDs) {
-        foreach my $EventID (@EventIDs) {
-          my $EventLink = &EventLink(-eventid => $EventID, -format => "full");
-          if ($EventLink) {
-            print $EventLink;
-          }  
-        }  
-      }  
+      &PrintDayEvents(-day => $Day, -month => $Month, -year => $Year, -format => "summary");
+#      if (@EventIDs) {
+#        foreach my $EventID (@EventIDs) {
+#          my $EventLink = &EventLink(-eventid => $EventID, -format => "full");
+#          if ($EventLink) {
+#            print $EventLink;
+#          }  
+#        }  
+#      }  
     }  
     print "</td>\n";
   }
@@ -171,75 +172,90 @@ sub PrintDayEvents (%) {
   
   my %Params = @_;
   
-  my $Month = $Params{-month};
-  my $Year  = $Params{-year};
-  my $Day   = $Params{-day};
+  my $Month  = $Params{-month};
+  my $Year   = $Params{-year};
+  my $Day    = $Params{-day};
+  my $Format = $Params{-format} || "full"; # full || summary || multiday
 
   my $DateTime = DateTime -> new(year => $Year, month => $Month, day => $Day);
   my $SQLDate  = $DateTime -> ymd(); 
 
   my @EventIDs = sort numerically &GetEventsByDate(-on => $SQLDate);
-
-  print "<table class=\"CenteredTable MedPaddedTable\">\n";
-  if (@EventIDs) {  
+  if ($Format eq "full") {
+    print "<table class=\"CenteredTable MedPaddedTable\">\n";
+  }  
 
 ### Separate into ones with and without sessions, save sessions for this day
-    my @AllDayEventIDs = ();
-    my @AllSessionIDs  = ();
-    foreach my $EventID (@EventIDs) {
-      my @SessionIDs = &FetchSessionsByConferenceID($EventID);
-      if (@SessionIDs) {
-        foreach my $SessionID (@SessionIDs) {
-          my ($Sec,$Min,$Hour,$SessDay,$SessMonth,$SessYear) = &SQLDateTime($Sessions{$SessionID}{StartTime});
-          if ($SessYear == $Year && $SessMonth == $Month && $SessDay == $Day) {
-            push @AllSessionIDs,$SessionID;
-          }
-        }    
-      } else {
-        push @AllDayEventIDs,$EventID;
-      }  
-    }  
-
-    if (@AllDayEventIDs || @AllSessionIDs) {
-      print "<tr>\n";
-      print "<th>Time</th>\n";
-      print "<th>Event</th>\n";
-      print "<th>Location</th>\n";
-      print "<th>External URL</th>\n";
-      print "</tr>\n";
+  my @AllDayEventIDs = ();
+  my @AllSessionIDs  = ();
+  my $EventID;
+  foreach $EventID (@EventIDs) {
+    my @SessionIDs = &FetchSessionsByConferenceID($EventID);
+    if (@SessionIDs) {
+      foreach my $SessionID (@SessionIDs) {
+        my ($Sec,$Min,$Hour,$SessDay,$SessMonth,$SessYear) = &SQLDateTime($Sessions{$SessionID}{StartTime});
+        if ($SessYear == $Year && $SessMonth == $Month && $SessDay == $Day) {
+          push @AllSessionIDs,$SessionID;
+        }
+      }    
     } else {
-      print "<tr><td>No events for this day</td></tr>\n";
+      push @AllDayEventIDs,$EventID;
     }  
-    foreach my $EventID (@AllDayEventIDs) {
-      my $EventLink = &EventLink(-eventid => $EventID, -format => "full");
-      if ($EventLink) {
+  }  
+
+### Print Header if we are going to print something
+
+  if ((@AllDayEventIDs || @AllSessionIDs) && $Format eq "full") {
+    print "<tr>\n";
+    print "<th>Time</th>\n";
+    print "<th>Event</th>\n";
+    print "<th>Location</th>\n";
+    print "<th>External URL</th>\n";
+    print "</tr>\n";
+  } elsif ($Format eq "full") {
+    print "<tr><td>No events for this day</td></tr>\n";
+  }  
+  
+### Loop over all day/no time events
+  
+  foreach $EventID (@AllDayEventIDs) {
+    my $EventLink = &EventLink(-eventid => $EventID, -format => "full");
+    if ($EventLink) {
+      if ($Format eq "full") {
         print "<tr>\n";
         print "<td>All day/no time</td>\n";
         print "<td>$EventLink</td>\n";
         print "<td>$Conferences{$ConferenceID}{Location}</td>\n";
         print "<td>$Conferences{$ConferenceID}{URL}</td>\n";
         print "</tr>\n";
-      }  
+      } elsif ($Format eq "summary") {
+        print $EventLink,"\n";
+      }   
     }  
-    
-    foreach my $SessionID (@AllSessionIDs) {
+  }  
+  
+  foreach my $SessionID (@AllSessionIDs) {
+    my $StartTime = &EuroTimeHM($Sessions{$SessionID}{StartTime});
+    my $EndTime   = &TruncateSeconds(&SessionEndTime($SessionID));
+    if ($EndTime eq $StartTime) { 
+      $EndTime = "";
+    }  
+    if ($Format eq "full") {
       my $SessionLink = &SessionLink(-sessionid => $SessionID, -format => "full");
-      my $StartTime = &EuroTimeHM($Sessions{$SessionID}{StartTime});
-      my $EndTime   = &TruncateSeconds(&SessionEndTime($SessionID));
-      if ($EndTime eq $StartTime) { 
-        $EndTime = "";
-      }  
       print "<tr>\n";
       print "<td>$StartTime &ndash; $EndTime</td>\n";
       print "<td>$SessionLink</td>\n";
       print "<td>$Sessions{$SessionID}{Location}</td>\n";
       print "<td>$Conferences{$ConferenceID}{URL}</td>\n";
       print "</tr>\n";
-    }  
-  } else {  
-    print "<tr><td>No events for this day</td></tr>\n";
+    } elsif($Format eq "summary") {
+      my $SessionLink = &SessionLink(-sessionid => $SessionID);
+      print "<span class=\"Event\">$StartTime $SessionLink</span>\n";
+    }   
   }  
-  print "</table>\n";
+  if ($Format eq "full") {
+    print "</table>\n";
+  }  
 }
 
 1;
