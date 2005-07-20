@@ -306,7 +306,7 @@ print $query -> hidden(-name => 'sessionid', -default => $SessionID);
 $query -> param('mode','modify');
 print $query -> hidden(-name => 'mode', -default => 'modify');
 
-print "<table cellpadding=10 align=center>\n";
+print "<table class=\"HighPaddingTable Centered\">\n";
 print "<tr>\n";
  print "<td>\n";              
   &TextField(-name      => 'sessiontitle', -size     => 40, 
@@ -334,7 +334,7 @@ print "<tr valign=top>\n";
 print "</tr>\n";
 print "</table>\n";
 
-print "<table cellpadding=10>\n";
+print "<table class=\"HighPaddingTable\">\n";
 
 print "<tr valign=top>\n";
  print "<td>\n"; 

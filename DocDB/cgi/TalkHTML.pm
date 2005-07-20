@@ -171,13 +171,15 @@ sub TalkEntryForm (@) {
     } 
 
     print "<tr valign=top>\n";
-    $query -> param('sessionorderid',$SessionOrderID);
-    print $query -> hidden(-name => 'sessionorderid', -default => $SessionOrderID);
-    print $query -> hidden(-name => 'timestamp',      -default => $EntryTimeStamp);
 
-    print "<td align=left rowspan=2>\n"; &TalkOrder; print "<br/>\n";
-    &TalkConfirm($SessionOrderID);    print "<br/>\n";
-    &TalkDelete($SessionOrderID);     print "</td>\n";
+    print "<td rowspan=2>\n"; 
+     $query -> param('sessionorderid',$SessionOrderID);
+     print $query -> hidden(-name => 'sessionorderid', -default => $SessionOrderID);
+     print $query -> hidden(-name => 'timestamp',      -default => $EntryTimeStamp);
+     &TalkOrder;                       print "<br/>\n";
+     &TalkConfirm($SessionOrderID);    print "<br/>\n";
+     &TalkDelete($SessionOrderID);     
+    print "</td>\n";
     
     print "<td align=center rowspan=2>\n"; &TalkSeparator($SessionOrderID); print "</td>\n";
     print "<td align=center rowspan=2>\n"; &TalkDocID($SessionOrderID);     print "</td>\n";
@@ -216,22 +218,19 @@ sub TalkNote {
                             -columns => 40, -rows => 4);
 }
 
-sub TalkDelete ($) {
+sub TalkDelete ($) { # v7 do nobr with CSS
   my ($SessionOrderID) = @_;
-  print "<nobr>";
   if ($TalkSeparatorDefault eq "Yes" || $TalkSeparatorDefault eq "No") {
     print $query -> checkbox(-name  => "talkdelete", 
                              -value => "$SessionOrderID", -label => 'Delete');
   } else {
     print "&nbsp;\n";
   }
-  print "</nobr>";
 }
 
-sub TalkConfirm ($) {
+sub TalkConfirm ($) {# v7 do nobr with CSS
   my ($SessionOrderID) = @_;
   
-  print "<nobr>";
   if ($TalkSeparatorDefault eq "Yes") {
     print "&nbsp;\n";
   } elsif ($TalkDefaultConfirmed) {  
@@ -241,7 +240,6 @@ sub TalkConfirm ($) {
     print $query -> checkbox(-name  => "talkconfirm", 
                              -value => "$SessionOrderID", -label => 'Confirm');
   }
-  print "</nobr>";
 }
 
 sub TalkOrder {
