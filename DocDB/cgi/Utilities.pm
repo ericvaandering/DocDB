@@ -112,7 +112,7 @@ sub AddTime ($$) {
 
   my ($Sec,$Min,$Hour) = localtime($Time);
   
-  my $TimeString = sprintf "%2d:%2.2d:%2.2d",$Hour,$Min,$Sec;
+  my $TimeString = sprintf "%2.2d:%2.2d:%2.2d",$Hour,$Min,$Sec;
 
   return $TimeString; 
 }

@@ -101,6 +101,8 @@ sub PrintCalendar {
 
   my $RowOpen;
 
+# Add blank cells for days in previous month
+
   my $DOW = $FirstDay -> day_of_week() + 1; if ($DOW ==8) {$DOW = 1;} 
   if ($DOW > 1) {
     my $NSkip = $DOW - 1; 
@@ -109,13 +111,16 @@ sub PrintCalendar {
   }    
   my $DaysLeft;
 
-  for  (my $Day = 1; $Day <= $DaysInMonth; ++$Day) {
+  for (my $Day = 1; $Day <= $DaysInMonth; ++$Day) {
     my $DateTime = DateTime -> new(year => $Year, month => $Month, day => $Day);
     my $SQLDate = $DateTime -> ymd(); 
-    my $DOW = $DateTime -> day_of_week() + 1; 
+    my $DOW = $DateTime -> day_of_week() + 1; # Convert from Monday week start
     if ($DOW ==8) {$DOW = 1;} 
        $DaysLeft = 7 - $DOW;
     my $DayName = $DateTime -> day_name();
+
+# Start a new row on Sundays
+
     if ($DOW == 1) {
       if ($RowOpen) {
         print "</tr>\n";
@@ -124,6 +129,7 @@ sub PrintCalendar {
       print "<tr>\n";
       $RowOpen = $TRUE;
     }
+
     my $TDClass = "$DayName";
     if ($DateTime == $Today) {
       $TDClass .= " Today";
@@ -144,14 +150,6 @@ sub PrintCalendar {
       print $DayLink,"\n"; 
       print $AddLink,"\n";
       &PrintDayEvents(-day => $Day, -month => $Month, -year => $Year, -format => "summary");
-#      if (@EventIDs) {
-#        foreach my $EventID (@EventIDs) {
-#          my $EventLink = &EventLink(-eventid => $EventID, -format => "full");
-#          if ($EventLink) {
-#            print $EventLink;
-#          }  
-#        }  
-#      }  
     }  
     print "</td>\n";
   }
@@ -184,8 +182,10 @@ sub PrintDayEvents (%) {
   if ($Format eq "full") {
     print "<table class=\"CenteredTable MedPaddedTable\">\n";
   }  
-
+  my $DayPrinted = $FALSE;
+  
 ### Separate into ones with and without sessions, save sessions for this day
+
   my @AllDayEventIDs = ();
   my @AllSessionIDs  = ();
   my $EventID;
@@ -221,8 +221,14 @@ sub PrintDayEvents (%) {
   foreach $EventID (@AllDayEventIDs) {
     my $EventLink = &EventLink(-eventid => $EventID, -format => "full");
     if ($EventLink) {
-      if ($Format eq "full") {
+      if ($Format eq "full" || $Format eq "multiday" ) {
         print "<tr>\n";
+        if ($Format eq "multiday" && !$DayPrinted) {
+          $DayPrinted = $TRUE;
+          print "<th class=\"LeftHeader\">$Day ",@AbrvMonths[$Month-1]," $Year</th>\n";
+        } else {
+          print "<td>&nbsp;</td>\n";   
+        }  
         print "<td>All day/no time</td>\n";
         print "<td>$EventLink</td>\n";
         print "<td>$Conferences{$ConferenceID}{Location}</td>\n";
@@ -240,15 +246,21 @@ sub PrintDayEvents (%) {
     if ($EndTime eq $StartTime) { 
       $EndTime = "";
     }  
-    if ($Format eq "full") {
+    if ($Format eq "full" || $Format eq "multiday" ) {
       my $SessionLink = &SessionLink(-sessionid => $SessionID, -format => "full");
       print "<tr>\n";
+      if ($Format eq "multiday" && !$DayPrinted) {
+        $DayPrinted = $TRUE;
+        print "<th class=\"LeftHeader\">$Day ",@AbrvMonths[$Month-1]," $Year</th>\n";
+      } else {
+        print "<td>&nbsp;</td>\n";   
+      }  
       print "<td>$StartTime &ndash; $EndTime</td>\n";
       print "<td>$SessionLink</td>\n";
       print "<td>$Sessions{$SessionID}{Location}</td>\n";
       print "<td>$Conferences{$ConferenceID}{URL}</td>\n";
       print "</tr>\n";
-    } elsif($Format eq "summary") {
+    } elsif ($Format eq "summary") {
       my $SessionLink = &SessionLink(-sessionid => $SessionID);
       print "<span class=\"Event\">$StartTime $SessionLink</span>\n";
     }   

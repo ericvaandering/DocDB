@@ -49,6 +49,8 @@ my $Year        = $Params{year}         || 0;
 print $query->header;
 
 my $TitleDate;
+my $FutureEventTable = $FALSE;
+my $Today = DateTime -> now();
 
 if ($Day && $Month && $Year) {
   my $Date = DateTime -> new(year => $Year, month => $Month, day => $Day);
@@ -58,11 +60,15 @@ if ($Day && $Month && $Year) {
   $TitleDate = $Date -> month_name()." ".$Year;
 } elsif ($Year) {
   $TitleDate = $Year;
+  if ($Year == $Today -> year()) {
+    $FutureEventTable = $TRUE;
+  }  
 } else {
   my $Date = DateTime -> now();
   $Month =  $Date -> month();
   $Year =  $Date -> year();
   $TitleDate = $Date -> month_name()." ".$Year;
+  $FutureEventTable = $TRUE;
 }  
   
 &DocDBHeader("Calendar for $TitleDate");
@@ -70,16 +76,16 @@ if ($Day && $Month && $Year) {
 
 if ($Day && $Month && $Year) {
   
-  my $Today = DateTime -> new(year => $Year, month => $Month, day => $Day);
+  my $TheDay = DateTime -> new(year => $Year, month => $Month, day => $Day);
 
-  my $PrevDay = $Today -> clone();
+  my $PrevDay = $TheDay -> clone();
      $PrevDay -> add(days => -1);
   my $PrevDNum  = $PrevDay -> day(); 
   my $PrevMNum  = $PrevDay -> month(); 
   my $PrevName  = $PrevDay -> month_name(); 
   my $PrevYear  = $PrevDay -> year(); 
 
-  my $NextDay = $Today -> clone();
+  my $NextDay = $TheDay -> clone();
      $NextDay -> add(days => 1);
   my $NextDNum  = $NextDay -> day(); 
   my $NextMNum  = $NextDay -> month(); 
@@ -126,6 +132,19 @@ if ($Day && $Month && $Year) {
   }
   print "</table>\n";
 }
+
+if ($FutureEventTable) {  
+  my $TheDay = $Today -> clone();
+  #FIXME Use GetEvents from, to to see if there are any
+  print "<table class=\"CenteredTable MultidayEventList\">\n";
+  print "<tr><th colspan=\"5\">Upcoming Events</th></tr>\n";
+  foreach my $i (0..60) {
+    $TheDay -> add(days => 1);
+    &PrintDayEvents(-year => $TheDay -> year(), -month  => $TheDay -> month(), 
+                    -day => $TheDay -> day(),   -format => "multiday");
+  }
+  print "</table>\n";
+}  
 
 $EndTime  = new Benchmark;
 
