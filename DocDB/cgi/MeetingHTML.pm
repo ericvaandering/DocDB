@@ -433,27 +433,26 @@ sub PrintSessionHeader ($) {
 
   my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
 
-  print "<center><a name=\"$SessionID\"><b>Session: ".
+  print "<h4><a name=\"$SessionID\" />Session: ".
         "<a href=\"$DisplayMeeting?sessionid=$SessionID\">$Sessions{$SessionID}{Title}</a> begins \n";
   print &EuroDate($Sessions{$SessionID}{StartTime});
   print " at ";
   print &EuroTimeHM($Sessions{$SessionID}{StartTime});
-  print "</b>\n";
+  print "</h4>\n";
   if ($Sessions{$SessionID}{Location}) {
-    print "<br> Location: $Sessions{$SessionID}{Location}\n";
+    print "<h5>Location: $Sessions{$SessionID}{Location}</h5>\n";
   }
   if (&CanModifyMeeting($ConferenceID)) {
-    print "<br>(<a href=\"$DocumentAddForm?sessionid=$SessionID\">Upload a document</a> ".
-          "or <a href=\"$SessionModify?sessionid=$SessionID\">update the agenda</a> for this session)\n";
+    print "<h5>(<a href=\"$DocumentAddForm?sessionid=$SessionID\">Upload a document</a> ".
+          "or <a href=\"$SessionModify?sessionid=$SessionID\">update the agenda</a> for this session)</h5>\n";
   }
   if ($Sessions{$SessionID}{Description}) {
     my $Description = $Sessions{$SessionID}{Description};
-    $Description =~ s/\n\s*\n/<p>/;
-    $Description =~ s/\n/<br>/;
+    $Description =~ s/\n\s*\n/<p\/>/;
+    $Description =~ s/\n/<br\/>/;
     
-    print "<p> ",&URLify($Description),"\n";
+    print "<p class=\"SessionDescription\"> ",&URLify($Description),"</p>\n";
   }
-  print "<p></center> \n";
 }
 
 sub PrintMeetingInfo($;%) {
