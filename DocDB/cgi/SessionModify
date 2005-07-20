@@ -321,13 +321,13 @@ print "<tr>\n";
 print "</td>\n";
 print "</tr>\n";
 
-print "<tr valign=top>\n";
+print "<tr>\n";
  print "<td>\n";                
   &TextArea(-name     => 'sessiondescription', -columns => 40, -rows => 4,
             -default  => $SessionDefaultDescription, 
             -helplink => 'sessioninfo', -helptext => 'Session Description');
  print "</td>\n";
- print "<td align=right>\n";  
+ print "<td>\n";  
  my $Header = &FormElementTitle(-helptext => "Start Date and Time", -helplink  => 'sessioninfo');
  print $Header;
  &SessionDateTimePullDown(-default => $SessionDefaultDateTime);            
@@ -337,14 +337,14 @@ print "</table>\n";
 
 print "<table class=\"HighPaddingTable\">\n";
 
-print "<tr valign=top>\n";
+print "<tr>\n";
  print "<td>\n"; 
   &TalkEntryForm(@SessionOrderIDs);   
  print "</td>\n";
 print "</tr>\n";
 
-print "<tr valign=top>\n";
- print "<td align=center>\n";
+print "<tr>\n";
+ print "<td>\n";
   print $query -> submit (-value => "Modify Session and Talks");
  print "</td>\n";
 print "</tr>\n";
