@@ -138,7 +138,6 @@ sub SafeHTML {
   my ($Text) = @_;
   $Text =~ s/\&/\&amp;/g;
   $Text =~ s/\&amp;amp;/\&amp;/g;
-  $Text = &SafeHTML($Text);
   return $Text;
 }  
  
