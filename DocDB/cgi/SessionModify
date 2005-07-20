@@ -300,7 +300,7 @@ my $SessionDefaultDescription = $Sessions{$SessionID}{Description};
 my $SessionDefaultLocation    = $Sessions{$SessionID}{Location};
 my $SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
 
-print "<div class=\"SessionEntryForm\">
+print "<div class=\"SessionEntryForm\">\n";
 print $query -> start_multipart_form('POST',"$SessionModify");
 $query -> param('sessionid',$SessionID);
 print $query -> hidden(-name => 'sessionid', -default => $SessionID);
