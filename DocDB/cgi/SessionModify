@@ -24,7 +24,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-use CGI;
+use CGI qw(-nosticky);
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -76,7 +76,7 @@ my @TalkDeletes     = split /\0/,$params{talkdelete};
 my @TalkConfirms    = split /\0/,$params{talkconfirm};
 my @TimeStamps      = split /\0/,$params{timestamp};
 
-$query -> delete_all(); # Stop program from caching variable from script to script
+$query -> delete_all(); # FIXME: No sticky should stop this. Stop program from caching variable from script to script
 
 # Also have params for DocID, authors, and topics in special params with 
 # SessionID embedded
@@ -300,8 +300,8 @@ my $SessionDefaultDescription = $Sessions{$SessionID}{Description};
 my $SessionDefaultLocation    = $Sessions{$SessionID}{Location};
 my $SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
 
-print "<div class=\"SessionEntryForm\">\n";
 print $query -> start_multipart_form('POST',"$SessionModify");
+print "<div class=\"SessionEntryForm\">\n";
 $query -> param('sessionid',$SessionID);
 print $query -> hidden(-name => 'sessionid', -default => $SessionID);
 $query -> param('mode','modify');
@@ -350,8 +350,8 @@ print "<tr>\n";
 print "</tr>\n";
 
 print "</table>\n";
-print $query -> end_multipart_form;
 print "</div>\n";
+print $query -> end_multipart_form;
 my $NavBarText = "Display&nbsp;Session";
 my $NavBarURL  = "$DisplayMeeting?sessionid=$SessionID";
 &DocDBNavBar($NavBarText,$NavBarURL);
