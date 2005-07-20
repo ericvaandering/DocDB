@@ -612,69 +612,31 @@ sub ModifyMeetingLink ($) {
   return $Link;
 }
 
-sub OrphanMeetingList { # remove v7
-  my ($Mode) = @_;
-  
-  require "Sorts.pm";
-
-  my @ConferenceIDs = keys %Conferences;
-  my @OrphanConferenceIDs = ();
-  foreach my $ConferenceID (@ConferenceIDs) {
-    unless ($Conferences{$ConferenceID}{Minor}) {
-      push @OrphanConferenceIDs,$ConferenceID;
-    }  
-  }
-
-#  my @OrphanConferenceIDs = sort byTopic keys @OrphanConferenceIDs;
-#FIXME add sort
-  if (@OrphanConferenceIDs) {
-    print "<b>More Meetings</b>\n";
-    print "<ul>\n";
-    foreach my $ConferenceID (@OrphanConferenceIDs) {
-      my $MeetingLink;
-      if ($Mode eq "modify") {
-        $MeetingLink = &ModifyMeetingLink($ConferenceID);
-      } else {
-        $MeetingLink = &EventLink(-eventid => $ConferenceID);
-      }
-      print "<li>$MeetingLink</li>\n";
-    }  
-    print "</ul>\n";
-  }  
-}
-
-sub AllMeetingsTable (;$) { # v7 redo
-  
-  my ($Mode) = @_;
-  
+sub EventsTable (;%) { # v7 redo
   require "Sorts.pm";
   require "TopicSQL.pm";
   require "TopicHTML.pm";
   
-  my $NCols = 3;
-  my @MajorTopicIDs = (@GatheringMajorIDs,0);
+  my %Params = @_;
 
+  my $Mode     = $Params{-mode}   || "display";
+  
+  my $NCols = 3;
   my $Col   = 0;
   my $Row   = 0;
-  print "<table cellpadding=10>\n";
-  foreach my $MajorID (@MajorTopicIDs) {
+  my @EventGroupIDs = &GetAllEventGroups();
+  
+  print "<table class=\"HighPaddedTable\">\n";
+  foreach my $EventGroupID (@EventGroupIDs) {
     unless ($Col % $NCols) {
       if ($Row) {
         print "</tr>\n";
       }  
-      print "<tr valign=top>\n";
+      print "<tr>\n";
       ++$Row;
     }
     print "<td>\n";
-    if ($MajorID) {
-      if ($Mode eq "modify") {
-        &MeetingsByMajorTopic($MajorID,"modify");
-      } else {
-        &TopicsByMajorTopic($MajorID);
-      }  
-    } else {
-      &OrphanMeetingList($Mode);
-    }  
+    &EventsByGroup(-groupid => $EventGroupID,-mode => $Mode);
     print "</td>\n";
     ++$Col;
   }  
@@ -682,28 +644,27 @@ sub AllMeetingsTable (;$) { # v7 redo
   print "</table>\n";
 }
 
-sub MeetingsByMajorTopic ($;$) { # v7 replace #FIXME: Can I combine with Orphan meetings?
-  my ($MajorID,$Mode) = @_;
-  
+sub EventsByGroup (%) { # v7 replace #FIXME: Can I combine with Orphan meetings?
   require "TopicSQL.pm";
   require "Sorts.pm";
-  
+
+  my %Params = @_;
+
+  my $Mode         = $Params{-mode}   || "display";
+  my $EventGroupID = $Params{-groupid};
+
   my @ConferenceIDs = keys %Conferences;
   my @DisplayConferenceIDs = ();
   foreach my $ConferenceID (@ConferenceIDs) {
-    my $MinorID = $Conferences{$ConferenceID}{Minor};
-    &FetchMinorTopic($MinorID);
-    # FIXME: We should probably allow modification of conferences not fully 
-    #        setup
-    if ($MinorID && $MinorTopics{$MinorID}{MAJOR} == $MajorID &&
-        ($Conferences{$ConferenceID}{Title} || $Mode eq "modify")) { 
+    if ($Conferences{$ConferenceID}{EventGroupID} == $EventGroupID) { 
       push @DisplayConferenceIDs,$ConferenceID;
     }  
   }
 
-  @DisplayConferenceIDs = sort ConferenceIDByDate @DisplayConferenceIDs;
-
-  print "<b>$MajorTopics{$MajorID}{SHORT}</b>\n";
+  @DisplayConferenceIDs = reverse sort EventsByDate @DisplayConferenceIDs;
+  &FetchEventGroup($EventGroupID);
+  
+  print "<strong>$EventGroups{$EventGroupID}{ShortDescription}</strong>\n"; #v7 add link, truncate list?
   print "<ul>\n";
   foreach my $ConferenceID (@DisplayConferenceIDs) {
     my $MeetingLink;

@@ -203,22 +203,6 @@ sub SessionOrderIDByOrder { # Sort lists of SessionTalks, TalkSeparators
   $SessionOrders{$a}{TalkOrder} <=> $SessionOrders{$b}{TalkOrder}
 }
 
-sub ConferenceIDByDate {
-
-  # Do reverse sort by date for meetings, otherwise alphabetical
-  
-  my $adate = $Conferences{$a}{StartDate}; 
-  my $bdate = $Conferences{$b}{StartDate};
-  my ($ayear,$amonth,$aday) = split /\-/,$adate;
-  my ($byear,$bmonth,$bday) = split /\-/,$bdate;
-
-   $byear <=> $ayear
-          or
-  $bmonth <=> $amonth 
-          or
-    $bday <=> $aday;
-}    
-
 sub byKeywordGroup {
   $KeywordGroups{$a}{Short} cmp $KeywordGroups{$b}{Short};
 }    

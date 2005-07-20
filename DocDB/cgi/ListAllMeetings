@@ -48,9 +48,9 @@ if ($Mode eq "modify") {
 &DocDBHeader($PageTitle);
 if ($Mode eq "modify") {
   print "<h3>Select an event to change:</h3>\n";
-  &AllMeetingsTable("modify");
+  &EventsTable(-mode => "modify");
 } else {  
-  &AllMeetingsTable("display");
+  &EventsTable(-mode => "display");
 }
 
 &DocDBNavBar();
