@@ -101,16 +101,16 @@ sub TalkEntryForm (@) {
   require "Scripts.pm";
   print "<table cellpadding=3>\n";
   print "<tr valign=bottom>\n";
-  print "<th>",&FormElementTitle(-helplink => "sessionorder", -helptext => "Order,");
-  print        &FormElementTitle(-helplink => "talkconfirm",  -helptext => "Confirm");
-  print "or ", &FormElementTitle(-helplink => "talkdelete",   -helptext => "Delete");
+  print "<th>",&FormElementTitle(-helplink => "sessionorder", -helptext => "Order,",  -nocolon => $TRUE);
+  print        &FormElementTitle(-helplink => "talkconfirm",  -helptext => "Confirm", -nocolon => $TRUE);
+  print "or ", &FormElementTitle(-helplink => "talkdelete",   -helptext => "Delete",  -nocolon => $TRUE);
   print "</th>\n";
-  print "<th><b><a "; &HelpLink("talkseparator"); print "Break</a></th>\n";
-  print "<th><b><a "; &HelpLink("talkdocid");     print "Doc. #</a></th>\n";
-  print "<th><b><a "; &HelpLink("talkinfo");      print "Talk Title & Note</a></th>\n";
-  print "<th><b><a "; &HelpLink("talktime");      print "Time</a></th>\n";
-  print "<th><b><a "; &HelpLink("authorhint");    print "Author Hints</a></b>\n";
-  print "<th><b><a "; &HelpLink("topichint");     print "Topic Hints</a></b>\n";
+  print "<th>",&FormElementTitle(-helplink => "talkseparator", -helptext => "Break",             -nocolon => $TRUE),"</th>\n";
+  print "<th>",&FormElementTitle(-helplink => "talkdocid"    , -helptext => "Doc. #",            -nocolon => $TRUE),"</th>\n";
+  print "<th>",&FormElementTitle(-helplink => "talkinfo"     , -helptext => "Talk Title & Note", -nocolon => $TRUE),"</th>\n";
+  print "<th>",&FormElementTitle(-helplink => "talktime"     , -helptext => "Time",              -nocolon => $TRUE),"</th>\n";
+  print "<th>",&FormElementTitle(-helplink => "authorhint"   , -helptext => "Author Hints",      -nocolon => $TRUE),"</th>\n";
+  print "<th>",&FormElementTitle(-helplink => "topichint"    , -helptext => "Topic Hints",       -nocolon => $TRUE),"</th>\n";
   print "</tr>\n";
   
   # Sort session IDs by order
