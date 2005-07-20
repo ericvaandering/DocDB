@@ -107,7 +107,7 @@ sub TalkEntryForm (@) {
   print "</th>\n";
   print "<th>",&FormElementTitle(-helplink => "talkseparator", -helptext => "Break",             -nocolon => $TRUE),"</th>\n";
   print "<th>",&FormElementTitle(-helplink => "talkdocid"    , -helptext => "Doc. #",            -nocolon => $TRUE),"</th>\n";
-  print "<th>",&FormElementTitle(-helplink => "talkinfo"     , -helptext => "Talk Title & Note", -nocolon => $TRUE),"</th>\n";
+  print "<th>",&FormElementTitle(-helplink => "talkinfo"     , -helptext => "Talk Title &amp; Note", -nocolon => $TRUE),"</th>\n";
   print "<th>",&FormElementTitle(-helplink => "talktime"     , -helptext => "Time",              -nocolon => $TRUE),"</th>\n";
   print "<th>",&FormElementTitle(-helplink => "authorhint"   , -helptext => "Author Hints",      -nocolon => $TRUE),"</th>\n";
   print "<th>",&FormElementTitle(-helplink => "topichint"    , -helptext => "Topic Hints",       -nocolon => $TRUE),"</th>\n";
@@ -200,7 +200,7 @@ sub TalkEntryForm (@) {
       print "<td colspan=2>&nbsp;</td>\n";
     }    
     print "</tr>\n";
-    print "<tr valign=top><td colspan=7><hr width=95%></td>\n";
+    print "<tr valign=top><td colspan=7><hr width=95% /></td>\n";
     print "</tr>\n";
   }
   print "</table>\n";
