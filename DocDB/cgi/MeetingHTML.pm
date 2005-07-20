@@ -249,6 +249,7 @@ sub SessionDateTimePullDown (;%) {
   print $query -> popup_menu (-name => 'sessionyear', -values => \@years, -default => $DefaultYear);
   print "<p> at &nbsp;\n";
   print $query -> popup_menu (-name => 'sessionhour', -values => \@hours, -default => $DefaultHour);
+  print "</p>\n";
 }
 
 sub SessionOrder {

@@ -55,9 +55,9 @@ sub PrintSessionTalk($) {
   &FetchDocument($DocumentID);
   my $Version = $Documents{$DocumentID}{NVersions};
   unless (&CanAccess($DocumentID,$Version)) {
-    print "<tr valign=\"top\" class=\"$RowClass\">\n";
-    print "<td align=\"right\"><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";  
-    print "<td colspan=6>Not authorized to view</td>\n";
+    print "<tr class=\"$RowClass\">\n";
+    print "<td class=\"TalkTime\"><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";  
+    print "<td colspan=\"6\">Not authorized to view</td>\n";
     print "</tr>\n";
     return;
   }
@@ -71,8 +71,8 @@ sub PrintSessionTalk($) {
 
   @TopicIDs = &RemoveArray(\@TopicIDs,@IgnoreTopics);
 
-  print "<tr valign=\"top\" class=\"$RowClass\">\n";
-  print "<td align=right><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";  
+  print "<tr class=\"$RowClass\">\n";
+  print "<td class=\"TalkTime\"><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";  
   if ($Confirmed) { # Put titles in italics for unconfirmed talks
     print "<td>$Title</td>\n";
   } else {
@@ -83,10 +83,10 @@ sub PrintSessionTalk($) {
     }
     print "</td>\n";
   }
-  print "<td><nobr>$AuthorLink</nobr></td>\n";
+  print "<td>$AuthorLink</td>\n"; # v7 class and nobr
   print "<td>"; &ShortTopicListByID(@TopicIDs);   print "</td>\n";
   print "<td>"; &ShortFileListByRevID($DocRevID); print "</td>\n";
-  print "<td align=right>$Time</td>\n";
+  print "<td class=\"TalkTime\">$Time</td>\n";
   if ($Note) {
     print "<td><b>",&TalkNoteLink,"</b></td>\n";
   } else {
@@ -170,9 +170,9 @@ sub TalkEntryForm (@) {
       }
     } 
 
-    print "<tr valign=top>\n";
+    print "<tr>\n";
 
-    print "<td rowspan=2>\n"; 
+    print "<td rowspan=\"2\">\n"; 
      $query -> param('sessionorderid',$SessionOrderID);
      print $query -> hidden(-name => 'sessionorderid', -default => $SessionOrderID);
      print $query -> hidden(-name => 'timestamp',      -default => $EntryTimeStamp);
