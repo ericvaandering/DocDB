@@ -101,9 +101,10 @@ sub TalkEntryForm (@) {
   require "Scripts.pm";
   print "<table cellpadding=3>\n";
   print "<tr valign=bottom>\n";
-  print "<th><b><a "; &HelpLink("sessionorder");  print "Order,</a></b><br/>\n";
-  print "    <b><a "; &HelpLink("talkconfirm");   print "Confirm</a><br/>\n";
-  print "or  <b><a "; &HelpLink("talkdelete");    print "Delete</a></td>\n";
+  print "<th>",&FormElementTitle(-helplink => "sessionorder", -helptext => "Order,");
+  print        &FormElementTitle(-helplink => "talkconfirm",  -helptext => "Confirm");
+  print "or ", &FormElementTitle(-helplink => "talkdelete",   -helptext => "Delete");
+  print "</th>\n";
   print "<th><b><a "; &HelpLink("talkseparator"); print "Break</a></th>\n";
   print "<th><b><a "; &HelpLink("talkdocid");     print "Doc. #</a></th>\n";
   print "<th><b><a "; &HelpLink("talkinfo");      print "Talk Title & Note</a></th>\n";
