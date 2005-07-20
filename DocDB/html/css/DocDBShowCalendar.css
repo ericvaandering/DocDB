@@ -9,6 +9,16 @@ table.Calendar td.Sunday, table.Calendar td.Saturday{
   background: #eee;
 }
 
+.DayNav {
+  text-align: center;
+}
+
+.DayNav .CurrDate {
+  font-size: 120%;
+  margin-right: 10em;
+  margin-left: 10em;
+}  
+
 .AddEvent {
   text-decoration: none;
   display: block;
