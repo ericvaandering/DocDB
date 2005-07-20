@@ -99,8 +99,8 @@ sub TalkEntryForm (@) {
   my @SessionOrderIDs = @_; 
 
   require "Scripts.pm";
-  print "<table cellpadding=3>\n";
-  print "<tr valign=bottom>\n";
+  print "<table class=\"LowPaddedTable\">\n";
+  print "<tr>\n";
   print "<th>",&FormElementTitle(-helplink => "sessionorder", -helptext => "Order,",  -nocolon => $TRUE);
   print        &FormElementTitle(-helplink => "talkconfirm",  -helptext => "Confirm", -nocolon => $TRUE);
   print "or ", &FormElementTitle(-helplink => "talkdelete",   -helptext => "Delete",  -nocolon => $TRUE);
@@ -181,26 +181,26 @@ sub TalkEntryForm (@) {
      &TalkDelete($SessionOrderID);     
     print "</td>\n";
     
-    print "<td align=center rowspan=2>\n"; &TalkSeparator($SessionOrderID); print "</td>\n";
-    print "<td align=center rowspan=2>\n"; &TalkDocID($SessionOrderID);     print "</td>\n";
-    print "<td>\n";           &TalkTitle($TalkDefaultTitle); print "</td>\n";
-    print "<td rowspan=3>\n"; &TalkTimePullDown;             print "</td>\n";
-    print "<td rowspan=3>\n"; &TalkAuthors($SessionOrderID); print "</td>\n";
-    print "<td rowspan=3>\n"; &TalkTopics($SessionOrderID);  print "</td>\n";
+    print "<td rowspan=\"2\">\n"; &TalkSeparator($SessionOrderID); print "</td>\n";
+    print "<td rowspan=\"2\">\n"; &TalkDocID($SessionOrderID);     print "</td>\n";
+    print "<td>\n";               &TalkTitle($TalkDefaultTitle);   print "</td>\n";
+    print "<td rowspan=\"3\">\n"; &TalkTimePullDown;               print "</td>\n";
+    print "<td rowspan=\"3\">\n"; &TalkAuthors($SessionOrderID);   print "</td>\n";
+    print "<td rowspan=\"3\">\n"; &TalkTopics($SessionOrderID);    print "</td>\n";
     print "</tr>\n";
-    print "<tr valign=top>\n";
+    print "<tr>\n";
     print "<td>\n"; &TalkNote; print "</td>\n";
     print "</tr>\n";
-    print "<tr valign=top>\n";
-    print "<td colspan=3>\n"; &TalkNewSession($SessionOrderID); print "</td>\n";
+    print "<tr>\n";
+    print "<td colspan=\"3\">\n"; &TalkNewSession($SessionOrderID); print "</td>\n";
     if ($TalkDefaultDocID && $TalkSeparatorDefault ne "Yes") {
       my $TitleLink = &NewDocumentLink($TalkDefaultDocID,undef,"title");
-      print "<td colspan=2>Match: $TitleLink</td>\n";
+      print "<td colspan=\"2\">Match: $TitleLink</td>\n";
     } else {
-      print "<td colspan=2>&nbsp;</td>\n";
+      print "<td colspan=\"2\">&nbsp;</td>\n";
     }    
     print "</tr>\n";
-    print "<tr valign=top><td colspan=7><hr width=95% /></td>\n";
+    print "<tr><td colspan=\"7\"><hr /></td>\n";
     print "</tr>\n";
   }
   print "</table>\n";

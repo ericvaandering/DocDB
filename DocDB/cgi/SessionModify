@@ -300,6 +300,7 @@ my $SessionDefaultDescription = $Sessions{$SessionID}{Description};
 my $SessionDefaultLocation    = $Sessions{$SessionID}{Location};
 my $SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
 
+print "<div class=\"SessionEntryForm\">
 print $query -> start_multipart_form('POST',"$SessionModify");
 $query -> param('sessionid',$SessionID);
 print $query -> hidden(-name => 'sessionid', -default => $SessionID);
@@ -349,7 +350,8 @@ print "<tr valign=top>\n";
 print "</tr>\n";
 
 print "</table>\n";
-
+print $query -> end_multipart_form;
+print "</div>\n";
 my $NavBarText = "Display&nbsp;Session";
 my $NavBarURL  = "$DisplayMeeting?sessionid=$SessionID";
 &DocDBNavBar($NavBarText,$NavBarURL);
