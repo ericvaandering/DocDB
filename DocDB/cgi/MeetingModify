@@ -90,9 +90,11 @@ my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
 my ($StartTime,$EndTime);
 
 my %RequiredEntries = ();
-   $RequiredEntries{StartDate}       = $TRUE;
-   $RequiredEntries{EndDate}         = $TRUE;
-   $RequiredEntries{LongDescription} = $TRUE;
+   $RequiredEntries{StartDate}        = $TRUE;
+   $RequiredEntries{EndDate}          = $TRUE;
+   $RequiredEntries{LongDescription}  = $TRUE;
+   $RequiredEntries{ShortDescription} = $TRUE;
+   $RequiredEntries{EventGroup}       = $TRUE;
    
 if ($StartDay && $StartMonth && $StartYear) {
   $StartTime = timelocal(0,0,0,$StartDay,$ReverseAbrvMonth{$StartMonth}-1,$StartYear);
@@ -535,14 +537,14 @@ print "<td rowspan=2 valign=top>\n";
 print "</td>\n";
 print "</tr>\n";
 print "<tr>\n";
-print "<td>\n"; &EventGroupSelect; print "</td>\n";
+print "<td>\n"; &EventGroupSelect(-required => $RequiredEntries{EventGroup}); print "</td>\n";
 print "<td valign=top>\n";
  print "<table>\n";
  print "<tr valign=top>\n";
- print "<td>\n"; &LongDescriptionBox(-required => $RequiredEntries{LongDescription});     print "</td>\n";
+ print "<td>\n"; &ShortDescriptionBox(-required => $RequiredEntries{ShortDescription});    print "</td>\n";
  print "</tr>\n";
  print "<tr valign=top>\n";
- print "<td>\n"; &ShortDescriptionBox;    print "</td>\n";
+ print "<td>\n"; &LongDescriptionBox(-required => $RequiredEntries{LongDescription});     print "</td>\n";
  print "</tr>\n";
  print "<tr valign=top>\n";
  print "<td>\n"; &ConferenceShowAllTalks; print "</td>\n";

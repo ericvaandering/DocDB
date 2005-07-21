@@ -719,6 +719,7 @@ sub EventGroupSelect (;%) {
 
   my $Disabled = $Params{-disabled} || "0";
   my $Multiple = $Params{-multiple} || "0";
+  my $Required = $Params{-required} || "0";
   my $Format   = $Params{-format}   || "short";
   my @Defaults = @{$Params{-default}};
  
@@ -737,7 +738,8 @@ sub EventGroupSelect (;%) {
     }
   }      
   
-  my $ElementTitle = &FormElementTitle(-helplink => "eventgroups", -helptext => "Event Groups");
+  my $ElementTitle = &FormElementTitle(-helplink => "eventgroups", -helptext => "Event Groups", 
+                                       -required => $Required);
 
   print $ElementTitle;
   print $query -> scrolling_list(-name     => "eventgroups",  -values  => \@EventGroupIDs, 
