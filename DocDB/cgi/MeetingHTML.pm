@@ -34,14 +34,16 @@ sub LocationBox (;%) {
     $Booleans .= "-disabled";
   }  
   
+  print "<div class=\"LocationEntry\">\n";
   print "<b><a ";
   &HelpLink("location");
   print "Location:</a></b><br> \n";
   print $query -> textfield (-name => 'location', -default => $MeetingDefaultLocation,
                              -size => 20, -maxlength => 64, $Booleans);
+  print "</div>\n";
 };
 
-sub ConferenceURLBox (;%) {
+sub EventURLBox (;%) {
   require "Scripts.pm";
 
   my (%Params) = @_;
@@ -54,11 +56,13 @@ sub ConferenceURLBox (;%) {
     $Booleans .= "-disabled";
   }  
   
+  print "<div class=\"EventURLEntry\">\n";
   print "<b><a ";
   &HelpLink("confurl");
   print "URL:</a></b><br> \n";
   print $query -> textfield (-name => 'url', -default => $MeetingDefaultURL,
                              -size => 40, -maxlength => 240, $Booleans);
+  print "</div>\n";
 };
 
 sub ConferencePreambleBox {

@@ -179,11 +179,12 @@ sub ShortDescriptionBox  (;%) {
   if ($Disabled) {
     $Booleans .= "-disabled";
   }  
-  
+  print "<div class=\"ShortDescriptionEntry\">\n";
   &TextField(-name     => $Name,     -helptext  => $HelpText,  
              -helplink => $HelpLink, -required  => $Required,  
              -size     => $Size,     -maxlength => $MaxLength, 
              -default  => $Default,  -disabled  => $Disabled);
+  print "</div>\n";           
 }
 
 sub LongDescriptionBox (;%) {
@@ -199,10 +200,12 @@ sub LongDescriptionBox (;%) {
   my $Disabled  =   $Params{-disabled}  || 0;
   my $Default   =   $Params{-default}   || "";                 # FIXME: Not used
 
+  print "<div class=\"LongDescriptionEntry\">\n";
   &TextField(-name     => $Name,                   -helptext  => $HelpText, 
              -helplink => $HelpLink,               -required  => $Required, 
              -size     => $Size,                   -maxlength => $MaxLength,
              -default  => $DefaultLongDescription, -disabled  => $Disabled);
+  print "</div>\n";           
 };
 
 sub FullTopicScroll ($$;@) { # Scrolling selectable list for topics, all info
