@@ -541,7 +541,7 @@ print "<td>\n"; &EventGroupSelect(-required => $RequiredEntries{EventGroup}); pr
 print "<td>\n";
  print "<table>\n";
  print "<tr>\n";
- print "<td>\nTT\n"; &ShortDescriptionBox(-required => $RequiredEntries{ShortDescription});    print "</td>\n";
+ print "<td>\n"; &ShortDescriptionBox(-name => "shortdesc", -helptext => "Short Description", -required => $RequiredEntries{ShortDescription});    print "</td>\n";
  print "</tr>\n";
  print "<tr>\n";
  print "<td>\n"; &LongDescriptionBox(-required => $RequiredEntries{LongDescription});     print "</td>\n";

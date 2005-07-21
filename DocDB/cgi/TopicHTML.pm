@@ -167,7 +167,7 @@ sub ShortDescriptionBox  (;%) {
   my $HelpLink  =   $Params{-helplink}  || "shortdescription"; #FIXME Not used, Blank might be needed later?
   my $HelpText  =   $Params{-helptext}  || "Topics";           # Not used
   my $ExtraText =   $Params{-extratext} || "";                 # Not used
-  my $Required  =   $Params{-required}  || 0;                  # Not used
+  my $Required  =   $Params{-required}  || 0;                  
   my $Name      =   $Params{-name}      || "short";
   my $Size      =   $Params{-size}      || 20;
   my $MaxLength =   $Params{-maxlength} || 40;
@@ -180,17 +180,11 @@ sub ShortDescriptionBox  (;%) {
     $Booleans .= "-disabled";
   }  
   
-  print "<b><a ";
-  &HelpLink("shortdescription");
-  print "Short Description:</a></b><br> \n";
-  if ($Disabled) {  # Doesn't scale
-    print $query -> textfield (-name => $Name,  -default   => $DefaultShortDescription,
-                               -size => $Size , -maxlength => $MaxLength, -disabled);
-  } else {
-    print $query -> textfield (-name => $Name,  -default   => $DefaultShortDescription,
-                               -size => $Size , -maxlength => $MaxLength);
-  }                               
-};
+  &TextField(-name     => $Name,     -helptext  => $HelpText,  
+             -helplink => $HelpLink, -required  => $Required,  
+             -size     => $Size,     -maxlength => $MaxLength, 
+             -default  => $Default,  -disabled  => $Disabled);
+}
 
 sub LongDescriptionBox (;%) {
   my (%Params) = @_;
@@ -203,7 +197,7 @@ sub LongDescriptionBox (;%) {
   my $Size      =   $Params{-size}      || 40;
   my $MaxLength =   $Params{-maxlength} || 120;
   my $Disabled  =   $Params{-disabled}  || 0;
-  my $Default   =   $Params{-default}   || "";                 # Not used
+  my $Default   =   $Params{-default}   || "";                 # FIXME: Not used
 
   &TextField(-name     => $Name,                   -helptext  => $HelpText, 
              -helplink => $HelpLink,               -required  => $Required, 
