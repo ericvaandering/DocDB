@@ -39,7 +39,7 @@ sub LocationBox (;%) {
   &HelpLink("location");
   print "Location:</a></b><br> \n";
   print $query -> textfield (-name => 'location', -default => $MeetingDefaultLocation,
-                             -size => 20, -maxlength => 64, $Booleans);
+                             -size => 40, -maxlength => 64, $Booleans);
   print "</div>\n";
 };
 
