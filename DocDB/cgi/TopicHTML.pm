@@ -179,7 +179,6 @@ sub ShortDescriptionBox  (;%) {
   if ($Disabled) {
     $Booleans .= "-disabled";
   }  
-  push @DebugStack,"DSS: $Default";
   print "<div class=\"ShortDescriptionEntry\">\n";
   &TextField(-name     => $Name,     -helptext  => $HelpText,  
              -helplink => $HelpLink, -required  => $Required,  

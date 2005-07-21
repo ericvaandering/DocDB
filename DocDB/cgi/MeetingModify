@@ -477,8 +477,6 @@ print "</tr>\n";
 print "<tr>\n";
 print "<td>\n"; &EventGroupSelect(-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID]);
 print "<td>\n";
-push @DebugStack,"DSC: $DefaultShortDescription";
-push @DebugStack,"DEC: $DefaultEventGroupID";
 &ShortDescriptionBox(-name => "shortdesc", -helptext => "Short Description", -required => $RequiredEntries{ShortDescription},
                      -default => $DefaultShortDescription);
 &LongDescriptionBox(-required => $RequiredEntries{LongDescription});
