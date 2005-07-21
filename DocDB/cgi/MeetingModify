@@ -51,8 +51,8 @@ $query = new CGI;  # Global for subroutines
 
 my $Mode               = $params{mode};
 
-my $EventGroupID       = $params{eventgroup};
-my $Short              = $params{short};
+my $EventGroupID       = $params{eventgroups};
+my $Short              = $params{shortdesc};
 my $Long               = $params{long};
 
 my $ConferenceID       = $params{conferenceid};
