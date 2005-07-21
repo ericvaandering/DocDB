@@ -475,10 +475,10 @@ print "<tr>\n";
  print "</td>\n";
 print "</tr>\n";
 print "<tr>\n";
-print "<td>\n"; &EventGroupSelect(-required => $RequiredEntries{EventGroup}, -default => $DefaultGroupID;);
+print "<td>\n"; &EventGroupSelect(-required => $RequiredEntries{EventGroup}, -default => $DefaultGroupID);
 print "<td>\n";
 &ShortDescriptionBox(-name => "shortdesc", -helptext => "Short Description", -required => $RequiredEntries{ShortDescription}
-                     -default => $DefaultShortDescription;);
+                     -default => $DefaultShortDescription);
 &LongDescriptionBox(-required => $RequiredEntries{LongDescription});
 &LocationBox;       
 &EventURLBox;  
