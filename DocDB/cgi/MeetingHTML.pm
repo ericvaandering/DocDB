@@ -730,12 +730,10 @@ sub EventGroupSelect (;%) {
   }  
 
   &GetAllEventGroups; 
-  my @EventGroupIDs = sort EventsGroupsByName keys %EventGroups;
+  my @EventGroupIDs = sort EventGroupsByName keys %EventGroups;
   my %Labels        = ();
   foreach my $EventGroupID (@EventGroupIDs) {
-    if ($Format eq "full") {
-      $Labels{$EventGroupID} = $EventGroups{$Conferences{$ConferenceID}{EventGroupID}}{ShortDescription}; 
-    }
+    $Labels{$EventGroupID} = $EventGroups{$EventGroupID}{ShortDescription}; 
   }      
   
   my $ElementTitle = &FormElementTitle(-helplink => "eventgroups", -helptext => "Event Groups", 
