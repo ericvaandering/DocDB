@@ -59,12 +59,19 @@ sub GetEventsByDate (%) {
 
   my %Params = @_;
   
-#  my $From = $Params{-from} || "";
-#  my $To   = $Params{-to}   || "";
-  my $On   = $Params{-on} || &SQLNow(-dateonly => $TRUE);
-
-  my $List = $dbh->prepare("select ConferenceID from Conference where StartDate<=? and EndDate>=?");
-  $List -> execute($On,$On);
+  my $From = $Params{-from} || "";
+  my $To   = $Params{-to}   || "";
+  my $On   = $Params{-on}   || &SQLNow(-dateonly => $TRUE);
+  
+  my $List;
+  if ($From && $To) { # Starts or ends in or surrounds window
+    $List = $dbh->prepare("select ConferenceID from Conference where (StartDate>=? and StartDate<=?) "."
+                           or (EndDate>=? and EndDate<=?) or (StartDate<? and EndDate>?)");
+    $List -> execute($From,$To,$From,$To,$From,$To);
+  } else { 
+    $List = $dbh->prepare("select ConferenceID from Conference where StartDate<=? and EndDate>=?");
+    $List -> execute($On,$On);
+  }
   
   my $EventID;
   my @EventIDs;
@@ -371,6 +378,5 @@ sub InsertEvents (%) {
       
   return $Count;
 }
-
 
 1;

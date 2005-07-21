@@ -135,15 +135,29 @@ if ($Day && $Month && $Year) {
 
 if ($FutureEventTable) {  
   my $TheDay = $Today -> clone();
-  #FIXME Use GetEvents from, to to see if there are any
-  print "<table class=\"CenteredTable MultidayEventList\">\n";
-  print "<tr><th colspan=\"5\">Upcoming Events</th></tr>\n";
-  foreach my $i (0..60) {
-    $TheDay -> add(days => 1);
-    &PrintDayEvents(-year => $TheDay -> year(), -month  => $TheDay -> month(), 
-                    -day => $TheDay -> day(),   -format => "multiday");
-  }
-  print "</table>\n";
+  my $WindowStart = $TheDay -> ymd();
+  $TheDay -> add(days => 60);
+  my $WindowEnd = $TheDay -> ymd();
+  my @EventIDs = &GetEventsByDate(-from => $WindowStart, -to => $WindowEnd);
+  
+  if (@EventIDs) {
+    print "<table class=\"CenteredTable MultidayEventList Alternating\">\n";
+    print "<tr><th>Date</th><th>Time</th><th>Upcoming Events</th><th></th><th></th></tr>\n";
+    $TheDay = $Today -> clone();
+    my $RowClass = "Odd";
+    foreach my $i (0..60) {
+      $TheDay -> add(days => 1);
+      my $Count = &PrintDayEvents(-year => $TheDay -> year(), -month  => $TheDay -> month(), 
+                                  -day  => $TheDay -> day(),  -format => "multiday", 
+                                  -rowclass => $RowClass);
+      if ($Count && $RowClass eq "Odd") {
+        $RowClass = "Even";
+      } elsif ($Count && $RowClass eq "Even") {            
+        $RowClass = "Odd";
+      }
+    }  
+    print "</table>\n";
+  }  
 }  
 
 $EndTime  = new Benchmark;

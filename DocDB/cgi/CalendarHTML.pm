@@ -20,11 +20,11 @@
 sub CalendarLink (%) {
   my %Params = @_;
   
-  my $Month = $Params{-month} || 0;
-  my $Year  = $Params{-year}  || 0;
-  my $Day   = $Params{-day}   || 0;
-  my $Text  = $Params{-text}  || "Calendar";
-  my $Class = $Params{-class} || "";
+  my $Month    = $Params{-month}    || 0;
+  my $Year     = $Params{-year}     || 0;
+  my $Day      = $Params{-day}      || 0;
+  my $Text     = $Params{-text}     || "Calendar";
+  my $Class    = $Params{-class}    || "";
   
   my $Link = "<a ";
   if ($Class) {
@@ -170,19 +170,21 @@ sub PrintDayEvents (%) {
   
   my %Params = @_;
   
-  my $Month  = $Params{-month};
-  my $Year   = $Params{-year};
-  my $Day    = $Params{-day};
-  my $Format = $Params{-format} || "full"; # full || summary || multiday
+  my $Month    = $Params{-month};
+  my $Year     = $Params{-year};
+  my $Day      = $Params{-day};
+  my $Format   = $Params{-format}   || "full"; # full || summary || multiday
+  my $RowClass = $Params{-rowclass} || "Normal";
 
   my $DateTime = DateTime -> new(year => $Year, month => $Month, day => $Day);
   my $SQLDate  = $DateTime -> ymd(); 
-
+  
   my @EventIDs = sort numerically &GetEventsByDate(-on => $SQLDate);
   if ($Format eq "full") {
     print "<table class=\"CenteredTable MedPaddedTable\">\n";
   }  
   my $DayPrinted = $FALSE;
+  my $Count      = 0;
   
 ### Separate into ones with and without sessions, save sessions for this day
 
@@ -221,8 +223,9 @@ sub PrintDayEvents (%) {
   foreach $EventID (@AllDayEventIDs) {
     my $EventLink = &EventLink(-eventid => $EventID, -format => "full");
     if ($EventLink) {
+      ++$Count;
       if ($Format eq "full" || $Format eq "multiday" ) {
-        print "<tr>\n";
+        print "<tr class=\"$RowClass\">\n";
         if ($Format eq "multiday" && !$DayPrinted) {
           $DayPrinted = $TRUE;
           print "<th class=\"LeftHeader\">$Day ",@AbrvMonths[$Month-1]," $Year</th>\n";
@@ -247,8 +250,9 @@ sub PrintDayEvents (%) {
       $EndTime = "";
     }  
     if ($Format eq "full" || $Format eq "multiday" ) {
+      ++$Count;
       my $SessionLink = &SessionLink(-sessionid => $SessionID, -format => "full");
-      print "<tr>\n";
+      print "<tr class=\"$RowClass\">\n";
       if ($Format eq "multiday" && !$DayPrinted) {
         $DayPrinted = $TRUE;
         print "<th class=\"LeftHeader\">$Day ",@AbrvMonths[$Month-1]," $Year</th>\n";
@@ -268,6 +272,7 @@ sub PrintDayEvents (%) {
   if ($Format eq "full") {
     print "</table>\n";
   }  
+  return $Count;
 }
 
 1;
