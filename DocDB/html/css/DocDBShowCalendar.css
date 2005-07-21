@@ -11,10 +11,11 @@ table.Calendar td.Sunday, table.Calendar td.Saturday{
 
 .DayNav {
   text-align: center;
+  font-weight: bold;
 }
 
 .DayNav .CurrDate {
-  font-size: 120%;
+  font-size: 150%;
   margin-right: 10em;
   margin-left: 10em;
 }  
@@ -26,7 +27,7 @@ table.Calendar td.Sunday, table.Calendar td.Saturday{
   width: 1em;
   height: 1.25em;
   text-align: center;
-  background-color: #aaa;
+  background-color: #999;
   color: white;
   font-weight: bold;
   vertical-align: top;
@@ -64,9 +65,9 @@ table.ByMonth .Date {
 
 table.ByMonth .Event {
   clear: both;
-  padding-left: 0.75em;
+  padding-left: 0.3em;
   padding-bottom: 0.3em;
-  padding-right: 0.5em;
+  padding-right: 0.2em;
   display: block;
 }
 
@@ -124,6 +125,7 @@ table.WholeYear td.Month {
   margin-bottom: 2em;
   margin-right: auto;
   margin-left: auto;
+  border-collapse: collapse;
 }
 
 .MultidayEventList td {
