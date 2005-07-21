@@ -642,13 +642,13 @@ by the administrators.
 
  <entry>
   <key>shortdescription</key>
-  <title>Short Description of Subtopic or Conference</title>
+  <title>Short Description of Subtopic or Event</title>
   <text>
 This is the text that appears in the selectable boxes and in the ShowDocument
-script.
-<p/>
-For conferences, this should be the short name of the conference, like "High
-Energy 6."
+script. It should a short version of the topic or event. For example, in a
+conference this should be the short name of the conference, like "High Energy
+6." while "The Sixth International Conference of Interactions at High Energy"
+should be entered as the  long description. 
   </text>
  </entry>
 
@@ -658,10 +658,9 @@ Energy 6."
   <text>
 This is a longer description of the topic, if needed. If not, it should be the
 same as the short description. While this isn't used now, it might be in the
-future.
-<p/>
-For conferences, this should be the full name of the conference, like "The Sixth
-International Conference of Interactions at High Energy."
+future.For example, in a conference this should be the full name of the
+conference, like "The Sixth International Conference of Interactions at High
+Energy."
   </text>
  </entry>
 
