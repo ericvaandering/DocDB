@@ -441,7 +441,7 @@ print "<table class=\"HighPaddedTable\">\n";
 #FIXME: Make rest of these defaults "my"
 
 my $DefaultEventGroupID        = $Conferences{$ConferenceID}{EventGroupID};
-my $DefaultShortDescription    = $Conferences{$ConferenceID}{ShortDescription};
+my $DefaultShortDescription    = $Conferences{$ConferenceID}{Title};
 $DefaultLongDescription     = $Conferences{$ConferenceID}{LongDescription};
 $MeetingDefaultLocation     = $Conferences{$ConferenceID}{Location};
 $MeetingDefaultURL          = $Conferences{$ConferenceID}{URL};
@@ -475,9 +475,10 @@ print "<tr>\n";
  print "</td>\n";
 print "</tr>\n";
 print "<tr>\n";
-print "<td>\n"; &EventGroupSelect(-required => $RequiredEntries{EventGroup}, -default => [$DefaultGroupID]);
+print "<td>\n"; &EventGroupSelect(-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID]);
 print "<td>\n";
 push @DebugStack,"DSC: $DefaultShortDescription";
+push @DebugStack,"DEC: $DefaultEventGroupID";
 &ShortDescriptionBox(-name => "shortdesc", -helptext => "Short Description", -required => $RequiredEntries{ShortDescription}
                      -default => $DefaultShortDescription);
 &LongDescriptionBox(-required => $RequiredEntries{LongDescription});
