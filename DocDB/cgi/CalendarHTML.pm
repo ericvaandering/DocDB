@@ -226,7 +226,7 @@ sub PrintDayEvents (%) {
         if ($Format eq "multiday" && !$DayPrinted) {
           $DayPrinted = $TRUE;
           print "<th class=\"LeftHeader\">$Day ",@AbrvMonths[$Month-1]," $Year</th>\n";
-        } else {
+        } elsif ($Format eq "multiday") {
           print "<td>&nbsp;</td>\n";   
         }  
         print "<td>All day/no time</td>\n";
@@ -252,7 +252,7 @@ sub PrintDayEvents (%) {
       if ($Format eq "multiday" && !$DayPrinted) {
         $DayPrinted = $TRUE;
         print "<th class=\"LeftHeader\">$Day ",@AbrvMonths[$Month-1]," $Year</th>\n";
-      } else {
+      } elsif ($Format eq "multiday") {
         print "<td>&nbsp;</td>\n";   
       }  
       print "<td>$StartTime &ndash; $EndTime</td>\n";
