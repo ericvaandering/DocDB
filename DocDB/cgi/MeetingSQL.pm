@@ -359,7 +359,7 @@ sub DeleteSessionSeparator ($) {
   $MeetingOrderDelete     -> execute($SessionSeparatorID);
 }
 
-sub InsertEvents (%) {
+sub InsertRevisionEvents (%) {
   my %Params = @_;
   
   my $DocRevID =   $Params{-docrevid} || "";   

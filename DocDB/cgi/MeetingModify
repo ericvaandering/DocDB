@@ -51,7 +51,7 @@ $query = new CGI;  # Global for subroutines
 
 my $Mode               = $params{mode};
 
-my $MajorTopic         = $params{majortopic};
+my $EventGroupID       = $params{eventgroup};
 my $Short              = $params{short};
 my $Long               = $params{long};
 
@@ -123,29 +123,12 @@ unless ($dbh) {
 
 print $query->header;
 if ($SetMode eq "create") {
-  &DocDBHeader("Create a New Meeting","",-scripts => ["PopUps"]);
+  &DocDBHeader("Create a New Event","",-scripts => ["PopUps"]);
 } else {
-  &DocDBHeader("Modify a Meeting","",-scripts => ["PopUps"]);
+  &DocDBHeader("Modify an Event","",-scripts => ["PopUps"]);
 }
   
 &EndPage(@ErrorStack);
-
-&GetTopics;
-
-if ($Mode eq "create") {
-  if ($MajorTopic) {
-    unless ($Short) {
-      push @ErrorStack,$Msg_TopicNoShort;
-    }      
-  } else {
-    if ($Short) {
-      push @WarnStack,$Msg_TopicShortIgnored;
-    }  
-  }
-  unless ($Long) {
-    push @ErrorStack,$Msg_TopicNoLong;
-  }      
-}
 
 # Security checks
 
@@ -159,17 +142,26 @@ if ($ConferenceID && !CanModifyMeeting($ConferenceID)) {
 # Checks on input parameters 
 
 if ($Mode eq "create" || $Mode eq "modify") { 
+  unless ($Short) {
+    push @ErrorStack,$Msg_TopicNoShort;
+  }      
+  unless ($Long) {
+    push @ErrorStack,$Msg_TopicNoLong;
+  }      
   if ($URL && !(&ValidURL($URL))) {
     push @ErrorStack,"The URL $URL is not valid.";
   }
+  unless ($EventGroupID) {
+    push @ErrorStack,"You must select a group for this event.";
+  }
   unless ($EndTime   && &ValidDate($EndDay,$ReverseAbrvMonth{$EndMonth},$EndYear)) {
-    push @ErrorStack,"The meeting ending date is not valid.";
+    push @ErrorStack,"The event ending date is not valid.";
   }
   unless ($StartTime && &ValidDate($StartDay,$ReverseAbrvMonth{$StartMonth},$StartYear)) {
-    push @ErrorStack,"The meeting starting date is not valid.";
+    push @ErrorStack,"The event starting date is not valid.";
   }
   if ($StartTime > $EndTime) {
-    push @ErrorStack,"The meeting starting date is after the ending date.";
+    push @ErrorStack,"The event starting date is after the ending date.";
   }
 }
 
@@ -186,21 +178,19 @@ foreach my $CheckTitle (@CheckTitles) { # Check session times
   my $Day   = shift @CheckDays  ;
   if ($CheckTitle) {
     my $Time = timelocal(0,0,0,$Day,$ReverseAbrvMonth{$Month}-1,$Year);
-    unless ($Time   && &ValidDate($Day,$ReverseAbrvMonth{$Month},$Year)) {
+    unless ($Time && &ValidDate($Day,$ReverseAbrvMonth{$Month},$Year)) {
       push @ErrorStack,"The starting date for $CheckTitle is not valid.";
     }
     if ($Time > $EndTime) {
-      push @ErrorStack,"The starting date for $CheckTitle is after the meeting ending date.";
+      push @ErrorStack,"The starting date for $CheckTitle is after the event ends.";
     }
     if ($Time < $StartTime) {
-      push @ErrorStack,"The starting date for $CheckTitle is before the meeting starting date.";
+      push @ErrorStack,"The starting date for $CheckTitle is before the event starts.";
     }
   }
 }  
 
 &EndPage(@ErrorStack);
-
-my $MinorTopicID;
 
 my $TopicsCreated     = 0;
 my $MeetingsCreated   = 0;
@@ -219,50 +209,29 @@ if ($ConferenceID) {
   my @SessionIDs          = &FetchSessionsByConferenceID($ConferenceID);
   my @SessionSeparatorIDs = &FetchSessionSeparatorsByConferenceID($ConferenceID);
   my @MeetingOrderIDs     = &FetchMeetingOrdersByConferenceID($ConferenceID);
-  $MinorTopicID = $Conferences{$ConferenceID}{Minor};
 }     
 
 if ($Mode eq "create" || $Mode eq "modify") {
-  if ($MajorTopic && (($Mode eq "create") || 
-                      ($Mode eq "modify" && !$MinorTopicID))) { 
-    my $TopicInsert = $dbh->prepare(
-      "insert into MinorTopic ".
-      "(MinorTopicID, MajorTopicID, ShortDescription, LongDescription) ". 
-      "values (0,?,?,?)");
-    $TopicInsert -> execute($MajorTopic,$Short,$Long);
-    $MinorTopicID = $TopicInsert -> {mysql_insertid}; # Works with MySQL only
-    ++$TopicsCreated;
-  } elsif ($MajorTopic && $Mode eq "modify") {
-    my $TopicUpdate = $dbh -> prepare(
-      "update MinorTopic set ".
-      "MajorTopicID=?,ShortDescription=?,LongDescription=? ".
-      "where MinorTopicID=?");
-    $TopicUpdate -> execute($MajorTopic,$Short,$Long,$MinorTopicID);  
-    ++$TopicsUpdated;
-  }
-  unless ($MinorTopicID) {
-    $MinorTopicID = 0;
-  }
   if ($Mode eq "create") { 
     my $ConferenceInsert = $dbh->prepare(
      "insert into Conference ".
-     "(ConferenceID, MinorTopicID, Location, URL, ShowAllTalks, StartDate, EndDate, ".
-     " Preamble, Epilogue, Title) ". 
+     "(ConferenceID, EventGroupID, Location, URL, ShowAllTalks, StartDate, EndDate, ".
+     " Preamble, Epilogue, Title, LongDescription) ". 
      "values (0,?,?,?,?,?,?,?,?,?)");
-    $ConferenceInsert -> execute($MinorTopicID,$Location,$URL,$ShowAllTalks,
+    $ConferenceInsert -> execute($EventGroupID,$Location,$URL,$ShowAllTalks,
                                  $StartDate,$EndDate,$MeetPreamble,
-                                 $MeetEpilogue,$Long); 
+                                 $MeetEpilogue,$Short,$Long); 
     $ConferenceID = $ConferenceInsert -> {mysql_insertid}; # Works with MySQL only
     ++$MeetingsCreated;
   } elsif ($Mode eq "modify") {
     my $ConferenceUpdate = $dbh->prepare(
      "update Conference set ".
-            "MinorTopicID=?, Location=?, URL=?, ShowAllTalks=?, StartDate=?, EndDate=?, ".
-            " Preamble=?, Epilogue=?, Title=? ". 
+            "EventGroupID=?, Location=?, URL=?, ShowAllTalks=?, StartDate=?, EndDate=?, ".
+            "Preamble=?, Epilogue=?, Title=?, LongDescription=? ". 
      "where ConferenceID=?");
-    $ConferenceUpdate -> execute($MinorTopicID,$Location,$URL,$ShowAllTalks,
+    $ConferenceUpdate -> execute($EventGroupID,$Location,$URL,$ShowAllTalks,
                                  $StartDate,$EndDate,$MeetPreamble,
-                                 $MeetEpilogue,$Long,$ConferenceID); 
+                                 $MeetEpilogue,$Short,$Long,$ConferenceID); 
     ++$MeetingsUpdated;
   }
 
@@ -393,7 +362,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
 &WarnPage(@WarnStack);
 &EndPage(@ErrorStack);
 
-# Print out forms with sessions
+# Print out diagnostics
 
 if ($SessionsCreated   || $SessionsUpdated   || $SessionsDeleted   || 
     $SeparatorsCreated || $SeparatorsUpdated || $SeparatorsDeleted ||
@@ -467,16 +436,11 @@ if ($SetMode eq "modify") {
   print $query -> hidden(-name => 'conferenceid',   -default => $ConferenceID);
   $query -> param('conferenceid',$ConferenceID);
 }
-print "<table cellpadding=10>\n";
+print "<table class=\"HighPaddedTable\">\n";
 
-$DefaultMajorID = $MinorTopics{$MinorTopicID}{MAJOR};
-if ($MinorTopicID) {
-  $DefaultShortDescription = $MinorTopics{$MinorTopicID}{SHORT};
-  $DefaultLongDescription  = $MinorTopics{$MinorTopicID}{LONG};
-} else {
-  $DefaultShortDescription = "";
-  $DefaultLongDescription  = $Conferences{$ConferenceID}{Title};
-}
+$DefaultEventGroupID        = $Conferences{$ConferenceID}{EventGroupID};
+$DefaultShortDescription    = $Conferences{$ConferenceID}{ShortDescription};
+$DefaultLongDescription     = $Conferences{$ConferenceID}{LongDescription};
 $MeetingDefaultLocation     = $Conferences{$ConferenceID}{Location};
 $MeetingDefaultURL          = $Conferences{$ConferenceID}{URL};
 $MeetingDefaultPreamble     = $Conferences{$ConferenceID}{Preamble};
@@ -504,8 +468,7 @@ foreach my $MeetingModifyID (@MeetingModifyIDs) {
 
 
 print "<tr>\n";
- print "<td colspan=\"3\">Only select a Major Topic and fill in the short description if
- you want to make a new topic. Required fields are marked with $RequiredMark. \n";
+ print "<td colspan=\"3\">Required fields are marked with $RequiredMark. \n";
  print "<a ";
  &HelpLink("meetingtopic");
  print "Click for an explanation.</a>\n";
@@ -531,9 +494,9 @@ print "</td>\n";
 print "</tr>\n";
 print "</table>\n";
 
-print "<table cellpadding=10>\n";
+print "<table class=\"HighPaddedTable\">\n";
 
-print "<tr valign=top>\n";
+print "<tr>\n";
 print "<td>\n"; &ConferencePreambleBox; print "</td>\n";
 print "<td>\n"; 
 &SecurityScroll(-addpublic => 'true',
@@ -544,7 +507,7 @@ print "<td>\n";
               -default   => \@MeetingViewDefaults,
               -size      => 8);
 print "</td>\n";
-print "</tr><tr valign=top>\n";
+print "</tr><tr>\n";
 print "<td>\n"; &ConferenceEpilogueBox; print "</td>\n";
 print "<td>\n"; 
 &SecurityScroll(-name      => 'meetingmodifygroups', 
@@ -556,7 +519,7 @@ print "<td>\n";
 print "</td>\n";
 print "</tr>\n";
 print "</table>\n";
-print "<table cellpadding=10>\n";
+print "<table class=\"HighPaddedTable\">\n";
 
 %Conferences       = ();
 %Sessions          = ();
@@ -570,12 +533,12 @@ my @MeetingOrderIDs     = &FetchMeetingOrdersByConferenceID($ConferenceID);
 
 @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs;
 
-print "<tr valign=top>\n";
-print "<td colspan=2>\n"; &SessionEntryForm($ConferenceID,@MeetingOrderIDs);   print "</td>\n";
+print "<tr>\n";
+print "<td colspan=\"2\">\n"; &SessionEntryForm($ConferenceID,@MeetingOrderIDs);   print "</td>\n";
 print "</tr>\n";
 
-print "<tr valign=top>\n";
-print "<td align=center colspan=2>\n";
+print "<tr>\n";
+print "<td class=\"SubmitCell\" colspan=\"2\">\n";
 print $query -> submit (-value => "Modify Meeting and Sessions");
 print "</td>\n";
 print "</tr>\n";

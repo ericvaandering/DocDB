@@ -91,11 +91,11 @@ sub AddDocument {
     my $Version    = $DocRevisions{$DocRevID}{Version};
     &MakeDirectory($DocumentID,$Version); 
     &ProtectDirectory($DocumentID,$Version,@ViewIDs); 
-    $Count = &InsertAuthors(-docrevid   => $DocRevID, -authorids => \@AuthorIDs);
-    $Count = &InsertTopics(-docrevid    => $DocRevID, -topicids  => \@TopicIDs);
-    $Count = &InsertEvents(-docrevid    => $DocRevID, -eventids  => \@EventIDs);
-    $Count = &InsertSecurity(-docrevid  => $DocRevID, -viewids   => \@ViewIDs, -modifyids => \@ModifyIDs);
-    @FileIDs = &AddFiles(-docrevid  => $DocRevID, -datetime => $DateTime, -files => \%Files);
+    $Count = &InsertAuthors(-docrevid        => $DocRevID, -authorids => \@AuthorIDs);
+    $Count = &InsertTopics(-docrevid         => $DocRevID, -topicids  => \@TopicIDs);
+    $Count = &InsertRevisionEvents(-docrevid => $DocRevID, -eventids  => \@EventIDs);
+    $Count = &InsertSecurity(-docrevid       => $DocRevID, -viewids   => \@ViewIDs, -modifyids => \@ModifyIDs);
+    @FileIDs = &AddFiles(-docrevid           => $DocRevID, -datetime  => $DateTime, -files => \%Files);
     if (@SignOffIDs) {
       &InsertSignoffList($DocRevID,@SignOffIDs);
     }  

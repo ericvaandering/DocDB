@@ -374,7 +374,7 @@ $Count = &InsertSecurity(-docrevid  => $DocRevID,
 ### Add events
 if (@EventIDs) {
   require "MeetingSQL.pm";
-  $Count = &InsertEvents(-docrevid => $DocRevID, -eventids => \@EventIDs);
+  $Count = &InsertRevisionEvents(-docrevid => $DocRevID, -eventids => \@EventIDs);
 }
 ### Add link to SessionTalk                         
 
