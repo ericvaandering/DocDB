@@ -244,6 +244,10 @@ sub EventsByDate {
                   $amonth <=> $bmonth 
                           or
                     $aday <=> $bday
-}    
+}
+
+sub EventGroupsByName {
+  $EventGroups{$a}{ShortDescription} cmp $EventGroups{$b}{ShortDescription};
+}
 
 1;

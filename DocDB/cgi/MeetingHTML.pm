@@ -712,18 +712,45 @@ sub EventsByGroup (%) { # v7 replace #FIXME: Can I combine with Orphan meetings?
  
 sub EventGroupSelect (;%) {
   require "FormElements.pm";
+  require "MeetingSQL.pm";
+  require "Sorts.pm";
  
   my (%Params) = @_;
 
   my $Disabled = $Params{-disabled} || "0";
-  my $Mode     = $Params{-format}   || "short";
+  my $Multiple = $Params{-multiple} || "0";
+  my $Format   = $Params{-format}   || "short";
+  my @Defaults = @{$Params{-default}};
+ 
+  my $Booleans = "";
   
-  # Finish
+  if ($Disabled) {
+    $Booleans .= "-disabled";
+  }  
+
+  &GetAllEventGroups; 
+  my @EventGroupIDs = sort EventsGroupsByName keys %EventGroups;
+  my %Labels        = ();
+  foreach my $EventGroupID (@EventGroupIDs) {
+    if ($Format eq "full") {
+      $Labels{$EventGroupID} = $EventGroups{$Conferences{$ConferenceID}{EventGroupID}}{ShortDescription}; 
+    }
+  }      
+  
+  my $ElementTitle = &FormElementTitle(-helplink => "eventgroups", -helptext => "Event Groups");
+
+  print $ElementTitle;
+  print $query -> scrolling_list(-name     => "eventgroups",  -values  => \@EventGroupIDs, 
+                                 -labels   => \%Labels,       -size    => 10, 
+                                 -multiple => $Multiple,      -default => \@Defaults,
+                                 $Booleans);
 }
 
 sub EventSelect (;%) {
   require "FormElements.pm";
   require "MeetingSQL.pm";
+  require "Sorts.pm";
+
   my (%Params) = @_;
 
   my $Disabled = $Params{-disabled} || "0";
