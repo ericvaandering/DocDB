@@ -438,8 +438,10 @@ if ($SetMode eq "modify") {
 }
 print "<table class=\"HighPaddedTable\">\n";
 
-$DefaultEventGroupID        = $Conferences{$ConferenceID}{EventGroupID};
-$DefaultShortDescription    = $Conferences{$ConferenceID}{ShortDescription};
+#FIXME: Make rest of these defaults "my"
+
+my $DefaultEventGroupID        = $Conferences{$ConferenceID}{EventGroupID};
+my $DefaultShortDescription    = $Conferences{$ConferenceID}{ShortDescription};
 $DefaultLongDescription     = $Conferences{$ConferenceID}{LongDescription};
 $MeetingDefaultLocation     = $Conferences{$ConferenceID}{Location};
 $MeetingDefaultURL          = $Conferences{$ConferenceID}{URL};
@@ -465,8 +467,6 @@ foreach my $MeetingModifyID (@MeetingModifyIDs) {
   push @MeetingModifyDefaults,$GroupID;
 }
 
-
-
 print "<tr>\n";
  print "<td colspan=\"3\">Required fields are marked with $RequiredMark. \n";
  print "<a ";
@@ -475,9 +475,10 @@ print "<tr>\n";
  print "</td>\n";
 print "</tr>\n";
 print "<tr>\n";
-print "<td>\n"; &EventGroupSelect(-required => $RequiredEntries{EventGroup});
+print "<td>\n"; &EventGroupSelect(-required => $RequiredEntries{EventGroup}, -default => $DefaultGroupID;);
 print "<td>\n";
-&ShortDescriptionBox(-name => "shortdesc", -helptext => "Short Description", -required => $RequiredEntries{ShortDescription});
+&ShortDescriptionBox(-name => "shortdesc", -helptext => "Short Description", -required => $RequiredEntries{ShortDescription}
+                     -default => $DefaultShortDescription;);
 &LongDescriptionBox(-required => $RequiredEntries{LongDescription});
 &LocationBox;       
 &EventURLBox;  
