@@ -150,54 +150,7 @@ sub TopicsTable {
 }
 
 sub GatheringTable { # v7 redo, rename as event table?
-  require "Sorts.pm";
-  require "TopicSQL.pm";
-  require "ResponseElements.pm";
-  
-  my @MinorTopicIDs = sort byTopic keys %MinorTopics; #FIXME special sort 
-
-  print "<table cellpadding=4>\n";
-
-  print "<tr>\n";
-  print "<th>Description</th>\n";
-  print "<th>Long Description</th>\n";
-  print "<th>Location</th>\n";
-  print "<th>Dates</th>\n";
-  print "<th>URL</th>\n";
-  print "</tr>\n";
-  
-  foreach my $MajorID (@GatheringMajorIDs) { 
-    print "<tr>\n";
-    print "<th colspan=5><hr></th>\n";
-    print "</tr>\n";
-    print "<tr>\n";
-    print "<th colspan=5>$MajorTopics{$MajorID}{SHORT}</th>\n";
-    print "</tr>\n";
-
-    foreach my $MinorID (@MinorTopicIDs) {
-      if ($MajorID == $MinorTopics{$MinorID}{MAJOR}) {
-        print "<tr>\n";
-        
-        my $ConferenceID = $ConferenceMinor{$MinorID};
-        my $EventLink = &EventLink(-eventid => $ConferenceID);
-        my $Start = &EuroDate($Conferences{$ConferenceID}{StartDate});
-        my $End   = &EuroDate($Conferences{$ConferenceID}{EndDate});
-        my $Link;
-        if ($Conferences{$ConferenceID}{URL}) {
-          $Link = "<a href=\"$Conferences{$ConferenceID}{URL}\">$Conferences{$ConferenceID}{URL}</a>";
-        } else {
-          $Link = "None entered\n";
-        }
-        print "<td>$EventLink</td>\n";
-        print "<td>$MinorTopics{$MinorID}{LONG}</td>\n";
-        print "<td>$Conferences{$ConferenceID}{Location}</td>\n";
-        print "<td>$Start - $End</td>\n";
-        print "<td>$Link</td>\n";
-        print "</tr>\n";
-      }  
-    }  
-  }
-  print "</table>";
+  print "<p>Routine is obsolete, replace it</p>\n";
 }
 
 sub MajorGatheringSelect (;%) { # v7 remove 
@@ -205,33 +158,7 @@ sub MajorGatheringSelect (;%) { # v7 remove
 }
 
 sub ConferenceSelect { # v7 remove
-  require "TopicSQL.pm";
-  
-  my (%Params) = @_;
-  
-  my $Disabled = $Params{-disabled}  || "0";
-  
-  my $Booleans = "";
-  
-  if ($Disabled) {
-    $Booleans .= "-disabled";
-  }  
-  
-  my @MinorIDs           = sort byTopic keys %MinorTopics;
-  my @ConferenceTopicIDs = ();
-  my %TopicLabels        = ();
-  foreach my $MinorID (@MinorIDs) {
-    unless (&MajorIsConference($MinorTopics{$MinorID}{MAJOR}) || &MajorIsMeeting($MinorTopics{$MinorID}{MAJOR})) {
-      next;
-    }  
-    push @ConferenceTopicIDs,$MinorID;
-    $TopicLabels{$MinorID} = $MinorTopics{$MinorID}{SHORT}; 
-  }  
-  print "<b><a ";
-  &HelpLink("conference");
-  print "Conferences:</a></b> <br> \n";
-  print $query -> scrolling_list(-name => "conftopic", -values => \@ConferenceTopicIDs, 
-                                 -labels => \%TopicLabels, -size => 10, $Booleans);
+  print "<p>Routine is obsolete, replace it</p>\n";
 }
 
 sub ShortDescriptionBox  (;%) {
