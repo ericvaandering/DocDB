@@ -97,7 +97,7 @@ if ($Day && $Month && $Year) {
                       -text => "&laquo; $PrevDNum $PrevName $PrevYear");
   print "<span class=\"CurrDate\">$Day ";
   print &CalendarLink(-year => $Year, -month => $Month,
-                      -text => $Today -> month_name());
+                      -text => $TheDay -> month_name());
   print " ";                    
   print &CalendarLink(-year => $Year, -text => "$Year");
   print "</span>\n";
