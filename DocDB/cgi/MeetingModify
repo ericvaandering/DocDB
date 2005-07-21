@@ -217,7 +217,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
      "insert into Conference ".
      "(ConferenceID, EventGroupID, Location, URL, ShowAllTalks, StartDate, EndDate, ".
      " Preamble, Epilogue, Title, LongDescription) ". 
-     "values (0,?,?,?,?,?,?,?,?,?)");
+     "values (0,?,?,?,?,?,?,?,?,?,?)");
     $ConferenceInsert -> execute($EventGroupID,$Location,$URL,$ShowAllTalks,
                                  $StartDate,$EndDate,$MeetPreamble,
                                  $MeetEpilogue,$Short,$Long); 
