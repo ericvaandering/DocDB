@@ -142,7 +142,7 @@ if ($FutureEventTable) {
   
   if (@EventIDs) {
     print "<table class=\"CenteredTable MultidayEventList Alternating\">\n";
-    print "<tr><th>Date</th><th>Time</th><th>Upcoming Events</th><th></th><th></th></tr>\n";
+    print "<tr><th>Date</th><th>Time</th><th>Upcoming Events</th><th>Location</th><th></th></tr>\n";
     $TheDay = $Today -> clone();
     my $RowClass = "Odd";
     foreach my $i (0..60) {

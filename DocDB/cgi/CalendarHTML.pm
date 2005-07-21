@@ -212,7 +212,7 @@ sub PrintDayEvents (%) {
     print "<th>Time</th>\n";
     print "<th>Event</th>\n";
     print "<th>Location</th>\n";
-    print "<th>External URL</th>\n";
+    print "<th>&nbsp;</th>\n";
     print "</tr>\n";
   } elsif ($Format eq "full") {
     print "<tr><td>No events for this day</td></tr>\n";
