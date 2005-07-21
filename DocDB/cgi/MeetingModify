@@ -503,8 +503,8 @@ foreach my $MeetingModifyID (@MeetingModifyIDs) {
 
 
 
-print "<tr valign=top>\n";
- print "<td colspan=2>Only select a Major Topic and fill in the short description if
+print "<tr>\n";
+ print "<td colspan=\"3\">Only select a Major Topic and fill in the short description if
  you want to make a new topic. Required fields are marked with $RequiredMark. \n";
  print "<a ";
  &HelpLink("meetingtopic");
