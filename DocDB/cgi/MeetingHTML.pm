@@ -184,14 +184,11 @@ sub SessionEntryForm ($@) {
      print "<td>\n";              &SessionDescription;                 print "</td>\n";
      print "<td>\n";  &SessionDateTimePullDown;            print "</td>\n";
     print "</tr>\n";
-
-    print "<tr class=\"$RowClass\"><td colspan=\"4\">&nbsp;</td>\n";
-    print "</tr>\n";
   }
   print "</table>\n";
 }
 
-sub SessionDateTimePullDown (;%) {
+sub SessionDateTimePullDown (;%) { #FIXME: Replace with DateTimePulldown
   my %Params = @_;
 
   my $Default = $Params{-default} || 0;
