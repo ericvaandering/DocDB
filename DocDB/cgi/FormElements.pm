@@ -109,7 +109,7 @@ sub DateTimePulldown (%) { # Note capitalization
   }
 }
 
-sub DateTimePullDown {
+sub DateTimePullDown { #FIXME: Replace with DateTimePulldown
   my ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
   $year += 1900;
   $min = (int (($min+3)/5))*5; # Nearest five minutes
@@ -149,7 +149,7 @@ sub DateTimePullDown {
   print $query -> popup_menu (-name => 'overmin',-values => \@minutes, -default => $min);
 }
 
-sub StartDatePullDown (;%) {
+sub StartDatePullDown (;%) { #FIXME: Replace with DateTimePulldown
 
   my (%Params) = @_;
   
@@ -200,7 +200,7 @@ sub StartDatePullDown (;%) {
   print $query -> popup_menu (-name => 'startyear',-values => \@years, -default => $year, $Booleans);
 }
 
-sub EndDatePullDown (;%) {
+sub EndDatePullDown (;%) { #FIXME: Replace with DateTimePulldown
 
   my (%Params) = @_;
   

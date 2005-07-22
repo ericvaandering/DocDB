@@ -35,9 +35,10 @@ sub LocationBox (;%) {
   }  
   
   print "<div class=\"LocationEntry\">\n";
-  print "<b><a ";
-  &HelpLink("location");
-  print "Location:</a></b><br> \n";
+  my $ElementTitle = &FormElementTitle(-helplink  => "location", 
+                                       -helptext  => "Location",
+                                       -required  => $Required );
+  print $ElementTitle,"\n";                                     
   print $query -> textfield (-name => 'location', -default => $MeetingDefaultLocation,
                              -size => 40, -maxlength => 64, $Booleans);
   print "</div>\n";
@@ -57,9 +58,10 @@ sub EventURLBox (;%) {
   }  
   
   print "<div class=\"EventURLEntry\">\n";
-  print "<b><a ";
-  &HelpLink("confurl");
-  print "URL:</a></b><br> \n";
+  my $ElementTitle = &FormElementTitle(-helplink  => "confurl", 
+                                       -helptext  => "URL",
+                                       -required  => $Required );
+  print $ElementTitle,"\n";                                     
   print $query -> textfield (-name => 'url', -default => $MeetingDefaultURL,
                              -size => 40, -maxlength => 240, $Booleans);
   print "</div>\n";

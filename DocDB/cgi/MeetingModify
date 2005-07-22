@@ -429,19 +429,19 @@ if ($SessionsCreated   || $SessionsUpdated   || $SessionsDeleted   ||
 }    
 
 print $query -> start_multipart_form('POST',"$MeetingModify");
-$query -> param('mode',$SetMode);
-print $query -> hidden(-name => 'mode',   -default => $SetMode);
-
+print "<fieldset>\n";
+print $query -> hidden(-name => 'mode', -default => $SetMode);
 if ($SetMode eq "modify") {
-  print $query -> hidden(-name => 'conferenceid',   -default => $ConferenceID);
-  $query -> param('conferenceid',$ConferenceID);
+  print $query -> hidden(-name => 'conferenceid', -default => $ConferenceID);
 }
+print "</fieldset>\n";
+
 print "<table class=\"HighPaddedTable\">\n";
 
 #FIXME: Make rest of these defaults "my"
 
-my $DefaultEventGroupID        = $Conferences{$ConferenceID}{EventGroupID};
-my $DefaultShortDescription    = $Conferences{$ConferenceID}{Title};
+my $DefaultEventGroupID     = $Conferences{$ConferenceID}{EventGroupID};
+my $DefaultShortDescription = $Conferences{$ConferenceID}{Title};
 $DefaultLongDescription     = $Conferences{$ConferenceID}{LongDescription};
 $MeetingDefaultLocation     = $Conferences{$ConferenceID}{Location};
 $MeetingDefaultURL          = $Conferences{$ConferenceID}{URL};
@@ -475,7 +475,9 @@ print "<tr>\n";
  print "</td>\n";
 print "</tr>\n";
 print "<tr>\n";
-print "<td>\n"; &EventGroupSelect(-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID]);
+print "<td>\n"; 
+&EventGroupSelect(-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID]);
+print "</td>\n";
 print "<td>\n";
 &ShortDescriptionBox(-name => "shortdesc", -helptext => "Short Description", -required => $RequiredEntries{ShortDescription},
                      -default => $DefaultShortDescription);
@@ -485,9 +487,11 @@ print "<td>\n";
 print "</td>\n";
 print "<td>\n";
 print "<div>\n";
-&StartDatePullDown(-required => $RequiredEntries{StartDate}); 
+&DateTimePulldown(-name => "start",         -required => $RequiredEntries{StartDate}, 
+                  -helplink => "startdate", -helptext => "Start Date", -dateonly => $TRUE); 
 print "</div><div>\n";
-&EndDatePullDown(-required => $RequiredEntries{EndDate});   
+&DateTimePulldown(-name => "end",         -required => $RequiredEntries{EndDate}, 
+                  -helplink => "enddate", -helptext => "End Date", -dateonly => $TRUE); 
 print "</div><div>\n";
 &ConferenceShowAllTalks;
 print "</div>\n";
