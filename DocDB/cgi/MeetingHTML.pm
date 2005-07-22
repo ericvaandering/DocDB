@@ -103,15 +103,15 @@ sub SessionEntryForm ($@) {
   require "Scripts.pm";
   print "<b><a ";
   &HelpLink("sessions");
-  print "Sessions:</a></b><p> \n";
+  print "Sessions:</a></b>\n";
   print "<table id=\"SessionEntry\" class=\"LowPaddedTable Alternating\">\n";
 
-  print "<tr valign=bottom>\n";
-   print "<th>",&FormElementTitle(-helplink  => "meetingorder", -helptext  => "Order", -nobreak => $TRUE),                          " or ";
-   print        &FormElementTitle(-helplink  => "sessiondelete", -helptext  => "Delete", -nobreak => $TRUE),                        "</th>\n";
-   print "<th>",&FormElementTitle(-helplink  => "meetingseparator", -helptext  => "Break", -nobreak => $TRUE),                      "</th>\n";
-   print "<th>",&FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Session", -nobreak => $TRUE),                         "</th>\n";
-   print "<th>",&FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Location<br/>Start Date and Time", -nobreak => $TRUE),"</th>\n";
+  print "<tr>\n";
+   print "<th>",&FormElementTitle(-helplink  => "meetingorder", -helptext  => "Order", -nobreak => $TRUE, -nocolon => $TRUE),                          " or<br/>";
+   print        &FormElementTitle(-helplink  => "sessiondelete", -helptext  => "Delete", -nobreak => $TRUE, -nocolon => $TRUE),                        "</th>\n";
+   print "<th>",&FormElementTitle(-helplink  => "meetingseparator", -helptext  => "Break", -nobreak => $TRUE, -nocolon => $TRUE),                      "</th>\n";
+   print "<th>",&FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Session", -nobreak => $TRUE, -nocolon => $TRUE),                         "</th>\n";
+   print "<th>",&FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Location<br/>Start Date and Time", -nobreak => $TRUE, -nocolon => $TRUE),"</th>\n";
   print "</tr>\n";
   
   # Sort session IDs by order
@@ -165,10 +165,11 @@ sub SessionEntryForm ($@) {
 
     print "<tr class=\"$RowClass\">\n";
     
-     $query -> param('meetingorderid',$MeetingOrderID);
+     print "<td rowspan=\"2\">";
+     $query -> param('meetingorderid',$MeetingOrderID); #FIXME: Try go remove
      print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
 
-     print "<td rowspan=\"2\">"; &SessionOrder;                       print "<p/>\n";
+      &SessionOrder;                       print "<p/>\n";
                                           &SessionModifyLink($MeetingOrderID); print "<p/>\n";
                                           &SessionDelete($MeetingOrderID);     
      print "</td>\n";
@@ -184,7 +185,7 @@ sub SessionEntryForm ($@) {
      print "<td>\n";  &SessionDateTimePullDown;            print "</td>\n";
     print "</tr>\n";
 
-    print "<tr valign=top class=\"$RowClass\"><td colspan=4>&nbsp;</td>\n";
+    print "<tr class=\"$RowClass\"><td colspan=\"4\">&nbsp;</td>\n";
     print "</tr>\n";
   }
   print "</table>\n";

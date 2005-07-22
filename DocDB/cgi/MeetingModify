@@ -429,12 +429,12 @@ if ($SessionsCreated   || $SessionsUpdated   || $SessionsDeleted   ||
 }    
 
 print $query -> start_multipart_form('POST',"$MeetingModify");
-print "<fieldset>\n";
+print "<div>\n";
 print $query -> hidden(-name => 'mode', -default => $SetMode);
 if ($SetMode eq "modify") {
   print $query -> hidden(-name => 'conferenceid', -default => $ConferenceID);
 }
-print "</fieldset>\n";
+print "</div>\n";
 
 print "<table class=\"HighPaddedTable\">\n";
 
