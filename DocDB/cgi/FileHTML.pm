@@ -83,7 +83,6 @@ sub ShortFileListByRevID {
   }
   if (@RootFiles) {
     &ShortFileListByFileID(@RootFiles);
-
   } else {
     print "None<br>\n";
   }
@@ -162,9 +161,9 @@ sub ShortFileLink { #FIXME: Make option of FileLink
     $URL = $RetrieveFile."?docid=".$documentID."&amp;version=".$version."&amp;filename=".$shortfile;
   }
   if ($description) {
-    return "<a href=\"$base_url$shortfile\" title=\"$shortname\">$description</a>";
+    return "<a href=\"$URL\" title=\"$shortname\">$description</a>";
   } else {
-    return "<a href=\"$base_url$shortfile\" title=\"$shortname\">$shortname</a>";
+    return "<a href=\"$URL\" title=\"$shortname\">$shortname</a>";
   }
 }  
 
