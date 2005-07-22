@@ -69,18 +69,18 @@ sub EventURLBox (;%) {
 
 sub ConferencePreambleBox {
   require "Scripts.pm";
-  print "<b><a ";
-  &HelpLink("meetpreepi");
-  print "Meeting Preamble:</a></b><br> \n";
+  my $ElementTitle = &FormElementTitle(-helplink  => "meetpreepi", 
+                                       -helptext  => "Meeting Preamble");
+  print $ElementTitle,"\n";                                     
   print $query -> textarea (-name => 'meetpreamble', -default => $MeetingDefaultPreamble,
                             -columns => 50, -rows => 7);
 };
 
 sub ConferenceEpilogueBox {
   require "Scripts.pm";
-  print "<b><a ";
-  &HelpLink("meetpreepi");
-  print "Meeting Epilogue:</a></b><br> \n";
+  my $ElementTitle = &FormElementTitle(-helplink  => "meetpreepi", 
+                                       -helptext  => "Meeting Epilogue");
+  print $ElementTitle,"\n";                                     
   print $query -> textarea (-name => 'meetepilogue', -default => $MeetingDefaultEpilogue,
                             -columns => 50, -rows => 7);
 };
@@ -104,14 +104,14 @@ sub SessionEntryForm ($@) {
   print "<b><a ";
   &HelpLink("sessions");
   print "Sessions:</a></b><p> \n";
-  print "<table cellpadding=3 id=\"SessionEntry\" class=\"Alternating\">\n";
+  print "<table id=\"SessionEntry\" class=\"LowPaddedTable Alternating\">\n";
 
   print "<tr valign=bottom>\n";
-   print "<th><b><a "; &HelpLink("meetingorder");     print "Order</a></b> or <br>\n";
-   print "    <b><a "; &HelpLink("sessiondelete");    print "Delete</a></td>\n";
-   print "<th><b><a "; &HelpLink("meetingseparator"); print "Break</a></th>\n";
-   print "<th><b><a "; &HelpLink("sessioninfo");      print "Session Title & Description</a></th>\n";
-   print "<th><b><a "; &HelpLink("sessioninfo");      print "Location<br>Start Date and Time</a></th>\n";
+   print "<th>",&FormElementTitle(-helplink  => "meetingorder", -helptext  => "Order", -nobreak => $TRUE),                          " or ";
+   print        &FormElementTitle(-helplink  => "sessiondelete", -helptext  => "Delete", -nobreak => $TRUE),                        "</th>\n";
+   print "<th>",&FormElementTitle(-helplink  => "meetingseparator", -helptext  => "Break", -nobreak => $TRUE),                      "</th>\n";
+   print "<th>",&FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Session", -nobreak => $TRUE),                         "</th>\n";
+   print "<th>",&FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Location<br/>Start Date and Time", -nobreak => $TRUE),"</th>\n";
   print "</tr>\n";
   
   # Sort session IDs by order
@@ -163,25 +163,25 @@ sub SessionEntryForm ($@) {
       }
     } 
 
-    print "<tr valign=top class=\"$RowClass\">\n";
+    print "<tr class=\"$RowClass\">\n";
     
      $query -> param('meetingorderid',$MeetingOrderID);
      print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
 
-     print "<td align=center rowspan=2>"; &SessionOrder;                       print "<p/>\n";
+     print "<td rowspan=\"2\">"; &SessionOrder;                       print "<p/>\n";
                                           &SessionModifyLink($MeetingOrderID); print "<p/>\n";
                                           &SessionDelete($MeetingOrderID);     
      print "</td>\n";
 
-     print "<td align=center>\n"; &SessionSeparator($MeetingOrderID);  print "</td>\n";
+     print "<td>\n"; &SessionSeparator($MeetingOrderID);  print "</td>\n";
      print "<td>\n";              &SessionTitle($SessionDefaultTitle); print "</td>\n";
      print "<td>\n";              &SessionLocation;                    print "</td>\n";
     print "</tr>\n";
 
-    print "<tr valign=top class=\"$RowClass\">\n";
+    print "<tr class=\"$RowClass\">\n";
      print "<td>&nbsp;</td>\n";
      print "<td>\n";              &SessionDescription;                 print "</td>\n";
-     print "<td align=right>\n";  &SessionDateTimePullDown;            print "</td>\n";
+     print "<td>\n";  &SessionDateTimePullDown;            print "</td>\n";
     print "</tr>\n";
 
     print "<tr valign=top class=\"$RowClass\"><td colspan=4>&nbsp;</td>\n";
