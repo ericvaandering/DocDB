@@ -188,6 +188,7 @@ if (&CanCreateMeeting()) {
   print "<li>\n"; 
   print $query -> startform('POST',$SessionModify),"<div>\n";
   print $query -> hidden(-name => 'singlesession', -default => 1);
+  print $query -> hidden(-name => 'mode', -default => "create");
   print $query -> submit (-value => "Create");
   print " a new event only one session"; 
   print "\n</div>\n",$query -> endform,"\n\n";

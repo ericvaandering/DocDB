@@ -118,6 +118,10 @@ if ($SessionID) {
   unless (&CanModifyMeeting($ConferenceID)) {
     push @ErrorStack,$Msg_MeetNoModify;
   }
+} elsif ($Mode eq "create" && $SingleSession) { 
+  unless (&CanCreateMeeting()) {
+    push @ErrorStack,$Msg_MeetNoCreate;
+  }
 } else {
   push @ErrorStack,"You must specify a session to modify. You probably arrived
   here by error.";
