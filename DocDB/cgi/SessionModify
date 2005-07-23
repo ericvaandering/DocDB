@@ -353,9 +353,12 @@ if ($SingleSession) {
   &LocationBox;       
   &EventURLBox;  
   print "<div>\n";
-  my $FormElementTitle = &FormElementTitle(-helptext => "Start Date and Time", -helplink  => 'sessioninfo');
-  print $FormElementTitle;
-  &SessionDateTimePullDown(-default => $SessionDefaultDateTime);            
+#  my $FormElementTitle = &FormElementTitle(-helptext => "Start Date and Time", -helplink  => 'sessioninfo');
+#  print $FormElementTitle;
+#  &SessionDateTimePullDown(-default => $SessionDefaultDateTime);            
+  &DateTimePulldown(-helptext => "Start Date and Time", -helplink  => 'sessioninfo',
+                    -oneline  => $TRUE, -onetime=> $TRUE, -granularity => 15,
+                    -default => $SessionDefaultDateTime);
   print "</div>\n";
   print "</td>\n";
   print "<td>\n";
