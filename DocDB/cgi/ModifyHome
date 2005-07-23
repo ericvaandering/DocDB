@@ -195,7 +195,7 @@ if (&CanCreateMeeting()) {
   ### No sessions form
 
   print "<li>\n"; 
-  print $query -> startform('POST',$SessionModify),"<div>\n";
+  print $query -> startform('POST',$MeetingModify),"<div>\n";
   print $query -> hidden(-name => 'nosessions',    -default => 'true');
   print $query -> submit (-value => "Create");
   print " an externally managed event (e. g. a conference)"; 
