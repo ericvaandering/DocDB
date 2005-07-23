@@ -332,7 +332,7 @@ print $query -> hidden(-name => 'mode', -default => 'modify');
 if ($SingleSession) {
   my %RequiredEntries = ();
      $RequiredEntries{StartDate}        = $TRUE;
-     $RequiredEntries{EndDate}          = $TRUE;
+     $RequiredEntries{EndDate}          = $FALSE;
      $RequiredEntries{LongDescription}  = $FALSE; # Can get from ShortDescription
      $RequiredEntries{ShortDescription} = $TRUE;
      $RequiredEntries{EventGroup}       = $TRUE;
@@ -350,16 +350,13 @@ if ($SingleSession) {
   &ShortDescriptionBox(-name => "shortdesc", -helptext => "Short Description", -required => $RequiredEntries{ShortDescription},
                        -default => $DefaultShortDescription);
   &LongDescriptionBox(-required => $RequiredEntries{LongDescription});
-  &LocationBox;       
-  &EventURLBox;  
   print "<div>\n";
-#  my $FormElementTitle = &FormElementTitle(-helptext => "Start Date and Time", -helplink  => 'sessioninfo');
-#  print $FormElementTitle;
-#  &SessionDateTimePullDown(-default => $SessionDefaultDateTime);            
   &DateTimePulldown(-helptext => "Start Date and Time", -helplink  => 'sessioninfo',
                     -oneline  => $TRUE, -onetime=> $TRUE, -granularity => 15,
-                    -default => $SessionDefaultDateTime);
+                    -default => $SessionDefaultDateTime, -required => $RequiredEntries{StartDate} );
   print "</div>\n";
+  &LocationBox;       
+  &EventURLBox;  
   print "</td>\n";
   print "<td>\n";
   &SecurityScroll(-addpublic => 'true',

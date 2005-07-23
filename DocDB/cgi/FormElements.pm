@@ -120,7 +120,10 @@ sub DateTimePulldown (%) { # Note capitalization
   }
   unless ($OneLine || $DateOnly || $TimeOnly) {
     print "<br\>\n";
-  }  
+  } 
+  if ($OneLine) {
+    print "&nbsp;\n";
+  } 
   unless ($TimeOnly) {
     print $query -> popup_menu (-name => $Name."day",-values => \@Days, -default => $Day, $Booleans);
     print $query -> popup_menu (-name => $Name."month",-values => \@AbrvMonths, -default => $AbrvMonths[$Mon], $Booleans);
