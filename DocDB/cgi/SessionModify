@@ -57,7 +57,6 @@ $query = new CGI;  # Global for subroutines
 my $SessionID          = $params{sessionid};
 my $Mode               = $params{mode};
 my $SingleSession      = $params{singlesession};
-my $EventID            = $params{eventid};
 
 my $SessionTitle       = $params{sessiontitle};
 my $SessionDescription = $params{sessiondescription};
@@ -77,6 +76,18 @@ my @TalkSeparators  = split /\0/,$params{talkseparator};
 my @TalkDeletes     = split /\0/,$params{talkdelete};
 my @TalkConfirms    = split /\0/,$params{talkconfirm};
 my @TimeStamps      = split /\0/,$params{timestamp};
+
+# For single session mode
+
+my $EventID               = $params{eventid};
+my $Location              = $params{location};
+my $URL                   = $params{url};
+my $EventGroupID          = $params{eventgroups};
+my $Short                 = $params{shortdesc};
+my $Long                  = $params{long};
+my @MeetingViewGroupIDs   = split /\0/,$params{meetingviewgroups};
+my @MeetingModifyGroupIDs = split /\0/,$params{meetingmodifygroups};
+
 
 $query -> delete_all(); # FIXME: No sticky should stop this. Stop program from caching variable from script to script
 
@@ -121,6 +132,10 @@ if ($SessionID) {
 } elsif ($Mode eq "create" && $SingleSession) { 
   unless (&CanCreateMeeting()) {
     push @ErrorStack,$Msg_MeetNoCreate;
+  }
+} elsif ($ConferenceID) { 
+  unless (&CanModifyMeeting($ConferenceID)) {
+    push @ErrorStack,$Msg_MeetNoModify;
   }
 } else {
   push @ErrorStack,"You must specify a session to modify. You probably arrived
@@ -336,13 +351,28 @@ if ($SingleSession) {
   &LongDescriptionBox(-required => $RequiredEntries{LongDescription});
   &LocationBox;       
   &EventURLBox;  
-  print "</td>\n";
-  print "<td>\n";
   print "<div>\n";
   my $FormElementTitle = &FormElementTitle(-helptext => "Start Date and Time", -helplink  => 'sessioninfo');
   print $FormElementTitle;
   &SessionDateTimePullDown(-default => $SessionDefaultDateTime);            
   print "</div>\n";
+  print "</td>\n";
+  print "<td>\n";
+  &SecurityScroll(-addpublic => 'true',
+                  -name      => 'meetingviewgroups', 
+                  -helplink  => 'meetingviewgroups',
+                  -helptext  => 'Viewable by',
+                  -multiple  => true,
+                  -default   => \@MeetingViewDefaults,
+                  -size      => 8);
+  print "</td>\n";
+  print "<td>\n";
+  &SecurityScroll(-name      => 'meetingmodifygroups', 
+                  -helplink  => 'meetingmodifygroups',
+                  -helptext  => 'Modifiable by',
+                  -multiple  => true,
+                  -default   => \@MeetingModifyDefaults,
+                  -size      => 8);
   print "</td>\n";
   print "</tr>\n";
   print "</table>\n";
