@@ -90,13 +90,6 @@ my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
 
 my ($StartTime,$EndTime);
 
-my %RequiredEntries = ();
-   $RequiredEntries{StartDate}        = $TRUE;
-   $RequiredEntries{EndDate}          = $TRUE;
-   $RequiredEntries{LongDescription}  = $TRUE;
-   $RequiredEntries{ShortDescription} = $TRUE;
-   $RequiredEntries{EventGroup}       = $TRUE;
-   
 if ($StartDay && $StartMonth && $StartYear) {
   $StartTime = timelocal(0,0,0,$StartDay,$ReverseAbrvMonth{$StartMonth}-1,$StartYear);
 }
@@ -113,6 +106,10 @@ if ($ConferenceID || $Mode) {
   $SetMode = "create";
 }    
 
+unless ($Long) {
+  $Long = $Short;
+}  
+
 @ErrorStack = ();
 @WarnStack  = ();
 
@@ -122,6 +119,13 @@ unless ($dbh) {
   push @ErrorStack,$Msg_NoConnect;
 }         
 
+my %RequiredEntries = ();
+   $RequiredEntries{StartDate}        = $TRUE;
+   $RequiredEntries{EndDate}          = $TRUE;
+   $RequiredEntries{LongDescription}  = $FALSE; # Can get from ShortDescription
+   $RequiredEntries{ShortDescription} = $TRUE;
+   $RequiredEntries{EventGroup}       = $TRUE;
+   
 print $query->header;
 if ($SetMode eq "create") {
   &DocDBHeader("Create a New Event","",-scripts => ["PopUps"]);
@@ -145,9 +149,6 @@ if ($ConferenceID && !CanModifyMeeting($ConferenceID)) {
 if ($Mode eq "create" || $Mode eq "modify") { 
   unless ($Short) {
     push @ErrorStack,$Msg_TopicNoShort;
-  }      
-  unless ($Long) {
-    push @ErrorStack,$Msg_TopicNoLong;
   }      
   if ($URL && !(&ValidURL($URL))) {
     push @ErrorStack,"The URL $URL is not valid.";

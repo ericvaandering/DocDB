@@ -314,6 +314,12 @@ $query -> param('mode','modify');        #FIXME eliminate?
 print $query -> hidden(-name => 'mode', -default => 'modify');
 
 if ($SingleSession) {
+  my %RequiredEntries = ();
+     $RequiredEntries{StartDate}        = $TRUE;
+     $RequiredEntries{EndDate}          = $TRUE;
+     $RequiredEntries{LongDescription}  = $FALSE; # Can get from ShortDescription
+     $RequiredEntries{ShortDescription} = $TRUE;
+     $RequiredEntries{EventGroup}       = $TRUE;
   print "<table class=\"HighPaddedTable\">\n";
 
   print "<tr>\n";
@@ -333,9 +339,9 @@ if ($SingleSession) {
   print "</td>\n";
   print "<td>\n";
   print "<div>\n";
-  &DateTimePulldown(-name => "start",         -required => $RequiredEntries{StartDate}, 
-                    -helplink => "startdate", -helptext => "Start Date", 
-                    -dateonly => $TRUE,       -default  => $DefaultStartDate); 
+  my $FormElementTitle = &FormElementTitle(-helptext => "Start Date and Time", -helplink  => 'sessioninfo');
+  print $FormElementTitle;
+  &SessionDateTimePullDown(-default => $SessionDefaultDateTime);            
   print "</div>\n";
   print "</td>\n";
   print "</tr>\n";
