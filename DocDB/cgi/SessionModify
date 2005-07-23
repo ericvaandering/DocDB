@@ -43,10 +43,11 @@ require "TalkHintUtilities.pm";
 require "FormElements.pm";
 require "ResponseElements.pm";
 require "MeetingHTML.pm";
+require "SecurityHTML.pm";
 require "TalkHTML.pm";
 require "MeetingSQL.pm";
-require "TalkSQL.pm";
 require "TalkHintSQL.pm";
+require "TalkSQL.pm";
 
 $query = new CGI;  # Global for subroutines
 

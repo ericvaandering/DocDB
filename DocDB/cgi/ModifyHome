@@ -190,7 +190,7 @@ if (&CanCreateMeeting()) {
   print $query -> hidden(-name => 'singlesession', -default => 1);
   print $query -> hidden(-name => 'mode', -default => "create");
   print $query -> submit (-value => "Create");
-  print " a new event only one session"; 
+  print " a new event with only one session"; 
   print "\n</div>\n",$query -> endform,"\n\n";
   print "</li>\n"; 
 
