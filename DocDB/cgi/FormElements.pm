@@ -42,11 +42,11 @@ sub DateTimePulldown (%) { # Note capitalization
   
   my $Name        = $Params{-name}        || "date";
   my $Disabled    = $Params{-disabled}    || 0;
-  my $DateOnly    = $Params{-dateonly}    || 0; 
-  my $TimeOnly    = $Params{-timeonly}    || 0; 
-  my $OneTime     = $Params{-onetime}     || 0; # Not Used (do like 5:45 in one pulldown)
+  my $DateOnly    = $Params{-dateonly}    || 0;
+  my $TimeOnly    = $Params{-timeonly}    || 0;
+  my $OneTime     = $Params{-onetime}     || 0;
   my $OneLine     = $Params{-oneline}     || 0;
-  my $Granularity = $Params{-granularity} || 5; 
+  my $Granularity = $Params{-granularity} || 5;
   
   my $Default     = $Params{-default};
 
@@ -94,6 +94,13 @@ sub DateTimePulldown (%) { # Note capitalization
     push @Minutes,(sprintf "%2.2d",$i);
   }  
   
+  my @Times = ();
+  for (my $Hour = 0; $Hour<=23; ++$Hour) {
+    for (my $Min = 0; $Min<=59; $Min=$Min+$Granularity) {
+      push @Times,sprintf "%2.2d:%2.2d",$Hour,$Min;
+    }  
+  }  
+  
   my $ElementTitle = &FormElementTitle(-helplink  => $HelpLink , 
                                        -helptext  => $HelpText ,
                                        -extratext => $ExtraText,
@@ -102,18 +109,22 @@ sub DateTimePulldown (%) { # Note capitalization
                                        -required  => $Required );
   print $ElementTitle,"\n";                                     
 
+  unless ($DateOnly) {
+    if ($OneDate) {
+      print $query -> popup_menu (-name => $Name."time", -values => \@Times,   -default => "$Hour:$Min", $Booleans);
+    } else {
+      print $query -> popup_menu (-name => $Name."hour", -values => \@Hours,   -default => $Hour, $Booleans);
+      print "<b> : </b>\n";
+      print $query -> popup_menu (-name => $Name."min",  -values => \@Minutes, -default => $Min, $Booleans);
+    }
+  }
+  unless ($OneLine || $DateOnly || $TimeOnly) {
+    print "<br\>\n";
+  }  
   unless ($TimeOnly) {
     print $query -> popup_menu (-name => $Name."day",-values => \@Days, -default => $Day, $Booleans);
     print $query -> popup_menu (-name => $Name."month",-values => \@AbrvMonths, -default => $AbrvMonths[$Mon], $Booleans);
     print $query -> popup_menu (-name => $Name."year",-values => \@Years, -default => $Year, $Booleans);
-  }
-  unless ($OneLine || $DateOnly || $TimeOnly) {
-    print "<br>\n";
-  }  
-  unless ($DateOnly) {
-    print $query -> popup_menu (-name => $Name."hour",-values => \@Hours, -default => $Hour, $Booleans);
-    print "<b> : </b>\n";
-    print $query -> popup_menu (-name => $Name."min",-values => \@Minutes, -default => $Min, $Booleans);
   }
 }
 
