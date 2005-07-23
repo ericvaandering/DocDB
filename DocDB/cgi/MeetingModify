@@ -354,8 +354,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
       }  
     }  
   }
-  unless (!$NoSessions && ($SessionsCreated   || $SessionsUpdated || 
-                           $SeparatorsCreated || $SeparatorsUpdated)) {
+  unless ($NoSessions || $SessionsCreated   || $SessionsUpdated || $SeparatorsCreated || $SeparatorsUpdated) {
     push @WarnStack,$Msg_MeetNoSessions; 
   }
 }
