@@ -368,12 +368,12 @@ if ($SessionsCreated   || $SessionsUpdated   || $SessionsDeleted   ||
     $SeparatorsCreated || $SeparatorsUpdated || $SeparatorsDeleted ||
     $MeetingsCreated   || $MeetingsUpdated) {
   print "<dl>\n";
-  print "<dt><b>This meeting has been modified:</b>\n";
+  print "<dt><b>This event has been modified:</b>\n";
   if ($MeetingsCreated) {
-    print "<dd>New meeting created";
+    print "<dd>New event created";
   }
   if ($MeetingsUpdated) {
-    print "<dd>Meeting modified";
+    print "<dd>Event modified";
   }
   if ($SessionsCreated   || $SessionsUpdated   || $SessionsDeleted) {
     print "<dd>";
@@ -425,7 +425,7 @@ if ($SessionsCreated   || $SessionsUpdated   || $SessionsDeleted   ||
   }  
   print "</dl>\n";
   print "You can make more modifications, <b>modify session agendas</b> or <b><a href=\"$DisplayMeeting?conferenceid=$ConferenceID\">Display
-         the Meeting</a></b>\n";
+         the Event</a></b>\n";
 }    
 
 print $query -> start_multipart_form('POST',"$MeetingModify");
@@ -438,8 +438,6 @@ if ($NoSessions) {
   print $query -> hidden(-name => "nosessions", -default => "true");
 }
 print "</div>\n";
-
-print "<table class=\"HighPaddedTable\">\n";
 
 #FIXME: Make rest of these defaults "my"
 
@@ -469,6 +467,8 @@ foreach my $MeetingModifyID (@MeetingModifyIDs) {
   my $GroupID = $MeetingModify{$MeetingModifyID}{GroupID};
   push @MeetingModifyDefaults,$GroupID;
 }
+
+print "<table class=\"HighPaddedTable\">\n";
 
 print "<tr>\n";
  print "<td colspan=\"3\">Required fields are marked with $RequiredMark. \n";
