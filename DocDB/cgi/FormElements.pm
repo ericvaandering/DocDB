@@ -46,9 +46,9 @@ sub DateTimePulldown (%) { # Note capitalization
   my $TimeOnly    = $Params{-timeonly}    || 0; 
   my $OneTime     = $Params{-onetime}     || 0; # Not Used (do like 5:45 in one pulldown)
   my $OneLine     = $Params{-oneline}     || 0;
-  my $Granularity = $Params{-granularity} || 5; # Not Used
+  my $Granularity = $Params{-granularity} || 5; 
   
-  my @Defaults = @{$Params{-default}}; # Not Used
+  my $Default     = $Params{-default};
 
   my $HelpLink  = $Params{-helplink}  || "";
   my $HelpText  = $Params{-helptext}  || "Date & Time";
@@ -66,6 +66,14 @@ sub DateTimePulldown (%) { # Note capitalization
   $Year += 1900;
   $Min = (int (($Min+($Granularity/2))/$Granularity))*$Granularity; # Nearest $Granularity minutes
 
+  if ($Default && $DateOnly) {
+    ($Year,$Mon,$Day) = split /-/,$Default;
+    $Day  = int($Day);
+    $Mon  = int($Mon);
+    $Year = int($Year);
+    --$Mon;
+  }
+  
   my @Years = ();
   for (my $i = $FirstYear; $i<=$Year; ++$i) { # $FirstYear - current year
     push @Years,$i;

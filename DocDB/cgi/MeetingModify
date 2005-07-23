@@ -448,8 +448,8 @@ $MeetingDefaultURL          = $Conferences{$ConferenceID}{URL};
 $MeetingDefaultPreamble     = $Conferences{$ConferenceID}{Preamble};
 $MeetingDefaultEpilogue     = $Conferences{$ConferenceID}{Epilogue};
 $MeetingDefaultShowAllTalks = $Conferences{$ConferenceID}{ShowAllTalks};
-$DefaultStartDate           = $Conferences{$ConferenceID}{StartDate};
-$DefaultEndDate             = $Conferences{$ConferenceID}{EndDate};
+my $DefaultStartDate        = $Conferences{$ConferenceID}{StartDate};
+my $DefaultEndDate          = $Conferences{$ConferenceID}{EndDate};
 
 # Get deaults for meeting view/modify
 
@@ -488,10 +488,12 @@ print "</td>\n";
 print "<td>\n";
 print "<div>\n";
 &DateTimePulldown(-name => "start",         -required => $RequiredEntries{StartDate}, 
-                  -helplink => "startdate", -helptext => "Start Date", -dateonly => $TRUE); 
+                  -helplink => "startdate", -helptext => "Start Date", 
+                  -dateonly => $TRUE,       -default  => $DefaultStartDate); 
 print "</div><div>\n";
 &DateTimePulldown(-name => "end",         -required => $RequiredEntries{EndDate}, 
-                  -helplink => "enddate", -helptext => "End Date", -dateonly => $TRUE); 
+                  -helplink => "enddate", -helptext => "End Date", 
+                  -dateonly => $TRUE,     -default  => $DefaultEndDate); 
 print "</div><div>\n";
 &ConferenceShowAllTalks;
 print "</div>\n";
