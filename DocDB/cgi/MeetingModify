@@ -548,15 +548,14 @@ unless ($NoSessions) {
   print "<tr>\n";
   print "<td colspan=\"2\">\n"; &SessionEntryForm($ConferenceID,@MeetingOrderIDs);   print "</td>\n";
   print "</tr>\n";
-
-  print "<tr>\n";
-  print "<td class=\"SubmitCell\" colspan=\"2\">\n";
-  print $query -> submit (-value => "Modify Meeting and Sessions");
-  print "</td>\n";
-  print "</tr>\n";
-
   print "</table>\n";
+
+
 }
+
+print "<div class=\"SubmitCell\">\n";
+print $query -> submit (-value => "Modify Meeting and Sessions");
+print "</div>\n";
   
 print $query -> end_multipart_form;
 
