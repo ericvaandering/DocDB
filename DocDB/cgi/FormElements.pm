@@ -110,7 +110,7 @@ sub DateTimePulldown (%) { # Note capitalization
   print $ElementTitle,"\n";                                     
 
   unless ($DateOnly) {
-    if ($OneDate) {
+    if ($OneTime) {
       print $query -> popup_menu (-name => $Name."time", -values => \@Times,   -default => "$Hour:$Min", $Booleans);
     } else {
       print $query -> popup_menu (-name => $Name."hour", -values => \@Hours,   -default => $Hour, $Booleans);
