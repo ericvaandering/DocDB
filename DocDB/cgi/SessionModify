@@ -153,15 +153,24 @@ if ($Mode eq "modify" || $Mode eq "create") {
                       ShD $Short LD $Long";
     $EventID = &InsertEvent(-eventgroupid => $EventGroupID, -location => $Location,
                -url => $URL, -startdate   => $SessionDate,  -enddate  => $SessionDate,
-               -shortdescription          => $Short, -longdescription => $Long);
+               -shortdescription          => $Short, -longdescription => $Long,
+               -showalltalks              => 1);
+    &MeetingSecurityUpdate(-mode         => 'access',
+                           -conferenceid => $EventID, 
+                           -groupids     => \@MeetingViewGroupIDs);
+    &MeetingSecurityUpdate(-mode         => 'modify',
+                           -conferenceid => $EventID, 
+                           -groupids     => \@MeetingModifyGroupIDs);
     push @DebugStack,"Created new event $EventID";
     $SessionID = &InsertSession(-eventid => $EventID, -date     => $SessionDate,
                                 -title   => $Short,   -location => $Location);
     push @DebugStack,"Created new session $SessionID";
   } elsif ($SingleSession && $Mode eq "modify") {
-    &UpdateEvent(-eventid => $EventID, -eventgroupid => $EventGroupID,   -location => $Location,
-               -url => $URL, -startdate   => $SessionDate,    -enddate  => $SessionDate,
-               -shortdescription => $ShortDescription, -longdescription => $LongDescription);
+    &UpdateEvent(-eventid => $EventID, -eventgroupid => $EventGroupID,  
+                 -location => $Location, -url => $URL, 
+                 -startdate => $SessionDate, -enddate  => $SessionDate,
+                 -shortdescription => $Short, -longdescription => $Long,
+                 -showalltalks => 1);
     &UpdateSession(-sessionid => $SessionID, -date     => $SessionDate,
                    -title     => $Short,     -location => $Location);
   } else {

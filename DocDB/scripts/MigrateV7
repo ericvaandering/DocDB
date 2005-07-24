@@ -55,6 +55,8 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                           
   my $ConferenceAdd1  = $dbh -> prepare("alter table Conference add EventGroupID int"); 
   my $ConferenceAdd2  = $dbh -> prepare("alter table Conference add LongDescription text"); 
+  my $ConferenceAdd3  = $dbh -> prepare("alter table Conference add index (StartDate)"); 
+  my $ConferenceAdd4  = $dbh -> prepare("alter table Conference add index (EndDate)"); 
 
 
   $RevisionAdd         -> execute();
@@ -62,6 +64,8 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
   $RevisionEventCreate -> execute();
   $ConferenceAdd1      -> execute();
   $ConferenceAdd2      -> execute();
+  $ConferenceAdd3      -> execute();
+  $ConferenceAdd4      -> execute();
  }
 
 if ($Action eq "migrate") {
@@ -162,7 +166,7 @@ if ($Action eq "migrate") {
     $ConferenceUpdate -> execute($EventGroupID,$Conferences{$ConferenceID}{Title},$ConferenceID);
     # Should figure out how to associate documents with these too                                         
   }
-  print "If no orphan events were reported, remove the Event Group \"Orphans\"\n";  
+  print "If no orphan events were reported, you may remove the Event Group \"Orphans\"\n";  
 }
 
 if ($Action eq "undo") { # Undo modifications
@@ -186,12 +190,14 @@ if ($Action eq "delete") {
   my $MajorTopicDel2     = $dbh -> prepare("alter table MajorTopic drop Suppressed "); 
   my $ConferenenceDel1   = $dbh -> prepare("alter table Conference drop MinorTopicID "); 
   my $ConferenenceDel2   = $dbh -> prepare("alter table Conference drop SingleSession "); 
+  my $SessionDel         = $dbh -> prepare("alter table Session    drop ShowAllTalks "); 
   
   $DocTypeDel       -> execute();
   $MajorTopicDel1   -> execute();
   $MajorTopicDel2   -> execute();
   $ConferenenceDel1 -> execute();
   $ConferenenceDel2 -> execute();
+  $SessionDel       -> execute();
 }
 
 exit;
