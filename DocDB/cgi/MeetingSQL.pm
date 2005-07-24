@@ -301,6 +301,79 @@ sub FetchMeetingOrdersByConferenceID {
   return @MeetingOrderIDs; 
 }
 
+sub InsertEvent (%) {
+  my (%Params) = @_;
+  
+  my $EventGroupID     = $Params{-eventgroupid}     || 0;
+  my $ShortDescription = $Params{-shortdescription} || "";
+  my $LongDescription  = $Params{-longdescription}  || "";
+  my $StartDate        = $Params{-startdate}        || &SQLNow();
+  my $EndDate          = $Params{-enddate}          || &SQLNow();
+  my $Location         = $Params{-location}         || "";
+  my $URL              = $Params{-url}              || "";
+  my $ShowAllTalks     = $Params{-showalltalks}     || 0;
+  my $Preample         = $Params{-preample}         || "";
+  my $Epilogue         = $Params{-epilogue}         || "";
+
+  my $Insert = $dbh->prepare(
+     "insert into Conference ".
+     "(ConferenceID, EventGroupID, Location, URL, ShowAllTalks, StartDate, EndDate, ".
+     " Preamble, Epilogue, Title, LongDescription) ". 
+     "values (0,?,?,?,?,?,?,?,?,?,?)");
+  $Insert -> execute($EventGroupID,$Location,$URL,$ShowAllTalks,
+                     $StartDate,$EndDate,$Preamble,
+                     $Epilogue,$ShortDescription,$LongDescription); 
+  $EventID = $Insert -> {mysql_insertid}; 
+  
+  return $EventID;  
+}
+
+sub UpdateEvent (%) {
+  my (%Params) = @_;
+
+  my $EventID          = $Params{-eventid}          || 0;
+  my $EventGroupID     = $Params{-eventgroupid}     || 0;
+  my $ShortDescription = $Params{-shortdescription} || "";
+  my $LongDescription  = $Params{-longdescription}  || "";
+  my $StartDate        = $Params{-startdate}        || &SQLNow();
+  my $EndDate          = $Params{-enddate}          || &SQLNow();
+  my $Location         = $Params{-location}         || "";
+  my $URL              = $Params{-url}              || "";
+  my $ShowAllTalks     = $Params{-showalltalks}     || 0;
+  my $Preample         = $Params{-preample}         || "";
+  my $Epilogue         = $Params{-epilogue}         || "";
+
+
+  my $Update = $dbh->prepare(
+   "update Conference set ".
+     "EventGroupID=?, Location=?, URL=?, ShowAllTalks=?, StartDate=?, EndDate=?, ".
+     "Preamble=?, Epilogue=?, Title=?, LongDescription=? ". 
+   "where ConferenceID=?");
+  $Update -> execute($EventGroupID,$Location,$URL,$ShowAllTalks,
+                     $StartDate,$EndDate,$Preamble,$Epilogue,
+                     $ShortDescription,$LongDescription,$ConferenceID); 
+  return;
+}
+
+sub InsertSession (%) {
+  my (%Params) = @_;
+  
+  my $EventID     = $Params{-eventid}     || 0;
+  my $Date        = $Params{-date}        || "";
+  my $Title       = $Params{-title}       || "";
+  my $Description = $Params{-description} || "";
+  my $Location    = $Params{-location}    || "";
+
+  my $Insert = $dbh -> prepare(
+   "insert into Session ".
+          "(SessionID, ConferenceID, StartTime, Location, Title, Description) ". 
+   "values (0,?,?,?,?,?)");
+  $Insert          -> execute($EventID,$Date,$Location,$Title,$Description);
+  $SessionID = $Insert -> {mysql_insertid}; 
+
+  return $SessionID;
+}  
+
 sub UpdateSession (%) {
   my (%Params) = @_;
   

@@ -66,7 +66,7 @@ my $SessionLocation    = $params{sessionlocation};
 my $SessionDay   = $params{sessionday};
 my $SessionMonth = $params{sessionmonth};
 my $SessionYear  = $params{sessionyear};
-my $SessionHour  = $params{sessionhour};
+my $SessionHour  = $params{sessiontime};
 
 my @SessionOrderIDs = split /\0/,$params{sessionorderid};
 my @TalkOrders      = split /\0/,$params{talkorder};
@@ -88,7 +88,7 @@ my $Short                 = $params{shortdesc};
 my $Long                  = $params{long};
 my @MeetingViewGroupIDs   = split /\0/,$params{meetingviewgroups};
 my @MeetingModifyGroupIDs = split /\0/,$params{meetingmodifygroups};
-
+my ($EventStartDate);
 
 $query -> delete_all(); # FIXME: No sticky should stop this. Stop program from caching variable from script to script
 
@@ -144,7 +144,21 @@ if ($SessionID) {
 }  
 &EndPage(@ErrorStack);
 
-if ($Mode eq "modify") {
+if ($Mode eq "modify" || $Mode eq "create") {
+
+  if ($SingleSession && $Mode eq "create") { # Make an event, then a session, pass variables out
+    $EventID = &InsertEvent(-eventgroupid => $EventGroupID,   -location => $Location,
+               -url => $URL, -startdate   => $EventStartDate, -enddate  => $EventStartDate,
+               -shortdescription => $ShortDescription, -longdescription => $LongDescription);
+    $SessionID = &InsertSession(-eventid => $EventID,          -date     => $EventStartDate,
+                                -title   => $ShortDescription, -location => $Location);
+  } elsif ($SingleSession && $Mode eq "modify") {
+    &UpdateEvent(-eventid => $EventID, -eventgroupid => $EventGroupID,   -location => $Location,
+               -url => $URL, -startdate   => $EventStartDate, -enddate  => $EventStartDate,
+               -shortdescription => $ShortDescription, -longdescription => $LongDescription);
+    &UpdateSession(-sessionid => $SessionID,        -date     => $EventStartDate,
+                   -title     => $ShortDescription, -location => $Location);
+  }
 
   # Update Session parameters, refetch
   my $SessionDate = "$SessionYear-$ReverseAbrvMonth{$SessionMonth}-$SessionDay $SessionHour:00";
