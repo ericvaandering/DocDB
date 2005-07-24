@@ -302,6 +302,8 @@ sub FetchMeetingOrdersByConferenceID {
 }
 
 sub InsertEvent (%) {
+  require "SQLUtilities.pm";
+
   my (%Params) = @_;
   
   my $EventGroupID     = $Params{-eventgroupid}     || 0;
