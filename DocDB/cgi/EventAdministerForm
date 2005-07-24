@@ -133,7 +133,7 @@ if ($SubForm eq "eventgroup") {
     }  
     unless ($Abort) {
       my $Delete = $dbh -> prepare("delete from Conference where ConferenceID=?");
-#      $Delete -> execute($EventID);
+      $Delete -> execute($EventID);
       push @Actions,"Event <strong>$Conferences{$ConferenceID}{Title}</strong> deleted";
     }
   } else {
