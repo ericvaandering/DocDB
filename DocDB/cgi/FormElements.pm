@@ -66,6 +66,7 @@ sub DateTimePulldown (%) { # Note capitalization
   $Year += 1900;
   $Min = (int (($Min+($Granularity/2))/$Granularity))*$Granularity; # Nearest $Granularity minutes
 
+  my $DefaultHHMM;
   if ($Default) {
     push @DebugStack,"REC DET: $Default";
     my ($DefaultDate,$DefaultTime);
@@ -87,8 +88,9 @@ sub DateTimePulldown (%) { # Note capitalization
     $Hour = int($Hour);
     $Min  = int($Min);
     $Sec  = int($Sec);
+    $DefaultHHMM = sprintf "%2.2d:%2.2d",$Hour,$Min;
     push @DebugStack,"DDI: $Year,$Mon,$Day";
-    push @DebugStack,"DTI: $Hour,$Min,$Sec";
+    push @DebugStack,"DTI: $Hour,$Min,$Sec ($DefaultHHMM)";
   }
   
   my @Years = ();
@@ -128,7 +130,7 @@ sub DateTimePulldown (%) { # Note capitalization
 
   unless ($DateOnly) {
     if ($OneTime) {
-      print $query -> popup_menu (-name => $Name."time", -values => \@Times,   -default => "$Hour:$Min", $Booleans);
+      print $query -> popup_menu (-name => $Name."time", -values => \@Times,   -default => $DefaultHHMM, $Booleans);
     } else {
       print $query -> popup_menu (-name => $Name."hour", -values => \@Hours,   -default => $Hour, $Booleans);
       print "<b> : </b>\n";

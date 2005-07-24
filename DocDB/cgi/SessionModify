@@ -329,12 +329,13 @@ my ($DefaultEventTime,$DefaultEventDate);
 if ($SingleSession) {
 
   unless ($DefaultEventTime) {
-    $DefaultEventTime = "9:00";
+    $DefaultEventTime = "9:00:00";
   }  
   unless ($DefaultEventDate) {
     $DefaultEventDate = &SQLNow(-dateonly => $TRUE);
   }  
   $SessionDefaultDateTime = "$DefaultEventDate $DefaultEventTime";
+  push @DebugStack,"Sending DET: $SessionDefaultDateTime";
 }
 
 
