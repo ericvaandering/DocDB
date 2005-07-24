@@ -144,6 +144,8 @@ if ($SessionID) {
 }  
 &EndPage(@ErrorStack);
 
+push @DebugStack,"Mode: $Mode SS: $SingleSession";
+
 if ($Mode eq "modify" || $Mode eq "create") {
 
   if ($SingleSession && $Mode eq "create") { # Make an event, then a session, pass variables out
