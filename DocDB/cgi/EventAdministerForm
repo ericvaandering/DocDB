@@ -121,7 +121,7 @@ if ($SubForm eq "eventgroup") {
     my $Insert = $dbh -> prepare("insert into EventGroup (ShortDescription,LongDescription) values (?,?)"); 
     $Insert -> execute($ShortDescription,$LongDescription);
   } else {
-    push @ErrorStack,"No valid action was specified.";
+    push @WarnStack,"No valid action was specified.";
   }  
 } elsif ($SubForm eq "event") {
   if      ($Action eq "Delete") {
@@ -135,17 +135,19 @@ if ($SubForm eq "eventgroup") {
       push @Actions,"Event <strong>$Conferences{$ConferenceID}{Title}</strong> deleted";
     }
   } else {
-    push @ErrorStack,"Only \"Delete\" is a valid action";
+    push @WarnStack,"Only \"Delete\" is a valid action";
   }  
 }
    
-if (@Actions) {
+if (@Actions) { #FIXME: Make into action stack, have action report clear, no params
   &ClearConferences;
   &ClearEventGroups;
   &GetConferences;
   &GetAllEventGroups;
   &ActionReport(@Actions); @Actions = ();
 }  
+
+&WarnPage(@WarnStack); @WarnStack = ();
 
 print "<p>This form allows you to administer events in DocDB. Begin by
        selecting an action for what you want to administer.  Depending on the
@@ -219,13 +221,13 @@ print $query -> start_multipart_form('POST',"$EventAdministerForm",
                                      "id=\"event\" name=\"event\"");
 print "<table class=\"HighPaddedTable CenteredTable\">\n";
 print "<tr>\n";
-print "<td>\n"; 
+print "<td colspan=\"2\">\n"; 
 print "You can only delete with this form; you can do everything else through event management.\n";
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
-print "<td>\n"; 
+print "<td colspan=\"2\">\n"; 
  &AdministerActions(-form => "event");
  print $query -> hidden(-name => "subform",   -default => "event");
 print "</td>\n";
@@ -235,10 +237,13 @@ print "<tr>\n";
 print "<td>\n";
  &EventSelect(-disabled => true, -format => "full"); 
 print "</td>\n";  
+print "<td>\n"; 
+ &AdminRegardless();
+print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
-print "<td class=\"SubmitCell\">\n";
+print "<td colspan=\"2\" class=\"SubmitCell\">\n";
  &AdministratorPassword;
  print "&nbsp;";
  print $query -> submit (-value => "Change Event Info");
