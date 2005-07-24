@@ -361,10 +361,15 @@ if ($SingleSession) {
 
 print $query -> start_multipart_form('POST',"$SessionModify");
 print "<div class=\"SessionEntryForm\">\n";
-$query -> param('sessionid',$SessionID); #FIXME eliminate?
-print $query -> hidden(-name => 'sessionid', -default => $SessionID);
-$query -> param('mode','modify');        #FIXME eliminate?
-print $query -> hidden(-name => 'mode', -default => 'modify');
+if ($SingleSession) { 
+  print $query -> hidden(-name => 'singlesession', -default => 1);
+  print $query -> hidden(-name => 'mode',          -default => "create");
+} else {
+  #$query -> param('sessionid',$SessionID); #FIXME eliminate?
+  print $query -> hidden(-name => 'sessionid', -default => $SessionID);
+  #$query -> param('mode','modify');        #FIXME eliminate?
+  print $query -> hidden(-name => 'mode', -default => 'modify');
+}
 
 if ($SingleSession) {
   my %RequiredEntries = ();
