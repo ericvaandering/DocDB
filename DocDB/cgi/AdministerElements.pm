@@ -55,6 +55,11 @@ sub AdministratorPassword {
                                  -maxlength => 12);
 };
 
+sub AdminRegardless {
+  print &FormElementTitle(-helplink => "admregardless", -helptext => "Act Regardless");
+  print $query -> checkbox(-name => "admregardless", -value => 1, -label => 'Yes');
+}  
+
 sub GroupEntryBox (%) {
   require "Scripts.pm";
 

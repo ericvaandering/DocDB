@@ -123,7 +123,21 @@ if ($SubForm eq "eventgroup") {
   } else {
     push @ErrorStack,"No valid action was specified.";
   }  
-} #elsif subform
+} elsif ($SubForm eq "event") {
+  if      ($Action eq "Delete") {
+    my @DocRevIDs = &FetchRevisionsByEventID($EventID);
+    if (@DocRevIDs) { 
+      $Abort = 1;
+    }  
+    unless ($Abort) {
+      my $Delete = $dbh -> prepare("delete from Conference where ConferenceID=?");
+#      $Delete -> execute($EventID);
+      push @Actions,"Event <strong>$Conferences{$ConferenceID}{Title}</strong> deleted";
+    }
+  } else {
+    push @ErrorStack,"Only \"Delete\" is a valid action";
+  }  
+
    
 if (@Actions) {
   &ClearConferences;
@@ -157,14 +171,14 @@ print $query -> start_multipart_form('POST',"$EventAdministerForm",
                                      "id=\"eventgroup\" name=\"eventgroup\"");
 print "<table class=\"HighPaddedTable CenteredTable\">\n";
 print "<tr>\n";
-print "<td colspan=\"2\">\n"; 
+print "<td colspan=\"3\">\n"; 
  &AdministerActions(-form => "eventgroup");
  print $query -> hidden(-name => "subform",   -default => "eventgroup");
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
-print "<td rowspan=\"2\">\n";
+print "<td rowspan=\"3\">\n";
  &EventGroupSelect(-disabled => true, -format => "full"); 
 print "</td>\n";  
 print "<td>\n"; 
@@ -175,6 +189,12 @@ print "</tr>\n";
 print "<tr>\n";
 print "<td>\n"; 
  &LongDescriptionBox(-name => "longdesc", -disabled => "true");
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td>\n"; 
+ &AdminRegardless();
 print "</td>\n";
 print "</tr>\n";
 
