@@ -44,7 +44,7 @@ sub GetConferences {
   return @ConferenceIDs;
 }
 
-sub &ClearConferences () {
+sub ClearConferences () {
   %Conferences = ();
   $HaveAllConferences = $FALSE;
   return;

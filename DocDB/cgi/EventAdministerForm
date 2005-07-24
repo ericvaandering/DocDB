@@ -153,7 +153,7 @@ print "<h4>Administer Event Groups</h4>\n";
 
 print $query -> start_multipart_form('POST',"$EventAdministerForm",
                                      "id=\"eventgroup\" name=\"eventgroup\"");
-print "<table class=\"HighPaddedTable CenteredTable\" border=1>\n";
+print "<table class=\"HighPaddedTable CenteredTable\">\n";
 print "<tr>\n";
 print "<td colspan=\"2\">\n"; 
  &AdministerActions(-form => "eventgroup");
@@ -195,7 +195,7 @@ print "<h4>Administer Events</h4>\n";
 
 print $query -> start_multipart_form('POST',"$EventAdministerForm",
                                      "id=\"event\" name=\"event\"");
-print "<table class=\"HighPaddedTable CenteredTable\" border=1>\n";
+print "<table class=\"HighPaddedTable CenteredTable\">\n";
 print "<tr>\n";
 print "<td>\n"; 
 print "You can only delete with this form; you can do everything else through event management.\n";
