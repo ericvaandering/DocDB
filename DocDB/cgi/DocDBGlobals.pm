@@ -211,7 +211,6 @@ $EmailAdministerForm   = $cgi_root."EmailAdministerForm";
 $EmailAdminister       = $cgi_root."EmailAdminister";
 
 $EventAdministerForm   = $cgi_root."EventAdministerForm";
-$EventAdminister       = $cgi_root."EventAdminister";
 
 $Statistics            = $cgi_root."Statistics";
 

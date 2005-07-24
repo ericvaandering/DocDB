@@ -33,6 +33,7 @@ require "DocDBGlobals.pm";
 require "AdministerElements.pm";
 require "Scripts.pm";
 require "Security.pm";
+require "Messages.pm";
 require "Sorts.pm";
 
 require "DBUtilities.pm";
@@ -45,7 +46,27 @@ require "MeetingHTML.pm";
 require "TopicHTML.pm"; # For description boxes
 
 $query = new CGI;  # Global for subroutines
-&CreateConnection(-type => "rw");
+
+%params = $query -> Vars;
+
+my $Password         = $params{password};
+my $Username         = $params{admuser};
+my $Action           = $params{admaction};
+
+my $SubForm          = $params{subform};
+my $EventGroupID     = int($params{eventgroups});
+my $EventID          = int($params{events});
+my $ShortDescription = $params{shortdesc};
+my $LongDescription  = $params{longdesc};
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+if ($Password && $UserName) {
+  &CreateConnection(-user => $Username, -password => $Password);
+} else {
+  &CreateConnection(-type => "ro");
+}
 
 &GetConferences;
 &GetAllEventGroups;
@@ -55,9 +76,6 @@ print $query->header;
 &DocDBHeader("Administer Events","",
              -scripts => ["PopUps","EventAdminDisable"]); 
 
-@ErrorStack = ();
-@WarnStack  = ();
-
 unless (&CanAdminister()) {
   push @ErrorStack,"You are not allowed to access administrative functions.";
 }
@@ -65,6 +83,53 @@ unless (&CanAdminister()) {
 if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
   &EndPage(@ErrorStack);
 }
+
+# Do administration
+
+my $Abort = 0;
+my @Actions = ();
+
+if ($SubForm eq "eventgroup") {
+  if      ($Action eq "Delete") {
+    foreach my $EventID (keys %Conferences) {
+      if ($Conferences{$ConferenceID}{EventGroupID} == $EventGroupID) {
+        push @ErrorStack,$Msg_DelFullEvtGroup;
+        $Abort = 1;
+        last;
+      }
+    }
+    unless ($Abort) {
+      my $Delete = $dbh -> prepare("delete from EventGroup where EventGroupID=?");
+      $Delete -> execute($EventGroupID);
+      push @Actions,"Event group $EventGroups{$EventGroupID}{ShortDescription} deleted";
+    }
+  } elsif ($Action eq "Modify") {
+    if ($ShortDescription) { 
+      push @Actions,"Updated short description of $EventGroups{$EventGroupID}{ShortDescription}";
+      my $Update = $dbh->prepare("update EventGroup set ShortDescription=? where EventGroupID=?");
+      $Update -> execute($ShortDescription,$EventGroupID);
+    }
+    if ($LongDescription) { 
+      push @Actions,"Updated long description of $EventGroups{$EventGroupID}{ShortDescription}";
+      my $Update = $dbh->prepare("update EventGroup set LongDescription=? where EventGroupID=?");
+      $Update -> execute($LongDescription,$EventGroupID);
+    }
+  } elsif ($Action eq "New") { 
+    push @Actions,"New event group with description of $ShortDescription inserted";
+    my $Insert = $dbh -> prepare("insert into EventGroup (ShortDescription,LongDescription) values (?,?)"); 
+    $Insert -> execute($ShortDescription,$LongDescription);
+  } else {
+    push @ErrorStack,"No valid action was specified.";
+  }  
+} #elsif subform
+   
+if (@Actions) {
+  &ClearConferences;
+  &ClearEventGroups;
+  &GetConferences;
+  &GetAllEventGroups;
+  &ActionReport(@Actions); @Actions = ();
+}  
 
 print "<p>This form allows you to administer events in DocDB. Begin by
        selecting an action for what you want to administer.  Depending on the
@@ -84,7 +149,7 @@ print "<hr/>\n";
 
 ### Event Modification
 
-print "<h4>Administer Events</h4>\n";
+print "<h4>Administer Event Groups</h4>\n";
 
 print $query -> start_multipart_form('POST',"$EventAdminister",
                                      "id=\"eventgroup\" name=\"eventgroup\"");
@@ -126,7 +191,7 @@ print "<hr/>\n";
 
 ### Event Administration
 
-print "<h4>Administer Event Groups</h4>\n";
+print "<h4>Administer Events</h4>\n";
 
 print $query -> start_multipart_form('POST',"$EventAdminister",
                                      "id=\"event\" name=\"event\"");

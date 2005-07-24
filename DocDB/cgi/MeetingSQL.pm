@@ -23,6 +23,11 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 sub GetConferences { 
+  if ($HaveAllConferences) {
+    my @ConferenceIDs = keys %Conferences;
+    return @ConferenceIDs;
+  }  
+
   %Conferences = ();
 
   my @ConferenceIDs = ();
@@ -35,7 +40,14 @@ sub GetConferences {
     $ConferenceID = &FetchConferenceByConferenceID($ConferenceID);
     push @ConferenceIDs,$ConferenceID;
   }
+  $HaveAllConferences = $TRUE;
   return @ConferenceIDs;
+}
+
+sub &ClearConferences () {
+  %Conferences = ();
+  $HaveAllConferences = $FALSE;
+  return;
 }
 
 sub FetchConferenceByTopicID { # Fetches a conference by MinorTopicID: Remove v7
@@ -108,7 +120,8 @@ sub GetRevisionEvents ($) { # Get the events associated with a revision
 
 sub GetAllEventGroups () {
   if ($HaveAllEventGroups) {
-    return;
+    my @EventGroupIDs = keys %EventGroups;
+    return @EventGroupIDs;
   }
   
   %EventGroups = ();
@@ -123,7 +136,14 @@ sub GetAllEventGroups () {
       push @EventGroupIDs,$EventGroupID;
     }  
   }
+  $HaveAllEventGroups = $TRUE;
   return @EventGroupIDs;  
+}
+
+sub ClearEventGroups () {
+  %EventGroups = ();
+  $HaveAllEventGroups = $FALSE;
+  return;
 }
 
 sub FetchEventGroup ($) {

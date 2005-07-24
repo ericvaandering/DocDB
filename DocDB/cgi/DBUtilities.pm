@@ -50,7 +50,7 @@ sub CreateConnection (%) {
     }
   } elsif ($User && $Password) {
     $dbh = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$User,$Password) 
-                || push @ErrorStack,$Msg_NoConnect;
+                || push @ErrorStack,$Msg_AdminNoConnect;
   }
   
   return $dbh;          
