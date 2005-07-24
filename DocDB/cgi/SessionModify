@@ -322,6 +322,23 @@ my $SessionDefaultDescription = $Sessions{$SessionID}{Description};
 my $SessionDefaultLocation    = $Sessions{$SessionID}{Location};
 my $SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
 
+# Defaults for SingleSessionMode;
+
+my ($DefaultEventTime,$DefaultEventDate);
+
+if ($SingleSession) {
+
+  unless ($DefaultEventTime) {
+    $DefaultEventTime = "9:00";
+  }  
+  unless ($DefaultEventDate) {
+    $DefaultEventDate = &SQLNow(-dateonly => $TRUE);
+  }  
+  $SessionDefaultDateTime = "$DefaultEventDate $DefaultEventTime";
+}
+
+
+
 print $query -> start_multipart_form('POST',"$SessionModify");
 print "<div class=\"SessionEntryForm\">\n";
 $query -> param('sessionid',$SessionID); #FIXME eliminate?

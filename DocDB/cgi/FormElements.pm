@@ -66,12 +66,24 @@ sub DateTimePulldown (%) { # Note capitalization
   $Year += 1900;
   $Min = (int (($Min+($Granularity/2))/$Granularity))*$Granularity; # Nearest $Granularity minutes
 
-  if ($Default && $DateOnly) {
-    ($Year,$Mon,$Day) = split /-/,$Default;
+  if ($Default) {
+    my ($DefaultDate,$DefaultTime);
+    if ($DateOnly) { 
+      $DefaultDate = $Default;
+    } elsif ($TimeOnly) {
+      $DefaultTime = $Default;
+    } else {
+      ($DefaultDate,$DefaultTime) = split /\s+/,$Default;
+    }  
+    ($Year,$Mon,$Day) = split /-/,$DefaultDate;
     $Day  = int($Day);
     $Mon  = int($Mon);
     $Year = int($Year);
     --$Mon;
+    ($Hour,$Min,$Sec) = split /:/,$DefaultTime;
+    $Hour = int($Hour);
+    $Min  = int($Min);
+    $Sec  = int($Sec);
   }
   
   my @Years = ();
