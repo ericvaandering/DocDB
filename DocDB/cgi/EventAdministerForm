@@ -92,6 +92,7 @@ print "<table class=\"HighPaddedTable CenteredTable\" border=1>\n";
 print "<tr>\n";
 print "<td colspan=\"2\">\n"; 
  &AdministerActions(-form => "eventgroup");
+ print $query -> hidden(-name => "subform",   -default => "eventgroup");
 print "</td>\n";
 print "</tr>\n";
 
@@ -139,6 +140,7 @@ print "</tr>\n";
 print "<tr>\n";
 print "<td>\n"; 
  &AdministerActions(-form => "event");
+ print $query -> hidden(-name => "subform",   -default => "event");
 print "</td>\n";
 print "</tr>\n";
 
