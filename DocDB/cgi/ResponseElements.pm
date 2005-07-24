@@ -88,16 +88,28 @@ sub ErrorPage { # Fatal errors, continues page
     print "<dl class=\"error\">\n";
     if ($#errors) {
       print "<dt class=\"Error\">There were fatal errors processing your
-             request: </font></dt>\n";
+             request:</dt>\n";
     } else {
       print "<dt class=\"Error\">There was a fatal error processing your
-             request: </font></dt>\n";
+             request:</dt>\n";
     } 
     foreach $message (@errors) {
       print "<dd>$message</dd>\n";
     }  
     print "</dl>\n";
     print "<p/>\n";
+  }  
+}
+
+sub ActionReport { 
+  my @Actions = @_;
+  if (@Actions) {
+    print "<dl class=\"Action\">\n";
+    print "<dt class=\"Action\">Action taken:</dt>\n";
+    foreach $Message (@Actions) {
+      print "<dd>$Message</dd>\n";
+    }  
+    print "</dl>\n";
   }  
 }
 

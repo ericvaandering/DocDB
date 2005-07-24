@@ -44,7 +44,9 @@ $Msg_ModDocTypeEmpty  = "You must select a document type to modify or delete.";
 $Msg_ModEUserEmpty    = "You must select a user to modify or delete.";
 
 $Msg_ModTopicEmpty    = "You must select a topic to modify or delete.";
-$Msg_ModConfEmpty     = "You must select a conference to modify or delete.";
+$Msg_ModConfEmpty     = "You must select an event to modify or delete.";
+
+$Msg_DelFullEvtGroup  = "You can't delete event groups with events. Delete the events first before deleting the group.";
 
 # Messages for document creation, modification, display
 
