@@ -47,7 +47,7 @@ $Msg_ModTopicEmpty    = "You must select a topic to modify or delete.";
 $Msg_ModConfEmpty     = "You must select an event to modify or delete.";
 
 $Msg_DelFullEvtGroup  = "You can't delete event groups with events. Delete the events first before deleting the group.";
-$Msg_DelFullEvtGroup  = "This event has associated documents. Not deleted.";
+$Msg_DelFullEvent     = "This event has associated documents. Not deleted.";
 
 # Messages for document creation, modification, display
 
