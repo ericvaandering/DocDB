@@ -1,0 +1,127 @@
+#! /usr/bin/env perl
+#
+#        Name: AdministerForm
+# Description: This single form provides a number of interfaces to admin 
+#              tools, each run by a different script. 
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+use CGI qw(-nosticky);                                                                                      
+use DBI;
+
+require "DocDBGlobals.pm";
+require "AdministerElements.pm";
+require "Scripts.pm";
+require "Security.pm";
+require "Sorts.pm";
+
+require "MeetingHTML.pm";
+require "TopicHTML.pm"; # For description boxes
+
+$query = new CGI;  # Global for subroutines
+$dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+&GetSecurityGroups;
+&GetInstitutions;
+&GetDocTypes;
+&GetAuthors;
+&GetTopics;
+&GetJournals;
+
+print $query->header;
+&DocDBHeader("Administer Events","",
+             -scripts => ["PopUps","EventAdminDisable"]); 
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+unless (&CanAdminister()) {
+  push @ErrorStack,"You are not allowed to access administrative functions.";
+}
+
+if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
+  &EndPage(@ErrorStack);
+}
+
+print "<h3>This form allows you to administer events in DocDB.</h3>\n"; 
+
+print "<p>Begin by selecting an action for what you want to administer. 
+       Depending on the action you select, the additional selections you can 
+       make are enabled. If you select <strong>Modify</strong> any attributes
+       you select or change changed in the DB. If you leave something blank, it
+       will not be changed. </p>\n";
+
+print "<p>Note that deleting and then re-entering with the same information is
+       not the same as modifying. Everything in the DB is tied together with
+       invisible ID numbers.</p>\n";
+
+print "<p>In all cases, you must supply the <i>database</i> username and
+       password for the administrator account to make any changes.<p>\n";
+
+print "<hr/>\n";
+
+### Event Group Modification
+
+print "<h4>Administer Event Groups</h4>\n";
+
+print $query -> start_multipart_form('POST',"$EventAdminister",
+                                     "id=\"author\" name=\"author\"");
+print "<table class=\"HighPaddedTable\" border=1>\n";
+print "<tr>\n";
+print "<td colspan=\"2\">\n"; 
+ &AdministerActions();
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td rowspan=\"2\">\n";
+ &EventGroupSelect(-disabled => true, -format => "full"); 
+print "</td>\n";  
+print "<td>\n"; 
+ &ShortDescriptionBox(-name => "shortdesc", -disabled => "true");
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td>\n"; 
+ &LongDescriptionBox(-name => "longdesc", -disabled => "true");
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td colspan=\"2\" class=\"SubmitCell\">\n";
+ &AdministratorPassword;
+ print "&nbsp;";
+ print $query -> submit (-value => "Change Author Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<hr/>\n";
+
+### Event Administration
+
+&DocDBNavBar();
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
