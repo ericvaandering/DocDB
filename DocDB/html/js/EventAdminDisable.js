@@ -1,6 +1,6 @@
 function disabler_event() {
   if (document.minortopic.admaction[1].checked == true) {
-    document.event.event.disabled = false;
+    document.event.events.disabled = false;
   }
 }
 

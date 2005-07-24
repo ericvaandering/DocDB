@@ -82,7 +82,7 @@ print "<p>In all cases, you must supply the <i>database</i> username and
 
 print "<hr/>\n";
 
-### Event Group Modification
+### Event Modification
 
 print "<h4>Administer Events</h4>\n";
 
@@ -126,11 +126,16 @@ print "<hr/>\n";
 ### Event Administration
 
 print "<h4>Administer Event Groups</h4>\n";
-print "<h6>Can only delete, do everything else through event management.</h6>\n";
 
 print $query -> start_multipart_form('POST',"$EventAdminister",
                                      "id=\"event\" name=\"event\"");
 print "<table class=\"HighPaddedTable CenteredTable\" border=1>\n";
+print "<tr>\n";
+print "<td>\n"; 
+print "You can only delete with this form; you can do everything else through event management.\n";
+print "</td>\n";
+print "</tr>\n";
+
 print "<tr>\n";
 print "<td>\n"; 
  &AdministerActions(-form => "event");

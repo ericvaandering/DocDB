@@ -672,7 +672,12 @@ sub EventGroupSelect (;%) {
   my @EventGroupIDs = sort EventGroupsByName keys %EventGroups;
   my %Labels        = ();
   foreach my $EventGroupID (@EventGroupIDs) {
-    $Labels{$EventGroupID} = $EventGroups{$EventGroupID}{ShortDescription}; 
+    if ($Format eq "full") {
+      $Labels{$EventGroupID} = $EventGroups{$EventGroupID}{ShortDescription}.
+      ":".$EventGroups{$EventGroupID}{LongDescription}; 
+    } else {  
+      $Labels{$EventGroupID} = $EventGroups{$EventGroupID}{ShortDescription}; 
+    }
   }      
   
   my $ElementTitle = &FormElementTitle(-helplink => "eventgroups", -helptext => "Event Groups", 
