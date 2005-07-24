@@ -74,13 +74,8 @@ my @PreTopics    = $query -> param('pretopic');
 
 @TopicDefaults = ();
  
-if ($Special eq "meeting")      {$Meeting = 1;}
-if ($Special eq "othermeeting") {$OtherMeeting = 1;}
-
-if ($Meeting) {
- require "WebUtilities.pm";
- push @TopicDefaults,(&NearByMeeting); 
-}
+if ($Special eq "meeting")      {$Meeting = 1;}       # v7 can we remove these
+if ($Special eq "othermeeting") {$OtherMeeting = 1;}  # v7 can we remove these
 
 push @TopicDefaults,@PreTopics; 
 

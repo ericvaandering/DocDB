@@ -130,8 +130,4 @@ sub DaysInMonth {
   }     
 }  
 
-sub NearByMeeting { # v7 fixme or remove, move to MeetingUtilities
-  return 0;
-}  
-  
 1;
