@@ -31,6 +31,7 @@ use DBI;
 
 require "DocDBGlobals.pm";
 require "AdministerElements.pm";
+require "ResponseElements.pm";
 require "Scripts.pm";
 require "Security.pm";
 require "Messages.pm";
