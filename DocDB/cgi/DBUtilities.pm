@@ -34,7 +34,6 @@ sub CreateConnection (%) {
   my $User     = $Params{-user};
   my $Password = $Params{-password};
   
-  push @DebugStack,"Connecting to DB in user/password mode failed.";
   if ($User && $Password) {
     push @DebugStack,"Connecting to DB in user/password mode";
     $dbh = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$User,$Password) 

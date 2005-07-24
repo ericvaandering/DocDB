@@ -69,7 +69,6 @@ if ($Password && $UserName) {
   &CreateConnection(-type => "ro");
 }
 
-&DebugPage();
 
 &GetConferences;
 &GetAllEventGroups;
@@ -78,6 +77,7 @@ if ($Password && $UserName) {
 print $query->header;
 &DocDBHeader("Administer Events","",
              -scripts => ["PopUps","EventAdminDisable"]); 
+&DebugPage();
 
 unless (&CanAdminister()) {
   push @ErrorStack,"You are not allowed to access administrative functions.";
