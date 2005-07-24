@@ -84,7 +84,7 @@ print "<hr/>\n";
 
 ### Event Group Modification
 
-print "<h4>Administer Event Groups</h4>\n";
+print "<h4>Administer Events</h4>\n";
 
 print $query -> start_multipart_form('POST',"$EventAdminister",
                                      "id=\"eventgroup\" name=\"eventgroup\"");
