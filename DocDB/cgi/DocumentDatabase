@@ -128,13 +128,13 @@ print "<div>\n";
 print $query -> submit (-value => "Show");
 print "<strong> documents modified in the last </strong>";
 &DaysPulldown($LastDays);
-print "<strong> days.</strong>";
+print "<strong> days</strong>";
 print "</div>\n";
 print $query -> endform;
 print "</div>\n";  
 
 print "<div class=\"HomepageMainChoice\">\n";
-print "<strong><a href=\"$ShowCalendar\">Calendar</a>of Events.</strong>";
+print "<strong><a href=\"$ShowCalendar\">Calendar</a> of events</strong>";
 print "</div>\n";  
 
 # Fill arrays that print lists of documents
@@ -151,7 +151,7 @@ unless ($Public && !$PublicAccess{MeetingList}) {
 }  
 
 unless ($Public) {
-  push @OtherColumns,"<a href=\"$ListMeetings\">Collaboration meetings</a>";
+  push @OtherColumns,"Collaboration meetings";
 }
 push @OtherColumns,"<a href=\"$ListBy?major=Conferences&amp;mode=conference\">Conferences</a>";
 if ($UseSignoffs && (!$Public || $PublicAccess{MeetingList})) {

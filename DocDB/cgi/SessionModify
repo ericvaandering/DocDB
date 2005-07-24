@@ -147,11 +147,15 @@ if ($SessionID) {
 if ($Mode eq "modify" || $Mode eq "create") {
 
   if ($SingleSession && $Mode eq "create") { # Make an event, then a session, pass variables out
+    push @DebugStack,"Creating new event in group $EventGroupID with L $Location U $URL SD $EventStartDate
+                      ShD $ShortDescription LD $LongDescription";
     $EventID = &InsertEvent(-eventgroupid => $EventGroupID,   -location => $Location,
                -url => $URL, -startdate   => $EventStartDate, -enddate  => $EventStartDate,
                -shortdescription => $ShortDescription, -longdescription => $LongDescription);
+    push @DebugStack,"Created new event $EventID";
     $SessionID = &InsertSession(-eventid => $EventID,          -date     => $EventStartDate,
                                 -title   => $ShortDescription, -location => $Location);
+    push @DebugStack,"Created new session $SessionID";
   } elsif ($SingleSession && $Mode eq "modify") {
     &UpdateEvent(-eventid => $EventID, -eventgroupid => $EventGroupID,   -location => $Location,
                -url => $URL, -startdate   => $EventStartDate, -enddate  => $EventStartDate,
