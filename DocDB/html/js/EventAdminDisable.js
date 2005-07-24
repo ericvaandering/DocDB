@@ -1,6 +1,12 @@
 function disabler_event() {
+  if (document.event.admaction[0].checked == true) {
+    document.event.events.disabled = true;
+  }
   if (document.event.admaction[1].checked == true) {
     document.event.events.disabled = false;
+  }
+  if (document.event.admaction[2].checked == true) {
+    document.event.events.disabled = true;
   }
 }
 
