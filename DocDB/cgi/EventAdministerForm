@@ -78,7 +78,7 @@ print "<p>Note that deleting and then re-entering with the same information is
        invisible ID numbers.</p>\n";
 
 print "<p>In all cases, you must supply the <i>database</i> username and
-       password for the administrator account to make any changes.<p>\n";
+       password for the administrator account to make any changes.</p>\n";
 
 print "<hr/>\n";
 
@@ -88,7 +88,7 @@ print "<h4>Administer Event Groups</h4>\n";
 
 print $query -> start_multipart_form('POST',"$EventAdminister",
                                      "id=\"eventgroup\" name=\"eventgroup\"");
-print "<table class=\"HighPaddedTable\" border=1>\n";
+print "<table class=\"HighPaddedTable CenteredTable\" border=1>\n";
 print "<tr>\n";
 print "<td colspan=\"2\">\n"; 
  &AdministerActions(-form => "eventgroup");
@@ -114,7 +114,7 @@ print "<tr>\n";
 print "<td colspan=\"2\" class=\"SubmitCell\">\n";
  &AdministratorPassword;
  print "&nbsp;";
- print $query -> submit (-value => "Change Author Info");
+ print $query -> submit (-value => "Change Event Group Info");
 print "</td>\n";
 print "</tr>\n";
 
@@ -124,6 +124,37 @@ print $query -> end_multipart_form;
 print "<hr/>\n";
 
 ### Event Administration
+
+print "<h4>Administer Event Groups</h4>\n";
+print "<h6>Can only delete, do everything else through event management.</h6>\n";
+
+print $query -> start_multipart_form('POST',"$EventAdminister",
+                                     "id=\"event\" name=\"event\"");
+print "<table class=\"HighPaddedTable CenteredTable\" border=1>\n";
+print "<tr>\n";
+print "<td>\n"; 
+ &AdministerActions(-form => "event");
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td>\n";
+ &EventSelect(-disabled => true, -format => "full"); 
+print "</td>\n";  
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td class=\"SubmitCell\">\n";
+ &AdministratorPassword;
+ print "&nbsp;";
+ print $query -> submit (-value => "Change Event Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<hr/>\n";
 
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

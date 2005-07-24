@@ -35,7 +35,7 @@ sub AdministerActions (%) {
   $Action{Delete}    = "Delete";
   $Action{New}       = "New";
   $Action{Modify}    = "Modify";
-  print &FormElementTitle(-helplink => "admaction", -helptext => "Action")
+  print &FormElementTitle(-helplink => "admaction", -helptext => "Action");
   print $query -> radio_group(-name => "admaction", 
                               -values => \%Action, -default => "-",
                               -onclick => "disabler_$Form();");
