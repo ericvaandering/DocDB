@@ -155,22 +155,23 @@ if ($Mode eq "modify" || $Mode eq "create") {
                -url => $URL, -startdate   => $SessionDate,  -enddate  => $SessionDate,
                -shortdescription          => $Short, -longdescription => $Long);
     push @DebugStack,"Created new event $EventID";
-    $SessionID = &InsertSession(-eventid => $EventID,          -date     => $SessionDate,
-                                -title   => $ShortDescription, -location => $Location);
+    $SessionID = &InsertSession(-eventid => $EventID, -date     => $SessionDate,
+                                -title   => $Short,   -location => $Location);
     push @DebugStack,"Created new session $SessionID";
   } elsif ($SingleSession && $Mode eq "modify") {
     &UpdateEvent(-eventid => $EventID, -eventgroupid => $EventGroupID,   -location => $Location,
                -url => $URL, -startdate   => $SessionDate,    -enddate  => $SessionDate,
                -shortdescription => $ShortDescription, -longdescription => $LongDescription);
-    &UpdateSession(-sessionid => $SessionID,        -date     => $SessionDate,
-                   -title     => $ShortDescription, -location => $Location);
-  }
+    &UpdateSession(-sessionid => $SessionID, -date     => $SessionDate,
+                   -title     => $Short,     -location => $Location);
+  } else {
 
   # Update Session parameters, refetch
 
-  &UpdateSession(-sessionid => $SessionID, -date => $SessionDate, 
-                 -title => $SessionTitle, -description => $SessionDescription,
-                 -location => $SessionLocation);
+    &UpdateSession(-sessionid => $SessionID, -date => $SessionDate, 
+                   -title => $SessionTitle, -description => $SessionDescription,
+                   -location => $SessionLocation);
+  }                 
   &ClearSessions;
   &FetchSessionByID($SessionID);
 
