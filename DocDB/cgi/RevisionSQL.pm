@@ -186,7 +186,7 @@ sub FetchRevisionsByEventID {
   my $DocRevID;
   my @DocRevIDs = ();
   
-  my $RevisionList = $dbh -> prepare("select DocRevID from RevisionEvent where EventID=?"); 
+  my $RevisionList = $dbh -> prepare("select DocRevID from RevisionEvent where ConferenceID=?"); 
  
   $RevisionList -> execute($EventID);
   $RevisionList -> bind_columns(undef, \($DocRevID));
