@@ -125,6 +125,7 @@ if ($SubForm eq "eventgroup") {
   }  
 } elsif ($SubForm eq "event") {
   if      ($Action eq "Delete") {
+    require "RevisionSQL.pm";
     my @DocRevIDs = &FetchRevisionsByEventID($EventID);
     if (@DocRevIDs) { 
       $Abort = 1;
