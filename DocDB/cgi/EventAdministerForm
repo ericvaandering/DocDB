@@ -68,6 +68,8 @@ if ($Password && $UserName) {
   &CreateConnection(-type => "ro");
 }
 
+&DebugPage();
+
 &GetConferences;
 &GetAllEventGroups;
 &GetSecurityGroups;

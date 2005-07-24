@@ -49,8 +49,12 @@ sub CreateConnection (%) {
       $dbh = $dbh_rw;
     }
   } elsif ($User && $Password) {
+    push @DebugStack,"Connecting to DB in user/password mode";
     $dbh = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$User,$Password) 
                 || push @ErrorStack,$Msg_AdminNoConnect;
+    unless ($dbh) {
+      push @DebugStack,"Connecting to DB in user/password mode failed.";
+    }  
   }
   
   return $dbh;          
