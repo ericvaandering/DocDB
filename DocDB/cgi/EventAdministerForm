@@ -35,6 +35,8 @@ require "Scripts.pm";
 require "Security.pm";
 require "Sorts.pm";
 
+require "HTMLUtilities.pm";
+
 require "MeetingSQL.pm";
 require "SecuritySQL.pm";
 
