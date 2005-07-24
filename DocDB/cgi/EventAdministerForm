@@ -35,18 +35,18 @@ require "Scripts.pm";
 require "Security.pm";
 require "Sorts.pm";
 
+require "MeetingSQL.pm";
+require "SecuritySQL.pm";
+
 require "MeetingHTML.pm";
 require "TopicHTML.pm"; # For description boxes
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
+&GetConferences;
+&GetAllEventGroups;
 &GetSecurityGroups;
-&GetInstitutions;
-&GetDocTypes;
-&GetAuthors;
-&GetTopics;
-&GetJournals;
 
 print $query->header;
 &DocDBHeader("Administer Events","",
