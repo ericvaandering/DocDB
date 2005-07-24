@@ -139,10 +139,10 @@ sub DocumentTable (%) {
         require "TopicSQL.pm";
         my @topics = &GetRevisionTopics($DocRevID);
         foreach my $topic (@topics) {
-          if (&MajorIsConference($MinorTopics{$topic}{MAJOR})) {
-            my $conference_link = &EventLink(-eventid => $ConferenceID);
-            print "$conference_link<br>\n";
-          }  
+#          if (&MajorIsConference($MinorTopics{$topic}{MAJOR})) {
+#            my $conference_link = &EventLink(-eventid => $ConferenceID);
+#            print "$conference_link<br>\n";
+#          }  
         }
       } elsif ($Field eq "Topics") {  # Topics for document
         require "TopicHTML.pm";

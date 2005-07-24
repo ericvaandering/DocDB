@@ -188,18 +188,6 @@ sub LookupMajorTopic { # Returns MajorTopicID from Topic Name
   return $MajorTopicID;
 }
 
-sub MajorIsMeeting { # Remove v7
-  return 0; 
-}
-
-sub MajorIsConference { # Remove v7
-  return 0;
-}
-
-sub MajorIsGathering { # Remove v7
-  return 0;
-}
-
 sub InsertTopics (%) {
   my %Params = @_;
   

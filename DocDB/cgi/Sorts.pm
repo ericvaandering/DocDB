@@ -27,34 +27,11 @@ sub byMinorTopic {
 }    
 
 sub byTopic {
-
-  # Do reverse sort by date for meetings, otherwise alphabetical
-  
-  if ($MinorTopics{$a}{MAJOR} == $MinorTopics{$b}{MAJOR} &&
-      &MajorIsGathering($MinorTopics{$a}{MAJOR}) &&
-      &MajorIsGathering($MinorTopics{$b}{MAJOR}) ) {
-    
-    my $acid = $ConferenceMinor{$a};
-    my $bcid = $ConferenceMinor{$b};
-    my $adate = $Conferences{$acid}{StartDate}; 
-    my $bdate = $Conferences{$bcid}{StartDate};
-    my ($ayear,$amonth,$aday) = split /\-/,$adate;
-    my ($byear,$bmonth,$bday) = split /\-/,$bdate;
-
-                     $byear <=> $ayear
-                            or
-                    $bmonth <=> $amonth 
-                            or
-                      $bday <=> $aday
-                            or 
-    $MinorTopics{$a}{SHORT} cmp $MinorTopics{$b}{SHORT};
-  } else {
-    $MajorTopics{$MinorTopics{$a}{MAJOR}}{SHORT} cmp
-    $MajorTopics{$MinorTopics{$b}{MAJOR}}{SHORT}
-                   or
-        $MinorTopics{$a}{SHORT} cmp
-        $MinorTopics{$b}{SHORT};
-  }
+  $MajorTopics{$MinorTopics{$a}{MAJOR}}{SHORT} cmp
+  $MajorTopics{$MinorTopics{$b}{MAJOR}}{SHORT}
+                 or
+      $MinorTopics{$a}{SHORT} cmp
+      $MinorTopics{$b}{SHORT};
 }    
 
 sub byLastName {
@@ -161,20 +138,20 @@ sub DocumentByConferenceDate { # FIXME: Look at this and see if it can be
   unless ($FirstConf{$adr}) {
     my @topics = &GetRevisionTopics($adr);
     foreach my $ID (@topics) {
-      if (&MajorIsConference($MinorTopics{$ID}{MAJOR})) {
-        $FirstConf{$adr} = $ID;
-        last;
-      }
+#      if (&MajorIsConference($MinorTopics{$ID}{MAJOR})) {
+#        $FirstConf{$adr} = $ID;
+#        last;
+#      }
     }
   }      
 
   unless ($FirstConf{$bdr}) {
     my @topics = &GetRevisionTopics($bdr);
     foreach my $ID (@topics) {
-      if (&MajorIsConference($MinorTopics{$ID}{MAJOR})) {
-        $FirstConf{$bdr} = $ID;
-        last;
-      }
+#      if (&MajorIsConference($MinorTopics{$ID}{MAJOR})) {
+#        $FirstConf{$bdr} = $ID;
+#        last;
+#      }
     }
   }      
 

@@ -203,7 +203,6 @@ sub PrintRevisionInfo {
   &PrintXRefInfo($DocRevID);
   &PrintReferenceInfo($DocRevID);
   &PrintEventInfo($DocRevID);
-  &PrintConfInfo(@TopicIDs);
   &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
   
   if ($UseSignoffs) {
@@ -349,42 +348,6 @@ sub PrintEventInfo {
     print "</dl></div>\n";
   }
 }  
-
-sub PrintConfInfo { # Remove v7
-#  require "TopicSQL.pm";
-  require "MeetingSQL.pm";
-#  require "TopicHTML.pm";
-  
-  my (@topicIDs) = @_;
-  my $HasConference = 0;
-  foreach $topicID (@topicIDs) {
-    if (&MajorIsConference($MinorTopics{$topicID}{MAJOR})) {
-      &FetchConferenceByTopicID($topicID);
-      unless ($HasConference) {
-        print "<div id=\"ConferenceInfo\">\n";
-        $HasConference = 1;
-      }  
-      my $ConferenceLink = &EventLink(-eventid => $ConferenceID, -format => "long");
-      my $ConferenceID = $ConferenceMinor{$topicID};
-      my $Start = &EuroDate($Conferences{$ConferenceID}{StartDate});
-      my $End   = &EuroDate($Conferences{$ConferenceID}{EndDate});
-      print "<dl>\n";
-      print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Associated with Conferences:</span></dt> \n";
-      print "<dd>";
-      print "$ConferenceLink ";
-      if ($Start && $End) {
-        print " held from $Start to $End ";
-      }  
-      if ($Conferences{$ConferenceID}{Location}) {
-        print " in $Conferences{$ConferenceID}{Location}";
-      }
-      print "</dd></dl>\n";
-    }
-  }
-  if ($HasConference) {
-    print "</div>\n";
-  }  
-}
 
 sub PrintPubInfo ($) {
   require "Utilities.pm";
