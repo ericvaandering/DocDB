@@ -77,7 +77,6 @@ if ($Password && $Username) {
 print $query->header;
 &DocDBHeader("Administer Events","",
              -scripts => ["PopUps","EventAdminDisable"]); 
-&DebugPage();
 
 unless (&CanAdminister()) {
   push @ErrorStack,"You are not allowed to access administrative functions.";
@@ -118,7 +117,7 @@ if ($SubForm eq "eventgroup") {
       $Update -> execute($LongDescription,$EventGroupID);
     }
   } elsif ($Action eq "New") { 
-    push @Actions,"New event group with description of $ShortDescription inserted";
+    push @Actions,"New event group with description <strong>$ShortDescription</strong> inserted";
     my $Insert = $dbh -> prepare("insert into EventGroup (ShortDescription,LongDescription) values (?,?)"); 
     $Insert -> execute($ShortDescription,$LongDescription);
   } else {
