@@ -88,7 +88,6 @@ my $Short                 = $params{shortdesc};
 my $Long                  = $params{long};
 my @MeetingViewGroupIDs   = split /\0/,$params{meetingviewgroups};
 my @MeetingModifyGroupIDs = split /\0/,$params{meetingmodifygroups};
-my ($EventStartDate);
 
 $query -> delete_all(); # FIXME: No sticky should stop this. Stop program from caching variable from script to script
 
@@ -147,27 +146,27 @@ if ($SessionID) {
 push @DebugStack,"Mode: $Mode SS: $SingleSession";
 
 if ($Mode eq "modify" || $Mode eq "create") {
+  my $SessionDate = "$SessionYear-$ReverseAbrvMonth{$SessionMonth}-$SessionDay $SessionHour:00";
 
   if ($SingleSession && $Mode eq "create") { # Make an event, then a session, pass variables out
-    push @DebugStack,"Creating new event in group $EventGroupID with L $Location U $URL SD $EventStartDate
-                      ShD $ShortDescription LD $LongDescription";
-    $EventID = &InsertEvent(-eventgroupid => $EventGroupID,   -location => $Location,
-               -url => $URL, -startdate   => $EventStartDate, -enddate  => $EventStartDate,
-               -shortdescription => $ShortDescription, -longdescription => $LongDescription);
+    push @DebugStack,"Creating new event in group $EventGroupID with L $Location U $URL SD $SessionDate
+                      ShD $Short LD $Long";
+    $EventID = &InsertEvent(-eventgroupid => $EventGroupID, -location => $Location,
+               -url => $URL, -startdate   => $SessionDate,  -enddate  => $SessionDate,
+               -shortdescription          => $Short, -longdescription => $Long);
     push @DebugStack,"Created new event $EventID";
-    $SessionID = &InsertSession(-eventid => $EventID,          -date     => $EventStartDate,
+    $SessionID = &InsertSession(-eventid => $EventID,          -date     => $SessionDate,
                                 -title   => $ShortDescription, -location => $Location);
     push @DebugStack,"Created new session $SessionID";
   } elsif ($SingleSession && $Mode eq "modify") {
     &UpdateEvent(-eventid => $EventID, -eventgroupid => $EventGroupID,   -location => $Location,
-               -url => $URL, -startdate   => $EventStartDate, -enddate  => $EventStartDate,
+               -url => $URL, -startdate   => $SessionDate,    -enddate  => $SessionDate,
                -shortdescription => $ShortDescription, -longdescription => $LongDescription);
-    &UpdateSession(-sessionid => $SessionID,        -date     => $EventStartDate,
+    &UpdateSession(-sessionid => $SessionID,        -date     => $SessionDate,
                    -title     => $ShortDescription, -location => $Location);
   }
 
   # Update Session parameters, refetch
-  my $SessionDate = "$SessionYear-$ReverseAbrvMonth{$SessionMonth}-$SessionDay $SessionHour:00";
 
   &UpdateSession(-sessionid => $SessionID, -date => $SessionDate, 
                  -title => $SessionTitle, -description => $SessionDescription,
