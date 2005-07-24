@@ -63,7 +63,7 @@ my $LongDescription  = $params{longdesc};
 @ErrorStack = ();
 @WarnStack  = ();
 
-if ($Password && $UserName) {
+if ($Password && $Username) {
   &CreateConnection(-user => $Username, -password => $Password);
 } else {
   &CreateConnection(-type => "ro");
