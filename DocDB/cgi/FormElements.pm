@@ -68,7 +68,6 @@ sub DateTimePulldown (%) { # Note capitalization
 
   my $DefaultHHMM;
   if ($Default) {
-    push @DebugStack,"REC DET: $Default";
     my ($DefaultDate,$DefaultTime);
     if ($DateOnly) { 
       $DefaultDate = $Default;
@@ -77,8 +76,7 @@ sub DateTimePulldown (%) { # Note capitalization
     } else {
       ($DefaultDate,$DefaultTime) = split /\s+/,$Default;
     }  
-    push @DebugStack,"DD: $DefaultDate";
-    push @DebugStack,"DT: $DefaultTime";
+
     ($Year,$Mon,$Day) = split /-/,$DefaultDate;
     $Day  = int($Day);
     $Mon  = int($Mon);
@@ -89,8 +87,6 @@ sub DateTimePulldown (%) { # Note capitalization
     $Min  = int($Min);
     $Sec  = int($Sec);
     $DefaultHHMM = sprintf "%2.2d:%2.2d",$Hour,$Min;
-    push @DebugStack,"DDI: $Year,$Mon,$Day";
-    push @DebugStack,"DTI: $Hour,$Min,$Sec ($DefaultHHMM)";
   }
   
   my @Years = ();

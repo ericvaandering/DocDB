@@ -335,7 +335,6 @@ if ($SingleSession) {
     $DefaultEventDate = &SQLNow(-dateonly => $TRUE);
   }  
   $SessionDefaultDateTime = "$DefaultEventDate $DefaultEventTime";
-  push @DebugStack,"Sending DET: $SessionDefaultDateTime";
 }
 
 
@@ -369,8 +368,8 @@ if ($SingleSession) {
                        -default => $DefaultShortDescription);
   &LongDescriptionBox(-required => $RequiredEntries{LongDescription});
   print "<div>\n";
-  &DateTimePulldown(-helptext => "Start Date and Time", -helplink  => 'sessioninfo',
-                    -oneline  => $TRUE, -onetime=> $TRUE, -granularity => 15,
+  &DateTimePulldown(-name    => "session", -helptext => "Start Date and Time", -helplink    => 'sessioninfo',
+                    -oneline => $TRUE,     -onetime  => $TRUE,                 -granularity => 15,
                     -default => $SessionDefaultDateTime, -required => $RequiredEntries{StartDate} );
   print "</div>\n";
   &LocationBox;       
@@ -417,9 +416,9 @@ if ($SingleSession) {
             -helplink => 'sessioninfo', -helptext => 'Session Description');
   print "</td>\n";
   print "<td>\n";  
-  my $FormElementTitle = &FormElementTitle(-helptext => "Start Date and Time", -helplink  => 'sessioninfo');
-  print $FormElementTitle;
-  &SessionDateTimePullDown(-default => $SessionDefaultDateTime);            
+  &DateTimePulldown(-name    => "session", -helptext => "Start Date and Time", -helplink    => 'sessioninfo',
+                    -oneline => $TRUE,     -onetime  => $TRUE,                 -granularity => 15,
+                    -default => $SessionDefaultDateTime, -required => $RequiredEntries{StartDate} );
   print "</td>\n";
   print "</tr>\n";
   print "</table>\n";

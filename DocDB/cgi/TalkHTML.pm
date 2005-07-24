@@ -96,6 +96,9 @@ sub PrintSessionTalk($) {
 }
 
 sub TalkEntryForm (@) {
+  require "FormElements.pm";
+  require "DocumentHTML.pm";
+  
   my @SessionOrderIDs = @_; 
 
   require "Scripts.pm";
@@ -194,7 +197,7 @@ sub TalkEntryForm (@) {
     print "<tr>\n";
     print "<td colspan=\"3\">\n"; &TalkNewSession($SessionOrderID); print "</td>\n";
     if ($TalkDefaultDocID && $TalkSeparatorDefault ne "Yes") {
-      my $TitleLink = &NewDocumentLink($TalkDefaultDocID,undef,"title");
+      my $TitleLink = &NewerDocumentLink(-docid => $TalkDefaultDocID, -titlelink => $TRUE);
       print "<td colspan=\"2\">Match: $TitleLink</td>\n";
     } else {
       print "<td colspan=\"2\">&nbsp;</td>\n";

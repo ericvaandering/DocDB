@@ -182,78 +182,13 @@ sub SessionEntryForm ($@) {
     print "<tr class=\"$RowClass\">\n";
      print "<td>&nbsp;</td>\n";
      print "<td>\n";              &SessionDescription;                 print "</td>\n";
-     print "<td>\n";  &SessionDateTimePullDown;            print "</td>\n";
+     print "<td>\n";    
+     &DateTimePulldown(-name    => "session", -oneline => $TRUE, -onetime  => $TRUE, -granularity => 15,
+                       -default => $SessionDefaultDateTime,      -required => $RequiredEntries{StartDate} );
+     print "</td>\n";
     print "</tr>\n";
   }
   print "</table>\n";
-}
-
-sub SessionDateTimePullDown (;%) { #FIXME: Replace with DateTimePulldown
-  my %Params = @_;
-
-  my $Default = $Params{-default} || 0;
-
-  my ($DefaultYear,$DefaultMonth,$DefaultDay,$DefaultHour);
-  my (undef,undef,undef,$Day,$Month,$Year) = localtime(time);
-  $Year += 1900;
-  if ($SessionDefaultDateTime) {
-    my ($Date,$Time) = split /\s+/,$SessionDefaultDateTime;
-    my ($Year,$Month,$Day) = split /-/,$Date;
-    my ($Hour,$Minute,undef) = split /:/,$Time;
-    $Time = "$Hour:$Minute";
-    $DefaultYear  = $Year;
-    $DefaultMonth = $Month-1;
-    $DefaultDay   = int($Day);
-    $DefaultHour  = $Time;
-  } elsif ($Default) {
-    my ($Date,$Time) = split /\s+/,$Default;
-    my ($Year,$Month,$Day) = split /-/,$Date;
-    my ($Hour,$Minute,undef) = split /:/,$Time;
-    $Time = "$Hour:$Minute";
-    $DefaultYear  = $Year;
-    $DefaultMonth = $Month-1;
-    $DefaultDay   = int($Day);
-    $DefaultHour  = $Time;
-  } else {
-    $DefaultYear  = $Year;
-    $DefaultMonth = $Month;
-    $DefaultDay   = int($Day);
-    $DefaultHour  = "09:00";
-  }  
-  if ($DefaultHour eq ":") {
-    $DefaultHour = "09:00";
-  }  
-   
-  my @days = ();
-  for ($i = 1; $i<=31; ++$i) {
-    push @days,$i;
-  }  
-
-  my @months = @AbrvMonths;
-
-  my @years = ();
-  for ($i = $FirstYear; $i<=$Year+2; ++$i) { # $FirstYear - current year
-    push @years,$i;
-  }  
-
-  my @hours = ();
-  for (my $Hour = 7; $Hour<=20; ++$Hour) {
-    for (my $Min = 0; $Min<=59; $Min=$Min+15) {
-      push @hours,sprintf "%2.2d:%2.2d",$Hour,$Min;
-    }  
-  }  
-
-  $query -> param('sessionday',  $DefaultDay);
-  $query -> param('sessionmonth',$AbrvMonths[$DefaultMonth]);
-  $query -> param('sessionyear', $DefaultYear);
-  $query -> param('sessionhour', $DefaultHour);
-
-  print $query -> popup_menu (-name => 'sessionday',  -values => \@days,  -default => $DefaultDay);
-  print $query -> popup_menu (-name => 'sessionmonth',-values => \@months,-default => $AbrvMonths[$DefaultMonth]);
-  print $query -> popup_menu (-name => 'sessionyear', -values => \@years, -default => $DefaultYear);
-  print "<p> at &nbsp;\n";
-  print $query -> popup_menu (-name => 'sessionhour', -values => \@hours, -default => $DefaultHour);
-  print "</p>\n";
 }
 
 sub SessionOrder {
