@@ -137,7 +137,7 @@ if ($SubForm eq "eventgroup") {
   } else {
     push @ErrorStack,"Only \"Delete\" is a valid action";
   }  
-
+}
    
 if (@Actions) {
   &ClearConferences;

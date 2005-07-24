@@ -180,6 +180,25 @@ sub FetchRevisionsByMinorTopic {
   return @DocRevIDs;
 }
 
+sub FetchRevisionsByEventID {
+  my ($EventID) = @_;
+  
+  my $DocRevID;
+  my @DocRevIDs = ();
+  
+  my $RevisionList = $dbh -> prepare("select DocRevID from RevisionEvent where EventID=?"); 
+ 
+  $RevisionList -> execute($EventID);
+  $RevisionList -> bind_columns(undef, \($DocRevID));
+
+  while ($RevisionList -> fetch) {
+    &FetchDocRevisionByID($DocRevID);
+    if ($DocRevisions{$DocRevID}{Obsolete}) {next;}
+    push @DocRevIDs,$DocRevID; 
+  }
+  return @DocRevIDs;
+}
+
 sub UpdateRevision (%) { # Later add other fields, where clause
   require "SQLUtilities.pm";
   
