@@ -119,7 +119,13 @@ unless ($dbh) {
 }      
 
 print $query -> header;
-&DocDBHeader("Modify a Session","",-scripts => ["PopUps"]);
+my $Title;
+if ($SingleSession && $Mode eq "new") { 
+  $Title = "Create a New Event";
+} else {
+  $Title = "Modify a Session";
+}  
+&DocDBHeader($Title,"",-scripts => ["PopUps"]);
 
 &EndPage(@ErrorStack);
 
@@ -146,6 +152,8 @@ if ($SessionID) {
 push @DebugStack,"Mode: $Mode SS: $SingleSession";
 
 if ($Mode eq "modify" || $Mode eq "create") {
+  require "MeetingSecuritySQL.pm";
+  
   my $SessionDate = "$SessionYear-$ReverseAbrvMonth{$SessionMonth}-$SessionDay $SessionHour:00";
 
   if ($SingleSession && $Mode eq "create") { # Make an event, then a session, pass variables out
@@ -172,6 +180,12 @@ if ($Mode eq "modify" || $Mode eq "create") {
                  -startdate => $SessionDate, -enddate  => $SessionDate,
                  -shortdescription => $Short, -longdescription => $Long,
                  -showalltalks => 1);
+    &MeetingSecurityUpdate(-mode         => 'access',
+                           -conferenceid => $EventID, 
+                           -groupids     => \@MeetingViewGroupIDs);
+    &MeetingSecurityUpdate(-mode         => 'modify',
+                           -conferenceid => $EventID, 
+                           -groupids     => \@MeetingModifyGroupIDs);
     &UpdateSession(-sessionid => $SessionID, -date     => $SessionDate,
                    -title     => $Short,     -location => $Location,
                    -description => $SessionDescription);
@@ -346,7 +360,7 @@ my @SessionOrderIDs  = &FetchSessionOrdersBySessionID($SessionID);
 
 # Display all info on all talks plus a number of blanks
 
-&PrintSessionHeader($SessionID); 
+# &PrintSessionHeader($SessionID); 
 
 my $SessionDefaultTitle       = $Sessions{$SessionID}{Title};
 my $SessionDefaultDescription = $Sessions{$SessionID}{Description};
@@ -389,7 +403,7 @@ if ($SingleSession) {
      $RequiredEntries{LongDescription}  = $FALSE; # Can get from ShortDescription
      $RequiredEntries{ShortDescription} = $TRUE;
      $RequiredEntries{EventGroup}       = $TRUE;
-  print "<table class=\"HighPaddedTable\" border=1>\n";
+  print "<table class=\"HighPaddedTable\">\n";
 
   print "<tr>\n";
   print "<td colspan=\"4\">Required fields are marked with $RequiredMark. \n";
