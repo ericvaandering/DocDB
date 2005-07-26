@@ -139,7 +139,7 @@ if ($SessionID) {
   unless (&CanCreateMeeting()) {
     push @ErrorStack,$Msg_MeetNoCreate;
   }
-} elsif ($ConferenceID) { 
+} elsif ($EventID) { 
   unless (&CanModifyMeeting($ConferenceID)) {
     push @ErrorStack,$Msg_MeetNoModify;
   }
