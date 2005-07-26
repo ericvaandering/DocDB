@@ -197,6 +197,10 @@ if ($Mode eq "modify" || $Mode eq "create") {
                    -title => $SessionTitle, -description => $SessionDescription,
                    -location => $SessionLocation);
   }                 
+  if ($SingleSession && $EventID) { 
+    ($SessionID) = &FetchSessionsByConferenceID($EventID);
+  }
+
   &ClearSessions;
   &FetchSessionByID($SessionID);
 
@@ -370,6 +374,8 @@ my $SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
 # Defaults for SingleSessionMode;
 my @MeetingModifyDefaults = ();
 my @MeetingViewDefaults   = ();
+my $DefaultShortDescription;
+my $DefaultLongDescription;
 
 if ($SingleSession) {
   my ($DefaultEventTime,$DefaultEventDate);
@@ -378,8 +384,12 @@ if ($SingleSession) {
     $DefaultEventDate = &SQLNow(-dateonly => $TRUE);
     @MeetingViewDefaults  = ();
     @MeetingModifyDefaults = &FindUsersGroups();
-  }
-  $SessionDefaultDateTime = "$DefaultEventDate $DefaultEventTime";
+    $SessionDefaultDateTime = "$DefaultEventDate $DefaultEventTime";
+  } elsif ($Mode eq "modify") {
+    &FetchConferenceByConferenceID($EventID);
+    $DefaultShortDescription = $Conferences{$EventID}{ShortDescription};
+    $DefaultLongDescription  = $Conferences{$EventID}{LongDescription};
+  }  
 }
 
 print $query -> start_multipart_form('POST',"$SessionModify");
