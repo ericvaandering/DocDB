@@ -378,6 +378,7 @@ my $DefaultShortDescription;
 my $DefaultLongDescription;
 my $DefaultEventLocaton;
 my $DefaultEventURL;
+my $DefaultEventGroupID;
 
 if ($SingleSession) {
   require "MeetingSecuritySQL.pm";
@@ -393,6 +394,7 @@ if ($SingleSession) {
   } elsif ($EventID) {
     &FetchConferenceByConferenceID($EventID);
     push @DebugStack,"Modify EID: $EventID S: $Conferences{$EventID}{Title} L: $Conferences{$EventID}{LongDescription}";
+    $DefaultEventGroupID  = $Conferences{$EventID}{EventGroupID};
     $DefaultShortDescription = $Conferences{$EventID}{Title};
     $DefaultLongDescription  = $Conferences{$EventID}{LongDescription};
     $DefaultEventLocation    = $Conferences{$EventID}{Location};
