@@ -397,8 +397,15 @@ if ($SingleSession) {
     $DefaultLongDescription  = $Conferences{$EventID}{LongDescription};
     $DefaultEventLocation    = $Conferences{$EventID}{Location};
     $DefaultEventURL         = $Conferences{$EventID}{URL};
-    @MeetingViewDefaults     = &GetMeetingSecurityGroups($EventID);
-    @MeetingModifyDefaults   = &GetMeetingModifyGroups($EventID);
+    foreach my $MeetingViewID (&GetMeetingSecurityGroups($EventID)) {
+      my $GroupID = $MeetingSecurities{$MeetingViewID}{GroupID};
+      push @MeetingViewDefaults,$GroupID;
+    }
+    foreach my $MeetingModifyID (&GetMeetingModifyGroups($EventID)) {
+      my $GroupID = $MeetingModify{$MeetingModifyID}{GroupID};
+      push @MeetingModifyDefaults,$GroupID;
+    }
+
     push @DebugStack,"View:",@MeetingViewDefaults;
     push @DebugStack,"Modify:",@MeetingModifyDefaults;
   }  
