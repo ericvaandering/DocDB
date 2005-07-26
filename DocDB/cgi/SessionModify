@@ -129,7 +129,7 @@ if ($SessionID) {
   unless (&CanModifyMeeting($ConferenceID)) {
     push @ErrorStack,$Msg_MeetNoModify;
   }
-} elsif ($Mode eq "create" && $SingleSession) { 
+} elsif (($Mode eq "create" || $Mode eq "new")  && $SingleSession) { 
   unless (&CanCreateMeeting()) {
     push @ErrorStack,$Msg_MeetNoCreate;
   }
@@ -353,31 +353,28 @@ my $SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
 
 # Defaults for SingleSessionMode;
 
-my ($DefaultEventTime,$DefaultEventDate);
-
 if ($SingleSession) {
-
-  unless ($DefaultEventTime) {
+  if ($Mode eq "new") {
     $DefaultEventTime = "9:00:00";
-  }  
-  unless ($DefaultEventDate) {
     $DefaultEventDate = &SQLNow(-dateonly => $TRUE);
-  }  
+    @MeetingViewGroupIDs   = ();
+    @MeetingModifyGroupIDs = &FindUsersGroups();
+  }
   $SessionDefaultDateTime = "$DefaultEventDate $DefaultEventTime";
 }
 
-
-
 print $query -> start_multipart_form('POST',"$SessionModify");
 print "<div class=\"SessionEntryForm\">\n";
-if ($SingleSession) { 
+if ($SingleSession && $Mode eq "new") { 
   print $query -> hidden(-name => 'singlesession', -default => 1);
   print $query -> hidden(-name => 'mode',          -default => "create");
+} elsif ($SingleSession) {
+  print $query -> hidden(-name => 'singlesession', -default => 1);
+  print $query -> hidden(-name => 'sessionid',     -default => $SessionID);
+  print $query -> hidden(-name => 'mode',          -default => 'modify');
 } else {
-  #$query -> param('sessionid',$SessionID); #FIXME eliminate?
-  print $query -> hidden(-name => 'sessionid', -default => $SessionID);
-  #$query -> param('mode','modify');        #FIXME eliminate?
-  print $query -> hidden(-name => 'mode', -default => 'modify');
+  print $query -> hidden(-name => 'sessionid',     -default => $SessionID);
+  print $query -> hidden(-name => 'mode',          -default => 'modify');
 }
 
 if ($SingleSession) {

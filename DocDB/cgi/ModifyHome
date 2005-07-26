@@ -188,7 +188,7 @@ if (&CanCreateMeeting()) {
   print "<li>\n"; 
   print $query -> startform('POST',$SessionModify),"<div>\n";
   print $query -> hidden(-name => 'singlesession', -default => 1);
-  print $query -> hidden(-name => 'mode', -default => "create");
+  print $query -> hidden(-name => 'mode', -default => "new");
   print $query -> submit (-value => "Create");
   print " a new event with only one session"; 
   print "\n</div>\n",$query -> endform,"\n\n";
@@ -213,11 +213,6 @@ if (&CanCreateMeeting()) {
 print "<p><strong>Database maintenance:</strong></p>\n";
 print "<ul>\n";
 print "<li>Add an <a href=\"$AuthorAddForm\">author</a></li>\n";
-if (&CanCreateMeeting()) {
-  print "<li>Create a <a href=\"$MeetingModify\">new meeting</a> or modify an 
-             <a href=\"$ListAllMeetings?mode=modify\">existing meeting</a>
-             (with talks)</li>\n";
-}
 print "</ul>\n";
            
 if (&CanAdminister()) {
