@@ -381,6 +381,7 @@ my $DefaultEventURL;
 
 if ($SingleSession) {
   require "MeetingSecuritySQL.pm";
+  require "SQLUtilities.pm";
 
   my ($DefaultEventTime,$DefaultEventDate);
   if ($Mode eq "new") {
