@@ -163,7 +163,8 @@ if ($Mode eq "modify" || $Mode eq "create") {
                            -groupids     => \@MeetingModifyGroupIDs);
     push @DebugStack,"Created new event $EventID";
     $SessionID = &InsertSession(-eventid => $EventID, -date     => $SessionDate,
-                                -title   => $Short,   -location => $Location);
+                                -title   => $Short,   -location => $Location,
+                                -description => $SessionDescription);
     push @DebugStack,"Created new session $SessionID";
   } elsif ($SingleSession && $Mode eq "modify") {
     &UpdateEvent(-eventid => $EventID, -eventgroupid => $EventGroupID,  
@@ -172,7 +173,8 @@ if ($Mode eq "modify" || $Mode eq "create") {
                  -shortdescription => $Short, -longdescription => $Long,
                  -showalltalks => 1);
     &UpdateSession(-sessionid => $SessionID, -date     => $SessionDate,
-                   -title     => $Short,     -location => $Location);
+                   -title     => $Short,     -location => $Location,
+                   -description => $SessionDescription);
   } else {
 
   # Update Session parameters, refetch
@@ -387,17 +389,17 @@ if ($SingleSession) {
      $RequiredEntries{LongDescription}  = $FALSE; # Can get from ShortDescription
      $RequiredEntries{ShortDescription} = $TRUE;
      $RequiredEntries{EventGroup}       = $TRUE;
-  print "<table class=\"HighPaddedTable\">\n";
+  print "<table class=\"HighPaddedTable\" border=1>\n";
 
   print "<tr>\n";
-  print "<td colspan=\"3\">Required fields are marked with $RequiredMark. \n";
+  print "<td colspan=\"4\">Required fields are marked with $RequiredMark. \n";
   print "</td>\n";
   print "</tr>\n";
   print "<tr>\n";
-  print "<td>\n"; 
+  print "<td rowspan=\"2\">\n"; 
   &EventGroupSelect(-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID]);
   print "</td>\n";
-  print "<td>\n";
+  print "<td rowspan=\"2\">\n";
   &ShortDescriptionBox(-name => "shortdesc", -helptext => "Short Description", -required => $RequiredEntries{ShortDescription},
                        -default => $DefaultShortDescription);
   &LongDescriptionBox(-required => $RequiredEntries{LongDescription});
@@ -425,6 +427,13 @@ if ($SingleSession) {
                   -multiple  => true,
                   -default   => \@MeetingModifyDefaults,
                   -size      => 8);
+  print "</td>\n";
+  print "</tr>\n";
+  print "<tr>\n";
+  print "<td colspan=\"2\">\n";
+  &TextArea(-name     => 'sessiondescription', -columns => 40, -rows => 4,
+            -default  => $SessionDefaultDescription, 
+            -helplink => 'sessioninfo', -helptext => 'Session Description');
   print "</td>\n";
   print "</tr>\n";
   print "</table>\n";
