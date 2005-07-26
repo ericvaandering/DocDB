@@ -570,7 +570,7 @@ sub ModifyEventLink ($) {
   my $URL;
   
   if (&SessionCountByEventID($EventID) == 1) {
-    $URL = "$SessionModify?eventid=$EventID&amp;singlesession=1&amp;mode=modify";
+    $URL = "$SessionModify?eventid=$EventID&amp;singlesession=1";
   } else {  
     $URL = "$MeetingModify?conferenceid=$EventID";
   }
