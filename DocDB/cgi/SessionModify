@@ -380,6 +380,8 @@ my $DefaultEventLocaton;
 my $DefaultEventURL;
 
 if ($SingleSession) {
+  require "MeetingSecuritySQL.pm";
+
   my ($DefaultEventTime,$DefaultEventDate);
   if ($Mode eq "new") {
     $DefaultEventTime = "9:00:00";
@@ -394,6 +396,8 @@ if ($SingleSession) {
     $DefaultLongDescription  = $Conferences{$EventID}{LongDescription};
     $DefaultEventLocation    = $Conferences{$EventID}{Location};
     $DefaultEventURL         = $Conferences{$EventID}{URL};
+    @MeetingViewDefaults     = &GetMeetingSecurityGroups($EventID);
+    @MeetingModifyDefaults   = &GetMeetingModifyGroups($EventID);
   }  
 }
 
