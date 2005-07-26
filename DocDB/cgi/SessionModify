@@ -89,8 +89,6 @@ my $Long                  = $params{long};
 my @MeetingViewGroupIDs   = split /\0/,$params{meetingviewgroups};
 my @MeetingModifyGroupIDs = split /\0/,$params{meetingmodifygroups};
 
-$query -> delete_all(); # FIXME: No sticky should stop this. Stop program from caching variable from script to script
-
 # Also have params for DocID, authors, and topics in special params with 
 # SessionID embedded
 
@@ -199,6 +197,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
   }                 
   if ($SingleSession && $EventID) { 
     ($SessionID) = &FetchSessionsByConferenceID($EventID);
+    push @DebugStack,"Found Session $SessionID";
   }
 
   &ClearSessions;
