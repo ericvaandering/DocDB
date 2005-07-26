@@ -148,6 +148,12 @@ if ($SessionID) {
 &EndPage(@ErrorStack);
 
 push @DebugStack,"Mode: $Mode SS: $SingleSession";
+push @DebugStack,"SS $SingleSession EI  $EventID";
+if ($SingleSession && $EventID) { 
+  ($SessionID) = &FetchSessionsByConferenceID($EventID);
+  push @DebugStack,"Found Session $SessionID";
+}
+
 
 if ($Mode eq "modify" || $Mode eq "create") {
   require "MeetingSecuritySQL.pm";
@@ -195,12 +201,6 @@ if ($Mode eq "modify" || $Mode eq "create") {
                    -title => $SessionTitle, -description => $SessionDescription,
                    -location => $SessionLocation);
   }                 
-  push @DebugStack,"SS $SingleSession EI  $EventID";
-  if ($SingleSession && $EventID) { 
-    ($SessionID) = &FetchSessionsByConferenceID($EventID);
-    push @DebugStack,"Found Session $SessionID";
-  }
-
   &ClearSessions;
   &FetchSessionByID($SessionID);
 
