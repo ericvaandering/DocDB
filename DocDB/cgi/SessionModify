@@ -195,6 +195,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
                    -title => $SessionTitle, -description => $SessionDescription,
                    -location => $SessionLocation);
   }                 
+  push @DebugStack,"SS $SingleSession EI  $EventID";
   if ($SingleSession && $EventID) { 
     ($SessionID) = &FetchSessionsByConferenceID($EventID);
     push @DebugStack,"Found Session $SessionID";
