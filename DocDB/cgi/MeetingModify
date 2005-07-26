@@ -444,9 +444,9 @@ print "</div>\n";
 
 my $DefaultEventGroupID     = $Conferences{$ConferenceID}{EventGroupID};
 my $DefaultShortDescription = $Conferences{$ConferenceID}{Title};
-$DefaultLongDescription     = $Conferences{$ConferenceID}{LongDescription};
-$MeetingDefaultLocation     = $Conferences{$ConferenceID}{Location};
-$MeetingDefaultURL          = $Conferences{$ConferenceID}{URL};
+my $DefaultLongDescription  = $Conferences{$ConferenceID}{LongDescription};
+my $MeetingDefaultLocation  = $Conferences{$ConferenceID}{Location};
+my $MeetingDefaultURL       = $Conferences{$ConferenceID}{URL};
 $MeetingDefaultPreamble     = $Conferences{$ConferenceID}{Preamble};
 $MeetingDefaultEpilogue     = $Conferences{$ConferenceID}{Epilogue};
 $MeetingDefaultShowAllTalks = $Conferences{$ConferenceID}{ShowAllTalks};
@@ -485,9 +485,10 @@ print "</td>\n";
 print "<td>\n";
 &ShortDescriptionBox(-name => "shortdesc", -helptext => "Short Description", -required => $RequiredEntries{ShortDescription},
                      -default => $DefaultShortDescription);
-&LongDescriptionBox(-required => $RequiredEntries{LongDescription});
-&LocationBox;       
-&EventURLBox;  
+&LongDescriptionBox(-required => $RequiredEntries{LongDescription}, 
+                    -default  => $DefaultLongDescription);
+&LocationBox(-default  => $MeetingDefaultLocation);       
+&EventURLBox(-default  => $MeetingDefaultURL);  
 print "</td>\n";
 print "<td>\n";
 print "<div>\n";

@@ -376,6 +376,8 @@ my @MeetingModifyDefaults = ();
 my @MeetingViewDefaults   = ();
 my $DefaultShortDescription;
 my $DefaultLongDescription;
+my $DefaultEventLocaton;
+my $DefaultEventURL;
 
 if ($SingleSession) {
   my ($DefaultEventTime,$DefaultEventDate);
@@ -390,6 +392,8 @@ if ($SingleSession) {
     push @DebugStack,"Modify EID: $EventID S: $Conferences{$EventID}{Title} L: $Conferences{$EventID}{LongDescription}";
     $DefaultShortDescription = $Conferences{$EventID}{Title};
     $DefaultLongDescription  = $Conferences{$EventID}{LongDescription};
+    $DefaultEventLocation    = $Conferences{$EventID}{Location};
+    $DefaultEventURL         = $Conferences{$EventID}{URL};
   }  
 }
 
@@ -425,16 +429,18 @@ if ($SingleSession) {
   &EventGroupSelect(-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID]);
   print "</td>\n";
   print "<td rowspan=\"2\">\n";
-  &ShortDescriptionBox(-name => "shortdesc", -helptext => "Short Description", -required => $RequiredEntries{ShortDescription},
+  &ShortDescriptionBox(-name    => "shortdesc", -helptext => "Short Description", 
+                      -required => $RequiredEntries{ShortDescription},
                        -default => $DefaultShortDescription);
-  &LongDescriptionBox(-required => $RequiredEntries{LongDescription}, -default => $DefaultShortDescription);
+  &LongDescriptionBox(-required => $RequiredEntries{LongDescription}, 
+                      -default  => $DefaultLongDescription);
   print "<div>\n";
   &DateTimePulldown(-name    => "session", -helptext => "Start Date and Time", -helplink    => 'sessioninfo',
                     -oneline => $TRUE,     -onetime  => $TRUE,                 -granularity => 15,
                     -default => $SessionDefaultDateTime, -required => $RequiredEntries{StartDate} );
   print "</div>\n";
-  &LocationBox;       
-  &EventURLBox;  
+  &LocationBox(-default  => $DefaultEventLocation);       
+  &EventURLBox(-default  => $DefaultEventURL     );  
   print "</td>\n";
   print "<td>\n";
   &SecurityScroll(-addpublic => 'true',

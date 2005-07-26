@@ -26,6 +26,7 @@ sub LocationBox (;%) {
 
   my (%Params) = @_;
   
+  my $Default  = $Params{-default}   || "";
   my $Disabled = $Params{-disabled}  || "0";
   
   my $Booleans = "";
@@ -39,7 +40,7 @@ sub LocationBox (;%) {
                                        -helptext  => "Location",
                                        -required  => $Required );
   print $ElementTitle,"\n";                                     
-  print $query -> textfield (-name => 'location', -default => $MeetingDefaultLocation,
+  print $query -> textfield (-name => 'location', -default => $Default,
                              -size => 40, -maxlength => 64, $Booleans);
   print "</div>\n";
 };
@@ -49,6 +50,7 @@ sub EventURLBox (;%) {
 
   my (%Params) = @_;
   
+  my $Default  = $Params{-default}   || "";
   my $Disabled = $Params{-disabled}  || "0";
   
   my $Booleans = "";
@@ -62,7 +64,7 @@ sub EventURLBox (;%) {
                                        -helptext  => "URL",
                                        -required  => $Required );
   print $ElementTitle,"\n";                                     
-  print $query -> textfield (-name => 'url', -default => $MeetingDefaultURL,
+  print $query -> textfield (-name => 'url', -default => $Default,
                              -size => 40, -maxlength => 240, $Booleans);
   print "</div>\n";
 };
