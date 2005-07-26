@@ -204,7 +204,7 @@ sub LongDescriptionBox (;%) {
   &TextField(-name     => $Name,     -helptext  => $HelpText, 
              -helplink => $HelpLink, -required  => $Required, 
              -size     => $Size,     -maxlength => $MaxLength,
-             -default  => $Default   -disabled  => $Disabled);
+             -default  => $Default,  -disabled  => $Disabled);
   print "</div>\n";           
 };
 
