@@ -201,10 +201,10 @@ sub LongDescriptionBox (;%) {
   my $Default   =   $Params{-default}   || "";                 # FIXME: Not used
 
   print "<div class=\"LongDescriptionEntry\">\n";
-  &TextField(-name     => $Name,                   -helptext  => $HelpText, 
-             -helplink => $HelpLink,               -required  => $Required, 
-             -size     => $Size,                   -maxlength => $MaxLength,
-             -default  => $DefaultLongDescription, -disabled  => $Disabled);
+  &TextField(-name     => $Name,     -helptext  => $HelpText, 
+             -helplink => $HelpLink, -required  => $Required, 
+             -size     => $Size,     -maxlength => $MaxLength,
+             -default  => $Default   -disabled  => $Disabled);
   print "</div>\n";           
 };
 

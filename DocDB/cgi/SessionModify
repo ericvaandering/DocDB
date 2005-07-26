@@ -387,8 +387,8 @@ if ($SingleSession) {
     $SessionDefaultDateTime = "$DefaultEventDate $DefaultEventTime";
   } elsif ($Mode eq "modify") {
     &FetchConferenceByConferenceID($EventID);
-    push @DebugStack,"Modify EID: $EventID $Conferences{$EventID}{ShortDescription}";
-    $DefaultShortDescription = $Conferences{$EventID}{ShortDescription};
+    push @DebugStack,"Modify EID: $EventID S: $Conferences{$EventID}{Title} L: $Conferences{$EventID}{LongDescription}";
+    $DefaultShortDescription = $Conferences{$EventID}{Title};
     $DefaultLongDescription  = $Conferences{$EventID}{LongDescription};
   }  
 }
@@ -427,7 +427,7 @@ if ($SingleSession) {
   print "<td rowspan=\"2\">\n";
   &ShortDescriptionBox(-name => "shortdesc", -helptext => "Short Description", -required => $RequiredEntries{ShortDescription},
                        -default => $DefaultShortDescription);
-  &LongDescriptionBox(-required => $RequiredEntries{LongDescription});
+  &LongDescriptionBox(-required => $RequiredEntries{LongDescription}, -default => $DefaultShortDescription);
   print "<div>\n";
   &DateTimePulldown(-name    => "session", -helptext => "Start Date and Time", -helplink    => 'sessioninfo',
                     -oneline => $TRUE,     -onetime  => $TRUE,                 -granularity => 15,
