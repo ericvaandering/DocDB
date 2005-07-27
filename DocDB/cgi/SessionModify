@@ -152,7 +152,7 @@ if ($SessionID) {
   unless (&CanModifyMeeting($ConferenceID)) {
     push @ErrorStack,$Msg_MeetNoModify;
   }
-  unless (&SessionCountByEventID($ConferenceID) <= 1) {
+  unless (&SessionCountByEventID($ConferenceID) == 1) {
     push @ErrorStack,$Msg_MeetOnlyOne
   }
 } else {
