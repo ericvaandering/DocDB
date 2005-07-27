@@ -261,9 +261,18 @@ sub SessionLink (%) {
   my $Text;
   my $ToolTip = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title}.":".$Sessions{$SessionID}{Title};
   if ($Format eq "full") {
-    $Text = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title}.":".$Sessions{$SessionID}{Title};
+    if ($Conferences{$Sessions{$SessionID}{ConferenceID}}{Title} && $Sessions{$SessionID}{Title} &&
+        $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title} ne $Sessions{$SessionID}{Title}) { 
+      $Text = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title}.":".$Sessions{$SessionID}{Title};
+    } else {
+      $Text = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title};
+    }  
   } else {
-    $Text = $Sessions{$SessionID}{Title};
+    if ($Text = $Sessions{$SessionID}{Title}) {
+      $Text = $Sessions{$SessionID}{Title};
+    } else {
+      $Text = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title};
+    }   
   }
   
   my $Link = "<a href=\"$URL\" title=\"$ToolTip\">$Text</a>";
