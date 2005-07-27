@@ -474,4 +474,17 @@ sub InsertRevisionEvents (%) {
   return $Count;
 }
 
+sub InsertMeetingOrder {
+   my %Params = @_;
+   my $Order              = $Params{-session}            || 1;   
+   my $SessionID          = $Params{-sessionid}          || 0;   
+   my $SessionSeparatorID = $Params{-sessionseparatorid} || 0;   
+ 
+   my $Insert = $dbh -> prepare(
+    "insert into MeetingOrder ".
+    "(MeetingOrderID, SessionOrder, SessionID, SessionSeparatorID) ". 
+    "values (0,?,?,?)");
+   $Insert -> execute($Order,$SessionID,$SessionSeparatorID);
+}
+
 1;

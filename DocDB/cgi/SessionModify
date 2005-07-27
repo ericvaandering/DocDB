@@ -37,7 +37,7 @@ require "Scripts.pm";
 require "Security.pm";
 require "Utilities.pm";
 
-require "EventUtilities.pm"
+require "EventUtilities.pm";
 require "HTMLUtilities.pm";
 require "MeetingSecurityUtilities.pm";
 require "TalkHintUtilities.pm";
@@ -186,6 +186,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
     $SessionID = &InsertSession(-eventid => $EventID, -date     => $SessionDate,
                                 -title   => $Short,   -location => $Location,
                                 -description => $SessionDescription);
+    &InsertMeetingOrder(-sessionid => $SessionID);
   } elsif ($SingleSession && $Mode eq "modify") {
     &UpdateEvent(-eventid => $EventID, -eventgroupid => $EventGroupID,  
                  -location => $Location, -url => $URL, 
@@ -201,6 +202,9 @@ if ($Mode eq "modify" || $Mode eq "create") {
     &UpdateSession(-sessionid => $SessionID, -date     => $SessionDate,
                    -title     => $Short,     -location => $Location,
                    -description => $SessionDescription);
+    my $MeetingOrderUpdate = $dbh -> prepare(
+         "update MeetingOrder set SessionOrder=1 where SessionID=?");
+    $MeetingOrderUpdate -> execute($SessionID);
   } else {
 
   # Update Session parameters, refetch
