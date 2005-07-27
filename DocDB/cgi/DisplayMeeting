@@ -95,6 +95,8 @@ if ($ConferenceID) {
   $ConferenceID = $SessionSeparators{$SessionSeparatorID}{ConferenceID};
 }
 
+push @DebugStack,"SSM: $SingleSessionMeeting DM: $DisplayMode EI: $ConferenceID SI: $SessionID ";
+
 unless (&CanAccessMeeting($ConferenceID)) {
   push @ErrorStack,$Msg_MeetNoAccess;
 }
