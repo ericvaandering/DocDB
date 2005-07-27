@@ -71,6 +71,7 @@ $Msg_TopicShortIgnored = "Your short description of this meeting has been ".
 # Messages for meeting/session creation/modification/access
 
 $Msg_MeetNoSessions     = "This meeting was created with no sessions. You will have to add at least one session before adding talks.";
+$Msg_MeetOnlyOne        = "this page can only be used to modify short meetings (just one session)";
 $Msg_SessionBlankDelete = "Setting session titles to blank will not delete them.";
 
 $Msg_MeetNoAccess       = "You do not have permission to view this meeting.";

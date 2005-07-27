@@ -36,6 +36,8 @@ require "Sorts.pm";
 require "Scripts.pm";
 require "Security.pm";
 require "Utilities.pm";
+
+require "EventUtilities.pm"
 require "HTMLUtilities.pm";
 require "MeetingSecurityUtilities.pm";
 require "TalkHintUtilities.pm";
@@ -53,6 +55,9 @@ $query = new CGI;  # Global for subroutines
 
 &GetPrefsCookie;
 &SetAuthorMode;
+
+### Gather parameters
+
 %params = $query -> Vars;
 
 my $SessionID          = $params{sessionid};
@@ -108,6 +113,8 @@ my %TalkConfirmFlags = ();
 foreach my $TalkConfirm (@TalkConfirms) { 
   $TalkConfirmFlags{$TalkConfirm} = 1; 
 }  
+
+### Start of HTML
   
 @ErrorStack = ();
 @WarnStack  = ();
@@ -129,6 +136,8 @@ if ($SingleSession && $Mode eq "new") {
 
 &EndPage(@ErrorStack);
 
+### Check parameters
+
 if ($SessionID) {
   &FetchSessionByID($SessionID);
   my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
@@ -143,16 +152,20 @@ if ($SessionID) {
   unless (&CanModifyMeeting($ConferenceID)) {
     push @ErrorStack,$Msg_MeetNoModify;
   }
+  unless (&SessionCountByEventID($ConferenceID)) {
+    push @ErrorStack,$Msg_MeetOnlyOne
+  }
 } else {
   push @ErrorStack,"You must specify a session to modify. You probably arrived
   here by error.";
 }  
 &EndPage(@ErrorStack);
 
-if ($SingleSession && $EventID) { 
+if ($SingleSession && $EventID) { # Grab single session ID in single session mode
   ($SessionID) = &FetchSessionsByConferenceID($EventID);
 }
 
+### Do DB updates and inserts
 
 if ($Mode eq "modify" || $Mode eq "create") {
   require "MeetingSecuritySQL.pm";
@@ -344,6 +357,8 @@ if ($Mode eq "modify" || $Mode eq "create") {
 &EndPage(@ErrorStack);
 &WarnPage(@WarnStack);
 
+### Prepare to display form (get required info)
+
 &ReHintTalksBySessionID($SessionID); 
 &ClearSessionTalks();
 
@@ -353,13 +368,9 @@ my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
 my @TalkSeparatorIDs = &FetchTalkSeparatorsBySessionID($SessionID);
 my @SessionOrderIDs  = &FetchSessionOrdersBySessionID($SessionID);
 
-# Sort talks and separators (subroutine)
+# Sort talks and separators
 
 @SessionOrderIDs = sort SessionOrderIDByOrder @SessionOrderIDs;
-
-# Display all info on all talks plus a number of blanks
-
-# &PrintSessionHeader($SessionID); 
 
 my $SessionDefaultTitle       = $Sessions{$SessionID}{Title};
 my $SessionDefaultDescription = $Sessions{$SessionID}{Description};
@@ -403,6 +414,8 @@ if ($SingleSession) {
     }
   }  
 }
+
+### Display form
 
 print $query -> start_multipart_form('POST',"$SessionModify");
 print "<div class=\"SessionEntryForm\">\n";
