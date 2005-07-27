@@ -139,11 +139,10 @@ sub SessionEntryForm ($@) {
     if (grep /n/,$MeetingOrderID) {# Erase defaults
       if ($ConferenceID) {
         &FetchConferenceByConferenceID($ConferenceID);
-        $SessionDefaultDateTime = $Conferences{$ConferenceID}{StartDate};
+        $SessionDefaultDateTime = $Conferences{$ConferenceID}{StartDate}." 9:00:00";
       } else {
         require "SQLUtilities.pm";
         $SessionDefaultDateTime = &SQLNow(-dateonly => $TRUE)." 9:00:00";
-        push @DebugStack, "Time: $SessionDefaultDateTime ";
       }
       $SessionDefaultLocation    = "";
       $SessionDefaultTitle       = "";

@@ -149,11 +149,8 @@ if ($SessionID) {
 }  
 &EndPage(@ErrorStack);
 
-push @DebugStack,"Mode: $Mode SS: $SingleSession";
-push @DebugStack,"SS $SingleSession EI  $EventID";
 if ($SingleSession && $EventID) { 
   ($SessionID) = &FetchSessionsByConferenceID($EventID);
-  push @DebugStack,"Found Session $SessionID";
 }
 
 
@@ -163,8 +160,6 @@ if ($Mode eq "modify" || $Mode eq "create") {
   my $SessionDate = "$SessionYear-$ReverseAbrvMonth{$SessionMonth}-$SessionDay $SessionHour:00";
 
   if ($SingleSession && $Mode eq "create") { # Make an event, then a session, pass variables out
-    push @DebugStack,"Creating new event in group $EventGroupID with L $Location U $URL SD $SessionDate
-                      ShD $Short LD $Long";
     $EventID = &InsertEvent(-eventgroupid => $EventGroupID, -location => $Location,
                -url => $URL, -startdate   => $SessionDate,  -enddate  => $SessionDate,
                -shortdescription          => $Short, -longdescription => $Long,
@@ -175,11 +170,9 @@ if ($Mode eq "modify" || $Mode eq "create") {
     &MeetingSecurityUpdate(-mode         => 'modify',
                            -conferenceid => $EventID, 
                            -groupids     => \@MeetingModifyGroupIDs);
-    push @DebugStack,"Created new event $EventID";
     $SessionID = &InsertSession(-eventid => $EventID, -date     => $SessionDate,
                                 -title   => $Short,   -location => $Location,
                                 -description => $SessionDescription);
-    push @DebugStack,"Created new session $SessionID";
   } elsif ($SingleSession && $Mode eq "modify") {
     &UpdateEvent(-eventid => $EventID, -eventgroupid => $EventGroupID,  
                  -location => $Location, -url => $URL, 
@@ -395,7 +388,6 @@ if ($SingleSession) {
     $SessionDefaultDateTime = "$DefaultEventDate $DefaultEventTime";
   } elsif ($EventID) {
     &FetchConferenceByConferenceID($EventID);
-    push @DebugStack,"Modify EID: $EventID S: $Conferences{$EventID}{Title} L: $Conferences{$EventID}{LongDescription}";
     $DefaultEventGroupID  = $Conferences{$EventID}{EventGroupID};
     $DefaultShortDescription = $Conferences{$EventID}{Title};
     $DefaultLongDescription  = $Conferences{$EventID}{LongDescription};
@@ -409,9 +401,6 @@ if ($SingleSession) {
       my $GroupID = $MeetingModify{$MeetingModifyID}{GroupID};
       push @MeetingModifyDefaults,$GroupID;
     }
-
-    push @DebugStack,"View:",@MeetingViewDefaults;
-    push @DebugStack,"Modify:",@MeetingModifyDefaults;
   }  
 }
 
