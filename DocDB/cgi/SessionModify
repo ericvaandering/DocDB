@@ -418,13 +418,18 @@ if ($SingleSession) {
 print $query -> start_multipart_form('POST',"$SessionModify");
 print "<div class=\"SessionEntryForm\">\n";
 if ($SingleSession && $Mode eq "new") { 
+  $query -> param('mode','create');
   print $query -> hidden(-name => 'singlesession', -default => 1);
   print $query -> hidden(-name => 'mode',          -default => "create");
 } elsif ($SingleSession) {
+  $query -> param('sessionid',$SessionID);
+  $query -> param('mode','modify');
   print $query -> hidden(-name => 'singlesession', -default => 1);
   print $query -> hidden(-name => 'sessionid',     -default => $SessionID);
   print $query -> hidden(-name => 'mode',          -default => 'modify');
 } else {
+  $query -> param('sessionid',$SessionID);
+  $query -> param('mode','modify');
   print $query -> hidden(-name => 'sessionid',     -default => $SessionID);
   print $query -> hidden(-name => 'mode',          -default => 'modify');
 }
