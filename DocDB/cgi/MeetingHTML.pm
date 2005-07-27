@@ -142,7 +142,8 @@ sub SessionEntryForm ($@) {
         $SessionDefaultDateTime = $Conferences{$ConferenceID}{StartDate};
       } else {
         require "SQLUtilities.pm";
-        $SessionDefaultDateTime = "9:00:00 ".&SQLNow(-dateonly => $TRUE);
+        $SessionDefaultDateTime = &SQLNow(-dateonly => $TRUE)." 9:00:00";
+        push @DebugStack, "Time: $SessionDefaultDateTime ";
       }
       $SessionDefaultLocation    = "";
       $SessionDefaultTitle       = "";

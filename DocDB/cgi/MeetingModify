@@ -52,7 +52,6 @@ $query = new CGI;  # Global for subroutines
 my $Mode               = $params{mode};
 my $NoSessions         = $params{nosessions};
 
-
 my $EventGroupID       = $params{eventgroups};
 my $Short              = $params{shortdesc};
 my $Long               = $params{long};
@@ -89,7 +88,6 @@ my @SessionDeletes       = split /\0/,$params{sessiondelete};
 my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
 my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
 
-push @DebugStack,"Mode $Mode CID: $ConferenceID";
 my ($StartTime,$EndTime);
 
 if ($StartDay && $StartMonth && $StartYear) {
@@ -470,6 +468,12 @@ foreach my $MeetingModifyID (@MeetingModifyIDs) {
   my $GroupID = $MeetingModify{$MeetingModifyID}{GroupID};
   push @MeetingModifyDefaults,$GroupID;
 }
+
+if ($SetMode eq "create") { # Defaults for new meetings
+  @MeetingModifyDefaults = &FindUsersGroups(); # Public by default but not everyone can modify
+}
+
+
 
 print "<table class=\"HighPaddedTable\">\n";
 
