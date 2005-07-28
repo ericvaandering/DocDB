@@ -536,7 +536,7 @@ sub PrintMeetingInfo($;%) {
     print "</p>\n";
   }
      
-  &PrintMeetingPreamblei($ConferenceID);
+  &PrintMeetingPreamble($ConferenceID);
   
   if ($AddTalkLink && &CanModifyMeeting($ConferenceID)) {
     print "<h5>(<a href=\"$DocumentAddForm?conferenceid=$ConferenceID\">Upload a document</a> ".
