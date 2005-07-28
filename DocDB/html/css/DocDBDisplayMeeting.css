@@ -19,6 +19,7 @@
 }  
 
 .EventNavBar {
+  border: 1px solid;
   margin-right: auto;
   margin-left: auto;
 }  
