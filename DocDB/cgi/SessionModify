@@ -527,7 +527,7 @@ if ($SingleSession) {
   print "</table>\n";
 }
 
-print "<table class=\"HighPaddingTable\">\n";
+print "<table class=\"HighPaddingTable AgendaEntryTable\">\n";
 print "<tr>\n";
  print "<td>\n"; 
   &TalkEntryForm(@SessionOrderIDs);   
