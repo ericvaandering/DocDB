@@ -112,7 +112,7 @@ if ($DisplayMode eq "Session") { # Display a single session
   &FetchConferenceByConferenceID($ConferenceID);
   &PrintSingleSessionHeader(-sessionid => $SessionID);
   &PrintSession(-sessionid => $SessionID, -skipheader => $TRUE); 
-#  &PrintMeetingEpilogue($ConferenceID);
+  &PrintMeetingEpilogue($ConferenceID);
 } elsif ($DisplayMode eq "Separator") { # Display a single break (never called)
   &FetchSessionSeparatorByID($SessionSeparatorID);
   &FetchConferenceByConferenceID($SessionSeparators{$SessionSeparatorID}{ConferenceID});

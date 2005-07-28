@@ -469,6 +469,7 @@ sub PrintSingleSessionHeader (%) {
     print "<h5>(<a href=\"$DocumentAddForm?sessionid=$SessionID\">Upload a document</a> ".
           "or <a href=\"$SessionModify?sessionid=$SessionID\">update the agenda</a> for this session)</h5>\n";
   }
+  &PrintMeetingPreamble($EventID);
   if ($Sessions{$SessionID}{Description}) {
     my $Description = $Sessions{$SessionID}{Description};
     $Description =~ s/\n\s*\n/<p\/>/;
@@ -546,11 +547,23 @@ sub PrintMeetingEpilogue($) {
   my ($ConferenceID) = @_;
 
   if ($Conferences{$ConferenceID}{Epilogue}) {
-    print "<p><center>\n";
-    print "<table width=80%><tr><td>\n";
+    print "<p class=\"EventPreEpi\">\n";
     print &Paragraphize($Conferences{$ConferenceID}{Epilogue}),"\n";
-    print "</td></tr></table>\n";
-    print "</center><p/>\n";
+    print "</center></p>\n";
+
+    print "<hr width=\"95%\"/>\n";
+  }
+}
+
+sub PrintMeetingPreamble($) {
+
+  require "Utilities.pm";
+  my ($ConferenceID) = @_;
+
+  if ($Conferences{$ConferenceID}{Preamble}) {
+    print "<p class=\"EventPreEpi\">\n";
+    print &Paragraphize($Conferences{$ConferenceID}{Preamble}),"\n";
+    print "</center></p>\n";
 
     print "<hr width=\"95%\"/>\n";
   }
