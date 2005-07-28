@@ -465,6 +465,9 @@ sub PrintSingleSessionHeader (%) {
   if ($Sessions{$SessionID}{Location}) {
     print "<h4>Location: $Sessions{$SessionID}{Location}</h4>\n";
   }
+  if ($Conferences{$EventID}{URL}) {
+    print "<h5>(<a href=\"$Conferences{$EventID}{URL}\">$Conferences{$EventID}{Title} homepage</a>)</h5>\n";
+  }
   if (&CanModifyMeeting($ConferenceID)) {
     print "<h5>(<a href=\"$DocumentAddForm?sessionid=$SessionID\">Upload a document</a> ".
           "or <a href=\"$SessionModify?sessionid=$SessionID\">update the agenda</a> for this session)</h5>\n";
