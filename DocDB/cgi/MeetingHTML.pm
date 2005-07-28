@@ -524,7 +524,7 @@ sub PrintMeetingInfo($;%) {
   
   
   if ($AddNavBar) {
-    print "<p class=\"EventNavBar\">\n";
+    print "<div class=\"EventNavBar\">\n";
     my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
     @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
     foreach $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks
@@ -538,7 +538,7 @@ sub PrintMeetingInfo($;%) {
         print "[&nbsp;",$SessionLink,"&nbsp;]\n";
       }
     }
-    print "</p>\n";
+    print "</div>\n";
   }
      
   &PrintMeetingPreamble($ConferenceID);
@@ -552,9 +552,9 @@ sub PrintMeetingEpilogue($) {
   my ($ConferenceID) = @_;
 
   if ($Conferences{$ConferenceID}{Epilogue}) {
-    print "<p class=\"EventPreEpi\">\n";
+    print "<div class=\"EventPreEpi\">\n";
     print &Paragraphize($Conferences{$ConferenceID}{Epilogue}),"\n";
-    print "</center></p>\n";
+    print "</div>\n";
   }
 }
 
@@ -564,9 +564,9 @@ sub PrintMeetingPreamble($) {
   my ($ConferenceID) = @_;
 
   if ($Conferences{$ConferenceID}{Preamble}) {
-    print "<p class=\"EventPreEpi\">\n";
+    print "<div class=\"EventPreEpi\">\n";
     print &Paragraphize($Conferences{$ConferenceID}{Preamble}),"\n";
-    print "</center></p>\n";
+    print "</div>\n";
   }
 }
 
