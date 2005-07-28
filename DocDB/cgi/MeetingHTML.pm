@@ -314,73 +314,79 @@ sub PrintSession (%) {
 # Sort talks and separators
 
   @SessionOrderIDs = sort SessionOrderIDByOrder @SessionOrderIDs;
-  print "<center><table class=\"Alternating\" class=\"CenteredTable\" id=\"TalkList\">\n";
+  
+  if (@SessionOrderIDs) {
+  
+    print "<table class=\"Alternating\" class=\"CenteredTable\" id=\"TalkList\">\n";
 
-  print "<tr>\n";
-  print "<th>Start</th>\n";
-  print "<th>Title</th>\n";
-  print "<th>Author</th>\n";
-  print "<th>Topic(s)</th>\n";
-  print "<th>Files</th>\n";
-  print "<th>Length</th>\n";
-  print "<th>Notes</th>\n";
-  print "</tr>\n";
+    print "<tr>\n";
+    print "<th>Start</th>\n";
+    print "<th>Title</th>\n";
+    print "<th>Author</th>\n";
+    print "<th>Topic(s)</th>\n";
+    print "<th>Files</th>\n";
+    print "<th>Length</th>\n";
+    print "<th>Notes</th>\n";
+    print "</tr>\n";
 
-  my $TalkCounter = 0;
-  my $RowClass;
-  foreach my $SessionOrderID (@SessionOrderIDs) {
-    ++$TalkCounter;
-    if ($TalkCounter % 2) { 
-      $RowClass = "Odd";
-    } else {
-      $RowClass = "Even";
-    }    
-    if ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) { # TalkSeparator
-      my $TalkSeparatorID =  $SessionOrders{$SessionOrderID}{TalkSeparatorID};
+    my $TalkCounter = 0;
+    my $RowClass;
+    foreach my $SessionOrderID (@SessionOrderIDs) {
+      ++$TalkCounter;
+      if ($TalkCounter % 2) { 
+        $RowClass = "Odd";
+      } else {
+        $RowClass = "Even";
+      }    
+      if ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) { # TalkSeparator
+        my $TalkSeparatorID =  $SessionOrders{$SessionOrderID}{TalkSeparatorID};
 
-      print "<tr valign=\"top\" class=\"$RowClass\">\n";
-      print "<td align=right><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";
-      print "<td>$TalkSeparators{$TalkSeparatorID}{Title}</td>\n";
-      print "<td colspan=3>$TalkSeparators{$TalkSeparatorID}{Note}</td>\n";
-      print "<td align=right>",&TruncateSeconds($TalkSeparators{$TalkSeparatorID}{Time}),"</td>\n";
-      print "</tr>\n";
-
-      $AccumulatedTime = &AddTime($AccumulatedTime,$TalkSeparators{$TalkSeparatorID}{Time});
-    } elsif ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
-      my $SessionTalkID =  $SessionOrders{$SessionOrderID}{SessionTalkID};
-
-      if ($SessionTalks{$SessionTalkID}{DocumentID}) { # Talk with DocID (confirmed or not)
-        &PrintSessionTalk($SessionTalkID,$AccumulatedTime,$RowClass);
-      } else { # Talk where only hints exist
-        # FIXME add output for for topic and author hints
         print "<tr valign=\"top\" class=\"$RowClass\">\n";
         print "<td align=right><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";
-        print "<td>$SessionTalks{$SessionTalkID}{HintTitle}</td>\n";
-        my @TopicHintIDs  = &FetchTopicHintsBySessionTalkID($SessionTalkID);
-        my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID);
-        my @TopicIDs  = ();
-        my @AuthorIDs = (); 
-        foreach my $TopicHintID (@TopicHintIDs) {
-          push @TopicIDs,$TopicHints{$TopicHintID}{MinorTopicID};
-        }
-        foreach my $AuthorHintID (@AuthorHintIDs) {
-          push @AuthorIDs,$AuthorHints{$AuthorHintID}{AuthorID};
-        }
-        print "<td><i>\n"; &ShortAuthorListByID(@AuthorIDs); print "</i></td>\n";
-        print "<td><i>\n"; &ShortTopicListByID(@TopicIDs);   print "</i></td>\n";
-        print "<td>&nbsp;</td>\n"; # Files, which can't exist
-        print "<td align=right>",&TruncateSeconds($SessionTalks{$SessionTalkID}{Time}),"</td>\n";
-        if ($SessionTalks{$SessionTalkID}{Note}) {
-          print "<td><b>",&TalkNoteLink($SessionTalkID),"</b></td>\n";
-        } else {
-          print "<td>",&TalkNoteLink($SessionTalkID),"</td>\n";
-        }  
+        print "<td>$TalkSeparators{$TalkSeparatorID}{Title}</td>\n";
+        print "<td colspan=3>$TalkSeparators{$TalkSeparatorID}{Note}</td>\n";
+        print "<td align=right>",&TruncateSeconds($TalkSeparators{$TalkSeparatorID}{Time}),"</td>\n";
         print "</tr>\n";
-      } 
-      $AccumulatedTime = &AddTime($AccumulatedTime,$SessionTalks{$SessionTalkID}{Time});
-    }
-  } # End Separator/Talk distinction
-  print "</table></center><hr width=95%>\n";   
+
+        $AccumulatedTime = &AddTime($AccumulatedTime,$TalkSeparators{$TalkSeparatorID}{Time});
+      } elsif ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
+        my $SessionTalkID =  $SessionOrders{$SessionOrderID}{SessionTalkID};
+
+        if ($SessionTalks{$SessionTalkID}{DocumentID}) { # Talk with DocID (confirmed or not)
+          &PrintSessionTalk($SessionTalkID,$AccumulatedTime,$RowClass);
+        } else { # Talk where only hints exist
+          print "<tr valign=\"top\" class=\"$RowClass\">\n";
+          print "<td align=right><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";
+          print "<td>$SessionTalks{$SessionTalkID}{HintTitle}</td>\n";
+          my @TopicHintIDs  = &FetchTopicHintsBySessionTalkID($SessionTalkID);
+          my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID);
+          my @TopicIDs  = ();
+          my @AuthorIDs = (); 
+          foreach my $TopicHintID (@TopicHintIDs) {
+            push @TopicIDs,$TopicHints{$TopicHintID}{MinorTopicID};
+          }
+          foreach my $AuthorHintID (@AuthorHintIDs) {
+            push @AuthorIDs,$AuthorHints{$AuthorHintID}{AuthorID};
+          }
+          print "<td><i>\n"; &ShortAuthorListByID(@AuthorIDs); print "</i></td>\n";
+          print "<td><i>\n"; &ShortTopicListByID(@TopicIDs);   print "</i></td>\n";
+          print "<td>&nbsp;</td>\n"; # Files, which can't exist
+          print "<td align=right>",&TruncateSeconds($SessionTalks{$SessionTalkID}{Time}),"</td>\n";
+          if ($SessionTalks{$SessionTalkID}{Note}) {
+            print "<td><b>",&TalkNoteLink($SessionTalkID),"</b></td>\n";
+          } else {
+            print "<td>",&TalkNoteLink($SessionTalkID),"</td>\n";
+          }  
+          print "</tr>\n";
+        } 
+        $AccumulatedTime = &AddTime($AccumulatedTime,$SessionTalks{$SessionTalkID}{Time});
+      }
+    } # End Separator/Talk distinction
+    print "</table></center>\n"; 
+  } else {
+    print "<h4>No talks in agenda</h4>\n";
+  }  
+  print "<hr width=\"95%\" />\n"; 
 }
 
 sub PrintSessionSeparator ($) {
