@@ -280,8 +280,12 @@ sub SessionLink (%) {
   return $Link;
 }   
 
-sub PrintSession ($) {
-  my ($SessionID) = @_;
+sub PrintSession (%) {
+  my %Params = @_;
+  
+  my $SessionID  = $Params{-sessionid};
+  my $SkipHeader = $Params{-skipheader} || $FALSE;
+
   
   require "Sorts.pm";
   require "TalkSQL.pm";
@@ -289,8 +293,10 @@ sub PrintSession ($) {
   require "SQLUtilities.pm";
   require "Utilities.pm";
   
-  &PrintSessionHeader($SessionID);
-  print "<p>\n";
+  unless ($SkipHeader) {
+    &PrintSessionHeader($SessionID);
+    print "<p>\n";
+  }
   
   my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
   my @TalkSeparatorIDs = &FetchTalkSeparatorsBySessionID($SessionID);
@@ -427,6 +433,46 @@ sub PrintSessionHeader ($) {
     print "<p class=\"SessionDescription\"> ",&URLify($Description),"</p>\n";
   }
 }
+
+sub PrintSingleSessionHeader (%) {
+  my %Params = @_;
+
+  my $SessionID  = $Params{-sessionid} || 0;
+  my $EventID    = $Sessions{$SessionID}{ConferenceID};
+  unless ($EventID) { 
+    return;
+  }
+  my $SessionTitle = $Sessions{$SessionID}{Title};
+  my $EventTitle   = $Conferences{$EventID}{LongDescription};
+  my $EventLink    = &EventLink(-eventid => $EventID);
+  print "<div class=\"SingleSessionHeader\">\n";
+
+  if ($SessionTitle && $EventTitle && $SessionTitle ne $EventTitle) {
+    print "<h2>$SessionTitle, part of $EventLink</h2>\n";
+  } else {
+    print "<h2>$EventTitle</h2>\n";
+  } 
+  print "<h4>Date and time: "; 
+  print &EuroDate($Sessions{$SessionID}{StartTime});
+  print " at ";
+  print &EuroTimeHM($Sessions{$SessionID}{StartTime});
+  print "</h4>";
+  if ($Sessions{$SessionID}{Location}) {
+    print "<h4>Location: $Sessions{$SessionID}{Location}</h4>\n";
+  }
+  if (&CanModifyMeeting($ConferenceID)) {
+    print "<h5>(<a href=\"$DocumentAddForm?sessionid=$SessionID\">Upload a document</a> ".
+          "or <a href=\"$SessionModify?sessionid=$SessionID\">update the agenda</a> for this session)</h5>\n";
+  }
+  if ($Sessions{$SessionID}{Description}) {
+    my $Description = $Sessions{$SessionID}{Description};
+    $Description =~ s/\n\s*\n/<p\/>/;
+    $Description =~ s/\n/<br\/>/;
+    
+    print "<p class=\"SessionDescription\"> ",&URLify($Description),"</p>\n";
+  }
+  print "</div>\n";
+}  
 
 sub PrintMeetingInfo($;%) {
   my ($ConferenceID,%Params) = @_;
