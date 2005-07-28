@@ -435,13 +435,18 @@ sub PrintSessionHeader ($) {
 }
 
 sub PrintSingleSessionHeader (%) {
+  require "SQLUtilities.pm";
+  require "Utilities.pm";
+
   my %Params = @_;
 
   my $SessionID  = $Params{-sessionid} || 0;
   my $EventID    = $Sessions{$SessionID}{ConferenceID};
+
   unless ($EventID) { 
     return;
   }
+
   my $SessionTitle = $Sessions{$SessionID}{Title};
   my $EventTitle   = $Conferences{$EventID}{LongDescription};
   my $EventLink    = &EventLink(-eventid => $EventID);

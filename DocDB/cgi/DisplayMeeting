@@ -81,6 +81,7 @@ if ($ConferenceID) {
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
   if ($#MeetingOrderIDs == 0) { # If just one session, switch to session mode
+  $DisplayMode = "Session";
     $SingleSessionMeeting = 1;
     $MeetingOrderID = pop @MeetingOrderIDs;
     $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
@@ -111,7 +112,7 @@ if ($DisplayMode eq "Session") { # Display a single session
   &FetchConferenceByConferenceID($ConferenceID);
   &PrintSingleSessionHeader(-sessionid => $SessionID);
   &PrintSession(-sessionid => $SessionID, -skipheader => $TRUE); 
-  &PrintMeetingEpilogue($ConferenceID);
+#  &PrintMeetingEpilogue($ConferenceID);
 } elsif ($DisplayMode eq "Separator") { # Display a single break (never called)
   &FetchSessionSeparatorByID($SessionSeparatorID);
   &FetchConferenceByConferenceID($SessionSeparators{$SessionSeparatorID}{ConferenceID});
@@ -125,7 +126,7 @@ if ($DisplayMode eq "Session") { # Display a single session
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
 
-  if ($SingleSessionMeeting) {
+  if ($SingleSessionMeeting) { # Get rid of this mode
     &PrintMeetingInfo($ConferenceID);
   } else {  
     my $AddNavBar = $Conferences{$ConferenceID}{ShowAllTalks};
