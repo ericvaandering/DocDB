@@ -141,7 +141,7 @@ if ($DisplayMode eq "Session") { # Display a single session
       }
     }   
   } else { # Display links to sessions and info on separators
-    print "<center><table cellpadding=5>\n";
+    print "<table class=\"MedPaddedTable CenteredTable\">\n";
     print "<tr><th>Session Title</th>\n";
     print "<th>Date & Time</th>\n";
     print "<th>Session Information</th>\n";
@@ -156,7 +156,7 @@ if ($DisplayMode eq "Session") { # Display a single session
         &PrintSessionSeparatorInfo($SessionSeparatorID); # SessionSeparator info 
       }
     }  
-    print "</table></center><hr width=95%>\n";
+    print "</table><hr width=\"95%\" />\n";
   }
   
 # If a topic-based meeting, display talks not associated with sessions  

@@ -382,7 +382,7 @@ sub PrintSession (%) {
         $AccumulatedTime = &AddTime($AccumulatedTime,$SessionTalks{$SessionTalkID}{Time});
       }
     } # End Separator/Talk distinction
-    print "</table></center>\n"; 
+    print "</table>\n"; 
   } else {
     print "<h4>No talks in agenda</h4>\n";
   }  
@@ -394,7 +394,7 @@ sub PrintSessionSeparator ($) {
   
   require "SQLUtilities.pm";
   
-  print "<center><table cellpadding=5><tr valign=top>\n";
+  print "<table class=\"MedPaddedTable CenteredTable\"><tr valign=top>\n";
   print "<td><dl><dt><b>$SessionSeparators{$SessionSeparatorID}{Title}</b>\n";
   print "<dd>",&EuroDate($SessionSeparators{$SessionSeparatorID}{StartTime});
   print " at ";
@@ -406,8 +406,8 @@ sub PrintSessionSeparator ($) {
   if ($SessionSeparators{$SessionSeparatorID}{Description}) {
     print "<td width=50%><dl><dt><b>Description:</b><dd>$SessionSeparators{$SessionSeparatorID}{Description}</dl> </td>\n";
   }
-  print "</tr></table><p>\n";
-  print "</center><hr width=95%>\n";   
+  print "</tr></table>\n";
+  print "<hr width=\"95%\" />\n";   
 }
 
 sub PrintSessionHeader ($) {
@@ -500,10 +500,11 @@ sub PrintMeetingInfo($;%) {
 #  my $AddTalkLink = $IsSingle; # FIXME: May want to make these 
 #  my $AddNavBar   = $IsSingle; # parameters in a hash
 
-  print "<center><b><big> \n";
+  print "<h2> \n";
   print "<a href=\"$DisplayMeeting?conferenceid=$ConferenceID\">$Conferences{$ConferenceID}{Title}</a>\n";
-  print "</big></b><br>\n";
+  print "</h2>\n";
 
+  print "<h4>\n";
   if ($Conferences{$ConferenceID}{StartDate} ne $Conferences{$ConferenceID}{EndDate}) {
     print " held from ",&EuroDate($Conferences{$ConferenceID}{StartDate});
     print " to ",&EuroDate($Conferences{$ConferenceID}{EndDate});
@@ -511,10 +512,10 @@ sub PrintMeetingInfo($;%) {
     print " held on ",&EuroDate($Conferences{$ConferenceID}{StartDate});
   }
   print " in $Conferences{$ConferenceID}{Location}\n";
-
+  print "</h4>\n";
+  
   if ($Conferences{$ConferenceID}{URL}) {
-    print "<br>\n";
-    print "(<a href=\"$Conferences{$ConferenceID}{URL}\">$Conferences{$ConferenceID}{Title} homepage</a>)\n";
+    print "<h5>(<a href=\"$Conferences{$ConferenceID}{URL}\">$Conferences{$ConferenceID}{Title} homepage</a>)</h5>\n";
   }
   
   if ($AddNavBar) {
@@ -532,22 +533,17 @@ sub PrintMeetingInfo($;%) {
         print "[&nbsp;",$SessionLink,"&nbsp;]\n";
       }
     }
+    print "</p>\n";
   }
      
-  if ($Conferences{$ConferenceID}{Preamble}) {
-    print "<p>\n";
-    print "<table width=80%><tr><td>\n";
-    print &Paragraphize($Conferences{$ConferenceID}{Preamble}),"\n";
-    print "</td></tr></table>\n";
-  }
-  print "<p>\n";
+  &PrintMeetingPreamblei($ConferenceID);
   
   if ($AddTalkLink && &CanModifyMeeting($ConferenceID)) {
-    print "(<a href=\"$DocumentAddForm?conferenceid=$ConferenceID\">Upload a document</a> ".
-          "to this meeting or conference)\n";
+    print "<h5>(<a href=\"$DocumentAddForm?conferenceid=$ConferenceID\">Upload a document</a> ".
+          "to this meeting or conference)</h5>\n";
   }
   
-  print "</center><hr width=95%>\n";
+  print "<hr width=\"95%\" />\n";
 }
 
 sub PrintMeetingEpilogue($) {
