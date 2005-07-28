@@ -538,7 +538,7 @@ sub PrintMeetingInfo($;%) {
         print "[&nbsp;",$SessionLink,"&nbsp;]\n";
       }
     }
-    print "</div\n";
+    print "</div>\n";
   }
      
   &PrintMeetingPreamble($ConferenceID);

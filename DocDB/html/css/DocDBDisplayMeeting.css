@@ -13,8 +13,13 @@
   padding: 5px 5px 5px 5px;
 }  
 
-.EventPreEpi {
+.EventPreEpi, SessionDescription {
   margin-right: 10%;
   margin-left: 10%;
+}  
+
+.EventNavBar {
+  margin-right: auto;
+  margin-left: auto;
 }  
 
