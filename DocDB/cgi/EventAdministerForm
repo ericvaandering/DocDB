@@ -172,7 +172,7 @@ print "<hr/>\n";
 print "<h4>Administer Event Groups</h4>\n";
 
 print $query -> start_multipart_form('POST',"$EventAdministerForm",
-                                     "id=\"eventgroup\"");
+                                     "name=\"eventgroup\" id=\"eventgroup\"");
 print "<table class=\"HighPaddedTable CenteredTable\">\n";
 print "<tr>\n";
 print "<td colspan=\"3\">\n"; 
@@ -220,7 +220,7 @@ print "<hr/>\n";
 print "<h4>Administer Events</h4>\n";
 
 print $query -> start_multipart_form('POST',"$EventAdministerForm",
-                                     "id=\"event\"");
+                                     "name=\"event\" id=\"event\"");
 print "<table class=\"HighPaddedTable CenteredTable\">\n";
 print "<tr>\n";
 print "<td colspan=\"2\">\n"; 
