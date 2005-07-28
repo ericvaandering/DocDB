@@ -181,6 +181,7 @@ sub TalkEntryForm (@) {
      print $query -> hidden(-name => 'timestamp',      -default => $EntryTimeStamp);
      &TalkOrder;                       print "<br/>\n";
      &TalkConfirm($SessionOrderID);    print "<br/>\n";
+     &TalkReserve($SessionOrderID);    print "<br/>\n";
      &TalkDelete($SessionOrderID);     
     print "</td>\n";
     
@@ -242,6 +243,19 @@ sub TalkConfirm ($) {# v7 do nobr with CSS
   } else {  
     print $query -> checkbox(-name  => "talkconfirm", 
                              -value => "$SessionOrderID", -label => 'Confirm');
+  }
+}
+
+sub TalkReserve ($) {# v7 do nobr with CSS
+  my ($SessionOrderID) = @_;
+  
+  if ($TalkSeparatorDefault eq "Yes") {
+    print "&nbsp;\n";
+  } elsif ($TalkDefaultConfirmed) {  
+    print "&nbsp;\n";
+  } else {  
+    print $query -> checkbox(-name  => "talkreserve", 
+                             -value => "$SessionOrderID", -label => 'Reserve');
   }
 }
 
