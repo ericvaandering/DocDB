@@ -103,7 +103,7 @@ $SessionTalkUpdate -> execute($DocumentID,$SessionTalkID);
 
 my $RevisionEventCheck = $dbh -> prepare("select RevisionEventID from RevisionEvent where DocRevID=? and ConferenceID=?");
 $RevisionEventCheck -> execute($DocRevID,$ConferenceID);
-my ($RevisionEventID) = $RevisionQuery -> fetchrow_array;
+my ($RevisionEventID) = $RevisionEventCheck -> fetchrow_array;
 unless ($RevisionEventID) {
   my $Insert = $dbh -> prepare("insert into RevensionEvent (RevisionEventID,DocRevID,ConferenceID) values (0,?,?)"); 
   $Insert -> execute($DocRevID,$ConferenceID);
