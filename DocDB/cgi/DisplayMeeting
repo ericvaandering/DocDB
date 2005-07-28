@@ -99,6 +99,8 @@ unless (&CanAccessMeeting($ConferenceID)) {
   push @ErrorStack,$Msg_MeetNoAccess;
 }
 &EndPage(@ErrorStack);
+
+push @DebugStack,"DM: $DisplayMode";
   
 if ($DisplayMode eq "Session") { # Display a single session
   &ReHintTalksBySessionID($SessionID); 
