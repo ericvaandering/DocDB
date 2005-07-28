@@ -524,7 +524,7 @@ sub PrintMeetingInfo($;%) {
   
   
   if ($AddNavBar) {
-    print "<p>\n";
+    print "<div class=\"EventNavBar\">\n";
     my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
     @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
     foreach $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks
@@ -538,7 +538,7 @@ sub PrintMeetingInfo($;%) {
         print "[&nbsp;",$SessionLink,"&nbsp;]\n";
       }
     }
-    print "</p>\n";
+    print "</div\n";
   }
      
   &PrintMeetingPreamble($ConferenceID);
