@@ -517,6 +517,11 @@ sub PrintMeetingInfo($;%) {
   if ($Conferences{$ConferenceID}{URL}) {
     print "<h5>(<a href=\"$Conferences{$ConferenceID}{URL}\">$Conferences{$ConferenceID}{Title} homepage</a>)</h5>\n";
   }
+  if ($AddTalkLink && &CanModifyMeeting($ConferenceID)) {
+    print "<h5>(<a href=\"$DocumentAddForm?conferenceid=$ConferenceID\">Upload a document</a> ".
+          "to this meeting or conference)</h5>\n";
+  }
+  
   
   if ($AddNavBar) {
     print "<p>\n";
@@ -538,11 +543,6 @@ sub PrintMeetingInfo($;%) {
      
   &PrintMeetingPreamble($ConferenceID);
   
-  if ($AddTalkLink && &CanModifyMeeting($ConferenceID)) {
-    print "<h5>(<a href=\"$DocumentAddForm?conferenceid=$ConferenceID\">Upload a document</a> ".
-          "to this meeting or conference)</h5>\n";
-  }
-  
   print "<hr width=\"95%\" />\n";
 }
 
@@ -555,8 +555,6 @@ sub PrintMeetingEpilogue($) {
     print "<p class=\"EventPreEpi\">\n";
     print &Paragraphize($Conferences{$ConferenceID}{Epilogue}),"\n";
     print "</center></p>\n";
-
-    print "<hr width=\"95%\"/>\n";
   }
 }
 
@@ -569,8 +567,6 @@ sub PrintMeetingPreamble($) {
     print "<p class=\"EventPreEpi\">\n";
     print &Paragraphize($Conferences{$ConferenceID}{Preamble}),"\n";
     print "</center></p>\n";
-
-    print "<hr width=\"95%\"/>\n";
   }
 }
 
