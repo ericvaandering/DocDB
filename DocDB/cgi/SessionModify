@@ -116,7 +116,6 @@ foreach my $TalkConfirm (@TalkConfirms) {
 }  
 my %TalkReserveFlags = ();
 foreach my $TalkReserve (@TalkReserves) { 
-  push @DebugStack,"Found reserve $TalkReserve";
   $TalkReserveFlags{$TalkReserve} = 1; 
 }  
 
@@ -367,23 +366,24 @@ if ($Mode eq "modify" || $Mode eq "create") {
     }  
 
 ### Reserve document if reserve checked
-      
-    push @DebugStack,"Test reserve: STI: $SessionTalkID TR: $TalkReserve TC: $TalkConfirmed";
-    if ($SessionTalkID && $TalkReserve && !$TalkConfirmed && @AuthorHints) {
-      require "DocumentUtilities.pm";
-      require "MiscSQL.pm";
-      my $TypeID = &FetchDocTypeByName("Talk") || 1; 
-      push @DebugStack,"Want to reserve: $SessionTalkID Event: $EventID Title: $TalkTitle Type $TypeID"; 
-      push @DebugStack,"Topic hints",@TopicHints; 
-      my ($NewDocumentID,$NewDocRevID) =  &AddDocument(-version => "reserve", -title => $TalkTitle, -typeid => $TypeID,
-                   -requesterid => @AuthorHints[0], -authorids => \@AuthorHints, 
-                   -topicids => \@TopicHints, -eventids => [$EventID], 
-                   -viewids  => \@MeetingViewGroupIDs, -modifyids =>  \@MeetingViewGroupIDs);
-      my $SessionTalkUpdate = $dbh -> prepare(
-         "update SessionTalk set DocumentID=?,Confirmed=? where SessionTalkID=?");
-      $SessionTalkUpdate -> execute($NewDocumentID,1,$SessionTalkID);
-      push @DebugStack,"Reserved document $NewDocumentID DRI: $NewDocRevID STI: $SessionTalkID";
-    }  
+    if ($TalkReserve) {  
+      if ($SessionTalkID && !$TalkConfirmed && @AuthorHints) {
+        require "DocumentUtilities.pm";
+        require "MiscSQL.pm";
+        my $TypeID = &FetchDocTypeByName("Talk") || 1; 
+        my ($NewDocumentID,$NewDocRevID) = 
+          = &AddDocument(-version     => "reserve",     -title       => $TalkTitle, 
+                         -typeid      => $TypeID,       -requesterid => @AuthorHints[0], 
+                         -authorids   => \@AuthorHints, -topicids    => \@TopicHints, 
+                         -eventids    => [$EventID],    -viewids     => \@MeetingViewGroupIDs, 
+                         -modifyids   => \@MeetingViewGroupIDs);
+        my $SessionTalkUpdate = $dbh -> prepare(
+           "update SessionTalk set DocumentID=?,Confirmed=? where SessionTalkID=?");
+        $SessionTalkUpdate -> execute($NewDocumentID,1,$SessionTalkID);
+      } 
+    } else {
+      push @WarnStack,"You cannot reserve a document if there is a confirmed document already or if you don't specify authors.";
+    }   
   }
 }
 

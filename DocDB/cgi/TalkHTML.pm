@@ -105,8 +105,7 @@ sub TalkEntryForm (@) {
   print "<table class=\"LowPaddedTable\">\n";
   print "<tr>\n";
   print "<th>",&FormElementTitle(-helplink => "sessionorder", -helptext => "Order,",  -nocolon => $TRUE);
-  print        &FormElementTitle(-helplink => "talkconfirm",  -helptext => "Confirm", -nocolon => $TRUE);
-  print "or ", &FormElementTitle(-helplink => "talkdelete",   -helptext => "Delete",  -nocolon => $TRUE);
+  print        &FormElementTitle(-helplink => "talketc",      -helptext => "etc.", -nocolon => $TRUE);
   print "</th>\n";
   print "<th>",&FormElementTitle(-helplink => "talkseparator", -helptext => "Break",             -nocolon => $TRUE),"</th>\n";
   print "<th>",&FormElementTitle(-helplink => "talkdocid"    , -helptext => "Doc. #",            -nocolon => $TRUE),"</th>\n";
