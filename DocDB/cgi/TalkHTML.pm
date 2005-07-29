@@ -179,9 +179,9 @@ sub TalkEntryForm (@) {
      print $query -> hidden(-name => 'sessionorderid', -default => $SessionOrderID);
      print $query -> hidden(-name => 'timestamp',      -default => $EntryTimeStamp);
      &TalkOrder;                       print "<br/>\n";
-     &TalkConfirm($SessionOrderID);    print "<br/>\n";
-     &TalkReserve($SessionOrderID);    print "<br/>\n";
-     &TalkDelete($SessionOrderID);     print "<br/>\n";
+     &TalkConfirm($SessionOrderID);    
+     &TalkReserve($SessionOrderID);    
+     &TalkDelete($SessionOrderID);     
      &TalkSeparator($SessionOrderID);     
     print "</td>\n";
     
@@ -227,6 +227,7 @@ sub TalkDelete ($) { # v7 do nobr with CSS
   if ($TalkSeparatorDefault eq "Yes" || $TalkSeparatorDefault eq "No") {
     print $query -> checkbox(-name  => "talkdelete", 
                              -value => "$SessionOrderID", -label => 'Delete');
+    print "<br/>\n";
   } else {
 #    print "&nbsp;\n";
   }
@@ -240,9 +241,11 @@ sub TalkConfirm ($) {# v7 do nobr with CSS
   } elsif ($TalkDefaultConfirmed) {  
     print $query -> checkbox(-name  => "talkconfirm", -checked => 'checked', 
                              -value => "$SessionOrderID", -label => 'Confirm');
+    print "<br/>\n";
   } else {  
     print $query -> checkbox(-name  => "talkconfirm", 
                              -value => "$SessionOrderID", -label => 'Confirm');
+    print "<br/>\n";
   }
 }
 
@@ -256,6 +259,7 @@ sub TalkReserve ($) {# v7 do nobr with CSS
   } else {  
     print $query -> checkbox(-name  => "talkreserve", 
                              -value => "$SessionOrderID", -label => 'Reserve');
+    print "<br/>\n";
   }
 }
 
@@ -270,11 +274,14 @@ sub TalkSeparator ($) {
 
   if ($TalkSeparatorDefault eq "Yes") {
     print "Yes\n";	      
+    print "<br/>\n";
   } elsif ($TalkSeparatorDefault eq "No") {
     print "No\n";	      
+    print "<br/>\n";
   } else {
     $query -> param('talkseparator', "");
     print $query -> checkbox(-name => "talkseparator", -value => "$SessionOrderID", -label => 'Break');
+    print "<br/>\n";
   }
 }
 
