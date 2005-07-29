@@ -262,7 +262,15 @@ if ($Mode eq "modify" || $Mode eq "create") {
     my $TalkDocID       = $params{"talkdocid-$SessionOrderID"};
     my $NewSessionID    = $params{"newsessionid-$SessionOrderID"};
     
-    my %NewSessionTalkMap = ();
+    my @TopicHints  = split /\0/,$params{"topics-$SessionOrderID"};
+    my @AuthorHints = ();
+    if ($params{"authors-$SessionOrderID"}) {
+      @AuthorHints = split /\0/,$params{"authors-$SessionOrderID"};
+    } elsif ($params{"authortext-$SessionOrderID"}) { 
+      require "AuthorSQL.pm";
+      my $AuthorText = $params{"authortext-$SessionOrderID"};
+      @AuthorHints = &ProcessManualAuthors($AuthorText);
+    }
     
     if (grep /n/,$SessionOrderID) { # Key on SessionOrderID to see if insert or update.	
       if ($TalkTitle || $TalkNote || $TalkDocID) { # Insert
@@ -282,8 +290,6 @@ if ($Mode eq "modify" || $Mode eq "create") {
           $TalkInsert          -> execute($SessionID,$TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote);
           $SessionTalkID = $TalkInsert -> {mysql_insertid}; # Works with MySQL only
           $NewSessionTalkMap{$TalkOrder} = $SessionTalkID;
-          my @TopicHints  = split /\0/,$params{"topics-$SessionOrderID"}; 
-          my @AuthorHints = split /\0/,$params{"authors-$SessionOrderID"}; 
           &InsertTopicHints($SessionTalkID,@TopicHints);
           &InsertAuthorHints($SessionTalkID,@AuthorHints);
 	}
@@ -345,16 +351,6 @@ if ($Mode eq "modify" || $Mode eq "create") {
            "where SessionTalkID=?");
           $SessionTalkUpdate -> execute($TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote,$SessionTalkID);
 
-          my @TopicHints  = split /\0/,$params{"topics-$SessionOrderID"};
-          
-          my @AuthorHints = ();
-          if ($params{"authors-$SessionOrderID"}) {
-            @AuthorHints = split /\0/,$params{"authors-$SessionOrderID"};
-          } elsif ($params{"authortext-$SessionOrderID"}) { 
-            require "AuthorSQL.pm";
-            my $AuthorText = $params{"authortext-$SessionOrderID"};
-            @AuthorHints = &ProcessManualAuthors($AuthorText);
-          }
           &InsertTopicHints($SessionTalkID,@TopicHints);
           &InsertAuthorHints($SessionTalkID,@AuthorHints);
           if ($NewSessionID) { # Move to new session
@@ -369,18 +365,9 @@ if ($Mode eq "modify" || $Mode eq "create") {
         $SessionOrderUpdate -> execute($TalkNewOrder,$SessionOrderID);
       } 
     }  
+
+### Reserve document if reserve checked
       
-    # Can we move this and shorten it?
-    
-    my @TopicHints  = split /\0/,$params{"topics-$SessionOrderID"};
-    my @AuthorHints = ();
-    if ($params{"authors-$SessionOrderID"}) {
-      @AuthorHints = split /\0/,$params{"authors-$SessionOrderID"};
-    } elsif ($params{"authortext-$SessionOrderID"}) { 
-      require "AuthorSQL.pm";
-      my $AuthorText = $params{"authortext-$SessionOrderID"};
-      @AuthorHints = &ProcessManualAuthors($AuthorText);
-    }
     push @DebugStack,"Test reserve: STI: $SessionTalkID TR: $TalkReserve TC: $TalkConfirmed";
     if ($SessionTalkID && $TalkReserve && !$TalkConfirmed && @AuthorHints) {
       require "DocumentUtilities.pm";
