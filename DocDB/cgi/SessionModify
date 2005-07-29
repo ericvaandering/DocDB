@@ -171,6 +171,11 @@ if ($SingleSession && $EventID) { # Grab single session ID in single session mod
   ($SessionID) = &FetchSessionsByConferenceID($EventID);
 }
 
+unless ($EventID) { 
+  &FetchSessionByID($SessionID);
+  $EventID = $Sessions{$SessionID}{ConferenceID};
+}  
+
 ### Do DB updates and inserts
 
 if ($Mode eq "modify" || $Mode eq "create") {
