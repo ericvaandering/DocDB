@@ -377,16 +377,16 @@ if ($Mode eq "modify" || $Mode eq "create") {
         require "DocumentUtilities.pm";
         require "MiscSQL.pm";
         my $TypeID = &FetchDocTypeByName("Talk") || 1; 
-        push @DebugStack,"Want to reserve: $SessionTalkID $TalkReserve Title: $TalkTitle Type $TypeID"; 
+        push @DebugStack,"Want to reserve: $SessionTalkID Event: $EventID Title: $TalkTitle Type $TypeID"; 
         push @DebugStack,"Topic hints",@TopicHints; 
-        my ($DocumentID,$DocRevID) =  &AddDocument(-version => "reserve", -title => $TalkTitle, -typeid => $TypeID,
+        my ($NewDocumentID,$NewDocRevID) =  &AddDocument(-version => "reserve", -title => $TalkTitle, -typeid => $TypeID,
                      -requesterid => @AuthorHints[0], -authorids => \@AuthorHints, 
                      -topicids => \@TopicHints, -eventids => [$EventID], 
                      -viewids  => \@MeetingViewGroupIDs, -modifyids =>  \@MeetingViewGroupIDs);
-        push @DebugStack,"Reserved document $DocumentID DRI: $DocRevID";
         my $SessionTalkUpdate = $dbh -> prepare(
            "update SessionTalk set DocumentID=?,Confirmed=? where SessionTalkID=?");
         $SessionTalkUpdate -> execute($DocumentID,1,$SessionTalkID);
+        push @DebugStack,"Reserved document $NewDocumentID DRI: $NewDocRevID STI: $SessionTalkID";
                      
 
       }  
