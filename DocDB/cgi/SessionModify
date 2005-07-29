@@ -368,36 +368,34 @@ if ($Mode eq "modify" || $Mode eq "create") {
          "update SessionOrder set TalkOrder=? where SessionOrderID=?");
         $SessionOrderUpdate -> execute($TalkNewOrder,$SessionOrderID);
       } 
+    }  
       
-      # Can we move this and shorten it?
-      
-      my @TopicHints  = split /\0/,$params{"topics-$SessionOrderID"};
-      my @AuthorHints = ();
-      if ($params{"authors-$SessionOrderID"}) {
-        @AuthorHints = split /\0/,$params{"authors-$SessionOrderID"};
-      } elsif ($params{"authortext-$SessionOrderID"}) { 
-        require "AuthorSQL.pm";
-        my $AuthorText = $params{"authortext-$SessionOrderID"};
-        @AuthorHints = &ProcessManualAuthors($AuthorText);
-      }
-      push @DebugStack,"Test reserve: STI: $SessionTalkID TR: $TalkReserve TC: $TalkConfirmed";
-      if ($SessionTalkID && $TalkReserve && !$TalkConfirmed && @AuthorHints) {
-        require "DocumentUtilities.pm";
-        require "MiscSQL.pm";
-        my $TypeID = &FetchDocTypeByName("Talk") || 1; 
-        push @DebugStack,"Want to reserve: $SessionTalkID Event: $EventID Title: $TalkTitle Type $TypeID"; 
-        push @DebugStack,"Topic hints",@TopicHints; 
-        my ($NewDocumentID,$NewDocRevID) =  &AddDocument(-version => "reserve", -title => $TalkTitle, -typeid => $TypeID,
-                     -requesterid => @AuthorHints[0], -authorids => \@AuthorHints, 
-                     -topicids => \@TopicHints, -eventids => [$EventID], 
-                     -viewids  => \@MeetingViewGroupIDs, -modifyids =>  \@MeetingViewGroupIDs);
-        my $SessionTalkUpdate = $dbh -> prepare(
-           "update SessionTalk set DocumentID=?,Confirmed=? where SessionTalkID=?");
-        $SessionTalkUpdate -> execute($DocumentID,1,$SessionTalkID);
-        push @DebugStack,"Reserved document $NewDocumentID DRI: $NewDocRevID STI: $SessionTalkID";
-                     
-
-      }  
+    # Can we move this and shorten it?
+    
+    my @TopicHints  = split /\0/,$params{"topics-$SessionOrderID"};
+    my @AuthorHints = ();
+    if ($params{"authors-$SessionOrderID"}) {
+      @AuthorHints = split /\0/,$params{"authors-$SessionOrderID"};
+    } elsif ($params{"authortext-$SessionOrderID"}) { 
+      require "AuthorSQL.pm";
+      my $AuthorText = $params{"authortext-$SessionOrderID"};
+      @AuthorHints = &ProcessManualAuthors($AuthorText);
+    }
+    push @DebugStack,"Test reserve: STI: $SessionTalkID TR: $TalkReserve TC: $TalkConfirmed";
+    if ($SessionTalkID && $TalkReserve && !$TalkConfirmed && @AuthorHints) {
+      require "DocumentUtilities.pm";
+      require "MiscSQL.pm";
+      my $TypeID = &FetchDocTypeByName("Talk") || 1; 
+      push @DebugStack,"Want to reserve: $SessionTalkID Event: $EventID Title: $TalkTitle Type $TypeID"; 
+      push @DebugStack,"Topic hints",@TopicHints; 
+      my ($NewDocumentID,$NewDocRevID) =  &AddDocument(-version => "reserve", -title => $TalkTitle, -typeid => $TypeID,
+                   -requesterid => @AuthorHints[0], -authorids => \@AuthorHints, 
+                   -topicids => \@TopicHints, -eventids => [$EventID], 
+                   -viewids  => \@MeetingViewGroupIDs, -modifyids =>  \@MeetingViewGroupIDs);
+      my $SessionTalkUpdate = $dbh -> prepare(
+         "update SessionTalk set DocumentID=?,Confirmed=? where SessionTalkID=?");
+      $SessionTalkUpdate -> execute($DocumentID,1,$SessionTalkID);
+      push @DebugStack,"Reserved document $NewDocumentID DRI: $NewDocRevID STI: $SessionTalkID";
     }  
   }
 }
