@@ -39,7 +39,7 @@ sub AddDocument {
   my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
 
   my $DocumentID    = $Params{-docid}         || 0;
-  my $DocumentID    = $Params{-version}       || "bump";
+  my $Version       = $Params{-version}       || "bump";
   my $Title         = $Params{-title}         || "";
   my $Abstract      = $Params{-abstract}      || "";
   my $Keywords      = $Params{-keywords}      || "";

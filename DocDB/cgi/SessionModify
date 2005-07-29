@@ -361,6 +361,17 @@ if ($Mode eq "modify" || $Mode eq "create") {
          "update SessionOrder set TalkOrder=? where SessionOrderID=?");
         $SessionOrderUpdate -> execute($TalkNewOrder,$SessionOrderID);
       } 
+      
+      # Can we move this and shorten it?
+      
+      my @AuthorHints = ();
+      if ($params{"authors-$SessionOrderID"}) {
+        @AuthorHints = split /\0/,$params{"authors-$SessionOrderID"};
+      } elsif ($params{"authortext-$SessionOrderID"}) { 
+        require "AuthorSQL.pm";
+        my $AuthorText = $params{"authortext-$SessionOrderID"};
+        @AuthorHints = &ProcessManualAuthors($AuthorText);
+      }
       if ($SessionTalkID && $TalkReserve && !$TalkConfirmed && @AuthorHints) {
         require "DocumentUtilities.pm";
         my $TypeID = &FetchDocTypeByName("Talk") || 1; 
