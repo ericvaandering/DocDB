@@ -39,6 +39,7 @@ sub AddDocument {
   my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
 
   my $DocumentID    = $Params{-docid}         || 0;
+  my $DocumentID    = $Params{-version}       || "bump";
   my $Title         = $Params{-title}         || "";
   my $Abstract      = $Params{-abstract}      || "";
   my $Keywords      = $Params{-keywords}      || "";
@@ -78,7 +79,7 @@ sub AddDocument {
                  -docid       => $DocumentID,  -doctypeid => $TypeID, 
                  -submitterid => $RequesterID, -title     => $Title,
                  -pubinfo     => $PubInfo,     -abstract  => $Abstract,
-                 -version     => 'bump',       -datetime  => $DateTime,
+                 -version     => $Version,     -datetime  => $DateTime,
                  -keywords    => $Keywords,    -note      => $Note);
 
     # Deal with SessionTalkID
@@ -95,7 +96,9 @@ sub AddDocument {
     $Count = &InsertTopics(-docrevid         => $DocRevID, -topicids  => \@TopicIDs);
     $Count = &InsertRevisionEvents(-docrevid => $DocRevID, -eventids  => \@EventIDs);
     $Count = &InsertSecurity(-docrevid       => $DocRevID, -viewids   => \@ViewIDs, -modifyids => \@ModifyIDs);
-    @FileIDs = &AddFiles(-docrevid           => $DocRevID, -datetime  => $DateTime, -files => \%Files);
+    unless ($Version eq "reserve" {
+      @FileIDs = &AddFiles(-docrevid         => $DocRevID, -datetime  => $DateTime, -files => \%Files);
+    }
     if (@SignOffIDs) {
       &InsertSignoffList($DocRevID,@SignOffIDs);
     }  

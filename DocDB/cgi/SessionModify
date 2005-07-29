@@ -81,6 +81,7 @@ my @TalkTimes       = split /\0/,$params{talktime};
 my @TalkSeparators  = split /\0/,$params{talkseparator};
 my @TalkDeletes     = split /\0/,$params{talkdelete};
 my @TalkConfirms    = split /\0/,$params{talkconfirm};
+my @TalkReserves    = split /\0/,$params{talkreserve};
 my @TimeStamps      = split /\0/,$params{timestamp};
 
 # For single session mode
@@ -112,6 +113,10 @@ foreach my $TalkSeparator (@TalkSeparators) {
 my %TalkConfirmFlags = ();
 foreach my $TalkConfirm (@TalkConfirms) { 
   $TalkConfirmFlags{$TalkConfirm} = 1; 
+}  
+my %TalkReserveFlags = ();
+foreach my $TalkReserve (@TalkReserves) { 
+  $TalkReserveFlags{$TalkReserve} = 1; 
 }  
 
 ### Start of HTML
@@ -247,11 +252,12 @@ if ($Mode eq "modify" || $Mode eq "create") {
     my $SessionTalkID   = 0;
     
     my $TalkConfirmed   = $TalkConfirmFlags{$SessionOrderID};
+    my $TalkReserve     = $TalkReserveFlags{$SessionOrderID};
     my $TalkDocID       = $params{"talkdocid-$SessionOrderID"};
     my $NewSessionID    = $params{"newsessionid-$SessionOrderID"};
     
     if (grep /n/,$SessionOrderID) { # Key on SessionOrderID to see if insert or update.	
-      if ($TalkTitle || $TalkNote || $TalkDocID) {
+      if ($TalkTitle || $TalkNote || $TalkDocID) { # Insert
 	++$TalksUpdated;
 	if ($TalkSeparatorFlags{$SessionOrderID}) {
           my $TalkSeparatorInsert = $dbh -> prepare(
@@ -278,7 +284,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
          "(SessionOrderID, TalkOrder, SessionTalkID, TalkSeparatorID) ". 
          "values (0,?,?,?)");
 	$SessionOrderInsert -> execute($TalkNewOrder,$SessionTalkID,$TalkSeparatorID);
-      }  
+      } # End of Insert 
     } else {
       $TalkSeparatorID = $SessionOrders{$SessionOrderID}{TalkSeparatorID};
       $SessionTalkID   = $SessionOrders{$SessionOrderID}{SessionTalkID};
@@ -353,6 +359,9 @@ if ($Mode eq "modify" || $Mode eq "create") {
         my $SessionOrderUpdate = $dbh -> prepare(
          "update SessionOrder set TalkOrder=? where SessionOrderID=?");
         $SessionOrderUpdate -> execute($TalkNewOrder,$SessionOrderID);
+      } 
+      if ($SessionTalkID && $TalkReserve && !$TalkConfirmed) {
+        push @DebugStack,"Want to reserve: $SessionTalkID $TalkReserve"; 
       }  
     }  
   }

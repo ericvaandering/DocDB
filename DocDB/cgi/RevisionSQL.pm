@@ -240,7 +240,9 @@ sub InsertRevision {
     $NewVersion = int($Documents{$DocumentID}{NVersions});
     if ($Version eq "bump") {
       ++$NewVersion;
-    }
+    } elsif ($Version eq "reserve") {
+      $NewVersion = 0;
+    }  
   }
   
   my $DocRevID = 0;
