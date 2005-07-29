@@ -228,7 +228,7 @@ sub TalkDelete ($) { # v7 do nobr with CSS
     print $query -> checkbox(-name  => "talkdelete", 
                              -value => "$SessionOrderID", -label => 'Delete');
   } else {
-    print "&nbsp;\n";
+#    print "&nbsp;\n";
   }
 }
 
@@ -236,7 +236,7 @@ sub TalkConfirm ($) {# v7 do nobr with CSS
   my ($SessionOrderID) = @_;
   
   if ($TalkSeparatorDefault eq "Yes") {
-    print "&nbsp;\n";
+#    print "&nbsp;\n";
   } elsif ($TalkDefaultConfirmed) {  
     print $query -> checkbox(-name  => "talkconfirm", -checked => 'checked', 
                              -value => "$SessionOrderID", -label => 'Confirm');
@@ -250,9 +250,9 @@ sub TalkReserve ($) {# v7 do nobr with CSS
   my ($SessionOrderID) = @_;
   
   if ($TalkSeparatorDefault eq "Yes") {
-    print "&nbsp;\n";
+#    print "&nbsp;\n";
   } elsif ($TalkDefaultConfirmed) {  
-    print "&nbsp;\n";
+#    print "&nbsp;\n";
   } else {  
     print $query -> checkbox(-name  => "talkreserve", 
                              -value => "$SessionOrderID", -label => 'Reserve');
