@@ -149,18 +149,6 @@ sub TopicsTable {
   print "</table>\n";
 }
 
-sub GatheringTable { # v7 redo, rename as event table?
-  print "<p>Routine is obsolete, replace it</p>\n";
-}
-
-sub MajorGatheringSelect (;%) { # v7 remove 
-  print "<p>Routine is obsolete, replace it</p>\n";
-}
-
-sub ConferenceSelect { # v7 remove
-  print "<p>Routine is obsolete, replace it</p>\n";
-}
-
 sub ShortDescriptionBox  (;%) {
   my (%Params) = @_;
   

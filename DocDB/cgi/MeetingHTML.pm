@@ -660,11 +660,9 @@ sub ModifyEventLink ($) {
   return $Link;
 }
 
-sub EventsTable (;%) { # v7 redo
+sub EventsTable (;%) {
   require "Sorts.pm";
-  require "TopicSQL.pm";
-  require "TopicHTML.pm";
-  
+
   my %Params = @_;
 
   my $Mode     = $Params{-mode}   || "display";
@@ -692,8 +690,7 @@ sub EventsTable (;%) { # v7 redo
   print "</table>\n";
 }
 
-sub EventsByGroup (%) { # v7 replace #FIXME: Can I combine with Orphan meetings?
-  require "TopicSQL.pm";
+sub EventsByGroup (%) {
   require "Sorts.pm";
 
   my %Params = @_;

@@ -50,20 +50,6 @@ sub ClearConferences () {
   return;
 }
 
-sub FetchConferenceByTopicID { # Fetches a conference by MinorTopicID: Remove v7
-  my ($minorTopicID) = @_;
-  my ($ConferenceID,$MinorTopicID);
-  
-  my $ConferenceFetch   = $dbh -> prepare(
-    "select ConferenceID,MinorTopicID from Conference where MinorTopicID=?");
-  $ConferenceFetch -> execute($minorTopicID);
-  ($ConferenceID,$MinorTopicID) = $ConferenceFetch -> fetchrow_array;
- 
-  $ConferenceID = &FetchConferenceByConferenceID($ConferenceID);
-
-  return $ConferenceID;
-}
-
 sub GetEventsByDate (%) {
   require "SQLUtilities.pm";
   require "Utilities.pm";
@@ -201,8 +187,6 @@ sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
     	
     &FetchEventGroup($EventGroupID);
     $Conferences{$ConferenceID}{Full}  = $EventGroups{$EventGroupID}{LongDescription}.":".$Title;
-    $ConferenceMinor{$MinorTopicID} = $ConferenceID; #  Remove v7 Used to index conferences with MinorTopic
-    &FetchMinorTopic($MinorTopicID);#  Remove v7 
   }
 
   return $ConferenceID;

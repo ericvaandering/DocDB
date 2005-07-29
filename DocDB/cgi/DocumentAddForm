@@ -265,8 +265,8 @@ if ($mode eq "add" && ($SessionID||$ConferenceID)) {
   }  
 } elsif ($mode eq "add" && @TopicDefaults) { # Check all preselected topics, see if they are conferences, etc. 
   require "TalkSQL.pm";
-  foreach my $MinorTopicID (@TopicDefaults) {
-    my $ConferenceID = &FetchConferenceByTopicID($MinorTopicID);
+  foreach my $MinorTopicID (@TopicDefaults) { #v7 get event ID directly
+#    my $ConferenceID = &FetchConferenceByTopicID($MinorTopicID);
     if ($ConferenceID) {
       my @CheckSessionTalkIDs = &FetchSessionTalksByConferenceID($ConferenceID);
       foreach my $SessionTalkID (@CheckSessionTalkIDs) {

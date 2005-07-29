@@ -185,7 +185,6 @@ sub TalkEntryForm (@) {
      &TalkSeparator($SessionOrderID);     
     print "</td>\n";
     
-#    print "<td rowspan=\"2\">\n"; &TalkSeparator($SessionOrderID); print "</td>\n";
     print "<td rowspan=\"2\">\n"; &TalkDocID($SessionOrderID);     print "</td>\n";
     print "<td>\n";               &TalkTitle($TalkDefaultTitle);   print "</td>\n";
     print "<td rowspan=\"3\">\n"; &TalkTimePullDown;               print "</td>\n";
@@ -222,18 +221,16 @@ sub TalkNote {
                             -columns => 40, -rows => 4);
 }
 
-sub TalkDelete ($) { # v7 do nobr with CSS
+sub TalkDelete ($) {
   my ($SessionOrderID) = @_;
   if ($TalkSeparatorDefault eq "Yes" || $TalkSeparatorDefault eq "No") {
     print $query -> checkbox(-name  => "talkdelete", 
                              -value => "$SessionOrderID", -label => 'Delete');
     print "<br/>\n";
-  } else {
-#    print "&nbsp;\n";
   }
 }
 
-sub TalkConfirm ($) {# v7 do nobr with CSS
+sub TalkConfirm ($) {
   my ($SessionOrderID) = @_;
   
   if ($TalkSeparatorDefault eq "Yes") {
@@ -249,7 +246,7 @@ sub TalkConfirm ($) {# v7 do nobr with CSS
   }
 }
 
-sub TalkReserve ($) {# v7 do nobr with CSS
+sub TalkReserve ($) {
   my ($SessionOrderID) = @_;
   
   if ($TalkSeparatorDefault eq "Yes") {
