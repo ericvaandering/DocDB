@@ -107,7 +107,7 @@ sub TalkEntryForm (@) {
   print "<th>",&FormElementTitle(-helplink => "sessionorder", -helptext => "Order,",  -nocolon => $TRUE);
   print        &FormElementTitle(-helplink => "talketc",      -helptext => "etc.", -nocolon => $TRUE);
   print "</th>\n";
-  print "<th>",&FormElementTitle(-helplink => "talkseparator", -helptext => "Break",             -nocolon => $TRUE),"</th>\n";
+#  print "<th>",&FormElementTitle(-helplink => "talkseparator", -helptext => "Break",             -nocolon => $TRUE),"</th>\n";
   print "<th>",&FormElementTitle(-helplink => "talkdocid"    , -helptext => "Doc. #",            -nocolon => $TRUE),"</th>\n";
   print "<th>",&FormElementTitle(-helplink => "talkinfo"     , -helptext => "Talk Title &amp; Note", -nocolon => $TRUE),"</th>\n";
   print "<th>",&FormElementTitle(-helplink => "talktime"     , -helptext => "Time",              -nocolon => $TRUE),"</th>\n";
@@ -181,10 +181,11 @@ sub TalkEntryForm (@) {
      &TalkOrder;                       print "<br/>\n";
      &TalkConfirm($SessionOrderID);    print "<br/>\n";
      &TalkReserve($SessionOrderID);    print "<br/>\n";
-     &TalkDelete($SessionOrderID);     
+     &TalkDelete($SessionOrderID);     print "<br/>\n";
+     &TalkSeparator($SessionOrderID);     
     print "</td>\n";
     
-    print "<td rowspan=\"2\">\n"; &TalkSeparator($SessionOrderID); print "</td>\n";
+#    print "<td rowspan=\"2\">\n"; &TalkSeparator($SessionOrderID); print "</td>\n";
     print "<td rowspan=\"2\">\n"; &TalkDocID($SessionOrderID);     print "</td>\n";
     print "<td>\n";               &TalkTitle($TalkDefaultTitle);   print "</td>\n";
     print "<td rowspan=\"3\">\n"; &TalkTimePullDown;               print "</td>\n";

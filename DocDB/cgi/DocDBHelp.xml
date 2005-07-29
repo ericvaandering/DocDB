@@ -899,13 +899,18 @@ or may not be the same as the web username and password.
    correctly based on the agenda information. Also check this box if you
    manually enter a document number in the "Doc. #" box. If you fail to do
    this, DocDB will try to guess again,  possibly erasing your change.</p>
+
    <p><strong>Delete:</strong> Check this box to delete a talk from the agenda. A document associated with
    the talk (if any) will <b>not</b> be deleted, just the agenda entry.</p>
+
    <p><strong>Reserve:</strong> Check this box to create a new document based
    on the  information entered in the agenda. The requester of the document is
    listed as the first author and the document is modifiable by anyone who can
    <i>view</i> the meeting. You must supply at least one author for the
    document.</p>
+
+   <p><strong>Break:</strong> Check this box to create a break (e.g. for coffee) 
+   rather than a talk in the agenda.</p>
   </text>
  </entry>
  
