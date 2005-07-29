@@ -361,8 +361,16 @@ if ($Mode eq "modify" || $Mode eq "create") {
          "update SessionOrder set TalkOrder=? where SessionOrderID=?");
         $SessionOrderUpdate -> execute($TalkNewOrder,$SessionOrderID);
       } 
-      if ($SessionTalkID && $TalkReserve && !$TalkConfirmed) {
-        push @DebugStack,"Want to reserve: $SessionTalkID $TalkReserve"; 
+      if ($SessionTalkID && $TalkReserve && !$TalkConfirmed && @AuthorHints) {
+        require "DocumentUtilities.pm";
+        my $TypeID = &FetchDocTypeByName("Talk") || 1; 
+        push @DebugStack,"Want to reserve: $SessionTalkID $TalkReserve Title: $TalkTitle Type $TypeID"; 
+#        &AddDocument(-version => "reserve", -title => $TalkTitle, -typeid => $TypeID,
+#                     -requesterid => @AuthorHints[0], -authorids => \@AuthorHints, 
+#                     -topicids => @TopicHints, -eventids => [$ConferenceID], 
+#                     -viewids  => \@MeetingViewGroupIDs, -modifyids =>  \@MeetingViewGroupIDs);
+#                     
+
       }  
     }  
   }
