@@ -374,6 +374,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
       }
       if ($SessionTalkID && $TalkReserve && !$TalkConfirmed && @AuthorHints) {
         require "DocumentUtilities.pm";
+        require "MiscSQL.pm";
         my $TypeID = &FetchDocTypeByName("Talk") || 1; 
         push @DebugStack,"Want to reserve: $SessionTalkID $TalkReserve Title: $TalkTitle Type $TypeID"; 
 #        &AddDocument(-version => "reserve", -title => $TalkTitle, -typeid => $TypeID,
