@@ -381,7 +381,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
         push @DebugStack,"Topic hints",@TopicHints; 
         my ($DocumentID,$DocRevID) =  &AddDocument(-version => "reserve", -title => $TalkTitle, -typeid => $TypeID,
                      -requesterid => @AuthorHints[0], -authorids => \@AuthorHints, 
-                     -topicids => @TopicHints, -eventids => [$ConferenceID], 
+                     -topicids => \@TopicHints, -eventids => [$EventID], 
                      -viewids  => \@MeetingViewGroupIDs, -modifyids =>  \@MeetingViewGroupIDs);
         push @DebugStack,"Reserved document $DocumentID DRI: $DocRevID";
         my $SessionTalkUpdate = $dbh -> prepare(
