@@ -371,7 +371,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
         require "DocumentUtilities.pm";
         require "MiscSQL.pm";
         my $TypeID = &FetchDocTypeByName("Talk") || 1; 
-        my ($NewDocumentID,$NewDocRevID) = 
+        my ($NewDocumentID,$NewDocRevID) 
           = &AddDocument(-version     => "reserve",     -title       => $TalkTitle, 
                          -typeid      => $TypeID,       -requesterid => @AuthorHints[0], 
                          -authorids   => \@AuthorHints, -topicids    => \@TopicHints, 
