@@ -364,6 +364,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
       
       # Can we move this and shorten it?
       
+      my @TopicHints  = split /\0/,$params{"topics-$SessionOrderID"};
       my @AuthorHints = ();
       if ($params{"authors-$SessionOrderID"}) {
         @AuthorHints = split /\0/,$params{"authors-$SessionOrderID"};
@@ -377,11 +378,12 @@ if ($Mode eq "modify" || $Mode eq "create") {
         require "MiscSQL.pm";
         my $TypeID = &FetchDocTypeByName("Talk") || 1; 
         push @DebugStack,"Want to reserve: $SessionTalkID $TalkReserve Title: $TalkTitle Type $TypeID"; 
-        my $DocumentID =  &AddDocument(-version => "reserve", -title => $TalkTitle, -typeid => $TypeID,
+        push @DebugStack,"Topic hints",@TopicHints; 
+        my ($DocumentID,$DocRevID) =  &AddDocument(-version => "reserve", -title => $TalkTitle, -typeid => $TypeID,
                      -requesterid => @AuthorHints[0], -authorids => \@AuthorHints, 
                      -topicids => @TopicHints, -eventids => [$ConferenceID], 
                      -viewids  => \@MeetingViewGroupIDs, -modifyids =>  \@MeetingViewGroupIDs);
-        push @DebugStack,"Reserved document $DocumentID";
+        push @DebugStack,"Reserved document $DocumentID DRI: $DocRevID";
         my $SessionTalkUpdate = $dbh -> prepare(
            "update SessionTalk set DocumentID=?,Confirmed=? where SessionTalkID=?");
         $SessionTalkUpdate -> execute($DocumentID,1,$SessionTalkID);
