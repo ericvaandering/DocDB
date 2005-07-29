@@ -116,6 +116,7 @@ foreach my $TalkConfirm (@TalkConfirms) {
 }  
 my %TalkReserveFlags = ();
 foreach my $TalkReserve (@TalkReserves) { 
+  push @DebugStack,"Found reserve $TalkReserve";
   $TalkReserveFlags{$TalkReserve} = 1; 
 }  
 
