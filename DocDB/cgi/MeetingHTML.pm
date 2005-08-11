@@ -489,7 +489,7 @@ sub PrintSingleSessionHeader (%) {
     print "<h5>(<a href=\"$Conferences{$EventID}{URL}\">$Conferences{$EventID}{Title} homepage</a>)</h5>\n";
   }
   
-  if ((&CanCreate()) || &CanModifyMeeting($ConferenceID)) {
+  if ((&CanCreate()) || &CanModifyMeeting($EventID)) {
     print "<table class=\"CenteredTable MedPaddedTable\"><tr>\n";
   }
   if (&CanCreate()) { # FIXME: make subroutine
@@ -497,16 +497,16 @@ sub PrintSingleSessionHeader (%) {
     &TalkUploadButton(-sessionid => $SessionID);
     print "</th>\n";
   }
-  if (&CanModifyMeeting($ConferenceID)) { # FIXME: make subroutine
+  if (&CanModifyMeeting($EventID)) { # FIXME: make subroutine
     print "<th>\n";
-    &SessionModifyButton(-eventid => $ConferenceID);
+    &SessionModifyButton(-eventid => $EventID);
     print "</th>\n";
 
     print "<th>\n";
-    &EventModifyButton(-eventid => $ConferenceID, -buttontext => "Add Sessions");
+    &EventModifyButton(-eventid => $EventID, -buttontext => "Add Sessions", -labeltext => "&nbsp;");
     print "</th>\n";
   }
-  if (&CanCreate() || &CanModifyMeeting($ConferenceID)) {
+  if (&CanCreate() || &CanModifyMeeting($EventID)) {
     print "</tr></table>\n";
   }
 
@@ -610,7 +610,7 @@ sub TalkUploadButton (%) {
 sub SessionModifyButton (%) {
     my %Params = @_;
     
-    my $EventID = $Params{-eventid}; 
+    my $EventID   = $Params{-eventid}; 
     my $SessionID = $Params{-sessionid}; 
 
     print $query -> startform('POST',$SessionModify),"<div>\n";
@@ -630,11 +630,13 @@ sub SessionModifyButton (%) {
 sub EventModifyButton (%) {
     my %Params = @_;
     
-    my $EventID = $Params{-eventid}; 
+    my $EventID    = $Params{-eventid}; 
+    my $ButtonText = $Params{-buttontext} || "Modify"; 
+    my $LabelText  = $Params{-labeltext}  || " agenda for this event"; 
 
     print $query -> startform('POST',$MeetingModify),"<div>\n";
-    print $query -> submit (-value => "Modify");
-    print " agenda for this event"; 
+    print $query -> submit (-value => $ButtonText);
+    print $LabelText; 
     print $query -> hidden(-name => 'conferenceid',    -default => $EventID);
     print "\n</div>\n",$query -> endform,"\n";
 }
