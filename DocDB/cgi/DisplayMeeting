@@ -216,21 +216,9 @@ if ($DisplayMode eq "Session") { # Display a single session
   #Complain that user didn't specify a session, break, or conference
 }  
 
-my $NavBarText = "";
-my $NavBarURL  = "";  
-if (&CanModifyMeeting($ConferenceID)) {
-  if ($SessionID) {
-    $NavBarText = "Modify&nbsp;Session";
-    $NavBarURL  = "$SessionModify?sessionid=$SessionID";
-  } elsif ($ConferenceID) {
-    $NavBarText = "Modify&nbsp;Meeting";
-    $NavBarURL  = "$MeetingModify?conferenceid=$ConferenceID";
-  }  
-}
-  
 $EndTime  = new Benchmark;
 
-&DocDBNavBar($NavBarText,$NavBarURL);
+&DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  
 exit;
