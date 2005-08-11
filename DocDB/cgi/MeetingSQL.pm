@@ -360,7 +360,7 @@ sub UpdateEvent (%) {
   push @DebugStack,"Updating with Long = $LongDescription";
   $Update -> execute($EventGroupID,$Location,$URL,$ShowAllTalks,
                      $StartDate,$EndDate,$Preamble,$Epilogue,
-                     $ShortDescription,$LongDescription,$ConferenceID); 
+                     $ShortDescription,$LongDescription,$EventID); 
   return;
 }
 
