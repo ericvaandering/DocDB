@@ -511,7 +511,7 @@ sub PrintSingleSessionHeader (%) {
     if ($OnlyOne) { 
       &EventModifyButton(-eventid => $EventID, -buttontext => "Add Sessions", -labeltext => "&nbsp;");
     } else {
-      &EventModifyButton(-eventid => $EventID, -buttontext => "Modify Event");
+      &EventModifyButton(-eventid => $EventID, -buttontext => "Modify Event", -labeltext => "&nbsp;");
     }
     print "</th>\n";
   }
@@ -617,12 +617,13 @@ sub TalkUploadButton (%) {
 sub SessionModifyButton (%) {
     my %Params = @_;
     
-    my $EventID   = $Params{-eventid}; 
-    my $SessionID = $Params{-sessionid}; 
-    my $LabelText = $Params{-labeltext}  || " agenda for this session"; 
+    my $EventID    = $Params{-eventid}; 
+    my $SessionID  = $Params{-sessionid}; 
+    my $LabelText  = $Params{-labeltext}  || " agenda for this session"; 
+    my $ButtonText = $Params{-buttontext}  || "Modify"; 
 
     print $query -> startform('POST',$SessionModify),"<div>\n";
-    print $query -> submit (-value => "Modify");
+    print $query -> submit (-value => $ButtonText);
     print $LabelText;
     if ($EventID) {
       print $query -> hidden(-name => 'eventid',    -default => $EventID);
