@@ -499,7 +499,7 @@ sub PrintSingleSessionHeader (%) {
   }
   if (&CanModifyMeeting($EventID)) { # FIXME: make subroutine
     print "<th>\n";
-    &SessionModifyButton(-eventid => $EventID);
+    &SessionModifyButton(-eventid => $EventID, -labeltext => " agenda for this session or ");
     print "</th>\n";
 
     print "<th>\n";
@@ -612,10 +612,11 @@ sub SessionModifyButton (%) {
     
     my $EventID   = $Params{-eventid}; 
     my $SessionID = $Params{-sessionid}; 
+    my $LabelText = $Params{-labeltext}  || " agenda for this session"; 
 
     print $query -> startform('POST',$SessionModify),"<div>\n";
     print $query -> submit (-value => "Modify");
-    print " agenda for this session or "; 
+    print $LabelText;
     if ($EventID) {
       print $query -> hidden(-name => 'eventid',    -default => $EventID);
       print $query -> hidden(-name => 'singlesession',    -default => 1);
