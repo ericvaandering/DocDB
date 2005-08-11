@@ -427,7 +427,11 @@ if ($SingleSession) {
   my ($DefaultEventTime,$DefaultEventDate);
   if ($Mode eq "new") {
     $DefaultEventTime = "9:00:00";
-    $DefaultEventDate = &SQLNow(-dateonly => $TRUE);
+    if ($SessionDay && $SessionMonth && $SessionYear) {
+      $DefaultEventDate = "$SessionYear-$SessionMonth-$SessionDay";
+    } else {  
+      $DefaultEventDate = &SQLNow(-dateonly => $TRUE);
+    }  
     @MeetingViewDefaults  = ();
     @MeetingModifyDefaults = &FindUsersGroups();
     $SessionDefaultDateTime = "$DefaultEventDate $DefaultEventTime";

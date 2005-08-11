@@ -146,7 +146,7 @@ sub PrintCalendar {
       }
     }
     if ($Type eq "month") {
-      my $AddLink = "<a class=\"AddEvent\" href=\"".$SessionModify."?singlesession=1&amp;sessionyear=$Year&amp;sessionmonth=$Month&amp;sessionday=$Day\">+</a>";            
+      my $AddLink = "<a class=\"AddEvent\" href=\"".$SessionModify."?mode=new&amp;singlesession=1&amp;sessionyear=$Year&amp;sessionmonth=$Month&amp;sessionday=$Day\">+</a>";            
       print $DayLink,"\n"; 
       print $AddLink,"\n";
       &PrintDayEvents(-day => $Day, -month => $Month, -year => $Year, -format => "summary");
