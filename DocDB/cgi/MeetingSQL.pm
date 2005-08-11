@@ -350,7 +350,7 @@ sub UpdateEvent (%) {
   my $Epilogue         = $Params{-epilogue}         || "";
 
 
-  push @DebugStack,"Updating with Long = $Long";
+  push @DebugStack,"Updating with Long = $LongDescription";
 
 
   my $Update = $dbh->prepare(
