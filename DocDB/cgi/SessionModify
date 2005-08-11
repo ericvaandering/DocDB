@@ -96,8 +96,11 @@ my $Long                  = $params{long};
 my @MeetingViewGroupIDs   = split /\0/,$params{meetingviewgroups};
 my @MeetingModifyGroupIDs = split /\0/,$params{meetingmodifygroups};
 
-unless ($Long) {$Long = $Short;}
-
+unless ($Long) {
+  $Long = $Short;
+  push @DebugStack,"No long";
+}
+  push @DebugStack,"Long = $Long";
 # Also have params for DocID, authors, and topics in special params with 
 # SessionID embedded
 
@@ -381,9 +384,9 @@ if ($Mode eq "modify" || $Mode eq "create") {
         my $SessionTalkUpdate = $dbh -> prepare(
            "update SessionTalk set DocumentID=?,Confirmed=? where SessionTalkID=?");
         $SessionTalkUpdate -> execute($NewDocumentID,1,$SessionTalkID);
-      } 
-    } else {
-      push @WarnStack,"You cannot reserve a document if there is a confirmed document already or if you don't specify authors.";
+      } else {
+        push @WarnStack,"You cannot reserve a document if there is a confirmed document already or if you don't specify authors.";
+      }
     }   
   }
 }
