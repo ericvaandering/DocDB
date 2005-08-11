@@ -492,14 +492,13 @@ sub PrintSingleSessionHeader (%) {
     print $query -> startform('POST',$SessionModify),"<div>\n";
     print $query -> submit (-value => "Modify");
     print " agenda for this session"; 
-    print $query -> hidden(-name => 'sessionid',    -default => $SessionID);
+    print $query -> hidden(-name => 'eventid',    -default => $ConfernceID);
     print "\n</div>\n",$query -> endform,"\n";
     print "</th>\n";
 
     print "<th>\n";
-    print $query -> startform('POST',$SessionModify),"<div>\n";
+    print $query -> startform('POST',$MeetingModify),"<div>or \n";
     print $query -> submit (-value => "Add Sessions");
-    print " to this event"; 
     print $query -> hidden(-name => 'conferenceid',    -default => $ConferenceID);
     print "\n</div>\n",$query -> endform,"\n";
     print "</th>\n";
