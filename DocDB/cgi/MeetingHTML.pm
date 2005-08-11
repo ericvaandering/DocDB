@@ -519,25 +519,25 @@ sub PrintMeetingInfo($;%) {
   }
   
   if (($AddTalkLink && &CanCreate()) || &CanModifyMeeting($ConferenceID)) {
-    print "<table><tr>\n";
+    print "<table class=\"CenteredTable MedPaddedTable\"><tr>\n";
   }
   if ($AddTalkLink && &CanCreate()) {
-    print "<td>\n";
+    print "<th>\n";
     print $query -> startform('POST',$DocumentAddForm),"<div>\n";
     print $query -> submit (-value => "Upload");
     print " a document for this event"; 
     print $query -> hidden(-name => 'conferenceid',    -default => $ConferenceID);
     print "\n</div>\n",$query -> endform,"\n";
-    print "</td>\n";
+    print "</th>\n";
   }
   if (&CanModifyMeeting($ConferenceID)) {
-    print "<td>\n";
+    print "<th>\n";
     print $query -> startform('POST',$MeetingModify),"<div>\n";
     print $query -> submit (-value => "Modify");
     print " agenda for this event"; 
     print $query -> hidden(-name => 'conferenceid',    -default => $ConferenceID);
     print "\n</div>\n",$query -> endform,"\n";
-    print "</td>\n";
+    print "</th>\n";
   }
   if (($AddTalkLink && &CanCreate()) || &CanModifyMeeting($ConferenceID)) {
     print "</tr></table>\n";
