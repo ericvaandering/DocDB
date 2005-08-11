@@ -436,9 +436,9 @@ sub PrintSessionHeader ($) {
     &TalkUploadButton(-sessionid => $SessionID);
     print "</th>\n";
   }
-  if (&CanModifyMeeting($ConferenceID)) { # FIXME: make subroutine
+  if (&CanModifyMeeting($ConferenceID)) {
     print "<th>\n";
-    &SessionModifyButton(-eventid => $ConferenceID);
+    &SessionModifyButton(-sessionid => $SessionID);
     print "</th>\n";
   }
   if (&CanCreate() || &CanModifyMeeting($ConferenceID)) {
@@ -492,12 +492,12 @@ sub PrintSingleSessionHeader (%) {
   if ((&CanCreate()) || &CanModifyMeeting($EventID)) {
     print "<table class=\"CenteredTable MedPaddedTable\"><tr>\n";
   }
-  if (&CanCreate()) { # FIXME: make subroutine
+  if (&CanCreate()) {
     print "<th>\n";
     &TalkUploadButton(-sessionid => $SessionID);
     print "</th>\n";
   }
-  if (&CanModifyMeeting($EventID)) { # FIXME: make subroutine
+  if (&CanModifyMeeting($EventID)) {
     print "<th>\n";
     &SessionModifyButton(-eventid => $EventID, -labeltext => " agenda for this session or ");
     print "</th>\n";
@@ -529,9 +529,6 @@ sub PrintMeetingInfo($;%) {
   my $AddTalkLink = $Params{-talklink} || "";	     # short, long, full
   my $AddNavBar   = $Params{-navbar}   || "";		  # Any non-null text is "true"
 
-#  my $AddTalkLink = $IsSingle; # FIXME: May want to make these 
-#  my $AddNavBar   = $IsSingle; # parameters in a hash
-
   print "<h2> \n";
   print "<a href=\"$DisplayMeeting?conferenceid=$ConferenceID\">$Conferences{$ConferenceID}{Title}</a>\n";
   print "</h2>\n";
@@ -553,12 +550,12 @@ sub PrintMeetingInfo($;%) {
   if (($AddTalkLink && &CanCreate()) || &CanModifyMeeting($ConferenceID)) {
     print "<table class=\"CenteredTable MedPaddedTable\"><tr>\n";
   }
-  if ($AddTalkLink && &CanCreate()) { # FIXME: make subroutine
+  if ($AddTalkLink && &CanCreate()) {
     print "<th>\n";
     &TalkUploadButton(-eventid => $ConferenceID);
     print "</th>\n";
   }
-  if (&CanModifyMeeting($ConferenceID)) { # FIXME: make subroutine
+  if (&CanModifyMeeting($ConferenceID)) {
     print "<th>\n";
     &EventModifyButton(-eventid => $ConferenceID);
     print "</th>\n";
@@ -598,10 +595,11 @@ sub TalkUploadButton (%) {
     
     print $query -> startform('POST',$DocumentAddForm),"<div>\n";
     print $query -> submit (-value => "Upload");
-    print " a document for this event"; 
     if ($EventID) {
+      print " a document for this event"; 
       print $query -> hidden(-name => 'conferenceid', -default => $EventID);
     } elsif ($SessionID) {
+      print " a document for this session"; 
       print $query -> hidden(-name => 'sessionid',    -default => $SessionID);
     }    
     print "\n</div>\n",$query -> endform,"\n";
