@@ -501,9 +501,9 @@ sub PrintSingleSessionHeader (%) {
   if (&CanModifyMeeting($EventID)) {
     print "<th>\n";
     if ($OnlyOne) { 
-      &SessionModifyButton(-eventid => $EventID, -labeltext => " agenda for this session or ");
+      &SessionModifyButton(-eventid => $EventID, -labeltext => " agenda for this session or");
     } else {
-      &SessionModifyButton(-sessionid => $SessionID, -labeltext => " agenda for this session or ");
+      &SessionModifyButton(-sessionid => $SessionID, -buttontext => "Modify Session", -labeltext => " or");
     }
     print "</th>\n";
 
@@ -511,7 +511,7 @@ sub PrintSingleSessionHeader (%) {
     if ($OnlyOne) { 
       &EventModifyButton(-eventid => $EventID, -buttontext => "Add Sessions", -labeltext => "&nbsp;");
     } else {
-      &EventModifyButton(-eventid => $EventID);
+      &EventModifyButton(-eventid => $EventID, -buttontext => "Modify Event");
     }
     print "</th>\n";
   }
