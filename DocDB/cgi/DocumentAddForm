@@ -236,19 +236,16 @@ if ($mode eq "add" && ($SessionID||$ConferenceID)) {
   require "MeetingSQL.pm";
   
   my @CheckSessionTalkIDs = ();
-  my $MinorTopicID;
-  
-  if ($SessionID) { # Build list for SessionID
+
+  if ($ConferenceID) { 
+    @CheckSessionTalkIDs = &FetchSessionTalksByConferenceID($ConferenceID);
+  } elsif ($SessionID) { # Build list for SessionID
     @CheckSessionTalkIDs = &FetchSessionTalksBySessionID($SessionID);
     &FetchSessionByID($SessionID);
-    my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
-    &FetchConferenceByConferenceID($ConferenceID);
-    $MinorTopicID = $Conferences{$ConferenceID}{Minor}; # FIXME: Why doesn't this work?
-  } elsif ($ConferenceID) { # Build list for ConferenceID
-    @CheckSessionTalkIDs = &FetchSessionTalksByConferenceID($ConferenceID);
-    &FetchConferenceByConferenceID($ConferenceID);
-    $MinorTopicID = $Conferences{$ConferenceID}{Minor};
-  }    
+    $ConferenceID = $Sessions{$SessionID}{ConferenceID};
+  }
+  &FetchConferenceByConferenceID($ConferenceID);
+  push @EventDefaults,$ConferenceID;
   
   # Check list of SessionTalks
   
@@ -257,28 +254,9 @@ if ($mode eq "add" && ($SessionID||$ConferenceID)) {
       push @OpenSessionTalkIDs,$SessionTalkID;
     } 
   }
-  
-  # Add the topic for conference to defaults
-  
-  if ($MinorTopicID) {
-    push @TopicDefaults,$MinorTopicID;
-  }  
-} elsif ($mode eq "add" && @TopicDefaults) { # Check all preselected topics, see if they are conferences, etc. 
-  require "TalkSQL.pm";
-  foreach my $MinorTopicID (@TopicDefaults) { #v7 get event ID directly
-#    my $ConferenceID = &FetchConferenceByTopicID($MinorTopicID);
-    if ($ConferenceID) {
-      my @CheckSessionTalkIDs = &FetchSessionTalksByConferenceID($ConferenceID);
-      foreach my $SessionTalkID (@CheckSessionTalkIDs) {
-        unless ($SessionTalks{$SessionTalkID}{Confirmed}) {
-          push @OpenSessionTalkIDs,$SessionTalkID;
-        } 
-      }
-    }    
-  }
 }
 
-&Unique(@TopicDefaults) ; # Make sure this list is unique
+@TopicDefaults = &Unique(@TopicDefaults) ; # Make sure this list is unique
 
 &EndPage(@ErrorStack); # The user may have made mistakes, warn and exit
 
