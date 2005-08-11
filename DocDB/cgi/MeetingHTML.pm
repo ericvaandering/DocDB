@@ -474,10 +474,40 @@ sub PrintSingleSessionHeader (%) {
   if ($Conferences{$EventID}{URL}) {
     print "<h5>(<a href=\"$Conferences{$EventID}{URL}\">$Conferences{$EventID}{Title} homepage</a>)</h5>\n";
   }
-  if (&CanModifyMeeting($ConferenceID)) {
-    print "<h5>(<a href=\"$DocumentAddForm?sessionid=$SessionID\">Upload a document</a> ".
-          "or <a href=\"$SessionModify?sessionid=$SessionID\">update the agenda</a> for this session)</h5>\n";
+  
+  if ((&CanCreate()) || &CanModifyMeeting($ConferenceID)) {
+    print "<table class=\"CenteredTable MedPaddedTable\"><tr>\n";
   }
+  if (&CanCreate()) { # FIXME: make subroutine
+    print "<th>\n";
+    print $query -> startform('POST',$DocumentAddForm),"<div>\n";
+    print $query -> submit (-value => "Upload");
+    print " a document for this session"; 
+    print $query -> hidden(-name => 'sessionid',    -default => $SessionID);
+    print "\n</div>\n",$query -> endform,"\n";
+    print "</th>\n";
+  }
+  if (&CanModifyMeeting($ConferenceID)) { # FIXME: make subroutine
+    print "<th>\n";
+    print $query -> startform('POST',$SessionModify),"<div>\n";
+    print $query -> submit (-value => "Modify");
+    print " agenda for this session"; 
+    print $query -> hidden(-name => 'sessionid',    -default => $SessionID);
+    print "\n</div>\n",$query -> endform,"\n";
+    print "</th>\n";
+
+    print "<th>\n";
+    print $query -> startform('POST',$SessionModify),"<div>\n";
+    print $query -> submit (-value => "Add Sessions");
+    print " to this event"; 
+    print $query -> hidden(-name => 'conferenceid',    -default => $ConferenceID);
+    print "\n</div>\n",$query -> endform,"\n";
+    print "</th>\n";
+  }
+  if (($AddTalkLink && &CanCreate()) || &CanModifyMeeting($ConferenceID)) {
+    print "</tr></table>\n";
+  }
+
   &PrintMeetingPreamble($EventID);
   if ($Sessions{$SessionID}{Description}) {
     my $Description = $Sessions{$SessionID}{Description};
@@ -521,7 +551,7 @@ sub PrintMeetingInfo($;%) {
   if (($AddTalkLink && &CanCreate()) || &CanModifyMeeting($ConferenceID)) {
     print "<table class=\"CenteredTable MedPaddedTable\"><tr>\n";
   }
-  if ($AddTalkLink && &CanCreate()) {
+  if ($AddTalkLink && &CanCreate()) { # FIXME: make subroutine
     print "<th>\n";
     print $query -> startform('POST',$DocumentAddForm),"<div>\n";
     print $query -> submit (-value => "Upload");
@@ -530,7 +560,7 @@ sub PrintMeetingInfo($;%) {
     print "\n</div>\n",$query -> endform,"\n";
     print "</th>\n";
   }
-  if (&CanModifyMeeting($ConferenceID)) {
+  if (&CanModifyMeeting($ConferenceID)) { # FIXME: make subroutine
     print "<th>\n";
     print $query -> startform('POST',$MeetingModify),"<div>\n";
     print $query -> submit (-value => "Modify");
@@ -542,7 +572,6 @@ sub PrintMeetingInfo($;%) {
   if (($AddTalkLink && &CanCreate()) || &CanModifyMeeting($ConferenceID)) {
     print "</tr></table>\n";
   }
-  
   
   if ($AddNavBar) {
     print "<div class=\"EventNavBar\">\n";
