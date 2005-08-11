@@ -427,10 +427,24 @@ sub PrintSessionHeader ($) {
   if ($Sessions{$SessionID}{Location}) {
     print "<h5>Location: $Sessions{$SessionID}{Location}</h5>\n";
   }
-  if (&CanModifyMeeting($ConferenceID)) {
-    print "<h5>(<a href=\"$DocumentAddForm?sessionid=$SessionID\">Upload a document</a> ".
-          "or <a href=\"$SessionModify?sessionid=$SessionID\">update the agenda</a> for this session)</h5>\n";
+  
+  if (&CanCreate || &CanModifyMeeting($ConferenceID)) {
+    print "<table class=\"CenteredTable MedPaddedTable\"><tr>\n";
   }
+  if (&CanCreate()) { # FIXME: make subroutine
+    print "<th>\n";
+    &TalkUploadButton(-sessionid => $SessionID);
+    print "</th>\n";
+  }
+  if (&CanModifyMeeting($ConferenceID)) { # FIXME: make subroutine
+    print "<th>\n";
+    &SessionModifyButton(-eventid => $ConferenceID);
+    print "</th>\n";
+  }
+  if (&CanCreate() || &CanModifyMeeting($ConferenceID)) {
+    print "</tr></table>\n";
+  }
+  
   if ($Sessions{$SessionID}{Description}) {
     my $Description = $Sessions{$SessionID}{Description};
     $Description =~ s/\n\s*\n/<p\/>/;
@@ -480,31 +494,19 @@ sub PrintSingleSessionHeader (%) {
   }
   if (&CanCreate()) { # FIXME: make subroutine
     print "<th>\n";
-    print $query -> startform('POST',$DocumentAddForm),"<div>\n";
-    print $query -> submit (-value => "Upload");
-    print " a document for this session"; 
-    print $query -> hidden(-name => 'sessionid',    -default => $SessionID);
-    print "\n</div>\n",$query -> endform,"\n";
+    &TalkUploadButton(-sessionid => $SessionID);
     print "</th>\n";
   }
   if (&CanModifyMeeting($ConferenceID)) { # FIXME: make subroutine
     print "<th>\n";
-    print $query -> startform('POST',$SessionModify),"<div>\n";
-    print $query -> submit (-value => "Modify");
-    print " agenda for this session or "; 
-    print $query -> hidden(-name => 'eventid',    -default => $EventID);
-    print $query -> hidden(-name => 'singlesession',    -default => 1);
-    print "\n</div>\n",$query -> endform,"\n";
+    &SessionModifyButton(-eventid => $ConferenceID);
     print "</th>\n";
 
     print "<th>\n";
-    print $query -> startform('POST',$MeetingModify),"<div>\n";
-    print $query -> submit (-value => "Add Sessions");
-    print $query -> hidden(-name => 'conferenceid',    -default => $ConferenceID);
-    print "\n</div>\n",$query -> endform,"\n";
+    &EventModifyButton(-eventid => $ConferenceID, -buttontext => "Add Sessions");
     print "</th>\n";
   }
-  if (($AddTalkLink && &CanCreate()) || &CanModifyMeeting($ConferenceID)) {
+  if (&CanCreate() || &CanModifyMeeting($ConferenceID)) {
     print "</tr></table>\n";
   }
 
@@ -553,20 +555,12 @@ sub PrintMeetingInfo($;%) {
   }
   if ($AddTalkLink && &CanCreate()) { # FIXME: make subroutine
     print "<th>\n";
-    print $query -> startform('POST',$DocumentAddForm),"<div>\n";
-    print $query -> submit (-value => "Upload");
-    print " a document for this event"; 
-    print $query -> hidden(-name => 'conferenceid',    -default => $ConferenceID);
-    print "\n</div>\n",$query -> endform,"\n";
+    &TalkUploadButton(-eventid => $ConferenceID);
     print "</th>\n";
   }
   if (&CanModifyMeeting($ConferenceID)) { # FIXME: make subroutine
     print "<th>\n";
-    print $query -> startform('POST',$MeetingModify),"<div>\n";
-    print $query -> submit (-value => "Modify");
-    print " agenda for this event"; 
-    print $query -> hidden(-name => 'conferenceid',    -default => $ConferenceID);
-    print "\n</div>\n",$query -> endform,"\n";
+    &EventModifyButton(-eventid => $ConferenceID);
     print "</th>\n";
   }
   if (($AddTalkLink && &CanCreate()) || &CanModifyMeeting($ConferenceID)) {
@@ -594,6 +588,55 @@ sub PrintMeetingInfo($;%) {
   &PrintMeetingPreamble($ConferenceID);
   
   print "<hr width=\"95%\" />\n";
+}
+
+sub TalkUploadButton (%) {
+    my %Params = @_;
+    
+    my $EventID   = $Params{-eventid}; 
+    my $SessionID = $Params{-sessionid}; 
+    
+    print $query -> startform('POST',$DocumentAddForm),"<div>\n";
+    print $query -> submit (-value => "Upload");
+    print " a document for this event"; 
+    if ($EventID) {
+      print $query -> hidden(-name => 'conferenceid', -default => $EventID);
+    } elsif ($SessionID) {
+      print $query -> hidden(-name => 'sessionid',    -default => $SessionID);
+    }    
+    print "\n</div>\n",$query -> endform,"\n";
+}
+
+sub SessionModifyButton (%)
+    my %Params = @_;
+    
+    my $EventID = $Params{-eventid}; 
+    my $SessionID = $Params{-sessionid}; 
+
+    print $query -> startform('POST',$SessionModify),"<div>\n";
+    print $query -> submit (-value => "Modify");
+    print " agenda for this session or "; 
+    if ($EventID) {
+      print $query -> hidden(-name => 'eventid',    -default => $EventID);
+      print $query -> hidden(-name => 'singlesession',    -default => 1);
+    } elsif ($SessionID) {
+      print $query -> hidden(-name => 'sessionid',    -default => $SessionID);
+    }    
+  
+    print "\n</div>\n",$query -> endform,"\n";
+
+}
+
+sub EventModifyButton (%) {
+    my %Params = @_;
+    
+    my $EventID = $Params{-eventid}; 
+
+    print $query -> startform('POST',$MeetingModify),"<div>\n";
+    print $query -> submit (-value => "Modify");
+    print " agenda for this event"; 
+    print $query -> hidden(-name => 'conferenceid',    -default => $EventID);
+    print "\n</div>\n",$query -> endform,"\n";
 }
 
 sub PrintMeetingEpilogue($) {
