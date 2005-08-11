@@ -461,6 +461,7 @@ sub PrintSingleSessionHeader (%) {
   my %Params = @_;
 
   my $SessionID  = $Params{-sessionid} || 0;
+  my $OnlyOne    = $Params{-onlyone}   || 0;
   my $EventID    = $Sessions{$SessionID}{ConferenceID};
 
   unless ($EventID) { 
@@ -499,11 +500,19 @@ sub PrintSingleSessionHeader (%) {
   }
   if (&CanModifyMeeting($EventID)) {
     print "<th>\n";
-    &SessionModifyButton(-eventid => $EventID, -labeltext => " agenda for this session or ");
+    if ($OnlyOne) { 
+      &SessionModifyButton(-eventid => $EventID, -labeltext => " agenda for this session or ");
+    } else {
+      &SessionModifyButton(-sessionid => $SessionID, -labeltext => " agenda for this session or ");
+    }
     print "</th>\n";
 
     print "<th>\n";
-    &EventModifyButton(-eventid => $EventID, -buttontext => "Add Sessions", -labeltext => "&nbsp;");
+    if ($OnlyOne) { 
+      &EventModifyButton(-eventid => $EventID, -buttontext => "Add Sessions", -labeltext => "&nbsp;");
+    } else {
+      &EventModifyButton(-eventid => $EventID);
+    }
     print "</th>\n";
   }
   if (&CanCreate() || &CanModifyMeeting($EventID)) {
