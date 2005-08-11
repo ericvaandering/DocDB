@@ -429,7 +429,7 @@ sub PrintSessionHeader ($) {
   }
   
   if (&CanCreate || &CanModifyMeeting($ConferenceID)) {
-    print "<table class=\"CenteredTable MedPaddedTable\"><tr>\n";
+    print "<table class=\"CenteredTable LowPaddedTable\"><tr>\n";
   }
   if (&CanCreate()) { # FIXME: make subroutine
     print "<th>\n";
@@ -491,7 +491,7 @@ sub PrintSingleSessionHeader (%) {
   }
   
   if ((&CanCreate()) || &CanModifyMeeting($EventID)) {
-    print "<table class=\"CenteredTable MedPaddedTable\"><tr>\n";
+    print "<table class=\"CenteredTable LowPaddedTable\"><tr>\n";
   }
   if (&CanCreate()) {
     print "<th>\n";
@@ -557,7 +557,7 @@ sub PrintMeetingInfo($;%) {
   }
   
   if (($AddTalkLink && &CanCreate()) || &CanModifyMeeting($ConferenceID)) {
-    print "<table class=\"CenteredTable MedPaddedTable\"><tr>\n";
+    print "<table class=\"CenteredTable LowPaddedTable\"><tr>\n";
   }
   if ($AddTalkLink && &CanCreate()) {
     print "<th>\n";
