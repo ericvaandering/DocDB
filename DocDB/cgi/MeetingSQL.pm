@@ -350,6 +350,9 @@ sub UpdateEvent (%) {
   my $Epilogue         = $Params{-epilogue}         || "";
 
 
+  push @DebugStack,"Updating with Long = $Long";
+
+
   my $Update = $dbh->prepare(
    "update Conference set ".
      "EventGroupID=?, Location=?, URL=?, ShowAllTalks=?, StartDate=?, EndDate=?, ".
