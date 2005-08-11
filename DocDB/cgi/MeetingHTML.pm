@@ -518,12 +518,20 @@ sub PrintMeetingInfo($;%) {
     print "<h5>(<a href=\"$Conferences{$ConferenceID}{URL}\">$Conferences{$ConferenceID}{Title} homepage</a>)</h5>\n";
   }
   if ($AddTalkLink && &CanCreate()) {
-    print "<h5>",$query -> startform('POST',$DocumentAddForm),"<div>\n";
+    print "<h4>",$query -> startform('POST',$DocumentAddForm),"<div>\n";
     print $query -> submit (-value => "Upload");
-    print " a document to this event"; 
+    print " a document for this event"; 
     print $query -> hidden(-name => 'conferenceid',    -default => $ConferenceID);
     print "\n</div>\n",$query -> endform,"\n";
-    print "</h5>\n";
+    print "</h4>\n";
+  }
+  if (&CanModifyMeeting($ConferenceID)) {
+    print "<h4>",$query -> startform('POST',$MeetingModify),"<div>\n";
+    print $query -> submit (-value => "Modify");
+    print " agenda for this event"; 
+    print $query -> hidden(-name => 'conferenceid',    -default => $ConferenceID);
+    print "\n</div>\n",$query -> endform,"\n";
+    print "</h4>\n";
   }
   
   
