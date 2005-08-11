@@ -517,20 +517,28 @@ sub PrintMeetingInfo($;%) {
   if ($Conferences{$ConferenceID}{URL}) {
     print "<h5>(<a href=\"$Conferences{$ConferenceID}{URL}\">$Conferences{$ConferenceID}{Title} homepage</a>)</h5>\n";
   }
+  
+  if (($AddTalkLink && &CanCreate()) || &CanModifyMeeting($ConferenceID)) {
+    print "<h4>\n";
+  }
   if ($AddTalkLink && &CanCreate()) {
-    print "<h4>",$query -> startform('POST',$DocumentAddForm),"<div>\n";
+    print $query -> startform('POST',$DocumentAddForm),"<div>\n";
     print $query -> submit (-value => "Upload");
     print " a document for this event"; 
     print $query -> hidden(-name => 'conferenceid',    -default => $ConferenceID);
     print "\n</div>\n",$query -> endform,"\n";
-    print "</h4>\n";
+  }
+  if (($AddTalkLink && &CanCreate()) || &CanModifyMeeting($ConferenceID)) {
+    print "&nbsp;nbsp;nbsp;nbsp;\n";
   }
   if (&CanModifyMeeting($ConferenceID)) {
-    print "<h4>",$query -> startform('POST',$MeetingModify),"<div>\n";
+    print $query -> startform('POST',$MeetingModify),"<div>\n";
     print $query -> submit (-value => "Modify");
     print " agenda for this event"; 
     print $query -> hidden(-name => 'conferenceid',    -default => $ConferenceID);
     print "\n</div>\n",$query -> endform,"\n";
+  }
+  if (($AddTalkLink && &CanCreate()) || &CanModifyMeeting($ConferenceID)) {
     print "</h4>\n";
   }
   
