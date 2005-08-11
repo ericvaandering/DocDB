@@ -99,6 +99,12 @@ unless (&CanAccessMeeting($ConferenceID)) {
 }
 &EndPage(@ErrorStack);
 
+print "<div  id=\"Header3Col\"></div>\n";
+
+print "<div  id=\"LeftColumn3Col\">\n";
+print "Links go here\n";
+print "</div>\n";
+print "<div  id=\"MainColumn3Col\">\n";
 if ($DisplayMode eq "Session") { # Display a single session
   &ReHintTalksBySessionID($SessionID); 
   &ClearSessionTalks();
@@ -107,12 +113,14 @@ if ($DisplayMode eq "Session") { # Display a single session
   $ConferenceID = $Sessions{$SessionID}{ConferenceID};
   &FetchConferenceByConferenceID($ConferenceID);
   &PrintSingleSessionHeader(-sessionid => $SessionID);
+  print "</div>\n";
   &PrintSession(-sessionid => $SessionID, -skipheader => $TRUE); 
   &PrintMeetingEpilogue($ConferenceID);
 } elsif ($DisplayMode eq "Separator") { # Display a single break (never called)
   &FetchSessionSeparatorByID($SessionSeparatorID);
   &FetchConferenceByConferenceID($SessionSeparators{$SessionSeparatorID}{ConferenceID});
   &PrintMeetingInfo($Sessions{$SessionID}{ConferenceID});
+  print "</div>\n";
   &PrintSessionSeparator($SessionSeparatorID);
   &PrintMeetingEpilogue($Sessions{$SessionID}{ConferenceID});
 } elsif ($DisplayMode eq "Conference") { # Display meeting info or meeting with all talks
@@ -124,6 +132,7 @@ if ($DisplayMode eq "Session") { # Display a single session
 
   my $AddNavBar = $Conferences{$ConferenceID}{ShowAllTalks};
   &PrintMeetingInfo($ConferenceID,-talklink => 1,-navbar => $AddNavBar);
+  print "</div>\n";
   
   if ($Conferences{$ConferenceID}{ShowAllTalks}) { # Display all talks, sessions
     # FIXME: Add a Navbar of sorts?
