@@ -65,7 +65,7 @@ if ($SessionID ) {
 } elsif ($SessionSeparatorID) {
   &DocDBHeader("Break Information", "", -scripts => ["PopUps"]);
 } else {  
-  &DocDBHeader("Meeting and Talks", "", -scripts => ["PopUps"]);
+  &DocDBHeader("Event",             "", -scripts => ["PopUps"]);
 }  
 
 unless ($dbh) {
