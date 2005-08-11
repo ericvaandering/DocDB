@@ -146,7 +146,7 @@ sub PrintCalendar {
       }
     }
     if ($Type eq "month") {
-      my $AddLink = "<a class=\"AddEvent\" href=\"".$ShowCalendar."?year=$Year&amp;month=$Month&amp;day=$Day\">+</a>";            
+      my $AddLink = "<a class=\"AddEvent\" href=\"".$MeetingModify."?singlesession=1&amp;year=$Year&amp;month=$Month&amp;day=$Day\">+</a>";            
       print $DayLink,"\n"; 
       print $AddLink,"\n";
       &PrintDayEvents(-day => $Day, -month => $Month, -year => $Year, -format => "summary");
