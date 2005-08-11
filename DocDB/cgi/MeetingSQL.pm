@@ -349,15 +349,12 @@ sub UpdateEvent (%) {
   my $Preample         = $Params{-preample}         || "";
   my $Epilogue         = $Params{-epilogue}         || "";
 
-
-
-
   my $Update = $dbh->prepare(
    "update Conference set ".
      "EventGroupID=?, Location=?, URL=?, ShowAllTalks=?, StartDate=?, EndDate=?, ".
      "Preamble=?, Epilogue=?, Title=?, LongDescription=? ". 
    "where ConferenceID=?");
-  push @DebugStack,"Updating with Long = $LongDescription";
+
   $Update -> execute($EventGroupID,$Location,$URL,$ShowAllTalks,
                      $StartDate,$EndDate,$Preamble,$Epilogue,
                      $ShortDescription,$LongDescription,$EventID); 

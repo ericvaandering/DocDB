@@ -607,7 +607,7 @@ sub TalkUploadButton (%) {
     print "\n</div>\n",$query -> endform,"\n";
 }
 
-sub SessionModifyButton (%)
+sub SessionModifyButton (%) {
     my %Params = @_;
     
     my $EventID = $Params{-eventid}; 

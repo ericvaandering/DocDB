@@ -96,11 +96,8 @@ my $Long                  = $params{long};
 my @MeetingViewGroupIDs   = split /\0/,$params{meetingviewgroups};
 my @MeetingModifyGroupIDs = split /\0/,$params{meetingmodifygroups};
 
-unless ($Long) {
-  $Long = $Short;
-  push @DebugStack,"No long";
-}
-  push @DebugStack,"Long = $Long";
+unless ($Long) {$Long = $Short;}
+
 # Also have params for DocID, authors, and topics in special params with 
 # SessionID embedded
 
