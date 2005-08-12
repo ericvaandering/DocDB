@@ -437,6 +437,8 @@ if ($SessionsCreated   || $SessionsUpdated   || $SessionsDeleted   ||
          the Event</a></b>\n";
 }    
 
+&FetchConferenceByConferenceID($ConferenceID);
+
 print $query -> start_multipart_form('POST',"$MeetingModify");
 print "<div>\n";
 print $query -> hidden(-name => 'mode', -default => $SetMode);
@@ -501,14 +503,11 @@ if ($Mode eq "copy" && $OffsetDays) {
   $DefaultEndDate   = $End   -> ymd();
 }  
 
-print "<table class=\"HighPaddedTable\">\n";
+print "<table class=\"MedPaddedTable CenteredTable\">\n";
 
 print "<tr>\n";
- print "<td colspan=\"3\">Required fields are marked with $RequiredMark. \n";
- print "<a ";
- &HelpLink("meetingtopic");
- print "Click for an explanation.</a>\n";
- print "</td>\n";
+print "<td colspan=\"3\">Required fields are marked with $RequiredMark. \n";
+print "</td>\n";
 print "</tr>\n";
 print "<tr>\n";
 print "<td>\n"; 
@@ -539,13 +538,13 @@ unless ($NoSessions) {
 }  
 print "</td>\n";
 print "</tr>\n";
-print "</table>\n";
 
-unless ($NoSessions) {
-  print "<table class=\"HighPaddedTable\">\n";
+if ($NoSessions) {
+  print "</table>\n";
+} else {
 
   print "<tr>\n";
-  print "<td>\n"; &ConferencePreambleBox; print "</td>\n";
+  print "<td colspan=\"2\">\n"; &ConferencePreambleBox; print "</td>\n";
   print "<td>\n"; 
   &SecurityScroll(-addpublic => 'true',
                 -name      => 'meetingviewgroups', 
@@ -556,7 +555,7 @@ unless ($NoSessions) {
                 -size      => 8);
   print "</td>\n";
   print "</tr><tr>\n";
-  print "<td>\n"; &ConferenceEpilogueBox; print "</td>\n";
+  print "<td colspan=\"2\">\n"; &ConferenceEpilogueBox; print "</td>\n";
   print "<td>\n"; 
   &SecurityScroll(-name      => 'meetingmodifygroups', 
                 -helplink  => 'meetingmodifygroups',
@@ -567,7 +566,6 @@ unless ($NoSessions) {
   print "</td>\n";
   print "</tr>\n";
   print "</table>\n";
-  print "<table class=\"HighPaddedTable\">\n";
 
   %Conferences       = ();
   %Sessions          = ();
@@ -581,19 +579,18 @@ unless ($NoSessions) {
 
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs;
 
-  print "<tr>\n";
-  print "<td colspan=\"2\">\n"; &SessionEntryForm($ConferenceID,@MeetingOrderIDs);   print "</td>\n";
-  print "</tr>\n";
-  print "</table>\n";
+  print "<p>\n";
+  &SessionEntryForm($ConferenceID,@MeetingOrderIDs);
+  print "</p>\n";
 }
 
-print "<div class=\"SubmitCell\">\n";
+print "<p class=\"SubmitCell\">\n";
 my $SubmitTitle = "Modify Event and Sessions";
 if ($NoSessions) {
   $SubmitTitle = "Modify Event";
 }
 print $query -> submit (-value => $SubmitTitle); 
-print "</div>\n";
+print "</p>\n";
   
 print $query -> end_multipart_form;
 

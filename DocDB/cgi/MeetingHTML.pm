@@ -103,10 +103,11 @@ sub SessionEntryForm ($@) {
   my ($ConferenceID,@MeetingOrderIDs) = @_; 
 
   require "Scripts.pm";
-  print "<b><a ";
-  &HelpLink("sessions");
-  print "Sessions:</a></b>\n";
-  print "<table id=\"SessionEntry\" class=\"LowPaddedTable Alternating\">\n";
+  print "<table id=\"SessionEntry\" class=\"MedPaddedTable Alternating CenteredTable\">\n";
+
+  print "<tr><th colspan=\"4\">\n";
+  print &FormElementTitle(-helplink  => "sessions", -helptext  => "Sessions", -nobreak => $TRUE, -nocolon => $TRUE);
+  print "</th></tr>\n";
 
   print "<tr>\n";
    print "<th>",&FormElementTitle(-helplink  => "meetingorder", -helptext  => "Order", -nobreak => $TRUE, -nocolon => $TRUE),                          " or<br/>";
@@ -165,7 +166,7 @@ sub SessionEntryForm ($@) {
 	$SessionSeparatorDefault   = "Yes";
       }
     } 
-
+    print "<tbody>\n";
     print "<tr class=\"$RowClass\">\n";
     
      print "<td rowspan=\"2\">";
@@ -190,6 +191,7 @@ sub SessionEntryForm ($@) {
                        -default => $SessionDefaultDateTime,      -required => $RequiredEntries{StartDate} );
      print "</td>\n";
     print "</tr>\n";
+    print "</tbody>\n";
   }
   print "</table>\n";
 }
