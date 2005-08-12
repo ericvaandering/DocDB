@@ -143,11 +143,11 @@ table.CenteredTable {
   margin-left: auto;
 }
 
-li.Odd, tr.Odd {
+li.Odd, tr.Odd, tbody.Odd {
   background: #eee;
 }
 
-li.Even, tr.Even {
+li.Even, tr.Even, tbody.Even {
   background: white;
 }
 
