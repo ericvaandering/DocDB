@@ -492,30 +492,31 @@ sub PrintSingleSessionHeader (%) {
   
   if ((&CanCreate()) || &CanModifyMeeting($EventID)) {
     print "<table class=\"CenteredTable LowPaddedTable\"><tr>\n";
-  }
-  if (&CanCreate()) {
-    print "<th>\n";
-    &TalkUploadButton(-sessionid => $SessionID);
-    print "</th>\n";
-  }
-  if (&CanModifyMeeting($EventID)) {
-    print "<th>\n";
-    if ($OnlyOne) { 
-      &SessionModifyButton(-eventid => $EventID, -labeltext => " agenda for this session or");
-    } else {
-      &SessionModifyButton(-sessionid => $SessionID, -buttontext => "Modify Session", -labeltext => " or");
+    if (&CanCreate()) {
+      print "<th>\n";
+      &TalkUploadButton(-sessionid => $SessionID);
+      print "</th>\n";
     }
-    print "</th>\n";
+    if (&CanModifyMeeting($EventID)) {
+      print "<th>\n";
+      if ($OnlyOne) { 
+        &SessionModifyButton(-eventid => $EventID, -labeltext => " agenda for this session or");
+      } else {
+        &SessionModifyButton(-sessionid => $SessionID, -buttontext => "Modify Session", -labeltext => " or");
+      }
+      print "</th>\n";
 
-    print "<th>\n";
-    if ($OnlyOne) { 
-      &EventModifyButton(-eventid => $EventID, -buttontext => "Add Sessions", -labeltext => "&nbsp;");
-    } else {
-      &EventModifyButton(-eventid => $EventID, -buttontext => "Modify Event", -labeltext => "&nbsp;");
+      print "<th>\n";
+      if ($OnlyOne) { 
+        &EventModifyButton(-eventid => $EventID, -buttontext => "Add Sessions", -labeltext => "&nbsp;");
+      } else {
+        &EventModifyButton(-eventid => $EventID, -buttontext => "Modify Event", -labeltext => "&nbsp;");
+      }
+      print "</th>\n";
+      print "</tr>\n<tr colspan=\"3\"><th>\n";
+      &EventCopyButton(-eventid => $EventID);
+      print "</th>\n";
     }
-    print "</th>\n";
-  }
-  if (&CanCreate() || &CanModifyMeeting($EventID)) {
     print "</tr></table>\n";
   }
 
@@ -558,18 +559,19 @@ sub PrintMeetingInfo($;%) {
   
   if (($AddTalkLink && &CanCreate()) || &CanModifyMeeting($ConferenceID)) {
     print "<table class=\"CenteredTable LowPaddedTable\"><tr>\n";
-  }
-  if ($AddTalkLink && &CanCreate()) {
-    print "<th>\n";
-    &TalkUploadButton(-eventid => $ConferenceID);
-    print "</th>\n";
-  }
-  if (&CanModifyMeeting($ConferenceID)) {
-    print "<th>\n";
-    &EventModifyButton(-eventid => $ConferenceID);
-    print "</th>\n";
-  }
-  if (($AddTalkLink && &CanCreate()) || &CanModifyMeeting($ConferenceID)) {
+    if ($AddTalkLink && &CanCreate()) {
+      print "<th>\n";
+      &TalkUploadButton(-eventid => $ConferenceID);
+      print "</th>\n";
+    }
+    if (&CanModifyMeeting($ConferenceID)) {
+      print "<th>\n";
+      &EventModifyButton(-eventid => $ConferenceID);
+      print "</th>\n";
+      print "</tr>\n<tr colspan=\"3\"><th>\n";
+      &EventCopyButton(-eventid => $EventID);
+      print "</th>\n";
+    }
     print "</tr></table>\n";
   }
   
@@ -594,60 +596,6 @@ sub PrintMeetingInfo($;%) {
   &PrintMeetingPreamble($ConferenceID);
   
   print "<hr width=\"95%\" />\n";
-}
-
-sub TalkUploadButton (%) {
-    my %Params = @_;
-    
-    my $EventID   = $Params{-eventid}; 
-    my $SessionID = $Params{-sessionid}; 
-    
-    print $query -> startform('POST',$DocumentAddForm),"<div>\n";
-    print $query -> submit (-value => "Upload");
-    if ($EventID) {
-      print " a document for this event"; 
-      print $query -> hidden(-name => 'conferenceid', -default => $EventID);
-    } elsif ($SessionID) {
-      print " a document for this session"; 
-      print $query -> hidden(-name => 'sessionid',    -default => $SessionID);
-    }    
-    print "\n</div>\n",$query -> endform,"\n";
-}
-
-sub SessionModifyButton (%) {
-    my %Params = @_;
-    
-    my $EventID    = $Params{-eventid}; 
-    my $SessionID  = $Params{-sessionid}; 
-    my $LabelText  = $Params{-labeltext}  || " agenda for this session"; 
-    my $ButtonText = $Params{-buttontext}  || "Modify"; 
-
-    print $query -> startform('POST',$SessionModify),"<div>\n";
-    print $query -> submit (-value => $ButtonText);
-    print $LabelText;
-    if ($EventID) {
-      print $query -> hidden(-name => 'eventid',    -default => $EventID);
-      print $query -> hidden(-name => 'singlesession',    -default => 1);
-    } elsif ($SessionID) {
-      print $query -> hidden(-name => 'sessionid',    -default => $SessionID);
-    }    
-  
-    print "\n</div>\n",$query -> endform,"\n";
-
-}
-
-sub EventModifyButton (%) {
-    my %Params = @_;
-    
-    my $EventID    = $Params{-eventid}; 
-    my $ButtonText = $Params{-buttontext} || "Modify"; 
-    my $LabelText  = $Params{-labeltext}  || " agenda for this event"; 
-
-    print $query -> startform('POST',$MeetingModify),"<div>\n";
-    print $query -> submit (-value => $ButtonText);
-    print $LabelText; 
-    print $query -> hidden(-name => 'conferenceid',    -default => $EventID);
-    print "\n</div>\n",$query -> endform,"\n";
 }
 
 sub PrintMeetingEpilogue($) {
@@ -905,6 +853,80 @@ sub EventSelect (;%) {
                                  -labels   => \%Labels,  -size    => 10, 
                                  -multiple => $Multiple, -default => \@Defaults,
                                  $Booleans);
+}
+
+sub TalkUploadButton (%) {
+  my %Params = @_;
+
+  my $EventID   = $Params{-eventid}; 
+  my $SessionID = $Params{-sessionid}; 
+
+  print $query -> startform('POST',$DocumentAddForm),"<div>\n";
+  print $query -> submit (-value => "Upload");
+  if ($EventID) {
+    print " a document for this event"; 
+    print $query -> hidden(-name => 'conferenceid', -default => $EventID);
+  } elsif ($SessionID) {
+    print " a document for this session"; 
+    print $query -> hidden(-name => 'sessionid',    -default => $SessionID);
+  }    
+  print "\n</div>\n",$query -> endform,"\n";
+}
+
+sub SessionModifyButton (%) {
+  my %Params = @_;
+
+  my $EventID    = $Params{-eventid}; 
+  my $SessionID  = $Params{-sessionid}; 
+  my $LabelText  = $Params{-labeltext}  || " agenda for this session"; 
+  my $ButtonText = $Params{-buttontext}  || "Modify"; 
+
+  print $query -> startform('POST',$SessionModify),"<div>\n";
+  print $query -> submit (-value => $ButtonText);
+  print $LabelText;
+  if ($EventID) {
+    print $query -> hidden(-name => 'eventid',    -default => $EventID);
+    print $query -> hidden(-name => 'singlesession',    -default => 1);
+  } elsif ($SessionID) {
+    print $query -> hidden(-name => 'sessionid',    -default => $SessionID);
+  }    
+  print "\n</div>\n",$query -> endform,"\n";
+}
+
+sub EventModifyButton (%) {
+  my %Params = @_;
+
+  my $EventID    = $Params{-eventid}; 
+  my $ButtonText = $Params{-buttontext} || "Modify"; 
+  my $LabelText  = $Params{-labeltext}  || " agenda for this event"; 
+
+  print $query -> startform('POST',$MeetingModify),"<div>\n";
+  print $query -> submit (-value => $ButtonText);
+  print $LabelText; 
+  print $query -> hidden(-name => 'conferenceid',    -default => $EventID);
+  print "\n</div>\n",$query -> endform,"\n";
+}
+
+sub CopyEventButton (%) {
+  my %Params = @_;
+
+  my $EventID    = $Params{-eventid}; 
+  
+  my @Offsets = (1,2,3,4,5,6,7,14,21,28,35,42,49,56,63,70);
+  my %Labels  = (1  => "1 day",    2 => "2 days",   3 => "3 days",
+                 4  => "4 days",   5 => "5 days",   6 => "6 days",
+                 7  => "1 week",  14 => "2 weeks", 21 => "3 weeks",
+                 28 => "4 weeks", 35 => "5 weeks", 42 => "6 weeks",
+                 49 => "7 weeks", 56 => "8 weeks", 63 => "9 weeks",
+                 70 => "10 weeks");
+
+  print $query -> startform('POST',$MeetingModify),"<div>\n";
+  print $query -> hidden(-name => "mode",         -default => "copy");
+  print $query -> hidden(-name => "conferenceid", -default => $EventID);
+  print $query -> submit (-value => "schedule");
+  print " a similar event in "; 
+  print $query -> popup_menu(-name => "offsetdays", -values => \@Offsets, -labels => \%Labels, -default => 7);
+  print "\n</div>\n",$query -> endform,"\n";
 }
 
 1;

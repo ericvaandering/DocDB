@@ -820,21 +820,6 @@ or may not be the same as the web username and password.
  </entry>
  
  <entry>
-  <key>meetingtopic</key>
-  <title>Meetings as Topics</title>
-  <text>
-   Meetings can be designated as their own topics or can be organized 
-   without such a designation. If you choose to create a topic for your
-   meeting, you must select a Major Topic from the list. These topics are
-   designated as a special meeting-like topic. You should also supply a short
-   and long title (description) for your meeting.
-   <p/>
-   If you don't choose to create a new topic, you should still fill out the
-   long description, location, URL, and date fields.
-  </text>
- </entry>
- 
- <entry>
   <key>meetpreepi</key>
   <title>Meeting Preamble and Epilogue</title>
   <text>

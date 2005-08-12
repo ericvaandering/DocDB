@@ -57,6 +57,7 @@ my $Short              = $params{shortdesc};
 my $Long               = $params{long};
 
 my $ConferenceID       = $params{conferenceid};
+my $OffsetDays         = $params{offsetdays};
 
 my $StartYear          = $params{startyear};
 my $StartMonth         = $params{startmonth};
@@ -100,7 +101,9 @@ if ($EndDay && $EndMonth && $EndYear) {
 
 if ($ShowAllTalks) {$ShowAllTalks = 1;}
 
-if ($ConferenceID || $Mode) {
+if ($Mode eq "copy") {
+  $SetMode = "create"
+} elsif ($ConferenceID || $Mode) {
   $SetMode = "modify";
 } else {
   $SetMode = "create";
@@ -473,7 +476,25 @@ if ($SetMode eq "create") { # Defaults for new meetings
   @MeetingModifyDefaults = &FindUsersGroups(); # Public by default but not everyone can modify
 }
 
+if ($Mode eq "copy" && $OffsetDays) {
+  use DateTime;
 
+#  Leave here until SessionModify is done too, will need this  
+#  my ($StartDate,$StartTime) = split /\s+/,$DefaultStartDate;
+#  my ($EndDate,  $EndTime)   = split /\s+/,$DefaultEndDate;
+  
+  my ($StartYear,$StartMon,$StartDay) = split /-/,$DefaultStartDate;
+  my ($EndYear,$EndMon,$EndDay)       = split /-/,$DefaultEndDate;
+  
+  my $Start = DateTime -> new(year => $StartYear, month => $StartMonth, day => $StartDay);
+  my $End   = DateTime -> new(year => $EndYear,   month => $EndMonth,   day => $EndDay);
+
+  $Start -> add(days => $OffsetDays);
+  $End   -> add(days => $OffsetDays);
+
+  my $DefaultStartDate = $Start -> ymd();
+  my $DefaultEndDate   = $End   -> ymd();
+}  
 
 print "<table class=\"HighPaddedTable\">\n";
 

@@ -1,7 +1,7 @@
 #
 #        Name: TopicSQL.pm
 # Description: Routines to do DB accesses related to topics 
-#              (major, minor and conferences which are special types of topics) 
+#              (major and minor) 
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 

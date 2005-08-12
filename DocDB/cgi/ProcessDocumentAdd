@@ -75,11 +75,6 @@ if ($Mode eq "reserve") {
 @WarnStack  = ();
 @DebugStack = ();
 
-$Special = $params{special};
-
-if ($Special eq "meeting") {$Meeting = 1;}
-if ($Special eq "othermeeting") {$OtherMeeting = 1;}
-
 # FIXME: Any reason all of these can't be "my"?
 
 my $Archive       = $params{archive};
@@ -150,14 +145,10 @@ if ($Archive eq "archive") { # They uploaded a tar/zip file
   $Archive{Description} = $params{"filedesc"};
 }
 
-if ($Meeting || $OtherMeeting) {
-  @authorIDs = ($Requester);
+if ($params{authormanual}) {
+  @authorIDs = &ProcessManualAuthors($params{authormanual});
 } else {
-  if ($params{authormanual}) {
-    @authorIDs = &ProcessManualAuthors($params{authormanual});
-  } else {
-    @authorIDs = split /\0/,$params{authors}; 
-  }
+  @authorIDs = split /\0/,$params{authors}; 
 }
 
 if ($Overdate && $Overyear && $Overmonth && $Overday) {
