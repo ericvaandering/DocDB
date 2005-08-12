@@ -52,6 +52,7 @@ require "WebUtilities.pm";
 $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
+$query -> delete_all(); # Stop program from caching variable from script to script
 
 my $Mode               = $params{mode};
 my $NoSessions         = $params{nosessions};
