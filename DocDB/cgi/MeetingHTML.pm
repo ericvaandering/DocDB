@@ -907,7 +907,7 @@ sub EventModifyButton (%) {
   print "\n</div>\n",$query -> endform,"\n";
 }
 
-sub CopyEventButton (%) {
+sub EventCopyButton (%) {
   my %Params = @_;
 
   my $EventID    = $Params{-eventid}; 
