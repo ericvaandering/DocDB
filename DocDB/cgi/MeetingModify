@@ -23,6 +23,10 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+# TODO: Add offset days to SessionEntryForm, change to %Params
+# TODO: Figure out why this doesn't work
+# TODO: Add similar functionality to SessionModify
+
 use CGI qw(-nosticky);
 use DBI;
 use Time::Local;
@@ -494,8 +498,6 @@ if ($Mode eq "copy" && $OffsetDays) {
 
   $DefaultStartDate = $Start -> ymd();
   $DefaultEndDate   = $End   -> ymd();
-  
-  push @DebugStack,"Dates: $DefaultStartDate $DefaultEndDate  ";
 }  
 
 print "<table class=\"HighPaddedTable\">\n";
