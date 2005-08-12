@@ -492,8 +492,8 @@ if ($Mode eq "copy" && $OffsetDays) {
   $Start -> add(days => $OffsetDays);
   $End   -> add(days => $OffsetDays);
 
-  my $DefaultStartDate = $Start -> ymd();
-  my $DefaultEndDate   = $End   -> ymd();
+  $DefaultStartDate = $Start -> ymd();
+  $DefaultEndDate   = $End   -> ymd();
   
   push @DebugStack,"Dates: $DefaultStartDate $DefaultEndDate  ";
 }  
