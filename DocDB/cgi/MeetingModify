@@ -483,8 +483,8 @@ if ($Mode eq "copy" && $OffsetDays) {
 #  my ($StartDate,$StartTime) = split /\s+/,$DefaultStartDate;
 #  my ($EndDate,  $EndTime)   = split /\s+/,$DefaultEndDate;
   
-  my ($StartYear,$StartMon,$StartDay) = split /-/,$DefaultStartDate;
-  my ($EndYear,$EndMon,$EndDay)       = split /-/,$DefaultEndDate;
+  my ($StartYear,$StartMonth,$StartDay) = split /-/,$DefaultStartDate;
+  my ($EndYear,$EndMonth,$EndDay)       = split /-/,$DefaultEndDate;
   
   my $Start = DateTime -> new(year => $StartYear, month => $StartMonth, day => $StartDay);
   my $End   = DateTime -> new(year => $EndYear,   month => $EndMonth,   day => $EndDay);

@@ -923,7 +923,7 @@ sub EventCopyButton (%) {
   print $query -> startform('POST',$MeetingModify),"<div>\n";
   print $query -> hidden(-name => "mode",         -default => "copy");
   print $query -> hidden(-name => "conferenceid", -default => $EventID);
-  print $query -> submit (-value => "schedule");
+  print $query -> submit (-value => "Schedule");
   print " a similar event in "; 
   print $query -> popup_menu(-name => "offsetdays", -values => \@Offsets, -labels => \%Labels, -default => 7);
   print "\n</div>\n",$query -> endform,"\n";
