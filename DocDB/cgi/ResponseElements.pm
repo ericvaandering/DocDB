@@ -102,14 +102,14 @@ sub ErrorPage { # Fatal errors, continues page
 }
 
 sub ActionReport { 
-  my @Actions = @_;
-  if (@Actions) {
+  if (@ActionStack) {
     print "<dl class=\"Action\">\n";
-    print "<dt class=\"Action\">Action taken:</dt>\n";
-    foreach $Message (@Actions) {
+    print "<dt class=\"Action\">Action(s) taken:</dt>\n";
+    foreach $Message (@ActionStack) {
       print "<dd>$Message</dd>\n";
     }  
     print "</dl>\n";
+    @ActionStack = ();
   }  
 }
 

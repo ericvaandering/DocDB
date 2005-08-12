@@ -561,20 +561,11 @@ if ($SingleSession) {
   print "</table>\n";
 }
 
-print "<table class=\"HighPaddingTable AgendaEntryTable\">\n";
-print "<tr>\n";
- print "<td>\n"; 
-  &TalkEntryForm(@SessionOrderIDs);   
- print "</td>\n";
-print "</tr>\n";
+&TalkEntryForm(@SessionOrderIDs);   
+print "<p class=\"SubmitCell\">\n";
+print $query -> submit (-value => "Modify Session and Talks");
+print "</p>\n";
 
-print "<tr>\n";
- print "<td class=\"SubmitCell\">\n";
-  print $query -> submit (-value => "Modify Session and Talks");
- print "</td>\n";
-print "</tr>\n";
-
-print "</table>\n";
 print "</div>\n";
 print $query -> end_multipart_form;
 my $NavBarText = "Display&nbsp;Session";

@@ -102,18 +102,19 @@ sub TalkEntryForm (@) {
   my @SessionOrderIDs = @_; 
 
   require "Scripts.pm";
-  print "<table class=\"LowPaddedTable\">\n";
+  print "<table id=\"TalkEntryTable\" class=\"LowPaddedTable Alternating CenteredTable\">\n";
+  print "<thead>\n";
   print "<tr>\n";
   print "<th>",&FormElementTitle(-helplink => "sessionorder", -helptext => "Order,",  -nocolon => $TRUE);
   print        &FormElementTitle(-helplink => "talketc",      -helptext => "etc.", -nocolon => $TRUE);
   print "</th>\n";
-#  print "<th>",&FormElementTitle(-helplink => "talkseparator", -helptext => "Break",             -nocolon => $TRUE),"</th>\n";
   print "<th>",&FormElementTitle(-helplink => "talkdocid"    , -helptext => "Doc. #",            -nocolon => $TRUE),"</th>\n";
   print "<th>",&FormElementTitle(-helplink => "talkinfo"     , -helptext => "Talk Title &amp; Note", -nocolon => $TRUE),"</th>\n";
   print "<th>",&FormElementTitle(-helplink => "talktime"     , -helptext => "Time",              -nocolon => $TRUE),"</th>\n";
   print "<th>",&FormElementTitle(-helplink => "authorhint"   , -helptext => "Author Hints",      -nocolon => $TRUE),"</th>\n";
   print "<th>",&FormElementTitle(-helplink => "topichint"    , -helptext => "Topic Hints",       -nocolon => $TRUE),"</th>\n";
   print "</tr>\n";
+  print "</thead>\n";
   
   # Sort session IDs by order
   
@@ -127,6 +128,11 @@ sub TalkEntryForm (@) {
   foreach $SessionOrderID (@SessionOrderIDs) {
   
     ++$TalkOrder;
+    if ($TalkOrder % 2) { 
+      $RowClass = "Odd";
+    } else {
+      $RowClass = "Even";
+    }    
     $TalkDefaultOrder = $TalkOrder;  
     my $EntryTimeStamp;
     
@@ -171,7 +177,7 @@ sub TalkEntryForm (@) {
         $EntryTimeStamp       = $TalkSeparators{$TalkSeparatorID}{TimeStamp}; 
       }
     } 
-
+    print "<tbody class=\"$RowClass\">\n";
     print "<tr>\n";
 
     print "<td rowspan=\"2\">\n"; 
@@ -195,7 +201,7 @@ sub TalkEntryForm (@) {
     print "<td>\n"; &TalkNote; print "</td>\n";
     print "</tr>\n";
     print "<tr>\n";
-    print "<td colspan=\"3\">\n"; &TalkNewSession($SessionOrderID); print "</td>\n";
+    print "<td colspan=\"2\">\n"; &TalkNewSession($SessionOrderID); print "</td>\n";
     if ($TalkDefaultDocID && $TalkSeparatorDefault ne "Yes") {
       my $TitleLink = &NewerDocumentLink(-docid => $TalkDefaultDocID, -titlelink => $TRUE);
       print "<td colspan=\"2\">Match: $TitleLink</td>\n";
@@ -203,8 +209,7 @@ sub TalkEntryForm (@) {
       print "<td colspan=\"2\">&nbsp;</td>\n";
     }    
     print "</tr>\n";
-    print "<tr><td colspan=\"7\"><hr /></td>\n";
-    print "</tr>\n";
+    print "</tbody>\n";
   }
   print "</table>\n";
 }

@@ -118,8 +118,9 @@ unless ($Long) {
   $Long = $Short;
 }  
 
-@ErrorStack = ();
-@WarnStack  = ();
+@ErrorStack  = ();
+@WarnStack   = ();
+@ActionStack = ();
 
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
@@ -202,16 +203,7 @@ foreach my $CheckTitle (@CheckTitles) { # Check session times
 
 &EndPage(@ErrorStack);
 
-my $TopicsCreated     = 0;
-my $MeetingsCreated   = 0;
-my $SessionsCreated   = 0;
-my $SeparatorsCreated = 0;
-my $TopicsUpdated     = 0;
-my $MeetingsUpdated   = 0;
-my $SessionsUpdated   = 0;
-my $SeparatorsUpdated = 0;
-my $SessionsDeleted   = 0;
-my $SeparatorsDeleted = 0;
+my $SessionsModified = 0;
 
 if ($ConferenceID) {
   require "MeetingSQL.pm";
@@ -232,7 +224,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
                                  $StartDate,$EndDate,$MeetPreamble,
                                  $MeetEpilogue,$Short,$Long); 
     $ConferenceID = $ConferenceInsert -> {mysql_insertid}; # Works with MySQL only
-    ++$MeetingsCreated;
+    push @ActionStack,"Created new event: $Short";
   } elsif ($Mode eq "modify") {
     my $ConferenceUpdate = $dbh->prepare(
      "update Conference set ".
@@ -242,7 +234,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
     $ConferenceUpdate -> execute($EventGroupID,$Location,$URL,$ShowAllTalks,
                                  $StartDate,$EndDate,$MeetPreamble,
                                  $MeetEpilogue,$Short,$Long,$ConferenceID); 
-    ++$MeetingsUpdated;
+    push @ActionStack,"Modified event: $Short";
   }
 
   &MeetingSecurityUpdate(-mode         => 'access',
@@ -307,7 +299,8 @@ if ($Mode eq "create" || $Mode eq "modify") {
            "values (0,?,?,?,?,?)");
           $SessionSeparatorInsert -> execute($ConferenceID,$SessionDate,$SessionLocation,$SessionTitle,$SessionDescription);
           $SessionSeparatorID = $SessionSeparatorInsert -> {mysql_insertid}; # Works with MySQL only
-          ++$SeparatorsCreated;
+          push @ActionStack,"Created break: $SessionTitle";
+          ++$SessionsModified;
 	} else {
           # Create a new session
           my $SessionInsert = $dbh -> prepare(
@@ -316,7 +309,8 @@ if ($Mode eq "create" || $Mode eq "modify") {
            "values (0,?,?,?,?,?)");
           $SessionInsert          -> execute($ConferenceID,$SessionDate,$SessionLocation,$SessionTitle,$SessionDescription);
           $SessionID = $SessionInsert -> {mysql_insertid}; # Works with MySQL only
-          ++$SessionsCreated;
+          push @ActionStack,"Created session: $SessionTitle";
+          ++$SessionsModified;
 	}
         # Insert the order of the session or separator
         my $MeetingOrderInsert = $dbh -> prepare(
@@ -334,10 +328,10 @@ if ($Mode eq "create" || $Mode eq "modify") {
       if ($SessionDeleteFlags{$MeetingOrderID}) { # Delete session or separator
 	if ($SessionSeparatorID) {
           &DeleteSessionSeparator($SessionSeparatorID);
-          ++$SeparatorsDeleted;
+          push @ActionStack,"Deleted a break";
 	} elsif ($SessionID) {
           &DeleteSession($SessionID);
-          ++$SessionsDeleted;
+          push @ActionStack,"Deleted a session";
 	}
       } elsif ($SessionTitle || $SessionDescription) {
 	if ($SessionSeparatorID) {
@@ -346,14 +340,16 @@ if ($Mode eq "create" || $Mode eq "modify") {
            "StartTime=?, Location=?, Title=?, Description=? ". 
            "where SessionSeparatorID=?");
           $SessionSeparatorUpdate -> execute($SessionDate,$SessionLocation,$SessionTitle,$SessionDescription,$SessionSeparatorID);
-	  ++$SeparatorsUpdated;
+          push @ActionStack,"Modified break: $SessionTitle";
+          ++$SessionsModified;
 	} else {
           my $SessionUpdate = $dbh -> prepare(
            "update Session set ".
            "StartTime=?, Location=?, Title=?, Description=? ". 
            "where SessionID=?");
           $SessionUpdate          -> execute($SessionDate,$SessionLocation,$SessionTitle,$SessionDescription,$SessionID);
-	  ++$SessionsUpdated;
+          push @ActionStack,"Modified session: $SessionTitle";
+          ++$SessionsModified;
 	}
         my $MeetingOrderUpdate = $dbh -> prepare(
          "update MeetingOrder set SessionOrder=? where MeetingOrderID=?");
@@ -363,7 +359,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
       }  
     }  
   }
-  unless ($NoSessions || $SessionsCreated   || $SessionsUpdated || $SeparatorsCreated || $SeparatorsUpdated) {
+  unless ($NoSessions || $SessionsModified) {
     push @WarnStack,$Msg_MeetNoSessions; 
   }
 }
@@ -373,69 +369,9 @@ if ($Mode eq "create" || $Mode eq "modify") {
 
 # Print out diagnostics
 
-if ($SessionsCreated   || $SessionsUpdated   || $SessionsDeleted   || 
-    $SeparatorsCreated || $SeparatorsUpdated || $SeparatorsDeleted ||
-    $MeetingsCreated   || $MeetingsUpdated) {
-  print "<dl>\n";
-  print "<dt><b>This event has been modified:</b>\n";
-  if ($MeetingsCreated) {
-    print "<dd>New event created";
-  }
-  if ($MeetingsUpdated) {
-    print "<dd>Event modified";
-  }
-  if ($SessionsCreated   || $SessionsUpdated   || $SessionsDeleted) {
-    print "<dd>";
-    my @Numbers = ();
-    my @Actions = ();
-    if ($SessionsCreated) {
-      push @Numbers,$SessionsCreated;
-      push @Actions,"created";
-    }  
-    if ($SessionsUpdated) {
-      push @Numbers,$SessionsUpdated;
-      push @Actions,"modified";
-    }  
-    if ($SessionsDeleted) {
-      push @Numbers,$SessionsDeleted;
-      push @Actions,"deleted";
-    } 
-    my $Number = shift @Numbers;
-    my $Action = shift @Actions;
-    print "$Number session(s) $Action";
-    foreach $Action (@Actions) {
-      my $Number = shift @Numbers;
-      print ", $Number $Action";
-    }  
-  }  
-  if ($SeparatorsCreated   || $SeparatorsUpdated   || $SeparatorsDeleted) {
-    print "<dd>";
-    my @Numbers = ();
-    my @Actions = ();
-    if ($SeparatorsCreated) {
-      push @Numbers,$SeparatorsCreated;
-      push @Actions,"created";
-    }  
-    if ($SeparatorsUpdated) {
-      push @Numbers,$SeparatorsUpdated;
-      push @Actions,"modified";
-    }  
-    if ($SeparatorsDeleted) {
-      push @Numbers,$SeparatorsDeleted;
-      push @Actions,"deleted";
-    } 
-    my $Number = shift @Numbers;
-    my $Action = shift @Actions;
-    print "$Number break(s) $Action";
-    foreach $Action (@Actions) {
-      my $Number = shift @Numbers;
-      print ", $Number $Action";
-    }  
-  }  
-  print "</dl>\n";
-  print "You can make more modifications, <b>modify session agendas</b> or <b><a href=\"$DisplayMeeting?conferenceid=$ConferenceID\">Display
-         the Event</a></b>\n";
-}    
+&ActionReport;
+print "You can make more modifications, <b>modify session agendas</b> or <b><a href=\"$DisplayMeeting?conferenceid=$ConferenceID\">Display
+       the Event</a></b>\n";
 
 &FetchConferenceByConferenceID($ConferenceID);
 

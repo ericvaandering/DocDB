@@ -60,8 +60,9 @@ my $EventID          = int($params{events});
 my $ShortDescription = $params{shortdesc};
 my $LongDescription  = $params{longdesc};
 
-@ErrorStack = ();
-@WarnStack  = ();
+@ErrorStack  = ();
+@WarnStack   = ();
+@ActionStack = ();
 
 if ($Password && $Username) {
   &CreateConnection(-user => $Username, -password => $Password);
@@ -89,7 +90,6 @@ if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
 # Do administration
 
 my $Abort = 0;
-my @Actions = ();
 
 if ($SubForm eq "eventgroup") {
   if      ($Action eq "Delete") {
@@ -103,21 +103,21 @@ if ($SubForm eq "eventgroup") {
     unless ($Abort) {
       my $Delete = $dbh -> prepare("delete from EventGroup where EventGroupID=?");
       $Delete -> execute($EventGroupID);
-      push @Actions,"Event group $EventGroups{$EventGroupID}{ShortDescription} deleted";
+      push @ActionStack,"Event group $EventGroups{$EventGroupID}{ShortDescription} deleted";
     }
   } elsif ($Action eq "Modify") {
     if ($ShortDescription) { 
-      push @Actions,"Updated short description of $EventGroups{$EventGroupID}{ShortDescription}";
+      push @ActionStack,"Updated short description of $EventGroups{$EventGroupID}{ShortDescription}";
       my $Update = $dbh->prepare("update EventGroup set ShortDescription=? where EventGroupID=?");
       $Update -> execute($ShortDescription,$EventGroupID);
     }
     if ($LongDescription) { 
-      push @Actions,"Updated long description of $EventGroups{$EventGroupID}{ShortDescription}";
+      push @ActionStack,"Updated long description of $EventGroups{$EventGroupID}{ShortDescription}";
       my $Update = $dbh->prepare("update EventGroup set LongDescription=? where EventGroupID=?");
       $Update -> execute($LongDescription,$EventGroupID);
     }
   } elsif ($Action eq "New") { 
-    push @Actions,"New event group with description <strong>$ShortDescription</strong> inserted";
+    push @ActionStack,"New event group with description <strong>$ShortDescription</strong> inserted";
     my $Insert = $dbh -> prepare("insert into EventGroup (ShortDescription,LongDescription) values (?,?)"); 
     $Insert -> execute($ShortDescription,$LongDescription);
   } else {
@@ -134,19 +134,19 @@ if ($SubForm eq "eventgroup") {
     unless ($Abort) {
       my $Delete = $dbh -> prepare("delete from Conference where ConferenceID=?");
       $Delete -> execute($EventID);
-      push @Actions,"Event <strong>$Conferences{$EventID}{Title}</strong> deleted";
+      push @ActionStack,"Event <strong>$Conferences{$EventID}{Title}</strong> deleted";
     }
   } else {
     push @WarnStack,"Only \"Delete\" is a valid action";
   }  
 }
    
-if (@Actions) { #FIXME: Make into action stack, have action report clear, no params
+if (@ActionStack) { 
   &ClearConferences;
   &ClearEventGroups;
   &GetConferences;
   &GetAllEventGroups;
-  &ActionReport(@Actions); @Actions = ();
+  &ActionReport;
 }  
 
 &WarnPage(@WarnStack); @WarnStack = ();

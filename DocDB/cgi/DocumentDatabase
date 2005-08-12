@@ -147,7 +147,7 @@ push @FirstColumn,"<a href=\"$ListAuthors\">Authors</a>";
 push @FirstColumn,"<a href=\"$ListTopics\">Topics</a>";
 push @FirstColumn,"<a href=\"$ListKeywords\">Keywords</a>";
 unless ($Public && !$PublicAccess{MeetingList}) {
-  push @FirstColumn,"<a href=\"$ListAllMeetings\">Meetings</a>";
+  push @FirstColumn,"<a href=\"$ListAllMeetings\">Events</a>";
 }  
 
 unless ($Public) {

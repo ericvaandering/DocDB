@@ -691,7 +691,7 @@ sub FormElementTitle (%) {
     $TitleText .= "<b>";
   }
   if ($HelpLink) {
-    $TitleText .= "<a style=\"color: red\" href=\"Javascript:helppopupwindow(\'$DocDBHelp?term=$HelpLink\');\">";
+    $TitleText .= "<a class=\"Help\" href=\"Javascript:helppopupwindow(\'$DocDBHelp?term=$HelpLink\');\">";
     $TitleText .= "$HelpText$Colon</a>";
   } elsif ($Text) {
     $TitleText .= "$Text$Colon"; 

@@ -89,9 +89,7 @@ sub ConferenceEpilogueBox {
 
 sub ConferenceShowAllTalks {
   require "Scripts.pm";
-  print "<b><a ";
-  &HelpLink("meetshowall");
-  print "Show All Talks?</a></b> \n";
+  print &FormElementTitle(-helplink  => "meetshowall", -helptext  => "Show All Talks?", -nobreak => $TRUE, -nocolon => $TRUE);
   if ($MeetingDefaultShowAllTalks) {
     print $query -> checkbox(-name => "meetshowall", -value => 1, -label => 'Yes', -checked => 'Yes');
   } else {
