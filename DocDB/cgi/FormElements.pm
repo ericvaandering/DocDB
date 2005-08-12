@@ -90,7 +90,7 @@ sub DateTimePulldown (%) { # Note capitalization
   }
   
   my @Years = ();
-  for (my $i = $FirstYear; $i<=$Year; ++$i) { # $FirstYear - current year
+  for (my $i = $FirstYear; $i<=$Year+1; ++$i) { # $FirstYear - current year + 1
     push @Years,$i;
   }  
 
