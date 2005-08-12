@@ -494,6 +494,8 @@ if ($Mode eq "copy" && $OffsetDays) {
 
   my $DefaultStartDate = $Start -> ymd();
   my $DefaultEndDate   = $End   -> ymd();
+  
+  push @DebugStack,"Dates: $DefaultStartDate $DefaultEndDate  ";
 }  
 
 print "<table class=\"HighPaddedTable\">\n";
