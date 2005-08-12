@@ -680,6 +680,10 @@ sub FormElementTitle (%) {
   my $TitleText = "";
   my $Colon = "";
   
+  unless ($HelpLink || $Text) {
+    return $TitleText;
+  }  
+  
   unless ($NoColon) {
     $Colon = ":";
   }  

@@ -579,9 +579,7 @@ if ($NoSessions) {
 
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs;
 
-  print "<p>\n";
   &SessionEntryForm($ConferenceID,@MeetingOrderIDs);
-  print "</p>\n";
 }
 
 print "<p class=\"SubmitCell\">\n";

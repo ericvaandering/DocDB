@@ -104,7 +104,7 @@ sub SessionEntryForm ($@) {
 
   require "Scripts.pm";
   print "<table id=\"SessionEntry\" class=\"MedPaddedTable Alternating CenteredTable\">\n";
-
+  print "<thead>\n";
   print "<tr><th colspan=\"4\">\n";
   print &FormElementTitle(-helplink  => "sessions", -helptext  => "Sessions", -nobreak => $TRUE, -nocolon => $TRUE);
   print "</th></tr>\n";
@@ -116,6 +116,7 @@ sub SessionEntryForm ($@) {
    print "<th>",&FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Session", -nobreak => $TRUE, -nocolon => $TRUE),                         "</th>\n";
    print "<th>",&FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Location<br/>Start Date and Time", -nobreak => $TRUE, -nocolon => $TRUE),"</th>\n";
   print "</tr>\n";
+  print "</thead>\n";
   
   # Sort session IDs by order
   
@@ -173,14 +174,14 @@ sub SessionEntryForm ($@) {
      $query -> param('meetingorderid',$MeetingOrderID); #FIXME: Try go remove
      print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
 
-      &SessionOrder;                       print "<p/>\n";
-                                          &SessionModifyLink($MeetingOrderID); print "<p/>\n";
-                                          &SessionDelete($MeetingOrderID);     
+     &SessionOrder;                       print "<br/>\n";
+     &SessionModifyLink($MeetingOrderID); print "<br/>\n";
+     &SessionDelete($MeetingOrderID);   
      print "</td>\n";
 
      print "<td>\n"; &SessionSeparator($MeetingOrderID);  print "</td>\n";
-     print "<td>\n";              &SessionTitle($SessionDefaultTitle); print "</td>\n";
-     print "<td>\n";              &SessionLocation;                    print "</td>\n";
+     print "<td>\n"; &SessionTitle($SessionDefaultTitle); print "</td>\n";
+     print "<td>\n"; &SessionLocation;                    print "</td>\n";
     print "</tr>\n";
 
     print "<tr class=\"$RowClass\">\n";
