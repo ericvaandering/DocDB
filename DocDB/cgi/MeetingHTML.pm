@@ -22,7 +22,7 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 sub LocationBox (;%) {
-  require "Scripts.pm";
+  require "FormElements.pm";
 
   my (%Params) = @_;
   
@@ -46,7 +46,7 @@ sub LocationBox (;%) {
 };
 
 sub EventURLBox (;%) {
-  require "Scripts.pm";
+  require "FormElements.pm";
 
   my (%Params) = @_;
   
@@ -70,7 +70,7 @@ sub EventURLBox (;%) {
 };
 
 sub ConferencePreambleBox {
-  require "Scripts.pm";
+  require "FormElements.pm";
   my $ElementTitle = &FormElementTitle(-helplink  => "meetpreepi", 
                                        -helptext  => "Meeting Preamble");
   print $ElementTitle,"\n";                                     
@@ -79,7 +79,7 @@ sub ConferencePreambleBox {
 };
 
 sub ConferenceEpilogueBox {
-  require "Scripts.pm";
+  require "FormElements.pm";
   my $ElementTitle = &FormElementTitle(-helplink  => "meetpreepi", 
                                        -helptext  => "Meeting Epilogue");
   print $ElementTitle,"\n";                                     
@@ -88,7 +88,7 @@ sub ConferenceEpilogueBox {
 };
 
 sub ConferenceShowAllTalks {
-  require "Scripts.pm";
+  require "FormElements.pm";
   print &FormElementTitle(-helplink  => "meetshowall", -helptext  => "Show All Talks?", -nobreak => $TRUE, -nocolon => $TRUE);
   if ($MeetingDefaultShowAllTalks) {
     print $query -> checkbox(-name => "meetshowall", -value => 1, -label => 'Yes', -checked => 'Yes');
@@ -98,9 +98,14 @@ sub ConferenceShowAllTalks {
 }
 
 sub SessionEntryForm ($@) {
-  my ($ConferenceID,@MeetingOrderIDs) = @_; 
+  require "FormElements.pm";
 
-  require "Scripts.pm";
+  my %Params = @_;
+ 
+  my $ConferenceID    =   $Params{-conferenceid}     || 0;
+  my $OffsetDays      =   $Params{-offsetdays}       || 0;
+  my @MeetingOrderIDs = @{$Params{-meetingorderids}} || 0;
+
   print "<table id=\"SessionEntry\" class=\"MedPaddedTable Alternating CenteredTable\">\n";
   print "<thead>\n";
   print "<tr><th colspan=\"4\">\n";
@@ -165,30 +170,42 @@ sub SessionEntryForm ($@) {
 	$SessionSeparatorDefault   = "Yes";
       }
     } 
+    
+    if ($OffsetDays) {
+      use DateTime;
+
+      my ($StartDate,$StartTime) = split /\s+/,$SessionDefaultDateTime;
+      my ($StartYear,$StartMonth,$StartDay) = split /-/,$StartDate;
+      my $Start = DateTime -> new(year => $StartYear, month => $StartMonth, day => $StartDay);
+      $Start -> add(days => $OffsetDays);
+      $SessionDefaultDateTime = $Start -> ymd()." ".$StartTime;
+    }  
+        
     print "<tbody>\n";
     print "<tr class=\"$RowClass\">\n";
-    
-     print "<td rowspan=\"2\">";
-     $query -> param('meetingorderid',$MeetingOrderID); #FIXME: Try go remove
-     print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
 
-     &SessionOrder;                       print "<br/>\n";
-     &SessionModifyLink($MeetingOrderID); print "<br/>\n";
-     &SessionDelete($MeetingOrderID);   
-     print "</td>\n";
+    print "<td rowspan=\"2\">";
+    $query -> param('meetingorderid',$MeetingOrderID); #FIXME: Try go remove
+    print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
+    &SessionOrder;                       print "<br/>\n";
+    &SessionModifyLink($MeetingOrderID); print "<br/>\n";
+    &SessionDelete($MeetingOrderID);   
+    print "</td>\n";
 
-     print "<td>\n"; &SessionSeparator($MeetingOrderID);  print "</td>\n";
-     print "<td>\n"; &SessionTitle($SessionDefaultTitle); print "</td>\n";
-     print "<td>\n"; &SessionLocation;                    print "</td>\n";
+    print "<td>\n"; &SessionSeparator($MeetingOrderID);  print "</td>\n";
+    print "<td>\n"; &SessionTitle($SessionDefaultTitle); print "</td>\n";
+    print "<td>\n"; &SessionLocation;                    print "</td>\n";
+
     print "</tr>\n";
-
     print "<tr class=\"$RowClass\">\n";
-     print "<td>&nbsp;</td>\n";
-     print "<td>\n";              &SessionDescription;                 print "</td>\n";
-     print "<td>\n";    
-     &DateTimePulldown(-name    => "session", -oneline => $TRUE, -onetime  => $TRUE, -granularity => 15,
-                       -default => $SessionDefaultDateTime,      -required => $RequiredEntries{StartDate} );
-     print "</td>\n";
+
+    print "<td>&nbsp;</td>\n";
+    print "<td>\n";              &SessionDescription;                 print "</td>\n";
+    print "<td>\n";    
+    &DateTimePulldown(-name    => "session", -oneline => $TRUE, -onetime  => $TRUE, -granularity => 15,
+                      -default => $SessionDefaultDateTime,      -required => $RequiredEntries{StartDate} );
+    print "</td>\n";
+
     print "</tr>\n";
     print "</tbody>\n";
   }

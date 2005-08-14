@@ -66,7 +66,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
   $ConferenceAdd2      -> execute();
   $ConferenceAdd3      -> execute();
   $ConferenceAdd4      -> execute();
- }
+}
 
 if ($Action eq "migrate") {
   my $RevisionEventInsert = $dbh -> prepare("insert into RevisionEvent (RevEventID,DocRevID,ConferenceID) values (0,?,?)");
@@ -182,6 +182,8 @@ if ($Action eq "undo") { # Undo modifications
 }
 
 if ($Action eq "delete") { 
+
+  print "Won't delete fields yet.\n";
 
   exit;
 

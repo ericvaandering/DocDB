@@ -23,7 +23,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-# TODO: Add offset days to SessionEntryForm, change to %Params
+# TODO: Test offset days to SessionEntryForm
 # TODO: Figure out why this doesn't work
 # TODO: Add similar functionality to SessionModify
 
@@ -421,11 +421,6 @@ if ($SetMode eq "create") { # Defaults for new meetings
 
 if ($Mode eq "copy" && $OffsetDays) {
   use DateTime;
-
-#  Leave here until SessionModify is done too, will need this  
-#  my ($StartDate,$StartTime) = split /\s+/,$DefaultStartDate;
-#  my ($EndDate,  $EndTime)   = split /\s+/,$DefaultEndDate;
-  
   my ($StartYear,$StartMonth,$StartDay) = split /-/,$DefaultStartDate;
   my ($EndYear,$EndMonth,$EndDay)       = split /-/,$DefaultEndDate;
   
@@ -515,7 +510,7 @@ if ($NoSessions) {
 
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs;
 
-  &SessionEntryForm($ConferenceID,@MeetingOrderIDs);
+  &SessionEntryForm(-conferenceid => $ConferenceID, -meetingorderids => \@MeetingOrderIDs, -offsetdays => $OffsetDays);
 }
 
 print "<p class=\"SubmitCell\">\n";
