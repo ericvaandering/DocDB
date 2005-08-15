@@ -258,9 +258,7 @@ sub MajorMinorSelect { # Two multi-select boxes for major and minor topics
   foreach my $ID (@MajorIDs) {
     $MajorLabels{$ID} = $MajorTopics{$ID}{SHORT};
   }  
-  print "<b><a ";
-  &HelpLink("dynamictopic");
-  print "Topics:</a></b><br>\n";
+  print &FormElementTitle(-helplink => "dynamictopic", -helptext => "Topic Groups");
   print $query -> scrolling_list(-name => "majortopic", -values => \@MajorIDs, 
                                  -labels => \%MajorLabels,  
                                  -size => 10, 
@@ -268,12 +266,13 @@ sub MajorMinorSelect { # Two multi-select boxes for major and minor topics
                                  -multiple => 'true');
   print "</td>\n";
   
-  print "<td colspan=2>\n";
+  print "<td colspan=\"2\">\n";
   my @MinorIDs = sort byTopic keys %MinorTopics;
   my %MinorLabels = ();
   foreach my $ID (@MinorIDs) {
     $MinorLabels{$ID} = $MinorTopics{$ID}{Full};
   }  
+  print &FormElementTitle(-helplink => "dynamictopic", -helptext => "Topics");
   print $query -> scrolling_list(-name => "minortopic", -values => \@MinorIDs, 
                                  -labels => \%MinorLabels,  
                                  -size => 10,

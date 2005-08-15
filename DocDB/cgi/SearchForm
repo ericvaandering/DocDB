@@ -64,7 +64,7 @@ print $query -> start_multipart_form('POST',$Search,"name=\"queryform\"");
 
 print "<h4>Click on any of the <span class=\"Help\">highlighted headings</span> for help.</h4>\n";
 
-print "<table class=\"HighPaddedTable CenteredTable\">\n";
+print "<table id=\"SearchFormTable\" class=\"HighPaddedTable CenteredTable\">\n";
 print "<tr>\n";
  print "<td colspan=\"3\" class=\"SubmitCell\">\n"; 
  print $query -> submit (-value => "Search for Documents");     
@@ -104,7 +104,7 @@ print "<tr>\n";
 print "</tr>\n";
 
 
- print "<tr valign=top>\n";
+ print "<tr>\n";
   print "<td>\n"; &RequesterSearchBox; print "</td>\n"; # FIXME: Move to AuthorScroll
   print "<td>\n"; 
    &AuthorScroll(-helplink => "author",
@@ -139,7 +139,7 @@ print "</tr>\n";
  print "</tr>\n";
 
  print "<tr>\n";
-  print "<td colspan=3 align=center>\n"; 
+  print "<td colspan=\"3\" class=\"SubmitCell\">\n"; 
   print $query -> submit (-value => "Search for Documents");     
   print "&nbsp;&nbsp;&nbsp;\n";
   print $query -> reset (-value => "Reset Search Form");     
