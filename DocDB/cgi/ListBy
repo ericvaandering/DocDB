@@ -123,7 +123,7 @@ if ($Days) {
   &FetchConferenceByConferenceID($EventID);
 
   $Title   = "Document List by Event";
-  $Message = "These documents from <span class=\"Highlight\">$Conferences{$EventID}{LongDescription})</span> are available:";
+  $Message = "These documents from <span class=\"Highlight\">$Conferences{$EventID}{LongDescription}</span> are available:";
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
            "DocumentRevision,RevisionEvent where DocumentRevision.DocRevID=RevisionEvent.DocRevID ".
            "and DocumentRevision.Obsolete=0 and RevisionEvent.ConferenceID=?");            

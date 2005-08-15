@@ -35,6 +35,7 @@ require "SecuritySQL.pm";
 require "MiscSQL.pm";
 require "ResponseElements.pm";
 require "HTMLUtilities.pm";
+require "MeetingHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -61,14 +62,9 @@ if ((@ErrorStack)) {  # The user made one or more mistakes, warn and exit
 print $query -> start_multipart_form('POST',$Search,"name=\"queryform\"");
 
 
-print "<center><table cellpadding=10 width=80%>\n";
-print "<tr>\n";
- print "<td colspan=3>\n";
- print "<center><b>Click on any of the <font color=red>red headings</font> for help.</b></center>\n"; 
- print "</td>\n";
-print "</tr></table><p>\n";
+print "<h4>Click on any of the <span class=\"Help\">highlighted headings</span> for help.</h4>\n";
 
-print "<center><table cellpadding=10 border=5><tr><td><table cellpadding=10>\n";
+print "<table class=\"HighPaddedTable CenteredTable\">\n";
 print "<tr>\n";
  print "<td colspan=3 align=center>\n"; 
  print $query -> submit (-value => "Search for Documents");     
@@ -129,8 +125,17 @@ print "</tr>\n";
   print "</td>\n";
  print "</tr>\n";
 
- print "<tr valign=bottom>\n";
+ print "<tr>\n";
   &MajorMinorSelect;
+ print "</tr>\n";
+
+ print "<tr>\n";
+ print "<td>\n";
+  &EventGroupSelect(-multiple => $TRUE);
+ print "</td>\n";
+ print "<td>\n";
+  &EventSelect(-multiple => $TRUE, -format => "full");
+ print "</td>\n";
  print "</tr>\n";
 
  print "<tr>\n";
@@ -141,11 +146,8 @@ print "</tr>\n";
   print "</td>\n";
  print "</tr>\n";
 
-print "</table></td></tr></table><p>\n";
+print "</table>\n";
 
-  
-
-print "</center><p>";
 print $query -> end_multipart_form;
 
 &DocDBNavBar();
