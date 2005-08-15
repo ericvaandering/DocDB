@@ -21,7 +21,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-use CGI;                                                                                      
+use CGI qw(-nosticky);                                                                                      
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -81,12 +81,12 @@ print "</tr>\n";
 print "<tr>\n";
  print "<td colspan=\"3\" class=\"SubmitCell\">\n";
  &ModeSelect; 
-print "</tr>\n";
+print "</td></tr>\n";
 
 print "<tr>\n";
  print "<td colspan=\"3\">\n"; 
 
-  print "<table class=\"LowPaddedTable\">\n";
+  print "<table class=\"LowPaddedTable LeftHeader\">\n";
    &TitleSearchBox;    
    &AbstractSearchBox;    
    &KeywordsSearchBox;    
@@ -105,12 +105,17 @@ print "</tr>\n";
 
 
  print "<tr>\n";
-  print "<td>\n"; &RequesterSearchBox; print "</td>\n"; # FIXME: Move to AuthorScroll
-  print "<td>\n"; 
-   &AuthorScroll(-helplink => "author",
-                 -multiple => "true");
-  print "</td>\n";
-  print "<td>\n"; &DocTypeMulti;       print "</td>\n";
+ 
+ print "<td>\n"; # Requester
+ &AuthorScroll(-helplink => "requestersearch", -helptext => "Requester", 
+               -name     => "requestersearch", -multiple => "true");
+ print "</td>\n"; 
+
+ print "<td>\n"; # Authors
+ &AuthorScroll(-helplink => "author", -multiple => "true");
+ print "</td>\n";
+ 
+ print "<td>\n"; &DocTypeMulti;       print "</td>\n";
  print "</tr>\n";
  
  print "<tr>\n";
@@ -131,7 +136,7 @@ print "</tr>\n";
 
  print "<tr>\n";
  print "<td>\n";
-  &EventGroupSelect(-multiple => $TRUE);
+  &EventGroupSelect(-multiple => $TRUE, -onchange => "selectEvent(this.form);");
  print "</td>\n";
  print "<td colspan=\"2\">\n";
   &EventSelect(-multiple => $TRUE, -format => "full");

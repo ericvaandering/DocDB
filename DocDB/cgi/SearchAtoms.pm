@@ -112,6 +112,46 @@ sub TopicSearch {
   return @Revisions;     
 }
 
+sub EventSearch {
+  my $List;
+  my ($Logic,$Type,@IDs) = @_;
+  if ($Type eq "event") {
+    $List = $dbh -> prepare("select DocRevID from RevisionEvent where ConferenceID=?"); 
+  } elsif ($Type eq "group") {
+    $List = $dbh -> prepare(
+      "select DocRevID from RevisionEvent,Conference ".
+      "where RevisionEvent.ConferenceID=Conference.ConferenceID ".
+      "and Conference.EventGroupID=?");
+  }  
+    
+  my %Revisions = ();
+  my @Revisions = ();
+  my $DocRevID;
+  
+  foreach $ID (@IDs) {
+    $List -> execute($ID);
+    $List -> bind_columns(undef, \($DocRevID));
+    my %EventRevisions = ();
+    while ($List -> fetch) { # Make sure each event only matches once
+      ++$EventRevisions{$DocRevID};
+    }
+    foreach $DocRevID (keys %EventRevisions) {
+      ++$Revisions{$DocRevID};
+    }  
+  }
+  if ($Logic eq "AND") {
+    foreach $DocRevID (keys %Revisions) {
+      if ($Revisions{$DocRevID} == scalar(@IDs)) { # Require a match for each topic
+        push @Revisions,$DocRevID;
+      }
+    }
+  } elsif ($Logic eq "OR") {
+    @Revisions = keys %Revisions;
+  }  
+  
+  return @Revisions;     
+}
+
 sub AuthorSearch {
   my $revtopic_list;
   my ($Logic,@AuthorIDs) = @_;

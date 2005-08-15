@@ -678,6 +678,7 @@ sub PrintSessionSeparatorInfo ($) {
 
 sub EventLink (%) {
   require "MeetingSecurityUtilities.pm";
+  require "EventUtilities.pm";
   
   my %Params = @_;
   my $EventID = $Params{-eventid} || 0;
@@ -808,11 +809,15 @@ sub EventGroupSelect (;%) {
   my $Required = $Params{-required} || "0";
   my $Format   = $Params{-format}   || "short";
   my @Defaults = @{$Params{-default}};
+  my $OnChange = $Params{-onchange} || undef;
+
+  my %Options = ();
  
-  my $Booleans = "";
-  
   if ($Disabled) {
-    $Booleans .= "-disabled";
+    $Options{-disabled} = "disabled";
+  }  
+  if ($OnChange) {
+    $Options{-onchange} = $OnChange;
   }  
 
   &GetAllEventGroups; 
@@ -834,7 +839,7 @@ sub EventGroupSelect (;%) {
   print $query -> scrolling_list(-name     => "eventgroups",  -values  => \@EventGroupIDs, 
                                  -labels   => \%Labels,       -size    => 10, 
                                  -multiple => $Multiple,      -default => \@Defaults,
-                                 $Booleans);
+                                 %Options);
 }
 
 sub EventSelect (;%) {

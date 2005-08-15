@@ -38,10 +38,6 @@
 #    A box to type words/strings and a mode selecter for text searches 
 #    on PublicationInfo
 #   
-#  RequesterSearchBox
-#    A select box for searches on the requester. Unlike entry box, this 
-#    has to be multi-selectable for ANDS/ORS
-#   
 #  DocTypeMulti
 #    A select box for searches on document type. Unlike entry buttons, 
 #    this has to be multi-selectable for ANDS/ORS
@@ -69,7 +65,7 @@
 require "SearchModes.pm";
 
 sub TitleSearchBox { # Box and mode selecter for searches on DocumentTitle
-  print "<tr><th align=right><a ";
+  print "<tr><th><a ";
   &HelpLink("wordsearch");
   print "Title:</a></th> \n";
   print "<td>\n";
@@ -84,7 +80,7 @@ sub TitleSearchBox { # Box and mode selecter for searches on DocumentTitle
 };
 
 sub AbstractSearchBox { # Field and mode selecter for searches on Abstract
-  print "<tr><th align=right><a ";
+  print "<tr><th><a ";
   &HelpLink("wordsearch");
   print "Abstract:</a></th> \n";
   print "<td>\n";
@@ -99,7 +95,7 @@ sub AbstractSearchBox { # Field and mode selecter for searches on Abstract
 };
 
 sub KeywordsSearchBox { # Field and mode selecter for searches on Keywords
-  print "<tr><th align=right><a ";
+  print "<tr><th><a ";
   &HelpLink("wordsearch");
   print "Keywords:</a></th> \n";
   print "<td>\n";
@@ -114,7 +110,7 @@ sub KeywordsSearchBox { # Field and mode selecter for searches on Keywords
 };
 
 sub RevisionNoteSearchBox { # Field and mode selecter for searches on Note
-  print "<tr><th align=right><a ";
+  print "<tr><th><a ";
   &HelpLink("wordsearch");
   print "Notes and Changes:</a></th> \n";
   print "<td>\n";
@@ -129,7 +125,7 @@ sub RevisionNoteSearchBox { # Field and mode selecter for searches on Note
 };
 
 sub PubInfoSearchBox { # Field and mode selecter for searches on PublicationInfo
-  print "<tr><th align=right><a ";
+  print "<tr><th><a ";
   &HelpLink("wordsearch");
   print "Publication Info:</a></th> \n";
   print "<td>\n";
@@ -144,7 +140,7 @@ sub PubInfoSearchBox { # Field and mode selecter for searches on PublicationInfo
 };
 
 sub FileNameSearchBox { # Field and mode selecter for searches on Files
-  print "<tr><th align=right><a ";
+  print "<tr><th><a ";
   &HelpLink("wordsearch");
   print "File names:</a></th> \n";
   print "<td>\n";
@@ -159,7 +155,7 @@ sub FileNameSearchBox { # Field and mode selecter for searches on Files
 };
 
 sub DescriptionSearchBox { # Field and mode selecter for searches on Files
-  print "<tr><th align=right><a ";
+  print "<tr><th><a ";
   &HelpLink("wordsearch");
   print "File descriptions:</a></th> \n";
   print "<td>\n";
@@ -174,7 +170,7 @@ sub DescriptionSearchBox { # Field and mode selecter for searches on Files
 };
 
 sub ContentSearchBox { # Field and mode selecter for searches on Files
-  print "<tr><th align=right><a ";
+  print "<tr><th><a ";
   &HelpLink("contentsearch");
   print "File contents:</a></th> \n";
   print "<td>\n";
@@ -186,25 +182,6 @@ sub ContentSearchBox { # Field and mode selecter for searches on Files
   print $query -> popup_menu (-name    => 'filecontsearchmode', 
                               -values  => \%SearchModes);
   print "</td></tr>\n";
-};
-
-sub RequesterSearchBox { # Scrolling selectable list for requester search
-  my @AuthorIDs = sort byLastName keys %Authors;
-  my %AuthorLabels = ();
-  my @ActiveIDs = ();
-  foreach my $ID (@AuthorIDs) {
-    if ($Authors{$ID}{ACTIVE}) {
-      $AuthorLabels{$ID} = $Authors{$ID}{Formal};
-      push @ActiveIDs,$ID; 
-    } 
-  }  
-  print "<b><a ";
-  &HelpLink("requestersearch");
-  print "Requester:</a></b><br> \n";
-  print $query -> scrolling_list(-name => "requestersearch", -values => \@ActiveIDs, 
-                                 -size => 10, -labels => \%AuthorLabels,                      
-                                 -default => $RequesterDefault,
-                                 -multiple => 'true');
 };
 
 sub DocTypeMulti { # Scrolling selectable list for doc type search
@@ -262,7 +239,7 @@ sub MajorMinorSelect { # Two multi-select boxes for major and minor topics
   print $query -> scrolling_list(-name => "majortopic", -values => \@MajorIDs, 
                                  -labels => \%MajorLabels,  
                                  -size => 10, 
-                                 -onChange => "selectProduct(this.form);",
+                                 -onchange => "selectProduct(this.form);",
                                  -multiple => 'true');
   print "</td>\n";
   
@@ -300,11 +277,8 @@ sub LogicTypeButtons { # Two buttons allow control whether inner and outer
 }
 
 sub ModeSelect { # Display Mode selecter for searches 
-  print "<a ";
-  &HelpLink("displaymode");
-  print "<b>Sort by:</b></a> \n";
-  print "</a>";
-  print " \n";
+  require "FormElements.pm";
+  print &FormElementTitle(-helptext => "Sort by", -helplink => "displaymode", -nobreak => $TRUE);
   my %Modes = ();
   $Modes{date}    = "Date with document #";
   $Modes{meeting} = "Author with topics and files";
