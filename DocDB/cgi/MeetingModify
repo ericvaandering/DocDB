@@ -508,11 +508,8 @@ if ($NoSessions) {
   my @SessionSeparatorIDs = &FetchSessionSeparatorsByConferenceID($ConferenceID);
   my @MeetingOrderIDs     = &FetchMeetingOrdersByConferenceID($ConferenceID);
 
-  push @DebugStack,"Raw MIS",@MeetingOrderIDs ;
-  &DebugPage("Before sort");
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs;
 
-  &DebugPage("After sort");
   &SessionEntryForm(-conferenceid => $ConferenceID, -meetingorderids => \@MeetingOrderIDs, -offsetdays => $OffsetDays);
 }
 
