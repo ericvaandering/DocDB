@@ -86,7 +86,7 @@ print "</tr>\n";
 print "<tr>\n";
  print "<td colspan=\"3\">\n"; 
 
-  print "<table>\n";
+  print "<table class=\"LowPaddedTable\">\n";
    &TitleSearchBox;    
    &AbstractSearchBox;    
    &KeywordsSearchBox;    
