@@ -140,11 +140,6 @@ sub SessionEntryForm ($@) {
       $RowClass = "Even";
     }    
     
-    if ($OffsetDays) {  # We are copying, not modifiying the original
-      push @DebugStack,"Reseting MID $MeetingOrderID to n$SessionOrder";
-      $MeetingOrderID = "n$SessionOrder";
-    }  
-    
     $SessionDefaultOrder = $SessionOrder;  
     push @DebugStack,"Session form for $MeetingOrderID";
     if (grep /n/,$MeetingOrderID) {# Erase defaults
@@ -196,8 +191,14 @@ sub SessionEntryForm ($@) {
 
     push @DebugStack,"Ready to do form for $MeetingOrderID";
     print "<td rowspan=\"2\">";
-    $query -> param('meetingorderid',$MeetingOrderID); #FIXME: Try go remove
-    print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
+    if ($OffsetDays) {  # We are copying, not modifiying the original
+      push @DebugStack,"Reseting MID $MeetingOrderID to n$SessionOrder";
+      $query -> param('meetingorderid',"n$SessionOrder"); #FIXME: Try to remove
+      print $query -> hidden(-name => 'meetingorderid', -default => "n$SessionOrder");
+    } else { 
+      $query -> param('meetingorderid',$MeetingOrderID); #FIXME: Try to remove
+      print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
+    }
     &SessionOrder;                       print "<br/>\n";
     &SessionModifyLink($MeetingOrderID); print "<br/>\n";
     &SessionDelete($MeetingOrderID);   
