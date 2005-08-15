@@ -140,7 +140,7 @@ sub SessionEntryForm ($@) {
     }    
     
     $SessionDefaultOrder = $SessionOrder;  
-    
+    push @DebugStack,"Session form for $MeetingOrderID";
     if (grep /n/,$MeetingOrderID) {# Erase defaults
       if ($ConferenceID) {
         &FetchConferenceByConferenceID($ConferenceID);
@@ -149,6 +149,7 @@ sub SessionEntryForm ($@) {
         require "SQLUtilities.pm";
         $SessionDefaultDateTime = &SQLNow(-dateonly => $TRUE)." 9:00:00";
       }
+      push @DebugStack,"Set time $SessionDefaultDateTime";
       $SessionDefaultLocation    = "";
       $SessionDefaultTitle       = "";
       $SessionDefaultDescription = "";
@@ -156,6 +157,7 @@ sub SessionEntryForm ($@) {
     } else { # Key off Meeting Order IDs, do differently for Sessions and Separators
       if ($MeetingOrders{$MeetingOrderID}{SessionID}) {
         my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
+        push @DebugStack,"SessionID: $SessionID";
 	$SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
         $SessionDefaultLocation    = $Sessions{$SessionID}{Location}    || "";
 	$SessionDefaultTitle       = $Sessions{$SessionID}{Title}       || "";
@@ -163,6 +165,7 @@ sub SessionEntryForm ($@) {
 	$SessionSeparatorDefault   = "No";
       } elsif ($MeetingOrders{$MeetingOrderID}{SessionSeparatorID}) {
         my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
+        push @DebugStack,"Sep ID: $SessionSeparatorID";
 	$SessionDefaultDateTime    = $SessionSeparators{$SessionSeparatorID}{StartTime};
         $SessionDefaultLocation    = $SessionSeparators{$SessionSeparatorID}{Location}    || "";
 	$SessionDefaultTitle       = $SessionSeparators{$SessionSeparatorID}{Title}       || "";
@@ -170,12 +173,13 @@ sub SessionEntryForm ($@) {
 	$SessionSeparatorDefault   = "Yes";
       }
     } 
-    
+    &DebugPage("in loop");
     if ($OffsetDays) {
       use DateTime;
 
       my ($StartDate,$StartTime) = split /\s+/,$SessionDefaultDateTime;
       my ($StartYear,$StartMonth,$StartDay) = split /-/,$StartDate;
+      push @DebugStack,"OD -- DDT: $SessionDefaultDateTime S: $StartYear,$StartMonth,$StartDay";
       my $Start = DateTime -> new(year => $StartYear, month => $StartMonth, day => $StartDay);
       $Start -> add(days => $OffsetDays);
       $SessionDefaultDateTime = $Start -> ymd()." ".$StartTime;
@@ -184,6 +188,7 @@ sub SessionEntryForm ($@) {
     print "<tbody>\n";
     print "<tr class=\"$RowClass\">\n";
 
+    push @DebugStack,"Ready to do form for $MeetingOrderID";
     print "<td rowspan=\"2\">";
     $query -> param('meetingorderid',$MeetingOrderID); #FIXME: Try go remove
     print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
