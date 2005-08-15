@@ -141,7 +141,7 @@ sub SessionEntryForm ($@) {
     }    
     
     if ($OffsetDays) {  # We are copying, not modifiying the original
-      push $DebugStack,"Reseting MID $MeetingOrderID to n$SessionOrder";
+      push @DebugStack,"Reseting MID $MeetingOrderID to n$SessionOrder";
       $MeetingOrderID = "n$SessionOrder";
     }  
     
