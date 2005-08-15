@@ -72,7 +72,7 @@ sub EventURLBox (;%) {
 sub ConferencePreambleBox {
   require "FormElements.pm";
   my $ElementTitle = &FormElementTitle(-helplink  => "meetpreepi", 
-                                       -helptext  => "Meeting Preamble");
+                                       -helptext  => "Event Preamble");
   print $ElementTitle,"\n";                                     
   print $query -> textarea (-name => 'meetpreamble', -default => $MeetingDefaultPreamble,
                             -columns => 50, -rows => 7);
@@ -81,7 +81,7 @@ sub ConferencePreambleBox {
 sub ConferenceEpilogueBox {
   require "FormElements.pm";
   my $ElementTitle = &FormElementTitle(-helplink  => "meetpreepi", 
-                                       -helptext  => "Meeting Epilogue");
+                                       -helptext  => "Event Epilogue");
   print $ElementTitle,"\n";                                     
   print $query -> textarea (-name => 'meetepilogue', -default => $MeetingDefaultEpilogue,
                             -columns => 50, -rows => 7);
