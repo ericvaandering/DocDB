@@ -40,26 +40,26 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                    " PublicURL varchar(255),PrivateURL varchar(255),".
                    " TimeStamp timestamp(14))"); 
   my $NotifyCreate = $dbh -> prepare("create table Notification ".
-                   "(NotificationID integer auto_increment primary key,".
+                   "(NotificationID integer auto_increment primary key, ".
                    " EmailUserID int, Type varchar(32), ".
-                   " ForeignID int, Interval varchar(32),".
+                   " ForeignID int, Period varchar(32), ".
                    " TimeStamp timestamp(14), ".
                    " KEY EmailUserID (EmailUserID), KEY ForeignID (ForeignID))"); 
   my $DocumentAdd  = $dbh -> prepare("alter table Document add DocHash char(32)"); 
 
   my $ConfigCreate1 =  $dbh -> prepare("create table ConfigSetting ".
                     "(ConfigSettingID integer auto_increment primary key,".
-                    " Group varchar(64),     Sub1Group varchar(64) ".
-                    " Sub2Group varchar(64), Sub3Group varchar(64), Sub4Group varchar(64) ".
+                    " ConfigGroup varchar(64),     Sub1Group varchar(64), ".
+                    " Sub2Group varchar(64), Sub3Group varchar(64), Sub4Group varchar(64), ".
                     " ForeignID int, Value varchar(64),".
                     " Sub1Value varchar(64), Sub2Value varchar(64), Sub3Value varchar(64), ".
                     " Sub4Value varchar(64), Sub5Value varchar(64), ".
                     " Description text, Constrained int, ".
                     " TimeStamp timestamp(14), ".
-                    " KEY Group (Group), KEY Sub1Group (Sub1Group), KEY ForeignID (ForeignID))"); 
+                    " KEY ConfigGroup (ConfigGroup), KEY Sub1Group (Sub1Group), KEY ForeignID (ForeignID))"); 
   my $ConfigCreate2 =  $dbh -> prepare("create table ConfigValue ".
                     "(ConfigValueID integer auto_increment primary key,".
-                    " ConfigSettingID int ".
+                    " ConfigSettingID int, ".
                     " Value varchar(64),".
                     " Description text, ".
                     " TimeStamp timestamp(14), ".
