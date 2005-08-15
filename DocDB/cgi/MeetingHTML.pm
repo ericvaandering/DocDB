@@ -140,6 +140,11 @@ sub SessionEntryForm ($@) {
       $RowClass = "Even";
     }    
     
+    if ($OffsetDays) {  # We are copying, not modifiying the original
+      push $DebugStack,"Reseting MID $MeetingOrderID to n$SessionOrder";
+      $MeetingOrderID = "n$SessionOrder";
+    }  
+    
     $SessionDefaultOrder = $SessionOrder;  
     push @DebugStack,"Session form for $MeetingOrderID";
     if (grep /n/,$MeetingOrderID) {# Erase defaults
