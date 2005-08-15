@@ -534,7 +534,7 @@ sub PrintSingleSessionHeader (%) {
         &EventModifyButton(-eventid => $EventID, -buttontext => "Modify Event", -labeltext => "&nbsp;");
       }
       print "</th>\n";
-      print "</tr>\n<tr colspan=\"3\"><th>\n";
+      print "</tr>\n<tr><th colspan=\"3\">\n";
       &EventCopyButton(-eventid => $EventID);
       print "</th>\n";
     }
