@@ -691,8 +691,8 @@ sub EventLink (%) {
   }  
 
   my $URL;
-  if ($LinkTo eq "listby") {
-    $URL = "$ListBy?topicid=$TopicID&amp;mode=meeting";
+  if ($LinkTo eq "listby" || &SessionCountByEventID($EventID) == 0) {
+    $URL = "$ListBy?eventid=$EventID&amp;mode=conference";
   } else {  
     $URL = "$DisplayMeeting?conferenceid=$EventID";
   }  

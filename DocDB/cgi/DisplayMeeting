@@ -79,7 +79,6 @@ my $OnlyOneSession = 0;
 if ($ConferenceID) {
   $DisplayMode = "Conference";
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
-  push @DebugStack,"CID: $ConferenceID","MIDS",@MeetingOrderIDs;
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
   if ($#MeetingOrderIDs == 0) { # If just one session, switch to session mode
     $DisplayMode    = "Session";
