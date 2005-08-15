@@ -105,7 +105,8 @@ sub SessionEntryForm ($@) {
   my $ConferenceID    =   $Params{-conferenceid}     || 0;
   my $OffsetDays      =   $Params{-offsetdays}       || 0;
   my @MeetingOrderIDs = @{$Params{-meetingorderids}} || 0;
-
+  push @DebugStack,"MID:",@MeetingOrderIDs;
+  
   print "<table id=\"SessionEntry\" class=\"MedPaddedTable Alternating CenteredTable\">\n";
   print "<thead>\n";
   print "<tr><th colspan=\"4\">\n";
