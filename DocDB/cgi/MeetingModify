@@ -512,6 +512,7 @@ if ($NoSessions) {
   &DebugPage("Before sort");
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs;
 
+  &DebugPage("After sort");
   &SessionEntryForm(-conferenceid => $ConferenceID, -meetingorderids => \@MeetingOrderIDs, -offsetdays => $OffsetDays);
 }
 
