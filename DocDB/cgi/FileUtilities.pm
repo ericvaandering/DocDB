@@ -171,16 +171,22 @@ sub AbbreviateFileName {
 }  
 
 sub StreamFile (%) {
+  use File::MimeInfo;
+ 
   my %Params = @_;
   
   my $File = $Params{-file};
   
   my $MimeType;
   
-  if (-e $File) {
-    my $Size = (stat $File)[7];
-    $MimeType = `$FileMagic -ib \"$File\"`; # Use magic
-    chomp $MimeType;
+  if (-e $File) {  
+    my $Size = (stat $File)[7];  
+    
+    $MimeType = mimetype($File);              # Try Mime-info first
+    unless ($MimeType) {
+      $MimeType = `$FileMagic -ib \"$File\"`; # Use magic as a backup
+      chomp $MimeType;
+    }
     
     my @Parts = split /\//,$File;
     my $ShortFile = pop @Parts;
