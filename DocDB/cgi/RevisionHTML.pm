@@ -202,7 +202,7 @@ sub PrintRevisionInfo {
   &PrintRevisionNote($DocRevisions{$DocRevID}{Note});
   &PrintXRefInfo($DocRevID);
   &PrintReferenceInfo($DocRevID);
-  &PrintConfInfo(@TopicIDs);
+  &PrintEventInfo($DocRevID);
   &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
   
   if ($UseSignoffs) {
@@ -317,37 +317,37 @@ sub PrintReferenceInfo ($) {
   }
 }
 
-sub PrintConfInfo {
-  require "TopicSQL.pm";
+sub PrintEventInfo {
   require "MeetingSQL.pm";
-  require "TopicHTML.pm";
-  &SpecialMajorTopics;
+  require "MeetingHTML.pm";
   
-  my (@topicIDs) = @_;
-  my $HasConference = 0;
-  foreach $topicID (@topicIDs) {
-    if (&MajorIsConference($MinorTopics{$topicID}{MAJOR})) {
-      &FetchConferenceByTopicID($topicID);
-      unless ($HasConference) {
-        print "<div id=\"ConferenceInfo\">\n";
-        $HasConference = 1;
+  my ($DocRevID) = @_;
+  my @EventIDs = &GetRevisionEvents($DocRevID);
+
+  if (@EventIDs) {
+    print "<div id=\"EventInfo\">\n";
+    print "<dl>\n";
+    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Associated with Events:</span></dt> \n";
+    foreach my $EventID (@EventIDs) {
+      my $EventLink = &EventLink(-eventid => $EventID);
+      my $Start = &EuroDate($Conferences{$EventID}{StartDate});
+      my $End   = &EuroDate($Conferences{$EventID}{EndDate});
+      print "<dd>";
+      print "$EventLink ";
+      if ($Start && $End && ($Start ne $End)) {
+        print " held from $Start to $End ";
       }  
-      my $ConferenceLink = &ConferenceLink($topicID,"long");
-      my $ConferenceID = $ConferenceMinor{$topicID};
-      my $Start = &EuroDate($Conferences{$ConferenceID}{StartDate});
-      my $End   = &EuroDate($Conferences{$ConferenceID}{EndDate});
-      print "<dl>\n";
-      print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Conference Information:</span></dt> \n";
-      print "<dd>Associated with ";
-      print "$ConferenceLink ";
-      print " held from $Start to $End \n";
-      print " in $Conferences{$ConferenceID}{Location}.</dd></dl>\n";
+      if ($Start && $End && ($Start eq $End)) {
+        print " held on $Start ";
+      }  
+      if ($Conferences{$EventID}{Location}) {
+        print " in $Conferences{$EventID}{Location}";
+      }
+      print "</dd>\n";
     }
+    print "</dl></div>\n";
   }
-  if ($HasConference) {
-    print "</div>\n";
-  }  
-}
+}  
 
 sub PrintPubInfo ($) {
   require "Utilities.pm";

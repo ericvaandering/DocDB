@@ -107,7 +107,7 @@ sub DocDBNavBar {
 
   print "<div class=\"DocDBNavBar\">\n";
   if ($ExtraDesc && $ExtraURL) {
-    print "[&nbsp;<a href=\"$ExtraURL\"l>$ExtraDesc</a>&nbsp;]&nbsp;\n";
+    print "[&nbsp;<a href=\"$ExtraURL\">$ExtraDesc</a>&nbsp;]&nbsp;\n";
   } 
   print "[&nbsp;<a href=\"$MainPage\">DocDB&nbsp;Home</a>&nbsp;]&nbsp;\n";
   if (&CanCreate()) {

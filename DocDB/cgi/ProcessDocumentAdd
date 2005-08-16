@@ -75,11 +75,6 @@ if ($Mode eq "reserve") {
 @WarnStack  = ();
 @DebugStack = ();
 
-$Special = $params{special};
-
-if ($Special eq "meeting") {$Meeting = 1;}
-if ($Special eq "othermeeting") {$OtherMeeting = 1;}
-
 # FIXME: Any reason all of these can't be "my"?
 
 my $Archive       = $params{archive};
@@ -105,7 +100,7 @@ my $SignoffList   = $params{signofflist};
 my $OldVersion    = $params{oldversion};
 my $MaxFiles      = $params{maxfiles};
 my @XRefs         = split /\D+/,$params{xrefs}; # Can be comma or space separated
-
+my @EventIDs      = $query -> param('events');
 
 if ($Archive eq "multi") {$Archive = "single";} # No real difference
 
@@ -150,14 +145,10 @@ if ($Archive eq "archive") { # They uploaded a tar/zip file
   $Archive{Description} = $params{"filedesc"};
 }
 
-if ($Meeting || $OtherMeeting) {
-  @authorIDs = ($Requester);
+if ($params{authormanual}) {
+  @authorIDs = &ProcessManualAuthors($params{authormanual});
 } else {
-  if ($params{authormanual}) {
-    @authorIDs = &ProcessManualAuthors($params{authormanual});
-  } else {
-    @authorIDs = split /\0/,$params{authors}; 
-  }
+  @authorIDs = split /\0/,$params{authors}; 
 }
 
 if ($Overdate && $Overyear && $Overmonth && $Overday) {
@@ -366,11 +357,16 @@ if (@XRefs) {
                            
 my $Count;
 $Count = &InsertAuthors(-docrevid => $DocRevID, -authorids => \@authorIDs);
-$Count = &InsertTopics(-docrevid => $DocRevID, -topicids => \@topicIDs);
+$Count = &InsertTopics( -docrevid => $DocRevID, -topicids  => \@topicIDs);
 $Count = &InsertSecurity(-docrevid  => $DocRevID, 
                          -viewids   => \@securities,
                          -modifyids => \@ModifyGroups);
 
+### Add events
+if (@EventIDs) {
+  require "MeetingSQL.pm";
+  $Count = &InsertRevisionEvents(-docrevid => $DocRevID, -eventids => \@EventIDs);
+}
 ### Add link to SessionTalk                         
 
 if ($SessionTalkID) { 

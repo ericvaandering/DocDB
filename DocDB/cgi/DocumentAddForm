@@ -30,11 +30,12 @@ require "Sorts.pm";
 require "Messages.pm";
 
 require "AuthorSQL.pm";
-require "TopicSQL.pm";
-require "SecuritySQL.pm";
 require "DocumentSQL.pm";
-require "RevisionSQL.pm";
+require "MeetingSQL.pm";
 require "MiscSQL.pm";
+require "RevisionSQL.pm";
+require "SecuritySQL.pm";
+require "TopicSQL.pm";
 
 require "ResponseElements.pm";
 require "FormElements.pm";
@@ -46,6 +47,7 @@ require "XRefUtilities.pm";
 
 require "FileHTML.pm";
 require "KeywordHTML.pm";
+require "MeetingHTML.pm";
 require "RevisionHTML.pm";
 require "SecurityHTML.pm";
 require "SignoffHTML.pm";
@@ -62,7 +64,6 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 %params = $query -> Vars;
 
-my $Special      = $params{special};
 my $DocumentID   = $params{docid};
 my $ConferenceID = $params{conferenceid};
 my $SessionID    = $params{sessionid};
@@ -72,14 +73,6 @@ my @PreTopics    = $query -> param('pretopic');
 
 @TopicDefaults = ();
  
-if ($Special eq "meeting")      {$Meeting = 1;}
-if ($Special eq "othermeeting") {$OtherMeeting = 1;}
-
-if ($Meeting) {
- require "WebUtilities.pm";
- push @TopicDefaults,(&NearByMeeting); 
-}
-
 push @TopicDefaults,@PreTopics; 
 
 if ($mode ne "add"    && $mode ne "reserve" && 
@@ -174,6 +167,7 @@ if ($mode eq "update") {
 my $SignoffsDefault; # FIXME: What other ones needn't be global?
 my @SecurityDefaults = ();
 my @ModifyDefaults   = ();
+my @EventDefaults    = ();
 my $RevisionNoteDefault; 
 my $XRefDefault;
 my $DocTypeIDDefault;
@@ -190,6 +184,7 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   @SecurityDefaults    = &GetRevisionSecurityGroups($DocRevID);
   @AuthorDefaults      = &GetRevisionAuthors($DocRevID);
   @TopicDefaults       = &GetRevisionTopics($DocRevID);
+  @EventDefaults       = &GetRevisionEvents($DocRevID);
   @ReferenceDefaults   = &FetchReferencesByRevision($DocRevID);
   $XRefDefault         = &SetXRefDefault($DocRevID);
   if ($UseSignoffs) {
@@ -237,19 +232,16 @@ if ($mode eq "add" && ($SessionID||$ConferenceID)) {
   require "MeetingSQL.pm";
   
   my @CheckSessionTalkIDs = ();
-  my $MinorTopicID;
-  
-  if ($SessionID) { # Build list for SessionID
+
+  if ($ConferenceID) { 
+    @CheckSessionTalkIDs = &FetchSessionTalksByConferenceID($ConferenceID);
+  } elsif ($SessionID) { # Build list for SessionID
     @CheckSessionTalkIDs = &FetchSessionTalksBySessionID($SessionID);
     &FetchSessionByID($SessionID);
-    my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
-    &FetchConferenceByConferenceID($ConferenceID);
-    $MinorTopicID = $Conferences{$ConferenceID}{Minor}; # FIXME: Why doesn't this work?
-  } elsif ($ConferenceID) { # Build list for ConferenceID
-    @CheckSessionTalkIDs = &FetchSessionTalksByConferenceID($ConferenceID);
-    &FetchConferenceByConferenceID($ConferenceID);
-    $MinorTopicID = $Conferences{$ConferenceID}{Minor};
-  }    
+    $ConferenceID = $Sessions{$SessionID}{ConferenceID};
+  }
+  &FetchConferenceByConferenceID($ConferenceID);
+  push @EventDefaults,$ConferenceID;
   
   # Check list of SessionTalks
   
@@ -258,28 +250,9 @@ if ($mode eq "add" && ($SessionID||$ConferenceID)) {
       push @OpenSessionTalkIDs,$SessionTalkID;
     } 
   }
-  
-  # Add the topic for conference to defaults
-  
-  if ($MinorTopicID) {
-    push @TopicDefaults,$MinorTopicID;
-  }  
-} elsif ($mode eq "add" && @TopicDefaults) { # Check all preselected topics, see if they are conferences, etc. 
-  require "TalkSQL.pm";
-  foreach my $MinorTopicID (@TopicDefaults) {
-    my $ConferenceID = &FetchConferenceByTopicID($MinorTopicID);
-    if ($ConferenceID) {
-      my @CheckSessionTalkIDs = &FetchSessionTalksByConferenceID($ConferenceID);
-      foreach my $SessionTalkID (@CheckSessionTalkIDs) {
-        unless ($SessionTalks{$SessionTalkID}{Confirmed}) {
-          push @OpenSessionTalkIDs,$SessionTalkID;
-        } 
-      }
-    }    
-  }
 }
 
-&Unique(@TopicDefaults) ; # Make sure this list is unique
+@TopicDefaults = &Unique(@TopicDefaults) ; # Make sure this list is unique
 
 &EndPage(@ErrorStack); # The user may have made mistakes, warn and exit
 
@@ -313,20 +286,9 @@ print "<table class=\"CenteredTable HighPaddedTable\">\n";
 print "<tr>\n";
 print "<td colspan=\"4\">\n";
 if ($mode eq "add") {
-  if ($Meeting || $OtherMeeting) {
-    print "<h4>You have chosen to add a new meeting talk to the database.<br/> 
-               Make sure you know all the required information and
-               the file is ready for uploading.<br/>
-               This is a simplified form for adding information to the 
-               database.<br/>
-               If you need something more complicated, such as multiple authors
-               or more upload boxes,<br> please use one of the options from
-               the <a href=$ModifyHome>change/add page</a>.\n";
-  } else {  
-    print "<h4>You have chosen to add a new document to the database.<br/> 
-               Make sure you know all the required information and
-               the file is ready for uploading.<br/>\n";
-  } 
+  print "<h4>You have chosen to add a new document to the database.<br/> 
+             Make sure you know all the required information and
+             the file is ready for uploading.<br/>\n";
 } elsif ($mode eq "reserve") {
   print "<h4>You have chosen to reserve a new document document number in 
              the database. <br/>
@@ -409,24 +371,10 @@ if ($mode eq "add" || $mode eq "update") {
 ### Document type and date override (if present)
 
 print "<tr>\n";
-if ($Meeting || $OtherMeeting) {
-  print "<td colspan=\"2\">\n"; 
-  my @TypeIDs = keys %DocumentTypes;
-  foreach my $ID (@TypeIDs) {
-    if ($DocumentTypes{$ID}{SHORT} eq "Talk") {
-      $TalkTypeID = $ID;
-      last;
-    }
-  }
-  print "<b>Document type is: $DocumentTypes{$TalkTypeID}{SHORT}</b>\n";  
-  print $query -> hidden(-name => 'doctype',  -default => $TalkTypeID);
-  print "</td>\n";  
-} else {
-  print "<td colspan=\"2\">\n";
-  &DocTypeButtons(-required => $RequiredEntries{Type}, 
-                  -default  => $DocTypeIDDefault);
-  print "</td>\n";
-}
+print "<td colspan=\"2\">\n";
+&DocTypeButtons(-required => $RequiredEntries{Type}, 
+                -default  => $DocTypeIDDefault);
+print "</td>\n";
 
 if ($Overdate eq "Yes") {
   print "<td colspan=\"2\">\n";
@@ -438,9 +386,6 @@ print "</tr>\n";
 ### Requester, Authors, and security 
 
 print "<tr>\n";
-if ($Meeting || $OtherMeeting) {
-  print "<td>&nbsp;&nbsp;&nbsp;</td>\n";
-} 
 
 print "<td>\n"; 
  my @RequesterDefaults = ($RequesterDefault);
@@ -449,21 +394,19 @@ print "<td>\n";
                -helptext => "Requester",
                -name     => "requester",
                -default  => \@RequesterDefaults);
-               
 print "</td>\n";
 
-unless ($Meeting || $OtherMeeting) {
-  if ($AuthorMode eq "list") {
-    print "<td>\n"; 
-    &AuthorScroll(-required => $RequiredEntries{Author},
-                  -helplink => "authors",
-                  -multiple => "true",
-                  -default  => \@AuthorDefaults);
-    print "</td>\n";
-  } elsif ($AuthorMode eq "field") {
-    print "<td>\n"; &AuthorManual(-required => $RequiredEntries{Author});    print "</td>\n";
-  }
+if ($AuthorMode eq "list") {
+  print "<td>\n"; 
+  &AuthorScroll(-required => $RequiredEntries{Author},
+                -helplink => "authors",
+                -multiple => "true",
+                -default  => \@AuthorDefaults);
+  print "</td>\n";
+} elsif ($AuthorMode eq "field") {
+  print "<td>\n"; &AuthorManual(-required => $RequiredEntries{Author});    print "</td>\n";
 }
+
 print "<td>\n"; 
 my $SecurityText;
 if ($EnhancedSecurity) {
@@ -489,7 +432,7 @@ if ($EnhancedSecurity) {
 }
 print "</tr>\n";
 
-### Topics
+### Topics # FIXME: Use non-global defaults
 
 print "<tr>\n";
 if ($TopicMode eq "single") {
@@ -497,6 +440,15 @@ if ($TopicMode eq "single") {
 } elsif ($TopicMode eq "multi") {
   print "<td colspan=\"4\">\n"; &MultiTopicSelect(-required => $RequiredEntries{Author});     print "</td>\n";
 }
+print "</tr>\n";
+
+### Events
+
+print "<tr>\n";
+print "<td colspan=\"4\">\n";
+ &EventSelect(-required => $FALSE,          -format   => "full", 
+              -default  => \@EventDefaults, -multiple => $TRUE);
+print "</td>\n";
 print "</tr>\n";
 
 ### Cross-references to other documents
@@ -511,13 +463,11 @@ print "</tr>\n";
 
 ### References and Publication info
 
-unless ($Meeting || $OtherMeeting) {
-  print "<tr>\n";
-  print "<td colspan=\"4\">\n"; &ReferenceForm;  print "</td>\n";
-  print "</tr><tr>\n";
-  print "<td colspan=\"4\">\n"; &PubInfoBox;  print "</td>\n";
-  print "</tr>\n";
-}
+print "<tr>\n";
+print "<td colspan=\"4\">\n"; &ReferenceForm;  print "</td>\n";
+print "</tr><tr>\n";
+print "<td colspan=\"4\">\n"; &PubInfoBox;  print "</td>\n";
+print "</tr>\n";
 
 if ($UseSignoffs) { # FIXME: Later may be more complicated control
   print "<tr>\n";

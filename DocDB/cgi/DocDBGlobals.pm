@@ -174,21 +174,18 @@ $ListManagedDocuments  = $cgi_root."ListManagedDocuments";
 $ListAuthors           = $cgi_root."ListAuthors";
 $ListTopics            = $cgi_root."ListTopics";
 $ListTypes             = $cgi_root."ListTypes";
-$ListMeetings          = $cgi_root."ListMeetings";
 $ListKeywords          = $cgi_root."ListKeywords";
 $ListBy                = $cgi_root."ListBy";
 
 $AddFiles              = $cgi_root."AddFiles";
 $AddFilesForm          = $cgi_root."AddFilesForm";
 
-$ConferenceAddForm     = $cgi_root."ConferenceAddForm";
-$ConferenceAdd         = $cgi_root."ConferenceAdd";
-
 $DisplayMeeting        = $cgi_root."DisplayMeeting";
 $MeetingModify         = $cgi_root."MeetingModify";
 $SessionModify         = $cgi_root."SessionModify";
-$ListAllMeetings       = $cgi_root."ListAllMeetings"; # FIXME: Remove later
+$ListAllMeetings       = $cgi_root."ListAllMeetings"; 
 $ConfirmTalkHint       = $cgi_root."ConfirmTalkHint";
+$ShowCalendar          = $cgi_root."ShowCalendar";
 
 $SignoffChooser        = $cgi_root."SignoffChooser";
 $SignRevision          = $cgi_root."SignRevision";
@@ -212,6 +209,8 @@ $GroupAdminister       = $cgi_root."GroupAdminister";
 
 $EmailAdministerForm   = $cgi_root."EmailAdministerForm";
 $EmailAdminister       = $cgi_root."EmailAdminister";
+
+$EventAdministerForm   = $cgi_root."EventAdministerForm";
 
 $Statistics            = $cgi_root."Statistics";
 

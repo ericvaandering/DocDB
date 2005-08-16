@@ -23,7 +23,7 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 sub CreateConnection (%) { 
-  my (%Params) = @_;
+  my %Params = @_;
   
   require "Messages.pm";
   
@@ -34,7 +34,10 @@ sub CreateConnection (%) {
   my $User     = $Params{-user};
   my $Password = $Params{-password};
   
-  if ($Type eq "ro") {
+  if ($User && $Password) {
+    $dbh = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$User,$Password) 
+                || push @ErrorStack,$Msg_AdminNoConnect;
+  } elsif ($Type eq "ro") {
     $dbh_ro   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass) 
                 || push @ErrorStack,$Msg_NoConnect;
     unless ($dbh) {
@@ -48,10 +51,7 @@ sub CreateConnection (%) {
     unless ($dbh) {
       $dbh = $dbh_rw;
     }
-  } elsif ($User && $Password) {
-    $dbh = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$User,$Password) 
-                || push @ErrorStack,$Msg_NoConnect;
-  }
+  } 
   
   return $dbh;          
 };

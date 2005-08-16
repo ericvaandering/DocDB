@@ -412,24 +412,23 @@ new documents are entered with the current date and time.</p>
 <h2>Documents for Events</h2>
 
 <p>These can be entered into the database using the normal entry
-form, just make sure you choose the appropriate event as one of the
-topics for your talk. </p>
+form, just make sure you choose the appropriate event for your talk. </p>
 
 <a name="conference" />
 <h2>Conference Talks and Proceedings</h2>
 
-<p>Conference documents are added just like any other document, except for two
-things. First, you probably need to 
+<p>Conference documents are added just like any other document, except for one extra step. 
+Before entering the document, you probably need to 
 <a href="$ConferenceAddForm">add some
 information</a> into the database about your conference. Do this by following
-the link at the bottom of the 
+the link on the 
 <a href="$ModifyHome">Create or Change</a> page.
 But before you add it, make sure someone else didn't already do it for you. (At
 the bottom of the add form is the list of conferences the database knows
 about).</p>
 
-<p>Second, when adding your document, make sure that one of the topics you select
-is the topic corresponding to your conference. This way your document is
+<p>Also make sure that you select
+the conference from the list of events. This way your document is
 associated with the right conference.</p>
 
 <a name="reference" />

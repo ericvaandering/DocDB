@@ -52,10 +52,19 @@ sub EuroTimeHM($) {
   return $ReturnDate;
 }
 
-sub SQLNow {
+sub SQLNow (;%) {
+  my %Params = @_;
+  
+  my $DateOnly = $Params{-dateonly}   || "";
+
   my ($sec,$min,$hour,$day,$mon,$year) = localtime(time); 
   ++$mon; $year += 1900; 
-  my $SQL_NOW       = "$year-$mon-$day $hour:$min:$sec";
+  my $SQL_NOW;
+  if ($DateOnly) {
+    $SQL_NOW = "$year-$mon-$day";
+  } else {
+    $SQL_NOW = "$year-$mon-$day $hour:$min:$sec";
+  }
   return $SQL_NOW;
 }
 

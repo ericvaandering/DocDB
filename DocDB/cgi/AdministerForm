@@ -55,7 +55,6 @@ $query = new CGI;  # Global for subroutines
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 &GetSecurityGroups;
-&SpecialMajorTopics;
 &GetInstitutions;
 &GetDocTypes;
 &GetAuthors;
@@ -103,7 +102,6 @@ print "[&nbsp;<a href=\"\#mintopic\">Minor&nbsp;Topics</a>&nbsp;] ";
 print "[&nbsp;<a href=\"\#majtopic\">Major&nbsp;Topics</a>&nbsp;] ";
 print "[&nbsp;<a href=\"\#doctype\">Document&nbsp;Types</a>&nbsp;] ";
 print "[&nbsp;<a href=\"\#journal\">Journals</a>&nbsp;] ";
-print "[&nbsp;<a href=\"\#conference\">Meetings&nbsp;and&nbsp;Conferences</a>&nbsp;] ";
 print "</center><p>";
 print "<hr><p>\n";
 
@@ -328,64 +326,6 @@ print $query -> end_multipart_form;
 
 print "<p>\n";
 &JournalTable;
-
-print "<p><hr>\n";
-
-### Conference and Meeting Administration
-
-print "<a name=\"conference\"><center><h4>Administer Conferences and Meetings</h4>
-       </center>\n";
-
-print $query -> start_multipart_form('POST',"$ConferenceAdminister",
-                                     "id=\"conferences\" name=\"conferences\"");
-print "<table cellpadding=10>\n";
-print "<tr valign=top>\n";
-print "<td colspan=2>\n"; 
- &AdministerActions(-form => "conferences");
-print "</td>\n";
-print "</tr>\n";
-
-print "<tr valign=top>\n";
-print "<td>\n"; &ConferenceSelect(-disabled => true);     print "</td>\n";
-print "<td>\n"; &MajorGatheringSelect(-disabled => true); print "</td>\n";
-print "<td>\n";
- print "<table>\n";
- print "<tr valign=top>\n";
- print "<td>\n"; &ShortDescriptionBox(-disabled => true, -name => 'shortdesc');     print "</td>\n";
- print "<td>\n"; &LongDescriptionBox(-disabled => true, -name => 'longdesc');      print "</td>\n";
- print "</tr>\n";
-
- print "<tr valign=top>\n";
- print "<td>\n"; &LocationBox(-disabled => true);          print "</td>\n";
- print "<td>\n"; &ConferenceURLBox(-disabled => true);     print "</td>\n";
- print "</tr>\n";
-
- print "<tr valign=top>\n";
- print "<td>\n"; &StartDatePullDown(-disabled => true);     print "</td>\n";
- print "<td>\n"; &EndDatePullDown(-disabled => true);       print "</td>\n";
- print "</tr>\n";
- print "<tr valign=top>\n";
- print "<td colspan=2>(Dates set to the current date will not be changed)</td>\n";
- print "</tr>\n";
-
- print "</table>\n";
-print "</td>\n";
-print "</tr>\n";
-
-print "<tr valign=top>\n";
-print "<td colspan=3>\n";
-&AdministratorPassword;
-print "&nbsp;";
-print $query -> submit (-value => "Change Meeting/Conference Info");
-print "</td>\n";
-print "</tr>\n";
-
-print "</table>\n";
-print $query -> end_multipart_form;
-
-print "<center><h4>Existing Meetings and Conferences</h4></center>\n";
-
-&GatheringTable;
 
 print "<p><hr>\n";
 

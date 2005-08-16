@@ -24,7 +24,7 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 sub AdministerActions (%) {
-  require "Scripts.pm";
+  require "FormElements.pm";
 
   my (%Params) = @_;
 
@@ -35,10 +35,7 @@ sub AdministerActions (%) {
   $Action{Delete}    = "Delete";
   $Action{New}       = "New";
   $Action{Modify}    = "Modify";
-  
-  print "<b><a ";
-  &HelpLink("admaction");
-  print "Action:</a></b><br> \n";
+  print &FormElementTitle(-helplink => "admaction", -helptext => "Action");
   print $query -> radio_group(-name => "admaction", 
                               -values => \%Action, -default => "-",
                               -onclick => "disabler_$Form();");
@@ -57,6 +54,11 @@ sub AdministratorPassword {
   print $query -> password_field(-name      => "password", -size => 12, 
                                  -maxlength => 12);
 };
+
+sub AdminRegardless {
+  print &FormElementTitle(-helplink => "admregardless", -helptext => "Act Regardless");
+  print $query -> checkbox(-name => "admregardless", -value => 1, -label => 'Yes');
+}  
 
 sub GroupEntryBox (%) {
   require "Scripts.pm";

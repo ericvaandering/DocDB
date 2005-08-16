@@ -101,12 +101,18 @@ my $SessionTalkUpdate = $dbh -> prepare(
  "update SessionTalk set DocumentID=?, Confirmed=1 where SessionTalkID=?");
 $SessionTalkUpdate -> execute($DocumentID,$SessionTalkID);
 
-
+my $RevisionEventCheck = $dbh -> prepare("select RevEventID from RevisionEvent where DocRevID=? and ConferenceID=?");
+$RevisionEventCheck -> execute($DocRevID,$ConferenceID);
+my ($RevisionEventID) = $RevisionEventCheck -> fetchrow_array;
+unless ($RevisionEventID) {
+  my $Insert = $dbh -> prepare("insert into RevisionEvent (RevEventID,DocRevID,ConferenceID) values (0,?,?)"); 
+  $Insert -> execute($DocRevID,$ConferenceID);
+}  
 print "<p><b>The match has been confirmed.<br/>
              Press the button below to reload the original page.</b></p>\n";
 
-print "<center><form>\n";
+print "<p class=\"SubmitCell\"><form>\n";
 print " <input type=\"button\" value=\"Close Window and Reload\" onclick=\"opener.location.reload(1); window.close()\">\n";
-print "</form></center>";
+print "</form></p>";
 
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName,-nobody => $TRUE);

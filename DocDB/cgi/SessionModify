@@ -24,7 +24,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-use CGI;
+use CGI qw(-nosticky);
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -36,6 +36,8 @@ require "Sorts.pm";
 require "Scripts.pm";
 require "Security.pm";
 require "Utilities.pm";
+
+require "EventUtilities.pm";
 require "HTMLUtilities.pm";
 require "MeetingSecurityUtilities.pm";
 require "TalkHintUtilities.pm";
@@ -43,19 +45,25 @@ require "TalkHintUtilities.pm";
 require "FormElements.pm";
 require "ResponseElements.pm";
 require "MeetingHTML.pm";
+require "SecurityHTML.pm";
 require "TalkHTML.pm";
 require "MeetingSQL.pm";
-require "TalkSQL.pm";
 require "TalkHintSQL.pm";
+require "TalkSQL.pm";
 
 $query = new CGI;  # Global for subroutines
 
 &GetPrefsCookie;
 &SetAuthorMode;
+
+### Gather parameters
+
 %params = $query -> Vars;
+$query -> delete_all(); # Stop program from caching variable from script to script
 
 my $SessionID          = $params{sessionid};
 my $Mode               = $params{mode};
+my $SingleSession      = $params{singlesession};
 
 my $SessionTitle       = $params{sessiontitle};
 my $SessionDescription = $params{sessiondescription};
@@ -64,7 +72,7 @@ my $SessionLocation    = $params{sessionlocation};
 my $SessionDay   = $params{sessionday};
 my $SessionMonth = $params{sessionmonth};
 my $SessionYear  = $params{sessionyear};
-my $SessionHour  = $params{sessionhour};
+my $SessionHour  = $params{sessiontime};
 
 my @SessionOrderIDs = split /\0/,$params{sessionorderid};
 my @TalkOrders      = split /\0/,$params{talkorder};
@@ -74,9 +82,21 @@ my @TalkTimes       = split /\0/,$params{talktime};
 my @TalkSeparators  = split /\0/,$params{talkseparator};
 my @TalkDeletes     = split /\0/,$params{talkdelete};
 my @TalkConfirms    = split /\0/,$params{talkconfirm};
+my @TalkReserves    = split /\0/,$params{talkreserve};
 my @TimeStamps      = split /\0/,$params{timestamp};
 
-$query -> delete_all(); # Stop program from caching variable from script to script
+# For single session mode
+
+my $EventID               = $params{eventid};
+my $Location              = $params{location};
+my $URL                   = $params{url};
+my $EventGroupID          = $params{eventgroups};
+my $Short                 = $params{shortdesc};
+my $Long                  = $params{long};
+my @MeetingViewGroupIDs   = split /\0/,$params{meetingviewgroups};
+my @MeetingModifyGroupIDs = split /\0/,$params{meetingmodifygroups};
+
+unless ($Long) {$Long = $Short;}
 
 # Also have params for DocID, authors, and topics in special params with 
 # SessionID embedded
@@ -95,6 +115,12 @@ my %TalkConfirmFlags = ();
 foreach my $TalkConfirm (@TalkConfirms) { 
   $TalkConfirmFlags{$TalkConfirm} = 1; 
 }  
+my %TalkReserveFlags = ();
+foreach my $TalkReserve (@TalkReserves) { 
+  $TalkReserveFlags{$TalkReserve} = 1; 
+}  
+
+### Start of HTML
   
 @ErrorStack = ();
 @WarnStack  = ();
@@ -106,9 +132,17 @@ unless ($dbh) {
 }      
 
 print $query -> header;
-&DocDBHeader("Modify a Session","",-scripts => ["PopUps"]);
+my $Title;
+if ($SingleSession && $Mode eq "new") { 
+  $Title = "Create a New Event";
+} else {
+  $Title = "Modify a Session";
+}  
+&DocDBHeader($Title,"",-scripts => ["PopUps"]);
 
 &EndPage(@ErrorStack);
+
+### Check parameters
 
 if ($SessionID) {
   &FetchSessionByID($SessionID);
@@ -116,20 +150,80 @@ if ($SessionID) {
   unless (&CanModifyMeeting($ConferenceID)) {
     push @ErrorStack,$Msg_MeetNoModify;
   }
+} elsif (($Mode eq "create" || $Mode eq "new")  && $SingleSession) { 
+  unless (&CanCreateMeeting()) {
+    push @ErrorStack,$Msg_MeetNoCreate;
+  }
+} elsif ($EventID) { 
+  unless (&CanModifyMeeting($EventID)) {
+    push @ErrorStack,$Msg_MeetNoModify;
+  }
+  unless (&SessionCountByEventID($EventID) == 1) {
+    push @ErrorStack,$Msg_MeetOnlyOne
+  }
 } else {
-  push @ErrorStack,"You must specify a session to modify. You probably arrived
+  push @ErrorStack,"You must specify a session or event to modify. You probably arrived
   here by error.";
 }  
 &EndPage(@ErrorStack);
 
-if ($Mode eq "modify") {
+if ($SingleSession && $EventID) { # Grab single session ID in single session mode
+  ($SessionID) = &FetchSessionsByConferenceID($EventID);
+}
 
-  # Update Session parameters, refetch
+unless ($EventID) { 
+  &FetchSessionByID($SessionID);
+  $EventID = $Sessions{$SessionID}{ConferenceID};
+}  
+
+### Do DB updates and inserts
+
+if ($Mode eq "modify" || $Mode eq "create") {
+  require "MeetingSecuritySQL.pm";
+  
   my $SessionDate = "$SessionYear-$ReverseAbrvMonth{$SessionMonth}-$SessionDay $SessionHour:00";
 
-  &UpdateSession(-sessionid => $SessionID, -date => $SessionDate, 
-                 -title => $SessionTitle, -description => $SessionDescription,
-                 -location => $SessionLocation);
+  if ($SingleSession && $Mode eq "create") { # Make an event, then a session, pass variables out
+    $EventID = &InsertEvent(-eventgroupid => $EventGroupID, -location => $Location,
+               -url => $URL, -startdate   => $SessionDate,  -enddate  => $SessionDate,
+               -shortdescription          => $Short, -longdescription => $Long,
+               -showalltalks              => 1);
+    &MeetingSecurityUpdate(-mode         => 'access',
+                           -conferenceid => $EventID, 
+                           -groupids     => \@MeetingViewGroupIDs);
+    &MeetingSecurityUpdate(-mode         => 'modify',
+                           -conferenceid => $EventID, 
+                           -groupids     => \@MeetingModifyGroupIDs);
+    $SessionID = &InsertSession(-eventid => $EventID, -date     => $SessionDate,
+                                -title   => $Short,   -location => $Location,
+                                -description => $SessionDescription);
+    &InsertMeetingOrder(-sessionid => $SessionID);
+  } elsif ($SingleSession && $Mode eq "modify") {
+    &UpdateEvent(-eventid => $EventID, -eventgroupid => $EventGroupID,  
+                 -location => $Location, -url => $URL, 
+                 -startdate => $SessionDate, -enddate  => $SessionDate,
+                 -shortdescription => $Short, -longdescription => $Long,
+                 -showalltalks => 1);
+    &MeetingSecurityUpdate(-mode         => 'access',
+                           -conferenceid => $EventID, 
+                           -groupids     => \@MeetingViewGroupIDs);
+    &MeetingSecurityUpdate(-mode         => 'modify',
+                           -conferenceid => $EventID, 
+                           -groupids     => \@MeetingModifyGroupIDs);
+    &UpdateSession(-sessionid => $SessionID, -date     => $SessionDate,
+                   -title     => $Short,     -location => $Location,
+                   -description => $SessionDescription);
+    my $MeetingOrderUpdate = $dbh -> prepare(
+         "update MeetingOrder set SessionOrder=1 where SessionID=?");
+    $MeetingOrderUpdate -> execute($SessionID);
+  } else {
+
+  # Update Session parameters, refetch
+
+    &UpdateSession(-sessionid => $SessionID, -date => $SessionDate, 
+                   -title => $SessionTitle, -description => $SessionDescription,
+                   -location => $SessionLocation);
+  }                 
   &ClearSessions;
   &FetchSessionByID($SessionID);
 
@@ -164,11 +258,22 @@ if ($Mode eq "modify") {
     my $SessionTalkID   = 0;
     
     my $TalkConfirmed   = $TalkConfirmFlags{$SessionOrderID};
+    my $TalkReserve     = $TalkReserveFlags{$SessionOrderID};
     my $TalkDocID       = $params{"talkdocid-$SessionOrderID"};
     my $NewSessionID    = $params{"newsessionid-$SessionOrderID"};
     
+    my @TopicHints  = split /\0/,$params{"topics-$SessionOrderID"};
+    my @AuthorHints = ();
+    if ($params{"authors-$SessionOrderID"}) {
+      @AuthorHints = split /\0/,$params{"authors-$SessionOrderID"};
+    } elsif ($params{"authortext-$SessionOrderID"}) { 
+      require "AuthorSQL.pm";
+      my $AuthorText = $params{"authortext-$SessionOrderID"};
+      @AuthorHints = &ProcessManualAuthors($AuthorText);
+    }
+    
     if (grep /n/,$SessionOrderID) { # Key on SessionOrderID to see if insert or update.	
-      if ($TalkTitle || $TalkNote || $TalkDocID) {
+      if ($TalkTitle || $TalkNote || $TalkDocID) { # Insert
 	++$TalksUpdated;
 	if ($TalkSeparatorFlags{$SessionOrderID}) {
           my $TalkSeparatorInsert = $dbh -> prepare(
@@ -184,9 +289,7 @@ if ($Mode eq "modify") {
            "values (0,?,?,?,?,?,?)");
           $TalkInsert          -> execute($SessionID,$TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote);
           $SessionTalkID = $TalkInsert -> {mysql_insertid}; # Works with MySQL only
-
-          my @TopicHints  = split /\0/,$params{"topics-$SessionOrderID"}; 
-          my @AuthorHints = split /\0/,$params{"authors-$SessionOrderID"}; 
+          $NewSessionTalkMap{$TalkOrder} = $SessionTalkID;
           &InsertTopicHints($SessionTalkID,@TopicHints);
           &InsertAuthorHints($SessionTalkID,@AuthorHints);
 	}
@@ -195,7 +298,7 @@ if ($Mode eq "modify") {
          "(SessionOrderID, TalkOrder, SessionTalkID, TalkSeparatorID) ". 
          "values (0,?,?,?)");
 	$SessionOrderInsert -> execute($TalkNewOrder,$SessionTalkID,$TalkSeparatorID);
-      }  
+      } # End of Insert 
     } else {
       $TalkSeparatorID = $SessionOrders{$SessionOrderID}{TalkSeparatorID};
       $SessionTalkID   = $SessionOrders{$SessionOrderID}{SessionTalkID};
@@ -248,16 +351,6 @@ if ($Mode eq "modify") {
            "where SessionTalkID=?");
           $SessionTalkUpdate -> execute($TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote,$SessionTalkID);
 
-          my @TopicHints  = split /\0/,$params{"topics-$SessionOrderID"};
-          
-          my @AuthorHints = ();
-          if ($params{"authors-$SessionOrderID"}) {
-            @AuthorHints = split /\0/,$params{"authors-$SessionOrderID"};
-          } elsif ($params{"authortext-$SessionOrderID"}) { 
-            require "AuthorSQL.pm";
-            my $AuthorText = $params{"authortext-$SessionOrderID"};
-            @AuthorHints = &ProcessManualAuthors($AuthorText);
-          }
           &InsertTopicHints($SessionTalkID,@TopicHints);
           &InsertAuthorHints($SessionTalkID,@AuthorHints);
           if ($NewSessionID) { # Move to new session
@@ -270,13 +363,35 @@ if ($Mode eq "modify") {
         my $SessionOrderUpdate = $dbh -> prepare(
          "update SessionOrder set TalkOrder=? where SessionOrderID=?");
         $SessionOrderUpdate -> execute($TalkNewOrder,$SessionOrderID);
-      }  
+      } 
     }  
+
+### Reserve document if reserve checked
+    if ($TalkReserve) {  
+      if ($SessionTalkID && !$TalkConfirmed && @AuthorHints) {
+        require "DocumentUtilities.pm";
+        require "MiscSQL.pm";
+        my $TypeID = &FetchDocTypeByName("Talk") || 1; 
+        my ($NewDocumentID,$NewDocRevID) 
+          = &AddDocument(-version     => "reserve",     -title       => $TalkTitle, 
+                         -typeid      => $TypeID,       -requesterid => @AuthorHints[0], 
+                         -authorids   => \@AuthorHints, -topicids    => \@TopicHints, 
+                         -eventids    => [$EventID],    -viewids     => \@MeetingViewGroupIDs, 
+                         -modifyids   => \@MeetingViewGroupIDs);
+        my $SessionTalkUpdate = $dbh -> prepare(
+           "update SessionTalk set DocumentID=?,Confirmed=? where SessionTalkID=?");
+        $SessionTalkUpdate -> execute($NewDocumentID,1,$SessionTalkID);
+      } else {
+        push @WarnStack,"You cannot reserve a document if there is a confirmed document already or if you don't specify authors.";
+      }
+    }   
   }
 }
 
 &EndPage(@ErrorStack);
 &WarnPage(@WarnStack);
+
+### Prepare to display form (get required info)
 
 &ReHintTalksBySessionID($SessionID); 
 &ClearSessionTalks();
@@ -287,69 +402,172 @@ my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
 my @TalkSeparatorIDs = &FetchTalkSeparatorsBySessionID($SessionID);
 my @SessionOrderIDs  = &FetchSessionOrdersBySessionID($SessionID);
 
-# Sort talks and separators (subroutine)
+# Sort talks and separators
 
 @SessionOrderIDs = sort SessionOrderIDByOrder @SessionOrderIDs;
-
-# Display all info on all talks plus a number of blanks
-
-&PrintSessionHeader($SessionID); 
 
 my $SessionDefaultTitle       = $Sessions{$SessionID}{Title};
 my $SessionDefaultDescription = $Sessions{$SessionID}{Description};
 my $SessionDefaultLocation    = $Sessions{$SessionID}{Location};
 my $SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
 
+# Defaults for SingleSessionMode;
+my @MeetingModifyDefaults = ();
+my @MeetingViewDefaults   = ();
+my $DefaultShortDescription;
+my $DefaultLongDescription;
+my $DefaultEventLocaton;
+my $DefaultEventURL;
+my $DefaultEventGroupID;
+
+if ($SingleSession) {
+  require "MeetingSecuritySQL.pm";
+  require "SQLUtilities.pm";
+
+  my ($DefaultEventTime,$DefaultEventDate);
+  if ($Mode eq "new") {
+    $DefaultEventTime = "9:00:00";
+    if ($SessionDay && $SessionMonth && $SessionYear) {
+      $DefaultEventDate = "$SessionYear-$SessionMonth-$SessionDay";
+    } else {  
+      $DefaultEventDate = &SQLNow(-dateonly => $TRUE);
+    }  
+    @MeetingViewDefaults  = ();
+    @MeetingModifyDefaults = &FindUsersGroups();
+    $SessionDefaultDateTime = "$DefaultEventDate $DefaultEventTime";
+  } elsif ($EventID) {
+    &FetchConferenceByConferenceID($EventID);
+    $DefaultEventGroupID  = $Conferences{$EventID}{EventGroupID};
+    $DefaultShortDescription = $Conferences{$EventID}{Title};
+    $DefaultLongDescription  = $Conferences{$EventID}{LongDescription};
+    $DefaultEventLocation    = $Conferences{$EventID}{Location};
+    $DefaultEventURL         = $Conferences{$EventID}{URL};
+    foreach my $MeetingViewID (&GetMeetingSecurityGroups($EventID)) {
+      my $GroupID = $MeetingSecurities{$MeetingViewID}{GroupID};
+      push @MeetingViewDefaults,$GroupID;
+    }
+    foreach my $MeetingModifyID (&GetMeetingModifyGroups($EventID)) {
+      my $GroupID = $MeetingModify{$MeetingModifyID}{GroupID};
+      push @MeetingModifyDefaults,$GroupID;
+    }
+  }  
+}
+
+### Display form
+
 print $query -> start_multipart_form('POST',"$SessionModify");
-$query -> param('sessionid',$SessionID);
-print $query -> hidden(-name => 'sessionid', -default => $SessionID);
-$query -> param('mode','modify');
-print $query -> hidden(-name => 'mode', -default => 'modify');
+print "<div class=\"SessionEntryForm\">\n";
+if ($SingleSession && $Mode eq "new") { 
+  $query -> param('mode','create');
+  print $query -> hidden(-name => 'singlesession', -default => 1);
+  print $query -> hidden(-name => 'mode',          -default => "create");
+} elsif ($SingleSession) {
+  $query -> param('sessionid',$SessionID);
+  $query -> param('mode','modify');
+  print $query -> hidden(-name => 'singlesession', -default => 1);
+  print $query -> hidden(-name => 'sessionid',     -default => $SessionID);
+  print $query -> hidden(-name => 'mode',          -default => 'modify');
+} else {
+  $query -> param('sessionid',$SessionID);
+  $query -> param('mode','modify');
+  print $query -> hidden(-name => 'sessionid',     -default => $SessionID);
+  print $query -> hidden(-name => 'mode',          -default => 'modify');
+}
 
-print "<table cellpadding=10 align=center>\n";
-print "<tr>\n";
- print "<td>\n";              
-  &TextField(-name      => 'sessiontitle', -size     => 40, 
-             -maxlength => 128,            -default  => $SessionDefaultTitle, 
-             -helplink  => 'sessioninfo',  -helptext => 'Session Title');
- print "</td>\n";
- print "<td>\n";  
-  &TextField(-name      => 'sessionlocation', -size     => 30, 
-             -maxlength => 128,            -default  => $SessionDefaultLocation, 
-             -helplink  => 'sessioninfo',  -helptext => 'Session Location');
-print "</td>\n";
-print "</tr>\n";
+if ($SingleSession) {
+  my %RequiredEntries = ();
+     $RequiredEntries{StartDate}        = $TRUE;
+     $RequiredEntries{EndDate}          = $FALSE;
+     $RequiredEntries{LongDescription}  = $FALSE; # Can get from ShortDescription
+     $RequiredEntries{ShortDescription} = $TRUE;
+     $RequiredEntries{EventGroup}       = $TRUE;
+  print "<table class=\"HighPaddedTable\">\n";
 
-print "<tr valign=top>\n";
- print "<td>\n";                
+  print "<tr>\n";
+  print "<td colspan=\"4\">Required fields are marked with $RequiredMark. \n";
+  print "</td>\n";
+  print "</tr>\n";
+  print "<tr>\n";
+  print "<td rowspan=\"2\">\n"; 
+  &EventGroupSelect(-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID]);
+  print "</td>\n";
+  print "<td rowspan=\"2\">\n";
+  &ShortDescriptionBox(-name    => "shortdesc", -helptext => "Short Description", 
+                      -required => $RequiredEntries{ShortDescription},
+                       -default => $DefaultShortDescription);
+  &LongDescriptionBox(-required => $RequiredEntries{LongDescription}, 
+                      -default  => $DefaultLongDescription);
+  print "<div>\n";
+  &DateTimePulldown(-name    => "session", -helptext => "Start Date and Time", -helplink    => 'sessioninfo',
+                    -oneline => $TRUE,     -onetime  => $TRUE,                 -granularity => 15,
+                    -default => $SessionDefaultDateTime, -required => $RequiredEntries{StartDate} );
+  print "</div>\n";
+  &LocationBox(-default  => $DefaultEventLocation);       
+  &EventURLBox(-default  => $DefaultEventURL     );  
+  print "</td>\n";
+  print "<td>\n";
+  &SecurityScroll(-addpublic => 'true',
+                  -name      => 'meetingviewgroups', 
+                  -helplink  => 'meetingviewgroups',
+                  -helptext  => 'Viewable by',
+                  -multiple  => true,
+                  -default   => \@MeetingViewDefaults,
+                  -size      => 8);
+  print "</td>\n";
+  print "<td>\n";
+  &SecurityScroll(-name      => 'meetingmodifygroups', 
+                  -helplink  => 'meetingmodifygroups',
+                  -helptext  => 'Modifiable by',
+                  -multiple  => true,
+                  -default   => \@MeetingModifyDefaults,
+                  -size      => 8);
+  print "</td>\n";
+  print "</tr>\n";
+  print "<tr>\n";
+  print "<td colspan=\"2\">\n";
   &TextArea(-name     => 'sessiondescription', -columns => 40, -rows => 4,
             -default  => $SessionDefaultDescription, 
             -helplink => 'sessioninfo', -helptext => 'Session Description');
- print "</td>\n";
- print "<td align=right>\n";  
- my $Header = &FormElementTitle(-helptext => "Start Date and Time", -helplink  => 'sessioninfo');
- print $Header;
- &SessionDateTimePullDown(-default => $SessionDefaultDateTime);            
- print "</td>\n";
-print "</tr>\n";
-print "</table>\n";
+  print "</td>\n";
+  print "</tr>\n";
+  print "</table>\n";
+} else {
+  print "<table class=\"HighPaddingTable Centered\">\n";
+  print "<tr>\n";
+  print "<td>\n";              
+  &TextField(-name      => 'sessiontitle', -size     => 40, 
+             -maxlength => 128,            -default  => $SessionDefaultTitle, 
+             -helplink  => 'sessioninfo',  -helptext => 'Session Title');
+  print "</td>\n";
+  print "<td>\n";  
+  &TextField(-name      => 'sessionlocation', -size     => 30, 
+             -maxlength => 128,            -default  => $SessionDefaultLocation, 
+             -helplink  => 'sessioninfo',  -helptext => 'Session Location');
+  print "</td>\n";
+  print "</tr>\n";
 
-print "<table cellpadding=10>\n";
+  print "<tr>\n";
+  print "<td>\n";                
+  &TextArea(-name     => 'sessiondescription', -columns => 40, -rows => 4,
+            -default  => $SessionDefaultDescription, 
+            -helplink => 'sessioninfo', -helptext => 'Session Description');
+  print "</td>\n";
+  print "<td>\n";  
+  &DateTimePulldown(-name    => "session", -helptext => "Start Date and Time", -helplink    => 'sessioninfo',
+                    -oneline => $TRUE,     -onetime  => $TRUE,                 -granularity => 15,
+                    -default => $SessionDefaultDateTime, -required => $RequiredEntries{StartDate} );
+  print "</td>\n";
+  print "</tr>\n";
+  print "</table>\n";
+}
 
-print "<tr valign=top>\n";
- print "<td>\n"; 
-  &TalkEntryForm(@SessionOrderIDs);   
- print "</td>\n";
-print "</tr>\n";
+&TalkEntryForm(@SessionOrderIDs);   
+print "<p class=\"SubmitCell\">\n";
+print $query -> submit (-value => "Modify Session and Talks");
+print "</p>\n";
 
-print "<tr valign=top>\n";
- print "<td align=center>\n";
-  print $query -> submit (-value => "Modify Session and Talks");
- print "</td>\n";
-print "</tr>\n";
-
-print "</table>\n";
-
+print "</div>\n";
+print $query -> end_multipart_form;
 my $NavBarText = "Display&nbsp;Session";
 my $NavBarURL  = "$DisplayMeeting?sessionid=$SessionID";
 &DocDBNavBar($NavBarText,$NavBarURL);

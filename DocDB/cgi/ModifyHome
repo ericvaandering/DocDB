@@ -58,7 +58,7 @@ if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
 
 print "<div id=\"Header3Col\">\n";
 print "<h4>\n";
-print "Click any <span class=\"Help\">red link</span> for quick help.\n";
+print "Click any <span class=\"Help\">highlighted link</span> for quick help.\n";
 print "</h4>\n";
 print "</div>\n";  # Header3Col
 
@@ -77,7 +77,7 @@ print "<p><strong><a href=\"$DocDBHome\">About DocDB</a></strong></p>\n";
 print "</div>\n";  # LeftColumn3Col
 
 print "<div id=\"MainColumn3Col\">\n";
-print "<strong>Shortcuts for putting information into the database: ";
+print "<strong>Document Management: ";
 print "(<a "; &HelpLink("modifytypes"); 
 print "Which option do I choose?</a>)</strong>\n";
 
@@ -92,7 +92,6 @@ print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
 print " file(s) on your <b><a "; 
 &HelpLink("uploadmethod"); 
 print "local computer</a></b> \n"; 
-#print "(no need to reserve the document).\n";
 print $query -> hidden(-name => 'mode',    -default => 'add');
 print $query -> hidden(-name => 'upload',    -default => 'file');
 print "\n</div>\n",$query -> endform,"\n\n";
@@ -171,15 +170,49 @@ if (&CanAdminister()) { # Delete Form
 }
 print "</ul>\n";
 
+if (&CanCreateMeeting()) {
+  print "<strong>Event Management</strong>\n";
+  print "<ul>\n";
+
+  ### Full meeting form
+
+  print "<li>\n"; 
+  print $query -> startform('POST',$MeetingModify),"<div>\n";
+  print $query -> submit (-value => "Create");
+  print " a new event with multiple sessions"; 
+  print "\n</div>\n",$query -> endform,"\n\n";
+  print "</li>\n"; 
+
+  ### Reduced meeting form
+
+  print "<li>\n"; 
+  print $query -> startform('POST',$SessionModify),"<div>\n";
+  print $query -> hidden(-name => 'singlesession', -default => 1);
+  print $query -> hidden(-name => 'mode', -default => "new");
+  print $query -> submit (-value => "Create");
+  print " a new event with only one session"; 
+  print "\n</div>\n",$query -> endform,"\n\n";
+  print "</li>\n"; 
+
+  ### No sessions form
+
+  print "<li>\n"; 
+  print $query -> startform('POST',$MeetingModify),"<div>\n";
+  print $query -> hidden(-name => 'nosessions',    -default => 1);
+  print $query -> submit (-value => "Create");
+  print " an externally managed event (e. g. a conference)"; 
+  print "\n</div>\n",$query -> endform,"\n\n";
+  print "</li>\n"; 
+  
+  print "<li>Modify an  <a href=\"$ListAllMeetings?mode=modify\">existing
+             event</a> (choose event on next page)</li>\n";
+
+  print "</ul>\n";
+}
+
 print "<p><strong>Database maintenance:</strong></p>\n";
 print "<ul>\n";
 print "<li>Add an <a href=\"$AuthorAddForm\">author</a></li>\n";
-print "<li>Add a  <a href=\"$ConferenceAddForm\">conference</a></li>\n";
-if (&CanCreateMeeting()) {
-  print "<li>Create a <a href=\"$MeetingModify\">new meeting</a> or modify an 
-             <a href=\"$ListAllMeetings?mode=modify\">existing meeting</a>
-             (with talks)</li>\n";
-}
 print "</ul>\n";
            
 if (&CanAdminister()) {
@@ -188,6 +221,7 @@ if (&CanAdminister()) {
   print "<li>Add a <a href=\"$TopicAddForm\">minor topic</a> (sub-topic)</li>\n";
   print "<li>Administer <a href=\"$GroupAdministerForm\">groups</a> of users</li>\n";
   print "<li>Administer <a href=\"$EmailAdministerForm\">personal accounts</a></li>\n";
+  print "<li>Administer <a href=\"$EventAdministerForm\">events</a></li>\n";
   print "<li>Administer <a href=\"$KeywordAdministerForm\">keywords and keyword groups</a></li>\n";
   print "<li>Administer <a href=\"$AdministerForm\">authors, institutions, topics</a>, and all other lists</li>\n";
   print "</ul>\n";

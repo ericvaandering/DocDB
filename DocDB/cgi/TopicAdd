@@ -50,10 +50,6 @@ $MajorTopicID     = $params{majortopic};
 $ShortDescription = $params{short};
 $LongDescription  = $params{long};
 
-if (&MajorIsGathering($MajorTopicID)) {
-  push @ErrorStack,"You cannot add conferences or meetings with this form, use the 
-       <a href=\"$AdministerForm\">Administration</a> form instead.";
-}       
 &EndPage(@ErrorStack);
 
 $topic_insert -> execute($MajorTopicID,$ShortDescription,$LongDescription);

@@ -57,14 +57,14 @@ sub DocDBHeader {
     @PublicCSS = ("","Public");
   }
   
-  foreach my $ProjectCSS ("",$ShortProject) {
-    foreach my $PublicCSS (@PublicCSS) {
-      foreach my $ScriptCSS ("",$ScriptName) {
+  foreach my $ScriptCSS ("",$ScriptName) {
+    foreach my $ProjectCSS ("",$ShortProject) {
+      foreach my $PublicCSS (@PublicCSS) {
         foreach my $BrowserCSS ("","_IE") {
           my $CSSFile = $CSSDirectory."/".$ProjectCSS.$PublicCSS."DocDB".$ScriptCSS.$BrowserCSS.".css";
           my $CSSURL  =   $CSSURLPath."/".$ProjectCSS.$PublicCSS."DocDB".$ScriptCSS.$BrowserCSS.".css";
           if (-e $CSSFile) {
-            if ($BrowserCSS eq "_IE") {
+            if ($BrowserCSS eq "_IE") { # Use IE format for including. Hopefully we can not give these to IE7
               print "<!--[if IE]>\n";
               print "<link rel=\"stylesheet\" href=\"$CSSURL\" type=\"text/css\" />\n";
               print "<![endif]-->\n"; 
@@ -83,7 +83,10 @@ sub DocDBHeader {
     if ($Script eq "TopicChooser") { # Get global variables in right place
       require "Scripts.pm";
       &TopicSearchScript;
-    } 
+    } elsif  ($Script eq "EventChooser") { # Get global variables in right place
+      require "Scripts.pm";
+      &EventSearchScript;
+    }
     print "<script type=\"text/javascript\" src=\"$JSURLPath/$Script.js\"></script>\n";
   }  
 

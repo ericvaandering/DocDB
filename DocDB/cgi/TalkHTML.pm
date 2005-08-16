@@ -55,9 +55,9 @@ sub PrintSessionTalk($) {
   &FetchDocument($DocumentID);
   my $Version = $Documents{$DocumentID}{NVersions};
   unless (&CanAccess($DocumentID,$Version)) {
-    print "<tr valign=\"top\" class=\"$RowClass\">\n";
-    print "<td align=\"right\"><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";  
-    print "<td colspan=6>Not authorized to view</td>\n";
+    print "<tr class=\"$RowClass\">\n";
+    print "<td class=\"TalkTime\"><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";  
+    print "<td colspan=\"6\">Not authorized to view</td>\n";
     print "</tr>\n";
     return;
   }
@@ -71,8 +71,8 @@ sub PrintSessionTalk($) {
 
   @TopicIDs = &RemoveArray(\@TopicIDs,@IgnoreTopics);
 
-  print "<tr valign=\"top\" class=\"$RowClass\">\n";
-  print "<td align=right><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";  
+  print "<tr class=\"$RowClass\">\n";
+  print "<td class=\"TalkTime\"><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";  
   if ($Confirmed) { # Put titles in italics for unconfirmed talks
     print "<td>$Title</td>\n";
   } else {
@@ -83,10 +83,10 @@ sub PrintSessionTalk($) {
     }
     print "</td>\n";
   }
-  print "<td><nobr>$AuthorLink</nobr></td>\n";
+  print "<td>$AuthorLink</td>\n"; # v7 class and nobr
   print "<td>"; &ShortTopicListByID(@TopicIDs);   print "</td>\n";
   print "<td>"; &ShortFileListByRevID($DocRevID); print "</td>\n";
-  print "<td align=right>$Time</td>\n";
+  print "<td class=\"TalkTime\">$Time</td>\n";
   if ($Note) {
     print "<td><b>",&TalkNoteLink,"</b></td>\n";
   } else {
@@ -96,21 +96,25 @@ sub PrintSessionTalk($) {
 }
 
 sub TalkEntryForm (@) {
+  require "FormElements.pm";
+  require "DocumentHTML.pm";
+  
   my @SessionOrderIDs = @_; 
 
   require "Scripts.pm";
-  print "<table cellpadding=3>\n";
-  print "<tr valign=bottom>\n";
-  print "<th><b><a "; &HelpLink("sessionorder");  print "Order,</a></b><br/>\n";
-  print "    <b><a "; &HelpLink("talkconfirm");   print "Confirm</a><br/>\n";
-  print "or  <b><a "; &HelpLink("talkdelete");    print "Delete</a></td>\n";
-  print "<th><b><a "; &HelpLink("talkseparator"); print "Break</a></th>\n";
-  print "<th><b><a "; &HelpLink("talkdocid");     print "Doc. #</a></th>\n";
-  print "<th><b><a "; &HelpLink("talkinfo");      print "Talk Title & Note</a></th>\n";
-  print "<th><b><a "; &HelpLink("talktime");      print "Time</a></th>\n";
-  print "<th><b><a "; &HelpLink("authorhint");    print "Author Hints</a></b>\n";
-  print "<th><b><a "; &HelpLink("topichint");     print "Topic Hints</a></b>\n";
+  print "<table id=\"TalkEntryTable\" class=\"LowPaddedTable Alternating CenteredTable\">\n";
+  print "<thead>\n";
+  print "<tr>\n";
+  print "<th>",&FormElementTitle(-helplink => "sessionorder", -helptext => "Order,",  -nocolon => $TRUE);
+  print        &FormElementTitle(-helplink => "talketc",      -helptext => "etc.", -nocolon => $TRUE);
+  print "</th>\n";
+  print "<th>",&FormElementTitle(-helplink => "talkdocid"    , -helptext => "Doc. #",            -nocolon => $TRUE),"</th>\n";
+  print "<th>",&FormElementTitle(-helplink => "talkinfo"     , -helptext => "Talk Title &amp; Note", -nocolon => $TRUE),"</th>\n";
+  print "<th>",&FormElementTitle(-helplink => "talktime"     , -helptext => "Time",              -nocolon => $TRUE),"</th>\n";
+  print "<th>",&FormElementTitle(-helplink => "authorhint"   , -helptext => "Author Hints",      -nocolon => $TRUE),"</th>\n";
+  print "<th>",&FormElementTitle(-helplink => "topichint"    , -helptext => "Topic Hints",       -nocolon => $TRUE),"</th>\n";
   print "</tr>\n";
+  print "</thead>\n";
   
   # Sort session IDs by order
   
@@ -124,6 +128,11 @@ sub TalkEntryForm (@) {
   foreach $SessionOrderID (@SessionOrderIDs) {
   
     ++$TalkOrder;
+    if ($TalkOrder % 2) { 
+      $RowClass = "Odd";
+    } else {
+      $RowClass = "Even";
+    }    
     $TalkDefaultOrder = $TalkOrder;  
     my $EntryTimeStamp;
     
@@ -168,37 +177,39 @@ sub TalkEntryForm (@) {
         $EntryTimeStamp       = $TalkSeparators{$TalkSeparatorID}{TimeStamp}; 
       }
     } 
+    print "<tbody class=\"$RowClass\">\n";
+    print "<tr>\n";
 
-    print "<tr valign=top>\n";
-    $query -> param('sessionorderid',$SessionOrderID);
-    print $query -> hidden(-name => 'sessionorderid', -default => $SessionOrderID);
-    print $query -> hidden(-name => 'timestamp',      -default => $EntryTimeStamp);
-
-    print "<td align=left rowspan=2>\n"; &TalkOrder; print "<br/>\n";
-    &TalkConfirm($SessionOrderID);    print "<br/>\n";
-    &TalkDelete($SessionOrderID);     print "</td>\n";
+    print "<td rowspan=\"2\">\n"; 
+     $query -> param('sessionorderid',$SessionOrderID);
+     print $query -> hidden(-name => 'sessionorderid', -default => $SessionOrderID);
+     print $query -> hidden(-name => 'timestamp',      -default => $EntryTimeStamp);
+     &TalkOrder;                       print "<br/>\n";
+     &TalkConfirm($SessionOrderID);    
+     &TalkReserve($SessionOrderID);    
+     &TalkDelete($SessionOrderID);     
+     &TalkSeparator($SessionOrderID);     
+    print "</td>\n";
     
-    print "<td align=center rowspan=2>\n"; &TalkSeparator($SessionOrderID); print "</td>\n";
-    print "<td align=center rowspan=2>\n"; &TalkDocID($SessionOrderID);     print "</td>\n";
-    print "<td>\n";           &TalkTitle($TalkDefaultTitle); print "</td>\n";
-    print "<td rowspan=3>\n"; &TalkTimePullDown;             print "</td>\n";
-    print "<td rowspan=3>\n"; &TalkAuthors($SessionOrderID); print "</td>\n";
-    print "<td rowspan=3>\n"; &TalkTopics($SessionOrderID);  print "</td>\n";
+    print "<td rowspan=\"2\">\n"; &TalkDocID($SessionOrderID);     print "</td>\n";
+    print "<td>\n";               &TalkTitle($TalkDefaultTitle);   print "</td>\n";
+    print "<td rowspan=\"3\">\n"; &TalkTimePullDown;               print "</td>\n";
+    print "<td rowspan=\"3\">\n"; &TalkAuthors($SessionOrderID);   print "</td>\n";
+    print "<td rowspan=\"3\">\n"; &TalkTopics($SessionOrderID);    print "</td>\n";
     print "</tr>\n";
-    print "<tr valign=top>\n";
+    print "<tr>\n";
     print "<td>\n"; &TalkNote; print "</td>\n";
     print "</tr>\n";
-    print "<tr valign=top>\n";
-    print "<td colspan=3>\n"; &TalkNewSession($SessionOrderID); print "</td>\n";
+    print "<tr>\n";
+    print "<td colspan=\"2\">\n"; &TalkNewSession($SessionOrderID); print "</td>\n";
     if ($TalkDefaultDocID && $TalkSeparatorDefault ne "Yes") {
-      my $TitleLink = &NewDocumentLink($TalkDefaultDocID,undef,"title");
-      print "<td colspan=2>Match: $TitleLink</td>\n";
+      my $TitleLink = &NewerDocumentLink(-docid => $TalkDefaultDocID, -titlelink => $TRUE);
+      print "<td colspan=\"2\">Match: $TitleLink</td>\n";
     } else {
-      print "<td colspan=2>&nbsp;</td>\n";
+      print "<td colspan=\"2\">&nbsp;</td>\n";
     }    
     print "</tr>\n";
-    print "<tr valign=top><td colspan=7><hr width=95%></td>\n";
-    print "</tr>\n";
+    print "</tbody>\n";
   }
   print "</table>\n";
 }
@@ -217,30 +228,41 @@ sub TalkNote {
 
 sub TalkDelete ($) {
   my ($SessionOrderID) = @_;
-  print "<nobr>";
   if ($TalkSeparatorDefault eq "Yes" || $TalkSeparatorDefault eq "No") {
     print $query -> checkbox(-name  => "talkdelete", 
                              -value => "$SessionOrderID", -label => 'Delete');
-  } else {
-    print "&nbsp;\n";
+    print "<br/>\n";
   }
-  print "</nobr>";
 }
 
 sub TalkConfirm ($) {
   my ($SessionOrderID) = @_;
   
-  print "<nobr>";
   if ($TalkSeparatorDefault eq "Yes") {
-    print "&nbsp;\n";
+#    print "&nbsp;\n";
   } elsif ($TalkDefaultConfirmed) {  
     print $query -> checkbox(-name  => "talkconfirm", -checked => 'checked', 
                              -value => "$SessionOrderID", -label => 'Confirm');
+    print "<br/>\n";
   } else {  
     print $query -> checkbox(-name  => "talkconfirm", 
                              -value => "$SessionOrderID", -label => 'Confirm');
+    print "<br/>\n";
   }
-  print "</nobr>";
+}
+
+sub TalkReserve ($) {
+  my ($SessionOrderID) = @_;
+  
+  if ($TalkSeparatorDefault eq "Yes") {
+#    print "&nbsp;\n";
+  } elsif ($TalkDefaultConfirmed) {  
+#    print "&nbsp;\n";
+  } else {  
+    print $query -> checkbox(-name  => "talkreserve", 
+                             -value => "$SessionOrderID", -label => 'Reserve');
+    print "<br/>\n";
+  }
 }
 
 sub TalkOrder {
@@ -254,11 +276,14 @@ sub TalkSeparator ($) {
 
   if ($TalkSeparatorDefault eq "Yes") {
     print "Yes\n";	      
+    print "<br/>\n";
   } elsif ($TalkSeparatorDefault eq "No") {
     print "No\n";	      
+    print "<br/>\n";
   } else {
     $query -> param('talkseparator', "");
     print $query -> checkbox(-name => "talkseparator", -value => "$SessionOrderID", -label => 'Break');
+    print "<br/>\n";
   }
 }
 
@@ -309,7 +334,7 @@ sub TalkAuthors ($) {
         $query -> param("authors-$SessionOrderID","");
       }  
       &AuthorScroll(-helplink => "", -name => "authors-$SessionOrderID", 
-                    -default  => \@TalkDefaultAuthorHints);
+                    -default  => \@TalkDefaultAuthorHints, -multiple => $TRUE);
     }
   } 
 }

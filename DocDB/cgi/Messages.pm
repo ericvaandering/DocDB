@@ -44,7 +44,10 @@ $Msg_ModDocTypeEmpty  = "You must select a document type to modify or delete.";
 $Msg_ModEUserEmpty    = "You must select a user to modify or delete.";
 
 $Msg_ModTopicEmpty    = "You must select a topic to modify or delete.";
-$Msg_ModConfEmpty     = "You must select a conference to modify or delete.";
+$Msg_ModConfEmpty     = "You must select an event to modify or delete.";
+
+$Msg_DelFullEvtGroup  = "You can't delete event groups with events. Delete the events first before deleting the group.";
+$Msg_DelFullEvent     = "This event has associated documents. Not deleted.";
 
 # Messages for document creation, modification, display
 
@@ -68,6 +71,7 @@ $Msg_TopicShortIgnored = "Your short description of this meeting has been ".
 # Messages for meeting/session creation/modification/access
 
 $Msg_MeetNoSessions     = "This meeting was created with no sessions. You will have to add at least one session before adding talks.";
+$Msg_MeetOnlyOne        = "This page can only be used to modify short meetings (just one session)";
 $Msg_SessionBlankDelete = "Setting session titles to blank will not delete them.";
 
 $Msg_MeetNoAccess       = "You do not have permission to view this meeting.";

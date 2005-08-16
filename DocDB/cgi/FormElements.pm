@@ -42,13 +42,13 @@ sub DateTimePulldown (%) { # Note capitalization
   
   my $Name        = $Params{-name}        || "date";
   my $Disabled    = $Params{-disabled}    || 0;
-  my $DateOnly    = $Params{-dateonly}    || 0; 
-  my $TimeOnly    = $Params{-timeonly}    || 0; 
-  my $OneTime     = $Params{-onetime}     || 0; # Not Used (do like 5:45 in one pulldown)
+  my $DateOnly    = $Params{-dateonly}    || 0;
+  my $TimeOnly    = $Params{-timeonly}    || 0;
+  my $OneTime     = $Params{-onetime}     || 0;
   my $OneLine     = $Params{-oneline}     || 0;
-  my $Granularity = $Params{-granularity} || 5; # Not Used
+  my $Granularity = $Params{-granularity} || 5;
   
-  my @Defaults = @{$Params{-default}}; # Not Used
+  my $Default     = $Params{-default};
 
   my $HelpLink  = $Params{-helplink}  || "";
   my $HelpText  = $Params{-helptext}  || "Date & Time";
@@ -66,8 +66,31 @@ sub DateTimePulldown (%) { # Note capitalization
   $Year += 1900;
   $Min = (int (($Min+($Granularity/2))/$Granularity))*$Granularity; # Nearest $Granularity minutes
 
+  my $DefaultHHMM;
+  if ($Default) {
+    my ($DefaultDate,$DefaultTime);
+    if ($DateOnly) { 
+      $DefaultDate = $Default;
+    } elsif ($TimeOnly) {
+      $DefaultTime = $Default;
+    } else {
+      ($DefaultDate,$DefaultTime) = split /\s+/,$Default;
+    }  
+
+    ($Year,$Mon,$Day) = split /-/,$DefaultDate;
+    $Day  = int($Day);
+    $Mon  = int($Mon);
+    $Year = int($Year);
+    --$Mon;
+    ($Hour,$Min,$Sec) = split /:/,$DefaultTime;
+    $Hour = int($Hour);
+    $Min  = int($Min);
+    $Sec  = int($Sec);
+    $DefaultHHMM = sprintf "%2.2d:%2.2d",$Hour,$Min;
+  }
+  
   my @Years = ();
-  for (my $i = $FirstYear; $i<=$Year; ++$i) { # $FirstYear - current year
+  for (my $i = $FirstYear; $i<=$Year+1; ++$i) { # $FirstYear - current year + 1
     push @Years,$i;
   }  
 
@@ -86,6 +109,13 @@ sub DateTimePulldown (%) { # Note capitalization
     push @Minutes,(sprintf "%2.2d",$i);
   }  
   
+  my @Times = ();
+  for (my $Hour = 0; $Hour<=23; ++$Hour) {
+    for (my $Min = 0; $Min<=59; $Min=$Min+$Granularity) {
+      push @Times,sprintf "%2.2d:%2.2d",$Hour,$Min;
+    }  
+  }  
+  
   my $ElementTitle = &FormElementTitle(-helplink  => $HelpLink , 
                                        -helptext  => $HelpText ,
                                        -extratext => $ExtraText,
@@ -94,22 +124,29 @@ sub DateTimePulldown (%) { # Note capitalization
                                        -required  => $Required );
   print $ElementTitle,"\n";                                     
 
+  unless ($DateOnly) {
+    if ($OneTime) {
+      print $query -> popup_menu (-name => $Name."time", -values => \@Times,   -default => $DefaultHHMM, $Booleans);
+    } else {
+      print $query -> popup_menu (-name => $Name."hour", -values => \@Hours,   -default => $Hour, $Booleans);
+      print "<b> : </b>\n";
+      print $query -> popup_menu (-name => $Name."min",  -values => \@Minutes, -default => $Min, $Booleans);
+    }
+  }
+  unless ($OneLine || $DateOnly || $TimeOnly) {
+    print "<br\>\n";
+  } 
+  if ($OneLine) {
+    print "&nbsp;\n";
+  } 
   unless ($TimeOnly) {
     print $query -> popup_menu (-name => $Name."day",-values => \@Days, -default => $Day, $Booleans);
     print $query -> popup_menu (-name => $Name."month",-values => \@AbrvMonths, -default => $AbrvMonths[$Mon], $Booleans);
     print $query -> popup_menu (-name => $Name."year",-values => \@Years, -default => $Year, $Booleans);
   }
-  unless ($OneLine || $DateOnly || $TimeOnly) {
-    print "<br>\n";
-  }  
-  unless ($DateOnly) {
-    print $query -> popup_menu (-name => $Name."hour",-values => \@Hours, -default => $Hour, $Booleans);
-    print "<b> : </b>\n";
-    print $query -> popup_menu (-name => $Name."min",-values => \@Minutes, -default => $Min, $Booleans);
-  }
 }
 
-sub DateTimePullDown {
+sub DateTimePullDown { #FIXME: Replace with DateTimePulldown
   my ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
   $year += 1900;
   $min = (int (($min+3)/5))*5; # Nearest five minutes
@@ -149,7 +186,7 @@ sub DateTimePullDown {
   print $query -> popup_menu (-name => 'overmin',-values => \@minutes, -default => $min);
 }
 
-sub StartDatePullDown (;%) {
+sub StartDatePullDown (;%) { #FIXME: Replace with DateTimePulldown
 
   my (%Params) = @_;
   
@@ -200,7 +237,7 @@ sub StartDatePullDown (;%) {
   print $query -> popup_menu (-name => 'startyear',-values => \@years, -default => $year, $Booleans);
 }
 
-sub EndDatePullDown (;%) {
+sub EndDatePullDown (;%) { #FIXME: Replace with DateTimePulldown
 
   my (%Params) = @_;
   
@@ -303,8 +340,6 @@ sub MultiTopicSelect (%) { # Multiple scrolling selectable lists for topics
   
   my $Required = $Params{-required}  || 0;
   my $Disabled = $Params{-disabled}  || "";
-
-  &SpecialMajorTopics;
 
   my $NCols = 4;
   my @MajorIDs = sort byMajorTopic keys %MajorTopics;
@@ -626,7 +661,7 @@ sub TextArea (%) {
                                        -nobreak   => $NoBreak  ,
                                        -required  => $Required );
   print $ElementTitle,"\n";                                     
-  print $query -> textarea (-name    => $Name,    -default   => $Default, 
+  print $query -> textarea (-name    => $Name,    -default   => &SafeHTML($Default), 
                             -columns => $Columns, -rows      => $Rows);
 } 
 
@@ -645,6 +680,10 @@ sub FormElementTitle (%) {
   my $TitleText = "";
   my $Colon = "";
   
+  unless ($HelpLink || $Text) {
+    return $TitleText;
+  }  
+  
   unless ($NoColon) {
     $Colon = ":";
   }  
@@ -652,7 +691,7 @@ sub FormElementTitle (%) {
     $TitleText .= "<b>";
   }
   if ($HelpLink) {
-    $TitleText .= "<a style=\"color: red\" href=\"Javascript:helppopupwindow(\'$DocDBHelp?term=$HelpLink\');\">";
+    $TitleText .= "<a class=\"Help\" href=\"Javascript:helppopupwindow(\'$DocDBHelp?term=$HelpLink\');\">";
     $TitleText .= "$HelpText$Colon</a>";
   } elsif ($Text) {
     $TitleText .= "$Text$Colon"; 

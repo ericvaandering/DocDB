@@ -33,17 +33,21 @@ $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
 
-my $Days     = $params{days}     || 0;
-my $TypeID   = $params{typeid}   || 0;
-my $AuthorID = $params{authorid} || 0;
+my $Days         = $params{days}         || 0;
+my $TypeID       = $params{typeid}       || 0;
+my $AuthorID     = $params{authorid}     || 0;
 
-my $TopicID  = $params{topicid}  || 0;
-my $MajorID  = $params{majorid}  || 0;
-my $Major    = $params{major}    || "";
-my $AllPubs  = $params{allpubs}  || "";
-my $AllDocs  = $params{alldocs}  || "";
+my $TopicID      = $params{topicid}      || 0;
+my $MajorID      = $params{majorid}      || 0;
+my $Major        = $params{major}        || "";
 
-my $Mode     = $params{mode}     || "";
+my $EventID      = $params{eventid}      || 0;
+my $EventGroupID = $params{eventgroupid} || 0;
+
+my $AllPubs      = $params{allpubs}      || "";
+my $AllDocs      = $params{alldocs}      || "";
+
+my $Mode         = $params{mode}         || "";
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
@@ -67,7 +71,6 @@ if ($Days) {
 ### Minor topic
 
   require "TopicSQL.pm";
-  &SpecialMajorTopics;
   &FetchMinorTopic($TopicID);
 
   $Title   = "Document List by Topic";
@@ -101,7 +104,6 @@ if ($Days) {
 ### Major topic (either number or name)
 
   require "TopicSQL.pm";
-  &SpecialMajorTopics;
   if ($Major) {
     $MajorID = &LookupMajorTopic($Major);
   } 
@@ -113,6 +115,32 @@ if ($Days) {
            "DocumentRevision,RevisionTopic,MinorTopic where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
            "and DocumentRevision.Obsolete=0 and RevisionTopic.MinorTopicID=MinorTopic.MinorTopicID and MinorTopic.MajorTopicID=?");            
   $List -> execute($MajorID);
+} elsif ($EventID) {
+
+### Event
+
+  require "MeetingSQL.pm";
+  &FetchConferenceByConferenceID($EventID);
+
+  $Title   = "Document List by Event";
+  $Message = "These documents from <span class=\"Highlight\">$Conferences{$EventID}{LongDescription}</span> are available:";
+  $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
+           "DocumentRevision,RevisionEvent where DocumentRevision.DocRevID=RevisionEvent.DocRevID ".
+           "and DocumentRevision.Obsolete=0 and RevisionEvent.ConferenceID=?");            
+  $List -> execute($EventID);
+} elsif ($EventGroupID) {
+
+### Event Group (number for now, name later)
+
+  require "MeetingSQL.pm";
+  &FetchEventGroup($EventGroupID);
+  
+  $Title   = "Document List by Events";
+  $Message = "These documents from <span class=\"Highlight\">$EventGroups{$EventGroupID}{LongDescription}</span> are available:";
+  $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
+           "DocumentRevision,RevisionEvent,Conference where DocumentRevision.DocRevID=RevisionEvent.DocRevID ".
+           "and DocumentRevision.Obsolete=0 and RevisionEvent.ConferenceID=Conference.ConferenceID and Conference.EventGroupID=?");            
+  $List -> execute($EventGroupID);
 } elsif ($TypeID) {
   $Title   = "Document List by Type";
   $Message = "These documents of type <span class=\"Highlight\">

@@ -99,9 +99,7 @@ unless ($DocRevID) { # Probably never executed since CanAccess fails.
   push @ErrorStack,"This document does not exist.";
 }
 
-if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@ErrorStack);
-}
+&EndPage(@ErrorStack);
 
 &PrintRevisionInfo($DocRevID, -showversions => 1);
 
