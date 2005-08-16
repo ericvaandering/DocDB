@@ -222,6 +222,8 @@ if ($Action eq "undo") { # Undo modifications
   my $DocumentDrop  = $dbh -> prepare("alter table Document drop DocHash"); 
   my $ConferenceDrop1 = $dbh -> prepare("alter table DocumentRevision drop EventGroupID"); 
   my $ConferenceDrop2 = $dbh -> prepare("alter table DocumentRevision drop LongDescription"); 
+  my $ConferenceDrop3 = $dbh -> prepare("alter table Conference drop index StartDate"); 
+  my $ConferenceDrop4 = $dbh -> prepare("alter table Conference drop index EndDate"); 
   my $EventGroupDrop  = $dbh -> prepare("drop  table EventGroup"); 
   
   $XRefDrop1         -> execute();
@@ -234,6 +236,8 @@ if ($Action eq "undo") { # Undo modifications
   $RevisionDrop      -> execute();
   $ConferenceDrop1   -> execute();
   $ConferenceDrop2   -> execute();
+  $ConferenceDrop3   -> execute();
+  $ConferenceDrop4   -> execute();
   $EventGroupDrop    -> execute();
 }
 
