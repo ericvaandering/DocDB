@@ -10,6 +10,16 @@ cpan> install File::MimeInfo
 cpan> install DateTime::Format::MySQL
 cpan> install DateTime (probably not needed)
 
+You also have to install the shared-mime-info package. If your system doesn't
+have it, you can get it from:
+
+http://freedesktop.org/Software/shared-mime-info
+
+The Fedora Core 2 RPM seems to work fine on Scientific Linux 3.0.x. If you don't
+get this installed correctly, RetrieveFile may give the wrong MIME type. In your
+webserver error logs you may see messages from DocDB. DocDB will still try to 
+figure out the MIME type of the files served using the Unix "file" command.
+
 The Document Type (Talk/Figure/etc.) is now changable
 
 Meetings/events (we now try to use the word "events" consistently) are no longer
@@ -42,6 +52,9 @@ Migration instructions:
    element "tbody.Odd" that will be grey by default.)
 8) Make sure everything works, make sure your events were migrated correctly.
 9) Run  MigrateV7 in delete mode  
+
+Links to "Collaboration Meetings" and "Conferences" have been removed from the
+homepage. If you would like to put them back .... 
 
 New web scripts added: EventAdministerForm  
                        ShowCalendar 
