@@ -150,10 +150,6 @@ unless ($Public && !$PublicAccess{MeetingList}) {
   push @FirstColumn,"<a href=\"$ListAllMeetings\">Events</a>";
 }  
 
-unless ($Public) {
-  push @OtherColumns,"Collaboration meetings";
-}
-push @OtherColumns,"<a href=\"$ListBy?major=Conferences&amp;mode=conference\">Conferences</a>";
 if ($UseSignoffs && (!$Public || $PublicAccess{MeetingList})) {
   push @OtherColumns,"<a href=\"$ListManagedDocuments\">Managed documents</a>";
 }

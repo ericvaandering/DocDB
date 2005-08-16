@@ -159,20 +159,19 @@ sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
     return $conferenceID;
   }
   
-  my ($ConferenceID,$EventGroupID,$MinorTopicID,$Location,$URL,$Title,$LongDescription,$Preamble,
+  my ($ConferenceID,$EventGroupID,$Location,$URL,$Title,$LongDescription,$Preamble,
       $Epilogue,$StartDate,$EndDate,$ShowAllTalks,$TimeStamp);
 
   my $ConferenceFetch   = $dbh -> prepare(
-    "select ConferenceID,EventGroupID,MinorTopicID,Location,URL,Title,LongDescription,Preamble,Epilogue,StartDate,EndDate,ShowAllTalks,TimeStamp ".
+    "select ConferenceID,EventGroupID,Location,URL,Title,LongDescription,Preamble,Epilogue,StartDate,EndDate,ShowAllTalks,TimeStamp ".
     "from Conference ".
     "where ConferenceID=?");
   $ConferenceFetch -> execute($conferenceID);
  
-  ($ConferenceID,$EventGroupID,$MinorTopicID,$Location,$URL,$Title,
+  ($ConferenceID,$EventGroupID,$Location,$URL,$Title,
    $LongDescription,$Preamble,$Epilogue,$StartDate,$EndDate,$ShowAllTalks,
    $TimeStamp) = $ConferenceFetch -> fetchrow_array;
   if ($ConferenceID) {
-    $Conferences{$ConferenceID}{Minor}           = $MinorTopicID; # Remove v7 (all references)
     $Conferences{$ConferenceID}{EventGroupID}    = $EventGroupID;
     $Conferences{$ConferenceID}{Location}        = $Location;
     $Conferences{$ConferenceID}{URL}             = $URL;

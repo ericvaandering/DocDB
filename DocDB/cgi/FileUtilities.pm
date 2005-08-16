@@ -186,6 +186,7 @@ sub StreamFile (%) {
     unless ($MimeType) {
       $MimeType = `$FileMagic -ib \"$File\"`; # Use magic as a backup
       chomp $MimeType;
+      print STDERR "DocDB: MIME info not found, defaulting to \"magic\" which says: $MimeType\n";
     }
     
     my @Parts = split /\//,$File;

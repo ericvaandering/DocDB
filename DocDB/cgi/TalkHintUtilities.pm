@@ -49,9 +49,8 @@ sub ReHintTalksBySessionID ($) { # FIXME: Refactor to use GetHintDocuments and T
   &FetchConferenceByConferenceID($ConferenceID);
   my $StartDate    = $Conferences{$ConferenceID}{StartDate};
   my $EndDate      = $Conferences{$ConferenceID}{EndDate};
-  my $MinorTopicID = $Conferences{$ConferenceID}{Minor};
 
-  if ($MinorTopicID) { 
+  if ($MinorTopicID) { # FIXME: Check for event
     $TalkMatchThreshold = $TopicMatchThreshold;
   } else {     
     $TalkMatchThreshold = $NoTopicMatchThreshold 
@@ -95,19 +94,7 @@ sub ReHintTalksBySessionID ($) { # FIXME: Refactor to use GetHintDocuments and T
     }   
   }
 
-  if ($MinorTopicID) {
-    my $RevisionList = $dbh -> prepare("select DocRevID from RevisionTopic where MinorTopicID=?"); 
-
-    $RevisionList -> execute($MinorTopicID);
-    $RevisionList -> bind_columns(undef, \($DocRevID));
-    while ($RevisionList -> fetch) {
-      $DocumentList -> execute($DocRevID);
-      ($DocumentID) = $DocumentList -> fetchrow_array;
-      if ($DocumentID) {
-        $DocumentIDs{$DocumentID} = "Topic"; # Hash removes duplicates
-      }
-    }
-  }
+  # FIXME: Check for Event (used to check for topic)
 
   # Get unique document IDs
 
@@ -294,7 +281,7 @@ sub GetHintDocuments ($$) {
   &FetchConferenceByConferenceID($ConferenceID);
   my $StartDate    = $Conferences{$ConferenceID}{StartDate};
   my $EndDate      = $Conferences{$ConferenceID}{EndDate};
-  my $MinorTopicID = $Conferences{$ConferenceID}{Minor};
+# FIXME: Use event ----  my $MinorTopicID = $Conferences{$ConferenceID}{Minor};
 
   # Get list of documents already confirmed with any conference
   
@@ -323,19 +310,19 @@ sub GetHintDocuments ($$) {
     }   
   }
 
-  if ($MinorTopicID) {
-    my $RevisionList = $dbh -> prepare("select DocRevID from RevisionTopic where MinorTopicID=?"); 
-
-    $RevisionList -> execute($MinorTopicID);
-    $RevisionList -> bind_columns(undef, \($DocRevID));
-    while ($RevisionList -> fetch) {
-      $DocumentList -> execute($DocRevID);
-      ($DocumentID) = $DocumentList -> fetchrow_array;
-      if ($DocumentID && !$ConfirmedDocumentIDs{$DocumentID}) {
-        $DocumentIDs{$DocumentID} = "Topic"; # Hash removes duplicates
-      }
-    }
-  }
+#  if ($MinorTopicID) {
+#    my $RevisionList = $dbh -> prepare("select DocRevID from RevisionTopic where MinorTopicID=?"); 
+#
+#    $RevisionList -> execute($MinorTopicID);
+#    $RevisionList -> bind_columns(undef, \($DocRevID));
+#    while ($RevisionList -> fetch) {
+#      $DocumentList -> execute($DocRevID);
+#      ($DocumentID) = $DocumentList -> fetchrow_array;
+#      if ($DocumentID && !$ConfirmedDocumentIDs{$DocumentID}) {
+#        $DocumentIDs{$DocumentID} = "Topic"; # Hash removes duplicates
+#      }
+#    }
+#  }
 
   return %DocumentIDs;
 }

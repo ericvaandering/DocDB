@@ -326,12 +326,7 @@ sub PrintSession (%) {
   
   my ($AccumSec,$AccumMin,$AccumHour) = &SQLDateTime($Sessions{$SessionID}{StartTime});
   my $AccumulatedTime = &AddTime("$AccumHour:$AccumMin:$AccumSec");
-  
-  # Getting TopicID will depend on re-factoring Conferences Hashes
-  my $MinorTopicID = $Conferences{$ConferenceID}{Minor};
-  
-  @IgnoreTopics = ($MinorTopicID);
-  
+    
 # Sort talks and separators
 
   @SessionOrderIDs = sort SessionOrderIDByOrder @SessionOrderIDs;

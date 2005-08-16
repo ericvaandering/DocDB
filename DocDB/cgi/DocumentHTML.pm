@@ -134,16 +134,8 @@ sub DocumentTable (%) {
         foreach my $EmailUserID (@EmailUserIDs) {
           print &SignatureLink($EmailUserID),"<br/>\n";
         }  
-      } elsif ($Field eq "Conference") {  # Conferences. Simplify in v7
-        require "TopicHTML.pm";
-        require "TopicSQL.pm";
-        my @topics = &GetRevisionTopics($DocRevID);
-        foreach my $topic (@topics) {
-#          if (&MajorIsConference($MinorTopics{$topic}{MAJOR})) {
-#            my $conference_link = &EventLink(-eventid => $ConferenceID);
-#            print "$conference_link<br>\n";
-#          }  
-        }
+      } elsif ($Field eq "Conference") {  
+        #FIXME: Change to event, put something here.
       } elsif ($Field eq "Topics") {  # Topics for document
         require "TopicHTML.pm";
         require "TopicSQL.pm";
