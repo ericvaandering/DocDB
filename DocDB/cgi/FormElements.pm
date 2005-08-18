@@ -51,7 +51,7 @@ sub DateTimePulldown (%) { # Note capitalization
   my $Default     = $Params{-default};
 
   my $HelpLink  = $Params{-helplink}  || "";
-  my $HelpText  = $Params{-helptext}  || "Date & Time";
+  my $HelpText  = $Params{-helptext}  || "Date &amp; Time";
   my $Required  = $Params{-required}  || 0;
   my $NoBreak   = $Params{-nobreak}  ;
   my $ExtraText = $Params{-extratext};
@@ -176,7 +176,7 @@ sub DateTimePullDown { #FIXME: Replace with DateTimePulldown
   
   print "<b><a ";
   &HelpLink("overdate");
-  print "Date & Time:</a></b><br> \n";
+  print "Date &amp; Time:</a></b><br> \n";
   print $query -> popup_menu (-name => 'overday',-values => \@days, -default => $day);
   print $query -> popup_menu (-name => 'overmonth',-values => \@months, -default => $months[$mon]);
   print $query -> popup_menu (-name => 'overyear',-values => \@years, -default => $year);

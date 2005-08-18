@@ -145,7 +145,7 @@ if ($DisplayMode eq "Session") { # Display a single session
   } else { # Display links to sessions and info on separators
     print "<table class=\"MedPaddedTable CenteredTable\">\n";
     print "<tr><th>Session Title</th>\n";
-    print "<th>Date & Time</th>\n";
+    print "<th>Date &amp; Time</th>\n";
     print "<th>Session Information</th>\n";
     print "<th>Location</th>\n";
     print "</tr>\n";
