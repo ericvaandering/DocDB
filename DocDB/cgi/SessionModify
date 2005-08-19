@@ -349,7 +349,6 @@ if ($Mode eq "modify" || $Mode eq "create") {
            "update SessionTalk set ".
            "DocumentID=?, Confirmed=?, Time=?, HintTitle=?, Note=? ". 
            "where SessionTalkID=?");
-          push @DebugStack,"Updating ST -- DI: $TalkDocID C: $TalkConfirmed STI: $SessionTalkID";                 
           $SessionTalkUpdate -> execute($TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote,$SessionTalkID);
 
           &InsertTopicHints($SessionTalkID,@TopicHints);
@@ -379,7 +378,6 @@ if ($Mode eq "modify" || $Mode eq "create") {
                          -authorids   => \@AuthorHints, -topicids    => \@TopicHints, 
                          -eventids    => [$EventID],    -viewids     => \@MeetingViewGroupIDs, 
                          -modifyids   => \@MeetingViewGroupIDs);
-        push @DebugStack,"Reserve and Confirm -- DI: $NewDocumentID STI: $SessionTalkID";                 
         my $SessionTalkUpdate = $dbh -> prepare(
            "update SessionTalk set DocumentID=?,Confirmed=? where SessionTalkID=?");
         $SessionTalkUpdate -> execute($NewDocumentID,1,$SessionTalkID);
