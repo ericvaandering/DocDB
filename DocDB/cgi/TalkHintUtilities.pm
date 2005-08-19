@@ -136,6 +136,7 @@ sub ReHintTalksBySessionID ($) { # FIXME: Refactor to use GetHintDocuments and T
       my $DocumentID = $SessionTalks{$SessionTalkID}{DocumentID};
       foreach my $ConfirmedDocumentID (@ConfirmedDocumentIDs) {
         if ($DocumentID == $ConfirmedDocumentID) {
+          push @DebugStack,"Removing hint -- STI: $SessionTalkID";
           my $BestDocUpdate = $dbh_w -> prepare("update SessionTalk set DocumentID=0 where SessionTalkID=?"); 
           $BestDocUpdate -> execute($SessionTalkID); # Remove hinted DocumentID
           last;  
@@ -204,9 +205,11 @@ sub ReHintTalksBySessionID ($) { # FIXME: Refactor to use GetHintDocuments and T
     if ($BestDocuments{$SessionTalkID}{Score} > $TalkMatchThreshold) {
       my $BestDocUpdate = $dbh_w -> prepare("update SessionTalk set DocumentID=? where SessionTalkID=?"); 
       my $DocumentID    = $BestDocuments{$SessionTalkID}{DocumentID};
+      push @DebugStack,"Match -- STI: $SessionTalkID DI: $DocumentID";
       $BestDocUpdate -> execute($DocumentID,$SessionTalkID); # Update database
     } else {
       my $BestDocUpdate = $dbh_w -> prepare("update SessionTalk set DocumentID=? where SessionTalkID=?"); 
+      push @DebugStack,"No Match -- STI: $SessionTalkID";
       $BestDocUpdate -> execute(0,$SessionTalkID); # Update database
     }   
   }
