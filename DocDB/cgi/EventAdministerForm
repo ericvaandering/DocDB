@@ -94,25 +94,7 @@ my $Abort = 0;
 
 if ($SubForm eq "eventgroup") {
   if ($Action eq "Delete") {
-    foreach my $EventID (keys %Conferences) {
-      if ($Conferences{$ConferenceID}{EventGroupID} == $EventGroupID) {
-        unless ($Force) {
-          push @WarnStack,$Msg_DelFullEvtGroup;
-          $Abort = 1;
-        }  
-        last;
-      }
-    }
-    unless ($Abort) {
-      my $Delete = $dbh -> prepare("delete from EventGroup where EventGroupID=?");
-      $Delete -> execute($EventGroupID);
-      push @ActionStack,"Event group $EventGroups{$EventGroupID}{ShortDescription} deleted";
-      if ($Force) {
-        my $Delete = $dbh -> prepare("delete from Conference where EventGroupID=?");
-        $Delete -> execute($EventGroupID);
-        push @ActionStack,"Events from group $EventGroups{$EventGroupID}{ShortDescription} (if any) deleted";
-      }
-    }
+    &DeleteEventGroup(-eventgroupid => $EventGroupID, -force => $Force);
   } elsif ($Action eq "Modify") {
     if ($ShortDescription) { 
       push @ActionStack,"Updated short description of $EventGroups{$EventGroupID}{ShortDescription}";

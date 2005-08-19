@@ -150,6 +150,25 @@ sub FetchEventGroup ($) {
   return $EventGroupID;  
 } 
 
+sub FetchEventsByGroup ($) {
+  my ($EventGroupID) = @_;
+  unless ($EventGroupID) {
+    return undef;
+  }
+  my $EventID;
+  my @EventIDs = ();
+  
+  my $List = $dbh -> prepare("select ConferenceID from Conference where EventGroupID=?");
+  $List -> execute($EventGroupID);
+  $List -> bind_columns(undef, \($EventID));
+
+  while ($List -> fetch) {
+    my $EventID = &FetchSessionByID($SessionID);
+    push @EventIDs,$EventID;
+  }
+  return @EventIDs;
+}  
+
 sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
   my ($conferenceID) = @_;
   
@@ -398,6 +417,36 @@ sub UpdateSession (%) {
   
 }
 
+sub DeleteEventGroup (%) {
+  my %Params = @_;
+  
+  my $EventGroupID = $Params{-eventgroupid} || 0;
+  my $Force        = $Params{-force}   || 0;
+  
+  unless ($EventGroupID) {
+    push @WarnStack,"No Event Group specified";
+    return 0;
+  }
+
+  &FetchEventGroup($EventGroupID);
+
+  my @EventIDs = &FetchEventsByGroup($EventGroupID);
+  if (@EventIDs && !$Force) {
+    push @WarnStack,"Cannot delete an event group with events. Use force option if you are sure.";
+    return 0;
+  }
+  
+  foreach my $EventID (@EventIDs) {
+    &DeleteEvent($EventID);
+  }
+    
+  my $Delete = $dbh -> prepare("delete from EventGroup where EventGroupID=?");
+  $Delete -> execute($EventGroupID);
+  push @ActionStack,"Event group <strong>$EventGroups{$EventGroupID}{LongDescription}</strong> deleted";
+
+  return 1;    
+}
+
 sub DeleteEvent (%) {
   require "RevisionSQL.pm";
 
@@ -407,7 +456,7 @@ sub DeleteEvent (%) {
   my $Force   = $Params{-force}   || 0;
   
   unless ($EventID) {
-    push @WarnStack,"No event ID specified";
+    push @WarnStack,"No Event specified";
     return 0;
   }
   
