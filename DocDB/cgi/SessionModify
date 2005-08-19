@@ -383,7 +383,6 @@ if ($Mode eq "modify" || $Mode eq "create") {
         my $SessionTalkUpdate = $dbh -> prepare(
            "update SessionTalk set DocumentID=?,Confirmed=? where SessionTalkID=?");
         $SessionTalkUpdate -> execute($NewDocumentID,1,$SessionTalkID);
-        exit;
       } else {
         push @WarnStack,"You cannot reserve a document if there is a confirmed document already or if you don't specify authors.";
       }
