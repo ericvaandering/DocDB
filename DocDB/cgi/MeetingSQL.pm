@@ -439,7 +439,7 @@ sub DeleteEventGroup (%) {
   }
   
   foreach my $EventID (@EventIDs) {
-    &DeleteEvent(-eventid => $EventID);
+    &DeleteEvent(-eventid => $EventID, -force => $Force);
   }
     
   my $Delete = $dbh -> prepare("delete from EventGroup where EventGroupID=?");

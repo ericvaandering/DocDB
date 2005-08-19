@@ -61,6 +61,8 @@ my $EventID          = int($params{events});
 my $ShortDescription = $params{shortdesc};
 my $LongDescription  = $params{longdesc};
 
+$query -> delete_all();
+
 @ErrorStack  = ();
 @WarnStack   = ();
 @ActionStack = ();
