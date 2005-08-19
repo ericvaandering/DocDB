@@ -56,8 +56,8 @@ sub AdministratorPassword {
 };
 
 sub AdminRegardless {
-  print &FormElementTitle(-helplink => "admregardless", -helptext => "Act Regardless");
-  print $query -> checkbox(-name => "admregardless", -value => 1, -label => 'Yes');
+  print &FormElementTitle(-helplink => "admforce", -helptext => "Force Action");
+  print $query -> checkbox(-name => "admforce", -value => 1, -label => 'Yes');
 }  
 
 sub GroupEntryBox (%) {

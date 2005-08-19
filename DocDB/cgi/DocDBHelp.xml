@@ -1052,4 +1052,14 @@ or may not be the same as the web username and password.
   </text>
  </entry>
  
+ <entry> 
+  <key>admforce</key> 
+  <title>Force admin action</title> 
+  <text>
+   Checking this box will force DocDB to take make the admin action regardless
+   of the consequeneces. Doing this may have unintend consequences or leave the
+   DB in an incoherent state. For instance, deleting a MajorTopic may cause its
+   sub-topics to also be deleted and leave some documents without any topics.
+  </text> 
+ </entry>
 </helpfile>

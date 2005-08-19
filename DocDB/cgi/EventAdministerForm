@@ -53,6 +53,7 @@ $query = new CGI;  # Global for subroutines
 my $Password         = $params{password};
 my $Username         = $params{admuser};
 my $Action           = $params{admaction};
+my $Force            = $params{admforce};
 
 my $SubForm          = $params{subform};
 my $EventGroupID     = int($params{eventgroups});
@@ -92,11 +93,13 @@ if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
 my $Abort = 0;
 
 if ($SubForm eq "eventgroup") {
-  if      ($Action eq "Delete") {
+  if ($Action eq "Delete") {
     foreach my $EventID (keys %Conferences) {
       if ($Conferences{$ConferenceID}{EventGroupID} == $EventGroupID) {
-        push @WarnStack,$Msg_DelFullEvtGroup;
-        $Abort = 1;
+        unless ($Force) {
+          push @WarnStack,$Msg_DelFullEvtGroup;
+          $Abort = 1;
+        }  
         last;
       }
     }
@@ -104,6 +107,11 @@ if ($SubForm eq "eventgroup") {
       my $Delete = $dbh -> prepare("delete from EventGroup where EventGroupID=?");
       $Delete -> execute($EventGroupID);
       push @ActionStack,"Event group $EventGroups{$EventGroupID}{ShortDescription} deleted";
+      if ($Force) {
+        my $Delete = $dbh -> prepare("delete from Conference where EventGroupID=?");
+        $Delete -> execute($EventGroupID);
+        push @ActionStack,"Events from group $EventGroups{$EventGroupID}{ShortDescription} (if any) deleted";
+      }
     }
   } elsif ($Action eq "Modify") {
     if ($ShortDescription) { 
@@ -124,18 +132,8 @@ if ($SubForm eq "eventgroup") {
     push @WarnStack,"No valid action was specified.";
   }  
 } elsif ($SubForm eq "event") {
-  if      ($Action eq "Delete") {
-    require "RevisionSQL.pm";
-    my @DocRevIDs = &FetchRevisionsByEventID($EventID);
-    if (@DocRevIDs) { 
-      push @WarnStack,$Msg_DelFullEvent;
-      $Abort = 1;
-    }  
-    unless ($Abort) {
-      my $Delete = $dbh -> prepare("delete from Conference where ConferenceID=?");
-      $Delete -> execute($EventID);
-      push @ActionStack,"Event <strong>$Conferences{$EventID}{Title}</strong> deleted";
-    }
+  if ($Action eq "Delete") {
+    &DeleteEvent($EventID);
   } else {
     push @WarnStack,"Only \"Delete\" is a valid action";
   }  
