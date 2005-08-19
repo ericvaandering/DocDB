@@ -393,6 +393,8 @@ if ($Mode eq "modify" || $Mode eq "create") {
 
 ### Prepare to display form (get required info)
 
+&ClearSessionTalks();
+&ClearSessions();
 &ReHintTalksBySessionID($SessionID); 
 &ClearSessionTalks();
 
