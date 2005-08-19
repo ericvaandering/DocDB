@@ -163,7 +163,6 @@ sub FetchEventsByGroup ($) {
   $List -> bind_columns(undef, \($EventID));
 
   while ($List -> fetch) {
-    my $EventID = &FetchSessionByID($SessionID);
     push @EventIDs,$EventID;
   }
   return @EventIDs;
@@ -439,6 +438,7 @@ sub DeleteEventGroup (%) {
   }
   
   foreach my $EventID (@EventIDs) {
+    push @DebugStack,"EID: $EventID";
     &DeleteEvent(-eventid => $EventID, -force => $Force);
   }
     
