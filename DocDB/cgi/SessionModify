@@ -349,6 +349,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
            "update SessionTalk set ".
            "DocumentID=?, Confirmed=?, Time=?, HintTitle=?, Note=? ". 
            "where SessionTalkID=?");
+          push @DebugStack,"Updating ST -- DI: $TalkDocID C: $TalkConfirmed STI: $SessionTalkID";                 
           $SessionTalkUpdate -> execute($TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote,$SessionTalkID);
 
           &InsertTopicHints($SessionTalkID,@TopicHints);
