@@ -378,6 +378,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
                          -authorids   => \@AuthorHints, -topicids    => \@TopicHints, 
                          -eventids    => [$EventID],    -viewids     => \@MeetingViewGroupIDs, 
                          -modifyids   => \@MeetingViewGroupIDs);
+        push @DebugStack,"Reserve and Confirm -- DI: $NewDocumentID STI: $SessionTalkID";                 
         my $SessionTalkUpdate = $dbh -> prepare(
            "update SessionTalk set DocumentID=?,Confirmed=? where SessionTalkID=?");
         $SessionTalkUpdate -> execute($NewDocumentID,1,$SessionTalkID);
