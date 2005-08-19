@@ -70,6 +70,8 @@ sub AddDocument {
 
   my ($DocRevID,$Count,@FileIDs);
 
+        push @DebugStack,"Reserve EIDs:",@EventIDs;
+
   $DocumentID = &InsertDocument(
                  -docid    => $DocumentID, -requesterid => $RequesterID, 
                  -datetime => $DateTime);

@@ -427,7 +427,12 @@ sub DeleteEventGroup (%) {
     return 0;
   }
 
-  &FetchEventGroup($EventGroupID);
+  my $Status = &FetchEventGroup($EventGroupID);
+
+  unless ($Status) {
+    push @WarnStack,"Event Group does not exist";
+    return 0;
+  }
 
   my @EventIDs = &FetchEventsByGroup($EventGroupID);
   if (@EventIDs && !$Force) {
@@ -459,7 +464,12 @@ sub DeleteEvent (%) {
     return 0;
   }
   
-  &FetchConferenceByConferenceID($EventID);
+  my $Status = &FetchConferenceByConferenceID($EventID);
+  unless ($Status) {
+    push @WarnStack,"Event does not exist";
+    return 0;
+  }
+
   my @SeparatorIDs = &FetchSessionSeparatorsByConferenceID($EventID);
   my @SessionIDs   = &FetchSessionsByConferenceID($EventID);
   my @DocRevIDs    = &FetchRevisionsByEventID($EventID);
@@ -539,6 +549,7 @@ sub InsertRevisionEvents (%) {
   my @EventIDs = @{$Params{-eventids}};
 
   my $Count = 0;
+  push @DebugStack,"Insert EID:",@EventIDs;
 
   my $Insert = $dbh -> prepare("insert into RevisionEvent (RevEventID, DocRevID, ConferenceID) values (0,?,?)");
                                  
@@ -553,18 +564,18 @@ sub InsertRevisionEvents (%) {
 }
 
 sub InsertMeetingOrder {
-   my %Params = @_;
-   my $Order              = $Params{-session}            || 1;
-   my $SessionID          = $Params{-sessionid}          || 0;
-   my $SessionSeparatorID = $Params{-sessionseparatorid} || 0;
-   unless ($SessionID || $SessionSeparatorID) { 
-     return;
-   }  
-   my $Insert = $dbh -> prepare(
-    "insert into MeetingOrder ".
-    "(MeetingOrderID, SessionOrder, SessionID, SessionSeparatorID) ". 
-    "values (0,?,?,?)");
-   $Insert -> execute($Order,$SessionID,$SessionSeparatorID);
+  my %Params = @_;
+  my $Order              = $Params{-session}            || 1;
+  my $SessionID          = $Params{-sessionid}          || 0;
+  my $SessionSeparatorID = $Params{-sessionseparatorid} || 0;
+  unless ($SessionID || $SessionSeparatorID) { 
+    return;
+  }  
+  my $Insert = $dbh -> prepare(
+   "insert into MeetingOrder ".
+   "(MeetingOrderID, SessionOrder, SessionID, SessionSeparatorID) ". 
+   "values (0,?,?,?)");
+  $Insert -> execute($Order,$SessionID,$SessionSeparatorID);
 }
 
 1;

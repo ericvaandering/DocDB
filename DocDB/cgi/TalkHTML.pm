@@ -155,7 +155,7 @@ sub TalkEntryForm (@) {
         $TalkDefaultTitle     = $SessionTalks{$SessionTalkID}{HintTitle}  || "";
         $TalkDefaultNote      = $SessionTalks{$SessionTalkID}{Note}       || "";
         $TalkDefaultDocID     = $SessionTalks{$SessionTalkID}{DocumentID} || "";
-        $TalkSeparatorDefault = "No";
+        $TalkSeparatorDefault = "";
         $EntryTimeStamp       = $SessionTalks{$SessionTalkID}{TimeStamp}; 
         # Get hints and convert to format accepted by scrolling lists
         
@@ -173,7 +173,7 @@ sub TalkEntryForm (@) {
         $TalkDefaultTime      = $TalkSeparators{$TalkSeparatorID}{Time}  || "00:30";
         $TalkDefaultTitle     = $TalkSeparators{$TalkSeparatorID}{Title} || "";
         $TalkDefaultNote      = $TalkSeparators{$TalkSeparatorID}{Note}  || "";
-        $TalkSeparatorDefault = "Yes";
+        $TalkSeparatorDefault = "Is a break";
         $EntryTimeStamp       = $TalkSeparators{$TalkSeparatorID}{TimeStamp}; 
       }
     } 

@@ -371,6 +371,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
       if ($SessionTalkID && !$TalkConfirmed && @AuthorHints) {
         require "DocumentUtilities.pm";
         require "MiscSQL.pm";
+        push @DebugStack,"Reserve EID: $EventID";
         my $TypeID = &FetchDocTypeByName("Talk") || 1; 
         my ($NewDocumentID,$NewDocRevID) 
           = &AddDocument(-version     => "reserve",     -title       => $TalkTitle, 
@@ -527,7 +528,7 @@ if ($SingleSession) {
   print "<td colspan=\"2\">\n";
   &TextArea(-name     => 'sessiondescription', -columns => 40, -rows => 4,
             -default  => $SessionDefaultDescription, 
-            -helplink => 'sessioninfo', -helptext => 'Session Description');
+            -helplink => 'sessioninfo', -helptext => 'Description');
   print "</td>\n";
   print "</tr>\n";
   print "</table>\n";
