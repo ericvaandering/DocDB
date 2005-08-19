@@ -412,11 +412,11 @@ sub DeleteEvent (%) {
   }
   
   &FetchConferenceByConferenceID($EventID);
-  my @SepararatorIDs = &FetchSessionSeparatorsByConferenceID($EventID);
-  my @SessionIDs     = &FetchSessionsByConferenceID($EventID);
-  my @DocRevIDs      = &FetchRevisionsByEventID($EventID);
+  my @SeparatorIDs = &FetchSessionSeparatorsByConferenceID($EventID);
+  my @SessionIDs   = &FetchSessionsByConferenceID($EventID);
+  my @DocRevIDs    = &FetchRevisionsByEventID($EventID);
 
-  if ((@SepararatorIDs || @SessionIDs) && !$Force) {
+  if ((@SeparatorIDs || @SessionIDs) && !$Force) {
     push @WarnStack,"Cannot delete event with sessions, use force option.";
     return 0;
   }
@@ -428,8 +428,8 @@ sub DeleteEvent (%) {
   foreach my $SessionID (@SessionIDs) {
     &DeleteSession($SessionID);
   }   
-  foreach my $SepararatorID (@SepararatorIDs) {
-    &DeleteSessionSepararator($EventID);
+  foreach my $SeparatorID (@SeparatorIDs) {
+    &DeleteSessionSeparator($EventID);
   }   
   
   my $Delete = $dbh -> prepare("delete from Conference where ConferenceID=?");
