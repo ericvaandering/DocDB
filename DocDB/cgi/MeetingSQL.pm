@@ -549,7 +549,6 @@ sub InsertRevisionEvents (%) {
   my @EventIDs = @{$Params{-eventids}};
 
   my $Count = 0;
-  push @DebugStack,"Insert EID:",@EventIDs;
 
   my $Insert = $dbh -> prepare("insert into RevisionEvent (RevEventID, DocRevID, ConferenceID) values (0,?,?)");
                                  

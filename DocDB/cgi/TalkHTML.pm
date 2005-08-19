@@ -155,7 +155,7 @@ sub TalkEntryForm (@) {
         $TalkDefaultTitle     = $SessionTalks{$SessionTalkID}{HintTitle}  || "";
         $TalkDefaultNote      = $SessionTalks{$SessionTalkID}{Note}       || "";
         $TalkDefaultDocID     = $SessionTalks{$SessionTalkID}{DocumentID} || "";
-        $TalkSeparatorDefault = "";
+        $TalkSeparatorDefault = "No";
         $EntryTimeStamp       = $SessionTalks{$SessionTalkID}{TimeStamp}; 
         # Get hints and convert to format accepted by scrolling lists
         
@@ -173,7 +173,7 @@ sub TalkEntryForm (@) {
         $TalkDefaultTime      = $TalkSeparators{$TalkSeparatorID}{Time}  || "00:30";
         $TalkDefaultTitle     = $TalkSeparators{$TalkSeparatorID}{Title} || "";
         $TalkDefaultNote      = $TalkSeparators{$TalkSeparatorID}{Note}  || "";
-        $TalkSeparatorDefault = "Is a break";
+        $TalkSeparatorDefault = "Yes";
         $EntryTimeStamp       = $TalkSeparators{$TalkSeparatorID}{TimeStamp}; 
       }
     } 
@@ -275,11 +275,11 @@ sub TalkSeparator ($) {
   my ($SessionOrderID) = @_;
 
   if ($TalkSeparatorDefault eq "Yes") {
-    print "Yes\n";	      
+    print "Break\n";	      
     print "<br/>\n";
   } elsif ($TalkSeparatorDefault eq "No") {
-    print "No\n";	      
-    print "<br/>\n";
+#    print "No\n";	      
+#    print "<br/>\n";
   } else {
     $query -> param('talkseparator', "");
     print $query -> checkbox(-name => "talkseparator", -value => "$SessionOrderID", -label => 'Break');
