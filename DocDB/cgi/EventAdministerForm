@@ -133,7 +133,7 @@ if ($SubForm eq "eventgroup") {
   }  
 } elsif ($SubForm eq "event") {
   if ($Action eq "Delete") {
-    &DeleteEvent($EventID);
+    &DeleteEvent(-eventid => $EventID, -force => $Force);
   } else {
     push @WarnStack,"Only \"Delete\" is a valid action";
   }  

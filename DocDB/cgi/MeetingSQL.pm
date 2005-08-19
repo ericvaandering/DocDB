@@ -398,6 +398,51 @@ sub UpdateSession (%) {
   
 }
 
+sub DeleteEvent (%) {
+  require "RevisionSQL.pm";
+
+  my %Params = @_;
+  
+  my $EventID = $Params{-eventid} || 0;
+  my $Force   = $Params{-force}   || 0;
+  
+  unless ($EventID) {
+    push @WarnStack,"No event ID specified";
+    return 0;
+  }
+  
+  &FetchConferenceByConferenceID($EventID);
+  my @SepararatorIDs = &FetchSessionSeparatorsByConferenceID($EventID);
+  my @SessionIDs     = &FetchSessionsByConferenceID($EventID);
+  my @DocRevIDs      = &FetchRevisionsByEventID($EventID);
+
+  if ((@SepararatorIDs || @SessionIDs) && !$Force) {
+    push @WarnStack,"Cannot delete event with sessions, use force option.";
+    return 0;
+  }
+  if (@DocRevIDs && !$Force) {
+    push @WarnStack,"Cannot delete event with associated documents, use force option.";
+    return 0;
+  }
+  
+  foreach my $SessionID (@SessionIDs) {
+    &DeleteSession($SessionID);
+  }   
+  foreach my $SepararatorID (@SepararatorIDs) {
+    &DeleteSessionSepararator($EventID);
+  }   
+  
+  my $Delete = $dbh -> prepare("delete from Conference where ConferenceID=?");
+  $Delete -> execute($EventID);
+  push @ActionStack,"Event <strong>$Conferences{$EventID}{Title}</strong> deleted";
+  if (@DocRevIDs) {
+    my $Delete = $dbh -> prepare("delete from RevisionEvent where ConferenceID=?");
+    $Delete -> execute($EventID);
+    push @ActionStack,"Document/Event associations deleted";
+  }
+  return 1;
+}    
+ 
 sub DeleteSession ($) {
   my ($SessionID) = @_;
    
@@ -425,6 +470,7 @@ sub DeleteSession ($) {
   }
 
   $MeetingOrderDelete -> execute($SessionID);
+  push @ActionStack,"Session and associated agenda entries deleted";
 }
 
 sub DeleteSessionSeparator ($) {
@@ -435,6 +481,7 @@ sub DeleteSessionSeparator ($) {
   
   $SessionSeparatorDelete -> execute($SessionSeparatorID);
   $MeetingOrderDelete     -> execute($SessionSeparatorID);
+  push @ActionStack,"Session separator deleted";
 }
 
 sub InsertRevisionEvents (%) {
