@@ -423,6 +423,8 @@ sub DeleteEventGroup (%) {
   my $EventGroupID = $Params{-eventgroupid} || 0;
   my $Force        = $Params{-force}   || 0;
   
+  push @DebugStack,"Called: $EventGroupID";
+  
   unless ($EventGroupID) {
     push @WarnStack,"No Event Group specified";
     return 0;

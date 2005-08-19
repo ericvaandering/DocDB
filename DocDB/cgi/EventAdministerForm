@@ -65,6 +65,8 @@ my $LongDescription  = $params{longdesc};
 @WarnStack   = ();
 @ActionStack = ();
 
+push @DebugStack,"Params $params{eventgroups}";
+
 if ($Password && $Username) {
   &CreateConnection(-user => $Username, -password => $Password);
 } else {
@@ -94,6 +96,7 @@ my $Abort = 0;
 
 if ($SubForm eq "eventgroup") {
   if ($Action eq "Delete") {
+    push @DebugStack,"Call: $EventGroupID";
     &DeleteEventGroup(-eventgroupid => $EventGroupID, -force => $Force);
   } elsif ($Action eq "Modify") {
     if ($ShortDescription) { 
