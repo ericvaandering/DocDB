@@ -161,6 +161,7 @@ if ($UserValidation eq "certificate" ||
   push @OtherColumns,"<a href=\"$web_root/Static/Lists/$remote_user/FullList.html\">All documents</a>";
 }
 
+push @OtherColumns,@{ $ProjectMessages{Homepage}{DocumentLists} }
 push @Spanners,@MultiColumnDocumentLists;
 
 my $Rows = scalar(@FirstColumn);
