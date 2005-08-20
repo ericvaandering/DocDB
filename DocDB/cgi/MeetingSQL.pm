@@ -132,6 +132,17 @@ sub ClearEventGroups () {
   return;
 }
 
+sub LookupEventGroup { # Returns EventGroupID from Name
+  my ($Name) = @_;
+  my $Fetch   = $dbh -> prepare("select EventGroupID from EventGroupTopic where ShortDescription=?");
+
+  $Fetch -> execute($Name);
+  my $EventGroupID = $Fetch -> fetchrow_array;
+  &FetchEventGroup($EventGroupID);
+  
+  return $EventGroupID;
+}
+
 sub FetchEventGroup ($) {
   my ($EventGroupID) = @_;
   unless ($EventGroupID) {

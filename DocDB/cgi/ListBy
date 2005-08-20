@@ -43,6 +43,7 @@ my $Major        = $params{major}        || "";
 
 my $EventID      = $params{eventid}      || 0;
 my $EventGroupID = $params{eventgroupid} || 0;
+my $EventGroup   = $params{eventgroup}   || "";
 
 my $AllPubs      = $params{allpubs}      || "";
 my $AllDocs      = $params{alldocs}      || "";
@@ -104,7 +105,7 @@ if ($Days) {
 ### Major topic (either number or name)
 
   require "TopicSQL.pm";
-  if ($Major) {
+  unless ($MajorID) {
     $MajorID = &LookupMajorTopic($Major);
   } 
   &FetchMajorTopic($MajorID);
@@ -128,14 +129,18 @@ if ($Days) {
            "DocumentRevision,RevisionEvent where DocumentRevision.DocRevID=RevisionEvent.DocRevID ".
            "and DocumentRevision.Obsolete=0 and RevisionEvent.ConferenceID=?");            
   $List -> execute($EventID);
-} elsif ($EventGroupID) {
+} elsif ($EventGroupID || $EventGroup) {
 
-### Event Group (number for now, name later)
+### Event Group (name or number)
 
   require "MeetingSQL.pm";
+
+  unless ($EventGroupID) {
+    $EventGroupID &LookupEventGroup($EventGroup);
+  }  
   &FetchEventGroup($EventGroupID);
   
-  $Title   = "Document List by Events";
+  $Title   = "Document List by Event Group";
   $Message = "These documents from <span class=\"Highlight\">$EventGroups{$EventGroupID}{LongDescription}</span> are available:";
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
            "DocumentRevision,RevisionEvent,Conference where DocumentRevision.DocRevID=RevisionEvent.DocRevID ".

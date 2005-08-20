@@ -778,7 +778,11 @@ sub EventsByGroup (%) {
   @DisplayEventIDs = reverse sort EventsByDate @DisplayEventIDs;
   &FetchEventGroup($EventGroupID);
   
-  print "<strong>$EventGroups{$EventGroupID}{ShortDescription}</strong>\n"; #v7 add link, truncate list?
+  if ($Mode eq "display") {
+    print "<strong><a href=\"$ListBy?eventgroupid=$EventGroupID\">$EventGroups{$EventGroupID}{ShortDescription}</a></strong>\n"; #v7 add link, truncate list?
+  } else {
+    print "<strong>$EventGroups{$EventGroupID}{ShortDescription}</strong>\n"; #v7 add link, truncate list?
+  }
   print "<ul>\n";
   foreach my $EventID (@DisplayEventIDs) {
     my $MeetingLink;
