@@ -31,8 +31,8 @@ sub TopicListByID {
   print "<div id=\"Topics\">\n";
   print "<dl>\n";
   print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Topics:</span></dt>\n";
-  print "</dl>\n";
   if (@TopicIDs) {
+    print "</dl>\n";
     print "<ul>\n";
     foreach my $TopicID (@TopicIDs) {
       my $TopicLink = &MinorTopicLink($TopicID);
@@ -41,6 +41,7 @@ sub TopicListByID {
     print "</ul>\n";
   } else {
     print "<dd>None</dd>\n";
+    print "</dl>\n";
   }
   print "</div>\n";
 }
