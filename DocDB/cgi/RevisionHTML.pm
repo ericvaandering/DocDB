@@ -328,7 +328,7 @@ sub PrintEventInfo (%) {
   my @EventIDs = &GetRevisionEvents($DocRevID);
 
   if (@EventIDs) {
-    unless ($Mode eq "short") {
+    unless ($Format eq "short") {
       print "<div id=\"EventInfo\">\n";
       print "<dl>\n";
       print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Associated with Events:</span></dt> \n";
@@ -337,11 +337,11 @@ sub PrintEventInfo (%) {
       my $EventLink = &EventLink(-eventid => $EventID);
       my $Start = &EuroDate($Conferences{$EventID}{StartDate});
       my $End   = &EuroDate($Conferences{$EventID}{EndDate});
-      unless ($Mode eq "short") {
+      unless ($Format eq "short") {
         print "<dd>";
       }  
       print "$EventLink ";
-      if ($Mode eq "short") {
+      if ($Format eq "short") {
         print "($Start)<br/>";
       } else {  
         if ($Start && $End && ($Start ne $End)) {
@@ -353,12 +353,10 @@ sub PrintEventInfo (%) {
         if ($Conferences{$EventID}{Location}) {
           print " in $Conferences{$EventID}{Location}";
         }
-      }  
-      unless ($Mode eq "short") {
         print "</dd>\n";
       }  
-    }
-    unless ($Mode eq "short") {
+     }
+    unless ($Format eq "short") {
       print "</dl></div>\n";
     }
   }
