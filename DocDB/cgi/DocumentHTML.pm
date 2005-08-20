@@ -134,8 +134,8 @@ sub DocumentTable (%) {
         foreach my $EmailUserID (@EmailUserIDs) {
           print &SignatureLink($EmailUserID),"<br/>\n";
         }  
-      } elsif ($Field eq "Conference") {  
-        #FIXME: Change to event, put something here.
+      } elsif ($Field eq "Conference" || $Field eq "Event") {  
+        &PrintEventInfo(-docrevid => $DocRevID, -format => "short");
       } elsif ($Field eq "Topics") {  # Topics for document
         require "TopicHTML.pm";
         require "TopicSQL.pm";

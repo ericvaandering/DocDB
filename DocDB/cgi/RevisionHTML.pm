@@ -317,11 +317,14 @@ sub PrintReferenceInfo ($) {
   }
 }
 
-sub PrintEventInfo {
+sub PrintEventInfo (%) {
   require "MeetingSQL.pm";
   require "MeetingHTML.pm";
   
-  my ($DocRevID) = @_;
+  my %Params = @_;
+  my $DocRevID = $Params{-docrevid};
+  my $Format   = $Params{-format}   || "normal";
+  
   my @EventIDs = &GetRevisionEvents($DocRevID);
 
   if (@EventIDs) {
