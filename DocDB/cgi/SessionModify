@@ -154,6 +154,18 @@ if ($SessionID) {
   unless (&CanCreateMeeting()) {
     push @ErrorStack,$Msg_MeetNoCreate;
   }
+  unless ($Short) {
+    push @ErrorStack,$Msg_TopicNoShort;
+  }      
+  if ($URL && !(&ValidURL($URL))) {
+    push @ErrorStack,"The URL $URL is not valid.";
+  }
+  unless ($EventGroupID) {
+    push @ErrorStack,"You must select a group for this event.";
+  }
+  unless ($StartTime && &ValidDate($SessionDay,$ReverseAbrvMonth{$SessionMonth},$SessionYear)) {
+    push @ErrorStack,"The event starting date is not valid.";
+  }
 } elsif ($EventID) { 
   unless (&CanModifyMeeting($EventID)) {
     push @ErrorStack,$Msg_MeetNoModify;
