@@ -118,8 +118,8 @@ sub DocumentByRequester {
 
   require "AuthorSQL.pm";
 
-  my $adr = $Documents{$a}{REQUESTER};
-  my $bdr = $Documents{$b}{REQUESTER};
+  my $adr = $Documents{$a}{Requester};
+  my $bdr = $Documents{$b}{Requester};
   &FetchAuthor($adr);
   &FetchAuthor($bdr);
     

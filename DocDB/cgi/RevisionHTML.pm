@@ -155,7 +155,7 @@ sub PrintRevisionInfo {
   print "<div id=\"BasicDocInfo\">\n";
   print "<dl>\n";
    &PrintDocNumber($DocRevID);
-   &RequesterByID($Documents{$DocumentID}{REQUESTER});
+   &RequesterByID($Documents{$DocumentID}{Requester});
    &SubmitterByID($DocRevisions{$DocRevID}{Submitter});
    &PrintModTimes;
   print "</dl>\n";
@@ -369,7 +369,7 @@ sub PrintPubInfo ($) {
 sub PrintModTimes {
   my ($DocRevID) = @_;
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
-  $DocTime     = &EuroDateHM($Documents{$DocumentID}{DATE}); 
+  $DocTime     = &EuroDateHM($Documents{$DocumentID}{Date}); 
   $RevTime     = &EuroDateHM($DocRevisions{$DocRevID}{DATE}); 
   $VersionTime = &EuroDateHM($DocRevisions{$DocRevID}{VersionDate}); 
 

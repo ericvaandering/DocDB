@@ -33,10 +33,9 @@ sub GetAllDocuments {
   %Documents = ();
   @DocumentIDs = ();
   while ($DocumentList -> fetch) {
-    $Documents{$DocumentID}{DOCID}     = $DocumentID;
-    $Documents{$DocumentID}{REQUESTER} = $RequesterID;
-    $Documents{$DocumentID}{DATE}      = $RequestDate;
-#    $Documents{$DocumentID}{TYPE}      = $DocumentType;
+    $Documents{$DocumentID}{DocID}     = $DocumentID;
+    $Documents{$DocumentID}{Requester} = $RequesterID;
+    $Documents{$DocumentID}{Date}      = $RequestDate;
     $Documents{$DocumentID}{TimeStamp} = $TimeStamp;
     push @DocumentIDs,$DocumentID;
   }
@@ -53,7 +52,7 @@ sub GetAllDocuments {
 sub FetchDocument {
   my ($DocumentID) = @_;
 
-  if ($Documents{$DocumentID}{DOCID} && $Documents{$DocumentID}{NVersions}) { 
+  if ($Documents{$DocumentID}{DocID} && $Documents{$DocumentID}{NVersions}) { 
     return $DocumentID;  # Already fetched
   }  
 
@@ -66,10 +65,9 @@ sub FetchDocument {
   push @DebugStack,"From Database DocID: $DocumentID";
 
   if ($DocumentID) {
-    $Documents{$DocumentID}{DOCID}     = $DocumentID;
-    $Documents{$DocumentID}{REQUESTER} = $RequesterID;
-    $Documents{$DocumentID}{DATE}      = $RequestDate;
-#    $Documents{$DocumentID}{TYPE}      = $DocumentType;
+    $Documents{$DocumentID}{DocID}     = $DocumentID;
+    $Documents{$DocumentID}{Requester} = $RequesterID;
+    $Documents{$DocumentID}{Date}      = $RequestDate;
     $Documents{$DocumentID}{TimeStamp} = $TimeStamp;
     push @DocumentIDs,$DocumentID;
 
