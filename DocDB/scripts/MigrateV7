@@ -221,6 +221,7 @@ if ($Action eq "undo") { # Undo modifications
   my $NotifyDrop    = $dbh -> prepare("drop table Notification"); 
   my $ConfigDrop1   = $dbh -> prepare("drop table ConfigSetting"); 
   my $ConfigDrop2   = $dbh -> prepare("drop table ConfigValue"); 
+  my $RevEventDrop  = $dbh -> prepare("drop table RevisionEvent"); 
   my $DocumentDrop  = $dbh -> prepare("alter table Document drop DocHash"); 
   my $ConferenceDrop1 = $dbh -> prepare("alter table Conference drop EventGroupID"); 
   my $ConferenceDrop2 = $dbh -> prepare("alter table Conference drop LongDescription"); 
@@ -236,6 +237,7 @@ if ($Action eq "undo") { # Undo modifications
   $ConfigDrop2       -> execute();
   $DocumentDrop      -> execute();
   $RevisionDrop      -> execute();
+  $RevEventDrop      -> execute();
   $ConferenceDrop1   -> execute();
   $ConferenceDrop2   -> execute();
   $ConferenceDrop3   -> execute();
