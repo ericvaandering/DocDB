@@ -1,7 +1,8 @@
 7.0.0
 
 Version 7 introduces some new functionality and a lot of clean-ups under the
-hood. It also requires a couple of new perl modules. To get these from CPAN, do
+hood. It also requires a couple of new perl modules. Install this from CPAN or
+from RPMs. See cpan.html in doc/ for pointers.  To get these from CPAN, do
 this:
 
 > setenv LANG en_US # Get's rid of UTF8 from RedHat
