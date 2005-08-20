@@ -5,7 +5,7 @@
 
 # Must run in a v6 environment
 
-# Usage: MigrateV7 --u=username --p=password --a=init|migrate|delete
+# Usage: MigrateV7 --u=username --p=password --a=init|migrate|undo|delete
 
 use DBI;
 use Getopt::Long;
@@ -26,7 +26,9 @@ unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate" or $Act
   print "Then run this script again in \"migrate\" mode. \n";
   print "At this point you can update the CGI code and when you are comfortable  \n";
   print "everything is OK, run in \"delete\" mode to erase old columns and/or tables.  \n";
- exit;
+  print "The undo mode removes the newly inserted tables and columns and should restore  \n";
+  print "the DB to a version 6 state.  \n";
+  exit;
 }  
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$User,$Password);
@@ -243,9 +245,9 @@ if ($Action eq "undo") { # Undo modifications
 
 if ($Action eq "delete") { 
 
-  print "Won't delete fields yet.\n";
+#  print "Won't delete fields yet.\n";
 
-  exit;
+#  exit;
 
   my $DocTypeDel         = $dbh -> prepare("alter table Document   drop DocumentType"); 
   my $MajorTopicDel1     = $dbh -> prepare("alter table MajorTopic drop Restricted "); 
@@ -260,6 +262,21 @@ if ($Action eq "delete") {
   $ConferenenceDel1 -> execute();
   $ConferenenceDel2 -> execute();
   $SessionDel       -> execute();
+
+  require "TopicSQL.pm";
+  require "MeetingSQL.pm";
+  &SpecialMajorTopics;
+  
+  print "\nDeleting Meeting-like topics\n";
+  
+  foreach my $MajorID (@GatheringMajorIDs) {
+    my $MajorTopicDel = $dbh -> prepare("delete from MajorTopic where MajorTopicID=?"); 
+    my $MinorTopicDel = $dbh -> prepare("delete from MinorTopic where MajorTopicID=?"); 
+    &FetchMajorTopic($MajorID);
+    print "Deleting $MajorTopics{$MajorID}{SHORT}\n";
+    $MajorTopicDel -> execute($MajorID);
+    $MinorTopicDel -> execute($MajorID);
+  }
 }
 
 exit;
