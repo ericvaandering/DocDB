@@ -176,7 +176,7 @@ $SortBy  = "date";
 $Reverse = 1;
 
 if ($Mode eq "conference") {
-  @Fields  = ("Title","Conference","Author","Files"); 
+  @Fields  = ("Title","Events","Author","Files"); 
   $SortBy  = "confdate";
 } elsif ($Mode eq "meeting") {
   @Fields  = ("Title","Author","Topics","Files");

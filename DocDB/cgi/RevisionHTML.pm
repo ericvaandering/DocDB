@@ -328,27 +328,39 @@ sub PrintEventInfo (%) {
   my @EventIDs = &GetRevisionEvents($DocRevID);
 
   if (@EventIDs) {
-    print "<div id=\"EventInfo\">\n";
-    print "<dl>\n";
-    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Associated with Events:</span></dt> \n";
+    unless ($Mode eq "short") {
+      print "<div id=\"EventInfo\">\n";
+      print "<dl>\n";
+      print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Associated with Events:</span></dt> \n";
+    }
     foreach my $EventID (@EventIDs) {
       my $EventLink = &EventLink(-eventid => $EventID);
       my $Start = &EuroDate($Conferences{$EventID}{StartDate});
       my $End   = &EuroDate($Conferences{$EventID}{EndDate});
-      print "<dd>";
+      unless ($Mode eq "short") {
+        print "<dd>";
+      }  
       print "$EventLink ";
-      if ($Start && $End && ($Start ne $End)) {
-        print " held from $Start to $End ";
+      if ($Mode eq "short") {
+        print "($Start)<br/>";
+      } else {  
+        if ($Start && $End && ($Start ne $End)) {
+          print " held from $Start to $End ";
+        }  
+        if ($Start && $End && ($Start eq $End)) {
+          print " held on $Start ";
+        }  
+        if ($Conferences{$EventID}{Location}) {
+          print " in $Conferences{$EventID}{Location}";
+        }
       }  
-      if ($Start && $End && ($Start eq $End)) {
-        print " held on $Start ";
+      unless ($Mode eq "short") {
+        print "</dd>\n";
       }  
-      if ($Conferences{$EventID}{Location}) {
-        print " in $Conferences{$EventID}{Location}";
-      }
-      print "</dd>\n";
     }
-    print "</dl></div>\n";
+    unless ($Mode eq "short") {
+      print "</dl></div>\n";
+    }
   }
 }  
 
