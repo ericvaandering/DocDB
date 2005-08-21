@@ -136,7 +136,7 @@ if ($Days) {
   require "MeetingSQL.pm";
 
   unless ($EventGroupID) {
-    $EventGroupID &LookupEventGroup($EventGroup);
+    $EventGroupID = &LookupEventGroup($EventGroup);
   }  
   &FetchEventGroup($EventGroupID);
   

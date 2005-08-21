@@ -32,7 +32,7 @@ sub GetConferences {
 
   my @ConferenceIDs = ();
   my $ConferenceID;
-  
+
   my $ConferenceList   = $dbh -> prepare("select ConferenceID from Conference");
   $ConferenceList -> execute();
   $ConferenceList -> bind_columns(undef, \($ConferenceID));
@@ -134,7 +134,7 @@ sub ClearEventGroups () {
 
 sub LookupEventGroup { # Returns EventGroupID from Name
   my ($Name) = @_;
-  my $Fetch   = $dbh -> prepare("select EventGroupID from EventGroupTopic where ShortDescription=?");
+  my $Fetch   = $dbh -> prepare("select EventGroupID from EventGroup where ShortDescription=?");
 
   $Fetch -> execute($Name);
   my $EventGroupID = $Fetch -> fetchrow_array;
