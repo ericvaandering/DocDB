@@ -394,7 +394,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
                          -authorids   => \@AuthorHints, -topicids    => \@TopicHints, 
                          -eventids    => [$EventID],    -viewids     => \@MeetingViewGroupIDs, 
                          -modifyids   => \@MeetingViewGroupIDs);
-        push @DebugStack,"Reserved document # $NewDocumentID";
+        push @ActionStack,"Reserved document # $NewDocumentID with title $TalkTitle";
         my $SessionTalkUpdate = $dbh -> prepare(
            "update SessionTalk set DocumentID=?,Confirmed=? where SessionTalkID=?");
         $SessionTalkUpdate -> execute($NewDocumentID,1,$SessionTalkID);
@@ -407,6 +407,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
 
 &EndPage(@ErrorStack);
 &WarnPage(@WarnStack);
+&ActionReport;
 
 ### Prepare to display form (get required info)
 
