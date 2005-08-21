@@ -48,7 +48,6 @@ CREATE TABLE AuthorHint (
 
 CREATE TABLE Conference (
   ConferenceID int(11) NOT NULL auto_increment,
-  MinorTopicID int(11) NOT NULL default '0',
   Location varchar(64) NOT NULL default '',
   URL varchar(240) default NULL,
   StartDate date default NULL,
@@ -58,12 +57,69 @@ CREATE TABLE Conference (
   Title varchar(128) default NULL,
   Epilogue text,
   ShowAllTalks int(11) default NULL,
-  SingleSession int(11) NOT NULL default '0',
-  PRIMARY KEY  (ConferenceID)
+  EventGroupID int(11) default NULL,
+  LongDescription text,
+  PRIMARY KEY  (ConferenceID),
+  KEY StartDate (StartDate),
+  KEY EndDate (EndDate)
 ) TYPE=MyISAM;
 
 --
 -- Dumping data for table `Conference`
+--
+
+
+
+--
+-- Table structure for table `ConfigSetting`
+--
+
+CREATE TABLE ConfigSetting (
+  ConfigSettingID int(11) NOT NULL auto_increment,
+  Project varchar(32) default NULL,
+  ConfigGroup varchar(64) default NULL,
+  Sub1Group varchar(64) default NULL,
+  Sub2Group varchar(64) default NULL,
+  Sub3Group varchar(64) default NULL,
+  Sub4Group varchar(64) default NULL,
+  ForeignID int(11) default NULL,
+  Value varchar(64) default NULL,
+  Sub1Value varchar(64) default NULL,
+  Sub2Value varchar(64) default NULL,
+  Sub3Value varchar(64) default NULL,
+  Sub4Value varchar(64) default NULL,
+  Sub5Value varchar(64) default NULL,
+  Description text,
+  Constrained int(11) default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (ConfigSettingID),
+  KEY ConfigGroup (ConfigGroup),
+  KEY Sub1Group (Sub1Group),
+  KEY ForeignID (ForeignID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table `ConfigSetting`
+--
+
+
+
+--
+-- Table structure for table `ConfigValue`
+--
+
+CREATE TABLE ConfigValue (
+  ConfigValueID int(11) NOT NULL auto_increment,
+  ConfigSettingID int(11) default NULL,
+  Value varchar(64) default NULL,
+  Description text,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (ConfigValueID),
+  KEY ConfigSettingID (ConfigSettingID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table `ConfigValue`
 --
 
 
@@ -77,6 +133,8 @@ CREATE TABLE DocXRef (
   DocRevID int(11) default NULL,
   DocumentID int(11) default NULL,
   TimeStamp timestamp(14) NOT NULL,
+  Version int(11) default NULL,
+  Project varchar(32) default NULL,
   PRIMARY KEY  (DocXRefID),
   KEY DocRevID (DocRevID),
   KEY DocumentID (DocumentID)
@@ -96,8 +154,8 @@ CREATE TABLE Document (
   DocumentID int(11) NOT NULL auto_increment,
   RequesterID int(11) NOT NULL default '0',
   RequestDate datetime default NULL,
-  DocumentType int(11) default NULL,
   TimeStamp timestamp(14) NOT NULL,
+  DocHash char(32) default NULL,
   PRIMARY KEY  (DocumentID),
   KEY Requester (RequesterID)
 ) TYPE=MyISAM;
@@ -148,6 +206,7 @@ CREATE TABLE DocumentRevision (
   Keywords varchar(240) default NULL,
   Note text,
   Demanaged int(11) default NULL,
+  DocTypeID int(11) default NULL,
   PRIMARY KEY  (DocRevID),
   KEY DocumentID (DocumentID),
   KEY DocumentTitle (DocumentTitle),
@@ -380,6 +439,44 @@ CREATE TABLE EmailUser (
 
 
 --
+-- Table structure for table `EventGroup`
+--
+
+CREATE TABLE EventGroup (
+  EventGroupID int(11) NOT NULL auto_increment,
+  ShortDescription varchar(32) NOT NULL default '',
+  LongDescription text,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (EventGroupID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table `EventGroup`
+--
+
+
+
+--
+-- Table structure for table `ExternalDocDB`
+--
+
+CREATE TABLE ExternalDocDB (
+  ExternalDocDBID int(11) NOT NULL auto_increment,
+  Project varchar(32) default NULL,
+  Description varchar(255) default NULL,
+  PublicURL varchar(255) default NULL,
+  PrivateURL varchar(255) default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (ExternalDocDBID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table `ExternalDocDB`
+--
+
+
+
+--
 -- Table structure for table `GroupHierarchy`
 --
 
@@ -518,8 +615,6 @@ CREATE TABLE MajorTopic (
   MajorTopicID int(11) NOT NULL auto_increment,
   ShortDescription varchar(32) NOT NULL default '',
   LongDescription text,
-  Restricted int(11) default '0',
-  Suppressed int(11) default '0',
   TimeStamp timestamp(14) NOT NULL,
   PRIMARY KEY  (MajorTopicID)
 ) TYPE=MyISAM;
@@ -610,6 +705,28 @@ CREATE TABLE MinorTopic (
 
 
 --
+-- Table structure for table `Notification`
+--
+
+CREATE TABLE Notification (
+  NotificationID int(11) NOT NULL auto_increment,
+  EmailUserID int(11) default NULL,
+  Type varchar(32) default NULL,
+  ForeignID int(11) default NULL,
+  Period varchar(32) default NULL,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (NotificationID),
+  KEY EmailUserID (EmailUserID),
+  KEY ForeignID (ForeignID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table `Notification`
+--
+
+
+
+--
 -- Table structure for table `RevisionAuthor`
 --
 
@@ -624,6 +741,26 @@ CREATE TABLE RevisionAuthor (
 
 --
 -- Dumping data for table `RevisionAuthor`
+--
+
+
+
+--
+-- Table structure for table `RevisionEvent`
+--
+
+CREATE TABLE RevisionEvent (
+  RevEventID int(11) NOT NULL auto_increment,
+  DocRevID int(11) NOT NULL default '0',
+  ConferenceID int(11) NOT NULL default '0',
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (RevEventID),
+  KEY MinorTopicID (ConferenceID),
+  KEY DocRevID (DocRevID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table `RevisionEvent`
 --
 
 
@@ -741,7 +878,6 @@ CREATE TABLE Session (
   Title varchar(128) default NULL,
   Description text,
   TimeStamp timestamp(14) NOT NULL,
-  ShowAllTalks int(11) default NULL,
   PRIMARY KEY  (SessionID),
   KEY ConferenceID (ConferenceID)
 ) TYPE=MyISAM;

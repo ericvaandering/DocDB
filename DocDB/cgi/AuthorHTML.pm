@@ -5,7 +5,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -165,7 +165,7 @@ sub AuthorsTable {
   my $NThisCol  = 0;
 
   print "<table>\n";
-  print "<tr valign=top>\n";
+  print "<tr>\n";
   
   print "<td>\n";
   print "<ul>\n";
@@ -180,7 +180,7 @@ sub AuthorsTable {
     }
     ++$NThisCol;
     my $author_link = &AuthorLink($AuthorID, -format => "formal");
-    print "<li>$author_link\n";
+    print "<li>$author_link</li>\n";
   }  
   print "</ul></td></tr>";
   print "</table>\n";
@@ -216,15 +216,12 @@ sub AuthorScroll (%) {
     } 
   }  
   if ($HelpLink) {
-    print "<b><a ";
-    &HelpLink($HelpLink);
-    print "$HelpText:</a></b>";
-    if ($Required) {
-      print $RequiredMark;
-    }  
-    print "<br> \n";
+    my $ElementTitle = &FormElementTitle(-helplink  => $HelpLink, 
+                                         -helptext  => $HelpText,
+                                         -required  => $Required );
+    print $ElementTitle,"\n";                                     
   }
-  if ($Disabled) {
+  if ($Disabled) { # FIXME: Use Booleans
     print $query -> scrolling_list(-name => $Name, -values => \@ActiveIDs, 
                                    -labels => \%AuthorLabels,
                                    -size => 10, -multiple => $Multiple,

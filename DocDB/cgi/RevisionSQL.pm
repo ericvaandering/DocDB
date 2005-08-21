@@ -1,3 +1,21 @@
+
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 sub FetchDocRevisionByID ($) {
 
   # FIXME Change name to FetchDocumentRevision
@@ -10,7 +28,7 @@ sub FetchDocRevisionByID ($) {
   my $RevisionList = $dbh->prepare(
     "select SubmitterID,DocumentTitle,PublicationInfo,VersionNumber,".
            "Abstract,RevisionDate,TimeStamp,DocumentID,Obsolete, ".
-           "Keywords,Note,Demanaged ".
+           "Keywords,Note,Demanaged,DocTypeID ".
     "from DocumentRevision ".
     "where DocRevID=? and Obsolete=0");
   if ($DocRevisions{$DocRevID}{DOCID} && $DocRevisions{$DocRevID}{Complete}) {
@@ -20,7 +38,7 @@ sub FetchDocRevisionByID ($) {
   my ($SubmitterID,$DocumentTitle,$PublicationInfo,
       $VersionNumber,$Abstract,$RevisionDate,
       $TimeStamp,$DocumentID,$Obsolete,
-      $Keywords,$Note,$Demanaged) = $RevisionList -> fetchrow_array;
+      $Keywords,$Note,$Demanaged,$DocTypeID) = $RevisionList -> fetchrow_array;
 
   #FIXME Make keys mixed-caps
   
@@ -37,7 +55,8 @@ sub FetchDocRevisionByID ($) {
   $DocRevisions{$DocRevID}{Obsolete}      = $Obsolete;
   $DocRevisions{$DocRevID}{Keywords}      = $Keywords;
   $DocRevisions{$DocRevID}{Note}          = $Note;
-  $DocRevisions{$DocRevID}{Demanaged}    = $Demanaged;
+  $DocRevisions{$DocRevID}{Demanaged}     = $Demanaged;
+  $DocRevisions{$DocRevID}{DocTypeID}     = $DocTypeID;
   $DocRevisions{$DocRevID}{Complete}      = 1;
 
 ### Find earliest instance this document for content modification date
@@ -161,6 +180,25 @@ sub FetchRevisionsByMinorTopic {
   return @DocRevIDs;
 }
 
+sub FetchRevisionsByEventID {
+  my ($EventID) = @_;
+  
+  my $DocRevID;
+  my @DocRevIDs = ();
+  
+  my $RevisionList = $dbh -> prepare("select DocRevID from RevisionEvent where ConferenceID=?"); 
+ 
+  $RevisionList -> execute($EventID);
+  $RevisionList -> bind_columns(undef, \($DocRevID));
+
+  while ($RevisionList -> fetch) {
+    &FetchDocRevisionByID($DocRevID);
+    if ($DocRevisions{$DocRevID}{Obsolete}) {next;}
+    push @DocRevIDs,$DocRevID; 
+  }
+  return @DocRevIDs;
+}
+
 sub UpdateRevision (%) { # Later add other fields, where clause
   require "SQLUtilities.pm";
   
@@ -187,6 +225,7 @@ sub InsertRevision {
   my $PubInfo       = $Params{-pubinfo}       || "";
   my $DateTime      = $Params{-datetime}           ;
   my $Version       = $Params{-version}       || 0;
+  my $DocTypeID     = $Params{-doctypeid}     || 0;
 
   unless ($DateTime) {
     my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
@@ -201,19 +240,21 @@ sub InsertRevision {
     $NewVersion = int($Documents{$DocumentID}{NVersions});
     if ($Version eq "bump") {
       ++$NewVersion;
-    }
+    } elsif ($Version eq "reserve") {
+      $NewVersion = 0;
+    }  
   }
   
   my $DocRevID = 0;
   
   my $Insert = $dbh -> prepare("insert into DocumentRevision ".
      "(DocRevID, DocumentID, SubmitterID, DocumentTitle, PublicationInfo, ". 
-     " VersionNumber, Abstract, RevisionDate,Keywords,Note) ". 
-     "values (0,?,?,?,?,?,?,?,?,?)");
+     " VersionNumber, Abstract, RevisionDate,Keywords,Note,DocTypeID) ". 
+     "values (0,?,?,?,?,?,?,?,?,?,?)");
   
   if ($DocumentID) {
     $Insert -> execute($DocumentID,$SubmitterID,$Title,$PubInfo,$NewVersion, 
-                       $Abstract,$DateTime,$Keywords,$Note);
+                       $Abstract,$DateTime,$Keywords,$Note,$DocTypeID);
                                
     $DocRevID = $Insert -> {mysql_insertid}; # Works with MySQL only
   }

@@ -1,0 +1,166 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+use Benchmark; $StartTime = new Benchmark;
+use CGI;
+use DBI;
+use DateTime;
+
+require "DocDBGlobals.pm";
+require "DBUtilities.pm";
+require "HTMLUtilities.pm";
+require "ResponseElements.pm";
+
+require "CalendarHTML.pm";
+require "MeetingHTML.pm";
+
+require "MeetingSQL.pm";
+
+$query = new CGI;  # Global for subroutines
+
+my %Params = $query -> Vars;
+
+my $Day         = $Params{day}         || 0;
+my $Month       = $Params{month}         || 0;
+my $Year        = $Params{year}         || 0;
+
+&CreateConnection();
+
+### Start HTML
+
+print $query->header;
+
+my $TitleDate;
+my $FutureEventTable = $FALSE;
+my $Today = DateTime -> now();
+
+if ($Day && $Month && $Year) {
+  my $Date = DateTime -> new(year => $Year, month => $Month, day => $Day);
+  $TitleDate = $Day." ".$Date -> month_name()." ".$Year;
+} elsif ($Month && $Year) {
+  my $Date = DateTime -> new(year => $Year, month => $Month, day => 1);
+  $TitleDate = $Date -> month_name()." ".$Year;
+} elsif ($Year) {
+  $TitleDate = $Year;
+  if ($Year == $Today -> year()) {
+    $FutureEventTable = $TRUE;
+  }  
+} else {
+  my $Date = DateTime -> now();
+  $Month =  $Date -> month();
+  $Year =  $Date -> year();
+  $TitleDate = $Date -> month_name()." ".$Year;
+  $FutureEventTable = $TRUE;
+}  
+  
+&DocDBHeader("Calendar for $TitleDate");
+&EndPage(@ErrorStack);
+
+if ($Day && $Month && $Year) {
+  
+  my $TheDay = DateTime -> new(year => $Year, month => $Month, day => $Day);
+
+  my $PrevDay = $TheDay -> clone();
+     $PrevDay -> add(days => -1);
+  my $PrevDNum  = $PrevDay -> day(); 
+  my $PrevMNum  = $PrevDay -> month(); 
+  my $PrevName  = $PrevDay -> month_name(); 
+  my $PrevYear  = $PrevDay -> year(); 
+
+  my $NextDay = $TheDay -> clone();
+     $NextDay -> add(days => 1);
+  my $NextDNum  = $NextDay -> day(); 
+  my $NextMNum  = $NextDay -> month(); 
+  my $NextName  = $NextDay -> month_name(); 
+  my $NextYear  = $NextDay -> year(); 
+
+  print "<p class=\"DayNav\">\n";
+  print &CalendarLink(-year => $PrevYear, -month => $PrevMNum, -day => $PrevDNum, 
+                      -text => "&laquo; $PrevDNum $PrevName $PrevYear");
+  print "<span class=\"CurrDate\">$Day ";
+  print &CalendarLink(-year => $Year, -month => $Month,
+                      -text => $TheDay -> month_name());
+  print " ";                    
+  print &CalendarLink(-year => $Year, -text => "$Year");
+  print "</span>\n";
+  print &CalendarLink(-year => $NextYear, -month => $NextMNum, -day => $NextDNum, 
+                      -text => "$NextDNum $NextName $NextYear &raquo;");
+  print "</p>\n";
+  
+  &PrintDayEvents(-year => $Year, -month => $Month, -day => $Day);
+} elsif ($Month && $Year) {
+  &PrintCalendar(-year => $Year, -month => $Month);
+} elsif ($Year) {
+  print "<table class=\"Calendar WholeYear\">\n";
+  my $PrevLink = &CalendarLink(-year => $Year - 1, -text => "&laquo;".($Year - 1));
+  my $NextLink = &CalendarLink(-year => $Year + 1, -text => ($Year + 1)."&raquo;");
+  
+  print "<tr class=\"MonthNav\">\n
+         <th>$PrevLink</th>\n
+         <th colspan=\"2\"><h1>$Year</h1></th>\n
+         <th>$NextLink</th>\n
+         </tr>\n";
+         
+  for $Month (1 .. 12) {
+    unless (($Month-1) % 4) {
+      print "<tr>\n";
+    }
+    print "<td class=\"Month\">";   
+    &PrintCalendar(-year => $Year, -month => $Month, -type => "year");
+    print "</td>";   
+    unless ($Month % 4) {
+      print "</tr>\n";
+    }
+  }
+  print "</table>\n";
+}
+
+if ($FutureEventTable) {  
+  my $TheDay = $Today -> clone();
+  my $WindowStart = $TheDay -> ymd();
+  $TheDay -> add(days => 60);
+  my $WindowEnd = $TheDay -> ymd();
+  my @EventIDs = &GetEventsByDate(-from => $WindowStart, -to => $WindowEnd);
+  
+  if (@EventIDs) {
+    print "<table class=\"CenteredTable MultidayEventList Alternating\">\n";
+    print "<tr><th>Date</th><th>Time</th><th>Upcoming Events</th><th>Location</th><th></th></tr>\n";
+    $TheDay = $Today -> clone();
+    my $RowClass = "Odd";
+    foreach my $i (0..60) {
+      $TheDay -> add(days => 1);
+      my $Count = &PrintDayEvents(-year => $TheDay -> year(), -month  => $TheDay -> month(), 
+                                  -day  => $TheDay -> day(),  -format => "multiday", 
+                                  -rowclass => $RowClass);
+      if ($Count && $RowClass eq "Odd") {
+        $RowClass = "Even";
+      } elsif ($Count && $RowClass eq "Even") {            
+        $RowClass = "Odd";
+      }
+    }  
+    print "</table>\n";
+  }  
+}  
+
+$EndTime  = new Benchmark;
+
+&DocDBNavBar();
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

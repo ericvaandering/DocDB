@@ -5,7 +5,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -30,6 +30,7 @@ sub AddDocument {
   require "RevisionSQL.pm";
   require "TopicSQL.pm";
   require "AuthorSQL.pm";
+  require "MeetingSQL.pm";
   require "SecuritySQL.pm";
   require "SignoffSQL.pm";
   
@@ -38,6 +39,7 @@ sub AddDocument {
   my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
 
   my $DocumentID    = $Params{-docid}         || 0;
+  my $Version       = $Params{-version}       || "bump";
   my $Title         = $Params{-title}         || "";
   my $Abstract      = $Params{-abstract}      || "";
   my $Keywords      = $Params{-keywords}      || "";
@@ -50,6 +52,7 @@ sub AddDocument {
   
   my @AuthorIDs  = @{$Params{-authorids}} ;
   my @TopicIDs   = @{$Params{-topicids}}  ;
+  my @EventIDs   = @{$Params{-eventids}}  ;
   my @ViewIDs    = @{$Params{-viewids}}   ;
   my @ModifyIDs  = @{$Params{-modifyids}} ;
   my @SignOffIDs = @{$Params{-signoffids}}; # For simple signoff list, may be deprecated
@@ -67,15 +70,17 @@ sub AddDocument {
 
   my ($DocRevID,$Count,@FileIDs);
 
-  $DocumentID = &InsertDocument(-docid => $DocumentID, -typeid => $TypeID, 
-                 -requesterid => $RequesterID, -datetime => $DateTime);
+  $DocumentID = &InsertDocument(
+                 -docid    => $DocumentID, -requesterid => $RequesterID, 
+                 -datetime => $DateTime);
                  
   if ($DocumentID) {                                 
-    $DocRevID = &InsertRevision(-docid => $DocumentID, 
-                 -submitterid => $RequesterID, -title    => $Title,
-                 -pubinfo     => $PubInfo,     -abstract => $Abstract,
-                 -version     => 'bump',       -datetime => $DateTime,
-                 -keywords    => $Keywords,    -note     => $Note);
+    $DocRevID = &InsertRevision(
+                 -docid       => $DocumentID,  -doctypeid => $TypeID, 
+                 -submitterid => $RequesterID, -title     => $Title,
+                 -pubinfo     => $PubInfo,     -abstract  => $Abstract,
+                 -version     => $Version,     -datetime  => $DateTime,
+                 -keywords    => $Keywords,    -note      => $Note);
 
     # Deal with SessionTalkID
 
@@ -87,14 +92,13 @@ sub AddDocument {
     my $Version    = $DocRevisions{$DocRevID}{Version};
     &MakeDirectory($DocumentID,$Version); 
     &ProtectDirectory($DocumentID,$Version,@ViewIDs); 
-    $Count = &InsertAuthors(-docrevid => $DocRevID, -authorids => \@AuthorIDs);
-
-    $Count = &InsertTopics(-docrevid => $DocRevID, -topicids => \@TopicIDs);
-
-    $Count = &InsertSecurity(-docrevid  => $DocRevID, 
-                             -viewids   => \@ViewIDs,
-                             -modifyids => \@ModifyIDs);
-    @FileIDs = &AddFiles(-docrevid  => $DocRevID, -datetime => $DateTime, -files => \%Files);
+    $Count = &InsertAuthors(-docrevid        => $DocRevID, -authorids => \@AuthorIDs);
+    $Count = &InsertTopics(-docrevid         => $DocRevID, -topicids  => \@TopicIDs);
+    $Count = &InsertRevisionEvents(-docrevid => $DocRevID, -eventids  => \@EventIDs);
+    $Count = &InsertSecurity(-docrevid       => $DocRevID, -viewids   => \@ViewIDs, -modifyids => \@ModifyIDs);
+    unless ($Version eq "reserve") {
+      @FileIDs = &AddFiles(-docrevid         => $DocRevID, -datetime  => $DateTime, -files => \%Files);
+    }
     if (@SignOffIDs) {
       &InsertSignoffList($DocRevID,@SignOffIDs);
     }  

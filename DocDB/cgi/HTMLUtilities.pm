@@ -28,8 +28,9 @@ require "ProjectRoutines.pm";
 sub DocDBHeader { 
   my ($Title,$PageTitle,%Params) = @_;
   
-  my $Search = $Params{-search}; # Fix search page!
-  my $NoBody = $Params{-nobody};
+  my $Search  = $Params{-search}; # Fix search page!
+  my $NoBody  = $Params{-nobody};
+  my @Scripts = @{$Params{-scripts}};
 
   my @ScriptParts = split /\//,$ENV{SCRIPT_NAME};
   my $ScriptName  = pop @ScriptParts;
@@ -38,45 +39,56 @@ sub DocDBHeader {
     $PageTitle = $Title;
   }  
   
-#  if ($ScriptName eq "ModifyHome") {
-#    print "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-#    print "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"DTD/xhtml1-transitional.dtd\">\n";
-#  } else {
+  # FIXME: Do Hash lookup for scripts as they are certified XHTML?
+  if ($DOCTYPE) {
+    print $DOCTYPE;
+  } else {
     print "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"
-          \"http://www.w3.org/TR/html4/loose.dtd\">";
-#  }
+          \"http://www.w3.org/TR/html4/loose.dtd\">\n";
+  }
   print "<html>\n";
   print "<head>\n";
   print "<title>$Title</title>\n";
   
   # Include DocDB style sheets
   
-  print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB.css\" type=\"text/css\" />\n";
-  if (-e "$CSSDirectory/DocDB_IE.css") {
-    print "<!--[if IE]>\n";
-    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB_IE.css\" type=\"text/css\" />\n";
-    print "<![endif]-->\n"; 
+  my @PublicCSS = ("");
+  if ($Public) {
+    @PublicCSS = ("","Public");
   }
-  if (-e "$CSSDirectory/DocDB$ScriptName.css") {
-    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB$ScriptName.css\" type=\"text/css\" />\n";
+  
+  foreach my $ScriptCSS ("",$ScriptName) {
+    foreach my $ProjectCSS ("",$ShortProject) {
+      foreach my $PublicCSS (@PublicCSS) {
+        foreach my $BrowserCSS ("","_IE") {
+          my $CSSFile = $CSSDirectory."/".$ProjectCSS.$PublicCSS."DocDB".$ScriptCSS.$BrowserCSS.".css";
+          my $CSSURL  =   $CSSURLPath."/".$ProjectCSS.$PublicCSS."DocDB".$ScriptCSS.$BrowserCSS.".css";
+          if (-e $CSSFile) {
+            if ($BrowserCSS eq "_IE") { # Use IE format for including. Hopefully we can not give these to IE7
+              print "<!--[if IE]>\n";
+              print "<link rel=\"stylesheet\" href=\"$CSSURL\" type=\"text/css\" />\n";
+              print "<![endif]-->\n"; 
+            } else {
+              print "<link rel=\"stylesheet\" href=\"$CSSURL\" type=\"text/css\" />\n";
+            }
+          }
+        }
+      }
+    }
   }
-  if (-e "$CSSDirectory/DocDB$ScriptName"."_IE.css") {
-    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/DocDB$ScriptName\_IE.css\" type=\"text/css\" />\n";
-  }
-   
-  # Include projects DocDB style sheets 
-   
-  if (-e "$CSSDirectory/$ShortProject"."DocDB.css") {
-    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB.css\" type=\"text/css\" />\n";
-  }
-  if (-e "$CSSDirectory/$ShortProject"."DocDB_IE.css") {
-    print "<!--[if IE]>\n";
-    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB_IE.css\" type=\"text/css\" />\n";
-    print "<![endif]-->\n"; 
-  }
-  if (-e "$CSSDirectory/$ShortProject"."DocDB".$ScriptName.".css") {
-    print "<link rel=\"stylesheet\" href=\"$CSSURLPath/$ShortProject"."DocDB".$ScriptName.".css\" type=\"text/css\" />\n";
-  }
+
+  # Include javascript links
+
+  foreach my $Script (@Scripts) {
+    if ($Script eq "TopicChooser") { # Get global variables in right place
+      require "Scripts.pm";
+      &TopicSearchScript;
+    } elsif  ($Script eq "EventChooser") { # Get global variables in right place
+      require "Scripts.pm";
+      &EventSearchScript;
+    }
+    print "<script type=\"text/javascript\" src=\"$JSURLPath/$Script.js\"></script>\n";
+  }  
 
   if (defined &ProjectHeader) {
     &ProjectHeader($Title,$PageTitle); 

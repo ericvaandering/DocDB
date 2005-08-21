@@ -34,7 +34,7 @@ sub PrintXRefInfo ($) {
   if (@DocXRefIDs) {
     print "<div id=\"XRefs\">\n";
     print "<dl>\n";
-    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Cross-References:</span></dt>\n";
+    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Related Documents:</span></dt>\n";
     print "</dl>\n";
     print "<ul>\n";
     foreach my $DocXRefID (@DocXRefIDs) {

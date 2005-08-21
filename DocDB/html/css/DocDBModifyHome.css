@@ -1,3 +1,5 @@
+/* Some (all) of this may be possible with general padding rules, etc. */
+
 .GenCustomForm {
   padding: 5px;
   border: 3px solid;
@@ -6,12 +8,7 @@
   border-collapse: collapse;
 }  
 
-.GenCustomForm td {
-  padding: 5px;
-  border: 1px solid;
-}  
-
-.GenCustomForm th {
+.GenCustomForm td, .GenCustomForm th {
   padding: 5px;
   border: 1px solid;
 }  
@@ -21,6 +18,3 @@
   border: none;
 }
 
-.LeftHeader {
-  text-align: right;
-}  

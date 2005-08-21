@@ -5,7 +5,7 @@
 # project. 
 
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -29,5 +29,10 @@
 #                             "documents on the home page");
 #$ProjectMessages{Homepage}{LeftColumn} = ["These are added",
 #                                          "to the left column"]; # Was MainPageAddendum
+#$ProjectMessages{Homepage}{DocumentLists} = ["These are added",
+#                                             "after All Documents, e.g.",
+#                                             "<a href=\"ListBy?eventgroup=Conferences\">Conference Documents</a>",
+#                                             "<a href=\"ListAllMeetings?eventgroup=Collaboration%20Meetings\">Collaboration Meetings</a>"];
+#
 
 1;

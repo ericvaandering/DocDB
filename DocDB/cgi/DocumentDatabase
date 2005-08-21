@@ -48,12 +48,9 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 # %params = $query -> Vars;  # No parameters (yet?) 
 
 print $query->header;
-&DocDBHeader("$Project Document Database","Document Database");
+&DocDBHeader("$Project Document Database","Document Database",-scripts => ["PopUps"]);
 
 my $PersonalAccountLink = &PersonalAccountLink();
-
-&HelpPopupScript;
-&GroupLimitPopupScript;
 
 print "<div id=\"DocDBHomeBody\">\n";
 
@@ -107,9 +104,10 @@ print "</div>\n";  # LeftColumn3Col
 
 print "<div id=\"MainColumn3Col\">\n";
 
-unless ($Public || !&CanCreate()) {
+if (&CanCreate()) {
   print "<div class=\"HomepageMainChoice\"><strong><a href=\"$ModifyHome\">Create or change documents or other information</a></strong></div>\n";
 }
+
 print "<div class=\"HomepageMainChoice\"><strong><a href=\"$SearchForm\">Search</a> for documents</strong></div>\n"; 
 
 my $ShowForm  = $query -> startform('POST',$ShowDocument);
@@ -130,9 +128,13 @@ print "<div>\n";
 print $query -> submit (-value => "Show");
 print "<strong> documents modified in the last </strong>";
 &DaysPulldown($LastDays);
-print "<strong> days.</strong>";
+print "<strong> days</strong>";
 print "</div>\n";
 print $query -> endform;
+print "</div>\n";  
+
+print "<div class=\"HomepageMainChoice\">\n";
+print "<strong><a href=\"$ShowCalendar\">Calendar</a> of events</strong>";
 print "</div>\n";  
 
 # Fill arrays that print lists of documents
@@ -145,13 +147,9 @@ push @FirstColumn,"<a href=\"$ListAuthors\">Authors</a>";
 push @FirstColumn,"<a href=\"$ListTopics\">Topics</a>";
 push @FirstColumn,"<a href=\"$ListKeywords\">Keywords</a>";
 unless ($Public && !$PublicAccess{MeetingList}) {
-  push @FirstColumn,"<a href=\"$ListAllMeetings\">Meetings</a>";
+  push @FirstColumn,"<a href=\"$ListAllMeetings\">Events</a>";
 }  
 
-unless ($Public) {
-  push @OtherColumns,"<a href=\"$ListMeetings\">Collaboration meetings</a>";
-}
-push @OtherColumns,"<a href=\"$ListBy?major=Conferences&amp;mode=conference\">Conferences</a>";
 if ($UseSignoffs && (!$Public || $PublicAccess{MeetingList})) {
   push @OtherColumns,"<a href=\"$ListManagedDocuments\">Managed documents</a>";
 }
@@ -163,6 +161,7 @@ if ($UserValidation eq "certificate" ||
   push @OtherColumns,"<a href=\"$web_root/Static/Lists/$remote_user/FullList.html\">All documents</a>";
 }
 
+push @OtherColumns,@{ $ProjectMessages{Homepage}{DocumentLists} };
 push @Spanners,@MultiColumnDocumentLists;
 
 my $Rows = scalar(@FirstColumn);
@@ -172,7 +171,7 @@ my $Cols = int((scalar(@OtherColumns) - 1)/scalar(@FirstColumn) + 1);
 
 print "<strong>List:</strong>\n";
 
-print "<table id=\"DocListMethods\">\n";
+print "<table id=\"DocListMethods\" class=\"MedPaddedTable\">\n";
 
 for (my $Index = 0; $Index < $Rows; ++$Index) {
   print "<tr>\n";
@@ -238,7 +237,7 @@ print "</div>\n";  # DocDBHomeBody
     } else {  
       print "Documents modified in the last $HomeLastDays days\n";
     }
-    print "</h4><p/>\n";
+    print "</h4>\n";
   }
   
   my $NumberOfDocuments = &DocumentTable(-fields  => \@Fields, -docids  => \@DocumentIDs, 

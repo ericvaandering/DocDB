@@ -1,3 +1,21 @@
+
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 sub TextSearch {
   my ($Field,$Mode,$Words) = @_;
   
@@ -94,6 +112,46 @@ sub TopicSearch {
   return @Revisions;     
 }
 
+sub EventSearch {
+  my $List;
+  my ($Logic,$Type,@IDs) = @_;
+  if ($Type eq "event") {
+    $List = $dbh -> prepare("select DocRevID from RevisionEvent where ConferenceID=?"); 
+  } elsif ($Type eq "group") {
+    $List = $dbh -> prepare(
+      "select DocRevID from RevisionEvent,Conference ".
+      "where RevisionEvent.ConferenceID=Conference.ConferenceID ".
+      "and Conference.EventGroupID=?");
+  }  
+    
+  my %Revisions = ();
+  my @Revisions = ();
+  my $DocRevID;
+  
+  foreach $ID (@IDs) {
+    $List -> execute($ID);
+    $List -> bind_columns(undef, \($DocRevID));
+    my %EventRevisions = ();
+    while ($List -> fetch) { # Make sure each event only matches once
+      ++$EventRevisions{$DocRevID};
+    }
+    foreach $DocRevID (keys %EventRevisions) {
+      ++$Revisions{$DocRevID};
+    }  
+  }
+  if ($Logic eq "AND") {
+    foreach $DocRevID (keys %Revisions) {
+      if ($Revisions{$DocRevID} == scalar(@IDs)) { # Require a match for each topic
+        push @Revisions,$DocRevID;
+      }
+    }
+  } elsif ($Logic eq "OR") {
+    @Revisions = keys %Revisions;
+  }  
+  
+  return @Revisions;     
+}
+
 sub AuthorSearch {
   my $revtopic_list;
   my ($Logic,@AuthorIDs) = @_;
@@ -126,7 +184,7 @@ sub AuthorSearch {
 sub TypeSearch {
   my $document_list;
   my ($Logic,@TypeIDs) = @_;
-  $document_list = $dbh -> prepare("select DocumentID from Document where DocumentType=?"); 
+  $document_list = $dbh -> prepare("select UNIQUE(DocumentID) from DocumentRevision where DocTypeID=?"); 
     
   my %Documents = ();
   my @Documents = ();
@@ -141,7 +199,7 @@ sub TypeSearch {
   }
   if ($Logic eq "AND") {
     foreach $DocumentID (keys %Documents) {
-      if ($Documents{$DocumentID} == $#TypeIDs+1) { # Require a match for each topic
+      if ($Documents{$DocumentID} == $#TypeIDs+1) { # Require a match for each type
         push @Documents,$DocumentID;
       }
     }

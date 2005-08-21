@@ -6,7 +6,7 @@
 #    Modified: Lynn Garren (garren@fnal.gov)
 #
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -44,7 +44,10 @@ $Msg_ModDocTypeEmpty  = "You must select a document type to modify or delete.";
 $Msg_ModEUserEmpty    = "You must select a user to modify or delete.";
 
 $Msg_ModTopicEmpty    = "You must select a topic to modify or delete.";
-$Msg_ModConfEmpty     = "You must select a conference to modify or delete.";
+$Msg_ModConfEmpty     = "You must select an event to modify or delete.";
+
+$Msg_DelFullEvtGroup  = "You can't delete event groups with events. Delete the events first before deleting the group.";
+$Msg_DelFullEvent     = "This event has associated documents. Not deleted.";
 
 # Messages for document creation, modification, display
 
@@ -65,14 +68,15 @@ $Msg_TopicShortIgnored = "Your short description of this meeting has been ".
                          "ignored. The long description will be used instead ".
                          "(because you didn't create a topic). ";
 
-# Messages for meeting/session creation/modification/access
+# Messages for event/session creation/modification/access
 
-$Msg_MeetNoSessions     = "This meeting was created with no sessions. You will have to add at least one session before adding talks.";
+$Msg_MeetNoSessions     = "This event was created with no sessions. You will have to add at least one session before adding talks.";
+$Msg_MeetOnlyOne        = "This page can only be used to modify short events (just one session)";
 $Msg_SessionBlankDelete = "Setting session titles to blank will not delete them.";
 
-$Msg_MeetNoAccess       = "You do not have permission to view this meeting.";
-$Msg_MeetNoCreate       = "You do not have permission to create or modify meetings.";
-$Msg_MeetNoModify       = "You do not have permission to modify this meeting.";
+$Msg_MeetNoAccess       = "You do not have permission to view this event.";
+$Msg_MeetNoCreate       = "You do not have permission to create or modify events.";
+$Msg_MeetNoModify       = "You do not have permission to modify this event.";
 
 # Messages for keywords, keyword groups
 

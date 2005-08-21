@@ -1,13 +1,13 @@
 #
 #        Name: TopicSQL.pm
 # Description: Routines to do DB accesses related to topics 
-#              (major, minor and conferences which are special types of topics) 
+#              (major and minor) 
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 #
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -26,8 +26,6 @@
 
 sub GetTopics {
   require "MeetingSQL.pm";
-  &SpecialMajorTopics;
-  &GetConferences; # Needed all the time for sorts, etc.
 
   my $minor_list   = $dbh->prepare("select MinorTopicID,MajorTopicID,ShortDescription,LongDescription from MinorTopic");
   my $major_list   = $dbh->prepare("select MajorTopicID,ShortDescription,LongDescription from MajorTopic");
@@ -158,6 +156,10 @@ sub GetTopicDocuments {
   
   require "RevisionSQL.pm";
 
+  my $DocumentID;
+  my $DocRevID;
+  my %DocumentIDs;
+
   my $RevisionList = $dbh -> prepare("select DocRevID from RevisionTopic where MinorTopicID=?"); 
   my $DocumentList = $dbh -> prepare("select DocumentID from DocumentRevision where DocRevID=? and Obsolete=0"); 
   $RevisionList -> execute($TopicID);
@@ -184,68 +186,6 @@ sub LookupMajorTopic { # Returns MajorTopicID from Topic Name
   &FetchMajorTopic($MajorTopicID);
   
   return $MajorTopicID;
-}
-
-sub SpecialMajorTopics { # Store MajorTopicIDs for special topics
-  unless ($SpecialMajorsFound) {
-    $SpecialMajorsFound = 1;
-    @ConferenceMajorIDs = ();
-    @MeetingMajorIDs    = ();
-    
-    my $TopicName;
-    foreach $TopicName (@ConferenceMajorTopics) {
-      my $MajorID  = &LookupMajorTopic($TopicName);
-      if ($MajorID) {
-        push @ConferenceMajorIDs,$MajorID;
-      }
-    }
-    foreach $TopicName (@MeetingMajorTopics) {
-      my $MajorID  = &LookupMajorTopic($TopicName);
-      if ($MajorID) {
-        push @MeetingMajorIDs,$MajorID;
-      }
-    }
-    @GatheringMajorIDs = (@MeetingMajorIDs,@ConferenceMajorIDs);
-  }
-}
-
-sub MajorIsMeeting {
-  my ($MajorID) = @_;
-  
-  &SpecialMajorTopics;
-  my $IsMeeting = 0;
-  foreach my $CheckID (@MeetingMajorIDs) {
-    if ($CheckID == $MajorID) {
-      $IsMeeting = 1;
-    }
-  }
-  return $IsMeeting; 
-}
-
-sub MajorIsConference {
-  my ($MajorID) = @_;
-  
-  &SpecialMajorTopics;
-  my $IsConference = 0;
-  foreach my $CheckID (@ConferenceMajorIDs) {
-    if ($CheckID == $MajorID) {
-      $IsConference = 1;
-    }
-  }
-  return $IsConference;
-}
-
-sub MajorIsGathering {
-  my ($MajorID) = @_;
-  
-  &SpecialMajorTopics;
-  my $IsGathering = 0;
-  foreach my $CheckID (@GatheringMajorIDs) {
-    if ($CheckID == $MajorID) {
-      $IsGathering = 1;
-    }
-  }
-  return $IsGathering;
 }
 
 sub InsertTopics (%) {

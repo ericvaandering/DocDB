@@ -8,7 +8,7 @@
 #    2) mode=meeting (sorted by author, files are listed)
 #    3) mode=conference (sorted by reverse date, conference fields shown)
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -86,6 +86,9 @@ $FileContSearchMode     = $params{filecontsearchmode};
 
 @MinorSearchIDs = split /\0/,$params{minortopic};
 @MajorSearchIDs = split /\0/,$params{majortopic};
+
+my @EventSearchIDs      = split /\0/,$params{events};
+my @EventGroupSearchIDs = split /\0/,$params{eventgroups};
 
 $Afterday   = $params{afterday};
 $Aftermonth = $params{aftermonth};
@@ -218,6 +221,39 @@ if (@MajorSearchIDs)  {
   @MajorDocumentIDs = &ValidateRevisions(@MajorRevisions);
 }  
 
+if (@EventSearchIDs && @EventGroupSearchIDs) { # Remove group if event is selected
+  require "MeetingSQL.pm";
+  &GetConferences;
+  my %EventGroupSearchIDs = ();
+  foreach my $EventGroupSearchID (@EventGroupSearchIDs) {
+    $EventGroupSearchIDs{$EventGroupSearchID} = 1;
+  } 
+  foreach my $EventSearchID (@EventSearchIDs) {
+    $EventGroupSearchIDs{$Conferences{$EventSearchID}{EventGroupID}} = 0;
+  } 
+  @EventGroupSearchIDs = ();
+  foreach my $EventGroupSearchID (keys %EventGroupSearchIDs) {
+    if ($EventGroupSearchIDs{$EventGroupSearchID}) {
+      push @EventGroupSearchIDs, $EventGroupSearchID;
+    }
+  } 
+}
+
+my @EventDocumentIDs      = ();
+my @EventGroupDocumentIDs = ();
+
+if (@EventSearchIDs) {  
+  $SearchedEvents = 1;
+  my @EventRevisions = &EventSearch($InnerLogic,"event",@EventSearchIDs);
+  @EventDocumentIDs = &ValidateRevisions(@EventRevisions);
+} 
+
+if (@EventGroupSearchIDs) {  
+  $SearchedEventGroups = 1;
+  my @EventGroupRevisions = &EventSearch($InnerLogic,"group",@EventGroupSearchIDs);
+  @EventGroupDocumentIDs = &ValidateRevisions(@EventGroupRevisions);
+} 
+
 ### Authors (if any)
 
 if (@AuthorSearchIDs) {
@@ -283,7 +319,10 @@ if ($ContentSearch && $FileContSearch) {
 
 if ($OuterLogic eq "OR") {
   push @DocumentIDs,@RevisionDocumentIDs;
-  push @DocumentIDs,@TopicDocumentIDs;
+  push @DocumentIDs,@MajorDocumentIDs;
+  push @DocumentIDs,@MinorDocumentIDs;
+  push @DocumentIDs,@EventDocumentIDs;
+  push @DocumentIDs,@EventGroupDocumentIDs;
   push @DocumentIDs,@AuthorDocumentIDs;
   push @DocumentIDs,@FileDocumentIDs;
   push @DocumentIDs,@TypeDocumentIDs;
@@ -307,6 +346,18 @@ if ($OuterLogic eq "OR") {
   if ($SearchedMajor) {
     ++$TotalSearches;
     foreach $DocID (@MajorDocumentIDs) {
+      ++$TotalDocumentIDs{$DocID};
+    }
+  } 
+  if ($SearchedEvents) {
+    ++$TotalSearches;
+    foreach $DocID (@EventDocumentIDs) {
+      ++$TotalDocumentIDs{$DocID};
+    }
+  } 
+  if ($SearchedEventGroups) {
+    ++$TotalSearches;
+    foreach $DocID (@EventGroupDocumentIDs) {
       ++$TotalDocumentIDs{$DocID};
     }
   } 

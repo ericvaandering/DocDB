@@ -169,31 +169,23 @@ $TopicAdd              = $cgi_root."TopicAdd";
 $AuthorAddForm         = $cgi_root."AuthorAddForm";
 $AuthorAdd             = $cgi_root."AuthorAdd";
 
-$ListDocuments         = $cgi_root."ListDocuments"; # FIXME: Remove later
-$ListByAuthor          = $cgi_root."ListByAuthor";  # FIXME: Remove later
-$ListByTopic           = $cgi_root."ListByTopic";   # FIXME: Remove later
-$ListByType            = $cgi_root."ListByType";    # FIXME: Remove later
 $ListManagedDocuments  = $cgi_root."ListManagedDocuments";
-$LastModified          = $cgi_root."LastModified";  # FIXME: Remove later
 
 $ListAuthors           = $cgi_root."ListAuthors";
 $ListTopics            = $cgi_root."ListTopics";
 $ListTypes             = $cgi_root."ListTypes";
-$ListMeetings          = $cgi_root."ListMeetings";
 $ListKeywords          = $cgi_root."ListKeywords";
 $ListBy                = $cgi_root."ListBy";
 
 $AddFiles              = $cgi_root."AddFiles";
 $AddFilesForm          = $cgi_root."AddFilesForm";
 
-$ConferenceAddForm     = $cgi_root."ConferenceAddForm";
-$ConferenceAdd         = $cgi_root."ConferenceAdd";
-
 $DisplayMeeting        = $cgi_root."DisplayMeeting";
 $MeetingModify         = $cgi_root."MeetingModify";
 $SessionModify         = $cgi_root."SessionModify";
-$ListAllMeetings       = $cgi_root."ListAllMeetings"; # FIXME: Remove later
+$ListAllMeetings       = $cgi_root."ListAllMeetings"; 
 $ConfirmTalkHint       = $cgi_root."ConfirmTalkHint";
+$ShowCalendar          = $cgi_root."ShowCalendar";
 
 $SignoffChooser        = $cgi_root."SignoffChooser";
 $SignRevision          = $cgi_root."SignRevision";
@@ -218,6 +210,8 @@ $GroupAdminister       = $cgi_root."GroupAdminister";
 $EmailAdministerForm   = $cgi_root."EmailAdministerForm";
 $EmailAdminister       = $cgi_root."EmailAdminister";
 
+$EventAdministerForm   = $cgi_root."EventAdministerForm";
+
 $Statistics            = $cgi_root."Statistics";
 
 $SelectPrefs           = $cgi_root."SelectPrefs";
@@ -240,6 +234,11 @@ $ShowTalkNote          = $cgi_root."ShowTalkNote";
 unless ($CSSDirectory && $CSSURLPath) {
   $CSSDirectory = $file_root."Static/css";
   $CSSURLPath   = $web_root."Static/css";
+}  
+
+unless ($JSDirectory && $JSURLPath) {
+  $JSDirectory = $file_root."Static/js";
+  $JSURLPath   = $web_root."Static/js";
 }  
 
 if (!$Tar && $GTar) {

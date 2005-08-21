@@ -3,7 +3,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -134,16 +134,8 @@ sub DocumentTable (%) {
         foreach my $EmailUserID (@EmailUserIDs) {
           print &SignatureLink($EmailUserID),"<br/>\n";
         }  
-      } elsif ($Field eq "Conference") {  # Conferences. Simplify in v7
-        require "TopicHTML.pm";
-        require "TopicSQL.pm";
-        my @topics = &GetRevisionTopics($DocRevID);
-        foreach my $topic (@topics) {
-          if (&MajorIsConference($MinorTopics{$topic}{MAJOR})) {
-            my $conference_link = &ConferenceLink($topic,"short");
-            print "$conference_link<br>\n";
-          }  
-        }
+      } elsif ($Field eq "Conference" || $Field eq "Events") {  
+        &PrintEventInfo(-docrevid => $DocRevID, -format => "short");
       } elsif ($Field eq "Topics") {  # Topics for document
         require "TopicHTML.pm";
         require "TopicSQL.pm";
@@ -256,11 +248,11 @@ sub PrintDocNumber { # And type
   print "<dt>Document #:</dt>";
   print "<dd>";
   print (&FullDocumentID($DocRevisions{$DocRevID}{DOCID}));
-  print "-v$DocRevisions{$DocRevID}{VERSION}";
+  print "-v$DocRevisions{$DocRevID}{Version}";
   print "</dd>\n";
   
   print "<dt>Document type:</dt>";
-  my $type_link = &TypeLink($Documents{$DocRevisions{$DocRevID}{DOCID}}{TYPE},"short");
+  my $type_link = &TypeLink($DocRevisions{$DocRevID}{DocTypeID},"short");
   print "<dd>$type_link</dd>\n";
 }
 

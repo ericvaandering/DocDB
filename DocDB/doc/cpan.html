@@ -8,7 +8,14 @@ perl-MailTools and perl-Digest-SHA1 are both available from
 <a href=http://www.cpan.org/>CPAN</a>.  
 You will probably find source, but no rpm.
 <p>
-To install a CPAN perl module:
+To install a CPAN manual automatically type:
+<b>perl -MCPAN -e shell<b>, answer the questions, then type <b>install
+<i>module</i></b>. There is a bug with recent versions of Redhat/Scientific
+Linux that the LANG environment variable confuses perl. Set LANG to simply
+"en_US" before executing the CPAN module.
+<p>
+
+To install a CPAN perl module manually:
 <ul>
 <li> download the module (<em>module</em>.tar.gz)
 <li> <b>tar -xzf <em>module</em>.tar.gz</b>

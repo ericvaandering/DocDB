@@ -1,4 +1,4 @@
-#    Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -93,6 +93,7 @@ sub URLify { # Adapted from Perl Cookbook, 6.21
                $                    #   then end of the string
               )
              }{<A HREF="$1">$1</A>}igox;
+  $Text = &SafeHTML($Text);
   return $Text;           
 }
 
@@ -111,25 +112,33 @@ sub AddTime ($$) {
 
   my ($Sec,$Min,$Hour) = localtime($Time);
   
-  my $TimeString = sprintf "%2d:%2.2d:%2.2d",$Hour,$Min,$Sec;
+  my $TimeString = sprintf "%2.2d:%2.2d:%2.2d",$Hour,$Min,$Sec;
 
   return $TimeString; 
 }
 
 sub Paragraphize {
   my ($Text) = @_;
-  $Text =~ s/\s*\n\s*\n\s*/<p>/g; # Replace two new lines and any space with <p>
+  $Text =~ s/\s*\n\s*\n\s*/<p\/>/g; # Replace two new lines and any space with <p>
 #  $Text =~ s/\s*\n\s*/<br>\n/g;
-  $Text =~ s/<p>/<p>\n/g;
+  $Text =~ s/<p\/>/<p\/>\n/g;
+  $Text = &SafeHTML($Text);
   return $Text;
 }
 
 sub AddLineBreaks {
   my ($Text) = @_;
-  $Text =~ s/\s*\n\s*\n\s*/<p>/g; # Replace two new lines and any space with <p>
-  $Text =~ s/\s*\n\s*/<br>\n/g;
-  $Text =~ s/<p>/<p>\n/g;
+  $Text =~ s/\s*\n\s*\n\s*/<p\/>/g; # Replace two new lines and any space with <p>
+  $Text =~ s/\s*\n\s*/<br\/>\n/g;
+  $Text =~ s/<p\/>/<p\/>\n/g;
   return $Text;
 }
 
+sub SafeHTML {
+  my ($Text) = @_;
+  $Text =~ s/\&/\&amp;/g;
+  $Text =~ s/\&amp;amp;/\&amp;/g;
+  return $Text;
+}  
+ 
 1;

@@ -7,7 +7,7 @@
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 #
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -55,8 +55,8 @@ sub KeywordsbyKeywordGroup ($;$) {
   foreach my $KeywordID (@KeywordIDs) {
     my $KeyLink;
     if ($Mode eq "chooser") {
-      $KeyLink = "<a href=\"$ListKeywords?mode=chooser\"
-      onClick=\"InsertKeyword('$Keywords{$KeywordID}{Short}');\">$Keywords{$KeywordID}{Short}</a>";
+      $KeyLink = "<a href=\"$ListKeywords?mode=chooser\" ".
+                 "onclick=\"InsertKeyword('$Keywords{$KeywordID}{Short}');\">$Keywords{$KeywordID}{Short}</a>";
     } else {
       $KeyLink = &KeywordLinkByID($KeywordID,-format => "short");
     }
@@ -264,19 +264,16 @@ sub KeywordLink ($;%) { # FIXME: Allow parameters of short, long, full a la Lynn
 
 sub KeywordsBox (%) {
   my (%Params) = @_; 
+  #FIXME: Get rid of global default
   
   my $Required = $Params{-required}   || 0;
 
-  print "<b><a ";
-  &HelpLink("keywords");
-  print "Keywords:</a></b>";
-  if ($Required) {
-    print $RequiredMark;
-  } else {
-    print " ";
-  }   
-  print "(space separated) - <a href=\"Javascript:keywordchooserwindow(\'$ListKeywords?mode=chooser\');\"><b>Keyword
-  Chooser</b></a><br> \n";
+  my $ElementTitle = &FormElementTitle(-helplink  => "keywords" , 
+                                       -helptext  => "Keywords" ,
+                                       -extratext => "(space separated) - <a href=\"Javascript:keywordchooserwindow(\'$ListKeywords?mode=chooser\');\"><b>Keyword
+  Chooser</b></a>",
+                                       -required  => $Required );
+  print $ElementTitle,"\n";                                     
   print $query -> textfield (-name => 'keywords', -default => $KeywordsDefault, 
                              -size => 70, -maxlength => 240);
 };

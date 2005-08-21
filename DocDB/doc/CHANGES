@@ -1,3 +1,77 @@
+7.0.0
+
+Version 7 introduces some new functionality and a lot of clean-ups under the
+hood. It also requires a couple of new perl modules. Install this from CPAN or
+from RPMs. See cpan.html in doc/ for pointers.  To get these from CPAN, do
+this:
+
+> setenv LANG en_US # Get's rid of UTF8 from RedHat
+> perl -MCPAN -e shell
+cpan> install File::MimeInfo
+cpan> install DateTime::Format::MySQL
+cpan> install DateTime (probably not needed)
+
+You also have to install the shared-mime-info package. If your system doesn't
+have it, you can get it from:
+
+http://freedesktop.org/Software/shared-mime-info
+
+The Fedora Core 2 RPM seems to work fine on Scientific Linux 3.0.x. If you don't
+get this installed correctly, RetrieveFile may give the wrong MIME type. In your
+webserver error logs you may see messages from DocDB. DocDB will still try to 
+figure out the MIME type of the files served using the Unix "file" command.
+
+The Document Type (Talk/Figure/etc.) is now changable
+
+Meetings/events (we now try to use the word "events" consistently) are no longer
+topics, they are a completely parallel way to organize documents. This
+alleviates the presentation problems when the number of events in an event
+group (the old special MajorTopics) gets large compared to the number of topics
+or when the number of Event Groups gets large. Your existing MajorTopics that
+are marked as special in ProjectGlobals will be migrated to the new scheme.
+
+There is now a calendar that shows events. Expect this to improve and grow (and
+ask me if you want a pref to turn it off). 
+
+There is a directory to store javascript files instead of having the JS we need
+printed out by DocDB.
+
+Migration instructions:
+
+0) Back-up your database (do a mysqldump command)
+1) Check out the new stable distribution in a fresh area
+2) Copy MigrateV7 into an area where you can run *version 6* scripts. The
+   cgi-bin will work, but make sure you delete it after you do this to prevent 
+   it being run from the web.
+3) Run MigrateV7 in init mode
+4) Run MigrateV7 in migrate mode
+5) Upgrade the DocDB code (cvs update -r stable)
+6) Go to your html/Static directory and do "cvs update -d -r stable" This will 
+   create and update a bunch of CSS files as well as create a new "js" directory
+   where Javascript files are stored.
+7) Edit your site specific CSS files if needed. (There is a new shaded    
+   element "tbody.Odd" that will be grey by default.)
+8) Make sure everything works, make sure your events were migrated correctly.
+9) Run  MigrateV7 in delete mode  
+
+Links to "Collaboration Meetings" and "Conferences" have been removed from the
+homepage. If you would like to put them back .... 
+
+New web scripts added: EventAdministerForm  
+                       ShowCalendar 
+                       
+Version 7 also has tables for future functionality to follow in point releases:
+
+1) Customizing which fields are shown in lists of documents and lists of talks 
+2) Cross-referencing specific versions of documents and version in *other*
+   DocDB's
+3) Eliminating people re-loading the document creation form and creating
+   duplicate documents.   
+
+Finally, the links to Conferences and Collaboration meetings have been removed.
+ProjectMessages.pm.template shows how you can restore these or other such lists
+for your instance to the DocDB Homepage
+
 6.6.2
 
 There are now basic instructions for the Public (you need to make link to DocDBInstructions in public

@@ -17,22 +17,21 @@
 
 sub TitleBox (%) {
   my (%Params) = @_; 
+  #FIXME: Get rid of global default
   
   my $Required   = $Params{-required}   || 0;
 
-  print "<b><a ";
-  &HelpLink("title");
-  print "Title:</a></b>";
-  if ($Required) {
-    print $RequiredMark;
-  }  
-  print "<br> \n";
+  my $ElementTitle = &FormElementTitle(-helplink  => "title" , 
+                                       -helptext  => "Title" ,
+                                       -required  => $Required );
+  print $ElementTitle,"\n";                                     
   print $query -> textfield (-name => 'title', -default => $TitleDefault, 
                              -size => 70, -maxlength => 240);
 };
 
 sub AbstractBox (%) {
   my (%Params) = @_; 
+  #FIXME: Get rid of global default
   
   my $Required = $Params{-required} || 0;
   my $HelpLink = $Params{-helplink} || "abstract";
@@ -41,15 +40,10 @@ sub AbstractBox (%) {
   my $Columns  = $Params{-columns}  || 60;
   my $Rows     = $Params{-rows}     || 6;
 
-  if ($HelpLink) {
-    print "<b><a ";
-    &HelpLink($HelpLink);
-    print "$HelpText</a></b>";
-    if ($Required) {
-      print $RequiredMark;
-    }  
-    print "<br> \n";
-  }  
+  my $ElementTitle = &FormElementTitle(-helplink  => $HelpLink , 
+                                       -helptext  => $HelpText ,
+                                       -required  => $Required );
+  print $ElementTitle,"\n";                                     
   print $query -> textarea (-name    => $Name, -default => $AbstractDefault,
                             -rows    => $Rows, -columns => $Columns);
 };
@@ -58,11 +52,10 @@ sub RevisionNoteBox {
   my (%Params) = @_;
   my $Default  = $Params{-default}  || "";
   my $JSInsert = $Params{-jsinsert} || "";
-  print "<a name=\"RevisionNote\">";
-  print "<b><a ";
-  &HelpLink("revisionnote");
-  print "Notes and Changes:</a> </b>\n";
-
+  print "<a name=\"RevisionNote\" />";
+  
+  my $ExtraText = "";
+  
   # Convert text string w/ control characters to JS literal
 
   if ($JSInsert) {
@@ -71,40 +64,38 @@ sub RevisionNoteBox {
     $JSInsert =~ s/\'/\\\'/g;
     $JSInsert =~ s/\"/\\\'/g; # FIXME: See if there is a way to insert double quotes
                               #        Bad HTML/JS interaction, I think
-
-    print "<a href=\"#RevisionNote\" onClick=\"InsertRevisionNote('$JSInsert');\">(Insert notes from previous version)</a>";
+    $ExtraText = "<a href=\"#RevisionNote\" onclick=\"InsertRevisionNote('$JSInsert');\">(Insert notes from previous version)</a>";
   }
-  print "<br>\n";
+  
+  my $ElementTitle = &FormElementTitle(-helplink  => "revisionnote", 
+                                       -helptext  => "Notes and Changes",
+                                       -extratext => $ExtraText,
+                                       -required  => $Required );
+  print $ElementTitle,"\n";                                     
   print $query -> textarea (-name => 'revisionnote', -default => $Default,
                             -columns => 60, -rows => 6);
 };
 
 sub DocTypeButtons (%) {
-# FIXME Get rid of fetches, make sure GetDocTypes is executed
-  my (%Params) = @_; 
+  my (%Params) = @_;
   
-  my $Required   = $Params{-required}   || 0;
+  my $Required = $Params{-required} || 0;
+  my $Default  = $Params{-default}  || 0;
+  
+  &GetDocTypes();
+  my @DocTypeIDs = keys %DocumentTypes;
+  my %ShortTypes = ();
 
-  my ($DocTypeID,$ShortType,$LongType);
-  my $doctype_list  = $dbh->prepare("select DocTypeID,ShortType,LongType from DocumentType");
-  $doctype_list -> execute;
-  $doctype_list -> bind_columns(undef, \($DocTypeID,$ShortType,$LongType));
-  while ($doctype_list -> fetch) {
-    $doc_type{$DocTypeID}{SHORT} = $ShortType;
-    $short_type{$DocTypeID}      = $ShortType;
-    $doc_type{$DocTypeID}{LONG}  = $LongType;
+  foreach my $DocTypeID (@DocTypeIDs) {
+    $ShortTypes{$DocTypeID} = $DocumentTypes{$DocTypeID}{SHORT};
   }
-  @values = keys %short_type;
   
-  print "<b><a ";
-  &HelpLink("doctype");
-  print "Document type:</a></b>";
-  if ($Required) {
-    print $RequiredMark;
-  }  
-  print "<br> \n";
-  print $query -> radio_group(-columns => 3, -name => "doctype", 
-                              -values => \%short_type, -default => "-");
+  my $ElementTitle = &FormElementTitle(-helplink  => "doctype" , 
+                                       -helptext  => "Document type" ,
+                                       -required  => $Required );
+  print $ElementTitle,"\n";                                     
+  print $query -> radio_group(-columns => 3,           -name    => "doctype", 
+                              -values => \%ShortTypes, -default => $Default);
 };
 
 sub PrintRevisionInfo {
@@ -164,7 +155,7 @@ sub PrintRevisionInfo {
   print "<div id=\"BasicDocInfo\">\n";
   print "<dl>\n";
    &PrintDocNumber($DocRevID);
-   &RequesterByID($Documents{$DocumentID}{REQUESTER});
+   &RequesterByID($Documents{$DocumentID}{Requester});
    &SubmitterByID($DocRevisions{$DocRevID}{Submitter});
    &PrintModTimes;
   print "</dl>\n";
@@ -211,7 +202,7 @@ sub PrintRevisionInfo {
   &PrintRevisionNote($DocRevisions{$DocRevID}{Note});
   &PrintXRefInfo($DocRevID);
   &PrintReferenceInfo($DocRevID);
-  &PrintConfInfo(@TopicIDs);
+  &PrintEventInfo(-docrevid => $DocRevID, -format => "normal");
   &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
   
   if ($UseSignoffs) {
@@ -326,37 +317,50 @@ sub PrintReferenceInfo ($) {
   }
 }
 
-sub PrintConfInfo {
-  require "TopicSQL.pm";
+sub PrintEventInfo (%) {
   require "MeetingSQL.pm";
-  require "TopicHTML.pm";
-  &SpecialMajorTopics;
+  require "MeetingHTML.pm";
   
-  my (@topicIDs) = @_;
-  my $HasConference = 0;
-  foreach $topicID (@topicIDs) {
-    if (&MajorIsConference($MinorTopics{$topicID}{MAJOR})) {
-      &FetchConferenceByTopicID($topicID);
-      unless ($HasConference) {
-        print "<div id=\"ConferenceInfo\">\n";
-        $HasConference = 1;
-      }  
-      my $ConferenceLink = &ConferenceLink($topicID,"long");
-      my $ConferenceID = $ConferenceMinor{$topicID};
-      my $Start = &EuroDate($Conferences{$ConferenceID}{StartDate});
-      my $End   = &EuroDate($Conferences{$ConferenceID}{EndDate});
+  my %Params = @_;
+  my $DocRevID = $Params{-docrevid};
+  my $Format   = $Params{-format}   || "normal";
+  
+  my @EventIDs = &GetRevisionEvents($DocRevID);
+
+  if (@EventIDs) {
+    unless ($Format eq "short") {
+      print "<div id=\"EventInfo\">\n";
       print "<dl>\n";
-      print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Conference Information:</span></dt> \n";
-      print "<dd>Associated with ";
-      print "$ConferenceLink ";
-      print " held from $Start to $End \n";
-      print " in $Conferences{$ConferenceID}{Location}.</dd></dl>\n";
+      print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Associated with Events:</span></dt> \n";
+    }
+    foreach my $EventID (@EventIDs) {
+      my $EventLink = &EventLink(-eventid => $EventID);
+      my $Start = &EuroDate($Conferences{$EventID}{StartDate});
+      my $End   = &EuroDate($Conferences{$EventID}{EndDate});
+      unless ($Format eq "short") {
+        print "<dd>";
+      }  
+      print "$EventLink ";
+      if ($Format eq "short") {
+        print "($Start)<br/>";
+      } else {  
+        if ($Start && $End && ($Start ne $End)) {
+          print " held from $Start to $End ";
+        }  
+        if ($Start && $End && ($Start eq $End)) {
+          print " held on $Start ";
+        }  
+        if ($Conferences{$EventID}{Location}) {
+          print " in $Conferences{$EventID}{Location}";
+        }
+        print "</dd>\n";
+      }  
+     }
+    unless ($Format eq "short") {
+      print "</dl></div>\n";
     }
   }
-  if ($HasConference) {
-    print "</div>\n";
-  }  
-}
+}  
 
 sub PrintPubInfo ($) {
   require "Utilities.pm";
@@ -378,7 +382,7 @@ sub PrintPubInfo ($) {
 sub PrintModTimes {
   my ($DocRevID) = @_;
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
-  $DocTime     = &EuroDateHM($Documents{$DocumentID}{DATE}); 
+  $DocTime     = &EuroDateHM($Documents{$DocumentID}{Date}); 
   $RevTime     = &EuroDateHM($DocRevisions{$DocRevID}{DATE}); 
   $VersionTime = &EuroDateHM($DocRevisions{$DocRevID}{VersionDate}); 
 
@@ -397,7 +401,7 @@ sub OtherVersionLinks {
   print "<div id=\"OtherVersions\">\n";
   print "<b>Other Versions:</b>\n";
   
-  print "<table id=\"OtherVersionTable\" class=\"Alternating\">\n";
+  print "<table id=\"OtherVersionTable\" class=\"Alternating LowPaddedTable\">\n";
   my $RowClass = "Odd";
   
   foreach $RevID (@RevIDs) {

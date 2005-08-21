@@ -55,7 +55,20 @@ h5 {
   font-weight: normal;
 }
 
+.UnPaddedTable   td, .UnPaddedTable   th {padding: 0px; }
+.LowPaddedTable  td, .LowPaddedTable  th {padding: 3px; }
+.MedPaddedTable  td, .MedPaddedTable  th {padding: 5px; }
+.HighPaddedTable td, .HighPaddedTable th {padding: 10px;}
+
+td {vertical-align: top;    }
+th {vertical-align: bottom; }
+
+.LeftHeader {text-align: right;}  
+
+.LeftHeader th {text-align: right;}  
+
 /* Stuff for PrintRevisionInfo, which shows up in lots of places, hence it's here */
+
 
 #RevisionInfo {
   position: relative;
@@ -108,7 +121,7 @@ h5 {
   text-align: center;
 }  
 
-#UpdateButtons input[type="submit"] { /* Probably not best to change all buttons */
+#DocNotifySignup input[type="submit"], #UpdateButtons input[type="submit"] { /* Probably not best to change all buttons */
   font-size: 90%;
 }  
 
@@ -119,11 +132,6 @@ h5 {
 #OtherVersionTable {
   width: 100%; 
 }
-
-#OtherVersionTable td {
-  padding: 3px;
-}  
-
 
 /* Allow for lists and tables with alternating color rows. 
    border-collapse gets rid of spacing between cells */
@@ -137,11 +145,11 @@ table.CenteredTable {
   margin-left: auto;
 }
 
-li.Odd, tr.Odd {
+li.Odd, tr.Odd, tbody.Odd {
   background: #eee;
 }
 
-li.Even, tr.Even {
+li.Even, tr.Even, tbody.Even {
   background: white;
 }
 
@@ -166,7 +174,11 @@ li.Even, tr.Even {
   padding: 5px 5px 5px 5px;
 }  
 
-#SubmitCell { // Should be ".SubmitCell"
+#SubmitCell { /* Should be ".SubmitCell" */
+  text-align: center;
+}  
+
+.SubmitCell { /* Should be ".SubmitCell" */
   text-align: center;
 }  
 

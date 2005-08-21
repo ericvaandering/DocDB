@@ -1,0 +1,8 @@
+#SessionEntry tbody {
+  border-bottom: 1px black solid;
+  border-top: 1px black solid;
+} 
+#SessionEntry {  
+  border-collapse: collapse;
+  border: 1px black solid;
+}

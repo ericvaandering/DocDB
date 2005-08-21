@@ -1,4 +1,4 @@
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -129,29 +129,5 @@ sub DaysInMonth {
     }       
   }     
 }  
-sub NearByMeeting { # Return MinorTopicID of meeting within $MeetingWindow days
-  # Our current scheme doesn't deal well with meetings that span months. 
-  # Suggest in that case just to use begin date.
-  use Time::Local;
-  
-  require "TopicSQL.pm";
-  &SpecialMajorTopics;
-  
-  my $Now       = time();
-  my @MinorIDs = keys %MinorTopics;
-  foreach $ID (@MinorIDs) {
-    unless (&MajorIsMeeting($MinorTopics{$ID}{MAJOR})) {next;}
-    my ($MeetDays,$MeetMonthName,$MeetYear) = split /\s+/,$MinorTopics{$ID}{SHORT};
-    my ($MeetBeginDay) = split /\-/,$MeetDays;
-    my $MeetMonth = $ReverseFullMonth{$MeetMonthName} - 1;
-    $MeetYear  = $MeetYear - 1900;
-    if ($MeetBeginDay > 0 && $MeetMonth >= 0 && $MeetYear > 0) { 
-      my $MeetTime  = timelocal(0,0,0,$MeetBeginDay,$MeetMonth,$MeetYear);
-      if (abs($MeetTime - $Now) < $MeetingWindow*24*60*60) {
-        return $ID;
-      }  
-    }
-  }   
-}  
-  
+
 1;

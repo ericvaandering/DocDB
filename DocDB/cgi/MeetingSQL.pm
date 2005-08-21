@@ -5,7 +5,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -23,11 +23,16 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 sub GetConferences { 
+  if ($HaveAllConferences) {
+    my @ConferenceIDs = keys %Conferences;
+    return @ConferenceIDs;
+  }  
+
   %Conferences = ();
 
   my @ConferenceIDs = ();
   my $ConferenceID;
-  
+
   my $ConferenceList   = $dbh -> prepare("select ConferenceID from Conference");
   $ConferenceList -> execute();
   $ConferenceList -> bind_columns(undef, \($ConferenceID));
@@ -35,22 +40,144 @@ sub GetConferences {
     $ConferenceID = &FetchConferenceByConferenceID($ConferenceID);
     push @ConferenceIDs,$ConferenceID;
   }
+  $HaveAllConferences = $TRUE;
   return @ConferenceIDs;
 }
 
-sub FetchConferenceByTopicID { # Fetches a conference by MinorTopicID
-  my ($minorTopicID) = @_;
-  my ($ConferenceID,$MinorTopicID);
-  
-  my $ConferenceFetch   = $dbh -> prepare(
-    "select ConferenceID,MinorTopicID from Conference where MinorTopicID=?");
-  $ConferenceFetch -> execute($minorTopicID);
-  ($ConferenceID,$MinorTopicID) = $ConferenceFetch -> fetchrow_array;
- 
-  $ConferenceID = &FetchConferenceByConferenceID($ConferenceID);
-
-  return $ConferenceID;
+sub ClearConferences () {
+  %Conferences = ();
+  $HaveAllConferences = $FALSE;
+  return;
 }
+
+sub GetEventsByDate (%) {
+  require "SQLUtilities.pm";
+  require "Utilities.pm";
+  require "MeetingSecurityUtilities.pm";
+
+  my %Params = @_;
+  
+  my $From = $Params{-from} || "";
+  my $To   = $Params{-to}   || "";
+  my $On   = $Params{-on}   || &SQLNow(-dateonly => $TRUE);
+  
+  my $List;
+  if ($From && $To) { # Starts or ends in or surrounds window
+    $List = $dbh->prepare("select ConferenceID from Conference where (StartDate>=? and StartDate<=?) "."
+                           or (EndDate>=? and EndDate<=?) or (StartDate<? and EndDate>?)");
+    $List -> execute($From,$To,$From,$To,$From,$To);
+  } else { 
+    $List = $dbh->prepare("select ConferenceID from Conference where StartDate<=? and EndDate>=?");
+    $List -> execute($On,$On);
+  }
+  
+  my $EventID;
+  my @EventIDs;
+  $List -> bind_columns(undef, \($EventID));
+  while ($List -> fetch) {
+    if (&FetchConferenceByConferenceID($EventID)) {
+      if (&CanAccessMeeting($EventID)) {
+        push @EventIDs,$EventID;
+      }  
+    }  
+  }
+  @EventIDs = &Unique(@EventIDs);
+  return @EventIDs;
+}
+
+sub GetRevisionEvents ($) { # Get the events associated with a revision
+  my ($DocRevID) = @_;
+  
+  require "Utilities.pm";
+  
+  my @ConferenceIDs = ();
+  my $ConferenceID;
+  my $EventList = $dbh->prepare("select ConferenceID from RevisionEvent where DocRevID=?");
+  $EventList -> execute($DocRevID);
+  $EventList -> bind_columns(undef, \($ConferenceID));
+  while ($EventList -> fetch) {
+    if (&FetchConferenceByConferenceID($ConferenceID)) {
+      push @ConferenceIDs,$ConferenceID;
+    }  
+  }
+  @ConferenceIDs = &Unique(@ConferenceIDs);
+  return @ConferenceIDs;
+}
+
+sub GetAllEventGroups () {
+  if ($HaveAllEventGroups) {
+    my @EventGroupIDs = keys %EventGroups;
+    return @EventGroupIDs;
+  }
+  
+  %EventGroups = ();
+  my @EventGroupIDs = ();
+  my ($EventGroupID);
+
+  my $List = $dbh->prepare("select EventGroupID from EventGroup");
+  $List -> execute();
+  $List -> bind_columns(undef, \($EventGroupID));
+  while ($List -> fetch) {
+    if (&FetchEventGroup($EventGroupID)) {
+      push @EventGroupIDs,$EventGroupID;
+    }  
+  }
+  $HaveAllEventGroups = $TRUE;
+  return @EventGroupIDs;  
+}
+
+sub ClearEventGroups () {
+  %EventGroups = ();
+  $HaveAllEventGroups = $FALSE;
+  return;
+}
+
+sub LookupEventGroup { # Returns EventGroupID from Name
+  my ($Name) = @_;
+  my $Fetch   = $dbh -> prepare("select EventGroupID from EventGroup where ShortDescription=?");
+
+  $Fetch -> execute($Name);
+  my $EventGroupID = $Fetch -> fetchrow_array;
+  &FetchEventGroup($EventGroupID);
+  
+  return $EventGroupID;
+}
+
+sub FetchEventGroup ($) {
+  my ($EventGroupID) = @_;
+  unless ($EventGroupID) {
+    return 0;
+  }
+    
+  my $Fetch = $dbh->prepare("select ShortDescription,LongDescription,TimeStamp from EventGroup where EventGroupID=?");
+  $Fetch -> execute($EventGroupID);
+ 
+  ($ShortDescription,$LongDescription,$TimeStamp) = $Fetch -> fetchrow_array;
+  if ($TimeStamp) {
+    $EventGroups{$EventGroupID}{ShortDescription} = $ShortDescription;
+    $EventGroups{$EventGroupID}{LongDescription}  = $LongDescription; 
+    $EventGroups{$EventGroupID}{TimeStamp}        = $TimeStamp; 
+  } 
+  return $EventGroupID;  
+} 
+
+sub FetchEventsByGroup ($) {
+  my ($EventGroupID) = @_;
+  unless ($EventGroupID) {
+    return undef;
+  }
+  my $EventID;
+  my @EventIDs = ();
+  
+  my $List = $dbh -> prepare("select ConferenceID from Conference where EventGroupID=?");
+  $List -> execute($EventGroupID);
+  $List -> bind_columns(undef, \($EventID));
+
+  while ($List -> fetch) {
+    push @EventIDs,$EventID;
+  }
+  return @EventIDs;
+}  
 
 sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
   my ($conferenceID) = @_;
@@ -61,31 +188,33 @@ sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
     return $conferenceID;
   }
   
-  my ($ConferenceID,$MinorTopicID,$Location,$URL,$Title,$Preamble,
+  my ($ConferenceID,$EventGroupID,$Location,$URL,$Title,$LongDescription,$Preamble,
       $Epilogue,$StartDate,$EndDate,$ShowAllTalks,$TimeStamp);
 
   my $ConferenceFetch   = $dbh -> prepare(
-    "select ConferenceID,MinorTopicID,Location,URL,Title,Preamble,Epilogue,StartDate,EndDate,ShowAllTalks,TimeStamp ".
+    "select ConferenceID,EventGroupID,Location,URL,Title,LongDescription,Preamble,Epilogue,StartDate,EndDate,ShowAllTalks,TimeStamp ".
     "from Conference ".
     "where ConferenceID=?");
   $ConferenceFetch -> execute($conferenceID);
  
-($ConferenceID,$MinorTopicID,$Location,$URL,$Title,$Preamble,$Epilogue,$StartDate,$EndDate,$ShowAllTalks,$TimeStamp) 
-    = $ConferenceFetch -> fetchrow_array;
+  ($ConferenceID,$EventGroupID,$Location,$URL,$Title,
+   $LongDescription,$Preamble,$Epilogue,$StartDate,$EndDate,$ShowAllTalks,
+   $TimeStamp) = $ConferenceFetch -> fetchrow_array;
   if ($ConferenceID) {
-    $Conferences{$ConferenceID}{Minor}        = $MinorTopicID;
-    $Conferences{$ConferenceID}{Location}     = $Location;
-    $Conferences{$ConferenceID}{URL}          = $URL;
-    $Conferences{$ConferenceID}{Title}        = $Title;
-    $Conferences{$ConferenceID}{Preamble}     = $Preamble;
-    $Conferences{$ConferenceID}{Epilogue}     = $Epilogue;
-    $Conferences{$ConferenceID}{StartDate}    = $StartDate;
-    $Conferences{$ConferenceID}{EndDate}      = $EndDate;
-    $Conferences{$ConferenceID}{ShowAllTalks} = $ShowAllTalks;
-    $Conferences{$ConferenceID}{TimeStamp}    = $TimeStamp;
+    $Conferences{$ConferenceID}{EventGroupID}    = $EventGroupID;
+    $Conferences{$ConferenceID}{Location}        = $Location;
+    $Conferences{$ConferenceID}{URL}             = $URL;
+    $Conferences{$ConferenceID}{Title}           = $Title;
+    $Conferences{$ConferenceID}{Preamble}        = $Preamble;
+    $Conferences{$ConferenceID}{LongDescription} = $LongDescription;
+    $Conferences{$ConferenceID}{Epilogue}        = $Epilogue;
+    $Conferences{$ConferenceID}{StartDate}       = $StartDate;
+    $Conferences{$ConferenceID}{EndDate}         = $EndDate;
+    $Conferences{$ConferenceID}{ShowAllTalks}    = $ShowAllTalks;
+    $Conferences{$ConferenceID}{TimeStamp}       = $TimeStamp;
     	
-    $ConferenceMinor{$MinorTopicID} = $ConferenceID; # Used to index conferences with MinorTopic
-    &FetchMinorTopic($MinorTopicID);
+    &FetchEventGroup($EventGroupID);
+    $Conferences{$ConferenceID}{Full}  = $EventGroups{$EventGroupID}{LongDescription}.":".$Title;
   }
 
   return $ConferenceID;
@@ -204,6 +333,81 @@ sub FetchMeetingOrdersByConferenceID {
   return @MeetingOrderIDs; 
 }
 
+sub InsertEvent (%) {
+  require "SQLUtilities.pm";
+
+  my (%Params) = @_;
+  
+  my $EventGroupID     = $Params{-eventgroupid}     || 0;
+  my $ShortDescription = $Params{-shortdescription} || "";
+  my $LongDescription  = $Params{-longdescription}  || "";
+  my $StartDate        = $Params{-startdate}        || &SQLNow();
+  my $EndDate          = $Params{-enddate}          || &SQLNow();
+  my $Location         = $Params{-location}         || "";
+  my $URL              = $Params{-url}              || "";
+  my $ShowAllTalks     = $Params{-showalltalks}     || 0;
+  my $Preample         = $Params{-preample}         || "";
+  my $Epilogue         = $Params{-epilogue}         || "";
+
+  my $Insert = $dbh->prepare(
+     "insert into Conference ".
+     "(ConferenceID, EventGroupID, Location, URL, ShowAllTalks, StartDate, EndDate, ".
+     " Preamble, Epilogue, Title, LongDescription) ". 
+     "values (0,?,?,?,?,?,?,?,?,?,?)");
+  $Insert -> execute($EventGroupID,$Location,$URL,$ShowAllTalks,
+                     $StartDate,$EndDate,$Preamble,
+                     $Epilogue,$ShortDescription,$LongDescription); 
+  $EventID = $Insert -> {mysql_insertid}; 
+  
+  return $EventID;  
+}
+
+sub UpdateEvent (%) {
+  my (%Params) = @_;
+
+  my $EventID          = $Params{-eventid}          || 0;
+  my $EventGroupID     = $Params{-eventgroupid}     || 0;
+  my $ShortDescription = $Params{-shortdescription} || "";
+  my $LongDescription  = $Params{-longdescription}  || "";
+  my $StartDate        = $Params{-startdate}        || &SQLNow();
+  my $EndDate          = $Params{-enddate}          || &SQLNow();
+  my $Location         = $Params{-location}         || "";
+  my $URL              = $Params{-url}              || "";
+  my $ShowAllTalks     = $Params{-showalltalks}     || 0;
+  my $Preample         = $Params{-preample}         || "";
+  my $Epilogue         = $Params{-epilogue}         || "";
+
+  my $Update = $dbh->prepare(
+   "update Conference set ".
+     "EventGroupID=?, Location=?, URL=?, ShowAllTalks=?, StartDate=?, EndDate=?, ".
+     "Preamble=?, Epilogue=?, Title=?, LongDescription=? ". 
+   "where ConferenceID=?");
+
+  $Update -> execute($EventGroupID,$Location,$URL,$ShowAllTalks,
+                     $StartDate,$EndDate,$Preamble,$Epilogue,
+                     $ShortDescription,$LongDescription,$EventID); 
+  return;
+}
+
+sub InsertSession (%) {
+  my (%Params) = @_;
+  
+  my $EventID     = $Params{-eventid}     || 0;
+  my $Date        = $Params{-date}        || "";
+  my $Title       = $Params{-title}       || "";
+  my $Description = $Params{-description} || "";
+  my $Location    = $Params{-location}    || "";
+
+  my $Insert = $dbh -> prepare(
+   "insert into Session ".
+          "(SessionID, ConferenceID, StartTime, Location, Title, Description) ". 
+   "values (0,?,?,?,?,?)");
+  $Insert          -> execute($EventID,$Date,$Location,$Title,$Description);
+  $SessionID = $Insert -> {mysql_insertid}; 
+
+  return $SessionID;
+}  
+
 sub UpdateSession (%) {
   my (%Params) = @_;
   
@@ -223,6 +427,91 @@ sub UpdateSession (%) {
   
 }
 
+sub DeleteEventGroup (%) {
+  my %Params = @_;
+  
+  my $EventGroupID = $Params{-eventgroupid} || 0;
+  my $Force        = $Params{-force}   || 0;
+  
+  unless ($EventGroupID) {
+    push @WarnStack,"No Event Group specified";
+    return 0;
+  }
+
+  my $Status = &FetchEventGroup($EventGroupID);
+
+  unless ($Status) {
+    push @WarnStack,"Event Group does not exist";
+    return 0;
+  }
+
+  my @EventIDs = &FetchEventsByGroup($EventGroupID);
+  if (@EventIDs && !$Force) {
+    push @WarnStack,"Cannot delete an event group with events. Use force option if you are sure.";
+    return 0;
+  }
+  
+  foreach my $EventID (@EventIDs) {
+    &DeleteEvent(-eventid => $EventID, -force => $Force);
+  }
+    
+  my $Delete = $dbh -> prepare("delete from EventGroup where EventGroupID=?");
+  $Delete -> execute($EventGroupID);
+  push @ActionStack,"Event group <strong>$EventGroups{$EventGroupID}{LongDescription}</strong> deleted";
+
+  return 1;    
+}
+
+sub DeleteEvent (%) {
+  require "RevisionSQL.pm";
+
+  my %Params = @_;
+  
+  my $EventID = $Params{-eventid} || 0;
+  my $Force   = $Params{-force}   || 0;
+  
+  unless ($EventID) {
+    push @WarnStack,"No Event specified";
+    return 0;
+  }
+  
+  my $Status = &FetchConferenceByConferenceID($EventID);
+  unless ($Status) {
+    push @WarnStack,"Event does not exist";
+    return 0;
+  }
+
+  my @SeparatorIDs = &FetchSessionSeparatorsByConferenceID($EventID);
+  my @SessionIDs   = &FetchSessionsByConferenceID($EventID);
+  my @DocRevIDs    = &FetchRevisionsByEventID($EventID);
+
+  if ((@SeparatorIDs || @SessionIDs) && !$Force) {
+    push @WarnStack,"Cannot delete event with sessions, use force option.";
+    return 0;
+  }
+  if (@DocRevIDs && !$Force) {
+    push @WarnStack,"Cannot delete event with associated documents, use force option.";
+    return 0;
+  }
+  
+  foreach my $SessionID (@SessionIDs) {
+    &DeleteSession($SessionID);
+  }   
+  foreach my $SeparatorID (@SeparatorIDs) {
+    &DeleteSessionSeparator($EventID);
+  }   
+  
+  my $Delete = $dbh -> prepare("delete from Conference where ConferenceID=?");
+  $Delete -> execute($EventID);
+  push @ActionStack,"Event <strong>$Conferences{$EventID}{Title}</strong> deleted";
+  if (@DocRevIDs) {
+    my $Delete = $dbh -> prepare("delete from RevisionEvent where ConferenceID=?");
+    $Delete -> execute($EventID);
+    push @ActionStack,"Document/Event associations deleted";
+  }
+  return 1;
+}    
+ 
 sub DeleteSession ($) {
   my ($SessionID) = @_;
    
@@ -250,6 +539,7 @@ sub DeleteSession ($) {
   }
 
   $MeetingOrderDelete -> execute($SessionID);
+  push @ActionStack,"Session and associated agenda entries deleted";
 }
 
 sub DeleteSessionSeparator ($) {
@@ -260,6 +550,42 @@ sub DeleteSessionSeparator ($) {
   
   $SessionSeparatorDelete -> execute($SessionSeparatorID);
   $MeetingOrderDelete     -> execute($SessionSeparatorID);
+  push @ActionStack,"Session separator deleted";
+}
+
+sub InsertRevisionEvents (%) {
+  my %Params = @_;
+  
+  my $DocRevID =   $Params{-docrevid} || "";   
+  my @EventIDs = @{$Params{-eventids}};
+
+  my $Count = 0;
+
+  my $Insert = $dbh -> prepare("insert into RevisionEvent (RevEventID, DocRevID, ConferenceID) values (0,?,?)");
+                                 
+  foreach my $EventID (@EventIDs) {
+    if (int $EventID) {
+      $Insert -> execute($DocRevID,$EventID);
+      ++$Count;
+    }
+  }  
+      
+  return $Count;
+}
+
+sub InsertMeetingOrder {
+  my %Params = @_;
+  my $Order              = $Params{-session}            || 1;
+  my $SessionID          = $Params{-sessionid}          || 0;
+  my $SessionSeparatorID = $Params{-sessionseparatorid} || 0;
+  unless ($SessionID || $SessionSeparatorID) { 
+    return;
+  }  
+  my $Insert = $dbh -> prepare(
+   "insert into MeetingOrder ".
+   "(MeetingOrderID, SessionOrder, SessionID, SessionSeparatorID) ". 
+   "values (0,?,?,?)");
+  $Insert -> execute($Order,$SessionID,$SessionSeparatorID);
 }
 
 1;

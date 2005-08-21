@@ -2,7 +2,7 @@
 #
 # Author Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -33,17 +33,22 @@ $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
 
-my $Days     = $params{days}     || 0;
-my $TypeID   = $params{typeid}   || 0;
-my $AuthorID = $params{authorid} || 0;
+my $Days         = $params{days}         || 0;
+my $TypeID       = $params{typeid}       || 0;
+my $AuthorID     = $params{authorid}     || 0;
 
-my $TopicID  = $params{topicid}  || 0;
-my $MajorID  = $params{majorid}  || 0;
-my $Major    = $params{major}    || "";
-my $AllPubs  = $params{allpubs}  || "";
-my $AllDocs  = $params{alldocs}  || "";
+my $TopicID      = $params{topicid}      || 0;
+my $MajorID      = $params{majorid}      || 0;
+my $Major        = $params{major}        || "";
 
-my $Mode     = $params{mode}     || "";
+my $EventID      = $params{eventid}      || 0;
+my $EventGroupID = $params{eventgroupid} || 0;
+my $EventGroup   = $params{eventgroup}   || "";
+
+my $AllPubs      = $params{allpubs}      || "";
+my $AllDocs      = $params{alldocs}      || "";
+
+my $Mode         = $params{mode}         || "";
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
@@ -67,7 +72,6 @@ if ($Days) {
 ### Minor topic
 
   require "TopicSQL.pm";
-  &SpecialMajorTopics;
   &FetchMinorTopic($TopicID);
 
   $Title   = "Document List by Topic";
@@ -101,8 +105,7 @@ if ($Days) {
 ### Major topic (either number or name)
 
   require "TopicSQL.pm";
-  &SpecialMajorTopics;
-  if ($Major) {
+  unless ($MajorID) {
     $MajorID = &LookupMajorTopic($Major);
   } 
   &FetchMajorTopic($MajorID);
@@ -113,13 +116,43 @@ if ($Days) {
            "DocumentRevision,RevisionTopic,MinorTopic where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
            "and DocumentRevision.Obsolete=0 and RevisionTopic.MinorTopicID=MinorTopic.MinorTopicID and MinorTopic.MajorTopicID=?");            
   $List -> execute($MajorID);
+} elsif ($EventID) {
+
+### Event
+
+  require "MeetingSQL.pm";
+  &FetchConferenceByConferenceID($EventID);
+
+  $Title   = "Document List by Event";
+  $Message = "These documents from <span class=\"Highlight\">$Conferences{$EventID}{LongDescription}</span> are available:";
+  $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
+           "DocumentRevision,RevisionEvent where DocumentRevision.DocRevID=RevisionEvent.DocRevID ".
+           "and DocumentRevision.Obsolete=0 and RevisionEvent.ConferenceID=?");            
+  $List -> execute($EventID);
+} elsif ($EventGroupID || $EventGroup) {
+
+### Event Group (name or number)
+
+  require "MeetingSQL.pm";
+
+  unless ($EventGroupID) {
+    $EventGroupID = &LookupEventGroup($EventGroup);
+  }  
+  &FetchEventGroup($EventGroupID);
+  
+  $Title   = "Document List by Event Group";
+  $Message = "These documents from <span class=\"Highlight\">$EventGroups{$EventGroupID}{LongDescription}</span> are available:";
+  $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
+           "DocumentRevision,RevisionEvent,Conference where DocumentRevision.DocRevID=RevisionEvent.DocRevID ".
+           "and DocumentRevision.Obsolete=0 and RevisionEvent.ConferenceID=Conference.ConferenceID and Conference.EventGroupID=?");            
+  $List -> execute($EventGroupID);
 } elsif ($TypeID) {
   $Title   = "Document List by Type";
   $Message = "These documents of type <span class=\"Highlight\">
              $DocumentTypes{$TypeID}{SHORT}</span> are available:";
   
-  $List = $dbh -> prepare("select DISTINCT(Document.DocumentID) from ".
-           "Document where Document.DocumentType=?");            
+  $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
+           "DocumentRevision where DocumentRevision.DocTypeID=?");            
   $List -> execute($TypeID);
 } elsif ($AllPubs) {
   $Title   = "$Project Publications";
@@ -143,7 +176,7 @@ $SortBy  = "date";
 $Reverse = 1;
 
 if ($Mode eq "conference") {
-  @Fields  = ("Title","Conference","Author","Files"); 
+  @Fields  = ("Title","Events","Author","Files"); 
   $SortBy  = "confdate";
 } elsif ($Mode eq "meeting") {
   @Fields  = ("Title","Author","Topics","Files");

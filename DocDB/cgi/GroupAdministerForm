@@ -6,7 +6,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -44,9 +44,7 @@ $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass
 &GetSecurityGroups;
 
 print $query->header;
-&DocDBHeader("Group Administration"); 
-
-&HelpPopupScript;
+&DocDBHeader("Group Administration","",-scripts => ["PopUps","GroupAdminDisable"]); 
 
 @ErrorStack = ();
 @WarnStack  = ();
@@ -79,31 +77,13 @@ print "Note that deleting and then re-entering with the same information is
 
 ### Group Modification
 
-my %EnableMatrix = ();
-
-$EnableMatrix{parent}{Delete}      = 1;
-
-$EnableMatrix{parent}{Modify}      = 1;
-$EnableMatrix{child}{Modify}       = 1;
-$EnableMatrix{name}{Modify}        = 1;
-$EnableMatrix{description}{Modify} = 1;
-$EnableMatrix{remove}{Modify}      = 1;
-$EnableMatrix{create}{Modify}      = 1;
-$EnableMatrix{admin}{Modify}       = 1;
-
-$EnableMatrix{child}{New}          = 1;
-$EnableMatrix{name}{New}           = 1;
-$EnableMatrix{description}{New}    = 1;
-$EnableMatrix{remove}{New}         = 1;
-$EnableMatrix{create}{New}         = 1;
-$EnableMatrix{admin}{New}          = 1;
 
 print $query -> start_multipart_form('POST',"$GroupAdminister",
                                      "id=\"groups\" name=\"groups\"");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
 print "<td colspan=2>\n";
- &AdministerActions(-form => "groups", -matrix => \%EnableMatrix);
+ &AdministerActions(-form => "groups");
 print "</td>\n";
 print "</tr>\n";
 

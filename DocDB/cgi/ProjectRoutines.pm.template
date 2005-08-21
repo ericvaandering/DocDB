@@ -13,7 +13,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -107,7 +107,7 @@ sub DocDBNavBar {
 
   print "<div class=\"DocDBNavBar\">\n";
   if ($ExtraDesc && $ExtraURL) {
-    print "[&nbsp;<a href=\"$ExtraURL\"l>$ExtraDesc</a>&nbsp;]&nbsp;\n";
+    print "[&nbsp;<a href=\"$ExtraURL\">$ExtraDesc</a>&nbsp;]&nbsp;\n";
   } 
   print "[&nbsp;<a href=\"$MainPage\">DocDB&nbsp;Home</a>&nbsp;]&nbsp;\n";
   if (&CanCreate()) {

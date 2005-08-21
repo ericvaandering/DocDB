@@ -6,7 +6,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -24,38 +24,21 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 sub AdministerActions (%) {
-  require "Scripts.pm";
+  require "FormElements.pm";
 
   my (%Params) = @_;
 
   my $Form       =   $Params{-form}  || "";
-  my %Matrix     = %{$Params{-matrix}};
 
   my %Action    = ();
-  my %Positions = ();
 
   $Action{Delete}    = "Delete";
   $Action{New}       = "New";
   $Action{Modify}    = "Modify";
-  
-  # Actions are a hash, can't rely on order.
-  
-  my $Position = 0;
-  foreach my $Action (keys %Action) { 
-    $Positions{$Action}    = $Position;
-    ++$Position;
-  }
-  
-  if ($Form) {
-    &AdminDisableScripts(-matrix    => \%Matrix, -form => $Form, 
-                         -positions => \%Positions); 
-  }  
-  print "<b><a ";
-  &HelpLink("admaction");
-  print "Action:</a></b><br> \n";
+  print &FormElementTitle(-helplink => "admaction", -helptext => "Action");
   print $query -> radio_group(-name => "admaction", 
                               -values => \%Action, -default => "-",
-                              -onClick => "disabler_$Form();");
+                              -onclick => "disabler_$Form();");
 };
 
 sub AdministratorPassword {
@@ -71,6 +54,11 @@ sub AdministratorPassword {
   print $query -> password_field(-name      => "password", -size => 12, 
                                  -maxlength => 12);
 };
+
+sub AdminRegardless {
+  print &FormElementTitle(-helplink => "admforce", -helptext => "Force Action");
+  print $query -> checkbox(-name => "admforce", -value => 1, -label => 'Yes');
+}  
 
 sub GroupEntryBox (%) {
   require "Scripts.pm";
