@@ -150,7 +150,7 @@ if ($SessionID) {
   unless (&CanModifyMeeting($ConferenceID)) {
     push @ErrorStack,$Msg_MeetNoModify;
   }
-} elsif ($Mode eq "create" || $Mode eq "new")  && $SingleSession) { 
+} elsif (($Mode eq "create" || $Mode eq "new")  && $SingleSession) { 
   unless (&CanCreateMeeting()) {
     push @ErrorStack,$Msg_MeetNoCreate;
   }
