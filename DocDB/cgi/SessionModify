@@ -41,6 +41,7 @@ require "EventUtilities.pm";
 require "HTMLUtilities.pm";
 require "MeetingSecurityUtilities.pm";
 require "TalkHintUtilities.pm";
+require "WebUtilities.pm";
 
 require "FormElements.pm";
 require "ResponseElements.pm";
