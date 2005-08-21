@@ -202,7 +202,7 @@ sub PrintRevisionInfo {
   &PrintRevisionNote($DocRevisions{$DocRevID}{Note});
   &PrintXRefInfo($DocRevID);
   &PrintReferenceInfo($DocRevID);
-  &PrintEventInfo($DocRevID);
+  &PrintEventInfo(-docrevid => $DocRevID, -format => "normal");
   &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
   
   if ($UseSignoffs) {
