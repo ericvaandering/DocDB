@@ -165,7 +165,7 @@ if ($SessionID) {
       push @ErrorStack,"You must select a group for this event.";
     }
     unless ($StartTime && &ValidDate($SessionDay,$ReverseAbrvMonth{$SessionMonth},$SessionYear)) {
-      push @ErrorStack,"The event starting date is not valid.";
+      push @ErrorStack,"The event starting date is not valid. $SessionDay,$ReverseAbrvMonth{$SessionMonth},$SessionYear";
     }
   }
 } elsif ($EventID) { 
