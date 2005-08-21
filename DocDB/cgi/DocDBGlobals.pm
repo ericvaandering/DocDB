@@ -135,12 +135,6 @@ $ContentSearch        = "";    # Scripts and engine installed for searching file
 
 $DefaultPublicAccess  = 0;     # New documents are public by default
 
-# Major topic names for "meetings" and "conferences". Each can be a list
-# The first item in the two lists are accessed by ListMeetings and ListConferences
-
-@MeetingMajorTopics    = ("Collaboration Meetings","Other Meetings");
-@ConferenceMajorTopics = ("Conferences");
-
 # Include project specific settings
 
 require "ProjectGlobals.pm";
