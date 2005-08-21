@@ -31,7 +31,7 @@
 #                                          "to the left column"]; # Was MainPageAddendum
 #$ProjectMessages{Homepage}{DocumentLists} = ["These are added",
 #                                             "after All Documents, e.g.",
-#                                             "<a href=\"ListBy?eventgroup=Conferences\">Conference Documents\"</a>"];
+#                                             "<a href=\"ListBy?eventgroup=Conferences\">Conference Documents</a>"];
 #
 
 1;
