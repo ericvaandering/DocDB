@@ -386,6 +386,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
       if ($SessionTalkID && !$TalkConfirmed && @AuthorHints) {
         require "DocumentUtilities.pm";
         require "MiscSQL.pm";
+        push @DebugStack,"Reserving document -- Title: $TalkTitle Event: $EventID";
         my $TypeID = &FetchDocTypeByName("Talk") || 1; 
         my ($NewDocumentID,$NewDocRevID) 
           = &AddDocument(-version     => "reserve",     -title       => $TalkTitle, 
@@ -393,6 +394,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
                          -authorids   => \@AuthorHints, -topicids    => \@TopicHints, 
                          -eventids    => [$EventID],    -viewids     => \@MeetingViewGroupIDs, 
                          -modifyids   => \@MeetingViewGroupIDs);
+        push @DebugStack,"Reserved document # $NewDocumentID";
         my $SessionTalkUpdate = $dbh -> prepare(
            "update SessionTalk set DocumentID=?,Confirmed=? where SessionTalkID=?");
         $SessionTalkUpdate -> execute($NewDocumentID,1,$SessionTalkID);
