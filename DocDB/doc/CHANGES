@@ -68,6 +68,10 @@ Version 7 also has tables for future functionality to follow in point releases:
 3) Eliminating people re-loading the document creation form and creating
    duplicate documents.   
 
+Finally, the links to Conferences and Collaboration meetings have been removed.
+ProjectMessages.pm.template shows how you can restore these or other such lists
+for your instance to the DocDB Homepage
+
 6.6.2
 
 There are now basic instructions for the Public (you need to make link to DocDBInstructions in public
