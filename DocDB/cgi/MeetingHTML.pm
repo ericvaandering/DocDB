@@ -867,7 +867,8 @@ sub EventSelect (;%) {
   foreach my $ConferenceID (@ConferenceIDs) {
     if ($Format eq "full") {
       $Labels{$ConferenceID} = $EventGroups{$Conferences{$ConferenceID}{EventGroupID}}{ShortDescription}.":".
-                               $Conferences{$ConferenceID}{Title}; 
+                               $Conferences{$ConferenceID}{Title} .
+                               " (".&EuroDate($Conferences{$ConferenceID}{StartDate}).")"; 
     }
   }      
   

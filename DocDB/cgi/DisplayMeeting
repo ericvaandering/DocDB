@@ -95,7 +95,10 @@ if ($ConferenceID) {
   &FetchSessionSeparatorByID($SessionSeparatorID);
   $ConferenceID = $SessionSeparators{$SessionSeparatorID}{ConferenceID};
 }
-
+&FetchConferenceByConferenceID($ConferenceID);
+unless ($Conferences{$ConferenceID}{TimeStamp}) {
+  push @ErrorStack,"No such event exists.";
+}  
 unless (&CanAccessMeeting($ConferenceID)) {
   push @ErrorStack,$Msg_MeetNoAccess;
 }

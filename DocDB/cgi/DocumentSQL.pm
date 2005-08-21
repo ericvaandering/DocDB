@@ -52,7 +52,7 @@ sub GetAllDocuments {
 sub FetchDocument {
   my ($DocumentID) = @_;
 
-  if ($Documents{$DocumentID}{DocID} && $Documents{$DocumentID}{NVersions}) { 
+  if ($Documents{$DocumentID}{DocID} && defined $Documents{$DocumentID}{NVersions}) { 
     return $DocumentID;  # Already fetched
   }  
 
