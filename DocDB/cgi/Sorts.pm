@@ -223,6 +223,32 @@ sub EventsByDate {
                     $aday <=> $bday
 }
 
+sub SessionsByDateTime {
+  my $adt = $Sessions{$a}{StartTime}; 
+  my $bdt = $Sessions{$b}{StartDate};
+  my ($adate,$atime) = split /\s+/,$adt;
+  my ($bdate,$btime) = split /\s+/,$bdt;
+  
+  my ($ayear,$amonth,$aday) = split /\-/,$adate;
+  my ($byear,$bmonth,$bday) = split /\-/,$bdate;
+  
+  my ($ahour,$amin,$asec) = split /:/,$atime;
+  my ($bhour,$bmin,$bsec) = split /:/,$btime;
+  
+   $ayear <=> $byear
+          or
+  $amonth <=> $bmonth 
+          or
+    $aday <=> $bday
+          or
+   $ahour <=> $bhour
+          or
+    $amin <=> $bmin 
+          or
+    $asec <=> $bsec;            
+}
+
+
 sub EventGroupsByName {
   $EventGroups{$a}{ShortDescription} cmp $EventGroups{$b}{ShortDescription};
 }
