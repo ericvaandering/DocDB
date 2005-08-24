@@ -16,6 +16,7 @@ require "CGIInclude.pm";
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
 require "Security.pm";
+require "DocumentHTML.pm";
 
 require "AuthorSQL.pm";
 require "SecuritySQL.pm";
@@ -40,31 +41,17 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetAllDocuments;  # For very 
 &GetAllRevisions;  # long lists
 
+my @Fields  = ("Docid","Title","Author","Updated"); 
+my $SortBy  = "date";
+my $Reverse = 1;
+
 ### Sort
 
 my @SortedDocuments = reverse sort DocumentByRevisionDate @DocumentIDs;
 
-### Print summary information
-
-print "<center><table cellpadding=3>\n";
-
-&DocumentSummary(0);
-my $NumDoc = 0;
-
-foreach $DocumentID (@SortedDocuments) {
-  unless ($DocumentID) {next;}
-  $Version = &LastAccess($DocumentID);
-  if ($Version == -1) {next;}
-  &DocumentSummary($DocumentID,$Mode,$Version);
-  ++$NumDoc;
-}
-
-print "</table></center>\n";
-print "<p>\n";
-
-### Statistics
-
-print "<p><b>Number of documents found: $NumDoc</b><p>\n";
+my $NumberOfDocuments = &DocumentTable(-fields => \@Fields, -docids  => \@SortedDocumentIDs, 
+                                       -sortby => $SortBy,  -reverse => $Reverse);
+print "<b>Number of documents found: ",int($NumberOfDocuments),"</b><p/>\n";
 
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
