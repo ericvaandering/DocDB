@@ -66,14 +66,18 @@ sub APSLink ($$$) {
 sub NPELink ($$$) {
   my ($Acronym,$Volume,$Page) = @_;
 
-  my %PubNumber       = ();
-     $PubNumber{PLB}  = "03702693";
-     $PubNumber{NIMA} = "01689002";
+# Elsevier lings are going away and Science Direct requires an MD5 hash to be
+# allowed to link. Instead link to spires with links like
+# http://www-spires.fnal.gov/spires/find/hep/www?j=NUPHA,B291,41
 
+  my %PubNumber       = ();
+     $PubNumber{PLB}  = "PHLTA,B";
+     $PubNumber{NIMA} = "NUIMA,A";
   ($Page) = split /\D/,$Page; # Remove any trailing non-digits 
   $Volume =~ s/\D//;    # Remove any non-digits 
 
-  my $ReferenceLink = "http://www.elsevier.com/IVP/$PubNumber{$Acronym}/$Volume/$Page/";
+  my $ReferenceLink = "http://www-spires.fnal.gov/spires/find/hep/www?j=".
+                       $PubNumber{$Acronym}.$Volume.",".$Page;
   my $ReferenceText = "";
 
   return $ReferenceLink,$ReferenceText;
