@@ -305,7 +305,6 @@ if ($Mode eq "modify" || $Mode eq "create") {
           $TalkInsert          -> execute($SessionID,$TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote);
           $SessionTalkID = $TalkInsert -> {mysql_insertid}; # Works with MySQL only
           if ($TalkConfirmed) {
-            push @DebugStack,"Calling confirm T $TalkDocID S $SessionTalkID C $EventID";
             &ConfirmTalk(-docid => $TalkDocID, -sessiontalkid => $SessionTalkID, -eventid => $EventID);
           }  
           $NewSessionTalkMap{$TalkOrder} = $SessionTalkID;
@@ -370,7 +369,6 @@ if ($Mode eq "modify" || $Mode eq "create") {
            "where SessionTalkID=?");
           $SessionTalkUpdate -> execute($TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote,$SessionTalkID);
           if ($TalkConfirmed) {
-            push @DebugStack,"Calling confirm T $TalkDocID S $SessionTalkID C $EventID";
             &ConfirmTalk(-docid => $TalkDocID, -sessiontalkid => $SessionTalkID, -eventid => $EventID);
           }  
           &InsertTopicHints($SessionTalkID,@TopicHints);
