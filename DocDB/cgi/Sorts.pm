@@ -225,7 +225,8 @@ sub EventsByDate {
 
 sub SessionsByDateTime {
   my $adt = $Sessions{$a}{StartTime}; 
-  my $bdt = $Sessions{$b}{StartDate};
+  my $bdt = $Sessions{$b}{StartTime};
+
   my ($adate,$atime) = split /\s+/,$adt;
   my ($bdate,$btime) = split /\s+/,$bdt;
   

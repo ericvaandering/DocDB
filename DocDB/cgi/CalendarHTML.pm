@@ -192,7 +192,7 @@ sub PrintDayEvents (%) {
   my @AllSessionIDs  = ();
   my $EventID;
   foreach $EventID (@EventIDs) {
-    my @SessionIDs = sort SessionsByDateTime &FetchSessionsByConferenceID($EventID);
+    my @SessionIDs = sort &FetchSessionsByConferenceID($EventID);
     if (@SessionIDs) {
       foreach my $SessionID (@SessionIDs) {
         my ($Sec,$Min,$Hour,$SessDay,$SessMonth,$SessYear) = &SQLDateTime($Sessions{$SessionID}{StartTime});
@@ -242,7 +242,8 @@ sub PrintDayEvents (%) {
       }   
     }  
   }  
-  
+  @AllSessionIDs = sort SessionsByDateTime @AllSessionIDs;
+   
   foreach my $SessionID (@AllSessionIDs) {
     my $StartTime = &EuroTimeHM($Sessions{$SessionID}{StartTime});
     my $EndTime   = &TruncateSeconds(&SessionEndTime($SessionID));
