@@ -304,6 +304,9 @@ if ($Mode eq "modify" || $Mode eq "create") {
            "values (0,?,?,?,?,?,?)");
           $TalkInsert          -> execute($SessionID,$TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote);
           $SessionTalkID = $TalkInsert -> {mysql_insertid}; # Works with MySQL only
+          if ($TalkConfirmed) {
+            &ConfirmTalk(-docid => $TalkDocID, -sessiontalkid => $SessionTalkID, -eventid => $ConferenceID);
+          }  
           $NewSessionTalkMap{$TalkOrder} = $SessionTalkID;
           &InsertTopicHints($SessionTalkID,@TopicHints);
           &InsertAuthorHints($SessionTalkID,@AuthorHints);
@@ -365,7 +368,9 @@ if ($Mode eq "modify" || $Mode eq "create") {
            "DocumentID=?, Confirmed=?, Time=?, HintTitle=?, Note=? ". 
            "where SessionTalkID=?");
           $SessionTalkUpdate -> execute($TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote,$SessionTalkID);
-
+          if ($TalkConfirmed) {
+            &ConfirmTalk(-docid => $TalkDocID, -sessiontalkid => $SessionTalkID, -eventid => $ConferenceID);
+          }  
           &InsertTopicHints($SessionTalkID,@TopicHints);
           &InsertAuthorHints($SessionTalkID,@AuthorHints);
           if ($NewSessionID) { # Move to new session

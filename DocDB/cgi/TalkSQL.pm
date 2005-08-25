@@ -175,4 +175,24 @@ sub DeleteTalkSeparator ($) {
   $OrderDelete     -> execute($TalkSeparatorID);
 }
 
+sub ConfirmTalk (%) {
+  require "RevisionSQL.pm";
+  my %Params = @_;
+  
+  my $DocumentID    = $Params{-docid}         || 0;
+  my $SessionTalkID = $Params{-sessiontalkid} || 0;
+  my $EventID       = $Params{-eventid}       || 0;
+ 
+  &FetchRevisionsByDocument($DocumentID);
+  my $DocRevID = $DocRevIDs{$DocumentID}{$Documents{$DocumentID}{NVersions}};
+  
+  my $Check = $dbh -> prepare("select RevEventID from RevisionEvent where DocRevID=? and ConferenceID=?");
+  $Check -> execute($DocRevID,$EventID);
+  my ($RevisionEventID) = $Check -> fetchrow_array;
+  unless ($RevisionEventID) {
+    my $Insert = $dbh -> prepare("insert into RevisionEvent (RevEventID,DocRevID,ConferenceID) values (0,?,?)"); 
+    $Insert -> execute($DocRevID,$EventID);
+  }  
+} 
+
 1;
