@@ -182,7 +182,9 @@ sub ConfirmTalk (%) {
   my $DocumentID    = $Params{-docid}         || 0;
   my $SessionTalkID = $Params{-sessiontalkid} || 0;
   my $EventID       = $Params{-eventid}       || 0;
- 
+  
+  push @DebugStack,"Called confirm D $DocumentID S $SessionTalkID E $EventID";
+
   &FetchRevisionsByDocument($DocumentID);
   my $DocRevID = $DocRevIDs{$DocumentID}{$Documents{$DocumentID}{NVersions}};
   
