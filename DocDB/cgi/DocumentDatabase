@@ -68,7 +68,7 @@ if ($UserValidation eq "certificate") {
     print "<p><h4 class=\"Warning\">\n";
     print "You have presented a valid certificate, but are not yet authorized to access DocDB.<br/>\n";
     print "</h4>\n";
-    print "<h4>\n";
+    print "<h4 id=\"AccessApply\">\n";
     print "Please <a href=\"$CertificateApplyForm\">apply for access</a> or get 
            <a href=\"$DocDBInstructions\">more information.</a></h4></p>\n";
   }
