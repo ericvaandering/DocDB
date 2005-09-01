@@ -91,8 +91,11 @@ TOC
     <li><a href="#email">Setting e-mail notification</a></li>
    </ul></li>
 TOC
+  if ($UserValidation eq "certificate") {
+    print "<li><a href=\"#certificates\">Certificates</a></li>\n";
+  }
   if ($UseSignoffs) {
-   print "<li><a href=\"#signoff\">Document Signoffs</a></li>\n";
+    print "<li><a href=\"#signoff\">Document Signoffs</a></li>\n";
   } 
   print <<TOC;
    <li><a href="#final">Advanced Users</a>
@@ -475,6 +478,22 @@ choose to be notified immediately if a new document is created about your
 detector and every week about all new documents in the database.</p> 
 
 HTML
+
+if ($UserValidation eq "certificate") {
+  print "<a name=\"certificates\" /><h1>Certificates</h1>\n";
+
+  print "<p>This DocDB uses client certificates to control your access to DocDB. 
+  While getting initial access to DocDB with certificates is a little more
+  complicated, you will never again have to type in passwords. To keep DocDB secure,
+  getting access is a two step process. First, you have to obtain a 
+  certificate which verifies your identity. Anyone, no matter if they are part of
+  your organization or not, can get a certificate from a valid issuer. 
+  To be given access, you have to <a href=\"$CertificateApplyForm\">apply for access</a> 
+  so that your DocDB administrators can verify that you belong in the groups you say you do. 
+  This is normally an easy and fast process, but if there is any doubt, you might
+  want to explain who you are and why you believe you belong to the groups you 
+  are applying to.</p>";
+}
 
 if ($UseSignoffs) {
  print "<a name=\"signoff\" /><h1>Document Signoffs</h1>\n";
