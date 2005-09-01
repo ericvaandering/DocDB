@@ -242,8 +242,10 @@ sub PrintDayEvents (%) {
       }   
     }  
   }  
-  @AllSessionIDs = sort SessionsByDateTime @AllSessionIDs;
    
+### Loop over sessions by time
+  
+  @AllSessionIDs = sort SessionsByDateTime @AllSessionIDs;
   foreach my $SessionID (@AllSessionIDs) {
     my $StartTime = &EuroTimeHM($Sessions{$SessionID}{StartTime});
     my $EndTime   = &TruncateSeconds(&SessionEndTime($SessionID));
