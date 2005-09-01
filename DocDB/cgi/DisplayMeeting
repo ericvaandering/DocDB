@@ -164,51 +164,47 @@ if ($DisplayMode eq "Session") { # Display a single session
     print "</table><hr width=\"95%\" />\n";
   }
   
-# FIXME: display talks not associated with sessions  
-
-#  if ($Conferences{$ConferenceID}{Minor}) {
-        
-    # Refetch all talks, flag talks which are associated with a session
-#    my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
-#    foreach $MeetingOrderID (@MeetingOrderIDs) {
-#      my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
-#      if ($SessionID) {
-#        my @SessionTalkIDs = &FetchSessionTalksBySessionID($SessionID);
-#        foreach my $SessionTalkID (@SessionTalkIDs) {
-#          if ($SessionTalks{$SessionTalkID}{DocumentID}) {
-#            $DocumentIDs{$SessionTalks{$SessionTalkID}{DocumentID}} = 0;
-#          }
-#        } 
-#      }
-#    }   
-
-    # Find which ones aren't
-#    my @UnusedDocIDs = ();
-#    foreach my $DocumentID (keys %DocumentIDs) {
-#      if ($DocumentIDs{$DocumentID}) {
-#        push @UnusedDocIDs,$DocumentID;
-#      }  
-#    }
-    
-    # Print out info for unused documents
-#    if (@UnusedDocIDs) {
-#      my $SortBy  = "date";
-#      my @Fields = ("Docid","Title","Author","Updated"); 
-#      my $Reverse = 1;
-#      print "<h4>Other talks for this meeting:</h4>\n";
-#      my $NumberOfDocuments = &DocumentTable(-fields  => \@Fields, 
-#           -docids  => \@UnusedDocIDs, -sortby  => $SortBy,  
-#           -reverse => $Reverse);
-#      print "<hr width=\"95%\"/>\n";
-#    }
-#  }
-  
 # Finish off meeting display  
   
   &PrintMeetingEpilogue($ConferenceID);
 } else {
-  #Complain that user didn't specify a session, break, or conference
+  # Complain that user didn't specify a session, break, or conference
 }  
+
+if ($DisplayMode eq "Session" || $DisplayMode eq "Conference") { # Display talks not associated with sessions  
+  # Refetch all talks, flag talks which are associated with a session
+  my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
+  foreach $MeetingOrderID (@MeetingOrderIDs) {
+    my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
+    if ($SessionID) {
+      my @SessionTalkIDs = &FetchSessionTalksBySessionID($SessionID);
+      foreach my $SessionTalkID (@SessionTalkIDs) {
+        if ($SessionTalks{$SessionTalkID}{DocumentID}) {
+          $DocumentIDs{$SessionTalks{$SessionTalkID}{DocumentID}} = 0;
+        }
+      } 
+    }
+  }   
+
+  # Find which ones aren't
+  my @UnusedDocIDs = ();
+  foreach my $DocumentID (keys %DocumentIDs) {
+    if ($DocumentIDs{$DocumentID}) {
+      push @UnusedDocIDs,$DocumentID;
+    }  
+  }
+
+ # Print out info for unused documents
+  if (@UnusedDocIDs) {
+    my @Fields = ("Docid","Title","Author","Updated"); 
+    print "<h4>Other documents for this event:</h4>\n";
+    my $NumberOfDocuments = &DocumentTable(-fields  => \@Fields, 
+         -docids  => \@UnusedDocIDs, -sortby  => "date",  
+         -reverse => $TRUE);
+    print "<hr width=\"95%\"/>\n";
+  }
+}
+  
 
 $EndTime  = new Benchmark;
 
