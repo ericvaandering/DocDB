@@ -206,11 +206,13 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "Conference") { # Display talks
   # Print out info for unused documents
   if (@UnusedDocIDs) {
     my @Fields = ("Docid","Title","Author","Updated"); 
-    print "<h4>Other documents for this event:</h4>\n";
+    print "<h4>Other documents for this event or <a href=\"$ListBy?eventid=$ConferenceID\">simple list</a> of all documents for event</h4>\n";
     my $NumberOfDocuments = &DocumentTable(-fields  => \@Fields, 
          -docids  => \@UnusedDocIDs, -sortby  => "date",  
          -reverse => $TRUE);
     print "<hr width=\"95%\"/>\n";
+  } else {
+    print "<h4><a href=\"$ListBy?eventid=$ConferenceID\">Simple list</a> of all documents for event</h4>\n";
   }
 }
   
