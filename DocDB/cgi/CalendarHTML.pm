@@ -234,8 +234,8 @@ sub PrintDayEvents (%) {
         }  
         print "<td>All day/no time</td>\n";
         print "<td>$EventLink</td>\n";
-        print "<td>$Conferences{$ConferenceID}{Location}</td>\n";
-        print "<td>$Conferences{$ConferenceID}{URL}</td>\n";
+        print "<td>$Conferences{$EventID}{Location}</td>\n";
+        print "<td>$Conferences{$EventID}{URL}</td>\n";
         print "</tr>\n";
       } elsif ($Format eq "summary") {
         print $EventLink,"\n";
@@ -263,7 +263,7 @@ sub PrintDayEvents (%) {
       print "<td>$StartTime &ndash; $EndTime</td>\n";
       print "<td>$SessionLink</td>\n";
       print "<td>$Sessions{$SessionID}{Location}</td>\n";
-      print "<td>$Conferences{$ConferenceID}{URL}</td>\n";
+      print "<td>$Conferences{$EventID}{URL}</td>\n";
       print "</tr>\n";
     } elsif ($Format eq "summary") {
       my $SessionLink = &SessionLink(-sessionid => $SessionID);
