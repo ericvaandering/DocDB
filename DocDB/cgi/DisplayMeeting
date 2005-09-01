@@ -172,7 +172,11 @@ if ($DisplayMode eq "Session") { # Display a single session
 }  
 
 if ($DisplayMode eq "Session" || $DisplayMode eq "Conference") { # Display talks not associated with sessions  
-  # Refetch all talks, flag talks which are associated with a session
+  require "Utilities.pm";
+  my %AgendaDocIDs = ();
+  my %AllDocIDs    = ();
+  
+  # Flag documents which are associated with a session
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
   foreach $MeetingOrderID (@MeetingOrderIDs) {
     my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
@@ -180,21 +184,26 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "Conference") { # Display talks
       my @SessionTalkIDs = &FetchSessionTalksBySessionID($SessionID);
       foreach my $SessionTalkID (@SessionTalkIDs) {
         if ($SessionTalks{$SessionTalkID}{DocumentID}) {
-          $DocumentIDs{$SessionTalks{$SessionTalkID}{DocumentID}} = 0;
+          $AgendaDocIDs{$SessionTalks{$SessionTalkID}{DocumentID}} = 1;
         }
       } 
     }
   }   
 
-  # Find which ones aren't
-  my @UnusedDocIDs = ();
-  foreach my $DocumentID (keys %DocumentIDs) {
-    if ($DocumentIDs{$DocumentID}) {
-      push @UnusedDocIDs,$DocumentID;
-    }  
+  # Get documents associated with event
+
+  my @AllRevisionIDs = &FetchRevisionsByEventID($ConferenceID);
+  foreach my $DocRevID (@AllRevisionIDs) {
+    $AllDocIDs{$DocRevisions{$DocRevID}{DOCID}} = 1;
   }
 
- # Print out info for unused documents
+  my @AgendaDocIDs = keys %AgendaDocIDs;
+  my @AllDocIDs    = keys %AllDocIDs;
+
+  # Find which ones aren't
+  my @UnusedDocIDs = &RemoveArray(\@AllDocIDs,@AgendaDocIDs);
+
+  # Print out info for unused documents
   if (@UnusedDocIDs) {
     my @Fields = ("Docid","Title","Author","Updated"); 
     print "<h4>Other documents for this event:</h4>\n";
