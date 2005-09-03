@@ -16,7 +16,6 @@ ln -sf ../../DocDB/DocDBGlobals.pm  .
 ln -sf ../../DocDB/DocumentDatabase . 
 ln -sf ../../DocDB/ShowDocument  .
 
-ln -sf ../../DocDB/ListConferences  .
 ln -sf ../../DocDB/ListTopics  .
 ln -sf ../../DocDB/ListAuthors  .
 ln -sf ../../DocDB/ListKeywords  .
