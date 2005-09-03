@@ -276,22 +276,26 @@ sub PrintRevisionNote {
   }
 }
 
-sub PrintReferenceInfo ($) {
+sub PrintReferenceInfo ($;$) {
   require "MiscSQL.pm";
   require "ReferenceLinks.pm";
   
-  my ($DocRevID) = @_;
-  
+  my ($DocRevID,$Mode) = @_;
+  unless ($Mode) {$Mode = "long";}
   my @ReferenceIDs = &FetchReferencesByRevision($DocRevID);
   
   if (@ReferenceIDs) {
     &GetJournals;
-    print "<div id=\"ReferenceInfo\">\n";
-    print "<dl>\n";
-    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Journal References:</span></dt>\n";
+    if ($Mode eq "long") {
+      print "<div id=\"ReferenceInfo\">\n";
+      print "<dl>\n";
+      print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Journal References:</span></dt>\n";
+    }
     foreach my $ReferenceID (@ReferenceIDs) {
       $JournalID = $RevisionReferences{$ReferenceID}{JournalID};
-      print "<dd>Published in ";
+      if ($Mode eq "long") {
+        print "<dd>Published in ";
+      }
       my ($ReferenceLink,$ReferenceText) = &ReferenceLink($ReferenceID);
       if ($ReferenceLink) {
         print "<a href=\"$ReferenceLink\">";
@@ -310,10 +314,16 @@ sub PrintReferenceInfo ($) {
       if ($ReferenceLink) {
         print "</a>";
       }  
-      print ".</dd>\n";
+      if ($Mode eq "long") {
+        print ".</dd>\n";
+      } elsif ($Mode eq "short") {
+        print ".<br/>\n";
+      }   
     }
-    print "</dl>\n";
-    print "</div>\n";
+    if ($Mode eq "long") {
+      print "</dl>\n";
+      print "</div>\n";
+    }   
   }
 }
 

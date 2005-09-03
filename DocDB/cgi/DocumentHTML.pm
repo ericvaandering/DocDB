@@ -150,6 +150,9 @@ sub DocumentTable (%) {
         print $query -> hidden(-name => 'sessiontalkid',-default => $SessionTalkID);
         print $query -> submit (-value => "Confirm");
         print $query -> end_multipart_form;
+      } elsif ($Field eq "References") {   # Journal refs
+        require "RevisionHTML.pm";
+        &PrintReferenceInfo($DocRevID,"short"); 
       } else {
         print "Unknown field"
       }  

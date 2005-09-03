@@ -182,6 +182,8 @@ if ($Mode eq "conference") {
   @Fields  = ("Title","Author","Topics","Files");
   $SortBy  = "requester";
   $Reverse = 0;
+} elsif ($Mode eq "pubs") {
+  @Fields  = ("Docid","Title","References","Files");
 }
 
 # Do the fetch on the $List. "unless (@DocumentIDs)" here to do complex fetches, user specify
