@@ -50,7 +50,7 @@ print $query->header;
 
 my $TitleDate;
 my $FutureEventTable = $FALSE;
-my $Today = DateTime -> now();
+my $Today = DateTime -> now(time_zone => 'local');
 
 if ($Day && $Month && $Year) {
   my $Date = DateTime -> new(year => $Year, month => $Month, day => $Day);
@@ -64,10 +64,9 @@ if ($Day && $Month && $Year) {
     $FutureEventTable = $TRUE;
   }  
 } else {
-  my $Date = DateTime -> now();
-  $Month =  $Date -> month();
-  $Year =  $Date -> year();
-  $TitleDate = $Date -> month_name()." ".$Year;
+  $Month     = $Today -> month();
+  $Year      = $Today -> year();
+  $TitleDate = $Today -> month_name()." ".$Year;
   $FutureEventTable = $TRUE;
 }  
   
