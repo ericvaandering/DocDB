@@ -254,4 +254,9 @@ sub EventGroupsByName {
   $EventGroups{$a}{ShortDescription} cmp $EventGroups{$b}{ShortDescription};
 }
 
+sub EmailUsersByName {
+  push @DebugStack,"A: $a B: $b";
+  $a <=> $b;
+}
+
 1;

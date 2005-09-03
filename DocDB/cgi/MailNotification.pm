@@ -486,7 +486,7 @@ sub NotifyKeywordEntry ($) {
 }
 
 sub EmailUserSelect (%) {
-
+  require "Sorts.pm";
   my (%Params) = @_;
   
   my $Disabled = $Params{-disabled}  || "0";
@@ -497,7 +497,7 @@ sub EmailUserSelect (%) {
     $Booleans .= "-disabled";
   }  
   
-  my @EmailUserIDs = &GetEmailUserIDs;
+  my @EmailUserIDs = sort EmailUserIDsByName &GetEmailUserIDs;
   foreach my $EmailUserID (@EmailUserIDs) {
     &FetchEmailUser($EmailUserID);  
     $EmailUserLabels{$EmailUserID} = $EmailUser{$EmailUserID}{Username};
