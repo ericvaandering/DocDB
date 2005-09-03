@@ -497,11 +497,13 @@ sub EmailUserSelect (%) {
     $Booleans .= "-disabled";
   }  
   
-  my @EmailUserIDs = sort EmailUserIDsByName &GetEmailUserIDs;
+  my @EmailUserIDs = &GetEmailUserIDs;
   foreach my $EmailUserID (@EmailUserIDs) {
     &FetchEmailUser($EmailUserID);  
     $EmailUserLabels{$EmailUserID} = $EmailUser{$EmailUserID}{Username};
   }  
+  
+  @EmailUserIDs = sort EmailUserIDsByName @EmailUserIDs;
   
   print "<b><a ";
   &HelpLink("emailuser");

@@ -193,18 +193,45 @@ sub DocIDsByScore {
 }    
 
 sub EmailUserIDsByName {
-  my $NameA = $EmailUser{$a}{Name};
-  my $NameB = $EmailUser{$b}{Name};
+  my $an = $EmailUser{$a}{Name};
+  my $bn = $EmailUser{$b}{Name};
   
-  my @PartsA = split /\s+/,$NameA;
-  my @NamesA = grep /^\w+$/,@PartsA;
-  my $LastA  = pop @NamesA;
+  my @aparts = split /\s+/,$an;
+  my @bparts = split /\s+/,$bn;
+  my $alast  = "";
+  my $afirst = "";
+  my $blast  = "";
+  my $bfirst = "";
+ 
+  my $FoundWord = 0;
+  while (!$FoundWord && @aparts) {
+    my $Part = pop @aparts;
+
+    if (grep /\D/,$Part) {
+      $alast = $Part;
+      $afirst = pop @aparts;
+      $FoundWord = 1;
+    }   
+  }
+  my $FoundWord = 0;
+  while (!$FoundWord && @bparts) {
+    my $Part = pop @bparts;
+
+    if (grep /\D/,$Part) {
+      $blast = $Part;
+      $bfirst = pop @bparts;
+      $FoundWord = 1;
+    }   
+  }
   
-  my @PartsB = split /\s+/,$NameB;
-  my @NamesB = grep /^\w+$/,@PartsB;
-  my $LastB  = pop @NamesB;
+  $alast  =~ tr/[A-Z]/[a-z]/;
+  $blast  =~ tr/[A-Z]/[a-z]/;
+  $afirst =~ tr/[A-Z]/[a-z]/;
+  $bfirst =~ tr/[A-Z]/[a-z]/;
   
-  $LastA cmp $LastB;
+   $alast cmp $blast 
+          or
+  $afirst cmp $bfirst;
 }  
 
 sub EventsByDate {
@@ -252,11 +279,6 @@ sub SessionsByDateTime {
 
 sub EventGroupsByName {
   $EventGroups{$a}{ShortDescription} cmp $EventGroups{$b}{ShortDescription};
-}
-
-sub EmailUsersByName {
-  push @DebugStack,"A: $a B: $b";
-  $a <=> $b;
 }
 
 1;
