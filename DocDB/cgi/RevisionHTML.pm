@@ -317,7 +317,7 @@ sub PrintReferenceInfo ($;$) {
       if ($Mode eq "long") {
         print ".</dd>\n";
       } elsif ($Mode eq "short") {
-        print ".<br/>\n";
+        print "<br/>\n";
       }   
     }
     if ($Mode eq "long") {
