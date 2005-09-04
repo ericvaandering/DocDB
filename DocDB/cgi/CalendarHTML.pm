@@ -56,7 +56,6 @@ sub PrintCalendar {
   my $FirstDay    = DateTime -> new(year => $Year, month => $Month, day => 1);
   my $MonthName   = $FirstDay -> month_name();
   my $Today       = DateTime ->today(time_zone => 'local');
-  push @DebugStack,"Today: ".$Today  ->  iso8601();
 
   my $Class = "ByMonth";
   if ($Type eq "year") {  
@@ -114,7 +113,6 @@ sub PrintCalendar {
 
   for (my $Day = 1; $Day <= $DaysInMonth; ++$Day) {
     my $DateTime = DateTime -> new(year => $Year, month => $Month, day => $Day);
-    push @DebugStack,$DateTime ->  iso8601();
     my $SQLDate = $DateTime -> ymd(); 
     my $DOW = $DateTime -> day_of_week() + 1; # Convert from Monday week start
     if ($DOW ==8) {$DOW = 1;} 
@@ -134,7 +132,6 @@ sub PrintCalendar {
 
     my $TDClass = "$DayName";
     if ($DateTime == $Today) {
-      push @DebugStack,"Found equal ".$DateTime ->  iso8601()." ".$Today ->  iso8601();
       $TDClass .= " Today";
     }  
     my @EventIDs = sort numerically &GetEventsByDate(-on => $SQLDate);
