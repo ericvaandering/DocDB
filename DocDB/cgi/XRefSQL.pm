@@ -49,7 +49,7 @@ sub InsertXRefs (%) {
     my $DocID      = 0; 
     my @Parts = split /\-/,$Document;
     foreach my $Part (@Parts) {
-      if (grep /^v\d$/,$Part) {
+      if (grep /^v\d+$/,$Part) {
         $Version = $Part;
         $Version =~ s/v//;
       } elsif (grep /^\d+$/,$Part) {
@@ -58,6 +58,22 @@ sub InsertXRefs (%) {
         $ExtProject = $Part;
       }
     }
+    
+    if (!$ExtProject || $ExtProject eq $ShortProject) { # Check if it exists
+      my $OK = 0;
+      if ($DocRevID && $DocID && $Version) {
+        unless (&FetchRevisionByDocumentAndVersion($DocID,$Version)) {
+          push @WarnStack,"Document $DocID, version $Version does not exist. No cross-reference created.";
+          next;
+        }
+        $OK = 1;
+      } elsif ($DocRevID && $DocID && &FetchDocument($DocID)) {
+        $OK = 1;
+      } else {
+        push @WarnStack,"Unable to Cross-reference to $Document: Does not exist or format is not 1234-v56";
+        next;
+      }  
+    }          
     
     my $DocXRefID = 0;
     if ($DocID) {

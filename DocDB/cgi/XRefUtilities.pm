@@ -29,7 +29,16 @@ sub SetXRefDefault ($) {
   my $Text = "";
   foreach my $DocXRefID (@DocXRefIDs) {
     my $DocumentID = $DocXRefs{$DocXRefID}{DocumentID};
-    $Text .= "$DocumentID ";
+    my $Version    = $DocXRefs{$DocXRefID}{Version};
+    my $ExtProject = $DocXRefs{$DocXRefID}{Project};
+    if ($ExtProject && $ExtProject ne $ShortProject) {
+      $Text .= "$ExtProject-";
+    }    
+    $Text .= $DocumentID;
+    if ($Version) {
+      $Text .= "-v$Version";
+    }    
+    $Text .= " ";
   }
 
   return $Text;
