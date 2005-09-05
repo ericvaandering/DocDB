@@ -100,6 +100,7 @@ my $SignoffList   = $params{signofflist};
 my $OldVersion    = $params{oldversion};
 my $MaxFiles      = $params{maxfiles};
 my @XRefs         = split /\D+/,$params{xrefs}; # Can be comma or space separated
+my @XRef2s        = split /,*\s+/,$params{xrefs}; # Can be comma or space separated
 my @EventIDs      = $query -> param('events');
 
 if ($Archive eq "multi") {$Archive = "single";} # No real difference
@@ -348,9 +349,11 @@ if (@JournalIDs || @Volumes || @Pages) {
 
 ### Add Cross-References 
 
-if (@XRefs) {
+if (@XRefs || @XRef2s) {
   require "XRefSQL.pm";
-  &InsertXRefs(-docrevid => $DocRevID, -docids => \@XRefs);
+#  &InsertXRefs(-docrevid => $DocRevID, -docids => \@XRefs);
+  push @DebugStack,"XREF2: ",@XRef2s;
+  &InsertXRefs(-docrevid => $DocRevID, -documents => \@XRef2s);
 }
 
 ### Add to authors, topics and securities

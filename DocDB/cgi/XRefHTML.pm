@@ -38,9 +38,21 @@ sub PrintXRefInfo ($) {
     print "</dl>\n";
     print "<ul>\n";
     foreach my $DocXRefID (@DocXRefIDs) {
+      my $DocumentLink = "";
       my $DocumentID = $DocXRefs{$DocXRefID}{DocumentID};
-      my $DocumentLink =  &FullDocumentID($DocumentID).": ";
-         $DocumentLink .= &NewerDocumentLink(-docid => $DocumentID, -titlelink => TRUE);
+      my $Version    = $DocXRefs{$DocXRefID}{Version};
+      my $ExtProject = $DocXRefs{$DocXRefID}{Project};
+      if ($ExtProject && $ExtProject ne $ShortProject) {
+        $DocumentLink = "External link to $ExtProject DocDB";
+      } else {
+        if ($Version) {
+          $DocumentLink =  &FullDocumentID($DocumentID,$Version).": ";
+          $DocumentLink .= &NewerDocumentLink(-docid => $DocumentID, -version => $Version, -titlelink => $TRUE);
+        } else { 
+          $DocumentLink =  &FullDocumentID($DocumentID).": ";
+          $DocumentLink .= &NewerDocumentLink(-docid => $DocumentID, -titlelink => $TRUE);
+        }
+      }    
       print "<li>$DocumentLink</li>\n";
     }
     print "</ul>\n";
@@ -49,7 +61,17 @@ sub PrintXRefInfo ($) {
 
 ### Find and print documents which link to this one
 
-  my @DocXRefIDs = &FetchXRefs(-docid => $DocRevisions{$DocRevID}{DOCID});
+  my @RawDocXRefIDs = &FetchXRefs(-docid => $DocRevisions{$DocRevID}{DOCID});
+  
+  my @DocXRefIDs = ();
+  
+  foreach my  $DocXRefID (@RawDocXRefIDs) { # Remove links to other projects
+    my $ExtProject = $DocXRefs{$DocXRefID}{Project};
+    if ($ExtProject eq $ShortProject || !$ExtProject) {
+      push @DocXRefIDs,$DocXRefID;
+    }
+  }    
+    
   if (@DocXRefIDs) {
     print "<div id=\"XReffedBy\">\n";
     print "<dl>\n";
