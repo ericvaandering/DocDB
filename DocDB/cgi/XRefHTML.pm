@@ -65,10 +65,17 @@ sub PrintXRefInfo ($) {
   
   my @DocXRefIDs = ();
   
-  foreach my  $DocXRefID (@RawDocXRefIDs) { # Remove links to other projects
+  foreach my  $DocXRefID (@RawDocXRefIDs) { # Remove links to other projects, versions
     my $ExtProject = $DocXRefs{$DocXRefID}{Project};
+    my $Version    = $DocXRefs{$DocXRefID}{Version};
     if ($ExtProject eq $ShortProject || !$ExtProject) {
-      push @DocXRefIDs,$DocXRefID;
+      if ($Version) {
+        if ($Version == $DocRevisions{$DocRevID}{Version}) {
+          push @DocXRefIDs,$DocXRefID;
+        } 
+      } else {
+        push @DocXRefIDs,$DocXRefID;
+      }  
     }
   }    
     

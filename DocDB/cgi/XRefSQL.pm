@@ -52,7 +52,7 @@ sub InsertXRefs (%) {
       if (grep /^v\d+$/,$Part) {
         $Version = $Part;
         $Version =~ s/v//;
-      } elsif (grep /^\d+$/,$Part) {
+      } elsif (grep /^\d+$/,$Part && !$DocID) { # Only take first one as DocID
         $DocID = $Part;
       } else {
         $ExtProject = $Part;
