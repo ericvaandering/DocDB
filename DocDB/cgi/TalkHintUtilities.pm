@@ -23,6 +23,8 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 sub ReHintTalksBySessionID ($) {
+  require "MeetingSQL.pm";
+  require "TalkSQL.pm";
   my ($SessionID) = @_;
 
   if ($Public) { # Can't write to DB
@@ -31,13 +33,16 @@ sub ReHintTalksBySessionID ($) {
 
   # Get valid Document IDs in the window
   
-  my %DocumentIDs = &GetHintDocuments($SessionID,$TalkHintWindow);
+  &FetchSessionByID($SessionID);
+  my @SessionTalkIDs = &FetchSessionTalksBySessionID($SessionID);
+  my %DocumentIDs    = &GetHintDocuments($SessionID,$TalkHintWindow);
 
   my $dbh_w = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
   # Loop over all session talk IDs
 
   foreach my $SessionTalkID (@SessionTalkIDs) { 
+    if($SessionTalks{$SessionTalkID}{Confirmed}) {next;}
     my @MatchedDocumentIDs = &TalkMatches($SessionTalkID,$TalkMatchThreshold,%DocumentIDs);
     my $BestDocumentID = shift @MatchedDocumentIDs;
     if ($BestDocumentID) {
@@ -231,6 +236,7 @@ sub TalkMatches ($$@) {
     }
 
     my $Score = $MethodScore*($AuthorMatches+1)*(2*$TopicMatches+1)*($FuzzyScore+1);
+    push @DebugStack,"Checking $HintTitle vs. $DocumentID Method: $MethodScore Words: $FuzzyScore Authors: $AuthorMatches Topics: $TopicMatches Score: $Score"; 
 
     my $NoMatchScore = 1*(0+1)*(2*0+1)*(2*0+1);
     if ($Score > $Threshold && $Score > $NoMatchScore) { # Might loosen
