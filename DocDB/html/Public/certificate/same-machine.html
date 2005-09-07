@@ -1,57 +1,28 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title>Getting a Certificate</title>
+<title>Same Machine Explanation</title>
 </head>
 <p>
 <center>
 <a href="http://www.fnal.gov/"><img src="/images/logotop.gif" border="0" height="30" width="404"></a>
 <br>
 <font size=+3>
-Getting a Certificate
+Same Machine Explanation
 </font>
 </center>
 <p>
-You can use either a DOEGrid Certificate or a Fermi Kerberos (KCA) certificate.
-<br>
-<font color="red">Each certificate type will need to be separately registered
-with the database.</font>
-<br>
-To minimize confusion, we strongly recommend that you choose only one 
-certificate type for access.  We recommend that Fermilab and other Kerberos 
-users choose the KCA certificate.  This is more secure and will, 
-at least at Fermilab, be required for access to other web sites.
+When you apply for a DOEGrid certificate, your web brower sends along a public
+key.  This key is used to match up with the private key that is kept on your
+browser.  When you get the e-mail with a link to your new DOEGrid certificate,
+that web page will be expecting to make a proper connection to the private key
+in your web browser.  This key is unique to your physical machine and chosen web
+browser.  
 <p>
-<center>
-<table width="95%"> 
-<tr>
-<td> Get a <a href=doe-cert.html>DOEGrid certificate</a></td>
-</tr>
-<tr>
-<td> Get a KCA (Kerberos) Certificate for 
-     <a href=kca-win-cert.html>Windows</a>,
-     <a href=kca-lnx-cert.html>Linux</a>, or
-    <a href=kca-mac-cert.html>MAC</a>
-</td>
-</tr>
-<tr>
-<td> <a href=register-cert.html>Register</a> your certificate with DocDB </td>
-</tr>
-<tr>
-<td> <a href=import-cert.html>Importing and Exporting</a> certificates </td>
-</tr>
-<tr>
-<td> 
-You may wish to <a href=http://computing.fnal.gov/security/pki/browsercerttest.html>test your certificate</a>
-</td>
-</tr>
-<tr>
-<td> 
-<a href=known-cert.html>Known issues</a> with certificates.
-</td>
-</tr>
-</table>
-</center>
+The actual port you use (wired, wireless, etc.) is irrelevant.
+<p>
+Your IP address (at the lab, away from the lab, DHCP, static, etc.) is
+irrelevant.
 <p>
 <!-- footer begins here -->
 <table border="0" cellpadding="0" cellspacing="0">
