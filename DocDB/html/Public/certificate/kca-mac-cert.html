@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Getting a KCA Certificate</title>
+</head>
+<p>
+<center>
+<a href="http://www.fnal.gov/"><img src="/images/logotop.gif" border="0" height="30" width="404"></a>
+<br>
+<font size=+3>
+Getting a KCA Certificate for MacOSX
+</font>
+</center>
+<p>
+To get and use a KCA certificate:
+<ol>
+<li>  You will need to either build or get <b>kx509</b> and <b>kxlist</b>.
+      Instructions and a disk image (for panther) are available at 
+      <a href=http://www.fnal.gov/orgs/macusers/osx/>http://www.fnal.gov/orgs/macusers/osx/</a>
+<li>  Manual method:
+  <ul>
+  <li> <b>kinit -r 7d</b> 
+      <ul>
+      <li> If your MAC Kerberos has not been configured: 
+           <b>kinit -r 7d user@FNAL.GOV</b> 
+      <li> If you make your ticket renewable for 7 days, then the resulting certificate
+	   will be valid for 7 days.
+      </ul>
+  <li> <b>kx509</b>
+  <li> <b>kxlist -p</b>
+  <li> <b>openssl pkcs12 -in /tmp/x509up_u&lt;your uid&gt; -out /tmp/x509up_u&lt;your uid&gt;.p12 -export</b> <br>
+       This converts your x509 certificate to browser format. <br>
+       The file will be named /tmp/x509up_u&lt;your uid&gt;.p12, where &lt;your uid&gt; is your UID. <br>
+       You will be asked for a password that will be used when you import your 
+       certificate into your browser.
+  </ul>
+<li> If your certificate was not imported, see 
+     <a href=import-cert.html>these instructions</a>.
+<li> If you want, test your certificate by going to 
+     <a href=http://security.fnal.gov/pki/browsercerttest.html>http://security.fnal.gov/pki/browsercerttest.html</a>
+     and following the instructions.
+
+<li> Finally, <a href=register-cert.html>register</a> your certificate with 
+     the LARP document database.
+     <font color="red">You only need to register once.</font>
+</ol>
+
+<p>
+<!-- footer begins here -->
+<table border="0" cellpadding="0" cellspacing="0">
+   <tr>
+     <td colspan="2" valign="top"><img src="/images/footer.gif" border="0" height="12" width="602"></td>
+   </tr>
+   <tr>
+     <td valign="top"><font size="-2"><a href="http://www.fnal.gov/pub/disclaim.html" class="linksmall">Security, Privacy, Legal</a></font></td>
+     <td align="right" valign="top"><img alt="Fermi National Accelerator Laboratory" src="/images/footertext.gif" border="0" height="14" width="228"></td>
+   </tr>
+   <tr>
+     <td>
+       <address>
+       <i><small>
+       <A HREF="mailto:garren@fnal.gov">LARP DocDB Administrator</A> 
+       </small></i>
+       </address>
+     </td>
+     <td> </td>
+   </tr>
+   <script language="javascript">
+   <!-- Hide from browsers that do not understand Javascript
+   // print the URL and modification date of this page
+   var url = document.location;
+   document.write('<tr><td align=left> ')
+   document.write(url)
+   var dt = document.lastModified;
+   document.write('</td><td align=right> Last Modified:')
+   document.write(dt)
+   document.write('</td></tr>')
+   // end hiding -->
+   </script>
+</table>
+<!-- footer  ends here -->
+
+</body>
+</html>

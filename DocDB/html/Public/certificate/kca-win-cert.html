@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Getting a KCA Certificate</title>
+</head>
+<p>
+<center>
+<a href="http://www.fnal.gov/"><img src="/images/logotop.gif" border="0" height="30" width="404"></a>
+<br>
+<font size=+3>
+Getting a KCA Certificate on a Windows machine
+</font>
+</center>
+<p>
+To get and use a KCA certificate:
+<p>
+The KCA certificate will be good for one week, but if you create a 
+desktop shortcut (as specified below), then you will only need to open 
+the shortcut and type in your Kerberos password.
+<p>
+<ol>
+<li> Create an empty folder and go there.
+<li> Download <a href=http://security.fnal.gov/tools/getcert.zip>getcert.zip</a>
+<li> Unzip the file. 
+     <ul>
+     <li> Left click on <b>getcert.zip</b> and select "Open with WinZip"
+     <li> Use the Winzip wizard to extract the contents of the zip file into
+          this same folder.
+     </ul>
+<li> Find <b>Get-Cert.cmd</b> and make a shortcut to it on your desktop.
+<li> Close the folder
+<li> Double click on the shortcut. <br>
+     <ul>
+     <li> A command window will appear.
+     <li> Follow the instructions in the window.
+     <li> It will prompt you for your Kerberos password and ask you
+          to close all browser windows.
+     <li> If it asks for a new password, just ignore and close the window.
+     <li> You should get a message in the window indicating that it has
+          imported the certificate into your browsers.
+     <li> It will also tell you the location of the certificate file it created.
+     </ul>
+<li> If your certificate was not imported, see 
+     <a href=import-cert.html>these instructions</a>.
+<li> If you want, test your certificate by going to 
+     <a href=http://security.fnal.gov/pki/browsercerttest.html>http://security.fnal.gov/pki/browsercerttest.html</a>
+     and following the instructions.
+
+<li> Finally, <a href=register-cert.html>register</a> your certificate with 
+     the LARP document database.  
+     <font color="red">You only need to register once.</font>
+</ol>
+
+<p>
+<!-- footer begins here -->
+<table border="0" cellpadding="0" cellspacing="0">
+   <tr>
+     <td colspan="2" valign="top"><img src="/images/footer.gif" border="0" height="12" width="602"></td>
+   </tr>
+   <tr>
+     <td valign="top"><font size="-2"><a href="http://www.fnal.gov/pub/disclaim.html" class="linksmall">Security, Privacy, Legal</a></font></td>
+     <td align="right" valign="top"><img alt="Fermi National Accelerator Laboratory" src="/images/footertext.gif" border="0" height="14" width="228"></td>
+   </tr>
+   <tr>
+     <td>
+       <address>
+       <i><small>
+       <A HREF="mailto:garren@fnal.gov">LARP DocDB Administrator</A> 
+       </small></i>
+       </address>
+     </td>
+     <td> </td>
+   </tr>
+   <script language="javascript">
+   <!-- Hide from browsers that do not understand Javascript
+   // print the URL and modification date of this page
+   var url = document.location;
+   document.write('<tr><td align=left> ')
+   document.write(url)
+   var dt = document.lastModified;
+   document.write('</td><td align=right> Last Modified:')
+   document.write(dt)
+   document.write('</td></tr>')
+   // end hiding -->
+   </script>
+</table>
+<!-- footer  ends here -->
+
+</body>
+</html>

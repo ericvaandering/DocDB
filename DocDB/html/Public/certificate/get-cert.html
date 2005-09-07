@@ -14,72 +14,39 @@ Getting a Certificate
 <p>
 You can use either a DOEGrid Certificate or a Fermi Kerberos (KCA) certificate.
 <br>
-Each certificate type will need to be separately registered with the database.
+<font color="red">Each certificate type will need to be separately registered
+with the database.</font>
+To minimize confusion, we strongly recommend that you choose only one 
+certificate type for access.  We recommend that Fermilab and other Kerberos 
+users choose the KCA certificate.  This is more secure and will, 
+at least at Fermilab, be required for access to other web sites.
 <p>
-To get and use a 
-<a href=http://computing.fnal.gov/security/pki/Get-Personal-DOEGrids-Cert.html>DOEGrid Certificate</a>
-<br>
-Windows IE users should note that you may need to use "Microsoft Enhanced
-Cryptographic Provider" instead of "Microsoft Strong Cryptographic Provider".
-<br>
-<font color=darkgreen>If you use a personal DOEGrid certificate, 
-you should request a single certificate and copy it to all relevant
-machines.</font>
+<center>
+<table width="95%"> 
+<tr>
+<td> <b>Windows</b> </td>
+<td> Get a <a href=doe-win-cert.html>DOEGrid certificate</a></td>
+<td> Get a <a href=kca-cert.html>KCA certificate</a> </td>
+<td> <a href=import-win-cert.html>Importing and Exporting</a> certificates </td>
+</tr>
+<tr>
+<td> <b>Linux</b> </td>
+<td> Get a <a href=doe-lnx-cert.html>DOEGrid certificate</a></td>
+<td> Get a <a href=kca-cert.html>KCA certificate</a> </td>
+<td> <a href=import-lnx-cert.html>Importing and Exporting</a> certificates </td>
+</tr>
+<tr>
+<td> <b>MAC</b> </td>
+<td> Get a <a href=doe-mac-cert.html>DOEGrid certificate</a></td>
+<td> Get a <a href=kca-cert.html>KCA certificate</a> </td>
+<td> <a href=import-mac-cert.html>Importing and Exporting</a> certificates </td>
+</tr>
+</table>
+</center>
 <p>
-To get and use a KCA certificate:
-<ul>
-<li> Linux: 
-    <ul>
-    <li> <b>kinit -r 7d</b> <br>
-             If you make your ticket renewable for 7 days, then the resulting certificate
-	     will be valid for 7 days.
-    <li> GetCert method:
-      <ul>
-      <li> Go to <a href=http://computing.fnal.gov/security/pki/Get-KCA-Cert.html>http://computing.fnal.gov/security/pki/Get-KCA-Cert.html</a> <br>
-           Page down and follow the instructions for Linux.  
-      </ul>
-    <li> dokx509 method:
-      <ul>
-      <li> Download and run <a href=/LARP-public/DocDB/RetrieveFile?docid=1>dokx509</a> <br>
-           This script will create a certificate and load it into mozilla or Firefox.  <br> 
-	   <font color=red>WARNING:  This script only works with some browser versions.</font>
-     </ul>
-    <li>  manual method:
-      <ul>
-      <li> <b>kx509</b>
-      <li> <b>kxlist -p</b>
-      <li> <b>openssl pkcs12 -in /tmp/x509up_u&lt;your uid&gt; -out /tmp/x509up_u&lt;your uid&gt;.p12 -export</b> <br>
-	   This converts your x509 certificate to browser format. <br>
-	   The file will be named /tmp/x509up_u&lt;your uid&gt;.p12, where &lt;your uid&gt; is your UID. <br>
-	   The password you pick here will be used when you import your certificate
-	   into your browser.
-      </ul>
-    </ul>
-<li> Windows: 
-    <ul>
-    <li> Go to <a href=http://computing.fnal.gov/security/pki/Get-KCA-Cert.html>http://computing.fnal.gov/security/pki/Get-KCA-Cert.html</a>
-    <li> Page down and follow the instructions under "Windows".
-    </ul>
-<li> Now import this certificate into your browser.
-   <ul>
-   <li> For Linux Firefox: <br>
-       open edit -> preferences -> advanced -> certificates -> manage certificates <br>
-       click import and enter the filename (/tmp/x509up_u&lt;your uid&gt;.p12)
-   <li> For Mozilla: <br>
-       open edit -> preferences -> Privacy &amp; Security -> Certificates ->
-       manage certificates <br>
-       click import and enter the filename (/tmp/x509up_u&lt;your uid&gt;.p12)
-   <li> For Windows Firefox: <br>
-       open tools -> options -> Advanced -> Certificates -> manage certificates <br>
-       click import and enter the filename 
-   <li> For Windows IE: <br>
-       open tools -> Internet Options -> Content -> Certificates <br>
-       click import and enter the filename 
-
-   </ul>
-<li> <a href=http://computing.fnal.gov/security/pki/browsercerttest.html>test your certificate</a>
-</ul>
-
+You may wish to <a href=http://computing.fnal.gov/security/pki/browsercerttest.html>test your certificate</a>
+<p>
+<a href=known-cert.html>Known issues</a> with certificates.
 <p>
 <!-- footer begins here -->
 <table border="0" cellpadding="0" cellspacing="0">

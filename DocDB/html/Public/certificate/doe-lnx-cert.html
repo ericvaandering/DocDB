@@ -1,0 +1,111 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Getting a DOEGrid Certificate</title>
+</head>
+<p>
+<center>
+<a href="http://www.fnal.gov/"><img src="/images/logotop.gif" border="0" height="30" width="404"></a>
+<br>
+<font size=+3>
+Getting a DOEGrid Certificate on a Linux machine
+</font>
+</center>
+<p>
+This certificate is good for 1 year.
+<p>
+Once you get this certificate, you can import it into other browsers on other
+machines by <a href=import-lnx-cert.html>exporting</a> 
+it to a file and then <a href=import-lnx-cert.html>importing</a> 
+into the other browser. 
+<font color="red">We do not recommend importing this certificate onto any
+machine other than your own desktop or laptop.</font>
+<p>
+<ol>
+<li>Get the certificate
+    <ul>
+    <li> Go to <a href=http://pki1.doegrids.org>http://pki1.doegrids.org</a>  and select "enrollment" tab.
+    <li> Select "New user" on the left hand side.
+    <li> Fill in the form
+        <ul>
+	<li> <b>Contact Information</b> <br>
+	     Your email address needs to match your affiliation. <br> 
+	     For instance, if you are at Fermilab, use your fnal.gov e-mail
+	     address and choose <b>FNAL</b> in the pulldown menu.
+	<li> <font color="blue">Your "supervisor" must also have an e-mail 
+	     address associated with your affiliation.</font>
+	<li> The person entered under "supervisor" receives email when you are granted the certificate.  
+	     They are not asked to approve or disapprove before the certificate is granted. 
+	     (Approval is handled by another process.)
+	<li> Get the optional password.
+	<li> Under "Public/Private key information", 
+	     select 2048(High grade) for Mozilla/Firefox/Netscape. 
+        </ul>
+    <li> click "submit."
+    <li> click "yes" to the dialog box that asks you if you trust the site.  
+         Your browser page should say "Request successfully submitted."  
+	 Note the request number.
+    <li> You will get email notification that you got it or were refused.  
+         If you don't get email in 24 hours, call the helpdesk, 2345.  
+	 They will want the request number.
+    </ul>
+
+<li> Import the certificate into your browser - first time
+    <ul>
+    <li> Use the same physical machine, same user account, same browser. 
+    <li> Open the link in the email.
+    <li> Click on "import the certificate" at the bottom of the page of letters and numbers.
+    <li> In Firefox or Mozilla, if you have set a Master Password on your 
+         Software Security Device, you might get a dialog box that asks for it.
+    <li> Click "OK" when asked if you trust this site.
+    <li> You should get a dialog box "Certificate successfully imported." 
+         Click OK.
+    </ul>
+<li> Save (<a href=import-lnx-cert.html>export</a>) the certificate 
+     in case you need it for something else or another browser.  
+     We stongly recommend that you keep a copy on your desktop or laptop 
+     so that you can restore it if necessary.  Do not keep copies elsewhere.
+<li> If you want, test your certificate by going to 
+     <a href=http://security.fnal.gov/pki/browsercerttest.html>http://security.fnal.gov/pki/browsercerttest.html</a>
+     and following the instructions.
+
+<li> Finally, <a href=register-cert.html>register</a> your certificate with 
+     the LARP document database.
+</ol>
+<p>
+<!-- footer begins here -->
+<table border="0" cellpadding="0" cellspacing="0">
+   <tr>
+     <td colspan="2" valign="top"><img src="/images/footer.gif" border="0" height="12" width="602"></td>
+   </tr>
+   <tr>
+     <td valign="top"><font size="-2"><a href="http://www.fnal.gov/pub/disclaim.html" class="linksmall">Security, Privacy, Legal</a></font></td>
+     <td align="right" valign="top"><img alt="Fermi National Accelerator Laboratory" src="/images/footertext.gif" border="0" height="14" width="228"></td>
+   </tr>
+   <tr>
+     <td>
+       <address>
+       <i><small>
+       <A HREF="mailto:garren@fnal.gov">LARP DocDB Administrator</A> 
+       </small></i>
+       </address>
+     </td>
+     <td> </td>
+   </tr>
+   <script language="javascript">
+   <!-- Hide from browsers that do not understand Javascript
+   // print the URL and modification date of this page
+   var url = document.location;
+   document.write('<tr><td align=left> ')
+   document.write(url)
+   var dt = document.lastModified;
+   document.write('</td><td align=right> Last Modified:')
+   document.write(dt)
+   document.write('</td></tr>')
+   // end hiding -->
+   </script>
+</table>
+<!-- footer  ends here -->
+
+</body>
+</html>

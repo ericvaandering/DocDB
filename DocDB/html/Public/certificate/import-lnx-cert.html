@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Import or Export a Certificate</title>
+</head>
+<p>
+<center>
+<a href="http://www.fnal.gov/"><img src="/images/logotop.gif" border="0" height="30" width="404"></a>
+<br>
+<font size=+3>
+Import or Export a Certificate - Linux 
+</font>
+</center>
+<p>
+To export or save a certificate:
+<ul>
+<li> For Linux Firefox: 
+    <ul>
+    <li> open Edit -> Preferences -> Advanced -> Certificates -> Manage Certificates 
+    <li> highlight the certificate to save
+    <li> click "Backup"
+    <li> select the desired directory and file name
+    <li> make sure the file type is PKCS12 (*.p12)
+    <li> click "Save"
+    <li> You will get a dialog box asking for a certificate backup password.
+         Choose a simple password.
+    <li> click "OK"
+    <li> click "OK" on any remaining open dialog boxes
+    </ul>
+<li> For Mozilla: 
+    <ul>
+    <li> open Edit -> Preferences -> Privacy &amp; Security -> Certificates -> Manage Certificates 
+    <li> highlight the certificate to save
+    <li> click "Backup"
+    <li> select the desired directory and file name
+    <li> make sure the file type is PKCS12 (*.p12)
+    <li> click "Save"
+    <li> If you set a master password, you will get a dialog box asking for the password.
+    <li> You will get a dialog box asking for a certificate backup password.
+         Choose a simple password.
+    <li> click "OK"
+    <li> click "OK" on any remaining open dialog boxes
+    </ul>
+</ul>
+<p>
+To import a saved certificate:
+<ul>
+<li> For Linux Firefox: <br>
+    <ul>
+    <li> open Edit -> Preferences -> Advanced -> Certificates -> Manage Certificates 
+    <li> click "Import"
+    <li> browse to select the file you saved
+    <li> make sure you are importing a PKCS12 file
+    <li> click "Open"
+    <li> When you get the Password Entry Dialog box, enter the password 
+         you used when you saved the certificate.
+    <li> click "OK"
+    <li> click "OK" on any remaining open dialog boxes
+    </ul>
+<li> For Mozilla: 
+    <ul>
+    <li> open Edit -> Preferences -> Privacy &amp; Security -> Certificates -> Manage Certificates 
+    <li> click "Import"
+    <li> browse to select the file you saved
+    <li> make sure you are importing a PKCS12 file
+    <li> click "Open"
+    <li> You might be prompted for a Master Password - use something you can
+         easily remember.
+    <li> When you get the Password Entry Dialog box, enter the password 
+         you used when you saved the certificate.
+    <li> click "OK"
+    <li> click "OK" on any remaining open dialog boxes
+    </ul>
+</ul>
+<p>
+<li>You can
+    <a href=http://computing.fnal.gov/security/pki/browsercerttest.html>test your certificate</a>
+    if you have problems.
+
+<p>
+<!-- footer begins here -->
+<table border="0" cellpadding="0" cellspacing="0">
+   <tr>
+     <td colspan="2" valign="top"><img src="/images/footer.gif" border="0" height="12" width="602"></td>
+   </tr>
+   <tr>
+     <td valign="top"><font size="-2"><a href="http://www.fnal.gov/pub/disclaim.html" class="linksmall">Security, Privacy, Legal</a></font></td>
+     <td align="right" valign="top"><img alt="Fermi National Accelerator Laboratory" src="/images/footertext.gif" border="0" height="14" width="228"></td>
+   </tr>
+   <tr>
+     <td>
+       <address>
+       <i><small>
+       <A HREF="mailto:garren@fnal.gov">LARP DocDB Administrator</A> 
+       </small></i>
+       </address>
+     </td>
+     <td> </td>
+   </tr>
+   <script language="javascript">
+   <!-- Hide from browsers that do not understand Javascript
+   // print the URL and modification date of this page
+   var url = document.location;
+   document.write('<tr><td align=left> ')
+   document.write(url)
+   var dt = document.lastModified;
+   document.write('</td><td align=right> Last Modified:')
+   document.write(dt)
+   document.write('</td></tr>')
+   // end hiding -->
+   </script>
+</table>
+<!-- footer  ends here -->
+
+</body>
+</html>
