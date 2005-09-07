@@ -22,189 +22,27 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-sub ReHintTalksBySessionID ($) { # FIXME: Refactor to use GetHintDocuments and TalkMatches
+sub ReHintTalksBySessionID ($) {
   my ($SessionID) = @_;
 
-  require "MeetingSQL.pm";
-  require "TalkSQL.pm";
-  require "DocumentSQL.pm";
-  require "RevisionSQL.pm";
-  require "TopicSQL.pm";
-  require "AuthorSQL.pm";
-  require "TalkHintSQL.pm";
-  require "Utilities.pm";
-  
   if ($Public) { # Can't write to DB
     return;
   }  
 
-  my ($DocRevID,$DocumentID);
-  my %DocumentIDs = (); 
-  my $SearchDays  = $TalkHintWindow;
-
-  &FetchSessionByID($SessionID);
-  my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
-  my $ConferenceID     = $Sessions{$SessionID}{ConferenceID};
-
-  &FetchConferenceByConferenceID($ConferenceID);
-  my $StartDate    = $Conferences{$ConferenceID}{StartDate};
-  my $EndDate      = $Conferences{$ConferenceID}{EndDate};
-
-  if ($MinorTopicID) { # FIXME: Check for event
-    $TalkMatchThreshold = $TopicMatchThreshold;
-  } else {     
-    $TalkMatchThreshold = $NoTopicMatchThreshold 
-  }	
-
-  my $DocumentList = $dbh -> prepare("select DocumentID from DocumentRevision where DocRevID=? and Obsolete=0"); 
-
-  # Find documents in a time window
-
-  my $TimedList = $dbh -> prepare("select DocRevID from DocumentRevision where RevisionDate>=? and RevisionDate<=?"); 
-
-  $TimedList -> execute($StartDate,$EndDate); # Between Start and End date
-  $TimedList -> bind_columns(undef, \($DocRevID));
-  while ($TimedList -> fetch) {
-    $DocumentList -> execute($DocRevID);
-    ($DocumentID) = $DocumentList -> fetchrow_array;
-    if ($DocumentID) {
-      $DocumentIDs{$DocumentID} = "Timed";
-    }   
-  }
-
-  my $TimedList = $dbh -> prepare("select DocRevID from DocumentRevision where ABS(TO_DAYS(?)-TO_DAYS(RevisionDate))<=?"); 
-
-  $TimedList -> execute($StartDate,$SearchDays); # Within $SearchDays days of start
-  $TimedList -> bind_columns(undef, \($DocRevID));
-  while ($TimedList -> fetch) {
-    $DocumentList -> execute($DocRevID);
-    ($DocumentID) = $DocumentList -> fetchrow_array;
-    if ($DocumentID) {
-      $DocumentIDs{$DocumentID} = "Timed"; 
-    }   
-  }
-
-  $TimedList -> execute($EndDate,$SearchDays);   # Within $SearchDays days of end
-  $TimedList -> bind_columns(undef, \($DocRevID));
-  while ($TimedList -> fetch) {
-    $DocumentList -> execute($DocRevID);
-    ($DocumentID) = $DocumentList -> fetchrow_array;
-    if ($DocumentID) {
-      $DocumentIDs{$DocumentID} = "Timed"; 
-    }   
-  }
-
-  # FIXME: Check for Event (used to check for topic)
-
-  # Get unique document IDs
-
-  my @DocumentIDs = sort keys %DocumentIDs;
-
-  # Remove documents already confirmed with a conference
+  # Get valid Document IDs in the window
   
-  my $ConfirmedList = $dbh -> prepare("select DocumentID from SessionTalk where Confirmed=1"); 
-  my %ConfirmedDocumentIDs = ();
-  $ConfirmedList -> execute();
-  $ConfirmedList -> bind_columns(undef, \($DocumentID));
-  while ($ConfirmedList -> fetch) {
-    $ConfirmedDocumentIDs{$DocumentID} = 1;
-  }
-  my @ConfirmedDocumentIDs = sort keys %ConfirmedDocumentIDs;
-  
-  @DocumentIDs = sort &RemoveArray(\@DocumentIDs,@ConfirmedDocumentIDs);
-  
-  # Convert to revisions (latest versions only)
-
-  my @DocRevIDs   = ();
-  foreach my $DocumentID (@DocumentIDs) { # For shorter lists
-    &FetchDocument($DocumentID);
-    my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVersions});
-    push @DocRevIDs,$DocRevID;
-  }
+  my %DocumentIDs = &GetHintDocuments($SessionID,$TalkHintWindow);
 
   my $dbh_w = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
   # Loop over all session talk IDs
 
-  my %BestDocuments = ();
   foreach my $SessionTalkID (@SessionTalkIDs) { 
-    &FetchSessionTalkByID($SessionTalkID);
-    if ($SessionTalks{$SessionTalkID}{Confirmed}) {next;} # Skip if confirmed
-    my $HintTitle = $SessionTalks{$SessionTalkID}{HintTitle};
-
-    if ($SessionTalks{$SessionTalkID}{DocumentID}) { # Remove hints to confirmed documents
-      my $DocumentID = $SessionTalks{$SessionTalkID}{DocumentID};
-      foreach my $ConfirmedDocumentID (@ConfirmedDocumentIDs) {
-        if ($DocumentID == $ConfirmedDocumentID) {
-          my $BestDocUpdate = $dbh_w -> prepare("update SessionTalk set DocumentID=0 where SessionTalkID=?"); 
-          $BestDocUpdate -> execute($SessionTalkID); # Remove hinted DocumentID
-          last;  
-        }
-      }
-    }
-          
-    my @TopicHintIDs  = &FetchTopicHintsBySessionTalkID($SessionTalkID);
-    my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID); 
-    
-    foreach my $DocRevID (@DocRevIDs) { # Check each document in the list
-      my @RevTopics  = &GetRevisionTopics($DocRevID);
-      my @RevAuthors = &GetRevisionAuthors($DocRevID);
-      
-      # Accumulate matches # FIXME: Look at soundex and fuzzy matching, cookbook 1.16 and 6.13
-      
-      my $TopicMatches = 0;
-      foreach my $RevTopic (@RevTopics) {
-        foreach my $TopicHintID (@TopicHintIDs) {
-          my $HintTopic = $TopicHints{$TopicHintID}{MinorTopicID};
-          if ($HintTopic == $RevTopic) {
-            ++$TopicMatches;
-          }   
-        }
-      }
-       
-      my $AuthorMatches = 0;
-      foreach my $RevAuthor (@RevAuthors) {
-        foreach my $AuthorHintID (@AuthorHintIDs) {
-          my $HintAuthor = $AuthorHints{$AuthorHintID}{AuthorID};
-          if ($HintAuthor == $RevAuthor) {
-            ++$AuthorMatches;
-          }   
-        }
-      }
-
-      # Assemble a score based on hints, track maximum
-      
-      my $DocumentID    = $DocRevisions{$DocRevID}{DOCID};
-      my $DocumentTitle = $DocRevisions{$DocRevID}{Title};
-
-      my $MethodScore = 0;
-      if ($DocumentIDs{$DocumentID} eq "Timed") { # More points for being with right meeting topic than time window
-        $MethodScore = 1;
-      } elsif ($DocumentIDs{$DocumentID} eq "Topic") {
-        $MethodScore = 3;
-      } 
-      
-      my $FuzzyScore1 = &FuzzyStringMatch($DocumentTitle,$HintTitle);
-      my $FuzzyScore2 = &FuzzyStringMatch($HintTitle,$DocumentTitle);
-      my $FuzzyScore;
-      
-      if ($FuzzyScore1 > $FuzzyScore2) { # Can be different since "test" matches "testbeam," not vvs.
-        $FuzzyScore = $FuzzyScore1;
-      } else {	 
-        $FuzzyScore = $FuzzyScore2;
-      }
-            
-      my $Score = $MethodScore*($AuthorMatches+1)*(2*$TopicMatches+1)*($FuzzyScore+1);
-      if ($Score > $BestDocuments{$SessionTalkID}{Score} && ($AuthorMatches+$TopicMatches)) {
-        $BestDocuments{$SessionTalkID}{Score}      = $Score;
-        $BestDocuments{$SessionTalkID}{DocumentID} = $DocumentID;
-      }
-    }  
-  
-    if ($BestDocuments{$SessionTalkID}{Score} > $TalkMatchThreshold) {
+    my @MatchedDocumentIDs = &TalkMatches($SessionTalkID,$TalkMatchThreshold,%DocumentIDs);
+    my $BestDocumentID = shift @MatchedDocumentIDs;
+    if ($BestDocumentID) {
       my $BestDocUpdate = $dbh_w -> prepare("update SessionTalk set DocumentID=? where SessionTalkID=?"); 
-      my $DocumentID    = $BestDocuments{$SessionTalkID}{DocumentID};
-      $BestDocUpdate -> execute($DocumentID,$SessionTalkID); # Update database
+      $BestDocUpdate -> execute($BestDocumentID,$SessionTalkID); # Update database
     } else {
       my $BestDocUpdate = $dbh_w -> prepare("update SessionTalk set DocumentID=? where SessionTalkID=?"); 
       $BestDocUpdate -> execute(0,$SessionTalkID); # Update database
@@ -281,7 +119,6 @@ sub GetHintDocuments ($$) {
   &FetchConferenceByConferenceID($ConferenceID);
   my $StartDate    = $Conferences{$ConferenceID}{StartDate};
   my $EndDate      = $Conferences{$ConferenceID}{EndDate};
-# FIXME: Use event ----  my $MinorTopicID = $Conferences{$ConferenceID}{Minor};
 
   # Get list of documents already confirmed with any conference
   
@@ -310,19 +147,17 @@ sub GetHintDocuments ($$) {
     }   
   }
 
-#  if ($MinorTopicID) {
-#    my $RevisionList = $dbh -> prepare("select DocRevID from RevisionTopic where MinorTopicID=?"); 
-#
-#    $RevisionList -> execute($MinorTopicID);
-#    $RevisionList -> bind_columns(undef, \($DocRevID));
-#    while ($RevisionList -> fetch) {
-#      $DocumentList -> execute($DocRevID);
-#      ($DocumentID) = $DocumentList -> fetchrow_array;
-#      if ($DocumentID && !$ConfirmedDocumentIDs{$DocumentID}) {
-#        $DocumentIDs{$DocumentID} = "Topic"; # Hash removes duplicates
-#      }
-#    }
-#  }
+  my $RevisionList = $dbh -> prepare("select DocRevID from RevisionEvent where ConferenceID=?"); 
+
+  $RevisionList -> execute($ConferenceID);
+  $RevisionList -> bind_columns(undef, \($DocRevID));
+  while ($RevisionList -> fetch) {
+    $DocumentList -> execute($DocRevID);
+    ($DocumentID) = $DocumentList -> fetchrow_array;
+    if ($DocumentID && !$ConfirmedDocumentIDs{$DocumentID}) {
+      $DocumentIDs{$DocumentID} = "Event"; # Hash removes duplicates
+    }
+  }
 
   return %DocumentIDs;
 }
@@ -381,7 +216,7 @@ sub TalkMatches ($$@) {
     my $MethodScore = 0;
     if ($DocumentIDs{$DocumentID} eq "Timed") { # More points for being with right meeting topic than time window
       $MethodScore = 1;
-    } elsif ($DocumentIDs{$DocumentID} eq "Topic") {
+    } elsif ($DocumentIDs{$DocumentID} eq "Event") {
       $MethodScore = 3;
     } 
 
@@ -396,9 +231,6 @@ sub TalkMatches ($$@) {
     }
 
     my $Score = $MethodScore*($AuthorMatches+1)*(2*$TopicMatches+1)*($FuzzyScore+1);
- 
-#    print "DI: $DocumentID Score: $Score AM: $AuthorMatches TM: $TopicMatches
-#           FM: $FuzzyScore MS: $MethodScore <br>\n";
 
     my $NoMatchScore = 1*(0+1)*(2*0+1)*(2*0+1);
     if ($Score > $Threshold && $Score > $NoMatchScore) { # Might loosen
@@ -410,7 +242,6 @@ sub TalkMatches ($$@) {
      @MatchDocumentIDs = reverse sort DocIDsByScore @MatchDocumentIDs; 
      
   return @MatchDocumentIDs;   
-  
 }
 
 sub ConfirmedDocuments (;%) {
@@ -430,6 +261,5 @@ sub ConfirmedDocuments (;%) {
 
   return @ConfirmedDocumentIDs;
 }  
-
 
 1;
