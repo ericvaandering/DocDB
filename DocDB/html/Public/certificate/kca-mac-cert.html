@@ -14,19 +14,22 @@ Getting a KCA Certificate for MacOSX
 <p>
 To get and use a KCA certificate:
 <ol>
-<li>  You will need to either build or get <b>kx509</b> and <b>kxlist</b>.
-      Instructions and a disk image (for panther) are available at 
+<li>  First make sure that you have both <b>kx509</b> and <b>kxlist</b>.
+      If these are not already on your machine, you can find
+      instructions and a disk image (for panther) at 
       <a href=http://www.fnal.gov/orgs/macusers/osx/>http://www.fnal.gov/orgs/macusers/osx/</a>
+<li>  You'll want to make sure that both <b>kx509</b> and <b>kxlist</b> are
+      in your path.
 <li>  Manual method:
   <ul>
-  <li> <b>kinit -r 7d</b> 
+  <li> Open a terminal window.
+  <li> <b>kinit</b> 
       <ul>
       <li> If your MAC Kerberos has not been configured: 
-           <b>kinit -r 7d user@FNAL.GOV</b> 
-      <li> If you make your ticket renewable for 7 days, then the resulting certificate
-	   will be valid for 7 days.
+           <b>kinit user@FNAL.GOV</b> 
+      <li> By default, the ticket should be renewable for 7 days.
       </ul>
-  <li> <b>kx509</b>
+  <li> <b>kx509</b> 
   <li> <b>kxlist -p</b>
   <li> <b>openssl pkcs12 -in /tmp/x509up_u&lt;your uid&gt; -out /tmp/x509up_u&lt;your uid&gt;.p12 -export</b> <br>
        This converts your x509 certificate to browser format. <br>
@@ -34,8 +37,8 @@ To get and use a KCA certificate:
        You will be asked for a password that will be used when you import your 
        certificate into your browser.
   </ul>
-<li> If your certificate was not imported, see 
-     <a href=import-cert.html>these instructions</a>.
+<li> <a href=import-cert.html>Import</a> 
+     <b>/tmp/x509up_u&lt;your uid&gt;</b> into your browser.
 <li> If you want, test your certificate by going to 
      <a href=http://security.fnal.gov/pki/browsercerttest.html>http://security.fnal.gov/pki/browsercerttest.html</a>
      and following the instructions.
