@@ -107,23 +107,16 @@ unless (&CanAccessMeeting($ConferenceID)) {
 if ($DisplayMode eq "Session") { # Display a single session
   &ReHintTalksBySessionID($SessionID); 
   &ClearSessionTalks();
-
   &FetchSessionByID($SessionID);
-  $ConferenceID = $Sessions{$SessionID}{ConferenceID};
-  &FetchConferenceByConferenceID($ConferenceID);
   &PrintSingleSessionHeader(-sessionid => $SessionID, -onlyone => $OnlyOneSession);
   &PrintSession(-sessionid => $SessionID, -skipheader => $TRUE); 
   &PrintMeetingEpilogue($ConferenceID);
 } elsif ($DisplayMode eq "Separator") { # Display a single break (never called)
   &FetchSessionSeparatorByID($SessionSeparatorID);
-  &FetchConferenceByConferenceID($SessionSeparators{$SessionSeparatorID}{ConferenceID});
   &PrintMeetingInfo($Sessions{$SessionID}{ConferenceID});
   &PrintSessionSeparator($SessionSeparatorID);
   &PrintMeetingEpilogue($Sessions{$SessionID}{ConferenceID});
 } elsif ($DisplayMode eq "Conference") { # Display meeting info or meeting with all talks
-
-  &FetchConferenceByConferenceID($ConferenceID);
-    
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
 
@@ -215,7 +208,6 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "Conference") { # Display talks
     print "<h4><a href=\"$ListBy?eventid=$ConferenceID\">Simple list</a> of all documents for this event</h4>\n";
   }
 }
-  
 
 $EndTime  = new Benchmark;
 
