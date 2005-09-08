@@ -488,9 +488,9 @@ sub PrintSingleSessionHeader (%) {
   my $EventTitle   = $Conferences{$EventID}{LongDescription};
   my $EventLink    = &EventLink(-eventid => $EventID);
   print "<div class=\"SingleSessionHeader\">\n";
-
-  if ($SessionTitle && $EventTitle && ($SessionTitle ne $EventTitle)) {
-    print "<h2>$SessionTitle, part of $EventLink ($EventTitle)</h2>\n";
+ 
+  if ($SessionTitle && $EventTitle && ($SessionTitle ne $EventTitle) && !$OnlyOne) {
+    print "<h2>$SessionTitle, part of $EventLink</h2>\n";
   } else {
     print "<h2>$EventTitle</h2>\n";
   } 
