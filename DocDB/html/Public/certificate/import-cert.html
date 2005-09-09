@@ -1,40 +1,93 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title>Import a Certificate</title>
+<title>Import and Exporting a Certificate</title>
 </head>
 <p>
 <center>
 <a href="http://www.fnal.gov/"><img src="/images/logotop.gif" border="0" height="30" width="404"></a>
 <br>
-<font size=+3>
-Import a Certificate
-</font>
+<font size=+3>Import and Exporting a Certificate</font>
 </center>
 <p>
-<ul>
-<li> Now import this certificate into your browser.
+<ol>
+<li> KCA certificates are usually named x509up_u&lt;your uid&gt;.p12,
+     but there is no naming convention for DOEGrid certificates.  
+     We will refer to all certificates as <b>mycert.p12</b>.
+<li> Your certificate must be of type pkcs12 with a <b>.p12</b> extension.
+<li> Choose a simple password when exporting your certificate.  
+     You will need to use this password when importing the certificate.
+<li> To import a certificate into your browser:
    <ul>
-   <li> For Linux Firefox: <br>
-       open edit -> preferences -> advanced -> certificates -> manage certificates <br>
-       click import and enter the filename (/tmp/x509up_u&lt;your uid&gt;.p12)
-   <li> For Mozilla: <br>
-       open edit -> preferences -> Privacy &amp; Security -> Certificates ->
-       manage certificates <br>
-       click import and enter the filename (/tmp/x509up_u&lt;your uid&gt;.p12)
-   <li> For Windows Firefox: <br>
-       open tools -> options -> Advanced -> Certificates -> manage certificates <br>
-       click import and enter the filename 
-   <li> For Windows IE: <br>
-       open tools -> Internet Options -> Content -> Certificates <br>
-       click import and enter the filename 
-   <li> For MAC Safari: <br>
-        See 
-        <a href=http://www.fnal.gov/orgs/macusers/osx/>http://www.fnal.gov/orgs/macusers/osx/</a>
-        for importing the certificate into your keychain. 
+   <li> For Firefox: 
+        <ul>
+	<li> <font color="maroon"> Linux:</font> 
+	     open Edit -> Preferences -> Advanced -> Certificates -> Manage Certificates <br>
+	     <font color="darkgreen"> Windows:</font>
+             open Tools -> Options -> Advanced -> Certificates -> Manage Certificates <br>
+	     <font color="darkblue"> MAC:</font>
+	     open  Firefox -> Preferences -> Advanced -> Certificates -> Manage Certificates <br>
+        <li> click import and enter the filename (mycert.p12)
+        </ul>
+   <li> For Mozilla:
+        <ul>
+        <li> open Edit -> Preferences -> Privacy &amp; Security -> Certificates -> Manage Certificates 
+        <li> click import and enter the filename (mycert.p12)
+        </ul>
+   <li> For Windows IE: 
+        <ul>
+        <li> open Tools -> Internet Options -> Content -> Certificates 
+        <li> click import and enter the filename (mycert.p12)
+        </ul>
+   <li> For MAC Safari: 
+        <ul>
+        <li> open a Terminal
+        <li> <b>open mycert.p12</b> <br>
+	     Open will recognize the <b>.p12</b> extension and open the keychain
+	     so you can import the certificate.
+        <li> There is a script at 
+             <a href=http://www.fnal.gov/orgs/macusers/osx/>http://www.fnal.gov/orgs/macusers/osx/</a>
+             which will generate the certificate and import it into your
+	     keychain.  But this script makes certain assumptions that may not 
+	     be true on your machine. 
+        </ul>
+   </ul>
+<li> To export a certificate from your browser:
+   <ul>
+   <li> In all cases, make sure you save the certificate as type 
+        <b>pkcs12</b> with extension <b>.p12</b>
+   <li> For Firefox: 
+        <ul>
+	<li> <font color="maroon"> Linux:</font> 
+	     open Edit -> Preferences -> Advanced -> Certificates -> Manage Certificates <br>
+	     <font color="darkgreen"> Windows:</font>
+             open Tools -> Options -> Advanced -> Certificates -> Manage Certificates <br>
+	     <font color="darkblue"> MAC:</font>
+	     open  Firefox -> Preferences -> Advanced -> Certificates -> Manage Certificates <br>
+        <li> highlight the certificate to export
+        <li> click Backup and choose an appropriate filename (mycert.p12) and directory.
+        </ul>
+   <li> For Mozilla:
+        <ul>
+        <li> open Edit -> Preferences -> Privacy &amp; Security -> Certificates -> Manage Certificates 
+        <li> highlight the certificate to export
+        <li> click Backup and choose an appropriate filename (mycert.p12) and directory.
+        </ul>
+   <li> For Windows IE: 
+        <ul>
+        <li> open Tools -> Internet Options -> Content -> Certificates 
+        <li> highlight the certificate to export
+        <li> click Backup and choose an appropriate filename (mycert.p12) and directory.
+        </ul>
+   <li> For MAC Safari: 
+        <ul>
+        <li> open Tools -> Internet Options -> Content -> Certificates 
+        <li> highlight the certificate to export
+        <li> click Backup and choose an appropriate filename (mycert.p12) and directory.
+        </ul>
    </ul>
 <li> <a href=http://computing.fnal.gov/security/pki/browsercerttest.html>test your certificate</a>
-</ul>
+</ol>
 
 <p>
 <!-- footer begins here -->
