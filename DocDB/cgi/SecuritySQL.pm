@@ -36,7 +36,7 @@ sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with 
   %SecurityGroups = ();
   while ($GroupList -> fetch) {
     $SecurityGroups{$GroupID}{NAME}          = $Name;
-    $SecurityGroups{$GroupID}{DESCRIPTION}   = $Description;
+    $SecurityGroups{$GroupID}{Description}   = $Description;
     $SecurityGroups{$GroupID}{CanCreate}     = $CanCreate;
     $SecurityGroups{$GroupID}{CanAdminister} = $CanAdminister;
     $SecurityGroups{$GroupID}{TimeStamp}     = $TimeStamp;
@@ -72,7 +72,7 @@ sub FetchSecurityGroup ($) {
   $GroupList -> bind_columns(undef, \($Name,$Description,$CanCreate,$CanAdminister,$TimeStamp));
   while ($GroupList -> fetch) {
     $SecurityGroups{$GroupID}{NAME}          = $Name;
-    $SecurityGroups{$GroupID}{DESCRIPTION}   = $Description;
+    $SecurityGroups{$GroupID}{Description}   = $Description;
     $SecurityGroups{$GroupID}{CanCreate}     = $CanCreate; 
     $SecurityGroups{$GroupID}{CanAdminister} = $CanAdminister;
     $SecurityGroups{$GroupID}{TimeStamp}     = $TimeStamp;

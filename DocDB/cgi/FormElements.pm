@@ -641,6 +641,7 @@ sub TextField (%) {
 } 
 
 sub TextArea (%) {  
+  require "Utilities.pm";
   my (%Params) = @_;
   
   my $HelpLink  = $Params{-helplink} ;

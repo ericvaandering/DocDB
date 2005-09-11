@@ -182,7 +182,7 @@ if ($Action eq "Modify" || $Action eq "New") {
   print "<p><b>Here are the results of your modification:<br>\n";
   print "<table cellpadding=10>\n";
   print "<tr valign=top>\n";
-  print "<td><b>$SecurityGroups{$ParentID}{NAME}</b><br>($SecurityGroups{$ParentID}{DESCRIPTION})</td>\n";
+  print "<td><b>$SecurityGroups{$ParentID}{NAME}</b><br>($SecurityGroups{$ParentID}{Description})</td>\n";
   print "<td>\n";
   print "Dominant groups:\n";
   &PrintGroupParents($ParentID);

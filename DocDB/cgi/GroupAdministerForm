@@ -123,7 +123,7 @@ my @GroupIDs = sort numerically keys %SecurityGroups;
 print "<table cellpadding=10>\n";
 foreach my $GroupID (@GroupIDs) {
   print "<tr valign=top>\n";
-  print "<td><b>$SecurityGroups{$GroupID}{NAME}</b><br>($SecurityGroups{$GroupID}{DESCRIPTION})</td>\n";
+  print "<td><b>$SecurityGroups{$GroupID}{NAME}</b><br>($SecurityGroups{$GroupID}{Description})</td>\n";
   print "<td>\n";
   print "<b>Dominant groups:</b>\n";
   &PrintGroupParents($GroupID);

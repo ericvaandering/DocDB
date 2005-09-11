@@ -35,6 +35,7 @@ sub SecurityScroll (%) {
   my $HelpText  =   $Params{-helptext}  || "Groups";
   my $Multiple  =   $Params{-multiple}; 
   my $Name      =   $Params{-name}      || "groups";
+  my $Format    =   $Params{-format}    || "short";
   my $Size      =   $Params{-size}      || 10;
   my $Disabled  =   $Params{-disabled}  || $FALSE;
   my @GroupIDs  = @{$Params{-groupids}};
@@ -61,6 +62,9 @@ sub SecurityScroll (%) {
 
   foreach my $GroupID (@GroupIDs) {
     $GroupLabels{$GroupID} = $SecurityGroups{$GroupID}{NAME};
+    if ($Format eq "full") {
+      $GroupLabels{$GroupID} .= " [".$SecurityGroups{$GroupID}{Description}."]";
+    }
   }  
   
   if ($AddPublic) { # Add dummy security code for "Public"
