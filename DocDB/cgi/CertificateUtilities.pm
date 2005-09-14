@@ -37,6 +37,9 @@ sub FetchEmailUserIDByCert (%) {
   my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
   my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
 
+  $CertificateCN    = $CertCN; 
+  $CertificateEmail = $CertEmail; 
+
   push @DebugStack,"Finding EmailUserID by certificate";
 
   # If we do http basic with users, this routine will function with minor modifications
