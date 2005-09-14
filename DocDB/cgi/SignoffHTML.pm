@@ -100,6 +100,7 @@ sub PrintSignatureInfo ($) {
     my $SignatureIDOK = &FetchSignature($SignatureID);
     if ($SignatureIDOK) {
       my $EmailUserID = $Signatures{$SignatureID}{EmailUserID};
+      my $UserName    = $EmailUser{$EmailUserID}{Username};
       &FetchEmailUser($EmailUserID);
       
       my $SignoffID = $Signatures{$SignatureID}{SignoffID};
@@ -119,17 +120,33 @@ sub PrintSignatureInfo ($) {
           $Action = "unsign";
           $ActionText = "Unsign Document"
         }  
-        $SignatureText .= $query -> start_multipart_form('POST',"$SignRevision");
-        $SignatureText .= "<div>\n";
-        $SignatureText .= "$SignatureLink ";
-        $SignatureText .= $query -> hidden(-name => 'signatureid',   -default => $SignatureID);
-        $SignatureText .= $query -> hidden(-name => 'emailuserid',   -default => $EmailUserID);
-        $SignatureText .= $query -> hidden(-name => 'action',   -default => $Action);
-        $SignatureText .= $query -> password_field(-name => "password-$EmailUserID", -size => 16, -maxlength => 32);
-        $SignatureText .= " ";
-        $SignatureText .= $query -> submit (-value => $ActionText);
-        $SignatureText .= "</div>\n";
-        $SignatureText .= $query -> end_multipart_form;
+        if ($UserValidation eq "certificate") {
+          if ($UserName eq $CertificateCN) {
+            $SignatureText .= $query -> start_multipart_form('POST',"$SignRevision");
+            $SignatureText .= "<div>\n";
+            $SignatureText .= "$SignatureLink ";
+            $SignatureText .= $query -> hidden(-name => 'signatureid',   -default => $SignatureID);
+            $SignatureText .= $query -> hidden(-name => 'emailuserid',   -default => $EmailUserID);
+            $SignatureText .= $query -> hidden(-name => 'action',   -default => $Action);
+            $SignatureText .= $query -> submit (-value => $ActionText);
+            $SignatureText .= "</div>\n";
+            $SignatureText .= $query -> end_multipart_form;
+          } else {
+            $SignatureText .= "$SignatureLink (waiting for signature)";
+          }
+        } else {
+          $SignatureText .= $query -> start_multipart_form('POST',"$SignRevision");
+          $SignatureText .= "<div>\n";
+          $SignatureText .= "$SignatureLink ";
+          $SignatureText .= $query -> hidden(-name => 'signatureid',   -default => $SignatureID);
+          $SignatureText .= $query -> hidden(-name => 'emailuserid',   -default => $EmailUserID);
+          $SignatureText .= $query -> hidden(-name => 'action',   -default => $Action);
+          $SignatureText .= $query -> password_field(-name => "password-$EmailUserID", -size => 16, -maxlength => 32);
+          $SignatureText .= " ";
+          $SignatureText .= $query -> submit (-value => $ActionText);
+          $SignatureText .= "</div>\n";
+          $SignatureText .= $query -> end_multipart_form;
+        }  
       } elsif ($Status eq "NotReady") {
         $SignatureText .= "$SignatureLink (waiting for other signatures)";
       } else {

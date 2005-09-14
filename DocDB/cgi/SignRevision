@@ -73,10 +73,14 @@ $EmailUserID = 0;
 
 if ($Password) { 
   $EmailUserID = &ValidateEmailUser($UserName,$Password);
-}  
+} 
+
+if ($UserValidation eq "certificate") {
+  $EmailUserID = FetchEmailUserIDByCert();
+}
 
 unless ($EmailUserID) {
-  push @ErrorStack,"The password you entered is invalid.";
+  push @ErrorStack,"The password you entered or the certificate you supplied is invalid.";
 }
 
 # Check Signature Status
