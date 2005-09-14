@@ -100,7 +100,6 @@ sub PrintSignatureInfo ($) {
     my $SignatureIDOK = &FetchSignature($SignatureID);
     if ($SignatureIDOK) {
       my $EmailUserID = $Signatures{$SignatureID}{EmailUserID};
-      my $UserName    = $EmailUser{$EmailUserID}{Username};
       &FetchEmailUser($EmailUserID);
       
       my $SignoffID = $Signatures{$SignatureID}{SignoffID};
@@ -121,7 +120,8 @@ sub PrintSignatureInfo ($) {
           $ActionText = "Unsign Document"
         }  
         if ($UserValidation eq "certificate") {
-          if ($UserName eq $CertificateCN) {
+          push @DebugStack,"Checking for signature: EID: $EmailUserID CID: ".FetchEmailUserIDByCert();
+          if (FetchEmailUserIDByCert() == $EmailUserID) {
             $SignatureText .= $query -> start_multipart_form('POST',"$SignRevision");
             $SignatureText .= "<div>\n";
             $SignatureText .= "$SignatureLink ";
