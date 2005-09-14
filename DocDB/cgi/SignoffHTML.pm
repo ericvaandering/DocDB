@@ -117,10 +117,9 @@ sub PrintSignatureInfo ($) {
           $ActionText = "Sign Document"
         } else {
           $Action = "unsign";
-          $ActionText = "Unsign Document"
+          $ActionText = "Remove Signature"
         }  
         if ($UserValidation eq "certificate") {
-          push @DebugStack,"Checking for signature: EID: $EmailUserID CID: ".FetchEmailUserIDByCert();
           if (FetchEmailUserIDByCert() == $EmailUserID) {
             $SignatureText .= $query -> start_multipart_form('POST',"$SignRevision");
             $SignatureText .= "<div>\n";
