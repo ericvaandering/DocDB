@@ -55,10 +55,10 @@ h5 {
   font-weight: normal;
 }
 
-.UnPaddedTable   td, .UnPaddedTable   th {padding: 0px; }
-.LowPaddedTable  td, .LowPaddedTable  th {padding: 3px; }
-.MedPaddedTable  td, .MedPaddedTable  th {padding: 5px; }
 .HighPaddedTable td, .HighPaddedTable th {padding: 10px;}
+.MedPaddedTable  td, .MedPaddedTable  th {padding: 5px; }
+.LowPaddedTable  td, .LowPaddedTable  th {padding: 3px; }
+.UnPaddedTable   td, .UnPaddedTable   th {padding: 0px; }
 
 td {vertical-align: top;    }
 th {vertical-align: bottom; }
