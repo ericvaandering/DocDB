@@ -93,9 +93,11 @@ sub DocTypeButtons (%) {
   my $ElementTitle = &FormElementTitle(-helplink  => "doctype" , 
                                        -helptext  => "Document type" ,
                                        -required  => $Required );
+  print "<div class=\"LowPaddedTable\">\n";				       
   print $ElementTitle,"\n";                                     
   print $query -> radio_group(-columns => 3,           -name    => "doctype", 
                               -values => \%ShortTypes, -default => $Default);
+  print "</div>\n";				       
 };
 
 sub PrintRevisionInfo {
