@@ -168,32 +168,6 @@ sub RevisionMailBody ($) {
   print $Mailer "    Abstract: ",$DocRevisions{$DocRevID}{ABSTRACT},"\n";;
 }
 
-sub SendEmail (%) {
-  require Mail::Send;
-  require Mail::Mailer;
-
-  my (%Params) = @_;
-  
-  my @Addressees = @{$Params{-to}};
-  my $From       =   $Params{-from}    || "$Project Document Database <$DBWebMasterEmail>";
-  my $Subject    =   $Params{-subject} || "$Project Document Database";
-  my $Body       =   $Params{-body}    || "";
-     
-  my %Headers = ();
-   
-  if (@Addressees) {
-    my $Mailer = new Mail::Mailer 'smtp', Server => $MailServer;
-    $Headers{To}      = \@Addressees;
-    $Headers{From}    = $From;
-    $Headers{Subject} = $Subject;
-    
-    $Mailer -> open(\%Headers);    # Start mail with headers
-    print $Mailer $Body;
-    $Mailer -> close;              # Complete the message and send it
-  }
-  return int(@Addressees);
-}
-
 sub UsersToNotify ($$) {
   require "NotificationSQL.pm";
   my ($DocRevID,$Mode) = @_;

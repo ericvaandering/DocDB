@@ -25,23 +25,25 @@ sub SendEmail (%) {
   my (%Params) = @_;
   
   my %Headers = ();
-  my @Addressees   = @{$Params{-to}};
-
-  print "Sending mail to: ",@Addressees,"<br>\n";
-
-  $Headers{To}      = \@Addressees;
-  $Headers{From}    = $Params{-from}    || "$Project Document Database <$DBWebMasterEmail>";
-  $Headers{Subject} = $Params{-subject} || "Message from $Project DocDB";
-
-  my $Body          = $Params{-body} || "";
-  
-  my $Mailer = new Mail::Mailer 'smtp', Server => $MailServer;
-  
-  $Mailer -> open(\%Headers);    # Start mail with headers
-  print $Mailer $Body;        # Write the body
-  $Mailer -> close;              # Complete the message and send it
-
-  return 1;
+  my @Addressees = @{$Params{-to}};
+  my $From       =   $Params{-from}    || "$Project Document Database <$DBWebMasterEmail>";
+  my $Subject    =   $Params{-subject} || "$Project Document Database";
+  my $Body       =   $Params{-body}    || "";
+     
+  my %Headers = ();
+   
+  if (@Addressees) {
+    print "Sending mail to: ",@Addressees,"<br/>\n";
+    my $Mailer = new Mail::Mailer 'smtp', Server => $MailServer;
+    $Headers{To}      = \@Addressees;
+    $Headers{From}    = $From;
+    $Headers{Subject} = $Subject;
+    
+    $Mailer -> open(\%Headers);    # Start mail with headers
+    print $Mailer $Body;
+    $Mailer -> close;              # Complete the message and send it
+  }
+  return int(@Addressees);
 }
 
 1;
