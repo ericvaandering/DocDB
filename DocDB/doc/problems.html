@@ -22,15 +22,5 @@ This page lists various gotchas that we have encountered.
 <li> DocDB uses cascading style sheets to set the look and feel of the web pages.
      If you include other style sheets in your project header
      (in ProjectRoutines.pm), these will override the DocDB style sheets and 
-     you may need to re-reference your project style sheets.  
-     Here is some example code you might want to include in ProjectHeader:
-     <pre>
-     if ($BrowserCSS eq "_IE") { # Use IE format for including. Hopefully we can not give these to IE7
-       print "<!--[if IE]>\n";
-       print "<link rel=\"stylesheet\" href=\"/DocDB/Static/css/BTeVDocDB.css\" type=\"text/css\" />\n";
-       print "<![endif]-->\n";
-     } else {
-       print "<link rel=\"stylesheet\" href=\"/DocDB/Static/css/BTeVDocDB.css\" type=\"text/css\" />\n";
-     }
-     </pre>
+     you may need to re-reference your DocDB project style sheets.  
 </ol>
