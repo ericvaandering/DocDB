@@ -19,4 +19,8 @@ This page lists various gotchas that we have encountered.
      access and I have found no way to enable it without embedding a password
      in the script.  The workaround is to disable that part of the script.
      See our sample <a href=mysqld.html>/etc/rc.d/init.d/mysqld</a> script.
+<li> DocDB uses cascading style sheets to set the look and feel of the web pages.
+     If you include other style sheets in your project header
+     (in ProjectRoutines.pm), these will override the DocDB style sheets and 
+     you may need to re-reference your DocDB project style sheets.  
 </ol>
