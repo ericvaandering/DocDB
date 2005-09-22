@@ -152,7 +152,7 @@ sub FetchEventGroup ($) {
   my $Fetch = $dbh->prepare("select ShortDescription,LongDescription,TimeStamp from EventGroup where EventGroupID=?");
   $Fetch -> execute($EventGroupID);
  
-  ($ShortDescription,$LongDescription,$TimeStamp) = $Fetch -> fetchrow_array;
+  my ($ShortDescription,$LongDescription,$TimeStamp) = $Fetch -> fetchrow_array;
   if ($TimeStamp) {
     $EventGroups{$EventGroupID}{ShortDescription} = $ShortDescription;
     $EventGroups{$EventGroupID}{LongDescription}  = $LongDescription; 

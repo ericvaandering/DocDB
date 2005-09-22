@@ -116,8 +116,8 @@ if ($SubForm eq "externaldocdb") {
     }
   } elsif ($Action eq "New") { 
     push @ActionStack,"New external DocDB for <strong>$ProjectName</strong> added";
-    my $Insert = $dbh -> prepare("insert into ExternalDocDB (Project,PrivateURL,PublicURL) values (?,?,?)"); 
-    $Insert -> execute($ProjectName,$PrivateURL,$ShortDescription,$PublicURL);
+    my $Insert = $dbh -> prepare("insert into ExternalDocDB (Project,Description,PrivateURL,PublicURL) values (?,?,?,?)"); 
+    $Insert -> execute($ProjectName,$Description,$PrivateURL,$PublicURL);
   } else {
     push @WarnStack,"No valid action was specified.";
   }  

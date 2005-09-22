@@ -132,4 +132,45 @@ sub FetchXRefs (%) { # For now, no single version
   return @DocXRefIDs;
 }  
 
+sub GetExternalDocDBs () {
+  if ($HaveAllExternalDocDBs) {
+    my @ExternalDocDBIDs = keys %ExternalDocDBs;
+    return @ExternalDocDBIDs;
+  }
+  my @ExternalDocDBIDs = (); 
+  my ($ExternalDocDBID);
+  
+  my $List = $dbh -> prepare("select ExternalDocDBID from ExternalDocDB");
+  $List -> execute();  
+  $List-> bind_columns(undef, \($ExternalDocDBID));
+  while ($List -> fetch) {
+    my $ID = FetchExternalDocDB($ExternalDocDBID);
+    push @ExternalDocDBIDs,$ID;
+  }
+  $HaveAllExternalDocDBs = $TRUE;
+  return @ExternalDocDBIDs;
+}
+
+sub FetchExternalDocDB ($) {
+  my ($ExternalDocDBID) = @_;
+  unless ($ExternalDocDBID) {
+    return 0;
+  }
+
+  my $Fetch = $dbh->prepare("select Project,Description,PrivateURL,PublicURL,TimeStamp from ExternalDocDB where ExternalDocDBID=?");
+  $Fetch -> execute($ExternalDocDBID);
+
+  my ($Project,$Description,$PrivateURL,$PublicURL,$TimeStamp) = $Fetch -> fetchrow_array;
+  if ($TimeStamp) {
+    $ExternalDocDBs{$EventGroupID}{Project}     = $Project;
+    $ExternalDocDBs{$EventGroupID}{Description} = $Description;
+    $ExternalDocDBs{$EventGroupID}{PrivateURL}  = $PrivateURL;
+    $ExternalDocDBs{$EventGroupID}{PublicURL}   = $PublicURL; 
+    $ExternalDocDBs{$EventGroupID}{TimeStamp}   = $TimeStamp;
+    return $ExternalDocDBID;
+  } else {
+    return;
+  }  
+}
+
 1;
