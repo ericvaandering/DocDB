@@ -49,18 +49,14 @@ sub InsertXRefs (%) {
     my $DocID      = 0; 
     my @Parts = split /\-/,$Document;
     foreach my $Part (@Parts) {
-      push @DebugStack,"Checking part $Part";
       if (grep /^v\d+$/,$Part) {
         $Version = $Part;
         $Version =~ s/v//;
-        push @DebugStack,"Set version $Version";
       } elsif (int($Part) && !$DocID) { # Only take first one as DocID
         $DocID = $Part;
-        push @DebugStack,"Set docid $DocID";
       } else {
         $ExtProject = $Part;
         $ExtProject =~ s/\s+//;
-        push @DebugStack,"Set project $ExtProject";
       }
     }
     
@@ -85,18 +81,13 @@ sub InsertXRefs (%) {
       $Insert -> execute($DocRevID,$DocID);
       $DocXRefID = $Insert -> {mysql_insertid};
     }
-    push @DebugStack,"DXI: $DocXRefID V: $Version EP: $ExtProject";
     if ($DocXRefID && $Version) {
-      push @DebugStack,"Add V: $Version";
       my $Update = $dbh -> prepare("update DocXRef set Version=? where DocXRefID=?");
       $Update -> execute($Version,$DocXRefID);
     }  
     if ($DocXRefID && $ExtProject) {
-      push @DebugStack,"Add EP: $ExtProject";
-      $dbh -> trace;local $dbh->{TraceLevel} = "3|SQL";
       my $Update = $dbh -> prepare("update DocXRef set Project=\"$ExtProject\" where DocXRefID=$DocXRefID");
       $Update -> execute();
-local $dbh->{TraceLevel} = "0";
     }  
   }
       

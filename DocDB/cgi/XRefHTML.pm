@@ -42,10 +42,28 @@ sub PrintXRefInfo ($) {
       my $DocumentID = $DocXRefs{$DocXRefID}{DocumentID};
       my $Version    = $DocXRefs{$DocXRefID}{Version};
       my $ExtProject = $DocXRefs{$DocXRefID}{Project};
-      push @DebugStack,"EP: $ExtProject";
       if ($ExtProject && $ExtProject ne $ShortProject) {
         my $ExternalDocDBID = FetchExternalDocDBByName($ExtProject);
-        $DocumentLink = "External link to $ExtProject DocDB $ExternalDocDBID ";
+        my $PublicURL  = $ExternalDocDBs{$ExternalDocDBID}{PublicURL};
+        my $PrivateURL = $ExternalDocDBs{$ExternalDocDBID}{PrivateURL};
+        my $DocumentLink  = "External Document ";
+           $DocumentLink .= "<a href=\"".$PublicURL."/ShowDocument?docid=$DocumentID";
+        if ($Version) {
+          $DocumentLink .= "&amp;version=$Version";
+        } 
+        $DocumentLink .= "\">".$ExtProject."-doc-".$DocumentID;
+        if ($Version) {
+          $DocumentLink .= "-v$Version";
+        } 
+        $DocumentLink .= " (";
+        $DocumentLink .= "<a href=\"".$PrivateURL."/ShowDocument?docid=$DocumentID";
+        if ($Version) {
+          $DocumentLink .= "&amp;version=$Version";
+        } 
+        $DocumentLink .= "private link</a>)";
+          
+          
+#        $DocumentLink = "External link to $ExtProject DocDB $ExternalDocDBID ";
       } else {
         if ($Version) {
           $DocumentLink =  &FullDocumentID($DocumentID,$Version).": ";
