@@ -2,6 +2,12 @@
 #
 # Author Eric Vaandering (ewv@fnal.gov)
 #
+# This script will loop over all documents and revisions and will re-write 
+# the .htaccess file for those revisions. You may need to do this if you 
+# change the group hierarchy, move your .htpasswd file, or for other reasons.
+
+# Use --force to update all the documents or 
+# use --days or --hours to update those modified recently
 
 use Benchmark;
 use DBI;
