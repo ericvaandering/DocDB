@@ -30,7 +30,7 @@ sub PrintXRefInfo ($) {
   
 ### Find and print documents this revision links to  
   
-  my @DocXRefIDs = &FetchXRefs(-docrevid => $DocRevID);
+  my @DocXRefIDs = FetchXRefs(-docrevid => $DocRevID);
   if (@DocXRefIDs) {
     print "<div id=\"XRefs\">\n";
     print "<dl>\n";
@@ -61,16 +61,13 @@ sub PrintXRefInfo ($) {
           $DocumentLink .= "&amp;version=$Version";
         } 
         $DocumentLink .= "\">"."private link</a>)";
-          
-          
-#        $DocumentLink = "External link to $ExtProject DocDB $ExternalDocDBID ";
       } else {
         if ($Version) {
-          $DocumentLink =  &FullDocumentID($DocumentID,$Version).": ";
-          $DocumentLink .= &NewerDocumentLink(-docid => $DocumentID, -version => $Version, -titlelink => $TRUE);
+          $DocumentLink  = FullDocumentID($DocumentID,$Version).": ";
+          $DocumentLink .= NewerDocumentLink(-docid => $DocumentID, -version => $Version, -titlelink => $TRUE);
         } else { 
-          $DocumentLink =  &FullDocumentID($DocumentID).": ";
-          $DocumentLink .= &NewerDocumentLink(-docid => $DocumentID, -titlelink => $TRUE);
+          $DocumentLink  = FullDocumentID($DocumentID).": ";
+          $DocumentLink .= NewerDocumentLink(-docid => $DocumentID, -titlelink => $TRUE);
         }
       }    
       print "<li>$DocumentLink</li>\n";
@@ -81,7 +78,7 @@ sub PrintXRefInfo ($) {
 
 ### Find and print documents which link to this one
 
-  my @RawDocXRefIDs = &FetchXRefs(-docid => $DocRevisions{$DocRevID}{DOCID});
+  my @RawDocXRefIDs = FetchXRefs(-docid => $DocRevisions{$DocRevID}{DOCID});
   
   my @DocXRefIDs = ();
   
@@ -108,14 +105,14 @@ sub PrintXRefInfo ($) {
     my %SeenDocument = ();
     foreach my $DocXRefID (@DocXRefIDs) {
       my $DocRevID = $DocXRefs{$DocXRefID}{DocRevID};
-      &FetchDocRevisionByID($DocRevID);
+      FetchDocRevisionByID($DocRevID);
       if ($DocRevisions{$DocRevID}{Obsolete}) {
         next;
       }
       my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
       if ($DocumentID && !$SeenDocument{$DocumentID}) {
-        my $DocumentLink  = &FullDocumentID($DocumentID).": ";
-           $DocumentLink .= &NewerDocumentLink(-docid => $DocumentID, -titlelink => TRUE);
+        my $DocumentLink  = FullDocumentID($DocumentID).": ";
+           $DocumentLink .= NewerDocumentLink(-docid => $DocumentID, -titlelink => TRUE);
         print "<li>$DocumentLink</li>\n";
         $SeenDocument{$DocumentID} = TRUE;
       }
