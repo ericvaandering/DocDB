@@ -307,7 +307,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
            "values (0,?,?,?,?)");
           $TalkSeparatorInsert -> execute($SessionID,$TalkTime,$TalkTitle,$TalkNote);
           $TalkSeparatorID = $TalkSeparatorInsert -> {mysql_insertid}; # Works with MySQL only
-          push @ActionStack,"Added break $TalkTitle to agenda";
+          push @ActionStack,"Added break to agenda: $TalkTitle";
 	} else {
           my $TalkInsert = $dbh -> prepare(
            "insert into SessionTalk ".
@@ -321,7 +321,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
           $NewSessionTalkMap{$TalkOrder} = $SessionTalkID;
           &InsertTopicHints($SessionTalkID,@TopicHints);
           &InsertAuthorHints($SessionTalkID,@AuthorHints);
-          push @ActionStack,"Added $TalkTitle to agenda";
+          push @ActionStack,"Added item to agenda: $TalkTitle";
 	}
         my $SessionOrderInsert = $dbh -> prepare(
          "insert into SessionOrder ".
@@ -392,9 +392,9 @@ if ($Mode eq "modify" || $Mode eq "create") {
             my $SessionTalkMove = $dbh -> prepare(
              "update SessionTalk set SessionID=? where SessionTalkID=?");
             $SessionTalkMove -> execute($NewSessionID,$SessionTalkID);
-            push @ActionStack,"Moved $TalkTitle to another session";
+            push @ActionStack,"Moved item to another session: $TalkTitle";
           } else {
-            push @ActionStack,"Modified agenda item $TalkTitle";
+            push @ActionStack,"Modified agenda item: $TalkTitle";
           }
         }
 
