@@ -55,7 +55,7 @@ sub PrintXRefInfo ($) {
         if ($Version) {
           $DocumentLink .= "-v$Version";
         } 
-        $DocumentLink .= " (";
+        $DocumentLink .= "</a> ID $ExternalDocDBID PU $PublicURL (";
         $DocumentLink .= "<a href=\"".$PrivateURL."/ShowDocument?docid=$DocumentID";
         if ($Version) {
           $DocumentLink .= "&amp;version=$Version";
