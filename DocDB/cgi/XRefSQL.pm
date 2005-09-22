@@ -86,10 +86,12 @@ sub InsertXRefs (%) {
     }
     push @DebugStack,"DXI: $DocXRefID V: $Version EP: $ExtProject";
     if ($DocXRefID && $Version) {
+      push @DebugStack,"Add V: $Version";
       my $Update = $dbh -> prepare("update DocXRef set Version=? where DocXRefID=?");
       $Update -> execute($Version,$DocXRefID);
     }  
     if ($DocXRefID && $ExtProject) {
+      push @DebugStack,"Add EP: $ExtProject";
       my $Update = $dbh -> prepare("update DocXRef set Project=? where DocXRefID=?");
       $Update -> execute($ExtProject,$DocXRefID);
     }  
