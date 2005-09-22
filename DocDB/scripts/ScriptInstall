@@ -10,13 +10,18 @@
 # minor). It creates links to the scripts and .pm files stored in a central 
 # location. This are need (should) not be accessible from the web. 
 
-# You can use this with the JS directory too, but since there are no project
-# customizations there, it's probably easier just to link the js/ directory
-# or set the path  ($JSDirectory and $JSURLPath in ProjectGlobals.pm) to the 
-# correct location.
+# This script creates a file named .DocDBSetup which you can copy to a new 
+# directory before running the script, which will set up the new directory just
+# like previous ones. (You can also change settings from that default.)
 
-# Your web server must be setup to execute links in cgi-bin areas, which is
-# often not the default setup.
+# You can use this with the CSS and JS directories too, but since there are no project
+# customizations in the JS directory and the customizations in the CSS directory have
+# the project in the file name, it's probably easier just to link the js/ or css 
+# directory or set the path  ($(JS/CSS)Directory and $(JS/CSS)URLPath in 
+# ProjectGlobals.pm) to the correct location.
+
+# Your web server must be setup to execute links in cgi-bin areas and follow
+# links in HTML areas, which is often not the default setup.
 
 # Usage: answer the questions. Your answers are stored for the next invocation.
 
@@ -123,7 +128,9 @@ while (my $File = readdir DIRECTORY) {
   my $FirstChar = substr $File,0,1;
   if ($FirstChar eq ".")  {next;}
   unless (-f $FullFile)   {next;}
-  if     ($Ignore{$File}) {next;}
+  if     ($Ignore{$File}) {
+    unlink $File;
+  }
   print "Linking $FullFile\n";
   system ("/bin/ln -sf $FullFile .");
 }
