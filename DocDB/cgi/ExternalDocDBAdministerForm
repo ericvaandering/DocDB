@@ -70,6 +70,7 @@ if ($Password && $Username) {
   CreateConnection(-user => $Username, -password => $Password);
 } else {
   CreateConnection(-type => "ro");
+  push @ErrorStack,"You must supply the admin username and password to administer";
 }
 
 GetSecurityGroups;
@@ -205,7 +206,7 @@ print "</tr>\n";
 
 print "<tr>\n";
 print "<td colspan=\"2\" class=\"SubmitCell\">\n";
- AdministratorPassword;
+ AdministratorPassword();
  print "&nbsp;";
  print $query -> submit (-value => "Change External DocDB Info");
 print "</td>\n";
