@@ -739,7 +739,7 @@ sub EventsTable (;%) {
   my $NCols = 3;
   my $Col   = 0;
   my $Row   = 0;
-  my @EventGroupIDs = &GetAllEventGroups();
+  my @EventGroupIDs = sort EventGroupsByName &GetAllEventGroups();
   
   print "<table class=\"HighPaddedTable\">\n";
   foreach my $EventGroupID (@EventGroupIDs) {
