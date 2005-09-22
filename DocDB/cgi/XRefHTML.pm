@@ -103,7 +103,51 @@ sub PrintXRefInfo ($) {
     print "</ul>\n";
     print "</div>\n";
   }
+}
 
+sub ExternalDocDBSelect (;%) {
+  require "FormElements.pm";
+  require "XRefSQL.pm";
+  require "Sorts.pm";
+ 
+  my (%Params) = @_;
+
+  my $Disabled = $Params{-disabled} || "0";
+  my $Multiple = $Params{-multiple} || "0";
+  my $Required = $Params{-required} || "0";
+  my $Format   = $Params{-format}   || "short";
+  my @Defaults = @{$Params{-default}};
+  my $OnChange = $Params{-onchange} || undef;
+
+  my %Options = ();
+ 
+  if ($Disabled) {
+    $Options{-disabled} = "disabled";
+  }  
+  if ($OnChange) {
+    $Options{-onchange} = $OnChange;
+  }  
+
+  &GetAllExternalDocDBs; 
+  my @ExternalDocDBIDs = keys %ExternalDocDBs;
+  my %Labels        = ();
+  foreach my $ExternalDocDBID (@ExternalDocDBIDs) {
+    if ($Format eq "full") {
+      $Labels{$ExternalDocDBID} = $ExternalDocDBs{$ExternalDocDBID}{Project}.
+      ":".$ExternalDocDBs{$ExternalDocDBID}{Description}; 
+    } else {  
+      $Labels{$ExternalDocDBID} = $ExternalDocDBs{$ExternalDocDBID}{Project}; 
+    }
+  }      
+  
+  my $ElementTitle = &FormElementTitle(-helplink => "extdocdb", -helptext => "Project", 
+                                       -required => $Required);
+
+  print $ElementTitle;
+  print $query -> scrolling_list(-name     => "externaldocdbs",  -values  => \@ExternalDocDBIDs, 
+                                 -labels   => \%Labels,       -size    => 10, 
+                                 -multiple => $Multiple,      -default => \@Defaults,
+                                 %Options);
 }
 
 1;

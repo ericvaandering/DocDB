@@ -132,7 +132,7 @@ sub FetchXRefs (%) { # For now, no single version
   return @DocXRefIDs;
 }  
 
-sub GetExternalDocDBs () {
+sub GetAllExternalDocDBs () {
   if ($HaveAllExternalDocDBs) {
     my @ExternalDocDBIDs = keys %ExternalDocDBs;
     return @ExternalDocDBIDs;

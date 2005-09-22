@@ -84,6 +84,7 @@ unless (CanAdminister()) {
 if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
   EndPage(@ErrorStack);
 }
+GetAllExternalDocDBs();
 
 # Do administration
 
@@ -131,10 +132,7 @@ if ($SubForm eq "externaldocdb") {
 }
    
 if (@ActionStack) { 
-  ClearConferences();
-  ClearEventGroups();
-  GetConferences();
-  GetAllEventGroups();
+  GetAllExternalDocDBs();
   ActionReport();
 }  
 
