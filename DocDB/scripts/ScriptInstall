@@ -108,6 +108,7 @@ close ANSWERS;
 # Figure out what files to ignore
 
 my %Ignore = ();
+my %PublicIgnore = ();
 
 foreach my $File (@TemplateIgnore) {
   $Ignore{$File} = 1;
@@ -116,6 +117,7 @@ foreach my $File (@TemplateIgnore) {
 if ($Public eq "y") {
   foreach my $File (@PublicIgnore) {
     $Ignore{$File} = 1;
+    $PublicIgnore{$File} = 1;
   }
 }   
 
@@ -128,8 +130,11 @@ while (my $File = readdir DIRECTORY) {
   my $FirstChar = substr $File,0,1;
   if ($FirstChar eq ".")  {next;}
   unless (-f $FullFile)   {next;}
-  if     ($Ignore{$File}) {
+  if     ($PublicIgnore{$File}) {
     unlink $File;
+  }
+  if (Ignore{$File}) {
+    next;
   }
   print "Linking $FullFile\n";
   system ("/bin/ln -sf $FullFile .");
