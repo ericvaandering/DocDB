@@ -80,13 +80,13 @@ $remote_user          =~ tr/[A-Z]/[a-z]/;
 
 # Preferences
 
-$Preferences{Security}{Certificates}{UseCNOnly}        = FALSE; # Use CN instead of E (E-mail) to distinguish
-$Preferences{Security}{Certificates}{PopupLimitCookie} = FALSE; # Unused, encourage users to limit which groups they belong to with cookies
+$Preferences{Security}{Certificates}{UseCNOnly}        = $FALSE; # Use CN instead of E (E-mail) to distinguish
+$Preferences{Security}{Certificates}{PopupLimitCookie} = $FALSE; # Unused, encourage users to limit which groups they belong to with cookies
 
-$Preferences{Options}{DynamicFullList}{Private} = FALSE; # Generate Full document list by dynamically for private db
-$Preferences{Options}{DynamicFullList}{Public}  = FALSE; # Generate Full document list by dynamically for public db
+$Preferences{Options}{DynamicFullList}{Private} = $FALSE; # Generate Full document list by dynamically for private db
+$Preferences{Options}{DynamicFullList}{Public}  = $FALSE; # Generate Full document list by dynamically for public db
 
-$Preferences{Options}{AlwaysRetrieveFile}       = FALSE; # Always use RetrieveFile instead of File Links
+$Preferences{Options}{AlwaysRetrieveFile}       = $FALSE; # Always use RetrieveFile instead of File Links
 
 $htaccess             = ".htaccess";
 
@@ -100,7 +100,7 @@ $InitialSessions      = 5;     # Number of initial sessions when making meeting
 
 $FirstYear            = 2000;  # Earliest year that documents can be created
 
-$TalkMatchThreshold    = 6;    # Threshold for matching talks in meetings with topics
+$TalkMatchThreshold    = 999;    # Threshold for matching talks in meetings with topics
 
 @MatchIgnoreWords       = ("from","with","then","than","that","what"); # Don't match on these
 
