@@ -54,7 +54,7 @@ my $SubForm          = $params{subform};
 
 my $ExternalDocDBID  = $params{externalid};
 my $ProjectName      = $params{project};
-my $Description      = $params{description};
+my $Description      = $params{desc};
 my $PublicURL        = $params{public};
 my $PrivateURL       = $params{private};
 
@@ -181,7 +181,7 @@ print "</tr>\n";
 
 print "<tr>\n";
 print "<td>\n"; 
- &TextField(-name => "description", -disabled => "true", -helptext => "Description", -helplink => "extdocdb");
+ &TextField(-name => "desc", -disabled => "true", -helptext => "Description", -helplink => "extdocdb");
 print "</td>\n";
 print "</tr>\n";
 
