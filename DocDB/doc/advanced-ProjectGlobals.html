@@ -1,0 +1,171 @@
+<html>
+<head>
+<title>Advanced ProjectGlobals.pm Management</title>
+<head>
+
+<body>
+
+<p>
+While the default instructions suggest putting a self-contained
+ProjectGlobals.pm file in each directory where DocDB scripts reside, that can be
+a hassle if you have more than a couple of such diretories, especially if you
+have several instances of DocDB running on the same server but using different
+MySQL directories.
+</p>
+
+<p>
+This page is intended to give some examples on how one might break the
+ProjectGlobals.pm file up and use the perl "require" statement to build a
+modular, more easily maintaind ProjectGlobals.pm. We will use
+ProjectGlobals.pm.template as an example.
+</p>
+
+<p>
+First, lets split up the file into parts in common for the Project and the
+Server. Well set things up so that we have some default settings in the Server
+file and then let the project file over-ride them. You can and should keep this
+files OUTSIDE of the area served by the web server.
+</p>
+
+<p><b>ServerCommon.pm:</b></p>
+
+<pre>
+$db_host       = "db-server-host-and-domain";
+$db_rwuser     = "docdbrw";             # This may or may not be common on you setup
+$db_rouser     = "docdbro";             # ditto
+$MailServer       = "smtp-server-host-name";
+
+$LastDays             = 20;    # Number of days for default in LastModified
+$HomeLastDays         = 7;     # Number of days for last modified on home page
+$HomeMaxDocs          = 50;    # Maximum number of documents on home page
+$MeetingWindow        = 7;     # Days before and after meeting to preselect
+$TalkHintWindow       = 7;     # Days before and after to guess on documents
+$MeetingFiles         = 3;     # Number of upload boxes on meeting short form
+$InitialSessions      = 5;     # Number of initial sessions when making meeting
+
+#$Wget   = "/usr/bin/wget -O - --quiet ";
+#$Tar    = "";                     # Set this if you don't have GNU tar
+#$GTar   = "/bin/tar ";            # Set this if you do have GNU tar (e.g. Linux)
+#$GZip   = "/bin/gzip ";           # Currently only needed if non-GNU tar
+#$GUnzip = "/bin/gunzip ";         # Currently only needed if non-GNU tar
+#$Unzip  = "/usr/bin/unzip -q ";
+#$Zip    = "/usr/bin/zip -q -r ";  # Set to "" in ProjectGlobals if not installed
+
+# Set up some common features/options/settings for everyone
+
+$FirstYear      = 2000;           # Earliest year that documents can be created
+$UseSignoffs          = 0;     # Sign-off system for document approval
+$MailInstalled        = 1;     # Is the Mailer::Mail module installed?
+#$DefaultPublicAccess  = 0;     # New documents are public by default
+</pre>
+
+Now let's look at the project file:
+
+<p><b>ProjectFooCommon.pm:</b></p>
+
+<pre>
+require "/full/path/to/ServerCommon.pm";
+
+# These are needed
+
+$db_name       = "DocDB";               
+$db_rwpass     = "read-write-password"; # Usernames defined above 
+$db_ropass     = "read-only-password";  
+
+# Root directories and URLs
+
+$file_root   = "/www/html/DocDB/";    
+$script_root = "/www/cgi-bin/DocDB/"; 
+$web_root    = "http://web-server-host-and-domain/DocDB/";
+$cgi_root    = "http://web-server-host-and-domain/cgi-bin/DocDB/";
+$cgi_path    = "/cgi-bin/DocDB/"; # Used for cookies
+
+# Name and e-mail address of the administrators (or mailing list for admins)
+
+$DBWebMasterEmail = "docdb\@mail-gateway";
+$DBWebMasterName  = "Document Database Administrators";
+
+$AuthUserFile     = "/full/path/to/.htpasswd";
+$Project        = "My Project";
+$ShortProject   = "MyProject";    # This is the project used in the Document ID
+
+# Now lets change a couple of things for this project
+
+$LastDays       = 7;    # Number of days for default in LastModified
+$FirstYear      = 1990;           # Earliest year that documents can be created
+</pre>
+
+<p>
+Now let's look at three hypothetical files that actually go in the
+cgi-directories. They will implement a DB with read-write certificate
+authorization, read-only http-basic authorization, and a public setting
+</p>
+
+<p><b>ProjectGlobals.pm: (Public)</b></p>
+
+<pre>
+require "/full/path/to/ProjectFooCommon.pm";
+
+$Public = 1;
+$remote_user      = ""; # Just to be safe
+$RemoteUsername   = ""; # Just to be safe
+$db_rwuser        = ""; # Just to be safe
+$db_rwpass        = ""; # Just to be safe
+
+$WelcomeMessage = "Welcome to the public portion of the $Project Document
+                   Database,<br/> the repository for all $Project public talks, proceedings, preprints, and publications.";
+
+# Need to change these to point at right places
+
+$script_root = "/www/cgi-bin/DocDB-public/"; 
+$cgi_root    = "http://web-server-host-and-domain/cgi-bin/DocDB-public/";
+$cgi_path    = "/cgi-bin/DocDB-public/"; # Used for cookies
+</pre>
+
+<p><b>ProjectGlobals.pm: (Certificate)</b></p>
+
+<pre>
+require "/full/path/to/ProjectFooCommon.pm";
+
+$WelcomeMessage = "Welcome to the $Project Document Database, the repository for all $Project documents.";
+
+$UserValidation = "certificate";
+$Preferences{Security}{Certificates}{UseCNOnly} = $TRUE; # For DOE certs, use CN instead of E (E-mail) to distinguish
+
+# Need to change these to point at right places
+
+$script_root = "/www/cgi-bin/DocDB-certificate/"; 
+$cgi_root    = "https://web-server-host-and-domain/cgi-bin/DocDB-certificate/";
+$cgi_path    = "/cgi-bin/DocDB-certificate/"; # Used for cookies
+</pre>
+
+<p><b>ProjectGlobals.pm: (Read Only)</b></p>
+
+<pre>
+require "/full/path/to/ProjectFooCommon.pm";
+
+$WelcomeMessage = "You can browse with the group username and password, but not
+upload documents or change meta-data";
+
+$ReadOnly = 1;
+
+# May need to change these to point at right places depending on what is in
+# Project-common
+
+$script_root = "/www/cgi-bin/DocDB/"; 
+$cgi_root    = "http://web-server-host-and-domain/cgi-bin/DocDB/";
+$cgi_path    = "/cgi-bin/DocDB/"; # Used for cookies
+</pre>
+
+<p>
+<b>Even more advanced usage:</b> You could store all the CSS files and JS files
+in one web-accessible location and set the variables <tt>$CSSDirectory</tt>,
+<tt>$CSSURLPath</tt>, <tt>$JSDirectory</tt>, and <tt>$JSURLPath</tt> to point at that
+place. You can set this in server common. You could also set most of common
+parts of the paths for script root, cgi_root, file_root, etc. in the
+ServerCommon.pm and then just add the differences in the relevant files. This
+lets you move things around easily.
+</p>
+
+</body>
+</html>
