@@ -55,8 +55,8 @@ my $SubForm          = $params{subform};
 my $ExternalDocDBID  = $params{externalid};
 my $ProjectName      = $params{project};
 my $Description      = $params{desc};
-my $PublicURL        = $params{public};
-my $PrivateURL       = $params{private};
+my $PublicURL        = $params{puburl};
+my $PrivateURL       = $params{privurl};
 
 $query -> delete_all();
 
@@ -187,13 +187,13 @@ print "</tr>\n";
 
 print "<tr>\n";
 print "<td>\n"; 
- &TextField(-name => "public", -disabled => "true", -helptext => "Public URL", -helplink => "extdocdb");
+ &TextField(-name => "puburl", -disabled => "true", -helptext => "Public URL", -helplink => "extdocdb");
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
 print "<td>\n"; 
- &TextField(-name => "private", -disabled => "true", -helptext => "Private URL", -helplink => "extdocdb");
+ &TextField(-name => "privurl", -disabled => "true", -helptext => "Private URL", -helplink => "extdocdb");
 print "</td>\n";
 print "</tr>\n";
 
