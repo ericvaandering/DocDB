@@ -163,11 +163,11 @@ sub FetchExternalDocDB ($) {
 
   my ($Project,$Description,$PrivateURL,$PublicURL,$TimeStamp) = $Fetch -> fetchrow_array;
   if ($TimeStamp) {
-    $ExternalDocDBs{$EventGroupID}{Project}     = $Project;
-    $ExternalDocDBs{$EventGroupID}{Description} = $Description;
-    $ExternalDocDBs{$EventGroupID}{PrivateURL}  = $PrivateURL;
-    $ExternalDocDBs{$EventGroupID}{PublicURL}   = $PublicURL; 
-    $ExternalDocDBs{$EventGroupID}{TimeStamp}   = $TimeStamp;
+    $ExternalDocDBs{$ExternalDocDBID}{Project}     = $Project;
+    $ExternalDocDBs{$ExternalDocDBID}{Description} = $Description;
+    $ExternalDocDBs{$ExternalDocDBID}{PrivateURL}  = $PrivateURL;
+    $ExternalDocDBs{$ExternalDocDBID}{PublicURL}   = $PublicURL; 
+    $ExternalDocDBs{$ExternalDocDBID}{TimeStamp}   = $TimeStamp;
     return $ExternalDocDBID;
   } else {
     return;

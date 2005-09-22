@@ -60,7 +60,7 @@ sub PrintXRefInfo ($) {
         if ($Version) {
           $DocumentLink .= "&amp;version=$Version";
         } 
-        $DocumentLink .= "private link</a>)";
+        $DocumentLink .= "\">"."private link</a>)";
           
           
 #        $DocumentLink = "External link to $ExtProject DocDB $ExternalDocDBID ";
