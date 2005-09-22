@@ -42,6 +42,7 @@ sub PrintXRefInfo ($) {
       my $DocumentID = $DocXRefs{$DocXRefID}{DocumentID};
       my $Version    = $DocXRefs{$DocXRefID}{Version};
       my $ExtProject = $DocXRefs{$DocXRefID}{Project};
+      push @DebugStack,"EP: $ExtProject";
       if ($ExtProject && $ExtProject ne $ShortProject) {
         my $ExternalDocDBID = FetchExternalDocDBByName($ExtProject);
         $DocumentLink = "External link to $ExtProject DocDB $ExternalDocDBID ";

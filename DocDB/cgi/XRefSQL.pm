@@ -84,6 +84,7 @@ sub InsertXRefs (%) {
       $Insert -> execute($DocRevID,$DocID);
       $DocXRefID = $Insert -> {mysql_insertid};
     }
+    push @DebugStack,"DXI: $DocXRefID V: $Version EP: $ExtProject";
     if ($DocXRefID && $Version) {
       my $Update = $dbh -> prepare("update DocXRef set Version=? where DocXRefID=?");
       $Update -> execute($Version,$DocXRefID);
