@@ -46,7 +46,7 @@ sub PrintXRefInfo ($) {
         my $ExternalDocDBID = FetchExternalDocDBByName($ExtProject);
         my $PublicURL  = $ExternalDocDBs{$ExternalDocDBID}{PublicURL};
         my $PrivateURL = $ExternalDocDBs{$ExternalDocDBID}{PrivateURL};
-        $DocumentLink  = "External Document ";
+        $DocumentLink  = "External document ";
         $DocumentLink .= "<a href=\"".$PublicURL."/ShowDocument?docid=$DocumentID";
         if ($Version) {
           $DocumentLink .= "&amp;version=$Version";
@@ -55,7 +55,7 @@ sub PrintXRefInfo ($) {
         if ($Version) {
           $DocumentLink .= "-v$Version";
         } 
-        $DocumentLink .= "</a> ID $ExternalDocDBID PU $PublicURL (";
+        $DocumentLink .= "</a> (";
         $DocumentLink .= "<a href=\"".$PrivateURL."/ShowDocument?docid=$DocumentID";
         if ($Version) {
           $DocumentLink .= "&amp;version=$Version";
