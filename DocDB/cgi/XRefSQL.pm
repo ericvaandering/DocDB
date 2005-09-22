@@ -49,13 +49,17 @@ sub InsertXRefs (%) {
     my $DocID      = 0; 
     my @Parts = split /\-/,$Document;
     foreach my $Part (@Parts) {
+      push @DebugStack,"Checking part $Part";
       if (grep /^v\d+$/,$Part) {
         $Version = $Part;
         $Version =~ s/v//;
+        push @DebugStack,"Set version $Version";
       } elsif (grep /^\d+$/,$Part && !$DocID) { # Only take first one as DocID
         $DocID = $Part;
+        push @DebugStack,"Set docid $DocID";
       } else {
         $ExtProject = $Part;
+        push @DebugStack,"Set project $ExtProject";
       }
     }
     
