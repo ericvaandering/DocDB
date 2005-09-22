@@ -59,6 +59,7 @@ sub InsertXRefs (%) {
         push @DebugStack,"Set docid $DocID";
       } else {
         $ExtProject = $Part;
+        $ExtProject =~ s/\s+//;
         push @DebugStack,"Set project $ExtProject";
       }
     }
