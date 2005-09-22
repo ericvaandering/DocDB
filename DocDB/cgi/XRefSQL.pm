@@ -93,6 +93,7 @@ sub InsertXRefs (%) {
     }  
     if ($DocXRefID && $ExtProject) {
       push @DebugStack,"Add EP: $ExtProject";
+      $dbh -> trace;
       my $Update = $dbh -> prepare("update DocXRef set Project=? where DocXRefID=?");
       $Update -> execute($ExtProject,$DocXRefID);
     }  
