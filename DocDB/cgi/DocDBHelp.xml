@@ -1067,4 +1067,15 @@ or may not be the same as the web username and password.
    sub-topics to also be deleted and leave some documents without any topics.
   </text> 
  </entry>
+ <entry> 
+  <key>extdocdb</key> 
+  <title>External DocDB Information</title> 
+  <text>
+   Fill in the information for any external DocDBs you want your users to be
+   able to use in <q>Related Documents.</q> The project should by the short 
+   project name, the description can be a longer description. The URLs should be
+   the public and private URLs where the scripts reside. Do not include a script name. 
+   (I. e., they should be of the form: http://server.name.com/cgi-bin/DocDB/.)
+  </text> 
+ </entry>
 </helpfile>

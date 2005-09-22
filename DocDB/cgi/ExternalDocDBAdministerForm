@@ -162,7 +162,7 @@ print "<h4>Administer External DocDB Information</h4>\n";
 
 print $query -> start_multipart_form('POST',"$ExternalDocDBAdministerForm",
                                      "name=\"externaldocdb\" id=\"externaldocdb\"");
-print "<table class=\"HighPaddedTable CenteredTable\">\n";
+print "<table class=\"LowPaddedTable CenteredTable\">\n";
 print "<tr>\n";
 print "<td colspan=\"3\">\n"; 
  &AdministerActions(-form => "externaldocdb");
@@ -175,25 +175,25 @@ print "<td rowspan=\"5\">\n";
 # &EventGroupSelect(-disabled => true, -format => "full"); 
 print "</td>\n";  
 print "<td>\n"; 
- &TextField(-name => "project", -disabled => "true", -helptext => "Project", -helplink => "extdocdbproject");
+ &TextField(-name => "project", -disabled => "true", -helptext => "Project", -helplink => "extdocdb");
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
 print "<td>\n"; 
- &TextField(-name => "description", -disabled => "true", -helptext => "Description", -helplink => "extdocdbdesc");
+ &TextField(-name => "description", -disabled => "true", -helptext => "Description", -helplink => "extdocdb");
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
 print "<td>\n"; 
- &TextField(-name => "public", -disabled => "true", -helptext => "Public URL", -helplink => "extdocdbpublic");
+ &TextField(-name => "public", -disabled => "true", -helptext => "Public URL", -helplink => "extdocdb");
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
 print "<td>\n"; 
- &TextField(-name => "private", -disabled => "true", -helptext => "Private URL", -helplink => "extdocdbprivate");
+ &TextField(-name => "private", -disabled => "true", -helptext => "Private URL", -helplink => "extdocdb");
 print "</td>\n";
 print "</tr>\n";
 
