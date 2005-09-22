@@ -216,47 +216,5 @@ print $query -> end_multipart_form;
 
 print "<hr/>\n";
 
-### Event Administration
-
-print "<h4>Administer Events</h4>\n";
-
-print $query -> start_multipart_form('POST',"$EventAdministerForm",
-                                     "name=\"event\" id=\"event\"");
-print "<table class=\"HighPaddedTable CenteredTable\">\n";
-print "<tr>\n";
-print "<td colspan=\"2\">\n"; 
-print "You can only delete with this form; you can do everything else through event management.\n";
-print "</td>\n";
-print "</tr>\n";
-
-print "<tr>\n";
-print "<td colspan=\"2\">\n"; 
- &AdministerActions(-form => "event");
- print $query -> hidden(-name => "subform",   -default => "event");
-print "</td>\n";
-print "</tr>\n";
-
-print "<tr>\n";
-print "<td>\n";
- &EventSelect(-disabled => true, -format => "full"); 
-print "</td>\n";  
-print "<td>\n"; 
- &AdminRegardless();
-print "</td>\n";
-print "</tr>\n";
-
-print "<tr>\n";
-print "<td colspan=\"2\" class=\"SubmitCell\">\n";
- &AdministratorPassword;
- print "&nbsp;";
- print $query -> submit (-value => "Change Event Info");
-print "</td>\n";
-print "</tr>\n";
-
-print "</table>\n";
-print $query -> end_multipart_form;
-
-print "<hr/>\n";
-
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

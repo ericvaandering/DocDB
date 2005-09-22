@@ -1072,7 +1072,7 @@ or may not be the same as the web username and password.
   <title>External DocDB Information</title> 
   <text>
    Fill in the information for any external DocDBs you want your users to be
-   able to use in <q>Related Documents.</q> The project should by the short 
+   able to reference in <q>Related Documents.</q> <q>Project</q> should be the short 
    project name, the description can be a longer description. The URLs should be
    the public and private URLs where the scripts reside. Do not include a script name. 
    (I. e., they should be of the form: http://server.name.com/cgi-bin/DocDB/.)
