@@ -137,7 +137,7 @@ print "<p>This form allows you to administer events in DocDB. Begin by
        selecting an action for what you want to administer.  Depending on the
        action you select, the additional selections you can  make are enabled.
        If you select <strong>Modify</strong> any attributes you select or
-       change changed in the DB. If you leave something blank, it will not be
+       change are changed in the DB. If you leave something blank, it will not be
        changed. </p>\n";
 
 print "<p>Note that deleting and then re-entering with the same information is

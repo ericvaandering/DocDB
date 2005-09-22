@@ -203,7 +203,8 @@ $GroupAdminister       = $cgi_root."GroupAdminister";
 $EmailAdministerForm   = $cgi_root."EmailAdministerForm";
 $EmailAdminister       = $cgi_root."EmailAdminister";
 
-$EventAdministerForm   = $cgi_root."EventAdministerForm";
+$EventAdministerForm         = $cgi_root."EventAdministerForm";
+$ExternalDocDBAdministerForm = $cgi_root."ExternalDocDBAdministerForm";
 
 $Statistics            = $cgi_root."Statistics";
 

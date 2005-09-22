@@ -1,0 +1,223 @@
+#! /usr/bin/env perl
+#
+#        Name: ExternalDocDBAdministerForm
+# Description: Allows the administrator to add knowledge of other DocDBs. 
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+use CGI qw(-nosticky);
+use DBI;
+
+require "DocDBGlobals.pm";
+require "AdministerElements.pm";
+require "ResponseElements.pm";
+require "Scripts.pm";
+require "Security.pm";
+require "Messages.pm";
+require "Sorts.pm";
+
+require "DBUtilities.pm";
+require "HTMLUtilities.pm";
+
+require "SecuritySQL.pm";
+require "XRefHTML.pm";
+require "XRefSQL.pm";
+
+$query = new CGI;  # Global for subroutines
+
+%params = $query -> Vars;
+
+my $Password         = $params{password};
+my $Username         = $params{admuser};
+my $Action           = $params{admaction};
+my $Force            = $params{admforce};
+
+my $SubForm          = $params{subform};
+
+my $ExternalDocDBID  = $params{externalid};
+my $ProjectName      = $params{project};
+my $Description      = $params{desc};
+my $PublicURL        = $params{puburl};
+my $PrivateURL       = $params{privurl};
+
+$query -> delete_all();
+
+@ErrorStack  = ();
+@WarnStack   = ();
+@ActionStack = ();
+
+if ($Password && $Username) {
+  CreateConnection(-user => $Username, -password => $Password);
+} else {
+  CreateConnection(-type => "ro");
+  if ($Action) {
+    push @ErrorStack,"You must supply the admin username and password to administer";
+  }
+}
+
+GetSecurityGroups;
+
+print $query->header;
+DocDBHeader("Administer External DocDBs","",
+             -scripts => ["PopUps","ExternalDocDBAdminDisable"]); 
+
+unless (CanAdminister()) {
+  push @ErrorStack,"You are not allowed to access administrative functions.";
+}
+
+if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
+  EndPage(@ErrorStack);
+}
+GetAllExternalDocDBs();
+
+# Do administration
+
+my $Abort = 0;
+
+if ($SubForm eq "externaldocdb") {
+  if ($Action eq "Delete" && $Force) {
+    my $Delete = $dbh -> prepare("delete from ExternalDocDB where ExternalDocDBID=?");
+    $Delete  -> execute($ExternalDocDBID);
+    push @ActionStack,"Deleted reference to external DocDB";
+  } elsif ($Action eq "Modify") {
+    if ($ProjectName) { 
+      push @ActionStack,"Updated project name of $ExternalDocDBs{$ExternalDocDBID}{Project}";
+      my $Update = $dbh->prepare("update ExternalDocDB set Project=? where ExternalDocDBID=?");
+      $Update -> execute($ProjectName,$ExternalDocDBID);
+    }
+    if ($Description) { 
+      push @ActionStack,"Updated description of $ExternalDocDBs{$ExternalDocDBID}{Project}";
+      my $Update = $dbh->prepare("update ExternalDocDB set Description=? where ExternalDocDBID=?");
+      $Update -> execute($Description,$ExternalDocDBID);
+    }
+    if ($PrivateURL) { 
+      push @ActionStack,"Updated private URL of $ExternalDocDBs{$ExternalDocDBID}{Project}";
+      my $Update = $dbh->prepare("update ExternalDocDB set PrivateURL=? where ExternalDocDBID=?");
+      $Update -> execute($PrivateURL,$ExternalDocDBID);
+    }
+    if ($PublicURL) { 
+      push @ActionStack,"Updated public URL of $ExternalDocDBs{$ExternalDocDBID}{Project}";
+      my $Update = $dbh->prepare("update ExternalDocDB set PublicURL=? where ExternalDocDBID=?");
+      $Update -> execute($PublicURL,$ExternalDocDBID);
+    }
+  } elsif ($Action eq "New") { 
+    push @ActionStack,"New external DocDB for <strong>$ProjectName</strong> added";
+    my $Insert = $dbh -> prepare("insert into ExternalDocDB (Project,Description,PrivateURL,PublicURL) values (?,?,?,?)"); 
+    $Insert -> execute($ProjectName,$Description,$PrivateURL,$PublicURL);
+  } else {
+    push @WarnStack,"No valid action was specified.";
+  }  
+} elsif ($SubForm eq "event") {
+  if ($Action eq "Delete") {
+    DeleteEvent(-eventid => $EventID, -force => $Force);
+  } else {
+    push @WarnStack,"Only \"Delete\" is a valid action";
+  }  
+}
+   
+if (@ActionStack) { 
+  GetAllExternalDocDBs();
+  ActionReport();
+}  
+
+WarnPage(@WarnStack); @WarnStack = ();
+
+print "<p>This form allows you to administer which instances of DocDB your DocDB knows about.
+       Begin by
+       selecting an action for what you want to administer.  Depending on the
+       action you select, the additional selections you can  make are enabled.
+       If you select <strong>Modify</strong> any attributes you select or
+       change are changed in the DB. If you leave something blank, it will not be
+       changed. </p>\n";
+
+print "<p>Note that deleting and then re-entering with the same information is
+       not the same as modifying. Everything in the DB is tied together with
+       invisible ID numbers.</p>\n";
+
+print "<p>In all cases, you must supply the <i>database</i> username and
+       password for the administrator account to make any changes.</p>\n";
+
+print "<hr/>\n";
+
+### Event Modification
+
+print "<h4>Administer External DocDB Information</h4>\n";
+
+print $query -> start_multipart_form('POST',"$ExternalDocDBAdministerForm",
+                                     "name=\"externaldocdb\" id=\"externaldocdb\"");
+print "<table class=\"LowPaddedTable CenteredTable\">\n";
+print "<tr>\n";
+print "<td colspan=\"3\">\n"; 
+ AdministerActions(-form => "externaldocdb");
+ print $query -> hidden(-name => "subform",   -default => "externaldocdb");
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td rowspan=\"5\">\n";
+ ExternalDocDBSelect(-disabled => true, -format => "full"); 
+print "</td>\n";  
+print "<td>\n"; 
+ TextField(-name => "project", -disabled => "true", -helptext => "Project", -helplink => "extdocdb");
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td>\n"; 
+ TextField(-name => "desc", -disabled => "true", -helptext => "Description", -helplink => "extdocdb");
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td>\n"; 
+ TextField(-name => "puburl", -disabled => "true", -helptext => "Public URL", -helplink => "extdocdb");
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td>\n"; 
+ TextField(-name => "privurl", -disabled => "true", -helptext => "Private URL", -helplink => "extdocdb");
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td>\n"; 
+ AdminRegardless();
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td colspan=\"2\" class=\"SubmitCell\">\n";
+ AdministratorPassword();
+ print "&nbsp;";
+ print $query -> submit (-value => "Change External DocDB Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<hr/>\n";
+
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

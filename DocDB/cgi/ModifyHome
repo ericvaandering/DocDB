@@ -224,6 +224,7 @@ if (&CanAdminister()) {
   print "<li>Administer <a href=\"$EventAdministerForm\">events</a></li>\n";
   print "<li>Administer <a href=\"$KeywordAdministerForm\">keywords and keyword groups</a></li>\n";
   print "<li>Administer <a href=\"$AdministerForm\">authors, institutions, topics</a>, and all other lists</li>\n";
+  print "<li>Administer <a href=\"$ExternalDocDBAdministerForm\">external DocDB</a> information</li>\n";
   print "</ul>\n";
 }
 
