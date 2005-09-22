@@ -154,7 +154,7 @@ sub GetAllExternalDocDBs () {
 sub FetchExternalDocDB ($) {
   my ($ExternalDocDBID) = @_;
   unless ($ExternalDocDBID) {
-    return 0;
+    return;
   }
 
   my $Fetch = $dbh->prepare("select Project,Description,PrivateURL,PublicURL,TimeStamp from ExternalDocDB where ExternalDocDBID=?");
@@ -173,4 +173,21 @@ sub FetchExternalDocDB ($) {
   }  
 }
 
+sub FetchExternalDocDBByName ($) {
+  my ($Name) = @_;
+  unless ($Name) {
+    return;
+  }
+
+  my $Fetch = $dbh->prepare("select ExternalDocDBID from ExternalDocDB where Project=?");
+  $Fetch -> execute($Name);
+
+  my ($ExternalDocDBID) = $Fetch -> fetchrow_array;
+  if ($ExternalDocDBID) {
+    my $ExternalDocDBID = FetchExternalDocDB($ExternalDocDBID);
+    return $ExternalDocDBID;
+  } else {
+    return;
+  }  
+}
 1;

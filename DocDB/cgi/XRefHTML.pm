@@ -43,7 +43,8 @@ sub PrintXRefInfo ($) {
       my $Version    = $DocXRefs{$DocXRefID}{Version};
       my $ExtProject = $DocXRefs{$DocXRefID}{Project};
       if ($ExtProject && $ExtProject ne $ShortProject) {
-        $DocumentLink = "External link to $ExtProject DocDB";
+        my $ExternalDocDBID = FetchExternalDocDBByName($ExtProject);
+        $DocumentLink = "External link to $ExtProject DocDB $ExternalDocDBID ";
       } else {
         if ($Version) {
           $DocumentLink =  &FullDocumentID($DocumentID,$Version).": ";
