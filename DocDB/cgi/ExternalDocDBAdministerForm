@@ -40,6 +40,7 @@ require "DBUtilities.pm";
 require "HTMLUtilities.pm";
 
 require "SecuritySQL.pm";
+require "XRefHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 
@@ -65,23 +66,23 @@ $query -> delete_all();
 @ActionStack = ();
 
 if ($Password && $Username) {
-  &CreateConnection(-user => $Username, -password => $Password);
+  CreateConnection(-user => $Username, -password => $Password);
 } else {
-  &CreateConnection(-type => "ro");
+  CreateConnection(-type => "ro");
 }
 
-&GetSecurityGroups;
+GetSecurityGroups;
 
 print $query->header;
-&DocDBHeader("Administer External DocDBs","",
+DocDBHeader("Administer External DocDBs","",
              -scripts => ["PopUps","ExternalDocDBAdminDisable"]); 
 
-unless (&CanAdminister()) {
+unless (CanAdminister()) {
   push @ErrorStack,"You are not allowed to access administrative functions.";
 }
 
 if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@ErrorStack);
+  EndPage(@ErrorStack);
 }
 
 # Do administration
@@ -123,21 +124,21 @@ if ($SubForm eq "externaldocdb") {
   }  
 } elsif ($SubForm eq "event") {
   if ($Action eq "Delete") {
-    &DeleteEvent(-eventid => $EventID, -force => $Force);
+    DeleteEvent(-eventid => $EventID, -force => $Force);
   } else {
     push @WarnStack,"Only \"Delete\" is a valid action";
   }  
 }
    
 if (@ActionStack) { 
-  &ClearConferences;
-  &ClearEventGroups;
-  &GetConferences;
-  &GetAllEventGroups;
-  &ActionReport;
+  ClearConferences();
+  ClearEventGroups();
+  GetConferences();
+  GetAllEventGroups();
+  ActionReport();
 }  
 
-&WarnPage(@WarnStack); @WarnStack = ();
+WarnPage(@WarnStack); @WarnStack = ();
 
 print "<p>This form allows you to administer which instances of DocDB your DocDB knows about.
        Begin by
@@ -165,47 +166,47 @@ print $query -> start_multipart_form('POST',"$ExternalDocDBAdministerForm",
 print "<table class=\"LowPaddedTable CenteredTable\">\n";
 print "<tr>\n";
 print "<td colspan=\"3\">\n"; 
- &AdministerActions(-form => "externaldocdb");
+ AdministerActions(-form => "externaldocdb");
  print $query -> hidden(-name => "subform",   -default => "externaldocdb");
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
 print "<td rowspan=\"5\">\n";
-# &EventGroupSelect(-disabled => true, -format => "full"); 
+ ExternalDocDBSelect(-disabled => true, -format => "full"); 
 print "</td>\n";  
 print "<td>\n"; 
- &TextField(-name => "project", -disabled => "true", -helptext => "Project", -helplink => "extdocdb");
+ TextField(-name => "project", -disabled => "true", -helptext => "Project", -helplink => "extdocdb");
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
 print "<td>\n"; 
- &TextField(-name => "desc", -disabled => "true", -helptext => "Description", -helplink => "extdocdb");
+ TextField(-name => "desc", -disabled => "true", -helptext => "Description", -helplink => "extdocdb");
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
 print "<td>\n"; 
- &TextField(-name => "puburl", -disabled => "true", -helptext => "Public URL", -helplink => "extdocdb");
+ TextField(-name => "puburl", -disabled => "true", -helptext => "Public URL", -helplink => "extdocdb");
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
 print "<td>\n"; 
- &TextField(-name => "privurl", -disabled => "true", -helptext => "Private URL", -helplink => "extdocdb");
+ TextField(-name => "privurl", -disabled => "true", -helptext => "Private URL", -helplink => "extdocdb");
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
 print "<td>\n"; 
- &AdminRegardless();
+ AdminRegardless();
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
 print "<td colspan=\"2\" class=\"SubmitCell\">\n";
- &AdministratorPassword;
+ AdministratorPassword;
  print "&nbsp;";
  print $query -> submit (-value => "Change External DocDB Info");
 print "</td>\n";
@@ -216,5 +217,5 @@ print $query -> end_multipart_form;
 
 print "<hr/>\n";
 
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
