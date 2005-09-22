@@ -39,6 +39,8 @@ require "Sorts.pm";
 require "DBUtilities.pm";
 require "HTMLUtilities.pm";
 
+require "SecuritySQL.pm";
+
 $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
