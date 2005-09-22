@@ -54,7 +54,7 @@ sub InsertXRefs (%) {
         $Version = $Part;
         $Version =~ s/v//;
         push @DebugStack,"Set version $Version";
-      } elsif (grep /^\d+$/,$Part && !$DocID) { # Only take first one as DocID
+      } elsif (int($Part) && !$DocID) { # Only take first one as DocID
         $DocID = $Part;
         push @DebugStack,"Set docid $DocID";
       } else {
