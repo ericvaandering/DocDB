@@ -1,4 +1,4 @@
-function disabler_eventgroup() {
+function disabler_externaldocdb() {
  if (document.externaldocdb.admaction[0].checked == true) {
    document.externaldocdb.externaldocdbs.disabled = true;
    document.externaldocdb.project.disabled        = false;
