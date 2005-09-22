@@ -70,7 +70,9 @@ if ($Password && $Username) {
   CreateConnection(-user => $Username, -password => $Password);
 } else {
   CreateConnection(-type => "ro");
-  push @ErrorStack,"You must supply the admin username and password to administer";
+  if ($Action) {
+    push @ErrorStack,"You must supply the admin username and password to administer";
+  }
 }
 
 GetSecurityGroups;
