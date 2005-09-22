@@ -85,7 +85,7 @@ print "</tr>\n";
 print "<tr valign=top>\n";
 
 print "<td>\n"; 
- &EmailUserSelect(-disabled => true);
+ &EmailUserSelect(-disabled => $TRUE);
 print "</td>\n";  
 
 print "<td>\n";   
@@ -101,7 +101,7 @@ if ($UserValidation eq "certificate") {
 print "</td>\n";
 print "<td rowspan=5>\n"; 
 &SecurityScroll(-helplink => 'usergroups', -helptext => 'User\'s Groups', 
-                -name     => 'usergroups', -disabled => TRUE, -multiple => TRUE); 
+                -name     => 'usergroups', -disabled => $TRUE, -multiple => $TRUE); 
 print "</td>\n";  
 print "</tr>\n";
 

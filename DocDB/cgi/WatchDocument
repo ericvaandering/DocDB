@@ -87,7 +87,7 @@ if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
 if (@WarnStack) {  # The user made one or more mistakes, warn
   &WarnPage(@WarnStack);
 }
-my $DocumentLink = &NewerDocumentLink(-docid => $DocumentID, -noversion => TRUE);
+my $DocumentLink = &NewerDocumentLink(-docid => $DocumentID, -noversion => $TRUE);
 
 print "An e-mail will be sent to $EmailUser{$EmailUserID}{Name} 
        ($EmailUser{$EmailUserID}{EmailAddress}) when $DocumentLink changes.<p/>\n";

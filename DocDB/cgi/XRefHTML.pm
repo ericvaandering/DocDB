@@ -40,7 +40,7 @@ sub PrintXRefInfo ($) {
     foreach my $DocXRefID (@DocXRefIDs) {
       my $DocumentID = $DocXRefs{$DocXRefID}{DocumentID};
       my $DocumentLink =  &FullDocumentID($DocumentID).": ";
-         $DocumentLink .= &NewerDocumentLink(-docid => $DocumentID, -titlelink => TRUE);
+         $DocumentLink .= &NewerDocumentLink(-docid => $DocumentID, -titlelink => $TRUE);
       print "<li>$DocumentLink</li>\n";
     }
     print "</ul>\n";
@@ -66,9 +66,9 @@ sub PrintXRefInfo ($) {
       my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
       if ($DocumentID && !$SeenDocument{$DocumentID}) {
         my $DocumentLink  = &FullDocumentID($DocumentID).": ";
-           $DocumentLink .= &NewerDocumentLink(-docid => $DocumentID, -titlelink => TRUE);
+           $DocumentLink .= &NewerDocumentLink(-docid => $DocumentID, -titlelink => $TRUE);
         print "<li>$DocumentLink</li>\n";
-        $SeenDocument{$DocumentID} = TRUE;
+        $SeenDocument{$DocumentID} = $TRUE;
       }
     }
     print "</ul>\n";

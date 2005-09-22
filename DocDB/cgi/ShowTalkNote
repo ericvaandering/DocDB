@@ -92,7 +92,7 @@ if ($Confirmed && $DocumentID) {
 # Start page
 
 print $query->header;
-&DocDBHeader("Notes for $BestTitle","",-nobody => TRUE);
+&DocDBHeader("Notes for $BestTitle","",-nobody => $TRUE);
 
 # Print out info
 
