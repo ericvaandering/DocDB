@@ -28,18 +28,18 @@ sub EventInstructionsSidebar {
   <h2>Contents</h2>
   <ul>
    <li><a href="#intro">Introduction</a></li>
-   <li><a href="#create">Creating an Event</a></li>
+   <li><a href="#create">Creating a New Event</a></li>
    <li><a href="#modify">Modifying an Event</a></li>
-   <li><a href="#talks">Managing Talks</a>
+   <li><a href="#talks">Managing Talks in Sessions</a>
    <ul>
     <li><a href="#basicinfo">Basic information</a></li>
     <li><a href="#order">Ordering talks</a></li>
     <li><a href="#confirm">Confirming documents</a></li>
-    <li><a href="#hints">Talk Hints</a></li>
+    <li><a href="#hints">Giving hints about talks</a></li>
    </ul></li>
    <li><a href="#matching">Matching agenda with documents</a>
    <ul>
-    <li><a href="#userentry">User selects</a></li>
+    <li><a href="#userentry">User uploads</a></li>
     <li><a href="#hinting">DocDB guesses</a></li>
     <li><a href="#reserve">Moderator reserves</a></li>
     <li><a href="#confirm2">Moderator confirms</a></li>
@@ -242,6 +242,12 @@ looking at the DocDB code. <p/>
 
 <a name="reserve"/>
 <h2>Moderator reserves initial documents</h2>
+
+By checking the "Reserve" box when creating creating or updating an agenda, 
+the moderator can create new documents with the title, authors, and topics listed. 
+Then, the author can upload document by updating this initial document. If you 
+choose to go this route, make sure your users understand that they are supposed
+to update rather than create new documents.
 
 <a name="confirm2"/>
 <h2>Moderator corrects and/or confirms</h2>

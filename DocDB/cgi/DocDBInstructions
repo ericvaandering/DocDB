@@ -72,6 +72,10 @@ if ($InstructionSet eq "general") {
   require "EventInstructions.pm";
   &EventInstructionsSidebar;
 }
+print "<hr/>\n";
+print "<h2>All Instructions</h2>\n";
+print "<p><a href=\"$DocDBInstructions?general\">General Instructions</a></p>\n";
+print "<p><a href=\"$DocDBInstructions?event\">Event Organizer and Calendar</a></p>\n";
 print "</div>\n";  # LeftColumn3Col
 
 ### Main Column
