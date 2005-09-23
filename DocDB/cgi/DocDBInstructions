@@ -82,7 +82,7 @@ if ($InstructionSet eq "general") {
   &GeneralInstructionsBody;
 } elsif ($InstructionSet eq "event") {
   require "EventInstructions.pm";
-  &EventInstructionsSidebar;
+  &EventInstructionsBody;
 }
 
 ### Right column (wrapped around by middle column)

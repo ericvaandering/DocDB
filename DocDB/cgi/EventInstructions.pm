@@ -45,7 +45,7 @@ sub EventInstructionsSidebar {
     <li><a href="#confirm2">Moderator confirms</a></li>
    </ul>
   </ul>
-TOC  
+TOC
 }
 
 sub EventInstructionsBody {
