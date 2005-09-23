@@ -40,7 +40,6 @@ sub EventInstructionsSidebar {
     <li><a href="#eventinfo">Event information</a></li>
     <li><a href="#sessions">Creating sessions</a></li>
    </ul></li> 
-   <li><a href="#modify">Modifying an Event</a></li>
    <li><a href="#talks">Managing Talks in Sessions</a>
    <ul>
     <li><a href="#basicinfo">Basic information</a></li>
@@ -48,6 +47,7 @@ sub EventInstructionsSidebar {
     <li><a href="#confirm">Confirming documents</a></li>
     <li><a href="#hints">Giving hints about talks</a></li>
    </ul></li>
+   <li><a href="#modify">Modifying an Event</a></li>
    <li><a href="#matching">Matching agenda with documents</a>
    <ul>
     <li><a href="#userentry">User uploads</a></li>
@@ -151,10 +151,8 @@ some of the inputs described are not present), and then follow the instructions
 for <a href="#talks">Managing Talks in Sessions</a>. For meetings with multiple
 sessions, follow all these instructions.</p>
 
-
-
 <a name="eventinfo">
-<h1>Entering event information</h1>
+<h2>Entering event information</h2>
 
 <p>A list of the groups of events are shown; you must select one. You must also
 provide a title, or short description,  and start and end dates for the event. 
@@ -260,6 +258,16 @@ to be given. This has two purposes. First, before documents are entered into
 the DocDB, attendees can more clearly see what the proposed agenda is.
 Secondly, this assists DocDB in finding the correct matches as described below.
 </p>
+
+<a name="modify"/>
+<h1>Modifying an Event</h1>
+
+<p>From the <a href="$ModifyHome">Create or Change</a> page, follow the link to
+modify an existing event. Then select the event you wish to modify. You will see
+the same page you used to create the event.  If you are a moderator, you will
+also see buttons to modify events or sessions when you view those events or
+sessions.</p>
+
 
 <a name="matching"/>
 <h1>How DocDB Matches Agenda Entries with Documents</h1>
