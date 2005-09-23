@@ -74,8 +74,8 @@ if ($InstructionSet eq "general") {
 }
 print "<hr/>\n";
 print "<h2>All Instructions</h2>\n";
-print "<p><a href=\"$DocDBInstructions?general\">General Instructions</a></p>\n";
-print "<p><a href=\"$DocDBInstructions?event\">Event Organizer and Calendar</a></p>\n";
+print "<p><big><a href=\"$DocDBInstructions?set=general\">General Instructions</a></big></p>\n";
+print "<p><big><a href=\"$DocDBInstructions?set=event\">Event Organizer and Calendar</a></big></p>\n";
 print "</div>\n";  # LeftColumn3Col
 
 ### Main Column
