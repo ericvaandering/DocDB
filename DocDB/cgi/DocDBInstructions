@@ -41,8 +41,19 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 %params = $query -> Vars; 
 $InstructionSet = $params{set} || "general";
 
+# Title
+
+my $PageTitle = "";
+my $HTMLTitle = "";
+if ($InstructionSet eq "general") {
+  $PageTitle = "DocDB Instructions";
+  $HTMLTitle = "$Project DocDB Instructions";
+} elsif ($InstructionSet eq "event") {
+  $PageTitle = "Event Manager";
+  $HTMLTitle = "Event Manager and Calendar Instructions";
+}
 print $query->header;
-&DocDBHeader("$Project DocDB Instructions","DocDB Instructions");
+&DocDBHeader($HTMLTitle,$PageTitle);
 
 print "<div id=\"DocDBHomeBody\">\n";
 
@@ -57,6 +68,9 @@ print "<div id=\"LeftColumn3Col\">\n";
 if ($InstructionSet eq "general") {
   require "GeneralInstructions.pm";
   &GeneralInstructionsSidebar;
+} elsif ($InstructionSet eq "event") {
+  require "EventInstructions.pm";
+  &EventInstructionsSidebar;
 }
 print "</div>\n";  # LeftColumn3Col
 
@@ -66,6 +80,9 @@ print "<div id=\"MainColumn3Col\">\n";
 if ($InstructionSet eq "general") {
   require "GeneralInstructions.pm";
   &GeneralInstructionsBody;
+} elsif ($InstructionSet eq "event") {
+  require "EventInstructions.pm";
+  &EventInstructionsSidebar;
 }
 
 ### Right column (wrapped around by middle column)
