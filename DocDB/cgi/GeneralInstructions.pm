@@ -142,7 +142,7 @@ HTML
   href="mailto:$DBWebMasterEmail">DocDB administrators</a>.</p>
 
   <p>For a more technical document on how the database works, see 
-  <a href="http://www-btev.fnal.gov/cgi-bin/DocDB/ShowDocument?docid=140">
+  <a href="http://www-btev.fnal.gov/cgi-bin/public/DocDB/ShowDocument?docid=140">
   BTeV-doc-140</a>.</p> 
 
   <a name="modtypes" />
