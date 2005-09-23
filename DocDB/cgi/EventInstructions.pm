@@ -28,6 +28,13 @@ sub EventInstructionsSidebar {
   <h2>Contents</h2>
   <ul>
    <li><a href="#intro">Introduction</a></li>
+   <li><a href="#calendar">Calendar</a>
+   <ul>
+    <li><a href="#day">Daily view</a></li>
+    <li><a href="#month">Monthly view</a></li>
+    <li><a href="#year">Yearly view</a></li>
+    <li><a href="#upcoming">Upcoming events</a></li>
+   </ul></li>
    <li><a href="#create">Creating a New Event</a></li>
    <li><a href="#modify">Modifying an Event</a></li>
    <li><a href="#talks">Managing Talks in Sessions</a>
@@ -50,6 +57,7 @@ TOC
 
 sub EventInstructionsBody {
   print <<HTML;
+<a name="intro"/>
 <h1>Introduction</h1>
 
 These instructions refer to a "moderator," but this is just any user with any
@@ -66,6 +74,58 @@ talk has a running time and each session has a starting time. This determines a
 time ordered
 agenda. Anything from an afternoon video conference to conferences with
 parallel and plenary sessions can be organized with this organizer.
+
+<a name="calendar"/>
+<h1>Using the Calendar</h1>
+
+<p>
+DocDB supplies a calendar which shows upcoming and past events. 
+The calendar also allows you easily create new events. 
+There are four <q>views</q> which the calendar supplies; the first view you
+will likely see is the month view. 
+</p>
+
+<a name="day"/>
+<h2>Daily view</h2>
+
+<p>The daily view shows a detailed list of the days events. Events without
+sessions are shown first, followed by the various sessions taking place on that
+day. Start and end times as well as locations and URLs (if any) are also shown.
+Click on the link for the event or session to see the relevant agenda. At the
+top of the page are buttons that can be used to schedule events for that day.
+You can also click on the dates at the top of the page to view the next or previous days, or to switch to the monthly or yearly views.
+</p>
+
+<a name="month"/>
+<h2>Monthly view</h2>
+
+<p>The monthly view shows an abbreviated list of the events on that day. Start
+times  for events that have them are shown. If you move your mouse over the
+event link, you will see more information. Click on the link to see the agenda.
+At the top of each date is a link to the day view for that date. Click on the
+plus sign to add a new event on this date. You can also click on the dates at
+the top of the page to view the next or previous month or click on the year to
+move to the yearly view.</p>
+
+<p>If you are viewing the current month, the table of upcoming events is also shown.</p>
+
+<a name="year"/>
+<h2>Yearly view</h2>
+
+<p>The yearly view the calendar for the whole year. The dates with links are
+days with events; click on the link to see the list of events. Click on the
+names of the months to see the monthly view for that month.   You can also click
+on the years at the top of the page to view the next or previous year.</p>
+
+<p>If you are viewing the current year, the table of upcoming events is also
+shown.</p>
+
+<a name="upcoming"/>
+<h2>Upcoming events</h2>
+
+<p>This view shows events scheduled for the next 180 days. The view is similar
+to the day view in that titles, locations, and URLs are all shown. Click on the
+links to view the agendas.</p> 
 
 <a name="create"/>
 <h1>Creating a New Event</h1>
@@ -243,25 +303,29 @@ looking at the DocDB code. <p/>
 <a name="reserve"/>
 <h2>Moderator reserves initial documents</h2>
 
+<p>
 By checking the "Reserve" box when creating creating or updating an agenda, 
 the moderator can create new documents with the title, authors, and topics listed. 
 Then, the author can upload document by updating this initial document. If you 
 choose to go this route, make sure your users understand that they are supposed
 to update rather than create new documents.
+</p>
 
 <a name="confirm2"/>
 <h2>Moderator corrects and/or confirms</h2>
 
+<p>
 Finally, a moderator can manually enter document numbers and check "Confirm" or
 just check "Confirm" to verify DocDB's choices. When managing an event, it is
 a good idea to periodically confirm unconfirmed documents for two reasons.
 First, the DocDB might find a better match which is <b>not</b> correct. Second,
 confirming documents removes them from the list of considered documents often
 allowing the DocDB to find correct matches for remaining entries in the
-agenda.<p/>
+agenda.</p>
 
+<p>
 For very small events (just a few talks) moderators may wish to not use hints
-at all and just manually enter the talks.<p/>
+at all and just manually enter the talks./<p>
 
 HTML
 }
