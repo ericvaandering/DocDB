@@ -30,20 +30,20 @@ sub EventInstructionsSidebar {
    <li><a href="#intro">Introduction</a></li>
    <li><a href="#create">Creating an Event</a></li>
    <li><a href="#modify">Modifying an Event</a></li>
-   <li><a href="#talks">Managing Talks</a></li>
+   <li><a href="#talks">Managing Talks</a>
    <ul>
     <li><a href="#basicinfo">Basic information</a></li>
     <li><a href="#order">Ordering talks</a></li>
     <li><a href="#confirm">Confirming documents</a></li>
     <li><a href="#hints">Talk Hints</a></li>
-   </ul>
-   <li><a href="#matching">Matching agenda with documents</a></li>
+   </ul></li>
+   <li><a href="#matching">Matching agenda with documents</a>
    <ul>
     <li><a href="#userentry">User selects</a></li>
     <li><a href="#hinting">DocDB guesses</a></li>
     <li><a href="#reserve">Moderator reserves</a></li>
     <li><a href="#confirm2">Moderator confirms</a></li>
-   </ul>
+   </ul></li>
   </ul>
 TOC
 }
