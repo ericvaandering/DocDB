@@ -52,7 +52,7 @@ if ($InstructionSet eq "general") {
   $PageTitle = "Event Manager";
   $HTMLTitle = "Event Manager and Calendar Instructions";
 }
-print $query->header;
+print $query->header(-charset => "utf-8");
 &DocDBHeader($HTMLTitle,$PageTitle);
 
 print "<div id=\"DocDBHomeBody\">\n";
