@@ -133,11 +133,18 @@ unless ($dbh) {
 }      
 
 print $query -> header;
-my $Title;
+my $Title       = "";
+my $ButtonTitle = "";
 if ($SingleSession && $Mode eq "new") { 
   $Title = "Create a New Event";
+  $ButtonTitle = "Create Event and Talks";
 } else {
-  $Title = "Modify a Session";
+  $Title       = "Modify a Session";
+  if ($SingleSession) {
+    $ButtonTitle = "Modify Event and Talks";
+  } else {
+    $ButtonTitle = "Modify Session and Talks";
+  }  
 }  
 &DocDBHeader($Title,"",-scripts => ["PopUps"]);
 
@@ -213,6 +220,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
                                 -title   => $Short,   -location => $Location,
                                 -description => $SessionDescription);
     &InsertMeetingOrder(-sessionid => $SessionID);
+    push @ActionStack,"Created new event: $Short";
   } elsif ($SingleSession && $Mode eq "modify") {
     &UpdateEvent(-eventid => $EventID, -eventgroupid => $EventGroupID,  
                  -location => $Location, -url => $URL, 
@@ -231,6 +239,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
     my $MeetingOrderUpdate = $dbh -> prepare(
          "update MeetingOrder set SessionOrder=1 where SessionID=?");
     $MeetingOrderUpdate -> execute($SessionID);
+    push @ActionStack,"Modified event: $Short";
   } else {
 
   # Update Session parameters, refetch
@@ -238,6 +247,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
     &UpdateSession(-sessionid => $SessionID, -date => $SessionDate, 
                    -title => $SessionTitle, -description => $SessionDescription,
                    -location => $SessionLocation);
+    push @ActionStack,"Modified session: $SessionTitle";
   }                 
   &ClearSessions;
   &FetchSessionByID($SessionID);
@@ -297,6 +307,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
            "values (0,?,?,?,?)");
           $TalkSeparatorInsert -> execute($SessionID,$TalkTime,$TalkTitle,$TalkNote);
           $TalkSeparatorID = $TalkSeparatorInsert -> {mysql_insertid}; # Works with MySQL only
+          push @ActionStack,"Added break to agenda: $TalkTitle";
 	} else {
           my $TalkInsert = $dbh -> prepare(
            "insert into SessionTalk ".
@@ -310,6 +321,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
           $NewSessionTalkMap{$TalkOrder} = $SessionTalkID;
           &InsertTopicHints($SessionTalkID,@TopicHints);
           &InsertAuthorHints($SessionTalkID,@AuthorHints);
+          push @ActionStack,"Added item to agenda: $TalkTitle";
 	}
         my $SessionOrderInsert = $dbh -> prepare(
          "insert into SessionOrder ".
@@ -345,8 +357,10 @@ if ($Mode eq "modify" || $Mode eq "create") {
       if ($TalkDeleteFlags{$SessionOrderID}) { # Delete session or separator
         if ($TalkSeparatorID) {
           &DeleteTalkSeparator($TalkSeparatorID);
+          push @ActionStack,"Deleted break from agenda";
         } elsif ($SessionTalkID) {
           &DeleteSessionTalk($SessionTalkID);
+          push @ActionStack,"Deleted item from agenda";
         }
       } elsif ($TalkTitle || $TalkNote || $TalkDocID) { # We will modify existing talks
 	++$TalksUpdated;
@@ -361,6 +375,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
             my $TalkSeparatorMove = $dbh -> prepare(
              "update TalkSeparator set SessionID=? where TalkSeparatorID=?");
             $TalkSeparatorMove -> execute($NewSessionID,$TalkSeparatorID);
+          push @ActionStack,"Modified break: $TalkTitle";
           }
         } elsif ($SessionTalkID) { # Modify a talk
           my $SessionTalkUpdate = $dbh -> prepare(
@@ -377,6 +392,9 @@ if ($Mode eq "modify" || $Mode eq "create") {
             my $SessionTalkMove = $dbh -> prepare(
              "update SessionTalk set SessionID=? where SessionTalkID=?");
             $SessionTalkMove -> execute($NewSessionID,$SessionTalkID);
+            push @ActionStack,"Moved item to another session: $TalkTitle";
+          } else {
+            push @ActionStack,"Modified agenda item: $TalkTitle";
           }
         }
 
@@ -391,7 +409,6 @@ if ($Mode eq "modify" || $Mode eq "create") {
       if ($SessionTalkID && !$TalkConfirmed && @AuthorHints) {
         require "DocumentUtilities.pm";
         require "MiscSQL.pm";
-        push @DebugStack,"Reserving document -- Title: $TalkTitle Event: $EventID";
         my $TypeID = &FetchDocTypeByName("Talk") || 1; 
         my ($NewDocumentID,$NewDocRevID) 
           = &AddDocument(-version     => "reserve",     -title       => $TalkTitle, 
@@ -586,9 +603,12 @@ if ($SingleSession) {
   print "</table>\n";
 }
 
+print "<p class=\"SubmitCell\">\n";
+print $query -> submit (-value => $ButtonTitle);
+print "</p>\n";
 &TalkEntryForm(@SessionOrderIDs);   
 print "<p class=\"SubmitCell\">\n";
-print $query -> submit (-value => "Modify Session and Talks");
+print $query -> submit (-value => $ButtonTitle);
 print "</p>\n";
 
 print "</div>\n";

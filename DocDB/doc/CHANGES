@@ -1,3 +1,17 @@
+7.1.0
+
+This release adds one major function. The "Related Documents" field now accepts 
+specific versions of documents (123-v4 always links to the 4th version instead
+of the latest) and you can also link to versions in *other* DocDB instances. To
+do this, you have to make your DocDB aware of other DocDBs with the admin
+interface and then use documents like BTeV-140-v1 (the v4 is optional, of
+course). This will create a link to the correct BTeV document.
+
+Also, there are instructions for the event organizer and the calendar available.
+
+There were also some bugs fixed along the way and some tweaks made to the event
+manager.
+
 7.0.0
 
 Version 7 introduces some new functionality and a lot of clean-ups under the

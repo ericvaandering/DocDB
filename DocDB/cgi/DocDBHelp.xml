@@ -1028,8 +1028,13 @@ or may not be the same as the web username and password.
   <text>
    Enter the document #'s of documents which are referred to by or related to
    this document. These documents will be listed in the display of this one,
-   and this document will be listed in the display of the entered documents.
-   Document numbers can be separated by spaces or commas.
+   and this document will be listed in the display of the entered documents. A
+   document # by itself will refer to all versions of that document, a document
+   ID like 123-v4 will refer only to the specified version. A document ID like
+   FOO-123-v4 will refer to version 4 of document 123 for project FOO. Consult
+   your DocDB admins  to find out what other projects' DocDBs you can link to
+   this way. <p/>
+   Document numbers can be separated by spaces or commas. 
   </text>
  </entry>
  
@@ -1060,6 +1065,17 @@ or may not be the same as the web username and password.
    of the consequeneces. Doing this may have unintend consequences or leave the
    DB in an incoherent state. For instance, deleting a MajorTopic may cause its
    sub-topics to also be deleted and leave some documents without any topics.
+  </text> 
+ </entry>
+ <entry> 
+  <key>extdocdb</key> 
+  <title>External DocDB Information</title> 
+  <text>
+   Fill in the information for any external DocDBs you want your users to be
+   able to reference in <q>Related Documents.</q> <q>Project</q> should be the short 
+   project name, the description can be a longer description. The URLs should be
+   the public and private URLs where the scripts reside. Do not include a script name. 
+   (I. e., they should be of the form: http://server.name.com/cgi-bin/DocDB/.)
   </text> 
  </entry>
 </helpfile>
