@@ -164,7 +164,7 @@ sub AuthorsTable {
   my $NPerCol   = int (scalar(@AuthorIDs)/$NCols);
   if (scalar(@AuthorIDs) % $NCols) {++$NPerCol;}
 
-  print "<table>\n";
+  print "<table class=\"CenteredTable MedPaddedTable\">\n";
   print "<tr><th colspan=\"$NCols\">\n";
   foreach my $Letter (A..Z) {
     print "<a href=\"#$Letter\">$Letter</a>\n";
@@ -181,6 +181,7 @@ sub AuthorsTable {
   foreach my $AuthorID (@AuthorIDs) {
     $FirstLetter = substr 0,1,$Authors{$AuthorID}{LastName};
     $FirstLetter =~ s/[a-z]/[A-Z]/;
+    push @DebugStack,"$Authors{$AuthorID}{LastName} F $FirstLetter P $PreviousLetter";
     if ($FirstLetter ne $PreviousLetter) { 
       $PreviousLetter = $FirstLetter;
       unless ($FirstPass) {
