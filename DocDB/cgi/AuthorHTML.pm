@@ -177,8 +177,6 @@ sub AuthorsTable {
   
   print "<tr>\n";
   
-  print "<td>\n";
-  
   my $NThisCol       = 0;
   my $PreviousLetter = "";
   my $FirstPass      = 1;
