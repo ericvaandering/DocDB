@@ -197,6 +197,7 @@ sub AuthorsTable {
       print "<td>\n";
       $StartNewColumn = 0;
       $NThisCol = 0;
+      $FirstPass = 1;
     }
       
     ++$NThisCol;
@@ -205,6 +206,7 @@ sub AuthorsTable {
       $PreviousLetter = $FirstLetter;
       unless ($FirstPass) {
         push @DebugStack,"Close $Authors{$AuthorID}{LastName} F $FirstLetter P $PreviousLetter";
+        print "</ul>\n";
       }  
       $FirstPass = 0;
       if ($UseAnchors) {
