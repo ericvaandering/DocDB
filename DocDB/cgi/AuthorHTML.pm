@@ -181,14 +181,14 @@ sub AuthorsTable {
   foreach my $AuthorID (@AuthorIDs) {
     $FirstLetter = substr $Authors{$AuthorID}{LastName},0,1;
     $FirstLetter =~ s/[a-z]/[A-Z]/;
-    push @DebugStack,"$Authors{$AuthorID}{LastName} F $FirstLetter P $PreviousLetter";
     if ($FirstLetter ne $PreviousLetter) { 
       $PreviousLetter = $FirstLetter;
       unless ($FirstPass) {
+        push @DebugStack,"Close $Authors{$AuthorID}{LastName} F $FirstLetter P $PreviousLetter";
         print "</ul>\n";
         $FirstPass = 0;
       }  
-      print "<a name=\"$FirstLetter\">$FirstLetter</a>\n";
+      print "<a name=\"$FirstLetter\" />\n";
       print "<b>$FirstLetter</b>\n";
       print "<ul>\n";
     }  
