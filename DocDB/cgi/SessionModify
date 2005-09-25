@@ -122,9 +122,6 @@ foreach my $TalkReserve (@TalkReserves) {
 }  
 
 ### Start of HTML
-  
-@ErrorStack = ();
-@WarnStack  = ();
 
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
@@ -146,9 +143,9 @@ if ($SingleSession && $Mode eq "new") {
     $ButtonTitle = "Modify Session and Talks";
   }  
 }  
-&DocDBHeader($Title,"",-scripts => ["PopUps"]);
+DocDBHeader($Title,"",-scripts => ["PopUps"]);
 
-&EndPage(@ErrorStack);
+EndPage();
 
 ### Check parameters
 
@@ -187,7 +184,7 @@ if ($SessionID) {
   push @ErrorStack,"You must specify a session or event to modify. You probably arrived
   here by error.";
 }  
-&EndPage(@ErrorStack);
+EndPage();
 
 if ($SingleSession && $EventID) { # Grab single session ID in single session mode
   ($SessionID) = &FetchSessionsByConferenceID($EventID);

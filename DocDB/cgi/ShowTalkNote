@@ -49,15 +49,12 @@ $query = new CGI;
 
 my $SessionTalkID = $params{sessiontalkid};   # Extract term user wants help for
 
-@ErrorStack = ();
-@WarnStack  = ();
-
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 unless ($dbh) {
   push @ErrorStack,$Msg_NoConnect;
 }         
-&EndPage(@ErrorStack);
+EndPage();
 
 # Collect info
 
@@ -74,7 +71,7 @@ my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
 unless (&CanAccessMeeting($ConferenceID)) {
   push @ErrorStack,$Msg_MeetNoAccess;
 }
-&EndPage(@ErrorStack);
+EndPage();
 
 my $DocRevID;
 if ($DocumentID) {

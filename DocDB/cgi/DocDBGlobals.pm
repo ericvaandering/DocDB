@@ -72,6 +72,13 @@ $TmpDir = "/tmp/";
                "May",      "June",    "July",    "August",
                "September","October", "November","December");
 
+# Reports 
+
+@WarnStack   = ();
+@ErrorStack  = ();
+@DebugStack  = ();
+@ActionStack = ();
+
 # Other Globals
 
 $RemoteUsername       = $ENV{REMOTE_USER};

@@ -53,12 +53,6 @@ print $query->header;
 &DocDBHeader("$Project Document Database Search","Document Database Search",
              -search => $TRUE, -scripts => ["PopUps","TopicChooser","EventChooser"]);
 
-@ErrorStack = ();
-
-if ((@ErrorStack)) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@ErrorStack);
-}
-
 print $query -> start_multipart_form('POST',$Search,"name=\"queryform\"");
 
 

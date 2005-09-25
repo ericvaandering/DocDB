@@ -44,13 +44,11 @@ my $topic_insert = $dbh->prepare(
           "(MinorTopicID, MajorTopicID, ShortDescription, LongDescription) ". 
    "values (0,            ?,            ?,                ?)");
 
-@ErrorStack = ();
-
 $MajorTopicID     = $params{majortopic};
 $ShortDescription = $params{short};
 $LongDescription  = $params{long};
 
-&EndPage(@ErrorStack);
+EndPage();
 
 $topic_insert -> execute($MajorTopicID,$ShortDescription,$LongDescription);
 my $MinorTopicID = $topic_insert -> {mysql_insertid}; # Works with MySQL only

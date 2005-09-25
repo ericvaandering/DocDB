@@ -58,9 +58,7 @@ $FirstName = $params{first};
 $MiddleInitials  = $params{middle};
 $LastName = $params{lastname};
   
-if (@ErrorStack) {
-  &EndPage(@ErrorStack);
-}
+EndPage(@ErrorStack);
 
 my $AuthorInsert = $dbh->prepare(
    "insert into Author ".

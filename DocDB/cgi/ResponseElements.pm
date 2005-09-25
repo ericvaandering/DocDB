@@ -38,9 +38,8 @@ sub PrintTitle {
   }
 }
 
-sub WarnPage { # Non-fatal errors
-  my @errors = @_;
-  if (@errors) {
+sub WarnPage () { # Non-fatal errors
+  if (@WarnStack) {
     print "<dl class=\"warning\">\n";
     if ($#errors) {
       print "<dt class=\"Warning\">There were non-fatal errors processing your
@@ -49,11 +48,13 @@ sub WarnPage { # Non-fatal errors
       print "<dt class=\"Warning\">There was a non-fatal error processing your
              request: </dt>\n";
     } 
-    foreach $message (@errors) {
+    foreach $message (@WarnStack) {
       print "<dd>$message</dd>\n";
     }
     print "</dl>\n"; 
   }   
+  @WarnStack = ();
+  return;
 }
 
 sub DebugPage (;$) { # Debugging output
@@ -73,18 +74,17 @@ sub DebugPage (;$) { # Debugging output
 }
 
 sub EndPage {  # Fatal errors, aborts page if present
-  my @Errors = @_;
-  if (@Errors) { 
-    &ErrorPage(@Errors);
-    &DocDBNavBar();
-    &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+  WarnPage();
+  if (@ErrorStack) { 
+    ErrorPage();
+    DocDBNavBar();
+    DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
     exit;
   }  
 }
 
 sub ErrorPage { # Fatal errors, continues page
-  my @errors = @_;
-  if (@errors) {
+  if (@ErrorStack) {
     print "<dl class=\"error\">\n";
     if ($#errors) {
       print "<dt class=\"Error\">There were fatal errors processing your
@@ -93,12 +93,14 @@ sub ErrorPage { # Fatal errors, continues page
       print "<dt class=\"Error\">There was a fatal error processing your
              request:</dt>\n";
     } 
-    foreach $message (@errors) {
+    foreach $message (@ErrorStack) {
       print "<dd>$message</dd>\n";
     }  
     print "</dl>\n";
     print "<p/>\n";
   }  
+  @ErrorStack = ();
+  return;
 }
 
 sub ActionReport { 
@@ -109,8 +111,9 @@ sub ActionReport {
       print "<dd>$Message</dd>\n";
     }  
     print "</dl>\n";
-    @ActionStack = ();
   }  
+  @ActionStack = ();
+  return;
 }
 
 sub FullDocumentID ($;$) {

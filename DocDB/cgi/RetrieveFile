@@ -40,9 +40,6 @@ $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
 
-@ErrorStack = ();
-@WarnStack  = ();
-
 my $DocumentID = $params{docid};
    $DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
    $DocumentID =~ s/\s+$//;
@@ -67,8 +64,8 @@ if (defined $Version && defined $AsOf) {
 
 if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
   print $query -> header;
-  &DocDBHeader("File Retrieve Results"); 
-  &EndPage(@ErrorStack);
+  DocDBHeader("File Retrieve Results"); 
+  EndPage();
 }
 
 my $DocRevID;
@@ -104,7 +101,7 @@ unless ($DocRevID) {
 if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
   print $query -> header;
   &DocDBHeader("File Retrieve Results"); 
-  &EndPage(@ErrorStack);
+  EndPage();
 }
 
 if ($FileName) {
@@ -159,18 +156,11 @@ if ($FullFile && ($UserValidation eq "certificate" || $Preferences{Options}{Alwa
   print $query -> redirect(-location => $FullURL, -method => 'GET');
 } else {
   print $query -> header;
-  &DocDBHeader("File Retrieve Results"); 
+  DocDBHeader("File Retrieve Results"); 
+  EndPage(@ErrorStack);
 
-  if (@WarnStack) {
-    &WarnPage(@WarnStack);
-    @WarnStack = ();
-  }
-  if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
-    &EndPage(@ErrorStack);
-  }
+  PrintRevisionInfo($DocRevID);
 
-  &PrintRevisionInfo($DocRevID);
-
-  &DocDBNavBar;
-  &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+  DocDBNavBar;
+  DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 }

@@ -115,9 +115,6 @@ unless ($Mode eq "date" or $Mode eq "meeting" or $Mode eq "conference") {
 
 ### Check parameters for errors
 
-@ErrorStack = ();
-@WarnStack  = ();
-
 my @DocumentIDs = ();
 my @RevisionDocumentIDs = ();
 my @TopicDocumentIDs = ();
@@ -132,9 +129,7 @@ unless ($OuterLogic eq "AND" || $OuterLogic eq "OR") {
   push @ErrorStack,"Outer logic must be either AND or OR.";
 }   
 
-if ((@ErrorStack)) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@ErrorStack);
-}
+EndPage();
 
 print "<p>\n";
 

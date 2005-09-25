@@ -115,9 +115,7 @@ if ($mode eq "update" || $mode eq "add") {
   }
 }
 
-if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@ErrorStack);
-}
+EndPage(@ErrorStack);
 
 # Set required/optional information
 
@@ -264,6 +262,11 @@ print $query -> hidden(-name => 'upload',    -default => 'file');
 print $query -> hidden(-name => 'archive',   -default => 'single');
 print $query -> hidden(-name => 'docid',     -default => $DocumentID);
 print $query -> hidden(-name => 'oldversion',-default => $Version);
+
+# Generate unique ID to disallow multiple posting
+srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
+my $UniqueID = time.(int rand (2**31-1));
+print $query -> hidden(-name => 'uniqueid',  -default => $UniqueID);
 
 if ($mode eq "updatedb") { 
   if (defined $params{version}) {

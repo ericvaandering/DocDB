@@ -116,10 +116,6 @@ unless ($Long) {
   $Long = $Short;
 }  
 
-@ErrorStack  = ();
-@WarnStack   = ();
-@ActionStack = ();
-
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
 unless ($dbh) {
@@ -206,7 +202,7 @@ foreach my $CheckTitle (@CheckTitles) { # Check session times
   }
 }  
 
-&EndPage(@ErrorStack);
+EndPage();
 
 my $SessionsModified = 0;
 
@@ -369,8 +365,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
   }
 }
 
-&WarnPage(@WarnStack);
-&EndPage(@ErrorStack);
+EndPage();
 
 # Print out diagnostics
 

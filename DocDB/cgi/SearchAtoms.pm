@@ -182,24 +182,23 @@ sub AuthorSearch {
 }
 
 sub TypeSearch {
-  my $document_list;
   my ($Logic,@TypeIDs) = @_;
-  $document_list = $dbh -> prepare("select UNIQUE(DocumentID) from DocumentRevision where DocTypeID=?"); 
+  my $List = $dbh -> prepare("select UNIQUE(DocumentID) from DocumentRevision where DocTypeID=?"); 
     
   my %Documents = ();
   my @Documents = ();
   my $DocumentID;
   
   foreach my $TypeID (@TypeIDs) {
-    $document_list -> execute($TypeID);
-    $document_list -> bind_columns(undef, \($DocumentID));
-    while ($document_list -> fetch) {
+    $List -> execute($TypeID);
+    $List -> bind_columns(undef, \($DocumentID));
+    while ($List -> fetch) {
       ++$Documents{$DocumentID};
     }
   }
   if ($Logic eq "AND") {
     foreach $DocumentID (keys %Documents) {
-      if ($Documents{$DocumentID} == $#TypeIDs+1) { # Require a match for each type
+      if ($Documents{$DocumentID} == scalar(@TypeIDs)) { # Require a match for each type
         push @Documents,$DocumentID;
       }
     }

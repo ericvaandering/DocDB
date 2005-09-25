@@ -159,19 +159,38 @@ sub AuthorsByInstitution {
 sub AuthorsTable {
   require "Sorts.pm";
 
-  my @AuthorIDs = sort byLastName    keys %Authors;
+  my @AuthorIDs = sort byLastName keys %Authors;
   my $NCols     = 4;
-  my $NPerCol   = int (scalar(@AuthorIDs)/$NCols + 1);
-  my $NThisCol  = 0;
+  my $NPerCol   = int (scalar(@AuthorIDs)/$NCols);
+  if (scalar(@AuthorIDs) % $NCols) {++$NPerCol;}
 
   print "<table>\n";
+  print "<tr><th colspan=\"$NCols\">\n";
+  foreach my $Letter (A..Z) {
+    print "<a href=\"#$Letter\">$Letter</a>\n";
+  }
+  print "</th></tr>\n";
+  
   print "<tr>\n";
   
   print "<td>\n";
-  print "<ul>\n";
   
+  my $NThisCol       = 0;
+  my $PreviousLetter = "";
+  my $FirstPass      = 1;
   foreach my $AuthorID (@AuthorIDs) {
-
+    $FirstLetter = substr 0,1,$Authors{$AuthorID}{LastName};
+    $FirstLetter =~ s/[a-z]/[A-Z]/;
+    if ($FirstLetter ne $PreviousLetter) { 
+      $PreviousLetter = $FirstLetter;
+      unless ($FirstPass) {
+        print "</ul>\n";
+        $FirstPass = 0;
+      }  
+      print "<a name=\"$FirstLetter\">$FirstLetter</a>\n";
+      print "<b>$FirstLetter</b>\n";
+      print "<ul>\n";
+    }  
     if ($NThisCol >= $NPerCol) {
       print "</ul></td>\n";
       print "<td>\n";
@@ -179,7 +198,7 @@ sub AuthorsTable {
       $NThisCol = 0;
     }
     ++$NThisCol;
-    my $author_link = &AuthorLink($AuthorID, -format => "formal");
+    my $author_link = AuthorLink($AuthorID, -format => "formal");
     print "<li>$author_link</li>\n";
   }  
   print "</ul></td></tr>";

@@ -70,12 +70,7 @@ if ($Mode eq "reserve") {
 
 ### Pull info out of params into local variables
 ### FIXME: Get all the params here, too confusing later on to be using $param
-
-@ErrorStack = ();
-@WarnStack  = ();
-@DebugStack = ();
-
-# FIXME: Any reason all of these can't be "my"?
+### FIXME: Any reason all of these can't be "my"?
 
 my $Archive       = $params{archive};
 my $DocTypeID     = $params{doctype};
@@ -99,6 +94,7 @@ my $RevisionNote  = $params{revisionnote};
 my $SignoffList   = $params{signofflist};
 my $OldVersion    = $params{oldversion};
 my $MaxFiles      = $params{maxfiles};
+my $UniqueID      = $params{uniqueid};
 my @XRefs         = split /,*\s+/,$params{xrefs}; # Can be comma or space separated
 my @EventIDs      = $query -> param('events');
 
@@ -160,14 +156,14 @@ if ($Overdate && $Overyear && $Overmonth && $Overday) {
   $SQL_NOW = "$year-$mon-$day $hour:$min:$sec";
 }  
 
-&DebugPage("After Parameter Collection");
+DebugPage("After Parameter Collection");
 
 if ($mode ne "add"    && $mode ne "reserve" && 
     $mode ne "update" && $mode ne "updatedb") {
-  &EndPage("<p><h3>You accessed this page without 
-            specifying a required parameter. 
-            Don't manipulate hidden fields or 
-            try to access this page directly. Mode is $mode.</h3>\n"); 
+  push @ErrorStack,"You accessed this page without  specifying a required
+        parameter.  Don't manipulate hidden fields or  try to access this page
+        directly. Mode is $mode.";
+  EndPage(); 
 }  
 
 if      ($mode eq "add") {
@@ -276,9 +272,17 @@ if ($EnhancedSecurity) {
   }                    
 }
 
-&DebugPage("After Checks");
-&WarnPage(@WarnStack); @WarnStack = ();
-&EndPage(@ErrorStack);
+my $UniqueSelect = $dbh -> prepare("select DocumentID from Document where DocHash=?"); 
+$UniqueSelect -> execute($UniqueID);
+my ($ExistingDocID) = $UniqueSelect -> fetchrow_array;
+if ($ExistingDocID) {
+  push @ErrorStack,"You seem to have attempted to upload a duplicate of document $ExistingDocID.
+                    If this is not correct, please reload the previous page or visit 
+                    <a href=\"$DocumentAddForm\">try again</a>.";
+}  
+
+DebugPage("After Checks");
+EndPage();
 
 ### Make entry in DocumentDatabase or get document ID
 ### FIXME: Should be able to move all this into an enhanced AddDocument

@@ -42,9 +42,6 @@ $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
 
-@ErrorStack = ();
-@WarnStack  = ();
-
 my $Type       = $params{type} ;
 my $DocumentID = $params{docid};
 
@@ -121,18 +118,13 @@ unless (@ErrorStack) {
 }
   
 if (@ErrorStack || @WarnStack) { # There was a problem. Warn the user.
-  print $query->header;
-  &DocDBHeader("File Retrieve Results"); 
-  if (@WarnStack) {
-    &WarnPage(@WarnStack);
-    @WarnStack = ();
-  }
-  if (@ErrorStack) {  
-    &EndPage(@ErrorStack);
-  }
-  &DocDBNavBar;
-  &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+  print $query -> header();
+  DocDBHeader("File Retrieve Results"); 
+  EndPage(@ErrorStack);
+  
+  DocDBNavBar();
+  DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 } else {
-  &StreamFile(-file => $TmpFile);
+  StreamFile(-file => $TmpFile);
 }
 
