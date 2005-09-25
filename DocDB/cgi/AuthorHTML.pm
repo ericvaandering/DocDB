@@ -167,7 +167,7 @@ sub AuthorsTable {
   if (scalar(@AuthorIDs) % $NCols) {++$NPerCol;}
 
   print "<table class=\"CenteredTable MedPaddedTable\">\n";
-  if ((scalar(@AuthorIDs) >= $MinForAnchors) {
+  if (scalar(@AuthorIDs) >= $MinForAnchors) {
     print "<tr><th colspan=\"$NCols\">\n";
     foreach my $Letter (A..Z) {
       print "<a href=\"#$Letter\">$Letter</a>\n";
