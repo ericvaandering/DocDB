@@ -186,8 +186,8 @@ sub AuthorsTable {
       unless ($FirstPass) {
         push @DebugStack,"Close $Authors{$AuthorID}{LastName} F $FirstLetter P $PreviousLetter";
         print "</ul>\n";
-        $FirstPass = 0;
       }  
+      $FirstPass = 0;
       print "<a name=\"$FirstLetter\" />\n";
       print "<b>$FirstLetter</b>\n";
       print "<ul>\n";
