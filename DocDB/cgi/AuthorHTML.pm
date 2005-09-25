@@ -202,20 +202,22 @@ sub AuthorsTable {
       
     ++$NThisCol;
     
-    if ($FirstLetter ne $PreviousLetter && $UseAnchors) { 
+    if ($FirstLetter ne $PreviousLetter) { 
+      $PreviousLetter = $FirstLetter;
       unless ($FirstPass) {
         push @DebugStack,"Close $Authors{$AuthorID}{LastName} F $FirstLetter P $PreviousLetter";
         print "</ul>\n";
       }  
       $FirstPass = 0;
-      print "<a name=\"$FirstLetter\" />\n";
-      print "<b>$FirstLetter</b>\n";
+      if ($UseAnchors) {
+        print "<a name=\"$FirstLetter\" />\n";
+        print "<b>$FirstLetter</b>\n";
+      }
       print "<ul>\n";
     }  
     my $author_link = AuthorLink($AuthorID, -format => "formal");
     print "<li>$author_link</li>\n";
     $CloseLastColumn = 1;
-    $PreviousLetter = $FirstLetter;
   }  
   print "</ul></td></tr>";
   print "</table>\n";
