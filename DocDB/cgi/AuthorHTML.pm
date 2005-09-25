@@ -159,17 +159,21 @@ sub AuthorsByInstitution {
 sub AuthorsTable {
   require "Sorts.pm";
 
-  my @AuthorIDs = sort byLastName keys %Authors;
-  my $NCols     = 4;
-  my $NPerCol   = int (scalar(@AuthorIDs)/$NCols);
+  my @AuthorIDs     = sort byLastName keys %Authors;
+  my $NCols         = 4;
+  my $NPerCol       = int (scalar(@AuthorIDs)/$NCols);
+  my $MinForAnchors = 40;
+  
   if (scalar(@AuthorIDs) % $NCols) {++$NPerCol;}
 
   print "<table class=\"CenteredTable MedPaddedTable\">\n";
-  print "<tr><th colspan=\"$NCols\">\n";
-  foreach my $Letter (A..Z) {
-    print "<a href=\"#$Letter\">$Letter</a>\n";
+  if ((scalar(@AuthorIDs) >= $MinForAnchors) {
+    print "<tr><th colspan=\"$NCols\">\n";
+    foreach my $Letter (A..Z) {
+      print "<a href=\"#$Letter\">$Letter</a>\n";
+    }
+    print "</th></tr>\n";
   }
-  print "</th></tr>\n";
   
   print "<tr>\n";
   
@@ -178,15 +182,24 @@ sub AuthorsTable {
   my $NThisCol       = 0;
   my $PreviousLetter = "";
   my $FirstPass      = 1;
+  my $StartNewColumn  = 1;
+  my $CloseLastColumn = 0;
   foreach my $AuthorID (@AuthorIDs) {
     $FirstLetter = substr $Authors{$AuthorID}{LastName},0,1;
     $FirstLetter =~ s/[a-z]/[A-Z]/;
-    if ($NThisCol >= $NPerCol) {
-      print "</ul></td>\n";
+    if ($NThisCol >= $NPerCol && $FirstLetter ne $PreviousLetter) {
+      $StartNewColumn = 1;
+    }
+    
+    if ($StartNewColumn) {
+      if ($CloseLastColumn) {
+        print "</ul></td>\n";
+      }
       print "<td>\n";
       print "<ul>\n";
       $NThisCol = 0;
     }
+      
     ++$NThisCol;
     
     if ($FirstLetter ne $PreviousLetter) { 
