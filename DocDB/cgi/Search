@@ -32,17 +32,20 @@ use DBI;
 $StartTime = new Benchmark;
 
 require "DocDBGlobals.pm";
-require "TopicSQL.pm";
-require "SecuritySQL.pm";
-require "DocumentSQL.pm";
-require "RevisionSQL.pm";
-require "MiscSQL.pm";
-
 require "FSUtilities.pm";
 require "WebUtilities.pm";
 require "HTMLUtilities.pm";
+require "ResponseElements.pm";
 require "Security.pm";
+
 require "SearchAtoms.pm";
+
+require "DocumentSQL.pm";
+require "MiscSQL.pm";
+require "RevisionSQL.pm";
+require "SecuritySQL.pm";
+require "TopicSQL.pm";
+
 require "DocumentHTML.pm";
 
 $query = new CGI;  # Global for subroutines
