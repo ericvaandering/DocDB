@@ -162,11 +162,11 @@ sub AuthorsTable {
   my @AuthorIDs     = sort byLastName keys %Authors;
   my $NCols         = 4;
   my $NPerCol       = int (scalar(@AuthorIDs)/$NCols);
-  my $UseAnchors = (scalar(@AuthorIDs) >= 4);
+  my $UseAnchors = (scalar(@AuthorIDs) >= 40);
 
   if (scalar(@AuthorIDs) % $NCols) {++$NPerCol;}
 
-  print "<table border=1 class=\"CenteredTable MedPaddedTable\">\n";
+  print "<table class=\"CenteredTable MedPaddedTable\">\n";
   if ($UseAnchors ) {
     print "<tr><th colspan=\"$NCols\">\n";
     foreach my $Letter (A..Z) {
@@ -179,7 +179,7 @@ sub AuthorsTable {
   
   my $NThisCol       = 0;
   my $PreviousLetter = "";
-  my $FirstPass      = 1;
+  my $FirstPass       = 1; # First sub-list of column
   my $StartNewColumn  = 1;
   my $CloseLastColumn = 0;
   foreach my $AuthorID (@AuthorIDs) {
@@ -205,7 +205,6 @@ sub AuthorsTable {
     if ($FirstLetter ne $PreviousLetter) { 
       $PreviousLetter = $FirstLetter;
       unless ($FirstPass) {
-        push @DebugStack,"Close $Authors{$AuthorID}{LastName} F $FirstLetter P $PreviousLetter";
         print "</ul>\n";
       }  
       $FirstPass = 0;
