@@ -179,7 +179,7 @@ sub AuthorsTable {
   my $PreviousLetter = "";
   my $FirstPass      = 1;
   foreach my $AuthorID (@AuthorIDs) {
-    $FirstLetter = substr 0,1,$Authors{$AuthorID}{LastName};
+    $FirstLetter = substr $Authors{$AuthorID}{LastName},0,1;
     $FirstLetter =~ s/[a-z]/[A-Z]/;
     push @DebugStack,"$Authors{$AuthorID}{LastName} F $FirstLetter P $PreviousLetter";
     if ($FirstLetter ne $PreviousLetter) { 
