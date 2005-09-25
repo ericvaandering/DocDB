@@ -289,7 +289,7 @@ EndPage();
 
 my $documentID;
 if ($mode eq "reserve" || $mode eq "add") {
-  $documentID = &InsertDocument(-requesterid => $RequesterID, -datetime => $SQL_NOW);
+  $documentID = &InsertDocument(-requesterid => $RequesterID, -datetime => $SQL_NOW, -dochash => $UniqueID);
 } else {
   $documentID = $params{docid};
 }  

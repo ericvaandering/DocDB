@@ -83,7 +83,7 @@ sub InsertDocument (%) {
   my %Params = @_;
 
   my $DocumentID    = $Params{-docid}         || 0;
-#  my $TypeID        = $Params{-typeid}        || 0;
+  my $DocHash       = $Params{-dochash}       || "";
   my $RequesterID   = $Params{-requesterid}   || 0;
   my $DateTime      = $Params{-datetime};
 
@@ -94,9 +94,9 @@ sub InsertDocument (%) {
     $DateTime = "$Year-$Mon-$Day $Hour:$Min:$Sec";
   } 
 
-  my $Insert = $dbh -> prepare( "insert into Document (DocumentID, RequesterID, RequestDate) values (?,?,?)");
+  my $Insert = $dbh -> prepare( "insert into Document (DocumentID, RequesterID, RequestDate, DocHash) values (?,?,?,?)");
   
-  $Insert -> execute($DocumentID,$RequesterID,$DateTime);
+  $Insert -> execute($DocumentID,$RequesterID,$DateTime,$DocHash);
   $DocumentID = $Insert -> {mysql_insertid}; # Works with MySQL only
   
   return $DocumentID;        
