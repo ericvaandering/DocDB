@@ -162,12 +162,12 @@ sub AuthorsTable {
   my @AuthorIDs     = sort byLastName keys %Authors;
   my $NCols         = 4;
   my $NPerCol       = int (scalar(@AuthorIDs)/$NCols);
-  my $MinForAnchors = 40;
-  
+  my $UseAnchors = (scalar(@AuthorIDs) >= 4);
+
   if (scalar(@AuthorIDs) % $NCols) {++$NPerCol;}
 
   print "<table class=\"CenteredTable MedPaddedTable\">\n";
-  if (scalar(@AuthorIDs) >= $MinForAnchors) {
+  if ($UseAnchors ) {
     print "<tr><th colspan=\"$NCols\">\n";
     foreach my $Letter (A..Z) {
       print "<a href=\"#$Letter\">$Letter</a>\n";
@@ -197,6 +197,7 @@ sub AuthorsTable {
       }
       print "<td>\n";
       print "<ul>\n";
+      $StartNewColumn = 0;
       $NThisCol = 0;
     }
       
