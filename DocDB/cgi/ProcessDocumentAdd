@@ -156,15 +156,13 @@ if ($Overdate && $Overyear && $Overmonth && $Overday) {
   $SQL_NOW = "$year-$mon-$day $hour:$min:$sec";
 }  
 
-DebugPage("After Parameter Collection");
-
 if ($mode ne "add"    && $mode ne "reserve" && 
     $mode ne "update" && $mode ne "updatedb") {
   push @ErrorStack,"You accessed this page without  specifying a required
         parameter.  Don't manipulate hidden fields or  try to access this page
         directly. Mode is $mode.";
-  EndPage(); 
 }  
+EndPage(); 
 
 if      ($mode eq "add") {
   print "<p><h3>Here are the results of your attempt to add a document
@@ -276,14 +274,14 @@ my $UniqueSelect = $dbh -> prepare("select DocumentID from Document where DocHas
 $UniqueSelect -> execute($UniqueID);
 my ($ExistingDocID) = $UniqueSelect -> fetchrow_array;
 if ($ExistingDocID) {
-  push @ErrorStack,"You seem to have attempted to upload a duplicate of document $ExistingDocID.
-                    If this is not correct, please reload the previous page or
-                    <a href=\"$DocumentAddForm\">try again</a>. If you were really trying to enter two similar documents
-                    hitting the \"Back\" button and then \"Reload\" may save the parameters you entered
-                    but create a new unique key for DocDB.";
+  push @ErrorStack,"You seem to be attempting to upload a duplicate of
+        document $ExistingDocID. If this is not correct, please reload the
+        previous page or <a href=\"$DocumentAddForm\">try again</a>. If you
+        were really trying to enter two similar documents hitting the \"Back\"
+        button and  then \"Reload\" and \"Submit\" may save the parameters you
+        entered but create a new unique key for DocDB.";
 }  
 
-DebugPage("After Checks");
 EndPage();
 
 ### Make entry in DocumentDatabase or get document ID
@@ -411,8 +409,7 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
 
 ### If we had any warnings print them out now
 
-&DebugPage("Inserts done");
-&WarnPage(@WarnStack); @WarnStack = ();
+WarnPage();
   
 if ($mode = "updatedb") { # Local DB not in sync, clear it
   %DocRevIDs    = ();
