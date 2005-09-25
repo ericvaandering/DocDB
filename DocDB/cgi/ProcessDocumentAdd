@@ -277,8 +277,10 @@ $UniqueSelect -> execute($UniqueID);
 my ($ExistingDocID) = $UniqueSelect -> fetchrow_array;
 if ($ExistingDocID) {
   push @ErrorStack,"You seem to have attempted to upload a duplicate of document $ExistingDocID.
-                    If this is not correct, please reload the previous page or visit 
-                    <a href=\"$DocumentAddForm\">try again</a>.";
+                    If this is not correct, please reload the previous page or
+                    <a href=\"$DocumentAddForm\">try again</a>. If you were really trying to enter two similar documents
+                    hitting the \"Back\" button and then \"Reload\" may save the parameters you entered
+                    but create a new unique key for DocDB.";
 }  
 
 DebugPage("After Checks");
