@@ -181,6 +181,14 @@ sub AuthorsTable {
   foreach my $AuthorID (@AuthorIDs) {
     $FirstLetter = substr $Authors{$AuthorID}{LastName},0,1;
     $FirstLetter =~ s/[a-z]/[A-Z]/;
+    if ($NThisCol >= $NPerCol) {
+      print "</ul></td>\n";
+      print "<td>\n";
+      print "<ul>\n";
+      $NThisCol = 0;
+    }
+    ++$NThisCol;
+    
     if ($FirstLetter ne $PreviousLetter) { 
       $PreviousLetter = $FirstLetter;
       unless ($FirstPass) {
@@ -192,13 +200,6 @@ sub AuthorsTable {
       print "<b>$FirstLetter</b>\n";
       print "<ul>\n";
     }  
-    if ($NThisCol >= $NPerCol) {
-      print "</ul></td>\n";
-      print "<td>\n";
-      print "<ul>\n";
-      $NThisCol = 0;
-    }
-    ++$NThisCol;
     my $author_link = AuthorLink($AuthorID, -format => "formal");
     print "<li>$author_link</li>\n";
   }  
