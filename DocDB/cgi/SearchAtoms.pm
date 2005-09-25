@@ -183,7 +183,7 @@ sub AuthorSearch {
 
 sub TypeSearch {
   my ($Logic,@TypeIDs) = @_;
-  my $List = $dbh -> prepare("select UNIQUE(DocumentID) from DocumentRevision where DocTypeID=?"); 
+  my $List = $dbh -> prepare("select DISTINCT(DocumentID) from DocumentRevision where DocTypeID=?"); 
     
   my %Documents = ();
   my @Documents = ();
