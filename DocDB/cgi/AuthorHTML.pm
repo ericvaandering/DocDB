@@ -202,7 +202,7 @@ sub AuthorsTable {
       
     ++$NThisCol;
     
-    if ($FirstLetter ne $PreviousLetter && $UserAnchors) { 
+    if ($FirstLetter ne $PreviousLetter && $UseAnchors) { 
       $PreviousLetter = $FirstLetter;
       unless ($FirstPass) {
         push @DebugStack,"Close $Authors{$AuthorID}{LastName} F $FirstLetter P $PreviousLetter";
