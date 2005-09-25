@@ -186,7 +186,7 @@ sub AuthorsTable {
     $FirstLetter = substr $Authors{$AuthorID}{LastName},0,1;
     $FirstLetter =~ s/[a-z]/[A-Z]/;
     if (($NThisCol >= $NPerCol && $FirstLetter ne $PreviousLetter && $UseAnchors) ||
-        ($NThisCol >= $NPerCol)) {
+        ($NThisCol >= $NPerCol && !$UseAnchor)) {
       $StartNewColumn = 1;
     }
     
