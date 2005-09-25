@@ -166,7 +166,7 @@ sub AuthorsTable {
 
   if (scalar(@AuthorIDs) % $NCols) {++$NPerCol;}
 
-  print "<table class=\"CenteredTable MedPaddedTable\">\n";
+  print "<table border=1 class=\"CenteredTable MedPaddedTable\">\n";
   if ($UseAnchors ) {
     print "<tr><th colspan=\"$NCols\">\n";
     foreach my $Letter (A..Z) {
@@ -187,7 +187,8 @@ sub AuthorsTable {
   foreach my $AuthorID (@AuthorIDs) {
     $FirstLetter = substr $Authors{$AuthorID}{LastName},0,1;
     $FirstLetter =~ s/[a-z]/[A-Z]/;
-    if ($NThisCol >= $NPerCol && $FirstLetter ne $PreviousLetter) {
+    if (($NThisCol >= $NPerCol && $FirstLetter ne $PreviousLetter && $UseAnchors) ||
+        ($NThisCol >= $NPerCol)) {
       $StartNewColumn = 1;
     }
     
@@ -203,7 +204,7 @@ sub AuthorsTable {
       
     ++$NThisCol;
     
-    if ($FirstLetter ne $PreviousLetter) { 
+    if ($FirstLetter ne $PreviousLetter && $UserAnchors) { 
       $PreviousLetter = $FirstLetter;
       unless ($FirstPass) {
         push @DebugStack,"Close $Authors{$AuthorID}{LastName} F $FirstLetter P $PreviousLetter";
@@ -216,6 +217,7 @@ sub AuthorsTable {
     }  
     my $author_link = AuthorLink($AuthorID, -format => "formal");
     print "<li>$author_link</li>\n";
+    $CloseLastColumn = 1;
   }  
   print "</ul></td></tr>";
   print "</table>\n";
