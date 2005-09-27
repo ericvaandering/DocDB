@@ -133,11 +133,17 @@ sub FetchXRefs (%) { # For now, no single version
   return @DocXRefIDs;
 }  
 
+sub ClearExternalDocDBs () {
+  $HaveAllExternalDocDBs = 0;
+  %ExternalDocDBs        = ();
+}
+
 sub GetAllExternalDocDBs () {
   if ($HaveAllExternalDocDBs) {
     my @ExternalDocDBIDs = keys %ExternalDocDBs;
     return @ExternalDocDBIDs;
   }
+  %ExternalDocDBs = ();
   my @ExternalDocDBIDs = (); 
   my ($ExternalDocDBID);
   

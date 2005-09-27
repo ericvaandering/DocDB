@@ -54,7 +54,7 @@ my $Force            = $params{admforce};
 
 my $SubForm          = $params{subform};
 
-my $ExternalDocDBID  = $params{externalid};
+my $ExternalDocDBID  = $params{externaldocdbs};
 my $ProjectName      = $params{project};
 my $Description      = $params{desc};
 my $PublicURL        = $params{puburl};
@@ -95,7 +95,7 @@ GetAllExternalDocDBs();
 my $Abort = 0;
 
 if ($SubForm eq "externaldocdb") {
-  if ($Action eq "Delete" && $Force) {
+  if ($Action eq "Delete") {
     my $Delete = $dbh -> prepare("delete from ExternalDocDB where ExternalDocDBID=?");
     $Delete  -> execute($ExternalDocDBID);
     push @ActionStack,"Deleted reference to external DocDB";
@@ -127,15 +127,10 @@ if ($SubForm eq "externaldocdb") {
   } else {
     push @WarnStack,"No valid action was specified.";
   }  
-} elsif ($SubForm eq "event") {
-  if ($Action eq "Delete") {
-    DeleteEvent(-eventid => $EventID, -force => $Force);
-  } else {
-    push @WarnStack,"Only \"Delete\" is a valid action";
-  }  
 }
    
 if (@ActionStack) { 
+  ClearExternalDocDBs();
   GetAllExternalDocDBs();
   ActionReport();
 }  
