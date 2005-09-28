@@ -10,9 +10,12 @@ Document table. ProcessDocumentAdd checks that this doesn't exist, so that
 reloading the document result form will no longer generate a duplicate
 document.
 
+There is a program script/ScriptInstall which can be used to set up DocDB in cgi
+areas which link to a central area. This should make setting up a public area
+easier, make multiple instances much easier, etc. Just make sure you read the 
+instructions before using it.
+
 There are also some code cleanups.
-
-
 
 7.1.0
 
