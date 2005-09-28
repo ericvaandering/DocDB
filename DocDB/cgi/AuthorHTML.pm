@@ -162,7 +162,7 @@ sub AuthorsTable {
   my @AuthorIDs     = sort byLastName keys %Authors;
   my $NCols         = 4;
   my $NPerCol       = int (scalar(@AuthorIDs)/$NCols);
-  my $UseAnchors = (scalar(@AuthorIDs) >= 40);
+  my $UseAnchors = (scalar(@AuthorIDs) >= 75);
 
   if (scalar(@AuthorIDs) % $NCols) {++$NPerCol;}
 
