@@ -133,7 +133,7 @@ while (my $File = readdir DIRECTORY) {
   if     ($PublicIgnore{$File}) {
     unlink $File;
   }
-  if (Ignore{$File}) {
+  if ($Ignore{$File}) {
     next;
   }
   print "Linking $FullFile\n";
