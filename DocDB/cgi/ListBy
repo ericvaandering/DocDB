@@ -89,7 +89,7 @@ if ($Days) {
 
   &GetInstitutions;
   &FetchAuthor($AuthorID);
-  unless ($Authors{$AuthorID}{LASTNAME}) {
+  unless ($Authors{$AuthorID}{LastName}) {
     push @ErrorStack,$Msg_AuthorInvalid;
   }
 

@@ -122,9 +122,6 @@ foreach my $TalkReserve (@TalkReserves) {
 }  
 
 ### Start of HTML
-  
-@ErrorStack = ();
-@WarnStack  = ();
 
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
@@ -146,9 +143,9 @@ if ($SingleSession && $Mode eq "new") {
     $ButtonTitle = "Modify Session and Talks";
   }  
 }  
-&DocDBHeader($Title,"",-scripts => ["PopUps"]);
+DocDBHeader($Title,"",-scripts => ["PopUps"]);
 
-&EndPage(@ErrorStack);
+EndPage();
 
 ### Check parameters
 
@@ -187,7 +184,7 @@ if ($SessionID) {
   push @ErrorStack,"You must specify a session or event to modify. You probably arrived
   here by error.";
 }  
-&EndPage(@ErrorStack);
+EndPage();
 
 if ($SingleSession && $EventID) { # Grab single session ID in single session mode
   ($SessionID) = &FetchSessionsByConferenceID($EventID);
@@ -495,6 +492,12 @@ if ($SingleSession) {
   }  
 }
 
+print "<h4>You can make more modifications, modify the agenda, or 
+       <a href=\"$DisplayMeeting?conferenceid=$ConferenceID\">Display
+       the Event</a>. Click a <span class=\"Help\">highlighted</span> link or 
+       read the <a href=\"$DocDBInstructions?set=event\">instructions</a> for 
+       help. Required fields are denoted by $RequiredMark.</h4>\n";
+
 ### Display form
 
 print $query -> start_multipart_form('POST',"$SessionModify");
@@ -525,10 +528,6 @@ if ($SingleSession) {
      $RequiredEntries{EventGroup}       = $TRUE;
   print "<table class=\"HighPaddedTable\">\n";
 
-  print "<tr>\n";
-  print "<td colspan=\"4\">Required fields are marked with $RequiredMark. \n";
-  print "</td>\n";
-  print "</tr>\n";
   print "<tr>\n";
   print "<td rowspan=\"2\">\n"; 
   &EventGroupSelect(-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID]);

@@ -32,17 +32,20 @@ use DBI;
 $StartTime = new Benchmark;
 
 require "DocDBGlobals.pm";
-require "TopicSQL.pm";
-require "SecuritySQL.pm";
-require "DocumentSQL.pm";
-require "RevisionSQL.pm";
-require "MiscSQL.pm";
-
 require "FSUtilities.pm";
 require "WebUtilities.pm";
 require "HTMLUtilities.pm";
+require "ResponseElements.pm";
 require "Security.pm";
+
 require "SearchAtoms.pm";
+
+require "DocumentSQL.pm";
+require "MiscSQL.pm";
+require "RevisionSQL.pm";
+require "SecuritySQL.pm";
+require "TopicSQL.pm";
+
 require "DocumentHTML.pm";
 
 $query = new CGI;  # Global for subroutines
@@ -115,9 +118,6 @@ unless ($Mode eq "date" or $Mode eq "meeting" or $Mode eq "conference") {
 
 ### Check parameters for errors
 
-@ErrorStack = ();
-@WarnStack  = ();
-
 my @DocumentIDs = ();
 my @RevisionDocumentIDs = ();
 my @TopicDocumentIDs = ();
@@ -132,9 +132,7 @@ unless ($OuterLogic eq "AND" || $OuterLogic eq "OR") {
   push @ErrorStack,"Outer logic must be either AND or OR.";
 }   
 
-if ((@ErrorStack)) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@ErrorStack);
-}
+EndPage();
 
 print "<p>\n";
 

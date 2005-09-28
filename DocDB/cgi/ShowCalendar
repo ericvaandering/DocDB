@@ -90,7 +90,7 @@ if ($Day && $Month && $Year) {
   my $NextMNum  = $NextDay -> month(); 
   my $NextName  = $NextDay -> month_name(); 
   my $NextYear  = $NextDay -> year(); 
-
+  
   print "<p class=\"DayNav\">\n";
   print &CalendarLink(-year => $PrevYear, -month => $PrevMNum, -day => $PrevDNum, 
                       -text => "&laquo; $PrevDNum $PrevName $PrevYear");
@@ -102,6 +102,9 @@ if ($Day && $Month && $Year) {
   print "</span>\n";
   print &CalendarLink(-year => $NextYear, -month => $NextMNum, -day => $NextDNum, 
                       -text => "$NextDNum $NextName $NextYear &raquo;");
+  print "</p>\n";
+  print "<p class=\"DayNav\">\n";
+  print "<a href=\"".$SessionModify."?mode=new&amp;singlesession=1&amp;sessionyear=$Year&amp;sessionmonth=$Month&amp;sessionday=$Day\">Add a New Event on this Day</a>\n";
   print "</p>\n";
   
   &PrintDayEvents(-year => $Year, -month => $Month, -day => $Day);

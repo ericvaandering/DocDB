@@ -40,9 +40,6 @@ $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
 
-@ErrorStack = ();
-@WarnStack  = ();
-
 # Parameters to script 
 
 my $Password      = $params{password};
@@ -61,20 +58,20 @@ unless ($dbh) {
 }         
 
 print $query->header;
-&DocDBHeader("Modified List of Topics");
+DocDBHeader("Modified List of Topics");
 
-&EndPage(@ErrorStack);
+EndPage();
 
 unless (&CanAdminister) {
   push @ErrorStack,$Msg_AdminNoLogin;
 }  
-&EndPage(@ErrorStack);
+EndPage();
 
 if      ($Action eq "Delete") {
   unless ($TopicID) {
     push @ErrorStack,$Msg_ModTopicEmpty;
   }
-  &EndPage(@ErrorStack);
+  EndPage();
   my $TopicLink   = &MinorTopicLink($TopicID);
   my @TopicDocIDs = &GetTopicDocuments($TopicID);
   
@@ -96,7 +93,7 @@ if      ($Action eq "Delete") {
   unless ($TopicID) {
     push @ErrorStack,$Msg_ModTopicEmpty;
   }
-  &EndPage(@ErrorStack);
+  EndPage();
 
 # Deal with name changes     
 
@@ -137,11 +134,11 @@ if      ($Action eq "Delete") {
 # For modify or new fetch information and display.
 
 if ($Action eq "Modify" || $Action eq "New") {
-  &GetTopics;
+  GetTopics();
 
   print "<p><b>Here are the results of your modification:<br>\n";
-  my $ShortLink = &MinorTopicLink($TopicID,"short");
-  my $LongLink = &MinorTopicLink($TopicID,"long");
+  my $ShortLink = MinorTopicLink($TopicID,"short");
+  my $LongLink  = MinorTopicLink($TopicID,"long");
   print "Short description: $ShortLink<br>\n";
   print "Long description: $LongLink<br>\n";
   print "</b><p>\n";
@@ -149,10 +146,9 @@ if ($Action eq "Modify" || $Action eq "New") {
 
 print "<p>\n";
 
-&WarnPage(@WarnStack);
-&EndPage(@ErrorStack);
+EndPage();
 
-&DocDBNavBar;
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  
 exit;

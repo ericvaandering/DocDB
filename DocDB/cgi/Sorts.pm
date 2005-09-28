@@ -35,9 +35,18 @@ sub byTopic {
 }    
 
 sub byLastName {
-   $Authors{$a}{LASTNAME} cmp $Authors{$b}{LASTNAME}
-                          or
-  $Authors{$a}{FIRSTNAME} cmp $Authors{$b}{FIRSTNAME};
+  my $LastA  = $Authors{$a}{LastName};
+  my $LastB  = $Authors{$b}{LastName};
+  my $FirstA = $Authors{$a}{FirstName};
+  my $FirstB = $Authors{$b}{FirstName};
+  $LastA  =~ s/[a-z]/[A-Z]/;
+  $LastB  =~ s/[a-z]/[A-Z]/;
+  $FirstA =~ s/[a-z]/[A-Z]/;
+  $FirstB =~ s/[a-z]/[A-Z]/;
+
+   $LastA cmp $LastB
+          or
+  $FirstA cmp $FirstB;
 }    
 
 sub byInstitution {
@@ -123,9 +132,9 @@ sub DocumentByRequester {
   &FetchAuthor($adr);
   &FetchAuthor($bdr);
     
-   $Authors{$adr}{LASTNAME} cmp $Authors{$bdr}{LASTNAME}
+   $Authors{$adr}{LastName} cmp $Authors{$bdr}{LastName}
                             or
-  $Authors{$adr}{FIRSTNAME} cmp $Authors{$bdr}{FIRSTNAME}
+  $Authors{$adr}{FirstName} cmp $Authors{$bdr}{FirstName}
 }
 
 sub DocumentByConferenceDate { # FIXME: Look at this and see if it can be 

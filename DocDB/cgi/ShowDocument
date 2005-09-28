@@ -40,9 +40,6 @@ $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
 
-@ErrorStack = ();
-@WarnStack  = ();
-
 $DocumentID = $params{docid};
 $DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
 $DocumentID =~ s/\s+$//;
@@ -93,16 +90,16 @@ if (&CanAccess($DocumentID,$Version)) {
 } 
 
 print $query->header;
-&DocDBHeader($PageTitle,"$Project Document $DocumentID-v$Version",-scripts => ["PopUps"]);
+DocDBHeader($PageTitle,"$Project Document $DocumentID-v$Version",-scripts => ["PopUps"]);
 
 unless ($DocRevID) { # Probably never executed since CanAccess fails.
   push @ErrorStack,"This document does not exist.";
 }
 
-&EndPage(@ErrorStack);
+EndPage();
 
-&PrintRevisionInfo($DocRevID, -showversions => 1);
+PrintRevisionInfo($DocRevID, -showversions => 1);
 
-&DebugPage("End of page");
-&DocDBNavBar;
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DebugPage("End of page");
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

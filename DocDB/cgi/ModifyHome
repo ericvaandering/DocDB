@@ -52,9 +52,7 @@ my $PersonalAccountLink = &PersonalAccountLink();
 
 print "<div id=\"ModifyHomeBody\">\n";
 
-if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@ErrorStack);
-}
+EndPage(@ErrorStack);
 
 print "<div id=\"Header3Col\">\n";
 print "<h4>\n";

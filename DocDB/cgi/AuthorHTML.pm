@@ -159,28 +159,63 @@ sub AuthorsByInstitution {
 sub AuthorsTable {
   require "Sorts.pm";
 
-  my @AuthorIDs = sort byLastName    keys %Authors;
-  my $NCols     = 4;
-  my $NPerCol   = int (scalar(@AuthorIDs)/$NCols + 1);
-  my $NThisCol  = 0;
+  my @AuthorIDs     = sort byLastName keys %Authors;
+  my $NCols         = 4;
+  my $NPerCol       = int (scalar(@AuthorIDs)/$NCols);
+  my $UseAnchors = (scalar(@AuthorIDs) >= 40);
 
-  print "<table>\n";
+  if (scalar(@AuthorIDs) % $NCols) {++$NPerCol;}
+
+  print "<table class=\"CenteredTable MedPaddedTable\">\n";
+  if ($UseAnchors ) {
+    print "<tr><th colspan=\"$NCols\">\n";
+    foreach my $Letter (A..Z) {
+      print "<a href=\"#$Letter\">$Letter</a>\n";
+    }
+    print "</th></tr>\n";
+  }
+  
   print "<tr>\n";
   
-  print "<td>\n";
-  print "<ul>\n";
-  
+  my $NThisCol       = 0;
+  my $PreviousLetter = "";
+  my $FirstPass       = 1; # First sub-list of column
+  my $StartNewColumn  = 1;
+  my $CloseLastColumn = 0;
   foreach my $AuthorID (@AuthorIDs) {
-
-    if ($NThisCol >= $NPerCol) {
-      print "</ul></td>\n";
-      print "<td>\n";
-      print "<ul>\n";
-      $NThisCol = 0;
+    $FirstLetter = substr $Authors{$AuthorID}{LastName},0,1;
+    $FirstLetter =~ s/[a-z]/[A-Z]/;
+    if ($NThisCol >= $NPerCol && $FirstLetter ne $PreviousLetter) {
+      $StartNewColumn = 1;
     }
+    
+    if ($StartNewColumn) {
+      if ($CloseLastColumn) {
+        print "</ul></td>\n";
+      }
+      print "<td>\n";
+      $StartNewColumn = 0;
+      $NThisCol = 0;
+      $FirstPass = 1;
+    }
+      
     ++$NThisCol;
-    my $author_link = &AuthorLink($AuthorID, -format => "formal");
+    
+    if ($FirstLetter ne $PreviousLetter) { 
+      $PreviousLetter = $FirstLetter;
+      unless ($FirstPass) {
+        print "</ul>\n";
+      }  
+      $FirstPass = 0;
+      if ($UseAnchors) {
+        print "<a name=\"$FirstLetter\" />\n";
+        print "<b>$FirstLetter</b>\n";
+      }
+      print "<ul>\n";
+    }  
+    my $author_link = AuthorLink($AuthorID, -format => "formal");
     print "<li>$author_link</li>\n";
+    $CloseLastColumn = 1;
   }  
   print "</ul></td></tr>";
   print "</table>\n";

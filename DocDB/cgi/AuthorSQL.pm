@@ -41,8 +41,8 @@ sub GetAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with all authors
       $Authors{$AuthorID}{FULLNAME}  = "$LastName";
       $Authors{$AuthorID}{Formal}    = "$LastName";
     }
-    $Authors{$AuthorID}{LASTNAME}      = $LastName;
-    $Authors{$AuthorID}{FIRSTNAME}     = $FirstName;
+    $Authors{$AuthorID}{LastName}      = $LastName;
+    $Authors{$AuthorID}{FirstName}     = $FirstName;
     $Authors{$AuthorID}{ACTIVE}        = $Active;
     $Authors{$AuthorID}{InstitutionID} = $InstitutionID;
   }
@@ -70,8 +70,8 @@ sub FetchAuthor { # Fetches an Author by ID, adds to $Authors{$AuthorID}{}
     $Authors{$AuthorID}{FULLNAME}  = "$FirstName $LastName";
     $Authors{$AuthorID}{Formal}    = "$LastName, $FirstName";
   }
-  $Authors{$AuthorID}{LASTNAME}      = $LastName;
-  $Authors{$AuthorID}{FIRSTNAME}     = $FirstName;
+  $Authors{$AuthorID}{LastName}      = $LastName;
+  $Authors{$AuthorID}{FirstName}     = $FirstName;
   $Authors{$AuthorID}{ACTIVE}        = $Active;
   $Authors{$AuthorID}{InstitutionID} = $InstitutionID;
   
@@ -114,8 +114,8 @@ sub GetInstitutionAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with au
       $Authors{$AuthorID}{FULLNAME} = "$FirstName $LastName";
       $Authors{$AuthorID}{Formal}   = "$LastName, $FirstName";
     }
-    $Authors{$AuthorID}{LASTNAME}      =  $LastName;
-    $Authors{$AuthorID}{FIRSTNAME}     =  $FirstName;
+    $Authors{$AuthorID}{LastName}      =  $LastName;
+    $Authors{$AuthorID}{FirstName}     =  $FirstName;
     $Authors{$AuthorID}{ACTIVE}        =  $Active;
     $Authors{$AuthorID}{InstitutionID} =  $InstitutionID;
   }

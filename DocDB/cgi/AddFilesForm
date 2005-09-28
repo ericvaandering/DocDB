@@ -106,11 +106,9 @@ if ($UseSignoffs) {
   }  
 }
 
-&WarnPage(@WarnStack); @WarnStack = ();
+WarnPage(@WarnStack); @WarnStack = ();
+EndPage(@ErrorStack);
 
-if ((@ErrorStack)) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@ErrorStack);
-}
 
 print "<center><p>\n";  
 print "<h4>You are adding files to a version of a document.<br>\n";

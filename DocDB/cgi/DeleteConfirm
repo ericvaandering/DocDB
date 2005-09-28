@@ -61,9 +61,7 @@ unless (&CanAdminister) {
   documents";
 }  
   
-if (@ErrorStack) {
-  &EndPage(@ErrorStack);
-}
+EndPage(@ErrorStack);
 
 &GetSecurityGroups;
 &FetchDocument($DocumentID);
@@ -79,9 +77,7 @@ unless ($DocRevID) {
   push @ErrorStack,"This document does not exist.";
 }
 
-if (@ErrorStack) {
-  &EndPage(@ErrorStack);
-}
+EndPage(@ErrorStack);
 
 print "<p><center><b>To delete this document, you must supply the adminstrator 
           username and password:</b>";

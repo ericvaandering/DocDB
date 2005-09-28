@@ -147,9 +147,7 @@ if ($NeedURLs) {
 
 ### Abort if there were errors
 
-if ((@ErrorStack)) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@ErrorStack);
-}
+EndPage(@ErrorStack);
 
 ### Put files in filesystem
 

@@ -55,7 +55,7 @@ unless ($dbh) {
 print $query->header;
 &DocDBHeader("Deleting Document $DocumentID");
 
-&EndPage(@ErrorStack);
+EndPage(@ErrorStack);
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number to delete.";
@@ -65,9 +65,7 @@ unless (&CanAdminister) {
   documents";
 }  
 
-if (@ErrorStack) {
-  &EndPage(@ErrorStack);
-}
+EndPage(@ErrorStack);
 
 # Get directory and pull of version number
 

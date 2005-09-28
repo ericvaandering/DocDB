@@ -71,7 +71,7 @@ if ($UserValidation eq "certificate") {
 }
 
 if ($WelcomeMessage) {
-  print "<p><h4>\n";
+  print "<h4>\n";
   print "$WelcomeMessage\n";
   print "</h4>\n";
 }
