@@ -284,10 +284,10 @@ sub SessionLink (%) {
   if ($Conferences{$Sessions{$SessionID}{ConferenceID}}{Title} eq $Sessions{$SessionID}{Title}) {
     $ToolTip = $Sessions{$SessionID}{Title};
   } else {  
-    $ToolTip = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title}."<br/>".$Sessions{$SessionID}{Title};
+    $ToolTip = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title}."&#13;&#10;".$Sessions{$SessionID}{Title};
   }
   if ($Sessions{$SessionID}{Location}) {
-    $ToolTip .= "<br/>$Sessions{$SessionID}{Location}";
+    $ToolTip .= "&#13;&#10;$Sessions{$SessionID}{Location}";
   }  
   if ($Format eq "full") {
     if ($Conferences{$Sessions{$SessionID}{ConferenceID}}{Title} && $Sessions{$SessionID}{Title} &&
