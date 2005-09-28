@@ -23,8 +23,6 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-# TODO: Add similar functionality to SessionModify
-
 use CGI qw(-nosticky);
 use DBI;
 use Time::Local;
@@ -370,8 +368,11 @@ EndPage();
 # Print out diagnostics
 
 &ActionReport;
-print "You can make more modifications, <b>modify session agendas</b> or <b><a href=\"$DisplayMeeting?conferenceid=$ConferenceID\">Display
-       the Event</a></b>\n";
+print "<h4>You can make more modifications, modify session agendas, or 
+       <a href=\"$DisplayMeeting?conferenceid=$ConferenceID\">Display
+       the Event</a>. Click a <span class=\"Help\">highlighted</span> link or 
+       read the <a href=\"$DocDBInstructions?set=event\">instructions</a> for 
+       help. Required fields are denoted by $RequiredMark.</h4>\n";
 
 &FetchConferenceByConferenceID($ConferenceID);
 
@@ -436,10 +437,6 @@ if ($Mode eq "copy" && $OffsetDays) {
 
 print "<table class=\"MedPaddedTable CenteredTable\">\n";
 
-print "<tr>\n";
-print "<td colspan=\"3\">Required fields are marked with $RequiredMark. \n";
-print "</td>\n";
-print "</tr>\n";
 print "<tr>\n";
 print "<td>\n"; 
 &EventGroupSelect(-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID]);

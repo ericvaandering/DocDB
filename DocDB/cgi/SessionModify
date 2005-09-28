@@ -492,6 +492,12 @@ if ($SingleSession) {
   }  
 }
 
+print "<h4>You can make more modifications, modify the agenda, or 
+       <a href=\"$DisplayMeeting?conferenceid=$ConferenceID\">Display
+       the Event</a>. Click a <span class=\"Help\">highlighted</span> link or 
+       read the <a href=\"$DocDBInstructions?set=event\">instructions</a> for 
+       help. Required fields are denoted by $RequiredMark.</h4>\n";
+
 ### Display form
 
 print $query -> start_multipart_form('POST',"$SessionModify");
@@ -522,10 +528,6 @@ if ($SingleSession) {
      $RequiredEntries{EventGroup}       = $TRUE;
   print "<table class=\"HighPaddedTable\">\n";
 
-  print "<tr>\n";
-  print "<td colspan=\"4\">Required fields are marked with $RequiredMark. \n";
-  print "</td>\n";
-  print "</tr>\n";
   print "<tr>\n";
   print "<td rowspan=\"2\">\n"; 
   &EventGroupSelect(-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID]);
