@@ -280,7 +280,15 @@ sub SessionLink (%) {
   my $URL = "$DisplayMeeting?sessionid=$SessionID";
   
   my $Text;
-  my $ToolTip = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title}.":".$Sessions{$SessionID}{Title};
+  my $ToolTip;
+  if ($Sessions{$SessionID}{ConferenceID}}{Title} eq $Sessions{$SessionID}{Title}) {
+    $ToolTip = $Sessions{$SessionID}{Title};
+  } else {  
+    $ToolTip = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title}."\n".$Sessions{$SessionID}{Title};
+  }
+  if ($Sessions{$SessionID}{Location}) {
+    $ToolTip .= "\n$Sessions{$SessionID}{Location}";
+  }  
   if ($Format eq "full") {
     if ($Conferences{$Sessions{$SessionID}{ConferenceID}}{Title} && $Sessions{$SessionID}{Title} &&
         $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title} ne $Sessions{$SessionID}{Title}) { 

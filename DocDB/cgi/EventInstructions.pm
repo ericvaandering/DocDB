@@ -65,16 +65,17 @@ sub EventInstructionsBody {
 
 <p>
 The event organizer and calendar system provides the ability to set up events
-with arbitrary numbers of sessions and breaks and order these sessions and
-breaks. Within each session, a moderator can set up an arbitrary number of talks
-and small breaks, discussion sessions, etc. These entries are also ordered. Each
+with arbitrary numbers of sessions and breaks. Within each session, a moderator 
+can set up an arbitrary number of talks
+and small breaks, discussion sessions, etc. Each
 talk has a running time and each session has a starting time. This creates a
 time ordered agenda. Anything from an afternoon video conference to conferences
 with parallel and plenary sessions can be organized with the organizer.
+The calendar provides an easy way to see which events are scheduled.
 </p>
 
 <p>
-These instructions refer to a "moderator" which is just any user who is
+These instructions refer to a "moderator" which is any user who is
 authorized to organize an event. Several people can collaborate to organize an
 event, but when changes collide or appear to collide, only the first is taken.
 </p>
@@ -83,7 +84,7 @@ event, but when changes collide or appear to collide, only the first is taken.
 <h1>Using the Calendar</h1>
 
 <p>
-DocDB also supplies a calendar which shows upcoming and past events. 
+DocDB supplies a calendar which shows upcoming and past events. 
 The calendar also allows you easily create new events. 
 There are four <q>views</q> which the calendar supplies; the first view you
 will likely see is the month view. 
@@ -95,7 +96,7 @@ will likely see is the month view.
 <p>The daily view shows a detailed list of a day's events. Events with no
 sessions are shown first, followed by the various sessions taking place on that
 day. Start and end times as well as locations and URLs (if any) are also shown.
-Click on the link for the event or session to see the relevant agenda. At the
+Click on the link for the event to see the relevant agenda. At the
 top of the page are buttons that can be used to schedule events for that day.
 You can also click on the dates at the top of the page to view the next or
 previous days, or to switch to the monthly or yearly views.</p>
@@ -103,7 +104,7 @@ previous days, or to switch to the monthly or yearly views.</p>
 <a name="month"/>
 <h2>Monthly view</h2>
 
-<p>The monthly view shows a whole months days and an abbreviated list of the
+<p>The monthly view shows a whole month and an abbreviated list of the
 events on each day. Start times  for events that have them are shown. If you
 move your mouse over the event link, you will see more information. Click on the
 links to see the agendas. At the top-left of each day is a link to the daily
@@ -139,7 +140,7 @@ links to view the agendas.</p>
 <p>DocDB is capable of scheduling three kinds of events. Events with no sessions
 (perhaps a conference someone from the group is attending), events with just one
 session (a small meeting) or events with more than one session (a multi-day
-meeting, perhaps with plenary and parrallel sessions).</p>
+meeting, perhaps with plenary and parallel sessions).</p>
 
 <p>Begin by clicking the correct button on the <a href="$ModifyHome">Change or
 Create</a> page according to how many sessions your event will have. (You can
@@ -242,7 +243,7 @@ document has been verified by a human, not guessed at by DocDB as explained
 below. Unconfirmed talks are shown in <i>italics</i> type.</p>
 
 <p>By checking the "Reserve" box when creating creating or updating an agenda, 
-the moderator can create new documents with the title, authors, and topics listed. 
+the moderator can create new documents with the title, authors, and topics chosen. 
 Then, the author can upload document by updating this initial document. If you 
 choose to do this, make sure the users understand that they are supposed
 to update rather than create new documents.</p>
@@ -255,7 +256,7 @@ checked, or DocDB will guess its own numbers instead.</p>
 
 <p>Finally, the moderator may enter the suggested authors and topics for the talks
 to be given. This has two purposes. First, before documents are entered into
-the DocDB, attendees can more clearly see what the proposed agenda is.
+the DocDB, attendees can more clearly see what the preliminary agenda is.
 Secondly, this assists DocDB in finding the correct matches as described below.
 </p>
 
@@ -322,7 +323,7 @@ agenda</li>
  
 <p>Points are assigned to documents for each of these criteria where the
 document matches the agenda entry. For each agenda entry/document pair, a score
-is calculated and the document with the highest score is entered as the
+is calculated. If the score is high enough, that document is entered as an
 unconfirmed match. When documents are confirmed, they are removed from
 consideration, which may change which assignments DocDB makes.</p>
 
