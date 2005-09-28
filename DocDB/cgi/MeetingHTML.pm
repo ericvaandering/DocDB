@@ -281,7 +281,7 @@ sub SessionLink (%) {
   
   my $Text;
   my $ToolTip;
-  if ($Sessions{$SessionID}{ConferenceID}}{Title} eq $Sessions{$SessionID}{Title}) {
+  if ($Conferences{$Sessions{$SessionID}{ConferenceID}}{Title} eq $Sessions{$SessionID}{Title}) {
     $ToolTip = $Sessions{$SessionID}{Title};
   } else {  
     $ToolTip = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title}."\n".$Sessions{$SessionID}{Title};
