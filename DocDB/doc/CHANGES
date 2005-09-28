@@ -1,3 +1,19 @@
+7.1.1
+
+From a user standpoint, not much is really new. There is a link from the agenda
+creation pages to the event documentation. On the list of authors, they are
+broken up by last name and if enough authors are entered (>40 currently) there
+are anchor links to help find the right author.
+
+On running DocumentAddForm a unique ID is generated which is stored in the
+Document table. ProcessDocumentAdd checks that this doesn't exist, so that
+reloading the document result form will no longer generate a duplicate
+document.
+
+There are also some code cleanups.
+
+
+
 7.1.0
 
 This release adds one major function. The "Related Documents" field now accepts 
