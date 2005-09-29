@@ -39,10 +39,10 @@ sub byLastName {
   my $LastB  = $Authors{$b}{LastName};
   my $FirstA = $Authors{$a}{FirstName};
   my $FirstB = $Authors{$b}{FirstName};
-  $LastA  =~ s/[a-z]/[A-Z]/;
-  $LastB  =~ s/[a-z]/[A-Z]/;
-  $FirstA =~ s/[a-z]/[A-Z]/;
-  $FirstB =~ s/[a-z]/[A-Z]/;
+  $LastA  =~ tr/[a-z]/[A-Z]/;
+  $LastB  =~ tr/[a-z]/[A-Z]/;
+  $FirstA =~ tr/[a-z]/[A-Z]/;
+  $FirstB =~ tr/[a-z]/[A-Z]/;
 
    $LastA cmp $LastB
           or

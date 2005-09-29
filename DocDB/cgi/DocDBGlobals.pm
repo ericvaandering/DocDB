@@ -109,7 +109,7 @@ $FirstYear            = 2000;  # Earliest year that documents can be created
 
 $TalkMatchThreshold    = 999;    # Threshold for matching talks in meetings with topics
 
-@MatchIgnoreWords       = ("from","with","then","than","that","what"); # Don't match on these
+@MatchIgnoreWords     = ("from","with","then","than","that","what"); # Don't match on these
 
 $RequiredMark = "&nbsp;*&nbsp;";
   
