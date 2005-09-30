@@ -493,7 +493,7 @@ if ($SingleSession) {
 }
 
 print "<h4>You can make more modifications, modify the agenda, or 
-       <a href=\"$DisplayMeeting?conferenceid=$ConferenceID\">Display
+       <a href=\"$DisplayMeeting?conferenceid=$EventID\">Display
        the Event</a>. Click a <span class=\"Help\">highlighted</span> link or 
        read the <a href=\"$DocDBInstructions?set=event\">instructions</a> for 
        help. Required fields are denoted by $RequiredMark.</h4>\n";
