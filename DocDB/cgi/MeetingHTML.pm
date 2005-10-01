@@ -289,6 +289,8 @@ sub SessionLink (%) {
   if ($Sessions{$SessionID}{Location}) {
     $ToolTip .= " - ".$Sessions{$SessionID}{Location};
   }  
+  # Would like to use newlines instead of -. See mozilla bugs Bug 67127 and 45375
+  
   if ($Format eq "full") {
     if ($Conferences{$Sessions{$SessionID}{ConferenceID}}{Title} && $Sessions{$SessionID}{Title} &&
         $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title} ne $Sessions{$SessionID}{Title}) { 

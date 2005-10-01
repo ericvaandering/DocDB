@@ -57,6 +57,12 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 my ($Title,  $Message, $List);
 my ($SortBy, $Reverse, @Fields);
 
+# Defaults, later can surround these in "unless"
+
+@Fields  = ("Docid","Title","Author","Updated"); 
+$SortBy  = "date";
+$Reverse = 1;
+
 my @DocumentIDs = ();
 
 if ($Days) { 
@@ -134,7 +140,9 @@ if ($Days) {
 ### Event Group (name or number)
 
   require "MeetingSQL.pm";
-
+  @Fields  = ("Docid","Title","Events","Author","Updated"); 
+  $SortBy = "confdate";
+  
   unless ($EventGroupID) {
     $EventGroupID = &LookupEventGroup($EventGroup);
   }  
@@ -169,11 +177,6 @@ if ($Days) {
   $List -> execute();
 }
 
-# Defaults, later can surround these in "unless"
-
-@Fields  = ("Docid","Title","Author","Updated"); 
-$SortBy  = "date";
-$Reverse = 1;
 
 if ($Mode eq "conference") {
   @Fields  = ("Title","Events","Author","Files"); 
@@ -203,7 +206,7 @@ unless (@DocumentIDs) { # Some do their own
 print $query->header;
 &DocDBHeader($Title);
 
-print "<center><h4>$Message</h4></center><p/>\n";
+print "<h4>$Message</h4><p/>\n";
 
 # Special HTML for special situations
 
