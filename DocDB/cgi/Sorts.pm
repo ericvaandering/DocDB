@@ -137,8 +137,7 @@ sub DocumentByRequester {
   $Authors{$adr}{FirstName} cmp $Authors{$bdr}{FirstName}
 }
 
-sub DocumentByConferenceDate { # FIXME: Look at this and see if it can be 
-                               # simplified after re-indexing conferences
+sub DocumentByConferenceDate {
   require "TopicSQL.pm";
   
   my $adr = $DocRevIDs{$a}{$Documents{$a}{NVersions}};
@@ -175,14 +174,6 @@ sub DocumentByConferenceDate { # FIXME: Look at this and see if it can be
   my $bdate = $Conferences{$btid}{EndDate};
   
   $adate cmp $bdate
-#  my ($ayear,$amonth,$aday) = split /\-/,$adate;
-#  my ($byear,$bmonth,$bday) = split /\-/,$bdate;
-
-#   $ayear <=> $byear
-#          or
-#  $amonth <=> $bmonth 
-#          or
-#    $aday <=> $bday
 }
 
 sub MeetingOrderIDByOrder { # Sort lists of Sessions, SessionSeparators 
@@ -247,10 +238,7 @@ sub EmailUserIDsByName {
   $afirst cmp $bfirst;
 }  
 
-sub EventsByDate {
-
-  # Do reverse sort by date 
-  
+sub EventsByDate { # Do sort by date 
   my $adate = $Conferences{$a}{StartDate}; 
   my $bdate = $Conferences{$b}{StartDate};
   my ($ayear,$amonth,$aday) = split /\-/,$adate;
