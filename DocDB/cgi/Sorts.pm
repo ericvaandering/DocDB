@@ -144,41 +144,45 @@ sub DocumentByConferenceDate { # FIXME: Look at this and see if it can be
   my $adr = $DocRevIDs{$a}{$Documents{$a}{NVersions}};
   my $bdr = $DocRevIDs{$b}{$Documents{$b}{NVersions}};
   
-  unless ($FirstConf{$adr}) {
-    my @topics = &GetRevisionTopics($adr);
-    foreach my $ID (@topics) {
-#      if (&MajorIsConference($MinorTopics{$ID}{MAJOR})) {
-#        $FirstConf{$adr} = $ID;
-#        last;
-#      }
+  unless ($LastConf{$adr}) {
+    my $LastDate = "0";
+    my @EventIDs = reverse GetRevisionEvents($adr);
+    foreach my $ID (@EventIDs) {
+      FetchConferenceByConferenceID($ID);
+      if ($Conferences{$ID}{EndDate} gt $LastDate) {
+        $LastDate = $Conferences{$ID}{EndDate};
+        $LastConf{$adr} = $ID;
+      }
     }
   }      
 
-  unless ($FirstConf{$bdr}) {
-    my @topics = &GetRevisionTopics($bdr);
-    foreach my $ID (@topics) {
-#      if (&MajorIsConference($MinorTopics{$ID}{MAJOR})) {
-#        $FirstConf{$bdr} = $ID;
-#        last;
-#      }
+  unless ($LastConf{$bdr}) {
+    my $LastDate = "0";
+    my @EventIDs = reverse GetRevisionEvents($bdr);
+    foreach my $ID (@EventIDs) {
+      FetchConferenceByConferenceID($ID);
+      if ($Conferences{$ID}{EndDate} gt $LastDate) {
+        $LastDate = $Conferences{$ID}{EndDate};
+        $LastConf{$bdr} = $ID;
+      }
     }
   }      
 
-  my $atid = $FirstConf{$adr};
-  my $btid = $FirstConf{$bdr};
-  my $acid = $ConferenceMinor{$atid};
-  my $bcid = $ConferenceMinor{$btid};
+  my $atid = $LastConf{$adr};
+  my $btid = $LastConf{$bdr};
 
-  my $adate = $Conferences{$acid}{StartDate}; 
-  my $bdate = $Conferences{$bcid}{StartDate};
-  my ($ayear,$amonth,$aday) = split /\-/,$adate;
-  my ($byear,$bmonth,$bday) = split /\-/,$bdate;
+  my $adate = $Conferences{$atid}{EndDate}; 
+  my $bdate = $Conferences{$btid}{EndDate};
+  
+  $adate cmp $bdate
+#  my ($ayear,$amonth,$aday) = split /\-/,$adate;
+#  my ($byear,$bmonth,$bday) = split /\-/,$bdate;
 
-   $ayear <=> $byear
-          or
-  $amonth <=> $bmonth 
-          or
-    $aday <=> $bday
+#   $ayear <=> $byear
+#          or
+#  $amonth <=> $bmonth 
+#          or
+#    $aday <=> $bday
 }
 
 sub MeetingOrderIDByOrder { # Sort lists of Sessions, SessionSeparators 
