@@ -1,0 +1,261 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" >
+<html>
+<head>
+<title>Document Database Meeting Organizer</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+<link rel="stylesheet" href="/includes/style.css" type="text/css"/>
+<!--#include virtual="/includes/navbar_header.html" --> <!-- Defining Javascript functions-->
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" topmargin="6" leftmargin="6" marginheight="6" marginwidth="6">
+
+<!--#include virtual="/includes/atwork_menuload.html" --> <!-- Loads menus and images in nav bar -->
+<!--#include virtual="/includes/begin_atwork_top.html" --> <!-- Starts the table at the top -->
+      <div align="center"><font size="+2"
+      color="#003399">DocDB&nbsp;Meeting&nbsp;Organizer</font></div>
+<!--#include virtual="/includes/end_atwork_top.html" --> <!-- Ends the table at the top -->
+<!--#include virtual="/includes/atwork_navbar.html" --> <!-- Puts in the nav bar table row entry -->
+<!--#include virtual="/includes/end_table.html" --> <!-- Ends the table -->
+<hr/>
+
+<center><h1>Document Database Meeting Organizer</h1></center>
+
+<h2>Table of Contents</h2>
+<ol type="A">
+ <li><a href="#intro">Introduction</a></li>
+ <li><a href="#create">Creating a New Meeting</a></li>
+ <li><a href="#modify">Modifying an Existing Meeting</a></li>
+ <li><a href="#talks">Adding and Modifying Talks in a Session</a></li>
+ <ol type="1">
+  <li><a href="#basicinfo">Ordering the talks</a></li>
+  <li><a href="#order">Ordering the talks</a></li>
+  <li><a href="#confirm">Specifying and confirming documents</a></li>
+  <li><a href="#hints">Giving hints about the talks</a></li>
+ </ol>
+ <li><a href="#matching">How the DocDB matches your entries with documents</a></li>
+ <ol type="1">
+  <li><a href="#userentry">User selects the talk</a></li>
+  <li><a href="#hinting">DocDB selects based on hints</a></li>
+  <li><a href="#confirm2">Moderator corrects and/or confirms</a></li>
+ </ol>
+</ol>
+
+
+<a name="intro"/>
+<h2>A. Introduction</h2>
+
+These instructions refer to a "moderator," but this is just any user with any
+valid password who is organizing a meeting. Several people can collaborate to
+organize a meeting, but where changes collide or appear to collide, only the
+first is taken.
+<p/>
+
+The meeting organizer system provides the ability to set up meetings with
+arbitrary numbers of sessions and breaks and order these sessions and breaks.
+Within each session, a moderator can set up an arbitrary number of talks and
+small breaks, discussion sessions, etc. These entries are also ordered. Each
+talk has a running time and each session has a starting time. This determines a
+time ordered
+agenda. Anything from an afternoon video conference to conferences with
+parallel and plenary sessions can be organized with this organizer.
+
+<a name="create"/>
+<h2>B. Creating a New Meeting</h2>
+
+The first step in creating a meeting is to set up the sessions in the meeting.
+You begin this process by clicking on "Oragnize a new meeting" from the DocDB
+modifications page. Meetings can be
+created as a subtopic in the DocDB or, for smaller meetings (perhaps by small
+subgroups of people), not as a subtopic. Ask an administrator if you are unsure
+if you should create a topic or not.
+Whether the moderator chooses to create
+a topic or not, all the functionality of the meeting organizer is still
+available. A list of the topics which are designated as "meeting-like" are
+shown; simply select one of these to create the subtopic.<p/>
+
+The "Show All Talks" selection controls what the user sees when viewing a
+meeting.  In the meeting view, either all the sessions for a meeting with all
+their talks can be shown or just links to the
+various sessions. This should probably be checked for meetings with just a few
+dozen talks, but left unchecked for larger meetings.<p/>
+
+Space is provided to provide both long and short descriptions of the meeting.
+If the meeting is being created with a subtopic, both of these descriptions are
+used. If a subtopic is not being created, only the long description is used. Also
+provided are spaces to specify a location and URL for the conference or meeting
+along with the start and end dates.<p/>
+
+The boxes labeled Meeting Preamble and Epilogue provide a space for text which
+will be placed at the top and bottom respectively of the display of the
+meeting. A welcome message or instructions can be placed here.<p/>
+
+Finally, the View and Modify selections are used to control which groups may
+view and modify the agenda for the meetings. The documents (talks) themselves
+rely on their own security, not this setting.<p/>
+
+A nearly identical form is used for modifying meeting information.  
+
+<a name="sessions"/>
+<h2>C. Creating Sessions</h2>
+
+On the same form used for creating or modifying a meeting, the moderator is able
+to set up one or more sessions in the meeting. If there are not enough spaces
+for all the needed sessions, don't worry; blank slots will be added when
+"Submit" is pressed.<p/>
+
+The order of these sessions is 
+displayed and can be changed by entering new numbers in the Order column.
+Decimal numbers are OK, so entering "1.5" will place the session between those
+currently numbered "1" and "2." <p/>
+
+Sessions may be designated as "Breaks" which cannot have talks associated with
+them. Breaks can be used for entering meals or other activities.<p/>
+
+Existing sessions can be deleted by checking the delete box. <p/>
+
+For each session or break, a location (such as a room number) and starting time should be entered. A
+session title should be entered and a longer description of the session
+(such as an explanation of the topics covered) may also be entered.<p/>
+
+Once at least one session has been added to the meeting, talks can be associated
+with the sessions.<p/>
+
+<a name="talks"/>
+<h2>D. Adding and Modifying Talks in a Session</h2>
+
+To create or modify slots for talks in a session, either click on the "Modify Session" link
+in the navigation bar on the "Display Session" page or the "Modify Talks" link
+on the "Modify Meeting" page. This allows the moderator to add as many talks or
+breaks as needed. In this context, breaks can be announcements, discussions,
+or coffee breaks during a session (any activity which won't have a document
+attached to it).<p/>
+
+To create an agenda, the moderator should enter as much information as needed
+about each talk or break. The fields are described below. While there are
+usually several open slots for talks, blank ones are added when "Submit" is
+pressed.
+
+<a name="basicinfo"/>
+<h3>1. Entering basic talk information</h3>
+
+For each talk, at least a suggested title and time (length) should be entered.
+A note on each talk can also be entered, but these are only visible when
+clicking on the "Note" link in the meeting or session displays. 
+
+<a name="order"/>
+<h3>2. Ordering the talks</h3>
+
+On the far left is the document order within the session. To reorder talks
+within the session, just input new numbers and press "Submit." Decimal numbers
+are allowed, so entering "1.5" will place that talk between the talks currently
+numbered "1" and "2." 
+
+<a name="confirm"/>
+<h3>3. Specifying, deleting, and confirming documents</h3>
+
+On the form there are places to enter the document number of a talk if the
+moderator already knows it, to confirm a suggestion by the DocDB, and to delete
+the entry for a talk entirely. (This will NOT delete the document from the
+database, just the entry for the meeting.)<p/>
+
+A confirmed talk is one where the relationship between agenda entry and document
+has been verified by a human, not guessed at by DocDB as explained below.
+Unconfirmed talks are shown in <i>italics</i> type.
+
+If document numbers are entered manually, the "Confirm" box(es) must also be
+checked, or DocDB will guess its own numbers instead.
+
+<a name="hints"/>
+<h3>4. Giving hints about the talks</h3>
+
+Finally, the moderator may enter the suggested authors and topics for the talks
+to be given. This has two purposes. First, before documents are entered into
+the DocDB, attendees can more clearly see what the proposed agenda is.
+Secondly, this assists DocDB in finding the correct matches as described below.
+
+<a name="matching"/>
+<h2>E. How the DocDB matches your entries with documents</h2>
+
+In addition to the moderator associating talks as described above, there are
+two other ways this can happen. The first way is to have the user themselves
+match the talks. The second way is to let DocDB guess.<p/>
+
+A suggested course of action for the moderator is to first encourage users to
+match their talks as described below. Then let DocDB guess and, as the
+moderator, confirm its correct guesses, let it guess again, and only then
+input numbers manually or correct its incorrect guesses. DocDB will not assign
+documents confirmed for another agenda entry to a second entry, so confirming
+documents and letting it guess again will often find more matches. 
+
+<a name="userentry"/>
+<h3>1. User selects the talk</h3>
+
+When a user follows the link at the top of a session or meeting display that says "Add a talk to this
+meeting of conference," they will see a document entry form with one small addition: a menu to select
+his or her talk from the list of talks for that meeting or session that have not yet been entered.
+When the user selects his or her talk from this list, it is entered into the agenda as a confirmed
+talk, just as if the moderator had followed the instructions below.
+
+<a name="hinting"/>
+<h3>2. DocDB selects based on hints</h3>
+
+For entries without a confirmed document, the DocDB will try to figure out which agenda entry matches
+which document. To do this, the DocDB constructs a list of documents which
+might match the entries in the agenda. It then compares each of those
+documents against the items in the agenda and pick what it thinks is the best
+document among them. This document becomes an unconfirmed match with the entry
+in the agenda. If it guesses right, confirm the document as discussed below.<p/>
+
+The list of documents to check against comes from two sources. First documents
+with modification times in a time window around the meeting dates are
+considered. Second, if the meeting is associated with a topic (discussed
+above), documents associated with that topic are considered.<p/>
+
+Documents are matched with the agenda entries using a scoring system that takes
+into account several criteria:
+<ul>
+<li>Whether the document is associated with the meeting topic</li>
+<li>If the document's topic(s) match those in the agenda</li>
+<li>If the document's author(s) match those in the agenda</li>
+<li>How well the title of the document matches the suggested title in the
+agenda</li>
+</ul>
+ 
+Documents that are associated with the meeting topic receive a bonus over
+documents that just happen to fall in the time window. Points are also assigned
+to documents for each author or topic that matches those suggested in the
+agenda and for matching words in the titles. For each agenda entry/document
+pair, a score is calculated and the document with the highest score is entered
+as the unconfirmed match. When documents are confirmed, they are removed from
+consideration, which may change which assignments DocDB makes.<p/>
+
+The precise algorithm used in choosing the best match can be determined by
+looking at the DocDB code. <p/>
+
+<a name="confirm2"/>
+<h3>3. Moderator corrects and/or confirms</h3>
+
+Finally, a moderator can manually enter document numbers and check "Confirm" or
+just check "Confirm" to verify DocDB's choices. When managing a meeting, it is
+a good idea to periodically confirm unconfirmed documents for two reasons.
+First, the DocDB might find a better match which is <b>not</b> correct. Second,
+confirming documents removes them from the list of considered documents often
+allowing the DocDB to find correct matches for remaining entries in the
+agenda.<p/>
+
+For very small meetings (just a few talks) moderators may wish to not use hints
+at all and just manually enter the talks.<p/>
+
+
+<hr/>
+<!-- begin footer, change the webmaster info if appropriate -->
+<div align="center"> 
+<!--#include virtual="/includes/atwork_bottomnav.html"-->  <!-- Put in the bottom navigation bar-->
+</div>
+<div align="left"> 
+<i><font size="-1">
+<A HREF="mailto:btev-docdb@fnal.gov">Document Database Administrators</A> 
+</font></i></div>
+<!--#include virtual="/includes/full_fermi_footer.shtml" --> 
+</body>
+</html>
