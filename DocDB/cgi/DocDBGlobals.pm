@@ -233,13 +233,13 @@ $DocDBInstructions     = $cgi_root."DocDBInstructions";
 $ShowTalkNote          = $cgi_root."ShowTalkNote";
 
 unless ($CSSDirectory && $CSSURLPath) {
-  $CSSDirectory = $file_root."Static/css";
-  $CSSURLPath   = $web_root."Static/css";
+  $CSSDirectory = $file_root."/Static/css";
+  $CSSURLPath   = $web_root."/Static/css";
 }  
 
 unless ($JSDirectory && $JSURLPath) {
-  $JSDirectory = $file_root."Static/js";
-  $JSURLPath   = $web_root."Static/js";
+  $JSDirectory = $file_root."/Static/js";
+  $JSURLPath   = $web_root."/Static/js";
 }  
 
 if (!$Tar && $GTar) {
