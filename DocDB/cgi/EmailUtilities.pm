@@ -33,7 +33,7 @@ sub SendEmail (%) {
   my %Headers = ();
    
   if (@Addressees) {
-    print "Sending mail to: ",@Addressees,"<br/>\n";
+    print "Sending mail to: ",join ", ",@Addressees,"<br/>\n";
     my $Mailer = new Mail::Mailer 'smtp', Server => $MailServer;
     $Headers{To}      = \@Addressees;
     $Headers{From}    = $From;
