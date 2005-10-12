@@ -51,6 +51,30 @@ if ($InstructionSet eq "general") {
 } elsif ($InstructionSet eq "event") {
   $PageTitle = "Event Manager";
   $HTMLTitle = "Event Manager and Calendar Instructions";
+} elsif ($InstructionSet eq "cert1") {
+  $PageTitle = "Getting a Certificate";
+  $HTMLTitle = "Getting a Certificate";
+} elsif ($InstructionSet eq "cert2") {
+  $PageTitle = "Getting a Certificate";
+  $HTMLTitle = "Getting a Certificate";
+} elsif ($InstructionSet eq "doe") {
+  $PageTitle = "Getting a DOEGrid Certificate";
+  $HTMLTitle = "Getting a DOEGrid Certificate";
+} elsif ($InstructionSet eq "kca") {
+  $PageTitle = "Getting a KCA (Kerberos) Certificate";
+  $HTMLTitle = "Getting a KCA (Kerberos) Certificate";
+} elsif ($InstructionSet eq "register") {
+  $PageTitle = "Register Your Certificate";
+  $HTMLTitle = "Register Your Certificate";
+} elsif ($InstructionSet eq "import") {
+  $PageTitle = "Importing and Exporting Your Certificate";
+  $HTMLTitle = "Importing and Exporting Your Certificate";
+} elsif ($InstructionSet eq "protect") {
+  $PageTitle = "Protect Your Certificate";
+  $HTMLTitle = "Protect Your Certificate";
+} elsif ($InstructionSet eq "misc") {
+  $PageTitle = "Miscellaneous Certificate Information";
+  $HTMLTitle = "Miscellaneous Certificate Information";
 }
 print $query->header(-charset => "utf-8");
 &DocDBHeader($HTMLTitle,$PageTitle);
@@ -71,10 +95,21 @@ if ($InstructionSet eq "general") {
 } elsif ($InstructionSet eq "event") {
   require "EventInstructions.pm";
   &EventInstructionsSidebar;
+} elsif ($InstructionSet eq "cert1") {
+  require "CertificateInstructions1.pm";
+  &CertificateInstructionsSidebar;
+} elsif ($InstructionSet eq "cert2" || $InstructionSet eq "doe" ||
+         $InstructionSet eq "kca" || $InstructionSet eq "register" ||
+	 $InstructionSet eq "import" || $InstructionSet eq "protect" ||
+	 $InstructionSet eq "misc" ) {
+  require "CertificateInstructions2.pm";
+  &CertificateInstructionsSidebar;
 }
 print "<hr/>\n";
 print "<h2>All Instructions</h2>\n";
 print "<p><b><a href=\"$DocDBInstructions?set=general\">General Instructions</a></b></p>\n";
+print "<p><b><a href=\"$DocDBInstructions?set=cert1\">Certificate Instructions (all in one)</a></b><br>\n";
+print "<b><a href=\"$DocDBInstructions?set=cert2\">Certificate Instructions (modular)</a></b></p>\n";
 if (!$Public) {
   print "<p><b><a href=\"$DocDBInstructions?set=event\">Event Organizer and Calendar</a></b></p>\n";
 }
@@ -89,6 +124,30 @@ if ($InstructionSet eq "general") {
 } elsif ($InstructionSet eq "event") {
   require "EventInstructions.pm";
   &EventInstructionsBody;
+} elsif ($InstructionSet eq "cert1") {
+  require "CertificateInstructions1.pm";
+  &CertificateInstructionsBody;
+} elsif ($InstructionSet eq "cert2") {
+  require "CertificateInstructions2.pm";
+  &CertificateInstructionsBody;
+} elsif ($InstructionSet eq "doe") {
+  require "CertificateInstructions2.pm";
+  &DOECertificateInstructionsBody;
+} elsif ($InstructionSet eq "kca") {
+  require "CertificateInstructions2.pm";
+  &KCACertificateInstructionsBody;
+} elsif ($InstructionSet eq "register") {
+  require "CertificateInstructions2.pm";
+  &RegisterCertificateInstructionsBody;
+} elsif ($InstructionSet eq "import") {
+  require "CertificateInstructions2.pm";
+  &ImportCertificateInstructionsBody;
+} elsif ($InstructionSet eq "protect") {
+  require "CertificateInstructions2.pm";
+  &ProtectCertificateInstructionsBody;
+} elsif ($InstructionSet eq "misc") {
+  require "CertificateInstructions2.pm";
+  &MiscCertificateInstructionsBody;
 }
 
 ### Right column (wrapped around by middle column)
