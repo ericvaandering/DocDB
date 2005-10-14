@@ -29,6 +29,8 @@ require "DBUtilities.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 
+require "MeetingSecurityUtilities.pm";
+
 require "CalendarHTML.pm";
 require "MeetingHTML.pm";
 
@@ -42,7 +44,7 @@ my $Day         = $Params{day}         || 0;
 my $Month       = $Params{month}         || 0;
 my $Year        = $Params{year}         || 0;
 
-&CreateConnection();
+CreateConnection();
 
 ### Start HTML
 
@@ -103,9 +105,12 @@ if ($Day && $Month && $Year) {
   print &CalendarLink(-year => $NextYear, -month => $NextMNum, -day => $NextDNum, 
                       -text => "$NextDNum $NextName $NextYear &raquo;");
   print "</p>\n";
-  print "<p class=\"DayNav\">\n";
-  print "<a href=\"".$SessionModify."?mode=new&amp;singlesession=1&amp;sessionyear=$Year&amp;sessionmonth=$Month&amp;sessionday=$Day\">Add a New Event on this Day</a>\n";
-  print "</p>\n";
+  
+  if (CanCreateMeeting()) {
+    print "<p class=\"DayNav\">\n";
+    print "<a href=\"".$SessionModify."?mode=new&amp;singlesession=1&amp;sessionyear=$Year&amp;sessionmonth=$Month&amp;sessionday=$Day\">Add a New Event on this Day</a>\n";
+    print "</p>\n";
+  }
   
   &PrintDayEvents(-year => $Year, -month => $Month, -day => $Day);
 } elsif ($Month && $Year) {
