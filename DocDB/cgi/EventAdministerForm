@@ -64,11 +64,12 @@ my $LongDescription  = $params{longdesc};
 $query -> delete_all();
 
 if ($Password && $Username) {
-  &CreateConnection(-user => $Username, -password => $Password);
+  CreateConnection(-user => $Username, -password => $Password);
 } else {
-  &CreateConnection(-type => "ro");
+  CreateConnection(-type => "ro");
 }
 
+EndPage(-startpage => $TRUE);
 
 &GetConferences;
 &GetAllEventGroups;

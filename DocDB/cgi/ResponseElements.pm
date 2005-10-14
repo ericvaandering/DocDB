@@ -73,9 +73,17 @@ sub DebugPage (;$) { # Debugging output
   return @DebugStack;
 }
 
-sub EndPage {  # Fatal errors, aborts page if present
+sub EndPage (;%) {  # Fatal errors, aborts page if present
+  my %Params = @_;
+  my $StartPage = $Params{-startpage} || $FALSE;
+
+
   WarnPage();
   if (@ErrorStack) { 
+    if ($StartPage) {
+      print $query -> header;
+      DocDBHeader("Fatal Error");
+    }
     ErrorPage();
     DocDBNavBar();
     DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
