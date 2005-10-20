@@ -45,6 +45,7 @@ sub CalendarLink (%) {
 sub PrintCalendar {
   use DateTime;
   require "Sorts.pm";
+  require "MeetingSecurityUtilities.pm";
   
   my %Params = @_;
   
@@ -147,8 +148,10 @@ sub PrintCalendar {
     }
     if ($Type eq "month") {
       my $AddLink = "<a class=\"AddEvent\" href=\"".$SessionModify."?mode=new&amp;singlesession=1&amp;sessionyear=$Year&amp;sessionmonth=$Month&amp;sessionday=$Day\">+</a>";            
-      print $DayLink,"\n"; 
-      print $AddLink,"\n";
+      print $DayLink,"\n";
+      if (CanCreateMeeting()) {
+        print $AddLink,"\n";
+      }  
       &PrintDayEvents(-day => $Day, -month => $Month, -year => $Year, -format => "summary");
     }  
     print "</td>\n";
