@@ -47,7 +47,7 @@ my $Reverse = 1;
 
 ### Sort
 
-my @SortedDocuments = reverse sort DocumentByRevisionDate @DocumentIDs;
+my @SortedDocumentIDs = reverse sort DocumentByRevisionDate @DocumentIDs;
 
 my $NumberOfDocuments = &DocumentTable(-fields => \@Fields, -docids  => \@SortedDocumentIDs, 
                                        -sortby => $SortBy,  -reverse => $Reverse);
