@@ -169,7 +169,7 @@ sub GetHintDocuments ($$) {
 
 sub TalkMatches ($$@) {
 
-  my ($SessionTalkID,$TalkMatchThreshold,%DocumentIDs) = @_;
+  my ($SessionTalkID,$Threshold,%DocumentIDs) = @_;
   
   require "Sorts.pm";
   require "DocumentSQL.pm";
