@@ -317,9 +317,9 @@ sub PrintSession (%) {
   my $SessionID  = $Params{-sessionid};
   my $SkipHeader = $Params{-skipheader} || $FALSE;
 
-  
   require "Sorts.pm";
   require "TalkSQL.pm";
+  require "TalkHintSQL.pm";
   require "TalkHTML.pm";
   require "SQLUtilities.pm";
   require "Utilities.pm";

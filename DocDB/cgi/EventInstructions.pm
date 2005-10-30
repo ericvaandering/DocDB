@@ -130,7 +130,7 @@ shown.</p>
 <a name="upcoming"/>
 <h2>Upcoming events</h2>
 
-<p>This view shows events scheduled for the next 180 days. The view is similar
+<p>This view shows events scheduled for the next 60 days. The view is similar
 to the day view in that titles, locations, and URLs are all shown. Click on the
 links to view the agendas.</p> 
 
