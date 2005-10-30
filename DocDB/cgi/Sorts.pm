@@ -282,4 +282,10 @@ sub EventGroupsByName {
   $EventGroups{$a}{ShortDescription} cmp $EventGroups{$b}{ShortDescription};
 }
 
+sub FilesByDescription {
+  $DocFiles{$a}{DESCRIPTION} cmp $DocFiles{$b}{DESCRIPTION}
+                             or
+         $DocFiles{$a}{NAME} cmp $DocFiles{$b}{NAME}
+}                              
+
 1;
