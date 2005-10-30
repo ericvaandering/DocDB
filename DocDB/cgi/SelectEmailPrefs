@@ -283,7 +283,7 @@ print " \n";
 print $query -> reset (-value => "Reset");
 print "</td></tr></table>\n";
 
-print "<a name=\"topic\" \><h3>Notification by Topics</h3>\n";
+print "<a name=\"topic\"/><h3>Notification by Topics</h3>\n";
 
 print "<table class=\"HighPaddedTable\">\n";
 print "<tr>";
@@ -295,14 +295,14 @@ print "</tr><tr>\n";
 print "</tr>\n";
 print "</table>\n";
 
-print "<hr/><a name=\"author\"><h3>Notification by Authors</h3>\n";
+print "<hr/><a name=\"author\"/><h3>Notification by Authors</h3>\n";
 print "<table class=\"HighPaddedTable\"><tr>\n";
 &EmailAuthorForm($EmailUserID,"Immediate");
 &EmailAuthorForm($EmailUserID,"Daily");
 &EmailAuthorForm($EmailUserID,"Weekly");
 print "</tr></table>\n";
 
-print "<hr><a name=\"keyword\"><h3>Notification by Keywords</h3>\n";
+print "<hr/><a name=\"keyword\"/><h3>Notification by Keywords</h3>\n";
 print "<table class=\"HighPaddedTable\">\n";
 &EmailKeywordForm($EmailUserID,"Immediate");
 &EmailKeywordForm($EmailUserID,"Daily");

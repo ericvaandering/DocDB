@@ -384,12 +384,13 @@ sub DisplayNotification($$;$) {
 }
 
 sub NotifyTopicSelect ($) { # Check for all, boxes for major and minor topics
+
+  require "FormElements.pm";
+
   my ($Set) = @_;
 
   print "<td valign=top>\n";
-  print "<b><a ";
-  &HelpLink("notifytopic");
-  print "$Set:</a></b><p>\n";
+  print FormElementTitle(-helplink => "notifytopic", -helptext => $Set);
   if ($NotifyAllTopics) {
     print $query -> checkbox(-name => "all$Set", -checked => 'checked', -value => 1, -label => '');
   } else {
@@ -424,12 +425,12 @@ sub NotifyTopicSelect ($) { # Check for all, boxes for major and minor topics
 }
 
 sub NotifyAuthorSelect ($) { 
+  require "FormElements.pm";
+
   my ($Set) = @_;
 
-  print "<td valign=top>\n";
-  print "<b><a ";
-  &HelpLink("notifyauthor");
-  print "$Set:</a></b><br>\n";
+  print "<td>\n";
+  print FormElementTitle(-helplink => "notifyauthor", -helptext => $Set);
 
   my @AuthorIDs = sort byLastName keys %Authors;
   my %AuthorLabels = ();
@@ -444,12 +445,13 @@ sub NotifyAuthorSelect ($) {
 }
   
 sub NotifyKeywordEntry ($) { 
+  require "FormElements.pm";
+
   my ($Set) = @_;
 
-  print "<tr><td align=left>\n";
-  print "<b><a ";
-  &HelpLink("notifykeyword");
-  print "$Set:</a></b> (separate with spaces)<br>\n";
+  print "<tr><td>\n";
+  print FormElementTitle(-helplink  => "notifykeyword", -helptext => $Set, 
+                   -extratext => "(separate with spaces)");
 
   foreach my $ID (@AuthorIDs) {
     $AuthorLabels{$ID} = $Authors{$ID}{FULLNAME};

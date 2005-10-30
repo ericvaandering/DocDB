@@ -72,18 +72,21 @@ sub UserPrefForm($) {
 
   print "<table class=\"MedPaddedTable LeftHeader\">";
   if ($Digest) { 
+    print "<tr><th>\n";
     print $query -> hidden(-name => 'username', -default => $Username);
     print $query -> hidden(-name => 'digest', -default => $Digest);
-    print "<tr><td><b>Username:</b></td>\n<td>$Username";
+    print "Username:</th>\n<td>$Username</td></tr>";
   } elsif ($UserValidation eq "certificate") {
-    print "<tr><td><b>Username:</b></td>\n<td>$Username";
+    print "<tr><th>Username:</th>\n<td>$Username</td></tr>";
   } else {
-    print "<tr><td><b>Username:</b></td>\n<td>";
+    print "<tr><th>Username:</th>\n<td>";
     print $query -> textfield(-name => 'username', -default => $Username,      
                             -size => 16, -maxlength => 32);
-    print "<tr><td><b>Password:</b></td>\n<td>";
+    print "</td></tr>";
+    print "<tr><th>Password:</th>\n<td>";
     print $query -> password_field(-name => 'password', 
                             -size => 16, -maxlength => 32);
+    print "</td></tr>";
   }  
   
   if  ($UserValidation eq "certificate") {                       
