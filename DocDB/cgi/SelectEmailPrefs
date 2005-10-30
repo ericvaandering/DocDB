@@ -24,7 +24,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-use CGI;    
+use CGI qw(-nosticky);    
 use DBI;
                                                   
 require "DocDBGlobals.pm";
@@ -231,6 +231,7 @@ if ($Mode eq "update") {
 }  
 
 print $query -> startform('POST',$SelectEmailPrefs);
+print "<div id=\"SelectEmailPrefsForm\">\n";
 print $query -> hidden(-name => 'mode', -default => "update", -override => 1);
 
 print "<table class=\"HighPaddedTable CenteredTable\"><tr><td>\n";
@@ -253,10 +254,10 @@ print "<p>At the bottom part of the page, select the <a
        every day or week.</p>\n";
 print "</td></tr></table>\n";
 
-print "<table class=\"HighPaddedTable\"><tr><td>\n";
+print "<table class=\"HighPaddedTable\">\n";
 print "<tr><td colspan=\"2\">\n";
 UserPrefForm($EmailUserID);
-print "<td>";
+print "</td><td>";
 print "<b>Current e-mail notifications:</b>\n";
 print "<ul>\n";
 DisplayNotification($EmailUserID,"Immediate",true);
@@ -314,7 +315,7 @@ print "<tr><td>";
 print $query -> submit (-value => "Update Notification Preferences");
 print " \n";
 print $query -> reset (-value => "Reset");
-print "</td></tr></table>\n";
+print "</td></tr></table></div>\n";
 print $query -> endform;
 print "<hr/>\n";
 

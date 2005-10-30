@@ -94,12 +94,12 @@ sub UserPrefForm($) {
     print "<tr><th>E-mail address:</th>\n<td>";
     print $query -> textfield(-name => 'email',    -default => $EmailAddress,     
                               -size => 24, -maxlength => 64);
-    print "</tr>\n";                          
+    print "</td></tr>\n";                          
   } else {
     print "<tr><th>Real name:</th>\n<td>";
     print $query -> textfield(-name => 'name',     -default => $Name,     
                               -size => 24, -maxlength => 128);    
-    print "</tr>\n";                          
+    print "</td></tr>\n";                          
     print "<tr><th>E-mail address:</th>\n<td>";
     print $query -> textfield(-name => 'email',    -default => $EmailAddress,     
                               -size => 24, -maxlength => 64);
@@ -107,11 +107,11 @@ sub UserPrefForm($) {
     print "<tr><th>New password:</th>\n<td>";
     print $query -> password_field(-name => 'newpass',    -default => "",     
                               -size => 24, -maxlength => 64, -override =>1 );
-    print "</tr>\n";                          
+    print "</td></tr>\n";                          
     print "<tr><th>Confirm password:</th>\n<td>";
     print $query -> password_field(-name => 'confnewpass',    -default => "",     
                               -size => 24, -maxlength => 64, -override =>1 );
-    print "</tr>\n";                          
+    print "</td></tr>\n";                          
   }                          
 
   print "<tr><th>Prefer HTML e-mail:</th>\n<td>";
@@ -120,6 +120,7 @@ sub UserPrefForm($) {
   } else {
     print $query -> checkbox(-name => "html", -value => 1, -label => '');
   }                             
+  print "</td></tr>\n";                          
   if  ($UserValidation eq "certificate") {                       
     print "<tr><th>Member of Groups:</th>\n";     
     print "<td><ul>\n"; 
@@ -128,7 +129,7 @@ sub UserPrefForm($) {
       &FetchSecurityGroup($UserGroupID);
       print "<li>$SecurityGroups{$UserGroupID}{NAME}</li>\n";
     }   
-    print "</ul></td>\n";
+    print "</ul></td></tr>\n";
   }
   print "</table>\n";
 }
