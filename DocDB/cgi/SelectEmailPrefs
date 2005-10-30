@@ -165,11 +165,9 @@ if ($EmailUserID) {
   &EndPage();
 }
 
-EndPage(@ErrorStack);
+EndPage();
 
 # Everything is OK, display the page
-
-WarnPage(@WarnStack);
 
 if ($Mode eq "update") {
 
@@ -235,7 +233,7 @@ if ($Mode eq "update") {
 print $query -> startform('POST',$SelectEmailPrefs);
 print $query -> hidden(-name => 'mode', -default => "update", -override => 1);
 
-print "<table cellspacing=10 width=90% align=center><tr><td>\n";
+print "<table class=\"HighPaddedTable CenteredTable\"><tr><td>\n";
 
 print "<p><b>Use this page to change your personal account settings.</b></p> 
        <p> At the top part of the page, you can change
@@ -255,10 +253,10 @@ print "<p>At the bottom part of the page, select the <a
        every day or week.</p>\n";
 print "</td></tr></table>\n";
 
-print "<table cellspacing=10><tr><td>\n";
-print "<tr><td colspan=2 valign=top>\n";
+print "<table class=\"HighPaddedTable\"><tr><td>\n";
+print "<tr><td colspan=\"2\">\n";
 &UserPrefForm($EmailUserID);
-print "<td valign=top>";
+print "<td>";
 print "<b>Current e-mail notifications:</b>\n";
 print "<ul>\n";
 &DisplayNotification($EmailUserID,"Immediate",true);
@@ -271,9 +269,9 @@ print "</td></tr></table>\n";
 
 my @WatchDocumentIDs = &FetchEmailDocuments(-emailuserid => $EmailUserID);
 if (@WatchDocumentIDs) {
-  print "<center><h4>You are watching these individual documents: </h4>\n";
+  print "<h4>You are watching these individual documents: \n";
   print $query -> checkbox(-name => "clearwatched", -value => 1, -label => 'Clear Watched Documents');
-  print "<p/></center><p/>\n";
+  print "</h4>\n";
 }
 my $NDocs = &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
                            -docids => \@WatchDocumentIDs);  
@@ -287,37 +285,38 @@ print "</td></tr></table>\n";
 
 print "<a name=\"topic\" \><h3>Notification by Topics</h3>\n";
 
-print "<table cellspacing=10>\n";
-print "<tr valign=bottom>";
+print "<table class=\"HighPaddedTable\">\n";
+print "<tr>";
 &EmailTopicForm($EmailUserID,"Immediate");
-print "<tr valign=bottom>";
+print "</tr><tr>\n";
 &EmailTopicForm($EmailUserID,"Daily");
-print "<tr valign=bottom>";
+print "</tr><tr>\n";
 &EmailTopicForm($EmailUserID,"Weekly");
+print "</tr>\n";
 print "</table>\n";
 
-print "<hr><a name=\"author\"><h3>Notification by Authors</h3>\n";
-print "<table cellspacing=10><tr valign=bottom>\n";
+print "<hr/><a name=\"author\"><h3>Notification by Authors</h3>\n";
+print "<table class=\"HighPaddedTable\"><tr>\n";
 &EmailAuthorForm($EmailUserID,"Immediate");
 &EmailAuthorForm($EmailUserID,"Daily");
 &EmailAuthorForm($EmailUserID,"Weekly");
 print "</tr></table>\n";
 
 print "<hr><a name=\"keyword\"><h3>Notification by Keywords</h3>\n";
-print "<table cellspacing=10>\n";
+print "<table class=\"HighPaddedTable\">\n";
 &EmailKeywordForm($EmailUserID,"Immediate");
 &EmailKeywordForm($EmailUserID,"Daily");
 &EmailKeywordForm($EmailUserID,"Weekly");
 print "</table>\n";
 
-print "<table cellspacing=10 class=\"CenteredTable\">\n";
+print "<table class=\"HighPaddedTable CenteredTable\">\n";
 print "<tr><td>";
 print $query -> submit (-value => "Update Notification Preferences");
 print " \n";
 print $query -> reset (-value => "Reset");
 print "</td></tr></table>\n";
 print $query -> endform;
-print "<hr/><p></p>\n";
+print "<hr/>\n";
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

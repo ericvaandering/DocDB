@@ -26,9 +26,6 @@
 
 # Constants
 
-use constant TRUE  => 1; #Doesn't span other files.
-use constant FALSE => 0;
-
 $TRUE  = 1;
 $FALSE = 0;
 
@@ -87,7 +84,6 @@ $remote_user          =~ tr/[A-Z]/[a-z]/;
 
 # Preferences
 
-$Preferences{Security}{Certificates}{UseCNOnly}        = $FALSE; # Use CN instead of E (E-mail) to distinguish
 $Preferences{Security}{Certificates}{PopupLimitCookie} = $FALSE; # Unused, encourage users to limit which groups they belong to with cookies
 
 $Preferences{Options}{DynamicFullList}{Private} = $FALSE; # Generate Full document list by dynamically for private db

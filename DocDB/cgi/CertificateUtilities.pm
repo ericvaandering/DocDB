@@ -45,25 +45,14 @@ sub FetchEmailUserIDByCert (%) {
   # If we do http basic with users, this routine will function with minor modifications
 
   my $EmailUserSelect;
-  if ($Preferences{Security}{Certificates}{UseCNOnly}) {  
-    if ($IgnoreVerification) {
-      $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                       "where Name=?");
-    } else {                                   
-      $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                       "where Verified=1 and Name=?");
-    }
-    $EmailUserSelect -> execute($CertCN);
-  } else {
-    if ($IgnoreVerification) {
-      $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                       "where EmailAddress=? and Name=?");
-    } else {                                   
-      $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                       "where Verified=1 and EmailAddress=? and Name=?");
-    }
-    $EmailUserSelect -> execute($CertEmail,$CertCN);
-  }                                    
+  if ($IgnoreVerification) {
+    $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
+                                     "where Name=?");
+  } else {                                   
+    $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
+                                     "where Verified=1 and Name=?");
+  }
+  $EmailUserSelect -> execute($CertCN);
 
   my ($EmailUserID) = $EmailUserSelect -> fetchrow_array; 
   push @DebugStack,"Found e-mail user: $EmailUserID";
@@ -89,25 +78,18 @@ sub CertificateStatus () {
   
   push @DebugStack,"Finding Status by certificate";
   
-  unless (($CertEmail && $CertCN) || ($CertCN && $Preferences{Security}{Certificates}{UseCNOnly})) {
+  unless ($CertCN) {
     $CertificateStatus = "nocert";
     push @DebugStack,"Certificate Status: $CertificateStatus";
     return $CertificateStatus;
   } 
     
   my $EmailUserSelect;
-  if ($Preferences{Security}{Certificates}{UseCNOnly}) {  
-    $EmailUserSelect = $dbh->prepare("select EmailUserID,Verified from EmailUser ".
-                                       "where Name=?");
-    $EmailUserSelect -> execute($CertCN);
-    push @DebugStack,"Checking user $CertCN by CN";
-  } else {
-    $EmailUserSelect = $dbh->prepare("select EmailUserID,Verified from EmailUser ".
-                                       "where EmailAddress=? and Name=?");
-    $EmailUserSelect -> execute($CertEmail,$CertCN);
-  }                                    
-
+  $EmailUserSelect = $dbh->prepare("select EmailUserID,Verified from EmailUser ".
+                                     "where Name=?");
+  $EmailUserSelect -> execute($CertCN);
   my ($EmailUserID,$Verified) = $EmailUserSelect -> fetchrow_array; 
+  push @DebugStack,"Checking user $CertCN by CN";
   
   if ($Verified) {
     $CertificateStatus = "verified";
@@ -121,25 +103,7 @@ sub CertificateStatus () {
     return $CertificateStatus;
   } 
   
-  if ($Preferences{Security}{Certificates}{UseCNOnly}) { # Can't do mismatch check
-    $CertificateStatus = "noapp";
-    push @DebugStack,"Certificate Status: $CertificateStatus";
-    return $CertificateStatus;
-  } 
-   
-  my $AddressSelect = $dbh->prepare("select EmailUserID from EmailUser where EmailAddress=?");
-     $AddressSelect -> execute($CertEmail);
-  my ($AddressID) = $AddressSelect -> fetchrow_array; 
-
-  my $NameSelect = $dbh->prepare("select EmailUserID from EmailUser where Name=?");
-     $NameSelect -> execute($CertCN);
-  my ($NameID) = $NameSelect -> fetchrow_array; 
-    
-  if ($NameID || $AddressID) {
-    $CertificateStatus = "mismatch";
-  } else {
-    $CertificateStatus = "noapp";
-  }
+  $CertificateStatus = "noapp";
   push @DebugStack,"Certificate Status: $CertificateStatus";
   return $CertificateStatus;
 }

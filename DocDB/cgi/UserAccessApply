@@ -44,21 +44,18 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 print $query->header;
 &DocDBHeader("Certificate Application");
 
-&EndPage(@ErrorStack);
+EndPage();
 
 ### Output Information
 
 my $CertificateStatus = &CertificateStatus();
-my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
-if ($Preferences{Security}{Certificates}{UseCNOnly} && !$CertEmail) {
-  $CertEmail = $params{email};
-}
+my $CertEmail = $params{email};
 
 unless ($CertEmail) { 
-  push @WarnStack,"Your certificate has no e-mail address and you didn't supply one.";
+  push @ErrorStack,"You must supply an e-mail address.";
 }
 
-&WarnPage(@WarnStack); @WarnStack = ();    
+EndPage();
     
 my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
 
