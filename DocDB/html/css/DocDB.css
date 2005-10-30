@@ -65,7 +65,14 @@ th {vertical-align: bottom; }
 
 .LeftHeader {text-align: right;}  
 
-.LeftHeader th {text-align: right;}  
+.LeftHeader th {
+  vertical-align: top;
+  text-align: right;
+}  
+
+.LeftHeader td {
+  text-align: left;
+}  
 
 /* Stuff for PrintRevisionInfo, which shows up in lots of places, hence it's here */
 
