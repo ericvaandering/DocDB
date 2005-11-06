@@ -771,7 +771,8 @@ sub EventsTable (;%) {
 
 sub EventsByGroup (%) {
   require "Sorts.pm";
-
+  require "ResponseElements.pm";
+  
   my %Params = @_;
 
   my $Mode         = $Params{-mode}   || "display";
