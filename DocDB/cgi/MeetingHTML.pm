@@ -707,7 +707,7 @@ sub EventLink (%) {
   
   my $Link  = "<a href=\"$URL\" class=\"$Class\" title=\"$ToolTip\">";
   if ($Format eq "long") {
-    $Link .=$Conferences{$EventID}{LongDescription};
+    $Link .= $Conferences{$EventID}{LongDescription};
   } else {  
     $Link .= $Conferences{$EventID}{Title};
   }  
@@ -787,23 +787,27 @@ sub EventsByGroup (%) {
 
   @DisplayEventIDs = reverse sort EventsByDate @DisplayEventIDs;
   &FetchEventGroup($EventGroupID);
-  
+  print "<table class=\"LowPaddedTable\">";
+  print "<tr><td colspan=\"2\">\n";
   if ($Mode eq "display") {
     print "<strong><a href=\"$ListBy?eventgroupid=$EventGroupID\">$EventGroups{$EventGroupID}{ShortDescription}</a></strong>\n"; #v7 add link, truncate list?
   } else {
     print "<strong>$EventGroups{$EventGroupID}{ShortDescription}</strong>\n"; #v7 add link, truncate list?
   }
-  print "<ul>\n";
+  print "</td></tr>\n";
   foreach my $EventID (@DisplayEventIDs) {
+    print "<tr>\n";
     my $MeetingLink;
     if ($Mode eq "modify") {
       $MeetingLink = &ModifyEventLink($EventID);
     } else {
       $MeetingLink = &EventLink(-eventid => $EventID);
     }
-    print "<li>$MeetingLink</li>\n";
+    print "<td>$MeetingLink</td>\n";
+    print "<td>$Conferences{$EventID}{StartDate}</td>\n";
+    print "</tr>\n";
   }  
-  print "</ul>\n";
+  print "</table>\n";
 }
  
 sub EventGroupSelect (;%) {
