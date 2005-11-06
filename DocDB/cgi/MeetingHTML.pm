@@ -746,7 +746,7 @@ sub EventsTable (;%) {
 
   my $Mode     = $Params{-mode}   || "display";
   
-  my $NCols = 3;
+  my $NCols = 2;
   my $Col   = 0;
   my $Row   = 0;
   my @EventGroupIDs = sort EventGroupsByName &GetAllEventGroups();
@@ -786,7 +786,7 @@ sub EventsByGroup (%) {
   }
 
   @DisplayEventIDs = reverse sort EventsByDate @DisplayEventIDs;
-  &FetchEventGroup($EventGroupID);
+  FetchEventGroup($EventGroupID);
   print "<table class=\"LowPaddedTable\">";
   print "<tr><td colspan=\"2\">\n";
   if ($Mode eq "display") {
@@ -799,12 +799,12 @@ sub EventsByGroup (%) {
     print "<tr>\n";
     my $MeetingLink;
     if ($Mode eq "modify") {
-      $MeetingLink = &ModifyEventLink($EventID);
+      $MeetingLink = ModifyEventLink($EventID);
     } else {
-      $MeetingLink = &EventLink(-eventid => $EventID);
+      $MeetingLink = EventLink(-eventid => $EventID);
     }
     print "<td>$MeetingLink</td>\n";
-    print "<td>$Conferences{$EventID}{StartDate}</td>\n";
+    print "<td>",EuroDate($Conferences{$EventID}{StartDate}),"</td>\n";
     print "</tr>\n";
   }  
   print "</table>\n";
