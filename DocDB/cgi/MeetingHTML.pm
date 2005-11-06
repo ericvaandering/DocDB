@@ -506,7 +506,7 @@ sub PrintSingleSessionHeader (%) {
     print "$EventTitle\n";
   } 
   print " (Part of ";
-  print EventGroupLink(-eventgroupid => $Conferences{$ConferenceID}{EventGroupID});
+  print EventGroupLink(-eventgroupid => $Conferences{$EventID}{EventGroupID});
   print ")\n"; 
   
   print "</h2>";
