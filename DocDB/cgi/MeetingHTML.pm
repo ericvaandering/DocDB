@@ -571,12 +571,15 @@ sub PrintMeetingInfo($;%) {
 
   print "<h4>\n";
   if ($Conferences{$ConferenceID}{StartDate} ne $Conferences{$ConferenceID}{EndDate}) {
-    print " held from ",&EuroDate($Conferences{$ConferenceID}{StartDate});
-    print " to ",&EuroDate($Conferences{$ConferenceID}{EndDate});
+    print " held from ",EuroDate($Conferences{$ConferenceID}{StartDate});
+    print " to ",EuroDate($Conferences{$ConferenceID}{EndDate});
   } else {
-    print " held on ",&EuroDate($Conferences{$ConferenceID}{StartDate});
+    print " held on ",EuroDate($Conferences{$ConferenceID}{StartDate});
   }
-  print " in $Conferences{$ConferenceID}{Location}\n";
+  if ($Conferences{$ConferenceID}{Location}) {
+    print " in $Conferences{$ConferenceID}{Location}\n";
+  )
+  print "<br/>(Part of ",EventGroupLink($Conferences{$ConferenceID}{EventGroup},")\n"; 
   print "</h4>\n";
   
   if ($Conferences{$ConferenceID}{URL}) {
@@ -679,6 +682,17 @@ sub PrintSessionSeparatorInfo ($) {
   print "<td>",$SessionSeparators{$SessionSeparatorID}{Description},"</td>\n";
   print "<td>",$SessionSeparators{$SessionSeparatorID}{Location},"</td>\n";
   print "</tr>\n";
+}
+
+sub EventGroupLink (%) {
+  my %Params = @_;
+  my $EventGroupID = $Params{-eventgroupid} || 0;
+  FetchEventGroup($EventGroupID);
+  
+  my $Link = "<a href=\"".$ListAllMeetings."?eventgroupid=".$EventGroupID.\"">;
+  $Link .= $EventGroups{$EventGroupID}{LongDescription};
+  $Link .= "</a>";
+  return $Link;
 }
 
 sub EventLink (%) {
