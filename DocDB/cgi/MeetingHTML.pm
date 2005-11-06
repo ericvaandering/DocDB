@@ -499,11 +499,18 @@ sub PrintSingleSessionHeader (%) {
   my $EventLink    = &EventLink(-eventid => $EventID);
   print "<div class=\"SingleSessionHeader\">\n";
  
+  print "<h2>";
   if ($SessionTitle && $EventTitle && ($SessionTitle ne $EventTitle) && !$OnlyOne) {
-    print "<h2>$SessionTitle, part of $EventLink</h2>\n";
+    print "$SessionTitle, part of $EventLink\n";
   } else {
-    print "<h2>$EventTitle</h2>\n";
+    print "$EventTitle\n";
   } 
+  print " (Part of ";
+  print EventGroupLink(-eventgroupid => $Conferences{$ConferenceID}{EventGroupID});
+  print ")\n"; 
+  
+  print "</h2>";
+  
   print "<h4>Date and time: "; 
   print &EuroDate($Sessions{$SessionID}{StartTime});
   print " at ";
