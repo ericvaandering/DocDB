@@ -97,7 +97,7 @@ sub ConferenceShowAllTalks {
   }
 }
 
-sub SessionEntryForm ($@) {
+sub SessionEntryForm (%) {
   require "FormElements.pm";
 
   my %Params = @_;
@@ -124,7 +124,7 @@ sub SessionEntryForm ($@) {
   # Sort session IDs by order
   
   my $ExtraSessions = $InitialSessions;
-  if (@MeetingOrderIDs) { $ExtraSessions = 1; }
+
   for (my $Session=1;$Session<=$ExtraSessions;++$Session) {
     push @MeetingOrderIDs,"n$Session";
   }
