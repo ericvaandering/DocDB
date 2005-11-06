@@ -579,7 +579,9 @@ sub PrintMeetingInfo($;%) {
   if ($Conferences{$ConferenceID}{Location}) {
     print " in $Conferences{$ConferenceID}{Location}\n";
   }
-  print "<br/>(Part of ".EventGroupLink($Conferences{$ConferenceID}{EventGroup}.")\n"; 
+  print "<br/>(Part of ";
+  print EventGroupLink($Conferences{$ConferenceID}{EventGroup});
+  print ")\n"; 
   print "</h4>\n";
   
   if ($Conferences{$ConferenceID}{URL}) {
