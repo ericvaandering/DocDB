@@ -691,7 +691,9 @@ sub EventGroupLink (%) {
   my $EventGroupID = $Params{-eventgroupid} || 0;
   FetchEventGroup($EventGroupID);
   
-  my $Link = "<a href=\"".$ListAllMeetings."?eventgroupid=".$EventGroupID.\"">;
+  my $Link = "<a href=\"";
+  $Link .= $ListAllMeetings."?eventgroupid=".$EventGroupID;
+  $Link .= "\">";
   $Link .= $EventGroups{$EventGroupID}{LongDescription};
   $Link .= "</a>";
   return $Link;
