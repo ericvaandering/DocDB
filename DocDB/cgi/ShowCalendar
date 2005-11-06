@@ -156,7 +156,7 @@ if ($FutureEventTable || $MonthEventTable) {
     $TheDay      -> add(days => 60);
     $WindowEnd   = $TheDay -> ymd();
   }  
-  push @DebugStack,"Start: $WindowStart End: $WindowEnd";
+
   my @EventIDs = &GetEventsByDate(-from => $WindowStart, -to => $WindowEnd);
   
   if (@EventIDs) {
