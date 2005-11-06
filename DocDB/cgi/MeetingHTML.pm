@@ -580,7 +580,7 @@ sub PrintMeetingInfo($;%) {
     print " in $Conferences{$ConferenceID}{Location}\n";
   }
   print "<br/>(Part of ";
-  print EventGroupLink(-eventgroupid => $Conferences{$ConferenceID}{EventGroup});
+  print EventGroupLink(-eventgroupid => $Conferences{$ConferenceID}{EventGroupID});
   print ")\n"; 
   print "</h4>\n";
   
