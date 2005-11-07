@@ -70,55 +70,66 @@ sub UserPrefForm($) {
   my $EmailAddress = $EmailUser{$EmailUserID}{EmailAddress};
   my $PreferHTML   = $EmailUser{$EmailUserID}{PreferHTML};
 
-  print "<table cellspacing=5>";
+  print "<table class=\"MedPaddedTable LeftHeader\">";
   if ($Digest) { 
+    print "<tr><th>\n";
     print $query -> hidden(-name => 'username', -default => $Username);
     print $query -> hidden(-name => 'digest', -default => $Digest);
-    print "<tr><td align=right><b>Username:</b></td>\n<td>$Username";
+    print "Username:</th>\n<td>$Username</td></tr>";
   } elsif ($UserValidation eq "certificate") {
-    print "<tr><td align=right><b>Username:</b></td>\n<td>$Username";
+    print "<tr><th>Username:</th>\n<td>$Username</td></tr>";
   } else {
-    print "<tr><td align=right><b>Username:</b></td>\n<td>";
+    print "<tr><th>Username:</th>\n<td>";
     print $query -> textfield(-name => 'username', -default => $Username,      
                             -size => 16, -maxlength => 32);
-    print "<tr><td align=right><b>Password:</b></td>\n<td>";
+    print "</td></tr>";
+    print "<tr><th>Password:</th>\n<td>";
     print $query -> password_field(-name => 'password', 
                             -size => 16, -maxlength => 32);
+    print "</td></tr>";
   }  
   
   if  ($UserValidation eq "certificate") {                       
-    print "<tr><td align=right><b>Real name:</b></td>\n<td>$Name</td>\n";     
-    print "<tr><td align=right><b>E-mail address:</b></td>\n<td>$EmailAddress</td>\n";
-  } else {
-    print "<tr><td align=right><b>Real name:</b></td>\n<td>";
-    print $query -> textfield(-name => 'name',     -default => $Name,     
-                              -size => 24, -maxlength => 128);    
-    print "<tr><td align=right><b>E-mail address:</b></td>\n<td>";
+    print "<tr><th>Real name:</th>\n<td>$Name</td></tr>\n";     
+    print "<tr><th>E-mail address:</th>\n<td>";
     print $query -> textfield(-name => 'email',    -default => $EmailAddress,     
                               -size => 24, -maxlength => 64);
-    print "<tr><td align=right><b>New password:</b></td>\n<td>";
+    print "</td></tr>\n";                          
+  } else {
+    print "<tr><th>Real name:</th>\n<td>";
+    print $query -> textfield(-name => 'name',     -default => $Name,     
+                              -size => 24, -maxlength => 128);    
+    print "</td></tr>\n";                          
+    print "<tr><th>E-mail address:</th>\n<td>";
+    print $query -> textfield(-name => 'email',    -default => $EmailAddress,     
+                              -size => 24, -maxlength => 64);
+    print "</tr>\n";                          
+    print "<tr><th>New password:</th>\n<td>";
     print $query -> password_field(-name => 'newpass',    -default => "",     
                               -size => 24, -maxlength => 64, -override =>1 );
-    print "<tr><td align=right><b>Confirm password:</b></td>\n<td>";
+    print "</td></tr>\n";                          
+    print "<tr><th>Confirm password:</th>\n<td>";
     print $query -> password_field(-name => 'confnewpass',    -default => "",     
                               -size => 24, -maxlength => 64, -override =>1 );
+    print "</td></tr>\n";                          
   }                          
 
-  print "<tr><td align=right><b>Prefer HTML e-mail:</b></td>\n<td>";
+  print "<tr><th>Prefer HTML e-mail:</th>\n<td>";
   if ($PreferHTML) {
     print $query -> checkbox(-name => "html", -checked => 'checked', -value => 1, -label => '');
   } else {
     print $query -> checkbox(-name => "html", -value => 1, -label => '');
   }                             
+  print "</td></tr>\n";                          
   if  ($UserValidation eq "certificate") {                       
-    print "<tr><td valign=top align=right><b>Member of Groups:</b></td>\n";     
+    print "<tr><th>Member of Groups:</th>\n";     
     print "<td><ul>\n"; 
     my @UserGroupIDs = &FetchUserGroupIDs($EmailUserID);
     foreach my $UserGroupID (@UserGroupIDs) {
       &FetchSecurityGroup($UserGroupID);
       print "<li>$SecurityGroups{$UserGroupID}{NAME}</li>\n";
     }   
-    print "</ul></td>\n";
+    print "</ul></td></tr>\n";
   }
   print "</table>\n";
 }

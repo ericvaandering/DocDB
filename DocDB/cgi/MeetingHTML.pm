@@ -97,7 +97,7 @@ sub ConferenceShowAllTalks {
   }
 }
 
-sub SessionEntryForm ($@) {
+sub SessionEntryForm (%) {
   require "FormElements.pm";
 
   my %Params = @_;
@@ -124,7 +124,7 @@ sub SessionEntryForm ($@) {
   # Sort session IDs by order
   
   my $ExtraSessions = $InitialSessions;
-  if (@MeetingOrderIDs) { $ExtraSessions = 1; }
+
   for (my $Session=1;$Session<=$ExtraSessions;++$Session) {
     push @MeetingOrderIDs,"n$Session";
   }
@@ -499,11 +499,18 @@ sub PrintSingleSessionHeader (%) {
   my $EventLink    = &EventLink(-eventid => $EventID);
   print "<div class=\"SingleSessionHeader\">\n";
  
+  print "<h2>";
   if ($SessionTitle && $EventTitle && ($SessionTitle ne $EventTitle) && !$OnlyOne) {
-    print "<h2>$SessionTitle, part of $EventLink</h2>\n";
+    print "$SessionTitle, part of $EventLink\n";
   } else {
-    print "<h2>$EventTitle</h2>\n";
+    print "$EventTitle\n";
   } 
+  print " (Part of ";
+  print EventGroupLink(-eventgroupid => $Conferences{$EventID}{EventGroupID});
+  print ")\n"; 
+  
+  print "</h2>";
+  
   print "<h4>Date and time: "; 
   print &EuroDate($Sessions{$SessionID}{StartTime});
   print " at ";
@@ -571,12 +578,17 @@ sub PrintMeetingInfo($;%) {
 
   print "<h4>\n";
   if ($Conferences{$ConferenceID}{StartDate} ne $Conferences{$ConferenceID}{EndDate}) {
-    print " held from ",&EuroDate($Conferences{$ConferenceID}{StartDate});
-    print " to ",&EuroDate($Conferences{$ConferenceID}{EndDate});
+    print " held from ",EuroDate($Conferences{$ConferenceID}{StartDate});
+    print " to ",EuroDate($Conferences{$ConferenceID}{EndDate});
   } else {
-    print " held on ",&EuroDate($Conferences{$ConferenceID}{StartDate});
+    print " held on ",EuroDate($Conferences{$ConferenceID}{StartDate});
   }
-  print " in $Conferences{$ConferenceID}{Location}\n";
+  if ($Conferences{$ConferenceID}{Location}) {
+    print " in $Conferences{$ConferenceID}{Location}\n";
+  }
+  print "<br/>(Part of ";
+  print EventGroupLink(-eventgroupid => $Conferences{$ConferenceID}{EventGroupID});
+  print ")\n"; 
   print "</h4>\n";
   
   if ($Conferences{$ConferenceID}{URL}) {
@@ -681,6 +693,19 @@ sub PrintSessionSeparatorInfo ($) {
   print "</tr>\n";
 }
 
+sub EventGroupLink (%) {
+  my %Params = @_;
+  my $EventGroupID = $Params{-eventgroupid} || 0;
+  FetchEventGroup($EventGroupID);
+  
+  my $Link = "<a href=\"";
+  $Link .= $ListAllMeetings."?eventgroupid=".$EventGroupID;
+  $Link .= "\">";
+  $Link .= $EventGroups{$EventGroupID}{LongDescription};
+  $Link .= "</a>";
+  return $Link;
+}
+
 sub EventLink (%) {
   require "MeetingSecurityUtilities.pm";
   require "EventUtilities.pm";
@@ -707,7 +732,7 @@ sub EventLink (%) {
   
   my $Link  = "<a href=\"$URL\" class=\"$Class\" title=\"$ToolTip\">";
   if ($Format eq "long") {
-    $Link .=$Conferences{$EventID}{LongDescription};
+    $Link .= $Conferences{$EventID}{LongDescription};
   } else {  
     $Link .= $Conferences{$EventID}{Title};
   }  
@@ -746,7 +771,7 @@ sub EventsTable (;%) {
 
   my $Mode     = $Params{-mode}   || "display";
   
-  my $NCols = 3;
+  my $NCols = 2;
   my $Col   = 0;
   my $Row   = 0;
   my @EventGroupIDs = sort EventGroupsByName &GetAllEventGroups();
@@ -771,7 +796,8 @@ sub EventsTable (;%) {
 
 sub EventsByGroup (%) {
   require "Sorts.pm";
-
+  require "ResponseElements.pm";
+  
   my %Params = @_;
 
   my $Mode         = $Params{-mode}   || "display";
@@ -786,24 +812,28 @@ sub EventsByGroup (%) {
   }
 
   @DisplayEventIDs = reverse sort EventsByDate @DisplayEventIDs;
-  &FetchEventGroup($EventGroupID);
-  
+  FetchEventGroup($EventGroupID);
+  print "<table class=\"LowPaddedTable\">";
+  print "<tr><td colspan=\"2\">\n";
   if ($Mode eq "display") {
     print "<strong><a href=\"$ListBy?eventgroupid=$EventGroupID\">$EventGroups{$EventGroupID}{ShortDescription}</a></strong>\n"; #v7 add link, truncate list?
   } else {
     print "<strong>$EventGroups{$EventGroupID}{ShortDescription}</strong>\n"; #v7 add link, truncate list?
   }
-  print "<ul>\n";
+  print "</td></tr>\n";
   foreach my $EventID (@DisplayEventIDs) {
+    print "<tr>\n";
     my $MeetingLink;
     if ($Mode eq "modify") {
-      $MeetingLink = &ModifyEventLink($EventID);
+      $MeetingLink = ModifyEventLink($EventID);
     } else {
-      $MeetingLink = &EventLink(-eventid => $EventID);
+      $MeetingLink = EventLink(-eventid => $EventID);
     }
-    print "<li>$MeetingLink</li>\n";
+    print "<td>$MeetingLink</td>\n";
+    print "<td>",EuroDate($Conferences{$EventID}{StartDate}),"</td>\n";
+    print "</tr>\n";
   }  
-  print "</ul>\n";
+  print "</table>\n";
 }
  
 sub EventGroupSelect (;%) {

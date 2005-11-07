@@ -1,3 +1,22 @@
+7.1.4
+
+A number of small-ish changes to enhance usability:
+
+1. Fixed automatic association of documents with agenda entries (was severely
+broken in v 7.1.3)
+
+2. Files are sorted by description and then file name
+
+3. More blank sessions are added to events in the modify page
+
+4. Whenever an event is shown, the date should also be shown. No need to include
+the date in the title
+
+5. There should be a link back to the event groups when an event is viewed
+
+6. When document #s are entered in agendas, a link to that event will appear in
+the list of events for a document. 
+
 7.1.1
 
 From a user standpoint, not much is really new. There is a link from the agenda

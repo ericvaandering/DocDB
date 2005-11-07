@@ -24,7 +24,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-use CGI;    
+use CGI qw(-nosticky);    
 use DBI;
                                                   
 require "DocDBGlobals.pm";
@@ -45,8 +45,8 @@ require "SecuritySQL.pm";
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
-&GetTopics;
-&GetAuthors;
+GetTopics();
+GetAuthors();
 
 %params = $query -> Vars;
 
@@ -95,18 +95,18 @@ if ($Mode eq "newuser") {
 # Start the page
    
 print $query->header;
-&DocDBHeader("Update Notification Preferences","",-scripts => ["PopUps"]); # Prob need specialized header
+DocDBHeader("Update Notification Preferences","",-scripts => ["PopUps"]); # Prob need specialized header
 
 # Create new user if called for
 
 if ($Mode eq "newuser") {
   if (@ErrorStack) { # There's a problem, so let them try again
-    &ErrorPage(@ErrorStack);
-    &NewEmailUserForm;
+    ErrorPage(@ErrorStack);
+    NewEmailUserForm();
     print "<p>\n";
-    &LoginEmailUserForm;
+    LoginEmailUserForm();
     print "<p>\n";
-    &EndPage();
+    EndPage();
   } else { # Everything OK, lets create the user
     srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
 
@@ -124,7 +124,7 @@ if ($Mode eq "newuser") {
 # Make the user part of the group who's httpd password they've used.
 
     my $EmailUserID =  $UserInsert -> {mysql_insertid}; # Works with MySQL only
-    my $GroupID = &FetchSecurityGroupByName($remote_user); 
+    my $GroupID = FetchSecurityGroupByName($remote_user); 
     my $EmailUserInsert = $dbh -> prepare("insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) values (0,?,?)"); 
        $EmailUserInsert -> execute($EmailUserID,$GroupID);
 
@@ -141,35 +141,33 @@ EndPage();
 # Check for valid user
 
 if ($Password) { 
-  $EmailUserID = &ValidateEmailUser($UserName,$Password);
+  $EmailUserID = ValidateEmailUser($UserName,$Password);
 } elsif ($Digest) {
-  $EmailUserID = &ValidateEmailUserDigest($UserName,$Digest);
+  $EmailUserID = ValidateEmailUserDigest($UserName,$Digest);
 } elsif ($UserValidation eq "certificate") {
   require "CertificateUtilities.pm";
-  $EmailUserID = &FetchEmailUserIDByCert();
+  $EmailUserID = FetchEmailUserIDByCert();
 }    
 
 
 # print "Mode: $Mode<br>\n";
   
 if ($EmailUserID) {
-  &FetchEmailUser($EmailUserID);
-  $Digest = &EmailUserDigest($EmailUserID);
+  FetchEmailUser($EmailUserID);
+  $Digest = EmailUserDigest($EmailUserID);
 } else {
   push @ErrorStack,"The username/password pair or certificate you supplied is invalid. Please try again or contact an administrator.";
-  &ErrorPage(@ErrorStack);
-  &LoginEmailUserForm;
+  ErrorPage();
+  LoginEmailUserForm();
   print "<p>\n";
-  &NewEmailUserForm;
+  NewEmailUserForm();
   print "<p>\n";
-  &EndPage();
+  EndPage();
 }
 
-EndPage(@ErrorStack);
+EndPage();
 
 # Everything is OK, display the page
-
-WarnPage(@WarnStack);
 
 if ($Mode eq "update") {
 
@@ -181,8 +179,8 @@ if ($Mode eq "update") {
 # Update DB
 
   if ($UserValidation eq "certificate") {
-    my $UpdateUserInfo = $dbh -> prepare("update EmailUser set PreferHTML=? where EmailUserID=?");
-    $UpdateUserInfo -> execute($HTML,$EmailUserID);
+    my $UpdateUserInfo = $dbh -> prepare("update EmailUser set EmailAddress=?,PreferHTML=? where EmailUserID=?");
+    $UpdateUserInfo -> execute($Email,$HTML,$EmailUserID);
   } else {
     my $UpdateUserInfo = $dbh -> prepare("update EmailUser set Name=?,EmailAddress=?,PreferHTML=? where EmailUserID=?");
     $UpdateUserInfo -> execute($Name,$Email,$HTML,$EmailUserID);
@@ -201,12 +199,12 @@ if ($Mode eq "update") {
     push @WarnStack,"Your password has been changed.";
   }  
 
-  WarnPage(@WarnStack);
+  WarnPage();
 
 # Clear and refetch user
 
   $EmailUser{$EmailUserID}{EmailUserID} = 0; 
-  &FetchEmailUser($EmailUserID);
+  FetchEmailUser($EmailUserID);
 
 # Delete individual documents if asked
     
@@ -217,25 +215,26 @@ if ($Mode eq "update") {
     
 # Delete old and Insert new notifications
 
-  &SetTopicNotifications($EmailUserID,"Immediate");  
-  &SetTopicNotifications($EmailUserID,"Daily");  
-  &SetTopicNotifications($EmailUserID,"Weekly");  
+  SetTopicNotifications($EmailUserID,"Immediate");  
+  SetTopicNotifications($EmailUserID,"Daily");  
+  SetTopicNotifications($EmailUserID,"Weekly");  
 
-  &SetAuthorNotifications($EmailUserID,"Immediate");  
-  &SetAuthorNotifications($EmailUserID,"Daily");  
-  &SetAuthorNotifications($EmailUserID,"Weekly");  
+  SetAuthorNotifications($EmailUserID,"Immediate");  
+  SetAuthorNotifications($EmailUserID,"Daily");  
+  SetAuthorNotifications($EmailUserID,"Weekly");  
 
-  &SetKeywordNotifications($EmailUserID,"Immediate");  
-  &SetKeywordNotifications($EmailUserID,"Daily");  
-  &SetKeywordNotifications($EmailUserID,"Weekly");  
+  SetKeywordNotifications($EmailUserID,"Immediate");  
+  SetKeywordNotifications($EmailUserID,"Daily");  
+  SetKeywordNotifications($EmailUserID,"Weekly");  
 
 # Clear and refetch if needed
 }  
 
 print $query -> startform('POST',$SelectEmailPrefs);
+print "<div id=\"SelectEmailPrefsForm\">\n";
 print $query -> hidden(-name => 'mode', -default => "update", -override => 1);
 
-print "<table cellspacing=10 width=90% align=center><tr><td>\n";
+print "<table class=\"HighPaddedTable CenteredTable\"><tr><td>\n";
 
 print "<p><b>Use this page to change your personal account settings.</b></p> 
        <p> At the top part of the page, you can change
@@ -255,28 +254,28 @@ print "<p>At the bottom part of the page, select the <a
        every day or week.</p>\n";
 print "</td></tr></table>\n";
 
-print "<table cellspacing=10><tr><td>\n";
-print "<tr><td colspan=2 valign=top>\n";
-&UserPrefForm($EmailUserID);
-print "<td valign=top>";
+print "<table class=\"HighPaddedTable\">\n";
+print "<tr><td colspan=\"2\">\n";
+UserPrefForm($EmailUserID);
+print "</td><td>";
 print "<b>Current e-mail notifications:</b>\n";
 print "<ul>\n";
-&DisplayNotification($EmailUserID,"Immediate",true);
-&DisplayNotification($EmailUserID,"Daily",true);
-&DisplayNotification($EmailUserID,"Weekly",true);
+DisplayNotification($EmailUserID,"Immediate",true);
+DisplayNotification($EmailUserID,"Daily",true);
+DisplayNotification($EmailUserID,"Weekly",true);
 print "</ul>\n";
 print "</td></tr></table>\n";
 
 # FIXME: No way to delete notification on a single document
 
-my @WatchDocumentIDs = &FetchEmailDocuments(-emailuserid => $EmailUserID);
+my @WatchDocumentIDs = FetchEmailDocuments(-emailuserid => $EmailUserID);
 if (@WatchDocumentIDs) {
-  print "<center><h4>You are watching these individual documents: </h4>\n";
+  print "<h4>You are watching these individual documents: \n";
   print $query -> checkbox(-name => "clearwatched", -value => 1, -label => 'Clear Watched Documents');
-  print "<p/></center><p/>\n";
+  print "</h4>\n";
 }
-my $NDocs = &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
-                           -docids => \@WatchDocumentIDs);  
+my $NDocs = DocumentTable(-fields => ["Docid","Title","Author","Updated"],
+                          -docids => \@WatchDocumentIDs);  
 
 print "<hr/><table class=\"CenteredTable\">\n";
 print "<tr><td>";
@@ -285,40 +284,41 @@ print " \n";
 print $query -> reset (-value => "Reset");
 print "</td></tr></table>\n";
 
-print "<a name=\"topic\" \><h3>Notification by Topics</h3>\n";
+print "<a name=\"topic\"/><h3>Notification by Topics</h3>\n";
 
-print "<table cellspacing=10>\n";
-print "<tr valign=bottom>";
-&EmailTopicForm($EmailUserID,"Immediate");
-print "<tr valign=bottom>";
-&EmailTopicForm($EmailUserID,"Daily");
-print "<tr valign=bottom>";
-&EmailTopicForm($EmailUserID,"Weekly");
+print "<table class=\"HighPaddedTable\">\n";
+print "<tr>";
+EmailTopicForm($EmailUserID,"Immediate");
+print "</tr><tr>\n";
+EmailTopicForm($EmailUserID,"Daily");
+print "</tr><tr>\n";
+EmailTopicForm($EmailUserID,"Weekly");
+print "</tr>\n";
 print "</table>\n";
 
-print "<hr><a name=\"author\"><h3>Notification by Authors</h3>\n";
-print "<table cellspacing=10><tr valign=bottom>\n";
-&EmailAuthorForm($EmailUserID,"Immediate");
-&EmailAuthorForm($EmailUserID,"Daily");
-&EmailAuthorForm($EmailUserID,"Weekly");
+print "<hr/><a name=\"author\"/><h3>Notification by Authors</h3>\n";
+print "<table class=\"HighPaddedTable\"><tr>\n";
+EmailAuthorForm($EmailUserID,"Immediate");
+EmailAuthorForm($EmailUserID,"Daily");
+EmailAuthorForm($EmailUserID,"Weekly");
 print "</tr></table>\n";
 
-print "<hr><a name=\"keyword\"><h3>Notification by Keywords</h3>\n";
-print "<table cellspacing=10>\n";
-&EmailKeywordForm($EmailUserID,"Immediate");
-&EmailKeywordForm($EmailUserID,"Daily");
-&EmailKeywordForm($EmailUserID,"Weekly");
+print "<hr/><a name=\"keyword\"/><h3>Notification by Keywords</h3>\n";
+print "<table class=\"HighPaddedTable\">\n";
+EmailKeywordForm($EmailUserID,"Immediate");
+EmailKeywordForm($EmailUserID,"Daily");
+EmailKeywordForm($EmailUserID,"Weekly");
 print "</table>\n";
 
-print "<table cellspacing=10 class=\"CenteredTable\">\n";
+print "<table class=\"HighPaddedTable CenteredTable\">\n";
 print "<tr><td>";
 print $query -> submit (-value => "Update Notification Preferences");
 print " \n";
 print $query -> reset (-value => "Reset");
-print "</td></tr></table>\n";
+print "</td></tr></table></div>\n";
 print $query -> endform;
-print "<hr/><p></p>\n";
+print "<hr/>\n";
 
-&DocDBNavBar;
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 

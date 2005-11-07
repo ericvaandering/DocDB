@@ -346,56 +346,58 @@ sub DisplayNotification($$;$) {
   } elsif ($Always) {
     print "<li>$Set notifications:\n";  
     print "<ul>\n";  
-    print "<li>None\n";  
-    print "</ul>\n";
+    print "<li>None</li>\n";  
+    print "</ul></li>\n";
     return;
   } else {
     return;
   }
   if ($NotifyAllTopics) {
-    print "<li>All documents\n";  
+    print "<li>All documents</li>\n";  
   }  
   
   if (@NotifyMajorIDs) {
     foreach my $MajorID (@NotifyMajorIDs) {
-      print "<li> Topic: ",&MajorTopicLink($MajorID)," ";
+      print "<li> Topic: ",&MajorTopicLink($MajorID),"</li>";
     }
   }
     
   if (@NotifyMinorIDs) {
     foreach my $MinorID (@NotifyMinorIDs) {
-      print "<li> Subtopic: ",&MinorTopicLink($MinorID)," ";
+      print "<li> Subtopic: ",&MinorTopicLink($MinorID),"</li>";
     }
   }
     
   if (@NotifyAuthorIDs) {
     foreach my $AuthorID (@NotifyAuthorIDs) {
-      print "<li> Author: ",&AuthorLink($AuthorID)," ";
+      print "<li> Author: ",&AuthorLink($AuthorID),"</li>";
     }
   }
     
   if (@NotifyKeywords) {
     foreach my $Keyword (@NotifyKeywords) {
-      print "<li>Keyword: $Keyword  ";
+      print "<li>Keyword: $Keyword</li>";
     }
   }
     
-  print "</ul>\n";  
+  print "</ul></li>\n";  
 }
 
 sub NotifyTopicSelect ($) { # Check for all, boxes for major and minor topics
+
+  require "FormElements.pm";
+
   my ($Set) = @_;
 
-  print "<td valign=top>\n";
-  print "<b><a ";
-  &HelpLink("notifytopic");
-  print "$Set:</a></b><p>\n";
+  print "<td>\n";
+  print FormElementTitle(-helplink => "notifytopic", -helptext => $Set);
   if ($NotifyAllTopics) {
     print $query -> checkbox(-name => "all$Set", -checked => 'checked', -value => 1, -label => '');
   } else {
     print $query -> checkbox(-name => "all$Set", -value => 1, -label => '');
   }                             
   print "<b> All Topics</b> ";
+  print "</td>\n";
 
   print "<td>\n";
   my @MajorIDs = sort byMajorTopic keys %MajorTopics;
@@ -409,7 +411,7 @@ sub NotifyTopicSelect ($) { # Check for all, boxes for major and minor topics
                                  -multiple => 'true');
   print "</td>\n";
   
-  print "<td colspan=2>\n";
+  print "<td colspan=\"2\">\n";
   my @MinorIDs = sort byTopic keys %MinorTopics;
   my %MinorLabels = ();
   foreach my $ID (@MinorIDs) {
@@ -424,12 +426,12 @@ sub NotifyTopicSelect ($) { # Check for all, boxes for major and minor topics
 }
 
 sub NotifyAuthorSelect ($) { 
+  require "FormElements.pm";
+
   my ($Set) = @_;
 
-  print "<td valign=top>\n";
-  print "<b><a ";
-  &HelpLink("notifyauthor");
-  print "$Set:</a></b><br>\n";
+  print "<td>\n";
+  print FormElementTitle(-helplink => "notifyauthor", -helptext => $Set);
 
   my @AuthorIDs = sort byLastName keys %Authors;
   my %AuthorLabels = ();
@@ -444,12 +446,13 @@ sub NotifyAuthorSelect ($) {
 }
   
 sub NotifyKeywordEntry ($) { 
+  require "FormElements.pm";
+
   my ($Set) = @_;
 
-  print "<tr><td align=left>\n";
-  print "<b><a ";
-  &HelpLink("notifykeyword");
-  print "$Set:</a></b> (separate with spaces)<br>\n";
+  print "<tr><td>\n";
+  print FormElementTitle(-helplink  => "notifykeyword", -helptext => $Set, 
+                   -extratext => "(separate with spaces)");
 
   foreach my $ID (@AuthorIDs) {
     $AuthorLabels{$ID} = $Authors{$ID}{FULLNAME};

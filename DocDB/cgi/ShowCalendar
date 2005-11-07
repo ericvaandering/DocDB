@@ -40,9 +40,9 @@ $query = new CGI;  # Global for subroutines
 
 my %Params = $query -> Vars;
 
-my $Day         = $Params{day}         || 0;
-my $Month       = $Params{month}         || 0;
-my $Year        = $Params{year}         || 0;
+my $Day   = $Params{day}   || 0;
+my $Month = $Params{month} || 0;
+my $Year  = $Params{year}  || 0;
 
 CreateConnection();
 
@@ -52,6 +52,10 @@ print $query->header;
 
 my $TitleDate;
 my $FutureEventTable = $FALSE;
+my $MonthEventTable  = $FALSE;
+my $WindowStart;
+my $WindowEnd;
+my $EventTableStart;
 my $Today = DateTime -> now(time_zone => 'local');
 
 if ($Day && $Month && $Year) {
@@ -60,6 +64,10 @@ if ($Day && $Month && $Year) {
 } elsif ($Month && $Year) {
   my $Date = DateTime -> new(year => $Year, month => $Month, day => 1);
   $TitleDate = $Date -> month_name()." ".$Year;
+  $EventTableStart = $Date -> clone();
+  $MonthEventTable = $TRUE;
+  $WindowStart = $Date -> ymd();;
+  $WindowEnd = DateTime -> last_day_of_month(year => $Year, month => $Month) -> ymd();
 } elsif ($Year) {
   $TitleDate = $Year;
   if ($Year == $Today -> year()) {
@@ -140,17 +148,21 @@ if ($Day && $Month && $Year) {
   print "</table>\n";
 }
 
-if ($FutureEventTable) {  
-  my $TheDay = $Today -> clone();
-  my $WindowStart = $TheDay -> ymd();
-  $TheDay -> add(days => 60);
-  my $WindowEnd = $TheDay -> ymd();
+if ($FutureEventTable || $MonthEventTable) { 
+  if ($FutureEventTable) {
+    my $TheDay   = $Today -> clone();
+    $EventTableStart = $Today -> clone();
+    $WindowStart = $TheDay -> ymd();
+    $TheDay      -> add(days => 60);
+    $WindowEnd   = $TheDay -> ymd();
+  }  
+
   my @EventIDs = &GetEventsByDate(-from => $WindowStart, -to => $WindowEnd);
   
   if (@EventIDs) {
     print "<table class=\"CenteredTable MultidayEventList Alternating\">\n";
     print "<tr><th>Date</th><th>Time</th><th>Upcoming Events</th><th>Location</th><th></th></tr>\n";
-    $TheDay = $Today -> clone();
+    my $TheDay = $EventTableStart -> clone();
     my $RowClass = "Odd";
     foreach my $i (0..60) {
       $TheDay -> add(days => 1);
