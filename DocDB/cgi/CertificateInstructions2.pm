@@ -31,16 +31,18 @@ sub CertificateInstructionsSidebar {
    <li><a href="$DocDBInstructions?set=doe">Get a DOEgrid Certificate</a></li>
    <li><a href="$DocDBInstructions?set=kca">Get a KCA (Kerberos) Certificate </a>
    <ul>
-    <li><a href="$DocDBInstructions?set=kca#win">for Windows</a></li>
-    <li><a href="$DocDBInstructions?set=kca#linux">for Linux</a></li>
-    <li><a href="$DocDBInstructions?set=kca#mac">for MAC</a></li>
+    <li><a href="$DocDBInstructions?set=kca#win">For Windows</a></li>
+    <li><a href="$DocDBInstructions?set=kca#linux">For Linux</a></li>
+    <li><a href="$DocDBInstructions?set=kca#mac">For MAC</a></li>
    </ul></li> 
    <li><a href="$DocDBInstructions?set=register">Register your certificate with DocDB</a></li>
    <li><a href="$DocDBInstructions?set=import">Importing and Exporting certificates</a></li>
-   <li><a href="$DocDBInstructions?set=protect">Protect your certificate</a></li>
    <li><a href="http://computing.fnal.gov/security/pki/browsercerttest.html">How to test your certificate</a></li>
-   <li><a href="$DocDBInstructions?set=misc#same">Same machine</a></li>
-   <li><a href="$DocDBInstructions?set=misc#issues">Known issues with certificates</a></li>
+   <li><a href="$DocDBInstructions?set=protect">Protect your certificate</a></li>
+   <li><a href="$DocDBInstructions?set=misc#issues">Known issues with certificates</a>
+    <ul>
+    <li><a href="$DocDBInstructions?set=misc#same">Same machine</a></li>
+    </ul></li> 
   </ul>
 TOC
 }
@@ -76,13 +78,13 @@ Get a <a href="$DocDBInstructions?set=kca">KCA (Kerberos) certificate</a> -
 <p>
 <a href="$DocDBInstructions?set=import">Importing and Exporting</a> certificates 
 </p>
-<p>
-<a href="$DocDBInstructions?set=protect">Protect your certificate.</a>
-</p>
 <p> 
 You may wish to 
 <a href="http://computing.fnal.gov/security/pki/browsercerttest.html">test your certificate</a>.
 </p> 
+<p>
+<a href="$DocDBInstructions?set=protect">Protect your certificate.</a>
+</p>
 <p> 
 <a href="$DocDBInstructions?set=misc#issues">Known issues</a> with certificates.
 </p> 
@@ -183,7 +185,7 @@ Use the instructions appropriate to your machine to get and use a KCA certificat
 </p>
 
  <a name="win"/>
-<h1>Get a KCA (Kerberos) Certificate for Windows</h1>
+<h2>Get a KCA (Kerberos) Certificate for Windows</h2>
 <p>
 The KCA certificate will be good for one week, but if you create a 
 desktop shortcut (as specified below), then you will only need to open 
@@ -240,7 +242,7 @@ the shortcut and type in your Kerberos password.
 </ol>
 
  <a name="linux"/>
-<h1>Get a KCA (Kerberos) Certificate for Linux</h1>
+<h2>Get a KCA (Kerberos) Certificate for Linux</h2>
 <ol>
 <li> GetCert method:
   <ul>
@@ -304,7 +306,7 @@ the shortcut and type in your Kerberos password.
 </ol>
 
  <a name="mac"/>
-<h1>Get a KCA (Kerberos) Certificate for MAC</h1>
+<h2>Get a KCA (Kerberos) Certificate for MAC</h2>
 <ol>
 <li>  First make sure that you have both <b>kx509</b> and <b>kxlist</b>.
       If these are not already on your machine, you can find
@@ -618,7 +620,7 @@ sub MiscCertificateInstructionsBody {
 </ol>
 
 <a name="same"/>
-<h1>Same Machine Explanation</h1>
+<h2>Same Machine Explanation</h2>
 <p>
 When you apply for a DOEgrid certificate, your web brower sends along a public
 key.  This key is used to match up with the private key that is kept on your
