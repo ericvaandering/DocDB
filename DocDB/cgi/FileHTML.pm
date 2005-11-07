@@ -90,10 +90,15 @@ sub ShortFileListByRevID {
 
 sub FileListByFileID {
   require "FileUtilities.pm";
+  require "Sorts.pm";
+  
   my (@Files) = @_;
   unless (@Files) {
     return;
   }  
+  
+  @Files = sort FilesByDescription @Files;
+  
   print "<ul>\n";
   foreach my $file (@Files) {
     my $DocRevID      = $DocFiles{$file}{DOCREVID};
@@ -112,7 +117,13 @@ sub FileListByFileID {
 }
 
 sub ShortFileListByFileID {
+  require "FileUtilities.pm";
+  require "Sorts.pm";
+  
   my (@Files) = @_;
+  
+  @Files = sort FilesByDescription @Files;
+  
   foreach my $file (@Files) {
     my $DocRevID      = $DocFiles{$file}{DOCREVID};
     my $VersionNumber = $DocRevisions{$DocRevID}{VERSION};

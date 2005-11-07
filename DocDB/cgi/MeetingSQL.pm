@@ -92,7 +92,10 @@ sub GetRevisionEvents ($) { # Get the events associated with a revision
   
   my @ConferenceIDs = ();
   my $ConferenceID;
-  my $EventList = $dbh->prepare("select ConferenceID from RevisionEvent where DocRevID=?");
+  
+  # Fetch from RevisionEvent table
+  
+  my $EventList = $dbh -> prepare("select ConferenceID from RevisionEvent where DocRevID=?");
   $EventList -> execute($DocRevID);
   $EventList -> bind_columns(undef, \($ConferenceID));
   while ($EventList -> fetch) {
@@ -100,6 +103,19 @@ sub GetRevisionEvents ($) { # Get the events associated with a revision
       push @ConferenceIDs,$ConferenceID;
     }  
   }
+  
+  # Fetch from SessionTalkID table
+  
+  my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+  my $SessionList =  $dbh -> prepare("select Session.ConferenceID from Session,SessionTalk where SessionTalk.SessionID=Session.SessionID and SessionTalk.DocumentID=?"); 
+  $SessionList -> execute($DocumentID);
+  $SessionList -> bind_columns(undef, \($ConferenceID));
+  while ($SessionList -> fetch) {
+    if (&FetchConferenceByConferenceID($ConferenceID)) {
+      push @ConferenceIDs,$ConferenceID;
+    }  
+  }
+
   @ConferenceIDs = &Unique(@ConferenceIDs);
   return @ConferenceIDs;
 }
