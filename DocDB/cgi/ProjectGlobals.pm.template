@@ -134,6 +134,9 @@ $ShortProject   = "MyProject";    # This is the project used in the Document ID
 #$ReadOnlyAdmin  = 0;           # Allows administration from the read-only 
                                 # area. Only suggested for boot-strapping until
                                 # you have an individual selected as admin                               
+			
+#$Preferences{Security}{Certificates}{FNALKCA} = $FALSE;	# TRUE or FALSE - show KCA certificate instructions
+#$Preferences{Security}{Certificates}{DOEGrids} = $FALSE;	# TRUE or FALSE - show DOEgrid certificate instructions
 			       
 #$UseSignoffs          = 0;     # Sign-off system for document approval
 #$MailInstalled        = 1;     # Is the Mailer::Mail module installed?

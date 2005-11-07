@@ -51,10 +51,7 @@ if ($InstructionSet eq "general") {
 } elsif ($InstructionSet eq "event") {
   $PageTitle = "Event Manager";
   $HTMLTitle = "Event Manager and Calendar Instructions";
-} elsif ($InstructionSet eq "cert1") {
-  $PageTitle = "Getting a Certificate";
-  $HTMLTitle = "Getting a Certificate";
-} elsif ($InstructionSet eq "cert2") {
+} elsif ($InstructionSet eq "cert") {
   $PageTitle = "Getting a Certificate";
   $HTMLTitle = "Getting a Certificate";
 } elsif ($InstructionSet eq "doe") {
@@ -95,10 +92,7 @@ if ($InstructionSet eq "general") {
 } elsif ($InstructionSet eq "event") {
   require "EventInstructions.pm";
   &EventInstructionsSidebar;
-} elsif ($InstructionSet eq "cert1") {
-  require "CertificateInstructions1.pm";
-  &CertificateInstructionsSidebar;
-} elsif ($InstructionSet eq "cert2" || $InstructionSet eq "doe" ||
+} elsif ($InstructionSet eq "cert" || $InstructionSet eq "doe" ||
          $InstructionSet eq "kca" || $InstructionSet eq "register" ||
 	 $InstructionSet eq "import" || $InstructionSet eq "protect" ||
 	 $InstructionSet eq "misc" ) {
@@ -107,12 +101,13 @@ if ($InstructionSet eq "general") {
 }
 print "<hr/>\n";
 print "<h2>All Instructions</h2>\n";
-print "<p><b><a href=\"$DocDBInstructions?set=general\">General Instructions</a></b></p>\n";
-print "<p><b><a href=\"$DocDBInstructions?set=cert1\">Certificate Instructions (all in one)</a></b><br>\n";
-print "<b><a href=\"$DocDBInstructions?set=cert2\">Certificate Instructions (modular)</a></b></p>\n";
+print "<p>\n";
+print "<b><a href=\"$DocDBInstructions?set=general\">General Instructions</a></b><br></br>\n";
+print "<b><a href=\"$DocDBInstructions?set=cert\">Certificate Instructions</a></b>\n";
 if (!$Public) {
-  print "<p><b><a href=\"$DocDBInstructions?set=event\">Event Organizer and Calendar</a></b></p>\n";
+  print "<br></br><b><a href=\"$DocDBInstructions?set=event\">Event Organizer and Calendar</a></b>\n";
 }
+print "</p>\n";
 print "</div>\n";  # LeftColumn3Col
 
 ### Main Column
@@ -124,10 +119,7 @@ if ($InstructionSet eq "general") {
 } elsif ($InstructionSet eq "event") {
   require "EventInstructions.pm";
   &EventInstructionsBody;
-} elsif ($InstructionSet eq "cert1") {
-  require "CertificateInstructions1.pm";
-  &CertificateInstructionsBody;
-} elsif ($InstructionSet eq "cert2") {
+} elsif ($InstructionSet eq "cert") {
   require "CertificateInstructions2.pm";
   &CertificateInstructionsBody;
 } elsif ($InstructionSet eq "doe") {

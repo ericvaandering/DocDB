@@ -28,13 +28,24 @@ sub CertificateInstructionsSidebar {
   <h2>Contents</h2>
   <ul>
    <li><a href="$DocDBInstructions?set=cert2#intro">Introduction</a></li>
+TOC
+
+  if ($Preferences{Security}{Certificates}{DOEGrids}) {
+   print <<DOE;
    <li><a href="$DocDBInstructions?set=doe">Get a DOEgrid Certificate</a></li>
+DOE
+  }
+  if ($Preferences{Security}{Certificates}{FNALKCA}) {
+   print <<KCA;
    <li><a href="$DocDBInstructions?set=kca">Get a KCA (Kerberos) Certificate </a>
    <ul>
     <li><a href="$DocDBInstructions?set=kca#win">For Windows</a></li>
     <li><a href="$DocDBInstructions?set=kca#linux">For Linux</a></li>
     <li><a href="$DocDBInstructions?set=kca#mac">For MAC</a></li>
    </ul></li> 
+KCA
+  }
+  print <<TOC;
    <li><a href="$DocDBInstructions?set=register">Register your certificate with DocDB</a></li>
    <li><a href="$DocDBInstructions?set=import">Importing and Exporting certificates</a></li>
    <li><a href="http://computing.fnal.gov/security/pki/browsercerttest.html">How to test your certificate</a></li>
@@ -63,15 +74,28 @@ certificate type for access.  We recommend that Fermilab and other Kerberos
 users choose the KCA certificate.  This is more secure and will, 
 at least at Fermilab, be required for access to other web sites.
 </p>
-<p>
-Get a <a href="$DocDBInstructions?set=doe">DOEgrid certificate</a>
-</p>
-<p>
-Get a <a href="$DocDBInstructions?set=kca">KCA (Kerberos) certificate</a> -
-<a href="$DocDBInstructions?set=kca#win">for Windows</a>, 
-<a href="$DocDBInstructions?set=kca#linux">for Linux</a>, or
-<a href="$DocDBInstructions?set=kca#mac">for MAC</a>
-</p>
+HTML
+
+if ($Preferences{Security}{Certificates}{DOEGrids}) {
+  print <<DOE;
+  <p>
+  Get a <a href="$DocDBInstructions?set=doe">DOEgrid certificate</a>
+  </p>
+DOE
+}
+
+if ($Preferences{Security}{Certificates}{FNALKCA}) {
+   print <<KCA;
+   <p>
+   Get a <a href="$DocDBInstructions?set=kca">KCA (Kerberos) certificate</a> -
+   <a href="$DocDBInstructions?set=kca#win">for Windows</a>, 
+   <a href="$DocDBInstructions?set=kca#linux">for Linux</a>, or
+   <a href="$DocDBInstructions?set=kca#mac">for MAC</a>
+   </p>
+KCA
+}
+
+  print <<HTML;
 <p>
 <a href="$DocDBInstructions?set=register">Register</a> your certificate with DocDB
 </p>
