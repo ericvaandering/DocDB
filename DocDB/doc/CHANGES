@@ -17,6 +17,12 @@ the date in the title
 6. When document #s are entered in agendas, a link to that event will appear in
 the list of events for a document. 
 
+7. Certificate users can change their e-mail
+
+8. The preference $Preferences{Security}{Certificates}{UseCNOnly} has been
+removed and this is the default behavior. If you have this in your
+ProjectGlobals.pm, you can remove it.
+
 7.1.1
 
 From a user standpoint, not much is really new. There is a link from the agenda
