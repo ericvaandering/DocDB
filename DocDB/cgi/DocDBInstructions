@@ -58,8 +58,8 @@ if ($InstructionSet eq "general") {
   $PageTitle = "Getting a Certificate";
   $HTMLTitle = "Getting a Certificate";
 } elsif ($InstructionSet eq "doe") {
-  $PageTitle = "Getting a DOEGrid Certificate";
-  $HTMLTitle = "Getting a DOEGrid Certificate";
+  $PageTitle = "Getting a DOEgrid Certificate";
+  $HTMLTitle = "Getting a DOEgrid Certificate";
 } elsif ($InstructionSet eq "kca") {
   $PageTitle = "Getting a KCA (Kerberos) Certificate";
   $HTMLTitle = "Getting a KCA (Kerberos) Certificate";

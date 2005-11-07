@@ -28,7 +28,7 @@ sub CertificateInstructionsSidebar {
   <h2>Contents</h2>
   <ul>
    <li><a href="#intro">Introduction</a></li>
-   <li><a href="#doe">Get a DoeGrid Certificate</a></li>
+   <li><a href="#doe">Get a DOEgrid Certificate</a></li>
    <li><a href="#kca">Get a KCA (Kerberos) Certificate </a>
    <ul>
     <li><a href="#win">for Windows</a></li>
@@ -51,7 +51,7 @@ sub CertificateInstructionsBody {
 <h1>Introduction</h1>
 
 <p>
-You can use either a DOEGrid Certificate or a Fermi Kerberos (KCA) certificate.
+You can use either a DOEgrid Certificate or a Fermi Kerberos (KCA) certificate.
 <br>
 <font color="red">Each certificate type will need to be separately registered
 with the database.</font>
@@ -63,9 +63,9 @@ at least at Fermilab, be required for access to other web sites.
 </p>
 
 <a name="doe"/>
-<h1>Get a DoeGrid Certificate</h1>
+<h1>Get a DOEgrid Certificate</h1>
 <p>
-DoeGrid certificates are good for 1 year.
+DOEgrid certificates are good for 1 year.
 </p>
 <p>
 Once you get this certificate, you can import it into other browsers on other
@@ -81,7 +81,7 @@ machine other than your own desktop or laptop.</font>
     <li> <font color="red">IMPORTANT for MAC users: The process does not work with Safari at this time.</font>
          Use <a href=http://www.mozilla.org/products/firefox/>Firefox</a>.</li>
     <li> Go to <a href=http://pki1.doegrids.org target="view_doe_window">http://pki1.doegrids.org</a>  and select "enrollment" tab.
-         (This link should open a new window for the DOEGrid site.)</li>
+         (This link should open a new window for the DOEgrid site.)</li>
     <li> Select "New user" on the left hand side.</li>
     <li> Fill in the form
         <ul>
@@ -354,7 +354,7 @@ We are not yet sure how much is possible.</font>
 <h1>Importing and Exporting certificates</h1>
 <ol>
 <li> KCA certificates are usually named x509up_u&lt;your uid&gt;.p12,
-     but there is no naming convention for DOEGrid certificates.  
+     but there is no naming convention for DOEgrid certificates.  
      We will refer to all certificates as <b>mycert.p12</b>.</li>
 <li> Your certificate must be of type PKCS#12 with a <b>.p12</b> extension.</li>
 <li> Choose a simple password when exporting your certificate.  
@@ -476,7 +476,7 @@ We are not yet sure how much is possible.</font>
 <h1>Protect your certificate</h1>
 <font size=+1>
 <p>
-If you export your DOEGrid certificate to a PKCS#12 file, it contains your private key.  
+If you export your DOEgrid certificate to a PKCS#12 file, it contains your private key.  
 You must carefully guard any PKCS#12 certificate files.
 </p>
 <p>
@@ -502,7 +502,7 @@ If someone else uses your certificate, the certificate will be revoked.
 </p>
 <p>
 Further explanation: <br>
-When you generate your certificate request to DOEGrids, a private
+When you generate your certificate request to DOEgrids, a private
 key is generated for you and stored in your brower (for Netscape,
 Mozilla, Firefox this is the Security Device protected by the
 Master Password).  This is why you have to import your new
@@ -523,9 +523,9 @@ The Computing Division provides a
 <a name="same"/>
 <h1>Same Machine Explanation</h1>
 <p>
-When you apply for a DOEGrid certificate, your web brower sends along a public
+When you apply for a DOEgrid certificate, your web brower sends along a public
 key.  This key is used to match up with the private key that is kept on your
-browser.  When you get the e-mail with a link to your new DOEGrid certificate,
+browser.  When you get the e-mail with a link to your new DOEgrid certificate,
 that web page will be expecting to make a proper connection to the private key
 in your web browser.  This key is unique to your physical machine and chosen web
 browser.  
@@ -542,7 +542,7 @@ irrelevant.
 <h1>Known issues with certificates</h1>
 <ol>
 <li> If you wish to use more than one type of certificate 
-     (for instance, both KCA and DOEGrid certificates), 
+     (for instance, both KCA and DOEgrid certificates), 
      each certificate type will need to be separately registered with DocDB.
      <ul>
      <li>To minimize confusion, we strongly recommend that you choose only one 
