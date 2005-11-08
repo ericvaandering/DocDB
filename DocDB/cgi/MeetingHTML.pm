@@ -2,7 +2,7 @@
 # Description: HTML producing routines for meetings and conferences
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified: Stephen Wood (saw@jlab.org)
 
 # Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -346,13 +346,13 @@ sub PrintSession (%) {
     print "<table class=\"Alternating\" class=\"CenteredTable\" id=\"TalkList\">\n";
 
     print "<tr>\n";
-    print "<th>Start</th>\n";
-    print "<th>Title</th>\n";
-    print "<th>Author</th>\n";
-    print "<th>Topic(s)</th>\n";
-    print "<th>Files</th>\n";
-    print "<th>Length</th>\n";
-    print "<th>Notes</th>\n";
+    print "<th class=\"TalkTime\">Start</th>\n";
+    print "<th class=\"TalkTitle\">Title</th>\n";
+    print "<th class=\"TalkAuthor\">Author</th>\n";
+    print "<th class=\"TalkTopics\">Topic(s)</th>\n";
+    print "<th class=\"TalkFiles\">Files</th>\n";
+    print "<th class=\"TalkLength\">Length</th>\n";
+    print "<th class=\"TalkNotes\">Notes</th>\n";
     print "</tr>\n";
 
     my $TalkCounter = 0;

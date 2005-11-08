@@ -2,8 +2,7 @@
 # Description: HTML producing routines for talk entries related to meetings 
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
-#
+#    Modified: Stephen Wood (saw@jlab.org)
 
 # Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -74,7 +73,7 @@ sub PrintSessionTalk($) {
   print "<tr class=\"$RowClass\">\n";
   print "<td class=\"TalkTime\"><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";  
   if ($Confirmed) { # Put titles in italics for unconfirmed talks
-    print "<td>$Title</td>\n";
+    print "<td class=\"TalkTitle\">$Title</td>\n";
   } else {
     my $SessionTalkSummary = &SessionTalkSummary($SessionTalkID);
     print "<td><i>$Title</i> [$SessionTalkSummary]\n";
@@ -83,15 +82,17 @@ sub PrintSessionTalk($) {
     }
     print "</td>\n";
   }
-  print "<td>$AuthorLink</td>\n"; # v7 class and nobr
-  print "<td>"; &ShortTopicListByID(@TopicIDs);   print "</td>\n";
-  print "<td>"; &ShortFileListByRevID($DocRevID); print "</td>\n";
-  print "<td class=\"TalkTime\">$Time</td>\n";
+  print "<td class=\"TalkAuthor\">$AuthorLink</td>\n"; # v7 class and nobr
+  print "<td class=\"TalkTopics\">"; ShortTopicListByID(@TopicIDs);   print "</td>\n";
+  print "<td class=\"TalkFiles\">";  ShortFileListByRevID($DocRevID); print "</td>\n";
+  print "<td class=\"TalkLength\">$Time</td>\n";
+  print "<td class=\"TalkNotes\">";
   if ($Note) {
-    print "<td><b>",&TalkNoteLink,"</b></td>\n";
+    print "<b>",TalkNoteLink(),"</b>";
   } else {
-    print "<td>",&TalkNoteLink,"</td>\n";
+    print TalkNoteLink();
   }  
+  print "</td>\n";
   print "</tr>\n";
 }
 
