@@ -23,6 +23,8 @@ the list of events for a document.
 removed and this is the default behavior. If you have this in your
 ProjectGlobals.pm, you can remove it.
 
+9. The events for a month are shown in the monthly calendar
+
 7.1.1
 
 From a user standpoint, not much is really new. There is a link from the agenda
