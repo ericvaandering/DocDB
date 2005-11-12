@@ -142,7 +142,7 @@ foreach my $EmailUserID (@EmailUserIDs) {
   print "<tr>\n";
   print "<td>\n";
 
-  print "<table>\n";
+  print "<table class=\"LowPaddedTable LeftHeader\">\n";
   print "<tr>\n";
   print "<th>Username:</th><td>$EmailUser{$EmailUserID}{Username}</td>\n"; 
   print "</tr><tr>\n";
