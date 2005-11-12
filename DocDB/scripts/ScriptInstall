@@ -8,17 +8,24 @@
 
 # This script is designed to be run on install and during upgrades (major and
 # minor). It creates links to the scripts and .pm files stored in a central 
-# location. This are need (should) not be accessible from the web. 
+# location. This area should not be accessible from the web. 
+
+# INSTRUCTIONS:
+# Change to the directory where you want to install the scripts (e.g. /var/www/cgi-bin/DocDB) 
+# and run this script and answer the questions. The path asked for is the central location of your
+# DocDB installation as checked out from CVS. (/blah/DocDB/cgi/). If you answer "Y" to the question
+# about being a Public install, links to certain scripts will be skipped since those are not needed
+# for the public version of DocDB.
 
 # This script creates a file named .DocDBSetup which you can copy to a new 
 # directory before running the script, which will set up the new directory just
 # like previous ones. (You can also change settings from that default.)
 
-# You can use this with the CSS and JS directories too, but since there are no project
-# customizations in the JS directory and the customizations in the CSS directory have
-# the project in the file name, it's probably easier just to link the js/ or css 
-# directory or set the path  ($(JS/CSS)Directory and $(JS/CSS)URLPath in 
-# ProjectGlobals.pm) to the correct location.
+# You can also use this with the CSS and JS directories too (it just links to all the files
+# in a directory), but since there are no project customizations in the JS directory and the
+# customizations in the CSS directory have the project in the file name, it's probably
+# easier just to link the js/ or css  directory or set the path  ($(JS/CSS)Directory and
+# $(JS/CSS)URLPath in  ProjectGlobals.pm) to the correct location.
 
 # Your web server must be setup to execute links in cgi-bin areas and follow
 # links in HTML areas, which is often not the default setup.
@@ -70,6 +77,11 @@ while (my $Line = <ANSWERS>) {
   $Answers{$Key} = $Value;
 }  
 
+print "This script is designed to be run on install and during upgrades (major and minor).\n";
+print "It creates links to the scripts and .pm files stored in a central location.\n"; 
+print "This is most useful when managing several instances of DocDB.\n"; 
+print "Read the comments at the beginning of the script for more information.\n\n";
+
 # Get input from user
 
 print "Is this a publicly accessible install (Y/N)";
@@ -86,7 +98,7 @@ unless ($Public) {
 
 $Public =~ tr/[A-Z]/[a-z]/;
 
-print "Full path to CGI, CSS, Javascript files";
+print "Full path to CGI files";
 if ($Answers{Path}) {
   print " [$Answers{Path}]";
 }  
