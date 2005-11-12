@@ -468,10 +468,10 @@ sub EmailUserSelect (%) {
   
   my $Disabled = $Params{-disabled}  || "0";
   
-  my $Booleans = "";
-  
+  my %Options = ();
+ 
   if ($Disabled) {
-    $Booleans .= "-disabled";
+    $Options{-disabled} = "disabled";
   }  
   
   my @EmailUserIDs = &GetEmailUserIDs;
@@ -486,7 +486,7 @@ sub EmailUserSelect (%) {
   print $query -> scrolling_list(-name => 'emailuserid', 
                                  -values => \@EmailUserIDs, 
                                  -labels => \%EmailUserLabels, 
-                                 -size => 10, $Booleans);
+                                 -size => 10, %Options);
 
 }
   
