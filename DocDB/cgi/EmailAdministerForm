@@ -208,7 +208,9 @@ foreach my $SecurityGroup (@SecurityGroups) {
     foreach my $EmailUserID (@EmailUserIDs) {
       if ($EmailUser{$EmailUserID}{Name}) { 
         print "<li>$EmailUser{$EmailUserID}{Name} ($EmailUser{$EmailUserID}{Username}, $EmailUser{$EmailUserID}{EmailAddress})</li>\n";
-      }
+      } else {
+        print "<li>Unknown</li>\n";
+      }  
     }
     print "</ul>\n";
   }     
