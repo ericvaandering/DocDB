@@ -260,9 +260,15 @@ UserPrefForm($EmailUserID);
 print "</td><td>";
 print "<b>Current e-mail notifications:</b>\n";
 print "<ul>\n";
-print "<li>\n",DisplayNotification($EmailUserID,"Immediate",true),"</li>\n";
-print "<li>\n",DisplayNotification($EmailUserID,"Daily",true),"</li>\n";
-print "<li>\n",DisplayNotification($EmailUserID,"Weekly",true),"</li>\n";
+print "<li>\n";
+DisplayNotification($EmailUserID,"Immediate",true);
+print "</li>\n";
+print "<li>\n";
+DisplayNotification($EmailUserID,"Daily",true);
+print "</li>\n";
+print "<li>\n";
+DisplayNotification($EmailUserID,"Weekly",true);
+print "</li>\n";
 print "</ul>\n";
 print "</td></tr></table>\n";
 
