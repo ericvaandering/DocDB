@@ -163,13 +163,19 @@ foreach my $EmailUserID (@EmailUserIDs) {
   # Groups user belongs (or wants to belong to)
   
   print "<th>Groups:</th>";
-  print "<td><ul>\n"; 
+  print "<td>\n"; 
   my @UserGroupIDs = FetchUserGroupIDs($EmailUserID);
-  foreach my $UserGroupID (@UserGroupIDs) {
-    FetchSecurityGroup($UserGroupID);
-    print "<li>$SecurityGroups{$UserGroupID}{NAME}</li>";
-  }   
-  print "</ul></td>\n";
+  if (@UserGroupIDs) {
+    print "<ul>\n";
+    foreach my $UserGroupID (@UserGroupIDs) {
+      FetchSecurityGroup($UserGroupID);
+      print "<li>$SecurityGroups{$UserGroupID}{NAME}</li>\n";
+    }
+    print "</ul>\n";
+  } else {
+    print "&nbsp;\n";
+  }       
+  print "</td>\n";
   print "</tr>\n";
   print "</table>\n";
   print "</td>\n";
@@ -187,7 +193,7 @@ foreach my $EmailUserID (@EmailUserIDs) {
   print "</td>\n"; 
 
   print "</tr>\n";
-  print "<tr><td colspan=\"5\"><hr width=\"95%\" /></td></tr>\n";
+  print "<tr><td colspan=\"5\"><hr/></td></tr>\n";
 } 
 print "</table>\n";
 
