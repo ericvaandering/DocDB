@@ -482,9 +482,7 @@ sub EmailUserSelect (%) {
   
   @EmailUserIDs = sort EmailUserIDsByName @EmailUserIDs;
   
-  print "<b><a ";
-  &HelpLink("emailuser");
-  print "Username:</a></b><br> \n";
+  print FormElementTitle(-helplink => "emailuser", -helptext => "Username"); 
   print $query -> scrolling_list(-name => 'emailuserid', 
                                  -values => \@EmailUserIDs, 
                                  -labels => \%EmailUserLabels, 

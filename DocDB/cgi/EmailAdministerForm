@@ -147,7 +147,6 @@ foreach my $EmailUserID (@EmailUserIDs) {
   print "<th>Username:</th><td>$EmailUser{$EmailUserID}{Username}</td>\n"; 
   print "</tr><tr>\n";
   print "<th>Name:</th><td>$EmailUser{$EmailUserID}{Name}</td>\n"; 
-  print "";
   print "</tr><tr>\n";
   print "<th>E-mail:</th><td>$EmailUser{$EmailUserID}{EmailAddress}</td>\n"; 
   print "</tr><tr>\n";
