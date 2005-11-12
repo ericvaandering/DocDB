@@ -41,17 +41,12 @@ sub SecurityScroll (%) {
   my @GroupIDs  = @{$Params{-groupids}};
   my @Default   = @{$Params{-default}};
 
-  #TODO: Don't we do this with arrays and join?
-
-  my $Booleans = "";
-  
+  my %Options = ();
+ 
   if ($Disabled) {
-    $Booleans .= "disabled";
+    $Options{-disabled} = "disabled";
   }  
-  if ($Booleans) {
-    $Booleans = "-".$Booleans;
-  }
-    
+
   &GetSecurityGroups;
   
   unless (@GroupIDs) {
@@ -83,7 +78,7 @@ sub SecurityScroll (%) {
   print $query -> scrolling_list(-name => $Name, -values => \@GroupIDs, 
                                  -labels => \%GroupLabels, 
                                  -size => $Size, -multiple => $Multiple,
-                                 -default => \@Default, $Booleans);
+                                 -default => \@Default, %Options);
 };
 
 sub SecurityListByID {

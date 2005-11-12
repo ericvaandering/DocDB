@@ -341,13 +341,13 @@ sub DisplayNotification($$;$) {
   
   if ($NotifyAllTopics || @NotifyMajorIDs || @NotifyMinorIDs ||
       @NotifyAuthorIDs || @NotifyKeywords) {
-    print "<li>$Set notifications:\n";  
+    print "<b>$Set notifications:</b>\n";  
     print "<ul>\n";  
   } elsif ($Always) {
-    print "<li>$Set notifications:\n";  
+    print "<b>$Set notifications:</b>\n";  
     print "<ul>\n";  
     print "<li>None</li>\n";  
-    print "</ul></li>\n";
+    print "</ul>\n";
     return;
   } else {
     return;
@@ -380,7 +380,7 @@ sub DisplayNotification($$;$) {
     }
   }
     
-  print "</ul></li>\n";  
+  print "</ul>\n";  
 }
 
 sub NotifyTopicSelect ($) { # Check for all, boxes for major and minor topics
