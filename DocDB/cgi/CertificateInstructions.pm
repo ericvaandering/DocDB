@@ -412,12 +412,14 @@ before you will have full access.
      if you don't hear anything within a day.
      </li>
 </ol>
-<p>
-<font color="darkgreen">People are investigating ways to streamline this process. 
-We are not yet sure how much is possible.</font>
-</p>
-
 HTML
+
+  if ($Preferences{Security}{Certificates}{DOEGrids} || $Preferences{Security}{Certificates}{FNALKCA}) {
+    print "<p>
+    <span class=\"HighLight\">People are investigating ways to streamline this process. 
+    We are not yet sure how much is possible.</span>
+    </p>\n";
+  }
 }
  
 sub ImportCertificateInstructionsBody {
