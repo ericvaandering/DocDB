@@ -47,14 +47,14 @@ DocDBHeader("Add Authors","",-scripts => ["PopUps"]);
 print $query -> start_multipart_form('POST',"$AuthorAdd");
 
 
-print "<p>You are about to add an author to the $Project document database.</strong>
-Anyone is allowed to add authors. <strong>Please be careful</strong>
-and make sure to put the authors first name, last name, and middle initials
-(with periods) in the right place. If you make a mistake, <b><span class=\"Warning\">DO
-NOT</span></b> enter the author again. Contact an  <a
-href=\"mailto:$DBWebMasterEmail\">adminstrator</a> and explain the
-problem. Required fields are denoted by $RequiredMark. 
-Click any <span class=\"Help\">highlighted link</span> for quick help.</p>\n";
+print "<p><strong>You are about to add an author to the $Project document
+database.</strong> Anyone is allowed to add authors. <strong>Please be
+careful</strong> and make sure to put the authors first name, last name, and
+middle initials (with periods) in the right place. If you make a mistake, 
+<span class=\"Warning\">DO NOT</span> enter the author again. Contact an
+<a href=\"mailto:$DBWebMasterEmail\">adminstrator</a> and explain the problem.
+Required fields are denoted by $RequiredMark.  Click any 
+<span class=\"Help\">highlighted link</span> for quick help.</p>\n";
 
 print "<table class=\"CenteredTable HighPaddedTable\">\n";
 print "<tr>\n";
