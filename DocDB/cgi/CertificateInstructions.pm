@@ -64,15 +64,11 @@ sub CertificateInstructionsBody {
 <h1>Introduction</h1>
 
 <p>
-You can use either a DOEgrid Certificate or a Fermi Kerberos (KCA) certificate.
-<br>
-<font color="red">Each certificate type will need to be separately registered
-with the database.</font>
-<br>
+You can use certificates provided by various certification authorities (CAs) with DocDB.
+<span class="HighLight">Each certificate type must be separately registered
+with the database.</span>
 To minimize confusion, we strongly recommend that you choose only one 
-certificate type for access.  We recommend that Fermilab and other Kerberos 
-users choose the KCA certificate.  This is more secure and will, 
-at least at Fermilab, be required for access to other web sites.
+certificate type for access.  
 </p>
 HTML
 
@@ -91,6 +87,9 @@ if ($Preferences{Security}{Certificates}{FNALKCA}) {
    <a href="$DocDBInstructions?set=kca#win">for Windows</a>, 
    <a href="$DocDBInstructions?set=kca#linux">for Linux</a>, or
    <a href="$DocDBInstructions?set=kca#mac">for MAC</a>
+   We recommend that Fermilab and other Kerberos 
+users choose the KCA certificate.  This is more secure and will, 
+at least at Fermilab, be required for access to other web sites.
    </p>
 KCA
 }
