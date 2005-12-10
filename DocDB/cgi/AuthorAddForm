@@ -46,20 +46,18 @@ DocDBHeader("Add Authors","",-scripts => ["PopUps"]);
 
 print $query -> start_multipart_form('POST',"$AuthorAdd");
 
-print "<table class=\"CenteredTable HighPaddedTable\">\n";
 
-print "<tr>\n";
-print "<td colspan=\"3\">\n";
-print "<strong>You are about to add an author to the $Project document database.</strong>
+print "<p>You are about to add an author to the $Project document database.</strong>
 Anyone is allowed to add authors. <strong>Please be careful</strong>
 and make sure to put the authors first name, last name, and middle initials
 (with periods) in the right place. If you make a mistake, <b><span class=\"Warning\">DO
 NOT</span></b> enter the author again. Contact an  <a
 href=\"mailto:$DBWebMasterEmail\">adminstrator</a> and explain the
-problem. Required fields are denoted by $RequiredMark.<br/>\n";
+problem. Required fields are denoted by $RequiredMark. 
+Click any <span class=\"Help\">highlighted link</span> for quick help.</p>\n";
 
-print "<strong>Click on any of the headings for help.</strong>\n"; print "</td>\n";
-print "</tr><tr>\n";
+print "<table class=\"CenteredTable HighPaddedTable\">\n";
+print "<tr>\n";
 print "<td>\n"; InstitutionSelect(-required => $TRUE); print "</td>\n";
 print "<td>\n"; NameEntryBox();      print "</td>\n";
 print "</tr>\n";
