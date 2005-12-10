@@ -38,11 +38,11 @@ require "Sorts.pm";
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&GetInstitutions;
-&GetAuthors;
+GetInstitutions();
+GetAuthors();
 
 print $query->header;
-&DocDBHeader("Add Authors","",-scripts => ["PopUps"]);
+DocDBHeader("Add Authors","",-scripts => ["PopUps"]);
 
 print $query -> start_multipart_form('POST',"$AuthorAdd");
 
@@ -50,27 +50,27 @@ print "<table class=\"CenteredTable HighPaddedTable\">\n";
 
 print "<tr>\n";
 print "<td colspan=\"3\">\n";
-print "<b>You are about to add an author to the $Project document database.</b>
-Everyone is allowed to add authors. <b>Please be careful</b>
+print "<strong>You are about to add an author to the $Project document database.</strong>
+Anyone is allowed to add authors. <strong>Please be careful</strong>
 and make sure to put the authors first name, last name, and middle initials
 (with periods) in the right place. If you make a mistake, <b><span class=\"Warning\">DO
 NOT</span></b> enter the author again. Contact an  <a
 href=\"mailto:$DBWebMasterEmail\">adminstrator</a> and explain the
-problem.<br/>\n";
+problem. Required fields are denoted by $RequiredMark.<br/>\n";
 
-print "<b>Click on any of the headings for help.</b>\n"; print "</td>\n";
+print "<strong>Click on any of the headings for help.</strong>\n"; print "</td>\n";
 print "</tr><tr>\n";
-print "<td>\n"; &InstitutionSelect; print "</td>\n";
-print "<td>\n"; &NameEntryBox;      print "</td>\n";
+print "<td>\n"; InstitutionSelect(-required => $TRUE); print "</td>\n";
+print "<td>\n"; NameEntryBox();      print "</td>\n";
 print "</tr>\n";
 print "</table><p>\n";
 print $query -> submit (-value => "Add Author");
 print "</p>\n";
 print $query -> end_multipart_form;
 
-print "<h3>Existing Authors: </h3>\n";
+print "<h3>Existing Authors:</h3>\n";
 
-&AuthorsTable;
+AuthorsTable();
 
-&DocDBNavBar;
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
