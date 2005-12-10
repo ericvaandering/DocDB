@@ -27,13 +27,11 @@ sub CertificateInstructionsSidebar {
   print <<TOC;
   <h2>Contents</h2>
   <ul>
-   <li><a href="$DocDBInstructions?set=cert2#intro">Introduction</a></li>
+   <li><a href="$DocDBInstructions?set=cert">Introduction</a></li>
 TOC
 
   if ($Preferences{Security}{Certificates}{DOEGrids}) {
-   print <<DOE;
-   <li><a href="$DocDBInstructions?set=doe">Get a DOEgrid Certificate</a></li>
-DOE
+    print "<li><a href=\"$DocDBInstructions?set=doe\">Get a DOEgrid Certificate</a></li>\n";
   }
   if ($Preferences{Security}{Certificates}{FNALKCA}) {
    print <<KCA;
@@ -428,8 +426,7 @@ sub ImportCertificateInstructionsBody {
 <a name="import"/>
 <h1>Importing and Exporting certificates</h1>
 <ol>
-<li> KCA certificates are usually named x509up_u&lt;your uid&gt;.p12,
-     but there is no naming convention for DOEgrid certificates.  
+<li> Naming conventions vary by certificate provider.  
      We will refer to all certificates as <b>mycert.p12</b>.</li>
 <li> Your certificate must be of type PKCS#12 with a <b>.p12</b> extension.</li>
 <li> Choose a simple password when exporting your certificate.  
@@ -543,7 +540,7 @@ sub ImportCertificateInstructionsBody {
    </li>
    </ul>
 </li>
-<li> <a href=http://computing.fnal.gov/security/pki/browsercerttest.html>test your certificate</a>
+<li> <a href=http://computing.fnal.gov/security/pki/browsercerttest.html>Test your certificate</a>
 </li>
 </ol>
 
