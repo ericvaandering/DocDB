@@ -435,12 +435,12 @@ sub ImportCertificateInstructionsBody {
    <ul>
    <li> For Firefox: 
         <ul>
-	<li> <font color="maroon"> Linux:</font> 
-	     open Edit -> Preferences -> Advanced -> Certificates -> Manage Certificates <br>
-	     <font color="darkgreen"> Windows:</font>
-             open Tools -> Options -> Advanced -> Certificates -> Manage Certificates <br>
-	     <font color="darkblue"> MAC:</font>
-	     open  Firefox -> Preferences -> Advanced -> Certificates -> Manage Certificates <br>
+	<li> <span class="HighLight">Linux:</span> 
+	     open Edit -> Preferences -> Advanced -> Certificates -> Manage Certificates <br/>
+	     <span class="HighLight">Windows:</span> 
+             open Tools -> Options -> Advanced -> Certificates -> Manage Certificates <br/>
+	     <span class="HighLight">MAC:</span> 
+	     open  Firefox -> Preferences -> Advanced -> Certificates -> Manage Certificates <br/>
         </li>
         <li> click import and enter the filename (mycert.p12 or <font color="darkblue">mycert.pfx on a MAC</font>)
         </li>
@@ -491,11 +491,11 @@ sub ImportCertificateInstructionsBody {
    </li>
    <li> For Firefox: 
         <ul>
-	<li> <font color="maroon"> Linux:</font> 
+	<li> <span class="HighLight">Linux:</span> 
 	     open Edit -> Preferences -> Advanced -> Certificates -> Manage Certificates <br>
-	     <font color="darkgreen"> Windows:</font>
+	     <span class="HighLight">Windows:</span> 
              open Tools -> Options -> Advanced -> Certificates -> Manage Certificates <br>
-	     <font color="darkblue"> MAC:</font>
+	     <span class="HighLight">MAC:</span> 
 	     open  Firefox -> Preferences -> Advanced -> Certificates -> Manage Certificates <br>
         </li>
         <li> highlight the certificate to export
