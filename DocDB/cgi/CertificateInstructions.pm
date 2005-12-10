@@ -63,7 +63,7 @@ sub CertificateInstructionsBody {
 
 <p>
 You can use certificates provided by various certification authorities (CAs) with DocDB.
-<span class="HighLight">Each certificate type must be separately registered
+<span class="Highlight">Each certificate type must be separately registered
 with the database.</span>
 To minimize confusion, we strongly recommend that you choose only one 
 certificate type for access.  
@@ -125,25 +125,25 @@ Once you get this certificate, you can import it into other browsers on other
 machines by <a href="$DocDBInstructions?set=import">exporting</a> 
 it to a file and then <a href="$DocDBInstructions?set=import">importing</a> 
 into the other browser. 
-<font color="red">We do not recommend importing this certificate onto any
-machine other than your own desktop or laptop.</font>
+<span class="Warning">We do not recommend importing this certificate onto any
+machine other than your own desktop or laptop.</span>
 </p>
 <ol>
 <li>Get the certificate
     <ul>
-    <li> <font color="red">IMPORTANT for MAC users: The process does not work with Safari at this time.</font>
+    <li> <span class="Warning">Important for Mac users: The process does not work with Safari at this time.</span>
          Use <a href="http://www.mozilla.org/products/firefox/">Firefox</a>.</li>
     <li> Go to <a href=http://pki1.doegrids.org target="view_doe_window">http://pki1.doegrids.org</a>  and select "enrollment" tab.
          (This link should open a new window for the DOEgrid site.)</li>
     <li> Select "New user" on the left hand side.</li>
     <li> Fill in the form
         <ul>
-	<li> <b>Contact Information</b> <br>
-	     Your email address needs to match your affiliation. <br> 
+	<li> <b>Contact Information</b> <br/>
+	     Your email address needs to match your affiliation. <br/> 
 	     For instance, if you are at Fermilab, use your fnal.gov e-mail
 	     address and choose <b>FNAL</b> in the pulldown menu.</li>
-	<li> <font color="blue">Your <b>sponsor</b> must also have an e-mail 
-	     address associated with your affiliation.</font></li>
+	<li> Your <b>sponsor</b> must also have an e-mail 
+	     address associated with your affiliation.</li>
 	<li> The person entered under <b>sponsor</b> receives email when you are granted the certificate.  
 	     They are not asked to approve or disapprove before the certificate is granted.  
 	     (Approval is handled by another process.)</li>
@@ -152,10 +152,10 @@ machine other than your own desktop or laptop.</font>
 	     <ul>
 	     <li> select 2048(High grade) for Mozilla/Firefox/Netscape. </li>
 	     <li> For Microsoft, select "Strong Cryptographic Provider".
-		  <br>	
-		  <font color="blue">Windows IE users should note that you may need to use 
+		  <br/>	
+		  <span class="Warning">Windows IE users should note that you may need to use 
 		  "Microsoft Enhanced Cryptographic Provider" instead of 
-		  "Microsoft Strong Cryptographic Provider".</font></li>
+		  "Microsoft Strong Cryptographic Provider".</span></li>
 	     </ul></li>
         </ul></li>
     <li> click "submit."</li>
@@ -190,7 +190,7 @@ machine other than your own desktop or laptop.</font>
 
 <li> Finally, <a href="$DocDBInstructions?set=register">register</a> your certificate with 
      the $ShortProject document database.
-     <font color="red">You only need to register once.</font></li>
+     <span class="Warning">You only need to register once.</span></li>
 </ol>
  
 HTML
@@ -231,7 +231,7 @@ the shortcut and type in your Kerberos password.
 </li>
 <li> Close the folder
 </li>
-<li> Double click on the shortcut. <br>
+<li> Double click on the shortcut. <br/>
      <ul>
      <li> A command window will appear.
         </li>
@@ -258,7 +258,7 @@ the shortcut and type in your Kerberos password.
 </li>
 <li> Finally, <a href="$DocDBInstructions?set=register">register</a> your certificate with 
      the $ShortProject document database.  
-     <font color="red">You only need to register once.</font>
+     <span class="Warning">You only need to register once.</span>
 </li>
 </ol>
 
@@ -269,21 +269,21 @@ the shortcut and type in your Kerberos password.
   <ul>
   <li> Download <a href="http://security.fnal.gov/tools/get-cert.tar.gz">get-cert.tar.gz</a>
        </li>
-  <li> <b>tar -xzf get-cert.tar.gz</b> <br>
+  <li> <b>tar -xzf get-cert.tar.gz</b> <br/>
        This will create a kca directotry.
        </li>
-  <li> <b>kinit -r 7d</b> <br>
+  <li> <b>kinit -r 7d</b> <br/>
            If you make your ticket renewable for 7 days, then the resulting certificate
 	   will be valid for 7 days.
        </li>
   <li> <b>cd kca</b> and choose one of the following options
        <ol>
-       <li>  <b>./get-cert.sh</b> <br>
-             The certificate will be /tmp/x509up_u&lt;your uid&gt;.p12, where &lt;your uid&gt; is your UID. <br>
+       <li>  <b>./get-cert.sh</b> <br/>
+             The certificate will be /tmp/x509up_u&lt;your uid&gt;.p12, where &lt;your uid&gt; is your UID. <br/>
              You will need to manually <a href="$DocDBInstructions?set=import">import</a> the certificate.
              </li>
-       <li> Close your browser. <br>
-            <b>./get-cert.sh -i</b> <br>
+       <li> Close your browser. <br/>
+            <b>./get-cert.sh -i</b> <br/>
             This option should automatically import the certificate into
 	    your browser.  If it does not, 
             manually <a href="$DocDBInstructions?set=import">import</a> the certificate.
@@ -297,7 +297,7 @@ the shortcut and type in your Kerberos password.
 </li>
 <li>  Manual method:
   <ul>
-  <li> <b>kinit -r 7d</b> <br>
+  <li> <b>kinit -r 7d</b> <br/>
            If you make your ticket renewable for 7 days, then the resulting certificate
 	   will be valid for 7 days.
         </li>
@@ -305,9 +305,9 @@ the shortcut and type in your Kerberos password.
         </li>
   <li> <b>kxlist -p</b>
         </li>
-  <li> <b>openssl pkcs12 -in /tmp/x509up_u&lt;your uid&gt; -out /tmp/x509up_u&lt;your uid&gt;.p12 -export</b> <br>
-       This converts your x509 certificate to browser format. <br>
-       The file will be named /tmp/x509up_u&lt;your uid&gt;.p12, where &lt;your uid&gt; is your UID. <br>
+  <li> <b>openssl pkcs12 -in /tmp/x509up_u&lt;your uid&gt; -out /tmp/x509up_u&lt;your uid&gt;.p12 -export</b> <br/>
+       This converts your x509 certificate to browser format. <br/>
+       The file will be named /tmp/x509up_u&lt;your uid&gt;.p12, where &lt;your uid&gt; is your UID. <br/>
        You will be asked for a password that will be used when you import your 
        certificate into your browser.
         </li>
@@ -322,7 +322,7 @@ the shortcut and type in your Kerberos password.
 </li>
 <li> Finally, <a href="$DocDBInstructions?set=register">register</a> your certificate with 
      the $ShortProject document database.
-     <font color="red">You only need to register once.</font>
+     <span class="Warning">You only need to register once.</span>
 </li>
 </ol>
 
@@ -356,9 +356,9 @@ the shortcut and type in your Kerberos password.
   </li>
   <li> <b>kxlist -p</b>
   </li>
-  <li> <b>openssl pkcs12 -in /tmp/x509up_u&lt;your uid&gt; -out /tmp/x509up_u&lt;your uid&gt;.pfx -export</b> <br>
-       This converts your x509 certificate to browser format. <br>
-       The file will be named /tmp/x509up_u&lt;your uid&gt;.pfx, where &lt;your uid&gt; is your UID. <br>
+  <li> <b>openssl pkcs12 -in /tmp/x509up_u&lt;your uid&gt; -out /tmp/x509up_u&lt;your uid&gt;.pfx -export</b> <br/>
+       This converts your x509 certificate to browser format. <br/>
+       The file will be named /tmp/x509up_u&lt;your uid&gt;.pfx, where &lt;your uid&gt; is your UID. <br/>
        You will be asked for a password that will be used when you import your 
        certificate into your browser.
   </li>
@@ -373,7 +373,7 @@ the shortcut and type in your Kerberos password.
 </li>
 <li> Finally, <a href="$DocDBInstructions?set=register">register</a> your certificate with 
      the $ShortProject document database.
-     <font color="red">You only need to register once.</font>
+     <span class="Warning">You only need to register once.</span>
 </li>
 </ol>
 
@@ -414,7 +414,7 @@ HTML
 
   if ($Preferences{Security}{Certificates}{DOEGrids} || $Preferences{Security}{Certificates}{FNALKCA}) {
     print "<p>
-    <span class=\"HighLight\">People are investigating ways to streamline this process. 
+    <span class=\"Highlight\">People are investigating ways to streamline this process. 
     We are not yet sure how much is possible.</span>
     </p>\n";
   }
@@ -435,14 +435,14 @@ sub ImportCertificateInstructionsBody {
    <ul>
    <li> For Firefox: 
         <ul>
-	<li> <span class="HighLight">Linux:</span> 
+	<li> <span class="Highlight">Linux:</span> 
 	     open Edit -> Preferences -> Advanced -> Certificates -> Manage Certificates <br/>
-	     <span class="HighLight">Windows:</span> 
+	     <span class="Highlight">Windows:</span> 
              open Tools -> Options -> Advanced -> Certificates -> Manage Certificates <br/>
-	     <span class="HighLight">MAC:</span> 
+	     <span class="Highlight">MAC:</span> 
 	     open  Firefox -> Preferences -> Advanced -> Certificates -> Manage Certificates <br/>
         </li>
-        <li> click import and enter the filename (mycert.p12 or <font color="darkblue">mycert.pfx on a MAC</font>)
+        <li> click import and enter the filename (mycert.p12 or <span class="Highlight">mycert.pfx on a MAC</span>)
         </li>
         </ul>
    </li>
@@ -466,7 +466,7 @@ sub ImportCertificateInstructionsBody {
         <ul>
         <li> open a Terminal
         </li>
-        <li> <b>open mycert.pfx</b> <br>
+        <li> <b>open mycert.pfx</b> <br/>
 	     Open recognizes either the <b>.pfx</b> or <b>.p12</b> extension and will
 	     open the keychain so you can import the certificate.
         </li>
@@ -485,22 +485,22 @@ sub ImportCertificateInstructionsBody {
 <li> To export a certificate from your browser:
    <ul>
    <li> In all cases, make sure you save the certificate as type 
-        <b>PKCS#12</b> with extension <b>.p12</b> or <font color="darkblue"><b>.pfx</b> on a MAC</font>
+        <b>PKCS#12</b> with extension <b>.p12</b> or <span class="Highlight"><b>.pfx</b> on a MAC</span>
    </li>
    <li> <a href="$DocDBInstructions?set=protect">Protect your certificate.</a>
    </li>
    <li> For Firefox: 
         <ul>
-	<li> <span class="HighLight">Linux:</span> 
-	     open Edit -> Preferences -> Advanced -> Certificates -> Manage Certificates <br>
-	     <span class="HighLight">Windows:</span> 
-             open Tools -> Options -> Advanced -> Certificates -> Manage Certificates <br>
-	     <span class="HighLight">MAC:</span> 
-	     open  Firefox -> Preferences -> Advanced -> Certificates -> Manage Certificates <br>
+	<li> <span class="Highlight">Linux:</span> 
+	     open Edit -> Preferences -> Advanced -> Certificates -> Manage Certificates <br/>
+	     <span class="Highlight">Windows:</span> 
+             open Tools -> Options -> Advanced -> Certificates -> Manage Certificates <br/>
+	     <span class="Highlight">MAC:</span> 
+	     open  Firefox -> Preferences -> Advanced -> Certificates -> Manage Certificates <br/>
         </li>
         <li> highlight the certificate to export
         </li>
-        <li> click Backup and choose an appropriate filename (mycert.p12 or <font color="darkblue">mycert.pfx on a MAC</font>) and directory.
+        <li> click Backup and choose an appropriate filename (mycert.p12 or <span class="Highlight">mycert.pfx on a MAC</span>) and directory.
         </li>
         </ul>
    </li>
@@ -552,15 +552,15 @@ sub ProtectCertificateInstructionsBody {
 
 <a name="protect"/>
 <h1>Protect your certificate</h1>
-<font size=+1>
+
 <p>
 If you export your DOEgrid certificate to a PKCS#12 file, it contains your private key.  
 You must carefully guard any PKCS#12 certificate files.
 </p>
 <p>
-<font color="red">
+<span class="Warning">
 Exposure of the private key is grounds for having the certificate revoked.
-</font>
+</span>
 </p>
 <p>
 If you keep a copy of your certificate on your machine, make sure that it can
@@ -574,12 +574,12 @@ floppy or USB thumb drive instead of online.
 Please be careful when copying the certificate.  If it is necessary to
 temporarily use your certificate on a machine that does not belong to you (e.g.,
 when visiting CERN), make absolutely sure that you delete the certificate.
-<font color="red">
+<span class="Warning">
 If someone else uses your certificate, the certificate will be revoked.
-</font>
+</span>
 </p>
 <p>
-Further explanation: <br>
+Further explanation: <br/>
 When you generate your certificate request to DOEgrids, a private
 key is generated for you and stored in your brower (for Netscape,
 Mozilla, Firefox this is the Security Device protected by the
@@ -589,7 +589,6 @@ the initial request with.  When you export the certificate,
 into a PKCS#12 file for backup or for later import, both
 the cert5iciate and the private key are exported! 
 </p>
-</font>
 
 HTML
 }
