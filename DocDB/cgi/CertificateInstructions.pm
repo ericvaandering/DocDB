@@ -133,7 +133,7 @@ machine other than your own desktop or laptop.</span>
     <ul>
     <li> <span class="Warning">Important for Mac users: The process does not work with Safari at this time.</span>
          Use <a href="http://www.mozilla.org/products/firefox/">Firefox</a>.</li>
-    <li> Go to <a href=http://pki1.doegrids.org target="view_doe_window">http://pki1.doegrids.org</a>  and select "enrollment" tab.
+    <li> Go to <a href="http://pki1.doegrids.org" target="view_doe_window">http://pki1.doegrids.org</a>  and select "enrollment" tab.
          (This link should open a new window for the DOEgrid site.)</li>
     <li> Select "New user" on the left hand side.</li>
     <li> Fill in the form
@@ -473,7 +473,7 @@ sub ImportCertificateInstructionsBody {
         <li> Import the certificate into your login keychain. 
         </li>
         <li> There is a script at 
-             <a href=http://www.fnal.gov/orgs/macusers/osx/>http://www.fnal.gov/orgs/macusers/osx/</a>
+             <a href="http://www.fnal.gov/orgs/macusers/osx/">http://www.fnal.gov/orgs/macusers/osx/</a>
              which will generate the certificate and import it into your
 	     keychain.  But this script makes certain assumptions that may not 
 	     be true on your machine. 
@@ -540,7 +540,7 @@ sub ImportCertificateInstructionsBody {
    </li>
    </ul>
 </li>
-<li> <a href=http://computing.fnal.gov/security/pki/browsercerttest.html>Test your certificate</a>
+<li> <a href="http://computing.fnal.gov/security/pki/browsercerttest.html">Test your certificate</a>
 </li>
 </ol>
 
