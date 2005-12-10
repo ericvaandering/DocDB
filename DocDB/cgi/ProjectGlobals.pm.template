@@ -42,6 +42,7 @@ $script_root = "/www/cgi-bin/DocDB/";
 $web_root    = "http://web-server-host-and-domain/DocDB/";
 $cgi_root    = "http://web-server-host-and-domain/cgi-bin/DocDB/";
 $cgi_path    = "/cgi-bin/DocDB/"; # Used for cookies
+#$secure_root = "https://web-server-host-and-domain/cgi-bin/DocDB/"; URL for secure DocDB in non-secure version 
 
 # Name and e-mail address of the administrators (or mailing list for admins)
 

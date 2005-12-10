@@ -85,6 +85,9 @@ $remote_user          =~ tr/[A-Z]/[a-z]/;
 # Preferences
 
 $Preferences{Security}{Certificates}{PopupLimitCookie} = $FALSE; # Unused, encourage users to limit which groups they belong to with cookies
+$Preferences{Security}{Certificates}{FNALKCA} = $FALSE;      # TRUE or FALSE - show KCA certificate instructions
+$Preferences{Security}{Certificates}{DOEGrids} = $FALSE;     # TRUE or FALSE - show DOEgrid certificate instructions
+$Preferences{Security}{Certificates}{ShowCertInstructions} = $FALSE;  # TRUE or FALSE - show certificate instructions even on non-cert version
 
 $Preferences{Options}{DynamicFullList}{Private} = $FALSE; # Generate Full document list by dynamically for private db
 $Preferences{Options}{DynamicFullList}{Public}  = $FALSE; # Generate Full document list by dynamically for public db
