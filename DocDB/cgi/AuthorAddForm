@@ -61,9 +61,9 @@ print "<tr>\n";
 print "<td>\n"; InstitutionSelect(-required => $TRUE); print "</td>\n";
 print "<td>\n"; NameEntryBox();      print "</td>\n";
 print "</tr>\n";
-print "</table><p>\n";
+print "<tr><td class=\"SubmitCell\" colspan=\"2\">";
 print $query -> submit (-value => "Add Author");
-print "</p>\n";
+print "</td></tr></table>\n";
 print $query -> end_multipart_form;
 
 print "<h3>Existing Authors:</h3>\n";
