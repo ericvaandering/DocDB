@@ -392,11 +392,11 @@ before you will have full access.
 <ol>
 <li> In a browser that has had your certificate imported, 
      go to the secure $ShortProject document database page: 
-      <a href="$secure_root/DocumentDatabase">$secure_root/DocumentDatabase</a> 
+      <a href="$secure_root/DocumentDatabase">$secure_root/DocumentDatabase</a></li> 
 <li> If you get a window "choose a digital certificate", 
      pick the desired certificate.  Click "OK"
      </li>
-<li> You shoule see the message "You have presented a valid certificate, 
+<li> You should see the message "You have presented a valid certificate, 
      but are not yet authorized to access the Docdb."  
      Click on the "Apply for Access" link.  
      This is to register your certificate in the database.
@@ -484,6 +484,9 @@ sub ImportCertificateInstructionsBody {
 </li>
 <li> To export a certificate from your browser:
    <ul>
+   <li>In all cases, make sure you save the certificate as type 
+        <b>PKCS#12</b> with extension <b>.p12</b> or (<b>.pfx</b> on a MAC)
+   </li>
    <li><a href="$DocDBInstructions?set=protect">Protect your certificate.</a>
    </li>
    <li>For Firefox: 
