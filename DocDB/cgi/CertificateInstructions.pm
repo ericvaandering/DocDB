@@ -484,9 +484,6 @@ sub ImportCertificateInstructionsBody {
 </li>
 <li> To export a certificate from your browser:
    <ul>
-   <li>In all cases, make sure you save the certificate as type 
-        <b>PKCS#12</b> with extension <b>.p12</b> or (<b>.pfx</b> on a MAC)
-   </li>
    <li><a href="$DocDBInstructions?set=protect">Protect your certificate.</a>
    </li>
    <li>For Firefox: 
