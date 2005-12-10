@@ -55,6 +55,7 @@ my $FutureEventTable = $FALSE;
 my $MonthEventTable  = $FALSE;
 my $WindowStart;
 my $WindowEnd;
+my $WindowDays;
 my $EventTableStart;
 my $Today = DateTime -> now(time_zone => 'local');
 
@@ -68,6 +69,7 @@ if ($Day && $Month && $Year) {
   $MonthEventTable = $TRUE;
   $WindowStart = $Date -> ymd();;
   $WindowEnd = DateTime -> last_day_of_month(year => $Year, month => $Month) -> ymd();
+  $WindowDays = DateTime -> last_day_of_month(year => $Year, month => $Month) -> day();
 } elsif ($Year) {
   $TitleDate = $Year;
   if ($Year == $Today -> year()) {
@@ -155,16 +157,23 @@ if ($FutureEventTable || $MonthEventTable) {
     $WindowStart = $TheDay -> ymd();
     $TheDay      -> add(days => 60);
     $WindowEnd   = $TheDay -> ymd();
+    $WindowDays  = 60;
   }  
 
   my @EventIDs = &GetEventsByDate(-from => $WindowStart, -to => $WindowEnd);
   
   if (@EventIDs) {
     print "<table class=\"CenteredTable MultidayEventList Alternating\">\n";
-    print "<tr><th>Date</th><th>Time</th><th>Upcoming Events</th><th>Location</th><th></th></tr>\n";
+    print "<tr><th>Date</th><th>Time</th>";
+    if ($FutureEventTable) {
+      print "<th>Upcoming Events</th>";
+    } else {
+      print "<th>Events for Month</th>";
+    }
+    print "<th>Location</th><th>&nbsp;</th></tr>\n";
     my $TheDay = $EventTableStart -> clone();
     my $RowClass = "Odd";
-    foreach my $i (0..60) {
+    foreach my $i (0..$WindowDays) {
       $TheDay -> add(days => 1);
       my $Count = &PrintDayEvents(-year => $TheDay -> year(), -month  => $TheDay -> month(), 
                                   -day  => $TheDay -> day(),  -format => "multiday", 
