@@ -10,9 +10,8 @@ Document table. ProcessDocumentAdd checks that this doesn't exist, so that
 reloading the document result form will no longer generate a duplicate
 document.
 
-There are also some code cleanups.
-
-
+Also bugs fixed in Searching by document type and administration of External
+DocDBs. Finally, there are some code cleanups.
 
 7.1.0
 
