@@ -662,10 +662,8 @@ HTML
      </li>
      </ul>
 </li>
-<li> MacOSX Safari seems to have problems with certificates. 
-</li>
-<li> <a href="$DocDBInstructions?set=protect">Protect your certificate.</a>
-</li>
+<li>MacOSX Safari seems to have problems with certificates.</li>
+<li><a href="$DocDBInstructions?set=protect">Protect your certificate.</a></li>
 </ol>
 HTML
 
