@@ -548,49 +548,64 @@ HTML
 }
  
 sub ProtectCertificateInstructionsBody {
-  print <<HTML;
 
-<a name="protect"/>
-<h1>Protect your certificate</h1>
+  if ($Preferences{Security}{Certificates}{DOEGrids} || $Preferences{Security}{Certificates}{FNALKCA}) {
+    print <<HTML;
 
-<p>
-If you export your DOEgrid certificate to a PKCS#12 file, it contains your private key.  
-You must carefully guard any PKCS#12 certificate files.
-</p>
-<p>
-<span class="Warning">
-Exposure of the private key is grounds for having the certificate revoked.
-</span>
-</p>
-<p>
-If you keep a copy of your certificate on your machine, make sure that it can
-only be ready by you.  (On unix, <b>chmod 600 mycert.p12</b>.)
-</p>
-<p>
-The Fermilab security team recommends that you keep your certificate on a
-floppy or USB thumb drive instead of online.
-</p>
-<p>
-Please be careful when copying the certificate.  If it is necessary to
-temporarily use your certificate on a machine that does not belong to you (e.g.,
-when visiting CERN), make absolutely sure that you delete the certificate.
-<span class="Warning">
-If someone else uses your certificate, the certificate will be revoked.
-</span>
-</p>
-<p>
-Further explanation: <br/>
-When you generate your certificate request to DOEgrids, a private
-key is generated for you and stored in your brower (for Netscape,
-Mozilla, Firefox this is the Security Device protected by the
-Master Password).  This is why you have to import your new
-cewtificate using the same system and browser that you made
-the initial request with.  When you export the certificate,
-into a PKCS#12 file for backup or for later import, both
-the cert5iciate and the private key are exported! 
-</p>
+  <a name="protect"/>
+  <h1>Protect your certificate</h1>
+
+  <p>
+  If you export your DOEgrid certificate to a PKCS#12 file, it contains your private key.  
+  You must carefully guard any PKCS#12 certificate files.
+  </p>
+  <p>
+  <span class="Warning">
+  Exposure of the private key is grounds for having the certificate revoked.
+  </span>
+  </p>
+  <p>
+  If you keep a copy of your certificate on your machine, make sure that it can
+  only be ready by you.  (On unix, <b>chmod 600 mycert.p12</b>.)
+  </p>
+  <p>
+  The Fermilab security team recommends that you keep your certificate on a
+  floppy or USB thumb drive instead of online.
+  </p>
+  <p>
+  Please be careful when copying the certificate.  If it is necessary to
+  temporarily use your certificate on a machine that does not belong to you (e.g.,
+  when visiting CERN), make absolutely sure that you delete the certificate.
+  <span class="Warning">
+  If someone else uses your certificate, the certificate will be revoked.
+  </span>
+  </p>
+  <p>
+  Further explanation: <br/>
+  When you generate your certificate request to DOEgrids, a private
+  key is generated for you and stored in your brower (for Netscape,
+  Mozilla, Firefox this is the Security Device protected by the
+  Master Password).  This is why you have to import your new
+  cewtificate using the same system and browser that you made
+  the initial request with.  When you export the certificate,
+  into a PKCS#12 file for backup or for later import, both
+  the certificate and the private key are exported! 
+  </p>
 
 HTML
+  } else {
+    print "<p>
+    If you export your certificate to a file, it contains your private key.  
+    You must carefully guard the contents of any PKCS#12 certificate files.
+    Ways of protecting this information are: 
+    </p>
+    <ul>
+    <li>Use access to controls to make sure other users can't read the files.</li>
+    <li>Use a password when exporting the file. You will have to use the same password when reading back the file.</li>
+    <li>Store the file on a removable disk</li>
+    </ul>\n";
+  }  
+  
 }
  
 sub MiscCertificateInstructionsBody {
