@@ -679,7 +679,7 @@ HTML
     Your IP address (at the lab, away from the lab, DHCP, static, etc.) is
     irrelevant.
     </p> 
-HTML    
+HTML
   }
 }
 
