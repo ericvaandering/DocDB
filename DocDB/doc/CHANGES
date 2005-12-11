@@ -4,8 +4,7 @@
 
   ***Fixed a directory transversal security issue***
   Improved reporting and interface for AuthorAdd(Form)
-  Added instructions for getting/importing certificates (courtesy of Lynn Garren)
-  Improved instructions for meetings
+  Improved help for meetings
   List of events for the month appear on monthly calendar
   EmailAdministerGroups will clear the list of groups a person belongs to rather
     than add to them if any groups are selected. (Admins can be less careful.)
