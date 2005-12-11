@@ -597,13 +597,13 @@ HTML
     print "<p>
     If you export your certificate to a file, it contains your private key.  
     You must carefully guard the contents of any PKCS#12 certificate files.
-    Ways of protecting this information are: 
+    Some ways of protecting this information are: 
     </p>
-    <ul>
+    <ol>
     <li>Use access to controls to make sure other users can't read the files.</li>
     <li>Use a password when exporting the file. You will have to use the same password when reading back the file.</li>
     <li>Store the file on a removable disk</li>
-    </ul>\n";
+    </ol>\n";
   }  
   
 }
@@ -621,10 +621,14 @@ sub MiscCertificateInstructionsBody {
      <li>To minimize confusion, we strongly recommend that you choose only one 
      certificate type for access.  
      </li>
-     <li>We recommend that Fermilab and other Kerberos 
+HTML     
+  if ($Preferences{Security}{Certificates}{FNALKCA}) {
+    print "<li>We recommend that Fermilab and other Kerberos 
      users choose the Kerberos (KCA) certificate.  This is more secure and will, 
      at least at Fermilab, be required for access to other web sites.
-     </li>
+     </li>\n";
+  }
+  print <<HTML;
      </ul>
 </li>
 <li> Every browser handles multiple certificates differently.
@@ -654,26 +658,29 @@ sub MiscCertificateInstructionsBody {
 <li> <a href="$DocDBInstructions?set=protect">Protect your certificate.</a>
 </li>
 </ol>
-
-<a name="same"/>
-<h2>Same Machine Explanation</h2>
-<p>
-When you apply for a DOEgrid certificate, your web brower sends along a public
-key.  This key is used to match up with the private key that is kept on your
-browser.  When you get the e-mail with a link to your new DOEgrid certificate,
-that web page will be expecting to make a proper connection to the private key
-in your web browser.  This key is unique to your physical machine and chosen web
-browser.  
-</p> 
-<p>
-The actual port you use (wired, wireless, etc.) is irrelevant.
-</p> 
-<p>
-Your IP address (at the lab, away from the lab, DHCP, static, etc.) is
-irrelevant.
-</p> 
-
 HTML
+
+  if ($Preferences{Security}{Certificates}{DOEGrids}) {
+    print <<HTML;
+    <a name="same"/>
+    <h2>Same Machine Explanation</h2>
+    <p>
+    When you apply for a DOEgrid certificate, your web brower sends along a public
+    key.  This key is used to match up with the private key that is kept on your
+    browser.  When you get the e-mail with a link to your new DOEgrid certificate,
+    that web page will be expecting to make a proper connection to the private key
+    in your web browser.  This key is unique to your physical machine and chosen web
+    browser.  
+    </p> 
+    <p>
+    The actual port you use (wired, wireless, etc.) is irrelevant.
+    </p> 
+    <p>
+    Your IP address (at the lab, away from the lab, DHCP, static, etc.) is
+    irrelevant.
+    </p> 
+HTML    
+  }
 }
 
 
