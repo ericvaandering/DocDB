@@ -343,7 +343,7 @@ sub PrintSession (%) {
   
   if (@SessionOrderIDs) {
   
-    print "<table class=\"Alternating\" class=\"CenteredTable\" id=\"TalkList\">\n";
+    print "<table class=\"Alternating CenteredTable\" id=\"TalkList\">\n";
 
     print "<tr>\n";
     print "<th class=\"TalkTime\">Start</th>\n";
@@ -382,8 +382,8 @@ sub PrintSession (%) {
           &PrintSessionTalk($SessionTalkID,$AccumulatedTime,$RowClass);
         } else { # Talk where only hints exist
           print "<tr valign=\"top\" class=\"$RowClass\">\n";
-          print "<td align=right><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";
-          print "<td>$SessionTalks{$SessionTalkID}{HintTitle}</td>\n";
+          print "<td><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";
+          print "<td>HT $SessionTalks{$SessionTalkID}{HintTitle}</td>\n";
           my @TopicHintIDs  = &FetchTopicHintsBySessionTalkID($SessionTalkID);
           my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID);
           my @TopicIDs  = ();

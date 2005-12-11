@@ -28,9 +28,9 @@ sub MyRoutine (%) {
 
 } 
 
-and a call looks like
+and a call (note no & before subroutine name) looks like
 
-&MyRoutine(-required => $RequiredEntries{Requester},
+MyRoutine(-required => $RequiredEntries{Requester},
            -helplink => "requester",
            -helptext => "Requester",
            -name     => "requester",
