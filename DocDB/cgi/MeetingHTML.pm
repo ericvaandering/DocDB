@@ -420,16 +420,16 @@ sub PrintSessionSeparator ($) {
   require "SQLUtilities.pm";
   
   print "<table class=\"MedPaddedTable CenteredTable\"><tr>\n";
-  print "<td><dl><dt><b>$SessionSeparators{$SessionSeparatorID}{Title}</b>\n";
+  print "<td><p><dl><dt><b>$SessionSeparators{$SessionSeparatorID}{Title}</b>\n";
   print "<dd>",&EuroDate($SessionSeparators{$SessionSeparatorID}{StartTime});
   print " at ";
   print &EuroTimeHM($SessionSeparators{$SessionSeparatorID}{StartTime});
-  print "</dl></td> \n";
+  print "</dl></p></td> \n";
   if ($SessionSeparators{$SessionSeparatorID}{Location}) {
-    print "<td><dl><dt><b>Location:</b><dd>$SessionSeparators{$SessionSeparatorID}{Location}</dl></td>\n";
+    print "<td><p><dl><dt><b>Location:</b><dd>$SessionSeparators{$SessionSeparatorID}{Location}</dl></p></td>\n";
   }
   if ($SessionSeparators{$SessionSeparatorID}{Description}) {
-    print "<td width=\"50%\"><dl><dt><b>Description:</b><dd>$SessionSeparators{$SessionSeparatorID}{Description}</dl> </td>\n";
+    print "<td><p><dl><dt><b>Description:</b><dd>$SessionSeparators{$SessionSeparatorID}{Description}</dl></p></td>\n";
   }
   print "</tr></table>\n";
   print "<hr/>\n";   
