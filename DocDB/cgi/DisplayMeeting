@@ -161,7 +161,7 @@ if ($DisplayMode eq "Session") { # Display a single session
         &PrintSessionSeparatorInfo($SessionSeparatorID); # SessionSeparator info 
       }
     }  
-    print "</table><hr width=\"95%\" />\n";
+    print "</table><hr/>\n";
   }
   
 # Finish off meeting display  
@@ -210,7 +210,7 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "Conference") { # Display talks
     my $NumberOfDocuments = &DocumentTable(-fields  => \@Fields, 
          -docids  => \@UnusedDocIDs, -sortby  => "date",  
          -reverse => $TRUE);
-    print "<hr width=\"95%\"/>\n";
+    print "<hr/>\n";
   } else {
     print "<h4><a href=\"$ListBy?eventid=$ConferenceID\">Simple list</a> of all documents for this event</h4>\n";
   }

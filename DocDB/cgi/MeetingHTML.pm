@@ -411,7 +411,7 @@ sub PrintSession (%) {
   } else {
     print "<h4>No talks in agenda</h4>\n";
   }  
-  print "<hr width=\"95%\" />\n"; 
+  print "<hr/>\n"; 
 }
 
 sub PrintSessionSeparator ($) {
@@ -429,10 +429,10 @@ sub PrintSessionSeparator ($) {
     print "<td><dl><dt><b>Location:</b><dd>$SessionSeparators{$SessionSeparatorID}{Location}</dl></td>\n";
   }
   if ($SessionSeparators{$SessionSeparatorID}{Description}) {
-    print "<td width=50%><dl><dt><b>Description:</b><dd>$SessionSeparators{$SessionSeparatorID}{Description}</dl> </td>\n";
+    print "<td width=\"50%\"><dl><dt><b>Description:</b><dd>$SessionSeparators{$SessionSeparatorID}{Description}</dl> </td>\n";
   }
   print "</tr></table>\n";
-  print "<hr width=\"95%\" />\n";   
+  print "<hr/>\n";   
 }
 
 sub PrintSessionHeader ($) {
