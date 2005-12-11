@@ -341,13 +341,13 @@ sub DisplayNotification($$;$) {
   
   if ($NotifyAllTopics || @NotifyMajorIDs || @NotifyMinorIDs ||
       @NotifyAuthorIDs || @NotifyKeywords) {
-    print "<li>$Set notifications:\n";  
+    print "<b>$Set notifications:</b>\n";  
     print "<ul>\n";  
   } elsif ($Always) {
-    print "<li>$Set notifications:\n";  
+    print "<b>$Set notifications:</b>\n";  
     print "<ul>\n";  
     print "<li>None</li>\n";  
-    print "</ul></li>\n";
+    print "</ul>\n";
     return;
   } else {
     return;
@@ -380,7 +380,7 @@ sub DisplayNotification($$;$) {
     }
   }
     
-  print "</ul></li>\n";  
+  print "</ul>\n";  
 }
 
 sub NotifyTopicSelect ($) { # Check for all, boxes for major and minor topics
@@ -468,10 +468,10 @@ sub EmailUserSelect (%) {
   
   my $Disabled = $Params{-disabled}  || "0";
   
-  my $Booleans = "";
-  
+  my %Options = ();
+ 
   if ($Disabled) {
-    $Booleans .= "-disabled";
+    $Options{-disabled} = "disabled";
   }  
   
   my @EmailUserIDs = &GetEmailUserIDs;
@@ -482,13 +482,11 @@ sub EmailUserSelect (%) {
   
   @EmailUserIDs = sort EmailUserIDsByName @EmailUserIDs;
   
-  print "<b><a ";
-  &HelpLink("emailuser");
-  print "Username:</a></b><br> \n";
+  print FormElementTitle(-helplink => "emailuser", -helptext => "Username"); 
   print $query -> scrolling_list(-name => 'emailuserid', 
                                  -values => \@EmailUserIDs, 
                                  -labels => \%EmailUserLabels, 
-                                 -size => 10, $Booleans);
+                                 -size => 10, %Options);
 
 }
   

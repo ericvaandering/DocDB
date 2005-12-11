@@ -119,7 +119,7 @@ if      ($Action eq "Delete") { # Delete user
        $UserUpdate -> execute($EncryptedPassword,$EmailUserID);
     print "<b>The User's password was changed. They should change it again ASAP.</b><p>\n";
   }
-  if ($ClearGroups) {
+  if ($ClearGroups || @UsersGroupIDs) {
     my $UsersGroupDelete = $dbh -> prepare("delete from UsersGroup where EmailUserID=?");
        $UsersGroupDelete -> execute($EmailUserID);
     print "<b>All associations between the user and groups have been deleted.</b><p>\n";

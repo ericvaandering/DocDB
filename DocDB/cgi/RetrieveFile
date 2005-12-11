@@ -54,13 +54,16 @@ unless ($DocumentID) {
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&GetSecurityGroups;
+GetSecurityGroups();
 
-&FetchDocument($DocumentID);
+FetchDocument($DocumentID);
 
 if (defined $Version && defined $AsOf) {
   push @ErrorStack,"You may not specify both a version and date.";
 }
+if (grep /\//,$FileName) {
+  push @ErrorStack,"File names with / are not allowed for security reasons.";
+}  
 
 if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
   print $query -> header;

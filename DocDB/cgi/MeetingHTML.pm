@@ -326,7 +326,6 @@ sub PrintSession (%) {
   
   unless ($SkipHeader) {
     &PrintSessionHeader($SessionID);
-    print "<p>\n";
   }
   
   my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
@@ -343,7 +342,7 @@ sub PrintSession (%) {
   
   if (@SessionOrderIDs) {
   
-    print "<table class=\"Alternating\" class=\"CenteredTable\" id=\"TalkList\">\n";
+    print "<table class=\"Alternating CenteredTable TalkList\">\n";
 
     print "<tr>\n";
     print "<th class=\"TalkTime\">Start</th>\n";
@@ -367,11 +366,11 @@ sub PrintSession (%) {
       if ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) { # TalkSeparator
         my $TalkSeparatorID =  $SessionOrders{$SessionOrderID}{TalkSeparatorID};
 
-        print "<tr valign=\"top\" class=\"$RowClass\">\n";
-        print "<td align=right><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";
+        print "<tr class=\"$RowClass\">\n";
+        print "<td class=\"Time\"><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";
         print "<td>$TalkSeparators{$TalkSeparatorID}{Title}</td>\n";
-        print "<td colspan=3>$TalkSeparators{$TalkSeparatorID}{Note}</td>\n";
-        print "<td align=right>",&TruncateSeconds($TalkSeparators{$TalkSeparatorID}{Time}),"</td>\n";
+        print "<td colspan=\"3\">$TalkSeparators{$TalkSeparatorID}{Note}</td>\n";
+        print "<td class=\"Time\">",&TruncateSeconds($TalkSeparators{$TalkSeparatorID}{Time}),"</td>\n";
         print "</tr>\n";
 
         $AccumulatedTime = &AddTime($AccumulatedTime,$TalkSeparators{$TalkSeparatorID}{Time});
@@ -381,8 +380,8 @@ sub PrintSession (%) {
         if ($SessionTalks{$SessionTalkID}{DocumentID}) { # Talk with DocID (confirmed or not)
           &PrintSessionTalk($SessionTalkID,$AccumulatedTime,$RowClass);
         } else { # Talk where only hints exist
-          print "<tr valign=\"top\" class=\"$RowClass\">\n";
-          print "<td align=right><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";
+          print "<tr class=\"$RowClass\">\n";
+          print "<td><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";
           print "<td>$SessionTalks{$SessionTalkID}{HintTitle}</td>\n";
           my @TopicHintIDs  = &FetchTopicHintsBySessionTalkID($SessionTalkID);
           my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID);
@@ -397,7 +396,7 @@ sub PrintSession (%) {
           print "<td><i>\n"; &ShortAuthorListByID(@AuthorIDs); print "</i></td>\n";
           print "<td><i>\n"; &ShortTopicListByID(@TopicIDs);   print "</i></td>\n";
           print "<td>&nbsp;</td>\n"; # Files, which can't exist
-          print "<td align=right>",&TruncateSeconds($SessionTalks{$SessionTalkID}{Time}),"</td>\n";
+          print "<td class=\"Time\">",&TruncateSeconds($SessionTalks{$SessionTalkID}{Time}),"</td>\n";
           if ($SessionTalks{$SessionTalkID}{Note}) {
             print "<td><b>",&TalkNoteLink($SessionTalkID),"</b></td>\n";
           } else {
@@ -412,7 +411,7 @@ sub PrintSession (%) {
   } else {
     print "<h4>No talks in agenda</h4>\n";
   }  
-  print "<hr width=\"95%\" />\n"; 
+  print "<hr/>\n"; 
 }
 
 sub PrintSessionSeparator ($) {
@@ -420,20 +419,20 @@ sub PrintSessionSeparator ($) {
   
   require "SQLUtilities.pm";
   
-  print "<table class=\"MedPaddedTable CenteredTable\"><tr valign=top>\n";
-  print "<td><dl><dt><b>$SessionSeparators{$SessionSeparatorID}{Title}</b>\n";
+  print "<table class=\"MedPaddedTable CenteredTable\"><tr>\n";
+  print "<td><div><dl><dt><b>$SessionSeparators{$SessionSeparatorID}{Title}</b></dt>\n";
   print "<dd>",&EuroDate($SessionSeparators{$SessionSeparatorID}{StartTime});
   print " at ";
   print &EuroTimeHM($SessionSeparators{$SessionSeparatorID}{StartTime});
-  print "</dl></td> \n";
+  print "</dd></dl></div></td> \n";
   if ($SessionSeparators{$SessionSeparatorID}{Location}) {
-    print "<td><dl><dt><b>Location:</b><dd>$SessionSeparators{$SessionSeparatorID}{Location}</dl></td>\n";
+    print "<td><div><dl><dt><b>Location:</b></dt><dd>$SessionSeparators{$SessionSeparatorID}{Location}</dd></dl></div></td>\n";
   }
   if ($SessionSeparators{$SessionSeparatorID}{Description}) {
-    print "<td width=50%><dl><dt><b>Description:</b><dd>$SessionSeparators{$SessionSeparatorID}{Description}</dl> </td>\n";
+    print "<td><div><dl><dt><b>Description:</b></dt><dd>$SessionSeparators{$SessionSeparatorID}{Description}</dd></dl></div></td>\n";
   }
   print "</tr></table>\n";
-  print "<hr width=\"95%\" />\n";   
+  print "<hr/>\n";   
 }
 
 sub PrintSessionHeader ($) {
@@ -444,7 +443,7 @@ sub PrintSessionHeader ($) {
 
   my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
 
-  print "<h4><a name=\"$SessionID\" />Session: ".
+  print "<h4><a name=\"sess$SessionID\" />Session: ".
         "<a href=\"$DisplayMeeting?sessionid=$SessionID\">$Sessions{$SessionID}{Title}</a> begins \n";
   print &EuroDate($Sessions{$SessionID}{StartTime});
   print " at ";
@@ -624,7 +623,7 @@ sub PrintMeetingInfo($;%) {
 
         my $SessionName = $Sessions{$SessionID}{Title};
 	   $SessionName =~ s/\s+/&nbsp;/;
-	my $SessionLink = "<a href=\"#$SessionID\">$SessionName</a>";  
+	my $SessionLink = "<a href=\"#sess$SessionID\">$SessionName</a>";  
         print "[&nbsp;",$SessionLink,"&nbsp;]\n";
       }
     }
@@ -633,7 +632,7 @@ sub PrintMeetingInfo($;%) {
      
   &PrintMeetingPreamble($ConferenceID);
   
-  print "<hr width=\"95%\" />\n";
+  print "<hr/>\n";
 }
 
 sub PrintMeetingEpilogue($) {
@@ -668,7 +667,7 @@ sub PrintSessionInfo ($) {
   
   &FetchSessionByID($SessionID);
   
-  print "<tr valign=top>\n";
+  print "<tr>\n";
   print "<td><a href=\"$DisplayMeeting?sessionid=$SessionID\">";
   print "$Sessions{$SessionID}{Title}</a></td>\n";
   print "<td>",&EuroDateHM($Sessions{$SessionID}{StartTime}),"</td>\n";
@@ -685,7 +684,7 @@ sub PrintSessionSeparatorInfo ($) {
   
   &FetchSessionSeparatorByID($SessionSeparatorID);
   
-  print "<tr valign=top>\n";
+  print "<tr>\n";
   print "<td>$SessionSeparators{$SessionSeparatorID}{Title}</td>\n";
   print "<td>",&EuroDateHM($SessionSeparators{$SessionSeparatorID}{StartTime}),"</td>\n";
   print "<td>",$SessionSeparators{$SessionSeparatorID}{Description},"</td>\n";

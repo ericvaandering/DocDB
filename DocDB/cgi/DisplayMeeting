@@ -112,17 +112,17 @@ unless (&CanAccessMeeting($ConferenceID)) {
 &EndPage(@ErrorStack);
 
 if ($DisplayMode eq "Session") { # Display a single session
-  &ReHintTalksBySessionID($SessionID); 
-  &ClearSessionTalks();
-  &FetchSessionByID($SessionID);
-  &PrintSingleSessionHeader(-sessionid => $SessionID, -onlyone => $OnlyOneSession);
-  &PrintSession(-sessionid => $SessionID, -skipheader => $TRUE); 
-  &PrintMeetingEpilogue($ConferenceID);
+  ReHintTalksBySessionID($SessionID); 
+  ClearSessionTalks();
+  FetchSessionByID($SessionID);
+  PrintSingleSessionHeader(-sessionid => $SessionID, -onlyone => $OnlyOneSession);
+  PrintSession(-sessionid => $SessionID, -skipheader => $TRUE); 
+  PrintMeetingEpilogue($ConferenceID);
 } elsif ($DisplayMode eq "Separator") { # Display a single break (never called)
-  &FetchSessionSeparatorByID($SessionSeparatorID);
-  &PrintMeetingInfo($Sessions{$SessionID}{ConferenceID});
-  &PrintSessionSeparator($SessionSeparatorID);
-  &PrintMeetingEpilogue($Sessions{$SessionID}{ConferenceID});
+  FetchSessionSeparatorByID($SessionSeparatorID);
+  PrintMeetingInfo($Sessions{$SessionID}{ConferenceID});
+  PrintSessionSeparator($SessionSeparatorID);
+  PrintMeetingEpilogue($Sessions{$SessionID}{ConferenceID});
 } elsif ($DisplayMode eq "Conference") { # Display meeting info or meeting with all talks
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
@@ -161,7 +161,7 @@ if ($DisplayMode eq "Session") { # Display a single session
         &PrintSessionSeparatorInfo($SessionSeparatorID); # SessionSeparator info 
       }
     }  
-    print "</table><hr width=\"95%\" />\n";
+    print "</table><hr/>\n";
   }
   
 # Finish off meeting display  
@@ -210,7 +210,7 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "Conference") { # Display talks
     my $NumberOfDocuments = &DocumentTable(-fields  => \@Fields, 
          -docids  => \@UnusedDocIDs, -sortby  => "date",  
          -reverse => $TRUE);
-    print "<hr width=\"95%\"/>\n";
+    print "<hr/>\n";
   } else {
     print "<h4><a href=\"$ListBy?eventid=$ConferenceID\">Simple list</a> of all documents for this event</h4>\n";
   }

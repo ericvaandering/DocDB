@@ -26,7 +26,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-use CGI;                                                                                      
+use CGI qw(-nosticky);                                                                                      
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -45,63 +45,62 @@ require "NotificationSQL.pm";
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&GetSecurityGroups;
+GetSecurityGroups();
 
 print $query->header;
-&DocDBHeader("User Administration","",-scripts => ["PopUps","PersonalAccountAdminDisable"]); 
+DocDBHeader("User Administration","",-scripts => ["PopUps","PersonalAccountAdminDisable"]); 
 
 @ErrorStack = ();
 @WarnStack  = ();
 
-unless (&CanAdminister()) {
+unless (CanAdminister()) {
   push @ErrorStack,"You are not allowed to access administrative functions.";
-  push @WarnStack,"I've disabled admin checking in this page. FIX IT.";
-  push @WarnStack,"Have to add help links here and for request";
 }
 
-&EndPage(@ErrorStack);
-&WarnPage(@WarnStack);
+EndPage();
 
-print "<b>This form allows you to administer personal accounts.</b><p>\n"; 
+print "<p><b>This form allows you to administer personal accounts.</b></p>\n"; 
 
-print "Since users can modify their own data and create their own accounts,
-       the only functions you can perform here are to reset the user's password
-       and delete a user. The full list of users receiving notifications and 
-       their preferences are shown below for your reference.<p>\n";
+print "<p>Since users can modify their own data and create their own accounts,
+       the only functions you can perform here are to delete a user";
+unless ($UserValidation eq "certificate") {
+  print ", reset the user's password,"; 
+}
+print " and change which groups the user belongs to. If any groups are selected or 
+       \"Clear Groups\" is selected, the list of groups the user belongs to will be cleared and
+       set to the selected groups. The full list of users, their groups, preferences, and which
+       notifications they recieve  are shown below for your reference.</p>\n";
 
 ### Email User Modification
 
 print $query -> start_multipart_form('POST',"$EmailAdminister",
                                      "id=\"peraccount\" name=\"peraccount\"");
-print "<table cellpadding=10>\n";
-print "<tr valign=top>\n";
+print "<table class=\"HighPaddedTable\">\n";
+print "<tr>\n";
 
-print "<td colspan=2>\n";
- &AdministerActions(-form => "peraccount");
+print "<td colspan=\"2\">\n";
+ AdministerActions(-form => "peraccount");
 print "</td>\n";
 
 print "</tr>\n";
 
-print "<tr valign=top>\n";
+print "<tr>\n";
 
 print "<td>\n"; 
- &EmailUserSelect(-disabled => $TRUE);
+ EmailUserSelect(-disabled => $TRUE);
 print "</td>\n";  
 
 print "<td>\n";   
 if ($UserValidation eq "certificate") {
   print "&nbsp;\n";
-} else {  
-  print "<b><a ";
-  &HelpLink("resetpassword");
-  print "New Password:</a></b><br> \n";
-  print $query -> textfield (-name => 'resetpw', -size => 20, 
-                             -maxlength => 20,   -disabled);
+} else { 
+  print FormElementTitle(-helplink => "resetpassword", -helptext => "New Password"); 
+  print $query -> textfield (-name => 'resetpw', -size => 20, -maxlength => 20, -disabled => "disabled");
 }
 print "</td>\n";
-print "<td rowspan=5>\n"; 
-&SecurityScroll(-helplink => 'usergroups', -helptext => 'User\'s Groups', 
-                -name     => 'usergroups', -disabled => $TRUE, -multiple => $TRUE); 
+print "<td rowspan=\"5\">\n"; 
+SecurityScroll(-helplink => 'usergroups', -helptext => 'User\'s Groups', 
+               -name     => 'usergroups', -disabled => $TRUE, -multiple => $TRUE); 
 print "</td>\n";  
 print "</tr>\n";
 
@@ -118,11 +117,11 @@ print "<tr><td>\n";
 print $query -> checkbox(-name  => "cleargroups", -label => 'Clear User\'s Groups');
 print "</td></tr>\n";
 
-print "<tr valign=top>\n";
-print "<td colspan=3>\n";
-&AdministratorPassword;
+print "<tr>\n";
+print "<td colspan=\"3\">\n";
+AdministratorPassword();
 print "&nbsp;";
-print $query -> submit (-value => "Modify Personal Account");
+print $query -> submit(-value => "Modify Personal Account");
 print "</td>\n";
 print "</tr>\n";
 
@@ -130,77 +129,71 @@ print "</table>\n";
 print $query -> end_multipart_form;
 
 print "<p>\n";
-print "<b>The personal accounts and when they receive e-mail are shown below:</b><p>\n";
-print "<p><hr>\n";
+print "<b>The personal accounts and when they receive e-mail are shown below:</b></p>\n";
+print "<hr/>\n";
 
 ### Display of existing groups
 
-my @EmailUserIDs = sort EmailUserIDsByName &GetEmailUserIDs;
+my @EmailUserIDs = sort EmailUserIDsByName GetEmailUserIDs();
 
-print "<table cellpadding=3>\n";
+print "<table class=\"LowPaddedTable\">\n";
 foreach my $EmailUserID (@EmailUserIDs) {
-  &FetchEmailUser($EmailUserID);  
-  print "<tr valign=top>\n";
+  FetchEmailUser($EmailUserID);  
+  print "<tr>\n";
   print "<td>\n";
 
-  print "<table>\n";
+  print "<table class=\"LowPaddedTable LeftHeader\">\n";
   print "<tr>\n";
-  print "<th>Username:</th><td>$EmailUser{$EmailUserID}{Username}<br>\n"; 
-  print "</td>\n";
-  print "</tr>\n";
-  print "<tr>\n";
-  print "<th>Name:</th><td>$EmailUser{$EmailUserID}{Name}<br>\n"; 
-  print "</td>\n";
-  print "</tr>\n";
-  print "<tr valign=top>\n";
-  print "<th>E-mail:</th><td>$EmailUser{$EmailUserID}{EmailAddress}<br>\n"; 
-  print "</td>\n";
-  print "</tr>\n";
-  print "<tr valign=top>\n";
+  print "<th>Username:</th><td>$EmailUser{$EmailUserID}{Username}</td>\n"; 
+  print "</tr><tr>\n";
+  print "<th>Name:</th><td>$EmailUser{$EmailUserID}{Name}</td>\n"; 
+  print "</tr><tr>\n";
+  print "<th>E-mail:</th><td>$EmailUser{$EmailUserID}{EmailAddress}</td>\n"; 
+  print "</tr><tr>\n";
   print "<th>Verified:</th>";
-  print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{Verified}]."<br>\n"; 
-  print "</td>\n";
-  print "</tr>\n";
-  print "<tr valign=top>\n";
+  print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{Verified}]."</td>\n"; 
+  print "</tr><tr>\n";
   print "<th>HTML:</th>";
-  print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{PreferHTML}]."<br>\n"; 
-  print "</td>\n";
-  print "</tr>\n";
-  print "<tr valign=top>\n";
+  print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{PreferHTML}]."</td>\n"; 
+  print "</tr><tr>\n";
   print "<th>Can Sign:</th>";
-  print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{CanSign}]."<br>\n"; 
-  print "</td>\n";
-  print "</tr>\n";
-  print "<tr valign=top>\n";
+  print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{CanSign}]."</td>\n"; 
+  print "</tr><tr>\n";
   
   # Groups user belongs (or wants to belong to)
   
   print "<th>Groups:</th>";
-  print "<td><ul>\n"; 
-  my @UserGroupIDs = &FetchUserGroupIDs($EmailUserID);
-  foreach my $UserGroupID (@UserGroupIDs) {
-    &FetchSecurityGroup($UserGroupID);
-    print "<li>$SecurityGroups{$UserGroupID}{NAME}</li>";
-  }   
-  print "</ul></td>\n";
+  print "<td>\n"; 
+  my @UserGroupIDs = FetchUserGroupIDs($EmailUserID);
+  if (@UserGroupIDs) {
+    print "<ul>\n";
+    foreach my $UserGroupID (@UserGroupIDs) {
+      FetchSecurityGroup($UserGroupID);
+      print "<li>$SecurityGroups{$UserGroupID}{NAME}</li>\n";
+    }
+    print "</ul>\n";
+  } else {
+    print "&nbsp;\n";
+  }       
+  print "</td>\n";
   print "</tr>\n";
   print "</table>\n";
   print "</td>\n";
 
   print "<td>\n";
-  &DisplayNotification($EmailUserID,"Immediate");
+  DisplayNotification($EmailUserID,"Immediate");
   print "</td>\n";
 
   print "<td>\n";
-  &DisplayNotification($EmailUserID,"Daily");
+  DisplayNotification($EmailUserID,"Daily");
   print "</td>\n";
 
   print "<td>\n";
-  &DisplayNotification($EmailUserID,"Weekly");
+  DisplayNotification($EmailUserID,"Weekly");
   print "</td>\n"; 
 
   print "</tr>\n";
-  print "<tr><td colspan=5><hr width=\"95%\"></td></tr>\n";
+  print "<tr><td colspan=\"5\"><hr/></td></tr>\n";
 } 
 print "</table>\n";
 
@@ -209,13 +202,15 @@ print "</table>\n";
 my @SecurityGroups = sort keys %SecurityIDs;
 
 foreach my $SecurityGroup (@SecurityGroups) {
-  my @EmailUserIDs = sort EmailUserIDsByName &FetchEmailUSerIDsBySecurityGroup($SecurityIDs{$SecurityGroup});
+  my @EmailUserIDs = sort EmailUserIDsByName FetchEmailUSerIDsBySecurityGroup($SecurityIDs{$SecurityGroup});
   if (@EmailUserIDs) {
-    print "<strong>$SecurityGroup has these members:</strong>\n<ul>\n";
+    print "<p><strong>$SecurityGroup has these members:</strong></p>\n<ul>\n";
     foreach my $EmailUserID (@EmailUserIDs) {
       if ($EmailUser{$EmailUserID}{Name}) { 
         print "<li>$EmailUser{$EmailUserID}{Name} ($EmailUser{$EmailUserID}{Username}, $EmailUser{$EmailUserID}{EmailAddress})</li>\n";
-      }
+      } else {
+        print "<li>Unknown</li>\n";
+      }  
     }
     print "</ul>\n";
   }     
@@ -223,5 +218,5 @@ foreach my $SecurityGroup (@SecurityGroups) {
 
 print "<p/><hr/><p/>\n";
 
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

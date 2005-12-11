@@ -1,3 +1,26 @@
+7.2.0
+
+  Both scripts and CSS have changed, make sure you update both
+
+  ***Fixed a directory transversal security issue***
+  Improved reporting and interface for AuthorAdd(Form)
+  Added instructions for getting/importing certificates (courtesy of Lynn Garren)
+  Improved instructions for meetings
+  List of events for the month appear on monthly calendar
+  EmailAdministerGroups will clear the list of groups a person belongs to rather
+    than add to them if any groups are selected. (Admins can be less careful.)
+    
+  Added instructions for getting/importing certificates (courtesy of Lynn 
+  Garren). There are several new settings to use for this: 
+    $Preferences{Security}{Certificates}{FNALKCA} = $FALSE;      # TRUE or FALSE - show KCA certificate instructions
+    $Preferences{Security}{Certificates}{DOEGrids} = $FALSE;     # TRUE or FALSE - show DOEgrid certificate instructions
+    $Preferences{Security}{Certificates}{ShowCertInstructions} = $FALSE;  # TRUE or FALSE - show certificate instructions even on non-cert version
+    $secure_root = "https://web-server-host-and-domain/cgi-bin/DocDB/"; URL for secure DocDB in non-secure version
+  We've tried to make these instructions generically useful if you have both
+  FNALKCA and DOEGrids set to false, as above. In the case where DOEGrids only
+  is set, there may be some issues. Please feel free to send patches if you find
+  FNAL specific information.
+
 7.1.4
 
 A number of small-ish changes to enhance usability:

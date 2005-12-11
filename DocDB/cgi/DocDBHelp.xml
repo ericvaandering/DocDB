@@ -900,6 +900,18 @@ or may not be the same as the web username and password.
  </entry>
  
  <entry>
+  <key>talkdocid</key>
+  <title>Talk Document #</title>
+  <text>
+   <p>This field shows the document # matched with the agenda entry in DocDB. 
+   If you know the corresponding document #, type it in and click 
+   <strong>Confirm</strong> to the left. If you know there will not be a document
+   for a slot, or wish to prevent DocDB from guessing which document matches, enter 
+   <strong>0</strong> and click <strong>Confirm</strong>.</p>
+  </text>
+ </entry>
+ 
+ <entry>
   <key>talkinfo</key>
   <title>Talk Information</title>
   <text>
