@@ -49,9 +49,13 @@ KCA
    <li><a href="http://computing.fnal.gov/security/pki/browsercerttest.html">How to test your certificate</a></li>
    <li><a href="$DocDBInstructions?set=protect">Protect your certificate</a></li>
    <li><a href="$DocDBInstructions?set=misc#issues">Known issues with certificates</a>
-    <ul>
-    <li><a href="$DocDBInstructions?set=misc#same">Same machine</a></li>
-    </ul></li> 
+  if ($Preferences{Security}{Certificates}{DOEGrids}) {
+    print "<ul>
+    <li><a href=\"$DocDBInstructions?set=misc#same\">Same machine</a></li>
+    </ul>\n";
+  }  
+  print <<TOC;
+   </li> 
   </ul>
 TOC
 }
@@ -611,17 +615,20 @@ HTML
 sub MiscCertificateInstructionsBody {
   print <<HTML;
 
-<a name="issues"/>
-<h1>Known issues with certificates</h1>
-<ol>
-<li> If you wish to use more than one type of certificate 
-     (for instance, both KCA and DOEgrid certificates), 
+  <a name="issues"/>
+  <h1>Known issues with certificates</h1>
+  <ol>
+  <li> If you wish to use more than one type of certificate 
+HTML
+  if ($Preferences{Security}{Certificates}{DOEGrids} && $Preferences{Security}{Certificates}{FNALKCA}) {
+    print "(for instance, both KCA and DOEgrid certificates),\n"; 
+  }  
+  print <<HTML;
      each certificate type will need to be separately registered with DocDB.
      <ul>
      <li>To minimize confusion, we strongly recommend that you choose only one 
      certificate type for access.  
      </li>
-HTML     
   if ($Preferences{Security}{Certificates}{FNALKCA}) {
     print "<li>We recommend that Fermilab and other Kerberos 
      users choose the Kerberos (KCA) certificate.  This is more secure and will, 
