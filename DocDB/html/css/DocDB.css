@@ -181,6 +181,10 @@ li.Even, tr.Even, tbody.Even {
   padding: 5px 5px 5px 5px;
 }  
 
+td.Time {
+  text-align: right;
+}
+  
 #SubmitCell { /* Should be ".SubmitCell" */
   text-align: center;
 }  

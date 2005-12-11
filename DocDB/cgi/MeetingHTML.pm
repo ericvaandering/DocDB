@@ -342,7 +342,7 @@ sub PrintSession (%) {
   
   if (@SessionOrderIDs) {
   
-    print "<table class=\"Alternating CenteredTable\" id=\"TalkList\">\n";
+    print "<table class=\"Alternating CenteredTable TalkList\">\n";
 
     print "<tr>\n";
     print "<th class=\"TalkTime\">Start</th>\n";
