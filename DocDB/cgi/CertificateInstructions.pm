@@ -63,22 +63,21 @@ TOC
 
 sub CertificateInstructionsBody {
   print <<HTML;
-<a name="intro"/>
-<h1>Introduction</h1>
+  <a name="intro"/>
+  <h1>Introduction</h1>
 
-<p>
-You can use certificates provided by various certification authorities (CAs) with DocDB.
-<span class="Highlight">Each certificate type must be separately registered
-with the database.</span>
-To minimize confusion, we strongly recommend that you choose only one 
-certificate type for access.  
-</p>
+  <p>
+  You can use certificates provided by various certification authorities (CAs)
+  with DocDB. <span class="Highlight">Each certificate type must be separately
+  registered with the database.</span> To minimize confusion, we strongly
+  recommend that you choose only one certificate type for access.  
+  </p>
 HTML
 
 if ($Preferences{Security}{Certificates}{DOEGrids}) {
   print <<DOE;
   <p>
-  Get a <a href="$DocDBInstructions?set=doe">DOEgrid certificate</a>
+  Get a <a href="$DocDBInstructions?set=doe">DOEgrid certificate</a>.
   </p>
 DOE
 }
@@ -89,7 +88,7 @@ if ($Preferences{Security}{Certificates}{FNALKCA}) {
    Get a <a href="$DocDBInstructions?set=kca">KCA (Kerberos) certificate</a> -
    <a href="$DocDBInstructions?set=kca#win">for Windows</a>, 
    <a href="$DocDBInstructions?set=kca#linux">for Linux</a>, or
-   <a href="$DocDBInstructions?set=kca#mac">for MAC</a>
+   <a href="$DocDBInstructions?set=kca#mac">for MAC</a>.
    We recommend that Fermilab and other Kerberos 
 users choose the KCA certificate.  This is more secure and will, 
 at least at Fermilab, be required for access to other web sites.
@@ -492,8 +491,7 @@ sub ImportCertificateInstructionsBody {
    <li>In all cases, make sure you save the certificate as type 
         <b>PKCS#12</b> with extension <b>.p12</b> or (<b>.pfx</b> on a MAC)
    </li>
-   <li><a href="$DocDBInstructions?set=protect">Protect your certificate.</a>
-   </li>
+<li> <a href="$DocDBInstructions?set=protect">Protect your certificate.</a></li>
    <li>For Firefox: 
         <ul>
 	<li> <span class="Highlight">Linux:</span> 
@@ -663,7 +661,7 @@ HTML
      </ul>
 </li>
 <li>MacOSX Safari seems to have problems with certificates.</li>
-<li><a href="$DocDBInstructions?set=protect">Protect your certificate.</a></li>
+<li> <a href="$DocDBInstructions?set=protect">Protect your certificate.</a></li>
 </ol>
 HTML
 
