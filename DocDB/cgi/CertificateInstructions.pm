@@ -49,6 +49,7 @@ KCA
    <li><a href="http://computing.fnal.gov/security/pki/browsercerttest.html">How to test your certificate</a></li>
    <li><a href="$DocDBInstructions?set=protect">Protect your certificate</a></li>
    <li><a href="$DocDBInstructions?set=misc#issues">Known issues with certificates</a>
+TOC
   if ($Preferences{Security}{Certificates}{DOEGrids}) {
     print "<ul>
     <li><a href=\"$DocDBInstructions?set=misc#same\">Same machine</a></li>
@@ -629,6 +630,7 @@ HTML
      <li>To minimize confusion, we strongly recommend that you choose only one 
      certificate type for access.  
      </li>
+HTML
   if ($Preferences{Security}{Certificates}{FNALKCA}) {
     print "<li>We recommend that Fermilab and other Kerberos 
      users choose the Kerberos (KCA) certificate.  This is more secure and will, 
