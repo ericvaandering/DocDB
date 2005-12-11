@@ -326,7 +326,6 @@ sub PrintSession (%) {
   
   unless ($SkipHeader) {
     &PrintSessionHeader($SessionID);
-    print "<p>\n";
   }
   
   my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
@@ -383,7 +382,7 @@ sub PrintSession (%) {
         } else { # Talk where only hints exist
           print "<tr valign=\"top\" class=\"$RowClass\">\n";
           print "<td><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";
-          print "<td>HT $SessionTalks{$SessionTalkID}{HintTitle}</td>\n";
+          print "<td>$SessionTalks{$SessionTalkID}{HintTitle}</td>\n";
           my @TopicHintIDs  = &FetchTopicHintsBySessionTalkID($SessionTalkID);
           my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID);
           my @TopicIDs  = ();
@@ -444,7 +443,7 @@ sub PrintSessionHeader ($) {
 
   my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
 
-  print "<h4><a name=\"$SessionID\" />Session: ".
+  print "<h4><a name=\"sess$SessionID\" />Session: ".
         "<a href=\"$DisplayMeeting?sessionid=$SessionID\">$Sessions{$SessionID}{Title}</a> begins \n";
   print &EuroDate($Sessions{$SessionID}{StartTime});
   print " at ";
@@ -624,7 +623,7 @@ sub PrintMeetingInfo($;%) {
 
         my $SessionName = $Sessions{$SessionID}{Title};
 	   $SessionName =~ s/\s+/&nbsp;/;
-	my $SessionLink = "<a href=\"#$SessionID\">$SessionName</a>";  
+	my $SessionLink = "<a href=\"#sess$SessionID\">$SessionName</a>";  
         print "[&nbsp;",$SessionLink,"&nbsp;]\n";
       }
     }
