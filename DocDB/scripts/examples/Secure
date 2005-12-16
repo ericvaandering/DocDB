@@ -1,0 +1,29 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+
+# This script can be used to recover from deleting a revision group. As written this is just for a security model where the list of 
+# groups that can modify is the same as the list that can view a document. For the model where they are different, uncomment the 
+# $ReviewModify line
+
+$GroupID       = 0; # Set this to the group ID that you wish to have R/W privilidges
+$FirstDocRevID = 0; # You can use this to skip earlier documents and only change ones after the accident. Find the maximum value from DocumentRevision 
+
+use DBI;
+require "CGIInclude.pm";
+
+require "DocDBGlobals.pm";
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+
+my $RevisionList = $dbh -> prepare("select DocRevID from DocumentRevision");
+my $ReviewSecure = $dbh -> prepare("insert into RevisionSecurity (RevSecurityID,GroupID,DocRevID) values (0,?,?)");
+my $ReviewModify = $dbh -> prepare("insert into RevisionModify (RevModifyID,GroupID,DocRevID) values (0,?,?)");
+
+$RevisionList -> execute();
+$RevisionList -> bind_columns(undef, \($DocRevID));
+while ($RevisionList -> fetch) {
+  if ($DocRevID <= $FirstDocRevID) {next;}
+  $ReviewSecure -> execute($GroupID,$DocRevID);
+#  $ReviewModify -> execute($GroupID,$DocRevID);
+}  
