@@ -289,9 +289,9 @@ sub FilesByDescription {
 }                              
 
 sub FieldsByColumn {
-  $FieldList{$a}{Row}    <=> $FieldList{$b}{Row} 
+  $SortFields{$a}{Row}    <=> $SortFields{$b}{Row} 
                          or
-  $FieldList{$a}{Column} <=> $FieldList{$b}{Column} 
+  $SortFields{$a}{Column} <=> $SortFields{$b}{Column} 
 }
 
 1;
