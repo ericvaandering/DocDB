@@ -40,7 +40,7 @@ sub DocumentTable (%) {
   my %FieldTitles = (
                      Docid   => "$ShortProject-doc-#", Updated => "Last Updated", 
                      CanSign => "Next Signature(s)",   Confirm => "Confirm?",
-                     Blank   => "",
+                     Blank   => "&nbsp;",
                      );  
   
   unless (@DocumentIDs) {
@@ -194,7 +194,7 @@ sub DocumentTable (%) {
         require "RevisionHTML.pm";
         &PrintReferenceInfo($DocRevID,"short"); 
       } elsif ($Field eq "Blank") {        # Blank Cell
-        print "&nbsp;"; 
+        print ""; 
       } else {
         print "Unknown field"
       }  
