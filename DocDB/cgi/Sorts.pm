@@ -288,4 +288,10 @@ sub FilesByDescription {
          $DocFiles{$a}{NAME} cmp $DocFiles{$b}{NAME}
 }                              
 
+sub FieldsByColumn {
+  $FieldList{$a}{Row}    <=> $FieldList{$b}{Row} 
+                         or
+  $FieldList{$a}{Column} <=> $FieldList{$b}{Column} 
+}
+
 1;

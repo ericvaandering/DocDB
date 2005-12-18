@@ -105,7 +105,25 @@ sub AddDocument {
   }
   
   return ($DocumentID,$DocRevID);                                 
+}
 
+sub PrepareFieldList (%) {
+  my %Params = @_;
+  
+  my @Fields        = @{$Params{-fields}}; 
+  
+  my %FieldList = ();
+  
+  my $Column = 0;
+  my $Row    = 1;
+  foreach my $Field (@Fields) {
+    ++$Column;
+    $FieldList{$Field}{Column}  = $Column;
+    $FieldList{$Field}{Row}     = 1;
+    $FieldList{$Field}{RowSpan} = 1;
+    $FieldList{$Field}{ColSpan} = 1;
+  }  
+  return %FieldList;
 }
 
 1;

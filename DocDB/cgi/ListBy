@@ -204,7 +204,7 @@ unless (@DocumentIDs) { # Some do their own
 ### Start HTML
 
 print $query->header;
-&DocDBHeader($Title);
+DocDBHeader($Title);
 
 print "<h4>$Message</h4><p/>\n";
 
@@ -217,16 +217,16 @@ if ($Days) { # Print out modified by form
   print "<center>";
   print $query -> submit (-value => "Show Documents");
   print " modified in the last ";
-  &DaysPulldown($Days);
+  DaysPulldown($Days);
   print " days.</center>";
   print $query -> endform;
   print "<p/>";
 }
 
 ### Table and Statistics
-
-my $NumberOfDocuments = &DocumentTable(-fields => \@Fields, -docids  => \@DocumentIDs, 
-                                       -sortby => $SortBy,  -reverse => $Reverse);
+my %FieldList = PrepareFieldList(-fields => \@Fields);
+my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs, 
+                                      -sortby    => $SortBy,     -reverse => $Reverse);
 print "<b>Number of documents found: ",int($NumberOfDocuments),"</b><p/>\n";
 
 $EndTime  = new Benchmark;

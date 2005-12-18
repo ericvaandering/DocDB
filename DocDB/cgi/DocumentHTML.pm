@@ -34,8 +34,8 @@ sub DocumentTable (%) {
   my $NoneBehavior  =   $Params{-nonebehavior} || "skip";  # skip|
   my $SessionTalkID =   $Params{-talkid};
   my @DocumentIDs   = @{$Params{-docids}};
-  my @Fields        = @{$Params{-fields}}; 
-  my %FieldOptions  = %{$Params{-fieldoptions}}; 
+  my @Fields        = @{$Params{-fields}}; # deprecated, remove
+  my %FieldList     = %{$Params{-fieldlist}}; 
   
   my %FieldTitles = (Docid   => "$ShortProject-doc-#", Updated => "Last Updated", 
                      CanSign => "Next Signature(s)",   Confirm => "Confirm?");  
@@ -53,11 +53,31 @@ sub DocumentTable (%) {
 
 ### Write out the beginning and header of table
 
-  print "<table id=\"DocumentList\" class=\"Alternating\">\n"; 
+
+  %SortFields = %FieldList;
+  my @Fields = sort FieldsByColumn keys %FieldList;  
+  %SortFields = ();
+  
+  print qq(<table class="Alternating DocumentList">\n); 
 
   print "<tr>\n";
+  my $LastRow = 1;
   foreach my $Field (@Fields) {
-    print "<th>";
+    my $Column  = $FieldList{$Field}{Column}; 
+    my $Row     = $FieldList{$Field}{Row}; 
+    my $RowSpan = $FieldList{$Field}{RowSpan}; 
+    my $ColSpan = $FieldList{$Field}{ColSpan}; 
+    
+    if ($Row != $LastRow) {
+      $LastRow = $Row;
+      print "</tr><tr>\n";
+    }  
+    
+    my $Header = "<th";
+    if ($RowSpan > 1) {$Header .= qq( rowspan="RowSpan");}
+    if ($ColSpan > 1) {$Header .= qq( colspan="ColSpan");}
+    $Header .= ">";
+    
     if ($FieldTitles{$Field}) {
       print $FieldTitles{$Field};
     } else {
