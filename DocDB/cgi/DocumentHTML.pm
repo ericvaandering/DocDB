@@ -74,8 +74,8 @@ sub DocumentTable (%) {
     }  
     
     my $Header = "<th";
-    if ($RowSpan > 1) {$Header .= qq( rowspan="RowSpan");}
-    if ($ColSpan > 1) {$Header .= qq( colspan="ColSpan");}
+    if ($RowSpan > 1) {$Header .= qq( rowspan="$RowSpan");}
+    if ($ColSpan > 1) {$Header .= qq( colspan="$ColSpan");}
     $Header .= ">";
     
     print "$Header";
@@ -149,8 +149,8 @@ sub DocumentTable (%) {
       }
         
       my $TD = qq(<td class="$Field");
-      if ($RowSpan > 1) {$TD .= qq( rowspan="RowSpan");}
-      if ($ColSpan > 1) {$TD .= qq( colspan="ColSpan");}
+      if ($RowSpan > 1) {$TD .= qq( rowspan="$RowSpan");}
+      if ($ColSpan > 1) {$TD .= qq( colspan="$ColSpan");}
       $TD .= ">";
       print $TD;
       

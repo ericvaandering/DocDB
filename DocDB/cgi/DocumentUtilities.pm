@@ -123,6 +123,9 @@ sub PrepareFieldList (%) {
     $FieldList{$Field}{RowSpan} = 1;
     $FieldList{$Field}{ColSpan} = 1;
   }  
+  
+  $FieldList{Title}{RowSpan} = 2;
+  $FieldList{Author}{Row} = 2;
   return %FieldList;
 }
 
