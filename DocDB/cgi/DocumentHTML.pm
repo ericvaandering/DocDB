@@ -135,7 +135,7 @@ sub DocumentTable (%) {
     } else {
       $RowClass = "Even";
     }    
-    print "<tr class=\"$RowClass\">\n";
+    print "<tbody class=\"$RowClass\"><tr>\n";
     my $LastRow = 1;
     foreach my $Field (@Fields) {
       my $Column  = $FieldList{$Field}{Column}; 
@@ -145,7 +145,7 @@ sub DocumentTable (%) {
 
       if ($Row != $LastRow) {
         $LastRow = $Row;
-        print "</tr><tr class=\"$RowClass\">\n";
+        print "</tr><tr>\n";
       }
         
       my $TD = qq(<td class="$Field");
@@ -195,7 +195,7 @@ sub DocumentTable (%) {
       }  
       print "</td>\n";
     }  
-    print "</tr>\n";
+    print "</tr></tbody>\n";
   }  
 
 ### End table, return
