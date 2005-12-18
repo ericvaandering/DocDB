@@ -37,8 +37,11 @@ sub DocumentTable (%) {
   my @Fields        = @{$Params{-fields}}; # deprecated, remove
   my %FieldList     = %{$Params{-fieldlist}}; 
   
-  my %FieldTitles = (Docid   => "$ShortProject-doc-#", Updated => "Last Updated", 
-                     CanSign => "Next Signature(s)",   Confirm => "Confirm?");  
+  my %FieldTitles = (
+                     Docid   => "$ShortProject-doc-#", Updated => "Last Updated", 
+                     CanSign => "Next Signature(s)",   Confirm => "Confirm?",
+                     Blank   => "",
+                     );  
   
   unless (@DocumentIDs) {
     if ($NoneBehavior eq "skip") {
@@ -190,6 +193,8 @@ sub DocumentTable (%) {
       } elsif ($Field eq "References") {   # Journal refs
         require "RevisionHTML.pm";
         &PrintReferenceInfo($DocRevID,"short"); 
+      } elsif ($Field eq "Blank") {        # Blank Cell
+        print "&nbsp;"; 
       } else {
         print "Unknown field"
       }  
