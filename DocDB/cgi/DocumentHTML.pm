@@ -136,8 +136,24 @@ sub DocumentTable (%) {
       $RowClass = "Even";
     }    
     print "<tr class=\"$RowClass\">\n";
+    my $LastRow = 1;
     foreach my $Field (@Fields) {
-      print "<td class=\"$Field\">";
+      my $Column  = $FieldList{$Field}{Column}; 
+      my $Row     = $FieldList{$Field}{Row}; 
+      my $RowSpan = $FieldList{$Field}{RowSpan}; 
+      my $ColSpan = $FieldList{$Field}{ColSpan}; 
+
+      if ($Row != $LastRow) {
+        $LastRow = $Row;
+        print "</tr><tr>\n";
+      }
+        
+      my $TD = qq(<th class="$Field");
+      if ($RowSpan > 1) {$TD .= qq( rowspan="RowSpan");}
+      if ($ColSpan > 1) {$TD .= qq( colspan="ColSpan");}
+      $TD .= ">";
+      print $TD;
+      
       if      ($Field eq "Docid") {    # Document number
         print &NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
                                  -numwithversion => $TRUE); 
