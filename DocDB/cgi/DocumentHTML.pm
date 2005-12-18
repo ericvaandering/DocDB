@@ -69,6 +69,7 @@ sub DocumentTable (%) {
     my $ColSpan = $FieldList{$Field}{ColSpan}; 
     
     if ($Row != $LastRow) {
+      push @DebugStack,"Staring new row $Row Last $LastRow";
       $LastRow = $Row;
       print "</tr><tr>\n";
     }  
@@ -144,11 +145,12 @@ sub DocumentTable (%) {
       my $ColSpan = $FieldList{$Field}{ColSpan}; 
 
       if ($Row != $LastRow) {
+        push @DebugStack,"Staring new row $Row Last $LastRow";
         $LastRow = $Row;
         print "</tr><tr>\n";
       }
         
-      my $TD = qq(<th class="$Field");
+      my $TD = qq(<td class="$Field");
       if ($RowSpan > 1) {$TD .= qq( rowspan="RowSpan");}
       if ($ColSpan > 1) {$TD .= qq( colspan="ColSpan");}
       $TD .= ">";

@@ -122,6 +122,7 @@ sub PrepareFieldList (%) {
     $FieldList{$Field}{Row}     = int(($Column+1)/2);#1;
     $FieldList{$Field}{RowSpan} = 1;
     $FieldList{$Field}{ColSpan} = 1;
+    push @DebugStack,$Field." ".$FieldList{$Field}{Row}." ".$FieldList{$Field}{Column};
   }  
   return %FieldList;
 }
