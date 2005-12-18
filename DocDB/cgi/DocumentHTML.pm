@@ -64,7 +64,7 @@ sub DocumentTable (%) {
   my $LastRow = 1;
   foreach my $Field (@Fields) {
     my $Column  = $FieldList{$Field}{Column}; 
-    my $Row     = int ($Column/2); #$FieldList{$Field}{Row}; 
+    my $Row     = $FieldList{$Field}{Row}; 
     my $RowSpan = $FieldList{$Field}{RowSpan}; 
     my $ColSpan = $FieldList{$Field}{ColSpan}; 
     

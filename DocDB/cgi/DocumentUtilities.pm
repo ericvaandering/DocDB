@@ -119,7 +119,7 @@ sub PrepareFieldList (%) {
   foreach my $Field (@Fields) {
     ++$Column;
     $FieldList{$Field}{Column}  = $Column;
-    $FieldList{$Field}{Row}     = 1;
+    $FieldList{$Field}{Row}     = int(($Column+1)/2);#1;
     $FieldList{$Field}{RowSpan} = 1;
     $FieldList{$Field}{ColSpan} = 1;
   }  
