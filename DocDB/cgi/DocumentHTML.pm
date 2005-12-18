@@ -78,6 +78,7 @@ sub DocumentTable (%) {
     if ($ColSpan > 1) {$Header .= qq( colspan="ColSpan");}
     $Header .= ">";
     
+    print "$Header";
     if ($FieldTitles{$Field}) {
       print $FieldTitles{$Field};
     } else {

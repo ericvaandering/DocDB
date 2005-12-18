@@ -28,6 +28,7 @@ $StartTime = new Benchmark;
 require "DocDBGlobals.pm";
 require "DocumentHTML.pm";
 require "HTMLUtilities.pm";
+require "DocumentUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 
