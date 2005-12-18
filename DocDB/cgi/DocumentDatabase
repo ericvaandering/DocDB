@@ -240,12 +240,13 @@ print "</div>\n";  # DocDBHomeBody
     print "</h4>\n";
   }
   
-  my $NumberOfDocuments = &DocumentTable(-fields  => \@Fields, -docids  => \@DocumentIDs, 
-                                         -sortby  => $SortBy,  -reverse => $Reverse, 
-                                         -maxdocs => $HomeMaxDocs);
+  my %FieldList = PrepareFieldList(-fields => \@Fields);
+  my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs, 
+                                        -sortby    => $SortBy,     -reverse => $Reverse, 
+                                        -maxdocs   => $HomeMaxDocs);
 }
 
 $EndTime  = new Benchmark;
 
-&DocDBNavBar;
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

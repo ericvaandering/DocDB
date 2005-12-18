@@ -24,6 +24,8 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+# FIXME: XHTML
+
 use CGI;                                                                                      
 use DBI;
 
@@ -119,7 +121,7 @@ if ($SessionID) {
    &ShortAuthorListByID(@AuthorIDs);
    print "</td></tr>\n";
   print "<tr><th align=right valign=top>Topics:</th><td>\n";
-   &ShortTopicListByID(@TopicIDs);
+   ShortTopicListByID(@TopicIDs);
    print "</td></tr>\n";
   print "</table><p/>\n";
   if ($DocumentID) {
@@ -130,8 +132,8 @@ if ($SessionID) {
     } 
     print "<p/>\n";
     my @DocumentIDs = ($DocumentID);
-    my @Fields = ("Title","Author","Topics","Files"); 
-    &DocumentTable(-fields => \@Fields, -docids  => \@DocumentIDs);
+    my %FieldList = PrepareFieldList(-fields => ["Title","Author","Topics","Files"]);
+    DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs);
   } else {
     print "<b>No document in the database has been matched to this talk.</b>\n"
   }
@@ -139,18 +141,17 @@ if ($SessionID) {
   print "<b><big>No notes for this talk</big></b><p>\n";
 }  
 
-if (&CanModifyMeeting($ConferenceID)) {
+if (CanModifyMeeting($ConferenceID)) {
   my $SearchDays  = $TalkHintWindow;
 
-  my %CheckDocumentIDs = &GetHintDocuments($SessionID,$SearchDays);
-  my @MatchedDocIDs    = &TalkMatches($SessionTalkID,0,%CheckDocumentIDs);
+  my %CheckDocumentIDs = GetHintDocuments($SessionID,$SearchDays);
+  my @MatchedDocIDs    = TalkMatches($SessionTalkID,0,%CheckDocumentIDs);
   if (@MatchedDocIDs) {
     print "<p/><b>The following documents are possible matches for this talk (best
     first):<p/>\n";
-
-    my @Fields = ("Title","Author","Topics","Confirm"); 
-    &DocumentTable(-fields => \@Fields, -docids  => \@MatchedDocIDs, -talkid => $SessionTalkID);
+    my %FieldList = PrepareFieldList(-fields => ["Title","Author","Topics","Confirm"]);
+    DocumentTable(-fieldlist => \%FieldList, -docids  => \@MatchedDocIDs, -talkid => $SessionTalkID);
   }  
 }
 
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName,-nobody => $TRUE);
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName,-nobody => $TRUE);

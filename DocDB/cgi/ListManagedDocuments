@@ -40,14 +40,14 @@ $query = new CGI; # Global for subroutines
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&GetSecurityGroups;
+GetSecurityGroups();
 
 ### Start HTML
 
 print $query->header;
-&DocDBHeader("Managed Documents");
+DocDBHeader("Managed Documents");
 
-&EndPage(@ErrorStack);
+EndPage(@ErrorStack);
 
 print "<center><h4>These are the managed documents in the $Project Document Database:</h4></center><p>\n";
 
@@ -65,13 +65,14 @@ while ($Select -> fetch) {
 
 ### Display list of docs
 
-my $NumDoc  = &DocumentTable(-fields => ["Docid","Title","CanSign","Updated"],
-                             -docids => \@DocumentIDs,
-                             -sortby => "date", -reverse => true);
+my %FieldList = PrepareFieldList(-fields => ["Docid","Title","CanSign","Updated"]);
+my $NumDoc    = DocumentTable(-fieldlist => \%FieldList,
+                            -docids      => \@DocumentIDs,
+                            -sortby      => "date", -reverse => true);
 ### Statistics
 
 print "<p><b>Number of documents found: $NumDoc</b><p>\n";
 
 $EndTime  = new Benchmark;
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

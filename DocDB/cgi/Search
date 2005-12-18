@@ -410,8 +410,9 @@ if ($Mode eq "conference") {
 
 ### Print table
 
-my $NumberOfDocuments = &DocumentTable(-fields => \@Fields, -docids  => \@DocumentIDs, 
-                                       -sortby => $SortBy,  -reverse => $Reverse);
+my %FieldList = PrepareFieldList(-fields => \@Fields);
+my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs, 
+                                      -sortby    => $SortBy,     -reverse => $Reverse);
 
 print "<b>Number of documents found: $NumberOfDocuments</b><p/>\n";
 

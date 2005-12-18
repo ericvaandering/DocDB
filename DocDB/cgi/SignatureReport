@@ -104,51 +104,52 @@ foreach my $SignoffID (@SignoffIDs) {
 my @CurrentDocumentIDs = (@ReadyDocumentIDs ,@NotReadyDocumentIDs,@ApprovedDocumentIDs,@SignedDocumentIDs);
 @OldSignatureDocumentIDs = &RemoveArray(\@DocumentIDs,@CurrentDocumentIDs);
 
-&DebugPage("Have created lists of documents");
-
 if (@ReadyDocumentIDs) {
   print "<center><h4>These documents are ready to be signed by $EmailUser{$EmailUserID}{Name}:</h4></center><p>\n";
 
-  &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
-                 -docids => \@ReadyDocumentIDs, 
-                 -sortby => "date", -reverse => 1);
+  my %FieldList = PrepareFieldList(-fields => ["Docid","Title","Author","Updated"]);
+  DocumentTable(-fieldlist => \%FieldList,
+                -docids    => \@ReadyDocumentIDs, 
+                -sortby    => "date", -reverse => 1);
 }
 
 if (@NotReadyDocumentIDs) {
   print "<center><h4>These documents may require a future signature by $EmailUser{$EmailUserID}{Name}:</h4></center><p>\n";
 
-  &DocumentTable(-fields => ["Docid","Title","CanSign","Updated"],
-                 -docids => \@NotReadyDocumentIDs, 
-                 -sortby => "date", -reverse => 1);
+  my %FieldList = PrepareFieldList(-fields => ["Docid","Title","CanSign","Updated"]);
+  DocumentTable(-fieldlist => \%FieldList,
+                -docids    => \@NotReadyDocumentIDs, 
+                -sortby    => "date", -reverse => 1);
 }
 
 if (@SignedDocumentIDs) {
   print "<center><h4>These documents are signed by $EmailUser{$EmailUserID}{Name}, but not approved:</h4></center><p>\n";
 
-  &DocumentTable(-fields => ["Docid","Title","CanSign","Updated"],
-                 -docids => \@SignedDocumentIDs, 
-                 -sortby => "date", -reverse => 1);
+  my %FieldList = PrepareFieldList(-fields => ["Docid","Title","CanSign","Updated"]);
+  DocumentTable(-fieldlist => \%FieldList,
+                -docids    => \@SignedDocumentIDs, 
+                -sortby    => "date", -reverse => 1);
 }
 
 if (@ApprovedDocumentIDs) {
   print "<center><h4>These approved documents are signed by $EmailUser{$EmailUserID}{Name}:</h4></center><p>\n";
 
-  &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
-                 -docids => \@ApprovedDocumentIDs, 
-                 -sortby => "date", -reverse => 1);
+  my %FieldList = PrepareFieldList(-fields => ["Docid","Title","Author","Updated"]);
+  DocumentTable(-fieldlist => \%FieldList,
+                -docids    => \@ApprovedDocumentIDs, 
+                -sortby    => "date", -reverse => 1);
 }
-
 
 if (@OldSignatureDocumentIDs) {
   print "<center><h4>Previous versions of these documents needed to be signed by $EmailUser{$EmailUserID}{Name}:</h4></center><p>\n";
 
-  &DocumentTable(-fields => ["Docid","Title","Author","Updated"],
-                 -docids => \@OldSignatureDocumentIDs, 
-                 -sortby => "date", -reverse => 1);
+  my %FieldList = PrepareFieldList(-fields => ["Docid","Title","Author","Updated"]);
+  DocumentTable(-fieldlist => \%FieldList,
+                -docids    => \@OldSignatureDocumentIDs, 
+                -sortby    => "date", -reverse => 1);
 }
-
 
 $EndTime  = new Benchmark;
 
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
