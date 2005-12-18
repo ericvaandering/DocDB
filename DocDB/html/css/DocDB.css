@@ -145,6 +145,7 @@ th {vertical-align: bottom; }
 
 table.Alternating {
   border-collapse: collapse;
+  empty-cells: show;
 }
 
 table.CenteredTable {
