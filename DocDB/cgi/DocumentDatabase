@@ -211,6 +211,7 @@ print "</div>\n";  # DocDBHomeBody
 
 {
   require "DocumentHTML.pm";
+  require "DocumentUtilities.pm";
 
 ### Get list of documents
 
