@@ -90,6 +90,10 @@ $Msg_ModKeywdEmpty = "You must select a keyword to modify or delete.";
 $Msg_WarnModManaged = "Warning: You are about to modify a managed document. This will clear all the signatures on the document.";
 
 # FIXME: Add more messages from other programs
-# FIXME: Add a localizable error message inclusion
+
+if (-e "ProjectMessages.pm") {
+  require "ProjectMessages.pm";
+  push @DebugStack,"Included Project Messages";
+}  
 
 1;

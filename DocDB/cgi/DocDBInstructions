@@ -30,7 +30,7 @@ use DBI;
 
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
-require "ProjectMessages.pm";
+require "Messages.pm";
 require "SecuritySQL.pm";
 
 $query = new CGI;  # Global for subroutines
