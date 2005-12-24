@@ -67,11 +67,13 @@ print $query->header;
 DocDBHeader("Customize Document Lists"); 
 EndPage();
 
+print q{<table class="MedPaddedTable">};
 
 foreach my $Partition (1..5) {
   FieldListChooser(-partition => $Partition);
 }
 
+print q{</table>\n};
 
 DocDBNavBar();
 DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
