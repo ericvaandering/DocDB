@@ -1,0 +1,77 @@
+#! /usr/bin/env perl
+#
+#        Name: CustomListForm
+# Description: Allow users, admins, and meeting organizers to change how various
+#              lists of documents and agendas are displayed in DocDB 
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+use CGI qw(-nosticky);
+use DBI;
+
+require "DocDBGlobals.pm";
+require "AdministerElements.pm";
+#require "ResponseElements.pm";
+#require "Scripts.pm";
+#require "Security.pm";
+require "Messages.pm";
+require "Sorts.pm";
+
+require "DBUtilities.pm";
+require "HTMLUtilities.pm";
+
+#require "MeetingSQL.pm";
+#require "SecuritySQL.pm";
+
+require "DocumentHTML.pm";
+#require "TopicHTML.pm"; # For description boxes
+
+$query = new CGI;  # Global for subroutines
+
+%params = $query -> Vars;
+
+my $EventGroupID     = int($params{eventgroupid});
+my $EventID          = int($params{eventid});
+
+$query -> delete_all();
+
+CreateConnection(-type => "rw");
+
+EndPage(-startpage => $TRUE);
+
+GetConferences();
+GetAllEventGroups();
+GetSecurityGroups();
+
+print $query->header;
+DocDBHeader("Customize Document Lists"); 
+EndPage();
+
+
+foreach my $Partition (1..5) {
+  FieldListChooser(-partition => $Partition);
+}
+
+
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

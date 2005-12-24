@@ -25,6 +25,7 @@ sub DocumentTable (%) {
   require "RevisionSQL.pm";
   require "Security.pm";
   require "Sorts.pm";
+  require "Fields.pm";
   
   my %Params = @_;
   
@@ -37,25 +38,13 @@ sub DocumentTable (%) {
   my @Fields        = @{$Params{-fields}}; # deprecated, remove
   my %FieldList     = %{$Params{-fieldlist}}; 
   
-  my %FieldTitles = (
-                     Docid   => "$ShortProject-doc-#", Updated => "Last Updated", 
-                     CanSign => "Next Signature(s)",   Confirm => "Confirm?",
-                     Blank   => "&nbsp;",
-                     );  
-  
   unless (@DocumentIDs) {
     if ($NoneBehavior eq "skip") {
       return;
     }
   }     
 
-# FIXME: For XHTML/CSS compliance: 
-#        id has to be settable (should be unique, can have more than one per page)
-#        should enclose in <div> </div>, 
-#        and should allow a "title" to be placed here rather than calling routine
-
 ### Write out the beginning and header of table
-
 
   %SortFields = %FieldList;
   my @Fields = sort FieldsByColumn keys %FieldList;  
@@ -111,7 +100,6 @@ sub DocumentTable (%) {
     @DocumentIDs = sort DocumentByConferenceDate @DocumentIDs; 
   }
 
-  
   if ($Reverse) {
     @DocumentIDs = reverse @DocumentIDs;
   }
@@ -300,5 +288,18 @@ sub PrintDocNumber { # And type
   my $type_link = &TypeLink($DocRevisions{$DocRevID}{DocTypeID},"short");
   print "<dd>$type_link</dd>\n";
 }
+
+sub FieldListChooser (%) {
+  my %Params = @_;
+  
+  my $Partition = $Params{-partition};
+
+  %FieldTitles{null} = "-- Select a Field --"; # Add option for nothing
+  my @Fields = sort keys %FieldTitles;
+       
+  print $query -> popup_menu (-name => "field$Partition", -values => \@Fields,   -default => "null", -labels => \%FieldTitles);
+
+  return  
+}  
 
 1;
