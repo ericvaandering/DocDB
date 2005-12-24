@@ -294,7 +294,7 @@ sub FieldListChooser (%) {
   
   my $Partition = $Params{-partition};
 
-  %FieldTitles{null} = "-- Select a Field --"; # Add option for nothing
+  $FieldTitles{null} = "-- Select a Field --"; # Add option for nothing
   my @Fields = sort keys %FieldTitles;
        
   print $query -> popup_menu (-name => "field$Partition", -values => \@Fields,   -default => "null", -labels => \%FieldTitles);
