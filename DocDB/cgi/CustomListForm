@@ -32,7 +32,7 @@ use DBI;
 require "DocDBGlobals.pm";
 require "AdministerElements.pm";
 require "ResponseElements.pm";
-#require "Scripts.pm";
+require "Scripts.pm";
 require "Security.pm";
 require "Messages.pm";
 require "Sorts.pm";
@@ -64,7 +64,7 @@ GetAllEventGroups();
 GetSecurityGroups();
 
 print $query->header;
-DocDBHeader("Customize Document Lists"); 
+DocDBHeader("Customize Document Lists","",-scripts => ["PopUps"]); 
 EndPage();
 
 print q{<table class="MedPaddedTable">};
