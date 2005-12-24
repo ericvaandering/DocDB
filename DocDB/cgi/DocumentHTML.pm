@@ -296,18 +296,22 @@ sub FieldListChooser (%) {
   
   my $Partition = $Params{-partition};
 
-  $FieldTitles{xxxx} = "-- Select a Field --"; # Add option for nothing
+  my %FormFields = %FieldTitles;
+
+  $FormFields{xxxx}  = "-- Select a Field --";      # Add option for nothing
+  $FormFields{Blank} = "Empty field (placeholder)"; # Add option for nothing
+  
   my @Fields = sort keys %FieldTitles;
-  push @DebugStack,@Fields;
+
   print "<tr>";
   print "<td>\n";     
-  print $query -> popup_menu (-name => "field$Partition", -values => \@Fields,   -default => "xxxx", -labels => \%FieldTitles);
+  print $query -> popup_menu (-name => "field$Partition",   -values => \@Fields, -default => "xxxx", -labels => \%FormFields);
   print "</td>\n";     
   print "<td>\n";     
-  print $query -> popup_menu (-name => "row$Partition", -values => [1..15],   -default => 1);
+  print $query -> popup_menu (-name => "row$Partition",     -values => [1..15],  -default => 1);
   print "</td>\n";     
   print "<td>\n";     
-  print $query -> popup_menu (-name => "col$Partition", -values => [1..15],   -default => 1);
+  print $query -> popup_menu (-name => "col$Partition",     -values => [1..15],  -default => 1);
   print "</td>\n";     
   print "<td>\n";     
   print $query -> popup_menu (-name => "rowspan$Partition", -values => [1..5],   -default => 1);
