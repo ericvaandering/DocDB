@@ -296,6 +296,16 @@ sub FieldListChooser (%) {
   
   my $Partition = $Params{-partition};
 
+  if ($Partition == 1) {
+    print "<tr>\n";
+    print "<th>",FormElementTitle(-helplink => "customlist", -helptext => "Field",      -nocolon => $TRUE),"</th>\n";
+    print "<th>",FormElementTitle(-helplink => "customlist", -helptext => "Row",        -nocolon => $TRUE),"</th>\n";
+    print "<th>",FormElementTitle(-helplink => "customlist", -helptext => "Column",     -nocolon => $TRUE),"</th>\n";
+    print "<th>",FormElementTitle(-helplink => "customlist", -helptext => "Row(s)",     -nocolon => $TRUE),"</th>\n";
+    print "<th>",FormElementTitle(-helplink => "customlist", -helptext => "Columns(s)", -nocolon => $TRUE),"</th>\n";
+    print "</tr>\n";
+  }
+  
   my %FormFields = %FieldTitles;
 
   $FormFields{xxxx}  = "-- Select a Field --";      # Add option for nothing
