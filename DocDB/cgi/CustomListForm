@@ -73,7 +73,7 @@ foreach my $Partition (1..5) {
   FieldListChooser(-partition => $Partition);
 }
 
-print q{</table>\n};
+print q{</table>};
 
 DocDBNavBar();
 DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

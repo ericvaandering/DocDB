@@ -292,12 +292,18 @@ sub PrintDocNumber { # And type
 sub FieldListChooser (%) {
   my %Params = @_;
   
+  require "Fields.pm";
+  
   my $Partition = $Params{-partition};
 
   $FieldTitles{null} = "-- Select a Field --"; # Add option for nothing
   my @Fields = sort keys %FieldTitles;
-       
+  push @DebugStack,@Fields;
+  print "<tr>";
+  print "<td>\n";     
   print $query -> popup_menu (-name => "field$Partition", -values => \@Fields,   -default => "null", -labels => \%FieldTitles);
+  print "</td>\n";     
+  print "</tr>";
 
   return  
 }  
