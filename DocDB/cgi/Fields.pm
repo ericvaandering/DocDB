@@ -23,9 +23,12 @@
 
   
 %FieldTitles = (
-                Docid   => "$ShortProject-doc-#", Updated => "Last Updated", 
-                CanSign => "Next Signature(s)",   Confirm => "Confirm?",
-                Blank   => "&nbsp;",
-                );  
+                Docid      => "$ShortProject-doc-#", Title   => "Title", 
+                CanSign    => "Next Signature(s)",   Confirm => "Confirm?",
+                Updated    => "Last Updated",        Author  => "Author",
+                Events     => "Events",              Files   => "Files",
+                References => "References",
+                Blank      => "&nbsp;",
+               );  
 
 1;

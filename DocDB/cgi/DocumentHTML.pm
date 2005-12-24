@@ -301,7 +301,7 @@ sub FieldListChooser (%) {
   $FormFields{xxxx}  = "-- Select a Field --";      # Add option for nothing
   $FormFields{Blank} = "Empty field (placeholder)"; # Add option for nothing
   
-  my @Fields = sort keys %FieldTitles;
+  my @Fields = sort keys %FormFields;
 
   print "<tr>";
   print "<td>\n";     
