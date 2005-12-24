@@ -31,17 +31,17 @@ use DBI;
 
 require "DocDBGlobals.pm";
 require "AdministerElements.pm";
-#require "ResponseElements.pm";
+require "ResponseElements.pm";
 #require "Scripts.pm";
-#require "Security.pm";
+require "Security.pm";
 require "Messages.pm";
 require "Sorts.pm";
 
 require "DBUtilities.pm";
 require "HTMLUtilities.pm";
 
-#require "MeetingSQL.pm";
-#require "SecuritySQL.pm";
+require "MeetingSQL.pm";
+require "SecuritySQL.pm";
 
 require "DocumentHTML.pm";
 #require "TopicHTML.pm"; # For description boxes
