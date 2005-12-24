@@ -293,7 +293,8 @@ sub FieldListChooser (%) {
   my %Params = @_;
   
   require "Fields.pm";
-  
+  require "FormElements.pm";
+ 
   my $Partition = $Params{-partition};
 
   if ($Partition == 1) {
