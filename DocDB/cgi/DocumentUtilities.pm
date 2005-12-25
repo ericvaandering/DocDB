@@ -112,6 +112,8 @@ sub PrepareFieldList (%) {
   
   my @Fields        = @{$Params{-fields}}; 
   
+  require "ConfigSQL.pm";
+  
   my %FieldList = ();
   
   my $Column = 0;
@@ -123,6 +125,8 @@ sub PrepareFieldList (%) {
     $FieldList{$Field}{RowSpan} = 1;
     $FieldList{$Field}{ColSpan} = 1;
   }  
+  
+  %FieldList = FetchCustomFieldList(-default => 1);
   
   return %FieldList;
 }

@@ -72,7 +72,7 @@ my %FieldList = ();
 foreach my $FieldCount (1..$MaxFields) {
   my $Field = $params{"field$FieldCount"};
   push @DebugStack,"$FieldCount $Field";
-  if ($Field) {
+  if ($Field && $Field ne "xxxx") {
     push @DebugStack,"Field $Field added to the display for ";
     push @ActionStack,"Field $Field added to the display for ";
     $FieldList{$Field}{Row}     = $params{"row$FieldCount"};
