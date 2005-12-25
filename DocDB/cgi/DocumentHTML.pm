@@ -322,7 +322,7 @@ sub FieldListChooser (%) {
   print $query -> popup_menu (-name => "row$Partition",     -values => [1..15],  -default => 1);
   print "</td>\n";     
   print "<td>\n";     
-  print $query -> popup_menu (-name => "col$Partition",     -values => [1..15],  -default => 1);
+  print $query -> popup_menu (-name => "col$Partition",     -values => [1..15],  -default => $Partition);
   print "</td>\n";     
   print "<td>\n";     
   print $query -> popup_menu (-name => "rowspan$Partition", -values => [1..5],   -default => 1);

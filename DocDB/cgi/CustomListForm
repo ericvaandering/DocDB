@@ -70,7 +70,7 @@ GetSecurityGroups();
 
 my %FieldList = ();
 foreach my $FieldCount (1..$MaxFields) {
-  my $Field = $params{"field$Partition"};
+  my $Field = $params{"field$FieldCount"};
   push @DebugStack,"$FieldCount $Field";
   if ($Field) {
     push @DebugStack,"Field $Field added to the display for ";
