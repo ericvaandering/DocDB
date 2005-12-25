@@ -1099,8 +1099,8 @@ or may not be the same as the web username and password.
    For each document, select the fields you want displayed and their position. 
    For instance, column 2 row 1 will be to the right of column 1, row 1 while
    column 1, row 2 will be displayed below. The Row(s) and Column(s) settings
-   allow longer fields to span several rows or  columns (These are equivalent to
-   rowspan and colspan in HTML.)  If not laid out correctly, these settings can
+   allow larger fields to span several rows or  columns (these are equivalent to
+   rowspan and colspan in HTML.)  If not laid out correctly, this can
    cause strange looking lists.
   </text> 
  </entry>
