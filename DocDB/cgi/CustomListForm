@@ -42,6 +42,7 @@ require "HTMLUtilities.pm";
 
 require "MeetingSQL.pm";
 require "SecuritySQL.pm";
+require "ConfigSQL.pm";
 
 require "DocumentHTML.pm";
 #require "TopicHTML.pm"; # For description boxes
@@ -52,7 +53,11 @@ $query = new CGI;  # Global for subroutines
 
 my $EventGroupID     = int($params{eventgroupid});
 my $EventID          = int($params{eventid});
+my $Default          = int($params{default});
 
+my $MaxFields = 15;
+
+$Default = 1;
 $query -> delete_all();
 
 CreateConnection(-type => "rw");
@@ -63,17 +68,36 @@ GetConferences();
 GetAllEventGroups();
 GetSecurityGroups();
 
+my %FieldList = ();
+foreach my $FieldCount (1..$MaxFields) {
+  my $Field = $params{"field$Partition"};
+  push @DebugStack,"$FieldCount $Field";
+  if ($Field) {
+    push @DebugStack,"Field $Field added to the display for ";
+    push @ActionStack,"Field $Field added to the display for ";
+    $FieldList{$Field}{Row}     = $params{"row$FieldCount"};
+    $FieldList{$Field}{Column}  = $params{"col$FieldCount"};
+    $FieldList{$Field}{RowSpan} = $params{"rowspan$FieldCount"};
+    $FieldList{$Field}{ColSpan} = $params{"colspan$FieldCount"};
+  }
+}
+
+InsertCustomFieldList(-default => 1,-fieldlist => \%FieldList); 
+
+
 print $query->header;
 DocDBHeader("Customize Document Lists","",-scripts => ["PopUps"]); 
 EndPage();
+print $query -> start_multipart_form('POST',$CustomListForm);
 
 print q{<table class="MedPaddedTable">};
 
-foreach my $Partition (1..5) {
+foreach my $Partition (1..$MaxFields) {
   FieldListChooser(-partition => $Partition);
 }
 
 print q{</table>};
+print $query -> end_multipart_form;
 
 DocDBNavBar();
 DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

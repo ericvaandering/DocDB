@@ -70,7 +70,7 @@ sub InsertConfig (%) {
                      $Sub3Value,$Sub4Value,$Sub5Value,$Description,$Constrained);
                                  
   my $ConfigSettingID = $Insert -> {mysql_insertid};
-      
+  push @DebugStack,"ConfigSettingID  $ConfigSettingID ";   
   return $ConfigSettingID;
 }
 
