@@ -97,7 +97,7 @@ sub FetchCustomFieldList (%) {
 
   my $List = $dbh->prepare("select
       Value,Sub1Value,Sub2Value,Sub3Value,Sub4Value from ConfigSetting 
-      where Project=? and ConfigGroup=CustomField and Sub1Group=? 
+      where Project=? and ConfigGroup='CustomField' and Sub1Group=? 
       and ForeignID=?");
   $List -> execute($ShortProject,$ForeignKey,$ForeignID);
   
@@ -137,7 +137,7 @@ sub InsertCustomFieldList {
   }  
 
   my $Delete = $dbh->prepare("delete from ConfigSetting 
-      where Project=? and ConfigGroup=CustomField and Sub1Group=? 
+      where Project=? and ConfigGroup='CustomField' and Sub1Group=? 
       and ForeignID=?");
   $Delete -> execute($ShortProject,$ForeignKey,$ForeignID);
   my $Count = 0;
