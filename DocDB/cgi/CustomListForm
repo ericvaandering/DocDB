@@ -96,6 +96,10 @@ foreach my $Partition (1..$MaxFields) {
   FieldListChooser(-partition => $Partition);
 }
 
+print q{<tr><td colspan="5" class="SubmitCell">};
+ print $query -> submit (-value => "Change Display of Fields");
+print "</td></tr>\n";
+
 print q{</table>};
 print $query -> end_multipart_form;
 
