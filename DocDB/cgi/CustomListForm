@@ -102,7 +102,7 @@ print $query->header;
 DocDBHeader("Customize Document Lists","",-scripts => ["PopUps","CustomListDisable"]); 
 EndPage();
 print $query -> start_multipart_form('POST',$CustomListForm",
-                                     id=\"customlist\" name=\"customlist\"");
+                                     "id=\"customlist\" name=\"customlist\"");
 
 print q{<table class="MedPaddedTable">
         <tr>
