@@ -258,31 +258,24 @@ sub TopicScroll (%) {
     } 
   }  
 
-  if ($HelpLink) {
-    print "<b><a ";
-    &HelpLink($HelpLink);
-    print "$HelpText:</a></b>";
-    if ($Required) {
-      print $RequiredMark;
-    }  
-    if ($ExtraText) {
-      print "&nbsp;$ExtraText";
-    }  
-    print "<br/> \n";
-  }
+  my $ElementTitle = FormElementTitle(-helplink  => $HelpLink , 
+                                      -helptext  => $HelpText ,
+                                      -extratext => $ExtraText,
+                                      -text      => $Text     ,
+#                                      -nobreak   => $NoBreak  ,
+                                      -required  => $Required );
+  print $ElementTitle,"\n";                                     
 
-  if ($Disabled) {  # Doesn't scale
-    print $query -> scrolling_list(-name => $Name, -values => \@ActiveIDs, 
-                                   -labels => \%TopicLabels,
-                                   -size => 10, -multiple => $Multiple, -disabled,
-                                   -default => \@Defaults);
-  } else {
-    print $query -> scrolling_list(-name => $Name, -values => \@ActiveIDs, 
-                                   -labels => \%TopicLabels,
-                                   -size => 10, -multiple => $Multiple,
-                                   -default => \@Defaults);
-  }                               
-  
+  my %Options = ();
+ 
+  if ($Disabled) {
+    $Options{-disabled} = "disabled";
+  }  
+
+  print $query -> scrolling_list(-name     => $Name, -values => \@ActiveIDs, 
+                                 -size     => 10,    -labels => \%TopicLabels,
+                                 -multiple => $Multiple,
+                                 -default  => \@Defaults, %Options);  
 }
 
 1;

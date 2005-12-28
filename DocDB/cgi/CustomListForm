@@ -45,7 +45,8 @@ require "SecuritySQL.pm";
 require "ConfigSQL.pm";
 
 require "DocumentHTML.pm";
-#require "TopicHTML.pm"; # For description boxes
+require "TopicHTML.pm"; 
+require "MeetingHTML.pm"; 
 
 $query = new CGI;  # Global for subroutines
 
@@ -84,11 +85,25 @@ foreach my $FieldCount (1..$MaxFields) {
 
 InsertCustomFieldList(-default => 1,-fieldlist => \%FieldList); 
 
-
 print $query->header;
 DocDBHeader("Customize Document Lists","",-scripts => ["PopUps"]); 
 EndPage();
 print $query -> start_multipart_form('POST',$CustomListForm);
+
+print q{<table class="MedPaddedTable">};
+print q{<tr><td colspan="2">For everyone or for just me</td></tr>};
+print "<tr><td>";
+print "Default lists";
+print "</td><td>\n";
+TopicScroll(-helptext => "Minor Topics", -helplink => "topics", -disabled => "true"); 
+print "</td></tr>\n";
+print "<tr><td>";
+EventGroupSelect();
+print "</td><td>\n";
+EventSelect();
+print "</td></tr>\n";
+
+print q{</table>};
 
 print q{<table class="MedPaddedTable">};
 
