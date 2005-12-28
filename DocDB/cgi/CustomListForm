@@ -71,11 +71,15 @@ GetConferences();
 GetAllEventGroups();
 GetSecurityGroups();
 
-# Setup disabled correctly
+# Setup disable script correctly
 
 my $AllowEvents = 0;
+my $AllowAll    = 0;
 if (CanCreate()) {
   $AllowEvents = 1;
+}  
+if (CanAdminister()) {
+  $AllowAll = 1;
 }  
 
 my %FieldList = ();
@@ -97,19 +101,20 @@ InsertCustomFieldList(-default => 1,-fieldlist => \%FieldList);
 print $query->header;
 DocDBHeader("Customize Document Lists","",-scripts => ["PopUps","CustomListDisable"]); 
 EndPage();
-print $query -> start_multipart_form('POST',$CustomListForm);
+print $query -> start_multipart_form('POST',$CustomListForm",
+                                     id=\"customlist\" name=\"customlist\"");
 
 print q{<table class="MedPaddedTable">
         <tr>
         <td colspan="2">
-        <p> This page allows you to change what information about documents is 
+        <p>This page allows you to change what information about documents is 
         displayed in various parts of DocDB. You can choose to change the information
         just for yourself (you must allow cookies in your browser) or, if  your
         access level is high enough, for everyone. As a normal user, you may only
         change the  display of events you may modify. For other changes that affect
         all users,  please contact an administrator.</p>
-        <p>Be aware that if you are using multiple rows, and especially if you are
-        spanning columns or rows it is easy to generate very difficult to read
+        <p>If you are using multiple rows, and especially if you are
+        spanning columns or rows, it is easy to generate very difficult to read
         output.</p>   
         </td>
         </tr>
@@ -123,8 +128,9 @@ my %Scope = ();
 $Scope{All}  = "For Everyone";
 $Scope{User} = "Only for me";
 print FormElementTitle(-helplink => "fieldscope", -helptext => "Scope of Changes");
-print $query -> radio_group(-name    => "scope",  -values   => \%Scope, 
-                            -default => "User",   -onclick  => "disabler_customlist($AllowEvents);");
+print $query -> radio_group(-name    => "scope", -values   => \%Scope, 
+                            -default => "User",   
+                            -onclick => "disabler_customlist($AllowEvents,$AllowAll);");
 
 print "</td></tr><tr><td>";
 
