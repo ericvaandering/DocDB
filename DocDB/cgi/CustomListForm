@@ -54,13 +54,13 @@ $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
 
-my $EventGroupID     = int($params{eventgroupid});
-my $EventID          = int($params{eventid});
-my $Default          = int($params{default});
+my $EventGroupID     = int($params{eventgroupid}); # Make arrays
+my $EventID          = int($params{eventid});      # Make arrays
+my $Default          = int($params{defaultlists}); # Make arrays
+$Default = 1; # FIXME
 
 my $MaxFields = 15;
 
-$Default = 1;
 $query -> delete_all();
 
 CreateConnection(-type => "rw");
@@ -70,6 +70,20 @@ EndPage(-startpage => $TRUE);
 GetConferences();
 GetAllEventGroups();
 GetSecurityGroups();
+
+# Setup disabled correctly
+
+my %FormOptions  = ();
+my %EventOptions = ();
+
+if (CanAdminister()) {
+  # Do nothing; admin can do what they want
+} elsif ($EventID && CanModifyMeeting($EventID)) {
+  $FormOptions{-disabled} = "disabled";
+} else {
+  $FormOptions{-disabled}  = "disabled";
+  $EventOptions{-disabled} = "disabled";
+}  
 
 my %FieldList = ();
 foreach my $FieldCount (1..$MaxFields) {
@@ -98,16 +112,16 @@ print "<tr><td>";
 
 my @FieldLists = keys %DefaultFieldLists;
 print FormElementTitle(-helptext => "Predefined Lists", -helplink => "definedfieldlists");
-print $query -> scrolling_list(-name     => "definedfieldlists", -values => \@FieldLists, 
-                               -size     => 10, -multiple => $Multiple);  
+print $query -> scrolling_list(-name     => "defaultlists", -values => \@FieldLists, 
+                               -size     => 10, -multiple => $Multiple, %FormOptions);  
 
 print "</td><td>\n";
-TopicScroll(-helptext => "Minor Topics", -helplink => "topics", -disabled => "true"); 
+TopicScroll(-helptext => "Minor Topics", -helplink => "topics", %FormOptions); 
 print "</td></tr>\n";
 print "<tr><td>";
-EventGroupSelect();
+EventGroupSelect(%FormOptions);
 print "</td><td>\n";
-EventSelect();
+EventSelect(%EventOptions);
 print "</td></tr>\n";
 
 print q{</table>};
