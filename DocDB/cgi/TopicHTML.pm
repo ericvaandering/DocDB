@@ -228,6 +228,7 @@ sub FullTopicScroll ($$;@) { # Scrolling selectable list for topics, all info
 
 sub TopicScroll (%) {
   require "TopicSQL.pm";
+  require "FormElements.pm";
   
   my (%Params) = @_;
   
@@ -243,7 +244,7 @@ sub TopicScroll (%) {
   my @Defaults  = @{$Params{-default}};
 
   unless ($GotAllTopics) {
-    &GetTopics;
+    GetTopics();
   }
   
   my @TopicIDs = sort byTopic keys %MinorTopics;
