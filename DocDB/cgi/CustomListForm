@@ -78,7 +78,7 @@ my %EventOptions = ();
 
 if (CanAdminister()) {
   # Do nothing; admin can do what they want
-} elsif ($EventID && CanModifyMeeting($EventID)) {
+} elsif (CanCreate()) {
   $FormOptions{-disabled} = "disabled";
 } else {
   $FormOptions{-disabled}  = "disabled";
@@ -107,7 +107,14 @@ EndPage();
 print $query -> start_multipart_form('POST',$CustomListForm);
 
 print q{<table class="MedPaddedTable">};
-print q{<tr><td colspan="2">For everyone or for just me</td></tr>};
+print q{<tr><td colspan="2">};
+
+my %Scope {"All" => "For Everyone","User" => "Only for me"}
+print FormElementTitle(-helplink => "fieldscope", -helptext => "Scope of Changes");
+print $query -> radio_group(-name    => "scope", -values  => \%Scope, 
+                            -default => "-",     -onclick => "disabler_customlist();");
+
+print q{</td></tr>};
 print "<tr><td>";
 
 my @FieldLists = keys %DefaultFieldLists;
