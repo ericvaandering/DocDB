@@ -243,6 +243,12 @@ sub TopicScroll (%) {
   my $Disabled  =   $Params{-disabled}  || "0";
   my @Defaults  = @{$Params{-default}};
 
+  my %Options = ();
+ 
+  if ($Disabled) {
+    $Options{-disabled} = "disabled";
+  }  
+
   unless ($GotAllTopics) {
     GetTopics();
   }
@@ -259,19 +265,9 @@ sub TopicScroll (%) {
     } 
   }  
 
-  my $ElementTitle = FormElementTitle(-helplink  => $HelpLink , 
-                                      -helptext  => $HelpText ,
-                                      -extratext => $ExtraText,
-                                      -text      => $Text     ,
-#                                      -nobreak   => $NoBreak  ,
-                                      -required  => $Required );
-  print $ElementTitle,"\n";                                     
-
-  my %Options = ();
- 
-  if ($Disabled) {
-    $Options{-disabled} = "disabled";
-  }  
+  print FormElementTitle(-helplink  => $HelpLink, -helptext  => $HelpText ,
+                         -text      => $Text    , -extratext => $ExtraText,
+                         -required  => $Required);
 
   print $query -> scrolling_list(-name     => $Name, -values => \@ActiveIDs, 
                                  -size     => 10,    -labels => \%TopicLabels,
