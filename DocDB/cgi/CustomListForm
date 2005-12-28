@@ -73,16 +73,9 @@ GetSecurityGroups();
 
 # Setup disabled correctly
 
-my %FormOptions  = ();
-my %EventOptions = ();
-
-if (CanAdminister()) {
-  # Do nothing; admin can do what they want
-} elsif (CanCreate()) {
-  $FormOptions{-disabled} = "disabled";
-} else {
-  $FormOptions{-disabled}  = "disabled";
-  $EventOptions{-disabled} = "disabled";
+my $AllowEvents = 0;
+if (CanCreate()) {
+  $AllowEvents = 1;
 }  
 
 my %FieldList = ();
@@ -102,34 +95,58 @@ foreach my $FieldCount (1..$MaxFields) {
 InsertCustomFieldList(-default => 1,-fieldlist => \%FieldList); 
 
 print $query->header;
-DocDBHeader("Customize Document Lists","",-scripts => ["PopUps"]); 
+DocDBHeader("Customize Document Lists","",-scripts => ["PopUps","CustomListDisable"]); 
 EndPage();
 print $query -> start_multipart_form('POST',$CustomListForm);
 
-print q{<table class="MedPaddedTable">};
-print q{<tr><td colspan="2">};
+print q{<table class="MedPaddedTable">
+        <tr>
+        <td colspan="2">
+        <strong>
+        This page allows you to change what information about documents is 
+        displayed in various parts of DocDB. You can choose to change the information
+        just for yourself (you must allow cookies in your browser) or for everyone if 
+        your access level is high enough. As a normal user, you may only change the 
+        display of events you may modify. For other changes that affect all users, 
+        please contact an administrator.   
+        </strong>
+        </td>
+        </tr>
+        <tr>
+        <td colspan="2">
+       };
+
+# Scope limiter which is hooked to JS
 
 my %Scope = ();
-  $Scope{All}    = "For Everyone";
-  $Scope{User}       = "Only for me";
+$Scope{All}  = "For Everyone";
+$Scope{User} = "Only for me";
 print FormElementTitle(-helplink => "fieldscope", -helptext => "Scope of Changes");
-print $query -> radio_group(-name    => "scope", -values  => \%Scope, 
-                            -default => "-",     -onclick => "disabler_customlist();");
+print $query -> radio_group(-name    => "scope",  -values   => \%Scope, 
+                            -default => "User",   -onclick  => "disabler_customlist($AllowEvents);");
 
 print "</td></tr><tr><td>";
+
+# Predefined lists
 
 my @FieldLists = keys %DefaultFieldLists;
 print FormElementTitle(-helptext => "Predefined Lists", -helplink => "definedfieldlists");
 print $query -> scrolling_list(-name     => "defaultlists", -values => \@FieldLists, 
-                               -size     => 10, -multiple => $Multiple, %FormOptions);  
+                               -size     => 10, -multiple => $Multiple);  
 
 print "</td><td>\n";
-TopicScroll(-helptext => "Minor Topics", -helplink => "topics", %FormOptions); 
+
+# Topics (which might be left off for the moment)
+
+TopicScroll(-helptext => "Minor Topics", -helplink => "topics"); 
 print "</td></tr>\n";
 print "<tr><td>";
-EventGroupSelect(%FormOptions);
+
+# Event groups and events. Put default here if they've followed the right link.
+
+EventGroupSelect();
 print "</td><td>\n";
-EventSelect(%EventOptions);
+EventSelect();
 print "</td></tr>\n";
 
 print q{</table>};
