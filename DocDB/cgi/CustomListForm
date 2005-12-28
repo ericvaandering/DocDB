@@ -109,13 +109,12 @@ print $query -> start_multipart_form('POST',$CustomListForm);
 print q{<table class="MedPaddedTable">};
 print q{<tr><td colspan="2">};
 
-my %Scope {"All" => "For Everyone","User" => "Only for me"};
+my %Scope = {"All" => "For Everyone","User" => "Only for me"};
 print FormElementTitle(-helplink => "fieldscope", -helptext => "Scope of Changes");
 print $query -> radio_group(-name    => "scope", -values  => \%Scope, 
                             -default => "-",     -onclick => "disabler_customlist();");
 
-print q{</td></tr>};
-print "<tr><td>";
+print "</td></tr><tr><td>";
 
 my @FieldLists = keys %DefaultFieldLists;
 print FormElementTitle(-helptext => "Predefined Lists", -helplink => "definedfieldlists");
