@@ -1,4 +1,4 @@
-function disabler_customlist(int AllowEvent, int AllowAll) {
+function disabler_customlist(AllowEvent,AllowAll) {
   document.event.events.disabled      = true;
   document.event.eventgroups.disabled = true;
   document.event.events.topics        = true;
