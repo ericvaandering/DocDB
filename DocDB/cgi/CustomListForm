@@ -55,8 +55,8 @@ $query = new CGI;  # Global for subroutines
 %params = $query -> Vars;
 
 my $Scope             = $params{scope};
-my @EventGroupIDs     = split /\0/,$params{eventgroupid};
-my @EventIDs          = split /\0/,$params{eventid};
+my @EventGroupIDs     = split /\0/,$params{eventgroups};
+my @EventIDs          = split /\0/,$params{events};
 my @Defaults          = split /\0/,$params{defaultlists}; 
 my @TopicIDs          = split /\0/,$params{topics};
 
@@ -85,6 +85,8 @@ if (CanAdminister()) {
   $AllowAll = 1;
 }  
 
+### Build field list, will be used for everything later
+
 my %FieldList = ();
 foreach my $FieldCount (1..$MaxFields) {
   my $Field = $params{"field$FieldCount"};
@@ -97,7 +99,7 @@ foreach my $FieldCount (1..$MaxFields) {
   }
 }
 
-if ($Scope eq "All") {
+if ($Scope eq "All") { # Do inserts to DB, check user's permissions
   foreach my $Default (@Defaults) {
     if ($AllowAll) {
       InsertCustomFieldList(-default => $Default, -fieldlist => \%FieldList); 
@@ -130,8 +132,11 @@ if ($Scope eq "All") {
       push @WarnStack,"You are not allowed to modify this event";
     }  
   }
-}  
-   
+} else {
+ # Set cookies, no need to check permissions
+} 
+ 
+### Start HTML   
     
 print $query->header;
 DocDBHeader("Customize Document Lists","",-scripts => ["PopUps","CustomListDisable"]); 
@@ -176,21 +181,21 @@ print "</td></tr><tr><td>";
 my @FieldLists = keys %DefaultFieldLists;
 print FormElementTitle(-helptext => "Predefined Lists", -helplink => "definedfieldlists");
 print $query -> scrolling_list(-name     => "defaultlists", -values => \@FieldLists, 
-                               -size     => 10, -multiple => $Multiple);  
+                               -size     => 10, -multiple => $TRUE);  
 
 print "</td><td>\n";
 
 # Topics (which might be left off for the moment)
 
-TopicScroll(-helptext => "Minor Topics", -helplink => "topics"); 
+TopicScroll(-helptext => "Minor Topics", -helplink => "topics", -multiple => $TRUE); 
 print "</td></tr>\n";
 print "<tr><td>";
 
 # Event groups and events. Put default here if they've followed the right link.
 
-EventGroupSelect();
+EventGroupSelect(-multiple => $TRUE);
 print "</td><td>\n";
-EventSelect();
+EventSelect(-multiple => $TRUE);
 print "</td></tr>\n";
 
 print q{</table>};
