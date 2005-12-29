@@ -132,6 +132,15 @@ sub PrepareFieldList (%) {
     $FieldList{$Field}{ColSpan} = 1;
   }  
   
+  # Precedence: 
+  #  Fields (no way to happen now
+  #  User Cookie for topic, event, etc.
+  #  User Cookie for default group
+  #  DB lookup   for topic, event, etc.
+  #  DB lookup   for default group
+  #  Default-Default
+  # Probably do in reverse order or keep testing FieldList
+  
 #  %FieldList = FetchCustomFieldList(-default => 1);
   
   return %FieldList;
