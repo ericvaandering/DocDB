@@ -158,7 +158,7 @@ print q{<table class="MedPaddedTable">
         all users,  please contact an administrator.</p>
         <p>If you are using multiple rows, and especially if you are
         spanning columns or rows, it is easy to generate very difficult to read
-        output.</p>   
+        output. Also, not all fields will have information in all contexts.</p>   
         </td>
         </tr>
         <tr>

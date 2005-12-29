@@ -111,8 +111,14 @@ sub PrepareFieldList (%) {
   my %Params = @_;
   
   my @Fields        = @{$Params{-fields}}; 
+  my $Default       = $Params{-default}
   
   require "ConfigSQL.pm";
+  require "Fields.pm";
+  
+  if ($Default) {
+    @Fields = @{ $DefaultFieldLists{$Default} };
+  }
   
   my %FieldList = ();
   
@@ -126,7 +132,7 @@ sub PrepareFieldList (%) {
     $FieldList{$Field}{ColSpan} = 1;
   }  
   
-  %FieldList = FetchCustomFieldList(-default => 1);
+#  %FieldList = FetchCustomFieldList(-default => 1);
   
   return %FieldList;
 }
