@@ -77,7 +77,7 @@ sub InsertConfig (%) {
 sub FetchCustomFieldList (%) {
   my %Params = (@_);
   
-  my $Default      = $Params{-default}      || $FALSE;   
+  my $Default      = $Params{-default}      || "";   
   my $EventID      = $Params{-eventid}      || 0;
   my $EventGroupID = $Params{-eventgroupid} || 0;
 
@@ -85,7 +85,7 @@ sub FetchCustomFieldList (%) {
 
   my ($ForeignKey,$ForeignID);
   if ($Default) {
-    $ForeignKey = "Default";
+    $ForeignKey = $Default;
     $ForeignID  = 0;
   } elsif ($EventID) {
     $ForeignKey = "EventID";
@@ -118,7 +118,7 @@ sub FetchCustomFieldList (%) {
 sub InsertCustomFieldList {
   my %Params = (@_);
   
-  my $Default      = $Params{-default}      || $FALSE;   
+  my $Default      = $Params{-default}      || "";   
   my $EventID      = $Params{-eventid}      || 0;
   my $EventGroupID = $Params{-eventgroupid} || 0;
   my $Description  = $Params{-description}  || "";
@@ -126,7 +126,7 @@ sub InsertCustomFieldList {
   
   my ($ForeignKey,$ForeignID);
   if ($Default) {
-    $ForeignKey = "Default";
+    $ForeignKey = $Default;
     $ForeignID  = 0;
   } elsif ($EventID) {
     $ForeignKey = "EventID";
@@ -142,13 +142,13 @@ sub InsertCustomFieldList {
   $Delete -> execute($ShortProject,$ForeignKey,$ForeignID);
   my $Count = 0;
   foreach my $Field (keys %FieldList ) {
-    InsertConfig(-project   => $ShortProject, -configgroup => "CustomField",
-                 -sub1group => $ForeignKey,   -foreignid   => $ForeignID, 
-                 -value => $Field, 
-                 -sub1value => $FieldList{$Field}{Row}, 
-                 -sub2value => $FieldList{$Field}{Column},  
-                 -sub3value => $FieldList{$Field}{RowSpan},
-                 -sub4value => $FieldList{$Field}{ColSpan}, 
+    InsertConfig(-project     => $ShortProject, -configgroup => "CustomField",
+                 -sub1group   => $ForeignKey,   -foreignid   => $ForeignID, 
+                 -value       => $Field, 
+                 -sub1value   => $FieldList{$Field}{Row}, 
+                 -sub2value   => $FieldList{$Field}{Column},  
+                 -sub3value   => $FieldList{$Field}{RowSpan},
+                 -sub4value   => $FieldList{$Field}{ColSpan}, 
                  -description => $Description);
     ++$Count;
   }

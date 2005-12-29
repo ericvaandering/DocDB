@@ -54,10 +54,13 @@ $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
 
-my $EventGroupID     = int($params{eventgroupid}); # Make arrays
-my $EventID          = int($params{eventid});      # Make arrays
-my $Default          = int($params{defaultlists}); # Make arrays
-$Default = 1; # FIXME
+my $Scope             = $params{scope};
+my @EventGroupIDs     = split /\0/,$params{eventgroupid};
+my @EventIDs          = split /\0/,$params{eventid};
+my @Defaults          = split /\0/,$params{defaultlists}; 
+my @TopicIDs          = split /\0/,$params{topics};
+
+$Default = "Default"; # FIXME
 
 my $MaxFields = 15;
 
@@ -85,10 +88,8 @@ if (CanAdminister()) {
 my %FieldList = ();
 foreach my $FieldCount (1..$MaxFields) {
   my $Field = $params{"field$FieldCount"};
-  push @DebugStack,"$FieldCount $Field";
   if ($Field && $Field ne "xxxx") {
-    push @DebugStack,"Field $Field added to the display for ";
-    push @ActionStack,"Field $Field added to the display for ";
+    push @ActionStack,"Field \"$Field\" added to the display";
     $FieldList{$Field}{Row}     = $params{"row$FieldCount"};
     $FieldList{$Field}{Column}  = $params{"col$FieldCount"};
     $FieldList{$Field}{RowSpan} = $params{"rowspan$FieldCount"};
@@ -96,10 +97,46 @@ foreach my $FieldCount (1..$MaxFields) {
   }
 }
 
-InsertCustomFieldList(-default => 1,-fieldlist => \%FieldList); 
-
+if ($Scope eq "All") {
+  foreach my $Default (@Defaults) {
+    if ($AllowAll) {
+      InsertCustomFieldList(-default => $Default, -fieldlist => \%FieldList); 
+      push @ActionStack,"Custom list set for $Default list";
+    } else {
+      push @WarnStack,"You are not allowed to default lists";
+    }  
+  }
+  foreach my $TopicID (@TopicIDs) {
+    if ($AllowAll) {
+      InsertCustomFieldList(-topicid => $TopicID, -fieldlist => \%FieldList); 
+      push @ActionStack,"Custom list set for Topic $TopicID";
+    } else {
+      push @WarnStack,"You are not allowed to modify topics";
+    }  
+  }
+  foreach my $EventGroupID (@EventGroupIDs) {
+    if ($AllowAll) {
+      InsertCustomFieldList(-eventgroupid => $EventGroupID, -fieldlist => \%FieldList); 
+      push @ActionStack,"Custom list set for Event Group $EventGroupID";
+    } else {
+      push @WarnStack,"You are not allowed to modify event groups";
+    }  
+  }
+  foreach my $EventID (@EventIDs) {
+    if ($AllowEvents && CanModifyMeeting($EventID)) {
+      InsertCustomFieldList(-eventid => $EventID, -fieldlist => \%FieldList); 
+      push @ActionStack,"Custom list set for Event $EventID";
+    } else {
+      push @WarnStack,"You are not allowed to modify this event";
+    }  
+  }
+}  
+   
+    
 print $query->header;
 DocDBHeader("Customize Document Lists","",-scripts => ["PopUps","CustomListDisable"]); 
+
+ActionReport();
 EndPage();
 print $query -> start_multipart_form('POST',$CustomListForm,
                                      "id=\"customlist\" name=\"customlist\"");
