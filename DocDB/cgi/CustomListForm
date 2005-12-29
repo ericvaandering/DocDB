@@ -41,6 +41,7 @@ require "Fields.pm";
 
 require "DBUtilities.pm";
 require "HTMLUtilities.pm";
+require "MeetingSecurityUtilities.pm";
 
 require "MeetingSQL.pm";
 require "SecuritySQL.pm";
