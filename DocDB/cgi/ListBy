@@ -56,13 +56,12 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 ### Set defaults
 
 my ($Title,  $Message, $List);
-my ($SortBy, $Reverse, @Fields);
+my ($SortBy, $Reverse,$DefaultFieldList);
 
 # Defaults, later can surround these in "unless"
-
-@Fields  = ("Docid","Title","Author","Updated"); 
-$SortBy  = "date";
-$Reverse = 1;
+$DefaultFieldList = "Default";
+$SortBy           = "date";
+$Reverse          = 1;
 
 my @DocumentIDs = ();
 
@@ -141,7 +140,7 @@ if ($Days) {
 ### Event Group (name or number)
 
   require "MeetingSQL.pm";
-  @Fields  = ("Docid","Title","Events","Author","Updated"); 
+  $DefaultFieldList = "Event Group Default";
   $SortBy = "confdate";
   
   unless ($EventGroupID) {
@@ -180,14 +179,14 @@ if ($Days) {
 
 
 if ($Mode eq "conference") {
-  @Fields  = ("Title","Events","Author","Files"); 
+  $DefaultFieldList = "Conference Mode";
   $SortBy  = "confdate";
 } elsif ($Mode eq "meeting") {
-  @Fields  = ("Title","Author","Topics","Files");
+  $DefaultFieldList = "Meeting Mode";
   $SortBy  = "requester";
   $Reverse = 0;
 } elsif ($Mode eq "pubs") {
-  @Fields  = ("Title","References","Files");
+  $DefaultFieldList = "Publications";
 }
 
 # Do the fetch on the $List. "unless (@DocumentIDs)" here to do complex fetches, user specify
@@ -225,7 +224,7 @@ if ($Days) { # Print out modified by form
 }
 
 ### Table and Statistics
-my %FieldList = PrepareFieldList(-fields => \@Fields);
+my %FieldList = PrepareFieldList(-default => $DefaultFieldList);
 my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs, 
                                       -sortby    => $SortBy,     -reverse => $Reverse);
 print "<b>Number of documents found: ",int($NumberOfDocuments),"</b><p/>\n";

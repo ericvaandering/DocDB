@@ -111,7 +111,7 @@ sub PrepareFieldList (%) {
   my %Params = @_;
   
   my @Fields        = @{$Params{-fields}}; 
-  my $Default       = $Params{-default}
+  my $Default       = $Params{-default};
   
   require "ConfigSQL.pm";
   require "Fields.pm";
