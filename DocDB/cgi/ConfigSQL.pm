@@ -119,6 +119,7 @@ sub InsertCustomFieldList {
   my %Params = (@_);
   
   my $Default      = $Params{-default}      || "";   
+  my $TopicID      = $Params{-topicid}      || 0;
   my $EventID      = $Params{-eventid}      || 0;
   my $EventGroupID = $Params{-eventgroupid} || 0;
   my $Description  = $Params{-description}  || "";
@@ -128,6 +129,9 @@ sub InsertCustomFieldList {
   if ($Default) {
     $ForeignKey = $Default;
     $ForeignID  = 0;
+  } elsif ($TopicID) {
+    $ForeignKey = "TopicID";
+    $ForeignID  = $TopicID;
   } elsif ($EventID) {
     $ForeignKey = "EventID";
     $ForeignID  = $EventID;
