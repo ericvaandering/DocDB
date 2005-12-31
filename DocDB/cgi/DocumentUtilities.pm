@@ -110,16 +110,86 @@ sub AddDocument {
 sub PrepareFieldList (%) {
   my %Params = @_;
   
-  my @Fields        = @{$Params{-fields}}; 
-  my $Default       = $Params{-default};
+  my @Fields       = @{$Params{-fields}}; 
+  my $Default      = $Params{-default}      || "";
+  my $TopicID      = $Params{-topicid}      || 0;
+  my $EventID      = $Params{-eventid}      || 0;
+  my $EventGroupID = $Params{-eventgroupid} || 0;
+  
+  # Given a bunch of parameters for what the current list of documents contains, 
+  # apply a precedence operation and figure out if any of the various ways of 
+  # returning a field list give us something. Fall back on defaults.
+  # Precedence is 1) @Fields if specified 
+  #               2) Cookies for user a) event b) eventgroup c) topic d) defaults
+  #               3) DB definitions   a) event b) eventgroup c) topic d) defaults
+  #               4) DocDB defined defaults
+  #               5) Default of all lists
   
   require "ConfigSQL.pm";
   require "Fields.pm";
   
+  my %FieldList = ();
+  
+  # If fields are specified, use that
+  if (@Fields) {
+    %FieldList = FieldsToFieldlist(@Fields);
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }  
+
+  #  User Cookie for topic, event, etc.
+  #  User Cookie for default group
+
+  #  DB lookup for event
+  if ($EventID) {
+    %FieldList = FetchCustomFieldList(-eventid => $EventID);
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }  
+    
+  #  DB lookup for event group
+  if ($EventGroupID) {
+    %FieldList = FetchCustomFieldList(-eventgroupid => $EventGroupID);
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }  
+    
+  #  DB lookup for topic
+  if ($TopicID) {
+    %FieldList = FetchCustomFieldList(-topicid => $TopicID);
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }  
+    
+  #  DB lookup   for default group
   if ($Default) {
-    @Fields = @{ $DefaultFieldLists{$Default} };
+    %FieldList = FetchCustomFieldList(-default => $Default);
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }  
+
+  # Default for various styles
+  if ($Default) {
+    my @DefaultFields = @{ $DefaultFieldLists{$Default} };
+    %FieldList = FieldsToFieldlist(@DefaultFields);
+    if (%FieldList) {
+      return %FieldList
+    }  
   }
   
+  # Default for "Default" (probably never gets here)
+  my @DefaultFields = @{ $DefaultFieldLists{"Default"} };
+  %FieldList = FieldsToFieldlist(@DefaultFields);
+  return %FieldList
+}
+
+sub FieldsToFieldList ();
+  my @Fields = @_;
   my %FieldList = ();
   
   my $Column = 0;
@@ -132,18 +202,7 @@ sub PrepareFieldList (%) {
     $FieldList{$Field}{ColSpan} = 1;
   }  
   
-  # Precedence: 
-  #  Fields (no way to happen now
-  #  User Cookie for topic, event, etc.
-  #  User Cookie for default group
-  #  DB lookup   for topic, event, etc.
-  #  DB lookup   for default group
-  #  Default-Default
-  # Probably do in reverse order or keep testing FieldList
-  
-#  %FieldList = FetchCustomFieldList(-default => 1);
-  
   return %FieldList;
 }
-
+  
 1;

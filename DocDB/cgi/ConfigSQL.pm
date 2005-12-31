@@ -80,6 +80,7 @@ sub FetchCustomFieldList (%) {
   my $Default      = $Params{-default}      || "";   
   my $EventID      = $Params{-eventid}      || 0;
   my $EventGroupID = $Params{-eventgroupid} || 0;
+  my $TopicID      = $Params{-topicid}      || 0;
 
   # Add ones for topic, document type, and groups?
 
@@ -93,6 +94,9 @@ sub FetchCustomFieldList (%) {
   } elsif ($EventGroupID) {
     $ForeignKey = "EventGroupID";
     $ForeignID  = $EventGroupID;
+  } elsif ($TopicID) {
+    $ForeignKey = "TopicID";
+    $ForeignID  = $TopicID;
   }  
 
   my $List = $dbh->prepare("select
