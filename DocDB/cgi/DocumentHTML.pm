@@ -27,6 +27,8 @@ sub DocumentTable (%) {
   require "Sorts.pm";
   require "Fields.pm";
   
+  require "AuthorHTML.pm";
+ 
   my %Params = @_;
   
   my $SortBy        =   $Params{-sortby}; 
