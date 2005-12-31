@@ -188,7 +188,7 @@ sub PrepareFieldList (%) {
   return %FieldList
 }
 
-sub FieldsToFieldList ();
+sub FieldsToFieldList {
   my @Fields = @_;
   my %FieldList = ();
   
