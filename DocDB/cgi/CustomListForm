@@ -151,14 +151,16 @@ print q{<table class="MedPaddedTable">
         <tr>
         <td colspan="2">
         <p>This page allows you to change what information about documents is 
-        displayed in various parts of DocDB. You can choose to change the information
-        just for yourself (you must allow cookies in your browser) or, if  your
-        access level is high enough, for everyone. As a normal user, you may only
-        change the  display of events you may modify. For other changes that affect
-        all users,  please contact an administrator.</p>
-        <p>If you are using multiple rows, and especially if you are
-        spanning columns or rows, it is easy to generate very difficult to read
-        output. Also, not all fields will have information in all contexts.</p>   
+        displayed in various parts of DocDB. You can choose to change the
+        information just for yourself (you must allow cookies in your browser)
+        or, if  your access level is high enough, for everyone. As a normal
+        user, you may only change the  display of events you may modify. For
+        other changes that affect all users,  please contact an administrator.
+        Leave all the <q>field</q>  selections blank and select events, etc. to
+        return to the DocDB  defaults for those lists.</p>
+        <p>If you are using multiple rows, and especially if you are spanning
+        columns or rows, it is easy to generate very difficult to read output.
+        Also, not all fields will have information in all contexts.</p>   
         </td>
         </tr>
         <tr>
