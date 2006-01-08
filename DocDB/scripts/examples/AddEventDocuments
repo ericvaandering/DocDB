@@ -45,7 +45,7 @@ foreach my $EventID (keys %Conferences) {
     unless (@SessionTalkIDs) {
       my $EventGroupID = $Conferences{$EventGroupID}{Title};
       FetchEventGroup($EventGroupID);
-      print $EventGroups{$EventGroupID}{ShortDescription},":",$EventGroups$Conferences{$EventID}{Title}," will be updated\n";
+      print $EventGroups{$EventGroupID}{ShortDescription},":",$Conferences{$EventID}{Title}," will be updated\n";
     }
     foreach my $SessionTalkID (@SessionTalkIDs) {
       my $DocumentID = $SessionTalks{$SessionTalkID}{DocumentID};
