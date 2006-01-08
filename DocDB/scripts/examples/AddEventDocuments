@@ -27,6 +27,7 @@ use Getopt::Long;
 require "DocDBGlobals.pm";
 require "MeetingSQL.pm";
 require "DocumentSQL.pm";
+require "TalkSQL.pm";
 require "DBUtilities.pm";
 
 CreateConnection(-type => "ro");
