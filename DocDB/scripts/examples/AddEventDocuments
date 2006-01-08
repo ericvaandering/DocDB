@@ -25,10 +25,11 @@ use Getopt::Long;
 #require "CGIInclude.pm";
 
 require "DocDBGlobals.pm";
+require "DBUtilities.pm";
 require "MeetingSQL.pm";
 require "DocumentSQL.pm";
 require "TalkSQL.pm";
-require "DBUtilities.pm";
+require "RevisionSQL.pm";
 
 CreateConnection(-type => "rw");
 GetConferences();
