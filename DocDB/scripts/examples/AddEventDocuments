@@ -42,7 +42,7 @@ foreach my $EventID (keys %Conferences) {
   my ($NDocuments) = $List -> fetchrow_array;
   unless ($NDocuments) {
     my @SessionTalkIDs = FetchSessionTalksByConferenceID($EventID);
-    unless (@SessionTalkIDs) {
+    if (@SessionTalkIDs) {
       my $EventGroupID = $Conferences{$EventID}{EventGroupID};
       FetchEventGroup($EventGroupID);
       print $EventGroups{$EventGroupID}{ShortDescription},":",$Conferences{$EventID}{Title}," will be updated\n";
