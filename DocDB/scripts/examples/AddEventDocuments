@@ -27,8 +27,9 @@ use Getopt::Long;
 require "DocDBGlobals.pm";
 require "MeetingSQL.pm";
 require "DocumentSQL.pm";
+require "DBUtilities.pm";
 
-$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$User,$Password);
+CreateConnection(-type => "ro");
 GetConferences();
 
 my $List = $dbh -> prepare("select COUNT(DocumentRevision.DocumentID) from ".
