@@ -41,12 +41,16 @@ foreach my $EventID (keys %Conferences) {
   $List -> execute($EventID);
   my ($NDocuments) = $List -> fetchrow_array;
   unless ($NDocuments) {
-    print $Conferences{$EventID}{Title}," is empty\n";
     my @SessionTalkIDs = FetchSessionTalksByConferenceID($EventID);
+    unless (@SessionTalkIDs) {
+      my $EventGroupID = $Conferences{$EventGroupID}{Title}
+      FetchEventGroup($EventGroupID);
+      print $EventGroups{$EventGroupID}{ShortDescription},":",$EventGroups$Conferences{$EventID}{Title}," will be updated\n";
+    }
     foreach my $SessionTalkID (@SessionTalkIDs) {
       my $DocumentID = $SessionTalks{$SessionTalkID}{DocumentID};
       FetchDocument($DocumentID);
-      print "  with document $DocumentID, version $Documents{$DocumentID}{NVersions}\n";
+      print "  Document $DocumentID, version $Documents{$DocumentID}{NVersions} will be updated\n";
     }
   }
 }    
