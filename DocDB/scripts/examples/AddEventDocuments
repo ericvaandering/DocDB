@@ -30,7 +30,7 @@ require "DocumentSQL.pm";
 require "TalkSQL.pm";
 require "DBUtilities.pm";
 
-CreateConnection(-type => "ro");
+CreateConnection(-type => "rw");
 GetConferences();
 
 my $List = $dbh -> prepare("select COUNT(DocumentRevision.DocumentID) from ".
@@ -50,7 +50,10 @@ foreach my $EventID (keys %Conferences) {
     foreach my $SessionTalkID (@SessionTalkIDs) {
       my $DocumentID = $SessionTalks{$SessionTalkID}{DocumentID};
       FetchDocument($DocumentID);
-      print "  Document $DocumentID, version $Documents{$DocumentID}{NVersions} will be updated\n";
+      my $Version = $Documents{$DocumentID}{NVersions};
+      my $DocRevID = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+      print "  Document $DocumentID, version $Version will be updated\n";
+      InsertRevisionEvents(-docrevid => $DocRevID, -eventids => [$EventID]);
     }
   }
 }    
