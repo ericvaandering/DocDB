@@ -357,7 +357,8 @@ sub PrintSession (%) {
   print "<h1>New Document Table</h1>\n";
   
   NewDocumentTable(-sessionorderids => \@SessionOrderIDs, -fieldlist => \%FieldList);
-  
+  print "<h1>End New Document Table</h1>\n";
+
   my $AccumulatedTime = &AddTime("$AccumHour:$AccumMin:$AccumSec"); # Remove
     
   if (@SessionOrderIDs) {
