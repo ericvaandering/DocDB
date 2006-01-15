@@ -407,7 +407,10 @@ sub NewDocumentTable (%) {
         ShortTopicListByID(@TopicIDs); 
       } elsif ($Field eq "Files") {   # Files in document
         require "FileHTML.pm";
-        ShortFileListByRevID($DocRevID); 
+        if ($DocRevID) {
+          ShortFileListByRevID($DocRevID); 
+        } else {
+          print "None";  
       } elsif ($Field eq "Confirm") {  
         print $query -> start_multipart_form('POST',$ConfirmTalkHint);
         print $query -> hidden(-name => 'documentid',   -default => $DocumentID);
