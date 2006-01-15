@@ -215,7 +215,7 @@ sub NewDocumentTable (%) {
   my $Reverse         =   $Params{-reverse};
   my $MaxDocs         =   $Params{-maxdocs};
   my $NoneBehavior    =   $Params{-nonebehavior} || "skip";  # skip|
-  my $SessionTalkID   =   $Params{-talkid};
+  my $SessionTalkID   =   $Params{-talkid} || 0;
   my @DocumentIDs     = @{$Params{-docids}};
   my @SessionOrderIDs = @{$Params{-sessionorderids}};
   my @Fields          = @{$Params{-fields}}; # deprecated, remove
@@ -306,7 +306,7 @@ sub NewDocumentTable (%) {
   foreach my $ID (@IDs) {
     my $DocumentID      = 0;
     my $SessionOrderID  = 0;
-    my $SessionTalkID   = 0;
+#    my $SessionTalkID   = 0;
     my $TalkSeparatorID = 0;
     if ($Mode eq "Document") {
       $DocumentID = $ID;
@@ -363,7 +363,11 @@ sub NewDocumentTable (%) {
         if ($DocumentID) {
           print NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
                                   -titlelink => $TRUE); 
-        } # elsif                           
+        } elsif ($TalkSeparatorID) { # TalkSeparator
+          print "$TalkSeparators{$TalkSeparatorID}{Title}";
+        } elsif ($SessionTalkID) { # TalkSeparator
+          print "$SessionTalks{$SessionTalkID}{HintTitle}";
+        }
       } elsif ($Field eq "Author") {   # Single author (et. al.)
         print &FirstAuthor($DocRevID);
       } elsif ($Field eq "Updated") {  # Date of last update
