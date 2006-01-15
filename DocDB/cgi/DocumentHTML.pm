@@ -369,26 +369,45 @@ sub NewDocumentTable (%) {
           print "$SessionTalks{$SessionTalkID}{HintTitle}";
         }
       } elsif ($Field eq "Author") {   # Single author (et. al.)
-        print &FirstAuthor($DocRevID);
+        require "TalkHintSQL.pm";
+        if ($DocRevID) {
+          print FirstAuthor($DocRevID);
+        } elsif ($SessionTalkID) {
+          my @AuthorHintIDs = FetchAuthorHintsBySessionTalkID($SessionTalkID);
+          my @AuthorIDs = (); 
+          foreach my $AuthorHintID (@AuthorHintIDs) {
+            push @AuthorIDs,$AuthorHints{$AuthorHintID}{AuthorID};
+          }
+          print ShortAuthorListByID(@AuthorIDs); 
+        }  
       } elsif ($Field eq "Updated") {  # Date of last update
         print &EuroDate($DocRevisions{$DocRevID}{DATE});
       } elsif ($Field eq "CanSign") {  # Who can sign document
         require "SignoffUtilities.pm";
         require "SignoffHTML.pm";
-        my @EmailUserIDs = &ReadySignatories($DocRevID);
+        my @EmailUserIDs = ReadySignatories($DocRevID);
         foreach my $EmailUserID (@EmailUserIDs) {
-          print &SignatureLink($EmailUserID),"<br/>\n";
+          print SignatureLink($EmailUserID),"<br/>\n";
         }  
       } elsif ($Field eq "Conference" || $Field eq "Events") {  
-        &PrintEventInfo(-docrevid => $DocRevID, -format => "short");
+        PrintEventInfo(-docrevid => $DocRevID, -format => "short");
       } elsif ($Field eq "Topics") {  # Topics for document
         require "TopicHTML.pm";
         require "TopicSQL.pm";
-        my @TopicIDs = &GetRevisionTopics($DocRevID);
-        &ShortTopicListByID(@TopicIDs); 
+        require "TalkHintSQL.pm";
+        my @TopicIDs = ();
+        if ($DocRevID) {
+          @TopicIDs = GetRevisionTopics($DocRevID);
+        } elsif ($SessionTalkID) {
+          my @TopicHintIDs  = FetchTopicHintsBySessionTalkID($SessionTalkID);
+          foreach my $TopicHintID (@TopicHintIDs) {
+            push @TopicIDs,$TopicHints{$TopicHintID}{MinorTopicID};
+          }
+        }
+        ShortTopicListByID(@TopicIDs); 
       } elsif ($Field eq "Files") {   # Files in document
         require "FileHTML.pm";
-        &ShortFileListByRevID($DocRevID); 
+        ShortFileListByRevID($DocRevID); 
       } elsif ($Field eq "Confirm") {  
         print $query -> start_multipart_form('POST',$ConfirmTalkHint);
         print $query -> hidden(-name => 'documentid',   -default => $DocumentID);
@@ -397,7 +416,7 @@ sub NewDocumentTable (%) {
         print $query -> end_multipart_form;
       } elsif ($Field eq "References") {   # Journal refs
         require "RevisionHTML.pm";
-        &PrintReferenceInfo($DocRevID,"short"); 
+        PrintReferenceInfo($DocRevID,"short"); 
       } elsif ($Field eq "TalkTime") {
         if ($SessionOrderID) {
           print "<strong>",TruncateSeconds($SessionOrders{$SessionOrderID}{StartTime}),"</strong>";
