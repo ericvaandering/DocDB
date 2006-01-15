@@ -35,10 +35,9 @@ sub DocumentTable (%) {
   my $Reverse         =   $Params{-reverse};
   my $MaxDocs         =   $Params{-maxdocs};
   my $NoneBehavior    =   $Params{-nonebehavior} || "skip";  # skip|
-  my $SessionTalkID   =   $Params{-talkid} || 0;
+  my $TalkID          =   $Params{-talkid} || 0;
   my @DocumentIDs     = @{$Params{-docids}};
   my @SessionOrderIDs = @{$Params{-sessionorderids}};
-  my @Fields          = @{$Params{-fields}}; # deprecated, remove
   my %FieldList       = %{$Params{-fieldlist}}; 
   
   my @IDs  = ();
@@ -57,7 +56,6 @@ sub DocumentTable (%) {
       return;
     }
   }     
-
 
 ### Write out the beginning and header of table
 
@@ -80,32 +78,27 @@ sub DocumentTable (%) {
       print "</tr><tr>\n";
     }  
     
-    my $Header = "<th";
-    if ($RowSpan > 1) {$Header .= qq( rowspan="$RowSpan");}
-    if ($ColSpan > 1) {$Header .= qq( colspan="$ColSpan");}
-    $Header .= " class=\"$Field\">";
+    # Construct and print <th></th>
     
-    print "$Header";
-    if ($FieldTitles{$Field}) {
-      print $FieldTitles{$Field};
-    } else {
-      print $Field;
-    }
-    print "</th>\n";
+    my $TH = "<th";
+    if ($RowSpan > 1) {$TH .= qq( rowspan="$RowSpan");}
+    if ($ColSpan > 1) {$TH .= qq( colspan="$ColSpan");}
+    $TH .= " class=\"$Field\">";
+    print "$TH",$FieldTitles{$Field},"</th>\n";
   }  
   print "</tr>\n";
-
-### Fetch all documents so sorts have info
-
-  foreach my $DocumentID (@DocumentIDs) {
-    my $Version = &LastAccess($DocumentID);
-    if ($Version == -1) {next;}
-    my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-  }
 
 ### Sort document IDs, reverse from convention if needed
 
   if ($Mode eq "Document") {
+    # Fetch all documents so sorts have info
+    foreach my $DocumentID (@IDs) { 
+      my $Version = &LastAccess($DocumentID);
+      if ($Version == -1) {next;}
+      my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+    }
+
+    # Sort and reverse
     if ($SortBy eq "docid") { 
       @IDs = sort numerically @IDs;
     } elsif ($SortBy eq "date") {
@@ -121,14 +114,14 @@ sub DocumentTable (%) {
     }
   }
 
-### Loop over document IDs
+### Loop over Document/SessionOrder IDs
 
   my $NumberOfDocuments = 0;
   my $RowClass;
   foreach my $ID (@IDs) {
     my $DocumentID      = 0;
     my $SessionOrderID  = 0;
-#    my $SessionTalkID   = 0;
+    my $SessionTalkID   = 0;
     my $TalkSeparatorID = 0;
     if ($Mode eq "Document") {
       $DocumentID = $ID;
@@ -236,8 +229,8 @@ sub DocumentTable (%) {
         ShortFileListByRevID($DocRevID); 
       } elsif ($Field eq "Confirm") {  
         print $query -> start_multipart_form('POST',$ConfirmTalkHint);
-        print $query -> hidden(-name => 'documentid',   -default => $DocumentID);
-        print $query -> hidden(-name => 'sessiontalkid',-default => $SessionTalkID);
+        print $query -> hidden(-name => 'documentid',    -default => $DocumentID);
+        print $query -> hidden(-name => 'sessiontalkid', -default => $TalkID);
         print $query -> submit (-value => "Confirm");
         print $query -> end_multipart_form;
       } elsif ($Field eq "References") {   # Journal refs

@@ -480,7 +480,7 @@ sub PrintSingleSessionHeader (%) {
     if (&CanModifyMeeting($EventID)) {
       print "<th>\n";
       if ($OnlyOne) { 
-        &SessionModifyButton(-eventid => $EventID, -labeltext => " agenda for this session or");
+        &SessionModifyButton(-eventid => $EventID, -labeltext => " for this session or");
       } else {
         &SessionModifyButton(-sessionid => $SessionID, -buttontext => "Modify Session", -labeltext => " or");
       }
@@ -497,6 +497,9 @@ sub PrintSingleSessionHeader (%) {
       &EventCopyButton(-eventid => $EventID);
       print "</th>\n";
     }
+    print "</tr>\n<tr><th colspan=\"3\">\n";
+    EventDisplayButton( {-eventid => $EventID} );
+    print "</th>\n";
     print "</tr></table>\n";
   }
 
@@ -910,8 +913,8 @@ sub EventModifyButton (%) {
   my %Params = @_;
 
   my $EventID    = $Params{-eventid}; 
-  my $ButtonText = $Params{-buttontext} || "Modify"; 
-  my $LabelText  = $Params{-labeltext}  || " agenda for this event"; 
+  my $ButtonText = $Params{-buttontext} || "Modify agenda"; 
+  my $LabelText  = $Params{-labeltext}  || " for this event"; 
 
   print $query -> startform('POST',$MeetingModify),"<div>\n";
   print $query -> submit (-value => $ButtonText);
@@ -939,6 +942,17 @@ sub EventCopyButton (%) {
   print $query -> submit (-value => "Schedule");
   print " a similar event in "; 
   print $query -> popup_menu(-name => "offsetdays", -values => \@Offsets, -labels => \%Labels, -default => 7);
+  print "\n</div>\n",$query -> endform,"\n";
+}
+
+sub EventDisplayButton ($) {
+  my ($ArgRef) = @_;
+  
+  my $EventID = exists $ArgRef->{-eventid}  ?   $ArgRef->{-eventid} : 0;
+  print $query -> startform('POST',$CustomListForm),"<div>\n";
+  print $query -> hidden(-name => "eventid", -default => $EventID);
+  print $query -> submit (-value => "Change");
+  print " the information displayed for this event"; 
   print "\n</div>\n",$query -> endform,"\n";
 }
 
