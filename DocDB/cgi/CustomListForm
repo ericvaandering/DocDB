@@ -164,7 +164,7 @@ print q{<table class="MedPaddedTable">
         </td>
         </tr>
         <tr>
-        <td colspan="2">
+        <td colspan="3">
        };
 
 # Scope limiter which is hooked to JS
@@ -192,14 +192,19 @@ print "</td><td>\n";
 
 TopicScroll(-helptext => "Minor Topics", -helplink => "topics", -multiple => $TRUE); 
 print "</td></tr>\n";
+
+# Put document types here
+
 print "<tr><td>";
 
 # Event groups and events. Put default here if they've followed the right link.
 
 EventGroupSelect(-multiple => $TRUE);
-print "</td><td>\n";
+print q{</td><td colspan="2">};
 EventSelect(-multiple => $TRUE);
 print "</td></tr>\n";
+
+# Field list controls
 
 print q{</table>};
 
