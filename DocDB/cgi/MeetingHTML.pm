@@ -327,16 +327,16 @@ sub PrintSession (%) {
   require "DocumentUtilities.pm";
   
   unless ($SkipHeader) {
-    &PrintSessionHeader($SessionID);
+    PrintSessionHeader($SessionID);
   }
   
-  my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
-  my @TalkSeparatorIDs = &FetchTalkSeparatorsBySessionID($SessionID);
-  my @SessionOrderIDs  = &FetchSessionOrdersBySessionID($SessionID);
-  my $ConferenceID     = $Sessions{$SessionID}{ConferenceID};
+  my @SessionTalkIDs   = FetchSessionTalksBySessionID($SessionID);
+  my @TalkSeparatorIDs = FetchTalkSeparatorsBySessionID($SessionID);
+  my @SessionOrderIDs  = FetchSessionOrdersBySessionID($SessionID);
+  my $EventID          = $Sessions{$SessionID}{ConferenceID};
   
-  my ($AccumSec,$AccumMin,$AccumHour) = &SQLDateTime($Sessions{$SessionID}{StartTime});
-  my $AccumulatedTime = &AddTime("$AccumHour:$AccumMin:$AccumSec");
+  my ($AccumSec,$AccumMin,$AccumHour) = SQLDateTime($Sessions{$SessionID}{StartTime});
+  my $AccumulatedTime = AddTime("$AccumHour:$AccumMin:$AccumSec");
     
 # Sort talks and separators, build start time arrays
 
@@ -345,15 +345,15 @@ sub PrintSession (%) {
     $SessionOrders{$SessionOrderID}{StartTime} = $AccumulatedTime;
     if ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) { # TalkSeparator
       my $TalkSeparatorID =  $SessionOrders{$SessionOrderID}{TalkSeparatorID};
-      $AccumulatedTime = &AddTime($AccumulatedTime,$TalkSeparators{$TalkSeparatorID}{Time});
+      $AccumulatedTime = AddTime($AccumulatedTime,$TalkSeparators{$TalkSeparatorID}{Time});
     } elsif ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
       my $SessionTalkID =  $SessionOrders{$SessionOrderID}{SessionTalkID};
-      $AccumulatedTime = &AddTime($AccumulatedTime,$SessionTalks{$SessionTalkID}{Time});
+      $AccumulatedTime = AddTime($AccumulatedTime,$SessionTalks{$SessionTalkID}{Time});
     }
   }
 
   if (@SessionOrderIDs) {
-    my %FieldListOptions = (-default => "Event Agenda");
+    my %FieldListOptions = (-default => "Event Agenda", -eventid => $EventID);
     my %FieldList = PrepareFieldList(%FieldListOptions);
     DocumentTable(-sessionorderids => \@SessionOrderIDs, -fieldlist => \%FieldList);
   } else {
