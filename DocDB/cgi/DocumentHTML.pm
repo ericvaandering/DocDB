@@ -396,7 +396,15 @@ sub NewDocumentTable (%) {
         &PrintReferenceInfo($DocRevID,"short"); 
       } elsif ($Field eq "TalkTime") {
         if ($SessionOrderID) {
-          print TruncateSeconds($SessionOrders{$SessionOrderID}{StartTime});
+          print "<strong>",TruncateSeconds($SessionOrders{$SessionOrderID}{StartTime}),"</strong>";
+        } else {
+          print "";
+        }    
+      } elsif ($Field eq "TalkLength") {
+        if ($SessionTalkID) {
+          print TruncateSeconds($SessionTalks{$SessionTalkID}{Time});
+        } elsif ($TalkSeparatorID) {
+          print TruncateSeconds($TalkSeparators{$TalkSeparatorID}{Time});
         } else {
           print "";
         }    
