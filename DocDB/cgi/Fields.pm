@@ -25,7 +25,8 @@
 %FieldTitles = (
                 Docid      => "$ShortProject-doc-#", Title      => "Title", 
                 CanSign    => "Next Signature(s)",   Confirm    => "Confirm?",
-                Updated    => "Last Updated",        Author     => "Author(s)",
+                Updated    => "Last Updated",        Created    => "Created", 
+                Author     => "Author(s)",
                 Events     => "Event(s)",            Files      => "File(s)",
                 References => "References",          TalkTime   => "Start",
                 Topics     => "Topic(s)",            TalkLength => "Length", 
@@ -35,6 +36,8 @@
                
 %FieldDescriptions = (%FieldTitles, # Take titles as defaults
                 Confirm    => "Confirm Button",
+                Updated    => "Date Last Updated",        
+                Created    => "Date Created",        
                 TalkTime   => "Talk Start Time",
                 TalkLength => "Talk Length", 
                 TalkNotes  => "Talk Notes",

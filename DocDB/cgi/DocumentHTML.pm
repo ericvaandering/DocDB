@@ -202,6 +202,8 @@ sub DocumentTable (%) {
         }  
       } elsif ($Field eq "Updated") {  # Date of last update
         print &EuroDate($DocRevisions{$DocRevID}{DATE});
+      } elsif ($Field eq "Created") {  # Date of creation
+        print &EuroDate($Documents{$DocumentID}{Date}); 
       } elsif ($Field eq "CanSign") {  # Who can sign document
         require "SignoffUtilities.pm";
         require "SignoffHTML.pm";
