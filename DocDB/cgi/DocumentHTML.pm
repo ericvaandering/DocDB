@@ -232,7 +232,7 @@ sub NewDocumentTable (%) {
     $Mode = "Document";
   }
   
-  unless (@DocumentIDs) {
+  unless (@IDs) {
     if ($NoneBehavior eq "skip") {
       return;
     }

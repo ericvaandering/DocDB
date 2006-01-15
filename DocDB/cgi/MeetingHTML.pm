@@ -353,7 +353,10 @@ sub PrintSession (%) {
   }
   my %FieldListOptions = (-default => "Events");
   my %FieldList = PrepareFieldList(%FieldListOptions);
-  DocumentTable(-sessionorderids => \@SessionOrderIDs, -fieldlist => \%FieldList);
+  
+  print "<h1>New Document Table</h1>\n";
+  
+  NewDocumentTable(-sessionorderids => \@SessionOrderIDs, -fieldlist => \%FieldList);
   
   my $AccumulatedTime = &AddTime("$AccumHour:$AccumMin:$AccumSec"); # Remove
     

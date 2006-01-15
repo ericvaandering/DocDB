@@ -45,6 +45,7 @@ require "MeetingSQL.pm";
 require "RevisionSQL.pm";
 
 require "TalkHintUtilities.pm";
+require "DocumentUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 
