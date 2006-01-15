@@ -23,12 +23,13 @@
 
   
 %FieldTitles = (
-                Docid      => "$ShortProject-doc-#", Title   => "Title", 
-                CanSign    => "Next Signature(s)",   Confirm => "Confirm?",
-                Updated    => "Last Updated",        Author  => "Author",
-                Events     => "Events",              Files   => "Files",
-                References => "References",          TalkTime => "Start",
-                Topics => "Topic(s)", TalkLength => "Length", TalkNotes => "Notes",
+                Docid      => "$ShortProject-doc-#", Title      => "Title", 
+                CanSign    => "Next Signature(s)",   Confirm    => "Confirm?",
+                Updated    => "Last Updated",        Author     => "Author",
+                Events     => "Events",              Files      => "Files",
+                References => "References",          TalkTime   => "Start",
+                Topics     => "Topic(s)",            TalkLength => "Length", 
+                TalkNotes  => "Notes",
                 Blank      => "&nbsp;",
                );  
                

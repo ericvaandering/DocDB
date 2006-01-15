@@ -411,9 +411,9 @@ sub NewDocumentTable (%) {
       } elsif ($Field eq "TalkNotes") {
         if ($SessionTalkID) {
           if ($SessionTalks{$SessionTalkID}{Note}) {
-            print "<td><strong>",TalkNoteLink($SessionTalkID),"</strong></td>\n";
+            print "<strong>",TalkNoteLink($SessionTalkID),"</strong>";
           } else {
-            print "<td>",TalkNoteLink($SessionTalkID),"</td>\n";
+            print TalkNoteLink($SessionTalkID);
           }
         }
       } elsif ($Field eq "Blank") {        # Blank Cell
