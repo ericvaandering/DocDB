@@ -470,8 +470,8 @@ sub PrintSingleSessionHeader (%) {
     print "<h5>(<a href=\"$Conferences{$EventID}{URL}\">$Conferences{$EventID}{Title} homepage</a>)</h5>\n";
   }
   
+  print "<table class=\"CenteredTable LowPaddedTable\"><tr>\n";
   if ((&CanCreate()) || &CanModifyMeeting($EventID)) {
-    print "<table class=\"CenteredTable LowPaddedTable\"><tr>\n";
     if (&CanCreate()) {
       print "<th>\n";
       &TalkUploadButton(-sessionid => $SessionID);
@@ -497,11 +497,11 @@ sub PrintSingleSessionHeader (%) {
       &EventCopyButton(-eventid => $EventID);
       print "</th>\n";
     }
-    print "</tr>\n<tr><th colspan=\"3\">\n";
-    EventDisplayButton( {-eventid => $EventID} );
-    print "</th>\n";
-    print "</tr></table>\n";
   }
+  print "</tr>\n<tr><th colspan=\"3\">\n";
+  EventDisplayButton( {-eventid => $EventID} );
+  print "</th>\n";
+  print "</tr></table>\n";
 
   &PrintMeetingPreamble($EventID);
   if ($Sessions{$SessionID}{Description}) {
@@ -545,7 +545,7 @@ sub PrintMeetingInfo($;%) {
     print "<h5>(<a href=\"$Conferences{$ConferenceID}{URL}\">$Conferences{$ConferenceID}{Title} homepage</a>)</h5>\n";
   }
   
-  if (($AddTalkLink && &CanCreate()) || &CanModifyMeeting($ConferenceID)) {
+  if ($AddTalkLink || &CanModifyMeeting($ConferenceID)) {
     print "<table class=\"CenteredTable LowPaddedTable\"><tr>\n";
     if ($AddTalkLink && &CanCreate()) {
       print "<th>\n";
@@ -558,6 +558,11 @@ sub PrintMeetingInfo($;%) {
       print "</th>\n";
       print "</tr>\n<tr><th colspan=\"3\">\n";
       &EventCopyButton(-eventid => $EventID);
+      print "</th>\n";
+    }
+    if ($AddTalkLink) {
+      print "</tr>\n<tr><th colspan=\"3\">\n";
+      EventDisplayButton( {-eventid => $EventID} );
       print "</th>\n";
     }
     print "</tr></table>\n";

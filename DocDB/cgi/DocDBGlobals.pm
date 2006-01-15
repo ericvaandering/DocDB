@@ -216,7 +216,7 @@ $Statistics            = $cgi_root."Statistics";
 
 $SelectPrefs           = $cgi_root."SelectPrefs";
 $SetPrefs              = $cgi_root."SetPrefs";
-$CustomListForm        = $cgi_root."SetPrefs";
+$CustomListForm        = $cgi_root."CustomListForm";
 
 $SelectGroups          = $cgi_root."SelectGroups";
 $SetGroups             = $cgi_root."SetGroups";
