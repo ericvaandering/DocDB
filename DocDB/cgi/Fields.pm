@@ -38,6 +38,7 @@
                 TalkTime   => "Talk Start Time",
                 TalkLength => "Talk Length", 
                 TalkNotes  => "Talk Notes",
+                Blank      => "Empty field (placeholder)",
                );  
                
 %DefaultFieldLists = (
