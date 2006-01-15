@@ -360,8 +360,10 @@ sub NewDocumentTable (%) {
         print &NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
                                  -numwithversion => $TRUE); 
       } elsif ($Field eq "Title") {    # Document title
-        print &NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
-                                 -titlelink => $TRUE); 
+        if ($DocumentID) {
+          print &NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
+                                   -titlelink => $TRUE); 
+        } # elsif                           
       } elsif ($Field eq "Author") {   # Single author (et. al.)
         print &FirstAuthor($DocRevID);
       } elsif ($Field eq "Updated") {  # Date of last update
@@ -392,10 +394,16 @@ sub NewDocumentTable (%) {
       } elsif ($Field eq "References") {   # Journal refs
         require "RevisionHTML.pm";
         &PrintReferenceInfo($DocRevID,"short"); 
+      } elsif ($Field eq "TalkTime") {
+        if ($SessionOrderID) {
+          print TruncateSeconds($SessionOrders{$SessionOrderID}{StartTime});
+        } else {
+          print "";
+        }    
       } elsif ($Field eq "Blank") {        # Blank Cell
         print ""; 
       } else {
-        print "Unknown field"
+        print "Unknown field: $Field"
       }  
       print "</td>\n";
     }  
