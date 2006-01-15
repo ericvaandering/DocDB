@@ -351,84 +351,11 @@ sub PrintSession (%) {
       $AccumulatedTime = &AddTime($AccumulatedTime,$SessionTalks{$SessionTalkID}{Time});
     }
   }
-  my %FieldListOptions = (-default => "Events");
-  my %FieldList = PrepareFieldList(%FieldListOptions);
-  
-  print "<h1>New Document Table</h1>\n";
-  
-  NewDocumentTable(-sessionorderids => \@SessionOrderIDs, -fieldlist => \%FieldList);
-  print "<h1>End New Document Table</h1>\n";
 
-  my $AccumulatedTime = &AddTime("$AccumHour:$AccumMin:$AccumSec"); # Remove
-    
   if (@SessionOrderIDs) {
-  
-    print "<table class=\"Alternating CenteredTable TalkList\">\n";
-
-    print "<tr>\n";
-    print "<th class=\"TalkTime\">Start</th>\n";
-    print "<th class=\"TalkTitle\">Title</th>\n";
-    print "<th class=\"TalkAuthor\">Author</th>\n";
-    print "<th class=\"TalkTopics\">Topic(s)</th>\n";
-    print "<th class=\"TalkFiles\">Files</th>\n";
-    print "<th class=\"TalkLength\">Length</th>\n";
-    print "<th class=\"TalkNotes\">Notes</th>\n";
-    print "</tr>\n";
-
-    my $TalkCounter = 0;
-    my $RowClass;
-    foreach my $SessionOrderID (@SessionOrderIDs) {
-      ++$TalkCounter;
-      if ($TalkCounter % 2) { 
-        $RowClass = "Odd";
-      } else {
-        $RowClass = "Even";
-      }    
-      if ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) { # TalkSeparator
-        my $TalkSeparatorID =  $SessionOrders{$SessionOrderID}{TalkSeparatorID};
-
-        print "<tr class=\"$RowClass\">\n";
-        print "<td class=\"Time\"><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";
-        print "<td>$TalkSeparators{$TalkSeparatorID}{Title}</td>\n";
-        print "<td colspan=\"3\">$TalkSeparators{$TalkSeparatorID}{Note}</td>\n";
-        print "<td class=\"Time\">",&TruncateSeconds($TalkSeparators{$TalkSeparatorID}{Time}),"</td>\n";
-        print "</tr>\n";
-
-        $AccumulatedTime = &AddTime($AccumulatedTime,$TalkSeparators{$TalkSeparatorID}{Time});
-      } elsif ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
-        my $SessionTalkID =  $SessionOrders{$SessionOrderID}{SessionTalkID};
-
-        if ($SessionTalks{$SessionTalkID}{DocumentID}) { # Talk with DocID (confirmed or not)
-          &PrintSessionTalk($SessionTalkID,$AccumulatedTime,$RowClass);
-        } else { # Talk where only hints exist
-          print "<tr class=\"$RowClass\">\n";
-          print "<td><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";
-          print "<td>$SessionTalks{$SessionTalkID}{HintTitle}</td>\n";
-          my @TopicHintIDs  = &FetchTopicHintsBySessionTalkID($SessionTalkID);
-          my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID);
-          my @TopicIDs  = ();
-          my @AuthorIDs = (); 
-          foreach my $TopicHintID (@TopicHintIDs) {
-            push @TopicIDs,$TopicHints{$TopicHintID}{MinorTopicID};
-          }
-          foreach my $AuthorHintID (@AuthorHintIDs) {
-            push @AuthorIDs,$AuthorHints{$AuthorHintID}{AuthorID};
-          }
-          print "<td><i>\n"; &ShortAuthorListByID(@AuthorIDs); print "</i></td>\n";
-          print "<td><i>\n"; &ShortTopicListByID(@TopicIDs);   print "</i></td>\n";
-          print "<td>&nbsp;</td>\n"; # Files, which can't exist
-          print "<td class=\"Time\">",&TruncateSeconds($SessionTalks{$SessionTalkID}{Time}),"</td>\n";
-          if ($SessionTalks{$SessionTalkID}{Note}) {
-            print "<td><b>",&TalkNoteLink($SessionTalkID),"</b></td>\n";
-          } else {
-            print "<td>",&TalkNoteLink($SessionTalkID),"</td>\n";
-          }  
-          print "</tr>\n";
-        } 
-        $AccumulatedTime = &AddTime($AccumulatedTime,$SessionTalks{$SessionTalkID}{Time});
-      }
-    } # End Separator/Talk distinction
-    print "</table>\n"; 
+    my %FieldListOptions = (-default => "Events");
+    my %FieldList = PrepareFieldList(%FieldListOptions);
+    NewDocumentTable(-sessionorderids => \@SessionOrderIDs, -fieldlist => \%FieldList);
   } else {
     print "<h4>No talks in agenda</h4>\n";
   }  
