@@ -105,20 +105,20 @@ sub DocumentTable (%) {
 
 ### Sort document IDs, reverse from convention if needed
 
-  push @DebugStack, "Sort by: $SortBy, Reverse: $Reverse";
+  if ($Mode eq "Document") {
+    if ($SortBy eq "docid") { 
+      @IDs = sort numerically @IDs;
+    } elsif ($SortBy eq "date") {
+      @IDs = sort DocumentByRevisionDate @IDs; 
+    } elsif ($SortBy eq "requester") {
+      @IDs = sort DocumentByRequester @IDs; 
+    } elsif ($SortBy eq "confdate") {
+      @IDs = sort DocumentByConferenceDate @IDs; 
+    }
 
-  if ($SortBy eq "docid") { 
-    @DocumentIDs = sort numerically @DocumentIDs;
-  } elsif ($SortBy eq "date") {
-    @DocumentIDs = sort DocumentByRevisionDate @DocumentIDs; 
-  } elsif ($SortBy eq "requester") {
-    @DocumentIDs = sort DocumentByRequester @DocumentIDs; 
-  } elsif ($SortBy eq "confdate") {
-    @DocumentIDs = sort DocumentByConferenceDate @DocumentIDs; 
-  }
-
-  if ($Reverse) {
-    @DocumentIDs = reverse @DocumentIDs;
+    if ($Reverse) {
+      @IDs = reverse @DocumentIDs;
+    }
   }
 
 ### Loop over document IDs
