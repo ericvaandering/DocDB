@@ -321,9 +321,9 @@ sub NewDocumentTable (%) {
       }  
     }  
     
-### Which version (if any) can they view
+### Which version (if any) can they view (Move into document mode section?)
     my $Version = &LastAccess($DocumentID);
-    if ($Version == -1) {next;}
+    if ($Version == -1 && $Mode eq "Document") {next;}
     my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
     ++$NumberOfDocuments;
 
@@ -357,12 +357,12 @@ sub NewDocumentTable (%) {
       print $TD;
       
       if      ($Field eq "Docid") {    # Document number
-        print &NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
-                                 -numwithversion => $TRUE); 
+        print NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
+                                -numwithversion => $TRUE); 
       } elsif ($Field eq "Title") {    # Document title
         if ($DocumentID) {
-          print &NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
-                                   -titlelink => $TRUE); 
+          print NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
+                                  -titlelink => $TRUE); 
         } # elsif                           
       } elsif ($Field eq "Author") {   # Single author (et. al.)
         print &FirstAuthor($DocRevID);
