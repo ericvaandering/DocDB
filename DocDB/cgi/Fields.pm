@@ -29,7 +29,7 @@
                 Events     => "Event(s)",            Files      => "File(s)",
                 References => "References",          TalkTime   => "Start",
                 Topics     => "Topic(s)",            TalkLength => "Length", 
-                TalkNotes  => "Notes",
+                TalkNotes  => "Notes",               Abstract   => "Abstract",
                 Blank      => "&nbsp;",
                );  
                
