@@ -557,7 +557,7 @@ sub PrintMeetingInfo($;%) {
       &EventModifyButton(-eventid => $ConferenceID);
       print "</th>\n";
       print "</tr>\n<tr><th colspan=\"3\">\n";
-      &EventCopyButton(-eventid => $EventID);
+      &EventCopyButton(-eventid => $ConferenceID);
       print "</th>\n";
     }
     if ($AddTalkLink) {
@@ -854,8 +854,6 @@ sub EventSelect (;%) {
     $Booleans .= "-disabled";
   }  
 
-  push @DebugStack,"Default event IDs:",@Defaults;
-
   GetConferences(); 
   GetAllEventGroups(); 
 
@@ -956,7 +954,6 @@ sub EventDisplayButton ($) {
   my ($ArgRef) = @_;
   
   my $EventID = exists $ArgRef->{-eventid} ? $ArgRef->{-eventid} : 0;
-  push @DebugStack,"Event ID $EventID";
   print $query -> startform('POST',$CustomListForm),"<div>\n";
   print $query -> hidden(-name => "eventid", -default => $EventID);
   print $query -> submit (-value => "Change");
