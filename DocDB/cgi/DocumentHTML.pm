@@ -407,7 +407,15 @@ sub NewDocumentTable (%) {
           print TruncateSeconds($TalkSeparators{$TalkSeparatorID}{Time});
         } else {
           print "";
-        }    
+        }  
+      } elsif ($Field eq "TalkNotes") {
+        if ($SessionTalkID) {
+          if ($SessionTalks{$SessionTalkID}{Note}) {
+            print "<td><strong>",TalkNoteLink($SessionTalkID),"</strong></td>\n";
+          } else {
+            print "<td>",TalkNoteLink($SessionTalkID),"</td>\n";
+          }
+        }
       } elsif ($Field eq "Blank") {        # Blank Cell
         print ""; 
       } else {
