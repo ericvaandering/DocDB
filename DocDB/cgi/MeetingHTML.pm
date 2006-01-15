@@ -323,6 +323,8 @@ sub PrintSession (%) {
   require "TalkHTML.pm";
   require "SQLUtilities.pm";
   require "Utilities.pm";
+  require "DocumentHTML.pm";
+  require "DocumentUtilities.pm";
   
   unless ($SkipHeader) {
     &PrintSessionHeader($SessionID);
@@ -336,10 +338,25 @@ sub PrintSession (%) {
   my ($AccumSec,$AccumMin,$AccumHour) = &SQLDateTime($Sessions{$SessionID}{StartTime});
   my $AccumulatedTime = &AddTime("$AccumHour:$AccumMin:$AccumSec");
     
-# Sort talks and separators
+# Sort talks and separators, build start time arrays
 
   @SessionOrderIDs = sort SessionOrderIDByOrder @SessionOrderIDs;
+  foreach my $SessionOrderID (@SessionOrderIDs) {
+    $SessionOrders{$SessionOrderID}{StartTime} = $AccumulatedTime;
+    if ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) { # TalkSeparator
+      my $TalkSeparatorID =  $SessionOrders{$SessionOrderID}{TalkSeparatorID};
+      $AccumulatedTime = &AddTime($AccumulatedTime,$TalkSeparators{$TalkSeparatorID}{Time});
+    } elsif ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
+      my $SessionTalkID =  $SessionOrders{$SessionOrderID}{SessionTalkID};
+      $AccumulatedTime = &AddTime($AccumulatedTime,$SessionTalks{$SessionTalkID}{Time});
+    }
+  }
+  my %FieldListOptions = (-default => "Events");
+  my %FieldList = PrepareFieldList(%FieldListOptions);
+  DocumentTable(-sessionorderids => \@SessionOrderIDs, -fieldlist => \%FieldList);
   
+  my $AccumulatedTime = &AddTime("$AccumHour:$AccumMin:$AccumSec"); # Remove
+    
   if (@SessionOrderIDs) {
   
     print "<table class=\"Alternating CenteredTable TalkList\">\n";

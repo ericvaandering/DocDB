@@ -27,7 +27,8 @@
                 CanSign    => "Next Signature(s)",   Confirm => "Confirm?",
                 Updated    => "Last Updated",        Author  => "Author",
                 Events     => "Events",              Files   => "Files",
-                References => "References",
+                References => "References",          TalkTime => "Start",
+                Topics => "Topic(s)", TalkLength => "Length", TalkNotes => "Notes",
                 Blank      => "&nbsp;",
                );  
                
@@ -37,6 +38,8 @@
                       "Meeting Mode"        => ["Docid","Title","Author","Updated"], 
                       "Conference Mode"     => ["Title","Events","Author","Files"],
                       "Publications"        => ["Title","References","Files"],
+                      "Events"              => ["TalkTime","Title","Author","Topics","Files",
+                                                "TalkLength","TalkNotes"],
                      );               
 
 1;
