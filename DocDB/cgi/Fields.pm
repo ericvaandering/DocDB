@@ -25,12 +25,19 @@
 %FieldTitles = (
                 Docid      => "$ShortProject-doc-#", Title      => "Title", 
                 CanSign    => "Next Signature(s)",   Confirm    => "Confirm?",
-                Updated    => "Last Updated",        Author     => "Author",
-                Events     => "Events",              Files      => "Files",
+                Updated    => "Last Updated",        Author     => "Author(s)",
+                Events     => "Event(s)",            Files      => "File(s)",
                 References => "References",          TalkTime   => "Start",
                 Topics     => "Topic(s)",            TalkLength => "Length", 
                 TalkNotes  => "Notes",
                 Blank      => "&nbsp;",
+               );  
+               
+%FieldDescriptions = (%FieldTitles, # Take titles as defaults
+                Confirm    => "Confirm Button",
+                TalkTime   => "Talk Start Time",
+                TalkLength => "Talk Length", 
+                TalkNotes  => "Talk Notes",
                );  
                
 %DefaultFieldLists = (
@@ -39,7 +46,7 @@
                       "Meeting Mode"        => ["Docid","Title","Author","Updated"], 
                       "Conference Mode"     => ["Title","Events","Author","Files"],
                       "Publications"        => ["Title","References","Files"],
-                      "Events"              => ["TalkTime","Title","Author","Topics","Files",
+                      "Event Agenda"        => ["TalkTime","Title","Author","Topics","Files",
                                                 "TalkLength","TalkNotes"],
                      );               
 

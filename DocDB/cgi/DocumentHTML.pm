@@ -394,7 +394,7 @@ sub FieldListChooser (%) {
 
   print "<tr>";
   print "<td>\n";     
-  print $query -> popup_menu (-name => "field$Partition",   -values => \@Fields, -default => "xxxx", -labels => \%FormFields);
+  print $query -> popup_menu (-name => "field$Partition",   -values => \@Fields, -default => "xxxx", -labels => \%FieldDescriptions);
   print "</td>\n";     
   print "<td>\n";     
   print $query -> popup_menu (-name => "row$Partition",     -values => [1..15],  -default => 1);
