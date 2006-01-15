@@ -60,8 +60,7 @@ my @EventGroupIDs     = split /\0/,$params{eventgroups};
 my @EventIDs          = split /\0/,$params{events};
 my @Defaults          = split /\0/,$params{defaultlists}; 
 my @TopicIDs          = split /\0/,$params{topics};
-
-$Default = "Default"; # FIXME
+my $DefaultEventID    = $params{eventid};
 
 my $MaxFields = 15;
 
@@ -201,7 +200,7 @@ print "<tr><td>";
 
 EventGroupSelect(-multiple => $TRUE);
 print q{</td><td colspan="2">};
-EventSelect(-multiple => $TRUE);
+EventSelect(-multiple => $TRUE, -default => [$DefaultEventID]);
 print "</td></tr>\n";
 
 # Field list controls
