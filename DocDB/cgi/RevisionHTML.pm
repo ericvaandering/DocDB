@@ -196,7 +196,7 @@ sub PrintRevisionInfo {
   
   print "</div>\n";  # RightColumn3Col
 
-  &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT}); # All are called only here, so changes are OK
+  &PrintAbstract($DocRevisions{$DocRevID}{Abstract}); # All are called only here, so changes are OK
   &FileListByRevID($DocRevID); # All are called only here, so changes are OK
   &TopicListByID(@TopicIDs);
   &AuthorListByID(@AuthorIDs);

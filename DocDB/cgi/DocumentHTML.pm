@@ -226,7 +226,7 @@ sub DocumentTable (%) {
         }
         ShortTopicListByID(@TopicIDs); 
       } elsif ($Field eq "Abstract") {   # Files in document
-        PrintAbstract($DocRevID); 
+        PrintAbstract($DocRevisions{$DocRevID}{Abstract}); 
       } elsif ($Field eq "Files") {   # Files in document
         require "FileHTML.pm";
         ShortFileListByRevID($DocRevID); 

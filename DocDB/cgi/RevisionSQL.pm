@@ -46,7 +46,7 @@ sub FetchDocRevisionByID ($) {
   $DocRevisions{$DocRevID}{Submitter}     = $SubmitterID;
   $DocRevisions{$DocRevID}{Title}         = $DocumentTitle;
   $DocRevisions{$DocRevID}{PUBINFO}       = $PublicationInfo;
-  $DocRevisions{$DocRevID}{ABSTRACT}      = $Abstract;
+  $DocRevisions{$DocRevID}{Abstract}      = $Abstract;
   $DocRevisions{$DocRevID}{DATE}          = $RevisionDate;
   $DocRevisions{$DocRevID}{TimeStamp}     = $TimeStamp;
   $DocRevisions{$DocRevID}{VERSION}       = $VersionNumber; # FIXME: BWC

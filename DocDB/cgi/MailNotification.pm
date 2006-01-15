@@ -165,7 +165,7 @@ sub RevisionMailBody ($) {
   print $Mailer "     Authors: ",$Authors,"\n";;
   print $Mailer "      Topics: ",$Topics,"\n";;
   print $Mailer "    Keywords: ",$DocRevisions{$DocRevID}{Keywords},"\n";;
-  print $Mailer "    Abstract: ",$DocRevisions{$DocRevID}{ABSTRACT},"\n";;
+  print $Mailer "    Abstract: ",$DocRevisions{$DocRevID}{Abstract},"\n";;
 }
 
 sub UsersToNotify ($$) {
