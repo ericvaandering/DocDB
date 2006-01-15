@@ -854,8 +854,10 @@ sub EventSelect (;%) {
     $Booleans .= "-disabled";
   }  
 
-  &GetConferences; 
-  &GetAllEventGroups; 
+  push @DebugStack,"Default event IDs:",@Defaults;
+
+  GetConferences(); 
+  GetAllEventGroups(); 
 
   my @ConferenceIDs = reverse sort EventsByDate keys %Conferences;
   my %Labels        = ();
@@ -863,11 +865,11 @@ sub EventSelect (;%) {
     if ($Format eq "full") {
       $Labels{$ConferenceID} = $EventGroups{$Conferences{$ConferenceID}{EventGroupID}}{ShortDescription}.":".
                                $Conferences{$ConferenceID}{Title} .
-                               " (".&EuroDate($Conferences{$ConferenceID}{StartDate}).")"; 
+                               " (".EuroDate($Conferences{$ConferenceID}{StartDate}).")"; 
     }
   }      
   
-  my $ElementTitle = &FormElementTitle(-helplink => "events", -helptext => "Events");
+  my $ElementTitle = FormElementTitle(-helplink => "events", -helptext => "Events");
 
   print $ElementTitle;
   print $query -> scrolling_list(-name     => "events",  -values  => \@ConferenceIDs, 

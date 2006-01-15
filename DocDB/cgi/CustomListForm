@@ -62,6 +62,8 @@ my @Defaults          = split /\0/,$params{defaultlists};
 my @TopicIDs          = split /\0/,$params{topics};
 my $DefaultEventID    = $params{eventid};
 
+push @DebugStack,"Default eventID $DefaultEventID";
+
 my $MaxFields = 15;
 
 $query -> delete_all();
