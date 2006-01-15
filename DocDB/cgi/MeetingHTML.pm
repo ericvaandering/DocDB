@@ -355,7 +355,7 @@ sub PrintSession (%) {
   if (@SessionOrderIDs) {
     my %FieldListOptions = (-default => "Events");
     my %FieldList = PrepareFieldList(%FieldListOptions);
-    NewDocumentTable(-sessionorderids => \@SessionOrderIDs, -fieldlist => \%FieldList);
+    DocumentTable(-sessionorderids => \@SessionOrderIDs, -fieldlist => \%FieldList);
   } else {
     print "<h4>No talks in agenda</h4>\n";
   }  
