@@ -385,7 +385,7 @@ sub FieldListChooser (%) {
     print "</tr>\n";
   }
   
-  my %FormFields = %FieldTitles;
+  my %FormFields = %FieldDescriptions;
 
   $FormFields{xxxx}  = "-- Select a Field --";      # Add option for nothing
   $FormFields{Blank} = "Empty field (placeholder)"; # Add option for nothing
@@ -394,7 +394,7 @@ sub FieldListChooser (%) {
 
   print "<tr>";
   print "<td>\n";     
-  print $query -> popup_menu (-name => "field$Partition",   -values => \@Fields, -default => "xxxx", -labels => \%FieldDescriptions);
+  print $query -> popup_menu (-name => "field$Partition",   -values => \@Fields, -default => "xxxx", -labels => \%FormFields);
   print "</td>\n";     
   print "<td>\n";     
   print $query -> popup_menu (-name => "row$Partition",     -values => [1..15],  -default => 1);

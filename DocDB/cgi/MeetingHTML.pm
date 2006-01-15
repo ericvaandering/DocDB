@@ -353,7 +353,7 @@ sub PrintSession (%) {
   }
 
   if (@SessionOrderIDs) {
-    my %FieldListOptions = (-default => "Events");
+    my %FieldListOptions = (-default => "Event Agenda");
     my %FieldList = PrepareFieldList(%FieldListOptions);
     DocumentTable(-sessionorderids => \@SessionOrderIDs, -fieldlist => \%FieldList);
   } else {
