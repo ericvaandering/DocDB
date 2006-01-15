@@ -562,7 +562,7 @@ sub PrintMeetingInfo($;%) {
     }
     if ($AddTalkLink) {
       print "</tr>\n<tr><th colspan=\"3\">\n";
-      EventDisplayButton( {-eventid => $EventID} );
+      EventDisplayButton( {-eventid => $ConferenceID} );
       print "</th>\n";
     }
     print "</tr></table>\n";
@@ -955,7 +955,8 @@ sub EventCopyButton (%) {
 sub EventDisplayButton ($) {
   my ($ArgRef) = @_;
   
-  my $EventID = exists $ArgRef->{-eventid}  ?   $ArgRef->{-eventid} : 0;
+  my $EventID = exists $ArgRef->{-eventid} ? $ArgRef->{-eventid} : 0;
+  push @DebugStack,"Event ID $EventID";
   print $query -> startform('POST',$CustomListForm),"<div>\n";
   print $query -> hidden(-name => "eventid", -default => $EventID);
   print $query -> submit (-value => "Change");
