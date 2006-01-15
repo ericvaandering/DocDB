@@ -219,8 +219,10 @@ sub PrintRevisionInfo {
   print "</div>\n";  # RevisionInfo
 }
  
-sub PrintAbstract {
-  my ($Abstract) = @_;
+sub PrintAbstract ($;$) {
+  my ($Abstract,$ArgRef) = @_;
+  
+  my $Format = exists $ArgRef->{-format} ? $ArgRef->{-format} : "div";
   
   if ($Abstract) {
     $Abstract = &URLify($Abstract);
@@ -229,12 +231,17 @@ sub PrintAbstract {
   } else {
     $Abstract = "None";
   }  
-  print "<div id=\"Abstract\">\n";
-  print "<dl>\n";
-  print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Abstract:</span></dt>\n";
-  print "<dd>$Abstract</dd>\n";
-  print "</dl>\n";
-  print "</div>\n";
+  
+  if ($Format eq "div") {
+    print "<div id=\"Abstract\">\n";
+    print "<dl>\n";
+    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Abstract:</span></dt>\n";
+    print "<dd>$Abstract</dd>\n";
+    print "</dl>\n";
+    print "</div>\n";
+  } elsif ($Format eq "bare") {
+    print  $Abstract;
+  }   
 }
 
 sub PrintKeywords {
