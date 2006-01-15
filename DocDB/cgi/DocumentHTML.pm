@@ -105,6 +105,8 @@ sub DocumentTable (%) {
 
 ### Sort document IDs, reverse from convention if needed
 
+  push @DebugStack, "Sort by: $SortBy, Reverse: $Reverse";
+
   if ($SortBy eq "docid") { 
     @DocumentIDs = sort numerically @DocumentIDs;
   } elsif ($SortBy eq "date") {
