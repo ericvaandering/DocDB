@@ -410,7 +410,8 @@ sub NewDocumentTable (%) {
         if ($DocRevID) {
           ShortFileListByRevID($DocRevID); 
         } else {
-          print "None";  
+          print "None"; 
+        }   
       } elsif ($Field eq "Confirm") {  
         print $query -> start_multipart_form('POST',$ConfirmTalkHint);
         print $query -> hidden(-name => 'documentid',   -default => $DocumentID);
