@@ -163,6 +163,12 @@ sub PrepareFieldList (%) {
   }
   
   #  User Cookie for default group
+  if ($Default && $query -> cookie("$Default") ) {
+    %FieldList = CookieToFieldList( $query -> cookie("$Default") );
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }
 
   #  DB lookup for event
   if ($EventID) {

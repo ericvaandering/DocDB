@@ -336,7 +336,7 @@ sub PrintSession (%) {
   my $EventID          = $Sessions{$SessionID}{ConferenceID};
   
   my ($AccumSec,$AccumMin,$AccumHour) = SQLDateTime($Sessions{$SessionID}{StartTime});
-  my $AccumulatedTime = AddTime("$AccumHour:$AccumMin:$AccumSec");
+  my $AccumulatedTime = AddTime("$AccumHour:$AccumMin:$AccumSec","0:0:0");
     
 # Sort talks and separators, build start time arrays
 
