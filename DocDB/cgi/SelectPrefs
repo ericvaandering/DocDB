@@ -75,7 +75,7 @@ print qq{
  <tr><td>
   <table class="RightHeader">
   <tr><th>
- }
+ };
  print "<a "; &HelpLink("namepref"); 
  print "<b>Name:</b></a>\n";
  print "</th>\n";
