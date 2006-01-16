@@ -63,6 +63,7 @@ my @TopicIDs          = split /\0/,$params{topics};
 my $DefaultEventID    = $params{eventid};
 
 my $MaxFields = 15;
+my @Cookies = ();
 
 $query -> delete_all();
 
@@ -133,7 +134,39 @@ if ($Scope eq "All") { # Do inserts to DB, check user's permissions
     }  
   }
 } else {
- # Set cookies, no need to check permissions
+  # Pack field list into string
+  my @Settings = ();
+  foreach my $Field (keys %FieldList) {
+    my $Setting = join '_',$Field,$FieldList{$Field}{Row},
+                           $FieldList{$Field}{Column}, 
+                           $FieldList{$Field}{RowSpan},
+                           $FieldList{$Field}{ColSpan};
+    push @Settings,$Setting;
+  } 
+  my $Settings = join ";",@Settings;
+  
+  my @CookieNames = ();
+                           # Set set string for name(s) of cookie
+  foreach my $Default (@Defaults) {
+    push @CookieNames,$Default;
+    push @ActionStack,"Custom list set for $Default list";
+  }
+  foreach my $TopicID (@TopicIDs) {
+    push @CookieNames,"topicid_$TopicID";
+    push @ActionStack,"Custom list set for Topic $TopicID";
+  }
+  foreach my $EventGroupID (@EventGroupIDs) {
+    push @CookieNames,"eventgroupid_$TopicID";
+    push @ActionStack,"Custom list set for Event Group $EventGroupID";
+  }
+  foreach my $EventID (@EventIDs) {
+    push @CookieNames,"eventid_$TopicID";
+    push @ActionStack,"Custom list set for Event $EventID";
+  }
+                         
+  foreach my $CookieName (@CookieNames) {
+    push @DebugStack, "Setting $CookieName to $Settings";
+  }
 } 
  
 ### Start HTML   
