@@ -178,6 +178,9 @@ DocDBHeader("Customize Document Lists","",-scripts => ["PopUps","CustomListDisab
 
 ActionReport();
 EndPage();
+
+print @Cookies;
+
 print $query -> start_multipart_form('POST',$CustomListForm,
                                      "id=\"customlist\" name=\"customlist\"");
 
