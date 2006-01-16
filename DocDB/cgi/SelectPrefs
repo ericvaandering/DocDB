@@ -65,7 +65,7 @@ $authormodes{list}  = "Selectable list";
 &GetPrefsCookie;
 
 print qq{
- <table class="MedPaddedTable CenteredTable" border="5">
+ <table class="MedPaddedTable CenteredTable LeftHeader" border="5">
  <tr><td><big>Select Preferences</big><br/>
  Use this form to set your personalized defaults. When you are done press submit.<br/>
  You must have your browser configured to accept cookies to use  this feature.<br/>
