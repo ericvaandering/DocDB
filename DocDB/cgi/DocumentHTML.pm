@@ -169,7 +169,6 @@ sub DocumentTable (%) {
       my $TD = qq(<td class="$Field");
       if ($RowSpan > 1) {$TD .= qq( rowspan="$RowSpan");}
       if ($ColSpan > 1) {$TD .= qq( colspan="$ColSpan");}
-      $TD .= " class=\"$Field\">";
       print $TD;
       
       if      ($Field eq "Docid") {    # Document number
