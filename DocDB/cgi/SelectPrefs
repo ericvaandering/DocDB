@@ -66,7 +66,8 @@ $authormodes{list}  = "Selectable list";
 
 print qq{
  <table class="MedPaddedTable CenteredTable LeftHeader" border="5">
- <tr><td><big>Select Preferences</big><br/>
+ <tr><th>Select Preferences</th></tr>
+ <tr><td>
  Use this form to set your personalized defaults. When you are done press submit.<br/>
  You must have your browser configured to accept cookies to use  this feature.<br/>
  You can always use the advanced options to override these choices.<br/>
@@ -105,6 +106,7 @@ print qq{
  print "<b>Upload method:</b></a>\n";
  print "<td>\n";
  print $query -> radio_group(-name => "upload", -values => \@uploads, -default => $UploadMethodPref, -labels => \%uploads);
+ print "</td></tr>\n";
 
  print "<tr><td>\n";
  print "<a "; &HelpLink("topicoption"); 
