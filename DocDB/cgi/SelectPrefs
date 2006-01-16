@@ -66,7 +66,6 @@ $authormodes{list}  = "Selectable list";
 
 print qq{
  <table class="MedPaddedTable CenteredTable LeftHeader" border="5">
- <tr><th>Select Preferences</th></tr>
  <tr><td>
  Use this form to set your personalized defaults. When you are done press submit.<br/>
  You must have your browser configured to accept cookies to use  this feature.<br/>
@@ -92,7 +91,6 @@ print qq{
  print "<a "; &HelpLink("uploadtype"); 
  print "<b>Upload type:</b></a></th>\n";
  print "<td>\n";
- print "<table><tr><td>\n";
  print $query -> radio_group(-name => "archive", -values => \@archives, -default => $UploadTypePref, -labels
                              => \%archives, -columns => 1);
  print "</td><td>\n";
