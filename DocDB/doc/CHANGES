@@ -1,3 +1,13 @@
+7.3.0
+
+  New files:
+    cgi/ConfigSQL.pm  
+    cgi/CustomListForm  
+    cgi/Fields.pm  
+  
+  Some CSS class names in meeting agendas have changed, we now have a class name
+  on all cells of document lists and agendas.
+
 7.2.0
 
   Both scripts and CSS have changed, make sure you update both
