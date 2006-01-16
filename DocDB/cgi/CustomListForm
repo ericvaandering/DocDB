@@ -133,20 +133,20 @@ if ($Scope eq "All") { # Do inserts to DB, check user's permissions
       push @WarnStack,"You are not allowed to modify this event";
     }  
   }
-} else {
-  # Pack field list into string
+} else { # We're doing cookies
+  # Pack field lists into a string
   my @Settings = ();
   foreach my $Field (keys %FieldList) {
     my $Setting = join '_',$Field,$FieldList{$Field}{Row},
-                           $FieldList{$Field}{Column}, 
-                           $FieldList{$Field}{RowSpan},
-                           $FieldList{$Field}{ColSpan};
+                                  $FieldList{$Field}{Column}, 
+                                  $FieldList{$Field}{RowSpan},
+                                  $FieldList{$Field}{ColSpan};
     push @Settings,$Setting;
   } 
   my $Settings = join ";",@Settings;
-  
+    
+  # Set set string for name(s) of cookie
   my @CookieNames = ();
-                           # Set set string for name(s) of cookie
   foreach my $Default (@Defaults) {
     push @CookieNames,$Default;
     push @ActionStack,"Custom list set for $Default list";
@@ -163,7 +163,8 @@ if ($Scope eq "All") { # Do inserts to DB, check user's permissions
     push @CookieNames,"eventid_$EventID";
     push @ActionStack,"Custom list set for Event $EventID";
   }
-                         
+  
+  # Create CGI Cookie objects that "never" expire                       
   foreach my $CookieName (@CookieNames) {
     push @Cookies, $query -> cookie (-name => $CookieName, -value => $Settings,
                                      -path => $cgi_path, -expires => '+30y');
@@ -177,8 +178,6 @@ DocDBHeader("Customize Document Lists","",-scripts => ["PopUps","CustomListDisab
 
 ActionReport();
 EndPage();
-
-print @Cookies;
 
 print $query -> start_multipart_form('POST',$CustomListForm,
                                      "id=\"customlist\" name=\"customlist\"");
@@ -251,7 +250,7 @@ foreach my $Partition (1..$MaxFields) {
 }
 
 print q{<tr><td colspan="5" class="SubmitCell">};
- print $query -> submit (-value => "Change Display of Fields");
+print $query -> submit (-value => "Change Display of Fields");
 print "</td></tr>\n";
 
 print q{</table>};
