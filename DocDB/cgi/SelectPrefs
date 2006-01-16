@@ -39,9 +39,9 @@ require "AuthorHTML.pm";
 
 $query = new CGI;
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
-&GetAuthors;
+GetAuthors();
 print $query->header;
-&DocDBHeader("Select Preferences","",-scripts => ["PopUps"]);
+DocDBHeader("Select Preferences","",-scripts => ["PopUps"]);
 
 print $query -> start_multipart_form('POST',$SetPrefs);
 
@@ -62,7 +62,7 @@ $authormodes{field} = "Text field";
 $authormodes{list}  = "Selectable list";
 @authormodes = ("list","field");
 
-&GetPrefsCookie;
+GetPrefsCookie();
 
 print qq{
  <table class="MedPaddedTable CenteredTable LeftHeader">
@@ -74,63 +74,64 @@ print qq{
  </td></tr>
 };
 
- print "<tr><th>\n";
- print FormElementTitle(-helplink => "namepref", -helptext => "Name");
- print "</th>\n";
+print "<tr><th>\n";
+print FormElementTitle(-helplink => "namepref", -helptext => "Name");
+print "</th>\n";
 
- print "<td colspan=\"2\">\n";
- my @RequesterDefaults = ($UserIDPref);
- AuthorScroll(-helplink => "",
-               -name     => "requester",
-               -default  => \@RequesterDefaults);
- print "</td></tr>\n";
+print "<td colspan=\"2\">\n";
+my @RequesterDefaults = ($UserIDPref);
+AuthorScroll(-helplink => "",
+              -name     => "requester",
+              -default  => \@RequesterDefaults);
+print "</td></tr>\n";
 
- print "<tr><th>\n";
- print FormElementTitle(-helplink => "uploadtype", -helptext => "Upload type");
- print "</th>\n";
- print "<td>\n";
- print $query -> radio_group(-name => "archive", -values => \@archives, -default => $UploadTypePref, -labels
-                             => \%archives, -columns => 1);
- print "</td><td>\n";
- print $query -> textfield(-name => "numfile", -default => $NumFilesPref, -size => 2, -maxlength => 2);
- print "<b># of files</b>\n";
- print "</td></tr>\n";
+print "<tr><th>\n";
+print FormElementTitle(-helplink => "uploadtype", -helptext => "Upload type");
+print "</th>\n";
+print "<td>\n";
+print $query -> radio_group(-name => "archive", -values => \@archives, -default => $UploadTypePref, -labels
+                            => \%archives, -columns => 1);
+print "</td><td>\n";
+print $query -> textfield(-name => "numfile", -default => $NumFilesPref, -size => 2, -maxlength => 2);
+print "<b># of files</b>\n";
+print "</td></tr>\n";
 
- print "<tr><th>\n";
- print FormElementTitle(-helplink => "uploadmethod", -helptext => "Upload method");
- print "</th>\n";
- print "<td colspan=\"2\">\n";
- print $query -> radio_group(-name => "upload", -values => \@uploads, -default => $UploadMethodPref, -labels => \%uploads);
- print "</td></tr>\n";
+print "<tr><th>\n";
+print FormElementTitle(-helplink => "uploadmethod", -helptext => "Upload method");
+print "</th>\n";
+print "<td colspan=\"2\">\n";
+print $query -> radio_group(-name => "upload", -values => \@uploads, -default => $UploadMethodPref, -labels => \%uploads);
+print "</td></tr>\n";
 
- print "<tr><th>\n";
- print FormElementTitle(-helplink => "topicoption", -helptext => "Topic Selection");
- print "</th>\n";
- print "<td colspan=\"2\">\n";
- print $query -> radio_group(-name => "topicmode", -values => \@topicmodes, -default => $TopicModePref, -labels => \%topicmodes);
- print "</td></tr>\n";
+print "<tr><th>\n";
+print FormElementTitle(-helplink => "topicoption", -helptext => "Topic Selection");
+print "</th>\n";
+print "<td colspan=\"2\">\n";
+print $query -> radio_group(-name => "topicmode", -values => \@topicmodes, -default => $TopicModePref, -labels => \%topicmodes);
+print "</td></tr>\n";
 
- print "<tr><th>\n";
- print FormElementTitle(-helplink => "authoroption", -helptext => "Author Selection");
- print "</th>\n";
- print "<td colspan=\"2\">\n";
- print $query -> radio_group(-name => "authormode", -values => \@authormodes, -default => $AuthorModePref, -labels => \%authormodes);
- print "</td></tr>\n";
+print "<tr><th>\n";
+print FormElementTitle(-helplink => "authoroption", -helptext => "Author Selection");
+print "</th>\n";
+print "<td colspan=\"2\">\n";
+print $query -> radio_group(-name => "authormode", -values => \@authormodes, -default => $AuthorModePref, -labels => \%authormodes);
+print "</td></tr>\n";
 
- print "<tr><th>\n";
- print FormElementTitle(-helplink => "overdatepref", -helptext => "Override submit date");
- print "</th>\n";
- print "<td colspan=\"2\">\n";
- print $query -> radio_group(-name => "overdate", -values => ['No','Yes'],
-                             -default => $DateOverridePref);
- print "</td></tr>\n";
- 
- print "<tr><td colspan=\"3\" class=\"SubmitCell\">\n";
- print $query -> submit (-value => "Set Preferences");
- print "</td></tr>\n";
+print "<tr><th>\n";
+print FormElementTitle(-helplink => "overdatepref", -helptext => "Override submit date");
+print "</th>\n";
+print "<td colspan=\"2\">\n";
+print $query -> radio_group(-name => "overdate", -values => ['No','Yes'],
+                            -default => $DateOverridePref);
+print "</td></tr>\n";
 
 print "</table>\n";
+
+print "<p class=\"SubmitCell\">\n";
+print $query -> submit (-value => "Set Preferences");
+print "</p>\n";
+
 print $query -> endform;
 
-&DocDBNavBar;
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
