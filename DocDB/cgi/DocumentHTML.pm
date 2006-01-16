@@ -66,7 +66,7 @@ sub DocumentTable (%) {
   
   print qq(<table class="Alternating DocumentList">\n); 
 
-  print "<tr>\n";
+  print "<thead><tr>\n";
   my $LastRow = 1;
   foreach my $Field (@Fields) {
     my $Column  = $FieldList{$Field}{Column}; 
@@ -87,7 +87,7 @@ sub DocumentTable (%) {
     $TH .= " class=\"$Field\">";
     print "$TH",$FieldTitles{$Field},"</th>\n";
   }  
-  print "</tr>\n";
+  print "</tr></thead>\n";
 
 ### Sort document IDs, reverse from convention if needed
 
