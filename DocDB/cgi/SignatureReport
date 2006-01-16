@@ -102,7 +102,7 @@ foreach my $SignoffID (@SignoffIDs) {
 }
     
 my @CurrentDocumentIDs = (@ReadyDocumentIDs ,@NotReadyDocumentIDs,@ApprovedDocumentIDs,@SignedDocumentIDs);
-@OldSignatureDocumentIDs = &RemoveArray(\@DocumentIDs,@CurrentDocumentIDs);
+@OldSignatureDocumentIDs = RemoveArray(\@DocumentIDs,@CurrentDocumentIDs);
 
 if (@ReadyDocumentIDs) {
   print "<center><h4>These documents are ready to be signed by $EmailUser{$EmailUserID}{Name}:</h4></center><p>\n";

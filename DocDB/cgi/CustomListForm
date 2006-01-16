@@ -156,22 +156,24 @@ if ($Scope eq "All") { # Do inserts to DB, check user's permissions
     push @ActionStack,"Custom list set for Topic $TopicID";
   }
   foreach my $EventGroupID (@EventGroupIDs) {
-    push @CookieNames,"eventgroupid_$TopicID";
+    push @CookieNames,"eventgroupid_$EventGroupID";
     push @ActionStack,"Custom list set for Event Group $EventGroupID";
   }
   foreach my $EventID (@EventIDs) {
-    push @CookieNames,"eventid_$TopicID";
+    push @CookieNames,"eventid_$EventID";
     push @ActionStack,"Custom list set for Event $EventID";
   }
                          
   foreach my $CookieName (@CookieNames) {
     push @DebugStack, "Setting $CookieName to $Settings";
+    push @Cookies, $query -> cookie (-name => $CookieName, -value => $Settings,
+                                     -path => $cgi_path, -expires => '-30y');
   }
 } 
  
 ### Start HTML   
     
-print $query->header;
+print $query->header(-cookies => \@Cookies);
 DocDBHeader("Customize Document Lists","",-scripts => ["PopUps","CustomListDisable"]); 
 
 ActionReport();
