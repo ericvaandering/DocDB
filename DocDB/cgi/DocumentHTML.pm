@@ -28,6 +28,7 @@ sub DocumentTable (%) {
   require "Fields.pm";
   
   require "AuthorHTML.pm";
+  require "RevisionHTML.pm";
  
   my %Params = @_;
   

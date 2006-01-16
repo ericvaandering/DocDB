@@ -137,8 +137,31 @@ sub PrepareFieldList (%) {
       return %FieldList
     }  
   }  
+  
+  #  User Cookie for event
+  if ($EventID && $query -> cookie("eventid_$EventID") ) {
+    %FieldList = CookieToFieldList( $query -> cookie("eventid_$EventID") );
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }
 
-  #  User Cookie for topic, event, etc.
+  #  User Cookie for eventgroup
+  if ($EventGroupID && $query -> cookie("eventgroupid_$EventGroupID") ) {
+    %FieldList = CookieToFieldList( $query -> cookie("eventgroupid_$EventGroupID") );
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }
+  
+  #  User Cookie for topic
+  if ($TopicID && $query -> cookie("topicid_$TopicID") ) {
+    %FieldList = CookieToFieldList( $query -> cookie("topicid_$TopicID") );
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }
+  
   #  User Cookie for default group
 
   #  DB lookup for event
@@ -205,4 +228,19 @@ sub FieldsToFieldlist {
   return %FieldList;
 }
   
+sub CookieToFieldList {
+  my ($Value) = @_;  
+  my @Settings = split /\;/,$Value;
+  
+  my %FieldList = ();
+  foreach my $Setting (@Settings) {
+    my ($Field,$Row,$Column,$RowSpan,$ColSpan) = split /_/,$Setting;
+    push @DebugStack, "Setting fieldlist to $Field,$Row,$Column,$RowSpan,$ColSpan";
+    $FieldList{$Field}{Row}     = $Row;
+    $FieldList{$Field}{Column}  = $Column;
+    $FieldList{$Field}{RowSpan} = $RowSpan;
+    $FieldList{$Field}{ColSpan} = $ColSpan;
+  }
+  return %FieldList;
+}  
 1;
