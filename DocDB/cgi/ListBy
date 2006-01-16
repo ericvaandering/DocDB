@@ -231,7 +231,7 @@ if ($Days) { # Print out modified by form
 my %FieldList = PrepareFieldList(%FieldListOptions);
 my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs, 
                                       -sortby    => $SortBy,     -reverse => $Reverse);
-print "<b>Number of documents found: ",int($NumberOfDocuments),"</b><p/>\n";
+print "<p><b>Number of documents found: ",int($NumberOfDocuments),"</b></p>\n";
 
 $EndTime  = new Benchmark;
 

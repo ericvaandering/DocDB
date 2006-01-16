@@ -64,34 +64,34 @@ $authormodes{list}  = "Selectable list";
 
 &GetPrefsCookie;
 
-print "<table cellpadding=5 border=5 align=center>\n";
-print "<tr><td align=center><big>Select Preferences</big><br>
-       Use this form to set your personalized defaults. When you are done 
-       press submit.<br>
-       You must have your browser configured to accept cookies to use
-       this feature.<br>
-       You can always use the advanced options to override these choices.</th></tr>\n";
-print "<tr><td>\n";
-
-print "<table align=center>\n";
-
- print "<tr><td align=right valign=top>\n";
+print qq{
+ <table class="MedPaddedTable CenteredTable" border="5">
+ <tr><td><big>Select Preferences</big><br/>
+ Use this form to set your personalized defaults. When you are done press submit.<br/>
+ You must have your browser configured to accept cookies to use  this feature.<br/>
+ You can always use the advanced options to override these choices.<br/>
+ You can also <a href="$CustomListForm">change the appearance</a> of lists of documents shown by DocDB.
+ </td></tr>
+ <tr><td>
+  <table class="RightHeader">
+  <tr><th>
+ }
  print "<a "; &HelpLink("namepref"); 
  print "<b>Name:</b></a>\n";
- print "</td>\n";
+ print "</th>\n";
 
  print "<td>\n";
  my @RequesterDefaults = ($UserIDPref);
- &AuthorScroll(-helplink => "",
+ AuthorScroll(-helplink => "",
                -name     => "requester",
                -default  => \@RequesterDefaults);
  print "</td></tr>\n";
 
- print "<tr><td align=right>\n";
+ print "<tr><th>\n";
  print "<a "; &HelpLink("uploadtype"); 
- print "<b>Upload type:</b></a>\n";
+ print "<b>Upload type:</b></a></th>\n";
  print "<td>\n";
- print "<table cellpadding=3><tr><td>\n";
+ print "<table><tr><td>\n";
  print $query -> radio_group(-name => "archive", -values => \@archives, -default => $UploadTypePref, -labels
                              => \%archives, -columns => 1);
  print "</td><td>\n";
@@ -99,18 +99,18 @@ print "<table align=center>\n";
  print "<b># of files</b>\n";
  print "</td></tr></table>\n";
 
- print "<tr><td align=right>\n";
+ print "<tr><td>\n";
  print "<a "; &HelpLink("uploadmethod"); 
  print "<b>Upload method:</b></a>\n";
  print "<td>\n";
  print $query -> radio_group(-name => "upload", -values => \@uploads, -default => $UploadMethodPref, -labels => \%uploads);
 
- print "<tr><td align=right>\n";
+ print "<tr><td>\n";
  print "<a "; &HelpLink("topicoption"); 
  print "<b>Topic Selection:</b></a>\n";
  print "<td>\n";
  print $query -> radio_group(-name => "topicmode", -values => \@topicmodes, -default => $TopicModePref, -labels => \%topicmodes);
- print "<tr><td align=right>\n";
+ print "<tr><td>\n";
  print "<a "; &HelpLink("authoroption"); 
  print "<b>Author Selection:</b></a>\n";
  print "<td>\n";
@@ -122,7 +122,7 @@ print "<table align=center>\n";
  print $query -> radio_group(-name => "overdate", -values => ['No','Yes'],
                              -default => $DateOverridePref);
 print "</table>\n";
-print "<tr><td align=center>\n";
+print "<tr><td>\n";
 print $query -> submit (-value => "Set Preferences");
 print "</table>\n";
 print $query -> endform;
