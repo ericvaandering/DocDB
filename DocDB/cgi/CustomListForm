@@ -167,7 +167,7 @@ if ($Scope eq "All") { # Do inserts to DB, check user's permissions
   foreach my $CookieName (@CookieNames) {
     push @DebugStack, "Setting $CookieName to $Settings";
     push @Cookies, $query -> cookie (-name => $CookieName, -value => $Settings,
-                                     -path => $cgi_path, -expires => '-30y');
+                                     -path => $cgi_path, -expires => '+30y');
   }
 } 
  
