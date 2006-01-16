@@ -73,7 +73,7 @@ print qq{
  You can also <a href="$CustomListForm">change the appearance</a> of lists of documents shown by DocDB.
  </td></tr>
  <tr><td>
-  <table class="RightHeader">
+  <table class="LeftHeader">
   <tr><th>
  };
  print "<a "; &HelpLink("namepref"); 
@@ -98,6 +98,7 @@ print qq{
  print $query -> textfield(-name => "numfile", -default => $NumFilesPref, -size => 2, -maxlength => 2);
  print "<b># of files</b>\n";
  print "</td></tr></table>\n";
+ print "</td></tr>\n";
 
  print "<tr><td>\n";
  print "<a "; &HelpLink("uploadmethod"); 
