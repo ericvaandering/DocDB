@@ -257,7 +257,7 @@ sub DocumentTable (%) {
         }
       } elsif ($Field eq "Edit") {
         if ($SessionTalkID) {
-          print TalkNoteLink($SessionTalkID);
+          print TalkNoteLink($SessionOrderID);
         } elsif ($DocumentID) {
           print DocumentUpdateLink( {-docid => $DocumentID} );
         }  

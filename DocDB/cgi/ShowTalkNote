@@ -49,7 +49,7 @@ require "DocumentHTML.pm";
 $query = new CGI;  
 %params = $query -> Vars;
 
-my $SessionTalkID = $params{sessiontalkid};   # Extract term user wants help for
+my $SessionOrderID = $params{sessionorderid};
 
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
@@ -59,20 +59,57 @@ unless ($dbh) {
 EndPage();
 
 # Collect info
+my ($SessionTalkID,$TalkSeparatorID,$SessionID);
+ 
+FetchSessionOrderByID($SessionOrderID);
 
-&FetchSessionTalkByID($SessionTalkID);
-my $SessionID  = $SessionTalks{$SessionTalkID}{SessionID};
-my $DocumentID = $SessionTalks{$SessionTalkID}{DocumentID};
-my $Confirmed  = $SessionTalks{$SessionTalkID}{Confirmed} ;
-my $Time       = $SessionTalks{$SessionTalkID}{Time}      ;
-my $HintTitle  = $SessionTalks{$SessionTalkID}{HintTitle} ;
-my $Note       = $SessionTalks{$SessionTalkID}{Note}      ;
+if ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
+  $SessionTalkID     = $SessionOrders{$SessionOrderID}{SessionTalkID};
+  FetchSessionTalkByID($SessionTalkID);
+  $TalkDefaultConfirmed = $SessionTalks{$SessionTalkID}{Confirmed}  || "";
+  $TalkDefaultTime      = $SessionTalks{$SessionTalkID}{Time}       || "00:30";
+  $TalkDefaultTitle     = $SessionTalks{$SessionTalkID}{HintTitle}  || "";
+  $TalkDefaultNote      = $SessionTalks{$SessionTalkID}{Note}       || "";
+  $TalkDefaultDocID     = $SessionTalks{$SessionTalkID}{DocumentID} || "";
+  $SessionID            = $SessionTalks{$SessionTalkID}{SessionID};
+  # Get hints and convert to format accepted by scrolling lists
+  
+  my @TopicHintIDs = &FetchTopicHintsBySessionTalkID($SessionTalkID);
+  foreach my $TopicHintID (@TopicHintIDs) {
+    push @TalkDefaultTopicHints,$TopicHints{$TopicHintID}{MinorTopicID};
+  }
+  my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID);
+  foreach my $AuthorHintID (@AuthorHintIDs) {
+    push @TalkDefaultAuthorHints,$AuthorHints{$AuthorHintID}{AuthorID};
+  }
+} elsif ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) {
+  $TalkSeparatorID   = $SessionOrders{$SessionOrderID}{TalkSeparatorID};
+  FetchTalkSeparatorByID($TalkSeparatorID);
+  
+  $TalkDefaultConfirmed = "";
+  $TalkDefaultTime      = $TalkSeparators{$TalkSeparatorID}{Time}  || "00:30";
+  $TalkDefaultTitle     = $TalkSeparators{$TalkSeparatorID}{Title} || "";
+  $TalkDefaultNote      = $TalkSeparators{$TalkSeparatorID}{Note}  || "";
+  $SessionID            = $TalkSeparators{$TalkSeparatorID}{SessionID};
+}
 
-&FetchSessionByID($SessionID);
-my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
-unless (&CanAccessMeeting($ConferenceID)) {
+
+#my $SessionTalkID = $SessionOrders{$SessionOrderID}{SessionTalkID}
+#FetchSessionTalkByID($SessionTalkID);
+#my $SessionID  = $SessionTalks{$SessionTalkID}{SessionID};
+#my $DocumentID = $SessionTalks{$SessionTalkID}{DocumentID};
+#my $Confirmed  = $SessionTalks{$SessionTalkID}{Confirmed} ;
+#my $Time       = $SessionTalks{$SessionTalkID}{Time}      ;
+#my $HintTitle  = $SessionTalks{$SessionTalkID}{HintTitle} ;
+#my $Note       = $SessionTalks{$SessionTalkID}{Note}      ;
+
+FetchSessionByID($SessionID);
+my $EventID = $Sessions{$SessionID}{ConferenceID};
+
+unless (CanAccessMeeting($EventID)) {
   push @ErrorStack,$Msg_MeetNoAccess;
 }
+
 EndPage();
 
 my $DocRevID;
@@ -93,53 +130,43 @@ if ($Confirmed && $DocumentID) {
 print $query->header;
 &DocDBHeader("Notes for $BestTitle","",-nobody => $TRUE);
 
-# Print out info
+ 
+### Form to change Agenda Info 
+ 
+print "<table>\n";
+print "<tr>\n";
 
-if ($SessionID) {
-  my @TopicHintIDs  = &FetchTopicHintsBySessionTalkID($SessionTalkID);
-  my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID);
+print "<td>\n"; 
+$query -> param('sessionorderid',$SessionOrderID);
+print $query -> hidden(-name => 'sessionorderid', -default => $SessionOrderID);
+print $query -> hidden(-name => 'timestamp',      -default => $EntryTimeStamp);
+TalkConfirm($SessionOrderID);    
+print "</td>\n";
 
-  my @TopicIDs  = ();
-  my @AuthorIDs = ();
-   
-  foreach my $TopicHintID (@TopicHintIDs) {
-    my $TopicID = $TopicHints{$TopicHintID}{MinorTopicID};
-    push @TopicIDs,$TopicID;
-  } 
+print "<td>\n"; TalkDocID($SessionOrderID);     print "</td>\n";
+print "<td>\n"; TalkTitle($TalkDefaultTitle);   print "</td>\n";
+print "<td>\n"; TalkTimePullDown();             print "</td>\n";
+print "<td>\n"; TalkAuthors($SessionOrderID);   print "</td>\n";
+print "<td>\n"; TalkTopics($SessionOrderID);    print "</td>\n";
+print "</tr>\n";
+print "<tr>\n";
+print "<td>\n"; TalkNote(); print "</td>\n";
+print "</tr>\n";
+print "</table>\n";
 
-  foreach my $AuthorHintID (@AuthorHintIDs) {
-    my $AuthorID = $AuthorHints{$AuthorHintID}{AuthorID};
-    push @AuthorIDs,$AuthorID;
-  } 
-
-  print "<b><big>Notes for $BestTitle</big></b><p>\n";
-  print "<b>This talk was entered with the following information:</b><p/>\n";
-  print "<table>\n";
-  print "<tr><th align=right valign=top>Suggested Title:</th><td>$SessionTalks{$SessionTalkID}{HintTitle}</td></tr>\n";
-  print "<tr><th align=right valign=top>Notes:</th><td>$Note</td></tr>\n";
-  print "<tr><th align=right valign=top>Authors:</th><td>\n";
-   &ShortAuthorListByID(@AuthorIDs);
-   print "</td></tr>\n";
-  print "<tr><th align=right valign=top>Topics:</th><td>\n";
-   ShortTopicListByID(@TopicIDs);
-   print "</td></tr>\n";
-  print "</table><p/>\n";
-  if ($DocumentID) {
-    if ($Confirmed) {
-      print "<b>This talk is a confirmed match with this document:</b>\n";
-    } else {
-      print "<b>This talk has been matched (but not confirmed) with this document:</b>\n";
-    } 
-    print "<p/>\n";
-    my @DocumentIDs = ($DocumentID);
-    my %FieldList = PrepareFieldList(-fields => ["Title","Author","Topics","Files"]);
-    DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs);
+if ($DocumentID) {
+  if ($Confirmed) {
+    print "<b>This talk is a confirmed match with this document:</b>\n";
   } else {
-    print "<b>No document in the database has been matched to this talk.</b>\n"
-  }
+    print "<b>This talk has been matched (but not confirmed) with this document:</b>\n";
+  } 
+  print "<p/>\n";
+  my @DocumentIDs = ($DocumentID);
+  my %FieldList = PrepareFieldList(-fields => ["Title","Author","Topics","Files"]);
+  DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs);
 } else {
-  print "<b><big>No notes for this talk</big></b><p>\n";
-}  
+  print "<b>No document in the database has been matched to this talk.</b>\n"
+}
 
 if (CanModifyMeeting($ConferenceID)) {
   my $SearchDays  = $TalkHintWindow;

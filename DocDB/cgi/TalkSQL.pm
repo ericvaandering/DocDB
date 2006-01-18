@@ -6,7 +6,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -149,6 +149,22 @@ sub FetchSessionOrdersBySessionID {
     push @SessionOrderIDs,$SessionOrderID;
   }
   return @SessionOrderIDs; 
+}
+
+sub FetchSessionOrderByID ($) {
+  my ($SessionOrderID) = @_;
+  my ($TalkSeparatorID,$SessionTalkID,$TalkOrder);
+  my $List   = $dbh -> prepare(
+    "select SessionOrderID,TalkSeparatorID,SessionTalkID,TalkOrder ".
+    "from SessionOrder where SessionOrderID=?");
+
+  $List -> execute($SessionOrderID);
+  ($SessionOrderID,$TalkSeparatorID,$SessionTalkID,$TalkOrder) = $List -> fetchrow_array;
+  $SessionOrders{$SessionOrderID}{TalkSeparatorID} = $TalkSeparatorID;
+  $SessionOrders{$SessionOrderID}{SessionTalkID}   = $SessionTalkID;
+  $SessionOrders{$SessionOrderID}{TalkOrder}       = $TalkOrder;
+
+  return $SessionOrderID;
 }
 
 sub DeleteSessionTalk ($) {
