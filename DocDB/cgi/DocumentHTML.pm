@@ -420,7 +420,9 @@ sub DocumentUpdateLink ($) {
   my $DocID = exists $ArgRef->{-docid} ? $ArgRef->{-docid} : 0;
   # Add option for update/updatedb if needed
   
-  if CanModify($DocID) {
+  require "Security.pm";
+  
+  if (CanModify($DocID)) {
     return qq{<a href="$DocumentAddForm?docid=$DocID&amp;mode=update">Update</a>};
   }
 }
