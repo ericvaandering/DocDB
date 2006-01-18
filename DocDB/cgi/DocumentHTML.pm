@@ -230,9 +230,11 @@ sub DocumentTable (%) {
         ShortFileListByRevID($DocRevID); 
       } elsif ($Field eq "Confirm") {  
         print $query -> start_multipart_form('POST',$ConfirmTalkHint);
+        print "<div>\n";
         print $query -> hidden(-name => 'documentid',    -default => $DocumentID);
         print $query -> hidden(-name => 'sessiontalkid', -default => $TalkID);
         print $query -> submit (-value => "Confirm");
+        print "</div>\n";
         print $query -> end_multipart_form;
       } elsif ($Field eq "References") {   # Journal refs
         require "RevisionHTML.pm";

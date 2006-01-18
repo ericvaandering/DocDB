@@ -125,11 +125,11 @@ print $query -> radio_group(-name => "overdate", -values => ['No','Yes'],
                             -default => $DateOverridePref);
 print "</td></tr>\n";
 
-print "</table>\n";
-
-print "<p class=\"SubmitCell\">\n";
+print '<tr><td colspan="3" class="SubmitCell">';
 print $query -> submit (-value => "Set Preferences");
-print "</p>\n";
+print "</td></tr>\n";
+
+print "</table>\n";
 
 print $query -> endform;
 
