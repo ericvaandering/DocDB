@@ -259,7 +259,7 @@ sub DocumentTable (%) {
         if ($SessionTalkID) {
           print TalkNoteLink($SessionTalkID);
         } elsif ($DocumentID) {
-          print qq{<a href="$DocumentAddForm?docid=$DocumentID&amp;mode=update">Update</a>};
+          print DocumentUpdateLink( {-docid => $DocumentID} );
         }  
       } elsif ($Field eq "Blank") {        # Blank Cell
         print ""; 
@@ -413,5 +413,17 @@ sub FieldListChooser (%) {
 
   return  
 }  
+
+sub DocumentUpdateLink ($) {
+  my ($ArgRef) = @_;
+  
+  my $DocID = exists $ArgRef->{-docid} ? $ArgRef->{-docid} : 0;
+  # Add option for update/updatedb if needed
+  
+  if CanModify($DocID) {
+    return qq{<a href="$DocumentAddForm?docid=$DocID&amp;mode=update">Update</a>};
+  }
+}
+
 
 1;
