@@ -26,7 +26,7 @@
                 Docid      => "$ShortProject-doc-#", Title      => "Title", 
                 CanSign    => "Next Signature(s)",   Confirm    => "Confirm?",
                 Updated    => "Last Updated",        Created    => "Created", 
-                Author     => "Author(s)",
+                Author     => "Author(s)",           Edit       => "Edit",
                 Events     => "Event(s)",            Files      => "File(s)",
                 References => "References",          TalkTime   => "Start",
                 Topics     => "Topic(s)",            TalkLength => "Length", 
@@ -41,17 +41,18 @@
                 TalkTime   => "Talk Start Time",
                 TalkLength => "Talk Length", 
                 TalkNotes  => "Talk Notes",
+                Edit       => "Edit Document/Agenda Info",
                 Blank      => "Empty field (placeholder)",
                );  
                
 %DefaultFieldLists = (
-                      "Default"             => ["Docid","Title","Author","Updated"], 
+                      "Default"             => ["Docid","Title","Author","Updated","Edit"], 
                       "Event Group Default" => ["Docid","Title","Events","Author","Updated"], 
                       "Meeting Mode"        => ["Docid","Title","Author","Updated"], 
                       "Conference Mode"     => ["Title","Events","Author","Files"],
                       "Publications"        => ["Title","References","Files"],
                       "Event Agenda"        => ["TalkTime","Title","Author","Topics","Files",
-                                                "TalkLength","TalkNotes"],
+                                                "TalkLength","Edit"],
                      );               
 
 1;

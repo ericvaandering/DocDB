@@ -253,12 +253,14 @@ sub DocumentTable (%) {
         }  
       } elsif ($Field eq "TalkNotes") {
         if ($SessionTalkID) {
-          if ($SessionTalks{$SessionTalkID}{Note}) {
-            print "<strong>",TalkNoteLink($SessionTalkID),"</strong>";
-          } else {
-            print TalkNoteLink($SessionTalkID);
-          }
+          print $SessionTalks{$SessionTalkID}{Note};
         }
+      } elsif ($Field eq "Edit") {
+        if ($SessionTalkID) {
+          print TalkNoteLink($SessionTalkID);
+        } elsif ($DocumentID) {
+          print qq{<a href="$DocumentAddForm?docid=$DocumentID&amp;mode=update">Update</a>};
+        }  
       } elsif ($Field eq "Blank") {        # Blank Cell
         print ""; 
       } else {
