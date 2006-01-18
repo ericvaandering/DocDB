@@ -3,7 +3,7 @@ function helppopupwindow(page) {
 }
 
 function notepopupwindow(page){
-  window.open(page,"docdbnote","width=800,height=350,menubar=0,resizable=1,scrollbars=1,status=0,titlebar=0,toolbar=0,left=0,top=0");
+  window.open(page,"docdbnote","width=700,height=600,menubar=0,resizable=1,scrollbars=1,status=0,titlebar=0,toolbar=0,left=0,top=0");
 }
   
 function grouplimitpopupwindow(page){
