@@ -23,7 +23,7 @@ sub HelpLink { # Change this, change FormElementTitle
 }
 
 sub TalkNoteLink {
-  my ($SessionTalkID) = @_;
+  my ($SessionOrderID) = @_;
   return "<a href=\"Javascript:notepopupwindow(\'$ShowTalkNote?sessionorderid=$SessionOrderID\');\">Note</a>";
 }
 

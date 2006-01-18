@@ -256,7 +256,8 @@ sub DocumentTable (%) {
           print $SessionTalks{$SessionTalkID}{Note};
         }
       } elsif ($Field eq "Edit") {
-        if ($SessionTalkID) {
+        if ($SessionOrderID) {
+          push @DebugStack,"SOI: $SessionOrderID";
           print TalkNoteLink($SessionOrderID);
         } elsif ($DocumentID) {
           print DocumentUpdateLink( {-docid => $DocumentID} );

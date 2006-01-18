@@ -45,6 +45,7 @@ require "TalkHintSQL.pm";
 require "TalkHintUtilities.pm";
 
 require "DocumentHTML.pm";
+require "TalkHTML.pm";
 
 $query = new CGI;  
 %params = $query -> Vars;
