@@ -190,7 +190,7 @@ td.Time {
   text-align: center;
 }  
 
-.SubmitCell { /* Should be ".SubmitCell" */
+.SubmitCell, td.SubmitCell, th.SubmitCell { /* Should be ".SubmitCell" */
   text-align: center;
 }  
 
