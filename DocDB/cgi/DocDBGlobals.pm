@@ -231,7 +231,7 @@ $UserAccessApply       = $cgi_root."UserAccessApply";
 $DocDBHelp             = $cgi_root."DocDBHelp";
 $DocDBInstructions     = $cgi_root."DocDBInstructions";
 $ShowTalkNote          = $cgi_root."ShowTalkNote";
-$EditTalkNote          = $cgi_root."EditTalkNote";
+$EditTalkInfo          = $cgi_root."EditTalkInfo";
 
 unless ($CSSDirectory && $CSSURLPath) {
   $CSSDirectory = $file_root."/Static/css";
