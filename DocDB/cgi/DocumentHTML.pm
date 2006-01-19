@@ -256,6 +256,8 @@ sub DocumentTable (%) {
       } elsif ($Field eq "TalkNotes") {
         if ($SessionTalkID) {
           print AddLineBreaks($SessionTalks{$SessionTalkID}{Note});
+        } elsif ($TalkSeparatorID) {
+          print AddLineBreaks($TalkSeparators{$TalkSeparatorID}{Note});
         }
       } elsif ($Field eq "Edit") {
         if ($SessionOrderID) {

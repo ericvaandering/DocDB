@@ -142,6 +142,8 @@ print '<table class="MedPaddedTable LeftHeader">';
 print "<tr>\n";
 print "<th>",FormElementTitle(-helplink => "talkinfo", -helptext => "Title"),"</th>\n";
 print '<td colspan="2">'; 
+$query -> param('sessionorderid',$SessionOrderID);
+print $query -> hidden(-name => 'sessionorderid', -default => $SessionOrderID),"\n";
 TalkTitle($TalkDefaultTitle);
 print "</td>\n";
 print "</tr><tr>\n";
@@ -149,8 +151,6 @@ print "</tr><tr>\n";
 if ($SessionTalkID) {
   print "<th>",FormElementTitle(-helplink => "talkdocid", -helptext => "Document #"),"</th>\n";
   print '<td colspan="2">';
-  $query -> param('sessionorderid',$SessionOrderID);
-  print $query -> hidden(-name => 'sessionorderid', -default => $SessionOrderID),"\n";
   TextField(-name => "docid", -size => 6, -maxlength => 6, -default => $DocumentID); 
   TalkConfirm($SessionOrderID);  
   print "</td></tr><tr>\n";  
