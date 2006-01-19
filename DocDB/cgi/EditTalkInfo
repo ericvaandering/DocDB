@@ -61,8 +61,8 @@ my $DocumentID     = $Params{docid};
 my $Confirmed      = $Params{talkconfirm};
 my $Length         = $Params{talktime};
 my $Note           = $Params{talknote};
-my @AuthorHints    = @{ $Params{authors} };
-my @TopicHints     = @{ $Params{topics} };
+my @AuthorHints    = split /\0/,$Params{authors};
+my @TopicHints     = split /\0/,$Params{topics};
 if ($Confirmed) {
   $Confirmed = $TRUE;
 }
@@ -111,7 +111,7 @@ if ($TalkSeparatorID) { # Modify a talk separator
   $SessionTalkUpdate -> execute($DocumentID,$Confirmed,$Length,$Title,$Note,$SessionTalkID);
   if ($Confirmed) {
     ConfirmTalk(-docid => $DocumentID, -sessiontalkid => $SessionTalkID, -eventid => $EventID);
-  }  
+  }
   InsertTopicHints($SessionTalkID,@TopicHints);
   InsertAuthorHints($SessionTalkID,@AuthorHints);
   push @ActionStack,"Modified talk: $Title";

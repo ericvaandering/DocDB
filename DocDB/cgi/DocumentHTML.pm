@@ -194,7 +194,7 @@ sub DocumentTable (%) {
           foreach my $AuthorHintID (@AuthorHintIDs) {
             push @AuthorIDs,$AuthorHints{$AuthorHintID}{AuthorID};
           }
-          print ShortAuthorListByID(@AuthorIDs); 
+          ShortAuthorListByID(@AuthorIDs); 
         }  
       } elsif ($Field eq "Updated") {  # Date of last update
         print &EuroDate($DocRevisions{$DocRevID}{DATE});
@@ -255,7 +255,7 @@ sub DocumentTable (%) {
         }  
       } elsif ($Field eq "TalkNotes") {
         if ($SessionTalkID) {
-          print $SessionTalks{$SessionTalkID}{Note};
+          print AddLineBreaks($SessionTalks{$SessionTalkID}{Note});
         }
       } elsif ($Field eq "Edit") {
         if ($SessionOrderID) {

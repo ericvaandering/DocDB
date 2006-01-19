@@ -164,7 +164,7 @@ print "</tr><tr>\n";
 
 print "<th>",FormElementTitle(-helplink => "talkinfo"     , -helptext => "Notes"),"</th>\n";
 print '<td colspan="2">';
-TextArea(-name => 'talknote', -columns => 50, -rows => 8); 
+TextArea(-name => 'talknote', -columns => 50, -rows => 8, -default => $TalkDefaultNote); 
 print "</td>\n";
 print "</tr>\n";
   
