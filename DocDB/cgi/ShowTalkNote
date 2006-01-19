@@ -131,6 +131,9 @@ print $query->header;
 DocDBHeader("Notes for $BestTitle","",-nobody => $TRUE, -scripts => ["PopUps"]);
 EndPage();
 
+print "<h5>Use this form to edit the agenda information for a single talk or break. 
+          This does not change the information for the associated document, if any.</h5>\n";
+
 ### Form to change Agenda Info 
  
 print $query -> start_multipart_form('POST',$EditTalkNote);
@@ -148,7 +151,7 @@ if ($SessionTalkID) {
   print '<td colspan="2">';
   $query -> param('sessionorderid',$SessionOrderID);
   print $query -> hidden(-name => 'sessionorderid', -default => $SessionOrderID),"\n";
-  TalkDocID($SessionOrderID);
+  TextField(-name => "docid", -size => 6, -maxlength => 6, -default => $DocumentID); 
   TalkConfirm($SessionOrderID);  
   print "</td></tr><tr>\n";  
 }
@@ -161,12 +164,13 @@ print "</tr><tr>\n";
 
 print "<th>",FormElementTitle(-helplink => "talkinfo"     , -helptext => "Notes"),"</th>\n";
 print '<td colspan="2">';
-TalkNote(); print "</td>\n";
+TextArea(-name => 'talknote', -columns => 50, -rows => 8); 
+print "</td>\n";
 print "</tr>\n";
   
 if ($SessionTalkID) {
-  print "<tr><th>",FormElementTitle(-helplink => "authorhint"   , -helptext => "Author Hints");
-  print        FormElementTitle(-helplink => "topichint"    , -helptext => "Topic Hints"),"</th>\n";
+  print "<tr><th>",FormElementTitle(-helplink => "authorhint", -helptext => "Author Hints", -nocolon => $TRUE);
+  print  " &amp; ",FormElementTitle(-helplink => "topichint"    , -helptext => "Topic Hints"),"</th>\n";
 
   print "<td>\n"; AuthorScroll(-multiple => $TRUE, -default => \@TalkDefaultAuthorHints);   print "</td>\n";
   print "<td>\n"; TopicScroll(-multiple => $TRUE,  -default => \@TalkDefaultTopicHints, -format => "full");    print "</td>\n";
@@ -180,7 +184,7 @@ print "</table>\n";
 
 print $query -> endform;
 
-if ($SessionTalkID) {
+if ($SessionTalkID) { # Don't do this for seperators
   if ($DocumentID) {
     if ($Confirmed) {
       print "<p><b>This talk is a confirmed match with this document:</b></p>\n";
