@@ -3,6 +3,7 @@
   New files:
     cgi/ConfigSQL.pm  
     cgi/CustomListForm  
+    cgi/EditTalkInfo  
     cgi/Fields.pm  
   
   Some CSS class names in meeting agendas have changed, we now have a class name
