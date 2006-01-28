@@ -121,9 +121,10 @@ if ($DocumentID) {
   $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVersions});
 }
 
-my $BestTitle;
+my $BestTitle, $UpdateLink;
 if ($Confirmed && $DocumentID) {
-  $BestTitle = $DocRevisions{$DocRevID}{Title};
+  $BestTitle  = $DocRevisions{$DocRevID}{Title};
+  $UpdateLink = $DocumentAddForm."?mode=update&docid=$DocumentID";
 } else {
   $BestTitle = $SessionTalks{$SessionTalkID}{HintTitle};    
 }
@@ -135,7 +136,11 @@ DocDBHeader("Notes for $BestTitle","",-nobody => $TRUE, -scripts => ["PopUps"]);
 EndPage();
 
 print "<h5>Use this form to edit the agenda information for a single talk or break. 
-          This does not change the information for the associated document, if any.</h5>\n";
+          This does not change the information for the associated document, if any."
+if ($UpdateLink) {
+  print "You may change that info <a href=\"$UpdateLink\">here</a> if you like";         
+}          
+print "</h5>\n";
 
 ### Form to change Agenda Info 
  
