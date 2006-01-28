@@ -206,9 +206,8 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "Conference") { # Display talks
 
   # Print out info for unused documents
   if (@UnusedDocIDs) {
-    my @Fields = ("Docid","Title","Author","Updated"); 
     print "<h4>Other documents for this event or <a href=\"$ListBy?eventid=$ConferenceID\">simple list</a> of all documents for this event</h4>\n";
-    my %FieldList = PrepareFieldList(-fields => \@Fields);
+    my %FieldList = PrepareFieldList(-default => "Default");
     my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList,
          -docids  => \@UnusedDocIDs, -sortby  => "date",  
          -reverse => $TRUE);

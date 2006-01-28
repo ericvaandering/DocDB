@@ -280,7 +280,7 @@ if (@WatchDocumentIDs) {
   print $query -> checkbox(-name => "clearwatched", -value => 1, -label => 'Clear Watched Documents');
   print "</h4>\n";
 }
-my %FieldList = PrepareFieldList(-fields => ["Docid","Title","Author","Updated"]);
+my %FieldList = PrepareFieldList(-default => "Default");
 my $NDocs = DocumentTable(-fieldlist => \%FieldList, -docids => \@WatchDocumentIDs);  
 
 print "<hr/><table class=\"CenteredTable\">\n";

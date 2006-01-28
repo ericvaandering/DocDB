@@ -216,7 +216,6 @@ print "</div>\n";  # DocDBHomeBody
 ### Get list of documents
 
   my $SortBy  = "date";
-  my @Fields = ("Docid","Title","Author","Updated"); 
   my $Reverse = 1;
 
   my $List = $dbh -> prepare("select DISTINCT(DocumentID) from DocumentRevision where Obsolete=0 and TO_DAYS(NOW())-TO_DAYS(TimeStamp)<=?");
@@ -241,7 +240,7 @@ print "</div>\n";  # DocDBHomeBody
     print "</h4>\n";
   }
   
-  my %FieldList = PrepareFieldList(-fields => \@Fields);
+  my %FieldList = PrepareFieldList(-default => "Default");
   my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs, 
                                         -sortby    => $SortBy,     -reverse => $Reverse, 
                                         -maxdocs   => $HomeMaxDocs);

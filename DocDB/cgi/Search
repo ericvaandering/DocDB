@@ -395,22 +395,22 @@ if ($OuterLogic eq "OR") {
 
 ### Set up fields and sorting
 
-my @Fields = ("Docid","Title","Author","Updated");
-my $SortBy  = "date";
-my $Reverse = 1;
+my %FieldListOptions = (-default => "Default");
+my $SortBy           = "date";
+my $Reverse          = 1;
 
 if ($Mode eq "conference") {
-  @Fields  = ("Title","Conference","Author","Files");
+  $FieldListOptions{-default} = "Conference Mode";
   $SortBy  = "confdate";
 } elsif ($Mode eq "meeting") {
-  @Fields  = ("Title","Author","Topics","Files"); 
+  $FieldListOptions{-default} = "Meeting Mode";
   $SortBy  = "requester";
   $Reverse = 0;
 } 
 
 ### Print table
 
-my %FieldList = PrepareFieldList(-fields => \@Fields);
+my %FieldList = PrepareFieldList(%FieldListOptions);
 my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs, 
                                       -sortby    => $SortBy,     -reverse => $Reverse);
 
