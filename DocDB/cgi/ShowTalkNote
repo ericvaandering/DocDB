@@ -121,7 +121,7 @@ if ($DocumentID) {
   $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVersions});
 }
 
-my $BestTitle, $UpdateLink;
+my ($BestTitle, $UpdateLink);
 if ($Confirmed && $DocumentID) {
   $BestTitle  = $DocRevisions{$DocRevID}{Title};
   $UpdateLink = $DocumentAddForm."?mode=update&docid=$DocumentID";
