@@ -419,10 +419,7 @@ sub PrintSessionHeader ($) {
   }
   
   if ($Sessions{$SessionID}{Description}) {
-    my $Description = $Sessions{$SessionID}{Description};
-    $Description =~ s/\n\s*\n/<p\/>/;
-    $Description =~ s/\n/<br\/>/;
-    
+    my $Description = AddLinkBreaks($Sessions{$SessionID}{Description});
     print "<p class=\"SessionDescription\"> ",&URLify($Description),"</p>\n";
   }
 }
@@ -505,10 +502,7 @@ sub PrintSingleSessionHeader (%) {
 
   &PrintMeetingPreamble($EventID);
   if ($Sessions{$SessionID}{Description}) {
-    my $Description = $Sessions{$SessionID}{Description};
-    $Description =~ s/\n\s*\n/<p\/>/;
-    $Description =~ s/\n/<br\/>/;
-    
+    my $Description = AddLinkBreaks($Sessions{$SessionID}{Description});
     print "<p class=\"SessionDescription\"> ",&URLify($Description),"</p>\n";
   }
   print "</div>\n";
