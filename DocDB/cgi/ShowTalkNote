@@ -63,6 +63,9 @@ unless ($dbh) {
 }         
 EndPage();
 
+# FIXME: XHTML
+
+
 # Collect info
 my ($SessionTalkID,$TalkSeparatorID,$SessionID,$DocumentID,$Confirmed);
 my @TalkDefaultTopicHints;

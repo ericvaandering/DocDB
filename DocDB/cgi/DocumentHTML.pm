@@ -261,7 +261,6 @@ sub DocumentTable (%) {
         }
       } elsif ($Field eq "Edit") {
         if ($SessionOrderID) {
-          push @DebugStack,"SOI: $SessionOrderID";
           print TalkNoteLink($SessionOrderID);
         } elsif ($DocumentID) {
           print DocumentUpdateLink( {-docid => $DocumentID} );

@@ -24,7 +24,7 @@ sub HelpLink { # Change this, change FormElementTitle
 
 sub TalkNoteLink {
   my ($SessionOrderID) = @_;
-  return "<a href=\"Javascript:notepopupwindow(\'$ShowTalkNote?sessionorderid=$SessionOrderID\');\">Note</a>";
+  return "<a href=\"Javascript:notepopupwindow(\'$ShowTalkNote?sessionorderid=$SessionOrderID\');\">Edit</a>";
 }
 
 sub GroupLimitLink {
