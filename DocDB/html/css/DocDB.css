@@ -178,7 +178,7 @@ li.Even, tr.Even, tbody.Even {
 
 #TalkList th,.DocumentList th {
   vertical-align: bottom;
-  border-bottom: 1px solid black;
+  border: 1px solid black;
   padding: 5px 5px 5px 5px;
 }  
 
