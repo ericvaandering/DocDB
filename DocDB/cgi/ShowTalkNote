@@ -136,7 +136,7 @@ DocDBHeader("Notes for $BestTitle","",-nobody => $TRUE, -scripts => ["PopUps"]);
 EndPage();
 
 print "<h5>Use this form to edit the agenda information for a single talk or break. 
-          This does not change the information for the associated document, if any."
+          This does not change the information for the associated document, if any.";
 if ($UpdateLink) {
   print "You may change that info <a href=\"$UpdateLink\">here</a> if you like";         
 }          
