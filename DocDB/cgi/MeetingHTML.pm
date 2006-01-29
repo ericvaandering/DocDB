@@ -334,7 +334,9 @@ sub PrintSession (%) {
   my @TalkSeparatorIDs = FetchTalkSeparatorsBySessionID($SessionID);
   my @SessionOrderIDs  = FetchSessionOrdersBySessionID($SessionID);
   my $EventID          = $Sessions{$SessionID}{ConferenceID};
-  
+  FetchConferenceByConferenceID($EventID);
+  my $EventGroupID = $Conferences{$EventID}{EventGroupID};
+
   my ($AccumSec,$AccumMin,$AccumHour) = SQLDateTime($Sessions{$SessionID}{StartTime});
   my $AccumulatedTime = AddTime("$AccumHour:$AccumMin:$AccumSec","0:0:0");
     
@@ -353,7 +355,7 @@ sub PrintSession (%) {
   }
 
   if (@SessionOrderIDs) {
-    my %FieldListOptions = (-default => "Event Agenda", -eventid => $EventID);
+    my %FieldListOptions = (-default => "Event Agenda", -eventid => $EventID, -eventgroupid => $EventGroupID);
     my %FieldList = PrepareFieldList(%FieldListOptions);
     DocumentTable(-sessionorderids => \@SessionOrderIDs, -fieldlist => \%FieldList);
   } else {
