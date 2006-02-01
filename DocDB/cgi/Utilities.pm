@@ -1,4 +1,4 @@
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -57,7 +57,7 @@ sub RemoveArray (\@@) { # Removes elements of one array from another
 
   my @Array = @{$Array_ref};
 
-  foreach my $BadElement (@BadElements) { # Move this into utility function
+  foreach my $BadElement (@BadElements) {
     my $Index = 0;
     foreach my $Element (@Array) {
       if ($Element eq $BadElement) {
