@@ -164,7 +164,7 @@ sub PrepareFieldList (%) {
   }
   
   #  User Cookie for document type
-  if ($TopicID && $query -> cookie("doctypeid_$DocTypeID") ) {
+  if ($DocTypeID && $query -> cookie("doctypeid_$DocTypeID") ) {
     %FieldList = CookieToFieldList( $query -> cookie("doctypeid_$DocTypeID") );
     if (%FieldList) {
       return %FieldList
