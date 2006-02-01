@@ -43,14 +43,15 @@ require "DBUtilities.pm";
 require "HTMLUtilities.pm";
 require "MeetingSecurityUtilities.pm";
 
-require "MeetingSQL.pm";
-require "SecuritySQL.pm";
 require "ConfigSQL.pm";
+require "MeetingSQL.pm";
+require "MiscSQL.pm";
+require "SecuritySQL.pm";
 
-require "DocumentHTML.pm";
 require "DocTypeHTML.pm";
-require "TopicHTML.pm"; 
+require "DocumentHTML.pm";
 require "MeetingHTML.pm"; 
+require "TopicHTML.pm"; 
 
 $query = new CGI;  # Global for subroutines
 
@@ -75,6 +76,7 @@ EndPage(-startpage => $TRUE);
 GetConferences();
 GetAllEventGroups();
 GetSecurityGroups();
+GetDocTypes();
 
 # Setup disable script correctly
 
@@ -183,7 +185,7 @@ EndPage();
 print $query -> start_multipart_form('POST',$CustomListForm,
                                      "id=\"customlist\" name=\"customlist\"");
 
-print q{<table class="MedPaddedTable">
+print q{<table class="MedPaddedTable" border=1>
         <tr>
         <td colspan="2">
         <p>This page allows you to change what information about documents is 
