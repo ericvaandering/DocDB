@@ -203,6 +203,7 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "Conference") { # Display talks
 
   # Find which ones aren't
   my @UnusedDocIDs = &RemoveArray(\@AllDocIDs,@AgendaDocIDs);
+    push @DebugStack,"UD: ".scalar(@UnusedDocIDs);
 
   # Print out info for unused documents
   if (@UnusedDocIDs) {
