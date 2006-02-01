@@ -201,10 +201,13 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "Conference") { # Display talks
   my @AgendaDocIDs = keys %AgendaDocIDs;
   my @AllDocIDs    = keys %AllDocIDs;
 
+  push @DebugStack,"All: ",join ',',@AllDocIDs;
+  push @DebugStack,"Agn: ",join ',',@AgendaDocIDs;
+
   # Find which ones aren't
   my @UnusedDocIDs = &RemoveArray(\@AllDocIDs,@AgendaDocIDs);
-    push @DebugStack,"UD: ".scalar(@UnusedDocIDs);
-
+    push @DebugStack,"NUD: ".scalar(@UnusedDocIDs);
+  
   # Print out info for unused documents
   if (@UnusedDocIDs) {
     push @DebugStack,"UD: ".join ',',@UnusedDocIDs;
