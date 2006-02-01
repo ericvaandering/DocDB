@@ -131,7 +131,7 @@ lots of old documents.
 <title>Name</title>
   <text>
 Select your name from the list. When you create a new document, you will be
-automatically selected as the requester and author.
+automatically selected as the submitter and author.
   </text>
  </entry>
 
@@ -201,9 +201,9 @@ OR.
 
  <entry>
 <key>requestersearch</key>
-<title>Requester</title>
+<title>Submitter</title>
   <text>
-Select the people who might have initially requested or requested a modification
+Select the people who might have initially submitted or made a modification
 to the document you are looking for. Note that regardless of the setting of
 <b>Within Fields</b> this search will be performed with a logical OR.
   </text>
@@ -256,7 +256,7 @@ you select two authors. You can either require that both authors are present on
 the paper (AND) or either author is present (OR). OR is the
 default. Note that this setting
 doesn't apply to text searches (since they use their own syntax). Also, for
-Requester and Document Type, multiple settings on the document are not
+Submitter and Document Type, multiple settings on the document are not
 possible, so these searches are <b>always</b> done with an OR. 
   </text>
  </entry>
@@ -508,13 +508,13 @@ when placing a document into the database and when reserving a document number.
 
  <entry>
   <key>requester</key>
-  <title>Requester</title>
+  <title>Submitter</title>
   <text>
-This is the name of the person who is requesting the document number or placing
+This is the name of the person who is reserving the document number or placing
 the document in the database. In other words, this is you. This option must be 
 supplied when reserving a document number, placing a document into the database,
-or updating a document. If a document has multiple authors, the requester will be
-listed as the first author if the requester is one of the authors.
+or updating a document. If a document has multiple authors, the submitter will be
+listed as the first author if the submitter is one of the authors.
   </text>
  </entry>
 
@@ -590,8 +590,8 @@ of <b>Within Fields</b>.
 </p>
 <p>
 To select multiple authors either click or CTRL-click (depending on your
-browser) on the author names. If a document has multiple authors, the requester
-will be listed as the first author if the requester is one of the authors.
+browser) on the author names. If a document has multiple authors, the submitter
+will be listed as the first author if the submitter is one of the authors.
 </p>
   </text>
  </entry>
@@ -889,7 +889,7 @@ or may not be the same as the web username and password.
    the talk (if any) will <b>not</b> be deleted, just the agenda entry.</p>
 
    <p><strong>Reserve:</strong> Check this box to create a new document based
-   on the  information entered in the agenda. The requester of the document is
+   on the  information entered in the agenda. The submitter of the document is
    listed as the first author and the document is modifiable by anyone who can
    <i>view</i> the meeting. You must supply at least one author for the
    document.</p>

@@ -394,7 +394,7 @@ print "<td>\n";
  my @RequesterDefaults = ($RequesterDefault);
  &AuthorScroll(-required => $RequiredEntries{Requester},
                -helplink => "requester",
-               -helptext => "Requester",
+               -helptext => "Submitter",
                -name     => "requester",
                -default  => \@RequesterDefaults);
 print "</td>\n";
