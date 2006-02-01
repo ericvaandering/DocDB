@@ -195,7 +195,9 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "Conference") { # Display talks
 
   my @AllRevisionIDs = &FetchRevisionsByEventID($ConferenceID);
   foreach my $DocRevID (@AllRevisionIDs) {
-    $AllDocIDs{$DocRevisions{$DocRevID}{DOCID}} = 1;
+    if ($DocRevisions{$DocRevID}{DOCID}) {
+      $AllDocIDs{$DocRevisions{$DocRevID}{DOCID}} = 1;
+    }  
   }
 
   my @AgendaDocIDs = keys %AgendaDocIDs;
