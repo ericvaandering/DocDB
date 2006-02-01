@@ -185,9 +185,9 @@ EndPage();
 print $query -> start_multipart_form('POST',$CustomListForm,
                                      "id=\"customlist\" name=\"customlist\"");
 
-print q{<table class="MedPaddedTable" border=1>
+print q{<table class="MedPaddedTable">
         <tr>
-        <td colspan="2">
+        <td colspan="3">
         <p>This page allows you to change what information about documents is 
         displayed in various parts of DocDB. You can choose to change the
         information just for yourself (you must allow cookies in your browser)
@@ -233,7 +233,7 @@ print "</td>\n";
 
 # Document types here
 print "<td>\n";
-DocTypeSelect( {-multiple => $TRUE} ); 
+DocTypeSelect( {-multiple => $TRUE, -format => "short"} ); 
 print "</td></tr>\n";
 
 print "<tr><td>";

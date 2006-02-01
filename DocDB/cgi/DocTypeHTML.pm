@@ -25,8 +25,9 @@
 
 sub DocTypeSelect (;%) { # Scrolling selectable list for doc type search
   my ($ArgRef) = @_;
-  my $Disabled = exists $ArgRef->{-disabled}  ?   $ArgRef->{-disabled}  : 0;
+  my $Disabled = exists $ArgRef->{-disabled} ?   $ArgRef->{-disabled} : 0;
   my $Multiple = exists $ArgRef->{-multiple} ?   $ArgRef->{-multiple} : 0;
+  my $Format   = exists $ArgRef->{-format}   ?   $ArgRef->{-format}   : "full";
 #  my $HelpLink = exists $ArgRef->{-helplink} ?   $ArgRef->{-helplink} : "";
 #  my $HelpText = exists $ArgRef->{-helptext} ?   $ArgRef->{-helptext} : "  my (%Params) = @_;
   
@@ -38,7 +39,11 @@ sub DocTypeSelect (;%) { # Scrolling selectable list for doc type search
   
   my %DocTypeLabels = ();
   foreach my $DocTypeID (keys %DocumentTypes) {
-    $DocTypeLabels{$DocTypeID} = "$DocumentTypes{$DocTypeID}{SHORT} [$DocumentTypes{$DocTypeID}{LONG}]";
+    if ($Format eq "short") {
+      $DocTypeLabels{$DocTypeID} = "$DocumentTypes{$DocTypeID}{SHORT}";    
+    } elsif ($Format eq "full") {
+      $DocTypeLabels{$DocTypeID} = "$DocumentTypes{$DocTypeID}{SHORT} [$DocumentTypes{$DocTypeID}{LONG}]";
+    }
   }  
   print FormElementTitle(-helplink => "doctype", -helptext => "Document type");   
   print $query -> scrolling_list(-size => 10, -name => "doctype", -multiple => $Multiple, 
