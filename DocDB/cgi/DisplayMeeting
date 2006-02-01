@@ -203,16 +203,11 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "Conference") { # Display talks
   my @AgendaDocIDs = keys %AgendaDocIDs;
   my @AllDocIDs    = keys %AllDocIDs;
 
-  push @DebugStack,"All: ",join ',',@AllDocIDs;
-  push @DebugStack,"Agn: ",join ',',@AgendaDocIDs;
-
   # Find which ones aren't
   my @UnusedDocIDs = &RemoveArray(\@AllDocIDs,@AgendaDocIDs);
-    push @DebugStack,"NUD: ".scalar(@UnusedDocIDs);
   
   # Print out info for unused documents
   if (@UnusedDocIDs) {
-    push @DebugStack,"UD: ".join ',',@UnusedDocIDs;
     print "<h4>Other documents for this event or <a href=\"$ListBy?eventid=$ConferenceID\">simple list</a> of all documents for this event</h4>\n";
     my %FieldList = PrepareFieldList(-default => "Default");
     my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList,
