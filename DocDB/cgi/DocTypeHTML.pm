@@ -6,7 +6,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -24,9 +24,11 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 sub DocTypeSelect (;%) { # Scrolling selectable list for doc type search
-  my (%Params) = @_;
-  
-  my $Disabled = $Params{-disabled}  || "0";
+  my ($ArgRef) = @_;
+  my $Disabled = exists $ArgRef->{-disabled}  ?   $ArgRef->{-disabled}  : 0;
+  my $Multiple = exists $ArgRef->{-multiple} ?   $ArgRef->{-multiple} : 0;
+#  my $HelpLink = exists $ArgRef->{-helplink} ?   $ArgRef->{-helplink} : "";
+#  my $HelpText = exists $ArgRef->{-helptext} ?   $ArgRef->{-helptext} : "  my (%Params) = @_;
   
   my $Booleans = "";
   
@@ -38,10 +40,8 @@ sub DocTypeSelect (;%) { # Scrolling selectable list for doc type search
   foreach my $DocTypeID (keys %DocumentTypes) {
     $DocTypeLabels{$DocTypeID} = "$DocumentTypes{$DocTypeID}{SHORT} [$DocumentTypes{$DocTypeID}{LONG}]";
   }  
-  print "<b><a ";
-  &HelpLink("doctype");
-  print "Document type:</a></b><br> \n";
-  print $query -> scrolling_list(-size => 10, -name => "doctype", 
+  print FormElementTitle(-helplink => "doctype", -helptext => "Document type");   
+  print $query -> scrolling_list(-size => 10, -name => "doctype", -multiple => $Multiple, 
                               -values => \%DocTypeLabels, $Booleans);
 };
 
