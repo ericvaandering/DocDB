@@ -48,6 +48,8 @@ require "TopicSQL.pm";
 
 require "DocumentHTML.pm";
 
+require "DocumentUtilities.pm";
+
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 

@@ -49,6 +49,7 @@ require "HTMLUtilities.pm";
 require "RevisionUtilities.pm";
 require "SignoffUtilities.pm";
 require "Utilities.pm";
+require "DocumentUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 
