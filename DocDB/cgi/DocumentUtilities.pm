@@ -113,6 +113,7 @@ sub PrepareFieldList (%) {
   my @Fields       = @{$Params{-fields}}; 
   my $Default      = $Params{-default}      || "";
   my $TopicID      = $Params{-topicid}      || 0;
+  my $DocTypeID    = $Params{-doctypeid}    || 0;
   my $EventID      = $Params{-eventid}      || 0;
   my $EventGroupID = $Params{-eventgroupid} || 0;
   
@@ -162,6 +163,14 @@ sub PrepareFieldList (%) {
     }  
   }
   
+  #  User Cookie for document type
+  if ($TopicID && $query -> cookie("doctypeid_$DocTypeID") ) {
+    %FieldList = CookieToFieldList( $query -> cookie("doctypeid_$DocTypeID") );
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }
+  
   #  User Cookie for default group
   if ($Default && $query -> cookie("$Default") ) {
     %FieldList = CookieToFieldList( $query -> cookie("$Default") );
@@ -189,6 +198,14 @@ sub PrepareFieldList (%) {
   #  DB lookup for topic
   if ($TopicID) {
     %FieldList = FetchCustomFieldList(-topicid => $TopicID);
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }  
+
+  #  DB lookup for document type
+  if ($DocTypeID) {
+    %FieldList = FetchCustomFieldList(-doctypeid => $DocTypeID);
     if (%FieldList) {
       return %FieldList
     }  

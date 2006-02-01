@@ -62,6 +62,7 @@ my @EventGroupIDs     = split /\0/,$params{eventgroups};
 my @EventIDs          = split /\0/,$params{events};
 my @Defaults          = split /\0/,$params{defaultlists}; 
 my @TopicIDs          = split /\0/,$params{topics};
+my @DocTypeIDs        = split /\0/,$params{doctype};
 my $DefaultEventID    = $params{eventid};
 
 my $MaxFields = 15;
@@ -136,6 +137,14 @@ if ($Scope eq "All") { # Do inserts to DB, check user's permissions
       push @WarnStack,"You are not allowed to modify this event";
     }  
   }
+  foreach my $DocTypeID (@DocTypeIDs) {
+    if ($AllowAll) {
+      InsertCustomFieldList(-doctypeid => $DocTypeID, -fieldlist => \%FieldList); 
+      push @ActionStack,"Custom list set for document type $DocTypeID";
+    } else {
+      push @WarnStack,"You are not allowed to document types";
+    }  
+  }
 } else { # We're doing cookies
   # Pack field lists into a string
   my @Settings = ();
@@ -165,6 +174,10 @@ if ($Scope eq "All") { # Do inserts to DB, check user's permissions
   foreach my $EventID (@EventIDs) {
     push @CookieNames,"eventid_$EventID";
     push @ActionStack,"Custom list set for Event $EventID";
+  }
+  foreach my $DocTypeID (@DocTypeIDs) {
+    push @CookieNames,"doctypeid_$DocTypeID";
+    push @ActionStack,"Custom list set for document type $DocTypeID";
   }
   
   # Create CGI Cookie objects that "never" expire                       

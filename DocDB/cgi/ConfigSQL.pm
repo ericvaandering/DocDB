@@ -81,6 +81,7 @@ sub FetchCustomFieldList (%) {
   my $EventID      = $Params{-eventid}      || 0;
   my $EventGroupID = $Params{-eventgroupid} || 0;
   my $TopicID      = $Params{-topicid}      || 0;
+  my $DocTypeID    = $Params{-doctypeid}    || 0;
 
   # Add ones for topic, document type, and groups?
 
@@ -97,6 +98,9 @@ sub FetchCustomFieldList (%) {
   } elsif ($TopicID) {
     $ForeignKey = "TopicID";
     $ForeignID  = $TopicID;
+  } elsif ($DocTypeID) {
+    $ForeignKey = "DocTypeID";
+    $ForeignID  = $DocTypeID;
   }  
 
   my $List = $dbh->prepare("select
@@ -126,6 +130,7 @@ sub InsertCustomFieldList {
   my $TopicID      = $Params{-topicid}      || 0;
   my $EventID      = $Params{-eventid}      || 0;
   my $EventGroupID = $Params{-eventgroupid} || 0;
+  my $DocTypeID    = $Params{-doctypeid}    || 0;
   my $Description  = $Params{-description}  || "";
   my %FieldList    = %{$Params{-fieldlist}}; 
   
@@ -142,6 +147,9 @@ sub InsertCustomFieldList {
   } elsif ($EventGroupID) {
     $ForeignKey = "EventGroupID";
     $ForeignID  = $EventGroupID;
+  } elsif ($DocTypeID) {
+    $ForeignKey = "DocTypeID";
+    $ForeignID  = $DocTypeID;
   }  
 
   my $Delete = $dbh->prepare("delete from ConfigSetting 
