@@ -314,8 +314,8 @@ sub DownloadURLs (%) {
       my @Authentication = ();
       if ($Files{$FileKey}{User} && $Files{$FileKey}{Pass}) {
         push @DebugStack,"Using authentication";
-        @Authentication = ("--http-user",$Files{$FileKey}{User}, 
-	                   "--http-pass",$Files{$FileKey}{Pass});
+        @Authentication = ("--http-user=".$Files{$FileKey}{User}, 
+	                   "--http-password=".$Files{$FileKey}{Pass});
       }
 
       $Status = system ($Wget,"--quiet",@Authentication,$Files{$FileKey}{URL});
