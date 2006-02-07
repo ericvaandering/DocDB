@@ -1,5 +1,5 @@
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -46,7 +46,7 @@ sub FetchDocRevisionByID ($) {
   $DocRevisions{$DocRevID}{Submitter}     = $SubmitterID;
   $DocRevisions{$DocRevID}{Title}         = $DocumentTitle;
   $DocRevisions{$DocRevID}{PUBINFO}       = $PublicationInfo;
-  $DocRevisions{$DocRevID}{ABSTRACT}      = $Abstract;
+  $DocRevisions{$DocRevID}{Abstract}      = $Abstract;
   $DocRevisions{$DocRevID}{DATE}          = $RevisionDate;
   $DocRevisions{$DocRevID}{TimeStamp}     = $TimeStamp;
   $DocRevisions{$DocRevID}{VERSION}       = $VersionNumber; # FIXME: BWC

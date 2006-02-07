@@ -2,7 +2,7 @@
 #
 # Author Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -28,6 +28,7 @@ $StartTime = new Benchmark;
 require "DocDBGlobals.pm";
 require "DocumentHTML.pm";
 require "HTMLUtilities.pm";
+require "DocumentUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 
@@ -55,13 +56,11 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 ### Set defaults
 
 my ($Title,  $Message, $List);
-my ($SortBy, $Reverse, @Fields);
 
 # Defaults, later can surround these in "unless"
-
-@Fields  = ("Docid","Title","Author","Updated"); 
-$SortBy  = "date";
-$Reverse = 1;
+my %FieldListOptions = (-default => "Default");
+my $SortBy           = "date";
+my $Reverse          = 1;
 
 my @DocumentIDs = ();
 
@@ -79,7 +78,7 @@ if ($Days) {
 
   require "TopicSQL.pm";
   &FetchMinorTopic($TopicID);
-
+  $FieldListOptions{-topicid} = $TopicID;
   $Title   = "Document List by Topic";
   $Message = "These documents on <span class=\"Highlight\">$MinorTopics{$TopicID}{LONG} 
               ($MinorTopics{$TopicID}{Full})</span> are available:";
@@ -99,6 +98,7 @@ if ($Days) {
     push @ErrorStack,$Msg_AuthorInvalid;
   }
 
+  $FieldListOptions{-authorid} = $AuthorID; # (Does nothing right now)
   $Title   = "Document List by Author";  
   
   my $Link = &AuthorLink($AuthorID);
@@ -129,6 +129,7 @@ if ($Days) {
   require "MeetingSQL.pm";
   &FetchConferenceByConferenceID($EventID);
 
+  $FieldListOptions{-eventid} = $EventID;
   $Title   = "Document List by Event";
   $Message = "These documents from <span class=\"Highlight\">$Conferences{$EventID}{LongDescription}</span> are available:";
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
@@ -140,7 +141,6 @@ if ($Days) {
 ### Event Group (name or number)
 
   require "MeetingSQL.pm";
-  @Fields  = ("Docid","Title","Events","Author","Updated"); 
   $SortBy = "confdate";
   
   unless ($EventGroupID) {
@@ -148,6 +148,8 @@ if ($Days) {
   }  
   &FetchEventGroup($EventGroupID);
   
+  $FieldListOptions{-eventgroupid} = $EventGroupID;
+  $FieldListOptions{-default}      = "Event Group Default";
   $Title   = "Document List by Event Group";
   $Message = "These documents from <span class=\"Highlight\">$EventGroups{$EventGroupID}{LongDescription}</span> are available:";
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
@@ -155,6 +157,7 @@ if ($Days) {
            "and DocumentRevision.Obsolete=0 and RevisionEvent.ConferenceID=Conference.ConferenceID and Conference.EventGroupID=?");            
   $List -> execute($EventGroupID);
 } elsif ($TypeID) {
+  $FieldListOptions{-doctypeid} = $TypeID;
   $Title   = "Document List by Type";
   $Message = "These documents of type <span class=\"Highlight\">
              $DocumentTypes{$TypeID}{SHORT}</span> are available:";
@@ -179,14 +182,14 @@ if ($Days) {
 
 
 if ($Mode eq "conference") {
-  @Fields  = ("Title","Events","Author","Files"); 
+  $FieldListOptions{-default} = "Conference Mode";
   $SortBy  = "confdate";
 } elsif ($Mode eq "meeting") {
-  @Fields  = ("Title","Author","Topics","Files");
+  $FieldListOptions{-default} = "Meeting Mode";
   $SortBy  = "requester";
   $Reverse = 0;
 } elsif ($Mode eq "pubs") {
-  @Fields  = ("Title","References","Files");
+  $FieldListOptions{-default} = "Publications";
 }
 
 # Do the fetch on the $List. "unless (@DocumentIDs)" here to do complex fetches, user specify
@@ -204,7 +207,7 @@ unless (@DocumentIDs) { # Some do their own
 ### Start HTML
 
 print $query->header;
-&DocDBHeader($Title);
+DocDBHeader($Title);
 
 print "<h4>$Message</h4><p/>\n";
 
@@ -217,17 +220,17 @@ if ($Days) { # Print out modified by form
   print "<center>";
   print $query -> submit (-value => "Show Documents");
   print " modified in the last ";
-  &DaysPulldown($Days);
+  DaysPulldown($Days);
   print " days.</center>";
   print $query -> endform;
   print "<p/>";
 }
 
 ### Table and Statistics
-
-my $NumberOfDocuments = &DocumentTable(-fields => \@Fields, -docids  => \@DocumentIDs, 
-                                       -sortby => $SortBy,  -reverse => $Reverse);
-print "<b>Number of documents found: ",int($NumberOfDocuments),"</b><p/>\n";
+my %FieldList = PrepareFieldList(%FieldListOptions);
+my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs, 
+                                      -sortby    => $SortBy,     -reverse => $Reverse);
+print "<p><b>Number of documents found: ",int($NumberOfDocuments),"</b></p>\n";
 
 $EndTime  = new Benchmark;
 

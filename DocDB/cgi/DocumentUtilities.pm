@@ -5,7 +5,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -105,7 +105,165 @@ sub AddDocument {
   }
   
   return ($DocumentID,$DocRevID);                                 
-
 }
 
+sub PrepareFieldList (%) {
+  my %Params = @_;
+  
+  my @Fields       = @{$Params{-fields}}; 
+  my $Default      = $Params{-default}      || "";
+  my $TopicID      = $Params{-topicid}      || 0;
+  my $DocTypeID    = $Params{-doctypeid}    || 0;
+  my $EventID      = $Params{-eventid}      || 0;
+  my $EventGroupID = $Params{-eventgroupid} || 0;
+  
+  # Given a bunch of parameters for what the current list of documents contains, 
+  # apply a precedence operation and figure out if any of the various ways of 
+  # returning a field list give us something. Fall back on defaults.
+  # Precedence is 1) @Fields if specified 
+  #               2) Cookies for user a) event b) eventgroup c) topic d) defaults
+  #               3) DB definitions   a) event b) eventgroup c) topic d) defaults
+  #               4) DocDB defined defaults
+  #               5) Default of all lists
+  
+  require "ConfigSQL.pm";
+  require "Fields.pm";
+  
+  my %FieldList = ();
+  
+  # If fields are specified, use that
+  if (@Fields) {
+    %FieldList = FieldsToFieldlist(@Fields);
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }  
+  
+  #  User Cookie for event
+  if ($EventID && $query -> cookie("eventid_$EventID") ) {
+    %FieldList = CookieToFieldList( $query -> cookie("eventid_$EventID") );
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }
+
+  #  User Cookie for eventgroup
+  if ($EventGroupID && $query -> cookie("eventgroupid_$EventGroupID") ) {
+    %FieldList = CookieToFieldList( $query -> cookie("eventgroupid_$EventGroupID") );
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }
+  
+  #  User Cookie for topic
+  if ($TopicID && $query -> cookie("topicid_$TopicID") ) {
+    %FieldList = CookieToFieldList( $query -> cookie("topicid_$TopicID") );
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }
+  
+  #  User Cookie for document type
+  if ($DocTypeID && $query -> cookie("doctypeid_$DocTypeID") ) {
+    %FieldList = CookieToFieldList( $query -> cookie("doctypeid_$DocTypeID") );
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }
+  
+  #  User Cookie for default group
+  if ($Default && $query -> cookie("$Default") ) {
+    %FieldList = CookieToFieldList( $query -> cookie("$Default") );
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }
+
+  #  DB lookup for event
+  if ($EventID) {
+    %FieldList = FetchCustomFieldList(-eventid => $EventID);
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }  
+    
+  #  DB lookup for event group
+  if ($EventGroupID) {
+    %FieldList = FetchCustomFieldList(-eventgroupid => $EventGroupID);
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }  
+    
+  #  DB lookup for topic
+  if ($TopicID) {
+    %FieldList = FetchCustomFieldList(-topicid => $TopicID);
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }  
+
+  #  DB lookup for document type
+  if ($DocTypeID) {
+    %FieldList = FetchCustomFieldList(-doctypeid => $DocTypeID);
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }  
+    
+  #  DB lookup   for default group
+  if ($Default) {
+    %FieldList = FetchCustomFieldList(-default => $Default);
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }  
+
+  # Default for various styles
+  if ($Default) {
+    my @DefaultFields = @{ $DefaultFieldLists{$Default} };
+    %FieldList = FieldsToFieldlist(@DefaultFields);
+    if (%FieldList) {
+      return %FieldList
+    }  
+  }
+  
+  # Default for "Default" (probably never gets here)
+  my @DefaultFields = @{ $DefaultFieldLists{"Default"} };
+  %FieldList = FieldsToFieldlist(@DefaultFields);
+  return %FieldList
+}
+
+sub FieldsToFieldlist {
+  my @Fields = @_;
+  my %FieldList = ();
+  
+  my $Column = 0;
+  my $Row    = 1;
+  foreach my $Field (@Fields) {
+    ++$Column;
+    $FieldList{$Field}{Column}  = $Column;
+    $FieldList{$Field}{Row}     = 1;
+    $FieldList{$Field}{RowSpan} = 1;
+    $FieldList{$Field}{ColSpan} = 1;
+  }  
+  
+  return %FieldList;
+}
+  
+sub CookieToFieldList {
+  my ($Value) = @_;  
+  my @Settings = split /\;/,$Value;
+  
+  my %FieldList = ();
+  foreach my $Setting (@Settings) {
+    my ($Field,$Row,$Column,$RowSpan,$ColSpan) = split /_/,$Setting;
+    push @DebugStack, "Setting fieldlist to $Field,$Row,$Column,$RowSpan,$ColSpan";
+    $FieldList{$Field}{Row}     = $Row;
+    $FieldList{$Field}{Column}  = $Column;
+    $FieldList{$Field}{RowSpan} = $RowSpan;
+    $FieldList{$Field}{ColSpan} = $ColSpan;
+  }
+  return %FieldList;
+}  
 1;

@@ -1,3 +1,30 @@
+7.3.0
+  This release adds the ability to change what information for an agenda or 
+  document list is displayed in various circumstances. There are two entries
+  into the customization form: From the display of an event and from the 
+  "Preferences" page. Let me know if you think this should be linked from other
+  places.
+  
+  Ordinary users can set (using cookies) display parameters for anything they
+  view which override defaults set by others. Those able to modify an event
+  agenda can change the display for that event and admins  can change the
+  display for events, groups of events, topics, document types, and various
+  system-wide defaults.
+  
+  Two other small changes:
+    1) Requester is now called "submitter" since the former was confusing
+    2) "Restricted to" is now called "Accessible by" when you don't have
+       separate view/modify lists (sugested by Stephen P.)
+
+  New files:
+    cgi/ConfigSQL.pm  
+    cgi/CustomListForm  
+    cgi/EditTalkInfo  
+    cgi/Fields.pm  
+  
+  Some CSS class names in meeting agendas have changed, we now have a  class
+  name on all cells of document lists and agendas.
+
 7.2.0
 
   Both scripts and CSS have changed, make sure you update both

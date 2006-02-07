@@ -145,6 +145,7 @@ th {vertical-align: bottom; }
 
 table.Alternating {
   border-collapse: collapse;
+  empty-cells: show;
 }
 
 table.CenteredTable {
@@ -162,22 +163,22 @@ li.Even, tr.Even, tbody.Even {
 
 /* DocumentList tables show up in lots of places, hence here */
 
-#TalkList,#DocumentList {
+#TalkList,.DocumentList {
   border: 1px solid black;
   margin-bottom: 2em;
   margin-right: auto;
   margin-left: auto;
 }
 
-#TalkList td,#DocumentList td {
+#TalkList td,.DocumentList td {
   vertical-align: top;
   text-align: left;
   padding: 3px 5px 3px 5px;
 }  
 
-#TalkList th,#DocumentList th {
+#TalkList th,.DocumentList th {
   vertical-align: bottom;
-  border-bottom: 1px solid black;
+  border: 1px solid black;
   padding: 5px 5px 5px 5px;
 }  
 
@@ -189,7 +190,7 @@ td.Time {
   text-align: center;
 }  
 
-.SubmitCell { /* Should be ".SubmitCell" */
+.SubmitCell, td.SubmitCell, th.SubmitCell { /* Should be ".SubmitCell" */
   text-align: center;
 }  
 

@@ -288,4 +288,10 @@ sub FilesByDescription {
          $DocFiles{$a}{NAME} cmp $DocFiles{$b}{NAME}
 }                              
 
+sub FieldsByColumn {
+  $SortFields{$a}{Row}    <=> $SortFields{$b}{Row} 
+                         or
+  $SortFields{$a}{Column} <=> $SortFields{$b}{Column} 
+}
+
 1;

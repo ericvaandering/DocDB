@@ -232,7 +232,5 @@ print "</tr>\n";
 print "</table>\n";
 print $query -> end_multipart_form;
 
-print "<hr/>\n";
-
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

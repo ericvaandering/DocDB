@@ -1,4 +1,4 @@
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -196,7 +196,7 @@ sub PrintRevisionInfo {
   
   print "</div>\n";  # RightColumn3Col
 
-  &PrintAbstract($DocRevisions{$DocRevID}{ABSTRACT}); # All are called only here, so changes are OK
+  &PrintAbstract($DocRevisions{$DocRevID}{Abstract}); # All are called only here, so changes are OK
   &FileListByRevID($DocRevID); # All are called only here, so changes are OK
   &TopicListByID(@TopicIDs);
   &AuthorListByID(@AuthorIDs);
@@ -219,9 +219,16 @@ sub PrintRevisionInfo {
   print "</div>\n";  # RevisionInfo
 }
  
-sub PrintAbstract {
-  my ($Abstract) = @_;
+sub PrintAbstract ($;$) {
+  my ($Abstract,$ArgRef) = @_;
   
+  my $Format = exists $ArgRef->{-format} ? $ArgRef->{-format} : "div";
+  
+#  if ($Format eq "bare") {
+#    print  $Abstract;
+#    return;
+#  }
+
   if ($Abstract) {
     $Abstract = &URLify($Abstract);
     $Abstract =~ s/\n\n/<p\/>/g;
@@ -229,12 +236,17 @@ sub PrintAbstract {
   } else {
     $Abstract = "None";
   }  
-  print "<div id=\"Abstract\">\n";
-  print "<dl>\n";
-  print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Abstract:</span></dt>\n";
-  print "<dd>$Abstract</dd>\n";
-  print "</dl>\n";
-  print "</div>\n";
+  
+  if ($Format eq "div") {
+    print "<div id=\"Abstract\">\n";
+    print "<dl>\n";
+    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Abstract:</span></dt>\n";
+    print "<dd>$Abstract</dd>\n";
+    print "</dl>\n";
+    print "</div>\n";
+  } elsif ($Format eq "bare") {
+    print  $Abstract;
+  }   
 }
 
 sub PrintKeywords {

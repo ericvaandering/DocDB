@@ -1,4 +1,4 @@
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -161,11 +161,11 @@ sub RevisionMailBody ($) {
   print $Mailer " Document ID: ",$FullID,"\n";
   print $Mailer "         URL: ",$URL,"\n";
   print $Mailer "        Date: ",$DocRevisions{$DocRevID}{DATE},"\n";;
-  print $Mailer "Requested by: ",$Submitter,"\n";;
+  print $Mailer "Submitted by: ",$Submitter,"\n";;
   print $Mailer "     Authors: ",$Authors,"\n";;
   print $Mailer "      Topics: ",$Topics,"\n";;
   print $Mailer "    Keywords: ",$DocRevisions{$DocRevID}{Keywords},"\n";;
-  print $Mailer "    Abstract: ",$DocRevisions{$DocRevID}{ABSTRACT},"\n";;
+  print $Mailer "    Abstract: ",$DocRevisions{$DocRevID}{Abstract},"\n";;
 }
 
 sub UsersToNotify ($$) {

@@ -4,7 +4,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Stephen Wood (saw@jlab.org)
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -323,91 +323,41 @@ sub PrintSession (%) {
   require "TalkHTML.pm";
   require "SQLUtilities.pm";
   require "Utilities.pm";
+  require "DocumentHTML.pm";
+  require "DocumentUtilities.pm";
   
   unless ($SkipHeader) {
-    &PrintSessionHeader($SessionID);
+    PrintSessionHeader($SessionID);
   }
   
-  my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
-  my @TalkSeparatorIDs = &FetchTalkSeparatorsBySessionID($SessionID);
-  my @SessionOrderIDs  = &FetchSessionOrdersBySessionID($SessionID);
-  my $ConferenceID     = $Sessions{$SessionID}{ConferenceID};
-  
-  my ($AccumSec,$AccumMin,$AccumHour) = &SQLDateTime($Sessions{$SessionID}{StartTime});
-  my $AccumulatedTime = &AddTime("$AccumHour:$AccumMin:$AccumSec");
+  my @SessionTalkIDs   = FetchSessionTalksBySessionID($SessionID);
+  my @TalkSeparatorIDs = FetchTalkSeparatorsBySessionID($SessionID);
+  my @SessionOrderIDs  = FetchSessionOrdersBySessionID($SessionID);
+  my $EventID          = $Sessions{$SessionID}{ConferenceID};
+  FetchConferenceByConferenceID($EventID);
+  my $EventGroupID = $Conferences{$EventID}{EventGroupID};
+
+  my ($AccumSec,$AccumMin,$AccumHour) = SQLDateTime($Sessions{$SessionID}{StartTime});
+  my $AccumulatedTime = AddTime("$AccumHour:$AccumMin:$AccumSec","0:0:0");
     
-# Sort talks and separators
+# Sort talks and separators, build start time arrays
 
   @SessionOrderIDs = sort SessionOrderIDByOrder @SessionOrderIDs;
-  
+  foreach my $SessionOrderID (@SessionOrderIDs) {
+    $SessionOrders{$SessionOrderID}{StartTime} = $AccumulatedTime;
+    if ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) { # TalkSeparator
+      my $TalkSeparatorID =  $SessionOrders{$SessionOrderID}{TalkSeparatorID};
+      $AccumulatedTime = AddTime($AccumulatedTime,$TalkSeparators{$TalkSeparatorID}{Time});
+    } elsif ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
+      my $SessionTalkID =  $SessionOrders{$SessionOrderID}{SessionTalkID};
+      $AccumulatedTime = AddTime($AccumulatedTime,$SessionTalks{$SessionTalkID}{Time});
+    }
+  }
+
   if (@SessionOrderIDs) {
-  
-    print "<table class=\"Alternating CenteredTable TalkList\">\n";
-
-    print "<tr>\n";
-    print "<th class=\"TalkTime\">Start</th>\n";
-    print "<th class=\"TalkTitle\">Title</th>\n";
-    print "<th class=\"TalkAuthor\">Author</th>\n";
-    print "<th class=\"TalkTopics\">Topic(s)</th>\n";
-    print "<th class=\"TalkFiles\">Files</th>\n";
-    print "<th class=\"TalkLength\">Length</th>\n";
-    print "<th class=\"TalkNotes\">Notes</th>\n";
-    print "</tr>\n";
-
-    my $TalkCounter = 0;
-    my $RowClass;
-    foreach my $SessionOrderID (@SessionOrderIDs) {
-      ++$TalkCounter;
-      if ($TalkCounter % 2) { 
-        $RowClass = "Odd";
-      } else {
-        $RowClass = "Even";
-      }    
-      if ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) { # TalkSeparator
-        my $TalkSeparatorID =  $SessionOrders{$SessionOrderID}{TalkSeparatorID};
-
-        print "<tr class=\"$RowClass\">\n";
-        print "<td class=\"Time\"><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";
-        print "<td>$TalkSeparators{$TalkSeparatorID}{Title}</td>\n";
-        print "<td colspan=\"3\">$TalkSeparators{$TalkSeparatorID}{Note}</td>\n";
-        print "<td class=\"Time\">",&TruncateSeconds($TalkSeparators{$TalkSeparatorID}{Time}),"</td>\n";
-        print "</tr>\n";
-
-        $AccumulatedTime = &AddTime($AccumulatedTime,$TalkSeparators{$TalkSeparatorID}{Time});
-      } elsif ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
-        my $SessionTalkID =  $SessionOrders{$SessionOrderID}{SessionTalkID};
-
-        if ($SessionTalks{$SessionTalkID}{DocumentID}) { # Talk with DocID (confirmed or not)
-          &PrintSessionTalk($SessionTalkID,$AccumulatedTime,$RowClass);
-        } else { # Talk where only hints exist
-          print "<tr class=\"$RowClass\">\n";
-          print "<td><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";
-          print "<td>$SessionTalks{$SessionTalkID}{HintTitle}</td>\n";
-          my @TopicHintIDs  = &FetchTopicHintsBySessionTalkID($SessionTalkID);
-          my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID);
-          my @TopicIDs  = ();
-          my @AuthorIDs = (); 
-          foreach my $TopicHintID (@TopicHintIDs) {
-            push @TopicIDs,$TopicHints{$TopicHintID}{MinorTopicID};
-          }
-          foreach my $AuthorHintID (@AuthorHintIDs) {
-            push @AuthorIDs,$AuthorHints{$AuthorHintID}{AuthorID};
-          }
-          print "<td><i>\n"; &ShortAuthorListByID(@AuthorIDs); print "</i></td>\n";
-          print "<td><i>\n"; &ShortTopicListByID(@TopicIDs);   print "</i></td>\n";
-          print "<td>&nbsp;</td>\n"; # Files, which can't exist
-          print "<td class=\"Time\">",&TruncateSeconds($SessionTalks{$SessionTalkID}{Time}),"</td>\n";
-          if ($SessionTalks{$SessionTalkID}{Note}) {
-            print "<td><b>",&TalkNoteLink($SessionTalkID),"</b></td>\n";
-          } else {
-            print "<td>",&TalkNoteLink($SessionTalkID),"</td>\n";
-          }  
-          print "</tr>\n";
-        } 
-        $AccumulatedTime = &AddTime($AccumulatedTime,$SessionTalks{$SessionTalkID}{Time});
-      }
-    } # End Separator/Talk distinction
-    print "</table>\n"; 
+    my %FieldListOptions = (-default => "Event Agenda", -eventid => $EventID, -eventgroupid => $EventGroupID);
+    my %FieldList = PrepareFieldList(%FieldListOptions);
+    DocumentTable(-sessionorderids => \@SessionOrderIDs, -fieldlist => \%FieldList);
   } else {
     print "<h4>No talks in agenda</h4>\n";
   }  
@@ -471,11 +421,8 @@ sub PrintSessionHeader ($) {
   }
   
   if ($Sessions{$SessionID}{Description}) {
-    my $Description = $Sessions{$SessionID}{Description};
-    $Description =~ s/\n\s*\n/<p\/>/;
-    $Description =~ s/\n/<br\/>/;
-    
-    print "<p class=\"SessionDescription\"> ",&URLify($Description),"</p>\n";
+    my $Description = AddLineBreaks($Sessions{$SessionID}{Description});
+    print "<div class=\"SessionDescription\"> ",URLify($Description),"</div>\n";
   }
 }
 
@@ -522,8 +469,8 @@ sub PrintSingleSessionHeader (%) {
     print "<h5>(<a href=\"$Conferences{$EventID}{URL}\">$Conferences{$EventID}{Title} homepage</a>)</h5>\n";
   }
   
+  print "<table class=\"CenteredTable LowPaddedTable\"><tr>\n";
   if ((&CanCreate()) || &CanModifyMeeting($EventID)) {
-    print "<table class=\"CenteredTable LowPaddedTable\"><tr>\n";
     if (&CanCreate()) {
       print "<th>\n";
       &TalkUploadButton(-sessionid => $SessionID);
@@ -532,7 +479,7 @@ sub PrintSingleSessionHeader (%) {
     if (&CanModifyMeeting($EventID)) {
       print "<th>\n";
       if ($OnlyOne) { 
-        &SessionModifyButton(-eventid => $EventID, -labeltext => " agenda for this session or");
+        &SessionModifyButton(-eventid => $EventID, -buttontext => "Modify Agenda", -labeltext => " for this session or");
       } else {
         &SessionModifyButton(-sessionid => $SessionID, -buttontext => "Modify Session", -labeltext => " or");
       }
@@ -549,16 +496,16 @@ sub PrintSingleSessionHeader (%) {
       &EventCopyButton(-eventid => $EventID);
       print "</th>\n";
     }
-    print "</tr></table>\n";
   }
+  print "</tr>\n<tr><th colspan=\"3\">\n";
+  EventDisplayButton( {-eventid => $EventID} );
+  print "</th>\n";
+  print "</tr></table>\n";
 
   &PrintMeetingPreamble($EventID);
   if ($Sessions{$SessionID}{Description}) {
-    my $Description = $Sessions{$SessionID}{Description};
-    $Description =~ s/\n\s*\n/<p\/>/;
-    $Description =~ s/\n/<br\/>/;
-    
-    print "<p class=\"SessionDescription\"> ",&URLify($Description),"</p>\n";
+    my $Description = AddLineBreaks($Sessions{$SessionID}{Description});
+    print "<div class=\"SessionDescription\"> ",&URLify($Description),"</div>\n";
   }
   print "</div>\n";
 }  
@@ -594,7 +541,7 @@ sub PrintMeetingInfo($;%) {
     print "<h5>(<a href=\"$Conferences{$ConferenceID}{URL}\">$Conferences{$ConferenceID}{Title} homepage</a>)</h5>\n";
   }
   
-  if (($AddTalkLink && &CanCreate()) || &CanModifyMeeting($ConferenceID)) {
+  if ($AddTalkLink || &CanModifyMeeting($ConferenceID)) {
     print "<table class=\"CenteredTable LowPaddedTable\"><tr>\n";
     if ($AddTalkLink && &CanCreate()) {
       print "<th>\n";
@@ -606,7 +553,12 @@ sub PrintMeetingInfo($;%) {
       &EventModifyButton(-eventid => $ConferenceID);
       print "</th>\n";
       print "</tr>\n<tr><th colspan=\"3\">\n";
-      &EventCopyButton(-eventid => $EventID);
+      &EventCopyButton(-eventid => $ConferenceID);
+      print "</th>\n";
+    }
+    if ($AddTalkLink) {
+      print "</tr>\n<tr><th colspan=\"3\">\n";
+      EventDisplayButton( {-eventid => $ConferenceID} );
       print "</th>\n";
     }
     print "</tr></table>\n";
@@ -898,8 +850,8 @@ sub EventSelect (;%) {
     $Booleans .= "-disabled";
   }  
 
-  &GetConferences; 
-  &GetAllEventGroups; 
+  GetConferences(); 
+  GetAllEventGroups(); 
 
   my @ConferenceIDs = reverse sort EventsByDate keys %Conferences;
   my %Labels        = ();
@@ -907,11 +859,11 @@ sub EventSelect (;%) {
     if ($Format eq "full") {
       $Labels{$ConferenceID} = $EventGroups{$Conferences{$ConferenceID}{EventGroupID}}{ShortDescription}.":".
                                $Conferences{$ConferenceID}{Title} .
-                               " (".&EuroDate($Conferences{$ConferenceID}{StartDate}).")"; 
+                               " (".EuroDate($Conferences{$ConferenceID}{StartDate}).")"; 
     }
   }      
   
-  my $ElementTitle = &FormElementTitle(-helplink => "events", -helptext => "Events");
+  my $ElementTitle = FormElementTitle(-helplink => "events", -helptext => "Events");
 
   print $ElementTitle;
   print $query -> scrolling_list(-name     => "events",  -values  => \@ConferenceIDs, 
@@ -962,8 +914,8 @@ sub EventModifyButton (%) {
   my %Params = @_;
 
   my $EventID    = $Params{-eventid}; 
-  my $ButtonText = $Params{-buttontext} || "Modify"; 
-  my $LabelText  = $Params{-labeltext}  || " agenda for this event"; 
+  my $ButtonText = $Params{-buttontext} || "Modify agenda"; 
+  my $LabelText  = $Params{-labeltext}  || " for this event"; 
 
   print $query -> startform('POST',$MeetingModify),"<div>\n";
   print $query -> submit (-value => $ButtonText);
@@ -991,6 +943,17 @@ sub EventCopyButton (%) {
   print $query -> submit (-value => "Schedule");
   print " a similar event in "; 
   print $query -> popup_menu(-name => "offsetdays", -values => \@Offsets, -labels => \%Labels, -default => 7);
+  print "\n</div>\n",$query -> endform,"\n";
+}
+
+sub EventDisplayButton ($) {
+  my ($ArgRef) = @_;
+  
+  my $EventID = exists $ArgRef->{-eventid} ? $ArgRef->{-eventid} : 0;
+  print $query -> startform('POST',$CustomListForm),"<div>\n";
+  print $query -> hidden(-name => "eventid", -default => $EventID);
+  print $query -> submit (-value => "Change");
+  print " the information displayed for this event"; 
   print "\n</div>\n",$query -> endform,"\n";
 }
 

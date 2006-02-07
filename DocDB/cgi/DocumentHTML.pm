@@ -3,7 +3,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -25,82 +25,122 @@ sub DocumentTable (%) {
   require "RevisionSQL.pm";
   require "Security.pm";
   require "Sorts.pm";
+  require "Fields.pm";
+  
+  require "AuthorHTML.pm";
+  require "RevisionHTML.pm";
+  require "ResponseElements.pm";
   
   my %Params = @_;
   
-  my $SortBy        =   $Params{-sortby}; 
-  my $Reverse       =   $Params{-reverse};
-  my $MaxDocs       =   $Params{-maxdocs};
-  my $NoneBehavior  =   $Params{-nonebehavior} || "skip";  # skip|
-  my $SessionTalkID =   $Params{-talkid};
-  my @DocumentIDs   = @{$Params{-docids}};
-  my @Fields        = @{$Params{-fields}}; 
-  my %FieldOptions  = %{$Params{-fieldoptions}}; 
+  my $SortBy          =   $Params{-sortby}; 
+  my $Reverse         =   $Params{-reverse};
+  my $MaxDocs         =   $Params{-maxdocs};
+  my $NoneBehavior    =   $Params{-nonebehavior} || "skip";  # skip|
+  my $TalkID          =   $Params{-talkid} || 0;
+  my @DocumentIDs     = @{$Params{-docids}};
+  my @SessionOrderIDs = @{$Params{-sessionorderids}};
+  my %FieldList       = %{$Params{-fieldlist}}; 
   
-  my %FieldTitles = (Docid   => "$ShortProject-doc-#", Updated => "Last Updated", 
-                     CanSign => "Next Signature(s)",   Confirm => "Confirm?");  
+  my @IDs  = ();
+  my $Mode;
   
-  unless (@DocumentIDs) {
+  if (@SessionOrderIDs) { 
+    @IDs  = @SessionOrderIDs;
+    $Mode = "SessionOrder";
+  } elsif (@DocumentIDs) { 
+    @IDs  = @DocumentIDs;
+    $Mode = "Document";
+  }
+  
+  unless (@IDs) {
     if ($NoneBehavior eq "skip") {
       return;
     }
   }     
 
-# FIXME: For XHTML/CSS compliance: 
-#        id has to be settable (should be unique, can have more than one per page)
-#        should enclose in <div> </div>, 
-#        and should allow a "title" to be placed here rather than calling routine
-
 ### Write out the beginning and header of table
 
-  print "<table id=\"DocumentList\" class=\"Alternating\">\n"; 
+  %SortFields = %FieldList;
+  my @Fields = sort FieldsByColumn keys %FieldList;  
+  %SortFields = ();
+  
+  print qq(<table class="Alternating DocumentList">\n); 
 
-  print "<tr>\n";
+  print "<thead><tr>\n";
+  my $LastRow = 1;
   foreach my $Field (@Fields) {
-    print "<th>";
-    if ($FieldTitles{$Field}) {
-      print $FieldTitles{$Field};
-    } else {
-      print $Field;
-    }
-    print "</th>\n";
+    my $Column  = $FieldList{$Field}{Column}; 
+    my $Row     = $FieldList{$Field}{Row}; 
+    my $RowSpan = $FieldList{$Field}{RowSpan}; 
+    my $ColSpan = $FieldList{$Field}{ColSpan}; 
+    
+    if ($Row != $LastRow) {
+      $LastRow = $Row;
+      print "</tr><tr>\n";
+    }  
+    
+    # Construct and print <th></th>
+    
+    my $TH = "<th";
+    if ($RowSpan > 1) {$TH .= qq( rowspan="$RowSpan");}
+    if ($ColSpan > 1) {$TH .= qq( colspan="$ColSpan");}
+    $TH .= " class=\"$Field\">";
+    print "$TH",$FieldTitles{$Field},"</th>\n";
   }  
-  print "</tr>\n";
-
-### Fetch all documents so sorts have info
-
-  foreach my $DocumentID (@DocumentIDs) {
-    my $Version = &LastAccess($DocumentID);
-    if ($Version == -1) {next;}
-    my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-  }
+  print "</tr></thead>\n";
 
 ### Sort document IDs, reverse from convention if needed
 
-  if ($SortBy eq "docid") { 
-    @DocumentIDs = sort numerically @DocumentIDs;
-  } elsif ($SortBy eq "date") {
-    @DocumentIDs = sort DocumentByRevisionDate @DocumentIDs; 
-  } elsif ($SortBy eq "requester") {
-    @DocumentIDs = sort DocumentByRequester @DocumentIDs; 
-  } elsif ($SortBy eq "confdate") {
-    @DocumentIDs = sort DocumentByConferenceDate @DocumentIDs; 
+  if ($Mode eq "Document") {
+    # Fetch all documents so sorts have info
+    foreach my $DocumentID (@IDs) { 
+      my $Version = &LastAccess($DocumentID);
+      if ($Version == -1) {next;}
+      my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+    }
+
+    # Sort and reverse
+    if ($SortBy eq "docid") { 
+      @IDs = sort numerically @IDs;
+    } elsif ($SortBy eq "date") {
+      @IDs = sort DocumentByRevisionDate @IDs; 
+    } elsif ($SortBy eq "requester") {
+      @IDs = sort DocumentByRequester @IDs; 
+    } elsif ($SortBy eq "confdate") {
+      @IDs = sort DocumentByConferenceDate @IDs; 
+    }
+
+    if ($Reverse) {
+      @IDs = reverse @DocumentIDs;
+    }
   }
 
-  
-  if ($Reverse) {
-    @DocumentIDs = reverse @DocumentIDs;
-  }
-
-### Loop over document IDs
+### Loop over Document/SessionOrder IDs
 
   my $NumberOfDocuments = 0;
   my $RowClass;
-  foreach my $DocumentID (@DocumentIDs) {
-  
-### Which version (if any) can they view
+  foreach my $ID (@IDs) {
+    my $DocumentID      = 0;
+    my $SessionOrderID  = 0;
+    my $SessionTalkID   = 0;
+    my $TalkSeparatorID = 0;
+    if ($Mode eq "Document") {
+      $DocumentID = $ID;
+    } elsif ($Mode eq "SessionOrder") {
+      $SessionOrderID = $ID;
+      if ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) {
+        $TalkSeparatorID = $SessionOrders{$SessionOrderID}{TalkSeparatorID};
+      }
+      if ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
+        $SessionTalkID = $SessionOrders{$SessionOrderID}{SessionTalkID};
+        $DocumentID    = $SessionTalks{$SessionTalkID}{DocumentID};
+      }  
+    }  
+    
+### Which version (if any) can they view (Move into document mode section?)
     my $Version = &LastAccess($DocumentID);
-    if ($Version == -1) {next;}
+    if ($Version == -1 && $Mode eq "Document") {next;}
     my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
     ++$NumberOfDocuments;
 
@@ -114,51 +154,126 @@ sub DocumentTable (%) {
     } else {
       $RowClass = "Even";
     }    
-    print "<tr class=\"$RowClass\">\n";
+    print "<tbody class=\"$RowClass\"><tr>\n";
+    my $LastRow = 1;
     foreach my $Field (@Fields) {
-      print "<td class=\"$Field\">";
+      my $Column  = $FieldList{$Field}{Column}; 
+      my $Row     = $FieldList{$Field}{Row}; 
+      my $RowSpan = $FieldList{$Field}{RowSpan}; 
+      my $ColSpan = $FieldList{$Field}{ColSpan}; 
+
+      if ($Row != $LastRow) {
+        $LastRow = $Row;
+        print "</tr><tr>\n";
+      }
+        
+      my $TD = qq(<td class="$Field");
+      if ($RowSpan > 1) {$TD .= qq( rowspan="$RowSpan");}
+      if ($ColSpan > 1) {$TD .= qq( colspan="$ColSpan");}
+      $TD .= ">";
+      print $TD;
+      
       if      ($Field eq "Docid") {    # Document number
-        print &NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
-                                 -numwithversion => $TRUE); 
+        print NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
+                                -numwithversion => $TRUE); 
       } elsif ($Field eq "Title") {    # Document title
-        print &NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
-                                 -titlelink => $TRUE); 
+        if ($DocumentID) {
+          print NewerDocumentLink(-docid => $DocumentID, -version => $Version, 
+                                  -titlelink => $TRUE); 
+        } elsif ($TalkSeparatorID) { # TalkSeparator
+          print "$TalkSeparators{$TalkSeparatorID}{Title}";
+        } elsif ($SessionTalkID) { # TalkSeparator
+          print "$SessionTalks{$SessionTalkID}{HintTitle}";
+        }
       } elsif ($Field eq "Author") {   # Single author (et. al.)
-        print &FirstAuthor($DocRevID);
+        require "TalkHintSQL.pm";
+        if ($DocRevID) {
+          print FirstAuthor($DocRevID);
+        } elsif ($SessionTalkID) {
+          my @AuthorHintIDs = FetchAuthorHintsBySessionTalkID($SessionTalkID);
+          my @AuthorIDs = (); 
+          foreach my $AuthorHintID (@AuthorHintIDs) {
+            push @AuthorIDs,$AuthorHints{$AuthorHintID}{AuthorID};
+          }
+          ShortAuthorListByID(@AuthorIDs); 
+        }  
       } elsif ($Field eq "Updated") {  # Date of last update
-        print &EuroDate($DocRevisions{$DocRevID}{DATE});
+        print EuroDate($DocRevisions{$DocRevID}{DATE});
+      } elsif ($Field eq "Created") {  # Date of creation
+        print EuroDate($Documents{$DocumentID}{Date}); 
       } elsif ($Field eq "CanSign") {  # Who can sign document
         require "SignoffUtilities.pm";
         require "SignoffHTML.pm";
-        my @EmailUserIDs = &ReadySignatories($DocRevID);
+        my @EmailUserIDs = ReadySignatories($DocRevID);
         foreach my $EmailUserID (@EmailUserIDs) {
-          print &SignatureLink($EmailUserID),"<br/>\n";
+          print SignatureLink($EmailUserID),"<br/>\n";
         }  
       } elsif ($Field eq "Conference" || $Field eq "Events") {  
-        &PrintEventInfo(-docrevid => $DocRevID, -format => "short");
+        PrintEventInfo(-docrevid => $DocRevID, -format => "short");
       } elsif ($Field eq "Topics") {  # Topics for document
         require "TopicHTML.pm";
         require "TopicSQL.pm";
-        my @TopicIDs = &GetRevisionTopics($DocRevID);
-        &ShortTopicListByID(@TopicIDs); 
+        require "TalkHintSQL.pm";
+        my @TopicIDs = ();
+        if ($DocRevID) {
+          @TopicIDs = GetRevisionTopics($DocRevID);
+        } elsif ($SessionTalkID) {
+          my @TopicHintIDs  = FetchTopicHintsBySessionTalkID($SessionTalkID);
+          foreach my $TopicHintID (@TopicHintIDs) {
+            push @TopicIDs,$TopicHints{$TopicHintID}{MinorTopicID};
+          }
+        }
+        ShortTopicListByID(@TopicIDs); 
+      } elsif ($Field eq "Abstract") {   # Files in document
+        PrintAbstract($DocRevisions{$DocRevID}{Abstract}, {-format => "bare"} ); 
       } elsif ($Field eq "Files") {   # Files in document
         require "FileHTML.pm";
-        &ShortFileListByRevID($DocRevID); 
+        ShortFileListByRevID($DocRevID); 
       } elsif ($Field eq "Confirm") {  
         print $query -> start_multipart_form('POST',$ConfirmTalkHint);
-        print $query -> hidden(-name => 'documentid',   -default => $DocumentID);
-        print $query -> hidden(-name => 'sessiontalkid',-default => $SessionTalkID);
+        print "<div>\n";
+        print $query -> hidden(-name => 'documentid',    -default => $DocumentID);
+        print $query -> hidden(-name => 'sessiontalkid', -default => $TalkID);
         print $query -> submit (-value => "Confirm");
+        print "</div>\n";
         print $query -> end_multipart_form;
       } elsif ($Field eq "References") {   # Journal refs
         require "RevisionHTML.pm";
-        &PrintReferenceInfo($DocRevID,"short"); 
+        PrintReferenceInfo($DocRevID,"short"); 
+      } elsif ($Field eq "TalkTime") {
+        if ($SessionOrderID) {
+          print "<strong>",TruncateSeconds($SessionOrders{$SessionOrderID}{StartTime}),"</strong>";
+        } else {
+          print "";
+        }    
+      } elsif ($Field eq "TalkLength") {
+        if ($SessionTalkID) {
+          print TruncateSeconds($SessionTalks{$SessionTalkID}{Time});
+        } elsif ($TalkSeparatorID) {
+          print TruncateSeconds($TalkSeparators{$TalkSeparatorID}{Time});
+        } else {
+          print "";
+        }  
+      } elsif ($Field eq "TalkNotes") {
+        if ($SessionTalkID) {
+          print URLify( AddLineBreaks($SessionTalks{$SessionTalkID}{Note}) );
+        } elsif ($TalkSeparatorID) {
+          print URLify( AddLineBreaks($TalkSeparators{$TalkSeparatorID}{Note}) );
+        }
+      } elsif ($Field eq "Edit") {
+        if ($SessionOrderID) {
+          print TalkNoteLink($SessionOrderID);
+        } elsif ($DocumentID) {
+          print DocumentUpdateLink( {-docid => $DocumentID} );
+        }  
+      } elsif ($Field eq "Blank") {        # Blank Cell
+        print ""; 
       } else {
-        print "Unknown field"
+        print "Unknown field: $Field"
       }  
       print "</td>\n";
     }  
-    print "</tr>\n";
+    print "</tr></tbody>\n";
   }  
 
 ### End table, return
@@ -258,5 +373,64 @@ sub PrintDocNumber { # And type
   my $type_link = &TypeLink($DocRevisions{$DocRevID}{DocTypeID},"short");
   print "<dd>$type_link</dd>\n";
 }
+
+sub FieldListChooser (%) {
+  my %Params = @_;
+  
+  require "Fields.pm";
+  require "FormElements.pm";
+ 
+  my $Partition = $Params{-partition};
+
+  if ($Partition == 1) {
+    print "<tr>\n";
+    print "<th>",FormElementTitle(-helplink => "customlist", -helptext => "Field",      -nocolon => $TRUE),"</th>\n";
+    print "<th>",FormElementTitle(-helplink => "customlist", -helptext => "Row",        -nocolon => $TRUE),"</th>\n";
+    print "<th>",FormElementTitle(-helplink => "customlist", -helptext => "Column",     -nocolon => $TRUE),"</th>\n";
+    print "<th>",FormElementTitle(-helplink => "customlist", -helptext => "Row(s)",     -nocolon => $TRUE),"</th>\n";
+    print "<th>",FormElementTitle(-helplink => "customlist", -helptext => "Columns(s)", -nocolon => $TRUE),"</th>\n";
+    print "</tr>\n";
+  }
+  
+  my %FormFields = %FieldDescriptions;
+
+  $FormFields{xxxx}  = "-- Select a Field --";      # Add option for nothing
+  
+  my @Fields = sort keys %FormFields;
+
+  print "<tr>";
+  print "<td>\n";     
+  print $query -> popup_menu (-name => "field$Partition",   -values => \@Fields, -default => "xxxx", -labels => \%FormFields);
+  print "</td>\n";     
+  print "<td>\n";     
+  print $query -> popup_menu (-name => "row$Partition",     -values => [1..15],  -default => 1);
+  print "</td>\n";     
+  print "<td>\n";     
+  print $query -> popup_menu (-name => "col$Partition",     -values => [1..15],  -default => $Partition);
+  print "</td>\n";     
+  print "<td>\n";     
+  print $query -> popup_menu (-name => "rowspan$Partition", -values => [1..10],   -default => 1);
+  print "</td>\n";     
+  print "<td>\n";     
+  print $query -> popup_menu (-name => "colspan$Partition", -values => [1..10],   -default => 1);
+  print "</td>\n";     
+  print "</tr>";
+
+  return  
+}  
+
+sub DocumentUpdateLink ($) {
+  my ($ArgRef) = @_;
+  
+  my $DocID = exists $ArgRef->{-docid} ? $ArgRef->{-docid} : 0;
+  # Add option for update/updatedb if needed
+  
+  require "Security.pm";
+  
+  if (CanModify($DocID)) {
+    return qq{<a href="$DocumentAddForm?docid=$DocID&amp;mode=update">Update</a>};
+  }
+}
+
 
 1;

@@ -5,7 +5,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -88,7 +88,7 @@ sub SecurityListByID {
   if ($EnhancedSecurity) {
     print "<b>Viewable by:</b><br/>\n";
   } else {  
-    print "<b>Restricted to:</b><br/>\n";
+    print "<b>Accessible by:</b><br/>\n";
   }  
   
   print "<ul>\n";
@@ -140,7 +140,5 @@ sub PersonalAccountLink () {
   }
   return $PersonalAccountLink;
 }
-
-
 
 1;

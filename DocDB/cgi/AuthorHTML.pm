@@ -5,7 +5,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -89,7 +89,7 @@ sub RequesterByID {
   my ($RequesterID) = @_;
   
   my $AuthorLink   = &AuthorLink($RequesterID);
-  print "<dt>Requested by:</dt>\n";
+  print "<dt>Submitted by:</dt>\n";
   print "<dd>$AuthorLink</dd>\n";
 }
 

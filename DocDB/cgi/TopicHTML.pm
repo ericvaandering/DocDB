@@ -228,6 +228,7 @@ sub FullTopicScroll ($$;@) { # Scrolling selectable list for topics, all info
 
 sub TopicScroll (%) {
   require "TopicSQL.pm";
+  require "FormElements.pm";
   
   my (%Params) = @_;
   
@@ -242,8 +243,14 @@ sub TopicScroll (%) {
   my $Disabled  =   $Params{-disabled}  || "0";
   my @Defaults  = @{$Params{-default}};
 
+  my %Options = ();
+ 
+  if ($Disabled) {
+    $Options{-disabled} = "disabled";
+  }  
+
   unless ($GotAllTopics) {
-    &GetTopics;
+    GetTopics();
   }
   
   my @TopicIDs = sort byTopic keys %MinorTopics;
@@ -258,31 +265,14 @@ sub TopicScroll (%) {
     } 
   }  
 
-  if ($HelpLink) {
-    print "<b><a ";
-    &HelpLink($HelpLink);
-    print "$HelpText:</a></b>";
-    if ($Required) {
-      print $RequiredMark;
-    }  
-    if ($ExtraText) {
-      print "&nbsp;$ExtraText";
-    }  
-    print "<br/> \n";
-  }
+  print FormElementTitle(-helplink  => $HelpLink, -helptext  => $HelpText ,
+                         -text      => $Text    , -extratext => $ExtraText,
+                         -required  => $Required);
 
-  if ($Disabled) {  # Doesn't scale
-    print $query -> scrolling_list(-name => $Name, -values => \@ActiveIDs, 
-                                   -labels => \%TopicLabels,
-                                   -size => 10, -multiple => $Multiple, -disabled,
-                                   -default => \@Defaults);
-  } else {
-    print $query -> scrolling_list(-name => $Name, -values => \@ActiveIDs, 
-                                   -labels => \%TopicLabels,
-                                   -size => 10, -multiple => $Multiple,
-                                   -default => \@Defaults);
-  }                               
-  
+  print $query -> scrolling_list(-name     => $Name, -values => \@ActiveIDs, 
+                                 -size     => 10,    -labels => \%TopicLabels,
+                                 -multiple => $Multiple,
+                                 -default  => \@Defaults, %Options);  
 }
 
 1;

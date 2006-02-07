@@ -8,7 +8,7 @@
 #    2) mode=meeting (sorted by author, files are listed)
 #    3) mode=conference (sorted by reverse date, conference fields shown)
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -47,6 +47,8 @@ require "SecuritySQL.pm";
 require "TopicSQL.pm";
 
 require "DocumentHTML.pm";
+
+require "DocumentUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -395,23 +397,24 @@ if ($OuterLogic eq "OR") {
 
 ### Set up fields and sorting
 
-my @Fields = ("Docid","Title","Author","Updated");
-my $SortBy  = "date";
-my $Reverse = 1;
+my %FieldListOptions = (-default => "Default");
+my $SortBy           = "date";
+my $Reverse          = 1;
 
 if ($Mode eq "conference") {
-  @Fields  = ("Title","Conference","Author","Files");
+  $FieldListOptions{-default} = "Conference Mode";
   $SortBy  = "confdate";
 } elsif ($Mode eq "meeting") {
-  @Fields  = ("Title","Author","Topics","Files"); 
+  $FieldListOptions{-default} = "Meeting Mode";
   $SortBy  = "requester";
   $Reverse = 0;
 } 
 
 ### Print table
 
-my $NumberOfDocuments = &DocumentTable(-fields => \@Fields, -docids  => \@DocumentIDs, 
-                                       -sortby => $SortBy,  -reverse => $Reverse);
+my %FieldList = PrepareFieldList(%FieldListOptions);
+my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs, 
+                                      -sortby    => $SortBy,     -reverse => $Reverse);
 
 print "<b>Number of documents found: $NumberOfDocuments</b><p/>\n";
 

@@ -4,7 +4,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Stephen Wood (saw@jlab.org)
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -21,81 +21,6 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-sub PrintSessionTalk($) {
-
-  my ($SessionTalkID,$AccumulatedTime,$RowClass) = @_;
-  
-  require "Security.pm";
-
-  require "RevisionSQL.pm";
-  require "DocumentSQL.pm";
-  require "TopicSQL.pm"; 
-  require "MiscSQL.pm"; 
-
-  require "AuthorHTML.pm";
-  require "TopicHTML.pm"; 
-  require "FileHTML.pm"; 
-  require "ResponseElements.pm";
-  
-  require "SQLUtilities.pm";
-  require "Utilities.pm";
-  require "Scripts.pm";
-  
-  my $DocumentID = $SessionTalks{$SessionTalkID}{DocumentID};
-  my $Confirmed  = $SessionTalks{$SessionTalkID}{Confirmed};
-  my $Note       = $SessionTalks{$SessionTalkID}{Note};
-  my $Time       = &TruncateSeconds($SessionTalks{$SessionTalkID}{Time});
-  my $SessionID  = $SessionTalks{$SessionTalkID}{SessionID};
-  &FetchSessionByID($SessionID);
-  my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
-
-  # Selected parts of how things are done in DocumentSummary
-
-  &FetchDocument($DocumentID);
-  my $Version = $Documents{$DocumentID}{NVersions};
-  unless (&CanAccess($DocumentID,$Version)) {
-    print "<tr class=\"$RowClass\">\n";
-    print "<td class=\"TalkTime\"><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";  
-    print "<td colspan=\"6\">Not authorized to view</td>\n";
-    print "</tr>\n";
-    return;
-  }
-  
-  my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-  my $AuthorLink = &FirstAuthor($DocRevID); 
-  #FIXME: Make Version optional, see comment in ResponseElements.pm
-  my $Title      = &DocumentLink($DocumentID,$Version,$DocRevisions{$DocRevID}{Title});
-  my @FileIDs    = &FetchDocFiles($DocRevID);
-  my @TopicIDs   = &GetRevisionTopics($DocRevID);
-
-  @TopicIDs = &RemoveArray(\@TopicIDs,@IgnoreTopics);
-
-  print "<tr class=\"$RowClass\">\n";
-  print "<td class=\"TalkTime\"><b>",&TruncateSeconds($AccumulatedTime),"</b></td>\n";  
-  if ($Confirmed) { # Put titles in italics for unconfirmed talks
-    print "<td class=\"TalkTitle\">$Title</td>\n";
-  } else {
-    my $SessionTalkSummary = &SessionTalkSummary($SessionTalkID);
-    print "<td><i>$Title</i> [$SessionTalkSummary]\n";
-    if (&CanModifyMeeting($ConferenceID)) {
-      print &ConfirmTalkLink($SessionTalkID,$DocumentID);
-    }
-    print "</td>\n";
-  }
-  print "<td class=\"TalkAuthor\">$AuthorLink</td>\n"; # v7 class and nobr
-  print "<td class=\"TalkTopics\">"; ShortTopicListByID(@TopicIDs);   print "</td>\n";
-  print "<td class=\"TalkFiles\">";  ShortFileListByRevID($DocRevID); print "</td>\n";
-  print "<td class=\"TalkLength\">$Time</td>\n";
-  print "<td class=\"TalkNotes\">";
-  if ($Note) {
-    print "<b>",TalkNoteLink(),"</b>";
-  } else {
-    print TalkNoteLink();
-  }  
-  print "</td>\n";
-  print "</tr>\n";
-}
-
 sub TalkEntryForm (@) {
   require "FormElements.pm";
   require "DocumentHTML.pm";
@@ -106,14 +31,14 @@ sub TalkEntryForm (@) {
   print "<table id=\"TalkEntryTable\" class=\"LowPaddedTable Alternating CenteredTable\">\n";
   print "<thead>\n";
   print "<tr>\n";
-  print "<th>",&FormElementTitle(-helplink => "sessionorder", -helptext => "Order,",  -nocolon => $TRUE);
-  print        &FormElementTitle(-helplink => "talketc",      -helptext => "etc.", -nocolon => $TRUE);
+  print "<th>",FormElementTitle(-helplink => "sessionorder", -helptext => "Order,",  -nocolon => $TRUE);
+  print        FormElementTitle(-helplink => "talketc",      -helptext => "etc.", -nocolon => $TRUE);
   print "</th>\n";
-  print "<th>",&FormElementTitle(-helplink => "talkdocid"    , -helptext => "Doc. #",            -nocolon => $TRUE),"</th>\n";
-  print "<th>",&FormElementTitle(-helplink => "talkinfo"     , -helptext => "Talk Title &amp; Note", -nocolon => $TRUE),"</th>\n";
-  print "<th>",&FormElementTitle(-helplink => "talktime"     , -helptext => "Time",              -nocolon => $TRUE),"</th>\n";
-  print "<th>",&FormElementTitle(-helplink => "authorhint"   , -helptext => "Author Hints",      -nocolon => $TRUE),"</th>\n";
-  print "<th>",&FormElementTitle(-helplink => "topichint"    , -helptext => "Topic Hints",       -nocolon => $TRUE),"</th>\n";
+  print "<th>",FormElementTitle(-helplink => "talkdocid"    , -helptext => "Doc. #",            -nocolon => $TRUE),"</th>\n";
+  print "<th>",FormElementTitle(-helplink => "talkinfo"     , -helptext => "Talk Title &amp; Note", -nocolon => $TRUE),"</th>\n";
+  print "<th>",FormElementTitle(-helplink => "talktime"     , -helptext => "Time",              -nocolon => $TRUE),"</th>\n";
+  print "<th>",FormElementTitle(-helplink => "authorhint"   , -helptext => "Author Hints",      -nocolon => $TRUE),"</th>\n";
+  print "<th>",FormElementTitle(-helplink => "topichint"    , -helptext => "Topic Hints",       -nocolon => $TRUE),"</th>\n";
   print "</tr>\n";
   print "</thead>\n";
   

@@ -29,7 +29,7 @@ use DBI;
 
 require "DocDBGlobals.pm";
 
-require "ProjectMessages.pm";
+require "Messages.pm";
 
 require "HTMLUtilities.pm";
 require "NotificationSQL.pm";

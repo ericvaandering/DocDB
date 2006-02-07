@@ -5,7 +5,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -314,8 +314,8 @@ sub DownloadURLs (%) {
       my @Authentication = ();
       if ($Files{$FileKey}{User} && $Files{$FileKey}{Pass}) {
         push @DebugStack,"Using authentication";
-        @Authentication = ("--http-user",$Files{$FileKey}{User}, 
-	                   "--http-pass",$Files{$FileKey}{Pass});
+        @Authentication = ("--http-user=".$Files{$FileKey}{User}, 
+	                   "--http-password=".$Files{$FileKey}{Pass});
       }
 
       $Status = system ($Wget,"--quiet",@Authentication,$Files{$FileKey}{URL});

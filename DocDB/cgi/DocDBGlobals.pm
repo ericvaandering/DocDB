@@ -7,7 +7,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 #
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -216,6 +216,7 @@ $Statistics            = $cgi_root."Statistics";
 
 $SelectPrefs           = $cgi_root."SelectPrefs";
 $SetPrefs              = $cgi_root."SetPrefs";
+$CustomListForm        = $cgi_root."CustomListForm";
 
 $SelectGroups          = $cgi_root."SelectGroups";
 $SetGroups             = $cgi_root."SetGroups";
@@ -230,6 +231,7 @@ $UserAccessApply       = $cgi_root."UserAccessApply";
 $DocDBHelp             = $cgi_root."DocDBHelp";
 $DocDBInstructions     = $cgi_root."DocDBInstructions";
 $ShowTalkNote          = $cgi_root."ShowTalkNote";
+$EditTalkInfo          = $cgi_root."EditTalkInfo";
 
 unless ($CSSDirectory && $CSSURLPath) {
   $CSSDirectory = $file_root."/Static/css";

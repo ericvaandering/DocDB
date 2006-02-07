@@ -1,5 +1,5 @@
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -23,8 +23,8 @@ sub HelpLink { # Change this, change FormElementTitle
 }
 
 sub TalkNoteLink {
-  my ($SessionTalkID) = @_;
-  return "<a href=\"Javascript:notepopupwindow(\'$ShowTalkNote?sessiontalkid=$SessionTalkID\');\">Note</a>";
+  my ($SessionOrderID) = @_;
+  return "<a href=\"Javascript:notepopupwindow(\'$ShowTalkNote?sessionorderid=$SessionOrderID\');\">Edit</a>";
 }
 
 sub GroupLimitLink {

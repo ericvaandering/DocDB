@@ -35,7 +35,7 @@ require "ResponseElements.pm";
 require "KeywordHTML.pm";
 require "HTMLUtilities.pm";
 
-require "ProjectMessages.pm";
+require "Messages.pm";
 
 $query = new CGI;  # Global for subroutines
 %params = $query -> Vars;

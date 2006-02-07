@@ -1,0 +1,136 @@
+#! /usr/bin/env perl
+#
+#        Name: ShowTalkNote
+# Description: Usually called as a pop-up, this will look up the note for a talk
+#              and display it since it could get crowded in the normal table.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+# FIXME: XHTML
+
+use CGI qw(-nosticky);                                                                                      
+use DBI;
+
+require "DocDBGlobals.pm";
+require "Messages.pm";
+
+require "ResponseElements.pm";
+require "Security.pm";
+require "MeetingSecurityUtilities.pm";
+require "HTMLUtilities.pm";
+require "DBUtilities.pm";
+
+#require "DocumentSQL.pm";
+#require "RevisionSQL.pm";
+require "TalkSQL.pm";
+require "MeetingSQL.pm";
+require "TalkHintSQL.pm";
+#require "TalkHintUtilities.pm";
+#require "DocumentUtilities.pm";
+#require "FormElements.pm";
+
+#require "DocumentHTML.pm";
+#require "TalkHTML.pm";
+#require "AuthorHTML.pm";
+#require "TopicHTML.pm";
+
+$query = new CGI;  
+my %Params = $query -> Vars;
+
+my $SessionOrderID = $Params{sessionorderid};
+my $Title          = $Params{talktitle};
+my $DocumentID     = $Params{docid};
+my $Confirmed      = $Params{talkconfirm};
+my $Length         = $Params{talktime};
+my $Note           = $Params{talknote};
+my @AuthorHints    = split /\0/,$Params{authors};
+my @TopicHints     = split /\0/,$Params{topics};
+if ($Confirmed) {
+  $Confirmed = $TRUE;
+}
+  
+CreateConnection(-type => "rw");
+EndPage(-startpage => $TRUE);
+
+# Collect info
+my ($SessionTalkID,$TalkSeparatorID,$SessionID);
+
+FetchSessionOrderByID($SessionOrderID);
+
+if ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
+  $SessionTalkID     = $SessionOrders{$SessionOrderID}{SessionTalkID};
+  FetchSessionTalkByID($SessionTalkID);
+  $SessionID            = $SessionTalks{$SessionTalkID}{SessionID};
+} elsif ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) {
+  $TalkSeparatorID   = $SessionOrders{$SessionOrderID}{TalkSeparatorID};
+  FetchTalkSeparatorByID($TalkSeparatorID);
+  $SessionID            = $TalkSeparators{$TalkSeparatorID}{SessionID};
+}
+
+FetchSessionByID($SessionID);
+my $EventID = $Sessions{$SessionID}{ConferenceID};
+
+unless (CanModifyMeeting($EventID)) {
+  push @ErrorStack,"You may not modify the agenda information for this event.";
+}
+unless ($SessionOrderID) {
+  push @ErrorStack,"You did not supply all the required parameters.";
+}
+EndPage(-startpage => $TRUE);
+
+if ($TalkSeparatorID) { # Modify a talk separator
+  my $TalkSeparatorUpdate = $dbh -> prepare(
+   "update TalkSeparator set ".
+   "Time=?, Title=?, Note=? ". 
+   "where TalkSeparatorID=?");
+  $TalkSeparatorUpdate -> execute($Length,$Title,$Note,$TalkSeparatorID);
+  push @ActionStack,"Modified break: $Title";
+} elsif ($SessionTalkID) { # Modify a talk
+  my $SessionTalkUpdate = $dbh -> prepare(
+   "update SessionTalk set ".
+   "DocumentID=?, Confirmed=?, Time=?, HintTitle=?, Note=? ". 
+   "where SessionTalkID=?");
+  $SessionTalkUpdate -> execute($DocumentID,$Confirmed,$Length,$Title,$Note,$SessionTalkID);
+  if ($Confirmed) {
+    ConfirmTalk(-docid => $DocumentID, -sessiontalkid => $SessionTalkID, -eventid => $EventID);
+  }
+  InsertTopicHints($SessionTalkID,@TopicHints);
+  InsertAuthorHints($SessionTalkID,@AuthorHints);
+  push @ActionStack,"Modified talk: $Title";
+}
+  
+# Start page
+
+print $query->header;
+DocDBHeader("Updating Agenda Information","",-nobody => $TRUE);
+EndPage();
+
+ActionReport();
+
+print "<p><b>The agenda entry has been modified.<br/>
+             Press the button below to reload the original page.</b></p>\n";
+
+print "<p class=\"SubmitCell\"><form>\n";
+print " <input type=\"button\" value=\"Close Window and Reload\" onclick=\"opener.location.reload(1); window.close()\">\n";
+print "</form></p>";
+
+
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName,-nobody => $TRUE);
