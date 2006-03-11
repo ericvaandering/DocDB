@@ -98,7 +98,7 @@ if ($UserValidation eq "certificate") {
   print $query -> textfield (-name => 'resetpw', -size => 20, -maxlength => 20, -disabled => "disabled");
 }
 print "</td>\n";
-print "<td rowspan=\"5\">\n"; 
+print "<td>\n"; 
 SecurityScroll(-helplink => 'usergroups', -helptext => 'User\'s Groups', 
                -name     => 'usergroups', -disabled => $TRUE, -multiple => $TRUE); 
 print "</td>\n";  
