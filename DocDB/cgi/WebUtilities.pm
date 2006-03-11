@@ -58,7 +58,7 @@ sub ValidFileURL { # URL is valid and has file afterwards
   unless (grep /^\s*[a-zA-z]+$/,$service) {
     return $ok;
   }    
-  unless (grep /^[\-\w\~\;\/\?\=\&\$\.\+\!\*\'\(\)\,]+\s*$/, $address) { # no :,@
+  unless (grep /^[\-\w\~\;\/\?\=\&\$\.\+\!\*\'\(\)\,\:\%]+\s*$/, $address) { # no :,@
     return $ok;
   }  
   if (grep /\/$/,$address) {
