@@ -75,7 +75,7 @@ print " and change which groups the user belongs to. If any groups are selected 
 
 print $query -> start_multipart_form('POST',"$EmailAdminister",
                                      "id=\"peraccount\" name=\"peraccount\"");
-print "<table class=\"HighPaddedTable\" border=1>\n";
+print "<table class=\"HighPaddedTable\">\n";
 print "<tr>\n";
 
 print "<td colspan=\"3\">\n";
