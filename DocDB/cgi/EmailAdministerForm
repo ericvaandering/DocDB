@@ -78,7 +78,7 @@ print $query -> start_multipart_form('POST',"$EmailAdminister",
 print "<table class=\"HighPaddedTable\">\n";
 print "<tr>\n";
 
-print "<td colspan=\"2\">\n";
+print "<td colspan=\"3\">\n";
  AdministerActions(-form => "peraccount");
 print "</td>\n";
 
@@ -104,16 +104,16 @@ SecurityScroll(-helplink => 'usergroups', -helptext => 'User\'s Groups',
 print "</td>\n";  
 print "</tr>\n";
 
-print "<tr><td>\n";
+print "<tr><td colspan=\"3\">\n";
 print $query -> checkbox(-name  => "verifyuser", -label => 'Verify User');
 print "</td></tr>\n";
-print "<tr><td>\n";
+print "<tr><td colspan=\"3\">\n";
 print $query -> checkbox(-name  => "usersign", -label => 'User Can Sign Docs');
 print "</td></tr>\n";
-print "<tr><td>\n";
+print "<tr><td colspan=\"3\">\n";
 print $query -> checkbox(-name  => "clearuser", -label => 'Clear Verify and Sign');
 print "</td></tr>\n";
-print "<tr><td colspan=\"2\">\n";
+print "<tr><td colspan=\"3\">\n";
 print $query -> checkbox(-name  => "cleargroups", -label => 'Clear User\'s Groups (always done if groups are selected)');
 print "</td></tr>\n";
 
