@@ -53,18 +53,23 @@ sub ValidFileURL { # URL is valid and has file afterwards
   push  @DebugStack,"ESC: $esc";
   $address = $esc;
   unless ($service && $address) {
+    push @DebugStack,"No service or no address";
     return $ok;
   }
   unless (grep /^\s*[a-zA-z]+$/,$service) {
+    push @DebugStack,"Bad service";
     return $ok;
   }    
   unless (grep /^[\-\w\~\;\/\?\=\&\$\.\+\!\*\'\(\)\,\:\%]+\s*$/, $address) { # no :,@
+    push @DebugStack,"Bad address";
     return $ok;
   }  
   if (grep /\/$/,$address) {
+    push @DebugStack,"No File name";
     return $ok;
   } 
   unless (grep /\//,$address) {
+    push @DebugStack,"No slash in address";
     return $ok;
   } 
    
