@@ -202,7 +202,7 @@ print "</table>\n";
 my @SecurityGroups = sort keys %SecurityIDs;
 
 foreach my $SecurityGroup (@SecurityGroups) {
-  my @EmailUserIDs = sort EmailUserIDsByName FetchEmailUSerIDsBySecurityGroup($SecurityIDs{$SecurityGroup});
+  my @EmailUserIDs = sort EmailUserIDsByName FetchEmailUserIDsBySecurityGroup($SecurityIDs{$SecurityGroup});
   if (@EmailUserIDs) {
     print "<p><strong>$SecurityGroup has these members:</strong></p>\n<ul>\n";
     foreach my $EmailUserID (@EmailUserIDs) {
