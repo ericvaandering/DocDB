@@ -36,7 +36,9 @@ my $Mode         = $params{mode} || "display";
 my $EventGroupID = $params{eventgroupid};
 my $EventGroup   = $params{eventgroup};
 
-&GetConferences;
+my $MaxEventsPerGroup = 8;
+
+GetConferences();
 
 print $query->header;
 
@@ -47,21 +49,21 @@ if ($Mode eq "modify") {
   $PageTitle = "List of Events";
 }
      
-&DocDBHeader($PageTitle);
+DocDBHeader($PageTitle);
 
 if ($EventGroup || $EventGroupID) {
   unless ($EventGroupID) {
-    $EventGroupID = &LookupEventGroup($EventGroup);
+    $EventGroupID = LookupEventGroup($EventGroup);
   }  
-  &EventsByGroup(-groupid => $EventGroupID,-mode => $Mode);
+  EventsByGroup( {-groupid => $EventGroupID, -mode => $Mode} );
 } else {
   if ($Mode eq "modify") {
     print "<h3>Select an event to change:</h3>\n";
-    &EventsTable(-mode => "modify");
+    EventsTable( {-mode => "modify"} );
   } else {  
-    &EventsTable(-mode => "display");
+    EventsTable( {-mode => "display"} );
   }
 }
 
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
