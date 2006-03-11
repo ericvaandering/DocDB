@@ -51,7 +51,7 @@ sub ValidFileURL { # URL is valid and has file afterwards
   
   push  @DebugStack,"UNE: $une";
   push  @DebugStack,"ESC: $esc";
-
+  $address = $esc;
   unless ($service && $address) {
     return $ok;
   }
