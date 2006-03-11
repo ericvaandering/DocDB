@@ -46,12 +46,13 @@ sub ValidFileURL { # URL is valid and has file afterwards
   my ($service,$address) = split /$sep/,$url;
   
   push @DebugStack,"Address: $address";
-  my $une = CGI::unescape($address);
-  my $esc = CGI::escape($address);
   
-  push  @DebugStack,"UNE: $une";
-  push  @DebugStack,"ESC: $esc";
-  $address = $esc;
+  my $UnescapedAddress = CGI::unescape($address);
+  my $EscapedAddress   = CGI::escape($UnescapedAddress);
+  
+  push  @DebugStack,"UNE: $UnescapedAddress";
+  push  @DebugStack,"ESC: $EscapedAddress";
+  $address = $EscapedAddress;
   unless ($service && $address) {
     push @DebugStack,"No service or no address";
     return $ok;
@@ -64,11 +65,11 @@ sub ValidFileURL { # URL is valid and has file afterwards
     push @DebugStack,"Bad address";
     return $ok;
   }  
-  if (grep /\/$/,$address) {
+  if (grep /\/$/,$UnescapedAddress) {
     push @DebugStack,"No File name";
     return $ok;
   } 
-  unless (grep /\//,$address) {
+  unless (grep /\//,$UnescapedAddress) {
     push @DebugStack,"No slash in address";
     return $ok;
   } 
