@@ -22,14 +22,7 @@ sub ValidURL { # URL is valid
   $sep = "://";
   
   my ($service,$address) = split /$sep/,$url;
-  
-  push @DebugStack,"Address: $address";
-  my $une = CGI::unescape($address);
-  my $esc = CGI::escape($address);
-  
-  push  @DebugStack,"UNE: $une";
-  push  @DebugStack,"ESC: $esc";
-  
+    
   unless ($service && $address) {
     return $ok;
   }
@@ -52,6 +45,13 @@ sub ValidFileURL { # URL is valid and has file afterwards
   
   my ($service,$address) = split /$sep/,$url;
   
+  push @DebugStack,"Address: $address";
+  my $une = CGI::unescape($address);
+  my $esc = CGI::escape($address);
+  
+  push  @DebugStack,"UNE: $une";
+  push  @DebugStack,"ESC: $esc";
+
   unless ($service && $address) {
     return $ok;
   }
