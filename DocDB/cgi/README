@@ -36,7 +36,7 @@ MyRoutine( {-required => $RequiredEntries{Requester},
             -name     => "requester",
             -default  => \@RequesterDefaults} );
 
-Older routines use a slightly different form like. New routines should
+Older routines use the slightly different format below. New routines should
 be in the above format.
 
 sub MyRoutine (%) {

@@ -22,7 +22,7 @@ sub ValidURL { # URL is valid
   $sep = "://";
   
   my ($service,$address) = split /$sep/,$url;
-  
+    
   unless ($service && $address) {
     return $ok;
   }
@@ -45,19 +45,31 @@ sub ValidFileURL { # URL is valid and has file afterwards
   
   my ($service,$address) = split /$sep/,$url;
   
+  # Create both Escaped (%20 for space, etc) and Unescaped versions of filename
+  # Use different versions for different checks
+  
+  my $UnescapedAddress = CGI::unescape($address);
+  my $EscapedAddress   = CGI::escape($UnescapedAddress);
+  $address = $EscapedAddress;
+  
   unless ($service && $address) {
+    push @DebugStack,"Invalid URL: No service or no address";
     return $ok;
   }
   unless (grep /^\s*[a-zA-z]+$/,$service) {
+    push @DebugStack,"Invalid URL: Bad service name";
     return $ok;
   }    
-  unless (grep /^[\-\w\~\;\/\?\=\&\$\.\+\!\*\'\(\)\,]+\s*$/, $address) { # no :,@
+  unless (grep /^[\-\w\~\;\/\?\=\&\$\.\+\!\*\'\(\)\,\:\%]+\s*$/, $address) { # no :,@
+    push @DebugStack,"Invalid URL: Bad address";
     return $ok;
   }  
-  if (grep /\/$/,$address) {
+  if (grep /\/$/,$UnescapedAddress) {
+    push @DebugStack,"Invalid URL: No file name after hostname";
     return $ok;
   } 
-  unless (grep /\//,$address) {
+  unless (grep /\//,$UnescapedAddress) {
+    push @DebugStack,"Invalid URL: No slash in address (hostname only)";
     return $ok;
   } 
    

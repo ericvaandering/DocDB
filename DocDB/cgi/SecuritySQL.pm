@@ -183,7 +183,7 @@ sub FetchUserGroupIDs ($) {
   return @UserGroupIDs;
 }
   
-sub FetchEmailUSerIDsBySecurityGroup ($) {
+sub FetchEmailUserIDsBySecurityGroup ($) {
   require "Utilities.pm";
 
   my ($GroupID) = @_;

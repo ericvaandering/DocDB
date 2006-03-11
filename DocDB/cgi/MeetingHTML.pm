@@ -715,12 +715,12 @@ sub ModifyEventLink ($) {
   return $Link;
 }
 
-sub EventsTable (;%) {
+sub EventsTable {
   require "Sorts.pm";
 
-  my %Params = @_;
-
-  my $Mode     = $Params{-mode}   || "display";
+  my ($ArgRef) = @_;
+  my $Mode        = exists $ArgRef->{-mode}        ? $ArgRef->{-mode}        : "display";
+  my $MaxPerGroup = exists $ArgRef->{-maxpergroup} ? $ArgRef->{-maxpergroup} : 8;
   
   my $NCols = 2;
   my $Col   = 0;
@@ -737,7 +737,7 @@ sub EventsTable (;%) {
       ++$Row;
     }
     print "<td>\n";
-    &EventsByGroup(-groupid => $EventGroupID,-mode => $Mode);
+    EventsByGroup( {-groupid => $EventGroupID, -mode => $Mode, -maxevents => $MaxPerGroup} );
     print "</td>\n";
     ++$Col;
   }  
@@ -749,10 +749,10 @@ sub EventsByGroup (%) {
   require "Sorts.pm";
   require "ResponseElements.pm";
   
-  my %Params = @_;
-
-  my $Mode         = $Params{-mode}   || "display";
-  my $EventGroupID = $Params{-groupid};
+  my ($ArgRef) = @_;
+  my $EventGroupID =        $ArgRef->{-groupid};
+  my $Mode         = exists $ArgRef->{-mode}      ? $ArgRef->{-mode}      : "display";
+  my $MaxEvents    = exists $ArgRef->{-maxevents} ? $ArgRef->{-maxevents} : 0;
 
   my @EventIDs = keys %Conferences;
   my @DisplayEventIDs = ();
@@ -767,21 +767,34 @@ sub EventsByGroup (%) {
   print "<table class=\"LowPaddedTable\">";
   print "<tr><td colspan=\"2\">\n";
   if ($Mode eq "display") {
-    print "<strong><a href=\"$ListBy?eventgroupid=$EventGroupID\">$EventGroups{$EventGroupID}{ShortDescription}</a></strong>\n"; #v7 add link, truncate list?
+    print "<strong><a href=\"$ListBy?eventgroupid=$EventGroupID\">$EventGroups{$EventGroupID}{ShortDescription}</a></strong>\n";
   } else {
-    print "<strong>$EventGroups{$EventGroupID}{ShortDescription}</strong>\n"; #v7 add link, truncate list?
+    print "<strong>$EventGroups{$EventGroupID}{ShortDescription}</strong>\n";
   }
   print "</td></tr>\n";
+  my $EventCount = 0;
   foreach my $EventID (@DisplayEventIDs) {
+    ++$EventCount;
     print "<tr>\n";
-    my $MeetingLink;
-    if ($Mode eq "modify") {
-      $MeetingLink = ModifyEventLink($EventID);
+    if ($EventCount > $MaxEvents && $MaxEvents) {
+      print '<td colspan="2">';
+      if ($Mode eq "display") {
+        print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID\">...show all events...</a>\n"; 
+      } else {
+        print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID&amp;mode=modify\">...more events...</a>\n"; 
+      }
+      print "</td>";
+      last;
     } else {
-      $MeetingLink = EventLink(-eventid => $EventID);
+      my $MeetingLink;
+      if ($Mode eq "modify") {
+        $MeetingLink = ModifyEventLink($EventID);
+      } else {
+        $MeetingLink = EventLink(-eventid => $EventID);
+      }
+      print "<td>$MeetingLink</td>\n";
+      print "<td>",EuroDate($Conferences{$EventID}{StartDate}),"</td>\n";
     }
-    print "<td>$MeetingLink</td>\n";
-    print "<td>",EuroDate($Conferences{$EventID}{StartDate}),"</td>\n";
     print "</tr>\n";
   }  
   print "</table>\n";
