@@ -321,14 +321,14 @@ sub DownloadURLs (%) {
       $Status = system ($Wget,"--quiet",@Authentication,$Files{$FileKey}{URL});
 
       my @URLParts = split /\//,$Files{$FileKey}{URL};
-      my $Filename = CGI::unescape(pop @URLParts);
+      my $Filename = CGI::unescape(pop @URLParts); # As downloaded, we hope
       push @DebugStack, "Download ($Files{$FileKey}{URL}) status: $Status";
       if (-e "$TmpDir/$Filename") {
         push @Filenames,$Filename;
 	delete $Files{$FileKey}{URL};
 	$Files{$FileKey}{Filename} =  "$TmpDir/$Filename";      			    
       } else {
-        push @DebugStack,"Check for existence of $TmpDir/$Filename failed";
+        push @DebugStack,"Check for existence of $TmpDir/$Filename failed. Check unescape function.";
         push @WarnStack,"The URL $Files{$FileKey}{URL} did not exist or was not accessible.";
       }
     }
