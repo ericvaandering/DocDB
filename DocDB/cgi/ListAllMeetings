@@ -36,8 +36,6 @@ my $Mode         = $params{mode} || "display";
 my $EventGroupID = $params{eventgroupid};
 my $EventGroup   = $params{eventgroup};
 
-my $MaxEventsPerGroup = 8;
-
 GetConferences();
 
 print $query->header;

@@ -1,3 +1,14 @@
+7.3.1 
+  A couple of bugfixes and one minor display enhancement
+  
+  1. When using the certificate version, the view and modify lists were not
+  populated correctly for the new document addition form
+  
+  2. URLs with port numbers or certain characters could not be uploaded
+  
+  3. The list of all events now only lists the most recent 8 events/group. There
+  is a link to see all the events.
+
 7.3.0
   This release adds the ability to change what information for an agenda or 
   document list is displayed in various circumstances. There are two entries
