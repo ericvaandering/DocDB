@@ -23,6 +23,13 @@ sub ValidURL { # URL is valid
   
   my ($service,$address) = split /$sep/,$url;
   
+  push @DebugStack,"Address: $address";
+  my $une = CGI::unescape($address);
+  my $esc = CGI::escape($address);
+  
+  push  @DebugStack,"UNE: $une";
+  push  @DebugStack,"ESC: $esc";
+  
   unless ($service && $address) {
     return $ok;
   }
