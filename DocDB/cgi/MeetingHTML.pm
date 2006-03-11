@@ -777,9 +777,9 @@ sub EventsByGroup (%) {
     ++$EventCount;
     print "<tr>\n";
     if ($EventCount > $MaxEvents && $MaxEvents) {
-      print "<td>";
+      print '<td colspan="2">';
       if ($Mode eq "display") {
-        print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID\">...more events...</a>\n"; 
+        print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID\">...show all events...</a>\n"; 
       } else {
         print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID&amp;mode=modify\">...more events...</a>\n"; 
       }
