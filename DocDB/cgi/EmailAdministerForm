@@ -113,7 +113,7 @@ print "</td></tr>\n";
 print "<tr><td>\n";
 print $query -> checkbox(-name  => "clearuser", -label => 'Clear Verify and Sign');
 print "</td></tr>\n";
-print "<tr><td>\n";
+print "<tr><td colspan=\"2\">\n";
 print $query -> checkbox(-name  => "cleargroups", -label => 'Clear User\'s Groups (always done if groups are selected)');
 print "</td></tr>\n";
 
