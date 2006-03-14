@@ -390,9 +390,8 @@ sub MajorTopicSelect (%) { # Scrolling selectable list for major topics
   my $Mode     = $Params{-format}    || "short";
   my $Disabled = $Params{-disabled}  || "0";
   
-  print "<b><a ";
-  &HelpLink("majortopics");
-  print "Major Topics:</a></b><br> \n";
+  print FormElementTitle(-helplink => "majortopics", -helptext => "Major Topics");
+
   my @MajorIDs = keys %MajorTopics;
   my %MajorLabels = ();
   foreach my $ID (@MajorIDs) {

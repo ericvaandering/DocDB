@@ -60,7 +60,7 @@ my $MinorTopicID = $TopicInsert -> {mysql_insertid}; # Works with MySQL only
 if ($MinorTopicID) {
   my $Short = MinorTopicLink($MinorTopicID,"short");
   my $Long  = MinorTopicLink($MinorTopicID,"long");
-  push @ActionStack,"New topic added: $Short ($Long)".
+  push @ActionStack,"New topic added: $Short ($Long)";
 } else {
   push @WarnStack,"An unknown error occured. If the problem still exists, contact an administrator.\n"; 
 }
