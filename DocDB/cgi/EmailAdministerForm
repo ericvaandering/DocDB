@@ -69,7 +69,7 @@ unless ($UserValidation eq "certificate") {
 }
 print " and change which groups the user belongs to. If  \"Clear Groups\" is
        selected, the list of groups the user belongs to will be cleared and set
-       to the selected groups. Use this option if any of the groups a user
+       to the selected groups (if any). Use this option if any of the groups a user
        currently belongs to are incorrect. The full list of users, their
        groups, preferences, and which notifications they recieve are shown
        below for your reference.</p>\n";
@@ -141,7 +141,7 @@ my @EmailUserIDs = sort EmailUserIDsByName GetEmailUserIDs();
 
 print "<table class=\"LowPaddedTable\">\n";
 foreach my $EmailUserID (@EmailUserIDs) {
-  PrintEmailUserInfo ($EmailUserID);
+  PrintEmailUserInfo($EmailUserID);
   print "<tr><td colspan=\"5\"><hr/></td></tr>\n";
 } 
 print "</table>\n";
