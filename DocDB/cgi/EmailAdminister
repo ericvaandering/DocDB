@@ -39,6 +39,7 @@ require "HTMLUtilities.pm";
 require "SecuritySQL.pm";
 require "NotificationSQL.pm";
 require "Messages.pm";
+require "EmailUserHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 
