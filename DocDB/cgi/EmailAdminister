@@ -169,8 +169,6 @@ if      ($Action eq "Delete") { # Delete user
   print "<table class=\"LowPaddedTable\">\n";
   PrintEmailUserInfo ($EmailUserID);
   print "</table>\n";
-} 
-print "</table>\n";
 } elsif ($Action eq "New") { 
   push @ErrorStack,"You can't create new users here. Do it the normal way.";
 } else {
