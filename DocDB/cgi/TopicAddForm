@@ -33,10 +33,10 @@ require "HTMLUtilities.pm";
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&GetTopics;
+GetTopics();
 
 print $query->header;
-&DocDBHeader("Add Topics","",-scripts => ["PopUps"]);
+DocDBHeader("Add Topics","",-scripts => ["PopUps"]);
 
 print $query -> start_multipart_form('POST',"$TopicAdd");
 
@@ -46,9 +46,9 @@ print "<tr>\n";
 print "<td colspan=3>\n";
 print "<h4>Click on any of the headings for help.</h4>\n"; print "</td>\n";
 print "</tr><tr valign=top>\n";
-print "<td>\n"; &MajorTopicSelect;     print "</td>\n";
-print "<td>\n"; &ShortDescriptionBox;     print "</td>\n";
-print "<td>\n"; &LongDescriptionBox;     print "</td>\n";
+print "<td>\n"; MajorTopicSelect();                                    print "</td>\n";
+print "<td>\n"; ShortDescriptionBox(-helptext => "Short Description"); print "</td>\n";
+print "<td>\n"; LongDescriptionBox();                                  print "</td>\n";
 print "</tr>\n";
 print "</table><p>\n";
 
@@ -61,7 +61,7 @@ print "<p>\n";
 
 print "<h3>Existing Topics:</h3>\n";
 
-&TopicsTable;
+TopicsTable();
 
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
