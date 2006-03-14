@@ -132,13 +132,13 @@ sub TopicsTable {
 
   my $Col   = 0;
   my $Row   = 0;
-  print "<table cellpadding=10>\n";
+  print "<table class=\"HighPaddedTable\">\n";
   foreach my $MajorID (@MajorTopicIDs) {
     unless ($Col % $NCols) {
       if ($Row) {
         print "</tr>\n";
       }  
-      print "<tr valign=top>\n";
+      print "<tr>\n";
       ++$Row;
     }
     print "<td>\n";

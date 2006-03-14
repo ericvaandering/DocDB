@@ -9,7 +9,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -35,6 +35,7 @@ require "ResponseElements.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";
 require "AdministerElements.pm";
+require "EmailUserHTML.pm";
 require "SecurityHTML.pm";
 
 require "MailNotification.pm";
@@ -66,10 +67,12 @@ print "<p>Since users can modify their own data and create their own accounts,
 unless ($UserValidation eq "certificate") {
   print ", reset the user's password,"; 
 }
-print " and change which groups the user belongs to. If any groups are selected or 
-       \"Clear Groups\" is selected, the list of groups the user belongs to will be cleared and
-       set to the selected groups. The full list of users, their groups, preferences, and which
-       notifications they recieve  are shown below for your reference.</p>\n";
+print " and change which groups the user belongs to. If  \"Clear Groups\" is
+       selected, the list of groups the user belongs to will be cleared and set
+       to the selected groups (if any). Use this option if any of the groups a user
+       currently belongs to are incorrect. The full list of users, their
+       groups, preferences, and which notifications they recieve are shown
+       below for your reference.</p>\n";
 
 ### Email User Modification
 
@@ -114,7 +117,7 @@ print "<tr><td colspan=\"3\">\n";
 print $query -> checkbox(-name  => "clearuser", -label => 'Clear Verify and Sign');
 print "</td></tr>\n";
 print "<tr><td colspan=\"3\">\n";
-print $query -> checkbox(-name  => "cleargroups", -label => 'Clear User\'s Groups (always done if groups are selected)');
+print $query -> checkbox(-name  => "cleargroups", -label => 'Clear User\'s Groups');
 print "</td></tr>\n";
 
 print "<tr>\n";
@@ -138,61 +141,7 @@ my @EmailUserIDs = sort EmailUserIDsByName GetEmailUserIDs();
 
 print "<table class=\"LowPaddedTable\">\n";
 foreach my $EmailUserID (@EmailUserIDs) {
-  FetchEmailUser($EmailUserID);  
-  print "<tr>\n";
-  print "<td>\n";
-
-  print "<table class=\"LowPaddedTable LeftHeader\">\n";
-  print "<tr>\n";
-  print "<th>Username:</th><td>$EmailUser{$EmailUserID}{Username}</td>\n"; 
-  print "</tr><tr>\n";
-  print "<th>Name:</th><td>$EmailUser{$EmailUserID}{Name}</td>\n"; 
-  print "</tr><tr>\n";
-  print "<th>E-mail:</th><td>$EmailUser{$EmailUserID}{EmailAddress}</td>\n"; 
-  print "</tr><tr>\n";
-  print "<th>Verified:</th>";
-  print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{Verified}]."</td>\n"; 
-  print "</tr><tr>\n";
-  print "<th>HTML:</th>";
-  print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{PreferHTML}]."</td>\n"; 
-  print "</tr><tr>\n";
-  print "<th>Can Sign:</th>";
-  print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{CanSign}]."</td>\n"; 
-  print "</tr><tr>\n";
-  
-  # Groups user belongs (or wants to belong to)
-  
-  print "<th>Groups:</th>";
-  print "<td>\n"; 
-  my @UserGroupIDs = FetchUserGroupIDs($EmailUserID);
-  if (@UserGroupIDs) {
-    print "<ul>\n";
-    foreach my $UserGroupID (@UserGroupIDs) {
-      FetchSecurityGroup($UserGroupID);
-      print "<li>$SecurityGroups{$UserGroupID}{NAME}</li>\n";
-    }
-    print "</ul>\n";
-  } else {
-    print "&nbsp;\n";
-  }       
-  print "</td>\n";
-  print "</tr>\n";
-  print "</table>\n";
-  print "</td>\n";
-
-  print "<td>\n";
-  DisplayNotification($EmailUserID,"Immediate");
-  print "</td>\n";
-
-  print "<td>\n";
-  DisplayNotification($EmailUserID,"Daily");
-  print "</td>\n";
-
-  print "<td>\n";
-  DisplayNotification($EmailUserID,"Weekly");
-  print "</td>\n"; 
-
-  print "</tr>\n";
+  PrintEmailUserInfo($EmailUserID);
   print "<tr><td colspan=\"5\"><hr/></td></tr>\n";
 } 
 print "</table>\n";

@@ -12,7 +12,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -39,6 +39,7 @@ require "HTMLUtilities.pm";
 require "SecuritySQL.pm";
 require "NotificationSQL.pm";
 require "Messages.pm";
+require "EmailUserHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 
@@ -119,7 +120,7 @@ if      ($Action eq "Delete") { # Delete user
        $UserUpdate -> execute($EncryptedPassword,$EmailUserID);
     print "<b>The User's password was changed. They should change it again ASAP.</b><p>\n";
   }
-  if ($ClearGroups || @UsersGroupIDs) {
+  if ($ClearGroups) {
     my $UsersGroupDelete = $dbh -> prepare("delete from UsersGroup where EmailUserID=?");
        $UsersGroupDelete -> execute($EmailUserID);
     print "<b>All associations between the user and groups have been deleted.</b><p>\n";
@@ -162,7 +163,13 @@ if      ($Action eq "Delete") { # Delete user
       &FetchSecurityGroup($UsersGroupID);
       print "Added user to $SecurityGroups{$UsersGroupID}{NAME}<br/>";
     }  
-  }                           
+  }  
+  
+  print "<p><b>The user now has the following information:</b></p>";
+                           
+  print "<table class=\"LowPaddedTable\">\n";
+  PrintEmailUserInfo($EmailUserID);
+  print "</table>\n";
 } elsif ($Action eq "New") { 
   push @ErrorStack,"You can't create new users here. Do it the normal way.";
 } else {

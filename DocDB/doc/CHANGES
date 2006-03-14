@@ -1,4 +1,4 @@
-7.3.1 
+7.3.2 
   A couple of bugfixes and one minor display enhancement
   
   1. When using the certificate version, the view and modify lists were not
@@ -9,6 +9,15 @@
   3. The list of all events now only lists the most recent 8 events/group. There
   is a link to see all the events.
 
+  4. Behavior for changing the groups a user belongs to has changed. New groups
+  selected are added (rather than clearing the list). The complete information
+  for a changed user is displayed as a result. 
+ 
+  5. Adding a topic tells the name of the topic, not a number.
+ 
+  New file:
+    cgi/EmailUserHTML.pm
+    
 7.3.0
   This release adds the ability to change what information for an agenda or 
   document list is displayed in various circumstances. There are two entries
@@ -34,7 +43,8 @@
     cgi/Fields.pm  
   
   Some CSS class names in meeting agendas have changed, we now have a  class
-  name on all cells of document lists and agendas.
+  name on all cells of document lists and agendas. Using CSS, you can change 
+  colors, type size, etc., of all these things.
 
 7.2.0
 
