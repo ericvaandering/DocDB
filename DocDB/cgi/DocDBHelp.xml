@@ -384,6 +384,17 @@ URL. The username and password are not saved.
  </entry>
 
  <entry>
+  <key>newfilename</key>
+  <title>New Filename</title>
+  <text>
+   Some files, especially those returned by scripts, may have unintelligible
+   names.  If you want the filename to be renamed after DocDB downloads it,
+   enter the new name here. Leave this blank if you want to use the same
+   filename as on the remote host.
+  </text>
+ </entry>
+
+ <entry>
   <key>modifytypes</key>
   <title>Modification Actions</title>
   <text>

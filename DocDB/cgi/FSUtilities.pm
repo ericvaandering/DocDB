@@ -321,6 +321,9 @@ sub DownloadURLs (%) {
       # Allow for a new filename as supplied by the user
       
       if ($Files{$FileKey}{NewFilename}) {
+        my @Parts = split /\//,$Files{$FileKey}{NewFilename};
+        my $SecureFilename = pop @Parts;
+        $Files{$FileKey}{NewFilename} = $SecureFilename;
         push @Options,"--output-document=".$Files{$FileKey}{NewFilename};
       }  
 
