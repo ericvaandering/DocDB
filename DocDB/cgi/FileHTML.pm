@@ -271,10 +271,12 @@ sub FileUploadBox (%) {
     my $FileIDName  = "fileid$i";
     my $CopyName    = "copyfile$i";
     my $URLName     = "url$i";
+    my $NewName     = "newname$i";
    
-    my $FileHelp        = &FormElementTitle(-helplink => $FileHelpLink, -helptext => $FileHelpText);
-    my $DescriptionHelp = &FormElementTitle(-helplink => $DescHelpLink, -helptext => $DescHelpText);
-    my $MainHelp        = &FormElementTitle(-helplink => "main", -helptext => "Main?", -nocolon => true, -nobold => true);
+    my $FileHelp        = FormElementTitle(-helplink => $FileHelpLink, -helptext => $FileHelpText);
+    my $DescriptionHelp = FormElementTitle(-helplink => $DescHelpLink, -helptext => $DescHelpText);
+    my $NewNameHelp     = FormElementTitle(-helplink => "newfilename", -helptext => "New Filename");
+    my $MainHelp        = FormElementTitle(-helplink => "main", -helptext => "Main?", -nocolon => true, -nobold => true);
     my $DefaultDesc = $DocFiles{$FileID}{DESCRIPTION};
     
     if ($DescOnly) {
@@ -295,11 +297,23 @@ sub FileUploadBox (%) {
         print $query -> filefield(-name      => $ElementName, -size => $FileSize,
                                   -maxlength => $FileMaxSize);
       } elsif ($Type eq "http") {
-        print $query -> textfield(-name      => $URLName, -size => $FileSize, 
+        print $query -> textfield(-name      => $URLName,     -size => $FileSize, 
                                   -maxlength => $FileMaxSize);
       }
       print "</td>\n";
       print "</tr>\n";
+      
+      if ($Type eq "http") {
+        print "<tr><td align=right>\n";
+        print $NewNameHelp;
+        print "</td>\n";
+
+        print "<td>\n";
+        print $query -> textfield(-name      => $NewName, -size => $FileSize, 
+                                  -maxlength => $FileMaxSize);
+        print "</td>\n";
+        print "</tr>\n";
+      }
     }  
     print "<tr><td align=right>\n";
     print $DescriptionHelp;
