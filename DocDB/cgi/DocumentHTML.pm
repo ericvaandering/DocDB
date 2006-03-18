@@ -224,9 +224,11 @@ sub DocumentTable (%) {
           }
         }
         ShortTopicListByID(@TopicIDs); 
-      } elsif ($Field eq "Abstract") {   # Files in document
+      } elsif ($Field eq "Abstract") { # Abstract
         PrintAbstract($DocRevisions{$DocRevID}{Abstract}, {-format => "bare"} ); 
-      } elsif ($Field eq "Files") {   # Files in document
+      } elsif ($Field eq "DocNotes") { # Notes and Changes
+        print AddLineBreaks(URLify($DocRevisions{$DocRevID}{Note}));
+      } elsif ($Field eq "Files") {    # Files in document
         require "FileHTML.pm";
         ShortFileListByRevID($DocRevID); 
       } elsif ($Field eq "Confirm") {  

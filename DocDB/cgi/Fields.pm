@@ -31,7 +31,7 @@
                 References => "References",          TalkTime   => "Start",
                 Topics     => "Topic(s)",            TalkLength => "Length", 
                 TalkNotes  => "Notes",               Abstract   => "Abstract",
-                Blank      => "&nbsp;",
+                Blank      => "&nbsp;",              DocNotes   => "Notes & Changes",
                );  
                
 %FieldDescriptions = (%FieldTitles, # Take titles as defaults
@@ -41,6 +41,7 @@
                 TalkTime   => "Talk Start Time",
                 TalkLength => "Talk Length", 
                 TalkNotes  => "Talk Notes",
+                DocNotes   => "Document Notes & Changes",
                 Edit       => "Edit Document/Agenda Info",
                 Blank      => "Empty field (placeholder)",
                );  
