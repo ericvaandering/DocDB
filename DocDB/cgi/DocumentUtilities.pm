@@ -96,7 +96,7 @@ sub AddDocument {
     $Count = &InsertTopics(-docrevid         => $DocRevID, -topicids  => \@TopicIDs);
     $Count = &InsertRevisionEvents(-docrevid => $DocRevID, -eventids  => \@EventIDs);
     $Count = &InsertSecurity(-docrevid       => $DocRevID, -viewids   => \@ViewIDs, -modifyids => \@ModifyIDs);
-    unless ($Version eq "reserve") {
+    unless ($Version eq "reserve" || $Version eq "same") {
       @FileIDs = &AddFiles(-docrevid         => $DocRevID, -datetime  => $DateTime, -files => \%Files);
     }
     if (@SignOffIDs) {

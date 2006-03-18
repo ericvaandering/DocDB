@@ -235,7 +235,7 @@ sub InsertRevision {
   } 
   $NewVersion = $Version;
   
-  if ($Version eq "bump" || $Version eq "same") {
+  if ($Version eq "bump" || $Version eq "same" || $Version eq "reserve") {
     my $Found = &FetchDocument($DocumentID);
     $NewVersion = int($Documents{$DocumentID}{NVersions});
     if ($Version eq "bump") {
