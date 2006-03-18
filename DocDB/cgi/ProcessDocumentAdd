@@ -116,7 +116,7 @@ for (my $i = 1; $i<= $MaxFiles; ++$i) {
     $Files{$Key}{URL}         = $params{"url$i"};
     $Files{$Key}{User}        = $params{http_user};
     $Files{$Key}{Pass}        = $params{http_pass};
-    $Files{$Key}{NewFilename} = $params{newname$i};
+    $Files{$Key}{NewFilename} = $params{"newname$i"};
   } elsif ($params{"copyfile$i"}) {
     $Files{$Key}{CopyFileID} = $params{"fileid$i"};
   } elsif ($Mode eq "updatedb") {
