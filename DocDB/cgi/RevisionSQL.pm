@@ -262,7 +262,7 @@ sub InsertRevision {
   if ($DocumentID) {
     if ($MakeObsolete) {
       my $Update = $dbh -> prepare("update DocumentRevision set Obsolete=1 ".
-                                   "where DocumentID=? and Version=?");
+                                   "where DocumentID=? and VersionNumber=?");
       $Update -> execute($DocumentID,$NewVersion);
     }                    
   
