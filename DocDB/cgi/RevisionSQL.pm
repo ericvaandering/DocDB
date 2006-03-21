@@ -233,10 +233,17 @@ sub InsertRevision {
     ++$Mon;
     $DateTime = "$Year-$Mon-$Day $Hour:$Min:$Sec";
   } 
+  
+  my $MakeObsolete = $FALSE;
+  
+  if ($Version eq "latest" || int($Version)) {
+    $MakeObsolete = $TRUE;
+  }
+  
   $NewVersion = $Version;
   
-  if ($Version eq "bump" || $Version eq "same" || $Version eq "reserve") {
-    my $Found = &FetchDocument($DocumentID);
+  if ($Version eq "bump" || $Version eq "latest" || $Version eq "reserve") {
+    my $Found = FetchDocument($DocumentID);
     $NewVersion = int($Documents{$DocumentID}{NVersions});
     if ($Version eq "bump") {
       ++$NewVersion;
@@ -253,6 +260,12 @@ sub InsertRevision {
      "values (0,?,?,?,?,?,?,?,?,?,?)");
   
   if ($DocumentID) {
+    if ($MakeObsolete) {
+      my $Update = $dbh -> prepare("update DocumentRevision set Obsolete=1 ".
+                                   "where DocumentID=? and Version=?");
+      $Update -> execute($DocumentID,$NewVersion);
+    }                    
+  
     $Insert -> execute($DocumentID,$SubmitterID,$Title,$PubInfo,$NewVersion, 
                        $Abstract,$DateTime,$Keywords,$Note,$DocTypeID);
                                
@@ -260,7 +273,6 @@ sub InsertRevision {
   }
   
   return $DocRevID;  
-
 }
 
 1;
