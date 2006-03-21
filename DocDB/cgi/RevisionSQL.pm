@@ -254,11 +254,6 @@ sub InsertRevision {
   
   my $DocRevID = 0;
   
-  my $Insert = $dbh -> prepare("insert into DocumentRevision ".
-     "(DocRevID, DocumentID, SubmitterID, DocumentTitle, PublicationInfo, ". 
-     " VersionNumber, Abstract, RevisionDate,Keywords,Note,DocTypeID) ". 
-     "values (0,?,?,?,?,?,?,?,?,?,?)");
-  
   if ($DocumentID) {
     if ($MakeObsolete) {
       my $Update = $dbh -> prepare("update DocumentRevision set Obsolete=1 ".
@@ -266,6 +261,10 @@ sub InsertRevision {
       $Update -> execute($DocumentID,$NewVersion);
     }                    
   
+    my $Insert = $dbh -> prepare("insert into DocumentRevision ".
+       "(DocRevID, DocumentID, SubmitterID, DocumentTitle, PublicationInfo, ". 
+       " VersionNumber, Abstract, RevisionDate,Keywords,Note,DocTypeID) ". 
+       "values (0,?,?,?,?,?,?,?,?,?,?)");
     $Insert -> execute($DocumentID,$SubmitterID,$Title,$PubInfo,$NewVersion, 
                        $Abstract,$DateTime,$Keywords,$Note,$DocTypeID);
                                
