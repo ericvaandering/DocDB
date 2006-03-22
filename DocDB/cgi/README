@@ -36,7 +36,7 @@ MyRoutine( {-required => $RequiredEntries{Requester},
             -name     => "requester",
             -default  => \@RequesterDefaults} );
 
-Older routines use the slightly different format below. New routines should
+Some older routines use the slightly different format below. New routines should
 be in the above format.
 
 sub MyRoutine (%) {
@@ -57,10 +57,10 @@ sub MyRoutine (%) {
 and a call (note no & before subroutine name) looks like
 
 MyRoutine(-required => $RequiredEntries{Requester},
-           -helplink => "requester",
-           -helptext => "Requester",
-           -name     => "requester",
-           -default  => \@RequesterDefaults);
+          -helplink => "requester",
+          -helptext => "Requester",
+          -name     => "requester",
+          -default  => \@RequesterDefaults);
 
 Extra or Boolean options are done like this:
                
