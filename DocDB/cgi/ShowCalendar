@@ -82,8 +82,8 @@ if ($Day && $Month && $Year) {
   $FutureEventTable = $TRUE;
 }  
   
-&DocDBHeader("Calendar for $TitleDate");
-&EndPage(@ErrorStack);
+DocDBHeader("Calendar for $TitleDate");
+EndPage(@ErrorStack);
 
 if ($Day && $Month && $Year) {
   
@@ -122,13 +122,13 @@ if ($Day && $Month && $Year) {
     print "</p>\n";
   }
   
-  &PrintDayEvents(-year => $Year, -month => $Month, -day => $Day);
+  PrintDayEvents(-year => $Year, -month => $Month, -day => $Day);
 } elsif ($Month && $Year) {
-  &PrintCalendar(-year => $Year, -month => $Month);
+  PrintCalendar(-year => $Year, -month => $Month);
 } elsif ($Year) {
   print "<table class=\"Calendar WholeYear\">\n";
-  my $PrevLink = &CalendarLink(-year => $Year - 1, -text => "&laquo;".($Year - 1));
-  my $NextLink = &CalendarLink(-year => $Year + 1, -text => ($Year + 1)."&raquo;");
+  my $PrevLink = CalendarLink(-year => $Year - 1, -text => "&laquo;".($Year - 1));
+  my $NextLink = CalendarLink(-year => $Year + 1, -text => ($Year + 1)."&raquo;");
   
   print "<tr class=\"MonthNav\">\n
          <th>$PrevLink</th>\n
