@@ -59,7 +59,9 @@ sub GetEventsByDate (%) {
   
   my $From = $Params{-from} || "";
   my $To   = $Params{-to}   || "";
-  my $On   = $Params{-on}   || &SQLNow(-dateonly => $TRUE);
+  my $On   = $Params{-on}   || SQLNow(-dateonly => $TRUE);
+  
+  push @DebugStack,"Fetching events from $From to $To";
   
   my $List;
   if ($From && $To) { # Starts or ends in or surrounds window
@@ -75,13 +77,13 @@ sub GetEventsByDate (%) {
   my @EventIDs;
   $List -> bind_columns(undef, \($EventID));
   while ($List -> fetch) {
-    if (&FetchConferenceByConferenceID($EventID)) {
-      if (&CanAccessMeeting($EventID)) {
+    if (FetchConferenceByConferenceID($EventID)) {
+      if (CanAccessMeeting($EventID)) {
         push @EventIDs,$EventID;
       }  
     }  
   }
-  @EventIDs = &Unique(@EventIDs);
+  @EventIDs = Unique(@EventIDs);
   return @EventIDs;
 }
 

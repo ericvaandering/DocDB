@@ -48,7 +48,7 @@ CreateConnection();
 
 ### Start HTML
 
-print $query->header;
+print $query -> header;
 
 my $TitleDate;
 my $FutureEventTable = $FALSE;
@@ -160,7 +160,7 @@ if ($FutureEventTable || $MonthEventTable) {
     $WindowDays  = 60;
   }  
 
-  my @EventIDs = &GetEventsByDate(-from => $WindowStart, -to => $WindowEnd);
+  my @EventIDs = GetEventsByDate(-from => $WindowStart, -to => $WindowEnd);
   
   if (@EventIDs) {
     print "<table class=\"CenteredTable MultidayEventList Alternating\">\n";
