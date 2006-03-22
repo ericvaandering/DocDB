@@ -1,6 +1,6 @@
 # Author Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -66,7 +66,7 @@ sub PrintCalendar {
   print "<table class=\"Calendar $Class\">";
 
   if ($Type eq "year") {
-    my $MonthLink = &CalendarLink(-year => $Year, -month => $Month, -text => $MonthName);
+    my $MonthLink = CalendarLink(-year => $Year, -month => $Month, -text => $MonthName);
     print "<tr><th colspan=\"7\">$MonthLink</th></tr>\n";
   } elsif ($Type eq "month") {
     my $PrevMonth = $FirstDay -> clone();
@@ -80,10 +80,10 @@ sub PrintCalendar {
     my $NextName  = $NextMonth -> month_name(); 
     my $NextYear  = $NextMonth -> year(); 
     
-    my $YearLink = &CalendarLink(-year => $Year, -text => $Year);
+    my $YearLink = CalendarLink(-year => $Year, -text => $Year);
     my $CurrLink = "$MonthName $YearLink";
-    my $PrevLink = &CalendarLink(-year => $PrevYear, -month => $PrevMNum, -text => "&laquo;$PrevName $PrevYear");
-    my $NextLink = &CalendarLink(-year => $NextYear, -month => $NextMNum, -text => "$NextName $NextYear&raquo;");
+    my $PrevLink = CalendarLink(-year => $PrevYear, -month => $PrevMNum, -text => "&laquo;$PrevName $PrevYear");
+    my $NextLink = CalendarLink(-year => $NextYear, -month => $NextMNum, -text => "$NextName $NextYear&raquo;");
     print "<tr class=\"MonthNav\">\n
             <th>$PrevLink</th>\n
             <th colspan=\"5\"><h1>$CurrLink</h1></th>\n
@@ -139,7 +139,7 @@ sub PrintCalendar {
     my $DayLink = "<a class=\"Date\" href=\"".$ShowCalendar."?year=$Year&amp;month=$Month&amp;day=$Day\">".
                   $DateTime -> day()."</a>";
     if ($Type eq "year") {
-      my @EventIDs = sort numerically &GetEventsByDate(-on => $SQLDate);
+      my @EventIDs = sort numerically GetEventsByDate(-on => $SQLDate);
       if (@EventIDs) {
         print "$DayLink\n";
       } else {
@@ -152,7 +152,7 @@ sub PrintCalendar {
       if (CanCreateMeeting()) {
         print $AddLink,"\n";
       }  
-      &PrintDayEvents(-day => $Day, -month => $Month, -year => $Year, -format => "summary");
+      PrintDayEvents(-day => $Day, -month => $Month, -year => $Year, -format => "summary");
     }  
     print "</td>\n";
   }

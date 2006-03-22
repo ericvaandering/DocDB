@@ -101,16 +101,18 @@ sub FileListByFileID {
   
   print "<ul>\n";
   foreach my $file (@Files) {
-    my $DocRevID      = $DocFiles{$file}{DOCREVID};
-    my $VersionNumber = $DocRevisions{$DocRevID}{VERSION};
-    my $DocumentID    = $DocRevisions{$DocRevID}{DOCID};
-    my $link;
-    if ($DocFiles{$file}{DESCRIPTION}) {
-      $link = &FileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME},
-                        $DocFiles{$file}{DESCRIPTION});
-    } else { 
-      $link = &FileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME});
-    }
+    my $DocRevID   = $DocFiles{$file}{DOCREVID};
+    my $Version    = $DocRevisions{$DocRevID}{VERSION};
+    my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+    my $link = NewFileLink( {-docid => $DocumentID, -version => $Version,
+                             -shortname   => $DocFiles{$file}{NAME},
+                             -description => $DocFiles{$file}{DESCRIPTION}} );
+#    if ($DocFiles{$file}{DESCRIPTION}) {
+#      $link = &FileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME},
+#                        $DocFiles{$file}{DESCRIPTION});
+#    } else { 
+#      $link = &FileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME});
+#    }
     print "<li>$link</li>\n";
   }  
   print "</ul>\n";
@@ -128,15 +130,64 @@ sub ShortFileListByFileID {
     my $DocRevID      = $DocFiles{$file}{DOCREVID};
     my $VersionNumber = $DocRevisions{$DocRevID}{VERSION};
     my $DocumentID    = $DocRevisions{$DocRevID}{DOCID};
-    my $link;
-    if ($DocFiles{$file}{DESCRIPTION}) {
-      $link = &ShortFileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME},
-                        $DocFiles{$file}{DESCRIPTION});
-    } else { 
-      $link = &ShortFileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME});
-    }
+    my $link = NewFileLink( {-maxlength => 16, -format => "short", -docid => $DocumentID, -version => $Version,
+                             -shortname   => $DocFiles{$file}{NAME},
+                             -description => $DocFiles{$file}{DESCRIPTION}} );
+#    my $link;
+#    if ($DocFiles{$file}{DESCRIPTION}) {
+#      $link = &ShortFileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME},
+#                        $DocFiles{$file}{DESCRIPTION});
+#    } else { 
+#      $link = &ShortFileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME});
+#    }
     print "$link<br/>\n";
   }  
+}
+
+sub NewFileLink ($) {
+  my ($ArgRef) = @_;
+  
+  my $DocumentID  = exists $ArgRef->{-docid}       ? $ArgRef->{-docid}       : 0;
+  my $Version     = exists $ArgRef->{-version}     ? $ArgRef->{-version}     : 0;
+  my $ShortName   = exists $ArgRef->{-shortname}   ? $ArgRef->{-shortname}   : "";
+  my $Description = exists $ArgRef->{-description} ? $ArgRef->{-description} : "";
+  my $MaxLength   = exists $ArgRef->{-maxlength}   ? $ArgRef->{-maxlength}   : 60;
+  my $MaxExt      = exists $ArgRef->{-maxext}      ? $ArgRef->{-maxext}      : 4;
+  my $Format      = exists $ArgRef->{-format}      ? $ArgRef->{-format}      : "long";
+  require "FSUtilities.pm";
+
+  my $ShortFile = CGI::escape($ShortName);
+  my $BaseURL   = GetURLDir($DocumentID,$Version);
+  my $FileSize  = FileSize(FullFile($DocumentID,$Version,$ShortName));
+
+  $FileSize =~ s/^\s+//; # Chop off leading spaces
+  
+  my $PrintedName = $ShortName; 
+  if ($MaxLength) { 
+    $PrintedName = AbbreviateFileName(-filename  => $shortname,
+                                      -maxlength => $MaxLength, -maxext => $MaxExt);
+  }  
+
+  my $URL = $BaseURL.$ShortFile;
+  if ($UserValidation eq "certificate" || $Preferences{Options}{AlwaysRetrieveFile}) {                                          
+    $URL = $RetrieveFile."?docid=".$DocumentID."&amp;version=".$Version."&amp;filename=".$ShortFile;
+  }
+  
+  my $Link = "";
+  
+  if ($Format eq "short") {
+    if ($Description) {
+      return "<a href=\"$URL\" title=\"$ShortName\">$Description</a>";
+    } else {
+      return "<a href=\"$URL\" title=\"$ShortName\">$PrintedName</a>";
+    }
+  } else {
+    if ($Description) {
+      return "<a href=\"$URL\" title=\"$ShortName\">$Description</a> ($PrintedName, $FileSize)";
+    } else {
+      return "<a href=\"$URL\" title=\"$ShortName\">$PrintedName</a> ($FileSize)";
+    }
+  }
 }
 
 sub FileLink {
