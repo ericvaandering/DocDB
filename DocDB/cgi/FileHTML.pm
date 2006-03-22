@@ -127,9 +127,9 @@ sub ShortFileListByFileID {
   @Files = sort FilesByDescription @Files;
   
   foreach my $file (@Files) {
-    my $DocRevID      = $DocFiles{$file}{DOCREVID};
-    my $VersionNumber = $DocRevisions{$DocRevID}{VERSION};
-    my $DocumentID    = $DocRevisions{$DocRevID}{DOCID};
+    my $DocRevID   = $DocFiles{$file}{DOCREVID};
+    my $Version    = $DocRevisions{$DocRevID}{VERSION};
+    my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
     my $link = NewFileLink( {-maxlength => 16, -format => "short", -docid => $DocumentID, -version => $Version,
                              -shortname   => $DocFiles{$file}{NAME},
                              -description => $DocFiles{$file}{DESCRIPTION}} );
