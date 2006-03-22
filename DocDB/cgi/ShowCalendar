@@ -174,15 +174,15 @@ if ($FutureEventTable || $MonthEventTable) {
     my $TheDay = $EventTableStart -> clone();
     my $RowClass = "Odd";
     foreach my $i (0..$WindowDays) {
-      $TheDay -> add(days => 1);
-      my $Count = &PrintDayEvents(-year => $TheDay -> year(), -month  => $TheDay -> month(), 
-                                  -day  => $TheDay -> day(),  -format => "multiday", 
-                                  -rowclass => $RowClass);
+      my $Count = PrintDayEvents(-year => $TheDay -> year(), -month  => $TheDay -> month(), 
+                                 -day  => $TheDay -> day(),  -format => "multiday", 
+                                 -rowclass => $RowClass);
       if ($Count && $RowClass eq "Odd") {
         $RowClass = "Even";
       } elsif ($Count && $RowClass eq "Even") {            
         $RowClass = "Odd";
       }
+      $TheDay -> add(days => 1);
     }  
     print "</table>\n";
   }  
@@ -190,5 +190,5 @@ if ($FutureEventTable || $MonthEventTable) {
 
 $EndTime  = new Benchmark;
 
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

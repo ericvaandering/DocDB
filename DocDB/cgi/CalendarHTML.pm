@@ -135,11 +135,11 @@ sub PrintCalendar {
     if ($DateTime == $Today) {
       $TDClass .= " Today";
     }  
-    my @EventIDs = sort numerically &GetEventsByDate(-on => $SQLDate);
     print "<td class=\"$TDClass\">\n";
     my $DayLink = "<a class=\"Date\" href=\"".$ShowCalendar."?year=$Year&amp;month=$Month&amp;day=$Day\">".
                   $DateTime -> day()."</a>";
     if ($Type eq "year") {
+      my @EventIDs = sort numerically &GetEventsByDate(-on => $SQLDate);
       if (@EventIDs) {
         print "$DayLink\n";
       } else {

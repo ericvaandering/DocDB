@@ -61,14 +61,15 @@ sub GetEventsByDate (%) {
   my $To   = $Params{-to}   || "";
   my $On   = $Params{-on}   || SQLNow(-dateonly => $TRUE);
   
-  push @DebugStack,"Fetching events from $From to $To";
   
   my $List;
   if ($From && $To) { # Starts or ends in or surrounds window
+    push @DebugStack,"Fetching events from $From to $To";
     $List = $dbh->prepare("select ConferenceID from Conference where (StartDate>=? and StartDate<=?) "."
                            or (EndDate>=? and EndDate<=?) or (StartDate<? and EndDate>?)");
     $List -> execute($From,$To,$From,$To,$From,$To);
   } else { 
+    push @DebugStack,"Fetching events on $On";
     $List = $dbh->prepare("select ConferenceID from Conference where StartDate<=? and EndDate>=?");
     $List -> execute($On,$On);
   }
@@ -79,6 +80,7 @@ sub GetEventsByDate (%) {
   while ($List -> fetch) {
     if (FetchConferenceByConferenceID($EventID)) {
       if (CanAccessMeeting($EventID)) {
+        push @DebugStack,"Found event $EventID";
         push @EventIDs,$EventID;
       }  
     }  
