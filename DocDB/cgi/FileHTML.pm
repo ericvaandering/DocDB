@@ -164,7 +164,7 @@ sub NewFileLink ($) {
   
   my $PrintedName = $ShortName; 
   if ($MaxLength) { 
-    $PrintedName = AbbreviateFileName(-filename  => $shortname,
+    $PrintedName = AbbreviateFileName(-filename  => $ShortName,
                                       -maxlength => $MaxLength, -maxext => $MaxExt);
   }  
 
