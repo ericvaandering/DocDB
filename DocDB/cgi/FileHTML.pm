@@ -124,7 +124,7 @@ sub ShortFileListByFileID { # FIXME: Make special case of FileListByFileID
     my $DocRevID   = $DocFiles{$FileID}{DOCREVID};
     my $Version    = $DocRevisions{$DocRevID}{VERSION};
     my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
-    my $Link = FileLink( {-maxlength => 16, -format => "short", -docid => $DocumentID, -version => $Version,
+    my $Link = FileLink( {-maxlength => 20, -format => "short", -docid => $DocumentID, -version => $Version,
                           -shortname   => $DocFiles{$FileID}{NAME},
                           -description => $DocFiles{$FileID}{DESCRIPTION}} );
     print "$Link<br/>\n";
