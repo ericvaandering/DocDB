@@ -175,7 +175,7 @@ if ($FutureEventTable || $MonthEventTable) {
     print "<th>Location</th><th>&nbsp;</th></tr>\n";
     my $TheDay = $EventTableStart -> clone();
     my $RowClass = "Odd";
-    foreach my $i (0..$WindowDays) {
+    foreach my $i (1..$WindowDays) {
       my $Count = PrintDayEvents(-year => $TheDay -> year(), -month  => $TheDay -> month(), 
                                  -day  => $TheDay -> day(),  -format => "multiday", 
                                  -rowclass => $RowClass);
