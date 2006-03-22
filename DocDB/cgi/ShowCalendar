@@ -58,6 +58,7 @@ my $WindowEnd;
 my $WindowDays;
 my $EventTableStart;
 my $Today = DateTime -> now(time_zone => 'local');
+push @DebugStack, "Today is ".$Today -> iso8601;
 
 if ($Day && $Month && $Year) {
   my $Date = DateTime -> new(year => $Year, month => $Month, day => $Day);
