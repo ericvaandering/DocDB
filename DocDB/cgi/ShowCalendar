@@ -58,6 +58,7 @@ my $WindowEnd;
 my $WindowDays;
 my $EventTableStart;
 my $Today = DateTime -> now(time_zone => 'local');
+
 push @DebugStack, "Today is ".$Today -> iso8601;
 
 if ($Day && $Month && $Year) {
@@ -69,7 +70,7 @@ if ($Day && $Month && $Year) {
   $EventTableStart = $Date -> clone();
   $MonthEventTable = $TRUE;
   $WindowStart = $Date -> ymd();;
-  $WindowEnd = DateTime -> last_day_of_month(year => $Year, month => $Month) -> ymd();
+  $WindowEnd  = DateTime -> last_day_of_month(year => $Year, month => $Month) -> ymd();
   $WindowDays = DateTime -> last_day_of_month(year => $Year, month => $Month) -> day();
 } elsif ($Year) {
   $TitleDate = $Year;
@@ -105,16 +106,16 @@ if ($Day && $Month && $Year) {
   my $NextYear  = $NextDay -> year(); 
   
   print "<p class=\"DayNav\">\n";
-  print &CalendarLink(-year => $PrevYear, -month => $PrevMNum, -day => $PrevDNum, 
-                      -text => "&laquo; $PrevDNum $PrevName $PrevYear");
+  print CalendarLink(-year => $PrevYear, -month => $PrevMNum, -day => $PrevDNum, 
+                     -text => "&laquo; $PrevDNum $PrevName $PrevYear");
   print "<span class=\"CurrDate\">$Day ";
-  print &CalendarLink(-year => $Year, -month => $Month,
-                      -text => $TheDay -> month_name());
+  print CalendarLink(-year => $Year, -month => $Month,
+                     -text => $TheDay -> month_name());
   print " ";                    
-  print &CalendarLink(-year => $Year, -text => "$Year");
+  print CalendarLink(-year => $Year, -text => "$Year");
   print "</span>\n";
-  print &CalendarLink(-year => $NextYear, -month => $NextMNum, -day => $NextDNum, 
-                      -text => "$NextDNum $NextName $NextYear &raquo;");
+  print CalendarLink(-year => $NextYear, -month => $NextMNum, -day => $NextDNum, 
+                     -text => "$NextDNum $NextName $NextYear &raquo;");
   print "</p>\n";
   
   if (CanCreateMeeting()) {
@@ -142,7 +143,7 @@ if ($Day && $Month && $Year) {
       print "<tr>\n";
     }
     print "<td class=\"Month\">";   
-    &PrintCalendar(-year => $Year, -month => $Month, -type => "year");
+    PrintCalendar(-year => $Year, -month => $Month, -type => "year");
     print "</td>";   
     unless ($Month % 4) {
       print "</tr>\n";

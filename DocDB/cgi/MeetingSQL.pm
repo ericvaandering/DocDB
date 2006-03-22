@@ -69,6 +69,7 @@ sub GetEventsByDate (%) {
                            or (EndDate>=? and EndDate<=?) or (StartDate<? and EndDate>?)");
     $List -> execute($From,$To,$From,$To,$From,$To);
   } else { 
+    push @DebugStack,"Fetching events on $On";
     $List = $dbh->prepare("select ConferenceID from Conference where StartDate<=? and EndDate>=?");
     $List -> execute($On,$On);
   }
