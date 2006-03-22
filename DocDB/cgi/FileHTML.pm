@@ -100,25 +100,19 @@ sub FileListByFileID {
   @Files = sort FilesByDescription @Files;
   
   print "<ul>\n";
-  foreach my $file (@Files) {
-    my $DocRevID   = $DocFiles{$file}{DOCREVID};
+  foreach my $FileID (@Files) {
+    my $DocRevID   = $DocFiles{$FileID}{DOCREVID};
     my $Version    = $DocRevisions{$DocRevID}{VERSION};
     my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
-    my $link = NewFileLink( {-docid => $DocumentID, -version => $Version,
-                             -shortname   => $DocFiles{$file}{NAME},
-                             -description => $DocFiles{$file}{DESCRIPTION}} );
-#    if ($DocFiles{$file}{DESCRIPTION}) {
-#      $link = &FileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME},
-#                        $DocFiles{$file}{DESCRIPTION});
-#    } else { 
-#      $link = &FileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME});
-#    }
-    print "<li>$link</li>\n";
+    my $Link = FileLink( {-docid => $DocumentID, -version => $Version,
+                          -shortname   => $DocFiles{$FileID}{NAME},
+                          -description => $DocFiles{$FileID}{DESCRIPTION}} );
+    print "<li>$Link</li>\n";
   }  
   print "</ul>\n";
 }
 
-sub ShortFileListByFileID {
+sub ShortFileListByFileID { # FIXME: Make special case of FileListByFileID
   require "FileUtilities.pm";
   require "Sorts.pm";
   
@@ -126,25 +120,18 @@ sub ShortFileListByFileID {
   
   @Files = sort FilesByDescription @Files;
   
-  foreach my $file (@Files) {
-    my $DocRevID   = $DocFiles{$file}{DOCREVID};
+  foreach my $FileID (@Files) {
+    my $DocRevID   = $DocFiles{$FileID}{DOCREVID};
     my $Version    = $DocRevisions{$DocRevID}{VERSION};
     my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
-    my $link = NewFileLink( {-maxlength => 16, -format => "short", -docid => $DocumentID, -version => $Version,
-                             -shortname   => $DocFiles{$file}{NAME},
-                             -description => $DocFiles{$file}{DESCRIPTION}} );
-#    my $link;
-#    if ($DocFiles{$file}{DESCRIPTION}) {
-#      $link = &ShortFileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME},
-#                        $DocFiles{$file}{DESCRIPTION});
-#    } else { 
-#      $link = &ShortFileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME});
-#    }
-    print "$link<br/>\n";
+    my $Link = FileLink( {-maxlength => 16, -format => "short", -docid => $DocumentID, -version => $Version,
+                          -shortname   => $DocFiles{$FileID}{NAME},
+                          -description => $DocFiles{$FileID}{DESCRIPTION}} );
+    print "$Link<br/>\n";
   }  
 }
 
-sub NewFileLink ($) {
+sub FileLink ($) {
   my ($ArgRef) = @_;
   
   my $DocumentID  = exists $ArgRef->{-docid}       ? $ArgRef->{-docid}       : 0;
@@ -154,6 +141,7 @@ sub NewFileLink ($) {
   my $MaxLength   = exists $ArgRef->{-maxlength}   ? $ArgRef->{-maxlength}   : 60;
   my $MaxExt      = exists $ArgRef->{-maxext}      ? $ArgRef->{-maxext}      : 4;
   my $Format      = exists $ArgRef->{-format}      ? $ArgRef->{-format}      : "long";
+
   require "FSUtilities.pm";
 
   my $ShortFile = CGI::escape($ShortName);
@@ -189,45 +177,6 @@ sub NewFileLink ($) {
     }
   }
 }
-
-sub FileLink {
-  require "FSUtilities.pm";
-
-  my ($DocumentID,$Version,$shortname,$description) = @_;
-  
-  my $shortfile = CGI::escape($shortname);
-  my $base_url = &GetURLDir($DocumentID,$Version);
-  my $file_size = &FileSize(&FullFile($DocumentID,$Version,$shortname));
-  $file_size =~ s/^\s+//; # Chop off leading spaces
-  my $PrintedName = &AbbreviateFileName(-filename => $shortname,
-                                            -maxlength => 60, -maxext => 4);
-  my $URL = $base_url.$shortfile;
-  if ($UserValidation eq "certificate" || $Preferences{Options}{AlwaysRetrieveFile}) {                                          
-    $URL = $RetrieveFile."?docid=".$DocumentID."&amp;version=".$Version."&amp;filename=".$shortfile;
-  }
-  if ($description) {
-    return "<a href=\"$URL\" title=\"$shortname\">$description</a> ($PrintedName, $file_size)";
-  } else {
-    return "<a href=\"$URL\" title=\"$shortname\">$PrintedName</a> ($file_size)";
-  }
-}  
-
-sub ShortFileLink { #FIXME: Make option of FileLink
-  require "FSUtilities.pm";
-
-  my ($documentID,$version,$shortname,$description) = @_;
-  my $shortfile = CGI::escape($shortname);
-  $base_url = &GetURLDir($documentID,$version);
-  my $URL = $base_url.$shortfile;
-  if ($UserValidation eq "certificate" || $Preferences{Options}{AlwaysRetrieveFile}) {                                          
-    $URL = $RetrieveFile."?docid=".$documentID."&amp;version=".$version."&amp;filename=".$shortfile;
-  }
-  if ($description) {
-    return "<a href=\"$URL\" title=\"$shortname\">$description</a>";
-  } else {
-    return "<a href=\"$URL\" title=\"$shortname\">$shortname</a>";
-  }
-}  
 
 sub ArchiveLink {
   my ($DocumentID,$Version) = @_;
