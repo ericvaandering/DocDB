@@ -89,7 +89,6 @@ sub ShortFileListByRevID {
 }
 
 sub FileListByFileID {
-  require "FileUtilities.pm";
   require "Sorts.pm";
   
   my (@Files) = @_;
@@ -113,7 +112,6 @@ sub FileListByFileID {
 }
 
 sub ShortFileListByFileID { # FIXME: Make special case of FileListByFileID
-  require "FileUtilities.pm";
   require "Sorts.pm";
   
   my (@Files) = @_;
@@ -143,6 +141,7 @@ sub FileLink ($) {
   my $Format      = exists $ArgRef->{-format}      ? $ArgRef->{-format}      : "long";
 
   require "FSUtilities.pm";
+  require "FileUtilities.pm";
 
   my $ShortFile = CGI::escape($ShortName);
   my $BaseURL   = GetURLDir($DocumentID,$Version);
