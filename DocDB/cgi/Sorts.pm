@@ -168,6 +168,7 @@ sub DocumentByFirstAuthor {
   ($bhour,$bmin,$bsec) = split /:/,$btime;
   
   unless ($DocFirstAuthor{$adr}{Have}) {
+    $DocFirstAuthor{$adr}{Have} = 1;
     my $FirstID = FirstAuthorID( {-docrevid => $adr} );
     if ($FirstID) {
       FetchAuthor($FirstID);
@@ -177,6 +178,7 @@ sub DocumentByFirstAuthor {
   }
     
   unless ($DocFirstAuthor{$bdr}{Have}) {
+    $DocFirstAuthor{$bdr}{Have} = 1;
     my $FirstID = FirstAuthorID( {-docrevid => $bdr} );
     if ($FirstID) {
       FetchAuthor($FirstID);
