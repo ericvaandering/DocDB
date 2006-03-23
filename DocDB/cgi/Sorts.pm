@@ -44,6 +44,8 @@ sub byLastName {
   $FirstA =~ tr/[a-z]/[A-Z]/;
   $FirstB =~ tr/[a-z]/[A-Z]/;
 
+  push @DebugStack,"Comparing $a to $b ($LastA to $LastB)";
+
    $LastA cmp $LastB
           or
   $FirstA cmp $FirstB;

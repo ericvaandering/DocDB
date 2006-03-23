@@ -23,26 +23,21 @@
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 sub FirstAuthor ($) {
-  require "AuthorSQL.pm";
-
   my ($DocRevID) = @_;
 
-  &FetchDocRevisionByID($DocRevID);
-  my @AuthorIDs = &GetRevisionAuthors($DocRevID);
+  require "AuthorSQL.pm";
+  require "Sorts.pm";
+
+  FetchDocRevisionByID($DocRevID);
+  my @AuthorIDs = sort byLastName GetRevisionAuthors($DocRevID);
   
   unless (@AuthorIDs) {return "None";}
   
   my $FirstID     = $AuthorIDs[0];
-  my $SubmitterID = $DocRevisions{$DocRevID}{Submitter};
-  foreach $AuthorID (@AuthorIDs) {
-    if ($AuthorID == $SubmitterID) {
-      $FirstID = $SubmitterID;  # Submitter is in list --> first author
-    }  
-  }
-  
-  my $author_link = &AuthorLink($FirstID);
-  if ($#AuthorIDs) {$author_link .= " <i>et. al.</i>";}
-  return $author_link; 
+
+  my $AuthorLink = AuthorLink($FirstID);
+  if ($#AuthorIDs) {$AuthorLink .= " <i>et. al.</i>";}
+  return $AuthorLink; 
 }
 
 sub AuthorListByID {
