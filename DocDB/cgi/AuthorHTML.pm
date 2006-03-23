@@ -33,7 +33,7 @@ sub FirstAuthor ($) {
   
   unless (@AuthorIDs) {return "None";}
   
-  my $FirstID     = $AuthorIDs[0];
+  my $FirstID = FirstAuthorID( {-docrevid => $DocRevID} );
 
   my $AuthorLink = AuthorLink($FirstID);
   if ($#AuthorIDs) {$AuthorLink .= " <i>et. al.</i>";}

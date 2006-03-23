@@ -168,10 +168,8 @@ sub DocumentByFirstAuthor {
   ($bhour,$bmin,$bsec) = split /:/,$btime;
   
   unless ($DocFirstAuthor{$adr}{Have}) {
-    my @AuthorIDs = sort byLastName GetRevisionAuthors($adr);
-    $DocFirstAuthor{$adr}{Have} = 1;
-    if (@AuthorIDs) {
-      my $FirstID     = $AuthorIDs[0];
+    my $FirstID = FirstAuthorID( {-docrevid => $adr} );
+    if ($FirstID) {
       FetchAuthor($FirstID);
       $DocFirstAuthor{$adr}{LastName}  = $Authors{$FirstID}{LastName};
       $DocFirstAuthor{$adr}{FirstName} = $Authors{$FirstID}{FirstName};
@@ -179,12 +177,9 @@ sub DocumentByFirstAuthor {
   }
     
   unless ($DocFirstAuthor{$bdr}{Have}) {
-    my @AuthorIDs = sort byLastName GetRevisionAuthors($bdr);
-    $DocFirstAuthor{$bdr}{Have} = 1;
-    if (@AuthorIDs) {
-      my $FirstID     = $AuthorIDs[0];
+    my $FirstID = FirstAuthorID( {-docrevid => $bdr} );
+    if ($FirstID) {
       FetchAuthor($FirstID);
-      $DocFirstAuthor{$bdr}{Have}      = 1;
       $DocFirstAuthor{$bdr}{LastName}  = $Authors{$FirstID}{LastName};
       $DocFirstAuthor{$bdr}{FirstName} = $Authors{$FirstID}{FirstName};
     }

@@ -5,7 +5,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -91,6 +91,25 @@ sub GetRevisionAuthors {
   }
   return @authors;  
 }
+
+sub FirstAuthorID ($) { # FIXME: Could be AuthorUtilities.pm
+  my ($ArgRef) = @_;
+  
+  my $DocumentID = exists $ArgRef->{-docid}    ? $ArgRef->{-docid}    : 0;
+  my $DocRevID   = exists $ArgRef->{-docrevid} ? $ArgRef->{-docrevid} : 0;
+
+  if ($DocumentID) {
+    # May have to fetch
+    $DocRevID = $DocRevIDs{$DocumentID}{$Documents{$DocumentID}{NVersions}};
+  }
+  my @AuthorIDs = sort byLastName GetRevisionAuthors($DocRevID);
+  
+  unless (@AuthorIDs) {return undef;}
+  
+  my $FirstID     = $AuthorIDs[0];
+
+  return $FirstID;
+}  
 
 sub GetInstitutionAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with authors from institution
   my ($InstitutionID) = @_;
