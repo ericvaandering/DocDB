@@ -1,5 +1,5 @@
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -52,8 +52,6 @@ sub byLastName {
   $LastB  =~ tr/[a-z]/[A-Z]/;
   $FirstA =~ tr/[a-z]/[A-Z]/;
   $FirstB =~ tr/[a-z]/[A-Z]/;
-
-  push @DebugStack,"Comparing $a to $b ($LastA to $LastB)";
 
    $LastA cmp $LastB
           or
@@ -146,6 +144,74 @@ sub DocumentByRequester {
    $Authors{$adr}{LastName} cmp $Authors{$bdr}{LastName}
                             or
   $Authors{$adr}{FirstName} cmp $Authors{$bdr}{FirstName}
+}
+
+sub DocumentByFirstAuthor {
+  
+  ### All documents (of interest) must be fetched before calling
+
+  require "AuthorSQL.pm";
+
+  my $adr = $DocRevIDs{$a}{$Documents{$a}{NVersions}};
+  my $bdr = $DocRevIDs{$b}{$Documents{$b}{NVersions}};
+
+  $adt = $DocRevisions{$adr}{DATE};
+  $bdt = $DocRevisions{$bdr}{DATE};
+  
+  ($adate,$atime) = split /\s+/,$adt;
+  ($bdate,$btime) = split /\s+/,$bdt;
+  
+  ($ayear,$amonth,$aday) = split /\-/,$adate;
+  ($byear,$bmonth,$bday) = split /\-/,$bdate;
+  
+  ($ahour,$amin,$asec) = split /:/,$atime;
+  ($bhour,$bmin,$bsec) = split /:/,$btime;
+  
+  my %DocFirstAuthor;
+  
+  unless ($DocFirstAuthor{$adr}{LastName}) {
+    my @AuthorIDs = sort byLastName GetRevisionAuthors($adr);
+    unless (@AuthorIDs) {
+      $DocFirstAuthor{$adr}{LastName} = "    ";
+    }
+  
+    my $FirstID     = $AuthorIDs[0];
+    FetchAuthor($FirstID);
+    $DocFirstAuthor{$adr}{LastName} = $Authors{$FirstID}{LastName};
+    $DocFirstAuthor{$adr}{FirstName} = $Authors{$FirstID}{FirstName};
+    push @DebugStack,"Fetched A author $FirstID ".$Authors{$FirstID}{LastName}.",".$Authors{$FirstID}{FirstName};
+  }
+    
+  unless ($DocFirstAuthor{$bdr}{LastName}) {
+    my @AuthorIDs = sort byLastName GetRevisionAuthors($bdr);
+    unless (@AuthorIDs) {
+      $DocFirstAuthor{$bdr}{LastName} = "    ";
+    }
+  
+    my $FirstID     = $AuthorIDs[0];
+    FetchAuthor($FirstID);
+    $DocFirstAuthor{$bdr}{LastName} = $Authors{$FirstID}{LastName};
+    $DocFirstAuthor{$bdr}{FirstName} = $Authors{$FirstID}{FirstName};
+    push @DebugStack,"Fetched B author $FirstID ".$Authors{$FirstID}{LastName}.",".$Authors{$FirstID}{FirstName};
+  }
+  
+  push @DebugStack,"Comparing $DocFirstAuthor{$adr}{LastName} to $DocFirstAuthor{$bdr}{LastName}";
+
+   $DocFirstAuthor{$adr}{LastName} cmp $DocFirstAuthor{$bdr}{LastName}
+                                   or
+  $DocFirstAuthor{$adr}{FirstName} cmp $DocFirstAuthor{$bdr}{FirstName}
+                                   or
+                            $ayear <=> $byear
+                                   or
+                           $amonth <=> $bmonth 
+                                   or
+                             $aday <=> $bday
+                                   or
+                            $ahour <=> $bhour
+                                   or
+                             $amin <=> $bmin 
+                                   or
+                             $asec <=> $bsec;            
 }
 
 sub DocumentByConferenceDate {
