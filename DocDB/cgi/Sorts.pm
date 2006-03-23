@@ -35,6 +35,15 @@ sub byTopic {
 }    
 
 sub byLastName {
+  require "AuthorSQL.pm";
+
+  unless ($Authors{$a}{LastName}) {
+    FetchAuthor($a);
+  }    
+  unless ($Authors{$b}{LastName}) {
+    FetchAuthor($b);
+  }    
+
   my $LastA  = $Authors{$a}{LastName};
   my $LastB  = $Authors{$b}{LastName};
   my $FirstA = $Authors{$a}{FirstName};
