@@ -167,51 +167,44 @@ sub DocumentByFirstAuthor {
   ($ahour,$amin,$asec) = split /:/,$atime;
   ($bhour,$bmin,$bsec) = split /:/,$btime;
   
-  my %DocFirstAuthor;
-  
-  unless ($DocFirstAuthor{$adr}{LastName}) {
+  unless ($DocFirstAuthor{$adr}{Have}) {
     my @AuthorIDs = sort byLastName GetRevisionAuthors($adr);
-    unless (@AuthorIDs) {
-      $DocFirstAuthor{$adr}{LastName} = "    ";
+    $DocFirstAuthor{$adr}{Have} = 1;
+    if (@AuthorIDs) {
+      my $FirstID     = $AuthorIDs[0];
+      FetchAuthor($FirstID);
+      $DocFirstAuthor{$adr}{LastName}  = $Authors{$FirstID}{LastName};
+      $DocFirstAuthor{$adr}{FirstName} = $Authors{$FirstID}{FirstName};
     }
-  
-    my $FirstID     = $AuthorIDs[0];
-    FetchAuthor($FirstID);
-    $DocFirstAuthor{$adr}{LastName} = $Authors{$FirstID}{LastName};
-    $DocFirstAuthor{$adr}{FirstName} = $Authors{$FirstID}{FirstName};
-    push @DebugStack,"Fetched A author $FirstID ".$Authors{$FirstID}{LastName}.",".$Authors{$FirstID}{FirstName};
   }
     
-  unless ($DocFirstAuthor{$bdr}{LastName}) {
+  unless ($DocFirstAuthor{$bdr}{Have}) {
     my @AuthorIDs = sort byLastName GetRevisionAuthors($bdr);
-    unless (@AuthorIDs) {
-      $DocFirstAuthor{$bdr}{LastName} = "    ";
+    $DocFirstAuthor{$bdr}{Have} = 1;
+    if (@AuthorIDs) {
+      my $FirstID     = $AuthorIDs[0];
+      FetchAuthor($FirstID);
+      $DocFirstAuthor{$bdr}{Have}      = 1;
+      $DocFirstAuthor{$bdr}{LastName}  = $Authors{$FirstID}{LastName};
+      $DocFirstAuthor{$bdr}{FirstName} = $Authors{$FirstID}{FirstName};
     }
-  
-    my $FirstID     = $AuthorIDs[0];
-    FetchAuthor($FirstID);
-    $DocFirstAuthor{$bdr}{LastName} = $Authors{$FirstID}{LastName};
-    $DocFirstAuthor{$bdr}{FirstName} = $Authors{$FirstID}{FirstName};
-    push @DebugStack,"Fetched B author $FirstID ".$Authors{$FirstID}{LastName}.",".$Authors{$FirstID}{FirstName};
   }
   
-  push @DebugStack,"Comparing $DocFirstAuthor{$adr}{LastName} to $DocFirstAuthor{$bdr}{LastName}";
-
    $DocFirstAuthor{$adr}{LastName} cmp $DocFirstAuthor{$bdr}{LastName}
                                    or
   $DocFirstAuthor{$adr}{FirstName} cmp $DocFirstAuthor{$bdr}{FirstName}
                                    or
-                            $ayear <=> $byear
-                                   or
-                           $amonth <=> $bmonth 
-                                   or
-                             $aday <=> $bday
-                                   or
-                            $ahour <=> $bhour
-                                   or
-                             $amin <=> $bmin 
-                                   or
-                             $asec <=> $bsec;            
+                           $byear  <=>  $ayear 
+                                   or         
+                           $bmonth <=> $amonth 
+                                   or         
+                           $bday   <=>   $aday 
+                                   or         
+                           $bhour  <=>  $ahour 
+                                   or         
+                           $bmin   <=>   $amin 
+                                   or         
+                           $bsec   <=>   $asec ;            
 }
 
 sub DocumentByConferenceDate {

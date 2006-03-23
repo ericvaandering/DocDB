@@ -107,6 +107,8 @@ sub DocumentTable (%) {
       @IDs = sort DocumentByRevisionDate @IDs; 
     } elsif ($SortBy eq "requester") {
       @IDs = sort DocumentByRequester @IDs; 
+    } elsif ($SortBy eq "firstauthor") {
+      @IDs = sort DocumentByFirstAuthor @IDs; 
     } elsif ($SortBy eq "confdate") {
       @IDs = sort DocumentByConferenceDate @IDs; 
     }

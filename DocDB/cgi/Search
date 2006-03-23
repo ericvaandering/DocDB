@@ -406,7 +406,7 @@ if ($Mode eq "conference") {
   $SortBy  = "confdate";
 } elsif ($Mode eq "meeting") {
   $FieldListOptions{-default} = "Meeting Mode";
-  $SortBy  = "requester";
+  $SortBy  = "firstauthor";
   $Reverse = 0;
 } 
 
