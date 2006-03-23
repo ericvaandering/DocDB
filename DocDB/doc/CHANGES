@@ -1,3 +1,16 @@
+7.4.0
+  Changes in the API to allow updating documents and the DB info
+  
+  Fix for some edge conditions in the calendar and displaying events
+  
+  Users are allowed to rename files that are fetched with wget
+  
+  Addition of document notes to fields that can be displayed
+  
+  In table view of document, abbreviate filenames longer than 20 characters
+
+  Change first author to first alphabetically and change sort to work on it.
+
 7.3.2 
   A couple of bugfixes and one minor display enhancement
   
