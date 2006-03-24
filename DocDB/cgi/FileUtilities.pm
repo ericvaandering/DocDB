@@ -22,11 +22,13 @@
 #  File        -- Contains file handle from CGI
 #  CopyFileID  -- Copy physical file from a previous version
 #  FileID      -- Duplicate file id entry from a previous version
+#  Description -- Description of the file
+#  Main        -- Boolean, is it a "main" file
+# These settings apply only to URL uploads
 #  URL         -- URL of the file  
 #  Pass        -- Password for wget 
 #  User        -- Username for wget 
-#  Description -- Description of the file
-#  Main        -- Boolean, is it a "main" file
+#  NewFilename -- New name of files (wget -O option)
 
 sub AddFiles (%) {
   require "FileSQL.pm";
