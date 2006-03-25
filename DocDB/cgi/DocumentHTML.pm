@@ -114,7 +114,7 @@ sub DocumentTable (%) {
     }
 
     if ($Reverse) {
-      @IDs = reverse @DocumentIDs;
+      @IDs = reverse @IDs;
     }
   }
 
