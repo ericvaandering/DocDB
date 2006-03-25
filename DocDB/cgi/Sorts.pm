@@ -72,8 +72,6 @@ sub DocumentByRevisionDate {
   $adt = $DocRevisions{$adr}{DATE};
   $bdt = $DocRevisions{$bdr}{DATE};
   
-  push @DebugStack,"Comparing $adt with $bdt";
-  
   ($adate,$atime) = split /\s+/,$adt;
   ($bdate,$btime) = split /\s+/,$bdt;
   
