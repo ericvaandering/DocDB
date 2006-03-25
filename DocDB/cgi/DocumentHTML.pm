@@ -107,12 +107,14 @@ sub DocumentTable (%) {
       @IDs = sort DocumentByRevisionDate @IDs; 
     } elsif ($SortBy eq "requester") {
       @IDs = sort DocumentByRequester @IDs; 
+    } elsif ($SortBy eq "firstauthor") {
+      @IDs = sort DocumentByFirstAuthor @IDs; 
     } elsif ($SortBy eq "confdate") {
       @IDs = sort DocumentByConferenceDate @IDs; 
     }
 
     if ($Reverse) {
-      @IDs = reverse @DocumentIDs;
+      @IDs = reverse @IDs;
     }
   }
 
@@ -224,9 +226,11 @@ sub DocumentTable (%) {
           }
         }
         ShortTopicListByID(@TopicIDs); 
-      } elsif ($Field eq "Abstract") {   # Files in document
+      } elsif ($Field eq "Abstract") { # Abstract
         PrintAbstract($DocRevisions{$DocRevID}{Abstract}, {-format => "bare"} ); 
-      } elsif ($Field eq "Files") {   # Files in document
+      } elsif ($Field eq "DocNotes") { # Notes and Changes
+        print AddLineBreaks(URLify($DocRevisions{$DocRevID}{Note}));
+      } elsif ($Field eq "Files") {    # Files in document
         require "FileHTML.pm";
         ShortFileListByRevID($DocRevID); 
       } elsif ($Field eq "Confirm") {  

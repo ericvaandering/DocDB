@@ -5,7 +5,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -59,14 +59,17 @@ sub GetEventsByDate (%) {
   
   my $From = $Params{-from} || "";
   my $To   = $Params{-to}   || "";
-  my $On   = $Params{-on}   || &SQLNow(-dateonly => $TRUE);
+  my $On   = $Params{-on}   || SQLNow(-dateonly => $TRUE);
+  
   
   my $List;
   if ($From && $To) { # Starts or ends in or surrounds window
+    push @DebugStack,"Fetching events from $From to $To";
     $List = $dbh->prepare("select ConferenceID from Conference where (StartDate>=? and StartDate<=?) "."
                            or (EndDate>=? and EndDate<=?) or (StartDate<? and EndDate>?)");
     $List -> execute($From,$To,$From,$To,$From,$To);
   } else { 
+    push @DebugStack,"Fetching events on $On";
     $List = $dbh->prepare("select ConferenceID from Conference where StartDate<=? and EndDate>=?");
     $List -> execute($On,$On);
   }
@@ -75,13 +78,13 @@ sub GetEventsByDate (%) {
   my @EventIDs;
   $List -> bind_columns(undef, \($EventID));
   while ($List -> fetch) {
-    if (&FetchConferenceByConferenceID($EventID)) {
-      if (&CanAccessMeeting($EventID)) {
+    if (FetchConferenceByConferenceID($EventID)) {
+      if (CanAccessMeeting($EventID)) {
         push @EventIDs,$EventID;
       }  
     }  
   }
-  @EventIDs = &Unique(@EventIDs);
+  @EventIDs = Unique(@EventIDs);
   return @EventIDs;
 }
 

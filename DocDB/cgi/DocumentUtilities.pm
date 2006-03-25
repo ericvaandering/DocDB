@@ -69,13 +69,15 @@ sub AddDocument {
   } 
 
   my ($DocRevID,$Count,@FileIDs);
-
-  $DocumentID = &InsertDocument(
-                 -docid    => $DocumentID, -requesterid => $RequesterID, 
-                 -datetime => $DateTime);
+  
+  my $ExistingDocumentID = FetchDocument($DocumentID); 
+  unless ($ExistingDocumentID) {
+    $DocumentID = InsertDocument(-docid    => $DocumentID, -requesterid => $RequesterID, 
+                                 -datetime => $DateTime);
+  }
                  
   if ($DocumentID) {                                 
-    $DocRevID = &InsertRevision(
+    $DocRevID = InsertRevision(
                  -docid       => $DocumentID,  -doctypeid => $TypeID, 
                  -submitterid => $RequesterID, -title     => $Title,
                  -pubinfo     => $PubInfo,     -abstract  => $Abstract,
@@ -88,19 +90,19 @@ sub AddDocument {
   
   my $Count;
   if ($DocRevID) { 
-    &FetchDocRevisionByID($DocRevID);
+    FetchDocRevisionByID($DocRevID);
     my $Version    = $DocRevisions{$DocRevID}{Version};
-    &MakeDirectory($DocumentID,$Version); 
-    &ProtectDirectory($DocumentID,$Version,@ViewIDs); 
-    $Count = &InsertAuthors(-docrevid        => $DocRevID, -authorids => \@AuthorIDs);
-    $Count = &InsertTopics(-docrevid         => $DocRevID, -topicids  => \@TopicIDs);
-    $Count = &InsertRevisionEvents(-docrevid => $DocRevID, -eventids  => \@EventIDs);
-    $Count = &InsertSecurity(-docrevid       => $DocRevID, -viewids   => \@ViewIDs, -modifyids => \@ModifyIDs);
-    unless ($Version eq "reserve") {
-      @FileIDs = &AddFiles(-docrevid         => $DocRevID, -datetime  => $DateTime, -files => \%Files);
+    MakeDirectory($DocumentID,$Version); 
+    ProtectDirectory($DocumentID,$Version,@ViewIDs); 
+    $Count = InsertAuthors(-docrevid        => $DocRevID, -authorids => \@AuthorIDs);
+    $Count = InsertTopics(-docrevid         => $DocRevID, -topicids  => \@TopicIDs);
+    $Count = InsertRevisionEvents(-docrevid => $DocRevID, -eventids  => \@EventIDs);
+    $Count = InsertSecurity(-docrevid       => $DocRevID, -viewids   => \@ViewIDs, -modifyids => \@ModifyIDs);
+    unless ($Version eq "reserve" || $Version eq "same") {
+      @FileIDs = AddFiles(-docrevid         => $DocRevID, -datetime  => $DateTime, -files => \%Files);
     }
     if (@SignOffIDs) {
-      &InsertSignoffList($DocRevID,@SignOffIDs);
+      InsertSignoffList($DocRevID,@SignOffIDs);
     }  
   }
   
@@ -265,5 +267,6 @@ sub CookieToFieldList {
     $FieldList{$Field}{ColSpan} = $ColSpan;
   }
   return %FieldList;
-}  
+}
+  
 1;

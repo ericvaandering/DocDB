@@ -1,5 +1,5 @@
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -35,6 +35,15 @@ sub byTopic {
 }    
 
 sub byLastName {
+  require "AuthorSQL.pm";
+
+  unless ($Authors{$a}{LastName}) {
+    FetchAuthor($a);
+  }    
+  unless ($Authors{$b}{LastName}) {
+    FetchAuthor($b);
+  }    
+
   my $LastA  = $Authors{$a}{LastName};
   my $LastB  = $Authors{$b}{LastName};
   my $FirstA = $Authors{$a}{FirstName};
@@ -135,6 +144,64 @@ sub DocumentByRequester {
    $Authors{$adr}{LastName} cmp $Authors{$bdr}{LastName}
                             or
   $Authors{$adr}{FirstName} cmp $Authors{$bdr}{FirstName}
+}
+
+sub DocumentByFirstAuthor {
+  
+  ### All documents (of interest) must be fetched before calling
+
+  require "AuthorSQL.pm";
+
+  my $adr = $DocRevIDs{$a}{$Documents{$a}{NVersions}};
+  my $bdr = $DocRevIDs{$b}{$Documents{$b}{NVersions}};
+
+  $adt = $DocRevisions{$adr}{DATE};
+  $bdt = $DocRevisions{$bdr}{DATE};
+  
+  ($adate,$atime) = split /\s+/,$adt;
+  ($bdate,$btime) = split /\s+/,$bdt;
+  
+  ($ayear,$amonth,$aday) = split /\-/,$adate;
+  ($byear,$bmonth,$bday) = split /\-/,$bdate;
+  
+  ($ahour,$amin,$asec) = split /:/,$atime;
+  ($bhour,$bmin,$bsec) = split /:/,$btime;
+  
+  unless ($DocFirstAuthor{$adr}{Have}) {
+    $DocFirstAuthor{$adr}{Have} = 1;
+    my $FirstID = FirstAuthorID( {-docrevid => $adr} );
+    if ($FirstID) {
+      FetchAuthor($FirstID);
+      $DocFirstAuthor{$adr}{LastName}  = $Authors{$FirstID}{LastName};
+      $DocFirstAuthor{$adr}{FirstName} = $Authors{$FirstID}{FirstName};
+    }
+  }
+    
+  unless ($DocFirstAuthor{$bdr}{Have}) {
+    $DocFirstAuthor{$bdr}{Have} = 1;
+    my $FirstID = FirstAuthorID( {-docrevid => $bdr} );
+    if ($FirstID) {
+      FetchAuthor($FirstID);
+      $DocFirstAuthor{$bdr}{LastName}  = $Authors{$FirstID}{LastName};
+      $DocFirstAuthor{$bdr}{FirstName} = $Authors{$FirstID}{FirstName};
+    }
+  }
+  
+   $DocFirstAuthor{$adr}{LastName} cmp $DocFirstAuthor{$bdr}{LastName}
+                                   or
+  $DocFirstAuthor{$adr}{FirstName} cmp $DocFirstAuthor{$bdr}{FirstName}
+                                   or
+                           $byear  <=>  $ayear 
+                                   or         
+                           $bmonth <=> $amonth 
+                                   or         
+                           $bday   <=>   $aday 
+                                   or         
+                           $bhour  <=>  $ahour 
+                                   or         
+                           $bmin   <=>   $amin 
+                                   or         
+                           $bsec   <=>   $asec ;            
 }
 
 sub DocumentByConferenceDate {

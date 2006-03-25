@@ -122,7 +122,7 @@ sub Paragraphize {
   $Text =~ s/\s*\n\s*\n\s*/<p\/>/g; # Replace two new lines and any space with <p>
 #  $Text =~ s/\s*\n\s*/<br>\n/g;
   $Text =~ s/<p\/>/<p\/>\n/g;
-  $Text = &SafeHTML($Text);
+  $Text = SafeHTML($Text);
   return $Text;
 }
 
@@ -131,6 +131,7 @@ sub AddLineBreaks {
   $Text =~ s/\s*\n\s*\n\s*/<p\/>/g; # Replace two new lines and any space with <p>
   $Text =~ s/\s*\n\s*/<br\/>\n/g;
   $Text =~ s/<p\/>/<p\/>\n/g;
+  $Text = SafeHTML($Text);
   return $Text;
 }
 

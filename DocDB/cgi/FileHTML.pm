@@ -6,7 +6,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -89,7 +89,6 @@ sub ShortFileListByRevID {
 }
 
 sub FileListByFileID {
-  require "FileUtilities.pm";
   require "Sorts.pm";
   
   my (@Files) = @_;
@@ -100,83 +99,83 @@ sub FileListByFileID {
   @Files = sort FilesByDescription @Files;
   
   print "<ul>\n";
-  foreach my $file (@Files) {
-    my $DocRevID      = $DocFiles{$file}{DOCREVID};
-    my $VersionNumber = $DocRevisions{$DocRevID}{VERSION};
-    my $DocumentID    = $DocRevisions{$DocRevID}{DOCID};
-    my $link;
-    if ($DocFiles{$file}{DESCRIPTION}) {
-      $link = &FileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME},
-                        $DocFiles{$file}{DESCRIPTION});
-    } else { 
-      $link = &FileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME});
-    }
-    print "<li>$link</li>\n";
+  foreach my $FileID (@Files) {
+    my $DocRevID   = $DocFiles{$FileID}{DOCREVID};
+    my $Version    = $DocRevisions{$DocRevID}{VERSION};
+    my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+    my $Link = FileLink( {-docid => $DocumentID, -version => $Version,
+                          -shortname   => $DocFiles{$FileID}{NAME},
+                          -description => $DocFiles{$FileID}{DESCRIPTION}} );
+    print "<li>$Link</li>\n";
   }  
   print "</ul>\n";
 }
 
-sub ShortFileListByFileID {
-  require "FileUtilities.pm";
+sub ShortFileListByFileID { # FIXME: Make special case of FileListByFileID
   require "Sorts.pm";
   
   my (@Files) = @_;
   
   @Files = sort FilesByDescription @Files;
   
-  foreach my $file (@Files) {
-    my $DocRevID      = $DocFiles{$file}{DOCREVID};
-    my $VersionNumber = $DocRevisions{$DocRevID}{VERSION};
-    my $DocumentID    = $DocRevisions{$DocRevID}{DOCID};
-    my $link;
-    if ($DocFiles{$file}{DESCRIPTION}) {
-      $link = &ShortFileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME},
-                        $DocFiles{$file}{DESCRIPTION});
-    } else { 
-      $link = &ShortFileLink($DocumentID,$VersionNumber,$DocFiles{$file}{NAME});
-    }
-    print "$link<br/>\n";
+  foreach my $FileID (@Files) {
+    my $DocRevID   = $DocFiles{$FileID}{DOCREVID};
+    my $Version    = $DocRevisions{$DocRevID}{VERSION};
+    my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+    my $Link = FileLink( {-maxlength => 20, -format => "short", -docid => $DocumentID, -version => $Version,
+                          -shortname   => $DocFiles{$FileID}{NAME},
+                          -description => $DocFiles{$FileID}{DESCRIPTION}} );
+    print "$Link<br/>\n";
   }  
 }
 
-sub FileLink {
-  require "FSUtilities.pm";
-
-  my ($DocumentID,$Version,$shortname,$description) = @_;
+sub FileLink ($) {
+  my ($ArgRef) = @_;
   
-  my $shortfile = CGI::escape($shortname);
-  my $base_url = &GetURLDir($DocumentID,$Version);
-  my $file_size = &FileSize(&FullFile($DocumentID,$Version,$shortname));
-  $file_size =~ s/^\s+//; # Chop off leading spaces
-  my $PrintedName = &AbbreviateFileName(-filename => $shortname,
-                                            -maxlength => 60, -maxext => 4);
-  my $URL = $base_url.$shortfile;
-  if ($UserValidation eq "certificate" || $Preferences{Options}{AlwaysRetrieveFile}) {                                          
-    $URL = $RetrieveFile."?docid=".$DocumentID."&amp;version=".$Version."&amp;filename=".$shortfile;
-  }
-  if ($description) {
-    return "<a href=\"$URL\" title=\"$shortname\">$description</a> ($PrintedName, $file_size)";
-  } else {
-    return "<a href=\"$URL\" title=\"$shortname\">$PrintedName</a> ($file_size)";
-  }
-}  
+  my $DocumentID  = exists $ArgRef->{-docid}       ? $ArgRef->{-docid}       : 0;
+  my $Version     = exists $ArgRef->{-version}     ? $ArgRef->{-version}     : 0;
+  my $ShortName   = exists $ArgRef->{-shortname}   ? $ArgRef->{-shortname}   : "";
+  my $Description = exists $ArgRef->{-description} ? $ArgRef->{-description} : "";
+  my $MaxLength   = exists $ArgRef->{-maxlength}   ? $ArgRef->{-maxlength}   : 60;
+  my $MaxExt      = exists $ArgRef->{-maxext}      ? $ArgRef->{-maxext}      : 4;
+  my $Format      = exists $ArgRef->{-format}      ? $ArgRef->{-format}      : "long";
 
-sub ShortFileLink { #FIXME: Make option of FileLink
   require "FSUtilities.pm";
+  require "FileUtilities.pm";
 
-  my ($documentID,$version,$shortname,$description) = @_;
-  my $shortfile = CGI::escape($shortname);
-  $base_url = &GetURLDir($documentID,$version);
-  my $URL = $base_url.$shortfile;
+  my $ShortFile = CGI::escape($ShortName);
+  my $BaseURL   = GetURLDir($DocumentID,$Version);
+  my $FileSize  = FileSize(FullFile($DocumentID,$Version,$ShortName));
+
+  $FileSize =~ s/^\s+//; # Chop off leading spaces
+  
+  my $PrintedName = $ShortName; 
+  if ($MaxLength) { 
+    $PrintedName = AbbreviateFileName(-filename  => $ShortName,
+                                      -maxlength => $MaxLength, -maxext => $MaxExt);
+  }  
+
+  my $URL = $BaseURL.$ShortFile;
   if ($UserValidation eq "certificate" || $Preferences{Options}{AlwaysRetrieveFile}) {                                          
-    $URL = $RetrieveFile."?docid=".$documentID."&amp;version=".$version."&amp;filename=".$shortfile;
+    $URL = $RetrieveFile."?docid=".$DocumentID."&amp;version=".$Version."&amp;filename=".$ShortFile;
   }
-  if ($description) {
-    return "<a href=\"$URL\" title=\"$shortname\">$description</a>";
+  
+  my $Link = "";
+  
+  if ($Format eq "short") {
+    if ($Description) {
+      return "<a href=\"$URL\" title=\"$ShortName\">$Description</a>";
+    } else {
+      return "<a href=\"$URL\" title=\"$ShortName\">$PrintedName</a>";
+    }
   } else {
-    return "<a href=\"$URL\" title=\"$shortname\">$shortname</a>";
+    if ($Description) {
+      return "<a href=\"$URL\" title=\"$ShortName\">$Description</a> ($PrintedName, $FileSize)";
+    } else {
+      return "<a href=\"$URL\" title=\"$ShortName\">$PrintedName</a> ($FileSize)";
+    }
   }
-}  
+}
 
 sub ArchiveLink {
   my ($DocumentID,$Version) = @_;
@@ -271,10 +270,12 @@ sub FileUploadBox (%) {
     my $FileIDName  = "fileid$i";
     my $CopyName    = "copyfile$i";
     my $URLName     = "url$i";
+    my $NewName     = "newname$i";
    
-    my $FileHelp        = &FormElementTitle(-helplink => $FileHelpLink, -helptext => $FileHelpText);
-    my $DescriptionHelp = &FormElementTitle(-helplink => $DescHelpLink, -helptext => $DescHelpText);
-    my $MainHelp        = &FormElementTitle(-helplink => "main", -helptext => "Main?", -nocolon => true, -nobold => true);
+    my $FileHelp        = FormElementTitle(-helplink => $FileHelpLink, -helptext => $FileHelpText);
+    my $DescriptionHelp = FormElementTitle(-helplink => $DescHelpLink, -helptext => $DescHelpText);
+    my $NewNameHelp     = FormElementTitle(-helplink => "newfilename", -helptext => "New Filename");
+    my $MainHelp        = FormElementTitle(-helplink => "main", -helptext => "Main?", -nocolon => true, -nobold => true);
     my $DefaultDesc = $DocFiles{$FileID}{DESCRIPTION};
     
     if ($DescOnly) {
@@ -295,11 +296,23 @@ sub FileUploadBox (%) {
         print $query -> filefield(-name      => $ElementName, -size => $FileSize,
                                   -maxlength => $FileMaxSize);
       } elsif ($Type eq "http") {
-        print $query -> textfield(-name      => $URLName, -size => $FileSize, 
+        print $query -> textfield(-name      => $URLName,     -size => $FileSize, 
                                   -maxlength => $FileMaxSize);
       }
       print "</td>\n";
       print "</tr>\n";
+      
+      if ($Type eq "http") {
+        print "<tr><td align=right>\n";
+        print $NewNameHelp;
+        print "</td>\n";
+
+        print "<td>\n";
+        print $query -> textfield(-name      => $NewName, -size => $FileSize, 
+                                  -maxlength => $FileMaxSize);
+        print "</td>\n";
+        print "</tr>\n";
+      }
     }  
     print "<tr><td align=right>\n";
     print $DescriptionHelp;

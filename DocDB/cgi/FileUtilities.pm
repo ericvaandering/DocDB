@@ -1,5 +1,5 @@
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -22,11 +22,13 @@
 #  File        -- Contains file handle from CGI
 #  CopyFileID  -- Copy physical file from a previous version
 #  FileID      -- Duplicate file id entry from a previous version
+#  Description -- Description of the file
+#  Main        -- Boolean, is it a "main" file
+# These settings apply only to URL uploads
 #  URL         -- URL of the file  
 #  Pass        -- Password for wget 
 #  User        -- Username for wget 
-#  Description -- Description of the file
-#  Main        -- Boolean, is it a "main" file
+#  NewFilename -- New name of files (wget -O option)
 
 sub AddFiles (%) {
   require "FileSQL.pm";
@@ -147,8 +149,8 @@ sub AbbreviateFileName {
   my %Params = @_;
   
   my $FileName  = $Params{-filename};   
-  my $MaxLength = $Params{-maxlength};   
-  my $MaxExt    = $Params{-maxext}; 
+  my $MaxLength = $Params{-maxlength} || 20;   
+  my $MaxExt    = $Params{-maxext}    || 4; 
 
   my $ReturnString = $FileName;
   

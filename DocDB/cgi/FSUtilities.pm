@@ -311,17 +311,31 @@ sub DownloadURLs (%) {
         push @ErrorStack,"The URL <tt>$URL</tt> is not well formed. Don't forget ".
                          "http:// on the front and a file name after the last /.";
       }  
-      my @Authentication = ();
+      my @Options = ();
       if ($Files{$FileKey}{User} && $Files{$FileKey}{Pass}) {
         push @DebugStack,"Using authentication";
-        @Authentication = ("--http-user=".$Files{$FileKey}{User}, 
-	                   "--http-password=".$Files{$FileKey}{Pass});
+        @Options = ("--http-user=".$Files{$FileKey}{User}, 
+	            "--http-password=".$Files{$FileKey}{Pass});
       }
+      
+      # Allow for a new filename as supplied by the user
+      
+      if ($Files{$FileKey}{NewFilename}) {
+        my @Parts = split /\//,$Files{$FileKey}{NewFilename};
+        my $SecureFilename = pop @Parts;
+        $Files{$FileKey}{NewFilename} = $SecureFilename;
+        push @Options,"--output-document=".$Files{$FileKey}{NewFilename};
+      }  
 
-      $Status = system ($Wget,"--quiet",@Authentication,$Files{$FileKey}{URL});
+      $Status = system ($Wget,"--quiet",@Options,$Files{$FileKey}{URL});
 
       my @URLParts = split /\//,$Files{$FileKey}{URL};
-      my $Filename = CGI::unescape(pop @URLParts); # As downloaded, we hope
+      my $Filename;
+      if ($Files{$FileKey}{NewFilename}) {
+        $Filename = $Files{$FileKey}{NewFilename};
+      } else {
+        $Filename = CGI::unescape(pop @URLParts); # As downloaded, we hope
+      }
       push @DebugStack, "Download ($Files{$FileKey}{URL}) status: $Status";
       if (-e "$TmpDir/$Filename") {
         push @Filenames,$Filename;
@@ -329,7 +343,7 @@ sub DownloadURLs (%) {
 	$Files{$FileKey}{Filename} =  "$TmpDir/$Filename";      			    
       } else {
         push @DebugStack,"Check for existence of $TmpDir/$Filename failed. Check unescape function.";
-        push @WarnStack,"The URL $Files{$FileKey}{URL} did not exist or was not accessible.";
+        push @WarnStack,"The URL $Files{$FileKey}{URL} did not exist, was not accessible or was not downloaded successfully.";
       }
     }
   }
