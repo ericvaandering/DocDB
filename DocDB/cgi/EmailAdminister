@@ -165,8 +165,10 @@ if      ($Action eq "Delete") { # Delete user
     }  
   }  
   
-  print "<p><b>The user now has the following information:</b></p>";
+  ClearEmailUsers();
+  FetchEmailUser($EmailUserID);
                            
+  print "<p><strong>The user now has the following information:</strong></p>";
   print "<table class=\"LowPaddedTable\">\n";
   PrintEmailUserInfo($EmailUserID);
   print "</table>\n";
