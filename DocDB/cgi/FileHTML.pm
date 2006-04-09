@@ -39,11 +39,11 @@ sub FileListByRevID {
   if (@FileIDs) {
     @RootFiles  = ();
     @OtherFiles = ();
-    foreach $File (@FileIDs) {
+    foreach my $FileID (@FileIDs) {
       if ($DocFiles{$File}{ROOT}) {
-        push @RootFiles,$File
+        push @RootFiles,$FileID;
       } else {
-        push @OtherFiles,$File
+        push @OtherFiles,$FileID;
       }  
     }
     if (@RootFiles) {
@@ -211,12 +211,27 @@ sub FileUploadBox (%) {
   
   my @FileIDs = @{$Params{-fileids}};
   
+  require "Sorts.pm";
+  
   if ($DocRevID) {
     require "MiscSQL.pm";
     @FileIDs = &FetchDocFiles($DocRevID);
   }
   
-  @FileIDs = sort @FileIDs;
+  my @RootFiles  = ();
+  my @OtherFiles = ();
+
+  foreach my $FileID (@FileIDs) {
+    if ($DocFiles{$FileID}{ROOT}) {
+      push @RootFiles,$FileID;
+    } else {
+      push @OtherFiles,$FileID;
+    }  
+  }
+  
+  @RootFiles  = sort FilesByDescription @RootFiles;
+  @OtherFiles = sort FilesByDescription @OtherFiles;
+  @FileIDs    = (@RootFiles,@OtherFiles);
   
   unless ($MaxFiles) {
     if (@FileIDs) {
