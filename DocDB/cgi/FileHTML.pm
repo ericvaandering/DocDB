@@ -40,7 +40,7 @@ sub FileListByRevID {
     @RootFiles  = ();
     @OtherFiles = ();
     foreach my $FileID (@FileIDs) {
-      if ($DocFiles{$File}{ROOT}) {
+      if ($DocFiles{$FileID}{ROOT}) {
         push @RootFiles,$FileID;
       } else {
         push @OtherFiles,$FileID;
