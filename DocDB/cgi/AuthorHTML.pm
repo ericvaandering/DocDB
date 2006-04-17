@@ -76,7 +76,7 @@ sub ShortAuthorListByID {
       print "$AuthorLink<br/>\n";
     }
   } else {
-    print "<strong>None</strong><br/>\n";
+    print "None<br/>\n";
   }
 }
 
