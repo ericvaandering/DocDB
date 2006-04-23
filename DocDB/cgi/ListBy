@@ -144,9 +144,9 @@ if ($Days) {
   $SortBy = "confdate";
   
   unless ($EventGroupID) {
-    $EventGroupID = &LookupEventGroup($EventGroup);
+    $EventGroupID = LookupEventGroup($EventGroup);
   }  
-  &FetchEventGroup($EventGroupID);
+  FetchEventGroup($EventGroupID);
   
   $FieldListOptions{-eventgroupid} = $EventGroupID;
   $FieldListOptions{-default}      = "Event Group Default";

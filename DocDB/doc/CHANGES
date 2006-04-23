@@ -1,3 +1,14 @@
+7.4.1
+  Put list of events and "notes" in notification e-mail as well as say whether
+  document was updated, meta-info updated, files added, document created or
+  reserved.
+  
+  Remove bolding from authors when there are none in meeting view
+  
+  Make sorting order on document update matches order on document view
+  
+  Fix bug where user was not reported as being verified after they were
+
 7.4.0
   Changes in the API to allow updating documents and the DB info
   

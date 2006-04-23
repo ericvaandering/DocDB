@@ -421,8 +421,8 @@ if ($mode = "updatedb") { # Local DB not in sync, clear it
 
 # Output feedback to the user
 
-$full_docid = &FullDocumentID($documentID);
-$DocRevID   = &FetchRevisionByDocumentAndVersion($documentID,$version);
+$full_docid = FullDocumentID($documentID);
+$DocRevID   = FetchRevisionByDocumentAndVersion($documentID,$version);
 
 unless ($DocRevID) {
   print "This document does not exist.<p>\n";
@@ -434,20 +434,20 @@ print "You were successful. Your Document ID is <b>$full_docid, version
        $version</b>.<br>
        Your entry was created with the following information: <p><hr><p>\n"; 
 
-&PrintRevisionInfo($DocRevID);
+PrintRevisionInfo($DocRevID);
 
 # Send out e-mail to people watching this document and people who have to sign
 
 if ($MailInstalled) {
-  &MailNotices(-docrevid => $DocRevID, -type => "update");
+  MailNotices(-docrevid => $DocRevID, -type => $Mode);
 }
 
 if ($UseSignoffs) {
-  &ClearSignatures; 
-  &NotifySignees($DocRevID);
+  ClearSignatures(); 
+  NotifySignees($DocRevID);
 }   
 
 $EndTime  = new Benchmark;
 
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
