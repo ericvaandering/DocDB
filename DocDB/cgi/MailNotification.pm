@@ -44,7 +44,7 @@ sub MailNotices (%) {
 
   my @Addressees = ();
   if ($Type eq "update"  || $Type eq "updatedb" || $Type eq "add" || 
-      $Type eq "reserve" || $Type eq "addfiles") {
+      $Type eq "reserve" || $Type eq "addfiles" || $Type eq "updateunknown") {
     @Addressees = UsersToNotify($DocRevID,"immediate");
   } elsif ($Type eq "signature") {
     foreach my $EmailUserID (@EmailUserIDs) {# Extract emails
@@ -89,17 +89,17 @@ sub MailNotices (%) {
         $Message  = "The following document was updated ".
                     "in the $Project Document Database:\n\n";
       } elsif ($Type eq "updatedb") {
-               $Message  = "The meta-information for the following document was updated ".
-                    "in the $Project Document Database:\n\n";
+        $Message  = "The meta-information for the following document was updated ".
+             "in the $Project Document Database:\n\n";
       } elsif ($Type eq "add") {
-               $Message  = "The following document was added ".
-                    "to the $Project Document Database:\n\n";
+        $Message  = "The following document was added ".
+             "to the $Project Document Database:\n\n";
       } elsif ($Type eq "reserve") {
-               $Message  = "The following document was reserved ".
-                    "in the $Project Document Database:\n\n";
+        $Message  = "The following document was reserved ".
+             "in the $Project Document Database:\n\n";
       } elsif ($Type eq "addfiles") {
-               $Message  = "Files were added to the following document ".
-                    "in the $Project Document Database:\n\n";
+        $Message  = "Files were added to the following document ".
+             "in the $Project Document Database:\n\n";
       }  
     } elsif ($Type eq "signature") {
       $Subject  = "Ready for signature: $FullID: $Title";
