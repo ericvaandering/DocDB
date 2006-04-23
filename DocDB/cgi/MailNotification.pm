@@ -199,15 +199,18 @@ sub RevisionMailBody ($) {
   print $Mailer "       Title: ",$DocRevisions{$DocRevID}{Title},"\n";
   print $Mailer " Document ID: ",$FullID,"\n";
   print $Mailer "         URL: ",$URL,"\n";
-  print $Mailer "        Date: ",$DocRevisions{$DocRevID}{DATE},"\n";;
+  print $Mailer "        Date: ",$DocRevisions{$DocRevID}{DATE},"\n";
   print $Mailer "Submitted by: ",$Submitter,"\n";
   print $Mailer "     Authors: ",$Authors,"\n";
   print $Mailer "      Topics: ",$Topics,"\n";
   if ($Events) {
     print $Mailer "      Events: ",$Events,"\n";
   } 
-  print $Mailer "    Keywords: ",$DocRevisions{$DocRevID}{Keywords},"\n";;
-  print $Mailer "    Abstract: ",$DocRevisions{$DocRevID}{Abstract},"\n";;
+  print $Mailer "    Keywords: ",$DocRevisions{$DocRevID}{Keywords},"\n";
+  print $Mailer "    Abstract: ",$DocRevisions{$DocRevID}{Abstract},"\n";
+  if ($DocRevisions{$DocRevID}{Note}) {
+    print $Mailer "       Notes: ",$DocRevisions{$DocRevID}{Note},"\n";
+  }  
 }
 
 sub UsersToNotify ($$) {
