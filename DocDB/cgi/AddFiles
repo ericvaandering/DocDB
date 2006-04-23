@@ -5,7 +5,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -172,14 +172,14 @@ if ($UseSignoffs) {
   
 ### If we had any warnings print them out now
 
-&WarnPage(@WarnStack); @WarnStack = ();
+WarnPage(@WarnStack); @WarnStack = ();
 
 %DocFiles = (); @Files    = (); # Files DB not in sync, clear it
 
 ### Output feedback to the user
 
-my $full_docid = &FullDocumentID($DocumentID);
-   $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+my $full_docid = FullDocumentID($DocumentID);
+   $DocRevID   = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 
 unless ($DocRevID) {
   print "This document does not exist.<p>\n";
@@ -190,19 +190,19 @@ unless ($DocRevID) {
 print "You were successful in adding files. Your entry now contains
        the following information: <p>\n"; 
 
-&PrintRevisionInfo($DocRevID);
+PrintRevisionInfo($DocRevID);
 
 if ($MailInstalled) {
   require "MailNotification.pm";
-  &MailNotices(-docrevid => $DocRevID, -type => "update");
+  MailNotices(-docrevid => $DocRevID, -type => "addfiles");
 }
 
 if ($MailInstalled && $UseSignoffs) { 
-  &ClearSignatures; 
-  &NotifySignees($DocRevID);
+  ClearSignatures(); 
+  NotifySignees($DocRevID);
 }
 
 $EndTime  = new Benchmark;
 
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

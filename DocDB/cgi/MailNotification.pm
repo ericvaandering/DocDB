@@ -33,38 +33,39 @@ sub MailNotices (%) {
   my (%Params) = @_;
 
   my $DocRevID     =   $Params{-docrevid};
-  my $Type         =   $Params{-type}      || "update";
+  my $Type         =   $Params{-type}      || "updateunknown";
   my @EmailUserIDs = @{$Params{-emailids}};
   
-  &FetchDocRevisionByID($DocRevID);
+  FetchDocRevisionByID($DocRevID);
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
   my $Version    = $DocRevisions{$DocRevID}{Version};
   
 # Figure out who cares 
 
   my @Addressees = ();
-  if ($Type eq "update") {
-    @Addressees = &UsersToNotify($DocRevID,"immediate");
+  if ($Type eq "update"  || $Type eq "updatedb" || $Type eq "add" || 
+      $Type eq "reserve" || $Type eq "addfiles") {
+    @Addressees = UsersToNotify($DocRevID,"immediate");
   } elsif ($Type eq "signature") {
     foreach my $EmailUserID (@EmailUserIDs) {# Extract emails
-      &FetchEmailUser($EmailUserID);
+      FetchEmailUser($EmailUserID);
       push @Addressees,$EmailUser{$EmailUserID}{EmailAddress};
     }
   } elsif ($Type eq "approved") { 
-    @Addressees = &UsersToNotify($DocRevID,"immediate");
+    @Addressees = UsersToNotify($DocRevID,"immediate");
     my %EmailUsers = ();
-    my @SignoffIDs = &GetAllSignoffsByDocRevID($DocRevID);
+    my @SignoffIDs = GetAllSignoffsByDocRevID($DocRevID);
     foreach my $SignoffID (@SignoffIDs) {
-      my @SignatureIDs = &GetSignatures($SignoffID);
+      my @SignatureIDs = GetSignatures($SignoffID);
       foreach my $SignatureID (@SignatureIDs) {
         my $EmailUserID = $Signatures{$SignatureID}{EmailUserID};
-        &FetchEmailUser($EmailUserID);
+        FetchEmailUser($EmailUserID);
         push @Addressees,$EmailUser{$EmailUserID}{EmailAddress};
       }  
     }  
   } 
   
-  @Addressees = &Unique(@Addressees);
+  @Addressees = Unique(@Addressees);
   
 # If anyone, open the mailer
 
@@ -73,16 +74,33 @@ sub MailNotices (%) {
 #    $Mailer = new Mail::Mailer 'test', Server => $MailServer;
     my %Headers = ();
 
-    my $FullID = &FullDocumentID($DocRevisions{$DocRevID}{DOCID},$DocRevisions{$DocRevID}{VERSION});
+    my $FullID = FullDocumentID($DocRevisions{$DocRevID}{DOCID},$DocRevisions{$DocRevID}{VERSION});
     my $Title  = $DocRevisions{$DocRevID}{Title};
 
     my ($Subject,$Message,$Feedback);
     
-    if ($Type eq "update") {
+    if ($Type eq "update"  || $Type eq "updatedb" || $Type eq "add" || 
+        $Type eq "reserve" || $Type eq "addfiles" || $Type eq "updateunknown") {
       $Subject  = "$FullID: $Title";
-      $Message  = "The following document was added or changed ".
+      $Message  = "The following document was added or updated ".
                   "in the $Project Document Database:\n\n";
-      $Feedback = "<b>E-mail sent to: </b>";           
+      $Feedback = "<b>E-mail sent to: </b>";        
+      if      ($Type eq "update") {
+        $Message  = "The following document was updated ".
+                    "in the $Project Document Database:\n\n";
+      } elsif ($Type eq "updatedb") {
+               $Message  = "The meta-information for the following document was updated ".
+                    "in the $Project Document Database:\n\n";
+      } elsif ($Type eq "add") {
+               $Message  = "The following document was added ".
+                    "to the $Project Document Database:\n\n";
+      } elsif ($Type eq "reserve") {
+               $Message  = "The following document was reserved ".
+                    "in the $Project Document Database:\n\n";
+      } elsif ($Type eq "addfiles") {
+               $Message  = "Files were added to the following document ".
+                    "in the $Project Document Database:\n\n";
+      }  
     } elsif ($Type eq "signature") {
       $Subject  = "Ready for signature: $FullID: $Title";
       $Message  = "The following document ".
@@ -105,7 +123,7 @@ sub MailNotices (%) {
 
     $Mailer -> open(\%Headers);    # Start mail with headers
     print $Mailer $Message;
-    &RevisionMailBody($DocRevID);  # Write the body
+    RevisionMailBody($DocRevID);   # Write the body
     $Mailer -> close;              # Complete the message and send it
     my $Addressees = join ', ',@Addressees;
     $Addressees =~ s/\&/\&amp\;/g;
@@ -117,27 +135,32 @@ sub MailNotices (%) {
 }
 
 sub RevisionMailBody ($) {
-  require "RevisionSQL.pm";
+  my ($DocRevID) = @_;
+
   require "ResponseElements.pm";
   require "AuthorSQL.pm";
+  require "MeetingSQL.pm";
+  require "RevisionSQL.pm";
   require "Sorts.pm";
 
-  my ($DocRevID) = @_;
-  &FetchDocRevisionByID($DocRevID);
+  FetchDocRevisionByID($DocRevID);
   
   my $Title  = $DocRevisions{$DocRevID}{Title};
-  my $FullID = &FullDocumentID($DocRevisions{$DocRevID}{DOCID},$DocRevisions{$DocRevID}{VERSION});
-  my $URL    = &DocumentURL($DocRevisions{$DocRevID}{DOCID});
+  my $FullID = FullDocumentID($DocRevisions{$DocRevID}{DOCID},$DocRevisions{$DocRevID}{VERSION});
+  my $URL    = DocumentURL($DocRevisions{$DocRevID}{DOCID});
   
-  &FetchAuthor($DocRevisions{$DocRevID}{Submitter});
+  FetchAuthor($DocRevisions{$DocRevID}{Submitter});
   my $Submitter = $Authors{$DocRevisions{$DocRevID}{Submitter}}{FULLNAME};
 
-  my @AuthorIDs = &GetRevisionAuthors($DocRevID);
-  my @TopicIDs  = &GetRevisionTopics($DocRevID);
+  my @AuthorIDs = GetRevisionAuthors($DocRevID);
+  my @TopicIDs  = GetRevisionTopics($DocRevID);
+  my @EventIDs  = GetRevisionEvents($DocRevID);
+  
+# Build list of authors  
   
   my @Authors = ();
   foreach $AuthorID (@AuthorIDs) {
-    &FetchAuthor($AuthorID);
+    FetchAuthor($AuthorID);
   }
   @AuthorIDs = sort byLastName @AuthorIDs;
   foreach $AuthorID (@AuthorIDs) {
@@ -145,9 +168,11 @@ sub RevisionMailBody ($) {
   }
   my $Authors = join ', ',@Authors;
   
+# Build list of topics
+
   my @Topics = ();
   foreach $TopicID (@TopicIDs) {
-    &FetchAuthor($TopicID);
+    FetchMinorTopic($TopicID);
   }
   @TopicIDs = sort byTopic @TopicIDs;
   foreach $TopicID (@TopicIDs) {
@@ -155,15 +180,31 @@ sub RevisionMailBody ($) {
   }
   my $Topics = join ', ',@Topics;
   
+# Build list of events  
+  
+  my @Events = ();
+  foreach $EventID (@EventIDs) {
+    FetchConferenceByConferenceID($EventID);
+  }
+  @EventIDs = sort EventsByDate @EventIDs;
+  foreach $EventID (@EventIDs) {
+    push @Events,$Conferences{$EventID}{Title}." (".$Conferences{$EventID}{StartDate}.")";
+  }
+  my $Events = join ', ',@Events;
+  
+  
   # Construct the mail body
   
   print $Mailer "       Title: ",$DocRevisions{$DocRevID}{Title},"\n";
   print $Mailer " Document ID: ",$FullID,"\n";
   print $Mailer "         URL: ",$URL,"\n";
   print $Mailer "        Date: ",$DocRevisions{$DocRevID}{DATE},"\n";;
-  print $Mailer "Submitted by: ",$Submitter,"\n";;
-  print $Mailer "     Authors: ",$Authors,"\n";;
-  print $Mailer "      Topics: ",$Topics,"\n";;
+  print $Mailer "Submitted by: ",$Submitter,"\n";
+  print $Mailer "     Authors: ",$Authors,"\n";
+  print $Mailer "      Topics: ",$Topics,"\n";
+  if ($Events) {
+    print $Mailer "      Events: ",$Events,"\n";
+  } 
   print $Mailer "    Keywords: ",$DocRevisions{$DocRevID}{Keywords},"\n";;
   print $Mailer "    Abstract: ",$DocRevisions{$DocRevID}{Abstract},"\n";;
 }
