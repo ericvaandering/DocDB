@@ -188,7 +188,8 @@ sub RevisionMailBody ($) {
   }
   @EventIDs = sort EventsByDate @EventIDs;
   foreach $EventID (@EventIDs) {
-    push @Events,$Conferences{$EventID}{Title}." (".$Conferences{$EventID}{StartDate}.")";
+    push @Events,$Conferences{$EventID}{Title}.
+         " (".EuroDate($Conferences{$EventID}{StartDate}).")";
   }
   my $Events = join ', ',@Events;
   
