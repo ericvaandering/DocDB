@@ -36,6 +36,7 @@ require "Scripts.pm";
 require "Sorts.pm";
 require "SearchFormElements.pm";
 require "DocumentHTML.pm";
+require "MeetingHTML.pm";
 
 require "TopicSQL.pm";
 require "AuthorSQL.pm";
@@ -248,9 +249,9 @@ print "<p><b>Use this page to change your personal account settings.</b></p>
 unless ($UserValidation eq "certificate") {
   print "<p>If you want to change your password, type the new password in both boxes.</p>\n"; 
 }
-print "<p>At the bottom part of the page, select the <a
-       href=\"#topic\">topics or  subtopics</a>,  <a
-       href=\"#author\">authors</a>, or  <a href=\"#keyword\">keywords</a> you
+print "<p>At the bottom part of the page, select the <a href=\"#topic\">topics 
+       or  subtopics</a>,  <a href=\"#author\">authors</a>, 
+       <a href=\"#event\">events</a>, or  <a href=\"#keyword\">keywords</a> you
        want to be notified of changes to, either immediately or in digests sent
        every day or week.</p>\n";
 print "</td></tr></table>\n";
@@ -309,6 +310,31 @@ EmailAuthorForm($EmailUserID,"Immediate");
 EmailAuthorForm($EmailUserID,"Daily");
 EmailAuthorForm($EmailUserID,"Weekly");
 print "</tr></table>\n";
+
+print "<hr/><a name=\"event\"/><h3>Notification by Events</h3>\n";
+print "<table class=\"HighPaddedTable\"><tr>\n";\
+print "<td>",FormElementTitle(-helptext => "Immediate", -helplink => "notifyevent"),"</td>";
+print "<td>";
+EventGroupSelect( -multiple => $TRUE, -name => "immediate_eventgroups", -helplink => "" );
+print "</td><td>";
+EventSelect(     {-multiple => $TRUE, -name => "immediate_events",      -helplink => ""} );
+print "</td>";
+print "</tr><tr>";
+print "<td>",FormElementTitle(-helptext => "Daily", -helplink => "notifyevent"),"</td>";
+print "<td>";
+EventGroupSelect( -multiple => $TRUE, -name => "daily_eventgroups", -helptext => "" );
+print "</td><td>";
+EventSelect(      {-multiple => $TRUE, -name => "daily_events",      -helplink => ""} );
+print "</td>";
+print "</tr><tr>";
+print "<td>",FormElementTitle(-helptext => "Weekly", -helplink => "notifyevent"),"</td>";
+print "<td>";
+EventGroupSelect( -multiple => $TRUE, -name => "weekly_eventgroups", -helptext => ""  );
+print "</td><td>";
+EventSelect(     { -multiple => $TRUE, -name => "weekly_events",      -helplink => ""} );
+print "</td>";
+print "</tr></table>\n";
+
 
 print "<hr/><a name=\"keyword\"/><h3>Notification by Keywords</h3>\n";
 print "<table class=\"HighPaddedTable\">\n";
