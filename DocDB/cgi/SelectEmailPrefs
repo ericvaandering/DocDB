@@ -62,6 +62,13 @@ my $ConfNewPass  = $params{confnewpass};
    $Digest       = $params{digest};
 my $ClearWatched = $params{clearwatched};
 
+my @ImmediateEventGroupIDs = split /\0/,$params{immediate_eventgroups};
+my @DailyEventGroupIDs     = split /\0/,$params{daily_eventgroups};
+my @WeeklyEventGroupIDs    = split /\0/,$params{weekly_eventgroups};
+my @ImmediateEventIDs      = split /\0/,$params{immediate_events};
+my @DailyEventIDs          = split /\0/,$params{daily_events};
+my @WeeklyEventIDs         = split /\0/,$params{weekly_events};
+
 $UserName =~ s/\s+//g;
 $Password =~ s/\s+//g;
 
@@ -229,6 +236,27 @@ if ($Mode eq "update") {
   SetKeywordNotifications($EmailUserID,"Daily");  
   SetKeywordNotifications($EmailUserID,"Weekly");  
 
+# FIXME: Move all notifications here, including document specific ones
+
+  DeleteNotifications( {-emailuserid => $EmailUserID} );
+
+# Events
+
+  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Event", 
+                                -ids => \@ImmediateEventIDs, -period => "Immediate",} );
+  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Event", 
+                                -ids => \@DailyEventIDs,     -period => "Immediate",} );
+  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Event", 
+                                -ids => \@WeeklyEventIDs,    -period => "Immediate",} );
+        
+# EventGroups        
+                                
+  InsertNotifications( {-emailuserid => $EmailUserID,             -type   => "EventGroup", 
+                                -ids => \@ImmediateEventGroupIDs, -period => "Immediate",} );
+  InsertNotifications( {-emailuserid => $EmailUserID,             -type   => "EventGroup", 
+                                -ids => \@DailyEventGroupIDs,     -period => "Immediate",} );
+  InsertNotifications( {-emailuserid => $EmailUserID,             -type   => "EventGroup", 
+                                -ids => \@WeeklyEventGroupIDs,    -period => "Immediate",} );
 # Clear and refetch if needed
 }  
 
