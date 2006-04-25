@@ -65,6 +65,11 @@ sub FetchEmailUser($) {
   return $EmailUser{$EmailUserID}{EmailUserID};
 }
 
+sub ClearNotifications {
+  $HaveAllNotifications = 0;
+  %Notifications        = ();
+}
+
 sub DeleteNotifications ($) {
   my ($ArgRef) = @_;
   my $EmailUserID = exists $ArgRef->{-emailuserid} ? $ArgRef->{-emailuserid} : 0;
@@ -102,7 +107,7 @@ sub InsertNotifications ($) {
 
 sub FetchNotifications ($) {
   my ($ArgRef) = @_;
-  my $EmailUserID = exists $ArgRef->{-emailuserid} ?   $ArgRef->{-emailuserid} : 0;
+  my $EmailUserID = exists $ArgRef->{-emailuserid} ? $ArgRef->{-emailuserid} : 0;
   
   my $Count = 0;
   

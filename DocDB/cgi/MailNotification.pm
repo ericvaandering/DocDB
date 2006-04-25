@@ -214,17 +214,19 @@ sub RevisionMailBody ($) {
 }
 
 sub UsersToNotify ($$) {
-  require "NotificationSQL.pm";
   my ($DocRevID,$Mode) = @_;
+  require "NotificationSQL.pm";
+  require "MeetingSQL.pm";
 
-  &GetTopics;
+  GetTopics();
 
-  &FetchDocRevisionByID($DocRevID);
+  FetchDocRevisionByID($DocRevID);
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
   my $Version    = $DocRevisions{$DocRevID}{Version};
 
   my $UserID;
   my $Table;
+  my $Period;
   my %UserIDs = (); # Hash to make user IDs unique (one notification per person)
   my @Addressees = ();
 
@@ -239,14 +241,17 @@ sub UsersToNotify ($$) {
     }
   }
 
-# Notification by topics 
+# Notification by topics and set $Period for new style
   
   if ($Mode eq "immediate") {
     $Table = "EmailTopicImmediate";
+    $Period = "Immediate";
   } elsif ($Mode eq "daily")  {
     $Table = "EmailTopicDaily";
+    $Period = "Daily";
   } elsif ($Mode eq "weekly")  {
     $Table = "EmailTopicWeekly";
+    $Period = "Weekly";
   } else {   
     return;
   }    
@@ -268,7 +273,7 @@ sub UsersToNotify ($$) {
   my $MajorFetch   = $dbh -> prepare(
     "select EmailUserID from $Table where MajorTopicID=?");
 
-  my @MinorTopicIDs = &GetRevisionTopics($DocRevID);
+  my @MinorTopicIDs = GetRevisionTopics($DocRevID);
   foreach my $MinorTopicID (@MinorTopicIDs) {
     $MinorFetch -> execute($MinorTopicID);
     $MinorFetch -> bind_columns(undef,\($UserID));
@@ -280,6 +285,29 @@ sub UsersToNotify ($$) {
     $MajorFetch -> execute($MajorTopicID);
     $MajorFetch -> bind_columns(undef,\($UserID));
     while ($MajorFetch -> fetch) {
+      $UserIDs{$UserID} = 1; 
+    }
+  }  
+
+# Get users interested in events for this reporting period
+
+  my $Fetch   = $dbh -> prepare(
+    "select EmailUserID from Notifications where Period=? and Type=? and ForeignID=?");
+
+  my @EventIDs = GetRevisionEvents($DocRevID);
+  foreach my $EventID (@EventIDs) {
+    FetchConferenceByConferenceID($EventID);
+    $Fetch -> execute($Period,"Event",$EventID);
+    $Fetch -> bind_columns(undef,\($UserID));
+    while ($Fetch -> fetch) {
+      $UserIDs{$UserID} = 1; 
+    }
+
+    my $EventGroupID = $Conferences{$EventID}{EventGroupID};
+    
+    $Fetch -> execute($Period,"EventGroup",$EventGroupID);
+    $Fetch -> bind_columns(undef,\($UserID));
+    while ($Fetch -> fetch) {
       $UserIDs{$UserID} = 1; 
     }
   }  
@@ -377,15 +405,22 @@ sub DisplayNotification($$;$) {
   my ($EmailUserID,$Set,$Always) = @_;
 
   require "NotificationSQL.pm";
-  require "TopicHTML.pm";
   require "AuthorHTML.pm";
+  require "MeetingHTML.pm";
+  require "TopicHTML.pm";
 
-  &FetchTopicNotification($EmailUserID,$Set);
-  &FetchAuthorNotification($EmailUserID,$Set);
-  &FetchKeywordNotification($EmailUserID,$Set);
+  FetchNotifications( {-emailuserid => $EmailUserID} );
+  FetchTopicNotification($EmailUserID,$Set);
+  FetchAuthorNotification($EmailUserID,$Set);
+  FetchKeywordNotification($EmailUserID,$Set);
   
+  my @EventIDs      = @{$Notifications{$EmailUserID}{"Event_".$Set}};
+  my @EventGroupIDs = @{$Notifications{$EmailUserID}{"EventGroup_".$Set}};
+  
+  my $NewNotify = (@EventIDs || @EventGroupIDs);
+                    
   if ($NotifyAllTopics || @NotifyMajorIDs || @NotifyMinorIDs ||
-      @NotifyAuthorIDs || @NotifyKeywords) {
+      @NotifyAuthorIDs || @NotifyKeywords || $NewNotify) {
     print "<b>$Set notifications:</b>\n";  
     print "<ul>\n";  
   } elsif ($Always) {
@@ -397,28 +432,39 @@ sub DisplayNotification($$;$) {
   } else {
     return;
   }
+  
   if ($NotifyAllTopics) {
     print "<li>All documents</li>\n";  
   }  
   
   if (@NotifyMajorIDs) {
     foreach my $MajorID (@NotifyMajorIDs) {
-      print "<li> Topic: ",&MajorTopicLink($MajorID),"</li>";
+      print "<li> Topic: ",MajorTopicLink($MajorID),"</li>";
     }
   }
     
   if (@NotifyMinorIDs) {
     foreach my $MinorID (@NotifyMinorIDs) {
-      print "<li> Subtopic: ",&MinorTopicLink($MinorID),"</li>";
+      print "<li> Subtopic: ",MinorTopicLink($MinorID),"</li>";
     }
   }
     
   if (@NotifyAuthorIDs) {
     foreach my $AuthorID (@NotifyAuthorIDs) {
-      print "<li> Author: ",&AuthorLink($AuthorID),"</li>";
+      print "<li> Author: ",AuthorLink($AuthorID),"</li>";
     }
   }
     
+  # FIXME: Make rest like this  
+    
+  foreach my $EventID (@EventIDs) {
+    print "<li>Event: ",EventLink(-eventid => $EventID),"</li>";
+  }
+    
+  foreach my $EventGroupID (@EventGroupIDs) {
+    print "<li>Event Group: ",EventGroupLink(-eventgroupid => $EventGroupID),"</li>";
+  }
+
   if (@NotifyKeywords) {
     foreach my $Keyword (@NotifyKeywords) {
       print "<li>Keyword: $Keyword</li>";
