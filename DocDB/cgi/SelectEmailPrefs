@@ -114,9 +114,9 @@ if ($Mode eq "newuser") {
   if (@ErrorStack) { # There's a problem, so let them try again
     ErrorPage(@ErrorStack);
     NewEmailUserForm();
-    print "<p>\n";
+    print "<p/>\n";
     LoginEmailUserForm();
-    print "<p>\n";
+    print "<p/>\n";
     EndPage();
   } else { # Everything OK, lets create the user
     srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
@@ -167,9 +167,9 @@ if ($EmailUserID) {
   push @ErrorStack,"The username/password pair or certificate you supplied is invalid. Please try again or contact an administrator.";
   ErrorPage();
   LoginEmailUserForm();
-  print "<p>\n";
+  print "<p/>\n";
   NewEmailUserForm();
-  print "<p>\n";
+  print "<p/>\n";
   EndPage();
 }
 
@@ -240,9 +240,6 @@ if ($Mode eq "update") {
   DeleteNotifications( {-emailuserid => $EmailUserID} );
 
 # Events
-
-  push @DebugStack,"Immediate Event",@ImmediateEventIDs;
-  push @DebugStack,"Immediate Group",@ImmediateEventGroupIDs;
 
   InsertNotifications({ -emailuserid => $EmailUserID,        -type   => "Event", 
                                 -ids => \@ImmediateEventIDs, -period => "Immediate", });
