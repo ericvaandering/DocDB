@@ -241,6 +241,9 @@ if ($Mode eq "update") {
 
 # Events
 
+  push @DebugStack,"Immediate Event",@ImmediateEventIDs;
+  push @DebugStack,"Immediate Group",@ImmediateEventGroupIDs;
+
   InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Event", 
                                 -ids => \@ImmediateEventIDs, -period => "Immediate",} );
   InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Event", 
