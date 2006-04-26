@@ -176,7 +176,7 @@ foreach $EmailUserID (@EmailUserIDs) {
   
   my @DocumentIDs = sort numerically keys %DocumentIDs;
   if (@DocumentIDs) {
-    print "$EmailUser{$EmailUserID}{Name} will receive mails on documents ",join ' ',@DocumentIDs,"\n";
+    print "$EmailUser{$EmailUserID}{Name} will receive e-mail for documents ",join ' ',@DocumentIDs,"\n";
 
 # Write the mail
   
@@ -197,10 +197,10 @@ foreach $EmailUserID (@EmailUserIDs) {
       FetchDocument($DocumentID);
       my $DocRevID = FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVersions});
 
-      RevisionMailBody($DocRevID);       # Write the body
+      RevisionMailBody($DocRevID);         # Write the body
       print $Mailer "\n","-" x 72,"\n\n";  # Write a divider
     } 
-    $Mailer -> close;              # Complete the message and send it
+    $Mailer -> close;                      # Complete the message and send it
   }
 }
  
