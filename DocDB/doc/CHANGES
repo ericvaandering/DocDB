@@ -1,3 +1,13 @@
+7.5.0
+  Can get notification of events
+  
+  Rewrite NotifyDigest to work with more than topics
+  
+  Change homepage to sourceforge
+  
+  Document AddDocument subroutine
+  
+
 7.4.0
   Changes in the API to allow updating documents and the DB info
   

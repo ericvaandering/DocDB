@@ -38,28 +38,29 @@ sub AddDocument {
   
   my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
 
-  my $DocumentID    = $Params{-docid}         || 0;
-  my $Version       = $Params{-version}       || "bump";
-  my $Title         = $Params{-title}         || "";
-  my $Abstract      = $Params{-abstract}      || "";
-  my $Keywords      = $Params{-keywords}      || "";
-  my $TypeID        = $Params{-typeid}        || 0;
-  my $RequesterID   = $Params{-requesterid}   || 0;
-  my $Note          = $Params{-note}          || "";
-  my $PubInfo       = $Params{-pubinfo}       || "";
-  my $DateTime      = $Params{-datetime};
-  my $SessionTalkID = $Params{-sessiontalkid} || 0; # Not used yet
+  my $DocumentID    = $Params{-docid}         || 0     ; # The number the database will use for the document id. If not specified, the database will automaticaly generate a new document number. 
+  my $Version       = $Params{-version}       || "bump"; # The version number of the document.  If undefined or "bump", the database will automaticaly increment the version number. If set to "latest", the last existing version will be updated (Update DB Info). If a version number is given, that version will be updated.
+  my $Title         = $Params{-title}         || ""    ;
+  my $Abstract      = $Params{-abstract}      || ""    ;
+  my $Keywords      = $Params{-keywords}      || ""    ;
+  my $TypeID        = $Params{-typeid}        || 0     ; # Internal ID number
+  my $RequesterID   = $Params{-requesterid}   || 0     ; # Internal ID number
+  my $Note          = $Params{-note}          || ""    ;
+  my $PubInfo       = $Params{-pubinfo}       || ""    ;
+  my $DateTime      = $Params{-datetime}               ; # In SQL format (YYYY-MM-DD HH:MM:SS)
+  my $SessionTalkID = $Params{-sessiontalkid} || 0     ; # Not used yet
+  my $UniqueID      = $Params{-uniqueid}      || 0     ; # Not used yet, parameter to keep from inserting duplicate documents via Web
   
-  my @AuthorIDs  = @{$Params{-authorids}} ;
-  my @TopicIDs   = @{$Params{-topicids}}  ;
-  my @EventIDs   = @{$Params{-eventids}}  ;
-  my @ViewIDs    = @{$Params{-viewids}}   ;
-  my @ModifyIDs  = @{$Params{-modifyids}} ;
-  my @SignOffIDs = @{$Params{-signoffids}}; # For simple signoff list, may be deprecated
-  
-  my %Files      = %{$Params{-files}};
-  my %References = %{$Params{-references}}; # Not used yet
-  my %Signoffs   = %{$Params{-signoffs}};   # Not used yet
+  my @AuthorIDs   = @{$Params{-authorids}}             ; # Internal ID numbers
+  my @TopicIDs    = @{$Params{-topicids}}              ; # Internal ID numbers
+  my @EventIDs    = @{$Params{-eventids}}              ; # Internal ID numbers
+  my @ViewIDs     = @{$Params{-viewids}}               ; # Internal ID numbers
+  my @ModifyIDs   = @{$Params{-modifyids}}             ; # Internal ID numbers
+  my @SignOffIDs  = @{$Params{-signoffids}}            ; # For simple signoff list, may be deprecated
+
+  my %Files       = %{$Params{-files}}                 ; # File hash. See FileUtilities.pm
+  my %References  = %{$Params{-references}}            ; # Not used yet
+  my %Signoffs    = %{$Params{-signoffs}}              ; # Not used yet
 
   unless ($DateTime) {
     my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
