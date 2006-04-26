@@ -244,21 +244,21 @@ if ($Mode eq "update") {
   push @DebugStack,"Immediate Event",@ImmediateEventIDs;
   push @DebugStack,"Immediate Group",@ImmediateEventGroupIDs;
 
-  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Event", 
-                                -ids => \@ImmediateEventIDs, -period => "Immediate",} );
-  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Event", 
-                                -ids => \@DailyEventIDs,     -period => "Immediate",} );
-  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Event", 
-                                -ids => \@WeeklyEventIDs,    -period => "Immediate",} );
+  InsertNotifications({ -emailuserid => $EmailUserID,        -type   => "Event", 
+                                -ids => \@ImmediateEventIDs, -period => "Immediate", });
+  InsertNotifications({ -emailuserid => $EmailUserID,        -type   => "Event", 
+                                -ids => \@DailyEventIDs,     -period => "Daily", });
+  InsertNotifications({ -emailuserid => $EmailUserID,        -type   => "Event", 
+                                -ids => \@WeeklyEventIDs,    -period => "Weekly", });
         
 # EventGroups        
                                 
-  InsertNotifications( {-emailuserid => $EmailUserID,             -type   => "EventGroup", 
-                                -ids => \@ImmediateEventGroupIDs, -period => "Immediate",} );
-  InsertNotifications( {-emailuserid => $EmailUserID,             -type   => "EventGroup", 
-                                -ids => \@DailyEventGroupIDs,     -period => "Immediate",} );
-  InsertNotifications( {-emailuserid => $EmailUserID,             -type   => "EventGroup", 
-                                -ids => \@WeeklyEventGroupIDs,    -period => "Immediate",} );
+  InsertNotifications({ -emailuserid => $EmailUserID,             -type   => "EventGroup", 
+                                -ids => \@ImmediateEventGroupIDs, -period => "Immediate", });
+  InsertNotifications({ -emailuserid => $EmailUserID,             -type   => "EventGroup", 
+                                -ids => \@DailyEventGroupIDs,     -period => "Daily", });
+  InsertNotifications({ -emailuserid => $EmailUserID,             -type   => "EventGroup", 
+                                -ids => \@WeeklyEventGroupIDs,    -period => "Weekly", });
 }  
 
 # Clear (are refetched in DisplayNotification)

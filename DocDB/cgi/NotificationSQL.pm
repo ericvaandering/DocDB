@@ -87,12 +87,12 @@ sub InsertNotifications ($) {
   my $EmailUserID = exists $ArgRef->{-emailuserid} ?   $ArgRef->{-emailuserid} : 0;
   my $Period      = exists $ArgRef->{-period}      ?   $ArgRef->{-period}      : 0;
   my $Type        = exists $ArgRef->{-type}        ?   $ArgRef->{-type}        : 0;
-  my @IDs         = exists $ArgRef->{-ids}         ? @{$ArgRef->{-ids}}       : ();
+  my @IDs         = exists $ArgRef->{-ids}         ? @{$ArgRef->{-ids}}        : ();
   
   # FIXME: Need way to insert AllDocuments and keywords (need to add text field to DB)
   
   my $Count = 0;
-  if ($EmailUserID && $Period && $Type && @Keys) {
+  if ($EmailUserID && $Period && $Type && @IDs) {
     my $Insert = $dbh -> prepare(
        "insert into Notification ".
        "(NotificationID,EmailUserID,Type,ForeignID,Period) values ".
