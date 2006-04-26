@@ -355,7 +355,7 @@ print "</tr><tr>";
 print "<td>",FormElementTitle(-helptext => "Daily", -helplink => "notifyevent"),"</td>";
 print "<td>";
 EventGroupSelect({ -multiple => $TRUE, -name => "daily_eventgroups", 
-                   -helptext => "",    -default => $Notifications{$EmailUserID}{EventGroup_Daily} });
+                   -helplink => "",    -default => $Notifications{$EmailUserID}{EventGroup_Daily} });
 print "</td><td>";
 EventSelect({      -multiple => $TRUE, -name => "daily_events",      
                    -helplink => "",    -default => $Notifications{$EmailUserID}{Event_Daily} });
@@ -364,7 +364,7 @@ print "</tr><tr>";
 print "<td>",FormElementTitle(-helptext => "Weekly", -helplink => "notifyevent"),"</td>";
 print "<td>";
 EventGroupSelect({ -multiple => $TRUE, -name => "weekly_eventgroups", 
-                   -helptext => "",    -default => $Notifications{$EmailUserID}{EventGroup_Weekly} });
+                   -helplink => "",    -default => $Notifications{$EmailUserID}{EventGroup_Weekly} });
 print "</td><td>";
 EventSelect({      -multiple => $TRUE, -name => "weekly_events",      
                    -helplink => "",    -default => $Notifications{$EmailUserID}{Event_Weekly} });

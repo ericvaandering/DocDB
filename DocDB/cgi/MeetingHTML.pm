@@ -838,10 +838,7 @@ sub EventGroupSelect (;%) {
     }
   }      
   
-  my $ElementTitle = FormElementTitle(-helplink => "eventgroups", -helptext => "Event Groups", 
-                                       -required => $Required);
-
-  print $ElementTitle;
+  print FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText, -required => $Required);
   print $query -> scrolling_list(-name     => $Name,     -values  => \@EventGroupIDs, 
                                  -labels   => \%Labels,  -size    => 10, 
                                  -multiple => $Multiple, -default => \@Defaults,
@@ -882,9 +879,7 @@ sub EventSelect (;%) {
     }
   }      
   
-  my $ElementTitle = FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText);
-
-  print $ElementTitle;
+  print FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText);
   print $query -> scrolling_list(-name     => $Name,     -values  => \@ConferenceIDs, 
                                  -labels   => \%Labels,  -size    => 10, 
                                  -multiple => $Multiple, -default => \@Defaults,
