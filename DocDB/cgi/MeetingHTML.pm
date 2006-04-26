@@ -801,22 +801,22 @@ sub EventsByGroup (%) {
 }
  
 sub EventGroupSelect (;%) {
+  my ($ArgRef) = @_;
+
+  my $Disabled = exists $ArgRef->{-disabled} ?   $ArgRef->{-disabled} : "0";
+  my $Format   = exists $ArgRef->{-format}   ?   $ArgRef->{-format}   : "short";
+  my $HelpLink = exists $ArgRef->{-helplink} ?   $ArgRef->{-helplink} : "eventgroups";
+  my $HelpText = exists $ArgRef->{-helptext} ?   $ArgRef->{-helptext} : "Event Groups";           
+  my $Multiple = exists $ArgRef->{-multiple} ?   $ArgRef->{-multiple} : "0";
+  my $Name     = exists $ArgRef->{-name}     ?   $ArgRef->{-name}     : "eventgroups";
+  my $OnChange = exists $ArgRef->{-onchange} ?   $ArgRef->{-onchange} : undef;
+  my $Required = exists $ArgRef->{-required} ?   $ArgRef->{-required} :  "0";
+  my @Defaults = exists $ArgRef->{-default}  ? @{$ArgRef->{-default}} : ();
+
   require "FormElements.pm";
   require "MeetingSQL.pm";
   require "Sorts.pm";
  
-  my (%Params) = @_;
-
-  my $Disabled =   $Params{-disabled} || "0";
-  my $Format   =   $Params{-format}   || "short";
-  my $HelpLink =   $Params{-helplink} || "eventgroups";
-  my $HelpText =   $Params{-helptext} || "Event Groups";           
-  my $Multiple =   $Params{-multiple} || "0";
-  my $Name     =   $Params{-name}     || "eventgroups";
-  my $OnChange =   $Params{-onchange} || undef;
-  my $Required =   $Params{-required} || "0";
-  my @Defaults = @{$Params{-default}};
-
   my %Options = ();
  
   if ($Disabled) {
@@ -849,10 +849,6 @@ sub EventGroupSelect (;%) {
 }
 
 sub EventSelect (;%) {
-  require "FormElements.pm";
-  require "MeetingSQL.pm";
-  require "Sorts.pm";
-
   my ($ArgRef) = @_;
 
   my $Disabled =  exists $ArgRef->{-disabled} ?   $ArgRef->{-disabled} : "0";
@@ -863,6 +859,10 @@ sub EventSelect (;%) {
   my $Name     =  exists $ArgRef->{-name}     ?   $ArgRef->{-name}     : "events";
   my @Defaults =  exists $ArgRef->{-default}  ? @{$ArgRef->{-default}} : ();
   
+  require "FormElements.pm";
+  require "MeetingSQL.pm";
+  require "Sorts.pm";
+
   my $Booleans = ""; # FIXME: Does not scale, use %Options
   
   if ($Disabled) {
