@@ -221,6 +221,7 @@ sub UsersToNotify ($$) {
   require "MeetingSQL.pm";
   require "NotificationSQL.pm";
   require "TopicSQL.pm";
+  require "Security.pm";
 
   unless ($Period eq "Immediate" || $Period eq "Daily" || $Period eq "Weekly") {
     return undef;
