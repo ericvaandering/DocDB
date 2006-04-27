@@ -1,13 +1,15 @@
 7.5.0
-  Can get notification of events
+  Can now get notification of documents associated with events (just like
+  topics, authors, keywords)
   
-  Rewrite NotifyDigest to work with more than topics
+  NotifyDigest was very old code and only sent mail on topics (or all documents)
+  It was re-written to work use the same criteria as instant notification.
   
-  Change homepage to sourceforge
+  The DocDB homepage was changed to SourceForge.net
   
-  Document AddDocument subroutine
+  Better documentation of some tricky things in the API (AddDocument subroutine)
+  was added
   
-
 7.4.0
   Changes in the API to allow updating documents and the DB info
   
