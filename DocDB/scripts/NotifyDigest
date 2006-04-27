@@ -100,7 +100,7 @@ foreach my $Address (keys %AddressDocuments) {
   @DocumentIDs = sort numerically Unique(@DocumentIDs); # They want these docs
 
   if (@DocumentIDs) {
-    print "$Address will receive e-mail for documents ",join ', ',@DocumentIDs,"\n";
+    print "$Address will receive e-mail for documents ",join (', ',@DocumentIDs),"\n";
 
 # Write the mail
   
