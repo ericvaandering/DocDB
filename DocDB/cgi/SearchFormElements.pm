@@ -234,7 +234,7 @@ sub MajorMinorSelect { # Two multi-select boxes for major and minor topics
   foreach my $ID (@MajorIDs) {
     $MajorLabels{$ID} = $MajorTopics{$ID}{SHORT};
   }  
-  print &FormElementTitle(-helplink => "dynamictopic", -helptext => "Topic Groups");
+  print FormElementTitle(-helplink => "dynamictopic", -helptext => "Topic Groups");
   print $query -> scrolling_list(-name => "majortopic", -values => \@MajorIDs, 
                                  -labels => \%MajorLabels,  
                                  -size => 10, 
@@ -248,7 +248,7 @@ sub MajorMinorSelect { # Two multi-select boxes for major and minor topics
   foreach my $ID (@MinorIDs) {
     $MinorLabels{$ID} = $MinorTopics{$ID}{Full};
   }  
-  print &FormElementTitle(-helplink => "dynamictopic", -helptext => "Topics");
+  print FormElementTitle(-helplink => "dynamictopic", -helptext => "Topics");
   print $query -> scrolling_list(-name => "minortopic", -values => \@MinorIDs, 
                                  -labels => \%MinorLabels,  
                                  -size => 10,
@@ -258,34 +258,27 @@ sub MajorMinorSelect { # Two multi-select boxes for major and minor topics
 
 sub LogicTypeButtons { # Two buttons allow control whether inner and outer 
                        # logic are done with ANDs or ORs
-  my @values = ["AND","OR"];
+  my @Values = ["AND","OR"];
   
   print FormElementTitle(-helplink => "logictype", -helptext => "Between Fields", -nobreak => $TRUE);
-#  print "<b><a ";
-#  &HelpLink("logictype");
-#  print "Between Fields:</a></b> \n";
   print $query -> radio_group(-name => "outerlogic", 
-                              -values => @values, -default => "AND");
+                              -values => @Values, -default => "AND");
   
   print "&nbsp;&nbsp;&nbsp;&nbsp;";
   
   print FormElementTitle(-helplink => "logictype", -helptext => "Within Fields", -nobreak => $TRUE);
-#  print "<b><a ";
-#  &HelpLink("logictype");
-#  print "Within Fields:</a></b> \n";
   print $query -> radio_group(-name => "innerlogic", 
-                              -values => @values, -default => "OR");
+                              -values => @Values, -default => "OR");
 }
 
 sub ModeSelect { # Display Mode selecter for searches 
-  require "FormElements.pm";
-  print &FormElementTitle(-helptext => "Sort by", -helplink => "displaymode", -nobreak => $TRUE);
+  print FormElementTitle(-helptext => "Sort by", -helplink => "displaymode", -nobreak => $TRUE);
   my %Modes = ();
   $Modes{date}    = "Date with document #";
   $Modes{meeting} = "Author with topics and files";
   print $query -> popup_menu (-name    => 'mode', 
                               -values  => \%Modes,
                               -default => 'date');
-};
+}
 
 1;

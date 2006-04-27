@@ -116,9 +116,9 @@ print "</tr>\n";
   print "<dl>\n";
   print "<dt>";
   print FormElementTitle(-helplink => "beforeafterdate", -helptext => "Last Modified Between");
-  print "<dd>\n";
+  print "</dt><dd>\n";
   DateRangePullDown();
-  print "</dl>\n";
+  print "</dd></dl>\n";
   print "</td>\n";
  print "</tr>\n";
 
