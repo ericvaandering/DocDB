@@ -87,7 +87,7 @@ my %AddressDocuments = ();
 foreach my $DocRevID (@DocRevIDs) {
   FetchDocRevisionByID($DocRevID);
   my $DocumentID =  $DocRevisions{$DocRevID}{DOCID};
-  my @EmailAddresses = UsersToNotify($DocRevID,{-period => $Period} );\
+  my @EmailAddresses = UsersToNotify($DocRevID,{-period => $Period} );
   foreach my $Address (@EmailAddresses) {
     push @{ $AddressDocuments{$Address} },$DocumentID;
   }  

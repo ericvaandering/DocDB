@@ -217,8 +217,10 @@ sub UsersToNotify ($$) {
   my ($DocRevID,$ArgRef) = @_;
   my $Period = exists $ArgRef->{-period} ? $ArgRef->{-period} : "Immediate";
 
-  require "NotificationSQL.pm";
+  require "AuthorSQL.pm";
   require "MeetingSQL.pm";
+  require "NotificationSQL.pm";
+  require "TopicSQL.pm";
 
   unless ($Period eq "Immediate" || $Period eq "Daily" || $Period eq "Weekly") {
     return undef;
