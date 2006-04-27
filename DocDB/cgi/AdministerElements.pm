@@ -42,23 +42,18 @@ sub AdministerActions (%) {
 };
 
 sub AdministratorPassword {
-  require "Scripts.pm";
-  
   print FormElementTitle(-helplink => "adminlogin",    -nobreak => $TRUE,
                          -helptext => "Administrator", -nocolon => $TRUE,);
-#  print "<b><a ";
-#  &HelpLink("adminlogin");
-#  print "Administrator</a> \n";
-  print "Username: </b>"; 
+  print "<strong> Username: </strong>"; 
   print $query -> textfield(-name => "admuser", -size => 12, -maxlength => 12, 
                             -default => $remote_user);
-  print "<b> Password: </b>"; 
+  print "<strong> Password: </strong>"; 
   print $query -> password_field(-name      => "password", -size => 12, 
                                  -maxlength => 12);
 };
 
 sub AdminRegardless {
-  print &FormElementTitle(-helplink => "admforce", -helptext => "Force Action");
+  print FormElementTitle(-helplink => "admforce", -helptext => "Force Action");
   print $query -> checkbox(-name => "admforce", -value => 1, -label => 'Yes');
 }  
 
