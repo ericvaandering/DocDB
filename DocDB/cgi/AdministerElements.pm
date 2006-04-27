@@ -35,7 +35,7 @@ sub AdministerActions (%) {
   $Action{Delete}    = "Delete";
   $Action{New}       = "New";
   $Action{Modify}    = "Modify";
-  print &FormElementTitle(-helplink => "admaction", -helptext => "Action");
+  print FormElementTitle(-helplink => "admaction", -helptext => "Action");
   print $query -> radio_group(-name => "admaction", 
                               -values => \%Action, -default => "-",
                               -onclick => "disabler_$Form();");
@@ -44,9 +44,11 @@ sub AdministerActions (%) {
 sub AdministratorPassword {
   require "Scripts.pm";
   
-  print "<b><a ";
-  &HelpLink("adminlogin");
-  print "Administrator</a> \n";
+  print FormElementTitle(-helplink => "adminlogin",    -nologin => $TRUE,
+                         -helptext => "Administrator", -nocolon => $TRUE,);
+#  print "<b><a ";
+#  &HelpLink("adminlogin");
+#  print "Administrator</a> \n";
   print "Username: </b>"; 
   print $query -> textfield(-name => "admuser", -size => 12, -maxlength => 12, 
                             -default => $remote_user);
