@@ -65,9 +65,9 @@
 require "SearchModes.pm";
 
 sub TitleSearchBox { # Box and mode selecter for searches on DocumentTitle
-  print "<tr><th><a ";
-  &HelpLink("wordsearch");
-  print "Title:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "Titles", -nobreak => $TRUE)
+  print "</th> \n";
   print "<td>\n";
   print $query -> textfield (-name      => 'titlesearch', 
                              -size      => 40, 

@@ -68,27 +68,27 @@ print "</tr>\n";
 
 print "<tr>\n";
  print "<td colspan=\"3\" class=\"SubmitCell\">\n";
- &LogicTypeButtons; 
+ LogicTypeButtons(); 
  print "</td>\n";
 print "</tr>\n";
 print "<tr>\n";
  print "<td colspan=\"3\" class=\"SubmitCell\">\n";
- &ModeSelect; 
+ ModeSelect(); 
 print "</td></tr>\n";
 
 print "<tr>\n";
  print "<td colspan=\"3\">\n"; 
 
   print "<table class=\"LowPaddedTable LeftHeader\">\n";
-   &TitleSearchBox;    
-   &AbstractSearchBox;    
-   &KeywordsSearchBox;    
-   &RevisionNoteSearchBox;    
-   &PubInfoSearchBox;    
-   &FileNameSearchBox;    
-   &DescriptionSearchBox;
+   TitleSearchBox();    
+   AbstractSearchBox();    
+   KeywordsSearchBox();    
+   RevisionNoteSearchBox();    
+   PubInfoSearchBox();    
+   FileNameSearchBox();    
+   DescriptionSearchBox();
    if ($ContentSearch) {    
-     &ContentSearchBox;
+     ContentSearchBox();
    }      
   print "</table>\n";
 
