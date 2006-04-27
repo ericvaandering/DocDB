@@ -68,7 +68,7 @@ require "FormElements.pm";
 sub TitleSearchBox { # Box and mode selecter for searches on DocumentTitle
   print "<tr><th>";
   print FormElementTitle(-helplink => "wordsearch", -helptext => "Titles", -nobreak => $TRUE);
-  print "</th> \n";
+  print "</th>\n";
   print "<td>\n";
   print $query -> textfield (-name      => 'titlesearch', 
                              -size      => 40, 
@@ -81,9 +81,9 @@ sub TitleSearchBox { # Box and mode selecter for searches on DocumentTitle
 };
 
 sub AbstractSearchBox { # Field and mode selecter for searches on Abstract
-  print "<tr><th><a ";
-  &HelpLink("wordsearch");
-  print "Abstract:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "Abstract", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
   print $query -> textfield (-name      => 'abstractsearch', 
                              -size      => 40, 
@@ -96,9 +96,9 @@ sub AbstractSearchBox { # Field and mode selecter for searches on Abstract
 };
 
 sub KeywordsSearchBox { # Field and mode selecter for searches on Keywords
-  print "<tr><th><a ";
-  &HelpLink("wordsearch");
-  print "Keywords:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "Keywords", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
   print $query -> textfield (-name      => 'keywordsearch', 
                              -size      => 40, 
@@ -111,9 +111,9 @@ sub KeywordsSearchBox { # Field and mode selecter for searches on Keywords
 };
 
 sub RevisionNoteSearchBox { # Field and mode selecter for searches on Note
-  print "<tr><th><a ";
-  &HelpLink("wordsearch");
-  print "Notes and Changes:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "Notes and Changes", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
   print $query -> textfield (-name      => 'revisionnotesearch', 
                              -size      => 40, 
@@ -126,9 +126,9 @@ sub RevisionNoteSearchBox { # Field and mode selecter for searches on Note
 };
 
 sub PubInfoSearchBox { # Field and mode selecter for searches on PublicationInfo
-  print "<tr><th><a ";
-  &HelpLink("wordsearch");
-  print "Publication Info:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "Publication Info", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
   print $query -> textfield (-name      => 'pubinfosearch', 
                              -size      => 40, 
@@ -141,9 +141,9 @@ sub PubInfoSearchBox { # Field and mode selecter for searches on PublicationInfo
 };
 
 sub FileNameSearchBox { # Field and mode selecter for searches on Files
-  print "<tr><th><a ";
-  &HelpLink("wordsearch");
-  print "File names:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "File names", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
   print $query -> textfield (-name      => 'filesearch', 
                              -size      => 40, 
@@ -156,9 +156,9 @@ sub FileNameSearchBox { # Field and mode selecter for searches on Files
 };
 
 sub DescriptionSearchBox { # Field and mode selecter for searches on Files
-  print "<tr><th><a ";
-  &HelpLink("wordsearch");
-  print "File descriptions:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "File descriptions", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
   print $query -> textfield (-name      => 'filedescsearch', 
                              -size      => 40, 
@@ -171,9 +171,9 @@ sub DescriptionSearchBox { # Field and mode selecter for searches on Files
 };
 
 sub ContentSearchBox { # Field and mode selecter for searches on Files
-  print "<tr><th><a ";
-  &HelpLink("contentsearch");
-  print "File contents:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "contentsearch", -helptext => "File contents", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
   print $query -> textfield (-name      => 'filecontsearch', 
                              -size      => 40, 

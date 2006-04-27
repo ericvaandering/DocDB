@@ -114,9 +114,11 @@ print "</tr>\n";
  print "<tr>\n";
   print "<td colspan=\"3\">\n";
   print "<dl>\n";
-  print "<dt><b><a ";
-  &HelpLink("beforeafterdate");
-  print "Last Modified Between:</a></b><p>\n";
+  print "<dt>";
+  print FormElementTitle(-helplink => "beforeafterdate", -helptext => "Last Modified Between");
+
+#  &HelpLink("beforeafterdate");
+#  print "Last Modified Between:</a></b><p>\n";
   print "<dd>\n";
   &DateRangePullDown;
   print "</dl>\n";
