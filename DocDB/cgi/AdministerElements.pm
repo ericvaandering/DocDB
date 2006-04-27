@@ -44,7 +44,7 @@ sub AdministerActions (%) {
 sub AdministratorPassword {
   require "Scripts.pm";
   
-  print FormElementTitle(-helplink => "adminlogin",    -nologin => $TRUE,
+  print FormElementTitle(-helplink => "adminlogin",    -nobreak => $TRUE,
                          -helptext => "Administrator", -nocolon => $TRUE,);
 #  print "<b><a ";
 #  &HelpLink("adminlogin");
