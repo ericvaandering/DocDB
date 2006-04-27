@@ -260,17 +260,19 @@ sub LogicTypeButtons { # Two buttons allow control whether inner and outer
                        # logic are done with ANDs or ORs
   my @values = ["AND","OR"];
   
-  print "<b><a ";
-  &HelpLink("logictype");
-  print "Between Fields:</a></b> \n";
+  print FormElementTitle(-helplink => "logictype", -helptext => "Between Fields", -nobreak => $TRUE);
+#  print "<b><a ";
+#  &HelpLink("logictype");
+#  print "Between Fields:</a></b> \n";
   print $query -> radio_group(-name => "outerlogic", 
                               -values => @values, -default => "AND");
   
   print "&nbsp;&nbsp;&nbsp;&nbsp;";
   
-  print "<b><a ";
-  &HelpLink("logictype");
-  print "Within Fields:</a></b> \n";
+  print FormElementTitle(-helplink => "logictype", -helptext => "Within Fields", -nobreak => $TRUE);
+#  print "<b><a ";
+#  &HelpLink("logictype");
+#  print "Within Fields:</a></b> \n";
   print $query -> radio_group(-name => "innerlogic", 
                               -values => @values, -default => "OR");
 }
