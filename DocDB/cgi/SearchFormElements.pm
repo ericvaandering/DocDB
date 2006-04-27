@@ -216,7 +216,7 @@ sub DateRangePullDown { # Two sets of pulldowns for defining a date range
   print $query -> popup_menu (-name => 'aftermonth',-values => \@months);
   print $query -> popup_menu (-name => 'afteryear', -values => \@years); 
   print " (Start)\n";
-  print "<br><b><big>&nbsp;</big>&nbsp;and</b><br>\n";
+  print "<br/><strong><big>&nbsp;</big>&nbsp;and</strong><br/>\n";
 
   print $query -> popup_menu (-name => 'beforeday',  -values => \@days);
   print $query -> popup_menu (-name => 'beforemonth',-values => \@months);
