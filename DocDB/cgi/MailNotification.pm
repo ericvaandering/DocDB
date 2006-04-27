@@ -292,7 +292,7 @@ sub UsersToNotify ($$) {
 # Get users interested in events for this reporting period
 
   my $Fetch   = $dbh -> prepare(
-    "select EmailUserID from Notifications where Period=? and Type=? and ForeignID=?");
+    "select EmailUserID from Notification where Period=? and Type=? and ForeignID=?");
 
   my @EventIDs = GetRevisionEvents($DocRevID);
   foreach my $EventID (@EventIDs) {
