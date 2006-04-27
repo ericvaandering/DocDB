@@ -45,14 +45,14 @@ sub MailNotices (%) {
   my @Addressees = ();
   if ($Type eq "update"  || $Type eq "updatedb" || $Type eq "add" || 
       $Type eq "reserve" || $Type eq "addfiles" || $Type eq "updateunknown") {
-    @Addressees = UsersToNotify($DocRevID,"immediate");
+    @Addressees = UsersToNotify($DocRevID,{-period => "Immediate"} );
   } elsif ($Type eq "signature") {
     foreach my $EmailUserID (@EmailUserIDs) {# Extract emails
       FetchEmailUser($EmailUserID);
       push @Addressees,$EmailUser{$EmailUserID}{EmailAddress};
     }
   } elsif ($Type eq "approved") { 
-    @Addressees = UsersToNotify($DocRevID,"immediate");
+    @Addressees = UsersToNotify($DocRevID,{-period => "Immediate"} );
     my %EmailUsers = ();
     my @SignoffIDs = GetAllSignoffsByDocRevID($DocRevID);
     foreach my $SignoffID (@SignoffIDs) {
@@ -214,9 +214,15 @@ sub RevisionMailBody ($) {
 }
 
 sub UsersToNotify ($$) {
-  my ($DocRevID,$Mode) = @_;
+  my ($DocRevID,$ArgRef) = @_;
+  my $Period = exists $ArgRef->{-period} ? $ArgRef->{-period} : "Immediate";
+
   require "NotificationSQL.pm";
   require "MeetingSQL.pm";
+
+  unless ($Period eq "Immediate" || $Period eq "Daily" || $Period eq "Weekly") {
+    return undef;
+  }  
 
   GetTopics();
 
@@ -226,13 +232,12 @@ sub UsersToNotify ($$) {
 
   my $UserID;
   my $Table;
-  my $Period;
   my %UserIDs = (); # Hash to make user IDs unique (one notification per person)
   my @Addressees = ();
 
 # Get users interested in this particular document (only immediate)
  
-  if ($Mode eq "immediate") {
+  if ($Period eq "Immediate") {
     my $DocFetch   = $dbh -> prepare("select EmailUserID from EmailDocumentImmediate where DocumentID=?");
     $DocFetch -> execute($DocumentID);
     $DocFetch -> bind_columns(undef,\($UserID));
@@ -241,23 +246,9 @@ sub UsersToNotify ($$) {
     }
   }
 
-# Notification by topics and set $Period for new style
-  
-  if ($Mode eq "immediate") {
-    $Table = "EmailTopicImmediate";
-    $Period = "Immediate";
-  } elsif ($Mode eq "daily")  {
-    $Table = "EmailTopicDaily";
-    $Period = "Daily";
-  } elsif ($Mode eq "weekly")  {
-    $Table = "EmailTopicWeekly";
-    $Period = "Weekly";
-  } else {   
-    return;
-  }    
-
 # Get users interested in all documents for this reporting period
 
+  $Table = "EmailTopic$Period";
   my $AllFetch   = $dbh -> prepare(
     "select EmailUserID from $Table where MinorTopicID=0 and MajorTopicID=0");
   $AllFetch -> execute();
@@ -312,22 +303,13 @@ sub UsersToNotify ($$) {
     }
   }  
 
-# Notification by authors 
-  
-  if ($Mode eq "immediate") {
-    $Table = "EmailAuthorImmediate";
-  } elsif ($Mode eq "daily")  {
-    $Table = "EmailAuthorDaily";
-  } elsif ($Mode eq "weekly")  {
-    $Table = "EmailAuthorWeekly";
-  }    
-
 # Get users interested in authors for this reporting period
 
+  $Table = "EmailAuthor$Period";
   my $AuthorFetch   = $dbh -> prepare(
     "select EmailUserID from $Table where AuthorID=?");
 
-  my @AuthorIDs = &GetRevisionAuthors($DocRevID);
+  my @AuthorIDs = GetRevisionAuthors($DocRevID);
 
   foreach my $AuthorID (@AuthorIDs) {
     $AuthorFetch -> execute($AuthorID);
@@ -337,21 +319,12 @@ sub UsersToNotify ($$) {
     }
   }  
 
-# Notification by keywords
-  
-  if ($Mode eq "immediate") {
-    $Table = "EmailKeywordImmediate";
-  } elsif ($Mode eq "daily")  {
-    $Table = "EmailKeywordDaily";
-  } elsif ($Mode eq "weekly")  {
-    $Table = "EmailKeywordWeekly";
-  }    
-
 # Get users interested in authors for this reporting period
-
+    
+  $Table = "EmailKeyword$Period";
   my $KeywordFetch   = $dbh -> prepare(
     "select EmailUserID from $Table where Keyword=lower(?)");
-  &FetchDocRevisionByID($DocRevID);
+  FetchDocRevisionByID($DocRevID);
   my @Keywords = split /\s+/,$DocRevisions{$DocRevID}{Keywords};
 
   foreach my $Keyword (@Keywords) {
@@ -367,8 +340,8 @@ sub UsersToNotify ($$) {
 # verify user is allowed to receive notification
    
   foreach $UserID (keys %UserIDs) {
-    my $EmailUserID = &FetchEmailUser($UserID);
-    if ($EmailUserID && &CanAccess($DocumentID,$Version,$EmailUserID)) {
+    my $EmailUserID = FetchEmailUser($UserID);
+    if ($EmailUserID && CanAccess($DocumentID,$Version,$EmailUserID)) {
       my $Name         = $EmailUser{$UserID}{Name}        ; # FIXME: TRYME: Have to use UserID as index for some reason
       my $EmailAddress = $EmailUser{$UserID}{EmailAddress};
       if ($EmailAddress) {

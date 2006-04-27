@@ -25,8 +25,6 @@ sub GetEmailUserIDs () {
   my $EmailUserID;
   my @EmailUserIDs;
 
-  # Find every individual who has a notification set for this time period
-
   my $EmailIDQuery = $dbh -> prepare("select DISTINCT(EmailUserID) from EmailUser");
   $EmailIDQuery -> execute();
   $EmailIDQuery -> bind_columns(undef,\($EmailUserID));
