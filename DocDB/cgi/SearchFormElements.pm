@@ -190,9 +190,7 @@ sub DocTypeMulti { # Scrolling selectable list for doc type search
   foreach my $DocTypeID (keys %DocumentTypes) {
     $DocTypeLabels{$DocTypeID} = $DocumentTypes{$DocTypeID}{SHORT};
   }  
-  print "<b><a ";
-  &HelpLink("doctypemulti");
-  print "Document type:</a></b><br> \n";
+  print FormElementTitle(-helplink => "doctypemulti", -helptext => "Document type");
   print $query -> scrolling_list(-size => 10, -name => "doctypemulti", 
                               -values => \%DocTypeLabels, -multiple => 'true');
 };

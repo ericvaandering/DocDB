@@ -100,15 +100,15 @@ print "</tr>\n";
  print "<tr>\n";
  
  print "<td>\n"; # Requester
- &AuthorScroll(-helplink => "requestersearch", -helptext => "Submitter", 
+ AuthorScroll(-helplink => "requestersearch", -helptext => "Submitter", 
                -name     => "requestersearch", -multiple => "true");
  print "</td>\n"; 
 
  print "<td>\n"; # Authors
- &AuthorScroll(-helplink => "author", -multiple => "true");
+ AuthorScroll(-helplink => "author", -multiple => "true");
  print "</td>\n";
  
- print "<td>\n"; &DocTypeMulti;       print "</td>\n";
+ print "<td>\n"; DocTypeMulti();       print "</td>\n";
  print "</tr>\n";
  
  print "<tr>\n";
@@ -116,25 +116,22 @@ print "</tr>\n";
   print "<dl>\n";
   print "<dt>";
   print FormElementTitle(-helplink => "beforeafterdate", -helptext => "Last Modified Between");
-
-#  &HelpLink("beforeafterdate");
-#  print "Last Modified Between:</a></b><p>\n";
   print "<dd>\n";
-  &DateRangePullDown;
+  DateRangePullDown();
   print "</dl>\n";
   print "</td>\n";
  print "</tr>\n";
 
  print "<tr>\n";
-  &MajorMinorSelect;
+  MajorMinorSelect();
  print "</tr>\n";
 
  print "<tr>\n";
  print "<td>\n";
-  &EventGroupSelect(-multiple => $TRUE, -onchange => "selectEvent(this.form);");
+  EventGroupSelect(-multiple => $TRUE, -onchange => "selectEvent(this.form);");
  print "</td>\n";
  print "<td colspan=\"2\">\n";
-  &EventSelect(-multiple => $TRUE, -format => "full");
+  EventSelect(-multiple => $TRUE, -format => "full");
  print "</td>\n";
  print "</tr>\n";
 
@@ -150,5 +147,5 @@ print "</table>\n";
 
 print $query -> end_multipart_form;
 
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
