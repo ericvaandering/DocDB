@@ -55,12 +55,10 @@ DocDBHeader("$Project Document Database Search","Document Database Search",
 
 print "<h4>Click on any of the <span class=\"Help\">highlighted headings</span> for help.</h4>\n";
 
-#print "<table id=\"SearchFormTable\" class=\"HighPaddedTable CenteredTable\">\n";
+# Quick search table
 
-#print "<tr><td class=\"SubmitCell SearchFormCell\">\n";
 print $query -> start_multipart_form('POST',$Search,"name=\"simplesearch\"");
-print "<table class=\"SearchFormTable HighPaddedTable CenteredTable\"><tr><td>\n";
-
+print "<table class=\"SearchFormTable LowPaddedTable CenteredTable\"><tr><td>\n";
 print FormElementTitle(-helplink => "quicksearch", -nobreak => $TRUE,
                        -helptext => "Search for", );
 print "</td><td>\n";                       
@@ -70,11 +68,11 @@ print "</td><td>\n";
 print $query -> submit (-value => "Quick Search");     
 print "</td></tr></table>\n";
 print $query -> end_multipart_form;
-#print "</td></tr>\n";
 
 print "<hr/>\n";
 
-#print "<tr><td class=\"SearchFormCell\">\n";
+# Advanced search table
+
 print $query -> start_multipart_form('POST',$Search,"name=\"queryform\"");
 print "<table class=\"SearchFormTable HighPaddedTable CenteredTable\">\n";
 print "<tr>\n";
@@ -167,9 +165,6 @@ print "</tr>\n";
  print "</tr>\n";
 print "</table>\n";
 print $query -> end_multipart_form;
-
-#print "</td></tr></table>\n";
-
 
 DocDBNavBar();
 DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
