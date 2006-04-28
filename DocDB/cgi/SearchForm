@@ -55,10 +55,10 @@ DocDBHeader("$Project Document Database Search","Document Database Search",
 
 print "<h4>Click on any of the <span class=\"Help\">highlighted headings</span> for help.</h4>\n";
 
-print "<table id=\"SearchFormTable\" class=\"UnPaddedTable CenteredTable\">\n";
+#print "<table id=\"SearchFormTable\" class=\"HighPaddedTable CenteredTable\">\n";
 
-print "<tr><td class=\"SubmitCell SearchFormCell\">\n";
-print "<table class=\"HighPaddedTable CenteredTable\"><tr><td>\n";
+#print "<tr><td class=\"SubmitCell SearchFormCell\">\n";
+print "<table class=\"SearchFormTable HighPaddedTable CenteredTable\"><tr><td>\n";
 print $query -> start_multipart_form('POST',$Search,"name=\"simplesearch\"");
 print FormElementTitle(-helplink => "simplesearch", -nobreak => $TRUE,
                        -helptext => "Search",       -nocolon => $TRUE,);
@@ -67,12 +67,12 @@ print $query -> hidden(-name => "simple", -default => '1');
 print $query -> submit (-value => "Simple Search");     
 print $query -> end_multipart_form;
 print "</td></tr></table>\n";
-print "</td></tr>\n";
+#print "</td></tr>\n";
 
 
-print "<tr><td class=\"SearchFormCell\">\n";
+#print "<tr><td class=\"SearchFormCell\">\n";
 print $query -> start_multipart_form('POST',$Search,"name=\"queryform\"");
-print "<table class=\"HighPaddedTable\">\n";
+print "<table class=\"SearchFormTable HighPaddedTable CenteredTable\">\n";
 print "<tr>\n";
  print "<td colspan=\"3\" class=\"SubmitCell\">\n"; 
  print $query -> submit (-value => "Advanced Search");     
@@ -164,7 +164,7 @@ print "</tr>\n";
 print "</table>\n";
 print $query -> end_multipart_form;
 
-print "</td></tr></table>\n";
+#print "</td></tr></table>\n";
 
 
 DocDBNavBar();
