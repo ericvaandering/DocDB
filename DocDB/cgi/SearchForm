@@ -52,14 +52,26 @@ print $query->header;
 DocDBHeader("$Project Document Database Search","Document Database Search",
             -search => $TRUE, -scripts => ["PopUps","TopicChooser","EventChooser"]);
 
-print $query -> start_multipart_form('POST',$Search,"name=\"queryform\"");
 
 print "<h4>Click on any of the <span class=\"Help\">highlighted headings</span> for help.</h4>\n";
 
 print "<table id=\"SearchFormTable\" class=\"HighPaddedTable CenteredTable\">\n";
-print "<tr>\n";
+
+print $query -> start_multipart_form('POST',$Search,"name=\"simplesearch\"");
+print "<tbody><tr><td colspan=\"3\" class=\"SubmitCell\">\n";
+print FormElementTitle(-helplink => "simplesearch", -nobreak => $TRUE,
+                       -helptext => "Search",       -nocolon => $TRUE,);
+print $query -> textfield(-size => 40, -name => "simpletext");
+print $query -> hidden(-name => "simple", -default => '1');
+print $query -> submit (-value => "Simple Search");     
+print "</td></tr></tbody>\n";
+print $query -> end_multipart_form;
+
+
+print $query -> start_multipart_form('POST',$Search,"name=\"queryform\"");
+print "<tbody><tr>\n";
  print "<td colspan=\"3\" class=\"SubmitCell\">\n"; 
- print $query -> submit (-value => "Search for Documents");     
+ print $query -> submit (-value => "Advanced Search");     
  print "&nbsp;&nbsp;&nbsp;\n";
  print $query -> reset (-value => "Reset Search Form");     
  print "</td>\n";
@@ -136,11 +148,11 @@ print "</tr>\n";
 
  print "<tr>\n";
   print "<td colspan=\"3\" class=\"SubmitCell\">\n"; 
-  print $query -> submit (-value => "Search for Documents");     
+  print $query -> submit (-value => "Advanced Search");     
   print "&nbsp;&nbsp;&nbsp;\n";
   print $query -> reset (-value => "Reset Search Form");     
   print "</td>\n";
- print "</tr>\n";
+ print "</tr></tbody>\n";
 
 print "</table>\n";
 
