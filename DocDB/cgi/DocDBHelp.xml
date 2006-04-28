@@ -2,6 +2,22 @@
 
 <helpfile>
  <entry>
+  <key>authortextsearch</key>
+  <title>Authors</title>
+  <text>
+     Type in the names of authors to search for. Put each author on a new line.
+     Use full last names and first names or initials. Each author entered will
+     checked against the database and a <b>unique</b> match must be found for
+     or that entry will be ignored. Requiring a unique match means that for
+     people who share a last name, the first name must be fully specified.
+     Entered middle initials are ignored.
+     <p/>
+     Authors entered here are added to the authors selected with the  list on
+     the left (if any).
+  </text>
+ </entry>
+
+ <entry>
   <key>groupperm</key>
   <title>Group Permissions</title>
   <text>

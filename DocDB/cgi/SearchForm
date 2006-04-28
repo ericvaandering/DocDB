@@ -126,7 +126,7 @@ print "</tr>\n";
  print "</td>\n";
  
  print "<td>\n";
- AuthorTextEntry();
+ AuthorTextEntry( {-helplink => "authortextsearch"} );
  print "</td>\n";
  
  print "</tr>\n";
