@@ -69,7 +69,7 @@ print "</td></tr></table>\n";
 print $query -> end_multipart_form;
 #print "</td></tr>\n";
 
-print "<p><hr/></p>\n";
+print "<hr/>\n";
 
 #print "<tr><td class=\"SearchFormCell\">\n";
 print $query -> start_multipart_form('POST',$Search,"name=\"queryform\"");
