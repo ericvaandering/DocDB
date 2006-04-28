@@ -112,18 +112,22 @@ print "</tr>\n";
  
  print "<td>\n"; # Requester
  AuthorScroll(-helplink => "requestersearch", -helptext => "Submitter", 
-               -name     => "requestersearch", -multiple => "true");
+              -name     => "requestersearch", -multiple => $TRUE);
  print "</td>\n"; 
 
  print "<td>\n"; # Authors
- AuthorScroll(-helplink => "author", -multiple => "true");
+ AuthorScroll(-helplink => "author", -multiple => $TRUE);
  print "</td>\n";
  
- print "<td>\n"; DocTypeMulti();       print "</td>\n";
+ print "<td>\n";
+ AuthorManual();
+ print "</td>\n";
+ 
  print "</tr>\n";
  
  print "<tr>\n";
-  print "<td colspan=\"3\">\n";
+ print "<td>\n"; DocTypeMulti();       print "</td>\n";
+  print "<td colspan=\"2\">\n";
   print "<dl>\n";
   print "<dt>";
   print FormElementTitle(-helplink => "beforeafterdate", -helptext => "Last Modified Between");
