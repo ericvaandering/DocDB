@@ -60,11 +60,11 @@ print "<h4>Click on any of the <span class=\"Help\">highlighted headings</span> 
 #print "<tr><td class=\"SubmitCell SearchFormCell\">\n";
 print "<table class=\"SearchFormTable HighPaddedTable CenteredTable\"><tr><td>\n";
 print $query -> start_multipart_form('POST',$Search,"name=\"simplesearch\"");
-print FormElementTitle(-helplink => "simplesearch", -nobreak => $TRUE,
+print FormElementTitle(-helplink => "quicksearch", -nobreak => $TRUE,
                        -helptext => "Search",       -nocolon => $TRUE,);
 print $query -> textfield(-size => 40, -name => "simpletext");
 print $query -> hidden(-name => "simple", -default => '1');
-print $query -> submit (-value => "Simple Search");     
+print $query -> submit (-value => "Quick Search");     
 print $query -> end_multipart_form;
 print "</td></tr></table>\n";
 #print "</td></tr>\n";
