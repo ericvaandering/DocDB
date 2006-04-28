@@ -265,17 +265,25 @@ sub AuthorScroll (%) {
 }
 
 sub AuthorTextEntry ($;@) {
-  my ($ElementName,@Defaults) = @_;
-  
+  my ($ArgRef) = @_;
+
+#  my $Disabled = exists $ArgRef->{-disabled} ?   $ArgRef->{-disabled} : "0";
+  my $HelpLink = exists $ArgRef->{-helplink} ?   $ArgRef->{-helplink} : "authormanual";
+  my $HelpText = exists $ArgRef->{-helptext} ?   $ArgRef->{-helptext} : "Authors";           
+  my $Name     = exists $ArgRef->{-name}     ?   $ArgRef->{-name}     : "authormanual";
+  my $Required = exists $ArgRef->{-required} ?   $ArgRef->{-required} :  "0";
+  my @Defaults = exists $ArgRef->{-default}  ? @{$ArgRef->{-default}} : ();
+
   my $AuthorManDefault = "";
 
   foreach $AuthorID (@Defaults) {
-    &FetchAuthor($AuthorID);
+    FetchAuthor($AuthorID);
     $AuthorManDefault .= "$Authors{$AuthorID}{FULLNAME}\n" ;
   }  
-  print $query -> textarea (-name    => $ElementName, 
-                            -default => $AuthorManDefault,
-                            -columns => 20, -rows    => 8);
+  
+  print FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText, -required => $Required);
+  print $query -> textarea (-name    => $Name, -default => $AuthorManDefault,
+                            -columns => 20,    -rows    => 8);
 };
 
 sub InstitutionEntryBox (;%) {
