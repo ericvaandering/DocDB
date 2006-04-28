@@ -55,10 +55,10 @@ DocDBHeader("$Project Document Database Search","Document Database Search",
 
 print "<h4>Click on any of the <span class=\"Help\">highlighted headings</span> for help.</h4>\n";
 
-print "<table class=\"HighPaddedTable CenteredTable SearchFormTable\">\n";
+print "<table id=\"SearchFormTable\"class=\"HighPaddedTable CenteredTable\">\n";
 
-print "<tr><td colspan=\"3\" class=\"SubmitCell\">\n";
-print "<table><tr><td>\n";
+print "<tr><td>\n";
+print "<table><tr><td class=\"SubmitCell\">\n";
 print $query -> start_multipart_form('POST',$Search,"name=\"simplesearch\"");
 print FormElementTitle(-helplink => "simplesearch", -nobreak => $TRUE,
                        -helptext => "Search",       -nocolon => $TRUE,);
