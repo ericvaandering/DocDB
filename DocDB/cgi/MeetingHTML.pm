@@ -647,6 +647,9 @@ sub PrintSessionSeparatorInfo ($) {
 sub EventGroupLink (%) {
   my %Params = @_;
   my $EventGroupID = $Params{-eventgroupid} || 0;
+
+  require "MeetingSQL.pm";
+
   FetchEventGroup($EventGroupID);
   
   my $Link = "<a href=\"";
@@ -658,22 +661,23 @@ sub EventGroupLink (%) {
 }
 
 sub EventLink (%) {
-  require "MeetingSecurityUtilities.pm";
-  require "EventUtilities.pm";
-  
   my %Params = @_;
   my $EventID = $Params{-eventid} || 0;
   my $Format  = $Params{-format}  || "short";
   my $LinkTo  = $Params{-linkto}  || "agenda";
   my $Class   = $Params{-class}   || "Event";
   
-  &FetchConferenceByConferenceID($EventID);
-  unless (&CanAccessMeeting($EventID)) {
+  require "MeetingSecurityUtilities.pm";
+  require "EventUtilities.pm";
+  require "MeetingSQL.pm";
+  
+  FetchConferenceByConferenceID($EventID);
+  unless (CanAccessMeeting($EventID)) {
     return "";
   }  
 
   my $URL;
-  if ($LinkTo eq "listby" || &SessionCountByEventID($EventID) == 0) {
+  if ($LinkTo eq "listby" || SessionCountByEventID($EventID) == 0) {
     $URL = "$ListBy?eventid=$EventID&amp;mode=conference";
   } else {  
     $URL = "$DisplayMeeting?conferenceid=$EventID";
@@ -699,7 +703,7 @@ sub ModifyEventLink ($) {
     
   my $URL;
   
-  if (&SessionCountByEventID($EventID) == 1) {
+  if (SessionCountByEventID($EventID) == 1) {
     $URL = "$SessionModify?eventid=$EventID&amp;singlesession=1";
   } else {  
     $URL = "$MeetingModify?conferenceid=$EventID";
