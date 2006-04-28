@@ -7,13 +7,29 @@
   <text>
      Type in the names of authors to search for. Put each author on a new line.
      Use full last names and first names or initials. Each author entered will
-     checked against the database and a <b>unique</b> match must be found for
-     or that entry will be ignored. Requiring a unique match means that for
-     people who share a last name, the first name must be fully specified.
-     Entered middle initials are ignored.
+     checked against the database and a <b>unique</b> match must be found or
+     that entry will be ignored. Requiring a unique match means that for people
+     who share a last name, the first name must be fully specified. Entered
+     middle initials are ignored.
      <p/>
      Authors entered here are added to the authors selected with the  list on
      the left (if any).
+  </text>
+ </entry>
+
+ <entry>
+  <key>quicksearch</key>
+  <title>Quick Search</title>
+  <text>
+   <p>
+    Enter one or more words to search for. These words will be searched for in
+    authors, topics, events, etc. as well as in text meta-data such as titles
+    and abstracts. The returned list of documents will be ranked by the number
+    and quality of matches. 
+   </p>
+   <p>
+    For more targeted searches, use the advanced form below.
+   </p>  
   </text>
  </entry>
 
