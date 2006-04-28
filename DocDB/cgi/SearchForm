@@ -55,7 +55,7 @@ DocDBHeader("$Project Document Database Search","Document Database Search",
 
 print "<h4>Click on any of the <span class=\"Help\">highlighted headings</span> for help.</h4>\n";
 
-print "<table id=\"SearchFormTable\" class=\"UnPaddedTable CenteredTable\">\n";
+print "<table id=\"SearchFormTable\" class=\"HighPaddedTable CenteredTable\">\n";
 
 print "<tr><td class=\"SubmitCell SearchFormCell\">\n";
 print "<table class=\"HighPaddedTable CenteredTable\"><tr><td>\n";

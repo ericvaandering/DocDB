@@ -1,7 +1,7 @@
-/*#SearchFormTable td {
-  border: 5px solid black;
+#SearchFormTable td {
+  border-collapse: collapse;
 }
-*/
+
 
 td.SearchFormCell {
   border: 5px solid black;
