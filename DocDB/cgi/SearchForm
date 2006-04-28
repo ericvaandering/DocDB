@@ -55,7 +55,7 @@ DocDBHeader("$Project Document Database Search","Document Database Search",
 
 print "<h4>Click on any of the <span class=\"Help\">highlighted headings</span> for help.</h4>\n";
 
-print "<table border=1 id=\"SearchFormTable\" class=\"HighPaddedTable CenteredTable\">\n";
+print "<table id=\"SearchFormTable\" class=\"HighPaddedTable CenteredTable\">\n";
 
 print $query -> start_multipart_form('POST',$Search,"name=\"simplesearch\"");
 print "<tbody><tr><td colspan=\"3\" class=\"SubmitCell\">\n";
