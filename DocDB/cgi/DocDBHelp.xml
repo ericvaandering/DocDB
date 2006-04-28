@@ -733,8 +733,11 @@ stored on the server. The URL must be a full URL, with http:// at the beginning
 and a file name at the end (cannot end in "/"). The https and ftp protocols may
 also work.
 <p/>
-If the URL is password protected, enter the username and
-password for the URL here. The username and password are NOT saved.
+If the URL is password protected, enter the username and password for the URL
+here. The username and password are NOT saved. If you enter more than one  URL,
+the same username and password are used for each URL. If you need to fetch
+files with different authentications, just upload some now and use "Add Files"
+to add the other files later.
 <p/>
 You can also enter a short description of each file, which will appear in the
 summary of the document. The description is optional.
