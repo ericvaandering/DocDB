@@ -57,8 +57,8 @@ print "<h4>Click on any of the <span class=\"Help\">highlighted headings</span> 
 
 print "<table border=1 id=\"SearchFormTable\" class=\"UnPaddedTable CenteredTable\">\n";
 
-print "<tr><td>\n";
-print "<table class=\"HighPaddedTable\"><tr><td class=\"SubmitCell SearchFormCell\">\n";
+print "<tr><td class=\"SubmitCell>\n";
+print "<table class=\"HighPaddedTable\"><tr><td SearchFormCell\">\n";
 print $query -> start_multipart_form('POST',$Search,"name=\"simplesearch\"");
 print FormElementTitle(-helplink => "simplesearch", -nobreak => $TRUE,
                        -helptext => "Search",       -nocolon => $TRUE,);
