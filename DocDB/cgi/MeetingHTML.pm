@@ -779,19 +779,21 @@ sub EventsByGroup (%) {
   }
   print "</td></tr>\n";
   my $EventCount = 0;
+  my $Truncated = $FALSE;
   foreach my $EventID (@DisplayEventIDs) {
     ++$EventCount;
     print "<tr>\n";
-    if ($EventCount > $MaxEvents && $MaxEvents) {
-      print '<td colspan="2">';
+    if ($EventCount > $MaxEvents && $MaxEvents) { # Put ...show all... at bottom
+      $Truncated = $TRUE;
+      print '<td colspan="2"><strong>';
       if ($Mode eq "display") {
         print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID\">...show all events...</a>\n"; 
       } else {
         print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID&amp;mode=modify\">...show all events...</a>\n"; 
       }
-      print "</td>";
+      print "</strong></td>";
       last;
-    } else {
+    } else { # Print normal entry
       my $MeetingLink;
       if ($Mode eq "modify") {
         $MeetingLink = ModifyEventLink($EventID);
@@ -800,14 +802,29 @@ sub EventsByGroup (%) {
       }
       print "<td>$MeetingLink</td>\n";
       print "<td>",EuroDate($Conferences{$EventID}{StartDate}),"</td>\n";
-      if ($SingleGroup && $Conferences{$EventID}{StartDate} ne $Conferences{$EventID}{EndDate}) {
-        print "<td>-</td><td>".EuroDate($Conferences{$EventID}{EndDate})."</td>\n";
-      } 
-      if ($SingleGroup) {
+
+      if ($SingleGroup) { # Add end date and location for singe group display
+        if ($Conferences{$EventID}{StartDate} ne $Conferences{$EventID}{EndDate}) {
+          print "<td>-</td><td>".EuroDate($Conferences{$EventID}{EndDate})."</td>\n";
+        } else {
+          print "<td></td><td></td>\n";
+        }
         print "<td>",$Conferences{$EventID}{Location},"</td>";
       }  
     }
     print "</tr>\n";
+    
+    # Put more info at bottom if not there already
+    
+    unless ($Truncated && !$SingleGroup) {
+      print '<td colspan="2"><strong>';
+      if ($Mode eq "display") {
+        print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID\">...show all events...</a>\n"; 
+      } else {
+        print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID&amp;mode=modify\">...show all events...</a>\n"; 
+      }
+      print "</strong></td>";
+    }
   }  
   print "</table>\n";
 }
