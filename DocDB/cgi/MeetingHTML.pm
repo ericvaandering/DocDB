@@ -765,7 +765,12 @@ sub EventsByGroup (%) {
 
   @DisplayEventIDs = reverse sort EventsByDate @DisplayEventIDs;
   FetchEventGroup($EventGroupID);
-  print "<table class=\"LowPaddedTable\">";
+
+  my $TableClass = "LowPaddedTable";
+  if ($SingleGroup) {
+    $TableClass .= " CenteredTable";
+  }  
+  print "<table class=\"$TableClass\">";
   print "<tr><td colspan=\"2\">\n";
   if ($Mode eq "display") {
     print "<strong><a href=\"$ListBy?eventgroupid=$EventGroupID\">$EventGroups{$EventGroupID}{ShortDescription}</a></strong>\n";
@@ -794,11 +799,10 @@ sub EventsByGroup (%) {
         $MeetingLink = EventLink(-eventid => $EventID);
       }
       print "<td>$MeetingLink</td>\n";
-      print "<td>",EuroDate($Conferences{$EventID}{StartDate});
+      print "<td>",EuroDate($Conferences{$EventID}{StartDate}),"</td>\n";
       if ($SingleGroup && $Conferences{$EventID}{StartDate} ne $Conferences{$EventID}{EndDate}) {
-        print " - ".EuroDate($Conferences{$EventID}{EndDate});
+        print "<td>-</td><td>".EuroDate($Conferences{$EventID}{EndDate})."</td>\n";
       } 
-      print "</td>\n";
       if ($SingleGroup) {
         print "<td>",$Conferences{$EventID}{Location},"</td>";
       }  
