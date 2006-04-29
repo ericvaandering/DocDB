@@ -796,7 +796,7 @@ sub EventsByGroup (%) {
       print "<td>$MeetingLink</td>\n";
       print "<td>",EuroDate($Conferences{$EventID}{StartDate});
       if ($SingleGroup && $Conferences{$EventID}{StartDate} ne $Conferences{$EventID}{EndDate}) {
-        print " - ".EuroDate($Conferences{$EventID}{EndDate};
+        print " - ".EuroDate($Conferences{$EventID}{EndDate});
       } 
       print "</td>\n";
       if ($SingleGroup) {
