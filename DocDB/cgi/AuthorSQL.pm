@@ -271,6 +271,27 @@ sub ProcessManualAuthors {
   return @AuthorIDs;
 }
 
+sub MatchAuthor ($) {
+  my ($ArgRef) = @_;
+  my $Either = exists $ArgRef->{-either} ? $ArgRef->{-either} : "";
+#  my $First = exists $ArgRef->{-first}  ? $ArgRef->{-first}  : "";
+#  my $Last  = exists $ArgRef->{-last}   ? $ArgRef->{-last}   : "";
+  
+  my $AuthorID;
+  my @MatchIDs = ();
+  if ($Either) {
+    $Either =~ tr/[A-Z]/[a-z]/;
+    my $List = $dbh -> prepare(
+       "select AuthorID from Author where LOWER(FirstName) like \"%$Either%\" or LOWER(LastName) like \"%$Either%\""); 
+    $List -> execute();
+    $List -> bind_columns(undef, \($AuthorID));
+    while ($List -> fetch) {
+      push @MatchIDs,$AuthorID;
+    }
+  }
+  return @MatchIDs;
+}
+
 sub InsertAuthors (%) {
   my %Params = @_;
   

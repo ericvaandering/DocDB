@@ -39,28 +39,45 @@ require "MeetingHTML.pm";
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&GetAuthors;
-&GetTopics;
-&GetSecurityGroups;
-&GetJournals;
-&GetDocTypes;
+GetAuthors();
+GetTopics();
+GetSecurityGroups();
+GetJournals();
+GetDocTypes();
 
 %params = $query -> Vars;
 
 print $query->header;
   
-&DocDBHeader("$Project Document Database Search","Document Database Search",
-             -search => $TRUE, -scripts => ["PopUps","TopicChooser","EventChooser"]);
-
-print $query -> start_multipart_form('POST',$Search,"name=\"queryform\"");
+DocDBHeader("$Project Document Database Search","Document Database Search",
+            -search => $TRUE, -scripts => ["PopUps","TopicChooser","EventChooser"]);
 
 
 print "<h4>Click on any of the <span class=\"Help\">highlighted headings</span> for help.</h4>\n";
 
-print "<table id=\"SearchFormTable\" class=\"HighPaddedTable CenteredTable\">\n";
+# Quick search table
+
+print $query -> start_multipart_form('POST',$Search,"name=\"simplesearch\"");
+print "<table class=\"SearchFormTable LowPaddedTable CenteredTable\"><tr><td>\n";
+print FormElementTitle(-helplink => "quicksearch", -nobreak => $TRUE,
+                       -helptext => "Search for", );
+print "</td><td>\n";                       
+print $query -> textfield(-size => 40, -name => "simpletext");
+print $query -> hidden(-name => "simple", -default => '1');
+print "</td><td>\n";                       
+print $query -> submit (-value => "Quick Search");     
+print "</td></tr></table>\n";
+print $query -> end_multipart_form;
+
+print "<hr/>\n";
+
+# Advanced search table
+
+print $query -> start_multipart_form('POST',$Search,"name=\"queryform\"");
+print "<table class=\"SearchFormTable HighPaddedTable CenteredTable\">\n";
 print "<tr>\n";
  print "<td colspan=\"3\" class=\"SubmitCell\">\n"; 
- print $query -> submit (-value => "Search for Documents");     
+ print $query -> submit (-value => "Advanced Search");     
  print "&nbsp;&nbsp;&nbsp;\n";
  print $query -> reset (-value => "Reset Search Form");     
  print "</td>\n";
@@ -68,27 +85,27 @@ print "</tr>\n";
 
 print "<tr>\n";
  print "<td colspan=\"3\" class=\"SubmitCell\">\n";
- &LogicTypeButtons; 
+ LogicTypeButtons(); 
  print "</td>\n";
 print "</tr>\n";
 print "<tr>\n";
  print "<td colspan=\"3\" class=\"SubmitCell\">\n";
- &ModeSelect; 
+ ModeSelect(); 
 print "</td></tr>\n";
 
 print "<tr>\n";
  print "<td colspan=\"3\">\n"; 
 
   print "<table class=\"LowPaddedTable LeftHeader\">\n";
-   &TitleSearchBox;    
-   &AbstractSearchBox;    
-   &KeywordsSearchBox;    
-   &RevisionNoteSearchBox;    
-   &PubInfoSearchBox;    
-   &FileNameSearchBox;    
-   &DescriptionSearchBox;
+   TitleSearchBox();    
+   AbstractSearchBox();    
+   KeywordsSearchBox();    
+   RevisionNoteSearchBox();    
+   PubInfoSearchBox();    
+   FileNameSearchBox();    
+   DescriptionSearchBox();
    if ($ContentSearch) {    
-     &ContentSearchBox;
+     ContentSearchBox();
    }      
   print "</table>\n";
 
@@ -100,36 +117,39 @@ print "</tr>\n";
  print "<tr>\n";
  
  print "<td>\n"; # Requester
- &AuthorScroll(-helplink => "requestersearch", -helptext => "Submitter", 
-               -name     => "requestersearch", -multiple => "true");
+ AuthorScroll(-helplink => "requestersearch", -helptext => "Submitter", 
+              -name     => "requestersearch", -multiple => $TRUE);
  print "</td>\n"; 
 
  print "<td>\n"; # Authors
- &AuthorScroll(-helplink => "author", -multiple => "true");
+ AuthorScroll(-helplink => "author", -multiple => $TRUE);
  print "</td>\n";
  
- print "<td>\n"; &DocTypeMulti;       print "</td>\n";
+ print "<td>\n";
+ AuthorTextEntry( {-helplink => "authortextsearch"} );
+ print "</td>\n";
+ 
  print "</tr>\n";
  
  print "<tr>\n";
-  print "<td colspan=\"3\">\n";
+ print "<td>\n"; DocTypeMulti();       print "</td>\n";
+  print "<td colspan=\"2\">\n";
   print "<dl>\n";
-  print "<dt><b><a ";
-  &HelpLink("beforeafterdate");
-  print "Last Modified Between:</a></b><p>\n";
-  print "<dd>\n";
-  &DateRangePullDown;
-  print "</dl>\n";
+  print "<dt>";
+  print FormElementTitle(-helplink => "beforeafterdate", -helptext => "Last Modified Between");
+  print "</dt><dd>\n";
+  DateRangePullDown();
+  print "</dd></dl>\n";
   print "</td>\n";
  print "</tr>\n";
 
  print "<tr>\n";
-  &MajorMinorSelect;
+  MajorMinorSelect();
  print "</tr>\n";
 
  print "<tr>\n";
  print "<td>\n";
-  &EventGroupSelect(-multiple => $TRUE, -onchange => "selectEvent(this.form);");
+  EventGroupSelect( {-multiple => $TRUE, -onchange => "selectEvent(this.form);"} );
  print "</td>\n";
  print "<td colspan=\"2\">\n";
   EventSelect( {-multiple => $TRUE, -format => "full"} );
@@ -138,15 +158,13 @@ print "</tr>\n";
 
  print "<tr>\n";
   print "<td colspan=\"3\" class=\"SubmitCell\">\n"; 
-  print $query -> submit (-value => "Search for Documents");     
+  print $query -> submit (-value => "Advanced Search");     
   print "&nbsp;&nbsp;&nbsp;\n";
   print $query -> reset (-value => "Reset Search Form");     
   print "</td>\n";
  print "</tr>\n";
-
 print "</table>\n";
-
 print $query -> end_multipart_form;
 
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

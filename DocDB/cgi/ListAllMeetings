@@ -53,7 +53,7 @@ if ($EventGroup || $EventGroupID) {
   unless ($EventGroupID) {
     $EventGroupID = LookupEventGroup($EventGroup);
   }  
-  EventsByGroup( {-groupid => $EventGroupID, -mode => $Mode} );
+  EventsByGroup( {-groupid => $EventGroupID, -mode => $Mode, -singlegroup => $TRUE} );
 } else {
   if ($Mode eq "modify") {
     print "<h3>Select an event to change:</h3>\n";

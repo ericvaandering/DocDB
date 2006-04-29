@@ -311,6 +311,33 @@ sub SessionLink (%) {
   return $Link;
 }   
 
+sub SessionSeparatorLink ($) {
+  my ($ArgRef) = @_;
+  my $SessionSeparatorID = exists $ArgRef->{-sessionseparatorid} ? $ArgRef->{-sessionseparatorid} : 0;
+  my $Format             = exists $ArgRef->{-short}              ? $ArgRef->{-short}              : "short";
+
+  my $URL = "$DisplayMeeting?sessionseparatorid=$SessionSeparatorID";
+  
+  my $Text;
+  my $ToolTip = $Conferences{$SessionSeparators{$SessionSeparatorID}{ConferenceID}}{Title}
+                ." - ".$SessionSeparators{$SessionSeparatorID}{Title};
+  if ($Sessions{$SessionID}{Location}) {
+    $ToolTip .= " - ".$Sessions{$SessionID}{Location};
+  }  
+  # Would like to use newlines instead of -. See mozilla bugs Bug 67127 and 45375
+  
+  if ($Format eq "full") {
+    $Text = $Conferences{$SessionSeparators{$SessionSeparatorID}{ConferenceID}}{Title}
+            .":".$SessionSeparators{$SessionSeparatorID}{Title};
+  } else {
+    $Text = $SessionSeparators{$SessionSeparatorID}{Title};
+  }
+  
+  my $Link = "<a href=\"$URL\" title=\"$ToolTip\">$Text</a>";
+  
+  return $Link;
+}   
+
 sub PrintSession (%) {
   my %Params = @_;
   
@@ -634,11 +661,11 @@ sub PrintSessionSeparatorInfo ($) {
   require "TalkSQL.pm";
   require "SQLUtilities.pm";
   
-  &FetchSessionSeparatorByID($SessionSeparatorID);
-  
+  FetchSessionSeparatorByID($SessionSeparatorID);
+  my $Link = SessionSeparatorLink( {-sessionseparatorid => $SessionSeparatorID} );
   print "<tr>\n";
-  print "<td>$SessionSeparators{$SessionSeparatorID}{Title}</td>\n";
-  print "<td>",&EuroDateHM($SessionSeparators{$SessionSeparatorID}{StartTime}),"</td>\n";
+  print "<td>$Link</td>\n";
+  print "<td>",EuroDateHM($SessionSeparators{$SessionSeparatorID}{StartTime}),"</td>\n";
   print "<td>",$SessionSeparators{$SessionSeparatorID}{Description},"</td>\n";
   print "<td>",$SessionSeparators{$SessionSeparatorID}{Location},"</td>\n";
   print "</tr>\n";
@@ -755,8 +782,9 @@ sub EventsByGroup (%) {
   
   my ($ArgRef) = @_;
   my $EventGroupID =        $ArgRef->{-groupid};
-  my $Mode         = exists $ArgRef->{-mode}      ? $ArgRef->{-mode}      : "display";
-  my $MaxEvents    = exists $ArgRef->{-maxevents} ? $ArgRef->{-maxevents} : 0;
+  my $Mode         = exists $ArgRef->{-mode}        ? $ArgRef->{-mode}        : "display";
+  my $MaxEvents    = exists $ArgRef->{-maxevents}   ? $ArgRef->{-maxevents}   : 0;
+  my $SingleGroup  = exists $ArgRef->{-singlegroup} ? $ArgRef->{-singlegroup} : $FALSE;
 
   my @EventIDs = keys %Conferences;
   my @DisplayEventIDs = ();
@@ -768,28 +796,38 @@ sub EventsByGroup (%) {
 
   @DisplayEventIDs = reverse sort EventsByDate @DisplayEventIDs;
   FetchEventGroup($EventGroupID);
-  print "<table class=\"LowPaddedTable\">";
-  print "<tr><td colspan=\"2\">\n";
+
+  my $TableClass = "LowPaddedTable";
+  my ($Big,$EBig);
+  if ($SingleGroup) {
+    ($Big,$EBig) = ("<big>","</big>");
+    $TableClass .= " CenteredTable";
+  }  
+  print "<table class=\"$TableClass\">";
+  print "<tr><td colspan=\"4\">\n";
+   
   if ($Mode eq "display") {
-    print "<strong><a href=\"$ListBy?eventgroupid=$EventGroupID\">$EventGroups{$EventGroupID}{ShortDescription}</a></strong>\n";
+    print "<strong>$Big<a href=\"$ListBy?eventgroupid=$EventGroupID\">$EventGroups{$EventGroupID}{ShortDescription}</a>$EBig</strong>\n";
   } else {
-    print "<strong>$EventGroups{$EventGroupID}{ShortDescription}</strong>\n";
+    print "<strong>$Big$EventGroups{$EventGroupID}{ShortDescription}$EBig</strong>\n";
   }
   print "</td></tr>\n";
   my $EventCount = 0;
+  my $Truncated = $FALSE;
   foreach my $EventID (@DisplayEventIDs) {
     ++$EventCount;
     print "<tr>\n";
-    if ($EventCount > $MaxEvents && $MaxEvents) {
-      print '<td colspan="2">';
+    if ($EventCount > $MaxEvents && $MaxEvents) { # Put ...show all... at bottom
+      $Truncated = $TRUE;
+      print '<td colspan="2"><strong>';
       if ($Mode eq "display") {
         print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID\">...show all events...</a>\n"; 
       } else {
-        print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID&amp;mode=modify\">...more events...</a>\n"; 
+        print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID&amp;mode=modify\">...show all events...</a>\n"; 
       }
-      print "</td>";
+      print "</strong></td>";
       last;
-    } else {
+    } else { # Print normal entry
       my $MeetingLink;
       if ($Mode eq "modify") {
         $MeetingLink = ModifyEventLink($EventID);
@@ -798,13 +836,34 @@ sub EventsByGroup (%) {
       }
       print "<td>$MeetingLink</td>\n";
       print "<td>",EuroDate($Conferences{$EventID}{StartDate}),"</td>\n";
+
+      if ($SingleGroup) { # Add end date and location for singe group display
+        if ($Conferences{$EventID}{StartDate} ne $Conferences{$EventID}{EndDate}) {
+          print "<td>-</td><td>".EuroDate($Conferences{$EventID}{EndDate})."</td>\n";
+        } else {
+          print "<td></td><td></td>\n";
+        }
+        print "<td>",$Conferences{$EventID}{Location},"</td>";
+      }  
     }
     print "</tr>\n";
+    
+    # Put more info at bottom if not there already
+    
   }  
+  if (!$Truncated && !$SingleGroup) {
+    print '<tr><td colspan="2"><strong>';
+    if ($Mode eq "display") {
+      print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID\">...more information...</a>\n"; 
+    } else {
+      print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID&amp;mode=modify\">...more information...</a>\n"; 
+    }
+    print "</strong></td></tr>";
+  }
   print "</table>\n";
 }
  
-sub EventGroupSelect (;%) {
+sub EventGroupSelect ($) {
   my ($ArgRef) = @_;
 
   my $Disabled = exists $ArgRef->{-disabled} ?   $ArgRef->{-disabled} : "0";
@@ -849,7 +908,7 @@ sub EventGroupSelect (;%) {
                                  %Options);
 }
 
-sub EventSelect (;%) {
+sub EventSelect ($) {
   my ($ArgRef) = @_;
 
   my $Disabled =  exists $ArgRef->{-disabled} ?   $ArgRef->{-disabled} : "0";

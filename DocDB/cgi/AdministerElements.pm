@@ -6,7 +6,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -35,28 +35,25 @@ sub AdministerActions (%) {
   $Action{Delete}    = "Delete";
   $Action{New}       = "New";
   $Action{Modify}    = "Modify";
-  print &FormElementTitle(-helplink => "admaction", -helptext => "Action");
+  print FormElementTitle(-helplink => "admaction", -helptext => "Action");
   print $query -> radio_group(-name => "admaction", 
                               -values => \%Action, -default => "-",
                               -onclick => "disabler_$Form();");
 };
 
 sub AdministratorPassword {
-  require "Scripts.pm";
-  
-  print "<b><a ";
-  &HelpLink("adminlogin");
-  print "Administrator</a> \n";
-  print "Username: </b>"; 
+  print FormElementTitle(-helplink => "adminlogin",    -nobreak => $TRUE,
+                         -helptext => "Administrator", -nocolon => $TRUE,);
+  print "<strong> Username: </strong>"; 
   print $query -> textfield(-name => "admuser", -size => 12, -maxlength => 12, 
                             -default => $remote_user);
-  print "<b> Password: </b>"; 
+  print "<strong> Password: </strong>"; 
   print $query -> password_field(-name      => "password", -size => 12, 
                                  -maxlength => 12);
 };
 
 sub AdminRegardless {
-  print &FormElementTitle(-helplink => "admforce", -helptext => "Force Action");
+  print FormElementTitle(-helplink => "admforce", -helptext => "Force Action");
   print $query -> checkbox(-name => "admforce", -value => 1, -label => 'Yes');
 }  
 

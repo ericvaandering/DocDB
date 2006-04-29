@@ -160,7 +160,7 @@ print "</tr>\n";
 
 print "<tr>\n";
 print "<td rowspan=\"3\">\n";
- &EventGroupSelect(-disabled => true, -format => "full"); 
+ &EventGroupSelect( {-disabled => true, -format => "full"} ); 
 print "</td>\n";  
 print "<td>\n"; 
  &ShortDescriptionBox(-name => "shortdesc", -disabled => "true");

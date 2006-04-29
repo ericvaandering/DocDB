@@ -162,6 +162,46 @@ sub LookupEventGroup { # Returns EventGroupID from Name
   return $EventGroupID;
 }
 
+sub MatchEventGroup ($) {
+  my ($ArgRef) = @_;
+  my $Short = exists $ArgRef->{-short} ? $ArgRef->{-short} : "";
+#  my $Long = exists $ArgRef->{-long}  ? $ArgRef->{-long}  : "";
+  my $EventGroupID;
+  my @MatchIDs = ();
+  if ($Short) {
+    $Short =~ tr/[A-Z]/[a-z]/;
+    $Short = "%".$Short."%";
+    my $List = $dbh -> prepare(
+       "select EventGroupID from EventGroup where LOWER(ShortDescription) like ?"); 
+    $List -> execute($Short);
+    $List -> bind_columns(undef, \($EventGroupID));
+    while ($List -> fetch) {
+      push @MatchIDs,$EventGroupID;
+    }
+  }
+  return @MatchIDs;
+}
+
+sub MatchEvent ($) {
+  my ($ArgRef) = @_;
+  my $Short = exists $ArgRef->{-short} ? $ArgRef->{-short} : "";
+#  my $Long = exists $ArgRef->{-long}  ? $ArgRef->{-long}  : "";
+  my $EventID;
+  my @MatchIDs = ();
+  if ($Short) {
+    $Short =~ tr/[A-Z]/[a-z]/;
+    $Short = "%".$Short."%";
+    my $List = $dbh -> prepare(
+       "select ConferenceID from Conference where LOWER(Title) like ?"); 
+    $List -> execute($Short);
+    $List -> bind_columns(undef, \($EventID));
+    while ($List -> fetch) {
+      push @MatchIDs,$EventID;
+    }
+  }
+  return @MatchIDs;
+}
+
 sub FetchEventGroup ($) {
   my ($EventGroupID) = @_;
   unless ($EventGroupID) {
