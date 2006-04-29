@@ -9,6 +9,10 @@
   Bold and add ...more information... link to event table even if all events are
   shown. Resulting page shows more end date (if different) and event location.
 
+  Titles of events, sessions, and breaks are now shown on the web pages instead
+  of generic "Event," etc. If your header code breaks the layout with too much
+  content you may want to truncate things in that code.
+
   NotifyDigest was very old code and only sent mail on topics (or all documents)
   It was re-written to work use the same criteria as instant notification.
   
