@@ -243,9 +243,7 @@ sub DocumentByConferenceDate {
   $adate cmp $bdate
 }
 
-sub DocumentByRelevance {
-  
-  ### All documents (of interest) must be fetched before calling
+sub DocumentByRelevance { # Documents to be sorted must be fetched before calling
 
   my $adr = $DocRevIDs{$a}{$Documents{$a}{NVersions}};
   my $bdr = $DocRevIDs{$b}{$Documents{$b}{NVersions}};
@@ -263,20 +261,19 @@ sub DocumentByRelevance {
   my ($bhour,$bmin,$bsec)   = split /:/,$btime;
    
    $Documents{$a}{Relevance} <=> $Documents{$b}{Relevance}
-                             or                       
-                      $ayear <=> $byear           
-                             or                   
-                     $amonth <=> $bmonth          
-                             or                   
-                       $aday <=> $bday            
-                             or                   
-                      $ahour <=> $bhour           
-                             or                   
-                       $amin <=> $bmin            
-                             or                   
-                       $asec <=> $bsec   ;              
+                             or
+                      $ayear <=> $byear
+                             or
+                     $amonth <=> $bmonth
+                             or
+                       $aday <=> $bday
+                             or
+                      $ahour <=> $bhour
+                             or
+                       $amin <=> $bmin
+                             or
+                       $asec <=> $bsec;
 }
-
 
 sub MeetingOrderIDByOrder { # Sort lists of Sessions, SessionSeparators 
   $MeetingOrders{$a}{SessionOrder} <=> $MeetingOrders{$b}{SessionOrder}
