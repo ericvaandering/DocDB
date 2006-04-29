@@ -751,8 +751,9 @@ sub EventsByGroup (%) {
   
   my ($ArgRef) = @_;
   my $EventGroupID =        $ArgRef->{-groupid};
-  my $Mode         = exists $ArgRef->{-mode}      ? $ArgRef->{-mode}      : "display";
-  my $MaxEvents    = exists $ArgRef->{-maxevents} ? $ArgRef->{-maxevents} : 0;
+  my $Mode         = exists $ArgRef->{-mode}        ? $ArgRef->{-mode}        : "display";
+  my $MaxEvents    = exists $ArgRef->{-maxevents}   ? $ArgRef->{-maxevents}   : 0;
+  my $SingleGroup  = exists $ArgRef->{-singlegroup} ? $ArgRef->{-singlegroup} : $FALSE;
 
   my @EventIDs = keys %Conferences;
   my @DisplayEventIDs = ();
@@ -781,7 +782,7 @@ sub EventsByGroup (%) {
       if ($Mode eq "display") {
         print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID\">...show all events...</a>\n"; 
       } else {
-        print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID&amp;mode=modify\">...more events...</a>\n"; 
+        print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID&amp;mode=modify\">...show all events...</a>\n"; 
       }
       print "</td>";
       last;
@@ -793,7 +794,13 @@ sub EventsByGroup (%) {
         $MeetingLink = EventLink(-eventid => $EventID);
       }
       print "<td>$MeetingLink</td>\n";
-      print "<td>",EuroDate($Conferences{$EventID}{StartDate}),"</td>\n";
+      print "<td>",EuroDate($Conferences{$EventID}{StartDate});
+      if ($SingleGroup && $Conferences{$EventID}{StartDate} ne $Conferences{$EventID}{EndDate}) {
+        print " - ".EuroDate($Conferences{$EventID}{EndDate};
+      } 
+      print "</td>\n";
+      if ($SingleGroup) {
+        print "<td>",EuroDate($Conferences{$EventID}{Location},"</td>";
     }
     print "</tr>\n";
   }  
