@@ -773,7 +773,7 @@ sub EventsByGroup (%) {
     $TableClass .= " CenteredTable";
   }  
   print "<table class=\"$TableClass\">";
-  print "<tr><td colspan=\"2\">\n";
+  print "<tr><td colspan=\"4\">\n";
    
   if ($Mode eq "display") {
     print "<strong>$Big<a href=\"$ListBy?eventgroupid=$EventGroupID\">$EventGroups{$EventGroupID}{ShortDescription}</a>$EBig</strong>\n";
