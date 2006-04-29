@@ -1,3 +1,9 @@
+7.5.0
+
+  A new, simpler way to search. Just type in one or more words and DocDB will
+  search for them in topics, authors, events, doctypes, and all the text fields.
+  Results are ranked by how many matches are found.
+
 7.4.1
   Put list of events and "notes" in notification e-mail as well as say whether
   document was updated, meta-info updated, files added, document created or
