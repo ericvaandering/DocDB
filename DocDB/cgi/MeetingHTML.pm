@@ -817,10 +817,10 @@ sub EventsByGroup (%) {
     # Put more info at bottom if not there already
     
   }  
-  unless ($Truncated && !$SingleGroup) {
+  if (!$Truncated && !$SingleGroup) {
     print '<tr><td colspan="2"><strong>';
     if ($Mode eq "display") {
-      print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID\">...show all events...</a>\n"; 
+      print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID\">...more information...</a>\n"; 
     } else {
       print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID&amp;mode=modify\">...show all events...</a>\n"; 
     }
