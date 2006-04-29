@@ -801,6 +801,7 @@ sub EventsByGroup (%) {
       print "</td>\n";
       if ($SingleGroup) {
         print "<td>",EuroDate($Conferences{$EventID}{Location},"</td>";
+      }  
     }
     print "</tr>\n";
   }  
