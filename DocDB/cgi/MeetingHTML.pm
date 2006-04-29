@@ -311,6 +311,33 @@ sub SessionLink (%) {
   return $Link;
 }   
 
+sub SessionSeparatorLink ($) {
+  my ($ArgRef) = @_;
+  my $SessionSeparatorID = exists $ArgRef->{-sessionseparatorid} ? $ArgRef->{-sessionseparatorid} : 0;
+  my $Format             = exists $ArgRef->{-short}              ? $ArgRef->{-short}              : "short";
+
+  my $URL = "$DisplayMeeting?sessionseparatorid=$SessionSeparatorID";
+  
+  my $Text;
+  my $ToolTip = $Conferences{$SessionSeparators{$SessionSeparatorID}{ConferenceID}}{Title}
+                ." - ".$SessionSeparators{$SessionSeparatorID}{Title};
+  if ($Sessions{$SessionID}{Location}) {
+    $ToolTip .= " - ".$Sessions{$SessionID}{Location};
+  }  
+  # Would like to use newlines instead of -. See mozilla bugs Bug 67127 and 45375
+  
+  if ($Format eq "full") {
+    $Text = $Conferences{$SessionSeparators{$SessionSeparatorID}{ConferenceID}}{Title}
+            .":".$SessionSeparators{$SessionSeparatorID}{Title};
+  } else {
+    $Text = $SessionSeparators{$SessionSeparatorID}{Title};
+  }
+  
+  my $Link = "<a href=\"$URL\" title=\"$ToolTip\">$Text</a>";
+  
+  return $Link;
+}   
+
 sub PrintSession (%) {
   my %Params = @_;
   
@@ -634,11 +661,11 @@ sub PrintSessionSeparatorInfo ($) {
   require "TalkSQL.pm";
   require "SQLUtilities.pm";
   
-  &FetchSessionSeparatorByID($SessionSeparatorID);
-  
+  FetchSessionSeparatorByID($SessionSeparatorID);
+  my $Link = SessionSeparatorLink( {-sessionseparatorid => $SessionSeparatorID} );
   print "<tr>\n";
-  print "<td>$SessionSeparators{$SessionSeparatorID}{Title}</td>\n";
-  print "<td>",&EuroDateHM($SessionSeparators{$SessionSeparatorID}{StartTime}),"</td>\n";
+  print "<td>$Link</td>\n";
+  print "<td>",EuroDateHM($SessionSeparators{$SessionSeparatorID}{StartTime}),"</td>\n";
   print "<td>",$SessionSeparators{$SessionSeparatorID}{Description},"</td>\n";
   print "<td>",$SessionSeparators{$SessionSeparatorID}{Location},"</td>\n";
   print "</tr>\n";

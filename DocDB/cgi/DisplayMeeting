@@ -126,11 +126,12 @@ if ($DisplayMode eq "Session") { # Display a single session
   PrintSingleSessionHeader(-sessionid => $SessionID, -onlyone => $OnlyOneSession);
   PrintSession(-sessionid => $SessionID, -skipheader => $TRUE); 
   PrintMeetingEpilogue($ConferenceID);
-} elsif ($DisplayMode eq "Separator") { # Display a single break (never called)
+} elsif ($DisplayMode eq "Separator") { 
+  push @DebugStack,"In seperator";
   FetchSessionSeparatorByID($SessionSeparatorID);
-  PrintMeetingInfo($Sessions{$SessionID}{ConferenceID});
+  PrintMeetingInfo($SessionSeparators{$SessionSeparatorID}{ConferenceID});
   PrintSessionSeparator($SessionSeparatorID);
-  PrintMeetingEpilogue($Sessions{$SessionID}{ConferenceID});
+  PrintMeetingEpilogue($SessionSeparators{$SessionSeparatorID}{ConferenceID});
 } elsif ($DisplayMode eq "Conference") { # Display meeting info or meeting with all talks
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
