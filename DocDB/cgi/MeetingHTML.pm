@@ -767,15 +767,18 @@ sub EventsByGroup (%) {
   FetchEventGroup($EventGroupID);
 
   my $TableClass = "LowPaddedTable";
+  my ($Big,$EBig);
   if ($SingleGroup) {
+    ($Big,$EBig) = ("<big>","</big>");
     $TableClass .= " CenteredTable";
   }  
   print "<table class=\"$TableClass\">";
   print "<tr><td colspan=\"2\">\n";
+   
   if ($Mode eq "display") {
-    print "<strong><a href=\"$ListBy?eventgroupid=$EventGroupID\">$EventGroups{$EventGroupID}{ShortDescription}</a></strong>\n";
+    print "<strong>$Big<a href=\"$ListBy?eventgroupid=$EventGroupID\">$EventGroups{$EventGroupID}{ShortDescription}</a>$EBig</strong>\n";
   } else {
-    print "<strong>$EventGroups{$EventGroupID}{ShortDescription}</strong>\n";
+    print "<strong>$Big$EventGroups{$EventGroupID}{ShortDescription}$EBig</strong>\n";
   }
   print "</td></tr>\n";
   my $EventCount = 0;
@@ -822,7 +825,7 @@ sub EventsByGroup (%) {
     if ($Mode eq "display") {
       print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID\">...more information...</a>\n"; 
     } else {
-      print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID&amp;mode=modify\">...show all events...</a>\n"; 
+      print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID&amp;mode=modify\">...more information...</a>\n"; 
     }
     print "</strong></td></tr>";
   }
