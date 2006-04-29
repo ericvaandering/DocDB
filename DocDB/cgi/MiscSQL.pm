@@ -115,6 +115,26 @@ sub FetchDocTypeByName ($) {
   return $DocTypeID;
 }
 
+sub MatchDocType ($) { # Make FetchDocType a special case
+  my ($ArgRef) = @_;
+  my $Short = exists $ArgRef->{-short} ? $ArgRef->{-short} : "";
+#  my $Long = exists $ArgRef->{-long}  ? $ArgRef->{-long}  : "";
+  my $TypeID;
+  my @MatchIDs = ();
+  if ($Short) {
+    $Short =~ tr/[A-Z]/[a-z]/;
+    $Short = "%".$Short."%";
+    my $List = $dbh -> prepare(
+       "select DocTypeID from DocumentType where LOWER(ShortType) like ?"); 
+    $List -> execute($Short);
+    $List -> bind_columns(undef, \($TypeID));
+    while ($List -> fetch) {
+      push @MatchIDs,$TypeID;
+    }
+  }
+  return @MatchIDs;
+}
+
 sub FetchDocFiles ($) {
   # Creates two hashes:
   # $Files{DocRevID}           holds the list of file IDs for a given DocRevID

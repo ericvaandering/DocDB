@@ -191,7 +191,7 @@ sub LookupMajorTopic { # Returns MajorTopicID from Topic Name
 sub MatchMajorTopic ($) { # FIXME: Make LookupMajorTopic a subset?
   my ($ArgRef) = @_;
   my $Short = exists $ArgRef->{-short} ? $ArgRef->{-short} : "";
-#  my $Long  = exists $ArgRef->{-long}   ? $ArgRef->{-long}   : "";
+#  my $Long = exists $ArgRef->{-long}  ? $ArgRef->{-long}  : "";
   my $MajorID;
   my @MatchIDs = ();
   if ($Short) {
@@ -211,7 +211,7 @@ sub MatchMajorTopic ($) { # FIXME: Make LookupMajorTopic a subset?
 sub MatchMinorTopic ($) {
   my ($ArgRef) = @_;
   my $Short = exists $ArgRef->{-short} ? $ArgRef->{-short} : "";
-#  my $Long  = exists $ArgRef->{-long}   ? $ArgRef->{-long}   : "";
+#  my $Long = exists $ArgRef->{-long}  ? $ArgRef->{-long}  : "";
   my $MinorID;
   my @MatchIDs = ();
   if ($Short) {
