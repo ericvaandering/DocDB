@@ -54,26 +54,33 @@ $query = new CGI;  # Global for subroutines
 my $SessionID          = $params{sessionid};
 my $SessionSeparatorID = $params{sessionseparatorid};
 my $ConferenceID       = $params{conferenceid};
+my $EventID            = $ConferenceID;
 
 @ErrorStack = ();
 @WarnStack  = ();
 
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
-
-print $query -> header;
-
-if ($SessionID ) {
-  &DocDBHeader("Session and Talks", "", -scripts => ["PopUps"]);
-} elsif ($SessionSeparatorID) {
-  &DocDBHeader("Break Information", "", -scripts => ["PopUps"]);
-} else {  
-  &DocDBHeader("Event",             "", -scripts => ["PopUps"]);
-}  
-
 unless ($dbh) {
   push @ErrorStack,$Msg_NoConnect;
 }         
-&EndPage(@ErrorStack);
+
+my $PageTitle = "Unknown Event";
+if (!$dbh) {
+  $PageTitle = "Database Error";
+} elsif ($SessionID ) {
+  FetchSessionByID($SessionID);
+  $PageTitle = $Sessions{$SessionID}{Title};
+} elsif ($SessionSeparatorID) {
+  FetchSessionSeparatorByID($SessionSeparatorID);
+  $PageTitle = $SessionSeparators{$SessionSeparatorID}{Title};
+} else {  
+  FetchConferenceByConferenceID($EventID);
+  $PageTitle = $Conferences{$EventID}{Title};
+}  
+
+print $query -> header;
+DocDBHeader($PageTitle,"", -scripts => ["PopUps"]);
+EndPage(@ErrorStack);
 
 my $DisplayMode = "";
 my $OnlyOneSession = 0;

@@ -4,6 +4,9 @@
   search for them in topics, authors, events, doctypes, and all the text fields.
   Results are ranked by how many matches are found.
 
+  Bold and add ...more information... link to event table even if all events are
+  shown. Resulting page shows more end date (if different) and event location.
+
 7.4.1
   Put list of events and "notes" in notification e-mail as well as say whether
   document was updated, meta-info updated, files added, document created or
