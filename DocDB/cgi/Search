@@ -53,15 +53,15 @@ require "DocumentUtilities.pm";
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&GetTopics;         
-&GetSecurityGroups; 
+GetTopics();         
+GetSecurityGroups(); 
 
 ### Set up, give user initial information
 
 %params = $query -> Vars;
 
 print $query->header;
-&DocDBHeader("$Project Document Search Results","Search Results");
+DocDBHeader("$Project Document Search Results","Search Results");
 
 ### Pull info out of params into local variables
 
@@ -94,6 +94,59 @@ $FileContSearchMode     = $params{filecontsearchmode};
 
 my @EventSearchIDs      = split /\0/,$params{events};
 my @EventGroupSearchIDs = split /\0/,$params{eventgroups};
+
+### Parameters for simple search
+
+my $Simple     = $params{simple};
+my $SimpleText = $params{simpletext};
+
+if ($Simple) { # Break up words and set parameters for rest of search
+
+  require "AuthorSQL.pm";
+
+  @RequesterSearchIDs  = ();
+  @AuthorSearchIDs     = ();
+  @TypeSearchIDs       = ();
+  @MinorSearchIDs      = ();
+  @MajorSearchIDs      = ();
+  @EventSearchIDs      = ();
+  @EventGroupSearchIDs = ();
+
+  my @Words = split /\s+/,$SimpleText;
+  foreach my $Word (@Words) {
+    push @AuthorSearchIDs    ,MatchAuthor(     {-either => $Word} );
+#    push @TypeSearchIDs      ,MatchDocType(    {-short  => $Word} );
+#    push @MinorSearchIDs     ,MatchMinorTopic( {-short  => $Word} );
+#    push @MajorSearchIDs     ,MatchMajorTopic( {-short  => $Word} );
+#    push @EventSearchIDs     ,MatchEvent(      {-short  => $Word} );
+#    push @EventGroupSearchIDs,MatchEventGroup( {-short  => $Word} );
+  }
+  @RequesterSearchIDs = @AuthorSearchIDs;
+  
+  push @DebugStack,"Found author IDs ",@AuthorSearchIDs;
+  
+  $InnerLogic  = "OR";
+  $OuterLogic  = "OR";
+ 
+  $TitleSearch            = $SimpleText;
+  $AbstractSearch         = $SimpleText;
+  $KeywordSearch          = $SimpleText;
+  $RevisionNoteSearch     = $SimpleText;
+  $PubInfoSearch          = $SimpleText;
+  $FileSearch             = $SimpleText;
+  $FileDescSearch         = $SimpleText;
+  $FileContSearch         = $SimpleText;
+  $TitleSearchMode        = "anyword";
+  $AbstractSearchMode     = "anyword";
+  $KeywordSearchMode      = "anyword";
+  $RevisionNoteSearchMode = "anyword";
+  $PubInfoSearchMode      = "anyword";
+  $FileSearchMode         = "anyword";
+  $FileDescSearchMode     = "anyword";
+  $FileContSearchMode     = "anyword";
+  
+}  
+
 
 $Afterday   = $params{afterday};
 $Aftermonth = $params{aftermonth};
@@ -301,6 +354,8 @@ if ($FileSearch || $FileDescSearch) {
   }
   @FileDocumentIDs = &ValidateRevisions(@FileRevisions);
 } 
+
+### Optional content search
 
 if ($ContentSearch && $FileContSearch) {
   $SearchedContent = 1;

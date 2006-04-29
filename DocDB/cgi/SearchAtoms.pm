@@ -1,5 +1,5 @@
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -26,7 +26,7 @@ sub TextSearch {
   
   if ($Mode eq "anysub" || $Mode eq "allsub" || $Mode eq "anyword" || $Mode eq "allword") {
     my @Words = split /\s+/,$Words;
-    foreach $Word (@Words) {
+    foreach my $Word (@Words) {
       if ($Mode eq "anysub" || $Mode eq "allsub") {
         $Word =~ tr/[A-Z]/[a-z]/;
         push @Atoms,"LOWER($Field) like \"%$Word%\"";
