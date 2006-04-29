@@ -35,6 +35,7 @@ require "DocDBGlobals.pm";
 require "FSUtilities.pm";
 require "WebUtilities.pm";
 require "HTMLUtilities.pm";
+require "Utilities.pm";
 require "ResponseElements.pm";
 require "Security.pm";
 
@@ -144,7 +145,6 @@ if ($Simple) { # Break up words and set parameters for rest of search
   # set sort mode to weighted
   
 }  
-
 
 $Afterday   = $params{afterday};
 $Aftermonth = $params{aftermonth};
@@ -448,6 +448,22 @@ if ($OuterLogic eq "OR") {
   }    
 }
 
+@DocumentIDs = Unique(@DocumentIDs);
+
+### Calculate relevance
+
+AddSearchWeights({
+  -revisions   => \@RevisionDocumentIDs   ,
+  -topics      => \@MinorDocumentIDs      ,
+  -majortopics => \@MajorDocumentIDs      ,
+  -events      => \@EventDocumentIDs      ,
+  -eventgroups => \@EventGroupDocumentIDs ,
+  -authors     => \@AuthorDocumentIDs     ,
+  -doctypes    => \@TypeDocumentIDs       ,
+  -files       => \@FileDocumentIDs       ,
+  -contents    => \@ContentDocumentIDs    ,
+});
+
 ### Set up fields and sorting
 
 my %FieldListOptions = (-default => "Default");
@@ -461,6 +477,11 @@ if ($Mode eq "conference") {
   $FieldListOptions{-default} = "Meeting Mode";
   $SortBy  = "firstauthor";
   $Reverse = 0;
+} 
+
+if ($Simple) {
+  $SortBy  = "relevance"; 
+  $Reverse = $TRUE;      
 } 
 
 ### Print table

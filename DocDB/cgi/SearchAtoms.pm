@@ -16,6 +16,24 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+%SearchWeights = ( # These weights are used to order documents from the simple search
+                  "Author"          => 4,  
+                  "Topic"           => 3,  
+                  "MajorTopic"      => 2,  
+                  "DocType"         => 2,  
+                  "Event"           => 3,  
+                  "EventGroup"      => 2,  
+                  "File"            => 3, 
+                  "FileContent"     => 1, 
+                  "Revision"        => 3,
+#                  "Title"           => 4, 
+#                  "Abstract"        => 3, 
+#                  "Keyword"         => 3, 
+#                  "RevisionNote"    => 2, 
+#                  "PubInfo"         => 3, 
+#                  "Age"             => 1, #  * (1-Age/MaxAge)
+              );
+              
 sub TextSearch {
   my ($Field,$Mode,$Words) = @_;
   
@@ -224,6 +242,47 @@ sub ValidateRevisions {
   }
   @DocumentIDs = keys %DocumentIDs;
   return @DocumentIDs;
+}
+
+sub AddSearchWeights ($) {
+  my ($ArgRef) = @_;
+  my @Revisions   = exists $ArgRef->{-revisions}   ? @{$ArgRef->{-revisions}}   : ();
+  my @Topics      = exists $ArgRef->{-topics}      ? @{$ArgRef->{-topics}}      : ();
+  my @MajorTopics = exists $ArgRef->{-majortopics} ? @{$ArgRef->{-majortopics}} : ();
+  my @Events      = exists $ArgRef->{-events}      ? @{$ArgRef->{-events}}      : ();
+  my @EventGroups = exists $ArgRef->{-eventgroups} ? @{$ArgRef->{-eventgroups}} : ();
+  my @Authors     = exists $ArgRef->{-authors}     ? @{$ArgRef->{-authors}}     : ();
+  my @DocTypes    = exists $ArgRef->{-doctypes}    ? @{$ArgRef->{-doctypes}}    : ();
+  my @Files       = exists $ArgRef->{-files}       ? @{$ArgRef->{-files}}       : ();
+  my @Contents    = exists $ArgRef->{-contents}    ? @{$ArgRef->{-contents}}     : ();
+
+  foreach my $DocumentID (@Revisions) {
+     $Documents{$DocumentID}{Relevance} += $SearchWeights{"Revision"};
+  }
+  foreach my $DocumentID (@Topics) {
+     $Documents{$DocumentID}{Relevance} += $SearchWeights{"Topic"};
+  }
+  foreach my $DocumentID (@MajorTopics) {
+     $Documents{$DocumentID}{Relevance} += $SearchWeights{"MajorTopic"};
+  }
+  foreach my $DocumentID (@Events) {
+     $Documents{$DocumentID}{Relevance} += $SearchWeights{"Event"};
+  }
+  foreach my $DocumentID (@EventGroups) {
+     $Documents{$DocumentID}{Relevance} += $SearchWeights{"EventGroup"};
+  }
+  foreach my $DocumentID (@Authors) {
+     $Documents{$DocumentID}{Relevance} += $SearchWeights{"Author"};
+  }
+  foreach my $DocumentID (@DocTypes) {
+     $Documents{$DocumentID}{Relevance} += $SearchWeights{"DocType"};
+  }
+  foreach my $DocumentID (@Files) {
+     $Documents{$DocumentID}{Relevance} += $SearchWeights{"File"};
+  }
+  foreach my $DocumentID (@Contents) {
+     $Documents{$DocumentID}{Relevance} += $SearchWeights{"FileContent"};
+  }
 }
 
 1;
