@@ -12,6 +12,8 @@
   Titles of events, sessions, and breaks are now shown on the web pages instead
   of generic "Event," etc. If your header code breaks the layout with too much
   content you may want to truncate things in that code.
+  
+  Link to web page to display break info. Not so useful now, may be later. 
 
   NotifyDigest was very old code and only sent mail on topics (or all documents)
   It was re-written to work use the same criteria as instant notification.
