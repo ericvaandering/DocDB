@@ -1,4 +1,4 @@
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -24,8 +24,6 @@ sub ClearEmailUsers () {
 sub GetEmailUserIDs () {
   my $EmailUserID;
   my @EmailUserIDs;
-
-  # Find every individual who has a notification set for this time period
 
   my $EmailIDQuery = $dbh -> prepare("select DISTINCT(EmailUserID) from EmailUser");
   $EmailIDQuery -> execute();
@@ -63,6 +61,74 @@ sub FetchEmailUser($) {
   $EmailUser{$EmailUserID}{AuthorID}     = $AuthorID;
   
   return $EmailUser{$EmailUserID}{EmailUserID};
+}
+
+sub ClearNotifications {
+  $HaveAllNotifications = 0;
+  %Notifications        = ();
+}
+
+sub DeleteNotifications ($) {
+  my ($ArgRef) = @_;
+  my $EmailUserID = exists $ArgRef->{-emailuserid} ? $ArgRef->{-emailuserid} : 0;
+  
+  if ($EmailUserID) { # FIXME: Don't do document specific?
+    my $Delete = $dbh -> prepare("delete from Notification where EmailUserID=?");
+    $Delete -> execute($EmailUserID);
+  }
+  
+  return 0;
+}
+
+sub InsertNotifications ($) {
+  my ($ArgRef) = @_;
+  my $EmailUserID = exists $ArgRef->{-emailuserid} ?   $ArgRef->{-emailuserid} : 0;
+  my $Period      = exists $ArgRef->{-period}      ?   $ArgRef->{-period}      : 0;
+  my $Type        = exists $ArgRef->{-type}        ?   $ArgRef->{-type}        : 0;
+  my @IDs         = exists $ArgRef->{-ids}         ? @{$ArgRef->{-ids}}        : ();
+  
+  # FIXME: Need way to insert AllDocuments and keywords (need to add text field to DB)
+  
+  my $Count = 0;
+  if ($EmailUserID && $Period && $Type && @IDs) {
+    my $Insert = $dbh -> prepare(
+       "insert into Notification ".
+       "(NotificationID,EmailUserID,Type,ForeignID,Period) values ".
+       "(0,?,?,?,?)");
+    foreach my $ID (@IDs) {
+      $Insert -> execute($EmailUserID,$Type,$ID,$Period);
+      ++$Count;
+    }  
+  }
+  return $Count;
+}  
+
+sub FetchNotifications ($) {
+  my ($ArgRef) = @_;
+  my $EmailUserID = exists $ArgRef->{-emailuserid} ? $ArgRef->{-emailuserid} : 0;
+  
+  my $Count = 0;
+  
+  if ($EmailUserID) {
+    @{$Notifications{$EmailUserID}{EventGroup_Immediate}} = ();
+    @{$Notifications{$EmailUserID}{EventGroup_Daily}}     = ();
+    @{$Notifications{$EmailUserID}{EventGroup_Weekly}}    = ();
+    @{$Notifications{$EmailUserID}{Event_Immediate}}      = ();
+    @{$Notifications{$EmailUserID}{Event_Daily}}          = ();
+    @{$Notifications{$EmailUserID}{Event_Weekly}}         = ();
+
+    my $Fetch = $dbh -> prepare("select Type,ForeignID,Period from Notification where EmailUserID=?");
+    $Fetch -> execute($EmailUserID);
+    $Fetch -> bind_columns(undef,\($Type,$ForeignID,$Period));
+    
+    while ($Fetch -> fetch) {
+      my $Key = $Type."_".$Period;
+      push @{$Notifications{$EmailUserID}{$Key}},$ForeignID;
+      ++$Count;      
+    }
+  }
+  
+  return $Count;
 }
 
 sub FetchTopicNotification ($$) {

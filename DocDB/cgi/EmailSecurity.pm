@@ -6,7 +6,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -103,7 +103,7 @@ sub UserPrefForm($) {
     print "<tr><th>E-mail address:</th>\n<td>";
     print $query -> textfield(-name => 'email',    -default => $EmailAddress,     
                               -size => 24, -maxlength => 64);
-    print "</tr>\n";                          
+    print "</td></tr>\n";                          
     print "<tr><th>New password:</th>\n<td>";
     print $query -> password_field(-name => 'newpass',    -default => "",     
                               -size => 24, -maxlength => 64, -override =>1 );

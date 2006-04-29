@@ -28,20 +28,23 @@ use CGI qw(-nosticky);
 use DBI;
                                                   
 require "DocDBGlobals.pm";
-require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 require "EmailSecurity.pm";
 require "MailNotification.pm";
 require "Scripts.pm";
 require "Sorts.pm";
 require "SearchFormElements.pm";
-require "DocumentHTML.pm";
 
-require "TopicSQL.pm";
+require "HTMLUtilities.pm";
+require "DocumentUtilities.pm";
+
 require "AuthorSQL.pm";
 require "NotificationSQL.pm";
 require "SecuritySQL.pm";
-require "DocumentUtilities.pm";
+require "TopicSQL.pm";
+
+require "DocumentHTML.pm";
+require "MeetingHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
@@ -60,6 +63,13 @@ my $NewPass      = $params{newpass};
 my $ConfNewPass  = $params{confnewpass};
    $Digest       = $params{digest};
 my $ClearWatched = $params{clearwatched};
+
+my @ImmediateEventGroupIDs = split /\0/,$params{immediate_eventgroups};
+my @DailyEventGroupIDs     = split /\0/,$params{daily_eventgroups};
+my @WeeklyEventGroupIDs    = split /\0/,$params{weekly_eventgroups};
+my @ImmediateEventIDs      = split /\0/,$params{immediate_events};
+my @DailyEventIDs          = split /\0/,$params{daily_events};
+my @WeeklyEventIDs         = split /\0/,$params{weekly_events};
 
 $UserName =~ s/\s+//g;
 $Password =~ s/\s+//g;
@@ -104,9 +114,9 @@ if ($Mode eq "newuser") {
   if (@ErrorStack) { # There's a problem, so let them try again
     ErrorPage(@ErrorStack);
     NewEmailUserForm();
-    print "<p>\n";
+    print "<p/>\n";
     LoginEmailUserForm();
-    print "<p>\n";
+    print "<p/>\n";
     EndPage();
   } else { # Everything OK, lets create the user
     srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
@@ -150,9 +160,6 @@ if ($Password) {
   $EmailUserID = FetchEmailUserIDByCert();
 }    
 
-
-# print "Mode: $Mode<br>\n";
-  
 if ($EmailUserID) {
   FetchEmailUser($EmailUserID);
   $Digest = EmailUserDigest($EmailUserID);
@@ -160,9 +167,9 @@ if ($EmailUserID) {
   push @ErrorStack,"The username/password pair or certificate you supplied is invalid. Please try again or contact an administrator.";
   ErrorPage();
   LoginEmailUserForm();
-  print "<p>\n";
+  print "<p/>\n";
   NewEmailUserForm();
-  print "<p>\n";
+  print "<p/>\n";
   EndPage();
 }
 
@@ -228,8 +235,32 @@ if ($Mode eq "update") {
   SetKeywordNotifications($EmailUserID,"Daily");  
   SetKeywordNotifications($EmailUserID,"Weekly");  
 
-# Clear and refetch if needed
+# FIXME: Move all notifications here, including document specific ones
+
+  DeleteNotifications( {-emailuserid => $EmailUserID} );
+
+# Events
+
+  InsertNotifications({ -emailuserid => $EmailUserID,        -type   => "Event", 
+                                -ids => \@ImmediateEventIDs, -period => "Immediate", });
+  InsertNotifications({ -emailuserid => $EmailUserID,        -type   => "Event", 
+                                -ids => \@DailyEventIDs,     -period => "Daily", });
+  InsertNotifications({ -emailuserid => $EmailUserID,        -type   => "Event", 
+                                -ids => \@WeeklyEventIDs,    -period => "Weekly", });
+        
+# EventGroups        
+                                
+  InsertNotifications({ -emailuserid => $EmailUserID,             -type   => "EventGroup", 
+                                -ids => \@ImmediateEventGroupIDs, -period => "Immediate", });
+  InsertNotifications({ -emailuserid => $EmailUserID,             -type   => "EventGroup", 
+                                -ids => \@DailyEventGroupIDs,     -period => "Daily", });
+  InsertNotifications({ -emailuserid => $EmailUserID,             -type   => "EventGroup", 
+                                -ids => \@WeeklyEventGroupIDs,    -period => "Weekly", });
 }  
+
+# Clear (are refetched in DisplayNotification)
+
+ClearNotifications();
 
 print $query -> startform('POST',$SelectEmailPrefs);
 print "<div id=\"SelectEmailPrefsForm\">\n";
@@ -248,9 +279,9 @@ print "<p><b>Use this page to change your personal account settings.</b></p>
 unless ($UserValidation eq "certificate") {
   print "<p>If you want to change your password, type the new password in both boxes.</p>\n"; 
 }
-print "<p>At the bottom part of the page, select the <a
-       href=\"#topic\">topics or  subtopics</a>,  <a
-       href=\"#author\">authors</a>, or  <a href=\"#keyword\">keywords</a> you
+print "<p>At the bottom part of the page, select the <a href=\"#topic\">topics 
+       or  subtopics</a>,  <a href=\"#author\">authors</a>, 
+       <a href=\"#event\">events</a>, or  <a href=\"#keyword\">keywords</a> you
        want to be notified of changes to, either immediately or in digests sent
        every day or week.</p>\n";
 print "</td></tr></table>\n";
@@ -309,6 +340,37 @@ EmailAuthorForm($EmailUserID,"Immediate");
 EmailAuthorForm($EmailUserID,"Daily");
 EmailAuthorForm($EmailUserID,"Weekly");
 print "</tr></table>\n";
+
+print "<hr/><a name=\"event\"/><h3>Notification by Events</h3>\n";
+print "<table class=\"HighPaddedTable\"><tr>\n";\
+print "<td>",FormElementTitle(-helptext => "Immediate", -helplink => "notifyevent"),"</td>";
+print "<td>";
+EventGroupSelect({ -multiple => $TRUE, -name    => "immediate_eventgroups", 
+                   -helplink => "",    -default => $Notifications{$EmailUserID}{EventGroup_Immediate}  });
+print "</td><td>";
+EventSelect({      -multiple => $TRUE, -name    => "immediate_events",      
+                   -helplink => "",    -default => $Notifications{$EmailUserID}{Event_Immediate} });
+print "</td>";
+print "</tr><tr>";
+print "<td>",FormElementTitle(-helptext => "Daily", -helplink => "notifyevent"),"</td>";
+print "<td>";
+EventGroupSelect({ -multiple => $TRUE, -name => "daily_eventgroups", 
+                   -helplink => "",    -default => $Notifications{$EmailUserID}{EventGroup_Daily} });
+print "</td><td>";
+EventSelect({      -multiple => $TRUE, -name => "daily_events",      
+                   -helplink => "",    -default => $Notifications{$EmailUserID}{Event_Daily} });
+print "</td>";
+print "</tr><tr>";
+print "<td>",FormElementTitle(-helptext => "Weekly", -helplink => "notifyevent"),"</td>";
+print "<td>";
+EventGroupSelect({ -multiple => $TRUE, -name => "weekly_eventgroups", 
+                   -helplink => "",    -default => $Notifications{$EmailUserID}{EventGroup_Weekly} });
+print "</td><td>";
+EventSelect({      -multiple => $TRUE, -name => "weekly_events",      
+                   -helplink => "",    -default => $Notifications{$EmailUserID}{Event_Weekly} });
+print "</td>";
+print "</tr></table>\n";
+
 
 print "<hr/><a name=\"keyword\"/><h3>Notification by Keywords</h3>\n";
 print "<table class=\"HighPaddedTable\">\n";

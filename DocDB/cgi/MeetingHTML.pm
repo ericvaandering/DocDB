@@ -647,6 +647,9 @@ sub PrintSessionSeparatorInfo ($) {
 sub EventGroupLink (%) {
   my %Params = @_;
   my $EventGroupID = $Params{-eventgroupid} || 0;
+
+  require "MeetingSQL.pm";
+
   FetchEventGroup($EventGroupID);
   
   my $Link = "<a href=\"";
@@ -658,22 +661,23 @@ sub EventGroupLink (%) {
 }
 
 sub EventLink (%) {
-  require "MeetingSecurityUtilities.pm";
-  require "EventUtilities.pm";
-  
   my %Params = @_;
   my $EventID = $Params{-eventid} || 0;
   my $Format  = $Params{-format}  || "short";
   my $LinkTo  = $Params{-linkto}  || "agenda";
   my $Class   = $Params{-class}   || "Event";
   
-  &FetchConferenceByConferenceID($EventID);
-  unless (&CanAccessMeeting($EventID)) {
+  require "MeetingSecurityUtilities.pm";
+  require "EventUtilities.pm";
+  require "MeetingSQL.pm";
+  
+  FetchConferenceByConferenceID($EventID);
+  unless (CanAccessMeeting($EventID)) {
     return "";
   }  
 
   my $URL;
-  if ($LinkTo eq "listby" || &SessionCountByEventID($EventID) == 0) {
+  if ($LinkTo eq "listby" || SessionCountByEventID($EventID) == 0) {
     $URL = "$ListBy?eventid=$EventID&amp;mode=conference";
   } else {  
     $URL = "$DisplayMeeting?conferenceid=$EventID";
@@ -699,7 +703,7 @@ sub ModifyEventLink ($) {
     
   my $URL;
   
-  if (&SessionCountByEventID($EventID) == 1) {
+  if (SessionCountByEventID($EventID) == 1) {
     $URL = "$SessionModify?eventid=$EventID&amp;singlesession=1";
   } else {  
     $URL = "$MeetingModify?conferenceid=$EventID";
@@ -801,19 +805,22 @@ sub EventsByGroup (%) {
 }
  
 sub EventGroupSelect (;%) {
+  my ($ArgRef) = @_;
+
+  my $Disabled = exists $ArgRef->{-disabled} ?   $ArgRef->{-disabled} : "0";
+  my $Format   = exists $ArgRef->{-format}   ?   $ArgRef->{-format}   : "short";
+  my $HelpLink = exists $ArgRef->{-helplink} ?   $ArgRef->{-helplink} : "eventgroups";
+  my $HelpText = exists $ArgRef->{-helptext} ?   $ArgRef->{-helptext} : "Event Groups";           
+  my $Multiple = exists $ArgRef->{-multiple} ?   $ArgRef->{-multiple} : "0";
+  my $Name     = exists $ArgRef->{-name}     ?   $ArgRef->{-name}     : "eventgroups";
+  my $OnChange = exists $ArgRef->{-onchange} ?   $ArgRef->{-onchange} : undef;
+  my $Required = exists $ArgRef->{-required} ?   $ArgRef->{-required} :  "0";
+  my @Defaults = exists $ArgRef->{-default}  ? @{$ArgRef->{-default}} : ();
+
   require "FormElements.pm";
   require "MeetingSQL.pm";
   require "Sorts.pm";
  
-  my (%Params) = @_;
-
-  my $Disabled = $Params{-disabled} || "0";
-  my $Multiple = $Params{-multiple} || "0";
-  my $Required = $Params{-required} || "0";
-  my $Format   = $Params{-format}   || "short";
-  my @Defaults = @{$Params{-default}};
-  my $OnChange = $Params{-onchange} || undef;
-
   my %Options = ();
  
   if ($Disabled) {
@@ -823,7 +830,7 @@ sub EventGroupSelect (;%) {
     $Options{-onchange} = $OnChange;
   }  
 
-  &GetAllEventGroups; 
+  GetAllEventGroups(); 
   my @EventGroupIDs = sort EventGroupsByName keys %EventGroups;
   my %Labels        = ();
   foreach my $EventGroupID (@EventGroupIDs) {
@@ -835,29 +842,29 @@ sub EventGroupSelect (;%) {
     }
   }      
   
-  my $ElementTitle = &FormElementTitle(-helplink => "eventgroups", -helptext => "Event Groups", 
-                                       -required => $Required);
-
-  print $ElementTitle;
-  print $query -> scrolling_list(-name     => "eventgroups",  -values  => \@EventGroupIDs, 
-                                 -labels   => \%Labels,       -size    => 10, 
-                                 -multiple => $Multiple,      -default => \@Defaults,
+  print FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText, -required => $Required);
+  print $query -> scrolling_list(-name     => $Name,     -values  => \@EventGroupIDs, 
+                                 -labels   => \%Labels,  -size    => 10, 
+                                 -multiple => $Multiple, -default => \@Defaults,
                                  %Options);
 }
 
 sub EventSelect (;%) {
+  my ($ArgRef) = @_;
+
+  my $Disabled =  exists $ArgRef->{-disabled} ?   $ArgRef->{-disabled} : "0";
+  my $Format   =  exists $ArgRef->{-format}   ?   $ArgRef->{-format}   : "full";
+  my $HelpLink =  exists $ArgRef->{-helplink} ?   $ArgRef->{-helplink} : "events";
+  my $HelpText =  exists $ArgRef->{-helptext} ?   $ArgRef->{-helptext} : "Events";           
+  my $Multiple =  exists $ArgRef->{-multiple} ?   $ArgRef->{-multiple} : "0";
+  my $Name     =  exists $ArgRef->{-name}     ?   $ArgRef->{-name}     : "events";
+  my @Defaults =  exists $ArgRef->{-default}  ? @{$ArgRef->{-default}} : ();
+  
   require "FormElements.pm";
   require "MeetingSQL.pm";
   require "Sorts.pm";
 
-  my (%Params) = @_;
-
-  my $Disabled = $Params{-disabled} || "0";
-  my $Multiple = $Params{-multiple} || "0";
-  my $Format   = $Params{-format}   || "full";
-  my @Defaults = @{$Params{-default}};
-  
-  my $Booleans = "";
+  my $Booleans = ""; # FIXME: Does not scale, use %Options
   
   if ($Disabled) {
     $Booleans .= "-disabled";
@@ -876,10 +883,8 @@ sub EventSelect (;%) {
     }
   }      
   
-  my $ElementTitle = FormElementTitle(-helplink => "events", -helptext => "Events");
-
-  print $ElementTitle;
-  print $query -> scrolling_list(-name     => "events",  -values  => \@ConferenceIDs, 
+  print FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText);
+  print $query -> scrolling_list(-name     => $Name,     -values  => \@ConferenceIDs, 
                                  -labels   => \%Labels,  -size    => 10, 
                                  -multiple => $Multiple, -default => \@Defaults,
                                  $Booleans);

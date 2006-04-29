@@ -1,3 +1,15 @@
+7.5.0
+  Can now get notification of documents associated with events (just like
+  topics, authors, keywords)
+  
+  NotifyDigest was very old code and only sent mail on topics (or all documents)
+  It was re-written to work use the same criteria as instant notification.
+  
+  The DocDB homepage was changed to SourceForge.net
+  
+  Better documentation of some tricky things in the API (AddDocument subroutine)
+  was added
+  
 7.4.1
   Put list of events and "notes" in notification e-mail as well as say whether
   document was updated, meta-info updated, files added, document created or

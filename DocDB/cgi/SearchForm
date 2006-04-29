@@ -132,7 +132,7 @@ print "</tr>\n";
   &EventGroupSelect(-multiple => $TRUE, -onchange => "selectEvent(this.form);");
  print "</td>\n";
  print "<td colspan=\"2\">\n";
-  &EventSelect(-multiple => $TRUE, -format => "full");
+  EventSelect( {-multiple => $TRUE, -format => "full"} );
  print "</td>\n";
  print "</tr>\n";
 
