@@ -116,14 +116,16 @@ if ($Simple) { # Break up words and set parameters for rest of search
   foreach my $Word (@Words) {
     push @AuthorSearchIDs    ,MatchAuthor(     {-either => $Word} );
 #    push @TypeSearchIDs      ,MatchDocType(    {-short  => $Word} );
-#    push @MinorSearchIDs     ,MatchMinorTopic( {-short  => $Word} );
-#    push @MajorSearchIDs     ,MatchMajorTopic( {-short  => $Word} );
+    push @MinorSearchIDs     ,MatchMinorTopic( {-short  => $Word} );
+    push @MajorSearchIDs     ,MatchMajorTopic( {-short  => $Word} );
 #    push @EventSearchIDs     ,MatchEvent(      {-short  => $Word} );
 #    push @EventGroupSearchIDs,MatchEventGroup( {-short  => $Word} );
   }
   @RequesterSearchIDs = @AuthorSearchIDs;
   
   push @DebugStack,"Found author IDs ",@AuthorSearchIDs;
+  push @DebugStack,"Found major IDs ",@MajorSearchIDs;
+  push @DebugStack,"Found minor IDs ",@MinorSearchIDs;
   
   $InnerLogic  = "OR";
   $OuterLogic  = "OR";

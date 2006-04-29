@@ -276,7 +276,8 @@ sub MatchAuthor ($) {
   my $Either = exists $ArgRef->{-either} ? $ArgRef->{-either} : "";
 #  my $First = exists $ArgRef->{-first}  ? $ArgRef->{-first}  : "";
 #  my $Last  = exists $ArgRef->{-last}   ? $ArgRef->{-last}   : "";
-
+  
+  my $AuthorID;
   my @MatchIDs = ();
   if ($Either) {
     $Either =~ tr/[A-Z]/[a-z]/;
