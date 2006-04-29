@@ -127,7 +127,6 @@ if ($DisplayMode eq "Session") { # Display a single session
   PrintSession(-sessionid => $SessionID, -skipheader => $TRUE); 
   PrintMeetingEpilogue($ConferenceID);
 } elsif ($DisplayMode eq "Separator") { 
-  push @DebugStack,"In seperator";
   FetchSessionSeparatorByID($SessionSeparatorID);
   PrintMeetingInfo($SessionSeparators{$SessionSeparatorID}{ConferenceID});
   PrintSessionSeparator($SessionSeparatorID);
