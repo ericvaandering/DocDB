@@ -148,7 +148,6 @@ if ($AuthorManual) { # Add these authors to list
   my @ManualAuthorIDs = ProcessManualAuthors($AuthorManual, {-warn => $TRUE} );
   if (@ManualAuthorIDs) {
     @AuthorSearchIDs = Unique(@AuthorSearchIDs,@ManualAuthorIDs);
-    push @DebugStack,"ASI:", @AuthorSearchIDs;
   }
 }  
     
@@ -476,7 +475,10 @@ my %FieldListOptions = (-default => "Default");
 my $SortBy           = "date";
 my $Reverse          = 1;
 
-if ($Mode eq "conference") {
+if ($Simple) {
+  $SortBy  = "relevance"; 
+  $Reverse = $TRUE;      
+} elsif ($Mode eq "conference") {
   $FieldListOptions{-default} = "Conference Mode";
   $SortBy  = "confdate";
 } elsif ($Mode eq "meeting") {
@@ -485,18 +487,13 @@ if ($Mode eq "conference") {
   $Reverse = 0;
 } 
 
-if ($Simple) {
-  $SortBy  = "relevance"; 
-  $Reverse = $TRUE;      
-} 
-
 ### Print table
 
 my %FieldList = PrepareFieldList(%FieldListOptions);
 my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs, 
                                       -sortby    => $SortBy,     -reverse => $Reverse);
 
-print "<b>Number of documents found: $NumberOfDocuments</b><p/>\n";
+print "<strong>Number of documents found: ",int($NumberOfDocuments),"</strong><p/>\n";
 
 ### Print footers
 
