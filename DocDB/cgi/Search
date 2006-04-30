@@ -87,12 +87,13 @@ $FileDescSearchMode     = $params{filedescsearchmode};
 $FileContSearch         = $params{filecontsearch};
 $FileContSearchMode     = $params{filecontsearchmode};
 
-@RequesterSearchIDs = split /\0/,$params{requestersearch};
-@AuthorSearchIDs    = split /\0/,$params{authors};
-@TypeSearchIDs      = split /\0/,$params{doctypemulti};
+my $AuthorManual        = $params{authormanual};
+   @RequesterSearchIDs  = split /\0/,$params{requestersearch};
+   @AuthorSearchIDs     = split /\0/,$params{authors};
+   @TypeSearchIDs       = split /\0/,$params{doctypemulti};
 
-@MinorSearchIDs = split /\0/,$params{minortopic};
-@MajorSearchIDs = split /\0/,$params{majortopic};
+   @MinorSearchIDs      = split /\0/,$params{minortopic};
+   @MajorSearchIDs      = split /\0/,$params{majortopic};
 
 my @EventSearchIDs      = split /\0/,$params{events};
 my @EventGroupSearchIDs = split /\0/,$params{eventgroups};
@@ -141,11 +142,16 @@ if ($Simple) { # Break up words and set parameters for rest of search
   $FileSearchMode         = "anyword";
   $FileDescSearchMode     = "anyword";
   $FileContSearchMode     = "anyword";
-  
-  # set sort mode to weighted
-  
 }  
 
+if ($AuthorManual) { # Add these authors to list
+  my @ManualAuthorIDs = ProcessManualAuthors($AuthorManual);
+  if (@ManualAuthorIDs) {
+    @AuthorSearchIDs = Unique(@AuthorSearchIDs,@ManualAuthorIDs);
+    push @DebugStack,"ASI:", @AuthorSearchIDs;
+  }
+}  
+    
 $Afterday   = $params{afterday};
 $Aftermonth = $params{aftermonth};
 $Afteryear  = $params{afteryear};
