@@ -7,7 +7,7 @@
   topics, authors, keywords)
   
   Bold and add ...more information... link to event table even if all events are
-  shown. Resulting page shows more end date (if different) and event location.
+  shown. Resulting page shows the end date (if different) and event location.
 
   Titles of events, sessions, and breaks are now shown on the web pages instead
   of generic "Event," etc. Note that if too much content breaks the layout of
@@ -22,6 +22,9 @@
   
   Better documentation of some tricky things in the API (AddDocument subroutine)
   was added
+  
+  A new script, CheckModules was created to check that your Perl installation has
+  all the modules required for DocDB
   
 7.4.1
   Put list of events and "notes" in notification e-mail as well as say whether
