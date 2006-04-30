@@ -196,8 +196,9 @@ sub GetAuthorDocuments { # Return a list of all documents the author is associat
 }  
 
 sub ProcessManualAuthors {
-  my ($author_list) = @_;
-  
+  my ($author_list,$ArgRef) = @_;
+  my $Warn = exists $ArgRef->{-warn} ? $ArgRef->{-warn} : $FALSE;
+
   # FIXME: Handle authors in Smith, John format too
   
   my $AuthorID;
@@ -210,8 +211,11 @@ sub ProcessManualAuthors {
     my $initial = substr($first,0,1).".";
     
     unless ($first && $last) {
-      push @ErrorStack,"Your author entry $entry did not have
-                         a first and last name.";
+      if ($Warn) {
+        push @WarnStack, "Your author entry $entry did not have a first and last name.";
+      } else {      
+        push @ErrorStack,"Your author entry $entry did not have a first and last name.";
+      }                   
       next;
     }  
     
@@ -265,8 +269,11 @@ sub ProcessManualAuthors {
 
 # FIXME: Remove error_stack when modifications done. 
 
-    push @ErrorStack,"No match was found for the author $entry. Please go 
-                      back and try again.";   
+    if ($Warn) {
+      push @WarnStack, "No match was found for the author $entry.";
+    } else {      
+      push @ErrorStack,"No match was found for the author $entry. Please go back and try again.";
+    }                   
   }
   return @AuthorIDs;
 }

@@ -145,7 +145,7 @@ if ($Simple) { # Break up words and set parameters for rest of search
 }  
 
 if ($AuthorManual) { # Add these authors to list
-  my @ManualAuthorIDs = ProcessManualAuthors($AuthorManual);
+  my @ManualAuthorIDs = ProcessManualAuthors($AuthorManual, {-warn => $TRUE} );
   if (@ManualAuthorIDs) {
     @AuthorSearchIDs = Unique(@AuthorSearchIDs,@ManualAuthorIDs);
     push @DebugStack,"ASI:", @AuthorSearchIDs;

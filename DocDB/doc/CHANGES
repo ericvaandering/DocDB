@@ -3,6 +3,9 @@
   search for them in topics, authors, events, doctypes, and all the text fields.
   Results are ranked by how many matches are found.
 
+  Also on the search form you can type in author names rather than having to
+  select them.
+
   Can now get notification of documents associated with events (just like
   topics, authors, keywords)
   
