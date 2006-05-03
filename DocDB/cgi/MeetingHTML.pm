@@ -728,6 +728,11 @@ sub ModifyEventLink ($) {
   
   my ($EventID) = @_;
     
+  FetchConferenceByConferenceID($EventID);
+  unless (CanAccessMeeting($EventID)) { # May want CanModifyMeeting
+    return "";
+  }  
+
   my $URL;
   
   if (SessionCountByEventID($EventID) == 1) {
