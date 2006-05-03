@@ -819,13 +819,13 @@ sub EventsByGroup (%) {
     print "<tr>\n";
     if ($EventCount > $MaxEvents && $MaxEvents) { # Put ...show all... at bottom
       $Truncated = $TRUE;
-      print '<td colspan="2"><strong>';
+      print '<th colspan="2">';
       if ($Mode eq "display") {
-        print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID\">...show all events...</a>\n"; 
+        print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID\">...more events and information...</a>\n"; 
       } else {
-        print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID&amp;mode=modify\">...show all events...</a>\n"; 
+        print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID&amp;mode=modify\">...more events and information...</a>\n"; 
       }
-      print "</strong></td>";
+      print "</th>";
       last;
     } else { # Print normal entry
       my $MeetingLink;
@@ -852,13 +852,13 @@ sub EventsByGroup (%) {
     
   }  
   if (!$Truncated && !$SingleGroup) {
-    print '<tr><td colspan="2"><strong>';
+    print '<tr><th colspan="2">';
     if ($Mode eq "display") {
       print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID\">...more information...</a>\n"; 
     } else {
       print "<a href=\"$ListAllMeetings?eventgroupid=$EventGroupID&amp;mode=modify\">...more information...</a>\n"; 
     }
-    print "</strong></td></tr>";
+    print "</th></tr>";
   }
   print "</table>\n";
 }

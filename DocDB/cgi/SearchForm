@@ -58,7 +58,7 @@ print "<h4>Click on any of the <span class=\"Help\">highlighted headings</span> 
 # Quick search table
 
 print $query -> start_multipart_form('POST',$Search,"name=\"simplesearch\"");
-print "<table class=\"SearchFormTable LowPaddedTable CenteredTable\"><tr><td>\n";
+print '<table id="QuickSearchForm" class="SearchFormTable LowPaddedTable CenteredTable"><tr><td>';
 print FormElementTitle(-helplink => "quicksearch", -nobreak => $TRUE,
                        -helptext => "Search for", );
 print "</td><td>\n";                       
