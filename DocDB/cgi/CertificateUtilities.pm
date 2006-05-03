@@ -40,7 +40,7 @@ sub FetchEmailUserIDByCert (%) {
   $CertificateCN    = $CertCN; 
   $CertificateEmail = $CertEmail; 
 
-  push @DebugStack,"Finding EmailUserID by certificate";
+  push @DebugStack,"Finding EmailUserID by certificate $CertCN";
 
   # If we do http basic with users, this routine will function with minor modifications
 

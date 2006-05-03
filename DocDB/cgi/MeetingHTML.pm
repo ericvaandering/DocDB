@@ -815,6 +815,16 @@ sub EventsByGroup (%) {
   my $EventCount = 0;
   my $Truncated = $FALSE;
   foreach my $EventID (@DisplayEventIDs) {
+    my $MeetingLink;
+    if ($Mode eq "modify") {
+      $MeetingLink = ModifyEventLink($EventID);
+    } else {
+      $MeetingLink = EventLink(-eventid => $EventID);
+    }
+    unless ($MeetingLink) {
+      next;
+    }  
+    
     ++$EventCount;
     print "<tr>\n";
     if ($EventCount > $MaxEvents && $MaxEvents) { # Put ...show all... at bottom
@@ -828,12 +838,6 @@ sub EventsByGroup (%) {
       print "</th>";
       last;
     } else { # Print normal entry
-      my $MeetingLink;
-      if ($Mode eq "modify") {
-        $MeetingLink = ModifyEventLink($EventID);
-      } else {
-        $MeetingLink = EventLink(-eventid => $EventID);
-      }
       print "<td>$MeetingLink</td>\n";
       print "<td>",EuroDate($Conferences{$EventID}{StartDate}),"</td>\n";
 
