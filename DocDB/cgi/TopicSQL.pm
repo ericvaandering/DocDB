@@ -7,7 +7,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -186,6 +186,46 @@ sub LookupMajorTopic { # Returns MajorTopicID from Topic Name
   &FetchMajorTopic($MajorTopicID);
   
   return $MajorTopicID;
+}
+
+sub MatchMajorTopic ($) { # FIXME: Make LookupMajorTopic a subset?
+  my ($ArgRef) = @_;
+  my $Short = exists $ArgRef->{-short} ? $ArgRef->{-short} : "";
+#  my $Long = exists $ArgRef->{-long}  ? $ArgRef->{-long}  : "";
+  my $MajorID;
+  my @MatchIDs = ();
+  if ($Short) {
+    $Short =~ tr/[A-Z]/[a-z]/;
+    $Short = "%".$Short."%";
+    my $List = $dbh -> prepare(
+       "select MajorTopicID from MajorTopic where LOWER(ShortDescription) like ?"); 
+    $List -> execute($Short);
+    $List -> bind_columns(undef, \($MajorID));
+    while ($List -> fetch) {
+      push @MatchIDs,$MajorID;
+    }
+  }
+  return @MatchIDs;
+}
+
+sub MatchMinorTopic ($) {
+  my ($ArgRef) = @_;
+  my $Short = exists $ArgRef->{-short} ? $ArgRef->{-short} : "";
+#  my $Long = exists $ArgRef->{-long}  ? $ArgRef->{-long}  : "";
+  my $MinorID;
+  my @MatchIDs = ();
+  if ($Short) {
+    $Short =~ tr/[A-Z]/[a-z]/;
+    $Short = "%".$Short."%";
+    my $List = $dbh -> prepare(
+       "select MinorTopicID from MinorTopic where LOWER(ShortDescription) like ?"); 
+    $List -> execute($Short);
+    $List -> bind_columns(undef, \($MinorID));
+    while ($List -> fetch) {
+      push @MatchIDs,$MinorID;
+    }
+  }
+  return @MatchIDs;
 }
 
 sub InsertTopics (%) {

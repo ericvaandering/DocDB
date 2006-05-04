@@ -31,7 +31,7 @@ $FALSE = 0;
 
 # Advertising link for DocDB
 
-$DocDBHome = "http://docdb.fnal.gov/doc/";
+$DocDBHome = "http://docdb-v.sourceforge.net/";
 
 # Optional components
 

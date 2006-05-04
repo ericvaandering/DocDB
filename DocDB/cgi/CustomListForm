@@ -253,9 +253,9 @@ print "<tr><td>";
 
 # Event groups and events. Put default here if they've followed the right link.
 
-EventGroupSelect(-multiple => $TRUE);
+EventGroupSelect( {-multiple => $TRUE} );
 print q{</td><td colspan="2">};
-EventSelect(-multiple => $TRUE, -default => [$DefaultEventID]);
+EventSelect( {-multiple => $TRUE, -default => [$DefaultEventID]} );
 print "</td></tr>\n";
 
 # Field list controls

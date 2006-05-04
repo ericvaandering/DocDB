@@ -254,7 +254,8 @@ sub TalkAuthors ($) {
       unless (@TalkDefaultAuthorHints) {
         $query -> param("authortext-$SessionOrderID","");
       }  
-      &AuthorTextEntry("authortext-$SessionOrderID",@TalkDefaultAuthorHints);
+      AuthorTextEntry( {-name    => "authortext-$SessionOrderID", -helplink => "",
+                        -default => \@TalkDefaultAuthorHints} );
     } else {
       unless (@TalkDefaultAuthorHints) {
         $query -> param("authors-$SessionOrderID","");

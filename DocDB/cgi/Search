@@ -35,11 +35,13 @@ require "DocDBGlobals.pm";
 require "FSUtilities.pm";
 require "WebUtilities.pm";
 require "HTMLUtilities.pm";
+require "Utilities.pm";
 require "ResponseElements.pm";
 require "Security.pm";
 
 require "SearchAtoms.pm";
 
+require "AuthorSQL.pm";
 require "DocumentSQL.pm";
 require "MiscSQL.pm";
 require "RevisionSQL.pm";
@@ -53,15 +55,15 @@ require "DocumentUtilities.pm";
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&GetTopics;         
-&GetSecurityGroups; 
+GetTopics();         
+GetSecurityGroups(); 
 
 ### Set up, give user initial information
 
 %params = $query -> Vars;
 
 print $query->header;
-&DocDBHeader("$Project Document Search Results","Search Results");
+DocDBHeader("$Project Document Search Results","Search Results");
 
 ### Pull info out of params into local variables
 
@@ -85,16 +87,70 @@ $FileDescSearchMode     = $params{filedescsearchmode};
 $FileContSearch         = $params{filecontsearch};
 $FileContSearchMode     = $params{filecontsearchmode};
 
-@RequesterSearchIDs = split /\0/,$params{requestersearch};
-@AuthorSearchIDs    = split /\0/,$params{authors};
-@TypeSearchIDs      = split /\0/,$params{doctypemulti};
+my $AuthorManual        = $params{authormanual};
+   @RequesterSearchIDs  = split /\0/,$params{requestersearch};
+   @AuthorSearchIDs     = split /\0/,$params{authors};
+   @TypeSearchIDs       = split /\0/,$params{doctypemulti};
 
-@MinorSearchIDs = split /\0/,$params{minortopic};
-@MajorSearchIDs = split /\0/,$params{majortopic};
+   @MinorSearchIDs      = split /\0/,$params{minortopic};
+   @MajorSearchIDs      = split /\0/,$params{majortopic};
 
 my @EventSearchIDs      = split /\0/,$params{events};
 my @EventGroupSearchIDs = split /\0/,$params{eventgroups};
 
+### Parameters for simple search
+
+my $Simple     = $params{simple};
+my $SimpleText = $params{simpletext};
+
+if ($Simple) { # Break up words and set parameters for rest of search
+  @RequesterSearchIDs  = ();
+  @AuthorSearchIDs     = ();
+  @TypeSearchIDs       = ();
+  @MinorSearchIDs      = ();
+  @MajorSearchIDs      = ();
+  @EventSearchIDs      = ();
+  @EventGroupSearchIDs = ();
+
+  my @Words = split /\s+/,$SimpleText;
+  foreach my $Word (@Words) {
+    push @AuthorSearchIDs    ,MatchAuthor(     {-either => $Word} );
+    push @TypeSearchIDs      ,MatchDocType(    {-short  => $Word} );
+    push @MinorSearchIDs     ,MatchMinorTopic( {-short  => $Word} );
+    push @MajorSearchIDs     ,MatchMajorTopic( {-short  => $Word} );
+    push @EventSearchIDs     ,MatchEvent(      {-short  => $Word} );
+    push @EventGroupSearchIDs,MatchEventGroup( {-short  => $Word} );
+  }
+  @RequesterSearchIDs = @AuthorSearchIDs;
+
+  $InnerLogic  = "OR";
+  $OuterLogic  = "OR";
+ 
+  $TitleSearch            = $SimpleText;
+  $AbstractSearch         = $SimpleText;
+  $KeywordSearch          = $SimpleText;
+  $RevisionNoteSearch     = $SimpleText;
+  $PubInfoSearch          = $SimpleText;
+  $FileSearch             = $SimpleText;
+  $FileDescSearch         = $SimpleText;
+  $FileContSearch         = $SimpleText;
+  $TitleSearchMode        = "anyword";
+  $AbstractSearchMode     = "anyword";
+  $KeywordSearchMode      = "anyword";
+  $RevisionNoteSearchMode = "anyword";
+  $PubInfoSearchMode      = "anyword";
+  $FileSearchMode         = "anyword";
+  $FileDescSearchMode     = "anyword";
+  $FileContSearchMode     = "anyword";
+}  
+
+if ($AuthorManual) { # Add these authors to list
+  my @ManualAuthorIDs = ProcessManualAuthors($AuthorManual, {-warn => $TRUE} );
+  if (@ManualAuthorIDs) {
+    @AuthorSearchIDs = Unique(@AuthorSearchIDs,@ManualAuthorIDs);
+  }
+}  
+    
 $Afterday   = $params{afterday};
 $Aftermonth = $params{aftermonth};
 $Afteryear  = $params{afteryear};
@@ -193,7 +249,7 @@ if ($TitleSearch || $AbstractSearch || $KeywordSearch || $RevisionNoteSearch ||
 
 ### Topics (if any)
 
-if (@MinorSearchIDs && @MajorSearchIDs) { # Remove major topic if one 
+if (@MinorSearchIDs && @MajorSearchIDs && !$Simple) { # Remove major topic if one 
   my %MajorSearchIDs = ();                # minor topics is selected
   foreach $MajorSearchID (@MajorSearchIDs) {
     $MajorSearchIDs{$MajorSearchID} = 1;
@@ -221,7 +277,7 @@ if (@MajorSearchIDs)  {
   @MajorDocumentIDs = &ValidateRevisions(@MajorRevisions);
 }  
 
-if (@EventSearchIDs && @EventGroupSearchIDs) { # Remove group if event is selected
+if (@EventSearchIDs && @EventGroupSearchIDs && !$Simple) { # Remove group if event is selected
   require "MeetingSQL.pm";
   &GetConferences;
   my %EventGroupSearchIDs = ();
@@ -301,6 +357,8 @@ if ($FileSearch || $FileDescSearch) {
   }
   @FileDocumentIDs = &ValidateRevisions(@FileRevisions);
 } 
+
+### Optional content search
 
 if ($ContentSearch && $FileContSearch) {
   $SearchedContent = 1;
@@ -395,13 +453,32 @@ if ($OuterLogic eq "OR") {
   }    
 }
 
+@DocumentIDs = Unique(@DocumentIDs);
+
+### Calculate relevance
+
+AddSearchWeights({
+  -revisions   => \@RevisionDocumentIDs   ,
+  -topics      => \@MinorDocumentIDs      ,
+  -majortopics => \@MajorDocumentIDs      ,
+  -events      => \@EventDocumentIDs      ,
+  -eventgroups => \@EventGroupDocumentIDs ,
+  -authors     => \@AuthorDocumentIDs     ,
+  -doctypes    => \@TypeDocumentIDs       ,
+  -files       => \@FileDocumentIDs       ,
+  -contents    => \@ContentDocumentIDs    ,
+});
+
 ### Set up fields and sorting
 
 my %FieldListOptions = (-default => "Default");
 my $SortBy           = "date";
 my $Reverse          = 1;
 
-if ($Mode eq "conference") {
+if ($Simple) {
+  $SortBy  = "relevance"; 
+  $Reverse = $TRUE;      
+} elsif ($Mode eq "conference") {
   $FieldListOptions{-default} = "Conference Mode";
   $SortBy  = "confdate";
 } elsif ($Mode eq "meeting") {
@@ -416,7 +493,7 @@ my %FieldList = PrepareFieldList(%FieldListOptions);
 my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs, 
                                       -sortby    => $SortBy,     -reverse => $Reverse);
 
-print "<b>Number of documents found: $NumberOfDocuments</b><p/>\n";
+print "<strong>Number of documents found: ",int($NumberOfDocuments),"</strong><p/>\n";
 
 ### Print footers
 

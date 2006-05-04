@@ -205,7 +205,7 @@ sub DocumentByFirstAuthor {
 }
 
 sub DocumentByConferenceDate {
-  require "TopicSQL.pm";
+  require "MeetingSQL.pm";
   
   my $adr = $DocRevIDs{$a}{$Documents{$a}{NVersions}};
   my $bdr = $DocRevIDs{$b}{$Documents{$b}{NVersions}};
@@ -241,6 +241,38 @@ sub DocumentByConferenceDate {
   my $bdate = $Conferences{$btid}{EndDate};
   
   $adate cmp $bdate
+}
+
+sub DocumentByRelevance { # Documents to be sorted must be fetched before calling
+
+  my $adr = $DocRevIDs{$a}{$Documents{$a}{NVersions}};
+  my $bdr = $DocRevIDs{$b}{$Documents{$b}{NVersions}};
+
+  my $adt = $DocRevisions{$adr}{DATE};
+  my $bdt = $DocRevisions{$bdr}{DATE};
+  
+  my ($adate,$atime)        = split /\s+/,$adt;
+  my ($bdate,$btime)        = split /\s+/,$bdt;
+  
+  my ($ayear,$amonth,$aday) = split /\-/,$adate;
+  my ($byear,$bmonth,$bday) = split /\-/,$bdate;
+  
+  my ($ahour,$amin,$asec)   = split /:/,$atime;
+  my ($bhour,$bmin,$bsec)   = split /:/,$btime;
+   
+   $Documents{$a}{Relevance} <=> $Documents{$b}{Relevance}
+                             or
+                      $ayear <=> $byear
+                             or
+                     $amonth <=> $bmonth
+                             or
+                       $aday <=> $bday
+                             or
+                      $ahour <=> $bhour
+                             or
+                       $amin <=> $bmin
+                             or
+                       $asec <=> $bsec;
 }
 
 sub MeetingOrderIDByOrder { # Sort lists of Sessions, SessionSeparators 

@@ -692,7 +692,7 @@ sub FormElementTitle (%) {
     $Colon = ":";
   }  
   unless ($NoBold) {
-    $TitleText .= "<b>";
+    $TitleText .= "<strong>";
   }
   if ($HelpLink) {
     $TitleText .= "<a class=\"Help\" href=\"Javascript:helppopupwindow(\'$DocDBHelp?term=$HelpLink\');\">";
@@ -701,7 +701,7 @@ sub FormElementTitle (%) {
     $TitleText .= "$Text$Colon"; 
   }
   unless ($NoBold) {
-    $TitleText .= "</b>";
+    $TitleText .= "</strong>";
   }
   
   if ($Required) {

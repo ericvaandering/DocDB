@@ -1,3 +1,13 @@
-#SearchFormTable {
+#QuickSearchForm {
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+/*.SearchFormTable {
   border: 5px solid black;
 }
+*/
+
+/*td.SearchFormCell {
+  border: 5px solid black;
+}*/

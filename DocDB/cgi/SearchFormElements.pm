@@ -1,4 +1,4 @@
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -63,11 +63,12 @@
 #
 
 require "SearchModes.pm";
+require "FormElements.pm";
 
 sub TitleSearchBox { # Box and mode selecter for searches on DocumentTitle
-  print "<tr><th><a ";
-  &HelpLink("wordsearch");
-  print "Title:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "Titles", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
   print $query -> textfield (-name      => 'titlesearch', 
                              -size      => 40, 
@@ -80,9 +81,9 @@ sub TitleSearchBox { # Box and mode selecter for searches on DocumentTitle
 };
 
 sub AbstractSearchBox { # Field and mode selecter for searches on Abstract
-  print "<tr><th><a ";
-  &HelpLink("wordsearch");
-  print "Abstract:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "Abstract", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
   print $query -> textfield (-name      => 'abstractsearch', 
                              -size      => 40, 
@@ -95,9 +96,9 @@ sub AbstractSearchBox { # Field and mode selecter for searches on Abstract
 };
 
 sub KeywordsSearchBox { # Field and mode selecter for searches on Keywords
-  print "<tr><th><a ";
-  &HelpLink("wordsearch");
-  print "Keywords:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "Keywords", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
   print $query -> textfield (-name      => 'keywordsearch', 
                              -size      => 40, 
@@ -110,9 +111,9 @@ sub KeywordsSearchBox { # Field and mode selecter for searches on Keywords
 };
 
 sub RevisionNoteSearchBox { # Field and mode selecter for searches on Note
-  print "<tr><th><a ";
-  &HelpLink("wordsearch");
-  print "Notes and Changes:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "Notes and Changes", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
   print $query -> textfield (-name      => 'revisionnotesearch', 
                              -size      => 40, 
@@ -125,9 +126,9 @@ sub RevisionNoteSearchBox { # Field and mode selecter for searches on Note
 };
 
 sub PubInfoSearchBox { # Field and mode selecter for searches on PublicationInfo
-  print "<tr><th><a ";
-  &HelpLink("wordsearch");
-  print "Publication Info:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "Publication Info", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
   print $query -> textfield (-name      => 'pubinfosearch', 
                              -size      => 40, 
@@ -140,9 +141,9 @@ sub PubInfoSearchBox { # Field and mode selecter for searches on PublicationInfo
 };
 
 sub FileNameSearchBox { # Field and mode selecter for searches on Files
-  print "<tr><th><a ";
-  &HelpLink("wordsearch");
-  print "File names:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "File names", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
   print $query -> textfield (-name      => 'filesearch', 
                              -size      => 40, 
@@ -155,9 +156,9 @@ sub FileNameSearchBox { # Field and mode selecter for searches on Files
 };
 
 sub DescriptionSearchBox { # Field and mode selecter for searches on Files
-  print "<tr><th><a ";
-  &HelpLink("wordsearch");
-  print "File descriptions:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "File descriptions", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
   print $query -> textfield (-name      => 'filedescsearch', 
                              -size      => 40, 
@@ -170,9 +171,9 @@ sub DescriptionSearchBox { # Field and mode selecter for searches on Files
 };
 
 sub ContentSearchBox { # Field and mode selecter for searches on Files
-  print "<tr><th><a ";
-  &HelpLink("contentsearch");
-  print "File contents:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "contentsearch", -helptext => "File contents", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
   print $query -> textfield (-name      => 'filecontsearch', 
                              -size      => 40, 
@@ -189,9 +190,7 @@ sub DocTypeMulti { # Scrolling selectable list for doc type search
   foreach my $DocTypeID (keys %DocumentTypes) {
     $DocTypeLabels{$DocTypeID} = $DocumentTypes{$DocTypeID}{SHORT};
   }  
-  print "<b><a ";
-  &HelpLink("doctypemulti");
-  print "Document type:</a></b><br> \n";
+  print FormElementTitle(-helplink => "doctypemulti", -helptext => "Document type");
   print $query -> scrolling_list(-size => 10, -name => "doctypemulti", 
                               -values => \%DocTypeLabels, -multiple => 'true');
 };
@@ -217,7 +216,7 @@ sub DateRangePullDown { # Two sets of pulldowns for defining a date range
   print $query -> popup_menu (-name => 'aftermonth',-values => \@months);
   print $query -> popup_menu (-name => 'afteryear', -values => \@years); 
   print " (Start)\n";
-  print "<br><b><big>&nbsp;</big>&nbsp;and</b><br>\n";
+  print "<br/><strong><big>&nbsp;</big>&nbsp;and</strong><br/>\n";
 
   print $query -> popup_menu (-name => 'beforeday',  -values => \@days);
   print $query -> popup_menu (-name => 'beforemonth',-values => \@months);
@@ -235,7 +234,7 @@ sub MajorMinorSelect { # Two multi-select boxes for major and minor topics
   foreach my $ID (@MajorIDs) {
     $MajorLabels{$ID} = $MajorTopics{$ID}{SHORT};
   }  
-  print &FormElementTitle(-helplink => "dynamictopic", -helptext => "Topic Groups");
+  print FormElementTitle(-helplink => "dynamictopic", -helptext => "Topic Groups");
   print $query -> scrolling_list(-name => "majortopic", -values => \@MajorIDs, 
                                  -labels => \%MajorLabels,  
                                  -size => 10, 
@@ -249,7 +248,7 @@ sub MajorMinorSelect { # Two multi-select boxes for major and minor topics
   foreach my $ID (@MinorIDs) {
     $MinorLabels{$ID} = $MinorTopics{$ID}{Full};
   }  
-  print &FormElementTitle(-helplink => "dynamictopic", -helptext => "Topics");
+  print FormElementTitle(-helplink => "dynamictopic", -helptext => "Topics");
   print $query -> scrolling_list(-name => "minortopic", -values => \@MinorIDs, 
                                  -labels => \%MinorLabels,  
                                  -size => 10,
@@ -259,32 +258,27 @@ sub MajorMinorSelect { # Two multi-select boxes for major and minor topics
 
 sub LogicTypeButtons { # Two buttons allow control whether inner and outer 
                        # logic are done with ANDs or ORs
-  my @values = ["AND","OR"];
+  my @Values = ["AND","OR"];
   
-  print "<b><a ";
-  &HelpLink("logictype");
-  print "Between Fields:</a></b> \n";
+  print FormElementTitle(-helplink => "logictype", -helptext => "Between Fields", -nobreak => $TRUE);
   print $query -> radio_group(-name => "outerlogic", 
-                              -values => @values, -default => "AND");
+                              -values => @Values, -default => "AND");
   
   print "&nbsp;&nbsp;&nbsp;&nbsp;";
   
-  print "<b><a ";
-  &HelpLink("logictype");
-  print "Within Fields:</a></b> \n";
+  print FormElementTitle(-helplink => "logictype", -helptext => "Within Fields", -nobreak => $TRUE);
   print $query -> radio_group(-name => "innerlogic", 
-                              -values => @values, -default => "OR");
+                              -values => @Values, -default => "OR");
 }
 
 sub ModeSelect { # Display Mode selecter for searches 
-  require "FormElements.pm";
-  print &FormElementTitle(-helptext => "Sort by", -helplink => "displaymode", -nobreak => $TRUE);
+  print FormElementTitle(-helptext => "Sort by", -helplink => "displaymode", -nobreak => $TRUE);
   my %Modes = ();
   $Modes{date}    = "Date with document #";
   $Modes{meeting} = "Author with topics and files";
   print $query -> popup_menu (-name    => 'mode', 
                               -values  => \%Modes,
                               -default => 'date');
-};
+}
 
 1;

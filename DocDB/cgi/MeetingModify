@@ -439,7 +439,7 @@ print "<table class=\"MedPaddedTable CenteredTable\">\n";
 
 print "<tr>\n";
 print "<td>\n"; 
-&EventGroupSelect(-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID]);
+&EventGroupSelect( {-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID] });
 print "</td>\n";
 print "<td>\n";
 &ShortDescriptionBox(-name => "shortdesc", -helptext => "Short Description", -required => $RequiredEntries{ShortDescription},

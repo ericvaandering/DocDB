@@ -45,14 +45,14 @@ sub MailNotices (%) {
   my @Addressees = ();
   if ($Type eq "update"  || $Type eq "updatedb" || $Type eq "add" || 
       $Type eq "reserve" || $Type eq "addfiles" || $Type eq "updateunknown") {
-    @Addressees = UsersToNotify($DocRevID,"immediate");
+    @Addressees = UsersToNotify($DocRevID,{-period => "Immediate"} );
   } elsif ($Type eq "signature") {
     foreach my $EmailUserID (@EmailUserIDs) {# Extract emails
       FetchEmailUser($EmailUserID);
       push @Addressees,$EmailUser{$EmailUserID}{EmailAddress};
     }
   } elsif ($Type eq "approved") { 
-    @Addressees = UsersToNotify($DocRevID,"immediate");
+    @Addressees = UsersToNotify($DocRevID,{-period => "Immediate"} );
     my %EmailUsers = ();
     my @SignoffIDs = GetAllSignoffsByDocRevID($DocRevID);
     foreach my $SignoffID (@SignoffIDs) {
@@ -214,12 +214,22 @@ sub RevisionMailBody ($) {
 }
 
 sub UsersToNotify ($$) {
+  my ($DocRevID,$ArgRef) = @_;
+  my $Period = exists $ArgRef->{-period} ? $ArgRef->{-period} : "Immediate";
+
+  require "AuthorSQL.pm";
+  require "MeetingSQL.pm";
   require "NotificationSQL.pm";
-  my ($DocRevID,$Mode) = @_;
+  require "TopicSQL.pm";
+  require "Security.pm";
 
-  &GetTopics;
+  unless ($Period eq "Immediate" || $Period eq "Daily" || $Period eq "Weekly") {
+    return undef;
+  }  
 
-  &FetchDocRevisionByID($DocRevID);
+  GetTopics();
+
+  FetchDocRevisionByID($DocRevID);
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
   my $Version    = $DocRevisions{$DocRevID}{Version};
 
@@ -230,7 +240,7 @@ sub UsersToNotify ($$) {
 
 # Get users interested in this particular document (only immediate)
  
-  if ($Mode eq "immediate") {
+  if ($Period eq "Immediate") {
     my $DocFetch   = $dbh -> prepare("select EmailUserID from EmailDocumentImmediate where DocumentID=?");
     $DocFetch -> execute($DocumentID);
     $DocFetch -> bind_columns(undef,\($UserID));
@@ -239,20 +249,9 @@ sub UsersToNotify ($$) {
     }
   }
 
-# Notification by topics 
-  
-  if ($Mode eq "immediate") {
-    $Table = "EmailTopicImmediate";
-  } elsif ($Mode eq "daily")  {
-    $Table = "EmailTopicDaily";
-  } elsif ($Mode eq "weekly")  {
-    $Table = "EmailTopicWeekly";
-  } else {   
-    return;
-  }    
-
 # Get users interested in all documents for this reporting period
 
+  $Table = "EmailTopic$Period";
   my $AllFetch   = $dbh -> prepare(
     "select EmailUserID from $Table where MinorTopicID=0 and MajorTopicID=0");
   $AllFetch -> execute();
@@ -268,7 +267,7 @@ sub UsersToNotify ($$) {
   my $MajorFetch   = $dbh -> prepare(
     "select EmailUserID from $Table where MajorTopicID=?");
 
-  my @MinorTopicIDs = &GetRevisionTopics($DocRevID);
+  my @MinorTopicIDs = GetRevisionTopics($DocRevID);
   foreach my $MinorTopicID (@MinorTopicIDs) {
     $MinorFetch -> execute($MinorTopicID);
     $MinorFetch -> bind_columns(undef,\($UserID));
@@ -284,22 +283,36 @@ sub UsersToNotify ($$) {
     }
   }  
 
-# Notification by authors 
-  
-  if ($Mode eq "immediate") {
-    $Table = "EmailAuthorImmediate";
-  } elsif ($Mode eq "daily")  {
-    $Table = "EmailAuthorDaily";
-  } elsif ($Mode eq "weekly")  {
-    $Table = "EmailAuthorWeekly";
-  }    
+# Get users interested in events for this reporting period
+
+  my $Fetch   = $dbh -> prepare(
+    "select EmailUserID from Notification where Period=? and Type=? and ForeignID=?");
+
+  my @EventIDs = GetRevisionEvents($DocRevID);
+  foreach my $EventID (@EventIDs) {
+    FetchConferenceByConferenceID($EventID);
+    $Fetch -> execute($Period,"Event",$EventID);
+    $Fetch -> bind_columns(undef,\($UserID));
+    while ($Fetch -> fetch) {
+      $UserIDs{$UserID} = 1; 
+    }
+
+    my $EventGroupID = $Conferences{$EventID}{EventGroupID};
+    
+    $Fetch -> execute($Period,"EventGroup",$EventGroupID);
+    $Fetch -> bind_columns(undef,\($UserID));
+    while ($Fetch -> fetch) {
+      $UserIDs{$UserID} = 1; 
+    }
+  }  
 
 # Get users interested in authors for this reporting period
 
+  $Table = "EmailAuthor$Period";
   my $AuthorFetch   = $dbh -> prepare(
     "select EmailUserID from $Table where AuthorID=?");
 
-  my @AuthorIDs = &GetRevisionAuthors($DocRevID);
+  my @AuthorIDs = GetRevisionAuthors($DocRevID);
 
   foreach my $AuthorID (@AuthorIDs) {
     $AuthorFetch -> execute($AuthorID);
@@ -309,21 +322,12 @@ sub UsersToNotify ($$) {
     }
   }  
 
-# Notification by keywords
-  
-  if ($Mode eq "immediate") {
-    $Table = "EmailKeywordImmediate";
-  } elsif ($Mode eq "daily")  {
-    $Table = "EmailKeywordDaily";
-  } elsif ($Mode eq "weekly")  {
-    $Table = "EmailKeywordWeekly";
-  }    
-
 # Get users interested in authors for this reporting period
-
+    
+  $Table = "EmailKeyword$Period";
   my $KeywordFetch   = $dbh -> prepare(
     "select EmailUserID from $Table where Keyword=lower(?)");
-  &FetchDocRevisionByID($DocRevID);
+  FetchDocRevisionByID($DocRevID);
   my @Keywords = split /\s+/,$DocRevisions{$DocRevID}{Keywords};
 
   foreach my $Keyword (@Keywords) {
@@ -339,8 +343,8 @@ sub UsersToNotify ($$) {
 # verify user is allowed to receive notification
    
   foreach $UserID (keys %UserIDs) {
-    my $EmailUserID = &FetchEmailUser($UserID);
-    if ($EmailUserID && &CanAccess($DocumentID,$Version,$EmailUserID)) {
+    my $EmailUserID = FetchEmailUser($UserID);
+    if ($EmailUserID && CanAccess($DocumentID,$Version,$EmailUserID)) {
       my $Name         = $EmailUser{$UserID}{Name}        ; # FIXME: TRYME: Have to use UserID as index for some reason
       my $EmailAddress = $EmailUser{$UserID}{EmailAddress};
       if ($EmailAddress) {
@@ -377,15 +381,22 @@ sub DisplayNotification($$;$) {
   my ($EmailUserID,$Set,$Always) = @_;
 
   require "NotificationSQL.pm";
-  require "TopicHTML.pm";
   require "AuthorHTML.pm";
+  require "MeetingHTML.pm";
+  require "TopicHTML.pm";
 
-  &FetchTopicNotification($EmailUserID,$Set);
-  &FetchAuthorNotification($EmailUserID,$Set);
-  &FetchKeywordNotification($EmailUserID,$Set);
+  FetchNotifications( {-emailuserid => $EmailUserID} );
+  FetchTopicNotification($EmailUserID,$Set);
+  FetchAuthorNotification($EmailUserID,$Set);
+  FetchKeywordNotification($EmailUserID,$Set);
   
+  my @EventIDs      = @{$Notifications{$EmailUserID}{"Event_".$Set}};
+  my @EventGroupIDs = @{$Notifications{$EmailUserID}{"EventGroup_".$Set}};
+  
+  my $NewNotify = (@EventIDs || @EventGroupIDs);
+                    
   if ($NotifyAllTopics || @NotifyMajorIDs || @NotifyMinorIDs ||
-      @NotifyAuthorIDs || @NotifyKeywords) {
+      @NotifyAuthorIDs || @NotifyKeywords || $NewNotify) {
     print "<b>$Set notifications:</b>\n";  
     print "<ul>\n";  
   } elsif ($Always) {
@@ -397,28 +408,39 @@ sub DisplayNotification($$;$) {
   } else {
     return;
   }
+  
   if ($NotifyAllTopics) {
     print "<li>All documents</li>\n";  
   }  
   
   if (@NotifyMajorIDs) {
     foreach my $MajorID (@NotifyMajorIDs) {
-      print "<li> Topic: ",&MajorTopicLink($MajorID),"</li>";
+      print "<li> Topic: ",MajorTopicLink($MajorID),"</li>";
     }
   }
     
   if (@NotifyMinorIDs) {
     foreach my $MinorID (@NotifyMinorIDs) {
-      print "<li> Subtopic: ",&MinorTopicLink($MinorID),"</li>";
+      print "<li> Subtopic: ",MinorTopicLink($MinorID),"</li>";
     }
   }
     
   if (@NotifyAuthorIDs) {
     foreach my $AuthorID (@NotifyAuthorIDs) {
-      print "<li> Author: ",&AuthorLink($AuthorID),"</li>";
+      print "<li> Author: ",AuthorLink($AuthorID),"</li>";
     }
   }
     
+  # FIXME: Make rest like this  
+    
+  foreach my $EventID (@EventIDs) {
+    print "<li>Event: ",EventLink(-eventid => $EventID),"</li>";
+  }
+    
+  foreach my $EventGroupID (@EventGroupIDs) {
+    print "<li>Event Group: ",EventGroupLink(-eventgroupid => $EventGroupID),"</li>";
+  }
+
   if (@NotifyKeywords) {
     foreach my $Keyword (@NotifyKeywords) {
       print "<li>Keyword: $Keyword</li>";

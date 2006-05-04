@@ -1,3 +1,34 @@
+7.5.0
+  A new, simpler way to search. Just type in one or more words and DocDB will
+  search for them in topics, authors, events, doctypes, and all the text fields.
+  Results are ranked by how many matches are found.
+
+  Also on the search form you can type in author names rather than having to
+  select them.
+
+  Can now get notification of documents associated with events (just like
+  topics, authors, keywords)
+  
+  Bold and add ...more information... link to event table even if all events are
+  shown. Resulting page shows the end date (if different) and event location.
+
+  Titles of events, sessions, and breaks are now shown on the web pages instead
+  of generic "Event," etc. Note that if too much content breaks the layout of
+  your header code, you may want to truncate things in that code.
+    
+  Link to web page to display break info. Not so useful now, may be later. 
+
+  NotifyDigest was very old code and only sent mail on topics (or all documents)
+  It was re-written to work use the same criteria as instant notification.
+  
+  The DocDB homepage was changed to SourceForge.net
+  
+  Better documentation of some tricky things in the API (AddDocument subroutine)
+  was added
+  
+  A new script, CheckModules was created to check that your Perl installation has
+  all the modules required for DocDB
+  
 7.4.1
   Put list of events and "notes" in notification e-mail as well as say whether
   document was updated, meta-info updated, files added, document created or

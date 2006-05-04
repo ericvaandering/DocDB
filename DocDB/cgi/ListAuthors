@@ -2,7 +2,7 @@
 #
 # Author Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -30,15 +30,19 @@ require "HTMLUtilities.pm";
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&GetInstitutions;
-&GetAuthors;
+GetInstitutions();
+GetAuthors();
 
 print $query->header;
-&DocDBHeader("List of Authors");
+DocDBHeader("List of Authors");
 
-print "<h3>All Existing Authors (<a href=\"$AuthorAddForm\">Add</a> a new author):</h3>\n";
+print "<h3>All Existing Authors";
+unless ($Public) {
+  print '(<a href="$AuthorAddForm">Add</a> a new author)';
+}
+print "</h3>\n";
 
-&AuthorsTable;
+AuthorsTable();
 
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -111,6 +111,8 @@ sub DocumentTable (%) {
       @IDs = sort DocumentByFirstAuthor @IDs; 
     } elsif ($SortBy eq "confdate") {
       @IDs = sort DocumentByConferenceDate @IDs; 
+    } elsif ($SortBy eq "relevance") {
+      @IDs = sort DocumentByRelevance @IDs; 
     }
 
     if ($Reverse) {
