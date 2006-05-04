@@ -6,7 +6,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -42,67 +42,74 @@ require "Sorts.pm";
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&GetSecurityGroups;
+GetSecurityGroups();
 
 print $query->header;
-&DocDBHeader("Group Administration","",-scripts => ["PopUps","GroupAdminDisable"]); 
+DocDBHeader("Group Administration","",-scripts => ["PopUps","GroupAdminDisable"]); 
 
 @ErrorStack = ();
 @WarnStack  = ();
 
-unless (&CanAdminister()) {
+unless (CanAdminister()) {
   push @ErrorStack,"You are not allowed to access administrative functions.";
 }
 
 EndPage(@ErrorStack);
 
-print "<b><a ";
-&HelpLink("grouptutorial");
-print "Help on groups</a></b><p>\n";
+print "<p>\n";
+print FormElementTitle(-helplink => "grouptutorial", -helptext => "Help on groups", -nocolon => $TRUE, -nobreak => $TRUE);
+print "</p>\n";
 
-print "Begin by selecting an action (Modify/New/Delete). If you select
-       <b>New</b>, any selection from the first list will be ignored, but you
-       must fill in the group name, description, and any permissions  you want
-       to grant. If you select <b>Modify</b> you must make a selection from
-       the first list and any attributes you select on the right will be
-       changed. If you leave something blank, it will not be changed. If you
-       select <b>Delete</b> any selections other than from  the first list
-       will be ignored.<p>\n";
+print "<p>Begin by selecting an action (Modify/New/Delete). The things you
+       cannot change will be disabled. If you select <strong>Modify</strong> you
+       must make a selection from the first list and any attributes you select
+       on the right will be changed. If you leave something blank, it will not
+       be changed. If you do not select subordinate groups at this point, the
+       subordinates will <strong>not</strong> be changed. To remove all the
+       subordinates, check \"Remove all\"</p>\n";
 
-print "Note that deleting and then re-entering with the same information is
+print "<p>To change the dominant groups for a group, you must change the
+       subordinate groups of the dominant group.</p>\n";
+
+print "<p>Note that deleting and then re-entering with the same information is
        not the same as modifying. Everything in the DB is tied together with
-       invisible ID numbers. <b>Be very careful about deleting groups;</b> you
-       may end up with documents not accessible to anyone.<p>\n";
+       invisible ID numbers. <strong>Be very careful about deleting
+       groups;</strong> you may end up with documents not accessible to
+       anyone.</p>\n";
 
 ### Group Modification
 
 
 print $query -> start_multipart_form('POST',"$GroupAdminister",
                                      "id=\"groups\" name=\"groups\"");
-print "<table cellpadding=10>\n";
-print "<tr valign=top>\n";
-print "<td colspan=2>\n";
- &AdministerActions(-form => "groups");
+print '<table class="HighPaddedTable">';
+print "<tr>\n";
+print '<td colspan="2">';
+ AdministerActions(-form => "groups");
 print "</td>\n";
 print "</tr>\n";
 
-print "<tr valign=top>\n";
+print "<tr>\n";
 print "<td>\n"; 
-&SecurityScroll(-name      => 'parent', -disabled => true, 
-                -helplink  => 'parent', -helptext  => 'Group');
+SecurityScroll(-name      => 'parent', -disabled => $TRUE, 
+               -helplink  => 'parent', -helptext => 'Group');
 print "</td>\n";  
 print "<td>\n"; 
-&SecurityScroll(-name      => 'child', -disabled => true, -multiple => true,
-                -helplink  => 'child', -helptext  => 'Subordinates');
+SecurityScroll(-name      => 'child', -disabled => $TRUE, -multiple => $TRUE,
+               -helplink  => 'child', -helptext => 'Subordinates');
+print "<br/>\n";
+print $query -> checkbox(-name  => "removesubs", -value    => 'removesubs', 
+                         -label => '',           -disabled => 'disabled');
+print "<strong>Remove all</strong>";
 print "</td>\n";
 print "<td>\n";
- &GroupEntryBox(-disabled => true);
+ GroupEntryBox(-disabled => $TRUE);
 print "</td>\n";
 print "</tr>\n";
 
-print "<tr valign=top>\n";
-print "<td colspan=3>\n";
-&AdministratorPassword;
+print "<tr>\n";
+print '<td colspan="3">';
+AdministratorPassword();
 print "&nbsp;";
 print $query -> submit (-value => "Change Group Info");
 print "</td>\n";
@@ -111,36 +118,35 @@ print "</tr>\n";
 print "</table>\n";
 print $query -> end_multipart_form;
 
-print "<p>\n";
-print "<b>The current groups and the relationships between them are shown below:</b><p>\n";
-print "<p><hr>\n";
+print "<p><strong>The current groups and the relationships between them are
+       shown below:</strong></p>\n";
+print "<hr/>\n";
 
 ### Display of existing groups
 
 my @GroupIDs = sort numerically keys %SecurityGroups;
 
-print "<table cellpadding=10>\n";
+print '<table class="HighPaddedTable">';
 foreach my $GroupID (@GroupIDs) {
-  print "<tr valign=top>\n";
-  print "<td><b>$SecurityGroups{$GroupID}{NAME}</b><br>($SecurityGroups{$GroupID}{Description})</td>\n";
+  print "<tr>\n";
+  print "<td><strong>$SecurityGroups{$GroupID}{NAME}</strong><br/>($SecurityGroups{$GroupID}{Description})</td>\n";
   print "<td>\n";
-  print "<b>Dominant groups:</b>\n";
-  &PrintGroupParents($GroupID);
+  print "<strong>Dominant groups:</strong>\n";
+  PrintGroupParents($GroupID);
   print "</td>\n";
   print "<td>\n";
-  print "<b>Subordinate groups:</b>\n";
-  &PrintGroupChildren($GroupID);
+  print "<strong>Subordinate groups:</strong>\n";
+  PrintGroupChildren($GroupID);
   print "</td>\n";
   print "<td>\n";
-  print "<b>Permissions:</b>\n";
-  &PrintGroupPermissions($GroupID);
+  print "<strong>Permissions:</strong>\n";
+  PrintGroupPermissions($GroupID);
   print "</td>\n";
   print "</tr>\n";
 } 
 print "</table>\n";
 
+print "<hr/>\n";
 
-print "<p><hr><p>\n";
-
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
