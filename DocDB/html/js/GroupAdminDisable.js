@@ -8,6 +8,7 @@ function disabler_groups() {
     document.groups.parent.disabled = true;
     document.groups.name.disabled = false;
     document.groups.child.disabled = false;
+    document.groups.removesubs.disabled = true;
     document.groups.description.disabled = false;
   }
   if (document.groups.admaction[1].checked == true) {
@@ -27,6 +28,7 @@ function disabler_groups() {
     document.groups.parent.disabled = false;
     document.groups.name.disabled = false;
     document.groups.child.disabled = false;
+    document.groups.removesubs.disabled = false;
     document.groups.description.disabled = false;
   }
 }
