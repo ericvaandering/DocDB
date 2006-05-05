@@ -19,29 +19,45 @@
 sub PrintGroupParents ($) {
   my ($GroupID) = @_;
 
-  print "<ul>\n";
   my @HierarchyIDs = keys %GroupsHierarchy;
-  foreach $HierarchyID (@HierarchyIDs) {
+  my @Parents = ();
+  
+  foreach my $HierarchyID (@HierarchyIDs) {
     if ($GroupID == $GroupsHierarchy{$HierarchyID}{Child}) {
       my $ParentID = $GroupsHierarchy{$HierarchyID}{Parent};
-      print "<li>$SecurityGroups{$ParentID}{NAME}</li>\n";
+      push @Parents,$SecurityGroups{$ParentID}{NAME};
     }  
   }
-  print "</ul>\n";
+  
+  if (@Parents) {
+    print "<ul>\n";
+    foreach my $Parent (@Parents) {
+      print "<li>$Parent</li>\n";
+    }  
+    print "</ul>\n";
+  }  
 }
 
 sub PrintGroupChildren ($) {
   my ($GroupID) = @_;
 
-  print "<ul>\n";
   my @HierarchyIDs = keys %GroupsHierarchy;
-  foreach $HierarchyID (@HierarchyIDs) {
+  my @Children = ();
+
+  foreach my $HierarchyID (@HierarchyIDs) {
     if ($GroupID == $GroupsHierarchy{$HierarchyID}{Parent}) {
-      my $ParentID = $GroupsHierarchy{$HierarchyID}{Child};
-      print "<li>$SecurityGroups{$ParentID}{NAME}</li>\n";
+      my $ChildID = $GroupsHierarchy{$HierarchyID}{Child};
+      push @Children,$SecurityGroups{$ChildID}{NAME};
     }  
   }
-  print "</ul>\n";
+  
+  if (@Children) {
+    print "<ul>\n";
+    foreach my $Child (@Children) {
+      print "<li>$Child</li>\n";
+    }  
+    print "</ul>\n";
+  }  
 }
 
 sub PrintGroupPermissions ($) {
