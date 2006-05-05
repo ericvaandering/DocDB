@@ -186,7 +186,7 @@ if ($Action eq "Modify" || $Action eq "New") {
   ClearSecurityGroups();
   GetSecurityGroups();
   print "<h4>This is the new group information:</h4>\n";
-  print '<table class="HighPaddedTable">';
+  print '<table class="HighPaddedTable CenteredTable">';
   print "<tr>\n";
   print "<td><strong>$SecurityGroups{$ParentID}{NAME}</strong><br/>
          ($SecurityGroups{$ParentID}{Description})</td>\n";
