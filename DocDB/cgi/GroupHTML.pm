@@ -24,7 +24,7 @@ sub PrintGroupParents ($) {
   foreach $HierarchyID (@HierarchyIDs) {
     if ($GroupID == $GroupsHierarchy{$HierarchyID}{Child}) {
       my $ParentID = $GroupsHierarchy{$HierarchyID}{Parent};
-      print "<li>$SecurityGroups{$ParentID}{NAME}\n";
+      print "<li>$SecurityGroups{$ParentID}{NAME}</li>\n";
     }  
   }
   print "</ul>\n";
@@ -38,7 +38,7 @@ sub PrintGroupChildren ($) {
   foreach $HierarchyID (@HierarchyIDs) {
     if ($GroupID == $GroupsHierarchy{$HierarchyID}{Parent}) {
       my $ParentID = $GroupsHierarchy{$HierarchyID}{Child};
-      print "<li>$SecurityGroups{$ParentID}{NAME}\n";
+      print "<li>$SecurityGroups{$ParentID}{NAME}</li>\n";
     }  
   }
   print "</ul>\n";
@@ -48,12 +48,12 @@ sub PrintGroupPermissions ($) {
   my ($GroupID) = @_;
 
   print "<ul>\n";
-  print "<li>View\n";
+  print "<li>View</li>\n";
   if ($SecurityGroups{$GroupID}{CanCreate}) {
-    print "<li>Create/Modify\n";
+    print "<li>Create/Modify</li>\n";
   }  
   if ($SecurityGroups{$GroupID}{CanAdminister}) { # Doesn't exist yet
-    print "<li>Administer\n";
+    print "<li>Administer</li>\n";
   }  
   print "</ul>\n";
 }

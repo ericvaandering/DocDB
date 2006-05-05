@@ -46,21 +46,23 @@ $query = new CGI;  # Global for subroutines
 
 # Parameters to script 
 
-my $Password      = $params{password};
-my $Username      = $params{admuser};
-my $Action        = $params{admaction};
+my $Password       = $params{password};
+my $Username       = $params{admuser};
+my $Action         = $params{admaction};
 
-my $Description = $params{description};
-my $Name        = $params{name};
-my $ParentID    = $params{parent};
-my @ChildIDs    = split /\0/,$params{child};
-my $Create      = $params{create};
-my $Admin       = $params{admin};
-my $NoPerm      = $params{remove};
+my $Description    = $params{description};
+my $Name           = $params{name};
+my $ParentID       = $params{parent};
+my @ChildIDs       = split /\0/,$params{child};
+my $Create         = $params{create};
+my $Admin          = $params{admin};
+my $NoPerm         = $params{remove};
+my $RemoveChildren = $params{removesubs};
 
-if ($Create) {$Create = 1;} # Make sure they are in format MySQL is expecting
-if ($Admin)  {$Admin  = 1;}
-if ($NoPerm) {$NoPerm = 1;}
+if ($Create)         {$Create = 1;} # Make sure they are in format MySQL is expecting
+if ($Admin)          {$Admin  = 1;}
+if ($NoPerm)         {$NoPerm = 1;}
+if ($RemoveChildren) {$RemoveChildren = 1;}
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
@@ -69,16 +71,16 @@ unless ($dbh) {
 }         
 
 print $query->header;
-&DocDBHeader("Modified Groups");
+DocDBHeader("Modified Groups");
 
-&EndPage(@ErrorStack);
+EndPage(@ErrorStack);
 
-unless (&CanAdminister) {
+unless (CanAdminister()) {
   push @ErrorStack,$Msg_AdminNoLogin;
 }  
-&EndPage(@ErrorStack);
+EndPage(@ErrorStack);
 
-&GetSecurityGroups;
+GetSecurityGroups();
 
 if      ($Action eq "Delete") { # Delete group
   if (!$ParentID) {
@@ -99,7 +101,7 @@ if      ($Action eq "Delete") { # Delete group
   unless ($ParentID) {
     push @ErrorStack,$Msg_ModGroupEmpty;
   }
-  &EndPage(@ErrorStack);
+  EndPage(@ErrorStack);
 
 # Deal with name changes     
 
@@ -118,7 +120,7 @@ if      ($Action eq "Delete") { # Delete group
 
 # Update parent child relationships. Delete the old and add new relationships
 
-  if (@ChildIDs) {
+  if (@ChildIDs || $RemoveChildren) {
     print "<b>Deleting all subordinates.</b><br>\n";
     my $HierarchyDelete = $dbh -> prepare("delete from GroupHierarchy   ".
                                     "where ParentID=?");
@@ -177,23 +179,23 @@ if      ($Action eq "Delete") { # Delete group
 # For modify or new fetch institution information and display.
 
 if ($Action eq "Modify" || $Action eq "New") {
-  &ClearSecurityGroups;
-  &GetSecurityGroups;
+  ClearSecurityGroups();
+  GetSecurityGroups();
   print "<p><b>Here are the results of your modification:<br>\n";
   print "<table cellpadding=10>\n";
   print "<tr valign=top>\n";
   print "<td><b>$SecurityGroups{$ParentID}{NAME}</b><br>($SecurityGroups{$ParentID}{Description})</td>\n";
   print "<td>\n";
   print "Dominant groups:\n";
-  &PrintGroupParents($ParentID);
+  PrintGroupParents($ParentID);
   print "</td>\n";
   print "<td>\n";
   print "Subordinate groups:\n";
-  &PrintGroupChildren($ParentID);
+  PrintGroupChildren($ParentID);
   print "</td>\n";
   print "<td>\n";
   print "Permissions:\n";
-  &PrintGroupPermissions($ParentID);
+  PrintGroupPermissions($ParentID);
   print "</td>\n";
   print "</tr>\n";
   print "</table>\n";
@@ -202,10 +204,9 @@ if ($Action eq "Modify" || $Action eq "New") {
 
 print "<p>\n";
 
-&WarnPage(@WarnStack);
-&EndPage(@ErrorStack);
-
-&DocDBNavBar;
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+WarnPage(@WarnStack);
+EndPage(@ErrorStack);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  
 exit;
