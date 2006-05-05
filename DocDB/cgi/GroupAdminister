@@ -95,7 +95,7 @@ if      ($Action eq "Delete") { # Delete group
     $GroupDelete       -> execute($ParentID);
     $RevSecurityDelete -> execute($ParentID);
     $HierarchyDelete   -> execute($ParentID,$ParentID);
-    print "<b>$SecurityGroups{$ParentID}{NAME} has been deleted.</b><br>\n";
+    push @ActionStack,"$SecurityGroups{$ParentID}{NAME} has been deleted.";
   }
 } elsif ($Action eq "Modify") { # Modify group
   unless ($ParentID) {
@@ -106,13 +106,13 @@ if      ($Action eq "Delete") { # Delete group
 # Deal with name changes     
 
   if ($Name) { 
-    print "<b>Updating group name.</b><br>\n";
+    push @ActionStack,"Updating group name.";
     my $GroupUpdate = $dbh->prepare(
        "update SecurityGroup set Name=? where GroupID=?");
     $GroupUpdate -> execute($Name,$ParentID);
   }
   if ($Description) { 
-    print "<b>Updating group description.</b><br>\n";
+    push @ActionStack,"Updating group description.";
     my $GroupUpdate = $dbh->prepare(
        "update SecurityGroup set Description=? where GroupID=?");
     $GroupUpdate -> execute($Description,$ParentID);
@@ -121,7 +121,7 @@ if      ($Action eq "Delete") { # Delete group
 # Update parent child relationships. Delete the old and add new relationships
 
   if (@ChildIDs || $RemoveChildren) {
-    print "<b>Deleting all subordinates.</b><br>\n";
+    push @ActionStack,"<b>Deleting all subordinate relationships.";
     my $HierarchyDelete = $dbh -> prepare("delete from GroupHierarchy   ".
                                     "where ParentID=?");
        $HierarchyDelete -> execute($ParentID);
@@ -131,7 +131,7 @@ if      ($Action eq "Delete") { # Delete group
                          "values (0,?,?)");
     foreach my $ChildID (@ChildIDs) {
       if ($ChildID && $ChildID != $ParentID) {
-        print "<b>Adding subordinate.</b><br>\n";
+        push @ActionStack,"Adding subordinate.";
         $HierarchyInsert -> execute($ChildID,$ParentID);
       }
     }     
@@ -156,7 +156,7 @@ if      ($Action eq "Delete") { # Delete group
   }  
      
 } elsif ($Action eq "New") { # Create new groups
-  print "<b>Adding a new group.</b><br>\n";
+  push @ActionStack,"Adding a new group.";
   my $GroupInsert = $dbh->prepare(
    "insert into SecurityGroup (GroupID,Name,Description,CanCreate,CanAdminister) ".
                       "values (0,?,?,?,?)");
@@ -178,13 +178,18 @@ if      ($Action eq "Delete") { # Delete group
 
 # For modify or new fetch institution information and display.
 
+ActionReport();
+WarnPage(@WarnStack);
+EndPage(@ErrorStack);
+
 if ($Action eq "Modify" || $Action eq "New") {
   ClearSecurityGroups();
   GetSecurityGroups();
-  print "<p><b>Here are the results of your modification:<br>\n";
-  print "<table cellpadding=10>\n";
-  print "<tr valign=top>\n";
-  print "<td><b>$SecurityGroups{$ParentID}{NAME}</b><br>($SecurityGroups{$ParentID}{Description})</td>\n";
+  print "<h4>This is the new group information:</h4>\n";
+  print '<table class="HighPaddedTable">';
+  print "<tr>\n";
+  print "<td><strong>$SecurityGroups{$ParentID}{NAME}</strong><br/>
+         ($SecurityGroups{$ParentID}{Description})</td>\n";
   print "<td>\n";
   print "Dominant groups:\n";
   PrintGroupParents($ParentID);
@@ -199,13 +204,8 @@ if ($Action eq "Modify" || $Action eq "New") {
   print "</td>\n";
   print "</tr>\n";
   print "</table>\n";
-  print "</b><p>\n";
 }  
 
-print "<p>\n";
-
-WarnPage(@WarnStack);
-EndPage(@ErrorStack);
 DocDBNavBar();
 DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  
