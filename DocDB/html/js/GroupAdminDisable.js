@@ -17,6 +17,7 @@ function disabler_groups() {
     document.groups.parent.disabled = false;
     document.groups.name.disabled = true;
     document.groups.child.disabled = true;
+    document.groups.removesubs.disabled = true;
     document.groups.description.disabled = true;
   }
   if (document.groups.admaction[2].checked == true) {
