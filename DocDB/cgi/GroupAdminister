@@ -121,7 +121,7 @@ if      ($Action eq "Delete") { # Delete group
 # Update parent child relationships. Delete the old and add new relationships
 
   if (@ChildIDs || $RemoveChildren) {
-    push @ActionStack,"<b>Deleting all subordinate relationships.";
+    push @ActionStack,"Deleting all subordinate relationships.";
     my $HierarchyDelete = $dbh -> prepare("delete from GroupHierarchy   ".
                                     "where ParentID=?");
        $HierarchyDelete -> execute($ParentID);
