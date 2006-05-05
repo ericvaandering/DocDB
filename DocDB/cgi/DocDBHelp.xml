@@ -71,9 +71,11 @@ the <b>.htpasswd</b> file although the comparison is not case sensitive.
   <key>child</key>
   <title>Subordinate groups</title>
   <text>
-Select the groups you want to be subordinates of this group. This means that the
-dominant group will be able to see and change all documents that these groups
-can.
+   <p>Select the groups you want to be subordinates of this group. This means
+   that this group will be able to see and change all documents that
+   the subordinate groups can.</p>
+   <p>To change a group's dominant groups, you must change the subordinate
+   groups of the dominant group</p>
   </text>
  </entry>
 
