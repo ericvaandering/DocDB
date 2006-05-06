@@ -144,17 +144,34 @@ print "<hr/>\n";
 my @EmailUserIDs = sort EmailUserIDsByName GetEmailUserIDs();
 
 print "<table class=\"LowPaddedTable AlternatingTable\">\n";
-print "<tr><th>Username</th><th>Name</th><th>Verified?</th><th>Groups</th><th>Notifications</th></tr>\n";
+print "<tr><th>Username</th><th>Name</th><th>Verified?</th><th>Groups</th></tr>\n";
+#print "<th>Notifications</th>\n";
+
 my $Row = 0;
 foreach my $EmailUserID (@EmailUserIDs) {
+
+# Get the list of groups
   my @Groups = ();
   my @UserGroupIDs = FetchUserGroupIDs($EmailUserID);
   foreach my $UserGroupID (@UserGroupIDs) {
     FetchSecurityGroup($UserGroupID);
-    push @Groups,$SecurityGroups{$UserGroupID}{NAME};
+    push @Groups,"<a href=\"#$SecurityGroups{$UserGroupID}{NAME}\">$SecurityGroups{$UserGroupID}{NAME}</a>";
   }       
   my $Groups = join "<br/>",@Groups; 
-  
+  unless ($Groups) {
+    $Groups = "None";
+  }
+    
+# Figure out if there are notifications
+# Can't actually use this until everything is unified. Just too much work right now. 
+  my $Count = FetchNotifications( {-emailuserid => $EmailUserID} );
+  my $Notifications = "";
+  if ($Count) { 
+    $Notifications = "Yes";
+  } else {
+    $Notifications = "No";
+  }
+      
   ++$Row;
   my $RowClass = ("Odd","Even")[$Row % 2];
 
@@ -163,8 +180,7 @@ foreach my $EmailUserID (@EmailUserIDs) {
   print "<td>$EmailUser{$EmailUserID}{Name}</td>\n"; 
   print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{Verified}]."</td>\n"; 
   print "<td>$Groups</td>\n";
-
-
+#  print "<td>$Notifications</td>\n";
   print "</tr>\n";
 } 
 print "</table>\n";
