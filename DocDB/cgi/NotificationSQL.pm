@@ -51,6 +51,10 @@ sub FetchEmailUser($) {
   
   ($EmailUserID,$Username,$Password,$Name,$EmailAddress,$PreferHTML,$CanSign,$Verified,$AuthorID) = $UserFetch -> fetchrow_array;
   
+  if ($Verified != 1) { # Have some weird ones out there
+    $Verified = 0;
+  }  
+  
   $EmailUser{$EmailUserID}{EmailUserID}  = $EmailUserID;
   $EmailUser{$EmailUserID}{Username}     = $Username;
   $EmailUser{$EmailUserID}{Password}     = $Password;

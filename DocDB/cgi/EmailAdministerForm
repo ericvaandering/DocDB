@@ -65,11 +65,11 @@ unless (CanAdminister()) {
 EndPage();
 
 if ($EmailUserID) {
-  print "<p>This form allows you to ";
+  print "<p>This form allows you to change which groups the user belongs to";
   unless ($UserValidation eq "certificate") {
-    print "reset the user's password, "; 
+    print ", reset the user's password, "; 
   }
-  print "change which groups the user belongs to and change their permissions.</p>";
+  print " and change their permissions.</p>";
 } else {
   print "<p><b>This form allows you to administer personal accounts.</b></p>\n"; 
 
@@ -174,19 +174,13 @@ foreach my $EmailUserID (@EmailUserIDs) {
 # Figure out if there are notifications
 # Can't actually use this until everything is unified. Just too much work right now. 
   my $Count = FetchNotifications( {-emailuserid => $EmailUserID} );
-  my $Notifications = "";
+  my $Notifications = "No";
   if ($Count) { 
     $Notifications = "Yes";
-  } else {
-    $Notifications = "No";
   }
-  
-  if ($EmailUser{$EmailUserID}{Verified} == 1) { 
-    $Verified = "Yes";
-  } else {
-    $Verified = "No";
-  }
-     
+    
+  my $Verified = ("No","Yes")[$EmailUser{$EmailUserID}{Verified}];
+
   ++$Row;
   my $RowClass = ("Odd","Even")[$Row % 2];
 
