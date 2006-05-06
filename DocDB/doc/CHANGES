@@ -3,6 +3,9 @@
   Added an XML output version of Search which will be used in the meta-search to
   be added in the version 7.6.0
 
+  Two new perl modules are required, "XML::Twig" and "HTML::TreeBuilder" Use the
+  "CheckModules" script to verify installation.
+
 7.5.0
   A new, simpler way to search. Just type in one or more words and DocDB will
   search for them in topics, authors, events, doctypes, and all the text fields.
