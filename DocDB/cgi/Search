@@ -505,7 +505,13 @@ if ($OutFormat eq 'HTML') {
                                         -sortby    => $SortBy,     -reverse => $Reverse);
 
   print "<strong>Number of documents found: ",int($NumberOfDocuments),"</strong><p/>\n";
+} else {
+  foreach my $DocumentID (@DocumentIDs) {
+    my $DocumentXML = DocumentXMLOut( {-docid => $DocumentID} );
+    $DocumentXML -> paste(last_child => $DocDBXML );
+  }  
 }
+
 
 ### Print footers
 

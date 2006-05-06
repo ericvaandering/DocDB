@@ -22,6 +22,7 @@
 use XML::Twig;
 
 sub NewXMLOutput {
+  require "DocDBVersion.pm";
   $XMLTwig = XML::Twig -> new();
   $DocDBXML = XML::Twig::Elt -> new(docdb => {version => $DocDBVersion, href => $web_root} );
   return $DocDBXML;
@@ -39,6 +40,15 @@ sub GetXMLOutput {
   $XMLTwig -> set_pretty_print('indented');
   my $XMLText = $DocDBXML -> sprint();
   return $XMLText;
+}
+
+sub DocumentXMLOut {
+  my ($ArgRef) = @_;
+  my $DocumentID = exists $ArgRef->{-docid} ? $ArgRef->{-docid} : 0;
+
+  my $DocumentXML = XML::Twig::Elt -> new(document => {id => $DocumentID, href => $web_root} );
+
+  return $DocumentXML;
 }
 
 1;
