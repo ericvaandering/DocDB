@@ -125,6 +125,7 @@ sub AuthorXMLOut {
   }  
   
   my %Attributes = ();
+  $Attributes{id} = $AuthorID;
   
   my $AuthorXML = XML::Twig::Elt -> new(author => \%Attributes );
   my $First     = XML::Twig::Elt -> new("firstname",$Authors{$AuthorID}{FirstName});
