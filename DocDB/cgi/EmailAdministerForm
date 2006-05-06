@@ -143,7 +143,7 @@ print "<hr/>\n";
 
 my @EmailUserIDs = sort EmailUserIDsByName GetEmailUserIDs();
 
-print "<table class=\"LowPaddedTable Alternating\">\n";
+print "<table class=\"DocumentList Alternating\">\n";
 print "<tr><th>Name</th><th>Username</th><th>Verified?</th><th>Groups</th></tr>\n";
 #print "<th>Notifications</th>\n";
 
