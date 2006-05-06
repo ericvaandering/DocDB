@@ -103,6 +103,7 @@ my @EventGroupSearchIDs = split /\0/,$params{eventgroups};
 my $Simple     = $params{simple};
 my $SimpleText = $params{simpletext};
 
+$OutFormat =~ tr/[a-z]/[A-Z]/;
 if ($OutFormat eq 'XML') {
   print XMLHeader();
   NewXMLOutput();
