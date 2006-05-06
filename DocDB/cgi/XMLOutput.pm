@@ -98,7 +98,8 @@ sub RevisionXMLOut {
   $Attributes{href}     = $ShowDocument."?docid=$DocumentID&amp;version=$Version";
   
   my $RevisionXML = XML::Twig::Elt -> new(docrevision => \%Attributes );
-     
+  XML::Twig::Elt -> new("title",$DocRevisions{$DocRevID}{Title}) -> paste(first_child => $RevisionXML);
+
   if ($Authors) {
     require "AuthorSQL.pm";
     my @AuthorIDs = GetRevisionAuthors($DocRevID);
