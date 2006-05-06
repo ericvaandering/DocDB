@@ -65,9 +65,9 @@ unless (CanAdminister()) {
 EndPage();
 
 if ($EmailUserID) {
-  print "<p>This form allows you to";
+  print "<p>This form allows you to ";
   unless ($UserValidation eq "certificate") {
-    print " reset the user's password,"; 
+    print "reset the user's password, "; 
   }
   print "change which groups the user belongs to and change their permissions.</p>";
 } else {
