@@ -192,7 +192,7 @@ my @SecurityGroups = sort keys %SecurityIDs;
 foreach my $SecurityGroup (@SecurityGroups) {
   my @EmailUserIDs = sort EmailUserIDsByName FetchEmailUserIDsBySecurityGroup($SecurityIDs{$SecurityGroup});
   if (@EmailUserIDs) {
-    print "<p><strong>$SecurityGroup has these members:</strong></p>\n<ul>\n";
+    print "<p><a name=\"$SecurityGroup\"><strong>$SecurityGroup has these members:</strong></p>\n<ul>\n";
     foreach my $EmailUserID (@EmailUserIDs) {
       if ($EmailUser{$EmailUserID}{Name}) { 
         print "<li>$EmailUser{$EmailUserID}{Name} ($EmailUser{$EmailUserID}{Username}, $EmailUser{$EmailUserID}{EmailAddress})</li>\n";
