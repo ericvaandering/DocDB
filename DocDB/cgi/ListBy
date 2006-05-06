@@ -129,7 +129,8 @@ if ($Days) {
   require "MeetingSQL.pm";
   &FetchConferenceByConferenceID($EventID);
 
-  $FieldListOptions{-eventid} = $EventID;
+  $FieldListOptions{-eventid}      = $EventID;
+  $FieldListOptions{-eventgroupid} = $Conferences{$EventID}{EventGroupID};
   $Title   = "Document List by Event";
   $Message = "These documents from <span class=\"Highlight\">$Conferences{$EventID}{LongDescription}</span> are available:";
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
