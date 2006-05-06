@@ -145,10 +145,16 @@ my @EmailUserIDs = sort EmailUserIDsByName GetEmailUserIDs();
 
 print "<table class=\"LowPaddedTable AlternatingTable\">\n";
 print "<tr><th>Username</th><th>Name</th><th>Verified?</th><th>Groups</th><th>Notifications</th></tr>\n";
+my $Row = 0;
 foreach my $EmailUserID (@EmailUserIDs) {
+  ++$Row;
+  my $RowClass = ("Odd","Even")[$Row % 2];
+
+  print '<tr class="$RowClass">',"\n";
   print "<td>$EmailUser{$EmailUserID}{Username}</td>\n"; 
   print "<td>$EmailUser{$EmailUserID}{Name}</td>\n"; 
   print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{Verified}]."</td>\n"; 
+  print "</tr>\n";
 } 
 print "</table>\n";
 
