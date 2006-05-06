@@ -172,8 +172,8 @@ foreach my $EmailUserID (@EmailUserIDs) {
     $Notifications = "No";
   }
   
-  if ($EmailUser{$EmailUserID}{Verified}) { 
-    $Verified = $EmailUser{$EmailUserID}{Verified};
+  if ($EmailUser{$EmailUserID}{Verified} == 1) { 
+    $Verified = "Yes";
   } else {
     $Verified = "No";
   }
