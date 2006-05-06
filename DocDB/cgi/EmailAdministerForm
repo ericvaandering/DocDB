@@ -64,19 +64,28 @@ unless (CanAdminister()) {
 
 EndPage();
 
-print "<p><b>This form allows you to administer personal accounts.</b></p>\n"; 
+if ($EmailUserID) {
+  print "<p>This form allows you to";
+  unless ($UserValidation eq "certificate") {
+    print " reset the user's password,"; 
+  }
+  print "change which groups the user belongs to and change their permissions.</p>";
+} else {
+  print "<p><b>This form allows you to administer personal accounts.</b></p>\n"; 
 
-print "<p>Since users can modify their own data and create their own accounts,
-       the only functions you can perform here are to delete a user";
-unless ($UserValidation eq "certificate") {
-  print ", reset the user's password,"; 
+  print "<p>Since users can modify their own data and create their own accounts,
+         the only functions you can perform here are to delete a user, ";
+  unless ($UserValidation eq "certificate") {
+    print "reset the user's password, "; 
+  }
+  print "change the user's permissions, and change which groups the user belongs to. If  \"Clear Groups\" is
+         selected, the list of groups the user belongs to will be cleared and set
+         to the selected groups (if any). Use this option if any of the groups a user
+         currently belongs to are incorrect. The full list of users and their
+         groups are shown below for your reference.</p>\n";
+
+  print "<p>Click on a username to get an easier form to modify just that user</p>\n";
 }
-print " and change which groups the user belongs to. If  \"Clear Groups\" is
-       selected, the list of groups the user belongs to will be cleared and set
-       to the selected groups (if any). Use this option if any of the groups a user
-       currently belongs to are incorrect. The full list of users, their
-       groups, preferences, and which notifications they recieve are shown
-       below for your reference.</p>\n";
 
 ### Email User Modification
 
@@ -200,7 +209,7 @@ my @SecurityGroups = sort keys %SecurityIDs;
 foreach my $SecurityGroup (@SecurityGroups) {
   my @EmailUserIDs = sort EmailUserIDsByName FetchEmailUserIDsBySecurityGroup($SecurityIDs{$SecurityGroup});
   if (@EmailUserIDs) {
-    print "<p><a name=\"$SecurityGroup\"><strong>$SecurityGroup has these members:</strong></p>\n<ul>\n";
+    print "<p><a name=\"$SecurityGroup\" /><strong>$SecurityGroup has these members:</strong></p>\n<ul>\n";
     foreach my $EmailUserID (@EmailUserIDs) {
       if ($EmailUser{$EmailUserID}{Name}) { 
         print "<li>$EmailUser{$EmailUserID}{Name} ($EmailUser{$EmailUserID}{Username}, $EmailUser{$EmailUserID}{EmailAddress})</li>\n";
