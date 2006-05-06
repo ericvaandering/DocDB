@@ -157,7 +157,7 @@ foreach my $EmailUserID (@EmailUserIDs) {
     FetchSecurityGroup($UserGroupID);
     push @Groups,"<a href=\"#$SecurityGroups{$UserGroupID}{NAME}\">$SecurityGroups{$UserGroupID}{NAME}</a>";
   }       
-  my $Groups = join "<br/>",@Groups; 
+  my $Groups = join "<br/>",sort @Groups; 
   unless ($Groups) {
     $Groups = "None";
   }
@@ -171,14 +171,22 @@ foreach my $EmailUserID (@EmailUserIDs) {
   } else {
     $Notifications = "No";
   }
-      
+  
+  if ($EmailUser{$EmailUserID}{Verified}) { 
+    $Verified = "Yes";
+  } else {
+    $Verified = "No";
+  }
+     
   ++$Row;
   my $RowClass = ("Odd","Even")[$Row % 2];
 
+  my $Link = $EmailAdministerForm."?emailuserid=$EmailUserID";
+
   print "<tr class=\"$RowClass\">\n";
-  print "<td>$EmailUser{$EmailUserID}{Name}</td>\n"; 
-  print "<td>$EmailUser{$EmailUserID}{Username}</td>\n"; 
-  print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{Verified}]."</td>\n"; 
+  print "<td><a href=\"$Link\">$EmailUser{$EmailUserID}{Name}</a>    </td>\n"; 
+  print "<td><a href=\"$Link\">$EmailUser{$EmailUserID}{Username}</a></td>\n"; 
+  print "<td>$Verified</td>\n"; 
   print "<td>$Groups</td>\n";
 #  print "<td>$Notifications</td>\n";
   print "</tr>\n";
