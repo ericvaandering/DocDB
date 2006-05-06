@@ -73,6 +73,7 @@ print "<hr/>\n";
 
 # Advanced search table
 
+print '<a name="Advanced" />';
 print $query -> start_multipart_form('POST',$Search,"name=\"queryform\"");
 print "<table class=\"SearchFormTable HighPaddedTable CenteredTable\">\n";
 print "<tr>\n";

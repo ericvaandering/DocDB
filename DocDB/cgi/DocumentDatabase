@@ -109,17 +109,17 @@ if (&CanCreate()) {
 }
 
 #print "<div class=\"HomepageMainChoice\"><strong><a href=\"$SearchForm\">Search</a> for documents</strong></div>\n"; 
-my $SearchForm  = $query -> startform('POST',$Search);
-   $SearchForm .= "<div>\n";
-   $SearchForm .= $query -> submit (-value => "Search");
-   $SearchForm .= " <strong>for</strong> "; 
-   $SearchForm .= $query -> textfield(-name => "simpletext", -size => 40, -maxlength => 300);
-   $SearchForm .= $query -> hidden(-name => "simple", -default => '1');
-   $SearchForm .= " (<a href=\"$SearchForm#Advanced\">Advanced<\a>)"; 
-   $SearchForm .= "\n</div>\n";
-   $SearchForm .= $query -> endform;
+my $SearchDiv  = $query -> startform('POST',$Search);
+   $SearchDiv .= "<div>\n";
+   $SearchDiv .= $query -> submit (-value => "Search");
+   $SearchDiv .= " <strong>for</strong> "; 
+   $SearchDiv .= $query -> textfield(-name => "simpletext", -size => 40, -maxlength => 300);
+   $SearchDiv .= $query -> hidden(-name => "simple", -default => '1');
+   $SearchDiv .= " (<a href=\"$SearchForm#Advanced\">Advanced<\a>)"; 
+   $SearchDiv .= "\n</div>\n";
+   $SearchDiv .= $query -> endform;
 
-print "<div class=\"HomepageMainChoice\">$SearchForm</div>\n";  
+print "<div class=\"HomepageMainChoice\">$SearchDiv</div>\n";  
 
 my $ShowForm  = $query -> startform('POST',$ShowDocument);
    $ShowForm .= "<div>\n";
