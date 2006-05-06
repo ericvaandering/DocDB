@@ -173,7 +173,7 @@ foreach my $EmailUserID (@EmailUserIDs) {
   }
   
   if ($EmailUser{$EmailUserID}{Verified}) { 
-    $Verified = "Yes";
+    $Verified = $EmailUser{$EmailUserID}{Verified};
   } else {
     $Verified = "No";
   }

@@ -37,7 +37,7 @@ sub GetEmailUserIDs () {
 
 sub FetchEmailUser($) {
   my ($eMailUserID) = @_;
-  my ($EmailUserID,$Username,$Password,$Name,$EmailAddress,$PreferHTML,$CanSign);
+  my ($EmailUserID,$Username,$Password,$Name,$EmailAddress,$PreferHTML,$CanSign,$Verified,$AuthorID);
 
   my $UserFetch   = $dbh -> prepare(
     "select EmailUserID,Username,Password,Name,EmailAddress,PreferHTML,CanSign,Verified,AuthorID ".
