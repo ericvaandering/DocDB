@@ -24,7 +24,11 @@ use XML::Twig;
 sub NewXMLOutput {
   require "DocDBVersion.pm";
   $XMLTwig = XML::Twig -> new();
-  $DocDBXML = XML::Twig::Elt -> new(docdb => {version => $DocDBVersion, href => $web_root} );
+  $DocDBXML = XML::Twig::Elt -> new(docdb => {version      => $DocDBVersion, 
+                                              href         => $web_root,
+                                              project      => $Project,
+                                              shortproject => $ShortProject,
+                                             } );
   return $DocDBXML;
 }
 
@@ -50,8 +54,8 @@ sub DocumentXMLOut {
   unless ($DocumentID) { return undef; }
   
   my %Attributes = ();
-  $Attributes{id}   = $DocumentID;
-  $Attributes{href} = $ShowDocument."?docid=$DocumentID";
+  $Attributes{id}           = $DocumentID;
+  $Attributes{href}         = $ShowDocument."?docid=$DocumentID";
   
   if ($Documents{$DocumentID}{Relevance}) { 
     $DocAttributes{relevance} = $Documents{$DocumentID}{Relevance};
@@ -123,8 +127,12 @@ sub AuthorXMLOut {
   
   my $AuthorXML = XML::Twig::Elt -> new(author => \%Attributes );
   my $First     = XML::Twig::Elt -> new("firstname",$Authors{$AuthorID}{FirstName});
+  my $Last      = XML::Twig::Elt -> new("lastname", $Authors{$AuthorID}{LastName});
+  my $Full      = XML::Twig::Elt -> new("fullname", $Authors{$AuthorID}{FULLNAME});
         
   $First -> paste(last_child => $AuthorXML);
+  $Last  -> paste(last_child => $AuthorXML);
+  $Full  -> paste(last_child => $AuthorXML);
     
   return $AuthorXML; 
 }
