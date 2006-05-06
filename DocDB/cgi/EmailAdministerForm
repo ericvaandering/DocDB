@@ -147,13 +147,24 @@ print "<table class=\"LowPaddedTable AlternatingTable\">\n";
 print "<tr><th>Username</th><th>Name</th><th>Verified?</th><th>Groups</th><th>Notifications</th></tr>\n";
 my $Row = 0;
 foreach my $EmailUserID (@EmailUserIDs) {
+  my @Groups = ();
+  my @UserGroupIDs = FetchUserGroupIDs($EmailUserID);
+  foreach my $UserGroupID (@UserGroupIDs) {
+    FetchSecurityGroup($UserGroupID);
+    push @Groups,$SecurityGroups{$UserGroupID}{NAME};
+  }       
+  my $Groups = join "<br/>",@Groups; 
+  
   ++$Row;
   my $RowClass = ("Odd","Even")[$Row % 2];
 
-  print '<tr class="$RowClass">',"\n";
+  print "<tr class=\"$RowClass\">\n";
   print "<td>$EmailUser{$EmailUserID}{Username}</td>\n"; 
   print "<td>$EmailUser{$EmailUserID}{Name}</td>\n"; 
   print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{Verified}]."</td>\n"; 
+  print "<td>$Groups</td>\n";
+
+
   print "</tr>\n";
 } 
 print "</table>\n";
