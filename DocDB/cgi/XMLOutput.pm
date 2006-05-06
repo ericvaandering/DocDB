@@ -44,21 +44,55 @@ sub GetXMLOutput {
 
 sub DocumentXMLOut {
   my ($ArgRef) = @_;
-  my $DocumentID = exists $ArgRef->{-docid} ? $ArgRef->{-docid} : 0;
+  my $DocumentID = exists $ArgRef->{-docid}   ? $ArgRef->{-docid}   : 0;
+  my $Version    = exists $ArgRef->{-version} ? $ArgRef->{-version} : "lastaccesible";
 
   unless ($DocumentID) { return undef; }
   
-  my %DocAttributes = ();
-  $DocAttributes{id}   = $DocumentID;
-  $DocAttributes{href} = $ShowDocument."?docid=$DocumentID";
+  my %Attributes = ();
+  $Attributes{id}   = $DocumentID;
+  $Attributes{href} = $ShowDocument."?docid=$DocumentID";
   
   if ($Documents{$DocumentID}{Relevance}) { 
     $DocAttributes{relevance} = $Documents{$DocumentID}{Relevance};
   }
   
-  my $DocumentXML = XML::Twig::Elt -> new(document => \%DocAttributes );
+  my $DocumentXML = XML::Twig::Elt -> new(document => \%Attributes );
+
+  if ($Version eq "lastaccesible") {
+    require "Security.pm";
+    $Version = LastAccess($DocumentID);
+    my $DocRevID = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+    my $RevisionXML = RevisionXMLOut( {-docrevid => $DocRevID} );
+    if ($RevisionXML) {
+      $RevisionXML -> paste(last_child => $DocumentXML);
+    }
+  }
 
   return $DocumentXML;
 }
+
+sub RevisionXMLOut {
+  my ($ArgRef) = @_;
+  my $DocRevID = exists $ArgRef->{-docrevid} ? $ArgRef->{-docrevid} : 0;
+  
+  require "Security.pm";
+
+  my $Version    = $DocRevisions{$DocRevID}{Version};
+  my $DocumentID = $DocRevisions{$DocRevID}{DOCID}  ;
+ 
+  unless ($DocRevID && CanAccess($DocumentID,$Version) ) {
+    return undef;
+  }
+  
+  my %Attributes = ();
+  
+  $Attributes{version} = $Version;
+  $Attributes{href}    = $ShowDocument."?docid=$DocumentID&amp;version=$Version";
+  
+  my $RevisionXML = XML::Twig::Elt -> new(docrevision => \%Attributes );
+     
+  return $RevisionXML;
+}  
 
 1;
