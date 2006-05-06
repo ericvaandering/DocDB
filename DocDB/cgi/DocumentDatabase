@@ -115,7 +115,7 @@ my $SearchDiv  = $query -> startform('POST',$Search);
    $SearchDiv .= " <strong>for</strong> "; 
    $SearchDiv .= $query -> textfield(-name => "simpletext", -size => 40, -maxlength => 300);
    $SearchDiv .= $query -> hidden(-name => "simple", -default => '1');
-   $SearchDiv .= " (<a href=\"$SearchForm#Advanced\">Advanced</a>)"; 
+   $SearchDiv .= " <strong>(<a href=\"$SearchForm#Advanced\">Advanced</a>)</strong>"; 
    $SearchDiv .= "\n</div>\n";
    $SearchDiv .= $query -> endform;
 
