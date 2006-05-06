@@ -41,6 +41,9 @@ my @Modules = (
                "XML::Parser::PerlSAX",
                "XML::PatAct::MatchName",
                "XML::PatAct::ToObjects",
+               "XML::Twig",
+               "LWP::Simple",
+               "HTML::TreeBuilder",
               );
 
 foreach $mod (@Modules) {
