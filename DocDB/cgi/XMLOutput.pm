@@ -46,7 +46,17 @@ sub DocumentXMLOut {
   my ($ArgRef) = @_;
   my $DocumentID = exists $ArgRef->{-docid} ? $ArgRef->{-docid} : 0;
 
-  my $DocumentXML = XML::Twig::Elt -> new(document => {id => $DocumentID, href => $web_root} );
+  unless ($DocumentID) { return undef; }
+  
+  my %DocAttributes = ();
+  $DocAttributes{id}   = $DocumentID;
+  $DocAttributes{href} = $ShowDocument."?docid=$DocumentID";
+  
+  if ($Documents{$DocumentID}{Relevance}) { 
+    $DocAttributes{relevance} = $Documents{$DocumentID}{Relevance};
+  }
+  
+  my $DocumentXML = XML::Twig::Elt -> new(document => \%DocAttributes );
 
   return $DocumentXML;
 }

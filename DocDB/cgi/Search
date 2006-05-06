@@ -508,7 +508,9 @@ if ($OutFormat eq 'HTML') {
 } else {
   foreach my $DocumentID (@DocumentIDs) {
     my $DocumentXML = DocumentXMLOut( {-docid => $DocumentID} );
-    $DocumentXML -> paste(last_child => $DocDBXML );
+    if ($DocumentXML) {
+      $DocumentXML -> paste(last_child => $DocDBXML );
+    }  
   }  
 }
 
