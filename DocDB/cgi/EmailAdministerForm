@@ -46,6 +46,10 @@ require "NotificationSQL.pm";
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
+%params = $query -> Vars;
+
+my $EmailUserID  = $params{emailuserid} || 0;
+
 GetSecurityGroups();
 
 print $query->header;
@@ -78,7 +82,7 @@ print " and change which groups the user belongs to. If  \"Clear Groups\" is
 
 print $query -> start_multipart_form('POST',"$EmailAdminister",
                                      "id=\"peraccount\" name=\"peraccount\"");
-print "<table class=\"HighPaddedTable\">\n";
+print "<table class=\"MedPaddedTable\">\n";
 print "<tr>\n";
 
 print "<td colspan=\"3\">\n";
@@ -139,10 +143,12 @@ print "<hr/>\n";
 
 my @EmailUserIDs = sort EmailUserIDsByName GetEmailUserIDs();
 
-print "<table class=\"LowPaddedTable\">\n";
+print "<table class=\"LowPaddedTable AlternatingTable\">\n";
+print "<tr><th>Username</th><th>Name</th><th>Verified?</th><th>Groups</th><th>Notifications</th></tr>\n";
 foreach my $EmailUserID (@EmailUserIDs) {
-  PrintEmailUserInfo($EmailUserID);
-  print "<tr><td colspan=\"5\"><hr/></td></tr>\n";
+  print "<td>$EmailUser{$EmailUserID}{Username}</td>\n"; 
+  print "<td>$EmailUser{$EmailUserID}{Name}</td>\n"; 
+  print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{Verified}]."</td>\n"; 
 } 
 print "</table>\n";
 
