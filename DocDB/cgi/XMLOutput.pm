@@ -75,6 +75,7 @@ sub DocumentXMLOut {
 sub RevisionXMLOut {
   my ($ArgRef) = @_;
   my $DocRevID = exists $ArgRef->{-docrevid} ? $ArgRef->{-docrevid} : 0;
+  my $Authors  = exists $ArgRef->{-authors}  ? $ArgRef->{-authors}  : $TRUE;
   
   require "Security.pm";
 
@@ -87,12 +88,45 @@ sub RevisionXMLOut {
   
   my %Attributes = ();
   
-  $Attributes{version} = $Version;
-  $Attributes{href}    = $ShowDocument."?docid=$DocumentID&amp;version=$Version";
+  $Attributes{docid}    = $DocumentID;
+  $Attributes{version}  = $Version;
+  $Attributes{modified} = $DocRevisions{$DocRevID}{Date};
+  $Attributes{href}     = $ShowDocument."?docid=$DocumentID&amp;version=$Version";
   
   my $RevisionXML = XML::Twig::Elt -> new(docrevision => \%Attributes );
      
+  if ($Authors) {
+    require "AuthorSQL.pm";
+    my @AuthorIDs = GetRevisionAuthors($DocRevID);
+    foreach my $AuthorID (@AuthorIDs) {
+      my $AuthorXML = AuthorXMLOut( {-authorid => $AuthorID} );
+      if ($AuthorXML) {
+        $AuthorXML -> paste(last_child => $RevisionXML);
+      }  
+    }
+  }
+         
   return $RevisionXML;
 }  
+
+sub AuthorXMLOut {
+  my ($ArgRef) = @_;
+  my $AuthorID = exists $ArgRef->{-authorid} ? $ArgRef->{-authorid} : 0;
+  
+  require "AuthorSQL.pm";
+  
+  unless ($AuthorID && FetchAuthor($AuthorID)) {
+    return undef;
+  }  
+  
+  my %Attributes = ();
+  
+  my $AuthorXML = XML::Twig::Elt -> new(author => \%Attributes );
+  my $First     = XML::Twig::Elt -> new("firstname",$Authors{$AuthorID}{FirstName});
+        
+  $First -> paste(last_child => $AuthorXML);
+    
+  return $AuthorXML; 
+}
 
 1;
