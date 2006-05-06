@@ -29,6 +29,7 @@ sub GetEmailUserIDs () {
   $EmailIDQuery -> execute();
   $EmailIDQuery -> bind_columns(undef,\($EmailUserID));
   while ($EmailIDQuery -> fetch) {
+    FetchEmailUser($EmailUserID);
     push @EmailUserIDs,$EmailUserID;
   }
   return @EmailUserIDs;

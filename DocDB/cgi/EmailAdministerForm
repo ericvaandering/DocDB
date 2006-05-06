@@ -143,8 +143,8 @@ print "<hr/>\n";
 
 my @EmailUserIDs = sort EmailUserIDsByName GetEmailUserIDs();
 
-print "<table class=\"LowPaddedTable AlternatingTable\">\n";
-print "<tr><th>Username</th><th>Name</th><th>Verified?</th><th>Groups</th></tr>\n";
+print "<table class=\"LowPaddedTable Alternating\">\n";
+print "<tr><th>Name</th><th>Username</th><th>Verified?</th><th>Groups</th></tr>\n";
 #print "<th>Notifications</th>\n";
 
 my $Row = 0;
@@ -176,8 +176,8 @@ foreach my $EmailUserID (@EmailUserIDs) {
   my $RowClass = ("Odd","Even")[$Row % 2];
 
   print "<tr class=\"$RowClass\">\n";
-  print "<td>$EmailUser{$EmailUserID}{Username}</td>\n"; 
   print "<td>$EmailUser{$EmailUserID}{Name}</td>\n"; 
+  print "<td>$EmailUser{$EmailUserID}{Username}</td>\n"; 
   print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{Verified}]."</td>\n"; 
   print "<td>$Groups</td>\n";
 #  print "<td>$Notifications</td>\n";
