@@ -108,7 +108,18 @@ if (&CanCreate()) {
   print "<div class=\"HomepageMainChoice\"><strong><a href=\"$ModifyHome\">Create or change documents or other information</a></strong></div>\n";
 }
 
-print "<div class=\"HomepageMainChoice\"><strong><a href=\"$SearchForm\">Search</a> for documents</strong></div>\n"; 
+#print "<div class=\"HomepageMainChoice\"><strong><a href=\"$SearchForm\">Search</a> for documents</strong></div>\n"; 
+my $SearchForm  = $query -> startform('POST',$Search);
+   $SearchForm .= "<div>\n";
+   $SearchForm .= $query -> submit (-value => "Search");
+   $SearchForm .= " <strong>for</strong> "; 
+   $SearchForm .= $query -> textfield(-name => "simpletext", -size => 40, -maxlength => 300);
+   $SearchForm .= $query -> hidden(-name => "simple", -default => '1');
+   $SearchForm .= " (<a href=\"$SearchForm#Advanced\">Advanced<\a>)"; 
+   $SearchForm .= "\n</div>\n";
+   $SearchForm .= $query -> endform;
+
+print "<div class=\"HomepageMainChoice\">$SearchForm</div>\n";  
 
 my $ShowForm  = $query -> startform('POST',$ShowDocument);
    $ShowForm .= "<div>\n";
