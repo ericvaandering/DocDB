@@ -77,7 +77,7 @@ print "</div>\n";  # LeftColumn3Col
 
 print "<div id=\"MainColumn3Col\">\n";
 print "<strong>Document Management: ";
-print "(".FormElement(-helplink => "modifytypes", -helptext => "Which option do I choose?",
+print "(".FormElementTitle(-helplink => "modifytypes", -helptext => "Which option do I choose?",
                       -nocolon  => $TRUE,         -nobreak  => $TRUE).")";
 
 ### New upload short form
@@ -89,7 +89,7 @@ print $query -> submit (-value => "Create a new");
 print " document from "; 
 print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
 print " file(s) on your "; 
-print FormElement(-helplink => "uploadmethod", -helptext => "local computer",
+print FormElementTitle(-helplink => "uploadmethod", -helptext => "local computer",
                   -nocolon  => $TRUE,          -nobreak  => $TRUE);
 print $query -> hidden(-name => 'mode',    -default => 'add');
 print $query -> hidden(-name => 'upload',    -default => 'file');
@@ -104,7 +104,7 @@ print $query -> submit (-value => "Create a new");
 print " document from "; 
 print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
 print " file(s) on the "; 
-print FormElement(-helplink => "uploadmethod", -helptext => "web",
+print FormElementTitle(-helplink => "uploadmethod", -helptext => "web",
                   -nocolon  => $TRUE,          -nobreak  => $TRUE);
 print $query -> hidden(-name => 'mode',    -default => 'add');
 print $query -> hidden(-name => 'upload',    -default => 'http');
@@ -266,7 +266,7 @@ print "<tr><th colspan=\"2\"><big>Customized Insert/Modify</big><br/>
        customized document creation or update form.<br/> Make a selection from each
        group.</th></tr>\n";
 print "<tr><td class=\"LeftHeader\">\n";
-print FormElement(-helplink => "modifytypes", -helptext => "Type of modification",
+print FormElementTitle(-helplink => "modifytypes", -helptext => "Type of modification",
                   -nobreak  => $TRUE);
 print "</td>\n";
 
@@ -283,7 +283,7 @@ print "<td>\n";
 print "</td></tr>\n";
 
 print "<tr><td class=\"LeftHeader\">\n";
-print FormElement(-helplink => "uploadtype", -helptext => "Upload type",
+print FormElementTitle(-helplink => "uploadtype", -helptext => "Upload type",
                   -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
@@ -297,7 +297,7 @@ print "<td>\n";
 print "</td></tr>\n";
 
 print "<tr><td class=\"LeftHeader\">\n";
-print FormElement(-helplink => "uploadmethod", -helptext => "Upload method",
+print FormElementTitle(-helplink => "uploadmethod", -helptext => "Upload method",
                   -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
@@ -305,7 +305,7 @@ print $query -> radio_group(-name => "upload", -values => \@uploads, -default =>
 print "</td></tr>\n";
 
 print "<tr><td class=\"LeftHeader\">\n";
-print FormElement(-helplink => "topicoption", -helptext => "Topic Selection",
+print FormElementTitle(-helplink => "topicoption", -helptext => "Topic Selection",
                   -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
@@ -321,7 +321,7 @@ print $query -> radio_group(-name => "authormode", -values => \@authormodes, -de
 print "</td></tr>\n";
 
 print "<tr><td class=\"LeftHeader\">\n";
-print FormElement(-helplink => "dateoverride", -helptext => "Override submit date",
+print FormElementTitle(-helplink => "dateoverride", -helptext => "Override submit date",
                   -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
