@@ -140,6 +140,7 @@ print "</tr>\n";
 
 if ($EmailUserID) {
   print "<tr><td colspan=\"3\">\n";
+  print $query -> hidden(-name => "singleuser", -default => '1');
   if ($DefaultVerified) {
     print $query -> checkbox(-name => "verifyuser", -label => 'User is Verified', -checked => 'Yes');
   } else {

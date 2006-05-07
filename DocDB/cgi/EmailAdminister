@@ -43,18 +43,15 @@ require "EmailUserHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 
-%params = $query -> Vars;
-
-@ErrorStack = ();
-@WarnStack  = ();
-
 # Parameters to script 
 
+%params = $query -> Vars;
 my $Password      = $params{password};
 my $Username      = $params{admuser};
 my $Action        = $params{admaction};
 
 my $EmailUserID   = $params{emailuserid};
+my $SingleUser    = $params{singleuser};
 my $NewPassword   = $params{resetpw};
 my $ClearGroups   = ($params{cleargroups} eq "on");
 my $ClearUser     = ($params{clearuser}   eq "on");
@@ -64,22 +61,20 @@ my @UsersGroupIDs = split /\0/,$params{usergroups};
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
-@WarnStack  = ();
 unless ($dbh) {
   push @ErrorStack,$Msg_AdminNoConnect;
 }         
 
 print $query->header;
-&DocDBHeader("Modified E-mail Users");
+DocDBHeader("Modified E-mail Users");
 
-&EndPage(@ErrorStack);
+EndPage();
+GetSecurityGroups();
 
-unless (&CanAdminister) {
+unless (CanAdminister()) {
   push @ErrorStack,$Msg_AdminNoLogin;
 }  
-&EndPage(@ErrorStack);
-
-&GetSecurityGroups;
+EndPage();
 
 if      ($Action eq "Delete") { # Delete user
   if (!$EmailUserID) {
@@ -100,14 +95,14 @@ if      ($Action eq "Delete") { # Delete user
       }  
     }
   }
-  print "<b>The User was deleted.</b><p>\n";
+  push @ActionStack,"The user was deleted.";
 } elsif ($Action eq "Modify") { 
   unless ($EmailUserID) { # Deal with password changes 
     push @ErrorStack,$Msg_ModEUserEmpty;
   }
-  &EndPage(@ErrorStack);
+  EndPage();
 
-  &FetchEmailUser($EmailUserID);
+  FetchEmailUser($EmailUserID);
 
   if ($NewPassword) { 
     srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
@@ -118,27 +113,29 @@ if      ($Action eq "Delete") { # Delete user
     my $EncryptedPassword = crypt($NewPassword,$Salt);
     my $UserUpdate = $dbh -> prepare("update EmailUser set Password=? where EmailUserID=?");
        $UserUpdate -> execute($EncryptedPassword,$EmailUserID);
-    print "<b>The User's password was changed. They should change it again ASAP.</b><p>\n";
+    push @ActionStack,"The User's password was changed. They should change it again ASAP.";
   }
-  if ($ClearGroups) {
+  if ($ClearGroups || $SingleUser) {
     my $UsersGroupDelete = $dbh -> prepare("delete from UsersGroup where EmailUserID=?");
        $UsersGroupDelete -> execute($EmailUserID);
-    print "<b>All associations between the user and groups have been deleted.</b><p>\n";
+    push @ActionStack,"All associations between the user and groups have been deleted.";
   }
-  if ($ClearUser) {
+  if ($ClearUser || $SingleUser) {
     my $UserUpdate = $dbh -> prepare("update EmailUser set CanSign=0,Verified=0 where EmailUserID=?");
        $UserUpdate -> execute($EmailUserID);
-    print "<b>The user is no longer verified and cannot sign documents.</b><p>\n";
+    unless ($SingleUser) {   
+      push @ActionStack,"The user is no longer verified and cannot sign documents.";
+    }  
   }
   if ($UserSign) {
     my $UserUpdate = $dbh -> prepare("update EmailUser set CanSign=1 where EmailUserID=?");
        $UserUpdate -> execute($EmailUserID);
-    print "<b>The user may now sign documents.</b><p>\n";
+    push @ActionStack,"The user may sign documents.";
   }
   if ($VerifyUser) {
     my $UserUpdate = $dbh -> prepare("update EmailUser set Verified=1 where EmailUserID=?");
        $UserUpdate -> execute($EmailUserID);
-    print "<b>The user is now verified.</b><p>\n";
+    push @ActionStack,"The user is verified.";
     
     if ($MailInstalled && $UserValidation eq "certificate") {
       require "EmailUtilities.pm";
@@ -149,7 +146,7 @@ if      ($Action eq "Delete") { # Delete user
       $Body      .= "$EmailUser{$EmailUserID}{Name} for access to $Project DocDB. ";
       $Body      .= "If you did not request access to $Project DocDB, ";
       $Body      .= "please contact $DBWebMasterEmail immediately.";
-      &SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
+      SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
     }
   }
   foreach my $UsersGroupID (@UsersGroupIDs) {
@@ -160,15 +157,16 @@ if      ($Action eq "Delete") { # Delete user
       my $UsersGroupUpdate = $dbh -> prepare("insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) ".
                                              " values (0,?,?)");
          $UsersGroupUpdate -> execute($EmailUserID,$UsersGroupID); 
-      &FetchSecurityGroup($UsersGroupID);
-      print "Added user to $SecurityGroups{$UsersGroupID}{NAME}<br/>";
+      FetchSecurityGroup($UsersGroupID);
+      push @ActionStack,"Added user to $SecurityGroups{$UsersGroupID}{NAME}";
     }  
   }  
   
   ClearEmailUsers();
   FetchEmailUser($EmailUserID);
+  ActionReport();
                            
-  print "<p><strong>The user now has the following information:</strong></p>";
+  print "<h3>The user now has the following information:</h3>";
   print "<table class=\"LowPaddedTable\">\n";
   PrintEmailUserInfo($EmailUserID);
   print "</table>\n";
@@ -178,12 +176,10 @@ if      ($Action eq "Delete") { # Delete user
   push @ErrorStack,"No valid action was specified.";
 }  
 
-print "<p>\n";
+EndPage();
+WarnPage();
 
-&EndPage(@ErrorStack);
-&WarnPage(@WarnStack);
-
-&DocDBNavBar;
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  
 exit;
