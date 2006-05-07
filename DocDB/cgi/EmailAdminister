@@ -80,10 +80,12 @@ if      ($Action eq "Delete") { # Delete user
   if (!$EmailUserID) {
     push @ErrorStack,$Msg_ModEUserEmpty;
   } else {
-    my $UserDelete = $dbh -> prepare("delete from EmailUser where EmailUserID=?");
-       $UserDelete -> execute($EmailUserID);
-    my $UsersGroupDelete = $dbh -> prepare("delete from UsersGroup where EmailUserID=?");
-       $UsersGroupDelete -> execute($EmailUserID);
+    my $UserDelete         = $dbh -> prepare("delete from EmailUser    where EmailUserID=?");
+    my $UsersGroupDelete   = $dbh -> prepare("delete from UsersGroup   where EmailUserID=?");
+    my $NotificationDelete = $dbh -> prepare("delete from Notification where EmailUserID=?");
+    $UsersGroupDelete   -> execute($EmailUserID);
+    $NotificationDelete -> execute($EmailUserID);
+    $UserDelete         -> execute($EmailUserID);
 
     my @NotifyTimes = ("Immediate","Daily","Weekly");
     my @NotifyTypes = ("Author","Keyword","Topic");

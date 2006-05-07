@@ -250,7 +250,7 @@ if ($EmailUserID) {
         if ($EmailUser{$EmailUserID}{Name}) { 
           print "<li>$EmailUser{$EmailUserID}{Name} ($EmailUser{$EmailUserID}{Username}, $EmailUser{$EmailUserID}{EmailAddress})</li>\n";
         } else {
-          print "<li>Unknown</li>\n";
+          print "<li>Unknown (ID: $EmailUserID)</li>\n";
         }  
       }
       print "</ul>\n";
