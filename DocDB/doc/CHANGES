@@ -1,3 +1,12 @@
+7.5.1
+
+  A somewhat simpler user interface for administering personal account
+  (certificates, email notifications. You can still use the old form if you
+  know what user you want to act on and what you want to change. But, if you
+  click on the person's name in the summary table that follows, you get a
+  slightly simpler form for just that one person that (especially) makes adding
+  or removing a group easier.
+
 7.5.0
   A new, simpler way to search. Just type in one or more words and DocDB will
   search for them in topics, authors, events, doctypes, and all the text fields.
