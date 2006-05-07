@@ -90,7 +90,7 @@ if ($EmailUserID) {
 
 ### Gather info for EmailUserID mode
 
-my @DefaultUsersGroups = ()
+my @DefaultUsersGroups = ();
 
 if ($EmailUserID) {
   @DefaultUsersGroups = FetchUserGroupIDs($EmailUserID);

@@ -534,9 +534,9 @@ sub EmailUserSelect (%) {
   my (%Params) = @_;
   
   my $Disabled = $Params{-disabled}  || "0";
-  
+  my @Defaults = @{$Params{-default}}; 
+
   my %Options = ();
- 
   if ($Disabled) {
     $Options{-disabled} = "disabled";
   }  
@@ -550,10 +550,11 @@ sub EmailUserSelect (%) {
   @EmailUserIDs = sort EmailUserIDsByName @EmailUserIDs;
   
   print FormElementTitle(-helplink => "emailuser", -helptext => "Username"); 
-  print $query -> scrolling_list(-name => 'emailuserid', 
+  print $query -> scrolling_list(-name   => 'emailuserid', 
                                  -values => \@EmailUserIDs, 
                                  -labels => \%EmailUserLabels, 
-                                 -size => 10, %Options);
+                                 -size   => 10, -default => \@Defaults, 
+                                 %Options);
 
 }
   
