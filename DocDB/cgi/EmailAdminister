@@ -96,8 +96,9 @@ if      ($Action eq "Delete") { # Delete user
            $NotifyDelete -> execute($EmailUserID);
       }  
     }
+    push @ActionStack,"The user was deleted.";
   }
-  push @ActionStack,"The user was deleted.";
+  ActionReport();
 } elsif ($Action eq "Modify") { 
   unless ($EmailUserID) { # Deal with password changes 
     push @ErrorStack,$Msg_ModEUserEmpty;
