@@ -70,7 +70,8 @@ if ($EmailUserID) {
   unless ($UserValidation eq "certificate") {
     print "reset the user's password, "; 
   }
-  print " and change their permissions.</p>";
+  print " and change their permissions. The full information, including
+          notifications, for the user is shown below.</p>";
 } else {
   print "<p><b>This form allows you to administer personal accounts.</b></p>\n"; 
 
@@ -178,8 +179,8 @@ print "</table>\n";
 print $query -> end_multipart_form;
 
 if ($EmailUserID) {
-  print "<h4>User Information</h4>";
-  print '<table class="MedPaddedTable CenteredTable">';
+  print "<h4>Full User Information</h4>";
+  print '<table class="MedPaddedTable">';
   PrintEmailUserInfo($EmailUserID);
   print '</table>';
 } else {
