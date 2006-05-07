@@ -85,7 +85,7 @@ if ($EmailUserID) {
          currently belongs to are incorrect. The full list of users and their
          groups are shown below for your reference.</p>\n";
 
-  print "<p>Click on a username to get an easier form to modify just that user</p>\n";
+  print "<p>Click on a username to get an simpler form to modify just that user.</p>\n";
 }
 
 ### Gather info for EmailUserID mode
@@ -178,7 +178,10 @@ print "</table>\n";
 print $query -> end_multipart_form;
 
 if ($EmailUserID) {
+  print "<h4>User Information</h4>";
+  print '<table class="MedPaddedTable CenteredTable">';
   PrintEmailUserInfo($EmailUserID);
+  print '</table>';
 } else {
   print "<p>\n";
   print "<b>The personal accounts and when they receive e-mail are shown below:</b></p>\n";
