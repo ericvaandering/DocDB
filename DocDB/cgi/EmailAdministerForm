@@ -212,7 +212,8 @@ if ($EmailUserID) {
     }
 
   # Figure out if there are notifications
-  # Can't actually use this until everything is unified. Just too much work right now. 
+  # FIXME: Can't actually use this until everything is unified. Just too much work right now. 
+  # FIXME: Also add option to delete all notifications when this is unified
     my $Count = FetchNotifications( {-emailuserid => $EmailUserID} );
     my $Notifications = "No";
     if ($Count) { 
@@ -255,7 +256,6 @@ if ($EmailUserID) {
     }     
   }
 }
-print "<p/><hr/><p/>\n";
 
 DocDBNavBar();
 DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
