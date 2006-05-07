@@ -78,7 +78,7 @@ print "</div>\n";  # LeftColumn3Col
 print "<div id=\"MainColumn3Col\">\n";
 print "<strong>Document Management: ";
 print "(".FormElementTitle(-helplink => "modifytypes", -helptext => "Which option do I choose?",
-                           -nocolon  => $TRUE,         -nobreak  => $TRUE).")";
+                           -nobold => $TRUE, -nocolon  => $TRUE,         -nobreak  => $TRUE).")";
 
 ### New upload short form
 
