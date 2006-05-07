@@ -78,7 +78,7 @@ print "</div>\n";  # LeftColumn3Col
 print "<div id=\"MainColumn3Col\">\n";
 print "<strong>Document Management: ";
 print "(".FormElementTitle(-helplink => "modifytypes", -helptext => "Which option do I choose?",
-                      -nocolon  => $TRUE,         -nobreak  => $TRUE).")";
+                           -nocolon  => $TRUE,         -nobreak  => $TRUE).")";
 
 ### New upload short form
 
@@ -90,7 +90,7 @@ print " document from ";
 print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
 print " file(s) on your "; 
 print FormElementTitle(-helplink => "uploadmethod", -helptext => "local computer",
-                  -nocolon  => $TRUE,          -nobreak  => $TRUE);
+                       -nocolon  => $TRUE,          -nobreak  => $TRUE);
 print $query -> hidden(-name => 'mode',    -default => 'add');
 print $query -> hidden(-name => 'upload',    -default => 'file');
 print "\n</div>\n",$query -> endform,"\n\n";
@@ -105,7 +105,7 @@ print " document from ";
 print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
 print " file(s) on the "; 
 print FormElementTitle(-helplink => "uploadmethod", -helptext => "web",
-                  -nocolon  => $TRUE,          -nobreak  => $TRUE);
+                       -nocolon  => $TRUE,          -nobreak  => $TRUE);
 print $query -> hidden(-name => 'mode',    -default => 'add');
 print $query -> hidden(-name => 'upload',    -default => 'http');
 print "\n</div>\n",$query -> endform,"\n\n";
@@ -267,7 +267,7 @@ print "<tr><th colspan=\"2\"><big>Customized Insert/Modify</big><br/>
        group.</th></tr>\n";
 print "<tr><td class=\"LeftHeader\">\n";
 print FormElementTitle(-helplink => "modifytypes", -helptext => "Type of modification",
-                  -nobreak  => $TRUE);
+                       -nobreak  => $TRUE);
 print "</td>\n";
 
 print "<td>\n";
@@ -284,7 +284,7 @@ print "</td></tr>\n";
 
 print "<tr><td class=\"LeftHeader\">\n";
 print FormElementTitle(-helplink => "uploadtype", -helptext => "Upload type",
-                  -nobreak  => $TRUE);
+                       -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
  print "<table class=\"CustomButtons\"><tr><td>\n";
@@ -298,7 +298,7 @@ print "</td></tr>\n";
 
 print "<tr><td class=\"LeftHeader\">\n";
 print FormElementTitle(-helplink => "uploadmethod", -helptext => "Upload method",
-                  -nobreak  => $TRUE);
+                       -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
 print $query -> radio_group(-name => "upload", -values => \@uploads, -default => $UploadMethodPref, -labels => \%uploads);
@@ -306,15 +306,15 @@ print "</td></tr>\n";
 
 print "<tr><td class=\"LeftHeader\">\n";
 print FormElementTitle(-helplink => "topicoption", -helptext => "Topic Selection",
-                  -nobreak  => $TRUE);
+                       -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
 print $query -> radio_group(-name => "topicmode", -values => \@topicmodes, -default => $TopicModePref, -labels => \%topicmodes);
 print "</td></tr>\n";
 
 print "<tr><td class=\"LeftHeader\">\n";
-print "<a "; &HelpLink("authoroption"); 
-print "<b>Author Selection:</b></a>\n";
+print FormElementTitle(-helplink => "authoroption", -helptext => "Author Selection",
+                       -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
 print $query -> radio_group(-name => "authormode", -values => \@authormodes, -default => $AuthorModePref, -labels => \%authormodes);
@@ -322,7 +322,7 @@ print "</td></tr>\n";
 
 print "<tr><td class=\"LeftHeader\">\n";
 print FormElementTitle(-helplink => "dateoverride", -helptext => "Override submit date",
-                  -nobreak  => $TRUE);
+                       -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
 print $query -> radio_group(-name => "overdate", -values => ['No','Yes'],
@@ -352,16 +352,16 @@ print "<big>Customized Add/Replace Files</big><br/>\n";
 print "Use this form to produce a customized file addition form.<br/>Make a
        selection from each group.</th></tr>\n";
 print "<tr><td class=\"LeftHeader\">\n";
-print "<a "; &HelpLink("docnumber"); 
-print "<b>Update Doc #:</b></a>\n";
+print FormElementTitle(-helplink => "docnumber", -helptext => "Update Doc #",
+                       -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 print "</td></tr>\n";
 
 print "<tr><td class=\"LeftHeader\">\n";
-print "<a "; &HelpLink("uploadtype"); 
-print "<b>Upload type:</b></a>\n";
+print FormElementTitle(-helplink => "uploadtype", -helptext => "Upload type",
+                       -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
 print "<table class=\"CustomButtons\"><tr><td>\n";
@@ -374,8 +374,8 @@ print "</td></tr></table>\n";
 print "</td></tr>\n";
 
 print "<tr><td class=\"LeftHeader\">\n";
-print "<a "; &HelpLink("uploadmethod"); 
-print "<b>Upload method:</b></a>\n";
+print FormElementTitle(-helplink => "uploadmethod", -helptext => "Upload method",
+                       -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
 print $query -> radio_group(-name => "upload", -values => \@uploads, -labels => \%uploads);
