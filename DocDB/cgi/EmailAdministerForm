@@ -91,9 +91,16 @@ if ($EmailUserID) {
 ### Gather info for EmailUserID mode
 
 my @DefaultUsersGroups = ();
-
+my ($DefaultCanSign,$DefaultVerified);
 if ($EmailUserID) {
+  FetchEmailUser($EmailUserID);
   @DefaultUsersGroups = FetchUserGroupIDs($EmailUserID);
+  if ($EmailUser{$EmailUserID}{Verified}) {
+    $DefaultVerified = $TRUE;
+  }  
+  if ($EmailUser{$EmailUserID}{CanSign}) {
+    $DefaultCanSign = $TRUE;
+  }  
 }
 
 ### Email User Modification
@@ -130,11 +137,25 @@ SecurityScroll(-helplink => 'usergroups', -helptext => 'User\'s Groups',
 print "</td>\n";  
 print "</tr>\n";
 
+if ($EmailUserID) {
+  print "<tr><td colspan=\"3\">\n";
+  if ($DefaultVerified) {
+    print $query -> checkbox(-name => "verifyuser", -label => 'User is Verified', -checked => 'Yes');
+  } else {
+    print $query -> checkbox(-name => "verifyuser", -label => 'User is Verified');
+  }
+  print "</td></tr>\n";
+} else {
+  print "<tr><td colspan=\"3\">\n";
+  print $query -> checkbox(-name  => "verifyuser", -label => 'Verify User');
+  print "</td></tr>\n";
+}
 print "<tr><td colspan=\"3\">\n";
-print $query -> checkbox(-name  => "verifyuser", -label => 'Verify User');
-print "</td></tr>\n";
-print "<tr><td colspan=\"3\">\n";
-print $query -> checkbox(-name  => "usersign", -label => 'User Can Sign Docs');
+if ($DefaultCanSign) {
+  print $query -> checkbox(-name => "usersign", -label => 'User Can Sign Docs', -checked => 'Yes');
+} else {
+  print $query -> checkbox(-name => "usersign", -label => 'User Can Sign Docs');
+}
 print "</td></tr>\n";
 unless ($EmailUserID) { 
   print "<tr><td colspan=\"3\">\n";
