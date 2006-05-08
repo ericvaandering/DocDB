@@ -3,7 +3,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -23,8 +23,11 @@
 sub FetchSecurityGroupsByCert (%) {
   require "SecuritySQL.pm"; 
   my %Params = @_;
-  my $EmailUserID  = &FetchEmailUserIDByCert(%Params);
-  my @UserGroupIDs = &FetchUserGroupIDs($EmailUserID);
+  my $EmailUserID  = FetchEmailUserIDByCert(%Params);
+  if ($EmailUser{$EmailUserID}{Verified} != 1) {
+    return;
+  }  
+  my @UserGroupIDs = FetchUserGroupIDs($EmailUserID);
   return @UserGroupIDs;
 }
 

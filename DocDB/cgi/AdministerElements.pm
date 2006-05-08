@@ -62,48 +62,41 @@ sub GroupEntryBox (%) {
 
   my (%Params) = @_;
   
-  my $Disabled = $Params{-disabled}  || "0";
+  my $Disabled = $Params{-disabled}  || $FALSE;
   
-  my $Booleans = "";
-  
+  my %Options = ();
   if ($Disabled) {
-    $Booleans .= "-disabled";
+    $Options{-disabled} = "disabled";
   }  
   
-  print "<table cellpadding=5><tr valign=top>\n";
+  print '<table class="MedPaddedTable"><tr>';
   print "<td>\n";
-  print "<b><a ";
-  &HelpLink("groupentry");
-  print "Name:</a></b><br> \n";
+  print FormElementTitle(-helplink => "groupentry", -helptext => "Name");
   print $query -> textfield (-name => 'name', 
-                             -size => 16, -maxlength => 16, $Booleans);
+                             -size => 16, -maxlength => 16, %Options);
   print "</td></tr>\n";
 
   print "<tr><td>\n";
-  print "<b><a ";
-  &HelpLink("groupentry");
-  print "Description:</a></b><br> \n";
+  print FormElementTitle(-helplink => "groupentry", -helptext => "Description");
   print $query -> textfield (-name => 'description', 
-                             -size => 40, -maxlength => 64, $Booleans);
+                             -size => 40, -maxlength => 64, %Options);
   print "</td></tr>\n";
 
   print "<tr><td>\n";
-  print "<b><a ";
-  &HelpLink("groupperm");
-  print "Permissions:</a></b><br> \n";
-  print $query -> checkbox(-name => "remove",  
-                           -value => 'remove', -label => '',, $Booleans);
-  print "<b>Remove existing permissions</b>\n";
-  print "<br>\n";
-
+  print FormElementTitle(-helplink => "groupperm", -helptext => "Permissions");
   print $query -> checkbox(-name => "create",  
-                           -value => 'create', -label => '', $Booleans);
-  print "<b>May create documents</b>\n";
-  print "<br>\n";
+                           -value => 'create', -label => '', %Options);
+  print "<strong>May create documents</strong>\n";
+  print "<br/>\n";
 
   print $query -> checkbox(-name => "admin",  
-                           -value => 'admin', -label => '', $Booleans);
-  print "<b>May administer database</b> \n";
+                           -value => 'admin', -label => '', %Options);
+  print "<strong>May administer database</strong> \n";
+  print "<br/>\n";
+  print $query -> checkbox(-name => "remove",  
+                           -value => 'remove', -label => '', %Options);
+  print "<strong>Remove existing permissions</strong>\n";
+
   print "</td></tr>\n";
   print "</table>\n";
 }

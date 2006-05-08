@@ -682,7 +682,7 @@ sub FormElementTitle (%) {
   my $Required  = $Params{-required}  || 0;
 
   my $TitleText = "";
-  my $Colon = "";
+  my $Colon     = "";
   
   unless ($HelpLink || $Text) {
     return $TitleText;
@@ -713,7 +713,7 @@ sub FormElementTitle (%) {
   } 
   
   if ($NoBreak) { 
-    $TitleText .= "\n";
+#    $TitleText .= "\n";
   } else {
     $TitleText .= "<br/>\n";
   }  

@@ -155,7 +155,7 @@ sub GetInstitutions { # Creates/fills a hash $Institutions{$InstitutionID}{} wit
   while ($inst_list -> fetch) {
     $Institutions{$InstitutionID}{InstitutionID} = $InstitutionID;
     $Institutions{$InstitutionID}{SHORT}         = $ShortName;
-    $Institutions{$InstitutionID}{LONG}          =  $LongName;
+    $Institutions{$InstitutionID}{LONG}          = $LongName;
   }
   $HaveAllInstitutions = 1;
 }

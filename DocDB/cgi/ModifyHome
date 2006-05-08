@@ -3,7 +3,7 @@
 # Author Eric Vaandering (ewv@fnal.gov)
 #
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -28,6 +28,7 @@ require "HTMLUtilities.pm";
 require "SecuritySQL.pm";
 require "Scripts.pm";
 require "ResponseElements.pm";
+require "FormElements.pm";
 require "Messages.pm";
 require "Cookies.pm";
 require "Security.pm";
@@ -38,17 +39,17 @@ require "MeetingSecurityUtilities.pm";
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&GetSecurityGroups;
+GetSecurityGroups();
 
 print $query->header;
-&DocDBHeader("Document Modifications","",-scripts => ["PopUps"]);
+DocDBHeader("Document Modifications","",-scripts => ["PopUps"]);
 @ErrorStack = ();
 
 if ($Public || !&CanCreate()) {
   push @ErrorStack,"You are not allowed to modify or create documents.";
 }
 
-my $PersonalAccountLink = &PersonalAccountLink();
+my $PersonalAccountLink = PersonalAccountLink();
 
 print "<div id=\"ModifyHomeBody\">\n";
 
@@ -76,8 +77,8 @@ print "</div>\n";  # LeftColumn3Col
 
 print "<div id=\"MainColumn3Col\">\n";
 print "<strong>Document Management: ";
-print "(<a "; &HelpLink("modifytypes"); 
-print "Which option do I choose?</a>)</strong>\n";
+print "(".FormElementTitle(-helplink => "modifytypes", -helptext => "Which option do I choose?",
+                           -nobold => $TRUE, -nocolon  => $TRUE,         -nobreak  => $TRUE).")</strong>";
 
 ### New upload short form
 
@@ -87,9 +88,9 @@ print "\n",$query -> startform('POST',$DocumentAddForm),"<div>\n";
 print $query -> submit (-value => "Create a new");
 print " document from "; 
 print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
-print " file(s) on your <b><a "; 
-&HelpLink("uploadmethod"); 
-print "local computer</a></b> \n"; 
+print " file(s) on your "; 
+print FormElementTitle(-helplink => "uploadmethod", -helptext => "local computer",
+                       -nocolon  => $TRUE,          -nobreak  => $TRUE);
 print $query -> hidden(-name => 'mode',    -default => 'add');
 print $query -> hidden(-name => 'upload',    -default => 'file');
 print "\n</div>\n",$query -> endform,"\n\n";
@@ -102,10 +103,9 @@ print "\n",$query -> startform('POST',$DocumentAddForm),"<div>\n";
 print $query -> submit (-value => "Create a new");
 print " document from "; 
 print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
-print " file(s) on the <b><a "; 
-&HelpLink("uploadmethod"); 
-print "web</a></b> \n"; 
-#print "(no need to reserve the document).\n";
+print " file(s) on the "; 
+print FormElementTitle(-helplink => "uploadmethod", -helptext => "web",
+                       -nocolon  => $TRUE,          -nobreak  => $TRUE);
 print $query -> hidden(-name => 'mode',    -default => 'add');
 print $query -> hidden(-name => 'upload',    -default => 'http');
 print "\n</div>\n",$query -> endform,"\n\n";
@@ -157,7 +157,7 @@ print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 print "\n</div>\n",$query -> endform,"\n\n";
 print "</li>"; 
 
-if (&CanAdminister()) { # Delete Form
+if (CanAdminister()) { # Delete Form
   print "<li>"; 
   print "\n",$query -> startform('POST',$DeleteConfirm),"<div>\n";
   print $query -> submit (-value => "Delete");
@@ -168,7 +168,7 @@ if (&CanAdminister()) { # Delete Form
 }
 print "</ul>\n";
 
-if (&CanCreateMeeting()) {
+if (CanCreateMeeting()) {
   print "<strong>Event Management</strong>\n";
   print "<ul>\n";
 
@@ -213,7 +213,7 @@ print "<ul>\n";
 print "<li>Add an <a href=\"$AuthorAddForm\">author</a></li>\n";
 print "</ul>\n";
            
-if (&CanAdminister()) {
+if (CanAdminister()) {
   print "<p><b>Administrator only functions:</b></p>\n";
   print "<ul>\n";
   print "<li>Add a <a href=\"$TopicAddForm\">minor topic</a> (sub-topic)</li>\n";
@@ -258,7 +258,7 @@ $authormodes{field}  = "Text field";
 $authormodes{list} = "Selectable list";
 @authormodes = ("list","field");
 
-&GetPrefsCookie;
+GetPrefsCookie();
 
 print "<table id=\"CustomCreate\" class=\"GenCustomForm\">\n";
 print "<tr><th colspan=\"2\"><big>Customized Insert/Modify</big><br/>
@@ -266,8 +266,8 @@ print "<tr><th colspan=\"2\"><big>Customized Insert/Modify</big><br/>
        customized document creation or update form.<br/> Make a selection from each
        group.</th></tr>\n";
 print "<tr><td class=\"LeftHeader\">\n";
-print "<a "; &HelpLink("modifytypes"); 
-print "<b>Type of modification:</b></a>\n";
+print FormElementTitle(-helplink => "modifytypes", -helptext => "Type of modification",
+                       -nobreak  => $TRUE);
 print "</td>\n";
 
 print "<td>\n";
@@ -283,8 +283,8 @@ print "<td>\n";
 print "</td></tr>\n";
 
 print "<tr><td class=\"LeftHeader\">\n";
-print "<a "; &HelpLink("uploadtype"); 
-print "<b>Upload type:</b></a>\n";
+print FormElementTitle(-helplink => "uploadtype", -helptext => "Upload type",
+                       -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
  print "<table class=\"CustomButtons\"><tr><td>\n";
@@ -297,32 +297,32 @@ print "<td>\n";
 print "</td></tr>\n";
 
 print "<tr><td class=\"LeftHeader\">\n";
-print "<a "; &HelpLink("uploadmethod"); 
-print "<b>Upload method:</b></a>\n";
+print FormElementTitle(-helplink => "uploadmethod", -helptext => "Upload method",
+                       -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
 print $query -> radio_group(-name => "upload", -values => \@uploads, -default => $UploadMethodPref, -labels => \%uploads);
 print "</td></tr>\n";
 
 print "<tr><td class=\"LeftHeader\">\n";
-print "<a "; &HelpLink("topicoption"); 
-print "<b>Topic Selection:</b></a>\n";
+print FormElementTitle(-helplink => "topicoption", -helptext => "Topic Selection",
+                       -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
 print $query -> radio_group(-name => "topicmode", -values => \@topicmodes, -default => $TopicModePref, -labels => \%topicmodes);
 print "</td></tr>\n";
 
 print "<tr><td class=\"LeftHeader\">\n";
-print "<a "; &HelpLink("authoroption"); 
-print "<b>Author Selection:</b></a>\n";
+print FormElementTitle(-helplink => "authoroption", -helptext => "Author Selection",
+                       -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
 print $query -> radio_group(-name => "authormode", -values => \@authormodes, -default => $AuthorModePref, -labels => \%authormodes);
 print "</td></tr>\n";
 
 print "<tr><td class=\"LeftHeader\">\n";
-print "<a "; &HelpLink("dateoverride"); 
-print "<b>Override submit date:</b></a>\n";
+print FormElementTitle(-helplink => "dateoverride", -helptext => "Override submit date",
+                       -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
 print $query -> radio_group(-name => "overdate", -values => ['No','Yes'],
@@ -352,16 +352,16 @@ print "<big>Customized Add/Replace Files</big><br/>\n";
 print "Use this form to produce a customized file addition form.<br/>Make a
        selection from each group.</th></tr>\n";
 print "<tr><td class=\"LeftHeader\">\n";
-print "<a "; &HelpLink("docnumber"); 
-print "<b>Update Doc #:</b></a>\n";
+print FormElementTitle(-helplink => "docnumber", -helptext => "Update Doc #",
+                       -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 print "</td></tr>\n";
 
 print "<tr><td class=\"LeftHeader\">\n";
-print "<a "; &HelpLink("uploadtype"); 
-print "<b>Upload type:</b></a>\n";
+print FormElementTitle(-helplink => "uploadtype", -helptext => "Upload type",
+                       -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
 print "<table class=\"CustomButtons\"><tr><td>\n";
@@ -374,8 +374,8 @@ print "</td></tr></table>\n";
 print "</td></tr>\n";
 
 print "<tr><td class=\"LeftHeader\">\n";
-print "<a "; &HelpLink("uploadmethod"); 
-print "<b>Upload method:</b></a>\n";
+print FormElementTitle(-helplink => "uploadmethod", -helptext => "Upload method",
+                       -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
 print $query -> radio_group(-name => "upload", -values => \@uploads, -labels => \%uploads);

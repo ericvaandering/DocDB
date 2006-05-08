@@ -48,8 +48,9 @@ sub DocDBHeader {
   }
   print "<html>\n";
   print "<head>\n";
+  print '<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />',"\n";
   print "<title>$Title</title>\n";
-  
+
   # Include DocDB style sheets
   
   my @PublicCSS = ("");

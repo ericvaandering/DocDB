@@ -1,3 +1,25 @@
+7.5.1
+  Two new perl modules are required for this release:
+  "XML::Twig" and "HTML::TreeBuilder" 
+  Use the "CheckModules" script to verify installation.
+
+  Added the quick search to the homepage instead of the link to "Search" Link is
+  also there as "Advanced"
+
+  Added an XML output version of Search which will be used in the meta-search to
+  be added in the version 7.6.0
+
+  Add option for removing all subordinate groups of a group. Otherwise, once
+  a subordinate group was set for a group, that group always had to have at
+  least one. Also change help to better explain what is going on with groups.
+
+  A somewhat simpler user interface for administering personal account
+  (certificates, email notifications. You can still use the old form if you
+  know what user you want to act on and what you want to change. But, if you
+  click on the person's name in the summary table that follows, you get a
+  slightly simpler form for just that one person that (especially) makes adding
+  or removing a group easier.
+
 7.5.0
   A new, simpler way to search. Just type in one or more words and DocDB will
   search for them in topics, authors, events, doctypes, and all the text fields.

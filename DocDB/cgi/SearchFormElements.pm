@@ -272,7 +272,7 @@ sub LogicTypeButtons { # Two buttons allow control whether inner and outer
 }
 
 sub ModeSelect { # Display Mode selecter for searches 
-  print FormElementTitle(-helptext => "Sort by", -helplink => "displaymode", -nobreak => $TRUE);
+  print FormElementTitle(-helptext => "Sort by", -helplink => "displaymode", -nobreak => $TRUE),"\n";
   my %Modes = ();
   $Modes{date}    = "Date with document #";
   $Modes{meeting} = "Author with topics and files";

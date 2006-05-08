@@ -38,6 +38,7 @@ require "HTMLUtilities.pm";
 require "Utilities.pm";
 require "ResponseElements.pm";
 require "Security.pm";
+require "XMLOutput.pm";
 
 require "SearchAtoms.pm";
 
@@ -62,10 +63,9 @@ GetSecurityGroups();
 
 %params = $query -> Vars;
 
-print $query->header;
-DocDBHeader("$Project Document Search Results","Search Results");
-
 ### Pull info out of params into local variables
+
+my $OutFormat = $params{outformat} || "HTML";
 
 $InnerLogic  = $params{innerlogic} || "OR";
 $OuterLogic  = $params{outerlogic} || "AND";
@@ -102,6 +102,15 @@ my @EventGroupSearchIDs = split /\0/,$params{eventgroups};
 
 my $Simple     = $params{simple};
 my $SimpleText = $params{simpletext};
+
+$OutFormat =~ tr/[a-z]/[A-Z]/;
+if ($OutFormat eq 'XML') {
+  print XMLHeader();
+  NewXMLOutput();
+} else {
+  print $query->header;
+  DocDBHeader("$Project Document Search Results","Search Results");
+}
 
 if ($Simple) { # Break up words and set parameters for rest of search
   @RequesterSearchIDs  = ();
@@ -190,23 +199,24 @@ unless ($OuterLogic eq "AND" || $OuterLogic eq "OR") {
   push @ErrorStack,"Outer logic must be either AND or OR.";
 }   
 
-EndPage();
-
-print "<p>\n";
+if ($OutFormat eq 'HTML') {
+  EndPage();
+  print "<p>\n";
+}
 
 if ($TitleSearch || $AbstractSearch || $KeywordSearch || $RevisionNoteSearch || 
     $PubInfoSearch || @RequesterSearchIDs || $SQLBegin    || $SQLEnd) {
   $SearchedRevisions = 1;
 ### Text search matches
-  my $TitlePhrase        = &TextSearch("DocumentTitle",  $TitleSearchMode,        $TitleSearch);
-  my $AbstractPhrase     = &TextSearch("Abstract",       $AbstractSearchMode,     $AbstractSearch);
-  my $KeywordPhrase      = &TextSearch("Keywords",       $KeywordSearchMode,      $KeywordSearch);
-  my $RevisionNotePhrase = &TextSearch("Note",           $RevisionNoteSearchMode, $RevisionNoteSearch);
-  my $PubInfoPhrase      = &TextSearch("PublicationInfo",$PubInfoSearchMode,      $PubInfoSearch);
+  my $TitlePhrase        = TextSearch("DocumentTitle",  $TitleSearchMode,        $TitleSearch);
+  my $AbstractPhrase     = TextSearch("Abstract",       $AbstractSearchMode,     $AbstractSearch);
+  my $KeywordPhrase      = TextSearch("Keywords",       $KeywordSearchMode,      $KeywordSearch);
+  my $RevisionNotePhrase = TextSearch("Note",           $RevisionNoteSearchMode, $RevisionNoteSearch);
+  my $PubInfoPhrase      = TextSearch("PublicationInfo",$PubInfoSearchMode,      $PubInfoSearch);
 
 ### Other matches
 
-  my $RequesterPhrase = &IDSearch("DocumentRevision","SubmitterID","OR",@RequesterSearchIDs);
+  my $RequesterPhrase    = IDSearch("DocumentRevision","SubmitterID","OR",@RequesterSearchIDs);
 
   my $EndDatePhrase;
   my $StartDatePhrase;
@@ -489,17 +499,31 @@ if ($Simple) {
 
 ### Print table
 
-my %FieldList = PrepareFieldList(%FieldListOptions);
-my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs, 
-                                      -sortby    => $SortBy,     -reverse => $Reverse);
+if ($OutFormat eq 'HTML') {
+  my %FieldList = PrepareFieldList(%FieldListOptions);
+  my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs, 
+                                        -sortby    => $SortBy,     -reverse => $Reverse);
 
-print "<strong>Number of documents found: ",int($NumberOfDocuments),"</strong><p/>\n";
+  print "<strong>Number of documents found: ",int($NumberOfDocuments),"</strong><p/>\n";
+} else {
+  foreach my $DocumentID (@DocumentIDs) {
+    my $DocumentXML = DocumentXMLOut( {-docid => $DocumentID} );
+    if ($DocumentXML) {
+      $DocumentXML -> paste(last_child => $DocDBXML);
+    }  
+  }  
+}
+
 
 ### Print footers
 
 $EndTime  = new Benchmark;
 
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+if ($OutFormat eq 'HTML') {
+  DocDBNavBar();
+  DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+} elsif ($OutFormat eq 'XML') {
+  print GetXMLOutput();
+}
 
 exit;

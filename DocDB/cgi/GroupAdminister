@@ -9,7 +9,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -46,21 +46,23 @@ $query = new CGI;  # Global for subroutines
 
 # Parameters to script 
 
-my $Password      = $params{password};
-my $Username      = $params{admuser};
-my $Action        = $params{admaction};
+my $Password       = $params{password};
+my $Username       = $params{admuser};
+my $Action         = $params{admaction};
 
-my $Description = $params{description};
-my $Name        = $params{name};
-my $ParentID    = $params{parent};
-my @ChildIDs    = split /\0/,$params{child};
-my $Create      = $params{create};
-my $Admin       = $params{admin};
-my $NoPerm      = $params{remove};
+my $Description    = $params{description};
+my $Name           = $params{name};
+my $ParentID       = $params{parent};
+my @ChildIDs       = split /\0/,$params{child};
+my $Create         = $params{create};
+my $Admin          = $params{admin};
+my $NoPerm         = $params{remove};
+my $RemoveChildren = $params{removesubs};
 
-if ($Create) {$Create = 1;} # Make sure they are in format MySQL is expecting
-if ($Admin)  {$Admin  = 1;}
-if ($NoPerm) {$NoPerm = 1;}
+if ($Create)         {$Create = 1;} # Make sure they are in format MySQL is expecting
+if ($Admin)          {$Admin  = 1;}
+if ($NoPerm)         {$NoPerm = 1;}
+if ($RemoveChildren) {$RemoveChildren = 1;}
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
@@ -69,16 +71,16 @@ unless ($dbh) {
 }         
 
 print $query->header;
-&DocDBHeader("Modified Groups");
+DocDBHeader("Modified Groups");
 
-&EndPage(@ErrorStack);
+EndPage(@ErrorStack);
 
-unless (&CanAdminister) {
+unless (CanAdminister()) {
   push @ErrorStack,$Msg_AdminNoLogin;
 }  
-&EndPage(@ErrorStack);
+EndPage(@ErrorStack);
 
-&GetSecurityGroups;
+GetSecurityGroups();
 
 if      ($Action eq "Delete") { # Delete group
   if (!$ParentID) {
@@ -93,24 +95,24 @@ if      ($Action eq "Delete") { # Delete group
     $GroupDelete       -> execute($ParentID);
     $RevSecurityDelete -> execute($ParentID);
     $HierarchyDelete   -> execute($ParentID,$ParentID);
-    print "<b>$SecurityGroups{$ParentID}{NAME} has been deleted.</b><br>\n";
+    push @ActionStack,"$SecurityGroups{$ParentID}{NAME} has been deleted.";
   }
 } elsif ($Action eq "Modify") { # Modify group
   unless ($ParentID) {
     push @ErrorStack,$Msg_ModGroupEmpty;
   }
-  &EndPage(@ErrorStack);
+  EndPage(@ErrorStack);
 
 # Deal with name changes     
 
   if ($Name) { 
-    print "<b>Updating group name.</b><br>\n";
+    push @ActionStack,"Updating group name.";
     my $GroupUpdate = $dbh->prepare(
        "update SecurityGroup set Name=? where GroupID=?");
     $GroupUpdate -> execute($Name,$ParentID);
   }
   if ($Description) { 
-    print "<b>Updating group description.</b><br>\n";
+    push @ActionStack,"Updating group description.";
     my $GroupUpdate = $dbh->prepare(
        "update SecurityGroup set Description=? where GroupID=?");
     $GroupUpdate -> execute($Description,$ParentID);
@@ -118,8 +120,8 @@ if      ($Action eq "Delete") { # Delete group
 
 # Update parent child relationships. Delete the old and add new relationships
 
-  if (@ChildIDs) {
-    print "<b>Deleting all subordinates.</b><br>\n";
+  if (@ChildIDs || $RemoveChildren) {
+    push @ActionStack,"Deleting all subordinate relationships.";
     my $HierarchyDelete = $dbh -> prepare("delete from GroupHierarchy   ".
                                     "where ParentID=?");
        $HierarchyDelete -> execute($ParentID);
@@ -129,7 +131,7 @@ if      ($Action eq "Delete") { # Delete group
                          "values (0,?,?)");
     foreach my $ChildID (@ChildIDs) {
       if ($ChildID && $ChildID != $ParentID) {
-        print "<b>Adding subordinate.</b><br>\n";
+        push @ActionStack,"Adding subordinate.";
         $HierarchyInsert -> execute($ChildID,$ParentID);
       }
     }     
@@ -154,7 +156,7 @@ if      ($Action eq "Delete") { # Delete group
   }  
      
 } elsif ($Action eq "New") { # Create new groups
-  print "<b>Adding a new group.</b><br>\n";
+  push @ActionStack,"Adding a new group.";
   my $GroupInsert = $dbh->prepare(
    "insert into SecurityGroup (GroupID,Name,Description,CanCreate,CanAdminister) ".
                       "values (0,?,?,?,?)");
@@ -176,36 +178,35 @@ if      ($Action eq "Delete") { # Delete group
 
 # For modify or new fetch institution information and display.
 
+ActionReport();
+WarnPage(@WarnStack);
+EndPage(@ErrorStack);
+
 if ($Action eq "Modify" || $Action eq "New") {
-  &ClearSecurityGroups;
-  &GetSecurityGroups;
-  print "<p><b>Here are the results of your modification:<br>\n";
-  print "<table cellpadding=10>\n";
-  print "<tr valign=top>\n";
-  print "<td><b>$SecurityGroups{$ParentID}{NAME}</b><br>($SecurityGroups{$ParentID}{Description})</td>\n";
+  ClearSecurityGroups();
+  GetSecurityGroups();
+  print "<h4>This is the new group information:</h4>\n";
+  print '<table class="HighPaddedTable CenteredTable">';
+  print "<tr>\n";
+  print "<td><strong>$SecurityGroups{$ParentID}{NAME}</strong><br/>
+         ($SecurityGroups{$ParentID}{Description})</td>\n";
   print "<td>\n";
   print "Dominant groups:\n";
-  &PrintGroupParents($ParentID);
+  PrintGroupParents($ParentID);
   print "</td>\n";
   print "<td>\n";
   print "Subordinate groups:\n";
-  &PrintGroupChildren($ParentID);
+  PrintGroupChildren($ParentID);
   print "</td>\n";
   print "<td>\n";
   print "Permissions:\n";
-  &PrintGroupPermissions($ParentID);
+  PrintGroupPermissions($ParentID);
   print "</td>\n";
   print "</tr>\n";
   print "</table>\n";
-  print "</b><p>\n";
 }  
 
-print "<p>\n";
-
-&WarnPage(@WarnStack);
-&EndPage(@ErrorStack);
-
-&DocDBNavBar;
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  
 exit;

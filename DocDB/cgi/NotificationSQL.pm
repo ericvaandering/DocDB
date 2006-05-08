@@ -29,6 +29,7 @@ sub GetEmailUserIDs () {
   $EmailIDQuery -> execute();
   $EmailIDQuery -> bind_columns(undef,\($EmailUserID));
   while ($EmailIDQuery -> fetch) {
+    FetchEmailUser($EmailUserID);
     push @EmailUserIDs,$EmailUserID;
   }
   return @EmailUserIDs;
@@ -36,7 +37,7 @@ sub GetEmailUserIDs () {
 
 sub FetchEmailUser($) {
   my ($eMailUserID) = @_;
-  my ($EmailUserID,$Username,$Password,$Name,$EmailAddress,$PreferHTML,$CanSign);
+  my ($EmailUserID,$Username,$Password,$Name,$EmailAddress,$PreferHTML,$CanSign,$Verified,$AuthorID);
 
   my $UserFetch   = $dbh -> prepare(
     "select EmailUserID,Username,Password,Name,EmailAddress,PreferHTML,CanSign,Verified,AuthorID ".
@@ -49,6 +50,10 @@ sub FetchEmailUser($) {
   $UserFetch -> execute($eMailUserID);
   
   ($EmailUserID,$Username,$Password,$Name,$EmailAddress,$PreferHTML,$CanSign,$Verified,$AuthorID) = $UserFetch -> fetchrow_array;
+  
+  if ($Verified != 1) { # Have some weird ones out there
+    $Verified = 0;
+  }  
   
   $EmailUser{$EmailUserID}{EmailUserID}  = $EmailUserID;
   $EmailUser{$EmailUserID}{Username}     = $Username;

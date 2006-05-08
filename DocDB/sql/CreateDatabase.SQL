@@ -426,9 +426,9 @@ CREATE TABLE EmailUser (
   EmailAddress char(64) NOT NULL default '',
   PreferHTML int(11) NOT NULL default '0',
   TimeStamp timestamp(14) NOT NULL,
-  CanSign int(11) default NULL,
-  Verified int(11) default NULL,
-  AuthorID int(11) default NULL,
+  CanSign int(11) NOT NULL default '0',
+  Verified int(11) NOT NULL default '0',
+  AuthorID int(11) NOT NULL default '0',
   PRIMARY KEY  (EmailUserID)
 ) TYPE=MyISAM;
 
