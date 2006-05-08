@@ -25,6 +25,7 @@ sub FetchSecurityGroupsByCert (%) {
   my %Params = @_;
   my $EmailUserID  = FetchEmailUserIDByCert(%Params);
   if ($EmailUser{$EmailUserID}{Verified} != 1) {
+    push @DebugStack,"User is not verified";
     return;
   }  
   my @UserGroupIDs = FetchUserGroupIDs($EmailUserID);
@@ -32,11 +33,13 @@ sub FetchSecurityGroupsByCert (%) {
 }
 
 sub FetchEmailUserIDByCert (%) {
-  require "SecuritySQL.pm"; 
   my %Params = @_;
 
   my $IgnoreVerification = $Params{-ignoreverification};
  
+  require "SecuritySQL.pm"; 
+  require "NotificationSQL.pm"; 
+
   my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
   my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
 
@@ -59,6 +62,10 @@ sub FetchEmailUserIDByCert (%) {
 
   my ($EmailUserID) = $EmailUserSelect -> fetchrow_array; 
   push @DebugStack,"Found e-mail user: $EmailUserID";
+
+  if ($EmailUserID) {
+    FetchEmailUser($EmailUserID)
+  }
   
   return $EmailUserID;
 }
