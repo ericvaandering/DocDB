@@ -72,8 +72,11 @@ sub DocumentXMLOut {
       $RevisionXML -> paste(last_child => $DocumentXML);
     }
   }
-
-  return $DocumentXML;
+  if ($RevisionXML) {
+    return $DocumentXML;
+  } else {
+    return undef;
+  }    
 }
 
 sub RevisionXMLOut {
