@@ -38,7 +38,7 @@ DocDBHeader("List of Authors");
 
 print "<h3>All Existing Authors";
 unless ($Public) {
-  print '(<a href="$AuthorAddForm">Add</a> a new author)';
+  print "(<a href=\"$AuthorAddForm\">Add</a> a new author)";
 }
 print "</h3>\n";
 
