@@ -63,16 +63,18 @@ sub DocumentXMLOut {
   
   my $DocumentXML = XML::Twig::Elt -> new(document => \%Attributes );
 
+  my $AccessibleRevision = $FALSE;
   if ($Version eq "lastaccesible") {
     require "Security.pm";
     $Version = LastAccess($DocumentID);
     my $DocRevID = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
     my $RevisionXML = RevisionXMLOut( {-docrevid => $DocRevID} );
     if ($RevisionXML) {
+      $AccessibleRevision = $TRUE;
       $RevisionXML -> paste(last_child => $DocumentXML);
     }
   }
-  if ($RevisionXML) {
+  if ($AccessibleRevision) {
     return $DocumentXML;
   } else {
     return undef;
