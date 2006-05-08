@@ -13,7 +13,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -58,6 +58,10 @@ sub ProjectBodyStart {
   $PageTitle = join '&nbsp;',@TitleParts;
 
   print "<h1>$PageTitle</h1>\n";
+  # show the navbar at the top of the page as well as at the bottom
+  if ($dbh) {
+     &DocDBNavBar();
+  }
 }
 
 sub ProjectFooter {
@@ -107,7 +111,7 @@ sub DocDBNavBar {
 
   print "<div class=\"DocDBNavBar\">\n";
   if ($ExtraDesc && $ExtraURL) {
-    print "[&nbsp;<a href=\"$ExtraURL\"l>$ExtraDesc</a>&nbsp;]&nbsp;\n";
+    print "[&nbsp;<a href=\"$ExtraURL\">$ExtraDesc</a>&nbsp;]&nbsp;\n";
   } 
   print "[&nbsp;<a href=\"$MainPage\">DocDB&nbsp;Home</a>&nbsp;]&nbsp;\n";
   if (&CanCreate()) {
@@ -117,8 +121,9 @@ sub DocDBNavBar {
   print "[&nbsp;<a href=\"$ListBy?days=$LastDays\">Last&nbsp;$LastDays&nbsp;Days</a>&nbsp;]\n";
   print "[&nbsp;<a href=\"$ListAuthors\">List&nbsp;Authors</a>&nbsp;]\n";
   print "[&nbsp;<a href=\"$ListTopics\">List&nbsp;Topics</a>&nbsp;]\n";
+  print "[&nbsp;<a href=\"$ListAllMeetings\">List&nbsp;Events</a>&nbsp;]\n";
   unless ($Public) {
-    print "[&nbsp;<a href=\"$HelpFile\">Help</a>&nbsp;]\n";
+    print "[&nbsp;<a href=\"$DocDBInstructions\">Help</a>&nbsp;]\n";
 #    print "[&nbsp;<a href=\"logout/LogOut\">Log Out</a>&nbsp;]\n";
   } 
   print "</div>\n";
