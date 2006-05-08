@@ -58,6 +58,10 @@ sub ProjectBodyStart {
   $PageTitle = join '&nbsp;',@TitleParts;
 
   print "<h1>$PageTitle</h1>\n";
+  # show the navbar at the top of the page as well as at the bottom
+  if ($dbh) {
+     &DocDBNavBar();
+  }
 }
 
 sub ProjectFooter {
@@ -117,6 +121,7 @@ sub DocDBNavBar {
   print "[&nbsp;<a href=\"$ListBy?days=$LastDays\">Last&nbsp;$LastDays&nbsp;Days</a>&nbsp;]\n";
   print "[&nbsp;<a href=\"$ListAuthors\">List&nbsp;Authors</a>&nbsp;]\n";
   print "[&nbsp;<a href=\"$ListTopics\">List&nbsp;Topics</a>&nbsp;]\n";
+  print "[&nbsp;<a href=\"$ListAllMeetings\">List&nbsp;Events</a>&nbsp;]\n";
   unless ($Public) {
     print "[&nbsp;<a href=\"$DocDBInstructions\">Help</a>&nbsp;]\n";
 #    print "[&nbsp;<a href=\"logout/LogOut\">Log Out</a>&nbsp;]\n";
