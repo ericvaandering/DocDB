@@ -167,6 +167,7 @@ sub CanCreate { # Can the user create documents
 # See what group(s) current user belongs to
 
   my @UsersGroupIDs = &FindUsersGroups();
+  push @DebugStack,"User belongs to groups ".join ', ',@UsersGroupIDs;
 
   my @GroupIDs = keys %SecurityGroups; # FIXME use a hash for direct lookup
   foreach my $UserGroupID (@UsersGroupIDs) {
@@ -175,6 +176,7 @@ sub CanCreate { # Can the user create documents
       $Create = 1;                           # User checks out
     }  
   }
+  push @DebugStack,"User can create: $Create";
   return $Create;
 }
 
@@ -231,6 +233,8 @@ sub FindUsersGroups (;%) {
   } else {
     @UsersGroupIDs = (&FetchSecurityGroupByName ($remote_user));
   }
+
+  push @DebugStack,"Before limiting, user belongs to groups ".join ', ',@UsersGroupIDs;
 
   unless (@UsersGroupIDs) {
     $Public = 1;
