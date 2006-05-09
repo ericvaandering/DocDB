@@ -59,7 +59,7 @@ my @Documents = keys %Documents;
 if (@Documents) {
   print '<table class="Alternating DocumentList">';
   print '<tr><th>Document</th><th>Title</th><th>Author(s)</th><th>Last Updated</th>';
-  foreach my $Identifier (keys @Documents) {
+  foreach my $Identifier (@Documents) {
     print '<tr>';
     print "<td><a href=\"$URL\">$Identifier</a></td>\n";
     print "<td><a href=\"$URL\">$Documents{$Identifier}{Title}</a></td>\n";
