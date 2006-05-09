@@ -29,6 +29,12 @@ require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 require "XSearch.pm";
 
+# Build form
+# do safe parse
+# check into timeout with LWP::Simple
+# move most of search into search.pm, wrap in XSearch.pm;
+# sort by relevance
+
 $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;

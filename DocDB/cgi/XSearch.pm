@@ -45,7 +45,7 @@ sub XSearchURL ($) {
 
   my ($DocDBXML) = $Twig -> children;
 
-  my $Project = $DocDBXML -> {'att'} -> {'project'};
+  my $Project = $DocDBXML -> {'att'} -> {'shortproject'};
   my $Version = $DocDBXML -> {'att'} -> {'version'};
 
   my @Documents = $DocDBXML -> children();
