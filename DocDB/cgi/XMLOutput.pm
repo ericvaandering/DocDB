@@ -58,7 +58,7 @@ sub DocumentXMLOut {
   $Attributes{href}         = $ShowDocument."?docid=$DocumentID";
   
   if ($Documents{$DocumentID}{Relevance}) { 
-    $DocAttributes{relevance} = $Documents{$DocumentID}{Relevance};
+    $Attributes{relevance} = $Documents{$DocumentID}{Relevance};
   }
   
   my $DocumentXML = XML::Twig::Elt -> new(document => \%Attributes );
