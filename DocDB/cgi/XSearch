@@ -26,6 +26,7 @@ use DBI;
 require "DocDBGlobals.pm";
 require "DBUtilities.pm";
 require "HTMLUtilities.pm";
+require "ResponseElements.pm";
 require "XSearch.pm";
 
 $query = new CGI;  # Global for subroutines
@@ -64,6 +65,15 @@ if (@Documents) {
     print '<tr>';
     print "<td><a href=\"$URL\">$Identifier</a></td>\n";
     print "<td><a href=\"$URL\">$Documents{$Identifier}{Title}</a></td>\n";
+    
+    print "<td><a href=\"$URL\">$Documents{$Identifier}{Author}</a>";
+    if ($Documents{$Identifier}{Author}) {
+      print " <emph>et. al.</emph>";
+    }  
+    print "</td>\n";
+    
+    print "<td>",EuroDate($Documents{$Identifier}{Date}),"</td>\n";
+    
     print "</tr>\n";
   }
   print "</table>\n";

@@ -74,6 +74,7 @@ sub XSearchURL ($) {
       $Author .= " et al";
     }  
     $Documents{$Identifier}{URL}       = $URL;
+    $Documents{$Identifier}{Title}     = $Title;
     $Documents{$Identifier}{Relevance} = $Relevance;
     $Documents{$Identifier}{Author}    = $Author;
     $Documents{$Identifier}{EtAl}      = $EtAl;
