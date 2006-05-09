@@ -61,8 +61,11 @@ my @Documents = keys %Documents;
 if (@Documents) {
   print '<table class="Alternating DocumentList">';
   print '<tr><th>Document</th><th>Title</th><th>Author(s)</th><th>Last Updated</th>';
+  my $Row = 0;
   foreach my $Identifier (@Documents) {
-    print '<tr>';
+    ++$Row;
+    my $RowClass = ("Odd","Even")[$Row % 2];
+    print "<tr class=\"$RowClass\">";
     print "<td><a href=\"$URL\">$Identifier</a></td>\n";
     print "<td><a href=\"$URL\">$Documents{$Identifier}{Title}</a></td>\n";
     

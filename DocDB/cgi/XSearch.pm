@@ -71,7 +71,7 @@ sub XSearchURL ($) {
                              -> text();
     my @Authors = $Revision -> children("author");
     if (scalar(@Authors)>1) {
-      $Author .= " et al";
+      $EtAl = $TRUE;
     }  
     $Documents{$Identifier}{URL}       = $URL;
     $Documents{$Identifier}{Title}     = $Title;
