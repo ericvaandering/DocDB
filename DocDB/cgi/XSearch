@@ -40,9 +40,10 @@ CreateConnection(-type => "ro");
 print $query->header;
 DocDBHeader("DocDB X-Search"); 
 
-my @Projects = ("FOCUS");
+my @Projects = ("FOCUS","CMS");
 
 my %Documents = ();
+$SearchText = "vaandering";
 
 foreach my $Project (@Projects) {
   my %ProjectDocuments = XSearchURL( {-project => $Project, -text => $SearchText } );
