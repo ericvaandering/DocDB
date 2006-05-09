@@ -64,12 +64,13 @@ if (@Documents) {
   my $Row = 0;
   foreach my $Identifier (@Documents) {
     ++$Row;
-    my $RowClass = ("Odd","Even")[$Row % 2];
+    my $RowClass = ("Even","Odd")[$Row % 2];
+    my $URL = $Documents{$Identifier}{URL};
     print "<tr class=\"$RowClass\">";
     print "<td><a href=\"$URL\">$Identifier</a></td>\n";
     print "<td><a href=\"$URL\">$Documents{$Identifier}{Title}</a></td>\n";
     
-    print "<td><a href=\"$URL\">$Documents{$Identifier}{Author}</a>";
+    print "<td>$Documents{$Identifier}{Author}";
     if ($Documents{$Identifier}{Author}) {
       print " <emph>et. al.</emph>";
     }  
