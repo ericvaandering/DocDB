@@ -50,11 +50,10 @@ foreach my $Project (@Projects) {
 
   foreach my $Identifier (keys %ProjectDocuments) {
     $Documents{$Identifier} = $ProjectDocuments{$Identifier} ;
-    push @DebugStack,keys %{$ProjectDocuments{$Identifier}}
   }
 }
 
-# sort
+# sort by relevance
 
 # Print document table 
 
