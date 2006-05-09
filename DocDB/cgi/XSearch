@@ -47,7 +47,7 @@ foreach my $Project (@Projects) {
   my %ProjectDocuments = XSearchURL( {-project => $Project, -text => $SearchText } );
 
   foreach my $Identifier (keys %ProjectDocuments) {
-    $Documents{$Identifier} = \%{ $ProjectDocuments{$Identifier} };
+    $Documents{$Identifier} = $ProjectDocuments{$Identifier} ;
   }
 }
 
