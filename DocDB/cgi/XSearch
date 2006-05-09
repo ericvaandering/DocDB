@@ -72,7 +72,7 @@ if (@Documents) {
     
     print "<td>$Documents{$Identifier}{Author}";
     if ($Documents{$Identifier}{Author}) {
-      print " <emph>et. al.</emph>";
+      print " <em>et. al.</em>";
     }  
     print "</td>\n";
     
