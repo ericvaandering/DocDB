@@ -43,7 +43,7 @@ DocDBHeader("DocDB X-Search");
 my @Projects = ("FOCUS","CMS");
 
 my %Documents = ();
-$SearchText = "vaandering";
+$SearchText = "vaandering gottschalk";
 
 foreach my $Project (@Projects) {
   my %ProjectDocuments = XSearchURL( {-project => $Project, -text => $SearchText } );

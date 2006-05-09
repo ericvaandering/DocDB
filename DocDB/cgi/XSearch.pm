@@ -26,20 +26,18 @@ sub XSearchURL ($) {
   use XML::Twig;
   require "XRefSQL.pm";
 
-#  GetAllExternalDocDBs();
+  GetAllExternalDocDBs();
   
   my $ExternalDocDBID = $ExternalProjects{$Project};
   
   unless ($ExternalDocDBID) {
-#    return undef;
+    return undef;
   }   
   
   my %Documents = ();
   my $SearchURL = $ExternalDocDBs{$ExternalDocDBID}{PublicURL}."Search";
   $SearchURL .= "?outformat=XML&simple=1";
   $SearchURL .= "&simpletext=$Text";
-
-  $SearchURL = "http://docdb.fnal.gov/FOCUS-public/DocDB/Search?outformat=XML&simple=1&simpletext=vaandering";
 
   my $Twig = XML::Twig -> new();
 
