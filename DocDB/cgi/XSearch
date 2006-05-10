@@ -29,6 +29,7 @@ require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 require "FormElements.pm";
 require "XSearch.pm";
+require "Search.pm";
 
 require "XRefHTML.pm";
 require "XRefSQL.pm";
