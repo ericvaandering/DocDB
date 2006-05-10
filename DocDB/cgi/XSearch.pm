@@ -59,6 +59,7 @@ sub XSearchParse ($) {
   my @Documents = $ProjectXML -> children();
 
   foreach my $Document (@Documents) {
+    print "DocID: $DocID<br/>";
     my $DocID     = $Document -> {'att'} -> {'id'};
     my $URL       = $Document -> {'att'} -> {'href'};
     my $Relevance = $Document -> {'att'} -> {'relevance'};
