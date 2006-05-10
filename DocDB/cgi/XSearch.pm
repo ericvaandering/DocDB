@@ -87,9 +87,10 @@ sub XSearchParse ($) {
     }
          
     my @Authors = $Revision -> children("author");
+    my $EtAl = $FALSE;
     if (scalar(@Authors)>1) {
       $EtAl = $TRUE;
-    }  
+    }
 
     $FoundDocuments{$Identifier}{URL}       = $URL;
     $FoundDocuments{$Identifier}{Title}     = $Title;
@@ -105,7 +106,7 @@ sub XSearchParse ($) {
 sub XSearchDocsByRelevance {
   $XSearchDocs{$a}{Relevance} <=> $XSearchDocs{$b}{Relevance}
                                or
-       $XSearchDocs{$a}{Date} <=> $XSearchDocs{$b}{Date}
+       $XSearchDocs{$a}{Date} cmp $XSearchDocs{$b}{Date}
 }
 
 1;
