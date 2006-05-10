@@ -55,7 +55,7 @@ sub XSearchParse ($) {
 
   my $Project = $ProjectXML -> {'att'} -> {'shortproject'};
   my $Version = $ProjectXML -> {'att'} -> {'version'};
-
+  print "$Project $Version<br/>";
   my @Documents = $ProjectXML -> children();
 
   foreach my $Document (@Documents) {
