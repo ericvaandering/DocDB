@@ -44,16 +44,16 @@ sub XSearchParse ($) {
     $Twig -> parseurl($SearchURL);
   } elsif ($UseTwig) {
     $Twig = $XMLTwig;
-    $XMLTwig -> print();
+    $DocDBXML -> print();
   } else {
     return undef;
   }
-  my ($DocDBXML) = $Twig -> children;
+  my ($ProjectXML) = $Twig -> children;
 
-  my $Project = $DocDBXML -> {'att'} -> {'shortproject'};
-  my $Version = $DocDBXML -> {'att'} -> {'version'};
+  my $Project = $ProjectXML -> {'att'} -> {'shortproject'};
+  my $Version = $ProjectXML -> {'att'} -> {'version'};
 
-  my @Documents = $DocDBXML -> children();
+  my @Documents = $ProjectXML -> children();
 
   foreach my $Document (@Documents) {
     my $DocID     = $Document -> {'att'} -> {'id'};
