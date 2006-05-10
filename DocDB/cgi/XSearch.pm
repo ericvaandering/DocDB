@@ -41,7 +41,7 @@ sub XSearchParse ($) {
     my $SearchURL = $ExternalDocDBs{$ExternalDocDBID}{PublicURL}."Search";
     $SearchURL .= "?outformat=XML&simple=1";
     $SearchURL .= "&simpletext=$Text";
-
+    push @DebugStack,"Contacting $Project $SearchURL";  
     $Twig -> parseurl($SearchURL);
     ($ProjectXML) = $Twig -> children();
   } elsif ($UseTwig) {
@@ -56,19 +56,12 @@ sub XSearchParse ($) {
   my $Project = $ProjectXML -> {'att'} -> {'shortproject'};
   my $Version = $ProjectXML -> {'att'} -> {'version'};
 
-  print "<p>Project $Project $Version</p>";
-
-  print "<p/>\n";
-  $ProjectXML -> print();
-  print "<p/>\n";
-  
   my @Documents = $ProjectXML -> children();
 
   foreach my $Document (@Documents) {
     my $DocID     = $Document -> {'att'} -> {'id'};
     my $URL       = $Document -> {'att'} -> {'href'};
     my $Relevance = $Document -> {'att'} -> {'relevance'};
-    print "<p> $DocID $URL</p>";
     
     my $Identifier = $Project."-".$DocID;
     
@@ -76,9 +69,10 @@ sub XSearchParse ($) {
     unless ($Revision) {
       next;
     }  
+
     my $DateTime = $Revision -> {'att'} -> {'modified'};
-    print "<p> $DateTime</p>";
     my ($Date,$Time) = split /\s+/,$DateTime;
+
     my $TitleElt = $Revision -> first_child("title");
     unless ($TitleElt) {
       next;
@@ -97,6 +91,7 @@ sub XSearchParse ($) {
     if (scalar(@Authors)>1) {
       $EtAl = $TRUE;
     }  
+
     $FoundDocuments{$Identifier}{URL}       = $URL;
     $FoundDocuments{$Identifier}{Title}     = $Title;
     $FoundDocuments{$Identifier}{Relevance} = $Relevance;
@@ -111,4 +106,5 @@ sub XSearchParse ($) {
 sub XSearchDocsByRelevance {
   $XSearchDocs{$a}{Relevance} <=> $XSearchDocs{$b}{Relevance}
 }
+
 1;
