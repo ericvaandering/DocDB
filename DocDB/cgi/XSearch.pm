@@ -79,9 +79,20 @@ sub XSearchParse ($) {
     my $DateTime = $Revision -> {'att'} -> {'modified'};
     print "<p> $DateTime</p>";
     my ($Date,$Time) = split /\s+/,$DateTime;
-    my $Title    = $Revision -> first_child("title")  -> text();;
-    my $Author   = $Revision -> first_child("author") -> first_child("fullname") 
-                             -> text();
+    my $TitleElt = $Revision -> first_child("title");
+    unless ($TitleElt) {
+      next;
+    }
+    my $Title = $TitleElt -> text();
+    
+    my $AuthorElt = $Revision -> first_child("author");
+    my $Author;
+    if ($AuthorElt) {
+      $Author = $AuthorElT -> first_child("fullname") -> text();
+    } else {
+      $Author = "None";
+    }
+         
     my @Authors = $Revision -> children("author");
     if (scalar(@Authors)>1) {
       $EtAl = $TRUE;
