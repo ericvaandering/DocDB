@@ -103,7 +103,7 @@ foreach my $Project (@Projects) {
 # Sort by relevance
 
 %XSearchDocs  = %FoundDocuments; # Make global for search
-my @Documents = reverse sort XSearchDocsByRelevance keys %Documents;
+my @Documents = reverse sort XSearchDocsByRelevance keys %FoundDocuments;
 %XSearchDocs  = (); 
 
 # Print document table 
