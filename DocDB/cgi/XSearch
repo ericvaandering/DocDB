@@ -45,8 +45,6 @@ my %CGIParams = $query -> Vars;
 my $SearchText  = $CGIParams{searchtext};
 my $LocalSearch = $CGIParams{"docdb-0"};
 
-$SearchText = "vaandering";
-
 CreateConnection(-type => "ro");
 
 print $query->header;
@@ -72,11 +70,19 @@ print $query -> textfield(-name => 'searchtext', -size => 40, -maxlength => 240)
 print "</td>\n";
 
 print '<td>';
-print $query -> checkbox(-name  => "docdb-0", -checked => 'checked', -label => "");
+if ($LocalSearch || !$SearchText) {
+  print $query -> checkbox(-name  => "docdb-0", -checked => 'checked', -label => "");
+} else {
+  print $query -> checkbox(-name  => "docdb-0", -label => "");
+}
 print "$ShortProject<br/>\n";
 foreach my $DocDBID (@ExternalDocDBIDs) {
   my $Link = ExternalDocDBLink( {-docdbid => $DocDBID} ); 
-  print $query -> checkbox(-name  => "docdb-$DocDBID", -checked => 'checked', -label => "");
+  if ($CGIParams{"docdb-$DocDBID"} || !$SearchText) {
+    print $query -> checkbox(-name  => "docdb-$DocDBID", -checked => 'checked', -label => "");
+  } else {
+    print $query -> checkbox(-name  => "docdb-$DocDBID", -label => "");
+  }
   print "$Link<br/>\n";
 }
 print '</td></tr>';
