@@ -4,7 +4,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -120,6 +120,15 @@ sub PrintXRefInfo ($) {
     print "</ul>\n";
     print "</div>\n";
   }
+}
+
+sub ExternalDocDBLink ($) {
+  my ($ArgRef) = @_;
+  my $DocDBID = exists $ArgRef->{-docdbid} ? $ArgRef->{-docdbid} : 0;
+  my $Link = "<a href=\"$ExternalDocDBs{$ExternalDocDBID}{PublicURL}\">";
+  $Link .= $ExternalDocDBs{$ExternalDocDBID}{Project};
+  $Link .= '</a>';
+  return $Link;
 }
 
 sub ExternalDocDBSelect (;%) {

@@ -29,41 +29,77 @@ require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 require "XSearch.pm";
 
+require "XRefHTML.pm";
+
 # Build form
 # do safe parse
 # check into timeout with LWP::Simple
-# move most of search into search.pm, wrap in XSearch.pm;
-# sort by relevance
 
 $query = new CGI;  # Global for subroutines
 
-%params = $query -> Vars;
+my %CGIParams = $query -> Vars;
 
-my $SearchText       = $params{searchtext};
+my $SearchText  = $CGIParams{searchtext};
+my $LocalSearch = $CGIParams{"docdb-0"};
+
+$SearchText = "vaandering gottschalk";
 
 CreateConnection(-type => "ro");
 
 print $query->header;
 DocDBHeader("DocDB X-Search"); 
+my @ExternalDocDBIDs = GetAllExternalDocDBs();
 
-my @Projects = ("FOCUS","CMS");
+# Figure out which projects are "on"
+
+my @Projects = ();
+foreach my $DocDBID (@ExternalDocDBIDs) {
+  if ($CGIParams{"docdb-$DocDBID"}) {
+    push @Projects,$ExternalDocDBs{$DocDBID}{Project};
+  }
+}
+
+# Print Search Table
+
+print '<table class="MedPaddedTable CenteredTable">';
+print '<tr><td>';
+print FormElementTitle(-helplink => 'xsearchtext', -helptext => "Search for");
+print $query -> textfield(-name => 'searchtext', -size => 40, -maxlength => 240);
+print "</td>\n";
+
+print '<td>';
+print $query -> checkbox(-name  => "docdb-0", -checked => 'checked', -label => $Link);
+print "<br/>\n";
+foreach my $DocDBID (@ExternalDocDBIDs) {
+  my $Link = ExternalDocDBLink( {-docdbid => $DocDBID} ); 
+  print $query -> checkbox(-name  => "docdb-$DocDBID", -checked => 'checked', -label => $Link);
+  print "<br/>\n";
+}
+print '</td></tr></table>';
 
 my %Documents = ();
-$SearchText = "vaandering gottschalk";
+if ($LocalSearch) {
+  my %LocalParams = ("outformat" => "XML","simpletext" => $SearchText);
+  LocalSearch( {-cgiparams => \%LocalParams} );
+  %Documents = XSearchParse( {-twig => $XMLTwig} );
+}
 
 foreach my $Project (@Projects) {
-  my %ProjectDocuments = XSearchURL( {-project => $Project, -text => $SearchText } );
+  my %ProjectDocuments = XSearchParse( {-project => $Project, -text => $SearchText } );
 
   foreach my $Identifier (keys %ProjectDocuments) {
     $Documents{$Identifier} = $ProjectDocuments{$Identifier} ;
   }
 }
 
-# sort by relevance
+# Sort by relevance
+
+%XSearchDocs  = %Documents; # Make global for search
+my @Documents = reverse sort XSearchDocsByRelevance keys %Documents;
+%XSearchDocs  = (); 
 
 # Print document table 
 
-my @Documents = keys %Documents;
 if (@Documents) {
   print '<table class="Alternating DocumentList">';
   print '<tr><th>Document</th><th>Title</th><th>Author(s)</th><th>Last Updated</th>';

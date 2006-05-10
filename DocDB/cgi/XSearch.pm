@@ -18,31 +18,35 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-sub XSearchURL ($) {
+sub XSearchParse ($) {
   my ($ArgRef) = @_;
   my $Project = exists $ArgRef->{-project} ? $ArgRef->{-project} : 0;
   my $Text    = exists $ArgRef->{-text}    ? $ArgRef->{-text}    : 0;
+  my $Twig    = exists $ArgRef->{-twig}    ? $ArgRef->{-twig}    : 0;
 
   use XML::Twig;
   require "XRefSQL.pm";
 
-  GetAllExternalDocDBs();
+  if ($Project) {
+    my $ExternalDocDBID = $ExternalProjects{$Project};
+
+    unless ($ExternalDocDBID) {
+      return undef;
+    }   
+
+    my %Documents = ();
+    my $SearchURL = $ExternalDocDBs{$ExternalDocDBID}{PublicURL}."Search";
+    $SearchURL .= "?outformat=XML&simple=1";
+    $SearchURL .= "&simpletext=$Text";
+
+    $Twig = XML::Twig -> new();
+
+    $Twig -> parseurl($SearchURL);
+  } elsif ($Twig) {
   
-  my $ExternalDocDBID = $ExternalProjects{$Project};
-  
-  unless ($ExternalDocDBID) {
+  } else {
     return undef;
-  }   
-  
-  my %Documents = ();
-  my $SearchURL = $ExternalDocDBs{$ExternalDocDBID}{PublicURL}."Search";
-  $SearchURL .= "?outformat=XML&simple=1";
-  $SearchURL .= "&simpletext=$Text";
-
-  my $Twig = XML::Twig -> new();
-
-  $Twig -> parseurl($SearchURL);
-
+  }
   my ($DocDBXML) = $Twig -> children;
 
   my $Project = $DocDBXML -> {'att'} -> {'shortproject'};
@@ -82,5 +86,7 @@ sub XSearchURL ($) {
   return %Documents;
 }
 
-
+sub XSearchDocsByRelevance {
+  $XSearchDocs{$a}{Relevance} <=> $XSearchDocs{$b}{Relevance}
+}
 1;

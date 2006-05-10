@@ -40,7 +40,7 @@ my %CGIParams = $query -> Vars;
 my $OutFormat = $CGIParams{outformat} || "HTML";
    $OutFormat =~ tr/[a-z]/[A-Z]/;
 
-Search( {-cgiparams => \%CGIParams} );
+LocalSearch( {-cgiparams => \%CGIParams} );
 
 ### Print footers
 
