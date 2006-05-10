@@ -30,6 +30,7 @@ require "ResponseElements.pm";
 require "XSearch.pm";
 
 require "XRefHTML.pm";
+require "XRefSQL.pm";
 
 # Build form
 # do safe parse
