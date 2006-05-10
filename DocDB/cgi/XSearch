@@ -89,7 +89,7 @@ my %Documents = ();
 if ($LocalSearch) {
   my %LocalParams = ("outformat" => "XML","simpletext" => $SearchText);
 #  LocalSearch( {-cgiparams => \%LocalParams} );
-#  %Documents = XSearchParse( {-twig => $XMLTwig} );
+#  %Documents = XSearchParse( {-usetwig => $TRUE} );
 }
 
 foreach my $Project (@Projects) {

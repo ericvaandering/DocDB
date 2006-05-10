@@ -20,13 +20,15 @@
 
 sub XSearchParse ($) {
   my ($ArgRef) = @_;
-  my $Project = exists $ArgRef->{-project} ? $ArgRef->{-project} : 0;
-  my $Text    = exists $ArgRef->{-text}    ? $ArgRef->{-text}    : 0;
-  my $Twig    = exists $ArgRef->{-twig}    ? $ArgRef->{-twig}    : 0;
+  my $Project = exists $ArgRef->{-project} ? $ArgRef->{-project} : "";
+  my $Text    = exists $ArgRef->{-text}    ? $ArgRef->{-text}    : "";
+  my $UseTwig = exists $ArgRef->{-usetwig} ? $ArgRef->{-usetwig} : $FALSE;
 
   use XML::Twig;
   require "XRefSQL.pm";
 
+  my $Twig = XML::Twig -> new();
+  
   if ($Project) {
     my $ExternalDocDBID = $ExternalProjects{$Project};
 
@@ -39,11 +41,9 @@ sub XSearchParse ($) {
     $SearchURL .= "?outformat=XML&simple=1";
     $SearchURL .= "&simpletext=$Text";
 
-    $Twig = XML::Twig -> new();
-
     $Twig -> parseurl($SearchURL);
-  } elsif ($Twig) {
-  
+  } elsif ($UseTwig) {
+    $Twig = $XMLTwig;
   } else {
     return undef;
   }
