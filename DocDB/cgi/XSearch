@@ -63,6 +63,7 @@ foreach my $DocDBID (@ExternalDocDBIDs) {
 
 # Print Search Table
 
+print $query -> start_multipart_form('POST',$XSearch);
 print '<table class="MedPaddedTable CenteredTable">';
 print '<tr><td>';
 print FormElementTitle(-helplink => 'xsearchtext', -helptext => "Search for");
@@ -77,7 +78,11 @@ foreach my $DocDBID (@ExternalDocDBIDs) {
   print $query -> checkbox(-name  => "docdb-$DocDBID", -checked => 'checked', -label => "");
   print "$Link<br/>\n";
 }
+print '</td></tr>';
+print '<tr><td class="SubmitCell" colspan="2">';
+print $query -> submit (-value => "Cross Search");     
 print '</td></tr></table>';
+print $query -> end_multipart_form;
 
 my %Documents = ();
 if ($LocalSearch) {

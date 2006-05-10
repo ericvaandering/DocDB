@@ -125,7 +125,7 @@ sub PrintXRefInfo ($) {
 sub ExternalDocDBLink ($) {
   my ($ArgRef) = @_;
   my $DocDBID = exists $ArgRef->{-docdbid} ? $ArgRef->{-docdbid} : 0;
-  my $Link = "<a href=\"$ExternalDocDBs{$DocDBID}{PublicURL}\">";
+  my $Link = "<a href=\"$ExternalDocDBs{$DocDBID}{PublicURL}/DocumentDatabase\">";
   $Link .= $ExternalDocDBs{$DocDBID}{Project};
   $Link .= '</a>';
   return $Link;
