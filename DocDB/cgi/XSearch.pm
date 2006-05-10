@@ -45,8 +45,9 @@ sub XSearchParse ($) {
     $Twig -> parseurl($SearchURL);
     ($ProjectXML) = $Twig -> children();
   } elsif ($UseTwig) {
-    $Twig = $XMLTwig;
-    ($ProjectXML) = $DocDBXML;
+    my $XML = $DocDBXML -> sprint();
+    $Twig -> parse($Text);
+    ($ProjectXML) = $Twig -> children();
   } else {
     return undef;
   }
