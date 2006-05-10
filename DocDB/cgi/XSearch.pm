@@ -56,7 +56,7 @@ sub XSearchParse ($) {
   my $Project = $ProjectXML -> {'att'} -> {'shortproject'};
   my $Version = $ProjectXML -> {'att'} -> {'version'};
 
-  print "<p>Project $Project</p>";
+  print "<p>Project $Project $Version</p>";
 
   print "<p/>\n";
   $ProjectXML -> print();
@@ -68,6 +68,7 @@ sub XSearchParse ($) {
     my $DocID     = $Document -> {'att'} -> {'id'};
     my $URL       = $Document -> {'att'} -> {'href'};
     my $Relevance = $Document -> {'att'} -> {'relevance'};
+    print "<p> $DocID $URL</p>";
     
     my $Identifier = $Project."-".$DocID;
     
@@ -76,6 +77,7 @@ sub XSearchParse ($) {
       next;
     }  
     my $DateTime = $Revision -> {'att'} -> {'modified'};
+    print "<p> $DateTime</p>";
     my ($Date,$Time) = split /\s+/,$DateTime;
     my $Title    = $Revision -> first_child("title")  -> text();;
     my $Author   = $Revision -> first_child("author") -> first_child("fullname") 
