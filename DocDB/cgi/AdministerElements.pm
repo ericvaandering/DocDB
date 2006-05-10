@@ -42,6 +42,8 @@ sub AdministerActions (%) {
 };
 
 sub AdministratorPassword {
+  require "FormElements.pm";
+
   print FormElementTitle(-helplink => "adminlogin",    -nobreak => $TRUE,
                          -helptext => "Administrator", -nocolon => $TRUE,);
   print "<strong> Username: </strong>"; 
@@ -53,12 +55,15 @@ sub AdministratorPassword {
 };
 
 sub AdminRegardless {
+  require "FormElements.pm";
+
   print FormElementTitle(-helplink => "admforce", -helptext => "Force Action");
   print $query -> checkbox(-name => "admforce", -value => 1, -label => 'Yes');
 }  
 
 sub GroupEntryBox (%) {
   require "Scripts.pm";
+  require "FormElements.pm";
 
   my (%Params) = @_;
   
