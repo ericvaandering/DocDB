@@ -44,6 +44,7 @@ sub XSearchParse ($) {
     $Twig -> parseurl($SearchURL);
   } elsif ($UseTwig) {
     $Twig = $XMLTwig;
+    $XMLTwig -> print();
   } else {
     return undef;
   }
