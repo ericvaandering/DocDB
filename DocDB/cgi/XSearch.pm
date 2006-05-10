@@ -92,6 +92,8 @@ sub XSearchParse ($) {
       $EtAl = $TRUE;
     }  
 
+    print "$Identifier $Title $Author<br/>";
+
     $FoundDocuments{$Identifier}{URL}       = $URL;
     $FoundDocuments{$Identifier}{Title}     = $Title;
     $FoundDocuments{$Identifier}{Relevance} = $Relevance;
