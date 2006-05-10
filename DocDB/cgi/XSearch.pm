@@ -29,6 +29,7 @@ sub XSearchParse ($) {
 
   my $Twig = XML::Twig -> new();
 
+  my %FoundDocuments = ();
   my $ProjectXML;  
   if ($Project) {
     my $ExternalDocDBID = $ExternalProjects{$Project};
@@ -37,7 +38,6 @@ sub XSearchParse ($) {
       return undef;
     }   
 
-    my %Documents = ();
     my $SearchURL = $ExternalDocDBs{$ExternalDocDBID}{PublicURL}."Search";
     $SearchURL .= "?outformat=XML&simple=1";
     $SearchURL .= "&simpletext=$Text";
@@ -81,12 +81,12 @@ sub XSearchParse ($) {
     if (scalar(@Authors)>1) {
       $EtAl = $TRUE;
     }  
-    $Documents{$Identifier}{URL}       = $URL;
-    $Documents{$Identifier}{Title}     = $Title;
-    $Documents{$Identifier}{Relevance} = $Relevance;
-    $Documents{$Identifier}{Author}    = $Author;
-    $Documents{$Identifier}{EtAl}      = $EtAl;
-    $Documents{$Identifier}{Date}      = $Date;
+    $FoundDocuments{$Identifier}{URL}       = $URL;
+    $FoundDocuments{$Identifier}{Title}     = $Title;
+    $FoundDocuments{$Identifier}{Relevance} = $Relevance;
+    $FoundDocuments{$Identifier}{Author}    = $Author;
+    $FoundDocuments{$Identifier}{EtAl}      = $EtAl;
+    $FoundDocuments{$Identifier}{Date}      = $Date;
   }  
   
   return %Documents;
