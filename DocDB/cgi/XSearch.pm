@@ -28,7 +28,8 @@ sub XSearchParse ($) {
   require "XRefSQL.pm";
 
   my $Twig = XML::Twig -> new();
-  
+
+  my $ProjectXML;  
   if ($Project) {
     my $ExternalDocDBID = $ExternalProjects{$Project};
 
@@ -42,13 +43,13 @@ sub XSearchParse ($) {
     $SearchURL .= "&simpletext=$Text";
 
     $Twig -> parseurl($SearchURL);
+    ($ProjectXML) = $Twig -> children();
   } elsif ($UseTwig) {
     $Twig = $XMLTwig;
-    $DocDBXML -> print();
+    ($ProjectXML) = $DocDBXML -> children();
   } else {
     return undef;
   }
-  my ($ProjectXML) = $Twig -> children;
 
   my $Project = $ProjectXML -> {'att'} -> {'shortproject'};
   my $Version = $ProjectXML -> {'att'} -> {'version'};
