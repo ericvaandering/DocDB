@@ -45,6 +45,7 @@ sub XSearchParse ($) {
     $Twig -> parseurl($SearchURL);
     ($ProjectXML) = $Twig -> children();
   } elsif ($UseTwig) {
+    return undef;
     my $XML = $DocDBXML -> sprint();
     $Twig -> parse($XML);
     $ProjectXML = $Twig -> root();
@@ -73,7 +74,7 @@ sub XSearchParse ($) {
     }  
     my $DateTime = $Revision -> {'att'} -> {'modified'};
     my ($Date,$Time) = split /\s+/,$DateTime;
-#    my $Title    = $Revision -> first_child("title")  -> text();;
+    my $Title    = $Revision -> first_child("title")  -> text();;
     my $Author   = $Revision -> first_child("author") -> first_child("fullname") 
                              -> text();
     my @Authors = $Revision -> children("author");
