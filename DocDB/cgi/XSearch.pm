@@ -51,6 +51,8 @@ sub XSearchParse ($) {
     return undef;
   }
 
+  $ProjectXML -> print();
+
   my $Project = $ProjectXML -> {'att'} -> {'shortproject'};
   my $Version = $ProjectXML -> {'att'} -> {'version'};
 
@@ -69,7 +71,6 @@ sub XSearchParse ($) {
     }  
     my $DateTime = $Revision -> {'att'} -> {'modified'};
     my ($Date,$Time) = split /\s+/,$DateTime;
-    print $Date,"<br/>";
     my $Title    = $Revision -> first_child("title")  -> text();;
     my $Author   = $Revision -> first_child("author") -> first_child("fullname") 
                              -> text();
