@@ -88,8 +88,8 @@ print $query -> end_multipart_form;
 my %Documents = ();
 if ($LocalSearch) {
   my %LocalParams = ("outformat" => "XML","simpletext" => $SearchText);
-#  LocalSearch( {-cgiparams => \%LocalParams} );
-#  %Documents = XSearchParse( {-usetwig => $TRUE} );
+  LocalSearch( {-cgiparams => \%LocalParams} );
+  %Documents = XSearchParse( {-usetwig => $TRUE} );
 }
 
 foreach my $Project (@Projects) {
