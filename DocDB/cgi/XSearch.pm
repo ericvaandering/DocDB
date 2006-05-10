@@ -72,7 +72,7 @@ sub XSearchParse ($) {
     }  
     my $DateTime = $Revision -> {'att'} -> {'modified'};
     my ($Date,$Time) = split /\s+/,$DateTime;
-    my $Title    = $Revision -> first_child("title")  -> text();;
+#    my $Title    = $Revision -> first_child("title")  -> text();;
     my $Author   = $Revision -> first_child("author") -> first_child("fullname") 
                              -> text();
     my @Authors = $Revision -> children("author");
