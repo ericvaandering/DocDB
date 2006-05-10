@@ -26,6 +26,7 @@ sub LocalSearch ($) {
   my ($ArgRef) = @_;
 
   my %params    = exists $ArgRef->{-cgiparams} ? %{$ArgRef->{-cgiparams}} : ();
+  my $NoXMLHead = exists $ArgRef->{-noxmlhead} ?   $ArgRef->{-noxmlhead}  : $FALSE;
 
   require "FSUtilities.pm";
   require "WebUtilities.pm";
@@ -93,7 +94,9 @@ sub LocalSearch ($) {
 
   $OutFormat =~ tr/[a-z]/[A-Z]/;
   if ($OutFormat eq 'XML') {
-    print XMLHeader();
+    unless ($NoXMLHead) {
+      print XMLHeader();
+    }  
     NewXMLOutput();
   } else {
     print $query->header;

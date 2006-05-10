@@ -88,7 +88,7 @@ print $query -> end_multipart_form;
 my %FoundDocuments = ();
 if ($LocalSearch) {
   my %LocalParams = ("outformat" => "XML","simpletext" => $SearchText);
-  LocalSearch( {-cgiparams => \%LocalParams} );
+  LocalSearch( {-noxmlhead => $TRUE, -cgiparams => \%LocalParams} );
   %FoundDocuments = XSearchParse( {-usetwig => $TRUE} );
 }
 

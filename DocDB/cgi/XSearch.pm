@@ -59,7 +59,6 @@ sub XSearchParse ($) {
   my @Documents = $ProjectXML -> children();
 
   foreach my $Document (@Documents) {
-    print "DocID: $DocID<br/>";
     my $DocID     = $Document -> {'att'} -> {'id'};
     my $URL       = $Document -> {'att'} -> {'href'};
     my $Relevance = $Document -> {'att'} -> {'relevance'};
@@ -92,8 +91,6 @@ sub XSearchParse ($) {
     if (scalar(@Authors)>1) {
       $EtAl = $TRUE;
     }  
-
-    print "$Identifier $Title $Author<br/>";
 
     $FoundDocuments{$Identifier}{URL}       = $URL;
     $FoundDocuments{$Identifier}{Title}     = $Title;
