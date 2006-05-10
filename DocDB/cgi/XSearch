@@ -27,6 +27,7 @@ require "DocDBGlobals.pm";
 require "DBUtilities.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
+require "FormElements.pm";
 require "XSearch.pm";
 
 require "XRefHTML.pm";
