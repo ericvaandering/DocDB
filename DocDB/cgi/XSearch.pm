@@ -56,7 +56,7 @@ sub XSearchParse ($) {
   my $Project = $ProjectXML -> {'att'} -> {'shortproject'};
   my $Version = $ProjectXML -> {'att'} -> {'version'};
 
-  print "<p>Project $Project</p>
+  print "<p>Project $Project</p>";
 
   print "<p/>\n";
   $ProjectXML -> print();

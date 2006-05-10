@@ -45,7 +45,7 @@ my %CGIParams = $query -> Vars;
 my $SearchText  = $CGIParams{searchtext};
 my $LocalSearch = $CGIParams{"docdb-0"};
 
-$SearchText = "vaandering gottschalk";
+$SearchText = "garren";
 
 CreateConnection(-type => "ro");
 
