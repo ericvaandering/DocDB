@@ -52,13 +52,16 @@ sub XSearchParse ($) {
   } else {
     return undef;
   }
-#  print "<p/>\n";
-#  $ProjectXML -> print();
-#  print "<p/>\n";
-  
+
   my $Project = $ProjectXML -> {'att'} -> {'shortproject'};
   my $Version = $ProjectXML -> {'att'} -> {'version'};
 
+  print "<p>Project $Project</p>
+
+  print "<p/>\n";
+  $ProjectXML -> print();
+  print "<p/>\n";
+  
   my @Documents = $ProjectXML -> children();
 
   foreach my $Document (@Documents) {
