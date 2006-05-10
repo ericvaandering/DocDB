@@ -45,7 +45,6 @@ sub XSearchParse ($) {
     $Twig -> parseurl($SearchURL);
     ($ProjectXML) = $Twig -> children();
   } elsif ($UseTwig) {
-#    return undef;
     my $XML = $DocDBXML -> sprint();
     $Twig -> parse($XML);
     $ProjectXML = $Twig -> root();
@@ -55,7 +54,7 @@ sub XSearchParse ($) {
 
   my $Project = $ProjectXML -> {'att'} -> {'shortproject'};
   my $Version = $ProjectXML -> {'att'} -> {'version'};
-  print "$Project $Version<br/>";
+
   my @Documents = $ProjectXML -> children();
 
   foreach my $Document (@Documents) {
@@ -105,6 +104,8 @@ sub XSearchParse ($) {
 
 sub XSearchDocsByRelevance {
   $XSearchDocs{$a}{Relevance} <=> $XSearchDocs{$b}{Relevance}
+                               or
+       $XSearchDocs{$a}{Date} <=> $XSearchDocs{$b}{Date}
 }
 
 1;
