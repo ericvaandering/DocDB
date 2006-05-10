@@ -89,7 +89,7 @@ sub XSearchParse ($) {
     $FoundDocuments{$Identifier}{Date}      = $Date;
   }  
   
-  return %Documents;
+  return %FoundDocuments;
 }
 
 sub XSearchDocsByRelevance {
