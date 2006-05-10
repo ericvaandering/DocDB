@@ -17,6 +17,7 @@
 
 sub ClearEmailUsers () {
   %EmailUser         = ();
+  %EmailUserReverse  = ();
   $HaveAllEmailUsers = $FALSE;
   return;
 }
@@ -64,6 +65,8 @@ sub FetchEmailUser($) {
   $EmailUser{$EmailUserID}{CanSign}      = $CanSign;
   $EmailUser{$EmailUserID}{Verified}     = $Verified;
   $EmailUser{$EmailUserID}{AuthorID}     = $AuthorID;
+  
+  $EmailUserReverse{EmailAddress}{$EmailAddress} = $EmailUserID;  
   
   return $EmailUser{$EmailUserID}{EmailUserID};
 }

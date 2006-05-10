@@ -104,6 +104,11 @@ foreach my $Address (keys %AddressDocuments) {
     foreach my $DocumentID (@DocumentIDs) {
       FetchDocument($DocumentID);
       my $DocRevID = FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVersions});
+      my $EmailUserID = $EmailUserReverse{EmailAddress}{$Address};
+      print "EmailUserID is $EmailUserID\n";
+      unless (CanAccess($DocumentID,$Documents{$DocumentID}{NVersions},$EmailUserID)) {
+        next;
+      } 
       RevisionMailBody($DocRevID);         # Write the body
       print $Mailer "\n","-" x 72,"\n\n";  # Write a divider
     } 
