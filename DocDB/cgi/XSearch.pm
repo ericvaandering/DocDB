@@ -88,7 +88,7 @@ sub XSearchParse ($) {
     my $AuthorElt = $Revision -> first_child("author");
     my $Author;
     if ($AuthorElt) {
-      $Author = $AuthorElT -> first_child("fullname") -> text();
+      $Author = $AuthorElt -> first_child("fullname") -> text();
     } else {
       $Author = "None";
     }
