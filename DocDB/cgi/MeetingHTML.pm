@@ -725,7 +725,8 @@ sub EventLink (%) {
 
 sub ModifyEventLink ($) {
   require "EventUtilities.pm";
-  
+  require "MeetingSecurityUtilities.pm";
+ 
   my ($EventID) = @_;
     
   FetchConferenceByConferenceID($EventID);
