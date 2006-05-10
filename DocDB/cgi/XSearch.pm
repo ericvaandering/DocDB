@@ -52,9 +52,9 @@ sub XSearchParse ($) {
   } else {
     return undef;
   }
-  print "<p/>\n";
-  $ProjectXML -> print();
-  print "<p/>\n";
+#  print "<p/>\n";
+#  $ProjectXML -> print();
+#  print "<p/>\n";
   
   my $Project = $ProjectXML -> {'att'} -> {'shortproject'};
   my $Version = $ProjectXML -> {'att'} -> {'version'};
