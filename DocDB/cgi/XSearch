@@ -70,12 +70,12 @@ print $query -> textfield(-name => 'searchtext', -size => 40, -maxlength => 240)
 print "</td>\n";
 
 print '<td>';
-print $query -> checkbox(-name  => "docdb-0", -checked => 'checked', -label => $Link);
-print "<br/>\n";
+print $query -> checkbox(-name  => "docdb-0", -checked => 'checked', -label => "");
+print "$ShortProject<br/>\n";
 foreach my $DocDBID (@ExternalDocDBIDs) {
   my $Link = ExternalDocDBLink( {-docdbid => $DocDBID} ); 
-  print $query -> checkbox(-name  => "docdb-$DocDBID", -checked => 'checked', -label => $Link);
-  print "<br/>\n";
+  print $query -> checkbox(-name  => "docdb-$DocDBID", -checked => 'checked', -label => "");
+  print "$Link<br/>\n";
 }
 print '</td></tr></table>';
 
