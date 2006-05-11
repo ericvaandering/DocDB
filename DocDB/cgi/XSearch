@@ -78,7 +78,7 @@ foreach my $DocDBID (@ExternalDocDBIDs) {
     push @CheckArray, $query -> checkbox(-name  => "docdb-$DocDBID", -label => "").$Link;
   }
 }
-push @CheckArray,(4,5,6,7,8,9,10);
+push @CheckArray,(4,5,6,7,8,9);
 
 # Put Checkboxes in Table
 my $NColumns = 1;
