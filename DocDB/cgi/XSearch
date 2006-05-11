@@ -60,6 +60,24 @@ foreach my $DocDBID (@ExternalDocDBIDs) {
   }
 }
 
+# Build up array of check boxes
+
+my @CheckArray = ();
+
+if ($LocalSearch || !$SearchText) {
+  push @CheckArray, $query -> checkbox(-name  => "docdb-0", -checked => 'checked', -label => "").$ShortProject;
+} else {
+  push @CheckArray, $query -> checkbox(-name  => "docdb-0", -label => "").$ShortProject;
+}
+foreach my $DocDBID (@ExternalDocDBIDs) {
+  my $Link = ExternalDocDBLink( {-docdbid => $DocDBID} ); 
+  if ($CGIParams{"docdb-$DocDBID"} || !$SearchText) {
+    push @CheckArray, $query -> checkbox(-name  => "docdb-$DocDBID", -checked => 'checked', -label => "").$Link;
+  } else {
+    push @CheckArray, $query -> checkbox(-name  => "docdb-$DocDBID", -label => "").$Link;
+  }
+}
+
 # Print Search Table
 
 print $query -> start_multipart_form('POST',$XSearch);
@@ -70,21 +88,11 @@ print $query -> textfield(-name => 'searchtext', -size => 40, -maxlength => 240)
 print "</td>\n";
 
 print '<td>';
-if ($LocalSearch || !$SearchText) {
-  print $query -> checkbox(-name  => "docdb-0", -checked => 'checked', -label => "");
-} else {
-  print $query -> checkbox(-name  => "docdb-0", -label => "");
-}
-print "$ShortProject<br/>\n";
-foreach my $DocDBID (@ExternalDocDBIDs) {
-  my $Link = ExternalDocDBLink( {-docdbid => $DocDBID} ); 
-  if ($CGIParams{"docdb-$DocDBID"} || !$SearchText) {
-    print $query -> checkbox(-name  => "docdb-$DocDBID", -checked => 'checked', -label => "");
-  } else {
-    print $query -> checkbox(-name  => "docdb-$DocDBID", -label => "");
-  }
-  print "$Link<br/>\n";
-}
+
+foreach my $Element (@CheckArray) {
+  print $Element,"<br/>";
+}  
+
 print '</td></tr>';
 print '<tr><td class="SubmitCell" colspan="2">';
 print $query -> submit (-value => "Cross Search");     
