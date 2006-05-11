@@ -142,4 +142,38 @@ sub SafeHTML {
   return $Text;
 }  
  
+sub FillTable ($) {
+  my ($ArgRef) = @_;
+  my $Arrange  = exists $ArgRef->{-arrange}  ?   $ArgRef->{-arrange}   : "vertical";
+  my $Columns  = exists $ArgRef->{-columns}  ?   $ArgRef->{-columns}   : 1;
+  my @Elements = exists $ArgRef->{-elements} ? @{$ArgRef->{-elements}} : ();
+
+  # Nothing other than vertical works
+  
+  my @PerColumn = ();
+  my $PerColumn = int(scalar(@Elements) / $Columns);
+  my $ExtraColumns = scalar(@Elements) % $Columns;
+  
+  for my $i (1..$Columns) {
+    if ($ExtraColumns >= $i) {
+      $PerColumn[$i] = $PerColumn + 1;
+    } else {  
+      $PerColumn[$i] = $PerColumn;
+    }    
+  }
+  
+  my @ColumnRefs = ();
+  
+  for my $i (1..$Columns) {
+    for my $j (1..$PerColumn[$i]) {
+      my $Element = shift,@Elements;
+      if ($Element) {
+        push @{$ColumnRefs[$i]},$Element;
+      }  
+    }
+  }    
+  
+  return @ColumnRefs;
+}
+  
 1;

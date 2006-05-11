@@ -25,6 +25,7 @@ use DBI;
 
 require "DocDBGlobals.pm";
 require "DBUtilities.pm";
+require "Utilities.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 require "FormElements.pm";
@@ -78,6 +79,27 @@ foreach my $DocDBID (@ExternalDocDBIDs) {
   }
 }
 
+# Put Checkboxes in Table
+my $NColumns = 1;
+if (scalar(@CheckArray) > 6) {
+  $NColumns = 3;
+} elsif (scalar(@CheckArray) > 3) {  
+  $NColumns = 2;
+}
+
+my @ColumnRefs = FillTable( {-arrange => "vertical", -columns => $NColumns, -elements => \@CheckArray} );
+
+my $Table = "<table><tr>";
+foreach my $ColumnRef (@ColumnRefs) {
+  $Table .= "<td>";
+  my @Elements = @{$ColumnRef};
+  foreach my $Element (@Elements) {
+    $Table .= $Element."<br/>\n";
+  }
+  $Table .= "</td>\n";   
+}
+$Table .= "</tr></table>\n";   
+
 # Print Search Table
 
 print $query -> start_multipart_form('POST',$XSearch);
@@ -89,9 +111,11 @@ print "</td>\n";
 
 print '<td>';
 
-foreach my $Element (@CheckArray) {
-  print $Element,"<br/>";
-}  
+
+print $Table;
+#foreach my $Element (@CheckArray) {
+#  print $Element,"<br/>";
+#}  
 
 print '</td></tr>';
 print '<tr><td class="SubmitCell" colspan="2">';
