@@ -48,6 +48,7 @@ sub XSearchParse ($) {
       push @DebugStack,"$Project DocDB did not return valid data. Error was ".$@;
       return undef;
     }  
+    push @DebugStack,"$Project returned OK";
     ($ProjectXML) = $Twig -> children();
   } elsif ($UseTwig) {
     my $XML = $DocDBXML -> sprint();
