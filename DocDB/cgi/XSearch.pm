@@ -45,11 +45,10 @@ sub XSearchParse ($) {
     $Twig -> safe_parseurl($SearchURL);
     if ($@) {
       push @WarnStack,"$Project DocDB did not return valid data. Error was ".$@;
-      push @DebugStack,"$Project DocDB did not return valid data. Error was ".$@;
       return undef;
     }  
     push @DebugStack,"$Project returned OK";
-    ($ProjectXML) = $Twig -> children();
+    ($ProjectXML) = $Twig -> children("docdb");
   } elsif ($UseTwig) {
     my $XML = $DocDBXML -> sprint();
     $Twig -> parse($XML);
@@ -58,6 +57,10 @@ sub XSearchParse ($) {
     return undef;
   }
 
+  unless ($ProjectXML) {
+    push @WarnStack,"$Project DocDB did not return valid data.";
+    return undef;
+  }
   my $Project = $ProjectXML -> {'att'} -> {'shortproject'};
   my $Version = $ProjectXML -> {'att'} -> {'version'};
 
