@@ -78,9 +78,10 @@ foreach my $DocDBID (@ExternalDocDBIDs) {
     push @CheckArray, $query -> checkbox(-name  => "docdb-$DocDBID", -label => "").$Link;
   }
 }
-push @CheckArray,(4,5,6,7,8,9);
+push @CheckArray,(4,5,6,7,8,9,10,11,12);
 
 # Put Checkboxes in Table
+
 my $NColumns = 1;
 if (scalar(@CheckArray) > 6) {
   $NColumns = 3;
@@ -90,16 +91,38 @@ if (scalar(@CheckArray) > 6) {
 
 my @ColumnRefs = FillTable( {-arrange => "vertical", -columns => $NColumns, -elements => \@CheckArray} );
 
-my $Table = "<table><tr>";
-foreach my $ColumnRef (@ColumnRefs) {
-  $Table .= "<td>";
-  my @Elements = @{$ColumnRef};
-  foreach my $Element (@Elements) {
-    $Table .= $Element."<br/>\n";
+# Build the table
+
+my $Table = '<table class="LowPaddedTable">';
+my $GotOne = $TRUE;
+
+while ($GotOne) {
+  $GotOne = $FALSE;
+  my $Row = "<tr>"; 
+  foreach my $ColumnRef (@ColumnRefs) {
+    my $Element = unshift @{$ColumnRef}
+    if ($Element) {
+      $GotOne = $TRUE;
+      $Row .= "<td>$Element</td>";
+    }
   }
-  $Table .= "</td>\n";   
-}
-$Table .= "</tr></table>\n";   
+  $Row .= "</tr>\n";
+  if ($GotOne) {
+    $Table .= $Row;
+  }
+}      
+$Table .= "</table>\n";   
+   
+#my $Table = '<table class="LowPaddedTable"><tr>';
+#foreach my $ColumnRef (@ColumnRefs) {
+#  $Table .= "<td>";
+#  my @Elements = @{$ColumnRef};
+#  foreach my $Element (@Elements) {
+#    $Table .= $Element."<br/>\n";
+#  }
+#  $Table .= "</td>\n";   
+#}
+#$Table .= "</tr></table>\n";   
 
 # Print Search Table
 
