@@ -42,7 +42,11 @@ sub XSearchParse ($) {
     $SearchURL .= "?outformat=XML&simple=1";
     $SearchURL .= "&simpletext=$Text";
     push @DebugStack,"Contacting $Project $SearchURL";  
-    $Twig -> parseurl($SearchURL);
+    $Twig -> safe_parseurl($SearchURL);
+    unless ($Twig) {
+      push @WarnStack,"$Project DocDB did not return valid data. Error was ".$@;
+      return undef;
+    }  
     ($ProjectXML) = $Twig -> children();
   } elsif ($UseTwig) {
     my $XML = $DocDBXML -> sprint();

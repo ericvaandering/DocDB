@@ -35,7 +35,6 @@ require "Search.pm";
 require "XRefHTML.pm";
 require "XRefSQL.pm";
 
-# Build form
 # do safe parse
 # check into timeout with LWP::Simple
 
@@ -160,6 +159,10 @@ foreach my $Project (@Projects) {
     $FoundDocuments{$Identifier} = $ProjectDocuments{$Identifier} ;
   }
 }
+
+# Output warnings
+
+WarnPage();
 
 # Sort by relevance
 
