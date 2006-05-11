@@ -45,6 +45,7 @@ sub XSearchParse ($) {
     $Twig -> safe_parseurl($SearchURL);
     unless ($Twig) {
       push @WarnStack,"$Project DocDB did not return valid data. Error was ".$@;
+      push @DebugStack,"$Project DocDB did not return valid data. Error was ".$@;
       return undef;
     }  
     ($ProjectXML) = $Twig -> children();
