@@ -43,7 +43,7 @@ sub XSearchParse ($) {
     $SearchURL .= "&simpletext=$Text";
     push @DebugStack,"Contacting $Project $SearchURL";  
     $Twig -> safe_parseurl($SearchURL);
-    unless ($Twig) {
+    if ($@) {
       push @WarnStack,"$Project DocDB did not return valid data. Error was ".$@;
       push @DebugStack,"$Project DocDB did not return valid data. Error was ".$@;
       return undef;
