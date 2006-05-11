@@ -168,6 +168,7 @@ sub FillTable ($) {
     for my $j (1..$PerColumn[$i]) {
       my $Element = shift,@Elements;
       if ($Element) {
+        push @DebugStack,"Putting $Element in colun $i, row $j";
         push @{$ColumnRefs[$i]},$Element;
       }  
     }
