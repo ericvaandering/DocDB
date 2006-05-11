@@ -1,3 +1,7 @@
+7.5.2
+  Fix some bugs from 7.5.1 with missing requires. Also updated FullList to 
+  use default settings
+  
 7.5.1
   Two new perl modules are required for this release:
   "XML::Twig" and "HTML::TreeBuilder" 

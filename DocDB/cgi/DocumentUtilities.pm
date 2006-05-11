@@ -143,7 +143,7 @@ sub PrepareFieldList (%) {
   }  
   
   #  User Cookie for event
-  if ($EventID && $query -> cookie("eventid_$EventID") ) {
+  if ($query && $EventID && $query -> cookie("eventid_$EventID") ) {
     %FieldList = CookieToFieldList( $query -> cookie("eventid_$EventID") );
     if (%FieldList) {
       return %FieldList
@@ -151,7 +151,7 @@ sub PrepareFieldList (%) {
   }
 
   #  User Cookie for eventgroup
-  if ($EventGroupID && $query -> cookie("eventgroupid_$EventGroupID") ) {
+  if ($query && $EventGroupID && $query -> cookie("eventgroupid_$EventGroupID") ) {
     %FieldList = CookieToFieldList( $query -> cookie("eventgroupid_$EventGroupID") );
     if (%FieldList) {
       return %FieldList
@@ -159,7 +159,7 @@ sub PrepareFieldList (%) {
   }
   
   #  User Cookie for topic
-  if ($TopicID && $query -> cookie("topicid_$TopicID") ) {
+  if ($query && $TopicID && $query -> cookie("topicid_$TopicID") ) {
     %FieldList = CookieToFieldList( $query -> cookie("topicid_$TopicID") );
     if (%FieldList) {
       return %FieldList
@@ -167,7 +167,7 @@ sub PrepareFieldList (%) {
   }
   
   #  User Cookie for document type
-  if ($DocTypeID && $query -> cookie("doctypeid_$DocTypeID") ) {
+  if ($query && $DocTypeID && $query -> cookie("doctypeid_$DocTypeID") ) {
     %FieldList = CookieToFieldList( $query -> cookie("doctypeid_$DocTypeID") );
     if (%FieldList) {
       return %FieldList
@@ -175,7 +175,7 @@ sub PrepareFieldList (%) {
   }
   
   #  User Cookie for default group
-  if ($Default && $query -> cookie("$Default") ) {
+  if ($query && $Default && $query -> cookie("$Default") ) {
     %FieldList = CookieToFieldList( $query -> cookie("$Default") );
     if (%FieldList) {
       return %FieldList

@@ -42,34 +42,32 @@ require "DocumentSQL.pm";
 require "RevisionSQL.pm";
 
 require "HTMLUtilities.pm";
+require "DocumentUtilities.pm";
 require "Sorts.pm";
 
-&GetOptions("u:s" => \$UserName);
+GetOptions("u:s" => \$UserName);
 $remote_user = $UserName;
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&DocDBHeader("$Project Document List","Document List");
+DocDBHeader("$Project Document List","Document List");
 
-&GetAuthors;
-&GetSecurityGroups;
+GetAuthors();
+GetSecurityGroups();
 
 ### Get all revisions and documents
 
-&GetAllDocuments;  # For very 
-&GetAllRevisions;  # long lists
+GetAllDocuments();  # For very 
+GetAllRevisions();  # long lists
 
-my @Fields  = ("Docid","Title","Author","Updated"); 
+my %FieldListOptions = (-default => "Default");
+my %FieldList = PrepareFieldList(%FieldListOptions);
 my $SortBy  = "date";
 my $Reverse = 1;
 
-### Sort
-
-my @SortedDocumentIDs = reverse sort DocumentByRevisionDate @DocumentIDs;
-
-my $NumberOfDocuments = &DocumentTable(-fields => \@Fields, -docids  => \@SortedDocumentIDs, 
-                                       -sortby => $SortBy,  -reverse => $Reverse);
+my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs, 
+                                      -sortby    => $SortBy,     -reverse => $Reverse);
 print "<b>Number of documents found: ",int($NumberOfDocuments),"</b><p/>\n";
 
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
