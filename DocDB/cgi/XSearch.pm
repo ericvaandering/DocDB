@@ -26,10 +26,11 @@ sub XSearchParse ($) {
 
   use XML::Twig;
   use LWP::UserAgent;
+#  use LWP::Simple;
   require "XRefSQL.pm";
  
   my $LWP = LWP::UserAgent -> new();
-  $LWP -> timeout(10);
+  $LWP -> timeout(15);
 
   my $Twig = XML::Twig -> new();
 
@@ -46,7 +47,7 @@ sub XSearchParse ($) {
     $SearchURL .= "?outformat=XML&simple=1";
     $SearchURL .= "&simpletext=$Text";
     push @DebugStack,"Contacting $Project $SearchURL";  
-    $Twig -> safe_parseurl($LWP -> get($SearchURL));
+    $Twig -> safe_parse($LWP -> get($SearchURL) -> content());
     if ($@) {
       push @WarnStack,"$Project DocDB did not return valid data. Error was ".$@;
       return undef;
