@@ -100,7 +100,7 @@ while ($GotOne) {
   $GotOne = $FALSE;
   my $Row = "<tr>"; 
   foreach my $ColumnRef (@ColumnRefs) {
-    my $Element = unshift @{$ColumnRef};
+    my $Element = shift @{$ColumnRef};
     if ($Element) {
       $GotOne = $TRUE;
       $Row .= "<td>$Element</td>";
