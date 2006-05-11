@@ -25,7 +25,11 @@ sub XSearchParse ($) {
   my $UseTwig = exists $ArgRef->{-usetwig} ? $ArgRef->{-usetwig} : $FALSE;
 
   use XML::Twig;
+  use LWP::UserAgent;
   require "XRefSQL.pm";
+ 
+  my $LWP = LWP::UserAgent -> new();
+  $LWP -> timeout(10);
 
   my $Twig = XML::Twig -> new();
 
@@ -42,7 +46,7 @@ sub XSearchParse ($) {
     $SearchURL .= "?outformat=XML&simple=1";
     $SearchURL .= "&simpletext=$Text";
     push @DebugStack,"Contacting $Project $SearchURL";  
-    $Twig -> safe_parseurl($SearchURL);
+    $Twig -> safe_parseurl($LWP -> get($SearchURL));
     if ($@) {
       push @WarnStack,"$Project DocDB did not return valid data. Error was ".$@;
       return undef;
@@ -51,7 +55,7 @@ sub XSearchParse ($) {
     ($ProjectXML) = $Twig -> children("docdb");
   } elsif ($UseTwig) {
     my $XML = $DocDBXML -> sprint();
-    $Twig -> parse($XML);
+    $Twig -> safe_parse($XML);
     $ProjectXML = $Twig -> root();
   } else {
     return undef;

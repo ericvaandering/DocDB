@@ -35,7 +35,6 @@ require "Search.pm";
 require "XRefHTML.pm";
 require "XRefSQL.pm";
 
-# do safe parse
 # check into timeout with LWP::Simple
 
 $query = new CGI;  # Global for subroutines
