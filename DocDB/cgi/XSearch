@@ -50,6 +50,17 @@ CreateConnection(-type => "ro");
 
 print $query->header;
 DocDBHeader("DocDB X-Search"); 
+
+if ($XSearchDescription) {
+  print $XSearchDescription;
+} else {
+  print "<h3>Here you can search documents in other DocDB installations. 
+  Only public documents from those installations will be shown. If you
+  don't see the the installation you want, the 
+  <a href=\"http://docdb.fnal.gov/DocDB-public/DocDB/XSearch\">DocDB
+  site</a> may have what you are looking for.</h3>";
+}     
+
 my @ExternalDocDBIDs = GetAllExternalDocDBs();
 
 # Figure out which projects are "on"
@@ -78,7 +89,6 @@ foreach my $DocDBID (@ExternalDocDBIDs) {
     push @CheckArray, $query -> checkbox(-name  => "docdb-$DocDBID", -label => "").$Link;
   }
 }
-push @CheckArray,(4,5,6,7,8,9,10,11,12);
 
 # Put Checkboxes in Table
 
@@ -98,12 +108,12 @@ my $GotOne = $TRUE;
 
 while ($GotOne) {
   $GotOne = $FALSE;
-  my $Row = "<tr>"; 
+  my $Row = "<tr>\n"; 
   foreach my $ColumnRef (@ColumnRefs) {
     my $Element = shift @{$ColumnRef};
     if ($Element) {
       $GotOne = $TRUE;
-      $Row .= "<td>$Element</td>";
+      $Row .= "<td>$Element</td>\n";
     }
   }
   $Row .= "</tr>\n";
@@ -112,17 +122,6 @@ while ($GotOne) {
   }
 }      
 $Table .= "</table>\n";   
-   
-#my $Table = '<table class="LowPaddedTable"><tr>';
-#foreach my $ColumnRef (@ColumnRefs) {
-#  $Table .= "<td>";
-#  my @Elements = @{$ColumnRef};
-#  foreach my $Element (@Elements) {
-#    $Table .= $Element."<br/>\n";
-#  }
-#  $Table .= "</td>\n";   
-#}
-#$Table .= "</tr></table>\n";   
 
 # Print Search Table
 
