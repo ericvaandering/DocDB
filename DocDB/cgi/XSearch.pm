@@ -30,7 +30,7 @@ sub XSearchParse ($) {
   require "XRefSQL.pm";
  
   my $LWP = LWP::UserAgent -> new();
-  $LWP -> timeout(15);
+  $LWP -> timeout(30);
 
   my $Twig = XML::Twig -> new();
 
