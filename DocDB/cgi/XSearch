@@ -189,7 +189,7 @@ if (@Documents) {
     }  
     print "</td>\n";
     
-    print "<td>",EuroDate($FoundDocuments{$Identifier}{Date}),"</td>\n";
+    print '<td class="Updated">',EuroDate($FoundDocuments{$Identifier}{Date}),"</td>\n";
     
     print "</tr>\n";
   }
