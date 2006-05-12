@@ -203,6 +203,7 @@ td.Time {
 }  
 
 .Updated {
+  text-align: right;
   white-space: nowrap;
 }  
 

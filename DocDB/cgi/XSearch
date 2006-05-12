@@ -194,6 +194,7 @@ if (@Documents) {
     print "</tr>\n";
   }
   print "</table>\n";
+  print "<p><strong>Number of documents found: ",int($Row),"</strong></p>\n";
 }  
 
 DocDBNavBar();

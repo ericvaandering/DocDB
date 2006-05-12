@@ -1,3 +1,17 @@
+7.6.0
+  New perl modules are required since 7.5.1. Use the scripts/CheckModules
+  script to see if you need new ones.
+  
+  DocDB 7.6.0 now adds a cross-search feature that will search other DocDB 
+  installations as long as you have them defined as External DocDBs (see the 
+  admin pages). Additionally, we will be supplying a DocDB instance that knows
+  about as many other instances as possible. So, you may choose not to define
+  every other DocDB, just somewhat related ones, but users will still have a 
+  single place to go if they really want to search everything.
+  
+  Links to this search engine only appear on the homepage if you have other 
+  DocDBs defined.
+
 7.5.1
   Two new perl modules are required for this release:
   "XML::Twig" and "HTML::TreeBuilder" 

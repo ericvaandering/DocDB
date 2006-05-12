@@ -42,7 +42,7 @@ my @Modules = (
                "XML::PatAct::MatchName",
                "XML::PatAct::ToObjects",
                "XML::Twig",
-               "LWP::Simple",
+               "LWP::UserAgent",
                "HTML::TreeBuilder",
               );
 
