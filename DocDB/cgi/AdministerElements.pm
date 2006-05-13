@@ -74,8 +74,8 @@ sub GroupEntryBox (%) {
     $Options{-disabled} = "disabled";
   }  
   
-  print '<table class="MedPaddedTable"><tr>';
-  print "<td>\n";
+#  print '<table class="MedPaddedTable"><tr>';
+#  print "<td>\n";
   print FormElementTitle(-helplink => "groupentry", -helptext => "Name");
   print $query -> textfield (-name => 'name', 
                              -size => 16, -maxlength => 16, %Options);
@@ -103,7 +103,7 @@ sub GroupEntryBox (%) {
   print "<strong>Remove existing permissions</strong>\n";
 
   print "</td></tr>\n";
-  print "</table>\n";
+#  print "</table>\n";
 }
 
 1;

@@ -82,19 +82,19 @@ print "<p>Note that deleting and then re-entering with the same information is
 
 print $query -> start_multipart_form('POST',"$GroupAdminister",
                                      "id=\"groups\" name=\"groups\"");
-print '<table class="HighPaddedTable">';
+print '<table class="HighPaddedTable" border=1>';
 print "<tr>\n";
-print '<td colspan="2">';
+print '<td colspan="3">';
  AdministerActions(-form => "groups");
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
-print "<td>\n"; 
+print '<td rowspan="4">';
 SecurityScroll(-name      => 'parent', -disabled => $TRUE, 
                -helplink  => 'parent', -helptext => 'Group');
 print "</td>\n";  
-print "<td>\n"; 
+print '<td rowspan="4">';
 SecurityScroll(-name      => 'child', -disabled => $TRUE, -multiple => $TRUE,
                -helplink  => 'child', -helptext => 'Subordinates');
 print "<br/>\n";
@@ -104,8 +104,12 @@ print "<strong>Remove all</strong>";
 print "</td>\n";
 print "<td>\n";
  GroupEntryBox(-disabled => $TRUE);
-print "</td>\n";
-print "</tr>\n";
+#print "</td>\n";
+#print "</tr>\n";
+
+print "<tr><td>\n";
+AdminRegardless();
+print "</td></tr>\n";
 
 print "<tr>\n";
 print '<td colspan="3">';
