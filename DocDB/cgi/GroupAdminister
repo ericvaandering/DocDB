@@ -39,26 +39,26 @@ require "Messages.pm";
 
 $query = new CGI;  # Global for subroutines
 
-%params = $query -> Vars;
+%CGIParams = $query -> Vars;
 
 @ErrorStack = ();
 @WarnStack  = ();
 
 # Parameters to script 
 
-my $Password       = $params{password};
-my $Username       = $params{admuser};
-my $Action         = $params{admaction};
+my $Password       = $CGIParams{password};
+my $Username       = $CGIParams{admuser};
+my $Action         = $CGIParams{admaction};
 
-my $Description    = $params{description};
-my $Name           = $params{name};
-my $ParentID       = $params{parent};
-my @ChildIDs       = split /\0/,$params{child};
-my $Create         = $params{create};
-my $Admin          = $params{admin};
-my $NoPerm         = $params{remove};
-my $RemoveChildren = $params{removesubs};
-my $Force          = $params{admforce};
+my $Description    = $CGIParams{description};
+my $Name           = $CGIParams{name};
+my $ParentID       = $CGIParams{parent};
+my @ChildIDs       = split /\0/,$CGIParams{child};
+my $Create         = $CGIParams{create};
+my $Admin          = $CGIParams{admin};
+my $NoPerm         = $CGIParams{remove};
+my $RemoveChildren = $CGIParams{removesubs};
+my $Force          = $CGIParams{admforce};
 
 if ($Create)         {$Create = 1;} # Make sure they are in format MySQL is expecting
 if ($Admin)          {$Admin  = 1;}
@@ -143,6 +143,7 @@ if      ($Action eq "Delete") { # Delete group
       push @ActionStack,"$Count inter-group relationship(s) removed.";
       $Count = $SGD -> execute($ParentID);
       push @ActionStack,"$SecurityGroups{$ParentID}{NAME} has been deleted.";
+      push @ActionStack,"Remove group from .htpasswd file and run scripts/Resecure if applicable.";
     } else {
       push @ErrorStack,"Action could lead to unintended consequences. 
                         Use the <strong>force</strong> option if you want to proceed.";
