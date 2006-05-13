@@ -18,6 +18,21 @@
  </entry>
 
  <entry>
+  <key>xsearchtext</key>
+  <title>Cross Search</title>
+  <text>
+     <p> 
+     Words typed here will be searched in all the DocDBs checked on the right. 
+     The search on the local DocDB will be over all documents you can access.
+     The search in remote DocDBs will only cover publicly accessible documents.
+     </p><p>
+     If you would like another DocDB added to the list, ask your DocDB 
+     administrator.
+     </p>
+  </text>
+ </entry>
+
+ <entry>
   <key>quicksearch</key>
   <title>Quick Search</title>
   <text>

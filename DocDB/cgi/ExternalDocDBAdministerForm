@@ -71,7 +71,7 @@ if ($Password && $Username) {
   }
 }
 
-GetSecurityGroups;
+GetSecurityGroups();
 
 print $query->header;
 DocDBHeader("Administer External DocDBs","",

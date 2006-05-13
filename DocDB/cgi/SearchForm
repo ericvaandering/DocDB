@@ -54,6 +54,7 @@ DocDBHeader("$Project Document Database Search","Document Database Search",
 
 
 print "<h4>Click on any of the <span class=\"Help\">highlighted headings</span> for help.</h4>\n";
+print "<h4><a href=\"$XSearch\">Search</a> other DocDB installations</h4>\n";
 
 # Quick search table
 

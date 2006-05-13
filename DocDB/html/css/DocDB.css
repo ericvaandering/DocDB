@@ -202,7 +202,8 @@ td.Time {
   color: red;
 }  
 
-.Updated {
+td.Updated {
+  text-align: right;
   white-space: nowrap;
 }  
 

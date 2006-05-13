@@ -160,6 +160,7 @@ $ShowDocument          = $cgi_root."ShowDocument";
 $RetrieveFile          = $cgi_root."RetrieveFile";
 $RetrieveArchive       = $cgi_root."RetrieveArchive";
 
+$XSearch               = $cgi_root."XSearch";
 $Search                = $cgi_root."Search";
 $SearchForm            = $cgi_root."SearchForm";
 

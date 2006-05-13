@@ -1,0 +1,201 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+use CGI qw(-nosticky);                                                                                      
+use DBI;
+
+require "DocDBGlobals.pm";
+require "DBUtilities.pm";
+require "Utilities.pm";
+require "HTMLUtilities.pm";
+require "ResponseElements.pm";
+require "FormElements.pm";
+require "XSearch.pm";
+require "Search.pm";
+
+require "XRefHTML.pm";
+require "XRefSQL.pm";
+
+# check into timeout with LWP::Simple
+
+$query = new CGI;  # Global for subroutines
+
+my %CGIParams = $query -> Vars;
+
+my $SearchText  = $CGIParams{searchtext};
+my $LocalSearch = $CGIParams{"docdb-0"};
+
+CreateConnection(-type => "ro");
+
+print $query->header;
+DocDBHeader("DocDB X-Search","",-scripts => ["PopUps"]); 
+
+if ($XSearchDescription) {
+  print $XSearchDescription;
+} else {
+  print "<h3>Here you can search documents in other DocDB installations. 
+  Only public documents from those installations will be shown. If you
+  don't see the the installation you want, the 
+  <a href=\"http://docdb.fnal.gov/DocDB-public/DocDB/XSearch\">DocDB
+  site</a> may have what you are looking for.</h3>";
+}     
+
+my @ExternalDocDBIDs = GetAllExternalDocDBs();
+
+# Figure out which projects are "on"
+
+my @Projects = ();
+foreach my $DocDBID (@ExternalDocDBIDs) {
+  if ($CGIParams{"docdb-$DocDBID"}) {
+    push @Projects,$ExternalDocDBs{$DocDBID}{Project};
+  }
+}
+
+# Build up array of check boxes
+
+my @CheckArray = ();
+
+if ($LocalSearch || !$SearchText) {
+  push @CheckArray, $query -> checkbox(-name  => "docdb-0", -checked => 'checked', -label => "").$ShortProject;
+} else {
+  push @CheckArray, $query -> checkbox(-name  => "docdb-0", -label => "").$ShortProject;
+}
+foreach my $DocDBID (@ExternalDocDBIDs) {
+  my $Link = ExternalDocDBLink( {-docdbid => $DocDBID} ); 
+  if ($CGIParams{"docdb-$DocDBID"} || !$SearchText) {
+    push @CheckArray, $query -> checkbox(-name  => "docdb-$DocDBID", -checked => 'checked', -label => "").$Link;
+  } else {
+    push @CheckArray, $query -> checkbox(-name  => "docdb-$DocDBID", -label => "").$Link;
+  }
+}
+
+# Put Checkboxes in Table
+
+my $NColumns = 1;
+if (scalar(@CheckArray) > 6) {
+  $NColumns = 3;
+} elsif (scalar(@CheckArray) > 3) {  
+  $NColumns = 2;
+}
+
+my @ColumnRefs = FillTable( {-arrange => "vertical", -columns => $NColumns, -elements => \@CheckArray} );
+
+# Build the table
+
+my $Table = '<table class="LowPaddedTable">';
+my $GotOne = $TRUE;
+
+while ($GotOne) {
+  $GotOne = $FALSE;
+  my $Row = "<tr>\n"; 
+  foreach my $ColumnRef (@ColumnRefs) {
+    my $Element = shift @{$ColumnRef};
+    if ($Element) {
+      $GotOne = $TRUE;
+      $Row .= "<td>$Element</td>\n";
+    }
+  }
+  $Row .= "</tr>\n";
+  if ($GotOne) {
+    $Table .= $Row;
+  }
+}      
+$Table .= "</table>\n";   
+
+# Print Search Table
+
+print $query -> start_multipart_form('POST',$XSearch);
+print '<table class="MedPaddedTable CenteredTable">';
+print '<tr><td>';
+print FormElementTitle(-helplink => 'xsearchtext', -helptext => "Search for");
+print $query -> textfield(-name => 'searchtext', -size => 40, -maxlength => 240);
+print "</td>\n";
+
+print '<td>';
+
+
+print $Table;
+#foreach my $Element (@CheckArray) {
+#  print $Element,"<br/>";
+#}  
+
+print '</td></tr>';
+print '<tr><td class="SubmitCell" colspan="2">';
+print $query -> submit (-value => "Cross Search");     
+print '</td></tr></table>';
+print $query -> end_multipart_form;
+
+my %FoundDocuments = ();
+if ($LocalSearch) {
+  my %LocalParams = ("outformat" => "XML","simpletext" => $SearchText);
+  LocalSearch( {-noxmlhead => $TRUE, -cgiparams => \%LocalParams} );
+  %FoundDocuments = XSearchParse( {-usetwig => $TRUE} );
+}
+
+foreach my $Project (@Projects) {
+  my %ProjectDocuments = XSearchParse( {-project => $Project, -text => $SearchText } );
+
+  foreach my $Identifier (keys %ProjectDocuments) {
+    $FoundDocuments{$Identifier} = $ProjectDocuments{$Identifier} ;
+  }
+}
+
+# Output warnings
+
+WarnPage();
+
+# Sort by relevance
+
+%XSearchDocs  = %FoundDocuments; # Make global for search
+my @Documents = reverse sort XSearchDocsByRelevance keys %FoundDocuments;
+%XSearchDocs  = (); 
+
+# Print document table 
+
+if (@Documents) {
+  print '<table class="Alternating DocumentList">';
+  print '<tr><th>Document</th><th>Title</th><th>Author(s)</th><th>Last Updated</th>';
+  my $Row = 0;
+  foreach my $Identifier (@Documents) {
+    ++$Row;
+    my $RowClass = ("Even","Odd")[$Row % 2];
+    my $URL = $FoundDocuments{$Identifier}{URL};
+    print "<tr class=\"$RowClass\">";
+    print "<td><a href=\"$URL\">$Identifier</a></td>\n";
+    print "<td><a href=\"$URL\">$FoundDocuments{$Identifier}{Title}</a></td>\n";
+    
+    print "<td>$FoundDocuments{$Identifier}{Author}";
+    if ($FoundDocuments{$Identifier}{EtAl}) {
+      print " <em>et. al.</em>";
+    }  
+    print "</td>\n";
+    
+    print '<td class="Updated">',EuroDate($FoundDocuments{$Identifier}{Date}),"</td>\n";
+    
+    print "</tr>\n";
+  }
+  print "</table>\n";
+  print "<p><strong>Number of documents found: ",int($Row),"</strong></p>\n";
+}  
+
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

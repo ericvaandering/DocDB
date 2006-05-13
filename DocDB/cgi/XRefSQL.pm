@@ -136,6 +136,7 @@ sub FetchXRefs (%) { # For now, no single version
 sub ClearExternalDocDBs () {
   $HaveAllExternalDocDBs = 0;
   %ExternalDocDBs        = ();
+  %ExternalProjects      = ();
 }
 
 sub GetAllExternalDocDBs () {
@@ -174,6 +175,7 @@ sub FetchExternalDocDB ($) {
     $ExternalDocDBs{$ExternalDocDBID}{PrivateURL}  = $PrivateURL;
     $ExternalDocDBs{$ExternalDocDBID}{PublicURL}   = $PublicURL; 
     $ExternalDocDBs{$ExternalDocDBID}{TimeStamp}   = $TimeStamp;
+    $ExternalProjects{$Project}                    = $ExternalDocDBID;
     return $ExternalDocDBID;
   } else {
     return;

@@ -224,7 +224,7 @@ if ($EmailUserID) {
     my $Verified = ("No","Yes")[$EmailUser{$EmailUserID}{Verified}];
 
     ++$Row;
-    my $RowClass = ("Odd","Even")[$Row % 2];
+    my $RowClass = ("Even","Odd")[$Row % 2];
 
     my $Link = $EmailAdministerForm."?emailuserid=$EmailUserID";
 

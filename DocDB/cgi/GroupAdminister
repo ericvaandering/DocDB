@@ -39,25 +39,26 @@ require "Messages.pm";
 
 $query = new CGI;  # Global for subroutines
 
-%params = $query -> Vars;
+%CGIParams = $query -> Vars;
 
 @ErrorStack = ();
 @WarnStack  = ();
 
 # Parameters to script 
 
-my $Password       = $params{password};
-my $Username       = $params{admuser};
-my $Action         = $params{admaction};
+my $Password       = $CGIParams{password};
+my $Username       = $CGIParams{admuser};
+my $Action         = $CGIParams{admaction};
 
-my $Description    = $params{description};
-my $Name           = $params{name};
-my $ParentID       = $params{parent};
-my @ChildIDs       = split /\0/,$params{child};
-my $Create         = $params{create};
-my $Admin          = $params{admin};
-my $NoPerm         = $params{remove};
-my $RemoveChildren = $params{removesubs};
+my $Description    = $CGIParams{description};
+my $Name           = $CGIParams{name};
+my $ParentID       = $CGIParams{parent};
+my @ChildIDs       = split /\0/,$CGIParams{child};
+my $Create         = $CGIParams{create};
+my $Admin          = $CGIParams{admin};
+my $NoPerm         = $CGIParams{remove};
+my $RemoveChildren = $CGIParams{removesubs};
+my $Force          = $CGIParams{admforce};
 
 if ($Create)         {$Create = 1;} # Make sure they are in format MySQL is expecting
 if ($Admin)          {$Admin  = 1;}
@@ -88,14 +89,65 @@ if      ($Action eq "Delete") { # Delete group
   } elsif (!$SecurityGroups{$ParentID}{TimeStamp}) {
     push @ErrorStack,$Msg_ModGroupNone;
   } else {
-    my $GroupDelete       = $dbh -> prepare("delete from SecurityGroup    where GroupID=?");
-    my $RevSecurityDelete = $dbh -> prepare("delete from RevisionSecurity where GroupID=?");
-    my $HierarchyDelete   = $dbh -> prepare("delete from GroupHierarchy   ".
-                                    "where ParentID=? or ChildID=?");
-    $GroupDelete       -> execute($ParentID);
-    $RevSecurityDelete -> execute($ParentID);
-    $HierarchyDelete   -> execute($ParentID,$ParentID);
-    push @ActionStack,"$SecurityGroups{$ParentID}{NAME} has been deleted.";
+    my $Count;
+    my $TotalCount;
+    if (!$Force) {
+      my $RSC = $dbh -> prepare("select COUNT(RevSecurityID)     from RevisionSecurity where GroupID=?");
+      my $RMC = $dbh -> prepare("select COUNT(RevModifyID)       from RevisionModify   where GroupID=?");
+      my $MSC = $dbh -> prepare("select COUNT(MeetingSecurityID) from MeetingSecurity  where GroupID=?");
+      my $MMC = $dbh -> prepare("select COUNT(MeetingModifyID)   from MeetingModify    where GroupID=?");
+      my $EUC = $dbh -> prepare("select COUNT(UsersGroupID)      from UsersGroup       where GroupID=?");
+
+      $RSC -> execute($ParentID);
+      $RMC -> execute($ParentID);
+      $MSC -> execute($ParentID);
+      $MMC -> execute($ParentID);
+      $EUC -> execute($ParentID);
+
+      ($Count) = $RSC -> fetchrow_array;
+      push @WarnStack,"Action would change view list on $Count document(s).";
+      $TotalCount += $Count;
+      ($Count) = $RMC -> fetchrow_array;
+      push @WarnStack,"Action would change modify list on $Count document(s).";
+      $TotalCount += $Count;
+      ($Count) = $MSC -> fetchrow_array;
+      push @WarnStack,"Action would change view list on $Count event(s).";
+      $TotalCount += $Count;
+      ($Count) = $MMC -> fetchrow_array;
+      push @WarnStack,"Action would change modify list on $Count event(s).";
+      $TotalCount += $Count;
+      ($Count) = $EUC -> fetchrow_array;
+      push @WarnStack,"Action would change groups for $Count user(s).";
+      $TotalCount += $Count;
+    }  
+
+    if ($Force || !$TotalCount) {
+      my $RSD = $dbh -> prepare("delete from RevisionSecurity where GroupID=?");
+      my $RMD = $dbh -> prepare("delete from RevisionModify   where GroupID=?");
+      my $MSD = $dbh -> prepare("delete from MeetingSecurity  where GroupID=?");
+      my $MMD = $dbh -> prepare("delete from MeetingModify    where GroupID=?");
+      my $EUD = $dbh -> prepare("delete from UsersGroup       where GroupID=?");
+      my $HD  = $dbh -> prepare("delete from GroupHierarchy   where ParentID=? or ChildID=?");
+      my $SGD = $dbh -> prepare("delete from SecurityGroup    where GroupID=?");
+      $Count = $RSD -> execute($ParentID);
+      push @ActionStack,"Group removed from view list on $Count document(s).";
+      $Count = $RMD -> execute($ParentID);
+      push @ActionStack,"Group removed from modify list on $Count document(s).";
+      $Count = $MSD -> execute($ParentID);
+      push @ActionStack,"Group removed from view list on $Count event(s).";
+      $Count = $MMD -> execute($ParentID);
+      push @ActionStack,"Group removed from modify list on $Count event(s).";
+      $Count = $EUD -> execute($ParentID);
+      push @ActionStack,"Group removed from $Count users(s).";
+      $Count = $HD  -> execute($ParentID,$ParentID);
+      push @ActionStack,"$Count inter-group relationship(s) removed.";
+      $Count = $SGD -> execute($ParentID);
+      push @ActionStack,"$SecurityGroups{$ParentID}{NAME} has been deleted.";
+      push @ActionStack,"Remove group from .htpasswd file and run scripts/Resecure if applicable.";
+    } else {
+      push @ErrorStack,"Action could lead to unintended consequences. 
+                        Use the <strong>force</strong> option if you want to proceed.";
+    }
   }
 } elsif ($Action eq "Modify") { # Modify group
   unless ($ParentID) {
