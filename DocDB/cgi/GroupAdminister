@@ -105,19 +105,19 @@ if      ($Action eq "Delete") { # Delete group
       $MMC -> execute($ParentID);
       $EUC -> execute($ParentID);
       ($Count) = $RSC -> fetchrow_array;
-      push @WarnStack,"Action would change view list on $Count documents.";
+      push @WarnStack,"Action would change view list on $Count document(s).";
       $TotalCount += $Count;
       ($Count) = $RMC -> fetchrow_array;
-      push @WarnStack,"Action would change modify list on $Count documents.";
+      push @WarnStack,"Action would change modify list on $Count document(s).";
       $TotalCount += $Count;
       ($Count) = $MSC -> fetchrow_array;
-      push @WarnStack,"Action would change view list on $Count events.";
+      push @WarnStack,"Action would change view list on $Count event(s).";
       $TotalCount += $Count;
       ($Count) = $MMC -> fetchrow_array;
-      push @WarnStack,"Action would change modify list on $Count events.";
+      push @WarnStack,"Action would change modify list on $Count event(s).";
       $TotalCount += $Count;
       ($Count) = $EUC -> fetchrow_array;
-      push @WarnStack,"Action would change groups for $Count users.";
+      push @WarnStack,"Action would change groups for $Count user(s).";
       $TotalCount += $Count;
     }  
 
@@ -130,6 +130,9 @@ if      ($Action eq "Delete") { # Delete group
 #      $RevSecurityDelete -> execute($ParentID);
 #      $HierarchyDelete   -> execute($ParentID,$ParentID);
       push @ActionStack,"$SecurityGroups{$ParentID}{NAME} has been deleted.";
+    } else {
+      push @ErrorStack,"Action could lead to unintended consequences. 
+                        Use <strong>force</strong> if you want to proceed.";
     }
   }
 } elsif ($Action eq "Modify") { # Modify group
