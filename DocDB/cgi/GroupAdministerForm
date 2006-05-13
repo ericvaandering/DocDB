@@ -82,7 +82,7 @@ print "<p>Note that deleting and then re-entering with the same information is
 
 print $query -> start_multipart_form('POST',"$GroupAdminister",
                                      "id=\"groups\" name=\"groups\"");
-print '<table class="HighPaddedTable" border=1>';
+print '<table class="MedPaddedTable">';
 print "<tr>\n";
 print '<td colspan="3">';
  AdministerActions(-form => "groups");
@@ -100,12 +100,10 @@ SecurityScroll(-name      => 'child', -disabled => $TRUE, -multiple => $TRUE,
 print "<br/>\n";
 print $query -> checkbox(-name  => "removesubs", -value    => 'removesubs', 
                          -label => '',           -disabled => 'disabled');
-print "<strong>Remove all</strong>";
+print "Remove all";
 print "</td>\n";
-print "<td>\n";
- GroupEntryBox(-disabled => $TRUE);
-#print "</td>\n";
-#print "</tr>\n";
+
+GroupEntryBox(-disabled => $TRUE);
 
 print "<tr><td>\n";
 AdminRegardless();

@@ -74,8 +74,7 @@ sub GroupEntryBox (%) {
     $Options{-disabled} = "disabled";
   }  
   
-#  print '<table class="MedPaddedTable"><tr>';
-#  print "<td>\n";
+  print "<td>\n";
   print FormElementTitle(-helplink => "groupentry", -helptext => "Name");
   print $query -> textfield (-name => 'name', 
                              -size => 16, -maxlength => 16, %Options);
@@ -89,21 +88,18 @@ sub GroupEntryBox (%) {
 
   print "<tr><td>\n";
   print FormElementTitle(-helplink => "groupperm", -helptext => "Permissions");
-  print $query -> checkbox(-name => "create",  
-                           -value => 'create', -label => '', %Options);
-  print "<strong>May create documents</strong>\n";
-  print "<br/>\n";
+  print $query -> checkbox(-name  => "create", -value => 'create', 
+                           -label => '', %Options);
+  print "May create documents<br/>\n";
 
-  print $query -> checkbox(-name => "admin",  
-                           -value => 'admin', -label => '', %Options);
-  print "<strong>May administer database</strong> \n";
-  print "<br/>\n";
-  print $query -> checkbox(-name => "remove",  
-                           -value => 'remove', -label => '', %Options);
-  print "<strong>Remove existing permissions</strong>\n";
+  print $query -> checkbox(-name  => "admin",  -value => 'admin',  
+                           -label => '', %Options);
+  print "May administer database<br/>\n";
+  print $query -> checkbox(-name  => "remove", -value => 'remove', 
+                           -label => '', %Options);
+  print "Remove existing permissions\n";
 
   print "</td></tr>\n";
-#  print "</table>\n";
 }
 
 1;
