@@ -88,6 +88,8 @@ if      ($Action eq "Delete") { # Delete group
   } elsif (!$SecurityGroups{$ParentID}{TimeStamp}) {
     push @ErrorStack,$Msg_ModGroupNone;
   } else {
+#MeetingSecurity for groups
+#EmailUsers for groups
     my $GroupDelete       = $dbh -> prepare("delete from SecurityGroup    where GroupID=?");
     my $RevSecurityDelete = $dbh -> prepare("delete from RevisionSecurity where GroupID=?");
     my $HierarchyDelete   = $dbh -> prepare("delete from GroupHierarchy   ".
