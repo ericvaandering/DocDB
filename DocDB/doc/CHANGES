@@ -1,5 +1,12 @@
 7.6.1
 
+  Added a new script, ListGroups which lists the various security groups and 
+  allows the user to get a list of the documents viewable by that group. This 
+  will NOT list public documents nor documents which the group is allowed to 
+  read because it is over another group in the hierarchy. Turned security list
+  in ShowDocument into links to ListBy. ListBy also takes ListBy?group=blah
+  which will translate blah into a group number. 
+
   Added two new fields for the document display. Author+Institution should be
   obvious. Events (Long Name) gives the description or long name of the event
   instead of the short name.
