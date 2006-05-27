@@ -201,6 +201,18 @@ sub DocumentTable (%) {
           }
           ShortAuthorListByID(@AuthorIDs); 
         }  
+      } elsif ($Field eq "AuthorInst") {   # Single author (et. al.)
+        require "TalkHintSQL.pm";
+        if ($DocRevID) {
+          print FirstAuthor($DocRevID, {-institution => $TRUE} );
+        } elsif ($SessionTalkID) {
+          my @AuthorHintIDs = FetchAuthorHintsBySessionTalkID($SessionTalkID);
+          my @AuthorIDs = (); 
+          foreach my $AuthorHintID (@AuthorHintIDs) {
+            push @AuthorIDs,$AuthorHints{$AuthorHintID}{AuthorID};
+          }
+          ShortAuthorListByID(@AuthorIDs); 
+        }  
       } elsif ($Field eq "Updated") {  # Date of last update
         print EuroDate($DocRevisions{$DocRevID}{DATE});
       } elsif ($Field eq "Created") {  # Date of creation
@@ -214,6 +226,8 @@ sub DocumentTable (%) {
         }  
       } elsif ($Field eq "Conference" || $Field eq "Events") {  
         PrintEventInfo(-docrevid => $DocRevID, -format => "short");
+      } elsif ($Field eq "LongEvents") {  
+        PrintEventInfo(-docrevid => $DocRevID, -format => "description");
       } elsif ($Field eq "Topics") {  # Topics for document
         require "TopicHTML.pm";
         require "TopicSQL.pm";

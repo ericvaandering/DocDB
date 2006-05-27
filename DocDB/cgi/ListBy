@@ -27,6 +27,7 @@ $StartTime = new Benchmark;
 
 require "DocDBGlobals.pm";
 require "DocumentHTML.pm";
+require "SecuritySQL.pm";
 require "HTMLUtilities.pm";
 require "DocumentUtilities.pm";
 
@@ -46,6 +47,9 @@ my $EventID      = $params{eventid}      || 0;
 my $EventGroupID = $params{eventgroupid} || 0;
 my $EventGroup   = $params{eventgroup}   || "";
 
+my $GroupID      = $params{groupid}      || 0;
+my $Group        = $params{group}        || "";
+
 my $AllPubs      = $params{allpubs}      || "";
 my $AllDocs      = $params{alldocs}      || "";
 
@@ -53,10 +57,11 @@ my $Mode         = $params{mode}         || "";
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
+GetSecurityGroups();
+
 ### Set defaults
 
 my ($Title,  $Message, $List);
-
 # Defaults, later can surround these in "unless"
 my %FieldListOptions = (-default => "Default");
 my $SortBy           = "date";
@@ -166,6 +171,17 @@ if ($Days) {
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
            "DocumentRevision where DocumentRevision.DocTypeID=?");            
   $List -> execute($TypeID);
+} elsif ($GroupID || $Group) {
+  if ($Group) {
+    $GroupID = FetchSecurityGroupByName($Group);
+  }
+  $Title   = "Document List by Group";
+  $Message = "These documents for <span class=\"Highlight\">
+             $SecurityGroups{$GroupID}{NAME}</span> are available:";
+  
+  $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
+           "DocumentRevision,RevisionSecurity where DocumentRevision.DocRevID=RevisionSecurity.DocRevID and RevisionSecurity.GroupID=?");            
+  $List -> execute($GroupID);
 } elsif ($AllPubs) {
   $Title   = "$Project Publications";
   $Message = "These publications are available:\n";

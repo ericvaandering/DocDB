@@ -439,20 +439,20 @@ print "<table class=\"MedPaddedTable CenteredTable\">\n";
 
 print "<tr>\n";
 print "<td>\n"; 
-&EventGroupSelect( {-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID] });
+EventGroupSelect( {-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID] });
 print "</td>\n";
 print "<td>\n";
-&ShortDescriptionBox(-name => "shortdesc", -helptext => "Short Description", -required => $RequiredEntries{ShortDescription},
-                     -default => $DefaultShortDescription);
-&LongDescriptionBox(-required => $RequiredEntries{LongDescription}, 
-                    -default  => $DefaultLongDescription);
-&LocationBox(-default  => $MeetingDefaultLocation);       
-&EventURLBox(-default  => $MeetingDefaultURL);  
+ShortDescriptionBox(-name      => "shortdesc", -helptext => "Short Description", -required => $RequiredEntries{ShortDescription},
+                    -maxlength => 128, -default => $DefaultShortDescription);
+LongDescriptionBox(-required  => $RequiredEntries{LongDescription}, 
+                   -maxlength => 400, -default => $DefaultLongDescription);
+LocationBox(-default  => $MeetingDefaultLocation);       
+EventURLBox(-default  => $MeetingDefaultURL);  
 print "</td>\n";
 print "<td>\n";
 print "<div>\n";
-&DateTimePulldown(-name => "start",         -required => $RequiredEntries{StartDate}, 
-                  -helplink => "startdate", -helptext => "Start Date", 
+DateTimePulldown(-name => "start",         -required => $RequiredEntries{StartDate}, 
+                 -helplink => "startdate", -helptext => "Start Date", 
                   -dateonly => $TRUE,       -default  => $DefaultStartDate); 
 print "</div><div>\n";
 &DateTimePulldown(-name => "end",         -required => $RequiredEntries{EndDate}, 

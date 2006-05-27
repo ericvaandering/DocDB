@@ -573,8 +573,7 @@ when placing a document into the database and when reserving a document number.
 This is the name of the person who is reserving the document number or placing
 the document in the database. In other words, this is you. This option must be 
 supplied when reserving a document number, placing a document into the database,
-or updating a document. If a document has multiple authors, the submitter will be
-listed as the first author if the submitter is one of the authors.
+or updating a document. 
   </text>
  </entry>
 
@@ -650,8 +649,8 @@ of <b>Within Fields</b>.
 </p>
 <p>
 To select multiple authors either click or CTRL-click (depending on your
-browser) on the author names. If a document has multiple authors, the submitter
-will be listed as the first author if the submitter is one of the authors.
+browser) on the author names. 
+If a document has multiple authors, the <q>first author</q> will be the first alphabetically.
 </p>
   </text>
  </entry>

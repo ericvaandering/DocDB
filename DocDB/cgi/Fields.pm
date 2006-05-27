@@ -32,6 +32,7 @@
                 Topics     => "Topic(s)",            TalkLength => "Length", 
                 TalkNotes  => "Notes",               Abstract   => "Abstract",
                 Blank      => "&nbsp;",              DocNotes   => "Notes & Changes",
+                LongEvents => "Event(s)",            AuthorInst => "Author(s)", 
                );  
                
 %FieldDescriptions = (%FieldTitles, # Take titles as defaults
@@ -44,6 +45,8 @@
                 DocNotes   => "Document Notes & Changes",
                 Edit       => "Edit Document/Agenda Info",
                 Blank      => "Empty field (placeholder)",
+                LongEvents => "Event(s) (Long Name)",            
+                AuthorInst => "Author(s) and Institution", 
                );  
                
 %DefaultFieldLists = (

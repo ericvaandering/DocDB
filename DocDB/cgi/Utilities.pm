@@ -120,7 +120,6 @@ sub AddTime ($$) {
 sub Paragraphize {
   my ($Text) = @_;
   $Text =~ s/\s*\n\s*\n\s*/<p\/>/g; # Replace two new lines and any space with <p>
-#  $Text =~ s/\s*\n\s*/<br>\n/g;
   $Text =~ s/<p\/>/<p\/>\n/g;
   $Text = SafeHTML($Text);
   return $Text;
@@ -139,6 +138,12 @@ sub SafeHTML {
   my ($Text) = @_;
   $Text =~ s/\&/\&amp;/g;
   $Text =~ s/\&amp;amp;/\&amp;/g;
+  return $Text;
+}  
+ 
+sub Printable ($) {
+  my ($Text) = @_;
+  $Text =~ tr/[\040-\377\r\n\t]//cd;
   return $Text;
 }  
  

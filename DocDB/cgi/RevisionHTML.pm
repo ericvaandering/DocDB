@@ -349,23 +349,28 @@ sub PrintEventInfo (%) {
   my $DocRevID = $Params{-docrevid};
   my $Format   = $Params{-format}   || "normal";
   
-  my @EventIDs = &GetRevisionEvents($DocRevID);
+  my @EventIDs = GetRevisionEvents($DocRevID);
 
   if (@EventIDs) {
-    unless ($Format eq "short") {
+    unless ($Format eq "short" || $Format eq "description") {
       print "<div id=\"EventInfo\">\n";
       print "<dl>\n";
       print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Associated with Events:</span></dt> \n";
     }
     foreach my $EventID (@EventIDs) {
-      my $EventLink = &EventLink(-eventid => $EventID);
-      my $Start = &EuroDate($Conferences{$EventID}{StartDate});
-      my $End   = &EuroDate($Conferences{$EventID}{EndDate});
-      unless ($Format eq "short") {
+      my $EventLink;
+      if ($Format eq "description") {
+        $EventLink = EventLink(-eventid => $EventID, -format => "long");
+      } else {  
+        $EventLink = EventLink(-eventid => $EventID);
+      }
+      my $Start = EuroDate($Conferences{$EventID}{StartDate});
+      my $End   = EuroDate($Conferences{$EventID}{EndDate});
+      unless ($Format eq "short" || $Format eq "description") {
         print "<dd>";
       }  
       print "$EventLink ";
-      if ($Format eq "short") {
+      if ($Format eq "short" || $Format eq "description") {
         print "($Start)<br/>";
       } else {  
         if ($Start && $End && ($Start ne $End)) {
@@ -380,7 +385,7 @@ sub PrintEventInfo (%) {
         print "</dd>\n";
       }  
      }
-    unless ($Format eq "short") {
+    unless ($Format eq "short" || $Format eq "description") {
       print "</dl></div>\n";
     }
   }

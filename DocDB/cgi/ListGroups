@@ -23,26 +23,31 @@ use CGI;
 use DBI;
 
 require "DocDBGlobals.pm";
-require "AuthorSQL.pm";
-require "ResponseElements.pm";
+require "SecuritySQL.pm";
+require "SecurityHTML.pm";
 require "HTMLUtilities.pm";
+require "DBUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
-$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+CreateConnection(-type => "ro");
 
-GetInstitutions();
-GetAuthors();
+GetSecurityGroups();
 
 print $query->header;
-DocDBHeader("List of Authors");
+DocDBHeader("List of Groups");
 
-print "<h3>All Existing Authors";
-unless ($Public) {
-  print " (<a href=\"$AuthorAddForm\">Add</a> a new author)";
-}
-print "</h3>\n";
+print '<table class="CenteredTable MedPaddedTable">';
+print "<tr><th>Group</th><th>Description</th></tr>\n";
 
-AuthorsTable();
+foreach my $GroupID (keys %SecurityGroups) {
+  print "<tr>\n";
+  print "<td>",SecurityLink( {-groupid => $GroupID} ),"</td>\n";
+  print "<td>",$SecurityGroups{$GroupID}{Description},"</td>\n";
+  print "</tr>\n";
+} 
+ 
+print "</table>\n";
+
 
 DocDBNavBar();
 DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

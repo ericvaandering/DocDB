@@ -94,7 +94,7 @@ sub SecurityListByID {
   print "<ul>\n";
   if (@GroupIDs) {
     foreach $GroupID (@GroupIDs) {
-      print "<li>$SecurityGroups{$GroupID}{NAME}</li>\n";
+      print "<li>",SecurityLink( {-groupid => $GroupID} ),"</li>\n";
     }
   } else {
     print "<li>Public document</li>\n";
@@ -115,7 +115,7 @@ sub ModifyListByID {
   print "<ul>\n";
   if (@GroupIDs) {
     foreach $GroupID (@GroupIDs) {
-      print "<li>$SecurityGroups{$GroupID}{NAME}</li>\n";
+      print "<li>",SecurityLink( {-groupid => $GroupID} ),"</li>\n";
     }
   } else {
     print "<li>Same as Viewable by</li>\n";
@@ -139,6 +139,23 @@ sub PersonalAccountLink () {
     $PersonalAccountLink = "";
   }
   return $PersonalAccountLink;
+}
+
+sub SecurityLink ($) {
+  my ($ArgRef) = @_;
+  my $GroupID = exists $ArgRef->{-groupid} ? $ArgRef->{-groupid} : 0;
+
+  unless ($GroupID) {
+    return;
+  }
+  
+  my $Link = "<a href=\"$ListBy?groupid=$GroupID\"";
+     $Link .= " title=\"$SecurityGroups{$GroupID}{Description}\"";
+     $Link .= ">";
+     $Link .= $SecurityGroups{$GroupID}{NAME};
+     $Link .= "</a>";
+     
+  return $Link;
 }
 
 1;

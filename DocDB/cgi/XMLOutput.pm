@@ -20,6 +20,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use XML::Twig;
+require "Utilities.pm";
 
 sub NewXMLOutput {
   require "DocDBVersion.pm";
@@ -103,7 +104,7 @@ sub RevisionXMLOut {
   $Attributes{href}     = $ShowDocument."?docid=$DocumentID&amp;version=$Version";
   
   my $RevisionXML = XML::Twig::Elt -> new(docrevision => \%Attributes );
-  XML::Twig::Elt -> new("title",$DocRevisions{$DocRevID}{Title}) -> paste(first_child => $RevisionXML);
+  XML::Twig::Elt -> new("title",Printable($DocRevisions{$DocRevID}{Title})) -> paste(first_child => $RevisionXML);
 
   if ($Authors) {
     require "AuthorSQL.pm";
@@ -133,9 +134,9 @@ sub AuthorXMLOut {
   $Attributes{id} = $AuthorID;
   
   my $AuthorXML = XML::Twig::Elt -> new(author => \%Attributes );
-  my $First     = XML::Twig::Elt -> new("firstname",$Authors{$AuthorID}{FirstName});
-  my $Last      = XML::Twig::Elt -> new("lastname", $Authors{$AuthorID}{LastName});
-  my $Full      = XML::Twig::Elt -> new("fullname", $Authors{$AuthorID}{FULLNAME});
+  my $First     = XML::Twig::Elt -> new("firstname",Printable($Authors{$AuthorID}{FirstName}));
+  my $Last      = XML::Twig::Elt -> new("lastname", Printable($Authors{$AuthorID}{LastName}));
+  my $Full      = XML::Twig::Elt -> new("fullname", Printable($Authors{$AuthorID}{FULLNAME}));
         
   $First -> paste(last_child => $AuthorXML);
   $Last  -> paste(last_child => $AuthorXML);

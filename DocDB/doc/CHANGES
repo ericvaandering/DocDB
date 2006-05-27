@@ -1,3 +1,24 @@
+7.6.1
+  New file: ListGroups Should be placed in public scripts directory too.
+
+  Added a new script, ListGroups which lists the various security groups and 
+  allows the user to get a list of the documents viewable by that group. This 
+  will NOT list public documents nor documents which the group is allowed to 
+  read because it is over another group in the hierarchy. Turned security list
+  in ShowDocument into links to ListBy. ListBy also takes ListBy?group=blah
+  which will translate blah into a group number. 
+
+  Added two new fields for the document display. Author+Institution should be
+  obvious. Events (Long Name) gives the description or long name of the event
+  instead of the short name.
+
+  The number of characters allowed in event and session descriptions was not
+  consistent with what the DB allowed. This has been fixed. (The long
+  desciptions are unlimited by the DB, limited to 400 characters by the UI.)
+
+  XML output could contain invalid characters (control characters I suppose)
+  which would not parse. These characters should be filtered out.
+
 7.6.0
   New perl modules are required since 7.5.1. Use the scripts/CheckModules
   script to see if you need new ones.

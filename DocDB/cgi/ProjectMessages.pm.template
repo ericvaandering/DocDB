@@ -33,6 +33,7 @@
 #                                             "after All Documents, e.g.",
 #                                             "<a href=\"ListBy?eventgroup=Conferences\">Conference Documents</a>",
 #                                             "<a href=\"ListAllMeetings?eventgroup=Collaboration%20Meetings\">Collaboration Meetings</a>"];
+#                                             "<a href=\"ListBy?group=name\">Documents for group Name</a>"];
 #
 
 1;
