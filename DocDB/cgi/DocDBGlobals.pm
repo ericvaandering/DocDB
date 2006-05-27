@@ -172,9 +172,10 @@ $AuthorAdd             = $cgi_root."AuthorAdd";
 $ListManagedDocuments  = $cgi_root."ListManagedDocuments";
 
 $ListAuthors           = $cgi_root."ListAuthors";
+$ListGroups            = $cgi_root."ListGroups";
+$ListKeywords          = $cgi_root."ListKeywords";
 $ListTopics            = $cgi_root."ListTopics";
 $ListTypes             = $cgi_root."ListTypes";
-$ListKeywords          = $cgi_root."ListKeywords";
 $ListBy                = $cgi_root."ListBy";
 
 $AddFiles              = $cgi_root."AddFiles";

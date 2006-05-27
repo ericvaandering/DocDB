@@ -94,7 +94,7 @@ sub SecurityListByID {
   print "<ul>\n";
   if (@GroupIDs) {
     foreach $GroupID (@GroupIDs) {
-      print "<li>$SecurityGroups{$GroupID}{NAME}</li>\n";
+      print "<li>",SecurityLink( {-groupid => $GroupID} ),"</li>\n";
     }
   } else {
     print "<li>Public document</li>\n";
@@ -115,7 +115,7 @@ sub ModifyListByID {
   print "<ul>\n";
   if (@GroupIDs) {
     foreach $GroupID (@GroupIDs) {
-      print "<li>$SecurityGroups{$GroupID}{NAME}</li>\n";
+      print "<li>",SecurityLink( {-groupid => $GroupID} ),"</li>\n";
     }
   } else {
     print "<li>Same as Viewable by</li>\n";
