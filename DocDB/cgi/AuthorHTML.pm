@@ -22,8 +22,9 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-sub FirstAuthor ($) {
-  my ($DocRevID) = @_;
+sub FirstAuthor ($;$) {
+  my ($DocRevID,$ArgRef) = @_;
+  my $Institution = exists $ArgRef->{-institution} ? $ArgRef->{-institution} : $FALSE;
 
   require "AuthorSQL.pm";
   require "Sorts.pm";
@@ -37,6 +38,12 @@ sub FirstAuthor ($) {
 
   my $AuthorLink = AuthorLink($FirstID);
   if ($#AuthorIDs) {$AuthorLink .= " <i>et. al.</i>";}
+  if ($Institution) {
+    FetchInstitution($Authors{$FirstID}{InstitutionID});
+    $AuthorLink .= "<br/><em>".
+                   $Institutions{$Authors{$FirstID}{InstitutionID}}{SHORT}.
+                   "</em>";
+  }  
   return $AuthorLink; 
 }
 

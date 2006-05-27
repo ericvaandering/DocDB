@@ -141,4 +141,21 @@ sub PersonalAccountLink () {
   return $PersonalAccountLink;
 }
 
+sub SecurityLink ($) {
+  my ($ArgRef) = @_;
+  my $GroupID = exists $ArgRef->{-groupid} ? $ArgRef->{-groupid} : 0;
+
+  unless ($GroupID) {
+    return;
+  }
+  
+  my $Link = "<a href=\"$ListBy?groupid=$GroupID\"";
+     $Link .= " title=\"$SecurityGroups{$GroupID}{Description}\"";
+     $Link .= ">";
+     $Link .= $SecurityGroups{$GroupID}{NAME};
+     $Link .= "</a>";
+     
+  return $Link;
+}
+
 1;
