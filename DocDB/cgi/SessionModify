@@ -531,38 +531,38 @@ if ($SingleSession) {
 
   print "<tr>\n";
   print "<td rowspan=\"2\">\n"; 
-  &EventGroupSelect( {-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID]} );
+  EventGroupSelect( {-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID]} );
   print "</td>\n";
   print "<td rowspan=\"2\">\n";
-  &ShortDescriptionBox(-name    => "shortdesc", -helptext => "Short Description", 
-                      -required => $RequiredEntries{ShortDescription},
-                       -default => $DefaultShortDescription);
-  &LongDescriptionBox(-required => $RequiredEntries{LongDescription}, 
-                      -default  => $DefaultLongDescription);
+  ShortDescriptionBox(-name      => "shortdesc", -helptext => "Short Description", 
+                      -required  => $RequiredEntries{ShortDescription},
+                      -maxlength => 128, -default => $DefaultShortDescription);
+  LongDescriptionBox(-required  => $RequiredEntries{LongDescription}, 
+                     -maxlength => 400,  -default => $DefaultLongDescription);
   print "<div>\n";
-  &DateTimePulldown(-name    => "session", -helptext => "Start Date and Time", -helplink    => 'sessioninfo',
-                    -oneline => $TRUE,     -onetime  => $TRUE,                 -granularity => 15,
-                    -default => $SessionDefaultDateTime, -required => $RequiredEntries{StartDate} );
+  DateTimePulldown(-name    => "session", -helptext => "Start Date and Time", -helplink    => 'sessioninfo',
+                   -oneline => $TRUE,     -onetime  => $TRUE,                 -granularity => 15,
+                   -default => $SessionDefaultDateTime, -required => $RequiredEntries{StartDate} );
   print "</div>\n";
-  &LocationBox(-default  => $DefaultEventLocation);       
-  &EventURLBox(-default  => $DefaultEventURL     );  
+  LocationBox(-default  => $DefaultEventLocation);       
+  EventURLBox(-default  => $DefaultEventURL     );  
   print "</td>\n";
   print "<td>\n";
-  &SecurityScroll(-addpublic => 'true',
-                  -name      => 'meetingviewgroups', 
-                  -helplink  => 'meetingviewgroups',
-                  -helptext  => 'Viewable by',
-                  -multiple  => true,
-                  -default   => \@MeetingViewDefaults,
-                  -size      => 8);
+  SecurityScroll(-addpublic => 'true',
+                 -name      => 'meetingviewgroups', 
+                 -helplink  => 'meetingviewgroups',
+                 -helptext  => 'Viewable by',
+                 -multiple  => true,
+                 -default   => \@MeetingViewDefaults,
+                 -size      => 8);
   print "</td>\n";
   print "<td>\n";
-  &SecurityScroll(-name      => 'meetingmodifygroups', 
-                  -helplink  => 'meetingmodifygroups',
-                  -helptext  => 'Modifiable by',
-                  -multiple  => true,
-                  -default   => \@MeetingModifyDefaults,
-                  -size      => 8);
+  SecurityScroll(-name      => 'meetingmodifygroups', 
+                 -helplink  => 'meetingmodifygroups',
+                 -helptext  => 'Modifiable by',
+                 -multiple  => true,
+                 -default   => \@MeetingModifyDefaults,
+                 -size      => 8);
   print "</td>\n";
   print "</tr>\n";
   print "<tr>\n";
@@ -577,12 +577,12 @@ if ($SingleSession) {
   print "<table class=\"HighPaddingTable Centered\">\n";
   print "<tr>\n";
   print "<td>\n";              
-  &TextField(-name      => 'sessiontitle', -size     => 40, 
+  TextField(-name      => 'sessiontitle', -size     => 40, 
              -maxlength => 128,            -default  => $SessionDefaultTitle, 
              -helplink  => 'sessioninfo',  -helptext => 'Session Title');
   print "</td>\n";
   print "<td>\n";  
-  &TextField(-name      => 'sessionlocation', -size     => 30, 
+  TextField(-name      => 'sessionlocation', -size     => 30, 
              -maxlength => 128,            -default  => $SessionDefaultLocation, 
              -helplink  => 'sessioninfo',  -helptext => 'Session Location');
   print "</td>\n";
@@ -590,12 +590,12 @@ if ($SingleSession) {
 
   print "<tr>\n";
   print "<td>\n";                
-  &TextArea(-name     => 'sessiondescription', -columns => 40, -rows => 4,
+  TextArea(-name     => 'sessiondescription', -columns => 40, -rows => 4,
             -default  => $SessionDefaultDescription, 
             -helplink => 'sessioninfo', -helptext => 'Session Description');
   print "</td>\n";
   print "<td>\n";  
-  &DateTimePulldown(-name    => "session", -helptext => "Start Date and Time", -helplink    => 'sessioninfo',
+  DateTimePulldown(-name    => "session", -helptext => "Start Date and Time", -helplink    => 'sessioninfo',
                     -oneline => $TRUE,     -onetime  => $TRUE,                 -granularity => 15,
                     -default => $SessionDefaultDateTime, -required => $RequiredEntries{StartDate} );
   print "</td>\n";
