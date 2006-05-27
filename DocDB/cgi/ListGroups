@@ -46,7 +46,7 @@ foreach my $GroupID (keys %SecurityGroups) {
   print "</tr>\n";
 } 
  
-print "</tr></table>\n";
+print "</table>\n";
 
 
 DocDBNavBar();
