@@ -208,9 +208,11 @@ sub EventXMLOut {
   my %Attributes = ();
   $Attributes{id}           = $EventID;
   $Attributes{eventgroupid} = $Conferences{$EventID}{EventGroupID}; 
-  $Attributes{href}         = $Conferences{$EventID}{URL}; 
   $Attributes{start}        = $Conferences{$EventID}{StartDate}; 
   $Attributes{end}          = $Conferences{$EventID}{EndDate}; 
+  if ($Conferences{$EventID}{URL}) {
+    $Attributes{href}       = $Conferences{$EventID}{URL}; 
+  }  
   
   my $EventXML    = XML::Twig::Elt -> new(event => \%Attributes );
   my $Name        = XML::Twig::Elt -> new("name",        Printable($Conferences{$EventID}{Title}));
@@ -219,9 +221,13 @@ sub EventXMLOut {
   my $FullName    = XML::Twig::Elt -> new("fullname",    Printable($Conferences{$EventID}{Full}));     
         
   $Name        -> paste(last_child => $EventXML);
-  $Location    -> paste(last_child => $EventXML);
-  $Description -> paste(last_child => $EventXML);
   $FullName    -> paste(last_child => $EventXML);
+  if ($Location) {
+    $Location    -> paste(last_child => $EventXML);
+  }  
+  if ($Description) {
+    $Description -> paste(last_child => $EventXML);
+  }  
     
   return $EventXML; 
 }
