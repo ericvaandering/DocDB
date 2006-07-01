@@ -32,6 +32,7 @@ require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "Messages.pm";
 require "SecuritySQL.pm";
+require "Security.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
