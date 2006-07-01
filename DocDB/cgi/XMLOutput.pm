@@ -87,7 +87,7 @@ sub RevisionXMLOut {
   my $DocRevID = exists $ArgRef->{-docrevid} ? $ArgRef->{-docrevid} : 0;
   my $Authors  = exists $ArgRef->{-authors}  ? $ArgRef->{-authors}  : $TRUE;
   my $Topics   = exists $ArgRef->{-topics}   ? $ArgRef->{-topics}   : $TRUE;
-  my $Events   = exists $ArgRef->{-events}   ? $ArgRef->{-events}   : $FALSE;
+  my $Events   = exists $ArgRef->{-events}   ? $ArgRef->{-events}   : $TRUE;
   
   require "Security.pm";
 
@@ -183,14 +183,45 @@ sub TopicXMLOut {
   $Attributes{id} = $TopicID;
   $Attributes{majorid} = $MinorTopics{$TopicID}{MAJOR}; # Soon to be Obsolete
   
-  my $TopicXML  = XML::Twig::Elt -> new(topic => \%Attributes );
-  my $Short     = XML::Twig::Elt -> new("name",       Printable($MinorTopics{$TopicID}{SHORT}));
-  my $Long      = XML::Twig::Elt -> new("description",Printable($MinorTopics{$TopicID}{LONG}));
-  my $Full      = XML::Twig::Elt -> new("fullname",   Printable($MinorTopics{$TopicID}{Full}));
+  my $TopicXML = XML::Twig::Elt -> new(topic => \%Attributes );
+  my $Short    = XML::Twig::Elt -> new("name",       Printable($MinorTopics{$TopicID}{SHORT}));
+  my $Long     = XML::Twig::Elt -> new("description",Printable($MinorTopics{$TopicID}{LONG}));
+  my $Full     = XML::Twig::Elt -> new("fullname",   Printable($MinorTopics{$TopicID}{Full}));
         
   $Short -> paste(last_child => $TopicXML);
   $Long  -> paste(last_child => $TopicXML);
   $Full  -> paste(last_child => $TopicXML);
+    
+  return $TopicXML; 
+}
+
+sub EventXMLOut {
+  my ($ArgRef) = @_;
+  my $EventID = exists $ArgRef->{-eventid} ? $ArgRef->{-eventid} : 0;
+  
+  require "MeetingSQL.pm";
+  
+  unless ($EventID && FetchConferenceByConferenceID($EventID)) {
+    return undef;
+  }  
+  
+  my %Attributes = ();
+  $Attributes{id}           = $EventID;
+  $Attributes{eventgroupid} = $Conferences{$EventID}{EventGroupID}; 
+  $Attributes{href}         = $Conferences{$EventID}{URL}; 
+  $Attributes{start}        = $Conferences{$EventID}{StartDate}; 
+  $Attributes{end}          = $Conferences{$EventID}{EndDate}; 
+  
+  my $EventXML    = XML::Twig::Elt -> new(topic => \%Attributes );
+  my $Name        = XML::Twig::Elt -> new("name",        Printable($Conferences{$EventID}{Title}));
+  my $Location    = XML::Twig::Elt -> new("location",    Printable($Conferences{$EventID}{Location}));
+  my $Description = XML::Twig::Elt -> new("description", Printable($Conferences{$EventID}{LongDescription}));
+  my $FullName    = XML::Twig::Elt -> new("fullname",    Printable($Conferences{$EventID}{Full}));     
+        
+  $Name        -> paste(last_child => $EventXML);
+  $Location    -> paste(last_child => $EventXML);
+  $Description -> paste(last_child => $EventXML);
+  $FullName    -> paste(last_child => $EventXML);
     
   return $TopicXML; 
 }
