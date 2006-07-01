@@ -115,15 +115,19 @@ sub AdvancedInstructionsBody {
 
   <h3>More complicated searches</h3>
 
-  <p>By using the search capabilities, more complicated combinations of documents can be shown. Producing these kinds of
-  searches requires an understanding of two additional parameters, <tt>innerlogic</tt> and <tt>outerlogic</tt>, both of
-  which can have values of <tt>AND</tt> and <tt>OR</tt>. For instance, if you specify two authors, <tt>innerlogic=OR</tt>
-  will return documents by <i>either</i> author while <tt>AND</tt> will require the document to be authored by <i>both</i>
-  people. To understand <tt>outerlogic</tt>, take the example of searching for an author and a topic. 
-  <tt>outerlogic=OR</tt> will require a document to either have the correct author or the correct topic, while <tt>AND</tt>
-  will require both. Both options can be specified at the same time. <tt>outerlogic</tt> defaults to <tt>AND</tt> and
-  <tt>innerlogic</tt> defaults to <tt>OR</tt>. But, this could change in the future, so specify these values if you want to
-  be absolutely sure.</p>
+  <p>By using the search capabilities, more complicated combinations of documents can be
+  shown. To do this, link to the <tt>Search</tt> script with correct parameters as
+  described below. Producing these kinds of searches requires an understanding of two
+  additional parameters, <tt>innerlogic</tt> and <tt>outerlogic</tt>, both of which can
+  have values of <tt>AND</tt> and <tt>OR</tt>. For instance, if you specify two authors,
+  <tt>innerlogic=OR</tt> will return documents by <i>either</i> author while <tt>AND</tt>
+  will require the document to be authored by <i>both</i> people. To understand
+  <tt>outerlogic</tt>, take the example of searching for an author and a topic. 
+  <tt>outerlogic=OR</tt> will require a document to either have the correct author or the
+  correct topic, while <tt>AND</tt> will require both. Both options can be specified at the
+  same time. <tt>outerlogic</tt> defaults to <tt>AND</tt> and <tt>innerlogic</tt> defaults
+  to <tt>OR</tt>. But, this could change in the future, so specify these values if you want
+  to be absolutely sure.</p>
 
   <p>Here is a complete list of search parameters that can be specified:</p>
   <ul>
@@ -174,23 +178,27 @@ sub AdvancedInstructionsBody {
   <a name="xml" />
   <h1>XML Interface</h1>
 
-  <p>An XML interface for retrieving information from DocDB is currently being developed. It is not complete, but it
-     satisfy the most common needs. Any link to <tt>Search</tt> or <tt>ShowDocument</tt> described above can 
-     generate XML output by adding <tt>&amp;outformat=xml</tt> to the parameter list. <tt>Search</tt> returns a summary
-     of the found documents while <tt>ShowDocument</tt> returns all the meta-info for the document.</p>
-     
-  <p>This output should be easy to incorporate into your own programs and should be more stable than the HTML 
-     counterparts (although internal changes in DocDB's formats may change the XML output). Future improvements 
-     to the XML facilities of DocDB may include XML output from <tt>ListBy</tt>, XML output of events, and 
-     XML <em>upload</em> of documents. If any of these enhancements would be useful to you, please contact your 
-     administrator or us.</p>  
+  <p>An XML interface for retrieving information from DocDB is currently being developed.
+     It is not complete, but it may satisfy the most common needs. Any link to
+     <tt>Search</tt> or <tt>ShowDocument</tt> described above will  generate XML output if
+     <tt>&amp;outformat=xml</tt> is added to the parameter list. <tt>Search</tt> returns a
+     summary of the found documents while <tt>ShowDocument</tt> returns all the meta-info
+     for the document.</p>
+
+  <p>This output is easy to incorporate into your own programs and should be more
+     stable than the HTML counterparts (although internal changes in DocDB's formats may
+     change the XML output). Future improvements  to the XML facilities of DocDB may
+     include XML output from <tt>ListBy</tt>, XML output of events, and  XML
+     <em>upload</em> of documents. If any of these enhancements would be useful to you,
+     please contact your  administrator or the developers.</p>  
 
   <a name="program" />
   <h1>Programatic Interface</h1>
 
-  <p>It is possible (and not too difficult) to write Perl programs to insert documents into DocDB. Examples of how to do
-     this may be in <tt>scripts/examples</tt> in the DocDB source package. Help with this may also be obtained by
-     writing the DocDB users mailing list linked from the <a href="$DocDBHomePage">DocDB homepage</a>.</p>
+  <p>It is possible (and not too difficult) to write Perl programs to insert documents into
+     DocDB. Examples of how to do this may be in <tt>scripts/examples</tt> in the DocDB
+     source package. Help with this may also be obtained by writing the DocDB users mailing
+     list linked from the <a href="$DocDBHome">DocDB homepage</a>.</p>
 
 HTML
 }
