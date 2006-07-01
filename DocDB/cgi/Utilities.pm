@@ -92,7 +92,7 @@ sub URLify { # Adapted from Perl Cookbook, 6.21
                |                    # or else
                $                    #   then end of the string
               )
-             }{<A HREF="$1">$1</A>}igox;
+             }{<a href="$1">$1</a>}igox;
   $Text = &SafeHTML($Text);
   return $Text;           
 }
