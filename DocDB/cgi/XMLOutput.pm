@@ -142,7 +142,7 @@ sub RevisionXMLOut {
   }
 
   if ($XMLDisplay{All} || $XMLDisplay{Abstract}) {
-    my $Abstract = XML::Twig::Elt -> new("fullname", Printable($DocRevisions{$DocRevID}{Abstract}));
+    my $Abstract = XML::Twig::Elt -> new("abstract", ParagraphizeXML($DocRevisions{$DocRevID}{Abstract}));
     $Abstract -> paste(last_child => $RevisionXML);
   }
 
