@@ -112,8 +112,11 @@ unless ($DocRevID) { # Probably never executed since CanAccess fails.
 # Print appropriate body
 
 if ($OutFormat eq 'XML') {
+  my %XMLDisplay = { All => $TRUE };
   my $DocumentXML = DocumentXMLOut( {-docid   => $DocRevisions{$DocRevID}{DOCID}, 
-                                     -version => $DocRevisions{$DocRevID}{Version}} );
+                                     -version => $DocRevisions{$DocRevID}{Version}, 
+                                     -display => \%XMLDisplay, 
+                                    } );
   if ($DocumentXML) {
     $DocumentXML -> paste(last_child => $DocDBXML);
   }  
@@ -127,5 +130,4 @@ if ($OutFormat eq 'HTML') {
   DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 } elsif ($OutFormat eq 'XML') {
   print GetXMLOutput();
-  print $DocRevisions{$DocRevID}{DOCID};
 }

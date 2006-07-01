@@ -49,8 +49,9 @@ sub GetXMLOutput {
 
 sub DocumentXMLOut {
   my ($ArgRef) = @_;
-  my $DocumentID = exists $ArgRef->{-docid}   ? $ArgRef->{-docid}   : 0;
-  my $Version    = exists $ArgRef->{-version} ? $ArgRef->{-version} : "lastaccesible";
+  my $DocumentID = exists $ArgRef->{-docid}   ?   $ArgRef->{-docid}    : 0;
+  my $Version    = exists $ArgRef->{-version} ?   $ArgRef->{-version}  : "lastaccesible";
+  my %XMLDisplay = exists $ArgRef->{-display} ? %{$ArgRef->{-display}} : ();
 
   unless ($DocumentID) { return undef; }
   
@@ -64,19 +65,15 @@ sub DocumentXMLOut {
   
   my $DocumentXML = XML::Twig::Elt -> new(document => \%Attributes );
 
-  my $AccessibleRevision = $FALSE;
   if ($Version eq "lastaccesible") {
     require "Security.pm";
     $Version = LastAccess($DocumentID);
   }
+  
   my $DocRevID = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-  my $RevisionXML = RevisionXMLOut( {-docrevid => $DocRevID} );
+  my $RevisionXML = RevisionXMLOut( {-docrevid => $DocRevID, -display => \%XMLDisplay} );
   if ($RevisionXML) {
-    $AccessibleRevision = $TRUE;
     $RevisionXML -> paste(last_child => $DocumentXML);
-  }
-
-  if ($AccessibleRevision) {
     return $DocumentXML;
   } else {
     return undef;
@@ -85,10 +82,12 @@ sub DocumentXMLOut {
 
 sub RevisionXMLOut {
   my ($ArgRef) = @_;
-  my $DocRevID = exists $ArgRef->{-docrevid} ? $ArgRef->{-docrevid} : 0;
-  my $Authors  = exists $ArgRef->{-authors}  ? $ArgRef->{-authors}  : $TRUE;
-  my $Topics   = exists $ArgRef->{-topics}   ? $ArgRef->{-topics}   : $FALSE;
-  my $Events   = exists $ArgRef->{-events}   ? $ArgRef->{-events}   : $FALSE;
+  my $DocRevID   = exists $ArgRef->{-docrevid} ?   $ArgRef->{-docrevid} : 0;
+  my %XMLDisplay = exists $ArgRef->{-display}  ? %{$ArgRef->{-display}} : ("Authors" => $TRUE);
+  
+#  my $Authors  = exists $XMLDisplay{Authors}  ? $ArgRef->{-authors}  : $TRUE;
+#  my $Topics   = exists $ArgRef->{-topics}   ? $ArgRef->{-topics}   : $FALSE;
+#  my $Events   = exists $ArgRef->{-events}   ? $ArgRef->{-events}   : $FALSE;
   
   require "Security.pm";
 
@@ -109,7 +108,7 @@ sub RevisionXMLOut {
   my $RevisionXML = XML::Twig::Elt -> new(docrevision => \%Attributes );
   XML::Twig::Elt -> new("title",Printable($DocRevisions{$DocRevID}{Title})) -> paste(first_child => $RevisionXML);
 
-  if ($Authors) {
+  if ($XMLDisplay{All} || $XMLDisplay{Authors}) {
     require "AuthorSQL.pm";
     my @AuthorIDs = GetRevisionAuthors($DocRevID);
     foreach my $AuthorID (@AuthorIDs) {
@@ -120,7 +119,7 @@ sub RevisionXMLOut {
     }
   }
          
-  if ($Topics) {
+  if ($XMLDisplay{All} || $XMLDisplay{Topics}) {
     require "TopicSQL.pm";
     my @TopicIDs = GetRevisionTopics($DocRevID);
     foreach my $TopicID (@TopicIDs) {
@@ -131,7 +130,7 @@ sub RevisionXMLOut {
     }
   }
 
-  if ($Events) {
+  if ($XMLDisplay{All} || $XMLDisplay{Events}) {
     require "MeetingSQL.pm";
     my @EventIDs = GetRevisionEvents($DocRevID);
     foreach my $EventID (@EventIDs) {
