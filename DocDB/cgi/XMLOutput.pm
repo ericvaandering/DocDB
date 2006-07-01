@@ -212,7 +212,7 @@ sub EventXMLOut {
   $Attributes{start}        = $Conferences{$EventID}{StartDate}; 
   $Attributes{end}          = $Conferences{$EventID}{EndDate}; 
   
-  my $EventXML    = XML::Twig::Elt -> new(topic => \%Attributes );
+  my $EventXML    = XML::Twig::Elt -> new(event => \%Attributes );
   my $Name        = XML::Twig::Elt -> new("name",        Printable($Conferences{$EventID}{Title}));
   my $Location    = XML::Twig::Elt -> new("location",    Printable($Conferences{$EventID}{Location}));
   my $Description = XML::Twig::Elt -> new("description", Printable($Conferences{$EventID}{LongDescription}));
