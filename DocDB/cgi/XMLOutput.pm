@@ -142,7 +142,8 @@ sub RevisionXMLOut {
   }
 
   if ($XMLDisplay{All} || $XMLDisplay{Abstract}) {
-    my $Abstract = XML::Twig::Elt -> new("abstract", ParagraphizeXML($DocRevisions{$DocRevID}{Abstract}));
+    # FIXME: Figure out how to do Paragraphize in XML. My routines are getting made safe like &lt;
+    my $Abstract = XML::Twig::Elt -> new("abstract", Printable($DocRevisions{$DocRevID}{Abstract}));
     $Abstract -> paste(last_child => $RevisionXML);
   }
 
