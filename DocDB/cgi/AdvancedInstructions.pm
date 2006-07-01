@@ -32,6 +32,7 @@ sub AdvancedInstructionsSidebar {
     <li><a href="#refer">Referring to your document and its files</a></li>
     <li><a href="#group">Referring to groups of documents</a></li>
    </ul></li>
+   <li><a href="#xml">XML Interface</a></li>
   </ul>
 TOC
 
@@ -58,7 +59,7 @@ sub AdvancedInstructionsBody {
   (I.e. leave off the ``$ShortProject-doc-'' and ``-v.'') As above, you can leave off the
   <tt>&amp;version=XX</tt> to refer to the latest version.</p>
 
-  <p><strong>Using "as of" instead of version number:</strong>: Instead of specifying a version
+  <p><strong>Using "as of" instead of version number:</strong> Instead of specifying a version
   number, you can specify <tt>&amp;asof=2002-12-25</tt> which will give you the
   version of this document current as of December 25, 2002. </p>
 
@@ -133,15 +134,19 @@ sub AdvancedInstructionsBody {
    <li>File names: <tt>filesearch</tt> (text) and <tt>filesearchmode</tt> (see search string modes). (Can be used to search
    for file names or extensions.)</li>
    <li>File descriptions: <tt>filedescsearch</tt> (text) and <tt>filedescsearchmode</tt> (see search string modes). </li>
+   <li>File contents: <tt>filecontsearch</tt> (text) and <tt>filecontsearchmode</tt> (see search string modes). <em>Your admin must have enabled file content searches to use this.</em></li>
    <li>Topics: <tt>minortopic</tt> (numbers found with List Topics)</li>
-   <li>Requester and authors: <tt>requestersearch</tt> and <tt>authors</tt> (numbers found with List Authors)</li>
+   <li>Events: <tt>events</tt> (numbers found with List Events)</li>
+   <li>Event Groups: <tt>eventgroups</tt> (numbers found with List Events)</li>
+   <li>Submitter and authors: <tt>requestersearch</tt> and <tt>authors</tt> (numbers found with List Authors)</li>
+   <li>Authors by name: <tt>authormanual</tt> (text)</li>
    <li>Document type: <tt>doctypemulti</tt> (numbers, look at the HTML source for <a href="$SearchForm">SearchForm</a> to find) </li>
    <li>Modification date ranges: Look at the HTML source for <a href="$SearchForm">SearchForm</a> to find the parameters and values</li>
   </ul>
 
 
   <p>For titles, abstracts, keywords, publication info, file names and file descriptions, you should specify the
-  <q>searchmode</q> also. Currently there are two modes:</p>
+  <q>searchmode</q> also. Currently there are four modes:</p>
   <ul>
    <li><tt>searchmode=anysub</tt> case-insensitive, word must be found as a substring (as opposed to a full word), and if
    more than one are specified, <i>only one</i> word must be found</li>
@@ -149,7 +154,7 @@ sub AdvancedInstructionsBody {
    <li><tt>searchmode=anyword</tt> or <tt>allword</tt> like above, but the word must be found surrounded by spaces</li>
   </ul> 
   <p>
-  More modes can easily be added if required. To search for more than one word, place the code for a space (%20) between
+  More modes can be added if required. To search for more than one word, place the code for a space (%20) between
   them.  </p>
 
   <p>To search for more than one author, topic, etc. (fields with numbers) you can specify more than one in the URL (see the
@@ -164,6 +169,20 @@ sub AdvancedInstructionsBody {
    <li>Search for documents by an author on a topic:
     <tt>$Search?authors=1&amp;minortopic=2&amp;outerlogic=AND</tt></li>
   </ul>
+
+  <a name="xml" />
+  <h1>XML Interface</h1>
+
+  <p>An XML interface for retrieving information from DocDB is currently being developed. It is not complete, but it
+     satisfy the most common needs. Any link to <tt>Search</tt> or <tt>ShowDocument</tt> described above can 
+     generate XML output by adding <tt>&amp;outformat=xml</tt> to the parameter list. <tt>Search</tt> returns a summary
+     of the found documents while <tt>ShowDocument</tt> returns all the meta-info for the document.</p>
+     
+  <p>This output should be easy to incorporate into your own programs and should be more stable than the HTML 
+     counterparts (although internal changes in DocDB's formats may change the XML output). Future improvements 
+     to the XML facilities of DocDB may include XML output from <tt>ListBy</tt>, XML output of event agendas, and 
+     XML <em>upload</em> of documents. If any of these enhancements would be useful to you, please contact your 
+     administrator or us.</p>  
 
 HTML
 }
