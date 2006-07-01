@@ -54,25 +54,29 @@ sub AdminInstructionsBody {
   <p>While some conventions differ from page to page (see above), a few are consistent:</p>
   
   <ol>   
-  <li>You must always supply the administrators password for every action. This
+  <li>You must always supply the administrator password for every action. This
       is to remind you that you are doing something potentially harmful and to
       keep a casual user from exploiting unknown DocDB bugs and causing
       havoc.</li>
   <li>You must select an action from New, Modify, or Delete. This activates the
-      parts of the user interface you may use. For Modify, you typically select  
-      something to act on on the left and then change what you want to change on the 
-      right. Usually if you leave something blank, no change will be made. In certain
-      cases there are boxes to check which will clear lists like this.</li>
+      parts of the user interface you may use. You must enable Javascript for
+      this to work. For Modify, you typically select   something to act on on
+      the left and then change what you want to change on the  right. Usually
+      if you leave something blank, no change will be made. In certain cases
+      there are boxes to check which will clear lists like this.</li>
   <li>Be especially careful deleting things. Deleting and then adding the same thing
       back again is not the same thing. Every piece of meta-data (like an author) is
       just a number in the DB.</li>
   <li>Some more recent routines have a <strong>Force</strong> option. This is
-      a  warning that you are about to do something destructive. For instance,
-      if you  check <strong>Force</strong> and delete a group of users, you may
-      end up making lots of documents public. We have tried to put the
-      <strong>Force</strong> options where the need to stop mistakes is the
-      greatest, but the flip side is that if you check these boxes, you can do
-      severe damage to your underlying database. </li>
+      a  warning that you are about to do something potentially destructive.
+      For instance, if you  check <strong>Force</strong> and delete a group of
+      users, you may end up making lots of documents public. We have tried to
+      put the <strong>Force</strong> options where the need to stop mistakes is
+      the greatest, but the flip side is that if you check these boxes, you can
+      do severe damage to your underlying database. If you try to do the action
+      without using <strong>Force</strong>, it will proceed if there are no
+      side effects. In the case above, deleting a group that is not allowed to
+      view or modify any documents will succeed.</li>
   <li>If you are unsure of what you are doing, ask your maintainer or even back
       up the DB before acting.</li>
   </ol>
@@ -90,7 +94,9 @@ sub AdminInstructionsBody {
      document may be tagged as accessible to a subset of groups. Additionally,
      each group may have a list of subordinate groups. Anything marked viewable
      by a subordinate is also viewable by its superior group. (This
-     relationship does not extend to more than one generation, though.)</p>
+     relationship does not extend to more than one generation, though.) Using
+     the administration routine, you may only change a group's subordinates.
+     The superior groups are listed for clarity.</p>
 
   <p>Each group also has a flag determining whether that group is allowed to
      create new or modify existing documents. If a group is in the list of
