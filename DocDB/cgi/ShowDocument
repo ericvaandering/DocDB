@@ -40,11 +40,14 @@ $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
 
-$DocumentID = $params{docid};
-$DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
-$DocumentID =~ s/\s+$//;
-$Version    = $params{version};
-$AsOf       = $params{asof};
+   $DocumentID = $params{docid};
+   $DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
+   $DocumentID =~ s/\s+$//;
+   $Version    = $params{version};
+   $AsOf       = $params{asof};
+my $OutFormat = $CGIParams{outformat} || "HTML";
+   $OutFormat =~ tr/[a-z]/[A-Z]/;
+
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number!";
@@ -52,9 +55,9 @@ unless ($DocumentID) {
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&GetSecurityGroups;
+GetSecurityGroups();
 
-&FetchDocument($DocumentID);
+FetchDocument($DocumentID);
 
 if (defined $Version && defined $AsOf) {
   push @ErrorStack,"You may not specify both a version and date.";
@@ -89,17 +92,35 @@ if (&CanAccess($DocumentID,$Version)) {
   }  
 } 
 
-print $query->header;
-DocDBHeader($PageTitle,"$Project Document $DocumentID-v$Version",-scripts => ["PopUps"]);
+# Print appropriate header
+
+if ($OutFormat eq 'XML') {
+  require "XMLOutput.pm";
+  unless ($NoXMLHead) {
+    print XMLHeader();
+  }  
+  NewXMLOutput();
+} else {
+  print $query->header;
+  DocDBHeader($PageTitle,"$Project Document $DocumentID-v$Version",-scripts => ["PopUps"]);
+}
 
 unless ($DocRevID) { # Probably never executed since CanAccess fails.
   push @ErrorStack,"This document does not exist.";
 }
 
-EndPage();
+# Print appropriate body
 
-PrintRevisionInfo($DocRevID, -showversions => 1);
+if ($OutFormat eq 'XML') {
+  DocumentXMLOut( {-docid => $DocRevisions{$DocRevID}{DOCID}, -version => $DocRevisions{$DocRevID}{Version}} );
+} else {
+  EndPage();
+  PrintRevisionInfo($DocRevID, -showversions => 1);
+}
 
-DebugPage("End of page");
-DocDBNavBar();
-DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+if ($OutFormat eq 'HTML') {
+  DocDBNavBar();
+  DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+} elsif ($OutFormat eq 'XML') {
+  print GetXMLOutput();
+}
