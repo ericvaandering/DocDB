@@ -113,6 +113,7 @@ unless ($DocRevID) { # Probably never executed since CanAccess fails.
 
 if ($OutFormat eq 'XML') {
   my $DocumentXML = DocumentXMLOut( {-docid   => $DocRevisions{$DocRevID}{DOCID}, 
+                                     -version => $DocRevisions{$DocRevID}{Version}} );
   if ($DocumentXML) {
     $DocumentXML -> paste(last_child => $DocDBXML);
   }  
