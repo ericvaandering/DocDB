@@ -86,6 +86,8 @@ sub RevisionXMLOut {
   my ($ArgRef) = @_;
   my $DocRevID = exists $ArgRef->{-docrevid} ? $ArgRef->{-docrevid} : 0;
   my $Authors  = exists $ArgRef->{-authors}  ? $ArgRef->{-authors}  : $TRUE;
+  my $Topics   = exists $ArgRef->{-topics}   ? $ArgRef->{-topics}   : $TRUE;
+  my $Events   = exists $ArgRef->{-events}   ? $ArgRef->{-events}   : $FALSE;
   
   require "Security.pm";
 
@@ -117,6 +119,28 @@ sub RevisionXMLOut {
     }
   }
          
+  if ($Topics) {
+    require "TopicSQL.pm";
+    my @TopicIDs = GetRevisionTopics($DocRevID);
+    foreach my $TopicID (@TopicIDs) {
+      my $TopicXML = TopicXMLOut( {-topicid => $TopicID} );
+      if ($TopicXML) {
+        $TopicXML -> paste(last_child => $RevisionXML);
+      }  
+    }
+  }
+
+  if ($Events) {
+    require "MeetingSQL.pm";
+    my @EventIDs = GetRevisionEvents($DocRevID);
+    foreach my $EventID (@EventIDs) {
+      my $EventXML = EventXMLOut( {-eventid => $EventID} );
+      if ($EventXML) {
+        $EventXML -> paste(last_child => $RevisionXML);
+      }  
+    }
+  }
+
   return $RevisionXML;
 }  
 
@@ -143,6 +167,32 @@ sub AuthorXMLOut {
   $Full  -> paste(last_child => $AuthorXML);
     
   return $AuthorXML; 
+}
+
+sub TopicXMLOut {
+  my ($ArgRef) = @_;
+  my $TopicID = exists $ArgRef->{-topicid} ? $ArgRef->{-topicid} : 0;
+  
+  require "TopicSQL.pm";
+  
+  unless ($TopicID && FetchMinorTopic($TopicID)) {
+    return undef;
+  }  
+  
+  my %Attributes = ();
+  $Attributes{id} = $TopicID;
+  $Attributes{majorid} = $MinorTopics{$TopicID}{MAJOR}; # Soon to be Obsolete
+  
+  my $TopicXML  = XML::Twig::Elt -> new(topic => \%Attributes );
+  my $Short     = XML::Twig::Elt -> new("name",       Printable($MinorTopics{$TopicID}{SHORT}));
+  my $Long      = XML::Twig::Elt -> new("description",Printable($MinorTopics{$TopicID}{LONG}));
+  my $Full      = XML::Twig::Elt -> new("fullname",   Printable($MinorTopics{$TopicID}{Full}));
+        
+  $Short -> paste(last_child => $TopicXML);
+  $Long  -> paste(last_child => $TopicXML);
+  $Full  -> paste(last_child => $TopicXML);
+    
+  return $TopicXML; 
 }
 
 1;
