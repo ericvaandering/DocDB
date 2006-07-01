@@ -67,7 +67,7 @@ TOC
      print "<li><a href=\"#signoff\">Document Signoffs</a></li>\n";
     } 
     print <<TOC;
-     <li><a href="#advanced">Advanced Users</a></li>
+     <li><a href="#advancedusers">Advanced Users</a></li>
      <li><a href="#philosophy">Final Words</a>
      <ul>
       <li><a href="#annoyances">Javascript, pop-ups, etc.</a></li>
@@ -489,11 +489,11 @@ HTML
 
   print <<HTML;
 
-  <a name="advanced" />
+  <a name="advancedusers" />
   <h1>Notes for Advanced Users</h1>
 
   <p>As you become more familiar with DocDB, you may wish to link to documents,
-     files within those documents, link to a list of documents, or even use
+     files within those documents, or to a list of documents. You may even want to use
      another computer program to communicate with DocDB. The <a
      href="$DocDBInstructions?set=advanced">Advanced Instructions</a> describe
      how to do these things and more.</p>

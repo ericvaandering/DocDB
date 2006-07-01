@@ -38,6 +38,7 @@ TOC
 }
 
 sub AdvancedInstructionsBody {
+  print <<HTML;
   <a name="final" />
   <h1>Notes for Advanced Users</h1>
 
@@ -165,8 +166,6 @@ sub AdvancedInstructionsBody {
   </ul>
 
 HTML
-
-  }
 }
 
 1;
