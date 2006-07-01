@@ -112,7 +112,10 @@ unless ($DocRevID) { # Probably never executed since CanAccess fails.
 # Print appropriate body
 
 if ($OutFormat eq 'XML') {
-  DocumentXMLOut( {-docid => $DocRevisions{$DocRevID}{DOCID}, -version => $DocRevisions{$DocRevID}{Version}} );
+  my $DocumentXML = DocumentXMLOut( {-docid   => $DocRevisions{$DocRevID}{DOCID}, 
+  if ($DocumentXML) {
+    $DocumentXML -> paste(last_child => $DocDBXML);
+  }  
 } else {
   EndPage();
   PrintRevisionInfo($DocRevID, -showversions => 1);
