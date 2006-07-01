@@ -127,9 +127,9 @@ sub Paragraphize {
 
 sub ParagraphizeXML {
   my ($Text) = @_;
+  $Text = SafeHTML($Text);
   $Text =~ s/\s*\n\s*\n\s*/<\/p><p>/g; # Replace two new lines and any space with </p><p>
   $Text =~ s/\s*\n\s*/<br\/>/g;        # Replace one new line and any space with <br/>
-  $Text = SafeHTML($Text);
   return "<p>".$Text."</p>";
 }
 
