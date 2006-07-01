@@ -26,7 +26,6 @@ sub XSearchParse ($) {
 
   use XML::Twig;
   use LWP::UserAgent;
-#  use LWP::Simple;
   require "XRefSQL.pm";
  
   my $LWP = LWP::UserAgent -> new();
@@ -43,7 +42,7 @@ sub XSearchParse ($) {
       return undef;
     }   
 
-    my $SearchURL = $ExternalDocDBs{$ExternalDocDBID}{PublicURL}."Search";
+    my $SearchURL = $ExternalDocDBs{$ExternalDocDBID}{PublicURL}."/Search";
     $SearchURL .= "?outformat=XML&simple=1";
     $SearchURL .= "&simpletext=$Text";
     push @DebugStack,"Contacting $Project $SearchURL";  

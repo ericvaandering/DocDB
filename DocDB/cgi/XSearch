@@ -132,11 +132,7 @@ print "</td>\n";
 
 print '<td>';
 
-
 print $Table;
-#foreach my $Element (@CheckArray) {
-#  print $Element,"<br/>";
-#}  
 
 print '</td></tr>';
 print '<tr><td class="SubmitCell" colspan="2">';

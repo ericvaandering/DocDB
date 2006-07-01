@@ -74,6 +74,7 @@ TOC
      </ul></li>
      <li><a href="#philosophy">Final Words</a>
      <ul>
+      <li><a href="#annoyances">Javascript, pop-ups, etc.</a></li>
       <li><a href="#archive">Archive vs. Catalog</a></li>
       <li><a href="#whatis">What is a document?</a></li>
       <li><a href="#formats">Notes on file formats</a></li>
@@ -620,6 +621,16 @@ HTML
 
   <a name="philosophy" />
   <h1>Final Words</h1>
+
+  <a name="annoyances" />
+  <h2>Javascript, pop-ups, and cookies</h2>
+
+  <p>DocDB makes limited use of these technologies to enhance your experience,
+  however DocDB will generally function just  fine without them. These
+  techniques are only used where they are required. For instance, DocDB will pop
+  up windows when you request help, but never automatically. We suggest you
+  configure your web browser to allow cookies, pop-ups, etc. from the DocDB
+  server.</p>
 
   <a name="archive" />
   <h2>Archive vs. Catalog</h2>
