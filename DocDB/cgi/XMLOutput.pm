@@ -223,7 +223,7 @@ sub EventXMLOut {
   $Description -> paste(last_child => $EventXML);
   $FullName    -> paste(last_child => $EventXML);
     
-  return $TopicXML; 
+  return $EventXML; 
 }
 
 1;
