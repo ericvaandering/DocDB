@@ -68,13 +68,14 @@ sub DocumentXMLOut {
   if ($Version eq "lastaccesible") {
     require "Security.pm";
     $Version = LastAccess($DocumentID);
-    my $DocRevID = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-    my $RevisionXML = RevisionXMLOut( {-docrevid => $DocRevID} );
-    if ($RevisionXML) {
-      $AccessibleRevision = $TRUE;
-      $RevisionXML -> paste(last_child => $DocumentXML);
-    }
   }
+  my $DocRevID = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+  my $RevisionXML = RevisionXMLOut( {-docrevid => $DocRevID} );
+  if ($RevisionXML) {
+    $AccessibleRevision = $TRUE;
+    $RevisionXML -> paste(last_child => $DocumentXML);
+  }
+
   if ($AccessibleRevision) {
     return $DocumentXML;
   } else {
