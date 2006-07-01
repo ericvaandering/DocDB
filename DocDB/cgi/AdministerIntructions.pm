@@ -87,7 +87,7 @@ sub AdminInstructionsBody {
   <a name="groups" />
   <h2>Administering groups</h2>
   
-  <p>Groups are at the heart of the access control of DocDB and they are a
+  <p>Groups are at the heart of the access control in DocDB and they are a
      little difficult to understand.</p>
   
   <p>Access to documents within the DocDB is controlled in several ways. A
