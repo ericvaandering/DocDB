@@ -73,13 +73,14 @@
   <text>
 Access to documents within the DocDB is controlled in several ways. A document
 may be tagged as accessible to a subset of groups. Additionally, each group may
-have a list of subordinate groups. Anything marked viewable by a subordinate
-is also viewable by its superior group. (This relationship does not extend to
-more than one generation, though.)<p/> Each group also has a flag determining
+have a list of subordinate groups. Anything marked viewable by a subordinate is
+also viewable by its superior group. (This relationship does not extend to more
+than one generation, though.)<p/> Each group also has a flag determining
 whether that group is allowed to create new  or modify existing documents. If a
-group is allowed to view a document, it can change that document (assuming they
-also have the create/modify flag set). These group names must match those in
-the <b>.htpasswd</b> file although the comparison is not case sensitive.
+group is in the list of those allowed to modify a  document, it can change that
+document (assuming they also have the create/modify flag set). These group
+names must match those in the <b>.htpasswd</b> file although the comparison is
+not case sensitive.
   </text>
  </entry>
  <entry>

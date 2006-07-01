@@ -129,7 +129,7 @@ sub AdvancedInstructionsBody {
   to <tt>OR</tt>. But, this could change in the future, so specify these values if you want
   to be absolutely sure.</p>
 
-  <p>Here is a complete list of search parameters that can be specified:</p>
+  <p>Here is a (nearly) complete list of search parameters that can be specified:</p>
   <ul>
    <li>Title: <tt>titlesearch</tt> (text) and <tt>titlesearchmode</tt> (see search string modes)</li>
    <li>Abstract: <tt>abstractsearch</tt> (text) and <tt>abstractsearchmode</tt> (see search string modes)</li>

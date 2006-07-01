@@ -75,6 +75,9 @@ if ($InstructionSet eq "general") {
 } elsif ($InstructionSet eq "advanced") {
   $PageTitle = "Advanced Users &amp; XML Interface";
   $HTMLTitle = $PageTitle;
+} elsif ($InstructionSet eq "admin") {
+  $PageTitle = "Adminstration Instructions";
+  $HTMLTitle = $PageTitle;
 }
 print $query->header(-charset => "utf-8");
 &DocDBHeader($HTMLTitle,$PageTitle);
@@ -104,6 +107,9 @@ if ($InstructionSet eq "general") {
 } elsif ($InstructionSet eq "advanced") {
   require "AdvancedInstructions.pm";
   AdvancedInstructionsSidebar();
+} elsif ($InstructionSet eq "admin") {
+  require "AdministerInstructions.pm";
+  AdminInstructionsSidebar();
 }
 print "<hr/>\n";
 print "<h2>All Instructions</h2>\n";
@@ -115,6 +121,10 @@ unless ($Public) {
   if ($Preferences{Security}{Certificates}{ShowCertInstructions} || $UserValidation eq "certificate") {
     print "<b><a href=\"$DocDBInstructions?set=cert\">Certificate Instructions</a></b><br/>\n";
   }
+}
+
+if (CanAdminister()) {
+  print "<b><a href=\"$DocDBInstructions?set=admin\">Administrator Instructions</b><br/>\n";
 }
 print "</p>\n";
 print "</div>\n";  # LeftColumn3Col
@@ -131,6 +141,9 @@ if ($InstructionSet eq "general") {
 } elsif ($InstructionSet eq "advanced") {
   require "AdvancedInstructions.pm";
   AdvancedInstructionsBody();
+} elsif ($InstructionSet eq "admin") {
+  require "AdministerInstructions.pm";
+  AdminInstructionsBody();
 } elsif ($InstructionSet eq "cert") {
   require "CertificateInstructions.pm";
   CertificateInstructionsBody();
