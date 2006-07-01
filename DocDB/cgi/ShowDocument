@@ -112,7 +112,7 @@ unless ($DocRevID) { # Probably never executed since CanAccess fails.
 # Print appropriate body
 
 if ($OutFormat eq 'XML') {
-  my %XMLDisplay = ( "All" => $TRUE, "Topics" => $TRUE );
+  my %XMLDisplay = ("All" => $TRUE);
   my $DocumentXML = DocumentXMLOut( {-docid   => $DocRevisions{$DocRevID}{DOCID}, 
                                      -version => $DocRevisions{$DocRevID}{Version}, 
                                      -display => \%XMLDisplay, 
