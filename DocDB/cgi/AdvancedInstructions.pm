@@ -33,6 +33,7 @@ sub AdvancedInstructionsSidebar {
     <li><a href="#group">Referring to groups of documents</a></li>
    </ul></li>
    <li><a href="#xml">XML Interface</a></li>
+   <li><a href="#program">Programatic Interface</a></li>
   </ul>
 TOC
 
@@ -180,9 +181,16 @@ sub AdvancedInstructionsBody {
      
   <p>This output should be easy to incorporate into your own programs and should be more stable than the HTML 
      counterparts (although internal changes in DocDB's formats may change the XML output). Future improvements 
-     to the XML facilities of DocDB may include XML output from <tt>ListBy</tt>, XML output of event agendas, and 
+     to the XML facilities of DocDB may include XML output from <tt>ListBy</tt>, XML output of events, and 
      XML <em>upload</em> of documents. If any of these enhancements would be useful to you, please contact your 
      administrator or us.</p>  
+
+  <a name="program" />
+  <h1>Programatic Interface</h1>
+
+  <p>It is possible (and not too difficult) to write Perl programs to insert documents into DocDB. Examples of how to do
+     this may be in <tt>scripts/examples</tt> in the DocDB source package. Help with this may also be obtained by
+     writing the DocDB users mailing list linked from the <a href="$DocDBHomePage">DocDB homepage</a>.</p>
 
 HTML
 }
