@@ -51,7 +51,7 @@ sub DocumentXMLOut {
   my ($ArgRef) = @_;
   my $DocumentID = exists $ArgRef->{-docid}   ?   $ArgRef->{-docid}    : 0;
   my $Version    = exists $ArgRef->{-version} ?   $ArgRef->{-version}  : "lastaccesible";
-  my %XMLDisplay = exists $ArgRef->{-display} ? %{$ArgRef->{-display}} : ();
+  my %XMLDisplay = exists $ArgRef->{-display}  ? %{$ArgRef->{-display}} : ("Authors" => $TRUE);
 
   unless ($DocumentID) { return undef; }
   
@@ -83,7 +83,7 @@ sub DocumentXMLOut {
 sub RevisionXMLOut {
   my ($ArgRef) = @_;
   my $DocRevID   = exists $ArgRef->{-docrevid} ?   $ArgRef->{-docrevid} : 0;
-  my %XMLDisplay = exists $ArgRef->{-display}  ? %{$ArgRef->{-display}} : ("Authors" => $TRUE);
+  my %XMLDisplay = exists $ArgRef->{-display}  ? %{$ArgRef->{-display}} : ();
   
 #  my $Authors  = exists $XMLDisplay{Authors}  ? $ArgRef->{-authors}  : $TRUE;
 #  my $Topics   = exists $ArgRef->{-topics}   ? $ArgRef->{-topics}   : $FALSE;
