@@ -86,8 +86,8 @@ sub RevisionXMLOut {
   my ($ArgRef) = @_;
   my $DocRevID = exists $ArgRef->{-docrevid} ? $ArgRef->{-docrevid} : 0;
   my $Authors  = exists $ArgRef->{-authors}  ? $ArgRef->{-authors}  : $TRUE;
-  my $Topics   = exists $ArgRef->{-topics}   ? $ArgRef->{-topics}   : $TRUE;
-  my $Events   = exists $ArgRef->{-events}   ? $ArgRef->{-events}   : $TRUE;
+  my $Topics   = exists $ArgRef->{-topics}   ? $ArgRef->{-topics}   : $FALSE;
+  my $Events   = exists $ArgRef->{-events}   ? $ArgRef->{-events}   : $FALSE;
   
   require "Security.pm";
 

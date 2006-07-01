@@ -45,7 +45,7 @@ $query = new CGI;  # Global for subroutines
    $DocumentID =~ s/\s+$//;
    $Version    = $params{version};
    $AsOf       = $params{asof};
-my $OutFormat = $CGIParams{outformat} || "HTML";
+my $OutFormat  = $params{outformat} || "HTML";
    $OutFormat =~ tr/[a-z]/[A-Z]/;
 
 
