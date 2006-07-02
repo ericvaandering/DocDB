@@ -194,12 +194,12 @@ sub RevisionXMLOut {
   
   if ($XMLDisplay{All} || $XMLDisplay{OtherVersions}) {
     my @OtherRevIDs = FetchRevisionsByDocument($DocumentID);
-    if (@DocRevIDs) {
+    if (@OtherRevIDs) {
       my $OtherVersionsXML = XML::Twig::Elt -> new("otherversions");
       foreach my $OtherRevID (@OtherRevIDs) {
-        my $Version = $DocRevisions{$RevID}{VERSION};
+        my $Version = $DocRevisions{$OtherRevID}{VERSION};
         unless (CanAccess($DocumentID,$Version)) {next;}
-        my $OtherVersionXML = RevisionXMLOut( {-docrevid => $DocRevID, -display => \()} );
+        my $OtherVersionXML = RevisionXMLOut( {-docrevid => $OtherRevID, -display => \()} );
         if ($OtherVersion) {
           $OtherVersionXML -> paste(last_child => $OtherVersionsXML);
         }
