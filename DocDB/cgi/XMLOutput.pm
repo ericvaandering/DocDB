@@ -200,7 +200,7 @@ sub RevisionXMLOut {
         my $Version = $DocRevisions{$OtherRevID}{VERSION};
         unless (CanAccess($DocumentID,$Version)) {next;}
         my $OtherVersionXML = RevisionXMLOut( {-docrevid => $OtherRevID, -display => \()} );
-        if ($OtherVersion) {
+        if ($OtherVersionXML) {
           $OtherVersionXML -> paste(last_child => $OtherVersionsXML);
         }
       }
