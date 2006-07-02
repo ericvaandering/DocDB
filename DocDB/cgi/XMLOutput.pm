@@ -162,6 +162,13 @@ sub RevisionXMLOut {
     }
   }
 
+  if ($XMLDisplay{All} || $XMLDisplay{Files}) {
+    my @FileXML = KeywordXMLOut( {-docrevid => $DocRevID} );
+    foreach my $FileXML (@FileXML) {
+      $FileXML -> paste(last_child => $RevisionXML);
+    }
+  }
+
   if ($XMLDisplay{All} || $XMLDisplay{XRefs}) {
     my @XRefToXML = XRefToXMLOut( {-docrevid => $DocRevID} );
     foreach my $XRefToXML (@XRefToXML) {
@@ -315,11 +322,10 @@ sub XRefToXMLOut {
   my @XRefToXML = ();
   
   foreach my $DocXRefID (@DocXRefIDs) {
-    my $DocumentID = $DocXRefs{$DocXRefID}{DocumentID};
     my $Version    = $DocXRefs{$DocXRefID}{Version};
     my $ExtProject = $DocXRefs{$DocXRefID}{Project};
     my %Attributes = ();
-    $Attributes{docid} = $DocumentID;
+    $Attributes{docid} = $DocXRefs{$DocXRefID}{DocumentID};
     if ($Version) {
       $Attributes{version} = $Version;
     }
@@ -382,5 +388,47 @@ sub XRefByXMLOut {
   }
   return @XRefByXML;  
 }
+
+sub FileXMLOut {
+  my ($ArgRef) = @_;
+  my $DocRevID = exists $ArgRef->{-docrevid} ? $ArgRef->{-docrevid} : 0;
+  
+  require "MiscSQL.pm";
+  
+  my @DocFileIDs = FetchDocFiles($DocRevID) ;
+
+  unless (@DocFileIDs) {
+    return undef;
+  }  
+  
+  my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+  my $Version    = $DocRevisions{$DocRevID}{Version};
+  my @FileXML = ();
+  
+  foreach my $DocFileID (@DocFileIDs) {
+    my %Attributes = ();
+    my $ShortFile = CGI::escape($DocFiles{$DocFileID}{Name});
+    my $URL = $RetrieveFile."?docid=".$DocumentID."&amp;version=".$Version."&amp;filename=".$ShortFile;
+    $Attributes{href} = $URL;
+    if ($DocFiles{$DocFileID}{ROOT}) {
+      $Attributes{main} = "yes";
+    } else {  
+      $Attributes{main} = "no";
+    }
+    my $FileXML     = XML::Twig::Elt -> new(file => \%Attributes );
+    my $Name        = XML::Twig::Elt -> new("name",        Printable($DocFiles{$DocFileID}{Name}));
+    my $Description = XML::Twig::Elt -> new("description", Printable($DocFiles{$DocFileID}{DESCRIPTION}));
+
+    $Name -> paste(last_child => $FileXML);
+    if ($DocFiles{$DocFileID}{DESCRIPTION}) {
+      $Description -> paste(last_child => $FileXML);
+    }
+    
+    push @FileXML,$FileXML;
+  }
+  return @FileXML;  
+}
+
+
 
 1;
