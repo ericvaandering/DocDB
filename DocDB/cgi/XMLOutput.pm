@@ -163,7 +163,7 @@ sub RevisionXMLOut {
   }
 
   if ($XMLDisplay{All} || $XMLDisplay{Files}) {
-    my @FileXML = KeywordXMLOut( {-docrevid => $DocRevID} );
+    my @FileXML = FileXMLOut( {-docrevid => $DocRevID} );
     foreach my $FileXML (@FileXML) {
       $FileXML -> paste(last_child => $RevisionXML);
     }
