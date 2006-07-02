@@ -438,6 +438,7 @@ sub JournalXMLOut {
   my $DocRevID = exists $ArgRef->{-docrevid} ? $ArgRef->{-docrevid} : 0;
   
   require "MiscSQL.pm";
+  require "ReferenceLinks.pm";
   
   my @ReferenceIDs = FetchReferencesByRevision($DocRevID);
   
