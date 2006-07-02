@@ -143,8 +143,15 @@ sub RevisionXMLOut {
 
   if ($XMLDisplay{All} || $XMLDisplay{Abstract}) {
     # FIXME: Figure out how to do Paragraphize in XML. My routines are getting made safe like &lt;
-    my $Abstract = XML::Twig::Elt -> new("abstract", Printable($DocRevisions{$DocRevID}{Abstract}));
-    $Abstract -> paste(last_child => $RevisionXML);
+    my $AbstractXML = XML::Twig::Elt -> new("abstract", Printable($DocRevisions{$DocRevID}{Abstract}));
+    $AbstractXML -> paste(last_child => $RevisionXML);
+  }
+  
+  if ($XMLDisplay{All} || $XMLDisplay{Keywords}) {
+    my @KeywordXML = KeywordXMLOut ( {-keywords => $DocRevisions{$DocRevID}{Keywords}} );
+    foreach my $KeywordXML (@KeywordXML) {
+      $KeywordXML -> paste(last_child => $RevisionXML);
+    }
   }
 
   return $RevisionXML;
@@ -236,6 +243,27 @@ sub EventXMLOut {
   }  
     
   return $EventXML; 
+}
+
+sub KeywordXMLOut {
+  my ($ArgRef) = @_;
+  my $Keywords = exists $ArgRef->{-keywords} ? $ArgRef->{-keywords} : 0;
+    
+  $Keywords =~ s/^\s+//;
+  $Keywords =~ s/\s+$//;
+  
+  unless ($Keywords) {
+    return undef;
+  }  
+  
+  my @Keywords = split /\,*\s+/,$Keywords;
+  my @KeywordXML = ();
+  
+  foreach my $Keyword (@Keywords) { 
+    my $KeywordXML    = XML::Twig::Elt -> new("keyword",Printable($Keyword));
+    push @KeywordXML,$KeywordXML;
+  }
+  return @KeywordXML;
 }
 
 1;
