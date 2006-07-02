@@ -101,10 +101,15 @@ sub RevisionXMLOut {
   $Attributes{modified} = $DocRevisions{$DocRevID}{Date};
   $Attributes{href}     = $ShowDocument."?docid=$DocumentID&amp;version=$Version";
   
+  # Basic revision info
+  
   my $RevisionXML = XML::Twig::Elt -> new(docrevision => \%Attributes );
   if ($XMLDisplay{All} || $XMLDisplay{Title}) {
     XML::Twig::Elt -> new("title",Printable($DocRevisions{$DocRevID}{Title})) -> paste(first_child => $RevisionXML);
   }
+  
+  # Add submitter
+  
   if ($XMLDisplay{All} || $XMLDisplay{Submitter}) {
     require "AuthorSQL.pm";
     my $AuthorXML = AuthorXMLOut( {-submitterid => $DocRevisions{$DocRevID}{Submitter}} );
@@ -112,6 +117,8 @@ sub RevisionXMLOut {
       $AuthorXML -> paste(last_child => $RevisionXML);
     }  
   }
+
+  # Add authors
 
   if ($XMLDisplay{All} || $XMLDisplay{Authors}) {
     require "AuthorSQL.pm";
@@ -124,6 +131,8 @@ sub RevisionXMLOut {
     }
   }
          
+  # Add Topics       
+         
   if ($XMLDisplay{All} || $XMLDisplay{Topics}) {
     require "TopicSQL.pm";
     my @TopicIDs = GetRevisionTopics($DocRevID);
@@ -134,6 +143,8 @@ sub RevisionXMLOut {
       }  
     }
   }
+
+  # Add Events
 
   if ($XMLDisplay{All} || $XMLDisplay{Events}) {
     require "MeetingSQL.pm";
@@ -146,11 +157,15 @@ sub RevisionXMLOut {
     }
   }
 
+  # Add Abstract
+
   if ($XMLDisplay{All} || $XMLDisplay{Abstract}) {
     # FIXME: Figure out how to do Paragraphize in XML. My routines are getting made safe like &lt;
     my $AbstractXML = XML::Twig::Elt -> new("abstract", Printable($DocRevisions{$DocRevID}{Abstract}));
     $AbstractXML -> paste(last_child => $RevisionXML);
   }
+  
+  # Add Keywords
   
   if ($XMLDisplay{All} || $XMLDisplay{Keywords}) {
     my @KeywordXML = KeywordXMLOut( {-keywords => $DocRevisions{$DocRevID}{Keywords}} );
@@ -159,6 +174,8 @@ sub RevisionXMLOut {
     }
   }
 
+  # Add Files
+
   if ($XMLDisplay{All} || $XMLDisplay{Files}) {
     my @FileXML = FileXMLOut( {-docrevid => $DocRevID} );
     foreach my $FileXML (@FileXML) {
@@ -166,12 +183,16 @@ sub RevisionXMLOut {
     }
   }
 
+  # Add XRefs to other documents
+
   if ($XMLDisplay{All} || $XMLDisplay{XRefs}) {
     my @XRefToXML = XRefToXMLOut( {-docrevid => $DocRevID} );
     foreach my $XRefToXML (@XRefToXML) {
       $XRefToXML -> paste(last_child => $RevisionXML);
     }
   }
+  
+  # Add other XRefs to this document
 
   if ($XMLDisplay{All} || $XMLDisplay{XRefs}) {
     my @XRefByXML = XRefByXMLOut( {-docrevid => $DocRevID} );
@@ -179,6 +200,8 @@ sub RevisionXMLOut {
       $XRefByXML -> paste(last_child => $RevisionXML);
     }
   }
+  
+  # Add Journal references
 
   if ($XMLDisplay{All} || $XMLDisplay{Journals}) {
     my @JournalXML = JournalXMLOut( {-docrevid => $DocRevID} );
@@ -187,11 +210,15 @@ sub RevisionXMLOut {
     }
   }
 
+  # Add free-form publication info
+
   if ($XMLDisplay{All} || $XMLDisplay{PubInfo}) {
     # FIXME: Figure out how to do Paragraphize in XML. My routines are getting made safe like &lt;
     my $PubInfoXML = XML::Twig::Elt -> new("publicationinfo", Printable($DocRevisions{$DocRevID}{PUBINFO}));
     $PubInfoXML -> paste(last_child => $RevisionXML);
   }
+  
+  # Add list of other versions. Careful as this is recursive, so display is blank.
   
   if ($XMLDisplay{All} || $XMLDisplay{OtherVersions}) {
     my @OtherRevIDs = FetchRevisionsByDocument($DocumentID);
