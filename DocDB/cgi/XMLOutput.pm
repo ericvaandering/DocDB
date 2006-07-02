@@ -192,6 +192,22 @@ sub RevisionXMLOut {
     $PubInfoXML -> paste(last_child => $RevisionXML);
   }
   
+  if ($XMLDisplay{All} || $XMLDisplay{OtherVersions}) {
+    my @OtherRevIDs = FetchRevisionsByDocument($DocumentID);
+    if (@DocRevIDs) {
+      my $OtherVersionsXML = XML::Twig::Elt -> new("otherversions");
+      foreach my $OtherRevID (@OtherRevIDs) {
+        my $Version = $DocRevisions{$RevID}{VERSION};
+        unless (CanAccess($DocumentID,$Version)) {next;}
+        my $OtherVersionXML = RevisionXMLOut( {-docrevid => $DocRevID, -display => \()} );
+        if ($OtherVersion) {
+          $OtherVersionXML -> paste(last_child => $OtherVersionsXML);
+        }
+      }
+      $OtherVersionsXML -> paste(last_child => $RevisionXML);
+    }
+  }       
+
   return $RevisionXML;
 }  
 
