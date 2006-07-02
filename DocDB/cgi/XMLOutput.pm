@@ -108,6 +108,14 @@ sub RevisionXMLOut {
   my $RevisionXML = XML::Twig::Elt -> new(docrevision => \%Attributes );
   XML::Twig::Elt -> new("title",Printable($DocRevisions{$DocRevID}{Title})) -> paste(first_child => $RevisionXML);
 
+  if ($XMLDisplay{All} || $XMLDisplay{Submitter}) {
+    require "AuthorSQL.pm";
+    my $AuthorXML = AuthorXMLOut( {-submitterid => $DocRevisions{$DocRevID}{Submitter}} );
+    if ($AuthorXML) {
+      $AuthorXML -> paste(last_child => $RevisionXML);
+    }  
+  }
+
   if ($XMLDisplay{All} || $XMLDisplay{Authors}) {
     require "AuthorSQL.pm";
     my @AuthorIDs = GetRevisionAuthors($DocRevID);
@@ -179,9 +187,15 @@ sub RevisionXMLOut {
 
 sub AuthorXMLOut {
   my ($ArgRef) = @_;
-  my $AuthorID = exists $ArgRef->{-authorid} ? $ArgRef->{-authorid} : 0;
-  
+  my $AuthorID    = exists $ArgRef->{-authorid}    ? $ArgRef->{-authorid}    : 0;
+  my $SubmitterID = exists $ArgRef->{-submitterid} ? $ArgRef->{-submitterid} : 0;
   require "AuthorSQL.pm";
+  
+  my $ElementName = "author";
+  if ($SubmitterID) {
+    $AuthorID = $SubmitterID;
+    $ElementName = "submitter";
+  }
   
   unless ($AuthorID && FetchAuthor($AuthorID)) {
     return undef;
@@ -190,7 +204,7 @@ sub AuthorXMLOut {
   my %Attributes = ();
   $Attributes{id} = $AuthorID;
   
-  my $AuthorXML = XML::Twig::Elt -> new(author => \%Attributes );
+  my $AuthorXML = XML::Twig::Elt -> new($ElementName => \%Attributes );
   my $First     = XML::Twig::Elt -> new("firstname",Printable($Authors{$AuthorID}{FirstName}));
   my $Last      = XML::Twig::Elt -> new("lastname", Printable($Authors{$AuthorID}{LastName}));
   my $Full      = XML::Twig::Elt -> new("fullname", Printable($Authors{$AuthorID}{FULLNAME}));
