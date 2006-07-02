@@ -148,12 +148,25 @@ sub RevisionXMLOut {
   }
   
   if ($XMLDisplay{All} || $XMLDisplay{Keywords}) {
-    my @KeywordXML = KeywordXMLOut ( {-keywords => $DocRevisions{$DocRevID}{Keywords}} );
+    my @KeywordXML = KeywordXMLOut( {-keywords => $DocRevisions{$DocRevID}{Keywords}} );
     foreach my $KeywordXML (@KeywordXML) {
       $KeywordXML -> paste(last_child => $RevisionXML);
     }
   }
 
+  if ($XMLDisplay{All} || $XMLDisplay{XRefs}) {
+    my @XRefToXML = XRefToXMLOut( {-docrevid => $DocRevID} );
+    foreach my $XRefToXML (@XRefToXML) {
+      $XRefToXML -> paste(last_child => $RevisionXML);
+    }
+  }
+
+  if ($XMLDisplay{All} || $XMLDisplay{PubInfo}) {
+    # FIXME: Figure out how to do Paragraphize in XML. My routines are getting made safe like &lt;
+    my $PubInfoXML = XML::Twig::Elt -> new("publicationinfo", Printable($DocRevisions{$DocRevID}{PUBINFO}));
+    $PubInfoXML -> paste(last_child => $RevisionXML);
+  }
+  
   return $RevisionXML;
 }  
 
@@ -264,6 +277,38 @@ sub KeywordXMLOut {
     push @KeywordXML,$KeywordXML;
   }
   return @KeywordXML;
+}
+
+sub XRefToXML {
+  my ($ArgRef) = @_;
+  my $DocRevID = exists $ArgRef->{-docrevid} ? $ArgRef->{-docrevid} : 0;
+  my @DocXRefIDs = FetchXRefs(-docrevid => $DocRevID);
+
+  unless (@DocXRefIDs) {
+    return undef;
+  }  
+  
+  my @XRefToXML = ();
+  
+  foreach my $DocXRefID (@DocXRefIDs) {
+    my $DocumentID = $DocXRefs{$DocXRefID}{DocumentID};
+    my $Version    = $DocXRefs{$DocXRefID}{Version};
+    my $ExtProject = $DocXRefs{$DocXRefID}{Project};
+    my %Attributes = ();
+    $Attributes{docid} = $DocumentID;
+    if ($Version) {
+      $Attributes{version} = $Version;
+    }
+    if ($ExtProject) {
+      $Attributes{shortproject} = $ExtProject;
+    } else {  
+      $Attributes{shortproject} = $ShortProject;
+    }
+    
+    my $XRefToXML = XML::Twig::Elt -> new(xrefto => \%Attributes );
+    push @XRefToXML,$XRefToXML;
+  }
+  return @XRefToXML;  
 }
 
 1;
