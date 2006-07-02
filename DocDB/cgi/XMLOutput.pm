@@ -161,6 +161,13 @@ sub RevisionXMLOut {
     }
   }
 
+  if ($XMLDisplay{All} || $XMLDisplay{XRefs}) {
+    my @XRefByXML = XRefByXMLOut( {-docrevid => $DocRevID} );
+    foreach my $XRefByXML (@XRefByXML) {
+      $XRefByXML -> paste(last_child => $RevisionXML);
+    }
+  }
+
   if ($XMLDisplay{All} || $XMLDisplay{PubInfo}) {
     # FIXME: Figure out how to do Paragraphize in XML. My routines are getting made safe like &lt;
     my $PubInfoXML = XML::Twig::Elt -> new("publicationinfo", Printable($DocRevisions{$DocRevID}{PUBINFO}));
@@ -312,6 +319,54 @@ sub XRefToXMLOut {
     push @XRefToXML,$XRefToXML;
   }
   return @XRefToXML;  
+}
+
+sub XRefByXMLOut {
+  my ($ArgRef) = @_;
+  my $DocRevID = exists $ArgRef->{-docrevid} ? $ArgRef->{-docrevid} : 0;
+  
+  require "XRefSQL.pm";
+  
+  my @RawDocXRefIDs = FetchXRefs(-docid => $DocRevisions{$DocRevID}{DOCID});
+  my @DocXRefIDs = ();
+  
+  foreach my $DocXRefID (@RawDocXRefIDs) { # Remove links to other projects, versions
+    my $ExtProject = $DocXRefs{$DocXRefID}{Project};
+    my $Version    = $DocXRefs{$DocXRefID}{Version};
+    if ($ExtProject eq $ShortProject || !$ExtProject) {
+      if ($Version) {
+        if ($Version == $DocRevisions{$DocRevID}{Version}) {
+          push @DocXRefIDs,$DocXRefID;
+        } 
+      } else {
+        push @DocXRefIDs,$DocXRefID;
+      }  
+    }
+  }    
+    
+  unless (@DocXRefIDs) {
+    return undef;
+  }  
+  
+  my @XRefByXML = ();
+  
+  foreach my $DocXRefID (@DocXRefIDs) {
+    my $DocRevID = $DocXRefs{$DocXRefID}{DocRevID};
+    FetchDocRevisionByID($DocRevID);
+    if ($DocRevisions{$DocRevID}{Obsolete}) {
+      next;
+    }
+    my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
+    if ($DocumentID && !$SeenDocument{$DocumentID}) {
+      my %Attributes = ();
+      $Attributes{docid} = $DocumentID;
+      $Attributes{shortproject} = $ShortProject;
+      my $XRefByXML = XML::Twig::Elt -> new(xrefby => \%Attributes );
+      push @XRefByXML,$XRefByXML;
+      $SeenDocument{$DocumentID} = $TRUE;
+    }
+  }
+  return @XRefByXML;  
 }
 
 1;
