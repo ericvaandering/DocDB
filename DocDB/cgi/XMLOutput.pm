@@ -51,7 +51,7 @@ sub DocumentXMLOut {
   my ($ArgRef) = @_;
   my $DocumentID = exists $ArgRef->{-docid}   ?   $ArgRef->{-docid}    : 0;
   my $Version    = exists $ArgRef->{-version} ?   $ArgRef->{-version}  : "lastaccesible";
-  my %XMLDisplay = exists $ArgRef->{-display}  ? %{$ArgRef->{-display}} : ("Authors" => $TRUE);
+  my %XMLDisplay = exists $ArgRef->{-display}  ? %{$ArgRef->{-display}} : ("Authors" => $TRUE, "Title" => $TRUE);
 
   unless ($DocumentID) { return undef; }
   
@@ -102,8 +102,9 @@ sub RevisionXMLOut {
   $Attributes{href}     = $ShowDocument."?docid=$DocumentID&amp;version=$Version";
   
   my $RevisionXML = XML::Twig::Elt -> new(docrevision => \%Attributes );
-  XML::Twig::Elt -> new("title",Printable($DocRevisions{$DocRevID}{Title})) -> paste(first_child => $RevisionXML);
-
+  if ($XMLDisplay{All} || $XMLDisplay{Title}) {
+    XML::Twig::Elt -> new("title",Printable($DocRevisions{$DocRevID}{Title})) -> paste(first_child => $RevisionXML);
+  }
   if ($XMLDisplay{All} || $XMLDisplay{Submitter}) {
     require "AuthorSQL.pm";
     my $AuthorXML = AuthorXMLOut( {-submitterid => $DocRevisions{$DocRevID}{Submitter}} );
