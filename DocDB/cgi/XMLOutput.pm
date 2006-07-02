@@ -279,7 +279,7 @@ sub KeywordXMLOut {
   return @KeywordXML;
 }
 
-sub XRefToXML {
+sub XRefToXMLOut {
   my ($ArgRef) = @_;
   my $DocRevID = exists $ArgRef->{-docrevid} ? $ArgRef->{-docrevid} : 0;
   
