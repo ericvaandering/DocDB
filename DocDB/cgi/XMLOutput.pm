@@ -269,10 +269,10 @@ sub EventXMLOut {
         
   $Name        -> paste(last_child => $EventXML);
   $FullName    -> paste(last_child => $EventXML);
-  if ($Location) {
+  if ($Conferences{$EventID}{Location}) {
     $Location    -> paste(last_child => $EventXML);
   }  
-  if ($Description) {
+  if ($Conferences{$EventID}{LongDescription}) {
     $Description -> paste(last_child => $EventXML);
   }  
     
