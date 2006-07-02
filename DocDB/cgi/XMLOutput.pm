@@ -282,6 +282,9 @@ sub KeywordXMLOut {
 sub XRefToXML {
   my ($ArgRef) = @_;
   my $DocRevID = exists $ArgRef->{-docrevid} ? $ArgRef->{-docrevid} : 0;
+  
+  require "XRefSQL.pm";
+  
   my @DocXRefIDs = FetchXRefs(-docrevid => $DocRevID);
 
   unless (@DocXRefIDs) {
