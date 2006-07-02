@@ -85,10 +85,6 @@ sub RevisionXMLOut {
   my $DocRevID   = exists $ArgRef->{-docrevid} ?   $ArgRef->{-docrevid} : 0;
   my %XMLDisplay = exists $ArgRef->{-display}  ? %{$ArgRef->{-display}} : ();
   
-#  my $Authors  = exists $XMLDisplay{Authors}  ? $ArgRef->{-authors}  : $TRUE;
-#  my $Topics   = exists $ArgRef->{-topics}   ? $ArgRef->{-topics}   : $FALSE;
-#  my $Events   = exists $ArgRef->{-events}   ? $ArgRef->{-events}   : $FALSE;
-  
   require "Security.pm";
 
   my $Version    = $DocRevisions{$DocRevID}{Version};
@@ -180,6 +176,13 @@ sub RevisionXMLOut {
     my @XRefByXML = XRefByXMLOut( {-docrevid => $DocRevID} );
     foreach my $XRefByXML (@XRefByXML) {
       $XRefByXML -> paste(last_child => $RevisionXML);
+    }
+  }
+
+  if ($XMLDisplay{All} || $XMLDisplay{Journals}) {
+    my @JournalXML = JournalXMLOut( {-docrevid => $DocRevID} );
+    foreach my $JournalXML (@JournalXML) {
+      $JournalXML -> paste(last_child => $RevisionXML);
     }
   }
 
@@ -429,6 +432,59 @@ sub FileXMLOut {
   return @FileXML;  
 }
 
+sub JournalXMLOut {
 
+  my ($ArgRef) = @_;
+  my $DocRevID = exists $ArgRef->{-docrevid} ? $ArgRef->{-docrevid} : 0;
+  
+  require "MiscSQL.pm";
+  
+  my @ReferenceIDs = FetchReferencesByRevision($DocRevID);
+  
+  unless (@ReferenceIDs) {
+    return undef;
+  }  
+  
+  my @JournalXML = ();
+  GetJournals();
+  foreach my $ReferenceID (@ReferenceIDs) {
+    my %Attributes = ();
+    
+    my $JournalID = $RevisionReferences{$ReferenceID}{JournalID};
+
+    my ($ReferenceLink,$ReferenceText) = ReferenceLink($ReferenceID);
+    
+    if ($ReferenceLink) {
+      $Attributes{href} = $ReferenceLink;
+    }  
+    unless ($ReferenceText) {
+      $ReferenceText = "$Journals{$JournalID}{Abbreviation}";
+      if ($RevisionReferences{$ReferenceID}{Volume}) {
+        $ReferenceText .= " vol. $RevisionReferences{$ReferenceID}{Volume}";
+      }
+      if ($RevisionReferences{$ReferenceID}{Page}) {
+        $ReferenceText .= " pg. $RevisionReferences{$ReferenceID}{Page}";
+      }
+    }  
+    my $JournalXML = XML::Twig::Elt -> new(reference => \%Attributes );
+    my $Citation   = XML::Twig::Elt -> new("citation", Printable($ReferenceText));
+    my $Journal    = XML::Twig::Elt -> new("journal",  Printable($Journals{$JournalID}{Name}));
+     # FIXME: Journal has info with it too.
+    my $Page       = XML::Twig::Elt -> new("page",     Printable($RevisionReferences{$ReferenceID}{Page}));
+    my $Volume     = XML::Twig::Elt -> new("volume",   Printable($RevisionReferences{$ReferenceID}{Volume}));
+    
+    $Citation -> paste(last_child => $JournalXML);
+    $Journal  -> paste(last_child => $JournalXML);
+    if ($RevisionReferences{$ReferenceID}{Volume}) {
+      $Volume -> paste(last_child => $JournalXML);
+    }
+    if ($RevisionReferences{$ReferenceID}{Page}) {
+      $Page   -> paste(last_child => $JournalXML);
+    }
+    push @JournalXML ,$JournalXML  
+  }
+
+  return @JournalXML;
+}
 
 1;
