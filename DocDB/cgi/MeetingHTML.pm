@@ -513,49 +513,53 @@ sub PrintEventRightSidebar ($) {
 
   print '<ul class="compact">';  
   print "<li>$EventGroupLink";
-#  if ($DisplayMode eq "SingleSession" || $DisplayMode eq "Event") { 
     
 ### Get and sort other events in this group
     
-    my @EventIDs = FetchEventsByGroup($EventGroupID);
-    foreach my $OtherEventID (@EventIDs) {
-      FetchConferenceByConferenceID($OtherEventID);
-    }
-    my @EventIDs = sort EventsByDate @EventIDs;
+  my @EventIDs = FetchEventsByGroup($EventGroupID);
+  foreach my $OtherEventID (@EventIDs) {
+    FetchConferenceByConferenceID($OtherEventID);
+  }
+  my @EventIDs = sort EventsByDate @EventIDs;
 
-    my $EventIndex = IndexOf($EventID,@EventIDs);
+  my $EventIndex = IndexOf($EventID,@EventIDs);
 
 ### Display list of other events in group    
    
-    my $ForeDots = $FALSE; 
-    my $AftDots  = $FALSE; 
-    my $Index    = 0; 
-    print '<ul class="compact">';  
-    foreach my $OtherEventID (@EventIDs) {
-      if ($EventID == $OtherEventID) {
-        print "<li><strong>",$Conferences{$EventID}{Title},"</strong>\n";
+  my $ForeDots = $FALSE; 
+  my $AftDots  = $FALSE; 
+  my $Index    = 0; 
+  print '<ul class="compact">';  
+  foreach my $OtherEventID (@EventIDs) {
+    if ($EventID == $OtherEventID) {
+      print "<li><strong>",$Conferences{$EventID}{Title},"</strong>\n";
+      if ($DisplayMode ne "SingleSession") { # Find and print links to sessions
+        my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
+        @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
         print '<ul class="compact">';  
-        print "<li>Session 1</li>";
-        print "<li>Session 2</li>";
-        print "<li>Session 3</li>";
-        print "<li>Session 4</li>";
+        foreach $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks
+          my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
+          if ($SessionID) {
+            my $SessionLink = SessionLink(-sessionid => $SessionID);
+            print "<li>",$SessionLink,"</li>\n";
+          }
+        }
         print "</ul>";
-        print "</li>\n";
-      } elsif (defined $EventIndex && $EventIndex-$Index > 2 && !$ForeDots) {
-        $ForeDots = $TRUE;
-        print "<li>....</li>\n";
-      } elsif (defined $EventIndex && $Index-$EventIndex > 2 && !$AftDots) {
-        $AftDots = $TRUE;
-        print "<li>....</li>\n";
-        last;
-      } elsif (abs($Index-$EventIndex) <= 2) {
-        print "<li>",EventLink(-eventid => $OtherEventID),"</li>\n";
-      }
-      ++$Index;
+      }   
+      print "</li>\n";
+    } elsif (defined $EventIndex && $EventIndex-$Index > 2 && !$ForeDots) {
+      $ForeDots = $TRUE;
+      print "<li>....</li>\n";
+    } elsif (defined $EventIndex && $Index-$EventIndex > 2 && !$AftDots) {
+      $AftDots = $TRUE;
+      print "<li>....</li>\n";
+      last;
+    } elsif (abs($Index-$EventIndex) <= 2) {
+      print "<li>",EventLink(-eventid => $OtherEventID),"</li>\n";
     }
-    print "</ul>\n";
-#  }      
-  print "</li></ul>\n";
+    ++$Index;
+  }
+  print "</ul></li></ul>\n";
   
 }
 
