@@ -511,9 +511,10 @@ sub PrintEventRightSidebar ($) {
   my $EventGroupID   = $Conferences{$EventID}{EventGroupID};
   my $EventGroupLink = EventGroupLink(-eventgroupid => $EventGroupID, -format => "short");
 
-  print '<ul class="compact">';  
-  print "<li>$EventGroupLink";
-  if ($DisplayMode eq "SingleSession" || $DisplayMode eq "Event") { 
+  print "$EventGroupLink";
+#  print '<ul class="compact">';  
+#  print "<li>$EventGroupLink";
+#  if ($DisplayMode eq "SingleSession" || $DisplayMode eq "Event") { 
     
 ### Get and sort other events in this group
     
@@ -521,7 +522,7 @@ sub PrintEventRightSidebar ($) {
     foreach my $OtherEventID (@EventIDs) {
       FetchConferenceByConferenceID($OtherEventID);
     }
-    my @EventIDs = reverse sort EventsByDate @EventIDs;
+    my @EventIDs = sort EventsByDate @EventIDs;
 
     my $EventIndex = IndexOf($EventID,@EventIDs);
 
@@ -554,8 +555,8 @@ sub PrintEventRightSidebar ($) {
       ++$Index;
     }
     print "</ul>\n";
-  }      
-  print "</li></ul>\n";
+#  }      
+#  print "</li></ul>\n";
   
 }
 
