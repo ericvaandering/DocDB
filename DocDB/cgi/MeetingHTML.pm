@@ -581,7 +581,10 @@ sub PrintEventHeader ($) {
   if ($DisplayMode eq "Session" || $DisplayMode eq "Separator") {
     push @Fields,"Event";
     $Fields{"Event"} = $EventTitle;
-  }  
+  } else {
+    push @Fields,"Full Title";
+    $Fields{"Full Title"} = $EventTitle;
+  }
   
   if ($StartTime) {
     push @Fields,"Date &amp; Time";

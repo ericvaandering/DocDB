@@ -178,10 +178,10 @@ print "</div>\n";  # Footer3Col
 print "</div>\n"; # EventInfo
 
 if ($DisplayMode eq "Session") { # Display a single session
-  ReHintTalksBySessionID($SessionID); 
-  ClearSessionTalks();
-  FetchSessionByID($SessionID);
-  PrintSingleSessionHeader(-sessionid => $SessionID, -onlyone => $OnlyOneSession);
+#  ReHintTalksBySessionID($SessionID); 
+#  ClearSessionTalks();
+#  FetchSessionByID($SessionID);
+#  PrintSingleSessionHeader(-sessionid => $SessionID, -onlyone => $OnlyOneSession);
   PrintSession(-sessionid => $SessionID, -skipheader => $TRUE); 
   PrintMeetingEpilogue($ConferenceID);
 } elsif ($DisplayMode eq "Separator") { 
