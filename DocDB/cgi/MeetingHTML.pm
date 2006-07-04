@@ -541,13 +541,19 @@ sub PrintEventRightSidebar ($) {
         @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
         print '<ul class="compact">';  
         foreach $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks
-          my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
-            print "<li>Session $SessionID </li>\n";
-          if ($SessionID) {
-            FetchSessionByID($SessionID);
-            my $SessionLink = SessionLink(-sessionid => $SessionID);
-            print "<li>",$SessionLink,"</li>\n";
-          }
+          my $OtherSessionID   = $MeetingOrders{$MeetingOrderID}{SessionID};
+          my $OtherSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
+          if ($OtherSessionID) {
+            FetchSessionByID($OtherSessionID);
+            my $SessionLink = SessionLink(-sessionid => $OtherSessionID);
+            if ($OtherSessionID == $SessionID) {
+              print "<li><strong>",$Sessions{$SessionID}{Title},"</strong></li>\n";
+            } else {              
+              print "<li>",$SessionLink,"</li>\n";
+            }  
+          } elsif ($OtherSeparatorID) {
+            print "<li>Break</li>\n";
+          } 
         }
         print "</ul>";
       }
