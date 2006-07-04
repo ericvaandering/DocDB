@@ -535,7 +535,7 @@ sub PrintEventRightSidebar ($) {
       if ($DisplayMode eq "SingleSession" || $DisplayMode eq "Event") { 
         print "<li><strong>",$Conferences{$EventID}{Title},"</strong>\n";
       } else {
-        print "<li>",EventLink(-eventid => $OtherEventID),"</li>\n";
+        print "<li>",EventLink(-eventid => $OtherEventID),"\n";
       } 
 ### Find and print links to sessions      
 
