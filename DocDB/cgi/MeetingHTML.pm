@@ -550,6 +550,7 @@ sub PrintEventRightSidebar ($) {
       } else {
         print "<li>",EventLink(-eventid => $OtherEventID),"</li>\n";
       }
+      ++$Index;
     }
     print "</ul>\n";
   }      
