@@ -513,7 +513,7 @@ sub PrintEventHeader ($) {
    
   my $SessionTitle = $Sessions{$SessionID}{Title};
   my $EventTitle   = $Conferences{$EventID}{LongDescription};
-  my $StartTime    = $Sessions{$SessionID}{StartTime}
+  my $StartTime    = $Sessions{$SessionID}{StartTime};
   my %Fields = ();
   my @Fields = ();
   
