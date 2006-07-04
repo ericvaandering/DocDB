@@ -533,10 +533,14 @@ sub PrintEventRightSidebar ($) {
   foreach my $OtherEventID (@EventIDs) {
     if ($EventID == $OtherEventID) {
       print "<li><strong>",$Conferences{$EventID}{Title},"</strong>\n";
-      if ($DisplayMode ne "SingleSession") { # Find and print links to sessions
+
+### Find and print links to sessions      
+
+      if ($DisplayMode ne "SingleSession") { 
         my @MeetingOrderIDs = FetchMeetingOrdersByConferenceID($EventID);
         @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
         print '<ul class="compact">';  
+            print "<li>Session</li>\n";
         foreach $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks
           my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
           if ($SessionID) {
@@ -545,7 +549,8 @@ sub PrintEventRightSidebar ($) {
           }
         }
         print "</ul>";
-      }   
+      }
+         
       print "</li>\n";
     } elsif (defined $EventIndex && $EventIndex-$Index > 2 && !$ForeDots) {
       $ForeDots = $TRUE;
