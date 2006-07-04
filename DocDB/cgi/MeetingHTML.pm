@@ -571,7 +571,7 @@ sub PrintEventHeader ($) {
    
   my $SessionTitle = $Sessions{$SessionID}{Title};
   my $EventTitle   = $Conferences{$EventID}{LongDescription};
-  my $StartTime    = $Sessions{$SessionID}{StartTime};
+  my $SessionStartTime    = $Sessions{$SessionID}{StartTime};
   my %Fields = ();
   my @Fields = ();
   
@@ -586,7 +586,12 @@ sub PrintEventHeader ($) {
     $Fields{"Full Title"} = $EventTitle;
   }
   
-  if ($StartTime) {
+#  if ($SessionStartTime) {
+    push @Fields,"Event Dates";
+    $Fields{"Event Dates"} = "Not available yet";
+#  }  
+
+  if ($SessionStartTime) {
     push @Fields,"Date &amp; Time";
     $Fields{"Date &amp; Time"} = EuroDate($StartTime)." at ".EuroTimeHM($StartTime);
   }  
@@ -603,7 +608,7 @@ sub PrintEventHeader ($) {
   
   if ($Conferences{$EventID}{Preamble}) {
     push @Fields,"Event Info";
-    $Fields{"Event Info"} = Paragraphize($Conferences{$ConferenceID}{Preamble});
+    $Fields{"Event Info"} = Paragraphize($Conferences{$EventID}{Preamble});
   }
 
   if ($Sessions{$SessionID}{Description}) {
@@ -711,7 +716,7 @@ sub PrintSingleSessionHeader (%) { # FIXME: No longer needed?
   print "</div>\n";
 }  
 
-sub PrintMeetingInfo($;%) {
+sub PrintMeetingInfo($;%) { # FIXME: Obsolete?
   my ($ConferenceID,%Params) = @_;
 
   require "Utilities.pm";
