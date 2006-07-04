@@ -459,11 +459,18 @@ sub PrintEventLeftSidebar ($) {
   my $SessionID   = exists $ArgRef->{-sessionid}   ? $ArgRef->{-sessionid}   : 0;
   my $DisplayMode = exists $ArgRef->{-displaymode} ? $ArgRef->{-displaymode} : "";
   
+  push @DebugStack,"DM in Left: $DisplayMode";
+  
   if ((CanCreate()) || CanModifyMeeting($EventID)) {
     if (CanCreate()) {
-      print "<p>\n";
-      TalkUploadButton(-sessionid => $SessionID);
-      print "</p>\n";
+#      print "<p>\n";
+      if ($DisplayMode eq "SingleSession" || $DisplayMode eq "Session") {
+        TalkUploadButton(-sessionid => $SessionID);
+      } else {
+        TalkUploadButton(-eventid => $EventID);
+      } 
+        
+#      print "</p>\n";
     }
     if (CanModifyMeeting($EventID)) {
       print "<p>\n";
@@ -1005,12 +1012,10 @@ sub TalkUploadButton (%) {
   my $SessionID = $Params{-sessionid}; 
 
   print $query -> startform('POST',$DocumentAddForm),"<div>\n";
-  print $query -> submit (-value => "Upload");
+  print $query -> submit (-value => "Upload Document");
   if ($EventID) {
-    print " a document for this event"; 
     print $query -> hidden(-name => 'conferenceid', -default => $EventID);
   } elsif ($SessionID) {
-    print " a document for this session"; 
     print $query -> hidden(-name => 'sessionid',    -default => $SessionID);
   }    
   print "\n</div>\n",$query -> endform,"\n";
