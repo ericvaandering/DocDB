@@ -501,7 +501,7 @@ sub PrintEventLeftSidebar ($) {
   print "</div>\n"; # UpdateButtons
 }
 
-print PrintEventRightSideBar ($) {
+sub PrintEventRightSideBar ($) {
   my ($ArgRef) = @_;
   my $EventID     = exists $ArgRef->{-eventid}     ? $ArgRef->{-eventid}     : 0;
   my $SessionID   = exists $ArgRef->{-sessionid}   ? $ArgRef->{-sessionid}   : 0;
