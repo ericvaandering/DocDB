@@ -532,14 +532,13 @@ sub PrintEventRightSidebar ($) {
     my $Index    = 0; 
     print '<ul class="compact">';  
     foreach my $OtherEventID (@EventIDs) {
-      print "<li> In: $EventIndex $Index </li>";
       if ($EventID == $OtherEventID) {
         print "<li><strong>",$Conferences{$EventID}{Title},"</strong>\n";
         print '<ul class="compact">';  
         print "<li>Session 1</li>";
         print "<li>Session 2</li>";
         print "<li>Session 3</li>";
-        print "<li>Session $EventIndex</li>";
+        print "<li>Session 4</li>";
         print "</ul>";
         print "</li>\n";
       } elsif (defined $EventIndex && $EventIndex-$Index > 2 && !$ForeDots) {
