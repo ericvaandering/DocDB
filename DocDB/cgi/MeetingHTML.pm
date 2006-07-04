@@ -460,6 +460,7 @@ sub PrintEventLeftSidebar ($) {
   my $DisplayMode = exists $ArgRef->{-displaymode} ? $ArgRef->{-displaymode} : "";
   
   push @DebugStack,"DM in Left: $DisplayMode";
+  print "<div id=\"UpdateButtons\">\n";
   
   if ((CanCreate()) || CanModifyMeeting($EventID)) {
     if (CanCreate()) {
@@ -496,6 +497,7 @@ sub PrintEventLeftSidebar ($) {
   print "<p>\n";
   EventDisplayButton( {-eventid => $EventID} );
   print "</p>\n";
+  print "</div>\n"; # UpdateButtons
 }
 
 
