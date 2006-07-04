@@ -556,6 +556,7 @@ sub PrintEventRightSidebar ($) {
               print "<li>",$Link,"</li>\n";
             }  
           } elsif ($OtherSeparatorID) {
+              print "<li>Sep</li>\n";
             if ($OtherSeparatorID == $SeparatorID) {
               print "<li><strong>",$SessionSeparators{$SeparatorID}{Title},"</strong></li>\n";
             } else {              
