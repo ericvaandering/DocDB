@@ -538,7 +538,7 @@ sub PrintEventRightSidebar ($) {
         print "<li>Session 1</li>";
         print "<li>Session 2</li>";
         print "<li>Session 3</li>";
-        print "<li>Session 4</li>";
+        print "<li>Session $EventIndex</li>";
         print "</ul>";
         print "</li>\n";
       } elsif (defined $EventIndex && $EventIndex-$Index > 2 && !$ForeDots) {

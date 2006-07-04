@@ -69,6 +69,26 @@ sub RemoveArray (\@@) { # Removes elements of one array from another
   return @Array;
 }
 
+sub IndexOf {
+  my ($Element,@Array) = @_;
+  
+  my $Found = 0;
+  my $Count = 0;
+  foreach my $Test (@Array) {
+    if ($Test eq $Element) {
+      $Found = 1;
+      last;
+    }  
+    ++$Count;
+  }
+  
+  if ($Found) {
+    return $Count;
+  } else {
+    return undef;
+  }          
+}
+
 sub URLify { # Adapted from Perl Cookbook, 6.21
   my ($Text) = @_;
 
