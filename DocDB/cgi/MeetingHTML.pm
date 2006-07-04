@@ -498,7 +498,7 @@ sub PrintEventLeftSidebar ($) {
   EventDisplayButton( {-eventid => $EventID} );
   print "</p>\n";
 
-  print "<p><a href=\"$ListBy?eventid=$EventID\">Simple list</a> of documents</p>\n";
+  print "<p><a href=\"$ListBy?eventid=$EventID\">Simple document list</a></p>\n";
 
   print "</div>\n"; # UpdateButtons
 }
@@ -600,9 +600,6 @@ sub PrintEventHeader ($) {
   my %Fields = ();
   my @Fields = ();
   
-    push @Fields,"DisplayMode";  #Debugging only
-    $Fields{"DisplayMode"} = $DisplayMode; #Debugging only
-
   if ($DisplayMode eq "Session" || $DisplayMode eq "Separator") {
     push @Fields,"Event";
     $Fields{"Event"} = $EventTitle;
