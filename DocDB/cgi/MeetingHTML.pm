@@ -511,7 +511,7 @@ sub PrintEventRightSidebar ($) {
   my $EventGroupID   = $Conferences{$EventID}{EventGroupID};
   my $EventGroupLink = EventGroupLink(-eventgroupid => $EventGroupID);
 
-  print '<ul>';  
+  print '<ul class="compact">';  
   print "<li>$EventGroupLink";
   if ($DisplayMode eq "SingleSession" || $DisplayMode eq "Event") { 
     
@@ -525,7 +525,7 @@ sub PrintEventRightSidebar ($) {
 
 ### Display list of other events in group    
     
-    print "<ul>\n";
+    print '<ul class="compact">';  
     foreach my $OtherEventID (@EventIDs) {
       if ($EventID == $OtherEventID) {
         print "<li><strong>",$Conferences{$EventID}{Title},"</strong></li>\n";

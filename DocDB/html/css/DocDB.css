@@ -37,6 +37,18 @@ dt {
   font-weight: bold;
 }
  
+ul.compact {
+  padding-left: 1em;
+  margin-left:  0em;
+}
+
+ul.compact li {
+  padding-left: 0em;
+  margin-left:  1em;
+  list-style-type: none;
+}
+
+
 h1, h2, h3, h4, h5 {
   margin: 0 1em 0 1em;
   text-align: center;
