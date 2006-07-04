@@ -509,7 +509,7 @@ sub PrintEventRightSidebar ($) {
   my $DisplayMode = exists $ArgRef->{-displaymode} ? $ArgRef->{-displaymode} : "";
 
   my $EventGroupID   = $Conferences{$EventID}{EventGroupID};
-  my $EventGroupLink = EventGroupLink(-eventgroupid => $EventGroupID);
+  my $EventGroupLink = EventGroupLink(-eventgroupid => $EventGroupID, -format => "short");
 
   print '<ul class="compact">';  
   print "<li>$EventGroupLink";
@@ -845,7 +845,8 @@ sub PrintSessionSeparatorInfo ($) {
 sub EventGroupLink (%) {
   my %Params = @_;
   my $EventGroupID = $Params{-eventgroupid} || 0;
-
+  my $Format       = $Params{-format}       || "long";
+  
   require "MeetingSQL.pm";
 
   FetchEventGroup($EventGroupID);
@@ -853,7 +854,11 @@ sub EventGroupLink (%) {
   my $Link = "<a href=\"";
   $Link .= $ListAllMeetings."?eventgroupid=".$EventGroupID;
   $Link .= "\">";
-  $Link .= $EventGroups{$EventGroupID}{LongDescription};
+  if ($Format eq "short")  {
+    $Link .= $EventGroups{$EventGroupID}{ShortDescription};
+  } else {
+    $Link .= $EventGroups{$EventGroupID}{LongDescription};
+  }  
   $Link .= "</a>";
   return $Link;
 }
