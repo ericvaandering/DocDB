@@ -540,9 +540,9 @@ sub PrintEventRightSidebar ($) {
         my @MeetingOrderIDs = FetchMeetingOrdersByConferenceID($EventID);
         @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
         print '<ul class="compact">';  
-            print "<li>Session</li>\n";
         foreach $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks
           my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
+            print "<li>Session $SessionID </li>\n";
           if ($SessionID) {
             my $SessionLink = SessionLink(-sessionid => $SessionID);
             print "<li>",$SessionLink,"</li>\n";
