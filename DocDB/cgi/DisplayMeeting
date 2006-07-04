@@ -137,7 +137,6 @@ if ($DisplayMode eq "Session") { # Display a single session
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
 }
 
-
 print "<div id=\"EventInfo\">\n";
   
 ### Header info
@@ -149,7 +148,7 @@ print "</div>\n";  # Header3Col
 ### Left Column
 
 print "<div id=\"LeftColumn3Col\">\n";
-PrintEventLeftSidebar( {-sessionid => $SessionID, -eventid => $EventID, -displaymode => $NewDisplayMode} );
+PrintEventLeftSidebar( {-sessionid => $SessionID, -eventid => $EventID, -separatorid => $SessionSeparatorID, -displaymode => $NewDisplayMode} );
 
 print "</div>\n";  # LeftColumn3Col
 
@@ -166,6 +165,7 @@ print "</div>\n";  # RightColumn3Col
 
 ### Main column content starts here
 
+PrintEventHeader( {-sessionid => $SessionID, -eventid => $EventID, -separatorid => $SessionSeparatorID, -displaymode => $NewDisplayMode} );
 
 print "</div>\n";  # MainColumn3Col
 

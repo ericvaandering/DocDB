@@ -457,6 +457,7 @@ sub PrintEventLeftSidebar ($) {
   my ($ArgRef) = @_;
   my $EventID     = exists $ArgRef->{-eventid}     ? $ArgRef->{-eventid}     : 0;
   my $SessionID   = exists $ArgRef->{-sessionid}   ? $ArgRef->{-sessionid}   : 0;
+  my $SeparatorID = exists $ArgRef->{-separatorid} ? $ArgRef->{-separatorid} : 0;
   my $DisplayMode = exists $ArgRef->{-displaymode} ? $ArgRef->{-displaymode} : "";
   
   push @DebugStack,"DM in Left: $DisplayMode";
@@ -500,6 +501,36 @@ sub PrintEventLeftSidebar ($) {
   print "</div>\n"; # UpdateButtons
 }
 
+sub PrintEventHeader ($) {
+  my ($ArgRef) = @_;
+  my $EventID     = exists $ArgRef->{-eventid}     ? $ArgRef->{-eventid}     : 0;
+  my $SessionID   = exists $ArgRef->{-sessionid}   ? $ArgRef->{-sessionid}   : 0;
+  my $SeparatorID = exists $ArgRef->{-separatorid} ? $ArgRef->{-separatorid} : 0;
+  my $DisplayMode = exists $ArgRef->{-displaymode} ? $ArgRef->{-displaymode} : "";
+ 
+   
+  my $SessionTitle = $Sessions{$SessionID}{Title};
+  my $EventTitle   = $Conferences{$EventID}{LongDescription};
+  print " (Part of ";
+  print EventGroupLink(-eventgroupid => $Conferences{$EventID}{EventGroupID});
+  print ")\n"; 
+  print "<h4>Date and time: "; 
+  print EuroDate($Sessions{$SessionID}{StartTime});
+  print " at ";
+  print EuroTimeHM($Sessions{$SessionID}{StartTime});
+  print "</h4>";
+  if ($Sessions{$SessionID}{Location}) {
+    print "<h4>Location: $Sessions{$SessionID}{Location}</h4>\n";
+  }
+  if ($Conferences{$EventID}{URL}) {
+    print "<h5>(<a href=\"$Conferences{$EventID}{URL}\">$Conferences{$EventID}{Title} homepage</a>)</h5>\n";
+  }
+  PrintMeetingPreamble($EventID);
+  if ($Sessions{$SessionID}{Description}) {
+    my $Description = AddLineBreaks($Sessions{$SessionID}{Description});
+    print "<div class=\"SessionDescription\"> ",URLify($Description),"</div>\n";
+  }
+}
 
 sub PrintSingleSessionHeader (%) { # FIXME: No longer needed?
   require "SQLUtilities.pm";
