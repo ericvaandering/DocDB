@@ -528,16 +528,16 @@ sub PrintEventRightSidebar ($) {
     print '<ul class="compact">';  
     foreach my $OtherEventID (@EventIDs) {
       if ($EventID == $OtherEventID) {
-        print "<li><strong>",$Conferences{$EventID}{Title},"</strong></li>\n";
-      } else {
-        print "<li>",EventLink(-eventid => $OtherEventID),"\n";
+        print "<li><strong>",$Conferences{$EventID}{Title},"</strong>\n";
         print '<ul class="compact">';  
         print "<li>Session 1</li>";
         print "<li>Session 2</li>";
         print "<li>Session 3</li>";
         print "<li>Session 4</li>";
         print "</ul>";
-        "</li>\n";
+        print "</li>\n";
+      } else {
+        print "<li>",EventLink(-eventid => $OtherEventID),"</li>\n";
       }
     }
     print "</ul>\n";
