@@ -477,8 +477,8 @@ sub PrintEventLeftSidebar ($) {
     if (CanModifyMeeting($EventID)) {
       print "<p>\n";
       if ($DisplayMode eq "SingleSession") { 
-        SessionModifyButton(-eventid => $EventID, -buttontext => "Modify Session");
-      } else {
+        SessionModifyButton(-eventid => $EventID,     -buttontext => "Modify Agenda");
+      } elsif ($DisplayMode eq "Session") {
         SessionModifyButton(-sessionid => $SessionID, -buttontext => "Modify Session");
       }
       print "</p>\n";
@@ -588,7 +588,7 @@ sub PrintEventHeader ($) {
   
 #  if ($SessionStartTime) {
     push @Fields,"Event Dates";
-    $Fields{"Event Dates"} = "Not available yet";
+    $Fields{"Event Dates"} = "Not available yet, nor is event location";
 #  }  
 
   if ($SessionStartTime) {
@@ -1164,8 +1164,8 @@ sub SessionModifyButton (%) {
 
   my $EventID    = $Params{-eventid}; 
   my $SessionID  = $Params{-sessionid}; 
-  my $LabelText  = $Params{-labeltext}  || " agenda for this session"; 
-  my $ButtonText = $Params{-buttontext}  || "Modify"; 
+  my $LabelText  = $Params{-labeltext}  || ""; 
+  my $ButtonText = $Params{-buttontext} || "Modify"; 
 
   print $query -> startform('POST',$SessionModify),"<div>\n";
   print $query -> submit (-value => $ButtonText);
@@ -1184,7 +1184,7 @@ sub EventModifyButton (%) {
 
   my $EventID    = $Params{-eventid}; 
   my $ButtonText = $Params{-buttontext} || "Modify agenda"; 
-  my $LabelText  = $Params{-labeltext}  || " for this event"; 
+  my $LabelText  = $Params{-labeltext}  || ""; 
 
   print $query -> startform('POST',$MeetingModify),"<div>\n";
   print $query -> submit (-value => $ButtonText);

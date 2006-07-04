@@ -193,8 +193,8 @@ if ($DisplayMode eq "Session") { # Display a single session
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
 
-  my $AddNavBar = $Conferences{$ConferenceID}{ShowAllTalks};
-  PrintMeetingInfo($ConferenceID,-talklink => 1,-navbar => $AddNavBar);
+#  my $AddNavBar = $Conferences{$ConferenceID}{ShowAllTalks};
+#  PrintMeetingInfo($ConferenceID,-talklink => 1,-navbar => $AddNavBar);
   
   if ($Conferences{$ConferenceID}{ShowAllTalks}) { # Display all talks, sessions
     # FIXME: Add a Navbar of sorts?
