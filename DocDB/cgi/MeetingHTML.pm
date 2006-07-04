@@ -508,6 +508,8 @@ sub PrintEventHeader ($) {
   my $SeparatorID = exists $ArgRef->{-separatorid} ? $ArgRef->{-separatorid} : 0;
   my $DisplayMode = exists $ArgRef->{-displaymode} ? $ArgRef->{-displaymode} : "";
  
+  require "SQLUtilities.pm";
+  require "Utilities.pm";
    
   my $SessionTitle = $Sessions{$SessionID}{Title};
   my $EventTitle   = $Conferences{$EventID}{LongDescription};
