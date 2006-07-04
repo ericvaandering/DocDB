@@ -639,6 +639,11 @@ sub PrintEventHeader ($) {
     $Fields{"Event Info"} = Paragraphize($Conferences{$EventID}{Preamble});
   }
 
+  if ($Conferences{$EventID}{Epilogue} && $SeparatorID) {
+    push @Fields,"Event Wrapup";
+    $Fields{"Event Info"} = Paragraphize($Conferences{$EventID}{Epilogue});
+  }
+
   if ($Sessions{$SessionID}{Description}) {
     push @Fields,"Session Info";
     $Fields{"Session Info"} = URLify(AddLineBreaks($Sessions{$SessionID}{Description}));
