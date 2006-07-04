@@ -523,8 +523,13 @@ sub PrintEventRightSidebar ($) {
     }
     my @EventIDs = reverse sort EventsByDate @EventIDs;
 
+    my $EventIndex = IndexOf($EventID,@EventIDs);
+
 ### Display list of other events in group    
-    
+   
+    my $ForeDots = $FALSE; 
+    my $AftDots  = $FALSE; 
+    my $Index    = 0; 
     print '<ul class="compact">';  
     foreach my $OtherEventID (@EventIDs) {
       if ($EventID == $OtherEventID) {
@@ -536,6 +541,12 @@ sub PrintEventRightSidebar ($) {
         print "<li>Session 4</li>";
         print "</ul>";
         print "</li>\n";
+      } elsif (defined $EventIndex && $EventIndex-$Index > 2 && !$ForeDots) {
+        $ForeDots = $TRUE;
+        print "<li>....</li>\n";
+      } elsif (defined $EventIndex && $Index-$EventIndex > 2 && !$AftDots) {
+        $AftDots = $TRUE;
+        print "<li>....</li>\n";
       } else {
         print "<li>",EventLink(-eventid => $OtherEventID),"</li>\n";
       }
