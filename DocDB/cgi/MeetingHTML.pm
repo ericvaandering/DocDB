@@ -512,6 +512,10 @@ sub PrintEventRightSidebar ($) {
   my $EventGroupLink = EventGroupLink(-eventgroupid => $EventGroupID, -format => "short");
 
   print '<ul class="compact">';  
+  print "<li>EI: $EventID    </li>";
+  print "<li>SI: $SessionID  </li>";
+  print "<li>SS: $SeparatorID</li>";
+  print "<li>DM: $DisplayMode</li>";
   print "<li>$EventGroupLink";
     
 ### Get and sort other events in this group
