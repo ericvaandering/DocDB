@@ -532,6 +532,7 @@ sub PrintEventRightSidebar ($) {
     my $Index    = 0; 
     print '<ul class="compact">';  
     foreach my $OtherEventID (@EventIDs) {
+      print "<li> In: $EventIndex $Index </li>";
       if ($EventID == $OtherEventID) {
         print "<li><strong>",$Conferences{$EventID}{Title},"</strong>\n";
         print '<ul class="compact">';  
