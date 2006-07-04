@@ -183,7 +183,7 @@ if ($DisplayMode eq "Session") { # Display a single session
 #  FetchSessionSeparatorByID($SessionSeparatorID);
 #  PrintMeetingInfo($SessionSeparators{$SessionSeparatorID}{ConferenceID});
 #  PrintSessionSeparator($SessionSeparatorID);
-  PrintMeetingEpilogue($SessionSeparators{$SessionSeparatorID}{ConferenceID});
+#  PrintMeetingEpilogue($SessionSeparators{$SessionSeparatorID}{ConferenceID});
 } elsif ($DisplayMode eq "Conference") { # Display meeting info or meeting with all talks
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
