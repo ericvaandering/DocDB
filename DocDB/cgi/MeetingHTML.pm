@@ -511,9 +511,8 @@ sub PrintEventRightSidebar ($) {
   my $EventGroupID   = $Conferences{$EventID}{EventGroupID};
   my $EventGroupLink = EventGroupLink(-eventgroupid => $EventGroupID, -format => "short");
 
-  print "$EventGroupLink";
-#  print '<ul class="compact">';  
-#  print "<li>$EventGroupLink";
+  print '<ul class="compact">';  
+  print "<li>$EventGroupLink";
 #  if ($DisplayMode eq "SingleSession" || $DisplayMode eq "Event") { 
     
 ### Get and sort other events in this group
@@ -556,7 +555,7 @@ sub PrintEventRightSidebar ($) {
     }
     print "</ul>\n";
 #  }      
-#  print "</li></ul>\n";
+  print "</li></ul>\n";
   
 }
 
