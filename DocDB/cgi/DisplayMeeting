@@ -114,6 +114,7 @@ if ($ConferenceID) {
   $NewDisplayMode = "Separator";
   FetchSessionSeparatorByID($SessionSeparatorID);
   $ConferenceID = $SessionSeparators{$SessionSeparatorID}{ConferenceID};
+  $EventID = $SessionSeparators{$SessionSeparatorID}{ConferenceID};
 }
 
 FetchConferenceByConferenceID($ConferenceID);

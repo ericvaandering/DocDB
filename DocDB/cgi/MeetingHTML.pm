@@ -548,15 +548,21 @@ sub PrintEventRightSidebar ($) {
           my $OtherSessionID   = $MeetingOrders{$MeetingOrderID}{SessionID};
           my $OtherSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
           if ($OtherSessionID) {
-            FetchSessionByID($OtherSessionID);
-            my $SessionLink = SessionLink(-sessionid => $OtherSessionID);
             if ($OtherSessionID == $SessionID) {
               print "<li><strong>",$Sessions{$SessionID}{Title},"</strong></li>\n";
             } else {              
-              print "<li>",$SessionLink,"</li>\n";
+              FetchSessionByID($OtherSessionID);
+              my $Link = SessionLink(-sessionid => $OtherSessionID);
+              print "<li>",$Link,"</li>\n";
             }  
           } elsif ($OtherSeparatorID) {
-            print "<li>Break</li>\n";
+            if ($OtherSeparatorID == $SeparatorID) {
+              print "<li><strong>",$SessionSeparators{$SeparatorID}{Title},"</strong></li>\n";
+            } else {              
+              FetchSessionSeparatorByID($OtherSeparatorID);
+              my $Link = SessionSeparatorLink($OtherSeparatorID);
+              print "<li>",$Link,"</li>\n";
+            }  
           } 
         }
         print "</ul>";
