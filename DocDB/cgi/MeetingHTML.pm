@@ -594,6 +594,7 @@ sub PrintEventHeader ($) {
   my $SessionTitle = $Sessions{$SessionID}{Title};
   my $EventTitle   = $Conferences{$EventID}{LongDescription};
   my $SessionStartTime    = $Sessions{$SessionID}{StartTime};
+  my $SeparatorStartTime    = $SessionSeparatorss{$SeparatorID}{StartTime};
   my %Fields = ();
   my @Fields = ();
   
@@ -615,7 +616,12 @@ sub PrintEventHeader ($) {
 
   if ($SessionStartTime) {
     push @Fields,"Date &amp; Time";
-    $Fields{"Date &amp; Time"} = EuroDate($StartTime)." at ".EuroTimeHM($StartTime);
+    $Fields{"Date &amp; Time"} = EuroDate($SessionStartTime)." at ".EuroTimeHM($SessionStartTime);
+  }  
+
+  if ($SeparatorStartTime) {
+    push @Fields,"Date &amp; Time";
+    $Fields{"Date &amp; Time"} = EuroDate($SeparatorStartTime)." at ".EuroTimeHM($SeparatorStartTime);
   }  
 
   if ($Sessions{$SessionID}{Location}) {
@@ -637,6 +643,13 @@ sub PrintEventHeader ($) {
     push @Fields,"Session Info";
     $Fields{"Session Info"} = URLify(AddLineBreaks($Sessions{$SessionID}{Description}));
   }
+
+  if ($SessionSeparators{$SeparatorID}{Description}) {
+    push @Fields,"Session Info";
+    $Fields{"Session Info"} = URLify(AddLineBreaks($SessionSeparators{$SeparatorID}{Description}));
+  }
+  
+  
   
   if (@Fields) {
     print '<table class="LeftHeader Alternating CenteredTable MedPaddedTable">';

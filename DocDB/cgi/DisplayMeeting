@@ -132,8 +132,8 @@ if ($DisplayMode eq "Session") { # Display a single session
   ReHintTalksBySessionID($SessionID); 
   ClearSessionTalks();
   FetchSessionByID($SessionID);
-} elsif ($DisplayMode eq "Separator") { 
-  FetchSessionSeparatorByID($SessionSeparatorID);
+#} elsif ($DisplayMode eq "Separator") { 
+#  FetchSessionSeparatorByID($SessionSeparatorID);
 } elsif ($DisplayMode eq "Conference") { # Display meeting info or meeting with all talks
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
@@ -151,7 +151,6 @@ print "</div>\n";  # Header3Col
 
 print "<div id=\"LeftColumn3Col\">\n";
 PrintEventLeftSidebar( {-sessionid => $SessionID, -eventid => $EventID, -separatorid => $SessionSeparatorID, -displaymode => $NewDisplayMode} );
-
 print "</div>\n";  # LeftColumn3Col
 
 ### Main Column
@@ -162,22 +161,16 @@ print "<div id=\"MainColumn3Col\">\n";
 
 print "<div id=\"RightColumn3Col\">\n";
 PrintEventRightSidebar( {-sessionid => $SessionID, -eventid => $EventID, -separatorid => $SessionSeparatorID, -displaymode => $NewDisplayMode} );
-
-
 print "</div>\n";  # RightColumn3Col
 
 ### Main column content starts here
 
 PrintEventHeader( {-sessionid => $SessionID, -eventid => $EventID, -separatorid => $SessionSeparatorID, -displaymode => $NewDisplayMode} );
-
 print "</div>\n";  # MainColumn3Col
 
 ### Footer
   
 print "<div id=\"Footer3Col\">\n"; # Must have to keep NavBar on true bottom
-print "</div>\n";  # Footer3Col
-
-print "</div>\n"; # EventInfo
 
 if ($DisplayMode eq "Session") { # Display a single session
 #  ReHintTalksBySessionID($SessionID); 
@@ -186,10 +179,10 @@ if ($DisplayMode eq "Session") { # Display a single session
 #  PrintSingleSessionHeader(-sessionid => $SessionID, -onlyone => $OnlyOneSession);
   PrintSession(-sessionid => $SessionID, -skipheader => $TRUE); 
   PrintMeetingEpilogue($ConferenceID);
-} elsif ($DisplayMode eq "Separator") { 
-  FetchSessionSeparatorByID($SessionSeparatorID);
-  PrintMeetingInfo($SessionSeparators{$SessionSeparatorID}{ConferenceID});
-  PrintSessionSeparator($SessionSeparatorID);
+#} elsif ($DisplayMode eq "Separator") { 
+#  FetchSessionSeparatorByID($SessionSeparatorID);
+#  PrintMeetingInfo($SessionSeparators{$SessionSeparatorID}{ConferenceID});
+#  PrintSessionSeparator($SessionSeparatorID);
   PrintMeetingEpilogue($SessionSeparators{$SessionSeparatorID}{ConferenceID});
 } elsif ($DisplayMode eq "Conference") { # Display meeting info or meeting with all talks
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
@@ -285,6 +278,9 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "Conference") { # Display talks
     print "<h4><a href=\"$ListBy?eventid=$ConferenceID\">Simple list</a> of all documents for this event</h4>\n";
   }
 }
+
+print "</div>\n";  # Footer3Col
+print "</div>\n"; # EventInfo
 
 $EndTime  = new Benchmark;
 
