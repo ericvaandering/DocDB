@@ -143,9 +143,8 @@ print "<div id=\"EventInfo\">\n";
   
 ### Header info
   
-print "<div id=\"Header3Col\">\n";
-print "Header: Nothing here for now\n";
-print "</div>\n";  # Header3Col
+#print "<div id=\"Header3Col\">\n";
+#print "</div>\n";  # Header3Col
 
 ### Left Column
 
@@ -268,14 +267,12 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "Conference") { # Display talks
   
   # Print out info for unused documents
   if (@UnusedDocIDs) {
-    print "<h4>Other documents for this event or <a href=\"$ListBy?eventid=$ConferenceID\">simple list</a> of all documents for this event</h4>\n";
+    print "<h4>Other documents for this event</h4>\n";
     my %FieldList = PrepareFieldList(-default => "Default");
     my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList,
          -docids  => \@UnusedDocIDs, -sortby  => "date",  
          -reverse => $TRUE);
     print "<hr/>\n";
-  } else {
-    print "<h4><a href=\"$ListBy?eventid=$ConferenceID\">Simple list</a> of all documents for this event</h4>\n";
   }
 }
 

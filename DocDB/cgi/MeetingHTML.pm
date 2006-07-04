@@ -498,6 +498,8 @@ sub PrintEventLeftSidebar ($) {
   EventDisplayButton( {-eventid => $EventID} );
   print "</p>\n";
 
+  print "<p><a href=\"$ListBy?eventid=$EventID\">Simple list</a> of documents</p>\n";
+
   print "</div>\n"; # UpdateButtons
 }
 
@@ -641,7 +643,7 @@ sub PrintEventHeader ($) {
 
   if ($Conferences{$EventID}{Epilogue} && $SeparatorID) {
     push @Fields,"Event Wrapup";
-    $Fields{"Event Info"} = Paragraphize($Conferences{$EventID}{Epilogue});
+    $Fields{"Event Wrapup"} = Paragraphize($Conferences{$EventID}{Epilogue});
   }
 
   if ($Sessions{$SessionID}{Description}) {
