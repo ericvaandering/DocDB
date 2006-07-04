@@ -549,7 +549,7 @@ sub PrintEventRightSidebar ($) {
         $AftDots = $TRUE;
         print "<li>....</li>\n";
         last;
-      } elsif (abs($Index-$EventIndex) < 2) {
+      } elsif (abs($Index-$EventIndex) <= 2) {
         print "<li>",EventLink(-eventid => $OtherEventID),"</li>\n";
       }
       ++$Index;
