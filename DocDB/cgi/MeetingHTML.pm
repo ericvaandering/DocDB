@@ -548,12 +548,15 @@ sub PrintEventHeader ($) {
   }
   
   if (@Fields) {
-    print '<table class="LeftHeader Alternating">';
+    print '<table class="LeftHeader Alternating CenteredTable">';
+    my $Row = 0;
     foreach my $Field (@Fields) {
-      print "<tr>\n";
+      my $RowClass = ("Even","Odd")[$Row % 2];
+      print "<tr class=\"$RowClass\">\n";
       print "<th>$Field</th>\n";
       print "<td>$Fields{$Field}</td>\n";
-      print "</tr>"; 
+      print "</tr>";
+      ++$Row; 
     }
     print "</table>\n";
   }
