@@ -466,7 +466,7 @@ sub PrintEventLeftSidebar ($) {
 #      print "<p>\n";
       if ($DisplayMode eq "SingleSession" || $DisplayMode eq "Session") {
         TalkUploadButton(-sessionid => $SessionID);
-      } else {
+      } elsif  ($DisplayMode eq "Event"){
         TalkUploadButton(-eventid => $EventID);
       } 
         
@@ -475,17 +475,17 @@ sub PrintEventLeftSidebar ($) {
     if (CanModifyMeeting($EventID)) {
       print "<p>\n";
       if ($DisplayMode eq "SingleSession") { 
-        SessionModifyButton(-eventid => $EventID, -buttontext => "Modify Agenda", -labeltext => " for this session or");
+        SessionModifyButton(-eventid => $EventID, -buttontext => "Modify Session");
       } else {
-        SessionModifyButton(-sessionid => $SessionID, -buttontext => "Modify Session", -labeltext => " or");
+        SessionModifyButton(-sessionid => $SessionID, -buttontext => "Modify Session");
       }
       print "</p>\n";
 
       print "<p>\n";
       if ($DisplayMode eq "SingleSession") { 
-        EventModifyButton(-eventid => $EventID, -buttontext => "Add Sessions", -labeltext => "&nbsp;");
+        EventModifyButton(-eventid => $EventID, -buttontext => "Add Sessions");
       } else {
-        EventModifyButton(-eventid => $EventID, -buttontext => "Modify Event", -labeltext => "&nbsp;");
+        EventModifyButton(-eventid => $EventID, -buttontext => "Modify Event");
       }
       print "</p>\n";
       print "<p>\n";
@@ -1071,8 +1071,8 @@ sub EventCopyButton (%) {
   print $query -> startform('POST',$MeetingModify),"<div>\n";
   print $query -> hidden(-name => "mode",         -default => "copy");
   print $query -> hidden(-name => "conferenceid", -default => $EventID);
-  print $query -> submit (-value => "Schedule");
-  print " a similar event in "; 
+  print $query -> submit (-value => "Schedule Similar");
+  print "<br/> in "; 
   print $query -> popup_menu(-name => "offsetdays", -values => \@Offsets, -labels => \%Labels, -default => 7);
   print "\n</div>\n",$query -> endform,"\n";
 }
@@ -1083,8 +1083,7 @@ sub EventDisplayButton ($) {
   my $EventID = exists $ArgRef->{-eventid} ? $ArgRef->{-eventid} : 0;
   print $query -> startform('POST',$CustomListForm),"<div>\n";
   print $query -> hidden(-name => "eventid", -default => $EventID);
-  print $query -> submit (-value => "Change");
-  print " the information displayed for this event"; 
+  print $query -> submit (-value => "Change Display");
   print "\n</div>\n",$query -> endform,"\n";
 }
 
