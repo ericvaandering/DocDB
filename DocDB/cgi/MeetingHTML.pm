@@ -513,25 +513,51 @@ sub PrintEventHeader ($) {
    
   my $SessionTitle = $Sessions{$SessionID}{Title};
   my $EventTitle   = $Conferences{$EventID}{LongDescription};
-  print " (Part of ";
-  print EventGroupLink(-eventgroupid => $Conferences{$EventID}{EventGroupID});
-  print ")\n"; 
-  print "<h4>Date and time: "; 
-  print EuroDate($Sessions{$SessionID}{StartTime});
-  print " at ";
-  print EuroTimeHM($Sessions{$SessionID}{StartTime});
-  print "</h4>";
+  my $StartTime    = $Sessions{$SessionID}{StartTime}
+  my %Fields = ();
+  my @Fields = ();
+  
+  if ($DisplayMode eq "Session" || $DisplayMode eq "Separator") {
+    push @Fields,"Event";
+    $Fields{"Event"} = $EventTitle;
+  }  
+  
+  if ($StartTime) {
+    push @Fields,"Date &amp; Time";
+    $Fields{"Date &amp; Time"} = EuroDate($StartTime)." at ".EuroTimeHM($StartTime);
+  }  
+
   if ($Sessions{$SessionID}{Location}) {
-    print "<h4>Location: $Sessions{$SessionID}{Location}</h4>\n";
+    push @Fields,"Location";
+    $Fields{"Location"} = $Sessions{$SessionID}{Location};
   }
+  
   if ($Conferences{$EventID}{URL}) {
-    print "<h5>(<a href=\"$Conferences{$EventID}{URL}\">$Conferences{$EventID}{Title} homepage</a>)</h5>\n";
+    push @Fields,"Event URL";
+    $Fields{"Event URL"} = "<a href=\"$Conferences{$EventID}{URL}\">$Conferences{$EventID}{Title}</a>";
   }
-  PrintMeetingPreamble($EventID);
+  
+  if ($Conferences{$EventID}{Preamble}) {
+    push @Fields,"Event Info";
+    $Fields{"Event Info"} = Paragraphize($Conferences{$ConferenceID}{Preamble});
+  }
+
   if ($Sessions{$SessionID}{Description}) {
-    my $Description = AddLineBreaks($Sessions{$SessionID}{Description});
-    print "<div class=\"SessionDescription\"> ",URLify($Description),"</div>\n";
+    push @Fields,"Session Info";
+    $Fields{"Session Info"} = URLify(AddLineBreaks($Sessions{$SessionID}{Description}));
   }
+  
+  if (@Fields) {
+    print '<table class="LeftHeader Alternating">';
+    foreach my $Field (@Fields) {
+      print "<tr>\n";
+      print "<th>$Field</th>\n";
+      print "<td>$Fields{$Field}</td>\n";
+      print "</tr>"; 
+    }
+    print "</table>\n";
+  }
+
 }
 
 sub PrintSingleSessionHeader (%) { # FIXME: No longer needed?
@@ -707,7 +733,7 @@ sub PrintMeetingEpilogue($) {
   }
 }
 
-sub PrintMeetingPreamble($) {
+sub PrintMeetingPreamble($) { # FIXME: Obsolete?
 
   require "Utilities.pm";
   my ($ConferenceID) = @_;
