@@ -520,7 +520,7 @@ sub PrintEventRightSidebar ($) {
       if ($EventID == $OtherEventID) {
         print "<li><strong>",$Conferences{$EventID}{Title},"</strong></li>\n";
       } else {
-        print "<strong>",EventLink(-eventid => $OtherEventID),"</li>\n";
+        print "<li>",EventLink(-eventid => $OtherEventID),"</li>\n";
       }
     }
     print "</ul>\n";
