@@ -412,7 +412,7 @@ sub PrintSessionSeparator ($) {
   print "<hr/>\n";   
 }
 
-sub PrintSessionHeader ($) {
+sub PrintSessionHeader ($) { # FIXME: Not needed?
   my ($SessionID) = @_;
 
   require "SQLUtilities.pm";
@@ -453,7 +453,46 @@ sub PrintSessionHeader ($) {
   }
 }
 
-sub PrintSingleSessionHeader (%) {
+sub PrintEventLeftSidebar ($) {
+  my ($ArgRef) = @_;
+  my $EventID     = exists $ArgRef->{-eventid}     ? $ArgRef->{-eventid}     : 0;
+  my $SessionID   = exists $ArgRef->{-sessionid}   ? $ArgRef->{-sessionid}   : 0;
+  my $DisplayMode = exists $ArgRef->{-displaymode} ? $ArgRef->{-displaymode} : "";
+  
+  if ((CanCreate()) || CanModifyMeeting($EventID)) {
+    if (CanCreate()) {
+      print "<p>\n";
+      TalkUploadButton(-sessionid => $SessionID);
+      print "</p>\n";
+    }
+    if (CanModifyMeeting($EventID)) {
+      print "<p>\n";
+      if ($DisplayMode eq "SingleSession") { 
+        SessionModifyButton(-eventid => $EventID, -buttontext => "Modify Agenda", -labeltext => " for this session or");
+      } else {
+        SessionModifyButton(-sessionid => $SessionID, -buttontext => "Modify Session", -labeltext => " or");
+      }
+      print "</p>\n";
+
+      print "<p>\n";
+      if ($DisplayMode eq "SingleSession") { 
+        EventModifyButton(-eventid => $EventID, -buttontext => "Add Sessions", -labeltext => "&nbsp;");
+      } else {
+        EventModifyButton(-eventid => $EventID, -buttontext => "Modify Event", -labeltext => "&nbsp;");
+      }
+      print "</p>\n";
+      print "<p>\n";
+      EventCopyButton(-eventid => $EventID);
+      print "</p>\n";
+    }
+  }
+  print "<p>\n";
+  EventDisplayButton( {-eventid => $EventID} );
+  print "</p>\n";
+}
+
+
+sub PrintSingleSessionHeader (%) { # FIXME: No longer needed?
   require "SQLUtilities.pm";
   require "Utilities.pm";
 

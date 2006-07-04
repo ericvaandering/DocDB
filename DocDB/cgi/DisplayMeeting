@@ -119,6 +119,58 @@ unless (CanAccessMeeting($ConferenceID)) {
 }
 EndPage(@ErrorStack);
 
+# Prepare output
+
+if ($DisplayMode eq "Session") { # Display a single session
+  ReHintTalksBySessionID($SessionID); 
+  ClearSessionTalks();
+  FetchSessionByID($SessionID);
+} elsif ($DisplayMode eq "Separator") { 
+  FetchSessionSeparatorByID($SessionSeparatorID);
+} elsif ($DisplayMode eq "Conference") { # Display meeting info or meeting with all talks
+  my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
+  @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
+}
+
+
+print "<div id=\"EventInfo\">\n";
+  
+### Header info
+  
+print "<div id=\"Header3Col\">\n";
+print "Header: Nothing here for now\n";
+print "</div>\n";  # Header3Col
+
+### Left Column
+
+print "<div id=\"LeftColumn3Col\">\n";
+PrintEventLeftSidebar( {-sessionid => $SessionID, -eventid => $EventID, -displaymode => $DisplayMode} );
+
+print "</div>\n";  # LeftColumn3Col
+
+### Main Column
+
+print "<div id=\"MainColumn3Col\">\n";
+
+### Right column (wrapped around by middle column)
+
+print "<div id=\"RightColumn3Col\">\n";
+
+
+print "</div>\n";  # RightColumn3Col
+
+### Main column content starts here
+
+
+print "</div>\n";  # MainColumn3Col
+
+### Footer
+  
+print "<div id=\"Footer3Col\">\n"; # Must have to keep NavBar on true bottom
+print "</div>\n";  # Footer3Col
+
+print "</div>\n"; # EventInfo
+
 if ($DisplayMode eq "Session") { # Display a single session
   ReHintTalksBySessionID($SessionID); 
   ClearSessionTalks();
