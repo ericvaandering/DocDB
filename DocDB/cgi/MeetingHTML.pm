@@ -508,10 +508,23 @@ sub PrintEventRightSidebar ($) {
   my $SeparatorID = exists $ArgRef->{-separatorid} ? $ArgRef->{-separatorid} : 0;
   my $DisplayMode = exists $ArgRef->{-displaymode} ? $ArgRef->{-displaymode} : "";
 
-  my $EventGroupLink = EventGroupLink(-eventgroupid => $Conferences{$EventID}{EventGroupID});
+  my $EventGroupID   = $Conferences{$EventID}{EventGroupID};
+  my $EventGroupLink = EventGroupLink(-eventgroupid => $EventGroupID);
 
   print '<ul>';  
   print "<li>$EventGroupLink";
+  if ($DisplayMode eq "SingleSession" || $DisplayMode eq "Event") { 
+    print "<ul>\n";
+    my @EventIDs = reverse sort EventsByDate FetchEventsByGroup($EventGroupID);
+    foreach my $OtherEventID (@EventIDs) {
+      if ($EventID == $OtherEventID) {
+        print "<li><strong>",$Conferences{$EventID}{Title},"</strong></li>\n";
+      } else {
+        print "<strong>",EventLink(-eventid => $OtherEventID),"</li>\n";
+      }
+    }
+    print "</ul>\n";
+  }      
   print "</li></ul>\n";
   
 }
