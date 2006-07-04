@@ -464,22 +464,26 @@ sub PrintEventLeftSidebar ($) {
   
   if ((CanCreate()) || CanModifyMeeting($EventID)) {
     if (CanCreate()) {
-      print "<p>\n";
       if ($DisplayMode eq "SingleSession" || $DisplayMode eq "Session") {
+        print "<p>\n";
         TalkUploadButton(-sessionid => $SessionID);
+        print "</p>\n";
       } elsif  ($DisplayMode eq "Event"){
+        print "<p>\n";
         TalkUploadButton(-eventid => $EventID);
+        print "</p>\n";
       } 
-      print "</p>\n";
     }
     if (CanModifyMeeting($EventID)) {
-      print "<p>\n";
       if ($DisplayMode eq "SingleSession") { 
+        print "<p>\n";
         SessionModifyButton(-eventid => $EventID,     -buttontext => "Modify Agenda");
+        print "</p>\n";
       } elsif ($DisplayMode eq "Session") {
+        print "<p>\n";
         SessionModifyButton(-sessionid => $SessionID, -buttontext => "Modify Session");
+        print "</p>\n";
       }
-      print "</p>\n";
 
       print "<p>\n";
       if ($DisplayMode eq "SingleSession") { 
