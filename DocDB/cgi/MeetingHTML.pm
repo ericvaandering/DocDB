@@ -501,6 +501,21 @@ sub PrintEventLeftSidebar ($) {
   print "</div>\n"; # UpdateButtons
 }
 
+print PrintEventRightSideBar ($) {
+  my ($ArgRef) = @_;
+  my $EventID     = exists $ArgRef->{-eventid}     ? $ArgRef->{-eventid}     : 0;
+  my $SessionID   = exists $ArgRef->{-sessionid}   ? $ArgRef->{-sessionid}   : 0;
+  my $SeparatorID = exists $ArgRef->{-separatorid} ? $ArgRef->{-separatorid} : 0;
+  my $DisplayMode = exists $ArgRef->{-displaymode} ? $ArgRef->{-displaymode} : "";
+
+  my $EventGroupLink = EventGroupLink(-eventgroupid => $Conferences{$EventID}{EventGroupID});
+
+  print '<ul>';  
+  print "<li>$EventGroupLink";
+  print "</li></ul>\n";
+  
+}
+
 sub PrintEventHeader ($) {
   my ($ArgRef) = @_;
   my $EventID     = exists $ArgRef->{-eventid}     ? $ArgRef->{-eventid}     : 0;
@@ -517,6 +532,9 @@ sub PrintEventHeader ($) {
   my %Fields = ();
   my @Fields = ();
   
+    push @Fields,"DisplayMode";  #Debugging only
+    $Fields{"DisplayMode"} = $DisplayMode; #Debugging only
+
   if ($DisplayMode eq "Session" || $DisplayMode eq "Separator") {
     push @Fields,"Event";
     $Fields{"Event"} = $EventTitle;

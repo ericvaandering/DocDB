@@ -159,6 +159,7 @@ print "<div id=\"MainColumn3Col\">\n";
 ### Right column (wrapped around by middle column)
 
 print "<div id=\"RightColumn3Col\">\n";
+PrintEventRightSidebar( {-sessionid => $SessionID, -eventid => $EventID, -separatorid => $SessionSeparatorID, -displaymode => $NewDisplayMode} );
 
 
 print "</div>\n";  # RightColumn3Col
