@@ -465,42 +465,42 @@ sub PrintEventLeftSidebar ($) {
   if ((CanCreate()) || CanModifyMeeting($EventID)) {
     if (CanCreate()) {
       if ($DisplayMode eq "SingleSession" || $DisplayMode eq "Session") {
-        print "<p>\n";
+#        print "<p>\n";
         TalkUploadButton(-sessionid => $SessionID);
-        print "</p>\n";
+#        print "</p>\n";
       } elsif  ($DisplayMode eq "Event"){
-        print "<p>\n";
+#        print "<p>\n";
         TalkUploadButton(-eventid => $EventID);
-        print "</p>\n";
+#        print "</p>\n";
       } 
     }
     if (CanModifyMeeting($EventID)) {
       if ($DisplayMode eq "SingleSession") { 
-        print "<p>\n";
+#        print "<p>\n";
         SessionModifyButton(-eventid => $EventID,     -buttontext => "Modify Agenda");
-        print "</p>\n";
+#        print "</p>\n";
       } elsif ($DisplayMode eq "Session") {
-        print "<p>\n";
+#        print "<p>\n";
         SessionModifyButton(-sessionid => $SessionID, -buttontext => "Modify Session");
-        print "</p>\n";
+#        print "</p>\n";
       }
 
-      print "<p>\n";
+#      print "<p>\n";
       if ($DisplayMode eq "SingleSession") { 
         EventModifyButton(-eventid => $EventID, -buttontext => "Add Sessions");
       } else {
         EventModifyButton(-eventid => $EventID, -buttontext => "Modify Event");
       }
-      print "</p>\n";
-      print "<p>\n";
+#      print "</p>\n";
+#      print "<p>\n";
       EventCopyButton(-eventid => $EventID);
-      print "</p>\n";
+#      print "</p>\n";
     }
   }
 
-  print "<p>\n";
+#  print "<p>\n";
   EventDisplayButton( {-eventid => $EventID} );
-  print "</p>\n";
+#  print "</p>\n";
 
   print "<p><a href=\"$ListBy?eventid=$EventID\">Simple document list</a></p>\n";
 
