@@ -512,10 +512,6 @@ sub PrintEventRightSidebar ($) {
   my $EventGroupLink = EventGroupLink(-eventgroupid => $EventGroupID, -format => "short");
 
   print '<ul class="compact">';  
-  print "<li>EI: $EventID    </li>";
-  print "<li>SI: $SessionID  </li>";
-  print "<li>SS: $SeparatorID</li>";
-  print "<li>DM: $DisplayMode</li>";
   print "<li>$EventGroupLink";
     
 ### Get and sort other events in this group
@@ -559,7 +555,6 @@ sub PrintEventRightSidebar ($) {
             if ($OtherSeparatorID == $SeparatorID) {
               print "<li><strong>",$SessionSeparators{$SeparatorID}{Title},"</strong></li>\n";
             } else {              
-              print "<li>Sep</li>\n";
               FetchSessionSeparatorByID($OtherSeparatorID);
               my $Link = SessionSeparatorLink({-sessionseparatorid => $OtherSeparatorID});
               print "<li>",$Link,"</li>\n";
