@@ -544,6 +544,7 @@ sub PrintEventRightSidebar ($) {
           my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
             print "<li>Session $SessionID </li>\n";
           if ($SessionID) {
+            FetchSessionByID($SessionID);
             my $SessionLink = SessionLink(-sessionid => $SessionID);
             print "<li>",$SessionLink,"</li>\n";
           }
