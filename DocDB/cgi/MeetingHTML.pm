@@ -465,11 +465,11 @@ sub PrintEventLeftSidebar ($) {
   if ((CanCreate()) || CanModifyMeeting($EventID)) {
     if (CanCreate()) {
       if ($DisplayMode eq "SingleSession" || $DisplayMode eq "Session") {
-#        print "<p>\n";
+        print "<p/>\n";
         TalkUploadButton(-sessionid => $SessionID);
 #        print "</p>\n";
       } elsif  ($DisplayMode eq "Event"){
-#        print "<p>\n";
+        print "<p/>\n";
         TalkUploadButton(-eventid => $EventID);
 #        print "</p>\n";
       } 
