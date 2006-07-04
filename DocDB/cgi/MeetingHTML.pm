@@ -534,7 +534,7 @@ sub PrintEventRightSidebar ($) {
     if ($EventID == $OtherEventID) {
       print "<li><strong>",$Conferences{$EventID}{Title},"</strong>\n";
       if ($DisplayMode ne "SingleSession") { # Find and print links to sessions
-        my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
+        my @MeetingOrderIDs = FetchMeetingOrdersByConferenceID($EventID);
         @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
         print '<ul class="compact">';  
         foreach $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks
