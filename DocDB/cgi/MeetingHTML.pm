@@ -561,7 +561,7 @@ sub PrintEventRightSidebar ($) {
             } else {              
               print "<li>Sep</li>\n";
               FetchSessionSeparatorByID($OtherSeparatorID);
-              my $Link = SessionSeparatorLink($OtherSeparatorID);
+              my $Link = SessionSeparatorLink({-sessionseparatorid => $OtherSeparatorID});
               print "<li>",$Link,"</li>\n";
             }  
           } 
