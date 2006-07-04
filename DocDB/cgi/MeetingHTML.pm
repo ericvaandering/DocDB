@@ -457,22 +457,20 @@ sub PrintEventLeftSidebar ($) {
   my ($ArgRef) = @_;
   my $EventID     = exists $ArgRef->{-eventid}     ? $ArgRef->{-eventid}     : 0;
   my $SessionID   = exists $ArgRef->{-sessionid}   ? $ArgRef->{-sessionid}   : 0;
-  my $SeparatorID = exists $ArgRef->{-separatorid} ? $ArgRef->{-separatorid} : 0;
+#  my $SeparatorID = exists $ArgRef->{-separatorid} ? $ArgRef->{-separatorid} : 0;
   my $DisplayMode = exists $ArgRef->{-displaymode} ? $ArgRef->{-displaymode} : "";
   
-  push @DebugStack,"DM in Left: $DisplayMode";
   print "<div id=\"UpdateButtons\">\n";
   
   if ((CanCreate()) || CanModifyMeeting($EventID)) {
     if (CanCreate()) {
-#      print "<p>\n";
+      print "<p>\n";
       if ($DisplayMode eq "SingleSession" || $DisplayMode eq "Session") {
         TalkUploadButton(-sessionid => $SessionID);
       } elsif  ($DisplayMode eq "Event"){
         TalkUploadButton(-eventid => $EventID);
       } 
-        
-#      print "</p>\n";
+      print "</p>\n";
     }
     if (CanModifyMeeting($EventID)) {
       print "<p>\n";
@@ -495,9 +493,11 @@ sub PrintEventLeftSidebar ($) {
       print "</p>\n";
     }
   }
+
   print "<p>\n";
   EventDisplayButton( {-eventid => $EventID} );
   print "</p>\n";
+
   print "</div>\n"; # UpdateButtons
 }
 
