@@ -34,7 +34,7 @@
 */
 }
 
-#EventSummary th {
+#EventSummary th, #EventEpilogue th {
   white-space: nowrap;
 }
 
@@ -47,6 +47,7 @@
 #SessionList, #EventEpilogue  {
   border: 1px solid black;
 }
+
 #SessionList th {
   vertical-align: bottom;
   border: 1px solid black;
