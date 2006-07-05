@@ -56,3 +56,7 @@
 #SessionList td { /* Why?!?! */
   text-align: left;
 }  
+
+#SessionList td.Date { /* Why?!?! */
+  white-space: nowrap;
+}  

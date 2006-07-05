@@ -713,11 +713,13 @@ sub PrintSessionInfo ($) {
   require "TalkSQL.pm";
   require "SQLUtilities.pm";
   
-  &FetchSessionByID($SessionID);
-  
+  FetchSessionByID($SessionID);
+ 
+  # DocumentList puts a class on every cell, this only on Date
+ 
   print "<td><a href=\"$DisplayMeeting?sessionid=$SessionID\">";
   print      "$Sessions{$SessionID}{Title}</a></td>\n";
-  print "<td>",&EuroDateHM($Sessions{$SessionID}{StartTime}),"</td>\n";
+  print "<td class=\"Date\">",&EuroDateHM($Sessions{$SessionID}{StartTime}),"</td>\n";
   print "<td>",$Sessions{$SessionID}{Description}           ,"</td>\n";
   print "<td>",$Sessions{$SessionID}{Location}              ,"</td>\n";
 }
@@ -730,8 +732,11 @@ sub PrintSessionSeparatorInfo ($) {
   
   FetchSessionSeparatorByID($SessionSeparatorID);
   my $Link = SessionSeparatorLink( {-sessionseparatorid => $SessionSeparatorID} );
+
+  # DocumentList puts a class on every cell, this only on Date
+ 
   print "<td>$Link</td>\n";
-  print "<td>",EuroDateHM($SessionSeparators{$SessionSeparatorID}{StartTime}),"</td>\n";
+  print "<td class=\"Date\">",EuroDateHM($SessionSeparators{$SessionSeparatorID}{StartTime}),"</td>\n";
   print "<td>",$SessionSeparators{$SessionSeparatorID}{Description},"</td>\n";
   print "<td>",$SessionSeparators{$SessionSeparatorID}{Location},"</td>\n";
 }
