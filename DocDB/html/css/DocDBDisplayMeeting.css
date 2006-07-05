@@ -34,6 +34,6 @@
 */
 }
 
-table.#EventInfo th {
+#EventInfo th {
   white-space: nowrap;
 }
