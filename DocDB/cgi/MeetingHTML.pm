@@ -704,7 +704,7 @@ sub PrintMeetingEpilogue($) {
     print '<table class="MedPaddedTable CenteredTable Alternating" id="EventEpilogue">';
     print '<tr class="Odd"><th class="LeftHeader">Event Wrapup:</th>';
     print "<td>\n";
-    print URLify(Paragraphize($Conferences{$ConferenceID}{Epilogue}));
+    print URLify(AddLineBreaks($Conferences{$ConferenceID}{Epilogue}));
     print "</td></tr></table>\n";
   }
 }
