@@ -33,3 +33,7 @@
   border: 1px solid black;
 */
 }
+
+table.#EventInfo th {
+  white-space: nowrap;
+}

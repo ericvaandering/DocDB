@@ -412,7 +412,7 @@ sub PrintSessionSeparator ($) {
   print "<hr/>\n";   
 }
 
-sub PrintSessionHeader ($) { # FIXME: Not needed?
+sub PrintSessionHeader ($) {
   my ($SessionID) = @_;
 
   require "SQLUtilities.pm";
@@ -433,7 +433,7 @@ sub PrintSessionHeader ($) { # FIXME: Not needed?
   if (&CanCreate || &CanModifyMeeting($ConferenceID)) {
     print "<table class=\"CenteredTable LowPaddedTable\"><tr>\n";
   }
-  if (&CanCreate()) { # FIXME: make subroutine
+  if (&CanCreate()) {
     print "<th>\n";
     &TalkUploadButton(-sessionid => $SessionID);
     print "</th>\n";
@@ -657,7 +657,7 @@ sub PrintEventHeader ($) {
   
   
   if (@Fields) {
-    print '<table class="LeftHeader Alternating CenteredTable MedPaddedTable">';
+    print '<table class="LeftHeader Alternating CenteredTable MedPaddedTable" id="EventInfo">';
     my $Row = 0;
     foreach my $Field (@Fields) {
       ++$Row; 
@@ -672,167 +672,6 @@ sub PrintEventHeader ($) {
 
 }
 
-sub PrintSingleSessionHeader (%) { # FIXME: No longer needed?
-  require "SQLUtilities.pm";
-  require "Utilities.pm";
-
-  my %Params = @_;
-
-  my $SessionID  = $Params{-sessionid} || 0;
-  my $OnlyOne    = $Params{-onlyone}   || 0;
-  my $EventID    = $Sessions{$SessionID}{ConferenceID};
-
-  unless ($EventID) { 
-    return;
-  }
-
-  my $SessionTitle = $Sessions{$SessionID}{Title};
-  my $EventTitle   = $Conferences{$EventID}{LongDescription};
-  my $EventLink    = &EventLink(-eventid => $EventID);
-  print "<div class=\"SingleSessionHeader\">\n";
- 
-  print "<h2>";
-  if ($SessionTitle && $EventTitle && ($SessionTitle ne $EventTitle) && !$OnlyOne) {
-    print "$SessionTitle, part of $EventLink\n";
-  } else {
-    print "$EventTitle\n";
-  } 
-  print " (Part of ";
-  print EventGroupLink(-eventgroupid => $Conferences{$EventID}{EventGroupID});
-  print ")\n"; 
-  
-  print "</h2>";
-  
-  print "<h4>Date and time: "; 
-  print &EuroDate($Sessions{$SessionID}{StartTime});
-  print " at ";
-  print &EuroTimeHM($Sessions{$SessionID}{StartTime});
-  print "</h4>";
-  if ($Sessions{$SessionID}{Location}) {
-    print "<h4>Location: $Sessions{$SessionID}{Location}</h4>\n";
-  }
-  if ($Conferences{$EventID}{URL}) {
-    print "<h5>(<a href=\"$Conferences{$EventID}{URL}\">$Conferences{$EventID}{Title} homepage</a>)</h5>\n";
-  }
-  
-  print "<table class=\"CenteredTable LowPaddedTable\"><tr>\n";
-  if ((&CanCreate()) || &CanModifyMeeting($EventID)) {
-    if (&CanCreate()) {
-      print "<th>\n";
-      &TalkUploadButton(-sessionid => $SessionID);
-      print "</th>\n";
-    }
-    if (&CanModifyMeeting($EventID)) {
-      print "<th>\n";
-      if ($OnlyOne) { 
-        &SessionModifyButton(-eventid => $EventID, -buttontext => "Modify Agenda", -labeltext => " for this session or");
-      } else {
-        &SessionModifyButton(-sessionid => $SessionID, -buttontext => "Modify Session", -labeltext => " or");
-      }
-      print "</th>\n";
-
-      print "<th>\n";
-      if ($OnlyOne) { 
-        &EventModifyButton(-eventid => $EventID, -buttontext => "Add Sessions", -labeltext => "&nbsp;");
-      } else {
-        &EventModifyButton(-eventid => $EventID, -buttontext => "Modify Event", -labeltext => "&nbsp;");
-      }
-      print "</th>\n";
-      print "</tr>\n<tr><th colspan=\"3\">\n";
-      &EventCopyButton(-eventid => $EventID);
-      print "</th>\n";
-    }
-  }
-  print "</tr>\n<tr><th colspan=\"3\">\n";
-  EventDisplayButton( {-eventid => $EventID} );
-  print "</th>\n";
-  print "</tr></table>\n";
-
-  &PrintMeetingPreamble($EventID);
-  if ($Sessions{$SessionID}{Description}) {
-    my $Description = AddLineBreaks($Sessions{$SessionID}{Description});
-    print "<div class=\"SessionDescription\"> ",&URLify($Description),"</div>\n";
-  }
-  print "</div>\n";
-}  
-
-sub PrintMeetingInfo($;%) { # FIXME: Obsolete?
-  my ($ConferenceID,%Params) = @_;
-
-  require "Utilities.pm";
-
-  my $AddTalkLink = $Params{-talklink} || "";	     # short, long, full
-  my $AddNavBar   = $Params{-navbar}   || "";		  # Any non-null text is "true"
-
-  print "<h2> \n";
-  print "<a href=\"$DisplayMeeting?conferenceid=$ConferenceID\">$Conferences{$ConferenceID}{Title}</a>\n";
-  print "</h2>\n";
-
-  print "<h4>\n";
-  if ($Conferences{$ConferenceID}{StartDate} ne $Conferences{$ConferenceID}{EndDate}) {
-    print " held from ",EuroDate($Conferences{$ConferenceID}{StartDate});
-    print " to ",EuroDate($Conferences{$ConferenceID}{EndDate});
-  } else {
-    print " held on ",EuroDate($Conferences{$ConferenceID}{StartDate});
-  }
-  if ($Conferences{$ConferenceID}{Location}) {
-    print " in $Conferences{$ConferenceID}{Location}\n";
-  }
-  print "<br/>(Part of ";
-  print EventGroupLink(-eventgroupid => $Conferences{$ConferenceID}{EventGroupID});
-  print ")\n"; 
-  print "</h4>\n";
-  
-  if ($Conferences{$ConferenceID}{URL}) {
-    print "<h5>(<a href=\"$Conferences{$ConferenceID}{URL}\">$Conferences{$ConferenceID}{Title} homepage</a>)</h5>\n";
-  }
-  
-  if ($AddTalkLink || &CanModifyMeeting($ConferenceID)) {
-    print "<table class=\"CenteredTable LowPaddedTable\"><tr>\n";
-    if ($AddTalkLink && &CanCreate()) {
-      print "<th>\n";
-      &TalkUploadButton(-eventid => $ConferenceID);
-      print "</th>\n";
-    }
-    if (&CanModifyMeeting($ConferenceID)) {
-      print "<th>\n";
-      &EventModifyButton(-eventid => $ConferenceID);
-      print "</th>\n";
-      print "</tr>\n<tr><th colspan=\"3\">\n";
-      &EventCopyButton(-eventid => $ConferenceID);
-      print "</th>\n";
-    }
-    if ($AddTalkLink) {
-      print "</tr>\n<tr><th colspan=\"3\">\n";
-      EventDisplayButton( {-eventid => $ConferenceID} );
-      print "</th>\n";
-    }
-    print "</tr></table>\n";
-  }
-  
-  if ($AddNavBar) {
-    print "<div class=\"EventNavBar\">\n";
-    my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
-    @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
-    foreach $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks
-      my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
-      if ($SessionID) {
-        &FetchSessionByID($SessionID);
-
-        my $SessionName = $Sessions{$SessionID}{Title};
-	   $SessionName =~ s/\s+/&nbsp;/;
-	my $SessionLink = "<a href=\"#sess$SessionID\">$SessionName</a>";  
-        print "[&nbsp;",$SessionLink,"&nbsp;]\n";
-      }
-    }
-    print "</div>\n";
-  }
-     
-  &PrintMeetingPreamble($ConferenceID);
-  
-  print "<hr/>\n";
-}
-
 sub PrintMeetingEpilogue($) {
 
   require "Utilities.pm";
@@ -841,18 +680,6 @@ sub PrintMeetingEpilogue($) {
   if ($Conferences{$ConferenceID}{Epilogue}) {
     print "<div class=\"EventPreEpi\">\n";
     print &Paragraphize($Conferences{$ConferenceID}{Epilogue}),"\n";
-    print "</div>\n";
-  }
-}
-
-sub PrintMeetingPreamble($) { # FIXME: Obsolete?
-
-  require "Utilities.pm";
-  my ($ConferenceID) = @_;
-
-  if ($Conferences{$ConferenceID}{Preamble}) {
-    print "<div class=\"EventPreEpi\">\n";
-    print &Paragraphize($Conferences{$ConferenceID}{Preamble}),"\n";
     print "</div>\n";
   }
 }
