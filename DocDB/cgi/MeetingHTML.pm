@@ -598,8 +598,14 @@ sub PrintEventHeader ($) {
   my $EventTitle   = $Conferences{$EventID}{LongDescription};
   my $SessionStartTime    = $Sessions{$SessionID}{StartTime};
   my $SeparatorStartTime    = $SessionSeparatorss{$SeparatorID}{StartTime};
+
+  my %SkipFields  = ();
   my %Fields = ();
   my @Fields = ();
+    
+  if ($DisplayMode eq "SingleSession") {
+    %SkipFields = ( "Event Dates" => $TRUE,);
+  }
   
   if ($DisplayMode eq "Session" || $DisplayMode eq "Separator") {
     push @Fields,"Event";
@@ -609,10 +615,19 @@ sub PrintEventHeader ($) {
     $Fields{"Full Title"} = $EventTitle;
   }
   
-#  if ($SessionStartTime) {
+  if ($Conferences{$EventID}{StartDate}) {
     push @Fields,"Event Dates";
-    $Fields{"Event Dates"} = "Not available yet, nor is event location";
-#  }  
+    if ($Conferences{$EventID}{StartDate} eq $Conferences{$EventID}{EndDate})
+      $Fields{"Event Dates"} = $Conferences{$EventID}{StartDate}." to ".$Conferences{$EventID}{EndDate};
+    } else {
+      $Fields{"Event Dates"} = $Conferences{$EventID}{StartDate};
+    }
+  }  
+
+  if ($Conferences{$EventID}{Location}) {
+    push @Fields,"Event Location";
+    $Fields{"Event Location"} = $Conferences{$EventID}{Location};
+  }  
 
   if ($SessionStartTime) {
     push @Fields,"Date &amp; Time";
@@ -653,13 +668,12 @@ sub PrintEventHeader ($) {
     push @Fields,"Session Info";
     $Fields{"Session Info"} = URLify(AddLineBreaks($SessionSeparators{$SeparatorID}{Description}));
   }
-  
-  
-  
+
   if (@Fields) {
     print '<table class="LeftHeader Alternating CenteredTable MedPaddedTable" id="EventSummary">';
     my $Row = 0;
     foreach my $Field (@Fields) {
+      if ($SkipFields{$Field}) {next;}
       ++$Row; 
       my $RowClass = ("Even","Odd")[$Row % 2];
       print "<tr class=\"$RowClass\">\n";
