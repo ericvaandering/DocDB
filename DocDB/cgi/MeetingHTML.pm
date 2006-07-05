@@ -657,7 +657,7 @@ sub PrintEventHeader ($) {
   
   
   if (@Fields) {
-    print '<table class="LeftHeader Alternating CenteredTable MedPaddedTable" id="EventInfo">';
+    print '<table class="LeftHeader Alternating CenteredTable MedPaddedTable" id="EventSummary">';
     my $Row = 0;
     foreach my $Field (@Fields) {
       ++$Row; 
