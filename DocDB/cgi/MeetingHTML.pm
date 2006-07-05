@@ -601,12 +601,14 @@ sub PrintEventHeader ($) {
   my $SessionStartTime    = $Sessions{$SessionID}{StartTime};
   my $SeparatorStartTime    = $SessionSeparatorss{$SeparatorID}{StartTime};
 
-  my %SkipFields  = ();
-  my %Fields = ();
-  my @Fields = ();
+  my %SkipFields   = ();
+  my %RenameFields = ();
+  my %Fields       = ();
+  my @Fields       = ();
     
   if ($DisplayMode eq "SingleSession") {
-    %SkipFields = ( "Event Dates" => $TRUE,);
+    %SkipFields   = ( "Event Dates"  => $TRUE, "Event Location" => $TRUE,);
+    %RenameFields = ( "Session Info" => "Event Info",);
   }
   
   if ($DisplayMode eq "Session" || $DisplayMode eq "Separator") {
@@ -680,6 +682,9 @@ sub PrintEventHeader ($) {
       ++$Row; 
       my $RowClass = ("Even","Odd")[$Row % 2];
       print "<tr class=\"$RowClass\">\n";
+      if ($RenameFields{$Field}) {
+        $Field = $RenameFields{$Field};
+      }  
       print "<th>$Field:</th>\n";
       print "<td>$Fields{$Field}</td>\n";
       print "</tr>";
