@@ -701,9 +701,11 @@ sub PrintMeetingEpilogue($) {
   my ($ConferenceID) = @_;
 
   if ($Conferences{$ConferenceID}{Epilogue}) {
-    print "<div class=\"EventPreEpi\">\n";
-    print &Paragraphize($Conferences{$ConferenceID}{Epilogue}),"\n";
-    print "</div>\n";
+    print '<table class="MedPaddedTable CenterTable Alternating">';
+    print '<tr><th class="LeftHeader">Event Wrapup</th>';
+    print "<td>\n";
+    print URLify(Paragraphize($Conferences{$ConferenceID}{Epilogue}));
+    print "</td></tr></table>\n";
   }
 }
 
