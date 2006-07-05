@@ -715,13 +715,11 @@ sub PrintSessionInfo ($) {
   
   &FetchSessionByID($SessionID);
   
-  print "<tr>\n";
   print "<td><a href=\"$DisplayMeeting?sessionid=$SessionID\">";
   print "$Sessions{$SessionID}{Title}</a></td>\n";
   print "<td>",&EuroDateHM($Sessions{$SessionID}{StartTime}),"</td>\n";
   print "<td>",$Sessions{$SessionID}{Description},"</td>\n";
   print "<td>",$Sessions{$SessionID}{Location},"</td>\n";
-  print "</tr>\n";
 }
 
 sub PrintSessionSeparatorInfo ($) {
@@ -732,12 +730,10 @@ sub PrintSessionSeparatorInfo ($) {
   
   FetchSessionSeparatorByID($SessionSeparatorID);
   my $Link = SessionSeparatorLink( {-sessionseparatorid => $SessionSeparatorID} );
-  print "<tr>\n";
   print "<td>$Link</td>\n";
   print "<td>",EuroDateHM($SessionSeparators{$SessionSeparatorID}{StartTime}),"</td>\n";
   print "<td>",$SessionSeparators{$SessionSeparatorID}{Description},"</td>\n";
   print "<td>",$SessionSeparators{$SessionSeparatorID}{Location},"</td>\n";
-  print "</tr>\n";
 }
 
 sub EventGroupLink (%) {
