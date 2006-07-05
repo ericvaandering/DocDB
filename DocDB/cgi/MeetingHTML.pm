@@ -716,10 +716,10 @@ sub PrintSessionInfo ($) {
   &FetchSessionByID($SessionID);
   
   print "<td><a href=\"$DisplayMeeting?sessionid=$SessionID\">";
-  print "$Sessions{$SessionID}{Title}</a></td>\n";
+  print      "$Sessions{$SessionID}{Title}</a></td>\n";
   print "<td>",&EuroDateHM($Sessions{$SessionID}{StartTime}),"</td>\n";
-  print "<td>",$Sessions{$SessionID}{Description},"</td>\n";
-  print "<td>",$Sessions{$SessionID}{Location},"</td>\n";
+  print "<td>",$Sessions{$SessionID}{Description}           ,"</td>\n";
+  print "<td>",$Sessions{$SessionID}{Location}              ,"</td>\n";
 }
 
 sub PrintSessionSeparatorInfo ($) {

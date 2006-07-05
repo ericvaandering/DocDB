@@ -47,3 +47,8 @@
 #SessionList  {
   border: 1px solid black;
 }
+#SessionList th {
+  vertical-align: bottom;
+  border: 1px solid black;
+  padding: 5px 5px 5px 5px;
+}  
