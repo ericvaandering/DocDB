@@ -164,7 +164,6 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { # Display a 
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
 
   if ($Conferences{$EventID}{ShowAllTalks}) { # Display all talks, sessions
-    # FIXME: Add a Navbar of sorts?
     foreach $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks
       my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
       my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
@@ -179,20 +178,25 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { # Display a 
       }
     }   
   } else { # Display links to sessions and info on separators
-    print "<table class=\"MedPaddedTable CenteredTable\">\n";
-    print "<tr><th>Session Title</th>\n";
+    print "<table class=\"MedPaddedTable CenteredTable Alternating\">\n";
+    print "<tr><th>Session</th>\n";
     print "<th>Date &amp; Time</th>\n";
     print "<th>Session Information</th>\n";
     print "<th>Location</th>\n";
     print "</tr>\n";
+    my $Row = 0;
     foreach $MeetingOrderID (@MeetingOrderIDs) {
+      ++$Row; 
+      my $RowClass = ("Even","Odd")[$Row % 2];
       my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
       my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
+      print "<tr class=\"$RowClass\">\n"; 
       if ($SessionID) {
         PrintSessionInfo($SessionID);                   # Session info and link to session
       } elsif ($SessionSeparatorID) {
         PrintSessionSeparatorInfo($SessionSeparatorID); # SessionSeparator info 
       }
+      print "</tr>\n";
     }  
     print "</table><hr/>\n";
   }
