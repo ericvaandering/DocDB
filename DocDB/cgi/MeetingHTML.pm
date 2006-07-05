@@ -491,10 +491,12 @@ sub PrintEventLeftSidebar ($) {
       EventCopyButton(-eventid => $EventID);
     }
   }
-
-  print "<p/>\n";
-  EventDisplayButton( {-eventid => $EventID} );
-
+  
+  unless ($DisplayMode eq "Separator") { 
+    print "<p/>\n";
+    EventDisplayButton( {-eventid => $EventID} );
+  }
+   
   print "<p><a href=\"$ListBy?eventid=$EventID\">Simple document list</a></p>\n";
 
   print "</div>\n"; # UpdateButtons
