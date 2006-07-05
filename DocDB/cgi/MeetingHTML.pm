@@ -617,10 +617,11 @@ sub PrintEventHeader ($) {
   
   if ($Conferences{$EventID}{StartDate}) {
     push @Fields,"Event Dates";
-    if ($Conferences{$EventID}{StartDate} eq $Conferences{$EventID}{EndDate}) {
-      $Fields{"Event Dates"} = $Conferences{$EventID}{StartDate}." to ".$Conferences{$EventID}{EndDate};
+    if ($Conferences{$EventID}{StartDate} ne $Conferences{$EventID}{EndDate}) {
+      $Fields{"Event Dates"} = EuroDate($Conferences{$EventID}{StartDate}).
+                        " to ".EuroDate($Conferences{$EventID}{EndDate});
     } else {
-      $Fields{"Event Dates"} = $Conferences{$EventID}{StartDate};
+      $Fields{"Event Dates"} = EuroDate($Conferences{$EventID}{StartDate});
     }
   }  
 
