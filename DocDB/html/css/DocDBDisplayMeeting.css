@@ -52,3 +52,7 @@
   border: 1px solid black;
   padding: 5px 5px 5px 5px;
 }  
+
+#SessionList td { /* Why?!?! */
+  text-align: left;
+}  
