@@ -596,10 +596,10 @@ sub PrintEventHeader ($) {
   require "SQLUtilities.pm";
   require "Utilities.pm";
    
-  my $SessionTitle = $Sessions{$SessionID}{Title};
-  my $EventTitle   = $Conferences{$EventID}{LongDescription};
-  my $SessionStartTime    = $Sessions{$SessionID}{StartTime};
-  my $SeparatorStartTime    = $SessionSeparatorss{$SeparatorID}{StartTime};
+  my $SessionTitle       = $Sessions{$SessionID}{Title};
+  my $EventTitle         = $Conferences{$EventID}{LongDescription};
+  my $SessionStartTime   = $Sessions{$SessionID}{StartTime};
+  my $SeparatorStartTime = $SessionSeparators{$SeparatorID}{StartTime};
 
   my %SkipFields   = ();
   my %RenameFields = ();
