@@ -701,7 +701,7 @@ sub PrintMeetingEpilogue($) {
   my ($ConferenceID) = @_;
 
   if ($Conferences{$ConferenceID}{Epilogue}) {
-    print '<table class="MedPaddedTable CenteredTable Alternating" id="EventEpilogue">';
+    print '<table class="MedPaddedTable leftHeader CenteredTable Alternating" id="EventEpilogue">';
     print '<tr class="Odd"><th class="LeftHeader">Event Wrapup:</th>';
     print "<td>\n";
     print URLify(AddLineBreaks($Conferences{$ConferenceID}{Epilogue}));
