@@ -178,7 +178,7 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { # Display a 
       }
     }   
   } else { # Display links to sessions and info on separators
-    print '<table class="MedPaddedTable CenteredTable Alternating" id="SessionList">";
+    print '<table class="MedPaddedTable CenteredTable Alternating" id="SessionList">';
     print "<tr><th>Session</th>\n";
     print "<th>Date &amp; Time</th>\n";
     print "<th>Session Information</th>\n";
