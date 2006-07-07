@@ -274,17 +274,24 @@ sub SessionLocation {
 sub SessionLink (%) {
   my %Params = @_;
   
-  my $SessionID = $Params{-sessionid};
-  my $Format    = $Params{-format} || "short";
+  my $SessionID   = $Params{-sessionid};
+  my $Format      = $Params{-format}  || "short";
+  my $ToolTipMode = $Params{-tooltip} || "Session";
 
   my $URL = "$DisplayMeeting?sessionid=$SessionID";
   
   my $Text;
   my $ToolTip;
-  if ($Conferences{$Sessions{$SessionID}{ConferenceID}}{Title} eq $Sessions{$SessionID}{Title}) {
-    $ToolTip = $Sessions{$SessionID}{Title};
-  } else {  
-    $ToolTip = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title}." - ".$Sessions{$SessionID}{Title};
+  if ($ToolTipMode eq "DateAndLoc") {
+    $ToolTip = EuroTime($Sessions{$SessionID}{StartTime})." ".
+               EuroDate($Sessions{$SessionID}{StartTime}).", ".    
+               $Sessions{$SessionID}{Location};
+  } else {
+    if ($Conferences{$Sessions{$SessionID}{ConferenceID}}{Title} eq $Sessions{$SessionID}{Title}) {
+      $ToolTip = $Sessions{$SessionID}{Title};
+    } else {  
+      $ToolTip = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title}." - ".$Sessions{$SessionID}{Title};
+    }
   }
   if ($Sessions{$SessionID}{Location}) {
     $ToolTip .= " - ".$Sessions{$SessionID}{Location};
@@ -315,15 +322,24 @@ sub SessionSeparatorLink ($) {
   my ($ArgRef) = @_;
   my $SessionSeparatorID = exists $ArgRef->{-sessionseparatorid} ? $ArgRef->{-sessionseparatorid} : 0;
   my $Format             = exists $ArgRef->{-short}              ? $ArgRef->{-short}              : "short";
+  my $ToolTipMode        = exists $ArgRef->{-tooltip}            ? $ArgRef->{-tooltip}            : "Session";
 
   my $URL = "$DisplayMeeting?sessionseparatorid=$SessionSeparatorID";
   
   my $Text;
-  my $ToolTip = $Conferences{$SessionSeparators{$SessionSeparatorID}{ConferenceID}}{Title}
-                ." - ".$SessionSeparators{$SessionSeparatorID}{Title};
-  if ($Sessions{$SessionID}{Location}) {
-    $ToolTip .= " - ".$Sessions{$SessionID}{Location};
-  }  
+  my $ToolTip;
+  if ($ToolTipMode eq "DateAndLoc") {
+    $ToolTip = EuroTime($SessionSeparators{$SessionSeparatorID}{StartTime})." ".
+               EuroDate($SessionSeparators{$SessionSeparatorID}{StartTime}).", ".    
+               $SessionSeparators{$SessionSeparatorID}{Location};
+  } else {
+    $ToolTip = $Conferences{$SessionSeparators{$SessionSeparatorID}{ConferenceID}}{Title}
+               ." - ".$SessionSeparators{$SessionSeparatorID}{Title};
+    if ($SessionSeparators{$SessionSeparatorID}{Location}) {
+      $ToolTip .= " - ".$SessionSeparators{$SessionSeparatorID}{Location};
+    }  
+  }
+
   # Would like to use newlines instead of -. See mozilla bugs Bug 67127 and 45375
   
   if ($Format eq "full") {
@@ -553,7 +569,8 @@ sub PrintEventRightSidebar ($) {
               print "<li><strong>",$Sessions{$SessionID}{Title},"</strong></li>\n";
             } else {              
               FetchSessionByID($OtherSessionID);
-              my $Link = SessionLink(-sessionid => $OtherSessionID);
+              my $Link = SessionLink(-sessionid => $OtherSessionID, 
+                                     -tooltip   => "TimeAndLoc",);
               print "<li>",$Link,"</li>\n";
             }  
           } elsif ($OtherSeparatorID) {
@@ -561,7 +578,8 @@ sub PrintEventRightSidebar ($) {
               print "<li><strong>",$SessionSeparators{$SeparatorID}{Title},"</strong></li>\n";
             } else {              
               FetchSessionSeparatorByID($OtherSeparatorID);
-              my $Link = SessionSeparatorLink({-sessionseparatorid => $OtherSeparatorID});
+              my $Link = SessionSeparatorLink({-sessionseparatorid => $OtherSeparatorID,
+                                               -tooltip            => "TimeAndLoc", });
               print "<li>",$Link,"</li>\n";
             }  
           } 
