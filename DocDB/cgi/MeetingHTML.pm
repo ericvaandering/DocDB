@@ -817,7 +817,7 @@ sub EventLink (%) {
   } else {
     $ToolTip = $Conferences{$EventID}{Full};
   }
-  
+  push @DebugStack,$ToolTipMode;
   my $Link  = "<a href=\"$URL\" class=\"$Class\" title=\"$ToolTip\">";
   if ($Format eq "long") {
     $Link .= $Conferences{$EventID}{LongDescription};
