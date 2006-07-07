@@ -287,8 +287,7 @@ sub SessionLink (%) {
   my $ToolTip;
   if ($ToolTipMode eq "TimeAndLoc") {
     $ToolTip = EuroTimeHM($Sessions{$SessionID}{StartTime})." ".
-               EuroDate($Sessions{$SessionID}{StartTime}).", ".    
-               $Sessions{$SessionID}{Location};
+               EuroDate($Sessions{$SessionID}{StartTime});
   } else {
     if ($Conferences{$Sessions{$SessionID}{ConferenceID}}{Title} eq $Sessions{$SessionID}{Title}) {
       $ToolTip = $Sessions{$SessionID}{Title};
@@ -336,15 +335,14 @@ sub SessionSeparatorLink ($) {
   my $ToolTip;
   if ($ToolTipMode eq "TimeAndLoc") {
     $ToolTip = EuroTimeHM($SessionSeparators{$SessionSeparatorID}{StartTime})." ".
-               EuroDate($SessionSeparators{$SessionSeparatorID}{StartTime}).", ".    
-               $SessionSeparators{$SessionSeparatorID}{Location};
+               EuroDate($SessionSeparators{$SessionSeparatorID}{StartTime});
   } else {
     $ToolTip = $Conferences{$SessionSeparators{$SessionSeparatorID}{ConferenceID}}{Title}
                ." - ".$SessionSeparators{$SessionSeparatorID}{Title};
-    if ($SessionSeparators{$SessionSeparatorID}{Location}) {
-      $ToolTip .= " - ".$SessionSeparators{$SessionSeparatorID}{Location};
-    }  
   }
+  if ($SessionSeparators{$SessionSeparatorID}{Location}) {
+    $ToolTip .= " - ".$SessionSeparators{$SessionSeparatorID}{Location};
+  }  
 
   # Would like to use newlines instead of -. See mozilla bugs Bug 67127 and 45375
   
