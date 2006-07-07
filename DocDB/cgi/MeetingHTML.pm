@@ -555,6 +555,7 @@ sub PrintEventRightSidebar ($) {
       if ($DisplayMode eq "SingleSession" || $DisplayMode eq "Event") { 
         print "<li><strong>",$Conferences{$EventID}{Title},"</strong>\n";
       } else {
+        push @DebugStack,"Calling with date";
         print "<li>",EventLink(-eventid => $OtherEventID, -tooltip => "Date"),"\n";
       } 
 ### Find and print links to sessions      
