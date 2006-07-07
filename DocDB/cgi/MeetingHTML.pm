@@ -282,7 +282,7 @@ sub SessionLink (%) {
   
   my $Text;
   my $ToolTip;
-  if ($ToolTipMode eq "DateAndLoc") {
+  if ($ToolTipMode eq "TimeAndLoc") {
     $ToolTip = EuroTime($Sessions{$SessionID}{StartTime})." ".
                EuroDate($Sessions{$SessionID}{StartTime}).", ".    
                $Sessions{$SessionID}{Location};
@@ -328,7 +328,7 @@ sub SessionSeparatorLink ($) {
   
   my $Text;
   my $ToolTip;
-  if ($ToolTipMode eq "DateAndLoc") {
+  if ($ToolTipMode eq "TimeAndLoc") {
     $ToolTip = EuroTime($SessionSeparators{$SessionSeparatorID}{StartTime})." ".
                EuroDate($SessionSeparators{$SessionSeparatorID}{StartTime}).", ".    
                $SessionSeparators{$SessionSeparatorID}{Location};
