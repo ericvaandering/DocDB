@@ -158,7 +158,7 @@ print "<div id=\"Footer3Col\">\n"; # Must have to keep NavBar on true bottom
 
 if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { # Display a single session
   PrintSession(-sessionid => $SessionID, -skipheader => $TRUE); 
-  PrintMeetingEpilogue($EventID);
+#  PrintMeetingEpilogue($EventID);
 } elsif ($DisplayMode eq "Event") { # Display meeting info or meeting with all talks
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($EventID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 

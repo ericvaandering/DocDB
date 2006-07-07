@@ -632,6 +632,9 @@ sub PrintEventHeader ($) {
     %SkipFields   = ( "Event Dates"  => $TRUE, "Event Location" => $TRUE,);
     %RenameFields = ( "Session Info" => "Event Info",);
   }
+  if ($DisplayMode eq "Session" || $DisplayMode eq "Separator") {
+    %SkipFields   = ( "Event Info"  => $TRUE, "Event URL" => $TRUE, "Event Wrapup" => $TRUE,);
+  }
   
   if ($DisplayMode eq "Session" || $DisplayMode eq "Separator") {
     push @Fields,"Event";
