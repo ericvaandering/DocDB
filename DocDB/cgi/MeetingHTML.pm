@@ -279,6 +279,7 @@ sub SessionLink (%) {
   my $ToolTipMode = $Params{-tooltip} || "Session";
 
   require "ResponseElements.pm";
+  require "SQLUtilities.pm";
 
   my $URL = "$DisplayMeeting?sessionid=$SessionID";
   
@@ -327,6 +328,7 @@ sub SessionSeparatorLink ($) {
   my $ToolTipMode        = exists $ArgRef->{-tooltip}            ? $ArgRef->{-tooltip}            : "Session";
 
   require "ResponseElements.pm";
+  require "SQLUtilities.pm";
 
   my $URL = "$DisplayMeeting?sessionseparatorid=$SessionSeparatorID";
   
