@@ -278,6 +278,8 @@ sub SessionLink (%) {
   my $Format      = $Params{-format}  || "short";
   my $ToolTipMode = $Params{-tooltip} || "Session";
 
+  require "ResponseElements.pm";
+
   my $URL = "$DisplayMeeting?sessionid=$SessionID";
   
   my $Text;
@@ -323,6 +325,8 @@ sub SessionSeparatorLink ($) {
   my $SessionSeparatorID = exists $ArgRef->{-sessionseparatorid} ? $ArgRef->{-sessionseparatorid} : 0;
   my $Format             = exists $ArgRef->{-short}              ? $ArgRef->{-short}              : "short";
   my $ToolTipMode        = exists $ArgRef->{-tooltip}            ? $ArgRef->{-tooltip}            : "Session";
+
+  require "ResponseElements.pm";
 
   my $URL = "$DisplayMeeting?sessionseparatorid=$SessionSeparatorID";
   
