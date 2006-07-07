@@ -450,20 +450,18 @@ sub PrintSessionHeader ($) {
     print "<h5>Location: $Sessions{$SessionID}{Location}</h5>\n";
   }
   
-  if (&CanCreate || &CanModifyMeeting($ConferenceID)) {
+  if (CanCreate() || CanModifyMeeting($ConferenceID)) {
     print "<table class=\"CenteredTable LowPaddedTable\"><tr>\n";
-  }
-  if (&CanCreate()) {
-    print "<th>\n";
-    &TalkUploadButton(-sessionid => $SessionID);
-    print "</th>\n";
-  }
-  if (&CanModifyMeeting($ConferenceID)) {
-    print "<th>\n";
-    &SessionModifyButton(-sessionid => $SessionID);
-    print "</th>\n";
-  }
-  if (&CanCreate() || &CanModifyMeeting($ConferenceID)) {
+    if (CanCreate()) {
+      print "<th>\n";
+      TalkUploadButton(-sessionid => $SessionID);
+      print "</th>\n";
+    }
+    if (CanModifyMeeting($ConferenceID)) {
+      print "<th>\n";
+      SessionModifyButton(-sessionid => $SessionID);
+      print "</th>\n";
+    }
     print "</tr></table>\n";
   }
   
@@ -557,7 +555,7 @@ sub PrintEventRightSidebar ($) {
       if ($DisplayMode eq "SingleSession" || $DisplayMode eq "Event") { 
         print "<li><strong>",$Conferences{$EventID}{Title},"</strong>\n";
       } else {
-        print "<li>",EventLink(-eventid => $OtherEventID),"\n";
+        print "<li>",EventLink(-eventid => $OtherEventID, -tooltip => "Date"),"\n";
       } 
 ### Find and print links to sessions      
 
@@ -791,10 +789,11 @@ sub EventGroupLink (%) {
 
 sub EventLink (%) {
   my %Params = @_;
-  my $EventID = $Params{-eventid} || 0;
-  my $Format  = $Params{-format}  || "short";
-  my $LinkTo  = $Params{-linkto}  || "agenda";
-  my $Class   = $Params{-class}   || "Event";
+  my $EventID     = $Params{-eventid} || 0;
+  my $Format      = $Params{-format}  || "short";
+  my $LinkTo      = $Params{-linkto}  || "agenda";
+  my $Class       = $Params{-class}   || "Event";
+  my $ToolTipMode = $Params{-tooltip} || "Full";
   
   require "MeetingSecurityUtilities.pm";
   require "EventUtilities.pm";
@@ -812,7 +811,12 @@ sub EventLink (%) {
     $URL = "$DisplayMeeting?conferenceid=$EventID";
   }  
   
-  my $ToolTip = $Conferences{$EventID}{Full};
+  my $ToolTip;
+  if ($ToolTipMode eq "Date") {
+    $ToolTip = $Conferences{$EventID}{StartDate};
+  }
+    $ToolTip = $Conferences{$EventID}{Full};
+  }
   
   my $Link  = "<a href=\"$URL\" class=\"$Class\" title=\"$ToolTip\">";
   if ($Format eq "long") {
