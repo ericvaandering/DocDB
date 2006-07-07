@@ -814,7 +814,7 @@ sub EventLink (%) {
   my $ToolTip;
   if ($ToolTipMode eq "Date") {
     $ToolTip = $Conferences{$EventID}{StartDate};
-  }
+  } else {
     $ToolTip = $Conferences{$EventID}{Full};
   }
   
