@@ -44,14 +44,24 @@ require "Messages.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
-&GetSecurityGroups;
+GetSecurityGroups();
+
+my $CertificateStatus;
+if ($UserValidation eq "certificate") {
+  require "CertificateUtilities.pm";
+  $CertificateStatus = CertificateStatus();
+}
 
 # %params = $query -> Vars;  # No parameters (yet?) 
 
 print $query->header;
-&DocDBHeader("$Project Document Database","Document Database",-scripts => ["PopUps"]);
+if ($UserValidation eq "certificate" && $CertificateStatus ne "verified") {
+  DocDBHeader("$Project Document Database","Document Database", -scripts => ["PopUps"], -refresh => "5;url=$CertificateApplyForm");
+} else {
+  DocDBHeader("$Project Document Database","Document Database", -scripts => ["PopUps"]);
+}
 
-my $PersonalAccountLink = &PersonalAccountLink();
+my $PersonalAccountLink = PersonalAccountLink();
 
 print "<div id=\"DocDBHomeBody\">\n";
 
@@ -59,16 +69,14 @@ print "<div id=\"DocDBHomeBody\">\n";
 
 print "<div id=\"Header3Col\">\n";
 
-if ($UserValidation eq "certificate") {
-  require "CertificateUtilities.pm";
-  my $CertificateStatus = &CertificateStatus();
-  if ($CertificateStatus ne "verified") {
-    print "<p><h3 class=\"Warning\">\n";
-    print "You have presented a valid certificate, but are not yet authorized to access the DocDB.\n";
-    print "</h3>\n";
-    print "<h2 class=\"AccessApplyLink\">\n";
-    print "<a href=\"$CertificateApplyForm\">Apply for access or get more information.</a></h2></p>\n";
-  }
+if ($UserValidation eq "certificate" && $CertificateStatus ne "verified") {
+  print "<p><h3 class=\"Warning\">\n";
+  print "You have presented a valid certificate, but are not yet authorized to access the DocDB.\n";
+  print "</h3>\n";
+  print "<h2 class=\"AccessApplyLink\">\n";
+  print "<a href=\"$CertificateApplyForm\">Apply for access or get more information.</a></h2></p>\n";
+  print "<h3>You will be redirected here in 5 seconds.</h3></p>\n";
+  print "\n";
 }
 
 if ($WelcomeMessage) {
