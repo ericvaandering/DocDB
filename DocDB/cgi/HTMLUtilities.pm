@@ -50,7 +50,7 @@ sub DocDBHeader {
   print "<html>\n";
   print "<head>\n";
   if ($Refresh) {
-    print "<meta http-equiv=\"refresh\" content=\"$Refresh\">\n";
+    print "<meta http-equiv=\"refresh\" content=\"$Refresh\" />\n";
   }  
   print '<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />',"\n";
   print "<title>$Title</title>\n";

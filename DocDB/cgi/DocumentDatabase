@@ -71,10 +71,9 @@ print "<div id=\"Header3Col\">\n";
 
 if ($UserValidation eq "certificate" && $CertificateStatus ne "verified") {
   print "<h3 class=\"Warning\">\n";
-  print "You have presented a valid certificate, but are not yet authorized to access the DocDB.\n";
-  print "</h3>\n";
+  print "You have presented a valid certificate, but are not yet authorized to access the DocDB.</h3>\n";
   print "<h2 class=\"AccessApplyLink\">\n";
-  print "<a href=\"$CertificateApplyForm\">Apply for access or get more information.</a></h2></p>\n";
+  print "<a href=\"$CertificateApplyForm\">Apply for access or get more information.</a></h2>\n";
   print "<h3>You will be redirected here in 5 seconds.</h3>\n";
   print "\n";
 }
