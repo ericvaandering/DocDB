@@ -1,5 +1,5 @@
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -38,14 +38,6 @@ sub HTMLPrintKeys {
     print "<tr><td>$key\n";
   }  
   print "</table>\n"; 
-}
-
-sub DBPrint {
-  print @_,"\n";
-}
-
-sub DBPrintLine {
-  &DBPrint(@_,"<br>");
 }
 
 1;
