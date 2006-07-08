@@ -3,7 +3,12 @@
 # Author Eric Vaandering (ewv@fnal.gov)
 #
 
-# Usage: NotifyDigest -t Weekly|Daily
+# Usage: CheckSubUsed
+
+# This program will find all subroutines in a .pm file and then search all files 
+# in the directory for calls to this. It then puts out a call count for each
+# subroutine. The count can be exagerated, but this does help find obsolete
+# routines which are no longer called and can be removed.
 
 # Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -47,10 +52,11 @@ while (my $File = readdir DIRECTORY) {
   my @File = <FILE>;
   close FILE;
   foreach my $Sub (@Subroutines) {
-#    print "Checking $File for calls to $Sub\n";
     my @Calls = grep /$Sub/,@File;
-    if (@Calls) {
-      $Count{$Sub} += scalar(@Calls);
+    foreach my $Call (@Calls) {
+      if (grep /^\s*sub/,$Call) {next;}
+      if (grep /^\s*\#/,$Call ) {next;}
+      ++$Count{$Sub};
     }  
   }
 }
