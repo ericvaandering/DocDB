@@ -718,7 +718,7 @@ sub PrintEventHeader ($) {
 
 }
 
-sub PrintMeetingEpilogue($) {
+sub PrintMeetingEpilogue ($) {
 
   require "Utilities.pm";
   my ($ConferenceID) = @_;

@@ -35,7 +35,7 @@ sub GetEmailUserIDs () {
   return @EmailUserIDs;
 }
 
-sub FetchEmailUser($) {
+sub FetchEmailUser ($) {
   my ($eMailUserID) = @_;
   my ($EmailUserID,$Username,$Password,$Name,$EmailAddress,$PreferHTML,$CanSign,$Verified,$AuthorID);
 

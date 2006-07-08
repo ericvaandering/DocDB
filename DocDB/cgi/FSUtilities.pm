@@ -203,7 +203,7 @@ sub UnixBaseFile {       # Strips off Unix directories
   return $short_file;
 }  
 
-sub ProcessUpload($$) {
+sub ProcessUpload ($$) {
   my ($new_dir,$long_file) = @_;
   $short_file = $long_file;
   if (grep /\\/,$long_file) {
@@ -235,7 +235,7 @@ sub CopyFile ($$$$) {
   return $ShortFile;
 }  
 
-sub ProcessArchive($$) {
+sub ProcessArchive ($$) {
   my ($new_dir,$short_file) = @_;
 
   if  (-s "$new_dir/$short_file") {

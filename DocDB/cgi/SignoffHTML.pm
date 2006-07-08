@@ -1,4 +1,4 @@
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -31,7 +31,7 @@ sub SignoffBox { # Just a text box for now with a list of names
                             -columns => 30, -rows => 6);
 };
 
-sub PrintRevisionSignoffInfo($) { # FIXME: Handle more complicated topologies?
+sub PrintRevisionSignoffInfo ($) { # FIXME: Handle more complicated topologies?
   require "SignoffSQL.pm";
   require "Security.pm";
 

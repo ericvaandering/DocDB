@@ -356,28 +356,28 @@ sub UsersToNotify ($$) {
   return @Addressees;
 }
 
-sub EmailTopicForm($$) {
+sub EmailTopicForm ($$) {
   require "NotificationSQL.pm";
   my ($EmailUserID,$Set) = @_;
   &FetchTopicNotification($EmailUserID,$Set);
   &NotifyTopicSelect($Set);
 }
 
-sub EmailAuthorForm($$) {
+sub EmailAuthorForm ($$) {
   require "NotificationSQL.pm";
   my ($EmailUserID,$Set) = @_;
   &FetchAuthorNotification($EmailUserID,$Set);
   &NotifyAuthorSelect($Set);
 }
 
-sub EmailKeywordForm($$) {
+sub EmailKeywordForm ($$) {
   require "NotificationSQL.pm";
   my ($EmailUserID,$Set) = @_;
   &FetchKeywordNotification($EmailUserID,$Set);
   &NotifyKeywordEntry($Set);
 }
 
-sub DisplayNotification($$;$) {
+sub DisplayNotification ($$;$) {
   my ($EmailUserID,$Set,$Always) = @_;
 
   require "NotificationSQL.pm";

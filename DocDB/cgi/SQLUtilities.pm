@@ -5,7 +5,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -41,7 +41,7 @@ sub SQLDateTime {
   return ($Sec,$Min,$Hour,$Day,$Mon,$Year);
 }
 
-sub EuroTimeHM($) {
+sub EuroTimeHM ($) {
   my ($SQLDatetime) = @_;
   unless ($SQLDatetime) {return "";}
   
