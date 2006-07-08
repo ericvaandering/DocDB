@@ -631,7 +631,7 @@ sub PrintEventHeader ($) {
     %RenameFields = ( "Session Info" => "Event Info",);
   }
   if ($DisplayMode eq "Session" || $DisplayMode eq "Separator") {
-    %SkipFields   = ( "Event Info"  => $TRUE, "Event URL" => $TRUE, "Event Wrapup" => $TRUE,);
+    %SkipFields   = ( "Event Info"  => $TRUE, "Event Wrapup" => $TRUE,);
   }
   
   if ($DisplayMode eq "Session" || $DisplayMode eq "Separator") {
@@ -673,8 +673,8 @@ sub PrintEventHeader ($) {
   }
   
   if ($Conferences{$EventID}{URL}) {
-    push @Fields,"Event URL";
-    $Fields{"Event URL"} = "<a href=\"$Conferences{$EventID}{URL}\">$Conferences{$EventID}{Title}</a>";
+    push @Fields,"External URL";
+    $Fields{"External URL"} = "<a href=\"$Conferences{$EventID}{URL}\">$Conferences{$EventID}{Title}</a>";
   }
   
   if ($Conferences{$EventID}{Preamble}) {
