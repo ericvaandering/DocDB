@@ -5,6 +5,21 @@
   Add a routine in scripts to help find obsolete code. Remove a bunch of
   uncalled routines.
 
+  Added XML output capability to ShowDocument
+  
+  Moved advanced user instructions to a separate page and added instructions for 
+  XML and mention of Perl "programatic" interface
+  
+  Allow external DocDB location to miss final "/" for XSearch
+  
+  Added instructions for admins.
+  
+  Added redirect to CertificateApplyForm after 5 seconds if the user is not verified.
+  
+  New Files:
+    AdministerIntructions.pm
+    AdvancedIntructions.pm
+
 7.6.1
   New file: ListGroups Should be placed in public scripts directory too.
 

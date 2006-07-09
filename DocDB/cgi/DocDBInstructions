@@ -8,7 +8,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -32,6 +32,7 @@ require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "Messages.pm";
 require "SecuritySQL.pm";
+require "Security.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -72,6 +73,12 @@ if ($InstructionSet eq "general") {
 } elsif ($InstructionSet eq "misc") {
   $PageTitle = "Miscellaneous Certificate Information";
   $HTMLTitle = "Miscellaneous Certificate Information";
+} elsif ($InstructionSet eq "advanced") {
+  $PageTitle = "Advanced Users &amp; XML Interface";
+  $HTMLTitle = $PageTitle;
+} elsif ($InstructionSet eq "admin") {
+  $PageTitle = "Adminstration Instructions";
+  $HTMLTitle = $PageTitle;
 }
 print $query->header(-charset => "utf-8");
 &DocDBHeader($HTMLTitle,$PageTitle);
@@ -88,26 +95,37 @@ print "</div>\n";  # Header3Col
 print "<div id=\"LeftColumn3Col\">\n";
 if ($InstructionSet eq "general") {
   require "GeneralInstructions.pm";
-  &GeneralInstructionsSidebar;
+  GeneralInstructionsSidebar();
 } elsif ($InstructionSet eq "event") {
   require "EventInstructions.pm";
-  &EventInstructionsSidebar;
+  EventInstructionsSidebar();
 } elsif ($InstructionSet eq "cert" || $InstructionSet eq "doe" ||
          $InstructionSet eq "kca" || $InstructionSet eq "register" ||
 	 $InstructionSet eq "import" || $InstructionSet eq "protect" ||
 	 $InstructionSet eq "misc" ) {
   require "CertificateInstructions.pm";
-  &CertificateInstructionsSidebar;
+  CertificateInstructionsSidebar();
+} elsif ($InstructionSet eq "advanced") {
+  require "AdvancedInstructions.pm";
+  AdvancedInstructionsSidebar();
+} elsif ($InstructionSet eq "admin") {
+  require "AdministerIntructions.pm";
+  AdminInstructionsSidebar();
 }
 print "<hr/>\n";
 print "<h2>All Instructions</h2>\n";
 print "<p>\n";
 print "<b><a href=\"$DocDBInstructions?set=general\">General Instructions</a></b><br/>\n";
-if (!$Public) {
+unless ($Public) {
   print "<b><a href=\"$DocDBInstructions?set=event\">Event Organizer and Calendar</a></b><br/>\n";
+  print "<b><a href=\"$DocDBInstructions?set=advanced\">Advanced Users &amp; XML</a></b><br/>\n";
   if ($Preferences{Security}{Certificates}{ShowCertInstructions} || $UserValidation eq "certificate") {
     print "<b><a href=\"$DocDBInstructions?set=cert\">Certificate Instructions</a></b><br/>\n";
   }
+}
+
+if (CanAdminister()) {
+  print "<b><a href=\"$DocDBInstructions?set=admin\">Administrator Instructions</b><br/>\n";
 }
 print "</p>\n";
 print "</div>\n";  # LeftColumn3Col
@@ -117,31 +135,37 @@ print "</div>\n";  # LeftColumn3Col
 print "<div id=\"MainColumn3Col\">\n";
 if ($InstructionSet eq "general") {
   require "GeneralInstructions.pm";
-  &GeneralInstructionsBody;
+  GeneralInstructionsBody();
 } elsif ($InstructionSet eq "event") {
   require "EventInstructions.pm";
-  &EventInstructionsBody;
+  EventInstructionsBody();
+} elsif ($InstructionSet eq "advanced") {
+  require "AdvancedInstructions.pm";
+  AdvancedInstructionsBody();
+} elsif ($InstructionSet eq "admin") {
+  require "AdministerIntructions.pm";
+  AdminInstructionsBody();
 } elsif ($InstructionSet eq "cert") {
   require "CertificateInstructions.pm";
-  &CertificateInstructionsBody;
+  CertificateInstructionsBody();
 } elsif ($InstructionSet eq "doe") {
   require "CertificateInstructions.pm";
-  &DOECertificateInstructionsBody;
+  DOECertificateInstructionsBody();
 } elsif ($InstructionSet eq "kca") {
   require "CertificateInstructions.pm";
-  &KCACertificateInstructionsBody;
+  KCACertificateInstructionsBody();
 } elsif ($InstructionSet eq "register") {
   require "CertificateInstructions.pm";
-  &RegisterCertificateInstructionsBody;
+  RegisterCertificateInstructionsBody();
 } elsif ($InstructionSet eq "import") {
   require "CertificateInstructions.pm";
-  &ImportCertificateInstructionsBody;
+  ImportCertificateInstructionsBody();
 } elsif ($InstructionSet eq "protect") {
   require "CertificateInstructions.pm";
-  &ProtectCertificateInstructionsBody;
+  ProtectCertificateInstructionsBody();
 } elsif ($InstructionSet eq "misc") {
   require "CertificateInstructions.pm";
-  &MiscCertificateInstructionsBody;
+  MiscCertificateInstructionsBody();
 }
 
 ### Right column (wrapped around by middle column)
