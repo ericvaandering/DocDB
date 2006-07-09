@@ -8,7 +8,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -186,108 +186,6 @@ sub DateTimePullDown { #FIXME: Replace with DateTimePulldown
   print $query -> popup_menu (-name => 'overmin',-values => \@minutes, -default => $min);
 }
 
-sub StartDatePullDown (;%) { #FIXME: Replace with DateTimePulldown
-
-  my (%Params) = @_;
-  
-  my $Disabled = $Params{-disabled}  || 0;
-  my $Required = $Params{-required}  || 0;
-  
-  my $Booleans = "";
-  
-  if ($Disabled) {
-    $Booleans .= "-disabled";
-  }  
-  
-  my ($sec,$min,$hour,$day,$mon,$year);
-  
-  if ($DefaultStartDate) {
-    ($year,$mon,$day) = split /-/,$DefaultStartDate;
-    $day  = int($day);
-    $mon  = int($mon);
-    $year = int($year);
-    --$mon;
-  } else {
-    ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
-    $year += 1900;
-  }
-  
-  my @days = ();
-  for ($i = 1; $i<=31; ++$i) {
-    push @days,$i;
-  }  
-
-  my @months = ("Jan","Feb","Mar","Apr","May","Jun",
-             "Jul","Aug","Sep","Oct","Nov","Dec");
-
-  my @years = ();
-  for ($i = $FirstYear; $i<=$year+2; ++$i) { # $FirstYear - current year
-    push @years,$i;
-  }  
-
-  print "<b><a ";
-  &HelpLink("startdate");
-  print "Start Date:</a></b>";
-  if ($Required) {
-    print $RequiredMark;
-  }  
-  print "<br> \n";
-  print $query -> popup_menu (-name => 'startday',-values => \@days, -default => $day, $Booleans);
-  print $query -> popup_menu (-name => 'startmonth',-values => \@months, -default => $months[$mon], $Booleans);
-  print $query -> popup_menu (-name => 'startyear',-values => \@years, -default => $year, $Booleans);
-}
-
-sub EndDatePullDown (;%) { #FIXME: Replace with DateTimePulldown
-
-  my (%Params) = @_;
-  
-  my $Disabled = $Params{-disabled}  || 0;
-  my $Required = $Params{-required}  || 0;
-  
-  my $Booleans = "";
-  
-  if ($Disabled) {
-    $Booleans .= "-disabled";
-  }  
-  
-  my ($sec,$min,$hour,$day,$mon,$year);
-  
-  if ($DefaultStartDate) {
-    ($year,$mon,$day) = split /-/,$DefaultEndDate;
-    $day  = int($day);
-    $mon  = int($mon);
-    $year = int($year);
-    --$mon;
-  } else {
-    ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
-    $year += 1900;
-  }
-  
-  my @days = ();
-  for ($i = 1; $i<=31; ++$i) {
-    push @days,$i;
-  }  
-
-  my @months = ("Jan","Feb","Mar","Apr","May","Jun",
-             "Jul","Aug","Sep","Oct","Nov","Dec");
-
-  my @years = ();
-  for ($i = $FirstYear; $i<=$year+2; ++$i) { # $FirstYear - current year
-    push @years,$i;
-  }  
-
-  print "<b><a ";
-  &HelpLink("enddate");
-  print "End Date:</a></b>";
-  if ($Required) {
-    print $RequiredMark;
-  }  
-  print "<br> \n";
-  print $query -> popup_menu (-name => 'endday',-values => \@days, -default => $day, $Booleans);
-  print $query -> popup_menu (-name => 'endmonth',-values => \@months, -default => $months[$mon], $Booleans);
-  print $query -> popup_menu (-name => 'endyear',-values => \@years, -default => $year, $Booleans);
-}
-
 sub PubInfoBox {
   my $ElementTitle = &FormElementTitle(-helplink  => "pubinfo", 
                                        -helptext  => "Other publication information");
@@ -314,22 +212,6 @@ sub TopicSelect { # Scrolling selectable list for topics
   print $query -> scrolling_list(-name => "topics", -values => \@TopicIDs, 
                                  -labels => \%TopicLabels,
                                  -size => 10, -multiple => 'true',
-                                 -default => \@TopicDefaults);
-};
-
-sub TopicSelectLong { # Scrolling selectable list for topics, all info
-  #FIXME: Use TopicScroll
-  my @TopicIDs = sort byTopic keys %MinorTopics;
-  my %TopicLabels = ();
-  foreach my $ID (@TopicIDs) {
-    $TopicLabels{$ID} = $MinorTopics{$ID}{Full}." [$MinorTopics{$ID}{LONG}]"; 
-  }  
-  print "<b><a ";
-  &HelpLink("topics");
-  print "Topics:</a></b> (Long descriptions in brackets)<br> \n";
-  print $query -> scrolling_list(-name => "topics", -values => \@TopicIDs, 
-                                 -labels => \%TopicLabels,
-                                 -size => 10, 
                                  -default => \@TopicDefaults);
 };
 

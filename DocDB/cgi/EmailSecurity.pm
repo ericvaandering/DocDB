@@ -62,7 +62,7 @@ sub ValidateEmailUserDigest ($$) {
   }     
 }
 
-sub UserPrefForm($) {
+sub UserPrefForm ($) {
   my ($EmailUserID) = @_;
 
   my $Username     = $EmailUser{$EmailUserID}{Username};

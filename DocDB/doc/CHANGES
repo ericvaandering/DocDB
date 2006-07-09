@@ -1,3 +1,10 @@
+7.7.0
+  Reorganized the output of DisplayMeeting to look more like ShowDocument and 
+  to present things in a clearer manner.
+  
+  Add a routine in scripts to help find obsolete code. Remove a bunch of
+  uncalled routines.
+
 7.6.1
   New file: ListGroups Should be placed in public scripts directory too.
 

@@ -53,8 +53,7 @@ $query = new CGI;  # Global for subroutines
 
 my $SessionID          = $params{sessionid};
 my $SessionSeparatorID = $params{sessionseparatorid};
-my $ConferenceID       = $params{conferenceid};
-my $EventID            = $ConferenceID;
+my $EventID            = $params{conferenceid};
 
 @ErrorStack = ();
 @WarnStack  = ();
@@ -82,64 +81,89 @@ print $query -> header;
 DocDBHeader($PageTitle,"", -scripts => ["PopUps"]);
 EndPage(@ErrorStack);
 
-my $DisplayMode = "";
-my $OnlyOneSession = 0;
+my $DisplayMode = ""; # 4 choices: Event, SingleSession(Event), Session, Separator
 
-if ($ConferenceID) {
-  $DisplayMode = "Conference";
-  my @MeetingOrderIDs = FetchMeetingOrdersByConferenceID($ConferenceID);
+if ($EventID) {
+  $DisplayMode = "Event";
+  my @MeetingOrderIDs = FetchMeetingOrdersByConferenceID($EventID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
-  if ($#MeetingOrderIDs == 0) { # If just one session, switch to session mode
-    $DisplayMode    = "Session";
-    $OnlyOneSession = 1;
+  if ($#MeetingOrderIDs == 0) { # If just one session, switch to SingleSession mode
+    $DisplayMode    = "SingleSession";
     $MeetingOrderID = pop @MeetingOrderIDs;
-    $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
+    $SessionID      = $MeetingOrders{$MeetingOrderID}{SessionID};
   }
 } elsif ($SessionID) {
   $DisplayMode = "Session";
   FetchSessionByID($SessionID);
-  $ConferenceID = $Sessions{$SessionID}{ConferenceID};
-  my @MeetingOrderIDs = FetchMeetingOrdersByConferenceID($ConferenceID);
+  $EventID = $Sessions{$SessionID}{ConferenceID};
+  my @MeetingOrderIDs = FetchMeetingOrdersByConferenceID($EventID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
-  if ($#MeetingOrderIDs == 0) { # If just one session, switch to session mode
-    $OnlyOneSession = 1;
+  if ($#MeetingOrderIDs == 0) { # If just one session, switch to SingleSession mode
+    $DisplayMode = "SingleSession";
   }
 } elsif ($SessionSeparatorID) {
   $DisplayMode = "Separator";
   FetchSessionSeparatorByID($SessionSeparatorID);
-  $ConferenceID = $SessionSeparators{$SessionSeparatorID}{ConferenceID};
+  $EventID = $SessionSeparators{$SessionSeparatorID}{ConferenceID};
 }
 
-FetchConferenceByConferenceID($ConferenceID);
-unless ($Conferences{$ConferenceID}{TimeStamp}) {
+FetchConferenceByConferenceID($EventID);
+unless ($Conferences{$EventID}{TimeStamp}) {
   push @ErrorStack,"No such event exists.";
 }  
-unless (CanAccessMeeting($ConferenceID)) {
+unless (CanAccessMeeting($EventID)) {
   push @ErrorStack,$Msg_MeetNoAccess;
 }
 EndPage(@ErrorStack);
 
-if ($DisplayMode eq "Session") { # Display a single session
+# Rehint talks if it is just a session we are looking at
+
+if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { 
   ReHintTalksBySessionID($SessionID); 
   ClearSessionTalks();
   FetchSessionByID($SessionID);
-  PrintSingleSessionHeader(-sessionid => $SessionID, -onlyone => $OnlyOneSession);
+} 
+
+print "<div id=\"EventInfo\">\n";
+  
+### Header info
+  
+#print "<div id=\"Header3Col\">\n";
+#print "</div>\n";  # Header3Col
+
+### Left Column
+
+print "<div id=\"LeftColumn3Col\">\n";
+PrintEventLeftSidebar( {-sessionid => $SessionID, -eventid => $EventID, -separatorid => $SessionSeparatorID, -displaymode => $DisplayMode} );
+print "</div>\n";  # LeftColumn3Col
+
+### Main Column
+
+print "<div id=\"MainColumn3Col\">\n";
+
+### Right column (wrapped around by middle column)
+
+print "<div id=\"RightColumn3Col\">\n";
+PrintEventRightSidebar( {-sessionid => $SessionID, -eventid => $EventID, -separatorid => $SessionSeparatorID, -displaymode => $DisplayMode} );
+print "</div>\n";  # RightColumn3Col
+
+### Main column content starts here
+
+PrintEventHeader( {-sessionid => $SessionID, -eventid => $EventID, -separatorid => $SessionSeparatorID, -displaymode => $DisplayMode} );
+print "</div>\n";  # MainColumn3Col
+
+### Footer
+  
+print "<div id=\"Footer3Col\">\n"; # Must have to keep NavBar on true bottom
+
+if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { # Display a single session
   PrintSession(-sessionid => $SessionID, -skipheader => $TRUE); 
-  PrintMeetingEpilogue($ConferenceID);
-} elsif ($DisplayMode eq "Separator") { 
-  FetchSessionSeparatorByID($SessionSeparatorID);
-  PrintMeetingInfo($SessionSeparators{$SessionSeparatorID}{ConferenceID});
-  PrintSessionSeparator($SessionSeparatorID);
-  PrintMeetingEpilogue($SessionSeparators{$SessionSeparatorID}{ConferenceID});
-} elsif ($DisplayMode eq "Conference") { # Display meeting info or meeting with all talks
-  my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
+#  PrintMeetingEpilogue($EventID);
+} elsif ($DisplayMode eq "Event") { # Display meeting info or meeting with all talks
+  my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($EventID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
 
-  my $AddNavBar = $Conferences{$ConferenceID}{ShowAllTalks};
-  PrintMeetingInfo($ConferenceID,-talklink => 1,-navbar => $AddNavBar);
-  
-  if ($Conferences{$ConferenceID}{ShowAllTalks}) { # Display all talks, sessions
-    # FIXME: Add a Navbar of sorts?
+  if ($Conferences{$EventID}{ShowAllTalks}) { # Display all talks, sessions
     foreach $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks
       my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
       my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
@@ -154,38 +178,41 @@ if ($DisplayMode eq "Session") { # Display a single session
       }
     }   
   } else { # Display links to sessions and info on separators
-    print "<table class=\"MedPaddedTable CenteredTable\">\n";
-    print "<tr><th>Session Title</th>\n";
+    print '<table class="MedPaddedTable CenteredTable Alternating" id="SessionList">';
+    print "<tr><th>Session</th>\n";
     print "<th>Date &amp; Time</th>\n";
     print "<th>Session Information</th>\n";
     print "<th>Location</th>\n";
     print "</tr>\n";
+    my $Row = 0;
     foreach $MeetingOrderID (@MeetingOrderIDs) {
+      ++$Row; 
+      my $RowClass = ("Even","Odd")[$Row % 2];
       my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
       my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
+      print "<tr class=\"$RowClass\">\n"; 
       if ($SessionID) {
         PrintSessionInfo($SessionID);                   # Session info and link to session
       } elsif ($SessionSeparatorID) {
         PrintSessionSeparatorInfo($SessionSeparatorID); # SessionSeparator info 
       }
+      print "</tr>\n";
     }  
     print "</table><hr/>\n";
   }
   
 # Finish off meeting display  
   
-  PrintMeetingEpilogue($ConferenceID);
-} else {
-  # Complain that user didn't specify a session, break, or conference
-}  
+  PrintMeetingEpilogue($EventID);
+}
 
-if ($DisplayMode eq "Session" || $DisplayMode eq "Conference") { # Display talks not associated with sessions  
+if ($DisplayMode eq "Session" || $DisplayMode eq "Event") { # Display talks not associated with sessions  
   require "Utilities.pm";
   my %AgendaDocIDs = ();
   my %AllDocIDs    = ();
   
   # Flag documents which are associated with a session
-  my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($ConferenceID);
+  my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($EventID);
   foreach $MeetingOrderID (@MeetingOrderIDs) {
     my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
     if ($SessionID) {
@@ -200,7 +227,7 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "Conference") { # Display talks
 
   # Get documents associated with event
 
-  my @AllRevisionIDs = &FetchRevisionsByEventID($ConferenceID);
+  my @AllRevisionIDs = &FetchRevisionsByEventID($EventID);
   foreach my $DocRevID (@AllRevisionIDs) {
     if ($DocRevisions{$DocRevID}{DOCID}) {
       $AllDocIDs{$DocRevisions{$DocRevID}{DOCID}} = 1;
@@ -215,20 +242,21 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "Conference") { # Display talks
   
   # Print out info for unused documents
   if (@UnusedDocIDs) {
-    print "<h4>Other documents for this event or <a href=\"$ListBy?eventid=$ConferenceID\">simple list</a> of all documents for this event</h4>\n";
+    print "<h4>Other documents for this event</h4>\n";
     my %FieldList = PrepareFieldList(-default => "Default");
     my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList,
          -docids  => \@UnusedDocIDs, -sortby  => "date",  
          -reverse => $TRUE);
     print "<hr/>\n";
-  } else {
-    print "<h4><a href=\"$ListBy?eventid=$ConferenceID\">Simple list</a> of all documents for this event</h4>\n";
   }
 }
 
+print "</div>\n";  # Footer3Col
+print "</div>\n"; # EventInfo
+
 $EndTime  = new Benchmark;
 
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  
 exit;

@@ -31,17 +31,6 @@ sub GroupLimitLink {
   return "<a href=\"Javascript:grouplimitpopupwindow(\'$SelectGroups\');\">Limit Groups</a>";
 }
 
-sub ConfirmTalkLink ($$) { #FIXME: Make onclick optional, use in DocumentTable
-  my ($SessionTalkID,$DocumentID) = @_;
-  my $HTML  = "<form>";
-     $HTML .= $query -> hidden(-name => 'documentid',   -default => $DocumentID);
-     $HTML .= $query -> hidden(-name => 'sessiontalkid',-default => $SessionTalkID);
-     $HTML .= $query -> button(-value => "Confirm Match", 
-                               -onclick => "confirmtalkpopupwindow(this.form,\"$ConfirmTalkHint\")");
-     $HTML .= "</form>";
-  return $HTML;
-}
-
 sub TopicSearchScript {
 
 # This script produces a menu for topics and another for relevant subtopics

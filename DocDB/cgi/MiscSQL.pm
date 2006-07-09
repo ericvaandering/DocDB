@@ -172,7 +172,7 @@ sub VersionNumbersByDocID {
   return @VersionList;
 } 
 
-sub ExistsUpload($$) {
+sub ExistsUpload ($$) {
   require "FSUtilities.pm";
   
   my ($DocRevID,$short_file) = @_;
@@ -188,7 +188,7 @@ sub ExistsUpload($$) {
   return $status;
 }
 
-sub ExistsURL($$) {
+sub ExistsURL ($$) {
   my ($DocRevID,$url) = @_;
   
   my @url_parts = split /\//,$url;
@@ -198,7 +198,7 @@ sub ExistsURL($$) {
   return $status;
 }
 
-sub ExistsFile($$) {
+sub ExistsFile ($$) {
   my ($DocRevID,$File) = @_;
 
   $File =~ s/^\s+//;

@@ -181,7 +181,7 @@ sub EuroDateTime {
   return $return_date;
 }
 
-sub EuroDateHM($) {
+sub EuroDateHM ($) {
   my ($SQLDatetime) = @_;
   unless ($SQLDatetime) {return "";}
   
