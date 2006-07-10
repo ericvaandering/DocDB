@@ -5,7 +5,7 @@
 #      Author: Lynn Garren (garren@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -20,11 +20,10 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub ClearKeywords {
   %Keywords         = ();
-  %FullKeywords     = (); # FIXME: Get rid of this
   %KeywordGroups    = ();
   %KeywordGroupings = ();
 }
@@ -83,8 +82,6 @@ sub FetchKeyword { # Fetches a Keyword by ID, adds to $Keywords{$keywordID}{}
     $Keywords{$KeywordID}{Short}          = $ShortDescription;
     $Keywords{$KeywordID}{Long}           = $LongDescription;
     $Keywords{$KeywordID}{TimeStamp}      = $TimeStamp;
-
-    $FullKeywords{$KeywordID} = $Keywords{$KeywordID}{Full}; # FIXME: Remove
     return $Keywords{$KeywordID}{Short};
   } else {
     return "";
@@ -132,66 +129,7 @@ sub FetchKeywordGroup { # Fetches a KeywordGroup by ID, adds to $KeywordGroups{$
   return $KeywordGroupID;
 }
 
-sub GetKeywordGroupingsByKeywordID ($) {
-  my ($KeywordID) = @_;
-  
-  my ($KeywordGroupingID,@KeywordGroupingIDs);
-  
-  my $KeywordGroupingList = $dbh -> prepare(
-    "select KeywordGroupingID from KeywordGrouping where KeywordID=?");
-  $KeywordGroupingList -> execute($KeywordID);
-  $KeywordGroupingList -> bind_columns(undef, \($KeywordGroupingID));
-  while ($KeywordGroupingList -> fetch) {
-    push @KeywordGroupingIDs,$KeywordGroupingID;
-    &FetchKeywordGrouping($KeywordGroupingID);
-  }
-
-  return @KeywordGroupingIDs;
-}
-
-sub GetKeywordGroupingsByKeywordGroupID ($) {
-  my ($KeywordGroupID) = @_;
-  
-  my ($KeywordGroupingID,@KeywordGroupingIDs);
-  
-  my $KeywordGroupingList = $dbh -> prepare(
-    "select KeywordGroupingID from KeywordGrouping where KeywordGroupID=?");
-  $KeywordGroupingList -> execute($KeywordGroupID);
-  $KeywordGroupingList -> bind_columns(undef, \($KeywordGroupingID));
-  while ($KeywordGroupingList -> fetch) {
-    push @KeywordGroupingIDs,$KeywordGroupingID;
-    &FetchKeywordGrouping($KeywordGroupingID);
-  }
-
-  return @KeywordGroupingIDs;
-}
-
-sub FetchKeywordGrouping { # Fetches a Keyword-KeywordGroup relationship
-  my ($KeywordGroupingID) = @_;
-  
-  if ($KeywordGroupings{$KeywordGroupingID}{TimeStamp}) { # We already have this one
-    return $KeywordGroupingID;
-  }
-
-  my ($KeywordGroupID,$KeywordID,$TimeStamp);
-  my $KeywordGroupingFetch   = $dbh -> prepare(
-    "select KeywordGroupID,KeywordID,TimeStamp ".
-    "from KeywordGrouping where KeywordGroupingID=?");
-
-  $KeywordGroupingFetch -> execute($KeywordGroupingID);
-  ($KeywordGroupID,$KeywordID,$TimeStamp) = $KeywordGroupingFetch -> fetchrow_array;
-  if ($TimeStamp) {
-    $KeywordGroupings{$KeywordGroupingID}{KeywordGroupID} = $KeywordGroupID;
-    $KeywordGroupings{$KeywordGroupingID}{KeywordID}      = $KeywordID;
-    $KeywordGroupings{$KeywordGroupingID}{TimeStamp}      = $TimeStamp;
-  } else {
-    undef $KeywordGroupingID;
-  }
-  
-  return $KeywordGroupingID;
-}
-
-sub LookupKeywordGroup { # Returns KeywordGroupID from Keyword Group Name
+sub LookupKeywordGroup { # Keep for Lynn? Returns KeywordGroupID from Keyword Group Name
   my ($KeywordGroupName) = @_;
   my $keygroup_fetch   = $dbh -> prepare(
     "select KeywordGroupID from KeywordGroup where ShortDescription=?");

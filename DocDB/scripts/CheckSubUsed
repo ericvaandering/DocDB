@@ -25,7 +25,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 
 my @Unused = ();
@@ -54,8 +54,9 @@ while (my $File = readdir DIRECTORY) {
   foreach my $Sub (@Subroutines) {
     my @Calls = grep /$Sub/,@File;
     foreach my $Call (@Calls) {
-      if (grep /^\s*sub/,$Call) {next;}
-      if (grep /^\s*\#/,$Call ) {next;}
+      if (grep /^\s*sub/,$Call) {next;}     # Skip definition
+      if (grep /^\s*\#/,$Call ) {next;}     # Skip clear comments
+#      unless (grep /$Sub\(/,$Call || grep /"&$Sub"/,$Call) {next;}  # require calling signature
       ++$Count{$Sub};
     }  
   }
