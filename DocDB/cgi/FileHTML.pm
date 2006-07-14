@@ -21,7 +21,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 
 sub FileListByRevID {
@@ -365,42 +365,6 @@ sub FileUploadBox (%) {
   print "</table>\n";
 }
    
-sub FileUpdateBox {
-  my ($DocRevID) = @_; 
-  my @FileIDs = &FetchDocFiles($DocRevID);
-
-  print "<table cellpadding=3>\n";
-  print "<tr>";
-   print "<td align=left>\n";
-   print "<a "; &HelpLink("filename"); print "<b>File Name</b></a>\n";
-   print "</td>\n";
-   print "<td align=left>\n";
-   print "<a "; &HelpLink("description"); print "<b>Description</b></a>\n";
-   print "</td>\n";
-   print "<td align=left>\n";
-   print "<a "; &HelpLink("main"); print "<b>Main</b></a>\n";
-   print "</td>\n";  
-  print "</tr>\n";
-  foreach my $FileID (@FileIDs) {
-    print "<tr><td align=right>\n";
-    print "$DocFiles{$FileID}{NAME}\n";
-    print "</td>\n";
-    print "<td>\n";
-    print $query -> hidden (-name => 'fileid', -default => $FileID);
-    print $query -> textfield (-name => 'filedesc', -size => 60, -maxlength => 128, 
-                               -default => $DocFiles{$FileID}{DESCRIPTION});
-    print "</td>\n";
-    print "<td>\n";
-    if ($DocFiles{$FileID}{ROOT}) {
-      print $query -> checkbox(-name => "root", -value => $FileID, -checked => 'checked', -label => '');
-    } else {
-      print $query -> checkbox(-name => "root", -value => $FileID, -label => '');
-    }
-    print "</td></tr>\n";
-  }
-  print "</table>\n";
-}
-
 sub ArchiveUploadBox (%)  {
   my (%Params) = @_; 
   
