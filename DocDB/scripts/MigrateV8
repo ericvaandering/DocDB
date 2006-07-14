@@ -1,0 +1,181 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+# Must run in a v7 environment
+
+# Usage: MigrateV8 --u=username --p=password --a=init|migrate|undo|delete
+
+
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+use DBI;
+use Getopt::Long;
+
+require "CGIInclude.pm";
+
+require "DocDBGlobals.pm";
+
+&GetOptions("a=s" => \$Action,"u=s" => \$User,"p=s" => \$Password);
+
+# In V7
+
+
+unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate" or $Action eq "undo") {
+  print "Usage: MigrateV8 --u=username --p=password --a=init|migrate|delete\n\n";
+  print "This script is used to migrate from a version 7 to version 8 DB structure. \n";
+  print "Run this script in \"init\" mode first, then update the DocDB code.\n";
+  print "Then run this script again in \"migrate\" mode. \n";
+  print "At this point you can update the CGI code and when you are comfortable  \n";
+  print "everything is OK, run in \"delete\" mode to erase old columns and/or tables.  \n";
+  print "The undo mode removes the newly inserted tables and columns and should restore  \n";
+  print "the DB to a version 7 state.  \n";
+  exit;
+}  
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$User,$Password);
+
+if ($Action eq "init") { # Modify existing tables and add new tables in preparation for migration 
+  my @Actions = ("alter table SecurityGroup add CanView     int default '1'",
+                 "alter table SecurityGroup add CanConfig   int default '0'",
+                 "alter table RevisionTopic add TopicID                    ",
+                 "alter table Conference    add AltLocation                ",
+                 "alter table Session       add AltLocation                ",
+                 "alter table Document      add Alias       varchar(255)   ",
+                 "create table Topic (
+                    TopicID          int         NOT NULL auto_increment,
+                    ShortDescription varchar(32) NOT NULL default '',
+                    LongDescription  text,
+                    TimeStamp        timestamp   NOT NULL,
+                    PRIMARY KEY (TopicID),
+                  )",
+                 "create table TopicHierarchy (
+                    TopicHierarchyID int       NOT NULL auto_increment,
+                    TopicID          int       NOT NULL,
+                    ParentTopicID    int       NOT NULL,
+                    TimeStamp        timestamp NOT NULL,
+                    PRIMARY KEY (TopicHierarchyID),
+                    KEY Topic   (TopicID),
+                    KEY Parent  (ParentTopicID)
+                  )",
+                 "create table Moderator (
+                    ModeratorID        int       NOT NULL auto_increment,
+                    EventID            int       NOT NULL,
+                    SessionID          int       NOT NULL,
+                    SessionSeparatorID int       NOT NULL,
+                    TimeStamp          timestamp NOT NULL,
+                    PRIMARY KEY   (ModeratorID),
+                    KEY Event     (EventID),
+                    KEY Session   (SessionID),
+                    KEY Separator (SessionSeparatorID)
+                  )",
+         );
+            
+  foreach my $Action (@Actions) {
+    unless ($Action) { next; }
+    my $Command = $dbh ->prepare($Action);
+    $Command -> execute();
+  }  
+}
+
+if ($Action eq "migrate") {
+  my $TopicUpdate     = $dbh -> prepare("update RevisionTopic set TopicID=? where MinorTopicID=?");
+  my $TopicInsert     = $dbh -> prepare("insert into Topic (TopicID,ShortDescription,LongDescription) values (0,?,?)");
+  my $HierarchyInsert = $dbh -> prepare("insert into TopicHierarchy (TopicHierarchyID,TopicID,ParentTopicID) values (0,?,?)");
+  my $MajorSelect     = $dbh -> prepare("select MajorTopicID,ShortDescription,LongDescription from MajorTopic");
+  my $MinorSelect     = $dbh -> prepare("select MinorTopicID,MajorTopicID,ShortDescription,LongDescription from MinorTopic");
+
+  print "\nMigrating topics.\n";
+  
+  my %MajorToTopic = ();
+  my %MinorToTopic = ();
+  my %MinorToMajor = ();
+  
+  my ($MinorID,$MajorID,$Short,$Long);
+  
+### Migrate MajorTopics to Topic
+   
+  $MajorSelect -> execute();
+  $MajorSelect -> bind_columns(undef, \($MajorID,$Short,$Long));
+  while ($MajorSelect -> fetch) {
+    $TopicInsert -> execute($Short,$Long);
+    $MajorToTopic{$MajorID} = $TopicInsert -> {mysql_insertid};
+  }
+ 
+### Migrate MinorTopics to Topic
+
+  $MinorSelect -> execute();
+  $MinorSelect -> bind_columns(undef, \($MinorID,$MajorID,$Short,$Long));
+  while ($MinorSelect -> fetch) {
+    $TopicInsert -> execute($Short,$Long);
+    $MinorToTopic{$MinorID} = $TopicInsert -> {mysql_insertid};
+    $MinorToMajor{$MinorID} = $MajorID;
+  }
+ 
+### Populate Hierarchy and update RevisionTopic
+
+  foreach $MinorID (keys %MinorToTopic) {
+    my $TopicID  = $MinorToTopic{$MinorID};
+    my $ParentID = $MajorToTopic{$MinorToMajor{$MinorID}};
+    $HierarchyInsert -> execute($TopicID,$ParentID);
+    $TopicUpdate     -> execute($TopicID,$MinorID);
+  }
+  
+  print "Migration finished\n";  
+}
+
+if ($Action eq "undo") { # Undo modifications
+
+# User based access
+
+  my @Actions = ("alter table SecurityGroup drop CanView    ",
+                 "alter table SecurityGroup drop CanConfig  ",
+                 "alter table RevisionTopic drop TopicID    ",
+                 "alter table Conference    drop AltLocation",
+                 "alter table Session       drop AltLocation",
+                 "alter table Document      drop Alias      ",
+                 "drop  table Topic                         ",
+                 "drop  table TopicHierarchy                ",
+                 "drop  table Moderator                     ",
+                );
+
+  foreach my $Action (@Actions) {
+    unless ($Action) { next; }
+    my $Command = $dbh ->prepare($Action);
+    $Command -> execute();
+  }  
+}
+
+if ($Action eq "delete") { 
+
+  my @Actions = ("alter  table RevisionTopic drop MinorTopicID ",
+                 "delete from  RevisionTopic where TopicID=0   ",
+                 "delete from  RevisionTopic where TopicID=NULL",
+                 "drop   table MinorTopic                      ",
+                 "drop   table MajorTopic                      ",
+                );
+
+  foreach my $Action (@Actions) {
+    unless ($Action) { next; }
+    my $Command = $dbh ->prepare($Action);
+    $Command -> execute();
+  }  
+}
+
+exit;
