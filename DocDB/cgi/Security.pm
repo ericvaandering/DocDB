@@ -81,7 +81,7 @@ sub CanAccess ($;$$) { # Can the user access (with current security) this versio
       my $ParentID = $GroupsHierarchy{$ID}{Parent}; 
       my $ChildID  = $GroupsHierarchy{$ID}{Child}; 
       unless ($SecurityGroups{$ChildID}{CanView}) {
-        push @DebugStack,"Child Group $UserGroupID can't view, skipping";
+        push @DebugStack,"Child Group $ChildID can't view, skipping";
         next;
       }  
       if ($ParentID == $UserGroupID) {    # We've found a "child" of one of our groups.   
