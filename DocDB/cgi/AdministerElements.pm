@@ -88,6 +88,10 @@ sub GroupEntryBox (%) {
 
   print "<tr><td>\n";
   print FormElementTitle(-helplink => "groupperm", -helptext => "Permissions");
+  print $query -> checkbox(-name  => "view",   -value => 'view', 
+                           -label => '', %Options);
+  print "May view documents<br/>\n";
+
   print $query -> checkbox(-name  => "create", -value => 'create', 
                            -label => '', %Options);
   print "May create documents<br/>\n";
@@ -95,6 +99,7 @@ sub GroupEntryBox (%) {
   print $query -> checkbox(-name  => "admin",  -value => 'admin',  
                            -label => '', %Options);
   print "May administer database<br/>\n";
+
   print $query -> checkbox(-name  => "remove", -value => 'remove', 
                            -label => '', %Options);
   print "Remove existing permissions\n";

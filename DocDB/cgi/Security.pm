@@ -28,7 +28,6 @@ sub CanAccess ($;$$) { # Can the user access (with current security) this versio
   require "RevisionSQL.pm";
   require "SecuritySQL.pm";
   
-## FIXME: Use SecurityLookup  
 ## FIXME: Allow -docrevid, or -docid and -version, same for other routines
   
   GetSecurityGroups();
@@ -88,7 +87,7 @@ sub CanAccess ($;$$) { # Can the user access (with current security) this versio
         push @DebugStack,"Child Group $ChildID can't view, skipping";
         next;
       }  
-      if ($ParentID == $UserGroupID) {    # We've found a "child" of one of our groups.   
+      if ($ParentID == $UserGroupID) {    # We've found a valid "child" of one of our groups.   
         foreach my $GroupID (@GroupIDs) { # See if the child can access the document
           if ($GroupID == $ChildID) {
             $access = 1;
@@ -105,28 +104,26 @@ sub CanModify { # Can the user modify (with current security) this document
   require "DocumentSQL.pm";
   require "SecuritySQL.pm";
 
-## FIXME: Use SecurityLookup  
-
-  &GetSecurityGroups;
+  GetSecurityGroups();
   my ($DocumentID,$Version) = @_;
 
   my $CanModify;
-  if     ($Public)      {return 0;} # Public version of code, can't modify 
-  unless (&CanCreate()) {return 0;} # User can't create documents, so can't modify
+  if     ($Public)     {return 0;} # Public version of code, can't modify 
+  unless (CanCreate()) {return 0;} # User can't create documents, so can't modify
   
-  &FetchDocument($DocumentID);
+  FetchDocument($DocumentID);
   unless (defined $Version) { # Last version is default  
     $Version = $Documents{$DocumentID}{NVersions};
   }   
   
 # See what group(s) current user belongs to
 
-  my @UsersGroupIDs = &FindUsersGroups();
+  my @UsersGroupIDs = FindUsersGroups();
     
   my @ModifyGroupIDs = ();
   if ($EnhancedSecurity) {
-    my $DocRevID    = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-    @ModifyGroupIDs = &GetRevisionModifyGroups($DocRevID);
+    my $DocRevID    = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+    @ModifyGroupIDs = GetRevisionModifyGroups($DocRevID);
   } 
   
   # In the enhanced security model, if no one is explictly listed as being 
@@ -144,7 +141,6 @@ sub CanModify { # Can the user modify (with current security) this document
     }
     
     if (!$CanModify && $SuperiorsCanModify) {    # We don't have a winner yet, but keep checking
-      &GetSecurityGroups(); # Pull out the big guns
       my @HierarchyIDs = keys %GroupsHierarchy;  # See if current users children can modify this document
       foreach my $UserGroupID (@UsersGroupIDs) { # Groups user belongs to
         foreach my $ID (@HierarchyIDs) {         # All Hierarchy entries
@@ -162,7 +158,7 @@ sub CanModify { # Can the user modify (with current security) this document
       }
     }
   } else { # No entries in the modify table or we're not using seperate view/modify lists 
-    $CanModify = &CanAccess($DocumentID,$Version); 
+    $CanModify = CanAccess($DocumentID,$Version); 
   } 
   return $CanModify;
 }
