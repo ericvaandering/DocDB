@@ -52,12 +52,17 @@ unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate" or $Act
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$User,$Password);
 
 if ($Action eq "init") { # Modify existing tables and add new tables in preparation for migration 
-  my @Actions = ("alter table SecurityGroup add CanView     int default '1'",
-                 "alter table SecurityGroup add CanConfig   int default '0'",
-                 "alter table RevisionTopic add TopicID                    ",
-                 "alter table Conference    add AltLocation                ",
-                 "alter table Session       add AltLocation                ",
-                 "alter table Document      add Alias       varchar(255)   ",
+  my @Actions = ("alter table SecurityGroup  add CanView      int default '1'",
+                 "alter table SecurityGroup  add CanConfig    int default '0'",
+                 "alter table RevisionTopic  add TopicID      int NOT NULL   ",
+                 "alter table RevisionAuthor add Order        int default '0'",
+                 "alter table Conference     add AltLocation  varchar(255)   ",
+                 "alter table Session        add AltLocation  varchar(255)   ",
+                 "alter table Session        add ShowAllTalks int default '0'",
+                 "alter table Document       add Alias        varchar(255)   ",
+                 "alter table Notification   add TextKey      varchar(255)   ",
+                 "alter table RevisionTopic  add index (TopicID)",
+                 "alter table Document       add index (Alias)",
                  "create table Topic (
                     TopicID          int         NOT NULL auto_increment,
                     ShortDescription varchar(32) NOT NULL default '',
@@ -76,6 +81,17 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                   )",
                  "create table Moderator (
                     ModeratorID        int       NOT NULL auto_increment,
+                    EventID            int       NOT NULL,
+                    SessionID          int       NOT NULL,
+                    SessionSeparatorID int       NOT NULL,
+                    TimeStamp          timestamp NOT NULL,
+                    PRIMARY KEY   (ModeratorID),
+                    KEY Event     (EventID),
+                    KEY Session   (SessionID),
+                    KEY Separator (SessionSeparatorID)
+                  )",
+                 "create table EventTopic (
+                    TopicID            int       NOT NULL auto_increment,
                     EventID            int       NOT NULL,
                     SessionID          int       NOT NULL,
                     SessionSeparatorID int       NOT NULL,
@@ -108,6 +124,7 @@ if ($Action eq "migrate") {
   my %MinorToMajor = ();
   
   my ($MinorID,$MajorID,$Short,$Long);
+  my ($LastMajor,$LastMinor);
   
 ### Migrate MajorTopics to Topic
    
@@ -116,6 +133,7 @@ if ($Action eq "migrate") {
   while ($MajorSelect -> fetch) {
     $TopicInsert -> execute($Short,$Long);
     $MajorToTopic{$MajorID} = $TopicInsert -> {mysql_insertid};
+    $LastMajor = $MajorToTopic{$MajorID};
   }
  
 ### Migrate MinorTopics to Topic
@@ -126,6 +144,7 @@ if ($Action eq "migrate") {
     $TopicInsert -> execute($Short,$Long);
     $MinorToTopic{$MinorID} = $TopicInsert -> {mysql_insertid};
     $MinorToMajor{$MinorID} = $MajorID;
+    $LastMinor = $MinorToTopic{$MinorID};
   }
  
 ### Populate Hierarchy and update RevisionTopic
@@ -137,6 +156,73 @@ if ($Action eq "migrate") {
     $TopicUpdate     -> execute($TopicID,$MinorID);
   }
   
+  print " Last MajorTopic is now Topic $LastMajor, last MinorTopic is now Topic $LastMinor\n";
+  
+  my @Periods = ("Daily","Immediate","Weekly");
+  my $NotificationInsert = $dbh -> prepare("insert into Notification (NotificationID,EmailUserID,Type,ForeignID,TextKey,Period) values (0,?,?,?,?,?)");
+
+### Migrate Topic Notifications
+  print "Migrating topic notifications\n";
+  foreach my $Period (@Periods) {
+    my ($EmailUserID,$MajorID,$MinorID);
+    my $Select = $dbh -> prepare("select EmailUserID,MajorTopicID,MinorTopicID from EmailTopic$Period");
+    $Select -> execute();
+    $Select -> bind_columns(undef, \($EmailUserID,$MajorID,$MinorID));
+    while ($Select -> fetch) {
+      unless ($EmailUserID) {next;}
+      if ($MinorID) {
+        $NotificationInsert -> execute($EmailUserID,"Topic",$MinorToTopic{$MinorID},"",$Period);
+      } elsif ($MajorID) {
+        $NotificationInsert -> execute($EmailUserID,"Topic",$MajorToTopic{$MajorID},"",$Period);
+      } else {
+        $NotificationInsert -> execute($EmailUserID,"AllDocuments",0,"",$Period);
+      }  
+    }
+  }
+  
+### Migrate Author Notifications
+  print "Migrating author notifications\n";
+  foreach my $Period (@Periods) {
+    my ($EmailUserID,$AuthorID);
+    my $Select = $dbh -> prepare("select EmailUserID,AuthorID from EmailAuthor$Period");
+    $Select -> execute();
+    $Select -> bind_columns(undef, \($EmailUserID,$AuthorID));
+    while ($Select -> fetch) {
+      unless ($EmailUserID) {next;}
+      if ($AuthorID) {
+        $NotificationInsert -> execute($EmailUserID,"Author",$AuthorID,"",$Period);
+      }  
+    }
+  }
+
+### Migrate Keyword Notifications
+  print "Migrating keyword notifications\n";
+  foreach my $Period (@Periods) {
+    my ($EmailUserID,$Keyword);
+    my $Select = $dbh -> prepare("select EmailUserID,Keyword from EmailKeyword$Period");
+    $Select -> execute();
+    $Select -> bind_columns(undef, \($EmailUserID,$Keyword));
+    while ($Select -> fetch) {
+      unless ($EmailUserID) {next;}
+      if ($Keyword) {
+        $NotificationInsert -> execute($EmailUserID,"Author",0,$Keyword,$Period);
+      }  
+    }
+  }
+
+### Migrate Document notifications
+  print "Migrating document notifications\n";
+  my ($EmailUserID,$DocumentID);
+  my $Select = $dbh -> prepare("select EmailUserID,DocumentID from EmailDocumentImmediate");
+  $Select -> execute();
+  $Select -> bind_columns(undef, \($EmailUserID,$DocumentID));
+  while ($Select -> fetch) {
+    unless ($EmailUserID) {next;}
+    if ($DocumentID) {
+      $NotificationInsert -> execute($EmailUserID,"Document",$DocumentID,"","Immediate");
+    }  
+  }
+
   print "Migration finished\n";  
 }
 
@@ -144,15 +230,26 @@ if ($Action eq "undo") { # Undo modifications
 
 # User based access
 
-  my @Actions = ("alter table SecurityGroup drop CanView    ",
-                 "alter table SecurityGroup drop CanConfig  ",
-                 "alter table RevisionTopic drop TopicID    ",
-                 "alter table Conference    drop AltLocation",
-                 "alter table Session       drop AltLocation",
-                 "alter table Document      drop Alias      ",
-                 "drop  table Topic                         ",
-                 "drop  table TopicHierarchy                ",
-                 "drop  table Moderator                     ",
+  my @Actions = ("alter table RevisionTopic  drop index TopicID     ",
+                 "alter table Document       drop index Alias       ",
+                 "alter table SecurityGroup  drop CanView           ",
+                 "alter table SecurityGroup  drop CanConfig         ",
+                 "alter table RevisionTopic  drop TopicID           ",
+                 "alter table Conference     drop AltLocation       ",
+                 "alter table Session        drop AltLocation       ",
+                 "alter table Session        drop ShowAllTalks      ",
+                 "alter table Document       drop Alias             ",
+                 "alter table RevisionAuthor drop Order             ",
+                 "alter table Notification   drop TextKey           ",
+                 "drop  table Topic                                 ",
+                 "drop  table TopicHierarchy                        ",
+                 "drop  table Moderator                             ",
+                 "drop  table EventTopic                            ",
+                 "delete from Notification where Type='AllDocuments'",
+                 "delete from Notification where Type='Topic'       ",
+                 "delete from Notification where Type='Author'      ",
+                 "delete from Notification where Type='Keyword'     ",
+                 "delete from Notification where Type='Document'    ",
                 );
 
   foreach my $Action (@Actions) {
@@ -169,6 +266,16 @@ if ($Action eq "delete") {
                  "delete from  RevisionTopic where TopicID=NULL",
                  "drop   table MinorTopic                      ",
                  "drop   table MajorTopic                      ",
+                 "drop   table EmailAuthorDaily                ",
+                 "drop   table EmailAuthorImmediate            ",
+                 "drop   table EmailAuthorWeekly               ",
+                 "drop   table EmailDocumentImmediate          ",
+                 "drop   table EmailKeywordDaily               ",
+                 "drop   table EmailKeywordImmediate           ",
+                 "drop   table EmailKeywordWeekly              ",
+                 "drop   table EmailTopicDaily                 ",
+                 "drop   table EmailTopicImmediate             ",
+                 "drop   table EmailTopicWeekly                ",
                 );
 
   foreach my $Action (@Actions) {
