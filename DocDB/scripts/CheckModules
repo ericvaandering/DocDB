@@ -27,6 +27,7 @@ GetOptions("a=s" => \$Action);
 my @Modules = (
                "Benchmark", 
                "CGI",
+               "CGI::Untaint",
                "Cwd",
                "DateTime",
                "DBI", 

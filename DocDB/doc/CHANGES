@@ -1,3 +1,12 @@
+8.0.0
+
+
+  Follow the migration instructions.
+  
+  DocDB now uses the Perl module CGI::Untaint. CGI::Untaint is used to "purify"
+  the input into the scripts. You must install it. You can use scripts/CheckModules 
+  to see if you have all the modules you need for Version 8.x
+  
 7.7.0
   Reorganized the output of DisplayMeeting to look more like ShowDocument and 
   to present things in a clearer manner.
