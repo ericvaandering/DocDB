@@ -69,7 +69,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                     ShortDescription varchar(64) default '',
                     LongDescription  text,
                     TimeStamp        timestamp   NOT NULL,
-                    PRIMARY KEY (TopicID),
+                    PRIMARY KEY (TopicID)
                   )",
                  "create table TopicHierarchy (
                     TopicHierarchyID int       NOT NULL auto_increment,
