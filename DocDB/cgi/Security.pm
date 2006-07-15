@@ -77,6 +77,10 @@ sub CanAccess ($;$$) { # Can the user access (with current security) this versio
 
   my @HierarchyIDs = keys %GroupsHierarchy;
   foreach my $UserGroupID (@UsersGroupIDs) { # Groups user belongs to
+    unless ($SecurityGroups{$UserGroupID}{CanView}) {
+      push @DebugStack,"Parent Group $UserGroupID can't view, skipping";
+      next;
+    }  
     foreach my $ID (@HierarchyIDs) {         # All Hierarchy entries
       my $ParentID = $GroupsHierarchy{$ID}{Parent}; 
       my $ChildID  = $GroupsHierarchy{$ID}{Child}; 
