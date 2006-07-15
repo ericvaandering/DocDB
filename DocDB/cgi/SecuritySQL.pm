@@ -30,15 +30,17 @@ sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with 
   
   my ($GroupID,$Name,$Description,$CanCreate,$CanAdminister,$TimeStamp);
   my $GroupList  = $dbh -> prepare(
-     "select GroupID,Name,Description,CanCreate,CanAdminister,TimeStamp from SecurityGroup"); 
+     "select GroupID,Name,Description,CanCreate,CanAdminister,CanView,CanConfig,TimeStamp from SecurityGroup"); 
   $GroupList -> execute;
-  $GroupList -> bind_columns(undef, \($GroupID,$Name,$Description,$CanCreate,$CanAdminister,$TimeStamp));
+  $GroupList -> bind_columns(undef, \($GroupID,$Name,$Description,$CanCreate,$CanAdminister,$CanView,$CanConfig,$TimeStamp));
   %SecurityGroups = ();
   while ($GroupList -> fetch) {
     $SecurityGroups{$GroupID}{NAME}          = $Name;
     $SecurityGroups{$GroupID}{Description}   = $Description;
-    $SecurityGroups{$GroupID}{CanCreate}     = $CanCreate;
     $SecurityGroups{$GroupID}{CanAdminister} = $CanAdminister;
+    $SecurityGroups{$GroupID}{CanConfig}     = $CanConfig;
+    $SecurityGroups{$GroupID}{CanCreate}     = $CanCreate;
+    $SecurityGroups{$GroupID}{CanView}       = $CanView;
     $SecurityGroups{$GroupID}{TimeStamp}     = $TimeStamp;
     $SecurityIDs{$Name} = $GroupID;
   }
@@ -62,19 +64,21 @@ sub FetchSecurityGroup ($) {
   my ($GroupID) = @_;
   my ($Name,$Description,$CanCreate,$CanAdminister,$TimeStamp);
   my $GroupList  = $dbh -> prepare(
-     "select Name,Description,CanCreate,CanAdminister,TimeStamp from SecurityGroup where GroupID=?"); 
+     "select Name,Description,CanCreate,CanAdminister,CanView,CanConfig,TimeStamp from SecurityGroup where GroupID=?"); 
   
   if ($SecurityGroups{$GroupID}{TimeStamp}) { 
     return;
   }
     
   $GroupList -> execute($GroupID);
-  $GroupList -> bind_columns(undef, \($Name,$Description,$CanCreate,$CanAdminister,$TimeStamp));
+  $GroupList -> bind_columns(undef, \($Name,$Description,$CanCreate,$CanAdminister,$CanView,$CanConfig,$TimeStamp));
   while ($GroupList -> fetch) {
     $SecurityGroups{$GroupID}{NAME}          = $Name;
     $SecurityGroups{$GroupID}{Description}   = $Description;
-    $SecurityGroups{$GroupID}{CanCreate}     = $CanCreate; 
     $SecurityGroups{$GroupID}{CanAdminister} = $CanAdminister;
+    $SecurityGroups{$GroupID}{CanConfig}     = $CanConfig;
+    $SecurityGroups{$GroupID}{CanCreate}     = $CanCreate;
+    $SecurityGroups{$GroupID}{CanView}       = $CanView;
     $SecurityGroups{$GroupID}{TimeStamp}     = $TimeStamp;
     $SecurityIDs{$Name} = $GroupID;
   }

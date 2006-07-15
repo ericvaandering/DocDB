@@ -7,10 +7,14 @@
   the input into the scripts. You must install it. You can use scripts/CheckModules 
   to see if you have all the modules you need for Version 8.x
   
-  Added CanView property to groups. CanView groups can still access DocDB, it will 
-  just show publicly accessible documents. Groups that cannot View are prohibited 
-  from creating or modifying documents too. This seems logical, but if there is a 
-  good reason to change it, we can.
+  There is now a CanView option that you can set for a group to disable their 
+  access even if they are marked as a group that can view a particular document. 
+  Groups without CanView set can still access DocDB, it will just show publicly 
+  accessible documents. Groups that cannot View are prohibited from creating or 
+  modifying documents too. This seems logical, but if there is a 
+  good reason to change it, we can. This feature was thought to be useful for 
+  disabling reviewer accounts between reviews.
+  The user can still use DocDB, but can only see publicly accessible documents.
   
 7.7.0
   Reorganized the output of DisplayMeeting to look more like ShowDocument and 
