@@ -107,19 +107,29 @@ if      ($Action eq "Delete") { # Delete group
       $EUC -> execute($ParentID);
 
       ($Count) = $RSC -> fetchrow_array;
-      push @WarnStack,"Action would change view list on $Count document(s).";
+      if ($Count) {
+        push @WarnStack,"Action would change view list on $Count document(s).";
+      }  
       $TotalCount += $Count;
       ($Count) = $RMC -> fetchrow_array;
-      push @WarnStack,"Action would change modify list on $Count document(s).";
+      if ($Count) {
+        push @WarnStack,"Action would change modify list on $Count document(s).";
+      }  
       $TotalCount += $Count;
       ($Count) = $MSC -> fetchrow_array;
-      push @WarnStack,"Action would change view list on $Count event(s).";
+      if ($Count) {
+        push @WarnStack,"Action would change view list on $Count event(s).";
+      }  
       $TotalCount += $Count;
       ($Count) = $MMC -> fetchrow_array;
-      push @WarnStack,"Action would change modify list on $Count event(s).";
+      if ($Count) {
+        push @WarnStack,"Action would change modify list on $Count event(s).";
+      }  
       $TotalCount += $Count;
       ($Count) = $EUC -> fetchrow_array;
-      push @WarnStack,"Action would change groups for $Count user(s).";
+      if ($Count) {
+        push @WarnStack,"Action would change groups for $Count user(s).";
+      }  
       $TotalCount += $Count;
     }  
 
@@ -132,17 +142,29 @@ if      ($Action eq "Delete") { # Delete group
       my $HD  = $dbh -> prepare("delete from GroupHierarchy   where ParentID=? or ChildID=?");
       my $SGD = $dbh -> prepare("delete from SecurityGroup    where GroupID=?");
       $Count = $RSD -> execute($ParentID);
-      push @ActionStack,"Group removed from view list on $Count document(s).";
+      if ($Count) {
+        push @ActionStack,"Group removed from view list on $Count document(s).";
+      }  
       $Count = $RMD -> execute($ParentID);
-      push @ActionStack,"Group removed from modify list on $Count document(s).";
+      if ($Count) {
+        push @ActionStack,"Group removed from modify list on $Count document(s).";
+      }
       $Count = $MSD -> execute($ParentID);
-      push @ActionStack,"Group removed from view list on $Count event(s).";
+      if ($Count) {
+        push @ActionStack,"Group removed from view list on $Count event(s).";
+      }
       $Count = $MMD -> execute($ParentID);
-      push @ActionStack,"Group removed from modify list on $Count event(s).";
+      if ($Count) {
+        push @ActionStack,"Group removed from modify list on $Count event(s).";
+      }
       $Count = $EUD -> execute($ParentID);
-      push @ActionStack,"Group removed from $Count users(s).";
+      if ($Count) {
+        push @ActionStack,"Group removed from $Count users(s).";
+      }
       $Count = $HD  -> execute($ParentID,$ParentID);
-      push @ActionStack,"$Count inter-group relationship(s) removed.";
+      if ($Count) {
+        push @ActionStack,"$Count inter-group relationship(s) removed.";
+      }
       $Count = $SGD -> execute($ParentID);
       push @ActionStack,"$SecurityGroups{$ParentID}{NAME} has been deleted.";
       push @ActionStack,"Remove group from .htpasswd file and run scripts/Resecure if applicable.";
