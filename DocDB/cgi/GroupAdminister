@@ -142,27 +142,27 @@ if      ($Action eq "Delete") { # Delete group
       my $HD  = $dbh -> prepare("delete from GroupHierarchy   where ParentID=? or ChildID=?");
       my $SGD = $dbh -> prepare("delete from SecurityGroup    where GroupID=?");
       $Count = $RSD -> execute($ParentID);
-      if ($Count) {
+      if (int($Count)) {
         push @ActionStack,"Group removed from view list on $Count document(s).";
       }  
       $Count = $RMD -> execute($ParentID);
-      if ($Count) {
+      if (int($Count)) {
         push @ActionStack,"Group removed from modify list on $Count document(s).";
       }
       $Count = $MSD -> execute($ParentID);
-      if ($Count) {
+      if (int($Count)) {
         push @ActionStack,"Group removed from view list on $Count event(s).";
       }
       $Count = $MMD -> execute($ParentID);
-      if ($Count) {
+      if (int($Count)) {
         push @ActionStack,"Group removed from modify list on $Count event(s).";
       }
       $Count = $EUD -> execute($ParentID);
-      if ($Count) {
+      if (int($Count)) {
         push @ActionStack,"Group removed from $Count users(s).";
       }
       $Count = $HD  -> execute($ParentID,$ParentID);
-      if ($Count) {
+      if (int($Count)) {
         push @ActionStack,"$Count inter-group relationship(s) removed.";
       }
       $Count = $SGD -> execute($ParentID);

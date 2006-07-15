@@ -66,7 +66,9 @@ sub PrintGroupPermissions ($) {
   print "<ul>\n";
   if ($SecurityGroups{$GroupID}{CanView}) {
     print "<li>View Non-public Documents</li>\n";
-  }  
+  } else {
+    print "<li>View Only Public Documents</li>\n";
+  }   
   if ($SecurityGroups{$GroupID}{CanCreate}) {
     print "<li>Create/Modify</li>\n";
   }  
