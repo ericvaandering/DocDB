@@ -38,14 +38,15 @@ require "DocDBGlobals.pm";
 
 
 unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate" or $Action eq "undo") {
-  print "Usage: MigrateV8 --u=username --p=password --a=init|migrate|delete\n\n";
+  print "Usage: MigrateV8 --u=username --p=password --a=init|migrate|delete|undo \n\n";
   print "This script is used to migrate from a version 7 to version 8 DB structure. \n";
+  print "!!!! BACKUP YOUR DATABASE BEFORE RUNNING THIS IN CASE THERE ARE PROBLEMS !!!! \n";
   print "Run this script in \"init\" mode first, then update the DocDB code.\n";
   print "Then run this script again in \"migrate\" mode. \n";
   print "At this point you can update the CGI code and when you are comfortable  \n";
   print "everything is OK, run in \"delete\" mode to erase old columns and/or tables.  \n";
   print "The undo mode removes the newly inserted tables and columns and should restore  \n";
-  print "the DB to a version 7 state.  \n";
+  print "the DB to a version 7 state. But, using your backup is better. \n";
   exit;
 }  
 
@@ -55,7 +56,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
   my @Actions = ("alter table SecurityGroup  add CanView      int default '1'",
                  "alter table SecurityGroup  add CanConfig    int default '0'",
                  "alter table RevisionTopic  add TopicID      int NOT NULL   ",
-                 "alter table RevisionAuthor add Order        int default '0'",
+                 "alter table RevisionAuthor add AuthorOrder  int default '0'",
                  "alter table Conference     add AltLocation  varchar(255)   ",
                  "alter table Session        add AltLocation  varchar(255)   ",
                  "alter table Session        add ShowAllTalks int default '0'",
@@ -105,6 +106,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
             
   foreach my $Action (@Actions) {
     unless ($Action) { next; }
+    print "Taking action: $Action\n";
     my $Command = $dbh ->prepare($Action);
     $Command -> execute();
   }  
@@ -239,7 +241,7 @@ if ($Action eq "undo") { # Undo modifications
                  "alter table Session        drop AltLocation       ",
                  "alter table Session        drop ShowAllTalks      ",
                  "alter table Document       drop Alias             ",
-                 "alter table RevisionAuthor drop Order             ",
+                 "alter table RevisionAuthor drop AuthorOrder       ",
                  "alter table Notification   drop TextKey           ",
                  "drop  table Topic                                 ",
                  "drop  table TopicHierarchy                        ",
