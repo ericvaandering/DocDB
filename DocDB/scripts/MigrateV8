@@ -66,7 +66,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                  "alter table Document       add index (Alias)",
                  "create table Topic (
                     TopicID          int         NOT NULL auto_increment,
-                    ShortDescription varchar(32) NOT NULL default '',
+                    ShortDescription varchar(64) default '',
                     LongDescription  text,
                     TimeStamp        timestamp   NOT NULL,
                     PRIMARY KEY (TopicID),
@@ -82,22 +82,26 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                   )",
                  "create table Moderator (
                     ModeratorID        int       NOT NULL auto_increment,
+                    AuthorID           int       NOT NULL,
                     EventID            int       NOT NULL,
                     SessionID          int       NOT NULL,
                     SessionSeparatorID int       NOT NULL,
                     TimeStamp          timestamp NOT NULL,
                     PRIMARY KEY   (ModeratorID),
+                    KEY Author    (AuthorID),
                     KEY Event     (EventID),
                     KEY Session   (SessionID),
                     KEY Separator (SessionSeparatorID)
                   )",
                  "create table EventTopic (
-                    TopicID            int       NOT NULL auto_increment,
+                    EventTopicID       int       NOT NULL auto_increment,
+                    TopicID            int       NOT NULL,
                     EventID            int       NOT NULL,
                     SessionID          int       NOT NULL,
                     SessionSeparatorID int       NOT NULL,
                     TimeStamp          timestamp NOT NULL,
-                    PRIMARY KEY   (ModeratorID),
+                    PRIMARY KEY   (EventTopicID),
+                    KEY Topic     (TopicID),
                     KEY Event     (EventID),
                     KEY Session   (SessionID),
                     KEY Separator (SessionSeparatorID)
