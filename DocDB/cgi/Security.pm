@@ -31,9 +31,9 @@ sub CanAccess ($;$$) { # Can the user access (with current security) this versio
 ## FIXME: Use SecurityLookup  
 ## FIXME: Allow -docrevid, or -docid and -version, same for other routines
   
-  &GetSecurityGroups;
+  GetSecurityGroups();
 
-  my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+  my $DocRevID = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   
   unless ($DocRevID) { # Document doesn't exist
     return 0;
@@ -42,7 +42,7 @@ sub CanAccess ($;$$) { # Can the user access (with current security) this versio
     return 0;
   } 
   
-  my @GroupIDs = &GetRevisionSecurityGroups($DocRevID);
+  my @GroupIDs = GetRevisionSecurityGroups($DocRevID);
   unless (@GroupIDs) {return 1;}             # Public documents
 
 # See what group(s) current (or assumed) user belongs to
@@ -50,15 +50,20 @@ sub CanAccess ($;$$) { # Can the user access (with current security) this versio
   my @UsersGroupIDs = ();
 
   if ($EmailUserID) {
-    @UsersGroupIDs = &FetchUserGroupIDs($EmailUserID);
+    @UsersGroupIDs = FetchUserGroupIDs($EmailUserID);
   } else {
-    @UsersGroupIDs = &FindUsersGroups();
+    @UsersGroupIDs = FindUsersGroups();
   }  
     
 # See if current user is in the list of groups who can access this document
 
   my $access = 0;
   foreach my $UserGroupID (@UsersGroupIDs) {
+    unless ($SecurityGroups{$UserGroupID}{CanView}) {
+      push @DebugStack,"Group $UserGroupID can't view, skipping";
+      next;
+    }  
+    
     foreach my $GroupID (@GroupIDs) { 
       if ($UserGroupID == $GroupID) {
         $access = 1;                           # User checks out
@@ -70,12 +75,15 @@ sub CanAccess ($;$$) { # Can the user access (with current security) this versio
 
 # See if current users child groups can access this document
 
-  &GetSecurityGroups(); # Pull out the big guns
   my @HierarchyIDs = keys %GroupsHierarchy;
   foreach my $UserGroupID (@UsersGroupIDs) { # Groups user belongs to
     foreach my $ID (@HierarchyIDs) {         # All Hierarchy entries
       my $ParentID = $GroupsHierarchy{$ID}{Parent}; 
       my $ChildID  = $GroupsHierarchy{$ID}{Child}; 
+      unless ($SecurityGroups{$ChildID}{CanView}) {
+        push @DebugStack,"Child Group $UserGroupID can't view, skipping";
+        next;
+      }  
       if ($ParentID == $UserGroupID) {    # We've found a "child" of one of our groups.   
         foreach my $GroupID (@GroupIDs) { # See if the child can access the document
           if ($GroupID == $ChildID) {
@@ -166,13 +174,13 @@ sub CanCreate { # Can the user create documents
 
 # See what group(s) current user belongs to
 
-  my @UsersGroupIDs = &FindUsersGroups();
+  my @UsersGroupIDs = FindUsersGroups();
   push @DebugStack,"User belongs to groups ".join ', ',@UsersGroupIDs;
 
   my @GroupIDs = keys %SecurityGroups; # FIXME use a hash for direct lookup
   foreach my $UserGroupID (@UsersGroupIDs) {
-    &FetchSecurityGroup($UserGroupID);
-    if ($SecurityGroups{$UserGroupID}{CanCreate}) {
+    FetchSecurityGroup($UserGroupID);
+    if ($SecurityGroups{$UserGroupID}{CanCreate} && $SecurityGroups{$UserGroupID}{CanView}) {
       $Create = 1;                           # User checks out
     }  
   }
