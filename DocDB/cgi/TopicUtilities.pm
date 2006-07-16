@@ -63,7 +63,7 @@ sub BuildTopicProvenance {
   GetTopics();
 
   foreach my $TopicID (keys %Topics) {
-    $TopicProvenance{$TopicID} = \($TopicID);
+    push @{$TopicProvenance{$TopicID}},$TopicID;
   }
   
   # Check each provenance entry to see if we can append to the list

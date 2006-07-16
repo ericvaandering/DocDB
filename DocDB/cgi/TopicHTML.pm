@@ -294,6 +294,7 @@ sub FullTopicScroll ($$;@) { # Scrolling selectable list for topics, all info
 
 sub TopicScroll ($) {
   require "TopicSQL.pm";
+  require "TopicUtilities.pm";
   require "FormElements.pm";
   
   my ($ArgRef) = @_;
