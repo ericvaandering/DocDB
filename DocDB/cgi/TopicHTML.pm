@@ -164,28 +164,37 @@ sub TopicsByMajorTopic ($) {
 
 sub TopicsTable {
   require "Sorts.pm";
+  require "TopicUtilities.pm";
+  
+#  my $NCols = 4;
+#  my @MajorTopicIDs = sort byMajorTopic keys %MajorTopics;
 
-  my $NCols = 4;
-  my @MajorTopicIDs = sort byMajorTopic keys %MajorTopics;
+#  my $Col   = 0;
+#  my $Row   = 0;
+#  print "<table class=\"HighPaddedTable\">\n";
+#  foreach my $MajorID (@MajorTopicIDs) {
+#    unless ($Col % $NCols) {
+#      if ($Row) {
+#        print "</tr>\n";
+#      }  
+#      print "<tr>\n";
+#      ++$Row;
+#    }
+#    print "<td>\n";
+#    &TopicsByMajorTopic($MajorID);
+#    print "</td>\n";
+#    ++$Col;
+#  }  
+#  print "</tr>\n";
+#  print "</table>\n";
 
-  my $Col   = 0;
-  my $Row   = 0;
-  print "<table class=\"HighPaddedTable\">\n";
-  foreach my $MajorID (@MajorTopicIDs) {
-    unless ($Col % $NCols) {
-      if ($Row) {
-        print "</tr>\n";
-      }  
-      print "<tr>\n";
-      ++$Row;
-    }
-    print "<td>\n";
-    &TopicsByMajorTopic($MajorID);
-    print "</td>\n";
-    ++$Col;
-  }  
-  print "</tr>\n";
-  print "</table>\n";
+  my @RootTopicIDs = AllRootTopics();
+  
+  print "<ul>\n";
+  foreach my $TopicID (@RootTopicIDs) {
+    print "<li>",TopicLink( {-topicid => $TopicID} ),"</li>";
+  }
+  print "</ul>\n";
 }
 
 sub ShortDescriptionBox  (;%) {

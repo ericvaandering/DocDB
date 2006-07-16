@@ -214,6 +214,9 @@ sub FetchTopic { # Fetches an Topic by ID, adds to $Topics{$TopicID}{}
   if ($Topics{$TopicID}{Short}) { # We already have this one
     return $TopicID;
   }
+  if ($GotAllTopics) { # We already have them all, but not this one
+    return undef;
+  }
   
   my $Fetch   = $dbh -> prepare(
     "select ShortDescription,LongDescription ".
@@ -224,7 +227,11 @@ sub FetchTopic { # Fetches an Topic by ID, adds to $Topics{$TopicID}{}
   $Topics{$TopicID}{Short} = $ShortDescription;
   $Topics{$TopicID}{Long}  = $LongDescription;
 
-  return $TopicID;
+  if ($Topics{$TopicID}{Short}) { # We already have this one
+    return $TopicID;
+  } else {
+    return undef;
+  }  
 }
 
 sub FetchTopicParents { # Returns parent IDs of topics
