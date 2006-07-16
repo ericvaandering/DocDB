@@ -322,6 +322,8 @@ sub TopicScroll ($) {
   my @ActiveIDs = @TopicIDs; # Later can select single major topics, etc.
   
   foreach my $ID (@ActiveIDs) {
+    my $Spaces = ' 'x(scalar(@{$TopicProvenance{$TopicID}}));
+  
     if ($ItemFormat eq "short") {
       $TopicLabels{$ID} = $Topics{$ID}{Short}; 
     } elsif ($ItemFormat eq "long") {
