@@ -30,8 +30,14 @@ sub TopicByProvenance {
    
   if ($#ProvA > $#ProvB) {
     $#ProvA = $#ProvB;
+    if (@ProvA[$#ProvA] == @ProvB[$#ProvB]) {
+      return -1;
+    }  
   } elsif ($#ProvB > $#ProvA) {
     $#ProvB = $#ProvA;
+    if (@ProvA[$#ProvA] == @ProvB[$#ProvB]) {
+      return 1;
+    }  
   }   
 
 ### Compare by "most distant" ancestor first
