@@ -29,13 +29,15 @@ sub TopicByProvenance {
 ### Make sure we are comparing things at the same level, truncate arrays
    
   if ($#ProvA > $#ProvB) {
+    push @DebugStack,"About to truncate A, A ".(join ' ',@ProvA)." B ".(join ' ',@ProvB);
     $#ProvA = $#ProvB;
-    if (@ProvA[$#ProvA] == @ProvB[$#ProvB]) {
+    if ($ProvA[$#ProvA] == $ProvB[$#ProvB]) {
       return -1;
     }  
   } elsif ($#ProvB > $#ProvA) {
+    push @DebugStack,"About to truncate B, A ".(join ' ',@ProvA)." B ".(join ' ',@ProvB);
     $#ProvB = $#ProvA;
-    if (@ProvA[$#ProvA] == @ProvB[$#ProvB]) {
+    if ($ProvA[$#ProvA] == $ProvB[$#ProvB]) {
       return 1;
     }  
   }   
