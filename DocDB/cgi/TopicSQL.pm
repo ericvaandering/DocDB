@@ -163,7 +163,7 @@ sub NewGetRevisionTopics {
     "select RevTopicID,TopicID from RevisionTopic where DocRevID=?");
   $List -> execute($DocRevID);
   $List -> bind_columns(undef, \($RevTopicID,$TopicID));
-  while ($topic_list -> fetch) {
+  while ($List -> fetch) {
     if (FetchTopic($TopicID)) {
       push @TopicIDs,$TopicID;
     }  

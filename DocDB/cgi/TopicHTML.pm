@@ -36,7 +36,7 @@ sub NewTopicListByID {
     print "</dl>\n";
     print "<ul>\n";
     foreach my $TopicID (@TopicIDs) {
-      my $TopicLink = "Topic $TopicID";
+      my $TopicLink = "Topic $TopicID $Topics{$TopicID}{Short}";
       print "<li>$TopicLink</li>\n";
     }
     print "</ul>\n";
