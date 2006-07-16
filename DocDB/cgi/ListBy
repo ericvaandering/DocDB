@@ -79,22 +79,29 @@ if ($Days) {
   $List -> execute($Days);
 } elsif ($TopicID) {
 
-### Minor topic
+### Topic
 
-  require "TopicUtilities.pm";
-  TopicAndSubTopics({ -topicid => 1 });
-  
-  
   require "TopicSQL.pm";
-  &FetchMinorTopic($TopicID);
+  require "TopicUtilities.pm";
+  require "Utilities.pm";
+  
+  my @ChildTopicIDs = TopicAndSubTopics({ -topicid => $TopicID });
+  
   $FieldListOptions{-topicid} = $TopicID;
   $Title   = "Document List by Topic";
-  $Message = "These documents on <span class=\"Highlight\">$MinorTopics{$TopicID}{LONG} 
-              ($MinorTopics{$TopicID}{Full})</span> are available:";
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
            "DocumentRevision,RevisionTopic where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
-           "and DocumentRevision.Obsolete=0 and RevisionTopic.MinorTopicID=?");            
-  $List -> execute($TopicID);
+           "and DocumentRevision.Obsolete=0 and RevisionTopic.TopicID=?"); 
+  foreach my $ChildTopicID (@ChildTopicIDs) {
+    FetchTopic($ChildTopicID);
+    $List -> execute($ChildTopicID);
+    while (my ($DocumentID) = $List -> fetchrow_array) {
+      push @DocumentIDs,$DocumentID;
+    }  
+  }
+  @DocumentIDs = Unique(@DocumentIDs);
+  $Message = "These documents on <span class=\"Highlight\">$Topics{$TopicID}{Long} 
+              </span> and sub-topics are available:"; # FIXME: No "subtopics" if there are none.
 } elsif ($AuthorID) {
 
 ### Author
