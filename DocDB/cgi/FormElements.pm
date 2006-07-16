@@ -195,7 +195,7 @@ sub PubInfoBox {
                             -columns => 60, -rows => 3);
 };
 
-sub TopicSelect { # Scrolling selectable list for topics
+sub TopicSelect { # V8OBS Scrolling selectable list for topics
   my (%Params) = @_;
   
   my $Required = $Params{-required} || 0;
@@ -215,7 +215,7 @@ sub TopicSelect { # Scrolling selectable list for topics
                                  -default => \@TopicDefaults);
 };
 
-sub MultiTopicSelect (%) { # Multiple scrolling selectable lists for topics
+sub MultiTopicSelect (%) {# V8OBS # Multiple scrolling selectable lists for topics
   require "TopicSQL.pm";
   
   my (%Params) = @_;
@@ -266,7 +266,7 @@ sub MultiTopicSelect (%) { # Multiple scrolling selectable lists for topics
   print "</table>\n";
 };
 
-sub MajorTopicSelect (%) { # Scrolling selectable list for major topics
+sub MajorTopicSelect (%) { # V8OBS# Scrolling selectable list for major topics
   my (%Params) = @_;
   
   my $Mode     = $Params{-format}    || "short";

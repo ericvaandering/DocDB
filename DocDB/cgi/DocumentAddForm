@@ -436,13 +436,15 @@ print "</tr>\n";
 
 ### Topics # FIXME: Use non-global defaults
 
-print "<tr>\n";
-if ($TopicMode eq "single") {
-  print "<td colspan=\"4\">\n"; &TopicSelect(-required => $RequiredEntries{Author});     print "</td>\n";
-} elsif ($TopicMode eq "multi") {
-  print "<td colspan=\"4\">\n"; &MultiTopicSelect(-required => $RequiredEntries{Author});     print "</td>\n";
-}
-print "</tr>\n";
+print "<tr><td colspan=\"4\">\n"; 
+
+TopicScroll({ -required => $RequiredEntries{Topic}, -size => 20 });
+#if ($TopicMode eq "single") {
+#  &TopicSelect(-required => $RequiredEntries{Author});     
+#} elsif ($TopicMode eq "multi") {
+#  &MultiTopicSelect(-required => $RequiredEntries{Author});
+#}
+print "</td></tr>\n";
 
 ### Events
 

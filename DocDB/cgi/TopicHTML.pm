@@ -292,22 +292,21 @@ sub FullTopicScroll ($$;@) { # Scrolling selectable list for topics, all info
                                  -default => \@Defaults);
 };
 
-sub TopicScroll (%) {
+sub TopicScroll ($) {
   require "TopicSQL.pm";
   require "FormElements.pm";
   
-  my (%Params) = @_;
-  
-  my $Format    =   $Params{-format}    || "full";
-  my $Multiple  =   $Params{-multiple}  || 0;
-  my $HelpLink  =   $Params{-helplink}  || "";
-  my $HelpText  =   $Params{-helptext}  || "Topics";
-  my $ExtraText =   $Params{-extratext} || "";
-  my $Required  =   $Params{-required}  || 0;
-  my $Name      =   $Params{-name}      || "topics";
-  my $Size      =   $Params{-size}      || 10;
-  my $Disabled  =   $Params{-disabled}  || "0";
-  my @Defaults  = @{$Params{-default}};
+  my ($ArgRef) = @_;
+  my $ItemFormat = exists $ArgRef->{-itemformat} ?   $ArgRef->{-itemformat} : "short";
+  my $Multiple   = exists $ArgRef->{-multiple}   ?   $ArgRef->{-multiple}   : 0;
+  my $HelpLink   = exists $ArgRef->{-helplink}   ?   $ArgRef->{-helplink}   : "";
+  my $HelpText   = exists $ArgRef->{-helptext}   ?   $ArgRef->{-helptext}   : "Topics";
+  my $ExtraText  = exists $ArgRef->{-extratext}  ?   $ArgRef->{-extratext}  : "";
+  my $Required   = exists $ArgRef->{-required}   ?   $ArgRef->{-required}   : 0;
+  my $Name       = exists $ArgRef->{-name}       ?   $ArgRef->{-name}       : "topics";
+  my $Size       = exists $ArgRef->{-size}       ?   $ArgRef->{-size}       : 10;
+  my $Disabled   = exists $ArgRef->{-disabled}   ?   $ArgRef->{-disabled}   : "0";
+  my @Defaults   = exists $ArgRef->{-default}    ? @{$ArgRef->{-default}}   : ();
 
   my %Options = ();
  
@@ -315,19 +314,19 @@ sub TopicScroll (%) {
     $Options{-disabled} = "disabled";
   }  
 
-  unless ($GotAllTopics) {
-    GetTopics();
-  }
+  GetTopics();
   
-  my @TopicIDs = sort byTopic keys %MinorTopics;
+  my @TopicIDs = keys %Topics;
   my %TopicLabels = ();
   my @ActiveIDs = @TopicIDs; # Later can select single major topics, etc.
   
   foreach my $ID (@ActiveIDs) {
-    if ($Format eq "full") {
-      $TopicLabels{$ID} = $MinorTopics{$ID}{Full}; 
-    } elsif ($Format eq "long") {
-      $TopicLabels{$ID} = $MinorTopics{$ID}{Full}." [$MinorTopics{$ID}{LONG}]"; 
+    if ($ItemFormat eq "short") {
+      $TopicLabels{$ID} = $Topics{$ID}{Short}; 
+    } elsif ($ItemFormat eq "long") {
+      $TopicLabels{$ID} = $Topics{$ID}{Long}; 
+    } elsif ($ItemFormat eq "long") {
+      $TopicLabels{$ID} = $Topics{$ID}{Short}." [".$Topics{$ID}{Long}."]"; 
     } 
   }  
 
@@ -336,7 +335,7 @@ sub TopicScroll (%) {
                          -required  => $Required);
 
   print $query -> scrolling_list(-name     => $Name, -values => \@ActiveIDs, 
-                                 -size     => 10,    -labels => \%TopicLabels,
+                                 -size     => $Size, -labels => \%TopicLabels,
                                  -multiple => $Multiple,
                                  -default  => \@Defaults, %Options);  
 }

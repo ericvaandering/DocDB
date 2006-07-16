@@ -24,7 +24,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-sub GetTopics { #V8OBS
+sub GetTopics { #V8OBS everything from here down to new code
   require "MeetingSQL.pm";
 
   my $minor_list   = $dbh->prepare("select MinorTopicID,MajorTopicID,ShortDescription,LongDescription from MinorTopic");
