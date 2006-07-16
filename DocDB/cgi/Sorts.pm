@@ -30,14 +30,18 @@ sub TopicByProvenance {
    
   if ($#ProvA > $#ProvB) {
     push @DebugStack,"About to truncate A, A ".(join ' ',@ProvA)." B ".(join ' ',@ProvB);
+    @ProvA = reverse @ProvA;
     $#ProvA = $#ProvB;
+    @ProvA = reverse @ProvA;
     if ($ProvA[$#ProvA] == $ProvB[$#ProvB]) {
       push @DebugStack,"Same generation: 1:$a 2:$b";
       return -1;
     }  
   } elsif ($#ProvB > $#ProvA) {
     push @DebugStack,"About to truncate B, A ".(join ' ',@ProvA)." B ".(join ' ',@ProvB);
+    @ProvB = reverse @ProvB;
     $#ProvB = $#ProvA;
+    @ProvB = reverse @ProvB;
     if ($ProvA[$#ProvA] == $ProvB[$#ProvB]) {
       push @DebugStack,"Same generation: 1:$a 2:$b";
       return 1;
