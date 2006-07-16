@@ -22,6 +22,29 @@ sub TopicByAlpha {
    $Topics{$a}{Short} cmp $Topics{$b}{Short};
 } 
 
+sub TopicByProvenance {
+  my @ProvA = @{$TopicProvenance{$a}};
+  my @ProvB = @{$TopicProvenance{$b}};
+  
+### Make sure we are comparing things at the same level, truncate arrays
+   
+  if ($#ProvA > $#ProvB) {
+    $#ProvA = $#ProvB;
+  } elsif ($#ProvB > $#ProvA) {
+    $#ProvB = $#ProvA;
+  }   
+
+### Compare by "most distant" ancestor first
+   
+  while (@ProvA || @ProvB) {
+    $TopicA = pop @ProvA;    
+    $TopicB = pop @ProvB;    
+    my $Cmp = $Topics{$TopicA}{Short} cmp $Topics{$TopicB}{Short};
+    if ($Cmp} {return $Cmp;}
+  }
+  return 0;  
+} 
+
 sub byMajorTopic { #V8OBS
   $MajorTopics{$a}{SHORT} cmp $MajorTopics{$b}{SHORT};
 }    
