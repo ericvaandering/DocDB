@@ -75,7 +75,7 @@ sub GetTopics { #V8OBS
 
   $HierarchyList -> execute();
   $HierarchyList -> bind_columns(undef, \($TopicID,$ParentTopicID));
-  while ($TopicList -> fetch) {
+  while ($HierarchyList -> fetch) {
     push @{$TopicParents{$TopicID}}       ,$ParentTopicID;
     push @{$TopicChildren{$ParentTopicID}},$TopicID;
   }

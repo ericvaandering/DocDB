@@ -18,15 +18,19 @@
 
 sub numerically {$a <=> $b;}
 
-sub byMajorTopic {
+sub TopicByAlpha {
+   $Topics{$a}{Short} cmp $Topics{$b}{Short};
+} 
+
+sub byMajorTopic { #V8OBS
   $MajorTopics{$a}{SHORT} cmp $MajorTopics{$b}{SHORT};
 }    
 
-sub byMinorTopic {
+sub byMinorTopic { #V8OBS
   $MinorTopics{$a}{SHORT} cmp $MinorTopics{$b}{SHORT};
 }    
 
-sub byTopic {
+sub byTopic { #V8OBS
   $MajorTopics{$MinorTopics{$a}{MAJOR}}{SHORT} cmp
   $MajorTopics{$MinorTopics{$b}{MAJOR}}{SHORT}
                  or

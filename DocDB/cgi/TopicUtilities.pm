@@ -21,7 +21,7 @@
 sub AllRootTopics {
   require "TopicSQL.pm";
 
-  GetAllTopics();
+  GetTopics();
   
   my @TopicIDs = keys %Topics;
   my @RootIDs  = ();

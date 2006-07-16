@@ -188,7 +188,7 @@ sub TopicsTable {
 #  print "</tr>\n";
 #  print "</table>\n";
 
-  my @RootTopicIDs = AllRootTopics();
+  my @RootTopicIDs = sort TopicByAlpha AllRootTopics();
   
   print "<ul>\n";
   foreach my $TopicID (@RootTopicIDs) {
