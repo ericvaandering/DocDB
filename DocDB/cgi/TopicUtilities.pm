@@ -36,5 +36,25 @@ sub AllRootTopics {
   return @RootIDs;
 }
 
+sub TopicAndSubTopics {
+  my ($ArgRef) = @_;
+  my $TopicID = exists $ArgRef->{-topicid} ? $ArgRef->{-topicid} : 0;
+  
+  require "TopicSQL.pm";
+  require "Utilities.pm";
+
+  GetTopics();
+  
+  my @TopicIDs = ($TopicID);
+  
+  foreach my $ChildID (@{$TopicChildren{$TopicID}}) {
+    push @DebugStack,"For topic $TopicID, child $ChildID and children added";
+    my @ChildIDs = TopicAndSubTopics({ -topicid => $ChildID });
+    push @TopicIDs,@ChildIDs;
+  }
+  
+  push @DebugStack,"Exiting TAST: ".join ' ',@TopicIDs;
+  return Unique(@TopicIDs);  
+}
 
 1;

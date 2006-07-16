@@ -191,12 +191,6 @@ sub TopicsTable {
   my @RootTopicIDs = AllRootTopics();
   
   print TopicListWithChildren({ -topicids => \@RootTopicIDs }); 
-  
-  print "<ul>\n";
-  foreach my $TopicID (@RootTopicIDs) {
-    print "<li>",TopicLink( {-topicid => $TopicID} ),"</li>";
-  }
-  print "</ul>\n";
 }
 
 sub TopicListWithChildren { # Recursive routine

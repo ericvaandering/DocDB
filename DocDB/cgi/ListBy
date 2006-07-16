@@ -81,6 +81,10 @@ if ($Days) {
 
 ### Minor topic
 
+  require "TopicUtilities.pm";
+  TopicAndSubTopics({ -topicid => 1 });
+  
+  
   require "TopicSQL.pm";
   &FetchMinorTopic($TopicID);
   $FieldListOptions{-topicid} = $TopicID;
