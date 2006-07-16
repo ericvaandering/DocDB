@@ -36,7 +36,7 @@ sub NewTopicListByID {
     print "</dl>\n";
     print "<ul>\n";
     foreach my $TopicID (@TopicIDs) {
-      my $TopicLink = "Topic $TopicID $Topics{$TopicID}{Short}";
+      my $TopicLink = TopicLink( {-topicid => $TopicID} );
       print "<li>$TopicLink</li>\n";
     }
     print "</ul>\n";
@@ -86,7 +86,26 @@ sub ShortTopicListByID {
   }
 }
 
-sub MinorTopicLink ($;$) {
+sub TopicLink ($) {
+  my ($ArgRef) = @_;
+  my $TopicID = exists $ArgRef->{-topicid} ? $ArgRef->{-topicid} : "";
+
+  require "TopicSQL.pm";
+  my ($URL,$Text,$Tooltip);
+
+  FetchTopic( {-topicid => $TopicID} );
+
+  $URL     = $ListBy."?topicid=".$TopicID;
+  $Text    = $Topics{$TopicID}{Short};
+  $Tooltip = $Topics{$TopicID}{Long};
+  
+  my $Link = "<a href=\"$URL\" title=\"$Tooltip\">$Text</a>";
+  
+  return $Link;
+}
+
+
+sub MinorTopicLink ($;$) { #V8OBS
   my ($TopicID,$mode) = @_;
   
   require "TopicSQL.pm";
@@ -110,7 +129,7 @@ sub MinorTopicLink ($;$) {
   return $Link;
 }
 
-sub MajorTopicLink ($;$) {
+sub MajorTopicLink ($;$) { #V8OBS
   my ($TopicID,$mode) = @_;
   
   require "TopicSQL.pm";

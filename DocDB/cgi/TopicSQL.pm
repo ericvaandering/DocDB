@@ -164,7 +164,7 @@ sub NewGetRevisionTopics {
   $List -> execute($DocRevID);
   $List -> bind_columns(undef, \($RevTopicID,$TopicID));
   while ($List -> fetch) {
-    if (FetchTopic($TopicID)) {
+    if (FetchTopic( {-topicid => $TopicID} )) {
       push @TopicIDs,$TopicID;
     }  
   }
@@ -173,7 +173,9 @@ sub NewGetRevisionTopics {
 }
 
 sub FetchTopic { # Fetches an Topic by ID, adds to $Topics{$TopicID}{}
-  my ($TopicID) = @_;
+  my ($ArgRef) = @_;
+  my $TopicID = exists $ArgRef->{-topicid} ? $ArgRef->{-topicid} : 0;
+
   my ($ShortDescription,$LongDescription);
   if ($Topics{$TopicID}{Short}) { # We already have this one
     return $TopicID;
