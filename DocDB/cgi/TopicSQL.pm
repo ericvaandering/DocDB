@@ -24,7 +24,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-sub GetTopics {
+sub GetTopics { #V8OBS
   require "MeetingSQL.pm";
 
   my $minor_list   = $dbh->prepare("select MinorTopicID,MajorTopicID,ShortDescription,LongDescription from MinorTopic");
@@ -54,6 +54,32 @@ sub GetTopics {
     $MinorTopics{$MinorTopicID}{LONG}  = $LongDescription;
     $MinorTopics{$MinorTopicID}{Full}  = $MajorTopics{$MajorTopicID}{SHORT}.":".$ShortDescription;
   }
+  
+### V8OBS: Everything above this
+
+  if ($GotAllTopics) {return;}
+  %Topics        = ();
+  %TopicParents  = ();
+  %TopicChildren = ();
+
+  my ($TopicID,$ShortDescription,$LongDescription,$ParentTopicID);
+
+  my $TopicList     = $dbh -> prepare("select TopicID,ShortDescription,LongDescription from Topic");
+  my $HierarchyList = $dbh -> prepare("select TopicID,ParentTopicID from TopicHierarchy");
+  $TopicList -> execute();
+  $TopicList -> bind_columns(undef, \($TopicID,$ShortDescription,$LongDescription));
+  while ($TopicList -> fetch) {
+    $Topics{$TopicID}{Short} = $ShortDescription;
+    $Topics{$TopicID}{Long}  = $LongDescription;
+  }
+
+  $HierarchyList -> execute();
+  $HierarchyList -> bind_columns(undef, \($TopicID,$ParentTopicID));
+  while ($TopicList -> fetch) {
+    push @{$TopicParents{$TopicID}}       ,$ParentTopicID;
+    push @{$TopicChildren{$ParentTopicID}},$TopicID;
+  }
+
   $GotAllTopics = 1;
 };
 
@@ -173,8 +199,10 @@ sub NewGetRevisionTopics {
 }
 
 sub ClearTopics {
-  %Topics       = ();
-  %TopicParents = ();
+  %Topics        = ();
+  %TopicParents  = ();
+  %TopicChildren = ();
+  $GotAllTopics  = 0;
   return;
 }
 
@@ -196,8 +224,6 @@ sub FetchTopic { # Fetches an Topic by ID, adds to $Topics{$TopicID}{}
   $Topics{$TopicID}{Short} = $ShortDescription;
   $Topics{$TopicID}{Long}  = $LongDescription;
 
-  FetchTopicParents( {-topicid => $TopicID} );
-
   return $TopicID;
 }
 
@@ -214,7 +240,6 @@ sub FetchTopicParents { # Returns parent IDs of topics
     }
     $TopicParents{$TopicID} = \@ParentIDs;
   }
-  push @DebugStack,"Topic Parents ", @{$TopicParents{$TopicID}};
   return @{$TopicParents{$TopicID}};
 }  
 
