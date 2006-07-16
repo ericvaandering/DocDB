@@ -234,59 +234,56 @@ sub UsersToNotify ($$) {
   my $Version    = $DocRevisions{$DocRevID}{Version};
 
   my $UserID;
-  my $Table;
-  my %UserIDs = (); # Hash to make user IDs unique (one notification per person)
+  my %UserIDs    = (); # Hash to make user IDs unique (one notification per person)
   my @Addressees = ();
+
+  my $Fetch     = $dbh -> prepare(
+    "select EmailUserID from Notification where Period=? and Type=? and ForeignID=?");
+  my $TextFetch = $dbh -> prepare(
+    "select EmailUserID from Notification where Period=? and Type=? and TextKey=?");
 
 # Get users interested in this particular document (only immediate)
  
   if ($Period eq "Immediate") {
-    my $DocFetch   = $dbh -> prepare("select EmailUserID from EmailDocumentImmediate where DocumentID=?");
-    $DocFetch -> execute($DocumentID);
-    $DocFetch -> bind_columns(undef,\($UserID));
-    while ($DocFetch -> fetch) {
+    $Fetch -> execute("Immediate","Document",$DocumentID);
+    $Fetch -> bind_columns(undef,\($UserID));
+    while ($Fetch -> fetch) {
       $UserIDs{$UserID} = 1; 
     }
   }
 
 # Get users interested in all documents for this reporting period
 
-  $Table = "EmailTopic$Period";
-  my $AllFetch   = $dbh -> prepare(
-    "select EmailUserID from $Table where MinorTopicID=0 and MajorTopicID=0");
-  $AllFetch -> execute();
-  $AllFetch -> bind_columns(undef,\($UserID));
-  while ($AllFetch -> fetch) {
+  $Fetch -> execute($Period,"AllDocuments",0);
+  $Fetch -> bind_columns(undef,\($UserID));
+  while ($Fetch -> fetch) {
     $UserIDs{$UserID} = 1; 
   }
 
 # Get users interested in major or minor topics for this reporting period
 
-  my $MinorFetch   = $dbh -> prepare(
-    "select EmailUserID from $Table where MinorTopicID=?");
-  my $MajorFetch   = $dbh -> prepare(
-    "select EmailUserID from $Table where MajorTopicID=?");
+#  my $MinorFetch   = $dbh -> prepare(
+#    "select EmailUserID from $Table where MinorTopicID=?");
+#  my $MajorFetch   = $dbh -> prepare(
+#    "select EmailUserID from $Table where MajorTopicID=?");
+#
+#  my @MinorTopicIDs = GetRevisionTopics($DocRevID);
+#  foreach my $MinorTopicID (@MinorTopicIDs) {
+#    $MinorFetch -> execute($MinorTopicID);
+#    $MinorFetch -> bind_columns(undef,\($UserID));
+#    while ($MinorFetch -> fetch) {
+#      $UserIDs{$UserID} = 1; 
+#    }
 
-  my @MinorTopicIDs = GetRevisionTopics($DocRevID);
-  foreach my $MinorTopicID (@MinorTopicIDs) {
-    $MinorFetch -> execute($MinorTopicID);
-    $MinorFetch -> bind_columns(undef,\($UserID));
-    while ($MinorFetch -> fetch) {
-      $UserIDs{$UserID} = 1; 
-    }
-
-    my $MajorTopicID = $MinorTopics{$MinorTopicID}{MAJOR};
-    $MajorFetch -> execute($MajorTopicID);
-    $MajorFetch -> bind_columns(undef,\($UserID));
-    while ($MajorFetch -> fetch) {
-      $UserIDs{$UserID} = 1; 
-    }
-  }  
+#    my $MajorTopicID = $MinorTopics{$MinorTopicID}{MAJOR};
+#    $MajorFetch -> execute($MajorTopicID);
+#    $MajorFetch -> bind_columns(undef,\($UserID));
+#    while ($MajorFetch -> fetch) {
+#      $UserIDs{$UserID} = 1; 
+#    }
+#  }  
 
 # Get users interested in events for this reporting period
-
-  my $Fetch   = $dbh -> prepare(
-    "select EmailUserID from Notification where Period=? and Type=? and ForeignID=?");
 
   my @EventIDs = GetRevisionEvents($DocRevID);
   foreach my $EventID (@EventIDs) {
@@ -308,33 +305,25 @@ sub UsersToNotify ($$) {
 
 # Get users interested in authors for this reporting period
 
-  $Table = "EmailAuthor$Period";
-  my $AuthorFetch   = $dbh -> prepare(
-    "select EmailUserID from $Table where AuthorID=?");
-
   my @AuthorIDs = GetRevisionAuthors($DocRevID);
-
   foreach my $AuthorID (@AuthorIDs) {
-    $AuthorFetch -> execute($AuthorID);
-    $AuthorFetch -> bind_columns(undef,\($UserID));
-    while ($AuthorFetch -> fetch) {
+    $Fetch -> execute($Period,"Author",$AuthorID);
+    $Fetch -> bind_columns(undef,\($UserID));
+    while ($Fetch -> fetch) {
       $UserIDs{$UserID} = 1; 
     }
   }  
 
-# Get users interested in authors for this reporting period
+# Get users interested in keywords for this reporting period
     
-  $Table = "EmailKeyword$Period";
-  my $KeywordFetch   = $dbh -> prepare(
-    "select EmailUserID from $Table where Keyword=lower(?)");
   FetchDocRevisionByID($DocRevID);
-  my @Keywords = split /\s+/,$DocRevisions{$DocRevID}{Keywords};
+  my @Keywords = split /,*\s+/,$DocRevisions{$DocRevID}{Keywords}; # Comma and/or space separated
 
   foreach my $Keyword (@Keywords) {
     $Keyword =~ tr/[A-Z]/[a-z]/;
-    $KeywordFetch -> execute($Keyword);
-    $KeywordFetch -> bind_columns(undef,\($UserID));
-    while ($KeywordFetch -> fetch) {
+    $TextFetch -> execute($Period,"Keyword",$Keyword);
+    $TextFetch -> bind_columns(undef,\($UserID));
+    while ($TextFetch -> fetch) {
       $UserIDs{$UserID} = 1; 
     }
   }  
