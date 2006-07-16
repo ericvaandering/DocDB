@@ -57,7 +57,7 @@ sub GetTopics {
   $GotAllTopics = 1;
 };
 
-sub GetSubTopics {
+sub GetSubTopics {# V8OBS
   my ($MajorTopicID) = @_;
   my @MinorTopicIDs = ();
   my $MinorList = $dbh->prepare("select MinorTopicID from MinorTopic where MajorTopicID=?");
@@ -71,7 +71,7 @@ sub GetSubTopics {
   return @MinorTopicIDs;
 };
 
-sub FetchMinorTopic { # Fetches an MinorTopic by ID, adds to $Topics{$TopicID}{}
+sub FetchMinorTopic { # V8OBS# Fetches an MinorTopic by ID, adds to $Topics{$TopicID}{}
   my ($minorTopicID) = @_;
   my ($MinorTopicID,$MajorTopicID,$ShortDescription,$LongDescription);
   my $minor_fetch   = $dbh -> prepare(
@@ -94,7 +94,7 @@ sub FetchMinorTopic { # Fetches an MinorTopic by ID, adds to $Topics{$TopicID}{}
   return $MinorTopics{$MinorTopicID}{MINOR};
 }
 
-sub FetchMinorTopicByInfo (%) { # Keep for John/Lynn? Can eventually add short/long, major topics
+sub FetchMinorTopicByInfo (%) { # V8OBS# Keep for John/Lynn? Can eventually add short/long, major topics
   my %Params = @_;
   
   my $Short = $Params{-short}; 
@@ -111,7 +111,7 @@ sub FetchMinorTopicByInfo (%) { # Keep for John/Lynn? Can eventually add short/l
   return $MinorTopicID;
 }
 
-sub FetchMajorTopic { # Fetches an MajorTopic by ID, adds to $Topics{$TopicID}{}
+sub FetchMajorTopic { # V8OBS# Fetches an MajorTopic by ID, adds to $Topics{$TopicID}{}
   my ($majorTopicID) = @_;
   my ($MajorTopicID,$ShortDescription,$LongDescription);
   my $major_fetch   = $dbh -> prepare(
@@ -129,6 +129,26 @@ sub FetchMajorTopic { # Fetches an MajorTopic by ID, adds to $Topics{$TopicID}{}
   $MajorTopics{$MajorTopicID}{LONG}  = $LongDescription;
 
   return $MajorTopics{$MajorTopicID}{MAJOR};
+}
+
+sub GetRevisionTopics { # V8OBS
+  my ($DocRevID) = @_;
+  
+  require "Utilities.pm";
+  
+  my @topics = ();
+  my ($RevTopicID,$MinorTopicID);
+  my $topic_list = $dbh->prepare(
+    "select RevTopicID,MinorTopicID from RevisionTopic where DocRevID=?");
+  $topic_list -> execute($DocRevID);
+  $topic_list -> bind_columns(undef, \($RevTopicID,$MinorTopicID));
+  while ($topic_list -> fetch) {
+    if (&FetchMinorTopic($MinorTopicID)) {
+      push @topics,$MinorTopicID;
+    }  
+  }
+  @topics = &Unique(@topics);
+  return @topics;
 }
 
 sub NewGetRevisionTopics {
@@ -152,7 +172,7 @@ sub NewGetRevisionTopics {
   return @TopicIDs;
 }
 
-sub FetchTopic { # Fetches an MinorTopic by ID, adds to $Topics{$TopicID}{}
+sub FetchTopic { # Fetches an Topic by ID, adds to $Topics{$TopicID}{}
   my ($TopicID) = @_;
   my ($ShortDescription,$LongDescription);
   if ($Topics{$TopicID}{Short}) { # We already have this one
@@ -171,7 +191,7 @@ sub FetchTopic { # Fetches an MinorTopic by ID, adds to $Topics{$TopicID}{}
   return $TopicID;
 }
 
-sub GetTopicDocuments {
+sub GetTopicDocuments {# V8OBS
   my ($TopicID) = @_;
   
   require "RevisionSQL.pm";
@@ -196,7 +216,7 @@ sub GetTopicDocuments {
   return @DocumentIDs;
 }
 
-sub LookupMajorTopic { # Returns MajorTopicID from Topic Name
+sub LookupMajorTopic { # V8OBS# Returns MajorTopicID from Topic Name
   my ($TopicName) = @_;
   my $major_fetch   = $dbh -> prepare(
     "select MajorTopicID from MajorTopic where ShortDescription=?");
@@ -208,7 +228,7 @@ sub LookupMajorTopic { # Returns MajorTopicID from Topic Name
   return $MajorTopicID;
 }
 
-sub MatchMajorTopic ($) { # FIXME: Make LookupMajorTopic a subset?
+sub MatchMajorTopic ($) { # V8OBS# FIXME: Make LookupMajorTopic a subset?
   my ($ArgRef) = @_;
   my $Short = exists $ArgRef->{-short} ? $ArgRef->{-short} : "";
 #  my $Long = exists $ArgRef->{-long}  ? $ArgRef->{-long}  : "";
@@ -228,7 +248,7 @@ sub MatchMajorTopic ($) { # FIXME: Make LookupMajorTopic a subset?
   return @MatchIDs;
 }
 
-sub MatchMinorTopic ($) {
+sub MatchMinorTopic ($) {# V8OBS
   my ($ArgRef) = @_;
   my $Short = exists $ArgRef->{-short} ? $ArgRef->{-short} : "";
 #  my $Long = exists $ArgRef->{-long}  ? $ArgRef->{-long}  : "";
@@ -248,7 +268,7 @@ sub MatchMinorTopic ($) {
   return @MatchIDs;
 }
 
-sub InsertTopics (%) {
+sub InsertTopics (%) {# V8OBS
   my %Params = @_;
   
   my $DocRevID =   $Params{-docrevid} || "";   

@@ -48,7 +48,7 @@ sub NewTopicListByID {
 
 }
 
-sub TopicListByID {
+sub TopicListByID { # V8OBS
   my @TopicIDs = @_;
   
   require "TopicSQL.pm";
