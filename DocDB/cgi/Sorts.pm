@@ -32,12 +32,14 @@ sub TopicByProvenance {
     push @DebugStack,"About to truncate A, A ".(join ' ',@ProvA)." B ".(join ' ',@ProvB);
     $#ProvA = $#ProvB;
     if ($ProvA[$#ProvA] == $ProvB[$#ProvB]) {
+      push @DebugStack,"Same generation: 1:$a 2:$b";
       return -1;
     }  
   } elsif ($#ProvB > $#ProvA) {
     push @DebugStack,"About to truncate B, A ".(join ' ',@ProvA)." B ".(join ' ',@ProvB);
     $#ProvB = $#ProvA;
     if ($ProvA[$#ProvA] == $ProvB[$#ProvB]) {
+      push @DebugStack,"Same generation: 1:$a 2:$b";
       return 1;
     }  
   }   
