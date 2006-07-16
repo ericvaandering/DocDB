@@ -188,13 +188,38 @@ sub TopicsTable {
 #  print "</tr>\n";
 #  print "</table>\n";
 
-  my @RootTopicIDs = sort TopicByAlpha AllRootTopics();
+  my @RootTopicIDs = AllRootTopics();
+  
+  print TopicListWithChildren({ -topicids => \@RootTopicIDs }); 
   
   print "<ul>\n";
   foreach my $TopicID (@RootTopicIDs) {
     print "<li>",TopicLink( {-topicid => $TopicID} ),"</li>";
   }
   print "</ul>\n";
+}
+
+sub TopicListWithChildren { # Recursive routine
+  my ($ArgRef) = @_;
+  my @TopicIDs = exists $ArgRef->{-topicids} ? @{$ArgRef->{-topicids}} : ();
+  
+  my @TopicIDs = sort TopicByAlpha @TopicIDs;
+
+  my $HTML;
+  
+  if (@TopicIDs) {
+    $HTML .= "<ul>\n";
+    foreach my $TopicID (@TopicIDs) {
+      $HTML .= "<li>".TopicLink( {-topicid => $TopicID} );
+      if (@{$TopicChildren{$TopicID}}) {
+        $HTML .= "\n";
+        $HTML .= TopicListWithChildren({ -topicids => $TopicChildren{$TopicID} });
+      }
+      $HTML .= "</li>\n";
+    }
+    $HTML .= "</ul>\n";
+  }    
+  return $HTML;
 }
 
 sub ShortDescriptionBox  (;%) {
