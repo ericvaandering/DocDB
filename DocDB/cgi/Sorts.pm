@@ -23,27 +23,25 @@ sub TopicByAlpha {
 } 
 
 sub TopicByProvenance {
-  my @ProvA = @{$TopicProvenance{$a}};
-  my @ProvB = @{$TopicProvenance{$b}};
+  my @ProvA = reverse @{$TopicProvenance{$a}};
+  my @ProvB = reverse @{$TopicProvenance{$b}};
   
-### Make sure we are comparing things at the same level, truncate arrays
+### Make sure we are comparing things at the same level, remove the front of arrays if we are not
+### Front of arrays contains the furthest topics down the tree
+### Then a topic is always greater than it's subtopics
    
-  if ($#ProvA > $#ProvB) {
-    push @DebugStack,"About to truncate A, A ".(join ' ',@ProvA)." B ".(join ' ',@ProvB);
-    @ProvA = reverse @ProvA;
+  if ($#ProvA > $#ProvB) {  
+#    @ProvA = reverse @ProvA;
     $#ProvA = $#ProvB;
-    @ProvA = reverse @ProvA;
+#    @ProvA = reverse @ProvA;
     if ($ProvA[$#ProvA] == $ProvB[$#ProvB]) {
-      push @DebugStack,"Same generation: 1:$a 2:$b";
       return 1;
     }  
   } elsif ($#ProvB > $#ProvA) {
-    push @DebugStack,"About to truncate B, A ".(join ' ',@ProvA)." B ".(join ' ',@ProvB);
-    @ProvB = reverse @ProvB;
+#    @ProvB = reverse @ProvB;
     $#ProvB = $#ProvA;
-    @ProvB = reverse @ProvB;
+#    @ProvB = reverse @ProvB;
     if ($ProvA[$#ProvA] == $ProvB[$#ProvB]) {
-      push @DebugStack,"Same generation: 1:$a 2:$b";
       return -1;
     }  
   }   
@@ -51,8 +49,8 @@ sub TopicByProvenance {
 ### Compare by "most distant" ancestor first
    
   while (@ProvA || @ProvB) {
-    $TopicA = pop @ProvA;    
-    $TopicB = pop @ProvB;    
+    $TopicA = shift @ProvA;    
+    $TopicB = shift @ProvB;    
     my $Cmp = $Topics{$TopicA}{Short} cmp $Topics{$TopicB}{Short};
     if ($Cmp) {return $Cmp;}
   }
