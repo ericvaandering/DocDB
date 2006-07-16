@@ -258,6 +258,7 @@ if ($Action eq "undo") { # Undo modifications
                  "alter table SecurityGroup  drop CanView           ",
                  "alter table SecurityGroup  drop CanConfig         ",
                  "alter table RevisionTopic  drop TopicID           ",
+                 "alter table TopicHint      drop TopicID           ",
                  "alter table Conference     drop AltLocation       ",
                  "alter table Session        drop AltLocation       ",
                  "alter table Session        drop ShowAllTalks      ",
