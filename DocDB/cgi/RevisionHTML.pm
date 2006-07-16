@@ -224,11 +224,6 @@ sub PrintAbstract ($;$) {
   
   my $Format = exists $ArgRef->{-format} ? $ArgRef->{-format} : "div";
   
-#  if ($Format eq "bare") {
-#    print  $Abstract;
-#    return;
-#  }
-
   if ($Abstract) {
     $Abstract = &URLify($Abstract);
     $Abstract =~ s/\n\n/<p\/>/g;

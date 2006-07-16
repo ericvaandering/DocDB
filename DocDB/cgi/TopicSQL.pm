@@ -172,6 +172,12 @@ sub NewGetRevisionTopics {
   return @TopicIDs;
 }
 
+sub ClearTopics {
+  %Topics       = ();
+  %TopicParents = ();
+  return;
+}
+
 sub FetchTopic { # Fetches an Topic by ID, adds to $Topics{$TopicID}{}
   my ($ArgRef) = @_;
   my $TopicID = exists $ArgRef->{-topicid} ? $ArgRef->{-topicid} : 0;
@@ -190,8 +196,27 @@ sub FetchTopic { # Fetches an Topic by ID, adds to $Topics{$TopicID}{}
   $Topics{$TopicID}{Short} = $ShortDescription;
   $Topics{$TopicID}{Long}  = $LongDescription;
 
+  FetchTopicParents( {-topicid => $TopicID} );
+
   return $TopicID;
 }
+
+sub FetchTopicParents { # Returns parent IDs of topics
+  my ($ArgRef) = @_;
+  my $TopicID = exists $ArgRef->{-topicid} ? $ArgRef->{-topicid} : 0;
+
+  unless (@{$TopicParents{$TopicID}}) {
+    my $Fetch   = $dbh -> prepare("select ParentTopicID from TopicHierarchy where TopicID=?");
+    $Fetch -> execute($TopicID);
+    my @ParentIDs = ();
+    while (my ($ParentID) = $Fetch -> fetchrow_array) {
+      push @ParentIDs,$ParentID;
+    }
+    $TopicParents{$TopicID} = \@ParentIDs;
+  }
+  push @DebugStack,"Topic Parents ", @{$TopicParents{$TopicID}};
+  return @{$TopicParents{$TopicID}};
+}  
 
 sub GetTopicDocuments {# V8OBS
   my ($TopicID) = @_;
