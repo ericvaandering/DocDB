@@ -234,14 +234,14 @@ sub DocumentTable (%) {
         require "TalkHintSQL.pm";
         my @TopicIDs = ();
         if ($DocRevID) {
-          @TopicIDs = GetRevisionTopics($DocRevID);
+          @TopicIDs = NewGetRevisionTopics( {-docrevid => $DocRevID} );
         } elsif ($SessionTalkID) {
           my @TopicHintIDs  = FetchTopicHintsBySessionTalkID($SessionTalkID);
           foreach my $TopicHintID (@TopicHintIDs) {
             push @TopicIDs,$TopicHints{$TopicHintID}{MinorTopicID};
           }
         }
-        ShortTopicListByID(@TopicIDs); 
+        TopicListByID( {-topicids => \@TopicIDs, -listformat => "br"} ); 
       } elsif ($Field eq "Abstract") { # Abstract
         PrintAbstract($DocRevisions{$DocRevID}{Abstract}, {-format => "bare"} ); 
       } elsif ($Field eq "DocNotes") { # Notes and Changes

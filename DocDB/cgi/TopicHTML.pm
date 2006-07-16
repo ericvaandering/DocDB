@@ -23,67 +23,53 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-sub NewTopicListByID {
+sub TopicListByID {
   my ($ArgRef) = @_;
   my @TopicIDs = exists $ArgRef->{-topicids} ? @{$ArgRef->{-topicids}} : ();
+  my $ListFormat = exists $ArgRef->{-listformat} ? $ArgRef->{-listformat} : "dl";
   
   require "TopicSQL.pm";
   
-  print "<div id=\"Topics\">\n";
-  print "<dl>\n";
-  print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Topics:</span></dt>\n";
+  
+  my @TopicLinks = ();
   if (@TopicIDs) {
-    print "</dl>\n";
-    print "<ul>\n";
     foreach my $TopicID (@TopicIDs) {
       my $TopicLink = TopicLink( {-topicid => $TopicID} );
-      print "<li>$TopicLink</li>\n";
+      if ($TopicLink) {
+        push @TopicLinks,$TopicLink;
+      }  
     }
-    print "</ul>\n";
-  } else {
-    print "<dd>None</dd>\n";
-    print "</dl>\n";
-  }
-  print "</div>\n";
-
-}
-
-sub TopicListByID { # V8OBS
-  my @TopicIDs = @_;
-  
-  require "TopicSQL.pm";
-  
-  print "<div id=\"Topics\">\n";
-  print "<dl>\n";
-  print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Topics:</span></dt>\n";
-  if (@TopicIDs) {
-    print "</dl>\n";
-    print "<ul>\n";
-    foreach my $TopicID (@TopicIDs) {
-      my $TopicLink = &MinorTopicLink($TopicID);
-      print "<li>$TopicLink</li>\n";
+  } 
+    
+  if ($ListFormat eq "dl") {
+    print "<div id=\"Topics\">\n";
+    print "<dl>\n";
+    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Topics:</span></dt>\n";
+    if (@TopicLinks) {
+      print "</dl>\n";
+      print "<ul>\n";
+    } else {
+      print "<dd>None</dd>\n";
+      print "</dl>\n";
+    } elsif ($ListFormat eq "br") {
+      print "None<br/>\n";
     }
-    print "</ul>\n";
-  } else {
-    print "<dd>None</dd>\n";
-    print "</dl>\n";
-  }
-  print "</div>\n";
-}
-
-sub ShortTopicListByID {
-  my @TopicIDs = @_;
-
-  require "TopicSQL.pm";
+  }  
   
-  if (@TopicIDs) {
-    foreach my $TopicID (@TopicIDs) {
-      my $TopicLink = &MinorTopicLink($TopicID);
+  foreach my $TopicLink (@TopicLinks) {
+    if ($ListFormat eq "dl") {
+      print "<li>$TopicLink</li>\n";  
+    } elsif ($ListFormat eq "br") {
       print "$TopicLink<br/>\n";
     }
-  } else {
-    print "None<br/>\n";
   }
+  
+  if ($ListFormat eq "dl") {
+    if (@TopicLinks) {
+      print "</ul>\n";
+    }   
+    print "</div>\n";
+  }  
 }
 
 sub TopicLink ($) {
