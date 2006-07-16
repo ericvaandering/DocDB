@@ -124,9 +124,10 @@ sub PrintRevisionInfo {
   
   my $DocumentID  = $DocRevisions{$DocRevID}{DOCID};
   my $Version     = $DocRevisions{$DocRevID}{VERSION};
-  my @AuthorIDs   = &GetRevisionAuthors($DocRevID);
-  my @TopicIDs    = &GetRevisionTopics($DocRevID);
-  my @GroupIDs    = &GetRevisionSecurityGroups($DocRevID);
+  my @AuthorIDs   = GetRevisionAuthors($DocRevID);
+  my @TopicIDs    = GetRevisionTopics($DocRevID);
+  my @NewTopicIDs    = NewGetRevisionTopics( {-docrevid => $DocRevID} );
+  my @GroupIDs    = GetRevisionSecurityGroups($DocRevID);
   my @ModifyIDs;
   if ($EnhancedSecurity) {
     @ModifyIDs   = &GetRevisionModifyGroups($DocRevID);
@@ -196,16 +197,17 @@ sub PrintRevisionInfo {
   
   print "</div>\n";  # RightColumn3Col
 
-  &PrintAbstract($DocRevisions{$DocRevID}{Abstract}); # All are called only here, so changes are OK
-  &FileListByRevID($DocRevID); # All are called only here, so changes are OK
-  &TopicListByID(@TopicIDs);
-  &AuthorListByID(@AuthorIDs);
-  &PrintKeywords($DocRevisions{$DocRevID}{Keywords});
-  &PrintRevisionNote($DocRevisions{$DocRevID}{Note});
-  &PrintXRefInfo($DocRevID);
-  &PrintReferenceInfo($DocRevID);
-  &PrintEventInfo(-docrevid => $DocRevID, -format => "normal");
-  &PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
+  PrintAbstract($DocRevisions{$DocRevID}{Abstract}); # All are called only here, so changes are OK
+  FileListByRevID($DocRevID); # All are called only here, so changes are OK
+  NewTopicListByID( {-topicids => \@NewTopicIDs} );
+  TopicListByID(@TopicIDs);
+  AuthorListByID(@AuthorIDs);
+  PrintKeywords($DocRevisions{$DocRevID}{Keywords});
+  PrintRevisionNote($DocRevisions{$DocRevID}{Note});
+  PrintXRefInfo($DocRevID);
+  PrintReferenceInfo($DocRevID);
+  PrintEventInfo(-docrevid => $DocRevID, -format => "normal");
+  PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
   
   if ($UseSignoffs) {
     require "SignoffHTML.pm";

@@ -23,6 +23,31 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+sub NewTopicListByID {
+  my ($ArgRef) = @_;
+  my @TopicIDs = exists $ArgRef->{-topicids} ? @{$ArgRef->{-topicids}} : ();
+  
+  require "TopicSQL.pm";
+  
+  print "<div id=\"Topics\">\n";
+  print "<dl>\n";
+  print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Topics:</span></dt>\n";
+  if (@TopicIDs) {
+    print "</dl>\n";
+    print "<ul>\n";
+    foreach my $TopicID (@TopicIDs) {
+      my $TopicLink = "Topic $TopicID";
+      print "<li>$TopicLink</li>\n";
+    }
+    print "</ul>\n";
+  } else {
+    print "<dd>None</dd>\n";
+    print "</dl>\n";
+  }
+  print "</div>\n";
+
+}
+
 sub TopicListByID {
   my @TopicIDs = @_;
   

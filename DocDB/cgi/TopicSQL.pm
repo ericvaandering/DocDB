@@ -131,24 +131,44 @@ sub FetchMajorTopic { # Fetches an MajorTopic by ID, adds to $Topics{$TopicID}{}
   return $MajorTopics{$MajorTopicID}{MAJOR};
 }
 
-sub GetRevisionTopics {
-  my ($DocRevID) = @_;
+sub NewGetRevisionTopics {
+  my ($ArgRef) = @_;
+  my $DocRevID = exists $ArgRef->{-docrevid} ? $ArgRef->{-docrevid} : 0;
   
   require "Utilities.pm";
   
-  my @topics = ();
-  my ($RevTopicID,$MinorTopicID);
-  my $topic_list = $dbh->prepare(
-    "select RevTopicID,MinorTopicID from RevisionTopic where DocRevID=?");
-  $topic_list -> execute($DocRevID);
-  $topic_list -> bind_columns(undef, \($RevTopicID,$MinorTopicID));
+  my @TopicIDs = ();
+  my ($RevTopicID,$TopicID);
+  my $List = $dbh->prepare(
+    "select RevTopicID,TopicID from RevisionTopic where DocRevID=?");
+  $List -> execute($DocRevID);
+  $List -> bind_columns(undef, \($RevTopicID,$TopicID));
   while ($topic_list -> fetch) {
-    if (&FetchMinorTopic($MinorTopicID)) {
-      push @topics,$MinorTopicID;
+    if (FetchTopic($TopicID)) {
+      push @TopicIDs,$TopicID;
     }  
   }
-  @topics = &Unique(@topics);
-  return @topics;
+  @TopicIDs = &Unique(@TopicIDs);
+  return @TopicIDs;
+}
+
+sub FetchTopic { # Fetches an MinorTopic by ID, adds to $Topics{$TopicID}{}
+  my ($TopicID) = @_;
+  my ($ShortDescription,$LongDescription);
+  if ($Topics{$TopicID}{Short}) { # We already have this one
+    return $TopicID;
+  }
+  
+  my $Fetch   = $dbh -> prepare(
+    "select ShortDescription,LongDescription ".
+    "from Topic where TopicID=?");
+  $Fetch -> execute($TopicID);
+  ($ShortDescription,$LongDescription) = $Fetch -> fetchrow_array;
+#  &FetchMajorTopic($MajorTopicID);
+  $Topics{$TopicID}{Short} = $ShortDescription;
+  $Topics{$TopicID}{Long}  = $LongDescription;
+
+  return $TopicID;
 }
 
 sub GetTopicDocuments {
