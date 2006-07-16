@@ -57,4 +57,38 @@ sub TopicAndSubTopics {
   return Unique(@TopicIDs);  
 }
 
+sub BuildTopicProvenance {
+  %TopicProvenance = ();
+  
+  GetTopics();
+
+  foreach my $TopicID (keys %Topics) {
+    $TopicProvenance{$TopicID} = \($TopicID);
+  }
+  
+  # Check each provenance entry to see if we can append to the list
+  # FIXME: Cannot deal with multiple parents.
+  
+  my $Found = $TRUE;
+  while ($Found) {
+    $Found = $FALSE;
+    foreach my $TopicID (keys %Topics) {
+      my @IDs = @{$TopicProvenance{$TopicID}};
+      my $LastID = pop @IDs;
+      if (@{$TopicParents{$LastID}}) {
+        $Found = $TRUE;
+        my @ParentIDs = @{$TopicParents{$LastID}};
+        my $FirstParentID = pop @ParentIDs;
+        push @{$TopicProvenance{$TopicID}},$FirstParentID;
+      }  
+    }
+  }
+  
+  foreach my $TopicID (keys %Topics) {
+    push @DebugStack,"Provenance for $TopicID: ",join ' ',@{$TopicProvenance{$TopicID}};
+  }
+  
+  return;
+}
+
 1;

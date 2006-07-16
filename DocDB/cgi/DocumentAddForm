@@ -438,7 +438,7 @@ print "</tr>\n";
 
 print "<tr><td colspan=\"4\">\n"; 
 
-TopicScroll({ -required => $RequiredEntries{Topic}, -size => 20 });
+TopicScroll({ -required => $RequiredEntries{Topic}, -size => 20 , -multiple => $TRUE});
 #if ($TopicMode eq "single") {
 #  &TopicSelect(-required => $RequiredEntries{Author});     
 #} elsif ($TopicMode eq "multi") {

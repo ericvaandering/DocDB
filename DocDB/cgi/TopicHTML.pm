@@ -299,7 +299,7 @@ sub TopicScroll ($) {
   my ($ArgRef) = @_;
   my $ItemFormat = exists $ArgRef->{-itemformat} ?   $ArgRef->{-itemformat} : "short";
   my $Multiple   = exists $ArgRef->{-multiple}   ?   $ArgRef->{-multiple}   : 0;
-  my $HelpLink   = exists $ArgRef->{-helplink}   ?   $ArgRef->{-helplink}   : "";
+  my $HelpLink   = exists $ArgRef->{-helplink}   ?   $ArgRef->{-helplink}   : "topics";
   my $HelpText   = exists $ArgRef->{-helptext}   ?   $ArgRef->{-helptext}   : "Topics";
   my $ExtraText  = exists $ArgRef->{-extratext}  ?   $ArgRef->{-extratext}  : "";
   my $Required   = exists $ArgRef->{-required}   ?   $ArgRef->{-required}   : 0;
@@ -315,7 +315,7 @@ sub TopicScroll ($) {
   }  
 
   GetTopics();
-  
+  BuildTopicProvenance();
   my @TopicIDs = keys %Topics;
   my %TopicLabels = ();
   my @ActiveIDs = @TopicIDs; # Later can select single major topics, etc.
