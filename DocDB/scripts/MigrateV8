@@ -175,6 +175,7 @@ if ($Action eq "migrate") {
   my $ConfigUpdate = $dbh -> prepare("update ConfigSetting set ForeignID=? where ConfigSettingID=?");
   my ($ConfigSettingID,$ConfigTopicID);
   
+  $ConfigSelect -> execute();
   while (($ConfigSettingID,$ConfigTopicID) = $ConfigSelect -> fetchrow_array) {
     $ConfigUpdate -> execute($MinorToTopic{$ConfigTopicID},$ConfigSettingID);
   }
@@ -284,8 +285,11 @@ if ($Action eq "undo") { # Undo modifications
 if ($Action eq "delete") { 
 
   my @Actions = ("alter  table RevisionTopic drop MinorTopicID ",
+                 "alter  table TopicHint     drop MinorTopicID ",
                  "delete from  RevisionTopic where TopicID=0   ",
                  "delete from  RevisionTopic where TopicID=NULL",
+                 "delete from  TopicHint     where TopicID=0   ",
+                 "delete from  TopicHint     where TopicID=NULL",
                  "drop   table MinorTopic                      ",
                  "drop   table MajorTopic                      ",
                  "drop   table EmailAuthorDaily                ",
