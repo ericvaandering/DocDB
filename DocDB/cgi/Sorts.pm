@@ -23,24 +23,19 @@ sub TopicByAlpha {
 } 
 
 sub TopicByProvenance {
-  my @ProvA = reverse @{$TopicProvenance{$a}};
-  my @ProvB = reverse @{$TopicProvenance{$b}};
+  my @ProvA = reverse @{$TopicProvenance{$a}}; # Front of arrays contains the children
+  my @ProvB = reverse @{$TopicProvenance{$b}}; # Don't want this
   
-### Make sure we are comparing things at the same level, remove the front of arrays if we are not
-### Front of arrays contains the furthest topics down the tree
-### Then a topic is always greater than it's subtopics
+### Make sure we are comparing things at the same level, truncate arrays if we are not
+### And a topic is always greater than it's subtopics
    
   if ($#ProvA > $#ProvB) {  
-#    @ProvA = reverse @ProvA;
     $#ProvA = $#ProvB;
-#    @ProvA = reverse @ProvA;
     if ($ProvA[$#ProvA] == $ProvB[$#ProvB]) {
       return 1;
     }  
   } elsif ($#ProvB > $#ProvA) {
-#    @ProvB = reverse @ProvB;
     $#ProvB = $#ProvA;
-#    @ProvB = reverse @ProvB;
     if ($ProvA[$#ProvA] == $ProvB[$#ProvB]) {
       return -1;
     }  
