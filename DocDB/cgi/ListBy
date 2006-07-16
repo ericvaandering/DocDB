@@ -80,13 +80,14 @@ if ($Days) {
 } elsif ($TopicID) {
 
 ### Topic
+### FIXME: Add Topic lookup
 
   require "TopicSQL.pm";
   require "TopicUtilities.pm";
   require "Utilities.pm";
   
   my @ChildTopicIDs = TopicAndSubTopics({ -topicid => $TopicID });
-  
+  my $HasSubTopics = (scalar(@ChildTopicIDs) > 1);
   $FieldListOptions{-topicid} = $TopicID;
   $Title   = "Document List by Topic";
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
@@ -101,7 +102,11 @@ if ($Days) {
   }
   @DocumentIDs = Unique(@DocumentIDs);
   $Message = "These documents on <span class=\"Highlight\">$Topics{$TopicID}{Long} 
-              </span> and sub-topics are available:"; # FIXME: No "subtopics" if there are none.
+              </span> ";
+  if ($HasSubTopics) {
+    $Message .= "and sub-topics ";
+  }
+  $Message .= "are available:"; 
 } elsif ($AuthorID) {
 
 ### Author
@@ -122,22 +127,6 @@ if ($Days) {
   $Message = "<span class=\"Highlight\">$Link of $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG}</span>
               is listed as an author on the following documents:";
   @DocumentIDs = &GetAuthorDocuments($AuthorID);  
-} elsif ($Major || $MajorID) {
-
-### Major topic (either number or name)
-
-  require "TopicSQL.pm";
-  unless ($MajorID) {
-    $MajorID = &LookupMajorTopic($Major);
-  } 
-  &FetchMajorTopic($MajorID);
-  
-  $Title   = "Document List by Topic";
-  $Message = "These documents on <span class=\"Highlight\"> $MajorTopics{$MajorID}{LONG}</span> are available:";
-  $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
-           "DocumentRevision,RevisionTopic,MinorTopic where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
-           "and DocumentRevision.Obsolete=0 and RevisionTopic.MinorTopicID=MinorTopic.MinorTopicID and MinorTopic.MajorTopicID=?");            
-  $List -> execute($MajorID);
 } elsif ($EventID) {
 
 ### Event
