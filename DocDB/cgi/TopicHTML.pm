@@ -40,6 +40,8 @@ sub TopicListByID {
       }  
     }
   } 
+  
+# Headers for different styles and handle no topics  
     
   if ($ListFormat eq "dl") {
     print "<div id=\"Topics\">\n";
@@ -51,10 +53,14 @@ sub TopicListByID {
     } else {
       print "<dd>None</dd>\n";
       print "</dl>\n";
-    } elsif ($ListFormat eq "br") {
-      print "None<br/>\n";
-    }
+    } 
   }  
+  
+  if ($ListFormat eq "br") {
+    unless (@TopicLinks) {
+      print "None<br/>\n";
+    }  
+  }
   
   foreach my $TopicLink (@TopicLinks) {
     if ($ListFormat eq "dl") {
@@ -63,6 +69,8 @@ sub TopicListByID {
       print "$TopicLink<br/>\n";
     }
   }
+  
+# Footers for different styles  
   
   if ($ListFormat eq "dl") {
     if (@TopicLinks) {
