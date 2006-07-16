@@ -85,7 +85,7 @@ sub BuildTopicProvenance {
   }
   
   foreach my $TopicID (keys %Topics) {
-    push @DebugStack,"Provenance for $TopicID: ",join ' ',@{$TopicProvenance{$TopicID}};
+    push @DebugStack,"Provenance for $TopicID: ".join ' ',@{$TopicProvenance{$TopicID}};
   }
   
   return;

@@ -325,9 +325,9 @@ sub TopicScroll ($) {
     my $Spaces = ' 'x(scalar(@{$TopicProvenance{$TopicID}}));
   
     if ($ItemFormat eq "short") {
-      $TopicLabels{$ID} = $Topics{$ID}{Short}; 
+      $TopicLabels{$ID} = $Spaces.$Topics{$ID}{Short}; 
     } elsif ($ItemFormat eq "long") {
-      $TopicLabels{$ID} = $Topics{$ID}{Long}; 
+      $TopicLabels{$ID} = $Spaces.$Topics{$ID}{Long}; 
     } elsif ($ItemFormat eq "long") {
       $TopicLabels{$ID} = $Topics{$ID}{Short}." [".$Topics{$ID}{Long}."]"; 
     } 
