@@ -56,6 +56,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
   my @Actions = ("alter table SecurityGroup  add CanView      int default '1'",
                  "alter table SecurityGroup  add CanConfig    int default '0'",
                  "alter table RevisionTopic  add TopicID      int NOT NULL   ",
+                 "alter table TopicHint      add TopicID      int NOT NULL   ",
                  "alter table RevisionAuthor add AuthorOrder  int default '0'",
                  "alter table Conference     add AltLocation  varchar(255)   ",
                  "alter table Session        add AltLocation  varchar(255)   ",
@@ -118,6 +119,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
 
 if ($Action eq "migrate") {
   my $TopicUpdate     = $dbh -> prepare("update RevisionTopic set TopicID=? where MinorTopicID=?");
+  my $HintUpdate      = $dbh -> prepare("update TopicHint     set TopicID=? where MinorTopicID=?");
   my $TopicInsert     = $dbh -> prepare("insert into Topic (TopicID,ShortDescription,LongDescription) values (0,?,?)");
   my $HierarchyInsert = $dbh -> prepare("insert into TopicHierarchy (TopicHierarchyID,TopicID,ParentTopicID) values (0,?,?)");
   my $MajorSelect     = $dbh -> prepare("select MajorTopicID,ShortDescription,LongDescription from MajorTopic");
@@ -160,9 +162,23 @@ if ($Action eq "migrate") {
     my $ParentID = $MajorToTopic{$MinorToMajor{$MinorID}};
     $HierarchyInsert -> execute($TopicID,$ParentID);
     $TopicUpdate     -> execute($TopicID,$MinorID);
+    $HintUpdate      -> execute($TopicID,$MinorID);
   }
   
   print " Last MajorTopic is now Topic $LastMajor, last MinorTopic is now Topic $LastMinor\n";
+  
+### Migrate Config Settings 
+
+  print "Migrating Custom Field settings for Topics. This cannot be undone, but you probably don't have any.\n";   
+  
+  my $ConfigSelect = $dbh -> prepare("select ConfigSettingID,ForeignID from ConfigSetting where ConfigGroup='CustomField' and Sub1Group='TopicID'");
+  my $ConfigUpdate = $dbh -> prepare("update ConfigSetting set ForeignID=? where ConfigSettingID=?");
+  my ($ConfigSettingID,$ConfigTopicID);
+  
+  while (($ConfigSettingID,$ConfigTopicID) = $ConfigSelect -> fetchrow_array) {
+    $ConfigUpdate -> execute($MinorToTopic{$ConfigTopicID},$ConfigSettingID);
+  }
+  
   
   my @Periods = ("Daily","Immediate","Weekly");
   my $NotificationInsert = $dbh -> prepare("insert into Notification (NotificationID,EmailUserID,Type,ForeignID,TextKey,Period) values (0,?,?,?,?,?)");

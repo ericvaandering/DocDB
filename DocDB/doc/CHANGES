@@ -16,6 +16,9 @@
   disabling reviewer accounts between reviews.
   The user can still use DocDB, but can only see publicly accessible documents.
   
+  New files
+    cgi/TopicUtilities.pm
+  
 7.7.0
   Reorganized the output of DisplayMeeting to look more like ShowDocument and 
   to present things in a clearer manner.
