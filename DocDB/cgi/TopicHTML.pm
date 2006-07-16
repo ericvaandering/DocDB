@@ -317,12 +317,12 @@ sub TopicScroll ($) {
 
   GetTopics();
   BuildTopicProvenance();
-  my @TopicIDs = keys %Topics;
+  my @TopicIDs = sort TopicByProvenance keys %Topics;
   my %TopicLabels = ();
   my @ActiveIDs = @TopicIDs; # Later can select single major topics, etc.
   
   foreach my $ID (@ActiveIDs) {
-    my $Spaces = '.'x(scalar(@{$TopicProvenance{$ID}}));
+    my $Spaces = '.'x(scalar(@{$TopicProvenance{$ID}})-1);
   
     if ($ItemFormat eq "short") {
       $TopicLabels{$ID} = $Spaces.$Topics{$ID}{Short}; 

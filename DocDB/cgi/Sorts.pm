@@ -40,7 +40,7 @@ sub TopicByProvenance {
     $TopicA = pop @ProvA;    
     $TopicB = pop @ProvB;    
     my $Cmp = $Topics{$TopicA}{Short} cmp $Topics{$TopicB}{Short};
-    if ($Cmp} {return $Cmp;}
+    if ($Cmp) {return $Cmp;}
   }
   return 0;  
 } 
