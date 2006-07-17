@@ -196,18 +196,18 @@ sub TopicsTable {
 sub TopicListWithChildren { # Recursive routine
   my ($ArgRef) = @_;
   my @TopicIDs = exists $ArgRef->{-topicids} ? @{$ArgRef->{-topicids}} : ();
-  
+  my $Depth    = exists $ArgRef->{-depth}    ?   $ArgRef->{-depth}     : 1;
   my @TopicIDs = sort TopicByAlpha @TopicIDs;
 
   my $HTML;
   
   if (@TopicIDs) {
-    $HTML .= "<ul>\n";
+    $HTML .= "<ul class=\"$Depth-deep\">\n";
     foreach my $TopicID (@TopicIDs) {
       $HTML .= "<li>".TopicLink( {-topicid => $TopicID} );
       if (@{$TopicChildren{$TopicID}}) {
         $HTML .= "\n";
-        $HTML .= TopicListWithChildren({ -topicids => $TopicChildren{$TopicID} });
+        $HTML .= TopicListWithChildren({ -topicids => $TopicChildren{$TopicID}, -depth => $Depth+1 });
       }
       $HTML .= "</li>\n";
     }
