@@ -90,8 +90,8 @@ sub TopicLink ($) {
   FetchTopic( {-topicid => $TopicID} );
 
   $URL     = $ListBy."?topicid=".$TopicID;
-  $Text    = $Topics{$TopicID}{Short};
-  $Tooltip = $Topics{$TopicID}{Long};
+  $Text    = CGI::escapeHTML($Topics{$TopicID}{Short});
+  $Tooltip = CGI::escapeHTML($Topics{$TopicID}{Long} );
   
   my $Link = "<a href=\"$URL\" title=\"$Tooltip\">$Text</a>";
   
