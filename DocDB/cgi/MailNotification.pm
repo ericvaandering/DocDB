@@ -221,7 +221,9 @@ sub UsersToNotify ($$) {
   require "MeetingSQL.pm";
   require "NotificationSQL.pm";
   require "TopicSQL.pm";
+  
   require "Security.pm";
+  require "Utilities.pm";
 
   unless ($Period eq "Immediate" || $Period eq "Daily" || $Period eq "Weekly") {
     return undef;
@@ -260,29 +262,24 @@ sub UsersToNotify ($$) {
     $UserIDs{$UserID} = 1; 
   }
 
-# Get users interested in major or minor topics for this reporting period
+# Get users interested in topics for this reporting period
 
-#  my $MinorFetch   = $dbh -> prepare(
-#    "select EmailUserID from $Table where MinorTopicID=?");
-#  my $MajorFetch   = $dbh -> prepare(
-#    "select EmailUserID from $Table where MajorTopicID=?");
-#
-#  my @MinorTopicIDs = GetRevisionTopics($DocRevID);
-#  foreach my $MinorTopicID (@MinorTopicIDs) {
-#    $MinorFetch -> execute($MinorTopicID);
-#    $MinorFetch -> bind_columns(undef,\($UserID));
-#    while ($MinorFetch -> fetch) {
-#      $UserIDs{$UserID} = 1; 
-#    }
-
-#    my $MajorTopicID = $MinorTopics{$MinorTopicID}{MAJOR};
-#    $MajorFetch -> execute($MajorTopicID);
-#    $MajorFetch -> bind_columns(undef,\($UserID));
-#    while ($MajorFetch -> fetch) {
-#      $UserIDs{$UserID} = 1; 
-#    }
-#  }  
-
+  GetTopics();
+  my @TopicIDs = ();
+  my @InitialTopicIDs = NewGetRevisionTopics( {-docrevid => $DocRevID} );
+  
+  foreach my $TopicID (@InitialTopicIDs) {
+    push @TopicIDs,@{$TopicProvenance{$TopicID}}; # Add ancestors to list
+  }
+  @TopicIDs = Unique(@TopicIDs);
+  foreach my $TopicID (@TopicIDs) {
+    $Fetch -> execute($Period,"Topic",$TopicID);
+    $Fetch -> bind_columns(undef,\($UserID));
+    while ($Fetch -> fetch) {
+      $UserIDs{$UserID} = 1; 
+    }
+  }  
+    
 # Get users interested in events for this reporting period
 
   my @EventIDs = GetRevisionEvents($DocRevID);
@@ -375,6 +372,9 @@ sub DisplayNotification ($$;$) {
   require "TopicHTML.pm";
 
   FetchNotifications( {-emailuserid => $EmailUserID} );
+
+#V8OBS
+
   FetchTopicNotification($EmailUserID,$Set);
   FetchAuthorNotification($EmailUserID,$Set);
   FetchKeywordNotification($EmailUserID,$Set);

@@ -115,20 +115,37 @@ sub FetchNotifications ($) {
   my $Count = 0;
   
   if ($EmailUserID) {
-    @{$Notifications{$EmailUserID}{EventGroup_Immediate}} = ();
-    @{$Notifications{$EmailUserID}{EventGroup_Daily}}     = ();
-    @{$Notifications{$EmailUserID}{EventGroup_Weekly}}    = ();
-    @{$Notifications{$EmailUserID}{Event_Immediate}}      = ();
-    @{$Notifications{$EmailUserID}{Event_Daily}}          = ();
-    @{$Notifications{$EmailUserID}{Event_Weekly}}         = ();
-
-    my $Fetch = $dbh -> prepare("select Type,ForeignID,Period from Notification where EmailUserID=?");
+    # Can I do something like %{$Notifications{$EmailUserID}} = ();
+    @{$Notifications{$EmailUserID}{AllDocuments_Immediate}} = ();
+    @{$Notifications{$EmailUserID}{Author_Daily}}           = ();
+    @{$Notifications{$EmailUserID}{Author_Immediate}}       = ();
+    @{$Notifications{$EmailUserID}{Author_Weekly}}          = ();
+    @{$Notifications{$EmailUserID}{Event_Daily}}            = ();
+    @{$Notifications{$EmailUserID}{EventGroup_Daily}}       = ();
+    @{$Notifications{$EmailUserID}{EventGroup_Immediate}}   = ();
+    @{$Notifications{$EmailUserID}{EventGroup_Weekly}}      = ();
+    @{$Notifications{$EmailUserID}{Event_Immediate}}        = ();
+    @{$Notifications{$EmailUserID}{Event_Weekly}}           = ();
+    @{$Notifications{$EmailUserID}{Keyword_Daily}}          = ();
+    @{$Notifications{$EmailUserID}{Keyword_Immediate}}      = ();
+    @{$Notifications{$EmailUserID}{Keyword_Weekly}}         = ();
+    @{$Notifications{$EmailUserID}{Topic_Daily}}            = ();
+    @{$Notifications{$EmailUserID}{Topic_Immediate}}        = ();
+    @{$Notifications{$EmailUserID}{Topic_Weekly}}           = ();
+    
+    my ($Type,$ForeignID,$Period,$TextKey);
+    my $Fetch = $dbh -> prepare("select Type,ForeignID,Period,TextKey from Notification where EmailUserID=?");
     $Fetch -> execute($EmailUserID);
-    $Fetch -> bind_columns(undef,\($Type,$ForeignID,$Period));
+    $Fetch -> bind_columns(undef,\($Type,$ForeignID,$Period,$TextKey));
     
     while ($Fetch -> fetch) {
       my $Key = $Type."_".$Period;
-      push @{$Notifications{$EmailUserID}{$Key}},$ForeignID;
+      if ($ForeignID) {
+        push @{$Notifications{$EmailUserID}{$Key}},$ForeignID;
+      }
+      if ($TextKey) {
+        push @{$Notifications{$EmailUserID}{$Key}},$TextKey;
+      }
       ++$Count;      
     }
   }
@@ -136,7 +153,7 @@ sub FetchNotifications ($) {
   return $Count;
 }
 
-sub FetchTopicNotification ($$) {
+sub FetchTopicNotification ($$) { #V8OBS
   my ($EmailUserID,$Set) = @_;
 
   my ($MajorTopicID,$MinorTopicID);
@@ -163,7 +180,7 @@ sub FetchTopicNotification ($$) {
   }
 }
 
-sub FetchAuthorNotification ($$) {
+sub FetchAuthorNotification ($$) { #V8OBS
   my ($EmailUserID,$Set) = @_;
 
   my $AuthorID;
@@ -184,7 +201,7 @@ sub FetchAuthorNotification ($$) {
   }
 }
 
-sub FetchKeywordNotification ($$) {
+sub FetchKeywordNotification ($$) { #V8OBS
   my ($EmailUserID,$Set) = @_;
 
   my $Keyword;
@@ -206,7 +223,7 @@ sub FetchKeywordNotification ($$) {
   $NotifyKeywords = join ' ',@NotifyKeywords;
 }
 
-sub SetTopicNotifications ($$) {
+sub SetTopicNotifications ($$) { #V8OBS
   my ($EmailUserID,$Set) = @_;
 
   my $Table = "EmailTopic$Set";  # Tables    for immediate, daily, weekly 
@@ -245,7 +262,7 @@ sub SetTopicNotifications ($$) {
   }   
 }
   
-sub SetKeywordNotifications ($$) {
+sub SetKeywordNotifications ($$) { #V8OBS
   my ($EmailUserID,$Set) = @_;
 
   my $Table = "EmailKeyword$Set";  # Tables    for immediate, daily, weekly 
@@ -273,7 +290,7 @@ sub SetKeywordNotifications ($$) {
   }   
 }
 
-sub SetAuthorNotifications ($$) {
+sub SetAuthorNotifications ($$) { #V8OBS
   my ($EmailUserID,$Set) = @_;
 
   my $Table = "EmailAuthor$Set";  # Tables    for immediate, daily, weekly 
@@ -298,7 +315,7 @@ sub SetAuthorNotifications ($$) {
   }   
 }
 
-sub InsertEmailDocumentImmediate (%) {
+sub InsertEmailDocumentImmediate (%) { #V8OBS
   my %Params = @_;
   
   my $EmailUserID = $Params{-emailuserid};
@@ -312,7 +329,7 @@ sub InsertEmailDocumentImmediate (%) {
   }  
 }
 
-sub FetchEmailDocuments (%) {
+sub FetchEmailDocuments (%) { #V8OBS
   my %Params = @_;
   
   my $EmailUserID = $Params{-emailuserid};
