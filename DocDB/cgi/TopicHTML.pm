@@ -229,15 +229,11 @@ sub ShortDescriptionBox  (;%) {
   my $Disabled  =   $Params{-disabled}  || $FALSE;
   my $Default   =   $Params{-default}   || "";                 # Not used
 
-  my %Options = ();
-  if ($Disabled) {
-    $Options{-disabled} = "disabled";
-  }  
   print "<div class=\"ShortDescriptionEntry\">\n";
   TextField(-name     => $Name,     -helptext  => $HelpText,  
             -helplink => $HelpLink, -required  => $Required,  
             -size     => $Size,     -maxlength => $MaxLength, 
-            -default  => $Default,  %Options);
+            -default  => $Default,  -disabled  => $Disabled);
   print "</div>\n";           
 }
 
@@ -252,18 +248,13 @@ sub LongDescriptionBox (;%) {
   my $Size      =   $Params{-size}      || 40;
   my $MaxLength =   $Params{-maxlength} || 120;
   my $Disabled  =   $Params{-disabled}  || $FALSE;
-  my $Default   =   $Params{-default}   || "";                 # FIXME: Not used
-
-  my %Options = (-junk => "junk");
-  if ($Disabled) {
-    $Options{-disabled} = "disabled";
-  }  
+  my $Default   =   $Params{-default}   || "";
 
   print "<div class=\"LongDescriptionEntry\">\n";
   TextField(-name     => $Name,     -helptext  => $HelpText, 
             -helplink => $HelpLink, -required  => $Required, 
             -size     => $Size,     -maxlength => $MaxLength,
-            -default  => $Default,  %Options);
+            -default  => $Default,  -disabled  => $Disabled);
   print "</div>\n";           
 };
 
