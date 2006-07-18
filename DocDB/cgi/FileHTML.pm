@@ -370,28 +370,19 @@ sub ArchiveUploadBox (%)  {
   
   my $Required   = $Params{-required}   || 0;        # short, long, full
 
-  print "<table class=\"LowPaddedTable\">\n";
-  print "<tr><td colspan=\"2\"><b><a ";
-  &HelpLink("filearchive");
-  print "Archive file upload:</a></b>";
-  if ($Required) {
-    print $RequiredMark;
-  } 
-  print "<br> \n";
-  print "<tr><td align=right>\n";
-  print "<b>Archive File:</b>\n";
-  print "</td><td>\n";
-  print $query -> filefield(-name => "single_upload", -size => 60,
-                              -maxlength=>250);
+  print "<table class=\"LowPaddedTable LeftHeader\">\n";
+  print "<tr><td colspan=\"2\">";
+  print FormElementTitle(-helplink => "filearchive", -helptext => "Archive file upload",
+                         -required => $Required);
+  print "</td></tr> \n";
+  print "<tr><th>Archive File:</th><td>\n";
+  print $query -> filefield(-name      => "single_upload", -size => 60,
+                            -maxlength => 250);
 
-  print "<tr><td align=right>\n";
-  print "<b>Main file in archive:</b>\n";
-  print "</td><td>\n";
+  print "<tr><th>Main file in archive:</th><td>\n";
   print $query -> textfield (-name => 'mainfile', -size => 70, -maxlength => 128);
 
-  print "<tr><td align=right>\n";
-  print "<b>Description of file:</b>\n";
-  print "</td><td>\n";
+  print "<tr><th>Description of file:</th><td>\n";
   print $query -> textfield (-name => 'filedesc', -size => 70, -maxlength => 128);
   print "</td></tr></table>\n";
 };

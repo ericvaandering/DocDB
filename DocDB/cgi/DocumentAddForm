@@ -20,7 +20,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI;                                                                                      
+use CGI qw(-nosticky);                                                                                      
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -496,7 +496,6 @@ if      ($mode eq "add") {
 print "</td>\n</tr>\n";
 print "</table>\n";
 
-print "<p>";
 print $query -> end_multipart_form;
 
 &DocDBNavBar();
