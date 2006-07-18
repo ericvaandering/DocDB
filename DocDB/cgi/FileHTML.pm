@@ -271,10 +271,12 @@ sub FileUploadBox (%) {
     
   $DescHelpLink = "description";
   $DescHelpText = "Description";
-    
+  
   my $BoxTitle = FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText,
                                   -required => $Required);
+  print '<tr><td colspan="2">'; 
   print $BoxTitle;
+  print "</td></tr>\n";
                               
   for (my $i = 1; $i <= $MaxFiles; ++$i) {
     my $FileID = shift @FileIDs;
