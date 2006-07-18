@@ -46,6 +46,7 @@ require "Security.pm";
 require "XRefUtilities.pm";
 
 require "FileHTML.pm";
+require "JournalHTML.pm";
 require "KeywordHTML.pm";
 require "MeetingHTML.pm";
 require "RevisionHTML.pm";

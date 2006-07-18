@@ -245,9 +245,11 @@ sub FileUploadBox (%) {
     }   
   }   
 
-  print "<table class=\"LowPaddedTable LeftHeader\">\n";
-  print "<tr><td colspan=\"2\">";
+  print "<div>\n";
   print $query -> hidden(-name => 'maxfiles', -default => $MaxFiles);
+  print "</div>\n";
+
+  print "<table class=\"LowPaddedTable LeftHeader\">\n";
  
   my ($HelpLink,$HelpText,$FileHelpLink,$FileHelpText,$DescHelpLink,$DescHelpText);
   if ($Type eq "file") {
@@ -270,12 +272,10 @@ sub FileUploadBox (%) {
   $DescHelpLink = "description";
   $DescHelpText = "Description";
     
-  my $BoxTitle = &FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText,
-                                   -required => $Required);
+  my $BoxTitle = FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText,
+                                  -required => $Required);
   print $BoxTitle;
-  
-  print $query -> hidden(-name => "maxfiles", -default => $MaxFiles);
-                            
+                              
   for (my $i = 1; $i <= $MaxFiles; ++$i) {
     my $FileID = shift @FileIDs;
     my $ElementName = "upload$i";
@@ -368,8 +368,8 @@ sub ArchiveUploadBox (%)  {
   
   my $Required   = $Params{-required}   || 0;        # short, long, full
 
-  print "<table cellpadding=3>\n";
-  print "<tr><td colspan=2><b><a ";
+  print "<table class=\"LowPaddedTable\">\n";
+  print "<tr><td colspan=\"2\"><b><a ";
   &HelpLink("filearchive");
   print "Archive file upload:</a></b>";
   if ($Required) {
