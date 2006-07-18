@@ -244,12 +244,11 @@ sub FileUploadBox (%) {
       $MaxFiles = 1;   
     }   
   }   
-  
-  print $query -> hidden(-name => 'maxfiles', -default => $MaxFiles);
-  
-  print "<table class=\"LowPaddedTable\">\n";
+
+  print "<table class=\"LowPaddedTable LeftHeader\">\n";
   print "<tr><td colspan=\"2\">";
-  
+  print $query -> hidden(-name => 'maxfiles', -default => $MaxFiles);
+ 
   my ($HelpLink,$HelpText,$FileHelpLink,$FileHelpText,$DescHelpLink,$DescHelpText);
   if ($Type eq "file") {
     $HelpLink = "fileupload";
@@ -295,16 +294,16 @@ sub FileUploadBox (%) {
     
     if ($DescOnly) {
       print "<tr>\n";
-      print "<td align=right>Filename:</td>";
+      print "<th>Filename:</th>";
       print "<td>\n";
       print $DocFiles{$FileID}{NAME};
       print $query -> hidden(-name => $FileIDName, -value => $FileID);
       print "</td>\n";
       print "</tr>\n";
     } else {
-      print "<tr><td align=right>\n";
+      print "<tr><th>\n";
       print $FileHelp;
-      print "</td>\n";
+      print "</th>\n";
 
       print "<td>\n";
       if ($Type eq "file") {
@@ -318,9 +317,9 @@ sub FileUploadBox (%) {
       print "</tr>\n";
       
       if ($Type eq "http") {
-        print "<tr><td align=right>\n";
+        print "<tr><th>\n";
         print $NewNameHelp;
-        print "</td>\n";
+        print "</th>\n";
 
         print "<td>\n";
         print $query -> textfield(-name      => $NewName, -size => $FileSize, 
@@ -329,15 +328,14 @@ sub FileUploadBox (%) {
         print "</tr>\n";
       }
     }  
-    print "<tr><td align=right>\n";
+    print "<tr><th>\n";
     print $DescriptionHelp;
-    print "</td>\n";
+    print "</th>\n";
     print "<td>\n";
     print $query -> textfield (-name      => $DescName, -size    => 60, 
                                -maxlength => 128,       -default => $DefaultDesc);
 
     if ($DocFiles{$FileID}{ROOT} || !$FileID) {
-#    if ($DocFiles{$FileID}{ROOT} || $NewFiles) {
       print $query -> checkbox(-name => $MainName, -checked => 'checked', -label => '');
     } else {
       print $query -> checkbox(-name => $MainName, -label => '');
@@ -346,16 +344,16 @@ sub FileUploadBox (%) {
     print $MainHelp;
     print "</td></tr>\n";
     if ($FileID && $AllowCopy && !$DescOnly) {
-      print "<tr><td>&nbsp;</td><td colspan=2>\n";
+      print "<tr><td>&nbsp;</td><td colspan=\"2\">\n";
       print "Copy <tt>$DocFiles{$FileID}{NAME}</tt> from previous version:";
       print $query -> hidden(-name => $FileIDName, -value => $FileID);
       print $query -> checkbox(-name => $CopyName, -label => '');
       print "</td></tr>\n";
     }  
-    print "<tr><td colspan=3></td></tr>\n";
+    print "<tr><td colspan=\"3\"></td></tr>\n";
   }
   if ($Type eq "http") {
-    print "<tr><td align=right><b>User:</b></td>\n";
+    print "<tr><th>User:</th>\n";
     print "<td>\n";
     print $query -> textfield (-name => 'http_user', -size => 20, -maxlength => 40);
     print "<b>&nbsp;&nbsp;&nbsp;&nbsp;Password:</b>\n";
