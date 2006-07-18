@@ -115,23 +115,7 @@ sub FetchNotifications ($) {
   my $Count = 0;
   
   if ($EmailUserID) {
-    # Can I do something like %{$Notifications{$EmailUserID}} = ();
-    @{$Notifications{$EmailUserID}{AllDocuments_Immediate}} = ();
-    @{$Notifications{$EmailUserID}{Author_Daily}}           = ();
-    @{$Notifications{$EmailUserID}{Author_Immediate}}       = ();
-    @{$Notifications{$EmailUserID}{Author_Weekly}}          = ();
-    @{$Notifications{$EmailUserID}{Event_Daily}}            = ();
-    @{$Notifications{$EmailUserID}{EventGroup_Daily}}       = ();
-    @{$Notifications{$EmailUserID}{EventGroup_Immediate}}   = ();
-    @{$Notifications{$EmailUserID}{EventGroup_Weekly}}      = ();
-    @{$Notifications{$EmailUserID}{Event_Immediate}}        = ();
-    @{$Notifications{$EmailUserID}{Event_Weekly}}           = ();
-    @{$Notifications{$EmailUserID}{Keyword_Daily}}          = ();
-    @{$Notifications{$EmailUserID}{Keyword_Immediate}}      = ();
-    @{$Notifications{$EmailUserID}{Keyword_Weekly}}         = ();
-    @{$Notifications{$EmailUserID}{Topic_Daily}}            = ();
-    @{$Notifications{$EmailUserID}{Topic_Immediate}}        = ();
-    @{$Notifications{$EmailUserID}{Topic_Weekly}}           = ();
+    %{$Notifications{$EmailUserID}} = (); # Erase notifications for user, not all users
     
     my ($Type,$ForeignID,$Period,$TextKey);
     my $Fetch = $dbh -> prepare("select Type,ForeignID,Period,TextKey from Notification where EmailUserID=?");

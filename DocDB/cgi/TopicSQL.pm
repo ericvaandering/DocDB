@@ -335,7 +335,7 @@ sub InsertTopics (%) {# V8OBS
 
   my $Count = 0;
 
-  my $Insert = $dbh -> prepare("insert into RevisionTopic (RevTopicID, DocRevID, MinorTopicID) values (0,?,?)");
+  my $Insert = $dbh -> prepare("insert into RevisionTopic (RevTopicID, DocRevID, TopicID) values (0,?,?)");
                                  
   foreach my $TopicID (@TopicIDs) {
     if ($TopicID) {

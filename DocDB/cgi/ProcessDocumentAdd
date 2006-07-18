@@ -243,8 +243,8 @@ if ($mode eq "update" || $mode eq "updatedb") {
 
 ### Final checks
 
-@topicIDs   = split ("\0",$params{topics});
-@securities = split ("\0",$params{security});
+my @TopicIDs = split ("\0",$params{topics});
+@securities  = split ("\0",$params{security});
 if ($EnhancedSecurity) {
   @ModifyGroups = split ("\0",$params{modify});
 }
@@ -361,11 +361,11 @@ if (@XRefs) {
 ### Add to authors, topics and securities
                            
 my $Count;
-$Count = &InsertAuthors(-docrevid => $DocRevID, -authorids => \@authorIDs);
-$Count = &InsertTopics( -docrevid => $DocRevID, -topicids  => \@topicIDs);
-$Count = &InsertSecurity(-docrevid  => $DocRevID, 
-                         -viewids   => \@securities,
-                         -modifyids => \@ModifyGroups);
+$Count = InsertAuthors( -docrevid  => $DocRevID, -authorids => \@authorIDs);
+$Count = InsertTopics(  -docrevid  => $DocRevID, -topicids  => \@TopicIDs);
+$Count = InsertSecurity(-docrevid  => $DocRevID, 
+                        -viewids   => \@securities,
+                        -modifyids => \@ModifyGroups);
 
 ### Add events
 if (@EventIDs) {
