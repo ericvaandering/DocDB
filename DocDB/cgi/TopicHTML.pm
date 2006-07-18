@@ -226,7 +226,7 @@ sub ShortDescriptionBox  (;%) {
   my $Name      =   $Params{-name}      || "short";
   my $Size      =   $Params{-size}      || 20;
   my $MaxLength =   $Params{-maxlength} || 40;
-  my $Disabled  =   $Params{-disabled}  || "0";
+  my $Disabled  =   $Params{-disabled}  || $FALSE;
   my $Default   =   $Params{-default}   || "";                 # Not used
 
   my %Options = ();
@@ -251,7 +251,7 @@ sub LongDescriptionBox (;%) {
   my $Name      =   $Params{-name}      || "long";
   my $Size      =   $Params{-size}      || 40;
   my $MaxLength =   $Params{-maxlength} || 120;
-  my $Disabled  =   $Params{-disabled}  || 0;
+  my $Disabled  =   $Params{-disabled}  || $FALSE;
   my $Default   =   $Params{-default}   || "";                 # FIXME: Not used
 
   my %Options = ();
