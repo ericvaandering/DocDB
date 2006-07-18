@@ -164,34 +164,47 @@ EndPage();
 
 print $query -> start_multipart_form('POST',"$TopicAdminister",
                                     "id=\"minortopic\" name=\"minortopic\"");
-print "<table cellpadding=10>\n";
 
-print "<tr valign=top>\n";
-print "<td colspan=2>\n"; 
- &AdministerActions(-form => "minortopic");      
+print "<table class=\"MedPaddedTable\">\n";
+print "<tr>\n";
+print "<td colspan=\"3\">\n"; 
+ AdministerActions(-form => "minortopic");      
 print "</td>\n";
 print "</tr>\n";
 
-print "<tr valign=top>\n";
-print "<td colspan=2>\n"; 
- &TopicScroll(-helptext  => "Minor Topics", -helplink => "topics", 
-              -extratext => " (Long descriptions in brackets)", 
-              -format    => "long", -disabled => "true"); 
+print "<tr>\n";
+print "<td>\n"; 
+ TopicScroll({ -helptext  => "Topic", -helplink => "topics", 
+               -format    => "long", -disabled => "true",
+               -extratext => "(Long descriptions in brackets)", 
+            }); 
 print "</td>\n"; 
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td rowspan=2>\n"; &MajorTopicSelect(-disabled => "true"); print "</td>\n";
-print "<td>\n"; &ShortDescriptionBox(-name => "shortdesc", -disabled => "true");     print "</td>\n";
+print "<td rowspan=\"3\">\n";  
+ TopicScroll({ -helptext  => "Parent Topic", -helplink => "parenttopic", 
+               -format    => "long", -disabled => "true",
+               -name      => "parenttopic",
+               -extratext => "(Long descriptions in brackets)", 
+            }); 
+print "</td>\n";
+print "<td>\n"; ShortDescriptionBox(-name => "shortdesc", -disabled => "true");     print "</td>\n";
 print "</tr>\n";
 
-print "<tr valign=top>\n";
-print "<td>\n"; &LongDescriptionBox(-name => "longdesc", -disabled => "true");     print "</td>\n";
+print "<tr>\n";
+print "<td>\n"; LongDescriptionBox(-name => "longdesc", -disabled => "true");     print "</td>\n";
 print "</tr>\n";
 
-print "<tr valign=top>\n";
-print "<td colspan=3>\n";
-&AdministratorPassword;
+print "<tr>\n";
+print "<td>\n"; 
+ AdminRegardless();
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print '<td colspan="3">';
+AdministratorPassword();
 print "&nbsp;";
 print $query -> submit (-value => "Change Topic Info");
 print "</td>\n";
@@ -199,10 +212,6 @@ print "</tr>\n";
 
 print "</table>\n";
 print $query -> end_multipart_form;
-
-print "<p><hr>\n";
-
-
 
 DocDBNavBar();
 DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
