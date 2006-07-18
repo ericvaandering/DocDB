@@ -71,7 +71,7 @@ my $Version      = $params{version};
 my @PreTopics    = $query -> param('pretopic');
    $mode         = $params{mode}; # FIXME: Can't be my since used in subroutines
 
-@TopicDefaults = ();
+my @TopicDefaults = ();
  
 push @TopicDefaults,@PreTopics; 
 
@@ -171,7 +171,7 @@ my $XRefDefault;
 my $DocTypeIDDefault;
  
 if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
-  $DocRevID            = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+  $DocRevID            = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   $TitleDefault        = $DocRevisions{$DocRevID}{Title};
   $PubInfoDefault      = $DocRevisions{$DocRevID}{PUBINFO};
   $AbstractDefault     = $DocRevisions{$DocRevID}{Abstract};
@@ -179,15 +179,15 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   $KeywordsDefault     = $DocRevisions{$DocRevID}{Keywords};
   $RevisionNoteDefault = $DocRevisions{$DocRevID}{Note};
   $DocTypeIDDefault    = $DocRevisions{$DocRevID}{DocTypeID};
-  @SecurityDefaults    = &GetRevisionSecurityGroups($DocRevID);
-  @AuthorDefaults      = &GetRevisionAuthors($DocRevID);
-  @TopicDefaults       = &GetRevisionTopics($DocRevID);
-  @EventDefaults       = &GetRevisionEvents($DocRevID);
-  @ReferenceDefaults   = &FetchReferencesByRevision($DocRevID);
-  $XRefDefault         = &SetXRefDefault($DocRevID);
+  @SecurityDefaults    = GetRevisionSecurityGroups($DocRevID);
+  @AuthorDefaults      = GetRevisionAuthors($DocRevID);
+  @TopicDefaults       = NewGetRevisionTopics($DocRevID);
+  @EventDefaults       = GetRevisionEvents($DocRevID);
+  @ReferenceDefaults   = FetchReferencesByRevision($DocRevID);
+  $XRefDefault         = SetXRefDefault($DocRevID);
   if ($UseSignoffs) {
     require "SignoffUtilities.pm";
-    $SignoffDefault     = &BuildSignoffDefault($DocRevID);
+    $SignoffDefault     = BuildSignoffDefault($DocRevID);
   }
 } else {
   if ($DefaultPublicAccess) {
@@ -438,7 +438,8 @@ print "</tr>\n";
 
 print "<tr><td colspan=\"4\">\n"; 
 
-TopicScroll({ -required => $RequiredEntries{Topic}, -size => 20 , -multiple => $TRUE});
+TopicScroll({ -required => $RequiredEntries{Topic}, -size     => 20 , 
+              -default  => \@TopicDefaults,         -multiple => $TRUE, });
 #if ($TopicMode eq "single") {
 #  &TopicSelect(-required => $RequiredEntries{Author});     
 #} elsif ($TopicMode eq "multi") {
