@@ -87,7 +87,7 @@ if      ($Action eq "Delete") {
   EndPage();
   my $TopicLink     = MinorTopicLink({-topicid => $TopicID});
   my @TopicDocIDs   = GetTopicDocuments($TopicID);
-  my @ChildTopicIDs = @{$TopicChildren{$TopicID}}
+  my @ChildTopicIDs = @{$TopicChildren{$TopicID}};
 # Delete TopicID from Topic, Conference, RevisionTopic tables
   
   my $TopicDelete      = $dbh -> prepare("delete from MinorTopic    where MinorTopicID=?");

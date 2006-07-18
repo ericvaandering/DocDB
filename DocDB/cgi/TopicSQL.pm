@@ -250,7 +250,7 @@ sub FetchTopicParents { # Returns parent IDs of topics
   return @{$TopicParents{$TopicID}};
 }  
 
-sub GetTopicDocuments {# V8OBS
+sub GetTopicDocuments {
   my ($TopicID) = @_;
   
   require "RevisionSQL.pm";
@@ -258,8 +258,8 @@ sub GetTopicDocuments {# V8OBS
   my $DocumentID;
   my $DocRevID;
   my %DocumentIDs;
-
-  my $RevisionList = $dbh -> prepare("select DocRevID from RevisionTopic where MinorTopicID=?"); 
+  #FIXME: Use the relational DB!
+  my $RevisionList = $dbh -> prepare("select DocRevID from RevisionTopic where TopicID=?"); 
   my $DocumentList = $dbh -> prepare("select DocumentID from DocumentRevision where DocRevID=? and Obsolete=0"); 
   $RevisionList -> execute($TopicID);
   $RevisionList -> bind_columns(undef, \($DocRevID));
