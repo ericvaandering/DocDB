@@ -60,8 +60,6 @@ my $ShortName     = $Untaint -> extract (-as_printable => "shortdesc")   || "";
 
 $query -> delete_all();
 
-$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
-
 # Open connection and die if we can't
 
 if ($Password && $Username) {
