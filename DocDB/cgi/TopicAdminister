@@ -26,15 +26,19 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 
-use CGI;
+use CGI qw(-nosticky);
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
+require "AdministerElements.pm";
 require "ResponseElements.pm";
+require "Scripts.pm";
 require "Security.pm";
-require "HTMLUtilities.pm";
-require "TopicSQL.pm";
 require "Messages.pm";
+require "Sorts.pm";
+
+require "DBUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 
@@ -42,47 +46,56 @@ $query = new CGI;  # Global for subroutines
 
 # Parameters to script 
 
-my $Password      = $params{password};
-my $Username      = $params{admuser};
-my $Action        = $params{admaction};
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-my $TopicID       = $params{topics};
-my $MajorTopicID  = $params{majortopic};
-my $LongName      = $params{longdesc};
-my $ShortName     = $params{shortdesc};
+my $Password      = $Untaint -> extract (-as_printable => "password")    || "";
+my $Username      = $Untaint -> extract (-as_printable => "admuser")     || "";
+my $Action        = $Untaint -> extract (-as_printable => "admaction")   || "";
+
+my $TopicID       = $Untaint -> extract (-as_integer   => "topics")      || 0;
+my $ParentTopicID = $Untaint -> extract (-as_integer   => "parenttopic") || 0;
+my $LongName      = $Untaint -> extract (-as_printable => "longdesc")    || "";
+my $ShortName     = $Untaint -> extract (-as_printable => "shortdesc")   || "";
+
+
+$query -> delete_all();
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
-unless ($dbh) {
-  push @ErrorStack,$Msg_AdminNoConnect;
-}         
+# Open connection and die if we can't
 
-print $query->header;
-DocDBHeader("Modified List of Topics");
+if ($Password && $Username) {
+  CreateConnection(-user => $Username, -password => $Password);
+} else {
+  CreateConnection(-type => "ro");
+}
+EndPage(-startpage => $TRUE);
 
-EndPage();
+print $query -> header;
+DocDBHeader("Topic Administration");
 
-unless (&CanAdminister) {
+unless (CanAdminister()) {
   push @ErrorStack,$Msg_AdminNoLogin;
 }  
 EndPage();
+GetTopics();
 
 if      ($Action eq "Delete") {
   unless ($TopicID) {
     push @ErrorStack,$Msg_ModTopicEmpty;
   }
   EndPage();
-  my $TopicLink   = &MinorTopicLink($TopicID);
-  my @TopicDocIDs = &GetTopicDocuments($TopicID);
-  
+  my $TopicLink     = MinorTopicLink({-topicid => $TopicID});
+  my @TopicDocIDs   = GetTopicDocuments($TopicID);
+  my @ChildTopicIDs = @{$TopicChildren{$TopicID}}
 # Delete TopicID from Topic, Conference, RevisionTopic tables
   
   my $TopicDelete      = $dbh -> prepare("delete from MinorTopic    where MinorTopicID=?");
   my $ConferenceDelete = $dbh -> prepare("delete from Conference    where MinorTopicID=?");
   my $RevisionDelete   = $dbh -> prepare("delete from RevisionTopic where MinorTopicID=?");
-  $TopicDelete      -> execute($TopicID);
-  $ConferenceDelete -> execute($TopicID);
-  $RevisionDelete   -> execute($TopicID);
+#  $TopicDelete      -> execute($TopicID);
+#  $ConferenceDelete -> execute($TopicID);
+#  $RevisionDelete   -> execute($TopicID);
   
   print "$TopicLink has been removed from the database.<br>\n";
   if (@TopicDocIDs) {
@@ -144,9 +157,54 @@ if ($Action eq "Modify" || $Action eq "New") {
   print "</b><p>\n";
 }  
 
-print "<p>\n";
+if (@ActionStack) { 
+  ClearTopics();
+  GetTopics();
+}  
 
 EndPage();
+
+print $query -> start_multipart_form('POST',"$TopicAdminister",
+                                    "id=\"minortopic\" name=\"minortopic\"");
+print "<table cellpadding=10>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; 
+ &AdministerActions(-form => "minortopic");      
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=2>\n"; 
+ &TopicScroll(-helptext  => "Minor Topics", -helplink => "topics", 
+              -extratext => " (Long descriptions in brackets)", 
+              -format    => "long", -disabled => "true"); 
+print "</td>\n"; 
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td rowspan=2>\n"; &MajorTopicSelect(-disabled => "true"); print "</td>\n";
+print "<td>\n"; &ShortDescriptionBox(-name => "shortdesc", -disabled => "true");     print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td>\n"; &LongDescriptionBox(-name => "longdesc", -disabled => "true");     print "</td>\n";
+print "</tr>\n";
+
+print "<tr valign=top>\n";
+print "<td colspan=3>\n";
+&AdministratorPassword;
+print "&nbsp;";
+print $query -> submit (-value => "Change Topic Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<p><hr>\n";
+
+
 
 DocDBNavBar();
 DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
