@@ -174,19 +174,19 @@ print "</tr>\n";
 
 print "<tr>\n";
 print "<td>\n"; 
- TopicScroll({ -helptext  => "Topic", -helplink => "topics", 
-               -format    => "long", -disabled => "true",
-               -extratext => "(Long descriptions in brackets)", 
+ TopicScroll({ -helptext   => "Topic", -helplink => "topics", 
+               -itemformat => "full",  -disabled => "true",
+               -extratext  => "[Long description]", 
             }); 
 print "</td>\n"; 
 print "</tr>\n";
 
 print "<tr valign=top>\n";
 print "<td rowspan=\"3\">\n";  
- TopicScroll({ -helptext  => "Parent Topic", -helplink => "parenttopic", 
-               -format    => "long", -disabled => "true",
-               -name      => "parenttopic",
-               -extratext => "(Long descriptions in brackets)", 
+ TopicScroll({ -helptext   => "Parent Topic", -helplink => "parenttopic", 
+               -itemformat => "full",         -disabled => "true",
+               -name       => "parenttopic",
+               -extratext  => "[Long description]", 
             }); 
 print "</td>\n";
 print "<td>\n"; ShortDescriptionBox(-name => "shortdesc", -disabled => "true");     print "</td>\n";

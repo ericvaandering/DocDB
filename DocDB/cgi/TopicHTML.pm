@@ -328,7 +328,7 @@ sub TopicScroll ($) {
       $TopicLabels{$ID} = $Spaces.$Topics{$ID}{Short}; 
     } elsif ($ItemFormat eq "long") {
       $TopicLabels{$ID} = $Spaces.$Topics{$ID}{Long}; 
-    } elsif ($ItemFormat eq "long") {
+    } elsif ($ItemFormat eq "full") {
       $TopicLabels{$ID} = $Topics{$ID}{Short}." [".$Topics{$ID}{Long}."]"; 
     } 
   }  
