@@ -39,10 +39,12 @@ require "Messages.pm";
 require "Sorts.pm";
 
 require "DBUtilities.pm";
+require "HTMLUtilities.pm";
+
+require "TopicHTML.pm";
+require "TopicSQL.pm"; 
 
 $query = new CGI;  # Global for subroutines
-
-%params = $query -> Vars;
 
 # Parameters to script 
 
