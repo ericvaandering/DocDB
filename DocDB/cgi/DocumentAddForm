@@ -256,6 +256,7 @@ if ($mode eq "add" && ($SessionID||$ConferenceID)) {
 &SetFileOptions($DocRevID);
 
 print $query -> start_multipart_form('POST',$ProcessDocumentAdd);
+print "<div>\n";
 print $query -> hidden(-name => 'mode',      -default => $mode);
 print $query -> hidden(-name => 'upload',    -default => 'file');
 print $query -> hidden(-name => 'archive',   -default => 'single');
@@ -280,8 +281,9 @@ if ($Overdate eq "Yes") {
 }  
 
 print $query -> hidden(-name => 'special',-default => '');
+print "</div>\n";
 
-&WarnPage(@WarnStack); @WarnStack = ();
+WarnPage(@WarnStack);
 
 print "<table class=\"CenteredTable HighPaddedTable\">\n";
 
@@ -314,30 +316,30 @@ print "</tr>\n";
 
 if (@OpenSessionTalkIDs) {
   print "<tr>\n";
-  print "<td colspan=4>\n"; &SessionTalkPulldown(@OpenSessionTalkIDs);    print "</td>\n";
+  print "<td colspan=\"4\">\n"; SessionTalkPulldown(@OpenSessionTalkIDs);    print "</td>\n";
   print "</tr>\n";
 }
 
 print "<tr>\n";
-print "<td colspan=4>\n"; 
+print "<td colspan=\"4\">\n"; 
  &TitleBox(-required => $RequiredEntries{Title});        
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
-print "<td colspan=4>\n";
+print "<td colspan=\"4\">\n";
  &AbstractBox(-required => $RequiredEntries{Abstract});     
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
-print "<td colspan=4>\n"; 
+print "<td colspan=\"4\">\n"; 
  &KeywordsBox(-required => $RequiredEntries{Keyword});     
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n"; 
-print "<td colspan=4>\n"; 
+print "<td colspan=\"4\">\n"; 
 if ($mode eq "update") {
   &RevisionNoteBox(-jsinsert => $RevisionNoteDefault, 
                    -required => $RequiredEntries{Note}); 
@@ -353,7 +355,7 @@ print "</tr>\n";
 if ($mode eq "add" || $mode eq "update") {
   my $CopyOption = ($mode eq "update");
 
-  print "<tr><td colspan=4>\n";
+  print "<tr><td colspan=\"4\">\n";
   if ($Archive eq "archive") { 
     &ArchiveUploadBox(-required => $RequiredEntries{File});
   } else {
@@ -434,9 +436,7 @@ if ($EnhancedSecurity) {
 }
 print "</tr>\n";
 
-### Topics # FIXME: Use non-global defaults
-
-push @DebugStack,"Default topics ".join ' ',@TopicDefaults;
+### Topics 
 
 print "<tr><td colspan=\"4\">\n"; 
 
