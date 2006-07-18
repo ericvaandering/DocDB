@@ -181,7 +181,7 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   $DocTypeIDDefault    = $DocRevisions{$DocRevID}{DocTypeID};
   @SecurityDefaults    = GetRevisionSecurityGroups($DocRevID);
   @AuthorDefaults      = GetRevisionAuthors($DocRevID);
-  @TopicDefaults       = NewGetRevisionTopics($DocRevID);
+  @TopicDefaults       = NewGetRevisionTopics({ -docrevid => $DocRevID });
   @EventDefaults       = GetRevisionEvents($DocRevID);
   @ReferenceDefaults   = FetchReferencesByRevision($DocRevID);
   $XRefDefault         = SetXRefDefault($DocRevID);
@@ -435,6 +435,8 @@ if ($EnhancedSecurity) {
 print "</tr>\n";
 
 ### Topics # FIXME: Use non-global defaults
+
+push @DebugStack,"Default topics ".join ' ',@TopicDefaults;
 
 print "<tr><td colspan=\"4\">\n"; 
 
