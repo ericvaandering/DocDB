@@ -140,8 +140,6 @@ if      ($Action eq "Delete") {
 
   $TopicInsert -> execute($MajorTopicID,$ShortName,$LongName);
   $TopicID = $TopicInsert -> {mysql_insertid}; # Works with MySQL only
-} else {
-  push @ErrorStack,"No valid action was specified.";
 }  
 
 # For modify or new fetch information and display.
