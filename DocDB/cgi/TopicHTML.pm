@@ -254,7 +254,7 @@ sub LongDescriptionBox (;%) {
   my $Disabled  =   $Params{-disabled}  || $FALSE;
   my $Default   =   $Params{-default}   || "";                 # FIXME: Not used
 
-  my %Options = ();
+  my %Options = (-junk => "junk");
   if ($Disabled) {
     $Options{-disabled} = "disabled";
   }  
