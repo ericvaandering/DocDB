@@ -325,11 +325,12 @@ sub TopicScroll ($) {
     my $Spaces = '.'x(scalar(@{$TopicProvenance{$ID}})-1);
   
     if ($ItemFormat eq "short") {
-      $TopicLabels{$ID} = $Spaces.$Topics{$ID}{Short}; 
+      $TopicLabels{$ID} = CGI::escapeHTML($Spaces.$Topics{$ID}{Short}); 
     } elsif ($ItemFormat eq "long") {
-      $TopicLabels{$ID} = $Spaces.$Topics{$ID}{Long}; 
+      $TopicLabels{$ID} = CGI::escapeHTML($Spaces.$Topics{$ID}{Long}); 
     } elsif ($ItemFormat eq "full") {
-      $TopicLabels{$ID} = $Topics{$ID}{Short}." [".$Topics{$ID}{Long}."]"; 
+      $TopicLabels{$ID} = CGI::escapeHTML($Topics{$ID}{Short}.
+                                     " [".$Topics{$ID}{Long}."]"); 
     } 
   }  
 

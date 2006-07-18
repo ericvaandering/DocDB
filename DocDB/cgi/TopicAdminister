@@ -163,12 +163,12 @@ if (@ActionStack) {
 EndPage();
 
 print $query -> start_multipart_form('POST',"$TopicAdminister",
-                                    "id=\"minortopic\" name=\"minortopic\"");
+                                    "id=\"topic\" name=\"topic\"");
 
 print "<table class=\"MedPaddedTable\">\n";
 print "<tr>\n";
 print "<td colspan=\"2\">\n"; 
- AdministerActions(-form => "minortopic");      
+ AdministerActions(-form => "topic");      
 print "</td>\n";
 print "</tr>\n";
 
@@ -179,11 +179,13 @@ print "<td rowspan=\"3\">\n";
                -extratext  => "[Long description]", 
             }); 
 print "</td>\n"; 
-print "<td>\n"; ShortDescriptionBox(-name => "shortdesc", -disabled => "true");     print "</td>\n";
+print "<td>\n"; ShortDescriptionBox(-name => "shortdesc", -disabled => $TRUE);
+print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
-print "<td>\n"; LongDescriptionBox(-name => "longdesc", -disabled => "true");     print "</td>\n";
+print "<td>\n"; LongDescriptionBox(-name => "longdesc", -disabled => $TRUE);
+print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
