@@ -219,8 +219,8 @@ sub TopicListWithChildren { # Recursive routine
 sub ShortDescriptionBox  (;%) {
   my (%Params) = @_;
   
-  my $HelpLink  =   $Params{-helplink}  || "shortdescription"; #FIXME Not used, Blank might be needed later?
-  my $HelpText  =   $Params{-helptext}  || "Topics";           # Not used
+  my $HelpLink  =   $Params{-helplink}  || "shortdescription";
+  my $HelpText  =   $Params{-helptext}  || "Short Description";           
   my $ExtraText =   $Params{-extratext} || "";                 # Not used
   my $Required  =   $Params{-required}  || 0;                  
   my $Name      =   $Params{-name}      || "short";
@@ -229,16 +229,15 @@ sub ShortDescriptionBox  (;%) {
   my $Disabled  =   $Params{-disabled}  || "0";
   my $Default   =   $Params{-default}   || "";                 # Not used
 
-  my $Booleans = "";
-  
+  my %Options = ();
   if ($Disabled) {
-    $Booleans .= "-disabled";
+    $Options{-disabled} = "disabled";
   }  
   print "<div class=\"ShortDescriptionEntry\">\n";
-  &TextField(-name     => $Name,     -helptext  => $HelpText,  
-             -helplink => $HelpLink, -required  => $Required,  
-             -size     => $Size,     -maxlength => $MaxLength, 
-             -default  => $Default,  -disabled  => $Disabled);
+  TextField(-name     => $Name,     -helptext  => $HelpText,  
+            -helplink => $HelpLink, -required  => $Required,  
+            -size     => $Size,     -maxlength => $MaxLength, 
+            -default  => $Default,  %Options);
   print "</div>\n";           
 }
 
@@ -255,15 +254,20 @@ sub LongDescriptionBox (;%) {
   my $Disabled  =   $Params{-disabled}  || 0;
   my $Default   =   $Params{-default}   || "";                 # FIXME: Not used
 
+  my %Options = ();
+  if ($Disabled) {
+    $Options{-disabled} = "disabled";
+  }  
+
   print "<div class=\"LongDescriptionEntry\">\n";
-  &TextField(-name     => $Name,     -helptext  => $HelpText, 
-             -helplink => $HelpLink, -required  => $Required, 
-             -size     => $Size,     -maxlength => $MaxLength,
-             -default  => $Default,  -disabled  => $Disabled);
+  TextField(-name     => $Name,     -helptext  => $HelpText, 
+            -helplink => $HelpLink, -required  => $Required, 
+            -size     => $Size,     -maxlength => $MaxLength,
+            -default  => $Default,  %Options);
   print "</div>\n";           
 };
 
-sub FullTopicScroll ($$;@) { # Scrolling selectable list for topics, all info
+sub FullTopicScroll ($$;@) { # V8OBS Scrolling selectable list for topics, all info
 
   #FIXME: Use TopicScroll
 
@@ -329,8 +333,8 @@ sub TopicScroll ($) {
     } elsif ($ItemFormat eq "long") {
       $TopicLabels{$ID} = CGI::escapeHTML($Spaces.$Topics{$ID}{Long}); 
     } elsif ($ItemFormat eq "full") {
-      $TopicLabels{$ID} = CGI::escapeHTML($Topics{$ID}{Short}.
-                                     " [".$Topics{$ID}{Long}."]"); 
+      $TopicLabels{$ID} = CGI::escapeHTML($Spaces.$Topics{$ID}{Short}.
+                                             " [".$Topics{$ID}{Long}."]"); 
     } 
   }  
 

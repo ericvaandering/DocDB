@@ -53,6 +53,7 @@ my $Untaint = CGI::Untaint -> new($query -> Vars);
 my $Password      = $Untaint -> extract (-as_printable => "password")    || "";
 my $Username      = $Untaint -> extract (-as_printable => "admuser")     || "";
 my $Action        = $Untaint -> extract (-as_printable => "admaction")   || "";
+my $Force         = $Untaint -> extract (-as_printable => "admforce")    || "";
 
 my $TopicID       = $Untaint -> extract (-as_integer   => "topics")      || 0;
 my $ParentTopicID = $Untaint -> extract (-as_integer   => "parenttopic") || 0;
