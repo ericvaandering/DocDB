@@ -357,7 +357,7 @@ sub DeleteTopic ($) {
   
   require "Messages.pm";
   require "TopicUtilities.pm";
-  
+
   unless ($TopicID) {
     push @WarnStack,$Msg_ModTopicEmpty;
     return 0;
@@ -370,15 +370,19 @@ sub DeleteTopic ($) {
   my @TopicDocIDs   = GetTopicDocuments($TopicID);
   my @ChildTopicIDs = @{$TopicChildren{$TopicID}};
 
+  my $Abort = $FALSE;
   if (@ChildTopicIDs && !$Force) {
     push @WarnStack,"Cannot delete a topic with sub-topic. Use the force option to delete this topic and all its children.";
-    return 0;
+    $Abort = $TRUE;
   }
   if (@TopicDocIDs && !$Force) {
     push @WarnStack,"Cannot delete a topic with associated with documents. Use the force option to delete this topic and all associations.";
-    return 0;
+    $Abort = $TRUE;
   }
   
+  if ($Abort) {
+    return 0;
+  }  
   # FIXME: EventTopics will need a similar check
 
   my $TopicDelete     = $dbh -> prepare("delete from Topic          where TopicID=?");
