@@ -263,12 +263,15 @@ sub GetTopicDocuments {
   my $DocumentList = $dbh -> prepare("select DocumentID from DocumentRevision where DocRevID=? and Obsolete=0"); 
   $RevisionList -> execute($TopicID);
   $RevisionList -> bind_columns(undef, \($DocRevID));
+  push @DebugStack,"Checking $TopicID";
 
   while ($RevisionList -> fetch) {
     &FetchDocRevisionByID($DocRevID);
+    push @DebugStack,"Is on revision $DocRevID";
     if ($DocRevisions{$DocRevID}{Obsolete}) {next;}
     $DocumentList -> execute($DocRevID);
     ($DocumentID) = $DocumentList -> fetchrow_array;
+    push @DebugStack,"Is on doc $DocumentID";
     $DocumentIDs{$DocumentID} = 1; # Hash removes duplicates
   }
   my @DocumentIDs = keys %DocumentIDs;

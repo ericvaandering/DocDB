@@ -96,20 +96,20 @@ if ($Action eq "Delete") {
 # Deal with name changes     
 
   if ($ShortName) { 
-    push @ActionStack,"<b>Updated short description of topic.";
+    push @ActionStack,"Updated short description of topic.";
     my $Update = $dbh -> prepare("update Topic set ShortDescription=? where TopicID=?");
     $Update -> execute($ShortName,$TopicID);
   }
   if ($LongName) { 
-    push @ActionStack,"<b>Updated long description of topic.";
+    push @ActionStack,"Updated long description of topic.";
     my $Update = $dbh -> prepare("update Topic set LongDescription=? where TopicID=?");
     $Update -> execute($LongName,$TopicID);
   }
 
-# Deal with Major Topic changes   
+# Deal with parent changes   
 
   if ($ParentTopicID) { 
-    push @ActionStack,"Updated partent topic of (sub)topic.";
+    push @ActionStack,"Updated parent topic of (sub)topic.";
    
     my $Delete = $dbh -> prepare("delete from TopicHierarchy where TopicID=?");
     my $Insert = $dbh -> prepare("insert into TopicHierarchy (TopicHierarchyID,TopicID,ParentTopicID) values (0,?,?)");
