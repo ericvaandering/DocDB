@@ -130,7 +130,7 @@ if ($Action eq "Delete") {
   } else {
     push @ActionStack,"New <span class=\"Highlight\">root-level topic</span> created with descriptions $ShortName and $LongName.";
   }
-} else {
+} elsif ($TopicID || $ParentTopicID || $LongName || $ShortName) { 
   push @WarnStack,"No valid action was specified.";
 }  
  

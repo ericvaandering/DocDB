@@ -465,6 +465,7 @@ sub TextField (%) {
   my $MaxLength = $Params{-maxlength} || 240;
   my $Disabled  = $Params{-disabled}  || $FALSE;
     
+  my %Options = ();  
   if ($Disabled) {
     $Options{-disabled} = "disabled";
   }  
@@ -475,11 +476,10 @@ sub TextField (%) {
                                        -text      => $Text     ,
                                        -nobreak   => $NoBreak  ,
                                        -required  => $Required ,
-                                       %Options,
                                       );
   print $ElementTitle,"\n";                                     
   print $query -> textfield (-name => $Name, -default   => $Default, 
-                             -size => $Size, -maxlength => $MaxLength, $Booleans);
+                             -size => $Size, -maxlength => $MaxLength, %Options,);
 } 
 
 sub TextArea (%) {  

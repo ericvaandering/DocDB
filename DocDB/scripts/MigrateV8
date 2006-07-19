@@ -103,16 +103,18 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                     KEY Separator (SessionSeparatorID)
                   )", # Not used yet in 8.0
                  "create table Suppress (
-                    SuppressID    int NOT NULL auto_increment,
-                    Type          varchar(32),
-                    ForeignID     int
-                    TextKey       varchar(255),
-                    ViewSetting   varchar(32),
-                    ModifySetting varchar(32),
-                    PRIMARY KEY   (SuppressID),
-                    KEY Type      (Type),
-                    KEY ForeignID (ForeignID),
-                    KEY TextKey   (TextKey)
+                    SuppressID      int NOT NULL auto_increment,
+                    SecurityGroupID int NOT NULL,
+                    Type            varchar(32),
+                    ForeignID       int,
+                    TextKey         varchar(255),
+                    ViewSetting     varchar(32),
+                    ModifySetting   varchar(32),
+                    PRIMARY KEY       (SuppressID),
+                    KEY SecurityGroup (SecurityGroupID),
+                    KEY Type          (Type),
+                    KEY Foreign       (ForeignID),
+                    KEY TextKey       (TextKey)
                   )", # Not used yet in 8.0
          );
          
