@@ -353,6 +353,7 @@ sub DeleteTopic ($) {
   my $Force   = exists $ArgRef->{-force}   ? $ArgRef->{-force}   : $FALSE;
   
   require "Messages.pm";
+  require "TopicUtilities.pm";
   
   unless ($TopicID) {
     push @WarnStack,$Msg_ModTopicEmpty;
