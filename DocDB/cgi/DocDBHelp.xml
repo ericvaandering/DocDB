@@ -1134,12 +1134,13 @@ or may not be the same as the web username and password.
  
  <entry> 
   <key>admforce</key> 
-  <title>Force admin action</title> 
+  <title>Force Delete</title> 
   <text>
-   Checking this box will force DocDB to take make the admin action regardless
-   of the consequences. Doing this may have unintended consequences or leave the
-   DB in an incoherent state. For instance, deleting a MajorTopic may cause its
-   sub-topics to also be deleted and leave some documents without any topics.
+   Checking this box will force DocDB to take the administration action
+   regardless of the consequences. Doing this may have unintended consequences
+   or leave the DB in an incoherent state. For instance, deleting a topic will
+   cause its sub-topics to also be deleted and may leave some documents without
+   any topics.
   </text> 
  </entry>
  

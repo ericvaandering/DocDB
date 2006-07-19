@@ -164,8 +164,6 @@ $XSearch               = $cgi_root."XSearch";
 $Search                = $cgi_root."Search";
 $SearchForm            = $cgi_root."SearchForm";
 
-$TopicAddForm          = $cgi_root."TopicAddForm";
-$TopicAdd              = $cgi_root."TopicAdd";
 $AuthorAddForm         = $cgi_root."AuthorAddForm";
 $AuthorAdd             = $cgi_root."AuthorAdd";
 
@@ -196,7 +194,6 @@ $AdministerForm        = $cgi_root."AdministerForm";
 $AuthorAdminister      = $cgi_root."AuthorAdminister";
 $InstitutionAdminister = $cgi_root."InstitutionAdminister";
 $TopicAdminister       = $cgi_root."TopicAdminister";
-$MajorTopicAdminister  = $cgi_root."MajorTopicAdminister";
 $DocTypeAdminister     = $cgi_root."DocTypeAdminister";
 $JournalAdminister     = $cgi_root."JournalAdminister";
 $ConferenceAdminister  = $cgi_root."ConferenceAdminister";

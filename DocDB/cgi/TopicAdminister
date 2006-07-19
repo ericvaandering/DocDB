@@ -82,89 +82,67 @@ EndPage();
 GetTopics();
 
 if      ($Action eq "Delete") {
-  unless ($TopicID) {
-    push @ErrorStack,$Msg_ModTopicEmpty;
-  }
-  EndPage();
-  my $TopicLink     = MinorTopicLink({-topicid => $TopicID});
-  my @TopicDocIDs   = GetTopicDocuments($TopicID);
-  my @ChildTopicIDs = @{$TopicChildren{$TopicID}};
-# Delete TopicID from Topic, Conference, RevisionTopic tables
-  
-  my $TopicDelete      = $dbh -> prepare("delete from MinorTopic    where MinorTopicID=?");
-  my $ConferenceDelete = $dbh -> prepare("delete from Conference    where MinorTopicID=?");
-  my $RevisionDelete   = $dbh -> prepare("delete from RevisionTopic where MinorTopicID=?");
-#  $TopicDelete      -> execute($TopicID);
-#  $ConferenceDelete -> execute($TopicID);
-#  $RevisionDelete   -> execute($TopicID);
-  
-  print "$TopicLink has been removed from the database.<br>\n";
-  if (@TopicDocIDs) {
-    push @WarnStack,"$TopicLink was a topic on some documents. These
-                     entries have been removed.";
-  }  
+  # FIXME?: Force option is not going to be compatible with children with 
+  # multiple parents In that case we would need to determine if any topics
+  # would be orphaned and  then delete those, but not ones with another
+  # parent
+
+  DeleteTopic({ -topicid => $EventGroupID, -force => $Force });
 } elsif ($Action eq "Modify") {
   unless ($TopicID) {
-    push @ErrorStack,$Msg_ModTopicEmpty;
+    push @WarnStack,$Msg_ModTopicEmpty;
   }
   EndPage();
 
 # Deal with name changes     
 
   if ($ShortName) { 
-    print "<b>Updating short topic name.</b><br>\n";
-    my $TopicUpdate = $dbh->prepare(
-       "update MinorTopic set ShortDescription=? where MinorTopicID=?");
-    $TopicUpdate -> execute($ShortName,$TopicID);
+    push @ActionStack,"<b>Updated short description of topic.";
+    my $Update = $dbh -> prepare("update Topic set ShortDescription=? where TopicID=?");
+    $Update -> execute($ShortName,$TopicID);
   }
   if ($LongName) { 
-    print "<b>Updating long topic name.</b><br>\n";
-    my $TopicUpdate = $dbh->prepare(
-       "update MinorTopic set LongDescription=? where MinorTopicID=?");
-    $TopicUpdate -> execute($LongName,$TopicID);
+    push @ActionStack,"<b>Updated long description of topic.";
+    my $Update = $dbh -> prepare("update Topic set LongDescription=? where TopicID=?");
+    $Update -> execute($LongName,$TopicID);
   }
 
 # Deal with Major Topic changes   
 
-  if ($MajorTopicID) { 
-    print "<b>Updating Major Topic for Minor Topic.</b><br>\n";
-    my $TopicUpdate = $dbh->prepare(
-     "update MinorTopic set MajorTopicID=? where MinorTopicID=?");
-    $TopicUpdate -> execute($MajorTopicID,$TopicID);
+  if ($ParentTopicID) { 
+    push @ActionStack,"Updated partent topic of (sub)topic.";
+   
+    my $Delete = $dbh -> prepare("delete from TopicHierarchy where TopicID=?");
+    my $Insert = $dbh -> prepare("insert into TopicHierarchy (TopicHierarchyID,TopicID,ParentTopicID) values (0,?,?)");
+   
+    $Delete -> execute($TopicID);
+    $Insert -> execute($TopicID,$ParentTopicID);
   }
 } elsif ($Action eq "New") {
-  print "<b>Adding a new topic.</b><br>\n";
-  my $TopicInsert = $dbh->prepare(
-   "insert into MinorTopic ".
-          "(MinorTopicID, MajorTopicID, ShortDescription, LongDescription) ". 
-   "values (0,            ?,            ?,                ?)");
+  my $TopicInsert = $dbh -> prepare("insert into Topic ".
+                    "(TopicID, ShortDescription, LongDescription) values (0,?,?)");
 
-  $TopicInsert -> execute($MajorTopicID,$ShortName,$LongName);
-  $TopicID = $TopicInsert -> {mysql_insertid}; # Works with MySQL only
+  $TopicInsert -> execute($ShortName,$LongName);
+  if ($ParentID) {
+    my $Insert = $dbh -> prepare("insert into TopicHierarchy (TopicHierarchyID,TopicID,ParentTopicID) values (0,?,?)");
+    $Insert -> execute($TopicID,$ParentTopicID);
+    push @ActionStack,"New sub-topic created with descriptions $ShortName and $LongName.";
+  } else {
+    push @ActionStack,"New <span class=\"Highlight\">root-level topic</span> created with descriptions $ShortName and $LongName.";
+  }
+} else {
+  push @WarnStack,"No valid action was specified.";
 }  
-
-# For modify or new fetch information and display.
-
-if ($Action eq "Modify" || $Action eq "New") {
-  GetTopics();
-
-  print "<p><b>Here are the results of your modification:<br>\n";
-  my $ShortLink = MinorTopicLink($TopicID,"short");
-  my $LongLink  = MinorTopicLink($TopicID,"long");
-  print "Short description: $ShortLink<br>\n";
-  print "Long description: $LongLink<br>\n";
-  print "</b><p>\n";
-}  
-
+ 
 if (@ActionStack) { 
   ClearTopics();
   GetTopics();
+  ActionReport();
 }  
 
 EndPage();
 
-print $query -> start_multipart_form('POST',"$TopicAdminister",
-                                    "id=\"topic\" name=\"topic\"");
+print $query -> start_multipart_form('POST',"$TopicAdminister",'id="topic" name="topic"');
 
 print "<table class=\"MedPaddedTable\">\n";
 print "<tr>\n";

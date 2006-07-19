@@ -57,7 +57,7 @@ sub AdministratorPassword {
 sub AdminRegardless {
   require "FormElements.pm";
 
-  print FormElementTitle(-helplink => "admforce", -helptext => "Force Action");
+  print FormElementTitle(-helplink => "admforce", -helptext => "Force Delete");
   print $query -> checkbox(-name => "admforce", -value => 1, -label => 'Yes');
 }  
 

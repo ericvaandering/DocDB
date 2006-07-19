@@ -347,4 +347,63 @@ sub InsertTopics (%) {# V8OBS
   return $Count;
 }
 
+sub DeleteTopic ($) {
+  my ($ArgRef) = @_;
+  my $TopicID = exists $ArgRef->{-topicid} ? $ArgRef->{-topicid} : 0;
+  my $Force   = exists $ArgRef->{-force}   ? $ArgRef->{-force}   : $FALSE;
+  
+  require "Messages.pm";
+  
+  unless ($TopicID) {
+    push @WarnStack,$Msg_ModTopicEmpty;
+    return 0;
+  }
+  unless (FetchTopic({ -topicid => $TopicID })) {
+    push @WarnStack,"Topic does not exist";
+    return 0;
+  }
+
+  my @TopicDocIDs   = GetTopicDocuments($TopicID);
+  my @ChildTopicIDs = @{$TopicChildren{$TopicID}};
+
+  if (@ChildTopicIDs && !$Force) {
+    push @WarnStack,"Cannot delete a topic with sub-topic. Use the force option to delete this topic and all its children.";
+    return 0;
+  }
+  if (@TopicDocIDs && !$Force) {
+    push @WarnStack,"Cannot delete a topic with associated with documents. Use the force option to delete this topic and all associations.";
+    return 0;
+  }
+  
+  # FIXME: EventTopics will need a similar check
+
+  my $TopicDelete     = $dbh -> prepare("delete from Topic          where TopicID=?");
+  my $RevisionDelete  = $dbh -> prepare("delete from RevisionTopic  where TopicID=?");
+  my $HintDelete      = $dbh -> prepare("delete from TopicHint      where TopicID=?");
+  my $EventDelete     = $dbh -> prepare("delete from EventTopic     where TopicID=?");
+  my $HierarchyDelete = $dbh -> prepare("delete from TopicHierarchy where TopicID=?");
+  my $ParentDelete    = $dbh -> prepare("delete from TopicHierarchy where ParentTopicID=?");
+  my $NotifyDelete    = $dbh -> prepare("delete from Notification   where Type='Topic' and ForeignID=?");
+  my $ConfigDelete    = $dbh -> prepare("delete from ConfigSetting  where ConfigGroup='CustomField
+                                         and Sub1Group='TopicID' and ForeignID=?");
+
+  my @TopicIDs = TopicAndSubTopics({ -topicid => $TopicID });
+  foreach my $DeleteID (@TopicIDs) {
+    $TopicDelete     -> execute($DeleteID);
+    $RevisionDelete  -> execute($DeleteID);
+    $HintDelete      -> execute($DeleteID);
+    $EventDelete     -> execute($DeleteID);
+    $HierarchyDelete -> execute($DeleteID);
+    $ParentDelete    -> execute($DeleteID);
+    $NotifyDelete    -> execute($DeleteID);
+    $ConfigDelete    -> execute($DeleteID);
+  }
+  
+  if ($Force) {  
+    push @ActionStack,"Topic <strong>$Topics{$TopicID}{LongDescription}</strong>, all sub-topics, all associations, and all associations to sub-topics deleted.";
+  } else {
+    push @ActionStack,"Topic <strong>$Topics{$TopicID}{LongDescription}</strong> deleted.";
+  }
+  return 1;    
+}
 1;
