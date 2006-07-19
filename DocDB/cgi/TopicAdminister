@@ -87,7 +87,7 @@ if ($Action eq "Delete") {
   # would be orphaned and  then delete those, but not ones with another
   # parent
 
-  DeleteTopic({ -topicid => $EventGroupID, -force => $Force });
+  DeleteTopic({ -topicid => $TopicID, -force => $Force });
 } elsif ($Action eq "Modify") {
   unless ($TopicID) {
     push @WarnStack,$Msg_ModTopicEmpty;
