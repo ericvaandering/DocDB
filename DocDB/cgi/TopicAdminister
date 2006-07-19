@@ -73,7 +73,7 @@ if ($Password && $Username) {
 EndPage(-startpage => $TRUE);
 
 print $query -> header;
-DocDBHeader("Topic Administration");
+DocDBHeader("Topic Administration","",-scripts => ["PopUps","TopicAdminDisable"]);
 
 unless (CanAdminister()) {
   push @ErrorStack,$Msg_AdminNoLogin;
@@ -81,7 +81,7 @@ unless (CanAdminister()) {
 EndPage();
 GetTopics();
 
-if      ($Action eq "Delete") {
+if ($Action eq "Delete") {
   # FIXME?: Force option is not going to be compatible with children with 
   # multiple parents In that case we would need to determine if any topics
   # would be orphaned and  then delete those, but not ones with another
@@ -92,7 +92,6 @@ if      ($Action eq "Delete") {
   unless ($TopicID) {
     push @WarnStack,$Msg_ModTopicEmpty;
   }
-  EndPage();
 
 # Deal with name changes     
 

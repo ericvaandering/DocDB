@@ -4,7 +4,10 @@ Inserters for new notifications, new scheme for readback
 Test all notifications
 Do hinting with new topics
 Figure out how to do fields with new topics (paying attention to provenance)
-Remove or redo prefs for topic entry form
+Remove or redo prefs for topic entry form (just redo multi-topic select)
+Make new admin routine so something.
+Don't forget to check things in scripts to make sure 
+  they all work and use the new routines.
 
 Database structures allow for a number of things that aren't currently supported
 by the code:
