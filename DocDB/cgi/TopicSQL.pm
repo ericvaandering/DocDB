@@ -385,7 +385,7 @@ sub DeleteTopic ($) {
   my $HierarchyDelete = $dbh -> prepare("delete from TopicHierarchy where TopicID=?");
   my $ParentDelete    = $dbh -> prepare("delete from TopicHierarchy where ParentTopicID=?");
   my $NotifyDelete    = $dbh -> prepare("delete from Notification   where Type='Topic' and ForeignID=?");
-  my $ConfigDelete    = $dbh -> prepare("delete from ConfigSetting  where ConfigGroup='CustomField
+  my $ConfigDelete    = $dbh -> prepare("delete from ConfigSetting  where ConfigGroup='CustomField'
                                          and Sub1Group='TopicID' and ForeignID=?");
 
   my @TopicIDs = TopicAndSubTopics({ -topicid => $TopicID });

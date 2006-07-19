@@ -122,6 +122,7 @@ if ($Action eq "Delete") {
                     "(TopicID, ShortDescription, LongDescription) values (0,?,?)");
 
   $TopicInsert -> execute($ShortName,$LongName);
+  my $TopicID = $TopicInsert -> {mysql_insertid};
   if ($ParentTopicID) {
     my $Insert = $dbh -> prepare("insert into TopicHierarchy (TopicHierarchyID,TopicID,ParentTopicID) values (0,?,?)");
     $Insert -> execute($TopicID,$ParentTopicID);
