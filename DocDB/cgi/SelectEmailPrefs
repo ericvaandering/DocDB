@@ -461,7 +461,7 @@ print "<hr/><a name=\"documents\"/><h3>Notification for Individual Documents</h3
 
 print "<table class=\"HighPaddedTable\">\n";
 print "<tr><td>\n";
-TextArea(-name => "immediate_documents", -helptext => "Immediate", -helplink => "notifiydocument", 
+TextArea(-name => "immediate_documents", -helptext => "Immediate", -helplink => "notifydocument", 
          -columns => 80, -default => join ' ',sort numerically @{$Notifications{$EmailUserID}{Document_Immediate}});
 print "</td></tr></table>\n";
 
