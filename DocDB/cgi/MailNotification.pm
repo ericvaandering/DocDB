@@ -353,7 +353,7 @@ sub EmailKeywordForm ($) {
   print FormElementTitle(-helplink  => "notifykeyword", -helptext => $Period, 
                          -extratext => "(separate with spaces)");
 
-  my $Keywords = join ' ',@Defaults;
+  my $Keywords = join ' ',sort @Defaults;
 
   print $query -> textfield (-name => $Name , -default   => $Keywords, 
                              -size => 80,     -maxlength => 400);
@@ -370,10 +370,6 @@ sub DisplayNotification ($$;$) {
 
   FetchNotifications( {-emailuserid => $EmailUserID} );
 
-#V8OBS
-
-  FetchKeywordNotification($EmailUserID,$Set);
-  
   my @AuthorIDs     = @{$Notifications{$EmailUserID}{"Author_".$Set}};
   my @TopicIDs      = @{$Notifications{$EmailUserID}{"Topic_".$Set}};
   my @EventIDs      = @{$Notifications{$EmailUserID}{"Event_".$Set}};
@@ -395,7 +391,7 @@ sub DisplayNotification ($$;$) {
     return;
   }
   
-  if ($NotifyAllTopics) {
+  if ($NotifyAllTopics) { # FIXME
     print "<li>All documents</li>\n";  
   }  
   
@@ -406,8 +402,6 @@ sub DisplayNotification ($$;$) {
   foreach my $AuthorID (@AuthorIDs) {
     print "<li> Author: ",AuthorLink($AuthorID),"</li>";
   }
-    
-  # FIXME: Make rest like this  
     
   foreach my $EventID (@EventIDs) {
     print "<li>Event: ",EventLink(-eventid => $EventID),"</li>";
@@ -424,26 +418,6 @@ sub DisplayNotification ($$;$) {
   print "</ul>\n";  
 }
 
-sub NotifyAuthorSelect ($) { 
-  require "FormElements.pm";
-
-  my ($Set) = @_;
-
-  print "<td>\n";
-  print FormElementTitle(-helplink => "notifyauthor", -helptext => $Set);
-
-  my @AuthorIDs = sort byLastName keys %Authors;
-  my %AuthorLabels = ();
-  foreach my $ID (@AuthorIDs) {
-    $AuthorLabels{$ID} = $Authors{$ID}{FULLNAME};
-  }  
-  print $query -> scrolling_list(-name => "author$Set", -values => \@AuthorIDs, 
-                                 -labels => \%AuthorLabels,  
-                                 -size => 10, -default => \@NotifyAuthorIDs,
-                                 -multiple => 'true');
-  print "</td>\n";
-}
-  
 sub EmailUserSelect (%) {
   require "Sorts.pm";
   my (%Params) = @_;
