@@ -351,7 +351,7 @@ if (@WatchDocumentIDs) {
   print "<h4>You are watching these individual documents:</h4>\n";
 }
 my %FieldList = PrepareFieldList(-default => "Default");
-my $NDocs = DocumentTable(-fieldlist => \%FieldList, -docids => \@WatchDocumentIDs -sortby => 'docid');  
+my $NDocs = DocumentTable(-fieldlist => \%FieldList, -docids => \@WatchDocumentIDs, -sortby => 'docid');  
 
 print "<hr/><table class=\"CenteredTable\">\n";
 print "<tr><td>";
