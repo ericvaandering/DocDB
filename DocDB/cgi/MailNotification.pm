@@ -342,13 +342,6 @@ sub UsersToNotify ($$) {
   return @Addressees;
 }
 
-sub EmailTopicForm ($$) {
-  require "NotificationSQL.pm";
-  my ($EmailUserID,$Set) = @_;
-  &FetchTopicNotification($EmailUserID,$Set);
-  &NotifyTopicSelect($Set);
-}
-
 sub EmailAuthorForm ($$) {
   require "NotificationSQL.pm";
   my ($EmailUserID,$Set) = @_;
@@ -375,10 +368,11 @@ sub DisplayNotification ($$;$) {
 
 #V8OBS
 
-  FetchTopicNotification($EmailUserID,$Set);
+#  FetchTopicNotification($EmailUserID,$Set);
   FetchAuthorNotification($EmailUserID,$Set);
   FetchKeywordNotification($EmailUserID,$Set);
   
+  my @TopicIDs      = @{$Notifications{$EmailUserID}{"Topic_".$Set}};
   my @EventIDs      = @{$Notifications{$EmailUserID}{"Event_".$Set}};
   my @EventGroupIDs = @{$Notifications{$EmailUserID}{"EventGroup_".$Set}};
   
@@ -402,16 +396,8 @@ sub DisplayNotification ($$;$) {
     print "<li>All documents</li>\n";  
   }  
   
-  if (@NotifyMajorIDs) {
-    foreach my $MajorID (@NotifyMajorIDs) {
-      print "<li> Topic: ",MajorTopicLink($MajorID),"</li>";
-    }
-  }
-    
-  if (@NotifyMinorIDs) {
-    foreach my $MinorID (@NotifyMinorIDs) {
-      print "<li> Subtopic: ",MinorTopicLink($MinorID),"</li>";
-    }
+  foreach my $TopicID (@TopicIDs) {
+    print "<li>Topic: ",TopicLink({ -topicid => $TopicID }),"</li>";
   }
     
   if (@NotifyAuthorIDs) {
@@ -437,48 +423,6 @@ sub DisplayNotification ($$;$) {
   }
     
   print "</ul>\n";  
-}
-
-sub NotifyTopicSelect ($) { # Check for all, boxes for major and minor topics
-
-  require "FormElements.pm";
-
-  my ($Set) = @_;
-
-  print "<td>\n";
-  print FormElementTitle(-helplink => "notifytopic", -helptext => $Set);
-  if ($NotifyAllTopics) {
-    print $query -> checkbox(-name => "all$Set", -checked => 'checked', -value => 1, -label => '');
-  } else {
-    print $query -> checkbox(-name => "all$Set", -value => 1, -label => '');
-  }                             
-  print "<b> All Topics</b> ";
-  print "</td>\n";
-
-  print "<td>\n";
-  my @MajorIDs = sort byMajorTopic keys %MajorTopics;
-  my %MajorLabels = ();
-  foreach my $ID (@MajorIDs) {
-    $MajorLabels{$ID} = $MajorTopics{$ID}{SHORT};
-  }  
-  print $query -> scrolling_list(-name => "majortopic$Set", -values => \@MajorIDs, 
-                                 -labels => \%MajorLabels,  
-                                 -size => 10, -default => \@NotifyMajorIDs,
-                                 -multiple => 'true');
-  print "</td>\n";
-  
-  print "<td colspan=\"2\">\n";
-  my @MinorIDs = sort byTopic keys %MinorTopics;
-  my %MinorLabels = ();
-  foreach my $ID (@MinorIDs) {
-    $MinorLabels{$ID} = $MinorTopics{$ID}{Full};
-  }  
-  
-  print $query -> scrolling_list(-name => "minortopic$Set", -values => \@MinorIDs, 
-                                 -labels => \%MinorLabels,  
-                                 -size => 10, -default => \@NotifyMinorIDs,
-                                 -multiple => 'true');
-  print "</td>\n";
 }
 
 sub NotifyAuthorSelect ($) { 

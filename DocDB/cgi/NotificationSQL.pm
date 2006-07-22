@@ -208,45 +208,6 @@ sub FetchKeywordNotification ($$) { #V8OBS
   $NotifyKeywords = join ' ',@NotifyKeywords;
 }
 
-sub SetTopicNotifications ($$) { #V8OBS
-  my ($EmailUserID,$Set) = @_;
-
-  my $Table = "EmailTopic$Set";  # Tables    for immediate, daily, weekly 
-  my $Field = $Set."EmailID";    # ID fields for immediate, daily, weekly  
-  
-# Delete all old notifications  
-  
-  my $Delete = $dbh -> prepare("delete from $Table where EmailUserID=?");
-     $Delete -> execute($EmailUserID);
-
-# Get parameters from input
-
-  my $AllTopics = $params{"all$Set"};
-  my @MinorIDs  = split /\0/,$params{"minortopic$Set"};
-  my @MajorIDs  = split /\0/,$params{"majortopic$Set"};
-
-# Insert into relevant tables
-
-  if ($AllTopics) {
-    my $AllInsert = $dbh -> prepare(
-      "insert into $Table ($Field,EmailUserID,MinorTopicID,MajorTopicID) ".
-      "            values (0,     ?,          0,           0)");
-    $AllInsert -> execute($EmailUserID); 
-  }
-  foreach my $MinorID (@MinorIDs) {
-    my $MinorInsert = $dbh -> prepare(
-      "insert into $Table ($Field,EmailUserID,MinorTopicID) ".
-      "            values (0,     ?,          ?)");
-    $MinorInsert -> execute($EmailUserID,$MinorID); 
-  }   
-  foreach my $MajorID (@MajorIDs) {
-    my $MajorInsert = $dbh -> prepare(
-      "insert into $Table ($Field,EmailUserID,MajorTopicID) ".
-      "            values (0,     ?,          ?)");
-    $MajorInsert -> execute($EmailUserID,$MajorID); 
-  }   
-}
-  
 sub SetKeywordNotifications ($$) { #V8OBS
   my ($EmailUserID,$Set) = @_;
 
