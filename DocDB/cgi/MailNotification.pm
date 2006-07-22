@@ -364,6 +364,7 @@ sub DisplayNotification ($$;$) {
 
   require "NotificationSQL.pm";
   require "AuthorHTML.pm";
+  require "KeywordHTML.pm";
   require "MeetingHTML.pm";
   require "TopicHTML.pm";
 
@@ -377,11 +378,11 @@ sub DisplayNotification ($$;$) {
   my @TopicIDs      = @{$Notifications{$EmailUserID}{"Topic_".$Set}};
   my @EventIDs      = @{$Notifications{$EmailUserID}{"Event_".$Set}};
   my @EventGroupIDs = @{$Notifications{$EmailUserID}{"EventGroup_".$Set}};
+  my @Keywords      = @{$Notifications{$EmailUserID}{"Keyword_".$Set}};
   
-  my $NewNotify = (@EventIDs || @EventGroupIDs);
+  my $NewNotify = (@AuthorIDs || @TopicIDs || @EventIDs || @EventGroupIDs || @Keywords);
                     
-  if ($NotifyAllTopics || @NotifyMajorIDs || @NotifyMinorIDs ||
-      @NotifyAuthorIDs || @NotifyKeywords || $NewNotify) {
+  if ($NotifyAllTopics || $NewNotify) {
     print "<b>$Set notifications:</b>\n";  
     print "<ul>\n";  
   } elsif ($Always) {
@@ -416,12 +417,10 @@ sub DisplayNotification ($$;$) {
     print "<li>Event Group: ",EventGroupLink(-eventgroupid => $EventGroupID),"</li>";
   }
 
-  if (@NotifyKeywords) {
-    foreach my $Keyword (@NotifyKeywords) {
-      print "<li>Keyword: $Keyword</li>";
-    }
+  foreach my $Keyword (@Keywords) {
+    print "<li>Keyword: ",KeywordLink($Keyword),</li>";
   }
-    
+     
   print "</ul>\n";  
 }
 

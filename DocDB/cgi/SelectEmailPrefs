@@ -81,6 +81,14 @@ my @ImmediateAuthorIDs     = split /\0/,$params{immediate_authors};
 my @DailyAuthorIDs         = split /\0/,$params{daily_authors};
 my @WeeklyAuthorIDs        = split /\0/,$params{weekly_authors};
 
+my $ImmediateKeywords      = $params{immediate_keywords};
+my $DailyKeywords          = $params{daily_keywords};
+my $WeeklyKeywords         = $params{weekly_keywords};
+
+$ImmediateKeywords =~ s/,/ /g; my @ImmediateKeywords = split /\s+/,$ImmediateKeywords;
+$DailyKeywords     =~ s/,/ /g; my @DailyKeywords     = split /\s+/,$DailyKeywords    ;
+$WeeklyKeywords    =~ s/,/ /g; my @WeeklyKeywords    = split /\s+/,$WeeklyKeywords   ;
+
 $UserName =~ s/\s+//g;
 $Password =~ s/\s+//g;
 
@@ -233,10 +241,6 @@ if ($Mode eq "update") {
     
 # Delete old and Insert new notifications
 
-  SetKeywordNotifications($EmailUserID,"Immediate");  
-  SetKeywordNotifications($EmailUserID,"Daily");  
-  SetKeywordNotifications($EmailUserID,"Weekly");  
-
 # FIXME: Move all notifications here, including document specific ones
 
   DeleteNotifications( {-emailuserid => $EmailUserID} );
@@ -276,6 +280,14 @@ if ($Mode eq "update") {
                                 -ids => \@DailyEventGroupIDs,     -period => "Daily",} );
   InsertNotifications( {-emailuserid => $EmailUserID,             -type   => "EventGroup", 
                                 -ids => \@WeeklyEventGroupIDs,    -period => "Weekly",} );
+# Keywords        
+                                
+  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Keyword", 
+                           -textkeys => \@ImmediateKeywords, -period => "Immediate",} );
+  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Keyword", 
+                           -textkeys => \@DailyKeywords,     -period => "Daily",} );
+  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Keyword", 
+                           -textkeys => \@WeeklyKeywords,    -period => "Weekly",} );
 }  
 
 # Clear (are refetched in DisplayNotification)
@@ -454,10 +466,16 @@ print "</tr></table>\n";
 
 print "<hr/><a name=\"keyword\"/><h3>Notification by Keywords</h3>\n";
 print "<table class=\"HighPaddedTable\">\n";
-EmailKeywordForm($EmailUserID,"Immediate");
-EmailKeywordForm($EmailUserID,"Daily");
-EmailKeywordForm($EmailUserID,"Weekly");
-print "</table>\n";
+print "<tr><td>\n";
+EmailKeywordForm({ -name    => "immediate_keywords", -period => "Immediate", 
+                   -default => $Notifications{$EmailUserID}{Keyword_Immediate}, });
+print "</td></tr><tr><td>\n";
+EmailKeywordForm({ -name    => "daily_keywords", -period => "Daily", 
+                   -default => $Notifications{$EmailUserID}{Keyword_Daily}, });
+print "</td></tr><tr><td>\n";
+EmailKeywordForm({ -name    => "weekly_keywords", -period => "Weekly", 
+                   -default => $Notifications{$EmailUserID}{Keyword_Weekly}, });
+print "</td></tr></table>\n";
 
 print "<table class=\"HighPaddedTable CenteredTable\">\n";
 print "<tr><td>";
