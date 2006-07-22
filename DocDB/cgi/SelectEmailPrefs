@@ -45,6 +45,7 @@ require "TopicSQL.pm";
 
 require "DocumentHTML.pm";
 require "MeetingHTML.pm";
+require "TopicHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
@@ -326,11 +327,12 @@ print "<a name=\"topic\"/><h3>Notification by Topics</h3>\n";
 
 print "<table class=\"HighPaddedTable\">\n";
 print "<tr>";
-EmailTopicForm($EmailUserID,"Immediate");
-print "</tr><tr>\n";
-EmailTopicForm($EmailUserID,"Daily");
-print "</tr><tr>\n";
-EmailTopicForm($EmailUserID,"Weekly");
+print "<td>";  
+TopicScroll({ -helptext   => "Daily", -helplink => "notifytopic", 
+              -itemformat => "short", -multiple => $TRUE, 
+              -name       => "daily_topics",
+            }); 
+print "</td>\n";
 print "</tr>\n";
 print "</table>\n";
 
