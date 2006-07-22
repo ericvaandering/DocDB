@@ -331,21 +331,21 @@ print "<td>";
 TopicScroll({ -helptext   => "Immediate", -helplink => "notifytopic", 
               -itemformat => "short", -multiple => $TRUE, 
               -name       => "immediate_topics",
-              -default    => $Notifications{$EmailUserID}{Topic_Immediate}},
+              -default    => $Notifications{$EmailUserID}{Topic_Immediate},
             }); 
 print "</td>\n";
 print "<td>";  
 TopicScroll({ -helptext   => "Daily", -helplink => "notifytopic", 
               -itemformat => "short", -multiple => $TRUE, 
               -name       => "daily_topics",
-              -default    => $Notifications{$EmailUserID}{Topic_Daily}},
+              -default    => $Notifications{$EmailUserID}{Topic_Daily},
             }); 
 print "</td>\n";
 print "<td>";  
 TopicScroll({ -helptext   => "Weekly", -helplink => "notifytopic", 
               -itemformat => "short", -multiple => $TRUE, 
               -name       => "weekly_topics",
-              -default    => $Notifications{$EmailUserID}{Topic_Weekly}},
+              -default    => $Notifications{$EmailUserID}{Topic_Weekly},
             }); 
 print "</td>\n";
 print "</tr>\n";
