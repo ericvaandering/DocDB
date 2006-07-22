@@ -225,7 +225,7 @@ sub TopicScroll ($) {
   
   foreach my $ID (@ActiveIDs) {
     # Can't use &nbsp; since some calls to scrolling_list double escape things. Very odd.
-    my $Spaces = '-'x(1*(scalar(@{$TopicProvenance{$ID}})-1));
+    my $Spaces = '&nbsp;&nbsp;'x(1*(scalar(@{$TopicProvenance{$ID}})-1));
   
     if ($ItemFormat eq "short") {
       $TopicLabels{$ID} = $Spaces.CGI::escapeHTML($Topics{$ID}{Short}); 
@@ -240,11 +240,13 @@ sub TopicScroll ($) {
   print FormElementTitle(-helplink  => $HelpLink, -helptext  => $HelpText ,
                          -text      => $Text    , -extratext => $ExtraText,
                          -required  => $Required);
+  $query ->  autoEscape(0);
 
   print $query -> scrolling_list(-name     => $Name, -values => \@ActiveIDs, 
                                  -size     => $Size, -labels => \%TopicLabels,
                                  -multiple => $Multiple,
                                  -default  => \@Defaults, %Options);  
+  $query ->  autoEscape(1);
 }
 
 1;
