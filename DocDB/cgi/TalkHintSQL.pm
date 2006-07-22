@@ -26,7 +26,7 @@ sub InsertTopicHints ($@) {
   my ($SessionTalkID,@TopicHints) = @_;
   
   my $HintDelete = $dbh -> prepare("delete from TopicHint where SessionTalkID=?");   
-  my $HintInsert = $dbh -> prepare("insert into TopicHint (TopicHintID, SessionTalkID, MinorTopicID) values (0,?,?)");
+  my $HintInsert = $dbh -> prepare("insert into TopicHint (TopicHintID, SessionTalkID, TopicID) values (0,?,?)");
  
   $HintDelete -> execute($SessionTalkID);
   foreach my $TopicHint (@TopicHints) {
@@ -55,7 +55,7 @@ sub DeleteHints ($) {
   $TopicDelete  -> execute($SessionTalkID);
 }
 
-sub FetchTopicHintsBySessionTalkID ($) {
+sub FetchTopicHintsBySessionTalkID ($) { #V8OBS
   my ($SessionTalkID) = @_;
 
   my ($TopicHintID,$MinorTopicID,$TimeStamp); 

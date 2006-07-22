@@ -258,35 +258,6 @@ sub LongDescriptionBox (;%) {
   print "</div>\n";           
 };
 
-sub FullTopicScroll ($$;@) { # V8OBS Scrolling selectable list for topics, all info
-
-  #FIXME: Use TopicScroll
-
-  my ($Multiple,$ElementName,@Defaults) = @_;
-
-  require "TopicSQL.pm";
-  
-  unless ($GotAllTopics) {
-    &GetTopics;
-  }
-  
-  if ($Multiple) {
-    $Multiple = "true";
-  } else { 
-    $Multiple = "false";
-  }  
-  
-  my @TopicIDs = sort byTopic keys %MinorTopics;
-  my %TopicLabels = ();
-  foreach my $ID (@TopicIDs) {
-    $TopicLabels{$ID} = &SafeHTML($MinorTopics{$ID}{Full}); 
-  }  
-  print $query -> scrolling_list(-name => $ElementName, -values => \@TopicIDs, 
-                                 -labels => \%TopicLabels,
-                                 -size => 10, -multiple => $Multiple,
-                                 -default => \@Defaults);
-};
-
 sub TopicScroll ($) {
   require "TopicSQL.pm";
   require "TopicUtilities.pm";
