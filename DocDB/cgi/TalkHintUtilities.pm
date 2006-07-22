@@ -197,7 +197,7 @@ sub TalkMatches ($$@) {
     my $TopicMatches = 0;
     foreach my $RevTopic (@RevTopics) {
       foreach my $TopicHintID (@TopicHintIDs) {
-        my $HintTopic = $TopicHints{$TopicHintID}{MinorTopicID};
+        my $HintTopic = $TopicHints{$TopicHintID}{TopicID};
         if ($HintTopic == $RevTopic) {
           ++$TopicMatches;
         }   

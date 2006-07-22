@@ -87,7 +87,7 @@ sub TalkEntryForm (@) {
         
         my @TopicHintIDs = &FetchTopicHintsBySessionTalkID($SessionTalkID);
         foreach my $TopicHintID (@TopicHintIDs) {
-          push @TalkDefaultTopicHints,$TopicHints{$TopicHintID}{MinorTopicID};
+          push @TalkDefaultTopicHints,$TopicHints{$TopicHintID}{TopicID};
         }
         my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID);
         foreach my $AuthorHintID (@AuthorHintIDs) {

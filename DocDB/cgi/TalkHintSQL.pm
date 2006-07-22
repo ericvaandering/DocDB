@@ -58,16 +58,16 @@ sub DeleteHints ($) {
 sub FetchTopicHintsBySessionTalkID ($) { #V8OBS
   my ($SessionTalkID) = @_;
 
-  my ($TopicHintID,$MinorTopicID,$TimeStamp); 
+  my ($TopicHintID,$TopicID,$TimeStamp); 
   my $TopicHintList   = $dbh -> prepare(
-    "select TopicHintID,MinorTopicID,TimeStamp from TopicHint where SessionTalkID=?");
+    "select TopicHintID,TopicID,TimeStamp from TopicHint where SessionTalkID=?");
   my @TopicHintIDs = ();
   $TopicHintList -> execute($SessionTalkID);
-  $TopicHintList -> bind_columns(undef, \($TopicHintID,$MinorTopicID,$TimeStamp));
+  $TopicHintList -> bind_columns(undef, \($TopicHintID,$TopicID,$TimeStamp));
 
   while ($TopicHintList -> fetch) {
     $TopicHints{$TopicHintID}{SessionTalkID} = $SessionTalkID;
-    $TopicHints{$TopicHintID}{MinorTopicID}  = $MinorTopicID;
+    $TopicHints{$TopicHintID}{TopicID}       = $TopicID;
     $TopicHints{$TopicHintID}{TimeStamp}     = $TimeStamp;
     push @TopicHintIDs,$TopicHintID;
   }

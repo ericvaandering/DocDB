@@ -238,7 +238,7 @@ sub DocumentTable (%) {
         } elsif ($SessionTalkID) {
           my @TopicHintIDs  = FetchTopicHintsBySessionTalkID($SessionTalkID);
           foreach my $TopicHintID (@TopicHintIDs) {
-            push @TopicIDs,$TopicHints{$TopicHintID}{MinorTopicID};
+            push @TopicIDs,$TopicHints{$TopicHintID}{TopicID};
           }
         }
         TopicListByID( {-topicids => \@TopicIDs, -listformat => "br"} ); 
