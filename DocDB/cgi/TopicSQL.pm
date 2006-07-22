@@ -267,44 +267,23 @@ sub LookupMajorTopic { # V8OBS# Returns MajorTopicID from Topic Name
   return $MajorTopicID;
 }
 
-sub MatchMajorTopic ($) { # V8OBS# FIXME: Make LookupMajorTopic a subset?
+sub MatchTopic ($) { # V8OBS# FIXME: Make LookupMajorTopic a subset?
   my ($ArgRef) = @_;
   my $Short = exists $ArgRef->{-short} ? $ArgRef->{-short} : "";
 #  my $Long = exists $ArgRef->{-long}  ? $ArgRef->{-long}  : "";
-  my $MajorID;
-  my @MatchIDs = ();
+  my $TopicID;
+  my @TopicIDs = ();
   if ($Short) {
     $Short =~ tr/[A-Z]/[a-z]/;
     $Short = "%".$Short."%";
-    my $List = $dbh -> prepare(
-       "select MajorTopicID from MajorTopic where LOWER(ShortDescription) like ?"); 
+    my $List = $dbh -> prepare("select TopicID from Topic where LOWER(ShortDescription) like ?"); 
     $List -> execute($Short);
-    $List -> bind_columns(undef, \($MajorID));
+    $List -> bind_columns(undef, \($TopicID));
     while ($List -> fetch) {
-      push @MatchIDs,$MajorID;
+      push @TopicIDs,$TopicID;
     }
   }
-  return @MatchIDs;
-}
-
-sub MatchMinorTopic ($) {# V8OBS
-  my ($ArgRef) = @_;
-  my $Short = exists $ArgRef->{-short} ? $ArgRef->{-short} : "";
-#  my $Long = exists $ArgRef->{-long}  ? $ArgRef->{-long}  : "";
-  my $MinorID;
-  my @MatchIDs = ();
-  if ($Short) {
-    $Short =~ tr/[A-Z]/[a-z]/;
-    $Short = "%".$Short."%";
-    my $List = $dbh -> prepare(
-       "select MinorTopicID from MinorTopic where LOWER(ShortDescription) like ?"); 
-    $List -> execute($Short);
-    $List -> bind_columns(undef, \($MinorID));
-    while ($List -> fetch) {
-      push @MatchIDs,$MinorID;
-    }
-  }
-  return @MatchIDs;
+  return @TopicIDs;
 }
 
 sub InsertTopics (%) {# V8OBS

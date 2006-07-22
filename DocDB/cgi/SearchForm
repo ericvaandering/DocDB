@@ -50,7 +50,7 @@ GetDocTypes();
 print $query->header;
   
 DocDBHeader("$Project Document Database Search","Document Database Search",
-            -search => $TRUE, -scripts => ["PopUps","TopicChooser","EventChooser"]);
+            -search => $TRUE, -scripts => ["PopUps","EventChooser"]);
 
 
 print "<h4>Click on any of the <span class=\"Help\">highlighted headings</span> for help.</h4>\n";
@@ -145,9 +145,9 @@ print "</tr>\n";
   print "</td>\n";
  print "</tr>\n";
 
- print "<tr>\n";
-  MajorMinorSelect();
- print "</tr>\n";
+ print "<tr><td colspan=\"3\">\n";
+  TopicScroll({ -multiple => $TRUE, -helplink => "searchtopic", });
+ print "</td></tr>\n";
 
  print "<tr>\n";
  print "<td>\n";

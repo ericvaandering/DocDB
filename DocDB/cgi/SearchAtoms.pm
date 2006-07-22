@@ -89,34 +89,35 @@ sub IDSearch {
   return $Phrase;
 }
 
-sub TopicSearch {
-  my $revtopic_list;
-  my ($Logic,$Type,@TopicIDs) = @_;
-  if ($Type eq "minor") {
-    $revtopic_list = $dbh -> prepare(
-     "select DocRevID from RevisionTopic where MinorTopicID=?"); 
-  } elsif ($Type eq "major") {
-    $revtopic_list = $dbh -> prepare(
-      "select DocRevID from RevisionTopic,MinorTopic ".
-      "where RevisionTopic.MinorTopicID=MinorTopic.MinorTopicID ".
-      "and MinorTopic.MajorTopicID=?");
-  }  
-    
-  my %Revisions = ();
-  my @Revisions = ();
-  my $DocRevID;
+sub TopicSearch ($) {
+  my ($ArgRef) = @_;
+
+  my $Logic      = exists $ArgRef->{-logic}     ?   $ArgRef->{-logic}     : "AND";
+  my $SubTopics  = exists $ArgRef->{-subtopics} ?   $ArgRef->{-subtopics} : $FALSE;
+  my @InitialIDs = exists $ArgRef->{-topicids}  ? @{$ArgRef->{-topicids}} : ();
   
+  my $List = $dbh -> prepare("select DocRevID from RevisionTopic where TopicID=?"); 
+ 
+  my @TopicIDs = ();
+ 
+  if ($Logic eq "OR" && $SubTopics) {
+    # FIXME: Get subtopics with new unwritten routine (do while over children)
+  } else {
+    @TopicIDs = @InitialIDs;
+  }  
+ 
   foreach $TopicID (@TopicIDs) {
-    $revtopic_list -> execute($TopicID );
-    $revtopic_list -> bind_columns(undef, \($DocRevID));
+    $List -> execute($TopicID );
+    $List -> bind_columns(undef, \($DocRevID));
     my %TopicRevisions = ();
-    while ($revtopic_list -> fetch) { # Make sure each topic only matches once
+    while ($List -> fetch) { # Make sure each topic only matches once
       ++$TopicRevisions{$DocRevID};
     }
     foreach $DocRevID (keys %TopicRevisions) {
       ++$Revisions{$DocRevID};
     }  
   }
+  
   if ($Logic eq "AND") {
     foreach $DocRevID (keys %Revisions) {
       if ($Revisions{$DocRevID} == $#TopicIDs+1) { # Require a match for each topic
@@ -126,7 +127,6 @@ sub TopicSearch {
   } elsif ($Logic eq "OR") {
     @Revisions = keys %Revisions;
   }  
-  
   return @Revisions;     
 }
 

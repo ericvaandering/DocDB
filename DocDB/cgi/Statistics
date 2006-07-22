@@ -100,15 +100,15 @@ my ($NRevisionAuthors) = $NRevAuth_query -> fetchrow_array;
 my $AuthPerRev = sprintf "%5.2f",$NRevisionAuthors/$NRevisions;
 my $DocPerAuth = sprintf "%5.2f",$NDocuments/$NUniqAuth*$AuthPerRev;
 
-my $NTopic_query = $dbh -> prepare("select COUNT(MinorTopicID) from MinorTopic");
+my $NTopic_query = $dbh -> prepare("select COUNT(TopicID) from Topic");
    $NTopic_query -> execute(); 
 my ($NTopics) = $NTopic_query -> fetchrow_array;
 
-my $NUniqTopic_query = $dbh -> prepare("select COUNT(DISTINCT(MinorTopicID)) from RevisionTopic");
+my $NUniqTopic_query = $dbh -> prepare("select COUNT(DISTINCT(TopicID)) from RevisionTopic");
    $NUniqTopic_query -> execute(); 
 my ($NUniqTopics) = $NUniqTopic_query -> fetchrow_array;
 
-my $NRevTopic_query = $dbh -> prepare("select COUNT(MinorTopicID) from RevisionTopic");
+my $NRevTopic_query = $dbh -> prepare("select COUNT(TopicID) from RevisionTopic");
    $NRevTopic_query -> execute(); 
 my ($NRevisionTopics) = $NRevTopic_query -> fetchrow_array;
 
