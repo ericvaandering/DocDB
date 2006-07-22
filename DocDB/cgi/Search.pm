@@ -77,7 +77,7 @@ sub LocalSearch ($) {
      @AuthorSearchIDs     = split /\0/,$params{authors};
      @TypeSearchIDs       = split /\0/,$params{doctypemulti};
 
-  my @TopicSearchIDs      = split /\0/,$params{topic};
+  my @TopicSearchIDs      = split /\0/,$params{topics};
 
   push @DebugStack,"Searching for topics ".join ', ',@TopicSearchIDs;
   my @EventSearchIDs      = split /\0/,$params{events};
