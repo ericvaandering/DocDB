@@ -79,6 +79,7 @@ sub LocalSearch ($) {
 
   my @TopicSearchIDs      = split /\0/,$params{topic};
 
+  push @DebugStack,"Searching for topics ".join ', ',@TopicSearchIDs;
   my @EventSearchIDs      = split /\0/,$params{events};
   my @EventGroupSearchIDs = split /\0/,$params{eventgroups};
 
@@ -86,7 +87,6 @@ sub LocalSearch ($) {
 
   my $Simple     = $params{simple};
   my $SimpleText = $params{simpletext};
-
 
   GetTopics();         
   GetSecurityGroups(); 
@@ -249,7 +249,8 @@ sub LocalSearch ($) {
 
   if (@TopicSearchIDs) { 
     $SearchedTopics = 1; # Add -subtopics switch
-    @TopicRevisions = TopicSearch({ -logic => $InnerLogic, -topicids => \@TopicSearchIDs, }); 
+    @TopicRevisions = TopicSearch({ -logic => $InnerLogic, -topicids => \@TopicSearchIDs, });
+    push @DebugStack,"Found revisions ".join ', ',@TopicRevisions;
     @TopicDocumentIDs = ValidateRevisions(@TopicRevisions);
   } 
 
