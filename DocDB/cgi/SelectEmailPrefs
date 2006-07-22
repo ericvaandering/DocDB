@@ -356,6 +356,7 @@ if ( @{$Notifications{$EmailUserID}{AllDocuments_Immediate}} ) {
 } else {
   print $query -> checkbox(-name => "immediate_all", -value => 1, -label => '');
 }                             
+print "<b> All Documents</b> ";
 print "</td>\n";
 print "<td>";  
 if ( @{$Notifications{$EmailUserID}{AllDocuments_Daily}} ) {
@@ -363,6 +364,7 @@ if ( @{$Notifications{$EmailUserID}{AllDocuments_Daily}} ) {
 } else {
   print $query -> checkbox(-name => "daily_all", -value => 1, -label => '');
 }                             
+print "<b> All Documents</b> ";
 print "</td>\n";
 print "<td>";  
 if ( @{$Notifications{$EmailUserID}{AllDocuments_Weekly}} ) {
@@ -370,6 +372,7 @@ if ( @{$Notifications{$EmailUserID}{AllDocuments_Weekly}} ) {
 } else {
   print $query -> checkbox(-name => "weekly_all", -value => 1, -label => '');
 }                             
+print "<b> All Documents</b> ";
 print "</td>\n";
 print "</tr>\n";
 print "</table>\n";
