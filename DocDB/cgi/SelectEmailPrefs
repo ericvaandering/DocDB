@@ -328,9 +328,24 @@ print "<a name=\"topic\"/><h3>Notification by Topics</h3>\n";
 print "<table class=\"HighPaddedTable\">\n";
 print "<tr>";
 print "<td>";  
+TopicScroll({ -helptext   => "Immediate", -helplink => "notifytopic", 
+              -itemformat => "short", -multiple => $TRUE, 
+              -name       => "immediate_topics",
+              -default    => $Notifications{$EmailUserID}{Topic_Immediate}},
+            }); 
+print "</td>\n";
+print "<td>";  
 TopicScroll({ -helptext   => "Daily", -helplink => "notifytopic", 
               -itemformat => "short", -multiple => $TRUE, 
               -name       => "daily_topics",
+              -default    => $Notifications{$EmailUserID}{Topic_Daily}},
+            }); 
+print "</td>\n";
+print "<td>";  
+TopicScroll({ -helptext   => "Weekly", -helplink => "notifytopic", 
+              -itemformat => "short", -multiple => $TRUE, 
+              -name       => "weekly_topics",
+              -default    => $Notifications{$EmailUserID}{Topic_Weekly}},
             }); 
 print "</td>\n";
 print "</tr>\n";

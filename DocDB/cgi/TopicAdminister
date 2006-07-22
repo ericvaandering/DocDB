@@ -154,7 +154,7 @@ print "</tr>\n";
 print "<tr>\n";
 print "<td rowspan=\"3\">\n"; 
  TopicScroll({ -helptext   => "Topic", -helplink => "topics", 
-               -itemformat => "full",  -disabled => "true",
+               -itemformat => "full",  -disabled => $TRUE,
                -extratext  => "[Long description]", 
             }); 
 print "</td>\n"; 
@@ -176,7 +176,7 @@ print "</tr>\n";
 print "<tr>\n";
 print "<td>\n";  
  TopicScroll({ -helptext   => "Parent Topic", -helplink => "parenttopic", 
-               -itemformat => "full",         -disabled => "true",
+               -itemformat => "full",         -disabled => $TRUE,
                -name       => "parenttopic",
                -extratext  => "[Long description]", 
             }); 
