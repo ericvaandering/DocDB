@@ -366,7 +366,7 @@ sub EmailAllForm ($) {
   if (@Defaults) {
     print $query -> checkbox(-name => $Name, -checked => 'checked', -value => 1, -label => '<b>All Documents</b>');
   } else {
-    print $query -> checkbox(-name => $Name, -value => 1, -label => '');
+    print $query -> checkbox(-name => $Name, -value => 1, -label => '<b>All Documents</b>');
   }                             
 }
 

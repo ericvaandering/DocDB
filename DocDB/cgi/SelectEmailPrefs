@@ -377,7 +377,7 @@ print "</td>\n";
 print "</tr>\n";
 print "<tr>";
 print "<td>";  
-EmailAllForm({ -name => "immediate_all", -defaults => $Notifications{$EmailUserID}{AllDocuments_Immediate});
+EmailAllForm({ -name => "immediate_all", -defaults => $Notifications{$EmailUserID}{AllDocuments_Immediate} });
 print "</td>\n";
 print "<td>";  
 if ( @{$Notifications{$EmailUserID}{AllDocuments_Daily}} ) {
