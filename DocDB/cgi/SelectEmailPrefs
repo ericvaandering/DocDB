@@ -389,7 +389,13 @@ print "</table>\n";
 
 print "<hr/><a name=\"author\"/><h3>Notification by Authors</h3>\n";
 print "<table class=\"HighPaddedTable\"><tr>\n";
-EmailAuthorForm($EmailUserID,"Immediate");
+print "<td>";  
+AuthorScroll(-helptext   => "Immediate", -helplink => "notifyauthor", 
+             -multiple => $TRUE, 
+             -name       => "immediate_authors",
+             -default    => $Notifications{$EmailUserID}{Author_Immediate},
+            ); 
+print "</td>\n";
 EmailAuthorForm($EmailUserID,"Daily");
 EmailAuthorForm($EmailUserID,"Weekly");
 print "</tr></table>\n";
