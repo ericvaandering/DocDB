@@ -342,11 +342,21 @@ sub UsersToNotify ($$) {
   return @Addressees;
 }
 
-sub EmailKeywordForm ($$) {
-  require "NotificationSQL.pm";
-  my ($EmailUserID,$Set) = @_;
-  &FetchKeywordNotification($EmailUserID,$Set);
-  &NotifyKeywordEntry($Set);
+sub EmailKeywordForm ($) {
+  my ($ArgRef) = @_;
+  my $Name     = exists $ArgRef->{-name}    ?   $ArgRef->{-name}     : "";
+  my $Period   = exists $ArgRef->{-period}  ?   $ArgRef->{-period}   : "";
+  my @Defaults = exists $ArgRef->{-default} ? @{$ArgRef->{-default}} : ();
+
+  require "FormElements.pm";
+
+  print FormElementTitle(-helplink  => "notifykeyword", -helptext => $Period, 
+                         -extratext => "(separate with spaces)");
+
+  my $Keywords = join ' ',@Defaults;
+
+  print $query -> textfield (-name => "keyword$Set", -default => $Keywords, 
+                             -size => 80, -maxlength => 400);
 }
 
 sub DisplayNotification ($$;$) {
@@ -435,23 +445,6 @@ sub NotifyAuthorSelect ($) {
   print "</td>\n";
 }
   
-sub NotifyKeywordEntry ($) { 
-  require "FormElements.pm";
-
-  my ($Set) = @_;
-
-  print "<tr><td>\n";
-  print FormElementTitle(-helplink  => "notifykeyword", -helptext => $Set, 
-                   -extratext => "(separate with spaces)");
-
-  foreach my $ID (@AuthorIDs) {
-    $AuthorLabels{$ID} = $Authors{$ID}{FULLNAME};
-  }  
-  print $query -> textfield (-name => "keyword$Set", -default => $NotifyKeywords, 
-                             -size => 80, -maxlength => 240);
-  print "</td></tr>\n";
-}
-
 sub EmailUserSelect (%) {
   require "Sorts.pm";
   my (%Params) = @_;
