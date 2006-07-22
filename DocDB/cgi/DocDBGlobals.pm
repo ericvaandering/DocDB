@@ -94,6 +94,8 @@ $Preferences{Options}{DynamicFullList}{Public}  = $FALSE; # Generate Full docume
 
 $Preferences{Options}{AlwaysRetrieveFile}       = $FALSE; # Always use RetrieveFile instead of File Links
 
+$Preferences{Topics}{MinLevel}{Document} = 1;
+
 $htaccess             = ".htaccess";
 
 $LastDays             = 20;    # Number of days for default in LastModified

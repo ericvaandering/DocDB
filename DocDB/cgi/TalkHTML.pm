@@ -277,7 +277,9 @@ sub TalkTopics ($) {
     unless (@TalkDefaultTopicHints) {
       $query -> param("topics-$SessionOrderID","");
     }  
-    &FullTopicScroll(1,"topics-$SessionOrderID",@TalkDefaultTopicHints);
+    TopicScroll({ -required => $RequiredEntries{Topic},
+                  -default  => \@TalkDefaultTopicHints,         
+                  -multiple => $TRUE, });
   }
 }
 
