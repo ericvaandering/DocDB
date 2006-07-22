@@ -68,9 +68,14 @@ my $ClearWatched = $params{clearwatched};
 my @ImmediateEventGroupIDs = split /\0/,$params{immediate_eventgroups};
 my @DailyEventGroupIDs     = split /\0/,$params{daily_eventgroups};
 my @WeeklyEventGroupIDs    = split /\0/,$params{weekly_eventgroups};
+
 my @ImmediateEventIDs      = split /\0/,$params{immediate_events};
 my @DailyEventIDs          = split /\0/,$params{daily_events};
 my @WeeklyEventIDs         = split /\0/,$params{weekly_events};
+
+my @ImmediateTopicIDs      = split /\0/,$params{immediate_topics};
+my @DailyTopicIDs          = split /\0/,$params{daily_topics};
+my @WeeklyTopicIDs         = split /\0/,$params{weekly_topics};
 
 $UserName =~ s/\s+//g;
 $Password =~ s/\s+//g;
@@ -224,10 +229,6 @@ if ($Mode eq "update") {
     
 # Delete old and Insert new notifications
 
-  SetTopicNotifications($EmailUserID,"Immediate");  
-  SetTopicNotifications($EmailUserID,"Daily");  
-  SetTopicNotifications($EmailUserID,"Weekly");  
-
   SetAuthorNotifications($EmailUserID,"Immediate");  
   SetAuthorNotifications($EmailUserID,"Daily");  
   SetAuthorNotifications($EmailUserID,"Weekly");  
@@ -240,6 +241,15 @@ if ($Mode eq "update") {
 
   DeleteNotifications( {-emailuserid => $EmailUserID} );
 
+# Events
+
+  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Topic", 
+                                -ids => \@ImmediateTopicIDs, -period => "Immediate",} );
+  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Topic", 
+                                -ids => \@DailyTopicIDs,     -period => "Daily",} );
+  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Topic", 
+                                -ids => \@WeeklyTopicIDs,    -period => "Weekly",} );
+        
 # Events
 
   InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Event", 

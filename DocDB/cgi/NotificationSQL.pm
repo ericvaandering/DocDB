@@ -78,7 +78,7 @@ sub DeleteNotifications ($) {
   my $EmailUserID = exists $ArgRef->{-emailuserid} ? $ArgRef->{-emailuserid} : 0;
   
   if ($EmailUserID) { # FIXME: Don't do document specific?
-    my $Delete = $dbh -> prepare("delete from Notification where Type<>'Document' EmailUserID=?");
+    my $Delete = $dbh -> prepare("delete from Notification where Type<>'Document' and EmailUserID=?");
     $Delete -> execute($EmailUserID);
   }
   
