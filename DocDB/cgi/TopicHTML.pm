@@ -224,7 +224,7 @@ sub TopicScroll ($) {
   my @ActiveIDs = @TopicIDs; # Later can select single root topics, etc.
   
   foreach my $ID (@ActiveIDs) {
-    my $Spaces = '  'x(1*(scalar(@{$TopicProvenance{$ID}})-1));
+    my $Spaces = '.'x(1*(scalar(@{$TopicProvenance{$ID}})-1));
   
     if ($ItemFormat eq "short") {
       $TopicLabels{$ID} = $Spaces.CGI::escapeHTML($Topics{$ID}{Short}); 

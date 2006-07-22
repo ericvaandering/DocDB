@@ -134,7 +134,7 @@ sub PrepareFieldList (%) {
   require "Fields.pm";
 
   if ($TopicID) {
-    require "TopicItilities.pm"
+    require "TopicItilities.pm";
     BuildTopicProvenance();
   }  
     
