@@ -63,7 +63,6 @@ my $Password     = $params{password};
 my $NewPass      = $params{newpass};
 my $ConfNewPass  = $params{confnewpass};
    $Digest       = $params{digest};
-my $ClearWatched = $params{clearwatched};
 
 my @ImmediateEventGroupIDs = split /\0/,$params{immediate_eventgroups};
 my @DailyEventGroupIDs     = split /\0/,$params{daily_eventgroups};
@@ -347,13 +346,9 @@ print "</li>\n";
 print "</ul>\n";
 print "</td></tr></table>\n";
 
-# FIXME: No way to delete notification on a single document
-
-my @WatchDocumentIDs = FetchEmailDocuments(-emailuserid => $EmailUserID);
+my @WatchDocumentIDs = @{$Notifications{$EmailUserID}{Document_Immediate}};
 if (@WatchDocumentIDs) {
-  print "<h4>You are watching these individual documents: \n";
-  print $query -> checkbox(-name => "clearwatched", -value => 1, -label => 'Clear Watched Documents');
-  print "</h4>\n";
+  print "<h4>You are watching these individual documents:</h4>\n";
 }
 my %FieldList = PrepareFieldList(-default => "Default");
 my $NDocs = DocumentTable(-fieldlist => \%FieldList, -docids => \@WatchDocumentIDs);  

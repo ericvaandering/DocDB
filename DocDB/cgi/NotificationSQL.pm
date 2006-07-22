@@ -78,7 +78,7 @@ sub DeleteNotifications ($) {
   my $EmailUserID = exists $ArgRef->{-emailuserid} ? $ArgRef->{-emailuserid} : 0;
   
   if ($EmailUserID) { # FIXME: Don't do document specific?
-    my $Delete = $dbh -> prepare("delete from Notification where Type<>'Document' and EmailUserID=?");
+    my $Delete = $dbh -> prepare("delete from Notification where EmailUserID=?");
     $Delete -> execute($EmailUserID);
   }
   
@@ -147,57 +147,15 @@ sub FetchNotifications ($) {
   return $Count;
 }
 
-sub FetchKeywordNotification ($$) { #V8OBS
-  my ($EmailUserID,$Set) = @_;
-
-  my $Keyword;
-
-  $Table = "EmailKeyword$Set";
-  @NotifyKeywords = ();
-  
-  my $UserFetch   = $dbh -> prepare("select Keyword from $Table where EmailUserID=?");
-
-# Get users interested in all documents for this reporting period
-
-  $UserFetch -> execute($EmailUserID);
-  $UserFetch -> bind_columns(undef,\($Keyword));
-  while ($UserFetch -> fetch) {
-    if ($Keyword) {
-      push @NotifyKeywords,$Keyword;
-    }  
-  }
-  $NotifyKeywords = join ' ',@NotifyKeywords;
-}
-
-sub InsertEmailDocumentImmediate (%) { #V8OBS
+sub InsertEmailDocumentImmediate (%) {
   my %Params = @_;
   
   my $EmailUserID = $Params{-emailuserid};
   my $DocumentID  = $Params{-docid};
   
-  if ($DocumentID && $EmailUserID) {
-    my $Insert = $dbh -> prepare("insert into EmailDocumentImmediate ".
-                                 "(EmailDocumentImmediateID,EmailUserID,DocumentID) ".
-                                 "values (0,?,?)");
-    $Insert -> execute($EmailUserID,$DocumentID);
-  }  
+  InsertNotifications({ -emailuserid => $EmailUserID, -period => "Immediate", 
+                        -type        => "Document", -ids => [$DocumentID] }); 
 }
 
-sub FetchEmailDocuments (%) { #V8OBS
-  my %Params = @_;
-  
-  my $EmailUserID = $Params{-emailuserid};
-  my $DocumentID;
-  my @DocumentIDs;
-  
-  my $Select = $dbh -> prepare("select DISTINCT(DocumentID) from EmailDocumentImmediate ".
-                                 "where EmailUserID=?");
-  $Select -> execute($EmailUserID);
-  $Select -> bind_columns(undef,\($DocumentID));
-  while ($Select -> fetch) {
-    push @DocumentIDs,$DocumentID; 
-  }
-  return @DocumentIDs;
-}
 
 1;
