@@ -383,11 +383,11 @@ TopicScroll({ -helptext   => "Weekly", -helplink => "notifytopic",
               -default    => $Notifications{$EmailUserID}{Topic_Weekly},
             }); 
 print "</td></tr><tr><td>\n";  
-EmailAllForm({ -name => "immediate_all", -defaults => $Notifications{$EmailUserID}{AllDocuments_Immediate} });
+EmailAllForm({ -name => "immediate_all", -default => $Notifications{$EmailUserID}{AllDocuments_Immediate} });
 print "</td><td>";  
-EmailAllForm({ -name => "daily_all", -defaults => $Notifications{$EmailUserID}{AllDocuments_Daily} });
+EmailAllForm({ -name => "daily_all", -default => $Notifications{$EmailUserID}{AllDocuments_Daily} });
 print "</td><td>";  
-EmailAllForm({ -name => "weekly_all", -defaults => $Notifications{$EmailUserID}{AllDocuments_Weekly} });
+EmailAllForm({ -name => "weekly_all", -default => $Notifications{$EmailUserID}{AllDocuments_Weekly} });
 print "</td></tr></table>\n";
 
 print "<hr/><a name=\"author\"/><h3>Notification by Authors</h3>\n";
