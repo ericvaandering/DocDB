@@ -132,7 +132,12 @@ sub PrepareFieldList (%) {
   
   require "ConfigSQL.pm";
   require "Fields.pm";
-  
+
+  if ($TopicID) {
+    require "TopicItilities.pm"
+    BuildTopicProvenance();
+  }  
+    
   my %FieldList = ();
   
   # If fields are specified, use that
@@ -159,14 +164,16 @@ sub PrepareFieldList (%) {
     }  
   }
   
-  #  User Cookie for topic
-  if ($query && $TopicID && $query -> cookie("topicid_$TopicID") ) {
-    %FieldList = CookieToFieldList( $query -> cookie("topicid_$TopicID") );
-    if (%FieldList) {
-      return %FieldList
-    }  
+  #  User Cookie for topic or parents
+  foreach my $ParentTopicID ( @{$TopicProvenance{$TopicID}} ) {
+    if ($query && $query -> cookie("topicid_$ParentTopicID") ) {
+      %FieldList = CookieToFieldList( $query -> cookie("topicid_$ParentTopicID") );
+      if (%FieldList) {
+        return %FieldList
+      }  
+    }
   }
-  
+   
   #  User Cookie for document type
   if ($query && $DocTypeID && $query -> cookie("doctypeid_$DocTypeID") ) {
     %FieldList = CookieToFieldList( $query -> cookie("doctypeid_$DocTypeID") );
@@ -199,12 +206,14 @@ sub PrepareFieldList (%) {
     }  
   }  
     
-  #  DB lookup for topic
+  #  DB lookup for topic or parent
   if ($TopicID) {
-    %FieldList = FetchCustomFieldList(-topicid => $TopicID);
-    if (%FieldList) {
-      return %FieldList
-    }  
+    foreach my $ParentTopicID ( @{$TopicProvenance{$TopicID}} ) {
+      %FieldList = FetchCustomFieldList(-topicid => $ParentTopicID);
+      if (%FieldList) {
+        return %FieldList
+      }
+    }    
   }  
 
   #  DB lookup for document type
