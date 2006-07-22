@@ -147,8 +147,7 @@ print "</tr>\n";
 
  print "<tr><td colspan=\"3\">\n";
   TopicScroll({ -multiple => $TRUE, -helplink => "searchtopic", });
- print "</td></tr>\n";
- print "<tr><td colspan=\"3\">\n";
+ print "</br>\n";
  print $query -> checkbox(-name  => "includesubtopics", -checked => 'checked', 
                           -label => "Include sub-topics");
  print "</td></tr>\n";

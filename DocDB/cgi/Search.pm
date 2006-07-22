@@ -124,8 +124,9 @@ sub LocalSearch ($) {
     }
     @RequesterSearchIDs = @AuthorSearchIDs;
 
-    $InnerLogic  = "OR";
-    $OuterLogic  = "OR";
+    $InnerLogic        = "OR";
+    $OuterLogic        = "OR";
+    $IncludeSubTopics  = $TRUE;
 
     $TitleSearch            = $SimpleText;
     $AbstractSearch         = $SimpleText;
