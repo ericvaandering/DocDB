@@ -81,6 +81,10 @@ my @ImmediateAuthorIDs     = split /\0/,$params{immediate_authors};
 my @DailyAuthorIDs         = split /\0/,$params{daily_authors};
 my @WeeklyAuthorIDs        = split /\0/,$params{weekly_authors};
 
+my $ImmediateAll           = $params{immediate_all};
+my $DailyAll               = $params{daily_all};
+my $WeeklyAll              = $params{weekly_all};
+
 my $ImmediateKeywords      = $params{immediate_keywords};
 my $DailyKeywords          = $params{daily_keywords};
 my $WeeklyKeywords         = $params{weekly_keywords};
@@ -239,11 +243,20 @@ if ($Mode eq "update") {
     $Delete -> execute($EmailUserID);
   }      
     
-# Delete old and Insert new notifications
-
-# FIXME: Move all notifications here, including document specific ones
-
   DeleteNotifications( {-emailuserid => $EmailUserID} );
+
+  if ($ImmediateAll) {
+    InsertNotifications( {-emailuserid => $EmailUserID, -type   => "AllDocuments", 
+                                  -ids => [0],          -period => "Immediate",} );
+  }  
+  if ($DailyAll) {
+    InsertNotifications( {-emailuserid => $EmailUserID, -type   => "AllDocuments", 
+                                  -ids => [0],          -period => "Daily",} );
+  }  
+  if ($WeeklyAll) {
+    InsertNotifications( {-emailuserid => $EmailUserID, -type   => "AllDocuments", 
+                                  -ids => [0],          -period => "Weekly",} );
+  }  
 
 # Topics
   InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Topic", 
@@ -351,52 +364,31 @@ print "</td></tr></table>\n";
 
 print "<a name=\"topic\"/><h3>Notification by Topics</h3>\n";
 
-print "<table class=\"HighPaddedTable\">\n";
-print "<tr>";
-print "<td>";  
+print "<table class=\"HighPaddedTable\"><tr><td>\n";
 TopicScroll({ -helptext   => "Immediate", -helplink => "notifytopic", 
               -itemformat => "short", -multiple => $TRUE, 
               -name       => "immediate_topics",
               -default    => $Notifications{$EmailUserID}{Topic_Immediate},
             }); 
-print "</td>\n";
-print "<td>";  
+print "</td><td>\n";  
 TopicScroll({ -helptext   => "Daily", -helplink => "notifytopic", 
               -itemformat => "short", -multiple => $TRUE, 
               -name       => "daily_topics",
               -default    => $Notifications{$EmailUserID}{Topic_Daily},
             }); 
-print "</td>\n";
-print "<td>";  
+print "</td><td>\n";  
 TopicScroll({ -helptext   => "Weekly", -helplink => "notifytopic", 
               -itemformat => "short", -multiple => $TRUE, 
               -name       => "weekly_topics",
               -default    => $Notifications{$EmailUserID}{Topic_Weekly},
             }); 
-print "</td>\n";
-print "</tr>\n";
-print "<tr>";
-print "<td>";  
+print "</td></tr><tr><td>\n";  
 EmailAllForm({ -name => "immediate_all", -defaults => $Notifications{$EmailUserID}{AllDocuments_Immediate} });
-print "</td>\n";
-print "<td>";  
-if ( @{$Notifications{$EmailUserID}{AllDocuments_Daily}} ) {
-  print $query -> checkbox(-name => "daily_all", -checked => 'checked', -value => 1, -label => '');
-} else {
-  print $query -> checkbox(-name => "daily_all", -value => 1, -label => '');
-}                             
-print "<b> All Documents</b> ";
-print "</td>\n";
-print "<td>";  
-if ( @{$Notifications{$EmailUserID}{AllDocuments_Weekly}} ) {
-  print $query -> checkbox(-name => "weekly_all", -checked => 'checked', -value => 1, -label => '');
-} else {
-  print $query -> checkbox(-name => "weekly_all", -value => 1, -label => '');
-}                             
-print "<b> All Documents</b> ";
-print "</td>\n";
-print "</tr>\n";
-print "</table>\n";
+print "</td><td>";  
+EmailAllForm({ -name => "daily_all", -defaults => $Notifications{$EmailUserID}{AllDocuments_Daily} });
+print "</td><td>";  
+EmailAllForm({ -name => "weekly_all", -defaults => $Notifications{$EmailUserID}{AllDocuments_Weekly} });
+print "</td></tr></table>\n";
 
 print "<hr/><a name=\"author\"/><h3>Notification by Authors</h3>\n";
 print "<table class=\"HighPaddedTable\"><tr>\n";

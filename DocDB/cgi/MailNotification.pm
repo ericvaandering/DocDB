@@ -386,6 +386,7 @@ sub DisplayNotification ($$;$) {
   my @EventIDs      = @{$Notifications{$EmailUserID}{"Event_".$Set}};
   my @EventGroupIDs = @{$Notifications{$EmailUserID}{"EventGroup_".$Set}};
   my @Keywords      = @{$Notifications{$EmailUserID}{"Keyword_".$Set}};
+  my @AllDocuments  = @{$Notifications{$EmailUserID}{"AllDocuments_".$Set}};
   
   my $NewNotify = (@AuthorIDs || @TopicIDs || @EventIDs || @EventGroupIDs || @Keywords);
                     
@@ -402,7 +403,7 @@ sub DisplayNotification ($$;$) {
     return;
   }
   
-  if ($NotifyAllTopics) { # FIXME
+  if (@AllDocuments) { 
     print "<li>All documents</li>\n";  
   }  
   
