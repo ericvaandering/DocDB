@@ -459,6 +459,11 @@ EmailKeywordForm({ -name    => "weekly_keywords", -period => "Weekly",
                    -default => $Notifications{$EmailUserID}{Keyword_Weekly}, });
 print "</td></tr></table>\n";
 
+print "<hr/><a name=\"documents\"/><h3>Notification for Individual Documents</h3>\n";
+
+TextArea(-name => "immediate_documents", -helptext => "Immediate", -helplink => "notifiydocument", 
+         -columns => 60, -default => join ' ',@{$Notifications{$EmailUserID}{Document_Immediate}});
+
 print "<table class=\"HighPaddedTable CenteredTable\">\n";
 print "<tr><td>";
 print $query -> submit (-value => "Update Notification Preferences");
