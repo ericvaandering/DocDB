@@ -29,7 +29,6 @@ sub AllRootTopics {
   foreach my $TopicID (@TopicIDs) {
     unless (@{$TopicParents{$TopicID}}) {
       push @RootIDs,$TopicID;
-      push @DebugStack,"Topic $TopicID has no parents";
     }  
   }
   
@@ -48,12 +47,10 @@ sub TopicAndSubTopics {
   my @TopicIDs = ($TopicID);
   
   foreach my $ChildID (@{$TopicChildren{$TopicID}}) {
-    push @DebugStack,"For topic $TopicID, child $ChildID and children added";
     my @ChildIDs = TopicAndSubTopics({ -topicid => $ChildID });
     push @TopicIDs,@ChildIDs;
   }
   
-  push @DebugStack,"Exiting TAST: ".join ' ',@TopicIDs;
   return Unique(@TopicIDs);  
 }
 
@@ -82,10 +79,6 @@ sub BuildTopicProvenance {
         push @{$TopicProvenance{$TopicID}},$FirstParentID;
       }  
     }
-  }
-  
-  foreach my $TopicID (keys %Topics) {
-    push @DebugStack,"Provenance for $TopicID: ".join ' ',@{$TopicProvenance{$TopicID}};
   }
   
   return;
