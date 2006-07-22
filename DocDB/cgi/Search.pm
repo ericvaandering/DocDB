@@ -78,7 +78,11 @@ sub LocalSearch ($) {
      @TypeSearchIDs       = split /\0/,$params{doctypemulti};
 
   my @TopicSearchIDs      = split /\0/,$params{topics};
-
+  my $IncludeSubTopics    = $params{includesubtopics};
+  if ($IncludeSubTopics) {
+    $IncludeSubTopics = $TRUE;
+  }
+    
   push @DebugStack,"Searching for topics ".join ', ',@TopicSearchIDs;
   my @EventSearchIDs      = split /\0/,$params{events};
   my @EventGroupSearchIDs = split /\0/,$params{eventgroups};
@@ -249,7 +253,9 @@ sub LocalSearch ($) {
 
   if (@TopicSearchIDs) { 
     $SearchedTopics = 1; # Add -subtopics switch
-    @TopicRevisions = TopicSearch({ -logic => $InnerLogic, -topicids => \@TopicSearchIDs, -subtopics => $TRUE});
+    @TopicRevisions = TopicSearch({ -logic     => $InnerLogic, -topicids => \@TopicSearchIDs, 
+                                    -subtopics => $IncludeSubTopics,
+                                 });
     push @DebugStack,"Found revisions ".join ', ',@TopicRevisions;
     @TopicDocumentIDs = ValidateRevisions(@TopicRevisions);
   } 
