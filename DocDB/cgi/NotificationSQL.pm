@@ -95,6 +95,8 @@ sub InsertNotifications ($) {
   
   # FIXME: Need way to insert AllDocuments
   
+  push @DebugStack,"Inserting text keys",@TextKeys;
+  
   my $Count = 0;
   if ($EmailUserID && $Period && $Type && @IDs) {
     my $Insert = $dbh -> prepare(
@@ -110,7 +112,8 @@ sub InsertNotifications ($) {
       ++$Count;
     }  
     foreach my $TextKey (@TextKeys) {
-      $Insert -> execute($EmailUserID,$Type,$TextKey,$Period);
+      push @DebugStack,"Inserting text key $TextKey";
+      $TextInsert -> execute($EmailUserID,$Type,$TextKey,$Period);
       ++$Count;
     }  
   }
