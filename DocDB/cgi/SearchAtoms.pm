@@ -19,7 +19,6 @@
 %SearchWeights = ( # These weights are used to order documents from the simple search
                   "Author"          => 4,  
                   "Topic"           => 3,  
-                  "MajorTopic"      => 2,  
                   "DocType"         => 2,  
                   "Event"           => 3,  
                   "EventGroup"      => 2,  

@@ -24,39 +24,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-sub GetTopics { #V8OBS everything from here down to new code
-  require "MeetingSQL.pm";
-
-  my $minor_list   = $dbh->prepare("select MinorTopicID,MajorTopicID,ShortDescription,LongDescription from MinorTopic");
-  my $major_list   = $dbh->prepare("select MajorTopicID,ShortDescription,LongDescription from MajorTopic");
-
-  %MinorTopics  = ();
-  %MajorTopics  = ();
-  $GotAllTopics = 0;
-
-  my ($MinorTopicID,$MajorTopicID,$ShortDescription,$LongDescription);
-
-  $major_list -> execute;
-  $major_list -> bind_columns(undef, \($MajorTopicID,$ShortDescription,$LongDescription));
-  while ($major_list -> fetch) {
-    $MajorTopics{$MajorTopicID}{MAJOR} = $MajorTopicID;
-    $MajorTopics{$MajorTopicID}{SHORT} = $ShortDescription;
-    $MajorTopics{$MajorTopicID}{LONG}  = $LongDescription;
-    $MajorTopics{$MajorTopicID}{Full}  = $ShortDescription." [".$LongDescription."]";
-  }
-
-  $minor_list -> execute;
-  $minor_list -> bind_columns(undef, \($MinorTopicID,$MajorTopicID,$ShortDescription,$LongDescription));
-  while ($minor_list -> fetch) {
-    $MinorTopics{$MinorTopicID}{MINOR} = $MinorTopicID;
-    $MinorTopics{$MinorTopicID}{MAJOR} = $MajorTopicID;
-    $MinorTopics{$MinorTopicID}{SHORT} = $ShortDescription;
-    $MinorTopics{$MinorTopicID}{LONG}  = $LongDescription;
-    $MinorTopics{$MinorTopicID}{Full}  = $MajorTopics{$MajorTopicID}{SHORT}.":".$ShortDescription;
-  }
-  
-### V8OBS: Everything above this
-
+sub GetTopics {
   if ($GotAllTopics) {return;}
   %Topics        = ();
   %TopicParents  = ();
@@ -82,52 +50,6 @@ sub GetTopics { #V8OBS everything from here down to new code
 
   $GotAllTopics = 1;
 };
-
-sub FetchMinorTopic { # V8OBS# Fetches an MinorTopic by ID, adds to $Topics{$TopicID}{}
-  my ($minorTopicID) = @_;
-  my ($MinorTopicID,$MajorTopicID,$ShortDescription,$LongDescription);
-  my $minor_fetch   = $dbh -> prepare(
-    "select MinorTopicID,MajorTopicID,ShortDescription,LongDescription ".
-    "from MinorTopic ".
-    "where MinorTopicID=?");
-  if ($MinorTopics{$minorTopicID}{MINOR}) { # We already have this one
-    return $MinorTopics{$minorTopicID}{MINOR};
-  }
-  
-  $minor_fetch -> execute($minorTopicID);
-  ($MinorTopicID,$MajorTopicID,$ShortDescription,$LongDescription) = $minor_fetch -> fetchrow_array;
-  &FetchMajorTopic($MajorTopicID);
-  $MinorTopics{$MinorTopicID}{MINOR} = $MinorTopicID;
-  $MinorTopics{$MinorTopicID}{MAJOR} = $MajorTopicID;
-  $MinorTopics{$MinorTopicID}{SHORT} = $ShortDescription;
-  $MinorTopics{$MinorTopicID}{LONG}  = $LongDescription;
-  $MinorTopics{$MinorTopicID}{Full}  = $MajorTopics{$MajorTopicID}{SHORT}.":".$ShortDescription;
-
-  return $MinorTopics{$MinorTopicID}{MINOR};
-}
-
-sub FetchMinorTopicByInfo (%) { # V8OBS# Keep for John/Lynn? Can eventually add short/long, major topics
-}
-
-sub FetchMajorTopic { # V8OBS# Fetches an MajorTopic by ID, adds to $Topics{$TopicID}{}
-  my ($majorTopicID) = @_;
-  my ($MajorTopicID,$ShortDescription,$LongDescription);
-  my $major_fetch   = $dbh -> prepare(
-    "select MajorTopicID,ShortDescription,LongDescription ".
-    "from MajorTopic ".
-    "where MajorTopicID=?");
-  if ($MajorTopics{$majorTopicID}{MAJOR}) { # We already have this one
-    return $MajorTopics{$majorTopicID}{MAJOR};
-  }
-
-  $major_fetch -> execute($majorTopicID);
-  ($MajorTopicID,$ShortDescription,$LongDescription) = $major_fetch -> fetchrow_array;
-  $MajorTopics{$MajorTopicID}{MAJOR} = $MajorTopicID;
-  $MajorTopics{$MajorTopicID}{SHORT} = $ShortDescription;
-  $MajorTopics{$MajorTopicID}{LONG}  = $LongDescription;
-
-  return $MajorTopics{$MajorTopicID}{MAJOR};
-}
 
 sub GetRevisionTopics {
   my ($ArgRef) = @_;
@@ -175,7 +97,6 @@ sub FetchTopic { # Fetches an Topic by ID, adds to $Topics{$TopicID}{}
     "from Topic where TopicID=?");
   $Fetch -> execute($TopicID);
   ($ShortDescription,$LongDescription) = $Fetch -> fetchrow_array;
-#  &FetchMajorTopic($MajorTopicID);
   $Topics{$TopicID}{Short} = $ShortDescription;
   $Topics{$TopicID}{Long}  = $LongDescription;
 
@@ -227,18 +148,6 @@ sub GetTopicDocuments {
   return @DocumentIDs;
 }
 
-sub LookupMajorTopic { # V8OBS# Returns MajorTopicID from Topic Name
-  my ($TopicName) = @_;
-  my $major_fetch   = $dbh -> prepare(
-    "select MajorTopicID from MajorTopic where ShortDescription=?");
-
-  $major_fetch -> execute($TopicName);
-  my $MajorTopicID = $major_fetch -> fetchrow_array;
-  &FetchMajorTopic($MajorTopicID);
-  
-  return $MajorTopicID;
-}
-
 sub MatchTopic ($) {
   my ($ArgRef) = @_;
   my $Short = exists $ArgRef->{-short} ? $ArgRef->{-short} : "";
@@ -258,7 +167,7 @@ sub MatchTopic ($) {
   return @TopicIDs;
 }
 
-sub InsertTopics (%) {# V8OBS
+sub InsertTopics (%) {
   my %Params = @_;
   
   my $DocRevID =   $Params{-docrevid} || "";   

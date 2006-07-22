@@ -140,7 +140,7 @@ sub AdvancedInstructionsBody {
    for file names or extensions.)</li>
    <li>File descriptions: <tt>filedescsearch</tt> (text) and <tt>filedescsearchmode</tt> (see search string modes). </li>
    <li>File contents: <tt>filecontsearch</tt> (text) and <tt>filecontsearchmode</tt> (see search string modes). <em>Your admin must have enabled file content searches to use this.</em></li>
-   <li>Topics: <tt>minortopic</tt> (numbers found with List Topics)</li>
+   <li>Topics: <tt>topics</tt> (numbers found with List Topics)</li>
    <li>Events: <tt>events</tt> (numbers found with List Events)</li>
    <li>Event Groups: <tt>eventgroups</tt> (numbers found with List Events)</li>
    <li>Submitter and authors: <tt>requestersearch</tt> and <tt>authors</tt> (numbers found with List Authors)</li>
@@ -172,7 +172,7 @@ sub AdvancedInstructionsBody {
    <li>Search for documents by two authors:
     <tt>$Search?authors=1&amp;authors=2&amp;innerlogic=AND</tt></li>
    <li>Search for documents by an author on a topic:
-    <tt>$Search?authors=1&amp;minortopic=2&amp;outerlogic=AND</tt></li>
+    <tt>$Search?authors=1&amp;topics=2&amp;outerlogic=AND</tt></li>
   </ul>
 
   <a name="xml" />

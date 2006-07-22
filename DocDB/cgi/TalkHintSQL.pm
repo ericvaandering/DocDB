@@ -55,7 +55,7 @@ sub DeleteHints ($) {
   $TopicDelete  -> execute($SessionTalkID);
 }
 
-sub FetchTopicHintsBySessionTalkID ($) { #V8OBS
+sub FetchTopicHintsBySessionTalkID ($) {
   my ($SessionTalkID) = @_;
 
   my ($TopicHintID,$TopicID,$TimeStamp); 

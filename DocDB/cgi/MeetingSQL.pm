@@ -243,7 +243,7 @@ sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
   
   require "TopicSQL.pm";
   
-  if ($Conference{$conferenceID}{MINOR}) { # We already have this one
+  if ($Conference{$conferenceID}{EventGroupID}) { # We already have this one
     return $conferenceID;
   }
   

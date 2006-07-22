@@ -710,16 +710,6 @@ the document. I.e. a PowerPoint file isn't <i>necessarily</i> a "Talk."
  </entry>
 
  <entry>
-  <key>majortopics</key>
-  <title>Major Topics</title>
-  <text>
-Select the Major topic which is the parent of the minor, or subtopic you are
-entering. New major topics can only be entered into the database
-by the administrators.
-  </text>
- </entry>
-
- <entry>
   <key>shortdescription</key>
   <title>Short Description of Subtopic or Event</title>
   <text>

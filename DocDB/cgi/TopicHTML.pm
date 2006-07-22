@@ -98,70 +98,6 @@ sub TopicLink ($) {
   return $Link;
 }
 
-
-sub MinorTopicLink ($;$) { #V8OBS
-  my ($TopicID,$mode) = @_;
-  
-  require "TopicSQL.pm";
-  
-  my ($URL,$Link);
-
-  &FetchMinorTopic($TopicID);
-
-  $URL = "$ListBy?topicid=$TopicID";
-    
-  $Link = "<a href=\"$URL\" title=\"$MinorTopics{$TopicID}{LONG}\">";
-  if ($mode eq "short") {
-    $Link .= $MinorTopics{$TopicID}{SHORT};
-  } elsif ($mode eq "long") {
-    $Link .= $MinorTopics{$TopicID}{LONG};
-  } else {
-    $Link .= $MinorTopics{$TopicID}{Full};
-  }
-  $Link .= "</a>";
-  
-  return $Link;
-}
-
-sub MajorTopicLink ($;$) { #V8OBS
-  my ($TopicID,$mode) = @_;
-  
-  require "TopicSQL.pm";
-  
-  &FetchMajorTopic($TopicID);
-  my $link;
-  $link = "<a href=\"$ListBy?majorid=$TopicID\" title=\"$MajorTopics{$TopicID}{LONG}\">";
-  if ($mode eq "short") {
-    $link .= $MajorTopics{$TopicID}{SHORT};
-  } elsif ($mode eq "long") {
-    $link .= $MajorTopics{$TopicID}{LONG};
-  } else {
-    $link .= $MajorTopics{$TopicID}{SHORT};
-  }
-  $link .= "</a>";
-  
-  return $link;
-}
-
-sub TopicsByMajorTopic ($) {
-  my ($MajorTopicID) = @_;
-  
-  require "Sorts.pm";
-
-  my @MinorTopicIDs = sort byTopic keys %MinorTopics;
-
-  my $MajorLink = &MajorTopicLink($MajorTopicID,"short");
-  print "<b>$MajorLink</b>\n";
-  print "<ul>\n";
-  foreach my $MinorTopicID (@MinorTopicIDs) {
-    if ($MajorTopicID == $MinorTopics{$MinorTopicID}{MAJOR}) {
-      my $TopicLink = &MinorTopicLink($MinorTopicID,"short");
-      print "<li>$TopicLink</li>\n";
-    }  
-  }  
-  print "</ul>\n";
-}
-
 sub TopicsTable {
   require "Sorts.pm";
   require "TopicUtilities.pm";
@@ -285,10 +221,10 @@ sub TopicScroll ($) {
   BuildTopicProvenance();
   my @TopicIDs = sort TopicByProvenance keys %Topics;
   my %TopicLabels = ();
-  my @ActiveIDs = @TopicIDs; # Later can select single major topics, etc.
+  my @ActiveIDs = @TopicIDs; # Later can select single root topics, etc.
   
   foreach my $ID (@ActiveIDs) {
-    my $Spaces = '.'x(scalar(@{$TopicProvenance{$ID}})-1);
+    my $Spaces = ' 'x(scalar(@{$TopicProvenance{$ID}})-1);
   
     if ($ItemFormat eq "short") {
       $TopicLabels{$ID} = CGI::escapeHTML($Spaces.$Topics{$ID}{Short}); 

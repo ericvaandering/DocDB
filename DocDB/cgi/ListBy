@@ -40,8 +40,7 @@ my $TypeID       = $params{typeid}       || 0;
 my $AuthorID     = $params{authorid}     || 0;
 
 my $TopicID      = $params{topicid}      || 0;
-my $MajorID      = $params{majorid}      || 0;
-my $Major        = $params{major}        || "";
+my $Topic        = $params{topic}        || 0;
 
 my $EventID      = $params{eventid}      || 0;
 my $EventGroupID = $params{eventgroupid} || 0;

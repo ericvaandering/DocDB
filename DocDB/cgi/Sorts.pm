@@ -52,22 +52,6 @@ sub TopicByProvenance {
   return 0;  
 } 
 
-sub byMajorTopic { #V8OBS
-  $MajorTopics{$a}{SHORT} cmp $MajorTopics{$b}{SHORT};
-}    
-
-sub byMinorTopic { #V8OBS
-  $MinorTopics{$a}{SHORT} cmp $MinorTopics{$b}{SHORT};
-}    
-
-sub byTopic { #V8OBS
-  $MajorTopics{$MinorTopics{$a}{MAJOR}}{SHORT} cmp
-  $MajorTopics{$MinorTopics{$b}{MAJOR}}{SHORT}
-                 or
-      $MinorTopics{$a}{SHORT} cmp
-      $MinorTopics{$b}{SHORT};
-}    
-
 sub byLastName {
   require "AuthorSQL.pm";
 
