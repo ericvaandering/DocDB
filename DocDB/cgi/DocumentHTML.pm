@@ -234,7 +234,7 @@ sub DocumentTable (%) {
         require "TalkHintSQL.pm";
         my @TopicIDs = ();
         if ($DocRevID) {
-          @TopicIDs = NewGetRevisionTopics( {-docrevid => $DocRevID} );
+          @TopicIDs = GetRevisionTopics( {-docrevid => $DocRevID} );
         } elsif ($SessionTalkID) {
           my @TopicHintIDs  = FetchTopicHintsBySessionTalkID($SessionTalkID);
           foreach my $TopicHintID (@TopicHintIDs) {

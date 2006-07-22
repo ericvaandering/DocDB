@@ -153,7 +153,7 @@ sub RevisionMailBody ($) {
   my $Submitter = $Authors{$DocRevisions{$DocRevID}{Submitter}}{FULLNAME};
 
   my @AuthorIDs = GetRevisionAuthors($DocRevID);
-  my @TopicIDs  = NewGetRevisionTopics({-docrevid => $DocRevID});
+  my @TopicIDs  = GetRevisionTopics({-docrevid => $DocRevID});
   my @EventIDs  = GetRevisionEvents($DocRevID);
   
 # Build list of authors  
@@ -266,7 +266,7 @@ sub UsersToNotify ($$) {
 
   GetTopics();
   my @TopicIDs = ();
-  my @InitialTopicIDs = NewGetRevisionTopics( {-docrevid => $DocRevID} );
+  my @InitialTopicIDs = GetRevisionTopics( {-docrevid => $DocRevID} );
   
   foreach my $TopicID (@InitialTopicIDs) {
     push @TopicIDs,@{$TopicProvenance{$TopicID}}; # Add ancestors to list

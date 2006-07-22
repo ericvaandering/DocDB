@@ -135,7 +135,7 @@ sub RevisionXMLOut {
          
   if ($XMLDisplay{All} || $XMLDisplay{Topics}) {
     require "TopicSQL.pm";
-    my @TopicIDs = NewGetRevisionTopics({-docrevid => $DocRevID});
+    my @TopicIDs = GetRevisionTopics({-docrevid => $DocRevID});
     foreach my $TopicID (@TopicIDs) {
       my $TopicXML = TopicXMLOut( {-topicid => $TopicID} );
       if ($TopicXML) {

@@ -125,7 +125,7 @@ sub PrintRevisionInfo {
   my $DocumentID  = $DocRevisions{$DocRevID}{DOCID};
   my $Version     = $DocRevisions{$DocRevID}{VERSION};
   my @AuthorIDs   = GetRevisionAuthors($DocRevID);
-  my @TopicIDs    = NewGetRevisionTopics( {-docrevid => $DocRevID} );
+  my @TopicIDs    = GetRevisionTopics( {-docrevid => $DocRevID} );
   my @GroupIDs    = GetRevisionSecurityGroups($DocRevID);
   my @ModifyIDs;
   if ($EnhancedSecurity) {

@@ -182,7 +182,7 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   $DocTypeIDDefault    = $DocRevisions{$DocRevID}{DocTypeID};
   @SecurityDefaults    = GetRevisionSecurityGroups($DocRevID);
   @AuthorDefaults      = GetRevisionAuthors($DocRevID);
-  @TopicDefaults       = NewGetRevisionTopics({ -docrevid => $DocRevID });
+  @TopicDefaults       = GetRevisionTopics({ -docrevid => $DocRevID });
   @EventDefaults       = GetRevisionEvents($DocRevID);
   @ReferenceDefaults   = FetchReferencesByRevision($DocRevID);
   $XRefDefault         = SetXRefDefault($DocRevID);

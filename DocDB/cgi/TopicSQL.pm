@@ -157,7 +157,7 @@ sub FetchMajorTopic { # V8OBS# Fetches an MajorTopic by ID, adds to $Topics{$Top
   return $MajorTopics{$MajorTopicID}{MAJOR};
 }
 
-sub NewGetRevisionTopics {
+sub GetRevisionTopics {
   my ($ArgRef) = @_;
   my $DocRevID = exists $ArgRef->{-docrevid} ? $ArgRef->{-docrevid} : 0;
   
