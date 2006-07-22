@@ -98,7 +98,7 @@ sub InsertNotifications ($) {
   push @DebugStack,"Inserting text keys",@TextKeys;
   
   my $Count = 0;
-  if ($EmailUserID && $Period && $Type && @IDs) {
+  if ($EmailUserID && $Period && $Type && (@IDs || @TextKeys)) {
     my $Insert = $dbh -> prepare(
        "insert into Notification ".
        "(NotificationID,EmailUserID,Type,ForeignID,Period) values ".
