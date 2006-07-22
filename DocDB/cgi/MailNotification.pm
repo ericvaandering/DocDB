@@ -153,7 +153,7 @@ sub RevisionMailBody ($) {
   my $Submitter = $Authors{$DocRevisions{$DocRevID}{Submitter}}{FULLNAME};
 
   my @AuthorIDs = GetRevisionAuthors($DocRevID);
-  my @TopicIDs  = GetRevisionTopics($DocRevID);
+  my @TopicIDs  = NewGetRevisionTopics({-docrevid => $DocRevID});
   my @EventIDs  = GetRevisionEvents($DocRevID);
   
 # Build list of authors  
@@ -169,14 +169,14 @@ sub RevisionMailBody ($) {
   my $Authors = join ', ',@Authors;
   
 # Build list of topics
-
+  
   my @Topics = ();
   foreach $TopicID (@TopicIDs) {
-    FetchMinorTopic($TopicID);
+    FetchTopic({-topicid => $TopicID});
   }
-  @TopicIDs = sort byTopic @TopicIDs;
+  @TopicIDs = sort TopicByAlpha @TopicIDs;
   foreach $TopicID (@TopicIDs) {
-    push @Topics,$MinorTopics{$TopicID}{Full};
+    push @Topics,$Topics{$TopicID}{Long};
   }
   my $Topics = join ', ',@Topics;
   

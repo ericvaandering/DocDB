@@ -135,7 +135,7 @@ sub RevisionXMLOut {
          
   if ($XMLDisplay{All} || $XMLDisplay{Topics}) {
     require "TopicSQL.pm";
-    my @TopicIDs = GetRevisionTopics($DocRevID);
+    my @TopicIDs = NewGetRevisionTopics({-docrevid => $DocRevID});
     foreach my $TopicID (@TopicIDs) {
       my $TopicXML = TopicXMLOut( {-topicid => $TopicID} );
       if ($TopicXML) {
@@ -276,22 +276,23 @@ sub TopicXMLOut {
   
   require "TopicSQL.pm";
   
-  unless ($TopicID && FetchMinorTopic($TopicID)) {
+  unless ($TopicID && FetchTopic({-topicid => $TopicID})) {
     return undef;
   }  
-  
+  FetchTopicParents({-topicid => $TopicID});
+  my ($ParentID) = @{$TopicParents{$TopicID}};
   my %Attributes = ();
   $Attributes{id} = $TopicID;
-  $Attributes{majorid} = $MinorTopics{$TopicID}{MAJOR}; # Soon to be Obsolete
+  if ($ParentID) {
+    $Attributes{parentid} = $ParentID; # Attribute not compatible with multiple parents
+  }
   
   my $TopicXML = XML::Twig::Elt -> new(topic => \%Attributes );
-  my $Short    = XML::Twig::Elt -> new("name",       Printable($MinorTopics{$TopicID}{SHORT}));
-  my $Long     = XML::Twig::Elt -> new("description",Printable($MinorTopics{$TopicID}{LONG}));
-  my $Full     = XML::Twig::Elt -> new("fullname",   Printable($MinorTopics{$TopicID}{Full}));
+  my $Short    = XML::Twig::Elt -> new("name",       Printable($Topics{$TopicID}{Short}));
+  my $Long     = XML::Twig::Elt -> new("description",Printable($Topics{$TopicID}{Long}));
         
   $Short -> paste(last_child => $TopicXML);
   $Long  -> paste(last_child => $TopicXML);
-  $Full  -> paste(last_child => $TopicXML);
     
   return $TopicXML; 
 }

@@ -419,20 +419,20 @@ if ($EnhancedSecurity) {
 } else {
   $SecurityText = "Security";
 }
-&SecurityScroll(-addpublic => 'true',
-                -name      => 'security', 
-                -helplink  => 'security',
-                -helptext  => $SecurityText,
-                -multiple  => true,
-                -default   => \@SecurityDefaults);
+SecurityScroll(-addpublic => 'true',
+               -name      => 'security', 
+               -helplink  => 'security',
+               -helptext  => $SecurityText,
+               -multiple  => $TRUE,
+               -default   => \@SecurityDefaults);
 print "</td>\n";
 if ($EnhancedSecurity) {
   print "<td>\n"; 
-  &SecurityScroll(-name      => 'modify', 
-                  -helplink  => 'modifygroups',
-                  -helptext  => 'Modify',
-                  -multiple  => true,
-                  -default   => \@ModifyDefaults);
+  SecurityScroll(-name      => 'modify', 
+                 -helplink  => 'modifygroups',
+                 -helptext  => 'Modify',
+                 -multiple  => $TRUE,
+                 -default   => \@ModifyDefaults);
   print "</td>\n";
 }
 print "</tr>\n";
@@ -452,40 +452,31 @@ print "</td></tr>\n";
 
 ### Events
 
-print "<tr>\n";
-print "<td colspan=\"4\">\n";
+print "<tr><td colspan=\"4\">\n";
  EventSelect( {-required => $FALSE,          -format   => "full", 
                -default  => \@EventDefaults, -multiple => $TRUE} );
-print "</td>\n";
-print "</tr>\n";
+print "</td></tr>\n";
 
 ### Cross-references to other documents
 
-print "<tr>\n";
-print "<td colspan=\"4\">\n"; 
-&TextField(-name     => 'xrefs', -size => 40,
-           -default  => $XRefDefault, 
-           -helplink => 'xrefentry', -helptext => 'Related Documents');
-print "</td>\n";
-print "</tr>\n";
+print "<tr><td colspan=\"4\">\n"; 
+TextField(-name     => 'xrefs', -size => 40,
+          -default  => $XRefDefault, 
+          -helplink => 'xrefentry', -helptext => 'Related Documents');
+print "</td></tr>\n";
 
 ### References and Publication info
 
-print "<tr>\n";
-print "<td colspan=\"4\">\n"; &ReferenceForm;  print "</td>\n";
-print "</tr><tr>\n";
-print "<td colspan=\"4\">\n"; &PubInfoBox;  print "</td>\n";
-print "</tr>\n";
+print "<tr><td colspan=\"4\">\n"; ReferenceForm(); print "</td></tr>\n";
+print "<tr><td colspan=\"4\">\n"; PubInfoBox();    print "</td></tr>\n";
 
 if ($UseSignoffs) { # FIXME: Later may be more complicated control
-  print "<tr>\n";
-    print "<td colspan=\"4\">\n"; 
-      &SignoffBox(-default => $SignoffDefault); 
-    print "</td>\n";
-  print "</tr>\n";
+  print "<tr><td colspan=\"4\">\n"; 
+  SignoffBox(-default => $SignoffDefault); 
+  print "</td></tr>\n";
 }
 
-print "<tr>\n<td colspan=\"4\" class=\"SubmitCell\">\n"; 
+print "<tr><td colspan=\"4\" class=\"SubmitCell\">\n"; 
 if      ($mode eq "add") {
   print $query -> submit (-value => "Submit document");
 } elsif ($mode eq "reserve") {
@@ -493,10 +484,10 @@ if      ($mode eq "add") {
 } elsif ($mode eq "update" || $mode eq "updatedb") {
   print $query -> submit (-value => "Update document");
 }
-print "</td>\n</tr>\n";
+print "</td></tr>\n";
 print "</table>\n";
 
 print $query -> end_multipart_form;
 
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

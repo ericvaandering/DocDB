@@ -157,26 +157,6 @@ sub FetchMajorTopic { # V8OBS# Fetches an MajorTopic by ID, adds to $Topics{$Top
   return $MajorTopics{$MajorTopicID}{MAJOR};
 }
 
-sub GetRevisionTopics { # V8OBS
-  my ($DocRevID) = @_;
-  
-  require "Utilities.pm";
-  
-  my @topics = ();
-  my ($RevTopicID,$MinorTopicID);
-  my $topic_list = $dbh->prepare(
-    "select RevTopicID,MinorTopicID from RevisionTopic where DocRevID=?");
-  $topic_list -> execute($DocRevID);
-  $topic_list -> bind_columns(undef, \($RevTopicID,$MinorTopicID));
-  while ($topic_list -> fetch) {
-    if (&FetchMinorTopic($MinorTopicID)) {
-      push @topics,$MinorTopicID;
-    }  
-  }
-  @topics = &Unique(@topics);
-  return @topics;
-}
-
 sub NewGetRevisionTopics {
   my ($ArgRef) = @_;
   my $DocRevID = exists $ArgRef->{-docrevid} ? $ArgRef->{-docrevid} : 0;
