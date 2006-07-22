@@ -95,8 +95,6 @@ sub InsertNotifications ($) {
   
   # FIXME: Need way to insert AllDocuments
   
-  push @DebugStack,"Inserting text keys",@TextKeys;
-  
   my $Count = 0;
   if ($EmailUserID && $Period && $Type && (@IDs || @TextKeys)) {
     my $Insert = $dbh -> prepare(
@@ -112,7 +110,6 @@ sub InsertNotifications ($) {
       ++$Count;
     }  
     foreach my $TextKey (@TextKeys) {
-      push @DebugStack,"Inserting the text key $TextKey";
       $TextInsert -> execute($EmailUserID,$Type,$TextKey,$Period);
       ++$Count;
     }  
@@ -170,59 +167,6 @@ sub FetchKeywordNotification ($$) { #V8OBS
     }  
   }
   $NotifyKeywords = join ' ',@NotifyKeywords;
-}
-
-sub SetKeywordNotifications ($$) { #V8OBS
-  my ($EmailUserID,$Set) = @_;
-
-  my $Table = "EmailKeyword$Set";  # Tables    for immediate, daily, weekly 
-  my $Field = "Keyword".$Set."ID"; # ID fields for immediate, daily, weekly  
-  
-# Delete all old notifications  
-  
-  my $Delete = $dbh -> prepare("delete from $Table where EmailUserID=?");
-     $Delete -> execute($EmailUserID);
-
-# Get parameters from input
-
-  my $Keywords = $params{"keyword$Set"};
-     $Keywords =~ s/^\s+//;
-     $Keywords =~ s/\s+$//;
-  my @Keywords = split /\s+/,$Keywords;
-  
-# Insert into relevant table
-
-  my $KeywordInsert = $dbh -> prepare(
-      "insert into $Table ($Field,EmailUserID,Keyword) ".
-      "            values (0,     ?,          ?)");
-  foreach my $Keyword (@Keywords) {
-    $KeywordInsert -> execute($EmailUserID,$Keyword); 
-  }   
-}
-
-sub SetAuthorNotifications ($$) { #V8OBS
-  my ($EmailUserID,$Set) = @_;
-
-  my $Table = "EmailAuthor$Set";  # Tables    for immediate, daily, weekly 
-  my $Field = "Author".$Set."ID"; # ID fields for immediate, daily, weekly  
-  
-# Delete all old notifications  
-  
-  my $Delete = $dbh -> prepare("delete from $Table where EmailUserID=?");
-     $Delete -> execute($EmailUserID);
-
-# Get parameters from input
-
-  my @AuthorIDs = split /\0/,$params{"author$Set"};
-
-# Insert into relevant table
-
-  foreach my $AuthorID (@AuthorIDs) {
-    my $MinorInsert = $dbh -> prepare(
-      "insert into $Table ($Field,EmailUserID,AuthorID) ".
-      "            values (0,     ?,          ?)");
-    $MinorInsert -> execute($EmailUserID,$AuthorID); 
-  }   
 }
 
 sub InsertEmailDocumentImmediate (%) { #V8OBS

@@ -89,8 +89,6 @@ $ImmediateKeywords =~ s/,/ /g; my @ImmediateKeywords = split /\s+/,$ImmediateKey
 $DailyKeywords     =~ s/,/ /g; my @DailyKeywords     = split /\s+/,$DailyKeywords    ;
 $WeeklyKeywords    =~ s/,/ /g; my @WeeklyKeywords    = split /\s+/,$WeeklyKeywords   ;
 
-push @DebugStack,"Adding Keywords",@ImmediateKeywords;
-
 $UserName =~ s/\s+//g;
 $Password =~ s/\s+//g;
 
@@ -248,7 +246,6 @@ if ($Mode eq "update") {
   DeleteNotifications( {-emailuserid => $EmailUserID} );
 
 # Topics
-
   InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Topic", 
                                 -ids => \@ImmediateTopicIDs, -period => "Immediate",} );
   InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Topic", 
@@ -257,7 +254,6 @@ if ($Mode eq "update") {
                                 -ids => \@WeeklyTopicIDs,    -period => "Weekly",} );
         
 # Authors
-
   InsertNotifications( {-emailuserid => $EmailUserID,         -type   => "Author", 
                                 -ids => \@ImmediateAuthorIDs, -period => "Immediate",} );
   InsertNotifications( {-emailuserid => $EmailUserID,         -type   => "Author", 
@@ -266,7 +262,6 @@ if ($Mode eq "update") {
                                 -ids => \@WeeklyAuthorIDs,    -period => "Weekly",} );
         
 # Events
-
   InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Event", 
                                 -ids => \@ImmediateEventIDs, -period => "Immediate",} );
   InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Event", 
@@ -275,7 +270,6 @@ if ($Mode eq "update") {
                                 -ids => \@WeeklyEventIDs,    -period => "Weekly",} );
         
 # EventGroups        
-                                
   InsertNotifications( {-emailuserid => $EmailUserID,             -type   => "EventGroup", 
                                 -ids => \@ImmediateEventGroupIDs, -period => "Immediate",} );
   InsertNotifications( {-emailuserid => $EmailUserID,             -type   => "EventGroup", 
@@ -283,7 +277,6 @@ if ($Mode eq "update") {
   InsertNotifications( {-emailuserid => $EmailUserID,             -type   => "EventGroup", 
                                 -ids => \@WeeklyEventGroupIDs,    -period => "Weekly",} );
 # Keywords        
-  push @DebugStack,"Call insert: ", @ImmediateKeywords;                             
   InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Keyword", 
                            -textkeys => \@ImmediateKeywords, -period => "Immediate",} );
   InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Keyword", 
