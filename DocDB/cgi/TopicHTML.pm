@@ -224,14 +224,14 @@ sub TopicScroll ($) {
   my @ActiveIDs = @TopicIDs; # Later can select single root topics, etc.
   
   foreach my $ID (@ActiveIDs) {
-    my $Spaces = '&nbsp;'x(scalar(@{$TopicProvenance{$ID}})-1);
+    my $Spaces = '&nbsp;'x(2*(scalar(@{$TopicProvenance{$ID}})-1));
   
     if ($ItemFormat eq "short") {
-      $TopicLabels{$ID} = CGI::escapeHTML($Spaces.$Topics{$ID}{Short}); 
+      $TopicLabels{$ID} = $Spaces.CGI::escapeHTML($Topics{$ID}{Short}); 
     } elsif ($ItemFormat eq "long") {
-      $TopicLabels{$ID} = CGI::escapeHTML($Spaces.$Topics{$ID}{Long}); 
+      $TopicLabels{$ID} = $Spaces.CGI::escapeHTML($Topics{$ID}{Long}); 
     } elsif ($ItemFormat eq "full") {
-      $TopicLabels{$ID} = CGI::escapeHTML($Spaces.$Topics{$ID}{Short}.
+      $TopicLabels{$ID} = $Spaces.CGI::escapeHTML($Topics{$ID}{Short}.
                                              " [".$Topics{$ID}{Long}."]"); 
     } 
   }  
