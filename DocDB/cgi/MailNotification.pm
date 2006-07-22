@@ -355,8 +355,8 @@ sub EmailKeywordForm ($) {
 
   my $Keywords = join ' ',@Defaults;
 
-  print $query -> textfield (-name => "keyword$Set", -default => $Keywords, 
-                             -size => 80, -maxlength => 400);
+  print $query -> textfield (-name => $Name , -default   => $Keywords, 
+                             -size => 80,     -maxlength => 400);
 }
 
 sub DisplayNotification ($$;$) {

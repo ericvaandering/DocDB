@@ -112,7 +112,7 @@ sub InsertNotifications ($) {
       ++$Count;
     }  
     foreach my $TextKey (@TextKeys) {
-      push @DebugStack,"Inserting text key $TextKey";
+      push @DebugStack,"Inserting the text key $TextKey";
       $TextInsert -> execute($EmailUserID,$Type,$TextKey,$Period);
       ++$Count;
     }  
