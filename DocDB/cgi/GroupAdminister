@@ -193,7 +193,7 @@ if      ($Action eq "Delete") { # Delete group
   
   if ($NoPerm) {
     my $GroupUpdate = $dbh->prepare(
-       "update SecurityGroup set CanCreate=0 where GroupID=?");
+       "update SecurityGroup set CanCreate=0,CanAdminister=0 where GroupID=?");
     $GroupUpdate -> execute($ParentID);
   }  
   if ($Create) {
