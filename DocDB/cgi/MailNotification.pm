@@ -364,9 +364,9 @@ sub EmailAllForm ($) {
   my @Defaults = exists $ArgRef->{-default} ? @{$ArgRef->{-default}} : ();
 
   if (@Defaults) {
-    print $query -> checkbox(-name => $Name, -checked => 'checked', -value => 1, -label => '<b>All Documents</b>');
+    print $query -> checkbox(-name => $Name, -checked => 'checked', -value => 1, -label => 'All Documents');
   } else {
-    print $query -> checkbox(-name => $Name, -value => 1, -label => '<b>All Documents</b>');
+    print $query -> checkbox(-name => $Name, -value => 1, -label => 'All Documents');
   }                             
 }
 
