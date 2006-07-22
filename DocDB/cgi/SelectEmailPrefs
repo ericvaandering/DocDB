@@ -93,6 +93,9 @@ $ImmediateKeywords =~ s/,/ /g; my @ImmediateKeywords = split /\s+/,$ImmediateKey
 $DailyKeywords     =~ s/,/ /g; my @DailyKeywords     = split /\s+/,$DailyKeywords    ;
 $WeeklyKeywords    =~ s/,/ /g; my @WeeklyKeywords    = split /\s+/,$WeeklyKeywords   ;
 
+my $ImmediateDocuments      = $params{immediate_documents};
+$ImmediateDocuments =~ s/,/ /g; my @ImmediateDocuments = split /\s+/,$ImmediateDocuments;
+
 $UserName =~ s/\s+//g;
 $Password =~ s/\s+//g;
 
@@ -236,15 +239,11 @@ if ($Mode eq "update") {
   $EmailUser{$EmailUserID}{EmailUserID} = 0; 
   FetchEmailUser($EmailUserID);
 
-# Delete individual documents if asked
-    
-  if ($ClearWatched && $EmailUserID) {
-    my $Delete = $dbh -> prepare("delete from EmailDocumentImmediate where EmailUserID=?"); 
-    $Delete -> execute($EmailUserID);
-  }      
-    
+# Out with the old, in with the new
+
   DeleteNotifications( {-emailuserid => $EmailUserID} );
 
+# All Documents
   if ($ImmediateAll) {
     InsertNotifications( {-emailuserid => $EmailUserID, -type   => "AllDocuments", 
                                   -ids => [0],          -period => "Immediate",} );
@@ -296,6 +295,10 @@ if ($Mode eq "update") {
                            -textkeys => \@DailyKeywords,     -period => "Daily",} );
   InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Keyword", 
                            -textkeys => \@WeeklyKeywords,    -period => "Weekly",} );
+# Individual documents
+  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Document", 
+                           -textkeys => \@ImmediateDocuments, -period => "Immediate",} );
+  
 }  
 
 # Clear (are refetched in DisplayNotification)
@@ -461,8 +464,11 @@ print "</td></tr></table>\n";
 
 print "<hr/><a name=\"documents\"/><h3>Notification for Individual Documents</h3>\n";
 
+print "<table class=\"HighPaddedTable\">\n";
+print "<tr><td>\n";
 TextArea(-name => "immediate_documents", -helptext => "Immediate", -helplink => "notifiydocument", 
-         -columns => 60, -default => join ' ',@{$Notifications{$EmailUserID}{Document_Immediate}});
+         -columns => 80, -default => join ' ',@{$Notifications{$EmailUserID}{Document_Immediate}});
+print "</td></tr></table>\n";
 
 print "<table class=\"HighPaddedTable CenteredTable\">\n";
 print "<tr><td>";
