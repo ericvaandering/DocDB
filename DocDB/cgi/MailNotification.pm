@@ -342,13 +342,6 @@ sub UsersToNotify ($$) {
   return @Addressees;
 }
 
-sub EmailAuthorForm ($$) {
-  require "NotificationSQL.pm";
-  my ($EmailUserID,$Set) = @_;
-  &FetchAuthorNotification($EmailUserID,$Set);
-  &NotifyAuthorSelect($Set);
-}
-
 sub EmailKeywordForm ($$) {
   require "NotificationSQL.pm";
   my ($EmailUserID,$Set) = @_;
@@ -368,10 +361,9 @@ sub DisplayNotification ($$;$) {
 
 #V8OBS
 
-#  FetchTopicNotification($EmailUserID,$Set);
-  FetchAuthorNotification($EmailUserID,$Set);
   FetchKeywordNotification($EmailUserID,$Set);
   
+  my @AuthorIDs     = @{$Notifications{$EmailUserID}{"Author_".$Set}};
   my @TopicIDs      = @{$Notifications{$EmailUserID}{"Topic_".$Set}};
   my @EventIDs      = @{$Notifications{$EmailUserID}{"Event_".$Set}};
   my @EventGroupIDs = @{$Notifications{$EmailUserID}{"EventGroup_".$Set}};
@@ -400,10 +392,8 @@ sub DisplayNotification ($$;$) {
     print "<li>Topic: ",TopicLink({ -topicid => $TopicID }),"</li>";
   }
     
-  if (@NotifyAuthorIDs) {
-    foreach my $AuthorID (@NotifyAuthorIDs) {
-      print "<li> Author: ",AuthorLink($AuthorID),"</li>";
-    }
+  foreach my $AuthorID (@AuthorIDs) {
+    print "<li> Author: ",AuthorLink($AuthorID),"</li>";
   }
     
   # FIXME: Make rest like this  

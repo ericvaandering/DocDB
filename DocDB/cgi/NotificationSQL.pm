@@ -138,54 +138,6 @@ sub FetchNotifications ($) {
   return $Count;
 }
 
-sub FetchTopicNotification ($$) { #V8OBS
-  my ($EmailUserID,$Set) = @_;
-
-  my ($MajorTopicID,$MinorTopicID);
-
-  $Table = "EmailTopic$Set";
-  @NotifyMajorIDs = ();
-  @NotifyMinorIDs = ();
-  $NotifyAllTopics = 0;
-  
-  my $UserFetch   = $dbh -> prepare("select MajorTopicID,MinorTopicID from $Table where EmailUserID=?");
-
-# Get users interested in all documents for this reporting period
-
-  $UserFetch -> execute($EmailUserID);
-  $UserFetch -> bind_columns(undef,\($MajorTopicID,$MinorTopicID));
-  while ($UserFetch -> fetch) {
-    if ($MajorTopicID) {
-      push @NotifyMajorIDs,$MajorTopicID;
-    } elsif ($MinorTopicID) { 
-      push @NotifyMinorIDs,$MinorTopicID;
-    } else { 
-      $NotifyAllTopics = 1;
-    }  
-  }
-}
-
-sub FetchAuthorNotification ($$) { #V8OBS
-  my ($EmailUserID,$Set) = @_;
-
-  my $AuthorID;
-
-  $Table = "EmailAuthor$Set";
-  @NotifyAuthorIDs = ();
-  
-  my $UserFetch   = $dbh -> prepare("select AuthorID from $Table where EmailUserID=?");
-
-# Get users interested in all documents for this reporting period
-
-  $UserFetch -> execute($EmailUserID);
-  $UserFetch -> bind_columns(undef,\($AuthorID));
-  while ($UserFetch -> fetch) {
-    if ($AuthorID) {
-      push @NotifyAuthorIDs,$AuthorID;
-    }  
-  }
-}
-
 sub FetchKeywordNotification ($$) { #V8OBS
   my ($EmailUserID,$Set) = @_;
 
