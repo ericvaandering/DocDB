@@ -418,7 +418,7 @@ sub DisplayNotification ($$;$) {
   }
 
   foreach my $Keyword (@Keywords) {
-    print "<li>Keyword: ",KeywordLink($Keyword),</li>";
+    print "<li>Keyword: ",KeywordLink($Keyword),"</li>";
   }
      
   print "</ul>\n";  
