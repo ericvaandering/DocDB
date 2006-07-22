@@ -50,7 +50,7 @@
                );  
                
 %DefaultFieldLists = (
-                      "Default"             => ["Docid","Title","Author","Updated"], 
+                      "Default"             => ["Docid","Title","Author","Topics","Updated"], 
                       "Event Group Default" => ["Docid","Title","Events","Author","Updated"], 
                       "Meeting Mode"        => ["Docid","Title","Author","Updated"], 
                       "Conference Mode"     => ["Title","Events","Author","Files"],

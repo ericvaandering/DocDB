@@ -125,12 +125,12 @@ of Illinois) for the institution.
 
  <entry>
 <key>notifyauthor</key>
-<title>E-mail notification authors</title>
+<title>E-mail notification by author</title>
   <text>
 Select which people you want to be notified about when they are listed as
 authors on documents.  Immediate notification will send you e-mail on each
 document as it is entered. Daily and weekly notifications send out lists of
-documents you are interested in every night or week.<p/>
+documents you are interested in every day or week.<p/>
 
 You can select any combination of authors for each of the three
 periods.
@@ -139,13 +139,13 @@ periods.
 
  <entry>
 <key>notifykeyword</key>
-<title>E-mail notification keywords</title>
+<title>E-mail notification by keyword</title>
   <text>
 Select the keywords that you want to be notified when they are entered on
 documents. The keywords are case insensitive, but otherwise must match
 <b>exactly</b>. Immediate notification will send you e-mail on each
 document as it is entered. Daily and weekly notifications send out lists of
-documents you are interested in every night or week.<p/>
+documents you are interested in every day or week.<p/>
 
 You can select any combination of keywords for each of the three
 periods.
@@ -153,16 +153,41 @@ periods.
  </entry>
 
  <entry>
-<key>notifytopic</key>
-<title>E-mail notification topics</title>
+  <key>notifytopic</key>
+  <title>E-mail notification by topic</title>
   <text>
-Select the topics or subtopics that you want to be notified about for the
-selected time period. Immediate notification will send you e-mail on each
-document as it is entered. Daily and weekly notifications send out lists of
-documents you are interested in every night or week.<p/>
+Select the topics that you want to be notified about for the selected time period.
+If you select a topic, you will receive notifications for its sub-topics as well.
+Immediate notification will send you e-mail on each document as it is entered. Daily
+and weekly notifications send out lists of documents you are interested in every day
+or week.<p/>
 
-You can select any combination of topics and subtopics for each of the three
+You can select any combination of topics and sub-topics for each of the three
 periods.
+  </text>
+ </entry>
+
+ <entry>
+  <key>notifyevent</key>
+  <title>E-mail notification by event</title>
+  <text>
+Select the events and event groups for documents that you want to be notified about.
+If you select an event group, you will receive notifications for all events in that.
+Immediate notification will send you e-mail on each document as it is entered. Daily
+and weekly notifications send out lists of documents you are interested in every day
+or week.<p/>
+
+You can select any combination of groups and events for each of the three
+periods.
+  </text>
+ </entry>
+
+ <entry>
+  <key>notifydocument</key>
+  <title>E-mail notification for documents</title>
+  <text>
+   This is the list of documents you are watching. You can add to or remove from it
+   here. Only immediate notifications for documents are available.
   </text>
  </entry>
 
@@ -206,21 +231,15 @@ document.
  </entry>
 
  <entry>
-<key>dynamictopic</key>
+<key>searchtopic</key>
 <title>Topics</title>
   <text>
-Using this control you can select either topics or sub-topics for the
-document(s) you are searching for. You can select topics on the left and
-sub-topics on the right. Selecting a topic on the left will limit your choices
-on the right (assuming you have Javascript turned on). 
-<p/>
-Selecting any sub-topic on the right ignore its parent topic on the left. 
-This means that if you have <i>Meetings</i> and
-<i>Detectors</i>
-selected on the left and <i>Detectors:Straws</i> selected on the right, your
-search will be performed on <i>Detectors:Straws</i> and <i>Meetings</i>. But,
-even if you have "OR" selected for "Within Fields," you won't get documents for
-detectors other than straws.  
+You can select the topics and/or sub-topics for the
+document(s) you are searching for. The default is to search all sub-topics for
+a topic as well; you can turn this option off by checking the box. However, for 
+searches of an <q>AND</q> of topics, this option is not available. E.g., a search
+for on documents with topics <q>Asia AND Europe</q> will not find documents with 
+topics <q>Germany</q> and <q>China</q>.   
   </text>
  </entry>
 
@@ -268,11 +287,11 @@ The following modes are used to search for information:
 <ul>
  <li><b>Any words as sub-string: </b>The information you enter is broken into
  words (delimited by spaces) and the field you are searching in is required to
- match one or more of these words as a substring (<i>lock</i> will match
+ match one or more of these words as a sub-string (<i>lock</i> will match
  <i>lock</i> and <i>block</i>).</li>
  <li><b>All words as sub-string: </b>The information you enter is broken into
  words (delimited by spaces) and the field you are searching in is required to
- match all of these words as substrings (in any order).</li> 
+ match all of these words as sub-strings (in any order).</li> 
  <li><b>Any or all words as words: </b>Like the searches above, but spaces are 
  require to delimit words (<i>lock</i> will not match <i>block</i>).</li> 
 </ul> 

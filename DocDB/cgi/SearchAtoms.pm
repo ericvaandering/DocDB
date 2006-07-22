@@ -255,7 +255,6 @@ sub AddSearchWeights ($) {
   my ($ArgRef) = @_;
   my @Revisions   = exists $ArgRef->{-revisions}   ? @{$ArgRef->{-revisions}}   : ();
   my @Topics      = exists $ArgRef->{-topics}      ? @{$ArgRef->{-topics}}      : ();
-  my @MajorTopics = exists $ArgRef->{-majortopics} ? @{$ArgRef->{-majortopics}} : ();
   my @Events      = exists $ArgRef->{-events}      ? @{$ArgRef->{-events}}      : ();
   my @EventGroups = exists $ArgRef->{-eventgroups} ? @{$ArgRef->{-eventgroups}} : ();
   my @Authors     = exists $ArgRef->{-authors}     ? @{$ArgRef->{-authors}}     : ();
@@ -268,9 +267,6 @@ sub AddSearchWeights ($) {
   }
   foreach my $DocumentID (@Topics) {
      $Documents{$DocumentID}{Relevance} += $SearchWeights{"Topic"};
-  }
-  foreach my $DocumentID (@MajorTopics) {
-     $Documents{$DocumentID}{Relevance} += $SearchWeights{"MajorTopic"};
   }
   foreach my $DocumentID (@Events) {
      $Documents{$DocumentID}{Relevance} += $SearchWeights{"Event"};
