@@ -377,12 +377,7 @@ print "</td>\n";
 print "</tr>\n";
 print "<tr>";
 print "<td>";  
-if ( @{$Notifications{$EmailUserID}{AllDocuments_Immediate}} ) {
-  print $query -> checkbox(-name => "immediate_all", -checked => 'checked', -value => 1, -label => '');
-} else {
-  print $query -> checkbox(-name => "immediate_all", -value => 1, -label => '');
-}                             
-print "<b> All Documents</b> ";
+EmailAllForm({ -name => "immediate_all", -defaults => $Notifications{$EmailUserID}{AllDocuments_Immediate});
 print "</td>\n";
 print "<td>";  
 if ( @{$Notifications{$EmailUserID}{AllDocuments_Daily}} ) {
