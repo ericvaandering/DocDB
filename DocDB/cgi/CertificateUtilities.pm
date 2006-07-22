@@ -111,15 +111,11 @@ sub CertificateStatus () {
   if ($EmailUserID) {
     $CertificateStatus = "unverified";
     push @DebugStack,"Certificate Status: $CertificateStatus";
-    push @WarnStack,"Your application for access to DocDB has not yet been approved. 
-                     <a href=\"$CertificateApplyForm\">Apply again.</a>";
     return $CertificateStatus;
   } 
   
   $CertificateStatus = "noapp";
   push @DebugStack,"Certificate Status: $CertificateStatus";
-  push @WarnStack,"You have a valid certificate, but have not applied for access to DocDB. 
-                   <a href=\"$CertificateApplyForm\">Apply for access.</a>";
   return $CertificateStatus;
 }
 
