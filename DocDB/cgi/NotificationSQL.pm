@@ -124,11 +124,12 @@ sub FetchNotifications ($) {
     
     while ($Fetch -> fetch) {
       my $Key = $Type."_".$Period;
-      if ($ForeignID) {
-        push @{$Notifications{$EmailUserID}{$Key}},$ForeignID;
-      }
       if ($TextKey) {
         push @{$Notifications{$EmailUserID}{$Key}},$TextKey;
+        push @DebugStack,"Adding $TextKey to $Key";
+      } else {
+        push @{$Notifications{$EmailUserID}{$Key}},$ForeignID;
+        push @DebugStack,"Adding $ForeignID to $Key";
       }
       ++$Count;      
     }
