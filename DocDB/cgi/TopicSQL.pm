@@ -83,20 +83,6 @@ sub GetTopics { #V8OBS everything from here down to new code
   $GotAllTopics = 1;
 };
 
-sub GetSubTopics {# V8OBS
-  my ($MajorTopicID) = @_;
-  my @MinorTopicIDs = ();
-  my $MinorList = $dbh->prepare("select MinorTopicID from MinorTopic where MajorTopicID=?");
-
-  my ($MinorTopicID);
-  $MinorList -> execute($MajorTopicID);
-  $MinorList -> bind_columns(undef, \($MinorTopicID));
-  while ($MinorList -> fetch) {
-    push @MinorTopicIDs,$MinorTopicID;
-  }
-  return @MinorTopicIDs;
-};
-
 sub FetchMinorTopic { # V8OBS# Fetches an MinorTopic by ID, adds to $Topics{$TopicID}{}
   my ($minorTopicID) = @_;
   my ($MinorTopicID,$MajorTopicID,$ShortDescription,$LongDescription);
@@ -121,20 +107,6 @@ sub FetchMinorTopic { # V8OBS# Fetches an MinorTopic by ID, adds to $Topics{$Top
 }
 
 sub FetchMinorTopicByInfo (%) { # V8OBS# Keep for John/Lynn? Can eventually add short/long, major topics
-  my %Params = @_;
-  
-  my $Short = $Params{-short}; 
-  
-  my $Select = $dbh -> prepare("select MinorTopicID from MinorTopic where lower(ShortDescription) like lower(?)");
-  $Select -> execute($Short);
-  my ($MinorTopicID) = $Select -> fetchrow_array;
-  
-  if ($MinorTopicID) {
-    &FetchMinorTopic($MinorTopicID);
-  } else {
-    return 0;
-  }  
-  return $MinorTopicID;
 }
 
 sub FetchMajorTopic { # V8OBS# Fetches an MajorTopic by ID, adds to $Topics{$TopicID}{}
@@ -267,7 +239,7 @@ sub LookupMajorTopic { # V8OBS# Returns MajorTopicID from Topic Name
   return $MajorTopicID;
 }
 
-sub MatchTopic ($) { # V8OBS# FIXME: Make LookupMajorTopic a subset?
+sub MatchTopic ($) {
   my ($ArgRef) = @_;
   my $Short = exists $ArgRef->{-short} ? $ArgRef->{-short} : "";
 #  my $Long = exists $ArgRef->{-long}  ? $ArgRef->{-long}  : "";

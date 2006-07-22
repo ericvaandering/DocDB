@@ -249,7 +249,7 @@ sub LocalSearch ($) {
 
   if (@TopicSearchIDs) { 
     $SearchedTopics = 1; # Add -subtopics switch
-    @TopicRevisions = TopicSearch({ -logic => $InnerLogic, -topicids => \@TopicSearchIDs, });
+    @TopicRevisions = TopicSearch({ -logic => $InnerLogic, -topicids => \@TopicSearchIDs, -subtopics => $TRUE});
     push @DebugStack,"Found revisions ".join ', ',@TopicRevisions;
     @TopicDocumentIDs = ValidateRevisions(@TopicRevisions);
   } 

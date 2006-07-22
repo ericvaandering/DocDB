@@ -96,12 +96,19 @@ sub TopicSearch ($) {
   my $SubTopics  = exists $ArgRef->{-subtopics} ?   $ArgRef->{-subtopics} : $FALSE;
   my @InitialIDs = exists $ArgRef->{-topicids}  ? @{$ArgRef->{-topicids}} : ();
   
+  require "TopicUtilities.pm";
+  require "Utilities.pm";
+  
   my $List = $dbh -> prepare("select DocRevID from RevisionTopic where TopicID=?"); 
  
   my @TopicIDs = ();
  
   if ($Logic eq "OR" && $SubTopics) {
-    # FIXME: Get subtopics with new unwritten routine (do while over children)
+    foreach my $TopicID (@InitialIDs) {
+      my @ChildIDs = TopicAndSubTopics({-topicid => $TopicID});
+      push @TopicIDs,@ChildIDs;
+    }  
+    @TopicIDs = Unique(@TopicIDs);
   } else {
     @TopicIDs = @InitialIDs;
   }  
