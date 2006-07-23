@@ -233,7 +233,7 @@ sub TopicScrollTable ($) {
   require "TopicUtilities.pm";
   require "FormElements.pm";
 
-  print "<table class=\"MedPaddedTable CenteredTable\">\n";
+  print "<table class=\"MedPaddedTable\">\n";
 
   print "<tr><th colspan=\"$NCols\">\n";
   print FormElementTitle(-helplink  => $HelpLink, -helptext  => $HelpText ,

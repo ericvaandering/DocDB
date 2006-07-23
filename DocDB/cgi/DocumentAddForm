@@ -439,12 +439,13 @@ print "</tr>\n";
 
 ### Topics 
 
-print "<tr><td colspan=\"4\">\n"; 
 
 if ($TopicMode eq "single") {
+  print "<tr><td colspan=\"4\">\n"; 
   TopicScroll({ -required => $RequiredEntries{Topic}, -size     => 20 , 
                 -default  => \@TopicDefaults,         -multiple => $TRUE, });
 } elsif ($TopicMode eq "multi") {
+  print "<tr><td colspan=\"4\" id=\"TopicScrollTable\">\n"; 
   TopicScrollTable({ -required => $RequiredEntries{Topic}, 
                      -default  => \@TopicDefaults, 
                      -multiple => $TRUE, });
