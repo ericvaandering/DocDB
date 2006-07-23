@@ -6,8 +6,9 @@ Test Search, incl XML
 Redo prefs for topic entry form & redo multi-topic select
 Don't forget to check things in scripts to make sure 
   they all work and use the new routines.
-Redo table of topics, add if less than twice target. Readjust target.
 Write or extend match topic for API
+Implement minimum topic level, display to users
+
 
 Database structures allow for a number of things that aren't currently supported
 by the code:
