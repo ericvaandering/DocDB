@@ -25,11 +25,10 @@
 
 sub TopicListByID {
   my ($ArgRef) = @_;
-  my @TopicIDs = exists $ArgRef->{-topicids} ? @{$ArgRef->{-topicids}} : ();
-  my $ListFormat = exists $ArgRef->{-listformat} ? $ArgRef->{-listformat} : "dl";
-  
+  my @TopicIDs   = exists $ArgRef->{-topicids}   ? @{$ArgRef->{-topicids}}  : ();
+  my $ListFormat = exists $ArgRef->{-listformat} ?   $ArgRef->{-listformat} : "dl";
+    
   require "TopicSQL.pm";
-  
   
   my @TopicLinks = ();
   if (@TopicIDs) {
@@ -138,16 +137,25 @@ sub TopicListWithChildren { # Recursive routine
   my $HTML;
   
   if (@TopicIDs) {
-    $HTML .= "<ul class=\"$Depth-deep\">\n";
+    if ($Depth > 1) {
+      $HTML .= "<ul class=\"$Depth-deep\">\n";
+    }  
     foreach my $TopicID (@TopicIDs) {
-      $HTML .= "<li>".TopicLink( {-topicid => $TopicID} );
+      if ($Depth > 1) {
+        $HTML .= "<li>";
+      }  
+      $HTML .= TopicLink( {-topicid => $TopicID} );
       if (@{$TopicChildren{$TopicID}}) {
         $HTML .= "\n";
         $HTML .= TopicListWithChildren({ -topicids => $TopicChildren{$TopicID}, -depth => $Depth+1 });
       }
-      $HTML .= "</li>\n";
+      if ($Depth > 1) {
+        $HTML .= "</li>\n";
+      }  
     }
-    $HTML .= "</ul>\n";
+    if ($Depth > 1) {
+      $HTML .= "</ul>\n";
+    }  
   }    
   return $HTML;
 }
