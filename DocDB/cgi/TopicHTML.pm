@@ -115,30 +115,30 @@ sub TopicsTable {
     $TotalSize += $Size; 
   }   
   
-  push @DebugStack,"Have to split up $TotalSize elements over $NCols columns";
- 
+  # This algorithm attempts to balance the length of columns in a multi-column
+  # table. It sees if things "mostly" fit and recalculates the length of the 
+  # columns on the fly
+
   my $Target = $TotalSize/$NCols;
+  push @DebugStack,"Target column length $Target";
   print '<table class="MedPaddedTable CenteredTable">'."<tr><td>\n";
   my $Col      = 1;
   my $NThisCol = 0;
   my $NSoFar   = 0;
   foreach my $TopicID (@RootTopicIDs) {
-    push @DebugStack,"Current column: $NThisCol, so far $NSoFar"; 
     my $Size = $List{$TopicID}{Size};
-    if ($NThisCol != 0 && $Col != $NCols) {
-      if ($NThisCol + 0.5*$Size > $Target) {
-        push @DebugStack,$NThisCol + 0.5*$Size." ($NThisCol,$Size) is more than ".$Target;
-#        unless ($Col == $NCols) {
-          $Target = ($TotalSize - $NSoFar)/($NCols-$Col);
-          push @DebugStack,"New Target for column ".($Col+1).": $Target";
-#        }  
-        print "</td><td>\n";
-        ++$Col;
-        $NThisCol = 0;
-      } else {
-        push @DebugStack,$NThisCol + 0.5*$Size." ($NThisCol,$Size) is less than ".$Target;
-      }
+    
+# Insert new cell if current chunk is to large and it's not 
+# the first thing in a column or the last column    
+    
+    if ($NThisCol != 0 && $Col != $NCols && $NThisCol + 0.5*$Size >= $Target) {
+      $Target = ($TotalSize - $NSoFar)/($NCols-$Col);
+      push @DebugStack,"New target column length $Target";
+      print "</td><td>\n";
+      ++$Col;
+      $NThisCol = 0;
     }
+    
     $NThisCol += $Size;
     $NSoFar   += $Size;
     print $List{$TopicID}{HTML}; 
