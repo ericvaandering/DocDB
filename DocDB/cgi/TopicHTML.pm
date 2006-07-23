@@ -240,9 +240,9 @@ sub TopicScrollTable ($) {
   my $Col = 0;
   foreach my $TopicID (@RootTopicIDs) {
     my @TopicIDs = TopicAndSubTopics({ -topicid => $TopicID });
-    unless ($Col % $NCols) {
+    if ($Col % $NCols) {
       unless ($Col) {
-        print "<\tr>\n";
+        print "</tr>\n";
       }  
       print "<tr>\n";
     }
@@ -250,6 +250,7 @@ sub TopicScrollTable ($) {
     TopicScroll({ -itemformat => "short",    -multiple => $TRUE, -helplink => "", 
                   -defaults   => \@Defaults, -topicids => \@TopicIDs, });
     print "</td>\n";
+    ++$Col;
   }   
   print "</tr></table>\n";
 }
@@ -281,8 +282,10 @@ sub TopicScroll ($) {
   GetTopics();
   BuildTopicProvenance();
   unless (@TopicIDs) {
-    @TopicIDs = sort TopicByProvenance keys %Topics;
+    @TopicIDs = keys %Topics;
   }  
+  @TopicIDs = sort TopicByProvenance @TopicIDs;
+  
   my %TopicLabels = ();
 #  my @ActiveIDs = @TopicIDs; # Later can select single root topics, etc.
   
