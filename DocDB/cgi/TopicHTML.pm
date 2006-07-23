@@ -249,7 +249,7 @@ sub TopicScrollTable ($) {
     print "<td>\n";
     push @DebugStack,"Calling with defaults ".join ', ',@Defaults;
     TopicScroll({ -itemformat => "short",    -multiple => $TRUE, -helplink => "", 
-                  -defaults   => \@Defaults, -topicids => \@TopicIDs, });
+                  -default   => \@Defaults, -topicids => \@TopicIDs, });
     print "</td>\n";
     ++$Col;
   }   
