@@ -115,8 +115,29 @@ sub TopicsTable {
     $TotalSize += $Size; 
   }   
   
-  push @DebugStack,"Have to split up $TotalSize elements over $NCols columns"
-  
+  push @DebugStack,"Have to split up $TotalSize elements over $NCols columns";
+ 
+  my $Target = $TotalSize/$NCols;
+  print "<table><tr><td>\n";
+  my $Col      = 1;
+  my $NThisCol = 0;
+  my $NSoFar   = 0;
+  foreach my $TopicID (@RootTopicIDs) {
+    push @DebugStack,"Current column: $NThisCol, so far $NSoFar"; 
+    my $Size = $List{$TopicID}{Size};
+    if ($NThisCol != 0 && $Col != $NCol) {
+      if ($NThisCol + 2*$Size > $Target) {
+        push @DebugStack,$NThisCol + 2*$Size." is more than ".$Target;
+        ++$Col;
+        $Target = ($TotalSize - $NSoFar)/($NCols-$Col);
+        print "</td><td>\n";
+      }  
+    }
+    $NThisCol += $Size;
+    $NSoFar   += $Size;
+    print $List{$TopicID}{HTML}; 
+  }  
+  print "</td></tr></table>";
 }
 
 sub TopicListWithChildren { # Recursive routine
