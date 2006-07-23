@@ -125,7 +125,7 @@ sub TopicsTable {
   foreach my $TopicID (@RootTopicIDs) {
     push @DebugStack,"Current column: $NThisCol, so far $NSoFar"; 
     my $Size = $List{$TopicID}{Size};
-    if ($NThisCol != 0 && $Col != $NCol) {
+    if ($NThisCol != 0 && $Col != $NCols) {
       if ($NThisCol + 2*$Size > $Target) {
         push @DebugStack,$NThisCol + 2*$Size." ($NThisCol,$Size) is more than ".$Target;
         ++$Col;
