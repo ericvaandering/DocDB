@@ -247,6 +247,7 @@ sub TopicScrollTable ($) {
       print "<tr>\n";
     }
     print "<td>\n";
+    push @DebugStack,"Calling with defaults ".join ', ',@Defaults;
     TopicScroll({ -itemformat => "short",    -multiple => $TRUE, -helplink => "", 
                   -defaults   => \@Defaults, -topicids => \@TopicIDs, });
     print "</td>\n";
@@ -278,6 +279,7 @@ sub TopicScroll ($) {
   require "TopicSQL.pm";
   require "TopicUtilities.pm";
   require "FormElements.pm";
+    push @DebugStack,"Called with defaults ".join ', ',@Defaults;
 
   GetTopics();
   BuildTopicProvenance();
