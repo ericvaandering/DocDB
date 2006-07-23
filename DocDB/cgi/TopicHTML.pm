@@ -107,7 +107,7 @@ sub TopicsTable {
   foreach my $TopicID (@RootTopicIDs) {
     my $HTML = TopicListWithChildren({ -topicids => [$TopicID] }); 
     print $HTML;
-    my $Size = grep /\n/,$HTML;
+    my $Size = grep /href/g,$HTML;
     push @DebugStack,"Size of $TopicID is $Size";
   }   
 }
