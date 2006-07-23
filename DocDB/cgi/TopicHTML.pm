@@ -134,6 +134,7 @@ sub TopicsTable {
           push @DebugStack,"New Target for column $Col: $Target";
         }  
         print "</td><td>\n";
+        $NThisCol = 0;
       } else {
         push @DebugStack,$NThisCol + 0.5*$Size." ($NThisCol,$Size) is less than ".$Target;
       }
