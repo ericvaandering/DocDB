@@ -229,6 +229,10 @@ sub TopicScrollTable ($) {
   my $Required   = exists $ArgRef->{-required}   ?   $ArgRef->{-required}   : 0;
   my @Defaults   = exists $ArgRef->{-default}    ? @{$ArgRef->{-default}}   : ();
 
+  require "TopicSQL.pm";
+  require "TopicUtilities.pm";
+  require "FormElements.pm";
+
   print "<table class=\"MedPaddedTable\">\n";
   
   my @RootTopicIDs = sort TopicByAlpha AllRootTopics();
@@ -252,10 +256,6 @@ sub TopicScrollTable ($) {
 
 
 sub TopicScroll ($) {
-  require "TopicSQL.pm";
-  require "TopicUtilities.pm";
-  require "FormElements.pm";
-  
   my ($ArgRef) = @_;
   my $ItemFormat = exists $ArgRef->{-itemformat} ?   $ArgRef->{-itemformat} : "long";
   my $Multiple   = exists $ArgRef->{-multiple}   ?   $ArgRef->{-multiple}   : 0;
@@ -274,6 +274,10 @@ sub TopicScroll ($) {
     $Options{-disabled} = "disabled";
   }  
   
+  require "TopicSQL.pm";
+  require "TopicUtilities.pm";
+  require "FormElements.pm";
+
   GetTopics();
   BuildTopicProvenance();
   unless (@TopicIDs) {
