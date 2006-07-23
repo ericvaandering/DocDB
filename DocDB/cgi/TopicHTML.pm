@@ -103,13 +103,20 @@ sub TopicsTable {
   
   my $NCols = 4;
 
+  my %Lists = ();
+  my $TotalSize = 0;
   my @RootTopicIDs = sort TopicByAlpha AllRootTopics();
   foreach my $TopicID (@RootTopicIDs) {
     my $HTML = TopicListWithChildren({ -topicids => [$TopicID] }); 
-    print $HTML;
-    my $Size = grep /href/,$HTML;
-    push @DebugStack,"Size of $TopicID is $Size";
+    $List{$TopicID}{HTML} = $HTML; 
+    my @Lines = split /\n/,$HTML;
+    my $Size = grep /href/,@Lines;
+    $List{$TopicID}{Size} = $Size;
+    $TotalSize += $Size; 
   }   
+  
+  push @DebugStack,"Have to split up $TotalSize elements over $NCols columns"
+  
 }
 
 sub TopicListWithChildren { # Recursive routine
