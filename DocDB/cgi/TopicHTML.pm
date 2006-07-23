@@ -240,7 +240,7 @@ sub TopicScrollTable ($) {
   my $Col = 0;
   foreach my $TopicID (@RootTopicIDs) {
     my @TopicIDs = TopicAndSubTopics({ -topicid => $TopicID });
-    if ($Col % $NCols) {
+    unless ($Col % $NCols) {
       unless ($Col) {
         print "</tr>\n";
       }  
