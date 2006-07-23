@@ -129,7 +129,7 @@ sub TopicsTable {
       if ($NThisCol + 2*$Size > $Target) {
         push @DebugStack,$NThisCol + 2*$Size." ($NThisCol,$Size) is more than ".$Target;
         ++$Col;
-        unless ($Col == $NCol) {
+        unless ($Col == $NCols) {
           $Target = ($TotalSize - $NSoFar)/($NCols-$Col);
           push @DebugStack,"New Target: $Target";
         }  
