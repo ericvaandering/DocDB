@@ -1,12 +1,13 @@
 V8.0 punchlist
 
-Inserters for new notifications,# new scheme for readback 
 Test all notifications
-Do hinting with new topics
-Figure out how to do custom fields with new topics (paying attention to provenance)
+Test XML output
+Test Search, incl XML
 Redo prefs for topic entry form & redo multi-topic select
 Don't forget to check things in scripts to make sure 
   they all work and use the new routines.
+Redo table of topics, add if less than twice target. Readjust target.
+Write or extend match topic for API
 
 Database structures allow for a number of things that aren't currently supported
 by the code:
