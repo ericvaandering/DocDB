@@ -57,6 +57,10 @@ sub TopicAndSubTopics {
 sub BuildTopicProvenance {
   %TopicProvenance = ();
   
+  # When finished, @{$TopicProvenance{$TopicID}} is an array for every $TopicID, 
+  # which has that TopicID as its first element, its parent as its second, 
+  # grandparent as the third, etc.
+  
   GetTopics();
 
   foreach my $TopicID (keys %Topics) {

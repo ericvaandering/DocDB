@@ -138,7 +138,7 @@ sub TopicListWithChildren { # Recursive routine
   
   if (@TopicIDs) {
     if ($Depth > 1) {
-      $HTML .= "<ul class=\"$Depth-deep\">\n";
+      $HTML .= "<ul class=\"compact $Depth-deep\">\n";
     }  
     foreach my $TopicID (@TopicIDs) {
       if ($Depth > 1) {
