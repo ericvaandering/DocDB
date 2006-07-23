@@ -233,18 +233,20 @@ sub TopicScrollTable ($) {
   require "TopicUtilities.pm";
   require "FormElements.pm";
 
-  print "<table class=\"MedPaddedTable\">\n";
-  
+  print "<table class=\"MedPaddedTable CenteredTable\">\n";
+
+  print "<tr><th colspan=\"$NCols\">\n";
+  print FormElementTitle(-helplink  => $HelpLink, -helptext  => $HelpText ,
+                         -required  => $Required);
+  print "</th>"; # </tr> by table routine
+   
   my @RootTopicIDs = sort TopicByAlpha AllRootTopics();
 
   my $Col = 0;
   foreach my $TopicID (@RootTopicIDs) {
     my @TopicIDs = TopicAndSubTopics({ -topicid => $TopicID });
     unless ($Col % $NCols) {
-      unless ($Col) {
-        print "</tr>\n";
-      }  
-      print "<tr>\n";
+      print "</tr><tr>\n";
     }
     print "<td>\n";
     push @DebugStack,"Calling with defaults ".join ', ',@Defaults;
