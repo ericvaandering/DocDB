@@ -220,6 +220,37 @@ sub LongDescriptionBox (;%) {
   print "</div>\n";           
 };
 
+sub TopicScrollTable ($) {
+  my ($ArgRef) = @_;
+
+  my $NCols      = exists $ArgRef->{-ncols}      ?   $ArgRef->{-ncols}      : 4;
+  my $HelpLink   = exists $ArgRef->{-helplink}   ?   $ArgRef->{-helplink}   : "topics";
+  my $HelpText   = exists $ArgRef->{-helptext}   ?   $ArgRef->{-helptext}   : "Topics";
+  my $Required   = exists $ArgRef->{-required}   ?   $ArgRef->{-required}   : 0;
+  my @Defaults   = exists $ArgRef->{-default}    ? @{$ArgRef->{-default}}   : ();
+
+  print "<table class=\"MedPaddedTable\">\n";
+  
+  my @RootTopicIDs = sort TopicByAlpha AllRootTopics();
+
+  my $Col = 0;
+  foreach my $TopicID (@RootTopicIDs) {
+    my @TopicIDs = TopicAndSubTopics({ -topicid => $TopicID });
+    unless ($Col % $NCols) {
+      unless ($Col) {
+        print "<\tr>\n";
+      }  
+      print "<tr>\n";
+    }
+    print "<td>\n";
+    TopicScroll({ -itemformat => "short",    -multiple => $TRUE, -helplink => "", 
+                  -defaults   => \@Defaults, -topicids => \@TopicIDs, });
+    print "</td>\n";
+  }   
+  print "</tr></table>\n";
+}
+
+
 sub TopicScroll ($) {
   require "TopicSQL.pm";
   require "TopicUtilities.pm";
@@ -236,20 +267,22 @@ sub TopicScroll ($) {
   my $Size       = exists $ArgRef->{-size}       ?   $ArgRef->{-size}       : 10;
   my $Disabled   = exists $ArgRef->{-disabled}   ?   $ArgRef->{-disabled}   : "0";
   my @Defaults   = exists $ArgRef->{-default}    ? @{$ArgRef->{-default}}   : ();
-
+  my @TopicIDs   = exists $ArgRef->{-topicids}   ? @{$ArgRef->{-topicids}}  : ();
   my %Options = ();
  
   if ($Disabled) {
     $Options{-disabled} = "disabled";
   }  
-
+  
   GetTopics();
   BuildTopicProvenance();
-  my @TopicIDs = sort TopicByProvenance keys %Topics;
+  unless (@TopicIDs) {
+    @TopicIDs = sort TopicByProvenance keys %Topics;
+  }  
   my %TopicLabels = ();
-  my @ActiveIDs = @TopicIDs; # Later can select single root topics, etc.
+#  my @ActiveIDs = @TopicIDs; # Later can select single root topics, etc.
   
-  foreach my $ID (@ActiveIDs) {
+  foreach my $ID (@TopicIDs) {
     my $Spaces = '&nbsp;&nbsp;'x(1*(scalar(@{$TopicProvenance{$ID}})-1));
     if ($ItemFormat eq "short") {
       $TopicLabels{$ID} = $Spaces.CGI::escapeHTML($Topics{$ID}{Short}); 
@@ -267,7 +300,7 @@ sub TopicScroll ($) {
 
   $query ->  autoEscape(0);  # Turn off and on since sometimes scrolling_list double escape this.
 
-  print $query -> scrolling_list(-name     => $Name, -values => \@ActiveIDs, 
+  print $query -> scrolling_list(-name     => $Name, -values => \@TopicIDs, 
                                  -size     => $Size, -labels => \%TopicLabels,
                                  -multiple => $Multiple,
                                  -default  => \@Defaults, %Options);  

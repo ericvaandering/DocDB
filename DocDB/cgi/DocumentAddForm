@@ -441,13 +441,14 @@ print "</tr>\n";
 
 print "<tr><td colspan=\"4\">\n"; 
 
-TopicScroll({ -required => $RequiredEntries{Topic}, -size     => 20 , 
-              -default  => \@TopicDefaults,         -multiple => $TRUE, });
-#if ($TopicMode eq "single") {
-#  &TopicSelect(-required => $RequiredEntries{Author});     
-#} elsif ($TopicMode eq "multi") {
-#  &MultiTopicSelect(-required => $RequiredEntries{Author});
-#}
+if ($TopicMode eq "single") {
+  TopicScroll({ -required => $RequiredEntries{Topic}, -size     => 20 , 
+                -default  => \@TopicDefaults,         -multiple => $TRUE, });
+} elsif ($TopicMode eq "multi") {
+  TopicScrollTable({ -required => $RequiredEntries{Topic}, 
+                     -default  => \@TopicDefaults, 
+                     -multiple => $TRUE, });
+}
 print "</td></tr>\n";
 
 ### Events
