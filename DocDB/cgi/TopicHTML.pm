@@ -130,7 +130,7 @@ sub TopicsTable {
         push @DebugStack,$NThisCol + 0.5*$Size." ($NThisCol,$Size) is more than ".$Target;
 #        unless ($Col == $NCols) {
           $Target = ($TotalSize - $NSoFar)/($NCols-$Col);
-          push @DebugStack,"New Target for column ".$Col+1.": $Target";
+          push @DebugStack,"New Target for column ".($Col+1).": $Target";
 #        }  
         print "</td><td>\n";
         ++$Col;
