@@ -101,31 +101,15 @@ sub TopicsTable {
   require "Sorts.pm";
   require "TopicUtilities.pm";
   
-#  my $NCols = 4;
-#  my @MajorTopicIDs = sort byMajorTopic keys %MajorTopics;
-
-#  my $Col   = 0;
-#  my $Row   = 0;
-#  print "<table class=\"HighPaddedTable\">\n";
-#  foreach my $MajorID (@MajorTopicIDs) {
-#    unless ($Col % $NCols) {
-#      if ($Row) {
-#        print "</tr>\n";
-#      }  
-#      print "<tr>\n";
-#      ++$Row;
-#    }
-#    print "<td>\n";
-#    &TopicsByMajorTopic($MajorID);
-#    print "</td>\n";
-#    ++$Col;
-#  }  
-#  print "</tr>\n";
-#  print "</table>\n";
+  my $NCols = 4;
 
   my @RootTopicIDs = AllRootTopics();
-  
-  print TopicListWithChildren({ -topicids => \@RootTopicIDs }); 
+  foreach my $TopicID (@RootTopicIDs) {
+    my $HTML = TopicListWithChildren({ -topicids => [$TopicID] }); 
+    print $HTML;
+    my $Size = grep /\n/,$HTML;
+    push @DebugStack,"Size of $TopicID is $Size";
+  }   
 }
 
 sub TopicListWithChildren { # Recursive routine
