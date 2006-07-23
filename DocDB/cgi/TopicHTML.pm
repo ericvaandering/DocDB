@@ -103,11 +103,11 @@ sub TopicsTable {
   
   my $NCols = 4;
 
-  my @RootTopicIDs = AllRootTopics();
+  my @RootTopicIDs = sort TopicByAlpha AllRootTopics();
   foreach my $TopicID (@RootTopicIDs) {
     my $HTML = TopicListWithChildren({ -topicids => [$TopicID] }); 
     print $HTML;
-    my $Size = grep /href/g,$HTML;
+    my $Size = grep /href/,$HTML;
     push @DebugStack,"Size of $TopicID is $Size";
   }   
 }
