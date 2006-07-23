@@ -128,12 +128,12 @@ sub TopicsTable {
     if ($NThisCol != 0 && $Col != $NCols) {
       if ($NThisCol + 0.5*$Size > $Target) {
         push @DebugStack,$NThisCol + 0.5*$Size." ($NThisCol,$Size) is more than ".$Target;
-        ++$Col;
-        unless ($Col == $NCols) {
+#        unless ($Col == $NCols) {
           $Target = ($TotalSize - $NSoFar)/($NCols-$Col);
           push @DebugStack,"New Target for column $Col: $Target";
-        }  
+#        }  
         print "</td><td>\n";
+        ++$Col;
         $NThisCol = 0;
       } else {
         push @DebugStack,$NThisCol + 0.5*$Size." ($NThisCol,$Size) is less than ".$Target;
