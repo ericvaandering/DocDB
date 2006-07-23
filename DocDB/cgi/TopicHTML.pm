@@ -118,7 +118,7 @@ sub TopicsTable {
   push @DebugStack,"Have to split up $TotalSize elements over $NCols columns";
  
   my $Target = $TotalSize/$NCols;
-  print "<table><tr><td>\n";
+  print '<table class="MedPaddedTable CenteredTable">'."<tr><td>\n";
   my $Col      = 1;
   my $NThisCol = 0;
   my $NSoFar   = 0;
@@ -130,7 +130,7 @@ sub TopicsTable {
         push @DebugStack,$NThisCol + 0.5*$Size." ($NThisCol,$Size) is more than ".$Target;
 #        unless ($Col == $NCols) {
           $Target = ($TotalSize - $NSoFar)/($NCols-$Col);
-          push @DebugStack,"New Target for column $Col: $Target";
+          push @DebugStack,"New Target for column ".$Col+1.": $Target";
 #        }  
         print "</td><td>\n";
         ++$Col;
