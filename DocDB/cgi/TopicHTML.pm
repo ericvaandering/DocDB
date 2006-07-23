@@ -127,11 +127,16 @@ sub TopicsTable {
     my $Size = $List{$TopicID}{Size};
     if ($NThisCol != 0 && $Col != $NCol) {
       if ($NThisCol + 2*$Size > $Target) {
-        push @DebugStack,$NThisCol + 2*$Size." is more than ".$Target;
+        push @DebugStack,$NThisCol + 2*$Size." ($NThisCol,$Size) is more than ".$Target;
         ++$Col;
-        $Target = ($TotalSize - $NSoFar)/($NCols-$Col);
+        unless ($Col == $NCol) {
+          $Target = ($TotalSize - $NSoFar)/($NCols-$Col);
+          push @DebugStack,"New Target: $Target";
+        }  
         print "</td><td>\n";
-      }  
+      } else {
+        push @DebugStack,$NThisCol + 2*$Size." ($NThisCol,$Size) is less than ".$Target;
+      }
     }
     $NThisCol += $Size;
     $NSoFar   += $Size;
