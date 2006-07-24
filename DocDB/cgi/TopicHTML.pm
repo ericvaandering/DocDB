@@ -121,7 +121,7 @@ sub TopicsTable {
 
   my $Target = $TotalSize/$NCols;
   push @DebugStack,"Target column length $Target";
-  print '<table class="MedPaddedTable CenteredTable">'."<tr><td>\n";
+  print '<table class="HighPaddedTable CenteredTable">'."<tr><td>\n";
   my $Col      = 1;
   my $NThisCol = 0;
   my $NSoFar   = 0;
