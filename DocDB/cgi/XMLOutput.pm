@@ -181,7 +181,9 @@ sub RevisionXMLOut {
   if ($XMLDisplay{All} || $XMLDisplay{Files}) {
     my @FileXML = FileXMLOut( {-docrevid => $DocRevID} );
     foreach my $FileXML (@FileXML) {
-      $FileXML -> paste(last_child => $RevisionXML);
+      if ($FileXML) {
+        $FileXML -> paste(last_child => $RevisionXML);
+      }
     }
   }
 
@@ -190,7 +192,9 @@ sub RevisionXMLOut {
   if ($XMLDisplay{All} || $XMLDisplay{XRefs}) {
     my @XRefToXML = XRefToXMLOut( {-docrevid => $DocRevID} );
     foreach my $XRefToXML (@XRefToXML) {
-      $XRefToXML -> paste(last_child => $RevisionXML);
+      if ($XRefToXML) {
+        $XRefToXML -> paste(last_child => $RevisionXML);
+      }
     }
   }
   
@@ -199,7 +203,9 @@ sub RevisionXMLOut {
   if ($XMLDisplay{All} || $XMLDisplay{XRefs}) {
     my @XRefByXML = XRefByXMLOut( {-docrevid => $DocRevID} );
     foreach my $XRefByXML (@XRefByXML) {
-      $XRefByXML -> paste(last_child => $RevisionXML);
+      if ($XRefByXML) {
+        $XRefByXML -> paste(last_child => $RevisionXML);
+      }  
     }
   }
   
@@ -208,7 +214,9 @@ sub RevisionXMLOut {
   if ($XMLDisplay{All} || $XMLDisplay{Journals}) {
     my @JournalXML = JournalXMLOut( {-docrevid => $DocRevID} );
     foreach my $JournalXML (@JournalXML) {
-      $JournalXML -> paste(last_child => $RevisionXML);
+      if ($JournalXML) {
+        $JournalXML -> paste(last_child => $RevisionXML);
+      }
     }
   }
 
