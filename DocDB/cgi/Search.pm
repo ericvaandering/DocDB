@@ -39,6 +39,7 @@ sub LocalSearch ($) {
 
   require "AuthorSQL.pm";
   require "DocumentSQL.pm";
+  require "MeetingSQL.pm";
   require "MiscSQL.pm";
   require "RevisionSQL.pm";
   require "SecuritySQL.pm";

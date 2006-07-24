@@ -170,7 +170,9 @@ sub RevisionXMLOut {
   if ($XMLDisplay{All} || $XMLDisplay{Keywords}) {
     my @KeywordXML = KeywordXMLOut( {-keywords => $DocRevisions{$DocRevID}{Keywords}} );
     foreach my $KeywordXML (@KeywordXML) {
-      $KeywordXML -> paste(last_child => $RevisionXML);
+      if ($KeywordXML) {
+        $KeywordXML -> paste(last_child => $RevisionXML);
+      }  
     }
   }
 
