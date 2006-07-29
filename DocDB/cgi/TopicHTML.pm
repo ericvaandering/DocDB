@@ -251,7 +251,8 @@ sub TopicScrollTable ($) {
     print "<td>\n";
     print "<strong>$Topics{$TopicID}{Short}</strong><br/>\n";
     TopicScroll({ -itemformat => "short",    -multiple => $TRUE, -helplink => "", 
-                  -default   => \@Defaults, -topicids => \@TopicIDs, });
+                  -default    => \@Defaults, -topicids => \@TopicIDs,
+                  -minlevel   => $MinLevel, });
     print "</td>\n";
     ++$Col;
   }   
