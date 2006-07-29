@@ -37,10 +37,14 @@ require "SignoffSQL.pm";
 require "MiscSQL.pm";
 require "FSUtilities.pm";
 require "FileUtilities.pm";
+require "TopicUtilities.pm";
 require "WebUtilities.pm";
 require "HTMLUtilities.pm";
+
 require "Security.pm";
 require "Scripts.pm";
+
+require "TopicHTML.pm";
 
 if ($MailInstalled) {
   require "MailNotification.pm";
