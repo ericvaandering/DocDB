@@ -250,7 +250,7 @@ my @TopicIDs = ();
 
 foreach my $TopicID (@RequestedTopicIDs) {
   if (scalar(@{$TopicProvenance{$TopicID}}) < $Preferences{Topics}{MinLevel}{Document}) {
-    push @WarnStack,"Topic ".TopicLink({-topicid => $TopicID})." removed. Topic is too high-level.";
+    push @WarnStack,"Topic ".TopicLink({-topicid => $TopicID})." not added to this document. Topic is too high-level.";
   } else {
     push @TopicIDs,$TopicID;
   }
