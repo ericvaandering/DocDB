@@ -1,14 +1,11 @@
 V8.0 punchlist
 
 Test all notifications
-Test XML output
 Test Search, incl XML
-Redo prefs for topic entry form & redo multi-topic select
 Don't forget to check things in scripts to make sure 
   they all work and use the new routines.
 Write or extend match topic for API
-Implement minimum topic level, display to users
-
+Get rid of HelpLink
 
 Database structures allow for a number of things that aren't currently supported
 by the code:

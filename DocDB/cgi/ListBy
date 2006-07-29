@@ -106,11 +106,11 @@ if ($Days) {
   my $SubTopicMessage = "";
   if (@ParentTopicIDs) {
     my ($ParentTopicID) = @ParentTopicIDs;
-    $SubTopicMessage = "(subtopic of ".TopicLink({-topicid => $ParentTopicID}).") ";
+    $SubTopicMessage = "(subtopic of ".TopicLink({-topicid => $ParentTopicID}).")";
   }
   
   $Message = "These documents on <span class=\"Highlight\">$Topics{$TopicID}{Long} 
-              $SubTopicMessage</span> ";
+              </span> $SubTopicMessage ";
   if ($HasSubTopics) {
     $Message .= "and sub-topics ";
   }
