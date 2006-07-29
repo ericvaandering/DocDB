@@ -680,11 +680,11 @@ If a document has multiple authors, the <q>first author</q> will be the first al
   <title>Topics</title>
   <text>
 Select all the topics and subtopics for the document. To select multiple topics
-either click or CTRL-click (depending on your
-browser) on
-the topic names. Note that there are two ways to enter topics, either from one
-big long list or from several shorter lists. You can select the other mode from
-the customize form on the main page.
+hold control or command (depending on your browser) and click on the topic
+names. You are not allowed to select topics in brackets (if any). Note that
+there are two ways to enter topics, either from one big long list or from
+several shorter lists. You can select the other mode from the customize form on
+the main page.
   </text>
  </entry>
 

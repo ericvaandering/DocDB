@@ -304,7 +304,7 @@ sub TopicScroll ($) {
       $TopicLabels{$ID} = $Spaces.CGI::escapeHTML($Topics{$ID}{Short}.
                                              " [".$Topics{$ID}{Long}."]"); 
     }
-    push @DebugStack, "Level ".scalar(@{$TopicProvenance{$ID}})." Min: $MinLevel";
+
     if (($ItemFormat eq "short" or $ItemFormat eq "long") && 
          scalar(@{$TopicProvenance{$ID}}) < $MinLevel) {
       $TopicLabels{$ID} = "[".$TopicLabels{$ID}."]";
