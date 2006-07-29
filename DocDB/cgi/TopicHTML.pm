@@ -223,6 +223,7 @@ sub TopicScrollTable ($) {
   my ($ArgRef) = @_;
 
   my $NCols      = exists $ArgRef->{-ncols}      ?   $ArgRef->{-ncols}      : 4;
+  my $MinLevel   = exists $ArgRef->{-minlevel}   ?   $ArgRef->{-minlevel}   : 1;
   my $HelpLink   = exists $ArgRef->{-helplink}   ?   $ArgRef->{-helplink}   : "topics";
   my $HelpText   = exists $ArgRef->{-helptext}   ?   $ArgRef->{-helptext}   : "Topics";
   my $Required   = exists $ArgRef->{-required}   ?   $ArgRef->{-required}   : 0;
@@ -261,6 +262,7 @@ sub TopicScrollTable ($) {
 sub TopicScroll ($) {
   my ($ArgRef) = @_;
   my $ItemFormat = exists $ArgRef->{-itemformat} ?   $ArgRef->{-itemformat} : "long";
+  my $MinLevel   = exists $ArgRef->{-minlevel}   ?   $ArgRef->{-minlevel}   : 1;
   my $Multiple   = exists $ArgRef->{-multiple}   ?   $ArgRef->{-multiple}   : 0;
   my $HelpLink   = exists $ArgRef->{-helplink}   ?   $ArgRef->{-helplink}   : "topics";
   my $HelpText   = exists $ArgRef->{-helptext}   ?   $ArgRef->{-helptext}   : "Topics";
@@ -302,8 +304,8 @@ sub TopicScroll ($) {
                                              " [".$Topics{$ID}{Long}."]"); 
     }
     if (($ItemFormat eq "short" or $ItemFormat eq "long") && 
-         scalar(@{$TopicProvenance{$TopicID}}) < $Preferences{Topics}{MinLevel}{Document}) {
-      $TopicLabels{$ID} = "[".$TopicLabels{$ID},"]";
+         scalar(@{$TopicProvenance{$ID}}) < $MinLevel) {
+      $TopicLabels{$ID} = "[".$TopicLabels{$ID}."]";
     }
   }  
 

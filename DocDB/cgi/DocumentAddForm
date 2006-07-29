@@ -443,12 +443,14 @@ print "</tr>\n";
 if ($TopicMode eq "single") {
   print "<tr><td colspan=\"4\">\n"; 
   TopicScroll({ -required => $RequiredEntries{Topic}, -size     => 20 , 
-                -default  => \@TopicDefaults,         -multiple => $TRUE, });
+                -default  => \@TopicDefaults,         -multiple => $TRUE, 
+                -minlevel => $Preferences{Topics}{MinLevel}{Document}, });
 } elsif ($TopicMode eq "multi") {
   print "<tr><td colspan=\"4\" id=\"TopicScrollTable\">\n"; 
   TopicScrollTable({ -required => $RequiredEntries{Topic}, 
                      -default  => \@TopicDefaults, 
-                     -multiple => $TRUE, });
+                     -multiple => $TRUE, 
+                     -minlevel => $Preferences{Topics}{MinLevel}{Document}, });
 }
 print "</td></tr>\n";
 

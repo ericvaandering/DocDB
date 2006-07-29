@@ -210,9 +210,6 @@ unless ($DocTypeID) {
 }
 
 if ($mode eq "add" || $mode eq "update") {
-  unless (@RequestedTopicIDs) {
-    push @ErrorStack,"You must supply at least one topic for this document.";
-  }
   unless ($params{abstract}) {
     push @ErrorStack,"You must supply an abstract for this document.";
   }
@@ -252,6 +249,12 @@ foreach my $TopicID (@RequestedTopicIDs) {
     push @WarnStack,"Topic ".TopicLink({-topicid => $TopicID})." removed. Topic is too high-level.";
   } else {
     push @TopicIDs,$TopicID;
+  }
+}
+
+if ($mode eq "add" || $mode eq "update") {
+  unless (@TopicIDs) {
+    push @ErrorStack,"You must supply at least one valid topic for this document.";
   }
 }
 
