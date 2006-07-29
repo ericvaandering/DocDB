@@ -1,7 +1,6 @@
 #
 #        Name: TopicSQL.pm
 # Description: Routines to do DB accesses related to topics 
-#              (major and minor) 
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
@@ -68,7 +67,7 @@ sub GetRevisionTopics {
       push @TopicIDs,$TopicID;
     }  
   }
-  @TopicIDs = &Unique(@TopicIDs);
+  @TopicIDs = Unique(@TopicIDs);
   return @TopicIDs;
 }
 
@@ -183,7 +182,6 @@ sub InsertTopics (%) {
       ++$Count;
     }
   }  
-      
   return $Count;
 }
 
@@ -220,7 +218,7 @@ sub DeleteTopic ($) {
   if ($Abort) {
     return 0;
   }  
-  # FIXME: EventTopics will need a similar check
+  # FIXME: (v8.x) EventTopics will need a similar check
 
   my $TopicDelete     = $dbh -> prepare("delete from Topic          where TopicID=?");
   my $RevisionDelete  = $dbh -> prepare("delete from RevisionTopic  where TopicID=?");

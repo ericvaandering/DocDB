@@ -49,9 +49,10 @@ if ($MailInstalled) {
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
-&GetTopics; 
-&GetJournals;
-&GetSecurityGroups; 
+GetTopics(); 
+BuildTopicProvenance();
+GetJournals();
+GetSecurityGroups(); 
 
 ### Set up, give user initial information
 
@@ -96,7 +97,8 @@ my $OldVersion    = $params{oldversion};
 my $MaxFiles      = $params{maxfiles};
 my $UniqueID      = $params{uniqueid};
 my @XRefs         = split /,*\s+/,$params{xrefs}; # Can be comma or space separated
-my @EventIDs      = $query -> param('events');
+my @EventIDs          = $query -> param('events');
+my @RequestedTopicIDs = $query -> param('topics');
 
 if ($Archive eq "multi") {$Archive = "single";} # No real difference
 
@@ -208,7 +210,7 @@ unless ($DocTypeID) {
 }
 
 if ($mode eq "add" || $mode eq "update") {
-  unless ($params{topics}) {
+  unless (@RequestedTopicIDs) {
     push @ErrorStack,"You must supply at least one topic for this document.";
   }
   unless ($params{abstract}) {
@@ -243,7 +245,16 @@ if ($mode eq "update" || $mode eq "updatedb") {
 
 ### Final checks
 
-my @TopicIDs = split ("\0",$params{topics});
+my @TopicIDs = ();
+
+foreach my $TopicID (@RequestedTopicIDs) {
+  if (scalar(@{$TopicProvenance{$TopicID}}) < $Preferences{Topics}{MinLevel}{Document}) {
+    push @WarnStack,"Topic ".TopicLink({-topicid => $TopicID})." removed. Topic is too high-level.";
+  } else {
+    push @TopicIDs,$TopicID;
+  }
+}
+
 @securities  = split ("\0",$params{security});
 if ($EnhancedSecurity) {
   @ModifyGroups = split ("\0",$params{modify});

@@ -1120,13 +1120,13 @@ sub EventCopyButton (%) {
 
   my $EventID    = $Params{-eventid}; 
   
-  my @Offsets = (1,2,3,4,5,6,7,14,21,28,35,42,49,56,63,70);
+  my @Offsets = (1,2,3,4,5,6,7,14,21,28,35,42,49,56,70,84);
   my %Labels  = (1  => "1 day",    2 => "2 days",   3 => "3 days",
                  4  => "4 days",   5 => "5 days",   6 => "6 days",
                  7  => "1 week",  14 => "2 weeks", 21 => "3 weeks",
                  28 => "4 weeks", 35 => "5 weeks", 42 => "6 weeks",
-                 49 => "7 weeks", 56 => "8 weeks", 63 => "9 weeks",
-                 70 => "10 weeks");
+                 49 => "7 weeks", 56 => "8 weeks", 70 => "10 weeks",
+                 84 => "12 weeks",);
 
   print $query -> startform('POST',$MeetingModify),"<div>\n";
   print $query -> hidden(-name => "mode",         -default => "copy");

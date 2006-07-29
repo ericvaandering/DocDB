@@ -1,7 +1,6 @@
 #
 #        Name: TopicHTML.pm
 # Description: Routines to produce snippets of HTML dealing with topics 
-#              (major and minor) 
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
@@ -182,14 +181,14 @@ sub ShortDescriptionBox  (;%) {
   my (%Params) = @_;
   
   my $HelpLink  =   $Params{-helplink}  || "shortdescription";
-  my $HelpText  =   $Params{-helptext}  || "Short Description";           
+  my $HelpText  =   $Params{-helptext}  || "Short Description";
   my $ExtraText =   $Params{-extratext} || "";                 # Not used
-  my $Required  =   $Params{-required}  || 0;                  
+  my $Required  =   $Params{-required}  || 0;
   my $Name      =   $Params{-name}      || "short";
   my $Size      =   $Params{-size}      || 20;
   my $MaxLength =   $Params{-maxlength} || 40;
   my $Disabled  =   $Params{-disabled}  || $FALSE;
-  my $Default   =   $Params{-default}   || "";                 # Not used
+  my $Default   =   $Params{-default}   || "";
 
   print "<div class=\"ShortDescriptionEntry\">\n";
   TextField(-name     => $Name,     -helptext  => $HelpText,  
@@ -301,7 +300,11 @@ sub TopicScroll ($) {
     } elsif ($ItemFormat eq "full") {
       $TopicLabels{$ID} = $Spaces.CGI::escapeHTML($Topics{$ID}{Short}.
                                              " [".$Topics{$ID}{Long}."]"); 
-    } 
+    }
+    if (($ItemFormat eq "short" or $ItemFormat eq "long") && 
+         scalar(@{$TopicProvenance{$TopicID}}) < $Preferences{Topics}{MinLevel}{Document}) {
+      $TopicLabels{$ID} = "[".$TopicLabels{$ID},"]";
+    }
   }  
 
   print FormElementTitle(-helplink  => $HelpLink, -helptext  => $HelpText ,
