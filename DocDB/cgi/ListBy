@@ -257,19 +257,6 @@ my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@D
                                       -sortby    => $SortBy,     -reverse => $Reverse);
 print "<p><b>Number of documents found: ",int($NumberOfDocuments),"</b></p>\n";
 
-require "TopicSQL.pm";
-my @IDs = MatchTopic({-short => "DocDB", -parent => 39});
-push @DebugStack,"#1 found: ".join ', ',@IDs;
-@IDs = MatchTopic({-short => "DocDB", -parent => 5});
-push @DebugStack,"#2 found: ".join ', ',@IDs;
-@IDs = MatchTopic({-short => "DocDB", -ancestor => 5});
-push @DebugStack,"#3 found: ".join ', ',@IDs;
-@IDs = MatchTopic({-short => "Tools"});
-push @DebugStack,"#4 found: ".join ', ',@IDs;
-@IDs = MatchTopic({-long => "Violation"});
-push @DebugStack,"#5 found: ".join ', ',@IDs;
-
-
 $EndTime  = new Benchmark;
 
 DocDBNavBar();
