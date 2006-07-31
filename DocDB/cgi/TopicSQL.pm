@@ -167,7 +167,7 @@ sub MatchTopic ($) {
     while ($List -> fetch) {
       push @TopicIDs,$TopicID;
     }
-  } elsif ($Long) 
+  } elsif ($Long) {
     $Long =~ tr/[A-Z]/[a-z]/;
     $Long = "%".$Long."%";
     my $List = $dbh -> prepare("select TopicID from Topic where LOWER(LongDescription) like ?"); 
