@@ -61,8 +61,6 @@ sub BuildTopicProvenance {
   # which has that TopicID as its first element, its parent as its second, 
   # grandparent as the third, etc.
   
-  GetTopics();
-
   foreach my $TopicID (keys %Topics) {
     push @{$TopicProvenance{$TopicID}},$TopicID;
   }
