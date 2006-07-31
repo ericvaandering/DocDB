@@ -134,8 +134,8 @@ sub PrepareFieldList (%) {
   require "Fields.pm";
 
   if ($TopicID) {
-    require "TopicUtilities.pm";
-    BuildTopicProvenance();
+    require "TopicSQL.pm";
+    GetTopics();
   }  
     
   my %FieldList = ();
