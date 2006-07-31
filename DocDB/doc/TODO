@@ -4,7 +4,6 @@ Test all notifications
 Test Search, incl XML
 Don't forget to check things in scripts to make sure 
   they all work and use the new routines.
-Write or extend match topic for API
 Get rid of HelpLink
 
 Database structures allow for a number of things that aren't currently supported
