@@ -174,9 +174,7 @@ sub DateTimePullDown { #FIXME: Replace with DateTimePulldown
     push @minutes,(sprintf "%2.2d",$i);
   }  
   
-  print "<b><a ";
-  &HelpLink("overdate");
-  print "Date &amp; Time:</a></b><br> \n";
+  print FormElementTitle(-helplink => "overdate", -helptext => "Date &amp; Time");
   print $query -> popup_menu (-name => 'overday',-values => \@days, -default => $day);
   print $query -> popup_menu (-name => 'overmonth',-values => \@months, -default => $months[$mon]);
   print $query -> popup_menu (-name => 'overyear',-values => \@years, -default => $year);
@@ -338,9 +336,7 @@ sub AuthorManual (%) { # FIXME: Special case of AuthorTextEntry
     $AuthorManDefault .= "$Authors{$AuthorID}{FULLNAME}\n" ;
   }
     
-  print "<b><a ";
-  &HelpLink("authormanual");
-  print "Authors:</a></b>";
+  print FormElementTitle(-helplink => "authormanual", -helptext => "Authors");
   if ($Required) {
     print $RequiredMark;
   }  

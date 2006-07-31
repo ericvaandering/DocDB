@@ -306,17 +306,13 @@ sub InstitutionEntryBox (;%) {
   
   print "<table cellpadding=5><tr valign=top>\n";
   print "<td>\n";
-  print "<b><a ";
-  &HelpLink("instentry");
-  print "Short Name:</a></b><br> \n";
+  print FormElementTitle(-helplink => "instentry", -helptext => "Short Name");
   print $query -> textfield (-name => 'shortdesc', 
                              -size => 30, -maxlength => 40,$Booleans);
   print "</td></tr>\n";
 
   print "<tr><td>\n";
-  print "<b><a ";
-  &HelpLink("instentry");
-  print "Long Name:</a></b><br> \n";
+  print FormElementTitle(-helplink => "instentry", -helptext => "Long Name");
   print $query -> textfield (-name => 'longdesc', 
                              -size => 40, -maxlength => 80,$Booleans);
   print "</td>\n";

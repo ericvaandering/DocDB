@@ -64,17 +64,13 @@ sub DocTypeEntryBox (;%) {
   
   print "<table cellpadding=5><tr valign=top>\n";
   print "<td>\n";
-  print "<b><a ";
-  &HelpLink("doctypeentry");
-  print "Short Description:</a></b><br> \n";
+  print FormElementTitle(-helplink => "doctypeentry", -helptext => "Short Description");
   print $query -> textfield (-name => 'name', 
                              -size => 20, -maxlength => 32, $Booleans);
   print "</td>\n";
   print "</tr><tr>\n";
   print "<td>\n";
-  print "<b><a ";
-  &HelpLink("doctypeentry");
-  print "Long Description:</a></b><br> \n";
+  print FormElementTitle(-helplink => "doctypeentry", -helptext => "Long Description");
   print $query -> textfield (-name => 'longdesc', 
                              -size => 40, -maxlength => 255, $Booleans);
   print "</td></tr>\n";
