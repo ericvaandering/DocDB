@@ -1,7 +1,15 @@
+V8.0 punchlist
+
+Test all notifications
+Test Search, incl XML
+Don't forget to check things in scripts to make sure 
+  they all work and use the new routines.
+Get rid of HelpLink
+
 Database structures allow for a number of things that aren't currently supported
 by the code:
 
-* Hiding major topics from groups (GroupTopic table)
+* Hiding various things from groups (Suppress table)
 
 * Associating an author with personal accounts (AuthorID in EmailUser)
 

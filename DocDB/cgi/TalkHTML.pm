@@ -87,7 +87,7 @@ sub TalkEntryForm (@) {
         
         my @TopicHintIDs = &FetchTopicHintsBySessionTalkID($SessionTalkID);
         foreach my $TopicHintID (@TopicHintIDs) {
-          push @TalkDefaultTopicHints,$TopicHints{$TopicHintID}{MinorTopicID};
+          push @TalkDefaultTopicHints,$TopicHints{$TopicHintID}{TopicID};
         }
         my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID);
         foreach my $AuthorHintID (@AuthorHintIDs) {
@@ -277,7 +277,9 @@ sub TalkTopics ($) {
     unless (@TalkDefaultTopicHints) {
       $query -> param("topics-$SessionOrderID","");
     }  
-    &FullTopicScroll(1,"topics-$SessionOrderID",@TalkDefaultTopicHints);
+    TopicScroll({ -name     => "topics-$SessionOrderID", -required => $RequiredEntries{Topic},
+                  -default  => \@TalkDefaultTopicHints,  -multiple => $TRUE, -helplink => "", 
+               });
   }
 }
 

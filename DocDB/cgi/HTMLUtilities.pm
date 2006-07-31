@@ -85,12 +85,9 @@ sub DocDBHeader {
   # Include javascript links
 
   foreach my $Script (@Scripts) {
-    if ($Script eq "TopicChooser") { # Get global variables in right place
+    if  ($Script eq "EventChooser") { # Get global variables in right place
       require "Scripts.pm";
-      &TopicSearchScript;
-    } elsif  ($Script eq "EventChooser") { # Get global variables in right place
-      require "Scripts.pm";
-      &EventSearchScript;
+      EventSearchScript();
     }
     print "<script type=\"text/javascript\" src=\"$JSURLPath/$Script.js\"></script>\n";
   }  

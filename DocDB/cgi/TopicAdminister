@@ -26,127 +26,173 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 
-use CGI;
+use CGI qw(-nosticky);
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
+require "AdministerElements.pm";
 require "ResponseElements.pm";
+require "Scripts.pm";
 require "Security.pm";
-require "HTMLUtilities.pm";
-require "TopicSQL.pm";
 require "Messages.pm";
+require "Sorts.pm";
+
+require "DBUtilities.pm";
+require "HTMLUtilities.pm";
+
+require "TopicHTML.pm";
+require "TopicSQL.pm"; 
 
 $query = new CGI;  # Global for subroutines
 
-%params = $query -> Vars;
-
 # Parameters to script 
 
-my $Password      = $params{password};
-my $Username      = $params{admuser};
-my $Action        = $params{admaction};
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-my $TopicID       = $params{topics};
-my $MajorTopicID  = $params{majortopic};
-my $LongName      = $params{longdesc};
-my $ShortName     = $params{shortdesc};
+my $Password      = $Untaint -> extract (-as_printable => "password")    || "";
+my $Username      = $Untaint -> extract (-as_printable => "admuser")     || "";
+my $Action        = $Untaint -> extract (-as_printable => "admaction")   || "";
+my $Force         = $Untaint -> extract (-as_printable => "admforce")    || "";
 
-$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
+my $TopicID       = $Untaint -> extract (-as_integer   => "topics")      || 0;
+my $ParentTopicID = $Untaint -> extract (-as_integer   => "parenttopic") || 0;
+my $LongName      = $Untaint -> extract (-as_printable => "longdesc")    || "";
+my $ShortName     = $Untaint -> extract (-as_printable => "shortdesc")   || "";
 
-unless ($dbh) {
-  push @ErrorStack,$Msg_AdminNoConnect;
-}         
 
-print $query->header;
-DocDBHeader("Modified List of Topics");
+$query -> delete_all();
 
-EndPage();
+# Open connection and die if we can't
 
-unless (&CanAdminister) {
+if ($Password && $Username) {
+  CreateConnection(-user => $Username, -password => $Password);
+} else {
+  CreateConnection(-type => "ro");
+}
+EndPage(-startpage => $TRUE);
+
+print $query -> header;
+DocDBHeader("Topic Administration","",-scripts => ["PopUps","TopicAdminDisable"]);
+
+unless (CanAdminister()) {
   push @ErrorStack,$Msg_AdminNoLogin;
 }  
 EndPage();
+GetTopics();
 
-if      ($Action eq "Delete") {
-  unless ($TopicID) {
-    push @ErrorStack,$Msg_ModTopicEmpty;
-  }
-  EndPage();
-  my $TopicLink   = &MinorTopicLink($TopicID);
-  my @TopicDocIDs = &GetTopicDocuments($TopicID);
-  
-# Delete TopicID from Topic, Conference, RevisionTopic tables
-  
-  my $TopicDelete      = $dbh -> prepare("delete from MinorTopic    where MinorTopicID=?");
-  my $ConferenceDelete = $dbh -> prepare("delete from Conference    where MinorTopicID=?");
-  my $RevisionDelete   = $dbh -> prepare("delete from RevisionTopic where MinorTopicID=?");
-  $TopicDelete      -> execute($TopicID);
-  $ConferenceDelete -> execute($TopicID);
-  $RevisionDelete   -> execute($TopicID);
-  
-  print "$TopicLink has been removed from the database.<br>\n";
-  if (@TopicDocIDs) {
-    push @WarnStack,"$TopicLink was a topic on some documents. These
-                     entries have been removed.";
-  }  
+if ($Action eq "Delete") {
+  # FIXME?: Force option is not going to be compatible with children with 
+  # multiple parents In that case we would need to determine if any topics
+  # would be orphaned and  then delete those, but not ones with another
+  # parent
+
+  DeleteTopic({ -topicid => $TopicID, -force => $Force });
 } elsif ($Action eq "Modify") {
   unless ($TopicID) {
-    push @ErrorStack,$Msg_ModTopicEmpty;
+    push @WarnStack,$Msg_ModTopicEmpty;
   }
-  EndPage();
 
 # Deal with name changes     
 
   if ($ShortName) { 
-    print "<b>Updating short topic name.</b><br>\n";
-    my $TopicUpdate = $dbh->prepare(
-       "update MinorTopic set ShortDescription=? where MinorTopicID=?");
-    $TopicUpdate -> execute($ShortName,$TopicID);
+    push @ActionStack,"Updated short description of topic.";
+    my $Update = $dbh -> prepare("update Topic set ShortDescription=? where TopicID=?");
+    $Update -> execute($ShortName,$TopicID);
   }
   if ($LongName) { 
-    print "<b>Updating long topic name.</b><br>\n";
-    my $TopicUpdate = $dbh->prepare(
-       "update MinorTopic set LongDescription=? where MinorTopicID=?");
-    $TopicUpdate -> execute($LongName,$TopicID);
+    push @ActionStack,"Updated long description of topic.";
+    my $Update = $dbh -> prepare("update Topic set LongDescription=? where TopicID=?");
+    $Update -> execute($LongName,$TopicID);
   }
 
-# Deal with Major Topic changes   
+# Deal with parent changes   
 
-  if ($MajorTopicID) { 
-    print "<b>Updating Major Topic for Minor Topic.</b><br>\n";
-    my $TopicUpdate = $dbh->prepare(
-     "update MinorTopic set MajorTopicID=? where MinorTopicID=?");
-    $TopicUpdate -> execute($MajorTopicID,$TopicID);
+  if ($ParentTopicID) { 
+    push @ActionStack,"Updated parent topic of (sub)topic.";
+   
+    my $Delete = $dbh -> prepare("delete from TopicHierarchy where TopicID=?");
+    my $Insert = $dbh -> prepare("insert into TopicHierarchy (TopicHierarchyID,TopicID,ParentTopicID) values (0,?,?)");
+   
+    $Delete -> execute($TopicID);
+    $Insert -> execute($TopicID,$ParentTopicID);
   }
 } elsif ($Action eq "New") {
-  print "<b>Adding a new topic.</b><br>\n";
-  my $TopicInsert = $dbh->prepare(
-   "insert into MinorTopic ".
-          "(MinorTopicID, MajorTopicID, ShortDescription, LongDescription) ". 
-   "values (0,            ?,            ?,                ?)");
+  my $TopicInsert = $dbh -> prepare("insert into Topic ".
+                    "(TopicID, ShortDescription, LongDescription) values (0,?,?)");
 
-  $TopicInsert -> execute($MajorTopicID,$ShortName,$LongName);
-  $TopicID = $TopicInsert -> {mysql_insertid}; # Works with MySQL only
-} else {
-  push @ErrorStack,"No valid action was specified.";
+  $TopicInsert -> execute($ShortName,$LongName);
+  my $TopicID = $TopicInsert -> {mysql_insertid};
+  if ($ParentTopicID) {
+    my $Insert = $dbh -> prepare("insert into TopicHierarchy (TopicHierarchyID,TopicID,ParentTopicID) values (0,?,?)");
+    $Insert -> execute($TopicID,$ParentTopicID);
+    push @ActionStack,"New sub-topic created with descriptions $ShortName and $LongName.";
+  } else {
+    push @ActionStack,"New <span class=\"Highlight\">root-level topic</span> created with descriptions $ShortName and $LongName.";
+  }
+} elsif ($TopicID || $ParentTopicID || $LongName || $ShortName) { 
+  push @WarnStack,"No valid action was specified.";
 }  
-
-# For modify or new fetch information and display.
-
-if ($Action eq "Modify" || $Action eq "New") {
+ 
+if (@ActionStack) { 
+  ClearTopics();
   GetTopics();
-
-  print "<p><b>Here are the results of your modification:<br>\n";
-  my $ShortLink = MinorTopicLink($TopicID,"short");
-  my $LongLink  = MinorTopicLink($TopicID,"long");
-  print "Short description: $ShortLink<br>\n";
-  print "Long description: $LongLink<br>\n";
-  print "</b><p>\n";
+  ActionReport();
 }  
-
-print "<p>\n";
 
 EndPage();
+
+print $query -> start_multipart_form('POST',"$TopicAdminister",'id="topic" name="topic"');
+
+print "<table class=\"MedPaddedTable\">\n";
+print "<tr>\n";
+print "<td colspan=\"2\">\n"; 
+ AdministerActions(-form => "topic");      
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td rowspan=\"3\">\n"; 
+ TopicScroll({ -helptext   => "Topic", -helplink => "topics", 
+               -itemformat => "full",  -disabled => $TRUE,
+               -extratext  => "[Long description]", 
+            }); 
+print "</td>\n"; 
+print "<td>\n"; ShortDescriptionBox(-name => "shortdesc", -disabled => $TRUE);
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td>\n"; LongDescriptionBox(-name => "longdesc", -disabled => $TRUE);
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td>\n"; 
+ AdminRegardless();
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td>\n";  
+ TopicScroll({ -helptext   => "Parent Topic", -helplink => "parenttopic", 
+               -itemformat => "full",         -disabled => $TRUE,
+               -name       => "parenttopic",
+               -extratext  => "[Long description]", 
+            }); 
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print '<td colspan="2">';
+AdministratorPassword();
+print "&nbsp;";
+print $query -> submit (-value => "Change Topic Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
 
 DocDBNavBar();
 DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

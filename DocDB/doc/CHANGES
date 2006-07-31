@@ -1,6 +1,9 @@
 8.0.0
 
-
+  Set to separate view/modify lists by default. If you want the old behavior, put 
+  $EnhancedSecurity = $FALSE; in ProjectGlobals. This is backwards compatible with 
+  the old setting.
+   
   Follow the migration instructions.
   
   DocDB now uses the Perl module CGI::Untaint. CGI::Untaint is used to "purify"
@@ -15,6 +18,9 @@
   good reason to change it, we can. This feature was thought to be useful for 
   disabling reviewer accounts between reviews.
   The user can still use DocDB, but can only see publicly accessible documents.
+  
+  New files
+    cgi/TopicUtilities.pm
   
 7.7.0
   Reorganized the output of DisplayMeeting to look more like ShowDocument and 

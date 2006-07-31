@@ -241,7 +241,7 @@ print "</td><td>\n";
 
 # Topics (which might be left off for the moment)
 
-TopicScroll(-helptext => "Minor Topics", -helplink => "topics", -multiple => $TRUE); 
+TopicScroll({ -helptext => "Topics", -helplink => "topics", -multiple => $TRUE }); 
 print "</td>\n";
 
 # Document types here

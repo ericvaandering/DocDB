@@ -45,13 +45,6 @@
 #  DateRangePullDown
 #    Two sets of pulldowns for defining a date range. Blanks are default
 #    for tagging no search on date.
-#   
-#  MajorMinorSelect
-#    Two multi-select boxes, one for major topics, one for minor topics.
-#    These are tied together by TopicSearchScript so that when major topics
-#    are selected, the list of minor topics is reduced. When only major topics
-#    are selected, the search will be on major topic. When even a single minor
-#    topic is selected, the search will be on the minor topic(s). 
 #    
 #  LogicTypeButtons
 #    Two buttons allow the user to control whether the inner logic (multiple 
@@ -222,38 +215,6 @@ sub DateRangePullDown { # Two sets of pulldowns for defining a date range
   print $query -> popup_menu (-name => 'beforemonth',-values => \@months);
   print $query -> popup_menu (-name => 'beforeyear', -values => \@years);
   print " (End)\n";
-}
-
-sub MajorMinorSelect { # Two multi-select boxes for major and minor topics
-                       # These are tied together by TopicSearchScript so that 
-                       # when major topics are selected, the list of minor 
-                       # topics is reduced.
-  print "<td>\n";
-  my @MajorIDs = sort byMajorTopic keys %MajorTopics;
-  my %MajorLabels = ();
-  foreach my $ID (@MajorIDs) {
-    $MajorLabels{$ID} = $MajorTopics{$ID}{SHORT};
-  }  
-  print FormElementTitle(-helplink => "dynamictopic", -helptext => "Topic Groups");
-  print $query -> scrolling_list(-name => "majortopic", -values => \@MajorIDs, 
-                                 -labels => \%MajorLabels,  
-                                 -size => 10, 
-                                 -onchange => "selectProduct(this.form);",
-                                 -multiple => 'true');
-  print "</td>\n";
-  
-  print "<td colspan=\"2\">\n";
-  my @MinorIDs = sort byTopic keys %MinorTopics;
-  my %MinorLabels = ();
-  foreach my $ID (@MinorIDs) {
-    $MinorLabels{$ID} = $MinorTopics{$ID}{Full};
-  }  
-  print FormElementTitle(-helplink => "dynamictopic", -helptext => "Topics");
-  print $query -> scrolling_list(-name => "minortopic", -values => \@MinorIDs, 
-                                 -labels => \%MinorLabels,  
-                                 -size => 10,
-                                 -multiple => 'true');
-  print "</td>\n";
 }
 
 sub LogicTypeButtons { # Two buttons allow control whether inner and outer 

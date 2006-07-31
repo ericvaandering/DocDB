@@ -180,24 +180,24 @@ sub TalkMatches ($$@) {
   
   %TalkMatches = ();
 
-  &FetchSessionTalkByID($SessionTalkID);
+  FetchSessionTalkByID($SessionTalkID);
 
   my $HintTitle     = $SessionTalks{$SessionTalkID}{HintTitle};
-  my @TopicHintIDs  = &FetchTopicHintsBySessionTalkID($SessionTalkID);
-  my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID); 
+  my @TopicHintIDs  = FetchTopicHintsBySessionTalkID($SessionTalkID);
+  my @AuthorHintIDs = FetchAuthorHintsBySessionTalkID($SessionTalkID); 
 
   foreach my $DocumentID (@DocumentIDs) { # Check each document in the list
-    &FetchDocument($DocumentID);
-    my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVersions});
-    my @RevTopics  = &GetRevisionTopics($DocRevID);
-    my @RevAuthors = &GetRevisionAuthors($DocRevID);
+    FetchDocument($DocumentID);
+    my $DocRevID   = FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVersions});
+    my @RevTopics  = GetRevisionTopics( {-docrevid => $DocRevID} );
+    my @RevAuthors = GetRevisionAuthors($DocRevID);
 
     # Accumulate matches # FIXME: Look at soundex and fuzzy matching, cookbook 1.16 and 6.13
 
     my $TopicMatches = 0;
     foreach my $RevTopic (@RevTopics) {
       foreach my $TopicHintID (@TopicHintIDs) {
-        my $HintTopic = $TopicHints{$TopicHintID}{MinorTopicID};
+        my $HintTopic = $TopicHints{$TopicHintID}{TopicID};
         if ($HintTopic == $RevTopic) {
           ++$TopicMatches;
         }   
@@ -225,8 +225,8 @@ sub TalkMatches ($$@) {
       $MethodScore = 3;
     } 
 
-    my $FuzzyScore1 = &FuzzyStringMatch($DocumentTitle,$HintTitle);
-    my $FuzzyScore2 = &FuzzyStringMatch($HintTitle,$DocumentTitle);
+    my $FuzzyScore1 = FuzzyStringMatch($DocumentTitle,$HintTitle);
+    my $FuzzyScore2 = FuzzyStringMatch($HintTitle,$DocumentTitle);
     my $FuzzyScore;
 
     if ($FuzzyScore1 > $FuzzyScore2) { # Can be different since "test" matches "testbeam," not vvs.

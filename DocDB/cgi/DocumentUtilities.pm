@@ -95,12 +95,13 @@ sub AddDocument {
     my $Version    = $DocRevisions{$DocRevID}{Version};
     MakeDirectory($DocumentID,$Version); 
     ProtectDirectory($DocumentID,$Version,@ViewIDs); 
-    $Count = InsertAuthors(-docrevid        => $DocRevID, -authorids => \@AuthorIDs);
-    $Count = InsertTopics(-docrevid         => $DocRevID, -topicids  => \@TopicIDs);
+    $Count = InsertAuthors(       -docrevid => $DocRevID, -authorids => \@AuthorIDs);
+    $Count = InsertTopics(        -docrevid => $DocRevID, -topicids  => \@TopicIDs);
     $Count = InsertRevisionEvents(-docrevid => $DocRevID, -eventids  => \@EventIDs);
-    $Count = InsertSecurity(-docrevid       => $DocRevID, -viewids   => \@ViewIDs, -modifyids => \@ModifyIDs);
+    $Count = InsertSecurity(      -docrevid => $DocRevID, -viewids   => \@ViewIDs, 
+                                                          -modifyids => \@ModifyIDs);
     unless ($Version eq "reserve" || $Version eq "same") {
-      @FileIDs = AddFiles(-docrevid         => $DocRevID, -datetime  => $DateTime, -files => \%Files);
+      @FileIDs = AddFiles(-docrevid => $DocRevID, -datetime => $DateTime, -files => \%Files);
     }
     if (@SignOffIDs) {
       InsertSignoffList($DocRevID,@SignOffIDs);
@@ -131,7 +132,12 @@ sub PrepareFieldList (%) {
   
   require "ConfigSQL.pm";
   require "Fields.pm";
-  
+
+  if ($TopicID) {
+    require "TopicSQL.pm";
+    GetTopics();
+  }  
+    
   my %FieldList = ();
   
   # If fields are specified, use that
@@ -158,14 +164,16 @@ sub PrepareFieldList (%) {
     }  
   }
   
-  #  User Cookie for topic
-  if ($query && $TopicID && $query -> cookie("topicid_$TopicID") ) {
-    %FieldList = CookieToFieldList( $query -> cookie("topicid_$TopicID") );
-    if (%FieldList) {
-      return %FieldList
-    }  
+  #  User Cookie for topic or parents
+  foreach my $ParentTopicID ( @{$TopicProvenance{$TopicID}} ) {
+    if ($query && $query -> cookie("topicid_$ParentTopicID") ) {
+      %FieldList = CookieToFieldList( $query -> cookie("topicid_$ParentTopicID") );
+      if (%FieldList) {
+        return %FieldList
+      }  
+    }
   }
-  
+   
   #  User Cookie for document type
   if ($query && $DocTypeID && $query -> cookie("doctypeid_$DocTypeID") ) {
     %FieldList = CookieToFieldList( $query -> cookie("doctypeid_$DocTypeID") );
@@ -198,12 +206,14 @@ sub PrepareFieldList (%) {
     }  
   }  
     
-  #  DB lookup for topic
+  #  DB lookup for topic or parent
   if ($TopicID) {
-    %FieldList = FetchCustomFieldList(-topicid => $TopicID);
-    if (%FieldList) {
-      return %FieldList
-    }  
+    foreach my $ParentTopicID ( @{$TopicProvenance{$TopicID}} ) {
+      %FieldList = FetchCustomFieldList(-topicid => $ParentTopicID);
+      if (%FieldList) {
+        return %FieldList
+      }
+    }    
   }  
 
   #  DB lookup for document type

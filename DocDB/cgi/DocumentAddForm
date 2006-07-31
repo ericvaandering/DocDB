@@ -20,7 +20,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI;                                                                                      
+use CGI qw(-nosticky);                                                                                      
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -46,6 +46,7 @@ require "Security.pm";
 require "XRefUtilities.pm";
 
 require "FileHTML.pm";
+require "JournalHTML.pm";
 require "KeywordHTML.pm";
 require "MeetingHTML.pm";
 require "RevisionHTML.pm";
@@ -71,7 +72,7 @@ my $Version      = $params{version};
 my @PreTopics    = $query -> param('pretopic');
    $mode         = $params{mode}; # FIXME: Can't be my since used in subroutines
 
-@TopicDefaults = ();
+my @TopicDefaults = ();
  
 push @TopicDefaults,@PreTopics; 
 
@@ -171,7 +172,7 @@ my $XRefDefault;
 my $DocTypeIDDefault;
  
 if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
-  $DocRevID            = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+  $DocRevID            = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   $TitleDefault        = $DocRevisions{$DocRevID}{Title};
   $PubInfoDefault      = $DocRevisions{$DocRevID}{PUBINFO};
   $AbstractDefault     = $DocRevisions{$DocRevID}{Abstract};
@@ -179,15 +180,15 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   $KeywordsDefault     = $DocRevisions{$DocRevID}{Keywords};
   $RevisionNoteDefault = $DocRevisions{$DocRevID}{Note};
   $DocTypeIDDefault    = $DocRevisions{$DocRevID}{DocTypeID};
-  @SecurityDefaults    = &GetRevisionSecurityGroups($DocRevID);
-  @AuthorDefaults      = &GetRevisionAuthors($DocRevID);
-  @TopicDefaults       = &GetRevisionTopics($DocRevID);
-  @EventDefaults       = &GetRevisionEvents($DocRevID);
-  @ReferenceDefaults   = &FetchReferencesByRevision($DocRevID);
-  $XRefDefault         = &SetXRefDefault($DocRevID);
+  @SecurityDefaults    = GetRevisionSecurityGroups($DocRevID);
+  @AuthorDefaults      = GetRevisionAuthors($DocRevID);
+  @TopicDefaults       = GetRevisionTopics({ -docrevid => $DocRevID });
+  @EventDefaults       = GetRevisionEvents($DocRevID);
+  @ReferenceDefaults   = FetchReferencesByRevision($DocRevID);
+  $XRefDefault         = SetXRefDefault($DocRevID);
   if ($UseSignoffs) {
     require "SignoffUtilities.pm";
-    $SignoffDefault     = &BuildSignoffDefault($DocRevID);
+    $SignoffDefault     = BuildSignoffDefault($DocRevID);
   }
 } else {
   if ($DefaultPublicAccess) {
@@ -256,6 +257,7 @@ if ($mode eq "add" && ($SessionID||$ConferenceID)) {
 &SetFileOptions($DocRevID);
 
 print $query -> start_multipart_form('POST',$ProcessDocumentAdd);
+print "<div>\n";
 print $query -> hidden(-name => 'mode',      -default => $mode);
 print $query -> hidden(-name => 'upload',    -default => 'file');
 print $query -> hidden(-name => 'archive',   -default => 'single');
@@ -280,8 +282,9 @@ if ($Overdate eq "Yes") {
 }  
 
 print $query -> hidden(-name => 'special',-default => '');
+print "</div>\n";
 
-&WarnPage(@WarnStack); @WarnStack = ();
+WarnPage(@WarnStack);
 
 print "<table class=\"CenteredTable HighPaddedTable\">\n";
 
@@ -314,30 +317,30 @@ print "</tr>\n";
 
 if (@OpenSessionTalkIDs) {
   print "<tr>\n";
-  print "<td colspan=4>\n"; &SessionTalkPulldown(@OpenSessionTalkIDs);    print "</td>\n";
+  print "<td colspan=\"4\">\n"; SessionTalkPulldown(@OpenSessionTalkIDs);    print "</td>\n";
   print "</tr>\n";
 }
 
 print "<tr>\n";
-print "<td colspan=4>\n"; 
+print "<td colspan=\"4\">\n"; 
  &TitleBox(-required => $RequiredEntries{Title});        
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
-print "<td colspan=4>\n";
+print "<td colspan=\"4\">\n";
  &AbstractBox(-required => $RequiredEntries{Abstract});     
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
-print "<td colspan=4>\n"; 
+print "<td colspan=\"4\">\n"; 
  &KeywordsBox(-required => $RequiredEntries{Keyword});     
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n"; 
-print "<td colspan=4>\n"; 
+print "<td colspan=\"4\">\n"; 
 if ($mode eq "update") {
   &RevisionNoteBox(-jsinsert => $RevisionNoteDefault, 
                    -required => $RequiredEntries{Note}); 
@@ -353,7 +356,7 @@ print "</tr>\n";
 if ($mode eq "add" || $mode eq "update") {
   my $CopyOption = ($mode eq "update");
 
-  print "<tr><td colspan=4>\n";
+  print "<tr><td colspan=\"4\">\n";
   if ($Archive eq "archive") { 
     &ArchiveUploadBox(-required => $RequiredEntries{File});
   } else {
@@ -416,70 +419,68 @@ if ($EnhancedSecurity) {
 } else {
   $SecurityText = "Security";
 }
-&SecurityScroll(-addpublic => 'true',
-                -name      => 'security', 
-                -helplink  => 'security',
-                -helptext  => $SecurityText,
-                -multiple  => true,
-                -default   => \@SecurityDefaults);
+SecurityScroll(-addpublic => 'true',
+               -name      => 'security', 
+               -helplink  => 'security',
+               -helptext  => $SecurityText,
+               -multiple  => $TRUE,
+               -default   => \@SecurityDefaults);
 print "</td>\n";
 if ($EnhancedSecurity) {
   print "<td>\n"; 
-  &SecurityScroll(-name      => 'modify', 
-                  -helplink  => 'modifygroups',
-                  -helptext  => 'Modify',
-                  -multiple  => true,
-                  -default   => \@ModifyDefaults);
+  SecurityScroll(-name      => 'modify', 
+                 -helplink  => 'modifygroups',
+                 -helptext  => 'Modify',
+                 -multiple  => $TRUE,
+                 -default   => \@ModifyDefaults);
   print "</td>\n";
 }
 print "</tr>\n";
 
-### Topics # FIXME: Use non-global defaults
+### Topics 
 
-print "<tr>\n";
+
 if ($TopicMode eq "single") {
-  print "<td colspan=\"4\">\n"; &TopicSelect(-required => $RequiredEntries{Author});     print "</td>\n";
+  print "<tr><td colspan=\"4\">\n"; 
+  TopicScroll({ -required => $RequiredEntries{Topic}, -size     => 20 , 
+                -default  => \@TopicDefaults,         -multiple => $TRUE, 
+                -minlevel => $Preferences{Topics}{MinLevel}{Document}, });
 } elsif ($TopicMode eq "multi") {
-  print "<td colspan=\"4\">\n"; &MultiTopicSelect(-required => $RequiredEntries{Author});     print "</td>\n";
+  print "<tr><td colspan=\"4\" id=\"TopicScrollTable\">\n"; 
+  TopicScrollTable({ -required => $RequiredEntries{Topic}, 
+                     -default  => \@TopicDefaults, 
+                     -multiple => $TRUE, 
+                     -minlevel => $Preferences{Topics}{MinLevel}{Document}, });
 }
-print "</tr>\n";
+print "</td></tr>\n";
 
 ### Events
 
-print "<tr>\n";
-print "<td colspan=\"4\">\n";
+print "<tr><td colspan=\"4\">\n";
  EventSelect( {-required => $FALSE,          -format   => "full", 
                -default  => \@EventDefaults, -multiple => $TRUE} );
-print "</td>\n";
-print "</tr>\n";
+print "</td></tr>\n";
 
 ### Cross-references to other documents
 
-print "<tr>\n";
-print "<td colspan=\"4\">\n"; 
-&TextField(-name     => 'xrefs', -size => 40,
-           -default  => $XRefDefault, 
-           -helplink => 'xrefentry', -helptext => 'Related Documents');
-print "</td>\n";
-print "</tr>\n";
+print "<tr><td colspan=\"4\">\n"; 
+TextField(-name     => 'xrefs', -size => 40,
+          -default  => $XRefDefault, 
+          -helplink => 'xrefentry', -helptext => 'Related Documents');
+print "</td></tr>\n";
 
 ### References and Publication info
 
-print "<tr>\n";
-print "<td colspan=\"4\">\n"; &ReferenceForm;  print "</td>\n";
-print "</tr><tr>\n";
-print "<td colspan=\"4\">\n"; &PubInfoBox;  print "</td>\n";
-print "</tr>\n";
+print "<tr><td colspan=\"4\">\n"; ReferenceForm(); print "</td></tr>\n";
+print "<tr><td colspan=\"4\">\n"; PubInfoBox();    print "</td></tr>\n";
 
 if ($UseSignoffs) { # FIXME: Later may be more complicated control
-  print "<tr>\n";
-    print "<td colspan=\"4\">\n"; 
-      &SignoffBox(-default => $SignoffDefault); 
-    print "</td>\n";
-  print "</tr>\n";
+  print "<tr><td colspan=\"4\">\n"; 
+  SignoffBox(-default => $SignoffDefault); 
+  print "</td></tr>\n";
 }
 
-print "<tr>\n<td colspan=\"4\" class=\"SubmitCell\">\n"; 
+print "<tr><td colspan=\"4\" class=\"SubmitCell\">\n"; 
 if      ($mode eq "add") {
   print $query -> submit (-value => "Submit document");
 } elsif ($mode eq "reserve") {
@@ -487,11 +488,10 @@ if      ($mode eq "add") {
 } elsif ($mode eq "update" || $mode eq "updatedb") {
   print $query -> submit (-value => "Update document");
 }
-print "</td>\n</tr>\n";
+print "</td></tr>\n";
 print "</table>\n";
 
-print "<p>";
 print $query -> end_multipart_form;
 
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

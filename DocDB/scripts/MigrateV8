@@ -3,8 +3,6 @@
 # Author Eric Vaandering (ewv@fnal.gov)
 #
 
-# Must run in a v7 environment
-
 # Usage: MigrateV8 --u=username --p=password --a=init|migrate|undo|delete
 
 
@@ -32,21 +30,18 @@ require "CGIInclude.pm";
 
 require "DocDBGlobals.pm";
 
-&GetOptions("a=s" => \$Action,"u=s" => \$User,"p=s" => \$Password);
-
-# In V7
-
+GetOptions("a=s" => \$Action,"u=s" => \$User,"p=s" => \$Password);
 
 unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate" or $Action eq "undo") {
-  print "Usage: MigrateV8 --u=username --p=password --a=init|migrate|delete|undo \n\n";
-  print "This script is used to migrate from a version 7 to version 8 DB structure. \n";
-  print "!!!! BACKUP YOUR DATABASE BEFORE RUNNING THIS IN CASE THERE ARE PROBLEMS !!!! \n";
+  print "Usage: MigrateV8 --u=username --p=password --a=init|migrate|delete|undo\n\n";
+  print "This script is used to migrate from a version 7 to version 8 DB structure.\n";
+  print "!!!! BACKUP YOUR DATABASE BEFORE RUNNING THIS IN CASE THERE ARE PROBLEMS !!!!\n";
   print "Run this script in \"init\" mode first, then update the DocDB code.\n";
-  print "Then run this script again in \"migrate\" mode. \n";
-  print "At this point you can update the CGI code and when you are comfortable  \n";
-  print "everything is OK, run in \"delete\" mode to erase old columns and/or tables.  \n";
-  print "The undo mode removes the newly inserted tables and columns and should restore  \n";
-  print "the DB to a version 7 state. But, using your backup is better. \n";
+  print "Then run this script again in \"migrate\" mode.\n";
+  print "At this point you can update the CGI code and when you are comfortable\n";
+  print "everything is OK, run in \"delete\" mode to erase old columns and/or tables.\n";
+  print "The \"undo\" mode removes the newly inserted tables and columns and should restore\n";
+  print "the DB to a version 7 state. But, using your backup is better.\n";
   exit;
 }  
 
@@ -56,6 +51,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
   my @Actions = ("alter table SecurityGroup  add CanView      int default '1'",
                  "alter table SecurityGroup  add CanConfig    int default '0'",
                  "alter table RevisionTopic  add TopicID      int NOT NULL   ",
+                 "alter table TopicHint      add TopicID      int NOT NULL   ",
                  "alter table RevisionAuthor add AuthorOrder  int default '0'",
                  "alter table Conference     add AltLocation  varchar(255)   ",
                  "alter table Session        add AltLocation  varchar(255)   ",
@@ -92,7 +88,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                     KEY Event     (EventID),
                     KEY Session   (SessionID),
                     KEY Separator (SessionSeparatorID)
-                  )",
+                  )", # Not used yet in 8.0
                  "create table EventTopic (
                     EventTopicID       int       NOT NULL auto_increment,
                     TopicID            int       NOT NULL,
@@ -105,12 +101,26 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                     KEY Event     (EventID),
                     KEY Session   (SessionID),
                     KEY Separator (SessionSeparatorID)
-                  )",
+                  )", # Not used yet in 8.0
+                 "create table Suppress (
+                    SuppressID      int NOT NULL auto_increment,
+                    SecurityGroupID int NOT NULL,
+                    Type            varchar(32),
+                    ForeignID       int,
+                    TextKey         varchar(255),
+                    ViewSetting     varchar(32),
+                    ModifySetting   varchar(32),
+                    PRIMARY KEY       (SuppressID),
+                    KEY SecurityGroup (SecurityGroupID),
+                    KEY Type          (Type),
+                    KEY Foreign       (ForeignID),
+                    KEY TextKey       (TextKey)
+                  )", # Not used yet in 8.0
          );
-            
+         
+  print "Creating new tables and columns.\n";          
   foreach my $Action (@Actions) {
     unless ($Action) { next; }
-    print "Taking action: $Action\n";
     my $Command = $dbh ->prepare($Action);
     $Command -> execute();
   }  
@@ -118,6 +128,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
 
 if ($Action eq "migrate") {
   my $TopicUpdate     = $dbh -> prepare("update RevisionTopic set TopicID=? where MinorTopicID=?");
+  my $HintUpdate      = $dbh -> prepare("update TopicHint     set TopicID=? where MinorTopicID=?");
   my $TopicInsert     = $dbh -> prepare("insert into Topic (TopicID,ShortDescription,LongDescription) values (0,?,?)");
   my $HierarchyInsert = $dbh -> prepare("insert into TopicHierarchy (TopicHierarchyID,TopicID,ParentTopicID) values (0,?,?)");
   my $MajorSelect     = $dbh -> prepare("select MajorTopicID,ShortDescription,LongDescription from MajorTopic");
@@ -133,7 +144,8 @@ if ($Action eq "migrate") {
   my ($LastMajor,$LastMinor);
   
 ### Migrate MajorTopics to Topic
-   
+  print " Migrating MajorTopics.\n";
+
   $MajorSelect -> execute();
   $MajorSelect -> bind_columns(undef, \($MajorID,$Short,$Long));
   while ($MajorSelect -> fetch) {
@@ -143,6 +155,7 @@ if ($Action eq "migrate") {
   }
  
 ### Migrate MinorTopics to Topic
+  print " Migrating MinorTopics.\n";
 
   $MinorSelect -> execute();
   $MinorSelect -> bind_columns(undef, \($MinorID,$MajorID,$Short,$Long));
@@ -154,15 +167,32 @@ if ($Action eq "migrate") {
   }
  
 ### Populate Hierarchy and update RevisionTopic
+  print " Setting topic relationships.\n";
 
   foreach $MinorID (keys %MinorToTopic) {
     my $TopicID  = $MinorToTopic{$MinorID};
     my $ParentID = $MajorToTopic{$MinorToMajor{$MinorID}};
     $HierarchyInsert -> execute($TopicID,$ParentID);
     $TopicUpdate     -> execute($TopicID,$MinorID);
+    $HintUpdate      -> execute($TopicID,$MinorID);
   }
   
   print " Last MajorTopic is now Topic $LastMajor, last MinorTopic is now Topic $LastMinor\n";
+  
+### Migrate Config Settings 
+
+  print "Migrating Custom Field settings for Topics. This cannot be undone,\n".
+        "     but you probably don't have any.\n";   
+  
+  my $ConfigSelect = $dbh -> prepare("select ConfigSettingID,ForeignID from ConfigSetting where ConfigGroup='CustomField' and Sub1Group='TopicID'");
+  my $ConfigUpdate = $dbh -> prepare("update ConfigSetting set ForeignID=? where ConfigSettingID=?");
+  my ($ConfigSettingID,$ConfigTopicID);
+  
+  $ConfigSelect -> execute();
+  while (($ConfigSettingID,$ConfigTopicID) = $ConfigSelect -> fetchrow_array) {
+    $ConfigUpdate -> execute($MinorToTopic{$ConfigTopicID},$ConfigSettingID);
+  }
+  
   
   my @Periods = ("Daily","Immediate","Weekly");
   my $NotificationInsert = $dbh -> prepare("insert into Notification (NotificationID,EmailUserID,Type,ForeignID,TextKey,Period) values (0,?,?,?,?,?)");
@@ -229,18 +259,20 @@ if ($Action eq "migrate") {
     }  
   }
 
-  print "Migration finished\n";  
+  print "\nMigration finished\n";  
 }
 
 if ($Action eq "undo") { # Undo modifications
 
-# User based access
+# Drop tables, columns, and entries we just put in
 
+  print "Removing new tables and columns.\n";          
   my @Actions = ("alter table RevisionTopic  drop index TopicID     ",
                  "alter table Document       drop index Alias       ",
                  "alter table SecurityGroup  drop CanView           ",
                  "alter table SecurityGroup  drop CanConfig         ",
                  "alter table RevisionTopic  drop TopicID           ",
+                 "alter table TopicHint      drop TopicID           ",
                  "alter table Conference     drop AltLocation       ",
                  "alter table Session        drop AltLocation       ",
                  "alter table Session        drop ShowAllTalks      ",
@@ -251,6 +283,7 @@ if ($Action eq "undo") { # Undo modifications
                  "drop  table TopicHierarchy                        ",
                  "drop  table Moderator                             ",
                  "drop  table EventTopic                            ",
+                 "drop  table Suppress                              ",
                  "delete from Notification where Type='AllDocuments'",
                  "delete from Notification where Type='Topic'       ",
                  "delete from Notification where Type='Author'      ",
@@ -267,11 +300,19 @@ if ($Action eq "undo") { # Undo modifications
 
 if ($Action eq "delete") { 
 
+  # Get rid of tables and columns no longer needed and clean up 
+  # a bit of a mess in RevisionTopic and TopicHint left from V6
+
+  print "Removing obsolete tables and columns.\n";          
   my @Actions = ("alter  table RevisionTopic drop MinorTopicID ",
+                 "alter  table TopicHint     drop MinorTopicID ",
                  "delete from  RevisionTopic where TopicID=0   ",
                  "delete from  RevisionTopic where TopicID=NULL",
+                 "delete from  TopicHint     where TopicID=0   ",
+                 "delete from  TopicHint     where TopicID=NULL",
                  "drop   table MinorTopic                      ",
                  "drop   table MajorTopic                      ",
+                 "drop   table GroupTopic                      ",
                  "drop   table EmailAuthorDaily                ",
                  "drop   table EmailAuthorImmediate            ",
                  "drop   table EmailAuthorWeekly               ",

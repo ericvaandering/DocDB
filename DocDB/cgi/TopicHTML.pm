@@ -1,7 +1,6 @@
 #
 #        Name: TopicHTML.pm
 # Description: Routines to produce snippets of HTML dealing with topics 
-#              (major and minor) 
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
@@ -24,155 +23,178 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub TopicListByID {
-  my @TopicIDs = @_;
-  
+  my ($ArgRef) = @_;
+  my @TopicIDs   = exists $ArgRef->{-topicids}   ? @{$ArgRef->{-topicids}}  : ();
+  my $ListFormat = exists $ArgRef->{-listformat} ?   $ArgRef->{-listformat} : "dl";
+    
   require "TopicSQL.pm";
   
-  print "<div id=\"Topics\">\n";
-  print "<dl>\n";
-  print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Topics:</span></dt>\n";
+  my @TopicLinks = ();
   if (@TopicIDs) {
-    print "</dl>\n";
-    print "<ul>\n";
     foreach my $TopicID (@TopicIDs) {
-      my $TopicLink = &MinorTopicLink($TopicID);
-      print "<li>$TopicLink</li>\n";
+      my $TopicLink = TopicLink( {-topicid => $TopicID} );
+      if ($TopicLink) {
+        push @TopicLinks,$TopicLink;
+      }  
     }
-    print "</ul>\n";
-  } else {
-    print "<dd>None</dd>\n";
-    print "</dl>\n";
-  }
-  print "</div>\n";
-}
-
-sub ShortTopicListByID {
-  my @TopicIDs = @_;
-
-  require "TopicSQL.pm";
+  } 
   
-  if (@TopicIDs) {
-    foreach my $TopicID (@TopicIDs) {
-      my $TopicLink = &MinorTopicLink($TopicID);
+# Headers for different styles and handle no topics  
+    
+  if ($ListFormat eq "dl") {
+    print "<div id=\"Topics\">\n";
+    print "<dl>\n";
+    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Topics:</span></dt>\n";
+    if (@TopicLinks) {
+      print "</dl>\n";
+      print "<ul>\n";
+    } else {
+      print "<dd>None</dd>\n";
+      print "</dl>\n";
+    } 
+  }  
+  
+  if ($ListFormat eq "br") {
+    unless (@TopicLinks) {
+      print "None<br/>\n";
+    }  
+  }
+  
+  foreach my $TopicLink (@TopicLinks) {
+    if ($ListFormat eq "dl") {
+      print "<li>$TopicLink</li>\n";  
+    } elsif ($ListFormat eq "br") {
       print "$TopicLink<br/>\n";
     }
-  } else {
-    print "None<br/>\n";
   }
+  
+# Footers for different styles  
+  
+  if ($ListFormat eq "dl") {
+    if (@TopicLinks) {
+      print "</ul>\n";
+    }   
+    print "</div>\n";
+  }  
 }
 
-sub MinorTopicLink ($;$) {
-  my ($TopicID,$mode) = @_;
-  
+sub TopicLink ($) {
+  my ($ArgRef) = @_;
+  my $TopicID = exists $ArgRef->{-topicid} ? $ArgRef->{-topicid} : "";
+
   require "TopicSQL.pm";
+  my ($URL,$Text,$Tooltip);
+
+  FetchTopic( {-topicid => $TopicID} );
+
+  $URL     = $ListBy."?topicid=".$TopicID;
+  $Text    = CGI::escapeHTML($Topics{$TopicID}{Short});
+  $Tooltip = CGI::escapeHTML($Topics{$TopicID}{Long} );
   
-  my ($URL,$Link);
-
-  &FetchMinorTopic($TopicID);
-
-  $URL = "$ListBy?topicid=$TopicID";
-    
-  $Link = "<a href=\"$URL\" title=\"$MinorTopics{$TopicID}{LONG}\">";
-  if ($mode eq "short") {
-    $Link .= $MinorTopics{$TopicID}{SHORT};
-  } elsif ($mode eq "long") {
-    $Link .= $MinorTopics{$TopicID}{LONG};
-  } else {
-    $Link .= $MinorTopics{$TopicID}{Full};
-  }
-  $Link .= "</a>";
+  my $Link = "<a href=\"$URL\" title=\"$Tooltip\">$Text</a>";
   
   return $Link;
 }
 
-sub MajorTopicLink ($;$) {
-  my ($TopicID,$mode) = @_;
-  
-  require "TopicSQL.pm";
-  
-  &FetchMajorTopic($TopicID);
-  my $link;
-  $link = "<a href=\"$ListBy?majorid=$TopicID\" title=\"$MajorTopics{$TopicID}{LONG}\">";
-  if ($mode eq "short") {
-    $link .= $MajorTopics{$TopicID}{SHORT};
-  } elsif ($mode eq "long") {
-    $link .= $MajorTopics{$TopicID}{LONG};
-  } else {
-    $link .= $MajorTopics{$TopicID}{SHORT};
-  }
-  $link .= "</a>";
-  
-  return $link;
-}
-
-sub TopicsByMajorTopic ($) {
-  my ($MajorTopicID) = @_;
-  
-  require "Sorts.pm";
-
-  my @MinorTopicIDs = sort byTopic keys %MinorTopics;
-
-  my $MajorLink = &MajorTopicLink($MajorTopicID,"short");
-  print "<b>$MajorLink</b>\n";
-  print "<ul>\n";
-  foreach my $MinorTopicID (@MinorTopicIDs) {
-    if ($MajorTopicID == $MinorTopics{$MinorTopicID}{MAJOR}) {
-      my $TopicLink = &MinorTopicLink($MinorTopicID,"short");
-      print "<li>$TopicLink</li>\n";
-    }  
-  }  
-  print "</ul>\n";
-}
-
 sub TopicsTable {
   require "Sorts.pm";
-
+  require "TopicUtilities.pm";
+  
   my $NCols = 4;
-  my @MajorTopicIDs = sort byMajorTopic keys %MajorTopics;
 
-  my $Col   = 0;
-  my $Row   = 0;
-  print "<table class=\"HighPaddedTable\">\n";
-  foreach my $MajorID (@MajorTopicIDs) {
-    unless ($Col % $NCols) {
-      if ($Row) {
-        print "</tr>\n";
-      }  
-      print "<tr>\n";
-      ++$Row;
+  my %Lists = ();
+  my $TotalSize = 0;
+  my @RootTopicIDs = sort TopicByAlpha AllRootTopics();
+  foreach my $TopicID (@RootTopicIDs) {
+    my $HTML = TopicListWithChildren({ -topicids => [$TopicID] }); 
+    $List{$TopicID}{HTML} = $HTML; 
+    my @Lines = split /\n/,$HTML;
+    my $Size = grep /href/,@Lines;
+    $List{$TopicID}{Size} = $Size;
+    $TotalSize += $Size; 
+  }   
+  
+  # This algorithm attempts to balance the length of columns in a multi-column
+  # table. It sees if things "mostly" fit and recalculates the length of the 
+  # columns on the fly
+
+  my $Target = $TotalSize/$NCols;
+  push @DebugStack,"Target column length $Target";
+  print '<table class="HighPaddedTable CenteredTable">'."<tr><td>\n";
+  my $Col      = 1;
+  my $NThisCol = 0;
+  my $NSoFar   = 0;
+  foreach my $TopicID (@RootTopicIDs) {
+    my $Size = $List{$TopicID}{Size};
+    
+# Insert new cell if current chunk is to large and it's not 
+# the first thing in a column or the last column    
+    
+    if ($NThisCol != 0 && $Col != $NCols && $NThisCol + 0.5*$Size >= $Target) {
+      $Target = ($TotalSize - $NSoFar)/($NCols-$Col);
+      push @DebugStack,"New target column length $Target";
+      print "</td><td>\n";
+      ++$Col;
+      $NThisCol = 0;
     }
-    print "<td>\n";
-    &TopicsByMajorTopic($MajorID);
-    print "</td>\n";
-    ++$Col;
+    
+    $NThisCol += $Size;
+    $NSoFar   += $Size;
+    print $List{$TopicID}{HTML}; 
   }  
-  print "</tr>\n";
-  print "</table>\n";
+  print "</td></tr></table>";
+}
+
+sub TopicListWithChildren { # Recursive routine
+  my ($ArgRef) = @_;
+  my @TopicIDs = exists $ArgRef->{-topicids} ? @{$ArgRef->{-topicids}} : ();
+  my $Depth    = exists $ArgRef->{-depth}    ?   $ArgRef->{-depth}     : 1;
+  my @TopicIDs = sort TopicByAlpha @TopicIDs;
+
+  my $HTML;
+  
+  if (@TopicIDs) {
+    if ($Depth > 1) {
+      $HTML .= "<ul class=\"$Depth-deep\">\n";
+    }  
+    foreach my $TopicID (@TopicIDs) {
+      if ($Depth > 1) {
+        $HTML .= "<li>";
+      }  
+      $HTML .= TopicLink( {-topicid => $TopicID} );
+      if (@{$TopicChildren{$TopicID}}) {
+        $HTML .= "\n";
+        $HTML .= TopicListWithChildren({ -topicids => $TopicChildren{$TopicID}, -depth => $Depth+1 });
+      }
+      if ($Depth > 1) {
+        $HTML .= "</li>\n";
+      }  
+    }
+    if ($Depth > 1) {
+      $HTML .= "</ul>\n";
+    }  
+  }    
+  return $HTML;
 }
 
 sub ShortDescriptionBox  (;%) {
   my (%Params) = @_;
   
-  my $HelpLink  =   $Params{-helplink}  || "shortdescription"; #FIXME Not used, Blank might be needed later?
-  my $HelpText  =   $Params{-helptext}  || "Topics";           # Not used
+  my $HelpLink  =   $Params{-helplink}  || "shortdescription";
+  my $HelpText  =   $Params{-helptext}  || "Short Description";
   my $ExtraText =   $Params{-extratext} || "";                 # Not used
-  my $Required  =   $Params{-required}  || 0;                  
+  my $Required  =   $Params{-required}  || 0;
   my $Name      =   $Params{-name}      || "short";
   my $Size      =   $Params{-size}      || 20;
   my $MaxLength =   $Params{-maxlength} || 40;
-  my $Disabled  =   $Params{-disabled}  || "0";
-  my $Default   =   $Params{-default}   || "";                 # Not used
+  my $Disabled  =   $Params{-disabled}  || $FALSE;
+  my $Default   =   $Params{-default}   || "";
 
-  my $Booleans = "";
-  
-  if ($Disabled) {
-    $Booleans .= "-disabled";
-  }  
   print "<div class=\"ShortDescriptionEntry\">\n";
-  &TextField(-name     => $Name,     -helptext  => $HelpText,  
-             -helplink => $HelpLink, -required  => $Required,  
-             -size     => $Size,     -maxlength => $MaxLength, 
-             -default  => $Default,  -disabled  => $Disabled);
+  TextField(-name     => $Name,     -helptext  => $HelpText,  
+            -helplink => $HelpLink, -required  => $Required,  
+            -size     => $Size,     -maxlength => $MaxLength, 
+            -default  => $Default,  -disabled  => $Disabled);
   print "</div>\n";           
 }
 
@@ -186,93 +208,119 @@ sub LongDescriptionBox (;%) {
   my $Name      =   $Params{-name}      || "long";
   my $Size      =   $Params{-size}      || 40;
   my $MaxLength =   $Params{-maxlength} || 120;
-  my $Disabled  =   $Params{-disabled}  || 0;
-  my $Default   =   $Params{-default}   || "";                 # FIXME: Not used
+  my $Disabled  =   $Params{-disabled}  || $FALSE;
+  my $Default   =   $Params{-default}   || "";
 
   print "<div class=\"LongDescriptionEntry\">\n";
-  &TextField(-name     => $Name,     -helptext  => $HelpText, 
-             -helplink => $HelpLink, -required  => $Required, 
-             -size     => $Size,     -maxlength => $MaxLength,
-             -default  => $Default,  -disabled  => $Disabled);
+  TextField(-name     => $Name,     -helptext  => $HelpText, 
+            -helplink => $HelpLink, -required  => $Required, 
+            -size     => $Size,     -maxlength => $MaxLength,
+            -default  => $Default,  -disabled  => $Disabled);
   print "</div>\n";           
 };
 
-sub FullTopicScroll ($$;@) { # Scrolling selectable list for topics, all info
+sub TopicScrollTable ($) {
+  my ($ArgRef) = @_;
 
-  #FIXME: Use TopicScroll
-
-  my ($Multiple,$ElementName,@Defaults) = @_;
+  my $NCols      = exists $ArgRef->{-ncols}      ?   $ArgRef->{-ncols}      : 4;
+  my $MinLevel   = exists $ArgRef->{-minlevel}   ?   $ArgRef->{-minlevel}   : 1;
+  my $HelpLink   = exists $ArgRef->{-helplink}   ?   $ArgRef->{-helplink}   : "topics";
+  my $HelpText   = exists $ArgRef->{-helptext}   ?   $ArgRef->{-helptext}   : "Topics";
+  my $Required   = exists $ArgRef->{-required}   ?   $ArgRef->{-required}   : 0;
+  my @Defaults   = exists $ArgRef->{-default}    ? @{$ArgRef->{-default}}   : ();
 
   require "TopicSQL.pm";
-  
-  unless ($GotAllTopics) {
-    &GetTopics;
-  }
-  
-  if ($Multiple) {
-    $Multiple = "true";
-  } else { 
-    $Multiple = "false";
-  }  
-  
-  my @TopicIDs = sort byTopic keys %MinorTopics;
-  my %TopicLabels = ();
-  foreach my $ID (@TopicIDs) {
-    $TopicLabels{$ID} = &SafeHTML($MinorTopics{$ID}{Full}); 
-  }  
-  print $query -> scrolling_list(-name => $ElementName, -values => \@TopicIDs, 
-                                 -labels => \%TopicLabels,
-                                 -size => 10, -multiple => $Multiple,
-                                 -default => \@Defaults);
-};
-
-sub TopicScroll (%) {
-  require "TopicSQL.pm";
+  require "TopicUtilities.pm";
   require "FormElements.pm";
-  
-  my (%Params) = @_;
-  
-  my $Format    =   $Params{-format}    || "full";
-  my $Multiple  =   $Params{-multiple}  || 0;
-  my $HelpLink  =   $Params{-helplink}  || "";
-  my $HelpText  =   $Params{-helptext}  || "Topics";
-  my $ExtraText =   $Params{-extratext} || "";
-  my $Required  =   $Params{-required}  || 0;
-  my $Name      =   $Params{-name}      || "topics";
-  my $Size      =   $Params{-size}      || 10;
-  my $Disabled  =   $Params{-disabled}  || "0";
-  my @Defaults  = @{$Params{-default}};
 
+  print "<table class=\"MedPaddedTable\">\n";
+
+  print "<tr><th colspan=\"$NCols\">\n";
+  print FormElementTitle(-helplink  => $HelpLink, -helptext  => $HelpText ,
+                         -required  => $Required);
+  print "</th>"; # </tr> by table routine
+   
+  my @RootTopicIDs = sort TopicByAlpha AllRootTopics();
+
+  my $Col = 0;
+  foreach my $TopicID (@RootTopicIDs) {
+    my @TopicIDs = TopicAndSubTopics({ -topicid => $TopicID });
+    unless ($Col % $NCols) {
+      print "</tr><tr>\n";
+    }
+    print "<td>\n";
+    print "<strong>$Topics{$TopicID}{Short}</strong><br/>\n";
+    TopicScroll({ -itemformat => "short",    -multiple => $TRUE, -helplink => "", 
+                  -default    => \@Defaults, -topicids => \@TopicIDs,
+                  -minlevel   => $MinLevel, });
+    print "</td>\n";
+    ++$Col;
+  }   
+  print "</tr></table>\n";
+}
+
+
+sub TopicScroll ($) {
+  my ($ArgRef) = @_;
+  my $ItemFormat = exists $ArgRef->{-itemformat} ?   $ArgRef->{-itemformat} : "long";
+  my $MinLevel   = exists $ArgRef->{-minlevel}   ?   $ArgRef->{-minlevel}   : 1;
+  my $Multiple   = exists $ArgRef->{-multiple}   ?   $ArgRef->{-multiple}   : 0;
+  my $HelpLink   = exists $ArgRef->{-helplink}   ?   $ArgRef->{-helplink}   : "topics";
+  my $HelpText   = exists $ArgRef->{-helptext}   ?   $ArgRef->{-helptext}   : "Topics";
+  my $ExtraText  = exists $ArgRef->{-extratext}  ?   $ArgRef->{-extratext}  : "";
+  my $Required   = exists $ArgRef->{-required}   ?   $ArgRef->{-required}   : 0;
+  my $Name       = exists $ArgRef->{-name}       ?   $ArgRef->{-name}       : "topics";
+  my $Size       = exists $ArgRef->{-size}       ?   $ArgRef->{-size}       : 10;
+  my $Disabled   = exists $ArgRef->{-disabled}   ?   $ArgRef->{-disabled}   : "0";
+  my @Defaults   = exists $ArgRef->{-default}    ? @{$ArgRef->{-default}}   : ();
+  my @TopicIDs   = exists $ArgRef->{-topicids}   ? @{$ArgRef->{-topicids}}  : ();
   my %Options = ();
  
   if ($Disabled) {
     $Options{-disabled} = "disabled";
   }  
+  
+  require "TopicSQL.pm";
+  require "TopicUtilities.pm";
+  require "FormElements.pm";
 
-  unless ($GotAllTopics) {
-    GetTopics();
-  }
+  GetTopics();
+  unless (@TopicIDs) {
+    @TopicIDs = keys %Topics;
+  }  
+  @TopicIDs = sort TopicByProvenance @TopicIDs;
   
-  my @TopicIDs = sort byTopic keys %MinorTopics;
   my %TopicLabels = ();
-  my @ActiveIDs = @TopicIDs; # Later can select single major topics, etc.
+#  my @ActiveIDs = @TopicIDs; # Later can select single root topics, etc.
   
-  foreach my $ID (@ActiveIDs) {
-    if ($Format eq "full") {
-      $TopicLabels{$ID} = $MinorTopics{$ID}{Full}; 
-    } elsif ($Format eq "long") {
-      $TopicLabels{$ID} = $MinorTopics{$ID}{Full}." [$MinorTopics{$ID}{LONG}]"; 
-    } 
+  foreach my $ID (@TopicIDs) {
+    my $Spaces = '&nbsp;&nbsp;'x(1*(scalar(@{$TopicProvenance{$ID}})-1));
+    if ($ItemFormat eq "short") {
+      $TopicLabels{$ID} = $Spaces.CGI::escapeHTML($Topics{$ID}{Short}); 
+    } elsif ($ItemFormat eq "long") {
+      $TopicLabels{$ID} = $Spaces.CGI::escapeHTML($Topics{$ID}{Long}); 
+    } elsif ($ItemFormat eq "full") {
+      $TopicLabels{$ID} = $Spaces.CGI::escapeHTML($Topics{$ID}{Short}.
+                                             " [".$Topics{$ID}{Long}."]"); 
+    }
+
+    if (($ItemFormat eq "short" or $ItemFormat eq "long") && 
+         scalar(@{$TopicProvenance{$ID}}) < $MinLevel) {
+      $TopicLabels{$ID} = "[".$TopicLabels{$ID}."]";
+    }
   }  
 
   print FormElementTitle(-helplink  => $HelpLink, -helptext  => $HelpText ,
                          -text      => $Text    , -extratext => $ExtraText,
                          -required  => $Required);
 
-  print $query -> scrolling_list(-name     => $Name, -values => \@ActiveIDs, 
-                                 -size     => 10,    -labels => \%TopicLabels,
+  $query ->  autoEscape(0);  # Turn off and on since sometimes scrolling_list double escape this.
+
+  print $query -> scrolling_list(-name     => $Name, -values => \@TopicIDs, 
+                                 -size     => $Size, -labels => \%TopicLabels,
                                  -multiple => $Multiple,
                                  -default  => \@Defaults, %Options);  
+  $query ->  autoEscape(1);
 }
 
 1;

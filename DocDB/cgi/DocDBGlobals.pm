@@ -94,6 +94,8 @@ $Preferences{Options}{DynamicFullList}{Public}  = $FALSE; # Generate Full docume
 
 $Preferences{Options}{AlwaysRetrieveFile}       = $FALSE; # Always use RetrieveFile instead of File Links
 
+$Preferences{Topics}{MinLevel}{Document} = 1;
+
 $htaccess             = ".htaccess";
 
 $LastDays             = 20;    # Number of days for default in LastModified
@@ -119,7 +121,7 @@ $PublicAccess{MeetingList} = 0;
 # Options
 
 $CaseInsensitiveUsers = 0;
-$EnhancedSecurity     = 0;     # Separate lists for view, modify
+$EnhancedSecurity     = $TRUE; # Separate lists for view, modify
 $SuperiorsCanModify   = 1;     # In enhanced model, a superior group can modify
                                # a subordinate groups documents without explicit
                                # permission
@@ -164,8 +166,6 @@ $XSearch               = $cgi_root."XSearch";
 $Search                = $cgi_root."Search";
 $SearchForm            = $cgi_root."SearchForm";
 
-$TopicAddForm          = $cgi_root."TopicAddForm";
-$TopicAdd              = $cgi_root."TopicAdd";
 $AuthorAddForm         = $cgi_root."AuthorAddForm";
 $AuthorAdd             = $cgi_root."AuthorAdd";
 
@@ -196,7 +196,6 @@ $AdministerForm        = $cgi_root."AdministerForm";
 $AuthorAdminister      = $cgi_root."AuthorAdminister";
 $InstitutionAdminister = $cgi_root."InstitutionAdminister";
 $TopicAdminister       = $cgi_root."TopicAdminister";
-$MajorTopicAdminister  = $cgi_root."MajorTopicAdminister";
 $DocTypeAdminister     = $cgi_root."DocTypeAdminister";
 $JournalAdminister     = $cgi_root."JournalAdminister";
 $ConferenceAdminister  = $cgi_root."ConferenceAdminister";

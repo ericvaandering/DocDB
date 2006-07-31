@@ -244,12 +244,13 @@ sub FileUploadBox (%) {
       $MaxFiles = 1;   
     }   
   }   
-  
+
+  print "<div>\n";
   print $query -> hidden(-name => 'maxfiles', -default => $MaxFiles);
-  
-  print "<table class=\"LowPaddedTable\">\n";
-  print "<tr><td colspan=\"2\">";
-  
+  print "</div>\n";
+
+  print "<table class=\"LowPaddedTable LeftHeader\">\n";
+ 
   my ($HelpLink,$HelpText,$FileHelpLink,$FileHelpText,$DescHelpLink,$DescHelpText);
   if ($Type eq "file") {
     $HelpLink = "fileupload";
@@ -270,13 +271,13 @@ sub FileUploadBox (%) {
     
   $DescHelpLink = "description";
   $DescHelpText = "Description";
-    
-  my $BoxTitle = &FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText,
-                                   -required => $Required);
-  print $BoxTitle;
   
-  print $query -> hidden(-name => "maxfiles", -default => $MaxFiles);
-                            
+  my $BoxTitle = FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText,
+                                  -required => $Required);
+  print '<tr><td colspan="2">'; 
+  print $BoxTitle;
+  print "</td></tr>\n";
+                              
   for (my $i = 1; $i <= $MaxFiles; ++$i) {
     my $FileID = shift @FileIDs;
     my $ElementName = "upload$i";
@@ -295,16 +296,16 @@ sub FileUploadBox (%) {
     
     if ($DescOnly) {
       print "<tr>\n";
-      print "<td align=right>Filename:</td>";
+      print "<th>Filename:</th>";
       print "<td>\n";
       print $DocFiles{$FileID}{NAME};
       print $query -> hidden(-name => $FileIDName, -value => $FileID);
       print "</td>\n";
       print "</tr>\n";
     } else {
-      print "<tr><td align=right>\n";
+      print "<tr><th>\n";
       print $FileHelp;
-      print "</td>\n";
+      print "</th>\n";
 
       print "<td>\n";
       if ($Type eq "file") {
@@ -318,9 +319,9 @@ sub FileUploadBox (%) {
       print "</tr>\n";
       
       if ($Type eq "http") {
-        print "<tr><td align=right>\n";
+        print "<tr><th>\n";
         print $NewNameHelp;
-        print "</td>\n";
+        print "</th>\n";
 
         print "<td>\n";
         print $query -> textfield(-name      => $NewName, -size => $FileSize, 
@@ -329,15 +330,14 @@ sub FileUploadBox (%) {
         print "</tr>\n";
       }
     }  
-    print "<tr><td align=right>\n";
+    print "<tr><th>\n";
     print $DescriptionHelp;
-    print "</td>\n";
+    print "</th>\n";
     print "<td>\n";
     print $query -> textfield (-name      => $DescName, -size    => 60, 
                                -maxlength => 128,       -default => $DefaultDesc);
 
     if ($DocFiles{$FileID}{ROOT} || !$FileID) {
-#    if ($DocFiles{$FileID}{ROOT} || $NewFiles) {
       print $query -> checkbox(-name => $MainName, -checked => 'checked', -label => '');
     } else {
       print $query -> checkbox(-name => $MainName, -label => '');
@@ -346,16 +346,16 @@ sub FileUploadBox (%) {
     print $MainHelp;
     print "</td></tr>\n";
     if ($FileID && $AllowCopy && !$DescOnly) {
-      print "<tr><td>&nbsp;</td><td colspan=2>\n";
+      print "<tr><td>&nbsp;</td><td colspan=\"2\">\n";
       print "Copy <tt>$DocFiles{$FileID}{NAME}</tt> from previous version:";
       print $query -> hidden(-name => $FileIDName, -value => $FileID);
       print $query -> checkbox(-name => $CopyName, -label => '');
       print "</td></tr>\n";
     }  
-    print "<tr><td colspan=3></td></tr>\n";
+    print "<tr><td colspan=\"3\"></td></tr>\n";
   }
   if ($Type eq "http") {
-    print "<tr><td align=right><b>User:</b></td>\n";
+    print "<tr><th>User:</th>\n";
     print "<td>\n";
     print $query -> textfield (-name => 'http_user', -size => 20, -maxlength => 40);
     print "<b>&nbsp;&nbsp;&nbsp;&nbsp;Password:</b>\n";
@@ -370,28 +370,19 @@ sub ArchiveUploadBox (%)  {
   
   my $Required   = $Params{-required}   || 0;        # short, long, full
 
-  print "<table cellpadding=3>\n";
-  print "<tr><td colspan=2><b><a ";
-  &HelpLink("filearchive");
-  print "Archive file upload:</a></b>";
-  if ($Required) {
-    print $RequiredMark;
-  } 
-  print "<br> \n";
-  print "<tr><td align=right>\n";
-  print "<b>Archive File:</b>\n";
-  print "</td><td>\n";
-  print $query -> filefield(-name => "single_upload", -size => 60,
-                              -maxlength=>250);
+  print "<table class=\"LowPaddedTable LeftHeader\">\n";
+  print "<tr><td colspan=\"2\">";
+  print FormElementTitle(-helplink => "filearchive", -helptext => "Archive file upload",
+                         -required => $Required);
+  print "</td></tr> \n";
+  print "<tr><th>Archive File:</th><td>\n";
+  print $query -> filefield(-name      => "single_upload", -size => 60,
+                            -maxlength => 250);
 
-  print "<tr><td align=right>\n";
-  print "<b>Main file in archive:</b>\n";
-  print "</td><td>\n";
+  print "<tr><th>Main file in archive:</th><td>\n";
   print $query -> textfield (-name => 'mainfile', -size => 70, -maxlength => 128);
 
-  print "<tr><td align=right>\n";
-  print "<b>Description of file:</b>\n";
-  print "</td><td>\n";
+  print "<tr><th>Description of file:</th><td>\n";
   print $query -> textfield (-name => 'filedesc', -size => 70, -maxlength => 128);
   print "</td></tr></table>\n";
 };

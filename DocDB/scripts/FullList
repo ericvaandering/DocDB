@@ -40,6 +40,7 @@ require "AuthorSQL.pm";
 require "SecuritySQL.pm";
 require "DocumentSQL.pm";
 require "RevisionSQL.pm";
+require "TopicSQL.pm";
 
 require "HTMLUtilities.pm";
 require "DocumentUtilities.pm";
@@ -54,6 +55,7 @@ DocDBHeader("$Project Document List","Document List");
 
 GetAuthors();
 GetSecurityGroups();
+GetTopics();
 
 ### Get all revisions and documents
 

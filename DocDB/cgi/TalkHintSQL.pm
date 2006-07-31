@@ -26,7 +26,7 @@ sub InsertTopicHints ($@) {
   my ($SessionTalkID,@TopicHints) = @_;
   
   my $HintDelete = $dbh -> prepare("delete from TopicHint where SessionTalkID=?");   
-  my $HintInsert = $dbh -> prepare("insert into TopicHint (TopicHintID, SessionTalkID, MinorTopicID) values (0,?,?)");
+  my $HintInsert = $dbh -> prepare("insert into TopicHint (TopicHintID, SessionTalkID, TopicID) values (0,?,?)");
  
   $HintDelete -> execute($SessionTalkID);
   foreach my $TopicHint (@TopicHints) {
@@ -58,16 +58,16 @@ sub DeleteHints ($) {
 sub FetchTopicHintsBySessionTalkID ($) {
   my ($SessionTalkID) = @_;
 
-  my ($TopicHintID,$MinorTopicID,$TimeStamp); 
+  my ($TopicHintID,$TopicID,$TimeStamp); 
   my $TopicHintList   = $dbh -> prepare(
-    "select TopicHintID,MinorTopicID,TimeStamp from TopicHint where SessionTalkID=?");
+    "select TopicHintID,TopicID,TimeStamp from TopicHint where SessionTalkID=?");
   my @TopicHintIDs = ();
   $TopicHintList -> execute($SessionTalkID);
-  $TopicHintList -> bind_columns(undef, \($TopicHintID,$MinorTopicID,$TimeStamp));
+  $TopicHintList -> bind_columns(undef, \($TopicHintID,$TopicID,$TimeStamp));
 
   while ($TopicHintList -> fetch) {
     $TopicHints{$TopicHintID}{SessionTalkID} = $SessionTalkID;
-    $TopicHints{$TopicHintID}{MinorTopicID}  = $MinorTopicID;
+    $TopicHints{$TopicHintID}{TopicID}       = $TopicID;
     $TopicHints{$TopicHintID}{TimeStamp}     = $TimeStamp;
     push @TopicHintIDs,$TopicHintID;
   }

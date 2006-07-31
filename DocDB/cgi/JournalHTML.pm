@@ -129,5 +129,47 @@ sub JournalTable (;$) {
   print "</table>\n";
 }
 
+sub ReferenceForm {
+  require "MiscSQL.pm";
+  
+  GetJournals();
+
+  my @JournalIDs = keys %Journals;
+  my %JournalLabels = ();
+  foreach my $ID (@JournalIDs) {
+    $JournalLabels{$ID} = $Journals{$ID}{Acronym};
+  }
+  @JournalIDs = sort @JournalIDs;  #FIXME Sort by acronym
+  unshift @JournalIDs,0; $JournalLabels{0} = "----"; # Null Journal
+  my $ElementTitle = FormElementTitle(-helplink  => "reference", 
+                                      -helptext  => "Journal References");
+  print $ElementTitle,"\n";                                     
+
+  my @ReferenceIDs = (@ReferenceDefaults,0);
+  
+  print "<table class=\"LowPaddedTable\">\n";
+  foreach my $ReferenceID (@ReferenceIDs) { 
+    print "<tr>\n";
+    my $JournalDefault = $RevisionReferences{$ReferenceID}{JournalID};
+    my $VolumeDefault  = $RevisionReferences{$ReferenceID}{Volume}   ;
+    my $PageDefault    = $RevisionReferences{$ReferenceID}{Page}     ;
+    print "<td><b>Journal: </b>\n";
+    print $query -> popup_menu(-name => "journal", -values => \@JournalIDs, 
+                                   -labels => \%JournalLabels,
+                                   -default => $JournalDefault);
+    print "</td>";
+    print "<td><b>Volume:</b> \n";
+    print $query -> textfield (-name => 'volume', 
+                               -size => 8, -maxlength => 8, 
+                               -default => $VolumeDefault);
+    print "</td>";
+    print "<td><b>Page:</b> \n";
+    print $query -> textfield (-name => 'page', 
+                               -size => 8, -maxlength => 16, 
+                               -default => $PageDefault);
+    print "</td></tr>\n";                           
+  }
+  print "</table>\n";
+}
 
 1;
