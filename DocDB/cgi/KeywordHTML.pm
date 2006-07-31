@@ -176,9 +176,7 @@ sub KeywordSelect (%) { # Scrolling selectable list for keyword groups
       }  
     }
   }  
-  print "<b><a ";
-  &HelpLink("keywords");
-  print "Keywords:</a></b><br> \n";
+  print FormElementTitle(-helplink => "keywords", -helptext => "Keywords");
   print $query -> scrolling_list(-name => "keywordlist", -values => \@KeywordIDs, 
                                  -labels => \%KeywordLabels,
                                  -size => 10, -multiple => $Multiple, $Booleans );
@@ -199,9 +197,7 @@ sub KeywordGroupSelect (%) { # Scrolling selectable list for keyword groups
     $Booleans .= "-disabled";
   }  
   
-  print "<b><a ";
-  &HelpLink("KeywordGroups");
-  print "Keyword Groups:</a></b><br> \n";
+  print FormElementTitle(-helplink => "keywordgroups", -helptext => "Keyword Groups");
   my @KeyGroupIDs = keys %KeywordGroups;
   my %GroupLabels = ();
   

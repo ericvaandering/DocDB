@@ -15,12 +15,6 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-sub HelpLink { # Change this, change FormElementTitle
-               # Eventually, replace with  FormElementTitle
-  my ($helpterm) = @_;
-  print " style=\"color: red\" href=\"Javascript:helppopupwindow(\'$DocDBHelp?term=$helpterm\');\">";
-}
-
 sub TalkNoteLink {
   my ($SessionOrderID) = @_;
   return "<a href=\"Javascript:notepopupwindow(\'$ShowTalkNote?sessionorderid=$SessionOrderID\');\">Edit</a>";

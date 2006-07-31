@@ -2,6 +2,16 @@
 
 <helpfile>
  <entry>
+  <key>keywordgroups</key>
+  <title>Keyword Groups</title>
+  <text>
+     The group names for managed keywords. While users can apply any keyword
+     to a document, the groups and keywords in them allow you to suggest a 
+     set of <q>approved</q> keywords.
+  </text>
+ </entry>
+
+ <entry>
   <key>authortextsearch</key>
   <title>Authors</title>
   <text>

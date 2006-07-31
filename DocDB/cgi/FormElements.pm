@@ -336,12 +336,7 @@ sub AuthorManual (%) { # FIXME: Special case of AuthorTextEntry
     $AuthorManDefault .= "$Authors{$AuthorID}{FULLNAME}\n" ;
   }
     
-  print FormElementTitle(-helplink => "authormanual", -helptext => "Authors");
-  if ($Required) {
-    print $RequiredMark;
-  }  
-  print "<br> \n";
-  
+  print FormElementTitle(-helplink => "authormanual", -helptext => "Authors", -required => $Required);
   print $query -> textarea (-name    => 'authormanual', 
                             -default => $AuthorManDefault,
                             -columns => 20, -rows    => 8);
