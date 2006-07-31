@@ -285,7 +285,6 @@ sub TopicScroll ($) {
   require "FormElements.pm";
 
   GetTopics();
-  BuildTopicProvenance();
   unless (@TopicIDs) {
     @TopicIDs = keys %Topics;
   }  

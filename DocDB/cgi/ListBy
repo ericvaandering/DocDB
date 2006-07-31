@@ -264,9 +264,9 @@ push @DebugStack,"#1 found: ".join ', ',@IDs;
 push @DebugStack,"#2 found: ".join ', ',@IDs;
 @IDs = MatchTopic({-short => "DocDB", -ancestor => 5});
 push @DebugStack,"#3 found: ".join ', ',@IDs;
-@IDs = MatchTopic({-short => "Tools");
+@IDs = MatchTopic({-short => "Tools"});
 push @DebugStack,"#4 found: ".join ', ',@IDs;
-@IDs = MatchTopic({-long => "Violation");
+@IDs = MatchTopic({-long => "Violation"});
 push @DebugStack,"#5 found: ".join ', ',@IDs;
 
 

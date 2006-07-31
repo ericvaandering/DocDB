@@ -25,6 +25,9 @@
 
 sub GetTopics {
   if ($GotAllTopics) {return;}
+
+  require "TopicUtilities.pm";
+
   %Topics        = ();
   %TopicParents  = ();
   %TopicChildren = ();
@@ -46,7 +49,7 @@ sub GetTopics {
     push @{$TopicParents{$TopicID}}       ,$ParentTopicID;
     push @{$TopicChildren{$ParentTopicID}},$TopicID;
   }
-
+  BuildTopicProvenance();
   $GotAllTopics = 1;
 };
 
@@ -149,8 +152,10 @@ sub GetTopicDocuments {
 
 sub MatchTopic ($) {
   my ($ArgRef) = @_;
-  my $Short = exists $ArgRef->{-short} ? $ArgRef->{-short} : "";
-#  my $Long = exists $ArgRef->{-long}  ? $ArgRef->{-long}  : "";
+  my $Short      = exists $ArgRef->{-short}    ? $ArgRef->{-short}    : "";
+  my $Long       = exists $ArgRef->{-long}     ? $ArgRef->{-long}     : "";
+  my $ParentID   = exists $ArgRef->{-parent}   ? $ArgRef->{-parent}   : 0;
+  my $AncestorID = exists $ArgRef->{-ancestor} ? $ArgRef->{-ancestor} : 0;
   my $TopicID;
   my @TopicIDs = ();
   if ($Short) {
@@ -162,7 +167,43 @@ sub MatchTopic ($) {
     while ($List -> fetch) {
       push @TopicIDs,$TopicID;
     }
+  } elsif ($Long) 
+    $Long =~ tr/[A-Z]/[a-z]/;
+    $Long = "%".$Long."%";
+    my $List = $dbh -> prepare("select TopicID from Topic where LOWER(LongDescription) like ?"); 
+    $List -> execute($Long);
+    $List -> bind_columns(undef, \($TopicID));
+    while ($List -> fetch) {
+      push @TopicIDs,$TopicID;
+    }
   }
+  
+  if ($ParentID) {
+    GetTopics();
+    my @CandidateIDs = @TopicIDs;
+    @TopicIDs = ();
+    foreach my $TopicID (@CandidateIDs) {
+      foreach my $ID (@{$TopicParents{$TopicID}}) {
+        if ($ParentID == $ID) {
+          push @TopicIDs,$TopicID;
+        }
+      }    
+    }
+  }  
+  
+  if ($AncestorID) {
+    GetTopics();
+    my @CandidateIDs = @TopicIDs;
+    @TopicIDs = ();
+    foreach my $TopicID (@CandidateIDs) {
+      foreach my $ID (@{$TopicProvenance{$TopicID}}) {
+        if ($AncestorID == $ID) {
+          push @TopicIDs,$TopicID;
+        }
+      }    
+    }
+  }  
+
   return @TopicIDs;
 }
 
