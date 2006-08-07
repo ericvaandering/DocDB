@@ -527,6 +527,9 @@ sub PrintEventRightSidebar ($) {
   my $SeparatorID = exists $ArgRef->{-separatorid} ? $ArgRef->{-separatorid} : 0;
   my $DisplayMode = exists $ArgRef->{-displaymode} ? $ArgRef->{-displaymode} : "";
 
+  require "MeetingSQL.pm";
+  require "Utilities.pm";
+
   my $EventGroupID   = $Conferences{$EventID}{EventGroupID};
   my $EventGroupLink = EventGroupLink(-eventgroupid => $EventGroupID, -format => "short");
 
