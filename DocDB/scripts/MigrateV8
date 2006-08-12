@@ -26,7 +26,7 @@
 use DBI;
 use Getopt::Long;
 
-require "CGIInclude.pm";
+#require "CGIInclude.pm";
 
 require "DocDBGlobals.pm";
 
@@ -113,7 +113,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                     PRIMARY KEY       (SuppressID),
                     KEY SecurityGroup (SecurityGroupID),
                     KEY Type          (Type),
-                    KEY Foreign       (ForeignID),
+                    KEY ForeignID     (ForeignID),
                     KEY TextKey       (TextKey)
                   )", # Not used yet in 8.0
          );
