@@ -1,4 +1,4 @@
--- This file creates the database structure for a Version 6.x installation of 
+-- This file creates the database structure for a Version 8.x installation of 
 -- DocDB.
 
 --
@@ -53,12 +53,13 @@ CREATE TABLE Conference (
   StartDate date default NULL,
   EndDate date default NULL,
   TimeStamp timestamp(14) NOT NULL,
-  Preamble text,
   Title varchar(128) default NULL,
+  Preamble text,
   Epilogue text,
   ShowAllTalks int(11) default NULL,
   EventGroupID int(11) default NULL,
   LongDescription text,
+  AltLocation varchar(255) default NULL,
   PRIMARY KEY  (ConferenceID),
   KEY StartDate (StartDate),
   KEY EndDate (EndDate)
@@ -156,8 +157,10 @@ CREATE TABLE Document (
   RequestDate datetime default NULL,
   TimeStamp timestamp(14) NOT NULL,
   DocHash char(32) default NULL,
+  Alias varchar(255) default NULL,
   PRIMARY KEY  (DocumentID),
-  KEY Requester (RequesterID)
+  KEY Requester (RequesterID),
+  KEY Alias (Alias)
 ) TYPE=MyISAM;
 
 --
@@ -228,188 +231,11 @@ CREATE TABLE DocumentType (
   ShortType varchar(32) default NULL,
   LongType varchar(255) default NULL,
   TimeStamp timestamp(14) NOT NULL,
-  Hide int(11) NOT NULL default '0',
   PRIMARY KEY  (DocTypeID)
 ) TYPE=MyISAM;
 
 --
 -- Dumping data for table `DocumentType`
---
-
-
-
---
--- Table structure for table `EmailAuthorDaily`
---
-
-CREATE TABLE EmailAuthorDaily (
-  AuthorDailyID int(11) NOT NULL auto_increment,
-  EmailUserID int(11) NOT NULL default '0',
-  AuthorID int(11) NOT NULL default '0',
-  PRIMARY KEY  (AuthorDailyID)
-) TYPE=MyISAM;
-
---
--- Dumping data for table `EmailAuthorDaily`
---
-
-
-
---
--- Table structure for table `EmailAuthorImmediate`
---
-
-CREATE TABLE EmailAuthorImmediate (
-  AuthorImmediateID int(11) NOT NULL auto_increment,
-  EmailUserID int(11) NOT NULL default '0',
-  AuthorID int(11) NOT NULL default '0',
-  PRIMARY KEY  (AuthorImmediateID)
-) TYPE=MyISAM;
-
---
--- Dumping data for table `EmailAuthorImmediate`
---
-
-
-
---
--- Table structure for table `EmailAuthorWeekly`
---
-
-CREATE TABLE EmailAuthorWeekly (
-  AuthorWeeklyID int(11) NOT NULL auto_increment,
-  EmailUserID int(11) NOT NULL default '0',
-  AuthorID int(11) NOT NULL default '0',
-  PRIMARY KEY  (AuthorWeeklyID)
-) TYPE=MyISAM;
-
---
--- Dumping data for table `EmailAuthorWeekly`
---
-
-
-
---
--- Table structure for table `EmailDocumentImmediate`
---
-
-CREATE TABLE EmailDocumentImmediate (
-  EmailDocumentImmediateID int(11) NOT NULL auto_increment,
-  EmailUserID int(11) default NULL,
-  DocumentID int(11) default NULL,
-  TimeStamp timestamp(14) NOT NULL,
-  PRIMARY KEY  (EmailDocumentImmediateID),
-  KEY EmailUserID (EmailUserID),
-  KEY DocumentID (DocumentID)
-) TYPE=MyISAM;
-
---
--- Dumping data for table `EmailDocumentImmediate`
---
-
-
-
---
--- Table structure for table `EmailKeywordDaily`
---
-
-CREATE TABLE EmailKeywordDaily (
-  KeywordDailyID int(11) NOT NULL auto_increment,
-  EmailUserID int(11) NOT NULL default '0',
-  Keyword varchar(32) default NULL,
-  PRIMARY KEY  (KeywordDailyID)
-) TYPE=MyISAM;
-
---
--- Dumping data for table `EmailKeywordDaily`
---
-
-
-
---
--- Table structure for table `EmailKeywordImmediate`
---
-
-CREATE TABLE EmailKeywordImmediate (
-  KeywordImmediateID int(11) NOT NULL auto_increment,
-  EmailUserID int(11) NOT NULL default '0',
-  Keyword varchar(32) default NULL,
-  PRIMARY KEY  (KeywordImmediateID)
-) TYPE=MyISAM;
-
---
--- Dumping data for table `EmailKeywordImmediate`
---
-
-
-
---
--- Table structure for table `EmailKeywordWeekly`
---
-
-CREATE TABLE EmailKeywordWeekly (
-  KeywordWeeklyID int(11) NOT NULL auto_increment,
-  EmailUserID int(11) NOT NULL default '0',
-  Keyword varchar(32) default NULL,
-  PRIMARY KEY  (KeywordWeeklyID)
-) TYPE=MyISAM;
-
---
--- Dumping data for table `EmailKeywordWeekly`
---
-
-
-
---
--- Table structure for table `EmailTopicDaily`
---
-
-CREATE TABLE EmailTopicDaily (
-  DailyEmailID int(11) NOT NULL auto_increment,
-  EmailUserID int(11) NOT NULL default '0',
-  MajorTopicID int(11) NOT NULL default '0',
-  MinorTopicID int(11) NOT NULL default '0',
-  PRIMARY KEY  (DailyEmailID)
-) TYPE=MyISAM;
-
---
--- Dumping data for table `EmailTopicDaily`
---
-
-
-
---
--- Table structure for table `EmailTopicImmediate`
---
-
-CREATE TABLE EmailTopicImmediate (
-  ImmediateEmailID int(11) NOT NULL auto_increment,
-  EmailUserID int(11) NOT NULL default '0',
-  MajorTopicID int(11) NOT NULL default '0',
-  MinorTopicID int(11) NOT NULL default '0',
-  PRIMARY KEY  (ImmediateEmailID)
-) TYPE=MyISAM;
-
---
--- Dumping data for table `EmailTopicImmediate`
---
-
-
-
---
--- Table structure for table `EmailTopicWeekly`
---
-
-CREATE TABLE EmailTopicWeekly (
-  WeeklyEmailID int(11) NOT NULL auto_increment,
-  EmailUserID int(11) NOT NULL default '0',
-  MajorTopicID int(11) NOT NULL default '0',
-  MinorTopicID int(11) NOT NULL default '0',
-  PRIMARY KEY  (WeeklyEmailID)
-) TYPE=MyISAM;
-
---
--- Dumping data for table `EmailTopicWeekly`
 --
 
 
@@ -457,6 +283,30 @@ CREATE TABLE EventGroup (
 
 
 --
+-- Table structure for table `EventTopic`
+--
+
+CREATE TABLE EventTopic (
+  EventTopicID int(11) NOT NULL auto_increment,
+  TopicID int(11) NOT NULL default '0',
+  EventID int(11) NOT NULL default '0',
+  SessionID int(11) NOT NULL default '0',
+  SessionSeparatorID int(11) NOT NULL default '0',
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (EventTopicID),
+  KEY Topic (TopicID),
+  KEY Event (EventID),
+  KEY Session (SessionID),
+  KEY Separator (SessionSeparatorID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table `EventTopic`
+--
+
+
+
+--
 -- Table structure for table `ExternalDocDB`
 --
 
@@ -490,24 +340,6 @@ CREATE TABLE GroupHierarchy (
 
 --
 -- Dumping data for table `GroupHierarchy`
---
-
-
-
---
--- Table structure for table `GroupTopic`
---
-
-CREATE TABLE GroupTopic (
-  GroupTopicID int(11) NOT NULL auto_increment,
-  GroupID int(11) NOT NULL default '0',
-  MajorTopicID int(11) NOT NULL default '0',
-  TimeStamp timestamp(14) NOT NULL,
-  PRIMARY KEY  (GroupTopicID)
-) TYPE=MyISAM;
-
---
--- Dumping data for table `GroupTopic`
 --
 
 
@@ -608,24 +440,6 @@ CREATE TABLE KeywordGrouping (
 
 
 --
--- Table structure for table `MajorTopic`
---
-
-CREATE TABLE MajorTopic (
-  MajorTopicID int(11) NOT NULL auto_increment,
-  ShortDescription varchar(32) NOT NULL default '',
-  LongDescription text,
-  TimeStamp timestamp(14) NOT NULL,
-  PRIMARY KEY  (MajorTopicID)
-) TYPE=MyISAM;
-
---
--- Dumping data for table `MajorTopic`
---
-
-
-
---
 -- Table structure for table `MeetingModify`
 --
 
@@ -685,21 +499,25 @@ CREATE TABLE MeetingSecurity (
 
 
 --
--- Table structure for table `MinorTopic`
+-- Table structure for table `Moderator`
 --
 
-CREATE TABLE MinorTopic (
-  MinorTopicID int(11) NOT NULL auto_increment,
-  MajorTopicID int(11) NOT NULL default '0',
-  ShortDescription varchar(32) NOT NULL default '',
-  LongDescription text,
+CREATE TABLE Moderator (
+  ModeratorID int(11) NOT NULL auto_increment,
+  AuthorID int(11) NOT NULL default '0',
+  EventID int(11) NOT NULL default '0',
+  SessionID int(11) NOT NULL default '0',
+  SessionSeparatorID int(11) NOT NULL default '0',
   TimeStamp timestamp(14) NOT NULL,
-  PRIMARY KEY  (MinorTopicID),
-  KEY Major (MajorTopicID)
+  PRIMARY KEY  (ModeratorID),
+  KEY Author (AuthorID),
+  KEY Event (EventID),
+  KEY Session (SessionID),
+  KEY Separator (SessionSeparatorID)
 ) TYPE=MyISAM;
 
 --
--- Dumping data for table `MinorTopic`
+-- Dumping data for table `Moderator`
 --
 
 
@@ -715,6 +533,7 @@ CREATE TABLE Notification (
   ForeignID int(11) default NULL,
   Period varchar(32) default NULL,
   TimeStamp timestamp(14) NOT NULL,
+  TextKey varchar(255) default NULL,
   PRIMARY KEY  (NotificationID),
   KEY EmailUserID (EmailUserID),
   KEY ForeignID (ForeignID)
@@ -734,6 +553,8 @@ CREATE TABLE RevisionAuthor (
   RevAuthorID int(11) NOT NULL auto_increment,
   DocRevID int(11) NOT NULL default '0',
   AuthorID int(11) NOT NULL default '0',
+  AuthorOrder int(11) default '0',
+  TimeStamp timestamp(14) NOT NULL,
   PRIMARY KEY  (RevAuthorID),
   KEY DocRevID (DocRevID),
   KEY AuthorID (AuthorID)
@@ -834,10 +655,11 @@ CREATE TABLE RevisionSecurity (
 CREATE TABLE RevisionTopic (
   RevTopicID int(11) NOT NULL auto_increment,
   DocRevID int(11) NOT NULL default '0',
-  MinorTopicID int(11) NOT NULL default '0',
+  TimeStamp timestamp(14) NOT NULL,
+  TopicID int(11) NOT NULL default '0',
   PRIMARY KEY  (RevTopicID),
-  KEY MinorTopicID (MinorTopicID),
-  KEY DocRevID (DocRevID)
+  KEY DocRevID (DocRevID),
+  KEY TopicID (TopicID)
 ) TYPE=MyISAM;
 
 --
@@ -857,6 +679,8 @@ CREATE TABLE SecurityGroup (
   TimeStamp timestamp(14) NOT NULL,
   CanCreate int(11) default '0',
   CanAdminister int(11) default '0',
+  CanView int(11) default '1',
+  CanConfig int(11) default '0',
   PRIMARY KEY  (GroupID)
 ) TYPE=MyISAM;
 
@@ -874,10 +698,12 @@ CREATE TABLE Session (
   SessionID int(11) NOT NULL auto_increment,
   ConferenceID int(11) default NULL,
   StartTime datetime default NULL,
-  Location varchar(128) default NULL,
   Title varchar(128) default NULL,
   Description text,
   TimeStamp timestamp(14) NOT NULL,
+  Location varchar(128) default NULL,
+  AltLocation varchar(255) default NULL,
+  ShowAllTalks int(11) default '0',
   PRIMARY KEY  (SessionID),
   KEY ConferenceID (ConferenceID)
 ) TYPE=MyISAM;
@@ -917,10 +743,10 @@ CREATE TABLE SessionSeparator (
   SessionSeparatorID int(11) NOT NULL auto_increment,
   ConferenceID int(11) default NULL,
   StartTime datetime default NULL,
-  Location varchar(128) default NULL,
   Title varchar(128) default NULL,
   Description text,
   TimeStamp timestamp(14) NOT NULL,
+  Location varchar(128) default NULL,
   PRIMARY KEY  (SessionSeparatorID),
   KEY ConferenceID (ConferenceID)
 ) TYPE=MyISAM;
@@ -1017,6 +843,31 @@ CREATE TABLE SignoffDependency (
 
 
 --
+-- Table structure for table `Suppress`
+--
+
+CREATE TABLE Suppress (
+  SuppressID int(11) NOT NULL auto_increment,
+  SecurityGroupID int(11) NOT NULL default '0',
+  Type varchar(32) default NULL,
+  ForeignID int(11) default NULL,
+  TextKey varchar(255) default NULL,
+  ViewSetting varchar(32) default NULL,
+  ModifySetting varchar(32) default NULL,
+  PRIMARY KEY  (SuppressID),
+  KEY SecurityGroup (SecurityGroupID),
+  KEY Type (Type),
+  KEY ForeignID (ForeignID),
+  KEY TextKey (TextKey)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table `Suppress`
+--
+
+
+
+--
 -- Table structure for table `TalkSeparator`
 --
 
@@ -1038,14 +889,52 @@ CREATE TABLE TalkSeparator (
 
 
 --
+-- Table structure for table `Topic`
+--
+
+CREATE TABLE Topic (
+  TopicID int(11) NOT NULL auto_increment,
+  ShortDescription varchar(64) default '',
+  LongDescription text,
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (TopicID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table `Topic`
+--
+
+
+
+--
+-- Table structure for table `TopicHierarchy`
+--
+
+CREATE TABLE TopicHierarchy (
+  TopicHierarchyID int(11) NOT NULL auto_increment,
+  TopicID int(11) NOT NULL default '0',
+  ParentTopicID int(11) NOT NULL default '0',
+  TimeStamp timestamp(14) NOT NULL,
+  PRIMARY KEY  (TopicHierarchyID),
+  KEY Topic (TopicID),
+  KEY Parent (ParentTopicID)
+) TYPE=MyISAM;
+
+--
+-- Dumping data for table `TopicHierarchy`
+--
+
+
+
+--
 -- Table structure for table `TopicHint`
 --
 
 CREATE TABLE TopicHint (
   TopicHintID int(11) NOT NULL auto_increment,
   SessionTalkID int(11) default NULL,
-  MinorTopicID int(11) default NULL,
   TimeStamp timestamp(14) NOT NULL,
+  TopicID int(11) NOT NULL default '0',
   PRIMARY KEY  (TopicHintID),
   KEY SessionTalkID (SessionTalkID)
 ) TYPE=MyISAM;
@@ -1073,8 +962,11 @@ CREATE TABLE UsersGroup (
 -- Dumping data for table `UsersGroup`
 --
 
+
 -- This file made by "mysqldump -c -u docdbadm -p BTeVDocDB | grep -v "INSERT INTO" " and then adding the last 4 lines
+
 -- Set up the DocDB adminstrator account. Everything else can be done in the admin interface
 
 INSERT INTO SecurityGroup (GroupID, Name, Description, CanCreate, CanAdminister) VALUES 
                           (0,'DocDBAdm','Document Database Administrators',1,1);
+
