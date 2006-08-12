@@ -256,7 +256,7 @@ sub UsersToNotify ($$) {
 
 # Get users interested in all documents for this reporting period
 
-  $Fetch -> execute($Period,"AllDocuments",0);
+  $Fetch -> execute($Period,"AllDocuments",1);
   $Fetch -> bind_columns(undef,\($UserID));
   while ($Fetch -> fetch) {
     $UserIDs{$UserID} = 1; 
@@ -389,7 +389,7 @@ sub DisplayNotification ($$;$) {
   my @Keywords      = @{$Notifications{$EmailUserID}{"Keyword_".$Set}};
   my @AllDocuments  = @{$Notifications{$EmailUserID}{"AllDocuments_".$Set}};
   
-  my $NewNotify = (@AuthorIDs || @TopicIDs || @EventIDs || @EventGroupIDs || @Keywords);
+  my $NewNotify = (@AllDocuments || @AuthorIDs || @TopicIDs || @EventIDs || @EventGroupIDs || @Keywords);
                     
   if ($NotifyAllTopics || $NewNotify) {
     print "<b>$Set notifications:</b>\n";  

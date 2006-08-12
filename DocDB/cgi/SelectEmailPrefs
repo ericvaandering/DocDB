@@ -245,15 +245,15 @@ if ($Mode eq "update") {
 # All Documents
   if ($ImmediateAll) {
     InsertNotifications( {-emailuserid => $EmailUserID, -type   => "AllDocuments", 
-                                  -ids => [0],          -period => "Immediate",} );
+                                  -ids => [1],          -period => "Immediate",} );
   }  
   if ($DailyAll) {
     InsertNotifications( {-emailuserid => $EmailUserID, -type   => "AllDocuments", 
-                                  -ids => [0],          -period => "Daily",} );
+                                  -ids => [1],          -period => "Daily",} );
   }  
   if ($WeeklyAll) {
     InsertNotifications( {-emailuserid => $EmailUserID, -type   => "AllDocuments", 
-                                  -ids => [0],          -period => "Weekly",} );
+                                  -ids => [1],          -period => "Weekly",} );
   }  
 
 # Topics

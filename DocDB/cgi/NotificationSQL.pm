@@ -120,7 +120,7 @@ sub InsertNotifications ($) {
 sub FetchNotifications ($) {
   my ($ArgRef) = @_;
   my $EmailUserID = exists $ArgRef->{-emailuserid} ? $ArgRef->{-emailuserid} : 0;
-  
+
   my $Count = 0;
   
   if ($EmailUserID) {
@@ -135,10 +135,8 @@ sub FetchNotifications ($) {
       my $Key = $Type."_".$Period;
       if ($TextKey) {
         push @{$Notifications{$EmailUserID}{$Key}},$TextKey;
-        push @DebugStack,"Adding $TextKey to $Key";
-      } else {
+      } elsif ($ForeignID) {
         push @{$Notifications{$EmailUserID}{$Key}},$ForeignID;
-        push @DebugStack,"Adding $ForeignID to $Key";
       }
       ++$Count;      
     }
