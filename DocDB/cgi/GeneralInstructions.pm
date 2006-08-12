@@ -210,7 +210,7 @@ HTML
 
   if ($Preferences{Options}{AlwaysRetrieveFile} || $UserValidation eq "certificate") {
 
-  print <<HTML;
+    print <<HTML;
   <p><strong>Note on HTML uploads:</strong>
   Remember that the purpose of the document database is to store your
   <i>complete</i> document. If you have a number of HTML pages all linked
@@ -219,10 +219,11 @@ HTML
   don't do this. Upload all the files so that they <i>all</i> reside on the
   server, including images. To
   make the links in your HTML work on the server, use  RetrieveFile links as described
-  in the <a href="#refer">Referring to your document and its files</a> section.
-  </p>
+  in the 
 HTML
 
+    print "<a href=\"$DocDBInstructions?set=advanced#refer\">Referring to your 
+           document and its files</a> section.</p>\n";
   } else {
 
     print <<HTML;
