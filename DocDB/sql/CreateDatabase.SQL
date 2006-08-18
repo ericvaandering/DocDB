@@ -967,6 +967,6 @@ CREATE TABLE UsersGroup (
 
 -- Set up the DocDB adminstrator account. Everything else can be done in the admin interface
 
-INSERT INTO SecurityGroup (GroupID, Name, Description, CanCreate, CanAdminister) VALUES 
-                          (0,'DocDBAdm','Document Database Administrators',1,1);
+INSERT INTO SecurityGroup (GroupID, Name, Description, CanCreate, CanAdminister,CanView,CanConfig) VALUES 
+                          (0,'DocDBAdm','Document Database Administrators',1,1,1,1);
 
