@@ -59,7 +59,6 @@ sub CanAccess ($;$$) { # Can the user access (with current security) this versio
   my $access = 0;
   foreach my $UserGroupID (@UsersGroupIDs) {
     unless ($SecurityGroups{$UserGroupID}{CanView}) {
-      push @DebugStack,"Group $UserGroupID can't view, skipping";
       next;
     }  
     
@@ -77,14 +76,12 @@ sub CanAccess ($;$$) { # Can the user access (with current security) this versio
   my @HierarchyIDs = keys %GroupsHierarchy;
   foreach my $UserGroupID (@UsersGroupIDs) { # Groups user belongs to
     unless ($SecurityGroups{$UserGroupID}{CanView}) {
-      push @DebugStack,"Parent Group $UserGroupID can't view, skipping";
       next;
     }  
     foreach my $ID (@HierarchyIDs) {         # All Hierarchy entries
       my $ParentID = $GroupsHierarchy{$ID}{Parent}; 
       my $ChildID  = $GroupsHierarchy{$ID}{Child}; 
       unless ($SecurityGroups{$ChildID}{CanView}) {
-        push @DebugStack,"Child Group $ChildID can't view, skipping";
         next;
       }  
       if ($ParentID == $UserGroupID) {    # We've found a valid "child" of one of our groups.   
