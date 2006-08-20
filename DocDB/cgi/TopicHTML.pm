@@ -24,15 +24,16 @@
 
 sub TopicListByID {
   my ($ArgRef) = @_;
-  my @TopicIDs   = exists $ArgRef->{-topicids}   ? @{$ArgRef->{-topicids}}  : ();
-  my $ListFormat = exists $ArgRef->{-listformat} ?   $ArgRef->{-listformat} : "dl";
+  my @TopicIDs    = exists $ArgRef->{-topicids}    ? @{$ArgRef->{-topicids}}   : ();
+  my $ListFormat  = exists $ArgRef->{-listformat}  ?   $ArgRef->{-listformat}  : "dl";
+  my $ListElement = exists $ArgRef->{-listelement} ?   $ArgRef->{-listelement} : "short";
     
   require "TopicSQL.pm";
   
   my @TopicLinks = ();
   if (@TopicIDs) {
     foreach my $TopicID (@TopicIDs) {
-      my $TopicLink = TopicLink( {-topicid => $TopicID} );
+      my $TopicLink = TopicLink( {-topicid => $TopicID, -format => $ListElement} );
       if ($TopicLink) {
         push @TopicLinks,$TopicLink;
       }  
@@ -81,6 +82,7 @@ sub TopicListByID {
 sub TopicLink ($) {
   my ($ArgRef) = @_;
   my $TopicID = exists $ArgRef->{-topicid} ? $ArgRef->{-topicid} : "";
+  my $Format  = exists $ArgRef->{-format}  ? $ArgRef->{-format}  : "short";
 
   require "TopicSQL.pm";
   my ($URL,$Text,$Tooltip);
@@ -88,9 +90,13 @@ sub TopicLink ($) {
   FetchTopic( {-topicid => $TopicID} );
 
   $URL     = $ListBy."?topicid=".$TopicID;
-  $Text    = CGI::escapeHTML($Topics{$TopicID}{Short});
-  $Tooltip = CGI::escapeHTML($Topics{$TopicID}{Long} );
-  
+  if ($Format eq "short") {
+    $Text    = CGI::escapeHTML($Topics{$TopicID}{Short});
+    $Tooltip = CGI::escapeHTML($Topics{$TopicID}{Long} );
+  } elsif ($Format eq "long") {
+    $Text    = CGI::escapeHTML($Topics{$TopicID}{Long} );
+    $Tooltip = CGI::escapeHTML($Topics{$TopicID}{Short});
+  }
   my $Link = "<a href=\"$URL\" title=\"$Tooltip\">$Text</a>";
   
   return $Link;
