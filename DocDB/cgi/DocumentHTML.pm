@@ -18,7 +18,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub DocumentTable (%) {
   require "DocumentSQL.pm";
@@ -234,14 +234,14 @@ sub DocumentTable (%) {
         require "TalkHintSQL.pm";
         my @TopicIDs = ();
         if ($DocRevID) {
-          @TopicIDs = GetRevisionTopics($DocRevID);
+          @TopicIDs = GetRevisionTopics( {-docrevid => $DocRevID} );
         } elsif ($SessionTalkID) {
           my @TopicHintIDs  = FetchTopicHintsBySessionTalkID($SessionTalkID);
           foreach my $TopicHintID (@TopicHintIDs) {
-            push @TopicIDs,$TopicHints{$TopicHintID}{MinorTopicID};
+            push @TopicIDs,$TopicHints{$TopicHintID}{TopicID};
           }
         }
-        ShortTopicListByID(@TopicIDs); 
+        TopicListByID( {-topicids => \@TopicIDs, -listformat => "br"} ); 
       } elsif ($Field eq "Abstract") { # Abstract
         PrintAbstract($DocRevisions{$DocRevID}{Abstract}, {-format => "bare"} ); 
       } elsif ($Field eq "DocNotes") { # Notes and Changes

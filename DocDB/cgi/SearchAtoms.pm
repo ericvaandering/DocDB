@@ -14,12 +14,11 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 %SearchWeights = ( # These weights are used to order documents from the simple search
                   "Author"          => 4,  
                   "Topic"           => 3,  
-                  "MajorTopic"      => 2,  
                   "DocType"         => 2,  
                   "Event"           => 3,  
                   "EventGroup"      => 2,  
@@ -89,34 +88,42 @@ sub IDSearch {
   return $Phrase;
 }
 
-sub TopicSearch {
-  my $revtopic_list;
-  my ($Logic,$Type,@TopicIDs) = @_;
-  if ($Type eq "minor") {
-    $revtopic_list = $dbh -> prepare(
-     "select DocRevID from RevisionTopic where MinorTopicID=?"); 
-  } elsif ($Type eq "major") {
-    $revtopic_list = $dbh -> prepare(
-      "select DocRevID from RevisionTopic,MinorTopic ".
-      "where RevisionTopic.MinorTopicID=MinorTopic.MinorTopicID ".
-      "and MinorTopic.MajorTopicID=?");
-  }  
-    
-  my %Revisions = ();
-  my @Revisions = ();
-  my $DocRevID;
+sub TopicSearch ($) {
+  my ($ArgRef) = @_;
+
+  my $Logic      = exists $ArgRef->{-logic}     ?   $ArgRef->{-logic}     : "AND";
+  my $SubTopics  = exists $ArgRef->{-subtopics} ?   $ArgRef->{-subtopics} : $FALSE;
+  my @InitialIDs = exists $ArgRef->{-topicids}  ? @{$ArgRef->{-topicids}} : ();
   
+  require "TopicUtilities.pm";
+  require "Utilities.pm";
+  
+  my $List = $dbh -> prepare("select DocRevID from RevisionTopic where TopicID=?"); 
+ 
+  my @TopicIDs = ();
+ 
+  if ($Logic eq "OR" && $SubTopics) {
+    foreach my $TopicID (@InitialIDs) {
+      my @ChildIDs = TopicAndSubTopics({-topicid => $TopicID});
+      push @TopicIDs,@ChildIDs;
+    }  
+    @TopicIDs = Unique(@TopicIDs);
+  } else {
+    @TopicIDs = @InitialIDs;
+  }  
+ 
   foreach $TopicID (@TopicIDs) {
-    $revtopic_list -> execute($TopicID );
-    $revtopic_list -> bind_columns(undef, \($DocRevID));
+    $List -> execute($TopicID );
+    $List -> bind_columns(undef, \($DocRevID));
     my %TopicRevisions = ();
-    while ($revtopic_list -> fetch) { # Make sure each topic only matches once
+    while ($List -> fetch) { # Make sure each topic only matches once
       ++$TopicRevisions{$DocRevID};
     }
     foreach $DocRevID (keys %TopicRevisions) {
       ++$Revisions{$DocRevID};
     }  
   }
+  
   if ($Logic eq "AND") {
     foreach $DocRevID (keys %Revisions) {
       if ($Revisions{$DocRevID} == $#TopicIDs+1) { # Require a match for each topic
@@ -126,7 +133,6 @@ sub TopicSearch {
   } elsif ($Logic eq "OR") {
     @Revisions = keys %Revisions;
   }  
-  
   return @Revisions;     
 }
 
@@ -248,7 +254,6 @@ sub AddSearchWeights ($) {
   my ($ArgRef) = @_;
   my @Revisions   = exists $ArgRef->{-revisions}   ? @{$ArgRef->{-revisions}}   : ();
   my @Topics      = exists $ArgRef->{-topics}      ? @{$ArgRef->{-topics}}      : ();
-  my @MajorTopics = exists $ArgRef->{-majortopics} ? @{$ArgRef->{-majortopics}} : ();
   my @Events      = exists $ArgRef->{-events}      ? @{$ArgRef->{-events}}      : ();
   my @EventGroups = exists $ArgRef->{-eventgroups} ? @{$ArgRef->{-eventgroups}} : ();
   my @Authors     = exists $ArgRef->{-authors}     ? @{$ArgRef->{-authors}}     : ();
@@ -261,9 +266,6 @@ sub AddSearchWeights ($) {
   }
   foreach my $DocumentID (@Topics) {
      $Documents{$DocumentID}{Relevance} += $SearchWeights{"Topic"};
-  }
-  foreach my $DocumentID (@MajorTopics) {
-     $Documents{$DocumentID}{Relevance} += $SearchWeights{"MajorTopic"};
   }
   foreach my $DocumentID (@Events) {
      $Documents{$DocumentID}{Relevance} += $SearchWeights{"Event"};

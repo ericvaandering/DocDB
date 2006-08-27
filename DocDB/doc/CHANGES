@@ -1,3 +1,35 @@
+8.0.0
+
+  Follow the migration instructions in MigrationGuide to upgrade.
+  
+  Set to separate view/modify lists by default. If you want the old behavior, put 
+  $EnhancedSecurity = $FALSE; in ProjectGlobals. This is backwards compatible with 
+  the old setting.
+   
+  DocDB now uses the Perl module CGI::Untaint. CGI::Untaint is used to "purify"
+  the input into the scripts. You must install it. You can use scripts/CheckModules 
+  to see if you have all the modules you need for Version 8.x
+  
+  There is now a CanView option that you can set for a group to disable their 
+  access even if they are marked as a group that can view a particular
+  document.  Groups without CanView set can still access DocDB, it will just
+  show publicly  accessible documents. Groups that cannot View are prohibited
+  from creating or  modifying documents too. This seems logical, but if there is
+  a  good reason to change it, we can. This feature was thought to be useful
+  for  disabling reviewer accounts between reviews.
+  The user can still use DocDB, but can only see publicly accessible documents.
+  
+  Topics can now have sub-topics, sub-sub-topics, etc. Users can also select top
+  level topics. Make sure the long description of a sub-topic is fully
+  descriptive as often the long description is shown without the context of its
+  parent topic. The maintainer can set the variable
+  $Preferences{Topics}{MinLevel}{Document} so that users cannot select top-level
+  (or 2nd level) topics for documents. The default value is 1, other values can
+  be set in ProjectGlobals.pm.
+
+  New files
+    cgi/TopicUtilities.pm
+  
 7.7.0
   Reorganized the output of DisplayMeeting to look more like ShowDocument and 
   to present things in a clearer manner.

@@ -24,7 +24,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use DBI;
 use Getopt::Long;
@@ -40,6 +40,7 @@ require "AuthorSQL.pm";
 require "SecuritySQL.pm";
 require "DocumentSQL.pm";
 require "RevisionSQL.pm";
+require "TopicSQL.pm";
 
 require "HTMLUtilities.pm";
 require "DocumentUtilities.pm";
@@ -54,6 +55,7 @@ DocDBHeader("$Project Document List","Document List");
 
 GetAuthors();
 GetSecurityGroups();
+GetTopics();
 
 ### Get all revisions and documents
 

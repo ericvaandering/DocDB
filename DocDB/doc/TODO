@@ -1,7 +1,7 @@
 Database structures allow for a number of things that aren't currently supported
 by the code:
 
-* Hiding major topics from groups (GroupTopic table)
+* Hiding various things from groups (Suppress table)
 
 * Associating an author with personal accounts (AuthorID in EmailUser)
 
@@ -10,3 +10,6 @@ by the code:
 * Use different URLs for Elsevier journals. 
   NIMA v465, p 124: http://www.sciencedirect.com/science?_ob=GatewayURL&_origin=physics&_method=citationSearch&_urlversion=4&_volkey=01689002%23465%23125%23&_version=1&md5=21c738cf27f2bb1702ab168834569a3d">
 
+* Ordering of authors
+
+* Assigning topics to sessions and events.

@@ -20,7 +20,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 #  Functions in this file:
 #  
@@ -62,10 +62,6 @@
 #    Retrieves a file uploaded by the user's browser and places the resulting 
 #    file in the correct place in the file system   
 #    
-#  ProcessArchive  
-#    Retrieves an archive and places it in the correct place in the file 
-#    system. Calls ExtractArchive to do the extraction.   
-#
 #  ExtractArchive  
 #    Detects the type of archive and extracts it into the correct 
 #    location on the file system. Does NOT protect against archives 
@@ -235,29 +231,6 @@ sub CopyFile ($$$$) {
   return $ShortFile;
 }  
 
-sub ProcessArchive ($$) {
-  my ($new_dir,$short_file) = @_;
-
-  if  (-s "$new_dir/$short_file") {
-    push @short_files,$short_file;
-    push @Descriptions,"Document Archive";
-    push @Roots,0;
-    $status = &ExtractArchive($new_dir,$short_file); # FIXME No status yet
-    $main_file = $params{mainfile};
-    if (-s "$new_dir/$main_file") {
-      push @short_files,$main_file;
-      push @Descriptions,$params{filedesc};
-      push @Roots,"on";
-    } else {
-      push @WarnStack,"The main file $main_file did not exist or was blank.";
-    }
-  } else {
-    push @WarnStack,"The archive file $short_file did not exist or was blank.";
-  }
-  
-  return $status;
-}
-  
 sub ExtractArchive {
   my ($Directory,$File) = @_;
 

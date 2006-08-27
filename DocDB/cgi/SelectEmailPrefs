@@ -22,7 +22,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI qw(-nosticky);    
 use DBI;
@@ -45,6 +45,7 @@ require "TopicSQL.pm";
 
 require "DocumentHTML.pm";
 require "MeetingHTML.pm";
+require "TopicHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
@@ -62,14 +63,37 @@ my $Password     = $params{password};
 my $NewPass      = $params{newpass};
 my $ConfNewPass  = $params{confnewpass};
    $Digest       = $params{digest};
-my $ClearWatched = $params{clearwatched};
 
 my @ImmediateEventGroupIDs = split /\0/,$params{immediate_eventgroups};
 my @DailyEventGroupIDs     = split /\0/,$params{daily_eventgroups};
 my @WeeklyEventGroupIDs    = split /\0/,$params{weekly_eventgroups};
+
 my @ImmediateEventIDs      = split /\0/,$params{immediate_events};
 my @DailyEventIDs          = split /\0/,$params{daily_events};
 my @WeeklyEventIDs         = split /\0/,$params{weekly_events};
+
+my @ImmediateTopicIDs      = split /\0/,$params{immediate_topics};
+my @DailyTopicIDs          = split /\0/,$params{daily_topics};
+my @WeeklyTopicIDs         = split /\0/,$params{weekly_topics};
+
+my @ImmediateAuthorIDs     = split /\0/,$params{immediate_authors};
+my @DailyAuthorIDs         = split /\0/,$params{daily_authors};
+my @WeeklyAuthorIDs        = split /\0/,$params{weekly_authors};
+
+my $ImmediateAll           = $params{immediate_all};
+my $DailyAll               = $params{daily_all};
+my $WeeklyAll              = $params{weekly_all};
+
+my $ImmediateKeywords      = $params{immediate_keywords};
+my $DailyKeywords          = $params{daily_keywords};
+my $WeeklyKeywords         = $params{weekly_keywords};
+
+$ImmediateKeywords =~ s/,/ /g; my @ImmediateKeywords = split /\s+/,$ImmediateKeywords;
+$DailyKeywords     =~ s/,/ /g; my @DailyKeywords     = split /\s+/,$DailyKeywords    ;
+$WeeklyKeywords    =~ s/,/ /g; my @WeeklyKeywords    = split /\s+/,$WeeklyKeywords   ;
+
+my $ImmediateDocuments      = $params{immediate_documents};
+$ImmediateDocuments =~ s/,/ /g; my @ImmediateDocuments = split /\s+/,$ImmediateDocuments;
 
 $UserName =~ s/\s+//g;
 $Password =~ s/\s+//g;
@@ -214,33 +238,41 @@ if ($Mode eq "update") {
   $EmailUser{$EmailUserID}{EmailUserID} = 0; 
   FetchEmailUser($EmailUserID);
 
-# Delete individual documents if asked
-    
-  if ($ClearWatched && $EmailUserID) {
-    my $Delete = $dbh -> prepare("delete from EmailDocumentImmediate where EmailUserID=?"); 
-    $Delete -> execute($EmailUserID);
-  }      
-    
-# Delete old and Insert new notifications
-
-  SetTopicNotifications($EmailUserID,"Immediate");  
-  SetTopicNotifications($EmailUserID,"Daily");  
-  SetTopicNotifications($EmailUserID,"Weekly");  
-
-  SetAuthorNotifications($EmailUserID,"Immediate");  
-  SetAuthorNotifications($EmailUserID,"Daily");  
-  SetAuthorNotifications($EmailUserID,"Weekly");  
-
-  SetKeywordNotifications($EmailUserID,"Immediate");  
-  SetKeywordNotifications($EmailUserID,"Daily");  
-  SetKeywordNotifications($EmailUserID,"Weekly");  
-
-# FIXME: Move all notifications here, including document specific ones
+# Out with the old, in with the new
 
   DeleteNotifications( {-emailuserid => $EmailUserID} );
 
-# Events
+# All Documents
+  if ($ImmediateAll) {
+    InsertNotifications( {-emailuserid => $EmailUserID, -type   => "AllDocuments", 
+                                  -ids => [1],          -period => "Immediate",} );
+  }  
+  if ($DailyAll) {
+    InsertNotifications( {-emailuserid => $EmailUserID, -type   => "AllDocuments", 
+                                  -ids => [1],          -period => "Daily",} );
+  }  
+  if ($WeeklyAll) {
+    InsertNotifications( {-emailuserid => $EmailUserID, -type   => "AllDocuments", 
+                                  -ids => [1],          -period => "Weekly",} );
+  }  
 
+# Topics
+  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Topic", 
+                                -ids => \@ImmediateTopicIDs, -period => "Immediate",} );
+  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Topic", 
+                                -ids => \@DailyTopicIDs,     -period => "Daily",} );
+  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Topic", 
+                                -ids => \@WeeklyTopicIDs,    -period => "Weekly",} );
+        
+# Authors
+  InsertNotifications( {-emailuserid => $EmailUserID,         -type   => "Author", 
+                                -ids => \@ImmediateAuthorIDs, -period => "Immediate",} );
+  InsertNotifications( {-emailuserid => $EmailUserID,         -type   => "Author", 
+                                -ids => \@DailyAuthorIDs,     -period => "Daily",} );
+  InsertNotifications( {-emailuserid => $EmailUserID,         -type   => "Author", 
+                                -ids => \@WeeklyAuthorIDs,    -period => "Weekly",} );
+        
+# Events
   InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Event", 
                                 -ids => \@ImmediateEventIDs, -period => "Immediate",} );
   InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Event", 
@@ -249,13 +281,23 @@ if ($Mode eq "update") {
                                 -ids => \@WeeklyEventIDs,    -period => "Weekly",} );
         
 # EventGroups        
-                                
   InsertNotifications( {-emailuserid => $EmailUserID,             -type   => "EventGroup", 
                                 -ids => \@ImmediateEventGroupIDs, -period => "Immediate",} );
   InsertNotifications( {-emailuserid => $EmailUserID,             -type   => "EventGroup", 
                                 -ids => \@DailyEventGroupIDs,     -period => "Daily",} );
   InsertNotifications( {-emailuserid => $EmailUserID,             -type   => "EventGroup", 
                                 -ids => \@WeeklyEventGroupIDs,    -period => "Weekly",} );
+# Keywords        
+  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Keyword", 
+                           -textkeys => \@ImmediateKeywords, -period => "Immediate",} );
+  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Keyword", 
+                           -textkeys => \@DailyKeywords,     -period => "Daily",} );
+  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Keyword", 
+                           -textkeys => \@WeeklyKeywords,    -period => "Weekly",} );
+# Individual documents
+  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Document", 
+                           -textkeys => \@ImmediateDocuments, -period => "Immediate",} );
+  
 }  
 
 # Clear (are refetched in DisplayNotification)
@@ -293,27 +335,23 @@ print "</td><td>";
 print "<b>Current e-mail notifications:</b>\n";
 print "<ul>\n";
 print "<li>\n";
-DisplayNotification($EmailUserID,"Immediate",true);
+DisplayNotification($EmailUserID,"Immediate",$TRUE);
 print "</li>\n";
 print "<li>\n";
-DisplayNotification($EmailUserID,"Daily",true);
+DisplayNotification($EmailUserID,"Daily",$TRUE);
 print "</li>\n";
 print "<li>\n";
-DisplayNotification($EmailUserID,"Weekly",true);
+DisplayNotification($EmailUserID,"Weekly",$TRUE);
 print "</li>\n";
 print "</ul>\n";
 print "</td></tr></table>\n";
 
-# FIXME: No way to delete notification on a single document
-
-my @WatchDocumentIDs = FetchEmailDocuments(-emailuserid => $EmailUserID);
+my @WatchDocumentIDs = @{$Notifications{$EmailUserID}{Document_Immediate}};
 if (@WatchDocumentIDs) {
-  print "<h4>You are watching these individual documents: \n";
-  print $query -> checkbox(-name => "clearwatched", -value => 1, -label => 'Clear Watched Documents');
-  print "</h4>\n";
+  print "<h4>You are watching these individual documents:</h4>\n";
 }
 my %FieldList = PrepareFieldList(-default => "Default");
-my $NDocs = DocumentTable(-fieldlist => \%FieldList, -docids => \@WatchDocumentIDs);  
+my $NDocs = DocumentTable(-fieldlist => \%FieldList, -docids => \@WatchDocumentIDs, -sortby => 'docid');  
 
 print "<hr/><table class=\"CenteredTable\">\n";
 print "<tr><td>";
@@ -324,21 +362,55 @@ print "</td></tr></table>\n";
 
 print "<a name=\"topic\"/><h3>Notification by Topics</h3>\n";
 
-print "<table class=\"HighPaddedTable\">\n";
-print "<tr>";
-EmailTopicForm($EmailUserID,"Immediate");
-print "</tr><tr>\n";
-EmailTopicForm($EmailUserID,"Daily");
-print "</tr><tr>\n";
-EmailTopicForm($EmailUserID,"Weekly");
-print "</tr>\n";
-print "</table>\n";
+print "<table class=\"HighPaddedTable\"><tr><td>\n";
+TopicScroll({ -helptext   => "Immediate", -helplink => "notifytopic", 
+              -itemformat => "short", -multiple => $TRUE, 
+              -name       => "immediate_topics",
+              -default    => $Notifications{$EmailUserID}{Topic_Immediate},
+            }); 
+print "</td><td>\n";  
+TopicScroll({ -helptext   => "Daily", -helplink => "notifytopic", 
+              -itemformat => "short", -multiple => $TRUE, 
+              -name       => "daily_topics",
+              -default    => $Notifications{$EmailUserID}{Topic_Daily},
+            }); 
+print "</td><td>\n";  
+TopicScroll({ -helptext   => "Weekly", -helplink => "notifytopic", 
+              -itemformat => "short", -multiple => $TRUE, 
+              -name       => "weekly_topics",
+              -default    => $Notifications{$EmailUserID}{Topic_Weekly},
+            }); 
+print "</td></tr><tr><td>\n";  
+EmailAllForm({ -name => "immediate_all", -default => $Notifications{$EmailUserID}{AllDocuments_Immediate} });
+print "</td><td>";  
+EmailAllForm({ -name => "daily_all", -default => $Notifications{$EmailUserID}{AllDocuments_Daily} });
+print "</td><td>";  
+EmailAllForm({ -name => "weekly_all", -default => $Notifications{$EmailUserID}{AllDocuments_Weekly} });
+print "</td></tr></table>\n";
 
 print "<hr/><a name=\"author\"/><h3>Notification by Authors</h3>\n";
 print "<table class=\"HighPaddedTable\"><tr>\n";
-EmailAuthorForm($EmailUserID,"Immediate");
-EmailAuthorForm($EmailUserID,"Daily");
-EmailAuthorForm($EmailUserID,"Weekly");
+print "<td>";  
+AuthorScroll(-helptext   => "Immediate", -helplink => "notifyauthor", 
+             -multiple => $TRUE, 
+             -name       => "immediate_authors",
+             -default    => $Notifications{$EmailUserID}{Author_Immediate},
+            ); 
+print "</td>\n";
+print "<td>";  
+AuthorScroll(-helptext   => "Daily", -helplink => "notifyauthor", 
+             -multiple => $TRUE, 
+             -name       => "daily_authors",
+             -default    => $Notifications{$EmailUserID}{Author_Daily},
+            ); 
+print "</td>\n";
+print "<td>";  
+AuthorScroll(-helptext   => "Weekly", -helplink => "notifyauthor", 
+             -multiple => $TRUE, 
+             -name       => "weekly_authors",
+             -default    => $Notifications{$EmailUserID}{Author_Weekly},
+            ); 
+print "</td>\n";
 print "</tr></table>\n";
 
 print "<hr/><a name=\"event\"/><h3>Notification by Events</h3>\n";
@@ -374,10 +446,24 @@ print "</tr></table>\n";
 
 print "<hr/><a name=\"keyword\"/><h3>Notification by Keywords</h3>\n";
 print "<table class=\"HighPaddedTable\">\n";
-EmailKeywordForm($EmailUserID,"Immediate");
-EmailKeywordForm($EmailUserID,"Daily");
-EmailKeywordForm($EmailUserID,"Weekly");
-print "</table>\n";
+print "<tr><td>\n";
+EmailKeywordForm({ -name    => "immediate_keywords", -period => "Immediate", 
+                   -default => $Notifications{$EmailUserID}{Keyword_Immediate}, });
+print "</td></tr><tr><td>\n";
+EmailKeywordForm({ -name    => "daily_keywords", -period => "Daily", 
+                   -default => $Notifications{$EmailUserID}{Keyword_Daily}, });
+print "</td></tr><tr><td>\n";
+EmailKeywordForm({ -name    => "weekly_keywords", -period => "Weekly", 
+                   -default => $Notifications{$EmailUserID}{Keyword_Weekly}, });
+print "</td></tr></table>\n";
+
+print "<hr/><a name=\"documents\"/><h3>Notification for Individual Documents</h3>\n";
+
+print "<table class=\"HighPaddedTable\">\n";
+print "<tr><td>\n";
+TextArea(-name => "immediate_documents", -helptext => "Immediate", -helplink => "notifydocument", 
+         -columns => 80, -default => join ' ',sort numerically @{$Notifications{$EmailUserID}{Document_Immediate}});
+print "</td></tr></table>\n";
 
 print "<table class=\"HighPaddedTable CenteredTable\">\n";
 print "<tr><td>";

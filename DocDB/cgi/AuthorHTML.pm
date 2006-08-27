@@ -20,7 +20,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub FirstAuthor ($;$) {
   my ($DocRevID,$ArgRef) = @_;
@@ -306,17 +306,13 @@ sub InstitutionEntryBox (;%) {
   
   print "<table cellpadding=5><tr valign=top>\n";
   print "<td>\n";
-  print "<b><a ";
-  &HelpLink("instentry");
-  print "Short Name:</a></b><br> \n";
+  print FormElementTitle(-helplink => "instentry", -helptext => "Short Name");
   print $query -> textfield (-name => 'shortdesc', 
                              -size => 30, -maxlength => 40,$Booleans);
   print "</td></tr>\n";
 
   print "<tr><td>\n";
-  print "<b><a ";
-  &HelpLink("instentry");
-  print "Long Name:</a></b><br> \n";
+  print FormElementTitle(-helplink => "instentry", -helptext => "Long Name");
   print $query -> textfield (-name => 'longdesc', 
                              -size => 40, -maxlength => 80,$Booleans);
   print "</td>\n";

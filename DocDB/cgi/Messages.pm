@@ -6,7 +6,7 @@
 #    Modified: Lynn Garren (garren@fnal.gov)
 #
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -21,7 +21,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 $Msg_NoConnect        = "Unable to connect to the database. Please alert an administrator.";
 
@@ -31,10 +31,6 @@ $Msg_AdminNoLogin     = "You must be logged in as the adminstrator to perform th
 $Msg_ModInstEmpty     = "You must select an institution to modify or delete.";
 $Msg_DelInstWAuthors  = "You can't delete institutions with authors. ".
                         "Delete the authors first if you want to delete the institution.";
-
-$Msg_ModMajEmpty      = "You must select a major topic to modify.";
-$Msg_DelMajWTopics    = "You can't delete major topics with subtopics. ".
-                        "Delete the subtopics first if you want to delete the major topic.";
 
 $Msg_ModGroupEmpty    = "You must select a group to modify or delete.";
 $Msg_ModGroupNone     = "The group you selected to modify does not exist.";

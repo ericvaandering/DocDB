@@ -18,7 +18,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI qw(-nosticky);                                                                                      
 use DBI;
@@ -216,12 +216,12 @@ print "</ul>\n";
 if (CanAdminister()) {
   print "<p><b>Administrator only functions:</b></p>\n";
   print "<ul>\n";
-  print "<li>Add a <a href=\"$TopicAddForm\">minor topic</a> (sub-topic)</li>\n";
   print "<li>Administer <a href=\"$GroupAdministerForm\">groups</a> of users</li>\n";
-  print "<li>Administer <a href=\"$EmailAdministerForm\">personal accounts</a></li>\n";
+  print "<li>Administer <a href=\"$TopicAdminister\">topics</a></li>\n";
   print "<li>Administer <a href=\"$EventAdministerForm\">events</a></li>\n";
+  print "<li>Administer <a href=\"$EmailAdministerForm\">personal accounts</a></li>\n";
   print "<li>Administer <a href=\"$KeywordAdministerForm\">keywords and keyword groups</a></li>\n";
-  print "<li>Administer <a href=\"$AdministerForm\">authors, institutions, topics</a>, and all other lists</li>\n";
+  print "<li>Administer <a href=\"$AdministerForm\">authors, institutions, types, and journals</a></li>\n";
   print "<li>Administer <a href=\"$ExternalDocDBAdministerForm\">external DocDB</a> information</li>\n";
   print "</ul>\n";
 }

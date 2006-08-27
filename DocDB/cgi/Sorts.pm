@@ -14,25 +14,43 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub numerically {$a <=> $b;}
 
-sub byMajorTopic {
-  $MajorTopics{$a}{SHORT} cmp $MajorTopics{$b}{SHORT};
-}    
+sub TopicByAlpha {
+   $Topics{$a}{Short} cmp $Topics{$b}{Short};
+} 
 
-sub byMinorTopic {
-  $MinorTopics{$a}{SHORT} cmp $MinorTopics{$b}{SHORT};
-}    
+sub TopicByProvenance {
+  my @ProvA = reverse @{$TopicProvenance{$a}}; # Front of arrays contains the children
+  my @ProvB = reverse @{$TopicProvenance{$b}}; # Don't want this
+  
+### Make sure we are comparing things at the same level, truncate arrays if we are not
+### And a topic is always greater than it's subtopics
+   
+  if ($#ProvA > $#ProvB) {  
+    $#ProvA = $#ProvB;
+    if ($ProvA[$#ProvA] == $ProvB[$#ProvB]) {
+      return 1;
+    }  
+  } elsif ($#ProvB > $#ProvA) {
+    $#ProvB = $#ProvA;
+    if ($ProvA[$#ProvA] == $ProvB[$#ProvB]) {
+      return -1;
+    }  
+  }   
 
-sub byTopic {
-  $MajorTopics{$MinorTopics{$a}{MAJOR}}{SHORT} cmp
-  $MajorTopics{$MinorTopics{$b}{MAJOR}}{SHORT}
-                 or
-      $MinorTopics{$a}{SHORT} cmp
-      $MinorTopics{$b}{SHORT};
-}    
+### Compare by "most distant" ancestor first
+   
+  while (@ProvA || @ProvB) {
+    $TopicA = shift @ProvA;    
+    $TopicB = shift @ProvB;    
+    my $Cmp = $Topics{$TopicA}{Short} cmp $Topics{$TopicB}{Short};
+    if ($Cmp) {return $Cmp;}
+  }
+  return 0;  
+} 
 
 sub byLastName {
   require "AuthorSQL.pm";

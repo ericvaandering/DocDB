@@ -19,7 +19,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub TalkEntryForm (@) {
   require "FormElements.pm";
@@ -87,7 +87,7 @@ sub TalkEntryForm (@) {
         
         my @TopicHintIDs = &FetchTopicHintsBySessionTalkID($SessionTalkID);
         foreach my $TopicHintID (@TopicHintIDs) {
-          push @TalkDefaultTopicHints,$TopicHints{$TopicHintID}{MinorTopicID};
+          push @TalkDefaultTopicHints,$TopicHints{$TopicHintID}{TopicID};
         }
         my @AuthorHintIDs = &FetchAuthorHintsBySessionTalkID($SessionTalkID);
         foreach my $AuthorHintID (@AuthorHintIDs) {
@@ -277,7 +277,9 @@ sub TalkTopics ($) {
     unless (@TalkDefaultTopicHints) {
       $query -> param("topics-$SessionOrderID","");
     }  
-    &FullTopicScroll(1,"topics-$SessionOrderID",@TalkDefaultTopicHints);
+    TopicScroll({ -name     => "topics-$SessionOrderID", -required => $RequiredEntries{Topic},
+                  -default  => \@TalkDefaultTopicHints,  -multiple => $TRUE, -helplink => "", 
+               });
   }
 }
 
@@ -334,9 +336,7 @@ sub SessionTalkPulldown {
   $SessionTalkLabels{0} = "Select your talk from this list";
   unshift @SessionTalkIDs,"0";
   
-  print "<b><a ";
-  &HelpLink("talkfromagenda");
-  print "Talk from Agenda:</a></b><br> \n";
+  print FormElementTitle(-helplink => "talkfromagenda", -helptext => "Talk from Agenda");
   print $query -> popup_menu (-name    => 'sessiontalkid', 
                               -labels => \%SessionTalkLabels, 
                               -values  => \@SessionTalkIDs);

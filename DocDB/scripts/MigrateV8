@@ -1,0 +1,335 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+# Usage: MigrateV8 --u=username --p=password --a=init|migrate|undo|delete
+
+
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+use DBI;
+use Getopt::Long;
+
+#require "CGIInclude.pm";
+
+require "DocDBGlobals.pm";
+
+GetOptions("a=s" => \$Action,"u=s" => \$User,"p=s" => \$Password);
+
+unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate" or $Action eq "undo") {
+  print "Usage: MigrateV8 --u=username --p=password --a=init|migrate|delete|undo\n\n";
+  print "This script is used to migrate from a version 7 to version 8 DB structure.\n";
+  print "!!!! BACKUP YOUR DATABASE BEFORE RUNNING THIS IN CASE THERE ARE PROBLEMS !!!!\n";
+  print "Run this script in \"init\" mode first, then update the DocDB code.\n";
+  print "Then run this script again in \"migrate\" mode.\n";
+  print "At this point you can update the CGI code and when you are comfortable\n";
+  print "everything is OK, run in \"delete\" mode to erase old columns and/or tables.\n";
+  print "The \"undo\" mode removes the newly inserted tables and columns and should restore\n";
+  print "the DB to a version 7 state. But, using your backup is better.\n";
+  exit;
+}  
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$User,$Password);
+
+if ($Action eq "init") { # Modify existing tables and add new tables in preparation for migration 
+  my @Actions = ("alter table SecurityGroup  add CanView      int default '1'",
+                 "alter table SecurityGroup  add CanConfig    int default '0'",
+                 "alter table RevisionTopic  add TopicID      int NOT NULL   ",
+                 "alter table TopicHint      add TopicID      int NOT NULL   ",
+                 "alter table RevisionAuthor add AuthorOrder  int default '0'",
+                 "alter table Conference     add AltLocation  varchar(255)   ",
+                 "alter table Session        add AltLocation  varchar(255)   ",
+                 "alter table Session        add ShowAllTalks int default '0'",
+                 "alter table Document       add Alias        varchar(255)   ",
+                 "alter table Notification   add TextKey      varchar(255)   ",
+                 "alter table RevisionTopic  add index (TopicID)",
+                 "alter table Document       add index (Alias)",
+                 "create table Topic (
+                    TopicID          int         NOT NULL auto_increment,
+                    ShortDescription varchar(64) default '',
+                    LongDescription  text,
+                    TimeStamp        timestamp   NOT NULL,
+                    PRIMARY KEY (TopicID)
+                  )",
+                 "create table TopicHierarchy (
+                    TopicHierarchyID int       NOT NULL auto_increment,
+                    TopicID          int       NOT NULL,
+                    ParentTopicID    int       NOT NULL,
+                    TimeStamp        timestamp NOT NULL,
+                    PRIMARY KEY (TopicHierarchyID),
+                    KEY Topic   (TopicID),
+                    KEY Parent  (ParentTopicID)
+                  )",
+                 "create table Moderator (
+                    ModeratorID        int       NOT NULL auto_increment,
+                    AuthorID           int       NOT NULL,
+                    EventID            int       NOT NULL,
+                    SessionID          int       NOT NULL,
+                    SessionSeparatorID int       NOT NULL,
+                    TimeStamp          timestamp NOT NULL,
+                    PRIMARY KEY   (ModeratorID),
+                    KEY Author    (AuthorID),
+                    KEY Event     (EventID),
+                    KEY Session   (SessionID),
+                    KEY Separator (SessionSeparatorID)
+                  )", # Not used yet in 8.0
+                 "create table EventTopic (
+                    EventTopicID       int       NOT NULL auto_increment,
+                    TopicID            int       NOT NULL,
+                    EventID            int       NOT NULL,
+                    SessionID          int       NOT NULL,
+                    SessionSeparatorID int       NOT NULL,
+                    TimeStamp          timestamp NOT NULL,
+                    PRIMARY KEY   (EventTopicID),
+                    KEY Topic     (TopicID),
+                    KEY Event     (EventID),
+                    KEY Session   (SessionID),
+                    KEY Separator (SessionSeparatorID)
+                  )", # Not used yet in 8.0
+                 "create table Suppress (
+                    SuppressID      int NOT NULL auto_increment,
+                    SecurityGroupID int NOT NULL,
+                    Type            varchar(32),
+                    ForeignID       int,
+                    TextKey         varchar(255),
+                    ViewSetting     varchar(32),
+                    ModifySetting   varchar(32),
+                    PRIMARY KEY       (SuppressID),
+                    KEY SecurityGroup (SecurityGroupID),
+                    KEY Type          (Type),
+                    KEY ForeignID     (ForeignID),
+                    KEY TextKey       (TextKey)
+                  )", # Not used yet in 8.0
+         );
+         
+  print "Creating new tables and columns.\n";          
+  foreach my $Action (@Actions) {
+    unless ($Action) { next; }
+    my $Command = $dbh ->prepare($Action);
+    $Command -> execute();
+  }  
+}
+
+if ($Action eq "migrate") {
+  my $TopicUpdate     = $dbh -> prepare("update RevisionTopic set TopicID=? where MinorTopicID=?");
+  my $HintUpdate      = $dbh -> prepare("update TopicHint     set TopicID=? where MinorTopicID=?");
+  my $TopicInsert     = $dbh -> prepare("insert into Topic (TopicID,ShortDescription,LongDescription) values (0,?,?)");
+  my $HierarchyInsert = $dbh -> prepare("insert into TopicHierarchy (TopicHierarchyID,TopicID,ParentTopicID) values (0,?,?)");
+  my $MajorSelect     = $dbh -> prepare("select MajorTopicID,ShortDescription,LongDescription from MajorTopic");
+  my $MinorSelect     = $dbh -> prepare("select MinorTopicID,MajorTopicID,ShortDescription,LongDescription from MinorTopic");
+
+  print "\nMigrating topics.\n";
+  
+  my %MajorToTopic = ();
+  my %MinorToTopic = ();
+  my %MinorToMajor = ();
+  
+  my ($MinorID,$MajorID,$Short,$Long);
+  my ($LastMajor,$LastMinor);
+  
+### Migrate MajorTopics to Topic
+  print " Migrating MajorTopics.\n";
+
+  $MajorSelect -> execute();
+  $MajorSelect -> bind_columns(undef, \($MajorID,$Short,$Long));
+  while ($MajorSelect -> fetch) {
+    $TopicInsert -> execute($Short,$Long);
+    $MajorToTopic{$MajorID} = $TopicInsert -> {mysql_insertid};
+    $LastMajor = $MajorToTopic{$MajorID};
+  }
+ 
+### Migrate MinorTopics to Topic
+  print " Migrating MinorTopics.\n";
+
+  $MinorSelect -> execute();
+  $MinorSelect -> bind_columns(undef, \($MinorID,$MajorID,$Short,$Long));
+  while ($MinorSelect -> fetch) {
+    $TopicInsert -> execute($Short,$Long);
+    $MinorToTopic{$MinorID} = $TopicInsert -> {mysql_insertid};
+    $MinorToMajor{$MinorID} = $MajorID;
+    $LastMinor = $MinorToTopic{$MinorID};
+  }
+ 
+### Populate Hierarchy and update RevisionTopic
+  print " Setting topic relationships.\n";
+
+  foreach $MinorID (keys %MinorToTopic) {
+    my $TopicID  = $MinorToTopic{$MinorID};
+    my $ParentID = $MajorToTopic{$MinorToMajor{$MinorID}};
+    $HierarchyInsert -> execute($TopicID,$ParentID);
+    $TopicUpdate     -> execute($TopicID,$MinorID);
+    $HintUpdate      -> execute($TopicID,$MinorID);
+  }
+  
+  print " Last MajorTopic is now Topic $LastMajor, last MinorTopic is now Topic $LastMinor\n";
+  
+### Migrate Config Settings 
+
+  print "Migrating Custom Field settings for Topics. This cannot be undone,\n".
+        "     but you probably don't have any.\n";   
+  
+  my $ConfigSelect = $dbh -> prepare("select ConfigSettingID,ForeignID from ConfigSetting where ConfigGroup='CustomField' and Sub1Group='TopicID'");
+  my $ConfigUpdate = $dbh -> prepare("update ConfigSetting set ForeignID=? where ConfigSettingID=?");
+  my ($ConfigSettingID,$ConfigTopicID);
+  
+  $ConfigSelect -> execute();
+  while (($ConfigSettingID,$ConfigTopicID) = $ConfigSelect -> fetchrow_array) {
+    $ConfigUpdate -> execute($MinorToTopic{$ConfigTopicID},$ConfigSettingID);
+  }
+  
+  
+  my @Periods = ("Daily","Immediate","Weekly");
+  my $NotificationInsert = $dbh -> prepare("insert into Notification (NotificationID,EmailUserID,Type,ForeignID,TextKey,Period) values (0,?,?,?,?,?)");
+
+### Migrate Topic Notifications
+  print "Migrating topic notifications\n";
+  foreach my $Period (@Periods) {
+    my ($EmailUserID,$MajorID,$MinorID);
+    my $Select = $dbh -> prepare("select EmailUserID,MajorTopicID,MinorTopicID from EmailTopic$Period");
+    $Select -> execute();
+    $Select -> bind_columns(undef, \($EmailUserID,$MajorID,$MinorID));
+    while ($Select -> fetch) {
+      unless ($EmailUserID) {next;}
+      if ($MinorID) {
+        $NotificationInsert -> execute($EmailUserID,"Topic",$MinorToTopic{$MinorID},"",$Period);
+      } elsif ($MajorID) {
+        $NotificationInsert -> execute($EmailUserID,"Topic",$MajorToTopic{$MajorID},"",$Period);
+      } else {
+        $NotificationInsert -> execute($EmailUserID,"AllDocuments",0,"",$Period);
+      }  
+    }
+  }
+  
+### Migrate Author Notifications
+  print "Migrating author notifications\n";
+  foreach my $Period (@Periods) {
+    my ($EmailUserID,$AuthorID);
+    my $Select = $dbh -> prepare("select EmailUserID,AuthorID from EmailAuthor$Period");
+    $Select -> execute();
+    $Select -> bind_columns(undef, \($EmailUserID,$AuthorID));
+    while ($Select -> fetch) {
+      unless ($EmailUserID) {next;}
+      if ($AuthorID) {
+        $NotificationInsert -> execute($EmailUserID,"Author",$AuthorID,"",$Period);
+      }  
+    }
+  }
+
+### Migrate Keyword Notifications
+  print "Migrating keyword notifications\n";
+  foreach my $Period (@Periods) {
+    my ($EmailUserID,$Keyword);
+    my $Select = $dbh -> prepare("select EmailUserID,Keyword from EmailKeyword$Period");
+    $Select -> execute();
+    $Select -> bind_columns(undef, \($EmailUserID,$Keyword));
+    while ($Select -> fetch) {
+      unless ($EmailUserID) {next;}
+      if ($Keyword) {
+        $NotificationInsert -> execute($EmailUserID,"Author",0,$Keyword,$Period);
+      }  
+    }
+  }
+
+### Migrate Document notifications
+  print "Migrating document notifications\n";
+  my ($EmailUserID,$DocumentID);
+  my $Select = $dbh -> prepare("select EmailUserID,DocumentID from EmailDocumentImmediate");
+  $Select -> execute();
+  $Select -> bind_columns(undef, \($EmailUserID,$DocumentID));
+  while ($Select -> fetch) {
+    unless ($EmailUserID) {next;}
+    if ($DocumentID) {
+      $NotificationInsert -> execute($EmailUserID,"Document",$DocumentID,"","Immediate");
+    }  
+  }
+
+  print "\nMigration finished\n";  
+}
+
+if ($Action eq "undo") { # Undo modifications
+
+# Drop tables, columns, and entries we just put in
+
+  print "Removing new tables and columns.\n";          
+  my @Actions = ("alter table RevisionTopic  drop index TopicID     ",
+                 "alter table Document       drop index Alias       ",
+                 "alter table SecurityGroup  drop CanView           ",
+                 "alter table SecurityGroup  drop CanConfig         ",
+                 "alter table RevisionTopic  drop TopicID           ",
+                 "alter table TopicHint      drop TopicID           ",
+                 "alter table Conference     drop AltLocation       ",
+                 "alter table Session        drop AltLocation       ",
+                 "alter table Session        drop ShowAllTalks      ",
+                 "alter table Document       drop Alias             ",
+                 "alter table RevisionAuthor drop AuthorOrder       ",
+                 "alter table Notification   drop TextKey           ",
+                 "drop  table Topic                                 ",
+                 "drop  table TopicHierarchy                        ",
+                 "drop  table Moderator                             ",
+                 "drop  table EventTopic                            ",
+                 "drop  table Suppress                              ",
+                 "delete from Notification where Type='AllDocuments'",
+                 "delete from Notification where Type='Topic'       ",
+                 "delete from Notification where Type='Author'      ",
+                 "delete from Notification where Type='Keyword'     ",
+                 "delete from Notification where Type='Document'    ",
+                );
+
+  foreach my $Action (@Actions) {
+    unless ($Action) { next; }
+    my $Command = $dbh ->prepare($Action);
+    $Command -> execute();
+  }  
+}
+
+if ($Action eq "delete") { 
+
+  # Get rid of tables and columns no longer needed and clean up 
+  # a bit of a mess in RevisionTopic and TopicHint left from V6
+
+  print "Removing obsolete tables and columns.\n";          
+  my @Actions = ("alter  table RevisionTopic drop MinorTopicID ",
+                 "alter  table TopicHint     drop MinorTopicID ",
+                 "delete from  RevisionTopic where TopicID=0   ",
+                 "delete from  RevisionTopic where TopicID=NULL",
+                 "delete from  TopicHint     where TopicID=0   ",
+                 "delete from  TopicHint     where TopicID=NULL",
+                 "drop   table MinorTopic                      ",
+                 "drop   table MajorTopic                      ",
+                 "drop   table GroupTopic                      ",
+                 "drop   table EmailAuthorDaily                ",
+                 "drop   table EmailAuthorImmediate            ",
+                 "drop   table EmailAuthorWeekly               ",
+                 "drop   table EmailDocumentImmediate          ",
+                 "drop   table EmailKeywordDaily               ",
+                 "drop   table EmailKeywordImmediate           ",
+                 "drop   table EmailKeywordWeekly              ",
+                 "drop   table EmailTopicDaily                 ",
+                 "drop   table EmailTopicImmediate             ",
+                 "drop   table EmailTopicWeekly                ",
+                );
+
+  foreach my $Action (@Actions) {
+    unless ($Action) { next; }
+    my $Command = $dbh ->prepare($Action);
+    $Command -> execute();
+  }  
+}
+
+exit;

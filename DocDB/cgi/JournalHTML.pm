@@ -5,7 +5,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -20,7 +20,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub JournalSelect (;%) {
   my (%Params) = @_;
@@ -41,9 +41,7 @@ sub JournalSelect (;%) {
   }
   @JournalIDs = sort @JournalIDs;  #FIXME Sort by abbreviation
 
-  print "<b><a ";
-  &HelpLink("journal");
-  print "Journal:</a></b><br> \n";
+  print FormElementTitle(-helplink => "journal", -helptext => "Journal");
   print $query -> scrolling_list(-name => "journal", -values => \@JournalIDs, 
                                  -labels => \%JournalLabels, -size => 10, 
                                  -default => $JournalDefault, $Booleans);
@@ -64,38 +62,28 @@ sub JournalEntryBox (;%) {
 
   print "<table cellpadding=5><tr valign=top>\n";
   print "<td>\n";
-  print "<b><a ";
-  &HelpLink("journalentry");
-  print "Full Name:</a></b><br> \n";
+  print FormElementTitle(-helplink => "journalentry", -helptext => "Full Name");
   print $query -> textfield (-name => 'name', 
                              -size => 40, -maxlength => 128, $Booleans);
   print "</td>\n";
   print "<td>\n";
-  print "<b><a ";
-  &HelpLink("journalentry");
-  print "Publisher:</a></b><br> \n";
+  print FormElementTitle(-helplink => "journalentry", -helptext => "Publisher");
   print $query -> textfield (-name => 'pub', 
                              -size => 40, -maxlength => 64, $Booleans);
   print "</td></tr>\n";
 
   print "<tr><td>\n";
-  print "<b><a ";
-  &HelpLink("journalentry");
-  print "Abbreviation:</a></b><br> \n";
+  print FormElementTitle(-helplink => "journalentry", -helptext => "Abbreviation");
   print $query -> textfield (-name => 'abbr', 
                              -size => 40, -maxlength => 64, $Booleans);
   print "</td>\n";
   print "<td>\n";
-  print "<b><a ";
-  &HelpLink("journalentry");
-  print "URL:</a></b><br> \n";
+  print FormElementTitle(-helplink => "journalentry", -helptext => "URL");
   print $query -> textfield (-name => 'url', 
                              -size => 40, -maxlength => 240, $Booleans);
   print "</td></tr>\n";
   print "<tr><td>\n";
-  print "<b><a ";
-  &HelpLink("journalentry");
-  print "Acronym:</a></b><br> \n";
+  print FormElementTitle(-helplink => "journalentry", -helptext => "Acronym");
   print $query -> textfield (-name => 'acronym', 
                              -size => 8, -maxlength => 8, $Booleans);
   print "</td></tr>\n";
@@ -129,5 +117,47 @@ sub JournalTable (;$) {
   print "</table>\n";
 }
 
+sub ReferenceForm {
+  require "MiscSQL.pm";
+  
+  GetJournals();
+
+  my @JournalIDs = keys %Journals;
+  my %JournalLabels = ();
+  foreach my $ID (@JournalIDs) {
+    $JournalLabels{$ID} = $Journals{$ID}{Acronym};
+  }
+  @JournalIDs = sort @JournalIDs;  #FIXME Sort by acronym
+  unshift @JournalIDs,0; $JournalLabels{0} = "----"; # Null Journal
+  my $ElementTitle = FormElementTitle(-helplink  => "reference", 
+                                      -helptext  => "Journal References");
+  print $ElementTitle,"\n";                                     
+
+  my @ReferenceIDs = (@ReferenceDefaults,0);
+  
+  print "<table class=\"LowPaddedTable\">\n";
+  foreach my $ReferenceID (@ReferenceIDs) { 
+    print "<tr>\n";
+    my $JournalDefault = $RevisionReferences{$ReferenceID}{JournalID};
+    my $VolumeDefault  = $RevisionReferences{$ReferenceID}{Volume}   ;
+    my $PageDefault    = $RevisionReferences{$ReferenceID}{Page}     ;
+    print "<td><b>Journal: </b>\n";
+    print $query -> popup_menu(-name => "journal", -values => \@JournalIDs, 
+                                   -labels => \%JournalLabels,
+                                   -default => $JournalDefault);
+    print "</td>";
+    print "<td><b>Volume:</b> \n";
+    print $query -> textfield (-name => 'volume', 
+                               -size => 8, -maxlength => 8, 
+                               -default => $VolumeDefault);
+    print "</td>";
+    print "<td><b>Page:</b> \n";
+    print $query -> textfield (-name => 'page', 
+                               -size => 8, -maxlength => 16, 
+                               -default => $PageDefault);
+    print "</td></tr>\n";                           
+  }
+  print "</table>\n";
+}
 
 1;

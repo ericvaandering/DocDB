@@ -18,7 +18,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use Benchmark;
 use CGI;
@@ -37,10 +37,14 @@ require "SignoffSQL.pm";
 require "MiscSQL.pm";
 require "FSUtilities.pm";
 require "FileUtilities.pm";
+require "TopicUtilities.pm";
 require "WebUtilities.pm";
 require "HTMLUtilities.pm";
+
 require "Security.pm";
 require "Scripts.pm";
+
+require "TopicHTML.pm";
 
 if ($MailInstalled) {
   require "MailNotification.pm";
@@ -49,9 +53,9 @@ if ($MailInstalled) {
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
-&GetTopics; 
-&GetJournals;
-&GetSecurityGroups; 
+GetTopics(); 
+GetJournals();
+GetSecurityGroups(); 
 
 ### Set up, give user initial information
 
@@ -96,7 +100,8 @@ my $OldVersion    = $params{oldversion};
 my $MaxFiles      = $params{maxfiles};
 my $UniqueID      = $params{uniqueid};
 my @XRefs         = split /,*\s+/,$params{xrefs}; # Can be comma or space separated
-my @EventIDs      = $query -> param('events');
+my @EventIDs          = $query -> param('events');
+my @RequestedTopicIDs = $query -> param('topics');
 
 if ($Archive eq "multi") {$Archive = "single";} # No real difference
 
@@ -208,9 +213,6 @@ unless ($DocTypeID) {
 }
 
 if ($mode eq "add" || $mode eq "update") {
-  unless ($params{topics}) {
-    push @ErrorStack,"You must supply at least one topic for this document.";
-  }
   unless ($params{abstract}) {
     push @ErrorStack,"You must supply an abstract for this document.";
   }
@@ -243,8 +245,23 @@ if ($mode eq "update" || $mode eq "updatedb") {
 
 ### Final checks
 
-@topicIDs   = split ("\0",$params{topics});
-@securities = split ("\0",$params{security});
+my @TopicIDs = ();
+
+foreach my $TopicID (@RequestedTopicIDs) {
+  if (scalar(@{$TopicProvenance{$TopicID}}) < $Preferences{Topics}{MinLevel}{Document}) {
+    push @WarnStack,"Topic ".TopicLink({-topicid => $TopicID})." not added to this document. Topic is too high-level.";
+  } else {
+    push @TopicIDs,$TopicID;
+  }
+}
+
+if ($mode eq "add" || $mode eq "update") {
+  unless (@TopicIDs) {
+    push @ErrorStack,"You must supply at least one valid topic for this document.";
+  }
+}
+
+@securities  = split ("\0",$params{security});
 if ($EnhancedSecurity) {
   @ModifyGroups = split ("\0",$params{modify});
 }
@@ -361,11 +378,11 @@ if (@XRefs) {
 ### Add to authors, topics and securities
                            
 my $Count;
-$Count = &InsertAuthors(-docrevid => $DocRevID, -authorids => \@authorIDs);
-$Count = &InsertTopics( -docrevid => $DocRevID, -topicids  => \@topicIDs);
-$Count = &InsertSecurity(-docrevid  => $DocRevID, 
-                         -viewids   => \@securities,
-                         -modifyids => \@ModifyGroups);
+$Count = InsertAuthors( -docrevid  => $DocRevID, -authorids => \@authorIDs);
+$Count = InsertTopics(  -docrevid  => $DocRevID, -topicids  => \@TopicIDs);
+$Count = InsertSecurity(-docrevid  => $DocRevID, 
+                        -viewids   => \@securities,
+                        -modifyids => \@ModifyGroups);
 
 ### Add events
 if (@EventIDs) {

@@ -14,7 +14,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub FetchDocRevisionByID ($) {
 
@@ -160,25 +160,6 @@ sub GetAllRevisions { # FIXME: Implement full mode, flag with got all revisions
     $DocRevisions{$DocRevID}{Obsolete}      = $Obsolete;
     $DocRevisions{$DocRevID}{Complete}      = 0;
   }
-}
-
-sub FetchRevisionsByMinorTopic {
-  my ($MinorTopicID) = @_;
-  
-  my $DocRevID;
-  my @DocRevIDs = ();
-  
-  my $RevisionList = $dbh -> prepare("select DocRevID from RevisionTopic where MinorTopicID=?"); 
- 
-  $RevisionList -> execute($MinorTopicID);
-  $RevisionList -> bind_columns(undef, \($DocRevID));
-
-  while ($RevisionList -> fetch) {
-    &FetchDocRevisionByID($DocRevID);
-    if ($DocRevisions{$DocRevID}{Obsolete}) {next;}
-    push @DocRevIDs,$DocRevID; 
-  }
-  return @DocRevIDs;
 }
 
 sub FetchRevisionsByEventID {

@@ -7,7 +7,7 @@
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 #
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -22,7 +22,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub KeywordGroupInfo ($;$) {
   my ($KeyID,$mode) = @_;
@@ -176,9 +176,7 @@ sub KeywordSelect (%) { # Scrolling selectable list for keyword groups
       }  
     }
   }  
-  print "<b><a ";
-  &HelpLink("keywords");
-  print "Keywords:</a></b><br> \n";
+  print FormElementTitle(-helplink => "keywords", -helptext => "Keywords");
   print $query -> scrolling_list(-name => "keywordlist", -values => \@KeywordIDs, 
                                  -labels => \%KeywordLabels,
                                  -size => 10, -multiple => $Multiple, $Booleans );
@@ -199,9 +197,7 @@ sub KeywordGroupSelect (%) { # Scrolling selectable list for keyword groups
     $Booleans .= "-disabled";
   }  
   
-  print "<b><a ";
-  &HelpLink("KeywordGroups");
-  print "Keyword Groups:</a></b><br> \n";
+  print FormElementTitle(-helplink => "keywordgroups", -helptext => "Keyword Groups");
   my @KeyGroupIDs = keys %KeywordGroups;
   my %GroupLabels = ();
   

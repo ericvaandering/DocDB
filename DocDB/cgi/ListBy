@@ -17,7 +17,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use Benchmark;
 use CGI;
@@ -40,8 +40,7 @@ my $TypeID       = $params{typeid}       || 0;
 my $AuthorID     = $params{authorid}     || 0;
 
 my $TopicID      = $params{topicid}      || 0;
-my $MajorID      = $params{majorid}      || 0;
-my $Major        = $params{major}        || "";
+my $Topic        = $params{topic}        || 0;
 
 my $EventID      = $params{eventid}      || 0;
 my $EventGroupID = $params{eventgroupid} || 0;
@@ -79,18 +78,43 @@ if ($Days) {
   $List -> execute($Days);
 } elsif ($TopicID) {
 
-### Minor topic
+### Topic
+### FIXME: Add Topic lookup
 
   require "TopicSQL.pm";
-  &FetchMinorTopic($TopicID);
+  require "TopicUtilities.pm";
+  require "TopicHTML.pm";
+  require "Utilities.pm";
+  
+  my @ChildTopicIDs  = TopicAndSubTopics({-topicid => $TopicID}); 
+  my @ParentTopicIDs = FetchTopicParents({-topicid => $TopicID}); 
+  
+  my $HasSubTopics = (scalar(@ChildTopicIDs) > 1);
   $FieldListOptions{-topicid} = $TopicID;
   $Title   = "Document List by Topic";
-  $Message = "These documents on <span class=\"Highlight\">$MinorTopics{$TopicID}{LONG} 
-              ($MinorTopics{$TopicID}{Full})</span> are available:";
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
            "DocumentRevision,RevisionTopic where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
-           "and DocumentRevision.Obsolete=0 and RevisionTopic.MinorTopicID=?");            
-  $List -> execute($TopicID);
+           "and DocumentRevision.Obsolete=0 and RevisionTopic.TopicID=?"); 
+  foreach my $ChildTopicID (@ChildTopicIDs) {
+    FetchTopic($ChildTopicID);
+    $List -> execute($ChildTopicID);
+    while (my ($DocumentID) = $List -> fetchrow_array) {
+      push @DocumentIDs,$DocumentID;
+    }  
+  }
+  @DocumentIDs = Unique(@DocumentIDs);
+  my $SubTopicMessage = "";
+  if (@ParentTopicIDs) {
+    my ($ParentTopicID) = @ParentTopicIDs;
+    $SubTopicMessage = "(subtopic of ".TopicLink({-topicid => $ParentTopicID}).")";
+  }
+  
+  $Message = "These documents on <span class=\"Highlight\">$Topics{$TopicID}{Long} 
+              </span> $SubTopicMessage ";
+  if ($HasSubTopics) {
+    $Message .= "and sub-topics ";
+  }
+  $Message .= "are available:"; 
 } elsif ($AuthorID) {
 
 ### Author
@@ -111,22 +135,6 @@ if ($Days) {
   $Message = "<span class=\"Highlight\">$Link of $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG}</span>
               is listed as an author on the following documents:";
   @DocumentIDs = &GetAuthorDocuments($AuthorID);  
-} elsif ($Major || $MajorID) {
-
-### Major topic (either number or name)
-
-  require "TopicSQL.pm";
-  unless ($MajorID) {
-    $MajorID = &LookupMajorTopic($Major);
-  } 
-  &FetchMajorTopic($MajorID);
-  
-  $Title   = "Document List by Topic";
-  $Message = "These documents on <span class=\"Highlight\"> $MajorTopics{$MajorID}{LONG}</span> are available:";
-  $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
-           "DocumentRevision,RevisionTopic,MinorTopic where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
-           "and DocumentRevision.Obsolete=0 and RevisionTopic.MinorTopicID=MinorTopic.MinorTopicID and MinorTopic.MajorTopicID=?");            
-  $List -> execute($MajorID);
 } elsif ($EventID) {
 
 ### Event
@@ -251,5 +259,5 @@ print "<p><b>Number of documents found: ",int($NumberOfDocuments),"</b></p>\n";
 
 $EndTime  = new Benchmark;
 
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

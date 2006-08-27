@@ -23,7 +23,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 
 use CGI;                                                                                      
@@ -96,8 +96,6 @@ print "In all cases, you must supply the <i>database</i> username and password f
 print "<center> <b>Modify:</b> ";
 print "[&nbsp;<a href=\"\#author\">Authors</a> ] ";
 print "[&nbsp;<a href=\"\#institution\">Institutions</a>&nbsp;] ";
-print "[&nbsp;<a href=\"\#mintopic\">Minor&nbsp;Topics</a>&nbsp;] ";
-print "[&nbsp;<a href=\"\#majtopic\">Major&nbsp;Topics</a>&nbsp;] ";
 print "[&nbsp;<a href=\"\#doctype\">Document&nbsp;Types</a>&nbsp;] ";
 print "[&nbsp;<a href=\"\#journal\">Journals</a>&nbsp;] ";
 print "</center><p>";
@@ -168,90 +166,6 @@ print "<td colspan=3>\n";
 &AdministratorPassword;
 print "&nbsp;";
 print $query -> submit (-value => "Change Institution Info");
-print "</td>\n";
-print "</tr>\n";
-
-print "</table>\n";
-print $query -> end_multipart_form;
-
-print "<p><hr>\n";
-
-### Topic Administration
-
-print "<a name=\"mintopic\"><center><h4>Administer Minor Topics</h4></center>\n";
-print $query -> start_multipart_form('POST',"$TopicAdminister",
-                                    "id=\"minortopic\" name=\"minortopic\"");
-print "<table cellpadding=10>\n";
-
-print "<tr valign=top>\n";
-print "<td colspan=2>\n"; 
- &AdministerActions(-form => "minortopic");      
-print "</td>\n";
-print "</tr>\n";
-
-print "<tr valign=top>\n";
-print "<td colspan=2>\n"; 
- &TopicScroll(-helptext  => "Minor Topics", -helplink => "topics", 
-              -extratext => " (Long descriptions in brackets)", 
-              -format    => "long", -disabled => "true"); 
-print "</td>\n"; 
-print "</tr>\n";
-
-print "<tr valign=top>\n";
-print "<td rowspan=2>\n"; &MajorTopicSelect(-disabled => "true"); print "</td>\n";
-print "<td>\n"; &ShortDescriptionBox(-name => "shortdesc", -disabled => "true");     print "</td>\n";
-print "</tr>\n";
-
-print "<tr valign=top>\n";
-print "<td>\n"; &LongDescriptionBox(-name => "longdesc", -disabled => "true");     print "</td>\n";
-print "</tr>\n";
-
-print "<tr valign=top>\n";
-print "<td colspan=3>\n";
-&AdministratorPassword;
-print "&nbsp;";
-print $query -> submit (-value => "Change Topic Info");
-print "</td>\n";
-print "</tr>\n";
-
-print "</table>\n";
-print $query -> end_multipart_form;
-
-print "<p><hr>\n";
-
-### Major Topic Administration
-
-print "<a name=\"majtopic\"><center><h4>Administer Major Topics</h4></center>\n";
-
-print $query -> start_multipart_form('POST',"$MajorTopicAdminister",
-                                    "id=\"majortopic\" name=\"majortopic\"");
-print "<table cellpadding=10>\n";
-print "<tr valign=top>\n";
-print "<td colspan=2>\n";
- &AdministerActions(-form => "majortopic");
-print "</td>\n";
-print "</tr>\n";
-
-print "<tr valign=top>\n";
-print "<td rowspan=2>\n"; 
- &MajorTopicSelect(-disabled => true, -format => "full"); 
-print "</td>\n";
-print "<td>\n"; 
- &ShortDescriptionBox(-disabled => true, -name => 'shortdesc');     
-print "</td>\n";
-print "</tr>\n";
-
-print "<tr valign=top>\n";
-print "<td>\n";
- &LongDescriptionBox(-disabled => true, -name => 'longdesc');
-print "</td>\n";
-print "</tr>\n";
-
-print "<tr valign=top>\n";
-print "<td colspan=3>\n";
-&AdministratorPassword;
-print "&nbsp;";
-print $query -> submit (-value => "Change Topic Info");
 print "</td>\n";
 print "</tr>\n";
 

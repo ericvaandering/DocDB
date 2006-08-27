@@ -24,7 +24,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
 use DBI;
@@ -54,13 +54,15 @@ my $Description    = $CGIParams{description};
 my $Name           = $CGIParams{name};
 my $ParentID       = $CGIParams{parent};
 my @ChildIDs       = split /\0/,$CGIParams{child};
+my $View           = $CGIParams{view};
 my $Create         = $CGIParams{create};
 my $Admin          = $CGIParams{admin};
 my $NoPerm         = $CGIParams{remove};
 my $RemoveChildren = $CGIParams{removesubs};
 my $Force          = $CGIParams{admforce};
 
-if ($Create)         {$Create = 1;} # Make sure they are in format MySQL is expecting
+if ($View)           {$View   = 1;} # Make sure they are in format MySQL is expecting
+if ($Create)         {$Create = 1;}
 if ($Admin)          {$Admin  = 1;}
 if ($NoPerm)         {$NoPerm = 1;}
 if ($RemoveChildren) {$RemoveChildren = 1;}
@@ -105,19 +107,29 @@ if      ($Action eq "Delete") { # Delete group
       $EUC -> execute($ParentID);
 
       ($Count) = $RSC -> fetchrow_array;
-      push @WarnStack,"Action would change view list on $Count document(s).";
+      if ($Count) {
+        push @WarnStack,"Action would change view list on $Count document(s).";
+      }  
       $TotalCount += $Count;
       ($Count) = $RMC -> fetchrow_array;
-      push @WarnStack,"Action would change modify list on $Count document(s).";
+      if ($Count) {
+        push @WarnStack,"Action would change modify list on $Count document(s).";
+      }  
       $TotalCount += $Count;
       ($Count) = $MSC -> fetchrow_array;
-      push @WarnStack,"Action would change view list on $Count event(s).";
+      if ($Count) {
+        push @WarnStack,"Action would change view list on $Count event(s).";
+      }  
       $TotalCount += $Count;
       ($Count) = $MMC -> fetchrow_array;
-      push @WarnStack,"Action would change modify list on $Count event(s).";
+      if ($Count) {
+        push @WarnStack,"Action would change modify list on $Count event(s).";
+      }  
       $TotalCount += $Count;
       ($Count) = $EUC -> fetchrow_array;
-      push @WarnStack,"Action would change groups for $Count user(s).";
+      if ($Count) {
+        push @WarnStack,"Action would change groups for $Count user(s).";
+      }  
       $TotalCount += $Count;
     }  
 
@@ -130,17 +142,29 @@ if      ($Action eq "Delete") { # Delete group
       my $HD  = $dbh -> prepare("delete from GroupHierarchy   where ParentID=? or ChildID=?");
       my $SGD = $dbh -> prepare("delete from SecurityGroup    where GroupID=?");
       $Count = $RSD -> execute($ParentID);
-      push @ActionStack,"Group removed from view list on $Count document(s).";
+      if (int($Count)) {
+        push @ActionStack,"Group removed from view list on $Count document(s).";
+      }  
       $Count = $RMD -> execute($ParentID);
-      push @ActionStack,"Group removed from modify list on $Count document(s).";
+      if (int($Count)) {
+        push @ActionStack,"Group removed from modify list on $Count document(s).";
+      }
       $Count = $MSD -> execute($ParentID);
-      push @ActionStack,"Group removed from view list on $Count event(s).";
+      if (int($Count)) {
+        push @ActionStack,"Group removed from view list on $Count event(s).";
+      }
       $Count = $MMD -> execute($ParentID);
-      push @ActionStack,"Group removed from modify list on $Count event(s).";
+      if (int($Count)) {
+        push @ActionStack,"Group removed from modify list on $Count event(s).";
+      }
       $Count = $EUD -> execute($ParentID);
-      push @ActionStack,"Group removed from $Count users(s).";
+      if (int($Count)) {
+        push @ActionStack,"Group removed from $Count users(s).";
+      }
       $Count = $HD  -> execute($ParentID,$ParentID);
-      push @ActionStack,"$Count inter-group relationship(s) removed.";
+      if (int($Count)) {
+        push @ActionStack,"$Count inter-group relationship(s) removed.";
+      }
       $Count = $SGD -> execute($ParentID);
       push @ActionStack,"$SecurityGroups{$ParentID}{NAME} has been deleted.";
       push @ActionStack,"Remove group from .htpasswd file and run scripts/Resecure if applicable.";
@@ -193,7 +217,12 @@ if      ($Action eq "Delete") { # Delete group
   
   if ($NoPerm) {
     my $GroupUpdate = $dbh->prepare(
-       "update SecurityGroup set CanCreate=0,CanAdminister=0 where GroupID=?");
+       "update SecurityGroup set CanCreate=0,CanAdminister=0,CanView=0,CanConfig=0 where GroupID=?");
+    $GroupUpdate -> execute($ParentID);
+  }  
+  if ($View) {
+    my $GroupUpdate = $dbh->prepare(
+       "update SecurityGroup set CanView=1 where GroupID=?");
     $GroupUpdate -> execute($ParentID);
   }  
   if ($Create) {
@@ -210,10 +239,10 @@ if      ($Action eq "Delete") { # Delete group
 } elsif ($Action eq "New") { # Create new groups
   push @ActionStack,"Adding a new group.";
   my $GroupInsert = $dbh->prepare(
-   "insert into SecurityGroup (GroupID,Name,Description,CanCreate,CanAdminister) ".
-                      "values (0,?,?,?,?)");
+   "insert into SecurityGroup (GroupID,Name,Description,CanCreate,CanAdminister,CanView,CanConfig) ".
+                      "values (0,?,?,?,?,?,0)");
 
-  $GroupInsert -> execute($Name,$Description,$Create,$Admin);
+  $GroupInsert -> execute($Name,$Description,$Create,$Admin,$View);
   $ParentID = $GroupInsert -> {mysql_insertid}; # Works with MySQL only
 
   my $HierarchyInsert = $dbh->prepare(

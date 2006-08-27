@@ -21,7 +21,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub AdministerActions (%) {
   require "FormElements.pm";
@@ -57,7 +57,7 @@ sub AdministratorPassword {
 sub AdminRegardless {
   require "FormElements.pm";
 
-  print FormElementTitle(-helplink => "admforce", -helptext => "Force Action");
+  print FormElementTitle(-helplink => "admforce", -helptext => "Force Delete");
   print $query -> checkbox(-name => "admforce", -value => 1, -label => 'Yes');
 }  
 
@@ -88,6 +88,10 @@ sub GroupEntryBox (%) {
 
   print "<tr><td>\n";
   print FormElementTitle(-helplink => "groupperm", -helptext => "Permissions");
+  print $query -> checkbox(-name  => "view",   -value => 'view', 
+                           -label => '', %Options);
+  print "May view documents<br/>\n";
+
   print $query -> checkbox(-name  => "create", -value => 'create', 
                            -label => '', %Options);
   print "May create documents<br/>\n";
@@ -95,6 +99,7 @@ sub GroupEntryBox (%) {
   print $query -> checkbox(-name  => "admin",  -value => 'admin',  
                            -label => '', %Options);
   print "May administer database<br/>\n";
+
   print $query -> checkbox(-name  => "remove", -value => 'remove', 
                            -label => '', %Options);
   print "Remove existing permissions\n";

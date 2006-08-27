@@ -21,7 +21,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub DocTypeSelect (;%) { # Scrolling selectable list for doc type search
   my ($ArgRef) = @_;
@@ -64,17 +64,13 @@ sub DocTypeEntryBox (;%) {
   
   print "<table cellpadding=5><tr valign=top>\n";
   print "<td>\n";
-  print "<b><a ";
-  &HelpLink("doctypeentry");
-  print "Short Description:</a></b><br> \n";
+  print FormElementTitle(-helplink => "doctypeentry", -helptext => "Short Description");
   print $query -> textfield (-name => 'name', 
                              -size => 20, -maxlength => 32, $Booleans);
   print "</td>\n";
   print "</tr><tr>\n";
   print "<td>\n";
-  print "<b><a ";
-  &HelpLink("doctypeentry");
-  print "Long Description:</a></b><br> \n";
+  print FormElementTitle(-helplink => "doctypeentry", -helptext => "Long Description");
   print $query -> textfield (-name => 'longdesc', 
                              -size => 40, -maxlength => 255, $Booleans);
   print "</td></tr>\n";

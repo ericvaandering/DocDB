@@ -23,7 +23,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 require "TopicHTML.pm";
 
@@ -174,9 +174,7 @@ sub DateTimePullDown { #FIXME: Replace with DateTimePulldown
     push @minutes,(sprintf "%2.2d",$i);
   }  
   
-  print "<b><a ";
-  &HelpLink("overdate");
-  print "Date &amp; Time:</a></b><br> \n";
+  print FormElementTitle(-helplink => "overdate", -helptext => "Date &amp; Time");
   print $query -> popup_menu (-name => 'overday',-values => \@days, -default => $day);
   print $query -> popup_menu (-name => 'overmonth',-values => \@months, -default => $months[$mon]);
   print $query -> popup_menu (-name => 'overyear',-values => \@years, -default => $year);
@@ -193,105 +191,6 @@ sub PubInfoBox {
 
   print $query -> textarea (-name => 'pubinfo', -default => $PubInfoDefault,
                             -columns => 60, -rows => 3);
-};
-
-sub TopicSelect { # Scrolling selectable list for topics
-  my (%Params) = @_;
-  
-  my $Required = $Params{-required} || 0;
-  #FIXME: Use TopicScroll
-  my @TopicIDs = sort byTopic keys %MinorTopics;
-  my %TopicLabels = ();
-  foreach my $ID (@TopicIDs) {
-    $TopicLabels{$ID} = $MinorTopics{$ID}{Full};
-  }
-  my $ElementTitle = &FormElementTitle(-helplink  => "topics", 
-                                       -helptext  => "Topics",
-                                       -required  => $Required );
-  print $ElementTitle,"\n";                                     
-  print $query -> scrolling_list(-name => "topics", -values => \@TopicIDs, 
-                                 -labels => \%TopicLabels,
-                                 -size => 10, -multiple => 'true',
-                                 -default => \@TopicDefaults);
-};
-
-sub MultiTopicSelect (%) { # Multiple scrolling selectable lists for topics
-  require "TopicSQL.pm";
-  
-  my (%Params) = @_;
-  
-  my $Required = $Params{-required}  || 0;
-  my $Disabled = $Params{-disabled}  || "";
-
-  my $NCols = 4;
-  my @MajorIDs = sort byMajorTopic keys %MajorTopics;
-  my @MinorIDs = keys %MinorTopics;
-
-  print "<table cellpadding=5>\n";
-  print "<tr><td colspan=$NCols align=center>\n";
-  my $ElementTitle = &FormElementTitle(-helplink  => "topics", 
-                                       -helptext  => "Topics",
-                                       -required  => $Required );
-  print $ElementTitle,"\n";                                     
-  my $Col = 0;
-  foreach $MajorID (@MajorIDs) {
-    unless ($Col % $NCols) {
-      print "<tr valign=top>\n";
-    }
-    print "<td><b>$MajorTopics{$MajorID}{SHORT}</b><br/>\n";
-    ++$Col;
-    my @MatchMinorIDs = ();
-    my %MatchLabels = ();
-    foreach my $MinorID (@MinorIDs) {
-      if ($MinorTopics{$MinorID}{MAJOR} == $MajorID) {
-        push @MatchMinorIDs,$MinorID;
-        $MatchLabels{$MinorID} = $MinorTopics{$MinorID}{SHORT};
-      }  
-    }
-    @MatchMinorIDs = sort byTopic @MatchMinorIDs;
-
-    #FIXME: Use TopicScroll
-    if ($Disabled) { # Doesn't scale
-      print $query -> scrolling_list(-name => "topics", 
-               -values => \@MatchMinorIDs, -labels => \%MatchLabels,
-               -size => 8, -multiple => 'true', -default => \@TopicDefaults,
-               -disabled);
-    } else {
-      print $query -> scrolling_list(-name => "topics", 
-               -values => \@MatchMinorIDs, -labels => \%MatchLabels,
-               -size => 8, -multiple => 'true', -default => \@TopicDefaults);
-    }               
-    print "</td>\n";
-  }  
-  print "</table>\n";
-};
-
-sub MajorTopicSelect (%) { # Scrolling selectable list for major topics
-  my (%Params) = @_;
-  
-  my $Mode     = $Params{-format}    || "short";
-  my $Disabled = $Params{-disabled}  || "0";
-  
-  print FormElementTitle(-helplink => "majortopics", -helptext => "Major Topics");
-
-  my @MajorIDs = keys %MajorTopics;
-  my %MajorLabels = ();
-  foreach my $ID (@MajorIDs) {
-    if ($Mode eq "full") {
-      $MajorLabels{$ID} = $MajorTopics{$ID}{Full};
-    } else {  
-      $MajorLabels{$ID} = $MajorTopics{$ID}{SHORT};
-    }  
-  } 
-  if ($Disabled) {  # Doesn't scale
-    print $query -> scrolling_list(-name => "majortopic", -values => \@MajorIDs, 
-                                   -labels => \%MajorLabels,  -size => 10,
-                                   -disabled);
-  } else {
-    print $query -> scrolling_list(-name => "majortopic", -values => \@MajorIDs, 
-                                   -labels => \%MajorLabels,  -size => 10);
-  }                               
-                                 
 };
 
 sub InstitutionSelect (;%) { # Scrolling selectable list for institutions
@@ -437,61 +336,11 @@ sub AuthorManual (%) { # FIXME: Special case of AuthorTextEntry
     $AuthorManDefault .= "$Authors{$AuthorID}{FULLNAME}\n" ;
   }
     
-  print "<b><a ";
-  &HelpLink("authormanual");
-  print "Authors:</a></b>";
-  if ($Required) {
-    print $RequiredMark;
-  }  
-  print "<br> \n";
-  
+  print FormElementTitle(-helplink => "authormanual", -helptext => "Authors", -required => $Required);
   print $query -> textarea (-name    => 'authormanual', 
                             -default => $AuthorManDefault,
                             -columns => 20, -rows    => 8);
 };
-
-sub ReferenceForm {
-  require "MiscSQL.pm";
-  
-  &GetJournals;
-
-  my @JournalIDs = keys %Journals;
-  my %JournalLabels = ();
-  foreach my $ID (@JournalIDs) {
-    $JournalLabels{$ID} = $Journals{$ID}{Acronym};
-  }
-  @JournalIDs = sort @JournalIDs;  #FIXME Sort by acronym
-  unshift @JournalIDs,0; $JournalLabels{0} = "----"; # Null Journal
-  my $ElementTitle = &FormElementTitle(-helplink  => "reference", 
-                                       -helptext  => "Journal References");
-  print $ElementTitle,"\n";                                     
-
-  my @ReferenceIDs = (@ReferenceDefaults,0);
-  
-  print "<table cellpadding=3>\n";
-  foreach my $ReferenceID (@ReferenceIDs) { 
-    print "<tr>\n";
-    my $JournalDefault = $RevisionReferences{$ReferenceID}{JournalID};
-    my $VolumeDefault  = $RevisionReferences{$ReferenceID}{Volume}   ;
-    my $PageDefault    = $RevisionReferences{$ReferenceID}{Page}     ;
-    print "<td><b>Journal: </b>\n";
-    print $query -> popup_menu(-name => "journal", -values => \@JournalIDs, 
-                                   -labels => \%JournalLabels,
-                                   -default => $JournalDefault);
-
-    print "<td><b>Volume:</b> \n";
-    print $query -> textfield (-name => 'volume', 
-                               -size => 8, -maxlength => 8, 
-                               -default => $VolumeDefault);
-
-    print "<td><b>Page:</b> \n";
-    print $query -> textfield (-name => 'page', 
-                               -size => 8, -maxlength => 16, 
-                               -default => $PageDefault);
-    print "</tr>\n";                           
-  }
-  print "</table>\n";
-}
 
 sub TextField (%) {  
   my (%Params) = @_;
@@ -506,12 +355,11 @@ sub TextField (%) {
   my $Default   = $Params{-default}   || "";
   my $Size      = $Params{-size}      || 40;
   my $MaxLength = $Params{-maxlength} || 240;
-  my $Disabled  = $Params{-disabled}  || 0;
+  my $Disabled  = $Params{-disabled}  || $FALSE;
     
-  my $Booleans = "";
-  
+  my %Options = ();  
   if ($Disabled) {
-    $Booleans .= "-disabled";
+    $Options{-disabled} = "disabled";
   }  
 
   my $ElementTitle = &FormElementTitle(-helplink  => $HelpLink , 
@@ -519,10 +367,11 @@ sub TextField (%) {
                                        -extratext => $ExtraText,
                                        -text      => $Text     ,
                                        -nobreak   => $NoBreak  ,
-                                       -required  => $Required );
+                                       -required  => $Required ,
+                                      );
   print $ElementTitle,"\n";                                     
   print $query -> textfield (-name => $Name, -default   => $Default, 
-                             -size => $Size, -maxlength => $MaxLength, $Booleans);
+                             -size => $Size, -maxlength => $MaxLength, %Options,);
 } 
 
 sub TextArea (%) {  

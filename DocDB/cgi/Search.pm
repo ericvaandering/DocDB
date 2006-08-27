@@ -39,6 +39,7 @@ sub LocalSearch ($) {
 
   require "AuthorSQL.pm";
   require "DocumentSQL.pm";
+  require "MeetingSQL.pm";
   require "MiscSQL.pm";
   require "RevisionSQL.pm";
   require "SecuritySQL.pm";
@@ -77,9 +78,13 @@ sub LocalSearch ($) {
      @AuthorSearchIDs     = split /\0/,$params{authors};
      @TypeSearchIDs       = split /\0/,$params{doctypemulti};
 
-     @MinorSearchIDs      = split /\0/,$params{minortopic};
-     @MajorSearchIDs      = split /\0/,$params{majortopic};
-
+  my @TopicSearchIDs      = split /\0/,$params{topics};
+  my $IncludeSubTopics    = $params{includesubtopics};
+  if ($IncludeSubTopics) {
+    $IncludeSubTopics = $TRUE;
+  }
+    
+  push @DebugStack,"Searching for topics ".join ', ',@TopicSearchIDs;
   my @EventSearchIDs      = split /\0/,$params{events};
   my @EventGroupSearchIDs = split /\0/,$params{eventgroups};
 
@@ -87,7 +92,6 @@ sub LocalSearch ($) {
 
   my $Simple     = $params{simple};
   my $SimpleText = $params{simpletext};
-
 
   GetTopics();         
   GetSecurityGroups(); 
@@ -107,8 +111,7 @@ sub LocalSearch ($) {
     @RequesterSearchIDs  = ();
     @AuthorSearchIDs     = ();
     @TypeSearchIDs       = ();
-    @MinorSearchIDs      = ();
-    @MajorSearchIDs      = ();
+    @TopicSearchIDs      = ();
     @EventSearchIDs      = ();
     @EventGroupSearchIDs = ();
 
@@ -116,15 +119,15 @@ sub LocalSearch ($) {
     foreach my $Word (@Words) {
       push @AuthorSearchIDs    ,MatchAuthor(     {-either => $Word} );
       push @TypeSearchIDs      ,MatchDocType(    {-short  => $Word} );
-      push @MinorSearchIDs     ,MatchMinorTopic( {-short  => $Word} );
-      push @MajorSearchIDs     ,MatchMajorTopic( {-short  => $Word} );
+      push @TopicSearchIDs     ,MatchTopic(      {-short  => $Word} );
       push @EventSearchIDs     ,MatchEvent(      {-short  => $Word} );
       push @EventGroupSearchIDs,MatchEventGroup( {-short  => $Word} );
     }
     @RequesterSearchIDs = @AuthorSearchIDs;
 
-    $InnerLogic  = "OR";
-    $OuterLogic  = "OR";
+    $InnerLogic        = "OR";
+    $OuterLogic        = "OR";
+    $IncludeSubTopics  = $TRUE;
 
     $TitleSearch            = $SimpleText;
     $AbstractSearch         = $SimpleText;
@@ -250,33 +253,14 @@ sub LocalSearch ($) {
 
   ### Topics (if any)
 
-  if (@MinorSearchIDs && @MajorSearchIDs && !$SimpleText) { # Remove major topic if one 
-    my %MajorSearchIDs = ();                # minor topics is selected
-    foreach $MajorSearchID (@MajorSearchIDs) {
-      $MajorSearchIDs{$MajorSearchID} = 1;
-    } 
-    foreach $MinorSearchID (@MinorSearchIDs) {
-      $MajorSearchIDs{$MinorTopics{$MinorSearchID}{MAJOR}} = 0;
-    } 
-    @MajorSearchIDs = ();
-    foreach $MajorSearchID (keys %MajorSearchIDs) {
-      if ($MajorSearchIDs{$MajorSearchID} == 1) {
-        push @MajorSearchIDs, $MajorSearchID;
-      }
-    } 
-  }
-
-  if (@MinorSearchIDs) { 
-    $SearchedMinor = 1;
-    @MinorRevisions = TopicSearch($InnerLogic,"minor",@MinorSearchIDs);
-    @MinorDocumentIDs = ValidateRevisions(@MinorRevisions);
+  if (@TopicSearchIDs) { 
+    $SearchedTopics = 1; # Add -subtopics switch
+    @TopicRevisions = TopicSearch({ -logic     => $InnerLogic, -topicids => \@TopicSearchIDs, 
+                                    -subtopics => $IncludeSubTopics,
+                                 });
+    push @DebugStack,"Found revisions ".join ', ',@TopicRevisions;
+    @TopicDocumentIDs = ValidateRevisions(@TopicRevisions);
   } 
-
-  if (@MajorSearchIDs)  {
-    $SearchedMajor = 1;
-    @MajorRevisions = TopicSearch($InnerLogic,"major",@MajorSearchIDs);
-    @MajorDocumentIDs = ValidateRevisions(@MajorRevisions);
-  }  
 
   if (@EventSearchIDs && @EventGroupSearchIDs && !$SimpleText) { # Remove group if event is selected
     require "MeetingSQL.pm";
@@ -378,8 +362,7 @@ sub LocalSearch ($) {
 
   if ($OuterLogic eq "OR") {
     push @DocumentIDs,@RevisionDocumentIDs;
-    push @DocumentIDs,@MajorDocumentIDs;
-    push @DocumentIDs,@MinorDocumentIDs;
+    push @DocumentIDs,@TopicDocumentIDs;
     push @DocumentIDs,@EventDocumentIDs;
     push @DocumentIDs,@EventGroupDocumentIDs;
     push @DocumentIDs,@AuthorDocumentIDs;
@@ -396,15 +379,9 @@ sub LocalSearch ($) {
         ++$TotalDocumentIDs{$DocID};
       }
     }    
-    if ($SearchedMinor) {
+    if ($SearchedTopics) {
       ++$TotalSearches;
-      foreach $DocID (@MinorDocumentIDs) {
-        ++$TotalDocumentIDs{$DocID};
-      }
-    } 
-    if ($SearchedMajor) {
-      ++$TotalSearches;
-      foreach $DocID (@MajorDocumentIDs) {
+      foreach $DocID (@TopicDocumentIDs) {
         ++$TotalDocumentIDs{$DocID};
       }
     } 
@@ -460,8 +437,7 @@ sub LocalSearch ($) {
 
   AddSearchWeights({
     -revisions   => \@RevisionDocumentIDs   ,
-    -topics      => \@MinorDocumentIDs      ,
-    -majortopics => \@MajorDocumentIDs      ,
+    -topics      => \@TopicDocumentIDs      ,
     -events      => \@EventDocumentIDs      ,
     -eventgroups => \@EventGroupDocumentIDs ,
     -authors     => \@AuthorDocumentIDs     ,

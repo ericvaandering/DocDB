@@ -1,4 +1,3 @@
-
 # Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
@@ -14,13 +13,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-sub HelpLink { # Change this, change FormElementTitle
-               # Eventually, replace with  FormElementTitle
-  my ($helpterm) = @_;
-  print " style=\"color: red\" href=\"Javascript:helppopupwindow(\'$DocDBHelp?term=$helpterm\');\">";
-}
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub TalkNoteLink {
   my ($SessionOrderID) = @_;
@@ -30,53 +23,6 @@ sub TalkNoteLink {
 sub GroupLimitLink {
   return "<a href=\"Javascript:grouplimitpopupwindow(\'$SelectGroups\');\">Limit Groups</a>";
 }
-
-sub TopicSearchScript {
-
-# This script produces a menu for topics and another for relevant subtopics
-# (i.e. selecting a topic reduces the set of subtopics). This code is 
-# adapted from Bugzilla, produced by mozilla.org.
-
-# There are two major changes:
-#  1. seperate labels and values
-#  2. sort by label instead of by value
-
-  print <<PREAMBLE;
-
-<script type="text/javascript">
-<!--
-
-var first_load = 1; // is this the first time we load the page?
-var last_sel = []; // caches last selection
-
-var major = new Array();
-var label = new Array();
-
-PREAMBLE
-
-  foreach $MajorID (sort byMajorTopic keys %MajorTopics) {
-    print "major[\'$MajorID\'] = [";
-    $first = 1;
-    foreach $MinorID (sort byTopic keys %MinorTopics) { #FIXME use join
-      if ($MinorTopics{$MinorID}{MAJOR} == $MajorID) {
-        unless ($first) { 
-          print ", ";
-        }
-        $first = 0;
-        print "\'$MinorID\'";
-      }
-    }
-    print "];\n";  
-  }
-
-  foreach $MinorID (sort byTopic keys %MinorTopics) { #FIXME use join
-    my $label = $MinorTopics{$MinorID}{Full};
-    $label =~ s/\'/\\\'/; # Escape single quotes
-    print "label[\'$MinorID\'] = \'$label\';\n"; 
-  }   
-
-  print "//-->\n</script>\n";
-} 
 
 sub EventSearchScript {
   
