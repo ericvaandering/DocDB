@@ -354,8 +354,8 @@ HTML
 
   <p>
   <strong>Topic Selection: </strong>
-  You can either select the subtopic(s) for your document from a number of
-  shorter lists split up by topic (the default) or from one long
+  You can either select the topics(s) for your document from a number of
+  shorter lists split up by parent topic (the default) or from one long
   list.</p> 
 
   <p>
