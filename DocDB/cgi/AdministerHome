@@ -45,11 +45,15 @@ print $query->header;
 DocDBHeader("Administrative Functions","",-scripts => ["PopUps"]);
 @ErrorStack = ();
 
+unless (CanAdminister()) {
+  push @ErrorStack,"This page is for administrators only. You are not an administrator.";
+}  
+
 my $PersonalAccountLink = PersonalAccountLink();
 
-print "<div id=\"AdministerHomeBody\">\n";
-
 EndPage(@ErrorStack);
+
+print "<div id=\"AdministerHomeBody\">\n";
 
 print "<div id=\"Header3Col\">\n";
 print "<h4>\n";
@@ -59,8 +63,9 @@ print "</div>\n";  # Header3Col
 
 print "<div id=\"LeftColumn3Col\">\n";
 print "<p><strong><a href=\"$MainPage\">Main Menu</a></strong></p>\n";
+print "<p><strong><a href=\"$ModifyHome\">Add Documents</a></strong></p>\n";
 print "<p><strong><a href=\"$DocDBInstructions\">Instructions</a></strong></p>\n";
-print "<p>Admin instructions</p>\n";
+print "<p><strong><a href=\"$DocDBInstructions?set=admin\">Administrator Instructions</strong></p>\n";
 if ($PersonalAccountLink) {
   print "<p><strong>$PersonalAccountLink</strong></p>\n";
 }  
