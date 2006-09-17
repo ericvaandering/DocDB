@@ -86,6 +86,7 @@ sub RevisionXMLOut {
   my %XMLDisplay = exists $ArgRef->{-display}  ? %{$ArgRef->{-display}} : ();
   
   require "Security.pm";
+  require "Sorts.pm";
 
   my $Version    = $DocRevisions{$DocRevID}{Version};
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID}  ;
@@ -122,7 +123,10 @@ sub RevisionXMLOut {
 
   if ($XMLDisplay{All} || $XMLDisplay{Authors}) {
     require "AuthorSQL.pm";
-    my @AuthorIDs = GetRevisionAuthors($DocRevID);
+    require "AuthorUtilities.pm";
+    my @AuthorRevIDs = GetRevisionAuthors($DocRevID);
+       @AuthorRevIDs = sort AuthorRevIDsByOrder @AuthorRevIDs;
+    my @AuthorIDs    = AuthorRevIDsToAuthorIDs({ -authorrevids => \@AuthorRevIDs, });
     foreach my $AuthorID (@AuthorIDs) {
       my $AuthorXML = AuthorXMLOut( {-authorid => $AuthorID} );
       if ($AuthorXML) {

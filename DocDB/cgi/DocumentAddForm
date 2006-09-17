@@ -81,28 +81,29 @@ if ($mode ne "add"    && $mode ne "reserve" &&
   $mode = "add";
 }  
 
-&SetUploadMethod;
-&SetDateOverride;
-&SetAuthorMode;
-&SetTopicMode;
+SetUploadMethod();
+SetDateOverride();
+SetAuthorMode();
+SetTopicMode();
 
 if ($mode eq "add" || $mode eq "reserve") {
   &SetAuthorDefault;
 }
 
 print $query->header;
+my @Scripts = ("PopUps","InsertRevisionNote","AuthorMethodDisplay");
 if      ($mode eq "add") {
-  &DocDBHeader("$Project Document Addition","Document Addition", -scripts => ["PopUps","InsertRevisionNote"]);
+  DocDBHeader("$Project Document Addition",   "Document Addition",    -scripts => \@Scripts);
 } elsif ($mode eq "reserve") {
-  &DocDBHeader("$Project Document Reservation","Document Reservation", -scripts => ["PopUps","InsertRevisionNote"]);
+  DocDBHeader("$Project Document Reservation","Document Reservation", -scripts => \@Scripts);
 } elsif ($mode eq "update" || $mode eq "updatedb") {
-  &DocDBHeader("$Project Document Update","Document Update", -scripts => ["PopUps","InsertRevisionNote"]);
+  DocDBHeader("$Project Document Update",     "Document Update",      -scripts => \@Scripts);
 }
 
 @ErrorStack = ();
 @WarnStack = ();
 
-unless (&CanCreate()) {
+unless (CanCreate()) {
   push @ErrorStack,"You are not allowed to modify or create documents.";
 }
 if ($mode eq "update" || $mode eq "updatedb") {
@@ -181,7 +182,9 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   $RevisionNoteDefault = $DocRevisions{$DocRevID}{Note};
   $DocTypeIDDefault    = $DocRevisions{$DocRevID}{DocTypeID};
   @SecurityDefaults    = GetRevisionSecurityGroups($DocRevID);
-  @AuthorDefaults      = GetRevisionAuthors($DocRevID);
+  my @AuthorRevIDs     = GetRevisionAuthors($DocRevID);
+     @AuthorRevIDs     = sort AuthorRevIDsByOrder @AuthorRevIDs;
+  my @AuthorDefaults   = AuthorRevIDsToAuthorIDs({ -authorrevids => \@AuthorRevIDs, });
   @TopicDefaults       = GetRevisionTopics({ -docrevid => $DocRevID });
   @EventDefaults       = GetRevisionEvents($DocRevID);
   @ReferenceDefaults   = FetchReferencesByRevision($DocRevID);
@@ -393,24 +396,30 @@ print "</tr>\n";
 print "<tr>\n";
 
 print "<td>\n"; 
- my @RequesterDefaults = ($RequesterDefault);
- &AuthorScroll(-required => $RequiredEntries{Requester},
-               -helplink => "requester",
-               -helptext => "Submitter",
-               -name     => "requester",
-               -default  => \@RequesterDefaults);
+AuthorScroll(-required => $RequiredEntries{Requester}, -helplink => "requester",
+             -helptext => "Submitter",                 -name     => "requester",
+             -default  => [$RequesterDefault], );
 print "</td>\n";
 
+my ($AuthorScrollDisplay,$AuthorTextDisplay);
 if ($AuthorMode eq "list") {
-  print "<td>\n"; 
-  &AuthorScroll(-required => $RequiredEntries{Author},
-                -helplink => "authors",
-                -multiple => "true",
-                -default  => \@AuthorDefaults);
-  print "</td>\n";
+   $AuthorTextDisplay   = ' style="display: none;"';
 } elsif ($AuthorMode eq "field") {
-  print "<td>\n"; &AuthorManual(-required => $RequiredEntries{Author});    print "</td>\n";
+   $AuthorScrollDisplay = ' style="display: none;"';
 }
+$ScrollExtraText = "<a href=\"Javascript:author_method_choose(\'text\');\">(Text w/ Order)</a>";
+$TextExtraText   = "<a href=\"Javascript:author_method_choose(\'scroll\');\">(Select from List)</a>";
+
+print "<td id=\"AuthorScroll\"$AuthorScrollDisplay>\n"; 
+AuthorScroll(-required  => $RequiredEntries{Author}, -helplink => "authors",
+             -default   => \@AuthorDefaults,         -multiple => "true",
+             -extratext => $ScrollExtraText,);
+print "</td>\n";
+
+print "<td id=\"AuthorText\"$AuthorTextDisplay>\n"; 
+AuthorTextEntry({ -required => $RequiredEntries{Author}, -extratext => $TextExtraText, 
+                  -default  => \@AuthorDefaults, });
+print "</td>\n";
 
 print "<td>\n"; 
 my $SecurityText;

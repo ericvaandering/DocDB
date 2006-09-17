@@ -325,23 +325,6 @@ sub AddFilesButton {
   print "\n";
 }
 
-sub AuthorManual (%) { # FIXME: Special case of AuthorTextEntry
-  my (%Params) = @_;
-  
-  my $Required  =   $Params{-required}  || 0;
-
-  $AuthorManDefault = "";
-
-  foreach $AuthorID (@AuthorDefaults) {
-    $AuthorManDefault .= "$Authors{$AuthorID}{FULLNAME}\n" ;
-  }
-    
-  print FormElementTitle(-helplink => "authormanual", -helptext => "Authors", -required => $Required);
-  print $query -> textarea (-name    => 'authormanual', 
-                            -default => $AuthorManDefault,
-                            -columns => 20, -rows    => 8);
-};
-
 sub TextField (%) {  
   my (%Params) = @_;
   

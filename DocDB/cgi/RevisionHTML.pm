@@ -120,16 +120,16 @@ sub PrintRevisionInfo {
   my $HideButtons  = $Params{-hidebuttons}  || 0;
   my $HideVersions = $Params{-hideversions} || 0;
   
-  &FetchDocRevisionByID($DocRevID);
+  FetchDocRevisionByID($DocRevID);
   
-  my $DocumentID  = $DocRevisions{$DocRevID}{DOCID};
-  my $Version     = $DocRevisions{$DocRevID}{VERSION};
-  my @AuthorIDs   = GetRevisionAuthors($DocRevID);
-  my @TopicIDs    = GetRevisionTopics( {-docrevid => $DocRevID} );
-  my @GroupIDs    = GetRevisionSecurityGroups($DocRevID);
+  my $DocumentID   = $DocRevisions{$DocRevID}{DOCID};
+  my $Version      = $DocRevisions{$DocRevID}{VERSION};
+  my @RevAuthorIDs = GetRevisionAuthors($DocRevID);
+  my @TopicIDs     = GetRevisionTopics( {-docrevid => $DocRevID} );
+  my @GroupIDs     = GetRevisionSecurityGroups($DocRevID);
   my @ModifyIDs;
   if ($EnhancedSecurity) {
-    @ModifyIDs   = &GetRevisionModifyGroups($DocRevID);
+    @ModifyIDs     = GetRevisionModifyGroups($DocRevID);
   }
   
   print "<div id=\"RevisionInfo\">\n";
@@ -199,7 +199,7 @@ sub PrintRevisionInfo {
   PrintAbstract($DocRevisions{$DocRevID}{Abstract}); # All are called only here, so changes are OK
   FileListByRevID($DocRevID); # All are called only here, so changes are OK
   TopicListByID( {-topicids => \@TopicIDs, -listelement => "long"} );
-  AuthorListByID(@AuthorIDs);
+  AuthorListByAuthorRevID({ -authorrevids => \@AuthorRevIDs });
   PrintKeywords($DocRevisions{$DocRevID}{Keywords});
   PrintRevisionNote($DocRevisions{$DocRevID}{Note});
   PrintXRefInfo($DocRevID);
