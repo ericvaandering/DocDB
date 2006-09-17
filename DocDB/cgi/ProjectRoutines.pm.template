@@ -115,7 +115,7 @@ sub DocDBNavBar {
   } 
   print "[&nbsp;<a href=\"$MainPage\">DocDB&nbsp;Home</a>&nbsp;]&nbsp;\n";
   if (&CanAdminister()) {
-    print "[&nbsp;<a href=\"AdministerHome\">Administer</a>&nbsp;]&nbsp;\n";
+    print "[&nbsp;<a href=\"$AdministerHome\">Administer</a>&nbsp;]&nbsp;\n";
   }
   if (&CanCreate()) {
     print "[&nbsp;<a href=\"$DocumentAddForm?mode=add\">New</a>&nbsp;]&nbsp;\n";
@@ -127,7 +127,6 @@ sub DocDBNavBar {
   print "[&nbsp;<a href=\"$ListAllMeetings\">List&nbsp;Events</a>&nbsp;]\n";
   unless ($Public) {
     print "[&nbsp;<a href=\"$DocDBInstructions\">Help</a>&nbsp;]\n";
-#    print "[&nbsp;<a href=\"logout/LogOut\">Log Out</a>&nbsp;]\n";
   } 
   print "</div>\n";
 }
