@@ -280,4 +280,17 @@ sub CookieToFieldList {
   return %FieldList;
 }
   
+sub RevisionToDocumentIDs {
+  my ($ArgRef) = @_;
+  my @RevisionIDs = exists $ArgRef->{-revisionids} ? @{$ArgRef->{-revisionids}} : ();
+
+  foreach my $DocRevID (@RevisionIDs) {
+    if ($DocRevisions{$DocRevID}{DOCID}) {
+      $DocIDs{$DocRevisions{$DocRevID}{DOCID}} = 1;
+    }  
+  }
+  my @DocumentIDs = keys %DocIDs;
+  return @DocumentIDs;
+}  
+  
 1;

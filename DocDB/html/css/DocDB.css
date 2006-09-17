@@ -173,6 +173,11 @@ li.Even, tr.Even, tbody.Even {
   background: white;
 }
 
+tr.Unconfirmed, tbody.Unconfirmed {
+  font-weight: italic;
+  color: green;
+}
+
 /* DocumentList tables show up in lots of places, hence here */
 
 #TalkList,.DocumentList {

@@ -70,8 +70,11 @@ my @Cookies = ();
 
 $query -> delete_all();
 
-CreateConnection(-type => "rw");
-
+if ($Public) {
+  CreateConnection(-type => "rw");
+} else {
+  CreateConnection(-type => "ro");
+}
 EndPage(-startpage => $TRUE);
 
 GetConferences();

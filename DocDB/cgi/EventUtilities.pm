@@ -55,4 +55,27 @@ sub SessionEndTime ($) { # Can eventually use EndTime? no need to order these
   return $AccumulatedTime;
 }
 
+sub EventAgendaDocIDs {
+  my ($ArgRef) = @_;
+  my $EventID = exists $ArgRef->{-eventid} ? $ArgRef->{-eventid} : 0;
+
+  my %AgendaDocIDs = ();
+  
+  # Flag documents which are associated with a session
+  my @MeetingOrderIDs = FetchMeetingOrdersByConferenceID($EventID);
+  foreach my $MeetingOrderID (@MeetingOrderIDs) {
+    my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
+    if ($SessionID) {
+      my @SessionTalkIDs = FetchSessionTalksBySessionID($SessionID);
+      foreach my $SessionTalkID (@SessionTalkIDs) {
+        if ($SessionTalks{$SessionTalkID}{DocumentID}) {
+          $AgendaDocIDs{$SessionTalks{$SessionTalkID}{DocumentID}} = 1;
+        }
+      } 
+    }
+  }   
+  my @AgendaDocIDs = keys %AgendaDocIDs;
+  return @AgendaDocIDs;
+}
+
 1;

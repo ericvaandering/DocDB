@@ -124,6 +124,7 @@ sub DocumentTable (%) {
 
   my $NumberOfDocuments = 0;
   my $RowClass;
+  my $Unconfirmed = $FALSE;
   foreach my $ID (@IDs) {
     my $DocumentID      = 0;
     my $SessionOrderID  = 0;
@@ -139,13 +140,16 @@ sub DocumentTable (%) {
       if ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
         $SessionTalkID = $SessionOrders{$SessionOrderID}{SessionTalkID};
         $DocumentID    = $SessionTalks{$SessionTalkID}{DocumentID};
-      }  
+        unless ($SessionTalks{$SessionTalkID}{Confirmed}) {
+          $Unconfirmed = $TRUE;
+        }  
+      }
     }  
     
 ### Which version (if any) can they view (Move into document mode section?)
-    my $Version = &LastAccess($DocumentID);
+    my $Version  = LastAccess($DocumentID);
     if ($Version == -1 && $Mode eq "Document") {next;}
-    my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+    my $DocRevID = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
     ++$NumberOfDocuments;
 
     if ($MaxDocs && $NumberOfDocuments > $MaxDocs) {
@@ -158,6 +162,9 @@ sub DocumentTable (%) {
     } else {
       $RowClass = "Even";
     }    
+    if ($Unconfirmed) {
+      $RowClass .= " Unconfirmed";
+    }  
     print "<tbody class=\"$RowClass\"><tr>\n";
     my $LastRow = 1;
     foreach my $Field (@Fields) {
