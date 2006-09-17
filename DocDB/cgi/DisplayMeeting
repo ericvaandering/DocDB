@@ -46,6 +46,7 @@ require "RevisionSQL.pm";
 
 require "TalkHintUtilities.pm";
 require "DocumentUtilities.pm";
+require "EventUtilities.pm";
 require "Utilities.pm";
 
 $query = new CGI;  # Global for subroutines

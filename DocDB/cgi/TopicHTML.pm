@@ -172,7 +172,7 @@ sub TopicListWithChildren { # Recursive routine
         $HTML .= "\n";
         $HTML .= TopicListWithChildren({ -topicids => $TopicChildren{$TopicID}, -depth => $Depth+1 });
       } elsif ($Depth == 1) {
-        $HTML .= "<br/>";
+        $HTML .= '<br class="EmptyTopic" />';
       }  
       if ($Depth > 1) {
         $HTML .= "</li>\n";

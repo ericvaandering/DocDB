@@ -59,6 +59,8 @@ sub EventAgendaDocIDs {
   my ($ArgRef) = @_;
   my $EventID = exists $ArgRef->{-eventid} ? $ArgRef->{-eventid} : 0;
 
+  require "TalkSQL.pm";	
+
   my %AgendaDocIDs = ();
   
   # Flag documents which are associated with a session
