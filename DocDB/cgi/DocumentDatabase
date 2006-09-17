@@ -112,11 +112,11 @@ print "</div>\n";  # LeftColumn3Col
 
 print "<div id=\"MainColumn3Col\">\n";
 
-if (CanCreate()) {
-  print "<div class=\"HomepageMainChoice\"><strong><a href=\"$ModifyHome\">Create or change documents or other information</a></strong></div>\n";
-}
 if (CanAdminister()) {
   print "<div class=\"HomepageMainChoice\"><strong><a href=\"$AdministerHome\">Administer DocDB</a></strong></div>\n";
+}
+if (CanCreate()) {
+  print "<div class=\"HomepageMainChoice\"><strong><a href=\"$ModifyHome\">Create or change documents or other information</a></strong></div>\n";
 }
 
 my @ExternalDocDBIDs = GetAllExternalDocDBs();
