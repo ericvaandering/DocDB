@@ -174,8 +174,7 @@ li.Even, tr.Even, tbody.Even {
 }
 
 tr.Unconfirmed, tbody.Unconfirmed {
-  font-weight: italic;
-  color: green;
+  font-style: italic;
 }
 
 /* DocumentList tables show up in lots of places, hence here */
