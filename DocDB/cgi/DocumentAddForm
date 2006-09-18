@@ -263,7 +263,7 @@ if ($mode eq "add" && ($SessionID||$ConferenceID)) {
 
 &SetFileOptions($DocRevID);
 
-print $query -> start_multipart_form('POST',$ProcessDocumentAdd);
+print $query -> start_multipart_form('POST',$ProcessDocumentAdd,'id="documentadd" name="documentadd"');
 print "<div>\n";
 print $query -> hidden(-name => 'mode',      -default => $mode);
 print $query -> hidden(-name => 'upload',    -default => 'file');
