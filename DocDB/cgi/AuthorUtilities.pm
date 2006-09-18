@@ -45,8 +45,12 @@ sub FirstAuthorID ($) {
     $DocRevID = $DocRevIDs{$DocumentID}{$Documents{$DocumentID}{NVersions}};
   }
   my @AuthorRevIDs = GetRevisionAuthors($DocRevID);
+  
+  push @DebugStack,"ARI: ".join ', ',@AuthorRevIDs;
      @AuthorRevIDs = sort AuthorRevIDsByOrder @AuthorRevIDs;
+  push @DebugStack,"SARI: ".join ', ',@AuthorRevIDs;
   my @AuthorIDs    = AuthorRevIDsToAuthorIDs({ -authorrevids => \@AuthorRevIDs, });
+  push @DebugStack,"SAI: ".join ', ',@AuthorIDs;
 
   unless (@AuthorIDs) {return undef;}
   

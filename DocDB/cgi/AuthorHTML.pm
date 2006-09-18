@@ -33,6 +33,8 @@ sub FirstAuthor ($;$) {
   FetchDocRevisionByID($DocRevID);
 
   my $FirstID = FirstAuthorID( {-docrevid => $DocRevID} );
+  
+  push @DebugStack,"DRI: $DocRevID FAI: $FirstID ";
   unless ($FirstID) {return "None";}
 
   my $AuthorLink = AuthorLink($FirstID);
