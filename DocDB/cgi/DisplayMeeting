@@ -220,8 +220,7 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { # Display a 
 
 # Display talks not associated with sessions  
 
-if ($DisplayMode eq "Session" || $DisplayMode eq "Event" || 
-    $DisplayMode eq "SingleSession") {  
+if ($DisplayMode eq "Event" || $DisplayMode eq "SingleSession") {  
   if (@UnusedDocIDs) {
     print "<h4>Other documents for this event</h4>\n";
     my %FieldList = PrepareFieldList(-default => "Default");
