@@ -169,6 +169,7 @@ my $SignoffsDefault; # FIXME: What other ones needn't be global?
 my @SecurityDefaults = ();
 my @ModifyDefaults   = ();
 my @EventDefaults    = ();
+my @AuthorDefaults   = ();
 my $RevisionNoteDefault; 
 my $XRefDefault;
 my $DocTypeIDDefault;
@@ -185,8 +186,7 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   @SecurityDefaults    = GetRevisionSecurityGroups($DocRevID);
   my @AuthorRevIDs     = GetRevisionAuthors($DocRevID);
      @AuthorRevIDs     = sort AuthorRevIDsByOrder @AuthorRevIDs;
-  my @AuthorDefaults   = AuthorRevIDsToAuthorIDs({ -authorrevids => \@AuthorRevIDs, });
-  push @DebugStack,"AD: ".join ', ',@AuthorDefaults;
+  @AuthorDefaults   = AuthorRevIDsToAuthorIDs({ -authorrevids => \@AuthorRevIDs, });
   @TopicDefaults       = GetRevisionTopics({ -docrevid => $DocRevID });
   @EventDefaults       = GetRevisionEvents($DocRevID);
   @ReferenceDefaults   = FetchReferencesByRevision($DocRevID);
@@ -394,6 +394,7 @@ if ($Overdate eq "Yes") {
 print "</tr>\n";
 
 ### Requester, Authors, and security 
+  push @DebugStack,"AD: ".join ', ',@AuthorDefaults;
 
 print "<tr>\n";
 
