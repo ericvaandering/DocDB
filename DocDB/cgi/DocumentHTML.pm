@@ -140,7 +140,7 @@ sub DocumentTable (%) {
       if ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
         $SessionTalkID = $SessionOrders{$SessionOrderID}{SessionTalkID};
         $DocumentID    = $SessionTalks{$SessionTalkID}{DocumentID};
-        unless ($DocumentID && $SessionTalks{$SessionTalkID}{Confirmed}) {
+        if ($DocumentID && !$SessionTalks{$SessionTalkID}{Confirmed}) {
           $Unconfirmed = $TRUE;
         }  
       }
