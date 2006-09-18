@@ -29,6 +29,7 @@ sub AuthorRevIDsToAuthorIDs {
   my @AuthorIDs = ();
   
   foreach my $AuthorRevID (@AuthorRevIDs) {
+    push @DebugStack,"Converting ARI $AuthorRevID to $AuthorRevIDs{$AuthorRevID}{AuthorID}";
     push @AuthorIDs,$AuthorRevIDs{$AuthorRevID}{AuthorID};
   }
   return @AuthorIDs;
