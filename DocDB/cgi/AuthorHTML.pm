@@ -33,11 +33,11 @@ sub FirstAuthor ($;$) {
   FetchDocRevisionByID($DocRevID);
 
   my $FirstID = FirstAuthorID( {-docrevid => $DocRevID} );
-  
   unless ($FirstID) {return "None";}
+  my @AuthorRevIDs = GetRevisionAuthors($DocRevID);
 
   my $AuthorLink = AuthorLink($FirstID);
-  if ($#AuthorIDs) {$AuthorLink .= " <i>et. al.</i>";}
+  if ($#AuthorRevIDs) {$AuthorLink .= " <i>et. al.</i>";}
   if ($Institution) {
     FetchInstitution($Authors{$FirstID}{InstitutionID});
     $AuthorLink .= "<br/><em>".
