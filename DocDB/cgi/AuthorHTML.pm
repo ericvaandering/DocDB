@@ -262,8 +262,6 @@ sub AuthorScroll (%) {
   my $Disabled  =   $Params{-disabled}  || "";
   my @Defaults  = @{$Params{-default}};
 
-  push @DebugStack,"ASD: ".join ', ',@Defaults;
-
   unless (keys %Author) {
     GetAuthors();
   }

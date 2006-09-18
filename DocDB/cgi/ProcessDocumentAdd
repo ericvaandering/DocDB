@@ -82,7 +82,6 @@ my $Title         = $params{title};
 my $Abstract      = $params{abstract};
 my $PubInfo       = $params{pubinfo};
 my $AuthorMode    = $params{authormode};
-push @DebugStack,"AM: $AuthorMode";
    $Overdate      = $params{overdate};
    $Overday       = $params{overday};
    $Overmonth     = $params{overmonth};

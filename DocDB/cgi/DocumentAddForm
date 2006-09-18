@@ -73,10 +73,6 @@ my $Version      = $params{version};
 my @PreTopics    = $query -> param('pretopic');
    $mode         = $params{mode}; # FIXME: Can't be my since used in subroutines
 
-my @TopicDefaults = ();
- 
-push @TopicDefaults,@PreTopics; 
-
 if ($mode ne "add"    && $mode ne "reserve" && 
     $mode ne "update" && $mode ne "updatedb") {
   $mode = "add";
@@ -86,10 +82,6 @@ SetUploadMethod();
 SetDateOverride();
 SetAuthorMode();
 SetTopicMode();
-
-if ($mode eq "add" || $mode eq "reserve") {
-  &SetAuthorDefault;
-}
 
 print $query->header;
 my @Scripts = ("PopUps","InsertRevisionNote","AuthorMethodDisplay");
@@ -165,15 +157,15 @@ if ($mode eq "update") {
   $Version = $Documents{$DocumentID}{NVersions};
 }
 
-my $SignoffsDefault; # FIXME: What other ones needn't be global?
-my @SecurityDefaults = ();
-my @ModifyDefaults   = ();
-my @EventDefaults    = ();
+# FIXME: What other ones needn't be global?
 my @AuthorDefaults   = ();
-my $AuthorListOrdered;
-my $RevisionNoteDefault; 
-my $XRefDefault;
-my $DocTypeIDDefault;
+my @EventDefaults    = ();
+my @ModifyDefaults   = ();
+my @SecurityDefaults = ();
+my @TopicDefaults    = ();
+my ($AuthorListOrdered);
+my ($DocTypeIDDefault,$RequesterDefault,$RevisionNoteDefault,$SignoffsDefault,
+    $XRefDefault);
  
 if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
   $DocRevID            = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
@@ -198,12 +190,21 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
     $SignoffDefault     = BuildSignoffDefault($DocRevID);
   }
 } else {
+  if ($UserPreferences{AuthorID}) {
+    @AuthorDefaults   = ($UserPreferences{AuthorID});
+    $RequesterDefault =  $UserPreferences{AuthorID};
+  } 
+ 
+  push @TopicDefaults,@PreTopics; 
+
   if ($DefaultPublicAccess) {
     @SecurityDefaults = (0);
   } else {
     @SecurityDefaults = FindUsersGroups(); 
   }
 }  
+
+@TopicDefaults = Unique(@TopicDefaults); # Make sure this list is unique
 
 if ($EnhancedSecurity) {
   @ModifyDefaults  = &GetRevisionModifyGroups($DocRevID);
@@ -256,8 +257,6 @@ if ($mode eq "add" && ($SessionID||$ConferenceID)) {
     } 
   }
 }
-
-@TopicDefaults = &Unique(@TopicDefaults) ; # Make sure this list is unique
 
 &EndPage(@ErrorStack); # The user may have made mistakes, warn and exit
 
