@@ -1,7 +1,3 @@
-* Make sure setting the default author (not mode) works
-* Switch into text mode if there is an order on update
-* Use hidden variable to tell it which mode to use, set with JS
-
 Database structures allow for a number of things that aren't currently supported
 by the code:
 
