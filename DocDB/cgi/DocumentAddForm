@@ -394,7 +394,6 @@ if ($Overdate eq "Yes") {
 print "</tr>\n";
 
 ### Requester, Authors, and security 
-  push @DebugStack,"AD: ".join ', ',@AuthorDefaults;
 
 print "<tr>\n";
 

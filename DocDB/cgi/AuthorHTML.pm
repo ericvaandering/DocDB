@@ -316,7 +316,7 @@ sub AuthorTextEntry ($;@) {
   print FormElementTitle(-helplink => $HelpLink, -helptext  => $HelpText, 
                          -required => $Required, -extratext => $ExtraText, );
   print $query -> textarea (-name    => $Name, -default => $AuthorManDefault,
-                            -columns => 20,    -rows    => 8);
+                            -columns => 30,    -rows    => 8);
 };
 
 sub InstitutionEntryBox (;%) {
