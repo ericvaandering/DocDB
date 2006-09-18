@@ -516,9 +516,11 @@ sub PrintEventLeftSidebar ($) {
   }
    
   print "<p><a href=\"$ListBy?eventid=$EventID\">Simple document list</a>";
-  if ($NExtraDocs) {
+  if ($NExtraDocs == 1) {
+    print "<br/>($NExtraDocs extra document)\n";
+  } elsif ($NExtraDocs > 1) {
     print "<br/>($NExtraDocs extra documents)\n";
-  }  
+  } 
   print "</p>\n";
   print "</div>\n"; # UpdateButtons
 }
