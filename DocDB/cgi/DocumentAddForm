@@ -186,7 +186,7 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   my @AuthorRevIDs     = GetRevisionAuthors($DocRevID);
      @AuthorRevIDs     = sort AuthorRevIDsByOrder @AuthorRevIDs;
   my @AuthorDefaults   = AuthorRevIDsToAuthorIDs({ -authorrevids => \@AuthorRevIDs, });
-  push @DebugStack,"AD: ",join ', ',@AuthorDefaults;
+  push @DebugStack,"AD: ".join ', ',@AuthorDefaults;
   @TopicDefaults       = GetRevisionTopics({ -docrevid => $DocRevID });
   @EventDefaults       = GetRevisionEvents($DocRevID);
   @ReferenceDefaults   = FetchReferencesByRevision($DocRevID);
