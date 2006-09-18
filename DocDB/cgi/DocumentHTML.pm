@@ -124,12 +124,12 @@ sub DocumentTable (%) {
 
   my $NumberOfDocuments = 0;
   my $RowClass;
-  my $Unconfirmed = $FALSE;
   foreach my $ID (@IDs) {
     my $DocumentID      = 0;
     my $SessionOrderID  = 0;
     my $SessionTalkID   = 0;
     my $TalkSeparatorID = 0;
+    my $Unconfirmed = $FALSE;
     if ($Mode eq "Document") {
       $DocumentID = $ID;
     } elsif ($Mode eq "SessionOrder") {
@@ -140,7 +140,7 @@ sub DocumentTable (%) {
       if ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
         $SessionTalkID = $SessionOrders{$SessionOrderID}{SessionTalkID};
         $DocumentID    = $SessionTalks{$SessionTalkID}{DocumentID};
-        unless ($SessionTalks{$SessionTalkID}{Confirmed}) {
+        unless ($DocumentID && $SessionTalks{$SessionTalkID}{Confirmed}) {
           $Unconfirmed = $TRUE;
         }  
       }
