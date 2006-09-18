@@ -209,7 +209,7 @@ sub PrintRevisionInfo {
   
   if ($UseSignoffs) {
     require "SignoffHTML.pm";
-    &PrintRevisionSignoffInfo($DocRevID);
+    PrintRevisionSignoffInfo($DocRevID);
   }  
 
   print "</div>\n";  # MainColumn3Col

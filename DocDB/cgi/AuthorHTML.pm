@@ -57,8 +57,6 @@ sub AuthorListByAuthorRevID {
   require "Sorts.pm";
   
   @AuthorRevIDs = sort AuthorRevIDsByOrder @AuthorRevIDs;
-  push @DebugStack,"AL ARI: ".join ', ',@AuthorRevIDs;
-  
   my @AuthorIDs = AuthorRevIDsToAuthorIDs({ -authorrevids => \@AuthorRevIDs, });
   
   if ($Format eq "long") {

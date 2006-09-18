@@ -44,6 +44,7 @@ require "Utilities.pm";
 require "Defaults.pm";
 require "Security.pm";
 require "XRefUtilities.pm";
+require "AuthorUtilities.pm";
 
 require "FileHTML.pm";
 require "JournalHTML.pm";

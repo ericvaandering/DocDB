@@ -89,7 +89,6 @@ sub GetRevisionAuthors {
   while ($AuthorList -> fetch) {
     $RevisionAuthors{$RevAuthorID}{AuthorID}    = $AuthorID;
     $RevisionAuthors{$RevAuthorID}{AuthorOrder} = $AuthorOrder;    
-    push @DebugStack,"AuthorID for $RevAuthorID is $AuthorID";
     push @RevAuthorIDs,$RevAuthorID;
   }
   return @RevAuthorIDs;  
