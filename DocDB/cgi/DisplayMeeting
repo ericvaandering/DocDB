@@ -46,6 +46,8 @@ require "RevisionSQL.pm";
 
 require "TalkHintUtilities.pm";
 require "DocumentUtilities.pm";
+require "EventUtilities.pm";
+require "Utilities.pm";
 
 $query = new CGI;  # Global for subroutines
 
@@ -124,6 +126,13 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") {
   FetchSessionByID($SessionID);
 } 
 
+### Get list of docs that are not on agenda
+
+my @AgendaDocIDs   = EventAgendaDocIDs({-eventid => $EventID});
+my @AllRevisionIDs = FetchRevisionsByEventID($EventID);
+my @AllDocIDs      = RevisionToDocumentIDs({-revisionids => \@AllRevisionIDs});
+my @UnusedDocIDs   = RemoveArray(\@AllDocIDs,@AgendaDocIDs);
+
 print "<div id=\"EventInfo\">\n";
   
 ### Header info
@@ -134,7 +143,10 @@ print "<div id=\"EventInfo\">\n";
 ### Left Column
 
 print "<div id=\"LeftColumn3Col\">\n";
-PrintEventLeftSidebar( {-sessionid => $SessionID, -eventid => $EventID, -separatorid => $SessionSeparatorID, -displaymode => $DisplayMode} );
+PrintEventLeftSidebar({ -sessionid   => $SessionID,          -eventid => $EventID, 
+                        -separatorid => $SessionSeparatorID, -displaymode => $DisplayMode,
+                        -nextradocs  => scalar(@UnusedDocIDs), 
+                     });
 print "</div>\n";  # LeftColumn3Col
 
 ### Main Column
@@ -160,7 +172,7 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { # Display a 
   PrintSession(-sessionid => $SessionID, -skipheader => $TRUE); 
 #  PrintMeetingEpilogue($EventID);
 } elsif ($DisplayMode eq "Event") { # Display meeting info or meeting with all talks
-  my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($EventID);
+  my @MeetingOrderIDs = FetchMeetingOrdersByConferenceID($EventID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
 
   if ($Conferences{$EventID}{ShowAllTalks}) { # Display all talks, sessions
@@ -206,41 +218,9 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { # Display a 
   PrintMeetingEpilogue($EventID);
 }
 
-if ($DisplayMode eq "Session" || $DisplayMode eq "Event") { # Display talks not associated with sessions  
-  require "Utilities.pm";
-  my %AgendaDocIDs = ();
-  my %AllDocIDs    = ();
-  
-  # Flag documents which are associated with a session
-  my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($EventID);
-  foreach $MeetingOrderID (@MeetingOrderIDs) {
-    my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
-    if ($SessionID) {
-      my @SessionTalkIDs = &FetchSessionTalksBySessionID($SessionID);
-      foreach my $SessionTalkID (@SessionTalkIDs) {
-        if ($SessionTalks{$SessionTalkID}{DocumentID}) {
-          $AgendaDocIDs{$SessionTalks{$SessionTalkID}{DocumentID}} = 1;
-        }
-      } 
-    }
-  }   
+# Display talks not associated with sessions  
 
-  # Get documents associated with event
-
-  my @AllRevisionIDs = &FetchRevisionsByEventID($EventID);
-  foreach my $DocRevID (@AllRevisionIDs) {
-    if ($DocRevisions{$DocRevID}{DOCID}) {
-      $AllDocIDs{$DocRevisions{$DocRevID}{DOCID}} = 1;
-    }  
-  }
-
-  my @AgendaDocIDs = keys %AgendaDocIDs;
-  my @AllDocIDs    = keys %AllDocIDs;
-
-  # Find which ones aren't
-  my @UnusedDocIDs = &RemoveArray(\@AllDocIDs,@AgendaDocIDs);
-  
-  # Print out info for unused documents
+if ($DisplayMode eq "Event" || $DisplayMode eq "SingleSession") {  
   if (@UnusedDocIDs) {
     print "<h4>Other documents for this event</h4>\n";
     my %FieldList = PrepareFieldList(-default => "Default");

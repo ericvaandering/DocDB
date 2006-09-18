@@ -171,7 +171,9 @@ sub TopicListWithChildren { # Recursive routine
       if (@{$TopicChildren{$TopicID}}) {
         $HTML .= "\n";
         $HTML .= TopicListWithChildren({ -topicids => $TopicChildren{$TopicID}, -depth => $Depth+1 });
-      }
+      } elsif ($Depth == 1) {
+        $HTML .= '<br class="EmptyTopic" />';
+      }  
       if ($Depth > 1) {
         $HTML .= "</li>\n";
       }  
@@ -180,6 +182,7 @@ sub TopicListWithChildren { # Recursive routine
       $HTML .= "</ul>\n";
     }  
   }    
+  
   return $HTML;
 }
 
