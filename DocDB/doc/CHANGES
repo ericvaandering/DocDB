@@ -5,10 +5,9 @@
   Restore document table for orphaned event documents for single session events
   Add # of documents orphaned to "Simple List" text
   
-  Unconfirmed session talks get italics again (try also with only matched
-  unconfirmed)
+  Matched but unconfirmed session talks get italics again 
   
-  Fix display of root level topics with no sub-topics
+  Fixed display of root level topics with no sub-topics
   
 8.0.0
 
