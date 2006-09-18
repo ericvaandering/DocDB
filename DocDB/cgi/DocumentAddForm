@@ -170,6 +170,7 @@ my @SecurityDefaults = ();
 my @ModifyDefaults   = ();
 my @EventDefaults    = ();
 my @AuthorDefaults   = ();
+my $AuthorListOrdered;
 my $RevisionNoteDefault; 
 my $XRefDefault;
 my $DocTypeIDDefault;
@@ -186,7 +187,8 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   @SecurityDefaults    = GetRevisionSecurityGroups($DocRevID);
   my @AuthorRevIDs     = GetRevisionAuthors($DocRevID);
      @AuthorRevIDs     = sort AuthorRevIDsByOrder @AuthorRevIDs;
-  @AuthorDefaults   = AuthorRevIDsToAuthorIDs({ -authorrevids => \@AuthorRevIDs, });
+  $AuthorListOrdered   = IsAuthorListOrdered({     -authorrevids => \@AuthorRevIDs, });
+  @AuthorDefaults      = AuthorRevIDsToAuthorIDs({ -authorrevids => \@AuthorRevIDs, });
   @TopicDefaults       = GetRevisionTopics({ -docrevid => $DocRevID });
   @EventDefaults       = GetRevisionEvents($DocRevID);
   @ReferenceDefaults   = FetchReferencesByRevision($DocRevID);
@@ -404,6 +406,9 @@ AuthorScroll(-required => $RequiredEntries{Requester}, -helplink => "requester",
 print "</td>\n";
 
 my ($AuthorScrollDisplay,$AuthorTextDisplay);
+if ($AuthorListOrdered) {
+  $AuthorMode = "field";
+}  
 if ($AuthorMode eq "list") {
    $AuthorTextDisplay   = ' style="display: none;"';
 } elsif ($AuthorMode eq "field") {
@@ -413,6 +418,7 @@ $ScrollExtraText = "<a href=\"Javascript:author_method_choose(\'text\');\">(Text
 $TextExtraText   = "<a href=\"Javascript:author_method_choose(\'scroll\');\">(Select from list)</a>";
 
 print "<td id=\"AuthorScroll\"$AuthorScrollDisplay>\n"; 
+print $query -> hidden(-name => 'authormode', -default => $AuthorMode);
 AuthorScroll(-required  => $RequiredEntries{Author}, -helplink => "authors",
              -default   => \@AuthorDefaults,         -multiple => "true",
              -extratext => $ScrollExtraText,);

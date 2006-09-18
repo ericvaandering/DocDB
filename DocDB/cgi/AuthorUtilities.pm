@@ -3,7 +3,6 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
-#
 
 # Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -34,6 +33,20 @@ sub AuthorRevIDsToAuthorIDs {
   return @AuthorIDs;
 }
 
+sub IsAuthorListOrdered {
+  my ($ArgRef) = @_;
+  my @AuthorRevIDs = exists $ArgRef->{-authorrevids} ? @{$ArgRef->{-authorrevids}} : ();
+  
+  my $Ordered = $FALSE;
+  
+  foreach my $AuthorRevID (@AuthorRevIDs) {
+    if ($RevisionAuthors{$AuthorRevID}{AuthorID}) {
+      $Ordered = $TRUE;
+    }
+  }
+  return $Ordered;
+}
+
 sub FirstAuthorID ($) {
   my ($ArgRef) = @_;
   
@@ -54,6 +67,5 @@ sub FirstAuthorID ($) {
 
   return $FirstID;
 }  
-
 
 1;

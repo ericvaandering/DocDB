@@ -81,6 +81,7 @@ my $DocTypeID     = $params{doctype};
 my $Title         = $params{title};
 my $Abstract      = $params{abstract};
 my $PubInfo       = $params{pubinfo};
+my $AuthorMode    = $params{authormode};
    $Overdate      = $params{overdate};
    $Overday       = $params{overday};
    $Overmonth     = $params{overmonth};
@@ -148,7 +149,7 @@ if ($Archive eq "archive") { # They uploaded a tar/zip file
 }
 
 my $OrderAuthors = $FALSE;
-if ($params{authormanual}) {
+if ($AuthorMode eq "field") {
   $OrderAuthors = $TRUE;
   @authorIDs = ProcessManualAuthors($params{authormanual});
 } else {
