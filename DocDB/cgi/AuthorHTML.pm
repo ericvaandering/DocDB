@@ -34,7 +34,6 @@ sub FirstAuthor ($;$) {
 
   my $FirstID = FirstAuthorID( {-docrevid => $DocRevID} );
   
-  push @DebugStack,"DRI: $DocRevID FAI: $FirstID ";
   unless ($FirstID) {return "None";}
 
   my $AuthorLink = AuthorLink($FirstID);
@@ -58,6 +57,7 @@ sub AuthorListByAuthorRevID {
   require "Sorts.pm";
   
   @AuthorRevIDs = sort AuthorRevIDsByOrder @AuthorRevIDs;
+  push @DebugStack,"AL ARI: ".join ', ',@AuthorRevIDs;
   
   my @AuthorIDs = AuthorRevIDsToAuthorIDs({ -authorrevids => \@AuthorRevIDs, });
   

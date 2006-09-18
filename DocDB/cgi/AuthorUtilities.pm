@@ -29,7 +29,6 @@ sub AuthorRevIDsToAuthorIDs {
   my @AuthorIDs = ();
   
   foreach my $AuthorRevID (@AuthorRevIDs) {
-    push @DebugStack,"Converting ARI $AuthorRevID to $RevisionAuthors{$AuthorRevID}{AuthorID}";
     push @AuthorIDs,$RevisionAuthors{$AuthorRevID}{AuthorID};
   }
   return @AuthorIDs;
@@ -49,9 +48,8 @@ sub FirstAuthorID ($) {
   
   push @DebugStack,"ARI: ".join ', ',@AuthorRevIDs;
      @AuthorRevIDs = sort AuthorRevIDsByOrder @AuthorRevIDs;
-  push @DebugStack,"SARI: ".join ', ',@AuthorRevIDs;
   my @AuthorIDs    = AuthorRevIDsToAuthorIDs({ -authorrevids => \@AuthorRevIDs, });
-  push @DebugStack,"SAI: ".join ', ',@AuthorIDs;
+  push @DebugStack,"AI: ".join ', ',@AuthorIDs;
 
   unless (@AuthorIDs) {return undef;}
   
