@@ -409,8 +409,8 @@ if ($AuthorMode eq "list") {
 } elsif ($AuthorMode eq "field") {
    $AuthorScrollDisplay = ' style="display: none;"';
 }
-$ScrollExtraText = "<a href=\"Javascript:author_method_choose(\'text\');\">(Text w/ Order)</a>";
-$TextExtraText   = "<a href=\"Javascript:author_method_choose(\'scroll\');\">(Select from List)</a>";
+$ScrollExtraText = "<a href=\"Javascript:author_method_choose(\'text\');\">(Text w/ order)</a>";
+$TextExtraText   = "<a href=\"Javascript:author_method_choose(\'scroll\');\">(Select from list)</a>";
 
 print "<td id=\"AuthorScroll\"$AuthorScrollDisplay>\n"; 
 AuthorScroll(-required  => $RequiredEntries{Author}, -helplink => "authors",

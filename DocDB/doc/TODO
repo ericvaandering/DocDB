@@ -1,4 +1,5 @@
 * Make sure setting the default author works
+* Switch into text mode if there is an order on update
 
 Database structures allow for a number of things that aren't currently supported
 by the code:
