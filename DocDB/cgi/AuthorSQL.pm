@@ -86,7 +86,7 @@ sub GetRevisionAuthors {
     "select RevAuthorID,AuthorID,AuthorOrder from RevisionAuthor where DocRevID=?");
   $AuthorList -> execute($DocRevID);
   $AuthorList -> bind_columns(undef, \($RevAuthorID,$AuthorID,$AuthorOrder));
-  while ($author_list -> fetch) {
+  while ($AuthorList -> fetch) {
     $RevisionAuthors{$RevAuthorID}{AuthorID}    = $AuthorID;
     $RevisionAuthors{$RevAuthorID}{AuthorOrder} = $AuthorOrder;
     push @RevAuthorIDs,$RevAuthorID;
