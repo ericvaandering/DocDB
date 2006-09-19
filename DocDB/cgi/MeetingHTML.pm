@@ -240,9 +240,9 @@ sub SessionSeparator ($) {
   my ($MeetingOrderID) = @_;
 
   if ($SessionSeparatorDefault eq "Yes") {
-    print "Yes\n";	      
+    print "Break\n";	      
   } elsif ($SessionSeparatorDefault eq "No") {
-    print "No\n";	      
+    print "\n";	      
   } else {
     print $query -> checkbox(-name => "sessionseparator", -value => "$MeetingOrderID", -label => 'Break');
   }
