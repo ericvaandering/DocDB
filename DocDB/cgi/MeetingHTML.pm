@@ -212,10 +212,10 @@ sub SessionEntryForm (%) {
     print "</td>\n";
 
     print "<td>\n";
-    AuthorScroll();
+    AuthorScroll(-helptext => "");
     print "</td>\n";
     print "<td>\n";
-    TopicScroll();
+    TopicScroll({-helptext => ""});
     print "</td>\n";
 
     print "</tr>\n";
