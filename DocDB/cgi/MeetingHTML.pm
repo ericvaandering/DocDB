@@ -220,6 +220,8 @@ sub SessionEntryForm (%) {
     SessionLocation(); 
     print "</div><div>\n";
     SessionLocation();  ###FIXME!!!
+    print "</div><div>\n";
+    print "Show all talks";  ###FIXME!!!
     print "</div></td>\n";
 
     print "</tr>\n";
