@@ -110,7 +110,7 @@ sub SessionEntryForm (%) {
   
   print "<table id=\"SessionEntry\" class=\"MedPaddedTable Alternating CenteredTable\">\n";
   print "<thead>\n";
-  print "<tr><th colspan=\"4\">\n";
+  print "<tr><th colspan=\"5\">\n";
   print FormElementTitle(-helplink  => "sessions", -helptext  => "Sessions", -nobreak => $TRUE, -nocolon => $TRUE);
   print "</th></tr>\n";
 
@@ -120,6 +120,8 @@ sub SessionEntryForm (%) {
    print        FormElementTitle(-helplink  => "meetingseparator", -helptext  => "Break", -nobreak => $TRUE, -nocolon => $TRUE),                      "</th>\n";
    print "<th>",FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Session", -nobreak => $TRUE, -nocolon => $TRUE),                         "</th>\n";
    print "<th>",FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Location<br/>Start Date and Time", -nobreak => $TRUE, -nocolon => $TRUE),"</th>\n";
+   print "<th>",FormElementTitle(-helplink  => "moderators",  -helptext  => "Moderators", -nobreak => $TRUE, -nocolon => $TRUE),                      "</th>\n";
+   print "<th>",FormElementTitle(-helplink  => "eventopics",  -helptext  => "Topics",     -nobreak => $TRUE, -nocolon => $TRUE),                      "</th>\n";
   print "</tr>\n";
   print "</thead>\n";
   
@@ -197,8 +199,8 @@ sub SessionEntryForm (%) {
     SessionDelete($MeetingOrderID);   
     SessionSeparator($MeetingOrderID);  
     print "</td>\n";
-    print "<td>T\n"; SessionTitle($SessionDefaultTitle); print "</td>\n";
-    print "<td>L\n"; SessionLocation();                  print "</td>\n";
+    print "<td>\n"; SessionTitle($SessionDefaultTitle); print "</td>\n";
+    print "<td>\n"; SessionLocation();                  print "</td>\n";
 
     print '<td rowspan="2">';
     AuthorScroll(-helptext => "");
@@ -210,7 +212,7 @@ sub SessionEntryForm (%) {
     print "</tr>\n";
     print "<tr class=\"$RowClass\">\n";
 
-    print "<td>D\n";              SessionDescription();                 print "</td>\n";
+    print "<td>\n";              SessionDescription();                 print "</td>\n";
     print "<td>\n";    
     DateTimePulldown(-name    => "session", -oneline => $TRUE, -onetime  => $TRUE, -granularity => 15,
                      -default => $SessionDefaultDateTime,      -required => $RequiredEntries{StartDate} );
