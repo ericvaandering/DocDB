@@ -99,7 +99,9 @@ sub ConferenceShowAllTalks {
 
 sub SessionEntryForm (%) {
   require "FormElements.pm";
-
+  require "AuthorHTML.pm";
+  require "TopicHTML.pm";
+  
   my %Params = @_;
  
   my $ConferenceID    =   $Params{-conferenceid}     || 0;
