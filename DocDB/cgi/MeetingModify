@@ -443,11 +443,14 @@ print "<div>\n";
 EventGroupSelect( {-required => $RequiredEntries{EventGroup}, 
                    -default  => [$DefaultEventGroupID], 
                    -helptext => "Event Group", });
-print "</div><div>\n";
-AuthorScroll(-multiple => $TRUE,        -default  => \@ModeratorIDs, 
-             -name     => "moderators", -helptext => "Moderators", 
-             -helplink => "moderators",);
 print "</div>\n";
+unless ($NoSessions) { # No moderators for external conferences
+  print "<div>\n";
+  AuthorScroll(-multiple => $TRUE,        -default  => \@ModeratorIDs, 
+               -name     => "moderators", -helptext => "Moderators", 
+               -helplink => "moderators",);
+  print "</div>\n";
+}
 print "</td>\n";
 print "<td>\n";
 print "<div>\n";
@@ -475,9 +478,9 @@ unless ($NoSessions) {
 print "</td>\n";
 
 print "<td>\n";
-TopicScroll({ -multiple => $TRUE, -default => \@EventTopicIDs, -helplink => "eventtopics",});
+TopicScroll({ -multiple => $TRUE,         -default => \@EventTopicIDs, 
+              -helplink => "eventtopics", -size    => 20, });
 print "</td>\n";
-
 
 print "</tr>\n";
 
