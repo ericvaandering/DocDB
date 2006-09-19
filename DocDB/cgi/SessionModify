@@ -595,7 +595,7 @@ if ($SingleSession) {
 
   print '<td rowspan="2">';
   TopicScroll({ -multiple => $TRUE,         -default => \@EventTopicIDs, 
-                -helplink => "eventtopics", -size    => $TopicLength, });
+                -helplink => "eventtopics", -itemformat => "short"});
   print "</td>\n";
 
   print "</tr>\n";
