@@ -79,10 +79,9 @@ print FormElementTitle(-helplink => "namepref", -helptext => "Name");
 print "</th>\n";
 
 print "<td colspan=\"2\">\n";
-my @RequesterDefaults = ($UserIDPref);
 AuthorScroll(-helplink => "",
-              -name     => "requester",
-              -default  => \@RequesterDefaults);
+             -name     => "requester",
+             -default  => [$UserPreferences{AuthorID}] );
 print "</td></tr>\n";
 
 print "<tr><th>\n";
