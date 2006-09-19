@@ -439,17 +439,16 @@ print "<table class=\"MedPaddedTable CenteredTable\">\n";
 
 print "<tr>\n";
 print "<td>\n"; 
-EventGroupSelect( {-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID] });
+EventGroupSelect( {-required => $RequiredEntries{EventGroup}, 
+                   -default  => [$DefaultEventGroupID], 
+                   -helptext => "Event Group", });
+unless ($NoSessions) {
+  print "<div>\n";
+  ConferenceShowAllTalks();
+  print "</div>\n";
+}  
 print "</td>\n";
 print "<td>\n";
-ShortDescriptionBox(-name      => "shortdesc", -helptext => "Short Description", -required => $RequiredEntries{ShortDescription},
-                    -maxlength => 128, -default => $DefaultShortDescription);
-LongDescriptionBox(-required  => $RequiredEntries{LongDescription}, 
-                   -maxlength => 400, -default => $DefaultLongDescription);
-LocationBox(-default  => $MeetingDefaultLocation);       
-TextField(-default  => $MeetingDefaultAltLocation, -name     => "altlocation",
-          -helplink => "location",                 -helptext => "Alt. Location",);       
-EventURLBox(-default  => $MeetingDefaultURL);  
 print "<div>\n";
 DateTimePulldown(-name => "start",         -required => $RequiredEntries{StartDate}, 
                  -helplink => "startdate", -helptext => "Start Date", 
@@ -459,11 +458,14 @@ DateTimePulldown(-name => "end",         -required => $RequiredEntries{EndDate},
                  -helplink => "enddate", -helptext => "End Date", 
                  -dateonly => $TRUE,     -default  => $DefaultEndDate); 
 print "</div>\n";
-unless ($NoSessions) {
-  print "<div>\n";
-  ConferenceShowAllTalks();
-  print "</div>\n";
-}  
+ShortDescriptionBox(-name      => "shortdesc", -helptext => "Short Description", -required => $RequiredEntries{ShortDescription},
+                    -maxlength => 128, -default => $DefaultShortDescription);
+LongDescriptionBox(-required  => $RequiredEntries{LongDescription}, 
+                   -maxlength => 400, -default => $DefaultLongDescription);
+LocationBox(-default  => $MeetingDefaultLocation);       
+TextField(-default  => $MeetingDefaultAltLocation, -name     => "altlocation",
+          -helplink => "location",                 -helptext => "Alt. Location",);       
+EventURLBox(-default  => $MeetingDefaultURL);  
 print "</td>\n";
 
 print "<td>\n";
@@ -472,7 +474,7 @@ AuthorScroll(-multiple => $TRUE,        -default  => \@ModeratorIDs,
              -helplink => "moderators",);
 print "</td>\n";
 print "<td>\n";
-TopicScroll({ -multiple => $TRUE, -default => \@EventTopicIDs, });
+TopicScroll({ -multiple => $TRUE, -default => \@EventTopicIDs, -helplink => "eventtopics",});
 print "</td>\n";
 
 
