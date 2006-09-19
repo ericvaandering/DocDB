@@ -578,13 +578,13 @@ if ($SingleSession) {
   print "<tr>\n";
   print "<td>\n";              
   TextField(-name      => 'sessiontitle', -size     => 40, 
-             -maxlength => 128,            -default  => $SessionDefaultTitle, 
-             -helplink  => 'sessioninfo',  -helptext => 'Session Title');
+            -maxlength => 128,            -default  => $SessionDefaultTitle, 
+            -helplink  => 'sessioninfo',  -helptext => 'Session Title');
   print "</td>\n";
   print "<td>\n";  
-  TextField(-name      => 'sessionlocation', -size     => 30, 
-             -maxlength => 128,            -default  => $SessionDefaultLocation, 
-             -helplink  => 'sessioninfo',  -helptext => 'Session Location');
+  DateTimePulldown(-name    => "session", -helptext => "Start Date and Time", -helplink    => 'sessioninfo',
+                   -oneline => $TRUE,     -onetime  => $TRUE,                 -granularity => 15,
+                   -default => $SessionDefaultDateTime, -required => $RequiredEntries{StartDate} );
   print "</td>\n";
   
   print '<td rowspan="2">';
@@ -606,11 +606,15 @@ if ($SingleSession) {
             -default  => $SessionDefaultDescription, 
             -helplink => 'sessioninfo', -helptext => 'Session Description');
   print "</td>\n";
-  print "<td>\n";  
-  DateTimePulldown(-name    => "session", -helptext => "Start Date and Time", -helplink    => 'sessioninfo',
-                    -oneline => $TRUE,     -onetime  => $TRUE,                 -granularity => 15,
-                    -default => $SessionDefaultDateTime, -required => $RequiredEntries{StartDate} );
-  print "</td>\n";
+  print "<td><div>\n";  
+  TextField(-name      => 'sessionlocation', -size     => 30, 
+            -maxlength => 128,               -default  => $SessionDefaultLocation, 
+            -helplink  => 'sessioninfo',     -helptext => 'Session Location');
+  print "</div><div>\n";
+  TextField(-name      => 'sessionaltlocation', -size     => 30, 
+            -maxlength => 128,               -default  => $SessionDefaultAltLocation, 
+            -helplink  => 'sessioninfo',     -helptext => 'Alternate Location');
+  print "</div>Show all talks</td>\n";
   print "</tr>\n";
   print "</table>\n";
 }
