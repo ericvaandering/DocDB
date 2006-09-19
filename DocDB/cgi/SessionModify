@@ -586,6 +586,18 @@ if ($SingleSession) {
              -maxlength => 128,            -default  => $SessionDefaultLocation, 
              -helplink  => 'sessioninfo',  -helptext => 'Session Location');
   print "</td>\n";
+  
+  print '<td rowspan="2">';
+  AuthorScroll(-multiple => $TRUE,        -default  => \@ModeratorIDs, 
+               -name     => "moderators", -helptext => "Moderators", 
+               -helplink => "moderators",);
+  print "</td>\n";
+
+  print '<td rowspan="2">';
+  TopicScroll({ -multiple => $TRUE,         -default => \@EventTopicIDs, 
+                -helplink => "eventtopics", -size    => $TopicLength, });
+  print "</td>\n";
+
   print "</tr>\n";
 
   print "<tr>\n";
