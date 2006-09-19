@@ -200,7 +200,10 @@ sub SessionEntryForm (%) {
     SessionSeparator($MeetingOrderID);  
     print "</td>\n";
     print "<td>\n"; SessionTitle($SessionDefaultTitle); print "</td>\n";
-    print "<td>\n"; SessionLocation();                  print "</td>\n";
+    print "<td>\n";     
+    DateTimePulldown(-name    => "session", -oneline => $TRUE, -onetime  => $TRUE, -granularity => 15,
+                     -default => $SessionDefaultDateTime,      -required => $RequiredEntries{StartDate} );
+    print "</td>\n";
 
     print '<td rowspan="2">';
     AuthorScroll(-helptext => "");
@@ -214,8 +217,8 @@ sub SessionEntryForm (%) {
 
     print "<td>\n";              SessionDescription();                 print "</td>\n";
     print "<td>\n";    
-    DateTimePulldown(-name    => "session", -oneline => $TRUE, -onetime  => $TRUE, -granularity => 15,
-                     -default => $SessionDefaultDateTime,      -required => $RequiredEntries{StartDate} );
+    SessionLocation(); 
+    SessionLocation(); 
     print "</td>\n";
 
     print "</tr>\n";
