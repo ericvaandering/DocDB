@@ -216,10 +216,11 @@ sub SessionEntryForm (%) {
     print "<tr class=\"$RowClass\">\n";
 
     print "<td>\n";              SessionDescription();                 print "</td>\n";
-    print "<td>\n";    
+    print "<td><div>\n";    
     SessionLocation(); 
-    SessionLocation(); 
-    print "</td>\n";
+    print "</div><div>\n";
+    SessionLocation();  ###FIXME!!!
+    print "</div></td>\n";
 
     print "</tr>\n";
     print "</tbody>\n";
