@@ -254,7 +254,7 @@ $topicmodes{multi}  = "Multiple Topic Boxes";
 $topicmodes{single} = "Single Topic List";
 @topicmodes = ("multi","single");
 
-$authormodes{field}  = "Text field";
+$authormodes{field}  = "Ordered text field";
 $authormodes{list} = "Selectable list";
 @authormodes = ("list","field");
 
