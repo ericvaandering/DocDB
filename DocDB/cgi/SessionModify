@@ -531,7 +531,8 @@ if ($SingleSession) {
 
   print "<tr>\n";
   print "<td>\n"; 
-  EventGroupSelect( {-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID], -size => 8 });
+  EventGroupSelect( {-required => $RequiredEntries{EventGroup}, -helptext => "Event Group",
+                     -default  => [$DefaultEventGroupID], -size => 8 });
   print "</td>\n";
   print "<td rowspan=\"2\">\n";
   ShortDescriptionBox(-name      => "shortdesc", -helptext => "Short Description", 
