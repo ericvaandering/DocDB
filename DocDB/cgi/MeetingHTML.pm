@@ -221,7 +221,7 @@ sub SessionEntryForm (%) {
     print "</div><div>\n";
     SessionLocation();  ###FIXME!!!
     print "</div><div>\n";
-    print "Show all talks";  ###FIXME!!!
+    print "Show all (not breaks)";  ###FIXME!!!
     print "</div></td>\n";
 
     print "</tr>\n";

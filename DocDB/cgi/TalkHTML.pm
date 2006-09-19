@@ -278,7 +278,8 @@ sub TalkTopics ($) {
       $query -> param("topics-$SessionOrderID","");
     }  
     TopicScroll({ -name     => "topics-$SessionOrderID", -required => $RequiredEntries{Topic},
-                  -default  => \@TalkDefaultTopicHints,  -multiple => $TRUE, -helplink => "", 
+                  -default  => \@TalkDefaultTopicHints,  -multiple => $TRUE, 
+                  -helplink => "",                       -itemformat => "short", 
                });
   }
 }
