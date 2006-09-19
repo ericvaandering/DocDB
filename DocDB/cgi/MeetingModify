@@ -439,12 +439,15 @@ print "<table class=\"MedPaddedTable CenteredTable\">\n";
 
 print "<tr>\n";
 print "<td>\n"; 
+print "<div>\n";
 EventGroupSelect( {-required => $RequiredEntries{EventGroup}, 
                    -default  => [$DefaultEventGroupID], 
                    -helptext => "Event Group", });
+print "</div><div>\n";
 AuthorScroll(-multiple => $TRUE,        -default  => \@ModeratorIDs, 
              -name     => "moderators", -helptext => "Moderators", 
              -helplink => "moderators",);
+print "</div>\n";
 print "</td>\n";
 print "<td>\n";
 print "<div>\n";
