@@ -554,7 +554,7 @@ if ($SingleSession) {
   print "</div><div>\n";
   TextArea(-name     => 'sessiondescription', -columns => 40, -rows => 4,
            -default  => $SessionDefaultDescription, 
-           -helplink => 'sessioninfo', -helptext => 'Description');
+           -helplink => 'sessioninfo', -helptext => 'Preamble');
 
   print "</div>\n";
   print "</td>\n";
