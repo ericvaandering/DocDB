@@ -450,8 +450,6 @@ LocationBox(-default  => $MeetingDefaultLocation);
 TextField(-default  => $MeetingDefaultAltLocation, -name     => "altlocation",
           -helplink => "location",                 -helptext => "Alt. Location",);       
 EventURLBox(-default  => $MeetingDefaultURL);  
-print "</td>\n";
-print "<td>\n";
 print "<div>\n";
 DateTimePulldown(-name => "start",         -required => $RequiredEntries{StartDate}, 
                  -helplink => "startdate", -helptext => "Start Date", 
