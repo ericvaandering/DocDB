@@ -195,11 +195,17 @@ sub SessionEntryForm (%) {
     SessionOrder();                     print "<br/>\n";
     SessionModifyLink($MeetingOrderID); print "<br/>\n";
     SessionDelete($MeetingOrderID);   
+    SessionSeparator($MeetingOrderID);  
     print "</td>\n";
-
-    print "<td>\n"; SessionSeparator($MeetingOrderID);  print "</td>\n";
     print "<td>\n"; SessionTitle($SessionDefaultTitle); print "</td>\n";
     print "<td>\n"; SessionLocation();                  print "</td>\n";
+
+    print '<td rowspan="2">';
+    AuthorScroll(-helptext => "");
+    print "</td>\n";
+    print '<td rowspan="2">';
+    TopicScroll({-itemformat => "short", -helplink  => "", -helptext => "",});
+    print "</td>\n";
 
     print "</tr>\n";
     print "<tr class=\"$RowClass\">\n";
@@ -209,13 +215,6 @@ sub SessionEntryForm (%) {
     print "<td>\n";    
     DateTimePulldown(-name    => "session", -oneline => $TRUE, -onetime  => $TRUE, -granularity => 15,
                      -default => $SessionDefaultDateTime,      -required => $RequiredEntries{StartDate} );
-    print "</td>\n";
-
-    print "<td>\n";
-    AuthorScroll(-helptext => "");
-    print "</td>\n";
-    print "<td>\n";
-    TopicScroll({-itemformat => "short", -helplink  => "", -helptext => "",});
     print "</td>\n";
 
     print "</tr>\n";
