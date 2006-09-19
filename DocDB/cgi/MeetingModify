@@ -447,24 +447,37 @@ ShortDescriptionBox(-name      => "shortdesc", -helptext => "Short Description",
 LongDescriptionBox(-required  => $RequiredEntries{LongDescription}, 
                    -maxlength => 400, -default => $DefaultLongDescription);
 LocationBox(-default  => $MeetingDefaultLocation);       
+TextField(-default  => $MeetingDefaultAltLocation, -name     => "altlocation",
+          -helplink => "location",                 -helptext => "Alt. Location",);       
 EventURLBox(-default  => $MeetingDefaultURL);  
 print "</td>\n";
 print "<td>\n";
 print "<div>\n";
 DateTimePulldown(-name => "start",         -required => $RequiredEntries{StartDate}, 
                  -helplink => "startdate", -helptext => "Start Date", 
-                  -dateonly => $TRUE,       -default  => $DefaultStartDate); 
+                 -dateonly => $TRUE,       -default  => $DefaultStartDate); 
 print "</div><div>\n";
-&DateTimePulldown(-name => "end",         -required => $RequiredEntries{EndDate}, 
-                  -helplink => "enddate", -helptext => "End Date", 
-                  -dateonly => $TRUE,     -default  => $DefaultEndDate); 
+DateTimePulldown(-name => "end",         -required => $RequiredEntries{EndDate}, 
+                 -helplink => "enddate", -helptext => "End Date", 
+                 -dateonly => $TRUE,     -default  => $DefaultEndDate); 
 print "</div>\n";
 unless ($NoSessions) {
   print "<div>\n";
-  &ConferenceShowAllTalks;
+  ConferenceShowAllTalks();
   print "</div>\n";
 }  
 print "</td>\n";
+
+print "<td>\n";
+AuthorScroll(-multiple => $TRUE,        -default  => \@ModeratorIDs, 
+             -name     => "moderators", -helptext => "Moderators", 
+             -helplink => "moderators",);
+print "</td>\n";
+print "<td>\n";
+TopicScroll({ -multiple => $TRUE, -default => \@EventTopicIDs, });
+print "</td>\n";
+
+
 print "</tr>\n";
 
 if ($NoSessions) {
