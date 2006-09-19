@@ -546,7 +546,7 @@ if ($SingleSession) {
   print "</div><div>\n";
   LocationBox(-default  => $DefaultEventLocation);       
   print "</div><div>\n";
-  TextField(-name      => 'sessionaltlocation', -size     => 30, 
+  TextField(-name      => 'sessionaltlocation', -size     => 40, 
             -maxlength => 128,                  -default  => $SessionDefaultAltLocation, 
             -helplink  => 'sessioninfo',        -helptext => 'Alternate Location');
   print "</div><div>\n";
