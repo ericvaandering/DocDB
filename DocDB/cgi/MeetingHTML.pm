@@ -196,7 +196,7 @@ sub SessionEntryForm (%) {
     }
     SessionOrder();                     print "<br/>\n";
     SessionModifyLink($MeetingOrderID); print "<br/>\n";
-    SessionDelete($MeetingOrderID);   
+    SessionDelete($MeetingOrderID);     print "<br/>\n";
     SessionSeparator($MeetingOrderID);  
     print "</td>\n";
     print "<td>\n"; SessionTitle($SessionDefaultTitle); print "</td>\n";
