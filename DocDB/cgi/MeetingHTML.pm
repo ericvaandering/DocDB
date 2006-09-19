@@ -215,7 +215,7 @@ sub SessionEntryForm (%) {
     AuthorScroll(-helptext => "");
     print "</td>\n";
     print "<td>\n";
-    TopicScroll({-helptext => ""});
+    TopicScroll({-itemformat => "short", -helplink  => "", -helptext => "",});
     print "</td>\n";
 
     print "</tr>\n";
