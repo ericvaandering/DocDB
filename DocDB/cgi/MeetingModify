@@ -442,11 +442,9 @@ print "<td>\n";
 EventGroupSelect( {-required => $RequiredEntries{EventGroup}, 
                    -default  => [$DefaultEventGroupID], 
                    -helptext => "Event Group", });
-unless ($NoSessions) {
-  print "<div>\n";
-  ConferenceShowAllTalks();
-  print "</div>\n";
-}  
+AuthorScroll(-multiple => $TRUE,        -default  => \@ModeratorIDs, 
+             -name     => "moderators", -helptext => "Moderators", 
+             -helplink => "moderators",);
 print "</td>\n";
 print "<td>\n";
 print "<div>\n";
@@ -466,13 +464,13 @@ LocationBox(-default  => $MeetingDefaultLocation);
 TextField(-default  => $MeetingDefaultAltLocation, -name     => "altlocation",
           -helplink => "location",                 -helptext => "Alt. Location",);       
 EventURLBox(-default  => $MeetingDefaultURL);  
+unless ($NoSessions) {
+  print "<div>\n";
+  ConferenceShowAllTalks();
+  print "</div>\n";
+}  
 print "</td>\n";
 
-print "<td>\n";
-AuthorScroll(-multiple => $TRUE,        -default  => \@ModeratorIDs, 
-             -name     => "moderators", -helptext => "Moderators", 
-             -helplink => "moderators",);
-print "</td>\n";
 print "<td>\n";
 TopicScroll({ -multiple => $TRUE, -default => \@EventTopicIDs, -helplink => "eventtopics",});
 print "</td>\n";
