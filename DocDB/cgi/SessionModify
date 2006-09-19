@@ -543,15 +543,20 @@ if ($SingleSession) {
   DateTimePulldown(-name    => "session", -helptext => "Start Date and Time", -helplink    => 'sessioninfo',
                    -oneline => $TRUE,     -onetime  => $TRUE,                 -granularity => 15,
                    -default => $SessionDefaultDateTime, -required => $RequiredEntries{StartDate} );
-  print "</div>\n";
+  print "</div><div>\n";
   LocationBox(-default  => $DefaultEventLocation);       
-  LocationBox(-default  => $DefaultEventLocation); #FIXME      
+  print "</div><div>\n";
+  TextField(-name      => 'sessionaltlocation', -size     => 30, 
+            -maxlength => 128,                  -default  => $SessionDefaultAltLocation, 
+            -helplink  => 'sessioninfo',        -helptext => 'Alternate Location');
+  print "</div><div>\n";
   EventURLBox(-default  => $DefaultEventURL     );  
-
+  print "</div><div>\n";
   TextArea(-name     => 'sessiondescription', -columns => 40, -rows => 4,
            -default  => $SessionDefaultDescription, 
            -helplink => 'sessioninfo', -helptext => 'Description');
 
+  print "</div>\n";
   print "</td>\n";
   print "<td>\n";
   SecurityScroll(-addpublic => 'true',
