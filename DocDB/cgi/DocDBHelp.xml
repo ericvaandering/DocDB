@@ -399,11 +399,12 @@ Select the date of the end of the conference.
  </entry>
 
  <entry>
-<key>location</key>
-<title>Location</title>
+  <key>location</key>
+  <title>Location &amp; Alternate</title>
   <text>
-Type in the location of the conference. City, state (if in the USA), and
-country.
+   <p>Enter the location of the conference, event, or session. This can be a
+   city, an institution, or a room number depending on the circumstances. The
+   alternate location might be video or teleconferencing instructions.</p>
   </text>
  </entry>
 
@@ -411,7 +412,7 @@ country.
 <key>confurl</key>
 <title>URL</title>
   <text>
-Type in the URL for the conference's home page. Please include the http:// or
+Enter the URL for the conference's home page. Please include the http:// or
 https:// at the beginning.
   </text>
  </entry>
