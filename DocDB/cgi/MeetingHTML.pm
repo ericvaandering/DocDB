@@ -210,7 +210,6 @@ sub SessionEntryForm (%) {
     print "</tr>\n";
     print "<tr class=\"$RowClass\">\n";
 
-    print "<td>&nbsp;</td>\n";
     print "<td>D\n";              SessionDescription();                 print "</td>\n";
     print "<td>\n";    
     DateTimePulldown(-name    => "session", -oneline => $TRUE, -onetime  => $TRUE, -granularity => 15,
