@@ -1000,14 +1000,15 @@ sub EventsByGroup (%) {
 sub EventGroupSelect ($) {
   my ($ArgRef) = @_;
 
-  my $Disabled = exists $ArgRef->{-disabled} ?   $ArgRef->{-disabled} : "0";
+  my $Disabled = exists $ArgRef->{-disabled} ?   $ArgRef->{-disabled} : $FALSE;
   my $Format   = exists $ArgRef->{-format}   ?   $ArgRef->{-format}   : "short";
   my $HelpLink = exists $ArgRef->{-helplink} ?   $ArgRef->{-helplink} : "eventgroups";
   my $HelpText = exists $ArgRef->{-helptext} ?   $ArgRef->{-helptext} : "Event Groups";           
-  my $Multiple = exists $ArgRef->{-multiple} ?   $ArgRef->{-multiple} : "0";
+  my $Multiple = exists $ArgRef->{-multiple} ?   $ArgRef->{-multiple} : $FALSE;
   my $Name     = exists $ArgRef->{-name}     ?   $ArgRef->{-name}     : "eventgroups";
+  my $Size     = exists $ArgRef->{-size}     ?   $ArgRef->{-size}     : 10;
   my $OnChange = exists $ArgRef->{-onchange} ?   $ArgRef->{-onchange} : undef;
-  my $Required = exists $ArgRef->{-required} ?   $ArgRef->{-required} :  "0";
+  my $Required = exists $ArgRef->{-required} ?   $ArgRef->{-required} : $FALSE;
   my @Defaults = exists $ArgRef->{-default}  ? @{$ArgRef->{-default}} : ();
 
   require "FormElements.pm";
@@ -1037,7 +1038,7 @@ sub EventGroupSelect ($) {
   
   print FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText, -required => $Required);
   print $query -> scrolling_list(-name     => $Name,     -values  => \@EventGroupIDs, 
-                                 -labels   => \%Labels,  -size    => 10, 
+                                 -labels   => \%Labels,  -size    => $Size, 
                                  -multiple => $Multiple, -default => \@Defaults,
                                  %Options);
 }

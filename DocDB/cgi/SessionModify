@@ -531,7 +531,7 @@ if ($SingleSession) {
 
   print "<tr>\n";
   print "<td>\n"; 
-  EventGroupSelect( {-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID], size => 8 });
+  EventGroupSelect( {-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID], -size => 8 });
   print "</td>\n";
   print "<td rowspan=\"2\">\n";
   ShortDescriptionBox(-name      => "shortdesc", -helptext => "Short Description", 
@@ -545,6 +545,7 @@ if ($SingleSession) {
                    -default => $SessionDefaultDateTime, -required => $RequiredEntries{StartDate} );
   print "</div>\n";
   LocationBox(-default  => $DefaultEventLocation);       
+  LocationBox(-default  => $DefaultEventLocation); #FIXME      
   EventURLBox(-default  => $DefaultEventURL     );  
 
   TextArea(-name     => 'sessiondescription', -columns => 40, -rows => 4,
