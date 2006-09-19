@@ -109,15 +109,15 @@ sub SessionEntryForm (%) {
   print "<table id=\"SessionEntry\" class=\"MedPaddedTable Alternating CenteredTable\">\n";
   print "<thead>\n";
   print "<tr><th colspan=\"4\">\n";
-  print &FormElementTitle(-helplink  => "sessions", -helptext  => "Sessions", -nobreak => $TRUE, -nocolon => $TRUE);
+  print FormElementTitle(-helplink  => "sessions", -helptext  => "Sessions", -nobreak => $TRUE, -nocolon => $TRUE);
   print "</th></tr>\n";
 
   print "<tr>\n";
-   print "<th>",&FormElementTitle(-helplink  => "meetingorder", -helptext  => "Order", -nobreak => $TRUE, -nocolon => $TRUE),                          " or<br/>";
-   print        &FormElementTitle(-helplink  => "sessiondelete", -helptext  => "Delete", -nobreak => $TRUE, -nocolon => $TRUE),                        "</th>\n";
-   print "<th>",&FormElementTitle(-helplink  => "meetingseparator", -helptext  => "Break", -nobreak => $TRUE, -nocolon => $TRUE),                      "</th>\n";
-   print "<th>",&FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Session", -nobreak => $TRUE, -nocolon => $TRUE),                         "</th>\n";
-   print "<th>",&FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Location<br/>Start Date and Time", -nobreak => $TRUE, -nocolon => $TRUE),"</th>\n";
+   print "<th>",FormElementTitle(-helplink  => "meetingorder", -helptext  => "Order", -nobreak => $TRUE, -nocolon => $TRUE),                          " or<br/>";
+   print        FormElementTitle(-helplink  => "sessiondelete", -helptext  => "Delete", -nobreak => $TRUE, -nocolon => $TRUE),                        "</th>\n";
+   print "<th>",FormElementTitle(-helplink  => "meetingseparator", -helptext  => "Break", -nobreak => $TRUE, -nocolon => $TRUE),                      "</th>\n";
+   print "<th>",FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Session", -nobreak => $TRUE, -nocolon => $TRUE),                         "</th>\n";
+   print "<th>",FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Location<br/>Start Date and Time", -nobreak => $TRUE, -nocolon => $TRUE),"</th>\n";
   print "</tr>\n";
   print "</thead>\n";
   
@@ -142,7 +142,7 @@ sub SessionEntryForm (%) {
     $SessionDefaultOrder = $SessionOrder;  
     if (grep /n/,$MeetingOrderID) {# Erase defaults
       if ($ConferenceID) {
-        &FetchConferenceByConferenceID($ConferenceID);
+        FetchConferenceByConferenceID($ConferenceID);
         $SessionDefaultDateTime = $Conferences{$ConferenceID}{StartDate}." 9:00:00";
       } else {
         require "SQLUtilities.pm";
@@ -190,23 +190,30 @@ sub SessionEntryForm (%) {
       $query -> param('meetingorderid',$MeetingOrderID); #FIXME: Try to remove
       print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
     }
-    &SessionOrder;                       print "<br/>\n";
-    &SessionModifyLink($MeetingOrderID); print "<br/>\n";
-    &SessionDelete($MeetingOrderID);   
+    SessionOrder();                     print "<br/>\n";
+    SessionModifyLink($MeetingOrderID); print "<br/>\n";
+    SessionDelete($MeetingOrderID);   
     print "</td>\n";
 
-    print "<td>\n"; &SessionSeparator($MeetingOrderID);  print "</td>\n";
-    print "<td>\n"; &SessionTitle($SessionDefaultTitle); print "</td>\n";
-    print "<td>\n"; &SessionLocation;                    print "</td>\n";
+    print "<td>\n"; SessionSeparator($MeetingOrderID);  print "</td>\n";
+    print "<td>\n"; SessionTitle($SessionDefaultTitle); print "</td>\n";
+    print "<td>\n"; SessionLocation();                  print "</td>\n";
 
     print "</tr>\n";
     print "<tr class=\"$RowClass\">\n";
 
     print "<td>&nbsp;</td>\n";
-    print "<td>\n";              &SessionDescription;                 print "</td>\n";
+    print "<td>\n";              SessionDescription();                 print "</td>\n";
     print "<td>\n";    
-    &DateTimePulldown(-name    => "session", -oneline => $TRUE, -onetime  => $TRUE, -granularity => 15,
-                      -default => $SessionDefaultDateTime,      -required => $RequiredEntries{StartDate} );
+    DateTimePulldown(-name    => "session", -oneline => $TRUE, -onetime  => $TRUE, -granularity => 15,
+                     -default => $SessionDefaultDateTime,      -required => $RequiredEntries{StartDate} );
+    print "</td>\n";
+
+    print "<td>\n";
+    AuthorScroll();
+    print "</td>\n";
+    print "<td>\n";
+    TopicScroll();
     print "</td>\n";
 
     print "</tr>\n";
