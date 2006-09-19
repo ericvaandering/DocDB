@@ -1,3 +1,8 @@
+* In using CGI::Untaint, look at as_set for arrays.
+HTML::Sanitizer for CGI untaint too. as well as URL
+
+
+
 Database structures allow for a number of things that aren't currently supported
 by the code:
 
