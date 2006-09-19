@@ -520,6 +520,7 @@ if ($SingleSession && $Mode eq "new") {
   print $query -> hidden(-name => 'mode',          -default => 'modify');
 }
 
+print '<table class="HighPaddedTable CenteredTable">';
 if ($SingleSession) {
   my %RequiredEntries = ();
      $RequiredEntries{StartDate}        = $TRUE;
@@ -527,7 +528,6 @@ if ($SingleSession) {
      $RequiredEntries{LongDescription}  = $FALSE; # Can get from ShortDescription
      $RequiredEntries{ShortDescription} = $TRUE;
      $RequiredEntries{EventGroup}       = $TRUE;
-  print "<table class=\"HighPaddedTable\">\n";
 
   print "<tr>\n";
   print "<td>\n"; 
@@ -594,9 +594,7 @@ if ($SingleSession) {
 
   print "</td>\n";
   print "</tr>\n";
-  print "</table>\n";
 } else {
-  print "<table class=\"HighPaddingTable Centered\">\n";
   print "<tr>\n";
   print "<td>\n";              
   TextField(-name      => 'sessiontitle', -size     => 40, 
@@ -638,8 +636,8 @@ if ($SingleSession) {
             -helplink  => 'sessioninfo',     -helptext => 'Alternate Location');
   print "</div>Show all talks</td>\n";
   print "</tr>\n";
-  print "</table>\n";
 }
+print "</table>\n";
 
 print "<p class=\"SubmitCell\">\n";
 print $query -> submit (-value => $ButtonTitle);
