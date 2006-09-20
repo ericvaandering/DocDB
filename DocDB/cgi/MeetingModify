@@ -408,16 +408,17 @@ print "</div>\n";
 
 #FIXME: Make rest of these defaults "my"
 
-my $DefaultEventGroupID     = $Conferences{$ConferenceID}{EventGroupID};
-my $DefaultShortDescription = $Conferences{$ConferenceID}{Title};
-my $DefaultLongDescription  = $Conferences{$ConferenceID}{LongDescription};
-my $MeetingDefaultLocation  = $Conferences{$ConferenceID}{Location};
-my $MeetingDefaultURL       = $Conferences{$ConferenceID}{URL};
-$MeetingDefaultPreamble     = $Conferences{$ConferenceID}{Preamble};
-$MeetingDefaultEpilogue     = $Conferences{$ConferenceID}{Epilogue};
-$MeetingDefaultShowAllTalks = $Conferences{$ConferenceID}{ShowAllTalks};
-my $DefaultStartDate        = $Conferences{$ConferenceID}{StartDate};
-my $DefaultEndDate          = $Conferences{$ConferenceID}{EndDate};
+my $DefaultEventGroupID       = $Conferences{$ConferenceID}{EventGroupID};
+my $DefaultShortDescription   = $Conferences{$ConferenceID}{Title};
+my $DefaultLongDescription    = $Conferences{$ConferenceID}{LongDescription};
+my $MeetingDefaultLocation    = $Conferences{$ConferenceID}{Location};
+my $MeetingDefaultAltLocation = $Conferences{$ConferenceID}{AltLocation};
+my $MeetingDefaultURL         = $Conferences{$ConferenceID}{URL};
+$MeetingDefaultPreamble       = $Conferences{$ConferenceID}{Preamble};
+$MeetingDefaultEpilogue       = $Conferences{$ConferenceID}{Epilogue};
+$MeetingDefaultShowAllTalks   = $Conferences{$ConferenceID}{ShowAllTalks};
+my $DefaultStartDate          = $Conferences{$ConferenceID}{StartDate};
+my $DefaultEndDate            = $Conferences{$ConferenceID}{EndDate};
 
 # Get deaults for meeting view/modify
 
