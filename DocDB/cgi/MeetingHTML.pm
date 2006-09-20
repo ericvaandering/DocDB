@@ -215,7 +215,11 @@ sub SessionEntryForm (%) {
     print "</tr>\n";
     print "<tr class=\"$RowClass\">\n";
 
-    print "<td>\n";              SessionDescription();                 print "</td>\n";
+    print "<td>\n";
+    TextArea(-name     => 'sessiondescription',       -columns  => 35,
+             -default  => $SessionDefaultDescription, -rows     => 4,
+             -helplink => '',                         -helptext => '', );
+    print "</td>\n";
     print "<td><div>\n";    
     TextField(-default  => $SessionDefaultLocation, 
               -name     => "sessionlocation", -helplink  => "", -helptext => "", 
