@@ -698,7 +698,7 @@ sub PrintEventHeader ($) {
 
   if (@{$Conferences{$EventID}{Topics}}) {
     push @Fields,"Event Topics";
-    $Fields{"Event Topics"} = join ', ',@{$Conferences{$EventID}{Topics}};
+    $Fields{"Event Topics"} = TopicListByID({ -topicids => $Conferences{$EventID}{Topics}, -listformat => "br" });
   }  
 
   if (@{$Conferences{$EventID}{Moderators}}) {

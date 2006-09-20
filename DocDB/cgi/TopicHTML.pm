@@ -30,6 +30,8 @@ sub TopicListByID {
     
   require "TopicSQL.pm";
   
+  my $HTML = "";
+  
   my @TopicLinks = ();
   if (@TopicIDs) {
     foreach my $TopicID (@TopicIDs) {
@@ -43,29 +45,29 @@ sub TopicListByID {
 # Headers for different styles and handle no topics  
     
   if ($ListFormat eq "dl") {
-    print "<div id=\"Topics\">\n";
-    print "<dl>\n";
-    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Topics:</span></dt>\n";
+    $HTML .= "<div id=\"Topics\">\n";
+    $HTML .= "<dl>\n";
+    $HTML .= "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Topics:</span></dt>\n";
     if (@TopicLinks) {
-      print "</dl>\n";
-      print "<ul>\n";
+      $HTML .= "</dl>\n";
+      $HTML .= "<ul>\n";
     } else {
-      print "<dd>None</dd>\n";
-      print "</dl>\n";
+      $HTML .= "<dd>None</dd>\n";
+      $HTML .= "</dl>\n";
     } 
   }  
   
   if ($ListFormat eq "br") {
     unless (@TopicLinks) {
-      print "None<br/>\n";
+      $HTML .= "None<br/>\n";
     }  
   }
   
   foreach my $TopicLink (@TopicLinks) {
     if ($ListFormat eq "dl") {
-      print "<li>$TopicLink</li>\n";  
+      $HTML .= "<li>$TopicLink</li>\n";  
     } elsif ($ListFormat eq "br") {
-      print "$TopicLink<br/>\n";
+      $HTML .= "$TopicLink<br/>\n";
     }
   }
   
@@ -73,10 +75,11 @@ sub TopicListByID {
   
   if ($ListFormat eq "dl") {
     if (@TopicLinks) {
-      print "</ul>\n";
+      $HTML .= "</ul>\n";
     }   
-    print "</div>\n";
+    $HTML .= "</div>\n";
   }  
+  return $HTML;
 }
 
 sub TopicLink ($) {

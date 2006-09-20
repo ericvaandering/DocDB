@@ -241,7 +241,7 @@ sub DocumentTable (%) {
             push @TopicIDs,$TopicHints{$TopicHintID}{TopicID};
           }
         }
-        TopicListByID( {-topicids => \@TopicIDs, -listformat => "br"} ); 
+        print TopicListByID( {-topicids => \@TopicIDs, -listformat => "br"} ); 
       } elsif ($Field eq "Abstract") { # Abstract
         PrintAbstract($DocRevisions{$DocRevID}{Abstract}, {-format => "bare"} ); 
       } elsif ($Field eq "DocNotes") { # Notes and Changes
