@@ -75,6 +75,8 @@ my $ShowAllTalks       = $params{meetshowall};
 
 my @MeetingViewGroupIDs   = split /\0/,$params{meetingviewgroups};
 my @MeetingModifyGroupIDs = split /\0/,$params{meetingmodifygroups};
+my @MeetingTopicIDs       = split /\0/,$params{topics};
+my @MeetingModeratorIDs   = split /\0/,$params{moderators};
 
 my @SessionYears         = split /\0/,$params{sessionyear};
 my @SessionMonths        = split /\0/,$params{sessionmonth};
@@ -245,6 +247,12 @@ if ($Mode eq "create" || $Mode eq "modify") {
   MeetingSecurityUpdate(-mode         => 'modify',
                         -conferenceid => $ConferenceID, 
                         -groupids     => \@MeetingModifyGroupIDs);
+  MeetingTopicUpdate({ -type     => 'Meeting',
+                       -id       => $ConferenceID, 
+                       -topicids => \@MeetingTopicIDs });
+  MeetingModeratorUpdate({ -type      => 'Meeting',
+                           -id        => $ConferenceID, 
+                           -authorids => \@MeetingModeratorIDs });
 
 # Repack check boxes into hashes
 
