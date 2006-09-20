@@ -54,7 +54,6 @@ sub AuthorListByID {
 #  my $ListElement = exists $ArgRef->{-listelement} ?   $ArgRef->{-listelement} : "short";
   
   require "AuthorSQL.pm";
-  use HTML::TreeBuilder;
   
   my ($HTML,$StartHTML,$EndHTML,$StartElement,$EndElement,$StartList,$EndList,$NoneText);
   
@@ -85,11 +84,14 @@ sub AuthorListByID {
     $HTML = $NoneText;
   }
   $HTML .= $EndHTML;
-  return $HTML;
-#  my $Parser = HTML::TreeBuilder -> new();
-#  $Parser -> parse($HTML);
-#  $Parser -> eof;
-#  return ($Parser -> as_HTML(undef,' ',{})); #Escape all, one space, all tags end
+#  return $HTML;
+  use XML::Twig;
+
+  my $t= new XML::Twig;
+  $t->parse($HTML);
+
+  $t->set_pretty_print( 'nice');     # \n before tags not part of mixed content
+  return $t->sprint;
 }
 
 # FIXME: Can replace with above now
