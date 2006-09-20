@@ -87,7 +87,7 @@ sub AuthorListByID {
   $HTML .= $EndHTML;
   my $Parser = HTML::TreeBuilder -> new();
   $Parser -> parse($HTML)
-  $Parser -> eof();
+  $Parser -> eof;
   return ($Parser -> as_HTML());
 }
 
