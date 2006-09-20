@@ -54,7 +54,7 @@ sub AuthorListByID {
 #  my $ListElement = exists $ArgRef->{-listelement} ?   $ArgRef->{-listelement} : "short";
   
   require "AuthorSQL.pm";
-  use "HTML::Parser";
+  use HTML::Parser;
   
   my ($HTML,$StartHTML,$EndHTML,$StartElement,$EndElement,$StartList,$EndList,$NoneText);
   
