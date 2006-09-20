@@ -88,7 +88,7 @@ sub AuthorListByID {
   my $Parser = HTML::TreeBuilder -> new();
   $Parser -> parse($HTML);
   $Parser -> eof;
-  return ($Parser -> as_HTML());
+  return ($Parser -> as_HTML(undef,' ',{})); #Escape all, one space, all tags end
 }
 
 sub ShortAuthorListByID {
