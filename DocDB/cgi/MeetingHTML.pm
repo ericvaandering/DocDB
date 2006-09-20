@@ -217,11 +217,13 @@ sub SessionEntryForm (%) {
 
     print "<td>\n";              SessionDescription();                 print "</td>\n";
     print "<td><div>\n";    
-    SessionLocation(); 
+    TextField(-default  => $SessionDefaultLocation, 
+              -name     => "sessionlocation", -helplink  => "", -helptext => "", 
+              -size     => 35,                -maxlength => 128, );       
     print "</div><div>\n";
-    TextField(-default  => $SessionDefaultAltLocation, -name     => "sessionaltlocation",
-              -helplink => "",                 -helptext => "",);       
-    print "</div><div>\n";
+    TextField(-default  => $SessionDefaultAltLocation, 
+              -name     => "sessionaltlocation", -helplink  => "", -helptext => "", 
+              -size     => 35,                   -maxlength => 128, );
     print FormElementTitle(-helplink  => "meetshowall", -helptext  => "Show All Talks?", -nobreak => $TRUE, -nocolon => $TRUE);
     if ($SessionDefaultShowAllTalks) {
       print $query -> checkbox(-name => "meetshowall", -value => 1, -label => '', -checked => 'Yes');
@@ -285,12 +287,6 @@ sub SessionDescription {
   print $query -> textarea (-name => 'sessiondescription',-value => $SessionDefaultDescription, 
                             -columns => 40, -rows => 3);
 }
-
-sub SessionLocation {
-  $query -> param('sessionlocation',$SessionDefaultLocation);
-  print $query -> textfield (-name => 'sessionlocation', -size => 30, -maxlength => 128, 
-                             -default => $SessionDefaultLocation);
-};
 
 sub SessionLink (%) {
   my %Params = @_;
