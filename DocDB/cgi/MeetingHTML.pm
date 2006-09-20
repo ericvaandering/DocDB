@@ -224,6 +224,7 @@ sub SessionEntryForm (%) {
     TextField(-default  => $SessionDefaultAltLocation, 
               -name     => "sessionaltlocation", -helplink  => "", -helptext => "", 
               -size     => 35,                   -maxlength => 128, );
+    print "</div><div>\n";
     print FormElementTitle(-helplink  => "meetshowall", -helptext  => "Show All Talks?", -nobreak => $TRUE, -nocolon => $TRUE);
     if ($SessionDefaultShowAllTalks) {
       print $query -> checkbox(-name => "meetshowall", -value => 1, -label => '', -checked => 'Yes');

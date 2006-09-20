@@ -634,7 +634,14 @@ if ($SingleSession) {
   TextField(-name      => 'sessionaltlocation', -size     => 30, 
             -maxlength => 128,               -default  => $SessionDefaultAltLocation, 
             -helplink  => 'sessioninfo',     -helptext => 'Alternate Location');
-  print "</div>Show all talks</td>\n";
+  print "</div><div>\n";
+  print FormElementTitle(-helplink  => "meetshowall", -helptext  => "Show All Talks?", -nobreak => $TRUE, -nocolon => $TRUE);
+  if ($SessionDefaultShowAllTalks) {
+    print $query -> checkbox(-name => "meetshowall", -value => 1, -label => '', -checked => 'Yes');
+  } else {
+    print $query -> checkbox(-name => "meetshowall", -value => 1, -label => '');
+  }
+  print "</div></td>\n";
   print "</tr>\n";
 }
 print "</table>\n";
