@@ -219,40 +219,28 @@ if ($ConferenceID) {
 
 if ($Mode eq "create" || $Mode eq "modify") {
   if ($Mode eq "create") { 
-    my $ConferenceInsert = $dbh->prepare(
-     "insert into Conference ".
-     "(ConferenceID, EventGroupID, Location, AltLocation, URL, ShowAllTalks,".
-     " StartDate, EndDate, Preamble, Epilogue, Title, LongDescription) ". 
-     "values (0,?,?,?,?,?,?,?,?,?,?,?)");
-    $ConferenceInsert -> execute($EventGroupID,$Location,$AltLocation,$URL,
-                                 $ShowAllTalks,$StartDate,$EndDate,$MeetPreamble,
-                                 $MeetEpilogue,$Short,$Long); 
-    $ConferenceID = $ConferenceInsert -> {mysql_insertid}; # Works with MySQL only
+    $ConferenceID = InsertEvent({
+        -eventgroupid     => $EventGroupID,         -location     => $Location, 
+        -altlocation      => $AltLocation,          -url          => $URL, 
+        -startdate        => $StartDate,            -enddate      => $EndDate,
+        -preamble         => $MeetPreamble,         -epilogue     => $MeetEpilogue,
+        -shortdescription => $Short,                -showalltalks => $ShowAllTalks,
+        -longdescription  => $Long, 
+        -topicids         => \@MeetingTopicIDs,     -moderatorids   => \@MeetingModeratorIDs , 
+        -viewgroupids     => \@MeetingViewGroupIDs, -modifygroupids => \@MeetingModifyGroupIDs, });
     push @ActionStack,"Created new event: $Short";
   } elsif ($Mode eq "modify") {
-    my $ConferenceUpdate = $dbh->prepare(
-     "update Conference set ".
-            "EventGroupID=?, Location=?, AltLocation=?, URL=?, ShowAllTalks=?, StartDate=?, EndDate=?, ".
-            "Preamble=?, Epilogue=?, Title=?, LongDescription=? ". 
-     "where ConferenceID=?");
-    $ConferenceUpdate -> execute($EventGroupID,$Location,$AltLocation,$URL,
-                                 $ShowAllTalks,$StartDate,$EndDate,$MeetPreamble,
-                                 $MeetEpilogue,$Short,$Long,$ConferenceID); 
+    UpdateEvent({ 
+        -eventid          => $ConferenceID,         -eventgroupid    => $EventGroupID,  
+        -location         => $Location,             -altlocation     => $AltLocation,
+        -url              => $URL,                  -startdate       => $StartDate, 
+        -enddate          => $EndDate,              -showalltalks    => $ShowAllTalks,
+        -preamble         => $MeetPreamble,         -epilogue        => $MeetEpilogue,
+        -shortdescription => $Short,                -longdescription => $Long, 
+        -topicids         => \@MeetingTopicIDs,     -moderatorids    => \@MeetingModeratorIDs, 
+        -viewgroupids     => \@MeetingViewGroupIDs, -modifygroupids  => \@MeetingModifyGroupIDs, });
     push @ActionStack,"Modified event: $Short";
   }
-
-  MeetingSecurityUpdate(-mode         => 'access',
-                        -conferenceid => $ConferenceID, 
-                        -groupids     => \@MeetingViewGroupIDs);
-  MeetingSecurityUpdate(-mode         => 'modify',
-                        -conferenceid => $ConferenceID, 
-                        -groupids     => \@MeetingModifyGroupIDs);
-  MeetingTopicUpdate({ -type     => 'Meeting',
-                       -id       => $ConferenceID, 
-                       -topicids => \@MeetingTopicIDs });
-  MeetingModeratorUpdate({ -type      => 'Meeting',
-                           -id        => $ConferenceID, 
-                           -authorids => \@MeetingModeratorIDs });
 
 # Repack check boxes into hashes
 

@@ -691,6 +691,21 @@ sub PrintEventHeader ($) {
     $Fields{"Event Location"} = $Conferences{$EventID}{Location};
   }  
 
+  if ($Conferences{$EventID}{AltLocation}) {
+    push @Fields,"Alternate Location";
+    $Fields{"Alternate Location"} = $Conferences{$EventID}{AltLocation};
+  }  
+
+  if (@{$Conferences{$EventID}{Topics}}) {
+    push @Fields,"Event Topics";
+    $Fields{"Event Topics"} = join ', ',@{$Conferences{$EventID}{Topics}};
+  }  
+
+  if (@{$Conferences{$EventID}{Moderators}}) {
+    push @Fields,"Event Moderators";
+    $Fields{"Event Moderators"} = join ', ',@{$Conferences{$EventID}{Moderators}};
+  }  
+
   if ($SessionStartTime) {
     push @Fields,"Date &amp; Time";
     $Fields{"Date &amp; Time"} = EuroDate($SessionStartTime)." at ".EuroTimeHM($SessionStartTime);

@@ -239,45 +239,56 @@ sub FetchEventsByGroup ($) {
 }  
 
 sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
-  my ($conferenceID) = @_;
+  my ($EventID) = @_;
   
   require "TopicSQL.pm";
   
-  if ($Conference{$conferenceID}{EventGroupID}) { # We already have this one
-    return $conferenceID;
+  if ($Conference{$EventID}{EventGroupID}) { # We already have this one
+    return $EventID;
   }
   
-  my ($ConferenceID,$EventGroupID,$Location,$URL,$Title,$LongDescription,$Preamble,
-      $Epilogue,$StartDate,$EndDate,$ShowAllTalks,$TimeStamp);
-
-  my $ConferenceFetch   = $dbh -> prepare(
-    "select ConferenceID,EventGroupID,Location,AltLocation,URL,Title,LongDescription,Preamble,Epilogue,StartDate,EndDate,ShowAllTalks,TimeStamp ".
+  my $Fetch = $dbh -> prepare(
+    "select EventGroupID,Location,AltLocation,URL,Title,LongDescription,Preamble,Epilogue,StartDate,EndDate,ShowAllTalks,TimeStamp ".
     "from Conference ".
     "where ConferenceID=?");
-  $ConferenceFetch -> execute($conferenceID);
+  $Fetch -> execute($EventID);
  
-  ($ConferenceID,$EventGroupID,$Location,$AltLocation,$URL,$Title,
-   $LongDescription,$Preamble,$Epilogue,$StartDate,$EndDate,$ShowAllTalks,
-   $TimeStamp) = $ConferenceFetch -> fetchrow_array;
-  if ($ConferenceID) {
-    $Conferences{$ConferenceID}{EventGroupID}    = $EventGroupID;
-    $Conferences{$ConferenceID}{Location}        = $Location;
-    $Conferences{$ConferenceID}{AltLocation}     = $AltLocation;
-    $Conferences{$ConferenceID}{URL}             = $URL;
-    $Conferences{$ConferenceID}{Title}           = $Title;
-    $Conferences{$ConferenceID}{Preamble}        = $Preamble;
-    $Conferences{$ConferenceID}{LongDescription} = $LongDescription;
-    $Conferences{$ConferenceID}{Epilogue}        = $Epilogue;
-    $Conferences{$ConferenceID}{StartDate}       = $StartDate;
-    $Conferences{$ConferenceID}{EndDate}         = $EndDate;
-    $Conferences{$ConferenceID}{ShowAllTalks}    = $ShowAllTalks;
-    $Conferences{$ConferenceID}{TimeStamp}       = $TimeStamp;
+  my ($EventGroupID,$Location,$AltLocation,$URL,$Title,
+      $LongDescription,$Preamble,$Epilogue,$StartDate,$EndDate,$ShowAllTalks,
+      $TimeStamp) = $Fetch -> fetchrow_array;
+  if ($EventGroupID) {
+    $Conferences{$EventID}{EventGroupID}    = $EventGroupID;
+    $Conferences{$EventID}{Location}        = $Location;
+    $Conferences{$EventID}{AltLocation}     = $AltLocation;
+    $Conferences{$EventID}{URL}             = $URL;
+    $Conferences{$EventID}{Title}           = $Title;
+    $Conferences{$EventID}{Preamble}        = $Preamble;
+    $Conferences{$EventID}{LongDescription} = $LongDescription;
+    $Conferences{$EventID}{Epilogue}        = $Epilogue;
+    $Conferences{$EventID}{StartDate}       = $StartDate;
+    $Conferences{$EventID}{EndDate}         = $EndDate;
+    $Conferences{$EventID}{ShowAllTalks}    = $ShowAllTalks;
+    $Conferences{$EventID}{TimeStamp}       = $TimeStamp;
     	
-    &FetchEventGroup($EventGroupID);
-    $Conferences{$ConferenceID}{Full}  = $EventGroups{$EventGroupID}{LongDescription}.":".$Title;
+    FetchEventGroup($EventGroupID);
+    $Conferences{$EventID}{Full}  = $EventGroups{$EventGroupID}{LongDescription}.":".$Title;
+    @{$Conferences{$EventID}{Moderators}} = ();
+    @{$Conferences{$EventID}{Topics}}     = ();
+  }
+  
+  my $ModeratorSelect = $dbh -> prepare("select AuthorID from Moderator  where EventID=?");
+  $ModeratorSelect -> execute($EventID);
+  while (my ($AuthorID) = $ModeratorSelect -> fetchrow_array()) {
+    push @{$Conferences{$EventID}{Moderators}},$AuthorID;
   }
 
-  return $ConferenceID;
+  my $TopicSelect     = $dbh -> prepare("select TopicID  from EventTopic where EventID=?");
+  $TopicSelect -> execute($EventID);
+  while (my ($TopicID) = $TopicSelect -> fetchrow_array()) {
+    push @{$Conferences{$EventID}{Topics}},$TopicID;
+  }
+
+  return $EventID;
 }
 
 sub FetchSessionsByConferenceID ($) {
@@ -394,95 +405,125 @@ sub FetchMeetingOrdersByConferenceID {
 }
 
 sub InsertEvent (%) {
-  require "SQLUtilities.pm";
-
-  my (%Params) = @_;
+  my ($ArgRef) = @_;
   
-  my $EventGroupID     = $Params{-eventgroupid}     || 0;
-  my $ShortDescription = $Params{-shortdescription} || "";
-  my $LongDescription  = $Params{-longdescription}  || "";
-  my $StartDate        = $Params{-startdate}        || &SQLNow();
-  my $EndDate          = $Params{-enddate}          || &SQLNow();
-  my $Location         = $Params{-location}         || "";
-  my $URL              = $Params{-url}              || "";
-  my $ShowAllTalks     = $Params{-showalltalks}     || 0;
-  my $Preample         = $Params{-preample}         || "";
-  my $Epilogue         = $Params{-epilogue}         || "";
+  my $EventGroupID     = exists $ArgRef->{-eventgroupid}     ?   $ArgRef->{-eventgroupid}     : 0;
+  my $ShortDescription = exists $ArgRef->{-shortdescription} ?   $ArgRef->{-shortdescription} : "";
+  my $LongDescription  = exists $ArgRef->{-longdescription}  ?   $ArgRef->{-longdescription}  : "";
+  my $StartDate        = exists $ArgRef->{-startdate}        ?   $ArgRef->{-startdate}        : SQLNow();
+  my $EndDate          = exists $ArgRef->{-enddate}          ?   $ArgRef->{-enddate}          : SQLNow();
+  my $Location         = exists $ArgRef->{-location}         ?   $ArgRef->{-location}         : "";
+  my $AltLocation      = exists $ArgRef->{-altlocation}      ?   $ArgRef->{-altlocation}      : "";
+  my $URL              = exists $ArgRef->{-url}              ?   $ArgRef->{-url}              : "";
+  my $ShowAllTalks     = exists $ArgRef->{-showalltalks}     ?   $ArgRef->{-showalltalks}     : 0;
+  my $Preample         = exists $ArgRef->{-preample}         ?   $ArgRef->{-preample}         : "";
+  my $Epilogue         = exists $ArgRef->{-epilogue}         ?   $ArgRef->{-epilogue}         : "";
+  my @TopicIDs         = exists $ArgRef->{-topicids}         ? @{$ArgRef->{-topicids}}        : ();
+  my @ModeratorIDs     = exists $ArgRef->{-moderatorids}     ? @{$ArgRef->{-moderatorids}}    : ();
+  my @ViewGroupIDs     = exists $ArgRef->{-viewgroupids}     ? @{$ArgRef->{-viewgroupids}}    : ();
+  my @ModifyGroupIDs   = exists $ArgRef->{-modifygroupids}   ? @{$ArgRef->{-viewgroupids}}    : ();
+
+  require "SQLUtilities.pm";
+  require "MeetingSecuritySQL.pm";
 
   my $Insert = $dbh->prepare(
      "insert into Conference ".
-     "(ConferenceID, EventGroupID, Location, URL, ShowAllTalks, StartDate, EndDate, ".
+     "(ConferenceID, EventGroupID, Location, AltLocation, URL, ShowAllTalks, StartDate, EndDate, ".
      " Preamble, Epilogue, Title, LongDescription) ". 
-     "values (0,?,?,?,?,?,?,?,?,?,?)");
-  $Insert -> execute($EventGroupID,$Location,$URL,$ShowAllTalks,
+     "values (0,?,?,?,?,?,?,?,?,?,?,?)");
+  $Insert -> execute($EventGroupID,$Location,$AltLocation,$URL,$ShowAllTalks,
                      $StartDate,$EndDate,$Preamble,
                      $Epilogue,$ShortDescription,$LongDescription); 
   $EventID = $Insert -> {mysql_insertid}; 
   
+  MeetingSecurityUpdate(-mode => 'access', -conferenceid => $EventID, -groupids => \@ViewGroupIDs);
+  MeetingSecurityUpdate(-mode => 'modify', -conferenceid => $EventID, -groupids => \@ModifyGroupIDs);
+  MeetingTopicUpdate({     -type => 'Event', -id => $EventID, -topicids  => \@TopicIDs });
+  MeetingModeratorUpdate({ -type => 'Event', -id => $EventID, -authorids => \@ModeratorIDs });
+
   return $EventID;  
 }
 
 sub UpdateEvent (%) {
-  my (%Params) = @_;
+  my ($ArgRef) = @_;
+  
+  my $EventID          = exists $ArgRef->{-eventid}          ?   $ArgRef->{-eventid}          : 0;
+  my $EventGroupID     = exists $ArgRef->{-eventgroupid}     ?   $ArgRef->{-eventgroupid}     : 0;
+  my $ShortDescription = exists $ArgRef->{-shortdescription} ?   $ArgRef->{-shortdescription} : "";
+  my $LongDescription  = exists $ArgRef->{-longdescription}  ?   $ArgRef->{-longdescription}  : "";
+  my $StartDate        = exists $ArgRef->{-startdate}        ?   $ArgRef->{-startdate}        : SQLNow();
+  my $EndDate          = exists $ArgRef->{-enddate}          ?   $ArgRef->{-enddate}          : SQLNow();
+  my $Location         = exists $ArgRef->{-location}         ?   $ArgRef->{-location}         : "";
+  my $AltLocation      = exists $ArgRef->{-altlocation}      ?   $ArgRef->{-altlocation}      : "";
+  my $URL              = exists $ArgRef->{-url}              ?   $ArgRef->{-url}              : "";
+  my $ShowAllTalks     = exists $ArgRef->{-showalltalks}     ?   $ArgRef->{-showalltalks}     : 0;
+  my $Preample         = exists $ArgRef->{-preample}         ?   $ArgRef->{-preample}         : "";
+  my $Epilogue         = exists $ArgRef->{-epilogue}         ?   $ArgRef->{-epilogue}         : "";
+  my @TopicIDs         = exists $ArgRef->{-topicids}         ? @{$ArgRef->{-topicids}}        : ();
+  my @ModeratorIDs     = exists $ArgRef->{-moderatorids}     ? @{$ArgRef->{-moderatorids}}    : ();
+  my @ViewGroupIDs     = exists $ArgRef->{-viewgroupids}     ? @{$ArgRef->{-viewgroupids}}    : ();
+  my @ModifyGroupIDs   = exists $ArgRef->{-modifygroupids}   ? @{$ArgRef->{-viewgroupids}}    : ();
 
-  my $EventID          = $Params{-eventid}          || 0;
-  my $EventGroupID     = $Params{-eventgroupid}     || 0;
-  my $ShortDescription = $Params{-shortdescription} || "";
-  my $LongDescription  = $Params{-longdescription}  || "";
-  my $StartDate        = $Params{-startdate}        || &SQLNow();
-  my $EndDate          = $Params{-enddate}          || &SQLNow();
-  my $Location         = $Params{-location}         || "";
-  my $URL              = $Params{-url}              || "";
-  my $ShowAllTalks     = $Params{-showalltalks}     || 0;
-  my $Preample         = $Params{-preample}         || "";
-  my $Epilogue         = $Params{-epilogue}         || "";
+  require "SQLUtilities.pm";
+  require "MeetingSecuritySQL.pm";
 
   my $Update = $dbh->prepare(
    "update Conference set ".
-     "EventGroupID=?, Location=?, URL=?, ShowAllTalks=?, StartDate=?, EndDate=?, ".
+     "EventGroupID=?, Location=?, AltLocation=?, URL=?, ShowAllTalks=?, StartDate=?, EndDate=?, ".
      "Preamble=?, Epilogue=?, Title=?, LongDescription=? ". 
    "where ConferenceID=?");
 
-  $Update -> execute($EventGroupID,$Location,$URL,$ShowAllTalks,
+  $Update -> execute($EventGroupID,$Location,$AltLocation,$URL,$ShowAllTalks,
                      $StartDate,$EndDate,$Preamble,$Epilogue,
                      $ShortDescription,$LongDescription,$EventID); 
+  MeetingSecurityUpdate(-mode => 'access', -conferenceid => $EventID, -groupids => \@ViewGroupIDs);
+  MeetingSecurityUpdate(-mode => 'modify', -conferenceid => $EventID, -groupids => \@ModifyGroupIDs);
+  MeetingTopicUpdate({     -type => 'Event', -id => $EventID, -topicids  => \@TopicIDs });
+  MeetingModeratorUpdate({ -type => 'Event', -id => $EventID, -authorids => \@ModeratorIDs });
   return;
 }
 
 sub InsertSession (%) {
-  my (%Params) = @_;
+  my ($ArgRef) = @_;
   
-  my $EventID     = $Params{-eventid}     || 0;
-  my $Date        = $Params{-date}        || "";
-  my $Title       = $Params{-title}       || "";
-  my $Description = $Params{-description} || "";
-  my $Location    = $Params{-location}    || "";
+  my $EventID      = exists $ArgRef->{-eventid}      ?   $ArgRef->{-eventid}       : 0;
+  my $Date         = exists $ArgRef->{-date}         ?   $ArgRef->{-date}          : "";
+  my $Title        = exists $ArgRef->{-title}        ?   $ArgRef->{-title}         : "";
+  my $Description  = exists $ArgRef->{-description}  ?   $ArgRef->{-description}   : "";
+  my $Location     = exists $ArgRef->{-location}     ?   $ArgRef->{-location}      : "";
+  my $AltLocation  = exists $ArgRef->{-altlocation}  ?   $ArgRef->{-altlocation}   : "";
+  my @TopicIDs     = exists $ArgRef->{-topicids}     ? @{$ArgRef->{-topicids}}     : ();
+  my @ModeratorIDs = exists $ArgRef->{-moderatorids} ? @{$ArgRef->{-moderatorids}} : ();
 
   my $Insert = $dbh -> prepare(
    "insert into Session ".
-          "(SessionID, ConferenceID, StartTime, Location, Title, Description) ". 
-   "values (0,?,?,?,?,?)");
-  $Insert          -> execute($EventID,$Date,$Location,$Title,$Description);
+          "(SessionID, ConferenceID, StartTime, Location, AltLocation, Title, Description) ". 
+   "values (0,?,?,?,?,?,?)");
+  $Insert -> execute($EventID,$Date,$Location,$AltLocation,$Title,$Description);
   $SessionID = $Insert -> {mysql_insertid}; 
 
   return $SessionID;
 }  
 
 sub UpdateSession (%) {
-  my (%Params) = @_;
+  my ($ArgRef) = @_;
   
   my $SessionID   = $Params{-sessionid}   || 0;
-  my $Date        = $Params{-date}        || "";
-  my $Title       = $Params{-title}       || "";
-  my $Description = $Params{-description} || "";
-  my $Location    = $Params{-location}    || "";
+  my $SessionID    = exists $ArgRef->{-sessionid}    ?   $ArgRef->{-sessionid}     : 0;
+  my $Date         = exists $ArgRef->{-date}         ?   $ArgRef->{-date}          : "";
+  my $Title        = exists $ArgRef->{-title}        ?   $ArgRef->{-title}         : "";
+  my $Description  = exists $ArgRef->{-description}  ?   $ArgRef->{-description}   : "";
+  my $Location     = exists $ArgRef->{-location}     ?   $ArgRef->{-location}      : "";
+  my $AltLocation  = exists $ArgRef->{-altlocation}  ?   $ArgRef->{-altlocation}   : "";
+  my @TopicIDs     = exists $ArgRef->{-topicids}     ? @{$ArgRef->{-topicids}}     : ();
+  my @ModeratorIDs = exists $ArgRef->{-moderatorids} ? @{$ArgRef->{-moderatorids}} : ();
 
   my $Update = $dbh -> prepare("update Session set ".
-               "Title=?, Description=?, Location=?, StartTime=? ". 
+               "Title=?, Description=?, Location=?, AltLocation=?, StartTime=? ". 
                "where SessionID=?");
                
   if ($SessionID) {
-    $Update -> execute($Title,$Description,$Location,$Date,$SessionID);
+    $Update -> execute($Title,$Description,$Location,$AltLocation,$Date,$SessionID);
   }
   
 }
@@ -657,7 +698,7 @@ sub MeetingTopicUpdate {
   my $Delete;
   my $Insert;
      
-  if ($Type eq "Meeting") {  
+  if ($Type eq "Event") {  
     $Delete = $dbh -> prepare("delete from EventTopic where EventID=?");
     $Insert = $dbh -> prepare("insert into EventTopic (EventTopicID,EventID,TopicID) values (0,?,?)");
   } elsif ($Type eq "Session") {
@@ -691,7 +732,7 @@ sub MeetingModeratorUpdate {
   my $Delete;
   my $Insert;
      
-  if ($Type eq "Meeting") {  
+  if ($Type eq "Event") {  
     $Delete = $dbh -> prepare("delete from Moderator where EventID=?");
     $Insert = $dbh -> prepare("insert into Moderator (ModeratorID,EventID,AuthorID) values (0,?,?)");
   } elsif ($Type eq "Session") {

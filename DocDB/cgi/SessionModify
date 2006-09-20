@@ -97,6 +97,8 @@ my $Short                 = $params{shortdesc};
 my $Long                  = $params{long};
 my @MeetingViewGroupIDs   = split /\0/,$params{meetingviewgroups};
 my @MeetingModifyGroupIDs = split /\0/,$params{meetingmodifygroups};
+my @MeetingTopicIDs       = split /\0/,$params{topics};
+my @MeetingModeratorIDs   = split /\0/,$params{moderators};
 
 unless ($Long) {$Long = $Short;}
 
@@ -204,36 +206,31 @@ if ($Mode eq "modify" || $Mode eq "create") {
   my $SessionDate = "$SessionYear-$ReverseAbrvMonth{$SessionMonth}-$SessionDay $SessionHour:00";
 
   if ($SingleSession && $Mode eq "create") { # Make an event, then a session, pass variables out
-    $EventID = &InsertEvent(-eventgroupid => $EventGroupID, -location => $Location,
-               -url => $URL, -startdate   => $SessionDate,  -enddate  => $SessionDate,
-               -shortdescription          => $Short, -longdescription => $Long,
-               -showalltalks              => 1);
-    &MeetingSecurityUpdate(-mode         => 'access',
-                           -conferenceid => $EventID, 
-                           -groupids     => \@MeetingViewGroupIDs);
-    &MeetingSecurityUpdate(-mode         => 'modify',
-                           -conferenceid => $EventID, 
-                           -groupids     => \@MeetingModifyGroupIDs);
-    $SessionID = &InsertSession(-eventid => $EventID, -date     => $SessionDate,
-                                -title   => $Short,   -location => $Location,
-                                -description => $SessionDescription);
-    &InsertMeetingOrder(-sessionid => $SessionID);
+    $EventID = InsertEvent({ 
+        -eventgroupid     => $EventGroupID,         -location        => $Location,
+        -url              => $URL,                  -startdate        => $SessionDate,  
+        -enddate          => $SessionDate,          -shortdescription => $Short, 
+        -longdescription  => $Long,                 -altlocation      => $AltLocation,
+        -showalltalks     => 1, 
+        -topicids         => \@MeetingTopicIDs,     -moderatorids     => \@MeetingModeratorIDs , 
+        -viewgroupids     => \@MeetingViewGroupIDs, -modifygroupids   => \@MeetingModifyGroupIDs, });
+    $SessionID = InsertSession({ -eventid  => $EventID,  -date        => $SessionDate,
+                                 -title    => $Short,    -description => $SessionDescription,
+                                 -location => $Location, -altlocation => $AltLocation, });
+    InsertMeetingOrder(-sessionid => $SessionID);
     push @ActionStack,"Created new event: $Short";
   } elsif ($SingleSession && $Mode eq "modify") {
-    &UpdateEvent(-eventid => $EventID, -eventgroupid => $EventGroupID,  
-                 -location => $Location, -url => $URL, 
-                 -startdate => $SessionDate, -enddate  => $SessionDate,
-                 -shortdescription => $Short, -longdescription => $Long,
-                 -showalltalks => 1);
-    &MeetingSecurityUpdate(-mode         => 'access',
-                           -conferenceid => $EventID, 
-                           -groupids     => \@MeetingViewGroupIDs);
-    &MeetingSecurityUpdate(-mode         => 'modify',
-                           -conferenceid => $EventID, 
-                           -groupids     => \@MeetingModifyGroupIDs);
-    &UpdateSession(-sessionid => $SessionID, -date     => $SessionDate,
-                   -title     => $Short,     -location => $Location,
-                   -description => $SessionDescription);
+    UpdateEvent({ 
+        -eventid          => $EventID,              -eventgroupid    => $EventGroupID,  
+        -location         => $Location,             -url             => $URL, 
+        -startdate        => $SessionDate,          -enddate         => $SessionDate,
+        -shortdescription => $Short,                -longdescription => $Long, 
+        -altlocation      => $AltLocation,          -showalltalks    => 1,                     
+        -topicids         => \@MeetingTopicIDs,     -moderatorids    => \@MeetingModeratorIDs , 
+        -viewgroupids     => \@MeetingViewGroupIDs, -modifygroupids  => \@MeetingModifyGroupIDs, });
+    UpdateSession({ -sessionid   => $SessionID, -date        => $SessionDate,
+                    -title       => $Short,     -description => $SessionDescription,     
+                    -location    => $Location,  -altlocation => $AltLocation, });
     my $MeetingOrderUpdate = $dbh -> prepare(
          "update MeetingOrder set SessionOrder=1 where SessionID=?");
     $MeetingOrderUpdate -> execute($SessionID);
@@ -242,13 +239,13 @@ if ($Mode eq "modify" || $Mode eq "create") {
 
   # Update Session parameters, refetch
 
-    &UpdateSession(-sessionid => $SessionID, -date => $SessionDate, 
-                   -title => $SessionTitle, -description => $SessionDescription,
-                   -location => $SessionLocation);
+    UpdateSession({ -sessionid => $SessionID, -date => $SessionDate, 
+                    -title => $SessionTitle, -description => $SessionDescription,
+                    -location => $SessionLocation, -altlocation => $AltLocation, });
     push @ActionStack,"Modified session: $SessionTitle";
   }                 
-  &ClearSessions;
-  &FetchSessionByID($SessionID);
+  ClearSessions();
+  FetchSessionByID($SessionID);
 
   my %TalkOrders = (); # Re-sort talk orders
   {
@@ -265,7 +262,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
   }
   
 # Loop over sessions and insert
-  &FetchSessionOrdersBySessionID($SessionID);
+  FetchSessionOrdersBySessionID($SessionID);
  
   my $TalksUpdated    = 0;
 
@@ -292,7 +289,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
     } elsif ($params{"authortext-$SessionOrderID"}) { 
       require "AuthorSQL.pm";
       my $AuthorText = $params{"authortext-$SessionOrderID"};
-      @AuthorHints = &ProcessManualAuthors($AuthorText);
+      @AuthorHints = ProcessManualAuthors($AuthorText);
     }
     
     if (grep /n/,$SessionOrderID) { # Key on SessionOrderID to see if insert or update.	
@@ -314,11 +311,11 @@ if ($Mode eq "modify" || $Mode eq "create") {
           $TalkInsert          -> execute($SessionID,$TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote);
           $SessionTalkID = $TalkInsert -> {mysql_insertid}; # Works with MySQL only
           if ($TalkConfirmed) {
-            &ConfirmTalk(-docid => $TalkDocID, -sessiontalkid => $SessionTalkID, -eventid => $EventID);
+            ConfirmTalk(-docid => $TalkDocID, -sessiontalkid => $SessionTalkID, -eventid => $EventID);
           }  
           $NewSessionTalkMap{$TalkOrder} = $SessionTalkID;
-          &InsertTopicHints($SessionTalkID,@TopicHints);
-          &InsertAuthorHints($SessionTalkID,@AuthorHints);
+          InsertTopicHints($SessionTalkID,@TopicHints);
+          InsertAuthorHints($SessionTalkID,@AuthorHints);
           push @ActionStack,"Added item to agenda: $TalkTitle";
 	}
         my $SessionOrderInsert = $dbh -> prepare(
@@ -334,7 +331,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
 ### Check TimeStamps from form vs. DB to detect collisions
 
       if ($SessionTalkID) {
-        &FetchSessionTalkByID($SessionTalkID);
+        FetchSessionTalkByID($SessionTalkID);
         if ($TimeStamp < $SessionTalks{$SessionTalkID}{TimeStamp}) {
           push @WarnStack,"Someone else modifed $TalkTitle while you were working. 
                           If you tried to modify $TalkTitle too, your modifications
@@ -343,7 +340,7 @@ if ($Mode eq "modify" || $Mode eq "create") {
         }
       }                    
       if ($TalkSeparatorID) {
-        &FetchTalkSeparatorByID($TalkSeparatorID);
+        FetchTalkSeparatorByID($TalkSeparatorID);
         if ($TimeStamp < $TalkSeparators{$TalkSeparatorID}{TimeStamp}) {
           push @WarnStack,"Someone else modifed $TalkTitle while you were working. 
                           If you tried to modify $TalkTitle too, your modifications
@@ -354,10 +351,10 @@ if ($Mode eq "modify" || $Mode eq "create") {
         
       if ($TalkDeleteFlags{$SessionOrderID}) { # Delete session or separator
         if ($TalkSeparatorID) {
-          &DeleteTalkSeparator($TalkSeparatorID);
+          DeleteTalkSeparator($TalkSeparatorID);
           push @ActionStack,"Deleted break from agenda";
         } elsif ($SessionTalkID) {
-          &DeleteSessionTalk($SessionTalkID);
+          DeleteSessionTalk($SessionTalkID);
           push @ActionStack,"Deleted item from agenda";
         }
       } elsif ($TalkTitle || $TalkNote || $TalkDocID) { # We will modify existing talks
@@ -382,10 +379,10 @@ if ($Mode eq "modify" || $Mode eq "create") {
            "where SessionTalkID=?");
           $SessionTalkUpdate -> execute($TalkDocID,$TalkConfirmed,$TalkTime,$TalkTitle,$TalkNote,$SessionTalkID);
           if ($TalkConfirmed) {
-            &ConfirmTalk(-docid => $TalkDocID, -sessiontalkid => $SessionTalkID, -eventid => $EventID);
+            ConfirmTalk(-docid => $TalkDocID, -sessiontalkid => $SessionTalkID, -eventid => $EventID);
           }  
-          &InsertTopicHints($SessionTalkID,@TopicHints);
-          &InsertAuthorHints($SessionTalkID,@AuthorHints);
+          InsertTopicHints($SessionTalkID,@TopicHints);
+          InsertAuthorHints($SessionTalkID,@AuthorHints);
           if ($NewSessionID) { # Move to new session
             my $SessionTalkMove = $dbh -> prepare(
              "update SessionTalk set SessionID=? where SessionTalkID=?");
@@ -407,13 +404,13 @@ if ($Mode eq "modify" || $Mode eq "create") {
       if ($SessionTalkID && !$TalkConfirmed && @AuthorHints) {
         require "DocumentUtilities.pm";
         require "MiscSQL.pm";
-        my $TypeID = &FetchDocTypeByName("Talk") || 1; 
+        my $TypeID = FetchDocTypeByName("Talk") || 1; 
         my ($NewDocumentID,$NewDocRevID) 
-          = &AddDocument(-version     => "reserve",     -title       => $TalkTitle, 
-                         -typeid      => $TypeID,       -requesterid => @AuthorHints[0], 
-                         -authorids   => \@AuthorHints, -topicids    => \@TopicHints, 
-                         -eventids    => [$EventID],    -viewids     => \@MeetingViewGroupIDs, 
-                         -modifyids   => \@MeetingViewGroupIDs);
+          = AddDocument(-version     => "reserve",     -title       => $TalkTitle, 
+                        -typeid      => $TypeID,       -requesterid => @AuthorHints[0], 
+                        -authorids   => \@AuthorHints, -topicids    => \@TopicHints, 
+                        -eventids    => [$EventID],    -viewids     => \@MeetingViewGroupIDs, 
+                        -modifyids   => \@MeetingViewGroupIDs);
         push @ActionStack,"Reserved document # $NewDocumentID with title $TalkTitle";
         my $SessionTalkUpdate = $dbh -> prepare(
            "update SessionTalk set DocumentID=?,Confirmed=? where SessionTalkID=?");
@@ -425,22 +422,22 @@ if ($Mode eq "modify" || $Mode eq "create") {
   }
 }
 
-&EndPage(@ErrorStack);
-&WarnPage(@WarnStack);
-&ActionReport;
+EndPage(@ErrorStack);
+WarnPage(@WarnStack);
+ActionReport();
 
 ### Prepare to display form (get required info)
 
-&ClearSessionTalks();
-&ClearSessions();
-&ReHintTalksBySessionID($SessionID); 
-&ClearSessionTalks();
+ClearSessionTalks();
+ClearSessions();
+ReHintTalksBySessionID($SessionID); 
+ClearSessionTalks();
 
 # Fetch all SessionTalks and TalkSeparators with this SessionID 
 
-my @SessionTalkIDs   = &FetchSessionTalksBySessionID($SessionID);
-my @TalkSeparatorIDs = &FetchTalkSeparatorsBySessionID($SessionID);
-my @SessionOrderIDs  = &FetchSessionOrdersBySessionID($SessionID);
+my @SessionTalkIDs   = FetchSessionTalksBySessionID($SessionID);
+my @TalkSeparatorIDs = FetchTalkSeparatorsBySessionID($SessionID);
+my @SessionOrderIDs  = FetchSessionOrdersBySessionID($SessionID);
 
 # Sort talks and separators
 
