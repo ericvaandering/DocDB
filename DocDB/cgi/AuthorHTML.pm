@@ -84,7 +84,7 @@ sub AuthorListByID {
     $HTML = $NoneText;
   }
   $HTML .= $EndHTML;
-#  return $HTML;
+  return $HTML;
   use XML::Twig;
 
   my $t= new XML::Twig;
