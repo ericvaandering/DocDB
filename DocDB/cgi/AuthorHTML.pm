@@ -85,11 +85,14 @@ sub AuthorListByID {
     $HTML = $NoneText;
   }
   $HTML .= $EndHTML;
-  my $Parser = HTML::TreeBuilder -> new();
-  $Parser -> parse($HTML);
-  $Parser -> eof;
-  return ($Parser -> as_HTML(undef,' ',{})); #Escape all, one space, all tags end
+  return $HTML;
+#  my $Parser = HTML::TreeBuilder -> new();
+#  $Parser -> parse($HTML);
+#  $Parser -> eof;
+#  return ($Parser -> as_HTML(undef,' ',{})); #Escape all, one space, all tags end
 }
+
+# FIXME: Can replace with above now
 
 sub ShortAuthorListByID {
   my @AuthorIDs = @_;
