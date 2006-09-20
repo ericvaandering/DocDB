@@ -69,6 +69,7 @@ my $EndDay             = $params{endday};
 my $MeetPreamble       = $params{meetpreamble};
 my $MeetEpilogue       = $params{meetepilogue};
 my $Location           = $params{location};
+my $AltLocation        = $params{altlocation};
 my $URL                = $params{url};
 my $ShowAllTalks       = $params{meetshowall};
 
@@ -82,10 +83,12 @@ my @SessionHours         = split /\0/,$params{sessiontime};
 my @SessionOrders        = split /\0/,$params{sessionorder};
 my @RawSessionSeparators = split /\0/,$params{sessionseparator};
 my @SessionLocations     = split /\0/,$params{sessionlocation};
+my @SessionAltLocations  = split /\0/,$params{sessionaltlocation};
 my @SessionTitles        = split /\0/,$params{sessiontitle};
 my @SessionDescriptions  = split /\0/,$params{sessiondescription};
 my @MeetingOrderIDs      = split /\0/,$params{meetingorderid};
 my @SessionDeletes       = split /\0/,$params{sessiondelete};
+my @SessionShowAlls      = split /\0/,$params{sessionshowall};
 
 my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
 my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
@@ -216,11 +219,11 @@ if ($Mode eq "create" || $Mode eq "modify") {
   if ($Mode eq "create") { 
     my $ConferenceInsert = $dbh->prepare(
      "insert into Conference ".
-     "(ConferenceID, EventGroupID, Location, URL, ShowAllTalks, StartDate, EndDate, ".
+     "(ConferenceID, EventGroupID, Location, AltLocation, URL, ShowAllTalks, StartDate, EndDate, ".
      " Preamble, Epilogue, Title, LongDescription) ". 
      "values (0,?,?,?,?,?,?,?,?,?,?)");
-    $ConferenceInsert -> execute($EventGroupID,$Location,$URL,$ShowAllTalks,
-                                 $StartDate,$EndDate,$MeetPreamble,
+    $ConferenceInsert -> execute($EventGroupID,$Location,$AltLocation,$URL,
+                                 $ShowAllTalks,$StartDate,$EndDate,$MeetPreamble,
                                  $MeetEpilogue,$Short,$Long); 
     $ConferenceID = $ConferenceInsert -> {mysql_insertid}; # Works with MySQL only
     push @ActionStack,"Created new event: $Short";
@@ -252,6 +255,10 @@ if ($Mode eq "create" || $Mode eq "modify") {
   my %SessionDeleteFlags = ();
   foreach my $SessionDelete (@SessionDeletes) { 
     $SessionDeleteFlags{$SessionDelete} = 1; 
+  }  
+  my %SessionShowAllFlags = ();
+  foreach my $SessionShowAll (@SessionShowAlls) { 
+    $SessionShowAllFlags{$SessionShowAll} = 1; 
   }  
   
 # Re-sort session orders
@@ -304,9 +311,11 @@ if ($Mode eq "create" || $Mode eq "modify") {
           # Create a new session
           my $SessionInsert = $dbh -> prepare(
            "insert into Session ".
-                  "(SessionID, ConferenceID, StartTime, Location, Title, Description) ". 
-           "values (0,?,?,?,?,?)");
-          $SessionInsert          -> execute($ConferenceID,$SessionDate,$SessionLocation,$SessionTitle,$SessionDescription);
+                  "(SessionID, ConferenceID, StartTime, Location, AltLocation, Title, Description, ShowAllTalks) ". 
+           "values (0,?,?,?,?,?,?,?)");
+          $SessionInsert-> execute($ConferenceID,$SessionDate,$SessionLocation,
+                                   $SessionAltLocation,$SessionTitle,$SessionDescription,
+                                   $ShowAllFlags{$MeetingOrderID));
           $SessionID = $SessionInsert -> {mysql_insertid}; # Works with MySQL only
           push @ActionStack,"Created session: $SessionTitle";
           ++$SessionsModified;

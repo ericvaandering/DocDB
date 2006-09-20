@@ -143,6 +143,11 @@ sub SessionEntryForm (%) {
       $RowClass = "Even";
     }    
     
+    # FIXME: All of these really should be local and code should be changed
+    my $SessionType = "";
+    my $SessionDefaultLocation = "";
+    my $SessionDefaultAltLocation = "";
+
     $SessionDefaultOrder = $SessionOrder;  
     if (grep /n/,$MeetingOrderID) {# Erase defaults
       if ($ConferenceID) {
@@ -150,14 +155,14 @@ sub SessionEntryForm (%) {
         $SessionDefaultDateTime = $Conferences{$ConferenceID}{StartDate}." 9:00:00";
       } else {
         require "SQLUtilities.pm";
-        $SessionDefaultDateTime = &SQLNow(-dateonly => $TRUE)." 9:00:00";
+        $SessionDefaultDateTime = SQLNow(-dateonly => $TRUE)." 9:00:00";
       }
-      $SessionDefaultLocation    = "";
       $SessionDefaultTitle       = "";
       $SessionDefaultDescription = "";
       $SessionSeparatorDefault   = "";
     } else { # Key off Meeting Order IDs, do differently for Sessions and Separators
       if ($MeetingOrders{$MeetingOrderID}{SessionID}) {
+        $SessionType = "Session";
         my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
 	$SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
         $SessionDefaultLocation    = $Sessions{$SessionID}{Location}    || "";
@@ -165,6 +170,7 @@ sub SessionEntryForm (%) {
 	$SessionDefaultDescription = $Sessions{$SessionID}{Description} || "";
 	$SessionSeparatorDefault   = "No";
       } elsif ($MeetingOrders{$MeetingOrderID}{SessionSeparatorID}) {
+        $SessionType = "Break";
         my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
 	$SessionDefaultDateTime    = $SessionSeparators{$SessionSeparatorID}{StartTime};
         $SessionDefaultLocation    = $SessionSeparators{$SessionSeparatorID}{Location}    || "";
@@ -206,10 +212,11 @@ sub SessionEntryForm (%) {
     print "</td>\n";
 
     print '<td rowspan="2">';
-    AuthorScroll(-helptext => "");
+    AuthorScroll(-helptext => "", -name => "moderators-$MeetingOrderID",);
     print "</td>\n";
     print '<td rowspan="2">';
-    TopicScroll({-itemformat => "short", -helplink  => "", -helptext => "",});
+    TopicScroll({-itemformat => "short",                         -helplink => "", 
+                 -name       => "sessiontopics-$MeetingOrderID", -helptext => "", });
     print "</td>\n";
 
     print "</tr>\n";
@@ -217,7 +224,7 @@ sub SessionEntryForm (%) {
 
     print "<td>\n";
     TextArea(-name     => 'sessiondescription',       -columns  => 35,
-             -default  => $SessionDefaultDescription, -rows     => 4,
+             -default  => $SessionDefaultDescription, -rows     => 5,
              -helplink => '',                         -helptext => '', );
     print "</td>\n";
     print "<td><div>\n";    
@@ -228,13 +235,15 @@ sub SessionEntryForm (%) {
     TextField(-default  => $SessionDefaultAltLocation, 
               -name     => "sessionaltlocation", -helplink  => "", -helptext => "", 
               -size     => 35,                   -maxlength => 128, );
-    print "</div><div>\n";
-    print FormElementTitle(-helplink  => "meetshowall", -helptext  => "Show All Talks?", -nobreak => $TRUE, -nocolon => $TRUE);
-    if ($SessionDefaultShowAllTalks) {
-      print $query -> checkbox(-name => "meetshowall", -value => 1, -label => '', -checked => 'Yes');
-    } else {
-      print $query -> checkbox(-name => "meetshowall", -value => 1, -label => '');
-    }
+    if ($SessionType ne "Break") {
+      print "</div><div>\n";
+      print FormElementTitle(-helplink  => "meetshowall", -helptext  => "Show All Talks?", -nobreak => $TRUE, -nocolon => $TRUE);
+      if ($SessionDefaultShowAllTalks) {
+        print $query -> checkbox(-name => "sessionshowall", -value => $MeetingOrderID, -label => '', -checked => 'Yes');
+      } else {
+        print $query -> checkbox(-name => "sessionshowall", -value => $MeetingOrderID, -label => '');
+      }
+    }  
     print "</div></td>\n";
 
     print "</tr>\n";
