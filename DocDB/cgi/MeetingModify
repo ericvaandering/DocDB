@@ -232,11 +232,11 @@ if ($Mode eq "create" || $Mode eq "modify") {
   } elsif ($Mode eq "modify") {
     my $ConferenceUpdate = $dbh->prepare(
      "update Conference set ".
-            "EventGroupID=?, Location=?, URL=?, ShowAllTalks=?, StartDate=?, EndDate=?, ".
+            "EventGroupID=?, Location=?, AltLocation=?, URL=?, ShowAllTalks=?, StartDate=?, EndDate=?, ".
             "Preamble=?, Epilogue=?, Title=?, LongDescription=? ". 
      "where ConferenceID=?");
-    $ConferenceUpdate -> execute($EventGroupID,$Location,$URL,$ShowAllTalks,
-                                 $StartDate,$EndDate,$MeetPreamble,
+    $ConferenceUpdate -> execute($EventGroupID,$Location,$AltLocation,$URL,
+                                 $ShowAllTalks,$StartDate,$EndDate,$MeetPreamble,
                                  $MeetEpilogue,$Short,$Long,$ConferenceID); 
     push @ActionStack,"Modified event: $Short";
   }

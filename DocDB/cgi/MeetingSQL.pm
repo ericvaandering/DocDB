@@ -647,4 +647,72 @@ sub InsertMeetingOrder {
   $Insert -> execute($Order,$SessionID,$SessionSeparatorID);
 }
 
+sub MeetingTopicUpdate {  
+  my ($ArgRef) = @_;
+  my @TopicIDs = exists $ArgRef->{-topicids} ? @{$ArgRef->{-topicids}} : ();
+  my $Type     = exists $ArgRef->{-type}     ?   $ArgRef->{-type}      : "";
+  my $ID       = exists $ArgRef->{-id}       ?   $ArgRef->{-id}        : 0;
+  
+  my $Delete;
+  my $Insert;
+     
+  if ($Type eq "Meeting") {  
+    $Delete = $dbh -> prepare("delete from EventTopic where EventID=?");
+    $Insert = $dbh -> prepare("insert into EventTopic (EventTopicID,EventID,TopicID) values (0,?,?)");
+  } elsif ($Type eq "Session") {
+    $Delete = $dbh -> prepare("delete from EventTopic where SessionID=?");
+    $Insert = $dbh -> prepare("insert into EventTopic (EventTopicID,SessionID,TopicID) values (0,?,?)");
+  } else {
+    return undef;
+  }
+  
+  unless ($ID) {
+    return undef;
+  }
+    
+# Delete old settings, insert new ones  
+  my $Count = 0;
+  $Delete -> execute($ID);
+  foreach my $TopicID (@TopicIDs) {
+    $Insert -> execute($ID,$TopicID);
+    ++$Count;
+  }
+  
+  return $Count;
+}
+
+sub MeetingModeratorUpdate {  
+  my ($ArgRef) = @_;
+  my @AuthorIDs = exists $ArgRef->{-authorids} ? @{$ArgRef->{-authorids}} : ();
+  my $Type      = exists $ArgRef->{-type}      ?   $ArgRef->{-type}       : "";
+  my $ID        = exists $ArgRef->{-id}        ?   $ArgRef->{-id}         : 0;
+
+  my $Delete;
+  my $Insert;
+     
+  if ($Type eq "Meeting") {  
+    $Delete = $dbh -> prepare("delete from Moderator where EventID=?");
+    $Insert = $dbh -> prepare("insert into Moderator (ModeratorID,EventID,AuthorID) values (0,?,?)");
+  } elsif ($Type eq "Session") {
+    $Delete = $dbh -> prepare("delete from Moderator where SessionID=?");
+    $Insert = $dbh -> prepare("insert into Moderator (ModeratorID,SessionID,AuthorID) values (0,?,?)");
+  } else {
+    return undef;
+  }
+  
+  unless ($ID) {
+    return undef;
+  }
+    
+# Delete old settings, insert new ones  
+  my $Count = 0;
+  $Delete -> execute($ID);
+  foreach my $AuthorID (@AuthorIDs) {
+    $Insert -> execute($ID,$AuthorID);
+    ++$Count;
+  }
+  
+  return $Count;
+}
+
 1;
