@@ -69,11 +69,11 @@ sub AuthorListByID {
     $NoneText     = '<dd>None</dd>';
   } else {
     $EndElement   = "<br/>\n";
-    $NoneText     = "None<br/>\n";
+    $NoneText = '<div id="Authors"><dl><dt class="InfoHeader"><span class="InfoHeader">Authors:</span></dt>None<br/></dl>'."\n";
   }  
   
-  $HTML = $StartHTML;
   if (@AuthorIDs) {
+    $HTML .= $StartHTML;
     $HTML .= $StartList;
     foreach my $AuthorID (@AuthorIDs) {
       FetchAuthor($AuthorID);
@@ -81,7 +81,7 @@ sub AuthorListByID {
     }
     $HTML .= $EndList;
   } else {
-    $HTML .= $NoneText;
+    $HTML = $NoneText;
   }
   $HTML .= $EndHTML;
   
