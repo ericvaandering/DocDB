@@ -60,15 +60,17 @@ sub AuthorListByID {
   if ($ListFormat eq "dl") {
     $StartHTML .= '<div id="Authors"><dl>';
     $StartHTML .= '<dt class="InfoHeader"><span class="InfoHeader">Authors:</span></dt>';
-    $StartHTML .= "</dl>\n";
-    $EndHTML    = "</div>\n";
+    $StartHTML .= "</dl>";
+    $EndHTML    = "</div>";
     $StartList  = '<ul>';
-    $EndList    = "</ul>\n";
+    $EndList    = "</ul>";
     $StartElement = '<li>';
-    $EndElement   = "</li>\n";
+    $EndElement   = "</li>";
     $NoneText     = '<dd>None</dd>';
   } else {
-    $EndElement   = "<br/>\n";
+    $StartHTML = '<div>';
+    $EndHTML   = '</div>';
+    $EndElement   = "<br/>";
     $NoneText = '<div id="Authors"><dl><dt class="InfoHeader"><span class="InfoHeader">Authors:</span></dt>None<br/></dl>'."\n";
   }  
   
@@ -84,13 +86,13 @@ sub AuthorListByID {
     $HTML = $NoneText;
   }
   $HTML .= $EndHTML;
-  return $HTML;
+#  return $HTML;
   use XML::Twig;
 
   my $t= new XML::Twig;
   $t->parse($HTML);
 
-  $t->set_pretty_print( 'nice');     # \n before tags not part of mixed content
+  $t->set_pretty_print( 'indented');     # \n before tags not part of mixed content
   return $t->sprint;
 }
 
