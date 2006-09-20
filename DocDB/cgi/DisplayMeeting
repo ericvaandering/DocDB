@@ -206,7 +206,7 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { # Display a 
   PrintMeetingEpilogue($EventID);
 }
 
-if ($DisplayMode eq "Session" || $DisplayMode eq "Event") { # Display talks not associated with sessions  
+if ($DisplayMode eq "SingleSession" || $DisplayMode eq "Event") { # Display talks not associated with sessions  
   require "Utilities.pm";
   my %AgendaDocIDs = ();
   my %AllDocIDs    = ();
