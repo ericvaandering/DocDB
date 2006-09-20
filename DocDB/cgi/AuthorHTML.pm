@@ -48,27 +48,42 @@ sub FirstAuthor ($;$) {
 }
 
 sub AuthorListByID {
-  my @AuthorIDs = @_;
+  my ($ArgRef) = @_;
+  my @AuthorIDs   = exists $ArgRef->{-authorids}   ? @{$ArgRef->{-authorids}}  : ();
+  my $ListFormat  = exists $ArgRef->{-listformat}  ?   $ArgRef->{-listformat}  : "dl";
+#  my $ListElement = exists $ArgRef->{-listelement} ?   $ArgRef->{-listelement} : "short";
   
   require "AuthorSQL.pm";
   
-  print "<div id=\"Authors\">\n";
-  print "<dl>\n";
-  print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Authors:</span></dt>\n";
-  print "</dl>\n";
-
-  if (@AuthorIDs) {
-    print "<ul>\n";
-    foreach my $AuthorID (@AuthorIDs) {
-      &FetchAuthor($AuthorID);
-      my $author_link = &AuthorLink($AuthorID);
-      print "<li> $author_link </li>\n";
-    }
-    print "</ul>\n";
+  my ($HTML,$StartHTML,$EndHTML,$StartElement,$EndElement,$StartList,$EndList,$NoneText);
+  
+  if ($ListFormat eq "dl") {
+    $StartHTML .= '<div id="Authors"><dl>';
+    $StartHTML .= '<dt class="InfoHeader"><span class="InfoHeader">Authors:</span></dt>';
+    $StartHTML .= "</dl>\n";
+    $EndHTML    = "</div>\n";
+    $StartList  = '<ul>';
+    $EndList    = "</ul>\n";
+    $StartElement = '<li>';
+    $EndElement   = '</li>\n';
+    $NoneText     = '<dd>None</dd>';
   } else {
-    print "<dd>None</dd>\n";
+    $EndElement   = "<br/>\n";
+    $NoneText     = "None<br/>\n";
+  }  
+  
+  $HTML = $StartHTML;
+  if (@AuthorIDs) {
+    $HTML .= $StartList;
+    foreach my $AuthorID (@AuthorIDs) {
+      FetchAuthor($AuthorID);
+      $HTML .= $StartElement.AuthorLink($AuthorID).$EndElement;
+    }
+    $HTML .= $EndList;
+  } else {
+    $HTML .= $NoneText;
   }
-  print "</div>\n";
+  $HTML .= $EndHTML;
 }
 
 sub ShortAuthorListByID {

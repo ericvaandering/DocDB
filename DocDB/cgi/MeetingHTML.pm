@@ -698,12 +698,12 @@ sub PrintEventHeader ($) {
 
   if (@{$Conferences{$EventID}{Topics}}) {
     push @Fields,"Event Topics";
-    $Fields{"Event Topics"} = TopicListByID({ -topicids => $Conferences{$EventID}{Topics}, -listformat => "br" });
+    $Fields{"Event Topics"} = TopicListByID({ -topicids => $Conferences{$EventID}{Topics}, -listformat => "br", -listelement => "long",  });
   }  
 
   if (@{$Conferences{$EventID}{Moderators}}) {
     push @Fields,"Event Moderators";
-    $Fields{"Event Moderators"} = join ', ',@{$Conferences{$EventID}{Moderators}};
+    $Fields{"Event Moderators"} = AuthorListByID({ -authorids => $Conferences{$EventID}{Moderators}, -listformat => "br" });
   }  
 
   if ($SessionStartTime) {
