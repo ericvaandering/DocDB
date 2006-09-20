@@ -65,7 +65,7 @@ sub AuthorListByID {
     $StartList  = '<ul>';
     $EndList    = "</ul>\n";
     $StartElement = '<li>';
-    $EndElement   = '</li>\n';
+    $EndElement   = "</li>\n";
     $NoneText     = '<dd>None</dd>';
   } else {
     $EndElement   = "<br/>\n";
