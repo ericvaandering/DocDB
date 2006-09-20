@@ -84,6 +84,8 @@ sub AuthorListByID {
     $HTML .= $NoneText;
   }
   $HTML .= $EndHTML;
+  
+  return $HTML;
 }
 
 sub ShortAuthorListByID {
