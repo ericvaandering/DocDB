@@ -54,7 +54,7 @@ sub AuthorListByID {
 #  my $ListElement = exists $ArgRef->{-listelement} ?   $ArgRef->{-listelement} : "short";
   
   require "AuthorSQL.pm";
-  use HTML::Parser;
+  use HTML::TreeBuilder;
   
   my ($HTML,$StartHTML,$EndHTML,$StartElement,$EndElement,$StartList,$EndList,$NoneText);
   
@@ -85,7 +85,7 @@ sub AuthorListByID {
     $HTML = $NoneText;
   }
   $HTML .= $EndHTML;
-  my $Parser = HTML::Parser -> new();
+  my $Parser = HTML::TreeBuilder -> new();
   $Parser -> parse($HTML)
   return ($Parser -> as_HTML());
 }
