@@ -219,9 +219,15 @@ sub SessionEntryForm (%) {
     print "<td><div>\n";    
     SessionLocation(); 
     print "</div><div>\n";
-    SessionLocation();  ###FIXME!!!
+    TextField(-default  => $SessionDefaultAltLocation, -name     => "sessionaltlocation",
+              -helplink => "",                 -helptext => "",);       
     print "</div><div>\n";
-    print "Show all (not breaks)";  ###FIXME!!!
+    print FormElementTitle(-helplink  => "meetshowall", -helptext  => "Show All Talks?", -nobreak => $TRUE, -nocolon => $TRUE);
+    if ($SessionDefaultShowAllTalks) {
+      print $query -> checkbox(-name => "meetshowall", -value => 1, -label => '', -checked => 'Yes');
+    } else {
+      print $query -> checkbox(-name => "meetshowall", -value => 1, -label => '');
+    }
     print "</div></td>\n";
 
     print "</tr>\n";
