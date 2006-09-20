@@ -315,7 +315,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
            "values (0,?,?,?,?,?,?,?)");
           $SessionInsert-> execute($ConferenceID,$SessionDate,$SessionLocation,
                                    $SessionAltLocation,$SessionTitle,$SessionDescription,
-                                   $ShowAllFlags{$MeetingOrderID));
+                                   $ShowAllFlags{$MeetingOrderID});
           $SessionID = $SessionInsert -> {mysql_insertid}; # Works with MySQL only
           push @ActionStack,"Created session: $SessionTitle";
           ++$SessionsModified;
