@@ -87,7 +87,7 @@ sub AuthorListByID {
   $HTML .= $EndHTML;
   my $Parser = HTML::Parser -> new();
   $Parser -> parse($HTML)
-  return $Parser -> as_HTML();
+  return ($Parser -> as_HTML());
 }
 
 sub ShortAuthorListByID {
