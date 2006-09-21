@@ -541,7 +541,7 @@ sub UpdateSession (%) {
   push @DebugStack,"Update session with $AltLocation";
 
   my $Update = $dbh -> prepare("update Session set ".
-               "Title=?, Description=?, Location=?, AltLocation=?, StartTime=?, ShowAllTalks=?". 
+               "Title=?, Description=?, Location=?, AltLocation=?, StartTime=?, ShowAllTalks=? ". 
                "where SessionID=?");
                
   if ($SessionID) {
