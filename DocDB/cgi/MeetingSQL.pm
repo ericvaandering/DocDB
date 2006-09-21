@@ -508,15 +508,18 @@ sub InsertSession (%) {
   my $Description  = exists $ArgRef->{-description}  ?   $ArgRef->{-description}   : "";
   my $Location     = exists $ArgRef->{-location}     ?   $ArgRef->{-location}      : "";
   my $AltLocation  = exists $ArgRef->{-altlocation}  ?   $ArgRef->{-altlocation}   : "";
+  my $ShowAllTalks = exists $ArgRef->{-showalltalks} ?   $ArgRef->{-showalltalks}  : $FALSE;
   my @TopicIDs     = exists $ArgRef->{-topicids}     ? @{$ArgRef->{-topicids}}     : ();
   my @ModeratorIDs = exists $ArgRef->{-moderatorids} ? @{$ArgRef->{-moderatorids}} : ();
 
   my $Insert = $dbh -> prepare(
    "insert into Session ".
-          "(SessionID, ConferenceID, StartTime, Location, AltLocation, Title, Description) ". 
-   "values (0,?,?,?,?,?,?)");
+          "(SessionID, ConferenceID, StartTime, Location, AltLocation, Title, Description, ShowAllTalks) ". 
+   "values (0,?,?,?,?,?,?,?)");
   $Insert -> execute($EventID,$Date,$Location,$AltLocation,$Title,$Description);
   $SessionID = $Insert -> {mysql_insertid}; 
+  MeetingTopicUpdate({     -type => 'Session', -id => $SessionID, -topicids  => \@TopicIDs });
+  MeetingModeratorUpdate({ -type => 'Session', -id => $SessionID, -authorids => \@ModeratorIDs });
 
   return $SessionID;
 }  
@@ -524,24 +527,25 @@ sub InsertSession (%) {
 sub UpdateSession (%) {
   my ($ArgRef) = @_;
   
-  my $SessionID   = $Params{-sessionid}   || 0;
   my $SessionID    = exists $ArgRef->{-sessionid}    ?   $ArgRef->{-sessionid}     : 0;
   my $Date         = exists $ArgRef->{-date}         ?   $ArgRef->{-date}          : "";
   my $Title        = exists $ArgRef->{-title}        ?   $ArgRef->{-title}         : "";
   my $Description  = exists $ArgRef->{-description}  ?   $ArgRef->{-description}   : "";
   my $Location     = exists $ArgRef->{-location}     ?   $ArgRef->{-location}      : "";
   my $AltLocation  = exists $ArgRef->{-altlocation}  ?   $ArgRef->{-altlocation}   : "";
+  my $ShowAllTalks = exists $ArgRef->{-showalltalks} ?   $ArgRef->{-showalltalks}  : $FALSE;
   my @TopicIDs     = exists $ArgRef->{-topicids}     ? @{$ArgRef->{-topicids}}     : ();
   my @ModeratorIDs = exists $ArgRef->{-moderatorids} ? @{$ArgRef->{-moderatorids}} : ();
 
   my $Update = $dbh -> prepare("update Session set ".
-               "Title=?, Description=?, Location=?, AltLocation=?, StartTime=? ". 
+               "Title=?, Description=?, Location=?, AltLocation=?, StartTime=?, ShowAllTalks=?". 
                "where SessionID=?");
                
   if ($SessionID) {
-    $Update -> execute($Title,$Description,$Location,$AltLocation,$Date,$SessionID);
+    $Update -> execute($Title,$Description,$Location,$AltLocation,$Date,$ShowAllTalks,$SessionID);
+    MeetingTopicUpdate({     -type => 'Session', -id => $SessionID, -topicids  => \@TopicIDs });
+    MeetingModeratorUpdate({ -type => 'Session', -id => $SessionID, -authorids => \@ModeratorIDs });
   }
-  
 }
 
 sub DeleteEventGroup (%) {

@@ -290,6 +290,9 @@ if ($Mode eq "create" || $Mode eq "modify") {
     my $SessionSeparatorID = 0;
     my $SessionID          = 0;
 
+    my @TopicIDs     = split /\0/,$params{"sessiontopics-$MeetingOrderID"};
+    my @ModeratorIDs = split /\0/,$params{"moderators-$MeetingOrderID"};
+
     # Key on MeetingOrderID to see if we are going to insert or update.	
     if (grep /n/,$MeetingOrderID) {
       if ($SessionTitle || $SessionDescription) {
@@ -305,14 +308,13 @@ if ($Mode eq "create" || $Mode eq "modify") {
           ++$SessionsModified;
 	} else {
           # Create a new session
-          my $SessionInsert = $dbh -> prepare(
-           "insert into Session ".
-                  "(SessionID, ConferenceID, StartTime, Location, AltLocation, Title, Description, ShowAllTalks) ". 
-           "values (0,?,?,?,?,?,?,?)");
-          $SessionInsert-> execute($ConferenceID,$SessionDate,$SessionLocation,
-                                   $SessionAltLocation,$SessionTitle,$SessionDescription,
-                                   $ShowAllFlags{$MeetingOrderID});
-          $SessionID = $SessionInsert -> {mysql_insertid}; # Works with MySQL only
+          $SessionID = InsertSession({ 
+              -eventid      => $ConferenceID,    -date        => $SessionDate,
+              -title        => $SessionTitle,    -description => $SessionDescription,
+              -location     => $SessionLocation, -altlocation => $SessionAltLocation, 
+              -moderatorids => \@ModeratorIDs,   -topicids    => \@TopicIDs,
+              -showalltalks => $ShowAllFlags{$MeetingOrderID},
+          });
           push @ActionStack,"Created session: $SessionTitle";
           ++$SessionsModified;
 	}
@@ -347,11 +349,13 @@ if ($Mode eq "create" || $Mode eq "modify") {
           push @ActionStack,"Modified break: $SessionTitle";
           ++$SessionsModified;
 	} else {
-          my $SessionUpdate = $dbh -> prepare(
-           "update Session set ".
-           "StartTime=?, Location=?, Title=?, Description=? ". 
-           "where SessionID=?");
-          $SessionUpdate          -> execute($SessionDate,$SessionLocation,$SessionTitle,$SessionDescription,$SessionID);
+          UpdateSession({ 
+              -sessionid   => $SessionID,        -date        => $SessionDate,
+              -title       => $Short,            -description => $SessionDescription,     
+              -location    => $SessionLocation,  -altlocation => $SessionAltLocation, 
+              -moderatorids => \@ModeratorIDs,   -topicids    => \@TopicIDs,
+              -showalltalks => $ShowAllFlags{$MeetingOrderID},
+          });
           push @ActionStack,"Modified session: $SessionTitle";
           ++$SessionsModified;
 	}
