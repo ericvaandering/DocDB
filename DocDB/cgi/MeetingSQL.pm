@@ -276,13 +276,13 @@ sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
     @{$Conferences{$EventID}{Topics}}     = ();
   }
   
-  my $ModeratorSelect = $dbh -> prepare("select AuthorID from Moderator  where EventID=?");
+  my $ModeratorSelect = $dbh -> prepare("select AuthorID from Moderator where EventID=?");
   $ModeratorSelect -> execute($EventID);
   while (my ($AuthorID) = $ModeratorSelect -> fetchrow_array()) {
     push @{$Conferences{$EventID}{Moderators}},$AuthorID;
   }
 
-  my $TopicSelect     = $dbh -> prepare("select TopicID  from EventTopic where EventID=?");
+  my $TopicSelect = $dbh -> prepare("select TopicID from EventTopic where EventID=?");
   $TopicSelect -> execute($EventID);
   while (my ($TopicID) = $TopicSelect -> fetchrow_array()) {
     push @{$Conferences{$EventID}{Topics}},$TopicID;
@@ -317,21 +317,37 @@ sub FetchSessionByID ($) {
   my ($SessionID) = @_;
   my ($ConferenceID,$StartTime,$Location,$Title,$Description,$TimeStamp); 
   my $SessionFetch = $dbh -> prepare(
-    "select ConferenceID,StartTime,Location,Title,Description,TimeStamp ".
+    "select ConferenceID,StartTime,Location,AltLocation,Title,Description,TimeStamp ".
     "from Session where SessionID=?");
   if ($Sessions{$SessionID}{TimeStamp}) {
     return $SessionID;
   }
   $SessionFetch -> execute($SessionID);
-  ($ConferenceID,$StartTime,$Location,$Title,$Description,$TimeStamp) = $SessionFetch -> fetchrow_array; 
+  ($ConferenceID,$StartTime,$Location,$AltLocation,$Title,$Description,$TimeStamp) = $SessionFetch -> fetchrow_array; 
   if ($TimeStamp) {
-    $Sessions{$SessionID}{ConferenceID} = $ConferenceID;
-    $Sessions{$SessionID}{StartTime}    = $StartTime;
-    $Sessions{$SessionID}{Location}     = $Location;
-    $Sessions{$SessionID}{Title}        = $Title;
-    $Sessions{$SessionID}{Description}  = $Description;
-    $Sessions{$SessionID}{TimeStamp}    = $TimeStamp;
+    $Sessions{$SessionID}{ConferenceID}  = $ConferenceID;
+    $Sessions{$SessionID}{StartTime}     = $StartTime;
+    $Sessions{$SessionID}{Location}      = $Location;
+    $Sessions{$SessionID}{AltLocation}   = $AltLocation;
+    $Sessions{$SessionID}{Title}         = $Title;
+    $Sessions{$SessionID}{Description}   = $Description;
+    $Sessions{$SessionID}{TimeStamp}     = $TimeStamp;
+    @{$Sessions{$SessionID}{Moderators}} = ();
+    @{$Sessions{$SessionID}{Topics}}     = ();
   }
+  
+  my $ModeratorSelect = $dbh -> prepare("select AuthorID from Moderator where SessionID=?");
+  $ModeratorSelect -> execute($SessionID);
+  while (my ($AuthorID) = $ModeratorSelect -> fetchrow_array()) {
+    push @{$Sessions{$SessionID}{Moderators}},$AuthorID;
+  }
+
+  my $TopicSelect = $dbh -> prepare("select TopicID from EventTopic where SessionID=?");
+  $TopicSelect -> execute($SessionID);
+  while (my ($TopicID) = $TopicSelect -> fetchrow_array()) {
+    push @{$Sessions{$SessionID}{Topics}},$TopicID;
+  }
+
   return $SessionID;  
 }
 
@@ -576,15 +592,15 @@ sub DeleteEvent (%) {
     return 0;
   }
   
-  my $Status = &FetchConferenceByConferenceID($EventID);
+  my $Status = FetchConferenceByConferenceID($EventID);
   unless ($Status) {
     push @WarnStack,"Event does not exist";
     return 0;
   }
 
-  my @SeparatorIDs = &FetchSessionSeparatorsByConferenceID($EventID);
-  my @SessionIDs   = &FetchSessionsByConferenceID($EventID);
-  my @DocRevIDs    = &FetchRevisionsByEventID($EventID);
+  my @SeparatorIDs = FetchSessionSeparatorsByConferenceID($EventID);
+  my @SessionIDs   = FetchSessionsByConferenceID($EventID);
+  my @DocRevIDs    = FetchRevisionsByEventID($EventID);
 
   if ((@SeparatorIDs || @SessionIDs) && !$Force) {
     push @WarnStack,"Cannot delete event with sessions, use force option.";
@@ -596,14 +612,18 @@ sub DeleteEvent (%) {
   }
   
   foreach my $SessionID (@SessionIDs) {
-    &DeleteSession($SessionID);
+    DeleteSession($SessionID);
   }   
   foreach my $SeparatorID (@SeparatorIDs) {
-    &DeleteSessionSeparator($EventID);
+    DeleteSessionSeparator($EventID);
   }   
   
   my $Delete = $dbh -> prepare("delete from Conference where ConferenceID=?");
-  $Delete -> execute($EventID);
+  my $DeleteTopic = $dbh -> prepare("delete from Moderator where EventID=?");
+  my $DeleteModerator = $dbh -> prepare("delete from EventTopic where EventID=?");
+  $Delete          -> execute($EventID);
+  $DeleteTopic     -> execute($EventID);
+  $DeleteModerator -> execute($EventID);
   push @ActionStack,"Event <strong>$Conferences{$EventID}{Title}</strong> deleted";
   if (@DocRevIDs) {
     my $Delete = $dbh -> prepare("delete from RevisionEvent where ConferenceID=?");
@@ -622,25 +642,29 @@ sub DeleteSession ($) {
   my $SessionTalkList    = $dbh -> prepare("select SessionTalkID from SessionTalk where SessionID=?");
   my $TalkSeparatorList  = $dbh -> prepare("select TalkSeparatorID from TalkSeparator where SessionID=?");
   my $MeetingOrderDelete = $dbh -> prepare("delete from MeetingOrder where SessionID=?");
+  my $DeleteTopic        = $dbh -> prepare("delete from Moderator where SessionID=?");
+  my $DeleteModerator    = $dbh -> prepare("delete from EventTopic where SessionID=?");
  
   $SessionDelete   -> execute($SessionID);
-  
+  $DeleteTopic     -> execute($SessionID);
+  $DeleteModerator -> execute($SessionID);
+
   my $SessionTalkID;
   $SessionTalkList -> execute($SessionID);    
   $SessionTalkList -> bind_columns(undef, \($SessionTalkID));
   while ($SessionTalkList -> fetch) {
-    &DeleteSessionTalk($SessionTalkID);
+    DeleteSessionTalk($SessionTalkID);
   }
 
   my $TalkSeparatorID;
   $TalkSeparatorList -> execute($SessionID);
   $TalkSeparatorList -> bind_columns(undef, \($TalkSeparatorID));
   while ($TalkSeparatorList -> fetch) {
-    &DeleteTalkSeparator($TalkSeparatorID);
+    DeleteTalkSeparator($TalkSeparatorID);
   }
 
   $MeetingOrderDelete -> execute($SessionID);
-  push @ActionStack,"Session and associated agenda entries deleted";
+  push @ActionStack,"Session and associated agenda entries deleted. (Documents not deleted.)";
 }
 
 sub DeleteSessionSeparator ($) {

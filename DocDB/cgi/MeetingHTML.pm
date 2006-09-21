@@ -211,14 +211,15 @@ sub SessionEntryForm (%) {
                      -default => $SessionDefaultDateTime,      -required => $RequiredEntries{StartDate} );
     print "</td>\n";
 
-    print '<td rowspan="2">';
-    AuthorScroll(-helptext => "", -name => "moderators-$MeetingOrderID",);
-    print "</td>\n";
-    print '<td rowspan="2">';
-    TopicScroll({-itemformat => "short",                         -helplink => "", 
-                 -name       => "sessiontopics-$MeetingOrderID", -helptext => "", });
-    print "</td>\n";
-
+    if ($SessionType ne "Break") {
+      print '<td rowspan="2">';
+      AuthorScroll(-helptext => "", -name => "moderators-$MeetingOrderID",);
+      print "</td>\n";
+      print '<td rowspan="2">';
+      TopicScroll({-itemformat => "short",                         -helplink => "", 
+                   -name       => "sessiontopics-$MeetingOrderID", -helptext => "", });
+      print "</td>\n";
+    }
     print "</tr>\n";
     print "<tr class=\"$RowClass\">\n";
 
@@ -231,11 +232,11 @@ sub SessionEntryForm (%) {
     TextField(-default  => $SessionDefaultLocation, 
               -name     => "sessionlocation", -helplink  => "", -helptext => "", 
               -size     => 35,                -maxlength => 128, );       
-    print "</div><div>\n";
-    TextField(-default  => $SessionDefaultAltLocation, 
-              -name     => "sessionaltlocation", -helplink  => "", -helptext => "", 
-              -size     => 35,                   -maxlength => 128, );
     if ($SessionType ne "Break") {
+      print "</div><div>\n";
+      TextField(-default  => $SessionDefaultAltLocation, 
+                -name     => "sessionaltlocation", -helplink  => "", -helptext => "", 
+                -size     => 35,                   -maxlength => 128, );
       print "</div><div>\n";
       print FormElementTitle(-helplink  => "meetshowall", -helptext  => "Show All Talks?", -nobreak => $TRUE, -nocolon => $TRUE);
       if ($SessionDefaultShowAllTalks) {
