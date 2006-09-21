@@ -217,11 +217,13 @@ sub SessionEntryForm (%) {
 
     if ($SessionType ne "Break") {
       print '<td rowspan="2">';
-      AuthorScroll(-helptext => "", -name => "moderators-$MeetingOrderID", -default => \@DefaultModeratorIDs,);
+      AuthorScroll(-helptext => "",    -name    => "moderators-$MeetingOrderID", 
+                   -multiple => $TRUE, -default => \@DefaultModeratorIDs,);
       print "</td>\n";
       print '<td rowspan="2">';
-      TopicScroll({-itemformat => "short",                         -helplink => "", 
-                   -name       => "sessiontopics-$MeetingOrderID", -helptext => "", -default => \@DefaultTopicIDs, });
+      TopicScroll({-itemformat => "short",                         -helplink => "",
+                   -default    => \@DefaultTopicIDs,               -helptext => "",
+                   -name       => "sessiontopics-$MeetingOrderID", -multiple => $TRUE,});
       print "</td>\n";
     }
     print "</tr>\n";
