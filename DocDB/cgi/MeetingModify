@@ -456,7 +456,7 @@ EventGroupSelect( {-required => $RequiredEntries{EventGroup},
 print "</div>\n";
 unless ($NoSessions) { # No moderators for external conferences
   print "<div>\n";
-  AuthorScroll(-multiple => $TRUE,        -default  => \@ModeratorIDs, 
+  AuthorScroll(-multiple => $TRUE,        -default  => \@MeetingModeratorDefaults, 
                -name     => "moderators", -helptext => "Moderators", 
                -helplink => "moderators",);
   print "</div>\n";
@@ -488,7 +488,7 @@ unless ($NoSessions) {
 print "</td>\n";
 
 print "<td>\n";
-TopicScroll({ -multiple => $TRUE,         -default => \@EventTopicIDs, 
+TopicScroll({ -multiple => $TRUE,         -default => \@MeetingTopicDefaults, 
               -helplink => "eventtopics", -size    => $TopicLength, });
 print "</td>\n";
 
