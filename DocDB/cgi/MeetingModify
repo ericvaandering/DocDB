@@ -92,6 +92,8 @@ my @MeetingOrderIDs      = split /\0/,$params{meetingorderid};
 my @SessionDeletes       = split /\0/,$params{sessiondelete};
 my @SessionShowAlls      = split /\0/,$params{sessionshowall};
 
+push @DebugStack,"SALS: ",join ', ',@SessionAltLocations;
+
 my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
 my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
 
@@ -287,6 +289,8 @@ if ($Mode eq "create" || $Mode eq "modify") {
     my $MeetingOrderID     = shift @MeetingOrderIDs       ;
     my $SessionNewOrder    = $SessionOrders{$SessionOrder};
     my $SessionDate        = "$SessionYear-$ReverseAbrvMonth{$SessionMonth}-$SessionDay $SessionHour:00";
+
+    push @DebugStack,"SAL: $SessionAltLocation";
 
     my $SessionSeparatorID = 0;
     my $SessionID          = 0;

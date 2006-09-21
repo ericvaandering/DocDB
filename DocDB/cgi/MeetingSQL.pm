@@ -512,6 +512,8 @@ sub InsertSession (%) {
   my @TopicIDs     = exists $ArgRef->{-topicids}     ? @{$ArgRef->{-topicids}}     : ();
   my @ModeratorIDs = exists $ArgRef->{-moderatorids} ? @{$ArgRef->{-moderatorids}} : ();
 
+  push @DebugStack,"Insert session with $AltLocation";
+
   my $Insert = $dbh -> prepare(
    "insert into Session ".
           "(SessionID, ConferenceID, StartTime, Location, AltLocation, Title, Description, ShowAllTalks) ". 
@@ -536,6 +538,7 @@ sub UpdateSession (%) {
   my $ShowAllTalks = exists $ArgRef->{-showalltalks} ?   $ArgRef->{-showalltalks}  : $FALSE;
   my @TopicIDs     = exists $ArgRef->{-topicids}     ? @{$ArgRef->{-topicids}}     : ();
   my @ModeratorIDs = exists $ArgRef->{-moderatorids} ? @{$ArgRef->{-moderatorids}} : ();
+  push @DebugStack,"Update session with $AltLocation";
 
   my $Update = $dbh -> prepare("update Session set ".
                "Title=?, Description=?, Location=?, AltLocation=?, StartTime=?, ShowAllTalks=?". 
