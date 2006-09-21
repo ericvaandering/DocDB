@@ -60,18 +60,18 @@ sub AuthorListByID {
   if ($ListFormat eq "dl") {
     $StartHTML .= '<div id="Authors"><dl>';
     $StartHTML .= '<dt class="InfoHeader"><span class="InfoHeader">Authors:</span></dt>';
-    $StartHTML .= "</dl>";
-    $EndHTML    = "</div>";
+    $StartHTML .= '</dl>';
+    $EndHTML    = '</div>';
     $StartList  = '<ul>';
-    $EndList    = "</ul>";
+    $EndList    = '</ul>';
     $StartElement = '<li>';
-    $EndElement   = "</li>";
-    $NoneText     = '<dd>None</dd>';
+    $EndElement   = '</li>';
+    $NoneText     = '<div id="Authors"><dl><dt class="InfoHeader"><span class="InfoHeader">Authors:</span></dt>None<br/></dl>';
   } else {
-    $StartHTML = '<div>';
-    $EndHTML   = '</div>';
-    $EndElement   = "<br/>";
-    $NoneText = '<div id="Authors"><dl><dt class="InfoHeader"><span class="InfoHeader">Authors:</span></dt>None<br/></dl>'."\n";
+    $StartHTML  = '<div>';
+    $EndHTML    = '</div>';
+    $EndElement = '<br/>';
+    $NoneText   = 'None<br/>';
   }  
   
   if (@AuthorIDs) {
@@ -86,14 +86,17 @@ sub AuthorListByID {
     $HTML = $NoneText;
   }
   $HTML .= $EndHTML;
-#  return $HTML;
-  use XML::Twig;
 
-  my $t= new XML::Twig;
-  $t->parse($HTML);
+  return $HTML;
+#  use HTML::Entities;
+#  $HTML = HTML::Entities::decode($HTML);
+#  $HTML = HTML::Entities::encode($HTML,'&');
 
-  $t->set_pretty_print( 'indented');     # \n before tags not part of mixed content
-  return $t->sprint;
+#  use XML::Twig;
+#  my $Twig = new XML::Twig;
+#  $Twig -> parse($HTML);
+#  $Twig -> set_pretty_print('indented');
+#  return $Twig -> sprint;
 }
 
 # FIXME: Can replace with above now

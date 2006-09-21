@@ -407,6 +407,8 @@ $MeetingDefaultEpilogue       = $Conferences{$ConferenceID}{Epilogue};
 $MeetingDefaultShowAllTalks   = $Conferences{$ConferenceID}{ShowAllTalks};
 my $DefaultStartDate          = $Conferences{$ConferenceID}{StartDate};
 my $DefaultEndDate            = $Conferences{$ConferenceID}{EndDate};
+my @MeetingTopicDefaults      = @{$Conferences{$ConferenceID}{Topics}};
+my @MeetingModeratorDefaults  = @{$Conferences{$ConferenceID}{Moderators}};
 
 # Get deaults for meeting view/modify
 
