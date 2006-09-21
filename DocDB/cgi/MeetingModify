@@ -276,14 +276,15 @@ if ($Mode eq "create" || $Mode eq "modify") {
 # Loop over sessions and insert
   
   foreach my $SessionOrder (@SessionOrders) {
-    my $SessionYear        = shift @SessionYears         ;
-    my $SessionMonth       = shift @SessionMonths        ;
-    my $SessionDay         = shift @SessionDays          ;
-    my $SessionHour        = shift @SessionHours         ;
-    my $SessionLocation    = shift @SessionLocations     ;
-    my $SessionTitle       = shift @SessionTitles        ;
-    my $SessionDescription = shift @SessionDescriptions  ;
-    my $MeetingOrderID     = shift @MeetingOrderIDs ;
+    my $SessionYear        = shift @SessionYears          ;
+    my $SessionMonth       = shift @SessionMonths         ;
+    my $SessionDay         = shift @SessionDays           ;
+    my $SessionHour        = shift @SessionHours          ;
+    my $SessionLocation    = shift @SessionLocations      ;
+    my $SessionAltLocation = shift @SessionAltLocations   ;
+    my $SessionTitle       = shift @SessionTitles         ;
+    my $SessionDescription = shift @SessionDescriptions   ;
+    my $MeetingOrderID     = shift @MeetingOrderIDs       ;
     my $SessionNewOrder    = $SessionOrders{$SessionOrder};
     my $SessionDate        = "$SessionYear-$ReverseAbrvMonth{$SessionMonth}-$SessionDay $SessionHour:00";
 
