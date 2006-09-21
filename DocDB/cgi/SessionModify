@@ -454,14 +454,18 @@ my @SessionOrderIDs  = FetchSessionOrdersBySessionID($SessionID);
 my $SessionDefaultTitle       = $Sessions{$SessionID}{Title};
 my $SessionDefaultDescription = $Sessions{$SessionID}{Description};
 my $SessionDefaultLocation    = $Sessions{$SessionID}{Location};
+my $SessionDefaultAltLocation = $Sessions{$SessionID}{AltLocation};
 my $SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
+my @DefaultModeratorIDs       = @{$Sessions{$SessionID}{Moderators}};
+my @DefaultTopicIDs           = @{$Sessions{$SessionID}{Topics}};
 
 # Defaults for SingleSessionMode;
 my @MeetingModifyDefaults = ();
 my @MeetingViewDefaults   = ();
 my $DefaultShortDescription;
 my $DefaultLongDescription;
-my $DefaultEventLocaton;
+my $DefaultEventLocation;
+my $DefaultEventAltLocation;
 my $DefaultEventURL;
 my $DefaultEventGroupID;
 
@@ -486,6 +490,7 @@ if ($SingleSession) {
     $DefaultShortDescription = $Conferences{$EventID}{Title};
     $DefaultLongDescription  = $Conferences{$EventID}{LongDescription};
     $DefaultEventLocation    = $Conferences{$EventID}{Location};
+    $DefaultEventAltLocation = $Conferences{$EventID}{AltLocation};
     $DefaultEventURL         = $Conferences{$EventID}{URL};
     foreach my $MeetingViewID (&GetMeetingSecurityGroups($EventID)) {
       my $GroupID = $MeetingSecurities{$MeetingViewID}{GroupID};
@@ -553,7 +558,7 @@ if ($SingleSession) {
   LocationBox(-default  => $DefaultEventLocation);       
   print "</div><div>\n";
   TextField(-name      => 'altlocation', -size     => 40, 
-            -maxlength => 128,           -default  => $SessionDefaultAltLocation, 
+            -maxlength => 128,           -default  => $DefaultEventAltLocation, 
             -helplink  => 'sessioninfo', -helptext => 'Alternate Location');
   print "</div><div>\n";
   EventURLBox(-default  => $DefaultEventURL     );  
@@ -585,14 +590,14 @@ if ($SingleSession) {
   print "<tr>\n";
   
   print "<td>\n";
-  AuthorScroll(-multiple => $TRUE,        -default  => \@ModeratorIDs, 
+  AuthorScroll(-multiple => $TRUE,        -default  => \@DefaultModeratorIDs, 
                -name     => "moderators", -helptext => "Moderators", 
                -helplink => "moderators",);
   print "</td>\n";
 
   print "<td colspan=\"2\">\n";
   
-  TopicScroll({ -multiple => $TRUE,         -default => \@EventTopicIDs, 
+  TopicScroll({ -multiple => $TRUE,         -default => \@DefaultTopicIDs, 
                 -helplink => "eventtopics", -itemformat => "short"});
 
   
