@@ -596,12 +596,8 @@ if ($SingleSession) {
   print "</td>\n";
 
   print "<td colspan=\"2\">\n";
-  
   TopicScroll({ -multiple => $TRUE,         -default => \@DefaultTopicIDs, 
                 -helplink => "eventtopics", -itemformat => "short"});
-
-  
-
   print "</td>\n";
   print "</tr>\n";
 } else {
@@ -618,13 +614,13 @@ if ($SingleSession) {
   print "</td>\n";
   
   print '<td rowspan="2">';
-  AuthorScroll(-multiple => $TRUE,        -default  => \@ModeratorIDs, 
+  AuthorScroll(-multiple => $TRUE,        -default  => \@DefaultModeratorIDs, 
                -name     => "moderators", -helptext => "Moderators", 
                -helplink => "moderators",);
   print "</td>\n";
 
   print '<td rowspan="2">';
-  TopicScroll({ -multiple => $TRUE,         -default => \@EventTopicIDs, 
+  TopicScroll({ -multiple => $TRUE,         -default => \@DefaultTopicIDs, 
                 -helplink => "eventtopics", -itemformat => "short"});
   print "</td>\n";
 
