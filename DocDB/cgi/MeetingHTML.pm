@@ -668,7 +668,7 @@ sub PrintEventHeader ($) {
   my @Fields       = ();
     
   if ($DisplayMode eq "SingleSession") {
-    %SkipFields   = ( "Event Dates"  => $TRUE, "Event Location" => $TRUE,);
+    %SkipFields   = ( "Event Dates"  => $TRUE, "Event Location" => $TRUE, "Alt. Event Location" => $TRUE,);
     %RenameFields = ( "Session Info" => "Event Info",);
   }
   if ($DisplayMode eq "Session" || $DisplayMode eq "Separator") {
@@ -699,8 +699,8 @@ sub PrintEventHeader ($) {
   }  
 
   if ($Conferences{$EventID}{AltLocation}) {
-    push @Fields,"Alternate Location";
-    $Fields{"Alternate Location"} = $Conferences{$EventID}{AltLocation};
+    push @Fields,"Alt. Event Location";
+    $Fields{"Alt. Event Location"} = $Conferences{$EventID}{AltLocation};
   }  
 
   if (@{$Conferences{$EventID}{Topics}}) {
@@ -728,6 +728,21 @@ sub PrintEventHeader ($) {
     $Fields{"Location"} = $Sessions{$SessionID}{Location};
   }
   
+  if ($Sessions{$SessionID}{AltLocation}) {
+    push @Fields,"Alt. Location";
+    $Fields{"Alt. Location"} = $Sessions{$SessionID}{AltLocation};
+  }
+  
+  if (@{$Sessions{$SessionID}{Topics}}) {
+    push @Fields,"Session Topics";
+    $Fields{"Session Topics"} = TopicListByID({ -topicids => $Sessions{$SessionID}{Topics}, -listformat => "br", -listelement => "long",  });
+  }  
+
+  if (@{$Sessions{$SessionID}{Moderators}}) {
+    push @Fields,"Session Moderators";
+    $Fields{"Session Moderators"} = AuthorListByID({ -authorids => $Sessions{$SessionID}{Moderators}, -listformat => "br" });
+  }  
+
   if ($Conferences{$EventID}{URL}) {
     push @Fields,"External URL";
     $Fields{"External URL"} = "<a href=\"$Conferences{$EventID}{URL}\">$Conferences{$EventID}{Title}</a>";
