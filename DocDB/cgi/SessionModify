@@ -102,6 +102,9 @@ my @MeetingModifyGroupIDs = split /\0/,$params{meetingmodifygroups};
 my @TopicIDs              = split /\0/,$params{topics};
 my @ModeratorIDs          = split /\0/,$params{moderators};
 
+push @DebugStack,"SMT: ".join ', ',@TopicIDs;
+push @DebugStack,"SMM: ".join ', ',@ModeratorIDs;
+
 unless ($Long) {$Long = $Short;}
 
 # Also have params for DocID, authors, and topics in special params with 
@@ -209,16 +212,17 @@ if ($Mode eq "modify" || $Mode eq "create") {
 
   if ($SingleSession && $Mode eq "create") { # Make an event, then a session, pass variables out
     $EventID = InsertEvent({ 
-        -eventgroupid     => $EventGroupID,         -location        => $Location,
+        -eventgroupid     => $EventGroupID,         -location         => $Location,
         -url              => $URL,                  -startdate        => $SessionDate,  
         -enddate          => $SessionDate,          -shortdescription => $Short, 
         -longdescription  => $Long,                 -altlocation      => $AltLocation,
         -showalltalks     => 1, 
-        -topicids         => \@MeetingTopicIDs,     -moderatorids     => \@MeetingModeratorIDs , 
+        -topicids         => \@TopicIDs,            -moderatorids     => \@ModeratorIDs , 
         -viewgroupids     => \@MeetingViewGroupIDs, -modifygroupids   => \@MeetingModifyGroupIDs, });
-    $SessionID = InsertSession({ -eventid  => $EventID,  -date        => $SessionDate,
-                                 -title    => $Short,    -description => $SessionDescription,
-                                 -location => $Location, -altlocation => $AltLocation, });
+    $SessionID = InsertSession({ -eventid  => $EventID,   -date         => $SessionDate,
+                                 -title    => $Short,     -description  => $SessionDescription,
+                                 -topicids => \@TopicIDs, -moderatorids => \@ModeratorIDs , 
+                                 -location => $Location,  -altlocation  => $AltLocation, });
     InsertMeetingOrder(-sessionid => $SessionID);
     push @ActionStack,"Created new event: $Short";
   } elsif ($SingleSession && $Mode eq "modify") {

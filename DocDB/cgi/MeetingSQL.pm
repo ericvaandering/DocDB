@@ -516,7 +516,7 @@ sub InsertSession (%) {
    "insert into Session ".
           "(SessionID, ConferenceID, StartTime, Location, AltLocation, Title, Description, ShowAllTalks) ". 
    "values (0,?,?,?,?,?,?,?)");
-  $Insert -> execute($EventID,$Date,$Location,$AltLocation,$Title,$Description);
+  $Insert -> execute($EventID,$Date,$Location,$AltLocation,$Title,$Description,$ShowAllTalks);
   $SessionID = $Insert -> {mysql_insertid}; 
   MeetingTopicUpdate({     -type => 'Session', -id => $SessionID, -topicids  => \@TopicIDs });
   MeetingModeratorUpdate({ -type => 'Session', -id => $SessionID, -authorids => \@ModeratorIDs });
