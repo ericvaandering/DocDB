@@ -147,7 +147,8 @@ sub SessionEntryForm (%) {
     my $SessionType = "";
     my $SessionDefaultLocation = "";
     my $SessionDefaultAltLocation = "";
-
+    my @DefaultModeratorIDs       = ();
+    my @DefaultTopicIDs           = ();
     $SessionDefaultOrder = $SessionOrder;  
     if (grep /n/,$MeetingOrderID) {# Erase defaults
       if ($ConferenceID) {
@@ -166,9 +167,12 @@ sub SessionEntryForm (%) {
         my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
 	$SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
         $SessionDefaultLocation    = $Sessions{$SessionID}{Location}    || "";
+        $SessionDefaultAltLocation = $Sessions{$SessionID}{AltLocation} || "";
 	$SessionDefaultTitle       = $Sessions{$SessionID}{Title}       || "";
 	$SessionDefaultDescription = $Sessions{$SessionID}{Description} || "";
 	$SessionSeparatorDefault   = "No";
+        @DefaultModeratorIDs       = @{$Sessions{$SessionID}{Moderators}};
+        @DefaultTopicIDs           = @{$Sessions{$SessionID}{Topics}};
       } elsif ($MeetingOrders{$MeetingOrderID}{SessionSeparatorID}) {
         $SessionType = "Break";
         my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
@@ -213,11 +217,11 @@ sub SessionEntryForm (%) {
 
     if ($SessionType ne "Break") {
       print '<td rowspan="2">';
-      AuthorScroll(-helptext => "", -name => "moderators-$MeetingOrderID",);
+      AuthorScroll(-helptext => "", -name => "moderators-$MeetingOrderID", -default => \@DefaultModeratorIDs,);
       print "</td>\n";
       print '<td rowspan="2">';
       TopicScroll({-itemformat => "short",                         -helplink => "", 
-                   -name       => "sessiontopics-$MeetingOrderID", -helptext => "", });
+                   -name       => "sessiontopics-$MeetingOrderID", -helptext => "", -default => \@DefaultTopicIDs, });
       print "</td>\n";
     }
     print "</tr>\n";
