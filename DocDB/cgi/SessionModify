@@ -70,6 +70,7 @@ my $SingleSession      = $params{singlesession};
 my $SessionTitle       = $params{sessiontitle};
 my $SessionDescription = $params{sessiondescription};
 my $SessionLocation    = $params{sessionlocation};
+my $SessionAltLocation = $params{sessionaltlocation};
 
 my $SessionDay   = $params{sessionday};
 my $SessionMonth = $params{sessionmonth};
@@ -91,14 +92,15 @@ my @TimeStamps      = split /\0/,$params{timestamp};
 
 my $EventID               = $params{eventid};
 my $Location              = $params{location};
+my $AltLocation           = $params{altlocation};
 my $URL                   = $params{url};
 my $EventGroupID          = $params{eventgroups};
 my $Short                 = $params{shortdesc};
 my $Long                  = $params{long};
 my @MeetingViewGroupIDs   = split /\0/,$params{meetingviewgroups};
 my @MeetingModifyGroupIDs = split /\0/,$params{meetingmodifygroups};
-my @MeetingTopicIDs       = split /\0/,$params{topics};
-my @MeetingModeratorIDs   = split /\0/,$params{moderators};
+my @TopicIDs              = split /\0/,$params{topics};
+my @ModeratorIDs          = split /\0/,$params{moderators};
 
 unless ($Long) {$Long = $Short;}
 
@@ -226,11 +228,12 @@ if ($Mode eq "modify" || $Mode eq "create") {
         -startdate        => $SessionDate,          -enddate         => $SessionDate,
         -shortdescription => $Short,                -longdescription => $Long, 
         -altlocation      => $AltLocation,          -showalltalks    => 1,                     
-        -topicids         => \@MeetingTopicIDs,     -moderatorids    => \@MeetingModeratorIDs , 
+        -topicids         => \@TopicIDs,            -moderatorids    => \@ModeratorIDs , 
         -viewgroupids     => \@MeetingViewGroupIDs, -modifygroupids  => \@MeetingModifyGroupIDs, });
-    UpdateSession({ -sessionid   => $SessionID, -date        => $SessionDate,
-                    -title       => $Short,     -description => $SessionDescription,     
-                    -location    => $Location,  -altlocation => $AltLocation, });
+    UpdateSession({ -sessionid => $SessionID, -date         => $SessionDate,
+                    -title     => $Short,     -description  => $SessionDescription,     
+                    -topicids  => \@TopicIDs, -moderatorids => \@ModeratorIDs , 
+                    -location  => $Location,  -altlocation  => $AltLocation, });
     my $MeetingOrderUpdate = $dbh -> prepare(
          "update MeetingOrder set SessionOrder=1 where SessionID=?");
     $MeetingOrderUpdate -> execute($SessionID);
@@ -239,9 +242,10 @@ if ($Mode eq "modify" || $Mode eq "create") {
 
   # Update Session parameters, refetch
 
-    UpdateSession({ -sessionid => $SessionID, -date => $SessionDate, 
-                    -title => $SessionTitle, -description => $SessionDescription,
-                    -location => $SessionLocation, -altlocation => $AltLocation, });
+    UpdateSession({ -sessionid => $SessionID,       -date         => $SessionDate, 
+                    -title     => $SessionTitle,    -description  => $SessionDescription,
+                    -topicids  => \@TopicIDs,       -moderatorids => \@ModeratorIDs , 
+                    -location  => $SessionLocation, -altlocation  => $SessionAltLocation, });
     push @ActionStack,"Modified session: $SessionTitle";
   }                 
   ClearSessions();
@@ -544,9 +548,9 @@ if ($SingleSession) {
   print "</div><div>\n";
   LocationBox(-default  => $DefaultEventLocation);       
   print "</div><div>\n";
-  TextField(-name      => 'sessionaltlocation', -size     => 40, 
-            -maxlength => 128,                  -default  => $SessionDefaultAltLocation, 
-            -helplink  => 'sessioninfo',        -helptext => 'Alternate Location');
+  TextField(-name      => 'altlocation', -size     => 40, 
+            -maxlength => 128,           -default  => $SessionDefaultAltLocation, 
+            -helplink  => 'sessioninfo', -helptext => 'Alternate Location');
   print "</div><div>\n";
   EventURLBox(-default  => $DefaultEventURL     );  
   print "</div><div>\n";
