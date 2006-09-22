@@ -37,9 +37,12 @@ sub PrettyHTML ($) {
   $HTML = HTML::Entities::encode($HTML,'&');
 
   my $Twig = new XML::Twig;
-  $Twig -> parse($HTML) || return $OldHTML;
-  $Twig -> set_pretty_print('indented');
-  return $Twig -> sprint;
+  if ($Twig -> safe_parse($HTML)) {
+    $Twig -> set_pretty_print('indented');
+    return $Twig -> sprint;
+  } else {
+    return $OldHTML;
+  }    
 }
 
 sub DocDBHeader { 

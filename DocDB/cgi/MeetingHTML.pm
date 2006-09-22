@@ -669,12 +669,12 @@ sub EventHeader ($) {
   my %RenameFields = ();
   my %Fields       = ();
   my @Fields       = ("Event","Full Title","Event Dates","Event Location","Alt. Event Location",
-                      "Event Topics","Event Moderators","Date &amp; Time","Location","Alt. Location",
+                      "Event Topic(s)","Event Moderator(s)","Date &amp; Time","Location","Alt. Location",
                       "External URL","Event Info","Event Wrapup");
     
   if ($DisplayMode eq "SingleSession") {
     @Fields       = ("Full Title","Date &amp; Time","Location","Alt. Location",
-                     "Event Topics","Event Moderators","External URL","Event Info");
+                     "Event Topic(s)","Event Moderator(s)","External URL","Event Info");
     %RenameFields = ( "Session Info" => "Event Info",);
   }
   if ($DisplayMode eq "Session" || $DisplayMode eq "Separator") {
