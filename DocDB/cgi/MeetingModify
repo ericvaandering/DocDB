@@ -351,9 +351,9 @@ if ($Mode eq "create" || $Mode eq "modify") {
           ++$SessionsModified;
 	} else {
           UpdateSession({ 
-              -sessionid   => $SessionID,        -date        => $SessionDate,
-              -title       => $Short,            -description => $SessionDescription,     
-              -location    => $SessionLocation,  -altlocation => $SessionAltLocation, 
+              -sessionid    => $SessionID,       -date        => $SessionDate,
+              -title        => $SessionTitle,    -description => $SessionDescription,     
+              -location     => $SessionLocation, -altlocation => $SessionAltLocation, 
               -moderatorids => \@ModeratorIDs,   -topicids    => \@TopicIDs,
               -showalltalks => $ShowAllFlags{$MeetingOrderID},
           });

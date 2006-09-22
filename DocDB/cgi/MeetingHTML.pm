@@ -647,7 +647,7 @@ sub PrintEventRightSidebar ($) {
   
 }
 
-sub PrintEventHeader ($) {
+sub EventHeader ($) {
   my ($ArgRef) = @_;
   my $EventID     = exists $ArgRef->{-eventid}     ? $ArgRef->{-eventid}     : 0;
   my $SessionID   = exists $ArgRef->{-sessionid}   ? $ArgRef->{-sessionid}   : 0;
@@ -667,15 +667,20 @@ sub PrintEventHeader ($) {
   my %Fields       = ();
   my @Fields       = ("Event","Full Title","Event Dates","Event Location","Alt. Event Location",
                       "Event Topics","Event Moderators","Date &amp; Time","Location","Alt. Location",
-                      "Session Topics","Session Moderators","External URL","Event Info","Event Wrapup",
-                      "Session Info");
+                      "External URL","Event Info","Event Wrapup");
     
   if ($DisplayMode eq "SingleSession") {
-    %SkipFields   = ( "Event Dates"  => $TRUE, "Event Location" => $TRUE, "Alt. Event Location" => $TRUE,);
+    @Fields       = ("Full Title","Date &amp; Time","Location","Alt. Location",
+                     "Event Topics","Event Moderators","External URL","Event Info");
     %RenameFields = ( "Session Info" => "Event Info",);
   }
   if ($DisplayMode eq "Session" || $DisplayMode eq "Separator") {
-    %SkipFields   = ( "Event Info"  => $TRUE, "Event Wrapup" => $TRUE,);
+      @Fields       = ("Session Info","Date &amp; Time","Location","Alt. Location",
+                       "Session Topic(s)","Session Moderator(s)",
+                       "Event","Event Dates","Event Location","Alt. Event Location",
+                       "Event Topic(s)","Event Moderator(s)",
+                       "External URL"
+                      );
   }
   
   if ($DisplayMode eq "Session" || $DisplayMode eq "Separator") {
@@ -702,11 +707,11 @@ sub PrintEventHeader ($) {
   }  
 
   if (@{$Conferences{$EventID}{Topics}}) {
-    $Fields{"Event Topics"} = TopicListByID({ -topicids => $Conferences{$EventID}{Topics}, -listformat => "br", -listelement => "long",  });
+    $Fields{"Event Topic(s)"} = TopicListByID({ -topicids => $Conferences{$EventID}{Topics}, -listformat => "br", -listelement => "long",  });
   }  
 
   if (@{$Conferences{$EventID}{Moderators}}) {
-    $Fields{"Event Moderators"} = AuthorListByID({ -authorids => $Conferences{$EventID}{Moderators}, -listformat => "br" });
+    $Fields{"Event Moderator(s)"} = AuthorListByID({ -authorids => $Conferences{$EventID}{Moderators}, -listformat => "br" });
   }  
 
   if ($SessionStartTime) {
@@ -726,11 +731,11 @@ sub PrintEventHeader ($) {
   }
   
   if (@{$Sessions{$SessionID}{Topics}}) {
-    $Fields{"Session Topics"} = TopicListByID({ -topicids => $Sessions{$SessionID}{Topics}, -listformat => "br", -listelement => "long",  });
+    $Fields{"Session Topic(s)"} = TopicListByID({ -topicids => $Sessions{$SessionID}{Topics}, -listformat => "br", -listelement => "long",  });
   }  
 
   if (@{$Sessions{$SessionID}{Moderators}}) {
-    $Fields{"Session Moderators"} = AuthorListByID({ -authorids => $Sessions{$SessionID}{Moderators}, -listformat => "br" });
+    $Fields{"Session Moderator(s)"} = AuthorListByID({ -authorids => $Sessions{$SessionID}{Moderators}, -listformat => "br" });
   }  
 
   if ($Conferences{$EventID}{URL}) {
@@ -753,8 +758,10 @@ sub PrintEventHeader ($) {
     $Fields{"Session Info"} = URLify(AddLineBreaks($SessionSeparators{$SeparatorID}{Description}));
   }
 
+  my $HTML;
+
   if (@Fields) {
-    print '<table class="LeftHeader Alternating CenteredTable MedPaddedTable" id="EventSummary">';
+    $HTML .= '<table class="LeftHeader Alternating CenteredTable MedPaddedTable" id="EventSummary">';
     my $Row = 0;
     foreach my $Field (@Fields) {
       if ($SkipFields{$Field}) {next;}
@@ -765,14 +772,14 @@ sub PrintEventHeader ($) {
       unless ($Text) {next;}
       ++$Row; 
       my $RowClass = ("Even","Odd")[$Row % 2];
-      print "<tr class=\"$RowClass\">\n";
-      print "<th>$Field:</th>\n";
-      print "<td>$Text</td>\n";
-      print "</tr>";
+      $HTML .= "<tr class=\"$RowClass\">\n";
+      $HTML .= "<th>$Field:</th>\n";
+      $HTML .= "<td>$Text</td>\n";
+      $HTML .= "</tr>";
     }
-    print "</table>\n";
+    $HTML .=  "</table>\n";
   }
-
+  return $HTML;
 }
 
 sub PrintMeetingEpilogue ($) {

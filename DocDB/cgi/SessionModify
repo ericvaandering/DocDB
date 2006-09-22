@@ -102,9 +102,6 @@ my @MeetingModifyGroupIDs = split /\0/,$params{meetingmodifygroups};
 my @TopicIDs              = split /\0/,$params{topics};
 my @ModeratorIDs          = split /\0/,$params{moderators};
 
-push @DebugStack,"SMT: ".join ', ',@TopicIDs;
-push @DebugStack,"SMM: ".join ', ',@ModeratorIDs;
-
 unless ($Long) {$Long = $Short;}
 
 # Also have params for DocID, authors, and topics in special params with 

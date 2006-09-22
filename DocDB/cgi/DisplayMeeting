@@ -149,7 +149,7 @@ print "</div>\n";  # RightColumn3Col
 
 ### Main column content starts here
 
-PrintEventHeader( {-sessionid => $SessionID, -eventid => $EventID, -separatorid => $SessionSeparatorID, -displaymode => $DisplayMode} );
+print EventHeader( {-sessionid => $SessionID, -eventid => $EventID, -separatorid => $SessionSeparatorID, -displaymode => $DisplayMode} );
 print "</div>\n";  # MainColumn3Col
 
 ### Footer
