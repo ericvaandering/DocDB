@@ -665,7 +665,10 @@ sub PrintEventHeader ($) {
   my %SkipFields   = ();
   my %RenameFields = ();
   my %Fields       = ();
-  my @Fields       = ();
+  my @Fields       = ("Event","Full Title","Event Dates","Event Location","Alt. Event Location","Event Topics",
+                      "Event Topics","Event Moderators","Date &amp; Time","Location","Alt. Location",
+                      "Session Topics","Session Moderators","External URL","Event Info","Event Wrapup",
+                      "Session Info");
     
   if ($DisplayMode eq "SingleSession") {
     %SkipFields   = ( "Event Dates"  => $TRUE, "Event Location" => $TRUE, "Alt. Event Location" => $TRUE,);
@@ -676,15 +679,12 @@ sub PrintEventHeader ($) {
   }
   
   if ($DisplayMode eq "Session" || $DisplayMode eq "Separator") {
-    push @Fields,"Event";
     $Fields{"Event"} = $EventTitle;
   } else {
-    push @Fields,"Full Title";
     $Fields{"Full Title"} = $EventTitle;
   }
   
   if ($Conferences{$EventID}{StartDate}) {
-    push @Fields,"Event Dates";
     if ($Conferences{$EventID}{StartDate} ne $Conferences{$EventID}{EndDate}) {
       $Fields{"Event Dates"} = EuroDate($Conferences{$EventID}{StartDate}).
                         " to ".EuroDate($Conferences{$EventID}{EndDate});
@@ -694,77 +694,62 @@ sub PrintEventHeader ($) {
   }  
 
   if ($Conferences{$EventID}{Location}) {
-    push @Fields,"Event Location";
     $Fields{"Event Location"} = $Conferences{$EventID}{Location};
   }  
 
   if ($Conferences{$EventID}{AltLocation}) {
-    push @Fields,"Alt. Event Location";
     $Fields{"Alt. Event Location"} = $Conferences{$EventID}{AltLocation};
   }  
 
   if (@{$Conferences{$EventID}{Topics}}) {
-    push @Fields,"Event Topics";
     $Fields{"Event Topics"} = TopicListByID({ -topicids => $Conferences{$EventID}{Topics}, -listformat => "br", -listelement => "long",  });
   }  
 
   if (@{$Conferences{$EventID}{Moderators}}) {
-    push @Fields,"Event Moderators";
     $Fields{"Event Moderators"} = AuthorListByID({ -authorids => $Conferences{$EventID}{Moderators}, -listformat => "br" });
   }  
 
   if ($SessionStartTime) {
-    push @Fields,"Date &amp; Time";
     $Fields{"Date &amp; Time"} = EuroDate($SessionStartTime)." at ".EuroTimeHM($SessionStartTime);
   }  
 
   if ($SeparatorStartTime) {
-    push @Fields,"Date &amp; Time";
     $Fields{"Date &amp; Time"} = EuroDate($SeparatorStartTime)." at ".EuroTimeHM($SeparatorStartTime);
   }  
 
   if ($Sessions{$SessionID}{Location}) {
-    push @Fields,"Location";
     $Fields{"Location"} = $Sessions{$SessionID}{Location};
   }
   
   if ($Sessions{$SessionID}{AltLocation}) {
-    push @Fields,"Alt. Location";
     $Fields{"Alt. Location"} = $Sessions{$SessionID}{AltLocation};
   }
   
   if (@{$Sessions{$SessionID}{Topics}}) {
-    push @Fields,"Session Topics";
     $Fields{"Session Topics"} = TopicListByID({ -topicids => $Sessions{$SessionID}{Topics}, -listformat => "br", -listelement => "long",  });
   }  
 
   if (@{$Sessions{$SessionID}{Moderators}}) {
-    push @Fields,"Session Moderators";
     $Fields{"Session Moderators"} = AuthorListByID({ -authorids => $Sessions{$SessionID}{Moderators}, -listformat => "br" });
   }  
 
   if ($Conferences{$EventID}{URL}) {
-    push @Fields,"External URL";
     $Fields{"External URL"} = "<a href=\"$Conferences{$EventID}{URL}\">$Conferences{$EventID}{Title}</a>";
   }
   
   if ($Conferences{$EventID}{Preamble}) {
-    push @Fields,"Event Info";
     $Fields{"Event Info"} = Paragraphize($Conferences{$EventID}{Preamble});
   }
 
   if ($Conferences{$EventID}{Epilogue} && $SeparatorID) {
-    push @Fields,"Event Wrapup";
     $Fields{"Event Wrapup"} = Paragraphize($Conferences{$EventID}{Epilogue});
   }
 
   if ($Sessions{$SessionID}{Description}) {
-    push @Fields,"Session Info";
     $Fields{"Session Info"} = URLify(AddLineBreaks($Sessions{$SessionID}{Description}));
   }
 
   if ($SessionSeparators{$SeparatorID}{Description}) {
-    push @Fields,"Session Info";
     $Fields{"Session Info"} = URLify(AddLineBreaks($SessionSeparators{$SeparatorID}{Description}));
   }
 
@@ -780,6 +765,7 @@ sub PrintEventHeader ($) {
       if ($RenameFields{$Field}) {
         $Field = $RenameFields{$Field};
       }  
+      unless ($Text) {next;}
       print "<th>$Field:</th>\n";
       print "<td>$Text</td>\n";
       print "</tr>";
