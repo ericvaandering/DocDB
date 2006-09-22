@@ -87,16 +87,7 @@ sub AuthorListByID {
   }
   $HTML .= $EndHTML;
 
-  return $HTML;
-#  use HTML::Entities;
-#  $HTML = HTML::Entities::decode($HTML);
-#  $HTML = HTML::Entities::encode($HTML,'&');
-
-#  use XML::Twig;
-#  my $Twig = new XML::Twig;
-#  $Twig -> parse($HTML);
-#  $Twig -> set_pretty_print('indented');
-#  return $Twig -> sprint;
+  return PrettyHTML($HTML);
 }
 
 # FIXME: Can replace with above now

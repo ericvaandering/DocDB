@@ -25,6 +25,23 @@
 
 require "ProjectRoutines.pm";
 
+sub PrettyHTML ($) {
+  my ($HTML) = @_;
+  
+  use HTML::Entities;
+  use XML::Twig;
+  
+  my $OldHTML = $HTML;
+  
+  $HTML = HTML::Entities::decode($HTML);
+  $HTML = HTML::Entities::encode($HTML,'&');
+
+  my $Twig = new XML::Twig;
+  $Twig -> parse($HTML) || return $OldHTML;
+  $Twig -> set_pretty_print('indented');
+  return $Twig -> sprint;
+}
+
 sub DocDBHeader { 
   my ($Title,$PageTitle,%Params) = @_;
   
