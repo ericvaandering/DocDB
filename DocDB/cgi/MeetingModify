@@ -515,7 +515,7 @@ if ($NoSessions) {
                  -size      => 8);
   print "</td>\n";
   print "</tr><tr>\n";
-  print "<td colspan=\"2\">\n"; &ConferenceEpilogueBox; print "</td>\n";
+  print "<td colspan=\"2\">\n"; ConferenceEpilogueBox(); print "</td>\n";
   print "<td>\n"; 
   SecurityScroll(-name     => 'meetingmodifygroups', 
                  -helplink => 'meetingmodifygroups',
