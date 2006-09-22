@@ -225,6 +225,9 @@ sub SessionEntryForm (%) {
                    -default    => \@DefaultTopicIDs,               -helptext => "",
                    -name       => "sessiontopics-$MeetingOrderID", -multiple => $TRUE,});
       print "</td>\n";
+    } else {
+      print '<td rowspan="2">&nbsp;</td>';
+      print '<td rowspan="2">&nbsp;</td>';
     }
     print "</tr>\n";
     print "<tr class=\"$RowClass\">\n";
