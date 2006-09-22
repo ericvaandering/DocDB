@@ -665,7 +665,7 @@ sub PrintEventHeader ($) {
   my %SkipFields   = ();
   my %RenameFields = ();
   my %Fields       = ();
-  my @Fields       = ("Event","Full Title","Event Dates","Event Location","Alt. Event Location","Event Topics",
+  my @Fields       = ("Event","Full Title","Event Dates","Event Location","Alt. Event Location",
                       "Event Topics","Event Moderators","Date &amp; Time","Location","Alt. Location",
                       "Session Topics","Session Moderators","External URL","Event Info","Event Wrapup",
                       "Session Info");
@@ -758,13 +758,13 @@ sub PrintEventHeader ($) {
     my $Row = 0;
     foreach my $Field (@Fields) {
       if ($SkipFields{$Field}) {next;}
-      ++$Row; 
-      my $RowClass = ("Even","Odd")[$Row % 2];
       my $Text = $Fields{$Field};
       if ($RenameFields{$Field}) {
         $Field = $RenameFields{$Field};
       }  
       unless ($Text) {next;}
+      ++$Row; 
+      my $RowClass = ("Even","Odd")[$Row % 2];
       print "<tr class=\"$RowClass\">\n";
       print "<th>$Field:</th>\n";
       print "<td>$Text</td>\n";
