@@ -760,12 +760,12 @@ sub PrintEventHeader ($) {
       if ($SkipFields{$Field}) {next;}
       ++$Row; 
       my $RowClass = ("Even","Odd")[$Row % 2];
-      print "<tr class=\"$RowClass\">\n";
       my $Text = $Fields{$Field};
       if ($RenameFields{$Field}) {
         $Field = $RenameFields{$Field};
       }  
       unless ($Text) {next;}
+      print "<tr class=\"$RowClass\">\n";
       print "<th>$Field:</th>\n";
       print "<td>$Text</td>\n";
       print "</tr>";
