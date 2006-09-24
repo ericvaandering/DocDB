@@ -79,11 +79,10 @@ my $HTML = "<div>";
 # Could make this a subroutine and re-use in calendar stuff
 if (@HashIDs) {
   $HTML .= '<table class="CenteredTable MedPaddedTable Alternating">';
-  $HTML .= '<tr><th>Date</th>
-                <th>Time</th>
-                <th>Title</th>
-                <th>Location</th>
-                <th>Topic(s)</th></tr>';
+  $HTML .= '<thead><tr>
+             <th>Date</th><th>Time</th><th>Title</th>
+             <th>Location</th><th>Topic(s)</th>
+            </tr></thead>';
                  
   my $LastDate = "";
   my $Row = 0;  

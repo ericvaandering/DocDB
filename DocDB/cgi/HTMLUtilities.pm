@@ -41,6 +41,7 @@ sub PrettyHTML ($) {
     $Twig -> set_pretty_print('indented');
     return $Twig -> sprint;
   } else {
+    push @DebugStack,"HTML Parse failed with error: ".$@;
     return $OldHTML;
   }    
 }
