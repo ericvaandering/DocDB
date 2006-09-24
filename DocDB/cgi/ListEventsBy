@@ -84,7 +84,7 @@ my $HTML = "<div>";
 
 # Could make this a subroutine and re-use in calendar stuff
 if (@HashIDs) {
-  $HTML .= '<table class="CenteredTable MedPaddedTable Alternating">';
+  $HTML .= '<table class="CenteredTable MultidayEventList Alternating">';
   $HTML .= '<thead><tr>
              <th>Date</th><th>Time</th><th>Title</th>
              <th>Location</th><th>Topic(s)</th>
@@ -121,6 +121,8 @@ if (@HashIDs) {
       if ($DidEvent{$EventID}) { next; }
       $DidEvent{$EventID} = $TRUE;
 
+      # FIXME: Remove events with one session where we already did the session
+
       $Title    = EventLink(-eventid => $EventID,);
       $Location = join '<br/>',$Conferences{$EventID}{Location},
                                $Conferences{$EventID}{AltLocation};
@@ -139,7 +141,7 @@ if (@HashIDs) {
       $DateString = EuroDate($Date);
       $LastDate = $Date;
     }  
-    $HTML .= '<tr><td>'.$DateString." ".$HashID.'</td>'.
+    $HTML .= '<tr><td>'.$DateString.'</td>'.
                  '<td>'.$Time.      '</td>'.
                  '<td>'.$Title.     '</td>'.
                  '<td>'.$Location.  '</td>'.
