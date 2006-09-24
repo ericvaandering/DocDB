@@ -90,6 +90,7 @@ if (@HashIDs) {
   foreach my $HashID (@HashIDs) {
     my ($Location,$Topics,$Title,$Time);
     my ($Date) = split /\s+/,$EventHash{$HashID}{Time};
+    my $DateString = '&nbsp;';
     if ($EventHash{$HashID}{SessionID}) {
       my $SessionID = $EventHash{$HashID}{SessionID};
       $Title    = SessionLink(-sessionid => $SessionID, -format => "full");
@@ -99,7 +100,7 @@ if (@HashIDs) {
                                   -topicids => $Sessions{$SessionID}{Topics}, });
 
       my $StartTime = EuroTimeHM($Sessions{$SessionID}{StartTime});
-      my $EndTime   = TruncateSeconds(SessionEndTime($SessionID));
+      my $EndTime   = SessionEndTime($SessionID);
       if ($EndTime eq $StartTime) {
         $EndTime = "";
       }  
@@ -121,13 +122,14 @@ if (@HashIDs) {
       }  
       my $RowClass = ("Even","Odd")[$Row % 2];
       $HTML .= "<tbody class=\"$RowClass\">";
+      $DateString = EuroDate($Date);
       $LastDate = $Date;
     }  
-    $HTML .= '<tr><td>'.$Date.    '</td>'.
-                 '<td>'.$Time.    '</td>'.
-                 '<td>'.$Title.   '</td>'.
-                 '<td>'.$Location.'</td>'.
-                 '<td>'.$Topics.  '</td></tr>';
+    $HTML .= '<tr><td>'.$DateString.'</td>'.
+                 '<td>'.$Time.      '</td>'.
+                 '<td>'.$Title.     '</td>'.
+                 '<td>'.$Location.  '</td>'.
+                 '<td>'.$Topics.    '</td></tr>';
     ++$Row;             
   } 
   $HTML .= '</tbody></table>';
