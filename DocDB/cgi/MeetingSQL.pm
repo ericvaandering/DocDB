@@ -793,7 +793,7 @@ sub GetEventsByModerator ($) {
   my ($ModeratorID,$EventID,$SessionID,$SessionSeparatorID,$TimeStamp);
 
   my $List = $dbh -> prepare("select ModeratorID,EventID,SessionID,SessionSeparatorID,TimeStamp from Moderator where AuthorID=?");
-  $List -> execute();
+  $List -> execute($AuthorID);
   $List -> bind_columns(undef, \($ModeratorID,$EventID,$SessionID,$SessionSeparatorID,$TimeStamp));
   while ($List -> fetch) {
     push @DebugStack,"MI:  $ModeratorID, $EventID, $SessionID";
