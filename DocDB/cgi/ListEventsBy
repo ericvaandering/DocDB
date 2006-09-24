@@ -131,7 +131,7 @@ if (@HashIDs) {
       $DateString = EuroDate($Date);
       $LastDate = $Date;
     }  
-    $HTML .= '<tr><td>'.$DateString.'</td>'.
+    $HTML .= '<tr><td>'.$DateString." ".$HashID.'</td>'.
                  '<td>'.$Time.      '</td>'.
                  '<td>'.$Title.     '</td>'.
                  '<td>'.$Location.  '</td>'.
