@@ -1,3 +1,12 @@
+8.2.0
+
+  DocDB now supports additional meta-information for events and sessions. A 2nd
+  location (Alternate Location) field has been added for things like video
+  conferencing numbers, virtual rooms, etc. Also, moderators (from the author
+  list) and topics can be attached to both events and sessions and lists of
+  events and sessions moderated by an author or on a topic can be retrieved. All
+  of this information is shown on the event page if present.
+
 8.0.0
 
   Follow the migration instructions in MigrationGuide to upgrade.

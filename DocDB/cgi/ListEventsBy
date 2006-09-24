@@ -1,0 +1,139 @@
+#! /usr/bin/env perl
+#
+# Description: This script is called by AdministerForm and does administration
+#              on Topics in the DB. TopicAdd is simpler and can only add
+#              topics. TopicAdd is most useful in setting up a new DB, while 
+#              TopicAdminister will be more useful in maintaining an existing DB. 
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+
+use CGI qw(-nosticky);
+use CGI::Untaint;
+use DBI;
+
+require "DocDBGlobals.pm";
+require "MeetingSQL.pm"; 
+
+require "DBUtilities.pm"; 
+require "EventUtilities.pm"; 
+require "HTMLUtilities.pm"; 
+
+$query = new CGI;  # Global for subroutines
+
+# Parameters to script 
+
+my $Untaint = CGI::Untaint -> new($query -> Vars);
+
+my $TopicID  = $Untaint -> extract (-as_integer => "topicid")  || 0;
+my $AuthorID = $Untaint -> extract (-as_integer => "authorid") || 0;
+
+$query -> delete_all();
+
+# Open connection and die if we can't
+
+CreateConnection(-type => "ro");
+EndPage(-startpage => $TRUE);
+
+print $query -> header;
+DocDBHeader("Event Listing","",-scripts => []);
+EndPage();
+
+my %EventHash = ();
+if ($TopicID) {
+  %EventHash = GetEventsByTopic($TopicID);
+} elsif ($AuthorID) {
+  %EventHash = GetEventsByModerator($AuthorID);
+}
+
+%TmpEventHash = %EventHash;
+my @HashIDs = keys %EventHash;
+@HashIDs = sort EventHashByTime @HashIDs;
+%TmpEventHash = ();
+
+my $HTML = "";
+   $HTML .= "Link to documents by this author";
+
+# Could make this a subroutine and re-use in calendar stuff
+if (@HashIDs) {
+  $HTML .= '<table class="CenteredTable MultidayEventList Alternating">';
+  $HTML .= '<tr><th>Date</th>
+                <th>Time</th>
+                <th>Title</th>
+                <th>Location</th>
+                <th>Topic(s)</th></tr>';
+                 
+  my $LastDate = "";
+  my $Row = 0;  
+  foreach my $HashID (@HashIDs) {
+    my ($Location,$Topics,$Title,$Time);
+    my $Date = $EventHash{$HashID}{Date};
+
+    if ($EventHash{$HashID}{SessionID}) {
+      my $SessionID = $EventHash{$HashID}{SessionID};
+      $Title    = SessionLink(-sessionid => $SessionID, -format => "full");
+      $Location = join '<br/>',$Sessions{$SessionID}{Location},
+                               $Sessions{$SessionID}{AltLocation};
+      $Topics   = TopicListByID({ -linktype => "event", -listformat => "br", -sortby => "name", 
+                                  -topicids => $Sessions{$SessionID}{Topics}, });
+
+      my $StartTime = EuroTimeHM($Sessions{$SessionID}{StartTime});
+      my $EndTime   = TruncateSeconds(SessionEndTime($SessionID));
+      if ($EndTime eq $StartTime) {
+        $EndTime = "";
+      }  
+      $Time = "$StartTime &ndash; $EndTime";
+    }
+    if ($EventHash{$HashID}{EventID}) {
+      my $EventID = $EventHash{$HashID}{EventID};
+      $Title    = EventLink(-eventid => $EventID,);
+      $Location = join '<br/>',$Conferences{$EventID}{Location},
+                               $Conferences{$EventID}{AltLocation};
+      $Topics   = TopicListByID({ -linktype => "event", -listformat => "br", -sortby => "name", 
+                                  -topicids => $Conferences{$EventID}{Topics}, });
+      $Time = 'All day/no time';
+    }
+    # Enhance: SessionSeparator meta-data
+    if ($LastDate ne $Date} { # Start a new tbody group
+      if ($LastDate) {        # Close old tbody
+        $HTML .= '</tbody>';
+      }  
+      my $RowClass = ("Even","Odd")[$Row % 2];
+      $HTML .= "<tbody class=\"$RowClass\">";
+      $LastDate = $Date;
+    }  
+    $HTML .= '<tr><td>'.$Date.    '</td>'.
+                 '<td>'.$Time.    '</td>'.
+                 '<td>'.$Title.   '</td>'.
+                 '<td>'.$Location.'</td>'.
+                 '<td>'.$Topics.  '</td></tr>';
+  } 
+  $HTML .= '</table>';
+} else {  
+  $HTML .= 'No events found.';
+}  
+
+print PrettyHTML($HTML);
+
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+ 
+exit;

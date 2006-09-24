@@ -785,4 +785,66 @@ sub MeetingModeratorUpdate {
   return $Count;
 }
 
+sub GetEventsByModerator ($) {
+  my ($AuthorID) = @_;
+  
+  my %EventHash = ();
+
+  my ($ModeratorID,$EventID,$SessionID,$SessionSeparatorID,$TimeStamp);
+
+  my $List   = $dbh -> prepare("select ModeratorID,EventID,SessionID,SessionSeparatorID,TimeStamp from Moderator where AuthorID=?");
+  $List -> execute();
+  $List -> bind_columns(undef, \($ModeratorID,$EventID,$SessionID,$SessionSeparatorID,$TimeStamp));
+  while ($List -> fetch) {
+    $ModeratorID .= "a";
+    if ($EventID) {
+      $EventHash{$ModeratorID}{EventID} = $EventID;
+      FetchConferenceByConferenceID($EventID);
+      $EventHash{$EventTopicID}{Time} = $Conferences{$EventID}{StartDate}." 00:00:00";
+    }
+    if ($SessionID) {
+      $EventHash{$ModeratorID}{SessionID} = $SessionID;
+      FetchSessionByID($SessionID);
+      $EventHash{$EventTopicID}{Time} = $Sessions{$SessionID}{StartTime};
+    }
+    if ($SessionSeparatorID) {
+      $EventHash{$ModeratorID}{SessionSeparatorID} = $SessionSeparatorID;
+      FetchSessionSeparatorByID($SessionSeparatorID);
+      $EventHash{$EventTopicID}{Time} = $SessionSeparators{$SessionSeparatorID}{StartTime};
+    }
+  }
+  return %EventHash;
+}
+
+sub GetEventsByTopic ($) {
+  my ($TopicID) = @_;
+  
+  my %EventHash = ();
+
+  my ($EventTopicID,$EventID,$SessionID,$SessionSeparatorID,$TimeStamp);
+
+  my $List   = $dbh -> prepare("select EventTopicID,EventID,SessionID,SessionSeparatorID,TimeStamp from EventTopic where TopicID=?");
+  $List -> execute();
+  $List -> bind_columns(undef, \($EventTopicID,$EventID,$SessionID,$SessionSeparatorID,$TimeStamp));
+  while ($List -> fetch) {
+    $EventTopicID .= "t";
+    if ($EventID) {
+      $EventHash{$EventTopicID}{EventID} = $EventID;
+      FetchConferenceByConferenceID($EventID);
+      $EventHash{$EventTopicID}{Time} = $Conferences{$EventID}{StartDate}." 00:00:00";
+    }
+    if ($SessionID) {
+      $EventHash{$EventTopicID}{SessionID} = $SessionID;
+      FetchSessionByID($SessionID);
+      $EventHash{$EventTopicID}{Time} = $Sessions{$SessionID}{StartTime};
+    }
+    if ($SessionSeparatorID) {
+      $EventHash{$EventTopicID}{SessionSeparatorID} = $SessionSeparatorID;
+      FetchSessionSeparatorByID($SessionSeparatorID);
+      $EventHash{$EventTopicID}{Time} = $SessionSeparators{$SessionSeparatorID}{StartTime};
+    }
+  }
+  return %EventHash;
+}
+
 1;

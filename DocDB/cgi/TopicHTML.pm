@@ -27,20 +27,30 @@ sub TopicListByID {
   my @TopicIDs    = exists $ArgRef->{-topicids}    ? @{$ArgRef->{-topicids}}   : ();
   my $ListFormat  = exists $ArgRef->{-listformat}  ?   $ArgRef->{-listformat}  : "dl";
   my $ListElement = exists $ArgRef->{-listelement} ?   $ArgRef->{-listelement} : "short";
-    
+  my $LinkType    = exists $ArgRef->{-linktype}    ?   $ArgRef->{-linktype}    : "document";
+  my $SortBy      = exists $ArgRef->{-sortby}      ?   $ArgRef->{-sortby}      : ""; # name or provenance
+
   require "TopicSQL.pm";
   
   my $HTML = "";
   
+  foreach my $TopicID (@TopicIDs) {
+    FetchTopic({ -topicid => $TopicID });
+  }
+
+  if ($SortBy eq "name") {
+    @TopicIDs = sort TopicByAlpha      @TopicIDs;
+  } elsif ($SortBy eq "provenance") {
+    @TopicIDs = sort TopicByProvenance @TopicIDs;
+  }
+  
   my @TopicLinks = ();
-  if (@TopicIDs) {
-    foreach my $TopicID (@TopicIDs) {
-      my $TopicLink = TopicLink( {-topicid => $TopicID, -format => $ListElement} );
-      if ($TopicLink) {
-        push @TopicLinks,$TopicLink;
-      }  
-    }
-  } 
+  foreach my $TopicID (@TopicIDs) {
+    my $TopicLink = TopicLink( {-topicid => $TopicID, -format => $ListElement, -type => $LinkType,} );
+    if ($TopicLink) {
+      push @TopicLinks,$TopicLink;
+    }  
+  }
   
 # Headers for different styles and handle no topics  
     
@@ -55,9 +65,7 @@ sub TopicListByID {
       $HTML .= "<dd>None</dd>\n";
       $HTML .= "</dl>\n";
     } 
-  }  
-  
-  if ($ListFormat eq "br") {
+  } elsif ($ListFormat eq "br") {
     unless (@TopicLinks) {
       $HTML .= "None<br/>\n";
     }  
@@ -86,13 +94,20 @@ sub TopicLink ($) {
   my ($ArgRef) = @_;
   my $TopicID = exists $ArgRef->{-topicid} ? $ArgRef->{-topicid} : "";
   my $Format  = exists $ArgRef->{-format}  ? $ArgRef->{-format}  : "short";
+  my $Type    = exists $ArgRef->{-type}    ? $ArgRef->{-type}    : "document";
 
   require "TopicSQL.pm";
-  my ($URL,$Text,$Tooltip);
+  my ($URL,$Text,$Tooltip,$Script);
 
   FetchTopic( {-topicid => $TopicID} );
 
-  $URL     = $ListBy."?topicid=".$TopicID;
+  if ($Type eq "event") {
+    $Script = $ListEventsBy;
+  } else {
+    $Script = $ListBy;
+  }    
+
+  $URL     = $Script."?topicid=".$TopicID;
   if ($Format eq "short") {
     $Text    = CGI::escapeHTML($Topics{$TopicID}{Short});
     $Tooltip = CGI::escapeHTML($Topics{$TopicID}{Long} );

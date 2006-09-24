@@ -1,3 +1,12 @@
+Restore sortByName for authors
+
+Use sort by name and sort by topic for lists in event header
+
+add topic and moderator links if they exist to Author and TopicTable
+
+do show all talks for sessions. have to break and restart the event table (or
+embed talk table in big cell in event table?)
+
 Database structures allow for a number of things that aren't currently supported
 by the code:
 

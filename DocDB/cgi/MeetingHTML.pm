@@ -710,11 +710,17 @@ sub EventHeader ($) {
   }  
 
   if (@{$Conferences{$EventID}{Topics}}) {
-    $Fields{"Event Topic(s)"} = TopicListByID({ -topicids => $Conferences{$EventID}{Topics}, -listformat => "br", -listelement => "long",  });
+    $Fields{"Event Topic(s)"} = TopicListByID({ 
+         -linktype   => "event", -topicids    => $Conferences{$EventID}{Topics}, 
+         -listformat => "br",    -listelement => "long", -sortby => "provenance", 
+        });
   }  
 
   if (@{$Conferences{$EventID}{Moderators}}) {
-    $Fields{"Event Moderator(s)"} = AuthorListByID({ -authorids => $Conferences{$EventID}{Moderators}, -listformat => "br" });
+    $Fields{"Event Moderator(s)"} = AuthorListByID({ 
+        -linktype   => "event", -authorids => $Conferences{$EventID}{Moderators},
+        -listformat => "br",    -sortby    => "name",
+       });
   }  
 
   if ($SessionStartTime) {
@@ -734,11 +740,17 @@ sub EventHeader ($) {
   }
   
   if (@{$Sessions{$SessionID}{Topics}}) {
-    $Fields{"Session Topic(s)"} = TopicListByID({ -topicids => $Sessions{$SessionID}{Topics}, -listformat => "br", -listelement => "long",  });
+    $Fields{"Session Topic(s)"} = TopicListByID({ 
+        -linktype   => "event", -topicids    => $Sessions{$SessionID}{Topics}, 
+        -listformat => "br",    -listelement => "long", -sortby => "provenance",  
+       });
   }  
 
   if (@{$Sessions{$SessionID}{Moderators}}) {
-    $Fields{"Session Moderator(s)"} = AuthorListByID({ -authorids => $Sessions{$SessionID}{Moderators}, -listformat => "br" });
+    $Fields{"Session Moderator(s)"} = AuthorListByID({ 
+        -linktype   => "event", -authorids => $Sessions{$SessionID}{Moderators},
+        -listformat => "br",    -sortby    => "name",
+       });
   }  
 
   if ($Conferences{$EventID}{URL}) {
@@ -799,8 +811,10 @@ sub PrintMeetingEpilogue ($) {
   }
 }
 
-sub PrintSessionInfo ($) {
-  my ($SessionID) = @_;
+sub SessionInfo ($) {
+  my ($SessionID,$ArgRef) = @_;
+  
+  my $RowClass = exists $ArgRef->{-rowclass} ? $ArgRef->{-rowclass} : "none";
   
   require "TalkSQL.pm";
   require "SQLUtilities.pm";
@@ -808,13 +822,26 @@ sub PrintSessionInfo ($) {
   FetchSessionByID($SessionID);
  
   # DocumentList puts a class on every cell, this only on Date
- 
-  print "<td><a href=\"$DisplayMeeting?sessionid=$SessionID\">";
-  print      "$Sessions{$SessionID}{Title}</a></td>\n";
-  print "<td class=\"Date\">",&EuroDateHM($Sessions{$SessionID}{StartTime}),"</td>\n";
-  print "<td>",$Sessions{$SessionID}{Description}           ,"</td>\n";
-  print "<td>",$Sessions{$SessionID}{Location}              ,"</td>\n";
-}
+
+  my $HTML = ""; 
+  $HTML .= "<tr class=\"$RowClass\">"; 
+  $HTML .= '<td class="Date">'.EuroDateHM($Sessions{$SessionID}{StartTime}).'</td>';
+  $HTML .= "<td><a href=\"$DisplayMeeting?sessionid=$SessionID\">";
+  $HTML .=     "$Sessions{$SessionID}{Title}</a></td>";
+  $HTML .= '<td>'.$Sessions{$SessionID}{Description}           .'</td>';
+  $HTML .= '<td>'.$Sessions{$SessionID}{Location}              .'</td>';
+  $HTML .= '<td>'.TopicListByID({ 
+              -linktype   => "event", -topicids    => $Sessions{$SessionID}{Topics}, 
+              -listformat => "br",    -listelement => "short", -sortby => "name",  
+            }).'</td>';
+  $HTML .= '<td>'.AuthorListByID({
+              -linktype   => "event", -authorids => $Sessions{$SessionID}{Moderators},
+              -listformat => "br",    -sortby    => "name",
+            }).'</td>';
+  $HTML .= '</tr>';
+
+  return PrettyHTML($HTML);          
+} 
 
 sub PrintSessionSeparatorInfo ($) {
   my ($SessionSeparatorID) = @_;
@@ -827,10 +854,11 @@ sub PrintSessionSeparatorInfo ($) {
 
   # DocumentList puts a class on every cell, this only on Date
  
-  print "<td>$Link</td>\n";
   print "<td class=\"Date\">",EuroDateHM($SessionSeparators{$SessionSeparatorID}{StartTime}),"</td>\n";
+  print "<td>$Link</td>\n";
   print "<td>",$SessionSeparators{$SessionSeparatorID}{Description},"</td>\n";
   print "<td>",$SessionSeparators{$SessionSeparatorID}{Location},"</td>\n";
+  print '<td>&nbsp;</td><td>&nbsp;</td>'; # Topics and Moderators
 }
 
 sub EventGroupLink (%) {

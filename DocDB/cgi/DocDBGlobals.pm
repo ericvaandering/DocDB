@@ -172,6 +172,7 @@ $AuthorAdd             = $cgi_root."AuthorAdd";
 $ListManagedDocuments  = $cgi_root."ListManagedDocuments";
 
 $ListAuthors           = $cgi_root."ListAuthors";
+$ListEventsBy          = $cgi_root."ListEventsBy";
 $ListGroups            = $cgi_root."ListGroups";
 $ListKeywords          = $cgi_root."ListKeywords";
 $ListTopics            = $cgi_root."ListTopics";

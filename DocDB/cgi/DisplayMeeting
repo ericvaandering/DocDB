@@ -178,25 +178,24 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { # Display a 
       }
     }   
   } else { # Display links to sessions and info on separators
-    print '<table class="MedPaddedTable CenteredTable Alternating" id="SessionList">';
-    print "<tr><th>Session</th>\n";
-    print "<th>Date &amp; Time</th>\n";
-    print "<th>Session Information</th>\n";
-    print "<th>Location</th>\n";
-    print "</tr>\n";
+    my $SummaryTableHeader  = '<table class="MedPaddedTable CenteredTable Alternating" id="SessionList">';
+       $SummaryTableHeader .= "<tr><th>Date &amp; Time</th><th>Session</th><th>Session Information</th>\n";
+       $SummaryTableHeader .= "<th>Location</th><th>Topic(s)</th><th>Moderator(s)</th></tr>\n";
+
+    print $SummaryTableHeader;
     my $Row = 0;
     foreach $MeetingOrderID (@MeetingOrderIDs) {
       ++$Row; 
       my $RowClass = ("Even","Odd")[$Row % 2];
       my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
       my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
-      print "<tr class=\"$RowClass\">\n"; 
-      if ($SessionID) {
-        PrintSessionInfo($SessionID);                   # Session info and link to session
+      if ($SessionID) {              # Session info and link to session
+        print SessionInfo($SessionID, {-rowclass => $RowClass} ); # Does own <tr>
       } elsif ($SessionSeparatorID) {
+        print "<tr class=\"$RowClass\">\n"; 
         PrintSessionSeparatorInfo($SessionSeparatorID); # SessionSeparator info 
+        print "</tr>\n";
       }
-      print "</tr>\n";
     }  
     print "</table><hr/>\n";
   }

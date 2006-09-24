@@ -52,9 +52,19 @@ sub AuthorListByID {
   my @AuthorIDs   = exists $ArgRef->{-authorids}   ? @{$ArgRef->{-authorids}}  : ();
   my $ListFormat  = exists $ArgRef->{-listformat}  ?   $ArgRef->{-listformat}  : "dl";
 #  my $ListElement = exists $ArgRef->{-listelement} ?   $ArgRef->{-listelement} : "short";
+  my $LinkType    = exists $ArgRef->{-linktype}    ?   $ArgRef->{-linktype}    : "document";
+  my $SortBy      = exists $ArgRef->{-sortby}      ?   $ArgRef->{-sortby}      : "";
   
   require "AuthorSQL.pm";
   
+  foreach my $AuthorID (@AuthorIDs) {
+    FetchAuthor($AuthorID);
+  }
+
+  if ($SortBy eq "name") {
+    @AuthorIDs = sort byLastName     @AuthorIDs;
+  }
+
   my ($HTML,$StartHTML,$EndHTML,$StartElement,$EndElement,$StartList,$EndList,$NoneText);
   
   if ($ListFormat eq "dl") {
@@ -78,8 +88,7 @@ sub AuthorListByID {
     $HTML .= $StartHTML;
     $HTML .= $StartList;
     foreach my $AuthorID (@AuthorIDs) {
-      FetchAuthor($AuthorID);
-      $HTML .= $StartElement.AuthorLink($AuthorID).$EndElement;
+      $HTML .= $StartElement.AuthorLink($AuthorID,-type => $LinkType).$EndElement;
     }
     $HTML .= $EndList;
   } else {
@@ -129,23 +138,31 @@ sub AuthorLink ($;%) {
   
   my ($AuthorID,%Params) = @_;
   my $Format = $Params{-format} || "full"; # full, formal
+  my $Type   = $Params{-type}   || "document"; # document, event
   
-  &FetchAuthor($AuthorID);
-  &FetchInstitution($Authors{$AuthorID}{InstitutionID});
+  FetchAuthor($AuthorID);
+  FetchInstitution($Authors{$AuthorID}{InstitutionID});
   my $InstitutionName = $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG};
   unless ($Authors{$AuthorID}{FULLNAME}) {
     return "Unknown";
   }  
-  my $link;
-  $link = "<a href=\"$ListBy?authorid=$AuthorID\" title=\"$InstitutionName\">";
-  if ($Format eq "full") {
-    $link .= $Authors{$AuthorID}{FULLNAME};
-  } elsif ($Format eq "formal") {
-    $link .= $Authors{$AuthorID}{Formal};
-  }
-  $link .= "</a>";
+  my $Script;
+  if ($Type eq "event") {
+    $Script = $ListEventsBy;
+  } else {
+    $Script = $ListBy;
+  }    
   
-  return $link;
+  my $Link;
+  $Link = "<a href=\"$Script?authorid=$AuthorID\" title=\"$InstitutionName\">";
+  if ($Format eq "full") {
+    $Link .= $Authors{$AuthorID}{FULLNAME};
+  } elsif ($Format eq "formal") {
+    $Link .= $Authors{$AuthorID}{Formal};
+  }
+  $Link .= "</a>";
+  
+  return $Link;
 }
 
 sub PrintAuthorInfo {
