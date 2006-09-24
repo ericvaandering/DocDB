@@ -91,13 +91,18 @@ if (@HashIDs) {
             </tr></thead>';
                  
   my $LastDate = "";
-  my $Row = 0;  
+  my $Row = 0; 
+  my %DidSession = ();
+  my %DidEvent   = (); 
   foreach my $HashID (@HashIDs) {
     my ($Location,$Topics,$Title,$Time);
     my ($Date) = split /\s+/,$EventHash{$HashID}{Time};
     my $DateString = '&nbsp;';
     if ($EventHash{$HashID}{SessionID}) {
       my $SessionID = $EventHash{$HashID}{SessionID};
+      if ($DidSession{$SessionID}) { next; }
+      $DidSession{$SessionID} = $TRUE;
+
       $Title    = SessionLink(-sessionid => $SessionID, -format => "full");
       $Location = join '<br/>',$Sessions{$SessionID}{Location},
                                $Sessions{$SessionID}{AltLocation};
@@ -113,6 +118,9 @@ if (@HashIDs) {
     }
     if ($EventHash{$HashID}{EventID}) {
       my $EventID = $EventHash{$HashID}{EventID};
+      if ($DidEvent{$EventID}) { next; }
+      $DidEvent{$EventID} = $TRUE;
+
       $Title    = EventLink(-eventid => $EventID,);
       $Location = join '<br/>',$Conferences{$EventID}{Location},
                                $Conferences{$EventID}{AltLocation};
