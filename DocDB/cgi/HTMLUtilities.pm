@@ -35,8 +35,12 @@ sub PrettyHTML ($) {
   
   $HTML = HTML::Entities::decode($HTML);
   $HTML = HTML::Entities::encode($HTML,'&');
-
   my $Twig = new XML::Twig;
+  
+  my $EL = $Twig -> entity_list();
+  
+  print "EL ";
+  $EL -> print();
   if ($Twig -> safe_parse($HTML)) {
     $Twig -> set_pretty_print('indented');
     return $Twig -> sprint;
