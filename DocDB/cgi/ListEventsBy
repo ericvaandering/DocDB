@@ -112,7 +112,7 @@ if (@HashIDs) {
       $Time = 'All day/no time';
     }
     # Enhance: SessionSeparator meta-data
-    if ($LastDate ne $Date} { # Start a new tbody group
+    if ($LastDate ne $Date) { # Start a new tbody group
       if ($LastDate) {        # Close old tbody
         $HTML .= '</tbody>';
       }  
