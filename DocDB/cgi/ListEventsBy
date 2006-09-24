@@ -116,7 +116,8 @@ if (@HashIDs) {
     }
     # Enhance: SessionSeparator meta-data
     if ($LastDate ne $Date) { # Start a new tbody group
-      if ($LastDate) {        # Close old tbody
+     ++$Row;             
+     if ($LastDate) {        # Close old tbody
         $HTML .= '</tbody>';
       }  
       my $RowClass = ("Even","Odd")[$Row % 2];
@@ -129,7 +130,6 @@ if (@HashIDs) {
                  '<td>'.$Title.     '</td>'.
                  '<td>'.$Location.  '</td>'.
                  '<td>'.$Topics.    '</td></tr>';
-    ++$Row;             
   } 
   $HTML .= '</tbody></table>';
 } else {  
