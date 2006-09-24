@@ -1,6 +1,12 @@
 8.1.0 
 
-  Can now specify the order of authors on a document
+  You can now specify the order of authors on a document. This is done by
+  switching the author entry widget from a selectable list to the existing
+  text-entry box. The method  can be selected by user preferences, the advanced
+  entry form, or by clicking to switch from one method to the other on the
+  document entry form (requires  Javascript). If a document with an ordered
+  author list is modified, the text form is the default since the selectable list
+  would destroy the list. 
 
 8.0.0
 
