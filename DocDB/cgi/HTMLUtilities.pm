@@ -28,6 +28,11 @@ require "ProjectRoutines.pm";
 sub PrettyHTML ($) {
   my ($HTML) = @_;
   
+  # This function is supposed to pretty-up any valid (X)HTML, but
+  # it doesn't work particularly well. As written, things like &nbsp; are not 
+  # valid XML. One possibility is to use HTML::Entities::encode_numeric in some way
+  # which should produce safe entities or to use a subsitution map
+  
   use HTML::Entities;
   use XML::Twig;
   
@@ -35,12 +40,8 @@ sub PrettyHTML ($) {
   
   $HTML = HTML::Entities::decode($HTML);
   $HTML = HTML::Entities::encode($HTML,'&');
+
   my $Twig = new XML::Twig;
-  
-  my $EL = $Twig -> entity_list();
-  
-  print "EL ";
-  $EL -> print();
   if ($Twig -> safe_parse($HTML)) {
     $Twig -> set_pretty_print('indented');
     return $Twig -> sprint;

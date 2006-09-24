@@ -62,7 +62,14 @@ EndPage();
 
 my %EventHash = ();
 if ($TopicID) {
-  %EventHash = GetEventsByTopic($TopicID);
+  require "TopicUtilities.pm";
+  my @ChildIDs = TopicAndSubTopics({-topicid => $TopicID});
+  foreach my $ChildID (@ChildIDs) {
+    my %Hash = GetEventsByTopic($ChildID);
+    foreach my $ID (keys %Hash) {
+      $EventHash{$ID} = $Hash{$ID}; 
+    }
+  }  
 } elsif ($AuthorID) {
   %EventHash = GetEventsByModerator($AuthorID);
 }
