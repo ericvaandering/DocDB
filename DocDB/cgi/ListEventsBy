@@ -59,10 +59,15 @@ EndPage(-startpage => $TRUE);
 print $query -> header;
 DocDBHeader("Event Listing","",-scripts => []);
 EndPage();
+my $HTML = "<div>";
 
 my %EventHash = ();
+
 if ($TopicID) {
   require "TopicUtilities.pm";
+  require "TopicSQL.pm";
+  
+  FetchTopic($TopicID);
   my @ChildIDs = TopicAndSubTopics({-topicid => $TopicID});
   foreach my $ChildID (@ChildIDs) {
     my %Hash = GetEventsByTopic($ChildID);
@@ -70,6 +75,14 @@ if ($TopicID) {
       $EventHash{$ID} = $Hash{$ID}; 
     }
   }  
+  $HTML .= "<h4>Events for <span class=\"Highlight\">$Topics{$TopicID}{Long} </span>";
+  if (scalar(@ChildTopicIDs) > 1) {
+    $HTML .= " and its sub-topics";
+  }
+  $HTML .= '<br/>(Documents on '.TopicLink({ -topicid => $TopicID }).')';
+
+  $HTML .= "</h4>"; 
+  
 } elsif ($AuthorID) {
   %EventHash = GetEventsByModerator($AuthorID);
 }
@@ -79,8 +92,7 @@ my @HashIDs = keys %EventHash;
 @HashIDs = sort EventHashByTime @HashIDs;
 %TmpEventHash = ();
 
-my $HTML = "<div>";
-   $HTML .= "<h4>Link to documents by this author</h4>";
+$HTML .= "<h4>Link to documents by this author</h4>";
 
 # Could make this a subroutine and re-use in calendar stuff
 if (@HashIDs) {

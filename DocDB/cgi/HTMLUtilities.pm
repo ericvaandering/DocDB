@@ -33,6 +33,8 @@ sub PrettyHTML ($) {
   # valid XML. One possibility is to use HTML::Entities::encode_numeric in some way
   # which should produce safe entities or to use a subsitution map
   
+  return $HTML;
+  
   use HTML::Entities;
   use XML::Twig;
   
