@@ -36,6 +36,10 @@ require "MeetingSQL.pm";
 require "DBUtilities.pm"; 
 require "EventUtilities.pm"; 
 require "HTMLUtilities.pm"; 
+require "SQLUtilities.pm"; 
+require "ResponseElements.pm"; 
+require "MeetingHTML.pm"; 
+require "TopicHTML.pm"; 
 
 $query = new CGI;  # Global for subroutines
 
