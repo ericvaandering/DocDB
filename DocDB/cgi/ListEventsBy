@@ -100,7 +100,7 @@ if (@HashIDs) {
                                   -topicids => $Sessions{$SessionID}{Topics}, });
 
       my $StartTime = EuroTimeHM($Sessions{$SessionID}{StartTime});
-      my $EndTime   = SessionEndTime($SessionID);
+      my $EndTime   = TruncateSeconds(SessionEndTime($SessionID));
       if ($EndTime eq $StartTime) {
         $EndTime = "";
       }  
