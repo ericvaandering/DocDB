@@ -792,10 +792,11 @@ sub GetEventsByModerator ($) {
 
   my ($ModeratorID,$EventID,$SessionID,$SessionSeparatorID,$TimeStamp);
 
-  my $List   = $dbh -> prepare("select ModeratorID,EventID,SessionID,SessionSeparatorID,TimeStamp from Moderator where AuthorID=?");
+  my $List = $dbh -> prepare("select ModeratorID,EventID,SessionID,SessionSeparatorID,TimeStamp from Moderator where AuthorID=?");
   $List -> execute();
   $List -> bind_columns(undef, \($ModeratorID,$EventID,$SessionID,$SessionSeparatorID,$TimeStamp));
   while ($List -> fetch) {
+    push @DebugStack,"MI:  $ModeratorID, $EventID, $SessionID";
     $ModeratorID .= "a";
     if ($EventID) {
       $EventHash{$ModeratorID}{EventID} = $EventID;
