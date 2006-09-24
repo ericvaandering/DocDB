@@ -82,7 +82,6 @@ if ($TopicID) {
   $HTML .= '<br/>(Documents on '.TopicLink({ -topicid => $TopicID }).')';
   $HTML .= "</h4>"; 
 } elsif ($AuthorID) {
-  FetchAuthor($AuthorID);
   %EventHash = GetEventsByModerator($AuthorID);
 
   my $Link = AuthorLink($AuthorID);
