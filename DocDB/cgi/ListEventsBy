@@ -73,12 +73,12 @@ my @HashIDs = keys %EventHash;
 @HashIDs = sort EventHashByTime @HashIDs;
 %TmpEventHash = ();
 
-my $HTML = "";
-   $HTML .= "Link to documents by this author";
+my $HTML = "<div>";
+   $HTML .= "<h4>Link to documents by this author</h4>";
 
 # Could make this a subroutine and re-use in calendar stuff
 if (@HashIDs) {
-  $HTML .= '<table class="CenteredTable MultidayEventList Alternating">';
+  $HTML .= '<table class="CenteredTable MedPaddedTable Alternating">';
   $HTML .= '<tr><th>Date</th>
                 <th>Time</th>
                 <th>Title</th>
@@ -134,6 +134,8 @@ if (@HashIDs) {
 } else {  
   $HTML .= 'No events found.';
 }  
+
+$HTML .= '</div>';
 
 print PrettyHTML($HTML);
 

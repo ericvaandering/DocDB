@@ -796,7 +796,6 @@ sub GetEventsByModerator ($) {
   $List -> execute($AuthorID);
   $List -> bind_columns(undef, \($ModeratorID,$EventID,$SessionID,$SessionSeparatorID,$TimeStamp));
   while ($List -> fetch) {
-    push @DebugStack,"MI:  $ModeratorID, $EventID, $SessionID";
     $ModeratorID .= "a";
     if ($EventID) {
       $EventHash{$ModeratorID}{EventID} = $EventID;
@@ -825,7 +824,7 @@ sub GetEventsByTopic ($) {
   my ($EventTopicID,$EventID,$SessionID,$SessionSeparatorID,$TimeStamp);
 
   my $List   = $dbh -> prepare("select EventTopicID,EventID,SessionID,SessionSeparatorID,TimeStamp from EventTopic where TopicID=?");
-  $List -> execute();
+  $List -> execute($TopicID);
   $List -> bind_columns(undef, \($EventTopicID,$EventID,$SessionID,$SessionSeparatorID,$TimeStamp));
   while ($List -> fetch) {
     $EventTopicID .= "t";

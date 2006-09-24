@@ -31,6 +31,7 @@ sub TopicListByID {
   my $SortBy      = exists $ArgRef->{-sortby}      ?   $ArgRef->{-sortby}      : ""; # name or provenance
 
   require "TopicSQL.pm";
+  require "Sorts.pm";
   
   my $HTML = "";
   
