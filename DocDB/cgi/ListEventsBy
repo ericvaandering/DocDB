@@ -89,7 +89,7 @@ if (@HashIDs) {
   my $Row = 0;  
   foreach my $HashID (@HashIDs) {
     my ($Location,$Topics,$Title,$Time);
-    my $Date = $EventHash{$HashID}{Date};
+    my ($Date) = split /\s+/,$EventHash{$HashID}{Time};
 
     if ($EventHash{$HashID}{SessionID}) {
       my $SessionID = $EventHash{$HashID}{SessionID};
@@ -129,6 +129,7 @@ if (@HashIDs) {
                  '<td>'.$Title.   '</td>'.
                  '<td>'.$Location.'</td>'.
                  '<td>'.$Topics.  '</td></tr>';
+    ++$Row;             
   } 
   $HTML .= '</table>';
 } else {  
