@@ -84,15 +84,35 @@ TOC
 sub GeneralInstructionsBody {
   if ($Public) {
 
-  print <<HTML;
-
+  print '
   <a name="about" />
   <h1>About DocDB</h1>
-
   <p>Only some of the documents in DocDB are publicly accessible. 
   If you try to access documents that are not visible to the public, 
-  you will receive an error. Also, all the machinery for creating new documents
-  is hidden from you. A <q>document</q> consists of a number of files along with 
+  you will receive an error. Also, all of the interface for creating new documents
+  is hidden from you. '; 
+  
+  if ($PrivateRoot || $secure_root) {
+    my $PrivateDocDB = $PrivateRoot."/DocumentDatabase";
+    my $SecureDocDB  = $secure_root."/DocumentDatabase";
+    print 'If you arrived to this public interface by mistake and wish to add a document
+           you must use the private interface instead. These links may help you: 
+           <ul>';
+    if ($PrivateRoot) {
+      print "<li><a href=\"$PrivateDocDB\">Private DocDB Homepage</a> (password protected)</li>\n";
+    }
+    if ($secure_root) {
+      print "<li><a href=\"$SecureDocDB\">Secure DocDB Homepage</a> (valid certificate required)</li>\n";
+    }
+    print 'If you need more assistance, please ask your DocDB administrator';
+  } else {
+    print 'If you arrived to this public interface by mistake and wish to add a document
+           you must use the private interface instead. If you don\'t know how to find it,
+           ask your DocDB administrator';
+  }
+  print <<HTML;
+  </p>
+  <p>A <q>document</q> consists of a number of files along with 
   additional information about the document.</p> 
 
   <a name="find" />

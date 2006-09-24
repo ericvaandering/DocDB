@@ -27,17 +27,17 @@ sub FirstAuthor ($;$) {
   my $Institution = exists $ArgRef->{-institution} ? $ArgRef->{-institution} : $FALSE;
 
   require "AuthorSQL.pm";
+  require "AuthorUtilities.pm";
   require "Sorts.pm";
 
   FetchDocRevisionByID($DocRevID);
-  my @AuthorIDs = sort byLastName GetRevisionAuthors($DocRevID);
-  
-  unless (@AuthorIDs) {return "None";}
-  
+
   my $FirstID = FirstAuthorID( {-docrevid => $DocRevID} );
+  unless ($FirstID) {return "None";}
+  my @AuthorRevIDs = GetRevisionAuthors($DocRevID);
 
   my $AuthorLink = AuthorLink($FirstID);
-  if ($#AuthorIDs) {$AuthorLink .= " <i>et. al.</i>";}
+  if ($#AuthorRevIDs) {$AuthorLink .= " <i>et. al.</i>";}
   if ($Institution) {
     FetchInstitution($Authors{$FirstID}{InstitutionID});
     $AuthorLink .= "<br/><em>".
@@ -47,39 +47,61 @@ sub FirstAuthor ($;$) {
   return $AuthorLink; 
 }
 
-sub AuthorListByID {
-  my @AuthorIDs = @_;
+sub AuthorListByAuthorRevID {
+  my ($ArgRef) = @_;
+  my @AuthorRevIDs = exists $ArgRef->{-authorrevids} ? @{$ArgRef->{-authorrevids}} : ();
+  my $Format       = exists $ArgRef->{-format}       ?   $ArgRef->{-format}        : "long";
   
   require "AuthorSQL.pm";
+  require "AuthorUtilities.pm";
+  require "Sorts.pm";
   
-  print "<div id=\"Authors\">\n";
-  print "<dl>\n";
-  print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Authors:</span></dt>\n";
-  print "</dl>\n";
-
-  if (@AuthorIDs) {
-    print "<ul>\n";
-    foreach my $AuthorID (@AuthorIDs) {
-      &FetchAuthor($AuthorID);
-      my $author_link = &AuthorLink($AuthorID);
-      print "<li> $author_link </li>\n";
-    }
-    print "</ul>\n";
-  } else {
-    print "<dd>None</dd>\n";
+  @AuthorRevIDs = sort AuthorRevIDsByOrder @AuthorRevIDs;
+  my @AuthorIDs = AuthorRevIDsToAuthorIDs({ -authorrevids => \@AuthorRevIDs, });
+  
+  if ($Format eq "long") {
+    print "<div id=\"Authors\">\n";
+    print "<dl>\n";
+    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Authors:</span></dt>\n";
+    print "</dl>\n";
   }
-  print "</div>\n";
+  if (@AuthorIDs) {
+    if ($Format eq "long") {
+      print "<ul>\n";
+    }
+    foreach my $AuthorID (@AuthorIDs) {
+      FetchAuthor($AuthorID);
+      my $AuthorLink = AuthorLink($AuthorID);
+      if ($Format eq "long") {
+        print "<li>$AuthorLink</li>\n";
+      } elsif ($Format eq "short") {
+        print "$AuthorLink<br/>\n";
+      }  
+    }
+    if ($Format eq "long") {
+      print "</ul>\n";
+    }  
+  } else {
+    if ($Format eq "long") {
+      print "<dd>None</dd>\n";
+    } elsif ($Format eq "short") {
+      print "None<br/>\n";
+    } 
+  }
+  if ($Format eq "long") {
+    print "</div>\n";
+  }
 }
 
-sub ShortAuthorListByID {
+sub ShortAuthorListByID { # Still used in document table (first author or hints only)
   my @AuthorIDs = @_;
   
   require "AuthorSQL.pm";
   
   if (@AuthorIDs) {
     foreach my $AuthorID (@AuthorIDs) {
-      &FetchAuthor($AuthorID);
-      my $AuthorLink = &AuthorLink($AuthorID);
+      FetchAuthor($AuthorID);
+      my $AuthorLink = AuthorLink($AuthorID);
       print "$AuthorLink<br/>\n";
     }
   } else {
@@ -233,6 +255,7 @@ sub AuthorScroll (%) {
   my $Multiple  =   $Params{-multiple}  || 0;
   my $HelpLink  =   $Params{-helplink}  || "";
   my $HelpText  =   $Params{-helptext}  || "Authors";
+  my $ExtraText =   $Params{-extratext} || "";
   my $Required  =   $Params{-required}  || 0;
   my $Name      =   $Params{-name}      || "authors";
   my $Size      =   $Params{-size}      || 10;
@@ -240,7 +263,7 @@ sub AuthorScroll (%) {
   my @Defaults  = @{$Params{-default}};
 
   unless (keys %Author) {
-    &GetAuthors;
+    GetAuthors();
   }
     
   my @AuthorIDs = sort byLastName keys %Authors;
@@ -253,9 +276,8 @@ sub AuthorScroll (%) {
     } 
   }  
   if ($HelpLink) {
-    my $ElementTitle = &FormElementTitle(-helplink  => $HelpLink, 
-                                         -helptext  => $HelpText,
-                                         -required  => $Required );
+    my $ElementTitle = FormElementTitle(-helplink => $HelpLink, -helptext  => $HelpText,
+                                        -required => $Required, -extratext => $ExtraText, );
     print $ElementTitle,"\n";                                     
   }
   if ($Disabled) { # FIXME: Use Booleans
@@ -275,11 +297,12 @@ sub AuthorTextEntry ($;@) {
   my ($ArgRef) = @_;
 
 #  my $Disabled = exists $ArgRef->{-disabled} ?   $ArgRef->{-disabled} : "0";
-  my $HelpLink = exists $ArgRef->{-helplink} ?   $ArgRef->{-helplink} : "authormanual";
-  my $HelpText = exists $ArgRef->{-helptext} ?   $ArgRef->{-helptext} : "Authors";           
-  my $Name     = exists $ArgRef->{-name}     ?   $ArgRef->{-name}     : "authormanual";
-  my $Required = exists $ArgRef->{-required} ?   $ArgRef->{-required} :  "0";
-  my @Defaults = exists $ArgRef->{-default}  ? @{$ArgRef->{-default}} : ();
+  my $HelpLink  = exists $ArgRef->{-helplink}  ?   $ArgRef->{-helplink}  : "authormanual";
+  my $HelpText  = exists $ArgRef->{-helptext}  ?   $ArgRef->{-helptext}  : "Authors";           
+  my $Name      = exists $ArgRef->{-name}      ?   $ArgRef->{-name}      : "authormanual";
+  my $Required  = exists $ArgRef->{-required}  ?   $ArgRef->{-required}  : $FALSE;
+  my $ExtraText = exists $ArgRef->{-extratext} ?   $ArgRef->{-extratext} : "";
+  my @Defaults  = exists $ArgRef->{-default}   ? @{$ArgRef->{-default}}  : ();
 
   my $AuthorManDefault = "";
 
@@ -288,9 +311,10 @@ sub AuthorTextEntry ($;@) {
     $AuthorManDefault .= "$Authors{$AuthorID}{FULLNAME}\n" ;
   }  
   
-  print FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText, -required => $Required);
+  print FormElementTitle(-helplink => $HelpLink, -helptext  => $HelpText, 
+                         -required => $Required, -extratext => $ExtraText, );
   print $query -> textarea (-name    => $Name, -default => $AuthorManDefault,
-                            -columns => 20,    -rows    => 8);
+                            -columns => 25,    -rows    => 8);
 };
 
 sub InstitutionEntryBox (;%) {

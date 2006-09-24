@@ -1,3 +1,24 @@
+8.1.0 
+
+  You can now specify the order of authors on a document. This is done by
+  switching the author entry widget from a selectable list to the existing
+  text-entry box. The method  can be selected by user preferences, the advanced
+  entry form, or by clicking to switch from one method to the other on the
+  document entry form (requires  Javascript). If a document with an ordered
+  author list is modified, the text form is the default since the selectable list
+  would destroy the list. 
+
+  The adminstrator only functions have been separated out into a separate page 
+  (AdminHome). A couple of the more common ones are duplicated on ModifyHome. For adminstrators
+  AdminHome is linked from the main DocDB page as well as from the Modify page
+  
+  The instructions for the public pages can contain links to the private and secure pages IF 
+  additional values are declared in ProjectGlobals.pm (see ProjectGlobals.pm.template for a 
+  an example). These two variables are called "secure_root" and "PrivateRoot" This should allow 
+  confused users who somehow arrive at the public interface to find the private interface. Even if
+  neither of these variables are defined, more explicit text is included in the instructions
+  to try to handle this case.
+
 8.0.1
 
   Fixed crash when "Change Display" is chosen with Public interface
@@ -10,6 +31,7 @@
   Fixed display of root level topics with no sub-topics
   
   Small change to CSS files, so update those as well
+
 8.0.0
 
   Follow the migration instructions in MigrationGuide to upgrade.

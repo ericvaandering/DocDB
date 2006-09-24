@@ -58,7 +58,7 @@ $topicmodes{multi}  = "Multiple Topic Boxes";
 $topicmodes{single} = "Single Topic List";
 @topicmodes = ("multi","single");
 
-$authormodes{field} = "Text field";
+$authormodes{field} = "Ordered text field";
 $authormodes{list}  = "Selectable list";
 @authormodes = ("list","field");
 
@@ -79,10 +79,9 @@ print FormElementTitle(-helplink => "namepref", -helptext => "Name");
 print "</th>\n";
 
 print "<td colspan=\"2\">\n";
-my @RequesterDefaults = ($UserIDPref);
 AuthorScroll(-helplink => "",
-              -name     => "requester",
-              -default  => \@RequesterDefaults);
+             -name     => "requester",
+             -default  => [$UserPreferences{AuthorID}] );
 print "</td></tr>\n";
 
 print "<tr><th>\n";

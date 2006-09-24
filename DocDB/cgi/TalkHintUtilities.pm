@@ -188,9 +188,10 @@ sub TalkMatches ($$@) {
 
   foreach my $DocumentID (@DocumentIDs) { # Check each document in the list
     FetchDocument($DocumentID);
-    my $DocRevID   = FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVersions});
-    my @RevTopics  = GetRevisionTopics( {-docrevid => $DocRevID} );
-    my @RevAuthors = GetRevisionAuthors($DocRevID);
+    my $DocRevID     = FetchRevisionByDocumentAndVersion($DocumentID,$Documents{$DocumentID}{NVersions});
+    my @RevTopics    = GetRevisionTopics( {-docrevid => $DocRevID} );
+    my @AuthorRevIDs = GetRevisionAuthors($DocRevID);
+    my @RevAuthors   = AuthorRevIDsToAuthorIDs({ -authorrevids => \@AuthorRevIDs, });
 
     # Accumulate matches # FIXME: Look at soundex and fuzzy matching, cookbook 1.16 and 6.13
 

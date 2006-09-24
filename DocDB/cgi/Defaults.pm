@@ -71,13 +71,6 @@ sub SetDateOverride {
   }  
 }
 
-sub SetAuthorDefault {
-  if ($UserIDPref) {
-    @AuthorDefaults = ($UserIDPref); #FIXME: Doesn't work for text field, ref thing
-    $RequesterDefault = ($UserIDPref);
-  }
-}
-
 sub SetFileOptions {
   my ($DocRevID) = @_;
 

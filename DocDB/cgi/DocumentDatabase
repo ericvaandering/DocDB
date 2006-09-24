@@ -112,7 +112,10 @@ print "</div>\n";  # LeftColumn3Col
 
 print "<div id=\"MainColumn3Col\">\n";
 
-if (&CanCreate()) {
+if (CanAdminister()) {
+  print "<div class=\"HomepageMainChoice\"><strong><a href=\"$AdministerHome\">Administer DocDB</a></strong></div>\n";
+}
+if (CanCreate()) {
   print "<div class=\"HomepageMainChoice\"><strong><a href=\"$ModifyHome\">Create or change documents or other information</a></strong></div>\n";
 }
 
@@ -150,7 +153,7 @@ print $query -> startform('POST',$ListBy);
 print "<div>\n";
 print $query -> submit (-value => "Show");
 print "<strong> documents modified in the last </strong>";
-&DaysPulldown($LastDays);
+DaysPulldown($LastDays);
 print "<strong> days</strong>";
 print "</div>\n";
 print $query -> endform;
