@@ -80,19 +80,22 @@ if ($TopicID) {
     $HTML .= " and its sub-topics";
   }
   $HTML .= '<br/>(Documents on '.TopicLink({ -topicid => $TopicID }).')';
-
   $HTML .= "</h4>"; 
-  
 } elsif ($AuthorID) {
+  FetchAuthor($AuthorID);
   %EventHash = GetEventsByModerator($AuthorID);
+
+  my $Link = AuthorLink($AuthorID);
+  
+  $HTML .= "<h4>Events moderated by <span class=\"Highlight\">$Link of 
+            $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG}</span>";
+  $HTML .= "</h4>"; 
 }
 
 %TmpEventHash = %EventHash;
 my @HashIDs = keys %EventHash;
 @HashIDs = sort EventHashByTime @HashIDs;
 %TmpEventHash = ();
-
-$HTML .= "<h4>Link to documents by this author</h4>";
 
 # Could make this a subroutine and re-use in calendar stuff
 if (@HashIDs) {

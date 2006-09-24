@@ -117,31 +117,3 @@ table.WholeYear td.Month {
   border: 1px solid;
 }  
 
-/* For table showing a upcoming events */
-
-.MultidayEventList {
-  border: 1px solid black;
-  margin-top: 2em;
-  margin-bottom: 2em;
-  margin-right: auto;
-  margin-left: auto;
-  border-collapse: collapse;
-}
-
-.MultidayEventList td {
-  vertical-align: top;
-  text-align: left;
-  padding: 3px 5px 3px 5px;
-}  
-
-.MultidayEventList th {
-  vertical-align: bottom;
-  border-bottom: 1px solid black;
-  padding: 5px 5px 5px 5px;
-}  
-
-.MultidayEventList th.LeftHeader {
-  vertical-align: top;
-  border-bottom: none;
-  padding: 3px 5px 3px 5px;
-}  
