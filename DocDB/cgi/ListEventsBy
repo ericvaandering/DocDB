@@ -90,7 +90,7 @@ if (@HashIDs) {
   foreach my $HashID (@HashIDs) {
     my ($Location,$Topics,$Title,$Time);
     my ($Date) = split /\s+/,$EventHash{$HashID}{Time};
-    $Date .= $EventHash{$HashID}{Time};
+    $Date = $EventHash{$HashID}{Time};
     if ($EventHash{$HashID}{SessionID}) {
       my $SessionID = $EventHash{$HashID}{SessionID};
       $Title    = SessionLink(-sessionid => $SessionID, -format => "full");

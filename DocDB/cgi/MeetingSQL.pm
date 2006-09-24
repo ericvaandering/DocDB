@@ -800,17 +800,17 @@ sub GetEventsByModerator ($) {
     if ($EventID) {
       $EventHash{$ModeratorID}{EventID} = $EventID;
       FetchConferenceByConferenceID($EventID);
-      $EventHash{$EventTopicID}{Time} = $Conferences{$EventID}{StartDate}." 00:00:00";
+      $EventHash{$ModeratorID}{Time} = $Conferences{$EventID}{StartDate}." 00:00:00";
     }
     if ($SessionID) {
       $EventHash{$ModeratorID}{SessionID} = $SessionID;
       FetchSessionByID($SessionID);
-      $EventHash{$EventTopicID}{Time} = $Sessions{$SessionID}{StartTime};
+      $EventHash{$ModeratorID}{Time} = $Sessions{$SessionID}{StartTime};
     }
     if ($SessionSeparatorID) {
       $EventHash{$ModeratorID}{SessionSeparatorID} = $SessionSeparatorID;
       FetchSessionSeparatorByID($SessionSeparatorID);
-      $EventHash{$EventTopicID}{Time} = $SessionSeparators{$SessionSeparatorID}{StartTime};
+      $EventHash{$ModeratorID}{Time} = $SessionSeparators{$SessionSeparatorID}{StartTime};
     }
   }
   return %EventHash;
