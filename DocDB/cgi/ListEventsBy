@@ -89,8 +89,8 @@ if (@HashIDs) {
   my $Row = 0;  
   foreach my $HashID (@HashIDs) {
     my ($Location,$Topics,$Title,$Time);
-    my ($Date) = split /\s+/,$EventHash{$HashID}{Time}." $HashID";
-
+    my ($Date) = split /\s+/,$EventHash{$HashID}{Time};
+    $Date .= $HashID;
     if ($EventHash{$HashID}{SessionID}) {
       my $SessionID = $EventHash{$HashID}{SessionID};
       $Title    = SessionLink(-sessionid => $SessionID, -format => "full");
@@ -131,7 +131,7 @@ if (@HashIDs) {
                  '<td>'.$Topics.  '</td></tr>';
     ++$Row;             
   } 
-  $HTML .= '</table>';
+  $HTML .= '</tbody></table>';
 } else {  
   $HTML .= 'No events found.';
 }  
