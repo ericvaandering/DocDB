@@ -211,11 +211,11 @@ if (CanCreateMeeting()) {
 print "<p><strong>Database maintenance:</strong></p>\n";
 print "<ul>\n";
 print "<li>Add an <a href=\"$AuthorAddForm\">author</a></li>\n";
+if (CanAdminister()) {
+  print "<li>Perform other <a href=\"$AdministerHome\">administration tasks</a></li>\n";
+}
 print "</ul>\n";
            
-if (CanAdminister()) {
-  print "<p><strong><a href=\"$AdministerHome\">Administer DocDB</a></strong></p>\n";
-}
 
 print "<hr/>\n";
   
