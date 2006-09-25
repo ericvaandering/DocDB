@@ -166,8 +166,13 @@ sub TopicListWithChildren { # Recursive routine
     foreach my $TopicID (@TopicIDs) {
       if ($Depth > 1) {
         $HTML .= "<li>";
-      }  
+      } else {
+        $HTML .= "<strong";
+      }
       $HTML .= TopicLink( {-topicid => $TopicID} );
+      if ($Depth == 1) {
+        $HTML .= "</strong>\n";
+      }
       if (@{$TopicChildren{$TopicID}}) {
         $HTML .= "\n";
         $HTML .= TopicListWithChildren({ -topicids => $TopicChildren{$TopicID}, -depth => $Depth+1 });
