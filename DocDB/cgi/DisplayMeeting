@@ -43,6 +43,7 @@ require "MeetingHTML.pm";
 require "DocumentHTML.pm";
 require "MeetingSQL.pm";
 require "RevisionSQL.pm";
+require "TalkSQL.pm";
 
 require "TalkHintUtilities.pm";
 require "DocumentUtilities.pm";
