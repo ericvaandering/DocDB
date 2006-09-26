@@ -165,14 +165,15 @@ sub SessionEntryForm (%) {
       if ($MeetingOrders{$MeetingOrderID}{SessionID}) {
         $SessionType = "Session";
         my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
-	$SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
-        $SessionDefaultLocation    = $Sessions{$SessionID}{Location}    || "";
-        $SessionDefaultAltLocation = $Sessions{$SessionID}{AltLocation} || "";
-	$SessionDefaultTitle       = $Sessions{$SessionID}{Title}       || "";
-	$SessionDefaultDescription = $Sessions{$SessionID}{Description} || "";
-	$SessionSeparatorDefault   = "No";
-        @DefaultModeratorIDs       = @{$Sessions{$SessionID}{Moderators}};
-        @DefaultTopicIDs           = @{$Sessions{$SessionID}{Topics}};
+	$SessionDefaultDateTime     = $Sessions{$SessionID}{StartTime};
+        $SessionDefaultLocation     = $Sessions{$SessionID}{Location}    || "";
+        $SessionDefaultAltLocation  = $Sessions{$SessionID}{AltLocation} || "";
+	$SessionDefaultTitle        = $Sessions{$SessionID}{Title}       || "";
+	$SessionDefaultDescription  = $Sessions{$SessionID}{Description} || "";
+        $SessionDefaultShowAllTalks = $Sessions{$SessionID}{ShowAllTalks};
+	$SessionSeparatorDefault    = "No";
+        @DefaultModeratorIDs        = @{$Sessions{$SessionID}{Moderators}};
+        @DefaultTopicIDs            = @{$Sessions{$SessionID}{Topics}};
       } elsif ($MeetingOrders{$MeetingOrderID}{SessionSeparatorID}) {
         $SessionType = "Break";
         my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};

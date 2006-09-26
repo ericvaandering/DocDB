@@ -315,7 +315,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
               -title        => $SessionTitle,    -description => $SessionDescription,
               -location     => $SessionLocation, -altlocation => $SessionAltLocation, 
               -moderatorids => \@ModeratorIDs,   -topicids    => \@TopicIDs,
-              -showalltalks => $ShowAllFlags{$MeetingOrderID},
+              -showalltalks => $SessionShowAllFlags{$MeetingOrderID},
           });
           push @ActionStack,"Created session: $SessionTitle";
           ++$SessionsModified;
@@ -357,7 +357,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
               -title        => $SessionTitle,    -description => $SessionDescription,     
               -location     => $SessionLocation, -altlocation => $SessionAltLocation, 
               -moderatorids => \@ModeratorIDs,   -topicids    => \@TopicIDs,
-              -showalltalks => $ShowAllFlags{$MeetingOrderID},
+              -showalltalks => $SessionShowAllFlags{$MeetingOrderID},
           });
           push @ActionStack,"Modified session: $SessionTitle";
           ++$SessionsModified;
