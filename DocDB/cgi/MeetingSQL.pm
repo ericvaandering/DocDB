@@ -320,12 +320,12 @@ sub FetchSessionByID ($) {
     return $SessionID;
   }
 
-  my ($ConferenceID,$StartTime,$Location,$Title,$Description,$TimeStamp); 
+  my ($ConferenceID,$StartTime,$Location,$AltLocation,$Title,$Description,$ShowAllTalks,$TimeStamp); 
   my $SessionFetch = $dbh -> prepare(
-    "select ConferenceID,StartTime,Location,AltLocation,Title,Description,TimeStamp ".
+    "select ConferenceID,StartTime,Location,AltLocation,Title,Description,ShowAllTalks,TimeStamp ".
     "from Session where SessionID=?");
   $SessionFetch -> execute($SessionID);
-  ($ConferenceID,$StartTime,$Location,$AltLocation,$Title,$Description,$TimeStamp) = $SessionFetch -> fetchrow_array; 
+  ($ConferenceID,$StartTime,$Location,$AltLocation,$Title,$Description,$ShowAllTalks,$TimeStamp) = $SessionFetch -> fetchrow_array; 
   if ($TimeStamp) {
     $Sessions{$SessionID}{ConferenceID}  = $ConferenceID;
     $Sessions{$SessionID}{StartTime}     = $StartTime;
@@ -333,6 +333,7 @@ sub FetchSessionByID ($) {
     $Sessions{$SessionID}{AltLocation}   = $AltLocation;
     $Sessions{$SessionID}{Title}         = $Title;
     $Sessions{$SessionID}{Description}   = $Description;
+    $Sessions{$SessionID}{ShowAllTalks}  = $ShowAllTalks;
     $Sessions{$SessionID}{TimeStamp}     = $TimeStamp;
     @{$Sessions{$SessionID}{Moderators}} = ();
     @{$Sessions{$SessionID}{Topics}}     = ();
