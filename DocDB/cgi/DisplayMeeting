@@ -174,8 +174,7 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { # Display a 
       my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
       if ($SessionID) {
         FetchSessionByID($SessionID);
-        print SessionInfo($SessionID, {-rowclass => $RowClass} ); # Does own <tr>
-        PrintSession(-sessionid => $SessionID, -skipheader => $TRUE); # Display a single session
+        PrintSession(-sessionid => $SessionID); # Display a single session
       } elsif ($SessionSeparatorID) {
         FetchSessionSeparatorByID($SessionSeparatorID);
         PrintSessionSeparator($SessionSeparatorID); # Display session separator
@@ -197,7 +196,8 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { # Display a 
         if ($Sessions{$SessionID}{ShowAllTalks}) {
           print '<tr><td class="EmbedSession" colspan="6">';
           FetchSessionByID($SessionID);
-          PrintSession(-sessionid => $SessionID); # Display a single session
+          print SessionInfo($SessionID, {-rowclass => $RowClass} ); # Does own <tr>
+          PrintSession(-sessionid => $SessionID, -skipheader => $TRUE); # Display a single session
           print '</td></tr>';
         } else {  
           print SessionInfo($SessionID, {-rowclass => $RowClass} ); # Does own <tr>
