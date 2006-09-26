@@ -131,7 +131,7 @@ sub TopicsTable {
   my $TotalSize = 0;
   my @RootTopicIDs = sort TopicByAlpha AllRootTopics();
   foreach my $TopicID (@RootTopicIDs) {
-    my $HTML = TopicListWithChildren({ -topicids => [$TopicID] }); 
+    my $HTML = TopicListWithChildren({ -topicids => [$TopicID], -checkevent => $TRUE }); 
     $List{$TopicID}{HTML} = $HTML; 
     my @Lines = split /\n/,$HTML;
     my $Size = grep /href/,@Lines;
@@ -172,8 +172,12 @@ sub TopicsTable {
 
 sub TopicListWithChildren { # Recursive routine
   my ($ArgRef) = @_;
-  my @TopicIDs = exists $ArgRef->{-topicids} ? @{$ArgRef->{-topicids}} : ();
-  my $Depth    = exists $ArgRef->{-depth}    ?   $ArgRef->{-depth}     : 1;
+  my @TopicIDs   = exists $ArgRef->{-topicids}   ? @{$ArgRef->{-topicids}}  : ();
+  my $Depth      = exists $ArgRef->{-depth}      ?   $ArgRef->{-depth}      : 1;
+  my $CheckEvent = exists $ArgRef->{-checkevent} ?   $ArgRef->{-checkevent} : $FALSE; # name or provenance
+
+  require "MeetingSQL.pm";
+
   my @TopicIDs = sort TopicByAlpha @TopicIDs;
 
   my $HTML;
@@ -187,9 +191,16 @@ sub TopicListWithChildren { # Recursive routine
         $HTML .= "<li>";
       }  
       $HTML .= TopicLink( {-topicid => $TopicID} );
+      if ($CheckEvent) {
+        my %Hash = GetEventsByTopic($TopicID);
+        if (%Hash) {
+          $HTML .= ' (<a href="'.$ListEventsBy.'?topicid='.$TopicID.'">Events</a>)';
+        }
+      }    
       if (@{$TopicChildren{$TopicID}}) {
         $HTML .= "\n";
-        $HTML .= TopicListWithChildren({ -topicids => $TopicChildren{$TopicID}, -depth => $Depth+1 });
+        $HTML .= TopicListWithChildren({ -topicids => $TopicChildren{$TopicID}, 
+                                         -checkevent => $CheckEvent, -depth => $Depth+1 });
       }
       if ($Depth > 1) {
         $HTML .= "</li>\n";

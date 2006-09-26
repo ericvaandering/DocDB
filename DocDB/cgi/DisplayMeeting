@@ -87,7 +87,7 @@ if ($EventID) {
   $DisplayMode = "Event";
   my @MeetingOrderIDs = FetchMeetingOrdersByConferenceID($EventID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
-  if ($#MeetingOrderIDs == 0) { # If just one session, switch to SingleSession mode
+  if (scalar(@MeetingOrderIDs) == 1) { # If just one session, switch to SingleSession mode
     $DisplayMode    = "SingleSession";
     $MeetingOrderID = pop @MeetingOrderIDs;
     $SessionID      = $MeetingOrders{$MeetingOrderID}{SessionID};
@@ -116,13 +116,18 @@ unless (CanAccessMeeting($EventID)) {
 }
 EndPage(@ErrorStack);
 
-# Rehint talks if it is just a session we are looking at
+# Rehint talks 
 
 if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { 
   ReHintTalksBySessionID($SessionID); 
-  ClearSessionTalks();
   FetchSessionByID($SessionID);
-} 
+} elsif ($DisplayMode eq $Event) {
+  my @SessionIDs = FetchSessionsByConferenceID($EventID);
+  foreach my $SessionID (@SessionIDs) {
+    ReHintTalksBySessionID($SessionID); 
+  }
+}
+ClearSessionTalks();
 
 print "<div id=\"EventInfo\">\n";
   
@@ -158,7 +163,6 @@ print "<div id=\"Footer3Col\">\n"; # Must have to keep NavBar on true bottom
 
 if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { # Display a single session
   PrintSession(-sessionid => $SessionID, -skipheader => $TRUE); 
-#  PrintMeetingEpilogue($EventID);
 } elsif ($DisplayMode eq "Event") { # Display meeting info or meeting with all talks
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($EventID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
@@ -168,8 +172,6 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { # Display a 
       my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
       my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
       if ($SessionID) {
-        ReHintTalksBySessionID($SessionID); 
-        ClearSessionTalks();
         FetchSessionByID($SessionID);
         PrintSession(-sessionid => $SessionID); # Display a single session
       } elsif ($SessionSeparatorID) {
@@ -190,7 +192,14 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { # Display a 
       my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
       my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
       if ($SessionID) {              # Session info and link to session
-        print SessionInfo($SessionID, {-rowclass => $RowClass} ); # Does own <tr>
+        if ($Sessions{$SessionID}{ShowAllTalks}) {
+          print '<tr><td class="EmbedSession" colspan="6">';
+          FetchSessionByID($SessionID);
+          PrintSession(-sessionid => $SessionID); # Display a single session
+          print '</td></tr>';
+        } else {  
+          print SessionInfo($SessionID, {-rowclass => $RowClass} ); # Does own <tr>
+        }
       } elsif ($SessionSeparatorID) {
         print "<tr class=\"$RowClass\">\n"; 
         PrintSessionSeparatorInfo($SessionSeparatorID); # SessionSeparator info 

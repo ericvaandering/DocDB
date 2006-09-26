@@ -315,13 +315,15 @@ sub ClearSessions () {
 
 sub FetchSessionByID ($) {
   my ($SessionID) = @_;
+
+  if ($Sessions{$SessionID}{TimeStamp}) {
+    return $SessionID;
+  }
+
   my ($ConferenceID,$StartTime,$Location,$Title,$Description,$TimeStamp); 
   my $SessionFetch = $dbh -> prepare(
     "select ConferenceID,StartTime,Location,AltLocation,Title,Description,TimeStamp ".
     "from Session where SessionID=?");
-  if ($Sessions{$SessionID}{TimeStamp}) {
-    return $SessionID;
-  }
   $SessionFetch -> execute($SessionID);
   ($ConferenceID,$StartTime,$Location,$AltLocation,$Title,$Description,$TimeStamp) = $SessionFetch -> fetchrow_array; 
   if ($TimeStamp) {

@@ -185,15 +185,15 @@ sub AuthorsByInstitution {
 
   my @AuthorIDs = sort byLastName keys %Authors;
 
-  print "<td><b>$Institutions{$InstID}{SHORT}</b>\n";
+  print "<td><strong>$Institutions{$InstID}{SHORT}</strong>\n";
   print "<ul>\n";
   foreach my $AuthorID (@AuthorIDs) {
     if ($InstID == $Authors{$AuthorID}{InstitutionID}) {
       my $author_link = &AuthorLink($AuthorID);
-      print "<li>$author_link\n";
+      print "<li>$author_link</li>\n";
     }  
   }  
-  print "</ul>";
+  print "</ul></td>";
 }
 
 sub AuthorsTable {
@@ -202,8 +202,9 @@ sub AuthorsTable {
   my @AuthorIDs     = sort byLastName keys %Authors;
   my $NCols         = 4;
   my $NPerCol       = int (scalar(@AuthorIDs)/$NCols);
-  my $UseAnchors = (scalar(@AuthorIDs) >= 75);
-
+  my $UseAnchors    = (scalar(@AuthorIDs) >= 75);
+  my $CheckEvent    = $TRUE;
+  
   if (scalar(@AuthorIDs) % $NCols) {++$NPerCol;}
 
   print "<table class=\"CenteredTable MedPaddedTable\">\n";
@@ -249,12 +250,19 @@ sub AuthorsTable {
       $FirstPass = 0;
       if ($UseAnchors) {
         print "<a name=\"$FirstLetter\" />\n";
-        print "<b>$FirstLetter</b>\n";
+        print "<strong>$FirstLetter</strong>\n";
       }
       print "<ul>\n";
     }  
-    my $author_link = AuthorLink($AuthorID, -format => "formal");
-    print "<li>$author_link</li>\n";
+    my $AuthorLink = AuthorLink($AuthorID, -format => "formal");
+    if ($CheckEvent) {
+      my %Hash = GetEventsByModerator($AuthorID);
+      if (%Hash) {
+        $AuthorLink .= ' (<a href="'.$ListEventsBy.'?authorid='.$AuthorID.'">Moderator</a>)';
+      }
+    }    
+
+    print "<li>$AuthorLink</li>\n";
     $CloseLastColumn = 1;
   }  
   print "</ul></td></tr>";
