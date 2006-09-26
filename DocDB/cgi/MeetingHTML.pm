@@ -405,6 +405,7 @@ sub PrintSession (%) {
   
   my $SessionID  = $Params{-sessionid};
   my $SkipHeader = $Params{-skipheader} || $FALSE;
+  my $OnlyTalks  = $Params{-onlytalks}  || $FALSE;
 
   require "Sorts.pm";
   require "TalkSQL.pm";
@@ -415,7 +416,7 @@ sub PrintSession (%) {
   require "DocumentHTML.pm";
   require "DocumentUtilities.pm";
   
-  unless ($SkipHeader) {
+  unless ($SkipHeader || $OnlyTalks) {
     PrintSessionHeader($SessionID);
   }
   
@@ -448,9 +449,15 @@ sub PrintSession (%) {
     my %FieldList = PrepareFieldList(%FieldListOptions);
     DocumentTable(-sessionorderids => \@SessionOrderIDs, -fieldlist => \%FieldList);
   } else {
-    print "<h4>No talks in agenda</h4>\n";
+    if ($OnlyTalks) {
+      print "<strong>No agenda yet</strong>\n";
+    } else {
+      print "<h4>No talks in agenda</h4>\n";
+    }  
   }  
-  print "<hr/>\n"; 
+  unless ($OnlyTalks) {
+    print "<hr/>\n"; 
+  }  
 }
 
 sub PrintSessionSeparator ($) {
