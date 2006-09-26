@@ -194,9 +194,9 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { # Display a 
       my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
       if ($SessionID) {              # Session info and link to session
         if ($Sessions{$SessionID}{ShowAllTalks}) {
-          print '<tr><td class="EmbedSession" colspan="6">';
           FetchSessionByID($SessionID);
           print SessionInfo($SessionID, {-rowclass => $RowClass} ); # Does own <tr>
+          print '<tr><td class="EmbedSession" colspan="6">';
           PrintSession(-sessionid => $SessionID, -skipheader => $TRUE); # Display a single session
           print '</td></tr>';
         } else {  
