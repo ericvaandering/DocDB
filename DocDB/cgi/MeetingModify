@@ -255,6 +255,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
   my %SessionShowAllFlags = ();
   foreach my $SessionShowAll (@SessionShowAlls) { 
     $SessionShowAllFlags{$SessionShowAll} = 1; 
+    push @DebugStack,"Setting $SessionShowAll to true";
   }  
   
 # Re-sort session orders
@@ -350,6 +351,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
           push @ActionStack,"Modified break: $SessionTitle";
           ++$SessionsModified;
 	} else {
+          push @DebugStack,"Reading $MeetingOrderID SF $ShowAllFlags{$MeetingOrderID}";
           UpdateSession({ 
               -sessionid    => $SessionID,       -date        => $SessionDate,
               -title        => $SessionTitle,    -description => $SessionDescription,     
