@@ -168,7 +168,7 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { # Display a 
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($EventID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
 
-  if ($Conferences{$EventID}{ShowAllTalks}) { # Display all talks, sessions
+  if ($Conferences{$EventID}{ShowAwlTalks}) { # Display all talks, sessions
     foreach $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks
       my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
       my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
@@ -193,7 +193,7 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { # Display a 
       my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};
       my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
       if ($SessionID) {              # Session info and link to session
-        if ($Sessions{$SessionID}{ShowAllTalks}) {
+        if ($Sessions{$SessionID}{ShowAllTalks} || $Conferences{$EventID}{ShowAllTalks}) {
           FetchSessionByID($SessionID);
           print SessionInfo($SessionID, {-rowclass => $RowClass} ); # Does own <tr>
           print "<tr class=\"$RowClass\">".'<td class="EmbedSession" colspan="6">';
