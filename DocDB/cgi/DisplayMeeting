@@ -197,7 +197,7 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { # Display a 
           FetchSessionByID($SessionID);
           print SessionInfo($SessionID, {-rowclass => $RowClass} ); # Does own <tr>
           print '<tr><td class="EmbedSession" colspan="6">';
-          PrintSession(-sessionid => $SessionID, -skipheader => $TRUE); # Display a single session
+          PrintSession(-sessionid => $SessionID, -onlytalks => $TRUE); # Display a single session
           print '</td></tr>';
         } else {  
           print SessionInfo($SessionID, {-rowclass => $RowClass} ); # Does own <tr>
