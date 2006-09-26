@@ -198,6 +198,7 @@ sub AuthorsByInstitution {
 
 sub AuthorsTable {
   require "Sorts.pm";
+  require "MeetingSQL.pm";
 
   my @AuthorIDs     = sort byLastName keys %Authors;
   my $NCols         = 4;
