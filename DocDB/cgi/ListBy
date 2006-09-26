@@ -142,7 +142,7 @@ if ($Days) {
               is listed as an author on the following documents:";
   my %Hash = GetEventsByModerator($AuthorID);
   if (%Hash) {
-    $Message .= '<br/>(List <a href="'.$ListEventsBy.'?authorid='.$AuthorID.'">events</a> moderated by '.$Authors{$AuthorID}{FullName}.')';
+    $Message .= '<br/>(List <a href="'.$ListEventsBy.'?authorid='.$AuthorID.'">events</a> moderated by '.$Authors{$AuthorID}{FULLNAME}.')';
   }
   @DocumentIDs = GetAuthorDocuments($AuthorID);  
 } elsif ($EventID) {
