@@ -322,6 +322,11 @@ sub SessionLink (%) {
 
   require "ResponseElements.pm";
   require "SQLUtilities.pm";
+  require "MeetingSQL.pm";
+
+  FetchSessionByID($SessionID);
+  my $EventID = $Sessions{$SessionID}{ConferenceID};
+  FetchConferenceByConferenceID($EventID);
 
   my $URL = "$DisplayMeeting?sessionid=$SessionID";
   
@@ -331,10 +336,10 @@ sub SessionLink (%) {
     $ToolTip = EuroTimeHM($Sessions{$SessionID}{StartTime})." ".
                EuroDate($Sessions{$SessionID}{StartTime});
   } else {
-    if ($Conferences{$Sessions{$SessionID}{ConferenceID}}{Title} eq $Sessions{$SessionID}{Title}) {
+    if ($Conferences{$EventID}{Title} eq $Sessions{$SessionID}{Title}) {
       $ToolTip = $Sessions{$SessionID}{Title};
     } else {  
-      $ToolTip = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title}." - ".$Sessions{$SessionID}{Title};
+      $ToolTip = $Conferences{$EventID}{Title}." - ".$Sessions{$SessionID}{Title};
     }
   }
   if ($Sessions{$SessionID}{Location}) {
@@ -343,17 +348,17 @@ sub SessionLink (%) {
   # Would like to use newlines instead of -. See mozilla bugs Bug 67127 and 45375
   
   if ($Format eq "full") {
-    if ($Conferences{$Sessions{$SessionID}{ConferenceID}}{Title} && $Sessions{$SessionID}{Title} &&
-        $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title} ne $Sessions{$SessionID}{Title}) { 
-      $Text = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title}.":".$Sessions{$SessionID}{Title};
+    if ($Conferences{$EventID}{Title} && $Sessions{$SessionID}{Title} &&
+        $Conferences{$EventID}{Title} ne $Sessions{$SessionID}{Title}) { 
+      $Text = $Conferences{$EventID}{Title}.":".$Sessions{$SessionID}{Title};
     } else {
-      $Text = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title};
+      $Text = $Conferences{$EventID}{Title};
     }  
   } else {
     if ($Text = $Sessions{$SessionID}{Title}) {
       $Text = $Sessions{$SessionID}{Title};
     } else {
-      $Text = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title};
+      $Text = $Conferences{$EventID}{Title};
     }   
   }
   
