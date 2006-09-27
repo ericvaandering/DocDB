@@ -38,6 +38,7 @@ require "ResponseElements.pm";
 require "MeetingHTML.pm"; 
 require "MeetingSQL.pm"; 
 require "TopicHTML.pm"; 
+require "CalendarHTML.pm"; 
 
 $query = new CGI;  # Global for subroutines
 
@@ -100,7 +101,7 @@ foreach my $Key1 (keys %EventHash) {
     if (scalar(@SessionIDs) == 1 && scalar(@BreakIDs) == 0) {
       my ($SessionID) = @SessionIDs;
       foreach my $Key2 (keys %EventHash) {
-        if ($SessionID == $EventHash{$Key1}{SessionID}) {
+        if ($SessionID == $EventHash{$Key2}{SessionID}) {
           $EventHash{$Key1}{EventID} = 0;
         }
       }
@@ -128,7 +129,7 @@ if (@HashIDs) {
   foreach my $HashID (@HashIDs) {
     my ($Location,$Topics,$Title,$Time);
     my ($Date) = split /\s+/,$EventHash{$HashID}{Time};
-    my $DateString = '&nbsp;';
+    my $DateLink = '&nbsp;';
     if ($EventHash{$HashID}{SessionID}) {
       my $SessionID = $EventHash{$HashID}{SessionID};
       if ($DidSession{$SessionID}) { next; }
@@ -171,10 +172,11 @@ if (@HashIDs) {
       }  
       my $RowClass = ("Even","Odd")[$Row % 2];
       $HTML .= "<tbody class=\"$RowClass\">";
-      $DateString = EuroDate($Date);
-      $LastDate = $Date;
+      my $DateString = EuroDate($Date);
+      $DateLink   = CalendarLink(-text => $DateString, -SQL => $Date);
+      $LastDate   = $Date;
     }  
-    $HTML .= '<tr><td>'.$DateString.'</td>'.
+    $HTML .= '<tr><td>'.$DateLink.'</td>'.
                  '<td>'.$Time.      '</td>'.
                  '<td>'.$Title.     '</td>'.
                  '<td>'.$Location.  '</td>'.

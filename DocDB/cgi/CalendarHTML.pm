@@ -23,6 +23,7 @@ sub CalendarLink (%) {
   my $Month    = $Params{-month}    || 0;
   my $Year     = $Params{-year}     || 0;
   my $Day      = $Params{-day}      || 0;
+  my $SQL      = $Params{-SQL}      || "";
   my $Text     = $Params{-text}     || "Calendar";
   my $Class    = $Params{-class}    || "";
   
@@ -31,6 +32,11 @@ sub CalendarLink (%) {
     $Link .= "class=\"Date\" ";
   }
   $Link .= "href=\"".$ShowCalendar;
+  
+  if ($SQL) {
+    ($Year,$Month,$Day) = split /-/,$SQL;
+    push @DebugStack,"Y $Year M $Month D $Day T $Text";
+  } 
                  
   if ($Day && $Month && $Year) {
     $Link .= "?year=$Year&amp;month=$Month&amp;day=$Day\">";
