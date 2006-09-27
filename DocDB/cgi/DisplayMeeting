@@ -168,6 +168,8 @@ if ($DisplayMode eq "Session" || $DisplayMode eq "SingleSession") { # Display a 
   my @MeetingOrderIDs = &FetchMeetingOrdersByConferenceID($EventID);
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs; 
 
+# FIXME: Awl -> All to restore previous behavior, remove Conferences test from ~20 lines below
+# Check separator before deciding
   if ($Conferences{$EventID}{ShowAwlTalks}) { # Display all talks, sessions
     foreach $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks
       my $SessionID          = $MeetingOrders{$MeetingOrderID}{SessionID};

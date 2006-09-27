@@ -1,9 +1,7 @@
 #! /usr/bin/env perl
 #
-# Description: This script is called by AdministerForm and does administration
-#              on Topics in the DB. TopicAdd is simpler and can only add
-#              topics. TopicAdd is most useful in setting up a new DB, while 
-#              TopicAdminister will be more useful in maintaining an existing DB. 
+# Description: This script lists events and sessions based on the topic(s) or 
+#              moderator(s) of the events and sessions 
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
@@ -38,6 +36,7 @@ require "HTMLUtilities.pm";
 require "SQLUtilities.pm"; 
 require "ResponseElements.pm"; 
 require "MeetingHTML.pm"; 
+require "MeetingSQL.pm"; 
 require "TopicHTML.pm"; 
 
 $query = new CGI;  # Global for subroutines
@@ -91,6 +90,24 @@ if ($TopicID) {
   $HTML .= "</h4>"; 
 }
 
+# Find events with one session/break, remove from list if session is in list
+
+foreach my $Key1 (keys %EventHash) {
+  my $EventID = $EventHash{$Key1}{EventID};
+  if ($EventID) {
+    my @SessionIDs = FetchSessionsByConferenceID($EventID);
+    my @BreakIDs   = FetchSessionSeparatorsByConferenceID($EventID);
+    if (scalar(@SessionIDs) == 1 && scalar(@BreakIDs) == 0) {
+      my ($SessionID) = @SessionIDs;
+      foreach my $Key2 (keys %EventHash) {
+        if ($SessionID == $EventHash{$Key1}{SessionID}) {
+          $EventHash{$Key1}{EventID} = 0;
+        }
+      }
+    }
+  }
+}
+        
 %TmpEventHash = %EventHash;
 my @HashIDs = keys %EventHash;
 @HashIDs = sort EventHashByTime @HashIDs;
@@ -129,13 +146,12 @@ if (@HashIDs) {
         $EndTime = "";
       }  
       $Time = "$StartTime &ndash; $EndTime";
-    }
-    if ($EventHash{$HashID}{EventID}) {
+    } elsif ($EventHash{$HashID}{EventID}) {
       my $EventID = $EventHash{$HashID}{EventID};
+
+      # Only show event once, even if multi-day
       if ($DidEvent{$EventID}) { next; }
       $DidEvent{$EventID} = $TRUE;
-
-      # FIXME: Remove events with one session where we already did the session
 
       $Title    = EventLink(-eventid => $EventID,);
       $Location = join '<br/>',$Conferences{$EventID}{Location},
@@ -143,8 +159,11 @@ if (@HashIDs) {
       $Topics   = TopicListByID({ -linktype => "event", -listformat => "br", -sortby => "name", 
                                   -topicids => $Conferences{$EventID}{Topics}, });
       $Time = 'All day/no time';
-    }
     # Enhance: SessionSeparator meta-data
+    } else {
+      next; # Skipped events because single session was shown
+    }
+          
     if ($LastDate ne $Date) { # Start a new tbody group
      ++$Row;             
      if ($LastDate) {        # Close old tbody
