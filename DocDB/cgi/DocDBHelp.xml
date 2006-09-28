@@ -367,18 +367,23 @@ Please use this option responsibly.
 
  <entry>
   <key>authormanual</key>
-  <title>Authors</title>
+  <title>Ordered Author List</title>
   <text>
-     Type the names of the authors here. Put each author on a new line. Use
-     full last names and first names or initials. Each author entered will
-     checked against the database and a <b>unique</b> match must be found for
-     <b>all</b> authors before the document will be added. Requiring a unique
-     match means that for people who share a last name, the first name must
-     be fully specified. Entered middle initials are ignored.
-     <p/>
-     If you would prefer to select the author names from a list, select
-     "Selectable List" as the author selection mode from the advanced form on
-     the document DB home page.
+   <p>Type the names of the authors <strong>in order</strong> here. Put each
+   author on a new line. Use first names or initials and full last names. Each
+   author entered will checked against the database and a <b>unique</b> match
+   must be found for <strong>all</strong> authors before the document will be
+   added. Requiring a unique match means that for people who share a last name and initial,
+   the first name must be fully specified. Entered middle initials are
+   ignored.</p>
+   <p>This will create an ordered author list. If you normally enter authors
+   from  a selectable list and you instead see the text entry box, that means
+   the list was already ordered by someone else.</p>
+   <p>If you would prefer to select the author names from a list, click on
+   "Select from list" or choose "Selectable List" as the author selection mode
+   from the advanced form on the DocDB Changes page. Switching list styles
+   will not preserve changes just made and the list style will erase any
+   ordering of the authors.</p>
   </text>
  </entry>
 
@@ -545,11 +550,12 @@ from a number of shorter lists split up by topic.
   <key>authoroption</key>
   <title>Author Selection</title>
   <text>
-There are two methods of entering the authors for a document. The first is
-selecting the authors from a list of all possible authors. The second is to type
-into a form the names of the authors. <i>However</i> for your document to be
-accepted, every author that you entered must successfully match with an author
-in the database. The second method has not been implemented.
+   <p>There are two methods of entering the authors for a document. The first is
+   selecting the authors from a list of all possible authors. The second is to
+   type the names of the authors into a form. This creates an
+   <strong>ordered</strong> author list. <em>However</em> for your document to
+   be accepted, every author that you entered must successfully match an author
+   in the database.</p>
   </text>
  </entry>
 
@@ -668,20 +674,17 @@ Insert/Modify functions to select your type of upload.
   <key>authors</key>
   <title>Authors</title>
   <text>
-<p>If entering a new document, select all the authors of the document.  If you
-would prefer to type in the author names individually, select "Text Field" as
-the author selection mode from the advanced form on the document DB home
-page.
-</p>
-<p>
-If searching for a document, select the authors appropriately for your setting
-of <b>Within Fields</b>.
-</p>
-<p>
-To select multiple authors either click or CTRL-click (depending on your
-browser) on the author names. 
-If a document has multiple authors, the <q>first author</q> will be the first alphabetically.
-</p>
+   <p>If entering a new or revised document, select all the authors of the
+   document.  If you would prefer to type in the author names individually and
+   in order, click on "Text w/ order" or select "Ordered text field" as the
+   author selection mode from the advanced form on the DocDB Changes page.
+   Switching list styles will not  preserve changes just made and the list style
+   will erase any ordering of the authors.</p>
+   <p> If searching for a document, select the authors appropriately for your
+   setting of <b>Within Fields</b>.</p>
+   <p> To select multiple authors either click or CTRL-click (depending on your
+   browser) on the author names.  If a document has multiple authors, the
+   <q>first author</q> will be the first alphabetically.</p>
   </text>
  </entry>
 

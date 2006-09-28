@@ -81,6 +81,7 @@ my $DocTypeID     = $params{doctype};
 my $Title         = $params{title};
 my $Abstract      = $params{abstract};
 my $PubInfo       = $params{pubinfo};
+my $AuthorMode    = $params{authormode};
    $Overdate      = $params{overdate};
    $Overday       = $params{overday};
    $Overmonth     = $params{overmonth};
@@ -147,8 +148,10 @@ if ($Archive eq "archive") { # They uploaded a tar/zip file
   $Archive{Description} = $params{"filedesc"};
 }
 
-if ($params{authormanual}) {
-  @authorIDs = &ProcessManualAuthors($params{authormanual});
+my $OrderAuthors = $FALSE;
+if ($AuthorMode eq "field") {
+  $OrderAuthors = $TRUE;
+  @authorIDs = ProcessManualAuthors($params{authormanual});
 } else {
   @authorIDs = split /\0/,$params{authors}; 
 }
@@ -378,7 +381,7 @@ if (@XRefs) {
 ### Add to authors, topics and securities
                            
 my $Count;
-$Count = InsertAuthors( -docrevid  => $DocRevID, -authorids => \@authorIDs);
+$Count = InsertAuthors( -docrevid  => $DocRevID, -authorids => \@authorIDs, -order => $OrderAuthors);
 $Count = InsertTopics(  -docrevid  => $DocRevID, -topicids  => \@TopicIDs);
 $Count = InsertSecurity(-docrevid  => $DocRevID, 
                         -viewids   => \@securities,

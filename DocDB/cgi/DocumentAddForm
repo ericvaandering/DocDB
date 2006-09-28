@@ -44,6 +44,7 @@ require "Utilities.pm";
 require "Defaults.pm";
 require "Security.pm";
 require "XRefUtilities.pm";
+require "AuthorUtilities.pm";
 
 require "FileHTML.pm";
 require "JournalHTML.pm";
@@ -72,37 +73,30 @@ my $Version      = $params{version};
 my @PreTopics    = $query -> param('pretopic');
    $mode         = $params{mode}; # FIXME: Can't be my since used in subroutines
 
-my @TopicDefaults = ();
- 
-push @TopicDefaults,@PreTopics; 
-
 if ($mode ne "add"    && $mode ne "reserve" && 
     $mode ne "update" && $mode ne "updatedb") {
   $mode = "add";
 }  
 
-&SetUploadMethod;
-&SetDateOverride;
-&SetAuthorMode;
-&SetTopicMode;
-
-if ($mode eq "add" || $mode eq "reserve") {
-  &SetAuthorDefault;
-}
+SetUploadMethod();
+SetDateOverride();
+SetAuthorMode();
+SetTopicMode();
 
 print $query->header;
+my @Scripts = ("PopUps","InsertRevisionNote","AuthorMethodDisplay");
 if      ($mode eq "add") {
-  &DocDBHeader("$Project Document Addition","Document Addition", -scripts => ["PopUps","InsertRevisionNote"]);
+  DocDBHeader("$Project Document Addition",   "Document Addition",    -scripts => \@Scripts);
 } elsif ($mode eq "reserve") {
-  &DocDBHeader("$Project Document Reservation","Document Reservation", -scripts => ["PopUps","InsertRevisionNote"]);
+  DocDBHeader("$Project Document Reservation","Document Reservation", -scripts => \@Scripts);
 } elsif ($mode eq "update" || $mode eq "updatedb") {
-  &DocDBHeader("$Project Document Update","Document Update", -scripts => ["PopUps","InsertRevisionNote"]);
+  DocDBHeader("$Project Document Update",     "Document Update",      -scripts => \@Scripts);
 }
 
 @ErrorStack = ();
 @WarnStack = ();
 
-unless (&CanCreate()) {
+unless (CanCreate()) {
   push @ErrorStack,"You are not allowed to modify or create documents.";
 }
 if ($mode eq "update" || $mode eq "updatedb") {
@@ -163,13 +157,15 @@ if ($mode eq "update") {
   $Version = $Documents{$DocumentID}{NVersions};
 }
 
-my $SignoffsDefault; # FIXME: What other ones needn't be global?
-my @SecurityDefaults = ();
-my @ModifyDefaults   = ();
+# FIXME: What other ones needn't be global?
+my @AuthorDefaults   = ();
 my @EventDefaults    = ();
-my $RevisionNoteDefault; 
-my $XRefDefault;
-my $DocTypeIDDefault;
+my @ModifyDefaults   = ();
+my @SecurityDefaults = ();
+my @TopicDefaults    = ();
+my ($AuthorListOrdered);
+my ($DocTypeIDDefault,$RequesterDefault,$RevisionNoteDefault,$SignoffsDefault,
+    $XRefDefault);
  
 if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
   $DocRevID            = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
@@ -181,7 +177,10 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   $RevisionNoteDefault = $DocRevisions{$DocRevID}{Note};
   $DocTypeIDDefault    = $DocRevisions{$DocRevID}{DocTypeID};
   @SecurityDefaults    = GetRevisionSecurityGroups($DocRevID);
-  @AuthorDefaults      = GetRevisionAuthors($DocRevID);
+  my @AuthorRevIDs     = GetRevisionAuthors($DocRevID);
+     @AuthorRevIDs     = sort AuthorRevIDsByOrder @AuthorRevIDs;
+  $AuthorListOrdered   = IsAuthorListOrdered({     -authorrevids => \@AuthorRevIDs, });
+  @AuthorDefaults      = AuthorRevIDsToAuthorIDs({ -authorrevids => \@AuthorRevIDs, });
   @TopicDefaults       = GetRevisionTopics({ -docrevid => $DocRevID });
   @EventDefaults       = GetRevisionEvents($DocRevID);
   @ReferenceDefaults   = FetchReferencesByRevision($DocRevID);
@@ -191,12 +190,21 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
     $SignoffDefault     = BuildSignoffDefault($DocRevID);
   }
 } else {
+  if ($UserPreferences{AuthorID}) {
+    @AuthorDefaults   = ($UserPreferences{AuthorID});
+    $RequesterDefault =  $UserPreferences{AuthorID};
+  } 
+ 
+  push @TopicDefaults,@PreTopics; 
+
   if ($DefaultPublicAccess) {
     @SecurityDefaults = (0);
   } else {
     @SecurityDefaults = FindUsersGroups(); 
   }
 }  
+
+@TopicDefaults = Unique(@TopicDefaults); # Make sure this list is unique
 
 if ($EnhancedSecurity) {
   @ModifyDefaults  = &GetRevisionModifyGroups($DocRevID);
@@ -250,13 +258,11 @@ if ($mode eq "add" && ($SessionID||$ConferenceID)) {
   }
 }
 
-@TopicDefaults = &Unique(@TopicDefaults) ; # Make sure this list is unique
-
 &EndPage(@ErrorStack); # The user may have made mistakes, warn and exit
 
 &SetFileOptions($DocRevID);
 
-print $query -> start_multipart_form('POST',$ProcessDocumentAdd);
+print $query -> start_multipart_form('POST',$ProcessDocumentAdd,'id="documentadd" name="documentadd"');
 print "<div>\n";
 print $query -> hidden(-name => 'mode',      -default => $mode);
 print $query -> hidden(-name => 'upload',    -default => 'file');
@@ -393,24 +399,34 @@ print "</tr>\n";
 print "<tr>\n";
 
 print "<td>\n"; 
- my @RequesterDefaults = ($RequesterDefault);
- &AuthorScroll(-required => $RequiredEntries{Requester},
-               -helplink => "requester",
-               -helptext => "Submitter",
-               -name     => "requester",
-               -default  => \@RequesterDefaults);
+AuthorScroll(-required => $RequiredEntries{Requester}, -helplink => "requester",
+             -helptext => "Submitter",                 -name     => "requester",
+             -default  => [$RequesterDefault], );
 print "</td>\n";
 
+my ($AuthorScrollDisplay,$AuthorTextDisplay);
+if ($AuthorListOrdered) {
+  $AuthorMode = "field";
+}  
 if ($AuthorMode eq "list") {
-  print "<td>\n"; 
-  &AuthorScroll(-required => $RequiredEntries{Author},
-                -helplink => "authors",
-                -multiple => "true",
-                -default  => \@AuthorDefaults);
-  print "</td>\n";
+   $AuthorTextDisplay   = ' style="display: none;"';
 } elsif ($AuthorMode eq "field") {
-  print "<td>\n"; &AuthorManual(-required => $RequiredEntries{Author});    print "</td>\n";
+   $AuthorScrollDisplay = ' style="display: none;"';
 }
+$ScrollExtraText = "<a href=\"Javascript:author_method_choose(\'text\');\">(Text w/ order)</a>";
+$TextExtraText   = "<a href=\"Javascript:author_method_choose(\'scroll\');\">(Select from list)</a>";
+
+print "<td id=\"AuthorScroll\"$AuthorScrollDisplay>\n"; 
+print $query -> hidden(-name => 'authormode', -default => $AuthorMode);
+AuthorScroll(-required  => $RequiredEntries{Author}, -helplink => "authors",
+             -default   => \@AuthorDefaults,         -multiple => "true",
+             -extratext => $ScrollExtraText,);
+print "</td>\n";
+
+print "<td id=\"AuthorText\"$AuthorTextDisplay>\n"; 
+AuthorTextEntry({ -required => $RequiredEntries{Author}, -extratext => $TextExtraText, 
+                  -default  => \@AuthorDefaults, });
+print "</td>\n";
 
 print "<td>\n"; 
 my $SecurityText;

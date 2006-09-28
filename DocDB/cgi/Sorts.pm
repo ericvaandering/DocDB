@@ -52,7 +52,7 @@ sub TopicByProvenance {
   return 0;  
 } 
 
-sub byLastName {
+sub byLastName { # Obsolete
   require "AuthorSQL.pm";
 
   unless ($Authors{$a}{LastName}) {
@@ -75,6 +75,38 @@ sub byLastName {
           or
   $FirstA cmp $FirstB;
 }    
+
+sub AuthorRevIDsByOrder {
+  require "AuthorSQL.pm";
+
+  if ($AuthorRevIDs{$a}{AuthorOrder} || $AuthorRevIDs{$b}{AuthorOrder}) {
+    return $a <=> $b;
+  }   
+
+  my $AID = $AuthorRevIDs{$a}{AuthorID};
+  my $BID = $AuthorRevIDs{$b}{AuthorID};
+
+  unless ($Authors{$AID}{LastName}) {
+    FetchAuthor($AID);
+  }    
+  unless ($Authors{$BID}{LastName}) {
+    FetchAuthor($BID);
+  }    
+
+  my $LastA  = $Authors{$AID}{LastName};
+  my $LastB  = $Authors{$BID}{LastName};
+  my $FirstA = $Authors{$AID}{FirstName};
+  my $FirstB = $Authors{$BID}{FirstName};
+  $LastA  =~ tr/[a-z]/[A-Z]/;
+  $LastB  =~ tr/[a-z]/[A-Z]/;
+  $FirstA =~ tr/[a-z]/[A-Z]/;
+  $FirstB =~ tr/[a-z]/[A-Z]/;
+
+   $LastA cmp $LastB
+          or
+  $FirstA cmp $FirstB;
+}    
+
 
 sub byInstitution {
   $Institutions{$a}{SHORT} cmp $Institutions{$b}{SHORT};
@@ -169,6 +201,7 @@ sub DocumentByFirstAuthor {
   ### All documents (of interest) must be fetched before calling
 
   require "AuthorSQL.pm";
+  require "AuthorUtilities.pm";
 
   my $adr = $DocRevIDs{$a}{$Documents{$a}{NVersions}};
   my $bdr = $DocRevIDs{$b}{$Documents{$b}{NVersions}};

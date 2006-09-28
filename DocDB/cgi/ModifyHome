@@ -1,7 +1,7 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
-#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
 
 # Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -211,20 +211,11 @@ if (CanCreateMeeting()) {
 print "<p><strong>Database maintenance:</strong></p>\n";
 print "<ul>\n";
 print "<li>Add an <a href=\"$AuthorAddForm\">author</a></li>\n";
+if (CanAdminister()) {
+  print "<li>Perform other <a href=\"$AdministerHome\">administration tasks</a></li>\n";
+}
 print "</ul>\n";
            
-if (CanAdminister()) {
-  print "<p><b>Administrator only functions:</b></p>\n";
-  print "<ul>\n";
-  print "<li>Administer <a href=\"$GroupAdministerForm\">groups</a> of users</li>\n";
-  print "<li>Administer <a href=\"$TopicAdminister\">topics</a></li>\n";
-  print "<li>Administer <a href=\"$EventAdministerForm\">events</a></li>\n";
-  print "<li>Administer <a href=\"$EmailAdministerForm\">personal accounts</a></li>\n";
-  print "<li>Administer <a href=\"$KeywordAdministerForm\">keywords and keyword groups</a></li>\n";
-  print "<li>Administer <a href=\"$AdministerForm\">authors, institutions, types, and journals</a></li>\n";
-  print "<li>Administer <a href=\"$ExternalDocDBAdministerForm\">external DocDB</a> information</li>\n";
-  print "</ul>\n";
-}
 
 print "<hr/>\n";
   
@@ -254,7 +245,7 @@ $topicmodes{multi}  = "Multiple Topic Boxes";
 $topicmodes{single} = "Single Topic List";
 @topicmodes = ("multi","single");
 
-$authormodes{field}  = "Text field";
+$authormodes{field}  = "Ordered text field";
 $authormodes{list} = "Selectable list";
 @authormodes = ("list","field");
 

@@ -23,14 +23,17 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub GetPrefsCookie {
-  $UserIDPref       = $query -> cookie('userid');
+
+  # FIXME: Move to using UserPreferences directly as possible.
+
   $UploadTypePref   = $query -> cookie('archive');
   $NumFilesPref     = $query -> cookie('numfile');
   $UploadMethodPref = $query -> cookie('upload');
   $TopicModePref    = $query -> cookie('topicmode');
   $AuthorModePref   = $query -> cookie('authormode');
   $DateOverridePref = $query -> cookie('overdate');
-  $UserPreferences{AuthorID}     = $UserIDPref      ;
+  
+  $UserPreferences{AuthorID}     = $query -> cookie('userid');
   $UserPreferences{UploadType}   = $UploadTypePref  ;
   $UserPreferences{NumFiles}     = $NumFilesPref    ;
   $UserPreferences{UploadMethod} = $UploadMethodPref;

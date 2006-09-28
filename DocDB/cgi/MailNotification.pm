@@ -152,9 +152,11 @@ sub RevisionMailBody ($) {
   FetchAuthor($DocRevisions{$DocRevID}{Submitter});
   my $Submitter = $Authors{$DocRevisions{$DocRevID}{Submitter}}{FULLNAME};
 
-  my @AuthorIDs = GetRevisionAuthors($DocRevID);
-  my @TopicIDs  = GetRevisionTopics({-docrevid => $DocRevID});
-  my @EventIDs  = GetRevisionEvents($DocRevID);
+  my @AuthorRevIDs = GetRevisionAuthors($DocRevID);
+     @AuthorRevIDs = sort AuthorRevIDsByOrder @AuthorRevIDs;
+  my @AuthorIDs    = AuthorRevIDsToAuthorIDs({ -authorrevids => \@AuthorRevIDs, });
+  my @TopicIDs     = GetRevisionTopics({-docrevid => $DocRevID});
+  my @EventIDs     = GetRevisionEvents($DocRevID);
   
 # Build list of authors  
   
@@ -302,7 +304,8 @@ sub UsersToNotify ($$) {
 
 # Get users interested in authors for this reporting period
 
-  my @AuthorIDs = GetRevisionAuthors($DocRevID);
+  my @AuthorRevIDs = GetRevisionAuthors($DocRevID);
+  my @AuthorIDs    = AuthorRevIDsToAuthorIDs({ -authorrevids => \@AuthorRevIDs, });
   foreach my $AuthorID (@AuthorIDs) {
     $Fetch -> execute($Period,"Author",$AuthorID);
     $Fetch -> bind_columns(undef,\($UserID));

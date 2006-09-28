@@ -1,5 +1,10 @@
 /* 
- This is an example of a CSS for a project. 
+ This is an example of a CSS for a project. The look and feel of everything in 
+ DocDB is controlled by CSS, so you can change the look of DocDB dramatically
+ by supplying new CSS parameters.
+ 
+ Let's look at an example:
+  
  The first thing we want to do is change the color of alternating rows and of
  the side bars from very light gray (#eee) to light blue (#ddf). These numbers
  are (#red-green-blue). 
@@ -8,8 +13,10 @@
  same as the $ShortProject variable.
  
  You can also create [Project]DocDB[Script].css files where [Script] is the name
- of a CSS file used just for a particular DocDB script (none exist yet). You can
- also supply *_IE.css to be included just by IE users. 
+ of a CSS file used just for a particular DocDB script (many of these exist, but
+ they are very short compared to DocDB.css). You can also supply *_IE.css to be 
+ included just by IE users. This is sometimes necessary to fix bugs with IE's
+ poor CSS support. 
 */
 
 body {
@@ -48,11 +55,11 @@ li.Even {
 
 /* Change alternating <tr> environments */
 
-tr.Odd {
+tr.Odd, tbody.Odd {
   background: #ddf;
 }
 
-tr.Even {
+tr.Even, tbody.Even {
   background: white;
 }
 

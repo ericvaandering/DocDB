@@ -80,36 +80,19 @@ sub FetchAuthor { # Fetches an Author by ID, adds to $Authors{$AuthorID}{}
 
 sub GetRevisionAuthors {
   my ($DocRevID) = @_;
-  my @authors = ();
-  my ($RevAuthorID,$AuthorID);
-  my $author_list = $dbh->prepare(
-    "select RevAuthorID,AuthorID from RevisionAuthor where DocRevID=?");
-  $author_list -> execute($DocRevID);
-  $author_list -> bind_columns(undef, \($RevAuthorID,$AuthorID));
-  while ($author_list -> fetch) {
-    push @authors,$AuthorID;
+  my @RevAuthorIDs = ();
+  my ($RevAuthorID,$AuthorID,$AuthorOrder);
+  my $AuthorList = $dbh->prepare(
+    "select RevAuthorID,AuthorID,AuthorOrder from RevisionAuthor where DocRevID=?");
+  $AuthorList -> execute($DocRevID);
+  $AuthorList -> bind_columns(undef, \($RevAuthorID,$AuthorID,$AuthorOrder));
+  while ($AuthorList -> fetch) {
+    $RevisionAuthors{$RevAuthorID}{AuthorID}    = $AuthorID;
+    $RevisionAuthors{$RevAuthorID}{AuthorOrder} = $AuthorOrder;    
+    push @RevAuthorIDs,$RevAuthorID;
   }
-  return @authors;  
+  return @RevAuthorIDs;  
 }
-
-sub FirstAuthorID ($) { # FIXME: Could be AuthorUtilities.pm
-  my ($ArgRef) = @_;
-  
-  my $DocumentID = exists $ArgRef->{-docid}    ? $ArgRef->{-docid}    : 0;
-  my $DocRevID   = exists $ArgRef->{-docrevid} ? $ArgRef->{-docrevid} : 0;
-
-  if ($DocumentID) {
-    # May have to fetch
-    $DocRevID = $DocRevIDs{$DocumentID}{$Documents{$DocumentID}{NVersions}};
-  }
-  my @AuthorIDs = sort byLastName GetRevisionAuthors($DocRevID);
-  
-  unless (@AuthorIDs) {return undef;}
-  
-  my $FirstID     = $AuthorIDs[0];
-
-  return $FirstID;
-}  
 
 sub GetInstitutionAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with authors from institution
   my ($InstitutionID) = @_;
@@ -303,15 +286,19 @@ sub InsertAuthors (%) {
   my %Params = @_;
   
   my $DocRevID  =   $Params{-docrevid}   || "";   
+  my $Order     =   $Params{-order}      || $FALSE;   
   my @AuthorIDs = @{$Params{-authorids}};
 
-  my $Count = 0;
-
-  my $Insert = $dbh->prepare("insert into RevisionAuthor (RevAuthorID, DocRevID, AuthorID) values (0,?,?)");
+  my $Count       = 0;
+  my $AuthorOrder = 0;
+  my $Insert = $dbh->prepare("insert into RevisionAuthor (RevAuthorID, DocRevID, AuthorID, AuthorOrder) values (0,?,?,?)");
                                  
   foreach my $AuthorID (@AuthorIDs) {
     if ($AuthorID) {
-      $Insert -> execute($DocRevID,$AuthorID);
+      if ($Order) {
+        $AuthorOrder = $Count;
+      }  
+      $Insert -> execute($DocRevID,$AuthorID,$AuthorOrder);
       ++$Count;
     }
   }  
