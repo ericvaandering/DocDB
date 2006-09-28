@@ -245,6 +245,11 @@ unless ($JSDirectory && $JSURLPath) {
   $JSURLPath   = $web_root."/Static/js";
 }  
 
+unless ($ImgDirectory && $ImgURLPath) {
+  $ImgDirectory = $file_root."/Static/img";
+  $ImgURLPath   = $web_root."/Static/img";
+}  
+
 if (!$Tar && $GTar) {
   $Tar = $GTar;
 } 

@@ -234,4 +234,19 @@ sub TypeLink {
   return $link;
 }
 
+sub ImageSrc {
+  my ($ArgRef) = @_;
+  
+  my $Alt   = exists $ArgRef->{-alt}   ? $ArgRef->{-alt}   : "image";
+  my $Image = exists $ArgRef->{-image} ? $ArgRef->{-image} : "";
+
+  require "Images.pm";
+  
+  unless ($Image) { return ""; }
+
+  my $HTML = '<img src="'.$ImgURLPath.'/'.$ImageNames{$Image}.'" alt="'.$Alt.'" />';
+
+  return $HTML;
+}
+
 1;

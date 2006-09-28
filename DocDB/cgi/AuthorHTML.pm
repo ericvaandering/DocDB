@@ -199,6 +199,7 @@ sub AuthorsByInstitution {
 sub AuthorsTable {
   require "Sorts.pm";
   require "MeetingSQL.pm";
+  require "MeetingHTML.pm";
 
   my @AuthorIDs     = sort byLastName keys %Authors;
   my $NCols         = 4;
@@ -259,7 +260,7 @@ sub AuthorsTable {
     if ($CheckEvent) {
       my %Hash = GetEventsByModerator($AuthorID);
       if (%Hash) {
-        $AuthorLink .= ' (<a href="'.$ListEventsBy.'?authorid='.$AuthorID.'">Moderator</a>)';
+        $AuthorLink .= ListByEventLink({ -authorid => $AuthorID });
       }
     }    
 

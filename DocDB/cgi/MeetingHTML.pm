@@ -1256,4 +1256,26 @@ sub EventDisplayButton ($) {
   print "\n</div>\n",$query -> endform,"\n";
 }
 
+sub ListByEventLink {
+  my ($ArgRef) = @_;
+  
+  my $AuthorID = exists $ArgRef->{-authorid} ? $ArgRef->{-authorid} : 0;
+  my $TopicID  = exists $ArgRef->{-topicid}  ? $ArgRef->{-topicid}  : 0;
+  
+  require "ResponseElements.pm";
+  
+  my $Link;
+  if ($AuthorID) {
+    $Link .= '<a href="'.$ListEventsBy.'?authorid='.$AuthorID.'" ';
+  } elsif ($TopicID) {
+    $Link .= '<a href="'.$ListEventsBy.'?topicid='.$TopicID.'" ';
+  } 
+  $Link .= 'text="List events">';
+  $Link .= ImageSrc({ -alt => 'Event', -image => 'EventIcon' }); 
+  
+  $Link .= '</a>';
+
+  return $Link;
+}
+
 1;
