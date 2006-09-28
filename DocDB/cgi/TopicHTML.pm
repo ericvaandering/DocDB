@@ -195,7 +195,7 @@ sub TopicListWithChildren { # Recursive routine
       if ($CheckEvent) {
         my %Hash = GetEventsByTopic($TopicID);
         if (%Hash) {        
-          $HTML .= ListByEventLink({ -authorid => $AuthorID });
+          $HTML .= ListByEventLink({ -topicid => $TopicID });
         }
       }    
       if (@{$TopicChildren{$TopicID}}) {
