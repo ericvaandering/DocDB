@@ -36,6 +36,10 @@ dd.FileList {
 dt {
   font-weight: bold;
 }
+
+a img {
+  border: none;
+}
  
 ul.compact {
   padding-left: 0em;
