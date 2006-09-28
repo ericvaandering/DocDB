@@ -177,6 +177,7 @@ sub TopicListWithChildren { # Recursive routine
   my $CheckEvent = exists $ArgRef->{-checkevent} ?   $ArgRef->{-checkevent} : $FALSE; # name or provenance
 
   require "MeetingSQL.pm";
+  require "MeetingHTML.pm";
 
   my @TopicIDs = sort TopicByAlpha @TopicIDs;
 
@@ -193,8 +194,8 @@ sub TopicListWithChildren { # Recursive routine
       $HTML .= TopicLink( {-topicid => $TopicID} );
       if ($CheckEvent) {
         my %Hash = GetEventsByTopic($TopicID);
-        if (%Hash) {
-          $HTML .= ' (<a href="'.$ListEventsBy.'?topicid='.$TopicID.'">Events</a>)';
+        if (%Hash) {        
+          $HTML .= ListByEventLink({ -authorid => $AuthorID });
         }
       }    
       if (@{$TopicChildren{$TopicID}}) {
