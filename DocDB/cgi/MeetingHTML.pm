@@ -1270,8 +1270,8 @@ sub ListByEventLink {
   } elsif ($TopicID) {
     $Link .= '<a href="'.$ListEventsBy.'?topicid='.$TopicID.'" ';
   } 
-  $Link .= 'text="List events">';
-  $Link .= ImageSrc({ -alt => 'Event', -image => 'EventIcon' }); 
+  $Link .= 'title="List events"> ';
+  $Link .= ImageSrc({ -alt => "Event", -image => "EventIcon" }); 
   
   $Link .= '</a>';
 

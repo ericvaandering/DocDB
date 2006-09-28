@@ -246,6 +246,8 @@ sub ImageSrc {
 
   my $HTML = '<img src="'.$ImgURLPath.'/'.$ImageNames{$Image}.'" alt="'.$Alt.'" />';
 
+  push @DebugStack,"Image: $Image, Final: ".$ImageNames{$Image};
+
   return $HTML;
 }
 
