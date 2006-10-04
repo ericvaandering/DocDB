@@ -175,6 +175,7 @@ sub TalkMatches ($$@) {
   require "DocumentSQL.pm";
   require "RevisionSQL.pm";
   require "TalkHintSQL.pm";
+  require "AuthorUtilities.pm";
   
   my @DocumentIDs = keys %DocumentIDs;
   
