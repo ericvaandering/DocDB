@@ -226,6 +226,7 @@ sub UsersToNotify ($$) {
   
   require "Security.pm";
   require "Utilities.pm";
+  require "AuthorUtilities.pm";
 
   unless ($Period eq "Immediate" || $Period eq "Daily" || $Period eq "Weekly") {
     return undef;
