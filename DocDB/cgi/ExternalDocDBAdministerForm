@@ -73,7 +73,7 @@ if ($Password && $Username) {
 
 GetSecurityGroups();
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader("Administer External DocDBs","",
              -scripts => ["PopUps","ExternalDocDBAdminDisable"]); 
 

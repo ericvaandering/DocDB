@@ -231,7 +231,7 @@ unless (@DocumentIDs) { # Some do their own
 
 ### Start HTML
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader($Title);
 
 print "<h4>$Message</h4><p/>\n";

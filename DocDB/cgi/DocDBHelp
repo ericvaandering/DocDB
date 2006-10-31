@@ -71,7 +71,7 @@ if ($ProjectHelp) {
 # Start page
 
 $query = new CGI;  
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("$Project DocDB Help","",-nobody => $TRUE);
 
 %params = $query -> Vars;

@@ -52,7 +52,7 @@ unless ($dbh) {
   push @ErrorStack,"Unable to connect to the database. Check the password.";
 }         
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Deleting Document $DocumentID");
 
 EndPage(@ErrorStack);

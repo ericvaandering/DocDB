@@ -72,7 +72,7 @@ if ($Password && $Username) {
 }
 EndPage(-startpage => $TRUE);
 
-print $query -> header;
+print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader("Topic Administration","",-scripts => ["PopUps","TopicAdminDisable"]);
 
 unless (CanAdminister()) {

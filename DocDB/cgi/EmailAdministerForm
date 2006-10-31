@@ -52,7 +52,7 @@ my $EmailUserID  = $params{emailuserid} || 0;
 
 GetSecurityGroups();
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader("User Administration","",-scripts => ["PopUps","PersonalAccountAdminDisable"]); 
 
 @ErrorStack = ();

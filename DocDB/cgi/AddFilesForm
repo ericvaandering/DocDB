@@ -62,7 +62,7 @@ $NumberUploads = $params{numfile};
 &SetUploadMethod;
 &SetFileOptions;
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("File Addition","",-scripts => ["PopUps"]);
 
 @ErrorStack = ();

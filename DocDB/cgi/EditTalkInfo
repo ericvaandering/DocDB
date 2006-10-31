@@ -119,7 +119,7 @@ if ($TalkSeparatorID) { # Modify a talk separator
   
 # Start page
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader("Updating Agenda Information","",-nobody => $TRUE);
 EndPage();
 

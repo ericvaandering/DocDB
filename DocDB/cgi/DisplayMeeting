@@ -79,7 +79,7 @@ if (!$dbh) {
   $PageTitle = $Conferences{$EventID}{Title};
 }  
 
-print $query -> header;
+print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader($PageTitle,"", -scripts => ["PopUps"]);
 EndPage(@ErrorStack);
 

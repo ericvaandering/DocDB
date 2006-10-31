@@ -40,7 +40,7 @@ my $EventGroup   = $params{eventgroup};
 GetConferences();
 GetSecurityGroups(); 
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 
 my $PageTitle;
 if ($Mode eq "modify") {

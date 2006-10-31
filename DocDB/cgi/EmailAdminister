@@ -65,7 +65,7 @@ unless ($dbh) {
   push @ErrorStack,$Msg_AdminNoConnect;
 }         
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader("Modified E-mail Users");
 
 EndPage();

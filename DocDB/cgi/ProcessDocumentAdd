@@ -63,7 +63,7 @@ GetSecurityGroups();
 $mode = $params{mode}; #FIXME: Remove
 $Mode = $params{mode};
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 if ($Mode eq "reserve") {
   &DocDBHeader("$Project Document Reservation Results","Document Reservation Results",-scripts => ["PopUps"]); 
 } elsif ($Mode eq "add") {
