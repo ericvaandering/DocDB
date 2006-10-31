@@ -52,7 +52,7 @@ sub DocDBHeader {
   if ($Refresh) {
     print "<meta http-equiv=\"refresh\" content=\"$Refresh\" />\n";
   }  
-  print '<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />',"\n";
+  print '<meta http-equiv="Content-Type" content="text/html; charset='.$HTTP_ENCODING.'" />',"\n";
   print "<title>$Title</title>\n";
 
   # Include DocDB style sheets

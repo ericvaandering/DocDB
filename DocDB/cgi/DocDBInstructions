@@ -80,7 +80,7 @@ if ($InstructionSet eq "general") {
   $PageTitle = "Adminstration Instructions";
   $HTMLTitle = $PageTitle;
 }
-print $query->header(-charset => "utf-8");
+print $query->header( -charset => $HTTP_ENCODING );
 &DocDBHeader($HTMLTitle,$PageTitle);
 
 print "<div id=\"DocDBHomeBody\">\n";

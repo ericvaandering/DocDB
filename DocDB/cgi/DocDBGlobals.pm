@@ -114,6 +114,9 @@ $TalkMatchThreshold   = 100;   # Threshold for matching talks with agenda entrie
 
 $RequiredMark = "&nbsp;*&nbsp;";
   
+$HTTP_ENCODING        = 'ISO-8859-1'; # Character set for page encoding, may have to modify 
+                                      # MySQL text fields accordingly
+
 # Which things are publicly viewable?
 
 $PublicAccess{MeetingList} = 0;  
