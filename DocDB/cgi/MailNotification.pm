@@ -258,8 +258,14 @@ sub UsersToNotify ($$) {
   }
 
 # Get users interested in all documents for this reporting period
+# FIXME: 2nd set can go away in version 9 after all values are reset
 
   $Fetch -> execute($Period,"AllDocuments",1);
+  $Fetch -> bind_columns(undef,\($UserID));
+  while ($Fetch -> fetch) {
+    $UserIDs{$UserID} = 1; 
+  }
+  $Fetch -> execute($Period,"AllDocuments",0);
   $Fetch -> bind_columns(undef,\($UserID));
   while ($Fetch -> fetch) {
     $UserIDs{$UserID} = 1; 

@@ -211,7 +211,7 @@ if ($Action eq "migrate") {
       } elsif ($MajorID) {
         $NotificationInsert -> execute($EmailUserID,"Topic",$MajorToTopic{$MajorID},"",$Period);
       } else {
-        $NotificationInsert -> execute($EmailUserID,"AllDocuments",0,"",$Period);
+        $NotificationInsert -> execute($EmailUserID,"AllDocuments",1,"",$Period);
       }  
     }
   }

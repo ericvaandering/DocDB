@@ -1,4 +1,18 @@
+8.1.3
+
+  Fix a problem with notifications for AllDocuments. The migrate script and the 
+  cgi code didn't agree on what value should be in a field. They are consistent 
+  now and a temporary patch (until version 9) has been added so that it works 
+  with both values.
+  
+  8.1.1 and 8.1.2 fix a couple of crashes related to missing require statements.
+
 8.1.0 
+
+  Reminder, you must follow the Version 8.0 upgrade instructions at 
+  https://sourceforge.net/forum/forum.php?forum_id=605893 before updating from
+  version 7.x. You can upgrade directly to any 8.x version, you needn't upgrade
+  to 8.0.
 
   You can now specify the order of authors on a document. This is done by
   switching the author entry widget from a selectable list to the existing
