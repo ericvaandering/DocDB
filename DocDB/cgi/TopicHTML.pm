@@ -167,7 +167,7 @@ sub TopicListWithChildren { # Recursive routine
       if ($Depth > 1) {
         $HTML .= "<li>";
       } else {
-        $HTML .= "<strong";
+        $HTML .= "<strong>";
       }
       $HTML .= TopicLink( {-topicid => $TopicID} );
       if ($Depth == 1) {
