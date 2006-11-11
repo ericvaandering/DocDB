@@ -33,7 +33,7 @@ CreateConnection(-type => "ro");
 
 GetSecurityGroups();
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader("List of Groups");
 
 print '<table class="CenteredTable MedPaddedTable">';

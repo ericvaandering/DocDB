@@ -7,6 +7,10 @@
   events and sessions moderated by an author or on a topic can be retrieved. All
   of this information is shown on the event page if present.
 
+  Add a new variable HTTP_ENCODING to allow DocDB to say it is unicode or other
+  character encodings. Set automatically to ISO-8859-1 (default Latin alphabet)
+  Change a bunch of header lines to enable this
+
 8.1.4
 
   A bug in an unclosed tag on the topic table was fixed.

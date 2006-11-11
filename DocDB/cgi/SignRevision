@@ -57,7 +57,7 @@ $Password =~ s/\s+//g;
 
 # Start the page
    
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Document Signature","",-scripts => ["PopUps"]);
 
 &GetSecurityGroups;

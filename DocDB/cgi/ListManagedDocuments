@@ -45,7 +45,7 @@ GetSecurityGroups();
 
 ### Start HTML
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader("Managed Documents");
 
 EndPage(@ErrorStack);

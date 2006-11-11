@@ -118,7 +118,7 @@ unless (@ErrorStack) {
 }
   
 if (@ErrorStack || @WarnStack) { # There was a problem. Warn the user.
-  print $query -> header();
+  print $query -> header( -charset => $HTTP_ENCODING );
   DocDBHeader("File Retrieve Results"); 
   EndPage(@ErrorStack);
   

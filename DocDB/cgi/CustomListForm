@@ -192,7 +192,7 @@ if ($Scope eq "All") { # Do inserts to DB, check user's permissions
  
 ### Start HTML   
     
-print $query->header(-cookies => \@Cookies);
+print $query->header( -charset => $HTTP_ENCODING, -cookies => \@Cookies);
 DocDBHeader("Customize Document Lists","",-scripts => ["PopUps","CustomListDisable"]); 
 
 ActionReport();

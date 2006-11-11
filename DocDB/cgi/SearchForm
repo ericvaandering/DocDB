@@ -47,7 +47,7 @@ GetDocTypes();
 
 %params = $query -> Vars;
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
   
 DocDBHeader("$Project Document Database Search","Document Database Search",
             -search => $TRUE, -scripts => ["PopUps","EventChooser"]);

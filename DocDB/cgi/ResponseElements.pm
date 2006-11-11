@@ -81,7 +81,7 @@ sub EndPage (;%) {  # Fatal errors, aborts page if present
   WarnPage();
   if (@ErrorStack) { 
     if ($StartPage) {
-      print $query -> header;
+      print $query -> header( -charset => $HTTP_ENCODING );
       DocDBHeader("Fatal Error");
     }
     ErrorPage();

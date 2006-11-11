@@ -57,7 +57,7 @@ unless ($dbh) {
 }         
 EndPage();
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader("Modified List of Document Types");
 
 unless (CanAdminister()) {

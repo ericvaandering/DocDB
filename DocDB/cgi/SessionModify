@@ -134,7 +134,7 @@ unless ($dbh) {
   push @ErrorStack,$Msg_NoConnect;
 }      
 
-print $query -> header;
+print $query -> header( -charset => $HTTP_ENCODING );
 my $Title       = "";
 my $ButtonTitle = "";
 if ($SingleSession && $Mode eq "new") { 

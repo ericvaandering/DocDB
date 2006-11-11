@@ -67,7 +67,7 @@ unless ($SessionTalkID) {
   push @ErrorStack,"You are must supply a Session Number!";
 }  
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Confirming document match","",-nobody => $TRUE);
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);

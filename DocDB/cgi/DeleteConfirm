@@ -68,7 +68,7 @@ EndPage(@ErrorStack);
 
 $Version = $Documents{$DocumentID}{NVersions}; # Show latest version
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Confirm Deletion of Document $DocumentID");
 
 my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);

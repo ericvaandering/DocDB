@@ -71,7 +71,7 @@ push @cookies, $query->cookie(-name=>'overdate',
 			  -expires=>'+30y',
 			  -path=>$cgi_path);
                           
-print $query->header(-cookie=>\@cookies);
+print $query->header( -charset => $HTTP_ENCODING, -cookie=>\@cookies);
 print "<meta http-equiv=\"Refresh\" content=\"10; URL=$MainPage\">"; ### generates improper html but works for now
 
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);

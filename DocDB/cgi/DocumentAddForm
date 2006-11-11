@@ -83,7 +83,7 @@ SetDateOverride();
 SetAuthorMode();
 SetTopicMode();
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 my @Scripts = ("PopUps","InsertRevisionNote","AuthorMethodDisplay");
 if      ($mode eq "add") {
   DocDBHeader("$Project Document Addition",   "Document Addition",    -scripts => \@Scripts);

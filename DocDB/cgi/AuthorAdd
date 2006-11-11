@@ -45,7 +45,7 @@ $FirstName       = $params{first};
 $MiddleInitials  = $params{middle};
 $LastName        = $params{lastname};
 
-print $query -> header;
+print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader("Author Addition Results");
 
 print "<h3>Here are the results of your attempt to add an author to the $Project document database:</h3>\n";

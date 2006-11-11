@@ -132,7 +132,7 @@ my %RequiredEntries = ();
    $RequiredEntries{ShortDescription} = $TRUE;
    $RequiredEntries{EventGroup}       = $TRUE;
    
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 if ($SetMode eq "create") {
   DocDBHeader("Create a New Event","",-scripts => ["PopUps"]);
 } else {
