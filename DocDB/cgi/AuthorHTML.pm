@@ -307,12 +307,12 @@ sub AuthorsTable {
       print "<ul>\n";
     }  
     my $AuthorLink = AuthorLink($AuthorID, -format => "formal");
-    if ($CheckEvent) {
-      my %Hash = GetEventsByModerator($AuthorID);
-      if (%Hash) {
-        $AuthorLink .= ListByEventLink({ -authorid => $AuthorID });
-      }
-    }    
+#    if ($CheckEvent) {
+#      my %Hash = GetEventsByModerator($AuthorID);
+#      if (%Hash) {
+#        $AuthorLink .= ListByEventLink({ -authorid => $AuthorID });
+#      }
+#    }    
 
     print "<li>$AuthorLink</li>\n";
     $CloseLastColumn = 1;
