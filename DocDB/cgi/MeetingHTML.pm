@@ -99,7 +99,9 @@ sub ConferenceShowAllTalks {
 
 sub SessionEntryForm (%) {
   require "FormElements.pm";
-
+  require "AuthorHTML.pm";
+  require "TopicHTML.pm";
+  
   my %Params = @_;
  
   my $ConferenceID    =   $Params{-conferenceid}     || 0;
@@ -108,16 +110,18 @@ sub SessionEntryForm (%) {
   
   print "<table id=\"SessionEntry\" class=\"MedPaddedTable Alternating CenteredTable\">\n";
   print "<thead>\n";
-  print "<tr><th colspan=\"4\">\n";
-  print &FormElementTitle(-helplink  => "sessions", -helptext  => "Sessions", -nobreak => $TRUE, -nocolon => $TRUE);
+  print "<tr><th colspan=\"5\">\n";
+  print FormElementTitle(-helplink  => "sessions", -helptext  => "Sessions", -nobreak => $TRUE, -nocolon => $TRUE);
   print "</th></tr>\n";
 
   print "<tr>\n";
-   print "<th>",&FormElementTitle(-helplink  => "meetingorder", -helptext  => "Order", -nobreak => $TRUE, -nocolon => $TRUE),                          " or<br/>";
-   print        &FormElementTitle(-helplink  => "sessiondelete", -helptext  => "Delete", -nobreak => $TRUE, -nocolon => $TRUE),                        "</th>\n";
-   print "<th>",&FormElementTitle(-helplink  => "meetingseparator", -helptext  => "Break", -nobreak => $TRUE, -nocolon => $TRUE),                      "</th>\n";
-   print "<th>",&FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Session", -nobreak => $TRUE, -nocolon => $TRUE),                         "</th>\n";
-   print "<th>",&FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Location<br/>Start Date and Time", -nobreak => $TRUE, -nocolon => $TRUE),"</th>\n";
+   print "<th>",FormElementTitle(-helplink  => "meetingorder", -helptext  => "Order", -nobreak => $TRUE, -nocolon => $TRUE),                          "<br/>\n";
+   print        FormElementTitle(-helplink  => "sessiondelete", -helptext  => "Delete", -nobreak => $TRUE, -nocolon => $TRUE),                        "<br/>\n";
+   print        FormElementTitle(-helplink  => "meetingseparator", -helptext  => "Break", -nobreak => $TRUE, -nocolon => $TRUE),                      "</th>\n";
+   print "<th>",FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Session Title<br/>&amp; Description", -nobreak => $TRUE, -nocolon => $TRUE),                         "</th>\n";
+   print "<th>",FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Start Date and Time<br/>Location<br/>Alt. Location", -nobreak => $TRUE, -nocolon => $TRUE),"</th>\n";
+   print "<th>",FormElementTitle(-helplink  => "moderators",  -helptext  => "Moderators", -nobreak => $TRUE, -nocolon => $TRUE),                      "</th>\n";
+   print "<th>",FormElementTitle(-helplink  => "eventopics",  -helptext  => "Topics",     -nobreak => $TRUE, -nocolon => $TRUE),                      "</th>\n";
   print "</tr>\n";
   print "</thead>\n";
   
@@ -139,28 +143,39 @@ sub SessionEntryForm (%) {
       $RowClass = "Even";
     }    
     
+    # FIXME: All of these really should be local and code should be changed
+    my $SessionType = "";
+    my $SessionDefaultLocation = "";
+    my $SessionDefaultAltLocation = "";
+    my @DefaultModeratorIDs       = ();
+    my @DefaultTopicIDs           = ();
     $SessionDefaultOrder = $SessionOrder;  
     if (grep /n/,$MeetingOrderID) {# Erase defaults
       if ($ConferenceID) {
-        &FetchConferenceByConferenceID($ConferenceID);
+        FetchConferenceByConferenceID($ConferenceID);
         $SessionDefaultDateTime = $Conferences{$ConferenceID}{StartDate}." 9:00:00";
       } else {
         require "SQLUtilities.pm";
-        $SessionDefaultDateTime = &SQLNow(-dateonly => $TRUE)." 9:00:00";
+        $SessionDefaultDateTime = SQLNow(-dateonly => $TRUE)." 9:00:00";
       }
-      $SessionDefaultLocation    = "";
       $SessionDefaultTitle       = "";
       $SessionDefaultDescription = "";
       $SessionSeparatorDefault   = "";
     } else { # Key off Meeting Order IDs, do differently for Sessions and Separators
       if ($MeetingOrders{$MeetingOrderID}{SessionID}) {
+        $SessionType = "Session";
         my $SessionID = $MeetingOrders{$MeetingOrderID}{SessionID};
-	$SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
-        $SessionDefaultLocation    = $Sessions{$SessionID}{Location}    || "";
-	$SessionDefaultTitle       = $Sessions{$SessionID}{Title}       || "";
-	$SessionDefaultDescription = $Sessions{$SessionID}{Description} || "";
-	$SessionSeparatorDefault   = "No";
+	$SessionDefaultDateTime     = $Sessions{$SessionID}{StartTime};
+        $SessionDefaultLocation     = $Sessions{$SessionID}{Location}    || "";
+        $SessionDefaultAltLocation  = $Sessions{$SessionID}{AltLocation} || "";
+	$SessionDefaultTitle        = $Sessions{$SessionID}{Title}       || "";
+	$SessionDefaultDescription  = $Sessions{$SessionID}{Description} || "";
+        $SessionDefaultShowAllTalks = $Sessions{$SessionID}{ShowAllTalks};
+	$SessionSeparatorDefault    = "No";
+        @DefaultModeratorIDs        = @{$Sessions{$SessionID}{Moderators}};
+        @DefaultTopicIDs            = @{$Sessions{$SessionID}{Topics}};
       } elsif ($MeetingOrders{$MeetingOrderID}{SessionSeparatorID}) {
+        $SessionType = "Break";
         my $SessionSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
 	$SessionDefaultDateTime    = $SessionSeparators{$SessionSeparatorID}{StartTime};
         $SessionDefaultLocation    = $SessionSeparators{$SessionSeparatorID}{Location}    || "";
@@ -190,24 +205,57 @@ sub SessionEntryForm (%) {
       $query -> param('meetingorderid',$MeetingOrderID); #FIXME: Try to remove
       print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
     }
-    &SessionOrder;                       print "<br/>\n";
-    &SessionModifyLink($MeetingOrderID); print "<br/>\n";
-    &SessionDelete($MeetingOrderID);   
+    SessionOrder();                     print "<br/>\n";
+    SessionModifyLink($MeetingOrderID); print "<br/>\n";
+    SessionDelete($MeetingOrderID);     print "<br/>\n";
+    SessionSeparator($MeetingOrderID);  
+    print "</td>\n";
+    print "<td>\n"; SessionTitle($SessionDefaultTitle); print "</td>\n";
+    print "<td>\n";     
+    DateTimePulldown(-name    => "session", -oneline => $TRUE, -onetime  => $TRUE, -granularity => 15,
+                     -default => $SessionDefaultDateTime,      -required => $RequiredEntries{StartDate} );
     print "</td>\n";
 
-    print "<td>\n"; &SessionSeparator($MeetingOrderID);  print "</td>\n";
-    print "<td>\n"; &SessionTitle($SessionDefaultTitle); print "</td>\n";
-    print "<td>\n"; &SessionLocation;                    print "</td>\n";
-
+    if ($SessionType ne "Break") {
+      print '<td rowspan="2">';
+      AuthorScroll(-helptext => "",    -name    => "moderators-$MeetingOrderID", 
+                   -multiple => $TRUE, -default => \@DefaultModeratorIDs,);
+      print "</td>\n";
+      print '<td rowspan="2">';
+      TopicScroll({-itemformat => "short",                         -helplink => "",
+                   -default    => \@DefaultTopicIDs,               -helptext => "",
+                   -name       => "sessiontopics-$MeetingOrderID", -multiple => $TRUE,});
+      print "</td>\n";
+    } else {
+      print '<td rowspan="2">&nbsp;</td>';
+      print '<td rowspan="2">&nbsp;</td>';
+    }
     print "</tr>\n";
     print "<tr class=\"$RowClass\">\n";
 
-    print "<td>&nbsp;</td>\n";
-    print "<td>\n";              &SessionDescription;                 print "</td>\n";
-    print "<td>\n";    
-    &DateTimePulldown(-name    => "session", -oneline => $TRUE, -onetime  => $TRUE, -granularity => 15,
-                      -default => $SessionDefaultDateTime,      -required => $RequiredEntries{StartDate} );
+    print "<td>\n";
+    TextArea(-name     => 'sessiondescription',       -columns  => 35,
+             -default  => $SessionDefaultDescription, -rows     => 5,
+             -helplink => '',                         -helptext => '', );
     print "</td>\n";
+    print "<td><div>\n";    
+    TextField(-default  => $SessionDefaultLocation, 
+              -name     => "sessionlocation", -helplink  => "", -helptext => "", 
+              -size     => 35,                -maxlength => 128, );       
+    if ($SessionType ne "Break") {
+      print "</div><div>\n";
+      TextField(-default  => $SessionDefaultAltLocation, 
+                -name     => "sessionaltlocation", -helplink  => "", -helptext => "", 
+                -size     => 35,                   -maxlength => 128, );
+      print "</div><div>\n";
+      print FormElementTitle(-helplink  => "meetshowall", -helptext  => "Show All Talks?", -nobreak => $TRUE, -nocolon => $TRUE);
+      if ($SessionDefaultShowAllTalks) {
+        print $query -> checkbox(-name => "sessionshowall", -value => $MeetingOrderID, -label => '', -checked => 'Yes');
+      } else {
+        print $query -> checkbox(-name => "sessionshowall", -value => $MeetingOrderID, -label => '');
+      }
+    }  
+    print "</div></td>\n";
 
     print "</tr>\n";
     print "</tbody>\n";
@@ -225,9 +273,9 @@ sub SessionSeparator ($) {
   my ($MeetingOrderID) = @_;
 
   if ($SessionSeparatorDefault eq "Yes") {
-    print "Yes\n";	      
+    print "Break\n";	      
   } elsif ($SessionSeparatorDefault eq "No") {
-    print "No\n";	      
+    print "\n";	      
   } else {
     print $query -> checkbox(-name => "sessionseparator", -value => "$MeetingOrderID", -label => 'Break');
   }
@@ -265,12 +313,6 @@ sub SessionDescription {
                             -columns => 40, -rows => 3);
 }
 
-sub SessionLocation {
-  $query -> param('sessionlocation',$SessionDefaultLocation);
-  print $query -> textfield (-name => 'sessionlocation', -size => 30, -maxlength => 128, 
-                             -default => $SessionDefaultLocation);
-};
-
 sub SessionLink (%) {
   my %Params = @_;
   
@@ -280,6 +322,11 @@ sub SessionLink (%) {
 
   require "ResponseElements.pm";
   require "SQLUtilities.pm";
+  require "MeetingSQL.pm";
+
+  FetchSessionByID($SessionID);
+  my $EventID = $Sessions{$SessionID}{ConferenceID};
+  FetchConferenceByConferenceID($EventID);
 
   my $URL = "$DisplayMeeting?sessionid=$SessionID";
   
@@ -289,10 +336,10 @@ sub SessionLink (%) {
     $ToolTip = EuroTimeHM($Sessions{$SessionID}{StartTime})." ".
                EuroDate($Sessions{$SessionID}{StartTime});
   } else {
-    if ($Conferences{$Sessions{$SessionID}{ConferenceID}}{Title} eq $Sessions{$SessionID}{Title}) {
+    if ($Conferences{$EventID}{Title} eq $Sessions{$SessionID}{Title}) {
       $ToolTip = $Sessions{$SessionID}{Title};
     } else {  
-      $ToolTip = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title}." - ".$Sessions{$SessionID}{Title};
+      $ToolTip = $Conferences{$EventID}{Title}." - ".$Sessions{$SessionID}{Title};
     }
   }
   if ($Sessions{$SessionID}{Location}) {
@@ -301,17 +348,17 @@ sub SessionLink (%) {
   # Would like to use newlines instead of -. See mozilla bugs Bug 67127 and 45375
   
   if ($Format eq "full") {
-    if ($Conferences{$Sessions{$SessionID}{ConferenceID}}{Title} && $Sessions{$SessionID}{Title} &&
-        $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title} ne $Sessions{$SessionID}{Title}) { 
-      $Text = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title}.":".$Sessions{$SessionID}{Title};
+    if ($Conferences{$EventID}{Title} && $Sessions{$SessionID}{Title} &&
+        $Conferences{$EventID}{Title} ne $Sessions{$SessionID}{Title}) { 
+      $Text = $Conferences{$EventID}{Title}.":".$Sessions{$SessionID}{Title};
     } else {
-      $Text = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title};
+      $Text = $Conferences{$EventID}{Title};
     }  
   } else {
     if ($Text = $Sessions{$SessionID}{Title}) {
       $Text = $Sessions{$SessionID}{Title};
     } else {
-      $Text = $Conferences{$Sessions{$SessionID}{ConferenceID}}{Title};
+      $Text = $Conferences{$EventID}{Title};
     }   
   }
   
@@ -363,6 +410,7 @@ sub PrintSession (%) {
   
   my $SessionID  = $Params{-sessionid};
   my $SkipHeader = $Params{-skipheader} || $FALSE;
+  my $OnlyTalks  = $Params{-onlytalks}  || $FALSE;
 
   require "Sorts.pm";
   require "TalkSQL.pm";
@@ -373,7 +421,7 @@ sub PrintSession (%) {
   require "DocumentHTML.pm";
   require "DocumentUtilities.pm";
   
-  unless ($SkipHeader) {
+  unless ($SkipHeader || $OnlyTalks) {
     PrintSessionHeader($SessionID);
   }
   
@@ -406,9 +454,15 @@ sub PrintSession (%) {
     my %FieldList = PrepareFieldList(%FieldListOptions);
     DocumentTable(-sessionorderids => \@SessionOrderIDs, -fieldlist => \%FieldList);
   } else {
-    print "<h4>No talks in agenda</h4>\n";
+    if ($OnlyTalks) {
+      print "<strong>No agenda yet</strong>\n";
+    } else {
+      print "<h4>No talks in agenda</h4>\n";
+    }  
   }  
-  print "<hr/>\n"; 
+  unless ($OnlyTalks) {
+    print "<hr/>\n"; 
+  }  
 }
 
 sub PrintSessionSeparator ($) {
@@ -614,7 +668,7 @@ sub PrintEventRightSidebar ($) {
   
 }
 
-sub PrintEventHeader ($) {
+sub EventHeader ($) {
   my ($ArgRef) = @_;
   my $EventID     = exists $ArgRef->{-eventid}     ? $ArgRef->{-eventid}     : 0;
   my $SessionID   = exists $ArgRef->{-sessionid}   ? $ArgRef->{-sessionid}   : 0;
@@ -632,26 +686,31 @@ sub PrintEventHeader ($) {
   my %SkipFields   = ();
   my %RenameFields = ();
   my %Fields       = ();
-  my @Fields       = ();
+  my @Fields       = ("Event","Full Title","Event Dates","Event Location","Alt. Event Location",
+                      "Event Topic(s)","Event Moderator(s)","Date &amp; Time","Location","Alt. Location",
+                      "External URL","Event Info","Event Wrapup");
     
   if ($DisplayMode eq "SingleSession") {
-    %SkipFields   = ( "Event Dates"  => $TRUE, "Event Location" => $TRUE,);
+    @Fields       = ("Full Title","Date &amp; Time","Location","Alt. Location",
+                     "Event Topic(s)","Event Moderator(s)","External URL","Event Info");
     %RenameFields = ( "Session Info" => "Event Info",);
   }
   if ($DisplayMode eq "Session" || $DisplayMode eq "Separator") {
-    %SkipFields   = ( "Event Info"  => $TRUE, "Event Wrapup" => $TRUE,);
+      @Fields       = ("Session Info","Date &amp; Time","Location","Alt. Location",
+                       "Session Topic(s)","Session Moderator(s)",
+                       "Event","Event Dates","Event Location","Alt. Event Location",
+                       "Event Topic(s)","Event Moderator(s)",
+                       "External URL"
+                      );
   }
   
   if ($DisplayMode eq "Session" || $DisplayMode eq "Separator") {
-    push @Fields,"Event";
     $Fields{"Event"} = $EventTitle;
   } else {
-    push @Fields,"Full Title";
     $Fields{"Full Title"} = $EventTitle;
   }
   
   if ($Conferences{$EventID}{StartDate}) {
-    push @Fields,"Event Dates";
     if ($Conferences{$EventID}{StartDate} ne $Conferences{$EventID}{EndDate}) {
       $Fields{"Event Dates"} = EuroDate($Conferences{$EventID}{StartDate}).
                         " to ".EuroDate($Conferences{$EventID}{EndDate});
@@ -661,69 +720,99 @@ sub PrintEventHeader ($) {
   }  
 
   if ($Conferences{$EventID}{Location}) {
-    push @Fields,"Event Location";
     $Fields{"Event Location"} = $Conferences{$EventID}{Location};
   }  
 
+  if ($Conferences{$EventID}{AltLocation}) {
+    $Fields{"Alt. Event Location"} = $Conferences{$EventID}{AltLocation};
+  }  
+
+  if (@{$Conferences{$EventID}{Topics}}) {
+    $Fields{"Event Topic(s)"} = TopicListByID({ 
+         -linktype   => "event", -topicids    => $Conferences{$EventID}{Topics}, 
+         -listformat => "br",    -listelement => "long", -sortby => "provenance", 
+        });
+  }  
+
+  if (@{$Conferences{$EventID}{Moderators}}) {
+    $Fields{"Event Moderator(s)"} = AuthorListByID({ 
+        -linktype   => "event", -authorids => $Conferences{$EventID}{Moderators},
+        -listformat => "br",    -sortby    => "name",
+       });
+  }  
+
   if ($SessionStartTime) {
-    push @Fields,"Date &amp; Time";
     $Fields{"Date &amp; Time"} = EuroDate($SessionStartTime)." at ".EuroTimeHM($SessionStartTime);
   }  
 
   if ($SeparatorStartTime) {
-    push @Fields,"Date &amp; Time";
     $Fields{"Date &amp; Time"} = EuroDate($SeparatorStartTime)." at ".EuroTimeHM($SeparatorStartTime);
   }  
 
   if ($Sessions{$SessionID}{Location}) {
-    push @Fields,"Location";
     $Fields{"Location"} = $Sessions{$SessionID}{Location};
   }
   
+  if ($Sessions{$SessionID}{AltLocation}) {
+    $Fields{"Alt. Location"} = $Sessions{$SessionID}{AltLocation};
+  }
+  
+  if (@{$Sessions{$SessionID}{Topics}}) {
+    $Fields{"Session Topic(s)"} = TopicListByID({ 
+        -linktype   => "event", -topicids    => $Sessions{$SessionID}{Topics}, 
+        -listformat => "br",    -listelement => "long", -sortby => "provenance",  
+       });
+  }  
+
+  if (@{$Sessions{$SessionID}{Moderators}}) {
+    $Fields{"Session Moderator(s)"} = AuthorListByID({ 
+        -linktype   => "event", -authorids => $Sessions{$SessionID}{Moderators},
+        -listformat => "br",    -sortby    => "name",
+       });
+  }  
+
   if ($Conferences{$EventID}{URL}) {
-    push @Fields,"External URL";
     $Fields{"External URL"} = "<a href=\"$Conferences{$EventID}{URL}\">$Conferences{$EventID}{Title}</a>";
   }
   
   if ($Conferences{$EventID}{Preamble}) {
-    push @Fields,"Event Info";
     $Fields{"Event Info"} = Paragraphize($Conferences{$EventID}{Preamble});
   }
 
   if ($Conferences{$EventID}{Epilogue} && $SeparatorID) {
-    push @Fields,"Event Wrapup";
     $Fields{"Event Wrapup"} = Paragraphize($Conferences{$EventID}{Epilogue});
   }
 
   if ($Sessions{$SessionID}{Description}) {
-    push @Fields,"Session Info";
     $Fields{"Session Info"} = URLify(AddLineBreaks($Sessions{$SessionID}{Description}));
   }
 
   if ($SessionSeparators{$SeparatorID}{Description}) {
-    push @Fields,"Session Info";
     $Fields{"Session Info"} = URLify(AddLineBreaks($SessionSeparators{$SeparatorID}{Description}));
   }
 
+  my $HTML;
+
   if (@Fields) {
-    print '<table class="LeftHeader Alternating CenteredTable MedPaddedTable" id="EventSummary">';
+    $HTML .= '<table class="LeftHeader Alternating CenteredTable MedPaddedTable" id="EventSummary">';
     my $Row = 0;
     foreach my $Field (@Fields) {
       if ($SkipFields{$Field}) {next;}
-      ++$Row; 
-      my $RowClass = ("Even","Odd")[$Row % 2];
-      print "<tr class=\"$RowClass\">\n";
       my $Text = $Fields{$Field};
       if ($RenameFields{$Field}) {
         $Field = $RenameFields{$Field};
       }  
-      print "<th>$Field:</th>\n";
-      print "<td>$Text</td>\n";
-      print "</tr>";
+      unless ($Text) {next;}
+      ++$Row; 
+      my $RowClass = ("Even","Odd")[$Row % 2];
+      $HTML .= "<tr class=\"$RowClass\">\n";
+      $HTML .= "<th>$Field:</th>\n";
+      $HTML .= "<td>$Text</td>\n";
+      $HTML .= "</tr>";
     }
-    print "</table>\n";
+    $HTML .=  "</table>\n";
   }
-
+  return $HTML;
 }
 
 sub PrintMeetingEpilogue ($) {
@@ -740,8 +829,10 @@ sub PrintMeetingEpilogue ($) {
   }
 }
 
-sub PrintSessionInfo ($) {
-  my ($SessionID) = @_;
+sub SessionInfo ($) {
+  my ($SessionID,$ArgRef) = @_;
+  
+  my $RowClass = exists $ArgRef->{-rowclass} ? $ArgRef->{-rowclass} : "none";
   
   require "TalkSQL.pm";
   require "SQLUtilities.pm";
@@ -749,13 +840,26 @@ sub PrintSessionInfo ($) {
   FetchSessionByID($SessionID);
  
   # DocumentList puts a class on every cell, this only on Date
- 
-  print "<td><a href=\"$DisplayMeeting?sessionid=$SessionID\">";
-  print      "$Sessions{$SessionID}{Title}</a></td>\n";
-  print "<td class=\"Date\">",&EuroDateHM($Sessions{$SessionID}{StartTime}),"</td>\n";
-  print "<td>",$Sessions{$SessionID}{Description}           ,"</td>\n";
-  print "<td>",$Sessions{$SessionID}{Location}              ,"</td>\n";
-}
+
+  my $HTML = ""; 
+  $HTML .= "<tr class=\"$RowClass\">"; 
+  $HTML .= '<td class="Date">'.EuroDateHM($Sessions{$SessionID}{StartTime}).'</td>';
+  $HTML .= "<td><a href=\"$DisplayMeeting?sessionid=$SessionID\">";
+  $HTML .=     "$Sessions{$SessionID}{Title}</a></td>";
+  $HTML .= '<td>'.$Sessions{$SessionID}{Description}           .'</td>';
+  $HTML .= '<td>'.$Sessions{$SessionID}{Location}              .'</td>';
+  $HTML .= '<td>'.TopicListByID({ 
+              -linktype   => "event", -topicids    => $Sessions{$SessionID}{Topics}, 
+              -listformat => "br",    -listelement => "short", -sortby => "name",  
+            }).'</td>';
+  $HTML .= '<td>'.AuthorListByID({
+              -linktype   => "event", -authorids => $Sessions{$SessionID}{Moderators},
+              -listformat => "br",    -sortby    => "name",
+            }).'</td>';
+  $HTML .= '</tr>';
+
+  return PrettyHTML($HTML);          
+} 
 
 sub PrintSessionSeparatorInfo ($) {
   my ($SessionSeparatorID) = @_;
@@ -768,10 +872,11 @@ sub PrintSessionSeparatorInfo ($) {
 
   # DocumentList puts a class on every cell, this only on Date
  
-  print "<td>$Link</td>\n";
   print "<td class=\"Date\">",EuroDateHM($SessionSeparators{$SessionSeparatorID}{StartTime}),"</td>\n";
+  print "<td>$Link</td>\n";
   print "<td>",$SessionSeparators{$SessionSeparatorID}{Description},"</td>\n";
   print "<td>",$SessionSeparators{$SessionSeparatorID}{Location},"</td>\n";
+  print '<td>&nbsp;</td><td>&nbsp;</td>'; # Topics and Moderators
 }
 
 sub EventGroupLink (%) {
@@ -990,14 +1095,15 @@ sub EventsByGroup (%) {
 sub EventGroupSelect ($) {
   my ($ArgRef) = @_;
 
-  my $Disabled = exists $ArgRef->{-disabled} ?   $ArgRef->{-disabled} : "0";
+  my $Disabled = exists $ArgRef->{-disabled} ?   $ArgRef->{-disabled} : $FALSE;
   my $Format   = exists $ArgRef->{-format}   ?   $ArgRef->{-format}   : "short";
   my $HelpLink = exists $ArgRef->{-helplink} ?   $ArgRef->{-helplink} : "eventgroups";
   my $HelpText = exists $ArgRef->{-helptext} ?   $ArgRef->{-helptext} : "Event Groups";           
-  my $Multiple = exists $ArgRef->{-multiple} ?   $ArgRef->{-multiple} : "0";
+  my $Multiple = exists $ArgRef->{-multiple} ?   $ArgRef->{-multiple} : $FALSE;
   my $Name     = exists $ArgRef->{-name}     ?   $ArgRef->{-name}     : "eventgroups";
+  my $Size     = exists $ArgRef->{-size}     ?   $ArgRef->{-size}     : 10;
   my $OnChange = exists $ArgRef->{-onchange} ?   $ArgRef->{-onchange} : undef;
-  my $Required = exists $ArgRef->{-required} ?   $ArgRef->{-required} :  "0";
+  my $Required = exists $ArgRef->{-required} ?   $ArgRef->{-required} : $FALSE;
   my @Defaults = exists $ArgRef->{-default}  ? @{$ArgRef->{-default}} : ();
 
   require "FormElements.pm";
@@ -1027,7 +1133,7 @@ sub EventGroupSelect ($) {
   
   print FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText, -required => $Required);
   print $query -> scrolling_list(-name     => $Name,     -values  => \@EventGroupIDs, 
-                                 -labels   => \%Labels,  -size    => 10, 
+                                 -labels   => \%Labels,  -size    => $Size, 
                                  -multiple => $Multiple, -default => \@Defaults,
                                  %Options);
 }
@@ -1153,6 +1259,28 @@ sub EventDisplayButton ($) {
   print $query -> hidden(-name => "eventid", -default => $EventID);
   print $query -> submit (-value => "Change Display");
   print "\n</div>\n",$query -> endform,"\n";
+}
+
+sub ListByEventLink {
+  my ($ArgRef) = @_;
+  
+  my $AuthorID = exists $ArgRef->{-authorid} ? $ArgRef->{-authorid} : 0;
+  my $TopicID  = exists $ArgRef->{-topicid}  ? $ArgRef->{-topicid}  : 0;
+  
+  require "ResponseElements.pm";
+  
+  my $Link;
+  if ($AuthorID) {
+    $Link .= '<a href="'.$ListEventsBy.'?authorid='.$AuthorID.'" ';
+  } elsif ($TopicID) {
+    $Link .= '<a href="'.$ListEventsBy.'?topicid='.$TopicID.'" ';
+  } 
+  $Link .= 'title="List events"> ';
+  $Link .= ImageSrc({ -alt => "Event", -image => "EventIcon" }); 
+  
+  $Link .= '</a>';
+
+  return $Link;
 }
 
 1;

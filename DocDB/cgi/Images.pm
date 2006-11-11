@@ -1,3 +1,10 @@
+#
+# Description: Configuration file for images used by DocCB. Can
+#              be extended to allow project images i
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
 # Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
@@ -15,6 +22,8 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-$DocDBVersion = "8.2.0";
+%ImageNames = ();
+
+%ImageNames = ("EventIcon" => "datum_darker.gif");
 
 1;

@@ -82,6 +82,7 @@ if ($Days) {
 ### FIXME: Add Topic lookup
 
   require "TopicSQL.pm";
+  require "MeetingSQL.pm";
   require "TopicUtilities.pm";
   require "TopicHTML.pm";
   require "Utilities.pm";
@@ -115,14 +116,19 @@ if ($Days) {
     $Message .= "and sub-topics ";
   }
   $Message .= "are available:"; 
+  my %Hash = GetEventsByTopic($TopicID);
+  if (%Hash) {
+    $Message .= '<br/>(List <a href="'.$ListEventsBy.'?topicid='.$TopicID.'">events</a> on '.$Topics{$TopicID}{Long}.')';
+  }
 } elsif ($AuthorID) {
 
 ### Author
   require "AuthorSQL.pm";
   require "AuthorHTML.pm";
+  require "MeetingSQL.pm";
 
-  &GetInstitutions;
-  &FetchAuthor($AuthorID);
+  GetInstitutions();
+  FetchAuthor($AuthorID);
   unless ($Authors{$AuthorID}{LastName}) {
     push @ErrorStack,$Msg_AuthorInvalid;
   }
@@ -130,11 +136,15 @@ if ($Days) {
   $FieldListOptions{-authorid} = $AuthorID; # (Does nothing right now)
   $Title   = "Document List by Author";  
   
-  my $Link = &AuthorLink($AuthorID);
+  my $Link = AuthorLink($AuthorID);
   
   $Message = "<span class=\"Highlight\">$Link of $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG}</span>
               is listed as an author on the following documents:";
-  @DocumentIDs = &GetAuthorDocuments($AuthorID);  
+  my %Hash = GetEventsByModerator($AuthorID);
+  if (%Hash) {
+    $Message .= '<br/>(List <a href="'.$ListEventsBy.'?authorid='.$AuthorID.'">events</a> moderated by '.$Authors{$AuthorID}{FULLNAME}.')';
+  }
+  @DocumentIDs = GetAuthorDocuments($AuthorID);  
 } elsif ($EventID) {
 
 ### Event

@@ -69,11 +69,14 @@ my $EndDay             = $params{endday};
 my $MeetPreamble       = $params{meetpreamble};
 my $MeetEpilogue       = $params{meetepilogue};
 my $Location           = $params{location};
+my $AltLocation        = $params{altlocation};
 my $URL                = $params{url};
 my $ShowAllTalks       = $params{meetshowall};
 
 my @MeetingViewGroupIDs   = split /\0/,$params{meetingviewgroups};
 my @MeetingModifyGroupIDs = split /\0/,$params{meetingmodifygroups};
+my @MeetingTopicIDs       = split /\0/,$params{topics};
+my @MeetingModeratorIDs   = split /\0/,$params{moderators};
 
 my @SessionYears         = split /\0/,$params{sessionyear};
 my @SessionMonths        = split /\0/,$params{sessionmonth};
@@ -82,10 +85,12 @@ my @SessionHours         = split /\0/,$params{sessiontime};
 my @SessionOrders        = split /\0/,$params{sessionorder};
 my @RawSessionSeparators = split /\0/,$params{sessionseparator};
 my @SessionLocations     = split /\0/,$params{sessionlocation};
+my @SessionAltLocations  = split /\0/,$params{sessionaltlocation};
 my @SessionTitles        = split /\0/,$params{sessiontitle};
 my @SessionDescriptions  = split /\0/,$params{sessiondescription};
 my @MeetingOrderIDs      = split /\0/,$params{meetingorderid};
 my @SessionDeletes       = split /\0/,$params{sessiondelete};
+my @SessionShowAlls      = split /\0/,$params{sessionshowall};
 
 my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
 my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
@@ -129,12 +134,12 @@ my %RequiredEntries = ();
    
 print $query->header;
 if ($SetMode eq "create") {
-  &DocDBHeader("Create a New Event","",-scripts => ["PopUps"]);
+  DocDBHeader("Create a New Event","",-scripts => ["PopUps"]);
 } else {
-  &DocDBHeader("Modify an Event","",-scripts => ["PopUps"]);
+  DocDBHeader("Modify an Event","",-scripts => ["PopUps"]);
 }
   
-&EndPage(@ErrorStack);
+EndPage(@ErrorStack);
 
 # Security checks
 
@@ -157,10 +162,10 @@ if ($Mode eq "create" || $Mode eq "modify") {
   unless ($EventGroupID) {
     push @ErrorStack,"You must select a group for this event.";
   }
-  unless ($EndTime   && &ValidDate($EndDay,$ReverseAbrvMonth{$EndMonth},$EndYear)) {
+  unless ($EndTime   && ValidDate($EndDay,$ReverseAbrvMonth{$EndMonth},$EndYear)) {
     push @ErrorStack,"The event ending date is not valid.";
   }
-  unless ($StartTime && &ValidDate($StartDay,$ReverseAbrvMonth{$StartMonth},$StartYear)) {
+  unless ($StartTime && ValidDate($StartDay,$ReverseAbrvMonth{$StartMonth},$StartYear)) {
     push @ErrorStack,"The event starting date is not valid.";
   }
   if ($StartTime > $EndTime) {
@@ -169,7 +174,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
 }
 
 if ($Mode eq "modify") { 
-  &FetchConferenceByConferenceID($ConferenceID);
+  FetchConferenceByConferenceID($ConferenceID);
   unless ($Conferences{$ConferenceID}{TimeStamp}) {
     push @ErrorStack,"No such event exists.";
   }  
@@ -188,7 +193,7 @@ foreach my $CheckTitle (@CheckTitles) { # Check session times
   my $Day   = shift @CheckDays  ;
   if ($CheckTitle) {
     my $Time = timelocal(0,0,0,$Day,$ReverseAbrvMonth{$Month}-1,$Year);
-    unless ($Time && &ValidDate($Day,$ReverseAbrvMonth{$Month},$Year)) {
+    unless ($Time && ValidDate($Day,$ReverseAbrvMonth{$Month},$Year)) {
       push @ErrorStack,"The starting date for $CheckTitle is not valid.";
     }
     if ($Time > $EndTime) {
@@ -206,42 +211,36 @@ my $SessionsModified = 0;
 
 if ($ConferenceID) {
   require "MeetingSQL.pm";
-                            &FetchConferenceByConferenceID($ConferenceID);
-  my @SessionIDs          = &FetchSessionsByConferenceID($ConferenceID);
-  my @SessionSeparatorIDs = &FetchSessionSeparatorsByConferenceID($ConferenceID);
-  my @MeetingOrderIDs     = &FetchMeetingOrdersByConferenceID($ConferenceID);
+                            FetchConferenceByConferenceID($ConferenceID);
+  my @SessionIDs          = FetchSessionsByConferenceID($ConferenceID);
+  my @SessionSeparatorIDs = FetchSessionSeparatorsByConferenceID($ConferenceID);
+  my @MeetingOrderIDs     = FetchMeetingOrdersByConferenceID($ConferenceID);
 }     
 
 if ($Mode eq "create" || $Mode eq "modify") {
   if ($Mode eq "create") { 
-    my $ConferenceInsert = $dbh->prepare(
-     "insert into Conference ".
-     "(ConferenceID, EventGroupID, Location, URL, ShowAllTalks, StartDate, EndDate, ".
-     " Preamble, Epilogue, Title, LongDescription) ". 
-     "values (0,?,?,?,?,?,?,?,?,?,?)");
-    $ConferenceInsert -> execute($EventGroupID,$Location,$URL,$ShowAllTalks,
-                                 $StartDate,$EndDate,$MeetPreamble,
-                                 $MeetEpilogue,$Short,$Long); 
-    $ConferenceID = $ConferenceInsert -> {mysql_insertid}; # Works with MySQL only
+    $ConferenceID = InsertEvent({
+        -eventgroupid     => $EventGroupID,         -location     => $Location, 
+        -altlocation      => $AltLocation,          -url          => $URL, 
+        -startdate        => $StartDate,            -enddate      => $EndDate,
+        -preamble         => $MeetPreamble,         -epilogue     => $MeetEpilogue,
+        -shortdescription => $Short,                -showalltalks => $ShowAllTalks,
+        -longdescription  => $Long, 
+        -topicids         => \@MeetingTopicIDs,     -moderatorids   => \@MeetingModeratorIDs , 
+        -viewgroupids     => \@MeetingViewGroupIDs, -modifygroupids => \@MeetingModifyGroupIDs, });
     push @ActionStack,"Created new event: $Short";
   } elsif ($Mode eq "modify") {
-    my $ConferenceUpdate = $dbh->prepare(
-     "update Conference set ".
-            "EventGroupID=?, Location=?, URL=?, ShowAllTalks=?, StartDate=?, EndDate=?, ".
-            "Preamble=?, Epilogue=?, Title=?, LongDescription=? ". 
-     "where ConferenceID=?");
-    $ConferenceUpdate -> execute($EventGroupID,$Location,$URL,$ShowAllTalks,
-                                 $StartDate,$EndDate,$MeetPreamble,
-                                 $MeetEpilogue,$Short,$Long,$ConferenceID); 
+    UpdateEvent({ 
+        -eventid          => $ConferenceID,         -eventgroupid    => $EventGroupID,  
+        -location         => $Location,             -altlocation     => $AltLocation,
+        -url              => $URL,                  -startdate       => $StartDate, 
+        -enddate          => $EndDate,              -showalltalks    => $ShowAllTalks,
+        -preamble         => $MeetPreamble,         -epilogue        => $MeetEpilogue,
+        -shortdescription => $Short,                -longdescription => $Long, 
+        -topicids         => \@MeetingTopicIDs,     -moderatorids    => \@MeetingModeratorIDs, 
+        -viewgroupids     => \@MeetingViewGroupIDs, -modifygroupids  => \@MeetingModifyGroupIDs, });
     push @ActionStack,"Modified event: $Short";
   }
-
-  &MeetingSecurityUpdate(-mode         => 'access',
-                         -conferenceid => $ConferenceID, 
-                         -groupids     => \@MeetingViewGroupIDs);
-  &MeetingSecurityUpdate(-mode         => 'modify',
-                         -conferenceid => $ConferenceID, 
-                         -groupids     => \@MeetingModifyGroupIDs);
 
 # Repack check boxes into hashes
 
@@ -252,6 +251,11 @@ if ($Mode eq "create" || $Mode eq "modify") {
   my %SessionDeleteFlags = ();
   foreach my $SessionDelete (@SessionDeletes) { 
     $SessionDeleteFlags{$SessionDelete} = 1; 
+  }  
+  my %SessionShowAllFlags = ();
+  foreach my $SessionShowAll (@SessionShowAlls) { 
+    $SessionShowAllFlags{$SessionShowAll} = 1; 
+    push @DebugStack,"Setting $SessionShowAll to true";
   }  
   
 # Re-sort session orders
@@ -273,19 +277,23 @@ if ($Mode eq "create" || $Mode eq "modify") {
 # Loop over sessions and insert
   
   foreach my $SessionOrder (@SessionOrders) {
-    my $SessionYear        = shift @SessionYears         ;
-    my $SessionMonth       = shift @SessionMonths        ;
-    my $SessionDay         = shift @SessionDays          ;
-    my $SessionHour        = shift @SessionHours         ;
-    my $SessionLocation    = shift @SessionLocations     ;
-    my $SessionTitle       = shift @SessionTitles        ;
-    my $SessionDescription = shift @SessionDescriptions  ;
-    my $MeetingOrderID     = shift @MeetingOrderIDs ;
+    my $SessionYear        = shift @SessionYears          ;
+    my $SessionMonth       = shift @SessionMonths         ;
+    my $SessionDay         = shift @SessionDays           ;
+    my $SessionHour        = shift @SessionHours          ;
+    my $SessionLocation    = shift @SessionLocations      ;
+    my $SessionAltLocation = shift @SessionAltLocations   ;
+    my $SessionTitle       = shift @SessionTitles         ;
+    my $SessionDescription = shift @SessionDescriptions   ;
+    my $MeetingOrderID     = shift @MeetingOrderIDs       ;
     my $SessionNewOrder    = $SessionOrders{$SessionOrder};
     my $SessionDate        = "$SessionYear-$ReverseAbrvMonth{$SessionMonth}-$SessionDay $SessionHour:00";
 
     my $SessionSeparatorID = 0;
     my $SessionID          = 0;
+
+    my @TopicIDs     = split /\0/,$params{"sessiontopics-$MeetingOrderID"};
+    my @ModeratorIDs = split /\0/,$params{"moderators-$MeetingOrderID"};
 
     # Key on MeetingOrderID to see if we are going to insert or update.	
     if (grep /n/,$MeetingOrderID) {
@@ -302,12 +310,13 @@ if ($Mode eq "create" || $Mode eq "modify") {
           ++$SessionsModified;
 	} else {
           # Create a new session
-          my $SessionInsert = $dbh -> prepare(
-           "insert into Session ".
-                  "(SessionID, ConferenceID, StartTime, Location, Title, Description) ". 
-           "values (0,?,?,?,?,?)");
-          $SessionInsert          -> execute($ConferenceID,$SessionDate,$SessionLocation,$SessionTitle,$SessionDescription);
-          $SessionID = $SessionInsert -> {mysql_insertid}; # Works with MySQL only
+          $SessionID = InsertSession({ 
+              -eventid      => $ConferenceID,    -date        => $SessionDate,
+              -title        => $SessionTitle,    -description => $SessionDescription,
+              -location     => $SessionLocation, -altlocation => $SessionAltLocation, 
+              -moderatorids => \@ModeratorIDs,   -topicids    => \@TopicIDs,
+              -showalltalks => $SessionShowAllFlags{$MeetingOrderID},
+          });
           push @ActionStack,"Created session: $SessionTitle";
           ++$SessionsModified;
 	}
@@ -326,10 +335,10 @@ if ($Mode eq "create" || $Mode eq "modify") {
 
       if ($SessionDeleteFlags{$MeetingOrderID}) { # Delete session or separator
 	if ($SessionSeparatorID) {
-          &DeleteSessionSeparator($SessionSeparatorID);
+          DeleteSessionSeparator($SessionSeparatorID);
           push @ActionStack,"Deleted a break";
 	} elsif ($SessionID) {
-          &DeleteSession($SessionID);
+          DeleteSession($SessionID);
           push @ActionStack,"Deleted a session";
 	}
       } elsif ($SessionTitle || $SessionDescription) {
@@ -342,11 +351,14 @@ if ($Mode eq "create" || $Mode eq "modify") {
           push @ActionStack,"Modified break: $SessionTitle";
           ++$SessionsModified;
 	} else {
-          my $SessionUpdate = $dbh -> prepare(
-           "update Session set ".
-           "StartTime=?, Location=?, Title=?, Description=? ". 
-           "where SessionID=?");
-          $SessionUpdate          -> execute($SessionDate,$SessionLocation,$SessionTitle,$SessionDescription,$SessionID);
+          push @DebugStack,"Reading $MeetingOrderID SF $SessionShowAllFlags{$MeetingOrderID}";
+          UpdateSession({ 
+              -sessionid    => $SessionID,       -date        => $SessionDate,
+              -title        => $SessionTitle,    -description => $SessionDescription,     
+              -location     => $SessionLocation, -altlocation => $SessionAltLocation, 
+              -moderatorids => \@ModeratorIDs,   -topicids    => \@TopicIDs,
+              -showalltalks => $SessionShowAllFlags{$MeetingOrderID},
+          });
           push @ActionStack,"Modified session: $SessionTitle";
           ++$SessionsModified;
 	}
@@ -367,15 +379,16 @@ EndPage();
 
 # Print out diagnostics
 
-&ActionReport;
+ActionReport();
 print "<h4>You can make more modifications, modify session agendas, or 
        <a href=\"$DisplayMeeting?conferenceid=$ConferenceID\">Display
        the Event</a>. Click a <span class=\"Help\">highlighted</span> link or 
        read the <a href=\"$DocDBInstructions?set=event\">instructions</a> for 
        help. Required fields are denoted by $RequiredMark.</h4>\n";
 
-&FetchConferenceByConferenceID($ConferenceID);
+FetchConferenceByConferenceID($ConferenceID);
 
+my $TopicLength = 20;
 print $query -> start_multipart_form('POST',"$MeetingModify");
 print "<div>\n";
 print $query -> hidden(-name => 'mode', -default => $SetMode);
@@ -384,28 +397,32 @@ if ($SetMode eq "modify") {
 }
 if ($NoSessions) {
   print $query -> hidden(-name => "nosessions", -default => "true");
+  $TopicLength = 10;
 }
 print "</div>\n";
 
 #FIXME: Make rest of these defaults "my"
 
-my $DefaultEventGroupID     = $Conferences{$ConferenceID}{EventGroupID};
-my $DefaultShortDescription = $Conferences{$ConferenceID}{Title};
-my $DefaultLongDescription  = $Conferences{$ConferenceID}{LongDescription};
-my $MeetingDefaultLocation  = $Conferences{$ConferenceID}{Location};
-my $MeetingDefaultURL       = $Conferences{$ConferenceID}{URL};
-$MeetingDefaultPreamble     = $Conferences{$ConferenceID}{Preamble};
-$MeetingDefaultEpilogue     = $Conferences{$ConferenceID}{Epilogue};
-$MeetingDefaultShowAllTalks = $Conferences{$ConferenceID}{ShowAllTalks};
-my $DefaultStartDate        = $Conferences{$ConferenceID}{StartDate};
-my $DefaultEndDate          = $Conferences{$ConferenceID}{EndDate};
+my $DefaultEventGroupID       = $Conferences{$ConferenceID}{EventGroupID};
+my $DefaultShortDescription   = $Conferences{$ConferenceID}{Title};
+my $DefaultLongDescription    = $Conferences{$ConferenceID}{LongDescription};
+my $MeetingDefaultLocation    = $Conferences{$ConferenceID}{Location};
+my $MeetingDefaultAltLocation = $Conferences{$ConferenceID}{AltLocation};
+my $MeetingDefaultURL         = $Conferences{$ConferenceID}{URL};
+$MeetingDefaultPreamble       = $Conferences{$ConferenceID}{Preamble};
+$MeetingDefaultEpilogue       = $Conferences{$ConferenceID}{Epilogue};
+$MeetingDefaultShowAllTalks   = $Conferences{$ConferenceID}{ShowAllTalks};
+my $DefaultStartDate          = $Conferences{$ConferenceID}{StartDate};
+my $DefaultEndDate            = $Conferences{$ConferenceID}{EndDate};
+my @MeetingTopicDefaults      = @{$Conferences{$ConferenceID}{Topics}};
+my @MeetingModeratorDefaults  = @{$Conferences{$ConferenceID}{Moderators}};
 
 # Get deaults for meeting view/modify
 
 my @MeetingViewDefaults   = ();
 my @MeetingModifyDefaults = ();
-my @MeetingViewIDs        = &GetMeetingSecurityGroups($ConferenceID);
-my @MeetingModifyIDs      = &GetMeetingModifyGroups($ConferenceID);
+my @MeetingViewIDs        = GetMeetingSecurityGroups($ConferenceID);
+my @MeetingModifyIDs      = GetMeetingModifyGroups($ConferenceID);
 
 foreach my $MeetingViewID (@MeetingViewIDs) {
   my $GroupID = $MeetingSecurities{$MeetingViewID}{GroupID};
@@ -417,7 +434,7 @@ foreach my $MeetingModifyID (@MeetingModifyIDs) {
 }
 
 if ($SetMode eq "create") { # Defaults for new meetings
-  @MeetingModifyDefaults = &FindUsersGroups(); # Public by default but not everyone can modify
+  @MeetingModifyDefaults = FindUsersGroups(); # Public by default but not everyone can modify
 }
 
 if ($Mode eq "copy" && $OffsetDays) {
@@ -439,32 +456,49 @@ print "<table class=\"MedPaddedTable CenteredTable\">\n";
 
 print "<tr>\n";
 print "<td>\n"; 
-EventGroupSelect( {-required => $RequiredEntries{EventGroup}, -default => [$DefaultEventGroupID] });
-print "</td>\n";
-print "<td>\n";
-ShortDescriptionBox(-name      => "shortdesc", -helptext => "Short Description", -required => $RequiredEntries{ShortDescription},
-                    -maxlength => 128, -default => $DefaultShortDescription);
-LongDescriptionBox(-required  => $RequiredEntries{LongDescription}, 
-                   -maxlength => 400, -default => $DefaultLongDescription);
-LocationBox(-default  => $MeetingDefaultLocation);       
-EventURLBox(-default  => $MeetingDefaultURL);  
+print "<div>\n";
+EventGroupSelect( {-required => $RequiredEntries{EventGroup}, 
+                   -default  => [$DefaultEventGroupID], 
+                   -helptext => "Event Group", });
+print "</div>\n";
+unless ($NoSessions) { # No moderators for external conferences
+  print "<div>\n";
+  AuthorScroll(-multiple => $TRUE,        -default  => \@MeetingModeratorDefaults, 
+               -name     => "moderators", -helptext => "Moderators", 
+               -helplink => "moderators",);
+  print "</div>\n";
+}
 print "</td>\n";
 print "<td>\n";
 print "<div>\n";
 DateTimePulldown(-name => "start",         -required => $RequiredEntries{StartDate}, 
                  -helplink => "startdate", -helptext => "Start Date", 
-                  -dateonly => $TRUE,       -default  => $DefaultStartDate); 
+                 -dateonly => $TRUE,       -default  => $DefaultStartDate); 
 print "</div><div>\n";
-&DateTimePulldown(-name => "end",         -required => $RequiredEntries{EndDate}, 
-                  -helplink => "enddate", -helptext => "End Date", 
-                  -dateonly => $TRUE,     -default  => $DefaultEndDate); 
+DateTimePulldown(-name => "end",         -required => $RequiredEntries{EndDate}, 
+                 -helplink => "enddate", -helptext => "End Date", 
+                 -dateonly => $TRUE,     -default  => $DefaultEndDate); 
 print "</div>\n";
+ShortDescriptionBox(-name      => "shortdesc", -helptext => "Short Description", -required => $RequiredEntries{ShortDescription},
+                    -maxlength => 128, -default => $DefaultShortDescription);
+LongDescriptionBox(-required  => $RequiredEntries{LongDescription}, 
+                   -maxlength => 400, -default => $DefaultLongDescription);
+LocationBox(-default  => $MeetingDefaultLocation);       
+TextField(-default  => $MeetingDefaultAltLocation, -name     => "altlocation",
+          -helplink => "location",                 -helptext => "Alt. Location",);       
+EventURLBox(-default  => $MeetingDefaultURL);  
 unless ($NoSessions) {
   print "<div>\n";
-  &ConferenceShowAllTalks;
+  ConferenceShowAllTalks();
   print "</div>\n";
 }  
 print "</td>\n";
+
+print "<td>\n";
+TopicScroll({ -multiple => $TRUE,         -default => \@MeetingTopicDefaults, 
+              -helplink => "eventtopics", -size    => $TopicLength, });
+print "</td>\n";
+
 print "</tr>\n";
 
 if ($NoSessions) {
@@ -472,25 +506,25 @@ if ($NoSessions) {
 } else {
 
   print "<tr>\n";
-  print "<td colspan=\"2\">\n"; &ConferencePreambleBox; print "</td>\n";
+  print "<td colspan=\"2\">\n"; ConferencePreambleBox(); print "</td>\n";
   print "<td>\n"; 
-  &SecurityScroll(-addpublic => 'true',
-                -name      => 'meetingviewgroups', 
-                -helplink  => 'meetingviewgroups',
-                -helptext  => 'Viewable by',
-                -multiple  => true,
-                -default   => \@MeetingViewDefaults,
-                -size      => 8);
+  SecurityScroll(-addpublic => 'true',
+                 -name      => 'meetingviewgroups', 
+                 -helplink  => 'meetingviewgroups',
+                 -helptext  => 'Viewable by',
+                 -multiple  => $TRUE,
+                 -default   => \@MeetingViewDefaults,
+                 -size      => 8);
   print "</td>\n";
   print "</tr><tr>\n";
-  print "<td colspan=\"2\">\n"; &ConferenceEpilogueBox; print "</td>\n";
+  print "<td colspan=\"2\">\n"; ConferenceEpilogueBox(); print "</td>\n";
   print "<td>\n"; 
-  &SecurityScroll(-name      => 'meetingmodifygroups', 
-                -helplink  => 'meetingmodifygroups',
-                -helptext  => 'Modifiable by',
-                -multiple  => true,
-                -default   => \@MeetingModifyDefaults,
-                -size      => 8);
+  SecurityScroll(-name     => 'meetingmodifygroups', 
+                 -helplink => 'meetingmodifygroups',
+                 -helptext => 'Modifiable by',
+                 -multiple => $TRUE,
+                 -default  => \@MeetingModifyDefaults,
+                 -size     => 8);
   print "</td>\n";
   print "</tr>\n";
   print "</table>\n";
@@ -500,14 +534,14 @@ if ($NoSessions) {
   %SessionSeparators = ();
   %MeetingOrderIDs   = ();
 
-  my $ConferenceID        = &FetchConferenceByConferenceID($ConferenceID);
-  my @SessionIDs          = &FetchSessionsByConferenceID($ConferenceID);
-  my @SessionSeparatorIDs = &FetchSessionSeparatorsByConferenceID($ConferenceID);
-  my @MeetingOrderIDs     = &FetchMeetingOrdersByConferenceID($ConferenceID);
+  my $ConferenceID        = FetchConferenceByConferenceID($ConferenceID);
+  my @SessionIDs          = FetchSessionsByConferenceID($ConferenceID);
+  my @SessionSeparatorIDs = FetchSessionSeparatorsByConferenceID($ConferenceID);
+  my @MeetingOrderIDs     = FetchMeetingOrdersByConferenceID($ConferenceID);
 
   @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs;
 
-  &SessionEntryForm(-conferenceid => $ConferenceID, -meetingorderids => \@MeetingOrderIDs, -offsetdays => $OffsetDays);
+  SessionEntryForm(-conferenceid => $ConferenceID, -meetingorderids => \@MeetingOrderIDs, -offsetdays => $OffsetDays);
 }
 
 print "<p class=\"SubmitCell\">\n";
@@ -526,7 +560,7 @@ if ($ConferenceID) { # Only put modify link in if meeting already exists
   $NavBarURL  = "$DisplayMeeting?conferenceid=$ConferenceID";
 }  
 
-&DocDBNavBar($NavBarText,$NavBarURL);
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar($NavBarText,$NavBarURL);
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  
 exit;

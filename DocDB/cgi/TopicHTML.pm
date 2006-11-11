@@ -27,45 +27,56 @@ sub TopicListByID {
   my @TopicIDs    = exists $ArgRef->{-topicids}    ? @{$ArgRef->{-topicids}}   : ();
   my $ListFormat  = exists $ArgRef->{-listformat}  ?   $ArgRef->{-listformat}  : "dl";
   my $ListElement = exists $ArgRef->{-listelement} ?   $ArgRef->{-listelement} : "short";
-    
+  my $LinkType    = exists $ArgRef->{-linktype}    ?   $ArgRef->{-linktype}    : "document";
+  my $SortBy      = exists $ArgRef->{-sortby}      ?   $ArgRef->{-sortby}      : ""; # name or provenance
+
   require "TopicSQL.pm";
+  require "Sorts.pm";
+  
+  my $HTML = "";
+  
+  foreach my $TopicID (@TopicIDs) {
+    FetchTopic({ -topicid => $TopicID });
+  }
+
+  if ($SortBy eq "name") {
+    @TopicIDs = sort TopicByAlpha      @TopicIDs;
+  } elsif ($SortBy eq "provenance") {
+    @TopicIDs = sort TopicByProvenance @TopicIDs;
+  }
   
   my @TopicLinks = ();
-  if (@TopicIDs) {
-    foreach my $TopicID (@TopicIDs) {
-      my $TopicLink = TopicLink( {-topicid => $TopicID, -format => $ListElement} );
-      if ($TopicLink) {
-        push @TopicLinks,$TopicLink;
-      }  
-    }
-  } 
+  foreach my $TopicID (@TopicIDs) {
+    my $TopicLink = TopicLink( {-topicid => $TopicID, -format => $ListElement, -type => $LinkType,} );
+    if ($TopicLink) {
+      push @TopicLinks,$TopicLink;
+    }  
+  }
   
 # Headers for different styles and handle no topics  
     
   if ($ListFormat eq "dl") {
-    print "<div id=\"Topics\">\n";
-    print "<dl>\n";
-    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Topics:</span></dt>\n";
+    $HTML .= "<div id=\"Topics\">\n";
+    $HTML .= "<dl>\n";
+    $HTML .= "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Topics:</span></dt>\n";
     if (@TopicLinks) {
-      print "</dl>\n";
-      print "<ul>\n";
+      $HTML .= "</dl>\n";
+      $HTML .= "<ul>\n";
     } else {
-      print "<dd>None</dd>\n";
-      print "</dl>\n";
+      $HTML .= "<dd>None</dd>\n";
+      $HTML .= "</dl>\n";
     } 
-  }  
-  
-  if ($ListFormat eq "br") {
+  } elsif ($ListFormat eq "br") {
     unless (@TopicLinks) {
-      print "None<br/>\n";
+      $HTML .= "None<br/>\n";
     }  
   }
   
   foreach my $TopicLink (@TopicLinks) {
     if ($ListFormat eq "dl") {
-      print "<li>$TopicLink</li>\n";  
+      $HTML .= "<li>$TopicLink</li>\n";  
     } elsif ($ListFormat eq "br") {
-      print "$TopicLink<br/>\n";
+      $HTML .= "$TopicLink<br/>\n";
     }
   }
   
@@ -73,23 +84,31 @@ sub TopicListByID {
   
   if ($ListFormat eq "dl") {
     if (@TopicLinks) {
-      print "</ul>\n";
+      $HTML .= "</ul>\n";
     }   
-    print "</div>\n";
+    $HTML .= "</div>\n";
   }  
+  return $HTML;
 }
 
 sub TopicLink ($) {
   my ($ArgRef) = @_;
   my $TopicID = exists $ArgRef->{-topicid} ? $ArgRef->{-topicid} : "";
   my $Format  = exists $ArgRef->{-format}  ? $ArgRef->{-format}  : "short";
+  my $Type    = exists $ArgRef->{-type}    ? $ArgRef->{-type}    : "document";
 
   require "TopicSQL.pm";
-  my ($URL,$Text,$Tooltip);
+  my ($URL,$Text,$Tooltip,$Script);
 
   FetchTopic( {-topicid => $TopicID} );
 
-  $URL     = $ListBy."?topicid=".$TopicID;
+  if ($Type eq "event") {
+    $Script = $ListEventsBy;
+  } else {
+    $Script = $ListBy;
+  }    
+
+  $URL     = $Script."?topicid=".$TopicID;
   if ($Format eq "short") {
     $Text    = CGI::escapeHTML($Topics{$TopicID}{Short});
     $Tooltip = CGI::escapeHTML($Topics{$TopicID}{Long} );
@@ -112,7 +131,7 @@ sub TopicsTable {
   my $TotalSize = 0;
   my @RootTopicIDs = sort TopicByAlpha AllRootTopics();
   foreach my $TopicID (@RootTopicIDs) {
-    my $HTML = TopicListWithChildren({ -topicids => [$TopicID] }); 
+    my $HTML = TopicListWithChildren({ -topicids => [$TopicID], -checkevent => $TRUE }); 
     $List{$TopicID}{HTML} = $HTML; 
     my @Lines = split /\n/,$HTML;
     my $Size = grep /href/,@Lines;
@@ -153,8 +172,13 @@ sub TopicsTable {
 
 sub TopicListWithChildren { # Recursive routine
   my ($ArgRef) = @_;
-  my @TopicIDs = exists $ArgRef->{-topicids} ? @{$ArgRef->{-topicids}} : ();
-  my $Depth    = exists $ArgRef->{-depth}    ?   $ArgRef->{-depth}     : 1;
+  my @TopicIDs   = exists $ArgRef->{-topicids}   ? @{$ArgRef->{-topicids}}  : ();
+  my $Depth      = exists $ArgRef->{-depth}      ?   $ArgRef->{-depth}      : 1;
+  my $CheckEvent = exists $ArgRef->{-checkevent} ?   $ArgRef->{-checkevent} : $FALSE; # name or provenance
+
+  require "MeetingSQL.pm";
+  require "MeetingHTML.pm";
+
   my @TopicIDs = sort TopicByAlpha @TopicIDs;
 
   my $HTML;
@@ -173,6 +197,12 @@ sub TopicListWithChildren { # Recursive routine
       if ($Depth == 1) {
         $HTML .= "</strong>\n";
       }
+#      if ($CheckEvent) {
+#        my %Hash = GetEventsByTopic($TopicID);
+#        if (%Hash) {        
+#          $HTML .= ListByEventLink({ -topicid => $TopicID });
+#        }
+#      }    
       if (@{$TopicChildren{$TopicID}}) {
         $HTML .= "\n";
         $HTML .= TopicListWithChildren({ -topicids => $TopicChildren{$TopicID}, -depth => $Depth+1 });

@@ -404,11 +404,12 @@ Select the date of the end of the conference.
  </entry>
 
  <entry>
-<key>location</key>
-<title>Location</title>
+  <key>location</key>
+  <title>Location &amp; Alternate</title>
   <text>
-Type in the location of the conference. City, state (if in the USA), and
-country.
+   <p>Enter the location of the conference, event, or session. This can be a
+   city, an institution, or a room number depending on the circumstances. The
+   alternate location might be video or teleconferencing instructions.</p>
   </text>
  </entry>
 
@@ -416,7 +417,7 @@ country.
 <key>confurl</key>
 <title>URL</title>
   <text>
-Type in the URL for the conference's home page. Please include the http:// or
+Enter the URL for the conference's home page. Please include the http:// or
 https:// at the beginning.
   </text>
  </entry>
@@ -916,14 +917,18 @@ or may not be the same as the web username and password.
  
  <entry>
   <key>meetshowall</key>
-  <title>Show All Talks for Meeting</title>
+  <title>Show All Talks for Meeting or Session</title>
   <text>
-   By checking this box, displaying the meeting will also display all the
-   sessions for the meeting and all the talks within that session. If this is
-   left unchecked, displaying the meeting will display <i>links</i> to the
-   individual sessions. It is suggested that this box be checked for meetings
-   with just a few sessions and left unchecked for meetings with many
-   sessions, especially parallel sessions. 
+   <p> Checking this box for a whole meeting will also display all the sessions
+   for the meeting and all the talks within those sessions. If this is left
+   unchecked for a meeting, displaying the meeting will display <em>links</em>
+   to the individual sessions. It is suggested that this box be checked for
+   meetings with just a few sessions and left unchecked for meetings with many
+   sessions, especially parallel sessions.</p>
+   <p> Checking this box for a session in a meeting will display the talks for
+   this session in the view of the meeting but will not display the talks for
+   other sessions. You may want to check this box for plenary sessions but leave
+   it unchecked for parallel sessions.</p>
   </text>
  </entry>
  
