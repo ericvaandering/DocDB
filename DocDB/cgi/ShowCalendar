@@ -48,7 +48,7 @@ CreateConnection();
 
 ### Start HTML
 
-print $query -> header;
+print $query -> header( -charset => $HTTP_ENCODING );
 
 my $TitleDate;
 my $FutureEventTable = $FALSE;

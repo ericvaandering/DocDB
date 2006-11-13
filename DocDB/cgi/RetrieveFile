@@ -66,7 +66,7 @@ if (grep /\//,$FileName) {
 }  
 
 if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
-  print $query -> header;
+  print $query -> header( -charset => $HTTP_ENCODING );
   DocDBHeader("File Retrieve Results"); 
   EndPage();
 }
@@ -102,7 +102,7 @@ unless ($DocRevID) {
 }
 
 if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
-  print $query -> header;
+  print $query -> header( -charset => $HTTP_ENCODING );
   &DocDBHeader("File Retrieve Results"); 
   EndPage();
 }
@@ -158,7 +158,7 @@ if ($FullFile && ($UserValidation eq "certificate" || $Preferences{Options}{Alwa
 } elsif ($FullURL) {
   print $query -> redirect(-location => $FullURL, -method => 'GET');
 } else {
-  print $query -> header;
+  print $query -> header( -charset => $HTTP_ENCODING );
   DocDBHeader("File Retrieve Results"); 
   EndPage(@ErrorStack);
 

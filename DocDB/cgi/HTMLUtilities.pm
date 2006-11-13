@@ -25,6 +25,34 @@
 
 require "ProjectRoutines.pm";
 
+sub PrettyHTML ($) {
+  my ($HTML) = @_;
+  
+  # This function is supposed to pretty-up any valid (X)HTML, but
+  # it doesn't work particularly well. As written, things like &nbsp; are not 
+  # valid XML. One possibility is to use HTML::Entities::encode_numeric in some way
+  # which should produce safe entities or to use a subsitution map
+  
+  return $HTML;
+  
+  use HTML::Entities;
+  use XML::Twig;
+  
+  my $OldHTML = $HTML;
+  
+  $HTML = HTML::Entities::decode($HTML);
+  $HTML = HTML::Entities::encode($HTML,'&');
+
+  my $Twig = new XML::Twig;
+  if ($Twig -> safe_parse($HTML)) {
+    $Twig -> set_pretty_print('indented');
+    return $Twig -> sprint;
+  } else {
+    push @DebugStack,"HTML Parse failed with error: ".$@;
+    return $OldHTML;
+  }    
+}
+
 sub DocDBHeader { 
   my ($Title,$PageTitle,%Params) = @_;
   
@@ -52,7 +80,7 @@ sub DocDBHeader {
   if ($Refresh) {
     print "<meta http-equiv=\"refresh\" content=\"$Refresh\" />\n";
   }  
-  print '<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />',"\n";
+  print '<meta http-equiv="Content-Type" content="text/html; charset='.$HTTP_ENCODING.'" />',"\n";
   print "<title>$Title</title>\n";
 
   # Include DocDB style sheets

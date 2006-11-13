@@ -37,7 +37,7 @@ sub XMLHeader {
   my $Header;
   $Header .= "Content-Type: text/xml\n";
   $Header .= "\n";
-  $Header .= '<?xml version="1.0" encoding="ISO-8859-1"?>'."\n";
+  $Header .= '<?xml version="1.0" encoding="'.$HTTP_ENCODING.'"?>'."\n";
   return $Header;
 }
 

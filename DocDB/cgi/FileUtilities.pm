@@ -215,7 +215,7 @@ sub StreamFile (%) {
     }
     close OUT;
   } else {
-    print $query -> header;
+    print $query -> header( -charset => $HTTP_ENCODING );
     print $query -> start_html,
           "There was a problem. File $File does not exist.",
           $query -> end_html;

@@ -46,7 +46,7 @@ my $LocalSearch = $CGIParams{"docdb-0"};
 
 CreateConnection(-type => "ro");
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader("DocDB X-Search","",-scripts => ["PopUps"]); 
 
 if ($XSearchDescription) {

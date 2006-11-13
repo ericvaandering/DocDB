@@ -54,7 +54,7 @@ if ($UserValidation eq "certificate") {
 
 # %params = $query -> Vars;  # No parameters (yet?) 
 
-print $query->header;
+print $query->header( -charset => $HTTP_ENCODING );
 if ($UserValidation eq "certificate" && $CertificateStatus ne "verified") {
   DocDBHeader("$Project Document Database","Document Database", -scripts => ["PopUps"], -refresh => "5;url=$CertificateApplyForm");
 } else {

@@ -26,6 +26,7 @@ sub TruncateSeconds ($) { # Strip of seconds (from SQL) if present
   my ($Time) = @_;
   
   my ($Hours,$Minutes) = split /:/,$Time;
+  
   $NewTime = "$Hours:$Minutes";
   return $NewTime;
 }

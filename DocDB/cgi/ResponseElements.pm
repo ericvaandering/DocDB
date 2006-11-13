@@ -81,7 +81,7 @@ sub EndPage (;%) {  # Fatal errors, aborts page if present
   WarnPage();
   if (@ErrorStack) { 
     if ($StartPage) {
-      print $query -> header;
+      print $query -> header( -charset => $HTTP_ENCODING );
       DocDBHeader("Fatal Error");
     }
     ErrorPage();
@@ -232,6 +232,23 @@ sub TypeLink {
   }
   
   return $link;
+}
+
+sub ImageSrc {
+  my ($ArgRef) = @_;
+  
+  my $Alt   = exists $ArgRef->{-alt}   ? $ArgRef->{-alt}   : "image";
+  my $Image = exists $ArgRef->{-image} ? $ArgRef->{-image} : "";
+
+  require "Images.pm";
+  
+  unless ($Image) { return ""; }
+
+  my $HTML = '<img src="'.$ImgURLPath.'/'.$ImageNames{$Image}.'" alt="'.$Alt.'" />';
+
+  push @DebugStack,"Image: $Image, Final: ".$ImageNames{$Image};
+
+  return $HTML;
 }
 
 1;

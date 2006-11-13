@@ -101,7 +101,7 @@ if ($OutFormat eq 'XML') {
   }  
   NewXMLOutput();
 } else {
-  print $query->header;
+  print $query -> header( -charset => $HTTP_ENCODING );
   DocDBHeader($PageTitle,"$Project Document $DocumentID-v$Version",-scripts => ["PopUps"]);
 }
 

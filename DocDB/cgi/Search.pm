@@ -103,7 +103,7 @@ sub LocalSearch ($) {
     }  
     NewXMLOutput();
   } else {
-    print $query->header;
+    print $query -> header( -charset => $HTTP_ENCODING );
     DocDBHeader("$Project Document Search Results","Search Results");
   }
 

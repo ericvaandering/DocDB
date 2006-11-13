@@ -131,7 +131,7 @@ if ($Confirmed && $DocumentID) {
  
 # Start page
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader("Notes for $BestTitle","",-nobody => $TRUE, -scripts => ["PopUps"]);
 EndPage();
 

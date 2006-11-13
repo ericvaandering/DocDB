@@ -80,4 +80,16 @@ sub EventAgendaDocIDs {
   return @AgendaDocIDs;
 }
 
+sub EventHashByTime { # Sort EventHash reverse in date, forward in time
+  my $adt = $TmpEventHash{$a}{Time};
+  my $bdt = $TmpEventHash{$b}{Time};
+  
+  my ($adate,$atime) = split /\s+/,$adt;  
+  my ($bdate,$btime) = split /\s+/,$bdt;
+  
+  $bdate cmp $adate
+         or 
+  $atime cmp $btime;
+}
+
 1;

@@ -51,6 +51,10 @@ sub AuthorListByAuthorRevID {
   my ($ArgRef) = @_;
   my @AuthorRevIDs = exists $ArgRef->{-authorrevids} ? @{$ArgRef->{-authorrevids}} : ();
   my $Format       = exists $ArgRef->{-format}       ?   $ArgRef->{-format}        : "long";
+#  my $ListFormat  = exists $ArgRef->{-listformat}  ?   $ArgRef->{-listformat}  : "dl";
+#  my $ListElement = exists $ArgRef->{-listelement} ?   $ArgRef->{-listelement} : "short";
+#  my $LinkType    = exists $ArgRef->{-linktype}    ?   $ArgRef->{-linktype}    : "document";
+#  my $SortBy      = exists $ArgRef->{-sortby}      ?   $ArgRef->{-sortby}      : "";
   
   require "AuthorSQL.pm";
   require "AuthorUtilities.pm";
@@ -65,6 +69,7 @@ sub AuthorListByAuthorRevID {
     print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Authors:</span></dt>\n";
     print "</dl>\n";
   }
+
   if (@AuthorIDs) {
     if ($Format eq "long") {
       print "<ul>\n";
@@ -93,7 +98,60 @@ sub AuthorListByAuthorRevID {
   }
 }
 
-sub ShortAuthorListByID { # Still used in document table (first author or hints only)
+sub AuthorListByID {
+  my ($ArgRef) = @_;
+  my @AuthorIDs   = exists $ArgRef->{-authorids}   ? @{$ArgRef->{-authorids}}  : ();
+  my $ListFormat  = exists $ArgRef->{-listformat}  ?   $ArgRef->{-listformat}  : "dl";
+#  my $ListElement = exists $ArgRef->{-listelement} ?   $ArgRef->{-listelement} : "short";
+  my $LinkType    = exists $ArgRef->{-linktype}    ?   $ArgRef->{-linktype}    : "document";
+  my $SortBy      = exists $ArgRef->{-sortby}      ?   $ArgRef->{-sortby}      : "";
+  
+  require "AuthorSQL.pm";
+  
+  foreach my $AuthorID (@AuthorIDs) {
+    FetchAuthor($AuthorID);
+  }
+
+  if ($SortBy eq "name") {
+    @AuthorIDs = sort byLastName     @AuthorIDs;
+  }
+
+  my ($HTML,$StartHTML,$EndHTML,$StartElement,$EndElement,$StartList,$EndList,$NoneText);
+  
+  if ($ListFormat eq "dl") {
+    $StartHTML .= '<div id="Authors"><dl>';
+    $StartHTML .= '<dt class="InfoHeader"><span class="InfoHeader">Authors:</span></dt>';
+    $StartHTML .= '</dl>';
+    $EndHTML    = '</div>';
+    $StartList  = '<ul>';
+    $EndList    = '</ul>';
+    $StartElement = '<li>';
+    $EndElement   = '</li>';
+    $NoneText     = '<div id="Authors"><dl><dt class="InfoHeader"><span class="InfoHeader">Authors:</span></dt>None<br/></dl>';
+  } else {
+    $StartHTML  = '<div>';
+    $EndHTML    = '</div>';
+    $EndElement = '<br/>';
+    $NoneText   = 'None<br/>';
+  }  
+  
+  if (@AuthorIDs) {
+    $HTML .= $StartHTML;
+    $HTML .= $StartList;
+    foreach my $AuthorID (@AuthorIDs) {
+      $HTML .= $StartElement.AuthorLink($AuthorID,-type => $LinkType).$EndElement;
+    }
+    $HTML .= $EndList;
+  } else {
+    $HTML = $NoneText;
+  }
+  $HTML .= $EndHTML;
+
+  return PrettyHTML($HTML);
+}
+
+sub ShortAuthorListByID { # Can replace with above, still used in document table (first author or hints only)
+
   my @AuthorIDs = @_;
   
   require "AuthorSQL.pm";
@@ -130,23 +188,31 @@ sub AuthorLink ($;%) {
   
   my ($AuthorID,%Params) = @_;
   my $Format = $Params{-format} || "full"; # full, formal
+  my $Type   = $Params{-type}   || "document"; # document, event
   
-  &FetchAuthor($AuthorID);
-  &FetchInstitution($Authors{$AuthorID}{InstitutionID});
+  FetchAuthor($AuthorID);
+  FetchInstitution($Authors{$AuthorID}{InstitutionID});
   my $InstitutionName = $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG};
   unless ($Authors{$AuthorID}{FULLNAME}) {
     return "Unknown";
   }  
-  my $link;
-  $link = "<a href=\"$ListBy?authorid=$AuthorID\" title=\"$InstitutionName\">";
-  if ($Format eq "full") {
-    $link .= $Authors{$AuthorID}{FULLNAME};
-  } elsif ($Format eq "formal") {
-    $link .= $Authors{$AuthorID}{Formal};
-  }
-  $link .= "</a>";
+  my $Script;
+  if ($Type eq "event") {
+    $Script = $ListEventsBy;
+  } else {
+    $Script = $ListBy;
+  }    
   
-  return $link;
+  my $Link;
+  $Link = "<a href=\"$Script?authorid=$AuthorID\" title=\"$InstitutionName\">";
+  if ($Format eq "full") {
+    $Link .= $Authors{$AuthorID}{FULLNAME};
+  } elsif ($Format eq "formal") {
+    $Link .= $Authors{$AuthorID}{Formal};
+  }
+  $Link .= "</a>";
+  
+  return $Link;
 }
 
 sub PrintAuthorInfo {
@@ -169,25 +235,28 @@ sub AuthorsByInstitution {
 
   my @AuthorIDs = sort byLastName keys %Authors;
 
-  print "<td><b>$Institutions{$InstID}{SHORT}</b>\n";
+  print "<td><strong>$Institutions{$InstID}{SHORT}</strong>\n";
   print "<ul>\n";
   foreach my $AuthorID (@AuthorIDs) {
     if ($InstID == $Authors{$AuthorID}{InstitutionID}) {
       my $author_link = &AuthorLink($AuthorID);
-      print "<li>$author_link\n";
+      print "<li>$author_link</li>\n";
     }  
   }  
-  print "</ul>";
+  print "</ul></td>";
 }
 
 sub AuthorsTable {
   require "Sorts.pm";
+  require "MeetingSQL.pm";
+  require "MeetingHTML.pm";
 
   my @AuthorIDs     = sort byLastName keys %Authors;
   my $NCols         = 4;
   my $NPerCol       = int (scalar(@AuthorIDs)/$NCols);
-  my $UseAnchors = (scalar(@AuthorIDs) >= 75);
-
+  my $UseAnchors    = (scalar(@AuthorIDs) >= 75);
+  my $CheckEvent    = $TRUE;
+  
   if (scalar(@AuthorIDs) % $NCols) {++$NPerCol;}
 
   print "<table class=\"CenteredTable MedPaddedTable\">\n";
@@ -233,12 +302,19 @@ sub AuthorsTable {
       $FirstPass = 0;
       if ($UseAnchors) {
         print "<a name=\"$FirstLetter\" />\n";
-        print "<b>$FirstLetter</b>\n";
+        print "<strong>$FirstLetter</strong>\n";
       }
       print "<ul>\n";
     }  
-    my $author_link = AuthorLink($AuthorID, -format => "formal");
-    print "<li>$author_link</li>\n";
+    my $AuthorLink = AuthorLink($AuthorID, -format => "formal");
+#    if ($CheckEvent) {
+#      my %Hash = GetEventsByModerator($AuthorID);
+#      if (%Hash) {
+#        $AuthorLink .= ListByEventLink({ -authorid => $AuthorID });
+#      }
+#    }    
+
+    print "<li>$AuthorLink</li>\n";
     $CloseLastColumn = 1;
   }  
   print "</ul></td></tr>";

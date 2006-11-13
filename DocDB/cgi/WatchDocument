@@ -50,7 +50,7 @@ $Password =~ s/\s+//g;
 
 # Start the page
    
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Watching Document"); # Prob need specialized header
 
 # Check for valid user

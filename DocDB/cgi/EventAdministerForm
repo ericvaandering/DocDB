@@ -75,7 +75,7 @@ EndPage(-startpage => $TRUE);
 &GetAllEventGroups;
 &GetSecurityGroups;
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Administer Events","",
              -scripts => ["PopUps","EventAdminDisable"]); 
 

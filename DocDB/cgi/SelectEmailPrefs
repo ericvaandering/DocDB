@@ -129,7 +129,7 @@ if ($Mode eq "newuser") {
 
 # Start the page
    
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader("Update Notification Preferences","",-scripts => ["PopUps"]); # Prob need specialized header
 
 # Create new user if called for
