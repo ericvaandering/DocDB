@@ -108,7 +108,11 @@ if ($Action eq "Delete") {
 
 # Deal with parent changes   
 
-  if ($ParentTopicID) { 
+  if ($ParentTopicID == $TopicID) {
+    push @WarnStack,"You cannot set a topic to be its own parent. No action taken.";
+  }  
+
+  if ($ParentTopicID && $ParentTopicID != $TopicID) { 
     push @ActionStack,"Updated parent topic of (sub)topic.";
    
     my $Delete = $dbh -> prepare("delete from TopicHierarchy where TopicID=?");
