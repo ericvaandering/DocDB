@@ -87,7 +87,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                     KEY Author    (AuthorID),
                     KEY Event     (EventID),
                     KEY Session   (SessionID),
-                    KEY Separator (SessionSeparatorID)
+                    KEY SepKey    (SessionSeparatorID)
                   )", # Not used yet in 8.0
                  "create table EventTopic (
                     EventTopicID       int       NOT NULL auto_increment,
@@ -100,7 +100,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
                     KEY Topic     (TopicID),
                     KEY Event     (EventID),
                     KEY Session   (SessionID),
-                    KEY Separator (SessionSeparatorID)
+                    KEY SepKey    (SessionSeparatorID)
                   )", # Not used yet in 8.0
                  "create table Suppress (
                     SuppressID      int NOT NULL auto_increment,

@@ -185,6 +185,21 @@ sub CanCreate { # Can the user create documents
   return $Create;
 }
 
+sub GroupCan { # Could be used in above, but we need to know without $Public and 
+               # such if the specified user is allowed to create or view documents
+  my ($ArgRef) = @_;
+  my $GroupID = exists $ArgRef->{-groupid} ? $ArgRef->{-groupid} : 0;
+  my $Action  = exists $ArgRef->{-action}  ? $ArgRef->{-action}  : "view";
+
+  if ($Action eq "view") {
+    return $SecurityGroups{$GroupID}{CanView};
+  } elsif ($Action eq "create") {
+    return $SecurityGroups{$GroupID}{CanCreate};
+  }  
+  
+  return $FALSE;
+}
+
 sub CanAdminister { # Can the user administer the database
   require "SecuritySQL.pm";
   

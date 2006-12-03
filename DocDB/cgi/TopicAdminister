@@ -108,7 +108,11 @@ if ($Action eq "Delete") {
 
 # Deal with parent changes   
 
-  if ($ParentTopicID) { 
+  if ($ParentTopicID == $TopicID) {
+    push @WarnStack,"You cannot set a topic to be its own parent. No action taken.";
+  }  
+
+  if ($ParentTopicID && $ParentTopicID != $TopicID) { 
     push @ActionStack,"Updated parent topic of (sub)topic.";
    
     my $Delete = $dbh -> prepare("delete from TopicHierarchy where TopicID=?");
@@ -118,18 +122,30 @@ if ($Action eq "Delete") {
     $Insert -> execute($TopicID,$ParentTopicID);
   }
 } elsif ($Action eq "New") {
-  my $TopicInsert = $dbh -> prepare("insert into Topic ".
-                    "(TopicID, ShortDescription, LongDescription) values (0,?,?)");
 
-  $TopicInsert -> execute($ShortName,$LongName);
-  my $TopicID = $TopicInsert -> {mysql_insertid};
-  if ($ParentTopicID) {
-    my $Insert = $dbh -> prepare("insert into TopicHierarchy (TopicHierarchyID,TopicID,ParentTopicID) values (0,?,?)");
-    $Insert -> execute($TopicID,$ParentTopicID);
-    push @ActionStack,"New sub-topic created with descriptions $ShortName and $LongName.";
+  if ($ShortName || $LongName) {
+    if (!$LongName) { 
+      $LongName = $ShortName;
+      push @WarnStack,"No long description supplied. Short description substituted.";
+    } elsif (!$ShortName) { 
+      $ShortName = $LongName;
+      push @WarnStack,"No short description supplied. Long description substituted.";
+    }
+    my $TopicInsert = $dbh -> prepare("insert into Topic ".
+                      "(TopicID, ShortDescription, LongDescription) values (0,?,?)");
+
+    $TopicInsert -> execute($ShortName,$LongName);
+    my $TopicID = $TopicInsert -> {mysql_insertid};
+    if ($ParentTopicID) {
+      my $Insert = $dbh -> prepare("insert into TopicHierarchy (TopicHierarchyID,TopicID,ParentTopicID) values (0,?,?)");
+      $Insert -> execute($TopicID,$ParentTopicID);
+      push @ActionStack,"New sub-topic created with descriptions $ShortName and $LongName.";
+    } else {
+      push @ActionStack,"New <span class=\"Highlight\">root-level topic</span> created with descriptions $ShortName and $LongName.";
+    }
   } else {
-    push @ActionStack,"New <span class=\"Highlight\">root-level topic</span> created with descriptions $ShortName and $LongName.";
-  }
+    push @WarnStack,"No short or long description supplied. No topic created.";
+  }  
 } elsif ($TopicID || $ParentTopicID || $LongName || $ShortName) { 
   push @WarnStack,"No valid action was specified.";
 }  

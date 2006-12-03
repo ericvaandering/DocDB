@@ -1,3 +1,19 @@
+8.2.1
+
+  The only user-visible change is that when a document is modifiable or viewable
+  by a group that can't actually view or modify documents, that fact is noted in
+  the document view. Entering documents like this generates a message to the
+  user but the update proceeds. See
+  https://sourceforge.net/tracker/?func=detail&atid=830064&aid=1603989&group_id=164024
+  for more information.
+  
+  Topic administration has been changed to eliminate some incomplete/wrong
+  entries.
+  
+  MigrateV8 and  CreateDatabase.SQL have been changed so that they are
+  compatible with more recent versions of MySQL. For more info see
+  https://sourceforge.net/forum/forum.php?forum_id=640807
+
 8.2.0
 
   DocDB now supports additional meta-information for events and sessions. A 2nd
