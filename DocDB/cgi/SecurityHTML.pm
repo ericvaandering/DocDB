@@ -158,10 +158,10 @@ sub SecurityLink ($) {
   $Link .= " title=\"$SecurityGroups{$GroupID}{Description}\"";
   $Link .= ">";
   $Link .= $SecurityGroups{$GroupID}{NAME};
+  $Link .= "</a>";
   if ($Check && !GroupCan({ -groupid => $GroupID, -action => $Check }) ) {
     $Link .= "<br/>(".$Message{$Check}.")";
   }  
-  $Link .= "</a>";
      
   return $Link;
 }

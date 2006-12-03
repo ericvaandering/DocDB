@@ -45,6 +45,7 @@ require "Security.pm";
 require "Scripts.pm";
 
 require "TopicHTML.pm";
+require "SecurityHTML.pm";
 
 if ($MailInstalled) {
   require "MailNotification.pm";
