@@ -297,7 +297,7 @@ CREATE TABLE EventTopic (
   KEY Topic (TopicID),
   KEY Event (EventID),
   KEY Session (SessionID),
-  KEY Separator (SessionSeparatorID)
+  KEY SepKey (SessionSeparatorID)
 ) TYPE=MyISAM;
 
 --
@@ -513,7 +513,7 @@ CREATE TABLE Moderator (
   KEY Author (AuthorID),
   KEY Event (EventID),
   KEY Session (SessionID),
-  KEY Separator (SessionSeparatorID)
+  KEY SepKey (SessionSeparatorID)
 ) TYPE=MyISAM;
 
 --
