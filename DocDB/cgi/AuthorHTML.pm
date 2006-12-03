@@ -56,46 +56,21 @@ sub AuthorListByAuthorRevID {
 #  my $LinkType    = exists $ArgRef->{-linktype}    ?   $ArgRef->{-linktype}    : "document";
 #  my $SortBy      = exists $ArgRef->{-sortby}      ?   $ArgRef->{-sortby}      : "";
   
-  require "AuthorSQL.pm";
   require "AuthorUtilities.pm";
   require "Sorts.pm";
   
   @AuthorRevIDs = sort AuthorRevIDsByOrder @AuthorRevIDs;
   my @AuthorIDs = AuthorRevIDsToAuthorIDs({ -authorrevids => \@AuthorRevIDs, });
   
+  my $HTML;
   if ($Format eq "long") {
-    print "<div id=\"Authors\">\n";
-    print "<dl>\n";
-    print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Authors:</span></dt>\n";
-    print "</dl>\n";
+    $HTML = AuthorListByID({ -listformat => "dl", -authorids => \@AuthorIDs });
+  } elsif ($Format eq "short") {
+    $HTML = AuthorListByID({ -listformat => "br", -authorids => \@AuthorIDs });
   }
-
-  if (@AuthorIDs) {
-    if ($Format eq "long") {
-      print "<ul>\n";
-    }
-    foreach my $AuthorID (@AuthorIDs) {
-      FetchAuthor($AuthorID);
-      my $AuthorLink = AuthorLink($AuthorID);
-      if ($Format eq "long") {
-        print "<li>$AuthorLink</li>\n";
-      } elsif ($Format eq "short") {
-        print "$AuthorLink<br/>\n";
-      }  
-    }
-    if ($Format eq "long") {
-      print "</ul>\n";
-    }  
-  } else {
-    if ($Format eq "long") {
-      print "<dd>None</dd>\n";
-    } elsif ($Format eq "short") {
-      print "None<br/>\n";
-    } 
-  }
-  if ($Format eq "long") {
-    print "</div>\n";
-  }
+  
+  print $HTML;
+  
 }
 
 sub AuthorListByID {
@@ -107,6 +82,7 @@ sub AuthorListByID {
   my $SortBy      = exists $ArgRef->{-sortby}      ?   $ArgRef->{-sortby}      : "";
   
   require "AuthorSQL.pm";
+  require "Sorts.pm";
   
   foreach my $AuthorID (@AuthorIDs) {
     FetchAuthor($AuthorID);
@@ -128,7 +104,7 @@ sub AuthorListByID {
     $StartElement = '<li>';
     $EndElement   = '</li>';
     $NoneText     = '<div id="Authors"><dl><dt class="InfoHeader"><span class="InfoHeader">Authors:</span></dt>None<br/></dl>';
-  } else {
+  } else {  #$ListFormat eq "br"
     $StartHTML  = '<div>';
     $EndHTML    = '</div>';
     $EndElement = '<br/>';
@@ -154,17 +130,9 @@ sub ShortAuthorListByID { # Can replace with above, still used in document table
 
   my @AuthorIDs = @_;
   
-  require "AuthorSQL.pm";
+  my $HTML = AuthorListByID({ -listformat => "br", -authorids => \@AuthorIDs });
   
-  if (@AuthorIDs) {
-    foreach my $AuthorID (@AuthorIDs) {
-      FetchAuthor($AuthorID);
-      my $AuthorLink = AuthorLink($AuthorID);
-      print "$AuthorLink<br/>\n";
-    }
-  } else {
-    print "None<br/>\n";
-  }
+  print $HTML;
 }
 
 sub RequesterByID { 
