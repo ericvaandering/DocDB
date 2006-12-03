@@ -284,11 +284,29 @@ if ($#securities > 0) {
   }  
 }
 
+my $ViewCheck = "create"; # Create/view are the same, check for more restrictive
 if ($EnhancedSecurity) {
+  $ViewCheck = "view";
   unless (@ModifyGroups) {
     push @ErrorStack,"You must select at least one group which is allowed to 
                       modify the document.";
   }                    
+}
+
+foreach my $GroupID (@securities) {
+  unless (!GroupCan({ -groupid => $GroupID, -action => $ViewCheck }) ) {
+    push @WarnStack,"The group ".SecurityLink({ -groupid => $GroupID, }).
+         " is not currently allowed to view documents. If this changes,".
+         " this document will be viewable by that group.";
+  }
+}         
+
+foreach my $GroupID (@ModifyGroups) {
+  unless (!GroupCan({ -groupid => $GroupID, -action => "create" }) ) {
+    push @WarnStack,"The group ".SecurityLink({ -groupid => $GroupID, }).
+         " is not currently allowed to create or modify documents. If this changes,".
+         " this document will be modifiable by that group.";
+  }
 }
 
 my $UniqueSelect = $dbh -> prepare("select DocumentID from Document where DocHash=?"); 
