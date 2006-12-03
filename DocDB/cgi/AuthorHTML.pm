@@ -126,15 +126,6 @@ sub AuthorListByID {
   return PrettyHTML($HTML);
 }
 
-sub ShortAuthorListByID { # Can replace with above, still used in document table (first author or hints only)
-
-  my @AuthorIDs = @_;
-  
-  my $HTML = AuthorListByID({ -listformat => "br", -authorids => \@AuthorIDs });
-  
-  print $HTML;
-}
-
 sub RequesterByID { 
   my ($RequesterID) = @_;
   

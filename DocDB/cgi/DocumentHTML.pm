@@ -206,7 +206,7 @@ sub DocumentTable (%) {
           foreach my $AuthorHintID (@AuthorHintIDs) {
             push @AuthorIDs,$AuthorHints{$AuthorHintID}{AuthorID};
           }
-          ShortAuthorListByID(@AuthorIDs); 
+          print AuthorListByID({ -listformat => "br", -authorids => \@AuthorIDs });
         }  
       } elsif ($Field eq "AuthorInst") {   # Single author (et. al.)
         require "TalkHintSQL.pm";
@@ -218,7 +218,7 @@ sub DocumentTable (%) {
           foreach my $AuthorHintID (@AuthorHintIDs) {
             push @AuthorIDs,$AuthorHints{$AuthorHintID}{AuthorID};
           }
-          ShortAuthorListByID(@AuthorIDs); 
+          print AuthorListByID({ -listformat => "br", -authorids => \@AuthorIDs });
         }  
       } elsif ($Field eq "Updated") {  # Date of last update
         print EuroDate($DocRevisions{$DocRevID}{DATE});

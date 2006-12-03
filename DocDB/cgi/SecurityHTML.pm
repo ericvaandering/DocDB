@@ -94,7 +94,7 @@ sub SecurityListByID {
   print "<ul>\n";
   if (@GroupIDs) {
     foreach $GroupID (@GroupIDs) {
-      print "<li>",SecurityLink( {-groupid => $GroupID} ),"</li>\n";
+      print "<li>",SecurityLink({ -groupid => $GroupID, -check => "view", }),"</li>\n";
     }
   } else {
     print "<li>Public document</li>\n";
@@ -115,7 +115,7 @@ sub ModifyListByID {
   print "<ul>\n";
   if (@GroupIDs) {
     foreach $GroupID (@GroupIDs) {
-      print "<li>",SecurityLink( {-groupid => $GroupID} ),"</li>\n";
+      print "<li>",SecurityLink( {-groupid => $GroupID, -check => "create", } ),"</li>\n";
     }
   } else {
     print "<li>Same as Viewable by</li>\n";
@@ -144,16 +144,24 @@ sub PersonalAccountLink () {
 sub SecurityLink ($) {
   my ($ArgRef) = @_;
   my $GroupID = exists $ArgRef->{-groupid} ? $ArgRef->{-groupid} : 0;
+  my $Check   = exists $ArgRef->{-check}   ? $ArgRef->{-check}   : "";
+
+  require "Security.pm";
+  
+  my %Message = ("view" => "Can't view now", "create" => "Can't modify now");
 
   unless ($GroupID) {
     return;
   }
   
   my $Link = "<a href=\"$ListBy?groupid=$GroupID\"";
-     $Link .= " title=\"$SecurityGroups{$GroupID}{Description}\"";
-     $Link .= ">";
-     $Link .= $SecurityGroups{$GroupID}{NAME};
-     $Link .= "</a>";
+  $Link .= " title=\"$SecurityGroups{$GroupID}{Description}\"";
+  $Link .= ">";
+  $Link .= $SecurityGroups{$GroupID}{NAME};
+  if ($Check && !GroupCan({ -groupid => $GroupID, -action => $Check }) ) {
+    $Link .= "<br/>(".$Message{$Check}.")";
+  }  
+  $Link .= "</a>";
      
   return $Link;
 }

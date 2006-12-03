@@ -84,7 +84,7 @@ sub ShortFileListByRevID {
   if (@RootFiles) {
     &ShortFileListByFileID(@RootFiles);
   } else {
-    print "None<br>\n";
+    print "None<br/>\n";
   }
 }
 
