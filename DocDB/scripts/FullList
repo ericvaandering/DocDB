@@ -27,6 +27,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use DBI;
+use CGI;
 use Getopt::Long;
 
 require "CGIInclude.pm";
