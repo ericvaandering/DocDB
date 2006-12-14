@@ -181,7 +181,7 @@ if (@Documents) {
     
     print "<td>$FoundDocuments{$Identifier}{Author}";
     if ($FoundDocuments{$Identifier}{EtAl}) {
-      print " <em>et. al.</em>";
+      print " <em>et al.</em>";
     }  
     print "</td>\n";
     

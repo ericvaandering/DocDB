@@ -196,7 +196,7 @@ sub DocumentTable (%) {
         } elsif ($SessionTalkID) { # TalkSeparator
           print "$SessionTalks{$SessionTalkID}{HintTitle}";
         }
-      } elsif ($Field eq "Author") {   # Single author (et. al.)
+      } elsif ($Field eq "Author") {   # Single author (et al.)
         require "TalkHintSQL.pm";
         if ($DocRevID) {
           print FirstAuthor($DocRevID);
@@ -208,7 +208,7 @@ sub DocumentTable (%) {
           }
           print AuthorListByID({ -listformat => "br", -authorids => \@AuthorIDs });
         }  
-      } elsif ($Field eq "AuthorInst") {   # Single author (et. al.)
+      } elsif ($Field eq "AuthorInst") {   # Single author (et al.)
         require "TalkHintSQL.pm";
         if ($DocRevID) {
           print FirstAuthor($DocRevID, {-institution => $TRUE} );
