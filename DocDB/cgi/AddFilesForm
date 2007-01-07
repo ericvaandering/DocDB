@@ -84,7 +84,7 @@ if ($params{version} eq "0") {
 }
 my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 
-my $UpdateLink = $DocumentAddForm."?mode=update&docid=$DocumentID";
+my $UpdateLink = $DocumentAddForm."?mode=update;docid=$DocumentID";
 unless (&CanModify($DocumentID,$Version)) {
   push @ErrorStack,"You are not authorized to modify this document.";
 }  
@@ -115,14 +115,14 @@ print "These should be files forgotten earlier or a new presentation format of
        an existing document.<br/>\n";
 print "If these are files with updated information, 
        <a href=\"$UpdateLink\">create a new version</a> instead.<br/>\n";
-print "If you aren't <font color=\"red\">absolutely sure</font> this is what 
+print "If you aren't <span class=\"Warning\">absolutely sure</span> this is what 
        you want to do, go back and read the help.</h4>\n";
 
 print "<h4>The current document document information is reproduced below:</h4>\n";
 
-print "<p><hr><p>\n";
+print "<hr/>\n";
 &PrintRevisionInfo($DocRevID,-hidebuttons => $TRUE, -hideversions => $TRUE);
-print "<p><hr><p>\n";
+print "<hr/>\n";
 
 print '<table class="HighPaddedTable CenteredTable">'."\n";
 print $query -> start_multipart_form('POST',$AddFiles);
