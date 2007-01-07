@@ -56,11 +56,13 @@ my @SecurityGroups = keys %SecurityIDs;
 foreach my $SecurityGroup (@SecurityGroups) {
   FetchSecurityGroup($SecurityGroup);
 }
-my @SecurityGroups = sort SecurityGroupsByName keys %SecurityIDs;
+
+@SecurityGroups = sort SecurityGroupsByName keys %SecurityIDs;
 
 print "<h2>DocDB Security Groups</h2>\n";
  
 foreach my $SecurityGroup (@SecurityGroups) {
+  print "SG: $SecurityGroup";
   print $SecurityGroups{$SecurityGroup}{NAME};
 }
 
