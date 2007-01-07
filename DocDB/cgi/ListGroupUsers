@@ -52,6 +52,10 @@ EndPage();
 
 ### List of groups and attributes
 
+my @SecurityGroups = keys %SecurityIDs;
+foreach my $SecurityGroup (@SecurityGroups) {
+  FetchSecurityGroup($UserGroupID);
+}
 my @SecurityGroups = sort SecurityGroupsByName keys %SecurityIDs;
 
 print "<h2>DocDB Security Groups</h2>\n";

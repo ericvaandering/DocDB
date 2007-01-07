@@ -444,4 +444,8 @@ sub FieldsByColumn {
   $SortFields{$a}{Column} <=> $SortFields{$b}{Column} 
 }
 
+sub SecurityGroupsByName {
+  $SecurityGroups{$a}{NAME} cmp $SecurityGroups{$b}{NAME};
+}
+
 1;
