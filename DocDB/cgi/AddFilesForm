@@ -156,7 +156,7 @@ print '<tr><td class="SubmitCell">'."\n";
 print $query -> submit (-value => "Add Files");
 print "</td></tr>";
 
-print "</table><p>";
+print "</table>";
 print $query -> end_multipart_form;
 
 &DocDBNavBar();
