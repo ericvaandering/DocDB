@@ -61,6 +61,11 @@ EndPage();
 
 print "<h2>DocDB Security Groups</h2>\n";
 
+print "<p>These are the security groups withing DocDB and a summary of their 
+       permissions. To see  the individual members of these groups, see the
+       lists below or click on the group name which will take you to the list.
+       </p>\n";
+
 print '<table class="CenteredTable LowPaddedTable">'."\n"; 
 print '<tr><th>Group</th><th>Description</th><th>Admin?</th><th>Create?</th><th>View?</th></tr>'."\n";
 foreach my $SecurityGroupID (@SecurityGroupIDs) {
