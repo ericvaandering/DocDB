@@ -40,7 +40,7 @@ sub IsAuthorListOrdered {
   my $Ordered = $FALSE;
   
   foreach my $AuthorRevID (@AuthorRevIDs) {
-    if ($RevisionAuthors{$AuthorRevID}{AuthorID}) {
+    if ($RevisionAuthors{$AuthorRevID}{AuthorOrder}) {
       $Ordered = $TRUE;
     }
   }
