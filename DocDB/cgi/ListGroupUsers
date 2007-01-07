@@ -54,7 +54,7 @@ EndPage();
 
 my @SecurityGroups = keys %SecurityIDs;
 foreach my $SecurityGroup (@SecurityGroups) {
-  FetchSecurityGroup($UserGroupID);
+  FetchSecurityGroup($SecurityGroup);
 }
 my @SecurityGroups = sort SecurityGroupsByName keys %SecurityIDs;
 
