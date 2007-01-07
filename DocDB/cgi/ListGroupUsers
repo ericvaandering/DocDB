@@ -60,11 +60,19 @@ EndPage();
 @SecurityGroupIDs = sort SecurityGroupsByName keys %SecurityGroups;
 
 print "<h2>DocDB Security Groups</h2>\n";
- 
+
+print '<table class="CenteredTable LowPaddedTable">'."\n"; 
+print '<tr><th>Group</th><th>Description</th><th>Admin</th><th>Create</th><th>View</th></tr>'."\n";
 foreach my $SecurityGroupID (@SecurityGroupIDs) {
-  print "SG: $SecurityGroupID";
-  print $SecurityGroups{$SecurityGroupID}{NAME};
+  print '<tr>';
+  print '<td>'.$SecurityGroups{$SecurityGroupID}{NAME}.'</td>';
+  print '<td>'.$SecurityGroups{$SecurityGroupID}{Description}.'</td>';
+  print '<td>'.('No','Yes')[$SecurityGroups{$SecurityGroupID}{CanAdmin}]. '</td>';
+  print '<td>'.('No','Yes')[$SecurityGroups{$SecurityGroupID}{CanCreate}].'</td>';
+  print '<td>'.('No','Yes')[$SecurityGroups{$SecurityGroupID}{CanView}].  '</td>';
+  print "<tr>\n";
 }
+print "</table>\n";
 
 ### List of groups with associated names
 
@@ -72,7 +80,7 @@ print "<h2>DocDB Users By Group</h2>\n";
 
 foreach my $SecurityGroupID (@SecurityGroupIDs) {
   my $GroupName = $SecurityGroups{$SecurityGroupID}{NAME};
-  my @EmailUserIDs = sort EmailUserIDsByName FetchEmailUserIDsBySecurityGroup($SecurityIDs{$SecurityGroup});
+  my @EmailUserIDs = sort EmailUserIDsByName FetchEmailUserIDsBySecurityGroup($SecurityGroupID);
   if (@EmailUserIDs) {
     print "<p><a name=\"$GroupName\" /><strong>$GroupName has these members:</strong></p>\n<ul>\n";
     foreach my $EmailUserID (@EmailUserIDs) {
