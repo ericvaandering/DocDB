@@ -1,0 +1,77 @@
+#! /usr/bin/env perl
+#
+#        Name: EmailAdministerForm
+# Description: This script provides a form to administer users receiving
+#              e-mail notifications and shows the complete list of who is
+#              receiving what.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+use DBI;
+
+require "DocDBGlobals.pm";
+#require "Scripts.pm";
+#require "ResponseElements.pm";
+require "Security.pm";
+require "HTMLUtilities.pm";
+#require "AdministerElements.pm";
+#require "EmailUserHTML.pm";
+#require "SecurityHTML.pm";
+
+#require "MailNotification.pm";
+#require "Sorts.pm";
+#require "SecuritySQL.pm";
+#require "NotificationSQL.pm";
+
+$dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+GetSecurityGroups();
+
+print $query -> header( -charset => $HTTP_ENCODING );
+DocDBHeader("List of Groups and Users",""); 
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+EndPage();
+
+  ### List of groups with associated names
+
+my @SecurityGroups = sort keys %SecurityIDs;
+
+foreach my $SecurityGroup (@SecurityGroups) {
+  my @EmailUserIDs = sort EmailUserIDsByName FetchEmailUserIDsBySecurityGroup($SecurityIDs{$SecurityGroup});
+  if (@EmailUserIDs) {
+    print "<p><a name=\"$SecurityGroup\" /><strong>$SecurityGroup has these members:</strong></p>\n<ul>\n";
+    foreach my $EmailUserID (@EmailUserIDs) {
+      if ($EmailUser{$EmailUserID}{Name}) { 
+        print "<li>$EmailUser{$EmailUserID}{Name} ($EmailUser{$EmailUserID}{Username}, $EmailUser{$EmailUserID}{EmailAddress})</li>\n";
+      } else {
+        print "<li>Unknown (ID: $EmailUserID)</li>\n";
+      }  
+    }
+    print "</ul>\n";
+  }     
+}
+
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
