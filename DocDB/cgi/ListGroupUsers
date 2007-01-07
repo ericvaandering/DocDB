@@ -65,11 +65,12 @@ print '<table class="CenteredTable LowPaddedTable">'."\n";
 print '<tr><th>Group</th><th>Description</th><th>Admin</th><th>Create</th><th>View</th></tr>'."\n";
 foreach my $SecurityGroupID (@SecurityGroupIDs) {
   print '<tr>';
-  print '<td>'.$SecurityGroups{$SecurityGroupID}{NAME}.'</td>';
+  print '<td><a href="#'.$SecurityGroups{$SecurityGroupID}{NAME}.'">'.
+        $SecurityGroups{$SecurityGroupID}{NAME}.'</a></td>';
   print '<td>'.$SecurityGroups{$SecurityGroupID}{Description}.'</td>';
-  print '<td>'.('No','Yes')[$SecurityGroups{$SecurityGroupID}{CanAdmin}]. '</td>';
-  print '<td>'.('No','Yes')[$SecurityGroups{$SecurityGroupID}{CanCreate}].'</td>';
-  print '<td>'.('No','Yes')[$SecurityGroups{$SecurityGroupID}{CanView}].  '</td>';
+  print '<td>'.('No','Yes')[$SecurityGroups{$SecurityGroupID}{CanAdminister}].'</td>';
+  print '<td>'.('No','Yes')[$SecurityGroups{$SecurityGroupID}{CanCreate}].    '</td>';
+  print '<td>'.('No','Yes')[$SecurityGroups{$SecurityGroupID}{CanView}].      '</td>';
   print "<tr>\n";
 }
 print "</table>\n";
