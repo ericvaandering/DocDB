@@ -204,6 +204,8 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   }
 }  
 
+push @DebugStack,"Ordered: $AuthorListOrdered";
+
 @TopicDefaults = Unique(@TopicDefaults); # Make sure this list is unique
 
 if ($EnhancedSecurity) {
