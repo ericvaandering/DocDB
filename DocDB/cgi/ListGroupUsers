@@ -30,18 +30,12 @@ use CGI qw(-nosticky);
 use DBI;
 
 require "DocDBGlobals.pm";
-#require "Scripts.pm";
 require "ResponseElements.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";
-#require "AdministerElements.pm";
-#require "EmailUserHTML.pm";
-#require "SecurityHTML.pm";
 
-#require "MailNotification.pm";
 require "Sorts.pm";
 require "SecuritySQL.pm";
-#require "NotificationSQL.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -56,9 +50,19 @@ DocDBHeader("List of Groups and Users","");
 
 EndPage();
 
+### List of groups and attributes
+
+my @SecurityGroups = sort SecurityGroupsByName keys %SecurityIDs;
+
+print "<h2>DocDB Security Groups</h2>\n";
+ 
+foreach my $SecurityGroup (@SecurityGroups) {
+  print $SecurityGroups{$SecurityGroup}{NAME};
+}
+
 ### List of groups with associated names
 
-my @SecurityGroups = sort keys %SecurityIDs;
+print "<h2>DocDB Users By Group</h2>\n";
 
 foreach my $SecurityGroup (@SecurityGroups) {
   my @EmailUserIDs = sort EmailUserIDsByName FetchEmailUserIDsBySecurityGroup($SecurityIDs{$SecurityGroup});
