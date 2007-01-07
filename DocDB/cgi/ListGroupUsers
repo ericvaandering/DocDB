@@ -52,28 +52,29 @@ EndPage();
 
 ### List of groups and attributes
 
-my @SecurityGroups = keys %SecurityIDs;
-foreach my $SecurityGroup (@SecurityGroups) {
-  FetchSecurityGroup($SecurityGroup);
-}
+#my @SecurityGroupIDs = keys %SecurityGroups;
+#foreach my $SecurityGroupID (@SecurityGroupIDs) {
+#  FetchSecurityGroup($SecurityGroupID);
+#}
 
-@SecurityGroups = sort SecurityGroupsByName keys %SecurityIDs;
+@SecurityGroupIDs = sort SecurityGroupsByName keys %SecurityGroups;
 
 print "<h2>DocDB Security Groups</h2>\n";
  
-foreach my $SecurityGroup (@SecurityGroups) {
-  print "SG: $SecurityGroup";
-  print $SecurityGroups{$SecurityGroup}{NAME};
+foreach my $SecurityGroupID (@SecurityGroupIDs) {
+  print "SG: $SecurityGroupID";
+  print $SecurityGroups{$SecurityGroupID}{NAME};
 }
 
 ### List of groups with associated names
 
 print "<h2>DocDB Users By Group</h2>\n";
 
-foreach my $SecurityGroup (@SecurityGroups) {
+foreach my $SecurityGroupID (@SecurityGroupIDs) {
+  my $GroupName = $SecurityGroups{$SecurityGroupID}{NAME}
   my @EmailUserIDs = sort EmailUserIDsByName FetchEmailUserIDsBySecurityGroup($SecurityIDs{$SecurityGroup});
   if (@EmailUserIDs) {
-    print "<p><a name=\"$SecurityGroup\" /><strong>$SecurityGroup has these members:</strong></p>\n<ul>\n";
+    print "<p><a name=\"$GroupName\" /><strong>$GroupName has these members:</strong></p>\n<ul>\n";
     foreach my $EmailUserID (@EmailUserIDs) {
       if ($EmailUser{$EmailUserID}{Name}) { 
         print "<li>$EmailUser{$EmailUserID}{Name} ($EmailUser{$EmailUserID}{Username}, $EmailUser{$EmailUserID}{EmailAddress})</li>\n";
