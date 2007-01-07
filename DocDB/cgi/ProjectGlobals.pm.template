@@ -115,6 +115,8 @@ $ShortProject   = "MyProject";    # This is the project used in the Document ID
   
 # ----- These are some options for extra features of the DocDB that can be 
 # ----- enabled. Values shown are defaults, change 0 -> 1 to enable a feature.
+# ----- There are a lot of other options shown in DocDBGlobals.pm. You can
+# ----- change any of them here.
 
 #$CaseInsensitiveUsers = 0;     # Can use "Project" for a name in the 
                                 # security groups, but "project" in .htaccess 

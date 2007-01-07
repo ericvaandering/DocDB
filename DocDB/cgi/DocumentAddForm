@@ -455,7 +455,6 @@ print "</tr>\n";
 
 ### Topics 
 
-
 if ($TopicMode eq "single") {
   print "<tr><td colspan=\"4\">\n"; 
   TopicScroll({ -required => $RequiredEntries{Topic}, -size     => 20 , 
@@ -467,6 +466,25 @@ if ($TopicMode eq "single") {
                      -default  => \@TopicDefaults, 
                      -multiple => $TRUE, 
                      -minlevel => $Preferences{Topics}{MinLevel}{Document}, });
+}
+print "</td></tr>\n";
+
+if ($Preferences{Options}{SubmitAgree}) {
+  print '<tr><td colspan="4">';
+  print $Preferences{Options}{SubmitAgree};
+  print $query -> checkbox(-name  => 'submitagree', -label => "");
+  print "</td></tr>\n";
+}  
+
+### Submit button prior to optional information
+
+print "<tr><td colspan=\"4\" class=\"SubmitCell\">\n"; 
+if      ($mode eq "add") {
+  print $query -> submit (-value => "Submit document");
+} elsif ($mode eq "reserve") {
+  print $query -> submit (-value => "Request document ID");
+} elsif ($mode eq "update" || $mode eq "updatedb") {
+  print $query -> submit (-value => "Update document");
 }
 print "</td></tr>\n";
 
