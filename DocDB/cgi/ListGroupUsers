@@ -71,7 +71,7 @@ foreach my $SecurityGroupID (@SecurityGroupIDs) {
 print "<h2>DocDB Users By Group</h2>\n";
 
 foreach my $SecurityGroupID (@SecurityGroupIDs) {
-  my $GroupName = $SecurityGroups{$SecurityGroupID}{NAME}
+  my $GroupName = $SecurityGroups{$SecurityGroupID}{NAME};
   my @EmailUserIDs = sort EmailUserIDsByName FetchEmailUserIDsBySecurityGroup($SecurityIDs{$SecurityGroup});
   if (@EmailUserIDs) {
     print "<p><a name=\"$GroupName\" /><strong>$GroupName has these members:</strong></p>\n<ul>\n";
