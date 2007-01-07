@@ -3,8 +3,18 @@
   Add the ability to make the user check a disclaimer box. See
   $Preferences{Options}{SubmitAgree} in Project/DocDBGlobals.pm
   
-  
+  For certificate version, add a script to be able to check which users
+  are part of which group(s).
 
+8.2.5 
+
+  Fix bug from 8.1 or 8.2 where whether existing author list was ordered or not
+  was mis-detected.
+
+8.2.4
+  
+  Fix bug from 8.2.0 where topics were not shown
+  
 8.2.1
 
   The only user-visible change is that when a document is modifiable or viewable
