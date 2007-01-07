@@ -453,6 +453,12 @@ if ($EnhancedSecurity) {
 }
 print "</tr>\n";
 
+if ($UserValidation eq "certificate") {
+  print '<tr><td colspan="2">&nbsp</td>';
+  print '<td colspan="2"><a href="'.$ListGroupUsers.'">List users in groups</a>';
+  print "</td></tr>\n";
+}
+  
 ### Topics 
 
 if ($TopicMode eq "single") {

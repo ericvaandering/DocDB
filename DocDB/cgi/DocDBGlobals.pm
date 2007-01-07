@@ -94,7 +94,7 @@ $Preferences{Options}{DynamicFullList}{Public}  = $FALSE; # Generate Full docume
 
 $Preferences{Options}{AlwaysRetrieveFile}       = $FALSE; # Always use RetrieveFile instead of File Links
 
-$Preferences{Options}{SubmitAgree}              = ""; # "Put text here to make users agree to a privacy statement or some-such. Generates a checkbox"
+$Preferences{Options}{SubmitAgree}              = ""; # "Put text here to make users agree to a privacy statement or some-such. <br/><b>I agree:</b>"
 
 $Preferences{Topics}{MinLevel}{Document} = 1;
 
@@ -235,6 +235,7 @@ $WatchDocument         = $cgi_root."WatchDocument";
 
 $CertificateApplyForm  = $cgi_root."CertificateApplyForm";
 $UserAccessApply       = $cgi_root."UserAccessApply";
+$ListGroupUsers        = $cgi_root."ListGroupUsers";
 
 $DocDBHelp             = $cgi_root."DocDBHelp";
 $DocDBInstructions     = $cgi_root."DocDBInstructions";

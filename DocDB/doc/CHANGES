@@ -1,3 +1,10 @@
+8.3.0
+  
+  Add the ability to make the user check a disclaimer box. See
+  $Preferences{Options}{SubmitAgree} in Project/DocDBGlobals.pm
+  
+  
+
 8.2.1
 
   The only user-visible change is that when a document is modifiable or viewable
