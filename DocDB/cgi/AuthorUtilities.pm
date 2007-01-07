@@ -41,7 +41,6 @@ sub IsAuthorListOrdered {
   
   foreach my $AuthorRevID (@AuthorRevIDs) {
     if ($RevisionAuthors{$AuthorRevID}{AuthorOrder}) {
-      push @DebugStack,"Setting ordered ".$RevisionAuthors{$AuthorRevID}{AuthorID};
       $Ordered = $TRUE;
     }
   }

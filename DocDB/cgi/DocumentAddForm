@@ -180,7 +180,6 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   my @AuthorRevIDs     = GetRevisionAuthors($DocRevID);
      @AuthorRevIDs     = sort AuthorRevIDsByOrder @AuthorRevIDs;
   $AuthorListOrdered   = IsAuthorListOrdered({     -authorrevids => \@AuthorRevIDs, });
-push @DebugStack,"Ordered 1: $AuthorListOrdered";
   @AuthorDefaults      = AuthorRevIDsToAuthorIDs({ -authorrevids => \@AuthorRevIDs, });
   @TopicDefaults       = GetRevisionTopics({ -docrevid => $DocRevID });
   @EventDefaults       = GetRevisionEvents($DocRevID);
@@ -204,8 +203,6 @@ push @DebugStack,"Ordered 1: $AuthorListOrdered";
     @SecurityDefaults = FindUsersGroups(); 
   }
 }  
-
-push @DebugStack,"Ordered: $AuthorListOrdered";
 
 @TopicDefaults = Unique(@TopicDefaults); # Make sure this list is unique
 
