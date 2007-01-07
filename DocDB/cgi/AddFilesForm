@@ -124,13 +124,15 @@ print "<hr/>\n";
 &PrintRevisionInfo($DocRevID,-hidebuttons => $TRUE, -hideversions => $TRUE);
 print "<hr/>\n";
 
-print '<table class="HighPaddedTable CenteredTable">'."\n";
 print $query -> start_multipart_form('POST',$AddFiles);
 
+print "<div>\n";
 print $query -> hidden(-name => 'upload',  -default => 'file');
 print $query -> hidden(-name => 'version', -default => $Version);
 print $query -> hidden(-name => 'docid',   -default => $DocumentID);
+print "</div>\n";
 
+print '<table class="HighPaddedTable CenteredTable">'."\n";
 print "<tr><td><strong>Files to add:</strong></td></tr>";
 
 print "<tr><td>\n";
@@ -154,8 +156,8 @@ print '<tr><td class="SubmitCell">'."\n";
 print $query -> submit (-value => "Add Files");
 print "</td></tr>";
 
-print $query -> end_multipart_form;
 print "</table><p>";
+print $query -> end_multipart_form;
 
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
