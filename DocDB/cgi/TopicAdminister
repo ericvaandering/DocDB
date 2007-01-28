@@ -65,7 +65,7 @@ $query -> delete_all();
 
 # Open connection and die if we can't
 
-if ($Password && $Username) {
+if ($Action || $Password || $Username) {
   CreateConnection(-user => $Username, -password => $Password);
 } else {
   CreateConnection(-type => "ro");
