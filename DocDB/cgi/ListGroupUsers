@@ -81,6 +81,7 @@ foreach my $SecurityGroupID (@SecurityGroupIDs) {
 print "</table>\n";
 
 ### List of groups with associated names
+my @EmailUserIDs = sort EmailUserIDsByName GetEmailUserIDs();
 
 print "<h2>DocDB Users By Group</h2>\n";
 
@@ -95,7 +96,9 @@ foreach my $SecurityGroupID (@SecurityGroupIDs) {
       }  
     }
     print "</ul>\n";
-  }     
+  } else {
+    print "<p><a name=\"$GroupName\" /><strong>$GroupName has no members.</strong></p>\n";
+  }    
 }
 
 DocDBNavBar();
