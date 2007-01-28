@@ -65,6 +65,11 @@ $query -> delete_all();
 
 # Open connection and die if we can't
 
+if ($Action && (!$Password || !$Username)) {
+  push @ErrorStack,$Msg_AdminNoPass;
+}
+EndPage(-startpage => $TRUE);
+
 if ($Action || $Password || $Username) {
   CreateConnection(-user => $Username, -password => $Password);
 } else {
