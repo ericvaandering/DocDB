@@ -396,7 +396,11 @@ print "</tr>\n";
 
 ### Requester, Authors, and security 
 
-print "<tr>\n";
+if ($UserValidation eq "certificate") {
+  print '<tr class="wListUsers">'."\n";
+} else {
+  print "<tr>\n";
+}
 
 print "<td>\n"; 
 AuthorScroll(-required => $RequiredEntries{Requester}, -helplink => "requester",
@@ -454,7 +458,7 @@ if ($EnhancedSecurity) {
 print "</tr>\n";
 
 if ($UserValidation eq "certificate") {
-  print '<tr><td colspan="2">&nbsp</td>';
+  print '<tr class="ListUsers"><td colspan="2">&nbsp</td>';
   print '<td colspan="2"><a href="'.$ListGroupUsers.'">List users in groups</a>';
   print "</td></tr>\n";
 }
