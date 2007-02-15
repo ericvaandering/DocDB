@@ -99,6 +99,7 @@ my $SessionTalkID = $params{sessiontalkid};
 my $RevisionNote  = $params{revisionnote};
 my $SignoffList   = $params{signofflist};
 my $OldVersion    = $params{oldversion};
+my $SubmitAgree   = $params{submitagree};
 my $MaxFiles      = $params{maxfiles};
 my $UniqueID      = $params{uniqueid};
 my @XRefs         = split /,*\s+/,$params{xrefs}; # Can be comma or space separated
@@ -245,6 +246,12 @@ if ($mode eq "update" || $mode eq "updatedb") {
   unless (&CanModify($params{docid})) {
     push @ErrorStack,"You are not allowed to modify this document.";
   }
+}
+
+if ($Preferences{Options}{SubmitAgree} && !$SubmitAgree) {
+  push @ErrorStack,'You must check the box near with this statement: <br/>'.
+                   $Preferences{Options}{SubmitAgree}.
+                   '<br/>to submit the document.';
 }
 
 ### Final checks

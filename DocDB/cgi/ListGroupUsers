@@ -1,0 +1,105 @@
+#! /usr/bin/env perl
+#
+#        Name: EmailAdministerForm
+# Description: This script provides a form to administer users receiving
+#              e-mail notifications and shows the complete list of who is
+#              receiving what.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+#
+
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+use CGI qw(-nosticky);                                                                                      
+use DBI;
+
+require "DocDBGlobals.pm";
+require "ResponseElements.pm";
+require "Security.pm";
+require "HTMLUtilities.pm";
+
+require "Sorts.pm";
+require "SecuritySQL.pm";
+
+$query = new CGI;  # Global for subroutines
+$dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+GetSecurityGroups();
+
+print $query -> header( -charset => $HTTP_ENCODING );
+DocDBHeader("List of Groups and Users",""); 
+
+@ErrorStack = ();
+@WarnStack  = ();
+
+EndPage();
+
+### List of groups and attributes
+
+#my @SecurityGroupIDs = keys %SecurityGroups;
+#foreach my $SecurityGroupID (@SecurityGroupIDs) {
+#  FetchSecurityGroup($SecurityGroupID);
+#}
+
+@SecurityGroupIDs = sort SecurityGroupsByName keys %SecurityGroups;
+
+print "<h2>DocDB Security Groups</h2>\n";
+
+print "<p>These are the security groups withing DocDB and a summary of their 
+       permissions. To see  the individual members of these groups, see the
+       lists below or click on the group name which will take you to the list.
+       </p>\n";
+
+print '<table class="CenteredTable LowPaddedTable">'."\n"; 
+print '<tr><th>Group</th><th>Description</th><th>Admin?</th><th>Create?</th><th>View?</th></tr>'."\n";
+foreach my $SecurityGroupID (@SecurityGroupIDs) {
+  print '<tr>';
+  print '<td><a href="#'.$SecurityGroups{$SecurityGroupID}{NAME}.'">'.
+        $SecurityGroups{$SecurityGroupID}{NAME}.'</a></td>';
+  print '<td>'.$SecurityGroups{$SecurityGroupID}{Description}.'</td>';
+  print '<td>'.('No','Yes')[$SecurityGroups{$SecurityGroupID}{CanAdminister}].'</td>';
+  print '<td>'.('No','Yes')[$SecurityGroups{$SecurityGroupID}{CanCreate}].    '</td>';
+  print '<td>'.('No','Yes')[$SecurityGroups{$SecurityGroupID}{CanView}].      '</td>';
+  print "</tr>\n";
+}
+print "</table>\n";
+
+### List of groups with associated names
+my @EmailUserIDs = sort EmailUserIDsByName GetEmailUserIDs();
+
+print "<h2>DocDB Users By Group</h2>\n";
+
+foreach my $SecurityGroupID (@SecurityGroupIDs) {
+  my $GroupName = $SecurityGroups{$SecurityGroupID}{NAME};
+  my @EmailUserIDs = sort EmailUserIDsByName FetchEmailUserIDsBySecurityGroup($SecurityGroupID);
+  if (@EmailUserIDs) {
+    print "<p><a name=\"$GroupName\" /><strong>$GroupName has these members:</strong></p>\n<ul>\n";
+    foreach my $EmailUserID (@EmailUserIDs) {
+      if ($EmailUser{$EmailUserID}{Name}) { 
+        print "<li>$EmailUser{$EmailUserID}{Name} ($EmailUser{$EmailUserID}{Username}, $EmailUser{$EmailUserID}{EmailAddress})</li>\n";
+      }  
+    }
+    print "</ul>\n";
+  } else {
+    print "<p><a name=\"$GroupName\" /><strong>$GroupName has no members.</strong></p>\n";
+  }    
+}
+
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

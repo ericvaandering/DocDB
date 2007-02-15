@@ -23,7 +23,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI;
+use CGI qw(-nosticky);
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -84,7 +84,7 @@ if ($params{version} eq "0") {
 }
 my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 
-my $UpdateLink = $DocumentAddForm."?mode=update&docid=$DocumentID";
+my $UpdateLink = $DocumentAddForm."?mode=update;docid=$DocumentID";
 unless (&CanModify($DocumentID,$Version)) {
   push @ErrorStack,"You are not authorized to modify this document.";
 }  
@@ -110,47 +110,54 @@ WarnPage(@WarnStack); @WarnStack = ();
 EndPage(@ErrorStack);
 
 
-print "<center><p>\n";  
-print "<h4>You are adding files to a version of a document.<br>\n";
+print "<h4>You are adding files to a version of a document.<br/>\n";
 print "These should be files forgotten earlier or a new presentation format of
-       an existing document.<br>\n";
+       an existing document.<br/>\n";
 print "If these are files with updated information, 
-       <a href=\"$UpdateLink\">create a new version</a> instead.<br>\n";
-print "If you aren't <font color=\"red\">absolutely sure</font> this is what 
-       you want to do, go back and read the help.<p>\n";
+       <a href=\"$UpdateLink\">create a new version</a> instead.<br/>\n";
+print "If you aren't <span class=\"Warning\">absolutely sure</span> this is what 
+       you want to do, go back and read the help.</h4>\n";
 
-print "The current document document information is reproduced below:</h4>\n";
-print "</center>\n";  
+print "<h4>The current document document information is reproduced below:</h4>\n";
 
-print "<p><hr><p>\n";
+print "<hr/>\n";
 &PrintRevisionInfo($DocRevID,-hidebuttons => $TRUE, -hideversions => $TRUE);
-print "<p><hr><p>\n";
+print "<hr/>\n";
 
-print "<center><table cellpadding=10>\n";
 print $query -> start_multipart_form('POST',$AddFiles);
 
+print "<div>\n";
 print $query -> hidden(-name => 'upload',  -default => 'file');
 print $query -> hidden(-name => 'version', -default => $Version);
 print $query -> hidden(-name => 'docid',   -default => $DocumentID);
+print "</div>\n";
 
-print "<tr><td><b>Files to add:</b></td></tr>";
+print '<table class="HighPaddedTable CenteredTable">'."\n";
+print "<tr><td><strong>Files to add:</strong></td></tr>";
 
 print "<tr><td>\n";
 &FileUploadBox(-type => $Upload);
 print "</td></tr>";
 
-print "<tr><td align=left>\n";
+print "<tr><td>\n";
 print FormElementTitle(-helplink => "replacefiles", -helptext => "Replace duplicate files?", -nocolon => $TRUE, -nobreak => $TRUE);
 print $query -> checkbox(-name => "replace", -label => '(Check for yes.)', 
                          -onclick => "helppopupwindow(\'DocDBHelp?term=replacefiles\');");
 print "</td></tr>";
 
-print "<tr><td align=center>\n";
+if ($Preferences{Options}{SubmitAgree}) {
+  print '<tr><td>';
+  print $Preferences{Options}{SubmitAgree};
+  print $query -> checkbox(-name  => 'submitagree', -label => "");
+  print "</td></tr>\n";
+}  
+
+print '<tr><td class="SubmitCell">'."\n";
 print $query -> submit (-value => "Add Files");
 print "</td></tr>";
 
+print "</table>";
 print $query -> end_multipart_form;
-print "</table></center><p>";
 
 &DocDBNavBar();
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

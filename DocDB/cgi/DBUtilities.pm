@@ -53,6 +53,10 @@ sub CreateConnection (%) {
     }
   } 
   
+  unless ($dbh) {
+    push @ErrorStack,"Unable to connect to the database.";
+  }  
+  
   return $dbh;          
 };
 

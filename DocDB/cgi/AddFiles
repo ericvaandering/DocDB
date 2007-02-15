@@ -61,10 +61,11 @@ print $query -> header( -charset => $HTTP_ENCODING );
 
 ### Get document and revision ID
 
-my $DocumentID = $params{docid};
-my $Version    = $params{version};
-my $Replace    = $params{replace};
-my $MaxFiles   = $params{maxfiles};
+my $DocumentID  = $params{docid};
+my $Version     = $params{version};
+my $Replace     = $params{replace};
+my $MaxFiles    = $params{maxfiles};
+my $SubmitAgree = $params{submitagree};
 
 my $DocRevID;
 
@@ -81,6 +82,13 @@ if ($DocumentID && $Version) {
 } else {
   push @ErrorStack,"You must supply document and version numbers to add files.";
 }
+
+if ($Preferences{Options}{SubmitAgree} && !$SubmitAgree) {
+  push @ErrorStack,'You must check the box near with this statement: <br/>'.
+                   $Preferences{Options}{SubmitAgree}.
+                   '<br/>to add files to the document.';
+}
+
 
 my $UpdateLink = $DocumentAddForm."?mode=update&docid=$DocumentID";
 
