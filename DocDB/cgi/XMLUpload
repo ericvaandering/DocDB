@@ -1,0 +1,105 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+# Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+use CGI qw(-nosticky);                                                                                      
+use DBI;
+use XML::Twig;
+
+require "DocDBGlobals.pm";
+my %CGIParams = $query -> Vars;
+
+my $XMLText = $CGIParams{XMLText};
+
+$Twig -> safe_parse($XML);
+    
+$XML = $Twig -> root();
+
+# Get control block
+
+my $Control = $XML     -> first_child("control");
+my $Mode    = $Control -> first_child("mode");
+my $UseDate = $Control -> first_child("usedate");
+
+# Get Authentication if needed
+
+my $Authentication =  $XML -> first_child("authentication");
+my $User     = $Authentication -> first_child("username");
+my $Password = $Authentication -> first_child("password");
+
+my $Document = $XML -> first_child("document");
+
+my $DocID     = $Document -> {'att'} -> {'id'};
+my $Revision  = $Document -> first_child();
+
+# Extract text information from XML
+
+my $Title     = $Revision -> first_child("title");
+my $Abstract  = $Revision -> first_child("abstract");
+# Document type
+# Publication info
+# Notes
+
+my $DocTypeID = 0; # Not done yet in output?
+
+# Extract submitter and author list from XML
+
+my $SubmitterID;
+
+my $Submitter = $Revision -> children("submitter");
+my $SubmitterID = $Submitter -> first_child("id") -> text();
+unless ($SubmitterID) {
+    #extract name and lookup 
+}  
+
+my @AuthorIDs = ();
+my @Authors = $Revision -> children("author");
+foreach $Author (@Authors) {
+  my $AuthorID = $Author -> {'att'} -> {'id'};
+  if ($AuthorID) {
+    push @AuthorIDs, $AuthorID;
+  } else {
+    #extract name and lookup
+  }  
+}
+
+# Extract topic list from XML
+
+my @TopicIDs = ();
+my @Topics = $Revision -> children("topic");
+foreach $Topic (@Topics) {
+  my $TopicID = $Topic -> {'att'} -> {'id'};
+  if ($TopicID) {
+    push @TopicIDs, $TopicID;
+  } else {
+    #extract name and lookup
+    #bail if more than one match
+  }  
+}
+
+# Similar loops for view and modify, Event IDs
+
+my ($NewDocumentID,$NewDocRevID) 
+          = AddDocument(-version     => $Mode,         -title       => $Title, 
+                        -typeid      => $DocTypeID,    -requesterid => @AuthorHints[0], 
+                        -authorids   => \@AuthorIDs,   -topicids    => \@TopicIDs, 
+                        -eventids    => \@EventIDs,    -viewids     => \@ViewGroupIDs, 
+                        -modifyids   => \@ModifyGroupIDs);
