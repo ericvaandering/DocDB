@@ -239,6 +239,8 @@ $DocDBInstructions     = $cgi_root."DocDBInstructions";
 $ShowTalkNote          = $cgi_root."ShowTalkNote";
 $EditTalkInfo          = $cgi_root."EditTalkInfo";
 
+$XMLUpload             = $cgi_root."XMLUpload";
+
 unless ($CSSDirectory && $CSSURLPath) {
   $CSSDirectory = $file_root."/Static/css";
   $CSSURLPath   = $web_root."/Static/css";

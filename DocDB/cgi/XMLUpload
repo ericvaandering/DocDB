@@ -133,8 +133,11 @@ if ($OutFormat eq 'XML') {
 } else {
   print $query -> header( -charset => $HTTP_ENCODING );
   DocDBHeader($PageTitle,"$Project Document $DocumentID-v$Version",-scripts => ["PopUps"]);
-  print $query -> filefield(-name      => 'XMLFile', -size => 120,
+  print $query -> start_multipart_form('POST',$XMLUpload,'id="xmlupload" name="xmlupload"');
+  print $query -> filefield(-name      => 'XMLFile', -size => 60,
                             -maxlength => 250);
+  print $query -> submit (-value => "Upload XML Description");
+  print $query -> end_multipart_form;
 }
 
 if ($OutFormat eq 'HTML') {
