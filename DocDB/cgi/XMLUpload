@@ -47,8 +47,9 @@ unless ($OutFormat) {
 }    
 $OutFormat =~ tr/[a-z]/[A-Z]/;
 
-if ($XMLText) {
+my ($NewDocumentID,$NewDocRevID);
 
+if ($XMLText) {
   $Twig -> safe_parse($XMLText);
 
   $XML = $Twig -> root();
@@ -56,7 +57,7 @@ if ($XMLText) {
   # Get control block
 
   my $Control = $XML     -> first_child("control");
-  my $Mode    = $Control -> first_child("mode");
+  my $Mode    = $Control -> first_child("mode") -> text();
   my $UseDate = $Control -> first_child("usedate");
 
   # Get Authentication if needed
@@ -97,9 +98,12 @@ if ($XMLText) {
   my $DocType   = $Revision -> first_child("doctype");
   my $DocTypeID = $DocType  -> {'att'} -> {'id'};
 
+  my $DateTime = "";
+  if ($UseDate) {
+    $DateTime = $Revision -> {'att'} -> {'modified'};
+  }
+  
   # Extract submitter and author list from XML
-
-  my $SubmitterID;
 
   my $Submitter = $Revision -> children("submitter");
   my $SubmitterID = $Submitter ->  {'att'} -> {'id'};
@@ -134,10 +138,10 @@ if ($XMLText) {
 
   # Similar loops for view and modify, Event IDs
 
-  my ($NewDocumentID,$NewDocRevID) 
+  ($NewDocumentID,$NewDocRevID) 
             = AddDocument(-version     => $Mode,         -title       => $Title,
                           -abstract    => $Abstract,     -keywords    => $Keywords,
-                          -pubinfo     => $PubInfo,
+                          -pubinfo     => $PubInfo,      -requesterid => $SubmitterID,
                           -typeid      => $DocTypeID,    -requesterid => @AuthorHints[0], 
                           -authorids   => \@AuthorIDs,   -topicids    => \@TopicIDs, 
                           -eventids    => \@EventIDs,    -viewids     => \@ViewGroupIDs, 
@@ -150,6 +154,14 @@ if ($OutFormat eq 'XML') {
     print XMLHeader();
   }  
   NewXMLOutput();
+  my %XMLDisplay = ("All" => $TRUE);
+  my $DocumentXML = DocumentXMLOut( {-docid   => $NewDocumentID,$NewDocRevID, 
+                                     -version => $DocRevisions{$NewDocRevID}{Version}, 
+                                     -display => \%XMLDisplay, 
+                                    } );
+  if ($DocumentXML) {
+    $DocumentXML -> paste(last_child => $DocDBXML);
+  }  
 } else {
   print $query -> header( -charset => $HTTP_ENCODING );
   DocDBHeader($PageTitle,"$Project Document $DocumentID-v$Version",-scripts => ["PopUps"]);

@@ -109,11 +109,13 @@ sub RevisionXMLOut {
     XML::Twig::Elt -> new("title",Printable($DocRevisions{$DocRevID}{Title})) -> paste(first_child => $RevisionXML);
   }
   
-  my $DocTypeXML = DocTypeXMLOut( {-doctypeid => $DocRevisions{$DocRevID}{DocTypeID}} );
-  if ($DocTypeXML) {
-    $DocTypeXML -> paste(last_child => $RevisionXML);
-  } 
-       
+  if ($XMLDisplay{All} || $XMLDisplay{DocType}) {
+    my $DocTypeXML = DocTypeXMLOut( {-doctypeid => $DocRevisions{$DocRevID}{DocTypeID}} );
+    if ($DocTypeXML) {
+      $DocTypeXML -> paste(last_child => $RevisionXML);
+    } 
+  }
+        
   # Add submitter
   
   if ($XMLDisplay{All} || $XMLDisplay{Submitter}) {
