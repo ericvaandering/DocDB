@@ -596,11 +596,13 @@ sub XMLReport {
     my $Line = XML::Twig::Elt -> new("action", Printable($Action));
     $Line -> paste(last_child => $ReportXML);
   }  
-  foreach my $Debug (@DebugStack) {
-    my $Line = XML::Twig::Elt -> new("debug", Printable($Debug));
-    $Line -> paste(last_child => $ReportXML);
-  }  
-  
+  if ($DebugOutput) {
+    foreach my $Debug (@DebugStack) {
+      my $Line = XML::Twig::Elt -> new("debug", Printable($Debug));
+      $Line -> paste(last_child => $ReportXML);
+    }  
+  }
+    
   @ErrorStack  = ();
   @WarnStack   = ();
   @ActionStack = ();
