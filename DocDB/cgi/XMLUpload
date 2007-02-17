@@ -25,6 +25,9 @@ use DBI;
 use XML::Twig;
 
 require "DocDBGlobals.pm";
+require "HTMLUtilities.pm";
+
+$query = new CGI;  # Global for subroutines
 my %CGIParams = $query -> Vars;
 
 my $XMLText = $query -> param("XMLFile");;
