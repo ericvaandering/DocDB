@@ -147,7 +147,8 @@ if ($XMLText) {
                           -typeid      => $DocTypeID,    -requesterid => @AuthorHints[0], 
                           -authorids   => \@AuthorIDs,   -topicids    => \@TopicIDs, 
                           -eventids    => \@EventIDs,    -viewids     => \@ViewGroupIDs, 
-                          -modifyids   => \@ModifyGroupIDs);
+                          -modifyids   => \@ModifyGroupIDs, -datetime => $DateTime,
+                          );
 }
 
 if ($OutFormat eq 'XML') {
@@ -168,6 +169,8 @@ if ($OutFormat eq 'XML') {
   if ($DocumentXML) {
     $DocumentXML -> paste(last_child => $DocDBXML);
   }  
+  my $ReportXML = XMLReport();
+  $ReportXML -> paste(last_child => $DocDBXML);
 } else {
   print $query -> header( -charset => $HTTP_ENCODING );
   DocDBHeader($PageTitle,"$Project Document $DocumentID-v$Version",-scripts => ["PopUps"]);

@@ -51,11 +51,12 @@ sub DocumentXMLOut {
   my ($ArgRef) = @_;
   my $DocumentID = exists $ArgRef->{-docid}   ?   $ArgRef->{-docid}    : 0;
   my $Version    = exists $ArgRef->{-version} ?   $ArgRef->{-version}  : "lastaccesible";
-  my %XMLDisplay = exists $ArgRef->{-display}  ? %{$ArgRef->{-display}} : ("Authors" => $TRUE, "Title" => $TRUE);
+  my %XMLDisplay = exists $ArgRef->{-display} ? %{$ArgRef->{-display}} : ("Authors" => $TRUE, "Title" => $TRUE);
 
   unless ($DocumentID) { return undef; }
   
-  push @DebugStack,"Document Display all: $XMLDisplay{All}";
+  push @DebugStack,"Document Display all: ".$XMLDisplay{All};
+  push @DebugStack,"Version: ".$Version;
 
   my %Attributes = ();
   $Attributes{id}           = $DocumentID;
