@@ -88,7 +88,7 @@ if ($XMLText) {
   my $SubmitterID;
 
   my $Submitter = $Revision -> children("submitter");
-  my $SubmitterID = $Submitter -> first_child("id") -> text();
+  my $SubmitterID = $Submitter ->  {'att'} -> {'id'};
   unless ($SubmitterID) {
       #extract name and lookup 
   }  
