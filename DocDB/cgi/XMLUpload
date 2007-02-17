@@ -61,9 +61,13 @@ if ($XMLText) {
   # Get Authentication if needed
 
   my $Authentication =  $XML -> first_child("authentication");
-  my $User     = $Authentication -> first_child("username");
-  my $Password = $Authentication -> first_child("password");
-
+  my ($User,$Password);
+   
+  if ($Authentication) {
+    $User     = $Authentication -> first_child("username");
+    $Password = $Authentication -> first_child("password");
+  }
+  
   my $Document = $XML -> first_child("document");
 
   my $DocID     = $Document -> {'att'} -> {'id'};
