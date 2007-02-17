@@ -55,10 +55,6 @@ sub DocumentXMLOut {
 
   unless ($DocumentID) { return undef; }
   
-  foreach my $Key (keys %XMLDisplay ) {
-    push @DebugStack,"Display $Key: ".$XMLDisplay{$Key};
-  }  
-
   my %Attributes = ();
   $Attributes{id}           = $DocumentID;
   $Attributes{href}         = $ShowDocument."?docid=$DocumentID";
@@ -108,8 +104,6 @@ sub RevisionXMLOut {
   
   # Basic revision info
   
-  push @DebugStack,"Revision Display all: $XMLDisplay{All}";
-
   my $RevisionXML = XML::Twig::Elt -> new(docrevision => \%Attributes );
   if ($XMLDisplay{All} || $XMLDisplay{Title}) {
     XML::Twig::Elt -> new("title",Printable($DocRevisions{$DocRevID}{Title})) -> paste(first_child => $RevisionXML);
