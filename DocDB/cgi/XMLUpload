@@ -99,7 +99,9 @@ if ($XMLText) {
   my $DocTypeID = $DocType  -> {'att'} -> {'id'};
 
   my $DateTime = "";
+  push @DebugStack,"Use date is ".$UseDate -> text();
   if ($UseDate) {
+    push @ActionStack,"Using dates supplied in XML for document.";
     $DateTime = $Revision -> {'att'} -> {'modified'};
   }
   

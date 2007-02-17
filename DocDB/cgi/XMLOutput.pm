@@ -55,6 +55,8 @@ sub DocumentXMLOut {
 
   unless ($DocumentID) { return undef; }
   
+  push @DebugStack,"Document Display all: $XMLDisplay{All}";
+
   my %Attributes = ();
   $Attributes{id}           = $DocumentID;
   $Attributes{href}         = $ShowDocument."?docid=$DocumentID";
@@ -104,7 +106,7 @@ sub RevisionXMLOut {
   
   # Basic revision info
   
-  push @DebugStack,"Display all: $XMLDisplay{All}";
+  push @DebugStack,"Revision Display all: $XMLDisplay{All}";
 
   my $RevisionXML = XML::Twig::Elt -> new(docrevision => \%Attributes );
   if ($XMLDisplay{All} || $XMLDisplay{Title}) {
