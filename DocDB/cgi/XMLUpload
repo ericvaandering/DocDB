@@ -76,11 +76,23 @@ if ($XMLText) {
 
   # Extract text information from XML
 
-  my $Title     = $Revision -> first_child("title")    -> text();
-  my $Abstract  = $Revision -> first_child("abstract") -> text();
-  # Document type
-  # Publication info
+  my $Title    = $Revision -> first_child("title")           -> text();
+  my $Abstract = $Revision -> first_child("abstract")        -> text();
+  my $PubInfo  = $Revision -> first_child("publicationinfo") -> text();
+  
   # Notes
+
+
+  # Extract keywords from XML
+   
+  my @Keywords = $Revision -> children("keyword");
+  my @KeywordsText = ();
+  foreach $Keyword (@Keywords) {
+    push @KeywordsText,$Keyword -> text();
+  }
+  my $Keywords = join ' ',@KeywordsText;
+
+  # Extract Document Type
 
   my $DocType   = $Revision -> first_child("doctype");
   my $DocTypeID = $DocType  -> {'att'} -> {'id'};
@@ -124,7 +136,8 @@ if ($XMLText) {
 
   my ($NewDocumentID,$NewDocRevID) 
             = AddDocument(-version     => $Mode,         -title       => $Title,
-                          -abstract    => $Abstract,  
+                          -abstract    => $Abstract,     -keywords    => $Keywords,
+                          -pubinfo     => $PubInfo,
                           -typeid      => $DocTypeID,    -requesterid => @AuthorHints[0], 
                           -authorids   => \@AuthorIDs,   -topicids    => \@TopicIDs, 
                           -eventids    => \@EventIDs,    -viewids     => \@ViewGroupIDs, 
