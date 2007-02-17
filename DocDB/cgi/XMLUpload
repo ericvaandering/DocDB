@@ -30,13 +30,13 @@ require "ResponseElements.pm";
 require "DBUtilities.pm";
 #require "FileHTML.pm";
 
+my $Twig = XML::Twig -> new();
 $query = new CGI;  # Global for subroutines
 my %CGIParams = $query -> Vars;
 CreateConnection(-type => "rw");
 
 my $XMLText = $query -> param("XMLFile");;
 my $OutFormat  = $CGIParams{outformat};
-
 unless ($OutFormat) {
   if ($XMLText) {
     $OutFormat = "XML";
