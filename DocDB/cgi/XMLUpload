@@ -144,7 +144,7 @@ if ($XMLText) {
             = AddDocument(-version     => $Mode,         -title       => $Title,
                           -abstract    => $Abstract,     -keywords    => $Keywords,
                           -pubinfo     => $PubInfo,      -requesterid => $SubmitterID,
-                          -typeid      => $DocTypeID,    -requesterid => @AuthorHints[0], 
+                          -typeid      => $DocTypeID,     
                           -authorids   => \@AuthorIDs,   -topicids    => \@TopicIDs, 
                           -eventids    => \@EventIDs,    -viewids     => \@ViewGroupIDs, 
                           -modifyids   => \@ModifyGroupIDs, -datetime => $DateTime,
@@ -161,7 +161,7 @@ if ($OutFormat eq 'XML') {
   my $ReportXML = XMLReport();
   $ReportXML -> paste(last_child => $DocDBXML);
   
-  my %XMLDisplay = ("All" => $TRUE);
+  my %XMLDisplay = ("All" => 1);
   my $DocumentXML = DocumentXMLOut( {-docid   => $NewDocumentID,$NewDocRevID, 
                                      -version => $DocRevisions{$NewDocRevID}{Version}, 
                                      -display => \%XMLDisplay, 
