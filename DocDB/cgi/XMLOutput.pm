@@ -575,4 +575,32 @@ sub JournalXMLOut {
   return @JournalXML;
 }
 
+sub XMLReport {
+  my %Attributes = ();
+  my $ReportXML = XML::Twig::Elt -> new(report => \%Attributes );
+  foreach my $Error (@ErrorStack) {
+    my $Line = XML::Twig::Elt -> new("error", Printable($Error));
+    $Line -> paste(last_child => $ReportXML);
+  }  
+  foreach my $Warning (@WarnStack) {
+    my $Line = XML::Twig::Elt -> new("warning", Printable($Warning));
+    $Line -> paste(last_child => $ReportXML);
+  }  
+  foreach my $Action (@ActionStack) {
+    my $Line = XML::Twig::Elt -> new("action", Printable($Action));
+    $Line -> paste(last_child => $ReportXML);
+  }  
+  foreach my $Debug (@DebugStack) {
+    my $Line = XML::Twig::Elt -> new("debug", Printable($Debug));
+    $Line -> paste(last_child => $ReportXML);
+  }  
+  
+  @ErrorStack  = ();
+  @WarnStack   = ();
+  @ActionStack = ();
+  @DebugStack  = ();
+  
+  return $ReportXML;
+}
+
 1;
