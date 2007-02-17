@@ -109,6 +109,11 @@ sub RevisionXMLOut {
     XML::Twig::Elt -> new("title",Printable($DocRevisions{$DocRevID}{Title})) -> paste(first_child => $RevisionXML);
   }
   
+  my $DocTypeXML = DocTypeXMLOut( {-doctypeid => $DocRevisions{$DocRevID}{DocTypeID}} );
+  if ($DocTypeXML) {
+    $DocTypeXML -> paste(last_child => $RevisionXML);
+  } 
+       
   # Add submitter
   
   if ($XMLDisplay{All} || $XMLDisplay{Submitter}) {
@@ -252,6 +257,27 @@ sub RevisionXMLOut {
 
   return $RevisionXML;
 }  
+
+sub DocTypeXMLOut {
+  my ($ArgRef) = @_;
+  my $DocTypeID = exists $ArgRef->{-doctypeid} ? $ArgRef->{-doctypeid} : 0;
+
+  require "MiscSQL.pm";
+
+  FetchDocType($DocTypeID);
+  my %Attributes = ();
+  $Attributes{id} = $DocTypeID;
+
+  my $DocTypeXML = XML::Twig::Elt -> new("doctype" => \%Attributes);
+  my $Short      = XML::Twig::Elt -> new("name",       Printable($DocumentTypes{$DocTypeID}{SHORT}));
+  my $Long       = XML::Twig::Elt -> new("description",Printable($DocumentTypes{$DocTypeID}{LONG}));
+        
+  $Short -> paste(last_child => $DocTypeXML);
+  $Long  -> paste(last_child => $DocTypeXML);
+
+  return $DocTypeXML;
+}
+
 
 sub AuthorXMLOut {
   my ($ArgRef) = @_;

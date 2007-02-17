@@ -82,7 +82,8 @@ if ($XMLText) {
   # Publication info
   # Notes
 
-  my $DocTypeID = 0; # Not done yet in output?
+  my $DocType   = $Revision -> first_child("doctype");
+  my $DocTypeID = $DocType  -> {'att'} -> {'id'};
 
   # Extract submitter and author list from XML
 
