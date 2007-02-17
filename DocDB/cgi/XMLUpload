@@ -105,7 +105,7 @@ if ($XMLText) {
   
   # Extract submitter and author list from XML
 
-  my $Submitter = $Revision -> children("submitter");
+  my $Submitter = $Revision -> first_child("submitter");
   my $SubmitterID = $Submitter ->  {'att'} -> {'id'};
   unless ($SubmitterID) {
       #extract name and lookup 
