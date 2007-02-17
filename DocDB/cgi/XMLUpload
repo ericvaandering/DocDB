@@ -161,10 +161,10 @@ if ($OutFormat eq 'XML') {
   my $ReportXML = XMLReport();
   $ReportXML -> paste(last_child => $DocDBXML);
   
-  my %XMLDisplay = ("All" => 1);
-  my $DocumentXML = DocumentXMLOut( {-docid   => $NewDocumentID,$NewDocRevID, 
+  my %XMLFields = ("All" => 1);
+  my $DocumentXML = DocumentXMLOut( {-docid   => $NewDocumentID, 
                                      -version => $DocRevisions{$NewDocRevID}{Version}, 
-                                     -display => \%XMLDisplay, 
+                                     -display => \%XMLFields, 
                                     } );
   if ($DocumentXML) {
     $DocumentXML -> paste(last_child => $DocDBXML);

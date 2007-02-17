@@ -55,8 +55,9 @@ sub DocumentXMLOut {
 
   unless ($DocumentID) { return undef; }
   
-  push @DebugStack,"Document Display all: ".$XMLDisplay{All};
-  push @DebugStack,"Version: ".$Version;
+  foreach my $Key (keys %XMLDisplay ) {
+    push @DebugStack,"Display $Key: ".$XMLDisplay{$Key};
+  }  
 
   my %Attributes = ();
   $Attributes{id}           = $DocumentID;
