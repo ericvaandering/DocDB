@@ -28,6 +28,7 @@ require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 require "DBUtilities.pm";
+#require "FileHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 my %CGIParams = $query -> Vars;
@@ -132,6 +133,8 @@ if ($OutFormat eq 'XML') {
 } else {
   print $query -> header( -charset => $HTTP_ENCODING );
   DocDBHeader($PageTitle,"$Project Document $DocumentID-v$Version",-scripts => ["PopUps"]);
+  print $query -> filefield(-name      => 'XMLFile', -size => 120,
+                            -maxlength => 250);
 }
 
 if ($OutFormat eq 'HTML') {
