@@ -154,6 +154,10 @@ if ($OutFormat eq 'XML') {
     print XMLHeader();
   }  
   NewXMLOutput();
+  
+  my $ReportXML = XMLReport();
+  $ReportXML -> paste(last_child => $DocDBXML);
+  
   my %XMLDisplay = ("All" => $TRUE);
   my $DocumentXML = DocumentXMLOut( {-docid   => $NewDocumentID,$NewDocRevID, 
                                      -version => $DocRevisions{$NewDocRevID}{Version}, 

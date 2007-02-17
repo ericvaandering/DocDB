@@ -104,6 +104,8 @@ sub RevisionXMLOut {
   
   # Basic revision info
   
+  push @DebugStack,"Display all: $XMLDisplay{All}";
+
   my $RevisionXML = XML::Twig::Elt -> new(docrevision => \%Attributes );
   if ($XMLDisplay{All} || $XMLDisplay{Title}) {
     XML::Twig::Elt -> new("title",Printable($DocRevisions{$DocRevID}{Title})) -> paste(first_child => $RevisionXML);
