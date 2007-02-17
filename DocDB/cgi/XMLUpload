@@ -76,8 +76,8 @@ if ($XMLText) {
 
   # Extract text information from XML
 
-  my $Title     = $Revision -> first_child("title");
-  my $Abstract  = $Revision -> first_child("abstract");
+  my $Title     = $Revision -> first_child("title")    -> text();
+  my $Abstract  = $Revision -> first_child("abstract") -> text();
   # Document type
   # Publication info
   # Notes
@@ -122,7 +122,8 @@ if ($XMLText) {
   # Similar loops for view and modify, Event IDs
 
   my ($NewDocumentID,$NewDocRevID) 
-            = AddDocument(-version     => $Mode,         -title       => $Title, 
+            = AddDocument(-version     => $Mode,         -title       => $Title,
+                          -abstract    => $Abstract,  
                           -typeid      => $DocTypeID,    -requesterid => @AuthorHints[0], 
                           -authorids   => \@AuthorIDs,   -topicids    => \@TopicIDs, 
                           -eventids    => \@EventIDs,    -viewids     => \@ViewGroupIDs, 
