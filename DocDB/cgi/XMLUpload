@@ -8,7 +8,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -20,7 +20,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI qw(-nosticky);                                                                                      
+use CGI qw(-nosticky);
 use DBI;
 use XML::Twig;
 
@@ -44,7 +44,7 @@ unless ($OutFormat) {
   } else {
     $OutFormat = "HTML";
   }
-}    
+}
 $OutFormat =~ tr/[a-z]/[A-Z]/;
 
 my ($NewDocumentID,$NewDocRevID);
@@ -64,19 +64,19 @@ if ($XMLText) {
 
   my $Authentication =  $XML -> first_child("authentication");
   my ($User,$Password);
-   
+
   if ($Authentication) {
     $User     = $Authentication -> first_child("username");
     $Password = $Authentication -> first_child("password");
   }
-  
+
   my $Document = $XML -> first_child("document");
 
   my $DocID     = $Document -> {'att'} -> {'id'};
   if ($Mode eq "new") {
     $Mode = "bump";
     $DocID = 0;
-  }  
+  }
 
   my $Revision  = $Document -> first_child();
 
@@ -88,7 +88,7 @@ if ($XMLText) {
   my $Note     = $Revision -> first_child("note")            -> text();
 
   # Extract keywords from XML
-   
+
   my @Keywords = $Revision -> children("keyword");
   my @KeywordsText = ();
   foreach $Keyword (@Keywords) {
@@ -107,14 +107,14 @@ if ($XMLText) {
     push @ActionStack,"Using dates supplied in XML for document.";
     $DateTime = $Revision -> {'att'} -> {'modified'};
   }
-  
+
   # Extract submitter and author list from XML
 
   my $Submitter = $Revision -> first_child("submitter");
   my $SubmitterID = $Submitter ->  {'att'} -> {'id'};
   unless ($SubmitterID) {
-      #extract name and lookup 
-  }  
+      #extract name and lookup
+  }
 
   my @AuthorIDs = ();
   my @Authors = $Revision -> children("author");
@@ -124,11 +124,11 @@ if ($XMLText) {
       push @AuthorIDs, $AuthorID;
     } else {
       #extract name and lookup
-    }  
+    }
   }
 
   # Extract view and modify groups
-  
+
   my @ViewIDs = ();
   my @ModifyIDs = ();
   my @ViewGroups = $Revision -> children("viewgroup");
@@ -153,7 +153,7 @@ if ($XMLText) {
     } else {
       #extract name and lookup
       #bail if more than one match
-    }  
+    }
   }
 
   # Extract event list from XML
@@ -164,9 +164,9 @@ if ($XMLText) {
     my $EventID = $Event -> {'att'} -> {'id'};
     if ($EventID) {
       push @EventIDs, $EventID;
-    }  
+    }
   }
-  
+
   # Create file hash for file upload (fetch from URL only)
 
   my %Files = ();
@@ -187,17 +187,17 @@ if ($XMLText) {
     if ($User || $Password) {
       $Files{$Name}{User} = $User;
       $Files{$Name}{Pass} = $Password;
-    }  
+    }
   }
 
   ($NewDocumentID,$NewDocRevID) = AddDocument(
-      -docid       => $DocID,        -version     => $Mode,         
+      -docid       => $DocID,        -version     => $Mode,
       -title       => $Title,        -requesterid => $SubmitterID,
       -abstract    => $Abstract,     -keywords    => $Keywords,
       -pubinfo     => $PubInfo,      -note        => $Note,
       -typeid      => $DocTypeID,    -datetime    => $DateTime,
-      -authorids   => \@AuthorIDs,   -topicids    => \@TopicIDs, 
-      -eventids    => \@EventIDs,    -viewids     => \@ViewIDs, 
+      -authorids   => \@AuthorIDs,   -topicids    => \@TopicIDs,
+      -eventids    => \@EventIDs,    -viewids     => \@ViewIDs,
       -modifyids   => \@ModifyIDs,   -files       => \%Files,
      );
 }
@@ -206,39 +206,41 @@ if ($OutFormat eq 'XML') {
   require "XMLOutput.pm";
   unless ($NoXMLHead) {
     print XMLHeader();
-  }  
+  }
   NewXMLOutput();
-  
+
   my $ReportXML = XMLReport();
   $ReportXML -> paste(last_child => $DocDBXML);
-  
+
   my %XMLFields = ("All" => 1);
-  my $DocumentXML = DocumentXMLOut( {-docid   => $NewDocumentID, 
-                                     -version => $DocRevisions{$NewDocRevID}{Version}, 
-                                     -display => \%XMLFields, 
+  my $DocumentXML = DocumentXMLOut( {-docid   => $NewDocumentID,
+                                     -version => $DocRevisions{$NewDocRevID}{Version},
+                                     -display => \%XMLFields,
                                     } );
   if ($DocumentXML) {
     $DocumentXML -> paste(last_child => $DocDBXML);
-  }  
+  }
   my $ReportXML = XMLReport();
   $ReportXML -> paste(last_child => $DocDBXML);
 } else {
+  my %Labels = {'xml'=>'XML', 'html' => 'HTML (This page)'};
+
   print $query -> header( -charset => $HTTP_ENCODING );
   DocDBHeader($PageTitle,"$Project Document $DocumentID-v$Version",-scripts => ["PopUps"]);
   print $query -> start_multipart_form('POST',$XMLUpload,'id="xmlupload" name="xmlupload"');
-  
+
   print '<table class="LeftHeader CenteredTable MedPaddedTable">'."\n";
   print '<tr><th>XML File</th><td>';
   print $query -> filefield(-name      => 'XMLFile', -size => 60,
                             -maxlength => 250);
-  print '</td></tr>'."\n";                          
+  print '</td></tr>'."\n";
   print '<tr><th>Result format</th><td>';
-  print $query -> radio_group(-name => "outformat", -values => ['xml','html'], -default => 'xml', 
-  -labels => ['xml'=>'XML', 'html' => 'HTML (This page)']);
-  print '</td></tr>'."\n";                          
+  print $query -> radio_group(-name => "outformat", -values => ['xml','html'], -default => 'xml',
+  -labels => \%Labels);
+  print '</td></tr>'."\n";
   print '<tr><td colspan="2" class="SubmitCell">';
   print $query -> submit (-value => "Upload XML Description");
-  print "</td></tr></table>\n";                          
+  print "</td></tr></table>\n";
   print $query -> end_multipart_form;
 }
 
