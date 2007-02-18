@@ -30,7 +30,7 @@ require "ResponseElements.pm";
 require "DBUtilities.pm";
 require "DocumentUtilities.pm";
 require "FSUtilities.pm";
-#require "FileHTML.pm";
+require "AuthorSQL.pm";
 
 my $Twig = XML::Twig -> new();
 $query = new CGI;  # Global for subroutines
@@ -113,18 +113,21 @@ if ($XMLText) {
   my $Submitter = $Revision -> first_child("submitter");
   my $SubmitterID = $Submitter ->  {'att'} -> {'id'};
   unless ($SubmitterID) {
-      #extract name and lookup
+    my $FirstName = $Submitter -> first_child("firstname") -> text();
+    my $LastName  = $Submitter -> first_child("lastname")  -> text();
+    ($SubmitterID) = ProcessManualAuthors("$FirstName $LastName");
   }
 
   my @AuthorIDs = ();
   my @Authors = $Revision -> children("author");
   foreach $Author (@Authors) {
     my $AuthorID = $Author -> {'att'} -> {'id'};
-    if ($AuthorID) {
-      push @AuthorIDs, $AuthorID;
-    } else {
-      #extract name and lookup
+    unless ($AuthorID) {
+      my $FirstName = $Author -> first_child("firstname") -> text();
+      my $LastName  = $Author -> first_child("lastname")  -> text();
+      ($AuthorID) = ProcessManualAuthors("$FirstName $LastName");
     }
+    push @AuthorIDs, $AuthorID;
   }
 
   # Extract view and modify groups
@@ -239,12 +242,11 @@ if ($OutFormat eq 'XML') {
 
   print '<table class="LeftHeader CenteredTable MedPaddedTable">'."\n";
   print '<tr><th>XML File</th><td>';
-  print $query -> filefield(-name      => 'XMLFile', -size => 60,
-                            -maxlength => 250);
+  print $query -> filefield(-name => 'XMLFile', -size => 60, -maxlength => 250);
   print '</td></tr>'."\n";
   print '<tr><th>Result format</th><td>';
-  print $query -> radio_group(-name => "outformat", -values => ['xml','html'], -default => 'xml',
-  -labels => \%Labels);
+  print $query -> radio_group(-name    => "outformat", -values => ['xml','html'],
+                              -default => 'xml',       -labels => \%Labels);
   print '</td></tr>'."\n";
   print '<tr><td colspan="2" class="SubmitCell">';
   print $query -> submit (-value => "Upload XML Description");
