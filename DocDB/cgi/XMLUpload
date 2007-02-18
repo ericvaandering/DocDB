@@ -78,7 +78,7 @@ if ($XMLText) {
     $DocID = 0;
   }
 
-  my $Revision  = $Document -> first_child();
+  my $Revision  = $Document -> first_child("docrevision");
 
   # Extract text information from XML
 
