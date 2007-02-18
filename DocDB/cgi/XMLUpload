@@ -258,6 +258,13 @@ if ($OutFormat eq 'XML') {
   print $query -> submit (-value => "Upload XML Description");
   print "</td></tr></table>\n";
   print $query -> end_multipart_form;
+
+  if ($NewDocRevID) {
+    $FullDocName = FullDocumentID($NewDocumentID);
+    print "<p>You were successful. Your Document ID is <strong>$FullDocName</strong>.<br/>
+           Your entry was created with the following information: </p>\n";
+    PrintRevisionInfo($NewDocRevID);
+  }
 }
 
 if ($OutFormat eq 'HTML') {
