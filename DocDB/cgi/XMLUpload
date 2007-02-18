@@ -73,12 +73,12 @@ if ($XMLText) {
   my $Document = $XML -> first_child("document");
 
   my $DocID     = $Document -> {'att'} -> {'id'};
+  my $Revision  = $Document -> first_child("docrevision");
+
   if ($Mode eq "new") {
     $Mode = "bump";
     $DocID = 0;
   }
-
-  my $Revision  = $Document -> first_child("docrevision");
 
   # Extract text information from XML
 
@@ -102,7 +102,6 @@ if ($XMLText) {
   my $DocTypeID = $DocType  -> {'att'} -> {'id'};
 
   my $DateTime = "";
-  push @DebugStack,"Use date is ".$UseDate -> text();
   if ($UseDate) {
     push @ActionStack,"Using dates supplied in XML for document.";
     $DateTime = $Revision -> {'att'} -> {'modified'};
