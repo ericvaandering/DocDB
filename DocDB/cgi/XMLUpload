@@ -172,12 +172,13 @@ if ($XMLText) {
   my @Files = $Revision -> children("file");
   foreach $File (@Files) {
     my $Name        = $File -> first_child("name")        -> text();
-    my $Description = $File -> first_child("description") -> text();
+    $Files{$Name}{NewFilename} = $Name;
+    if ($File -> first_child("description")) {
+      $Files{$Name}{Description} = $File -> first_child("description") -> text();
+    }
     my $URL  = $File -> {'att'} -> {'href'};
     my $Main = $File -> {'att'} -> {'main'};
-    $Files{$Name}{NewFilename} = $Name;
     $Files{$Name}{URL} = $URL;
-    $Files{$Name}{Description} = $Description;
     if ($Main eq "yes") {
       $Files{$Name}{Main} = $TRUE;
     } else {
