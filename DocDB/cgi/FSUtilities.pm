@@ -299,7 +299,7 @@ sub DownloadURLs (%) {
         $Files{$FileKey}{NewFilename} = $SecureFilename;
         push @Options,"--output-document=".$Files{$FileKey}{NewFilename};
       }
-      push @DebugStack,"Issueing command:".join ' ',$Wget,"--quiet",@Options,$Files{$FileKey}{URL};
+
       $Status = system ($Wget,"--quiet",@Options,$Files{$FileKey}{URL});
 
       my @URLParts = split /\//,$Files{$FileKey}{URL};
@@ -314,7 +314,6 @@ sub DownloadURLs (%) {
         push @Filenames,$Filename;
 	delete $Files{$FileKey}{URL};
 	$Files{$FileKey}{Filename} =  "$TmpDir/$Filename";
-        push @DebugStack,"Check for existence of $TmpDir/$Filename suceeded.";
       } else {
         push @DebugStack,"Check for existence of $TmpDir/$Filename failed. Check unescape function.";
         push @WarnStack,"The URL $Files{$FileKey}{URL} did not exist, was not accessible or was not downloaded successfully.";

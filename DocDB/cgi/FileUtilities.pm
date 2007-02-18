@@ -78,7 +78,7 @@ sub AddFiles (%) {
       $ShortName = $DocFiles{$OldFileID}{Name};
       $DateTime  = $DocFiles{$OldFileID}{Date};
     } else { # else other methods
-      push @DebugStack,"Don't understand method to insert file $Files{$File}{Name}";
+      push @DebugStack,"Don't understand method to insert file with key $File";
     }
     if ($ReplaceOld && $ShortName) {
       my $OldFileID = &ExistsFile($DocRevID,$ShortName);
