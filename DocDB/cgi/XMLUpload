@@ -187,6 +187,7 @@ if ($XMLText) {
     if ($User || $Password) {
       $Files{$Name}{User} = $User;
       $Files{$Name}{Pass} = $Password;
+      push @DebugStack,"Getting set to download $Name with URL $URL";
     }
   }
 
