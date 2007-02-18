@@ -29,6 +29,7 @@ require "HTMLUtilities.pm";
 require "ResponseElements.pm";
 require "DBUtilities.pm";
 require "DocumentUtilities.pm";
+require "FSUtilities.pm";
 #require "FileHTML.pm";
 
 my $Twig = XML::Twig -> new();
@@ -189,6 +190,12 @@ if ($XMLText) {
       $Files{$Name}{Pass} = $Password;
       push @DebugStack,"Getting set to download $Name with URL $URL";
     }
+  }
+
+  my $NeedURLs = $TRUE; # Maybe optional later?
+  if ($NeedURLs) {
+    my $TmpDir = MakeTmpSubDir();
+    %Files = DownloadURLs(-tmpdir => $TmpDir, -files => \%Files);
   }
 
   ($NewDocumentID,$NewDocRevID) = AddDocument(
