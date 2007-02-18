@@ -122,8 +122,8 @@ sub RevisionXMLOut {
     my @ViewIDs   = GetRevisionSecurityGroups($DocRevID);
     my @ModifyIDs = GetRevisionModifyGroups($DocRevID);
 
-    my @ViewXML   = SecurityXMLOut({ -viewids => \@ViewIDs   });
-    my @ModifyXML = SecurityXMLOut({ -viewids => \@ModifyIDs });
+    my @ViewXML   = SecurityXMLOut({ -viewids   => \@ViewIDs   });
+    my @ModifyXML = SecurityXMLOut({ -modifyids => \@ModifyIDs });
 
     foreach my $SecurityXML (@ViewXML,@ModifyXML) {
       if ($SecurityXML) {
