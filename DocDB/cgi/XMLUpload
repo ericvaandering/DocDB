@@ -52,7 +52,7 @@ my ($NewDocumentID,$NewDocRevID);
 if ($XMLText) {
   $Twig -> safe_parse($XMLText);
 
-  $XML = $Twig -> root();
+  my $XML = $Twig -> root();
 
   # Get control block
 
