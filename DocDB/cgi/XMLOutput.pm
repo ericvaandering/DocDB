@@ -115,7 +115,23 @@ sub RevisionXMLOut {
       $DocTypeXML -> paste(last_child => $RevisionXML);
     } 
   }
-        
+       
+  # Add security settings    
+
+  if ($XMLDisplay{All} || $XMLDisplay{Security}) {
+    my @ViewIDs   = GetRevisionSecurityGroups($DocRevID);
+    my @ModifyIDs = GetRevisionModifyGroups($DocRevID);
+
+    my @ViewXML   = SecurityXMLOut({ -viewids => \@ViewIDs   });
+    my @ModifyXML = SecurityXMLOut({ -viewids => \@ModifyIDs });
+  
+    foreach my $SecurityXML (@ViewXML,@ModifyXML) {
+      if ($SecurityXML) {
+        $SecurityXML -> paste(last_child => $RevisionXML);
+      }  
+    }
+  }
+
   # Add submitter
   
   if ($XMLDisplay{All} || $XMLDisplay{Submitter}) {
@@ -186,6 +202,14 @@ sub RevisionXMLOut {
       }  
     }
   }
+
+  if ($XMLDisplay{All} || $XMLDisplay{Note}) {
+    # FIXME: Figure out how to do Paragraphize in XML. My routines are getting made safe like &lt;
+    my $NoteXML = XML::Twig::Elt -> new("note", Printable($DocRevisions{$DocRevID}{Note}));
+    $NoteXML -> paste(last_child => $RevisionXML);
+  }
+
+  
 
   # Add Files
 
@@ -574,6 +598,37 @@ sub JournalXMLOut {
 
   return @JournalXML;
 }
+
+sub SecurityXMLOut {
+  my ($ArgRef) = @_;
+  my @ViewIDs   = exists $ArgRef->{-viewids}   ? @{$ArgRef->{-viewids}}   : ();
+  my @ModifyIDs = exists $ArgRef->{-modifyids} ? @{$ArgRef->{-modifyids}} : ();
+  require "SecuritySQL.pm";
+  
+  my $ElementName = "viewgroup";
+  my @IDs = @ViewIDs;
+  
+  if ($SubmitterID) {
+    $ElementName = "modifygroup";
+    @IDs = @ModifyIDs;
+  }
+
+  my @SecurityXML = ();
+  
+  foreach my $ID (@IDs) {
+    FetchSecurityGroup ($ID);
+    my %Attributes = ('id' => $ID);
+    my $SecurityXML = XML::Twig::Elt -> new($ElementName => \%Attributes );
+    my $Name        = XML::Twig::Elt -> new("name",        Printable($SecurityGroups{$ID}{NAME}));
+    my $Description = XML::Twig::Elt -> new("description", Printable($SecurityGroups{$ID}{Description}));
+    $Name        -> paste(last_child => $SecurityXML);
+    $Description -> paste(last_child => $SecurityXML);
+    push @SecurityXML,$SecurityXML;
+  }
+  
+  return @SecurityXML;
+}    
+
 
 sub XMLReport {
   my %Attributes = ();

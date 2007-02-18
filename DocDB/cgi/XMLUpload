@@ -73,6 +73,11 @@ if ($XMLText) {
   my $Document = $XML -> first_child("document");
 
   my $DocID     = $Document -> {'att'} -> {'id'};
+  if ($Mode eq "new") {
+    $Mode = "bump";
+    $DocID = 0;
+  }  
+
   my $Revision  = $Document -> first_child();
 
   # Extract text information from XML
@@ -80,9 +85,7 @@ if ($XMLText) {
   my $Title    = $Revision -> first_child("title")           -> text();
   my $Abstract = $Revision -> first_child("abstract")        -> text();
   my $PubInfo  = $Revision -> first_child("publicationinfo") -> text();
-  
-  # Notes
-
+  my $Note     = $Revision -> first_child("note")            -> text();
 
   # Extract keywords from XML
    
@@ -124,6 +127,21 @@ if ($XMLText) {
     }  
   }
 
+  # Extract view and modify groups
+  
+  my @ViewIDs = ();
+  my @ModifyIDs = ();
+  my @ViewGroups = $Revision -> children("viewgroup");
+  foreach $Group (@ViewGroups) {
+    my $ID = $Group -> {'att'} -> {'id'};
+    push @ViewIDs, $ID;
+  }
+  my @ModifyGroups = $Revision -> children("modifygroup");
+  foreach $Group (@ModifyGroups) {
+    my $ID = $Group -> {'att'} -> {'id'};
+    push @ModifyIDs, $ID;
+  }
+
   # Extract topic list from XML
 
   my @TopicIDs = ();
@@ -138,17 +156,50 @@ if ($XMLText) {
     }  
   }
 
-  # Similar loops for view and modify, Event IDs
+  # Extract event list from XML
 
-  ($NewDocumentID,$NewDocRevID) 
-            = AddDocument(-version     => $Mode,         -title       => $Title,
-                          -abstract    => $Abstract,     -keywords    => $Keywords,
-                          -pubinfo     => $PubInfo,      -requesterid => $SubmitterID,
-                          -typeid      => $DocTypeID,     
-                          -authorids   => \@AuthorIDs,   -topicids    => \@TopicIDs, 
-                          -eventids    => \@EventIDs,    -viewids     => \@ViewGroupIDs, 
-                          -modifyids   => \@ModifyGroupIDs, -datetime => $DateTime,
-                          );
+  my @EventIDs = ();
+  my @Events = $Revision -> children("event");
+  foreach $Event (@Events) {
+    my $EventID = $Event -> {'att'} -> {'id'};
+    if ($EventID) {
+      push @EventIDs, $EventID;
+    }  
+  }
+  
+  # Create file hash for file upload (fetch from URL only)
+
+  my %Files = ();
+  my @Files = $Revision -> children("file");
+  foreach $File (@Files) {
+    my $Name        = $File -> first_child("name")        -> text();
+    my $Description = $File -> first_child("description") -> text();
+    my $URL  = $File -> {'att'} -> {'href'};
+    my $Main = $File -> {'att'} -> {'main'};
+    $Files{$Name}{NewFilename} = $Name;
+    $Files{$Name}{URL} = $URL;
+    $Files{$Name}{Description} = $Description;
+    if ($Main eq "yes") {
+      $Files{$Name}{Main} = $TRUE;
+    } else {
+      $Files{$Name}{Main} = $FALSE;
+    }
+    if ($User || $Password) {
+      $Files{$Name}{User} = $User;
+      $Files{$Name}{Pass} = $Password;
+    }  
+  }
+
+  ($NewDocumentID,$NewDocRevID) = AddDocument(
+      -docid       => $DocID,        -version     => $Mode,         
+      -title       => $Title,        -requesterid => $SubmitterID,
+      -abstract    => $Abstract,     -keywords    => $Keywords,
+      -pubinfo     => $PubInfo,      -note        => $Note,
+      -typeid      => $DocTypeID,    -datetime    => $DateTime,
+      -authorids   => \@AuthorIDs,   -topicids    => \@TopicIDs, 
+      -eventids    => \@EventIDs,    -viewids     => \@ViewIDs, 
+      -modifyids   => \@ModifyIDs,   -files       => \%Files,
+     );
 }
 
 if ($OutFormat eq 'XML') {
@@ -175,9 +226,19 @@ if ($OutFormat eq 'XML') {
   print $query -> header( -charset => $HTTP_ENCODING );
   DocDBHeader($PageTitle,"$Project Document $DocumentID-v$Version",-scripts => ["PopUps"]);
   print $query -> start_multipart_form('POST',$XMLUpload,'id="xmlupload" name="xmlupload"');
+  
+  print '<table class="LeftHeader CenteredTable MedPaddedTable">'."\n";
+  print '<tr><th>XML File</th><td>';
   print $query -> filefield(-name      => 'XMLFile', -size => 60,
                             -maxlength => 250);
+  print '</td></tr>'."\n";                          
+  print '<tr><th>Result format</th><td>';
+  print $query -> radio_group(-name => "outformat", -values => ['xml','html'], -default => 'xml', 
+  -labels => ['xml'=>'XML', 'html' => 'HTML (This page)']);
+  print '</td></tr>'."\n";                          
+  print '<tr><td colspan="2" class="SubmitCell">';
   print $query -> submit (-value => "Upload XML Description");
+  print "</td></tr></table>\n";                          
   print $query -> end_multipart_form;
 }
 
