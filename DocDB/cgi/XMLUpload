@@ -67,8 +67,8 @@ if ($XMLText) {
   my ($User,$Password);
 
   if ($Authentication) {
-    $User     = $Authentication -> first_child("username");
-    $Password = $Authentication -> first_child("password");
+    $User     = $Authentication -> first_child("username") -> text();
+    $Password = $Authentication -> first_child("password") -> text();
   }
 
   my $Document = $XML -> first_child("document");
