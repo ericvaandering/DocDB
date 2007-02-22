@@ -17,9 +17,12 @@ system @Command;
 
 
 open SOURCE,"/tmp/DocDB.xml";
+my @Lines = <SOURCE>;
+my $XMLText = join "\n",@Lines;
+
 my $Twig = XML::Twig -> new();
 
-$Twig -> safe_parse(<SOURCE>);
+$Twig -> safe_parse($XMLText);
 $XML = $Twig -> root();
 
   my $Document = $XML -> first_child("document");
