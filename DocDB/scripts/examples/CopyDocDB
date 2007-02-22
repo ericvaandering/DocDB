@@ -1,17 +1,32 @@
 #! /usr/bin/perl
 
+use XML::Twig;
+
 require "CopySetup.pm"; # Passwords
 
+# Download XML file from source DocDB
+
 my $OriginalURL = $SourceURL."ShowDocument?docid=904;outformat=xml";
-my $SubmitURL   = $DestURL."XMLUpload";
-
 @Command = ("wget","-O","/tmp/DocDB.xml","--no-check-certificate");
-
 if ($SourceUser) {
   push @Command,"--http-user=$SourceUser","--http-password=$SourcePassword"
 }
-
 push @Command,$OriginalURL;
-
+unlink "/tmp/DocDB.xml";
 system @Command;
+
+
+open SOURCE,"/tmp/DocDB.xml";
+my $Twig = XML::Twig -> new();
+
+$Twig -> safe_parse(<SOURCE>);
+$XML = $Twig -> root();
+
+  my $Document = $XML -> first_child("document");
+
+  my $DocID     = $Document -> {'att'} -> {'id'};
+
+print "Fetched DocumentID $DocID\n";
+
+my $SubmitURL   = $DestURL."XMLUpload";
 
