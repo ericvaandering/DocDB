@@ -51,8 +51,8 @@ $ModeXML -> paste(last_child => $ControlXML);
 $ControlXML -> paste(last_child => $XML);
 
 my $AuthenticationXML = XML::Twig::Elt -> new(authentication => \%Attributes );
-my $UserXML    = XML::Twig::Elt -> new("user", $SourceUser);
-my $PassXML    = XML::Twig::Elt -> new("user", $SourcePassword);
+my $UserXML    = XML::Twig::Elt -> new("username", $SourceUser);
+my $PassXML    = XML::Twig::Elt -> new("password", $SourcePassword);
 $UserXML -> paste(last_child => $AuthenticationXML);
 $PassXML -> paste(last_child => $AuthenticationXML);
 $AuthenticationXML -> paste(last_child => $XML);
