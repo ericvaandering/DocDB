@@ -299,7 +299,7 @@ sub DownloadURLs (%) {
         $Files{$FileKey}{NewFilename} = $SecureFilename;
         push @Options,"--output-document=".$Files{$FileKey}{NewFilename};
       }
-
+      push @DebugStack,"Command is: ",join ' ',$Wget,"--quiet",@Options,$Files{$FileKey}{URL};
       $Status = system ($Wget,"--quiet",@Options,$Files{$FileKey}{URL});
 
       my @URLParts = split /\//,$Files{$FileKey}{URL};
