@@ -88,11 +88,17 @@ if ($XMLText) {
   }
 
   # Extract text information from XML
-
+  my ($PubInfo,$Note,$Abstract);
   my $Title    = $Revision -> first_child("title")           -> text();
-  my $Abstract = $Revision -> first_child("abstract")        -> text();
-  my $PubInfo  = $Revision -> first_child("publicationinfo") -> text();
-  my $Note     = $Revision -> first_child("note")            -> text();
+  if ($Revision -> first_child("abstract")) {
+    $Abstract = $Revision -> first_child("abstract")        -> text();
+  }
+  if ($Revision -> first_child("publicationinfo")) {
+    $PubInfo  = $Revision -> first_child("publicationinfo") -> text();
+  }
+  if ($Revision -> first_child("note")) {
+    $Note     = $Revision -> first_child("note")            -> text();
+  }
 
   # Extract keywords from XML
 

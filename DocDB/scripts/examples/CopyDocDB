@@ -46,7 +46,7 @@ foreach $Author (@Authors) {
 my %Attributes = ();
 
 my $ControlXML = XML::Twig::Elt -> new(control => \%Attributes );
-my $ModeXML    = XML::Twig::Elt -> new("mode", Printable("bump"));
+my $ModeXML    = XML::Twig::Elt -> new("mode", "bump");
 
 $ModeXML -> paste(last_child => $ControlXML);
 $ControlXML -> paste(last_child => $XML);
