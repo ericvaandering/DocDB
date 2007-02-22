@@ -1,0 +1,17 @@
+#! /usr/bin/perl
+
+require "CopySetup.pm"; # Passwords
+
+my $OriginalURL = $SourceURL."ShowDocument?docid=904;outformat=xml";
+my $SubmitURL   = $DestURL."XMLUpload";
+
+@Command = ("wget","-O","/tmp/DocDB.xml");
+
+if ($SourceUser) {
+  push @Command,"--http-user=$SourceUser","--http-password=$SourcePassword"
+}
+
+push @Command,$OriginalURL;
+
+system @Command;
+
