@@ -7,7 +7,7 @@ require "CopySetup.pm"; # Passwords
 # Download XML file from source DocDB
 
 my $OriginalURL = $SourceURL."ShowDocument?docid=904;outformat=xml";
-@Command = ("wget","-O","/tmp/DocDB.xml","--no-check-certificate");
+my @Command = ("wget","-O","/tmp/DocDB.xml","--no-check-certificate");
 if ($SourceUser) {
   push @Command,"--http-user=$SourceUser","--http-password=$SourcePassword"
 }
@@ -32,11 +32,26 @@ my $Document = $XML -> first_child("document");
 my $DocID     = $Document -> {'att'} -> {'id'};
 
 my $Revision  = $Document -> first_child("docrevision");
+
+# Remove ID numbers from submitter and authors (lookup will handle this)
+
 my $Submitter = $Revision -> first_child("submitter");
 $Submitter -> del_att('id');
 
+my @Authors = $Revision -> children("author");
+foreach $Author (@Authors) {
+  $Author -> del_att('id');
+}
+
+
 
 print "Fetched DocumentID $DocID\n";
-print ($XML -> sprint()),"\n";;
+
+open DEST,">/tmp/NewDocDB.xml";
+print DEST ($XML -> sprint()),"\n";
+close DEST;
+
 my $SubmitURL   = $DestURL."XMLUpload";
+my @Upload = ("curl","-F","outformat=xml","-F","XMLFile=@/tmp/NewDocDB.xml","-u","$DestUser:$DestPassword",$SubmitURL);
+system @Upload;
 
