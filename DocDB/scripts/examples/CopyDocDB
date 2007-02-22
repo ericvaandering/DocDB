@@ -33,9 +33,10 @@ my $DocID     = $Document -> {'att'} -> {'id'};
 
 my $Revision  = $Document -> first_child("docrevision");
 my $Submitter = $Revision -> first_child("submitter");
-$Submitter ->  {'att'} -> {'id'} = undef;
+$Submitter -> del_att('id');
+
 
 print "Fetched DocumentID $DocID\n";
-print $XML -> sprint();
+print ($XML -> sprint()),"\n";;
 my $SubmitURL   = $DestURL."XMLUpload";
 
