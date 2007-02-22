@@ -43,7 +43,13 @@ foreach $Author (@Authors) {
   $Author -> del_att('id');
 }
 
+my %Attributes = ();
 
+my $ControlXML = XML::Twig::Elt -> new(control => \%Attributes );
+my $ModeXML    = XML::Twig::Elt -> new("mode", Printable("bump"));
+
+$ModeXML -> paste(last_child => $ControlXML);
+$ControlXML -> paste(last_child => $XML);
 
 print "Fetched DocumentID $DocID\n";
 
