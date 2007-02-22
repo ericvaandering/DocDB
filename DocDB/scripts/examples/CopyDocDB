@@ -5,7 +5,7 @@ require "CopySetup.pm"; # Passwords
 my $OriginalURL = $SourceURL."ShowDocument?docid=904;outformat=xml";
 my $SubmitURL   = $DestURL."XMLUpload";
 
-@Command = ("wget","-O","/tmp/DocDB.xml");
+@Command = ("wget","-O","/tmp/DocDB.xml","--no-check-certificate");
 
 if ($SourceUser) {
   push @Command,"--http-user=$SourceUser","--http-password=$SourcePassword"
