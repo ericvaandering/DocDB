@@ -46,10 +46,16 @@ foreach $Author (@Authors) {
 my %Attributes = ();
 
 my $ControlXML = XML::Twig::Elt -> new(control => \%Attributes );
-my $ModeXML    = XML::Twig::Elt -> new("mode", "bump");
-
+my $ModeXML    = XML::Twig::Elt -> new("mode", "new"); # bump
 $ModeXML -> paste(last_child => $ControlXML);
 $ControlXML -> paste(last_child => $XML);
+
+my $AuthenticationXML = XML::Twig::Elt -> new(authentication => \%Attributes );
+my $UserXML    = XML::Twig::Elt -> new("user", $SourceUser);
+my $PassXML    = XML::Twig::Elt -> new("user", $SourcePassword);
+$UserXML -> paste(last_child => $AuthenticationXML);
+$PassXML -> paste(last_child => $AuthenticationXML);
+$AuthenticationXML -> paste(last_child => $XML);
 
 print "Fetched DocumentID $DocID\n";
 
