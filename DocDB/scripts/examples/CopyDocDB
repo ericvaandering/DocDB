@@ -11,6 +11,8 @@ my @OrigDocIDs = (893..894,904);
 %TopicMap = ( 20 => [4,26],
               17 => [32]  ,);
 
+%TypeMap = ( 1=>2, 3=>4); # Not functional since 8.3 doesn't return type
+
 unlink "/tmp/DocDB.xml";
 unlink "/tmp/NewDocDB.xml";
 unlink "/tmp/ReturnDocDB.xml";
@@ -59,7 +61,13 @@ foreach my $OrigDocID (@OrigDocIDs) {
     push @NewTopicIDs, @{$TopicMap{$TopicID}};
   }
   @NewTopicIDs = Unique(@NewTopicIDs);
-  print "New document topics: ".join ' ',@NewTopicIDs."\n";
+
+# Get type from last version, applied to all versions
+  my $DocType = $Revision -> first_child("doctype");
+  my $TypeID  = $DocType -> {'att'} -> {'id'};
+  my $NewTypeID = $TypeMap{$TypeID};
+
+  my $NewTypeID = 4; # Hack
 
   my $NewDocID = 0;
   my $Mode     = "new";
@@ -112,6 +120,13 @@ foreach my $OrigDocID (@OrigDocIDs) {
         my $TopicXML = XML::Twig::Elt -> new(topic => \%Attributes );
         $TopicXML -> paste(last_child => $Revision);
       }
+
+      # Remove type and insert our own
+      my $DocType = $Revision -> first_child("doctype");
+      $DocType -> delete();
+      my %Attributes = ('id' => $NewTypeID);
+      my $TypeXML = XML::Twig::Elt -> new(doctype => \%Attributes );
+         $TypeXML -> paste(last_child => $Revision);
 
       # Get publication info (if any) and add old DocID to it
       my $PubInfoText = "";
