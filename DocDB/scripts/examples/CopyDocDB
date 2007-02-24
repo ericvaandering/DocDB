@@ -75,6 +75,7 @@ foreach my $OrigDocID (@OrigDocIDs) {
 
     my $Revision  = $Document -> first_child("docrevision");
     my $Version = $Revision -> {'att'} -> {'version'};
+    print "Fetched DocumentID $DocID, version $Version\n";
 
     if ($DoUpload) {
       # Remove ID numbers from submitter and authors (lookup will handle this)
