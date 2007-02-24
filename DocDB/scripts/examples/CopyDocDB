@@ -125,7 +125,7 @@ foreach my $OrigDocID (@OrigDocIDs) {
         $PubInfoXML -> delete();
       }
       $PubInfoXML = XML::Twig::Elt -> new("publicationinfo", $PubInfoText);
-      $TopicXML -> paste(last_child => $Revision);
+      $PubInfoXML -> paste(last_child => $Revision);
 
       # Build control and authentication blocks and paste them into XML
 
