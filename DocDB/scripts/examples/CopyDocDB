@@ -5,7 +5,7 @@ use XML::Twig;
 require "CopySetup.pm"; # Passwords
 
 
-my $DoUpload   = 0; # Test first
+my $DoUpload   = 1; # Test first
 my @OrigDocIDs = (524,893..894);
 
 
@@ -57,18 +57,14 @@ foreach my $OrigDocID (@OrigDocIDs) {
       push @Command,"--http-user=$SourceUser","--http-password=$SourcePassword"
     }
     push @Command,$OriginalURL;
-    unlink "/tmp/DocDB.xml";
     system @Command;
 
       # Modify XML
 
     my $Twig = XML::Twig -> new();
-    open SOURCE,"/tmp/DocDB.xml";
-    my @Lines = <SOURCE>;
-    close SOURCE;
-    my $XMLText = join "\n",@Lines;
-    $Twig -> safe_parse($XMLText);
+    $Twig -> safe_parsefile("/tmp/DocDB.xml");
     $XML = $Twig -> root();
+    unlink "/tmp/DocDB.xml";
 
     my $Document = $XML -> first_child("document");
     my $DocID     = $Document -> {'att'} -> {'id'};
@@ -109,17 +105,15 @@ foreach my $OrigDocID (@OrigDocIDs) {
       close DEST;
 
       my $SubmitURL   = $DestURL."XMLUpload";
-      my @Upload = ("curl","-o","/tmp/ReturnDocDB.xml","-F","outformat=xml","-F","XMLFile=@/tmp/NewDocDB.xml","-u","$DestUser:$DestPassword",$SubmitURL);
+      my @Upload = ("curl","-o","/tmp/ReturnDocDB.xml","-F","outformat=xml","-F","XMLFile=@/tmp/NewDocDB.xml",
+                    "-u","$DestUser:$DestPassword",$SubmitURL);
       system @Upload;
 
       unless ($NewDocID) {
         my $Twig = XML::Twig -> new();
-        open SOURCE,"/tmp/DocDB.xml";
-        my @Lines = <SOURCE>;
-        close SOURCE;
-        my $XMLText = join "\n",@Lines;
-        $Twig -> safe_parse($XMLText);
+        $Twig -> safe_parsefile("/tmp/ReturnDocDB.xml");
         $XML = $Twig -> root();
+        unlink "/tmp/ReturnDocDB.xml";
 
         my $Document = $XML -> first_child("document");
         my $DocID     = $Document -> {'att'} -> {'id'};
@@ -127,6 +121,7 @@ foreach my $OrigDocID (@OrigDocIDs) {
         if ($DocID) {
           $NewDocID = $DocID;
           $Mode = "bump";
+          print "Created new DocumentID $DocID\n";
         }
       }
     }
