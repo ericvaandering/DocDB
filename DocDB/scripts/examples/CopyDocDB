@@ -9,7 +9,7 @@ my $DoUpload   = 0; # Test first
 my @OrigDocIDs = (904); # (893..894,904);
 
 %TopicMap = ( 20 => [4,26],
-              17 => [32]  ,);
+              17 => [32,26]  ,);
 
 unlink "/tmp/DocDB.xml";
 unlink "/tmp/NewDocDB.xml";
@@ -59,6 +59,7 @@ foreach my $OrigDocID (@OrigDocIDs) {
     push @NewTopicIDs, @{$TopicMap{$TopicID}};
     print "Replacing $TopicID with ID(s) ".join ' ',@{$TopicMap{$TopicID}}."\n";
   }
+  print "New document topics: ".join ' ',@NewTopicIDs;
   @NewTopicIDs = Unique(@NewTopicIDs);
 
   my $NewDocID = 0;
