@@ -6,7 +6,7 @@ require "CopySetup.pm"; # Passwords
 
 
 my $DoUpload   = 1; # Test first
-my @OrigDocIDs = (904); # (893..894,904);
+my @OrigDocIDs = (893..894,904);
 
 %TopicMap = ( 20 => [4,26],
               17 => [32]  ,);
