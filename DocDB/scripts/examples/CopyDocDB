@@ -74,6 +74,7 @@ foreach my $OrigDocID (@OrigDocIDs) {
     print "Fetched DocumentID $DocID, version $Version\n";
 
     if ($DoUpload) {
+      $Document -> {'att'} -> {'id'} = $NewDocID;
       # Remove ID numbers from submitter and authors (lookup will handle this)
 
       my $Submitter = $Revision -> first_child("submitter");
@@ -87,7 +88,8 @@ foreach my $OrigDocID (@OrigDocIDs) {
       my %Attributes = ();
 
       my $ControlXML = XML::Twig::Elt -> new(control => \%Attributes );
-      my $ModeXML    = XML::Twig::Elt -> new("mode", $Mode); # bump
+      my $ModeXML    = XML::Twig::Elt -> new("mode", $Mode);    # new or bump
+      my $ModeXML    = XML::Twig::Elt -> new("usedate", "yes"); # preserve dates
       $ModeXML -> paste(last_child => $ControlXML);
       $ControlXML -> paste(last_child => $XML);
 
@@ -97,8 +99,6 @@ foreach my $OrigDocID (@OrigDocIDs) {
       $UserXML -> paste(last_child => $AuthenticationXML);
       $PassXML -> paste(last_child => $AuthenticationXML);
       $AuthenticationXML -> paste(last_child => $XML);
-
-      print "Fetched DocumentID $DocID, version $Version\n";
 
       open DEST,">/tmp/NewDocDB.xml";
       print DEST ($XML -> sprint()),"\n";
