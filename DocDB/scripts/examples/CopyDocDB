@@ -89,8 +89,9 @@ foreach my $OrigDocID (@OrigDocIDs) {
 
       my $ControlXML = XML::Twig::Elt -> new(control => \%Attributes );
       my $ModeXML    = XML::Twig::Elt -> new("mode", $Mode);    # new or bump
-      my $ModeXML    = XML::Twig::Elt -> new("usedate", "yes"); # preserve dates
+      my $DateXML    = XML::Twig::Elt -> new("usedate", "yes"); # preserve dates
       $ModeXML -> paste(last_child => $ControlXML);
+      $DateXML -> paste(last_child => $ControlXML);
       $ControlXML -> paste(last_child => $XML);
 
       my $AuthenticationXML = XML::Twig::Elt -> new(authentication => \%Attributes );
