@@ -8,8 +8,8 @@ require "CopySetup.pm"; # Passwords
 my $DoUpload   = 0; # Test first
 my @OrigDocIDs = (904); # (893..894,904);
 
-%TopicMap = { 20 => [4,26],
-              17 => [32]  ,};
+%TopicMap = ( 20 => [4,26],
+              17 => [32]  ,);
 
 unlink "/tmp/DocDB.xml";
 unlink "/tmp/NewDocDB.xml";
@@ -57,7 +57,7 @@ foreach my $OrigDocID (@OrigDocIDs) {
   foreach my $Topic (@Topics) {
     my $TopicID = $Topic -> {'att'} -> {'id'};
     push @NewTopicIDs, @{$TopicMap{$TopicID}};
-    print "Replacing $TopicID with ID(s) ".join ' ',@{$TopicMap{$TopicID}};
+    print "Replacing $TopicID with ID(s) ".join ' ',@{$TopicMap{$TopicID}}."\n";
   }
   @NewTopicIDs = Unique(@NewTopicIDs);
 
@@ -108,7 +108,7 @@ foreach my $OrigDocID (@OrigDocIDs) {
         $Topic -> delete();
       }
       foreach my $TopicID (@NewTopicIDs) {
-        my %Attributes = {'id' => $TopicID};
+        my %Attributes = ('id' => $TopicID);
         my $TopicXML = XML::Twig::Elt -> new(topic => \%Attributes );
         $TopicXML -> paste(last_child => $Revision);
       }
