@@ -13,6 +13,11 @@ my @OrigDocIDs = (893..894,904);
 
 %TypeMap = ( 1=>2, 3=>4); # Not functional since 8.3 doesn't return type
 
+%EventMap = (72 => 107); 
+
+@ViewIDs   = (5);
+@ModifyIDs = (5);
+
 unlink "/tmp/DocDB.xml";
 unlink "/tmp/NewDocDB.xml";
 unlink "/tmp/ReturnDocDB.xml";
@@ -130,7 +135,38 @@ foreach my $OrigDocID (@OrigDocIDs) {
       my $TypeXML = XML::Twig::Elt -> new(doctype => \%Attributes );
          $TypeXML -> paste(last_child => $Revision);
 
+      # Remove security and insert our own
+
+      my   @Security = $Revision -> children("viewgroup");
+      push @Security,  $Revision -> children("modifygroup");
+      foreach my $Element (@Security) {
+        $Element -> delete();
+      }
+      foreach my $ID (@ViewIDs) {
+        my %Attributes = ('id' => $ID);
+        my $IDXML = XML::Twig::Elt -> new(viewgroup => \%Attributes );
+        $IDXML -> paste(last_child => $Revision);
+      }
+      foreach my $ID (@ModifyIDs) {
+        my %Attributes = ('id' => $ID);
+        my $IDXML = XML::Twig::Elt -> new(modifygroup => \%Attributes );
+        $IDXML -> paste(last_child => $Revision);
+      }
+
+      # Translate events, remove if no translation (assumes 1:1 unlike topics)
+      
+      my @Events = $Revision -> children("event");
+      foreach my $Event (@Events) {
+        my $EventID = $Event -> {'att'} -> {'id'};
+        if ($EventID) {
+          $Event -> {'att'} -> {'id'} = $EventMap{$EventID};
+        } else {
+          $Event -> delete();
+        }
+      }
+  
       # Get publication info (if any) and add old DocID to it
+      
       my $PubInfoText = "";
       my $PubInfoXML =  $Revision -> first_child("publicationinfo");
       if ($PubInfoXML) {
