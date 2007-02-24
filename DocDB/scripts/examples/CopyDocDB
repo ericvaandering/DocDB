@@ -123,7 +123,9 @@ foreach my $OrigDocID (@OrigDocIDs) {
 
       # Remove type and insert our own
       my $DocType = $Revision -> first_child("doctype");
-      $DocType -> delete();
+      if ($DocType) {
+        $DocType -> delete();
+      }
       my %Attributes = ('id' => $NewTypeID);
       my $TypeXML = XML::Twig::Elt -> new(doctype => \%Attributes );
          $TypeXML -> paste(last_child => $Revision);
