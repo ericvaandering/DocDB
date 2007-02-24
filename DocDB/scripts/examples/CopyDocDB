@@ -56,7 +56,7 @@ foreach my $OrigDocID (@OrigDocIDs) {
   my @Topics = $Revision -> children("topic");
   foreach my $Topic (@Topics) {
     my $TopicID = $Topic -> {'att'} -> {'id'};
-    push @NewTopicIDs, @{$TopicMap{$TopicID};
+    push @NewTopicIDs, @{$TopicMap{$TopicID}};
   }
   @NewTopicIDs = Unique(@NewTopicIDs);
 
