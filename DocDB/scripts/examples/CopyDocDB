@@ -37,7 +37,8 @@ foreach my $OrigDocID (@OrigDocIDs) {
 
   my $Document = $XML -> first_child("document");
   my $DocID     = $Document -> {'att'} -> {'id'};
-  my $OtherRevs = $Document -> first_child("otherversions");
+  my $Revision  = $Document -> first_child("docrevision");
+  my $OtherRevs = $Revision -> first_child("otherversions");
   my @Revisions = $OtherRevs -> children("docrevision");
 
   my @Versions = ();
