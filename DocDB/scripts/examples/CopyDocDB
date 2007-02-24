@@ -5,8 +5,8 @@ use XML::Twig;
 require "CopySetup.pm"; # Passwords
 
 
-my $DoUpload   = 1; # Test first
-my @OrigDocIDs = (893..894,904);
+my $DoUpload   = 0; # Test first
+my @OrigDocIDs = (904); # (893..894,904);
 
 %TopicMap = { 20 => [4,26],
               17 => [32]  ,};
@@ -57,6 +57,7 @@ foreach my $OrigDocID (@OrigDocIDs) {
   foreach my $Topic (@Topics) {
     my $TopicID = $Topic -> {'att'} -> {'id'};
     push @NewTopicIDs, @{$TopicMap{$TopicID}};
+    print "Replacing $TopicID with ID(s) ".join ' ',@{$TopicMap{$TopicID}};
   }
   @NewTopicIDs = Unique(@NewTopicIDs);
 
