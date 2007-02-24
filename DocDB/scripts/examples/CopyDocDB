@@ -24,7 +24,7 @@ unlink "/tmp/ReturnDocDB.xml";
 
 foreach my $OrigDocID (@OrigDocIDs) {
 
-# Download latest XML file from source DocDB
+  # Download latest XML file from source DocDB
 
   my $OriginalURL = $SourceURL."ShowDocument?docid=$OrigDocID;outformat=xml";
   my @Command = ("wget","-q","-O","/tmp/DocDB.xml","--no-check-certificate");
@@ -57,7 +57,7 @@ foreach my $OrigDocID (@OrigDocIDs) {
   }
   @Versions = sort numerically @Versions;
 
-# Get topics from last version, will be applied to all versions
+  # Get topics from last version, will be applied to all versions
 
   my @NewTopicIDs = ();
   my @Topics = $Revision -> children("topic");
@@ -67,7 +67,8 @@ foreach my $OrigDocID (@OrigDocIDs) {
   }
   @NewTopicIDs = Unique(@NewTopicIDs);
 
-# Get type from last version, applied to all versions
+  # Get type from last version, applied to all versions
+  
   my $DocType = $Revision -> first_child("doctype");
   my $TypeID  = $DocType -> {'att'} -> {'id'};
   my $NewTypeID = $TypeMap{$TypeID};
@@ -86,7 +87,7 @@ foreach my $OrigDocID (@OrigDocIDs) {
     push @Command,$OriginalURL;
     system @Command;
 
-      # Modify XML
+    # Modify XML
 
     my $Twig = XML::Twig -> new();
     $Twig -> safe_parsefile("/tmp/DocDB.xml");
@@ -226,10 +227,10 @@ foreach my $OrigDocID (@OrigDocIDs) {
           $Mode = "bump";
           print "Created new DocumentID $DocID\n";
         }
-      }
-    }
-  }
-}
+      } # Figure out new document ID
+    }   # Do upload
+  }     # Loop on document versions
+}       # Loop on documents
 
 exit;
 
