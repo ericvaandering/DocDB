@@ -9,29 +9,28 @@ my $DoUpload   = 0; # Test first
 my @OrigDocIDs = (524,893..894);
 
 
+unlink "/tmp/DocDB.xml";
+unlink "/tmp/NewDocDB.xml";
+unlink "/tmp/ReturnDocDB.xml";
 
 foreach my $OrigDocID (@OrigDocIDs) {
 
 # Download latest XML file from source DocDB
 
   my $OriginalURL = $SourceURL."ShowDocument?docid=$OrigDocID;outformat=xml";
-  my @Command = ("wget","-O","/tmp/DocDB.xml","--no-check-certificate");
+  my @Command = ("wget","-q","-O","/tmp/DocDB.xml","--no-check-certificate");
   if ($SourceUser) {
     push @Command,"--http-user=$SourceUser","--http-password=$SourcePassword"
   }
   push @Command,$OriginalURL;
-  unlink "/tmp/DocDB.xml";
   system @Command;
 
   # Read and parse input file
 
   my $Twig = XML::Twig -> new();
-  open SOURCE,"/tmp/DocDB.xml";
-  my @Lines = <SOURCE>;
-  close SOURCE;
-  my $XMLText = join "\n",@Lines;
-  $Twig -> safe_parse($XMLText);
+  $Twig -> safe_parsefile("/tmp/DocDB.xml");
   $XML = $Twig -> root();
+  unlink "/tmp/DocDB.xml";
 
   # Get DocumentID and version #'s
 
@@ -48,11 +47,12 @@ foreach my $OrigDocID (@OrigDocIDs) {
     push @Versions,$Version;
   }
   @Versions = sort numerically @Versions;
-
+  my $NewDocID = 0;
+  my $Mode     = "new";
   foreach my $Version (@Versions) {
 
     my $OriginalURL = $SourceURL."ShowDocument?docid=$OrigDocID;version=$Version;outformat=xml";
-    my @Command = ("wget","-O","/tmp/DocDB.xml","--no-check-certificate");
+    my @Command = ("wget","-q","-O","/tmp/DocDB.xml","--no-check-certificate");
     if ($SourceUser) {
       push @Command,"--http-user=$SourceUser","--http-password=$SourcePassword"
     }
@@ -76,40 +76,58 @@ foreach my $OrigDocID (@OrigDocIDs) {
     my $Revision  = $Document -> first_child("docrevision");
     my $Version = $Revision -> {'att'} -> {'version'};
 
-    # Remove ID numbers from submitter and authors (lookup will handle this)
-
-    my $Submitter = $Revision -> first_child("submitter");
-    $Submitter -> del_att('id');
-
-    my @Authors = $Revision -> children("author");
-    foreach my $Author (@Authors) {
-      $Author -> del_att('id');
-    }
-
-    my %Attributes = ();
-
-    my $ControlXML = XML::Twig::Elt -> new(control => \%Attributes );
-    my $ModeXML    = XML::Twig::Elt -> new("mode", "new"); # bump
-    $ModeXML -> paste(last_child => $ControlXML);
-    $ControlXML -> paste(last_child => $XML);
-
-    my $AuthenticationXML = XML::Twig::Elt -> new(authentication => \%Attributes );
-    my $UserXML    = XML::Twig::Elt -> new("username", $SourceUser);
-    my $PassXML    = XML::Twig::Elt -> new("password", $SourcePassword);
-    $UserXML -> paste(last_child => $AuthenticationXML);
-    $PassXML -> paste(last_child => $AuthenticationXML);
-    $AuthenticationXML -> paste(last_child => $XML);
-
-    print "Fetched DocumentID $DocID, version $Version\n";
-
-    open DEST,">/tmp/NewDocDB.xml";
-    print DEST ($XML -> sprint()),"\n";
-    close DEST;
-
-    my $SubmitURL   = $DestURL."XMLUpload";
-    my @Upload = ("curl","-F","outformat=xml","-F","XMLFile=@/tmp/NewDocDB.xml","-u","$DestUser:$DestPassword",$SubmitURL);
     if ($DoUpload) {
+      # Remove ID numbers from submitter and authors (lookup will handle this)
+
+      my $Submitter = $Revision -> first_child("submitter");
+      $Submitter -> del_att('id');
+
+      my @Authors = $Revision -> children("author");
+      foreach my $Author (@Authors) {
+        $Author -> del_att('id');
+      }
+
+      my %Attributes = ();
+
+      my $ControlXML = XML::Twig::Elt -> new(control => \%Attributes );
+      my $ModeXML    = XML::Twig::Elt -> new("mode", $Mode); # bump
+      $ModeXML -> paste(last_child => $ControlXML);
+      $ControlXML -> paste(last_child => $XML);
+
+      my $AuthenticationXML = XML::Twig::Elt -> new(authentication => \%Attributes );
+      my $UserXML    = XML::Twig::Elt -> new("username", $SourceUser);
+      my $PassXML    = XML::Twig::Elt -> new("password", $SourcePassword);
+      $UserXML -> paste(last_child => $AuthenticationXML);
+      $PassXML -> paste(last_child => $AuthenticationXML);
+      $AuthenticationXML -> paste(last_child => $XML);
+
+      print "Fetched DocumentID $DocID, version $Version\n";
+
+      open DEST,">/tmp/NewDocDB.xml";
+      print DEST ($XML -> sprint()),"\n";
+      close DEST;
+
+      my $SubmitURL   = $DestURL."XMLUpload";
+      my @Upload = ("curl","-o","/tmp/ReturnDocDB.xml","-F","outformat=xml","-F","XMLFile=@/tmp/NewDocDB.xml","-u","$DestUser:$DestPassword",$SubmitURL);
       system @Upload;
+
+      unless ($NewDocID) {
+        my $Twig = XML::Twig -> new();
+        open SOURCE,"/tmp/DocDB.xml";
+        my @Lines = <SOURCE>;
+        close SOURCE;
+        my $XMLText = join "\n",@Lines;
+        $Twig -> safe_parse($XMLText);
+        $XML = $Twig -> root();
+
+        my $Document = $XML -> first_child("document");
+        my $DocID     = $Document -> {'att'} -> {'id'};
+
+        if ($DocID) {
+          $NewDocID = $DocID;
+          $Mode = "bump";
+        }
+      }
     }
   }
 }
