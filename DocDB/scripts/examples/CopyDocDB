@@ -51,7 +51,7 @@ foreach my $OrigDocID (@OrigDocIDs) {
 
   foreach my $Version (@Versions) {
 
-    my $OriginalURL = $SourceURL."ShowDocument?docid=$OrigDocID;outformat=xml";
+    my $OriginalURL = $SourceURL."ShowDocument?docid=$OrigDocID;version=$Version;outformat=xml";
     my @Command = ("wget","-O","/tmp/DocDB.xml","--no-check-certificate");
     if ($SourceUser) {
       push @Command,"--http-user=$SourceUser","--http-password=$SourcePassword"
