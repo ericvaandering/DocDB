@@ -32,7 +32,11 @@ sub AdvancedInstructionsSidebar {
     <li><a href="#refer">Referring to your document and its files</a></li>
     <li><a href="#group">Referring to groups of documents</a></li>
    </ul></li>
-   <li><a href="#xml">XML Interface</a></li>
+   <li><a href="#xml">XML Interface</a>
+   <ul>
+    <li><a href="#xmldown">Download</a></li>
+    <li><a href="#xmlup">Upload</a></li>
+   </ul></li>
    <li><a href="#program">Programatic Interface</a></li>
   </ul>
 TOC
@@ -178,19 +182,38 @@ sub AdvancedInstructionsBody {
   <a name="xml" />
   <h1>XML Interface</h1>
 
-  <p>An XML interface for retrieving information from DocDB is currently being developed.
-     It is not complete, but it may satisfy the most common needs. Any link to
-     <tt>Search</tt> or <tt>ShowDocument</tt> described above will  generate XML output if
-     <tt>&amp;outformat=xml</tt> is added to the parameter list. <tt>Search</tt> returns a
-     summary of the found documents while <tt>ShowDocument</tt> returns all the meta-info
-     for the document.</p>
+  <p>An XML interface for retrieving information from and submiting information to DocDB is 
+     partially complete. It is not fully complete, but it may satisfy the most common needs.</p>
+     
+  <a name="xmldown" />
+  <h2>XML Downloads</h2>
+
+  <p>Any link to <tt>Search</tt> or <tt>ShowDocument</tt> described above will generate XML 
+     output if <tt>&amp;outformat=xml</tt> is added to the parameter list. <tt>Search</tt> returns
+     a summary of the found documents while <tt>ShowDocument</tt> returns all the meta-info for
+     the document.</p>
 
   <p>This output is easy to incorporate into your own programs and should be more
-     stable than the HTML counterparts (although internal changes in DocDB's formats may
-     change the XML output). Future improvements  to the XML facilities of DocDB may
-     include XML output from <tt>ListBy</tt>, XML output of events, and  XML
-     <em>upload</em> of documents. If any of these enhancements would be useful to you,
-     please contact your  administrator or the developers.</p>  
+     stable than the HTML counterparts (although internal changes in DocDB's formats may change
+     the XML output). Future improvements  to the XML facilities of DocDB may include XML output
+     from <tt>ListBy</tt>, XML output of events, and  XML output of topic, author and other lists.
+     If any of these enhancements would be useful to you, please contact your  administrator or
+     the developers.</p>  
+
+  <a name="xmlup" />
+  <h2>XML Uploads</h2>
+
+  <p>Since version 8.4 DocDB has supported uploads of XML data describing documents. This is
+     done with the <a href="$XMLUpload">XMLUpload</a> script. The XML output of ShowDocument
+     described above can be used almost directly to create a new document. One new XML element
+     must be added to such an XMLFile and a second element is optional.</p>
+     
+     <pre>
+     &lt;control&gt;
+     
+     &lt;/control&gt;
+     </pre> 
+
 
   <a name="program" />
   <h1>Programatic Interface</h1>

@@ -54,9 +54,13 @@ unless ($OutFormat) {
 }
 $OutFormat =~ tr/[a-z]/[A-Z]/;
 
+unless (CanCreate()) {
+  push @ErrorStack,"You are not allowed to modify or create documents.";
+}
+
 my ($NewDocumentID,$NewDocRevID);
 
-if ($XMLText) {
+if ($XMLText && !@ErrorStack) {
   $Twig -> safe_parse($XMLText);
 
   my $XML = $Twig -> root();
@@ -245,7 +249,9 @@ if ($OutFormat eq 'XML') {
   }
   my $ReportXML = XMLReport();
   $ReportXML -> paste(last_child => $DocDBXML);
+  print GetXMLOutput();
 } else {
+  EndPage(); 
   my %Labels = {'xml'=>'XML', 'html' => 'HTML (This page)'};
 
   print $query -> header( -charset => $HTTP_ENCODING );
@@ -271,11 +277,7 @@ if ($OutFormat eq 'XML') {
            Your entry was created with the following information: </p>\n";
     PrintRevisionInfo($NewDocRevID);
   }
-}
-
-if ($OutFormat eq 'HTML') {
+  EndPage(); 
   DocDBNavBar();
   DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
-} elsif ($OutFormat eq 'XML') {
-  print GetXMLOutput();
 }
