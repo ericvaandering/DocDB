@@ -75,6 +75,8 @@ foreach my $OrigDocID (@OrigDocIDs) {
 
   my $NewTypeID = 4; # Hack
 
+  # Values needed for creating first document
+
   my $NewDocID = 0;
   my $Mode     = "new";
   foreach my $Version (@Versions) { # Fetch each version from old DocDB
@@ -210,6 +212,7 @@ foreach my $OrigDocID (@OrigDocIDs) {
       my @Upload = ("curl","-o","/tmp/ReturnDocDB.xml","-F","outformat=xml","-F","XMLFile=@/tmp/NewDocDB.xml",
                     "-u","$DestUser:$DestPassword",$SubmitURL);
       system @Upload;
+      unlink "/tmp/NewDocDB.xml";
 
       # Figure out document ID of what we just uploaded for future docs
 
