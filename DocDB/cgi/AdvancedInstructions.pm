@@ -223,14 +223,14 @@ sub AdvancedInstructionsBody {
      &lt;/control&gt;
      </pre> 
 
-  <p>The second element XML element (which is optional) is <tt>authentication</tt> which contains the 
-     username and password needed to download the file(s) in the document, so it will look   like
-     this:</p>
+  <p>The second element XML element (which is optional) is <tt>authentication</tt> which contains
+     the  username and password needed to download the file(s) in the document from the remote
+     source. It will look   like this:</p>
      
      <pre>
      &lt;authentication&gt;
-       &lt;username&gt;username-http-basic&lt;/username&gt;
-       &lt;password&gt;password-http-basic&lt;/password&gt;
+       &lt;username&gt;http-basic-username&lt;/username&gt;
+       &lt;password&gt;http-basic-password&lt;/password&gt;
      &lt;/authentication&gt;
      </pre> 
      
@@ -242,7 +242,7 @@ sub AdvancedInstructionsBody {
   <p>If the <tt>id</tt> numbers are missing, DocDB attempts a text match for the following 
      information:</p>
   <ul>
-   <li>Document submitter (based on <tt>firstname</tt> and <tt>lastname</tt></li>
+   <li>Document submitter (based on <tt>firstname</tt> and <tt>lastname</tt>)</li>
    <li>Document authors (same as submitter)</li>
   </ul>
 
@@ -250,7 +250,7 @@ sub AdvancedInstructionsBody {
   <ul>
    <li>Cross-references either to local or remote documents</li>
    <li>Signoff lists</li>
-   <li>Files are uploaded by URL only while in principle the could be uploaded by <tt>CDATA</tt>
+   <li>Files are uploaded by URL only while in principle they could be uploaded by <tt>CDATA</tt>
        as well</li>
   </ul>
 

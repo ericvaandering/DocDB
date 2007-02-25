@@ -125,7 +125,7 @@ unless ($Public) {
 }
 
 if (CanAdminister()) {
-  print "<b><a href=\"$DocDBInstructions?set=admin\">Administrator Instructions</b><br/>\n";
+  print "<b><a href=\"$DocDBInstructions?set=admin\">Administrator Instructions</a></b><br/>\n";
 }
 print "</p>\n";
 print "</div>\n";  # LeftColumn3Col
