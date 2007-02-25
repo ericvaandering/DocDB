@@ -223,11 +223,44 @@ sub AdvancedInstructionsBody {
      &lt;/control&gt;
      </pre> 
 
+  <p>The second element XML element (which is optional) is <tt>authentication</tt> which contains the 
+     username and password needed to download the file(s) in the document, so it will look   like
+     this:</p>
+     
+     <pre>
+     &lt;authentication&gt;
+       &lt;username&gt;username-http-basic&lt;/username&gt;
+       &lt;password&gt;password-http-basic&lt;/password&gt;
+     &lt;/authentication&gt;
+     </pre> 
+     
+  <p>Generally speaking, when DocDB is processing an XML file, the <tt>id</tt> numbers describing 
+     things  like topics, events, etc. are used and the names of those things shown in the XML
+     file are ignored. Also, not all information  about a document van be uploaded via XML. This
+     can be changed if there is a need for it. </p>
 
+  <p>If the <tt>id</tt> numbers are missing, DocDB attempts a text match for the following 
+     information:</p>
+  <ul>
+   <li>Document submitter (based on <tt>firstname</tt> and <tt>lastname</tt></li>
+   <li>Document authors (same as submitter)</li>
+  </ul>
+
+  <p>The following information cannot be uploaded via XML:</p>
+  <ul>
+   <li>Cross-references either to local or remote documents</li>
+   <li>Signoff lists</li>
+   <li>Files are uploaded by URL only while in principle the could be uploaded by <tt>CDATA</tt>
+       as well</li>
+  </ul>
+
+  <p>Finally, you will notice that there is no provision for just updating the database info for a document
+     reserving a document, or adding files via XML. Those things could be added but were not needed.</p>
+     
   <a name="program" />
   <h1>Programatic Interface</h1>
 
-  <p>It is possible (and not too difficult) to write Perl programs to insert documents into
+  <p>It is also possible (and not too difficult) to write Perl programs to insert documents into
      DocDB. Examples of how to do this may be in <tt>scripts/examples</tt> in the DocDB
      source package. Help with this may also be obtained by writing the DocDB users mailing
      list linked from the <a href="$DocDBHome">DocDB homepage</a>.</p>
