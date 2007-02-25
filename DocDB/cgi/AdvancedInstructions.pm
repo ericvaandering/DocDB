@@ -208,9 +208,18 @@ sub AdvancedInstructionsBody {
      described above can be used almost directly to create a new document. One new XML element
      must be added to such an XMLFile and a second element is optional.</p>
      
+  <p>The first XML element is <tt>control</tt> which has two parameters: <tt>mode</tt> and
+     <tt>usedate</tt>. <tt>mode</tt> must be one of two values, <q>new</q> or <q>bump</q>. New
+     ignores the  document ID in the uploaded XML and creates a new document with the included
+     information. Bump uses  that document ID and creates a new version of that document with the
+     XML information. <tt>usedate</tt>, if present  (the value is unimportant) will take the
+     modification dates for the document from the XML. The default is to use the current date and
+     time. So the <tt>control</tt> element might look like this:</p>
+
      <pre>
      &lt;control&gt;
-     
+       &lt;mode&gt;new&lt;/mode&gt;
+       &lt;usedate&gt;yes&lt;/usedate&gt;
      &lt;/control&gt;
      </pre> 
 
