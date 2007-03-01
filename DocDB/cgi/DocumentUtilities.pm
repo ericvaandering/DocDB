@@ -2,7 +2,7 @@
 # Description: Routines to deal with documents
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 #
 
 # Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
@@ -10,7 +10,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -33,12 +33,12 @@ sub AddDocument {
   require "MeetingSQL.pm";
   require "SecuritySQL.pm";
   require "SignoffSQL.pm";
-  
+
   my %Params = @_;
-  
+
   my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
 
-  my $DocumentID    = $Params{-docid}         || 0     ; # The number the database will use for the document id. If not specified, the database will automaticaly generate a new document number. 
+  my $DocumentID    = $Params{-docid}         || 0     ; # The number the database will use for the document id. If not specified, the database will automaticaly generate a new document number.
   my $Version       = $Params{-version}       || "bump"; # The version number of the document.  If undefined or "bump", the database will automaticaly increment the version number. If set to "latest", the last existing version will be updated (Update DB Info). If a version number is given, that version will be updated.
   my $Title         = $Params{-title}         || ""    ;
   my $Abstract      = $Params{-abstract}      || ""    ;
@@ -50,7 +50,7 @@ sub AddDocument {
   my $DateTime      = $Params{-datetime}               ; # In SQL format (YYYY-MM-DD HH:MM:SS)
   my $SessionTalkID = $Params{-sessiontalkid} || 0     ; # Not used yet
   my $UniqueID      = $Params{-uniqueid}      || 0     ; # Not used yet, parameter to keep from inserting duplicate documents via Web
-  
+
   my @AuthorIDs   = @{$Params{-authorids}}             ; # Internal ID numbers
   my @TopicIDs    = @{$Params{-topicids}}              ; # Internal ID numbers
   my @EventIDs    = @{$Params{-eventids}}              ; # Internal ID numbers
@@ -67,19 +67,19 @@ sub AddDocument {
     $Year += 1900;
     ++$Mon;
     $DateTime = "$Year-$Mon-$Day $Hour:$Min:$Sec";
-  } 
+  }
 
   my ($DocRevID,$Count,@FileIDs);
-  
-  my $ExistingDocumentID = FetchDocument($DocumentID); 
+
+  my $ExistingDocumentID = FetchDocument($DocumentID);
   unless ($ExistingDocumentID) {
-    $DocumentID = InsertDocument(-docid    => $DocumentID, -requesterid => $RequesterID, 
+    $DocumentID = InsertDocument(-docid    => $DocumentID, -requesterid => $RequesterID,
                                  -datetime => $DateTime);
   }
-                 
-  if ($DocumentID) {                                 
+
+  if ($DocumentID) {
     $DocRevID = InsertRevision(
-                 -docid       => $DocumentID,  -doctypeid => $TypeID, 
+                 -docid       => $DocumentID,  -doctypeid => $TypeID,
                  -submitterid => $RequesterID, -title     => $Title,
                  -pubinfo     => $PubInfo,     -abstract  => $Abstract,
                  -version     => $Version,     -datetime  => $DateTime,
@@ -88,72 +88,73 @@ sub AddDocument {
     # Deal with SessionTalkID
 
   }
-  
+
   my $Count;
-  if ($DocRevID) { 
+  if ($DocRevID) {
     FetchDocRevisionByID($DocRevID);
     my $Version    = $DocRevisions{$DocRevID}{Version};
-    MakeDirectory($DocumentID,$Version); 
-    ProtectDirectory($DocumentID,$Version,@ViewIDs); 
+    MakeDirectory($DocumentID,$Version);
+    ProtectDirectory($DocumentID,$Version,@ViewIDs);
     $Count = InsertAuthors(       -docrevid => $DocRevID, -authorids => \@AuthorIDs);
     $Count = InsertTopics(        -docrevid => $DocRevID, -topicids  => \@TopicIDs);
     $Count = InsertRevisionEvents(-docrevid => $DocRevID, -eventids  => \@EventIDs);
-    $Count = InsertSecurity(      -docrevid => $DocRevID, -viewids   => \@ViewIDs, 
+    $Count = InsertSecurity(      -docrevid => $DocRevID, -viewids   => \@ViewIDs,
                                                           -modifyids => \@ModifyIDs);
     unless ($Version eq "reserve" || $Version eq "same") {
+      push @DebugStack,"Uploading files";
       @FileIDs = AddFiles(-docrevid => $DocRevID, -datetime => $DateTime, -files => \%Files);
     }
     if (@SignOffIDs) {
       InsertSignoffList($DocRevID,@SignOffIDs);
-    }  
+    }
   }
-  
-  return ($DocumentID,$DocRevID);                                 
+
+  return ($DocumentID,$DocRevID);
 }
 
 sub PrepareFieldList (%) {
   my %Params = @_;
-  
-  my @Fields       = @{$Params{-fields}}; 
+
+  my @Fields       = @{$Params{-fields}};
   my $Default      = $Params{-default}      || "";
   my $TopicID      = $Params{-topicid}      || 0;
   my $DocTypeID    = $Params{-doctypeid}    || 0;
   my $EventID      = $Params{-eventid}      || 0;
   my $EventGroupID = $Params{-eventgroupid} || 0;
-  
-  # Given a bunch of parameters for what the current list of documents contains, 
-  # apply a precedence operation and figure out if any of the various ways of 
+
+  # Given a bunch of parameters for what the current list of documents contains,
+  # apply a precedence operation and figure out if any of the various ways of
   # returning a field list give us something. Fall back on defaults.
-  # Precedence is 1) @Fields if specified 
+  # Precedence is 1) @Fields if specified
   #               2) Cookies for user a) event b) eventgroup c) topic d) defaults
   #               3) DB definitions   a) event b) eventgroup c) topic d) defaults
   #               4) DocDB defined defaults
   #               5) Default of all lists
-  
+
   require "ConfigSQL.pm";
   require "Fields.pm";
 
   if ($TopicID) {
     require "TopicSQL.pm";
     GetTopics();
-  }  
-    
+  }
+
   my %FieldList = ();
-  
+
   # If fields are specified, use that
   if (@Fields) {
     %FieldList = FieldsToFieldlist(@Fields);
     if (%FieldList) {
       return %FieldList
-    }  
-  }  
-  
+    }
+  }
+
   #  User Cookie for event
   if ($query && $EventID && $query -> cookie("eventid_$EventID") ) {
     %FieldList = CookieToFieldList( $query -> cookie("eventid_$EventID") );
     if (%FieldList) {
       return %FieldList
-    }  
+    }
   }
 
   #  User Cookie for eventgroup
@@ -161,33 +162,33 @@ sub PrepareFieldList (%) {
     %FieldList = CookieToFieldList( $query -> cookie("eventgroupid_$EventGroupID") );
     if (%FieldList) {
       return %FieldList
-    }  
+    }
   }
-  
+
   #  User Cookie for topic or parents
   foreach my $ParentTopicID ( @{$TopicProvenance{$TopicID}} ) {
     if ($query && $query -> cookie("topicid_$ParentTopicID") ) {
       %FieldList = CookieToFieldList( $query -> cookie("topicid_$ParentTopicID") );
       if (%FieldList) {
         return %FieldList
-      }  
+      }
     }
   }
-   
+
   #  User Cookie for document type
   if ($query && $DocTypeID && $query -> cookie("doctypeid_$DocTypeID") ) {
     %FieldList = CookieToFieldList( $query -> cookie("doctypeid_$DocTypeID") );
     if (%FieldList) {
       return %FieldList
-    }  
+    }
   }
-  
+
   #  User Cookie for default group
   if ($query && $Default && $query -> cookie("$Default") ) {
     %FieldList = CookieToFieldList( $query -> cookie("$Default") );
     if (%FieldList) {
       return %FieldList
-    }  
+    }
   }
 
   #  DB lookup for event
@@ -195,17 +196,17 @@ sub PrepareFieldList (%) {
     %FieldList = FetchCustomFieldList(-eventid => $EventID);
     if (%FieldList) {
       return %FieldList
-    }  
-  }  
-    
+    }
+  }
+
   #  DB lookup for event group
   if ($EventGroupID) {
     %FieldList = FetchCustomFieldList(-eventgroupid => $EventGroupID);
     if (%FieldList) {
       return %FieldList
-    }  
-  }  
-    
+    }
+  }
+
   #  DB lookup for topic or parent
   if ($TopicID) {
     foreach my $ParentTopicID ( @{$TopicProvenance{$TopicID}} ) {
@@ -213,24 +214,24 @@ sub PrepareFieldList (%) {
       if (%FieldList) {
         return %FieldList
       }
-    }    
-  }  
+    }
+  }
 
   #  DB lookup for document type
   if ($DocTypeID) {
     %FieldList = FetchCustomFieldList(-doctypeid => $DocTypeID);
     if (%FieldList) {
       return %FieldList
-    }  
-  }  
-    
+    }
+  }
+
   #  DB lookup   for default group
   if ($Default) {
     %FieldList = FetchCustomFieldList(-default => $Default);
     if (%FieldList) {
       return %FieldList
-    }  
-  }  
+    }
+  }
 
   # Default for various styles
   if ($Default) {
@@ -238,9 +239,9 @@ sub PrepareFieldList (%) {
     %FieldList = FieldsToFieldlist(@DefaultFields);
     if (%FieldList) {
       return %FieldList
-    }  
+    }
   }
-  
+
   # Default for "Default" (probably never gets here)
   my @DefaultFields = @{ $DefaultFieldLists{"Default"} };
   %FieldList = FieldsToFieldlist(@DefaultFields);
@@ -250,7 +251,7 @@ sub PrepareFieldList (%) {
 sub FieldsToFieldlist {
   my @Fields = @_;
   my %FieldList = ();
-  
+
   my $Column = 0;
   my $Row    = 1;
   foreach my $Field (@Fields) {
@@ -259,15 +260,15 @@ sub FieldsToFieldlist {
     $FieldList{$Field}{Row}     = 1;
     $FieldList{$Field}{RowSpan} = 1;
     $FieldList{$Field}{ColSpan} = 1;
-  }  
-  
+  }
+
   return %FieldList;
 }
-  
+
 sub CookieToFieldList {
-  my ($Value) = @_;  
+  my ($Value) = @_;
   my @Settings = split /\;/,$Value;
-  
+
   my %FieldList = ();
   foreach my $Setting (@Settings) {
     my ($Field,$Row,$Column,$RowSpan,$ColSpan) = split /_/,$Setting;
@@ -279,7 +280,7 @@ sub CookieToFieldList {
   }
   return %FieldList;
 }
-  
+
 sub RevisionToDocumentIDs {
   my ($ArgRef) = @_;
   my @RevisionIDs = exists $ArgRef->{-revisionids} ? @{$ArgRef->{-revisionids}} : ();
@@ -287,10 +288,10 @@ sub RevisionToDocumentIDs {
   foreach my $DocRevID (@RevisionIDs) {
     if ($DocRevisions{$DocRevID}{DOCID}) {
       $DocIDs{$DocRevisions{$DocRevID}{DOCID}} = 1;
-    }  
+    }
   }
   my @DocumentIDs = keys %DocIDs;
   return @DocumentIDs;
-}  
-  
+}
+
 1;

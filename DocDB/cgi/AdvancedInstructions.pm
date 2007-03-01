@@ -32,7 +32,11 @@ sub AdvancedInstructionsSidebar {
     <li><a href="#refer">Referring to your document and its files</a></li>
     <li><a href="#group">Referring to groups of documents</a></li>
    </ul></li>
-   <li><a href="#xml">XML Interface</a></li>
+   <li><a href="#xml">XML Interface</a>
+   <ul>
+    <li><a href="#xmldown">Download</a></li>
+    <li><a href="#xmlup">Upload</a></li>
+   </ul></li>
    <li><a href="#program">Programatic Interface</a></li>
   </ul>
 TOC
@@ -178,24 +182,85 @@ sub AdvancedInstructionsBody {
   <a name="xml" />
   <h1>XML Interface</h1>
 
-  <p>An XML interface for retrieving information from DocDB is currently being developed.
-     It is not complete, but it may satisfy the most common needs. Any link to
-     <tt>Search</tt> or <tt>ShowDocument</tt> described above will  generate XML output if
-     <tt>&amp;outformat=xml</tt> is added to the parameter list. <tt>Search</tt> returns a
-     summary of the found documents while <tt>ShowDocument</tt> returns all the meta-info
-     for the document.</p>
+  <p>An XML interface for retrieving information from and submiting information to DocDB is 
+     partially complete. It is not fully complete, but it may satisfy the most common needs.</p>
+     
+  <a name="xmldown" />
+  <h2>XML Downloads</h2>
+
+  <p>Any link to <tt>Search</tt> or <tt>ShowDocument</tt> described above will generate XML 
+     output if <tt>&amp;outformat=xml</tt> is added to the parameter list. <tt>Search</tt> returns
+     a summary of the found documents while <tt>ShowDocument</tt> returns all the meta-info for
+     the document.</p>
 
   <p>This output is easy to incorporate into your own programs and should be more
-     stable than the HTML counterparts (although internal changes in DocDB's formats may
-     change the XML output). Future improvements  to the XML facilities of DocDB may
-     include XML output from <tt>ListBy</tt>, XML output of events, and  XML
-     <em>upload</em> of documents. If any of these enhancements would be useful to you,
-     please contact your  administrator or the developers.</p>  
+     stable than the HTML counterparts (although internal changes in DocDB's formats may change
+     the XML output). Future improvements  to the XML facilities of DocDB may include XML output
+     from <tt>ListBy</tt>, XML output of events, and  XML output of topic, author and other lists.
+     If any of these enhancements would be useful to you, please contact your  administrator or
+     the developers.</p>  
 
+  <a name="xmlup" />
+  <h2>XML Uploads</h2>
+
+  <p>Since version 8.4 DocDB has supported uploads of XML data describing documents. This is
+     done with the <a href="$XMLUpload">XMLUpload</a> script. The XML output of ShowDocument
+     described above can be used almost directly to create a new document. One new XML element
+     must be added to such an XMLFile and a second element is optional.</p>
+     
+  <p>The first XML element is <tt>control</tt> which has two parameters: <tt>mode</tt> and
+     <tt>usedate</tt>. <tt>mode</tt> must be one of two values, <q>new</q> or <q>bump</q>. New
+     ignores the  document ID in the uploaded XML and creates a new document with the included
+     information. Bump uses  that document ID and creates a new version of that document with the
+     XML information. <tt>usedate</tt>, if present  (the value is unimportant) will take the
+     modification dates for the document from the XML. The default is to use the current date and
+     time. So the <tt>control</tt> element might look like this:</p>
+
+     <pre>
+     &lt;control&gt;
+       &lt;mode&gt;new&lt;/mode&gt;
+       &lt;usedate&gt;yes&lt;/usedate&gt;
+     &lt;/control&gt;
+     </pre> 
+
+  <p>The second element XML element (which is optional) is <tt>authentication</tt> which contains
+     the  username and password needed to download the file(s) in the document from the remote
+     source. It will look   like this:</p>
+     
+     <pre>
+     &lt;authentication&gt;
+       &lt;username&gt;http-basic-username&lt;/username&gt;
+       &lt;password&gt;http-basic-password&lt;/password&gt;
+     &lt;/authentication&gt;
+     </pre> 
+     
+  <p>Generally speaking, when DocDB is processing an XML file, the <tt>id</tt> numbers describing 
+     things  like topics, events, etc. are used and the names of those things shown in the XML
+     file are ignored. Also, not all information  about a document van be uploaded via XML. This
+     can be changed if there is a need for it. </p>
+
+  <p>If the <tt>id</tt> numbers are missing, DocDB attempts a text match for the following 
+     information:</p>
+  <ul>
+   <li>Document submitter (based on <tt>firstname</tt> and <tt>lastname</tt>)</li>
+   <li>Document authors (same as submitter)</li>
+  </ul>
+
+  <p>The following information cannot be uploaded via XML:</p>
+  <ul>
+   <li>Cross-references either to local or remote documents</li>
+   <li>Signoff lists</li>
+   <li>Files are uploaded by URL only while in principle they could be uploaded by <tt>CDATA</tt>
+       as well</li>
+  </ul>
+
+  <p>Finally, you will notice that there is no provision for just updating the database info for a document
+     reserving a document, or adding files via XML. Those things could be added but were not needed.</p>
+     
   <a name="program" />
   <h1>Programatic Interface</h1>
 
-  <p>It is possible (and not too difficult) to write Perl programs to insert documents into
+  <p>It is also possible (and not too difficult) to write Perl programs to insert documents into
      DocDB. Examples of how to do this may be in <tt>scripts/examples</tt> in the DocDB
      source package. Help with this may also be obtained by writing the DocDB users mailing
      list linked from the <a href="$DocDBHome">DocDB homepage</a>.</p>

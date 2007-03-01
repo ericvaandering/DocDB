@@ -1,0 +1,283 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+# Allows one to provide an XML file with all the data describing a document. One can
+# upload the XML file with a command like
+#
+#  curl -F outformat=xml -F XMLFile=@file.xml -u user:pass http://host.com/cgi-bin/DocDB/XMLUpload
+#
+
+# Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+use CGI qw(-nosticky);
+use DBI;
+use XML::Twig;
+
+require "DocDBGlobals.pm";
+require "HTMLUtilities.pm";
+require "ResponseElements.pm";
+require "DBUtilities.pm";
+require "DocumentUtilities.pm";
+require "FSUtilities.pm";
+require "AuthorSQL.pm";
+
+my $Twig = XML::Twig -> new();
+$query = new CGI;  # Global for subroutines
+my %CGIParams = $query -> Vars;
+CreateConnection(-type => "rw");
+
+my $XMLText = $query -> param("XMLFile");;
+my $OutFormat  = $CGIParams{outformat};
+unless ($OutFormat) {
+  if ($XMLText) {
+    $OutFormat = "XML";
+  } else {
+    $OutFormat = "HTML";
+  }
+}
+$OutFormat =~ tr/[a-z]/[A-Z]/;
+
+unless (CanCreate()) {
+  push @ErrorStack,"You are not allowed to modify or create documents.";
+}
+
+my ($NewDocumentID,$NewDocRevID);
+
+if ($XMLText && !@ErrorStack) {
+  $Twig -> safe_parse($XMLText);
+
+  my $XML = $Twig -> root();
+
+  # Get control block
+
+  my $Control = $XML     -> first_child("control");
+  my $Mode    = $Control -> first_child("mode") -> text();
+  my $UseDate = $Control -> first_child("usedate");
+
+  # Get Authentication if needed
+
+  my $Authentication =  $XML -> first_child("authentication");
+  my ($User,$Password);
+
+  if ($Authentication) {
+    $User     = $Authentication -> first_child("username") -> text();
+    $Password = $Authentication -> first_child("password") -> text();
+  }
+
+  my $Document = $XML -> first_child("document");
+
+  my $DocID     = $Document -> {'att'} -> {'id'};
+  my $Revision  = $Document -> first_child("docrevision");
+
+  if ($Mode eq "new") {
+    $Mode = "bump";
+    $DocID = 0;
+  }
+
+  # Extract text information from XML
+  my ($PubInfo,$Note,$Abstract);
+  my $Title    = $Revision -> first_child("title")           -> text();
+  if ($Revision -> first_child("abstract")) {
+    $Abstract = $Revision -> first_child("abstract")        -> text();
+  }
+  if ($Revision -> first_child("publicationinfo")) {
+    $PubInfo  = $Revision -> first_child("publicationinfo") -> text();
+  }
+  if ($Revision -> first_child("note")) {
+    $Note     = $Revision -> first_child("note")            -> text();
+  }
+
+  # Extract keywords from XML
+
+  my @Keywords = $Revision -> children("keyword");
+  my @KeywordsText = ();
+  foreach $Keyword (@Keywords) {
+    push @KeywordsText,$Keyword -> text();
+  }
+  my $Keywords = join ' ',@KeywordsText;
+
+  # Extract Document Type
+
+  my $DocType   = $Revision -> first_child("doctype");
+  my $DocTypeID = $DocType  -> {'att'} -> {'id'};
+
+  my $DateTime = "";
+  if ($UseDate) {
+    push @ActionStack,"Using dates supplied in XML for document.";
+    $DateTime = $Revision -> {'att'} -> {'modified'};
+  }
+
+  # Extract submitter and author list from XML
+
+  my $Submitter = $Revision -> first_child("submitter");
+  my $SubmitterID = $Submitter ->  {'att'} -> {'id'};
+  unless ($SubmitterID) {
+    my $FirstName = $Submitter -> first_child("firstname") -> text();
+    my $LastName  = $Submitter -> first_child("lastname")  -> text();
+    ($SubmitterID) = ProcessManualAuthors("$FirstName $LastName");
+  }
+
+  my @AuthorIDs = ();
+  my @Authors = $Revision -> children("author");
+  foreach $Author (@Authors) {
+    my $AuthorID = $Author -> {'att'} -> {'id'};
+    unless ($AuthorID) {
+      my $FirstName = $Author -> first_child("firstname") -> text();
+      my $LastName  = $Author -> first_child("lastname")  -> text();
+      ($AuthorID) = ProcessManualAuthors("$FirstName $LastName");
+    }
+    push @AuthorIDs, $AuthorID;
+  }
+
+  # Extract view and modify groups
+
+  my @ViewIDs = ();
+  my @ModifyIDs = ();
+  my @ViewGroups = $Revision -> children("viewgroup");
+  foreach $Group (@ViewGroups) {
+    my $ID = $Group -> {'att'} -> {'id'};
+    push @ViewIDs, $ID;
+  }
+  my @ModifyGroups = $Revision -> children("modifygroup");
+  foreach $Group (@ModifyGroups) {
+    my $ID = $Group -> {'att'} -> {'id'};
+    push @ModifyIDs, $ID;
+  }
+
+  # Extract topic list from XML
+
+  my @TopicIDs = ();
+  my @Topics = $Revision -> children("topic");
+  foreach $Topic (@Topics) {
+    my $TopicID = $Topic -> {'att'} -> {'id'};
+    if ($TopicID) {
+      push @TopicIDs, $TopicID;
+    } else {
+      #extract name and lookup
+      #bail if more than one match
+    }
+  }
+
+  # Extract event list from XML
+
+  my @EventIDs = ();
+  my @Events = $Revision -> children("event");
+  foreach $Event (@Events) {
+    my $EventID = $Event -> {'att'} -> {'id'};
+    if ($EventID) {
+      push @EventIDs, $EventID;
+    }
+  }
+
+  # Create file hash for file upload (fetch from URL only)
+
+  my %Files = ();
+  my @Files = $Revision -> children("file");
+  foreach $File (@Files) {
+    my $Name        = $File -> first_child("name")        -> text();
+    $Files{$Name}{NewFilename} = $Name;
+    if ($File -> first_child("description")) {
+      $Files{$Name}{Description} = $File -> first_child("description") -> text();
+    }
+    my $URL  = $File -> {'att'} -> {'href'};
+    my $Main = $File -> {'att'} -> {'main'};
+    $Files{$Name}{URL} = $URL;
+    if ($Main eq "yes") {
+      $Files{$Name}{Main} = $TRUE;
+    } else {
+      $Files{$Name}{Main} = $FALSE;
+    }
+    if ($User || $Password) {
+      $Files{$Name}{User} = $User;
+      $Files{$Name}{Pass} = $Password;
+      push @DebugStack,"Getting set to download $Name with URL $URL";
+    }
+  }
+
+  my $NeedURLs = $TRUE; # Maybe optional later?
+  if ($NeedURLs) {
+    my $TmpDir = MakeTmpSubDir();
+    %Files = DownloadURLs(-tmpdir => $TmpDir, -files => \%Files);
+  }
+
+  ($NewDocumentID,$NewDocRevID) = AddDocument(
+      -docid       => $DocID,        -version     => $Mode,
+      -title       => $Title,        -requesterid => $SubmitterID,
+      -abstract    => $Abstract,     -keywords    => $Keywords,
+      -pubinfo     => $PubInfo,      -note        => $Note,
+      -typeid      => $DocTypeID,    -datetime    => $DateTime,
+      -authorids   => \@AuthorIDs,   -topicids    => \@TopicIDs,
+      -eventids    => \@EventIDs,    -viewids     => \@ViewIDs,
+      -modifyids   => \@ModifyIDs,   -files       => \%Files,
+     );
+}
+
+if ($OutFormat eq 'XML') {
+  require "XMLOutput.pm";
+  unless ($NoXMLHead) {
+    print XMLHeader();
+  }
+  NewXMLOutput();
+
+  my $ReportXML = XMLReport();
+  $ReportXML -> paste(last_child => $DocDBXML);
+
+  my %XMLFields = ("All" => 1);
+  my $DocumentXML = DocumentXMLOut( {-docid   => $NewDocumentID,
+                                     -version => $DocRevisions{$NewDocRevID}{Version},
+                                     -display => \%XMLFields,
+                                    } );
+  if ($DocumentXML) {
+    $DocumentXML -> paste(last_child => $DocDBXML);
+  }
+  my $ReportXML = XMLReport();
+  $ReportXML -> paste(last_child => $DocDBXML);
+  print GetXMLOutput();
+} else {
+  EndPage(); 
+  my %Labels = {'xml'=>'XML', 'html' => 'HTML (This page)'};
+
+  print $query -> header( -charset => $HTTP_ENCODING );
+  DocDBHeader($PageTitle,"$Project Document $DocumentID-v$Version",-scripts => ["PopUps"]);
+  print $query -> start_multipart_form('POST',$XMLUpload,'id="xmlupload" name="xmlupload"');
+
+  print '<table class="LeftHeader CenteredTable MedPaddedTable">'."\n";
+  print '<tr><th>XML File</th><td>';
+  print $query -> filefield(-name => 'XMLFile', -size => 60, -maxlength => 250);
+  print '</td></tr>'."\n";
+  print '<tr><th>Result format</th><td>';
+  print $query -> radio_group(-name    => "outformat", -values => ['xml','html'],
+                              -default => 'xml',       -labels => \%Labels);
+  print '</td></tr>'."\n";
+  print '<tr><td colspan="2" class="SubmitCell">';
+  print $query -> submit (-value => "Upload XML Description");
+  print "</td></tr></table>\n";
+  print $query -> end_multipart_form;
+
+  if ($NewDocRevID) {
+    $FullDocName = FullDocumentID($NewDocumentID);
+    print "<p>You were successful. Your Document ID is <strong>$FullDocName</strong>.<br/>
+           Your entry was created with the following information: </p>\n";
+    PrintRevisionInfo($NewDocRevID);
+  }
+  EndPage(); 
+  DocDBNavBar();
+  DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+}
