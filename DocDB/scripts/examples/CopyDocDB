@@ -229,7 +229,6 @@ foreach my $OrigDocID (@OrigDocIDs) {
         my $Twig = XML::Twig -> new();
         $Twig -> safe_parsefile("/tmp/ReturnDocDB.xml");
         $XML = $Twig -> root();
-        unlink "/tmp/ReturnDocDB.xml";
 
         my $Document = $XML -> first_child("document");
         my $TestDocID     = $Document -> {'att'} -> {'id'};
@@ -240,6 +239,7 @@ foreach my $OrigDocID (@OrigDocIDs) {
           print     "Old DocumentID $DocID is new DocumentID $NewDocID\n";
           print LOG "Old DocumentID $DocID is new DocumentID $NewDocID\n";
         }
+        unlink "/tmp/ReturnDocDB.xml";
       } # Figure out new document ID
     }   # Do upload
   }     # Loop on document versions
