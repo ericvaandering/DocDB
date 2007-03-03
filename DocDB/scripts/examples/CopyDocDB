@@ -54,6 +54,7 @@ foreach my $OrigDocID (@OrigDocIDs) {
     my $TopicID = $Topic -> {'att'} -> {'id'};
     push @NewTopicIDs, @{$TopicMap{$TopicID}};
     foreach my $SkipID (@SkipTopicIDs) {
+      print "Checking $TopicID vs.  $SkipID\n";
       if ($TopicID == $SkipID) {
         $SkipDocument = 1;
       }
@@ -62,7 +63,7 @@ foreach my $OrigDocID (@OrigDocIDs) {
   @NewTopicIDs = Unique(@NewTopicIDs);
 
   if ($SkipDocument) {
-    print LOG "Old docid $DocID not migrated.\n"; 
+    print LOG "Old DocumentID $DocID not migrated.\n"; 
     next;
   }   
   # Get type from last version, applied to all versions
@@ -70,8 +71,6 @@ foreach my $OrigDocID (@OrigDocIDs) {
   my $DocType = $Revision -> first_child("doctype");
   my $TypeID  = $DocType -> {'att'} -> {'id'};
   my $NewTypeID = $TypeMap{$TypeID};
-
-  my $NewTypeID = 4; # Hack
 
   # Values needed for creating first document
 
@@ -107,12 +106,24 @@ foreach my $OrigDocID (@OrigDocIDs) {
 
       # Remove ID numbers from submitter and authors (lookup will handle this)
 
+#      my $Submitter = $Revision -> first_child("submitter");
+#      $Submitter -> del_att('id');
+
+#      my @Authors = $Revision -> children("author");
+#      foreach my $Author (@Authors) {
+#        $Author -> del_att('id');
+#      }
+
+      # Use numerical map to reset author and submitter IDs
+
       my $Submitter = $Revision -> first_child("submitter");
-      $Submitter -> del_att('id');
+      my $SubmitterID = $Submitter ->  {'att'} -> {'id'};
+      $Submitter ->  {'att'} -> {'id'} = $AuthorMap{$SubmitterID};
 
       my @Authors = $Revision -> children("author");
       foreach my $Author (@Authors) {
-        $Author -> del_att('id');
+        my $AuthorID = $Author ->  {'att'} -> {'id'};
+        $Author ->  {'att'} -> {'id'} = $AuthorMap{$AuthorID};
       }
 
       # Remove topics and insert our own
