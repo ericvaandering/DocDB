@@ -76,16 +76,13 @@ foreach my $OrigDocID (@OrigDocIDs) {
   my $NewDocID = 0;
   my $Mode     = "new";
   foreach my $Version (@Versions) { # Fetch each version from old DocDB
-    unless ($Version) {
-      $Mode = "reserve";
-    }  
-
     my $OriginalURL = $SourceURL."ShowDocument?docid=$OrigDocID;version=$Version;outformat=xml";
     my @Command = ("wget","-q","-O","/tmp/DocDB.xml","--no-check-certificate");
     if ($SourceUser) {
       push @Command,"--http-user=$SourceUser","--http-password=$SourcePassword"
     }
     push @Command,$OriginalURL;
+    print "Fetching DocumentID $OrigDocID, version $Version\n";
     system @Command;
 
     # Modify XML
@@ -102,6 +99,11 @@ foreach my $OrigDocID (@OrigDocIDs) {
     my $Revision  = $Document -> first_child("docrevision");
     my $Version   = $Revision -> {'att'} -> {'version'};
     print "Fetched DocumentID $DocID, version $Version\n";
+
+    unless ($Version) {
+      $Mode = "reserve";
+      print "Reserving rather than creating.\n";
+    }  
 
     if ($DoUpload) {
       $Document -> {'att'} -> {'id'} = $NewDocID; # Reset document #
