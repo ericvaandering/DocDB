@@ -2,15 +2,13 @@
 
 use XML::Twig;
 
-require "CopySetup.pm"; # Passwords
-
-
+require "CopySetup.pm"; # Passwords and topics maps, etc. See CopySetup.pm.example
 
 unlink "/tmp/DocDB.xml";
 unlink "/tmp/NewDocDB.xml";
 unlink "/tmp/ReturnDocDB.xml";
 
-open LOG ">CopyDocDB.log";
+open LOG,">CopyDocDB.log";
 
 foreach my $OrigDocID (@OrigDocIDs) {
 
