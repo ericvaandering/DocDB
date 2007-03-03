@@ -56,7 +56,8 @@ foreach my $OrigDocID (@OrigDocIDs) {
     foreach my $SkipID (@SkipTopicIDs) {
       if ($TopicID == $SkipID) {
         $SkipDocument = 1;
-      }  
+      }
+    }    
   }
   @NewTopicIDs = Unique(@NewTopicIDs);
 
