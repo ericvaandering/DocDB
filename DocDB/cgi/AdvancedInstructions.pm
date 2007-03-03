@@ -254,7 +254,7 @@ sub AdvancedInstructionsBody {
        as well</li>
   </ul>
 
-  <p>Finally, you will notice that there is no provision for just updating the database info for a document
+  <p>Finally, you will notice that there is no provision for just updating the database info for a document,
      reserving a document, or adding files via XML. Those things could be added but were not needed.</p>
      
   <a name="program" />
