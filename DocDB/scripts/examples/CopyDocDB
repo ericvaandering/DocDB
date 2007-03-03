@@ -5,22 +5,12 @@ use XML::Twig;
 require "CopySetup.pm"; # Passwords
 
 
-my $DoUpload   = 1; # Test first
-my @OrigDocIDs = (893..894,904);
-
-%TopicMap = ( 20 => [4,26],
-              17 => [32]  ,);
-
-%TypeMap = ( 1=>2, 3=>4); # Not functional since 8.3 doesn't return type
-
-%EventMap = (72 => 107); 
-
-@ViewIDs   = (5);
-@ModifyIDs = (5);
 
 unlink "/tmp/DocDB.xml";
 unlink "/tmp/NewDocDB.xml";
 unlink "/tmp/ReturnDocDB.xml";
+
+open LOG ">CopyDocDB.log";
 
 foreach my $OrigDocID (@OrigDocIDs) {
 
@@ -61,12 +51,21 @@ foreach my $OrigDocID (@OrigDocIDs) {
 
   my @NewTopicIDs = ();
   my @Topics = $Revision -> children("topic");
+  my $SkipDocument = 0;
   foreach my $Topic (@Topics) {
     my $TopicID = $Topic -> {'att'} -> {'id'};
     push @NewTopicIDs, @{$TopicMap{$TopicID}};
+    foreach my $SkipID (@SkipTopicIDs) {
+      if ($TopicID == $SkipID) {
+        $SkipDocument = 1;
+      }  
   }
   @NewTopicIDs = Unique(@NewTopicIDs);
 
+  if ($SkipDocument) {
+    print LOG "Old docid $DocID not migrated.\n"; 
+    next;
+  }   
   # Get type from last version, applied to all versions
   
   my $DocType = $Revision -> first_child("doctype");
@@ -223,12 +222,13 @@ foreach my $OrigDocID (@OrigDocIDs) {
         unlink "/tmp/ReturnDocDB.xml";
 
         my $Document = $XML -> first_child("document");
-        my $DocID     = $Document -> {'att'} -> {'id'};
+        my $TestDocID     = $Document -> {'att'} -> {'id'};
 
         if ($DocID) {
-          $NewDocID = $DocID;
+          $NewDocID = $TestDocID;
           $Mode = "bump";
-          print "Created new DocumentID $DocID\n";
+          print     "Old DocumentID $DocID is new DocumentID $NewDocID\n";
+          print LOG "Old DocumentID $DocID is new DocumentID $NewDocID\n";
         }
       } # Figure out new document ID
     }   # Do upload
