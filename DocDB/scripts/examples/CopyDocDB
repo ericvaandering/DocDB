@@ -54,7 +54,6 @@ foreach my $OrigDocID (@OrigDocIDs) {
     my $TopicID = $Topic -> {'att'} -> {'id'};
     push @NewTopicIDs, @{$TopicMap{$TopicID}};
     foreach my $SkipID (@SkipTopicIDs) {
-      print "Checking $TopicID vs.  $SkipID\n";
       if ($TopicID == $SkipID) {
         $SkipDocument = 1;
       }
@@ -77,6 +76,9 @@ foreach my $OrigDocID (@OrigDocIDs) {
   my $NewDocID = 0;
   my $Mode     = "new";
   foreach my $Version (@Versions) { # Fetch each version from old DocDB
+    unless ($Version) {
+      $Mode = "reserve";
+    }  
 
     my $OriginalURL = $SourceURL."ShowDocument?docid=$OrigDocID;version=$Version;outformat=xml";
     my @Command = ("wget","-q","-O","/tmp/DocDB.xml","--no-check-certificate");
