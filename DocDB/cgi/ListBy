@@ -181,6 +181,7 @@ if ($Days) {
            "and DocumentRevision.Obsolete=0 and RevisionEvent.ConferenceID=Conference.ConferenceID and Conference.EventGroupID=?");            
   $List -> execute($EventGroupID);
 } elsif ($TypeID) {
+  require "MiscSQL.pm";
   FetchDocType ($TypeID);
   $FieldListOptions{-doctypeid} = $TypeID;
   $Title   = "Document List by Type";
