@@ -181,6 +181,7 @@ if ($Days) {
            "and DocumentRevision.Obsolete=0 and RevisionEvent.ConferenceID=Conference.ConferenceID and Conference.EventGroupID=?");            
   $List -> execute($EventGroupID);
 } elsif ($TypeID) {
+  FetchDocType ($TypeID);
   $FieldListOptions{-doctypeid} = $TypeID;
   $Title   = "Document List by Type";
   $Message = "These documents of type <span class=\"Highlight\">
