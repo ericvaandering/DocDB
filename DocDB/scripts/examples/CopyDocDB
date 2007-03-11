@@ -50,6 +50,8 @@ foreach my $OrigDocID (@OrigDocIDs) {
   my @NewTopicIDs = ();
   my @Topics = $Revision -> children("topic");
   my $SkipDocument = 0;
+  my $NewTypeID;
+  
   foreach my $Topic (@Topics) {
     my $TopicID = $Topic -> {'att'} -> {'id'};
     push @NewTopicIDs, @{$TopicMap{$TopicID}};
@@ -57,7 +59,11 @@ foreach my $OrigDocID (@OrigDocIDs) {
       if ($TopicID == $SkipID) {
         $SkipDocument = 1;
       }
-    }    
+    }
+    if ($TopicID == 67 || $TopicID == 91 || $TopicID == 87 ||
+        $TopicID == 89 || $TopicID == 90 || $TopicID == 88) {
+      $NewTypeID = 23; # Set BOE topics to BOE doc type
+    }
   }
   @NewTopicIDs = Unique(@NewTopicIDs);
 
@@ -69,8 +75,10 @@ foreach my $OrigDocID (@OrigDocIDs) {
   
   my $DocType = $Revision -> first_child("doctype");
   my $TypeID  = $DocType -> {'att'} -> {'id'};
-  my $NewTypeID = $TypeMap{$TypeID};
-
+  unless ($NewTypeID) {
+    $NewTypeID = $TypeMap{$TypeID};
+  }
+  
   # Values needed for creating first document
 
   my $NewDocID = 0;
@@ -196,6 +204,11 @@ foreach my $OrigDocID (@OrigDocIDs) {
       }
       $PubInfoXML = XML::Twig::Elt -> new("publicationinfo", $PubInfoText);
       $PubInfoXML -> paste(last_child => $Revision);
+
+      # Add Keyword "script_import";
+      
+      my $KeywordXML = XML::Twig::Elt -> new("keyword","script_import");
+      $KeywordXML -> paste(last_child => $Revision);
 
       # Build control and authentication blocks and paste them into XML
 
