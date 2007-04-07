@@ -41,8 +41,6 @@ sub CanAccess ($;$$) { # Can the user access (with current security) this versio
     return 0;
   } 
   
-  push @DebugStack,"Checking public";
-  
   my @GroupIDs = GetRevisionSecurityGroups($DocRevID);
   unless (@GroupIDs) {return 1;}             # Public documents
 
@@ -55,26 +53,22 @@ sub CanAccess ($;$$) { # Can the user access (with current security) this versio
   } else {
     @UsersGroupIDs = FindUsersGroups();
   }  
-  push @DebugStack,"My groups:",@UsersGroupIDs,"";
     
 # See if current user is in the list of groups who can access this document
 
   my $access = 0;
   foreach my $UserGroupID (@UsersGroupIDs) {
     unless ($SecurityGroups{$UserGroupID}{CanView}) {
-      push @DebugStack,"Skipping $UserGroupID, can't view";
       next;
     }  
     
     foreach my $GroupID (@GroupIDs) { 
       if ($UserGroupID == $GroupID) {
         $access = 1;                           # User checks out
-        push @DebugStack,"Group $UserGroupID checks out";
         last;
       }  
     }
   }
-  push @DebugStack,"Access mid-way: $access";
   if ($access) {return $access;}
 
 # See if current users child groups can access this document
@@ -88,21 +82,18 @@ sub CanAccess ($;$$) { # Can the user access (with current security) this versio
       my $ParentID = $GroupsHierarchy{$ID}{Parent}; 
       my $ChildID  = $GroupsHierarchy{$ID}{Child}; 
       unless ($SecurityGroups{$ChildID}{CanView}) {
-        push @DebugStack,"Skipping child $UserGroupID, can't view";
         next;
       }  
       if ($ParentID == $UserGroupID) {    # We've found a valid "child" of one of our groups.   
         foreach my $GroupID (@GroupIDs) { # See if the child can access the document
           if ($GroupID == $ChildID) {
             $access = 1;
-            push @DebugStack,"Child $UserGroupID checks out";
             last;                           
           }   
         }
       }  
     }
   }
-  push @DebugStack,"Access at end: $access";
   return $access;       
 }
 
