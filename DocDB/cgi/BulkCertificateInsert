@@ -37,6 +37,9 @@ require "DBUtilities.pm";
 require "DBColumnSizes.pm";
 require "HTMLUtilities.pm";
 
+require "SecuritySQL.pm";
+require "SecurityHTML.pm";
+
 $query = new CGI;  # Global for subroutines
 
 # Parameters to script
