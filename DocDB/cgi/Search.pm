@@ -1,6 +1,6 @@
 # Author Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -92,6 +92,18 @@ sub LocalSearch ($) {
 
   my $Simple     = $params{simple};
   my $SimpleText = $params{simpletext};
+  
+  ### Purify input (remove punctuation)
+  
+  $SimpleText         =~ s/[^\s\w+-\.]//go;
+  $TitleSearch        =~ s/[^\s\w+-\.]//go;
+  $AbstractSearch     =~ s/[^\s\w+-\.]//go;
+  $KeywordSearch      =~ s/[^\s\w+-\.]//go;
+  $RevisionNoteSearch =~ s/[^\s\w+-\.]//go;
+  $PubInfoSearch      =~ s/[^\s\w+-\.]//go;
+  $FileSearch         =~ s/[^\s\w+-\.]//go;
+  $FileDescSearch     =~ s/[^\s\w+-\.]//go;
+  $FileContSearch     =~ s/[^\s\w+-\.]//go;            
 
   GetTopics();         
   GetSecurityGroups(); 
