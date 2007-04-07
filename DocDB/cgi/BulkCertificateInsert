@@ -44,7 +44,8 @@ $query = new CGI;  # Global for subroutines
 
 # Parameters to script
 
-my $Untaint = CGI::Untaint -> new($query -> Vars);
+my $Untaint   = CGI::Untaint -> new($query -> Vars);
+my %CGIParams = $query -> Vars;
 
 my $Password      = $Untaint -> extract (-as_printable => "password")    || "";
 my $Username      = $Untaint -> extract (-as_printable => "admuser")     || "";
@@ -55,6 +56,8 @@ my $Force         = $Untaint -> extract (-as_printable => "admforce")    || "";
 #my $ParentTopicID = $Untaint -> extract (-as_integer   => "parenttopic") || 0;
 #my $LongName      = $Untaint -> extract (-as_printable => "longdesc")    || "";
 #my $ShortName     = $Untaint -> extract (-as_printable => "shortdesc")   || "";
+my @GroupIDs       = split /\0/,$CGIParams{group};
+my $CanSign        = $Untaint -> extract (-as_printable => "CanSign")    || "";
 
 my $MaxUsers = 12;
 
@@ -83,7 +86,42 @@ unless (CanAdminister()) {
 EndPage();
 
 if ($Action eq "Insert") {
-  # Do our thing here
+  # Get all users and their Usernames
+  my @EmailUserIDs = GetEmailUserIDs();
+  my %Usernames = ();
+  foreach my $UserID (@EmailUserIDs) {
+    FetchEmailUser($UserID);
+    $Usernames{ $EmailUser{$UserID}{Username} } = $UserID;
+  }
+
+  my $UserInsert       = $dbh -> prepare("insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Verified,Password) values (0,?,?,?,1,'x')");
+  my $UsersGroupInsert = $dbh -> prepare("insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) values (0,?,?)");
+
+  foreach my $Row (1..$MaxUsers) {
+    my $Username = $Untaint -> extract (-as_printable => "cn$Row")    || "";
+    my $Name     = $Untaint -> extract (-as_printable => "name$Row")  || "";
+    my $Email    = $Untaint -> extract (-as_printable => "email$Row") || "";
+
+    if ($Username) {
+      if ($Usernames{$Username}) {
+        push @WarnStack,"A user with username $Username already exists. Not inserted.";
+        next;
+      }
+      unless ($Name && $Email) {
+        push @WarnStack,"You must supply a name and e-mail address for the user with username $Username. Not inserted.";
+        next;
+      }
+      unless (@GroupIDs) {
+        push @WarnStack,"You did not specify any groups. $Username inserted as member of no groups.";
+      }
+      $UserInsert -> execute($UserName,$CertCN,$CertEmail);
+      my $EmailUserID = $UserInsert -> {mysql_insertid}; # Works with MySQL only
+      push @ActionStack,"User $Username inserted.";
+      foreach my $GroupID (@GroupIDs) {
+        $UsersGroupInsert -> execute($EmailUserID,$GroupID);
+      }
+    }
+  }
 }
 
 if (@ActionStack) {
@@ -98,6 +136,7 @@ print 'Use this form to add several users at once into the same group(s) and wit
 print "</h4>\n";
 
 print $query -> start_multipart_form('POST',$BulkCertificateInsert,'id="bulkinsert" name="bulkinsert"');
+print $query -> hidden(-name => 'admaction', -default => 'Insert');
 
 print "<table class=\"MedPaddedTable CenteredTable\">\n";
 
@@ -106,28 +145,27 @@ print '<td rowspan="2">';
 SecurityScroll(-name => 'group', -helplink  => 'usergroups', -helptext => "Users' Groups");
 print "</td>\n";
 print '<td colspan="2">';
+AdministratorPassword();
+print "</td></tr>\n";
+
+print '<tr><td colspan="2">';
 if ($UseSignoffs) {
   print $query -> checkbox(-name  => "CanSign", -value    => 'CanSign',
                            -label => 'May sign documents');
 } else {
   print '&nbsp;';
 }
-print "</td>\n";
-print "</tr><tr>\n";
-print '<td colspan="2">';
-AdministratorPassword();
-print "</td>\n";
-print "</tr>\n";
+print "</td></tr>\n";
 
 print "<tr><th>Certificate CN</th><th>Name</th><th>E-mail Address</th></tr>";
 
 foreach my $Row (1..$MaxUsers) {
   print "<tr>\n";
   print "<td>\n";
-  TextField(-name => "cn$Row", -size => 40, -maxlength => $DBColumnSize{EmailUser}{Username});
+  TextField(-name => "cn$Row",    -size => 40, -maxlength => $DBColumnSize{EmailUser}{Username}    );
   print "</td>\n";
   print "<td>\n";
-  TextField(-name => "name$Row", -size => 40, -maxlength => $DBColumnSize{EmailUser}{Name});
+  TextField(-name => "name$Row",  -size => 40, -maxlength => $DBColumnSize{EmailUser}{Name}        );
   print "</td>\n";
   print "<td>\n";
   TextField(-name => "email$Row", -size => 30, -maxlength => $DBColumnSize{EmailUser}{EmailAddress});
