@@ -102,18 +102,20 @@ print $query -> start_multipart_form('POST',$BulkCertificateInsert,'id="bulkinse
 print "<table class=\"MedPaddedTable CenteredTable\">\n";
 
 print "<tr>\n";
-print "<th>\n";
-SecurityScroll(-name      => 'parent', -disabled => $TRUE,
-               -helplink  => 'parent', -helptext => 'Group');
-print "</th>\n";
-print "<th>\n";
+print "<td>\n";
+SecurityScroll(-name => 'group', -helplink  => 'usergroups', -helptext => "Users' Groups");
+print "</td>\n";
+print "<td>\n";
 if ($UseSignoffs) {
   print $query -> checkbox(-name  => "CanSign", -value    => 'CanSign',
                            -label => 'May sign documents');
 } else {
   print '&nbsp;';
 }
-print "</th>\n";
+print "</td>\n";
+print '<td>';
+AdministratorPassword();
+print "</td>\n";
 print "</tr>\n";
 
 print "<tr><th>Certificate CN</th><th>Name</th><th>E-mail Address</th></tr>";
@@ -127,7 +129,7 @@ foreach my $Row (1..$MaxUsers) {
   TextField(-name => "name$Row", -size => 40, -maxlength => $DBColumnSize{EmailUser}{Name});
   print "</td>\n";
   print "<td>\n";
-  TextField(-name => "email$Row", -size => 20, -maxlength => $DBColumnSize{EmailUser}{EmailAddress});
+  TextField(-name => "email$Row", -size => 30, -maxlength => $DBColumnSize{EmailUser}{EmailAddress});
   print "</td>\n";
   print "</tr>\n";
 }
