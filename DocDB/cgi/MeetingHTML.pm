@@ -704,6 +704,8 @@ sub EventHeader ($) {
                       );
   }
   
+  push @DebugStack,"Fields to display:",@Fields;
+  
   if ($DisplayMode eq "Session" || $DisplayMode eq "Separator") {
     $Fields{"Event"} = $EventTitle;
   } else {
@@ -777,6 +779,7 @@ sub EventHeader ($) {
   
   if ($Conferences{$EventID}{Preamble}) {
     $Fields{"Event Info"} = Paragraphize($Conferences{$EventID}{Preamble});
+    push @DebugStack,"Filled Event Info";
   }
 
   if ($Conferences{$EventID}{Epilogue} && $SeparatorID) {
@@ -790,6 +793,8 @@ sub EventHeader ($) {
   if ($SessionSeparators{$SeparatorID}{Description}) {
     $Fields{"Session Info"} = URLify(AddLineBreaks($SessionSeparators{$SeparatorID}{Description}));
   }
+  
+  push @DebugStack,"Fields to display:",@Fields;
 
   my $HTML;
 
