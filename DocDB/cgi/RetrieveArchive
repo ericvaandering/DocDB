@@ -1,10 +1,10 @@
 #! /usr/bin/env perl
 #
-# Description: Create an archive (.zip, .tar, .tar.gz) file of the document 
+# Description: Create an archive (.zip, .tar, .tar.gz) file of the document
 #              and stream it to the user.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 #
 
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
@@ -12,7 +12,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -47,17 +47,17 @@ my $DocumentID = $params{docid};
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number!";
-}  
+}
 
 unless ($Type eq "zip" || $Type eq "tar.gz" || $Type eq ".tar") {
   $Type = "tar.gz";
-}  
+}
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetSecurityGroups;
 &FetchDocument($DocumentID);
 
-if (defined $params{version}) { 
+if (defined $params{version}) {
   $Version = $params{version};
 } else {
   $Version = $Documents{$DocumentID}{NVersions};
@@ -68,8 +68,8 @@ unless (&CanAccess($DocumentID,$Version)) {
     push @ErrorStack,"The $remote_user group is not authorized to view this document (or it does not exist).";
   } else {
     push @ErrorStack,"This document is not publicly accessible.";
-  }  
-}  
+  }
+}
 
 if (($Type eq "zip" && !$Zip)) {
   push @ErrorStack,"You asked for a type of archive this system can't produce.";
@@ -84,7 +84,7 @@ unless ($DocRevID) {
 my $Status;
 my $TmpFile;
 
-unless (@ErrorStack) { 
+unless (@ErrorStack) {
   my $Directory = &GetDirectory($DocumentID,$Version);
 
 ### Get rid of files left over from old (< v6.5.0) versions
@@ -100,28 +100,28 @@ unless (@ErrorStack) {
 
   $TmpFile   = "$TmpDir/$ShortFile";
   $Directory =~ s/\/+$//g;
-     
+
   if ($Type eq "tar.gz") {
-    if ($GTar) { 
-      $Status = system("$GTar czf $TmpFile -C $Directory ."); 
+    if ($GTar) {
+      $Status = system("$GTar czf $TmpFile -C $Directory .");
     } elsif ($Tar && $GZip) {
       $Status = system("$Tar cf - $Directory | $GZip > $TmpFile");
     }
   } elsif ($Type eq "tar") {
-    $Status = system("$Tar cf $TmpFile $Directory"); 
+    $Status = system("$Tar cf $TmpFile $Directory");
   } elsif ($Type eq "zip") {
-    $Status = system("$Zip $TmpFile $Directory/*"); 
-  }  
+    $Status = system("$Zip $TmpFile $Directory/*");
+  }
   if ($Status) {
     push @ErrorStack,"There was a problem creating the archive. Please contact an administrator.";
   }
 }
-  
+
 if (@ErrorStack || @WarnStack) { # There was a problem. Warn the user.
   print $query -> header( -charset => $HTTP_ENCODING );
-  DocDBHeader("File Retrieve Results"); 
+  DocDBHeader("File Retrieve Results");
   EndPage(@ErrorStack);
-  
+
   DocDBNavBar();
   DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 } else {
