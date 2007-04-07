@@ -777,6 +777,7 @@ sub EventHeader ($) {
     $Fields{"External URL"} = "<a href=\"$Conferences{$EventID}{URL}\">$Conferences{$EventID}{Title}</a>";
   }
   
+  push @DebugStack,"Event ID is $EventID";
   if ($Conferences{$EventID}{Preamble}) {
     $Fields{"Event Info"} = Paragraphize($Conferences{$EventID}{Preamble});
     push @DebugStack,"Filled Event Info";
