@@ -102,10 +102,10 @@ print $query -> start_multipart_form('POST',$BulkCertificateInsert,'id="bulkinse
 print "<table class=\"MedPaddedTable CenteredTable\">\n";
 
 print "<tr>\n";
-print "<td>\n";
+print '<td rowspan="2">';
 SecurityScroll(-name => 'group', -helplink  => 'usergroups', -helptext => "Users' Groups");
 print "</td>\n";
-print "<td>\n";
+print '<td colspan="2">';
 if ($UseSignoffs) {
   print $query -> checkbox(-name  => "CanSign", -value    => 'CanSign',
                            -label => 'May sign documents');
@@ -113,7 +113,8 @@ if ($UseSignoffs) {
   print '&nbsp;';
 }
 print "</td>\n";
-print '<td>';
+print "</tr><tr>\n";
+print '<td colspan="2">';
 AdministratorPassword();
 print "</td>\n";
 print "</tr>\n";
