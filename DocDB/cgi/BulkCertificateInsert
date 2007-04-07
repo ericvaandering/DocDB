@@ -113,9 +113,9 @@ if ($Action eq "Insert") {
         next;
       }
       unless (@GroupIDs) {
-        push @WarnStack,"You did not specify any groups. $Username inserted as member of no groups.";
+        push @WarnStack,"You did not specify any groups. $Username inserted with membership in no groups.";
       }
-      $UserInsert -> execute($UserName,$Name,$Email,$CanSign);
+      $UserInsert -> execute($Username,$Name,$Email,$CanSign);
       my $EmailUserID = $UserInsert -> {mysql_insertid}; # Works with MySQL only
       push @ActionStack,"User $Username inserted.";
       foreach my $GroupID (@GroupIDs) {
