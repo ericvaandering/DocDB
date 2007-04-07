@@ -58,6 +58,7 @@ my $Force         = $Untaint -> extract (-as_printable => "admforce")    || "";
 #my $ShortName     = $Untaint -> extract (-as_printable => "shortdesc")   || "";
 my @GroupIDs       = split /\0/,$CGIParams{group};
 my $CanSign        = $Untaint -> extract (-as_printable => "CanSign")    || "";
+if ($CanSign) {$CanSign = $TRUE;}
 
 my $MaxUsers = 12;
 
@@ -94,7 +95,7 @@ if ($Action eq "Insert") {
     $Usernames{ $EmailUser{$UserID}{Username} } = $UserID;
   }
 
-  my $UserInsert       = $dbh -> prepare("insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Verified,Password) values (0,?,?,?,1,'x')");
+  my $UserInsert       = $dbh -> prepare("insert into EmailUser (EmailUserID,Username,Name,EmailAddress,CanSign,Verified,Password) values (0,?,?,?,?,1,'x')");
   my $UsersGroupInsert = $dbh -> prepare("insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) values (0,?,?)");
 
   foreach my $Row (1..$MaxUsers) {
@@ -114,7 +115,7 @@ if ($Action eq "Insert") {
       unless (@GroupIDs) {
         push @WarnStack,"You did not specify any groups. $Username inserted as member of no groups.";
       }
-      $UserInsert -> execute($UserName,$CertCN,$CertEmail);
+      $UserInsert -> execute($UserName,$Name,$Email,$CanSign);
       my $EmailUserID = $UserInsert -> {mysql_insertid}; # Works with MySQL only
       push @ActionStack,"User $Username inserted.";
       foreach my $GroupID (@GroupIDs) {
