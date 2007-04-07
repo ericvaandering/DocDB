@@ -1,3 +1,15 @@
+8.4.1
+
+  Make some additional changes to XML uploading.
+
+8.4.0
+
+  Add a new routine, XMLUpload which takes XML in the same format (with some
+  additions) as that output by ShowDocument and creates a new document or
+  updates an existing one. See the instructions under "advanced users" for more
+  information and CopyDocDB in scripts/examples for a script that will move
+  documents from one DocDB to another preserving the meta-data
+
 8.3.0
   
   Add the ability to make the user check a disclaimer box. See

@@ -37,6 +37,7 @@ require "DBUtilities.pm";
 require "DocumentUtilities.pm";
 require "FSUtilities.pm";
 require "AuthorSQL.pm";
+require "Security.pm";
 
 my $Twig = XML::Twig -> new();
 $query = new CGI;  # Global for subroutines
