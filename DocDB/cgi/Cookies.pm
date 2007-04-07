@@ -47,6 +47,7 @@ sub GetGroupsCookie {
   if ($query) {
     my $GroupIDs = $query -> cookie('groupids');
     if ($GroupIDs) {
+      push @DebugStack,"Found group limiting cookie";
       @GroupIDs = split /,/,$GroupIDs;
     }  
   }  
