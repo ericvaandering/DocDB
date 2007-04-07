@@ -132,6 +132,7 @@ sub CanModify { # Can the user modify (with current security) this document
       foreach my $GroupID (@ModifyGroupIDs) { # Check auth. users vs. logged in user
         if ($UsersGroupID == $GroupID) {
           $CanModify = 1;                           # User checks out
+          push @DebugStack,"User is member of $GroupID which can modify";
           last;
         }  
       }  
