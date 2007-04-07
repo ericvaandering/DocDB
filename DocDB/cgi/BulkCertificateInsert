@@ -92,14 +92,14 @@ if (@ActionStack) {
 
 EndPage();
 
+print '<h4>';
+print 'Use this form to add several users at once into the same group(s) and with the same permissions. This eliminates
+       the need for the users to apply for access separately.';
+print "</h4>\n";
+
 print $query -> start_multipart_form('POST',$BulkCertificateInsert,'id="bulkinsert" name="bulkinsert"');
 
 print "<table class=\"MedPaddedTable CenteredTable\">\n";
-
-print '<tr><th colspan="3">';
-print 'Use this form to add several users at once into the same group(s) and with the same permissions. This eliminates
-       the need for the users to apply for access separately.';
-print "</th></tr>\n";
 
 print "<tr>\n";
 print "<th>\n";
@@ -109,7 +109,7 @@ print "</th>\n";
 print "<th>\n";
 if ($UseSignoffs) {
   print $query -> checkbox(-name  => "CanSign", -value    => 'CanSign',
-                           -label => 'These users may sign documents');
+                           -label => 'May sign documents');
 } else {
   print '&nbsp;';
 }
