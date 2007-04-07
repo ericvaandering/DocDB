@@ -103,7 +103,7 @@ unless (@ErrorStack) {
      
   if ($Type eq "tar.gz") {
     if ($GTar) { 
-      $Status = system("$GTar czf $TmpFile $Directory"); 
+      $Status = system("$GTar czf $TmpFile -C $Directory ."); 
     } elsif ($Tar && $GZip) {
       $Status = system("$Tar cf - $Directory | $GZip > $TmpFile");
     }
