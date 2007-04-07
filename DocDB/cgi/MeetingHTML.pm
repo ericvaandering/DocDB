@@ -692,7 +692,7 @@ sub EventHeader ($) {
     
   if ($DisplayMode eq "SingleSession") {
     @Fields       = ("Full Title","Date &amp; Time","Location","Alt. Location",
-                     "Event Topic(s)","Event Moderator(s)","External URL","Event Info");
+                     "Event Topic(s)","Event Moderator(s)","External URL","Session Info");
     %RenameFields = ( "Session Info" => "Event Info",);
   }
   if ($DisplayMode eq "Session" || $DisplayMode eq "Separator") {
