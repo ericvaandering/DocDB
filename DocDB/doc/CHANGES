@@ -1,3 +1,17 @@
+8.4.2
+
+  Fix bug where session pre-amble (Event Info) was not displayed for single
+  session events
+
+  Fix an issue where documents modifiable by groups without modify permission
+  (currently) could still be modifed if the user was able to create documents
+
+  Make safe search strings which could crash MySQL search function
+
+  Add a new administration routine, BulkCertificateInsert which allows an admin
+  insert new certificate users 12 at a time without the user having to apply.
+  Linked from admin page.
+
 8.4.1
 
   Make some additional changes to XML uploading.
@@ -11,22 +25,22 @@
   documents from one DocDB to another preserving the meta-data
 
 8.3.0
-  
+
   Add the ability to make the user check a disclaimer box. See
   $Preferences{Options}{SubmitAgree} in Project/DocDBGlobals.pm
-  
+
   For certificate version, add a script to be able to check which users
   are part of which group(s).
 
-8.2.5 
+8.2.5
 
   Fix bug from 8.1 or 8.2 where whether existing author list was ordered or not
   was mis-detected.
 
 8.2.4
-  
+
   Fix bug from 8.2.0 where topics were not shown
-  
+
 8.2.1
 
   The only user-visible change is that when a document is modifiable or viewable
@@ -35,10 +49,10 @@
   user but the update proceeds. See
   https://sourceforge.net/tracker/?func=detail&atid=830064&aid=1603989&group_id=164024
   for more information.
-  
+
   Topic administration has been changed to eliminate some incomplete/wrong
   entries.
-  
+
   MigrateV8 and  CreateDatabase.SQL have been changed so that they are
   compatible with more recent versions of MySQL. For more info see
   https://sourceforge.net/forum/forum.php?forum_id=640807
@@ -62,16 +76,16 @@
 
 8.1.3
 
-  Fix a problem with notifications for AllDocuments. The migrate script and the 
-  cgi code didn't agree on what value should be in a field. They are consistent 
-  now and a temporary patch (until version 9) has been added so that it works 
+  Fix a problem with notifications for AllDocuments. The migrate script and the
+  cgi code didn't agree on what value should be in a field. They are consistent
+  now and a temporary patch (until version 9) has been added so that it works
   with both values.
-  
+
   8.1.1 and 8.1.2 fix a couple of crashes related to missing require statements.
 
-8.1.0 
+8.1.0
 
-  Reminder, you must follow the Version 8.0 upgrade instructions at 
+  Reminder, you must follow the Version 8.0 upgrade instructions at
   https://sourceforge.net/forum/forum.php?forum_id=605893 before updating from
   version 7.x. You can upgrade directly to any 8.x version, you needn't upgrade
   to 8.0.
@@ -82,15 +96,15 @@
   entry form, or by clicking to switch from one method to the other on the
   document entry form (requires  Javascript). If a document with an ordered
   author list is modified, the text form is the default since the selectable list
-  would destroy the list. 
+  would destroy the list.
 
-  The adminstrator only functions have been separated out into a separate page 
+  The adminstrator only functions have been separated out into a separate page
   (AdminHome). A couple of the more common ones are duplicated on ModifyHome. For adminstrators
   AdminHome is linked from the main DocDB page as well as from the Modify page
-  
-  The instructions for the public pages can contain links to the private and secure pages IF 
-  additional values are declared in ProjectGlobals.pm (see ProjectGlobals.pm.template for a 
-  an example). These two variables are called "secure_root" and "PrivateRoot" This should allow 
+
+  The instructions for the public pages can contain links to the private and secure pages IF
+  additional values are declared in ProjectGlobals.pm (see ProjectGlobals.pm.template for a
+  an example). These two variables are called "secure_root" and "PrivateRoot" This should allow
   confused users who somehow arrive at the public interface to find the private interface. Even if
   neither of these variables are defined, more explicit text is included in the instructions
   to try to handle this case.
@@ -98,29 +112,29 @@
 8.0.1
 
   Fixed crash when "Change Display" is chosen with Public interface
-  
+
   Restore document table for orphaned event documents for single session events
   Add # of documents orphaned to "Simple List" text
-  
-  Matched but unconfirmed session talks get italics again 
-  
+
+  Matched but unconfirmed session talks get italics again
+
   Fixed display of root level topics with no sub-topics
-  
+
   Small change to CSS files, so update those as well
 
 8.0.0
 
   Follow the migration instructions in MigrationGuide to upgrade.
-  
-  Set to separate view/modify lists by default. If you want the old behavior, put 
-  $EnhancedSecurity = $FALSE; in ProjectGlobals. This is backwards compatible with 
+
+  Set to separate view/modify lists by default. If you want the old behavior, put
+  $EnhancedSecurity = $FALSE; in ProjectGlobals. This is backwards compatible with
   the old setting.
-   
+
   DocDB now uses the Perl module CGI::Untaint. CGI::Untaint is used to "purify"
-  the input into the scripts. You must install it. You can use scripts/CheckModules 
+  the input into the scripts. You must install it. You can use scripts/CheckModules
   to see if you have all the modules you need for Version 8.x
-  
-  There is now a CanView option that you can set for a group to disable their 
+
+  There is now a CanView option that you can set for a group to disable their
   access even if they are marked as a group that can view a particular
   document.  Groups without CanView set can still access DocDB, it will just
   show publicly  accessible documents. Groups that cannot View are prohibited
@@ -128,7 +142,7 @@
   a  good reason to change it, we can. This feature was thought to be useful
   for  disabling reviewer accounts between reviews.
   The user can still use DocDB, but can only see publicly accessible documents.
-  
+
   Topics can now have sub-topics, sub-sub-topics, etc. Users can also select top
   level topics. Make sure the long description of a sub-topic is fully
   descriptive as often the long description is shown without the context of its
@@ -139,25 +153,25 @@
 
   New files
     cgi/TopicUtilities.pm
-  
+
 7.7.0
-  Reorganized the output of DisplayMeeting to look more like ShowDocument and 
+  Reorganized the output of DisplayMeeting to look more like ShowDocument and
   to present things in a clearer manner.
-  
+
   Add a routine in scripts to help find obsolete code. Remove a bunch of
   uncalled routines.
 
   Added XML output capability to ShowDocument
-  
-  Moved advanced user instructions to a separate page and added instructions for 
+
+  Moved advanced user instructions to a separate page and added instructions for
   XML and mention of Perl "programatic" interface
-  
+
   Allow external DocDB location to miss final "/" for XSearch
-  
+
   Added instructions for admins.
-  
+
   Added redirect to CertificateApplyForm after 5 seconds if the user is not verified.
-  
+
   New Files:
     AdministerIntructions.pm
     AdvancedIntructions.pm
@@ -165,12 +179,12 @@
 7.6.1
   New file: ListGroups Should be placed in public scripts directory too.
 
-  Added a new script, ListGroups which lists the various security groups and 
-  allows the user to get a list of the documents viewable by that group. This 
-  will NOT list public documents nor documents which the group is allowed to 
+  Added a new script, ListGroups which lists the various security groups and
+  allows the user to get a list of the documents viewable by that group. This
+  will NOT list public documents nor documents which the group is allowed to
   read because it is over another group in the hierarchy. Turned security list
   in ShowDocument into links to ListBy. ListBy also takes ListBy?group=blah
-  which will translate blah into a group number. 
+  which will translate blah into a group number.
 
   Added two new fields for the document display. Author+Institution should be
   obvious. Events (Long Name) gives the description or long name of the event
@@ -186,28 +200,28 @@
 7.6.0
   New perl modules are required since 7.5.1. Use the scripts/CheckModules
   script to see if you need new ones.
-  
-  DocDB 7.6.0 now adds a cross-search feature that will search other DocDB 
-  installations as long as you have them defined as External DocDBs (see the 
+
+  DocDB 7.6.0 now adds a cross-search feature that will search other DocDB
+  installations as long as you have them defined as External DocDBs (see the
   admin pages). Additionally, we will be supplying a DocDB instance that knows
   about as many other instances as possible. So, you may choose not to define
-  every other DocDB, just somewhat related ones, but users will still have a 
-  single place to go if they really want to search everything. The minimum 
+  every other DocDB, just somewhat related ones, but users will still have a
+  single place to go if they really want to search everything. The minimum
   version of an external DocDB for this to work is 7.5.1
-  
-  Links to this search engine only appear on the homepage if you have other 
+
+  Links to this search engine only appear on the homepage if you have other
   DocDBs defined.
-  
-  Improved the Group Administer routines with "force option" and better 
-  reporting. 
+
+  Improved the Group Administer routines with "force option" and better
+  reporting.
 
 7.5.2
-  Fix some bugs from 7.5.1 with missing requires. Also updated FullList to 
+  Fix some bugs from 7.5.1 with missing requires. Also updated FullList to
   use default settings
-  
+
 7.5.1
   Two new perl modules are required for this release:
-  "XML::Twig" and "HTML::TreeBuilder" 
+  "XML::Twig" and "HTML::TreeBuilder"
   Use the "CheckModules" script to verify installation.
 
   Added the quick search to the homepage instead of the link to "Search" Link is
@@ -237,99 +251,99 @@
 
   Can now get notification of documents associated with events (just like
   topics, authors, keywords)
-  
+
   Bold and add ...more information... link to event table even if all events are
   shown. Resulting page shows the end date (if different) and event location.
 
   Titles of events, sessions, and breaks are now shown on the web pages instead
   of generic "Event," etc. Note that if too much content breaks the layout of
   your header code, you may want to truncate things in that code.
-    
-  Link to web page to display break info. Not so useful now, may be later. 
+
+  Link to web page to display break info. Not so useful now, may be later.
 
   NotifyDigest was very old code and only sent mail on topics (or all documents)
   It was re-written to work use the same criteria as instant notification.
-  
+
   The DocDB homepage was changed to SourceForge.net
-  
+
   Better documentation of some tricky things in the API (AddDocument subroutine)
   was added
-  
+
   A new script, CheckModules was created to check that your Perl installation has
   all the modules required for DocDB
-  
+
 7.4.1
   Put list of events and "notes" in notification e-mail as well as say whether
   document was updated, meta-info updated, files added, document created or
   reserved.
-  
+
   Remove bolding from authors when there are none in meeting view
-  
+
   Make sorting order on document update matches order on document view
-  
+
   Fix bug where user was not reported as being verified after they were
 
 7.4.0
   Changes in the API to allow updating documents and the DB info
-  
+
   Fix for some edge conditions in the calendar and displaying events
-  
+
   Users are allowed to rename files that are fetched with wget
-  
+
   Addition of document notes to fields that can be displayed
-  
+
   In table view of document, abbreviate filenames longer than 20 characters
 
   Change first author to first alphabetically and change sort to work on it.
 
   Fixed a bug in reversing a sorted list of documents
 
-7.3.2 
+7.3.2
   A couple of bugfixes and one minor display enhancement
-  
+
   1. When using the certificate version, the view and modify lists were not
   populated correctly for the new document addition form
-  
+
   2. URLs with port numbers or certain characters could not be uploaded
-  
+
   3. The list of all events now only lists the most recent 8 events/group. There
   is a link to see all the events.
 
   4. Behavior for changing the groups a user belongs to has changed. New groups
   selected are added (rather than clearing the list). The complete information
-  for a changed user is displayed as a result. 
- 
+  for a changed user is displayed as a result.
+
   5. Adding a topic tells the name of the topic, not a number.
- 
+
   New file:
     cgi/EmailUserHTML.pm
-    
+
 7.3.0
-  This release adds the ability to change what information for an agenda or 
+  This release adds the ability to change what information for an agenda or
   document list is displayed in various circumstances. There are two entries
-  into the customization form: From the display of an event and from the 
+  into the customization form: From the display of an event and from the
   "Preferences" page. Let me know if you think this should be linked from other
   places.
-  
+
   Ordinary users can set (using cookies) display parameters for anything they
   view which override defaults set by others. Those able to modify an event
   agenda can change the display for that event and admins  can change the
   display for events, groups of events, topics, document types, and various
   system-wide defaults.
-  
+
   Two other small changes:
     1) Requester is now called "submitter" since the former was confusing
     2) "Restricted to" is now called "Accessible by" when you don't have
        separate view/modify lists (sugested by Stephen P.)
 
   New files:
-    cgi/ConfigSQL.pm  
-    cgi/CustomListForm  
-    cgi/EditTalkInfo  
-    cgi/Fields.pm  
-  
+    cgi/ConfigSQL.pm
+    cgi/CustomListForm
+    cgi/EditTalkInfo
+    cgi/Fields.pm
+
   Some CSS class names in meeting agendas have changed, we now have a  class
-  name on all cells of document lists and agendas. Using CSS, you can change 
+  name on all cells of document lists and agendas. Using CSS, you can change
   colors, type size, etc., of all these things.
 
 7.2.0
@@ -342,9 +356,9 @@
   List of events for the month appear on monthly calendar
   EmailAdministerGroups will clear the list of groups a person belongs to rather
     than add to them if any groups are selected. (Admins can be less careful.)
-    
-  Added instructions for getting/importing certificates (courtesy of Lynn 
-  Garren). There are several new settings to use for this: 
+
+  Added instructions for getting/importing certificates (courtesy of Lynn
+  Garren). There are several new settings to use for this:
     $Preferences{Security}{Certificates}{FNALKCA} = $FALSE;      # TRUE or FALSE - show KCA certificate instructions
     $Preferences{Security}{Certificates}{DOEGrids} = $FALSE;     # TRUE or FALSE - show DOEgrid certificate instructions
     $Preferences{Security}{Certificates}{ShowCertInstructions} = $FALSE;  # TRUE or FALSE - show certificate instructions even on non-cert version
@@ -371,7 +385,7 @@ the date in the title
 5. There should be a link back to the event groups when an event is viewed
 
 6. When document #s are entered in agendas, a link to that event will appear in
-the list of events for a document. 
+the list of events for a document.
 
 7. Certificate users can change their e-mail
 
@@ -395,14 +409,14 @@ document.
 
 There is a program script/ScriptInstall which can be used to set up DocDB in cgi
 areas which link to a central area. This should make setting up a public area
-easier, make multiple instances much easier, etc. Just make sure you read the 
+easier, make multiple instances much easier, etc. Just make sure you read the
 instructions before using it.
 
 There are also some code cleanups.
 
 7.1.0
 
-This release adds one major function. The "Related Documents" field now accepts 
+This release adds one major function. The "Related Documents" field now accepts
 specific versions of documents (123-v4 always links to the 4th version instead
 of the latest) and you can also link to versions in *other* DocDB instances. To
 do this, you have to make your DocDB aware of other DocDBs with the admin
@@ -434,7 +448,7 @@ http://freedesktop.org/Software/shared-mime-info
 
 The Fedora Core 2 RPM seems to work fine on Scientific Linux 3.0.x. If you don't
 get this installed correctly, RetrieveFile may give the wrong MIME type. In your
-webserver error logs you may see messages from DocDB. DocDB will still try to 
+webserver error logs you may see messages from DocDB. DocDB will still try to
 figure out the MIME type of the files served using the Unix "file" command.
 
 The Document Type (Talk/Figure/etc.) is now changable
@@ -447,7 +461,7 @@ or when the number of Event Groups gets large. Your existing MajorTopics that
 are marked as special in ProjectGlobals will be migrated to the new scheme.
 
 There is now a calendar that shows events. Expect this to improve and grow (and
-ask me if you want a pref to turn it off). 
+ask me if you want a pref to turn it off).
 
 There is a directory to store javascript files instead of having the JS we need
 printed out by DocDB.
@@ -457,32 +471,32 @@ Migration instructions:
 0) Back-up your database (do a mysqldump command)
 1) Check out the new stable distribution in a fresh area
 2) Copy MigrateV7 into an area where you can run *version 6* scripts. The
-   cgi-bin will work, but make sure you delete it after you do this to prevent 
+   cgi-bin will work, but make sure you delete it after you do this to prevent
    it being run from the web.
 3) Run MigrateV7 in init mode
 4) Run MigrateV7 in migrate mode
 5) Upgrade the DocDB code (cvs update -r stable)
-6) Go to your html/Static directory and do "cvs update -d -r stable" This will 
+6) Go to your html/Static directory and do "cvs update -d -r stable" This will
    create and update a bunch of CSS files as well as create a new "js" directory
    where Javascript files are stored.
-7) Edit your site specific CSS files if needed. (There is a new shaded    
+7) Edit your site specific CSS files if needed. (There is a new shaded
    element "tbody.Odd" that will be grey by default.)
 8) Make sure everything works, make sure your events were migrated correctly.
-9) Run  MigrateV7 in delete mode  
+9) Run  MigrateV7 in delete mode
 
 Links to "Collaboration Meetings" and "Conferences" have been removed from the
-homepage. If you would like to put them back .... 
+homepage. If you would like to put them back ....
 
-New web scripts added: EventAdministerForm  
-                       ShowCalendar 
-                       
+New web scripts added: EventAdministerForm
+                       ShowCalendar
+
 Version 7 also has tables for future functionality to follow in point releases:
 
-1) Customizing which fields are shown in lists of documents and lists of talks 
+1) Customizing which fields are shown in lists of documents and lists of talks
 2) Cross-referencing specific versions of documents and version in *other*
    DocDB's
 3) Eliminating people re-loading the document creation form and creating
-   duplicate documents.   
+   duplicate documents.
 
 Finally, the links to Conferences and Collaboration meetings have been removed.
 ProjectMessages.pm.template shows how you can restore these or other such lists
@@ -504,14 +518,14 @@ with "-docid => $id"
 6.6.0
 
 Two major changes: First, the instructions are now printed with a script rather
-than HTML. If you have $HelpFile defined in ProjectGlobals, please remove it, 
-it is no longer necessary. The instructions will now also include your project 
+than HTML. If you have $HelpFile defined in ProjectGlobals, please remove it,
+it is no longer necessary. The instructions will now also include your project
 name, point at your URLs, etc. They should not need to be edited.
 
-The second change applies to certificate based authentication only. There is a new 
-option in the left "menu" of both the main page and the "Change" page that allows a 
-user to only act as certain groups that they belong to. In other words, if your 
-certificate lets you act as an administrator and a normal user, you can turn off the 
+The second change applies to certificate based authentication only. There is a new
+option in the left "menu" of both the main page and the "Change" page that allows a
+user to only act as certain groups that they belong to. In other words, if your
+certificate lets you act as an administrator and a normal user, you can turn off the
 admin abilities until you need them.
 
 6.5.0
@@ -520,9 +534,9 @@ In certificate mode or optionally, by setting
 $Preferences{Options}{AlwaysRetrieveFile} all files are retrieved via
 RetrieveFile which streams the file directly to the user. This has the benefit
 of not requiring separate passwords from the user while probably being a little
-slower. 
+slower.
 
-6.3.0 
+6.3.0
 
 By default, certificate authorization uses the e-mail address in a client
 certificate to determine if it is unique. Some certificate providers don't
@@ -532,7 +546,7 @@ $Preferences{Security}{Certificates}{UseCNOnly} = TRUE to use the CN instead.
 Also, adds indicators of required fields to the meeting entry form and fixes a
 few small bugs discovered by FNAL-CD.
 
-6.2 
+6.2
 
 Allows people with personal accounts to monitor specific documents, not just
 based on authors, topics, or keywords. At the bottom of the left column you will
@@ -540,7 +554,7 @@ see a place to type your username and password to watch a document. You can
 erase the list of watched documents from the "Manage a personal account" page.
 When a document you are watching changes, you get e-mail.
 
-6.1 
+6.1
 
 Adds a new field to the document entry and display, cross-references. The user
 can type in a space or comma separated list of document numbers, which are then
@@ -560,14 +574,14 @@ to grow. The general steps are:
 3. Edit ProjectRoutines.pm to match the new format. See the .template file
    for examples
 4. Very few users will want to upgrade to certificates, so detailed instructions
-   for this will come later.   
+   for this will come later.
 5. If you have links like "LastModified?days=20" (e.g. in the NavBar) please
    change it to "ListBy?days=20" Also, any ListByType, ListByAuthor,
    ListByTopic links should be changed to just "ListBy" since these routines
    have been consolidated. The old ones are not CSS enabled and will be removed
    in DocDB v 7.0. As a bonus, ListBy is often faster than the routines it
    replaces.
-6. Link ListBy to your public site, if you have one.    
+6. Link ListBy to your public site, if you have one.
 
 CSS (Cascading Style Sheets)
 
@@ -582,21 +596,21 @@ CSS (Cascading Style Sheets)
   directory with the default CSS files for the installation. You can also
   create CSS files just for your project(s) which are included if they exist so
   you can change the DocDB defaults. See ProjectDocDB.css.example for an
-  explanation. 
+  explanation.
 
-  To accommodate the CSS changes, changes were made to what is expected in 
+  To accommodate the CSS changes, changes were made to what is expected in
   ProjectRoutines.pm. DocDB now takes care of loading the default CSS files,
   beginning and ending the <HEAD> and the <BODY> and a few other things. There
   are now three hook routines instead of two:
-  
+
   o ProjectHeader is called at the end of the section of the page between
     <HEAD> and </HEAD> which allows you to include your own CSS (if you don't
-    use the mechanism above), Javascript for menus, etc.  
+    use the mechanism above), Javascript for menus, etc.
   o ProjectBodyStart is called just after the <BODY> tag and allows you to print
     out a header on the page.
   o ProjectBodyEnd is called just before </BODY> and allows you to print a
     footer on the page.
-    
+
   Take a look at the examples in ProjectRoutines.pm.template. What you used to
   have in DocDBHeader is now expected to be in ProjectHeader and
   ProjectBodyStart, but there are lots of things you don't need either.
@@ -604,22 +618,22 @@ CSS (Cascading Style Sheets)
   like the keyword chooser, help tips, etc. ProjectHeader will be called, but
   not the other two routines. This allows the style of those windows to be
   consistent with the others without the real estate of headers and
-  footers.       
+  footers.
 
   Finally, CSS may allow us to make generic HTML help files too, since I know
-  this is an problem. 
-  
+  this is an problem.
+
 Client Certificates
-  
+
   This is a different, more secure method of authenticating users (rather than
   shared group passwords). Access to meta-data and permission to upload files
   requires the user to have a valid client certificate from a CA that you trust.
   The admin interface is used to grant those people membership in the various
   groups in DocDB. Access to files within a document is still controlled by
   group passwords.
-  
+
   For instructions on setting up a web server to use SSL and require client
-  certificates, see http://www.fnal.gov/docs/products/apache/SSLNotes.html 
+  certificates, see http://www.fnal.gov/docs/products/apache/SSLNotes.html
 
 5.6.0
 
@@ -645,13 +659,13 @@ There are also the beginnings of an API to allow easier insertation of documents
 
 5.3.1
 
-Lots of cosmetic changes suggested by FNAL-CD: 
+Lots of cosmetic changes suggested by FNAL-CD:
 
-Lists of documents now have project name in the header, not in each document #. 
+Lists of documents now have project name in the header, not in each document #.
 Completed (I think) the change from E-mail account to personal account.
 Add topic -> Add minor topic
 Create/edit meeting links are more explicit.
-Things that were in blue text are now in the default color. 
+Things that were in blue text are now in the default color.
 Actually styled with class="highlight" which will be a CSS property later.
 
 5.3.0
@@ -686,7 +700,7 @@ set to GNU's tar (standard tar on Linux). If this doesn't exist, then $Tar
 should be set to regular tar and $GZip and $GUnzip to the GNU gzip/gunzip
 utilities. The correct defaults for Linux are set in the DocDBGlobals.pm file,
 so if you didn't modify these before, you don't need to do anything. If you did
-change this and are using GTar, then change your Tar reference to GTar. 
+change this and are using GTar, then change your Tar reference to GTar.
 
 Some groups have requested that by default, new documents are marked as
 publically accessible. The variable $DefaultPublicAccess, which defaults to "0"
@@ -695,15 +709,15 @@ has been added for this. Change it in ProjectGlobals.pm if you want to have
 document.
 
 I'm starting a new set of settings to determine which parts of the regular
-interface are available to the public. The first part of this is the 
+interface are available to the public. The first part of this is the
 $PublicAccess{MeetingList} variable, set to 0 by default. Set this to 1 if you
 want the "all meetings" item to appear on the public home page. If you do this,
-you must also create a link to "ListAllMeetings" in your public directory.  
+you must also create a link to "ListAllMeetings" in your public directory.
 
 5.1.0
 
 Added new "anyword" and "allword" search modes. Changed keyword link to use
-"anyword." 
+"anyword."
 
 Added an option for external search routines for document contents, added
 template files in scripts/ to give examples on use. You must set the
