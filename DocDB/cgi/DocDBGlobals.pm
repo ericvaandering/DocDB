@@ -1,18 +1,18 @@
 #
 # Description: Configuration file for the DocDB. Sets default
 #              values and script names. Do not change this file,
-#              specific local settings are in ProjectGlobals.pm. 
+#              specific local settings are in ProjectGlobals.pm.
 #              Nearly any variable here can be changed there.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 #
-# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -69,7 +69,7 @@ $TmpDir = "/tmp/";
                "May",      "June",    "July",    "August",
                "September","October", "November","December");
 
-# Reports 
+# Reports
 
 @WarnStack   = ();
 @ErrorStack  = ();
@@ -115,14 +115,14 @@ $TalkMatchThreshold   = 100;   # Threshold for matching talks with agenda entrie
 @MatchIgnoreWords     = ("from","with","then","than","that","what"); # Don't match on these
 
 $RequiredMark = "&nbsp;*&nbsp;";
-  
-$HTTP_ENCODING        = 'ISO-8859-1'; # Character set for page encoding, may have to modify 
+
+$HTTP_ENCODING        = 'ISO-8859-1'; # Character set for page encoding, may have to modify
                                       # MySQL text fields accordingly
 
 # Which things are publicly viewable?
 
-$PublicAccess{MeetingList} = 0;  
-  
+$PublicAccess{MeetingList} = 0;
+
 # Options
 
 $CaseInsensitiveUsers = 0;
@@ -133,15 +133,15 @@ $SuperiorsCanModify   = 1;     # In enhanced model, a superior group can modify
 $UserValidation = "";          # || "basic-user" || "certificate"
                                # Do we do group authorization like V5 and before
 			       # or do we allow .htaccess/.htpasswd users to map to groups (basic)
-			       # or require SSL certificates of users which map to groups (certificate)			       
+			       # or require SSL certificates of users which map to groups (certificate)
 $ReadOnly       = 0;           # Can be used in conjunction with individual
                                # authorization methods to set up a group-like
                                # area with group passwords which can view
                                # but not change any info
-$ReadOnlyAdmin  = 0;           # Allows administration from the read-only 
+$ReadOnlyAdmin  = 0;           # Allows administration from the read-only
                                # area. Only suggested for boot-strapping until
-                               # you have an individual selected as admin                               
-			       
+                               # you have an individual selected as admin
+
 $UseSignoffs          = 0;     # Optional sign-off system for document approval
 $ContentSearch        = "";    # Scripts and engine installed for searching files
 
@@ -190,7 +190,7 @@ $AddFilesForm          = $cgi_root."AddFilesForm";
 $DisplayMeeting        = $cgi_root."DisplayMeeting";
 $MeetingModify         = $cgi_root."MeetingModify";
 $SessionModify         = $cgi_root."SessionModify";
-$ListAllMeetings       = $cgi_root."ListAllMeetings"; 
+$ListAllMeetings       = $cgi_root."ListAllMeetings";
 $ConfirmTalkHint       = $cgi_root."ConfirmTalkHint";
 $ShowCalendar          = $cgi_root."ShowCalendar";
 
@@ -234,6 +234,7 @@ $SelectEmailPrefs      = $cgi_root."SelectEmailPrefs";
 $WatchDocument         = $cgi_root."WatchDocument";
 
 $CertificateApplyForm  = $cgi_root."CertificateApplyForm";
+$BulkCertificateInsert = $cgi_root."BulkCertificateInsert";
 $UserAccessApply       = $cgi_root."UserAccessApply";
 $ListGroupUsers        = $cgi_root."ListGroupUsers";
 
@@ -247,20 +248,20 @@ $XMLUpload             = $cgi_root."XMLUpload";
 unless ($CSSDirectory && $CSSURLPath) {
   $CSSDirectory = $file_root."/Static/css";
   $CSSURLPath   = $web_root."/Static/css";
-}  
+}
 
 unless ($JSDirectory && $JSURLPath) {
   $JSDirectory = $file_root."/Static/js";
   $JSURLPath   = $web_root."/Static/js";
-}  
+}
 
 unless ($ImgDirectory && $ImgURLPath) {
   $ImgDirectory = $file_root."/Static/img";
   $ImgURLPath   = $web_root."/Static/img";
-}  
+}
 
 if (!$Tar && $GTar) {
   $Tar = $GTar;
-} 
+}
 
 1;

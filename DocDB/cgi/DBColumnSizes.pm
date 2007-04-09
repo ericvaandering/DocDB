@@ -1,13 +1,15 @@
-#! /usr/bin/env perl
+# Description: Holds column sizes of various fields in the DB. Input forms can
+#              be limited to these values
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified:
 
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -19,23 +21,8 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI;
-use DBI;
+%DBColumnSize = (
+  "EmailUser" => {Username => 32, Name => 128, EmailAddress => 64, Password => 32},
+);
 
-require "DocDBGlobals.pm";
-require "TopicSQL.pm";
-require "TopicHTML.pm";
-require "HTMLUtilities.pm";
-
-$query = new CGI;  # Global for subroutines
-$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
-
-GetTopics();
-
-print $query -> header( -charset => $HTTP_ENCODING );
-DocDBHeader("List of Topics");
-
-TopicsTable();
-
-DocDBNavBar();
-DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+1;

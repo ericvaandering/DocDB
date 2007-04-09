@@ -1,11 +1,11 @@
 # Author Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -83,7 +83,7 @@ sub LocalSearch ($) {
   if ($IncludeSubTopics) {
     $IncludeSubTopics = $TRUE;
   }
-    
+
   push @DebugStack,"Searching for topics ".join ', ',@TopicSearchIDs;
   my @EventSearchIDs      = split /\0/,$params{events};
   my @EventGroupSearchIDs = split /\0/,$params{eventgroups};
@@ -93,14 +93,26 @@ sub LocalSearch ($) {
   my $Simple     = $params{simple};
   my $SimpleText = $params{simpletext};
 
-  GetTopics();         
-  GetSecurityGroups(); 
+  ### Purify input (remove punctuation)
+
+  $SimpleText         =~ s/[^\s\w+-\.]//go;
+  $TitleSearch        =~ s/[^\s\w+-\.]//go;
+  $AbstractSearch     =~ s/[^\s\w+-\.]//go;
+  $KeywordSearch      =~ s/[^\s\w+-\.]//go;
+  $RevisionNoteSearch =~ s/[^\s\w+-\.]//go;
+  $PubInfoSearch      =~ s/[^\s\w+-\.]//go;
+  $FileSearch         =~ s/[^\s\w+-\.]//go;
+  $FileDescSearch     =~ s/[^\s\w+-\.]//go;
+  $FileContSearch     =~ s/[^\s\w+-\.]//go;
+
+  GetTopics();
+  GetSecurityGroups();
 
   $OutFormat =~ tr/[a-z]/[A-Z]/;
   if ($OutFormat eq 'XML') {
     unless ($NoXMLHead) {
       print XMLHeader();
-    }  
+    }
     NewXMLOutput();
   } else {
     print $query -> header( -charset => $HTTP_ENCODING );
@@ -145,19 +157,19 @@ sub LocalSearch ($) {
     $FileSearchMode         = "anyword";
     $FileDescSearchMode     = "anyword";
     $FileContSearchMode     = "anyword";
-  }  
+  }
 
   if ($AuthorManual) { # Add these authors to list
     my @ManualAuthorIDs = ProcessManualAuthors($AuthorManual, {-warn => $TRUE} );
     if (@ManualAuthorIDs) {
       @AuthorSearchIDs = Unique(@AuthorSearchIDs,@ManualAuthorIDs);
     }
-  }  
+  }
 
   $Afterday   = $params{afterday};
   $Aftermonth = $params{aftermonth};
   $Afteryear  = $params{afteryear};
-  if ($Afteryear && $Afteryear ne "----") { 
+  if ($Afteryear && $Afteryear ne "----") {
     if ($Aftermonth eq "---") {$Aftermonth = "Jan";}
     if ($Afterday   eq "--")  {$Afterday   = "1";}
     $SQLBegin   = "$Afteryear-$ReverseAbrvMonth{$Aftermonth}-$Afterday";
@@ -166,7 +178,7 @@ sub LocalSearch ($) {
   $Beforeday   = $params{beforeday};
   $Beforemonth = $params{beforemonth};
   $Beforeyear  = $params{beforeyear};
-  if ($Beforeyear && $Beforeyear ne "----") { 
+  if ($Beforeyear && $Beforeyear ne "----") {
     if ($Beforemonth eq "---") {$Beforemonth = "Dec";}
     if ($Beforeday   eq "--")  {$Beforeday   = DaysInMonth($ReverseAbrvMonth{$Beforemonth},$Beforeyear);}
     $SQLEnd     = "$Beforeyear-$ReverseAbrvMonth{$Beforemonth}-$Beforeday";
@@ -175,7 +187,7 @@ sub LocalSearch ($) {
   my $Mode    = $params{mode};
   unless ($Mode eq "date" or $Mode eq "meeting" or $Mode eq "conference") {
     $Mode = "date";
-  }  
+  }
 
   ### Check parameters for errors
 
@@ -188,17 +200,17 @@ sub LocalSearch ($) {
 
   unless ($InnerLogic eq "AND" || $InnerLogic eq "OR") {
     push @ErrorStack,"Inner logic must be either AND or OR.";
-  }   
+  }
   unless ($OuterLogic eq "AND" || $OuterLogic eq "OR") {
     push @ErrorStack,"Outer logic must be either AND or OR.";
-  }   
+  }
 
   if ($OutFormat eq 'HTML') {
     EndPage();
     print "<p>\n";
   }
 
-  if ($TitleSearch || $AbstractSearch || $KeywordSearch || $RevisionNoteSearch || 
+  if ($TitleSearch || $AbstractSearch || $KeywordSearch || $RevisionNoteSearch ||
       $PubInfoSearch || @RequesterSearchIDs || $SQLBegin    || $SQLEnd) {
     $SearchedRevisions = 1;
   ### Text search matches
@@ -249,18 +261,18 @@ sub LocalSearch ($) {
       $RevisionDocumentIDs{$DocumentID} = 1; # Hash removes duplicates
     }
     @RevisionDocumentIDs = keys %RevisionDocumentIDs;
-  } 
+  }
 
   ### Topics (if any)
 
-  if (@TopicSearchIDs) { 
+  if (@TopicSearchIDs) {
     $SearchedTopics = 1; # Add -subtopics switch
-    @TopicRevisions = TopicSearch({ -logic     => $InnerLogic, -topicids => \@TopicSearchIDs, 
+    @TopicRevisions = TopicSearch({ -logic     => $InnerLogic, -topicids => \@TopicSearchIDs,
                                     -subtopics => $IncludeSubTopics,
                                  });
     push @DebugStack,"Found revisions ".join ', ',@TopicRevisions;
     @TopicDocumentIDs = ValidateRevisions(@TopicRevisions);
-  } 
+  }
 
   if (@EventSearchIDs && @EventGroupSearchIDs && !$SimpleText) { # Remove group if event is selected
     require "MeetingSQL.pm";
@@ -268,32 +280,32 @@ sub LocalSearch ($) {
     my %EventGroupSearchIDs = ();
     foreach my $EventGroupSearchID (@EventGroupSearchIDs) {
       $EventGroupSearchIDs{$EventGroupSearchID} = 1;
-    } 
+    }
     foreach my $EventSearchID (@EventSearchIDs) {
       $EventGroupSearchIDs{$Conferences{$EventSearchID}{EventGroupID}} = 0;
-    } 
+    }
     @EventGroupSearchIDs = ();
     foreach my $EventGroupSearchID (keys %EventGroupSearchIDs) {
       if ($EventGroupSearchIDs{$EventGroupSearchID}) {
         push @EventGroupSearchIDs, $EventGroupSearchID;
       }
-    } 
+    }
   }
 
   my @EventDocumentIDs      = ();
   my @EventGroupDocumentIDs = ();
 
-  if (@EventSearchIDs) {  
+  if (@EventSearchIDs) {
     $SearchedEvents = 1;
     my @EventRevisions = EventSearch($InnerLogic,"event",@EventSearchIDs);
     @EventDocumentIDs = ValidateRevisions(@EventRevisions);
-  } 
+  }
 
-  if (@EventGroupSearchIDs) {  
+  if (@EventGroupSearchIDs) {
     $SearchedEventGroups = 1;
     my @EventGroupRevisions = EventSearch($InnerLogic,"group",@EventGroupSearchIDs);
     @EventGroupDocumentIDs = ValidateRevisions(@EventGroupRevisions);
-  } 
+  }
 
   ### Authors (if any)
 
@@ -341,7 +353,7 @@ sub LocalSearch ($) {
       push @FileRevisions,$DocRevID;
     }
     @FileDocumentIDs = ValidateRevisions(@FileRevisions);
-  } 
+  }
 
   ### Optional content search
 
@@ -353,10 +365,10 @@ sub LocalSearch ($) {
       chomp $line;
       my $DocumentID = int($line);
       $ContentDocumentIDs{$DocumentID} = 1;
-    } 
-    close SEARCH; 
+    }
+    close SEARCH;
     @ContentDocumentIDs = keys %ContentDocumentIDs;
-  }  
+  }
 
   ### Fetch all info for documents that match all criteria
 
@@ -378,49 +390,49 @@ sub LocalSearch ($) {
       foreach $DocID (@RevisionDocumentIDs) {
         ++$TotalDocumentIDs{$DocID};
       }
-    }    
+    }
     if ($SearchedTopics) {
       ++$TotalSearches;
       foreach $DocID (@TopicDocumentIDs) {
         ++$TotalDocumentIDs{$DocID};
       }
-    } 
+    }
     if ($SearchedEvents) {
       ++$TotalSearches;
       foreach $DocID (@EventDocumentIDs) {
         ++$TotalDocumentIDs{$DocID};
       }
-    } 
+    }
     if ($SearchedEventGroups) {
       ++$TotalSearches;
       foreach $DocID (@EventGroupDocumentIDs) {
         ++$TotalDocumentIDs{$DocID};
       }
-    } 
+    }
     if ($SearchedAuthors) {
       ++$TotalSearches;
       foreach $DocID (@AuthorDocumentIDs) {
         ++$TotalDocumentIDs{$DocID};
       }
-    }  
+    }
     if ($SearchedFiles) {
       ++$TotalSearches;
       foreach $DocID (@FileDocumentIDs) {
         ++$TotalDocumentIDs{$DocID};
       }
-    } 
+    }
     if ($SearchedTypes) {
       ++$TotalSearches;
       foreach $DocID (@TypeDocumentIDs) {
         ++$TotalDocumentIDs{$DocID};
       }
-    } 
+    }
     if ($SearchedContent) {
       ++$TotalSearches;
       foreach $DocID (@ContentDocumentIDs) {
         ++$TotalDocumentIDs{$DocID};
       }
-    } 
+    }
 
   ### Which ones matched every search
 
@@ -428,7 +440,7 @@ sub LocalSearch ($) {
       if ($TotalDocumentIDs{$DocID} == $TotalSearches) {
         push @DocumentIDs,$DocID;
       }
-    }    
+    }
   }
 
   @DocumentIDs = Unique(@DocumentIDs);
@@ -453,8 +465,8 @@ sub LocalSearch ($) {
   my $Reverse          = 1;
 
   if ($SimpleText) {
-    $SortBy  = "relevance"; 
-    $Reverse = $TRUE;      
+    $SortBy  = "relevance";
+    $Reverse = $TRUE;
   } elsif ($Mode eq "conference") {
     $FieldListOptions{-default} = "Conference Mode";
     $SortBy  = "confdate";
@@ -462,13 +474,13 @@ sub LocalSearch ($) {
     $FieldListOptions{-default} = "Meeting Mode";
     $SortBy  = "firstauthor";
     $Reverse = 0;
-  } 
+  }
 
   ### Print table
 
   if ($OutFormat eq 'HTML') {
     my %FieldList = PrepareFieldList(%FieldListOptions);
-    my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs, 
+    my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs,
                                           -sortby    => $SortBy,     -reverse => $Reverse);
 
     print "<strong>Number of documents found: ",int($NumberOfDocuments),"</strong><p/>\n";
@@ -477,8 +489,8 @@ sub LocalSearch ($) {
       my $DocumentXML = DocumentXMLOut( {-docid => $DocumentID} );
       if ($DocumentXML) {
         $DocumentXML -> paste(last_child => $DocDBXML);
-      }  
-    }  
+      }
+    }
   }
 
   return;

@@ -6,7 +6,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -28,9 +28,9 @@ sub AdministerActions (%) {
 
   my (%Params) = @_;
 
-  my $Form       =   $Params{-form}  || "";
+  my $Form = $Params{-form}  || "";
 
-  my %Action    = ();
+  my %Action = ();
 
   $Action{Delete}    = "Delete";
   $Action{New}       = "New";
@@ -42,16 +42,28 @@ sub AdministerActions (%) {
 };
 
 sub AdministratorPassword {
+  my ($ArgRef) = @_;
+  my $Layout = exists $ArgRef->{-layout} ? $ArgRef->{-layout} : "horizontal";
+  
   require "FormElements.pm";
 
-  print FormElementTitle(-helplink => "adminlogin",    -nobreak => $TRUE,
-                         -helptext => "Administrator", -nocolon => $TRUE,);
-  print "<strong> Username: </strong>"; 
-  print $query -> textfield(-name => "admuser", -size => 12, -maxlength => 12, 
-                            -default => $remote_user);
-  print "<strong> Password: </strong>"; 
-  print $query -> password_field(-name      => "password", -size => 12, 
-                                 -maxlength => 12);
+  my ($HTML,$NoColon,$NoBreak);
+  
+  if ($Layout eq "horizontal") {
+    $NoBreak = $TRUE;
+    $NoColon = $TRUE;
+  }
+  
+  $HTML .= FormElementTitle(-helplink => "adminlogin",    -nobreak => $NoBreak,
+                            -helptext => "Administrator", -nocolon => $NoColon,);
+  $HTML .= "<strong> Username: </strong>"; 
+  $HTML .= $query -> textfield(-name => "admuser", -size => 12, -maxlength => 12, 
+                               -default => $remote_user);
+  if ($Layout eq "vertical") {$HTML .= '<br/>';}                       
+  $HTML .= "<strong> Password: </strong>"; 
+  $HTML .= $query -> password_field(-name      => "password", -size => 12, 
+                                    -maxlength => 12);
+  print $HTML;                                  
 };
 
 sub AdminRegardless {

@@ -2,15 +2,15 @@
 # Description: Routines to deal with cookies
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 #
 
-# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -32,7 +32,7 @@ sub GetPrefsCookie {
   $TopicModePref    = $query -> cookie('topicmode');
   $AuthorModePref   = $query -> cookie('authormode');
   $DateOverridePref = $query -> cookie('overdate');
-  
+
   $UserPreferences{AuthorID}     = $query -> cookie('userid');
   $UserPreferences{UploadType}   = $UploadTypePref  ;
   $UserPreferences{NumFiles}     = $NumFilesPref    ;
@@ -47,11 +47,12 @@ sub GetGroupsCookie {
   if ($query) {
     my $GroupIDs = $query -> cookie('groupids');
     if ($GroupIDs) {
+      push @DebugStack,"Found group limiting cookie";
       @GroupIDs = split /,/,$GroupIDs;
-    }  
-  }  
+    }
+  }
   return @GroupIDs;
-}  
+}
 
 1;
- 
+

@@ -1196,4 +1196,24 @@ or may not be the same as the web username and password.
   </text> 
  </entry>
 
+ <entry> 
+  <key>certname</key> 
+  <title>Certificate Common Name (CN)</title> 
+  <text>
+   This is a unique identifier in the user's client certificate. It is usually
+   the user's name or login. It must be entered exactly or the user will not be
+   authenticated when they  present their client certificate to DocDB.  
+  </text> 
+ </entry>
+
+ <entry> 
+  <key>certemail</key> 
+  <title>E-Mail Address for Certificate User</title> 
+  <text>
+   This must be a valid e-mail address for the user. This e-mail address will
+   be used for notifications of changed documents and requests for signatures
+   (if enabled by the DocDB maintainer). 
+  </text> 
+ </entry>
+
 </helpfile>
