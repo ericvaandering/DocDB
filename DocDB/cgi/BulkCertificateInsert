@@ -144,7 +144,7 @@ print '<td rowspan="2">';
 SecurityScroll(-name => 'group', -helplink  => 'usergroups', -helptext => "Users' Groups", -multiple => $TRUE);
 print "</td>\n";
 print '<td colspan="2">';
-AdministratorPassword();
+AdministratorPassword({-layout => 'vertical'});
 print "</td></tr>\n";
 
 print '<tr><td>';

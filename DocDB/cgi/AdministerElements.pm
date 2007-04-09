@@ -43,7 +43,7 @@ sub AdministerActions (%) {
 
 sub AdministratorPassword {
   my ($ArgRef) = @_;
-  my $Format = exists $ArgRef->{-layout} ? $ArgRef->{-layout} : "horizontal";
+  my $Layout = exists $ArgRef->{-layout} ? $ArgRef->{-layout} : "horizontal";
   
   require "FormElements.pm";
 
