@@ -47,11 +47,15 @@ sub AdministratorPassword {
   
   require "FormElements.pm";
 
-  my $HTML;
-
-  $HTML .= FormElementTitle(-helplink => "adminlogin",    -nobreak => $TRUE,
-                            -helptext => "Administrator", -nocolon => $TRUE,);
-  if ($Layout eq "vertical") {$HTML .= '<br/>';}                       
+  my ($HTML,$NoColon,$NoBreak);
+  
+  if ($Layout eq "horizontal") {
+    $NoBreak = $TRUE;
+    $NoColon = $TRUE;
+  }
+  
+  $HTML .= FormElementTitle(-helplink => "adminlogin",    -nobreak => $NoBreak,
+                            -helptext => "Administrator", -nocolon => $NoColon,);
   $HTML .= "<strong> Username: </strong>"; 
   $HTML .= $query -> textfield(-name => "admuser", -size => 12, -maxlength => 12, 
                                -default => $remote_user);
