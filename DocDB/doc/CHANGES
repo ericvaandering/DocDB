@@ -12,6 +12,8 @@
   insert new certificate users 12 at a time without the user having to apply.
   Linked from admin page.
 
+  New files: BulkCertificateInsert & DBColumnSizes.pm
+
 8.4.1
 
   Make some additional changes to XML uploading.
