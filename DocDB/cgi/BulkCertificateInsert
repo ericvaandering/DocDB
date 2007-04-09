@@ -47,17 +47,13 @@ $query = new CGI;  # Global for subroutines
 my $Untaint   = CGI::Untaint -> new($query -> Vars);
 my %CGIParams = $query -> Vars;
 
-my $Password      = $Untaint -> extract (-as_printable => "password")    || "";
-my $Username      = $Untaint -> extract (-as_printable => "admuser")     || "";
-my $Action        = $Untaint -> extract (-as_printable => "admaction")   || "";
-my $Force         = $Untaint -> extract (-as_printable => "admforce")    || "";
+my $Password = $Untaint -> extract (-as_printable => "password")  || "";
+my $Username = $Untaint -> extract (-as_printable => "admuser")   || "";
+my $Action   = $Untaint -> extract (-as_printable => "admaction") || "";
+my $Force    = $Untaint -> extract (-as_printable => "admforce")  || "";
+my $CanSign  = $Untaint -> extract (-as_printable => "CanSign")   || "";
+my @GroupIDs = split /\0/,$CGIParams{group};
 
-#my $TopicID       = $Untaint -> extract (-as_integer   => "topics")      || 0;
-#my $ParentTopicID = $Untaint -> extract (-as_integer   => "parenttopic") || 0;
-#my $LongName      = $Untaint -> extract (-as_printable => "longdesc")    || "";
-#my $ShortName     = $Untaint -> extract (-as_printable => "shortdesc")   || "";
-my @GroupIDs       = split /\0/,$CGIParams{group};
-my $CanSign        = $Untaint -> extract (-as_printable => "CanSign")    || "";
 if ($CanSign) {$CanSign = $TRUE;}
 
 my $MaxUsers = 12;
@@ -99,21 +95,22 @@ if ($Action eq "Insert") {
   my $UsersGroupInsert = $dbh -> prepare("insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) values (0,?,?)");
 
   foreach my $Row (1..$MaxUsers) {
-    my $Username = $Untaint -> extract (-as_printable => "cn$Row")    || "";
     my $Name     = $Untaint -> extract (-as_printable => "name$Row")  || "";
     my $Email    = $Untaint -> extract (-as_printable => "email$Row") || "";
+    my $Username = $Name;
+       $Username =~ s/\W//g;
 
     if ($Username) {
       if ($Usernames{$Username}) {
-        push @WarnStack,"A user with username $Username already exists. Not inserted.";
+        push @WarnStack,"The user $Name already exists. Not inserted.";
         next;
       }
-      unless ($Name && $Email) {
-        push @WarnStack,"You must supply a name and e-mail address for the user with username $Username. Not inserted.";
+      unless ($Email) {
+        push @WarnStack,"You must supply a name and e-mail address for the user $Name. Not inserted.";
         next;
       }
       unless (@GroupIDs) {
-        push @WarnStack,"You did not specify any groups. $Username inserted with membership in no groups.";
+        push @WarnStack,"You did not specify any groups. $Name inserted with membership in no groups.";
       }
       $UserInsert -> execute($Username,$Name,$Email,$CanSign);
       my $EmailUserID = $UserInsert -> {mysql_insertid}; # Works with MySQL only
@@ -131,10 +128,9 @@ if (@ActionStack) {
 
 EndPage();
 
-print '<h4>';
-print 'Use this form to add several users at once into the same group(s) and with the same permissions. This eliminates
-       the need for the users to apply for access separately.';
-print "</h4>\n";
+print "<h4>Use this form to add several users at once into the same group(s) and
+       with the same permissions. This eliminates the need for the users to
+       apply for access separately.</h4>\n";
 
 print $query -> start_multipart_form('POST',$BulkCertificateInsert,'id="bulkinsert" name="bulkinsert"');
 print $query -> hidden(-name => 'admaction', -default => 'Insert');
@@ -145,11 +141,11 @@ print "<tr>\n";
 print '<td rowspan="2">';
 SecurityScroll(-name => 'group', -helplink  => 'usergroups', -helptext => "Users' Groups", -multiple => $TRUE);
 print "</td>\n";
-print '<td colspan="2">';
+print '<td>';
 AdministratorPassword();
 print "</td></tr>\n";
 
-print '<tr><td colspan="2">';
+print '<tr><td>';
 if ($UseSignoffs) {
   print $query -> checkbox(-name  => "CanSign", -value    => 'CanSign',
                            -label => 'May sign documents');
@@ -158,23 +154,21 @@ if ($UseSignoffs) {
 }
 print "</td></tr>\n";
 
-print "<tr><th>Certificate CN</th><th>Name</th><th>E-mail Address</th></tr>";
+print "<tr><th>";
+print FormElementTitle(-helplink => 'certname',  -helptext => 'Certificate CN');
+print "</th><th>";
+print FormElementTitle(-helplink => 'certemail', -helptext => 'E-mail Address');
+print "</th></tr>\n";
 
 foreach my $Row (1..$MaxUsers) {
-  print "<tr>\n";
-  print "<td>\n";
-  TextField(-name => "cn$Row",    -size => 40, -maxlength => $DBColumnSize{EmailUser}{Username}    );
-  print "</td>\n";
-  print "<td>\n";
+  print "<tr><td>\n";
   TextField(-name => "name$Row",  -size => 40, -maxlength => $DBColumnSize{EmailUser}{Name}        );
-  print "</td>\n";
-  print "<td>\n";
+  print "</td><td>\n";
   TextField(-name => "email$Row", -size => 30, -maxlength => $DBColumnSize{EmailUser}{EmailAddress});
-  print "</td>\n";
-  print "</tr>\n";
+  print "</td></tr>\n";
 }
 
-print '<td colspan="3" class="SubmitCell">';
+print '<td colspan="2" class="SubmitCell">';
 print $query -> submit (-value => "Insert Users");
 print "</td>\n";
 
