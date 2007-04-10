@@ -625,29 +625,33 @@ sub PrintEventRightSidebar ($) {
         my @MeetingOrderIDs = FetchMeetingOrdersByConferenceID($EventID);
         @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs;
         print '<ul class="compact">';
-        foreach $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks
-          my $OtherSessionID   = $MeetingOrders{$MeetingOrderID}{SessionID};
-          my $OtherSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
-          if ($OtherSessionID) {
-            if ($OtherSessionID == $SessionID) {
-              print "<li><strong>",$Sessions{$SessionID}{Title},"</strong></li>\n";
-            } else {
-              FetchSessionByID($OtherSessionID);
-              my $Link = SessionLink(-sessionid => $OtherSessionID,
-                                     -tooltip   => "TimeAndLoc",);
-              print "<li>",$Link,"</li>\n";
-            }
-          } elsif ($OtherSeparatorID) {
-            if ($OtherSeparatorID == $SeparatorID) {
-              print "<li><strong>",$SessionSeparators{$SeparatorID}{Title},"</strong></li>\n";
-            } else {
-              FetchSessionSeparatorByID($OtherSeparatorID);
-              my $Link = SessionSeparatorLink({-sessionseparatorid => $OtherSeparatorID,
-                                               -tooltip            => "TimeAndLoc", });
-              print "<li>",$Link,"</li>\n";
+        if (scalar(@MeetingOrderIDs) > {
+          print "<li>",EventLink(-eventid => $EventID, -tooltip => "None", -format => "ListSession"),"\n";
+        } else {
+          foreach $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks
+            my $OtherSessionID   = $MeetingOrders{$MeetingOrderID}{SessionID};
+            my $OtherSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
+            if ($OtherSessionID) {
+              if ($OtherSessionID == $SessionID) {
+                print "<li><strong>",$Sessions{$SessionID}{Title},"</strong></li>\n";
+              } else {
+                FetchSessionByID($OtherSessionID);
+                my $Link = SessionLink(-sessionid => $OtherSessionID,
+                                       -tooltip   => "TimeAndLoc",);
+                print "<li>",$Link,"</li>\n";
+              }
+            } elsif ($OtherSeparatorID) {
+              if ($OtherSeparatorID == $SeparatorID) {
+                print "<li><strong>",$SessionSeparators{$SeparatorID}{Title},"</strong></li>\n";
+              } else {
+                FetchSessionSeparatorByID($OtherSeparatorID);
+                my $Link = SessionSeparatorLink({-sessionseparatorid => $OtherSeparatorID,
+                                                 -tooltip            => "TimeAndLoc", });
+                print "<li>",$Link,"</li>\n";
+              }
             }
           }
-        }
+        }  
         print "</ul>";
       }
 
@@ -927,14 +931,21 @@ sub EventLink (%) {
   my $ToolTip;
   if ($ToolTipMode eq "Date") {
     $ToolTip = EuroDate($Conferences{$EventID}{StartDate});
-  } else {
+  } elsif ($ToolTipMode eq "Full") {
     $ToolTip = $Conferences{$EventID}{Full};
   }
 
-  my $Link  = "<a href=\"$URL\" class=\"$Class\" title=\"$ToolTip\">";
+  my $Link = "<a href=\"$URL\" class=\"$Class\"";
+  if ($ToolTip) {
+    $Link .= " title=\"$ToolTip\"";
+  }
+  $Link .= ">";
+  
   if ($Format eq "long") {
     $Link .= $Conferences{$EventID}{LongDescription};
-  } else {
+  } elsif ($Format eq "ListSession") {
+    $Link .= "List All Sessions";
+  } else  {
     $Link .= $Conferences{$EventID}{Title};
   }
   $Link .= "</a>";
