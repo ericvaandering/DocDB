@@ -625,7 +625,7 @@ sub PrintEventRightSidebar ($) {
         my @MeetingOrderIDs = FetchMeetingOrdersByConferenceID($EventID);
         @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs;
         print '<ul class="compact">';
-        if (scalar(@MeetingOrderIDs) > {
+        if (scalar(@MeetingOrderIDs) > $Preferences{Events}{MaxSessionList}) {
           print "<li>",EventLink(-eventid => $EventID, -tooltip => "None", -format => "ListSession"),"\n";
         } else {
           foreach $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks
