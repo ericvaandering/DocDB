@@ -621,8 +621,8 @@ sub PrintEventRightSidebar ($) {
       }
 ### Find and print links to sessions
 
-      if ($DisplayMode ne "SingleSession") {
-        my @MeetingOrderIDs = FetchMeetingOrdersByConferenceID($EventID);
+      my @MeetingOrderIDs = FetchMeetingOrdersByConferenceID($EventID);
+      if ($DisplayMode ne "SingleSession" && scalar(@MeetingOrderIDs) <= $Preferences{Events}{MaxSessionList}) {
         @MeetingOrderIDs = sort MeetingOrderIDByOrder @MeetingOrderIDs;
         print '<ul class="compact">';
         foreach $MeetingOrderID (@MeetingOrderIDs) { # Loop over sessions/breaks
