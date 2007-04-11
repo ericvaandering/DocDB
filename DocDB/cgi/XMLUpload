@@ -224,6 +224,8 @@ if ($XMLText && !@ErrorStack) {
     }
   }
 
+  push @DebugStack,"NeedURLS: $NeedURLs";
+
   if ($NeedURLs) {
     my $TmpDir = MakeTmpSubDir();
     %Files = DownloadURLs(-tmpdir => $TmpDir, -files => \%Files);
