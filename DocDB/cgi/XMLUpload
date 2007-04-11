@@ -90,6 +90,12 @@ if ($XMLText && !@ErrorStack) {
   if ($Mode eq "new") {
     $Mode = "bump";
     $DocID = 0;
+  } elsif ($Mode eq "updatedb") {
+    if (defined $Revision -> {'att'} -> {'version'}) {
+      $Mode = $Revision -> {'att'} -> {'version'};
+    } else {
+      $Mode = "latest";  
+    }
   }
 
   # Extract text information from XML
@@ -192,7 +198,7 @@ if ($XMLText && !@ErrorStack) {
   my %Files = ();
   my @Files = $Revision -> children("file");
   foreach $File (@Files) {
-    my $Name        = $File -> first_child("name")        -> text();
+    my $Name = $File -> first_child("name") -> text();
     $Files{$Name}{NewFilename} = $Name;
     if ($File -> first_child("description")) {
       $Files{$Name}{Description} = $File -> first_child("description") -> text();

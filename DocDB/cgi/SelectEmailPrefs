@@ -295,8 +295,8 @@ if ($Mode eq "update") {
   InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Keyword", 
                            -textkeys => \@WeeklyKeywords,    -period => "Weekly",} );
 # Individual documents
-  InsertNotifications( {-emailuserid => $EmailUserID,        -type   => "Document", 
-                           -textkeys => \@ImmediateDocuments, -period => "Immediate",} );
+  InsertNotifications( {-emailuserid => $EmailUserID,         -type   => "Document", 
+                                -ids => \@ImmediateDocuments, -period => "Immediate",} );
   
 }  
 

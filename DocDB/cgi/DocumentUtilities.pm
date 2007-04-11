@@ -39,7 +39,11 @@ sub AddDocument {
   my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
 
   my $DocumentID    = $Params{-docid}         || 0     ; # The number the database will use for the document id. If not specified, the database will automaticaly generate a new document number.
-  my $Version       = $Params{-version}       || "bump"; # The version number of the document.  If undefined or "bump", the database will automaticaly increment the version number. If set to "latest", the last existing version will be updated (Update DB Info). If a version number is given, that version will be updated.
+  # The version number of the document.  
+  # If undefined or "bump", the database will automaticaly increment the version number. 
+  # If set to "latest", the last existing version will be updated (Update DB Info). 
+  # If a version number is given, that version will be updated.
+  my $Version       = $Params{-version}       || "bump"; 
   my $Title         = $Params{-title}         || ""    ;
   my $Abstract      = $Params{-abstract}      || ""    ;
   my $Keywords      = $Params{-keywords}      || ""    ;
@@ -69,6 +73,9 @@ sub AddDocument {
     $DateTime = "$Year-$Mon-$Day $Hour:$Min:$Sec";
   }
 
+  if ($Version eq "same") {
+    $Version = "latest"; # FIXME: Is this needed? Shouldn't be.
+  }  
   my ($DocRevID,$Count,@FileIDs);
 
   my $ExistingDocumentID = FetchDocument($DocumentID);
@@ -85,7 +92,7 @@ sub AddDocument {
                  -version     => $Version,     -datetime  => $DateTime,
                  -keywords    => $Keywords,    -note      => $Note);
 
-    # Deal with SessionTalkID
+    #FUTURE: Deal with SessionTalkID
 
   }
 
@@ -100,7 +107,7 @@ sub AddDocument {
     $Count = InsertRevisionEvents(-docrevid => $DocRevID, -eventids  => \@EventIDs);
     $Count = InsertSecurity(      -docrevid => $DocRevID, -viewids   => \@ViewIDs,
                                                           -modifyids => \@ModifyIDs);
-    unless ($Version eq "reserve" || $Version eq "same") {
+    unless ($Version eq "reserve" || $Version eq "latest") {
       push @DebugStack,"Uploading files";
       @FileIDs = AddFiles(-docrevid => $DocRevID, -datetime => $DateTime, -files => \%Files);
     }
