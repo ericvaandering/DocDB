@@ -262,7 +262,7 @@ if ($OutFormat eq 'XML') {
   $ReportXML -> paste(last_child => $DocDBXML);
   print GetXMLOutput();
 } else {
-  EndPage(); 
+  EndPage(-startpage => $TRUE); 
   my %Labels = {'xml'=>'XML', 'html' => 'HTML (This page)'};
 
   print $query -> header( -charset => $HTTP_ENCODING );
