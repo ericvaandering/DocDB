@@ -229,6 +229,7 @@ if ($XMLText && !@ErrorStack) {
   if ($NeedURLs) {
     my $TmpDir = MakeTmpSubDir();
     %Files = DownloadURLs(-tmpdir => $TmpDir, -files => \%Files);
+    push @DebugStack,"Downloaded files";
   }
 
   ($NewDocumentID,$NewDocRevID) = AddDocument({
