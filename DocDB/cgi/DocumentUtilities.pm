@@ -81,6 +81,7 @@ sub AddDocument {
   unless ($ExistingDocumentID) {
     $DocumentID = InsertDocument(-docid    => $DocumentID, -requesterid => $RequesterID,
                                  -datetime => $DateTime);
+    push @DebugStack,"Document $DocumentID inserted";
   }
 
   if ($DocumentID) {
@@ -90,7 +91,7 @@ sub AddDocument {
                  -pubinfo     => $PubInfo,     -abstract  => $Abstract,
                  -version     => $Version,     -datetime  => $DateTime,
                  -keywords    => $Keywords,    -note      => $Note);
-
+    push @DebugStack,"DocRevID $DocRevID inserted";
     #FUTURE: Deal with SessionTalkID
 
   }
@@ -99,8 +100,6 @@ sub AddDocument {
   if ($DocRevID) {
     FetchDocRevisionByID($DocRevID);
     my $Version    = $DocRevisions{$DocRevID}{Version};
-    MakeDirectory($DocumentID,$Version);
-    ProtectDirectory($DocumentID,$Version,@ViewIDs);
     $Count = InsertAuthors(       -docrevid => $DocRevID, -authorids => \@AuthorIDs);
     $Count = InsertTopics(        -docrevid => $DocRevID, -topicids  => \@TopicIDs);
     $Count = InsertRevisionEvents(-docrevid => $DocRevID, -eventids  => \@EventIDs);
@@ -108,6 +107,8 @@ sub AddDocument {
                                                           -modifyids => \@ModifyIDs);
     if ($Version eq "bump" || $Version eq "new") {
       push @DebugStack,"Uploading files";
+      MakeDirectory($DocumentID,$Version);
+      ProtectDirectory($DocumentID,$Version,@ViewIDs);
       @FileIDs = AddFiles(-docrevid => $DocRevID, -datetime => $DateTime, -files => \%Files);
     }
     if (@SignOffIDs) {
