@@ -209,10 +209,11 @@ sub AdvancedInstructionsBody {
      must be added to such an XMLFile and a second element is optional.</p>
      
   <p>The first XML element is <tt>control</tt> which has two parameters: <tt>mode</tt> and
-     <tt>usedate</tt>. <tt>mode</tt> must be one of two values, <q>new</q> or <q>bump</q>. New
+     <tt>usedate</tt>. <tt>mode</tt> must be one of three values, <q>new</q>, <q>bump</q>, or <q>updatedb</q>. New
      ignores the  document ID in the uploaded XML and creates a new document with the included
      information. Bump uses  that document ID and creates a new version of that document with the
-     XML information. <tt>usedate</tt>, if present  (the value is unimportant) will take the
+     XML information. Updatedb uses the document ID and the version and updates the metadata for that version.
+     <tt>usedate</tt>, if present  (the value is unimportant) will take the
      modification dates for the document from the XML. The default is to use the current date and
      time. So the <tt>control</tt> element might look like this:</p>
 
@@ -254,8 +255,8 @@ sub AdvancedInstructionsBody {
        as well</li>
   </ul>
 
-  <p>Finally, you will notice that there is no provision for just updating the database info for a document,
-     reserving a document, or adding files via XML. Those things could be added but were not needed.</p>
+  <p>Finally, you will notice that there is no provision for adding files via XML. 
+     This could be added but was not needed at the moment.</p>
      
   <a name="program" />
   <h1>Programatic Interface</h1>

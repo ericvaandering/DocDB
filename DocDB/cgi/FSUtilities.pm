@@ -323,6 +323,7 @@ sub DownloadURLs (%) {
   }
 
   unless (@Filenames) {
+    push @DebugStack,"No files were downloaded.";
     push @ErrorStack,"No files were downloaded.";
   }
 

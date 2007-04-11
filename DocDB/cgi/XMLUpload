@@ -71,6 +71,7 @@ if ($XMLText && !@ErrorStack) {
   my $Control = $XML     -> first_child("control");
   my $Mode    = $Control -> first_child("mode") -> text();
   my $UseDate = $Control -> first_child("usedate");
+  push @DebugStack,"Mode is $Mode";
 
   # Get Authentication if needed
 
@@ -87,9 +88,20 @@ if ($XMLText && !@ErrorStack) {
   my $DocID     = $Document -> {'att'} -> {'id'};
   my $Revision  = $Document -> first_child("docrevision");
 
+  push @DebugStack,"Mode is $Mode";
+  my $NeedURLs = $TRUE; # Default, now can reset
   if ($Mode eq "new") {
     $Mode = "bump";
     $DocID = 0;
+  } elsif ($Mode eq "updatedb") {
+    $NeedURLs = $FALSE;
+    push @DebugStack,"Update DB mode";
+    if (defined $Revision -> {'att'} -> {'version'}) {
+      $Mode = $Revision -> {'att'} -> {'version'};
+    } else {
+      $Mode = "latest";  
+    }
+    push @DebugStack,"Mode is $Mode";
   }
 
   # Extract text information from XML
@@ -192,7 +204,7 @@ if ($XMLText && !@ErrorStack) {
   my %Files = ();
   my @Files = $Revision -> children("file");
   foreach $File (@Files) {
-    my $Name        = $File -> first_child("name")        -> text();
+    my $Name = $File -> first_child("name") -> text();
     $Files{$Name}{NewFilename} = $Name;
     if ($File -> first_child("description")) {
       $Files{$Name}{Description} = $File -> first_child("description") -> text();
@@ -212,13 +224,15 @@ if ($XMLText && !@ErrorStack) {
     }
   }
 
-  my $NeedURLs = $TRUE; # Maybe optional later?
+  push @DebugStack,"NeedURLS: $NeedURLs";
+
   if ($NeedURLs) {
     my $TmpDir = MakeTmpSubDir();
     %Files = DownloadURLs(-tmpdir => $TmpDir, -files => \%Files);
+    push @DebugStack,"Downloaded files";
   }
 
-  ($NewDocumentID,$NewDocRevID) = AddDocument(
+  ($NewDocumentID,$NewDocRevID) = AddDocument({
       -docid       => $DocID,        -version     => $Mode,
       -title       => $Title,        -requesterid => $SubmitterID,
       -abstract    => $Abstract,     -keywords    => $Keywords,
@@ -227,7 +241,7 @@ if ($XMLText && !@ErrorStack) {
       -authorids   => \@AuthorIDs,   -topicids    => \@TopicIDs,
       -eventids    => \@EventIDs,    -viewids     => \@ViewIDs,
       -modifyids   => \@ModifyIDs,   -files       => \%Files,
-     );
+     });
 }
 
 if ($OutFormat eq 'XML') {
@@ -252,7 +266,7 @@ if ($OutFormat eq 'XML') {
   $ReportXML -> paste(last_child => $DocDBXML);
   print GetXMLOutput();
 } else {
-  EndPage(); 
+  EndPage(-startpage => $TRUE); 
   my %Labels = {'xml'=>'XML', 'html' => 'HTML (This page)'};
 
   print $query -> header( -charset => $HTTP_ENCODING );

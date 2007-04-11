@@ -34,47 +34,54 @@ sub AddDocument {
   require "SecuritySQL.pm";
   require "SignoffSQL.pm";
 
-  my %Params = @_;
+  my ($ArgRef) = @_;
 
-  my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
-
-  my $DocumentID    = $Params{-docid}         || 0     ; # The number the database will use for the document id. If not specified, the database will automaticaly generate a new document number.
-  my $Version       = $Params{-version}       || "bump"; # The version number of the document.  If undefined or "bump", the database will automaticaly increment the version number. If set to "latest", the last existing version will be updated (Update DB Info). If a version number is given, that version will be updated.
-  my $Title         = $Params{-title}         || ""    ;
-  my $Abstract      = $Params{-abstract}      || ""    ;
-  my $Keywords      = $Params{-keywords}      || ""    ;
-  my $TypeID        = $Params{-typeid}        || 0     ; # Internal ID number
-  my $RequesterID   = $Params{-requesterid}   || 0     ; # Internal ID number
-  my $Note          = $Params{-note}          || ""    ;
-  my $PubInfo       = $Params{-pubinfo}       || ""    ;
-  my $DateTime      = $Params{-datetime}               ; # In SQL format (YYYY-MM-DD HH:MM:SS)
-  my $SessionTalkID = $Params{-sessiontalkid} || 0     ; # Not used yet
-  my $UniqueID      = $Params{-uniqueid}      || 0     ; # Not used yet, parameter to keep from inserting duplicate documents via Web
-
-  my @AuthorIDs   = @{$Params{-authorids}}             ; # Internal ID numbers
-  my @TopicIDs    = @{$Params{-topicids}}              ; # Internal ID numbers
-  my @EventIDs    = @{$Params{-eventids}}              ; # Internal ID numbers
-  my @ViewIDs     = @{$Params{-viewids}}               ; # Internal ID numbers
-  my @ModifyIDs   = @{$Params{-modifyids}}             ; # Internal ID numbers
-  my @SignOffIDs  = @{$Params{-signoffids}}            ; # For simple signoff list, may be deprecated
-
-  my %Files       = %{$Params{-files}}                 ; # File hash. See FileUtilities.pm
-  my %References  = %{$Params{-references}}            ; # Not used yet
-  my %Signoffs    = %{$Params{-signoffs}}              ; # Not used yet
-
+  my $DefaultTime;
   unless ($DateTime) {
     my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
     $Year += 1900;
     ++$Mon;
-    $DateTime = "$Year-$Mon-$Day $Hour:$Min:$Sec";
+    $DefaultTime = "$Year-$Mon-$Day $Hour:$Min:$Sec";
   }
 
+  my $DocumentID    =  exists $ArgRef->{-docid} ? $ArgRef->{-docid}       :  0 ;  # The number the database will use for the document id. If not specified, the database will automaticaly generate a new document number.
+  # The version number of the document.  
+  # If undefined or "bump", the database will automaticaly increment the version number. 
+  # If set to "latest", the last existing version will be updated (Update DB Info). 
+  # If a version number is given, that version will be updated.
+  my $Version       = exists $ArgRef->{-version}       ? $ArgRef->{-version}       : "bump"; 
+  my $Title         = exists $ArgRef->{-title}         ? $ArgRef->{-title}         : ""; 
+  my $Abstract      = exists $ArgRef->{-abstract}      ? $ArgRef->{-abstract}      : ""; 
+  my $Keywords      = exists $ArgRef->{-keywords}      ? $ArgRef->{-keywords}      : ""; 
+  my $TypeID        = exists $ArgRef->{-typeid}        ? $ArgRef->{-typeid}        : 0 ; # Internal ID number
+  my $RequesterID   = exists $ArgRef->{-requesterid}   ? $ArgRef->{-requesterid}   : 0 ; # Internal ID number
+  my $Note          = exists $ArgRef->{-note}          ? $ArgRef->{-note}          : "";
+  my $PubInfo       = exists $ArgRef->{-pubinfo}       ? $ArgRef->{-pubinfo}       : "";
+  my $DateTime      = exists $ArgRef->{-datetime}      ? $ArgRef->{-datetime}      : $DefaultTime ; # In SQL format (YYYY-MM-DD HH:MM:SS)
+  my $SessionTalkID = exists $ArgRef->{-sessiontalkid} ? $ArgRef->{-sessiontalkid} : 0 ; # Not used yet
+  my $UniqueID      = exists $ArgRef->{-uniqueid}      ? $ArgRef->{-uniqueid}      : 0 ; # Not used yet, parameter to keep from inserting duplicate documents via Web
+
+  my @AuthorIDs  = exists $ArgRef->{-authorids}  ? @{$ArgRef->{-authorids} } : (); # Internal ID numbers
+  my @TopicIDs   = exists $ArgRef->{-topicids}   ? @{$ArgRef->{-topicids}  } : (); # Internal ID numbers
+  my @EventIDs   = exists $ArgRef->{-eventids}   ? @{$ArgRef->{-eventids}  } : (); # Internal ID numbers
+  my @ViewIDs    = exists $ArgRef->{-viewids}    ? @{$ArgRef->{-viewids}   } : (); # Internal ID numbers
+  my @ModifyIDs  = exists $ArgRef->{-modifyids}  ? @{$ArgRef->{-modifyids} } : (); # Internal ID numbers
+  my @SignOffIDs = exists $ArgRef->{-signoffids} ? @{$ArgRef->{-signoffids}} : (); # For simple signoff list, may be deprecated
+  
+  my %Files      = exists $ArgRef->{-files}      ? %{$ArgRef->{-files}     } : (); # File hash. See FileUtilities.pm
+  my %References = exists $ArgRef->{-references} ? %{$ArgRef->{-references}} : (); # Not used yet
+  my %Signoffs   = exists $ArgRef->{-signoffs}   ? %{$ArgRef->{-signoffs}  } : (); # Not used yet
+
+  if ($Version eq "same") {
+    $Version = "latest"; # FIXME: Is this needed? Shouldn't be.
+  }  
   my ($DocRevID,$Count,@FileIDs);
 
   my $ExistingDocumentID = FetchDocument($DocumentID);
   unless ($ExistingDocumentID) {
     $DocumentID = InsertDocument(-docid    => $DocumentID, -requesterid => $RequesterID,
                                  -datetime => $DateTime);
+    push @DebugStack,"Document $DocumentID inserted";
   }
 
   if ($DocumentID) {
@@ -84,24 +91,23 @@ sub AddDocument {
                  -pubinfo     => $PubInfo,     -abstract  => $Abstract,
                  -version     => $Version,     -datetime  => $DateTime,
                  -keywords    => $Keywords,    -note      => $Note);
-
-    # Deal with SessionTalkID
-
+    push @DebugStack,"DocRevID $DocRevID inserted";
+    #FUTURE: Deal with SessionTalkID
   }
 
   my $Count;
   if ($DocRevID) {
     FetchDocRevisionByID($DocRevID);
-    my $Version    = $DocRevisions{$DocRevID}{Version};
-    MakeDirectory($DocumentID,$Version);
-    ProtectDirectory($DocumentID,$Version,@ViewIDs);
+    my $NewVersion    = $DocRevisions{$DocRevID}{Version};
     $Count = InsertAuthors(       -docrevid => $DocRevID, -authorids => \@AuthorIDs);
     $Count = InsertTopics(        -docrevid => $DocRevID, -topicids  => \@TopicIDs);
     $Count = InsertRevisionEvents(-docrevid => $DocRevID, -eventids  => \@EventIDs);
     $Count = InsertSecurity(      -docrevid => $DocRevID, -viewids   => \@ViewIDs,
                                                           -modifyids => \@ModifyIDs);
-    unless ($Version eq "reserve" || $Version eq "same") {
+    if ($Version eq "bump" || $Version eq "new") {
       push @DebugStack,"Uploading files";
+      MakeDirectory($DocumentID,$NewVersion);
+      ProtectDirectory($DocumentID,$NewVersion,@ViewIDs);
       @FileIDs = AddFiles(-docrevid => $DocRevID, -datetime => $DateTime, -files => \%Files);
     }
     if (@SignOffIDs) {

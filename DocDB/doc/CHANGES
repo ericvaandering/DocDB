@@ -1,3 +1,23 @@
+8.4.5
+  
+  Fix bug where some people watching documents would not be notified. Those
+  users should re-visit the Personal Account page, check it, and re-submit their
+  notification preferences. Add back any watched documents that are missing.
+  
+  Add in the capability to update the DB info of documents via XML. The
+  signature of AddDocument has changed, now must be called with 
+  ({ -version => 1, document => 2 )}, etc. New documents should be created with version="bump"
+  or version="new"
+
+8.4.4
+
+  Fixs a crash in ListGroupUsers
+
+8.4.3
+
+  Limit display of sessions in right navigation bar to situations where there
+  are 5 or les sessions
+
 8.4.2
 
   Fix bug where session pre-amble (Event Info) was not displayed for single
