@@ -91,11 +91,13 @@ if ($XMLText && !@ErrorStack) {
     $Mode = "bump";
     $DocID = 0;
   } elsif ($Mode eq "updatedb") {
+    push @DebugStack,"Update DB mode";
     if (defined $Revision -> {'att'} -> {'version'}) {
       $Mode = $Revision -> {'att'} -> {'version'};
     } else {
       $Mode = "latest";  
     }
+    push @DebugStack,"Mode is $Mode";
   }
 
   # Extract text information from XML
