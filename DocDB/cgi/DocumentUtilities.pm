@@ -99,7 +99,7 @@ sub AddDocument {
   my $Count;
   if ($DocRevID) {
     FetchDocRevisionByID($DocRevID);
-    my $Version    = $DocRevisions{$DocRevID}{Version};
+    my $NewVersion    = $DocRevisions{$DocRevID}{Version};
     $Count = InsertAuthors(       -docrevid => $DocRevID, -authorids => \@AuthorIDs);
     $Count = InsertTopics(        -docrevid => $DocRevID, -topicids  => \@TopicIDs);
     $Count = InsertRevisionEvents(-docrevid => $DocRevID, -eventids  => \@EventIDs);
@@ -108,8 +108,8 @@ sub AddDocument {
     push @DebugStack,"Version is $Version";
     if ($Version eq "bump" || $Version eq "new") {
       push @DebugStack,"Uploading files";
-      MakeDirectory($DocumentID,$Version);
-      ProtectDirectory($DocumentID,$Version,@ViewIDs);
+      MakeDirectory($DocumentID,$NewVersion);
+      ProtectDirectory($DocumentID,$NewVersion,@ViewIDs);
       @FileIDs = AddFiles(-docrevid => $DocRevID, -datetime => $DateTime, -files => \%Files);
     }
     if (@SignOffIDs) {
