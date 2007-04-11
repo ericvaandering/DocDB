@@ -68,9 +68,9 @@ sub AddDocument {
   my @ModifyIDs  = exists $ArgRef->{-modifyids}  ? @{$ArgRef->{-modifyids} } : (); # Internal ID numbers
   my @SignOffIDs = exists $ArgRef->{-signoffids} ? @{$ArgRef->{-signoffids}} : (); # For simple signoff list, may be deprecated
   
-  my %Files      = exists $ArgRef->{-files}      ? @{$ArgRef->{-files}     } : (); # File hash. See FileUtilities.pm
-  my %References = exists $ArgRef->{-references} ? @{$ArgRef->{-references}} : (); # Not used yet
-  my %Signoffs   = exists $ArgRef->{-signoffs}   ? @{$ArgRef->{-signoffs}  } : (); # Not used yet
+  my %Files      = exists $ArgRef->{-files}      ? %{$ArgRef->{-files}     } : (); # File hash. See FileUtilities.pm
+  my %References = exists $ArgRef->{-references} ? %{$ArgRef->{-references}} : (); # Not used yet
+  my %Signoffs   = exists $ArgRef->{-signoffs}   ? %{$ArgRef->{-signoffs}  } : (); # Not used yet
 
   if ($Version eq "same") {
     $Version = "latest"; # FIXME: Is this needed? Shouldn't be.

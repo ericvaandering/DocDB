@@ -228,7 +228,7 @@ if ($XMLText && !@ErrorStack) {
     %Files = DownloadURLs(-tmpdir => $TmpDir, -files => \%Files);
   }
 
-  ($NewDocumentID,$NewDocRevID) = AddDocument(
+  ($NewDocumentID,$NewDocRevID) = AddDocument({
       -docid       => $DocID,        -version     => $Mode,
       -title       => $Title,        -requesterid => $SubmitterID,
       -abstract    => $Abstract,     -keywords    => $Keywords,
@@ -237,7 +237,7 @@ if ($XMLText && !@ErrorStack) {
       -authorids   => \@AuthorIDs,   -topicids    => \@TopicIDs,
       -eventids    => \@EventIDs,    -viewids     => \@ViewIDs,
       -modifyids   => \@ModifyIDs,   -files       => \%Files,
-     );
+     });
 }
 
 if ($OutFormat eq 'XML') {
