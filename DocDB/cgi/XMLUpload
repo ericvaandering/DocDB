@@ -71,6 +71,7 @@ if ($XMLText && !@ErrorStack) {
   my $Control = $XML     -> first_child("control");
   my $Mode    = $Control -> first_child("mode") -> text();
   my $UseDate = $Control -> first_child("usedate");
+  push @DebugStack,"Mode is $Mode";
 
   # Get Authentication if needed
 
@@ -87,6 +88,7 @@ if ($XMLText && !@ErrorStack) {
   my $DocID     = $Document -> {'att'} -> {'id'};
   my $Revision  = $Document -> first_child("docrevision");
 
+  push @DebugStack,"Mode is $Mode";
   if ($Mode eq "new") {
     $Mode = "bump";
     $DocID = 0;
