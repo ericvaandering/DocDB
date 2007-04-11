@@ -105,6 +105,7 @@ sub AddDocument {
     $Count = InsertRevisionEvents(-docrevid => $DocRevID, -eventids  => \@EventIDs);
     $Count = InsertSecurity(      -docrevid => $DocRevID, -viewids   => \@ViewIDs,
                                                           -modifyids => \@ModifyIDs);
+    push @DebugStack,"Version is $Version";
     if ($Version eq "bump" || $Version eq "new") {
       push @DebugStack,"Uploading files";
       MakeDirectory($DocumentID,$Version);

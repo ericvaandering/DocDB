@@ -89,10 +89,12 @@ if ($XMLText && !@ErrorStack) {
   my $Revision  = $Document -> first_child("docrevision");
 
   push @DebugStack,"Mode is $Mode";
+  my $NeedURLs = $TRUE; # Default, now can reset
   if ($Mode eq "new") {
     $Mode = "bump";
     $DocID = 0;
   } elsif ($Mode eq "updatedb") {
+    $NeedURLs = $FALSE;
     push @DebugStack,"Update DB mode";
     if (defined $Revision -> {'att'} -> {'version'}) {
       $Mode = $Revision -> {'att'} -> {'version'};
@@ -222,7 +224,6 @@ if ($XMLText && !@ErrorStack) {
     }
   }
 
-  my $NeedURLs = $TRUE; # Maybe optional later?
   if ($NeedURLs) {
     my $TmpDir = MakeTmpSubDir();
     %Files = DownloadURLs(-tmpdir => $TmpDir, -files => \%Files);
