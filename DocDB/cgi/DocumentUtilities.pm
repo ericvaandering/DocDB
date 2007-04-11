@@ -106,7 +106,7 @@ sub AddDocument {
     $Count = InsertRevisionEvents(-docrevid => $DocRevID, -eventids  => \@EventIDs);
     $Count = InsertSecurity(      -docrevid => $DocRevID, -viewids   => \@ViewIDs,
                                                           -modifyids => \@ModifyIDs);
-    unless ($Version eq "reserve" || $Version eq "latest") {
+    if ($Version eq "bump" || $Version eq "new") {
       push @DebugStack,"Uploading files";
       @FileIDs = AddFiles(-docrevid => $DocRevID, -datetime => $DateTime, -files => \%Files);
     }
