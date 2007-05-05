@@ -22,7 +22,9 @@ mysql> grant ALL on SomeDocDB.* to docdbadm@localhost identified by "<em>databas
 mysql> grant ALL on SomeDocDB.* to docdbadm@mydocs.fnal.gov identified by "<em>database owner password</em>";
 mysql> quit
 </pre>
-<li>  MySQL accounts (choose your own names)
+<li>  MySQL accounts. You may choose your own names or leave these as defaults.
+Only docdbadm (in our example) is visible to users, but if you have more than
+one DocDB sharing the same MySQL server, you may want different names.
     <ul>
     <li> docdbadm - administrative account with full MySQL access
     <li> docdbrw - for trusted user read/write access to MySQL
@@ -37,6 +39,14 @@ mysql> quit
     <li> % - access allowed from any domain.
          (don't even <em>consider</em> doing this)
     </ul>
+    
+<li>Test access: Login to the host where DocDB will run and as the user (usually
+the user that runs Apache) that the scripts will run under. Connect to DocDB
+with <tt>mysql -h hostname -u docdbro -p SomeDocDB</tt>. Make sure you can
+connect. If not, see if you are running SELinux extensions. There are reports of
+these access rules being configured to disallow access from the Apache user to
+MySQL</li>
+   
 <li>  Create the DocDB tables: <br>
       <b>mysql -u docdbadm -p SomeDocDB < CreateDatabase.SQL</b> <br>
       (CreateDatabase.SQL is in DocDB/sql)
