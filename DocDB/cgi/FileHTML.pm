@@ -277,6 +277,14 @@ sub FileUploadBox (%) {
   print '<tr><td colspan="2">'; 
   print $BoxTitle;
   print "</td></tr>\n";
+  
+  if ($AllowCopy) {
+    print '<tr><td colspan="2">'; 
+    print $query -> checkbox(-name => 'LessFiles', -label => '');    
+    print FormElementTitle(-helplink => "LessFiles", -helptext => "New version has fewer files", 
+                           -nocolon  => $TRUE,       -nobold   => $TRUE);;
+    print "</td></tr>\n";
+  }
                               
   for (my $i = 1; $i <= $MaxFiles; ++$i) {
     my $FileID = shift @FileIDs;
@@ -291,7 +299,7 @@ sub FileUploadBox (%) {
     my $FileHelp        = FormElementTitle(-helplink => $FileHelpLink, -helptext => $FileHelpText);
     my $DescriptionHelp = FormElementTitle(-helplink => $DescHelpLink, -helptext => $DescHelpText);
     my $NewNameHelp     = FormElementTitle(-helplink => "newfilename", -helptext => "New Filename");
-    my $MainHelp        = FormElementTitle(-helplink => "main", -helptext => "Main?", -nocolon => true, -nobold => true);
+    my $MainHelp        = FormElementTitle(-helplink => "main", -helptext => "Main?", -nocolon => $TRUE, -nobold => $TRUE);
     my $DefaultDesc = $DocFiles{$FileID}{DESCRIPTION};
     
     if ($DescOnly) {

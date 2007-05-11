@@ -57,6 +57,11 @@
                       "Publications"        => ["Title","References","Files"],
                       "Event Agenda"        => ["TalkTime","Title","Author","Topics","Files",
                                                 "TalkLength","Edit"],
-                     );               
+                     );       
+                     
+%PublicSkipFields = ("Edit"    => $TRUE,
+                     "Confirm" => $TRUE,
+                    );
+                             
 
 1;

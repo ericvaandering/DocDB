@@ -2,6 +2,17 @@
 
 <helpfile>
  <entry>
+  <key>LessFiles</key>
+  <title>New Version Has Fewer Files</title>
+  <text>
+     If the new version of a document has fewer files than the original version, 
+     you must check this box. This ensures that you don't forget to either upload
+     new versions of the other files or forget to use the copy option to copy 
+     files from one version to the next.
+  </text>
+ </entry>
+
+ <entry>
   <key>keywordgroups</key>
   <title>Keyword Groups</title>
   <text>

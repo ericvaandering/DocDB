@@ -70,6 +70,9 @@ sub DocumentTable (%) {
   print "<thead><tr>\n";
   my $LastRow = 1;
   foreach my $Field (@Fields) {
+    if ($Public && $PublicSkipFields{$Field}) {
+      next; # Skip headers for fields which public should never see
+    }  
     my $Column  = $FieldList{$Field}{Column}; 
     my $Row     = $FieldList{$Field}{Row}; 
     my $RowSpan = $FieldList{$Field}{RowSpan}; 
@@ -168,6 +171,9 @@ sub DocumentTable (%) {
     print "<tbody class=\"$RowClass\"><tr>\n";
     my $LastRow = 1;
     foreach my $Field (@Fields) {
+      if ($Public && $PublicSkipFields{$Field}) {
+        next; # Skip contents for fields which public should never see
+      }  
       my $Column  = $FieldList{$Field}{Column}; 
       my $Row     = $FieldList{$Field}{Row}; 
       my $RowSpan = $FieldList{$Field}{RowSpan}; 
