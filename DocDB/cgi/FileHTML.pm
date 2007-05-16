@@ -232,10 +232,11 @@ sub FileUploadBox (%) {
   @RootFiles  = sort FilesByDescription @RootFiles;
   @OtherFiles = sort FilesByDescription @OtherFiles;
   @FileIDs    = (@RootFiles,@OtherFiles);
-  
+  my $NOrigFiles = scalar(@FileIDs);
   unless ($MaxFiles) {
     if (@FileIDs) {
       $MaxFiles = @FileIDs + $AddFiles;
+      
     } elsif ($NumberUploads) {
       $MaxFiles = $NumberUploads;	  
     } elsif ($UserPreferences{NumFiles}) {
@@ -278,14 +279,6 @@ sub FileUploadBox (%) {
   print $BoxTitle;
   print "</td></tr>\n";
   
-  if ($AllowCopy) {
-    print '<tr><td colspan="2">'; 
-    print $query -> checkbox(-name => 'LessFiles', -label => '');    
-    print FormElementTitle(-helplink => "LessFiles", -helptext => "New version has fewer files", 
-                           -nocolon  => $TRUE,       -nobold   => $TRUE);;
-    print "</td></tr>\n";
-  }
-                              
   for (my $i = 1; $i <= $MaxFiles; ++$i) {
     my $FileID = shift @FileIDs;
     my $ElementName = "upload$i";
@@ -361,6 +354,13 @@ sub FileUploadBox (%) {
       print "</td></tr>\n";
     }  
     print "<tr><td colspan=\"3\"></td></tr>\n";
+  }
+  if ($AllowCopy && $NOrigFiles) {
+    print '<tr><td colspan="2">'; 
+    print $query -> checkbox(-name => 'LessFiles', -label => '');    
+    print FormElementTitle(-helplink => "LessFiles", -helptext => "New version has fewer files", 
+                           -nocolon  => $TRUE,       -nobold   => $TRUE);;
+    print "</td></tr>\n";
   }
   if ($Type eq "http") {
     print "<tr><th>User:</th>\n";

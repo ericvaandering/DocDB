@@ -253,7 +253,7 @@ if ($Mode eq "update" && !$LessFiles) {
   my $Version = $Documents{$DocumentID}{NVersions};
   my $DocRevID = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   my @FileIDs = FetchDocFiles($DocRevID);
-  if (scalar(@FileIDs) < $NumberOfFiles) {
+  if (scalar(@FileIDs) > $NumberOfFiles) {
     push @ErrorStack,"You are attempting to create a new version with fewer
       files than the original. Either upload or copy the correct number of files
       or check the box confirming that you want to upload fewer files.";
