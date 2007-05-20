@@ -1,3 +1,12 @@
+8.5.0
+
+  Add a check box people must check when uploading a document with fewer files
+  than the latest version of the document.
+  
+  Remove Edit and Confirm from the display for publicly viewable meetings
+  
+  Display sessions in calendar that are out of the bounds of a meeting.
+
 8.4.5
   
   Fix bug where some people watching documents would not be notified. Those
