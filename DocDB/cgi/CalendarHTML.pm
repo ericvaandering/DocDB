@@ -214,9 +214,9 @@ sub PrintDayEvents (%) {
     }  
   }  
   
-  my @DateSessionIDs = GetSessionsByDate($SQLDate);
+  my @DateSessionIDs = FetchSessionsByDate($SQLDate);
   push @AllSessionIDs,@DateSessionIDs;
-  @AllSessionIDs = Unique(@SessionIDs);
+  @AllSessionIDs = Unique(@AllSessionIDs);
   
 ### Print Header if we are going to print something
 
