@@ -306,6 +306,21 @@ sub FetchSessionsByConferenceID ($) {
   return @SessionIDs; 
 }
 
+sub FetchSessionsByDate ($) {
+  my ($Date) = @_;
+  my $SessionID;
+  my @SessionIDs = ();
+  my $SessionList   = $dbh -> prepare(
+    "select SessionID from Session where DATE(StartTime)=?");
+  $SessionList -> execute($Date);
+  $SessionList -> bind_columns(undef, \($SessionID));
+  while ($SessionList -> fetch) {
+    $SessionID = FetchSessionByID($SessionID);
+    push @SessionIDs,$SessionID;
+  }
+  return @SessionIDs; 
+}
+
 sub ClearSessions () {
   $HaveAllSessions          = 0;
   $HaveAllSessionSeparators = 0;

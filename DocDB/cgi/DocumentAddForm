@@ -374,7 +374,7 @@ if ($mode eq "add" || $mode eq "update") {
   print "</td></tr>";
 } elsif ($mode eq "updatedb" && $Version) { # v0 can't have files
   print "<tr><td colspan=\"4\">\n";
-  &FileUploadBox(-desconly => true, -docrevid => $DocRevID,
+  &FileUploadBox(-desconly => $TRUE, -docrevid => $DocRevID,
                  -fileids  => \@FileIDs);
   print "</td></tr>";
 }

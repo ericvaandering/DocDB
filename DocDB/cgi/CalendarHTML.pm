@@ -145,8 +145,9 @@ sub PrintCalendar {
     my $DayLink = "<a class=\"Date\" href=\"".$ShowCalendar."?year=$Year&amp;month=$Month&amp;day=$Day\">".
                   $DateTime -> day()."</a>";
     if ($Type eq "year") {
-      my @EventIDs = sort numerically GetEventsByDate(-on => $SQLDate);
-      if (@EventIDs) {
+      my @EventIDs   = GetEventsByDate(-on => $SQLDate);
+      my @SessionIDs = FetchSessionsByDate($SQLDate);
+      if (@EventIDs || @SessionIDs) {
         print "$DayLink\n";
       } else {
         print "$Day\n";  
@@ -213,7 +214,11 @@ sub PrintDayEvents (%) {
       push @AllDayEventIDs,$EventID;
     }  
   }  
-
+  
+  my @DateSessionIDs = FetchSessionsByDate($SQLDate);
+  push @AllSessionIDs,@DateSessionIDs;
+  @AllSessionIDs = Unique(@AllSessionIDs);
+  
 ### Print Header if we are going to print something
 
   if ((@AllDayEventIDs || @AllSessionIDs) && $Format eq "full") {

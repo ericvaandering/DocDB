@@ -100,6 +100,7 @@ my $RevisionNote  = $params{revisionnote};
 my $SignoffList   = $params{signofflist};
 my $OldVersion    = $params{oldversion};
 my $SubmitAgree   = $params{submitagree};
+my $LessFiles     = $params{LessFiles};
 my $MaxFiles      = $params{maxfiles};
 my $UniqueID      = $params{uniqueid};
 my @XRefs         = split /,*\s+/,$params{xrefs}; # Can be comma or space separated
@@ -111,23 +112,28 @@ if ($Archive eq "multi") {$Archive = "single";} # No real difference
 # Fill in file hash
 
 my %Files = ();
-my $NeedURLs   = 0;
-my $AddNewFile = 0;
+my $NeedURLs      = 0;
+my $AddNewFile    = 0;
+my $NumberOfFiles = 0;
 for (my $i = 1; $i<= $MaxFiles; ++$i) {
   my $Key = $i; # Probably something better later
   if ($params{"upload$i"}) {
     $AddNewFile = 1;
+    ++$NumberOfFiles;
     $Files{$Key}{File} = $query ->  param("upload$i");
   } elsif ($params{"url$i"}) {
     $NeedURLs = 1;
     $AddNewFile = 1;
+    ++$NumberOfFiles;
     $Files{$Key}{URL}         = $params{"url$i"};
     $Files{$Key}{User}        = $params{http_user};
     $Files{$Key}{Pass}        = $params{http_pass};
     $Files{$Key}{NewFilename} = $params{"newname$i"};
   } elsif ($params{"copyfile$i"}) {
+    ++$NumberOfFiles;
     $Files{$Key}{CopyFileID} = $params{"fileid$i"};
   } elsif ($Mode eq "updatedb") {
+    ++$NumberOfFiles;
     $Files{$Key}{FileID} = $params{"fileid$i"};
     push @DebugStack,"Duplicating in slot $i, $Files{$Key}{FileID}";
   }
@@ -141,6 +147,8 @@ for (my $i = 1; $i<= $MaxFiles; ++$i) {
   $Files{$Key}{Description} = $params{"filedesc$i"};
 }
 
+# FIXME: Several places fetch information for the about-to-be-updated document
+# FIXME: Look at consolidating this
 
 my %Archive = ();
 if ($Archive eq "archive") { # They uploaded a tar/zip file
@@ -217,7 +225,7 @@ unless ($DocTypeID) {
   push @ErrorStack,"You must supply a document type for this document.";
 }
 
-if ($mode eq "add" || $mode eq "update") {
+if ($Mode eq "add" || $Mode eq "update") {
   unless ($params{abstract}) {
     push @ErrorStack,"You must supply an abstract for this document.";
   }
@@ -239,7 +247,20 @@ if ($mode eq "add" || $mode eq "update") {
   }  
 }
 
-if ($mode eq "update" || $mode eq "updatedb") {
+if ($Mode eq "update" && !$LessFiles) {
+  my $DocumentID = $params{docid};
+  FetchDocument($DocumentID);
+  my $Version = $Documents{$DocumentID}{NVersions};
+  my $DocRevID = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+  my @FileIDs = FetchDocFiles($DocRevID);
+  if (scalar(@FileIDs) > $NumberOfFiles) {
+    push @ErrorStack,"You are attempting to create a new version with fewer
+      files than the original. Either upload or copy the correct number of files
+      or check the box confirming that you want to upload fewer files.";
+  }
+}
+
+if ($Mode eq "update" || $Mode eq "updatedb") {
   unless ($params{docid}) {
     push @ErrorStack,"You must supply a document number to modify a document.";
   }
