@@ -213,7 +213,11 @@ sub PrintDayEvents (%) {
       push @AllDayEventIDs,$EventID;
     }  
   }  
-
+  
+  my @DateSessionIDs = GetSessionsByDate($SQLDate);
+  push @AllSessionIDs,@DateSessionIDs;
+  @AllSessionIDs = Unique(@SessionIDs);
+  
 ### Print Header if we are going to print something
 
   if ((@AllDayEventIDs || @AllSessionIDs) && $Format eq "full") {
