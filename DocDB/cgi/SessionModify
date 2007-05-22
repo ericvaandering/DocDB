@@ -71,6 +71,10 @@ my $SessionTitle       = $params{sessiontitle};
 my $SessionDescription = $params{sessiondescription};
 my $SessionLocation    = $params{sessionlocation};
 my $SessionAltLocation = $params{sessionaltlocation};
+my $ShowAllTalks       = $params{meetshowall};
+if ($ShowAllTalks) {
+  $ShowAllTalks = $TRUE;
+}  
 
 my $SessionDay   = $params{sessionday};
 my $SessionMonth = $params{sessionmonth};
@@ -246,7 +250,8 @@ if ($Mode eq "modify" || $Mode eq "create") {
     UpdateSession({ -sessionid => $SessionID,       -date         => $SessionDate, 
                     -title     => $SessionTitle,    -description  => $SessionDescription,
                     -topicids  => \@TopicIDs,       -moderatorids => \@ModeratorIDs , 
-                    -location  => $SessionLocation, -altlocation  => $SessionAltLocation, });
+                    -location  => $SessionLocation, -altlocation  => $SessionAltLocation, 
+                    -showalltalks => $ShowAllTalks, });
     push @ActionStack,"Modified session: $SessionTitle";
   }                 
   ClearSessions();
