@@ -453,14 +453,14 @@ my @SessionOrderIDs  = FetchSessionOrdersBySessionID($SessionID);
 
 @SessionOrderIDs = sort SessionOrderIDByOrder @SessionOrderIDs;
 
-my $SessionDefaultTitle       = $Sessions{$SessionID}{Title};
-my $SessionDefaultDescription = $Sessions{$SessionID}{Description};
-my $SessionDefaultLocation    = $Sessions{$SessionID}{Location};
-my $SessionDefaultAltLocation = $Sessions{$SessionID}{AltLocation};
-my $SessionDefaultDateTime    = $Sessions{$SessionID}{StartTime};
+my $SessionDefaultTitle        = $Sessions{$SessionID}{Title};
+my $SessionDefaultDescription  = $Sessions{$SessionID}{Description};
+my $SessionDefaultLocation     = $Sessions{$SessionID}{Location};
+my $SessionDefaultAltLocation  = $Sessions{$SessionID}{AltLocation};
+my $SessionDefaultDateTime     = $Sessions{$SessionID}{StartTime};
 my $SessionDefaultShowAllTalks = $Sessions{$SessionID}{ShowAllTalks};
-my @DefaultModeratorIDs       = @{$Sessions{$SessionID}{Moderators}};
-my @DefaultTopicIDs           = @{$Sessions{$SessionID}{Topics}};
+my @DefaultModeratorIDs        = @{$Sessions{$SessionID}{Moderators}};
+my @DefaultTopicIDs            = @{$Sessions{$SessionID}{Topics}};
 
 # Defaults for SingleSessionMode;
 my @MeetingModifyDefaults = ();

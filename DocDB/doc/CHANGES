@@ -1,3 +1,7 @@
+8.5.1
+
+  Fix show all talks being ignored by SessionModify
+
 8.5.0
 
   Add a check box people must check when uploading a document with fewer files
