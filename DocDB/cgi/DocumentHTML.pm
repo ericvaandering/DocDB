@@ -320,6 +320,7 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
   require "DocumentSQL.pm";
   require "RevisionSQL.pm";
   require "ResponseElements.pm";
+  require "Security.pm";
   
   my %Params = @_;
   
@@ -339,40 +340,48 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
     $Version = $Params{-version};
   }  
 
-  &FetchDocument($DocumentID);
+  FetchDocument($DocumentID);
   if ($Version eq "latest") {  
     $Version      = $Documents{$DocumentID}{NVersions};
   }
   
-  my $DocRevID  = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+  my $DocRevID  = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   unless ($DocRevID) {
     return "";
   }
-  my $FullDocID = &FullDocumentID($DocumentID,$Version);
-    
-  my $Link = "<a href=\"$ShowDocument\?docid=$DocumentID";
-  if ($Version != $Documents{$DocumentID}{NVersions}) { # For other than last one
-    $Link .= "&amp;version=$Version";
-  }
-  $Link .= "\"";
-  $Link .= " title=\"$FullDocID\"";
-  $Link .= ">"; 
-
+  my $FullDocID = FullDocumentID($DocumentID,$Version);
+  my $CanAccess = CanAccess($DocumentID,$Version);
+  
+  my $Link;
+  my $EndElement = '</a>';
+  if ($CanAccess) {
+    $Link .= "<a href=\"$ShowDocument\?docid=$DocumentID";
+    if ($Version != $Documents{$DocumentID}{NVersions}) { # For other than last one
+      $Link .= "&amp;version=$Version";
+    }
+    $Link .= "\"";
+    $Link .= " title=\"$FullDocID\"";
+    $Link .= ">"; 
+  } else {
+    $Link .= '<span class="PrivateDocument">';
+    $EndElement = '</span>';
+  }  
+  
   if ($LinkText) {            # User specifies text
     $Link .= $LinkText;
-    $Link .= "</a>";
+    $Link .= $EndElement;
   } elsif ($DocIDOnly) {      # Like 1234                   
     $Link .= $DocumentID;
-    $Link .= "</a>";
+    $Link .= $EndElement;
   } elsif ($NumWithVersion) { # Like 1234-v56
     $Link .= $DocumentID."-v".$Version;
-    $Link .= "</a>";
+    $Link .= $EndElement;
   } elsif ($TitleLink) {      # Use the document Title
     $Link .= $DocRevisions{$DocRevID}{Title};
-    $Link .= "</a>";
+    $Link .= $EndElement;
     if ($UseSignoffs && !$NoApprovalStatus) { # Put document status on next line
       require "SignoffUtilities.pm";
-      my ($ApprovalStatus,$LastApproved) = &RevisionStatus($DocRevID);
+      my ($ApprovalStatus,$LastApproved) = RevisionStatus($DocRevID);
       unless ($ApprovalStatus eq "Unmanaged") { 
         $Link .= "<br/>($ApprovalStatus";
         if ($ApprovalStatus eq "Unapproved") {
@@ -390,11 +399,11 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
       }  
     }  
   } elsif ($NoVersion) {      # Like Project-doc-1234
-    $Link .= &FullDocumentID($DocumentID);  
-    $Link .= "</a>";
+    $Link .= FullDocumentID($DocumentID);  
+    $Link .= $EndElement;
   } else {                    # Like Project-doc-1234-v56
-    $Link .= &FullDocumentID($DocumentID,$Version);  
-    $Link .= "</a>";
+    $Link .= FullDocumentID($DocumentID,$Version);  
+    $Link .= $EndElement;
   }
   return $Link;
 }         
