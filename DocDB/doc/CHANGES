@@ -1,6 +1,10 @@
 8.5.1
 
   Fix show all talks being ignored by SessionModify
+  
+  Remove old routine DocumentLink and rename NewerDocumentLink to DocumentLink
+  
+  Fix document link to not link to unaccessible documents (but show title)
 
 8.5.0
 

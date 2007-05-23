@@ -3,7 +3,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -16,23 +16,23 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub TitleBox (%) {
-  my (%Params) = @_; 
+  my (%Params) = @_;
   #FIXME: Get rid of global default
-  
+
   my $Required   = $Params{-required}   || 0;
 
-  my $ElementTitle = &FormElementTitle(-helplink  => "title" , 
+  my $ElementTitle = &FormElementTitle(-helplink  => "title" ,
                                        -helptext  => "Title" ,
                                        -required  => $Required );
-  print $ElementTitle,"\n";                                     
-  print $query -> textfield (-name => 'title', -default => $TitleDefault, 
+  print $ElementTitle,"\n";
+  print $query -> textfield (-name => 'title', -default => $TitleDefault,
                              -size => 70, -maxlength => 240);
 };
 
 sub AbstractBox (%) {
-  my (%Params) = @_; 
+  my (%Params) = @_;
   #FIXME: Get rid of global default
-  
+
   my $Required = $Params{-required} || 0;
   my $HelpLink = $Params{-helplink} || "abstract";
   my $HelpText = $Params{-helptext} || "Abstract";
@@ -40,10 +40,10 @@ sub AbstractBox (%) {
   my $Columns  = $Params{-columns}  || 60;
   my $Rows     = $Params{-rows}     || 6;
 
-  my $ElementTitle = &FormElementTitle(-helplink  => $HelpLink , 
+  my $ElementTitle = &FormElementTitle(-helplink  => $HelpLink ,
                                        -helptext  => $HelpText ,
                                        -required  => $Required );
-  print $ElementTitle,"\n";                                     
+  print $ElementTitle,"\n";
   print $query -> textarea (-name    => $Name, -default => $AbstractDefault,
                             -rows    => $Rows, -columns => $Columns);
 };
@@ -53,9 +53,9 @@ sub RevisionNoteBox {
   my $Default  = $Params{-default}  || "";
   my $JSInsert = $Params{-jsinsert} || "";
   print "<a name=\"RevisionNote\" />";
-  
+
   my $ExtraText = "";
-  
+
   # Convert text string w/ control characters to JS literal
 
   if ($JSInsert) {
@@ -66,22 +66,22 @@ sub RevisionNoteBox {
                               #        Bad HTML/JS interaction, I think
     $ExtraText = "<a href=\"#RevisionNote\" onclick=\"InsertRevisionNote('$JSInsert');\">(Insert notes from previous version)</a>";
   }
-  
-  my $ElementTitle = &FormElementTitle(-helplink  => "revisionnote", 
+
+  my $ElementTitle = &FormElementTitle(-helplink  => "revisionnote",
                                        -helptext  => "Notes and Changes",
                                        -extratext => $ExtraText,
                                        -required  => $Required );
-  print $ElementTitle,"\n";                                     
+  print $ElementTitle,"\n";
   print $query -> textarea (-name => 'revisionnote', -default => $Default,
                             -columns => 60, -rows => 6);
 };
 
 sub DocTypeButtons (%) {
   my (%Params) = @_;
-  
+
   my $Required = $Params{-required} || 0;
   my $Default  = $Params{-default}  || 0;
-  
+
   &GetDocTypes();
   my @DocTypeIDs = keys %DocumentTypes;
   my %ShortTypes = ();
@@ -89,15 +89,15 @@ sub DocTypeButtons (%) {
   foreach my $DocTypeID (@DocTypeIDs) {
     $ShortTypes{$DocTypeID} = $DocumentTypes{$DocTypeID}{SHORT};
   }
-  
-  my $ElementTitle = &FormElementTitle(-helplink  => "doctype" , 
+
+  my $ElementTitle = &FormElementTitle(-helplink  => "doctype" ,
                                        -helptext  => "Document type" ,
                                        -required  => $Required );
-  print "<div class=\"LowPaddedTable\">\n";				       
-  print $ElementTitle,"\n";                                     
-  print $query -> radio_group(-columns => 3,           -name    => "doctype", 
+  print "<div class=\"LowPaddedTable\">\n";
+  print $ElementTitle,"\n";
+  print $query -> radio_group(-columns => 3,           -name    => "doctype",
                               -values => \%ShortTypes, -default => $Default);
-  print "</div>\n";				       
+  print "</div>\n";
 };
 
 sub PrintRevisionInfo {
@@ -107,21 +107,21 @@ sub PrintRevisionInfo {
   require "AuthorSQL.pm";
   require "SecuritySQL.pm";
   require "TopicSQL.pm";
- 
+
   require "AuthorHTML.pm";
   require "DocumentHTML.pm";
   require "FileHTML.pm";
   require "SecurityHTML.pm";
   require "TopicHTML.pm";
   require "XRefHTML.pm";
-  
+
   my ($DocRevID,%Params) = @_;
-  
+
   my $HideButtons  = $Params{-hidebuttons}  || 0;
   my $HideVersions = $Params{-hideversions} || 0;
-  
+
   FetchDocRevisionByID($DocRevID);
-  
+
   my $DocumentID   = $DocRevisions{$DocRevID}{DOCID};
   my $Version      = $DocRevisions{$DocRevID}{VERSION};
   my @RevAuthorIDs = GetRevisionAuthors($DocRevID);
@@ -131,11 +131,11 @@ sub PrintRevisionInfo {
   if ($EnhancedSecurity) {
     @ModifyIDs     = GetRevisionModifyGroups($DocRevID);
   }
-  
+
   print "<div id=\"RevisionInfo\">\n";
-  
+
   ### Header info
-  
+
   print "<div id=\"Header3Col\">\n";
 
   print "<div id=\"DocTitle\">\n";
@@ -143,17 +143,17 @@ sub PrintRevisionInfo {
    if ($UseSignoffs) {
      require "SignoffUtilities.pm";
      my ($ApprovalStatus,$LastApproved) = &RevisionStatus($DocRevID);
-     unless ($ApprovalStatus eq "Unmanaged") { 
+     unless ($ApprovalStatus eq "Unmanaged") {
        print "<h5>(Document Status: $ApprovalStatus)</h5>\n";
-     }  
-   }  
+     }
+   }
   print "</div>\n";  # DocTitle
   print "</div>\n";  # Header3Col
 
   ### Left Column
 
   print "<div id=\"LeftColumn3Col\">\n";
-  
+
   print "<div id=\"BasicDocInfo\">\n";
   print "<dl>\n";
    &PrintDocNumber($DocRevID);
@@ -169,9 +169,9 @@ sub PrintRevisionInfo {
     &UpdateDBButton($DocumentID,$Version);
     if ($Version) {
       &AddFilesButton($DocumentID,$Version);
-    }  
+    }
     print "</div>\n";
-  }  
+  }
 
   unless ($Public || $HideButtons) {
     require "NotificationHTML.pm";
@@ -181,19 +181,19 @@ sub PrintRevisionInfo {
   print "</div>\n";  # LeftColumn3Col
 
   ### Main Column
-  
+
   print "<div id=\"MainColumn3Col\">\n";
 
   ### Right column (wrapped around by middle column)
 
   print "<div id=\"RightColumn3Col\">\n";
-  
+
   &SecurityListByID(@GroupIDs);
   &ModifyListByID(@ModifyIDs);
   unless ($HideVersions) {
     &OtherVersionLinks($DocumentID,$Version);
   }
-  
+
   print "</div>\n";  # RightColumn3Col
 
   PrintAbstract($DocRevisions{$DocRevID}{Abstract}); # All are called only here, so changes are OK
@@ -206,32 +206,32 @@ sub PrintRevisionInfo {
   PrintReferenceInfo($DocRevID);
   PrintEventInfo(-docrevid => $DocRevID, -format => "normal");
   PrintPubInfo($DocRevisions{$DocRevID}{PUBINFO});
-  
+
   if ($UseSignoffs) {
     require "SignoffHTML.pm";
     PrintRevisionSignoffInfo($DocRevID);
-  }  
+  }
 
   print "</div>\n";  # MainColumn3Col
-  
+
   print "<div id=\"Footer3Col\">\n"; # Must have to keep NavBar on true bottom
   print "</div>\n";  # Footer3Col
   print "</div>\n";  # RevisionInfo
 }
- 
+
 sub PrintAbstract ($;$) {
   my ($Abstract,$ArgRef) = @_;
-  
+
   my $Format = exists $ArgRef->{-format} ? $ArgRef->{-format} : "div";
-  
+
   if ($Abstract) {
     $Abstract = &URLify($Abstract);
     $Abstract =~ s/\n\n/<p\/>/g;
     $Abstract =~ s/\n/<br\/>/g;
   } else {
     $Abstract = "None";
-  }  
-  
+  }
+
   if ($Format eq "div") {
     print "<div id=\"Abstract\">\n";
     print "<dl>\n";
@@ -241,17 +241,17 @@ sub PrintAbstract ($;$) {
     print "</div>\n";
   } elsif ($Format eq "bare") {
     print  $Abstract;
-  }   
+  }
 }
 
 sub PrintKeywords {
   my ($Keywords) = @_;
-  
+
   require "KeywordHTML.pm";
-  
+
   $Keywords =~ s/^\s+//;
   $Keywords =~ s/\s+$//;
-  
+
   if ($Keywords) {
     print "<div id=\"Keywords\">\n";
     print "<dl>\n";
@@ -262,7 +262,7 @@ sub PrintKeywords {
     foreach my $Keyword (@Keywords) {
       $Link = &KeywordLink($Keyword);
       print "$Link \n";
-    }  
+    }
     print "</dd></dl>\n";
     print "</div>\n";
   }
@@ -288,11 +288,11 @@ sub PrintRevisionNote {
 sub PrintReferenceInfo ($;$) {
   require "MiscSQL.pm";
   require "ReferenceLinks.pm";
-  
+
   my ($DocRevID,$Mode) = @_;
   unless ($Mode) {$Mode = "long";}
   my @ReferenceIDs = &FetchReferencesByRevision($DocRevID);
-  
+
   if (@ReferenceIDs) {
     &GetJournals;
     if ($Mode eq "long") {
@@ -308,10 +308,10 @@ sub PrintReferenceInfo ($;$) {
       my ($ReferenceLink,$ReferenceText) = &ReferenceLink($ReferenceID);
       if ($ReferenceLink) {
         print "<a href=\"$ReferenceLink\">";
-      }  
+      }
       if ($ReferenceText) {
         print "$ReferenceText";
-      } else {  
+      } else {
         print "$Journals{$JournalID}{Abbreviation} ";
         if ($RevisionReferences{$ReferenceID}{Volume}) {
           print " vol. $RevisionReferences{$ReferenceID}{Volume}";
@@ -319,31 +319,31 @@ sub PrintReferenceInfo ($;$) {
         if ($RevisionReferences{$ReferenceID}{Page}) {
           print " pg. $RevisionReferences{$ReferenceID}{Page}";
         }
-      }  
+      }
       if ($ReferenceLink) {
         print "</a>";
-      }  
+      }
       if ($Mode eq "long") {
         print ".</dd>\n";
       } elsif ($Mode eq "short") {
         print "<br/>\n";
-      }   
+      }
     }
     if ($Mode eq "long") {
       print "</dl>\n";
       print "</div>\n";
-    }   
+    }
   }
 }
 
 sub PrintEventInfo (%) {
   require "MeetingSQL.pm";
   require "MeetingHTML.pm";
-  
+
   my %Params = @_;
   my $DocRevID = $Params{-docrevid};
   my $Format   = $Params{-format}   || "normal";
-  
+
   my @EventIDs = GetRevisionEvents($DocRevID);
 
   if (@EventIDs) {
@@ -356,35 +356,35 @@ sub PrintEventInfo (%) {
       my $EventLink;
       if ($Format eq "description") {
         $EventLink = EventLink(-eventid => $EventID, -format => "long");
-      } else {  
+      } else {
         $EventLink = EventLink(-eventid => $EventID);
       }
       my $Start = EuroDate($Conferences{$EventID}{StartDate});
       my $End   = EuroDate($Conferences{$EventID}{EndDate});
       unless ($Format eq "short" || $Format eq "description") {
         print "<dd>";
-      }  
+      }
       print "$EventLink ";
       if ($Format eq "short" || $Format eq "description") {
         print "($Start)<br/>";
-      } else {  
+      } else {
         if ($Start && $End && ($Start ne $End)) {
           print " held from $Start to $End ";
-        }  
+        }
         if ($Start && $End && ($Start eq $End)) {
           print " held on $Start ";
-        }  
+        }
         if ($Conferences{$EventID}{Location}) {
           print " in $Conferences{$EventID}{Location}";
         }
         print "</dd>\n";
-      }  
+      }
      }
     unless ($Format eq "short" || $Format eq "description") {
       print "</dl></div>\n";
     }
   }
-}  
+}
 
 sub PrintPubInfo ($) {
   require "Utilities.pm";
@@ -406,9 +406,9 @@ sub PrintPubInfo ($) {
 sub PrintModTimes {
   my ($DocRevID) = @_;
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
-  $DocTime     = &EuroDateHM($Documents{$DocumentID}{Date}); 
-  $RevTime     = &EuroDateHM($DocRevisions{$DocRevID}{DATE}); 
-  $VersionTime = &EuroDateHM($DocRevisions{$DocRevID}{VersionDate}); 
+  $DocTime     = &EuroDateHM($Documents{$DocumentID}{Date});
+  $RevTime     = &EuroDateHM($DocRevisions{$DocRevID}{DATE});
+  $VersionTime = &EuroDateHM($DocRevisions{$DocRevID}{VersionDate});
 
   print "<dt>Document Created:</dt>\n<dd>$DocTime</dd>\n";
   print "<dt>Contents Revised:</dt>\n<dd>$VersionTime</dd>\n";
@@ -417,37 +417,37 @@ sub PrintModTimes {
 
 sub OtherVersionLinks {
   require "Sorts.pm";
-  
+
   my ($DocumentID,$CurrentVersion) = @_;
   my @RevIDs   = reverse sort RevisionByVersion &FetchRevisionsByDocument($DocumentID);
-  
+
   unless ($#RevIDs > 0) {return;}
   print "<div id=\"OtherVersions\">\n";
   print "<b>Other Versions:</b>\n";
-  
+
   print "<table id=\"OtherVersionTable\" class=\"Alternating LowPaddedTable\">\n";
   my $RowClass = "Odd";
-  
+
   foreach $RevID (@RevIDs) {
     my $Version = $DocRevisions{$RevID}{VERSION};
     if ($Version == $CurrentVersion) {next;}
     unless (&CanAccess($DocumentID,$Version)) {next;}
-    $link = NewerDocumentLink(-docid => $DocumentID, -version => $Version);
+    $link = DocumentLink(-docid => $DocumentID, -version => $Version);
     $date = &EuroDateHM($DocRevisions{$RevID}{DATE});
     print "<tr class=\"$RowClass\"><td>$link\n";
-    if ($RowClass eq "Odd") {  
+    if ($RowClass eq "Odd") {
       $RowClass = "Even";
-    } else {    
+    } else {
       $RowClass = "Odd";
-    }  
+    }
     print "<br/>$date\n";
     if ($UseSignoffs) {
       require "SignoffUtilities.pm";
       my ($ApprovalStatus,$LastApproved) = &RevisionStatus($RevID);
-      unless ($ApprovalStatus eq "Unmanaged") { 
+      unless ($ApprovalStatus eq "Unmanaged") {
         print "<br/>$ApprovalStatus";
-      }  
-    }  
+      }
+    }
     print "</td></tr>\n";
   }
 

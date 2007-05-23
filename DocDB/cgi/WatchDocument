@@ -4,7 +4,7 @@
 #              changes in e-mail.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 #
 
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
@@ -12,7 +12,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -24,9 +24,9 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI;    
+use CGI;
 use DBI;
-                                                  
+
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
@@ -49,25 +49,25 @@ $UserName =~ s/\s+//g;
 $Password =~ s/\s+//g;
 
 # Start the page
-   
+
 print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Watching Document"); # Prob need specialized header
 
 # Check for valid user
 
-if ($Password) { 
+if ($Password) {
   $EmailUserID = &ValidateEmailUser($UserName,$Password);
 } elsif ($UserValidation eq "certificate") {
   require "CertificateUtilities.pm";
   $EmailUserID = &FetchEmailUserIDByCert();
-}    
+}
 
 if ($EmailUserID) {
   &FetchEmailUser($EmailUserID);
 } else {
   push @ErrorStack,"The username/password pair or certificate you supplied is
                     invalid. Please try again or contact an administrator. If
-                    you don't have a personal account, you need to 
+                    you don't have a personal account, you need to
                     <a href=\"$EmailLogin\">set one up.</a>";
 }
 
@@ -75,9 +75,9 @@ EndPage();
 
 # Everything is OK, display the page
 
-my $DocumentLink = &NewerDocumentLink(-docid => $DocumentID, -noversion => $TRUE);
+my $DocumentLink = &DocumentLink(-docid => $DocumentID, -noversion => $TRUE);
 
-print "An e-mail will be sent to $EmailUser{$EmailUserID}{Name} 
+print "An e-mail will be sent to $EmailUser{$EmailUserID}{Name}
        ($EmailUser{$EmailUserID}{EmailAddress}) when $DocumentLink changes.<p/>\n";
 
 
