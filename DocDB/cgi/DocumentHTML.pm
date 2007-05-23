@@ -329,6 +329,7 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
   my $NumWithVersion   = $Params{-numwithversion}   || 0;
   my $NoVersion        = $Params{-noversion}        || 0;
   my $TitleLink        = $Params{-titlelink}        || 0;
+  my $LinkText         = $Params{-linktext}         || "";
   my $NoApprovalStatus = $Params{-noapprovalstatus} || 0;
 
 # Treat Version special since v0 is valid and we don't know the last version # until later
@@ -357,7 +358,10 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
   $Link .= " title=\"$FullDocID\"";
   $Link .= ">"; 
 
-  if ($DocIDOnly) {           # Like 1234                   
+  if ($LinkText) {            # User specifies text
+    $Link .= $LinkText;
+    $Link .= "</a>";
+  } elsif ($DocIDOnly) {      # Like 1234                   
     $Link .= $DocumentID;
     $Link .= "</a>";
   } elsif ($NumWithVersion) { # Like 1234-v56
@@ -375,7 +379,8 @@ sub NewerDocumentLink (%) { # FIXME: Make this the default (DocumentLink)
           if (defined $LastApproved) {
             my $DocumentID = $DocRevisions{$LastApproved}{DOCID};
             my $Version    = $DocRevisions{$LastApproved}{Version};
-            my $LastLink   = &DocumentLink($DocumentID,$Version,"version $Version"); # Will Recurse
+            my $LastLink   = NewerDocumentLink(-docid    => $DocumentID, -version => $Version, 
+                                               -linktext => "version $Version", -noapprovalstatus => $TRUE,); # Will Recurse
             $Link .= " - Last approved: $LastLink";
           } else {
             $Link .= " - No approved version";

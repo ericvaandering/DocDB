@@ -133,17 +133,17 @@ sub FullDocumentID ($;$) {
   }  
 }  
 
-sub DocumentLink { #FIXME: Move to NewerDocumentLink 
-  my ($DocumentID,$Version,$Title) = @_;
-  my $DocNumber = &FullDocumentID($DocumentID,$Version);
-  my $Link = "<a title=\"$DocNumber\" href=\"$ShowDocument\?docid=$DocumentID\&amp;version=$Version\">";
-  if ($Title) {
-    $Link .= $Title;
-  } else {
-    $Link .= $DocNumber;
-  }
-  $Link .=  "</a>";
-}         
+#sub DocumentLink { #FIXME: Move to NewerDocumentLink 
+#  my ($DocumentID,$Version,$Title) = @_;
+#  my $DocNumber = &FullDocumentID($DocumentID,$Version);
+#  my $Link = "<a title=\"$DocNumber\" href=\"$ShowDocument\?docid=$DocumentID\&amp;version=$Version\">";
+#  if ($Title) {
+#    $Link .= $Title;
+#  } else {
+#    $Link .= $DocNumber;
+#  }
+#  $Link .=  "</a>";
+#}         
 
 sub DocumentURL {
   my ($DocumentID,$Version) = @_;

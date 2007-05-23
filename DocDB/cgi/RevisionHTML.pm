@@ -432,7 +432,7 @@ sub OtherVersionLinks {
     my $Version = $DocRevisions{$RevID}{VERSION};
     if ($Version == $CurrentVersion) {next;}
     unless (&CanAccess($DocumentID,$Version)) {next;}
-    $link = &DocumentLink($DocumentID,$Version);
+    $link = NewerDocumentLink(-docid => $DocumentID, -version => $Version);
     $date = &EuroDateHM($DocRevisions{$RevID}{DATE});
     print "<tr class=\"$RowClass\"><td>$link\n";
     if ($RowClass eq "Odd") {  
