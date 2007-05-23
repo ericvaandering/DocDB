@@ -5,14 +5,14 @@
 #              THIS FILE IS DEPRECATED. DO NOT PUT NEW ROUTINES HERE, USE *HTML
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -47,28 +47,28 @@ sub WarnPage () { # Non-fatal errors
     } else {
       print "<dt class=\"Warning\">There was a non-fatal error processing your
              request: </dt>\n";
-    } 
+    }
     foreach $message (@WarnStack) {
       print "<dd>$message</dd>\n";
     }
-    print "</dl>\n"; 
-  }   
+    print "</dl>\n";
+  }
   @WarnStack = ();
   return;
 }
 
 sub DebugPage (;$) { # Debugging output
-  my ($CheckPoint) = @_; 
+  my ($CheckPoint) = @_;
   if (@DebugStack && $DebugOutput) {
     print "<dl class=\"debug\">\n";
     print "<dt class=\"Warning\">Debugging messages: $CheckPoint</dt>\n";
     foreach my $Message (@DebugStack) {
       print "<dd>$Message</dd>\n";
-    } 
+    }
     print "</dl>\n";
   } elsif ($CheckPoint && $DebugOutput) {
     print "<div>No Debugging messages: $CheckPoint<br/></div>\n";
-  }  
+  }
   @DebugStack = ();
   return @DebugStack;
 }
@@ -79,7 +79,7 @@ sub EndPage (;%) {  # Fatal errors, aborts page if present
 
 
   WarnPage();
-  if (@ErrorStack) { 
+  if (@ErrorStack) {
     if ($StartPage) {
       print $query -> header( -charset => $HTTP_ENCODING );
       DocDBHeader("Fatal Error");
@@ -88,7 +88,7 @@ sub EndPage (;%) {  # Fatal errors, aborts page if present
     DocDBNavBar();
     DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
     exit;
-  }  
+  }
 }
 
 sub ErrorPage { # Fatal errors, continues page
@@ -100,26 +100,26 @@ sub ErrorPage { # Fatal errors, continues page
     } else {
       print "<dt class=\"Error\">There was a fatal error processing your
              request:</dt>\n";
-    } 
+    }
     foreach $message (@ErrorStack) {
       print "<dd>$message</dd>\n";
-    }  
+    }
     print "</dl>\n";
     print "<p/>\n";
-  }  
+  }
   @ErrorStack = ();
   return;
 }
 
-sub ActionReport { 
+sub ActionReport {
   if (@ActionStack) {
     print "<dl class=\"Action\">\n";
     print "<dt class=\"Action\">Action(s) taken:</dt>\n";
     foreach $Message (@ActionStack) {
       print "<dd>$Message</dd>\n";
-    }  
+    }
     print "</dl>\n";
-  }  
+  }
   @ActionStack = ();
   return;
 }
@@ -128,69 +128,57 @@ sub FullDocumentID ($;$) {
   my ($DocumentID,$Version) = @_;
   if (defined $Version) {
     return "$ShortProject-doc-$DocumentID-v$Version";
-  } else {  
-    return "$ShortProject-doc-$DocumentID";
-  }  
-}  
-
-sub DocumentLink { #FIXME: Move to NewerDocumentLink 
-  my ($DocumentID,$Version,$Title) = @_;
-  my $DocNumber = &FullDocumentID($DocumentID,$Version);
-  my $Link = "<a title=\"$DocNumber\" href=\"$ShowDocument\?docid=$DocumentID\&amp;version=$Version\">";
-  if ($Title) {
-    $Link .= $Title;
   } else {
-    $Link .= $DocNumber;
+    return "$ShortProject-doc-$DocumentID";
   }
-  $Link .=  "</a>";
-}         
+}
 
 sub DocumentURL {
   my ($DocumentID,$Version) = @_;
   my $URL;
   if (defined $Version) {
     $URL =  "$ShowDocument\?docid=$DocumentID\&amp;version=$Version";
-  } else {  
+  } else {
     $URL =  "$ShowDocument\?docid=$DocumentID";
-  }  
+  }
   return $URL
 }
 
 sub EuroDate {
   my ($sql_datetime) = @_;
   unless ($sql_datetime) {return "";}
-  
+
   my ($date,$time) = split /\s+/,$sql_datetime;
   my ($year,$month,$day) = split /\-/,$date;
   $return_date = "$day ".("Jan","Feb","Mar","Apr","May","Jun",
                           "Jul","Aug","Sep","Oct","Nov","Dec")[$month-1].
-                 " $year"; 
+                 " $year";
   return $return_date;
 }
 
 sub EuroDateTime {
   my ($sql_datetime) = @_;
   unless ($sql_datetime) {return "";}
-  
+
   my ($date,$time) = split /\s+/,$sql_datetime;
   my ($year,$month,$day) = split /\-/,$date;
   $return_date = "$time ".
                  "$day ".("Jan","Feb","Mar","Apr","May","Jun",
                           "Jul","Aug","Sep","Oct","Nov","Dec")[$month-1].
-                 " $year"; 
+                 " $year";
   return $return_date;
 }
 
 sub EuroDateHM ($) {
   my ($SQLDatetime) = @_;
   unless ($SQLDatetime) {return "";}
-  
+
   my ($Date,$Time) = split /\s+/,$SQLDatetime;
   my ($Year,$Month,$Day) = split /\-/,$Date;
   my ($Hour,$Min,$Sec) = split /:/,$Time;
   $ReturnDate = "$Day ".("Jan","Feb","Mar","Apr","May","Jun",
                           "Jul","Aug","Sep","Oct","Nov","Dec")[$Month-1].
-                " $Year, $Hour:$Min"; 
+                " $Year, $Hour:$Min";
   return $ReturnDate;
 }
 
@@ -207,16 +195,16 @@ sub TypesTable {
     $link = &TypeLink($TypeID,"short");
     print "<td>$link\n";
     ++$Col;
-  }  
+  }
 
   print "</table>\n";
 }
 
 sub TypeLink {
   my ($TypeID,$mode) = @_;
-  
+
   require "MiscSQL.pm";
-  
+
   &FetchDocType($TypeID);
   my $link = "";
   unless ($Public) {
@@ -230,18 +218,18 @@ sub TypeLink {
   unless ($Public) {
     $link .= "</a>";
   }
-  
+
   return $link;
 }
 
 sub ImageSrc {
   my ($ArgRef) = @_;
-  
+
   my $Alt   = exists $ArgRef->{-alt}   ? $ArgRef->{-alt}   : "image";
   my $Image = exists $ArgRef->{-image} ? $ArgRef->{-image} : "";
 
   require "Images.pm";
-  
+
   unless ($Image) { return ""; }
 
   my $HTML = '<img src="'.$ImgURLPath.'/'.$ImageNames{$Image}.'" alt="'.$Alt.'" />';

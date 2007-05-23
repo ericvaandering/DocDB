@@ -1,3 +1,13 @@
+8.5.1
+
+  Fix show all talks being ignored by SessionModify
+  
+  Remove old routine DocumentLink and rename NewerDocumentLink to DocumentLink
+  
+  Fix document link to not link to unaccessible documents (but show title)
+
+  Update advanced instructions on where <control> and <authentication> go
+
 8.5.0
 
   Add a check box people must check when uploading a document with fewer files

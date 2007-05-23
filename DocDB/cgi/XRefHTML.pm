@@ -2,14 +2,14 @@
 # Description: Input and output routines related to cross-referencing documents
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -22,14 +22,14 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub PrintXRefInfo ($) {
-  require "XRefSQL.pm"; 
+  require "XRefSQL.pm";
   require "DocumentHTML.pm";
   require "RevisionSQL.pm";
-  
+
   my ($DocRevID) = @_;
-  
-### Find and print documents this revision links to  
-  
+
+### Find and print documents this revision links to
+
   my @DocXRefIDs = FetchXRefs(-docrevid => $DocRevID);
   if (@DocXRefIDs) {
     print "<div id=\"XRefs\">\n";
@@ -50,26 +50,26 @@ sub PrintXRefInfo ($) {
         $DocumentLink .= "<a href=\"".$PublicURL."/ShowDocument?docid=$DocumentID";
         if ($Version) {
           $DocumentLink .= "&amp;version=$Version";
-        } 
+        }
         $DocumentLink .= "\">".$ExtProject."-doc-".$DocumentID;
         if ($Version) {
           $DocumentLink .= "-v$Version";
-        } 
+        }
         $DocumentLink .= "</a> (";
         $DocumentLink .= "<a href=\"".$PrivateURL."/ShowDocument?docid=$DocumentID";
         if ($Version) {
           $DocumentLink .= "&amp;version=$Version";
-        } 
+        }
         $DocumentLink .= "\">"."private link</a>)";
       } else {
         if ($Version) {
           $DocumentLink  = FullDocumentID($DocumentID,$Version).": ";
-          $DocumentLink .= NewerDocumentLink(-docid => $DocumentID, -version => $Version, -titlelink => $TRUE);
-        } else { 
+          $DocumentLink .= DocumentLink(-docid => $DocumentID, -version => $Version, -titlelink => $TRUE);
+        } else {
           $DocumentLink  = FullDocumentID($DocumentID).": ";
-          $DocumentLink .= NewerDocumentLink(-docid => $DocumentID, -titlelink => $TRUE);
+          $DocumentLink .= DocumentLink(-docid => $DocumentID, -titlelink => $TRUE);
         }
-      }    
+      }
       print "<li>$DocumentLink</li>\n";
     }
     print "</ul>\n";
@@ -79,9 +79,9 @@ sub PrintXRefInfo ($) {
 ### Find and print documents which link to this one
 
   my @RawDocXRefIDs = FetchXRefs(-docid => $DocRevisions{$DocRevID}{DOCID});
-  
+
   my @DocXRefIDs = ();
-  
+
   foreach my  $DocXRefID (@RawDocXRefIDs) { # Remove links to other projects, versions
     my $ExtProject = $DocXRefs{$DocXRefID}{Project};
     my $Version    = $DocXRefs{$DocXRefID}{Version};
@@ -89,13 +89,13 @@ sub PrintXRefInfo ($) {
       if ($Version) {
         if ($Version == $DocRevisions{$DocRevID}{Version}) {
           push @DocXRefIDs,$DocXRefID;
-        } 
+        }
       } else {
         push @DocXRefIDs,$DocXRefID;
-      }  
+      }
     }
-  }    
-    
+  }
+
   if (@DocXRefIDs) {
     print "<div id=\"XReffedBy\">\n";
     print "<dl>\n";
@@ -112,7 +112,7 @@ sub PrintXRefInfo ($) {
       my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
       if ($DocumentID && !$SeenDocument{$DocumentID}) {
         my $DocumentLink  = FullDocumentID($DocumentID).": ";
-           $DocumentLink .= NewerDocumentLink(-docid => $DocumentID, -titlelink => $TRUE);
+           $DocumentLink .= DocumentLink(-docid => $DocumentID, -titlelink => $TRUE);
         print "<li>$DocumentLink</li>\n";
         $SeenDocument{$DocumentID} = $TRUE;
       }
@@ -136,7 +136,7 @@ sub ExternalDocDBSelect (;%) {
   require "FormElements.pm";
   require "XRefSQL.pm";
   require "Sorts.pm";
- 
+
   my (%Params) = @_;
 
   my $Disabled = $Params{-disabled} || "0";
@@ -147,32 +147,32 @@ sub ExternalDocDBSelect (;%) {
   my $OnChange = $Params{-onchange} || undef;
 
   my %Options = ();
- 
+
   if ($Disabled) {
     $Options{-disabled} = "disabled";
-  }  
+  }
   if ($OnChange) {
     $Options{-onchange} = $OnChange;
-  }  
+  }
 
-  &GetAllExternalDocDBs; 
+  &GetAllExternalDocDBs;
   my @ExternalDocDBIDs = keys %ExternalDocDBs;
   my %Labels        = ();
   foreach my $ExternalDocDBID (@ExternalDocDBIDs) {
     if ($Format eq "full") {
       $Labels{$ExternalDocDBID} = $ExternalDocDBs{$ExternalDocDBID}{Project}.
-      ":".$ExternalDocDBs{$ExternalDocDBID}{Description}; 
-    } else {  
-      $Labels{$ExternalDocDBID} = $ExternalDocDBs{$ExternalDocDBID}{Project}; 
+      ":".$ExternalDocDBs{$ExternalDocDBID}{Description};
+    } else {
+      $Labels{$ExternalDocDBID} = $ExternalDocDBs{$ExternalDocDBID}{Project};
     }
-  }      
-  
-  my $ElementTitle = &FormElementTitle(-helplink => "extdocdb", -helptext => "Project", 
+  }
+
+  my $ElementTitle = &FormElementTitle(-helplink => "extdocdb", -helptext => "Project",
                                        -required => $Required);
 
   print $ElementTitle;
-  print $query -> scrolling_list(-name     => "externaldocdbs",  -values  => \@ExternalDocDBIDs, 
-                                 -labels   => \%Labels,       -size    => 10, 
+  print $query -> scrolling_list(-name     => "externaldocdbs",  -values  => \@ExternalDocDBIDs,
+                                 -labels   => \%Labels,       -size    => 10,
                                  -multiple => $Multiple,      -default => \@Defaults,
                                  %Options);
 }

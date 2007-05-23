@@ -206,7 +206,8 @@ sub AdvancedInstructionsBody {
   <p>Since version 8.4 DocDB has supported uploads of XML data describing documents. This is
      done with the <a href="$XMLUpload">XMLUpload</a> script. The XML output of ShowDocument
      described above can be used almost directly to create a new document. One new XML element
-     must be added to such an XMLFile and a second element is optional.</p>
+     must be added to such an XMLFile and a second element is optional. Both elements must be 
+     added as children of &lt;docdb&gt; (at the same level as &lt;document&gt;).</p>
      
   <p>The first XML element is <tt>control</tt> which has two parameters: <tt>mode</tt> and
      <tt>usedate</tt>. <tt>mode</tt> must be one of three values, <q>new</q>, <q>bump</q>, or <q>updatedb</q>. New
@@ -226,7 +227,7 @@ sub AdvancedInstructionsBody {
 
   <p>The second element XML element (which is optional) is <tt>authentication</tt> which contains
      the  username and password needed to download the file(s) in the document from the remote
-     source. It will look   like this:</p>
+     source. It will look like this:</p>
      
      <pre>
      &lt;authentication&gt;
