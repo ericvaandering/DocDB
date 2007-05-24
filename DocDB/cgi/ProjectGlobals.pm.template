@@ -99,7 +99,8 @@ $ShortProject   = "MyProject";    # This is the project used in the Document ID
 #$MeetingFiles         = 3;     # Number of upload boxes on meeting short form
 #$InitialSessions      = 5;     # Number of initial sessions when making meeting
 
-#$Wget   = "/usr/bin/wget -O - --quiet ";
+#$Wget   = "/usr/bin/wget --no-check-certificate"; # --no-check is not default, enable if needed
+                                                   # useful when fetching from https with "invalid" certs
 #$Tar    = "";                     # Set this if you don't have GNU tar
 #$GTar   = "/bin/tar ";            # Set this if you do have GNU tar (e.g. Linux)
 #$GZip   = "/bin/gzip ";           # Currently only needed if non-GNU tar
