@@ -61,9 +61,9 @@ INSERT INTO RevisionSecurity (RevSecurityID, GroupID, DocRevID, TimeStamp) VALUE
 INSERT INTO RevisionSecurity (RevSecurityID, GroupID, DocRevID, TimeStamp) VALUES (3,3,2,20040323145216);
 INSERT INTO RevisionSecurity (RevSecurityID, GroupID, DocRevID, TimeStamp) VALUES (4,2,3,20050903142403);
 INSERT INTO RevisionSecurity (RevSecurityID, GroupID, DocRevID, TimeStamp) VALUES (5,3,3,20050903142403);
-INSERT INTO RevisionTopic (RevTopicID, DocRevID, MinorTopicID) VALUES (1,1,2);
-INSERT INTO RevisionTopic (RevTopicID, DocRevID, MinorTopicID) VALUES (2,2,1);
-INSERT INTO RevisionTopic (RevTopicID, DocRevID, MinorTopicID) VALUES (3,3,2);
+INSERT INTO RevisionTopic (RevTopicID, DocRevID, TopicID) VALUES (1,1,2);
+INSERT INTO RevisionTopic (RevTopicID, DocRevID, TopicID) VALUES (2,2,3);
+INSERT INTO RevisionTopic (RevTopicID, DocRevID, TopicID) VALUES (3,3,2);
 INSERT INTO SecurityGroup (GroupID, Name, Description, TimeStamp, CanCreate, CanAdminister) VALUES (1,'DocDBAdm','Document Database Administrators',20050903141912,1,1);
 INSERT INTO SecurityGroup (GroupID, Name, Description, TimeStamp, CanCreate, CanAdminister) VALUES (2,'Reader','Read-only group (maybe a reviewer)',20040323143940,NULL,NULL);
 INSERT INTO SecurityGroup (GroupID, Name, Description, TimeStamp, CanCreate, CanAdminister) VALUES (3,'Writer','A regular user, may add documents to database',20040323144332,1,NULL);
