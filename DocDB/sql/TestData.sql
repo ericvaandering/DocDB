@@ -21,8 +21,8 @@ INSERT INTO DocumentFile (DocFileID, DocRevID, FileName, Date, RootFile, TimeSta
 INSERT INTO DocumentRevision (DocRevID, DocumentID, SubmitterID, DocumentTitle, PublicationInfo, VersionNumber, Abstract, RevisionDate, TimeStamp, Obsolete, Keywords, Note, Demanaged, DocTypeID) VALUES (1,1,1,'Reserved document','',0,'This is just a reservation for a future document. No files are allowed to exist for a reservation, just a number and the basic information.','2004-03-23 14:45:30',20050903142403,1,'test reservation',NULL,NULL,1);
 INSERT INTO DocumentRevision (DocRevID, DocumentID, SubmitterID, DocumentTitle, PublicationInfo, VersionNumber, Abstract, RevisionDate, TimeStamp, Obsolete, Keywords, Note, Demanaged, DocTypeID) VALUES (2,2,3,'Test document with a \"file\"','Here you can put other information, like a URL http://www.fnal.gov/ which will be turned into a link.',1,'This is a test document with a file (dti.html). Of course the file won\'t actually exist, but the entries for the file in the DB will.','2004-03-23 14:52:16',20040325220556,0,'',NULL,1,2);
 INSERT INTO DocumentRevision (DocRevID, DocumentID, SubmitterID, DocumentTitle, PublicationInfo, VersionNumber, Abstract, RevisionDate, TimeStamp, Obsolete, Keywords, Note, Demanaged, DocTypeID) VALUES (3,1,1,'Reserved document','',0,'This is just a reservation for a future document. No files are allowed to exist for a reservation, just a number and the basic information.','2005-09-03 14:24:03',20050903142403,0,'test reservation','',NULL,1);
-INSERT INTO DocumentType (DocTypeID, ShortType, LongType, TimeStamp, Hide) VALUES (1,'Talk','Talk',20040323142849,0);
-INSERT INTO DocumentType (DocTypeID, ShortType, LongType, TimeStamp, Hide) VALUES (2,'Publication','Publication',20040323142915,0);
+INSERT INTO DocumentType (DocTypeID, ShortType, LongType, TimeStamp) VALUES (1,'Talk','Talk',20040323142849);
+INSERT INTO DocumentType (DocTypeID, ShortType, LongType, TimeStamp) VALUES (2,'Publication','Publication',20040323142915);
 INSERT INTO EventGroup (EventGroupID, ShortDescription, LongDescription, TimeStamp) VALUES (1,'Collaboration Meetings','Collaboration Meetings',20050903142100);
 INSERT INTO EventGroup (EventGroupID, ShortDescription, LongDescription, TimeStamp) VALUES (2,'Conferences','Conferences',20050903142100);
 INSERT INTO GroupHierarchy (HierarchyID, ChildID, ParentID, TimeStamp) VALUES (1,2,1,20040323144032);
@@ -39,12 +39,14 @@ INSERT INTO KeywordGrouping (KeywordGroupingID, KeywordGroupID, KeywordID, TimeS
 INSERT INTO KeywordGrouping (KeywordGroupingID, KeywordGroupID, KeywordID, TimeStamp) VALUES (2,1,1,20040323151257);
 INSERT INTO KeywordGrouping (KeywordGroupingID, KeywordGroupID, KeywordID, TimeStamp) VALUES (3,2,2,20040323151330);
 INSERT INTO KeywordGrouping (KeywordGroupingID, KeywordGroupID, KeywordID, TimeStamp) VALUES (4,1,3,20040323151349);
-INSERT INTO MajorTopic (MajorTopicID, ShortDescription, LongDescription, TimeStamp) VALUES (3,'Computing','Computing',20040323142820);
+INSERT INTO Topic (TopicID, ShortDescription, LongDescription, TimeStamp) VALUES (1,'Computing','Computing',20040323142820);
+INSERT INTO Topic (TopicID, ShortDescription, LongDescription, TimeStamp) VALUES (2,'Web Tools','Web Tools',20040323143811);
+INSERT INTO Topic (TopicID, ShortDescription, LongDescription, TimeStamp) VALUES (3,'Document Database','Document Database',20040323143830);
+INSERT INTO TopicHierarchy (TopicID,ParentTopicID) values (2,1);
+INSERT INTO TopicHierarchy (TopicID,ParentTopicID) values (3,1);
 INSERT INTO MeetingOrder (MeetingOrderID, SessionOrder, SessionID, SessionSeparatorID, TimeStamp) VALUES (1,1,1,0,20040323150832);
 INSERT INTO MeetingOrder (MeetingOrderID, SessionOrder, SessionID, SessionSeparatorID, TimeStamp) VALUES (2,2,0,1,20040323150832);
 INSERT INTO MeetingOrder (MeetingOrderID, SessionOrder, SessionID, SessionSeparatorID, TimeStamp) VALUES (3,3,2,0,20040323150832);
-INSERT INTO MinorTopic (MinorTopicID, MajorTopicID, ShortDescription, LongDescription, TimeStamp) VALUES (1,3,'Web Tools','Web Tools',20040323143811);
-INSERT INTO MinorTopic (MinorTopicID, MajorTopicID, ShortDescription, LongDescription, TimeStamp) VALUES (2,3,'Document Database','Document Database',20040323143830);
 INSERT INTO RevisionAuthor (RevAuthorID, DocRevID, AuthorID) VALUES (1,1,2);
 INSERT INTO RevisionAuthor (RevAuthorID, DocRevID, AuthorID) VALUES (2,1,1);
 INSERT INTO RevisionAuthor (RevAuthorID, DocRevID, AuthorID) VALUES (3,2,3);
