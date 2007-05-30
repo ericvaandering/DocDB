@@ -310,9 +310,18 @@ sub FetchSessionsByDate ($) {
   my ($Date) = @_;
   my $SessionID;
   my @SessionIDs = ();
+  
+  # FIXME: These next three lines are good for MySQL >= 4, but not MySQL 3
+  
+#  my $SessionList   = $dbh -> prepare(
+#    "select SessionID from Session where DATE(StartTime)=?");
+#  $SessionList -> execute($Date);
+
+  # FIXME: These next three lines are good for MySQL 3
+  
   my $SessionList   = $dbh -> prepare(
-    "select SessionID from Session where DATE(StartTime)=?");
-  $SessionList -> execute($Date);
+    "select SessionID from Session where StartTime like ?");
+  $SessionList -> execute($Date."%");
   $SessionList -> bind_columns(undef, \($SessionID));
   while ($SessionList -> fetch) {
     $SessionID = FetchSessionByID($SessionID);
