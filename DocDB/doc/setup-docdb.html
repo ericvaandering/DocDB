@@ -79,6 +79,9 @@ CGIInclude.pm.
 	 Uncomment the "Public" lines in ProjectGlobals.pm.</li>
     <li> Copy CGIInclude.pm from the scripts/ directory and edit it to point at
          your main installation. This is needed to pick up the DocDB .pm files.</li>
+    <li> Edit your Apache <tt>httpd.conf</tt> file and make sure
+         <tt>FollowSymLinks</tt> is added to the <tt>Options</tt> for this
+         directory.</li>
     </ol></li>
 <li> mysql SomeDocDB -u docdbadm -p < DocDB/sql/CreateDatabase.SQL </li>
 <li>If you are using client certificate based authorization:</li>
