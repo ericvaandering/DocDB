@@ -90,6 +90,7 @@ if ($XMLText && !@ErrorStack) {
 
   push @DebugStack,"Mode is $Mode";
   my $NeedURLs = $TRUE; # Default, now can reset
+  my $OldMode = $Mode;
   if ($Mode eq "new") {
     $Mode = "bump";
     $DocID = 0;
@@ -205,6 +206,12 @@ if ($XMLText && !@ErrorStack) {
   my @Files = $Revision -> children("file");
   foreach $File (@Files) {
     my $Name = $File -> first_child("name") -> text();
+    my $ID   = $File -> {'att'} -> {'id'};
+    push @DebugStack,"Checking ID: $ID and Mode: $OldMode";
+    if ($ID && $OldMode eq "updatedb") {
+      $Name = $ID;
+      $Files{$Name}{CopyFileID} = $ID;
+    }  
     $Files{$Name}{NewFilename} = $Name;
     if ($File -> first_child("description")) {
       $Files{$Name}{Description} = $File -> first_child("description") -> text();
@@ -222,6 +229,7 @@ if ($XMLText && !@ErrorStack) {
       $Files{$Name}{Pass} = $Password;
       push @DebugStack,"Getting set to download $Name with URL $URL";
     }
+    push @DebugStack,"File $Name added to Files hash";
   }
 
   push @DebugStack,"NeedURLS: $NeedURLs";

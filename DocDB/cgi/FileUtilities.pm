@@ -32,6 +32,7 @@
 
 sub AddFiles (%) {
   require "FileSQL.pm";
+  require "MiscSQL.pm";
   require "FSUtilities.pm";
 
   my %Params = @_;
@@ -61,6 +62,7 @@ sub AddFiles (%) {
   foreach my $File (@Files) {
     my $ShortName = "";
     if ($Files{$File}{Filename} && (-e $Files{$File}{Filename})) {
+      push @DebugStack,"Used cp $Files{$File}{Filename} $Directory";
       my @Parts = split /\//,$Files{$File}{Filename};
       $ShortName = pop @Parts;
       system ("cp",$Files{$File}{Filename},$Directory);

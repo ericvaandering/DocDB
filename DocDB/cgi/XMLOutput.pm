@@ -524,6 +524,7 @@ sub FileXMLOut {
     my $ShortFile = CGI::escape($DocFiles{$DocFileID}{Name});
     my $URL = $RetrieveFile."?docid=".$DocumentID."&amp;version=".$Version."&amp;filename=".$ShortFile;
     $Attributes{href} = $URL;
+    $Attributes{id}   = $DocFileID;
     if ($DocFiles{$DocFileID}{ROOT}) {
       $Attributes{main} = "yes";
     } else {
