@@ -109,7 +109,12 @@ sub AddDocument {
       MakeDirectory($DocumentID,$NewVersion);
       ProtectDirectory($DocumentID,$NewVersion,@ViewIDs);
       @FileIDs = AddFiles(-docrevid => $DocRevID, -datetime => $DateTime, -files => \%Files);
-    }
+    } elsif ($Version eq "latest" || int($Version) > 0) {
+      @FileIDs = AddFiles(-docrevid => $DocRevID,   -datetime => $DateTime, 
+                          -files    => \%Files,   -oldversion => $NewVersion);
+    } 
+    
+      
     if (@SignOffIDs) {
       InsertSignoffList($DocRevID,@SignOffIDs);
     }
