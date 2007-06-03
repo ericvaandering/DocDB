@@ -278,7 +278,7 @@ if ($OutFormat eq 'XML') {
   my %Labels = {'xml'=>'XML', 'html' => 'HTML (This page)'};
 
   print $query -> header( -charset => $HTTP_ENCODING );
-  DocDBHeader($PageTitle,"$Project Document $DocumentID-v$Version",-scripts => ["PopUps"]);
+  DocDBHeader($PageTitle,"$Project Document $NewDocumentID",-scripts => ["PopUps"]);
   print $query -> start_multipart_form('POST',$XMLUpload,'id="xmlupload" name="xmlupload"');
 
   print '<table class="LeftHeader CenteredTable MedPaddedTable">'."\n";
