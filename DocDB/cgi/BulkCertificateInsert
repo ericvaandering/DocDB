@@ -1,0 +1,183 @@
+#! /usr/bin/env perl
+#
+# Description: Allows an administrator to create entries for certificate users in EmailUser
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified:
+
+# Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+use CGI qw(-nosticky);
+use CGI::Untaint;
+use DBI;
+
+require "DocDBGlobals.pm";
+require "AdministerElements.pm";
+require "ResponseElements.pm";
+require "Scripts.pm";
+require "Security.pm";
+require "Messages.pm";
+
+require "DBUtilities.pm";
+require "DBColumnSizes.pm";
+require "HTMLUtilities.pm";
+
+require "SecuritySQL.pm";
+require "SecurityHTML.pm";
+
+$query = new CGI;  # Global for subroutines
+
+# Parameters to script
+
+my $Untaint   = CGI::Untaint -> new($query -> Vars);
+my %CGIParams = $query -> Vars;
+
+my $Password = $Untaint -> extract (-as_printable => "password")  || "";
+my $Username = $Untaint -> extract (-as_printable => "admuser")   || "";
+my $Action   = $Untaint -> extract (-as_printable => "admaction") || "";
+my $Force    = $Untaint -> extract (-as_printable => "admforce")  || "";
+my $CanSign  = $Untaint -> extract (-as_printable => "CanSign")   || "";
+my @GroupIDs = split /\0/,$CGIParams{group};
+
+if ($CanSign) {$CanSign = $TRUE;}
+
+my $MaxUsers = 12;
+
+$query -> delete_all();
+
+# Open connection and die if we can't
+
+if ($Action && (!$Password || !$Username)) {
+  push @ErrorStack,$Msg_AdminNoPass;
+}
+EndPage(-startpage => $TRUE);
+
+if ($Action || $Password || $Username) {
+  CreateConnection(-user => $Username, -password => $Password);
+} else {
+  CreateConnection(-type => "ro");
+}
+EndPage(-startpage => $TRUE);
+
+print $query -> header( -charset => $HTTP_ENCODING );
+DocDBHeader("Bulk User Insert","",-scripts => ["PopUps"]);
+
+unless (CanAdminister()) {
+  push @ErrorStack,$Msg_AdminNoLogin;
+}
+EndPage();
+
+if ($Action eq "Insert") {
+  # Get all users and their Usernames
+  my @EmailUserIDs = GetEmailUserIDs();
+  my %Usernames = ();
+  foreach my $UserID (@EmailUserIDs) {
+    FetchEmailUser($UserID);
+    $Usernames{ $EmailUser{$UserID}{Username} } = $UserID;
+  }
+
+  my $UserInsert       = $dbh -> prepare("insert into EmailUser (EmailUserID,Username,Name,EmailAddress,CanSign,Verified,Password) values (0,?,?,?,?,1,'x')");
+  my $UsersGroupInsert = $dbh -> prepare("insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) values (0,?,?)");
+
+  foreach my $Row (1..$MaxUsers) {
+    my $Name     = $Untaint -> extract (-as_printable => "name$Row")  || "";
+    my $Email    = $Untaint -> extract (-as_printable => "email$Row") || "";
+    my $Username = $Name;
+       $Username =~ s/\W//g;
+
+    if ($Username) {
+      if ($Usernames{$Username}) {
+        push @WarnStack,"The user $Name already exists. Not inserted.";
+        next;
+      }
+      unless ($Email) {
+        push @WarnStack,"You must supply a name and e-mail address for the user $Name. Not inserted.";
+        next;
+      }
+      unless (@GroupIDs) {
+        push @WarnStack,"You did not specify any groups. $Name inserted with membership in no groups.";
+      }
+      $UserInsert -> execute($Username,$Name,$Email,$CanSign);
+      my $EmailUserID = $UserInsert -> {mysql_insertid}; # Works with MySQL only
+      push @ActionStack,"User $Name inserted.";
+      foreach my $GroupID (@GroupIDs) {
+        $UsersGroupInsert -> execute($EmailUserID,$GroupID);
+      }
+    }
+  }
+}
+
+if (@ActionStack) {
+  ActionReport();
+}
+
+EndPage();
+
+print "<h4>Use this form to add several users at once into the same group(s) and
+       with the same permissions. This eliminates the need for the users to
+       apply for access separately.</h4>\n";
+
+print $query -> start_multipart_form('POST',$BulkCertificateInsert,'id="bulkinsert" name="bulkinsert"');
+print "<div>";
+print $query -> hidden(-name => 'admaction', -default => 'Insert');
+print "</div>";
+
+print "<table class=\"MedPaddedTable CenteredTable\">\n";
+
+print "<tr>\n";
+print '<td rowspan="2">';
+SecurityScroll(-name => 'group', -helplink  => 'usergroups', -helptext => "Users' Groups", -multiple => $TRUE);
+print "</td>\n";
+print '<td colspan="2">';
+AdministratorPassword({-layout => 'vertical'});
+print "</td></tr>\n";
+
+print '<tr><td>';
+if ($UseSignoffs) {
+  print $query -> checkbox(-name  => "CanSign", -value    => 'CanSign',
+                           -label => 'May sign documents');
+} else {
+  print '&nbsp;';
+}
+print "</td></tr>\n";
+
+print "<tr><th>";
+print FormElementTitle(-helplink => 'certname',  -helptext => 'Certificate CN');
+print "</th><th>";
+print FormElementTitle(-helplink => 'certemail', -helptext => 'E-mail Address');
+print "</th></tr>\n";
+
+foreach my $Row (1..$MaxUsers) {
+  print "<tr><td>\n";
+  TextField(-name => "name$Row",  -size => 40, -maxlength => $DBColumnSize{EmailUser}{Name}        );
+  print "</td><td>\n";
+  TextField(-name => "email$Row", -size => 30, -maxlength => $DBColumnSize{EmailUser}{EmailAddress});
+  print "</td></tr>\n";
+}
+
+print '<tr><td colspan="2" class="SubmitCell">';
+print $query -> submit (-value => "Insert Users");
+print "</td></tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+
+exit;

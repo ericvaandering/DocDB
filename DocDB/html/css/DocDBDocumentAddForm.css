@@ -1,0 +1,14 @@
+#TopicScrollTable {
+  padding-left: 3px;
+  padding-right: 10px;
+}
+
+/* Put the link to list users in a group as close to security scrolls as possible */
+
+.wListUsers td {
+  padding-bottom: 0px;
+}
+
+.ListUsers td {
+  padding-top: 0px;
+}

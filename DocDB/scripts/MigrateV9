@@ -1,0 +1,102 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+# Usage: MigrateV8 --u=username --p=password --a=init|migrate|undo|delete
+
+
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+use DBI;
+use Getopt::Long;
+
+#require "CGIInclude.pm";
+
+require "DocDBGlobals.pm";
+
+GetOptions("a=s" => \$Action,"u=s" => \$User,"p=s" => \$Password);
+
+unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate" or $Action eq "undo") {
+  print "Usage: MigrateV8 --u=username --p=password --a=init|migrate|delete|undo\n\n";
+  print "This script is used to migrate from a version 7 to version 8 DB structure.\n";
+  print "!!!! BACKUP YOUR DATABASE BEFORE RUNNING THIS IN CASE THERE ARE PROBLEMS !!!!\n";
+  print "Run this script in \"init\" mode first, then update the DocDB code.\n";
+  print "Then run this script again in \"migrate\" mode.\n";
+  print "At this point you can update the CGI code and when you are comfortable\n";
+  print "everything is OK, run in \"delete\" mode to erase old columns and/or tables.\n";
+  print "The \"undo\" mode removes the newly inserted tables and columns and should restore\n";
+  print "the DB to a version 7 state. But, using your backup is better.\n";
+  exit;
+}  
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$User,$Password);
+
+if ($Action eq "init") { # Modify existing tables and add new tables in preparation for migration 
+  # After this is done, can remove (almost) duplicate code section from MailNotification.pm
+  
+  my @Actions = (
+    "update Notification set ForeignID=1 where Type='AllDocuments'",
+    "alter table Moderator drop key Separator",
+    "alter table Moderator add key SepKey (SessionSeparatorID)",
+    "alter table EventTopic drop key Separator",
+    "alter table EventTopic add key SepKey (SessionSeparatorID)",
+  );
+         
+  print "Creating new tables and columns.\n";          
+  foreach my $Action (@Actions) {
+    unless ($Action) { next; }
+    my $Command = $dbh ->prepare($Action);
+    $Command -> execute();
+  }  
+}
+
+if ($Action eq "migrate") {
+#  my $TopicUpdate     = $dbh -> prepare("update RevisionTopic set TopicID=? where MinorTopicID=?");
+
+}
+
+if ($Action eq "undo") { # Undo modifications
+
+# Drop tables, columns, and entries we just put in
+
+  print "Removing new tables and columns.\n";          
+  my @Actions = ();
+
+  foreach my $Action (@Actions) {
+    unless ($Action) { next; }
+    my $Command = $dbh ->prepare($Action);
+    $Command -> execute();
+  }  
+}
+
+if ($Action eq "delete") { 
+
+  # Get rid of tables and columns no longer needed
+  
+  print "Removing obsolete tables and columns.\n";          
+  my @Actions = ();
+
+  foreach my $Action (@Actions) {
+    unless ($Action) { next; }
+    my $Command = $dbh ->prepare($Action);
+    $Command -> execute();
+  }  
+}
+
+exit;

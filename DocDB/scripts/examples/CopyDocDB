@@ -1,0 +1,280 @@
+#! /usr/bin/perl
+
+use XML::Twig;
+
+require "CopySetup.pm"; # Passwords and topics maps, etc. See CopySetup.pm.example
+
+unlink "/tmp/DocDB.xml";
+unlink "/tmp/NewDocDB.xml";
+unlink "/tmp/ReturnDocDB.xml";
+
+open LOG,">CopyDocDB.log";
+
+foreach my $OrigDocID (@OrigDocIDs) {
+
+  # Download latest XML file from source DocDB
+
+  my $OriginalURL = $SourceURL."ShowDocument?docid=$OrigDocID;outformat=xml";
+  my @Command = ("wget","-q","-O","/tmp/DocDB.xml","--no-check-certificate");
+  if ($SourceUser) {
+    push @Command,"--http-user=$SourceUser","--http-password=$SourcePassword"
+  }
+  push @Command,$OriginalURL;
+  system @Command;
+
+  # Read and parse input file
+
+  my $Twig = XML::Twig -> new();
+  $Twig -> safe_parsefile("/tmp/DocDB.xml");
+  $XML = $Twig -> root();
+
+  # Get DocumentID and version #'s
+
+  my $OrigProject = $XML ->  {'att'} -> {'shortproject'};
+  my $Document    = $XML -> first_child("document");
+  my $DocID       = $Document -> {'att'} -> {'id'};
+  my $Revision    = $Document -> first_child("docrevision");
+  my $OtherRevs   = $Revision -> first_child("otherversions");
+  my @Revisions   = $OtherRevs -> children("docrevision");
+
+  my @Versions = ();
+  foreach my $Revision (@Revisions) {
+    my $Version = $Revision -> {'att'} -> {'version'};
+    push @Versions,$Version;
+  }
+  @Versions = sort numerically @Versions;
+
+  unlink "/tmp/DocDB.xml";
+  # Get topics from last version, will be applied to all versions
+
+  my @NewTopicIDs = ();
+  my @Topics = $Revision -> children("topic");
+  my $SkipDocument = 0;
+  my $NewTypeID;
+  
+  foreach my $Topic (@Topics) {
+    my $TopicID = $Topic -> {'att'} -> {'id'};
+    push @NewTopicIDs, @{$TopicMap{$TopicID}};
+    foreach my $SkipID (@SkipTopicIDs) {
+      if ($TopicID == $SkipID) {
+        $SkipDocument = 1;
+      }
+    }
+    if ($TopicID == 67 || $TopicID == 91 || $TopicID == 87 ||
+        $TopicID == 89 || $TopicID == 90 || $TopicID == 88) {
+      $NewTypeID = 23; # Set BOE topics to BOE doc type
+    }
+  }
+  @NewTopicIDs = Unique(@NewTopicIDs);
+
+  if ($SkipDocument) {
+    print LOG "Old DocumentID $DocID not migrated.\n"; 
+    next;
+  }   
+  # Get type from last version, applied to all versions
+  
+  my $DocType = $Revision -> first_child("doctype");
+  my $TypeID  = $DocType -> {'att'} -> {'id'};
+  unless ($NewTypeID) {
+    $NewTypeID = $TypeMap{$TypeID};
+  }
+  
+  # Values needed for creating first document
+
+  my $NewDocID = 0;
+  my $Mode     = "new";
+  foreach my $Version (@Versions) { # Fetch each version from old DocDB
+    my $OriginalURL = $SourceURL."ShowDocument?docid=$OrigDocID;version=$Version;outformat=xml";
+    my @Command = ("wget","-q","-O","/tmp/DocDB.xml","--no-check-certificate");
+    if ($SourceUser) {
+      push @Command,"--http-user=$SourceUser","--http-password=$SourcePassword"
+    }
+    push @Command,$OriginalURL;
+    print "Fetching DocumentID $OrigDocID, version $Version\n";
+    system @Command;
+
+    # Modify XML
+
+    my $Twig = XML::Twig -> new();
+    $Twig -> safe_parsefile("/tmp/DocDB.xml");
+    $XML = $Twig -> root();
+    unlink "/tmp/DocDB.xml";
+
+    # Basic info for feedback to user
+
+    my $Document  = $XML -> first_child("document");
+    my $DocID     = $Document -> {'att'} -> {'id'};
+    my $Revision  = $Document -> first_child("docrevision");
+    my $Version   = $Revision -> {'att'} -> {'version'};
+    print "Fetched DocumentID $DocID, version $Version\n";
+
+    unless ($Version) {
+      $Mode = "reserve";
+      print "Reserving rather than creating.\n";
+    }  
+
+    if ($DoUpload) {
+      $Document -> {'att'} -> {'id'} = $NewDocID; # Reset document #
+
+      # Remove ID numbers from submitter and authors (lookup will handle this)
+
+#      my $Submitter = $Revision -> first_child("submitter");
+#      $Submitter -> del_att('id');
+
+#      my @Authors = $Revision -> children("author");
+#      foreach my $Author (@Authors) {
+#        $Author -> del_att('id');
+#      }
+
+      # Use numerical map to reset author and submitter IDs
+      my $SubmitterID;
+      my $Submitter = $Revision -> first_child("submitter");
+      if ($Submitter) {
+        $SubmitterID = $Submitter ->  {'att'} -> {'id'};
+        $Submitter ->  {'att'} -> {'id'} = $AuthorMap{$SubmitterID};
+      }
+        
+      my @Authors = $Revision -> children("author");
+      foreach my $Author (@Authors) {
+        my $AuthorID = $Author ->  {'att'} -> {'id'};
+        $Author ->  {'att'} -> {'id'} = $AuthorMap{$AuthorID};
+      }
+
+      # Remove topics and insert our own
+
+      my @Topics = $Revision -> children("topic");
+      foreach my $Topic (@Topics) {
+        $Topic -> delete();
+      }
+      foreach my $TopicID (@NewTopicIDs) {
+        my %Attributes = ('id' => $TopicID);
+        my $TopicXML = XML::Twig::Elt -> new(topic => \%Attributes );
+        $TopicXML -> paste(last_child => $Revision);
+      }
+
+      # Remove type and insert our own
+      my $DocType = $Revision -> first_child("doctype");
+      if ($DocType) {
+        $DocType -> delete();
+      }
+      my %Attributes = ('id' => $NewTypeID);
+      my $TypeXML = XML::Twig::Elt -> new(doctype => \%Attributes );
+         $TypeXML -> paste(last_child => $Revision);
+
+      # Remove security and insert our own
+
+      my   @Security = $Revision -> children("viewgroup");
+      push @Security,  $Revision -> children("modifygroup");
+      foreach my $Element (@Security) {
+        $Element -> delete();
+      }
+      foreach my $ID (@ViewIDs) {
+        my %Attributes = ('id' => $ID);
+        my $IDXML = XML::Twig::Elt -> new(viewgroup => \%Attributes );
+        $IDXML -> paste(last_child => $Revision);
+      }
+      foreach my $ID (@ModifyIDs) {
+        my %Attributes = ('id' => $ID);
+        my $IDXML = XML::Twig::Elt -> new(modifygroup => \%Attributes );
+        $IDXML -> paste(last_child => $Revision);
+      }
+
+      # Translate events, remove if no translation (assumes 1:1 unlike topics)
+      
+      my @Events = $Revision -> children("event");
+      foreach my $Event (@Events) {
+        my $EventID = $Event -> {'att'} -> {'id'};
+        if ($EventID) {
+          $Event -> {'att'} -> {'id'} = $EventMap{$EventID};
+        } else {
+          $Event -> delete();
+        }
+      }
+  
+      # Get publication info (if any) and add old DocID to it
+      
+      my $PubInfoText = "";
+      my $PubInfoXML =  $Revision -> first_child("publicationinfo");
+      if ($PubInfoXML) {
+        $PubInfoText = $PubInfoXML -> text();
+        if ($PubInfoText) {
+          $PubInfoText .= "\n".$OrigProject.'-doc-'.$DocID;
+        } else {
+          $PubInfoText  =      $OrigProject.'-doc-'.$DocID;
+        }
+        $PubInfoXML -> delete();
+      }
+      $PubInfoXML = XML::Twig::Elt -> new("publicationinfo", $PubInfoText);
+      $PubInfoXML -> paste(last_child => $Revision);
+
+      # Add Keyword "script_import";
+      
+      my $KeywordXML = XML::Twig::Elt -> new("keyword","script_import");
+      $KeywordXML -> paste(last_child => $Revision);
+
+      # Build control and authentication blocks and paste them into XML
+
+      my %Attributes = ();
+
+      my $ControlXML = XML::Twig::Elt -> new(control => \%Attributes );
+      my $ModeXML    = XML::Twig::Elt -> new("mode", $Mode);    # new or bump
+      my $DateXML    = XML::Twig::Elt -> new("usedate", "yes"); # preserve dates
+      $ModeXML -> paste(last_child => $ControlXML);
+      $DateXML -> paste(last_child => $ControlXML);
+      $ControlXML -> paste(last_child => $XML);
+
+      my $AuthenticationXML = XML::Twig::Elt -> new(authentication => \%Attributes );
+      my $UserXML    = XML::Twig::Elt -> new("username", $SourceUser);
+      my $PassXML    = XML::Twig::Elt -> new("password", $SourcePassword);
+      $UserXML -> paste(last_child => $AuthenticationXML);
+      $PassXML -> paste(last_child => $AuthenticationXML);
+      $AuthenticationXML -> paste(last_child => $XML);
+
+      # Write out and submit new XML
+
+      open DEST,">/tmp/NewDocDB.xml";
+      print DEST ($XML -> sprint()),"\n";
+      close DEST;
+
+      my $SubmitURL   = $DestURL."XMLUpload";
+      my @Upload = ("curl","-o","/tmp/ReturnDocDB.xml","-F","outformat=xml","-F","XMLFile=@/tmp/NewDocDB.xml",
+                    "-u","$DestUser:$DestPassword",$SubmitURL);
+      system @Upload;
+      unlink "/tmp/NewDocDB.xml";
+
+      # Figure out document ID of what we just uploaded for future docs
+
+      unless ($NewDocID) {
+        my $Twig = XML::Twig -> new();
+        $Twig -> safe_parsefile("/tmp/ReturnDocDB.xml");
+        $XML = $Twig -> root();
+
+        my $Document = $XML -> first_child("document");
+        my $TestDocID     = $Document -> {'att'} -> {'id'};
+
+        if ($DocID) {
+          $NewDocID = $TestDocID;
+          $Mode = "bump";
+          print     "Old DocumentID $DocID is new DocumentID $NewDocID\n";
+          print LOG "Old DocumentID $DocID is new DocumentID $NewDocID\n";
+        }
+        unlink "/tmp/ReturnDocDB.xml";
+      } # Figure out new document ID
+    }   # Do upload
+  }     # Loop on document versions
+}       # Loop on documents
+
+exit;
+
+sub numerically {$a <=> $b;}
+
+sub Unique {
+  my @Elements = @_;
+  my %Hash = ();
+  foreach my $Element (@Elements) {
+    ++$Hash{$Element};
+  }
+
+  my @UniqueElements = keys %Hash;
+  return @UniqueElements;
+}
