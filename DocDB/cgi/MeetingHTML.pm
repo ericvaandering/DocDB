@@ -776,11 +776,11 @@ sub EventHeader ($) {
   }
 
   if ($Conferences{$EventID}{Preamble}) {
-    $Fields{"Event Info"} = Paragraphize($Conferences{$EventID}{Preamble});
+    $Fields{"Event Info"}   = URLify(AddLineBreaks($Conferences{$EventID}{Preamble}));
   }
 
   if ($Conferences{$EventID}{Epilogue} && $SeparatorID) {
-    $Fields{"Event Wrapup"} = Paragraphize($Conferences{$EventID}{Epilogue});
+    $Fields{"Event Wrapup"} = URLify(AddLineBreaks($Conferences{$EventID}{Epilogue}));
   }
 
   if ($Sessions{$SessionID}{Description}) {
@@ -846,7 +846,7 @@ sub SessionInfo ($) {
   $HTML .= '<td class="Date">'.EuroDateHM($Sessions{$SessionID}{StartTime}).'</td>';
   $HTML .= "<td><a href=\"$DisplayMeeting?sessionid=$SessionID\">";
   $HTML .=     "$Sessions{$SessionID}{Title}</a></td>";
-  $HTML .= '<td>'.$Sessions{$SessionID}{Description}           .'</td>';
+  $HTML .= '<td>'.URLify(AddLineBreaks($Sessions{$SessionID}{Description})).'</td>';
   $HTML .= '<td>'.$Sessions{$SessionID}{Location}              .'</td>';
   $HTML .= '<td>'.TopicListByID({
               -linktype   => "event", -topicids    => $Sessions{$SessionID}{Topics},
@@ -874,7 +874,7 @@ sub PrintSessionSeparatorInfo ($) {
 
   print "<td class=\"Date\">",EuroDateHM($SessionSeparators{$SessionSeparatorID}{StartTime}),"</td>\n";
   print "<td>$Link</td>\n";
-  print "<td>",$SessionSeparators{$SessionSeparatorID}{Description},"</td>\n";
+  print "<td>",URLify(AddLineBreaks($SessionSeparators{$SessionSeparatorID}{Description})),"</td>\n";
   print "<td>",$SessionSeparators{$SessionSeparatorID}{Location},"</td>\n";
   print '<td>&nbsp;</td><td>&nbsp;</td>'; # Topics and Moderators
 }

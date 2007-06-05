@@ -15,6 +15,6 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-$DocDBVersion = "8.5.3";
+$DocDBVersion = "8.5.4";
 
 1;
