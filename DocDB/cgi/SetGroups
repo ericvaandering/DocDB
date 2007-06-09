@@ -3,7 +3,7 @@
 #        Author:  Eric Vaandering
 #          Date:  22 May 2005
 #
-# Allow a user to choose to limit their membership to certain groups 
+# Allow a user to choose to limit their membership to certain groups
 # for a period of time
 
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
@@ -11,7 +11,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -35,7 +35,7 @@ require "Cookies.pm";
 # Start page
 
 $query = new CGI;
-%params = $query -> Vars; 
+%params = $query -> Vars;
 
 my @cookies = ();
 
@@ -43,35 +43,33 @@ my $Duration = $params{duration};
 my @GroupIDs = split /\0/,$params{groups};
 unless (@GroupIDs) {
   @GroupIDs = (-1);
-}  
+}
 my $GroupIDs = join ',',@GroupIDs;
 
 if ($Duration eq "session") {
-  push @cookies, $query -> cookie(-name  => 'groupids', 
-			          -value => $GroupIDs, 
+  push @cookies, $query -> cookie(-name  => 'groupids',
+			          -value => $GroupIDs,
 			          -path  => $cgi_path);
 } else {
   my $Expires = "+".int($Duration)."d";
-  push @cookies, $query -> cookie(-name    => 'groupids', 
-			          -value   => $GroupIDs, 
+  push @cookies, $query -> cookie(-name    => 'groupids',
+			          -value   => $GroupIDs,
 			          -expires => $Expires,
 			          -path    => $cgi_path);
 }
-
-push @DebugStack,"Cookies: ",@cookies;
 
 print $query->header( -charset => $HTTP_ENCODING, -cookie=>\@cookies);
 
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 unless ($dbh) {
   push @ErrorStack,$Msg_NoConnect;
-}      
+}
 
 DocDBHeader("Setting Groups","",-nobody => $TRUE);
 EndPage(@ErrorStack);
 
 print "<table class=\"LowPaddedTable\"><tr><td>\n";
-print "<strong>You are limited to the groups you selected.</strong><br/> 
+print "<strong>You are limited to the groups you selected.</strong><br/>
           If your  groups havn't been properly set, make sure your web
           browser is  accepting cookies.";
 print "</td></tr>";
