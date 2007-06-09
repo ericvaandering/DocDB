@@ -41,6 +41,9 @@ my @cookies = ();
 
 my $Duration = $params{duration};
 my @GroupIDs = split /\0/,$params{groups};
+unless (@GroupIDs) {
+  @GroupIDs = (0);
+}  
 my $GroupIDs = join ',',@GroupIDs;
 
 if ($Duration eq "session") {
