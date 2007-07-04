@@ -117,14 +117,14 @@ sub DateTimeString {
   my $ShowSeconds = exists $ArgRef->{-ShowSeconds} ? $ArgRef->{-ShowSeconds} : $FALSE;
   my $DateTime    = exists $ArgRef->{-DateTime} ? $ArgRef->{-DateTime} : DateTime->now();
 
-  my $String = $DateTime->strftime("%d %b ");
-  
-  #." ".$DateTime->month_abbr()." ".$DateTime->year().", ";
-  #$String   .= $DateTime->hour().":".$DateTime->minute();
-  #if ($ShowSeconds) {
-  #  $String   .= $DateTime->seconds().":".$DateTime->minute();
-    
-  #}
+  my $Format = "%d %b %Y, ";
+  if ($ShowSeconds) {
+    $Format .= "%T";
+  } else {
+    $Format .= "%R";
+  }    
+
+  my $String = $DateTime->strftime($Format);
   return $String;
 }
 

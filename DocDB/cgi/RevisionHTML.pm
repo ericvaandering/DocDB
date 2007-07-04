@@ -423,7 +423,9 @@ sub PrintModTimes {
   print "<dt>Document Created:</dt>\n<dd>$DocTime</dd>\n";
   print "<dt>Contents Revised:</dt>\n<dd>$VersionTime</dd>\n";
   print "<dt>DB Info Revised:</dt>\n<dd>$RevTime</dd>\n";
-  print "<dt>Actually Revised:</dt>\n<dd>$ActualTime</dd>\n";
+  if ($ActualTime ne $RevTime) {
+    print "<dt>Actually Revised:</dt>\n<dd>$ActualTime</dd>\n";
+  }
 }
 
 sub OtherVersionLinks {
