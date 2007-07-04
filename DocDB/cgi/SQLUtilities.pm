@@ -1,10 +1,9 @@
-#        Name: SQLUtilities.pm
+#        Name: $RCSfile$
 # Description: Format conversions from SQL formats to human readable, etc. 
 #    Revision: $Revision$
-#        File: $Source$
+#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
 #
 
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
