@@ -1,3 +1,8 @@
+#        Name: $RCSfile$
+# Description: 
+#    Revision: $Revision$
+#    Modified: $Author $ $Date $
+
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
@@ -409,10 +414,12 @@ sub PrintModTimes {
   $DocTime     = &EuroDateHM($Documents{$DocumentID}{Date});
   $RevTime     = &EuroDateHM($DocRevisions{$DocRevID}{DATE});
   $VersionTime = &EuroDateHM($DocRevisions{$DocRevID}{VersionDate});
-
+  $ActualTime  = DateTimeString(ConvertToDateTime($DocRevisions{$DocRevID}{TimeStamp}));
+  
   print "<dt>Document Created:</dt>\n<dd>$DocTime</dd>\n";
   print "<dt>Contents Revised:</dt>\n<dd>$VersionTime</dd>\n";
   print "<dt>DB Info Revised:</dt>\n<dd>$RevTime</dd>\n";
+  print "<dt>Actually Revised:</dt>\n<dd>$ActualTime</dd>\n";
 }
 
 sub OtherVersionLinks {
