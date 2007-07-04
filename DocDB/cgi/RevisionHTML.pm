@@ -417,7 +417,7 @@ sub PrintModTimes {
   $RevTime     = &EuroDateHM($DocRevisions{$DocRevID}{DATE});
   $VersionTime = &EuroDateHM($DocRevisions{$DocRevID}{VersionDate});
   
-  my $ActualDateTime = ConvertToDateTime({-MySQLTimeStamp => $DocRevisions{$DocRevID}{TimeStamp}, })
+  my $ActualDateTime = ConvertToDateTime({-MySQLTimeStamp => $DocRevisions{$DocRevID}{TimeStamp}, });
   my $ActualTime  = DateTimeString({ -DateTime => $ActualDateTime });
   
   print "<dt>Document Created:</dt>\n<dd>$DocTime</dd>\n";
