@@ -1,7 +1,7 @@
 #        Name: $RCSfile$
 # Description: 
 #    Revision: $Revision$
-#    Modified: $Author $ $Date $
+#    Modified: $Author$ $Date$
 
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -409,6 +409,8 @@ sub PrintPubInfo ($) {
 }
 
 sub PrintModTimes {
+  require "SQLUtilities.pm";
+
   my ($DocRevID) = @_;
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
   $DocTime     = &EuroDateHM($Documents{$DocumentID}{Date});

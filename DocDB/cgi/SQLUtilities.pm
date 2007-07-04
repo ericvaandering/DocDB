@@ -1,5 +1,7 @@
 #        Name: SQLUtilities.pm
 # Description: Format conversions from SQL formats to human readable, etc. 
+#    Revision: $Revision$
+#        File: $Source$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
@@ -69,5 +71,55 @@ sub SQLNow (;%) {
   return $SQL_NOW;
 }
 
+sub ConvertToDateTime {
+  use DateTime;
+  
+  my ($ArgRef) = @_;
+  my $MySQLTimeStamp = exists $ArgRef->{-MySQLTimeStamp} ? $ArgRef->{-MySQLTimeStamp} : "";
+  my $MySQLDateTime  = exists $ArgRef->{-MySQLDateTime}  ? $ArgRef->{-MySQLDateTime} : "";
+
+  my $DateTime;
+
+  if (grep /:/,$MySQLTimeStamp) {
+    $MySQLDateTime = $MySQLTimeStamp; # MySQL >= 4.1
+  } else {
+    $OldTimeStamp = $MySQLTimeStamp;  # MySQL <= 4.0
+  }  
+
+  if ($MySQLDateTime) {
+    my ($Date,$Time)     = split /\s+/,$MySQLDateTime;
+    my ($Year,$Month,$Day) = split /\-/,$Date;
+    my ($Hour,$Min,$Sec) = split /\:/,$Time;
+
+    $DateTime = DateTime -> new(year => $Year, month  => $Month,  day => $Day,
+                                hour => $Hour, minute => $Min, second => $Sec,
+                                time_zone => 'local');
+  } elsif ($OldTimeStamp) {
+    my $Year  = substr  $OldTimeStamp,0,4; 
+    my $Month = substr  $OldTimeStamp,4,2; 
+    my $Day   = substr  $OldTimeStamp,6,2; 
+    my $Hour  = substr  $OldTimeStamp,8,2; 
+    my $Min   = substr  $OldTimeStamp,10,2; 
+    my $Sec   = substr  $OldTimeStamp,12,2; 
+    $DateTime = DateTime -> new(year => $Year, month  => $Month,  day => $Day,
+                                hour => $Hour, minute => $Min, second => $Sec,
+                                time_zone => 'local');
+  }                           
+  
+  return $DateTime;
+}
+
+sub DateTimeString {
+  use DateTime;
+  
+  my ($ArgRef) = @_;
+
+  my $ShowSeconds = exists $ArgRef->{-ShowSeconds} ? $ArgRef->{-ShowSeconds} : $FALSE;
+  my $DateTime    = exists $ArgRef->{-DateTime} ? $ArgRef->{-DateTime} : DateTime->now();
+
+  my $String = $DateTime->day()." ".$DateTime->month_abbr;
+  
+  return $String;
+}
 
 1;
