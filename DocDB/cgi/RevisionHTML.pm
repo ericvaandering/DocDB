@@ -1,7 +1,7 @@
 #        Name: $RCSfile$
 # Description: 
 #    Revision: $Revision$
-#    Modified: $Author$ $Date$
+#    Modified: $Author$ on $Date$
 
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -416,7 +416,9 @@ sub PrintModTimes {
   $DocTime     = &EuroDateHM($Documents{$DocumentID}{Date});
   $RevTime     = &EuroDateHM($DocRevisions{$DocRevID}{DATE});
   $VersionTime = &EuroDateHM($DocRevisions{$DocRevID}{VersionDate});
-  $ActualTime  = DateTimeString(ConvertToDateTime($DocRevisions{$DocRevID}{TimeStamp}));
+  
+  my $ActualDateTime = ConvertToDateTime({-MySQLTimeStamp => $DocRevisions{$DocRevID}{TimeStamp}, })
+  my $ActualTime  = DateTimeString({ -DateTime => $ActualDateTime });
   
   print "<dt>Document Created:</dt>\n<dd>$DocTime</dd>\n";
   print "<dt>Contents Revised:</dt>\n<dd>$VersionTime</dd>\n";
