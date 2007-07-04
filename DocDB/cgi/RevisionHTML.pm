@@ -2,6 +2,9 @@
 # Description: 
 #    Revision: $Revision$
 #    Modified: $Author$ on $Date$
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#
 
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
