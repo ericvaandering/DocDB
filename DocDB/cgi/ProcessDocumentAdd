@@ -125,7 +125,6 @@ my $NeedURLs      = 0;
 my $AddNewFile    = 0;
 my $NumberOfFiles = 0;
 for (my $i = 1; $i<= $MaxFiles; ++$i) {
-  print STDERR "Deal with file $i.\n";
   my $Key = $i; # Probably something better later
   if ($params{"upload$i"}) {
     $AddNewFile = 1;
