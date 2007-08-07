@@ -56,10 +56,9 @@ if ($MailInstalled) {
   require "MailNotification.pm";
 }
 
-print STDERR "ERR We are in the program.\n";
-
-$query = new CGI || die "Could not create CGI";  # Global for subroutines
-print STDERR "Did New CGI\n";
+#print STDERR "Doing new CGI.\n";
+$query = new CGI;  # Global for subroutines
+#print STDERR "Did new CGI.\n";
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
 GetTopics();
@@ -68,7 +67,6 @@ GetSecurityGroups();
 
 ### Set up, give user initial information
 
-print STDERR "Query params.\n";
 %params = $query -> Vars;
 $mode = $params{mode}; #FIXME: Remove
 $Mode = $params{mode};
@@ -117,7 +115,6 @@ my @EventIDs          = $query -> param('events');
 my @RequestedTopicIDs = $query -> param('topics');
 
 if ($Archive eq "multi") {$Archive = "single";} # No real difference
-print STDERR "Parsed params.\n";
 
 # Fill in file hash
 
@@ -130,7 +127,6 @@ for (my $i = 1; $i<= $MaxFiles; ++$i) {
   if ($params{"upload$i"}) {
     $AddNewFile = 1;
     ++$NumberOfFiles;
-    print STDERR "Time to process a file.\n";
     $Files{$Key}{File} = $query ->  param("upload$i");
   } elsif ($params{"url$i"}) {
     $NeedURLs = 1;
