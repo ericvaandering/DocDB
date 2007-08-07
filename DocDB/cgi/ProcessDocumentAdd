@@ -57,7 +57,6 @@ if ($MailInstalled) {
 }
 
 print STDERR "ERR We are in the program.\n";
-print STDOUT "OUT We are in the program.\n";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
@@ -68,6 +67,7 @@ GetSecurityGroups();
 
 ### Set up, give user initial information
 
+print STDERR "Query params.\n";
 %params = $query -> Vars;
 $mode = $params{mode}; #FIXME: Remove
 $Mode = $params{mode};
@@ -116,6 +116,7 @@ my @EventIDs          = $query -> param('events');
 my @RequestedTopicIDs = $query -> param('topics');
 
 if ($Archive eq "multi") {$Archive = "single";} # No real difference
+print STDERR "Parsed params.\n";
 
 # Fill in file hash
 
@@ -124,6 +125,7 @@ my $NeedURLs      = 0;
 my $AddNewFile    = 0;
 my $NumberOfFiles = 0;
 for (my $i = 1; $i<= $MaxFiles; ++$i) {
+  print STDERR "Deal with file $i.\n";
   my $Key = $i; # Probably something better later
   if ($params{"upload$i"}) {
     $AddNewFile = 1;
