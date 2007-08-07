@@ -59,6 +59,7 @@ if ($MailInstalled) {
 print STDERR "ERR We are in the program.\n";
 
 $query = new CGI;  # Global for subroutines
+print STDERR "Did New CGI\n";
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
 GetTopics();
