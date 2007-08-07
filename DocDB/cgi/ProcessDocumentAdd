@@ -1,14 +1,19 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+#        Name: $RCSfile$
+# Description: Receives the output of DocumentAddForm and creates or updates the document
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified:
 
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -51,12 +56,15 @@ if ($MailInstalled) {
   require "MailNotification.pm";
 }
 
+print STDERR "ERR We are in the program.\n";
+print STDOUT "OUT We are in the program.\n";
+
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
-GetTopics(); 
+GetTopics();
 GetJournals();
-GetSecurityGroups(); 
+GetSecurityGroups();
 
 ### Set up, give user initial information
 
@@ -66,11 +74,11 @@ $Mode = $params{mode};
 
 print $query -> header( -charset => $HTTP_ENCODING );
 if ($Mode eq "reserve") {
-  &DocDBHeader("$Project Document Reservation Results","Document Reservation Results",-scripts => ["PopUps"]); 
+  &DocDBHeader("$Project Document Reservation Results","Document Reservation Results",-scripts => ["PopUps"]);
 } elsif ($Mode eq "add") {
-  &DocDBHeader("$Project Document Addition Results","Document Addition Results",-scripts => ["PopUps"]); 
+  &DocDBHeader("$Project Document Addition Results","Document Addition Results",-scripts => ["PopUps"]);
 } elsif ($Mode eq "update" || $mode eq "updatedb") {
-  &DocDBHeader("$Project Document Modification Results","Document Modification Results",-scripts => ["PopUps"]); 
+  &DocDBHeader("$Project Document Modification Results","Document Modification Results",-scripts => ["PopUps"]);
 }
 
 ### Pull info out of params into local variables
@@ -92,7 +100,7 @@ my $AuthorMode    = $params{authormode};
    @JournalIDs    = split /\0/,$params{journal};
    @Volumes       = split /\0/,$params{volume};
    @Pages         = split /\0/,$params{page};
-   $Keywords      = $params{keywords}; 
+   $Keywords      = $params{keywords};
    $Requester     = $params{requester}; #FIXME: Replace with RequesterID
 my $RequesterID   = $params{requester};
 my $SessionTalkID = $params{sessiontalkid};
@@ -137,12 +145,12 @@ for (my $i = 1; $i<= $MaxFiles; ++$i) {
     $Files{$Key}{FileID} = $params{"fileid$i"};
     push @DebugStack,"Duplicating in slot $i, $Files{$Key}{FileID}";
   }
-  
+
   if ($params{"main$i"}) {
     $Files{$Key}{Main} = 1;
   } else {
     $Files{$Key}{Main} = 0;
-  }          
+  }
 
   $Files{$Key}{Description} = $params{"filedesc$i"};
 }
@@ -163,33 +171,33 @@ if ($AuthorMode eq "field") {
   $OrderAuthors = $TRUE;
   @authorIDs = ProcessManualAuthors($params{authormanual});
 } else {
-  @authorIDs = split /\0/,$params{authors}; 
+  @authorIDs = split /\0/,$params{authors};
 }
 
 if ($Overdate && $Overyear && $Overmonth && $Overday) {
   $SQL_NOW = "$Overyear-$ReverseAbrvMonth{$Overmonth}-$Overday $Overhour:$Overmin:00";
 } else {
-  my ($sec,$min,$hour,$day,$mon,$year) = localtime(time); 
+  my ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
   $year += 1900;
   ++$mon;
   $SQL_NOW = "$year-$mon-$day $hour:$min:$sec";
-}  
+}
 
-if ($mode ne "add"    && $mode ne "reserve" && 
+if ($mode ne "add"    && $mode ne "reserve" &&
     $mode ne "update" && $mode ne "updatedb") {
   push @ErrorStack,"You accessed this page without  specifying a required
         parameter.  Don't manipulate hidden fields or  try to access this page
         directly. Mode is $mode.";
-}  
-EndPage(); 
+}
+EndPage();
 
 if      ($mode eq "add") {
   print "<p><h3>Here are the results of your attempt to add a document
                 into the $Project document database:</h3><p>\n";
-} elsif ($mode eq "reserve") {              
+} elsif ($mode eq "reserve") {
   print "<p><h3>Here are the results of your attempt to reserve a document
                 number in the $Project document database:</h3><p>\n";
-} elsif ($mode eq "update" || $mode eq "updatedb") {              
+} elsif ($mode eq "update" || $mode eq "updatedb") {
   print "<p><h3>Here are the results of your attempt to update a document
                 in the $Project document database:</h3><p>\n";
 }
@@ -219,8 +227,8 @@ if (@JournalIDs || @Volumes || @Pages) {
       both.";
     }
   }
-}    
-    
+}
+
 unless ($DocTypeID) {
   push @ErrorStack,"You must supply a document type for this document.";
 }
@@ -240,11 +248,11 @@ if ($Mode eq "add" || $Mode eq "update") {
   if     (!$params{mainfile} && $Archive eq "archive") {
     push @ErrorStack,"You must specify a main file in the archive.";
   }
-  
+
   if ($NeedURLs) {
     my $TmpDir = &MakeTmpSubDir();
     %Files = &DownloadURLs(-tmpdir => $TmpDir, -files => \%Files);
-  }  
+  }
 }
 
 if ($Mode eq "update" && !$LessFiles) {
@@ -310,16 +318,16 @@ if ($#securities > 0) {
       push @ErrorStack,"You selected \"Public\" and another form of security. ".
                     "You may only select \"Public\" by itself.";
     }
-  }  
+  }
 }
 
 my $ViewCheck = "create"; # Create/view are the same, check for more restrictive
 if ($EnhancedSecurity) {
   $ViewCheck = "view";
   unless (@ModifyGroups) {
-    push @ErrorStack,"You must select at least one group which is allowed to 
+    push @ErrorStack,"You must select at least one group which is allowed to
                       modify the document.";
-  }                    
+  }
 }
 
 foreach my $GroupID (@securities) {
@@ -329,7 +337,7 @@ foreach my $GroupID (@securities) {
          " is not currently allowed to view documents. If this changes,".
          " this document will be viewable by that group.";
   }
-}         
+}
 
 foreach my $GroupID (@ModifyGroups) {
   unless ($GroupID) {next;} # Don't check for public
@@ -340,7 +348,7 @@ foreach my $GroupID (@ModifyGroups) {
   }
 }
 
-my $UniqueSelect = $dbh -> prepare("select DocumentID from Document where DocHash=?"); 
+my $UniqueSelect = $dbh -> prepare("select DocumentID from Document where DocHash=?");
 $UniqueSelect -> execute($UniqueID);
 my ($ExistingDocID) = $UniqueSelect -> fetchrow_array;
 if ($ExistingDocID) {
@@ -350,7 +358,7 @@ if ($ExistingDocID) {
         were really trying to enter two similar documents hitting the \"Back\"
         button and  then \"Reload\" and \"Submit\" may save the parameters you
         entered but create a new unique key for DocDB.";
-}  
+}
 
 EndPage();
 
@@ -362,7 +370,7 @@ if ($mode eq "reserve" || $mode eq "add") {
   $documentID = &InsertDocument(-requesterid => $RequesterID, -datetime => $SQL_NOW, -dochash => $UniqueID);
 } else {
   $documentID = $params{docid};
-}  
+}
 
 ### Set version number. For reservations, it is "0", for new documents "1". For
 ### updates, increment by one, and for DB info updates, either the latest
@@ -380,7 +388,7 @@ if      ($mode eq "reserve") {
   &FetchDocument($documentID);
   if  (defined $params{version}) {
     $version = $params{version};
-  } else { 
+  } else {
     $version = $Documents{$documentID}{NVersions};
   }
   if ($version != $Documents{$documentID}{NVersions}) {
@@ -389,17 +397,17 @@ if      ($mode eq "reserve") {
   }
 }
 
-if ($mode eq "updatedb") { # New Document revision replaces old. Fetch 
+if ($mode eq "updatedb") { # New Document revision replaces old. Fetch
                            # old DocumentRevision and mark it obsolete
   my $OldRevID = &FetchRevisionByDocumentAndVersion($documentID,$version);
   my $ObsoleteRevision = $dbh -> prepare("update DocumentRevision set Obsolete=1 where DocRevID=?");
-  $ObsoleteRevision -> execute($OldRevID); 
-}  
+  $ObsoleteRevision -> execute($OldRevID);
+}
 
 ### Add entry to Document Revision
 
 my $DocRevID = &InsertRevision(
-                 -docid       => $documentID,  -doctypeid => $DocTypeID, 
+                 -docid       => $documentID,  -doctypeid => $DocTypeID,
                  -submitterid => $RequesterID, -title     => $Title,
                  -pubinfo     => $PubInfo,     -abstract  => $Abstract,
                  -version     => $version,     -datetime  => $SQL_NOW,
@@ -410,17 +418,17 @@ my $DocRevID = &InsertRevision(
 if (@JournalIDs || @Volumes || @Pages) {
   my $ReferenceInsert  = $dbh -> prepare(
     "insert into RevisionReference (ReferenceID,DocRevID,JournalID,Volume,Page) ".
-    "values (0,?,?,?,?)"); 
+    "values (0,?,?,?,?)");
   foreach my $JournalID (@JournalIDs) {
     my $Volume = shift @Volumes;
     my $Page   = shift @Pages;
     if ($JournalID) { # Can delete references too.
       $ReferenceInsert -> execute($DocRevID,$JournalID,$Volume,$Page);
-    }  
+    }
   }
-}    
+}
 
-### Add Cross-References 
+### Add Cross-References
 
 if (@XRefs) {
   require "XRefSQL.pm";
@@ -428,11 +436,11 @@ if (@XRefs) {
 }
 
 ### Add to authors, topics and securities
-                           
+
 my $Count;
 $Count = InsertAuthors( -docrevid  => $DocRevID, -authorids => \@authorIDs, -order => $OrderAuthors);
 $Count = InsertTopics(  -docrevid  => $DocRevID, -topicids  => \@TopicIDs);
-$Count = InsertSecurity(-docrevid  => $DocRevID, 
+$Count = InsertSecurity(-docrevid  => $DocRevID,
                         -viewids   => \@securities,
                         -modifyids => \@ModifyGroups);
 
@@ -441,12 +449,12 @@ if (@EventIDs) {
   require "MeetingSQL.pm";
   $Count = &InsertRevisionEvents(-docrevid => $DocRevID, -eventids => \@EventIDs);
 }
-### Add link to SessionTalk                         
+### Add link to SessionTalk
 
-if ($SessionTalkID) { 
+if ($SessionTalkID) {
   my $SessionTalkUpdate = $dbh -> prepare("update SessionTalk set DocumentID=?,Confirmed=1 where SessionTalkID=?");
   $SessionTalkUpdate -> execute($documentID,$SessionTalkID);
-}  
+}
 
 ### Add Signoffs
 
@@ -455,17 +463,17 @@ if ($UseSignoffs && $SignoffList) {
   @SignoffIDs = &ProcessSignoffList($SignoffList);
   if (@SignoffIDs) {
     &InsertSignoffList($DocRevID,@SignoffIDs);
-  }  
-}  
+  }
+}
 
 ### Deal with files
 
 my @FileIDs;
 
 if ($mode eq "updatedb") { # Copy DocumentFile entries
-  &ProtectDirectory($documentID,$version,@securities); # Redo security 
+  &ProtectDirectory($documentID,$version,@securities); # Redo security
   @FileIDs = &AddFiles(-docrevid => $DocRevID, -files => \%Files, -oldversion => $OldVersion);
-}  
+}
 
 if ($mode eq "add" || $mode eq "update") { # We're adding new files
   my $NewDir = &MakeDirectory($documentID,$version);
@@ -474,13 +482,13 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
     @FileIDs = &AddFiles(-docrevid => $DocRevID, -files => \%Files, -oldversion => $OldVersion);
   } elsif ($Archive eq "archive") { # They uploaded a tar/zip file
     @FileIDs = &AddArchive(-docrevid => $DocRevID, -archive => \%Archive);
-  } 
-} 
+  }
+}
 
 ### If we had any warnings print them out now
 
 WarnPage();
-  
+
 if ($mode = "updatedb") { # Local DB not in sync, clear it
   %DocRevIDs    = ();
   %DocRevisions = ();
@@ -501,7 +509,7 @@ unless ($DocRevID) {
 
 print "You were successful. Your Document ID is <b>$full_docid, version
        $version</b>.<br>
-       Your entry was created with the following information: <p><hr><p>\n"; 
+       Your entry was created with the following information: <p><hr><p>\n";
 
 PrintRevisionInfo($DocRevID);
 
@@ -512,9 +520,9 @@ if ($MailInstalled) {
 }
 
 if ($UseSignoffs) {
-  ClearSignatures(); 
+  ClearSignatures();
   NotifySignees($DocRevID);
-}   
+}
 
 $EndTime  = new Benchmark;
 
