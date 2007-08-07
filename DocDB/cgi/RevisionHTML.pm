@@ -1,3 +1,11 @@
+#        Name: $RCSfile$
+# Description: 
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#
+
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
@@ -404,15 +412,23 @@ sub PrintPubInfo ($) {
 }
 
 sub PrintModTimes {
+  require "SQLUtilities.pm";
+
   my ($DocRevID) = @_;
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
   $DocTime     = &EuroDateHM($Documents{$DocumentID}{Date});
   $RevTime     = &EuroDateHM($DocRevisions{$DocRevID}{DATE});
   $VersionTime = &EuroDateHM($DocRevisions{$DocRevID}{VersionDate});
-
+  
+  my $ActualDateTime = ConvertToDateTime({-MySQLTimeStamp => $DocRevisions{$DocRevID}{TimeStamp}, });
+  my $ActualTime  = DateTimeString({ -DateTime => $ActualDateTime });
+  
   print "<dt>Document Created:</dt>\n<dd>$DocTime</dd>\n";
   print "<dt>Contents Revised:</dt>\n<dd>$VersionTime</dd>\n";
   print "<dt>DB Info Revised:</dt>\n<dd>$RevTime</dd>\n";
+  if ($ActualTime ne $RevTime) {
+    print "<dt>Actually Revised:</dt>\n<dd>$ActualTime</dd>\n";
+  }
 }
 
 sub OtherVersionLinks {

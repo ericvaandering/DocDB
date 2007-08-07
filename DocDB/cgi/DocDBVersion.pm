@@ -1,3 +1,8 @@
+#        Name: $RCSfile$
+# Description: Holds the version number string for DocDB
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
@@ -15,6 +20,6 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-$DocDBVersion = "8.5.5";
+$DocDBVersion = "8.5.6";
 
 1;
