@@ -129,6 +129,7 @@ for (my $i = 1; $i<= $MaxFiles; ++$i) {
   if ($params{"upload$i"}) {
     $AddNewFile = 1;
     ++$NumberOfFiles;
+    print STDERR "Time to process a file.\n";
     $Files{$Key}{File} = $query ->  param("upload$i");
   } elsif ($params{"url$i"}) {
     $NeedURLs = 1;
