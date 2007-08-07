@@ -1,3 +1,11 @@
+8.5.6
+
+  Add "Actually Modified" to document summary, wrote some new date routines.
+
+8.5.5
+
+  Allow LimitGroups to remove ALL groups from user's list
+
 8.5.4
 
   Make URLs show up as links in more places in displaying meetings
