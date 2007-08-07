@@ -56,9 +56,13 @@ if ($MailInstalled) {
   require "MailNotification.pm";
 }
 
-#print STDERR "Doing new CGI.\n";
+print STDERR "Doing new CGI.\n";
 $query = new CGI;  # Global for subroutines
-#print STDERR "Did new CGI.\n";
+my $CGIError = $query->cgi_error;
+    if ($CGIError) {
+      print STDERR "CGI Error.\n";
+    }
+print STDERR "Did new CGI.\n";
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
 GetTopics();
