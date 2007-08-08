@@ -56,13 +56,12 @@ if ($MailInstalled) {
   require "MailNotification.pm";
 }
 
-print STDERR "Doing new CGI.\n";
+#print STDERR "Doing new CGI.\n";
 $query = new CGI;  # Global for subroutines
-my $CGIError = $query->cgi_error;
-    if ($CGIError) {
-      print STDERR "CGI Error.\n";
-    }
-print STDERR "Did new CGI.\n";
+# This line can crash and I'm not sure I can do anything about it. One way to force it to happen is to supply a
+# directory name instead of a file. The error is "CGI.pm: Server closed socket during multipart read (client aborted?)."
+# It's possible that perl 5.6.1 and CGI.pm from there fixes this.
+#print STDERR "Did new CGI.\n";
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
 GetTopics();

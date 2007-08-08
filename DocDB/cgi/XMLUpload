@@ -247,6 +247,9 @@ if ($XMLText && !@ErrorStack) {
     %Files = DownloadURLs(-tmpdir => $TmpDir, -files => \%Files);
     push @DebugStack,"Downloaded files";
   }
+
+  push @DebugStack,"DocID: $DocID, Mode: $Mode";
+
   unless (@ErrorStack) {
     ($NewDocumentID,$NewDocRevID) = AddDocument({
         -docid       => $DocID,        -version     => $Mode,
