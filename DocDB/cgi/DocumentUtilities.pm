@@ -1,9 +1,12 @@
 #
+#        Name: $RCSfile$
 # Description: Routines to deal with documents
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
-#
 
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -45,14 +48,14 @@ sub AddDocument {
   }
 
   my $DocumentID    =  exists $ArgRef->{-docid} ? $ArgRef->{-docid}       :  0 ;  # The number the database will use for the document id. If not specified, the database will automaticaly generate a new document number.
-  # The version number of the document.  
-  # If undefined or "bump", the database will automaticaly increment the version number. 
-  # If set to "latest", the last existing version will be updated (Update DB Info). 
+  # The version number of the document.
+  # If undefined or "bump", the database will automaticaly increment the version number.
+  # If set to "latest", the last existing version will be updated (Update DB Info).
   # If a version number is given, that version will be updated.
-  my $Version       = exists $ArgRef->{-version}       ? $ArgRef->{-version}       : "bump"; 
-  my $Title         = exists $ArgRef->{-title}         ? $ArgRef->{-title}         : ""; 
-  my $Abstract      = exists $ArgRef->{-abstract}      ? $ArgRef->{-abstract}      : ""; 
-  my $Keywords      = exists $ArgRef->{-keywords}      ? $ArgRef->{-keywords}      : ""; 
+  my $Version       = exists $ArgRef->{-version}       ? $ArgRef->{-version}       : "bump";
+  my $Title         = exists $ArgRef->{-title}         ? $ArgRef->{-title}         : "";
+  my $Abstract      = exists $ArgRef->{-abstract}      ? $ArgRef->{-abstract}      : "";
+  my $Keywords      = exists $ArgRef->{-keywords}      ? $ArgRef->{-keywords}      : "";
   my $TypeID        = exists $ArgRef->{-typeid}        ? $ArgRef->{-typeid}        : 0 ; # Internal ID number
   my $RequesterID   = exists $ArgRef->{-requesterid}   ? $ArgRef->{-requesterid}   : 0 ; # Internal ID number
   my $Note          = exists $ArgRef->{-note}          ? $ArgRef->{-note}          : "";
@@ -67,14 +70,15 @@ sub AddDocument {
   my @ViewIDs    = exists $ArgRef->{-viewids}    ? @{$ArgRef->{-viewids}   } : (); # Internal ID numbers
   my @ModifyIDs  = exists $ArgRef->{-modifyids}  ? @{$ArgRef->{-modifyids} } : (); # Internal ID numbers
   my @SignOffIDs = exists $ArgRef->{-signoffids} ? @{$ArgRef->{-signoffids}} : (); # For simple signoff list, may be deprecated
-  
+
   my %Files      = exists $ArgRef->{-files}      ? %{$ArgRef->{-files}     } : (); # File hash. See FileUtilities.pm
   my %References = exists $ArgRef->{-references} ? %{$ArgRef->{-references}} : (); # Not used yet
   my %Signoffs   = exists $ArgRef->{-signoffs}   ? %{$ArgRef->{-signoffs}  } : (); # Not used yet
 
   if ($Version eq "same") {
     $Version = "latest"; # FIXME: Is this needed? Shouldn't be.
-  }  
+  }
+  push @DebugStack,"AddDocument: DocID=$DocumentID, Version=$Version";
   my ($DocRevID,$Count,@FileIDs);
 
   my $ExistingDocumentID = FetchDocument($DocumentID);
@@ -110,11 +114,11 @@ sub AddDocument {
       ProtectDirectory($DocumentID,$NewVersion,@ViewIDs);
       @FileIDs = AddFiles(-docrevid => $DocRevID, -datetime => $DateTime, -files => \%Files);
     } elsif ($Version eq "latest" || int($Version) > 0) {
-      @FileIDs = AddFiles(-docrevid => $DocRevID,   -datetime => $DateTime, 
+      @FileIDs = AddFiles(-docrevid => $DocRevID,   -datetime => $DateTime,
                           -files    => \%Files,   -oldversion => $NewVersion);
-    } 
-    
-      
+    }
+
+
     if (@SignOffIDs) {
       InsertSignoffList($DocRevID,@SignOffIDs);
     }
