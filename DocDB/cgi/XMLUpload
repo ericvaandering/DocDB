@@ -93,9 +93,12 @@ if ($XMLText && !@ErrorStack) {
   push @DebugStack,"Mode is $Mode";
   my $NeedURLs = $TRUE; # Default, now can reset
   my $OldMode = $Mode;
+  my $CheckSecurity = $TRUE;
+
   if ($Mode eq "new") {
     $Mode = "bump";
     $DocID = 0;
+    $CheckSecurity = $FALSE;
   } elsif ($Mode eq "updatedb") {
     $NeedURLs = $FALSE;
     push @DebugStack,"Update DB mode";
@@ -107,7 +110,8 @@ if ($XMLText && !@ErrorStack) {
     push @DebugStack,"Mode is $Mode";
   }
 
-  if ($Mode eq "updatedb" || ($Mode eq "bump" && $DocID)) {
+  push @DebugStack,"Checking permissions: $CheckSecurity";
+  if ($CheckSecurity) {
     unless (CanModify($DocID)) {
       push @ErrorStack,"You are not authorized to modify this document.";
     }

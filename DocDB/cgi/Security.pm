@@ -1,6 +1,10 @@
 #
+#        Name: $RCSfile$
 # Description: Routines to determine various levels of access to documents
 #              and the database based on usernames, doc numbers, etc.
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
@@ -99,6 +103,7 @@ sub CanAccess ($;$$) { # Can the user access (with current security) this versio
 
 sub CanModify { # Can the user modify (with current security) this document
   require "DocumentSQL.pm";
+  require "RevisionSQL.pm";
   require "SecuritySQL.pm";
 
   GetSecurityGroups();
