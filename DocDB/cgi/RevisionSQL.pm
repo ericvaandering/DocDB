@@ -1,10 +1,19 @@
+#
+#        Name: $RCSfile$
+# Description: Database routines to deal with document revisions
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified:
 
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -41,7 +50,7 @@ sub FetchDocRevisionByID ($) {
       $Keywords,$Note,$Demanaged,$DocTypeID) = $RevisionList -> fetchrow_array;
 
   #FIXME Make keys mixed-caps
-  
+
   $DocRevIDs{$DocumentID}{$VersionNumber} = $DocRevID;
   $DocRevisions{$DocRevID}{Submitter}     = $SubmitterID;
   $DocRevisions{$DocRevID}{Title}         = $DocumentTitle;
@@ -67,16 +76,16 @@ sub FetchDocRevisionByID ($) {
     "from DocumentRevision ".
     "where DocumentID=? and VersionNumber=? order by DocRevID");
   $EarliestVersionQuery -> execute($DocumentID,$VersionNumber);
-  
-### Pull off first one  
-  
+
+### Pull off first one
+
   my (undef,$VersionDate) = $EarliestVersionQuery -> fetchrow_array;
   $DocRevisions{$DocRevID}{VersionDate}   = $VersionDate;
 
   return $DocRevID;
 }
 
-sub FetchRevisionByDocumentAndVersion ($$) { 
+sub FetchRevisionByDocumentAndVersion ($$) {
   require "DocumentSQL.pm";
 
   my ($DocumentID,$VersionNumber) = @_;
@@ -96,7 +105,7 @@ sub FetchRevisionByDocumentAndVersion ($$) {
   return $DocRevID;
 }
 
-sub FetchRevisionByDocumentAndDate ($$) { 
+sub FetchRevisionByDocumentAndDate ($$) {
   require "DocumentSQL.pm";
 
   my ($DocumentID,$Date) = @_;
@@ -121,10 +130,10 @@ sub FetchRevisionsByDocument {
   &FetchDocument($DocumentID);
   my $revision_list = $dbh->prepare(
     "select DocRevID from DocumentRevision where DocumentID=? and Obsolete=0");
-  
+
   my ($DocRevID);
   $revision_list -> execute($DocumentID);
-  
+
   $revision_list -> bind_columns(undef, \($DocRevID));
 
   my @DocRevList = ();
@@ -132,7 +141,7 @@ sub FetchRevisionsByDocument {
     &FetchDocRevisionByID($DocRevID);
     unless ($DocRevisions{$DocRevID}{Obsolete}) {
       push @DocRevList,$DocRevID;
-    }  
+    }
   }
   return @DocRevList;
 }
@@ -164,38 +173,38 @@ sub GetAllRevisions { # FIXME: Implement full mode, flag with got all revisions
 
 sub FetchRevisionsByEventID {
   my ($EventID) = @_;
-  
+
   my $DocRevID;
   my @DocRevIDs = ();
-  
-  my $RevisionList = $dbh -> prepare("select DocRevID from RevisionEvent where ConferenceID=?"); 
- 
+
+  my $RevisionList = $dbh -> prepare("select DocRevID from RevisionEvent where ConferenceID=?");
+
   $RevisionList -> execute($EventID);
   $RevisionList -> bind_columns(undef, \($DocRevID));
 
   while ($RevisionList -> fetch) {
     &FetchDocRevisionByID($DocRevID);
     if ($DocRevisions{$DocRevID}{Obsolete}) {next;}
-    push @DocRevIDs,$DocRevID; 
+    push @DocRevIDs,$DocRevID;
   }
   return @DocRevIDs;
 }
 
 sub UpdateRevision (%) { # Later add other fields, where clause
   require "SQLUtilities.pm";
-  
+
   my %Params = @_;
-  
+
   my $DocRevID = $Params{-docrevid};
   my $DateTime = $Params{-datetime} || &SQLNow();
-  
-   
+
+
   my $Update = $dbh -> prepare("update DocumentRevision set RevisionDate=? where DocRevID=?");
   $Update -> execute ($DateTime,$DocRevID);
-}  
-  
+}
+
 sub InsertRevision {
-  
+
   my %Params = @_;
 
   my $DocumentID    = $Params{-docid}         || "";
@@ -214,46 +223,45 @@ sub InsertRevision {
     $Year += 1900;
     ++$Mon;
     $DateTime = "$Year-$Mon-$Day $Hour:$Min:$Sec";
-  } 
-  
+  }
+
   my $MakeObsolete = $FALSE;
-  
-  if ($Version eq "latest" || int($Version)) {
+  if ($Version ne "bump" && $Version ne "reserve") {
     $MakeObsolete = $TRUE;
   }
-  
+
   $NewVersion = $Version;
-  
-  if ($Version eq "bump" || $Version eq "latest" || $Version eq "reserve") {
+
+  if ($Version eq "bump" || $Version eq "latest") {
     my $Found = FetchDocument($DocumentID);
     $NewVersion = int($Documents{$DocumentID}{NVersions});
     if ($Version eq "bump") {
       ++$NewVersion;
-    } elsif ($Version eq "reserve") {
-      $NewVersion = 0;
-    }  
+    }
+  } elsif ($Version eq "reserve") {
+    $NewVersion = 0;
   }
-  
+
   my $DocRevID = 0;
-  
+
   if ($DocumentID) {
     if ($MakeObsolete) {
       my $Update = $dbh -> prepare("update DocumentRevision set Obsolete=1 ".
                                    "where DocumentID=? and VersionNumber=?");
       $Update -> execute($DocumentID,$NewVersion);
-    }                    
-  
+    }
+
     my $Insert = $dbh -> prepare("insert into DocumentRevision ".
-       "(DocRevID, DocumentID, SubmitterID, DocumentTitle, PublicationInfo, ". 
-       " VersionNumber, Abstract, RevisionDate,Keywords,Note,DocTypeID) ". 
+       "(DocRevID, DocumentID, SubmitterID, DocumentTitle, PublicationInfo, ".
+       " VersionNumber, Abstract, RevisionDate,Keywords,Note,DocTypeID) ".
        "values (0,?,?,?,?,?,?,?,?,?,?)");
-    $Insert -> execute($DocumentID,$SubmitterID,$Title,$PubInfo,$NewVersion, 
+    $Insert -> execute($DocumentID,$SubmitterID,$Title,$PubInfo,$NewVersion,
                        $Abstract,$DateTime,$Keywords,$Note,$DocTypeID);
-                               
+
     $DocRevID = $Insert -> {mysql_insertid}; # Works with MySQL only
   }
-  
-  return $DocRevID;  
+
+  return $DocRevID;
 }
 
 1;

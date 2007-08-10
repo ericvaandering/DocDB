@@ -4,7 +4,6 @@
 # Description: Modify sessions of meeting the shell of a meeting. Calls itself
 #    Revision: $Revision$
 #    Modified: $Author$ on $Date$
-#        Name: MeetingModify
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 

@@ -1,13 +1,15 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+#        Name: $RCSfile$
+# Description: Allows the user to provide an XML file with all the data describing a document.
+#              The user can upload the XML file with a command like
 #
-
-# Allows one to provide an XML file with all the data describing a document. One can
-# upload the XML file with a command like
+#              curl -F outformat=xml -F XMLFile=@file.xml -u user:pass http://host.com/cgi-bin/DocDB/XMLUpload
 #
-#  curl -F outformat=xml -F XMLFile=@file.xml -u user:pass http://host.com/cgi-bin/DocDB/XMLUpload
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
+#      Author: Eric Vaandering (ewv@fnal.gov)
 
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -91,18 +93,28 @@ if ($XMLText && !@ErrorStack) {
   push @DebugStack,"Mode is $Mode";
   my $NeedURLs = $TRUE; # Default, now can reset
   my $OldMode = $Mode;
+  my $CheckSecurity = $TRUE;
+
   if ($Mode eq "new") {
     $Mode = "bump";
     $DocID = 0;
+    $CheckSecurity = $FALSE;
   } elsif ($Mode eq "updatedb") {
     $NeedURLs = $FALSE;
     push @DebugStack,"Update DB mode";
     if (defined $Revision -> {'att'} -> {'version'}) {
       $Mode = $Revision -> {'att'} -> {'version'};
     } else {
-      $Mode = "latest";  
+      $Mode = "latest";
     }
     push @DebugStack,"Mode is $Mode";
+  }
+
+  push @DebugStack,"Checking permissions: $CheckSecurity";
+  if ($CheckSecurity) {
+    unless (CanModify($DocID)) {
+      push @ErrorStack,"You are not authorized to modify this document.";
+    }
   }
 
   # Extract text information from XML
@@ -211,7 +223,7 @@ if ($XMLText && !@ErrorStack) {
     if ($ID && $OldMode eq "updatedb") {
       $Name = $ID;
       $Files{$Name}{CopyFileID} = $ID;
-    }  
+    }
     $Files{$Name}{NewFilename} = $Name;
     if ($File -> first_child("description")) {
       $Files{$Name}{Description} = $File -> first_child("description") -> text();
@@ -240,16 +252,20 @@ if ($XMLText && !@ErrorStack) {
     push @DebugStack,"Downloaded files";
   }
 
-  ($NewDocumentID,$NewDocRevID) = AddDocument({
-      -docid       => $DocID,        -version     => $Mode,
-      -title       => $Title,        -requesterid => $SubmitterID,
-      -abstract    => $Abstract,     -keywords    => $Keywords,
-      -pubinfo     => $PubInfo,      -note        => $Note,
-      -typeid      => $DocTypeID,    -datetime    => $DateTime,
-      -authorids   => \@AuthorIDs,   -topicids    => \@TopicIDs,
-      -eventids    => \@EventIDs,    -viewids     => \@ViewIDs,
-      -modifyids   => \@ModifyIDs,   -files       => \%Files,
-     });
+  push @DebugStack,"DocID: $DocID, Mode: $Mode";
+
+  unless (@ErrorStack) {
+    ($NewDocumentID,$NewDocRevID) = AddDocument({
+        -docid       => $DocID,        -version     => $Mode,
+        -title       => $Title,        -requesterid => $SubmitterID,
+        -abstract    => $Abstract,     -keywords    => $Keywords,
+        -pubinfo     => $PubInfo,      -note        => $Note,
+        -typeid      => $DocTypeID,    -datetime    => $DateTime,
+        -authorids   => \@AuthorIDs,   -topicids    => \@TopicIDs,
+        -eventids    => \@EventIDs,    -viewids     => \@ViewIDs,
+        -modifyids   => \@ModifyIDs,   -files       => \%Files,
+      });
+  }
 }
 
 if ($OutFormat eq 'XML') {
@@ -274,7 +290,7 @@ if ($OutFormat eq 'XML') {
   $ReportXML -> paste(last_child => $DocDBXML);
   print GetXMLOutput();
 } else {
-  EndPage(-startpage => $TRUE); 
+  EndPage(-startpage => $TRUE);
   my %Labels = {'xml'=>'XML', 'html' => 'HTML (This page)'};
 
   print $query -> header( -charset => $HTTP_ENCODING );
@@ -300,7 +316,7 @@ if ($OutFormat eq 'XML') {
            Your entry was created with the following information: </p>\n";
     PrintRevisionInfo($NewDocRevID);
   }
-  EndPage(); 
+  EndPage();
   DocDBNavBar();
   DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 }

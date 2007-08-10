@@ -1,17 +1,18 @@
 #
-#        Name: TopicSQL.pm
-# Description: Routines to do DB accesses related to topics 
+#        Name: $RCSfile$
+# Description: Routines to do DB accesses related to topics
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
-#
+#    Modified:
 
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -56,9 +57,9 @@ sub GetTopics {
 sub GetRevisionTopics {
   my ($ArgRef) = @_;
   my $DocRevID = exists $ArgRef->{-docrevid} ? $ArgRef->{-docrevid} : 0;
-  
+
   require "Utilities.pm";
-  
+
   my @TopicIDs = ();
   my ($RevTopicID,$TopicID);
   my $List = $dbh->prepare(
@@ -68,7 +69,7 @@ sub GetRevisionTopics {
   while ($List -> fetch) {
     if (FetchTopic( {-topicid => $TopicID} )) {
       push @TopicIDs,$TopicID;
-    }  
+    }
   }
   @TopicIDs = Unique(@TopicIDs);
   return @TopicIDs;
@@ -93,7 +94,7 @@ sub FetchTopic { # Fetches an Topic by ID, adds to $Topics{$TopicID}{}
   if ($GotAllTopics) { # We already have them all, but not this one
     return undef;
   }
-  
+
   my $Fetch   = $dbh -> prepare(
     "select ShortDescription,LongDescription ".
     "from Topic where TopicID=?");
@@ -106,7 +107,7 @@ sub FetchTopic { # Fetches an Topic by ID, adds to $Topics{$TopicID}{}
     return $TopicID;
   } else {
     return undef;
-  }  
+  }
 }
 
 sub FetchTopicParents { # Returns parent IDs of topics
@@ -123,19 +124,25 @@ sub FetchTopicParents { # Returns parent IDs of topics
     $TopicParents{$TopicID} = \@ParentIDs;
   }
   return @{$TopicParents{$TopicID}};
-}  
+}
 
 sub GetTopicDocuments {
   my ($TopicID) = @_;
-  
+
   require "RevisionSQL.pm";
 
   my $DocumentID;
   my $DocRevID;
   my %DocumentIDs;
-  #FIXME: Use the relational DB!
-  my $RevisionList = $dbh -> prepare("select DocRevID from RevisionTopic where TopicID=?"); 
-  my $DocumentList = $dbh -> prepare("select DocumentID from DocumentRevision where DocRevID=? and Obsolete=0"); 
+
+# FIXME: Use the relational DB!
+#  This routine has a bug in that it still returns DocumentIDs (or something, like the keys of a hash with
+#  null keys) in the case where topics are associated with obsolete revisions of documents. Fixing this would expose a bug
+#  in DeleteTopic and would allow the user to delete topics that just had historical information, but no current associations
+#  so that routine would also have to be changed to do a search on RevisionTopic directly.
+
+  my $RevisionList = $dbh -> prepare("select DocRevID from RevisionTopic where TopicID=?");
+  my $DocumentList = $dbh -> prepare("select DocumentID from DocumentRevision where DocRevID=? and Obsolete=0");
   $RevisionList -> execute($TopicID);
   $RevisionList -> bind_columns(undef, \($DocRevID));
 
@@ -161,7 +168,7 @@ sub MatchTopic ($) {
   if ($Short) {
     $Short =~ tr/[A-Z]/[a-z]/;
     $Short = "%".$Short."%";
-    my $List = $dbh -> prepare("select TopicID from Topic where LOWER(ShortDescription) like ?"); 
+    my $List = $dbh -> prepare("select TopicID from Topic where LOWER(ShortDescription) like ?");
     $List -> execute($Short);
     $List -> bind_columns(undef, \($TopicID));
     while ($List -> fetch) {
@@ -170,14 +177,14 @@ sub MatchTopic ($) {
   } elsif ($Long) {
     $Long =~ tr/[A-Z]/[a-z]/;
     $Long = "%".$Long."%";
-    my $List = $dbh -> prepare("select TopicID from Topic where LOWER(LongDescription) like ?"); 
+    my $List = $dbh -> prepare("select TopicID from Topic where LOWER(LongDescription) like ?");
     $List -> execute($Long);
     $List -> bind_columns(undef, \($TopicID));
     while ($List -> fetch) {
       push @TopicIDs,$TopicID;
     }
   }
-  
+
   if ($ParentID) {
     GetTopics();
     my @CandidateIDs = @TopicIDs;
@@ -187,10 +194,10 @@ sub MatchTopic ($) {
         if ($ParentID == $ID) {
           push @TopicIDs,$TopicID;
         }
-      }    
+      }
     }
-  }  
-  
+  }
+
   if ($AncestorID) {
     GetTopics();
     my @CandidateIDs = @TopicIDs;
@@ -200,29 +207,29 @@ sub MatchTopic ($) {
         if ($AncestorID == $ID) {
           push @TopicIDs,$TopicID;
         }
-      }    
+      }
     }
-  }  
+  }
 
   return @TopicIDs;
 }
 
 sub InsertTopics (%) {
   my %Params = @_;
-  
-  my $DocRevID =   $Params{-docrevid} || "";   
+
+  my $DocRevID =   $Params{-docrevid} || "";
   my @TopicIDs = @{$Params{-topicids}};
 
   my $Count = 0;
 
   my $Insert = $dbh -> prepare("insert into RevisionTopic (RevTopicID, DocRevID, TopicID) values (0,?,?)");
-                                 
+
   foreach my $TopicID (@TopicIDs) {
     if ($TopicID) {
       $Insert -> execute($DocRevID,$TopicID);
       ++$Count;
     }
-  }  
+  }
   return $Count;
 }
 
@@ -230,7 +237,7 @@ sub DeleteTopic ($) {
   my ($ArgRef) = @_;
   my $TopicID = exists $ArgRef->{-topicid} ? $ArgRef->{-topicid} : 0;
   my $Force   = exists $ArgRef->{-force}   ? $ArgRef->{-force}   : $FALSE;
-  
+
   require "Messages.pm";
   require "TopicUtilities.pm";
 
@@ -252,13 +259,15 @@ sub DeleteTopic ($) {
     $Abort = $TRUE;
   }
   if (@TopicDocIDs && !$Force) {
-    push @WarnStack,"Cannot delete a topic with associated with documents. Use the force option to delete this topic and all associations.";
+    push @WarnStack,"Cannot delete a topic with associated with documents. Use the force option to delete this topic ".
+                    "and all associations. Some associations may be from documents updated with \"Update DB Info\" ".
+                    "which are no longer visible, but you must use the force option to erase this history.";
     $Abort = $TRUE;
   }
-  
+
   if ($Abort) {
     return 0;
-  }  
+  }
   # FIXME: (v8.x) EventTopics will need a similar check
 
   my $TopicDelete     = $dbh -> prepare("delete from Topic          where TopicID=?");
@@ -282,12 +291,12 @@ sub DeleteTopic ($) {
     $NotifyDelete    -> execute($DeleteID);
     $ConfigDelete    -> execute($DeleteID);
   }
-  
-  if ($Force) {  
+
+  if ($Force) {
     push @ActionStack,"Topic <strong>$Topics{$TopicID}{LongDescription}</strong>, all sub-topics, all associations, and all associations to sub-topics deleted.";
   } else {
     push @ActionStack,"Topic <strong>$Topics{$TopicID}{LongDescription}</strong> deleted.";
   }
-  return 1;    
+  return 1;
 }
 1;

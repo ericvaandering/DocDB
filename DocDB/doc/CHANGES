@@ -1,3 +1,17 @@
+8.5.7
+
+  Fix problem with multiple version 0 entries when updating v0 via XML
+  Check modification permission with XMLUpload
+  Set new event permissions the same way as documents (not always public)
+
+8.5.6
+
+  Add "Actually Modified" to document summary, wrote some new date routines.
+
+8.5.5
+
+  Allow LimitGroups to remove ALL groups from user's list
+
 8.5.4
 
   Make URLs show up as links in more places in displaying meetings
