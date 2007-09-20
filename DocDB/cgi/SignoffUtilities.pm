@@ -27,6 +27,8 @@ sub SignoffStatus ($) {
 
   my ($SignoffID) = @_;
 
+  push @DebugStack,"Checking signoff $SignoffID";
+
   my $Status = "Ready";
 
   # Check to see if there is already a signature for this signoff
@@ -36,6 +38,7 @@ sub SignoffStatus ($) {
     &FetchSignature($SignatureID);
     if ($Signatures{$SignatureID}{Signed}) { # See if signed
       $Status = "Signed";
+      push @DebugStack,"Status $Status";
       return $Status;
     }
   }
@@ -58,10 +61,12 @@ sub SignoffStatus ($) {
     }
     unless ($SignedOff) { # All signatures of signoff unsigned
       $Status = "NotReady";
+      push @DebugStack,"Status $Status";
       return $Status;
     }
   }
 
+  push @DebugStack,"Status $Status";
   return $Status;
 
 }
