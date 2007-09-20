@@ -143,7 +143,11 @@ sub PrintSignatureInfo ($) {
             $SignatureText .= "</div>\n";
             $SignatureText .= $query -> end_multipart_form;
           } else {
-            $SignatureText .= "$SignatureLink (waiting for signature)";
+            if ($Status eq "Signed") {
+              $SignatureText .= "$SignatureLink (signature complete)";
+            } else {
+              $SignatureText .= "$SignatureLink (waiting for signature)";
+            }
           }
         } else {
           $SignatureText .= $query -> start_multipart_form('POST',"$SignRevision");
