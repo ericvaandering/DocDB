@@ -7,7 +7,6 @@
 #    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified:
 
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
