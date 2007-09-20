@@ -6,7 +6,6 @@
 #    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified:
 
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -287,6 +286,10 @@ if ($Preferences{Options}{SubmitAgree} && !$SubmitAgree) {
 
 ### Final checks
 
+if ($UseSignoffs && $SignoffList) {
+  my @SignoffIDs = ProcessSignoffList($SignoffList);
+}
+
 my @TopicIDs = ();
 
 foreach my $TopicID (@RequestedTopicIDs) {
@@ -460,11 +463,10 @@ if ($SessionTalkID) {
 
 ### Add Signoffs
 
-my @SignoffIDs;
 if ($UseSignoffs && $SignoffList) {
-  @SignoffIDs = &ProcessSignoffList($SignoffList);
+  my  @SignoffIDs = ProcessSignoffList($SignoffList);
   if (@SignoffIDs) {
-    &InsertSignoffList($DocRevID,@SignoffIDs);
+    InsertSignoffList($DocRevID,@SignoffIDs);
   }
 }
 
