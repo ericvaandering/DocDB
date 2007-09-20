@@ -36,6 +36,7 @@ require "Messages.pm";
 
 require "HTMLUtilities.pm";
 require "NotificationSQL.pm";
+require "EmailSecurity.pm";
 
 require "Scripts.pm";
 
