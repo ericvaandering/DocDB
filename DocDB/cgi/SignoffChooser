@@ -56,7 +56,7 @@ print "Click on names to insert them into keyword box on the document form.<p>\n
 print "<a name=\"list\">\n";
 foreach $EmailUserID (@EmailUserIDs) {
   FetchEmailUser($EmailUserID);
-  unless (CanSign(($EmailUserID)) {next;}
+  unless (CanSign($EmailUserID)) {next;}
   my $Name = $EmailUser{$EmailUserID}{Name};
   print "<a href=\"#list\" onclick=\"InsertSignature('$Name');\">$Name</a><br>";
 }
