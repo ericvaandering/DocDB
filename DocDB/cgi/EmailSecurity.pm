@@ -1,17 +1,19 @@
-#
-# Description: Routines to deal with Email User accounts. Some of this should
+#        Name: $RCSfile$
+# Description: Security routines for individual user accounts. Used for notifications,
+#              preferences, and sign-offs. Some of this should
 #              probably be moved to other or new files.
 #
-#      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
+#      Author: Eric Vaandering (ewv@fnal.gov)
 
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -32,7 +34,7 @@ sub ValidateEmailUser ($$) {
 
   unless ($EmailUserID) {
     return 0;
-  }  
+  }
 
   my $TryPassword = crypt($Password,$EncryptedPassword);
 
@@ -40,7 +42,7 @@ sub ValidateEmailUser ($$) {
     return $EmailUserID;
   } else {
     return 0;
-  }     
+  }
 }
 
 sub ValidateEmailUserDigest ($$) {
@@ -52,14 +54,14 @@ sub ValidateEmailUserDigest ($$) {
 
   unless ($EmailUserID) {
     return 0;
-  }  
-  
+  }
+
   my $RealDigest = &EmailUserDigest($EmailUserID);
   if ($RealDigest eq $TryDigest) {
     return $EmailUserID;
   } else {
     return 0;
-  }     
+  }
 }
 
 sub UserPrefForm ($) {
@@ -71,7 +73,7 @@ sub UserPrefForm ($) {
   my $PreferHTML   = $EmailUser{$EmailUserID}{PreferHTML};
 
   print "<table class=\"MedPaddedTable LeftHeader\">";
-  if ($Digest) { 
+  if ($Digest) {
     print "<tr><th>\n";
     print $query -> hidden(-name => 'username', -default => $Username);
     print $query -> hidden(-name => 'digest', -default => $Digest);
@@ -80,55 +82,55 @@ sub UserPrefForm ($) {
     print "<tr><th>Username:</th>\n<td>$Username</td></tr>";
   } else {
     print "<tr><th>Username:</th>\n<td>";
-    print $query -> textfield(-name => 'username', -default => $Username,      
+    print $query -> textfield(-name => 'username', -default => $Username,
                             -size => 16, -maxlength => 32);
     print "</td></tr>";
     print "<tr><th>Password:</th>\n<td>";
-    print $query -> password_field(-name => 'password', 
+    print $query -> password_field(-name => 'password',
                             -size => 16, -maxlength => 32);
     print "</td></tr>";
-  }  
-  
-  if  ($UserValidation eq "certificate") {                       
-    print "<tr><th>Real name:</th>\n<td>$Name</td></tr>\n";     
+  }
+
+  if  ($UserValidation eq "certificate") {
+    print "<tr><th>Real name:</th>\n<td>$Name</td></tr>\n";
     print "<tr><th>E-mail address:</th>\n<td>";
-    print $query -> textfield(-name => 'email',    -default => $EmailAddress,     
+    print $query -> textfield(-name => 'email',    -default => $EmailAddress,
                               -size => 24, -maxlength => 64);
-    print "</td></tr>\n";                          
+    print "</td></tr>\n";
   } else {
     print "<tr><th>Real name:</th>\n<td>";
-    print $query -> textfield(-name => 'name',     -default => $Name,     
-                              -size => 24, -maxlength => 128);    
-    print "</td></tr>\n";                          
+    print $query -> textfield(-name => 'name',     -default => $Name,
+                              -size => 24, -maxlength => 128);
+    print "</td></tr>\n";
     print "<tr><th>E-mail address:</th>\n<td>";
-    print $query -> textfield(-name => 'email',    -default => $EmailAddress,     
+    print $query -> textfield(-name => 'email',    -default => $EmailAddress,
                               -size => 24, -maxlength => 64);
-    print "</td></tr>\n";                          
+    print "</td></tr>\n";
     print "<tr><th>New password:</th>\n<td>";
-    print $query -> password_field(-name => 'newpass',    -default => "",     
+    print $query -> password_field(-name => 'newpass',    -default => "",
                               -size => 24, -maxlength => 64, -override =>1 );
-    print "</td></tr>\n";                          
+    print "</td></tr>\n";
     print "<tr><th>Confirm password:</th>\n<td>";
-    print $query -> password_field(-name => 'confnewpass',    -default => "",     
+    print $query -> password_field(-name => 'confnewpass',    -default => "",
                               -size => 24, -maxlength => 64, -override =>1 );
-    print "</td></tr>\n";                          
-  }                          
+    print "</td></tr>\n";
+  }
 
   print "<tr><th>Prefer HTML e-mail:</th>\n<td>";
   if ($PreferHTML) {
     print $query -> checkbox(-name => "html", -checked => 'checked', -value => 1, -label => '');
   } else {
     print $query -> checkbox(-name => "html", -value => 1, -label => '');
-  }                             
-  print "</td></tr>\n";                          
-  if  ($UserValidation eq "certificate") {                       
-    print "<tr><th>Member of Groups:</th>\n";     
-    print "<td><ul>\n"; 
+  }
+  print "</td></tr>\n";
+  if  ($UserValidation eq "certificate") {
+    print "<tr><th>Member of Groups:</th>\n";
+    print "<td><ul>\n";
     my @UserGroupIDs = &FetchUserGroupIDs($EmailUserID);
     foreach my $UserGroupID (@UserGroupIDs) {
       &FetchSecurityGroup($UserGroupID);
       print "<li>$SecurityGroups{$UserGroupID}{NAME}</li>\n";
-    }   
+    }
     print "</ul></td></tr>\n";
   }
   print "</table>\n";
@@ -138,7 +140,7 @@ sub EmailUserDigest ($) {
   use Digest::SHA1 qw(sha1_hex);
   my ($EmailUserID) = @_;
   &FetchEmailUser($EmailUserID);
-  
+
   my ($day,$mon,$yr);
   my $Digest;
   (undef,undef,undef,$day,$mon,$yr) = localtime(time);
@@ -148,9 +150,9 @@ sub EmailUserDigest ($) {
     $Digest = sha1_hex($data);
   } else {
     $Digest = 0;
-  }  
+  }
 
-  return $Digest;           
+  return $Digest;
 }
 
 sub NewEmailUserForm {
@@ -185,6 +187,15 @@ sub LoginEmailUserForm {
   print $query -> submit (-value => "Login");
   print "</table></dl>\n";
   print $query -> endform;
+}
+
+sub CanSign($) {
+  my ($EmailUserID) = @_;
+
+  require "NotificationSQL.pm";
+
+  FetchEmailUser($EmailUserID);
+  return $EmailUser{$EmailUserID}{CanSign};
 }
 
 1;

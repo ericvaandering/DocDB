@@ -1,9 +1,12 @@
 #! /usr/bin/env perl
 #
-#        Name: SignoffChooser
+#        Name: $RCSfile$
 # Description: Lists the people who can sign a document and helps the user
 #              build a list of signatures needed for a document.
 #              Links insert the name into the form on the calling page
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
@@ -12,7 +15,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -24,7 +27,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI;                                                                                      
+use CGI;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -33,6 +36,7 @@ require "Messages.pm";
 
 require "HTMLUtilities.pm";
 require "NotificationSQL.pm";
+require "EmailSecurity.pm";
 
 require "Scripts.pm";
 
@@ -42,19 +46,17 @@ $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 print $query -> header( -charset => $HTTP_ENCODING );
-&DocDBHeader("List of Signees","", -scripts => ["InsertSignature"]);
+DocDBHeader("List of Signees","", -scripts => ["InsertSignature"]);
 
 my @EmailUserIDs = &GetEmailUserIDs();
 my $EmailUserID;
-
-foreach $EmailUserID (@EmailUserIDs) {
-  &FetchEmailUser($EmailUserID);
-}
 
 print "Click on names to insert them into keyword box on the document form.<p>\n";
 
 print "<a name=\"list\">\n";
 foreach $EmailUserID (@EmailUserIDs) {
+  FetchEmailUser($EmailUserID);
+  unless (CanSign($EmailUserID)) {next;}
   my $Name = $EmailUser{$EmailUserID}{Name};
   print "<a href=\"#list\" onclick=\"InsertSignature('$Name');\">$Name</a><br>";
 }
