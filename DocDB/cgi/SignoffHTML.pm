@@ -75,8 +75,6 @@ sub PrintSignoffInfo ($) {
 
   my ($SignoffID) = @_;
 
-  push @DebugStack,"Printing info for signoff $SignoffID";
-
   if ($Public) { return; }
 
   my @SubSignoffIDs = &GetSubSignoffs($SignoffID);
@@ -99,7 +97,6 @@ sub PrintSignatureInfo ($) {
   require "NotificationSQL.pm";
 
   my ($SignoffID) = @_;
-  push @DebugStack,"Printing info for signature $SignoffID";
 
   if ($Public) { return; }
 
@@ -116,7 +113,6 @@ sub PrintSignatureInfo ($) {
       my $SignoffID = $Signatures{$SignatureID}{SignoffID};
       my $Status = &SignoffStatus($SignoffID);
 
-      push @DebugStack,"HTML status $Status";
       # If the Signoff is ready for a signature, put a password field
       # If signed, allow rescinding the signature
       # Otherwise, note that it's waiting
