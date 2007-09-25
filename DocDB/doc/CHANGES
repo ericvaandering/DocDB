@@ -1,3 +1,13 @@
+8.5.9
+
+  Ignore blank lines in signoff list
+
+8.5.8
+
+  Enforce CanSign from personal accounts
+  Fix display of completed signatures on certificate version
+  Check that signature info is correct before allowing document to be inserted
+
 8.5.7
 
   Fix problem with multiple version 0 entries when updating v0 via XML
@@ -21,15 +31,15 @@
   Fix problems with XMLUpload destroying files.
 
 8.5.2
-  
+
   Fix calendar for MySQL < 4
 
 8.5.1
 
   Fix show all talks being ignored by SessionModify
-  
+
   Remove old routine DocumentLink and rename NewerDocumentLink to DocumentLink
-  
+
   Fix document link to not link to unaccessible documents (but show title)
 
   Update advanced instructions on where <control> and <authentication> go
@@ -38,19 +48,19 @@
 
   Add a check box people must check when uploading a document with fewer files
   than the latest version of the document.
-  
+
   Remove Edit and Confirm from the display for publicly viewable meetings
-  
+
   Display sessions in calendar that are out of the bounds of a meeting.
 
 8.4.5
-  
+
   Fix bug where some people watching documents would not be notified. Those
   users should re-visit the Personal Account page, check it, and re-submit their
   notification preferences. Add back any watched documents that are missing.
-  
+
   Add in the capability to update the DB info of documents via XML. The
-  signature of AddDocument has changed, now must be called with 
+  signature of AddDocument has changed, now must be called with
   ({ -version => 1, document => 2 )}, etc. New documents should be created with version="bump"
   or version="new"
 
