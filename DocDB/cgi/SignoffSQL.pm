@@ -37,6 +37,11 @@ sub ProcessSignoffList ($) {
     $Entry =~ s/^\s+//g;
     $Entry =~ s/\s+$//g;
 
+    unless ($Entry) {
+      push @WarnStack,"A blank line was entered into the signoff list. It was ignored.";
+      next;
+    }
+
     if (grep /\,/, $Entry) {
       @Parts = split /\,\s+/, $Entry,2;
       $Entry = join ' ',@Parts[1],@Parts[0];
@@ -53,12 +58,13 @@ sub ProcessSignoffList ($) {
       push @Matches,$EmailUserID;
     }
     if ($#Matches == 0) { # Found 1 exact match
-      unless (CanSign($EmailUserID)) {
+      if (CanSign($EmailUserID)) {
+        push @EmailUserIDs,$EmailUserID;
+        next;
+      } else {
         push @ErrorStack,"$Entry is not allowed to sign documents. Contact an administrator to change the permissions or ".
                          "restrict your choices to those who can sign documents.";
       }
-      push @EmailUserIDs,$EmailUserID;
-      next;
     }
 
     push @ErrorStack,"No unique match was found for the signoff $Entry. Please go
