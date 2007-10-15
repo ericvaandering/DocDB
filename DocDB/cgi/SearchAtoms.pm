@@ -101,18 +101,21 @@ sub TopicSearch ($) {
   if ($Logic eq "AND" && $SubTopics) { # Break up and call recursively
     my %Revisions = ();
     foreach my $TopicID (@InitialIDs) {
+      push @DebugStack,"Searching for revisions with topic $TopicID";
       my @ChildIDs  = TopicAndSubTopics({-topicid => $TopicID});
       my @Revisions = TopicSearch({-logic => "OR", -topicids => \@ChildIDs});
       foreach my $DocRevID (@Revisions) {
         ++$TopicRevisions{$DocRevID};
       }
       foreach my $DocRevID (keys %TopicRevisions) {
+        push @DebugStack,"Revision $DocRevID has topic $TopicID";
         ++$Revisions{$DocRevID};
       }
     }
     my @Revisions = ();
     foreach my $DocRevID (keys %Revisions) {
       if ($Revisions{$DocRevID} == scalar(@InitialIDs)) {
+        push @DebugStack,"Rev: ".$Revisions{$DocRevID}." Scalar ".scalar(@InitialIDs);
         push @Revisions,$DocRevID;
       }
     }
