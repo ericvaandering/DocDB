@@ -128,6 +128,7 @@ sub TopicSearch ($) {
   my $List = $dbh -> prepare("select DocRevID from RevisionTopic where TopicID=?");
 
   my @TopicIDs = ();
+  my @Revisions = ();
 
   if ($Logic eq "OR" && $SubTopics) {
     foreach my $TopicID (@InitialIDs) {
