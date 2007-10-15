@@ -113,9 +113,9 @@ sub TopicSearch ($) {
       }
     }
     my @Revisions = ();
-    foreach my $DocRevID (keys %Revisions) {
+    foreach my $DocRevID (reverse sort numerically keys %Revisions) {
+      push @DebugStack,"$DocRevID Rev: ".$Revisions{$DocRevID}." Scalar ".scalar(@InitialIDs);
       if ($Revisions{$DocRevID} == scalar(@InitialIDs)) {
-        push @DebugStack,"Rev: ".$Revisions{$DocRevID}." Scalar ".scalar(@InitialIDs);
         push @Revisions,$DocRevID;
       }
     }
