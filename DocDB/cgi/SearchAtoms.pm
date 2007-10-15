@@ -103,16 +103,11 @@ sub TopicSearch ($) {
     my %Revisions = ();
     foreach my $TopicID (@InitialIDs) {
       my %TopicRevisions = ();
-      push @DebugStack,"Searching for revisions with topic $TopicID";
       my @ChildIDs  = TopicAndSubTopics({-topicid => $TopicID});
-      push @DebugStack,"Child IDs: ".join ', ', @ChildIDs;
       my @Revisions = TopicSearch({-logic => "OR", -topicids => \@ChildIDs});
-      @Revisions = reverse sort @Revisions;
       push @DebugStack,"Search found revisions ".join ', ', @Revisions;
+      @Revisions = Unique(@Revisions);
       foreach my $DocRevID (@Revisions) {
-        ++$TopicRevisions{$DocRevID};
-      }
-      foreach my $DocRevID (keys %TopicRevisions) {
         push @DebugStack,"Revision $DocRevID has topic $TopicID";
         ++$Revisions{$DocRevID};
       }
@@ -124,10 +119,11 @@ sub TopicSearch ($) {
         push @Revisions,$DocRevID;
       }
     }
+    @Revisions = reverse sort numerically @Revisions;
     return @Revisions;
   }
 
-  # Other cases handled no recursively
+  # Other cases handled non-recursively
 
   my $List = $dbh -> prepare("select DocRevID from RevisionTopic where TopicID=?");
 
