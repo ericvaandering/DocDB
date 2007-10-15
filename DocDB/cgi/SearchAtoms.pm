@@ -129,6 +129,7 @@ sub TopicSearch ($) {
 
   my @TopicIDs = ();
   my @Revisions = ();
+  my %Revisions = ();
 
   if ($Logic eq "OR" && $SubTopics) {
     foreach my $TopicID (@InitialIDs) {
