@@ -105,7 +105,8 @@ sub TopicSearch ($) {
       push @DebugStack,"Searching for revisions with topic $TopicID";
       my @ChildIDs  = TopicAndSubTopics({-topicid => $TopicID});
       push @DebugStack,"Child IDs: ".join ', ', @ChildIDs;
-      my @Revisions = reverse sort TopicSearch({-logic => "OR", -topicids => \@ChildIDs});
+      my @Revisions = TopicSearch({-logic => "OR", -topicids => \@ChildIDs});
+      @Revisions = reverse sort @Revisions;
       push @DebugStack,"Search found revisions ".join ', ', @Revisions;
       foreach my $DocRevID (@Revisions) {
         ++$TopicRevisions{$DocRevID};
