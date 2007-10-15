@@ -1,3 +1,10 @@
+#        Name: $RCSfile$
+# Description: Bits of code to do various searches. Some specific, some generic
+
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+# Author Eric Vaandering (ewv@fnal.gov)
 
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -111,8 +118,7 @@ sub TopicSearch ($) {
       }
     }
     my @Revisions = ();
-    foreach my $DocRevID (reverse sort numerically keys %Revisions) {
-      push @DebugStack,"$DocRevID Rev: ".$Revisions{$DocRevID}." Scalar ".scalar(@InitialIDs);
+    foreach my $DocRevID (keys %Revisions) {
       if ($Revisions{$DocRevID} == scalar(@InitialIDs)) {
         push @Revisions,$DocRevID;
       }
@@ -233,7 +239,7 @@ sub AuthorSearch {
 
 sub TypeSearch {
   my ($Logic,@TypeIDs) = @_;
-  my $List = $dbh -> prepare("select DISTINCT(DocumentID) from DocumentRevision where DocTypeID=?");
+  my $List = $dbh -> prepare("select DISTINCT(DocumentID) from DocumentRevision where DocTypeID=? and Obsolete=0");
 
   my %Documents = ();
   my @Documents = ();
