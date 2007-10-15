@@ -106,7 +106,7 @@ sub TopicSearch ($) {
       my @ChildIDs  = TopicAndSubTopics({-topicid => $TopicID});
       my @Revisions = TopicSearch({-logic => "OR", -topicids => \@ChildIDs});
       push @DebugStack,"Search found revisions ".join ', ', @Revisions;
-      @Revisions = Unique(@Revisions);
+#      @Revisions = Unique(@Revisions);
       foreach my $DocRevID (@Revisions) {
         push @DebugStack,"Revision $DocRevID has topic $TopicID";
         ++$Revisions{$DocRevID};
