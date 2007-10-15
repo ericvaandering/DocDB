@@ -4,7 +4,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -17,30 +17,30 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 %SearchWeights = ( # These weights are used to order documents from the simple search
-                  "Author"          => 4,  
-                  "Topic"           => 3,  
-                  "DocType"         => 2,  
-                  "Event"           => 3,  
-                  "EventGroup"      => 2,  
-                  "File"            => 3, 
-                  "FileContent"     => 1, 
+                  "Author"          => 4,
+                  "Topic"           => 3,
+                  "DocType"         => 2,
+                  "Event"           => 3,
+                  "EventGroup"      => 2,
+                  "File"            => 3,
+                  "FileContent"     => 1,
                   "Revision"        => 3,
-#                  "Title"           => 4, 
-#                  "Abstract"        => 3, 
-#                  "Keyword"         => 3, 
-#                  "RevisionNote"    => 2, 
-#                  "PubInfo"         => 3, 
+#                  "Title"           => 4,
+#                  "Abstract"        => 3,
+#                  "Keyword"         => 3,
+#                  "RevisionNote"    => 2,
+#                  "PubInfo"         => 3,
 #                  "Age"             => 1, #  * (1-Age/MaxAge)
               );
-              
+
 sub TextSearch {
   my ($Field,$Mode,$Words) = @_;
-  
+
   my $Phrase = "";
   my $Join;
   my $Delimit;
   my @Atoms = ();
-  
+
   if ($Mode eq "anysub" || $Mode eq "allsub" || $Mode eq "anyword" || $Mode eq "allword") {
     my @Words = split /\s+/,$Words;
     foreach my $Word (@Words) {
@@ -51,7 +51,7 @@ sub TextSearch {
         $Word =~ tr/[A-Z]/[a-z]/;
         push @Atoms,"LOWER($Field) REGEXP \"\[\[:<:\]\]$Word\[\[:>:\]\]\"";
       }
-    }    
+    }
   }
 
   if      ($Mode eq "anysub" || $Mode eq "anyword") {
@@ -60,31 +60,31 @@ sub TextSearch {
     $Join = " AND ";
   }
 
-  $Phrase = join $Join,@Atoms;  
-  
+  $Phrase = join $Join,@Atoms;
+
   if ($Phrase) {$Phrase = "($Phrase)";}
-  
+
   return $Phrase;
 }
 
 sub IDSearch {
   my ($Table,$Field,$Mode,@IDs) = @_;
-  
+
   my $Phrase = "";
   my $Join;
   my $Delimit;
   my @Atoms = ();
-  
+
   $Join = $Mode;
-  
+
   foreach $ID (@IDs) {
     push @Atoms," $Field=$ID ";
-  }  
+  }
 
-  $Phrase = join $Join,@Atoms;  
-  
+  $Phrase = join $Join,@Atoms;
+
   if ($Phrase) {$Phrase = "($Phrase)";}
-  
+
   return $Phrase;
 }
 
@@ -94,24 +94,41 @@ sub TopicSearch ($) {
   my $Logic      = exists $ArgRef->{-logic}     ?   $ArgRef->{-logic}     : "AND";
   my $SubTopics  = exists $ArgRef->{-subtopics} ?   $ArgRef->{-subtopics} : $FALSE;
   my @InitialIDs = exists $ArgRef->{-topicids}  ? @{$ArgRef->{-topicids}} : ();
-  
+
   require "TopicUtilities.pm";
   require "Utilities.pm";
-  
-  my $List = $dbh -> prepare("select DocRevID from RevisionTopic where TopicID=?"); 
- 
+
+  if ($Logic eq "AND" && $SubTopics) { # Break up and call recursively
+    my %Revisions = ();
+    foreach my $TopicID (@InitialIDs) {
+      my @ChildIDs  = TopicAndSubTopics({-topicid => $TopicID});
+      my @Revisions = TopicSearch({-logic => "OR", -topicids => \@ChildIDs});
+      foreach my $DocRevID (@Revisions) {
+        ++$TopicRevisions{$DocRevID};
+      }
+      foreach my $DocRevID (keys %TopicRevisions) {
+        ++$Revisions{$DocRevID};
+      }
+    }
+    return keys %Revisions;
+  }
+
+  # Other cases handled no recursively
+
+  my $List = $dbh -> prepare("select DocRevID from RevisionTopic where TopicID=?");
+
   my @TopicIDs = ();
- 
+
   if ($Logic eq "OR" && $SubTopics) {
     foreach my $TopicID (@InitialIDs) {
       my @ChildIDs = TopicAndSubTopics({-topicid => $TopicID});
       push @TopicIDs,@ChildIDs;
-    }  
+    }
     @TopicIDs = Unique(@TopicIDs);
   } else {
     @TopicIDs = @InitialIDs;
-  }  
- 
+  }
+
   foreach $TopicID (@TopicIDs) {
     $List -> execute($TopicID );
     $List -> bind_columns(undef, \($DocRevID));
@@ -121,9 +138,9 @@ sub TopicSearch ($) {
     }
     foreach $DocRevID (keys %TopicRevisions) {
       ++$Revisions{$DocRevID};
-    }  
+    }
   }
-  
+
   if ($Logic eq "AND") {
     foreach $DocRevID (keys %Revisions) {
       if ($Revisions{$DocRevID} == $#TopicIDs+1) { # Require a match for each topic
@@ -132,26 +149,26 @@ sub TopicSearch ($) {
     }
   } elsif ($Logic eq "OR") {
     @Revisions = keys %Revisions;
-  }  
-  return @Revisions;     
+  }
+  return @Revisions;
 }
 
 sub EventSearch {
   my $List;
   my ($Logic,$Type,@IDs) = @_;
   if ($Type eq "event") {
-    $List = $dbh -> prepare("select DocRevID from RevisionEvent where ConferenceID=?"); 
+    $List = $dbh -> prepare("select DocRevID from RevisionEvent where ConferenceID=?");
   } elsif ($Type eq "group") {
     $List = $dbh -> prepare(
       "select DocRevID from RevisionEvent,Conference ".
       "where RevisionEvent.ConferenceID=Conference.ConferenceID ".
       "and Conference.EventGroupID=?");
-  }  
-    
+  }
+
   my %Revisions = ();
   my @Revisions = ();
   my $DocRevID;
-  
+
   foreach $ID (@IDs) {
     $List -> execute($ID);
     $List -> bind_columns(undef, \($DocRevID));
@@ -161,7 +178,7 @@ sub EventSearch {
     }
     foreach $DocRevID (keys %EventRevisions) {
       ++$Revisions{$DocRevID};
-    }  
+    }
   }
   if ($Logic eq "AND") {
     foreach $DocRevID (keys %Revisions) {
@@ -171,20 +188,20 @@ sub EventSearch {
     }
   } elsif ($Logic eq "OR") {
     @Revisions = keys %Revisions;
-  }  
-  
-  return @Revisions;     
+  }
+
+  return @Revisions;
 }
 
 sub AuthorSearch {
   my $revtopic_list;
   my ($Logic,@AuthorIDs) = @_;
-  $revauthor_list = $dbh -> prepare("select DocRevID from RevisionAuthor where AuthorID=?"); 
-    
+  $revauthor_list = $dbh -> prepare("select DocRevID from RevisionAuthor where AuthorID=?");
+
   my %Revisions = ();
   my @Revisions = ();
   my $DocRevID;
-  
+
   foreach my $AuthorID (@AuthorIDs) {
     $revauthor_list -> execute($AuthorID);
     $revauthor_list -> bind_columns(undef, \($DocRevID));
@@ -200,19 +217,19 @@ sub AuthorSearch {
     }
   } elsif ($Logic eq "OR") {
     @Revisions = keys %Revisions;
-  }  
-  
-  return @Revisions;     
+  }
+
+  return @Revisions;
 }
 
 sub TypeSearch {
   my ($Logic,@TypeIDs) = @_;
-  my $List = $dbh -> prepare("select DISTINCT(DocumentID) from DocumentRevision where DocTypeID=?"); 
-    
+  my $List = $dbh -> prepare("select DISTINCT(DocumentID) from DocumentRevision where DocTypeID=?");
+
   my %Documents = ();
   my @Documents = ();
   my $DocumentID;
-  
+
   foreach my $TypeID (@TypeIDs) {
     $List -> execute($TypeID);
     $List -> bind_columns(undef, \($DocumentID));
@@ -228,18 +245,18 @@ sub TypeSearch {
     }
   } elsif ($Logic eq "OR") {
     @Documents = keys %Documents;
-  }  
-  
-  return @Documents;     
+  }
+
+  return @Documents;
 }
 
 sub ValidateRevisions {
   require "RevisionSQL.pm";
-  
+
   my (@RevisionIDs) = @_;
   my %DocumentIDs = ();
   my @DocumentIDs = ();
-  
+
   foreach my $RevID (@RevisionIDs) {
     &FetchDocRevisionByID($RevID);
     unless ($DocRevisions{$RevID}{Obsolete}) {
