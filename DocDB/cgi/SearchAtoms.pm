@@ -97,6 +97,7 @@ sub TopicSearch ($) {
 
   require "TopicUtilities.pm";
   require "Utilities.pm";
+  require "Sorts.pm";
 
   if ($Logic eq "AND" && $SubTopics) { # Break up and call recursively
     my %Revisions = ();
@@ -163,6 +164,7 @@ sub TopicSearch ($) {
   } elsif ($Logic eq "OR") {
     @Revisions = keys %Revisions;
   }
+  @Revisions = reverse sort numerically @Revisions;
   return @Revisions;
 }
 
