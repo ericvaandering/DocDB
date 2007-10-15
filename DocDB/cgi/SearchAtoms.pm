@@ -110,7 +110,13 @@ sub TopicSearch ($) {
         ++$Revisions{$DocRevID};
       }
     }
-    return keys %Revisions;
+    my @Revisions = ();
+    foreach my $DocRevID (keys %Revisions) {
+      if ($Revisions{$DocRevID} == scalar(@InitialIDs) {
+        push @Revisions,$DocRevID;
+      }
+    }
+    return @Revisions;
   }
 
   # Other cases handled no recursively
