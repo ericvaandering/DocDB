@@ -101,9 +101,11 @@ sub TopicSearch ($) {
   if ($Logic eq "AND" && $SubTopics) { # Break up and call recursively
     my %Revisions = ();
     foreach my $TopicID (@InitialIDs) {
+      my %TopicRevisions = ();
       push @DebugStack,"Searching for revisions with topic $TopicID";
       my @ChildIDs  = TopicAndSubTopics({-topicid => $TopicID});
       my @Revisions = TopicSearch({-logic => "OR", -topicids => \@ChildIDs});
+      push @DebugStack,"Search found revisions ".join ', ', @Revisions;
       foreach my $DocRevID (@Revisions) {
         ++$TopicRevisions{$DocRevID};
       }
