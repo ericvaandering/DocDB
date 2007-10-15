@@ -112,7 +112,7 @@ sub TopicSearch ($) {
     }
     my @Revisions = ();
     foreach my $DocRevID (keys %Revisions) {
-      if ($Revisions{$DocRevID} == scalar(@InitialIDs) {
+      if ($Revisions{$DocRevID} == scalar(@InitialIDs)) {
         push @Revisions,$DocRevID;
       }
     }
