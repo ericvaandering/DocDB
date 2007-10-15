@@ -105,10 +105,8 @@ sub TopicSearch ($) {
       my %TopicRevisions = ();
       my @ChildIDs  = TopicAndSubTopics({-topicid => $TopicID});
       my @Revisions = TopicSearch({-logic => "OR", -topicids => \@ChildIDs});
-      push @DebugStack,"Search found revisions ".join ', ', @Revisions;
-#      @Revisions = Unique(@Revisions);
+      @Revisions = Unique(@Revisions);
       foreach my $DocRevID (@Revisions) {
-        push @DebugStack,"Revision $DocRevID has topic $TopicID";
         ++$Revisions{$DocRevID};
       }
     }
@@ -119,7 +117,6 @@ sub TopicSearch ($) {
         push @Revisions,$DocRevID;
       }
     }
-    @Revisions = reverse sort numerically @Revisions;
     return @Revisions;
   }
 
@@ -162,7 +159,6 @@ sub TopicSearch ($) {
   } elsif ($Logic eq "OR") {
     @Revisions = keys %Revisions;
   }
-  @Revisions = reverse sort numerically @Revisions;
   return @Revisions;
 }
 
