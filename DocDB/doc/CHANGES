@@ -1,3 +1,8 @@
+8.5.10
+
+  Fix problems with searching on AND of topics with sub-topics
+  Fix searches where old document type still matched
+
 8.5.9
 
   Ignore blank lines in signoff list

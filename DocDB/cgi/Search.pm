@@ -1,3 +1,13 @@
+#        Name: $RCSfile$
+# Description: Searching is done here, moved out of Search for XML
+#              Three modes of presenting information:
+#              1) mode=date (default, sorted by reverse date, modification date given)
+#              2) mode=meeting (sorted by author, files are listed)
+#              3) mode=conference (sorted by reverse date, conference fields shown)
+
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
 # Author Eric Vaandering (ewv@fnal.gov)
 
 # Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
@@ -16,11 +26,6 @@
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
-
-#  Three modes of presenting information:
-#    1) mode=date (default, sorted by reverse date, modification date given)
-#    2) mode=meeting (sorted by author, files are listed)
-#    3) mode=conference (sorted by reverse date, conference fields shown)
 
 sub LocalSearch ($) {
   my ($ArgRef) = @_;
