@@ -1,8 +1,11 @@
+#        Name: $RCSfile$
 # Description: Holds column sizes of various fields in the DB. Input forms can
 #              be limited to these values
 #
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified:
 
 # Copyright 2001-2008 Eric Vaandering, Lynn Garren, Adam Bryant
 
