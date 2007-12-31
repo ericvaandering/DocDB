@@ -190,7 +190,7 @@ sub LocalSearch ($) {
   }
 
   my $Mode    = $params{mode};
-  unless ($Mode eq "date" or $Mode eq "meeting" or $Mode eq "conference") {
+  unless ($Mode eq "date" or $Mode eq "meeting" or $Mode eq "conference" or $Mode eq "title") {
     $Mode = "date";
   }
 
@@ -472,6 +472,9 @@ sub LocalSearch ($) {
   if ($SimpleText) {
     $SortBy  = "relevance";
     $Reverse = $TRUE;
+  } elsif ($Mode eq "title") {
+    $SortBy  = "doctitle";
+    $Reverse = $FALSE;
   } elsif ($Mode eq "conference") {
     $FieldListOptions{-default} = "Conference Mode";
     $SortBy  = "confdate";

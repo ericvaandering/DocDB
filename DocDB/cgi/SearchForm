@@ -1,14 +1,20 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+#        Name: $RCSfile$
+# Description: Build the input form for the "Advanced" (formerly normal) DocDB Search
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
 #
 
-# Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2008 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -20,7 +26,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI qw(-nosticky);                                                                                      
+use CGI qw(-nosticky);
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -48,7 +54,7 @@ GetDocTypes();
 %params = $query -> Vars;
 
 print $query -> header( -charset => $HTTP_ENCODING );
-  
+
 DocDBHeader("$Project Document Database Search","Document Database Search",
             -search => $TRUE, -scripts => ["PopUps","EventChooser"]);
 
@@ -62,11 +68,11 @@ print $query -> start_multipart_form('POST',$Search,"name=\"simplesearch\"");
 print '<table id="QuickSearchForm" class="SearchFormTable LowPaddedTable CenteredTable"><tr><td>';
 print FormElementTitle(-helplink => "quicksearch", -nobreak => $TRUE,
                        -helptext => "Search for", );
-print "</td><td>\n";                       
+print "</td><td>\n";
 print $query -> textfield(-size => 40, -name => "simpletext");
 print $query -> hidden(-name => "simple", -default => '1');
-print "</td><td>\n";                       
-print $query -> submit (-value => "Quick Search");     
+print "</td><td>\n";
+print $query -> submit (-value => "Quick Search");
 print "</td></tr></table>\n";
 print $query -> end_multipart_form;
 
@@ -77,62 +83,62 @@ print "<hr/>\n";
 print $query -> start_multipart_form('POST',$Search,"name=\"queryform\"");
 print "<table class=\"SearchFormTable HighPaddedTable CenteredTable\">\n";
 print "<tr>\n";
- print "<td colspan=\"3\" class=\"SubmitCell\">\n"; 
+ print "<td colspan=\"3\" class=\"SubmitCell\">\n";
  print '<a name="Advanced" />';
- print $query -> submit (-value => "Advanced Search");     
+ print $query -> submit (-value => "Advanced Search");
  print "&nbsp;&nbsp;&nbsp;\n";
- print $query -> reset (-value => "Reset Search Form");     
+ print $query -> reset (-value => "Reset Search Form");
  print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
  print "<td colspan=\"3\" class=\"SubmitCell\">\n";
- LogicTypeButtons(); 
+ LogicTypeButtons();
  print "</td>\n";
 print "</tr>\n";
 print "<tr>\n";
  print "<td colspan=\"3\" class=\"SubmitCell\">\n";
- ModeSelect(); 
+ ModeSelect();
 print "</td></tr>\n";
 
 print "<tr>\n";
- print "<td colspan=\"3\">\n"; 
+ print "<td colspan=\"3\">\n";
 
   print "<table class=\"LowPaddedTable LeftHeader\">\n";
-   TitleSearchBox();    
-   AbstractSearchBox();    
-   KeywordsSearchBox();    
-   RevisionNoteSearchBox();    
-   PubInfoSearchBox();    
-   FileNameSearchBox();    
+   TitleSearchBox();
+   AbstractSearchBox();
+   KeywordsSearchBox();
+   RevisionNoteSearchBox();
+   PubInfoSearchBox();
+   FileNameSearchBox();
    DescriptionSearchBox();
-   if ($ContentSearch) {    
+   if ($ContentSearch) {
      ContentSearchBox();
-   }      
+   }
   print "</table>\n";
 
  print "</td>\n";
-#&ReferenceForm;  
+#&ReferenceForm;
 print "</tr>\n";
 
 
  print "<tr>\n";
- 
+
  print "<td>\n"; # Requester
- AuthorScroll(-helplink => "requestersearch", -helptext => "Last Updated By:", 
+ AuthorScroll(-helplink => "requestersearch", -helptext => "Last Updated By:",
               -name     => "requestersearch", -multiple => $TRUE);
- print "</td>\n"; 
+ print "</td>\n";
 
  print "<td>\n"; # Authors
  AuthorScroll(-helplink => "author", -multiple => $TRUE);
  print "</td>\n";
- 
+
  print "<td>\n";
  AuthorTextEntry( {-helplink => "authortextsearch"} );
  print "</td>\n";
- 
+
  print "</tr>\n";
- 
+
  print "<tr>\n";
  print "<td>\n"; DocTypeMulti();       print "</td>\n";
   print "<td colspan=\"2\">\n";
@@ -148,7 +154,7 @@ print "</tr>\n";
  print "<tr><td colspan=\"3\">\n";
   TopicScroll({ -multiple => $TRUE, -helplink => "searchtopic", });
  print "</br>\n";
- print $query -> checkbox(-name  => "includesubtopics", -checked => 'checked', 
+ print $query -> checkbox(-name  => "includesubtopics", -checked => 'checked',
                           -label => "Include sub-topics");
  print "</td></tr>\n";
 
@@ -162,10 +168,10 @@ print "</tr>\n";
  print "</tr>\n";
 
  print "<tr>\n";
-  print "<td colspan=\"3\" class=\"SubmitCell\">\n"; 
-  print $query -> submit (-value => "Advanced Search");     
+  print "<td colspan=\"3\" class=\"SubmitCell\">\n";
+  print $query -> submit (-value => "Advanced Search");
   print "&nbsp;&nbsp;&nbsp;\n";
-  print $query -> reset (-value => "Reset Search Form");     
+  print $query -> reset (-value => "Reset Search Form");
   print "</td>\n";
  print "</tr>\n";
 print "</table>\n";
