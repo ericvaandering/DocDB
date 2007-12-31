@@ -474,6 +474,7 @@ sub LocalSearch ($) {
     $Reverse = $TRUE;
   } elsif ($Mode eq "title") {
     $SortBy  = "doctitle";
+    $Reverse = $FALSE;
   } elsif ($Mode eq "conference") {
     $FieldListOptions{-default} = "Conference Mode";
     $SortBy  = "confdate";
