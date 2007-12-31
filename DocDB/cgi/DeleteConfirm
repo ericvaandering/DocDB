@@ -1,18 +1,19 @@
 #! /usr/bin/env perl
+#        Name: $RCSfile$
+# Description: Displays the document to be deleted and requests the
+#              admin password. Calls DeleteDocument to delete the doc.
 #
-# Description: Displays the document to be deleted and requests the 
-#              admin password. Calls DeleteDocument to delete the doc. 
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
-#
 
-# Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2008 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -55,13 +56,13 @@ $DocumentID =~ s/\s+$//;
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number to delete.";
-}  
+}
 unless (&CanAdminister) {
   push @ErrorStack,"You must be logged in as the adminstrator to delete
   documents";
-}  
-  
-EndPage(@ErrorStack);
+}
+
+EndPage(-startpage => $TRUE);
 
 &GetSecurityGroups;
 &FetchDocument($DocumentID);
@@ -79,13 +80,13 @@ unless ($DocRevID) {
 
 EndPage(@ErrorStack);
 
-print "<p><center><b>To delete this document, you must supply the adminstrator 
+print "<p><center><b>To delete this document, you must supply the adminstrator
           username and password:</b>";
 
 print $query -> startform('POST',$DeleteDocument);
 &AdministratorPassword;
 print $query -> hidden(-name => 'docid',    -default => $DocumentID);
-print "<b> </b>"; 
+print "<b> </b>";
 print $query -> submit (-value => "Delete Document");
 print $query -> endform;
 

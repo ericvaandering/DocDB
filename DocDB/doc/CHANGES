@@ -1,7 +1,8 @@
-8.5.11
+8.6.0
 
   Change max user/password lengths for administration (request from Stephen Wood)
-
+  Add sort by document title to advanced search
+  Fix crash in DeleteConfirm
 
 8.5.10
 
