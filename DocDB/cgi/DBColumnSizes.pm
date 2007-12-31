@@ -4,7 +4,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 
-# Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2008 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -22,6 +22,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 %DBColumnSize = (
+  "MySQLUser" => {User => 16, Password => 41},  # Not part of DocDB, MySQL limitation
   "EmailUser" => {Username => 32, Name => 128, EmailAddress => 64, Password => 32},
 );
 
