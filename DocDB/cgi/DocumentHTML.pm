@@ -1,9 +1,12 @@
+#        Name: $RCSfile$
 # Description: Subroutines to provide various parts of HTML about documents
 #
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified:
 
-# Copyright 2001-2007 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2008 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -108,6 +111,8 @@ sub DocumentTable (%) {
       @IDs = sort numerically @IDs;
     } elsif ($SortBy eq "date") {
       @IDs = sort DocumentByRevisionDate @IDs;
+    } elsif ($SortBy eq "doctitle") {
+      @IDs = sort DocumentByTitle @IDs;
     } elsif ($SortBy eq "requester") {
       @IDs = sort DocumentByRequester @IDs;
     } elsif ($SortBy eq "firstauthor") {
