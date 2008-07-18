@@ -464,7 +464,7 @@ sub InsertEvent (%) {
   my @TopicIDs         = exists $ArgRef->{-topicids}         ? @{$ArgRef->{-topicids}}        : ();
   my @ModeratorIDs     = exists $ArgRef->{-moderatorids}     ? @{$ArgRef->{-moderatorids}}    : ();
   my @ViewGroupIDs     = exists $ArgRef->{-viewgroupids}     ? @{$ArgRef->{-viewgroupids}}    : ();
-  my @ModifyGroupIDs   = exists $ArgRef->{-modifygroupids}   ? @{$ArgRef->{-viewgroupids}}    : ();
+  my @ModifyGroupIDs   = exists $ArgRef->{-modifygroupids}   ? @{$ArgRef->{-modifygroupids}}  : ();
 
   require "SQLUtilities.pm";
   require "MeetingSecuritySQL.pm";
@@ -505,7 +505,7 @@ sub UpdateEvent (%) {
   my @TopicIDs         = exists $ArgRef->{-topicids}         ? @{$ArgRef->{-topicids}}        : ();
   my @ModeratorIDs     = exists $ArgRef->{-moderatorids}     ? @{$ArgRef->{-moderatorids}}    : ();
   my @ViewGroupIDs     = exists $ArgRef->{-viewgroupids}     ? @{$ArgRef->{-viewgroupids}}    : ();
-  my @ModifyGroupIDs   = exists $ArgRef->{-modifygroupids}   ? @{$ArgRef->{-viewgroupids}}    : ();
+  my @ModifyGroupIDs   = exists $ArgRef->{-modifygroupids}   ? @{$ArgRef->{-modifygroupids}}  : ();
 
   require "SQLUtilities.pm";
   require "MeetingSecuritySQL.pm";
