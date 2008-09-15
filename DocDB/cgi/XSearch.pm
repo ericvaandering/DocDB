@@ -1,5 +1,11 @@
-# Author Eric Vaandering (ewv@fnal.gov)
 #
+#        Name: XSearch
+# Description: Routines for performing the cross-search across multiple DocDB instances
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+# Author Eric Vaandering (ewv@fnal.gov)
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
