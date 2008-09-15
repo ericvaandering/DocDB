@@ -10,7 +10,7 @@
 # subroutine. The count can be exagerated, but this does help find obsolete
 # routines which are no longer called and can be removed.
 
-# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
