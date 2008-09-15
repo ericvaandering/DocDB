@@ -206,7 +206,7 @@ sub PrintRevisionInfo {
 
   PrintAbstract($DocRevisions{$DocRevID}{Abstract}); # All are called only here, so changes are OK
   FileListByRevID($DocRevID); # All are called only here, so changes are OK
-  print TopicListByID( {-topicids => \@TopicIDs, -listelement => "long"} );
+  print TopicListByID( {-topicids => \@TopicIDs, -listelement => "withparents"} );
   AuthorListByAuthorRevID({ -authorrevids => \@RevAuthorIDs });
   PrintKeywords($DocRevisions{$DocRevID}{Keywords});
   PrintRevisionNote($DocRevisions{$DocRevID}{Note});
