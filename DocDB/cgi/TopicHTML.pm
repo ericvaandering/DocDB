@@ -97,8 +97,10 @@ sub TopicLink ($) {
   my $Format  = exists $ArgRef->{-format}  ? $ArgRef->{-format}  : "short";
   my $Type    = exists $ArgRef->{-type}    ? $ArgRef->{-type}    : "document";
 
+  my $Separator = ":";
+
   require "TopicSQL.pm";
-  my ($URL,$Text,$Tooltip,$Script);
+  my ($URL,$Text,$Tooltip,$Script,$Link);
 
   FetchTopic( {-topicid => $TopicID} );
 
@@ -109,16 +111,52 @@ sub TopicLink ($) {
   }    
 
   $URL     = $Script."?topicid=".$TopicID;
+  $Link = "";   
+   
   if ($Format eq "short") {
     $Text    = CGI::escapeHTML($Topics{$TopicID}{Short});
-    $Tooltip = CGI::escapeHTML($Topics{$TopicID}{Long} );
+    $Tooltip = TopicName({-topicid => $TopicID, -format => "withparents",} );
   } elsif ($Format eq "long") {
     $Text    = CGI::escapeHTML($Topics{$TopicID}{Long} );
     $Tooltip = CGI::escapeHTML($Topics{$TopicID}{Short});
+  } elsif ($Format eq "withparents") {
+    $Text    = CGI::escapeHTML($Topics{$TopicID}{Short});
+    $Tooltip = CGI::escapeHTML($Topics{$TopicID}{Long} );
+    my @ParentTopicIDs = FetchTopicParents( {-topicid => $TopicID}); 
+    if (@ParentTopicIDs) {
+      my ($ParentTopicID) = @ParentTopicIDs;
+      $Link .= TopicLink({-topicid => $ParentTopicID, -format => $Format,} );
+      $Link .= $Separator;
+    } 
   }
-  my $Link = "<a href=\"$URL\" title=\"$Tooltip\">$Text</a>";
-  
+  $Link .= "<a href=\"$URL\" title=\"$Tooltip\">$Text</a>";
+
   return $Link;
+}
+
+sub TopicName ($) {
+  my ($ArgRef) = @_;
+  my $TopicID = exists $ArgRef->{-topicid} ? $ArgRef->{-topicid} : "";
+  my $Format  = exists $ArgRef->{-format}  ? $ArgRef->{-format}  : "withparents";
+
+  my $Separator = ":";
+
+  require "TopicSQL.pm";
+  my ($Text);
+
+  FetchTopic( {-topicid => $TopicID} );
+
+  if ($Format eq "withparents") {
+    my @ParentTopicIDs = FetchTopicParents( {-topicid => $TopicID}); 
+    if (@ParentTopicIDs) {
+      my ($ParentTopicID) = @ParentTopicIDs;
+      $Text .= TopicName({-topicid => $ParentTopicID, -format => $Format,} );
+      $Text .= $Separator;
+    } 
+  }
+  $Text .= CGI::escapeHTML($Topics{$TopicID}{Short});
+
+  return $Text;
 }
 
 sub TopicsTable {
@@ -157,7 +195,6 @@ sub TopicsTable {
     
     if ($NThisCol != 0 && $Col != $NCols && $NThisCol + 0.5*$Size >= $Target) {
       $Target = ($TotalSize - $NSoFar)/($NCols-$Col);
-      push @DebugStack,"New target column length $Target";
       print "</td><td>\n";
       ++$Col;
       $NThisCol = 0;
