@@ -30,10 +30,18 @@ use Data::ICal::Entry::Event;
 require "SQLUtilities.pm";
 require "EventUtilities.pm";
 require "MeetingSQL.pm";
+require "MeetingHTML.pm";
 
 sub NewICal {
   my $Calendar = Data::ICal->new();
   return $Calendar;
+}
+
+sub ICalHeader {
+  my $Header;
+  $Header .= "Content-Type: text/calendar\n";
+  $Header .= "\n";
+  return $Header;
 }
 
 sub ICalEventEntry {
@@ -52,6 +60,8 @@ sub ICalSessionEntry {
   my %ICalMapping = (Title => summary, Description => description, Location => location,);
 
   my %SessionHash = ();
+
+  $SessionHash{url} = "$DisplayMeeting?sessionid=$SessionID";
 
   # Start Time
   SessionEndTime($SessionID);

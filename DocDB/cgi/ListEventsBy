@@ -68,8 +68,9 @@ if ($Format eq "html") {
   EndPage();
   my $HTML = "<div>";
 } elsif ($Format eq "ical") {
-  print $query -> header( -charset => $HTTP_ENCODING );
   require "VEntryOutput.pm" ;
+  #print $query -> header( -charset => $HTTP_ENCODING );
+  print ICalHeader();
   $iCal = NewICal();
 }
 
@@ -210,9 +211,9 @@ if ($Format eq "html") {
   DocDBNavBar();
   DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 } elsif ($Format eq "ical") {
-  print "<body><pre>\n";
+  #print "<body><pre>\n";
   print $iCal->as_string;
-  print "</pre></body>\n";
+  #print "</pre></body>\n";
 }
 
 exit;
