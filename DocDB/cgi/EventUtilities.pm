@@ -38,14 +38,17 @@ sub SessionEndTime ($) { # Can eventually use EndTime? no need to order these
   require "MeetingSQL.pm";
   require "TalkSQL.pm";
   require "Utilities.pm";
+  require "SQLUtilities.pm";
 
   my ($SessionID) = @_;
   &FetchSessionByID ($SessionID);
-  my @TalkIDs      = &FetchSessionTalksBySessionID($SessionID);
-  my @SeparatorIDs = &FetchTalkSeparatorsBySessionID($SessionID);
 
-  my ($AccumSec,$AccumMin,$AccumHour) = &SQLDateTime($Sessions{$SessionID}{StartTime});
-  my $AccumulatedTime = AddTime("$AccumHour:$AccumMin:$AccumSec");
+  # Determine times for session
+
+  my @TalkIDs      = FetchSessionTalksBySessionID($SessionID);
+  my @SeparatorIDs = FetchTalkSeparatorsBySessionID($SessionID);
+
+  my $AccumulatedTime = "0:0:0";
 
   foreach my $TalkID (@TalkIDs) {
     $AccumulatedTime = AddTime($AccumulatedTime,$SessionTalks{$TalkID}{Time});
@@ -54,6 +57,18 @@ sub SessionEndTime ($) { # Can eventually use EndTime? no need to order these
   foreach my $SeparatorID (@SeparatorIDs) {
     $AccumulatedTime = AddTime($AccumulatedTime,$TalkSeparators{$SeparatorID}{Time});
   }
+  my ($Hr,$Min,$Sec) = split /:/,$AccumulatedTime;
+  $Sessions{$SessionID}{Duration} = $Hr*60 + $Min;
+
+  if ($AccumulatedTime eq "0:0:0") {
+    $AccumulatedTime = "00:01:00";
+  }
+
+  my ($SessSec,$SessMin,$SessHour,$SessDay,$SessMon,$SessYear) = SQLDateTime($Sessions{$SessionID}{StartTime});
+  my $SessionTime = "$SessHour:$SessMin:$SessSec";
+  $AccumulatedTime = AddTime($AccumulatedTime,$SessionTime);
+  # FIXME: This assumes that a session does not span days
+  $Sessions{$SessionID}{EndTime} = "$SessYear-$SessMon-$SessDay ".$AccumulatedTime;
 
   return $AccumulatedTime;
 }

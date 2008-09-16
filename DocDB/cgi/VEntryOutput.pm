@@ -28,6 +28,8 @@ use Data::ICal;
 use Data::ICal::Entry::Event;
 
 require "SQLUtilities.pm";
+require "EventUtilities.pm";
+require "MeetingSQL.pm";
 
 sub NewICal {
   my $Calendar = Data::ICal->new();
@@ -51,8 +53,14 @@ sub ICalSessionEntry {
 
   my %SessionHash = ();
 
-  ($Sec,$Min,$Hour,$Day,$Mon,$Year) = SQLDateTime($Sessions{$SessionID}{StartTime});
+  # Start Time
+  SessionEndTime($SessionID);
+  my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = SQLDateTime($Sessions{$SessionID}{StartTime});
   $SessionHash{dtstart} = sprintf('%04d%02d%02dT%02d%02d%02d', ($Year,$Mon,$Day,$Hour,$Min,$Sec));
+
+  # End Time
+  ($Sec,$Min,$Hour,$Day,$Mon,$Year) = SQLDateTime($Sessions{$SessionID}{EndTime});
+  $SessionHash{dtend} = sprintf('%04d%02d%02dT%02d%02d%02d', ($Year,$Mon,$Day,$Hour,$Min,$Sec));
 
   foreach my $Key (keys %ICalMapping) {
     if ($Sessions{$SessionID}{$Key}) {
