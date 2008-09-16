@@ -1,17 +1,20 @@
 #! /usr/bin/env perl
 #
-# Description: This script lists events and sessions based on the topic(s) or 
-#              moderator(s) of the events and sessions 
+#        Name: ListEventsBy
+# Description: This script lists events and sessions based on the topic(s) or
+#              moderator(s) of the events and sessions
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -28,26 +31,27 @@ use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
-require "MeetingSQL.pm"; 
+require "MeetingSQL.pm";
 
-require "DBUtilities.pm"; 
-require "EventUtilities.pm"; 
-require "HTMLUtilities.pm"; 
-require "SQLUtilities.pm"; 
-require "ResponseElements.pm"; 
-require "MeetingHTML.pm"; 
-require "MeetingSQL.pm"; 
-require "TopicHTML.pm"; 
-require "CalendarHTML.pm"; 
+require "DBUtilities.pm";
+require "EventUtilities.pm";
+require "HTMLUtilities.pm";
+require "SQLUtilities.pm";
+require "ResponseElements.pm";
+require "MeetingHTML.pm";
+require "MeetingSQL.pm";
+require "TopicHTML.pm";
+require "CalendarHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 
-# Parameters to script 
+# Parameters to script
 
 my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-my $TopicID  = $Untaint -> extract (-as_integer => "topicid")  || 0;
-my $AuthorID = $Untaint -> extract (-as_integer => "authorid") || 0;
+my $TopicID  = $Untaint -> extract (-as_integer   => "topicid")  || 0;
+my $AuthorID = $Untaint -> extract (-as_integer   => "authorid") || 0;
+my $Format   = $Untaint -> extract (-as_printable => "format")   || "html";
 
 $query -> delete_all();
 
@@ -56,39 +60,47 @@ $query -> delete_all();
 CreateConnection(-type => "ro");
 EndPage(-startpage => $TRUE);
 
-print $query -> header;
-DocDBHeader("Event Listing","",-scripts => []);
-EndPage();
-my $HTML = "<div>";
+my ($HTML,$iCal);
+
+if ($Format eq "html") {
+  print $query -> header;
+  DocDBHeader("Event Listing","",-scripts => []);
+  EndPage();
+  my $HTML = "<div>";
+} elsif ($Format eq "ical") {
+  print $query -> header( -charset => $HTTP_ENCODING );
+  require "VEntryOutput.pm" ;
+  $iCal = NewICal();
+}
 
 my %EventHash = ();
 
 if ($TopicID) {
   require "TopicUtilities.pm";
   require "TopicSQL.pm";
-  
+
   FetchTopic($TopicID);
   my @ChildIDs = TopicAndSubTopics({-topicid => $TopicID});
   foreach my $ChildID (@ChildIDs) {
     my %Hash = GetEventsByTopic($ChildID);
     foreach my $ID (keys %Hash) {
-      $EventHash{$ID} = $Hash{$ID}; 
+      $EventHash{$ID} = $Hash{$ID};
     }
-  }  
+  }
   $HTML .= "<h4>Events for <span class=\"Highlight\">$Topics{$TopicID}{Long} </span>";
   if (scalar(@ChildTopicIDs) > 1) {
     $HTML .= " and its sub-topics";
   }
   $HTML .= '<br/>(Documents on '.TopicLink({ -topicid => $TopicID }).')';
-  $HTML .= "</h4>"; 
+  $HTML .= "</h4>";
 } elsif ($AuthorID) {
   %EventHash = GetEventsByModerator($AuthorID);
 
   my $Link = AuthorLink($AuthorID);
-  
-  $HTML .= "<h4>Events moderated by <span class=\"Highlight\">$Link of 
+
+  $HTML .= "<h4>Events moderated by <span class=\"Highlight\">$Link of
             $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG}</span>";
-  $HTML .= "</h4>"; 
+  $HTML .= "</h4>";
 }
 
 # Find events with one session/break, remove from list if session is in list
@@ -108,7 +120,7 @@ foreach my $Key1 (keys %EventHash) {
     }
   }
 }
-        
+
 %TmpEventHash = %EventHash;
 my @HashIDs = keys %EventHash;
 @HashIDs = sort EventHashByTime @HashIDs;
@@ -121,11 +133,11 @@ if (@HashIDs) {
              <th>Date</th><th>Time</th><th>Title</th>
              <th>Location</th><th>Topic(s)</th>
             </tr></thead>';
-                 
+
   my $LastDate = "";
-  my $Row = 0; 
+  my $Row = 0;
   my %DidSession = ();
-  my %DidEvent   = (); 
+  my %DidEvent   = ();
   foreach my $HashID (@HashIDs) {
     my ($Location,$Topics,$Title,$Time);
     my ($Date) = split /\s+/,$EventHash{$HashID}{Time};
@@ -134,18 +146,21 @@ if (@HashIDs) {
       my $SessionID = $EventHash{$HashID}{SessionID};
       if ($DidSession{$SessionID}) { next; }
       $DidSession{$SessionID} = $TRUE;
+      if ($Format eq "ical") {
+        $iCal->add_entry(ICalSessionEntry({-sessionid => $SessionID,}));
+      }
 
       $Title    = SessionLink(-sessionid => $SessionID, -format => "full");
       $Location = join '<br/>',$Sessions{$SessionID}{Location},
                                $Sessions{$SessionID}{AltLocation};
-      $Topics   = TopicListByID({ -linktype => "event", -listformat => "br", -sortby => "name", 
+      $Topics   = TopicListByID({ -linktype => "event", -listformat => "br", -sortby => "name",
                                   -topicids => $Sessions{$SessionID}{Topics}, });
 
       my $StartTime = EuroTimeHM($Sessions{$SessionID}{StartTime});
       my $EndTime   = TruncateSeconds(SessionEndTime($SessionID));
       if ($EndTime eq $StartTime) {
         $EndTime = "";
-      }  
+      }
       $Time = "$StartTime &ndash; $EndTime";
     } elsif ($EventHash{$HashID}{EventID}) {
       my $EventID = $EventHash{$HashID}{EventID};
@@ -157,41 +172,47 @@ if (@HashIDs) {
       $Title    = EventLink(-eventid => $EventID,);
       $Location = join '<br/>',$Conferences{$EventID}{Location},
                                $Conferences{$EventID}{AltLocation};
-      $Topics   = TopicListByID({ -linktype => "event", -listformat => "br", -sortby => "name", 
+      $Topics   = TopicListByID({ -linktype => "event", -listformat => "br", -sortby => "name",
                                   -topicids => $Conferences{$EventID}{Topics}, });
       $Time = 'All day/no time';
     # Enhance: SessionSeparator meta-data
     } else {
       next; # Skipped events because single session was shown
     }
-          
+
     if ($LastDate ne $Date) { # Start a new tbody group
-     ++$Row;             
+     ++$Row;
      if ($LastDate) {        # Close old tbody
         $HTML .= '</tbody>';
-      }  
+      }
       my $RowClass = ("Even","Odd")[$Row % 2];
       $HTML .= "<tbody class=\"$RowClass\">";
       my $DateString = EuroDate($Date);
       $DateLink   = CalendarLink(-text => $DateString, -SQL => $Date);
       $LastDate   = $Date;
-    }  
+    }
     $HTML .= '<tr><td>'.$DateLink.'</td>'.
                  '<td>'.$Time.      '</td>'.
                  '<td>'.$Title.     '</td>'.
                  '<td>'.$Location.  '</td>'.
                  '<td>'.$Topics.    '</td></tr>';
-  } 
+  }
   $HTML .= '</tbody></table>';
-} else {  
+} else {
   $HTML .= 'No events found.';
-}  
+}
 
 $HTML .= '</div>';
 
-print PrettyHTML($HTML);
+if ($Format eq "html") {
+  print PrettyHTML($HTML);
 
-DocDBNavBar();
-DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
- 
+  DocDBNavBar();
+  DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+} elsif ($Format eq "ical") {
+  print "<body><pre>\n";
+  print $iCal->as_string;
+  print "</pre></body>\n";
+}
+
 exit;

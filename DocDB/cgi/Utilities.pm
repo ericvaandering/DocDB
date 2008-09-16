@@ -3,7 +3,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -21,8 +21,8 @@ sub Unique {
   foreach my $Element (@Elements) {
     ++$Hash{$Element};
   }
-  
-  my @UniqueElements = keys %Hash;  
+
+  my @UniqueElements = keys %Hash;
   return @UniqueElements;
 }
 
@@ -35,16 +35,16 @@ sub Union (\@@) {
   @A2 = &Unique(@A2);
   push @A1,@A2; # Concat arrays into A1
   my @UnionElements = ();
-  
+
   my %Hash = ();
   foreach my $Element (@A1) {
     if ($Hash{$Element} > 0) {
       push @UnionElements,$Element;
-    } else {  
+    } else {
       ++$Hash{$Element};
-    }  
+    }
   }
-  
+
   return @UnionElements;
 }
 
@@ -52,7 +52,7 @@ sub RemoveArray (\@@) { # Removes elements of one array from another
                         # Call &RemoveArray(\@Array1,@Array2)
                         # FIXME: Figure out how to do like push, no reference
                         #        on call needed
-                        
+
   my ($Array_ref,@BadElements) = @_;
 
   my @Array = @{$Array_ref};
@@ -63,7 +63,7 @@ sub RemoveArray (\@@) { # Removes elements of one array from another
       if ($Element eq $BadElement) {
         splice @Array,$Index,1;
       }
-      ++$Index;  
+      ++$Index;
     }
   }
   return @Array;
@@ -71,22 +71,22 @@ sub RemoveArray (\@@) { # Removes elements of one array from another
 
 sub IndexOf {
   my ($Element,@Array) = @_;
-  
+
   my $Found = 0;
   my $Count = 0;
   foreach my $Test (@Array) {
     if ($Test eq $Element) {
       $Found = 1;
       last;
-    }  
+    }
     ++$Count;
   }
-  
+
   if ($Found) {
     return $Count;
   } else {
     return undef;
-  }          
+  }
 }
 
 sub URLify { # Adapted from Perl Cookbook, 6.21
@@ -114,27 +114,27 @@ sub URLify { # Adapted from Perl Cookbook, 6.21
               )
              }{<a href="$1">$1</a>}igox;
   $Text = &SafeHTML($Text);
-  return $Text;           
+  return $Text;
 }
 
-sub AddTime ($$) {
+sub AddTime ($;$) {
   my ($TimeA,$TimeB) = @_;
-  
+
   use Time::Local;
 
   my ($HourA,$MinA,$SecA) = split /:/,$TimeA;
   my ($HourB,$MinB,$SecB) = split /:/,$TimeB;
-  
+
   $TimeA = timelocal($SecA,$MinA,$HourA,1,0,0);
   $TimeB = timelocal($SecB,$MinB,$HourB,1,0,0)-timelocal(0,0,0,1,0,0);
-  
+
   my $Time = $TimeA + $TimeB;
 
   my ($Sec,$Min,$Hour) = localtime($Time);
-  
+
   my $TimeString = sprintf "%2.2d:%2.2d:%2.2d",$Hour,$Min,$Sec;
 
-  return $TimeString; 
+  return $TimeString;
 }
 
 sub Paragraphize {
@@ -159,14 +159,14 @@ sub SafeHTML {
   $Text =~ s/\&/\&amp;/g;
   $Text =~ s/\&amp;amp;/\&amp;/g;
   return $Text;
-}  
- 
+}
+
 sub Printable ($) {
   my ($Text) = @_;
   $Text =~ tr/[\040-\377\r\n\t]//cd;
   return $Text;
-}  
- 
+}
+
 sub FillTable ($) {
   my ($ArgRef) = @_;
   my $Arrange  = exists $ArgRef->{-arrange}  ?   $ArgRef->{-arrange}   : "vertical";
@@ -174,31 +174,31 @@ sub FillTable ($) {
   my @Elements = exists $ArgRef->{-elements} ? @{$ArgRef->{-elements}} : ();
 
   # Nothing other than vertical works
-  
+
   my @PerColumn = ();
   my $PerColumn = int(scalar(@Elements) / $Columns);
   my $ExtraColumns = scalar(@Elements) % $Columns;
-  
+
   for my $i (1..$Columns) {
     if ($ExtraColumns >= $i) {
       $PerColumn[$i] = $PerColumn + 1;
-    } else {  
+    } else {
       $PerColumn[$i] = $PerColumn;
-    }    
+    }
   }
-  
+
   my @ColumnRefs = ();
-  
+
   for my $i (1..$Columns) {
     for my $j (1..$PerColumn[$i]) {
       my $Element = shift @Elements;
       if ($Element) {
         push @{$ColumnRefs[$i]},$Element;
-      }  
+      }
     }
-  }    
-  
+  }
+
   return @ColumnRefs;
 }
-  
+
 1;
