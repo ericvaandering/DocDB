@@ -67,8 +67,10 @@ sub SessionEndTime ($) { # Can eventually use EndTime? no need to order these
   my ($SessSec,$SessMin,$SessHour,$SessDay,$SessMon,$SessYear) = SQLDateTime($Sessions{$SessionID}{StartTime});
   my $SessionTime = "$SessHour:$SessMin:$SessSec";
   $AccumulatedTime = AddTime($AccumulatedTime,$SessionTime);
-  # FIXME: This assumes that a session does not span days
-  $Sessions{$SessionID}{EndTime} = "$SessYear-$SessMon-$SessDay ".$AccumulatedTime;
+  my $EndTime = "$SessYear-$SessMon-$SessDay ".$AccumulatedTime;
+  # FIXME: This assumes that a session does not span days. Proper thing to do is use DateTime for everything
+  $Sessions{$SessionID}{EndTime} = $EndTime;
+  $Sessions{$SessionID}{EndDateTime} = ConvertToDateTime({-MySQLDateTime => $EndTime, });
 
   return $AccumulatedTime;
 }

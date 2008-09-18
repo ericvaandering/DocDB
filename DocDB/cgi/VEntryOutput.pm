@@ -26,6 +26,7 @@
 
 use Data::ICal;
 use Data::ICal::Entry::Event;
+use DateTime::Format::ICal;
 
 require "SQLUtilities.pm";
 require "EventUtilities.pm";
@@ -63,14 +64,20 @@ sub ICalSessionEntry {
 
   $SessionHash{url} = "$DisplayMeeting?sessionid=$SessionID";
 
-  # Start Time
-  SessionEndTime($SessionID);
-  my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = SQLDateTime($Sessions{$SessionID}{StartTime});
-  $SessionHash{dtstart} = sprintf('%04d%02d%02dT%02d%02d%02d', ($Year,$Mon,$Day,$Hour,$Min,$Sec));
+  my $Moderators = "";
+  my @ModeratorIDs = @{$Conferences{$EventID}{Moderators}};
+  foreach my $ModeratorID (@ModeratorIDs) {
+    FetchAuthor($ModeratorID);
+    $Moderators .= $Authors{$AuthorID}{FULLNAME};
+  }
+  $SessionHash{"x-moderators"} = $Moderators;
 
-  # End Time
-  ($Sec,$Min,$Hour,$Day,$Mon,$Year) = SQLDateTime($Sessions{$SessionID}{EndTime});
-  $SessionHash{dtend} = sprintf('%04d%02d%02dT%02d%02d%02d', ($Year,$Mon,$Day,$Hour,$Min,$Sec));
+  # Start & End Time
+  SessionEndTime($SessionID);
+  my $ICalFormatter = DateTime::Format::ICal->new();
+
+  $SessionHash{dtstart} = $ICalFormatter->format_datetime($Sessions{$SessionID}{StartDateTime});
+  $SessionHash{dtend}   = $ICalFormatter->format_datetime($Sessions{$SessionID}{EndDateTime});
 
   foreach my $Key (keys %ICalMapping) {
     if ($Sessions{$SessionID}{$Key}) {

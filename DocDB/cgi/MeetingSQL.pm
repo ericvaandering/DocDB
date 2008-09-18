@@ -22,6 +22,8 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+require "SQLUtilities.pm";
+
 sub GetConferences {
   if ($HaveAllConferences) {
     my @ConferenceIDs = keys %Conferences;
@@ -51,7 +53,6 @@ sub ClearConferences () {
 }
 
 sub GetEventsByDate (%) {
-  require "SQLUtilities.pm";
   require "Utilities.pm";
   require "MeetingSecurityUtilities.pm";
 
@@ -267,6 +268,8 @@ sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
     $Conferences{$EventID}{Epilogue}        = $Epilogue;
     $Conferences{$EventID}{StartDate}       = $StartDate;
     $Conferences{$EventID}{EndDate}         = $EndDate;
+    $Conferences{$EventID}{StartDateTime}   = ConvertToDateTime({-MySQLDateTime => $StartDate, });
+    $Conferences{$EventID}{EndDateTime}     = ConvertToDateTime({-MySQLDateTime => $EndDate, });
     $Conferences{$EventID}{ShowAllTalks}    = $ShowAllTalks;
     $Conferences{$EventID}{TimeStamp}       = $TimeStamp;
 
@@ -353,6 +356,7 @@ sub FetchSessionByID ($) {
   if ($TimeStamp) {
     $Sessions{$SessionID}{ConferenceID}  = $ConferenceID;
     $Sessions{$SessionID}{StartTime}     = $StartTime;
+    $Sessions{$SessionID}{StartDateTime} = ConvertToDateTime({-MySQLDateTime => $StartTime, });
     $Sessions{$SessionID}{Location}      = $Location;
     $Sessions{$SessionID}{AltLocation}   = $AltLocation;
     $Sessions{$SessionID}{Title}         = $Title;
@@ -466,7 +470,6 @@ sub InsertEvent (%) {
   my @ViewGroupIDs     = exists $ArgRef->{-viewgroupids}     ? @{$ArgRef->{-viewgroupids}}    : ();
   my @ModifyGroupIDs   = exists $ArgRef->{-modifygroupids}   ? @{$ArgRef->{-modifygroupids}}  : ();
 
-  require "SQLUtilities.pm";
   require "MeetingSecuritySQL.pm";
 
   my $Insert = $dbh->prepare(
@@ -507,7 +510,6 @@ sub UpdateEvent (%) {
   my @ViewGroupIDs     = exists $ArgRef->{-viewgroupids}     ? @{$ArgRef->{-viewgroupids}}    : ();
   my @ModifyGroupIDs   = exists $ArgRef->{-modifygroupids}   ? @{$ArgRef->{-modifygroupids}}  : ();
 
-  require "SQLUtilities.pm";
   require "MeetingSecuritySQL.pm";
 
   my $Update = $dbh->prepare(
