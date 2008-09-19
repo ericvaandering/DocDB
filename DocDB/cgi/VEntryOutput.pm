@@ -76,6 +76,7 @@ sub ICalSessionEntry {
   $SessionHash{url} = "$DisplayMeeting?sessionid=$SessionID";
   $SessionHash{uid} = "Session".$SessionID."\@".$cgi_root;
 
+  #FUTURE: With e-mail for moderators, could use ORGANIZER tag (for one mod)
   my @ModeratorIDs = @{$Sessions{$SessionID}{Moderators}};
   if (@ModeratorIDs) {
     my @Moderators = ();
