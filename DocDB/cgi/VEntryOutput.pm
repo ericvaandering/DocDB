@@ -38,6 +38,15 @@ sub NewICal {
   return $Calendar;
 }
 
+sub NewICalEvent {
+  my $Event = Data::ICal::Entry::Event->new();
+  my $ICalFormatter = DateTime::Format::ICal->new();
+  $Hash{dtstamp}   = $ICalFormatter->format_datetime(DateTime->now);
+  $Event->add_properties(%Hash);
+
+  return $Event;
+}
+
 sub ICalHeader {
   my $Header;
   $Header .= "Content-Type: text/calendar\n";
@@ -53,7 +62,7 @@ sub ICalSessionEntry {
   my ($ArgRef) = @_;
 
   my $SessionID = exists $ArgRef->{-sessionid} ? $ArgRef->{-sessionid} : 0;
-  my $Event = Data::ICal::Entry::Event->new();
+  my $Event = NewICalEvent();
   unless ($SessionID) {return $Event}
   FetchSessionByID($SessionID);
 
@@ -61,16 +70,31 @@ sub ICalSessionEntry {
   my %ICalMapping = (Title => summary, Description => description, Location => location,);
 
   my %SessionHash = ();
-
+  my $Comment;
   $SessionHash{url} = "$DisplayMeeting?sessionid=$SessionID";
+  $SessionHash{uid} = "Session".$SessionID."\@".$cgi_root;
 
-  my $Moderators = "";
-  my @ModeratorIDs = @{$Conferences{$EventID}{Moderators}};
-  foreach my $ModeratorID (@ModeratorIDs) {
-    FetchAuthor($ModeratorID);
-    $Moderators .= $Authors{$AuthorID}{FULLNAME};
+  my @ModeratorIDs = @{$Sessions{$SessionID}{Moderators}};
+  if (@ModeratorIDs) {
+    my @Moderators = ();
+    foreach my $ModeratorID (@ModeratorIDs) {
+      FetchAuthor($ModeratorID);
+      push @Moderators,$Authors{$ModeratorID}{FULLNAME};
+    }
+    $SessionHash{"x-moderators"} = join ', ',@Moderators;
+    $Comment .= "Moderated by: ".(join ', ',@Moderators)."\n\n";;
   }
-  $SessionHash{"x-moderators"} = $Moderators;
+
+  my @TopicIDs = @{$Sessions{$SessionID}{Topics}};
+  if (@TopicIDs) {
+    my @Topics = ();
+    foreach my $TopicID (@TopicIDs) {
+      FetchTopic({ -topicid => $TopicID });
+      push @Topics,TopicName({ -topicid => $TopicID });
+    }
+    $SessionHash{"x-topics"} = join ', ',@Topics;
+    $Comment .= "Topics: ".(join ', ',@Topics)."\n\n";
+  }
 
   # Start & End Time
   SessionEndTime($SessionID);
@@ -78,11 +102,16 @@ sub ICalSessionEntry {
 
   $SessionHash{dtstart} = $ICalFormatter->format_datetime($Sessions{$SessionID}{StartDateTime});
   $SessionHash{dtend}   = $ICalFormatter->format_datetime($Sessions{$SessionID}{EndDateTime});
+  $SessionHash{"LAST-MODIFIED"} = $ICalFormatter->format_datetime($Sessions{$SessionID}{ModifiedDateTime});
 
   foreach my $Key (keys %ICalMapping) {
     if ($Sessions{$SessionID}{$Key}) {
       $SessionHash{$ICalMapping{$Key}} = $Sessions{$SessionID}{$Key};
     }
+  }
+
+  if ($Comment) {
+    $SessionHash{comment} = $Comment;
   }
 
   $Event->add_properties(%SessionHash);

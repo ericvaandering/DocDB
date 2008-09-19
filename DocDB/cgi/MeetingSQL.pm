@@ -363,6 +363,7 @@ sub FetchSessionByID ($) {
     $Sessions{$SessionID}{Description}   = $Description;
     $Sessions{$SessionID}{ShowAllTalks}  = $ShowAllTalks;
     $Sessions{$SessionID}{TimeStamp}     = $TimeStamp;
+    $Sessions{$SessionID}{ModifiedDateTime} = ConvertToDateTime({-MySQLTimeStamp => $TimeStamp, });
     @{$Sessions{$SessionID}{Moderators}} = ();
     @{$Sessions{$SessionID}{Topics}}     = ();
   }
