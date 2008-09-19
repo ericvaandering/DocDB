@@ -2,6 +2,7 @@ function disabler_author() {
   if (document.author.admaction[0].checked == true) {
     document.author.middle.disabled = false;
     document.author.authors.disabled = true;
+    document.author.targetauthor.disabled = true;
     document.author.first.disabled = false;
     document.author.inst.disabled = false;
     document.author.lastname.disabled = false;
@@ -9,6 +10,7 @@ function disabler_author() {
   if (document.author.admaction[1].checked == true) {
     document.author.middle.disabled = true;
     document.author.authors.disabled = false;
+    document.author.targetauthor.disabled = false;
     document.author.first.disabled = true;
     document.author.inst.disabled = true;
     document.author.lastname.disabled = true;
@@ -16,6 +18,7 @@ function disabler_author() {
   if (document.author.admaction[2].checked == true) {
     document.author.middle.disabled = false;
     document.author.authors.disabled = false;
+    document.author.targetauthor.disabled = true;
     document.author.first.disabled = false;
     document.author.inst.disabled = false;
     document.author.lastname.disabled = false;

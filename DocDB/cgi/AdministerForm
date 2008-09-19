@@ -1,19 +1,20 @@
 #! /usr/bin/env perl
 #
 #        Name: AdministerForm
-# Description: This single form provides a number of interfaces to admin 
-#              tools, each run by a different script. 
+# Description: This single form provides a number of interfaces to admin
+#              tools, each run by a different script.
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
-#
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -26,7 +27,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 
-use CGI;                                                                                      
+use CGI;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -63,7 +64,7 @@ $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass
 
 print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Administer $Project DocDB","",
-             -scripts => ["PopUps","AuthorAdminDisable","MiscAdminDisable","TopicAdminDisable"]); 
+             -scripts => ["PopUps","AuthorAdminDisable","MiscAdminDisable","TopicAdminDisable"]);
 
 @ErrorStack = ();
 @WarnStack  = ();
@@ -75,7 +76,7 @@ unless (&CanAdminister()) {
 EndPage(@ErrorStack);
 
 print "<b>This form allows you to administer the lists of things within
-the database.</b><p>\n"; 
+the database.</b><p>\n";
 
 print "Begin by selecting an action for what you want to administer. If you
        select <b>New</b>, the selection from the first list will be
@@ -83,7 +84,7 @@ print "Begin by selecting an action for what you want to administer. If you
        for adding authors. If you select <b>Modify</b> you have to make a
        selection from the first list and any attributes you select on the
        right will be changed. If you leave something blank, it will not be
-       changed. If you select <b>Delete</b> any selections other than from 
+       changed. If you select <b>Delete</b> any selections other than from
        the first list will be ignored.<p>\n";
 
 print "Note that deleting and then re-entering with the same information is
@@ -111,25 +112,28 @@ print $query -> start_multipart_form('POST',"$AuthorAdminister",
                                      "id=\"author\" name=\"author\"");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
-print "<td colspan=2>\n"; 
+print "<td colspan=2>\n";
  &AdministerActions(-form => "author");
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
 print "<td>\n";
- &AuthorScroll(-helplink => "author", -disabled => true); 
-print "</td>\n";  
-print "<td>\n";
- &InstitutionSelect(-disabled => true); 
+ &AuthorScroll(-helplink => "author", -disabled => true);
 print "</td>\n";
-print "<td>\n"; 
- &NameEntryBox(-disabled => true);      
+print "<td>\n";
+ AuthorScroll(-helplink => "targetauthor", -helptext => "Target", -name => "targetauthor", -disabled => true);
+print "</td>\n";
+print "<td>\n";
+ &InstitutionSelect(-disabled => true);
+print "</td>\n";
+print "<td>\n";
+ &NameEntryBox(-disabled => true);
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td colspan=3>\n";
+print "<td colspan=\"4\">\n";
 &AdministratorPassword;
 print "&nbsp;";
 print $query -> submit (-value => "Change Author Info");
@@ -149,14 +153,14 @@ print $query -> start_multipart_form('POST',"$InstitutionAdminister",
                                      "id=\"institution\" name=\"institution\"");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
-print "<td colspan=2>\n"; 
- &AdministerActions(-form => "institution");      
+print "<td colspan=2>\n";
+ &AdministerActions(-form => "institution");
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td>\n"; 
-&InstitutionSelect(-format => "full", -disabled => true); 
+print "<td>\n";
+&InstitutionSelect(-format => "full", -disabled => true);
 print "</td>\n";
 print "<td>\n"; &InstitutionEntryBox(-disabled => true); print "</td>\n";
 print "</tr>\n";
@@ -182,7 +186,7 @@ print $query -> start_multipart_form('POST',"$DocTypeAdminister",
                                      "id=\"documenttype\" name=\"documenttype\"");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
-print "<td colspan=2>\n"; 
+print "<td colspan=2>\n";
  &AdministerActions(-form => "documenttype");
 print "</td>\n";
 print "</tr>\n";
