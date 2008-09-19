@@ -1,6 +1,8 @@
 #
 #        Name: VEntryOutput.pm
-# Description: Routines to produce iCal formatted lists of events
+# Description: Routines to produce iCal formatted lists of events.
+#              If support added for XML/HTML format, then add translation
+#              layer and presentation layer?
 #
 #    Revision: $Revision$
 #    Modified: $Author$ on $Date$
