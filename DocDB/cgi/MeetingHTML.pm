@@ -1283,4 +1283,24 @@ sub ListByEventLink {
   return $Link;
 }
 
+sub ICalLink ($) {
+  my ($ArgRef) = @_;
+
+  my $EventID   = exists $ArgRef->{-eventid} ? $ArgRef->{-eventid} : 0;
+  my $SessionID = exists $ArgRef->{-sessionid} ? $ArgRef->{-sessionid} : 0;
+  my $AuthorID  = exists $ArgRef->{-authorid} ? $ArgRef->{-authorid} : 0;
+  my $TopicID   = exists $ArgRef->{-topicid} ? $ArgRef->{-topicid} : 0;
+
+  my $Link =  ' <a href="'.$ListEventsBy.'?format=ical;';
+  if ($AuthorID) {
+    $Link .= 'authorid='.$AuthorID;
+  }
+  if ($TopicID) {
+    $Link .= 'topicid='.$TopicID;
+  }
+  $Link .= '"><img class="icon" src="'.$ImgURLPath.'/ical_small.png" alt="iCal list of events" /></a>';
+
+  return $Link;
+}
+
 1;

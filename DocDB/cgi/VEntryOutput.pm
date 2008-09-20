@@ -30,10 +30,11 @@ use Data::ICal;
 use Data::ICal::Entry::Event;
 use DateTime::Format::ICal;
 
-require "SQLUtilities.pm";
+require "AuthorSQL.pm";
 require "EventUtilities.pm";
 require "MeetingSQL.pm";
 require "MeetingHTML.pm";
+require "SQLUtilities.pm";
 
 sub NewICal {
   my $Calendar = Data::ICal->new();

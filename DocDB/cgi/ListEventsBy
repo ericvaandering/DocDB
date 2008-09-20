@@ -92,6 +92,9 @@ if ($TopicID) {
   if (scalar(@ChildTopicIDs) > 1) {
     $HTML .= " and its sub-topics";
   }
+  if ($Preferences{Components}{iCal}) {
+    $HTML .= ' '.ICalLink({ -topicid => $TopicID });
+  }
   $HTML .= '<br/>(Documents on '.TopicLink({ -topicid => $TopicID }).')';
   $HTML .= "</h4>";
 } elsif ($AuthorID) {
@@ -101,6 +104,9 @@ if ($TopicID) {
 
   $HTML .= "<h4>Events moderated by <span class=\"Highlight\">$Link of
             $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG}</span>";
+  if ($Preferences{Components}{iCal}) {
+    $HTML .= ' '.ICalLink({ -authorid => $AuthorID });
+  }
   $HTML .= "</h4>";
 }
 

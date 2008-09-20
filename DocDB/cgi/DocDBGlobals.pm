@@ -96,6 +96,8 @@ $Preferences{Options}{AlwaysRetrieveFile}       = $FALSE; # Always use RetrieveF
 
 $Preferences{Options}{SubmitAgree}              = ""; # "Put text here to make users agree to a privacy statement or some-such. <br/><b>I agree:</b>"
 
+$Preferences{Components}{iCal}  = $TRUE; # Display links to iCal calendars
+
 $Preferences{Topics}{MinLevel}{Document} = 1;
 $Preferences{Events}{MaxSessionList}     = 5;
 

@@ -4,7 +4,7 @@ body {
   margin: 10px 10px 10px 10px;
   padding:0px;
   margin-right: 20px;
-  
+
 }
 
 ul {
@@ -40,7 +40,12 @@ dt {
 a img {
   border: none;
 }
- 
+
+img.icon { /* For inline icons */
+  vertical-align: bottom;
+  padding: 2px;
+}
+
 ul.compact {
   padding-left: 0em;
   margin-left:  0em;
@@ -79,16 +84,16 @@ h5 {
 td {vertical-align: top;    }
 th {vertical-align: bottom; }
 
-.LeftHeader {text-align: right;}  
+.LeftHeader {text-align: right;}
 
 .LeftHeader th {
   vertical-align: top;
   text-align: right;
-}  
+}
 
 .LeftHeader td {
   text-align: left;
-}  
+}
 
 /* Stuff for PrintRevisionInfo, which shows up in lots of places, hence it's here */
 
@@ -102,14 +107,14 @@ th {vertical-align: bottom; }
   width: 100%;
   padding: 0.5em;
 }
-	
+
 #Footer3Col {
   clear: both;
   width: 100%;
   padding: 0.5em;
   text-align: center;
 }
-	
+
 #LeftColumn3Col {
   width: 12.5em;
   float: left;
@@ -130,7 +135,7 @@ th {vertical-align: bottom; }
 }
 
 #RightColumn3Col {
-  width: 12.5em; 
+  width: 12.5em;
   background: #eee;
   float: right;
   margin-bottom: 0.5em;
@@ -140,23 +145,23 @@ th {vertical-align: bottom; }
   border: 1px solid black;
 }
 
-#UpdateButtons { 
+#UpdateButtons {
   text-align: center;
-}  
+}
 
 #DocNotifySignup input[type="submit"], #UpdateButtons input[type="submit"] { /* Probably not best to change all buttons */
   font-size: 90%;
-}  
+}
 
 #Signoffs ul ul {
   padding-left: 1em;
 }
 
 #OtherVersionTable {
-  width: 100%; 
+  width: 100%;
 }
 
-/* Allow for lists and tables with alternating color rows. 
+/* Allow for lists and tables with alternating color rows.
    border-collapse gets rid of spacing between cells */
 
 table.Alternating {
@@ -194,13 +199,13 @@ tr.Unconfirmed, tbody.Unconfirmed {
   vertical-align: top;
   text-align: left;
   padding: 3px 5px 3px 5px;
-}  
+}
 
 .DocumentList th {
   vertical-align: bottom;
   border: 1px solid black;
   padding: 5px 5px 5px 5px;
-}  
+}
 
 /* For table showing a upcoming events */
 
@@ -217,48 +222,48 @@ tr.Unconfirmed, tbody.Unconfirmed {
   vertical-align: top;
   text-align: left;
   padding: 3px 5px 3px 5px;
-}  
+}
 
 .MultidayEventList th {
   vertical-align: bottom;
   border-bottom: 1px solid black;
   padding: 5px 5px 5px 5px;
-}  
+}
 
 .MultidayEventList th.LeftHeader {
   vertical-align: top;
   border-bottom: none;
   padding: 3px 5px 3px 5px;
-}  
+}
 
 td.Time {
   text-align: right;
 }
-  
+
 #SubmitCell { /* Should be ".SubmitCell" */
   text-align: center;
-}  
+}
 
 .SubmitCell, td.SubmitCell, th.SubmitCell { /* Should be ".SubmitCell" */
   text-align: center;
-}  
+}
 
 .Highlight {
   color: blue;
-}  
+}
 
 .Error, .Warning, .Help {
   color: red;
-}  
+}
 
 td.Updated {
   text-align: right;
   white-space: nowrap;
-}  
+}
 
 .DocDBNavBar {
   text-align: center;
-}  
+}
 
 .EmbedSession table {
   margin-left: 1em;
