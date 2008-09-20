@@ -1257,11 +1257,11 @@ or may not be the same as the web username and password.
 
  <entry>
      <key>targetauthor</key>
-     <title>Author for Copy Before Delete</title>
+     <title>Author to Consolidate</title>
      <text>
          <p>Instead of simply deleting the author, all references to the author about
          to be deleted will be updated to another author before deletion. This may
-         be useful if there are two entries for an author or if your practice is to
+         be useful if there are two author entries for one person or if your practice is to
          move all activity by people who have left the organization to <q>Obsolete Author</q>
          or something similar.</p><p>This field is optional.</p>
      </text>
