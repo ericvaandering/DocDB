@@ -121,7 +121,7 @@ print "<td>\n";
  &AuthorScroll(-helplink => "author", -disabled => true);
 print "</td>\n";
 print "<td>\n";
- AuthorScroll(-helplink => "targetauthor", -helptext => "Target", -name => "targetauthor", -disabled => true);
+ AuthorScroll(-helplink => "targetauthor", -helptext => "Consolidate", -name => "targetauthor", -disabled => true);
 print "</td>\n";
 print "<td>\n";
  &InstitutionSelect(-disabled => true);

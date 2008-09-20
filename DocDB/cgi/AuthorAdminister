@@ -46,16 +46,16 @@ $query = new CGI;  # Global for subroutines
 
 # Parameters to script
 
-$Password      = $params{password};
-my $Username      = $params{admuser};
-$Action        = $params{admaction};
+$Password    = $params{password};
+my $Username = $params{admuser};
+$Action      = $params{admaction};
 
 my $AuthorID      = $params{authors};
 my $ConsolidateID = $params{targetauthor};
-$FirstName     = $params{first};
-$Middle        = $params{middle};
-$LastName      = $params{lastname};
-$InstitutionID = $params{inst};
+$FirstName        = $params{first};
+$Middle           = $params{middle};
+$LastName         = $params{lastname};
+$InstitutionID    = $params{inst};
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
@@ -85,7 +85,12 @@ if      ($Action eq "Delete") {
   my $ModeratorDelete = $dbh -> prepare("delete from Moderator      where AuthorID=?");
 
   if ($ConsolidateID) {
-
+    my $RevisionUpdate  = $dbh -> prepare("update RevisionAuthor set AuthorID=? where AuthorID=?");
+    my $HintUpdate      = $dbh -> prepare("update AuthorHint     set AuthorID=? where AuthorID=?");
+    my $ModeratorUpdate = $dbh -> prepare("update Moderator      set AuthorID=? where AuthorID=?");
+    $RevisionUpdate  -> execute($ConsolidateID,$AuthorID);
+    $HintUpdate      -> execute($ConsolidateID,$AuthorID);
+    $ModeratorUpdate -> execute($ConsolidateID,$AuthorID);
   }
 
   $RevisionDelete  -> execute($AuthorID);
@@ -94,7 +99,7 @@ if      ($Action eq "Delete") {
   $AuthorDelete    -> execute($AuthorID);
 
   print "$AuthorLink has been removed from the database.<br>\n";
-  if (@AuthorDocIDs) {
+  if (@AuthorDocIDs && !$ConsolidateID) {
     push @WarnStack,"$AuthorLink was an author on documents. These
                      entries have been removed.";
   }
