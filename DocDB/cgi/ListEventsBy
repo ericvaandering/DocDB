@@ -49,9 +49,12 @@ $query = new CGI;  # Global for subroutines
 
 my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-my $TopicID  = $Untaint -> extract (-as_integer   => "topicid")  || 0;
-my $AuthorID = $Untaint -> extract (-as_integer   => "authorid") || 0;
-my $Format   = $Untaint -> extract (-as_printable => "format")   || "html";
+my $TopicID      = $Untaint -> extract (-as_integer   => "topicid")      || 0;
+my $AuthorID     = $Untaint -> extract (-as_integer   => "authorid")     || 0;
+my $EventID      = $Untaint -> extract (-as_integer   => "eventid")      || 0;
+my $EventGroupID = $Untaint -> extract (-as_integer   => "eventgroupid") || 0;
+my $AllEvents    = $Untaint -> extract (-as_integer   => "allevents")    || 0;
+my $Format       = $Untaint -> extract (-as_printable => "format")       || "html";
 
 $query -> delete_all();
 
@@ -108,6 +111,15 @@ if ($TopicID) {
     $HTML .= ' '.ICalLink({ -authorid => $AuthorID });
   }
   $HTML .= "</h4>";
+} elsif ($EventID) {
+  %EventHash = GetEventHashByEvent($EventID);
+  # No HTML component, iCal only
+} elsif ($EventGroupID) {
+  %EventHash = GetEventHashByEventGroup($EventGroupID);
+  # No HTML component, iCal only
+} elsif ($AllEvents) {
+  %EventHash = GetEventHashAllEvents();
+  # No HTML component, iCal only
 }
 
 # Find events with one session/break, remove from list if session is in list

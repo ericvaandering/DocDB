@@ -1298,6 +1298,7 @@ sub ICalLink ($) {
   my $SessionID    = exists $ArgRef->{-sessionid}    ? $ArgRef->{-sessionid}    : 0;
   my $AuthorID     = exists $ArgRef->{-authorid}     ? $ArgRef->{-authorid}     : 0;
   my $TopicID      = exists $ArgRef->{-topicid}      ? $ArgRef->{-topicid}      : 0;
+  my $AllEvents    = exists $ArgRef->{-allevents}    ? $ArgRef->{-allevents}    : 0;
 
   my $Link =  ' <a href="'.$ListEventsBy.'?format=ical;';
   if ($AuthorID) {
@@ -1311,6 +1312,9 @@ sub ICalLink ($) {
   }
   if ($EventID) {
     $Link .= 'eventid='.$EventID;
+  }
+  if ($AllEvents) {
+    $Link .= 'allevents=1';
   }
   $Link .= '"><img class="icon" src="'.$ImgURLPath.'/ical_small.png" alt="iCal list of events" /></a>';
 

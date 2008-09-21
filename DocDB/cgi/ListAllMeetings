@@ -7,7 +7,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -19,7 +19,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI;                                                                                      
+use CGI;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -38,7 +38,7 @@ my $EventGroupID = $params{eventgroupid};
 my $EventGroup   = $params{eventgroup};
 
 GetConferences();
-GetSecurityGroups(); 
+GetSecurityGroups();
 
 print $query -> header( -charset => $HTTP_ENCODING );
 
@@ -48,19 +48,24 @@ if ($Mode eq "modify") {
 } else {
   $PageTitle = "List of Events";
 }
-     
+
 DocDBHeader($PageTitle);
 
 if ($EventGroup || $EventGroupID) {
   unless ($EventGroupID) {
     $EventGroupID = LookupEventGroup($EventGroup);
-  }  
+  }
   EventsByGroup( {-groupid => $EventGroupID, -mode => $Mode, -singlegroup => $TRUE} );
 } else {
   if ($Mode eq "modify") {
     print "<h3>Select an event to change:</h3>\n";
     EventsTable( {-mode => "modify"} );
-  } else {  
+  } else {
+    print "<h3>All events";
+    if ($Preferences{Components}{iCal}) {
+      print ' '.ICalLink({ -allevents => 1 });
+    }
+    print "</h3>\n";
     EventsTable( {-mode => "display"} );
   }
 }

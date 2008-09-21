@@ -877,4 +877,52 @@ sub GetEventsByTopic ($) {
   return %EventHash;
 }
 
+sub GetEventHashByEvent ($) { # Put all events and sessions for an event into a unified hash
+  my ($EventID) = @_;
+
+  my %EventHash = ();
+  FetchConferenceByConferenceID($EventID);
+  $EventHash{$SessionID."s"}{EventID} = $EventID;
+  $EventHash{$EventID."e"}{Time} = $Conferences{$EventID}{StartDate}." 00:00:00";
+
+  my @SessionIDs = FetchSessionsByConferenceID($EventID);
+  foreach my $SessionID (@SessionIDs) {
+    $EventHash{$SessionID."s"}{SessionID} = $SessionID;
+    $EventHash{$SessionID."s"}{Time} = $Sessions{$SessionID}{StartTime};
+  }
+  my @SessionSeparatorIDs = FetchSessionSeparatorsByConferenceID($EventID);
+  foreach my $SessionSeparatorID (@SessionSeparatorIDs) {
+    $EventHash{$SessionSeparatorID."b"}{SessionSeparatorID} = $SessionSeparatorID;
+    $EventHash{$SessionSeparatorID."b"}{Time} = $SessionSeparators{$SessionSeparatorID}{StartTime};
+  }
+  return %EventHash;
+}
+
+sub GetEventHashByEventGroup ($) { # Put all events and sessions for an event into a unified hash
+  my ($EventGroupID) = @_;
+
+  my %EventHash = ();
+  my @EventIDs = FetchEventsByGroup($EventGroupID);
+  foreach my $EventID (@EventIDs) {
+    my %Hash = GetEventHashByEvent($EventID);
+    foreach my $ID (keys %Hash) {
+      $EventHash{$ID} = $Hash{$ID};
+    }
+  }
+
+  return %EventHash;
+}
+
+sub GetEventHashAllEvents {
+  my @EventGroupIDs = GetAllEventGroups();
+  foreach my $EventGroupID (@EventGroupIDs) {
+    my %Hash = GetEventHashByEventGroup($EventGroupID);
+    foreach my $ID (keys %Hash) {
+      $EventHash{$ID} = $Hash{$ID};
+    }
+  }
+
+  return %EventHash;
+}
+
 1;
