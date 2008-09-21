@@ -1,8 +1,11 @@
 #        Name: MeetingHTML.pm
 # Description: HTML producing routines for meetings and conferences
 #
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: Stephen Wood (saw@jlab.org)
+#    Modified: Stephen Wood (saw@jlab.org), Eric Vaandering (ewv@fnal.gov)
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 

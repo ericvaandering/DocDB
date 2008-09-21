@@ -2,8 +2,10 @@
 #        Name: MeetingSQL.pm
 # Description: Routines to access SQL tables related to conferences and meetings
 #
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified:
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
