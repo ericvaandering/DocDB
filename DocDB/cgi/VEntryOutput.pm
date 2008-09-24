@@ -58,7 +58,61 @@ sub ICalHeader {
 }
 
 sub ICalEventEntry {
+  my ($ArgRef) = @_;
 
+  my $EventID = exists $ArgRef->{-eventid} ? $ArgRef->{-eventid} : 0;
+  my $Event = NewICalEvent();
+  unless ($EventID) {return $Event}
+  FetchEventByEventID($EventID);
+
+  # Map names of DocDB Session fields into iCal format fields
+  my %ICalMapping = (Title => summary, LongDescription => description, Location => location,);
+
+  my %EventHash = ();
+  my @Comments = ();
+  if ($Conferences{$EventID}{Preamble}) {
+    push @Comments, $Conferences{$EventID}{Preamble};
+  }
+  $EventHash{url} = "$DisplayMeeting?conferenceid=$EventID";
+  $EventHash{uid} = "Event.".$EventID."\@".$cgi_root;
+
+  #FUTURE: With e-mail for moderators, could use ORGANIZER tag (for one mod)
+  my @ModeratorIDs = @{$Conferences{$EventID}{Moderators}};
+  if (@ModeratorIDs) {
+    my $ModeratorList = ListOfModerators(@ModeratorIDs);
+    $EventHash{"x-moderators"} = $ModeratorList;
+    push @Comments, "Moderated by: $ModeratorList";
+  }
+
+  my @TopicIDs = @{$Conferences{$EventID}{Topics}};
+  if (@TopicIDs) {
+    my $TopicList = ListOfTopics(@TopicIDs);
+    $EventHash{"x-topics"} = $TopicList;
+    push @Comments, "Topics: $TopicList";
+  }
+
+  if ($Conferences{$EventID}{AltLocation}) {
+    push @Comments, "Alternate Location: $Conferences{$EventID}{AltLocation}";
+  }
+
+  my $ICalFormatter = DateTime::Format::ICal->new();
+
+  $EventHash{dtstart} = $ICalFormatter->format_datetime($Conferences{$EventID}{StartDateTime});
+  $EventHash{dtend}   = $ICalFormatter->format_datetime($Conferences{$EventID}{EndDateTime});
+  $EventHash{"LAST-MODIFIED"} = $ICalFormatter->format_datetime($Conferences{$EventID}{ModifiedDateTime});
+
+  foreach my $Key (keys %ICalMapping) {
+    if ($Conferences{$EventID}{$Key}) {
+      $EventHash{$ICalMapping{$Key}} = $Conferences{$EventID}{$Key};
+    }
+  }
+
+  if (@Comments) {
+    $EventHash{comment} = join "\n\n",@Comments;
+  }
+
+  $Event->add_properties(%EventHash);
+  return $Event;
 }
 
 sub ICalSessionEntry {
@@ -73,31 +127,27 @@ sub ICalSessionEntry {
   my %ICalMapping = (Title => summary, Description => description, Location => location,);
 
   my %SessionHash = ();
-  my $Comment;
+  my @Comments = ();
   $SessionHash{url} = "$DisplayMeeting?sessionid=$SessionID";
-  $SessionHash{uid} = "Session".$SessionID."\@".$cgi_root;
+  $SessionHash{uid} = "Session.".$SessionID."\@".$cgi_root;
 
-  #FUTURE: With e-mail for moderators, could use ORGANIZER tag (for one mod)
+  # FUTURE: With e-mail for moderators, could use ORGANIZER tag (for one mod)
   my @ModeratorIDs = @{$Sessions{$SessionID}{Moderators}};
   if (@ModeratorIDs) {
-    my @Moderators = ();
-    foreach my $ModeratorID (@ModeratorIDs) {
-      FetchAuthor($ModeratorID);
-      push @Moderators,$Authors{$ModeratorID}{FULLNAME};
-    }
-    $SessionHash{"x-moderators"} = join ', ',@Moderators;
-    $Comment .= "Moderated by: ".(join ', ',@Moderators)."\n\n";;
+    my $ModeratorList = ListOfModerators(@ModeratorIDs);
+    $SessionHash{"x-moderators"} = $ModeratorList;
+    push @Comments, "Moderated by: $ModeratorList";
   }
 
   my @TopicIDs = @{$Sessions{$SessionID}{Topics}};
   if (@TopicIDs) {
-    my @Topics = ();
-    foreach my $TopicID (@TopicIDs) {
-      FetchTopic({ -topicid => $TopicID });
-      push @Topics,TopicName({ -topicid => $TopicID });
-    }
-    $SessionHash{"x-topics"} = join ', ',@Topics;
-    $Comment .= "Topics: ".(join ', ',@Topics)."\n\n";
+    my $TopicList = ListOfTopics(@TopicIDs);
+    $SessionHash{"x-topics"} = $TopicList;
+    push @Comments, "Topics: $TopicList";
+  }
+
+  if ($Sessions{$SessionID}{AltLocation}) {
+    push @Comments, "Alternate Location: $Sessions{$SessionID}{AltLocation}";
   }
 
   # Start & End Time
@@ -114,12 +164,40 @@ sub ICalSessionEntry {
     }
   }
 
-  if ($Comment) {
-    $SessionHash{comment} = $Comment;
+  if (@Comments) {
+    $SessionHash{comment} = join "\n\n",@Comments;
   }
 
   $Event->add_properties(%SessionHash);
   return $Event;
+}
+
+sub ListOfModerators {
+  my @ModeratorIDs = @_;
+  my $ModeratorList = "";
+  if (@ModeratorIDs) {
+    my @Moderators = ();
+    foreach my $ModeratorID (@ModeratorIDs) {
+      FetchAuthor($ModeratorID);
+      push @Moderators,$Authors{$ModeratorID}{FULLNAME};
+    }
+    $ModeratorList = join ', ',@Moderators;
+  }
+  return $ModeratorList;
+}
+
+sub ListOfTopics {
+  my @TopicIDs = @_;
+  my $TopicList = "";
+  if (@TopicIDs) {
+    my @Topics = ();
+    foreach my $TopicID (@TopicIDs) {
+      FetchTopic({ -topicid => $TopicID });
+      push @Topics,TopicName({ -topicid => $TopicID });
+    }
+    $TopicList = join ', ',@Topics;
+  }
+  return $TopicList;
 }
 
 1;

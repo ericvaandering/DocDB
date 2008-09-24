@@ -241,7 +241,11 @@ sub FetchEventsByGroup ($) {
   return @EventIDs;
 }
 
-sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
+sub FetchConferenceByConferenceID { # Deprecated
+  return FetchEventByEventID(@_);
+}
+
+sub FetchEventByEventID { # Fetches an event by EventID
   my ($EventID) = @_;
 
   require "TopicSQL.pm";
@@ -260,20 +264,21 @@ sub FetchConferenceByConferenceID { # Fetches a conference by ConferenceID
       $LongDescription,$Preamble,$Epilogue,$StartDate,$EndDate,$ShowAllTalks,
       $TimeStamp) = $Fetch -> fetchrow_array;
   if ($EventGroupID) {
-    $Conferences{$EventID}{EventGroupID}    = $EventGroupID;
-    $Conferences{$EventID}{Location}        = $Location;
-    $Conferences{$EventID}{AltLocation}     = $AltLocation;
-    $Conferences{$EventID}{URL}             = $URL;
-    $Conferences{$EventID}{Title}           = $Title;
-    $Conferences{$EventID}{Preamble}        = $Preamble;
-    $Conferences{$EventID}{LongDescription} = $LongDescription;
-    $Conferences{$EventID}{Epilogue}        = $Epilogue;
-    $Conferences{$EventID}{StartDate}       = $StartDate;
-    $Conferences{$EventID}{EndDate}         = $EndDate;
-    $Conferences{$EventID}{StartDateTime}   = ConvertToDateTime({-MySQLDateTime => $StartDate, });
-    $Conferences{$EventID}{EndDateTime}     = ConvertToDateTime({-MySQLDateTime => $EndDate, });
-    $Conferences{$EventID}{ShowAllTalks}    = $ShowAllTalks;
-    $Conferences{$EventID}{TimeStamp}       = $TimeStamp;
+    $Conferences{$EventID}{EventGroupID}     = $EventGroupID;
+    $Conferences{$EventID}{Location}         = $Location;
+    $Conferences{$EventID}{AltLocation}      = $AltLocation;
+    $Conferences{$EventID}{URL}              = $URL;
+    $Conferences{$EventID}{Title}            = $Title;
+    $Conferences{$EventID}{Preamble}         = $Preamble;
+    $Conferences{$EventID}{LongDescription}  = $LongDescription;
+    $Conferences{$EventID}{Epilogue}         = $Epilogue;
+    $Conferences{$EventID}{StartDate}        = $StartDate;     # Deprecated, use DateTimes
+    $Conferences{$EventID}{EndDate}          = $EndDate;       # Deprecated, use DateTimes
+    $Conferences{$EventID}{StartDateTime}    = ConvertToDateTime({-MySQLDateTime => $StartDate, });
+    $Conferences{$EventID}{EndDateTime}      = ConvertToDateTime({-MySQLDateTime => $EndDate, });
+    $Conferences{$EventID}{ShowAllTalks}     = $ShowAllTalks;
+    $Conferences{$EventID}{TimeStamp}        = $TimeStamp;
+    $Conferences{$EventID}{ModifiedDateTime} = ConvertToDateTime({-MySQLTimeStamp => $TimeStamp, });
 
     FetchEventGroup($EventGroupID);
     $Conferences{$EventID}{Full}  = $EventGroups{$EventGroupID}{LongDescription}.":".$Title;
@@ -817,8 +822,10 @@ sub MeetingModeratorUpdate {
   return $Count;
 }
 
-sub GetEventsByModerator ($) {
+sub GetEventHashByModerator ($) {
   my ($AuthorID) = @_;
+
+  require "MeetingSecurityUtilities.pm";
 
   my %EventHash = ();
 
@@ -830,26 +837,34 @@ sub GetEventsByModerator ($) {
   while ($List -> fetch) {
     $ModeratorID .= "a";
     if ($EventID) {
-      $EventHash{$ModeratorID}{EventID} = $EventID;
-      FetchConferenceByConferenceID($EventID);
-      $EventHash{$ModeratorID}{Time} = $Conferences{$EventID}{StartDate}." 00:00:00";
+      FetchEventByEventID($EventID);
+      if (CanAccessMeeting($EventID)) {
+        $EventHash{$ModeratorID}{EventID} = $EventID;
+        $EventHash{$ModeratorID}{Time} = $Conferences{$EventID}{StartDate}." 00:00:00";
+      }
     }
     if ($SessionID) {
-      $EventHash{$ModeratorID}{SessionID} = $SessionID;
       FetchSessionByID($SessionID);
-      $EventHash{$ModeratorID}{Time} = $Sessions{$SessionID}{StartTime};
+      if (CanAccessMeeting($Sessions{$SessionID}{ConferenceID})) {
+        $EventHash{$ModeratorID}{SessionID} = $SessionID;
+        $EventHash{$ModeratorID}{Time} = $Sessions{$SessionID}{StartTime};
+      }
     }
     if ($SessionSeparatorID) {
-      $EventHash{$ModeratorID}{SessionSeparatorID} = $SessionSeparatorID;
       FetchSessionSeparatorByID($SessionSeparatorID);
-      $EventHash{$ModeratorID}{Time} = $SessionSeparators{$SessionSeparatorID}{StartTime};
+      if (CanAccessMeeting($SessionSeparators{$SessionSeparatorID}{ConferenceID})) {
+        $EventHash{$ModeratorID}{SessionSeparatorID} = $SessionSeparatorID;
+        $EventHash{$ModeratorID}{Time} = $SessionSeparators{$SessionSeparatorID}{StartTime};
+      }
     }
   }
   return %EventHash;
 }
 
-sub GetEventsByTopic ($) {
+sub GetEventHashByTopic ($) {
   my ($TopicID) = @_;
+
+  require "MeetingSecurityUtilities.pm";
 
   my %EventHash = ();
 
@@ -861,19 +876,25 @@ sub GetEventsByTopic ($) {
   while ($List -> fetch) {
     $EventTopicID .= "t";
     if ($EventID) {
-      $EventHash{$EventTopicID}{EventID} = $EventID;
-      FetchConferenceByConferenceID($EventID);
-      $EventHash{$EventTopicID}{Time} = $Conferences{$EventID}{StartDate}." 00:00:00";
+      FetchEventByEventID($EventID);
+      if (CanAccessMeeting($EventID)) {
+        $EventHash{$EventTopicID}{EventID} = $EventID;
+        $EventHash{$EventTopicID}{Time} = $Conferences{$EventID}{StartDate}." 00:00:00";
+      }
     }
     if ($SessionID) {
-      $EventHash{$EventTopicID}{SessionID} = $SessionID;
       FetchSessionByID($SessionID);
-      $EventHash{$EventTopicID}{Time} = $Sessions{$SessionID}{StartTime};
+      if (CanAccessMeeting($Sessions{$SessionID}{ConferenceID})) {
+        $EventHash{$EventTopicID}{SessionID} = $SessionID;
+        $EventHash{$EventTopicID}{Time} = $Sessions{$SessionID}{StartTime};
+      }
     }
     if ($SessionSeparatorID) {
-      $EventHash{$EventTopicID}{SessionSeparatorID} = $SessionSeparatorID;
       FetchSessionSeparatorByID($SessionSeparatorID);
-      $EventHash{$EventTopicID}{Time} = $SessionSeparators{$SessionSeparatorID}{StartTime};
+      if (CanAccessMeeting($SessionSeparators{$SessionSeparatorID}{ConferenceID})) {
+        $EventHash{$EventTopicID}{SessionSeparatorID} = $SessionSeparatorID;
+        $EventHash{$EventTopicID}{Time} = $SessionSeparators{$SessionSeparatorID}{StartTime};
+      }
     }
   }
   return %EventHash;
@@ -882,20 +903,24 @@ sub GetEventsByTopic ($) {
 sub GetEventHashByEvent ($) { # Put all events and sessions for an event into a unified hash
   my ($EventID) = @_;
 
-  my %EventHash = ();
-  FetchConferenceByConferenceID($EventID);
-  $EventHash{$SessionID."s"}{EventID} = $EventID;
-  $EventHash{$EventID."e"}{Time} = $Conferences{$EventID}{StartDate}." 00:00:00";
+  require "MeetingSecurityUtilities.pm";
 
-  my @SessionIDs = FetchSessionsByConferenceID($EventID);
-  foreach my $SessionID (@SessionIDs) {
-    $EventHash{$SessionID."s"}{SessionID} = $SessionID;
-    $EventHash{$SessionID."s"}{Time} = $Sessions{$SessionID}{StartTime};
-  }
-  my @SessionSeparatorIDs = FetchSessionSeparatorsByConferenceID($EventID);
-  foreach my $SessionSeparatorID (@SessionSeparatorIDs) {
-    $EventHash{$SessionSeparatorID."b"}{SessionSeparatorID} = $SessionSeparatorID;
-    $EventHash{$SessionSeparatorID."b"}{Time} = $SessionSeparators{$SessionSeparatorID}{StartTime};
+  my %EventHash = ();
+  FetchEventByEventID($EventID);
+  if (CanAccessMeeting($EventID)) {
+    $EventHash{$EventID."e"}{EventID} = $EventID;
+    $EventHash{$EventID."e"}{Time} = $Conferences{$EventID}{StartDate}." 00:00:00";
+
+    my @SessionIDs = FetchSessionsByConferenceID($EventID);
+    foreach my $SessionID (@SessionIDs) {
+      $EventHash{$SessionID."s"}{SessionID} = $SessionID;
+      $EventHash{$SessionID."s"}{Time} = $Sessions{$SessionID}{StartTime};
+    }
+    my @SessionSeparatorIDs = FetchSessionSeparatorsByConferenceID($EventID);
+    foreach my $SessionSeparatorID (@SessionSeparatorIDs) {
+      $EventHash{$SessionSeparatorID."b"}{SessionSeparatorID} = $SessionSeparatorID;
+      $EventHash{$SessionSeparatorID."b"}{Time} = $SessionSeparators{$SessionSeparatorID}{StartTime};
+    }
   }
   return %EventHash;
 }

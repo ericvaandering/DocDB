@@ -86,7 +86,7 @@ if ($TopicID) {
   FetchTopic($TopicID);
   my @ChildIDs = TopicAndSubTopics({-topicid => $TopicID});
   foreach my $ChildID (@ChildIDs) {
-    my %Hash = GetEventsByTopic($ChildID);
+    my %Hash = GetEventHashByTopic($ChildID);
     foreach my $ID (keys %Hash) {
       $EventHash{$ID} = $Hash{$ID};
     }
@@ -101,7 +101,7 @@ if ($TopicID) {
   $HTML .= '<br/>(Documents on '.TopicLink({ -topicid => $TopicID }).')';
   $HTML .= "</h4>";
 } elsif ($AuthorID) {
-  %EventHash = GetEventsByModerator($AuthorID);
+  %EventHash = GetEventHashByModerator($AuthorID);
 
   my $Link = AuthorLink($AuthorID);
 
@@ -187,6 +187,9 @@ if (@HashIDs) {
       # Only show event once, even if multi-day
       if ($DidEvent{$EventID}) { next; }
       $DidEvent{$EventID} = $TRUE;
+      if ($Format eq "ical") {
+        $iCal->add_entry(ICalEventEntry({-eventid => $EventID,}));
+      }
 
       $Title    = EventLink(-eventid => $EventID,);
       $Location = join '<br/>',$Conferences{$EventID}{Location},
