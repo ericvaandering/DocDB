@@ -109,6 +109,7 @@ my $RevisionNote  = $params{revisionnote};
 my $SignoffList   = $params{signofflist};
 my $OldVersion    = $params{oldversion};
 my $SubmitAgree   = $params{submitagree};
+my $PreserveSigs  = $params{preservesigs};
 my $LessFiles     = $params{LessFiles};
 my $MaxFiles      = $params{maxfiles};
 my $UniqueID      = $params{uniqueid};
@@ -208,6 +209,13 @@ if      ($mode eq "add") {
 unless (&CanCreate()) {
   push @ErrorStack,"You are not allowed to modify or create documents.";
 }
+if ($PreserveSigs && !CanPreserveSigs()) {
+  push @ErrorStack,'You are not authorized to preserve signatures when making '.
+                   'this change. Members of another group may have this capability. ';
+}
+if ($PreserveSigs && $mode ne "updatedb") {
+  push @ErrorStack,'Signatures may only be preserved when modifying document meta-data.';
+}
 unless ($params{requester}) {
   push @ErrorStack,"You must supply a requester for this document.";
 }
@@ -286,7 +294,7 @@ if ($Preferences{Options}{SubmitAgree} && !$SubmitAgree) {
 
 ### Final checks
 
-if ($UseSignoffs && $SignoffList) {
+if ($UseSignoffs && $SignoffList && !$PreserveSigs) {
   my @SignoffIDs = ProcessSignoffList($SignoffList);
 }
 
@@ -402,9 +410,10 @@ if      ($mode eq "reserve") {
   }
 }
 
+my $OldRevID;
 if ($mode eq "updatedb") { # New Document revision replaces old. Fetch
                            # old DocumentRevision and mark it obsolete
-  my $OldRevID = &FetchRevisionByDocumentAndVersion($documentID,$version);
+  $OldRevID = &FetchRevisionByDocumentAndVersion($documentID,$version);
   my $ObsoleteRevision = $dbh -> prepare("update DocumentRevision set Obsolete=1 where DocRevID=?");
   $ObsoleteRevision -> execute($OldRevID);
 }
@@ -463,11 +472,15 @@ if ($SessionTalkID) {
 
 ### Add Signoffs
 
-if ($UseSignoffs && $SignoffList) {
+if ($UseSignoffs && $SignoffList && !$PreserveSigs) {
   my  @SignoffIDs = ProcessSignoffList($SignoffList);
   if (@SignoffIDs) {
     InsertSignoffList($DocRevID,@SignoffIDs);
   }
+} elsif ($PreserveSigs) {
+  push @WarnStack,"The document's signatures have been identically preserved. ".
+                  "Any changes in the list have been ignored.";
+  CopyRevisionSignoffs($OldRevID,$DocRevID,$TRUE);
 }
 
 ### Deal with files

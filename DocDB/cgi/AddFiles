@@ -1,6 +1,9 @@
 #! /usr/bin/env perl
 #
+#        Name: $RCSfile$
 # Description: Adds downloaded files to the database and filesystem
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
