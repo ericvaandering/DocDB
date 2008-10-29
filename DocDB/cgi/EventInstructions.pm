@@ -1,17 +1,17 @@
-# Description: The instructions for the event organizer and calendar in DocDB. 
+# Description: The instructions for the event organizer and calendar in DocDB.
 #              This is mostly HTML, but making  it a script allows us to eliminate
 #              parts of it that we don't want and get it following everyone's
 #              style, and allows groups to add to it with ProjectMessages.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -39,7 +39,7 @@ sub EventInstructionsSidebar {
    <ul>
     <li><a href="#eventinfo">Event information</a></li>
     <li><a href="#sessions">Creating sessions</a></li>
-   </ul></li> 
+   </ul></li>
    <li><a href="#talks">Managing Talks in Sessions</a>
    <ul>
     <li><a href="#basicinfo">Basic information</a></li>
@@ -48,6 +48,11 @@ sub EventInstructionsSidebar {
     <li><a href="#hints">Giving hints about talks</a></li>
    </ul></li>
    <li><a href="#modify">Modifying an Event</a></li>
+TOC
+    if ($Preferences{Components}{iCal}) {
+     print "<li><a href=\"#ical\">Exporting events to iCal</a></li>\n";
+    }
+    print <<TOC;
    <li><a href="#matching">Matching agenda with documents</a>
    <ul>
     <li><a href="#userentry">User uploads</a></li>
@@ -65,7 +70,7 @@ sub EventInstructionsBody {
 
 <p>
 The event organizer and calendar system provides the ability to set up events
-with arbitrary numbers of sessions and breaks. Within each session, a moderator 
+with arbitrary numbers of sessions and breaks. Within each session, a moderator
 can set up an arbitrary number of talks
 and small breaks, discussion sessions, etc. Each
 talk has a running time and each session has a starting time. This creates a
@@ -84,10 +89,10 @@ event, but when changes collide or appear to collide, only the first is taken.
 <h1>Using the Calendar</h1>
 
 <p>
-DocDB supplies a calendar which shows upcoming and past events. 
-The calendar also allows you easily create new events. 
+DocDB supplies a calendar which shows upcoming and past events.
+The calendar also allows you easily create new events.
 There are four <q>views</q> which the calendar supplies; the first view you
-will likely see is the month view. 
+will likely see is the month view.
 </p>
 
 <a name="day"/>
@@ -132,7 +137,7 @@ shown.</p>
 
 <p>This view shows events scheduled for the next 60 days. The view is similar
 to the day view in that titles, locations, and URLs are all shown. Click on the
-links to view the agendas.</p> 
+links to view the agendas.</p>
 
 <a name="create"/>
 <h1>Creating a New Event</h1>
@@ -156,7 +161,7 @@ sessions, follow all these instructions.</p>
 <h2>Entering event information</h2>
 
 <p>A list of the groups of events are shown; you must select one. You must also
-provide a title, or short description,  and start and end dates for the event. 
+provide a title, or short description,  and start and end dates for the event.
 A long description of the event, a location, and a URL (external homepage) are
 all optional, but if they exist, you should supply them.  The "Show All Talks"
 selection controls what the user sees when viewing a event. In the event view,
@@ -182,7 +187,7 @@ able to set up one or more sessions in the event. If there are not enough spaces
 for all the needed sessions, don't worry; blank slots will be added after
 "Submit" is pressed.</p>
 
-<p>The order of these sessions is 
+<p>The order of these sessions is
 displayed and can be changed by entering new numbers in the Order column.
 Decimal numbers are OK, so entering "1.5" will place the session between those
 currently numbered "1" and "2."</p>
@@ -242,9 +247,9 @@ database, just the entry for the event.)</p>
 document has been verified by a human, not guessed at by DocDB as explained
 below. Unconfirmed talks are shown in <i>italics</i> type.</p>
 
-<p>By checking the "Reserve" box when creating creating or updating an agenda, 
-the moderator can create new documents with the title, authors, and topics chosen. 
-Then, the author can upload document by updating this initial document. If you 
+<p>By checking the "Reserve" box when creating creating or updating an agenda,
+the moderator can create new documents with the title, authors, and topics chosen.
+Then, the author can upload document by updating this initial document. If you
 choose to do this, make sure the users understand that they are supposed
 to update rather than create new documents.</p>
 
@@ -268,6 +273,24 @@ modify an existing event. Then select the event you wish to modify. You will see
 the same page you used to create the event.  If you are a moderator, you will
 also see buttons to modify events or sessions when you view those events or
 sessions.</p>
+HTML
+
+  if ($Preferences{Components}{iCal}) {
+   print "<a name=\"ical\" /><h1>Exporting events to iCal</h1>\n";
+
+   print "<p>Wherever you see the iCal icon <img src=\"$ImgURLPath/ical_small.png\" alt=\"iCal icon\" />,
+   you can click and get a list of events suitable to import into many calendar programs. (The iCal format
+   is standardized.) The events listed are those you are allowed to view meeting the criteria listed.
+   You can get a list of all the events, those one particular topic, in a group, etc.</p>
+   <p>
+   If you want to use the URL the icon links to as an automatically updated feed for your calendar program,
+   you can do that too,
+   but you will need to use the URL from the public DocDB installation since your calendar program
+   will not be able to reach secure DocDB pages. This, of course, requires events are created so that
+   the agendas are be publicly visible.\n";
+  }
+
+  print <<HTML;
 
 
 <a name="matching"/>
@@ -320,7 +343,7 @@ into account several criteria:
 <li>How well the title of the document matches the suggested title in the
 agenda</li>
 </ul></p>
- 
+
 <p>Points are assigned to documents for each of these criteria where the
 document matches the agenda entry. For each agenda entry/document pair, a score
 is calculated. If the score is high enough, that document is entered as an
@@ -346,5 +369,5 @@ hints at all and just manually enter the talks.</p>
 
 HTML
 }
- 
+
 1;
