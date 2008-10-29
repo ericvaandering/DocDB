@@ -115,6 +115,12 @@ $TalkMatchThreshold   = 100;   # Threshold for matching talks with agenda entrie
 
 @MatchIgnoreWords     = ("from","with","then","than","that","what"); # Don't match on these
 
+# These groups will be allowed to modify document meta-data and add files without
+# clearing the signature list. This variable will be replaced in DocDB 9.x with
+# a database field.
+
+@HackPreserveSignoffGroups = (); # = ('Writer','Admin')
+
 $RequiredMark = "&nbsp;*&nbsp;";
 
 $HTTP_ENCODING        = 'ISO-8859-1'; # Character set for page encoding, may have to modify
