@@ -1,7 +1,12 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+#        Name: $RCSfile$
+# Description: The main form to add or modify documents or metadata
 #
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -527,8 +532,10 @@ if ($UseSignoffs) { # FIXME: Later may be more complicated control
 if ($mode eq "updatedb" && $UseSignoffs &&
     $SignoffDefault && CanPreserveSigs()) {
   print '<tr><td colspan="4">';
-  print "Preserve signatures on this revision?";
-  print $query -> checkbox(-name  => 'preservesigs', -label => "Yes");
+  print FormElementTitle(-helplink => "preservesigs",
+                         -helptext => "Preserve signatures on this revision?",
+                         -nocolon => $TRUE, -nobreak => $TRUE);
+  print $query -> checkbox(-name  => 'preservesigs', -label => "(Check for yes.)");
   print "</td></tr>\n";
 }
 

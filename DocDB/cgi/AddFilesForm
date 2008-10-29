@@ -1,17 +1,20 @@
 #! /usr/bin/env perl
 #
-# Description: An entry form to add files to an existing document 
+#        Name: $RCSfile$
+# Description: An entry form to add files to an existing document
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
-#
+#    Modified:
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -69,8 +72,8 @@ print $query -> header( -charset => $HTTP_ENCODING );
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number.";
-}  
-  
+}
+
 &FetchDocument($DocumentID);
 
 if ($params{version} eq "0") {
@@ -78,7 +81,7 @@ if ($params{version} eq "0") {
 } else {
   if ($params{version}) {
     $Version = $params{version};
-  } else {   
+  } else {
     $Version = $Documents{$DocumentID}{NVersions};
   }
 }
@@ -87,7 +90,7 @@ my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 my $UpdateLink = $DocumentAddForm."?mode=update;docid=$DocumentID";
 unless (&CanModify($DocumentID,$Version)) {
   push @ErrorStack,"You are not authorized to modify this document.";
-}  
+}
 unless ($DocRevID) {
   push @ErrorStack,"This document does not exist.";
 }
@@ -103,7 +106,7 @@ if ($UseSignoffs) {
   my ($Status) = &RevisionStatus($DocRevID);
   unless ($Status eq "Unmanaged") {
     push @WarnStack,$Msg_WarnModManaged;
-  }  
+  }
 }
 
 WarnPage(@WarnStack); @WarnStack = ();
@@ -113,9 +116,9 @@ EndPage(@ErrorStack);
 print "<h4>You are adding files to a version of a document.<br/>\n";
 print "These should be files forgotten earlier or a new presentation format of
        an existing document.<br/>\n";
-print "If these are files with updated information, 
+print "If these are files with updated information,
        <a href=\"$UpdateLink\">create a new version</a> instead.<br/>\n";
-print "If you aren't <span class=\"Warning\">absolutely sure</span> this is what 
+print "If you aren't <span class=\"Warning\">absolutely sure</span> this is what
        you want to do, go back and read the help.</h4>\n";
 
 print "<h4>The current document document information is reproduced below:</h4>\n";
@@ -141,16 +144,24 @@ print "</td></tr>";
 
 print "<tr><td>\n";
 print FormElementTitle(-helplink => "replacefiles", -helptext => "Replace duplicate files?", -nocolon => $TRUE, -nobreak => $TRUE);
-print $query -> checkbox(-name => "replace", -label => '(Check for yes.)', 
+print $query -> checkbox(-name => "replace", -label => '(Check for yes.)',
                          -onclick => "helppopupwindow(\'DocDBHelp?term=replacefiles\');");
 print "</td></tr>";
+if ($UseSignoffs && CanPreserveSigs()) {
+  print '<tr><td>';
+  print FormElementTitle(-helplink => "preservesigs",
+                         -helptext => "Preserve signatures on this revision?",
+                         -nocolon => $TRUE, -nobreak => $TRUE);
+  print $query -> checkbox(-name  => 'preservesigs', -label => "(Check for yes.)");
+  print "</td></tr>\n";
+}
 
 if ($Preferences{Options}{SubmitAgree}) {
   print '<tr><td>';
   print $Preferences{Options}{SubmitAgree};
   print $query -> checkbox(-name  => 'submitagree', -label => "");
   print "</td></tr>\n";
-}  
+}
 
 print '<tr><td class="SubmitCell">'."\n";
 print $query -> submit (-value => "Add Files");
