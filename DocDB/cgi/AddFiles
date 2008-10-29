@@ -3,14 +3,14 @@
 # Description: Adds downloaded files to the database and filesystem
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -52,7 +52,7 @@ $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass
 %params = $query -> Vars;
 
 print $query -> header( -charset => $HTTP_ENCODING );
-&DocDBHeader("$Project File Addition Results","File Addition Results"); 
+&DocDBHeader("$Project File Addition Results","File Addition Results");
 
 ### Check parameters for errors
 
@@ -61,11 +61,12 @@ print $query -> header( -charset => $HTTP_ENCODING );
 
 ### Get document and revision ID
 
-my $DocumentID  = $params{docid};
-my $Version     = $params{version};
-my $Replace     = $params{replace};
-my $MaxFiles    = $params{maxfiles};
-my $SubmitAgree = $params{submitagree};
+my $DocumentID   = $params{docid};
+my $Version      = $params{version};
+my $Replace      = $params{replace};
+my $MaxFiles     = $params{maxfiles};
+my $SubmitAgree  = $params{submitagree};
+my $PreserveSigs = $params{preservesigs};
 
 my $DocRevID;
 
@@ -89,6 +90,10 @@ if ($Preferences{Options}{SubmitAgree} && !$SubmitAgree) {
                    '<br/>to add files to the document.';
 }
 
+if ($PreserveSigs && !CanPreserveSigs()) {
+  push @ErrorStack,'You are not authorized to preserve signatures when making '.
+                   'this change. Members of another group may have this capability. ';
+}
 
 my $UpdateLink = $DocumentAddForm."?mode=update&docid=$DocumentID";
 
@@ -113,7 +118,7 @@ for (my $i = 1; $i<= $MaxFiles; ++$i) {
              You probably want to <a href=\"$UpdateLink\">update</a> your
              document,  not add files.";
       }
-    }  
+
   } elsif ($params{"url$i"}) {
     $NeedURLs = 1;
     $AddNewFile = 1;
@@ -125,19 +130,19 @@ for (my $i = 1; $i<= $MaxFiles; ++$i) {
         push @WarnStack,"The file $short_file already existed and has been
                           replaced with a new version.";
       } else {
-        push @ErrorStack,"The file $short_file already exists. 
+        push @ErrorStack,"The file $short_file already exists.
          You may not add files with the same file name.<br>
-         You probably want to <a href=\"$UpdateLink\">update</a> your document, 
+         You probably want to <a href=\"$UpdateLink\">update</a> your document,
          not add files.";
       }
-    }  
+    }
   }
-  
+
   if ($params{"main$i"}) {
     $Files{$Key}{Main} = 1;
   } else {
     $Files{$Key}{Main} = 0;
-  }          
+  }
 
   $Files{$Key}{Description} = $params{"filedesc$i"};
 }
@@ -147,11 +152,11 @@ unless ($AddNewFile) {
 }
 
 # Download HTTP files (generates it's own warnings)
- 
+
 if ($NeedURLs) {
   my $TmpDir = &MakeTmpSubDir();
   %Files = &DownloadURLs(-tmpdir => $TmpDir, -files => \%Files);
-}  
+}
 
 ### Abort if there were errors
 
@@ -161,7 +166,7 @@ EndPage(@ErrorStack);
 
 $new_dir = &MakeDirectory($DocumentID,$Version);
 
-my @FileIDs = &AddFiles(-docrevid   => $DocRevID, -files => \%Files, 
+my @FileIDs = &AddFiles(-docrevid   => $DocRevID, -files => \%Files,
                         -replaceold => $Replace);
 
 ### Touch document
@@ -177,7 +182,7 @@ if ($UseSignoffs) {
     push @WarnStack,"All signatures from the document have been removed.";
   }
 }
-  
+
 ### If we had any warnings print them out now
 
 WarnPage(@WarnStack); @WarnStack = ();
@@ -196,7 +201,7 @@ unless ($DocRevID) {
 }
 
 print "You were successful in adding files. Your entry now contains
-       the following information: <p>\n"; 
+       the following information: <p>\n";
 
 PrintRevisionInfo($DocRevID);
 
@@ -205,8 +210,8 @@ if ($MailInstalled) {
   MailNotices(-docrevid => $DocRevID, -type => "addfiles");
 }
 
-if ($MailInstalled && $UseSignoffs) { 
-  ClearSignatures(); 
+if ($MailInstalled && $UseSignoffs && !$PreserveSigs) {
+  ClearSignatures();
   NotifySignees($DocRevID);
 }
 
