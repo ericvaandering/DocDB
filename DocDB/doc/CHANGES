@@ -1,3 +1,11 @@
+8.7.0
+
+ A new option allows special users to copy the signature list and whether
+ those signatures have been made to be preserved or copied when metadata is
+ updated. This is used for small or irrelevant changes that should not
+ trigger a requirement to have the document re-signed. A hack for version 8;
+ will be done right (added to the DB) in version 9.
+
 8.6.2
 
  Display topics on ShowDocument as Topic:SubTopic:SubSubTopic etc.

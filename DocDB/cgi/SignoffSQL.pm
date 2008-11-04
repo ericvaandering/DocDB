@@ -344,6 +344,9 @@ sub CopyRevisionSignoffs { # CopySignoffs from one revision to another
     foreach my $OldPreSignoffID (@OldPreSignoffIDs) {
       my $NewSignoffID    = $SignoffMap{$OldSignoffID};
       my $NewPreSignoffID = $SignoffMap{$OldPreSignoffID};
+      unless ($NewPreSignoffID) {
+        $NewPreSignoffID = 0; # Default, not NULL
+      }
       $DependencyInsert->execute($NewPreSignoffID,$NewSignoffID);
     }
   }
