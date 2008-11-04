@@ -1,17 +1,18 @@
-# Description: The generic instructions for DocDB. This is mostly HTML, but making 
+# Description: The generic instructions for DocDB. This is mostly HTML, but making
 #              it a script allows us to eliminate parts of it that we don't want
 #              and get it following everyone's style, and allows groups to add
 #              to it with ProjectMessages.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+#    Additional Text: Marcia Teckenbrock
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -49,6 +50,7 @@ TOC
       </ul></li>
       <li><a href="#upload">Upload methods</a></li>
       <li><a href="#filling">Filling in the form</a></li>
+      <li><a href="#topickey">Topics and Keywords</a></li>
       <li><a href="#advanced">Advanced options</a></li>
      </ul></li>
      <li><a href="#special">Special Cases</a>
@@ -65,7 +67,7 @@ TOC
 TOC
     if ($UseSignoffs) {
      print "<li><a href=\"#signoff\">Document Signoffs</a></li>\n";
-    } 
+    }
     print <<TOC;
      <li><a href="#advancedusers">Advanced Users</a></li>
      <li><a href="#philosophy">Final Words</a>
@@ -87,16 +89,16 @@ sub GeneralInstructionsBody {
   print '
   <a name="about" />
   <h1>About DocDB</h1>
-  <p>Only some of the documents in DocDB are publicly accessible. 
-  If you try to access documents that are not visible to the public, 
+  <p>Only some of the documents in DocDB are publicly accessible.
+  If you try to access documents that are not visible to the public,
   you will receive an error. Also, all of the interface for creating new documents
-  is hidden from you. '; 
-  
+  is hidden from you. ';
+
   if ($PrivateRoot || $secure_root) {
     my $PrivateDocDB = $PrivateRoot."/DocumentDatabase";
     my $SecureDocDB  = $secure_root."/DocumentDatabase";
     print 'If you arrived to this public interface by mistake and wish to add a document
-           you must use the private interface instead. These links may help you: 
+           you must use the private interface instead. These links may help you:
            <ul>';
     if ($PrivateRoot) {
       print "<li><a href=\"$PrivateDocDB\">Private DocDB Homepage</a> (password protected)</li>\n";
@@ -112,26 +114,26 @@ sub GeneralInstructionsBody {
   }
   print <<HTML;
   </p>
-  <p>A <q>document</q> consists of a number of files along with 
-  additional information about the document.</p> 
+  <p>A <q>document</q> consists of a number of files along with
+  additional information about the document.</p>
 
   <a name="find" />
   <h1>Finding Documents</h1>
 
-  <p>If you are looking for a specific document and know its document number, 
+  <p>If you are looking for a specific document and know its document number,
   the easiest thing is to just enter the number in the box on the <a href="$MainPage">home page</a>.
   If you are looking for documents by a certain person or on a certain topic,
-  you might want to see the <a href="$ListTopics">list of topics</a> or 
-  <a href="$ListAuthors">list of authors</a>. 
+  you might want to see the <a href="$ListTopics">list of topics</a> or
+  <a href="$ListAuthors">list of authors</a>.
   A full fledged <a href="$SearchForm">search engine</a> is also available.
-  </p> 
+  </p>
 
 
   <a name="more" />
   <h1>More Information</h1>
 
   <p>If you want more information about how DocDB works or would like to use it for
-  your own project, please visit the <a href="$DocDBHome">DocDB homepage.</a></p> 
+  your own project, please visit the <a href="$DocDBHome">DocDB homepage.</a></p>
 
 HTML
 
@@ -142,10 +144,10 @@ HTML
   <a name="entering" />
   <h1>Entering or updating a document in the database</h1>
 
-  <p>Creating a document will be most users first experience with DocDB. 
-  Read the next few sections to help you get an idea of what you can do and how 
-  to proceed. Follow the link to "Create or change documents or other information" 
-  to begin.</p> 
+  <p>Creating a document will be most users first experience with DocDB.
+  Read the next few sections to help you get an idea of what you can do and how
+  to proceed. Follow the link to "Create or change documents or other information"
+  to begin.</p>
 
   <a name="morehelp" />
 
@@ -158,9 +160,9 @@ HTML
   questions or problems with the DocDB, please send e-mail to the <a
   href="mailto:$DBWebMasterEmail">DocDB administrators</a>.</p>
 
-  <p>For a more technical document on how the database works, see 
+  <p>For a more technical document on how the database works, see
   <a href="http://www-btev.fnal.gov/cgi-bin/public/DocDB/ShowDocument?docid=140">
-  BTeV-doc-140</a>.</p> 
+  BTeV-doc-140</a>.</p>
 
   <a name="modtypes" />
   <h2>What do you want to do?</h2>
@@ -188,20 +190,20 @@ HTML
   </div>
 
   <p>
-  Select the type of modification appropriate to your situation. 
+  Select the type of modification appropriate to your situation.
   </p>
 
   <a name="prepare" />
   <h2>Preparing your document for upload</h2>
 
   <p>
-  If your document just consists of just a few files, say a PDF and PowerPoint, and 
+  If your document just consists of just a few files, say a PDF and PowerPoint, and
   they are on the computer
   you are using or accessible by the web, you are prepared. Better yet, you will
   probably be able to use one of the shortcuts at the top of the page. Skip
   ahead to the next section.</p>
   <p>
-  If your document is in a lot of pieces, say a bunch of HTML files, 
+  If your document is in a lot of pieces, say a bunch of HTML files,
   you have a decision to make. Do you want
   to specify each file you want to upload or do you want to make everything into
   an archive (like a .tar or .zip file) and upload that? In either case, you might
@@ -239,10 +241,10 @@ HTML
   don't do this. Upload all the files so that they <i>all</i> reside on the
   server, including images. To
   make the links in your HTML work on the server, use  RetrieveFile links as described
-  in the 
+  in the
 HTML
 
-    print "<a href=\"$DocDBInstructions?set=advanced#refer\">Referring to your 
+    print "<a href=\"$DocDBInstructions?set=advanced#refer\">Referring to your
            document and its files</a> section.</p>\n";
   } else {
 
@@ -275,9 +277,9 @@ HTML
   server, including images. To
   make the links in your HTML work on the server, use links like</p>
   <pre>
-  &lt;a href="myotherpage.html"&gt; or &lt;a href="mysubdir/myotherpage.html"&gt; 
+  &lt;a href="myotherpage.html"&gt; or &lt;a href="mysubdir/myotherpage.html"&gt;
   </pre>
-  <p>rather than</p> 
+  <p>rather than</p>
   <pre>
   &lt;a href="http://some.server.com/myotherpage.html"&gt;
   </pre>
@@ -301,13 +303,13 @@ HTML
   <li>You can upload files from your local computer. In this case, you will get
   boxes to type the file names into and (probably) a "Browse" button that will
   allow you to pick the file from a list. (How this happens depends on your
-  browser and operating system.)</li> 
+  browser and operating system.)</li>
   <li>You can upload files by supplying a URL. You have to make sure the files
   are accessible from the web, but they can be password protected (you will have
   to supply the password). You will have to specify the full URL, including the
   "http://" or "https://" at the beginning and a filename at the end (you may not
   end the URL with "/"). Currently "https://" (secure upload) does not work, but
-  we hope this will change in the near future.</li> 
+  we hope this will change in the near future.</li>
   </ol>
 
   <a name="filling" />
@@ -321,7 +323,7 @@ HTML
   information about your document. A lot of the fields are required, but some are
   optional. The required fields are indicated. You can click on any <span class="Help">red link</span> to get a quick
   help window that tells you what you are being asked for. Instructions for every
-  piece of information are not reproduced here, just click on the <span class="Help">red link</span> 
+  piece of information are not reproduced here, just click on the <span class="Help">red link</span>
   if anything is not obvious.</p>
 
   <p>Also, note that lots of things can have more than one selection. For instance,
@@ -332,28 +334,28 @@ HTML
   <p>
   When <strong>reserving</strong> a document, you must supply:</p>
   <ul>
-   <li>A title </li> 
-   <li>A requester (who is requesting the document?)</li> 
-   <li>A document type (talk, note, etc.)</li> 
+   <li>A title </li>
+   <li>A requester (who is requesting the document?)</li>
+   <li>A document type (talk, note, etc.)</li>
   </ul>
 
   <p>
   When <strong>adding</strong> a new document, you must supply all of the above plus:</p>
   <ul>
-   <li>An abstract</li> 
-   <li>Authors (one required, multiples OK)</li> 
-   <li>Topics (one required, multiples OK)</li> 
-   <li>At least one file</li> 
-  </ul> 
+   <li>An abstract</li>
+   <li>Authors (one required, multiples OK)</li>
+   <li>Topics (one required, multiples OK)</li>
+   <li>At least one file</li>
+  </ul>
   <p>and optionally:</p>
   <ul>
    <li>Keywords: These can be anything, but check with your group and/or subgroups
-       as standards may exist.</li> 
-   <li>Meetings, conferences, or other events</li>    
-   <li>Notes and changes: What changed in this version?</li> 
-   <li>Security settings (blank is the same as public, multiples OK)</li> 
-   <li>A journal reference (you can add more later)</li> 
-   <li>A note explaining any publication information</li> 
+       as standards may exist.</li>
+   <li>Meetings, conferences, or other events</li>
+   <li>Notes and changes: What changed in this version?</li>
+   <li>Security settings (blank is the same as public, multiples OK)</li>
+   <li>A journal reference (you can add more later)</li>
+   <li>A note explaining any publication information</li>
   </ul>
 
   <p>
@@ -367,17 +369,49 @@ HTML
   updating the document except for two things. First, you can't supply new
   files. Second, a new version number <i>is not</i> created.</p>
 
+  <a name="topickey" />
+  <h2>Topics and Keywords</h2>
+
+  <p>When you put documents into DocDB, paying attention to the topics and keywords you select is a
+  real aid to people who will need to find your documents or a set of related documents later. How
+  do you know which topic to use?</p>
+
+  <p>Topics should be broad categories based on work that is being done, not on the organization you
+  are a part of. The right topic for your document might not exist yet. Please don't choose a topic
+  that doesn't fit. Email the <a href="mailto:$DBWebMasterEmail">DocDB administrators</a> with
+  questions or suggestions. Ideally, categories with many documents should be divided into
+  subcategories.</p>
+
+  <p>What about  keywords? Keywords can help refine a set of documents. They should be used
+  sparingly and thoughtfully. The best time to use them is when you need to define a set of documents
+  that are used to collaborate among a small group of people, while the keywords used are communicated
+  to these people. Keywords can also be used to group similar documents together into finer categories
+  than the document types allow.</p>
+
+  <p>Keywords in DocDB may be official or unofficial. Official keywords are those that appear in the
+  keyword list (the same as the <q>keyword chooser,</q> which is the pop-up window you can use to
+  select your official keywords when you're adding or updating a document in DocDB). These must be
+  added by the DocDB administrator. They can be displayed as a list in DocDB and the keyword field is
+  searchable via the advanced search function in DocDB.</p>
+
+  <p>Unofficial keywords are keywords you enter yourself when you're adding/updating a document.
+  They don't appear in the keyword list, but they ARE still a searchable in the keyword field in the
+  database.</p>
+
+  <p>Topics can be nested or combined with keywords to refine a collection of documents and aid in
+  searchability.</p>
+
   <a name="advanced" />
   <h2>Advanced options</h2>
 
-  <p> 
-  The advanced form provides a few other options that might be useful.</p> 
+  <p>
+  The advanced form provides a few other options that might be useful.</p>
 
   <p>
   <strong>Topic Selection: </strong>
   You can either select the topics(s) for your document from a number of
   shorter lists split up by parent topic (the default) or from one long
-  list.</p> 
+  list.</p>
 
   <p>
   <strong>Author Selection: </strong> You can either select the author(s) for your document
@@ -405,11 +439,11 @@ HTML
   <a name="conference" />
   <h2>Conference Talks and Proceedings</h2>
 
-  <p>Conference documents are added just like any other document, except for one extra step. 
-  Before entering the document, you probably need to 
+  <p>Conference documents are added just like any other document, except for one extra step.
+  Before entering the document, you probably need to
   <a href="$ConferenceAddForm">add some
   information</a> into the database about your conference. Do this by following
-  the link on the 
+  the link on the
   <a href="$ModifyHome">Create or Change</a> page.
   But before you add it, make sure someone else didn't already do it for you. (At
   the bottom of the add form is the list of conferences the database knows
@@ -459,7 +493,7 @@ HTML
   notified immediately, once a day, and/or once a week. For each time period, you
   can choose which documents to be notified about. So, for instance, you could
   choose to be notified immediately if a new document is created about your
-  detector and every week about all new documents in the database.</p> 
+  detector and every week about all new documents in the database.</p>
 
 HTML
 
@@ -469,10 +503,10 @@ HTML
    print "<p>An optional component of DocDB is to allow some documents to be <q>signed</q>
    by a group of people before becoming <q>approved.</q> People with <strong>Personal
    Accounts</strong> can sign documents. The list of people needing to approve a
-   document is editable by the same groups that can edit the document itself.</p> 
+   document is editable by the same groups that can edit the document itself.</p>
    <p>
    To <q>freeze</q> a document and its meta-information such that only
-   <q>managers</q> can modify it or unfreeze it, ask the 
+   <q>managers</q> can modify it or unfreeze it, ask the
    <a href=\"mailto:$DBWebMasterEmail\">DocDB
    administrators</a> for the procedure.</p>\n";
 
@@ -481,7 +515,7 @@ HTML
   (even if they were approved at some time). All information about who <q>signed</q>'
   each version of each document is kept.</p>\n";
 
-   print "<p>DocDB contains the ability to allow any number of approval <q>topologies.</q> 
+   print "<p>DocDB contains the ability to allow any number of approval <q>topologies.</q>
   For instance, person A or person B might be allowed to sign at the first step,
   followed by person C at the second step. Or, person A and person B may both have to
   sign (but in parallel) before person C can sign. However, the current DocDB code only
@@ -564,7 +598,7 @@ HTML
   <h2>File formats (PowerPoint, Postscript, PDF etc.)</h2>
 
 
-  <p>People view the web with many different OS/Software combinations. 
+  <p>People view the web with many different OS/Software combinations.
   This means they
   may not be able to view files in formats such as PowerPoint, MS Word, and Excel. The two
   file formats that everyone can read are Postscript and PDF. PDF is easiest for

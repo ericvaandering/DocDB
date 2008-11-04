@@ -13,7 +13,7 @@ ln -sf ../../DocDB/DocDBGlobals.pm  .
 
 # Set-up only needed scripts
 
-ln -sf ../../DocDB/DocumentDatabase . 
+ln -sf ../../DocDB/DocumentDatabase .
 ln -sf ../../DocDB/ShowDocument  .
 
 ln -sf ../../DocDB/ListTopics  .

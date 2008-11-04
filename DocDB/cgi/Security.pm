@@ -228,6 +228,27 @@ sub CanAdminister { # Can the user administer the database
   return $Administer;
 }
 
+sub CanPreserveSigs { # Can the user preserve signatures during document modifications?
+  # FIXME: Currently a hack, will change in version 9
+  require "SecuritySQL.pm";
+
+  my $CanPreserveSigs = $FALSE;
+  if ($Public || $ReadOnly) {
+    return $CanPreserveSigs;
+  }
+  my @UsersGroupIDs = FindUsersGroups();
+
+  foreach my $UserGroupID (@UsersGroupIDs) {
+    FetchSecurityGroup($UserGroupID);
+    foreach my $PreserveName (@HackPreserveSignoffGroups) {
+      if ($PreserveName eq $SecurityGroups{$UserGroupID}{NAME}) {
+        $CanPreserveSigs = 1; # User checks out
+      }
+    }
+  }
+  return $CanPreserveSigs;
+}
+
 sub LastAccess { # Highest version user can access (with current security)
   require "DocumentSQL.pm";
   my ($DocumentID) = @_;

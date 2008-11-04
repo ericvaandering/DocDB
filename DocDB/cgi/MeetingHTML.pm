@@ -1,8 +1,11 @@
 #        Name: MeetingHTML.pm
 # Description: HTML producing routines for meetings and conferences
 #
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: Stephen Wood (saw@jlab.org)
+#    Modified: Stephen Wood (saw@jlab.org), Eric Vaandering (ewv@fnal.gov)
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -1036,15 +1039,22 @@ sub EventsByGroup (%) {
   } else {
     print "<strong>$Big$EventGroups{$EventGroupID}{ShortDescription}$EBig</strong>\n";
   }
+  if ($Preferences{Components}{iCal}) {
+    print ' '.ICalLink({ -eventgroupid => $EventGroupID });
+  }
+
   print "</td></tr>\n";
   my $EventCount = 0;
   my $Truncated = $FALSE;
   foreach my $EventID (@DisplayEventIDs) {
-    my $MeetingLink;
+    my ($MeetingLink,$ICalLink);
     if ($Mode eq "modify") {
       $MeetingLink = ModifyEventLink($EventID);
     } else {
       $MeetingLink = EventLink(-eventid => $EventID);
+    }
+    if ($Preferences{Components}{iCal}) {
+      $ICalLink = ' '.ICalLink({ -eventid => $EventID });
     }
     unless ($MeetingLink) {
       next;
@@ -1063,7 +1073,7 @@ sub EventsByGroup (%) {
       print "</th>";
       last;
     } else { # Print normal entry
-      print "<td>$MeetingLink</td>\n";
+      print "<td>$MeetingLink$ICalLink</td>\n";
       print "<td>",EuroDate($Conferences{$EventID}{StartDate}),"</td>\n";
 
       if ($SingleGroup) { # Add end date and location for singe group display
@@ -1279,6 +1289,37 @@ sub ListByEventLink {
   $Link .= ImageSrc({ -alt => "Event", -image => "EventIcon" });
 
   $Link .= '</a>';
+
+  return $Link;
+}
+
+sub ICalLink ($) {
+  my ($ArgRef) = @_;
+
+  my $EventGroupID = exists $ArgRef->{-eventgroupid} ? $ArgRef->{-eventgroupid} : 0;
+  my $EventID      = exists $ArgRef->{-eventid}      ? $ArgRef->{-eventid}      : 0;
+  my $SessionID    = exists $ArgRef->{-sessionid}    ? $ArgRef->{-sessionid}    : 0;
+  my $AuthorID     = exists $ArgRef->{-authorid}     ? $ArgRef->{-authorid}     : 0;
+  my $TopicID      = exists $ArgRef->{-topicid}      ? $ArgRef->{-topicid}      : 0;
+  my $AllEvents    = exists $ArgRef->{-allevents}    ? $ArgRef->{-allevents}    : 0;
+
+  my $Link =  ' <a href="'.$ListEventsBy.'?format=ical;';
+  if ($AuthorID) {
+    $Link .= 'authorid='.$AuthorID;
+  }
+  if ($TopicID) {
+    $Link .= 'topicid='.$TopicID;
+  }
+  if ($EventGroupID) {
+    $Link .= 'eventgroupid='.$EventGroupID;
+  }
+  if ($EventID) {
+    $Link .= 'eventid='.$EventID;
+  }
+  if ($AllEvents) {
+    $Link .= 'allevents=1';
+  }
+  $Link .= '"><img class="icon" src="'.$ImgURLPath.'/ical_small.png" alt="iCal list of events" /></a>';
 
   return $Link;
 }

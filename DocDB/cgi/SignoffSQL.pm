@@ -304,4 +304,52 @@ sub FetchSignature ($) {
   }
 }
 
+sub CopyRevisionSignoffs { # CopySignoffs from one revision to another
+                           # One mode to copy with signed Signatures,
+                           # one without
+
+  my ($OldDocRevID,$NewDocRevID,$CopySignatures) = @_;
+
+  my $SignoffInsert    = $dbh -> prepare("insert into Signoff (SignoffID,DocRevID,Note) ".
+                                         "values (0,?,?)");
+  my $SignatureInsert  = $dbh -> prepare("insert into Signature (SignatureID,EmailUserID,SignoffID,Note,Signed) ".
+                                         "values (0,?,?,?,?)");
+
+  my %SignoffMap   = ();
+
+  my @OldSignoffIDs = GetAllSignoffsByDocRevID($OldDocRevID);
+  foreach my $OldSignoffID (@OldSignoffIDs) {
+    # Copy the signoff
+    FetchSignoff($OldSignoffID);
+    $SignoffInsert->execute($NewDocRevID,$Signoffs{$OldSignoffID}{Note});
+    my $NewSignoffID = $SignoffInsert->{mysql_insertid}; # Works with MySQL only
+    $SignoffMap{$OldSignoffID} = $NewSignoffID;
+
+    my @OldSignatureIDs = GetSignatures($OldSignoffID);
+    foreach my $OldSignatureID (@OldSignatureIDs) {
+      FetchSignature($OldSignatureID);
+      # Copy Signatures
+      my $Signed = $Signatures{$OldSignatureID}{Signed};
+      if (!$CopySignatures) {
+        $Signed = $FALSE;
+      }
+      $SignatureInsert->execute($Signatures{$OldSignatureID}{EmailUserID}, $NewSignoffID,
+                                $Signatures{$OldSignatureID}{Note},        $Signed);
+    }
+  }
+  my $DependencyInsert = $dbh -> prepare("insert into SignoffDependency (SignoffDependencyID,PreSignoffID,SignoffID) ".
+                                         "values (0,?,?)");
+  foreach my $OldSignoffID (@OldSignoffIDs) {
+    my @OldPreSignoffIDs = GetPreSignoffs($OldSignoffID);
+    foreach my $OldPreSignoffID (@OldPreSignoffIDs) {
+      my $NewSignoffID    = $SignoffMap{$OldSignoffID};
+      my $NewPreSignoffID = $SignoffMap{$OldPreSignoffID};
+      unless ($NewPreSignoffID) {
+        $NewPreSignoffID = 0; # Default, not NULL
+      }
+      $DependencyInsert->execute($NewPreSignoffID,$NewSignoffID);
+    }
+  }
+}
+
 1;

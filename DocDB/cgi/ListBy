@@ -7,7 +7,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -68,13 +68,13 @@ my $Reverse          = 1;
 
 my @DocumentIDs = ();
 
-if ($Days) { 
+if ($Days) {
 
 ### Days since last modification
 
   $Title   = "Documents from Last $Days Days";
   $Message = "These documents have been modified in the last <span class=\"Highlight\">$Days days</span>.";
-  $List = $dbh -> prepare("select DISTINCT(DocumentID) from DocumentRevision where Obsolete=0 and TO_DAYS(NOW())-TO_DAYS(TimeStamp)<=?");            
+  $List = $dbh -> prepare("select DISTINCT(DocumentID) from DocumentRevision where Obsolete=0 and TO_DAYS(NOW())-TO_DAYS(TimeStamp)<=?");
   $List -> execute($Days);
 } elsif ($TopicID) {
 
@@ -86,22 +86,22 @@ if ($Days) {
   require "TopicUtilities.pm";
   require "TopicHTML.pm";
   require "Utilities.pm";
-  
-  my @ChildTopicIDs  = TopicAndSubTopics({-topicid => $TopicID}); 
-  my @ParentTopicIDs = FetchTopicParents({-topicid => $TopicID}); 
-  
+
+  my @ChildTopicIDs  = TopicAndSubTopics({-topicid => $TopicID});
+  my @ParentTopicIDs = FetchTopicParents({-topicid => $TopicID});
+
   my $HasSubTopics = (scalar(@ChildTopicIDs) > 1);
   $FieldListOptions{-topicid} = $TopicID;
   $Title   = "Document List by Topic";
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
            "DocumentRevision,RevisionTopic where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
-           "and DocumentRevision.Obsolete=0 and RevisionTopic.TopicID=?"); 
+           "and DocumentRevision.Obsolete=0 and RevisionTopic.TopicID=?");
   foreach my $ChildTopicID (@ChildTopicIDs) {
     FetchTopic($ChildTopicID);
     $List -> execute($ChildTopicID);
     while (my ($DocumentID) = $List -> fetchrow_array) {
       push @DocumentIDs,$DocumentID;
-    }  
+    }
   }
   @DocumentIDs = Unique(@DocumentIDs);
   my $SubTopicMessage = "";
@@ -109,14 +109,14 @@ if ($Days) {
     my ($ParentTopicID) = @ParentTopicIDs;
     $SubTopicMessage = "(subtopic of ".TopicLink({-topicid => $ParentTopicID}).")";
   }
-  
-  $Message = "These documents on <span class=\"Highlight\">$Topics{$TopicID}{Long} 
+
+  $Message = "These documents on <span class=\"Highlight\">$Topics{$TopicID}{Long}
               </span> $SubTopicMessage ";
   if ($HasSubTopics) {
     $Message .= "and sub-topics ";
   }
-  $Message .= "are available:"; 
-  my %Hash = GetEventsByTopic($TopicID);
+  $Message .= "are available:";
+  my %Hash = GetEventHashByTopic($TopicID);
   if (%Hash) {
     $Message .= '<br/>(List <a href="'.$ListEventsBy.'?topicid='.$TopicID.'">events</a> on '.$Topics{$TopicID}{Long}.')';
   }
@@ -134,17 +134,17 @@ if ($Days) {
   }
 
   $FieldListOptions{-authorid} = $AuthorID; # (Does nothing right now)
-  $Title   = "Document List by Author";  
-  
+  $Title   = "Document List by Author";
+
   my $Link = AuthorLink($AuthorID);
-  
+
   $Message = "<span class=\"Highlight\">$Link of $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG}</span>
               is listed as an author on the following documents:";
-  my %Hash = GetEventsByModerator($AuthorID);
+  my %Hash = GetEventHashByModerator($AuthorID);
   if (%Hash) {
     $Message .= '<br/>(List <a href="'.$ListEventsBy.'?authorid='.$AuthorID.'">events</a> moderated by '.$Authors{$AuthorID}{FULLNAME}.')';
   }
-  @DocumentIDs = GetAuthorDocuments($AuthorID);  
+  @DocumentIDs = GetAuthorDocuments($AuthorID);
 } elsif ($EventID) {
 
 ### Event
@@ -158,7 +158,7 @@ if ($Days) {
   $Message = "These documents from <span class=\"Highlight\">$Conferences{$EventID}{LongDescription}</span> are available:";
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
            "DocumentRevision,RevisionEvent where DocumentRevision.DocRevID=RevisionEvent.DocRevID ".
-           "and DocumentRevision.Obsolete=0 and RevisionEvent.ConferenceID=?");            
+           "and DocumentRevision.Obsolete=0 and RevisionEvent.ConferenceID=?");
   $List -> execute($EventID);
 } elsif ($EventGroupID || $EventGroup) {
 
@@ -166,19 +166,19 @@ if ($Days) {
 
   require "MeetingSQL.pm";
   $SortBy = "confdate";
-  
+
   unless ($EventGroupID) {
     $EventGroupID = LookupEventGroup($EventGroup);
-  }  
+  }
   FetchEventGroup($EventGroupID);
-  
+
   $FieldListOptions{-eventgroupid} = $EventGroupID;
   $FieldListOptions{-default}      = "Event Group Default";
   $Title   = "Document List by Event Group";
   $Message = "These documents from <span class=\"Highlight\">$EventGroups{$EventGroupID}{LongDescription}</span> are available:";
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
            "DocumentRevision,RevisionEvent,Conference where DocumentRevision.DocRevID=RevisionEvent.DocRevID ".
-           "and DocumentRevision.Obsolete=0 and RevisionEvent.ConferenceID=Conference.ConferenceID and Conference.EventGroupID=?");            
+           "and DocumentRevision.Obsolete=0 and RevisionEvent.ConferenceID=Conference.ConferenceID and Conference.EventGroupID=?");
   $List -> execute($EventGroupID);
 } elsif ($TypeID) {
   require "MiscSQL.pm";
@@ -187,9 +187,9 @@ if ($Days) {
   $Title   = "Document List by Type";
   $Message = "These documents of type <span class=\"Highlight\">
              $DocumentTypes{$TypeID}{SHORT}</span> are available:";
-  
+
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
-           "DocumentRevision where DocumentRevision.DocTypeID=?");            
+           "DocumentRevision where DocumentRevision.DocTypeID=?");
   $List -> execute($TypeID);
 } elsif ($GroupID || $Group) {
   if ($Group) {
@@ -198,22 +198,22 @@ if ($Days) {
   $Title   = "Document List by Group";
   $Message = "These documents for <span class=\"Highlight\">
              $SecurityGroups{$GroupID}{NAME}</span> are available:";
-  
+
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
-           "DocumentRevision,RevisionSecurity where DocumentRevision.DocRevID=RevisionSecurity.DocRevID and RevisionSecurity.GroupID=?");            
+           "DocumentRevision,RevisionSecurity where DocumentRevision.DocRevID=RevisionSecurity.DocRevID and RevisionSecurity.GroupID=?");
   $List -> execute($GroupID);
 } elsif ($AllPubs) {
   $Title   = "$Project Publications";
   $Message = "These publications are available:\n";
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
            "DocumentRevision,RevisionReference ".
-           "where DocumentRevision.DocRevID=RevisionReference.DocRevID and RevisionReference.JournalID>0"); 
+           "where DocumentRevision.DocRevID=RevisionReference.DocRevID and RevisionReference.JournalID>0");
   $List -> execute();
 } elsif ($AllDocs) {
   $Title   = "All $Project Documents";
   $Message = "";
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
-           "DocumentRevision"); 
+           "DocumentRevision");
   $List -> execute();
 }
 
@@ -252,7 +252,7 @@ print "<h4>$Message</h4><p/>\n";
 
 if ($Days) { # Print out modified by form
   require "FormElements.pm";
-  
+
   print $query -> startform('POST',"ListBy");
   print "<center>";
   print $query -> submit (-value => "Show Documents");
@@ -265,7 +265,7 @@ if ($Days) { # Print out modified by form
 
 ### Table and Statistics
 my %FieldList = PrepareFieldList(%FieldListOptions);
-my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs, 
+my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs,
                                       -sortby    => $SortBy,     -reverse => $Reverse);
 print "<p><b>Number of documents found: ",int($NumberOfDocuments),"</b></p>\n";
 

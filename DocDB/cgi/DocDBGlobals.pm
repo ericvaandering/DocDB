@@ -96,6 +96,8 @@ $Preferences{Options}{AlwaysRetrieveFile}       = $FALSE; # Always use RetrieveF
 
 $Preferences{Options}{SubmitAgree}              = ""; # "Put text here to make users agree to a privacy statement or some-such. <br/><b>I agree:</b>"
 
+$Preferences{Components}{iCal}  = $TRUE; # Display links to iCal calendars
+
 $Preferences{Topics}{MinLevel}{Document} = 1;
 $Preferences{Events}{MaxSessionList}     = 5;
 
@@ -114,6 +116,12 @@ $FirstYear            = 2000;  # Earliest year that documents can be created
 $TalkMatchThreshold   = 100;   # Threshold for matching talks with agenda entries in agendas
 
 @MatchIgnoreWords     = ("from","with","then","than","that","what"); # Don't match on these
+
+# These groups will be allowed to modify document meta-data and add files without
+# clearing the signature list. This variable will be replaced in DocDB 9.x with
+# a database field.
+
+@HackPreserveSignoffGroups = (); # = ('Writer','Admin')
 
 $RequiredMark = "&nbsp;*&nbsp;";
 
