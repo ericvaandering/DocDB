@@ -13,7 +13,8 @@
  online calendars including Google calendar. Can be turned off by setting
  $Preferences{Components}{iCal}  = $FALSE; Three new perl modules are needed
  to support this: Data::ICal, Data::ICal::Entry::Event, and
- DateTime::Format::ICal
+ DateTime::Format::ICal Also make sure you do cvs update -d in the html area
+ to pick up the right image and CSS files.
 
 8.6.2
 
