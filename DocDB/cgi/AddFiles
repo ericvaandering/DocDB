@@ -121,7 +121,7 @@ for (my $i = 1; $i<= $MaxFiles; ++$i) {
              You probably want to <a href=\"$UpdateLink\">update</a> your
              document,  not add files.";
       }
-
+    }
   } elsif ($params{"url$i"}) {
     $NeedURLs = 1;
     $AddNewFile = 1;
