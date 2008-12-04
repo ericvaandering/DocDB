@@ -251,13 +251,13 @@ sub FetchConferenceByConferenceID { # Deprecated
 
 sub FetchEventByEventID { # Fetches an event by EventID
   my ($EventID,$LimitInfo) = @_;
-
   require "TopicSQL.pm";
 
-  if ($Conference{$EventID}{EventGroupID}) { # We already have this one
-    if (!$LimitInfo && !$Conference{$EventID}{HaveAllInfo}) {
+  if ($Conferences{$EventID}{EventGroupID}) { # We already have this one
+    if ($Conference{$EventID}{HaveAllInfo} || $LimitInfo) {
       return $EventID;
     }
+
   }
 
   my $Fetch = $dbh -> prepare(

@@ -915,7 +915,7 @@ sub EventLink (%) {
   require "EventUtilities.pm";
   require "MeetingSQL.pm";
 
-  FetchConferenceByConferenceID($EventID);
+  FetchEventByEventID($EventID,$TRUE);
   unless (CanAccessMeeting($EventID)) {
     return "";
   }
