@@ -1,3 +1,8 @@
+8.7.1/8.7.2
+
+ A bugfix in AddFiles (was crashing due to a syntax error) and performance
+ enhancements related to Events (regression in 8.7.0)
+
 8.7.0
 
  A new option allows special users to copy the signature list and whether

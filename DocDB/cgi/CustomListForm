@@ -2,18 +2,19 @@
 #
 #        Name: CustomListForm
 # Description: Allow users, admins, and meeting organizers to change how various
-#              lists of documents and agendas are displayed in DocDB 
+#              lists of documents and agendas are displayed in DocDB
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
-#
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -50,8 +51,8 @@ require "SecuritySQL.pm";
 
 require "DocTypeHTML.pm";
 require "DocumentHTML.pm";
-require "MeetingHTML.pm"; 
-require "TopicHTML.pm"; 
+require "MeetingHTML.pm";
+require "TopicHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 
@@ -60,7 +61,7 @@ $query = new CGI;  # Global for subroutines
 my $Scope             = $params{scope};
 my @EventGroupIDs     = split /\0/,$params{eventgroups};
 my @EventIDs          = split /\0/,$params{events};
-my @Defaults          = split /\0/,$params{defaultlists}; 
+my @Defaults          = split /\0/,$params{defaultlists};
 my @TopicIDs          = split /\0/,$params{topics};
 my @DocTypeIDs        = split /\0/,$params{doctype};
 my $DefaultEventID    = $params{eventid};
@@ -77,7 +78,7 @@ if ($Public) {
 }
 EndPage(-startpage => $TRUE);
 
-GetConferences();
+GetConferences($TRUE);
 GetAllEventGroups();
 GetSecurityGroups();
 GetDocTypes();
@@ -88,10 +89,10 @@ my $AllowEvents = 0;
 my $AllowAll    = 0;
 if (CanCreate()) {
   $AllowEvents = 1;
-}  
+}
 if (CanAdminister()) {
   $AllowAll = 1;
-}  
+}
 
 ### Build field list, will be used for everything later
 
@@ -110,56 +111,56 @@ foreach my $FieldCount (1..$MaxFields) {
 if ($Scope eq "All") { # Do inserts to DB, check user's permissions
   foreach my $Default (@Defaults) {
     if ($AllowAll) {
-      InsertCustomFieldList(-default => $Default, -fieldlist => \%FieldList); 
+      InsertCustomFieldList(-default => $Default, -fieldlist => \%FieldList);
       push @ActionStack,"Custom list set for $Default list";
     } else {
       push @WarnStack,"You are not allowed to default lists";
-    }  
+    }
   }
   foreach my $TopicID (@TopicIDs) {
     if ($AllowAll) {
-      InsertCustomFieldList(-topicid => $TopicID, -fieldlist => \%FieldList); 
+      InsertCustomFieldList(-topicid => $TopicID, -fieldlist => \%FieldList);
       push @ActionStack,"Custom list set for Topic $TopicID";
     } else {
       push @WarnStack,"You are not allowed to modify topics";
-    }  
+    }
   }
   foreach my $EventGroupID (@EventGroupIDs) {
     if ($AllowAll) {
-      InsertCustomFieldList(-eventgroupid => $EventGroupID, -fieldlist => \%FieldList); 
+      InsertCustomFieldList(-eventgroupid => $EventGroupID, -fieldlist => \%FieldList);
       push @ActionStack,"Custom list set for Event Group $EventGroupID";
     } else {
       push @WarnStack,"You are not allowed to modify event groups";
-    }  
+    }
   }
   foreach my $EventID (@EventIDs) {
     if ($AllowEvents && CanModifyMeeting($EventID)) {
-      InsertCustomFieldList(-eventid => $EventID, -fieldlist => \%FieldList); 
+      InsertCustomFieldList(-eventid => $EventID, -fieldlist => \%FieldList);
       push @ActionStack,"Custom list set for Event $EventID";
     } else {
       push @WarnStack,"You are not allowed to modify this event";
-    }  
+    }
   }
   foreach my $DocTypeID (@DocTypeIDs) {
     if ($AllowAll) {
-      InsertCustomFieldList(-doctypeid => $DocTypeID, -fieldlist => \%FieldList); 
+      InsertCustomFieldList(-doctypeid => $DocTypeID, -fieldlist => \%FieldList);
       push @ActionStack,"Custom list set for document type $DocTypeID";
     } else {
       push @WarnStack,"You are not allowed to document types";
-    }  
+    }
   }
 } else { # We're doing cookies
   # Pack field lists into a string
   my @Settings = ();
   foreach my $Field (keys %FieldList) {
     my $Setting = join '_',$Field,$FieldList{$Field}{Row},
-                                  $FieldList{$Field}{Column}, 
+                                  $FieldList{$Field}{Column},
                                   $FieldList{$Field}{RowSpan},
                                   $FieldList{$Field}{ColSpan};
     push @Settings,$Setting;
-  } 
+  }
   my $Settings = join ";",@Settings;
-    
+
   # Set set string for name(s) of cookie
   my @CookieNames = ();
   foreach my $Default (@Defaults) {
@@ -182,18 +183,18 @@ if ($Scope eq "All") { # Do inserts to DB, check user's permissions
     push @CookieNames,"doctypeid_$DocTypeID";
     push @ActionStack,"Custom list set for document type $DocTypeID";
   }
-  
-  # Create CGI Cookie objects that "never" expire                       
+
+  # Create CGI Cookie objects that "never" expire
   foreach my $CookieName (@CookieNames) {
     push @Cookies, $query -> cookie (-name => $CookieName, -value => $Settings,
                                      -path => $cgi_path, -expires => '+30y');
   }
-} 
- 
-### Start HTML   
-    
+}
+
+### Start HTML
+
 print $query->header( -charset => $HTTP_ENCODING, -cookies => \@Cookies);
-DocDBHeader("Customize Document Lists","",-scripts => ["PopUps","CustomListDisable"]); 
+DocDBHeader("Customize Document Lists","",-scripts => ["PopUps","CustomListDisable"]);
 
 ActionReport();
 EndPage();
@@ -204,7 +205,7 @@ print $query -> start_multipart_form('POST',$CustomListForm,
 print q{<table class="MedPaddedTable">
         <tr>
         <td colspan="3">
-        <p>This page allows you to change what information about documents is 
+        <p>This page allows you to change what information about documents is
         displayed in various parts of DocDB. You can choose to change the
         information just for yourself (you must allow cookies in your browser)
         or, if  your access level is high enough, for everyone. As a normal
@@ -214,7 +215,7 @@ print q{<table class="MedPaddedTable">
         return to the DocDB  defaults for those lists.</p>
         <p>If you are using multiple rows, and especially if you are spanning
         columns or rows, it is easy to generate very difficult to read output.
-        Also, not all fields will have information in all contexts.</p>   
+        Also, not all fields will have information in all contexts.</p>
         </td>
         </tr>
         <tr>
@@ -227,8 +228,8 @@ my %Scope = ();
 $Scope{All}  = "For Everyone";
 $Scope{User} = "Only for me";
 print FormElementTitle(-helplink => "fieldscope", -helptext => "Scope of Changes");
-print $query -> radio_group(-name    => "scope", -values   => \%Scope, 
-                            -default => "User",   
+print $query -> radio_group(-name    => "scope", -values   => \%Scope,
+                            -default => "User",
                             -onclick => "disabler_customlist($AllowEvents,$AllowAll);");
 
 print "</td></tr><tr><td>";
@@ -237,19 +238,19 @@ print "</td></tr><tr><td>";
 
 my @FieldLists = keys %DefaultFieldLists;
 print FormElementTitle(-helptext => "Predefined Lists", -helplink => "definedfieldlists");
-print $query -> scrolling_list(-name     => "defaultlists", -values => \@FieldLists, 
-                               -size     => 10, -multiple => $TRUE);  
+print $query -> scrolling_list(-name     => "defaultlists", -values => \@FieldLists,
+                               -size     => 10, -multiple => $TRUE);
 
 print "</td><td>\n";
 
 # Topics (which might be left off for the moment)
 
-TopicScroll({ -helptext => "Topics", -helplink => "topics", -multiple => $TRUE }); 
+TopicScroll({ -helptext => "Topics", -helplink => "topics", -multiple => $TRUE });
 print "</td>\n";
 
 # Document types here
 print "<td>\n";
-DocTypeSelect( {-multiple => $TRUE, -format => "short"} ); 
+DocTypeSelect( {-multiple => $TRUE, -format => "short"} );
 print "</td></tr>\n";
 
 print "<tr><td>";

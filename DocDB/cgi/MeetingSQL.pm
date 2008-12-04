@@ -27,7 +27,8 @@
 require "SQLUtilities.pm";
 
 sub GetConferences {
-  if ($HaveAllConferences) {
+  my ($LimitInfo) = @_;
+  if ($HaveAllConferences && $LimitInfo || $HaveAllConferenceInfo) {
     my @ConferenceIDs = keys %Conferences;
     return @ConferenceIDs;
   }
@@ -41,10 +42,13 @@ sub GetConferences {
   $ConferenceList -> execute();
   $ConferenceList -> bind_columns(undef, \($ConferenceID));
   while ($ConferenceList -> fetch) {
-    $ConferenceID = &FetchConferenceByConferenceID($ConferenceID);
+    $ConferenceID = FetchEventByEventID($ConferenceID,$LimitInfo);
     push @ConferenceIDs,$ConferenceID;
   }
   $HaveAllConferences = $TRUE;
+  unless ($LimitInfo) {
+    $HaveAllConferenceInfo = $TRUE;
+  }
   return @ConferenceIDs;
 }
 
@@ -246,12 +250,14 @@ sub FetchConferenceByConferenceID { # Deprecated
 }
 
 sub FetchEventByEventID { # Fetches an event by EventID
-  my ($EventID) = @_;
+  my ($EventID,$LimitInfo) = @_;
 
   require "TopicSQL.pm";
 
   if ($Conference{$EventID}{EventGroupID}) { # We already have this one
-    return $EventID;
+    if (!$LimitInfo && !$Conference{$EventID}{HaveAllInfo}) {
+      return $EventID;
+    }
   }
 
   my $Fetch = $dbh -> prepare(
@@ -263,28 +269,38 @@ sub FetchEventByEventID { # Fetches an event by EventID
   my ($EventGroupID,$Location,$AltLocation,$URL,$Title,
       $LongDescription,$Preamble,$Epilogue,$StartDate,$EndDate,$ShowAllTalks,
       $TimeStamp) = $Fetch -> fetchrow_array;
-  if ($EventGroupID) {
+  if ($EventGroupID) { # FIXME: Probably just return null if it doesn't have EventGroupID
     $Conferences{$EventID}{EventGroupID}     = $EventGroupID;
-    $Conferences{$EventID}{Location}         = $Location;
-    $Conferences{$EventID}{AltLocation}      = $AltLocation;
-    $Conferences{$EventID}{URL}              = $URL;
     $Conferences{$EventID}{Title}            = $Title;
-    $Conferences{$EventID}{Preamble}         = $Preamble;
     $Conferences{$EventID}{LongDescription}  = $LongDescription;
-    $Conferences{$EventID}{Epilogue}         = $Epilogue;
     $Conferences{$EventID}{StartDate}        = $StartDate;     # Deprecated, use DateTimes
     $Conferences{$EventID}{EndDate}          = $EndDate;       # Deprecated, use DateTimes
-    $Conferences{$EventID}{StartDateTime}    = ConvertToDateTime({-MySQLDateTime => $StartDate, });
-    $Conferences{$EventID}{EndDateTime}      = ConvertToDateTime({-MySQLDateTime => $EndDate, });
-    $Conferences{$EventID}{ShowAllTalks}     = $ShowAllTalks;
-    $Conferences{$EventID}{TimeStamp}        = $TimeStamp;
-    $Conferences{$EventID}{ModifiedDateTime} = ConvertToDateTime({-MySQLTimeStamp => $TimeStamp, });
 
     FetchEventGroup($EventGroupID);
     $Conferences{$EventID}{Full}  = $EventGroups{$EventGroupID}{LongDescription}.":".$Title;
+    # End of info needed for reduced mode
+
     @{$Conferences{$EventID}{Moderators}} = ();
     @{$Conferences{$EventID}{Topics}}     = ();
+    unless ($LimitInfo) {
+      $Conferences{$EventID}{Location}         = $Location;
+      $Conferences{$EventID}{AltLocation}      = $AltLocation;
+      $Conferences{$EventID}{URL}              = $URL;
+      $Conferences{$EventID}{Preamble}         = $Preamble;
+      $Conferences{$EventID}{Epilogue}         = $Epilogue;
+      $Conferences{$EventID}{ShowAllTalks}     = $ShowAllTalks;
+      $Conferences{$EventID}{TimeStamp}        = $TimeStamp;
+      # FIXME: This is quite slow, so maybe a routine to add it if needed?
+      $Conferences{$EventID}{ModifiedDateTime} = ConvertToDateTime({-MySQLTimeStamp => $TimeStamp, });
+      $Conferences{$EventID}{StartDateTime}    = ConvertToDateTime({-MySQLDateTime => $StartDate, });
+      $Conferences{$EventID}{EndDateTime}      = ConvertToDateTime({-MySQLDateTime => $EndDate, });
+    }
   }
+
+  if ($LimitInfo) {
+    return $EventID;
+  }
+  $Conferences{$EventID}{HaveAllInfo}      = $TRUE;
 
   my $ModeratorSelect = $dbh -> prepare("select AuthorID from Moderator where EventID=?");
   $ModeratorSelect -> execute($EventID);

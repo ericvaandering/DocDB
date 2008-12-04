@@ -1169,7 +1169,7 @@ sub EventSelect ($) {
     $Booleans .= "-disabled";
   }
 
-  GetConferences();
+  GetConferences($TRUE);
   GetAllEventGroups();
 
   my @ConferenceIDs = reverse sort EventsByDate keys %Conferences;

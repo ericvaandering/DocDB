@@ -1,14 +1,14 @@
-#        Name: $RCSfile$
+#        Name: Search.pm
 # Description: Searching is done here, moved out of Search for XML
 #              Three modes of presenting information:
 #              1) mode=date (default, sorted by reverse date, modification date given)
 #              2) mode=meeting (sorted by author, files are listed)
 #              3) mode=conference (sorted by reverse date, conference fields shown)
-
+#
 #    Revision: $Revision$
 #    Modified: $Author$ on $Date$
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+#      Author: Eric Vaandering (ewv@fnal.gov)
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -281,7 +281,7 @@ sub LocalSearch ($) {
 
   if (@EventSearchIDs && @EventGroupSearchIDs && !$SimpleText) { # Remove group if event is selected
     require "MeetingSQL.pm";
-    GetConferences();
+    GetConferences($TRUE);
     my %EventGroupSearchIDs = ();
     foreach my $EventGroupSearchID (@EventGroupSearchIDs) {
       $EventGroupSearchIDs{$EventGroupSearchID} = 1;

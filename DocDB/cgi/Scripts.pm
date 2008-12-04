@@ -1,9 +1,18 @@
+#        Name: Scripts.pm
+# Description: Create links to Javascript used by DocDB and if the
+#              scripts need info from DocDB, write the JS
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -25,19 +34,19 @@ sub GroupLimitLink {
 }
 
 sub EventSearchScript {
-  
+
 # This script produces a menu for event groups and another for relevant events
-# (i.e. selecting a group reduces the set of events). This code is 
+# (i.e. selecting a group reduces the set of events). This code is
 # adapted from Bugzilla, produced by mozilla.org.
 
 # There are two major changes:
 #  1. seperate labels and values
 #  2. sort by label instead of by value
   require "MeetingSQL.pm";
-  
-  &GetConferences;
-  &GetAllEventGroups;
-  
+
+  GetConferences($TRUE);
+  GetAllEventGroups();
+
   print <<PREAMBLE;
 
 <script type="text/javascript">
@@ -56,23 +65,23 @@ PREAMBLE
     my $first = 1;
     foreach my $EventID (sort EventsByDate keys %Conferences) { #FIXME use join
       if ($Conferences{$EventID}{EventGroupID} == $EventGroupID) {
-        unless ($first) { 
+        unless ($first) {
           print ", ";
         }
         $first = 0;
         print "\'$EventID\'";
       }
     }
-    print "];\n";  
+    print "];\n";
   }
 
   foreach $EventID (sort EventsByDate keys %Conferences) { #FIXME use join
     my $label = $Conferences{$EventID}{Full};
     $label =~ s/\'/\\\'/; # Escape single quotes
-    print "event[\'$EventID\'] = \'$label\';\n"; 
-  }   
+    print "event[\'$EventID\'] = \'$label\';\n";
+  }
 
   print "//-->\n</script>\n";
-} 
+}
 
 1;
