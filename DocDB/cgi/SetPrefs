@@ -1,19 +1,20 @@
 #! /usr/bin/env perl
+
+#        Name: SetPrefs
+# Description: Reads form parameters from SelectPrefs and stores user's
+#              selections in a group of cookies, one for each preference.
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
-#        Author:  Adam Bryant
-#          Date:  24 March 2002
-#   Modified by:  Eric Vaandering
-# Last Modified:  27 March 2002
-#
-# Reads form parameters from SelectPrefs and stores user's selections in
-# a group of cookies, one for each preference.
+#      Author:  Adam Bryant
+#        Date:  24 March 2002
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -38,39 +39,39 @@ require "Cookies.pm";
 # Start page
 
 $query = new CGI;
-%params = $query -> Vars; 
+%params = $query -> Vars;
 
 @cookies = ();
 
-push @cookies, $query->cookie(-name=>'userid', 
-			  -value=>"$params{requester}", 
-			  -expires=>'+30y',
+push @cookies, $query->cookie(-name=>'userid',
+			  -value=>"$params{requester}",
+			  -expires=>'+10y',
 			  -path=>$cgi_path);
-push @cookies, $query->cookie(-name=>'archive', 
+push @cookies, $query->cookie(-name=>'archive',
 			  -value=>"$params{archive}",
- 			  -expires=>'+30y',
+ 			  -expires=>'+10y',
 			  -path=>$cgi_path);
-push @cookies, $query->cookie(-name=>'numfile', 
+push @cookies, $query->cookie(-name=>'numfile',
 			  -value=>"$params{numfile}",
- 			  -expires=>'+30y',
+ 			  -expires=>'+10y',
 			  -path=>$cgi_path);
-push @cookies, $query->cookie(-name=>'upload', 
-			  -value=>"$params{upload}", 
-			  -expires=>'+30y',
+push @cookies, $query->cookie(-name=>'upload',
+			  -value=>"$params{upload}",
+			  -expires=>'+10y',
 			  -path=>$cgi_path);
-push @cookies, $query->cookie(-name=>'topicmode', 
-			  -value=>"$params{topicmode}", 
-			  -expires=>'+30y',
+push @cookies, $query->cookie(-name=>'topicmode',
+			  -value=>"$params{topicmode}",
+			  -expires=>'+10y',
 			  -path=>$cgi_path);
-push @cookies, $query->cookie(-name=>'authormode', 
-			  -value=>"$params{authormode}", 
-			  -expires=>'+30y',
+push @cookies, $query->cookie(-name=>'authormode',
+			  -value=>"$params{authormode}",
+			  -expires=>'+10y',
 			  -path=>$cgi_path);
-push @cookies, $query->cookie(-name=>'overdate', 
-			  -value=>"$params{overdate}", 
-			  -expires=>'+30y',
+push @cookies, $query->cookie(-name=>'overdate',
+			  -value=>"$params{overdate}",
+			  -expires=>'+10y',
 			  -path=>$cgi_path);
-                          
+
 print $query->header( -charset => $HTTP_ENCODING, -cookie=>\@cookies);
 print "<meta http-equiv=\"Refresh\" content=\"10; URL=$MainPage\">"; ### generates improper html but works for now
 
@@ -78,14 +79,14 @@ $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass
 
 unless ($dbh) {
   push @ErrorStack,$Msg_NoConnect;
-}      
+}
 &DocDBHeader("Setting Preferences");
 &EndPage(@ErrorStack);
 
 print "<p>";
-print "<b>Your preferences have been saved.</b> 
+print "<b>Your preferences have been saved.</b>
           You will be sent to the Document Database <a href=\"$MainPage\">home
-          page</a> in 10 seconds.<br> 
+          page</a> in 10 seconds.<br>
           If your  preferences havn't been properly set, make sure your web
           browser is  accepting cookies.";
 print "<p>";

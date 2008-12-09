@@ -187,7 +187,7 @@ if ($Scope eq "All") { # Do inserts to DB, check user's permissions
   # Create CGI Cookie objects that "never" expire
   foreach my $CookieName (@CookieNames) {
     push @Cookies, $query -> cookie (-name => $CookieName, -value => $Settings,
-                                     -path => $cgi_path, -expires => '+30y');
+                                     -path => $cgi_path, -expires => '+10y');
   }
 }
 
