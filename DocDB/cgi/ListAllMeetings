@@ -43,7 +43,6 @@ my $Mode         = $params{mode} || "display";
 my $EventGroupID = $params{eventgroupid};
 my $EventGroup   = $params{eventgroup};
 
-GetConferences($TRUE);
 GetSecurityGroups();
 
 print $query -> header( -charset => $HTTP_ENCODING );
@@ -61,8 +60,13 @@ if ($EventGroup || $EventGroupID) {
   unless ($EventGroupID) {
     $EventGroupID = LookupEventGroup($EventGroup);
   }
+  my @EventIDs = FetchEventsByGroup($EventGroupID);
+  foreach my $EventID (@EventIDs) {
+    FetchEventByEventID($EventID,$TRUE);
+  }
   EventsByGroup( {-groupid => $EventGroupID, -mode => $Mode, -singlegroup => $TRUE} );
 } else {
+  GetConferences($TRUE);
   if ($Mode eq "modify") {
     print "<h3>Select an event to change:</h3>\n";
     EventsTable( {-mode => "modify"} );

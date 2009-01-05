@@ -28,6 +28,7 @@ require "SQLUtilities.pm";
 
 sub GetConferences {
   my ($LimitInfo) = @_;
+  push @DebugStack,"Calling GetConferences with LimitInfo=$LimitInfo";
   if ($HaveAllConferences && $LimitInfo || $HaveAllConferenceInfo) {
     my @ConferenceIDs = keys %Conferences;
     return @ConferenceIDs;
@@ -252,12 +253,11 @@ sub FetchConferenceByConferenceID { # Deprecated
 sub FetchEventByEventID { # Fetches an event by EventID
   my ($EventID,$LimitInfo) = @_;
   require "TopicSQL.pm";
-
+  push @DebugStack,"Getting info for event $EventID. Limited: $LimitInfo";
   if ($Conferences{$EventID}{EventGroupID}) { # We already have this one
-    if ($Conference{$EventID}{HaveAllInfo} || $LimitInfo) {
+    if ($Conferences{$EventID}{HaveAllInfo} || $LimitInfo) {
       return $EventID;
     }
-
   }
 
   my $Fetch = $dbh -> prepare(
@@ -301,7 +301,6 @@ sub FetchEventByEventID { # Fetches an event by EventID
     return $EventID;
   }
   $Conferences{$EventID}{HaveAllInfo}      = $TRUE;
-
   my $ModeratorSelect = $dbh -> prepare("select AuthorID from Moderator where EventID=?");
   $ModeratorSelect -> execute($EventID);
   while (my ($AuthorID) = $ModeratorSelect -> fetchrow_array()) {

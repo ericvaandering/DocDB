@@ -602,7 +602,7 @@ sub PrintEventRightSidebar ($) {
 
   my @EventIDs = FetchEventsByGroup($EventGroupID);
   foreach my $OtherEventID (@EventIDs) {
-    FetchConferenceByConferenceID($OtherEventID);
+    FetchEventByEventID($OtherEventID,$TRUE);
   }
   my @EventIDs = sort EventsByDate @EventIDs;
 
