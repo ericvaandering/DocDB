@@ -63,12 +63,11 @@ sub GetEventsByDate (%) {
   require "Utilities.pm";
   require "MeetingSecurityUtilities.pm";
 
-  my %Params = @_;
-
-  my $From = $Params{-from} || "";
-  my $To   = $Params{-to}   || "";
-  my $On   = $Params{-on}   || SQLNow(-dateonly => $TRUE);
-
+  my ($ArgRef) = @_;
+  my $From      = exists $ArgRef->{-from}      ? $ArgRef->{-from} : "";
+  my $To        = exists $ArgRef->{-to}        ? $ArgRef->{-to} : "";
+  my $On        = exists $ArgRef->{-on}        ? $ArgRef->{-on} : SQLNow(-dateonly => $TRUE);
+  my $LimitInfo = exists $ArgRef->{-limitinfo} ? $ArgRef->{-limitinfo} : $TRUE;
 
   my $List;
   if ($From && $To) { # Starts or ends in or surrounds window
@@ -86,7 +85,7 @@ sub GetEventsByDate (%) {
   my @EventIDs;
   $List -> bind_columns(undef, \($EventID));
   while ($List -> fetch) {
-    if (FetchConferenceByConferenceID($EventID)) {
+    if (FetchEventByEventID($EventID,$LimitInfo)) {
       if (CanAccessMeeting($EventID)) {
         push @EventIDs,$EventID;
       }
@@ -253,7 +252,9 @@ sub FetchConferenceByConferenceID { # Deprecated
 sub FetchEventByEventID { # Fetches an event by EventID
   my ($EventID,$LimitInfo) = @_;
   require "TopicSQL.pm";
-  push @DebugStack,"Getting info for event $EventID. Limited: $LimitInfo";
+  unless ($LimitInfo) {
+    push @DebugStack,"Getting all info for event $EventID.";
+  }
   if ($Conferences{$EventID}{EventGroupID}) { # We already have this one
     if ($Conferences{$EventID}{HaveAllInfo} || $LimitInfo) {
       return $EventID;

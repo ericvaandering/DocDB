@@ -1,11 +1,19 @@
-# Author Eric Vaandering (ewv@fnal.gov)
+#
+#        Name: CalendarHTML.pm
+# Description: Functions to print out various types of calendar (monthly/yearly/daily)
+#              and the events on that day (or an indication that there are events)
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -19,42 +27,42 @@
 
 sub CalendarLink (%) {
   my %Params = @_;
-  
+
   my $Month    = $Params{-month}    || 0;
   my $Year     = $Params{-year}     || 0;
   my $Day      = $Params{-day}      || 0;
   my $SQL      = $Params{-SQL}      || "";
   my $Text     = $Params{-text}     || "Calendar";
   my $Class    = $Params{-class}    || "";
-  
+
   my $Link = "<a ";
   if ($Class) {
     $Link .= "class=\"Date\" ";
   }
   $Link .= "href=\"".$ShowCalendar;
-  
+
   if ($SQL) {
     ($Year,$Month,$Day) = split /-/,$SQL;
     push @DebugStack,"Y $Year M $Month D $Day T $Text";
-  } 
-                 
+  }
+
   if ($Day && $Month && $Year) {
     $Link .= "?year=$Year&amp;month=$Month&amp;day=$Day\">";
   } elsif ($Month && $Year) {
     $Link .= "?year=$Year&amp;month=$Month\">";
   } elsif ($Year) {
     $Link .= "?year=$Year\">";
-  }  
-  $Link .= $Text."</a>";  
+  }
+  $Link .= $Text."</a>";
 }
 
 sub PrintCalendar {
   use DateTime;
   require "Sorts.pm";
   require "MeetingSecurityUtilities.pm";
-  
+
   my %Params = @_;
-  
+
   my $Month = $Params{-month};
   my $Year  = $Params{-year};
   my $Type  = $Params{-type} || "month";
@@ -65,10 +73,10 @@ sub PrintCalendar {
   my $Today       = DateTime ->today(time_zone => 'local');
 
   my $Class = "ByMonth";
-  if ($Type eq "year") {  
+  if ($Type eq "year") {
     $Class = "InYear";
   }
-  
+
   print "<table class=\"Calendar $Class\">";
 
   if ($Type eq "year") {
@@ -77,15 +85,15 @@ sub PrintCalendar {
   } elsif ($Type eq "month") {
     my $PrevMonth = $FirstDay -> clone();
        $PrevMonth -> add(months => -1);
-    my $PrevMNum  = $PrevMonth -> month(); 
-    my $PrevName  = $PrevMonth -> month_name(); 
-    my $PrevYear  = $PrevMonth -> year(); 
+    my $PrevMNum  = $PrevMonth -> month();
+    my $PrevName  = $PrevMonth -> month_name();
+    my $PrevYear  = $PrevMonth -> year();
     my $NextMonth = $FirstDay -> clone();
        $NextMonth -> add(months => 1);
-    my $NextMNum  = $NextMonth -> month(); 
-    my $NextName  = $NextMonth -> month_name(); 
-    my $NextYear  = $NextMonth -> year(); 
-    
+    my $NextMNum  = $NextMonth -> month();
+    my $NextName  = $NextMonth -> month_name();
+    my $NextYear  = $NextMonth -> year();
+
     my $YearLink = CalendarLink(-year => $Year, -text => $Year);
     my $CurrLink = "$MonthName $YearLink";
     my $PrevLink = CalendarLink(-year => $PrevYear, -month => $PrevMNum, -text => "&laquo;$PrevName $PrevYear");
@@ -95,34 +103,34 @@ sub PrintCalendar {
             <th colspan=\"5\"><h1>$CurrLink</h1></th>\n
             <th>$NextLink</th>\n
           </tr>\n";
-  } 
+  }
   print "<tr>\n";
   foreach my $DayName ("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday") {
-    if ($Type eq "year") {  
+    if ($Type eq "year") {
       print "<th class=\"$DayName InYearDays\">",substr($DayName,0,1),"</th>\n";
     } else {
       print "<th class=\"$DayName\">$DayName</th>\n";
     }
-  }  
+  }
   print "</tr>\n";
 
   my $RowOpen;
 
 # Add blank cells for days in previous month
 
-  my $DOW = $FirstDay -> day_of_week() + 1; if ($DOW ==8) {$DOW = 1;} 
+  my $DOW = $FirstDay -> day_of_week() + 1; if ($DOW ==8) {$DOW = 1;}
   if ($DOW > 1) {
-    my $NSkip = $DOW - 1; 
+    my $NSkip = $DOW - 1;
     print "<tr><td colspan=\"$NSkip\"></td>\n";
     $RowOpen = $TRUE;
-  }    
+  }
   my $DaysLeft;
 
   for (my $Day = 1; $Day <= $DaysInMonth; ++$Day) {
     my $DateTime = DateTime -> new(year => $Year, month => $Month, day => $Day);
-    my $SQLDate = $DateTime -> ymd(); 
+    my $SQLDate = $DateTime -> ymd();
     my $DOW = $DateTime -> day_of_week() + 1; # Convert from Monday week start
-    if ($DOW ==8) {$DOW = 1;} 
+    if ($DOW ==8) {$DOW = 1;}
        $DaysLeft = 7 - $DOW;
     my $DayName = $DateTime -> day_name();
 
@@ -140,27 +148,27 @@ sub PrintCalendar {
     my $TDClass = "$DayName";
     if ($DateTime == $Today) {
       $TDClass .= " Today";
-    }  
+    }
     print "<td class=\"$TDClass\">\n";
     my $DayLink = "<a class=\"Date\" href=\"".$ShowCalendar."?year=$Year&amp;month=$Month&amp;day=$Day\">".
                   $DateTime -> day()."</a>";
     if ($Type eq "year") {
-      my @EventIDs   = GetEventsByDate(-on => $SQLDate);
+      my @EventIDs   = GetEventsByDate({-on => $SQLDate});
       my @SessionIDs = FetchSessionsByDate($SQLDate);
       if (@EventIDs || @SessionIDs) {
         print "$DayLink\n";
       } else {
-        print "$Day\n";  
+        print "$Day\n";
       }
     }
     if ($Type eq "month") {
-      my $AddLink = "<a class=\"AddEvent\" href=\"".$SessionModify."?mode=new&amp;singlesession=1&amp;sessionyear=$Year&amp;sessionmonth=$Month&amp;sessionday=$Day\">+</a>";            
+      my $AddLink = "<a class=\"AddEvent\" href=\"".$SessionModify."?mode=new&amp;singlesession=1&amp;sessionyear=$Year&amp;sessionmonth=$Month&amp;sessionday=$Day\">+</a>";
       print $DayLink,"\n";
       if (CanCreateMeeting()) {
         print $AddLink,"\n";
-      }  
+      }
       PrintDayEvents(-day => $Day, -month => $Month, -year => $Year, -format => "summary");
-    }  
+    }
     print "</td>\n";
   }
 
@@ -177,9 +185,9 @@ sub PrintDayEvents (%) {
   require "MeetingSQL.pm";
   require "Utilities.pm";
   require "EventUtilities.pm";
-  
+
   my %Params = @_;
-  
+
   my $Month    = $Params{-month};
   my $Year     = $Params{-year};
   my $Day      = $Params{-day};
@@ -187,15 +195,15 @@ sub PrintDayEvents (%) {
   my $RowClass = $Params{-rowclass} || "Normal";
 
   my $DateTime = DateTime -> new(year => $Year, month => $Month, day => $Day);
-  my $SQLDate  = $DateTime -> ymd(); 
-  
-  my @EventIDs = sort numerically &GetEventsByDate(-on => $SQLDate);
+  my $SQLDate  = $DateTime -> ymd();
+
+  my @EventIDs = sort numerically GetEventsByDate({-on => $SQLDate});
   if ($Format eq "full") {
     print "<table class=\"CenteredTable MedPaddedTable\">\n";
-  }  
+  }
   my $DayPrinted = $FALSE;
   my $Count      = 0;
-  
+
 ### Separate into ones with and without sessions, save sessions for this day
 
   my @AllDayEventIDs = ();
@@ -209,16 +217,16 @@ sub PrintDayEvents (%) {
         if ($SessYear == $Year && $SessMonth == $Month && $SessDay == $Day) {
           push @AllSessionIDs,$SessionID;
         }
-      }    
+      }
     } else {
       push @AllDayEventIDs,$EventID;
-    }  
-  }  
-  
+    }
+  }
+
   my @DateSessionIDs = FetchSessionsByDate($SQLDate);
   push @AllSessionIDs,@DateSessionIDs;
   @AllSessionIDs = Unique(@AllSessionIDs);
-  
+
 ### Print Header if we are going to print something
 
   if ((@AllDayEventIDs || @AllSessionIDs) && $Format eq "full") {
@@ -230,10 +238,10 @@ sub PrintDayEvents (%) {
     print "</tr>\n";
   } elsif ($Format eq "full") {
     print "<tr><td>No events for this day</td></tr>\n";
-  }  
-  
+  }
+
 ### Loop over all day/no time events
-  
+
   foreach $EventID (@AllDayEventIDs) {
     my $EventLink = &EventLink(-eventid => $EventID, -format => "full");
     if ($EventLink) {
@@ -244,8 +252,8 @@ sub PrintDayEvents (%) {
           $DayPrinted = $TRUE;
           print "<th class=\"LeftHeader\">$Day ",@AbrvMonths[$Month-1]," $Year</th>\n";
         } elsif ($Format eq "multiday") {
-          print "<td>&nbsp;</td>\n";   
-        }  
+          print "<td>&nbsp;</td>\n";
+        }
         print "<td>All day/no time</td>\n";
         print "<td>$EventLink</td>\n";
         print "<td>$Conferences{$EventID}{Location}</td>\n";
@@ -253,19 +261,19 @@ sub PrintDayEvents (%) {
         print "</tr>\n";
       } elsif ($Format eq "summary") {
         print $EventLink,"\n";
-      }   
-    }  
-  }  
-   
+      }
+    }
+  }
+
 ### Loop over sessions by time
-  
+
   @AllSessionIDs = sort SessionsByDateTime @AllSessionIDs;
   foreach my $SessionID (@AllSessionIDs) {
     my $StartTime = &EuroTimeHM($Sessions{$SessionID}{StartTime});
     my $EndTime   = &TruncateSeconds(&SessionEndTime($SessionID));
-    if ($EndTime eq $StartTime) { 
+    if ($EndTime eq $StartTime) {
       $EndTime = "";
-    }  
+    }
     if ($Format eq "full" || $Format eq "multiday" ) {
       ++$Count;
       my $SessionLink = &SessionLink(-sessionid => $SessionID, -format => "full");
@@ -274,8 +282,8 @@ sub PrintDayEvents (%) {
         $DayPrinted = $TRUE;
         print "<th class=\"LeftHeader\">$Day ",@AbrvMonths[$Month-1]," $Year</th>\n";
       } elsif ($Format eq "multiday") {
-        print "<td>&nbsp;</td>\n";   
-      }  
+        print "<td>&nbsp;</td>\n";
+      }
       print "<td>$StartTime &ndash; $EndTime</td>\n";
       print "<td>$SessionLink</td>\n";
       print "<td>$Sessions{$SessionID}{Location}</td>\n";
@@ -284,11 +292,11 @@ sub PrintDayEvents (%) {
     } elsif ($Format eq "summary") {
       my $SessionLink = &SessionLink(-sessionid => $SessionID);
       print "<span class=\"Event\">$StartTime $SessionLink</span>\n";
-    }   
-  }  
+    }
+  }
   if ($Format eq "full") {
     print "</table>\n";
-  }  
+  }
   return $Count;
 }
 
