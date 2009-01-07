@@ -329,7 +329,7 @@ sub SessionLink (%) {
 
   FetchSessionByID($SessionID);
   my $EventID = $Sessions{$SessionID}{ConferenceID};
-  FetchConferenceByConferenceID($EventID);
+  FetchEventByEventID($EventID,$TRUE);
 
   my $URL = "$DisplayMeeting?sessionid=$SessionID";
 
