@@ -160,7 +160,7 @@ print $query -> endform;
 print "</div>\n";  
 
 print "<div class=\"HomepageMainChoice\">\n";
-print "<strong><a href=\"$ShowCalendar\">Calendar</a> of events</strong>";
+print "<strong><a href=\"$ShowCalendar\">Calendar</a> of events or <a href=\"$ShowCalendar?todayonly=1\">today's</a> events</strong>";
 print "</div>\n";  
 
 # Fill arrays that print lists of documents
