@@ -51,9 +51,10 @@ $query = new CGI;  # Global for subroutines
 
 my %Params = $query -> Vars;
 
-my $Day   = $Params{day}   || 0;
-my $Month = $Params{month} || 0;
-my $Year  = $Params{year}  || 0;
+my $Day       = $Params{day}       || 0;
+my $Month     = $Params{month}     || 0;
+my $Year      = $Params{year}      || 0;
+my $TodayOnly = $Params{todayonly} || 0;
 
 CreateConnection();
 
@@ -72,7 +73,14 @@ my $Today = DateTime -> now(time_zone => 'local');
 
 push @DebugStack, "Today is ".$Today -> iso8601;
 
-if ($Day && $Month && $Year) {
+if ($TodayOnly) {
+  $Month     = $Today -> month();
+  $Year      = $Today -> year();
+  $Day       = $Today -> day();
+  my $Date = DateTime -> new(year => $Year, month => $Month, day => $Day);
+  $TitleDate = $Day." ".$Date -> month_name()." ".$Year;
+  #$FutureEventTable = $TRUE;
+} elsif ($Day && $Month && $Year) {
   my $Date = DateTime -> new(year => $Year, month => $Month, day => $Day);
   $TitleDate = $Day." ".$Date -> month_name()." ".$Year;
 } elsif ($Month && $Year) {
