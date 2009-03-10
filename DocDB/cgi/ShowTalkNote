@@ -180,8 +180,8 @@ if ($SessionTalkID) {
   print "<tr><th>",FormElementTitle(-helplink => "authorhint", -helptext => "Author Hints", -nocolon => $TRUE);
   print  " &amp; ",FormElementTitle(-helplink => "topichint"    , -helptext => "Topic Hints"),"</th>\n";
 
-  print "<td>\n"; AuthorScroll(-multiple => $TRUE, -default => \@TalkDefaultAuthorHints);   print "</td>\n";
-  print "<td>\n"; TopicScroll(-multiple => $TRUE,  -default => \@TalkDefaultTopicHints, -format => "full");    print "</td>\n";
+  print "<td>\n"; AuthorScroll( -multiple => $TRUE,  -default => \@TalkDefaultAuthorHints);   print "</td>\n";
+  print "<td>\n"; TopicScroll({ -multiple => $TRUE,  -default => \@TalkDefaultTopicHints, -format => "full" });    print "</td>\n";
   print "</tr>\n";
 }
 
