@@ -3,9 +3,11 @@
 #        Name: ShowTalkNote
 # Description: Usually called as a pop-up, this will look up the note for a talk
 #              and display it since it could get crowded in the normal table.
-#
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
