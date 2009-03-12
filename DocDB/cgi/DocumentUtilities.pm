@@ -147,7 +147,7 @@ sub PrepareFieldList (%) {
   #               5) Default of all lists
 
   require "ConfigSQL.pm";
-  require "Fields.pm";
+  require "DocDBFields.pm";
 
   if ($TopicID) {
     require "TopicSQL.pm";

@@ -1,11 +1,16 @@
+8.7.8
+
+ Rename Fields.pm to DocDBFields.pm to avoid an apparent case sensitivity
+ problem on Mac OS X. Found with the help of Mark Foster, Sussex.
+
 8.7.7
 
- Bugfix to ShowTalkNote from Charles Lane, Drexel 
+ Bugfix to ShowTalkNote from Charles Lane, Drexel
 
 8.7.6
 
  Stop text from wrapping on main page choices
- Add a link and functionality for today's events 
+ Add a link and functionality for today's events
 
 8.7.4/8.75
 

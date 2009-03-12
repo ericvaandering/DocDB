@@ -28,7 +28,7 @@ sub DocumentTable (%) {
   require "RevisionSQL.pm";
   require "Security.pm";
   require "Sorts.pm";
-  require "Fields.pm";
+  require "DocDBFields.pm";
 
   require "AuthorHTML.pm";
   require "RevisionHTML.pm";
@@ -429,7 +429,7 @@ sub PrintDocNumber { # And type
 sub FieldListChooser (%) {
   my %Params = @_;
 
-  require "Fields.pm";
+  require "DocDBFields.pm";
   require "FormElements.pm";
 
   my $Partition = $Params{-partition};

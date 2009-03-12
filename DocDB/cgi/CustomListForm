@@ -38,7 +38,7 @@ require "Scripts.pm";
 require "Security.pm";
 require "Messages.pm";
 require "Sorts.pm";
-require "Fields.pm";
+require "DocDBFields.pm";
 
 require "DBUtilities.pm";
 require "HTMLUtilities.pm";
