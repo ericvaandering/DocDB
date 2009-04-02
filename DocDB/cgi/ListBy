@@ -1,6 +1,10 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+#        Name: $RCSfile$
+# Description: Generate tables of document for various input parameters
+#    Revision: $Revision$
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: $Author$ on $Date$
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -150,12 +154,16 @@ if ($Days) {
 ### Event
 
   require "MeetingSQL.pm";
-  &FetchConferenceByConferenceID($EventID);
+  FetchEventByEventID($EventID);
 
   $FieldListOptions{-eventid}      = $EventID;
   $FieldListOptions{-eventgroupid} = $Conferences{$EventID}{EventGroupID};
   $Title   = "Document List by Event";
-  $Message = "These documents from <span class=\"Highlight\">$Conferences{$EventID}{LongDescription}</span> are available:";
+  $Message = "These documents from <span class=\"Highlight\">$Conferences{$EventID}{LongDescription}</span> ";
+  if ($Conferences{$EventID}{URL}) {
+    $Message .= "(<a href=\"$Conferences{$EventID}{URL}\">$Conferences{$EventID}{URL}</a>) ";
+  }
+  $Message .= "are available:";
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
            "DocumentRevision,RevisionEvent where DocumentRevision.DocRevID=RevisionEvent.DocRevID ".
            "and DocumentRevision.Obsolete=0 and RevisionEvent.ConferenceID=?");
