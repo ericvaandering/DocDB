@@ -1,3 +1,20 @@
+V9
+  implement supress
+    find most general rule that applies: 
+      topic, no one can view
+      need codes for all see by default, all can see, groups sees by default, group can view, group can create, public calendar for
+      need entry for all topics/all events
+    Need for topic, eventgroup, event, keyword group, session (add directly if not present), group
+    Also need to put authors into groups
+    Option to reduce documents writable by certain group
+      Public (only) docs writable by ecal not visible by hcal
+    list certificate and security groups in footer
+
+  add multi-field keys
+  preserve sig hack
+  add authorID link to EmailUserID, need to use this to restrict list of authors
+  segmented administration
+
 * In using CGI::Untaint, look at as_set for arrays.
 HTML::Sanitizer for CGI untaint too. as well as URL
 

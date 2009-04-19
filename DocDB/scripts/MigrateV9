@@ -33,15 +33,15 @@ require "DocDBGlobals.pm";
 GetOptions("a=s" => \$Action,"u=s" => \$User,"p=s" => \$Password);
 
 unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate" or $Action eq "undo") {
-  print "Usage: MigrateV8 --u=username --p=password --a=init|migrate|delete|undo\n\n";
-  print "This script is used to migrate from a version 7 to version 8 DB structure.\n";
+  print "Usage: MigrateV9 --u=username --p=password --a=init|migrate|delete|undo\n\n";
+  print "This script is used to migrate from a version 8 to version 9 DB structure.\n";
   print "!!!! BACKUP YOUR DATABASE BEFORE RUNNING THIS IN CASE THERE ARE PROBLEMS !!!!\n";
   print "Run this script in \"init\" mode first, then update the DocDB code.\n";
   print "Then run this script again in \"migrate\" mode.\n";
   print "At this point you can update the CGI code and when you are comfortable\n";
   print "everything is OK, run in \"delete\" mode to erase old columns and/or tables.\n";
   print "The \"undo\" mode removes the newly inserted tables and columns and should restore\n";
-  print "the DB to a version 7 state. But, using your backup is better.\n";
+  print "the DB to a version 8 state. But, using your backup is better.\n";
   exit;
 }
 
@@ -52,12 +52,38 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
   my @Actions = (
     # After this is done, can remove (almost) duplicate code section from MailNotification.pm
     "update Notification set ForeignID=1 where Type='AllDocuments'",
-    "alter table Moderator drop key Separator",
     "alter table Moderator add key SepKey (SessionSeparatorID)",
-    "alter table EventTopic drop key Separator",
     "alter table EventTopic add key SepKey (SessionSeparatorID)",
+    # TODO: rename Type and it's key in Suppress
     # Remove hack put in in version 8
     "alter table SecurityGroup  add CanPreserveSigs int default '0'",
+    # External keys/URLs for events and users
+    "alter table Conference add ExternalURL varchar(240) default NULL",
+    "alter table Conference add ExternalKey varchar(240) default NULL",
+    "alter table EmailUser  add ExternalKey varchar(240) default NULL",
+    "CREATE TABLE CalendarLink (
+      CalendarLinkID int(11) NOT NULL auto_increment,
+      LinkType varchar(32) default NULL,
+      ForeignID int(11) default NULL,
+      SecurityGroupID int(11) NOT NULL default '0',
+      SecurityHash varchar(240) default NULL,
+      TimeStamp timestamp(14) NOT NULL,
+      PRIMARY KEY  (CalendarLinkID),
+      KEY TypeKey  (LinkType),
+      KEY SecurityGroupKey (SecurityGroupID),
+      KEY TypeIDKey (LinkType,ForeignID)
+     ) TYPE=MyISAM",
+    "CREATE TABLE LocalAdminister (
+      LocalAdministerID int(11) NOT NULL auto_increment,
+      EmailUserID int(11) NOT NULL default '0',
+      TableType varchar(32) default NULL,
+      ForeignID int(11) default NULL,
+      TimeStamp timestamp(14) NOT NULL,
+      PRIMARY KEY  (LocalAdministerID),
+      KEY TypeKey  (TableType),
+      KEY EmailUserKey (EmailUserID),
+      KEY TypeIDKey (TableType,ForeignID)
+     ) TYPE=MyISAM",
   );
 
   print "Creating new tables and columns.\n";
@@ -70,7 +96,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
 
 if ($Action eq "migrate") {
 #  my $TopicUpdate     = $dbh -> prepare("update RevisionTopic set TopicID=? where MinorTopicID=?");
-
+# CanPreserveSigs hack
 }
 
 if ($Action eq "undo") { # Undo modifications
@@ -91,8 +117,11 @@ if ($Action eq "delete") {
 
   # Get rid of tables and columns no longer needed
 
-  print "Removing obsolete tables and columns.\n";
-  my @Actions = ();
+  print "Removing obsolete tables, columns, keys.\n";
+  my @Actions = (   
+    "alter table Moderator drop key Separator",
+    "alter table EventTopic drop key Separator",
+  );
 
   foreach my $Action (@Actions) {
     unless ($Action) { next; }
