@@ -3,7 +3,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -18,52 +18,56 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub FetchSecurityGroupsByCert (%) {
   require "SecuritySQL.pm"; 
   my %Params = @_;
-  my $EmailUserID  = &FetchEmailUserIDByCert(%Params);
-  my @UserGroupIDs = &FetchUserGroupIDs($EmailUserID);
+  my $EmailUserID  = FetchEmailUserIDByCert(%Params);
+  if ($EmailUser{$EmailUserID}{Verified} != 1) {
+    push @DebugStack,"User is not verified";
+    push @WarnStack,"You have a valid certificate, but have are not yet allowed to access to DocDB. 
+                   <a href=\"$CertificateApplyForm\">Apply for access.</a>";
+    return;
+  }  
+  my @UserGroupIDs = FetchUserGroupIDs($EmailUserID);
   return @UserGroupIDs;
 }
 
 sub FetchEmailUserIDByCert (%) {
-  require "SecuritySQL.pm"; 
   my %Params = @_;
 
   my $IgnoreVerification = $Params{-ignoreverification};
  
+  require "SecuritySQL.pm"; 
+  require "NotificationSQL.pm"; 
+
   my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
   my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
 
-  push @DebugStack,"Finding EmailUserID by certificate";
+  $CertificateCN    = $CertCN; 
+  $CertificateEmail = $CertEmail; 
+
+  push @DebugStack,"Finding EmailUserID by certificate $CertCN";
 
   # If we do http basic with users, this routine will function with minor modifications
 
   my $EmailUserSelect;
-  if ($Preferences{Security}{Certificates}{UseCNOnly}) {  
-    if ($IgnoreVerification) {
-      $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                       "where Name=?");
-    } else {                                   
-      $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                       "where Verified=1 and Name=?");
-    }
-    $EmailUserSelect -> execute($CertCN);
-  } else {
-    if ($IgnoreVerification) {
-      $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                       "where EmailAddress=? and Name=?");
-    } else {                                   
-      $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                       "where Verified=1 and EmailAddress=? and Name=?");
-    }
-    $EmailUserSelect -> execute($CertEmail,$CertCN);
-  }                                    
+  if ($IgnoreVerification) {
+    $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
+                                     "where Name=?");
+  } else {                                   
+    $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
+                                     "where Verified=1 and Name=?");
+  }
+  $EmailUserSelect -> execute($CertCN);
 
   my ($EmailUserID) = $EmailUserSelect -> fetchrow_array; 
   push @DebugStack,"Found e-mail user: $EmailUserID";
+
+  if ($EmailUserID) {
+    FetchEmailUser($EmailUserID)
+  }
   
   return $EmailUserID;
 }
@@ -75,7 +79,6 @@ sub CertificateStatus () {
   #
   # verified   --  certificate is valid and user has been given access to DocDB by admin
   # unverified --  certificate is valid and unique, but user has not been given access
-  # mismatch   --  certificate is valid, but e-mail or CN conflicts with existing user
   # noapp      --  certificate is valid, but has never requested access
   # nocert     --  no certificate was presented (not sure if this can work)
 
@@ -86,25 +89,18 @@ sub CertificateStatus () {
   
   push @DebugStack,"Finding Status by certificate";
   
-  unless (($CertEmail && $CertCN) || ($CertCN && $Preferences{Security}{Certificates}{UseCNOnly})) {
+  unless ($CertCN) {
     $CertificateStatus = "nocert";
     push @DebugStack,"Certificate Status: $CertificateStatus";
     return $CertificateStatus;
   } 
     
   my $EmailUserSelect;
-  if ($Preferences{Security}{Certificates}{UseCNOnly}) {  
-    $EmailUserSelect = $dbh->prepare("select EmailUserID,Verified from EmailUser ".
-                                       "where Name=?");
-    $EmailUserSelect -> execute($CertCN);
-    push @DebugStack,"Checking user $CertCN by CN";
-  } else {
-    $EmailUserSelect = $dbh->prepare("select EmailUserID,Verified from EmailUser ".
-                                       "where EmailAddress=? and Name=?");
-    $EmailUserSelect -> execute($CertEmail,$CertCN);
-  }                                    
-
+  $EmailUserSelect = $dbh->prepare("select EmailUserID,Verified from EmailUser ".
+                                     "where Name=?");
+  $EmailUserSelect -> execute($CertCN);
   my ($EmailUserID,$Verified) = $EmailUserSelect -> fetchrow_array; 
+  push @DebugStack,"Checking user $CertCN by CN";
   
   if ($Verified) {
     $CertificateStatus = "verified";
@@ -118,25 +114,7 @@ sub CertificateStatus () {
     return $CertificateStatus;
   } 
   
-  if ($Preferences{Security}{Certificates}{UseCNOnly}) { # Can't do mismatch check
-    $CertificateStatus = "noapp";
-    push @DebugStack,"Certificate Status: $CertificateStatus";
-    return $CertificateStatus;
-  } 
-   
-  my $AddressSelect = $dbh->prepare("select EmailUserID from EmailUser where EmailAddress=?");
-     $AddressSelect -> execute($CertEmail);
-  my ($AddressID) = $AddressSelect -> fetchrow_array; 
-
-  my $NameSelect = $dbh->prepare("select EmailUserID from EmailUser where Name=?");
-     $NameSelect -> execute($CertCN);
-  my ($NameID) = $NameSelect -> fetchrow_array; 
-    
-  if ($NameID || $AddressID) {
-    $CertificateStatus = "mismatch";
-  } else {
-    $CertificateStatus = "noapp";
-  }
+  $CertificateStatus = "noapp";
   push @DebugStack,"Certificate Status: $CertificateStatus";
   return $CertificateStatus;
 }

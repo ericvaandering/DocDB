@@ -6,6 +6,23 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
 use CGI;                                                                                      
 use XML::Parser::PerlSAX;
 use XML::PatAct::MatchName;
@@ -14,6 +31,7 @@ use XML::Grove::AsString;
 use XML::Grove::AsCanonXML;
 
 require "DocDBGlobals.pm";
+require "HTMLUtilities.pm";
 
 my $DefaultPatterns = [
   'helpfile'    => [ qw{ -holder                                  } ],
@@ -53,8 +71,9 @@ if ($ProjectHelp) {
 # Start page
 
 $query = new CGI;  
-print $query->header;
-print $query->start_html(-title=>"$Project Document Database Help");
+print $query -> header( -charset => $HTTP_ENCODING );
+&DocDBHeader("$Project DocDB Help","",-nobody => $TRUE);
+
 %params = $query -> Vars;
 $helpterm = $params{term};   # Extract term user wants help for
 
@@ -109,4 +128,5 @@ if ($DefaultText || $ProjectText) {
 } else {
   print "<b><big>No help available on this topic.</big></b><p>\n";
 }  
-print $query->end_html;     # End page
+
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName,-nobody => $TRUE);

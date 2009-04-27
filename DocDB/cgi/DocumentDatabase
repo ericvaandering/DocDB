@@ -1,13 +1,17 @@
 #! /usr/bin/env perl
 #
+#
+#        Name: $RCSfile$
 # Description: The Document Database homepage. Give the user various ways to  
 #              view documents, a link to ways to change documents, and a list 
 #              of the most recently updated documents.
 #
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -22,7 +26,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use Benchmark;
 use CGI;                                                      
@@ -38,21 +42,30 @@ require "SecurityHTML.pm";
 require "Security.pm";
 require "Scripts.pm";
 require "FormElements.pm";
+require "XRefSQL.pm";
 
-require "ProjectMessages.pm";
+require "Messages.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
-&GetSecurityGroups;
+GetSecurityGroups();
+
+my $CertificateStatus;
+if ($UserValidation eq "certificate") {
+  require "CertificateUtilities.pm";
+  $CertificateStatus = CertificateStatus();
+}
 
 # %params = $query -> Vars;  # No parameters (yet?) 
 
-print $query->header;
-&DocDBHeader("$Project Document Database","Document Database");
+print $query->header( -charset => $HTTP_ENCODING );
+if ($UserValidation eq "certificate" && $CertificateStatus ne "verified") {
+  DocDBHeader("$Project Document Database","Document Database", -scripts => ["PopUps"], -refresh => "5;url=$CertificateApplyForm");
+} else {
+  DocDBHeader("$Project Document Database","Document Database", -scripts => ["PopUps"]);
+}
 
-my $PersonalAccountLink = &PersonalAccountLink();
-
-&HelpPopupScript;
+my $PersonalAccountLink = PersonalAccountLink();
 
 print "<div id=\"DocDBHomeBody\">\n";
 
@@ -60,20 +73,17 @@ print "<div id=\"DocDBHomeBody\">\n";
 
 print "<div id=\"Header3Col\">\n";
 
-if ($UserValidation eq "certificate") {
-  require "CertificateUtilities.pm";
-  my $CertificateStatus = &CertificateStatus();
-  if ($CertificateStatus ne "verified") {
-    print "<p><h4 class=\"Warning\">\n";
-    print "You have presented a valid certificate, but are not yet authorized to access the DocDB.<br/>\n";
-    print "</h4>\n";
-    print "<h4>\n";
-    print "<a href=\"$CertificateApplyForm\">Apply for access or get more information.</a></h4></p>\n";
-  }
+if ($UserValidation eq "certificate" && $CertificateStatus ne "verified") {
+  print "<h3 class=\"Warning\">\n";
+  print "You have presented a valid certificate, but are not yet authorized to access the DocDB.</h3>\n";
+  print "<h2 class=\"AccessApplyLink\">\n";
+  print "<a href=\"$CertificateApplyForm\">Apply for access or get more information.</a></h2>\n";
+  print "<h3>You will be redirected here in 5 seconds.</h3>\n";
+  print "\n";
 }
 
 if ($WelcomeMessage) {
-  print "<p><h4>\n";
+  print "<h4>\n";
   print "$WelcomeMessage\n";
   print "</h4>\n";
 }
@@ -83,12 +93,15 @@ print "</div>\n";  # Header3Col
 ### Left Column
 
 print "<div id=\"LeftColumn3Col\">\n";
+print "<p><strong><a href=\"$DocDBInstructions\">Instructions</a></strong></p>\n";
 unless ($Public) {
-  print "<p><strong><a href=\"$HelpFile\">Instructions</a></strong></p>\n";
   if ($PersonalAccountLink) {
     print "<p><strong>$PersonalAccountLink</strong></p>\n";
   }  
   print "<p><strong><a href=\"$SelectPrefs\">Preferences</a></strong></p>\n";
+  if ($UserValidation eq "certificate") {
+    print "<p><strong>",&GroupLimitLink(),"</strong></p>\n";
+  }
 }
 print "<p><strong><a href=\"$Statistics\">DocDB Statistics</a></strong></p>\n";
 
@@ -103,10 +116,29 @@ print "</div>\n";  # LeftColumn3Col
 
 print "<div id=\"MainColumn3Col\">\n";
 
-unless ($Public || !&CanCreate()) {
+if (CanAdminister()) {
+  print "<div class=\"HomepageMainChoice\"><strong><a href=\"$AdministerHome\">Administer DocDB</a></strong></div>\n";
+}
+if (CanCreate()) {
   print "<div class=\"HomepageMainChoice\"><strong><a href=\"$ModifyHome\">Create or change documents or other information</a></strong></div>\n";
 }
-print "<div class=\"HomepageMainChoice\"><strong><a href=\"$SearchForm\">Search</a> for documents</strong></div>\n"; 
+
+my @ExternalDocDBIDs = GetAllExternalDocDBs();
+my $SearchDiv  = $query -> startform('POST',$Search);
+   $SearchDiv .= "<div>\n";
+   $SearchDiv .= $query -> submit (-value => "Search");
+   $SearchDiv .= " <strong>for</strong> "; 
+   $SearchDiv .= $query -> textfield(-name => "simpletext", -size => 40, -maxlength => 300);
+   $SearchDiv .= $query -> hidden(-name => "simple", -default => '1');
+   $SearchDiv .= " <strong>(<a href=\"$SearchForm#Advanced\">Advanced</a>";
+if (@ExternalDocDBIDs) {
+   $SearchDiv .= " or <a href=\"$XSearch\">Cross Search</a>";
+}
+   $SearchDiv .= ")</strong>"; 
+   $SearchDiv .= "\n</div>\n";
+   $SearchDiv .= $query -> endform;
+
+print "<div class=\"HomepageMainChoice\">$SearchDiv</div>\n";  
 
 my $ShowForm  = $query -> startform('POST',$ShowDocument);
    $ShowForm .= "<div>\n";
@@ -125,10 +157,14 @@ print $query -> startform('POST',$ListBy);
 print "<div>\n";
 print $query -> submit (-value => "Show");
 print "<strong> documents modified in the last </strong>";
-&DaysPulldown($LastDays);
-print "<strong> days.</strong>";
+DaysPulldown($LastDays);
+print "<strong> days</strong>";
 print "</div>\n";
 print $query -> endform;
+print "</div>\n";  
+
+print "<div class=\"HomepageMainChoice\">\n";
+print "<strong><a href=\"$ShowCalendar\">Calendar</a> of events or <a href=\"$ShowCalendar?todayonly=1\">today's</a> events</strong>";
 print "</div>\n";  
 
 # Fill arrays that print lists of documents
@@ -139,15 +175,12 @@ my @Spanners     = ();
 
 push @FirstColumn,"<a href=\"$ListAuthors\">Authors</a>";
 push @FirstColumn,"<a href=\"$ListTopics\">Topics</a>";
+push @FirstColumn,"<a href=\"$ListGroups\">Groups</a>";
 push @FirstColumn,"<a href=\"$ListKeywords\">Keywords</a>";
 unless ($Public && !$PublicAccess{MeetingList}) {
-  push @FirstColumn,"<a href=\"$ListAllMeetings\">Meetings</a>";
+  push @FirstColumn,"<a href=\"$ListAllMeetings\">Events</a>";
 }  
 
-unless ($Public) {
-  push @OtherColumns,"<a href=\"$ListMeetings\">Collaboration meetings</a>";
-}
-push @OtherColumns,"<a href=\"$ListBy?major=Conferences&amp;mode=conference\">Conferences</a>";
 if ($UseSignoffs && (!$Public || $PublicAccess{MeetingList})) {
   push @OtherColumns,"<a href=\"$ListManagedDocuments\">Managed documents</a>";
 }
@@ -159,6 +192,7 @@ if ($UserValidation eq "certificate" ||
   push @OtherColumns,"<a href=\"$web_root/Static/Lists/$remote_user/FullList.html\">All documents</a>";
 }
 
+push @OtherColumns,@{ $ProjectMessages{Homepage}{DocumentLists} };
 push @Spanners,@MultiColumnDocumentLists;
 
 my $Rows = scalar(@FirstColumn);
@@ -168,7 +202,7 @@ my $Cols = int((scalar(@OtherColumns) - 1)/scalar(@FirstColumn) + 1);
 
 print "<strong>List:</strong>\n";
 
-print "<table id=\"DocListMethods\">\n";
+print "<table id=\"DocListMethods\" class=\"MedPaddedTable\">\n";
 
 for (my $Index = 0; $Index < $Rows; ++$Index) {
   print "<tr>\n";
@@ -208,11 +242,11 @@ print "</div>\n";  # DocDBHomeBody
 
 {
   require "DocumentHTML.pm";
+  require "DocumentUtilities.pm";
 
 ### Get list of documents
 
   my $SortBy  = "date";
-  my @Fields = ("Docid","Title","Author","Updated"); 
   my $Reverse = 1;
 
   my $List = $dbh -> prepare("select DISTINCT(DocumentID) from DocumentRevision where Obsolete=0 and TO_DAYS(NOW())-TO_DAYS(TimeStamp)<=?");
@@ -234,15 +268,16 @@ print "</div>\n";  # DocDBHomeBody
     } else {  
       print "Documents modified in the last $HomeLastDays days\n";
     }
-    print "</h4><p/>\n";
+    print "</h4>\n";
   }
   
-  my $NumberOfDocuments = &DocumentTable(-fields  => \@Fields, -docids  => \@DocumentIDs, 
-                                         -sortby  => $SortBy,  -reverse => $Reverse, 
-                                         -maxdocs => $HomeMaxDocs);
+  my %FieldList = PrepareFieldList(-default => "Default");
+  my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs, 
+                                        -sortby    => $SortBy,     -reverse => $Reverse, 
+                                        -maxdocs   => $HomeMaxDocs);
 }
 
 $EndTime  = new Benchmark;
 
-&DocDBNavBar;
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

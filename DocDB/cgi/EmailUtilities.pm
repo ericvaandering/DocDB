@@ -1,4 +1,4 @@
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -13,7 +13,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub SendEmail (%) {
   unless ($MailInstalled) {
@@ -25,23 +25,25 @@ sub SendEmail (%) {
   my (%Params) = @_;
   
   my %Headers = ();
-  my @Addressees   = @{$Params{-to}};
-
-  print "Sending mail to: ",@Addressees,"<br>\n";
-
-  $Headers{To}      = \@Addressees;
-  $Headers{From}    = $Params{-from}    || "$Project Document Database <$DBWebMasterEmail>";
-  $Headers{Subject} = $Params{-subject} || "Message from $Project DocDB";
-
-  my $Body          = $Params{-body} || "";
-  
-  my $Mailer = new Mail::Mailer 'smtp', Server => $MailServer;
-  
-  $Mailer -> open(\%Headers);    # Start mail with headers
-  print $Mailer $Body;        # Write the body
-  $Mailer -> close;              # Complete the message and send it
-
-  return 1;
+  my @Addressees = @{$Params{-to}};
+  my $From       =   $Params{-from}    || "$Project Document Database <$DBWebMasterEmail>";
+  my $Subject    =   $Params{-subject} || "$Project Document Database";
+  my $Body       =   $Params{-body}    || "";
+     
+  my %Headers = ();
+   
+  if (@Addressees) {
+    print "Sending mail to: ",join ", ",@Addressees,"<br/>\n";
+    my $Mailer = new Mail::Mailer 'smtp', Server => $MailServer;
+    $Headers{To}      = \@Addressees;
+    $Headers{From}    = $From;
+    $Headers{Subject} = $Subject;
+    
+    $Mailer -> open(\%Headers);    # Start mail with headers
+    print $Mailer $Body;
+    $Mailer -> close;              # Complete the message and send it
+  }
+  return int(@Addressees);
 }
 
 1;

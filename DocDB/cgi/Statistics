@@ -5,6 +5,23 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
 use CGI;
 use DBI;
 
@@ -16,7 +33,7 @@ require "ResponseElements.pm";
 $query = new CGI;  # Global for subroutines
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 
 &DocDBHeader("$Project DocDB Statistics");
 
@@ -48,22 +65,25 @@ my ($NOKFiles) = $NOKFile_query -> fetchrow_array;
 my $FilePerRev = sprintf "%5.2f",$NOKFiles/$NOKRevisions;
 my $FilePerDoc = sprintf "%5.2f",$NOKFiles/$NDocuments;
 
-print "<p><center><b>This page shows statistics about the Document Database,
-       such as how many Documents, Revisions, and Files are in the DB.</b>
-       </center><p>\n";
+print "<h4>This page shows statistics about the Document Database,
+       such as how many Documents, Revisions, and Files are in the DB.</h4>\n";
+print "<table id=\"StatisticsTable\" class=\"CenteredTable MedPaddedTable\">\n";
+# Use row groups and borders, right align tds
 
-print "<table cellpadding=5 align=center>\n";
-print "<tr><th colspan=4><hr></tr>\n";  
-print "<tr><th align=right>Total number of Documents:      <td align=right>$NDocuments</tr>\n";  
-print "<tr><th align=right>Total number of Revisions:<td align=right>$NRevisions\n";  
-print " <th align=right>Number of File Entries:      <td align=right>$NFiles</tr>\n";  
-print "<tr><th align=right>Total Active Revisions:   <td align=right>$NOKRevisions\n";  
-print " <th align=right>Actual number of Files:      <td align=right>$NOKFiles</tr>\n";  
-print "<tr><th align=right>Average Versions per Document:   <td align=right>$RevPerDoc\n";  
-print " <th align=right>Average Files per Revision:   <td align=right>$FilePerRev</tr>\n";  
-print "<tr><td><td><th align=right>Average Files per Document:   <td align=right>$FilePerDoc</tr>\n";  
 
-print "<tr><th colspan=4><hr></th></tr>\n";  
+print "<tbody>\n";
+
+print "<tr><th>Total number of Documents:          </th><td>$NDocuments</td></tr>\n";  
+print "<tr><th>Total number of Revisions:          </th><td>$NRevisions</td>\n";  
+print "    <th>Number of File Entries:             </th><td>$NFiles</td></tr>\n";  
+print "<tr><th>Total Active Revisions:             </th><td>$NOKRevisions</td>\n";  
+print " <th>Actual number of Files:                </th><td>$NOKFiles</td></tr>\n";  
+print "<tr><th>Average Versions per Document:      </th><td>$RevPerDoc</td>\n";  
+print " <th>Average Files per Revision:            </th><td>$FilePerRev</td></tr>\n";  
+print "<tr><td></td><td></td>\n";
+print " <th>Average Files per Document: </th><td>$FilePerDoc</td></tr>\n";  
+
+print "</tbody>\n";
 
 my $NAuth_query = $dbh -> prepare("select COUNT(AuthorID) from Author");
    $NAuth_query -> execute(); 
@@ -73,12 +93,6 @@ my $NUniqAuth_query = $dbh -> prepare("select COUNT(DISTINCT(AuthorID)) from Rev
    $NUniqAuth_query -> execute(); 
 my ($NUniqAuth) = $NUniqAuth_query -> fetchrow_array;
 
-# For older versions of MySQL, use these lines rather than preceding 3
-#my $NUniqAuth_query = $dbh -> prepare("select DISTINCT(AuthorID) from RevisionAuthor");
-#   $NUniqAuth_query -> execute(); 
-#   $MatrixRef = $NUniqAuth_query -> fetchall_arrayref; 
-#my $NUniqAuth = scalar(@{$MatrixRef});
-
 my $NRevAuth_query = $dbh -> prepare("select COUNT(AuthorID) from RevisionAuthor");
    $NRevAuth_query -> execute(); 
 my ($NRevisionAuthors) = $NRevAuth_query -> fetchrow_array;
@@ -86,45 +100,64 @@ my ($NRevisionAuthors) = $NRevAuth_query -> fetchrow_array;
 my $AuthPerRev = sprintf "%5.2f",$NRevisionAuthors/$NRevisions;
 my $DocPerAuth = sprintf "%5.2f",$NDocuments/$NUniqAuth*$AuthPerRev;
 
-my $NTopic_query = $dbh -> prepare("select COUNT(MinorTopicID) from MinorTopic");
+my $NTopic_query = $dbh -> prepare("select COUNT(TopicID) from Topic");
    $NTopic_query -> execute(); 
 my ($NTopics) = $NTopic_query -> fetchrow_array;
 
-my $NUniqTopic_query = $dbh -> prepare("select COUNT(DISTINCT(MinorTopicID)) from RevisionTopic");
+my $NUniqTopic_query = $dbh -> prepare("select COUNT(DISTINCT(TopicID)) from RevisionTopic");
    $NUniqTopic_query -> execute(); 
 my ($NUniqTopics) = $NUniqTopic_query -> fetchrow_array;
 
-# For older versions of MySQL, use these lines rather than preceding 3
-#my $NUniqTopic_query = $dbh -> prepare("select DISTINCT(MinorTopicID) from RevisionTopic");
-#   $NUniqTopic_query -> execute(); 
-#   $MatrixRef = $NUniqTopic_query -> fetchall_arrayref; # Use COUNT(DISTINCT()) with newer MySQL
-#my $NUniqTopics = scalar(@{$MatrixRef});
-
-my $NRevTopic_query = $dbh -> prepare("select COUNT(MinorTopicID) from RevisionTopic");
+my $NRevTopic_query = $dbh -> prepare("select COUNT(TopicID) from RevisionTopic");
    $NRevTopic_query -> execute(); 
 my ($NRevisionTopics) = $NRevTopic_query -> fetchrow_array;
 
 my $TopicPerRev = sprintf "%5.2f",$NRevisionTopics/$NRevisions;
 my $DocPerTopic = sprintf "%5.2f",$NDocuments/$NUniqTopics*$TopicPerRev;
 
-print "<tr><th align=right>Number of registered Authors:       <td align=right>$NAuthors\n";  
-print " <th align=right>Number of possible Topics:             <td align=right>$NTopics</tr>\n";  
+print "<tbody>\n";
+print "<tr><th>Number of registered Authors:       </th><td>$NAuthors</td>\n";  
+print " <th>Number of possible Topics:             </th><td>$NTopics</td></tr>\n";  
 
-print "<tr><th align=right>Authors of one or more Documents:   <td align=right>$NUniqAuth\n";  
-print "    <th align=right>Number of Topics used:              <td align=right>$NUniqTopics</tr>\n";  
+print "<tr><th>Authors of one or more Documents:   </th><td>$NUniqAuth</td>\n";  
+print "    <th>Number of Topics used:              </th><td>$NUniqTopics</td></tr>\n";  
 
-print "<tr><th align=right>Number of Authors on all Revisions: <td align=right>$NRevisionAuthors\n";  
-print "    <th align=right>Number of Topics on all Revisions:  <td align=right>$NRevisionTopics</tr>\n";  
+print "<tr><th>Number of Authors on all Revisions: </th><td>$NRevisionAuthors</td>\n";  
+print "    <th>Number of Topics on all Revisions:  </th><td>$NRevisionTopics</td></tr>\n";  
 
-print "<tr><th align=right>Average Authors per Revision:       <td align=right>$AuthPerRev\n";  
-print "    <th align=right>Average Topics per Revision:        <td align=right>$TopicPerRev</tr>\n";  
+print "<tr><th>Average Authors per Revision:       </th><td>$AuthPerRev</td>\n";  
+print "    <th>Average Topics per Revision:        </th><td>$TopicPerRev</td></tr>\n";  
 
-print "<tr><th align=right>Average Documents per Author:       <td align=right>$DocPerAuth\n";  
-print "    <th align=right>Average Documents per Topic:        <td align=right>$DocPerTopic</tr>\n";  
+print "<tr><th>Average Documents per Author:       </th><td>$DocPerAuth</td>\n";  
+print "    <th>Average Documents per Topic:        </th><td>$DocPerTopic</td></tr>\n";  
 
-print "<tr><th colspan=4><hr></tr>\n";  
+print "</tbody>\n";
+
+my $NEvent_query = $dbh -> prepare("select COUNT(ConferenceID) from Conference");
+   $NEvent_query -> execute(); 
+my ($NEvents) = $NEvent_query -> fetchrow_array;
+
+my $NUniqEvent_query = $dbh -> prepare("select COUNT(DISTINCT(ConferenceID)) from RevisionEvent");
+   $NUniqEvent_query -> execute(); 
+my ($NUniqEvents) = $NUniqEvent_query -> fetchrow_array;
+
+my $NRevEvent_query = $dbh -> prepare("select COUNT(ConferenceID) from RevisionEvent");
+   $NRevEvent_query -> execute(); 
+my ($NRevisionEvents) = $NRevEvent_query -> fetchrow_array;
+
+my $EventsPerRev = sprintf "%5.2f",$NRevisionEvents/$NRevisions;
+my $DocPerEvent  = sprintf "%5.2f",$NDocuments/$NEvents*$EventsPerRev;
+
+
+print "<tbody>\n";
+print "<tr><th>Number of Events:                   </th><td>$NEvents</td></tr>\n";  
+print "<tr><th>Events with Documents:              </th><td>$NUniqEvents</td></tr>\n";  
+print "<tr><th>Number of Events for all Revisions: </th><td>$NRevisionEvents</td></tr>\n";  
+print "<tr><th>Average Events per Revision:        </th><td>$EventsPerRev</td></tr>\n";  
+print "<tr><th>Estimated Documents per Event:      </th><td>$DocPerEvent</td></tr>\n";  
+print "</tbody>\n";
+
 print "</table>\n";
-print "<center>DocDB Version: $DocDBVersion</center><p>\n";  
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

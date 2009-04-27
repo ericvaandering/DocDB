@@ -1,11 +1,4 @@
 .HomepageMainChoice {
   height: 2.5em;
+  white-space: nowrap;
 }  
-
-#DocListMethods td {
-  padding: 5px;
-}  
-
-#LeftColumn3Col {
-/*  height: 100%; */
-}

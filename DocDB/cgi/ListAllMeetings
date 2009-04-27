@@ -1,26 +1,51 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+#        Name: ListAllMeetings
+# Description: Generates a nice table of all meetings, either for viewing or modification
 #
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
 
-use CGI;                                                                                      
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+use CGI;
 use DBI;
 
 require "DocDBGlobals.pm";
 require "MeetingSQL.pm";
 require "MeetingHTML.pm";
 require "HTMLUtilities.pm";
+require "SecuritySQL.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 %params = $query -> Vars;
 
-my $Mode = $params{mode};
+my $Mode         = $params{mode} || "display";
+my $EventGroupID = $params{eventgroupid};
+my $EventGroup   = $params{eventgroup};
 
-&GetConferences;
+GetSecurityGroups();
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 
 my $PageTitle;
 if ($Mode eq "modify") {
@@ -28,14 +53,32 @@ if ($Mode eq "modify") {
 } else {
   $PageTitle = "List of Events";
 }
-     
-&DocDBHeader($PageTitle);
-if ($Mode eq "modify") {
-  print "<h3>Select an event to change:</h3>\n";
-  &AllMeetingsTable("modify");
-} else {  
-  &AllMeetingsTable("display");
+
+DocDBHeader($PageTitle);
+
+if ($EventGroup || $EventGroupID) {
+  unless ($EventGroupID) {
+    $EventGroupID = LookupEventGroup($EventGroup);
+  }
+  my @EventIDs = FetchEventsByGroup($EventGroupID);
+  foreach my $EventID (@EventIDs) {
+    FetchEventByEventID($EventID,$TRUE);
+  }
+  EventsByGroup( {-groupid => $EventGroupID, -mode => $Mode, -singlegroup => $TRUE} );
+} else {
+  GetConferences($TRUE);
+  if ($Mode eq "modify") {
+    print "<h3>Select an event to change:</h3>\n";
+    EventsTable( {-mode => "modify"} );
+  } else {
+    print "<h3>All events";
+    if ($Preferences{Components}{iCal}) {
+      print ' '.ICalLink({ -allevents => 1 });
+    }
+    print "</h3>\n";
+    EventsTable( {-mode => "display"} );
+  }
 }
 
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

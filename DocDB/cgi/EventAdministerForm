@@ -1,0 +1,237 @@
+#! /usr/bin/env perl
+#
+#        Name: EventAdministerForm
+# Description: This single form provides interfaces to admin tools for
+#              events and event groups, each run by a different script.
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+
+use CGI qw(-nosticky);
+use DBI;
+
+require "DocDBGlobals.pm";
+require "AdministerElements.pm";
+require "ResponseElements.pm";
+require "Scripts.pm";
+require "Security.pm";
+require "Messages.pm";
+require "Sorts.pm";
+
+require "DBUtilities.pm";
+require "HTMLUtilities.pm";
+
+require "MeetingSQL.pm";
+require "SecuritySQL.pm";
+
+require "MeetingHTML.pm";
+require "TopicHTML.pm"; # For description boxes
+
+$query = new CGI;  # Global for subroutines
+
+%params = $query -> Vars;
+
+my $Password         = $params{password};
+my $Username         = $params{admuser};
+my $Action           = $params{admaction};
+my $Force            = $params{admforce};
+
+my $SubForm          = $params{subform};
+my $EventGroupID     = int($params{eventgroups});
+my $EventID          = int($params{events});
+my $ShortDescription = $params{shortdesc};
+my $LongDescription  = $params{longdesc};
+
+$query -> delete_all();
+
+if ($Password && $Username) {
+  CreateConnection(-user => $Username, -password => $Password);
+} else {
+  CreateConnection(-type => "ro");
+}
+
+EndPage(-startpage => $TRUE);
+
+GetConferences($TRUE);
+GetAllEventGroups();
+GetSecurityGroups();
+
+print $query -> header( -charset => $HTTP_ENCODING );
+&DocDBHeader("Administer Events","",
+             -scripts => ["PopUps","EventAdminDisable"]);
+
+unless (&CanAdminister()) {
+  push @ErrorStack,"You are not allowed to access administrative functions.";
+}
+
+EndPage();
+
+# Do administration
+
+my $Abort = 0;
+
+if ($SubForm eq "eventgroup") {
+  if ($Action eq "Delete") {
+    &DeleteEventGroup(-eventgroupid => $EventGroupID, -force => $Force);
+  } elsif ($Action eq "Modify") {
+    if ($ShortDescription) {
+      push @ActionStack,"Updated short description of $EventGroups{$EventGroupID}{ShortDescription}";
+      my $Update = $dbh->prepare("update EventGroup set ShortDescription=? where EventGroupID=?");
+      $Update -> execute($ShortDescription,$EventGroupID);
+    }
+    if ($LongDescription) {
+      push @ActionStack,"Updated long description of $EventGroups{$EventGroupID}{ShortDescription}";
+      my $Update = $dbh->prepare("update EventGroup set LongDescription=? where EventGroupID=?");
+      $Update -> execute($LongDescription,$EventGroupID);
+    }
+  } elsif ($Action eq "New") {
+    push @ActionStack,"New event group with description <strong>$ShortDescription</strong> inserted";
+    my $Insert = $dbh -> prepare("insert into EventGroup (ShortDescription,LongDescription) values (?,?)");
+    $Insert -> execute($ShortDescription,$LongDescription);
+  } else {
+    push @WarnStack,"No valid action was specified.";
+  }
+} elsif ($SubForm eq "event") {
+  if ($Action eq "Delete") {
+    &DeleteEvent(-eventid => $EventID, -force => $Force);
+  } else {
+    push @WarnStack,"Only \"Delete\" is a valid action";
+  }
+}
+
+if (@ActionStack) {
+  ClearConferences();
+  ClearEventGroups();
+  GetConferences($TRUE);
+  GetAllEventGroups();
+  ActionReport();
+}
+
+EndPage();
+
+print "<p>This form allows you to administer events in DocDB. Begin by
+       selecting an action for what you want to administer.  Depending on the
+       action you select, the additional selections you can  make are enabled.
+       If you select <strong>Modify</strong> any attributes you select or
+       change are changed in the DB. If you leave something blank, it will not be
+       changed. </p>\n";
+
+print "<p>Note that deleting and then re-entering with the same information is
+       not the same as modifying. Everything in the DB is tied together with
+       invisible ID numbers.</p>\n";
+
+print "<p>In all cases, you must supply the <i>database</i> username and
+       password for the administrator account to make any changes.</p>\n";
+
+print "<hr/>\n";
+
+### Event Modification
+
+print "<h4>Administer Event Groups</h4>\n";
+
+print $query -> start_multipart_form('POST',"$EventAdministerForm",
+                                     "name=\"eventgroup\" id=\"eventgroup\"");
+print "<table class=\"HighPaddedTable CenteredTable\">\n";
+print "<tr>\n";
+print "<td colspan=\"3\">\n";
+ &AdministerActions(-form => "eventgroup");
+ print $query -> hidden(-name => "subform",   -default => "eventgroup");
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td rowspan=\"3\">\n";
+ &EventGroupSelect( {-disabled => true, -format => "full"} );
+print "</td>\n";
+print "<td>\n";
+ &ShortDescriptionBox(-name => "shortdesc", -disabled => "true", -helptext => 'Short Description');
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td>\n";
+ &LongDescriptionBox(-name => "longdesc", -disabled => "true");
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td>\n";
+ &AdminRegardless();
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td colspan=\"2\" class=\"SubmitCell\">\n";
+ &AdministratorPassword;
+ print "&nbsp;";
+ print $query -> submit (-value => "Change Event Group Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+print "<hr/>\n";
+
+### Event Administration
+
+print "<h4>Administer Events</h4>\n";
+
+print $query -> start_multipart_form('POST',"$EventAdministerForm",
+                                     "name=\"event\" id=\"event\"");
+print "<table class=\"HighPaddedTable CenteredTable\">\n";
+print "<tr>\n";
+print "<td colspan=\"2\">\n";
+print "You can only delete with this form; you can do everything else through event management.\n";
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td colspan=\"2\">\n";
+ &AdministerActions(-form => "event");
+ print $query -> hidden(-name => "subform",   -default => "event");
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td>\n";
+ &EventSelect( {-disabled => $TRUE, -format => "full"} );
+print "</td>\n";
+print "<td>\n";
+ &AdminRegardless();
+print "</td>\n";
+print "</tr>\n";
+
+print "<tr>\n";
+print "<td colspan=\"2\" class=\"SubmitCell\">\n";
+ &AdministratorPassword;
+ print "&nbsp;";
+ print $query -> submit (-value => "Change Event Info");
+print "</td>\n";
+print "</tr>\n";
+
+print "</table>\n";
+print $query -> end_multipart_form;
+
+&DocDBNavBar();
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -6,7 +6,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -21,10 +21,10 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 
-use CGI;                                                                                      
+use CGI qw(-nosticky);                                                                                      
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -38,43 +38,37 @@ require "Sorts.pm";
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&GetInstitutions;
-&GetAuthors;
+GetInstitutions();
+GetAuthors();
 
-print $query->header;
-&DocDBHeader("Add Authors");
-
-&HelpPopupScript;
+print $query -> header( -charset => $HTTP_ENCODING );
+DocDBHeader("Add Authors","",-scripts => ["PopUps"]);
 
 print $query -> start_multipart_form('POST',"$AuthorAdd");
 
-print "<center><table cellpadding=10 width=75%>\n";
 
+print "<p><strong>You are about to add an author to the $Project document
+database.</strong> Anyone is allowed to add authors. <strong>Please be
+careful</strong> and make sure to put the authors first name, last name, and
+middle initials (with periods) in the right place. If you make a mistake, 
+<span class=\"Warning\">DO NOT</span> enter the author again. Contact an
+<a href=\"mailto:$DBWebMasterEmail\">adminstrator</a> and explain the problem.
+Required fields are denoted by $RequiredMark.  Click any 
+<span class=\"Help\">highlighted link</span> for quick help.</p>\n";
+
+print "<table class=\"CenteredTable HighPaddedTable\">\n";
 print "<tr>\n";
-print "<td colspan=3>\n";
-print "<b>You are about to add an author to the $Project document database.</b>
-Everyone is allowed to add authors. <b>Please be careful</b>
-and make sure to put the authors first name, last name, and middle initials
-(with periods) in the right place. If you make a mistake, <b><font color=red>DO
-NOT</font></b> enter the author again. Contact an  <a
-href=\"mailto:$DBWebMasterEmail\">adminstrator</a> and explain the
-problem.<br>\n";
-
-print "<b>Click on any of the headings for help.</b>\n"; print "</td>\n";
-print "</tr><tr valign=top>\n";
-print "<td>\n"; &InstitutionSelect; print "</td>\n";
-print "<td>\n"; &NameEntryBox;      print "</td>\n";
+print "<td>\n"; InstitutionSelect(-required => $TRUE); print "</td>\n";
+print "<td>\n"; NameEntryBox();      print "</td>\n";
 print "</tr>\n";
-print "</table><p>\n";
-
+print "<tr><td class=\"SubmitCell\" colspan=\"2\">";
 print $query -> submit (-value => "Add Author");
-print "</center><p>\n";
+print "</td></tr></table>\n";
 print $query -> end_multipart_form;
-print "<p>\n";
 
-print "<h3>Existing Authors: </h3>\n";
+print "<h3>Existing Authors:</h3>\n";
 
-&AuthorsTable;
+AuthorsTable();
 
-&DocDBNavBar;
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

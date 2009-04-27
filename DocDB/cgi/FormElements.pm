@@ -8,7 +8,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -23,7 +23,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 require "TopicHTML.pm";
 
@@ -42,16 +42,16 @@ sub DateTimePulldown (%) { # Note capitalization
   
   my $Name        = $Params{-name}        || "date";
   my $Disabled    = $Params{-disabled}    || 0;
-  my $DateOnly    = $Params{-dateonly}    || 0; 
-  my $TimeOnly    = $Params{-timeonly}    || 0; 
-  my $OneTime     = $Params{-onetime}     || 0; # Not Used (do like 5:45 in one pulldown)
+  my $DateOnly    = $Params{-dateonly}    || 0;
+  my $TimeOnly    = $Params{-timeonly}    || 0;
+  my $OneTime     = $Params{-onetime}     || 0;
   my $OneLine     = $Params{-oneline}     || 0;
-  my $Granularity = $Params{-granularity} || 5; # Not Used
+  my $Granularity = $Params{-granularity} || 5;
   
-  my @Defaults = @{$Params{-default}}; # Not Used
+  my $Default     = $Params{-default};
 
   my $HelpLink  = $Params{-helplink}  || "";
-  my $HelpText  = $Params{-helptext}  || "Date & Time";
+  my $HelpText  = $Params{-helptext}  || "Date &amp; Time";
   my $Required  = $Params{-required}  || 0;
   my $NoBreak   = $Params{-nobreak}  ;
   my $ExtraText = $Params{-extratext};
@@ -66,8 +66,31 @@ sub DateTimePulldown (%) { # Note capitalization
   $Year += 1900;
   $Min = (int (($Min+($Granularity/2))/$Granularity))*$Granularity; # Nearest $Granularity minutes
 
+  my $DefaultHHMM;
+  if ($Default) {
+    my ($DefaultDate,$DefaultTime);
+    if ($DateOnly) { 
+      $DefaultDate = $Default;
+    } elsif ($TimeOnly) {
+      $DefaultTime = $Default;
+    } else {
+      ($DefaultDate,$DefaultTime) = split /\s+/,$Default;
+    }  
+
+    ($Year,$Mon,$Day) = split /-/,$DefaultDate;
+    $Day  = int($Day);
+    $Mon  = int($Mon);
+    $Year = int($Year);
+    --$Mon;
+    ($Hour,$Min,$Sec) = split /:/,$DefaultTime;
+    $Hour = int($Hour);
+    $Min  = int($Min);
+    $Sec  = int($Sec);
+    $DefaultHHMM = sprintf "%2.2d:%2.2d",$Hour,$Min;
+  }
+  
   my @Years = ();
-  for (my $i = $FirstYear; $i<=$Year; ++$i) { # $FirstYear - current year
+  for (my $i = $FirstYear; $i<=$Year+1; ++$i) { # $FirstYear - current year + 1
     push @Years,$i;
   }  
 
@@ -86,6 +109,13 @@ sub DateTimePulldown (%) { # Note capitalization
     push @Minutes,(sprintf "%2.2d",$i);
   }  
   
+  my @Times = ();
+  for (my $Hour = 0; $Hour<=23; ++$Hour) {
+    for (my $Min = 0; $Min<=59; $Min=$Min+$Granularity) {
+      push @Times,sprintf "%2.2d:%2.2d",$Hour,$Min;
+    }  
+  }  
+  
   my $ElementTitle = &FormElementTitle(-helplink  => $HelpLink , 
                                        -helptext  => $HelpText ,
                                        -extratext => $ExtraText,
@@ -94,22 +124,29 @@ sub DateTimePulldown (%) { # Note capitalization
                                        -required  => $Required );
   print $ElementTitle,"\n";                                     
 
+  unless ($DateOnly) {
+    if ($OneTime) {
+      print $query -> popup_menu (-name => $Name."time", -values => \@Times,   -default => $DefaultHHMM, $Booleans);
+    } else {
+      print $query -> popup_menu (-name => $Name."hour", -values => \@Hours,   -default => $Hour, $Booleans);
+      print "<b> : </b>\n";
+      print $query -> popup_menu (-name => $Name."min",  -values => \@Minutes, -default => $Min, $Booleans);
+    }
+  }
+  unless ($OneLine || $DateOnly || $TimeOnly) {
+    print "<br\>\n";
+  } 
+  if ($OneLine) {
+    print "&nbsp;\n";
+  } 
   unless ($TimeOnly) {
     print $query -> popup_menu (-name => $Name."day",-values => \@Days, -default => $Day, $Booleans);
     print $query -> popup_menu (-name => $Name."month",-values => \@AbrvMonths, -default => $AbrvMonths[$Mon], $Booleans);
     print $query -> popup_menu (-name => $Name."year",-values => \@Years, -default => $Year, $Booleans);
   }
-  unless ($OneLine || $DateOnly || $TimeOnly) {
-    print "<br>\n";
-  }  
-  unless ($DateOnly) {
-    print $query -> popup_menu (-name => $Name."hour",-values => \@Hours, -default => $Hour, $Booleans);
-    print "<b> : </b>\n";
-    print $query -> popup_menu (-name => $Name."min",-values => \@Minutes, -default => $Min, $Booleans);
-  }
 }
 
-sub DateTimePullDown {
+sub DateTimePullDown { #FIXME: Replace with DateTimePulldown
   my ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
   $year += 1900;
   $min = (int (($min+3)/5))*5; # Nearest five minutes
@@ -137,9 +174,7 @@ sub DateTimePullDown {
     push @minutes,(sprintf "%2.2d",$i);
   }  
   
-  print "<b><a ";
-  &HelpLink("overdate");
-  print "Date & Time:</a></b><br> \n";
+  print FormElementTitle(-helplink => "overdate", -helptext => "Date &amp; Time");
   print $query -> popup_menu (-name => 'overday',-values => \@days, -default => $day);
   print $query -> popup_menu (-name => 'overmonth',-values => \@months, -default => $months[$mon]);
   print $query -> popup_menu (-name => 'overyear',-values => \@years, -default => $year);
@@ -149,235 +184,13 @@ sub DateTimePullDown {
   print $query -> popup_menu (-name => 'overmin',-values => \@minutes, -default => $min);
 }
 
-sub StartDatePullDown (;%) {
-
-  my (%Params) = @_;
-  
-  my $Disabled = $Params{-disabled}  || 0;
-  my $Required = $Params{-required}  || 0;
-  
-  my $Booleans = "";
-  
-  if ($Disabled) {
-    $Booleans .= "-disabled";
-  }  
-  
-  my ($sec,$min,$hour,$day,$mon,$year);
-  
-  if ($DefaultStartDate) {
-    ($year,$mon,$day) = split /-/,$DefaultStartDate;
-    $day  = int($day);
-    $mon  = int($mon);
-    $year = int($year);
-    --$mon;
-  } else {
-    ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
-    $year += 1900;
-  }
-  
-  my @days = ();
-  for ($i = 1; $i<=31; ++$i) {
-    push @days,$i;
-  }  
-
-  my @months = ("Jan","Feb","Mar","Apr","May","Jun",
-             "Jul","Aug","Sep","Oct","Nov","Dec");
-
-  my @years = ();
-  for ($i = $FirstYear; $i<=$year+2; ++$i) { # $FirstYear - current year
-    push @years,$i;
-  }  
-
-  print "<b><a ";
-  &HelpLink("startdate");
-  print "Start Date:</a></b>";
-  if ($Required) {
-    print $RequiredMark;
-  }  
-  print "<br> \n";
-  print $query -> popup_menu (-name => 'startday',-values => \@days, -default => $day, $Booleans);
-  print $query -> popup_menu (-name => 'startmonth',-values => \@months, -default => $months[$mon], $Booleans);
-  print $query -> popup_menu (-name => 'startyear',-values => \@years, -default => $year, $Booleans);
-}
-
-sub EndDatePullDown (;%) {
-
-  my (%Params) = @_;
-  
-  my $Disabled = $Params{-disabled}  || 0;
-  my $Required = $Params{-required}  || 0;
-  
-  my $Booleans = "";
-  
-  if ($Disabled) {
-    $Booleans .= "-disabled";
-  }  
-  
-  my ($sec,$min,$hour,$day,$mon,$year);
-  
-  if ($DefaultStartDate) {
-    ($year,$mon,$day) = split /-/,$DefaultEndDate;
-    $day  = int($day);
-    $mon  = int($mon);
-    $year = int($year);
-    --$mon;
-  } else {
-    ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
-    $year += 1900;
-  }
-  
-  my @days = ();
-  for ($i = 1; $i<=31; ++$i) {
-    push @days,$i;
-  }  
-
-  my @months = ("Jan","Feb","Mar","Apr","May","Jun",
-             "Jul","Aug","Sep","Oct","Nov","Dec");
-
-  my @years = ();
-  for ($i = $FirstYear; $i<=$year+2; ++$i) { # $FirstYear - current year
-    push @years,$i;
-  }  
-
-  print "<b><a ";
-  &HelpLink("enddate");
-  print "End Date:</a></b>";
-  if ($Required) {
-    print $RequiredMark;
-  }  
-  print "<br> \n";
-  print $query -> popup_menu (-name => 'endday',-values => \@days, -default => $day, $Booleans);
-  print $query -> popup_menu (-name => 'endmonth',-values => \@months, -default => $months[$mon], $Booleans);
-  print $query -> popup_menu (-name => 'endyear',-values => \@years, -default => $year, $Booleans);
-}
-
 sub PubInfoBox {
-  print "<b><a ";
-  &HelpLink("pubinfo");
-  print "Other publication information:</a></b><br> \n";
+  my $ElementTitle = &FormElementTitle(-helplink  => "pubinfo", 
+                                       -helptext  => "Other publication information");
+  print $ElementTitle,"\n";                                     
+
   print $query -> textarea (-name => 'pubinfo', -default => $PubInfoDefault,
                             -columns => 60, -rows => 3);
-};
-
-sub TopicSelect { # Scrolling selectable list for topics
-  #FIXME: Use TopicScroll
-  my @TopicIDs = sort byTopic keys %MinorTopics;
-  my %TopicLabels = ();
-  foreach my $ID (@TopicIDs) {
-    $TopicLabels{$ID} = $MinorTopics{$ID}{Full};
-  }
-  print "<b><a ";
-  &HelpLink("topics");
-  print "Topics:</a></b>";
-  if ($Required) {
-    print $RequiredMark;
-  }  
-  print "<br> \n";
-  print $query -> scrolling_list(-name => "topics", -values => \@TopicIDs, 
-                                 -labels => \%TopicLabels,
-                                 -size => 10, -multiple => 'true',
-                                 -default => \@TopicDefaults);
-};
-
-sub TopicSelectLong { # Scrolling selectable list for topics, all info
-  #FIXME: Use TopicScroll
-  my @TopicIDs = sort byTopic keys %MinorTopics;
-  my %TopicLabels = ();
-  foreach my $ID (@TopicIDs) {
-    $TopicLabels{$ID} = $MinorTopics{$ID}{Full}." [$MinorTopics{$ID}{LONG}]"; 
-  }  
-  print "<b><a ";
-  &HelpLink("topics");
-  print "Topics:</a></b> (Long descriptions in brackets)<br> \n";
-  print $query -> scrolling_list(-name => "topics", -values => \@TopicIDs, 
-                                 -labels => \%TopicLabels,
-                                 -size => 10, 
-                                 -default => \@TopicDefaults);
-};
-
-sub MultiTopicSelect (%) { # Multiple scrolling selectable lists for topics
-  require "TopicSQL.pm";
-  
-  my (%Params) = @_;
-  
-  my $Required = $Params{-required}  || 0;
-  my $Disabled = $Params{-disabled}  || "";
-
-  &SpecialMajorTopics;
-
-  my $NCols = 4;
-  my @MajorIDs = sort byMajorTopic keys %MajorTopics;
-  my @MinorIDs = keys %MinorTopics;
-
-  print "<table cellpadding=5>\n";
-  print "<tr><td colspan=$NCols align=center>\n";
-  print "<b><a ";
-  &HelpLink("topics");
-  print "Topics:</a></b>";
-  if ($Required) {
-    print $RequiredMark;
-  }  
-  print "<br> \n";
-  my $Col = 0;
-  foreach $MajorID (@MajorIDs) {
-    unless ($Col % $NCols) {
-      print "<tr valign=top>\n";
-    }
-    print "<td><b>$MajorTopics{$MajorID}{SHORT}</b><br>\n";
-    ++$Col;
-    my @MatchMinorIDs = ();
-    my %MatchLabels = ();
-    foreach my $MinorID (@MinorIDs) {
-      if ($MinorTopics{$MinorID}{MAJOR} == $MajorID) {
-        push @MatchMinorIDs,$MinorID;
-        $MatchLabels{$MinorID} = $MinorTopics{$MinorID}{SHORT};
-      }  
-    }
-    @MatchMinorIDs = sort byTopic @MatchMinorIDs;
-
-    #FIXME: Use TopicScroll
-    if ($Disabled) { # Doesn't scale
-      print $query -> scrolling_list(-name => "topics", 
-               -values => \@MatchMinorIDs, -labels => \%MatchLabels,
-               -size => 8, -multiple => 'true', -default => \@TopicDefaults,
-               -disabled);
-    } else {
-      print $query -> scrolling_list(-name => "topics", 
-               -values => \@MatchMinorIDs, -labels => \%MatchLabels,
-               -size => 8, -multiple => 'true', -default => \@TopicDefaults);
-    }               
-    print "</td>\n";
-  }  
-  print "</table>\n";
-};
-
-sub MajorTopicSelect (%) { # Scrolling selectable list for major topics
-  my (%Params) = @_;
-  
-  my $Mode     = $Params{-format}    || "short";
-  my $Disabled = $Params{-disabled}  || "0";
-  
-  print "<b><a ";
-  &HelpLink("majortopics");
-  print "Major Topics:</a></b><br> \n";
-  my @MajorIDs = keys %MajorTopics;
-  my %MajorLabels = ();
-  foreach my $ID (@MajorIDs) {
-    if ($Mode eq "full") {
-      $MajorLabels{$ID} = $MajorTopics{$ID}{Full};
-    } else {  
-      $MajorLabels{$ID} = $MajorTopics{$ID}{SHORT};
-    }  
-  } 
-  if ($Disabled) {  # Doesn't scale
-    print $query -> scrolling_list(-name => "majortopic", -values => \@MajorIDs, 
-                                   -labels => \%MajorLabels,  -size => 10,
-                                   -disabled);
-  } else {
-    print $query -> scrolling_list(-name => "majortopic", -values => \@MajorIDs, 
-                                   -labels => \%MajorLabels,  -size => 10);
-  }                               
-                                 
 };
 
 sub InstitutionSelect (;%) { # Scrolling selectable list for institutions
@@ -387,12 +200,18 @@ sub InstitutionSelect (;%) { # Scrolling selectable list for institutions
   
   my $Mode     = $Params{-format}    || "short";
   my $Disabled = $Params{-disabled}  || "0";
+  my $Required = $Params{-required}  || $FALSE;
   
-  print "<b><a ";
-  &HelpLink("institution");
-  print "Institution:</a></b>";
-  if ($Mode eq "full") {print " (Long descriptions in brackets)";}
-  print "<br> \n";
+  my $ExtraText;
+  if ($Mode eq "full") {$ExtraText = "(Long descriptions in brackets)";}
+  
+  
+  my $ElementTitle = &FormElementTitle(-helplink  => "institution", 
+                                       -helptext  => "Institution",
+                                       -extratext => $ExtraText,
+                                       -required  => $Required);
+  print $ElementTitle,"\n";                                     
+
   my @InstIDs = sort byInstitution keys %Institutions;
   my %InstLabels = ();
   foreach my $ID (@InstIDs) {
@@ -423,25 +242,27 @@ sub NameEntryBox (;%) {
     $Booleans .= "-disabled";
   }  
   
-  print "<table cellpadding=5><tr valign=top>\n";
+  print "<table class=\"MedPaddedTable\"><tr>\n";
   print "<td>\n";
-  print "<b><a ";
-  &HelpLink("authorentry");
-  print "First Name:</a></b><br> \n";
+  my $ElementTitle = FormElementTitle(-helplink  => "authorentry", 
+                                      -helptext  => "First Name",
+                                      -required  => $TRUE);
+  print $ElementTitle,"\n";                                     
   print $query -> textfield (-name => 'first', 
                              -size => 20, -maxlength => 32,$Booleans);
   print "</td></tr>\n";
   print "<tr><td>\n";
-  print "<b><a ";
-  &HelpLink("authorentry");
-  print "Middle Initial(s):</a></b><br> \n";
+  $ElementTitle = FormElementTitle(-helplink  => "authorentry", 
+                                   -helptext  => "Middle Initial(s)");
+  print $ElementTitle,"\n";                                     
   print $query -> textfield (-name => 'middle', 
                              -size => 10, -maxlength => 16,$Booleans);
   print "</td></tr>\n";
   print "<tr><td>\n";
-  print "<b><a ";
-  &HelpLink("authorentry");
-  print "Last Name:</a></b><br> \n";
+  $ElementTitle = FormElementTitle(-helplink  => "authorentry", 
+                                   -helptext  => "Last Name",
+                                   -required  => $TRUE);
+  print $ElementTitle,"\n";                                     
   print $query -> textfield (-name => 'lastname', 
                              -size => 20, -maxlength => 32,$Booleans);
   print "</td>\n";
@@ -504,73 +325,6 @@ sub AddFilesButton {
   print "\n";
 }
 
-sub AuthorManual (%) { # FIXME: Special case of AuthorTextEntry
-  my (%Params) = @_;
-  
-  my $Required  =   $Params{-required}  || 0;
-
-  $AuthorManDefault = "";
-
-  foreach $AuthorID (@AuthorDefaults) {
-    $AuthorManDefault .= "$Authors{$AuthorID}{FULLNAME}\n" ;
-  }
-    
-  print "<b><a ";
-  &HelpLink("authormanual");
-  print "Authors:</a></b>";
-  if ($Required) {
-    print $RequiredMark;
-  }  
-  print "<br> \n";
-  
-  print $query -> textarea (-name    => 'authormanual', 
-                            -default => $AuthorManDefault,
-                            -columns => 20, -rows    => 8);
-};
-
-sub ReferenceForm {
-  require "MiscSQL.pm";
-  
-  &GetJournals;
-
-  my @JournalIDs = keys %Journals;
-  my %JournalLabels = ();
-  foreach my $ID (@JournalIDs) {
-    $JournalLabels{$ID} = $Journals{$ID}{Acronym};
-  }
-  @JournalIDs = sort @JournalIDs;  #FIXME Sort by acronym
-  unshift @JournalIDs,0; $JournalLabels{0} = "----"; # Null Journal
-  print "<b><a ";
-  &HelpLink("reference");
-  print "Journal References:</a></b><br> \n";
-  
-  my @ReferenceIDs = (@ReferenceDefaults,0);
-  
-  print "<table cellpadding=3>\n";
-  foreach my $ReferenceID (@ReferenceIDs) { 
-    print "<tr>\n";
-    my $JournalDefault = $RevisionReferences{$ReferenceID}{JournalID};
-    my $VolumeDefault  = $RevisionReferences{$ReferenceID}{Volume}   ;
-    my $PageDefault    = $RevisionReferences{$ReferenceID}{Page}     ;
-    print "<td><b>Journal: </b>\n";
-    print $query -> popup_menu(-name => "journal", -values => \@JournalIDs, 
-                                   -labels => \%JournalLabels,
-                                   -default => $JournalDefault);
-
-    print "<td><b>Volume:</b> \n";
-    print $query -> textfield (-name => 'volume', 
-                               -size => 8, -maxlength => 8, 
-                               -default => $VolumeDefault);
-
-    print "<td><b>Page:</b> \n";
-    print $query -> textfield (-name => 'page', 
-                               -size => 8, -maxlength => 16, 
-                               -default => $PageDefault);
-    print "</tr>\n";                           
-  }
-  print "</table>\n";
-}
-
 sub TextField (%) {  
   my (%Params) = @_;
   
@@ -584,12 +338,11 @@ sub TextField (%) {
   my $Default   = $Params{-default}   || "";
   my $Size      = $Params{-size}      || 40;
   my $MaxLength = $Params{-maxlength} || 240;
-  my $Disabled  = $Params{-disabled}  || 0;
+  my $Disabled  = $Params{-disabled}  || $FALSE;
     
-  my $Booleans = "";
-  
+  my %Options = ();  
   if ($Disabled) {
-    $Booleans .= "-disabled";
+    $Options{-disabled} = "disabled";
   }  
 
   my $ElementTitle = &FormElementTitle(-helplink  => $HelpLink , 
@@ -597,13 +350,15 @@ sub TextField (%) {
                                        -extratext => $ExtraText,
                                        -text      => $Text     ,
                                        -nobreak   => $NoBreak  ,
-                                       -required  => $Required );
+                                       -required  => $Required ,
+                                      );
   print $ElementTitle,"\n";                                     
   print $query -> textfield (-name => $Name, -default   => $Default, 
-                             -size => $Size, -maxlength => $MaxLength, $Booleans);
+                             -size => $Size, -maxlength => $MaxLength, %Options,);
 } 
 
 sub TextArea (%) {  
+  require "Utilities.pm";
   my (%Params) = @_;
   
   my $HelpLink  = $Params{-helplink} ;
@@ -624,7 +379,7 @@ sub TextArea (%) {
                                        -nobreak   => $NoBreak  ,
                                        -required  => $Required );
   print $ElementTitle,"\n";                                     
-  print $query -> textarea (-name    => $Name,    -default   => $Default, 
+  print $query -> textarea (-name    => $Name,    -default   => &SafeHTML($Default), 
                             -columns => $Columns, -rows      => $Rows);
 } 
 
@@ -641,22 +396,26 @@ sub FormElementTitle (%) {
   my $Required  = $Params{-required}  || 0;
 
   my $TitleText = "";
-  my $Colon = "";
+  my $Colon     = "";
+  
+  unless ($HelpLink || $Text) {
+    return $TitleText;
+  }  
   
   unless ($NoColon) {
     $Colon = ":";
   }  
   unless ($NoBold) {
-    $TitleText .= "<b>";
+    $TitleText .= "<strong>";
   }
   if ($HelpLink) {
-    $TitleText .= "<a style=\"color: red\" href=\"Javascript:helppopupwindow(\'$DocDBHelp?term=$HelpLink\');\">";
+    $TitleText .= "<a class=\"Help\" href=\"Javascript:helppopupwindow(\'$DocDBHelp?term=$HelpLink\');\">";
     $TitleText .= "$HelpText$Colon</a>";
   } elsif ($Text) {
     $TitleText .= "$Text$Colon"; 
   }
   unless ($NoBold) {
-    $TitleText .= "</b>";
+    $TitleText .= "</strong>";
   }
   
   if ($Required) {
@@ -668,7 +427,7 @@ sub FormElementTitle (%) {
   } 
   
   if ($NoBreak) { 
-    $TitleText .= "\n";
+#    $TitleText .= "\n";
   } else {
     $TitleText .= "<br/>\n";
   }  

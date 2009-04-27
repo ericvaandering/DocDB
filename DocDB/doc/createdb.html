@@ -22,7 +22,9 @@ mysql> grant ALL on SomeDocDB.* to docdbadm@localhost identified by "<em>databas
 mysql> grant ALL on SomeDocDB.* to docdbadm@mydocs.fnal.gov identified by "<em>database owner password</em>";
 mysql> quit
 </pre>
-<li>  MySQL accounts (choose your own names)
+<li>  MySQL accounts. You may choose your own names or leave these as defaults.
+Only docdbadm (in our example) is visible to users, but if you have more than
+one DocDB sharing the same MySQL server, you may want different names.
     <ul>
     <li> docdbadm - administrative account with full MySQL access
     <li> docdbrw - for trusted user read/write access to MySQL
@@ -37,6 +39,14 @@ mysql> quit
     <li> % - access allowed from any domain.
          (don't even <em>consider</em> doing this)
     </ul>
+    
+<li>Test access: Login to the host where DocDB will run and as the user (usually
+the user that runs Apache) that the scripts will run under. Connect to DocDB
+with <tt>mysql -h hostname -u docdbro -p SomeDocDB</tt>. Make sure you can
+connect. If not, see if you are running SELinux extensions. There are reports of
+these access rules being configured to disallow access from the Apache user to
+MySQL</li>
+   
 <li>  Create the DocDB tables: <br>
       <b>mysql -u docdbadm -p SomeDocDB < CreateDatabase.SQL</b> <br>
       (CreateDatabase.SQL is in DocDB/sql)
@@ -59,7 +69,7 @@ mysql> insert into SecurityGroup set Name='docdbadm',Description='DocDB Administ
 	all administration tasks from the web pages.
   <li> If you have a lot of information to enter, 
        you may find it useful to populate  
-       the Author, Institution, MajorTopic, MinorTopic, and SecurityGroup tables directly.<br>
+       the Author, Institution, Topic, and SecurityGroup tables directly.<br>
 <pre>
   mysql -u docdbadm -p SomeDocDB
   mysql> insert into SecurityGroup set Name='SomeGroup',Description='Some Group of Priviledged People',CanCreate=1;
@@ -69,13 +79,16 @@ mysql> insert into SecurityGroup set Name='docdbadm',Description='DocDB Administ
       -> ('W.','Bill','Jones',1);
   mysql> insert into Author (FirstName,LastName,InstitutionID) 
       ->   values('Amy','Smith',1);
-  mysql> INSERT INTO MajorTopic set ShortDescription='Main Topic 1',
-      -> LongDescription='Some major topic';
-  mysql> INSERT INTO MajorTopic (ShortDescription,LongDescription)         
-      -> values('Main Topic 2','Another major topic');
-  mysql> insert into MinorTopic (MajorTopicID,ShortDescription,LongDescription)
-    values(1,'Other','Miscelaneous'), 
-    (1,'Minor Topic','some minor topic description'); 
+  mysql> INSERT INTO Topic (TopicID,ShortDescription,LongDescription)         
+      -> values(1,'Main Topic 1','Some high-level topic');
+  mysql> INSERT INTO Topic (TopicID,ShortDescription,LongDescription)         
+      -> values(2,'Main Topic 2','Another high-level topic');
+  mysql> INSERT INTO Topic (TopicID,ShortDescription,LongDescription)         
+      -> values(3,'Lower-level','A child topic of topic 2');
+## And insert into the hierarchy too
+  mysql> INSERT INTO TopicHierarchy (TopicID,ParentTopicID)         
+      -> values(3,2);
+      
 </pre>
   </ul>
 <li>  The web interface allows the database administrator to perform

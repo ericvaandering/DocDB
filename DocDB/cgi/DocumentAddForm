@@ -1,14 +1,19 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+#        Name: $RCSfile$
+# Description: The main form to add or modify documents or metadata
 #
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -18,9 +23,9 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI;                                                                                      
+use CGI qw(-nosticky);
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -30,11 +35,12 @@ require "Sorts.pm";
 require "Messages.pm";
 
 require "AuthorSQL.pm";
-require "TopicSQL.pm";
-require "SecuritySQL.pm";
 require "DocumentSQL.pm";
-require "RevisionSQL.pm";
+require "MeetingSQL.pm";
 require "MiscSQL.pm";
+require "RevisionSQL.pm";
+require "SecuritySQL.pm";
+require "TopicSQL.pm";
 
 require "ResponseElements.pm";
 require "FormElements.pm";
@@ -43,9 +49,12 @@ require "Utilities.pm";
 require "Defaults.pm";
 require "Security.pm";
 require "XRefUtilities.pm";
+require "AuthorUtilities.pm";
 
 require "FileHTML.pm";
+require "JournalHTML.pm";
 require "KeywordHTML.pm";
+require "MeetingHTML.pm";
 require "RevisionHTML.pm";
 require "SecurityHTML.pm";
 require "SignoffHTML.pm";
@@ -62,7 +71,6 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 %params = $query -> Vars;
 
-my $Special      = $params{special};
 my $DocumentID   = $params{docid};
 my $ConferenceID = $params{conferenceid};
 my $SessionID    = $params{sessionid};
@@ -70,52 +78,30 @@ my $Version      = $params{version};
 my @PreTopics    = $query -> param('pretopic');
    $mode         = $params{mode}; # FIXME: Can't be my since used in subroutines
 
-@TopicDefaults = ();
- 
-if ($Special eq "meeting")      {$Meeting = 1;}
-if ($Special eq "othermeeting") {$OtherMeeting = 1;}
-
-if ($Meeting) {
- require "WebUtilities.pm";
- push @TopicDefaults,(&NearByMeeting); 
-}
-
-push @TopicDefaults,@PreTopics; 
-
-if ($mode ne "add"    && $mode ne "reserve" && 
+if ($mode ne "add"    && $mode ne "reserve" &&
     $mode ne "update" && $mode ne "updatedb") {
   $mode = "add";
-}  
-
-&SetUploadMethod;
-&SetDateOverride;
-&SetAuthorMode;
-&SetTopicMode;
-
-if ($mode eq "add" || $mode eq "reserve") {
-  &SetAuthorDefault;
 }
 
-print $query->header;
+SetUploadMethod();
+SetDateOverride();
+SetAuthorMode();
+SetTopicMode();
+
+print $query -> header( -charset => $HTTP_ENCODING );
+my @Scripts = ("PopUps","InsertRevisionNote","AuthorMethodDisplay");
 if      ($mode eq "add") {
-  &DocDBHeader("$Project Document Addition","Document Addition");
+  DocDBHeader("$Project Document Addition",   "Document Addition",    -scripts => \@Scripts);
 } elsif ($mode eq "reserve") {
-  &DocDBHeader("$Project Document Reservation","Document Reservation");
+  DocDBHeader("$Project Document Reservation","Document Reservation", -scripts => \@Scripts);
 } elsif ($mode eq "update" || $mode eq "updatedb") {
-  &DocDBHeader("$Project Document Update","Document Update");
+  DocDBHeader("$Project Document Update",     "Document Update",      -scripts => \@Scripts);
 }
 
-&HelpPopupScript;
-&KeywordChooserPopupScript;
-&RevisionNoteInsertScript;
-if ($UseSignoffs) {
-  &SignoffChooserPopupScript;
-}
-  
 @ErrorStack = ();
 @WarnStack = ();
 
-unless (&CanCreate()) {
+unless (CanCreate()) {
   push @ErrorStack,"You are not allowed to modify or create documents.";
 }
 if ($mode eq "update" || $mode eq "updatedb") {
@@ -129,13 +115,11 @@ if ($mode eq "update" || $mode eq "add") {
   }
 }
 
-if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@ErrorStack);
-}
+EndPage(@ErrorStack);
 
 # Set required/optional information
 
-my %RequiredEntries = (); 
+my %RequiredEntries = ();
 
 $RequiredEntries{Title}     = 1;   # Note that this isn't completely
 $RequiredEntries{Abstract}  = 1;   # functional. Some of these variables
@@ -154,7 +138,7 @@ $RequiredEntries{Signoff}   = 0;
 
 if ($mode eq "reserve") {
   $RequiredEntries{Abstract}  = 0;
-}  
+}
 
 my $DocRevID;
 
@@ -165,50 +149,67 @@ if ($mode eq "update" || $mode eq "updatedb") {
   }
 }
 
-if ($mode eq "updatedb") { 
+if ($mode eq "updatedb") {
   unless (defined $Version) {
     $Version = $Documents{$DocumentID}{NVersions};
-  }  
+  }
   if ($Version != $Documents{$DocumentID}{NVersions}) {
     push @WarnStack,"You are about to update an old version of this document.";
   }
-}    
+}
 
 if ($mode eq "update") {
   $Version = $Documents{$DocumentID}{NVersions};
 }
 
-my $SignoffsDefault; # FIXME: What other ones needn't be global?
-my @SecurityDefaults = ();
+# FIXME: What other ones needn't be global?
+my @AuthorDefaults   = ();
+my @EventDefaults    = ();
 my @ModifyDefaults   = ();
-my $RevisionNoteDefault; 
-my $XRefDefault;
+my @SecurityDefaults = ();
+my @TopicDefaults    = ();
+my ($AuthorListOrdered);
+my ($DocTypeIDDefault,$RequesterDefault,$RevisionNoteDefault,$SignoffsDefault,
+    $XRefDefault);
 
 if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
-  $DocRevID            = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+  $DocRevID            = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   $TitleDefault        = $DocRevisions{$DocRevID}{Title};
   $PubInfoDefault      = $DocRevisions{$DocRevID}{PUBINFO};
-  $AbstractDefault     = $DocRevisions{$DocRevID}{ABSTRACT};
+  $AbstractDefault     = $DocRevisions{$DocRevID}{Abstract};
   $RequesterDefault    = $DocRevisions{$DocRevID}{Submitter};
   $KeywordsDefault     = $DocRevisions{$DocRevID}{Keywords};
   $RevisionNoteDefault = $DocRevisions{$DocRevID}{Note};
-  @SecurityDefaults    = &GetRevisionSecurityGroups($DocRevID);
-  @AuthorDefaults      = &GetRevisionAuthors($DocRevID);
-  @TopicDefaults       = &GetRevisionTopics($DocRevID);
-  @ReferenceDefaults   = &FetchReferencesByRevision($DocRevID);
-  $XRefDefault         = &SetXRefDefault($DocRevID);
+  $DocTypeIDDefault    = $DocRevisions{$DocRevID}{DocTypeID};
+  @SecurityDefaults    = GetRevisionSecurityGroups($DocRevID);
+  my @AuthorRevIDs     = GetRevisionAuthors($DocRevID);
+     @AuthorRevIDs     = sort AuthorRevIDsByOrder @AuthorRevIDs;
+  $AuthorListOrdered   = IsAuthorListOrdered({     -authorrevids => \@AuthorRevIDs, });
+  @AuthorDefaults      = AuthorRevIDsToAuthorIDs({ -authorrevids => \@AuthorRevIDs, });
+  @TopicDefaults       = GetRevisionTopics({ -docrevid => $DocRevID });
+  @EventDefaults       = GetRevisionEvents($DocRevID);
+  @ReferenceDefaults   = FetchReferencesByRevision($DocRevID);
+  $XRefDefault         = SetXRefDefault($DocRevID);
   if ($UseSignoffs) {
     require "SignoffUtilities.pm";
-    $SignoffDefault     = &BuildSignoffDefault($DocRevID);
+    $SignoffDefault     = BuildSignoffDefault($DocRevID);
   }
 } else {
+  if ($UserPreferences{AuthorID}) {
+    @AuthorDefaults   = ($UserPreferences{AuthorID});
+    $RequesterDefault =  $UserPreferences{AuthorID};
+  }
+
+  push @TopicDefaults,@PreTopics;
+
   if ($DefaultPublicAccess) {
     @SecurityDefaults = (0);
   } else {
-    my $User = &SecurityLookup($remote_user);
-    @SecurityDefaults = ($SecurityIDs{$User}); 
+    @SecurityDefaults = FindUsersGroups();
   }
-}  
+}
+
+@TopicDefaults = Unique(@TopicDefaults); # Make sure this list is unique
 
 if ($EnhancedSecurity) {
   @ModifyDefaults  = &GetRevisionModifyGroups($DocRevID);
@@ -217,7 +218,7 @@ if ($EnhancedSecurity) {
   }
   unless (@ModifyDefaults) { # A public doc with no list of who can modify
     $AllCanModifyPublic = 1;
-  }    
+  }
 }
 
 # Warn the user if they are about to modify a controlled document
@@ -227,7 +228,7 @@ if ($UseSignoffs && ($mode eq "update" || $mode eq "updatedb")) {
   my ($Status) = &RevisionStatus($DocRevID);
   unless ($Status eq "Unmanaged") {
     push @WarnStack,$Msg_WarnModManaged;
-  }  
+  }
 }
 
 # Find SessionTalks that the user might choose and display
@@ -240,114 +241,86 @@ my @OpenSessionTalkIDs = ();
 if ($mode eq "add" && ($SessionID||$ConferenceID)) {
   require "TalkSQL.pm";
   require "MeetingSQL.pm";
-  
+
   my @CheckSessionTalkIDs = ();
-  my $MinorTopicID;
-  
-  if ($SessionID) { # Build list for SessionID
+
+  if ($ConferenceID) {
+    @CheckSessionTalkIDs = &FetchSessionTalksByConferenceID($ConferenceID);
+  } elsif ($SessionID) { # Build list for SessionID
     @CheckSessionTalkIDs = &FetchSessionTalksBySessionID($SessionID);
     &FetchSessionByID($SessionID);
-    my $ConferenceID = $Sessions{$SessionID}{ConferenceID};
-    &FetchConferenceByConferenceID($ConferenceID);
-    $MinorTopicID = $Conferences{$ConferenceID}{Minor}; # FIXME: Why doesn't this work?
-  } elsif ($ConferenceID) { # Build list for ConferenceID
-    @CheckSessionTalkIDs = &FetchSessionTalksByConferenceID($ConferenceID);
-    &FetchConferenceByConferenceID($ConferenceID);
-    $MinorTopicID = $Conferences{$ConferenceID}{Minor};
-  }    
-  
+    $ConferenceID = $Sessions{$SessionID}{ConferenceID};
+  }
+  &FetchConferenceByConferenceID($ConferenceID);
+  push @EventDefaults,$ConferenceID;
+
   # Check list of SessionTalks
-  
+
   foreach my $SessionTalkID (@CheckSessionTalkIDs) {
     unless ($SessionTalks{$SessionTalkID}{Confirmed}) {
       push @OpenSessionTalkIDs,$SessionTalkID;
-    } 
-  }
-  
-  # Add the topic for conference to defaults
-  
-  if ($MinorTopicID) {
-    push @TopicDefaults,$MinorTopicID;
-  }  
-} elsif ($mode eq "add" && @TopicDefaults) { # Check all preselected topics, see if they are conferences, etc. 
-  require "TalkSQL.pm";
-  foreach my $MinorTopicID (@TopicDefaults) {
-    my $ConferenceID = &FetchConferenceByTopicID($MinorTopicID);
-    if ($ConferenceID) {
-      my @CheckSessionTalkIDs = &FetchSessionTalksByConferenceID($ConferenceID);
-      foreach my $SessionTalkID (@CheckSessionTalkIDs) {
-        unless ($SessionTalks{$SessionTalkID}{Confirmed}) {
-          push @OpenSessionTalkIDs,$SessionTalkID;
-        } 
-      }
-    }    
+    }
   }
 }
-
-&Unique(@TopicDefaults) ; # Make sure this list is unique
 
 &EndPage(@ErrorStack); # The user may have made mistakes, warn and exit
 
 &SetFileOptions($DocRevID);
 
-print $query -> start_multipart_form('POST',$ProcessDocumentAdd);
+print $query -> start_multipart_form('POST',$ProcessDocumentAdd,'id="documentadd" name="documentadd"');
+print "<div>\n";
 print $query -> hidden(-name => 'mode',      -default => $mode);
 print $query -> hidden(-name => 'upload',    -default => 'file');
 print $query -> hidden(-name => 'archive',   -default => 'single');
 print $query -> hidden(-name => 'docid',     -default => $DocumentID);
 print $query -> hidden(-name => 'oldversion',-default => $Version);
 
-if ($mode eq "updatedb") { 
+# Generate unique ID to disallow multiple posting
+srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
+my $UniqueID = time."-".(int rand (2**31-1));
+print $query -> hidden(-name => 'uniqueid',  -default => $UniqueID);
+
+if ($mode eq "updatedb") {
   if (defined $params{version}) {
     print $query -> hidden(-name => 'version',   -default => $Version);
   }
-}    
+}
 
 if ($Overdate eq "Yes") {
   print $query -> hidden(-name => 'overdate',-default => 'Yes');
 } else {
   print $query -> hidden(-name => 'overdate',-default => '');
-}  
-
-print $query -> hidden(-name => 'special',-default => '');
-
-&WarnPage(@WarnStack); @WarnStack = ();
-
-print "<center><table cellpadding=10>\n";
-
-print "<tr>\n";
-print "<td colspan=4>\n";
-if ($mode eq "add") {
-  if ($Meeting || $OtherMeeting) {
-    print "<h4>You have chosen to add a new meeting talk to the database.<br> 
-               Make sure you know all the required information and
-               the file is ready for uploading.<p>
-               This is a simplified form for adding information to the 
-               database. (<a href=\"$HelpFile#meeting\">Instructions</a>)<br>
-               If you need something more complicated, such as multiple authors
-               or more upload boxes,<br> please use one of the options from
-               the <a href=$ModifyHome>change/add page</a>.\n";
-  } else {  
-    print "<h4>You have chosen to add a new document to the database.<br> 
-               Make sure you know all the required information and
-               the file is ready for uploading.<br>\n";
-  } 
-} elsif ($mode eq "reserve") {
-  print "<h4>You have chosen to reserve a new document document number in 
-             the database. <br>
-             You CANNOT upload the document using this form.<br>
-             Make sure you know all the required information.<br>\n";
-} elsif ($mode eq "update") {
-  $documentName = &FullDocumentID($DocumentID);
-  print "<h4>You have chosen to update $documentName. 
-             Make sure you know all the required information.<br>\n";
-} elsif ($mode eq "updatedb") {
-  $documentName = &FullDocumentID($DocumentID,$Version);
-  print "<h4>You have chosen to update the database for $documentName. 
-             Make sure you know all the required information.<br>\n";
 }
 
-print "Required fields are marked with an asterisk (*).<br>";
+print $query -> hidden(-name => 'special',-default => '');
+print "</div>\n";
+
+WarnPage(@WarnStack);
+
+print "<table class=\"CenteredTable HighPaddedTable\">\n";
+
+print "<tr>\n";
+print "<td colspan=\"4\">\n";
+if ($mode eq "add") {
+  print "<h4>You have chosen to add a new document to the database.<br/>
+             Make sure you know all the required information and
+             the file is ready for uploading.<br/>\n";
+} elsif ($mode eq "reserve") {
+  print "<h4>You have chosen to reserve a new document document number in
+             the database. <br/>
+             You CANNOT upload the document using this form.<br/>
+             Make sure you know all the required information.<br/>\n";
+} elsif ($mode eq "update") {
+  $documentName = &FullDocumentID($DocumentID);
+  print "<h4>You have chosen to update $documentName.
+             Make sure you know all the required information.<br/>\n";
+} elsif ($mode eq "updatedb") {
+  $documentName = &FullDocumentID($DocumentID,$Version);
+  print "<h4>You have chosen to update the database for $documentName.
+             Make sure you know all the required information.<br/>\n";
+}
+
+print "Required fields are marked with an asterisk (*).<br/>";
 print "Click on any of the headings for help.</h4>\n"; print "</td>\n";
 print "</tr>\n";
 
@@ -355,37 +328,37 @@ print "</tr>\n";
 
 if (@OpenSessionTalkIDs) {
   print "<tr>\n";
-  print "<td colspan=4>\n"; &SessionTalkPulldown(@OpenSessionTalkIDs);    print "</td>\n";
+  print "<td colspan=\"4\">\n"; SessionTalkPulldown(@OpenSessionTalkIDs);    print "</td>\n";
   print "</tr>\n";
 }
 
 print "<tr>\n";
-print "<td colspan=4>\n"; 
- &TitleBox(-required => $RequiredEntries{Title});        
+print "<td colspan=\"4\">\n";
+ &TitleBox(-required => $RequiredEntries{Title});
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
-print "<td colspan=4>\n";
- &AbstractBox(-required => $RequiredEntries{Abstract});     
+print "<td colspan=\"4\">\n";
+ &AbstractBox(-required => $RequiredEntries{Abstract});
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
-print "<td colspan=4>\n"; 
- &KeywordsBox(-required => $RequiredEntries{Keyword});     
+print "<td colspan=\"4\">\n";
+ &KeywordsBox(-required => $RequiredEntries{Keyword});
 print "</td>\n";
 print "</tr>\n";
 
-print "<tr>\n"; 
-print "<td colspan=4>\n"; 
+print "<tr>\n";
+print "<td colspan=\"4\">\n";
 if ($mode eq "update") {
-  &RevisionNoteBox(-jsinsert => $RevisionNoteDefault, 
-                   -required => $RequiredEntries{Note}); 
+  &RevisionNoteBox(-jsinsert => $RevisionNoteDefault,
+                   -required => $RequiredEntries{Note});
 } else {
-  &RevisionNoteBox(-default  => $RevisionNoteDefault,  
-                   -required => $RequiredEntries{Note}); 
-}  
+  &RevisionNoteBox(-default  => $RevisionNoteDefault,
+                   -required => $RequiredEntries{Note});
+}
 print "</td>\n";
 print "</tr>\n";
 
@@ -394,19 +367,19 @@ print "</tr>\n";
 if ($mode eq "add" || $mode eq "update") {
   my $CopyOption = ($mode eq "update");
 
-  print "<tr><td colspan=4>\n";
-  if ($Archive eq "archive") { 
+  print "<tr><td colspan=\"4\">\n";
+  if ($Archive eq "archive") {
     &ArchiveUploadBox(-required => $RequiredEntries{File});
   } else {
     &FileUploadBox(-allowcopy => $CopyOption, -type => $Upload, -docrevid => $DocRevID,
                    -addfiles => 1, -required  => $RequiredEntries{File}, -fileids => \@FileIDs);
   }
   print "<br/>Make sure you supply a format everyone can view (e.g. PDF) along
-  with source formats.<br/>\n"; 
+  with source formats.<br/>\n";
   print "</td></tr>";
-} elsif ($mode eq "updatedb") {
-  print "<tr><td colspan=4>\n";
-  &FileUploadBox(-desconly => true, -docrevid => $DocRevID,
+} elsif ($mode eq "updatedb" && $Version) { # v0 can't have files
+  print "<tr><td colspan=\"4\">\n";
+  &FileUploadBox(-desconly => $TRUE, -docrevid => $DocRevID,
                  -fileids  => \@FileIDs);
   print "</td></tr>";
 }
@@ -414,127 +387,113 @@ if ($mode eq "add" || $mode eq "update") {
 ### Document type and date override (if present)
 
 print "<tr>\n";
-if ($Meeting || $OtherMeeting) {
-  print "<td colspan=2 valign=top>\n"; 
-  my @TypeIDs = keys %DocumentTypes;
-  foreach my $ID (@TypeIDs) {
-    if ($DocumentTypes{$ID}{SHORT} eq "Talk") {
-      $TalkTypeID = $ID;
-      last;
-    }
-  }
-  print "<b>Document type is: $DocumentTypes{$TalkTypeID}{SHORT}</b>\n";  
-  print $query -> hidden(-name => 'doctype',  -default => $TalkTypeID);
-  print "</td>\n";  
-} else {
-  if ($mode eq "add" || $mode eq "reserve") {
-    print "<td colspan=2 valign=top>\n";
-    &DocTypeButtons(-required => $RequiredEntries{Type});
-    print "</td>\n";
-  }
-}
-
-if ($Overdate eq "Yes") {
-  print "<td colspan=2 valign=top>\n";
-  &DateTimePullDown;
-  print "</td>\n";
-}  
-print "</tr>\n";
-
-### Requester, Authors, and security 
-
-print "<tr valign=top>\n";
-if ($Meeting || $OtherMeeting) {
-  print "<td>&nbsp;&nbsp;&nbsp;</td>\n";
-} 
-
-print "<td>\n"; 
- my @RequesterDefaults = ($RequesterDefault);
- &AuthorScroll(-required => $RequiredEntries{Requester},
-               -helplink => "requester",
-               -helptext => "Requester",
-               -name     => "requester",
-               -default  => \@RequesterDefaults);
-               
+print "<td colspan=\"2\">\n";
+&DocTypeButtons(-required => $RequiredEntries{Type},
+                -default  => $DocTypeIDDefault);
 print "</td>\n";
 
-unless ($Meeting || $OtherMeeting) {
-  if ($AuthorMode eq "list") {
-    print "<td>\n"; 
-    &AuthorScroll(-required => $RequiredEntries{Author},
-                  -helplink => "authors",
-                  -multiple => "true",
-                  -default  => \@AuthorDefaults);
-    print "</td>\n";
-  } elsif ($AuthorMode eq "field") {
-    print "<td>\n"; &AuthorManual(-required => $RequiredEntries{Author});    print "</td>\n";
-  }
+if ($Overdate eq "Yes") {
+  print "<td colspan=\"2\">\n";
+  &DateTimePullDown;
+  print "</td>\n";
 }
-print "<td colspan=1 valign=top>\n"; 
+print "</tr>\n";
+
+### Requester, Authors, and security
+
+if ($UserValidation eq "certificate") {
+  print '<tr class="wListUsers">'."\n";
+} else {
+  print "<tr>\n";
+}
+
+print "<td>\n";
+AuthorScroll(-required => $RequiredEntries{Requester}, -helplink => "requester",
+             -helptext => "Submitter",                 -name     => "requester",
+             -default  => [$RequesterDefault], );
+print "</td>\n";
+
+my ($AuthorScrollDisplay,$AuthorTextDisplay);
+if ($AuthorListOrdered) {
+  $AuthorMode = "field";
+}
+if ($AuthorMode eq "list") {
+   $AuthorTextDisplay   = ' style="display: none;"';
+} elsif ($AuthorMode eq "field") {
+   $AuthorScrollDisplay = ' style="display: none;"';
+}
+$ScrollExtraText = "<a href=\"Javascript:author_method_choose(\'text\');\">(Text w/ order)</a>";
+$TextExtraText   = "<a href=\"Javascript:author_method_choose(\'scroll\');\">(Select from list)</a>";
+
+print "<td id=\"AuthorScroll\"$AuthorScrollDisplay>\n";
+print $query -> hidden(-name => 'authormode', -default => $AuthorMode);
+AuthorScroll(-required  => $RequiredEntries{Author}, -helplink => "authors",
+             -default   => \@AuthorDefaults,         -multiple => "true",
+             -extratext => $ScrollExtraText,);
+print "</td>\n";
+
+print "<td id=\"AuthorText\"$AuthorTextDisplay>\n";
+AuthorTextEntry({ -required => $RequiredEntries{Author}, -extratext => $TextExtraText,
+                  -default  => \@AuthorDefaults, });
+print "</td>\n";
+
+print "<td>\n";
 my $SecurityText;
 if ($EnhancedSecurity) {
   $SecurityText = "View";
 } else {
   $SecurityText = "Security";
 }
-&SecurityScroll(-addpublic => 'true',
-              -name      => 'security', 
-              -helplink  => 'security',
-              -helptext  => $SecurityText,
-              -multiple  => true,
-              -default   => \@SecurityDefaults);
+SecurityScroll(-addpublic => 'true',
+               -name      => 'security',
+               -helplink  => 'security',
+               -helptext  => $SecurityText,
+               -multiple  => $TRUE,
+               -default   => \@SecurityDefaults);
 print "</td>\n";
 if ($EnhancedSecurity) {
-  print "<td colspan=1 valign=top>\n"; 
-  &SecurityScroll(-name      => 'modify', 
-                -helplink  => 'modifygroups',
-                -helptext  => 'Modify',
-                -multiple  => true,
-                -default   => \@ModifyDefaults);
+  print "<td>\n";
+  SecurityScroll(-name      => 'modify',
+                 -helplink  => 'modifygroups',
+                 -helptext  => 'Modify',
+                 -multiple  => $TRUE,
+                 -default   => \@ModifyDefaults);
   print "</td>\n";
 }
 print "</tr>\n";
 
+if ($UserValidation eq "certificate") {
+  print '<tr class="ListUsers"><td colspan="2">&nbsp</td>';
+  print '<td colspan="2"><a href="'.$ListGroupUsers.'">List users in groups</a>';
+  print "</td></tr>\n";
+}
+
 ### Topics
 
-print "<tr>\n";
 if ($TopicMode eq "single") {
-  print "<td colspan=4>\n"; &TopicSelect(-required => $RequiredEntries{Author});     print "</td>\n";
+  print "<tr><td colspan=\"4\">\n";
+  TopicScroll({ -required => $RequiredEntries{Topic}, -size     => 20 ,
+                -default  => \@TopicDefaults,         -multiple => $TRUE,
+                -minlevel => $Preferences{Topics}{MinLevel}{Document}, });
 } elsif ($TopicMode eq "multi") {
-  print "<td colspan=4>\n"; &MultiTopicSelect(-required => $RequiredEntries{Author});     print "</td>\n";
+  print "<tr><td colspan=\"4\" id=\"TopicScrollTable\">\n";
+  TopicScrollTable({ -required => $RequiredEntries{Topic},
+                     -default  => \@TopicDefaults,
+                     -multiple => $TRUE,
+                     -minlevel => $Preferences{Topics}{MinLevel}{Document}, });
 }
-print "</tr>\n";
+print "</td></tr>\n";
 
-### Cross-references to other documents
-
-print "<tr>\n";
-print "<td colspan=4>\n"; 
-&TextField(-name     => 'xrefs', -size => 40,
-           -default  => $XRefDefault, 
-           -helplink => 'xrefentry', -helptext => 'Cross-References');
-print "</td>\n";
-print "</tr>\n";
-
-### References and Publication info
-
-unless ($Meeting || $OtherMeeting) {
-  print "<tr>\n";
-  print "<td colspan=4>\n"; &ReferenceForm;  print "</td>\n";
-  print "</tr><tr>\n";
-  print "<td colspan=4>\n"; &PubInfoBox;  print "</td>\n";
-  print "</tr>\n";
+if ($Preferences{Options}{SubmitAgree}) {
+  print '<tr><td colspan="4">';
+  print $Preferences{Options}{SubmitAgree};
+  print $query -> checkbox(-name  => 'submitagree', -label => "");
+  print "</td></tr>\n";
 }
 
-if ($UseSignoffs) { # FIXME: Later may be more complicated control
-  print "<tr>\n";
-    print "<td colspan=4>\n"; 
-      &SignoffBox(-default => $SignoffDefault); 
-    print "</td>\n";
-  print "</tr>\n";
-}
+### Submit button prior to optional information
 
-print "</table><p>\n";
-
+print "<tr><td colspan=\"4\" class=\"SubmitCell\">\n";
 if      ($mode eq "add") {
   print $query -> submit (-value => "Submit document");
 } elsif ($mode eq "reserve") {
@@ -542,8 +501,56 @@ if      ($mode eq "add") {
 } elsif ($mode eq "update" || $mode eq "updatedb") {
   print $query -> submit (-value => "Update document");
 }
-print "</center><p>";
+print "</td></tr>\n";
+
+### Events
+
+print "<tr><td colspan=\"4\">\n";
+ EventSelect( {-required => $FALSE,          -format   => "full",
+               -default  => \@EventDefaults, -multiple => $TRUE} );
+print "</td></tr>\n";
+
+### Cross-references to other documents
+
+print "<tr><td colspan=\"4\">\n";
+TextField(-name     => 'xrefs', -size => 40,
+          -default  => $XRefDefault,
+          -helplink => 'xrefentry', -helptext => 'Related Documents');
+print "</td></tr>\n";
+
+### References and Publication info
+
+print "<tr><td colspan=\"4\">\n"; ReferenceForm(); print "</td></tr>\n";
+print "<tr><td colspan=\"4\">\n"; PubInfoBox();    print "</td></tr>\n";
+
+if ($UseSignoffs) { # FIXME: Later may be more complicated control
+  print "<tr><td colspan=\"4\">\n";
+  SignoffBox(-default => $SignoffDefault);
+  print "</td></tr>\n";
+}
+
+if ($mode eq "updatedb" && $UseSignoffs &&
+    $SignoffDefault && CanPreserveSigs()) {
+  print '<tr><td colspan="4">';
+  print FormElementTitle(-helplink => "preservesigs",
+                         -helptext => "Preserve signatures on this revision?",
+                         -nocolon => $TRUE, -nobreak => $TRUE);
+  print $query -> checkbox(-name  => 'preservesigs', -label => "(Check for yes.)");
+  print "</td></tr>\n";
+}
+
+print "<tr><td colspan=\"4\" class=\"SubmitCell\">\n";
+if      ($mode eq "add") {
+  print $query -> submit (-value => "Submit document");
+} elsif ($mode eq "reserve") {
+  print $query -> submit (-value => "Request document ID");
+} elsif ($mode eq "update" || $mode eq "updatedb") {
+  print $query -> submit (-value => "Update document");
+}
+print "</td></tr>\n";
+print "</table>\n";
+
 print $query -> end_multipart_form;
 
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

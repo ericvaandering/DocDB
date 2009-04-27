@@ -3,7 +3,7 @@
 # Author Eric Vaandering (ewv@fnal.gov)
 #
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -18,7 +18,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
 use DBI;
@@ -40,14 +40,14 @@ $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
 
-@ErrorStack = ();
-@WarnStack  = ();
+   $DocumentID = $params{docid};
+   $DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
+   $DocumentID =~ s/\s+$//;
+   $Version    = $params{version};
+   $AsOf       = $params{asof};
+my $OutFormat  = $params{outformat} || "HTML";
+   $OutFormat =~ tr/[a-z]/[A-Z]/;
 
-$DocumentID = $params{docid};
-$DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
-$DocumentID =~ s/\s+$//;
-$Version    = $params{version};
-$AsOf       = $params{asof};
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number!";
@@ -55,9 +55,9 @@ unless ($DocumentID) {
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&GetSecurityGroups;
+GetSecurityGroups();
 
-&FetchDocument($DocumentID);
+FetchDocument($DocumentID);
 
 if (defined $Version && defined $AsOf) {
   push @ErrorStack,"You may not specify both a version and date.";
@@ -92,21 +92,42 @@ if (&CanAccess($DocumentID,$Version)) {
   }  
 } 
 
-print $query->header;
-&DocDBHeader($PageTitle,"$Project Document $DocumentID-v$Version");
+# Print appropriate header
 
-&HelpPopupScript;
+if ($OutFormat eq 'XML') {
+  require "XMLOutput.pm";
+  unless ($NoXMLHead) {
+    print XMLHeader();
+  }  
+  NewXMLOutput();
+} else {
+  print $query -> header( -charset => $HTTP_ENCODING );
+  DocDBHeader($PageTitle,"$Project Document $DocumentID-v$Version",-scripts => ["PopUps"]);
+}
 
 unless ($DocRevID) { # Probably never executed since CanAccess fails.
   push @ErrorStack,"This document does not exist.";
 }
 
-if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@ErrorStack);
+# Print appropriate body
+
+if ($OutFormat eq 'XML') {
+  my %XMLDisplay = ("All" => $TRUE);
+  my $DocumentXML = DocumentXMLOut( {-docid   => $DocRevisions{$DocRevID}{DOCID}, 
+                                     -version => $DocRevisions{$DocRevID}{Version}, 
+                                     -display => \%XMLDisplay, 
+                                    } );
+  if ($DocumentXML) {
+    $DocumentXML -> paste(last_child => $DocDBXML);
+  }  
+} else {
+  EndPage();
+  PrintRevisionInfo($DocRevID, -showversions => 1);
 }
 
-&PrintRevisionInfo($DocRevID, -showversions => 1);
-
-&DebugPage("End of page");
-&DocDBNavBar;
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+if ($OutFormat eq 'HTML') {
+  DocDBNavBar();
+  DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+} elsif ($OutFormat eq 'XML') {
+  print GetXMLOutput();
+}

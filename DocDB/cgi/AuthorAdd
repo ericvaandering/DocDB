@@ -7,7 +7,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -22,8 +22,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
 use DBI;
@@ -37,30 +36,30 @@ require "HTMLUtilities.pm";
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
-&GetSecurityGroups;
+GetSecurityGroups();
 
 %params = $query -> Vars;
 
-print $query -> header;
-&DocDBHeader("Author Addition Results");
+$InstitutionID   = $params{inst};
+$FirstName       = $params{first};
+$MiddleInitials  = $params{middle};
+$LastName        = $params{lastname};
 
-print "<p><h3>Here are the results of your attempt to add an author
-                to the $Project document database:</h3><p>\n";
+print $query -> header( -charset => $HTTP_ENCODING );
+DocDBHeader("Author Addition Results");
+
+print "<h3>Here are the results of your attempt to add an author to the $Project document database:</h3>\n";
 
 @ErrorStack = ();
 
-unless (&CanCreate()) {
+unless (CanCreate()) {
   push @ErrorStack,"You are not allowed to add authors to the DocDB.";
 }
-
-$InstitutionID     = $params{inst};
-$FirstName = $params{first};
-$MiddleInitials  = $params{middle};
-$LastName = $params{lastname};
+unless ($InstitutionID && $FirstName && $LastName) {
+  push @ErrorStack,"You must supply a first and last name and an institution.";
+}  
   
-if (@ErrorStack) {
-  &EndPage(@ErrorStack);
-}
+EndPage(@ErrorStack);
 
 my $AuthorInsert = $dbh->prepare(
    "insert into Author ".
@@ -71,13 +70,15 @@ $AuthorInsert -> execute($FirstName,$MiddleInitials,$LastName,$InstitutionID);
 my $AuthorID = $AuthorInsert -> {mysql_insertid}; # Works with MySQL only
                            
 if ($AuthorID) {
-  print "You were successful. $FirstName $MiddleInitials $LastName has been
-         added as an author.<br>\n"; 
+  push @ActionStack,"$FirstName $MiddleInitials $LastName has been added as an author. You can <a href=\"$AuthorAddForm\">add another</a> author."; 
 } else {
-  print "Something went wrong. Make sure you did everything right. If the
-         problem still exists, contact an administrator.\n"; 
+  unless (@ErrorStack) {
+    push @ErrorStack,"Something unknown went wrong. Contact an administrator.";
+  }   
 }
 
-&DocDBNavBar("Add&nbsp;Author",$AuthorAddForm);
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+ActionReport();
+
+DocDBNavBar("Add&nbsp;Author",$AuthorAddForm);
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 

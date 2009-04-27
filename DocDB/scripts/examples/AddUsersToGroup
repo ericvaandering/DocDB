@@ -1,0 +1,44 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+# This script will, based on the search criteria, add EmailUsers to a 
+# SecurityGroup. This particular example discriminates KCA from DOEGrid 
+# certificates and adds on that basis
+
+use DBI;
+use Getopt::Long;
+
+#require "CGIInclude.pm";
+
+my $Group = "kca";
+
+require "DocDBGlobals.pm";
+require "DBUtilities.pm";
+
+CreateConnection(-type => "rw");
+
+my $GroupFind = $dbh -> prepare("select GroupID from SecurityGroup where Name=?");
+$GroupFind -> execute($Group);
+my ($GroupID) = $GroupFind-> fetchrow_array;
+unless ($GroupID) {
+  print "Could not find group $Group\n";
+}  
+
+my $List = $dbh -> prepare("select EmailUserID,Username from EmailUser where Password='x'");
+$List -> execute();
+while (my ($EmailUserID,$Username) = $List -> fetchrow_array) {
+  if (grep /\d+$/,$Username) {next;}
+  
+  my $Find = $dbh -> prepare("select UsersGroupID from UsersGroup where EmailUserID=? and GroupID=?");
+  $Find -> execute($EmailUserID,$GroupID);
+  my ($UsersGroupID) = $Find-> fetchrow_array;
+  if ($UsersGroupID) {
+    print "$Username already in group $Group\n";
+  } else {
+    print "$Username added to group $Group\n";
+    my $Insert = $dbh -> prepare("insert UsersGroup (UsersGroupID,EmailUserID,GroupID) values (0,?,?)");
+    $Insert -> execute($EmailUserID,$GroupID);
+  }      
+}    

@@ -1,0 +1,6 @@
+/* IE has problems wrapping ordered lists around floating elements */
+
+ol.IEWrap { 
+  margin-left: 18em;
+}
+

@@ -8,7 +8,23 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
-#
+
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
 use DBI;
@@ -23,28 +39,33 @@ require "Messages.pm";
 
 $query = new CGI;  # Global for subroutines
 
-%params = $query -> Vars;
+%CGIParams = $query -> Vars;
 
 @ErrorStack = ();
 @WarnStack  = ();
 
 # Parameters to script 
 
-my $Password      = $params{password};
-my $Username      = $params{admuser};
-my $Action        = $params{admaction};
+my $Password       = $CGIParams{password};
+my $Username       = $CGIParams{admuser};
+my $Action         = $CGIParams{admaction};
 
-my $Description = $params{description};
-my $Name        = $params{name};
-my $ParentID    = $params{parent};
-my @ChildIDs    = split /\0/,$params{child};
-my $Create      = $params{create};
-my $Admin       = $params{admin};
-my $NoPerm      = $params{remove};
+my $Description    = $CGIParams{description};
+my $Name           = $CGIParams{name};
+my $ParentID       = $CGIParams{parent};
+my @ChildIDs       = split /\0/,$CGIParams{child};
+my $View           = $CGIParams{view};
+my $Create         = $CGIParams{create};
+my $Admin          = $CGIParams{admin};
+my $NoPerm         = $CGIParams{remove};
+my $RemoveChildren = $CGIParams{removesubs};
+my $Force          = $CGIParams{admforce};
 
-if ($Create) {$Create = 1;} # Make sure they are in format MySQL is expecting
-if ($Admin)  {$Admin  = 1;}
-if ($NoPerm) {$NoPerm = 1;}
+if ($View)           {$View   = 1;} # Make sure they are in format MySQL is expecting
+if ($Create)         {$Create = 1;}
+if ($Admin)          {$Admin  = 1;}
+if ($NoPerm)         {$NoPerm = 1;}
+if ($RemoveChildren) {$RemoveChildren = 1;}
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
@@ -52,17 +73,17 @@ unless ($dbh) {
   push @ErrorStack,$Msg_AdminNoConnect;
 }         
 
-print $query->header;
-&DocDBHeader("Modified Groups");
+print $query -> header( -charset => $HTTP_ENCODING );
+DocDBHeader("Modified Groups");
 
-&EndPage(@ErrorStack);
+EndPage(@ErrorStack);
 
-unless (&CanAdminister) {
+unless (CanAdminister()) {
   push @ErrorStack,$Msg_AdminNoLogin;
 }  
-&EndPage(@ErrorStack);
+EndPage(@ErrorStack);
 
-&GetSecurityGroups;
+GetSecurityGroups();
 
 if      ($Action eq "Delete") { # Delete group
   if (!$ParentID) {
@@ -70,31 +91,104 @@ if      ($Action eq "Delete") { # Delete group
   } elsif (!$SecurityGroups{$ParentID}{TimeStamp}) {
     push @ErrorStack,$Msg_ModGroupNone;
   } else {
-    my $GroupDelete       = $dbh -> prepare("delete from SecurityGroup    where GroupID=?");
-    my $RevSecurityDelete = $dbh -> prepare("delete from RevisionSecurity where GroupID=?");
-    my $HierarchyDelete   = $dbh -> prepare("delete from GroupHierarchy   ".
-                                    "where ParentID=? or ChildID=?");
-    $GroupDelete       -> execute($ParentID);
-    $RevSecurityDelete -> execute($ParentID);
-    $HierarchyDelete   -> execute($ParentID,$ParentID);
-    print "<b>$SecurityGroups{$ParentID}{NAME} has been deleted.</b><br>\n";
+    my $Count;
+    my $TotalCount;
+    if (!$Force) {
+      my $RSC = $dbh -> prepare("select COUNT(RevSecurityID)     from RevisionSecurity where GroupID=?");
+      my $RMC = $dbh -> prepare("select COUNT(RevModifyID)       from RevisionModify   where GroupID=?");
+      my $MSC = $dbh -> prepare("select COUNT(MeetingSecurityID) from MeetingSecurity  where GroupID=?");
+      my $MMC = $dbh -> prepare("select COUNT(MeetingModifyID)   from MeetingModify    where GroupID=?");
+      my $EUC = $dbh -> prepare("select COUNT(UsersGroupID)      from UsersGroup       where GroupID=?");
+
+      $RSC -> execute($ParentID);
+      $RMC -> execute($ParentID);
+      $MSC -> execute($ParentID);
+      $MMC -> execute($ParentID);
+      $EUC -> execute($ParentID);
+
+      ($Count) = $RSC -> fetchrow_array;
+      if ($Count) {
+        push @WarnStack,"Action would change view list on $Count document(s).";
+      }  
+      $TotalCount += $Count;
+      ($Count) = $RMC -> fetchrow_array;
+      if ($Count) {
+        push @WarnStack,"Action would change modify list on $Count document(s).";
+      }  
+      $TotalCount += $Count;
+      ($Count) = $MSC -> fetchrow_array;
+      if ($Count) {
+        push @WarnStack,"Action would change view list on $Count event(s).";
+      }  
+      $TotalCount += $Count;
+      ($Count) = $MMC -> fetchrow_array;
+      if ($Count) {
+        push @WarnStack,"Action would change modify list on $Count event(s).";
+      }  
+      $TotalCount += $Count;
+      ($Count) = $EUC -> fetchrow_array;
+      if ($Count) {
+        push @WarnStack,"Action would change groups for $Count user(s).";
+      }  
+      $TotalCount += $Count;
+    }  
+
+    if ($Force || !$TotalCount) {
+      my $RSD = $dbh -> prepare("delete from RevisionSecurity where GroupID=?");
+      my $RMD = $dbh -> prepare("delete from RevisionModify   where GroupID=?");
+      my $MSD = $dbh -> prepare("delete from MeetingSecurity  where GroupID=?");
+      my $MMD = $dbh -> prepare("delete from MeetingModify    where GroupID=?");
+      my $EUD = $dbh -> prepare("delete from UsersGroup       where GroupID=?");
+      my $HD  = $dbh -> prepare("delete from GroupHierarchy   where ParentID=? or ChildID=?");
+      my $SGD = $dbh -> prepare("delete from SecurityGroup    where GroupID=?");
+      $Count = $RSD -> execute($ParentID);
+      if (int($Count)) {
+        push @ActionStack,"Group removed from view list on $Count document(s).";
+      }  
+      $Count = $RMD -> execute($ParentID);
+      if (int($Count)) {
+        push @ActionStack,"Group removed from modify list on $Count document(s).";
+      }
+      $Count = $MSD -> execute($ParentID);
+      if (int($Count)) {
+        push @ActionStack,"Group removed from view list on $Count event(s).";
+      }
+      $Count = $MMD -> execute($ParentID);
+      if (int($Count)) {
+        push @ActionStack,"Group removed from modify list on $Count event(s).";
+      }
+      $Count = $EUD -> execute($ParentID);
+      if (int($Count)) {
+        push @ActionStack,"Group removed from $Count users(s).";
+      }
+      $Count = $HD  -> execute($ParentID,$ParentID);
+      if (int($Count)) {
+        push @ActionStack,"$Count inter-group relationship(s) removed.";
+      }
+      $Count = $SGD -> execute($ParentID);
+      push @ActionStack,"$SecurityGroups{$ParentID}{NAME} has been deleted.";
+      push @ActionStack,"Remove group from .htpasswd file and run scripts/Resecure if applicable.";
+    } else {
+      push @ErrorStack,"Action could lead to unintended consequences. 
+                        Use the <strong>force</strong> option if you want to proceed.";
+    }
   }
 } elsif ($Action eq "Modify") { # Modify group
   unless ($ParentID) {
     push @ErrorStack,$Msg_ModGroupEmpty;
   }
-  &EndPage(@ErrorStack);
+  EndPage(@ErrorStack);
 
 # Deal with name changes     
 
   if ($Name) { 
-    print "<b>Updating group name.</b><br>\n";
+    push @ActionStack,"Updating group name.";
     my $GroupUpdate = $dbh->prepare(
        "update SecurityGroup set Name=? where GroupID=?");
     $GroupUpdate -> execute($Name,$ParentID);
   }
   if ($Description) { 
-    print "<b>Updating group description.</b><br>\n";
+    push @ActionStack,"Updating group description.";
     my $GroupUpdate = $dbh->prepare(
        "update SecurityGroup set Description=? where GroupID=?");
     $GroupUpdate -> execute($Description,$ParentID);
@@ -102,8 +196,8 @@ if      ($Action eq "Delete") { # Delete group
 
 # Update parent child relationships. Delete the old and add new relationships
 
-  if (@ChildIDs) {
-    print "<b>Deleting all subordinates.</b><br>\n";
+  if (@ChildIDs || $RemoveChildren) {
+    push @ActionStack,"Deleting all subordinate relationships.";
     my $HierarchyDelete = $dbh -> prepare("delete from GroupHierarchy   ".
                                     "where ParentID=?");
        $HierarchyDelete -> execute($ParentID);
@@ -113,7 +207,7 @@ if      ($Action eq "Delete") { # Delete group
                          "values (0,?,?)");
     foreach my $ChildID (@ChildIDs) {
       if ($ChildID && $ChildID != $ParentID) {
-        print "<b>Adding subordinate.</b><br>\n";
+        push @ActionStack,"Adding subordinate.";
         $HierarchyInsert -> execute($ChildID,$ParentID);
       }
     }     
@@ -123,7 +217,12 @@ if      ($Action eq "Delete") { # Delete group
   
   if ($NoPerm) {
     my $GroupUpdate = $dbh->prepare(
-       "update SecurityGroup set CanCreate=0 where GroupID=?");
+       "update SecurityGroup set CanCreate=0,CanAdminister=0,CanView=0,CanConfig=0 where GroupID=?");
+    $GroupUpdate -> execute($ParentID);
+  }  
+  if ($View) {
+    my $GroupUpdate = $dbh->prepare(
+       "update SecurityGroup set CanView=1 where GroupID=?");
     $GroupUpdate -> execute($ParentID);
   }  
   if ($Create) {
@@ -138,12 +237,12 @@ if      ($Action eq "Delete") { # Delete group
   }  
      
 } elsif ($Action eq "New") { # Create new groups
-  print "<b>Adding a new group.</b><br>\n";
+  push @ActionStack,"Adding a new group.";
   my $GroupInsert = $dbh->prepare(
-   "insert into SecurityGroup (GroupID,Name,Description,CanCreate,CanAdminister) ".
-                      "values (0,?,?,?,?)");
+   "insert into SecurityGroup (GroupID,Name,Description,CanCreate,CanAdminister,CanView,CanConfig) ".
+                      "values (0,?,?,?,?,?,0)");
 
-  $GroupInsert -> execute($Name,$Description,$Create,$Admin);
+  $GroupInsert -> execute($Name,$Description,$Create,$Admin,$View);
   $ParentID = $GroupInsert -> {mysql_insertid}; # Works with MySQL only
 
   my $HierarchyInsert = $dbh->prepare(
@@ -160,36 +259,35 @@ if      ($Action eq "Delete") { # Delete group
 
 # For modify or new fetch institution information and display.
 
+ActionReport();
+WarnPage(@WarnStack);
+EndPage(@ErrorStack);
+
 if ($Action eq "Modify" || $Action eq "New") {
-  &ClearSecurityGroups;
-  &GetSecurityGroups;
-  print "<p><b>Here are the results of your modification:<br>\n";
-  print "<table cellpadding=10>\n";
-  print "<tr valign=top>\n";
-  print "<td><b>$SecurityGroups{$ParentID}{NAME}</b><br>($SecurityGroups{$ParentID}{DESCRIPTION})</td>\n";
+  ClearSecurityGroups();
+  GetSecurityGroups();
+  print "<h4>This is the new group information:</h4>\n";
+  print '<table class="HighPaddedTable CenteredTable">';
+  print "<tr>\n";
+  print "<td><strong>$SecurityGroups{$ParentID}{NAME}</strong><br/>
+         ($SecurityGroups{$ParentID}{Description})</td>\n";
   print "<td>\n";
   print "Dominant groups:\n";
-  &PrintGroupParents($ParentID);
+  PrintGroupParents($ParentID);
   print "</td>\n";
   print "<td>\n";
   print "Subordinate groups:\n";
-  &PrintGroupChildren($ParentID);
+  PrintGroupChildren($ParentID);
   print "</td>\n";
   print "<td>\n";
   print "Permissions:\n";
-  &PrintGroupPermissions($ParentID);
+  PrintGroupPermissions($ParentID);
   print "</td>\n";
   print "</tr>\n";
   print "</table>\n";
-  print "</b><p>\n";
 }  
 
-print "<p>\n";
-
-&WarnPage(@WarnStack);
-&EndPage(@ErrorStack);
-
-&DocDBNavBar;
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  
 exit;

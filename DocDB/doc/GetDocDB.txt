@@ -1,0 +1,18 @@
+DocDB is released often and .tar or .zip files are not usually made.  The best
+way to get DocDB is to check out the latest stable version from the CVS
+repository into a special account for the document database. Set the
+environment variable CVSROOT to
+":pserver:anony@docdb.fnal.gov:/local/cvs/doccvs/cvs" (No password or cvs login
+is required.  Only DocDB is available in this repository.)
+
+Check out DocDB with the command "cvs co -r stable DocDB"
+
+We strongly recommend that you checkout the 'stable' release The head of the
+repository is unstable and likely to cause disfunction.  Other branches of the
+code are used only for development purposes.
+
+Updates can be performed with the command "cvs update" while in the same
+directory. If you cannot get the software via CVS, please contact the DocDB
+maintainers via the users mailing list (docdb-users@fnal.gov) to make
+arrangements of if you have questions.
+

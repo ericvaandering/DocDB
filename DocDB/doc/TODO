@@ -1,44 +1,69 @@
+V9
+  implement supress
+    view codes: see by default, can see, cannot see
+    modify codes: can create with, cannot create with
+    
+    flag things that don't make sense: cannot see but can create
+
+    find most general rule that applies: 
+      can disable rules
+      eg view topic:
+        (all, group, user) view settings for all topics
+        (all, group, user) view settings for top topic
+        (all, group, user) view settings for parent topics
+        (all, group, user) view settings for particular topic
+      authors
+	can create with author group (security group with authors)
+        can create with that author
+      modify events
+        (all, group, user) modify all events
+        (all, group, user) modify meeting groups
+        modify event and view agenda (vs. existence) of event already in place
+      create/display ical/rss link
+        do above to see if we can display link
+        on request, do above again to check if it's OK
+        either set group or set groups of user in retrieval, unset after
+        on lookup, see if already exists before creating, only create if not public
+        creatation should involve a hash of sequence #, DocDB URL, group, email user, key class, type, and key
+	  May not need to store URL
+
+
+    Need for topic, eventgroup, event, keyword group, session (add directly if not present), group
+    Also need to put authors into groups
+    Option to reduce documents writable by certain group
+      Public (only) docs writable by ecal not visible by hcal
+    list certificate and security groups in footer
+
+  add multi-field keys
+  preserve sig hack
+  add authorID link to EmailUserID, need to use this to restrict list of authors
+  segmented administration
+  check and remove topic(s) on events and sessions
+
+* In using CGI::Untaint, look at as_set for arrays.
+HTML::Sanitizer for CGI untaint too. as well as URL
+
+Restore sortByName for authors
+
+Use sort by name and sort by topic for lists in event header
+
+add topic and moderator links if they exist to Author and TopicTable
+
+do show all talks for sessions. have to break and restart the event table (or
+embed talk table in big cell in event table?)
+
 Database structures allow for a number of things that aren't currently supported
 by the code:
 
-* Hiding major topics from groups (GroupTopic table)
+* Hiding various things from groups (Suppress table)
 
 * Associating an author with personal accounts (AuthorID in EmailUser)
 
 * Restricting who is allowed to sign documents (CanSign in EmailUser)
 
-* More info on "Your Account" Page:
+* Use different URLs for Elsevier journals. 
+  NIMA v465, p 124: http://www.sciencedirect.com/science?_ob=GatewayURL&_origin=physics&_method=citationSearch&_urlversion=4&_volkey=01689002%23465%23125%23&_version=1&md5=21c738cf27f2bb1702ab168834569a3d">
 
-1. What groups you have membership in
+* Assigning topics to sessions and events.
 
-2. Whether you have sign off privileges
-
-3. What your email notification preferences are
-
-4. Links to changing your email notification preferences (or the capability to change them right there)
-
-5. A mailto link to DocDB administrators in order to get sign off or security group membership changed.
-
-* Remove add files button on reserved ShowDocument
-
-* Remove "None" from topics, files in meeting list(?)
-
-* Login popup if certifcate is more than one group. Can choose groups to use.
-
-* Move ListDocuments in scripts area to DocumentTable
-
-* SelectEmailPrefs problems
-
-2. SelectEmailPrefs - once I hit Update, I just go back to the top of the page
-(when I expect to get a page that says my update was successful like I do for
-most DocDB operations) - not a big deal.
-
-2b.  Hmmm. I did get email about changes, but my notification preferences
-aren't showing up under my account.
-
-* Display preferences
- * Columns in DocumentType selection
- * TopicColumns for Addition
- * Topic columns for list
- * Author Columns
- 
+* Things like remote location and moderator of an event

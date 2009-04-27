@@ -7,7 +7,23 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
-#
+
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
 use DBI;
@@ -24,35 +40,32 @@ $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
 
-@ErrorStack = ();
-@WarnStack  = ();
-
 # Parameters to script 
 
 $Password  = $params{password};
 my $Username      = $params{admuser};
 $Action    = $params{admaction};
 
-$DocTypeID = $params{doctype};
-$ShortName = $params{name};
-$LongName  = $params{longdesc};
+my $DocTypeID = $params{doctype};
+my $ShortName = $params{name};
+my $LongName  = $params{longdesc};
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
 unless ($dbh) {
   push @ErrorStack,$Msg_AdminNoConnect;
 }         
-&EndPage(@ErrorStack);
+EndPage();
 
-print $query->header;
-&DocDBHeader("Modified List of Document Types");
+print $query -> header( -charset => $HTTP_ENCODING );
+DocDBHeader("Modified List of Document Types");
 
-unless (&CanAdminister) {
+unless (CanAdminister()) {
   push @ErrorStack,$Msg_AdminNoLogin;
 }  
-&EndPage(@ErrorStack);
+EndPage();
 
-&GetDocTypes;
+GetDocTypes();
 
 if      ($Action eq "Delete") { # Delete institutions
   if (!$DocTypeID) {
@@ -60,34 +73,29 @@ if      ($Action eq "Delete") { # Delete institutions
   } else {
     my $DocTypeDelete = $dbh -> prepare("delete from DocumentType where DocTypeID=?");
     $DocTypeDelete -> execute($DocTypeID);
-    print "<b>$DocumentTypes{$DocTypeID}{SHORT} has been deleted.</b><br>\n";
+    push @ActionStack,"$DocumentTypes{$DocTypeID}{SHORT} deleted.";
   }
 } elsif ($Action eq "Modify") { # Modify journals
   if (!$DocTypeID) {
     push @ErrorStack,$Msg_ModDocTypeEmpty;
   }
-  &EndPage(@ErrorStack);
+  EndPage();
 
 # Deal with name changes     
 
   if ($ShortName) { 
-    print "<b>Updating short document type description.</b><br>\n";
-    my $DocTypeUpdate = $dbh->prepare(
-       "update DocumentType set ShortType=? where DocTypeID=?");
+    push @ActionStack,"Changed document type's short name to $ShortName";
+    my $DocTypeUpdate = $dbh->prepare("update DocumentType set ShortType=? where DocTypeID=?");
     $DocTypeUpdate -> execute($ShortName,$DocTypeID);
   }
   if ($LongName) { 
-    print "<b>Updating long document type description.</b><br>\n";
-    my $DocTypeUpdate = $dbh->prepare(
-       "update DocumentType set LongType=? where DocTypeID=?");
+    push @ActionStack,"Changed document type's long name to $LongName";
+    my $DocTypeUpdate = $dbh -> prepare("update DocumentType set LongType=? where DocTypeID=?");
     $DocTypeUpdate -> execute($LongName,$DocTypeID);
   }
 } elsif ($Action eq "New") { # Create new journals
-  print "<b>Adding a new document type.</b><br>\n";
-  my $DocTypeInsert = $dbh->prepare(
-   "insert into DocumentType (DocTypeID,ShortType,LongType) ".
-   "                  values (0,?,?)");
-
+  push @ActionStack,"Added document type with short name $ShortName";
+  my $DocTypeInsert = $dbh -> prepare("insert into DocumentType (DocTypeID,ShortType,LongType) values (0,?,?)");
   $DocTypeInsert -> execute($ShortName,$LongName);
   $DocTypeID = $DocTypeInsert -> {mysql_insertid}; # Works with MySQL only
 } else {
@@ -96,20 +104,10 @@ if      ($Action eq "Delete") { # Delete institutions
 
 # For modify or new fetch institution information and display.
 
-if ($Action eq "Modify" || $Action eq "New") {
-  &GetDocTypes;
-  print "<p><b>Here are the results of your modification:  <br>\n";
-  print "Short Description: $DocumentTypes{$DocTypeID}{SHORT} <br>\n";
-  print "Long Description:  $DocumentTypes{$DocTypeID}{LONG}  <br>\n";
-  print "</b><p>\n";
-}  
+ActionReport();
+EndPage();
 
-print "<p>\n";
-
-&WarnPage(@WarnStack);
-&EndPage(@ErrorStack);
-
-&DocDBNavBar;
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
  
 exit;

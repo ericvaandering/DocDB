@@ -1,0 +1,302 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+# Must run in a v6 environment
+
+# Usage: MigrateV7 --u=username --p=password --a=init|migrate|undo|delete
+
+
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+use DBI;
+use Getopt::Long;
+
+require "CGIInclude.pm";
+
+require "DocDBGlobals.pm";
+
+&GetOptions("a=s" => \$Action,"u=s" => \$User,"p=s" => \$Password);
+
+# In V7
+
+
+unless ($Action eq "init" or $Action eq "delete" or $Action eq "migrate" or $Action eq "undo") {
+  print "Usage: MigrateV7 --u=username --p=password --a=init|migrate|delete\n\n";
+  print "This script is used to migrate from a version 6 to version 7 DB structure. \n";
+  print "Run this script in \"init\" mode first, then update the DocDB code.\n";
+  print "Then run this script again in \"migrate\" mode. \n";
+  print "At this point you can update the CGI code and when you are comfortable  \n";
+  print "everything is OK, run in \"delete\" mode to erase old columns and/or tables.  \n";
+  print "The undo mode removes the newly inserted tables and columns and should restore  \n";
+  print "the DB to a version 6 state.  \n";
+  exit;
+}  
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$User,$Password);
+
+if ($Action eq "init") { # Modify existing tables and add new tables in preparation for migration 
+
+  my $XRefAdd1     = $dbh ->prepare("alter table DocXRef add Version int"); 
+  my $XRefAdd2     = $dbh ->prepare("alter table DocXRef add Project varchar(32)"); 
+  my $XRefCreate   = $dbh -> prepare("create table ExternalDocDB ".
+                   "(ExternalDocDBID integer auto_increment primary key,".
+                   " Project varchar(32), Description varchar(255),".
+                   " PublicURL varchar(255),PrivateURL varchar(255),".
+                   " TimeStamp timestamp(14))"); 
+  my $NotifyCreate = $dbh -> prepare("create table Notification ".
+                   "(NotificationID integer auto_increment primary key, ".
+                   " EmailUserID int, Type varchar(32), ".
+                   " ForeignID int, Period varchar(32), ".
+                   " TimeStamp timestamp(14), ".
+                   " KEY EmailUserID (EmailUserID), KEY ForeignID (ForeignID))"); 
+  my $DocumentAdd  = $dbh -> prepare("alter table Document add DocHash char(32)"); 
+
+  my $ConfigCreate1 =  $dbh -> prepare("create table ConfigSetting ".
+                    "(ConfigSettingID integer auto_increment primary key,".
+                    " Project varchar(32), ".
+                    " ConfigGroup varchar(64),     Sub1Group varchar(64), ".
+                    " Sub2Group varchar(64), Sub3Group varchar(64), Sub4Group varchar(64), ".
+                    " ForeignID int, Value varchar(64),".
+                    " Sub1Value varchar(64), Sub2Value varchar(64), Sub3Value varchar(64), ".
+                    " Sub4Value varchar(64), Sub5Value varchar(64), ".
+                    " Description text, Constrained int, ".
+                    " TimeStamp timestamp(14), ".
+                    " KEY ConfigGroup (ConfigGroup), KEY Sub1Group (Sub1Group), KEY ForeignID (ForeignID))"); 
+  my $ConfigCreate2 =  $dbh -> prepare("create table ConfigValue ".
+                    "(ConfigValueID integer auto_increment primary key,".
+                    " ConfigSettingID int, ".
+                    " Value varchar(64),".
+                    " Description text, ".
+                    " TimeStamp timestamp(14), ".
+                    " KEY ConfigSettingID (ConfigSettingID))"); 
+
+  my $EventGroupCreate  = $dbh -> prepare(
+                         "CREATE TABLE EventGroup (
+                          EventGroupID int(11) NOT NULL auto_increment,
+                          ShortDescription varchar(32) NOT NULL default '',
+                          LongDescription text,
+                          TimeStamp timestamp(14) NOT NULL,
+                          PRIMARY KEY  (EventGroupID))");
+  my $RevisionEventCreate  = $dbh -> prepare(
+                         "CREATE TABLE RevisionEvent (
+                          RevEventID int(11) NOT NULL auto_increment,
+                          DocRevID int(11) NOT NULL default '0',
+                          ConferenceID int(11) NOT NULL default '0',
+                          TimeStamp timestamp(14) NOT NULL,
+                          PRIMARY KEY  (RevEventID),
+                          KEY MinorTopicID (ConferenceID),
+                          KEY DocRevID (DocRevID))");
+  my $ConferenceAdd1  = $dbh -> prepare("alter table Conference add EventGroupID int"); 
+  my $ConferenceAdd2  = $dbh -> prepare("alter table Conference add LongDescription text"); 
+  my $ConferenceAdd3  = $dbh -> prepare("alter table Conference add index (StartDate)"); 
+  my $ConferenceAdd4  = $dbh -> prepare("alter table Conference add index (EndDate)"); 
+
+  my $RevisionAdd  = $dbh -> prepare("alter table DocumentRevision add DocTypeID int"); 
+
+  $XRefAdd1            -> execute();
+  $XRefAdd2            -> execute();
+  $XRefCreate          -> execute();
+  $NotifyCreate        -> execute();
+  $ConfigCreate1       -> execute();
+  $ConfigCreate2       -> execute();
+  $DocumentAdd         -> execute();
+  $RevisionAdd         -> execute();
+  $EventGroupCreate    -> execute();
+  $RevisionEventCreate -> execute();
+  $ConferenceAdd1      -> execute();
+  $ConferenceAdd2      -> execute();
+  $ConferenceAdd3      -> execute();
+  $ConferenceAdd4      -> execute();
+}
+
+if ($Action eq "migrate") {
+  my $RevisionEventInsert = $dbh -> prepare("insert into RevisionEvent (RevEventID,DocRevID,ConferenceID) values (0,?,?)");
+  print "\nMigrating doctypes to document revisions.\n";
+  
+### Migrate DocType from Document to Revision
+
+  require "DocumentSQL.pm";
+  &GetAllDocuments;
+
+  my @DocumentIDs = sort keys %Documents;
+  my $RevisionUpdate = $dbh -> prepare("update DocumentRevision set DocTypeID=?,TimeStamp=? where DocRevID=?"); 
+  my $RevisionSelect = $dbh -> prepare("select DocRevID,Timestamp from DocumentRevision where DocumentID=?");  
+  my $DocumentSelect = $dbh -> prepare("select DocumentType from Document where DocumentID=?");  
+  foreach my $DocumentID (@DocumentIDs) {
+    unless ($DocumentID) {next;} # Null documentID in test DB
+    my ($DocRevID,$TimeStamp);
+    $DocumentSelect -> execute($DocumentID);
+    my ($DocTypeID) = $DocumentSelect -> fetchrow_array;
+    unless ($DocTypeID) {next;}  # Don't overwrite v7 docs
+    unless (($DocumentID-1) % 100) {
+      print "Updating Document $DocumentID, DocTypeID $DocTypeID\n";
+    }   
+    # Do revision by revision to keep TimeStamps in sync
+    
+    $RevisionSelect -> execute($DocumentID);
+    $RevisionSelect -> bind_columns(undef, \($DocRevID,$TimeStamp));
+    while ($RevisionSelect -> fetch) {
+      $RevisionUpdate -> execute($DocTypeID,$TimeStamp,$DocRevID);
+    }
+  }  
+  
+### Migrate SpecialTopic Major topics to event groups  
+  
+  require "TopicSQL.pm";
+  require "MeetingSQL.pm";
+  
+  &GetTopics;
+  &SpecialMajorTopics;
+  &GetConferences;
+  
+  print "\nMigrating event-like topics to true events\n";
+  
+  foreach my $MajorID (@GatheringMajorIDs) {
+    &FetchMajorTopic($MajorID);
+    my $Insert = $dbh -> prepare("insert into EventGroup (ShortDescription,LongDescription) values (?,?)"); 
+    print "Migrating $MajorTopics{$MajorID}{SHORT}\n";
+    $Insert -> execute($MajorTopics{$MajorID}{SHORT},$MajorTopics{$MajorID}{LONG});
+    my $EventGroupID = $Insert -> {mysql_insertid};
+    # Now deal with three cases: MinorTopics which are conferences
+    #                            MinorTopics which are not conferences
+    #                            Conferences which are not MinorTopics   
+    foreach my $MinorID (keys %MinorTopics) { 
+      unless ($MinorTopics{$MinorID}{MAJOR} == $MajorID) {
+        next;
+      }
+      my $ConferenceID = &FetchConferenceByTopicID($MinorID);
+      if ($ConferenceID) {
+        my $ConferenceUpdate = $dbh -> prepare("update Conference set EventGroupID=?,
+                                                 LongDescription=? where ConferenceID=?");
+        $ConferenceUpdate -> execute($EventGroupID,$MinorTopics{$MinorID}{LONG},$ConferenceID);
+        unless ($Conferences{$ConferenceID}{Title}) {
+          my $ConferenceUpdate2 = $dbh -> prepare("update Conference set Title=? where ConferenceID=?");
+          $ConferenceUpdate2 -> execute($MinorTopics{$MinorID}{SHORT},$ConferenceID);
+        }  
+      } else {
+        my $ConferenceInsert = $dbh -> prepare("insert into Conference 
+                               (ConferenceID,MinorTopicID,EventGroupID,LongDescription,StartDate,EndDate,Title,ShowAllTalks)  
+                               values (0,?,?,?,NOW(),NOW(),?,1)");
+        print "Warning: Event $MinorTopics{$MinorID}{SHORT} ($MinorTopics{$MinorID}{LONG}) created without true dates\n";
+        $ConferenceInsert  -> execute($MinorID,$EventGroupID,$MinorTopics{$MinorID}{LONG},$MinorTopics{$MinorID}{SHORT});
+        $ConferenceID = $ConferenceInsert -> {mysql_insertid};
+      }
+          
+      # Find revisions with this MinorID, add to RevisionEvent table
+      my $DocRevID;
+      my $RevisionList = $dbh -> prepare("select DocRevID from RevisionTopic where MinorTopicID=?"); 
+      $RevisionList -> execute($MinorID);
+      $RevisionList -> bind_columns(undef, \($DocRevID));
+      while ($RevisionList -> fetch) {
+        unless ($ConferenceID) {print "We have a blank CID\n";}
+        $RevisionEventInsert -> execute($DocRevID,$ConferenceID);
+      }
+    } 
+  }                                
+  my $Insert = $dbh -> prepare("insert into EventGroup (ShortDescription,LongDescription) values (?,?)"); 
+  print "\n\nV6 allowed events to be created that were not topics. \n";  
+  print "These will be moved into a newly created group for orphan events.  \n";  
+  $Insert -> execute("Orphans","Orphans");
+  $EventGroupID = $Insert -> {mysql_insertid};
+  foreach my $ConferenceID (keys %Conferences) {
+    if ($Conferences{$ConferenceID}{Minor}) {
+      next;
+    }  
+    my $ConferenceUpdate = $dbh -> prepare("update Conference set EventGroupID=?,
+                                            LongDescription=? where ConferenceID=?");
+    print "Orphan Event found: $Conferences{$ConferenceID}{Title}\n";                                       
+    $ConferenceUpdate -> execute($EventGroupID,$Conferences{$ConferenceID}{Title},$ConferenceID);
+    # Should figure out how to associate documents with these too                                         
+  }
+  print "If no orphan events were reported just now, you should remove the Event Group \"Orphans\"\n";  
+}
+
+if ($Action eq "undo") { # Undo modifications
+
+# User based access
+
+  my $RevisionDrop  = $dbh -> prepare("alter table DocumentRevision drop DocTypeID"); 
+  my $XRefDrop1     = $dbh -> prepare("alter table DocXRef drop Version"); 
+  my $XRefDrop2     = $dbh -> prepare("alter table DocXRef drop Project"); 
+  my $XRefDrop3     = $dbh -> prepare("drop table ExternalDocDB"); 
+  my $NotifyDrop    = $dbh -> prepare("drop table Notification"); 
+  my $ConfigDrop1   = $dbh -> prepare("drop table ConfigSetting"); 
+  my $ConfigDrop2   = $dbh -> prepare("drop table ConfigValue"); 
+  my $RevEventDrop  = $dbh -> prepare("drop table RevisionEvent"); 
+  my $DocumentDrop  = $dbh -> prepare("alter table Document drop DocHash"); 
+  my $ConferenceDrop1 = $dbh -> prepare("alter table Conference drop EventGroupID"); 
+  my $ConferenceDrop2 = $dbh -> prepare("alter table Conference drop LongDescription"); 
+  my $ConferenceDrop3 = $dbh -> prepare("alter table Conference drop index StartDate"); 
+  my $ConferenceDrop4 = $dbh -> prepare("alter table Conference drop index EndDate"); 
+  my $EventGroupDrop  = $dbh -> prepare("drop  table EventGroup"); 
+  
+  $XRefDrop1         -> execute();
+  $XRefDrop2         -> execute();
+  $XRefDrop3         -> execute();
+  $NotifyDrop        -> execute();
+  $ConfigDrop1       -> execute();
+  $ConfigDrop2       -> execute();
+  $DocumentDrop      -> execute();
+  $RevisionDrop      -> execute();
+  $RevEventDrop      -> execute();
+  $ConferenceDrop1   -> execute();
+  $ConferenceDrop2   -> execute();
+  $ConferenceDrop3   -> execute();
+  $ConferenceDrop4   -> execute();
+  $EventGroupDrop    -> execute();
+}
+
+if ($Action eq "delete") { 
+
+#  print "Won't delete fields yet.\n";
+
+#  exit;
+
+  my $DocTypeDel         = $dbh -> prepare("alter table Document   drop DocumentType"); 
+  my $MajorTopicDel1     = $dbh -> prepare("alter table MajorTopic drop Restricted "); 
+  my $MajorTopicDel2     = $dbh -> prepare("alter table MajorTopic drop Suppressed "); 
+  my $ConferenenceDel1   = $dbh -> prepare("alter table Conference drop MinorTopicID "); 
+  my $ConferenenceDel2   = $dbh -> prepare("alter table Conference drop SingleSession "); 
+  my $SessionDel         = $dbh -> prepare("alter table Session    drop ShowAllTalks "); 
+  
+  $DocTypeDel       -> execute();
+  $MajorTopicDel1   -> execute();
+  $MajorTopicDel2   -> execute();
+  $ConferenenceDel1 -> execute();
+  $ConferenenceDel2 -> execute();
+  $SessionDel       -> execute();
+
+  require "TopicSQL.pm";
+  require "MeetingSQL.pm";
+  &SpecialMajorTopics;
+  
+  print "\nDeleting Meeting-like topics\n";
+  
+  foreach my $MajorID (@GatheringMajorIDs) {
+    my $MajorTopicDel = $dbh -> prepare("delete from MajorTopic where MajorTopicID=?"); 
+    my $MinorTopicDel = $dbh -> prepare("delete from MinorTopic where MajorTopicID=?"); 
+    &FetchMajorTopic($MajorID);
+    print "Deleting $MajorTopics{$MajorID}{SHORT}\n";
+    $MajorTopicDel -> execute($MajorID);
+    $MinorTopicDel -> execute($MajorID);
+  }
+}
+
+exit;

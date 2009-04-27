@@ -1,0 +1,3 @@
+#MainColumn3Col {
+  line-height: 1.2;   /* Fix for peekaboo bug in IE<=6 (No IE 7 yet) */
+}

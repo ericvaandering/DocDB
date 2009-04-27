@@ -1,0 +1,16 @@
+#StatisticsTable th {
+  text-align: right;
+  padding-left: 20px;
+}  
+#StatisticsTable td {
+  text-align: right;
+}  
+#StatisticsTable tbody {
+  border-bottom: 2px black solid;
+  border-top: 2px black solid;
+} 
+#StatisticsTable {  
+  border-collapse: collapse;
+  margin-top: 2em;
+  margin-bottom: 2em;
+}

@@ -1,0 +1,79 @@
+#! /usr/bin/env perl
+#
+#        Author:  Eric Vaandering
+#          Date:  22 May 2005
+#
+# Allow a user to choose to limit their membership to certain groups 
+# for a period of time
+
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+use CGI qw(-nosticky);
+use DBI;
+
+require "DocDBGlobals.pm";
+require "Messages.pm";
+require "HTMLUtilities.pm";
+require "ResponseElements.pm";
+require "SecurityHTML.pm";
+require "Security.pm";
+require "Scripts.pm";
+
+# Start page
+$query  = new CGI;
+%params = $query -> Vars; 
+$dbh    = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+print $query -> header( -charset => $HTTP_ENCODING );
+&DocDBHeader("Limit Groups","",-nobody => $TRUE,-scripts => ["PopUps"]);
+
+&EndPage(@ErrorStack);
+
+print "<h3>Using this page, you can remove groups whose permissions you don't want to use</h3>\n";
+ 
+print $query -> startform('POST',$SetGroups);
+print "<div>\n";
+print "<table id=\"SelectGroups\" class=\"CenteredTable MedPaddedTable\">\n";
+print "<tr><td>\n";
+my @RawGroupIDs = &FindUsersGroups(-ignorecookie => $TRUE);
+
+&SecurityScroll(-helptext  => 'Use Groups', -helplink => 'limitgroups', -multiple => $TRUE, -groupids => \@RawGroupIDs, -default => \@RawGroupIDs);
+
+print "</td><td>\n";
+
+my @Times = ("session",1,7,30,365);
+my %Labels = ("session" => "This session", 
+                      1 => "One day",
+                      7 => "One week",
+                     30 => "One month",
+                    365 => "One year");
+
+print "<strong>Limit for:</strong><br/>\n";
+                    
+print $query -> popup_menu (-name   => 'duration', 
+                            -values => \@Times,
+                            -labels => \%Labels);
+print "</td></tr><tr><td colspan=\"2\" id=\"SubmitCell\">\n";
+
+print $query -> submit (-value => "Limit Groups");
+print "</td></tr></table>\n";
+print "</div>\n";
+print $query -> endform;
+print "\n";
+
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName,-nobody => $TRUE);

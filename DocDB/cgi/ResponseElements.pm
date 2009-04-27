@@ -5,14 +5,14 @@
 #              THIS FILE IS DEPRECATED. DO NOT PUT NEW ROUTINES HERE, USE *HTML
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -22,7 +22,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 require "AuthorHTML.pm"; #FIXME: Remove, move references to correct place
 require "TopicHTML.pm";  #FIXME: Remove, move references to correct place
@@ -38,9 +38,8 @@ sub PrintTitle {
   }
 }
 
-sub WarnPage { # Non-fatal errors
-  my @errors = @_;
-  if (@errors) {
+sub WarnPage () { # Non-fatal errors
+  if (@WarnStack) {
     print "<dl class=\"warning\">\n";
     if ($#errors) {
       print "<dt class=\"Warning\">There were non-fatal errors processing your
@@ -48,281 +47,139 @@ sub WarnPage { # Non-fatal errors
     } else {
       print "<dt class=\"Warning\">There was a non-fatal error processing your
              request: </dt>\n";
-    } 
-    foreach $message (@errors) {
+    }
+    foreach $message (@WarnStack) {
       print "<dd>$message</dd>\n";
     }
-    print "</dl>\n"; 
-  }   
+    print "</dl>\n";
+  }
+  @WarnStack = ();
+  return;
 }
 
 sub DebugPage (;$) { # Debugging output
-  my ($CheckPoint) = @_; 
+  my ($CheckPoint) = @_;
   if (@DebugStack && $DebugOutput) {
     print "<dl class=\"debug\">\n";
     print "<dt class=\"Warning\">Debugging messages: $CheckPoint</dt>\n";
     foreach my $Message (@DebugStack) {
       print "<dd>$Message</dd>\n";
-    } 
+    }
     print "</dl>\n";
   } elsif ($CheckPoint && $DebugOutput) {
-    print "No Debugging messages: $CheckPoint<br/>\n";
-  }  
+    print "<div>No Debugging messages: $CheckPoint<br/></div>\n";
+  }
   @DebugStack = ();
   return @DebugStack;
 }
 
-sub EndPage {  # Fatal errors, aborts page if present
-  my @Errors = @_;
-  if (@Errors) { 
-    &ErrorPage(@Errors);
-    &DocDBNavBar();
-    &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+sub EndPage (;%) {  # Fatal errors, aborts page if present
+  my %Params = @_;
+  my $StartPage = $Params{-startpage} || $FALSE;
+
+
+  WarnPage();
+  if (@ErrorStack) {
+    if ($StartPage) {
+      print $query -> header( -charset => $HTTP_ENCODING );
+      DocDBHeader("Fatal Error");
+    }
+    ErrorPage();
+    DocDBNavBar();
+    DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
     exit;
-  }  
+  }
 }
 
 sub ErrorPage { # Fatal errors, continues page
-  my @errors = @_;
-  if (@errors) {
+  if (@ErrorStack) {
     print "<dl class=\"error\">\n";
     if ($#errors) {
       print "<dt class=\"Error\">There were fatal errors processing your
-             request: </font></dt>\n";
+             request:</dt>\n";
     } else {
       print "<dt class=\"Error\">There was a fatal error processing your
-             request: </font></dt>\n";
-    } 
-    foreach $message (@errors) {
+             request:</dt>\n";
+    }
+    foreach $message (@ErrorStack) {
       print "<dd>$message</dd>\n";
-    }  
+    }
     print "</dl>\n";
     print "<p/>\n";
-  }  
+  }
+  @ErrorStack = ();
+  return;
+}
+
+sub ActionReport {
+  if (@ActionStack) {
+    print "<dl class=\"Action\">\n";
+    print "<dt class=\"Action\">Action(s) taken:</dt>\n";
+    foreach $Message (@ActionStack) {
+      print "<dd>$Message</dd>\n";
+    }
+    print "</dl>\n";
+  }
+  @ActionStack = ();
+  return;
 }
 
 sub FullDocumentID ($;$) {
   my ($DocumentID,$Version) = @_;
   if (defined $Version) {
     return "$ShortProject-doc-$DocumentID-v$Version";
-  } else {  
+  } else {
     return "$ShortProject-doc-$DocumentID";
-  }  
-}  
+  }
+}
 
-sub DocumentLink { #FIXME: Make Version optional, Document URL, "title" mode 
-  my ($DocumentID,$Version,$Title) = @_;
-  my $DocNumber = &FullDocumentID($DocumentID,$Version);
-  my $Link = "<a title=\"$DocNumber\" href=\"$ShowDocument\?docid=$DocumentID\&amp;version=$Version\">";
-  if ($Title) {
-    $Link .= $Title;
-  } else {
-    $Link .= $DocNumber;
-  }
-  $Link .=  "</a>";
-}         
-
-sub NewDocumentLink ($;$$) { # FIXME: Make this the default
-  #FIXME: Figure out how to do modes like CGI.pm
-  my ($DocumentID,$Version,$Mode) = @_;
-  
-  require "DocumentSQL.pm";
-  require "RevisionSQL.pm";
-  
-  &FetchDocument($DocumentID);
-  my $GivenVersion = false;
-  unless (defined $Version) {
-    $Version      = $Documents{$DocumentID}{NVersions};
-    $GivenVersion = true;
-  }
-  my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-  
-  unless ($DocRevID && $DocumentID) {
-    return "";
-  }
-    
-  my $Link = "<a href=\"$ShowDocument\?docid=$DocumentID";
-  if ($GivenVersion) {
-    $Link .= "&version=$Version";
-  }
-  $Link .= "\">"; 
-  if ($Mode eq "title") {
-    $Link .= $DocRevisions{$DocRevID}{Title};
-  } elsif ($Mode eq "number_only") {
-    $Link .= $DocumentID."-v".$Version;
-  } else {
-    $Link .= &FullDocumentID($DocumentID,$Version);
-  }
-  $Link .=  "</a>";
-  return $Link;
-}         
-  
 sub DocumentURL {
   my ($DocumentID,$Version) = @_;
   my $URL;
   if (defined $Version) {
     $URL =  "$ShowDocument\?docid=$DocumentID\&amp;version=$Version";
-  } else {  
+  } else {
     $URL =  "$ShowDocument\?docid=$DocumentID";
-  }  
+  }
   return $URL
 }
 
 sub EuroDate {
   my ($sql_datetime) = @_;
   unless ($sql_datetime) {return "";}
-  
+
   my ($date,$time) = split /\s+/,$sql_datetime;
   my ($year,$month,$day) = split /\-/,$date;
   $return_date = "$day ".("Jan","Feb","Mar","Apr","May","Jun",
                           "Jul","Aug","Sep","Oct","Nov","Dec")[$month-1].
-                 " $year"; 
+                 " $year";
   return $return_date;
 }
 
 sub EuroDateTime {
   my ($sql_datetime) = @_;
   unless ($sql_datetime) {return "";}
-  
+
   my ($date,$time) = split /\s+/,$sql_datetime;
   my ($year,$month,$day) = split /\-/,$date;
   $return_date = "$time ".
                  "$day ".("Jan","Feb","Mar","Apr","May","Jun",
                           "Jul","Aug","Sep","Oct","Nov","Dec")[$month-1].
-                 " $year"; 
+                 " $year";
   return $return_date;
 }
 
-sub EuroDateHM($) {
+sub EuroDateHM ($) {
   my ($SQLDatetime) = @_;
   unless ($SQLDatetime) {return "";}
-  
+
   my ($Date,$Time) = split /\s+/,$SQLDatetime;
   my ($Year,$Month,$Day) = split /\-/,$Date;
   my ($Hour,$Min,$Sec) = split /:/,$Time;
   $ReturnDate = "$Day ".("Jan","Feb","Mar","Apr","May","Jun",
                           "Jul","Aug","Sep","Oct","Nov","Dec")[$Month-1].
-                " $Year, $Hour:$Min"; 
+                " $Year, $Hour:$Min";
   return $ReturnDate;
-}
-
-sub DocumentSummary { # One line summary for lists, uses non-standard <nobr>
-  require "MiscSQL.pm";
-  require "TopicSQL.pm";
-  
-  require "Utilities.pm";
-  require "Security.pm";
-  
-  my ($DocumentID,$Mode,$Version) = @_;
-  unless (defined $Version) {$Version = $Documents{$DocumentID}{NVersions}}
-  unless ($Mode) {$Mode = "date"};
-  
-  if ($DocumentID) {
-    &FetchDocument($DocumentID);
-    unless (&CanAccess($DocumentID,$Version)) {return;}
-    
-    my $full_docid  = &DocumentLink($DocumentID,$Version);
-    my $short_docid = &NewDocumentLink($DocumentID,$Version,"number_only");
-    my $DocRevID    = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-    my $title       = &DocumentLink($DocumentID,$Version,$DocRevisions{$DocRevID}{Title});
-    if ($Mode eq "meeting") {
-      my @FileIDs   = &FetchDocFiles($DocRevID);
-    }
-
-    if ($UseSignoffs) {
-      require "SignoffUtilities.pm";
-      my ($ApprovalStatus,$LastApproved) = &RevisionStatus($DocRevID);
-      unless ($ApprovalStatus eq "Unmanaged") { 
-        $title .= "<br>($ApprovalStatus";
-        if ($ApprovalStatus eq "Unapproved") {
-          if (defined $LastApproved) {
-            my $DocumentID = $DocRevisions{$LastApproved}{DOCID};
-            my $Version    = $DocRevisions{$LastApproved}{Version};
-            my $LastLink   = &DocumentLink($DocumentID,$Version,"version $Version");
-            $title .= " - Last approved: $LastLink";
-          } else {
-            $title .= " - No approved version";
-          }
-        }
-        $title .= ")";
-      }  
-    }  
-    
-    my $rev_date    = &EuroDate($DocRevisions{$DocRevID}{DATE});
-    my $author_link = &FirstAuthor($DocRevID);
-    print "<tr valign=top>\n";
-    if ($Mode eq "date") {
-      print "<td><nobr>$short_docid</nobr></td>\n";
-      print "<td>$title</td>\n";
-      print "<td><nobr>$author_link</nobr></td>\n";
-      print "<td><nobr>$rev_date</nobr></td>\n";
-    } elsif ($Mode eq "meeting") {
-      my @TopicIDs = &GetRevisionTopics($DocRevID);
-      
-      @TopicIDs = &RemoveArray(\@TopicIDs,@IgnoreTopics);
-
-      print "<td>$title</td>\n";
-      print "<td><nobr>$author_link</nobr></td>\n";
-      print "<td>"; &ShortTopicListByID(@TopicIDs); print "</td>\n";
-      print "<td>"; &ShortFileListByRevID($DocRevID); print "</td>\n";
-    } elsif ($Mode eq "confirm") {
-      my @TopicIDs = &GetRevisionTopics($DocRevID);
-      
-      @TopicIDs = &RemoveArray(\@TopicIDs,@IgnoreTopics);
-
-      print "<td>$title</td>\n";
-      print "<td><nobr>$author_link</nobr></td>\n";
-      print "<td>"; &ShortTopicListByID(@TopicIDs); print "</td>\n";
-      print "<td>\n";
-      print $query -> start_multipart_form('POST',$ConfirmTalkHint);
-      print $query -> hidden(-name => 'documentid',   -default => $ConfirmDocID);
-      print $query -> hidden(-name => 'sessiontalkid',-default => $ConfirmSessionTalkID);
-      print $query -> submit (-value => "Confirm");
-      print $query -> end_multipart_form;
-      
-      print "</td>\n";
-   } elsif ($Mode eq "conference") {
-      print "<td>$title</td>\n";
-      print "<td>\n";
-
-      my @topics = &GetRevisionTopics($DocRevID);
-      foreach my $topic (@topics) {
-        if (&MajorIsConference($MinorTopics{$topic}{MAJOR})) {
-          my $conference_link = &ConferenceLink($topic,"short");
-          print "$conference_link<br>\n";
-        }  
-      }
-      print "</td>\n";
-      print "<td><nobr>$author_link</nobr></td>\n";
-      print "<td>"; &ShortFileListByRevID($DocRevID); print "</td>\n";
-    }  
-    print "</tr>\n";
-  } else { # Print header if $DocumentID = 0
-    print "<tr valign=bottom>\n";
-    if ($Mode eq "date") {
-      print "<th>$ShortProject-doc-#</th>\n";
-      print "<th>Title</th>\n";
-      print "<th>Author</th>\n";
-      print "<th>Last Updated</th>\n";
-    } elsif ($Mode eq "meeting") {
-      print "<th>Title</th>\n";
-      print "<th>Author</th>\n";
-      print "<th>Topic(s)</th>\n";
-      print "<th>Files</th>\n";
-    } elsif ($Mode eq "confirm") {
-      print "<th>Title</th>\n";
-      print "<th>Author</th>\n";
-      print "<th>Topic(s)</th>\n";
-      print "<th>Confirm?</th>\n";
-    } elsif ($Mode eq "conference") {
-      &GetTopics;
-      print "<th>Title</th>\n";
-      print "<th>Conference</th>\n";
-      print "<th>Author</th>\n";
-      print "<th>Files</th>\n";
-    }  
-    print "</tr>\n";
-  } 
 }
 
 sub TypesTable {
@@ -338,16 +195,16 @@ sub TypesTable {
     $link = &TypeLink($TypeID,"short");
     print "<td>$link\n";
     ++$Col;
-  }  
+  }
 
   print "</table>\n";
 }
 
 sub TypeLink {
   my ($TypeID,$mode) = @_;
-  
+
   require "MiscSQL.pm";
-  
+
   &FetchDocType($TypeID);
   my $link = "";
   unless ($Public) {
@@ -361,121 +218,25 @@ sub TypeLink {
   unless ($Public) {
     $link .= "</a>";
   }
-  
+
   return $link;
 }
 
-sub PrintAgenda {
-  my ($MeetingID) = @_; 
-  
-  my ($DocRevID) = &FindAgendaRevision($MeetingID);
-  if ($DocRevID) {
-    &FetchDocRevisionByID($DocRevID); 
-    my @FileIDs  = &FetchDocFiles($DocRevID);                                                                                             
-    my $FirstFile = shift @FileIDs;   #FIXME: Collapse to one line
+sub ImageSrc {
+  my ($ArgRef) = @_;
 
-    print "<h3>Agenda:</h3>\n";
-    &PrintFile($FirstFile);
-  }
+  my $Alt   = exists $ArgRef->{-alt}   ? $ArgRef->{-alt}   : "image";
+  my $Image = exists $ArgRef->{-image} ? $ArgRef->{-image} : "";
+
+  require "Images.pm";
+
+  unless ($Image) { return ""; }
+
+  my $HTML = '<img src="'.$ImgURLPath.'/'.$ImageNames{$Image}.'" alt="'.$Alt.'" />';
+
+  push @DebugStack,"Image: $Image, Final: ".$ImageNames{$Image};
+
+  return $HTML;
 }
 
-sub FindAgendaRevision {
-  require "MiscSQL.pm";
-  my ($MeetingID) = @_; 
-  
-  my $agenda_base = 
-    "select DocumentRevision.DocRevID from DocumentRevision,RevisionTopic ".
-    "where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
-     "and RevisionTopic.MinorTopicID=$MeetingID "; 
-  my $agenda_find = $dbh -> prepare ($agenda_base.
-     "and lower(DocumentRevision.DocumentTitle) like lower(\"agenda%\") ".
-     "and DocumentRevision.Obsolete=0");
-  
-  my $AgendaRevID = 0;
-  my $DocRevID;
-
-  $agenda_find -> execute();
-  $agenda_find -> bind_columns(undef, \($DocRevID));
-  while ($agenda_find -> fetch && !$AgendaRevID) {
-    &FetchDocRevisionByID($DocRevID); 
-    if ($DocRevisions{$DocRevID}{Obsolete}) {next;}
-    my $DocID = &FetchDocument($DocRevisions{$DocRevID}{DOCID});
-    if ($DocRevisions{$DocRevID}{VERSION} != $Documents{$DocID}{NVersions}) {next;}
-    $AgendaRevID = $DocRevID;
-  }
-
-  unless ($AgendaRevID) {
-    my $agenda_find = $dbh -> prepare ($agenda_base.
-       "and lower(DocumentRevision.DocumentTitle) like lower(\"%agenda%\") ".
-       "and DocumentRevision.Obsolete=0");
-  
-    $agenda_find -> execute();
-    $agenda_find -> bind_columns(undef, \($DocRevID));
-    while ($agenda_find -> fetch && !$AgendaRevID) {
-      &FetchDocRevisionByID($DocRevID); 
-      if ($DocRevisions{$DocRevID}{Obsolete}) {next;}
-      my $DocID = &FetchDocument($DocRevisions{$DocRevID}{DOCID});
-      if ($DocRevisions{$DocRevID}{VERSION} != $Documents{$DocID}{NVersions}) {next;}
-      $AgendaRevID = $DocRevID;
-    }
-  }
-    
-  return $AgendaRevID;
-}
-
-sub FindAgendaURL {
-  require "FSUtilities.pm";
-  my ($MeetingID) = @_; 
-  
-  my ($DocRevID) = &FindAgendaRevision($MeetingID);
-
-  if ($DocRevID) {
-    &FetchDocRevisionByID($DocRevID); 
-    my @FileIDs  = &FetchDocFiles($DocRevID);  
-    foreach my $FileID (@FileIDs) {
-      unless ($DocFiles{$FileID}{ROOT}) {next;}
-      my $VersionNumber = $DocRevisions{$DocRevID}{VERSION};
-      my $DocumentID    = $DocRevisions{$DocRevID}{DOCID}  ;
-
-      my $Directory     = &GetURLDir($DocumentID,$VersionNumber);  
-
-      my $FileName      = $Directory.$DocFiles{$FileID}{NAME};
-      return $FileName;
-    }
-  } else {
-    return 0;
-  }  
-}
-
-sub PrintFile {
-  require "FSUtilities.pm";
-  my ($FileID) = @_;
-  
-  my $DocRevID      = $DocFiles{$FileID}{DOCREVID};
-  my $VersionNumber = $DocRevisions{$DocRevID}{VERSION};
-  my $DocumentID    = $DocRevisions{$DocRevID}{DOCID}  ;
-  
-  my $Directory     = &GetDirectory($DocumentID,$VersionNumber);  
-  
-  my $FileName      = $Directory.$DocFiles{$FileID}{NAME};  
-    
-  if (grep /text/,`file $FileName`) {
-    open FILE,$FileName;
-    my @FileLines = <FILE>;
-    close FILE;
-
-    if (grep /html$/,$FileName) {
-      print "<div id=\"includedfile\">\n";
-      print @FileLines;
-      print "</div>\n";
-    } else {
-      print "<pre>\n";
-      print @FileLines;
-      print "</pre>\n";
-    }    
-  } else {
-    print "<b>Non-text file</b>\n";
-  }  
-}
-    
 1;

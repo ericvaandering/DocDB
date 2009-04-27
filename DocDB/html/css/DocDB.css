@@ -4,12 +4,17 @@ body {
   margin: 10px 10px 10px 10px;
   padding:0px;
   margin-right: 20px;
-  
+
 }
 
 ul {
   padding-left: 2em;
   margin-left:  0em;
+}
+
+ol li {
+  padding-left: 0em;
+  margin-left:  2em;
 }
 
 dl {
@@ -31,7 +36,28 @@ dd.FileList {
 dt {
   font-weight: bold;
 }
- 
+
+a img {
+  border: none;
+}
+
+img.icon { /* For inline icons */
+  vertical-align: bottom;
+  padding: 2px;
+}
+
+ul.compact {
+  padding-left: 0em;
+  margin-left:  0em;
+}
+
+ul.compact li {
+  padding-left: 0em;
+  margin-left:  0.75em;
+  list-style-type: none;
+}
+
+
 h1, h2, h3, h4, h5 {
   margin: 0 1em 0 1em;
   text-align: center;
@@ -50,7 +76,27 @@ h5 {
   font-weight: normal;
 }
 
+.HighPaddedTable td, .HighPaddedTable th {padding: 10px;}
+.MedPaddedTable  td, .MedPaddedTable  th {padding: 5px; }
+.LowPaddedTable  td, .LowPaddedTable  th {padding: 3px; }
+.UnPaddedTable   td, .UnPaddedTable   th {padding: 0px; }
+
+td {vertical-align: top;    }
+th {vertical-align: bottom; }
+
+.LeftHeader {text-align: right;}
+
+.LeftHeader th {
+  vertical-align: top;
+  text-align: right;
+}
+
+.LeftHeader td {
+  text-align: left;
+}
+
 /* Stuff for PrintRevisionInfo, which shows up in lots of places, hence it's here */
+
 
 #RevisionInfo {
   position: relative;
@@ -61,14 +107,14 @@ h5 {
   width: 100%;
   padding: 0.5em;
 }
-	
+
 #Footer3Col {
   clear: both;
   width: 100%;
   padding: 0.5em;
   text-align: center;
 }
-	
+
 #LeftColumn3Col {
   width: 12.5em;
   float: left;
@@ -89,7 +135,7 @@ h5 {
 }
 
 #RightColumn3Col {
-  width: 12.5em; 
+  width: 12.5em;
   background: #eee;
   float: right;
   margin-bottom: 0.5em;
@@ -99,79 +145,127 @@ h5 {
   border: 1px solid black;
 }
 
-#UpdateButtons { 
+#UpdateButtons {
   text-align: center;
-}  
+}
 
-#UpdateButtons input[type="submit"] { /* Probably not best to change all buttons */
-/*  background: #ddd; 
-  font-weight: bold;*/
-/*  border: 1px black solid;
-  padding: 0.25em; */
+#DocNotifySignup input[type="submit"], #UpdateButtons input[type="submit"] { /* Probably not best to change all buttons */
   font-size: 90%;
-}  
-/*
-#UpdateButtons input[type="submit"] {
-  width: 12em;
-}  
-*/
+}
+
 #Signoffs ul ul {
   padding-left: 1em;
 }
 
 #OtherVersionTable {
-  width: 100%; 
+  width: 100%;
 }
 
-#OtherVersionTable td {
-  padding: 3px;
-}  
-
-
-/* Allow for lists and tables with alternating color rows. 
+/* Allow for lists and tables with alternating color rows.
    border-collapse gets rid of spacing between cells */
 
 table.Alternating {
   border-collapse: collapse;
+  empty-cells: show;
 }
 
-li.Odd, tr.Odd {
+table.CenteredTable {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+li.Odd, tr.Odd, tbody.Odd {
   background: #eee;
 }
 
-li.Even, tr.Even {
+li.Even, tr.Even, tbody.Even, .DocumentList th {
   background: white;
+}
+
+tr.Unconfirmed, tbody.Unconfirmed {
+  font-style: italic;
 }
 
 /* DocumentList tables show up in lots of places, hence here */
 
-#TalkList,#DocumentList {
+.DocumentList {
   border: 1px solid black;
   margin-bottom: 2em;
   margin-right: auto;
   margin-left: auto;
 }
 
-#TalkList td,#DocumentList td {
+.DocumentList td {
   vertical-align: top;
   text-align: left;
   padding: 3px 5px 3px 5px;
-}  
+}
 
-#TalkList th,#DocumentList th {
+.DocumentList th {
+  vertical-align: bottom;
+  border: 1px solid black;
+  padding: 5px 5px 5px 5px;
+}
+
+/* For table showing a upcoming events */
+
+.MultidayEventList {
+  border: 1px solid black;
+  margin-top: 2em;
+  margin-bottom: 2em;
+  margin-right: auto;
+  margin-left: auto;
+  border-collapse: collapse;
+}
+
+.MultidayEventList td {
+  vertical-align: top;
+  text-align: left;
+  padding: 3px 5px 3px 5px;
+}
+
+.MultidayEventList th {
   vertical-align: bottom;
   border-bottom: 1px solid black;
   padding: 5px 5px 5px 5px;
-}  
+}
+
+.MultidayEventList th.LeftHeader {
+  vertical-align: top;
+  border-bottom: none;
+  padding: 3px 5px 3px 5px;
+}
+
+td.Time {
+  text-align: right;
+}
+
+#SubmitCell { /* Should be ".SubmitCell" */
+  text-align: center;
+}
+
+.SubmitCell, td.SubmitCell, th.SubmitCell { /* Should be ".SubmitCell" */
+  text-align: center;
+}
 
 .Highlight {
   color: blue;
-}  
+}
 
 .Error, .Warning, .Help {
   color: red;
-}  
+}
 
-.Updated {
+td.Updated {
+  text-align: right;
   white-space: nowrap;
-}  
+}
+
+.DocDBNavBar {
+  text-align: center;
+}
+
+.EmbedSession table {
+  margin-left: 1em;
+  margin-bottom: 1em;
+}

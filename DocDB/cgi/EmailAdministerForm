@@ -1,20 +1,21 @@
 #! /usr/bin/env perl
 #
-#        Name: EmailAdministerForm
+#        Name: $RCSfile$
 # Description: This script provides a form to administer users receiving
 #              e-mail notifications and shows the complete list of who is
 #              receiving what.
 #
-#      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
+#      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -24,9 +25,9 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI;                                                                                      
+use CGI qw(-nosticky);
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -35,6 +36,7 @@ require "ResponseElements.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";
 require "AdministerElements.pm";
+require "EmailUserHTML.pm";
 require "SecurityHTML.pm";
 
 require "MailNotification.pm";
@@ -45,192 +47,219 @@ require "NotificationSQL.pm";
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&GetSecurityGroups;
+%params = $query -> Vars;
 
-print $query->header;
-&DocDBHeader("User Administration"); 
+my $EmailUserID  = $params{emailuserid} || 0;
 
-&HelpPopupScript;
+GetSecurityGroups();
+
+print $query -> header( -charset => $HTTP_ENCODING );
+DocDBHeader("User Administration","",-scripts => ["PopUps","PersonalAccountAdminDisable"]);
 
 @ErrorStack = ();
 @WarnStack  = ();
 
-unless (&CanAdminister()) {
+unless (CanAdminister()) {
   push @ErrorStack,"You are not allowed to access administrative functions.";
-  push @WarnStack,"I've disabled admin checking in this page. FIX IT.";
-  push @WarnStack,"Have to add help links here and for request";
 }
 
-&EndPage(@ErrorStack);
-&WarnPage(@WarnStack);
+EndPage();
 
-print "<b>This form allows you to administer personal accounts.</b><p>\n"; 
+if ($EmailUserID) {
+  print "<p>This form allows you to delete the user, change which groups the
+         user belongs to, ";
+  unless ($UserValidation eq "certificate") {
+    print "reset the user's password, ";
+  }
+  print " and change their permissions. The full information, including
+          notifications, for the user is shown below.</p>";
+} else {
+  print "<p><b>This form allows you to administer personal accounts.</b></p>\n";
 
-print "Since users can modify their own data and create their own accounts,
-       the only functions you can perform here are to reset the user's password
-       and delete a user. The full list of users receiving notifications and 
-       their preferences are shown below for your reference.<p>\n";
+  print "<p>Since users can modify their own data and create their own accounts,
+         the only functions you can perform here are to delete a user, ";
+  unless ($UserValidation eq "certificate") {
+    print "reset the user's password, ";
+  }
+  print "change the user's permissions, and change which groups the user belongs to. If  \"Clear Groups\" is
+         selected, the list of groups the user belongs to will be cleared and set
+         to the selected groups (if any). Use this option if any of the groups a user
+         currently belongs to are incorrect. The full list of users and their
+         groups are shown below for your reference.</p>\n";
+
+  print "<p>Click on a username to get an simpler form to modify just that user.</p>\n";
+}
+
+### Gather info for EmailUserID mode
+
+my @DefaultUsersGroups = ();
+my ($DefaultCanSign,$DefaultVerified);
+if ($EmailUserID) {
+  FetchEmailUser($EmailUserID);
+  @DefaultUsersGroups = FetchUserGroupIDs($EmailUserID);
+  if ($EmailUser{$EmailUserID}{Verified}) {
+    $DefaultVerified = $TRUE;
+  }
+  if ($EmailUser{$EmailUserID}{CanSign}) {
+    $DefaultCanSign = $TRUE;
+  }
+}
 
 ### Email User Modification
 
-my %EnableMatrix = ();
-
-$EnableMatrix{emailuserid}{Delete} = 1;
-
-$EnableMatrix{emailuserid}{Modify} = 1;
-$EnableMatrix{resetpw}{Modify}     = 1;
-$EnableMatrix{usergroups}{Modify}  = 1;
 print $query -> start_multipart_form('POST',"$EmailAdminister",
                                      "id=\"peraccount\" name=\"peraccount\"");
-print "<table cellpadding=10>\n";
-print "<tr valign=top>\n";
+print "<table class=\"MedPaddedTable\">\n";
+print "<tr>\n";
 
-print "<td colspan=2>\n";
- &AdministerActions(-form => "peraccount", -matrix => \%EnableMatrix);
+print "<td colspan=\"3\">\n";
+ AdministerActions(-form => "peraccount");
 print "</td>\n";
 
 print "</tr>\n";
 
-print "<tr valign=top>\n";
+print "<tr>\n";
 
-print "<td>\n"; 
- &EmailUserSelect(-disabled => true);
-print "</td>\n";  
+print "<td>\n";
+ EmailUserSelect(-disabled => $TRUE, -default => [$EmailUserID]);
+print "</td>\n";
 
-print "<td>\n";   
+print "<td>\n";
 if ($UserValidation eq "certificate") {
   print "&nbsp;\n";
-} else {  
-  print "<b><a ";
-  &HelpLink("resetpassword");
-  print "New Password:</a></b><br> \n";
-  print $query -> textfield (-name => 'resetpw', -size => 20, 
-                             -maxlength => 20,   -disabled);
+} else {
+  print FormElementTitle(-helplink => "resetpassword", -helptext => "New Password");
+  print $query -> textfield (-name => 'resetpw', -size => 20, -maxlength => 20, -disabled => "disabled");
 }
 print "</td>\n";
-print "<td rowspan=5>\n"; 
-&SecurityScroll(-helplink => 'usergroups', -helptext => 'User\'s Groups', 
-                -name     => 'usergroups', -disabled => TRUE, -multiple => TRUE); 
-print "</td>\n";  
+print "<td>\n";
+SecurityScroll(-helplink => 'usergroups', -helptext => 'User\'s Groups',
+               -name     => 'usergroups', -disabled => $TRUE,
+               -multiple => $TRUE,        -default  => \@DefaultUsersGroups);
+print "</td>\n";
 print "</tr>\n";
 
-print "<tr><td>\n";
-print $query -> checkbox(-name  => "verifyuser", -label => 'Verify User');
+if ($EmailUserID) {
+  print "<tr><td colspan=\"3\">\n";
+  print $query -> hidden(-name => "singleuser", -default => '1');
+  if ($DefaultVerified) {
+    print $query -> checkbox(-name => "verifyuser", -label => 'User is Verified', -checked => 'Yes');
+  } else {
+    print $query -> checkbox(-name => "verifyuser", -label => 'User is Verified');
+  }
+  print "</td></tr>\n";
+} else {
+  print "<tr><td colspan=\"3\">\n";
+  print $query -> checkbox(-name  => "verifyuser", -label => 'Verify User');
+  print "</td></tr>\n";
+}
+print "<tr><td colspan=\"3\">\n";
+if ($DefaultCanSign) {
+  print $query -> checkbox(-name => "usersign", -label => 'User Can Sign Docs', -checked => 'Yes');
+} else {
+  print $query -> checkbox(-name => "usersign", -label => 'User Can Sign Docs');
+}
 print "</td></tr>\n";
-print "<tr><td>\n";
-print $query -> checkbox(-name  => "usersign", -label => 'User Can Sign Docs');
-print "</td></tr>\n";
-print "<tr><td>\n";
-print $query -> checkbox(-name  => "clearuser", -label => 'Clear Verify and Sign');
-print "</td></tr>\n";
-print "<tr><td>\n";
-print $query -> checkbox(-name  => "cleargroups", -label => 'Clear User\'s Groups');
-print "</td></tr>\n";
+unless ($EmailUserID) {
+  print "<tr><td colspan=\"3\">\n";
+  print $query -> checkbox(-name  => "clearuser", -label => 'Clear Verify and Sign');
+  print "</td></tr>\n";
+  print "<tr><td colspan=\"3\">\n";
+  print $query -> checkbox(-name  => "cleargroups", -label => 'Clear User\'s Groups');
+  print "</td></tr>\n";
+}
 
-print "<tr valign=top>\n";
-print "<td colspan=3>\n";
-&AdministratorPassword;
+print "<tr>\n";
+print "<td colspan=\"3\">\n";
+AdministratorPassword();
 print "&nbsp;";
-print $query -> submit (-value => "Modify Personal Account");
+print $query -> submit(-value => "Modify Personal Account");
 print "</td>\n";
 print "</tr>\n";
 
 print "</table>\n";
 print $query -> end_multipart_form;
 
-print "<p>\n";
-print "<b>The personal accounts and when they receive e-mail are shown below:</b><p>\n";
-print "<p><hr>\n";
+if ($EmailUserID) {
+  print "<h4>Full User Information</h4>";
+  print '<table class="MedPaddedTable">';
+  PrintEmailUserInfo($EmailUserID);
+  print '</table>';
+} else {
+  print "<p>\n";
+  print "<b>The personal accounts and when they receive e-mail are shown below:</b></p>\n";
+  print "<hr/>\n";
 
 ### Display of existing groups
 
-my @EmailUserIDs = sort EmailUserIDsByName &GetEmailUserIDs;
+  my @EmailUserIDs = sort EmailUserIDsByName GetEmailUserIDs();
 
-print "<table cellpadding=3>\n";
-foreach my $EmailUserID (@EmailUserIDs) {
-  &FetchEmailUser($EmailUserID);  
-  print "<tr valign=top>\n";
-  print "<td>\n";
+  print "<table class=\"DocumentList Alternating\">\n";
+  print "<tr><th>Name</th><th>Username</th><th>Verified?</th><th>Can Sign?</th><th>Groups</th></tr>\n";
+  #print "<th>Notifications</th>\n";
 
-  print "<table>\n";
-  print "<tr>\n";
-  print "<th>Username:</th><td>$EmailUser{$EmailUserID}{Username}<br>\n"; 
-  print "</td>\n";
-  print "</tr>\n";
-  print "<tr>\n";
-  print "<th>Name:</th><td>$EmailUser{$EmailUserID}{Name}<br>\n"; 
-  print "</td>\n";
-  print "</tr>\n";
-  print "<tr valign=top>\n";
-  print "<th>E-mail:</th><td>$EmailUser{$EmailUserID}{EmailAddress}<br>\n"; 
-  print "</td>\n";
-  print "</tr>\n";
-  print "<tr valign=top>\n";
-  print "<th>Verified:</th>";
-  print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{Verified}]."<br>\n"; 
-  print "</td>\n";
-  print "</tr>\n";
-  print "<tr valign=top>\n";
-  print "<th>HTML:</th>";
-  print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{PreferHTML}]."<br>\n"; 
-  print "</td>\n";
-  print "</tr>\n";
-  print "<tr valign=top>\n";
-  print "<th>Can Sign:</th>";
-  print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{CanSign}]."<br>\n"; 
-  print "</td>\n";
-  print "</tr>\n";
-  print "<tr valign=top>\n";
-  
-  # Groups user belongs (or wants to belong to)
-  
-  print "<th>Groups:</th>";
-  print "<td><ul>\n"; 
-  my @UserGroupIDs = &FetchUserGroupIDs($EmailUserID);
-  foreach my $UserGroupID (@UserGroupIDs) {
-    &FetchSecurityGroup($UserGroupID);
-    print "<li>$SecurityGroups{$UserGroupID}{NAME}</li>";
-  }   
-  print "</ul></td>\n";
-  print "</tr>\n";
-  print "</table>\n";
-  print "</td>\n";
+  my $Row = 0;
+  foreach my $EmailUserID (@EmailUserIDs) {
 
-  print "<td>\n";
-  &DisplayNotification($EmailUserID,"Immediate");
-  print "</td>\n";
-
-  print "<td>\n";
-  &DisplayNotification($EmailUserID,"Daily");
-  print "</td>\n";
-
-  print "<td>\n";
-  &DisplayNotification($EmailUserID,"Weekly");
-  print "</td>\n"; 
-
-  print "</tr>\n";
-  print "<tr><td colspan=5><hr width=\"95%\"></td></tr>\n";
-} 
-print "</table>\n";
-
-### List of groups with associated names
-
-my @SecurityGroups = sort keys %SecurityIDs;
-
-foreach my $SecurityGroup (@SecurityGroups) {
-  my @EmailUserIDs = sort EmailUserIDsByName &FetchEmailUSerIDsBySecurityGroup($SecurityIDs{$SecurityGroup});
-  if (@EmailUserIDs) {
-    print "<strong>$SecurityGroup has these members:</strong>\n<ul>\n";
-    foreach my $EmailUserID (@EmailUserIDs) {
-      if ($EmailUser{$EmailUserID}{Name}) { 
-        print "<li>$EmailUser{$EmailUserID}{Name} ($EmailUser{$EmailUserID}{Username}, $EmailUser{$EmailUserID}{EmailAddress})</li>\n";
-      }
+  # Get the list of groups
+    my @Groups = ();
+    my @UserGroupIDs = FetchUserGroupIDs($EmailUserID);
+    foreach my $UserGroupID (@UserGroupIDs) {
+      FetchSecurityGroup($UserGroupID);
+      push @Groups,"<a href=\"#$SecurityGroups{$UserGroupID}{NAME}\">$SecurityGroups{$UserGroupID}{NAME}</a>";
     }
-    print "</ul>\n";
-  }     
+    my $Groups = join "<br/>",sort @Groups;
+    unless ($Groups) {
+      $Groups = "None";
+    }
+
+  # Figure out if there are notifications
+  # FIXME: Can't actually use this until everything is unified. Just too much work right now.
+  # FIXME: Also add option to delete all notifications when this is unified
+    my $Count = FetchNotifications( {-emailuserid => $EmailUserID} );
+    my $Notifications = "No";
+    if ($Count) {
+      $Notifications = "Yes";
+    }
+
+    my $Verified = ("No","Yes")[$EmailUser{$EmailUserID}{Verified}];
+    my $CanSign  = ("No","Yes")[$EmailUser{$EmailUserID}{CanSign}];
+
+    ++$Row;
+    my $RowClass = ("Even","Odd")[$Row % 2];
+
+    my $Link = $EmailAdministerForm."?emailuserid=$EmailUserID";
+
+    print "<tr class=\"$RowClass\">\n";
+    print "<td><a href=\"$Link\">$EmailUser{$EmailUserID}{Name}</a>    </td>\n";
+    print "<td><a href=\"$Link\">$EmailUser{$EmailUserID}{Username}</a></td>\n";
+    print "<td>$Verified</td>\n";
+    print "<td>$CanSign</td>\n";
+    print "<td>$Groups</td>\n";
+  #  print "<td>$Notifications</td>\n";
+    print "</tr>\n";
+  }
+  print "</table>\n";
+
+  ### List of groups with associated names
+
+  my @SecurityGroups = sort keys %SecurityIDs;
+
+  foreach my $SecurityGroup (@SecurityGroups) {
+    my @EmailUserIDs = sort EmailUserIDsByName FetchEmailUserIDsBySecurityGroup($SecurityIDs{$SecurityGroup});
+    if (@EmailUserIDs) {
+      print "<p><a name=\"$SecurityGroup\" /><strong>$SecurityGroup has these members:</strong></p>\n<ul>\n";
+      foreach my $EmailUserID (@EmailUserIDs) {
+        if ($EmailUser{$EmailUserID}{Name}) {
+          print "<li>$EmailUser{$EmailUserID}{Name} ($EmailUser{$EmailUserID}{Username}, $EmailUser{$EmailUserID}{EmailAddress})</li>\n";
+        } else {
+          print "<li>Unknown (ID: $EmailUserID)</li>\n";
+        }
+      }
+      print "</ul>\n";
+    }
+  }
 }
 
-print "<p/><hr/><p/>\n";
-
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

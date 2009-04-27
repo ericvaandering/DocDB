@@ -1,3 +1,19 @@
+version 7.x to 8.0
+  This is a very easy migration:
+  
+  1) Run scripts/CheckModules to see if you need any more Perl modules. 
+     CGI::Untaint is the only thing added in this release.
+  
+  2) Optional: Make sure your topics subtopics are all unique and descriptive
+     enough that they can be distinguished from eachother without knowing what
+     the parent topic is. Optional because even if you have two topics named
+     "Software" DocDB knows the difference even if the users don't and you can
+     adjust later. Also, the long topic names are more visible, so you may 
+     want to recheck those.
+     
+  3) Back up your database. Then run MigrateV8 in --init, --migrate, and
+     --delete modes.
+     
 version 4.x to 5.0
   As before, please run MigrateV5 in both --init and --migrate modes. You will
   probably want to edit MigrateV5 before running in --migrate mode (see the

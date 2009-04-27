@@ -7,7 +7,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -22,7 +22,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub GetJournals { # Creates/fills a hash $Journals{$JournalID}{} 
   my ($JournalID,$Acronym,$Abbreviation,$Name,$Publisher,$URL,$TimeStamp);                
@@ -65,6 +65,10 @@ sub FetchReferencesByRevision ($) {
 };
 
 sub GetDocTypes { # Creates/fills a hash $DocumentTypes{$DocTypeID}{} 
+  if ($HaveAllDocTypes) {
+    return;
+  }  
+
   my ($DocTypeID,$ShortType,$LongType);
   my $DocTypeList  = $dbh -> prepare("select DocTypeID,ShortType,LongType from DocumentType");
   %DocumentTypes = ();
@@ -74,6 +78,8 @@ sub GetDocTypes { # Creates/fills a hash $DocumentTypes{$DocTypeID}{}
     $DocumentTypes{$DocTypeID}{SHORT}     = $ShortType;
     $DocumentTypes{$DocTypeID}{LONG}      = $LongType;
   }
+  $HaveAllDocTypes = 1;
+  return;
 };
 
 sub FetchDocType ($) { # Fetches an DocumentType by ID, adds to $DocumentTypes{$DocTypeID}{}
@@ -109,6 +115,26 @@ sub FetchDocTypeByName ($) {
   return $DocTypeID;
 }
 
+sub MatchDocType ($) { # Make FetchDocType a special case
+  my ($ArgRef) = @_;
+  my $Short = exists $ArgRef->{-short} ? $ArgRef->{-short} : "";
+#  my $Long = exists $ArgRef->{-long}  ? $ArgRef->{-long}  : "";
+  my $TypeID;
+  my @MatchIDs = ();
+  if ($Short) {
+    $Short =~ tr/[A-Z]/[a-z]/;
+    $Short = "%".$Short."%";
+    my $List = $dbh -> prepare(
+       "select DocTypeID from DocumentType where LOWER(ShortType) like ?"); 
+    $List -> execute($Short);
+    $List -> bind_columns(undef, \($TypeID));
+    while ($List -> fetch) {
+      push @MatchIDs,$TypeID;
+    }
+  }
+  return @MatchIDs;
+}
+
 sub FetchDocFiles ($) {
   # Creates two hashes:
   # $Files{DocRevID}           holds the list of file IDs for a given DocRevID
@@ -137,16 +163,7 @@ sub FetchDocFiles ($) {
   return @{$Files{$DocRevID}};
 }
 
-sub VersionNumbersByDocID {
-  my ($DocumentID) = @_;
-  my @DocRevList = &FetchRevisionsByDocument($DocumentID);
-  foreach my $DocRevID (@DocRevList) {
-    push @VersionList,$DocRevisions{$DocRevID}{VERSION};
-  }
-  return @VersionList;
-} 
-
-sub ExistsUpload($$) {
+sub ExistsUpload ($$) {
   require "FSUtilities.pm";
   
   my ($DocRevID,$short_file) = @_;
@@ -162,7 +179,7 @@ sub ExistsUpload($$) {
   return $status;
 }
 
-sub ExistsURL($$) {
+sub ExistsURL ($$) {
   my ($DocRevID,$url) = @_;
   
   my @url_parts = split /\//,$url;
@@ -172,7 +189,7 @@ sub ExistsURL($$) {
   return $status;
 }
 
-sub ExistsFile($$) {
+sub ExistsFile ($$) {
   my ($DocRevID,$File) = @_;
 
   $File =~ s/^\s+//;

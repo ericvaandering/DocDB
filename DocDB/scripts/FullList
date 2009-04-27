@@ -8,7 +8,26 @@
 #    Modified: 
 #
 
+
+# Copyright 2001-2006 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
 use DBI;
+use CGI;
 use Getopt::Long;
 
 require "CGIInclude.pm";
@@ -16,55 +35,42 @@ require "CGIInclude.pm";
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
 require "Security.pm";
+require "DocumentHTML.pm";
 
 require "AuthorSQL.pm";
 require "SecuritySQL.pm";
 require "DocumentSQL.pm";
 require "RevisionSQL.pm";
+require "TopicSQL.pm";
 
 require "HTMLUtilities.pm";
+require "DocumentUtilities.pm";
 require "Sorts.pm";
 
-&GetOptions("u:s" => \$UserName);
+GetOptions("u:s" => \$UserName);
 $remote_user = $UserName;
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&DocDBHeader("$Project Document List","Document List");
+DocDBHeader("$Project Document List","Document List");
 
-&GetAuthors;
-&GetSecurityGroups;
+GetAuthors();
+GetSecurityGroups();
+GetTopics();
 
 ### Get all revisions and documents
 
-&GetAllDocuments;  # For very 
-&GetAllRevisions;  # long lists
+GetAllDocuments();  # For very 
+GetAllRevisions();  # long lists
 
-### Sort
+my %FieldListOptions = (-default => "Default");
+my %FieldList = PrepareFieldList(%FieldListOptions);
+my $SortBy  = "date";
+my $Reverse = 1;
 
-my @SortedDocuments = reverse sort DocumentByRevisionDate @DocumentIDs;
+my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs, 
+                                      -sortby    => $SortBy,     -reverse => $Reverse);
+print "<b>Number of documents found: ",int($NumberOfDocuments),"</b><p/>\n";
 
-### Print summary information
-
-print "<center><table cellpadding=3>\n";
-
-&DocumentSummary(0);
-my $NumDoc = 0;
-
-foreach $DocumentID (@SortedDocuments) {
-  unless ($DocumentID) {next;}
-  $Version = &LastAccess($DocumentID);
-  if ($Version == -1) {next;}
-  &DocumentSummary($DocumentID,$Mode,$Version);
-  ++$NumDoc;
-}
-
-print "</table></center>\n";
-print "<p>\n";
-
-### Statistics
-
-print "<p><b>Number of documents found: $NumDoc</b><p>\n";
-
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

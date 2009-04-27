@@ -1,0 +1,68 @@
+$SourceURL      = "https://source.docdb.host/path/DocDB/";
+$SourceUser     = "username-for-source";
+$SourcePassword = "password-for-source";
+
+$DestURL      = "https://destination.docdb.host/path/DocDB/";
+$DestUser     = "username-for-destination";
+$DestPassword = "password-for-destination";
+
+@OrigDocIDs   = (1..100,105..200); # Migrate docs 1-100 and 105-200
+@SkipTopicIDs = (86,94); # Skip anything that has these TopicIDs
+
+%TopicMap = (           # Map old topic IDs (left) to new ones (right). Can map 1 into many
+      1  => [113],
+      40 => [119],
+      66 => [11 ],
+      60 => [129],
+      69 => [13 ], 
+      45 => [120], 
+      43 => [121], 
+      22 => [115,122], 
+      20 => [116], 
+      70 => [72,123,124], 
+   ); # Topic Map
+
+
+%AuthorMap = (   # Map of old author IDs to new. See CopyDocDB for using lookup (less reliable)                             
+  508 => 206,
+  498 => 207,
+  367 => 176,
+  487 => 203,
+  310 => 4  ,
+  509 => 210,
+  55 => 211 ,
+  233 => 205,
+  11 => 45  ,
+  86 => 43  ,
+  322 => 212,
+  51 => 213 ,
+  361 => 137,
+  2 => 220  ,
+  52 => 221 ,
+  49 => 222 ,
+  262 => 48 ,
+);
+
+
+%EventMap = ( # Map of event IDs (one-to-one, many-to-one,  or one-to-none)
+    12    =>    191,
+    16    =>    165,
+    17    =>    166,
+    18    =>    167,
+    19    =>    168,
+    20    =>    169,
+    21    =>    170,
+    22    =>    171,
+    23    =>    172,
+);
+
+# Map document type IDs
+
+%TypeMap = ( 6=>15, 13=>15, 4=>10, 11=>15, 2=>16, 3=>13, 7=>11, 9=>14, 5=>12); 
+
+# Security for new documents (view and modify group IDs)
+
+@ViewIDs   = (4);
+@ModifyIDs = (4);
+
+$DoUpload   = 0; # Test (0) first before do it (1)

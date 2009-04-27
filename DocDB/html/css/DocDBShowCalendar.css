@@ -1,0 +1,119 @@
+/* Parts of style taken from O'Reilly's CSS cookbook, example 6.6 */
+
+table.Calendar {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table.Calendar td.Sunday, table.Calendar td.Saturday{
+  background: #eee;
+}
+
+.DayNav {
+  text-align: center;
+  font-weight: bold;
+}
+
+.DayNav .CurrDate {
+  font-size: 150%;
+  margin-right: 3em;
+  margin-left: 3em;
+}  
+
+.AddEvent {
+  text-decoration: none;
+  display: block;
+  float: right;
+  width: 1em;
+  height: 1.25em;
+  text-align: center;
+  background-color: #999;
+  color: white;
+  font-weight: bold;
+  vertical-align: top;
+}
+
+/* For table showing a whole month in detail */
+
+table.ByMonth {
+  width: 95%;
+  border-collapse: collapse; 
+}
+
+table.ByMonth td {
+  width: 14%;
+  height: 7em; /* Works like min-height on mozilla, should use min-height? */
+  border: 1px solid black;
+  padding: 0px;
+}  
+
+table.ByMonth th {
+  border: 1px solid black;
+  padding: 3px;
+}  
+
+table.ByMonth .Date {
+  border-right: 1px solid black;
+  padding-right: 3px;
+  border-bottom: 1px solid black;
+  float: left;
+  width: 1.5em;
+  height: 1.25em;
+  text-align: right;
+  background-color: white;
+}
+
+table.ByMonth .Event {
+  clear: both;
+  padding-left: 0.3em;
+  padding-bottom: 0.3em;
+  padding-right: 0.2em;
+  display: block;
+}
+
+table.ByMonth td.Today {
+  border: 3px solid black;
+}  
+
+tr.MonthNav th {
+  border-left: 0px;
+  border-right: 0px;
+  border-top: 0px;
+  vertical-align: middle;
+}  
+
+/* For month tables in a year calendar */
+
+table.InYear {
+  border-collapse: collapse; 
+  margin: 5px;
+}
+
+table.InYear td, table.InYear th {
+  padding: 3px;
+}
+
+table.InYear td {
+  text-align: right;
+  border: 1px dotted;
+}
+
+table.InYear td.Today {
+  background: #f99;
+  border: 1px solid black;
+}  
+
+th.InYearDays {
+  border-bottom: 1px solid;
+}  
+
+/* For table showing a whole year (cells are InYear tables) */
+
+table.WholeYear {
+  border-collapse: collapse; 
+}  
+
+table.WholeYear td.Month {
+  border: 1px solid;
+}  
+

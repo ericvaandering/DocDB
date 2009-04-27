@@ -1,0 +1,70 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+#
+
+# Usage: CheckSubUsed
+
+# This program will find all subroutines in a .pm file and then search all files 
+# in the directory for calls to this. It then puts out a call count for each
+# subroutine. The count can be exagerated, but this does help find obsolete
+# routines which are no longer called and can be removed.
+
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+
+my @Unused = ();
+my @Subroutines = ();
+my %Count = ();
+opendir DIRECTORY,".";
+while (my $File = readdir DIRECTORY) {
+  unless (grep /\.pm/,$File) {next;}
+  open (FILE,$File);
+  my @File = <FILE>;
+  close FILE;
+  my @SubLines = grep /^sub /,@File;
+  foreach $Line (@SubLines) {
+    my ($Sub,$Name) = split /\s+/,$Line;
+    push @Subroutines,$Name;
+  }   
+}
+ 
+closedir DIRECTORY; 
+
+opendir DIRECTORY,".";
+while (my $File = readdir DIRECTORY) {
+  open (FILE,$File);
+  my @File = <FILE>;
+  close FILE;
+  foreach my $Sub (@Subroutines) {
+    my @Calls = grep /$Sub/,@File;
+    foreach my $Call (@Calls) {
+      if (grep /^\s*sub/,$Call) {next;}     # Skip definition
+      if (grep /^\s*\#/,$Call ) {next;}     # Skip clear comments
+#      unless (grep /$Sub\(/,$Call || grep /"&$Sub"/,$Call) {next;}  # require calling signature
+      ++$Count{$Sub};
+    }  
+  }
+}
+ 
+closedir DIRECTORY; 
+
+foreach my $Sub (sort @Subroutines) {
+  
+   printf "%3d %s\n", $Count{$Sub}, $Sub; 
+}

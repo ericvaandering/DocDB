@@ -4,11 +4,27 @@
 
 <center><h1>CPAN note</h1></center>
 <p>
-perl-MailTools and perl-Digest-SHA1 are both available from 
+All perl modules needed by DocDB can be downloaded from
 <a href=http://www.cpan.org/>CPAN</a>.  
-You will probably find source, but no rpm.
 <p>
-To install a CPAN perl module:
+In the "scripts" directory of the DocDB distribution is a program called
+CheckModules. This will determine if all the perl modules needed to run DocDB
+are present on your system and tell you which ones are still needed. You should
+run this script before attempting to install DocDB. You should also run this
+script when performing a major upgrade of the DocDB software. The upgrade
+instructions will tell you when to do this.</p>  
+
+<p>To install a CPAN perl module manually:</p> 
+<ul>
+<li> <b>setenv LANG en_US </b>
+       <em>(Some versions of perl on Redhat will fail if you don't do this)</em> 
+<li> <b>setenv LANGVAR en_US </b>
+       <em>(some reports say this is needed in some instances)</em> 
+<li> <b>perl -MCPAN -e shell <br>
+       cpan> install <em>module</em> </b>
+</ul>
+<p>
+If necessary, use the old method to download and build a CPAN module.
 <ul>
 <li> <b>setenv LANG en_US </b>
        <em>(the cpan install will probably fail if you don't do this)</em> 

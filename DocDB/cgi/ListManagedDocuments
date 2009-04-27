@@ -2,7 +2,7 @@
 #
 # Author Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -17,7 +17,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use Benchmark;
 use CGI;
@@ -33,6 +33,7 @@ require "ResponseElements.pm";
 require "DocumentHTML.pm";
 
 require "HTMLUtilities.pm";
+require "DocumentUtilities.pm";
 
 $query = new CGI; # Global for subroutines
 
@@ -40,14 +41,14 @@ $query = new CGI; # Global for subroutines
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&GetSecurityGroups;
+GetSecurityGroups();
 
 ### Start HTML
 
-print $query->header;
-&DocDBHeader("Managed Documents");
+print $query -> header( -charset => $HTTP_ENCODING );
+DocDBHeader("Managed Documents");
 
-&EndPage(@ErrorStack);
+EndPage(@ErrorStack);
 
 print "<center><h4>These are the managed documents in the $Project Document Database:</h4></center><p>\n";
 
@@ -65,13 +66,14 @@ while ($Select -> fetch) {
 
 ### Display list of docs
 
-my $NumDoc  = &DocumentTable(-fields => ["Docid","Title","CanSign","Updated"],
-                             -docids => \@DocumentIDs,
-                             -sortby => "date", -reverse => true);
+my %FieldList = PrepareFieldList(-fields => ["Docid","Title","CanSign","Updated"]);
+my $NumDoc    = DocumentTable(-fieldlist => \%FieldList,
+                            -docids      => \@DocumentIDs,
+                            -sortby      => "date", -reverse => true);
 ### Statistics
 
 print "<p><b>Number of documents found: $NumDoc</b><p>\n";
 
 $EndTime  = new Benchmark;
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

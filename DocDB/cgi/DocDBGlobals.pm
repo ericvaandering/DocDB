@@ -1,18 +1,18 @@
 #
 # Description: Configuration file for the DocDB. Sets default
 #              values and script names. Do not change this file,
-#              specific local settings are in ProjectGlobals.pm. 
+#              specific local settings are in ProjectGlobals.pm.
 #              Nearly any variable here can be changed there.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 #
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -22,16 +22,16 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 # Constants
 
-use constant TRUE  => 1;
-use constant FALSE => 0;
+$TRUE  = 1;
+$FALSE = 0;
 
 # Advertising link for DocDB
 
-$DocDBHome = "http://docdb.fnal.gov/doc/";
+$DocDBHome = "http://docdb-v.sourceforge.net/";
 
 # Optional components
 
@@ -69,6 +69,13 @@ $TmpDir = "/tmp/";
                "May",      "June",    "July",    "August",
                "September","October", "November","December");
 
+# Reports
+
+@WarnStack   = ();
+@ErrorStack  = ();
+@DebugStack  = ();
+@ActionStack = ();
+
 # Other Globals
 
 $RemoteUsername       = $ENV{REMOTE_USER};
@@ -77,11 +84,22 @@ $remote_user          =~ tr/[A-Z]/[a-z]/;
 
 # Preferences
 
-$Preferences{Security}{Certificates}{UseCNOnly} = FALSE; # Use CN instead of E (E-mail) to distinguish
-$Preferences{Options}{DynamicFullList}{Private} = FALSE; # Generate Full document list by dynamically for private db
-$Preferences{Options}{DynamicFullList}{Public}  = FALSE; # Generate Full document list by dynamically for public db
+$Preferences{Security}{Certificates}{PopupLimitCookie} = $FALSE; # Unused, encourage users to limit which groups they belong to with cookies
+$Preferences{Security}{Certificates}{FNALKCA} = $FALSE;      # TRUE or FALSE - show KCA certificate instructions
+$Preferences{Security}{Certificates}{DOEGrids} = $FALSE;     # TRUE or FALSE - show DOEgrid certificate instructions
+$Preferences{Security}{Certificates}{ShowCertInstructions} = $FALSE;  # TRUE or FALSE - show certificate instructions even on non-cert version
 
-$Preferences{Options}{AlwaysRetrieveFile}       = FALSE; # Always use RetrieveFile instead of File Links
+$Preferences{Options}{DynamicFullList}{Private} = $FALSE; # Generate Full document list by dynamically for private db
+$Preferences{Options}{DynamicFullList}{Public}  = $FALSE; # Generate Full document list by dynamically for public db
+
+$Preferences{Options}{AlwaysRetrieveFile}       = $FALSE; # Always use RetrieveFile instead of File Links
+
+$Preferences{Options}{SubmitAgree}              = ""; # "Put text here to make users agree to a privacy statement or some-such. <br/><b>I agree:</b>"
+
+$Preferences{Components}{iCal}  = $TRUE; # Display links to iCal calendars
+
+$Preferences{Topics}{MinLevel}{Document} = 1;
+$Preferences{Events}{MaxSessionList}     = 5;
 
 $htaccess             = ".htaccess";
 
@@ -95,46 +113,48 @@ $InitialSessions      = 5;     # Number of initial sessions when making meeting
 
 $FirstYear            = 2000;  # Earliest year that documents can be created
 
-$TopicMatchThreshold    = 25;  # Threshold for matching talks in meetings with topics
-$NoTopicMatchThreshold  = 6;   # Threshold for matching talks in meetings with topics
+$TalkMatchThreshold   = 100;   # Threshold for matching talks with agenda entries in agendas
 
-@MatchIgnoreWords       = ("from","with","then","than","that","what"); # Don't match on these
+@MatchIgnoreWords     = ("from","with","then","than","that","what"); # Don't match on these
+
+# These groups will be allowed to modify document meta-data and add files without
+# clearing the signature list. This variable will be replaced in DocDB 9.x with
+# a database field.
+
+@HackPreserveSignoffGroups = (); # = ('Writer','Admin')
 
 $RequiredMark = "&nbsp;*&nbsp;";
-  
+
+$HTTP_ENCODING        = 'ISO-8859-1'; # Character set for page encoding, may have to modify
+                                      # MySQL text fields accordingly
+
 # Which things are publicly viewable?
 
-$PublicAccess{MeetingList} = 0;  
-  
+$PublicAccess{MeetingList} = 0;
+
 # Options
 
 $CaseInsensitiveUsers = 0;
-$EnhancedSecurity     = 0;     # Separate lists for view, modify
+$EnhancedSecurity     = $TRUE; # Separate lists for view, modify
 $SuperiorsCanModify   = 1;     # In enhanced model, a superior group can modify
                                # a subordinate groups documents without explicit
                                # permission
 $UserValidation = "";          # || "basic-user" || "certificate"
                                # Do we do group authorization like V5 and before
 			       # or do we allow .htaccess/.htpasswd users to map to groups (basic)
-			       # or require SSL certificates of users which map to groups (certificate)			       
+			       # or require SSL certificates of users which map to groups (certificate)
 $ReadOnly       = 0;           # Can be used in conjunction with individual
                                # authorization methods to set up a group-like
                                # area with group passwords which can view
                                # but not change any info
-$ReadOnlyAdmin  = 0;           # Allows administration from the read-only 
+$ReadOnlyAdmin  = 0;           # Allows administration from the read-only
                                # area. Only suggested for boot-strapping until
-                               # you have an individual selected as admin                               
-			       
+                               # you have an individual selected as admin
+
 $UseSignoffs          = 0;     # Optional sign-off system for document approval
 $ContentSearch        = "";    # Scripts and engine installed for searching files
 
 $DefaultPublicAccess  = 0;     # New documents are public by default
-
-# Major topic names for "meetings" and "conferences". Each can be a list
-# The first item in the two lists are accessed by ListMeetings and ListConferences
-
-@MeetingMajorTopics    = ("Collaboration Meetings","Other Meetings");
-@ConferenceMajorTopics = ("Conferences");
 
 # Include project specific settings
 
@@ -156,49 +176,42 @@ $ShowDocument          = $cgi_root."ShowDocument";
 $RetrieveFile          = $cgi_root."RetrieveFile";
 $RetrieveArchive       = $cgi_root."RetrieveArchive";
 
+$XSearch               = $cgi_root."XSearch";
 $Search                = $cgi_root."Search";
 $SearchForm            = $cgi_root."SearchForm";
 
-$TopicAddForm          = $cgi_root."TopicAddForm";
-$TopicAdd              = $cgi_root."TopicAdd";
 $AuthorAddForm         = $cgi_root."AuthorAddForm";
 $AuthorAdd             = $cgi_root."AuthorAdd";
 
-$ListDocuments         = $cgi_root."ListDocuments";
-$ListByAuthor          = $cgi_root."ListByAuthor";
-$ListByTopic           = $cgi_root."ListByTopic";
-$ListByType            = $cgi_root."ListByType";
 $ListManagedDocuments  = $cgi_root."ListManagedDocuments";
-$LastModified          = $cgi_root."LastModified";
 
 $ListAuthors           = $cgi_root."ListAuthors";
+$ListEventsBy          = $cgi_root."ListEventsBy";
+$ListGroups            = $cgi_root."ListGroups";
+$ListKeywords          = $cgi_root."ListKeywords";
 $ListTopics            = $cgi_root."ListTopics";
 $ListTypes             = $cgi_root."ListTypes";
-$ListMeetings          = $cgi_root."ListMeetings";
-$ListKeywords          = $cgi_root."ListKeywords";
 $ListBy                = $cgi_root."ListBy";
 
 $AddFiles              = $cgi_root."AddFiles";
 $AddFilesForm          = $cgi_root."AddFilesForm";
 
-$ConferenceAddForm     = $cgi_root."ConferenceAddForm";
-$ConferenceAdd         = $cgi_root."ConferenceAdd";
-
 $DisplayMeeting        = $cgi_root."DisplayMeeting";
 $MeetingModify         = $cgi_root."MeetingModify";
 $SessionModify         = $cgi_root."SessionModify";
-$ListAllMeetings       = $cgi_root."ListAllMeetings"; # FIXME: Remove later
+$ListAllMeetings       = $cgi_root."ListAllMeetings";
 $ConfirmTalkHint       = $cgi_root."ConfirmTalkHint";
+$ShowCalendar          = $cgi_root."ShowCalendar";
 
 $SignoffChooser        = $cgi_root."SignoffChooser";
 $SignRevision          = $cgi_root."SignRevision";
 $SignatureReport       = $cgi_root."SignatureReport";
 
+$AdministerHome        = $cgi_root."AdministerHome";
 $AdministerForm        = $cgi_root."AdministerForm";
 $AuthorAdminister      = $cgi_root."AuthorAdminister";
 $InstitutionAdminister = $cgi_root."InstitutionAdminister";
 $TopicAdminister       = $cgi_root."TopicAdminister";
-$MajorTopicAdminister  = $cgi_root."MajorTopicAdminister";
 $DocTypeAdminister     = $cgi_root."DocTypeAdminister";
 $JournalAdminister     = $cgi_root."JournalAdminister";
 $ConferenceAdminister  = $cgi_root."ConferenceAdminister";
@@ -213,30 +226,51 @@ $GroupAdminister       = $cgi_root."GroupAdminister";
 $EmailAdministerForm   = $cgi_root."EmailAdministerForm";
 $EmailAdminister       = $cgi_root."EmailAdminister";
 
-$Statistics            = $cgi_root."Statistics";
+$EventAdministerForm         = $cgi_root."EventAdministerForm";
+$ExternalDocDBAdministerForm = $cgi_root."ExternalDocDBAdministerForm";
 
-$HelpFile              = $web_root."Static/Restricted/DocDB_Help.shtml";
+$Statistics            = $cgi_root."Statistics";
 
 $SelectPrefs           = $cgi_root."SelectPrefs";
 $SetPrefs              = $cgi_root."SetPrefs";
+$CustomListForm        = $cgi_root."CustomListForm";
+
+$SelectGroups          = $cgi_root."SelectGroups";
+$SetGroups             = $cgi_root."SetGroups";
 
 $EmailLogin            = $cgi_root."EmailLogin";
 $SelectEmailPrefs      = $cgi_root."SelectEmailPrefs";
 $WatchDocument         = $cgi_root."WatchDocument";
 
 $CertificateApplyForm  = $cgi_root."CertificateApplyForm";
+$BulkCertificateInsert = $cgi_root."BulkCertificateInsert";
 $UserAccessApply       = $cgi_root."UserAccessApply";
+$ListGroupUsers        = $cgi_root."ListGroupUsers";
 
 $DocDBHelp             = $cgi_root."DocDBHelp";
+$DocDBInstructions     = $cgi_root."DocDBInstructions";
 $ShowTalkNote          = $cgi_root."ShowTalkNote";
+$EditTalkInfo          = $cgi_root."EditTalkInfo";
+
+$XMLUpload             = $cgi_root."XMLUpload";
 
 unless ($CSSDirectory && $CSSURLPath) {
-  $CSSDirectory = $file_root."Static/css";
-  $CSSURLPath   = $web_root."Static/css";
-}  
+  $CSSDirectory = $file_root."/Static/css";
+  $CSSURLPath   = $web_root."/Static/css";
+}
+
+unless ($JSDirectory && $JSURLPath) {
+  $JSDirectory = $file_root."/Static/js";
+  $JSURLPath   = $web_root."/Static/js";
+}
+
+unless ($ImgDirectory && $ImgURLPath) {
+  $ImgDirectory = $file_root."/Static/img";
+  $ImgURLPath   = $web_root."/Static/img";
+}
 
 if (!$Tar && $GTar) {
   $Tar = $GTar;
-} 
+}
 
 1;

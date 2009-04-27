@@ -6,7 +6,7 @@
 #    Modified: 
 #
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -21,7 +21,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub ClearSessionTalks {
   %SessionTalks       = ();
@@ -151,6 +151,22 @@ sub FetchSessionOrdersBySessionID {
   return @SessionOrderIDs; 
 }
 
+sub FetchSessionOrderByID ($) {
+  my ($SessionOrderID) = @_;
+  my ($TalkSeparatorID,$SessionTalkID,$TalkOrder);
+  my $List   = $dbh -> prepare(
+    "select SessionOrderID,TalkSeparatorID,SessionTalkID,TalkOrder ".
+    "from SessionOrder where SessionOrderID=?");
+
+  $List -> execute($SessionOrderID);
+  ($SessionOrderID,$TalkSeparatorID,$SessionTalkID,$TalkOrder) = $List -> fetchrow_array;
+  $SessionOrders{$SessionOrderID}{TalkSeparatorID} = $TalkSeparatorID;
+  $SessionOrders{$SessionOrderID}{SessionTalkID}   = $SessionTalkID;
+  $SessionOrders{$SessionOrderID}{TalkOrder}       = $TalkOrder;
+
+  return $SessionOrderID;
+}
+
 sub DeleteSessionTalk ($) {
   my ($SessionTalkID) = @_;
 
@@ -174,5 +190,25 @@ sub DeleteTalkSeparator ($) {
   $SeparatorDelete -> execute($TalkSeparatorID);
   $OrderDelete     -> execute($TalkSeparatorID);
 }
+
+sub ConfirmTalk (%) {
+  require "RevisionSQL.pm";
+  my %Params = @_;
+  
+  my $DocumentID    = $Params{-docid}         || 0;
+  my $SessionTalkID = $Params{-sessiontalkid} || 0;
+  my $EventID       = $Params{-eventid}       || 0;
+  
+  &FetchRevisionsByDocument($DocumentID);
+  my $DocRevID = $DocRevIDs{$DocumentID}{$Documents{$DocumentID}{NVersions}};
+  
+  my $Check = $dbh -> prepare("select RevEventID from RevisionEvent where DocRevID=? and ConferenceID=?");
+  $Check -> execute($DocRevID,$EventID);
+  my ($RevisionEventID) = $Check -> fetchrow_array;
+  unless ($RevisionEventID) {
+    my $Insert = $dbh -> prepare("insert into RevisionEvent (RevEventID,DocRevID,ConferenceID) values (0,?,?)"); 
+    $Insert -> execute($DocRevID,$EventID);
+  }  
+} 
 
 1;

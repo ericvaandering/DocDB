@@ -1,18 +1,19 @@
 #! /usr/bin/env perl
+#        Name: $RCSfile$
+# Description: Displays the document to be deleted and requests the
+#              admin password. Calls DeleteDocument to delete the doc.
 #
-# Description: Displays the document to be deleted and requests the 
-#              admin password. Calls DeleteDocument to delete the doc. 
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
-#
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -22,7 +23,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
 use DBI;
@@ -55,22 +56,20 @@ $DocumentID =~ s/\s+$//;
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number to delete.";
-}  
+}
 unless (&CanAdminister) {
   push @ErrorStack,"You must be logged in as the adminstrator to delete
   documents";
-}  
-  
-if (@ErrorStack) {
-  &EndPage(@ErrorStack);
 }
+
+EndPage(-startpage => $TRUE);
 
 &GetSecurityGroups;
 &FetchDocument($DocumentID);
 
 $Version = $Documents{$DocumentID}{NVersions}; # Show latest version
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Confirm Deletion of Document $DocumentID");
 
 my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
@@ -79,17 +78,15 @@ unless ($DocRevID) {
   push @ErrorStack,"This document does not exist.";
 }
 
-if (@ErrorStack) {
-  &EndPage(@ErrorStack);
-}
+EndPage(@ErrorStack);
 
-print "<p><center><b>To delete this document, you must supply the adminstrator 
+print "<p><center><b>To delete this document, you must supply the adminstrator
           username and password:</b>";
 
 print $query -> startform('POST',$DeleteDocument);
 &AdministratorPassword;
 print $query -> hidden(-name => 'docid',    -default => $DocumentID);
-print "<b> </b>"; 
+print "<b> </b>";
 print $query -> submit (-value => "Delete Document");
 print $query -> endform;
 

@@ -1,0 +1,183 @@
+#! /usr/bin/env perl
+#
+# Description: The instructions for DocDB. This is mostly HTML, but making 
+#              it a script allows us to eliminate parts of it that we don't want
+#              and get it following everyone's style, and allows groups to add
+#              to it with ProjectMessages.
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: 
+
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License 
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+use CGI;                                                      
+use DBI;                                                      
+
+require "DocDBGlobals.pm";
+require "HTMLUtilities.pm";
+require "Messages.pm";
+require "SecuritySQL.pm";
+require "Security.pm";
+
+$query = new CGI;  # Global for subroutines
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+
+&GetSecurityGroups;
+
+%params = $query -> Vars; 
+$InstructionSet = $params{set} || "general";
+
+# Title
+
+my $PageTitle = "";
+my $HTMLTitle = "";
+if ($InstructionSet eq "general") {
+  $PageTitle = "DocDB Instructions";
+  $HTMLTitle = "$Project DocDB Instructions";
+} elsif ($InstructionSet eq "event") {
+  $PageTitle = "Event Manager";
+  $HTMLTitle = "Event Manager and Calendar Instructions";
+} elsif ($InstructionSet eq "cert") {
+  $PageTitle = "Getting a Certificate";
+  $HTMLTitle = "Getting a Certificate";
+} elsif ($InstructionSet eq "doe") {
+  $PageTitle = "Getting a DOEgrid Certificate";
+  $HTMLTitle = "Getting a DOEgrid Certificate";
+} elsif ($InstructionSet eq "kca") {
+  $PageTitle = "Getting a KCA (Kerberos) Certificate";
+  $HTMLTitle = "Getting a KCA (Kerberos) Certificate";
+} elsif ($InstructionSet eq "register") {
+  $PageTitle = "Register Your Certificate";
+  $HTMLTitle = "Register Your Certificate";
+} elsif ($InstructionSet eq "import") {
+  $PageTitle = "Importing and Exporting Your Certificate";
+  $HTMLTitle = "Importing and Exporting Your Certificate";
+} elsif ($InstructionSet eq "protect") {
+  $PageTitle = "Protect Your Certificate";
+  $HTMLTitle = "Protect Your Certificate";
+} elsif ($InstructionSet eq "misc") {
+  $PageTitle = "Miscellaneous Certificate Information";
+  $HTMLTitle = "Miscellaneous Certificate Information";
+} elsif ($InstructionSet eq "advanced") {
+  $PageTitle = "Advanced Users &amp; XML Interface";
+  $HTMLTitle = $PageTitle;
+} elsif ($InstructionSet eq "admin") {
+  $PageTitle = "Adminstration Instructions";
+  $HTMLTitle = $PageTitle;
+}
+print $query->header( -charset => $HTTP_ENCODING );
+&DocDBHeader($HTMLTitle,$PageTitle);
+
+print "<div id=\"DocDBHomeBody\">\n";
+
+### Header info
+
+print "<div id=\"Header3Col\">\n";
+print "</div>\n";  # Header3Col
+
+### Left Column
+
+print "<div id=\"LeftColumn3Col\">\n";
+if ($InstructionSet eq "general") {
+  require "GeneralInstructions.pm";
+  GeneralInstructionsSidebar();
+} elsif ($InstructionSet eq "event") {
+  require "EventInstructions.pm";
+  EventInstructionsSidebar();
+} elsif ($InstructionSet eq "cert" || $InstructionSet eq "doe" ||
+         $InstructionSet eq "kca" || $InstructionSet eq "register" ||
+	 $InstructionSet eq "import" || $InstructionSet eq "protect" ||
+	 $InstructionSet eq "misc" ) {
+  require "CertificateInstructions.pm";
+  CertificateInstructionsSidebar();
+} elsif ($InstructionSet eq "advanced") {
+  require "AdvancedInstructions.pm";
+  AdvancedInstructionsSidebar();
+} elsif ($InstructionSet eq "admin") {
+  require "AdministerIntructions.pm";
+  AdminInstructionsSidebar();
+}
+print "<hr/>\n";
+print "<h2>All Instructions</h2>\n";
+print "<p>\n";
+print "<b><a href=\"$DocDBInstructions?set=general\">General Instructions</a></b><br/>\n";
+unless ($Public) {
+  print "<b><a href=\"$DocDBInstructions?set=event\">Event Organizer and Calendar</a></b><br/>\n";
+  print "<b><a href=\"$DocDBInstructions?set=advanced\">Advanced Users &amp; XML</a></b><br/>\n";
+  if ($Preferences{Security}{Certificates}{ShowCertInstructions} || $UserValidation eq "certificate") {
+    print "<b><a href=\"$DocDBInstructions?set=cert\">Certificate Instructions</a></b><br/>\n";
+  }
+}
+
+if (CanAdminister()) {
+  print "<b><a href=\"$DocDBInstructions?set=admin\">Administrator Instructions</a></b><br/>\n";
+}
+print "</p>\n";
+print "</div>\n";  # LeftColumn3Col
+
+### Main Column
+
+print "<div id=\"MainColumn3Col\">\n";
+if ($InstructionSet eq "general") {
+  require "GeneralInstructions.pm";
+  GeneralInstructionsBody();
+} elsif ($InstructionSet eq "event") {
+  require "EventInstructions.pm";
+  EventInstructionsBody();
+} elsif ($InstructionSet eq "advanced") {
+  require "AdvancedInstructions.pm";
+  AdvancedInstructionsBody();
+} elsif ($InstructionSet eq "admin") {
+  require "AdministerIntructions.pm";
+  AdminInstructionsBody();
+} elsif ($InstructionSet eq "cert") {
+  require "CertificateInstructions.pm";
+  CertificateInstructionsBody();
+} elsif ($InstructionSet eq "doe") {
+  require "CertificateInstructions.pm";
+  DOECertificateInstructionsBody();
+} elsif ($InstructionSet eq "kca") {
+  require "CertificateInstructions.pm";
+  KCACertificateInstructionsBody();
+} elsif ($InstructionSet eq "register") {
+  require "CertificateInstructions.pm";
+  RegisterCertificateInstructionsBody();
+} elsif ($InstructionSet eq "import") {
+  require "CertificateInstructions.pm";
+  ImportCertificateInstructionsBody();
+} elsif ($InstructionSet eq "protect") {
+  require "CertificateInstructions.pm";
+  ProtectCertificateInstructionsBody();
+} elsif ($InstructionSet eq "misc") {
+  require "CertificateInstructions.pm";
+  MiscCertificateInstructionsBody();
+}
+
+### Right column (wrapped around by middle column)
+
+#print "<div id=\"RightColumn3Col\">\n";
+#print "</div>\n";  # RightColumn3Col
+
+print "</div>\n";  # MainColumn3Col
+
+print "<div id=\"Footer3Col\">\n"; # Must have to keep NavBar on true bottom
+print "</div>\n";  # Footer3Col
+print "</div>\n";  # DocDBHomeBody
+
+&DocDBNavBar;
+&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

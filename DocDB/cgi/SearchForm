@@ -1,15 +1,20 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+#        Name: $RCSfile$
+# Description: Build the input form for the "Advanced" (formerly normal) DocDB Search
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
 #
 
-
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -19,9 +24,9 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI;                                                                                      
+use CGI qw(-nosticky);
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -35,119 +40,142 @@ require "SecuritySQL.pm";
 require "MiscSQL.pm";
 require "ResponseElements.pm";
 require "HTMLUtilities.pm";
+require "MeetingHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-&GetAuthors;
-&GetTopics;
-&GetSecurityGroups;
-&GetJournals;
-&GetDocTypes;
+GetAuthors();
+GetTopics();
+GetSecurityGroups();
+GetJournals();
+GetDocTypes();
 
 %params = $query -> Vars;
 
-print $query->header;
-  
-&DocDBHeader("$Project Document Database Search","Document Database Search",1);
-&HelpPopupScript;
-&TopicSearchScript;
+print $query -> header( -charset => $HTTP_ENCODING );
 
-@ErrorStack = ();
+DocDBHeader("$Project Document Database Search","Document Database Search",
+            -search => $TRUE, -scripts => ["PopUps","EventChooser"]);
 
-if ((@ErrorStack)) {  # The user made one or more mistakes, warn and exit
-  &EndPage(@ErrorStack);
-}
+
+print "<h4>Click on any of the <span class=\"Help\">highlighted headings</span> for help.</h4>\n";
+print "<h4><a href=\"$XSearch\">Search</a> other DocDB installations</h4>\n";
+
+# Quick search table
+
+print $query -> start_multipart_form('POST',$Search,"name=\"simplesearch\"");
+print '<table id="QuickSearchForm" class="SearchFormTable LowPaddedTable CenteredTable"><tr><td>';
+print FormElementTitle(-helplink => "quicksearch", -nobreak => $TRUE,
+                       -helptext => "Search for", );
+print "</td><td>\n";
+print $query -> textfield(-size => 40, -name => "simpletext");
+print $query -> hidden(-name => "simple", -default => '1');
+print "</td><td>\n";
+print $query -> submit (-value => "Quick Search");
+print "</td></tr></table>\n";
+print $query -> end_multipart_form;
+
+print "<hr/>\n";
+
+# Advanced search table
 
 print $query -> start_multipart_form('POST',$Search,"name=\"queryform\"");
-
-
-print "<center><table cellpadding=10 width=80%>\n";
+print "<table class=\"SearchFormTable HighPaddedTable CenteredTable\">\n";
 print "<tr>\n";
- print "<td colspan=3>\n";
- print "<center><b>Click on any of the <font color=red>red headings</font> for help.</b></center>\n"; 
- print "</td>\n";
-print "</tr></table><p>\n";
-
-print "<center><table cellpadding=10 border=5><tr><td><table cellpadding=10>\n";
-print "<tr>\n";
- print "<td colspan=3 align=center>\n"; 
- print $query -> submit (-value => "Search for Documents");     
+ print "<td colspan=\"3\" class=\"SubmitCell\">\n";
+ print '<a name="Advanced" />';
+ print $query -> submit (-value => "Advanced Search");
  print "&nbsp;&nbsp;&nbsp;\n";
- print $query -> reset (-value => "Reset Search Form");     
+ print $query -> reset (-value => "Reset Search Form");
  print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
- print "<td colspan=3 align=center>\n";
- &LogicTypeButtons; 
+ print "<td colspan=\"3\" class=\"SubmitCell\">\n";
+ LogicTypeButtons();
  print "</td>\n";
 print "</tr>\n";
 print "<tr>\n";
- print "<td colspan=3 align=center>\n";
- &ModeSelect; 
-print "</tr>\n";
+ print "<td colspan=\"3\" class=\"SubmitCell\">\n";
+ ModeSelect();
+print "</td></tr>\n";
 
 print "<tr>\n";
- print "<td colspan=3>\n"; 
+ print "<td colspan=\"3\">\n";
 
-  print "<table cellpadding=2>\n";
-   &TitleSearchBox;    
-   &AbstractSearchBox;    
-   &KeywordsSearchBox;    
-   &RevisionNoteSearchBox;    
-   &PubInfoSearchBox;    
-   &FileNameSearchBox;    
-   &DescriptionSearchBox;
-   if ($ContentSearch) {    
-     &ContentSearchBox;
-   }      
+  print "<table class=\"LowPaddedTable LeftHeader\">\n";
+   TitleSearchBox();
+   AbstractSearchBox();
+   KeywordsSearchBox();
+   RevisionNoteSearchBox();
+   PubInfoSearchBox();
+   FileNameSearchBox();
+   DescriptionSearchBox();
+   if ($ContentSearch) {
+     ContentSearchBox();
+   }
   print "</table>\n";
 
  print "</td>\n";
-#&ReferenceForm;  
+#&ReferenceForm;
 print "</tr>\n";
 
 
- print "<tr valign=top>\n";
-  print "<td>\n"; &RequesterSearchBox; print "</td>\n"; # FIXME: Move to AuthorScroll
-  print "<td>\n"; 
-   &AuthorScroll(-helplink => "author",
-                 -multiple => "true");
-  print "</td>\n";
-  print "<td>\n"; &DocTypeMulti;       print "</td>\n";
- print "</tr>\n";
- 
  print "<tr>\n";
-  print "<td valign=top colspan=3>\n";
+
+ print "<td>\n"; # Requester
+ AuthorScroll(-helplink => "requestersearch", -helptext => "Last Updated By:",
+              -name     => "requestersearch", -multiple => $TRUE);
+ print "</td>\n";
+
+ print "<td>\n"; # Authors
+ AuthorScroll(-helplink => "author", -multiple => $TRUE);
+ print "</td>\n";
+
+ print "<td>\n";
+ AuthorTextEntry( {-helplink => "authortextsearch"} );
+ print "</td>\n";
+
+ print "</tr>\n";
+
+ print "<tr>\n";
+ print "<td>\n"; DocTypeMulti();       print "</td>\n";
+  print "<td colspan=\"2\">\n";
   print "<dl>\n";
-  print "<dt><b><a ";
-  &HelpLink("beforeafterdate");
-  print "Last Modified Between:</a></b><p>\n";
-  print "<dd>\n";
-  &DateRangePullDown;
-  print "</dl>\n";
+  print "<dt>";
+  print FormElementTitle(-helplink => "beforeafterdate", -helptext => "Last Modified Between");
+  print "</dt><dd>\n";
+  DateRangePullDown();
+  print "</dd></dl>\n";
   print "</td>\n";
  print "</tr>\n";
 
- print "<tr valign=bottom>\n";
-  &MajorMinorSelect;
+ print "<tr><td colspan=\"3\">\n";
+  TopicScroll({ -multiple => $TRUE, -helplink => "searchtopic", });
+ print "</br>\n";
+ print $query -> checkbox(-name  => "includesubtopics", -checked => 'checked',
+                          -label => "Include sub-topics");
+ print "</td></tr>\n";
+
+ print "<tr>\n";
+ print "<td>\n";
+  EventGroupSelect( {-multiple => $TRUE, -onchange => "selectEvent(this.form);"} );
+ print "</td>\n";
+ print "<td colspan=\"2\">\n";
+  EventSelect( {-multiple => $TRUE, -format => "full"} );
+ print "</td>\n";
  print "</tr>\n";
 
  print "<tr>\n";
-  print "<td colspan=3 align=center>\n"; 
-  print $query -> submit (-value => "Search for Documents");     
+  print "<td colspan=\"3\" class=\"SubmitCell\">\n";
+  print $query -> submit (-value => "Advanced Search");
   print "&nbsp;&nbsp;&nbsp;\n";
-  print $query -> reset (-value => "Reset Search Form");     
+  print $query -> reset (-value => "Reset Search Form");
   print "</td>\n";
  print "</tr>\n";
-
-print "</table></td></tr></table><p>\n";
-
-  
-
-print "</center><p>";
+print "</table>\n";
 print $query -> end_multipart_form;
 
-&DocDBNavBar();
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

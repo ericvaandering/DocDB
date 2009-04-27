@@ -1,16 +1,19 @@
 #
-# Description: Routines to determine various levels of access to documents 
+#        Name: $RCSfile$
+# Description: Routines to determine various levels of access to documents
 #              and the database based on usernames, doc numbers, etc.
 #
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -20,29 +23,28 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub CanAccess ($;$$) { # Can the user access (with current security) this version
   my ($DocumentID,$Version,$EmailUserID) = @_;
 
   require "RevisionSQL.pm";
   require "SecuritySQL.pm";
-  
-## FIXME: Use SecurityLookup  
-## FIXME: Allow -docrevid, or -docid and -version, same for other routines
-  
-  &GetSecurityGroups;
 
-  my $DocRevID = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-  
+## FIXME: Allow -docrevid, or -docid and -version, same for other routines
+
+  GetSecurityGroups();
+
+  my $DocRevID = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+
   unless ($DocRevID) { # Document doesn't exist
     return 0;
   }
   if ($Documents{$DocumentID}{NVersions} eq "") { # Bad documents (no revisions)
     return 0;
-  } 
-  
-  my @GroupIDs = &GetRevisionSecurityGroups($DocRevID);
+  }
+
+  my @GroupIDs = GetRevisionSecurityGroups($DocRevID);
   unless (@GroupIDs) {return 1;}             # Public documents
 
 # See what group(s) current (or assumed) user belongs to
@@ -50,156 +52,201 @@ sub CanAccess ($;$$) { # Can the user access (with current security) this versio
   my @UsersGroupIDs = ();
 
   if ($EmailUserID) {
-    @UsersGroupIDs = &FetchUserGroupIDs($EmailUserID);
+    @UsersGroupIDs = FetchUserGroupIDs($EmailUserID);
   } else {
-    @UsersGroupIDs = &FindUsersGroups();
-  }  
-    
+    @UsersGroupIDs = FindUsersGroups();
+  }
+
 # See if current user is in the list of groups who can access this document
 
   my $access = 0;
   foreach my $UserGroupID (@UsersGroupIDs) {
-    foreach my $GroupID (@GroupIDs) { 
+    unless ($SecurityGroups{$UserGroupID}{CanView}) {
+      next;
+    }
+
+    foreach my $GroupID (@GroupIDs) {
       if ($UserGroupID == $GroupID) {
         $access = 1;                           # User checks out
         last;
-      }  
+      }
     }
   }
   if ($access) {return $access;}
 
 # See if current users child groups can access this document
 
-  &GetSecurityGroups(); # Pull out the big guns
   my @HierarchyIDs = keys %GroupsHierarchy;
   foreach my $UserGroupID (@UsersGroupIDs) { # Groups user belongs to
+    unless ($SecurityGroups{$UserGroupID}{CanView}) {
+      next;
+    }
     foreach my $ID (@HierarchyIDs) {         # All Hierarchy entries
-      my $ParentID = $GroupsHierarchy{$ID}{Parent}; 
-      my $ChildID  = $GroupsHierarchy{$ID}{Child}; 
-      if ($ParentID == $UserGroupID) {    # We've found a "child" of one of our groups.   
+      my $ParentID = $GroupsHierarchy{$ID}{Parent};
+      my $ChildID  = $GroupsHierarchy{$ID}{Child};
+      unless ($SecurityGroups{$ChildID}{CanView}) {
+        next;
+      }
+      if ($ParentID == $UserGroupID) {    # We've found a valid "child" of one of our groups.
         foreach my $GroupID (@GroupIDs) { # See if the child can access the document
           if ($GroupID == $ChildID) {
             $access = 1;
-            last;                           
-          }   
+            last;
+          }
         }
-      }  
+      }
     }
   }
-  return $access;       
+  return $access;
 }
 
 sub CanModify { # Can the user modify (with current security) this document
   require "DocumentSQL.pm";
+  require "RevisionSQL.pm";
   require "SecuritySQL.pm";
 
-## FIXME: Use SecurityLookup  
-
-  &GetSecurityGroups;
+  GetSecurityGroups();
   my ($DocumentID,$Version) = @_;
 
   my $CanModify;
-  if     ($Public)      {return 0;} # Public version of code, can't modify 
-  unless (&CanCreate()) {return 0;} # User can't create documents, so can't modify
-  
-  &FetchDocument($DocumentID);
-  unless (defined $Version) { # Last version is default  
+  if     ($Public)     {return 0;} # Public version of code, can't modify
+  unless (CanCreate()) {return 0;} # User can't create documents, so can't modify
+
+  FetchDocument($DocumentID);
+  unless (defined $Version) { # Last version is default
     $Version = $Documents{$DocumentID}{NVersions};
-  }   
-  
+  }
+
 # See what group(s) current user belongs to
 
-  my @UsersGroupIDs = &FindUsersGroups();
-    
+  my @UsersGroupIDs = FindUsersGroups();
+
   my @ModifyGroupIDs = ();
   if ($EnhancedSecurity) {
-    my $DocRevID    = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
-    @ModifyGroupIDs = &GetRevisionModifyGroups($DocRevID);
-  } 
-  
-  # In the enhanced security model, if no one is explictly listed as being 
+    my $DocRevID    = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+    @ModifyGroupIDs = GetRevisionModifyGroups($DocRevID);
+  }
+
+  # In the enhanced security model, if no one is explictly listed as being
   # able to modify the document, then anyone who can view it is allowed to.
   # This maintains backwards compatibility with DB entries from before.
-  
+
   if (@ModifyGroupIDs && $EnhancedSecurity) {
     foreach my $UsersGroupID (@UsersGroupIDs) {
       foreach my $GroupID (@ModifyGroupIDs) { # Check auth. users vs. logged in user
-        if ($UsersGroupID == $GroupID) {
+        if ($UsersGroupID == $GroupID && $SecurityGroups{$GroupID}{CanCreate}) {
           $CanModify = 1;                           # User checks out
           last;
-        }  
-      }  
+        }
+      }
     }
-    
+
     if (!$CanModify && $SuperiorsCanModify) {    # We don't have a winner yet, but keep checking
-      &GetSecurityGroups(); # Pull out the big guns
       my @HierarchyIDs = keys %GroupsHierarchy;  # See if current users children can modify this document
       foreach my $UserGroupID (@UsersGroupIDs) { # Groups user belongs to
         foreach my $ID (@HierarchyIDs) {         # All Hierarchy entries
-          my $ParentID = $GroupsHierarchy{$ID}{Parent}; 
-          my $ChildID  = $GroupsHierarchy{$ID}{Child}; 
-          if ($ParentID == $UserGroupID) {          # We've found a "child" of one of our groups.   
+          my $ParentID = $GroupsHierarchy{$ID}{Parent};
+          my $ChildID  = $GroupsHierarchy{$ID}{Child};
+          if ($ParentID == $UserGroupID) {          # We've found a "child" of one of our groups.
             foreach my $GroupID (@ModifyGroupIDs) { # See if the child can access the document
               if ($GroupID == $ChildID) {
-                $CanModify = 1;        
-                last;                   
-              }  
+                $CanModify = 1;
+                last;
+              }
             }
           }
-        }    
+        }
       }
     }
-  } else { # No entries in the modify table or we're not using seperate view/modify lists 
-    $CanModify = &CanAccess($DocumentID,$Version); 
-  } 
+  } else { # No entries in the modify table or we're not using seperate view/modify lists
+    $CanModify = CanAccess($DocumentID,$Version);
+  }
   return $CanModify;
 }
 
-sub CanCreate { # Can the user create documents 
+sub CanCreate { # Can the user create documents
   require "SecuritySQL.pm";
 
   my $Create = 0;
-  
+
   if ($Public || $ReadOnly) {
     return $Create;
   }
 
 # See what group(s) current user belongs to
 
-  my @UsersGroupIDs = &FindUsersGroups();
+  my @UsersGroupIDs = FindUsersGroups();
+  push @DebugStack,"User belongs to groups ".join ', ',@UsersGroupIDs;
 
   my @GroupIDs = keys %SecurityGroups; # FIXME use a hash for direct lookup
   foreach my $UserGroupID (@UsersGroupIDs) {
-    &FetchSecurityGroup($UserGroupID);
-    if ($SecurityGroups{$UserGroupID}{CanCreate}) {
+    FetchSecurityGroup($UserGroupID);
+    if ($SecurityGroups{$UserGroupID}{CanCreate} && $SecurityGroups{$UserGroupID}{CanView}) {
       $Create = 1;                           # User checks out
-    }  
+    }
   }
+  push @DebugStack,"User can create: $Create";
   return $Create;
+}
+
+sub GroupCan { # Could be used in above, but we need to know without $Public and
+               # such if the specified user is allowed to create or view documents
+  my ($ArgRef) = @_;
+  my $GroupID = exists $ArgRef->{-groupid} ? $ArgRef->{-groupid} : 0;
+  my $Action  = exists $ArgRef->{-action}  ? $ArgRef->{-action}  : "view";
+
+  if ($Action eq "view") {
+    return $SecurityGroups{$GroupID}{CanView};
+  } elsif ($Action eq "create") {
+    return $SecurityGroups{$GroupID}{CanCreate};
+  }
+
+  return $FALSE;
 }
 
 sub CanAdminister { # Can the user administer the database
   require "SecuritySQL.pm";
-  
+
 # See what group(s) current user belongs to
 
   my @UsersGroupIDs = &FindUsersGroups();
 
   my $Administer = 0;
-  
+
   if ($Public || ($ReadOnly && !$ReadOnlyAdmin)) {
     return $Administer;
   }
-  
-  
+
+
   my @GroupIDs = keys %SecurityGroups; # FIXME use a hash for direct lookup
   foreach my $UserGroupID (@UsersGroupIDs) {
     &FetchSecurityGroup($UserGroupID);
     if ($SecurityGroups{$UserGroupID}{CanAdminister}) {
       $Administer = 1;                           # User checks out
-    }  
+    }
   }
   return $Administer;
+}
+
+sub CanPreserveSigs { # Can the user preserve signatures during document modifications?
+  # FIXME: Currently a hack, will change in version 9
+  require "SecuritySQL.pm";
+
+  my $CanPreserveSigs = $FALSE;
+  if ($Public || $ReadOnly) {
+    return $CanPreserveSigs;
+  }
+  my @UsersGroupIDs = FindUsersGroups();
+
+  foreach my $UserGroupID (@UsersGroupIDs) {
+    FetchSecurityGroup($UserGroupID);
+    foreach my $PreserveName (@HackPreserveSignoffGroups) {
+      if ($PreserveName eq $SecurityGroups{$UserGroupID}{NAME}) {
+        $CanPreserveSigs = 1; # User checks out
+      }
+    }
+  }
+  return $CanPreserveSigs;
 }
 
 sub LastAccess { # Highest version user can access (with current security)
@@ -212,19 +259,40 @@ sub LastAccess { # Highest version user can access (with current security)
     if (&CanAccess($DocumentID,$tryver)) {$Version = $tryver;}
     --$tryver;
   }
-  return $Version;    
+  return $Version;
 }
 
-sub FindUsersGroups () {
+sub FindUsersGroups (;%) {
+  require "Utilities.pm";
+  require "Cookies.pm";
+
+  my (%Params) = @_;
+  my $IgnoreCookie = $Params{-ignorecookie} || $FALSE;
+
   my @UsersGroupIDs  = ();
   if ($UserValidation eq "certificate") {
     require "CertificateUtilities.pm";
     @UsersGroupIDs = &FetchSecurityGroupsByCert();
   } elsif ($UserValidation eq "basic-user") {
-# Coming (maybe)
+    # Coming (maybe)
   } else {
     @UsersGroupIDs = (&FetchSecurityGroupByName ($remote_user));
   }
+
+  push @DebugStack,"Before limiting, user belongs to groups ".join ', ',@UsersGroupIDs;
+
+  unless (@UsersGroupIDs) {
+    $Public = 1;
+  }
+
+  @UsersGroupIDs = &Unique(@UsersGroupIDs);
+  unless ($IgnoreCookie) {
+    my @LimitedGroupIDs = &GetGroupsCookie();
+    if (@LimitedGroupIDs) {
+      @UsersGroupIDs = &Union(\@LimitedGroupIDs,@UsersGroupIDs);
+    }
+  }
+
   return @UsersGroupIDs;
 }
 

@@ -1,0 +1,9 @@
+#CertApplyTable {
+  margin-right: auto;
+  margin-left: auto;
+}  
+
+#CertApplyTable td {
+  padding: 5px;
+  vertical-align: top;
+}

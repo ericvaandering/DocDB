@@ -13,7 +13,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2005 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -28,7 +28,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub ProjectHeader { 
   my ($Title,$PageTitle) = @_;
@@ -114,6 +114,9 @@ sub DocDBNavBar {
     print "[&nbsp;<a href=\"$ExtraURL\">$ExtraDesc</a>&nbsp;]&nbsp;\n";
   } 
   print "[&nbsp;<a href=\"$MainPage\">DocDB&nbsp;Home</a>&nbsp;]&nbsp;\n";
+  if (&CanAdminister()) {
+    print "[&nbsp;<a href=\"$AdministerHome\">Administer</a>&nbsp;]&nbsp;\n";
+  }
   if (&CanCreate()) {
     print "[&nbsp;<a href=\"$DocumentAddForm?mode=add\">New</a>&nbsp;]&nbsp;\n";
   }
@@ -124,7 +127,6 @@ sub DocDBNavBar {
   print "[&nbsp;<a href=\"$ListAllMeetings\">List&nbsp;Events</a>&nbsp;]\n";
   unless ($Public) {
     print "[&nbsp;<a href=\"$DocDBInstructions\">Help</a>&nbsp;]\n";
-#    print "[&nbsp;<a href=\"logout/LogOut\">Log Out</a>&nbsp;]\n";
   } 
   print "</div>\n";
 }

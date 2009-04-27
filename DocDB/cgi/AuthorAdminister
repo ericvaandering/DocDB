@@ -2,18 +2,19 @@
 #
 # Description: This script is called by AdministerForm and does administration
 #              on Authors in the DB. AddAuthor is simpler and can only add
-#              authors (perhaps suitable for everyone). 
+#              authors (perhaps suitable for everyone).
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
-#
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -23,7 +24,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 
 use CGI;
@@ -43,102 +44,107 @@ $query = new CGI;  # Global for subroutines
 @ErrorStack = ();
 @WarnStack  = ();
 
-# Parameters to script 
+# Parameters to script
 
-$Password      = $params{password};
-my $Username      = $params{admuser};
-$Action        = $params{admaction};
+$Password    = $params{password};
+my $Username = $params{admuser};
+$Action      = $params{admaction};
 
-@AuthorIDs     = split ("\0",$params{authors});
-$FirstName     = $params{first};
-$Middle        = $params{middle};
-$LastName      = $params{lastname};
-$InstitutionID = $params{inst};
-
-my $AuthorID;
+my $AuthorID      = $params{authors};
+my $ConsolidateID = $params{targetauthor};
+$FirstName        = $params{first};
+$Middle           = $params{middle};
+$LastName         = $params{lastname};
+$InstitutionID    = $params{inst};
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
 unless ($dbh) {
   push @ErrorStack,$Msg_AdminNoConnect;
-}         
+}
 
-print $query->header;
+print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Modified List of Authors");
 
 &EndPage(@ErrorStack);
 
 unless (&CanAdminister) {
   push @ErrorStack,$Msg_AdminNoLogin;
-}  
+}
 &EndPage(@ErrorStack);
 
 if      ($Action eq "Delete") {
-  foreach my $AuthorID (@AuthorIDs) {
-    my $AuthorLink   = &AuthorLink($AuthorID);
-    my @AuthorDocIDs = &GetAuthorDocuments($AuthorID);
-    
-    # Delete AuthorID from Author, RevisionAuthor tables
-    
-    my $AuthorDelete   = $dbh -> prepare("delete from Author         where AuthorID=?");
-    my $RevisionDelete = $dbh -> prepare("delete from RevisionAuthor where AuthorID=?");
-    $AuthorDelete   -> execute($AuthorID);
-    $RevisionDelete -> execute($AuthorID);
-   
-    print "$AuthorLink has been removed from the database.<br>\n";
-    if (@AuthorDocIDs) {
-      push @WarnStack,"$AuthorLink was an author on documents. These
-                       entries have been removed.";
-    }  
-  }  
+  my $AuthorLink   = &AuthorLink($AuthorID);
+  my @AuthorDocIDs = &GetAuthorDocuments($AuthorID);
+
+  # Delete AuthorID from Author, RevisionAuthor tables
+
+  my $AuthorDelete    = $dbh -> prepare("delete from Author         where AuthorID=?");
+  my $RevisionDelete  = $dbh -> prepare("delete from RevisionAuthor where AuthorID=?");
+  my $HintDelete      = $dbh -> prepare("delete from AuthorHint     where AuthorID=?");
+  my $ModeratorDelete = $dbh -> prepare("delete from Moderator      where AuthorID=?");
+
+  if ($ConsolidateID) {
+    my $RevisionUpdate  = $dbh -> prepare("update RevisionAuthor set AuthorID=? where AuthorID=?");
+    my $HintUpdate      = $dbh -> prepare("update AuthorHint     set AuthorID=? where AuthorID=?");
+    my $ModeratorUpdate = $dbh -> prepare("update Moderator      set AuthorID=? where AuthorID=?");
+    $RevisionUpdate  -> execute($ConsolidateID,$AuthorID);
+    $HintUpdate      -> execute($ConsolidateID,$AuthorID);
+    $ModeratorUpdate -> execute($ConsolidateID,$AuthorID);
+  }
+
+  $RevisionDelete  -> execute($AuthorID);
+  $HintDelete      -> execute($AuthorID);
+  $ModeratorDelete -> execute($AuthorID);
+  $AuthorDelete    -> execute($AuthorID);
+
+  print "$AuthorLink has been removed from the database.<br>\n";
+  if (@AuthorDocIDs && !$ConsolidateID) {
+    push @WarnStack,"$AuthorLink was an author on documents. These
+                     entries have been removed.";
+  }
 } elsif ($Action eq "Modify") {
-  if (scalar(@AuthorIDs) != 1) {
-    push @ErrorStack,"You can only modify one author at a time.";
-  } else {
-    ($AuthorID) = @AuthorIDs;
+  if ($FirstName && $LastName) { # Deal with name changes (first & last will update initials)
+    print "<b>Updating full name.</b><br>\n";
+    my $AuthorUpdate = $dbh->prepare(
+       "update Author set FirstName=?,MiddleInitials=?, LastName=? ".
+       "where AuthorID=?");
+    $AuthorUpdate -> execute($FirstName,$Middle,$LastName,$AuthorID);
+  } elsif ($FirstName) {
+    print "<b>Updating first name.</b><br>\n";
+    my $AuthorUpdate = $dbh->prepare(
+       "update Author set FirstName=? where AuthorID=?");
+    $AuthorUpdate -> execute($FirstName,$AuthorID);
+  } elsif ($LastName) {
+    print "<b>Updating last name.</b><br>\n";
+    my $AuthorUpdate = $dbh->prepare(
+       "update Author set LastName=? where AuthorID=?");
+    $AuthorUpdate -> execute($LastName,$AuthorID);
+  } elsif ($Middle) {
+    print "<b>Updating middle initials.</b><br>\n";
+    my $AuthorUpdate = $dbh->prepare(
+       "update Author set MiddleInitials=? where AuthorID=?");
+    $AuthorUpdate -> execute($Middle,$AuthorID);
+  }
 
-    if ($FirstName && $LastName) { # Deal with name changes (first & last will update initials)     
-      print "<b>Updating full name.</b><br>\n";
-      my $AuthorUpdate = $dbh->prepare(
-         "update Author set FirstName=?,MiddleInitials=?, LastName=? ".
-         "where AuthorID=?");
-      $AuthorUpdate -> execute($FirstName,$Middle,$LastName,$AuthorID);
-    } elsif ($FirstName) {         
-      print "<b>Updating first name.</b><br>\n";
-      my $AuthorUpdate = $dbh->prepare(
-         "update Author set FirstName=? where AuthorID=?");
-      $AuthorUpdate -> execute($FirstName,$AuthorID);
-    } elsif ($LastName) {         
-      print "<b>Updating last name.</b><br>\n";
-      my $AuthorUpdate = $dbh->prepare(
-         "update Author set LastName=? where AuthorID=?");
-      $AuthorUpdate -> execute($LastName,$AuthorID);
-    } elsif ($Middle) {         
-      print "<b>Updating middle initials.</b><br>\n";
-      my $AuthorUpdate = $dbh->prepare(
-         "update Author set MiddleInitials=? where AuthorID=?");
-      $AuthorUpdate -> execute($Middle,$AuthorID);
-    } 
-
-    if ($InstitutionID) { # Deal with institution changes
-      print "<b>Updating institution.</b><br>\n";
-      my $AuthorUpdate = $dbh->prepare(
-         "update Author set InstitutionID=? where AuthorID=?");
-      $AuthorUpdate -> execute($InstitutionID,$AuthorID);
-    }
+  if ($InstitutionID) { # Deal with institution changes
+    print "<b>Updating institution.</b><br>\n";
+    my $AuthorUpdate = $dbh->prepare(
+       "update Author set InstitutionID=? where AuthorID=?");
+    $AuthorUpdate -> execute($InstitutionID,$AuthorID);
   }
 } elsif ($Action eq "New") {
   print "<b>Adding a new author.</b><br>\n";
   my $AuthorInsert = $dbh->prepare(
      "insert into Author ".
-            "(AuthorID, FirstName, MiddleInitials, LastName, InstitutionID,Active) ". 
+            "(AuthorID, FirstName, MiddleInitials, LastName, InstitutionID,Active) ".
      "values (0,        ?,         ?,              ?,        ?,            1)");
 
   $AuthorInsert -> execute($FirstName,$Middle,$LastName,$InstitutionID);
   $AuthorID = $AuthorInsert -> {mysql_insertid}; # Works with MySQL only
 } else {
   push @ErrorStack,"No valid action was specified.";
-}  
+}
 
 # For modify or new fetch author information and display.
 
@@ -146,7 +152,7 @@ if ($Action eq "Modify" || $Action eq "New") {
   print "<p><b>Here are the results of your modification:<br>\n";
   &PrintAuthorInfo($AuthorID);
   print "</b><p>\n";
-}  
+}
 
 print "<p>\n";
 
@@ -155,5 +161,5 @@ print "<p>\n";
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
- 
+
 exit;

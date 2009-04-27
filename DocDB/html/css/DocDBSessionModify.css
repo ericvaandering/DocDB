@@ -1,0 +1,11 @@
+#TalkEntryTable  {
+  white-space: nowrap;
+  border: 1px black solid;
+}  
+
+#TalkEntryTable tbody {
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  padding-bottom: 5px;
+  padding-top: 5px;
+}

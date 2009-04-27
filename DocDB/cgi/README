@@ -13,6 +13,32 @@ For subroutines/functions with more than a couple of input parameters (or which
 might grow beyond a couple) passing values via a hash is preferred. The function
 looks like
 
+sub MyRoutine ($) {
+  
+  my ($ArgRef) = @_;
+  
+  my $All      = exists $ArgRef->{-showall}  ?   $ArgRef->{-showall}  : 0;
+  my $Multiple = exists $ArgRef->{-multiple} ?   $ArgRef->{-multiple} : 0;
+  my $HelpLink = exists $ArgRef->{-helplink} ?   $ArgRef->{-helplink} : "";
+  my $HelpText = exists $ArgRef->{-helptext} ?   $ArgRef->{-helptext} : "Authors";
+  my $Required = exists $ArgRef->{-required} ?   $ArgRef->{-required} : 0;
+  my $Name     = exists $ArgRef->{-name}     ?   $ArgRef->{-name}     : "authors";
+  my $Size     = exists $ArgRef->{-size}     ?   $ArgRef->{-size}     : 10;
+  my @Defaults = exists $ArgRef->{-default}  ? @{$ArgRef->{-default}} : ();
+
+}
+
+and a call (note no & before subroutine name) looks like
+
+MyRoutine( {-required => $RequiredEntries{Requester},
+            -helplink => "requester",
+            -helptext => "Requester",
+            -name     => "requester",
+            -default  => \@RequesterDefaults} );
+
+Some older routines use the slightly different format below. New routines should
+be in the above format.
+
 sub MyRoutine (%) {
   
   my (%Params) = @_;
@@ -28,14 +54,22 @@ sub MyRoutine (%) {
 
 } 
 
-and a call looks like
+and a call (note no & before subroutine name) looks like
 
-&MyRoutine(-required => $RequiredEntries{Requester},
-           -helplink => "requester",
-           -helptext => "Requester",
-           -name     => "requester",
-           -default  => \@RequesterDefaults);
+MyRoutine(-required => $RequiredEntries{Requester},
+          -helplink => "requester",
+          -helptext => "Requester",
+          -name     => "requester",
+          -default  => \@RequesterDefaults);
+
+Extra or Boolean options are done like this:
                
+my %Options = ();
+
+if ($Disabled) {
+  $Options{-disabled} = "disabled"; # Can't be empty in XHTML
+}  
+
 A lot of the routines already done this way are the various routines that create
 form controls. The standardized parameters for these are
 

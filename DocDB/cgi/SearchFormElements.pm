@@ -1,9 +1,55 @@
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+#        Name: $RCSfile$
+# Description: Snippets of HTML producing various things for SearchForm.
+#              Some of these can probably be moved to more generic functions.
+#              Functions in this file:
+#
+#        TitleSearchBox
+#          A box to type words/strings and a mode selecter for text searches
+#          on DocumentTitle
+#
+#        AbstractSearchBox
+#          A box to type words/strings and a mode selecter for text searches
+#          on Abstract
+#
+#        KeywordSearchBox
+#          A box to type words/strings and a mode selecter for text searches
+#          on Keywords
+#
+#        RevisionNoteSearchBox
+#          A box to type words/strings and a mode selecter for text searches
+#          on Keywords
+#
+#        PubInfoSearchBox
+#          A box to type words/strings and a mode selecter for text searches
+#          on PublicationInfo
+#
+#        DocTypeMulti
+#          A select box for searches on document type. Unlike entry buttons,
+#          this has to be multi-selectable for ANDS/ORS
+#
+#        DateRangePullDown
+#          Two sets of pulldowns for defining a date range. Blanks are default
+#          for tagging no search on date.
+#
+#        LogicTypeButtons
+#          Two buttons allow the user to control whether the inner logic (multiple
+#          members of field) and the outer logic (between fields) are done with ANDs
+#          or ORs.
+#
+#        ModeSelect
+#          A pulldown to select the display mode for searches
+
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -13,220 +59,149 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-#  Functions in this file:
-#
-#
-#  TitleSearchBox
-#    A box to type words/strings and a mode selecter for text searches 
-#    on DocumentTitle
-#    
-#  AbstractSearchBox
-#    A box to type words/strings and a mode selecter for text searches 
-#    on Abstract
-#   
-#  KeywordSearchBox
-#    A box to type words/strings and a mode selecter for text searches 
-#    on Keywords
-#   
-#  RevisionNoteSearchBox
-#    A box to type words/strings and a mode selecter for text searches 
-#    on Keywords
-#   
-#  PubInfoSearchBox
-#    A box to type words/strings and a mode selecter for text searches 
-#    on PublicationInfo
-#   
-#  RequesterSearchBox
-#    A select box for searches on the requester. Unlike entry box, this 
-#    has to be multi-selectable for ANDS/ORS
-#   
-#  DocTypeMulti
-#    A select box for searches on document type. Unlike entry buttons, 
-#    this has to be multi-selectable for ANDS/ORS
-#   
-#  DateRangePullDown
-#    Two sets of pulldowns for defining a date range. Blanks are default
-#    for tagging no search on date.
-#   
-#  MajorMinorSelect
-#    Two multi-select boxes, one for major topics, one for minor topics.
-#    These are tied together by TopicSearchScript so that when major topics
-#    are selected, the list of minor topics is reduced. When only major topics
-#    are selected, the search will be on major topic. When even a single minor
-#    topic is selected, the search will be on the minor topic(s). 
-#    
-#  LogicTypeButtons
-#    Two buttons allow the user to control whether the inner logic (multiple 
-#    members of field) and the outer logic (between fields) are done with ANDs
-#    or ORs.  
-#    
-#  ModeSelect
-#    A pulldown to select the display mode for searches
-#
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 require "SearchModes.pm";
+require "FormElements.pm";
 
 sub TitleSearchBox { # Box and mode selecter for searches on DocumentTitle
-  print "<tr><th align=right><a ";
-  &HelpLink("wordsearch");
-  print "Title:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "Titles", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
-  print $query -> textfield (-name      => 'titlesearch', 
-                             -size      => 40, 
+  print $query -> textfield (-name      => 'titlesearch',
+                             -size      => 40,
                              -maxlength => 240);
   print "</td>\n";
   print "<td>\n";
-  print $query -> popup_menu (-name    => 'titlesearchmode', 
+  print $query -> popup_menu (-name    => 'titlesearchmode',
                               -values  => \%SearchModes);
   print "</td></tr>\n";
 };
 
 sub AbstractSearchBox { # Field and mode selecter for searches on Abstract
-  print "<tr><th align=right><a ";
-  &HelpLink("wordsearch");
-  print "Abstract:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "Abstract", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
-  print $query -> textfield (-name      => 'abstractsearch', 
-                             -size      => 40, 
+  print $query -> textfield (-name      => 'abstractsearch',
+                             -size      => 40,
                              -maxlength => 240);
   print "</td>\n";
   print "<td>\n";
-  print $query -> popup_menu (-name    => 'abstractsearchmode', 
+  print $query -> popup_menu (-name    => 'abstractsearchmode',
                               -values  => \%SearchModes);
   print "</td></tr>\n";
 };
 
 sub KeywordsSearchBox { # Field and mode selecter for searches on Keywords
-  print "<tr><th align=right><a ";
-  &HelpLink("wordsearch");
-  print "Keywords:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "Keywords", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
-  print $query -> textfield (-name      => 'keywordsearch', 
-                             -size      => 40, 
+  print $query -> textfield (-name      => 'keywordsearch',
+                             -size      => 40,
                              -maxlength => 240);
   print "</td>\n";
   print "<td>\n";
-  print $query -> popup_menu (-name    => 'keywordsearchmode', 
+  print $query -> popup_menu (-name    => 'keywordsearchmode',
                               -values  => \%SearchModes);
   print "</td></tr>\n";
 };
 
 sub RevisionNoteSearchBox { # Field and mode selecter for searches on Note
-  print "<tr><th align=right><a ";
-  &HelpLink("wordsearch");
-  print "Notes and Changes:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "Notes and Changes", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
-  print $query -> textfield (-name      => 'revisionnotesearch', 
-                             -size      => 40, 
+  print $query -> textfield (-name      => 'revisionnotesearch',
+                             -size      => 40,
                              -maxlength => 240);
   print "</td>\n";
   print "<td>\n";
-  print $query -> popup_menu (-name    => 'revisionnotesearchmode', 
+  print $query -> popup_menu (-name    => 'revisionnotesearchmode',
                               -values  => \%SearchModes);
   print "</td></tr>\n";
 };
 
 sub PubInfoSearchBox { # Field and mode selecter for searches on PublicationInfo
-  print "<tr><th align=right><a ";
-  &HelpLink("wordsearch");
-  print "Publication Info:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "Publication Info", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
-  print $query -> textfield (-name      => 'pubinfosearch', 
-                             -size      => 40, 
+  print $query -> textfield (-name      => 'pubinfosearch',
+                             -size      => 40,
                              -maxlength => 240);
   print "</td>\n";
   print "<td>\n";
-  print $query -> popup_menu (-name    => 'pubinfosearchmode', 
+  print $query -> popup_menu (-name    => 'pubinfosearchmode',
                               -values  => \%SearchModes);
   print "</td></tr>\n";
 };
 
 sub FileNameSearchBox { # Field and mode selecter for searches on Files
-  print "<tr><th align=right><a ";
-  &HelpLink("wordsearch");
-  print "File names:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "File names", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
-  print $query -> textfield (-name      => 'filesearch', 
-                             -size      => 40, 
+  print $query -> textfield (-name      => 'filesearch',
+                             -size      => 40,
                              -maxlength => 240);
   print "</td>\n";
   print "<td>\n";
-  print $query -> popup_menu (-name    => 'filesearchmode', 
+  print $query -> popup_menu (-name    => 'filesearchmode',
                               -values  => \%SearchModes);
   print "</td></tr>\n";
 };
 
 sub DescriptionSearchBox { # Field and mode selecter for searches on Files
-  print "<tr><th align=right><a ";
-  &HelpLink("wordsearch");
-  print "File descriptions:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "wordsearch", -helptext => "File descriptions", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
-  print $query -> textfield (-name      => 'filedescsearch', 
-                             -size      => 40, 
+  print $query -> textfield (-name      => 'filedescsearch',
+                             -size      => 40,
                              -maxlength => 240);
   print "</td>\n";
   print "<td>\n";
-  print $query -> popup_menu (-name    => 'filedescsearchmode', 
+  print $query -> popup_menu (-name    => 'filedescsearchmode',
                               -values  => \%SearchModes);
   print "</td></tr>\n";
 };
 
 sub ContentSearchBox { # Field and mode selecter for searches on Files
-  print "<tr><th align=right><a ";
-  &HelpLink("contentsearch");
-  print "File contents:</a></th> \n";
+  print "<tr><th>";
+  print FormElementTitle(-helplink => "contentsearch", -helptext => "File contents", -nobreak => $TRUE);
+  print "</th>\n";
   print "<td>\n";
-  print $query -> textfield (-name      => 'filecontsearch', 
-                             -size      => 40, 
+  print $query -> textfield (-name      => 'filecontsearch',
+                             -size      => 40,
                              -maxlength => 240);
   print "</td>\n";
   print "<td>\n";
-  print $query -> popup_menu (-name    => 'filecontsearchmode', 
+  print $query -> popup_menu (-name    => 'filecontsearchmode',
                               -values  => \%SearchModes);
   print "</td></tr>\n";
-};
-
-sub RequesterSearchBox { # Scrolling selectable list for requester search
-  my @AuthorIDs = sort byLastName keys %Authors;
-  my %AuthorLabels = ();
-  my @ActiveIDs = ();
-  foreach my $ID (@AuthorIDs) {
-    if ($Authors{$ID}{ACTIVE}) {
-      $AuthorLabels{$ID} = $Authors{$ID}{Formal};
-      push @ActiveIDs,$ID; 
-    } 
-  }  
-  print "<b><a ";
-  &HelpLink("requestersearch");
-  print "Requester:</a></b><br> \n";
-  print $query -> scrolling_list(-name => "requestersearch", -values => \@ActiveIDs, 
-                                 -size => 10, -labels => \%AuthorLabels,                      
-                                 -default => $RequesterDefault,
-                                 -multiple => 'true');
 };
 
 sub DocTypeMulti { # Scrolling selectable list for doc type search
   my %DocTypeLabels = ();
   foreach my $DocTypeID (keys %DocumentTypes) {
     $DocTypeLabels{$DocTypeID} = $DocumentTypes{$DocTypeID}{SHORT};
-  }  
-  print "<b><a ";
-  &HelpLink("doctypemulti");
-  print "Document type:</a></b><br> \n";
-  print $query -> scrolling_list(-size => 10, -name => "doctypemulti", 
+  }
+  print FormElementTitle(-helplink => "doctypemulti", -helptext => "Document type");
+  print $query -> scrolling_list(-size => 10, -name => "doctypemulti",
                               -values => \%DocTypeLabels, -multiple => 'true');
 };
 
 sub DateRangePullDown { # Two sets of pulldowns for defining a date range
   my ($sec,$min,$hour,$day,$mon,$year) = localtime(time);
   $year += 1900;
-  
+
   my @days = ("--");
   for ($i = 1; $i<=31; ++$i) {
     push @days,$i;
-  }  
+  }
 
   my @months = ("---","Jan","Feb","Mar","Apr","May","Jun",
                       "Jul","Aug","Sep","Oct","Nov","Dec");
@@ -234,13 +209,13 @@ sub DateRangePullDown { # Two sets of pulldowns for defining a date range
   my @years = ("----");
   for ($i = $FirstYear; $i<=$year; ++$i) { # $FirstYear - current year
     push @years,$i;
-  }  
+  }
 
-  print $query -> popup_menu (-name => 'afterday',  -values => \@days);    
+  print $query -> popup_menu (-name => 'afterday',  -values => \@days);
   print $query -> popup_menu (-name => 'aftermonth',-values => \@months);
-  print $query -> popup_menu (-name => 'afteryear', -values => \@years); 
+  print $query -> popup_menu (-name => 'afteryear', -values => \@years);
   print " (Start)\n";
-  print "<br><b><big>&nbsp;</big>&nbsp;and</b><br>\n";
+  print "<br/><strong><big>&nbsp;</big>&nbsp;and</strong><br/>\n";
 
   print $query -> popup_menu (-name => 'beforeday',  -values => \@days);
   print $query -> popup_menu (-name => 'beforemonth',-values => \@months);
@@ -248,70 +223,30 @@ sub DateRangePullDown { # Two sets of pulldowns for defining a date range
   print " (End)\n";
 }
 
-sub MajorMinorSelect { # Two multi-select boxes for major and minor topics
-                       # These are tied together by TopicSearchScript so that 
-                       # when major topics are selected, the list of minor 
-                       # topics is reduced.
-  print "<td>\n";
-  my @MajorIDs = sort byMajorTopic keys %MajorTopics;
-  my %MajorLabels = ();
-  foreach my $ID (@MajorIDs) {
-    $MajorLabels{$ID} = $MajorTopics{$ID}{SHORT};
-  }  
-  print "<b><a ";
-  &HelpLink("dynamictopic");
-  print "Topics:</a></b><br>\n";
-  print $query -> scrolling_list(-name => "majortopic", -values => \@MajorIDs, 
-                                 -labels => \%MajorLabels,  
-                                 -size => 10, 
-                                 -onChange => "selectProduct(this.form);",
-                                 -multiple => 'true');
-  print "</td>\n";
-  
-  print "<td colspan=2>\n";
-  my @MinorIDs = sort byTopic keys %MinorTopics;
-  my %MinorLabels = ();
-  foreach my $ID (@MinorIDs) {
-    $MinorLabels{$ID} = $MinorTopics{$ID}{Full};
-  }  
-  print $query -> scrolling_list(-name => "minortopic", -values => \@MinorIDs, 
-                                 -labels => \%MinorLabels,  
-                                 -size => 10,
-                                 -multiple => 'true');
-  print "</td>\n";
-}
-
-sub LogicTypeButtons { # Two buttons allow control whether inner and outer 
+sub LogicTypeButtons { # Two buttons allow control whether inner and outer
                        # logic are done with ANDs or ORs
-  my @values = ["AND","OR"];
-  
-  print "<b><a ";
-  &HelpLink("logictype");
-  print "Between Fields:</a></b> \n";
-  print $query -> radio_group(-name => "outerlogic", 
-                              -values => @values, -default => "AND");
-  
+  my @Values = ["AND","OR"];
+
+  print FormElementTitle(-helplink => "logictype", -helptext => "Between Fields", -nobreak => $TRUE);
+  print $query -> radio_group(-name => "outerlogic",
+                              -values => @Values, -default => "AND");
+
   print "&nbsp;&nbsp;&nbsp;&nbsp;";
-  
-  print "<b><a ";
-  &HelpLink("logictype");
-  print "Within Fields:</a></b> \n";
-  print $query -> radio_group(-name => "innerlogic", 
-                              -values => @values, -default => "OR");
+
+  print FormElementTitle(-helplink => "logictype", -helptext => "Within Fields", -nobreak => $TRUE);
+  print $query -> radio_group(-name => "innerlogic",
+                              -values => @Values, -default => "OR");
 }
 
-sub ModeSelect { # Display Mode selecter for searches 
-  print "<a ";
-  &HelpLink("displaymode");
-  print "<b>Sort by:</b></a> \n";
-  print "</a>";
-  print " \n";
+sub ModeSelect { # Display Mode selecter for searches
+  print FormElementTitle(-helptext => "Sort by", -helplink => "displaymode", -nobreak => $TRUE),"\n";
   my %Modes = ();
   $Modes{date}    = "Date with document #";
   $Modes{meeting} = "Author with topics and files";
-  print $query -> popup_menu (-name    => 'mode', 
+  $Modes{title}   = "Document title";
+  print $query -> popup_menu (-name    => 'mode',
                               -values  => \%Modes,
                               -default => 'date');
-};
+}
 
 1;

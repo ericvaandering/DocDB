@@ -1,5 +1,5 @@
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -14,29 +14,28 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub GetAllDocuments {
   my ($DocumentID);
   my $DocumentList    = $dbh->prepare(
-     "select DocumentID,RequesterID,RequestDate,DocumentType,TimeStamp ".
+     "select DocumentID,RequesterID,RequestDate,TimeStamp ".
      "from Document");
   my $MaxVersionQuery = $dbh->prepare("select DocumentID,max(VersionNumber) ".
                                      "from DocumentRevision ".
                                      "group by DocumentID;");
 
-  my ($DocumentID,$RequesterID,$RequestDate,$DocumentType,$TimeStamp);
+  my ($DocumentID,$RequesterID,$RequestDate,$TimeStamp);
   my ($MaxVersion);
   
   $DocumentList -> execute;
-  $DocumentList -> bind_columns(undef, \($DocumentID,$RequesterID,$RequestDate,$DocumentType,$TimeStamp));
+  $DocumentList -> bind_columns(undef, \($DocumentID,$RequesterID,$RequestDate,$TimeStamp));
   %Documents = ();
   @DocumentIDs = ();
   while ($DocumentList -> fetch) {
-    $Documents{$DocumentID}{DOCID}     = $DocumentID;
-    $Documents{$DocumentID}{REQUESTER} = $RequesterID;
-    $Documents{$DocumentID}{DATE}      = $RequestDate;
-    $Documents{$DocumentID}{TYPE}      = $DocumentType;
+    $Documents{$DocumentID}{DocID}     = $DocumentID;
+    $Documents{$DocumentID}{Requester} = $RequesterID;
+    $Documents{$DocumentID}{Date}      = $RequestDate;
     $Documents{$DocumentID}{TimeStamp} = $TimeStamp;
     push @DocumentIDs,$DocumentID;
   }
@@ -53,23 +52,22 @@ sub GetAllDocuments {
 sub FetchDocument {
   my ($DocumentID) = @_;
 
-  if ($Documents{$DocumentID}{DOCID} && $Documents{$DocumentID}{NVersions}) { 
+  if ($Documents{$DocumentID}{DocID} && defined $Documents{$DocumentID}{NVersions}) { 
     return $DocumentID;  # Already fetched
   }  
 
-  my $DocumentList    = $dbh -> prepare("select DocumentID,RequesterID,RequestDate,DocumentType,TimeStamp ".
+  my $DocumentList    = $dbh -> prepare("select DocumentID,RequesterID,RequestDate,TimeStamp ".
                                         "from Document where DocumentID=?");
   my $MaxVersionQuery = $dbh -> prepare("select MAX(VersionNumber) from ".
                                         "DocumentRevision where DocumentID=?");
   $DocumentList -> execute($DocumentID);
-  my ($DocumentID,$RequesterID,$RequestDate,$DocumentType,$TimeStamp) = $DocumentList -> fetchrow_array;
+  my ($DocumentID,$RequesterID,$RequestDate,$TimeStamp) = $DocumentList -> fetchrow_array;
   push @DebugStack,"From Database DocID: $DocumentID";
 
   if ($DocumentID) {
-    $Documents{$DocumentID}{DOCID}     = $DocumentID;
-    $Documents{$DocumentID}{REQUESTER} = $RequesterID;
-    $Documents{$DocumentID}{DATE}      = $RequestDate;
-    $Documents{$DocumentID}{TYPE}      = $DocumentType;
+    $Documents{$DocumentID}{DocID}     = $DocumentID;
+    $Documents{$DocumentID}{Requester} = $RequesterID;
+    $Documents{$DocumentID}{Date}      = $RequestDate;
     $Documents{$DocumentID}{TimeStamp} = $TimeStamp;
     push @DocumentIDs,$DocumentID;
 
@@ -84,7 +82,8 @@ sub FetchDocument {
 sub InsertDocument (%) {
   my %Params = @_;
 
-  my $TypeID        = $Params{-typeid}        || 0;
+  my $DocumentID    = $Params{-docid}         || 0;
+  my $DocHash       = $Params{-dochash}       || "";
   my $RequesterID   = $Params{-requesterid}   || 0;
   my $DateTime      = $Params{-datetime};
 
@@ -95,10 +94,10 @@ sub InsertDocument (%) {
     $DateTime = "$Year-$Mon-$Day $Hour:$Min:$Sec";
   } 
 
-  my $Insert = $dbh -> prepare( "insert into Document (DocumentID, RequesterID, RequestDate, DocumentType) values (0,?,?,?)");
+  my $Insert = $dbh -> prepare( "insert into Document (DocumentID, RequesterID, RequestDate, DocHash) values (?,?,?,?)");
   
-  $Insert -> execute($RequesterID,$DateTime,$TypeID);
-  my $DocumentID = $Insert -> {mysql_insertid}; # Works with MySQL only
+  $Insert -> execute($DocumentID,$RequesterID,$DateTime,$DocHash);
+  $DocumentID = $Insert -> {mysql_insertid}; # Works with MySQL only
   
   return $DocumentID;        
 }            

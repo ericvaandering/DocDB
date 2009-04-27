@@ -2,7 +2,7 @@
 #
 # Author Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -17,7 +17,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use Benchmark;
 use CGI;
@@ -29,6 +29,7 @@ require "DocDBGlobals.pm";
 require "Messages.pm";
 require "HTMLUtilities.pm";
 require "ResponseElements.pm";
+require "FormElements.pm";
 require "Scripts.pm";
 require "Security.pm";
 
@@ -42,10 +43,8 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 ### Start HTML
 
-print $query->header;
-&HelpPopupScript;
-
-&DocDBHeader("Certificate Status and Application");
+print $query -> header( -charset => $HTTP_ENCODING );
+&DocDBHeader("Certificate Status and Application","",-scripts => ["PopUps"]);
 
 &EndPage(@ErrorStack);
 
@@ -55,7 +54,7 @@ my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
 my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
 
 if ($CertificateStatus eq "verified") {
-  print "<h4>Your certificate has been verified and you have access to documents from these groups:</h4>";
+  print "<b>Your certificate has been verified and you have access to documents from these groups:</b>";
   my @GroupIDs = &FindUsersGroups();
   print "<ul>\n";
   if (@GroupIDs) {
@@ -68,51 +67,52 @@ if ($CertificateStatus eq "verified") {
   }       
   print "</ul>\n";
 } elsif ($CertificateStatus eq "unverified") {  
-  print "<h4>Your certificate is valid and you have applied for access to documents.
-         You have not been granted access yet.
-         If you believe your request has been misplaced or neglected, contact an administator.</h4>";
-  print "The following information may be helpful:\n";
-  print "<dl><dt><strong>Certificate Common Name (CN):</strong></dt><dd>$CertCN</dd></dl>\n";
-  print "<dl><dt><strong>Certificate E-mail Address:</strong></dt><dd>$CertEmail</dd></dl>\n";
+  print "<b>Your certificate is valid and you have applied for access to documents. 
+         If you believe your request has been misplaced or neglected, contact an administator.</b><p/>";
+  print "The following information may be helpful:<br>\n";
+  print "<b>Certificate Common Name (CN):</b> $CertCN<br/>\n";
+  print "<b>Certificate E-mail Address:</b> $CertEmail<br/>\n";
 } elsif ($CertificateStatus eq "mismatch") {  
-  print "<h4>Your certificate is valid but a similar certificate already exists
+  print "<b>Your certificate is valid but a similar certificate already exists
          for  either your e-mail address or your name (CN). Only one
          certificate is allowed per person. Contact an administrator if you
-         don't know what to do.</h4>";
-  print "The following information may be helpful:\n";
-  print "<dl><dt><strong>Certificate Common Name (CN):</strong></dt><dd>$CertCN</dd></dl>\n";
-  print "<dl><dt><strong>Certificate E-mail Address:</strong></dt><dd>$CertEmail</dd></dl>\n";
+         don't know what to do.</b><p/>";
+  print "The following information may be helpful:<br/>\n";
+  print "<b>Certificate Common Name (CN):</b> $CertCN<br/>\n";
+  print "<b>Certificate E-mail Address:</b> $CertEmail<br/>\n";
 } elsif ($CertificateStatus eq "nocert") {  
-  print "<h4>You didn't present a certificate. Contact an administrator.</h4>";
+  print "<b>You didn't present a certificate. Make sure your browser is supplying one and contact an administrator if are supplying one.</b><p/>";
 } elsif ($CertificateStatus eq "noapp") {
   require "SecurityHTML.pm";
   require "FormElements.pm";
-  print "<h4>Your certificate is valid but you have never applied for access to
-         documents.<br/>Fill out the form below to apply for access.</h4>";
+  print "<p><b>Your certificate is valid but you have never applied for access to
+         documents.<br/>Fill out the form below to apply for access. 
+         Select the groups which you think you belong to from the list. 
+         Your selection(s) will be verified by an administrator.</b></p>";
+  print "<center>\n";
   print $query -> start_multipart_form('POST',$UserAccessApply);
-  print "<table id=\"CertApplyTable\">\n";
+  print "<table class=\"MedPaddedTable CenteredTable\">\n";
   print "<tr>\n";
-  print "<td><dl><dt>Your certificate Common Name (CN):</dt>\n<dd>$CertCN</dd></dl>\n";
-  if ($Preferences{Security}{Certificates}{UseCNOnly}) {
-    &TextField(-name => "email", -helplink => "email", -helptext => "Enter your e-mail address",
-               -size => 20, -maxlength => 64);
-  } else {
-    print "<dl><dt>Your certificate e-mail address:</dt>\n<dd>$CertEmail</dd></dl>\n";
-  }  
+  print "<td><b>Your name (Certificate CN):</b><br/>&nbsp;&nbsp;$CertCN<p/>\n";
+  TextField(-name => "email", -helplink  => "email", -helptext => "Your E-mail",
+            -size => 20,      -maxlength => 64,      -default  => $CertEmail);
   print "</td>\n";
   print "<td>\n";
-  &SecurityScroll(-helplink => "reqgroups", -helptext => "Requested<br/>Groups",
-                  -name     => "reqgroups", -multiple => TRUE);
+  SecurityScroll(-helplink => "reqgroups", -helptext => "Requested Groups",
+                 -name     => "reqgroups", -multiple => $TRUE, -format => "full");
   print "</td></tr>\n";
-  print "<tr><td colspan=2>\n";
-  &TextArea(-helplink  => "certnote", -helptext => "Note to adminstrators", 
-            -extratext => "(Identify yourself or other comments.)",
-            -name      => "certnote");    
+  print "<tr>\n";
+  print "</td></tr>\n";
+  print "<tr><td colspan=\"2\">\n";
+  TextArea(-helplink  => "certnote", -helptext => "Notes", 
+           -extratext => "(Identify yourself or other notes if needed.)",
+           -name      => "certnote");    
   print "</td></tr>";
-  print "<tr><th colspan=\"2\">\n";
+  print "<tr><td colspan=2 align=center>\n";
   print $query -> submit (-value => "Apply for access");
-  print "</th></tr>";
+  print "</td></tr>";
   print "</table>\n";       
+  print "</center>\n";
 }
 
 &DocDBNavBar();

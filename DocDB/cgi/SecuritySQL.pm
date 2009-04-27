@@ -1,4 +1,4 @@
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -13,7 +13,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub ClearSecurityGroups {
   $HaveAllSecurityGroups = 0;
@@ -30,15 +30,17 @@ sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with 
   
   my ($GroupID,$Name,$Description,$CanCreate,$CanAdminister,$TimeStamp);
   my $GroupList  = $dbh -> prepare(
-     "select GroupID,Name,Description,CanCreate,CanAdminister,TimeStamp from SecurityGroup"); 
+     "select GroupID,Name,Description,CanCreate,CanAdminister,CanView,CanConfig,TimeStamp from SecurityGroup"); 
   $GroupList -> execute;
-  $GroupList -> bind_columns(undef, \($GroupID,$Name,$Description,$CanCreate,$CanAdminister,$TimeStamp));
+  $GroupList -> bind_columns(undef, \($GroupID,$Name,$Description,$CanCreate,$CanAdminister,$CanView,$CanConfig,$TimeStamp));
   %SecurityGroups = ();
   while ($GroupList -> fetch) {
     $SecurityGroups{$GroupID}{NAME}          = $Name;
-    $SecurityGroups{$GroupID}{DESCRIPTION}   = $Description;
-    $SecurityGroups{$GroupID}{CanCreate}     = $CanCreate;
+    $SecurityGroups{$GroupID}{Description}   = $Description;
     $SecurityGroups{$GroupID}{CanAdminister} = $CanAdminister;
+    $SecurityGroups{$GroupID}{CanConfig}     = $CanConfig;
+    $SecurityGroups{$GroupID}{CanCreate}     = $CanCreate;
+    $SecurityGroups{$GroupID}{CanView}       = $CanView;
     $SecurityGroups{$GroupID}{TimeStamp}     = $TimeStamp;
     $SecurityIDs{$Name} = $GroupID;
   }
@@ -62,19 +64,21 @@ sub FetchSecurityGroup ($) {
   my ($GroupID) = @_;
   my ($Name,$Description,$CanCreate,$CanAdminister,$TimeStamp);
   my $GroupList  = $dbh -> prepare(
-     "select Name,Description,CanCreate,CanAdminister,TimeStamp from SecurityGroup where GroupID=?"); 
+     "select Name,Description,CanCreate,CanAdminister,CanView,CanConfig,TimeStamp from SecurityGroup where GroupID=?"); 
   
   if ($SecurityGroups{$GroupID}{TimeStamp}) { 
     return;
   }
     
   $GroupList -> execute($GroupID);
-  $GroupList -> bind_columns(undef, \($Name,$Description,$CanCreate,$CanAdminister,$TimeStamp));
+  $GroupList -> bind_columns(undef, \($Name,$Description,$CanCreate,$CanAdminister,$CanView,$CanConfig,$TimeStamp));
   while ($GroupList -> fetch) {
     $SecurityGroups{$GroupID}{NAME}          = $Name;
-    $SecurityGroups{$GroupID}{DESCRIPTION}   = $Description;
-    $SecurityGroups{$GroupID}{CanCreate}     = $CanCreate; 
+    $SecurityGroups{$GroupID}{Description}   = $Description;
     $SecurityGroups{$GroupID}{CanAdminister} = $CanAdminister;
+    $SecurityGroups{$GroupID}{CanConfig}     = $CanConfig;
+    $SecurityGroups{$GroupID}{CanCreate}     = $CanCreate;
+    $SecurityGroups{$GroupID}{CanView}       = $CanView;
     $SecurityGroups{$GroupID}{TimeStamp}     = $TimeStamp;
     $SecurityIDs{$Name} = $GroupID;
   }
@@ -183,7 +187,7 @@ sub FetchUserGroupIDs ($) {
   return @UserGroupIDs;
 }
   
-sub FetchEmailUSerIDsBySecurityGroup ($) {
+sub FetchEmailUserIDsBySecurityGroup ($) {
   require "Utilities.pm";
 
   my ($GroupID) = @_;

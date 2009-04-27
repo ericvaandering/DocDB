@@ -1,6 +1,102 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
 
+<!--
+        Name: DocDBHelp.xml
+ Description: The snippets of documentation that appear in pop-up scripts.
+              Read by DocDBHelp
+
+    Revision: $Revision$
+    Modified: $Author$ on $Date$
+
+      Author: Eric Vaandering (ewv@fnal.gov)
+
+ Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+
+    This file is part of DocDB.
+
+    DocDB is free software; you can redistribute it and/or modify
+    it under the terms of version 2 of the GNU General Public License
+    as published by the Free Software Foundation.
+
+    DocDB is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with DocDB; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+-->
+
 <helpfile>
+ <entry>
+  <key>LessFiles</key>
+  <title>New Version Has Fewer Files</title>
+  <text>
+     If the new version of a document has fewer files than the original version,
+     you must check this box. This ensures that you don't forget to either upload
+     new versions of the other files or forget to use the copy option to copy
+     files from one version to the next.
+  </text>
+ </entry>
+
+ <entry>
+  <key>keywordgroups</key>
+  <title>Keyword Groups</title>
+  <text>
+     The group names for managed keywords. While users can apply any keyword
+     to a document, the groups and keywords in them allow you to suggest a
+     set of <q>approved</q> keywords.
+  </text>
+ </entry>
+
+ <entry>
+  <key>authortextsearch</key>
+  <title>Authors</title>
+  <text>
+     Type in the names of authors to search for. Put each author on a new line.
+     Use full last names and first names or initials. Each author entered will
+     checked against the database and a <b>unique</b> match must be found or
+     that entry will be ignored. Requiring a unique match means that for people
+     who share a last name, the first name must be fully specified. Entered
+     middle initials are ignored.
+     <p/>
+     Authors entered here are added to the authors selected with the  list on
+     the left (if any).
+  </text>
+ </entry>
+
+ <entry>
+  <key>xsearchtext</key>
+  <title>Cross Search</title>
+  <text>
+     <p>
+     Words typed here will be searched in all the DocDBs checked on the right.
+     The search on the local DocDB will be over all documents you can access.
+     The search in remote DocDBs will only cover publicly accessible documents.
+     </p><p>
+     If you would like another DocDB added to the list, ask your DocDB
+     administrator.
+     </p>
+  </text>
+ </entry>
+
+ <entry>
+  <key>quicksearch</key>
+  <title>Quick Search</title>
+  <text>
+   <p>
+    Enter one or more words to search for. These words will be searched for in
+    authors, topics, events, etc. as well as in text meta-data such as titles
+    and abstracts. The returned list of documents will be ranked by the number
+    and quality of matches.
+   </p>
+   <p>
+    For more targeted searches, use the advanced form below.
+   </p>
+  </text>
+ </entry>
+
  <entry>
   <key>groupperm</key>
   <title>Group Permissions</title>
@@ -16,7 +112,7 @@
   <title>Group Name and Description</title>
   <text>
    Enter the name and description of the group. The name should be short and one
-   word. The description can be longer and multiple words. 
+   word. The description can be longer and multiple words.
   </text>
  </entry>
 
@@ -26,22 +122,25 @@
   <text>
 Access to documents within the DocDB is controlled in several ways. A document
 may be tagged as accessible to a subset of groups. Additionally, each group may
-have a list of subordinate groups. Anything marked viewable by a subordinate
-is also viewable by its superior group. (This relationship does not extend to
-more than one generation, though.)<p/> Each group also has a flag determining
+have a list of subordinate groups. Anything marked viewable by a subordinate is
+also viewable by its superior group. (This relationship does not extend to more
+than one generation, though.)<p/> Each group also has a flag determining
 whether that group is allowed to create new  or modify existing documents. If a
-group is allowed to view a document, it can change that document (assuming they
-also have the create/modify flag set). These group names must match those in
-the <b>.htpasswd</b> file although the comparison is not case sensitive.
+group is in the list of those allowed to modify a  document, it can change that
+document (assuming they also have the create/modify flag set). These group
+names must match those in the <b>.htpasswd</b> file although the comparison is
+not case sensitive.
   </text>
  </entry>
  <entry>
   <key>child</key>
   <title>Subordinate groups</title>
   <text>
-Select the groups you want to be subordinates of this group. This means that the
-dominant group will be able to see and change all documents that these groups
-can.
+   <p>Select the groups you want to be subordinates of this group. This means
+   that this group will be able to see and change all documents that
+   the subordinate groups can.</p>
+   <p>To change a group's dominant groups, you must change the subordinate
+   groups of the dominant group</p>
   </text>
  </entry>
 
@@ -75,12 +174,12 @@ of Illinois) for the institution.
 
  <entry>
 <key>notifyauthor</key>
-<title>E-mail notification authors</title>
+<title>E-mail notification by author</title>
   <text>
 Select which people you want to be notified about when they are listed as
 authors on documents.  Immediate notification will send you e-mail on each
 document as it is entered. Daily and weekly notifications send out lists of
-documents you are interested in every night or week.<p/>
+documents you are interested in every day or week.<p/>
 
 You can select any combination of authors for each of the three
 periods.
@@ -89,13 +188,13 @@ periods.
 
  <entry>
 <key>notifykeyword</key>
-<title>E-mail notification keywords</title>
+<title>E-mail notification by keyword</title>
   <text>
 Select the keywords that you want to be notified when they are entered on
 documents. The keywords are case insensitive, but otherwise must match
 <b>exactly</b>. Immediate notification will send you e-mail on each
 document as it is entered. Daily and weekly notifications send out lists of
-documents you are interested in every night or week.<p/>
+documents you are interested in every day or week.<p/>
 
 You can select any combination of keywords for each of the three
 periods.
@@ -103,16 +202,41 @@ periods.
  </entry>
 
  <entry>
-<key>notifytopic</key>
-<title>E-mail notification topics</title>
+  <key>notifytopic</key>
+  <title>E-mail notification by topic</title>
   <text>
-Select the topics or subtopics that you want to be notified about for the
-selected time period. Immediate notification will send you e-mail on each
-document as it is entered. Daily and weekly notifications send out lists of
-documents you are interested in every night or week.<p/>
+Select the topics that you want to be notified about for the selected time period.
+If you select a topic, you will receive notifications for its sub-topics as well.
+Immediate notification will send you e-mail on each document as it is entered. Daily
+and weekly notifications send out lists of documents you are interested in every day
+or week.<p/>
 
-You can select any combination of topics and subtopics for each of the three
+You can select any combination of topics and sub-topics for each of the three
 periods.
+  </text>
+ </entry>
+
+ <entry>
+  <key>notifyevent</key>
+  <title>E-mail notification by event</title>
+  <text>
+Select the events and event groups for documents that you want to be notified about.
+If you select an event group, you will receive notifications for all events in that.
+Immediate notification will send you e-mail on each document as it is entered. Daily
+and weekly notifications send out lists of documents you are interested in every day
+or week.<p/>
+
+You can select any combination of groups and events for each of the three
+periods.
+  </text>
+ </entry>
+
+ <entry>
+  <key>notifydocument</key>
+  <title>E-mail notification for documents</title>
+  <text>
+   This is the list of documents you are watching. You can add to or remove from it
+   here. Only immediate notifications for documents are available.
   </text>
  </entry>
 
@@ -131,7 +255,7 @@ lots of old documents.
 <title>Name</title>
   <text>
 Select your name from the list. When you create a new document, you will be
-automatically selected as the requester and author.
+automatically selected as the submitter and author.
   </text>
  </entry>
 
@@ -156,21 +280,15 @@ document.
  </entry>
 
  <entry>
-<key>dynamictopic</key>
+<key>searchtopic</key>
 <title>Topics</title>
   <text>
-Using this control you can select either topics or sub-topics for the
-document(s) you are searching for. You can select topics on the left and
-sub-topics on the right. Selecting a topic on the left will limit your choices
-on the right (assuming you have Javascript turned on). 
-<p/>
-Selecting any sub-topic on the right ignore its parent topic on the left. 
-This means that if you have <i>Meetings</i> and
-<i>Detectors</i>
-selected on the left and <i>Detectors:Straws</i> selected on the right, your
-search will be performed on <i>Detectors:Straws</i> and <i>Meetings</i>. But,
-even if you have "OR" selected for "Within Fields," you won't get documents for
-detectors other than straws.  
+You can select the topics and/or sub-topics for the
+document(s) you are searching for. The default is to search all sub-topics for
+a topic as well; you can turn this option off by checking the box. However, for
+searches of an <q>AND</q> of topics, this option is not available. E.g., a search
+for on documents with topics <q>Asia AND Europe</q> will not find documents with
+topics <q>Germany</q> and <q>China</q>.
   </text>
  </entry>
 
@@ -201,9 +319,9 @@ OR.
 
  <entry>
 <key>requestersearch</key>
-<title>Requester</title>
+<title>Submitter</title>
   <text>
-Select the people who might have initially requested or requested a modification
+Select the people who might have initially submitted or made a modification
 to the document you are looking for. Note that regardless of the setting of
 <b>Within Fields</b> this search will be performed with a logical OR.
   </text>
@@ -218,14 +336,14 @@ The following modes are used to search for information:
 <ul>
  <li><b>Any words as sub-string: </b>The information you enter is broken into
  words (delimited by spaces) and the field you are searching in is required to
- match one or more of these words as a substring (<i>lock</i> will match
+ match one or more of these words as a sub-string (<i>lock</i> will match
  <i>lock</i> and <i>block</i>).</li>
  <li><b>All words as sub-string: </b>The information you enter is broken into
  words (delimited by spaces) and the field you are searching in is required to
- match all of these words as substrings (in any order).</li> 
- <li><b>Any or all words as words: </b>Like the searches above, but spaces are 
- require to delimit words (<i>lock</i> will not match <i>block</i>).</li> 
-</ul> 
+ match all of these words as sub-strings (in any order).</li>
+ <li><b>Any or all words as words: </b>Like the searches above, but spaces are
+ require to delimit words (<i>lock</i> will not match <i>block</i>).</li>
+</ul>
   </text>
  </entry>
 
@@ -233,9 +351,9 @@ The following modes are used to search for information:
  <key>contentsearch</key>
  <title>File content search</title>
  <text>
-  This field uses an external search engine to search for strings in the files 
-  in the document. Whether it matches sub-strings or whole words is a function 
-  of the external search engine. Note that not all document formats are 
+  This field uses an external search engine to search for strings in the files
+  in the document. Whether it matches sub-strings or whole words is a function
+  of the external search engine. Note that not all document formats are
   searchable. (Searches in text and HTML files will be most reliable.)
   </text>
  </entry>
@@ -256,8 +374,8 @@ you select two authors. You can either require that both authors are present on
 the paper (AND) or either author is present (OR). OR is the
 default. Note that this setting
 doesn't apply to text searches (since they use their own syntax). Also, for
-Requester and Document Type, multiple settings on the document are not
-possible, so these searches are <b>always</b> done with an OR. 
+Submitter and Document Type, multiple settings on the document are not
+possible, so these searches are <b>always</b> done with an OR.
   </text>
  </entry>
 
@@ -267,7 +385,7 @@ possible, so these searches are <b>always</b> done with an OR.
   <text>
    Keywords are used to further classify documents below the sub-topic level.
    Keywords should be separated by spaces. Compound words should use a dash or
-   under-score to connect words. 
+   under-score to connect words.
   </text>
  </entry>
 
@@ -276,30 +394,35 @@ possible, so these searches are <b>always</b> done with an OR.
 <title>Replace Duplicate Files</title>
   <text>
 If you select this option, any files you add which duplicate file names of
-existing files will completely replace the old files (no backup will be kept). You
-should <b>not</b> be using this option avoid creating a new version of a
+existing files will completely replace the old files (no backup will be kept).
+Do <strong>not</strong> use this option to avoid creating a new version of a
 document, even if only minor changes have been made. This option is, instead,
-intended for making minor fixes to presentation formats and the like. 
-Disk space is cheap, mistakes are not.
+intended for making minor fixes to presentation formats and the like.  Disk
+space is cheap, mistakes are not.
 <p/>
-Please use this option responsibly. 
+Please use this option responsibly.
   </text>
  </entry>
 
  <entry>
   <key>authormanual</key>
-  <title>Authors</title>
+  <title>Ordered Author List</title>
   <text>
-     Type the names of the authors here. Put each author on a new line. Use
-     full last names and first names or initials. Each author entered will
-     checked against the database and a <b>unique</b> match must be found for
-     <b>all</b> authors before the document will be added. Requiring a unique
-     match means that for people who share a last name, the first name must
-     be fully specified. Entered middle initials are ignored.
-     <p/>
-     If you would prefer to select the author names from a list, select
-     "Selectable List" as the author selection mode from the advanced form on
-     the document DB home page.
+   <p>Type the names of the authors <strong>in order</strong> here. Put each
+   author on a new line. Use first names or initials and full last names. Each
+   author entered will checked against the database and a <b>unique</b> match
+   must be found for <strong>all</strong> authors before the document will be
+   added. Requiring a unique match means that for people who share a last name and initial,
+   the first name must be fully specified. Entered middle initials are
+   ignored.</p>
+   <p>This will create an ordered author list. If you normally enter authors
+   from  a selectable list and you instead see the text entry box, that means
+   the list was already ordered by someone else.</p>
+   <p>If you would prefer to select the author names from a list, click on
+   "Select from list" or choose "Selectable List" as the author selection mode
+   from the advanced form on the DocDB Changes page. Switching list styles
+   will not preserve changes just made and the list style will erase any
+   ordering of the authors.</p>
   </text>
  </entry>
 
@@ -320,11 +443,12 @@ Select the date of the end of the conference.
  </entry>
 
  <entry>
-<key>location</key>
-<title>Location</title>
+  <key>location</key>
+  <title>Location &amp; Alternate</title>
   <text>
-Type in the location of the conference. City, state (if in the USA), and
-country.
+   <p>Enter the location of the conference, event, or session. This can be a
+   city, an institution, or a room number depending on the circumstances. The
+   alternate location might be video or teleconferencing instructions.</p>
   </text>
  </entry>
 
@@ -332,7 +456,7 @@ country.
 <key>confurl</key>
 <title>URL</title>
   <text>
-Type in the URL for the conference's home page. Please include the http:// or
+Enter the URL for the conference's home page. Please include the http:// or
 https:// at the beginning.
   </text>
  </entry>
@@ -384,6 +508,17 @@ URL. The username and password are not saved.
  </entry>
 
  <entry>
+  <key>newfilename</key>
+  <title>New Filename</title>
+  <text>
+   Some files, especially those returned by scripts, may have unintelligible
+   names.  If you want the filename to be renamed after DocDB downloads it,
+   enter the new name here. Leave this blank if you want to use the same
+   filename as on the remote host.
+  </text>
+ </entry>
+
+ <entry>
   <key>modifytypes</key>
   <title>Modification Actions</title>
   <text>
@@ -413,7 +548,7 @@ Select the type of modification appropriate to your situation
   <key>uploadmethod</key>
   <title>Upload Methods</title>
   <text>
-You can upload documents by two different methods. 
+You can upload documents by two different methods.
 <ol>
 <li>You can upload files from
 your local computer </li>
@@ -428,7 +563,7 @@ In both cases the document is ultimately stored on the document database web ser
   <key>uploadtype</key>
   <title>Upload Types</title>
   <text>
-You can upload three different types of documents. 
+You can upload three different types of documents.
 <ol>
 <li>You can upload a single file. This is the default. </li>
 <li>You can upload a document consisting of multiple files, such as PowerPoint
@@ -447,7 +582,7 @@ this option to upload a group of linked web pages. You can upload files in
   <title>Topic Selection</title>
   <text>
 You can either select the subtopic(s) for your document from one long list or
-from a number of shorter lists split up by topic. 
+from a number of shorter lists split up by topic.
   </text>
  </entry>
 
@@ -455,11 +590,12 @@ from a number of shorter lists split up by topic.
   <key>authoroption</key>
   <title>Author Selection</title>
   <text>
-There are two methods of entering the authors for a document. The first is
-selecting the authors from a list of all possible authors. The second is to type
-into a form the names of the authors. <i>However</i> for your document to be
-accepted, every author that you entered must successfully match with an author
-in the database. The second method has not been implemented.
+   <p>There are two methods of entering the authors for a document. The first is
+   selecting the authors from a list of all possible authors. The second is to
+   type the names of the authors into a form. This creates an
+   <strong>ordered</strong> author list. <em>However</em> for your document to
+   be accepted, every author that you entered must successfully match an author
+   in the database.</p>
   </text>
  </entry>
 
@@ -508,10 +644,10 @@ when placing a document into the database and when reserving a document number.
 
  <entry>
   <key>requester</key>
-  <title>Requester</title>
+  <title>Submitter</title>
   <text>
-This is the name of the person who is requesting the document number or placing
-the document in the database. In other words, this is you. This option must be 
+This is the name of the person who is reserving the document number or placing
+the document in the database. In other words, this is you. This option must be
 supplied when reserving a document number, placing a document into the database,
 or updating a document.
   </text>
@@ -562,7 +698,7 @@ This field will upload a file from your local computer to the database server.
 Usually you will press the "Browse" button to select, from your local file
 system, the file to be uploaded. The base file name cannot contain a back slash
 "\" or a forward slash "/" to preserve compatibility with both Windows and
-Unix. 
+Unix.
 <p/>
 You can also enter a short description of each file, which will appear in the
 summary of the document. The description is optional.
@@ -578,14 +714,17 @@ Insert/Modify functions to select your type of upload.
   <key>authors</key>
   <title>Authors</title>
   <text>
-If entering a new document, select all the authors of the document. 
-If you would prefer to type in the author names individually, select "Text
-Field" as the author selection mode from the advanced form on the document DB
-home page.<p/>
-If searching for a document, select the authors appropriately for your setting
-of <b>Within Fields</b>.<p/>
-To select multiple authors either click or CTRL-click (depending on your
-browser) on the author names.
+   <p>If entering a new or revised document, select all the authors of the
+   document.  If you would prefer to type in the author names individually and
+   in order, click on "Text w/ order" or select "Ordered text field" as the
+   author selection mode from the advanced form on the DocDB Changes page.
+   Switching list styles will not  preserve changes just made and the list style
+   will erase any ordering of the authors.</p>
+   <p> If searching for a document, select the authors appropriately for your
+   setting of <b>Within Fields</b>.</p>
+   <p> To select multiple authors either click or CTRL-click (depending on your
+   browser) on the author names.  If a document has multiple authors, the
+   <q>first author</q> will be the first alphabetically.</p>
   </text>
  </entry>
 
@@ -594,11 +733,11 @@ browser) on the author names.
   <title>Topics</title>
   <text>
 Select all the topics and subtopics for the document. To select multiple topics
-either click or CTRL-click (depending on your
-browser) on
-the topic names. Note that there are two ways to enter topics, either from one
-big long list or from several shorter lists. You can select the other mode from
-the customize form on the main page.
+hold control or command (depending on your browser) and click on the topic
+names. You are not allowed to select topics in brackets (if any). Note that
+there are two ways to enter topics, either from one big long list or from
+several shorter lists. You can select the other mode from the customize form on
+the main page.
   </text>
  </entry>
 
@@ -624,24 +763,14 @@ the document. I.e. a PowerPoint file isn't <i>necessarily</i> a "Talk."
  </entry>
 
  <entry>
-  <key>majortopics</key>
-  <title>Major Topics</title>
-  <text>
-Select the Major topic which is the parent of the minor, or subtopic you are
-entering. New major topics can only be entered into the database
-by the administrators.
-  </text>
- </entry>
-
- <entry>
   <key>shortdescription</key>
-  <title>Short Description of Subtopic or Conference</title>
+  <title>Short Description of Subtopic or Event</title>
   <text>
 This is the text that appears in the selectable boxes and in the ShowDocument
-script.
-<p/>
-For conferences, this should be the short name of the conference, like "High
-Energy 6."
+script. It should a short version of the topic or event. For example, in a
+conference this should be the short name of the conference, like "High Energy
+6." while "The Sixth International Conference of Interactions at High Energy"
+should be entered as the  long description.
   </text>
  </entry>
 
@@ -651,10 +780,9 @@ Energy 6."
   <text>
 This is a longer description of the topic, if needed. If not, it should be the
 same as the short description. While this isn't used now, it might be in the
-future.
-<p/>
-For conferences, this should be the full name of the conference, like "The Sixth
-International Conference of Interactions at High Energy."
+future.For example, in a conference this should be the full name of the
+conference, like "The Sixth International Conference of Interactions at High
+Energy."
   </text>
  </entry>
 
@@ -671,7 +799,7 @@ The institution the author you are entering is associated with.
   <title>Entering the Author's Name</title>
   <text>
 Fill in the fields for first and last name as well as the middle initials, if
-needed. 
+needed.
   </text>
  </entry>
 
@@ -684,8 +812,11 @@ stored on the server. The URL must be a full URL, with http:// at the beginning
 and a file name at the end (cannot end in "/"). The https and ftp protocols may
 also work.
 <p/>
-If the URL is password protected, enter the username and
-password for the URL here. The username and password are NOT saved.
+If the URL is password protected, enter the username and password for the URL
+here. The username and password are NOT saved. If you enter more than one  URL,
+the same username and password are used for each URL. If you need to fetch
+files with different authentications, just upload some now and use "Add Files"
+to add the other files later.
 <p/>
 You can also enter a short description of each file, which will appear in the
 summary of the document. The description is optional.
@@ -748,7 +879,7 @@ This is the list of groups who may modify the document.
   <title>Administrator login and password</title>
   <text>
 Enter here the SQL username and password of the administrator account. This may
-or may not be the same as the web username and password. 
+or may not be the same as the web username and password.
   </text>
  </entry>
 
@@ -776,7 +907,7 @@ or may not be the same as the web username and password.
   <text>
    Change the numbers here to reorder your sessions within a meeting. Using
    floating point numbers like 2.5 will put this session between those
-   currently numbered 2 and 3.  
+   currently numbered 2 and 3.
   </text>
  </entry>
 
@@ -787,7 +918,7 @@ or may not be the same as the web username and password.
    Check this box if your entry is a break between sessions. These
    <q>sessions</q> cannot have talks or documents associated with them. You
    might use such a separator between sessions to denote a coffee break, a
-   meal, or another activity. 
+   meal, or another activity.
    <p/>
    There are also separators you can use between <i>talks</i> to indicate
    breaks in the agenda for lunch or coffee. (These are inserted as you
@@ -804,7 +935,7 @@ or may not be the same as the web username and password.
    description field. URLs entered here will be linked.
   </text>
  </entry>
- 
+
  <entry>
   <key>sessiondelete</key>
   <title>Deleting a Session</title>
@@ -812,22 +943,7 @@ or may not be the same as the web username and password.
    Check this box to delete the corresponding session or separator.
   </text>
  </entry>
- 
- <entry>
-  <key>meetingtopic</key>
-  <title>Meetings as Topics</title>
-  <text>
-   Meetings can be designated as their own topics or can be organized 
-   without such a designation. If you choose to create a topic for your
-   meeting, you must select a Major Topic from the list. These topics are
-   designated as a special meeting-like topic. You should also supply a short
-   and long title (description) for your meeting.
-   <p/>
-   If you don't choose to create a new topic, you should still fill out the
-   long description, location, URL, and date fields.
-  </text>
- </entry>
- 
+
  <entry>
   <key>meetpreepi</key>
   <title>Meeting Preamble and Epilogue</title>
@@ -837,20 +953,24 @@ or may not be the same as the web username and password.
    directions, etc. in this way. URLs entered here will be linked.
   </text>
  </entry>
- 
+
  <entry>
   <key>meetshowall</key>
-  <title>Show All Talks for Meeting</title>
+  <title>Show All Talks for Meeting or Session</title>
   <text>
-   By checking this box, displaying the meeting will also display all the
-   sessions for the meeting and all the talks within that session. If this is
-   left unchecked, displaying the meeting will display <i>links</i> to the
-   individual sessions. It is suggested that this box be checked for meetings
-   with just a few sessions and left unchecked for meetings with many
-   sessions, especially parallel sessions. 
+   <p> Checking this box for a whole meeting will also display all the sessions
+   for the meeting and all the talks within those sessions. If this is left
+   unchecked for a meeting, displaying the meeting will display <em>links</em>
+   to the individual sessions. It is suggested that this box be checked for
+   meetings with just a few sessions and left unchecked for meetings with many
+   sessions, especially parallel sessions.</p>
+   <p> Checking this box for a session in a meeting will display the talks for
+   this session in the view of the meeting but will not display the talks for
+   other sessions. You may want to check this box for plenary sessions but leave
+   it unchecked for parallel sessions.</p>
   </text>
  </entry>
- 
+
  <entry>
   <key>sessions</key>
   <title>Sessions</title>
@@ -862,7 +982,7 @@ or may not be the same as the web username and password.
    meals or activities.
   </text>
  </entry>
- 
+
  <entry>
   <key>talkfromagenda</key>
   <title>Talk from Agenda</title>
@@ -874,7 +994,7 @@ or may not be the same as the web username and password.
    find your agenda entry, just leave the selector on "Select your talk..."
   </text>
  </entry>
- 
+
  <entry>
   <key>sessionorder</key>
   <title>Order of Talks in a Session</title>
@@ -884,37 +1004,52 @@ or may not be the same as the web username and password.
    numbered 2 and 3.
   </text>
  </entry>
- 
+
  <entry>
-  <key>talkconfirm</key>
-  <title>Confirming a Talk</title>
+  <key>talketc</key>
+  <title>Talk Options</title>
   <text>
-   Check this box if DocDB has guessed the talk correctly based on the agenda
-   information. Also check this box if you manually enter a document number
-   in the "Doc. #" box. If you fail to do this, DocDB will guess again, 
-   possibly erasing your change.
+   <p><strong>Confirm:</strong> Check this box if DocDB has guessed the talk
+   correctly based on the agenda information. Also check this box if you
+   manually enter a document number in the "Doc. #" box. If you fail to do
+   this, DocDB will try to guess again,  possibly erasing your change.</p>
+
+   <p><strong>Delete:</strong> Check this box to delete a talk from the agenda. A document associated with
+   the talk (if any) will <b>not</b> be deleted, just the agenda entry.</p>
+
+   <p><strong>Reserve:</strong> Check this box to create a new document based
+   on the  information entered in the agenda. The submitter of the document is
+   listed as the first author and the document is modifiable by anyone who can
+   <i>view</i> the meeting. You must supply at least one author for the
+   document.</p>
+
+   <p><strong>Break:</strong> Check this box to create a break (e.g. for coffee)
+   rather than a talk in the agenda.</p>
   </text>
  </entry>
- 
+
  <entry>
-  <key>talkdelete</key>
-  <title>Deleting a Talk</title>
+  <key>talkdocid</key>
+  <title>Talk Document #</title>
   <text>
-   Check this box to delete a talk from the agenda. A document associated with
-   the talk (if any) will <b>not</b> be deleted, just the agenda entry.
+   <p>This field shows the document # matched with the agenda entry in DocDB.
+   If you know the corresponding document #, type it in and click
+   <strong>Confirm</strong> to the left. If you know there will not be a document
+   for a slot, or wish to prevent DocDB from guessing which document matches, enter
+   <strong>0</strong> and click <strong>Confirm</strong>.</p>
   </text>
  </entry>
- 
+
  <entry>
   <key>talkinfo</key>
   <title>Talk Information</title>
   <text>
    Fill out the title for the talk, and a note, if needed. This title will
-   be matched against the titles of documents in the database, so being 
+   be matched against the titles of documents in the database, so being
    accurate helps.
   </text>
  </entry>
- 
+
  <entry>
   <key>talktime</key>
   <title>Talk Duration</title>
@@ -922,7 +1057,7 @@ or may not be the same as the web username and password.
    Select how long the talk is scheduled to last.
   </text>
  </entry>
- 
+
  <entry>
   <key>authorhint</key>
   <title>Talk Author Hints</title>
@@ -933,18 +1068,18 @@ or may not be the same as the web username and password.
    who may give the talk.
   </text>
  </entry>
- 
+
  <entry>
   <key>topichint</key>
   <title>Talk Topic Hints</title>
   <text>
    Select the topic of the talk. Multiple topics can be selected if the
    talk will cover more than one topic. Multiple topics can also be
-   selected  if the exact topic is not known. In this case, select all the 
+   selected  if the exact topic is not known. In this case, select all the
    topics which might be entered.
   </text>
  </entry>
- 
+
  <entry>
   <key>revisionnote</key>
   <title>Notes and Changes</title>
@@ -955,7 +1090,7 @@ or may not be the same as the web username and password.
    the notes from the previous version, click on the link <q>Insert notes from previous version</q>.
   </text>
  </entry>
- 
+
  <entry>
   <key>meetingviewgroups</key>
   <title>Meeting Viewable by</title>
@@ -966,28 +1101,39 @@ or may not be the same as the web username and password.
    documents will also be view  meetings viewable by that group.
   </text>
  </entry>
- 
+
  <entry>
   <key>meetingmodifygroups</key>
   <title>Meeting Viewable by</title>
   <text>
    Select the groups you want to be able to modify the meeting and the agendas
    for the sessions in the meeting.  By default this is chosen to be the group
-   you logged into. 
+   you logged into.
   </text>
  </entry>
- 
+
  <entry>
   <key>signoffs</key>
   <title>Signoff List</title>
   <text>
-   This is the list of people who must sign the document in order, 
-   from top to bottom. Since the entered name must exactly match the name of 
+   This is the list of people who must sign the document in order,
+   from top to bottom. Since the entered name must exactly match the name of
    the personal account, it's easiest to use the signoff chooser and click
    on the names you wish to add.
   </text>
  </entry>
- 
+
+ <entry>
+  <key>preservesigs</key>
+  <title>Preserve Signoff List</title>
+  <text>
+   This option allows special users to copy the signature list and whether
+   those signatures have been made to be preserved or copied when metadata is
+   updated. This is used for small or irrelevant changes that should not
+   trigger a requirement to have the document re-signed.
+  </text>
+ </entry>
+
  <entry>
   <key>filechar</key>
   <title>Update File Characteristics</title>
@@ -996,47 +1142,140 @@ or may not be the same as the web username and password.
    and change which ones are listed as "Main."
   </text>
  </entry>
- 
+
  <entry>
   <key>usergroups</key>
   <title>Groups the user belongs to</title>
   <text>
-   This is the list of groups the user belongs to. If you are using a user based 
-   authentication method such as certificates, this controls which documents a 
+   This is the list of groups the user belongs to. If you are using a user based
+   authentication method such as certificates, this controls which documents a
    user is allowed to see, if they are allowed to create documents, or administer
    the database. If you are using group or user authentication, it makes sure users
    get e-mail only for documents they are allowed to access.
   </text>
  </entry>
- 
+
  <entry>
   <key>reqgroups</key>
   <title>Requested Groups</title>
   <text>
-   Select all the groups whose documents you wish to have access to. 
-   Your request will be checked and processed by an adminstrator.
+   Select all the groups whose documents you wish to have access to.
+   Your request will be checked and processed by an administrator.
   </text>
  </entry>
- 
+
  <entry>
   <key>certnote</key>
   <title>Note for access</title>
   <text>
-   Enter a note to the administrator. Identify yourself and your reasons for 
-   requesting access if you think you should, otherwise your request may be 
+   Enter a note to the administrator. Identify yourself and your reasons for
+   requesting access if you think you should, otherwise your request may be
    rejected.
   </text>
  </entry>
- 
+
  <entry>
   <key>xrefentry</key>
-  <title>Cross-References</title>
+  <title>Related Documents</title>
   <text>
    Enter the document #'s of documents which are referred to by or related to
    this document. These documents will be listed in the display of this one,
-   and this document will be listed in  the display of the entered documents.
+   and this document will be listed in the display of the entered documents. A
+   document # by itself will refer to all versions of that document, a document
+   ID like 123-v4 will refer only to the specified version. A document ID like
+   FOO-123-v4 will refer to version 4 of document 123 for project FOO. Consult
+   your DocDB admins  to find out what other projects' DocDBs you can link to
+   this way. <p/>
    Document numbers can be separated by spaces or commas.
   </text>
  </entry>
- 
+
+ <entry>
+  <key>limitgroups</key>
+  <title>Limit Groups</title>
+  <text>
+   Select which groups you would like to be considered a member of.
+   A cookie will be set for the duration you select to limit your membership
+   to the groups you specify. This can be useful to temporarily remove
+   administration permissions.
+  </text>
+ </entry>
+
+ <entry>
+  <key>events</key>
+  <title>Events</title>
+  <text>
+   Select which events (meetings, conferences, etc.) the document is associated with.
+  </text>
+ </entry>
+
+ <entry>
+  <key>admforce</key>
+  <title>Force Delete</title>
+  <text>
+   Checking this box will force DocDB to take the administration action
+   regardless of the consequences. Doing this may have unintended consequences
+   or leave the DB in an incoherent state. For instance, deleting a topic will
+   cause its sub-topics to also be deleted and may leave some documents without
+   any topics.
+  </text>
+ </entry>
+
+ <entry>
+  <key>extdocdb</key>
+  <title>External DocDB Information</title>
+  <text>
+   Fill in the information for any external DocDBs you want your users to be
+   able to reference in <q>Related Documents.</q> <q>Project</q> should be the short
+   project name, the description can be a longer description. The URLs should be
+   the public and private URLs where the scripts reside. Do not include a script name.
+   (I. e., they should be of the form: http://server.name.com/cgi-bin/DocDB/.)
+  </text>
+ </entry>
+
+ <entry>
+  <key>customlist</key>
+  <title>Customizing Document Lists</title>
+  <text>
+   For each document, select the fields you want displayed and their position.
+   For instance, column 2 row 1 will be to the right of column 1, row 1 while
+   column 1, row 2 will be displayed below. The Row(s) and Column(s) settings
+   allow larger fields to span several rows or  columns (these are equivalent to
+   rowspan and colspan in HTML.)  If not laid out correctly, this can
+   cause strange looking lists.
+  </text>
+ </entry>
+
+ <entry>
+  <key>certname</key>
+  <title>Certificate Common Name (CN)</title>
+  <text>
+   This is a unique identifier in the user's client certificate. It is usually
+   the user's name or login. It must be entered exactly or the user will not be
+   authenticated when they  present their client certificate to DocDB.
+  </text>
+ </entry>
+
+ <entry>
+  <key>certemail</key>
+  <title>E-Mail Address for Certificate User</title>
+  <text>
+   This must be a valid e-mail address for the user. This e-mail address will
+   be used for notifications of changed documents and requests for signatures
+   (if enabled by the DocDB maintainer).
+  </text>
+ </entry>
+
+ <entry>
+     <key>targetauthor</key>
+     <title>Author to Consolidate</title>
+     <text>
+         <p>Instead of simply deleting the author, all references to the author about
+         to be deleted will be updated to another author before deletion. This may
+         be useful if there are two author entries for one person or if your practice is to
+         move all activity by people who have left the organization to <q>Obsolete Author</q>
+         or something similar.</p><p>This field is optional.</p>
+     </text>
+ </entry>
+
 </helpfile>

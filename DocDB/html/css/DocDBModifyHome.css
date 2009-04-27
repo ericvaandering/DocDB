@@ -1,0 +1,20 @@
+/* Some (all) of this may be possible with general padding rules, etc. */
+
+.GenCustomForm {
+  padding: 5px;
+  border: 3px solid;
+  margin-right: auto;
+  margin-left: auto;
+  border-collapse: collapse;
+}  
+
+.GenCustomForm td, .GenCustomForm th {
+  padding: 5px;
+  border: 1px solid;
+}  
+
+.CustomButtons td {
+  padding: 3px;
+  border: none;
+}
+

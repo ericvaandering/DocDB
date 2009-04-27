@@ -2,15 +2,15 @@
 # Description: Routines to deal with cookies
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 #
 
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -20,17 +20,20 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub GetPrefsCookie {
-  $UserIDPref       = $query -> cookie('userid');
+
+  # FIXME: Move to using UserPreferences directly as possible.
+
   $UploadTypePref   = $query -> cookie('archive');
   $NumFilesPref     = $query -> cookie('numfile');
   $UploadMethodPref = $query -> cookie('upload');
   $TopicModePref    = $query -> cookie('topicmode');
   $AuthorModePref   = $query -> cookie('authormode');
   $DateOverridePref = $query -> cookie('overdate');
-  $UserPreferences{AuthorID}     = $UserIDPref      ;
+
+  $UserPreferences{AuthorID}     = $query -> cookie('userid');
   $UserPreferences{UploadType}   = $UploadTypePref  ;
   $UserPreferences{NumFiles}     = $NumFilesPref    ;
   $UserPreferences{UploadMethod} = $UploadMethodPref;
@@ -39,5 +42,17 @@ sub GetPrefsCookie {
   $UserPreferences{DateOverride} = $DateOverridePref;
 }
 
+sub GetGroupsCookie {
+  my @GroupIDs = ();
+  if ($query) {
+    my $GroupIDs = $query -> cookie('groupids');
+    if ($GroupIDs) {
+      push @DebugStack,"Found group limiting cookie";
+      @GroupIDs = split /,/,$GroupIDs;
+    }
+  }
+  return @GroupIDs;
+}
+
 1;
- 
+

@@ -1,0 +1,25 @@
+/* Make our "menu" be a float on the left */
+
+#LeftColumn3Col {
+  width: 17em;
+  margin-right: 1em;
+  float: left;
+}
+
+#MainColumn3Col {
+  padding-left: 1.5em;   
+}
+
+#LeftColumn3Col ul {
+  padding-left: 1em; /* Compact lists */
+}
+
+#MainColumn3Col h2, #MainColumn3Col h3 { /* Align them on the left */
+  text-align: left;
+  margin-left: 0px;
+}
+
+#MainColumn3Col p {
+  margin-top: 3px; /* Put top near headers */
+}
+

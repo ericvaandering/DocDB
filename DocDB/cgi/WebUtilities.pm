@@ -1,4 +1,4 @@
-# Copyright 2001-2004 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -13,7 +13,7 @@
 
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
-#    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub ValidURL { # URL is valid
   my ($url) = @_;
@@ -22,7 +22,7 @@ sub ValidURL { # URL is valid
   $sep = "://";
   
   my ($service,$address) = split /$sep/,$url;
-  
+    
   unless ($service && $address) {
     return $ok;
   }
@@ -45,19 +45,31 @@ sub ValidFileURL { # URL is valid and has file afterwards
   
   my ($service,$address) = split /$sep/,$url;
   
+  # Create both Escaped (%20 for space, etc) and Unescaped versions of filename
+  # Use different versions for different checks
+  
+  my $UnescapedAddress = CGI::unescape($address);
+  my $EscapedAddress   = CGI::escape($UnescapedAddress);
+  $address = $EscapedAddress;
+  
   unless ($service && $address) {
+    push @DebugStack,"Invalid URL: No service or no address";
     return $ok;
   }
   unless (grep /^\s*[a-zA-z]+$/,$service) {
+    push @DebugStack,"Invalid URL: Bad service name";
     return $ok;
   }    
-  unless (grep /^[\-\w\~\;\/\?\=\&\$\.\+\!\*\'\(\)\,]+\s*$/, $address) { # no :,@
+  unless (grep /^[\-\w\~\;\/\?\=\&\$\.\+\!\*\'\(\)\,\:\%]+\s*$/, $address) { # no :,@
+    push @DebugStack,"Invalid URL: Bad address";
     return $ok;
   }  
-  if (grep /\/$/,$address) {
+  if (grep /\/$/,$UnescapedAddress) {
+    push @DebugStack,"Invalid URL: No file name after hostname";
     return $ok;
   } 
-  unless (grep /\//,$address) {
+  unless (grep /\//,$UnescapedAddress) {
+    push @DebugStack,"Invalid URL: No slash in address (hostname only)";
     return $ok;
   } 
    
@@ -129,29 +141,5 @@ sub DaysInMonth {
     }       
   }     
 }  
-sub NearByMeeting { # Return MinorTopicID of meeting within $MeetingWindow days
-  # Our current scheme doesn't deal well with meetings that span months. 
-  # Suggest in that case just to use begin date.
-  use Time::Local;
-  
-  require "TopicSQL.pm";
-  &SpecialMajorTopics;
-  
-  my $Now       = time();
-  my @MinorIDs = keys %MinorTopics;
-  foreach $ID (@MinorIDs) {
-    unless (&MajorIsMeeting($MinorTopics{$ID}{MAJOR})) {next;}
-    my ($MeetDays,$MeetMonthName,$MeetYear) = split /\s+/,$MinorTopics{$ID}{SHORT};
-    my ($MeetBeginDay) = split /\-/,$MeetDays;
-    my $MeetMonth = $ReverseFullMonth{$MeetMonthName} - 1;
-    $MeetYear  = $MeetYear - 1900;
-    if ($MeetBeginDay > 0 && $MeetMonth >= 0 && $MeetYear > 0) { 
-      my $MeetTime  = timelocal(0,0,0,$MeetBeginDay,$MeetMonth,$MeetYear);
-      if (abs($MeetTime - $Now) < $MeetingWindow*24*60*60) {
-        return $ID;
-      }  
-    }
-  }   
-}  
-  
+
 1;
