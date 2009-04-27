@@ -100,12 +100,12 @@ if ($Action eq "Delete") {
 
 # Deal with name changes     
 
-  if ($ShortName) { 
+  if ($TopicID && $ShortName) { 
     push @ActionStack,"Updated short description of topic.";
     my $Update = $dbh -> prepare("update Topic set ShortDescription=? where TopicID=?");
     $Update -> execute($ShortName,$TopicID);
   }
-  if ($LongName) { 
+  if ($TopicID && $LongName) { 
     push @ActionStack,"Updated long description of topic.";
     my $Update = $dbh -> prepare("update Topic set LongDescription=? where TopicID=?");
     $Update -> execute($LongName,$TopicID);
@@ -113,11 +113,11 @@ if ($Action eq "Delete") {
 
 # Deal with parent changes   
 
-  if ($ParentTopicID == $TopicID) {
+  if ($ParentTopicID && $ParentTopicID == $TopicID) {
     push @WarnStack,"You cannot set a topic to be its own parent. No action taken.";
   }  
 
-  if ($ParentTopicID && $ParentTopicID != $TopicID) { 
+  if ($TopicID && $ParentTopicID && $ParentTopicID != $TopicID) { 
     push @ActionStack,"Updated parent topic of (sub)topic.";
    
     my $Delete = $dbh -> prepare("delete from TopicHierarchy where TopicID=?");

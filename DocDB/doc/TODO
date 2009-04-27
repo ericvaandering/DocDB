@@ -1,9 +1,33 @@
 V9
   implement supress
+    view codes: see by default, can see, cannot see
+    modify codes: can create with, cannot create with
+    
+    flag things that don't make sense: cannot see but can create
+
     find most general rule that applies: 
-      topic, no one can view
-      need codes for all see by default, all can see, groups sees by default, group can view, group can create, public calendar for
-      need entry for all topics/all events
+      can disable rules
+      eg view topic:
+        (all, group, user) view settings for all topics
+        (all, group, user) view settings for top topic
+        (all, group, user) view settings for parent topics
+        (all, group, user) view settings for particular topic
+      authors
+	can create with author group (security group with authors)
+        can create with that author
+      modify events
+        (all, group, user) modify all events
+        (all, group, user) modify meeting groups
+        modify event and view agenda (vs. existence) of event already in place
+      create/display ical/rss link
+        do above to see if we can display link
+        on request, do above again to check if it's OK
+        either set group or set groups of user in retrieval, unset after
+        on lookup, see if already exists before creating, only create if not public
+        creatation should involve a hash of sequence #, DocDB URL, group, email user, key class, type, and key
+	  May not need to store URL
+
+
     Need for topic, eventgroup, event, keyword group, session (add directly if not present), group
     Also need to put authors into groups
     Option to reduce documents writable by certain group
@@ -14,6 +38,7 @@ V9
   preserve sig hack
   add authorID link to EmailUserID, need to use this to restrict list of authors
   segmented administration
+  check and remove topic(s) on events and sessions
 
 * In using CGI::Untaint, look at as_set for arrays.
 HTML::Sanitizer for CGI untaint too. as well as URL

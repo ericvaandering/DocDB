@@ -240,6 +240,7 @@ sub DeleteTopic ($) {
 
   require "Messages.pm";
   require "TopicUtilities.pm";
+  require "MeetingSQL.pm";
 
   unless ($TopicID) {
     push @WarnStack,$Msg_ModTopicEmpty;
@@ -252,24 +253,32 @@ sub DeleteTopic ($) {
 
   my @TopicDocIDs   = GetTopicDocuments($TopicID);
   my @ChildTopicIDs = @{$TopicChildren{$TopicID}};
+  my %EventHash     = GetEventHashByTopic($TopicID);
 
   my $Abort = $FALSE;
   if (@ChildTopicIDs && !$Force) {
-    push @WarnStack,"Cannot delete a topic with sub-topic. Use the force option to delete this topic and all its children.";
+    push @WarnStack,"Cannot delete a topic with sub-topic(s). ".
+      "Use the force option to delete this topic and all its children and their associations. ".
+      "Those associations, if any, are not reported here.";
     $Abort = $TRUE;
   }
   if (@TopicDocIDs && !$Force) {
-    push @WarnStack,"Cannot delete a topic with associated with documents. Use the force option to delete this topic ".
-                    "and all associations. Some associations may be from documents updated with \"Update DB Info\" ".
-                    "which are no longer visible, but you must use the force option to erase this history.";
+    push @WarnStack,"Cannot delete a topic with associated documents. ".
+      "Use the force option to delete this topic and all associations. ".
+      "Some associations may be from documents updated with \"Update DB Info\" ".
+      "which are no longer visible, but you must use the force option to erase this history.";
     $Abort = $TRUE;
   }
 
+  if (%EventHash && !$Force) {
+    push @WarnStack,"Cannot delete a topic with event(s) and/or sessions. ".
+                    "Use the force option to delete this topic and all other associations. ";
+    $Abort = $TRUE;
+  }
   if ($Abort) {
     return 0;
   }
-  # FIXME: (v8.x) EventTopics will need a similar check
-
+ 
   my $TopicDelete     = $dbh -> prepare("delete from Topic          where TopicID=?");
   my $RevisionDelete  = $dbh -> prepare("delete from RevisionTopic  where TopicID=?");
   my $HintDelete      = $dbh -> prepare("delete from TopicHint      where TopicID=?");
