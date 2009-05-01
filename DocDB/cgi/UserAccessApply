@@ -58,6 +58,7 @@ unless ($CertEmail) {
 EndPage();
     
 my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
+my $CertDN    = $ENV{SSL_CLIENT_S_DN};
 
 if ($CertificateStatus eq "verified") {
   print "<b>Your certificate has already been verified. A new request has NOT been generated.<br>".
@@ -77,6 +78,7 @@ if ($CertificateStatus eq "verified") {
   print "<b>You have already applied for access to documents. A new request has not been generated.
          If you believe your request has been misplaced or neglected, contact an administator.</b>";
   print "The following information may be helpful:<br>\n";
+  print "<b>Certificate Distinguished Name (DN):</b> $CertDN<br>\n";
   print "<b>Certificate Common Name (CN):</b> $CertCN<br>\n";
   print "<b>Certificate E-mail Address:</b> $CertEmail<br>\n";
 } elsif ($CertificateStatus eq "mismatch") {  
@@ -101,9 +103,9 @@ if ($CertificateStatus eq "verified") {
 ### Fill in DB tables
 
   my $UserInsert = $dbh -> prepare(
-      "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Verified,Password) ".
+      "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Verified,Password,CertDN) ".
       "            values (0,?,?,?,0,'x')");
-     $UserInsert -> execute($UserName,$CertCN,$CertEmail);
+     $UserInsert -> execute($UserName,$CertCN,$CertEmail,$CertDN);
   my $EmailUserID = $UserInsert -> {mysql_insertid}; # Works with MySQL only
   
   my $UsersGroupInsert = $dbh -> prepare(
@@ -116,12 +118,12 @@ if ($CertificateStatus eq "verified") {
 ### Notify applicant and administrator
 
   
-  print "You ($CertCN with e-mail address $CertEmail) have requested ";
+  print "You ($CertDN with e-mail address $CertEmail) have requested ";
   print "access to $Project DocDB. ";
   print "You have requested membership in the following groups:\n";
   print "<ul>\n";
   foreach my $GroupID (@RequestedGroupIDs) {
-    &FetchSecurityGroup($GroupID);
+    FetchSecurityGroup($GroupID);
     print "<li>",$SecurityGroups{$GroupID}{NAME},"</li>\n";
   }  
   print "</ul>\n";
@@ -132,12 +134,12 @@ if ($CertificateStatus eq "verified") {
     print "An e-mail has been sent to the administrators and a confirmation e-mail has been sent to you.<p/>\n";
     
     my @To      = ($DBWebMasterEmail);
-    my $Subject = "$CertCN requests access to $Project DocDB";
-    my $Body    = "$CertCN with e-mail address $CertEmail has requested ";
+    my $Subject = "$CertDN requests access to $Project DocDB";
+    my $Body    = "$CertDN (CN $CertCN) with e-mail address $CertEmail has requested ";
     $Body      .= "access to $Project DocDB. ";
     $Body      .= "He or she requests membership in the following groups:\n";
     foreach my $GroupID (@RequestedGroupIDs) {
-      &FetchSecurityGroup($GroupID);
+      FetchSecurityGroup($GroupID);
       $Body .= "  ".$SecurityGroups{$GroupID}{NAME}."\n";
     }  
     $Body .= "\n";
@@ -148,7 +150,7 @@ if ($CertificateStatus eq "verified") {
       $Body .= "The user attached this note to their application:\n";
       $Body .= $CertNote;
     }  
-    &SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
+    SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
 
     my @To      = ($CertEmail);
     my $Subject = "$CertCN requests access to $Project DocDB";

@@ -61,6 +61,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
     "alter table UsersGroup add key UserGroupKey (EmailUserID, GroupID)",
     "alter table Notification add key NotifIDKey (Period, Type, ForeignID)",
     "alter table Notification add key NotifTextKey (Period, Type, TextKey)",
+    "alter table EmailUser  add CertDN varchar(240) default NULL",
 
     # TODO: rename Type and it's key in Suppress
     # Remove hack put in in version 8

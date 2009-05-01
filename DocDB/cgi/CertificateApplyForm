@@ -52,6 +52,7 @@ print $query -> header( -charset => $HTTP_ENCODING );
 my $CertificateStatus = &CertificateStatus();
 my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
 my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
+my $CertDN    = $ENV{SSL_CLIENT_S_DN};
 
 if ($CertificateStatus eq "verified") {
   print "<b>Your certificate has been verified and you have access to documents from these groups:</b>";
@@ -78,6 +79,7 @@ if ($CertificateStatus eq "verified") {
          certificate is allowed per person. Contact an administrator if you
          don't know what to do.</b><p/>";
   print "The following information may be helpful:<br/>\n";
+  print "<b>Certificate Distinguished Name (DN):</b> $CertCN<br/>\n";
   print "<b>Certificate Common Name (CN):</b> $CertCN<br/>\n";
   print "<b>Certificate E-mail Address:</b> $CertEmail<br/>\n";
 } elsif ($CertificateStatus eq "nocert") {  
