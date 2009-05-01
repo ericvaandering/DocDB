@@ -1,10 +1,14 @@
-# Description: How to get and use a certificate. 
+#
+#        Name: CertificateInstructions.pm
+# Description: How to get and use a certificate.
 #              This is mostly HTML, but making  it a script allows us to eliminate
 #              parts of it that we don't want and get it following everyone's
 #              style, and allows groups to add to it with ProjectMessages.
 #
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
 #      Author: Lynn Garren (garren@fnal.gov)
-#    Modified: Eric Vaandering (ewv@fnal.gov)
 
 # We've tried to make these instructions generically useful if you have both
 # FNALKCA and DOEGrids set to false, as above. In the case where DOEGrids only
@@ -47,6 +51,9 @@ TOC
     <li><a href="$DocDBInstructions?set=kca#mac">For MAC</a></li>
    </ul></li> 
 KCA
+  }
+  if ($Preferences{Security}{Certificates}{CERN}) {
+    print "<li><a href=\"$DocDBInstructions?set=cern\">Get a CERN Certificate</a></li>\n";
   }
   print <<TOC;
    <li><a href="$DocDBInstructions?set=register">Register your certificate with DocDB</a></li>
@@ -100,6 +107,15 @@ at least at Fermilab, be required for access to other web sites.
    </p>
 KCA
 }
+
+if ($Preferences{Security}{Certificates}{CERN}) {
+  print <<CERN;
+  <p>
+  <a href="http://ca.cern.ch/ca/">Request a CERN user certificate</a> and follow the instructions for importing it into your browser. You will need to use your NICE account.
+  </p>
+CERN
+}
+
 
   print <<HTML;
 <p>
@@ -692,6 +708,5 @@ HTML
 HTML
   }
 }
-
 
 1;

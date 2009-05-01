@@ -1,4 +1,5 @@
 #
+#        Name: ProjectGlobals.pm.template
 # Description: Configuration file for your projects DocDB settings. 
 #              Set variables  for server names, accounts, and command 
 #              paths here.
@@ -6,8 +7,10 @@
 #              This file is included in every DocDB program.
 #              You can override any settings in DocDBGlobals.pm here.
 #
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -146,5 +149,9 @@ $ShortProject   = "MyProject";    # This is the project used in the Document ID
                          # Scripts and engine installed for searching files
 
 #$DefaultPublicAccess  = 0;     # New documents are public by default
+
+$Preferences{Security}{Certificates}{FNALKCA}  = $FALSE;
+$Preferences{Security}{Certificates}{DOEGrids} = $FALSE;
+$Preferences{Security}{Certificates}{CERN}     = $FALSE;
 
 1;
