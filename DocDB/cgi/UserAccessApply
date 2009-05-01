@@ -134,7 +134,7 @@ if ($CertificateStatus eq "verified") {
     print "An e-mail has been sent to the administrators and a confirmation e-mail has been sent to you.<p/>\n";
     
     my @To      = ($DBWebMasterEmail);
-    my $Subject = "$CertDN requests access to $Project DocDB";
+    my $Subject = "$CertCN requests access to $Project DocDB";
     my $Body    = "$CertDN (CN $CertCN) with e-mail address $CertEmail has requested ";
     $Body      .= "access to $Project DocDB. ";
     $Body      .= "He or she requests membership in the following groups:\n";
@@ -155,7 +155,7 @@ if ($CertificateStatus eq "verified") {
     my @To      = ($CertEmail);
     my $Subject = "$CertCN requests access to $Project DocDB";
     my $Body    = "Dear $CertCN,\n\n";
-    $Body      .= "You, or someone using your e-mail address ($CertEmail) has requested ";
+    $Body      .= "You, ($CertDN) or someone using your e-mail address ($CertEmail) has requested ";
     $Body      .= "access to $Project DocDB. If you did not initiate this request, ";
     $Body      .= "please contact the DocDB administrators at $DBWebMasterEmail immediately.\n\n";
     $Body      .= "If you did request this access, please give the ";
