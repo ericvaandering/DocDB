@@ -104,7 +104,7 @@ if ($CertificateStatus eq "verified") {
 
   my $UserInsert = $dbh -> prepare(
       "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Verified,Password,CertDN) ".
-      "            values (0,?,?,?,0,'x')");
+      "            values (0,?,?,?,0,'x',?)");
      $UserInsert -> execute($UserName,$CertCN,$CertEmail,$CertDN);
   my $EmailUserID = $UserInsert -> {mysql_insertid}; # Works with MySQL only
   
