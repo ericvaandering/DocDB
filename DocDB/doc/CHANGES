@@ -1,3 +1,8 @@
+
+ Refactor EmailUsers to better support certificates & add instructions
+  for CERN issued certificates. Set $Preferences{Security}{Certificates}{CERN} = $TRUE;
+  to see
+
 8.7.10
 
  Some fixes to topic administration
