@@ -1,4 +1,5 @@
 V9
+  add a proper name field to email user
   implement supress
     view codes: see by default, can see, cannot see
     modify codes: can create with, cannot create with
@@ -38,7 +39,6 @@ V9
   preserve sig hack
   add authorID link to EmailUserID, need to use this to restrict list of authors
   segmented administration
-  check and remove topic(s) on events and sessions
 
 * In using CGI::Untaint, look at as_set for arrays.
 HTML::Sanitizer for CGI untaint too. as well as URL
