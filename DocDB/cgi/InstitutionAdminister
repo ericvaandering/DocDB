@@ -92,13 +92,13 @@ if      ($Action eq "Delete") { # Delete institutions
 # Deal with name changes     
 
   if ($ShortName) { 
-    print "<b>Updating short topic name.</b><br>\n";
+    print "<b>Updating short institution name.</b><br>\n";
     my $InstitutionUpdate = $dbh->prepare(
        "update Institution set ShortName=? where InstitutionID=?");
     $InstitutionUpdate -> execute($ShortName,$InstitutionID);
   }
   if ($LongName) { 
-    print "<b>Updating long topic name.</b><br>\n";
+    print "<b>Updating long institution name.</b><br>\n";
     my $InstitutionUpdate = $dbh->prepare(
        "update Institution set LongName=? where InstitutionID=?");
     $InstitutionUpdate -> execute($LongName,$InstitutionID);
@@ -117,11 +117,12 @@ if      ($Action eq "Delete") { # Delete institutions
 
 # For modify or new fetch institution information and display.
 
+ClearInstitutions();
 if ($Action eq "Modify" || $Action eq "New") {
   &FetchInstitution($InstitutionID);
   print "<p><b>Here are the results of your modification:<br>\n";
-  print "Short name: $Institutions{$InstitutionID}{SHORT}<br>\n";
-  print "Long name:  $Institutions{$InstitutionID}{LONG}<br>\n";
+  print "Short institution name: $Institutions{$InstitutionID}{SHORT}<br>\n";
+  print "Long institution name:  $Institutions{$InstitutionID}{LONG}<br>\n";
   print "</b><p>\n";
 }  
 
