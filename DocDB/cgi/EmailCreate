@@ -72,7 +72,7 @@ print $query -> header( -charset => $HTTP_ENCODING );
 # Everything is OK, create the account
 
 unless (@ErrorStack) {
-  srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
+  srand (time ^ $$ ^ unpack "%32L*", `ps -eaf`);
   
   my $Salt = ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]).
              ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]);

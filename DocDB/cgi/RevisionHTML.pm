@@ -413,21 +413,29 @@ sub PrintPubInfo ($) {
 
 sub PrintModTimes {
   require "SQLUtilities.pm";
+  require "SignoffUtilities.pm";
 
   my ($DocRevID) = @_;
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
   $DocTime     = &EuroDateHM($Documents{$DocumentID}{Date});
   $RevTime     = &EuroDateHM($DocRevisions{$DocRevID}{DATE});
   $VersionTime = &EuroDateHM($DocRevisions{$DocRevID}{VersionDate});
-  
+
   my $ActualDateTime = ConvertToDateTime({-MySQLTimeStamp => $DocRevisions{$DocRevID}{TimeStamp}, });
   my $ActualTime  = DateTimeString({ -DateTime => $ActualDateTime });
-  
+
   print "<dt>Document Created:</dt>\n<dd>$DocTime</dd>\n";
   print "<dt>Contents Revised:</dt>\n<dd>$VersionTime</dd>\n";
   print "<dt>DB Info Revised:</dt>\n<dd>$RevTime</dd>\n";
   if ($ActualTime ne $RevTime) {
     print "<dt>Actually Revised:</dt>\n<dd>$ActualTime</dd>\n";
+  }
+
+  my $LastApproved = RevisionSignoffDate($DocRevID);
+  if ($LastApproved) {
+    my $ApprovalDateTime = ConvertToDateTime({-MySQLTimeStamp => $LastApproved, });
+    my $ApprovalTime  = DateTimeString({ -DateTime => $ApprovalDateTime });
+    print "<dt>Last Signed:</dt>\n<dd>$ApprovalTime</dd>\n";
   }
 }
 

@@ -276,7 +276,7 @@ print $query -> hidden(-name => 'docid',     -default => $DocumentID);
 print $query -> hidden(-name => 'oldversion',-default => $Version);
 
 # Generate unique ID to disallow multiple posting
-srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
+srand (time ^ $$ ^ unpack "%32L*", `ps -eaf`);
 my $UniqueID = time."-".(int rand (2**31-1));
 print $query -> hidden(-name => 'uniqueid',  -default => $UniqueID);
 

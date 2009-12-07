@@ -389,7 +389,12 @@ sub DocumentLink (%) {
       my ($ApprovalStatus,$LastApproved) = RevisionStatus($DocRevID);
       unless ($ApprovalStatus eq "Unmanaged") {
         $Link .= "<br/>($ApprovalStatus";
-        if ($ApprovalStatus eq "Unapproved") {
+        if($ApprovalStatus eq "Approved") {
+          my $LastApproved = RevisionSignoffDate($DocRevID);
+          my $ApprovalDateTime = ConvertToDateTime({-MySQLTimeStamp => $LastApproved, });
+          my $ApprovalTime  = DateTimeString({ -DateTime => $ApprovalDateTime, -ShowTime => $FALSE, });
+          $Link .= " - $ApprovalTime";
+        } elsif ($ApprovalStatus eq "Unapproved") {
           if (defined $LastApproved) {
             my $DocumentID = $DocRevisions{$LastApproved}{DOCID};
             my $Version    = $DocRevisions{$LastApproved}{Version};

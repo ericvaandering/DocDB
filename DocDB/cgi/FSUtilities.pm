@@ -332,7 +332,7 @@ sub DownloadURLs (%) {
 }
 
 sub MakeTmpSubDir {
-  my $TmpSubDir = $TmpDir."/".(time ^ $$ ^ unpack "%32L*", `ps axww`);
+  my $TmpSubDir = $TmpDir."/".(time ^ $$ ^ unpack "%32L*", `ps -eaf`);
   mkdir $TmpSubDir, oct 755 or die "Could not make temporary directory";
   return $TmpSubDir;
 }

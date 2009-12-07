@@ -118,7 +118,7 @@ sub PrintSignatureInfo ($) {
       # Otherwise, note that it's waiting
 
       my $SignatureText = "";
-      my $SignatureLink = &SignatureLink($EmailUserID);
+      my $SignatureLink = &SignatureLink($EmailUserID,$SignatureID);
       if ($Status eq "Ready" || $Status eq "Signed") {
         if ($Status eq "Ready") {
           $Action = "sign";
@@ -173,12 +173,26 @@ sub PrintSignatureInfo ($) {
 
 sub SignatureLink ($) {
   require "NotificationSQL.pm";
-  my ($EmailUserID) = @_;
+  require "SQLUtilities.pm";
+  require "SignoffSQL.pm";
+  my ($EmailUserID,$SignatureID) = @_;
 
   &FetchEmailUser($EmailUserID);
-  my $Link = "<a href=\"$SignatureReport?emailuserid=$EmailUserID\">";
-     $Link .= $EmailUser{$EmailUserID}{Name};
-     $Link .= "</a>";
+  my $Link = "<a href=\"$SignatureReport?emailuserid=$EmailUserID\"";
+  if ($SignatureID) {
+    FetchSignature($SignatureID);
+    if ($Signatures{$SignatureID}{Signed}) {
+      my $SignatureTimestamp = $Signatures{$SignatureID}{TimeStamp};
+      my $SignatureDateTime = ConvertToDateTime({-MySQLTimeStamp => $SignatureTimestamp, });
+      my $SignatureTime  = DateTimeString({ -DateTime => $SignatureDateTime });
+
+
+      $Link .= " title=\"$SignatureTime\"";
+    }
+  }#title=\"$InstitutionName\"
+  $Link .= ">";
+  $Link .= $EmailUser{$EmailUserID}{Name};
+  $Link .= "</a>";
   return $Link;
 }
 1;
