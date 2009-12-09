@@ -386,6 +386,8 @@ sub DocumentLink (%) {
     $Link .= $EndElement;
     if ($UseSignoffs && !$NoApprovalStatus) { # Put document status on next line
       require "SignoffUtilities.pm";
+      require "SignoffSQL.pm";
+      require "SQLUtilities.pm";
       my ($ApprovalStatus,$LastApproved) = RevisionStatus($DocRevID);
       unless ($ApprovalStatus eq "Unmanaged") {
         $Link .= "<br/>($ApprovalStatus";
