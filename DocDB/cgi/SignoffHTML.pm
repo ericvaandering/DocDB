@@ -187,7 +187,9 @@ sub SignatureLink ($) {
       my $SignatureTime  = DateTimeString({ -DateTime => $SignatureDateTime });
 
 
-      $Link .= " title=\"$SignatureTime\"";
+      $Link .= " title=\"Signed $SignatureTime\"";
+    } else {
+      $Link .= " title=\"Not signed\"";
     }
   }#title=\"$InstitutionName\"
   $Link .= ">";
