@@ -118,13 +118,16 @@ sub DateTimeString {
   my ($ArgRef) = @_;
 
   my $ShowSeconds = exists $ArgRef->{-ShowSeconds} ? $ArgRef->{-ShowSeconds} : $FALSE;
-  my $DateTime    = exists $ArgRef->{-DateTime} ? $ArgRef->{-DateTime} : DateTime->now();
+  my $ShowTime    = exists $ArgRef->{-ShowTime}    ? $ArgRef->{-ShowTime}    : $TRUE;
+  my $DateTime    = exists $ArgRef->{-DateTime}    ? $ArgRef->{-DateTime}    : DateTime->now();
 
-  my $Format = "%d %b %Y, ";
-  if ($ShowSeconds) {
-    $Format .= "%T";
+  my $Format = "%d %b %Y";
+  if (not $ShowTime) {
+    # Do nothing
+  } elsif ($ShowSeconds) {
+    $Format .= ", %T";
   } else {
-    $Format .= "%R";
+    $Format .= ", %R";
   }
 
   my $String = $DateTime->strftime($Format);

@@ -156,6 +156,28 @@ sub RevisionStatus ($) { # Return the approval status of a revision
   return ($Status,$LastDocRevID);
 }
 
+sub RevisionSignoffDate ($) {
+  require "SignoffSQL.pm";
+  require "RevisionSQL.pm";
+  require "Sorts.pm";
+
+  my ($DocRevID) = @_;
+  FetchDocRevisionByID($DocRevID);
+  my $LastTimeStamp = 0;
+  my @SignoffIDs = GetAllSignoffsByDocRevID($DocRevID);
+  foreach my $SignoffID (@SignoffIDs) {
+    # Copy the signoff
+    my @SignatureIDs = GetSignatures($SignoffID);
+    foreach my $SignatureID (@SignatureIDs) {
+      FetchSignature($SignatureID);
+      if ($Signatures{$SignatureID}{Signed} && $Signatures{$SignatureID}{TimeStamp} > $LastTimeStamp) {
+        $LastTimeStamp = $Signatures{$SignatureID}{TimeStamp};
+      }
+    }
+  }
+  return $LastTimeStamp;
+}
+
 sub BuildSignoffDefault ($) {
   require "SignoffSQL.pm";
   require "NotificationSQL.pm";

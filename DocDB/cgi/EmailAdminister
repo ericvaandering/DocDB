@@ -108,7 +108,7 @@ if      ($Action eq "Delete") { # Delete user
   FetchEmailUser($EmailUserID);
 
   if ($NewPassword) { 
-    srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
+    srand (time ^ $$ ^ unpack "%32L*", `ps -eaf`);
 
     my $Salt = ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]).
                ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]);

@@ -47,11 +47,16 @@ sub PrintRevisionSignoffInfo ($) { # FIXME: Handle more complicated topologies?
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
   my $Version    = $DocRevisions{$DocRevID}{Version};
 
-  # Don't display anything unless the user is logged into a group that can
-  # modify the DB. Maybe we want to display but not provide signature boxes?
+  # Don't display anything if the user is logged in as public.
+  # If the user can't modify the document, only show signatures,
+  # don't provide the ability to sign.
 
-  unless (&CanModify($DocumentID,$Version)) {
+  if ($Public) {
     return;
+  }
+  my $UserCanSign = $FALSE;
+  if (CanModify($DocumentID,$Version)) {
+    $UserCanSign = $TRUE;
   }
 
   my @RootSignoffIDs = &GetRootSignoffs($DocRevID);
@@ -63,7 +68,7 @@ sub PrintRevisionSignoffInfo ($) { # FIXME: Handle more complicated topologies?
 
     print "<ul>\n";
     foreach my $RootSignoffID (@RootSignoffIDs) {
-      &PrintSignoffInfo($RootSignoffID);
+      PrintSignoffInfo($RootSignoffID,$UserCanSign);
     }
     print "</ul>\n";
     print "</div>\n";
@@ -73,17 +78,17 @@ sub PrintRevisionSignoffInfo ($) { # FIXME: Handle more complicated topologies?
 sub PrintSignoffInfo ($) {
   require "SignoffSQL.pm";
 
-  my ($SignoffID) = @_;
+  my ($SignoffID,$UserCanSign) = @_;
 
   if ($Public) { return; }
 
   my @SubSignoffIDs = &GetSubSignoffs($SignoffID);
   print "<li>";
-  &PrintSignatureInfo($SignoffID);
+  PrintSignatureInfo($SignoffID,$UserCanSign);
   if (@SubSignoffIDs) {
     print "<ul>\n";
     foreach my $SubSignoffID (@SubSignoffIDs) {
-      &PrintSignoffInfo($SubSignoffID);
+      PrintSignoffInfo($SubSignoffID,$UserCanSign);
     }
     print "</ul>\n";
   }
@@ -96,7 +101,7 @@ sub PrintSignatureInfo ($) {
   require "SignoffUtilities.pm";
   require "NotificationSQL.pm";
 
-  my ($SignoffID) = @_;
+  my ($SignoffID,$UserCanSign) = @_;
 
   if ($Public) { return; }
 
@@ -118,50 +123,62 @@ sub PrintSignatureInfo ($) {
       # Otherwise, note that it's waiting
 
       my $SignatureText = "";
-      my $SignatureLink = &SignatureLink($EmailUserID);
-      if ($Status eq "Ready" || $Status eq "Signed") {
-        if ($Status eq "Ready") {
-          $Action = "sign";
-          $ActionText = "Sign Document"
-        } else {
-          $Action = "unsign";
-          $ActionText = "Remove Signature"
-        }
-        if ($UserValidation eq "certificate") {
-          if (FetchEmailUserIDByCert() == $EmailUserID) {
+      my $SignatureLink = &SignatureLink($EmailUserID,$SignatureID);
+      if ($UserCanSign) {
+        if ($Status eq "Ready" || $Status eq "Signed") {
+          if ($Status eq "Ready") {
+            $Action = "sign";
+            $ActionText = "Sign Document"
+          } else {
+            $Action = "unsign";
+            $ActionText = "Remove Signature"
+          }
+          if ($UserValidation eq "certificate") {
+            if (FetchEmailUserIDByCert() == $EmailUserID) {
+              $SignatureText .= $query -> start_multipart_form('POST',"$SignRevision");
+              $SignatureText .= "<div>\n";
+              $SignatureText .= "$SignatureLink ";
+              $SignatureText .= $query -> hidden(-name => 'signatureid',   -default => $SignatureID);
+              $SignatureText .= $query -> hidden(-name => 'emailuserid',   -default => $EmailUserID);
+              $SignatureText .= $query -> hidden(-name => 'action',   -default => $Action);
+              $SignatureText .= $query -> submit (-value => $ActionText);
+              $SignatureText .= "</div>\n";
+              $SignatureText .= $query -> end_multipart_form;
+            } else {
+              if ($Status eq "Signed") {
+                $SignatureText .= "$SignatureLink (signature complete)";
+              } else {
+                $SignatureText .= "$SignatureLink (waiting for signature)";
+              }
+            }
+          } else {
             $SignatureText .= $query -> start_multipart_form('POST',"$SignRevision");
             $SignatureText .= "<div>\n";
             $SignatureText .= "$SignatureLink ";
             $SignatureText .= $query -> hidden(-name => 'signatureid',   -default => $SignatureID);
             $SignatureText .= $query -> hidden(-name => 'emailuserid',   -default => $EmailUserID);
             $SignatureText .= $query -> hidden(-name => 'action',   -default => $Action);
+            $SignatureText .= $query -> password_field(-name => "password-$EmailUserID", -size => 16, -maxlength => 32);
+            $SignatureText .= " ";
             $SignatureText .= $query -> submit (-value => $ActionText);
             $SignatureText .= "</div>\n";
             $SignatureText .= $query -> end_multipart_form;
-          } else {
-            if ($Status eq "Signed") {
-              $SignatureText .= "$SignatureLink (signature complete)";
-            } else {
-              $SignatureText .= "$SignatureLink (waiting for signature)";
-            }
           }
+        } elsif ($Status eq "NotReady") {
+          $SignatureText .= "$SignatureLink (waiting for other signatures)";
         } else {
-          $SignatureText .= $query -> start_multipart_form('POST',"$SignRevision");
-          $SignatureText .= "<div>\n";
-          $SignatureText .= "$SignatureLink ";
-          $SignatureText .= $query -> hidden(-name => 'signatureid',   -default => $SignatureID);
-          $SignatureText .= $query -> hidden(-name => 'emailuserid',   -default => $EmailUserID);
-          $SignatureText .= $query -> hidden(-name => 'action',   -default => $Action);
-          $SignatureText .= $query -> password_field(-name => "password-$EmailUserID", -size => 16, -maxlength => 32);
-          $SignatureText .= " ";
-          $SignatureText .= $query -> submit (-value => $ActionText);
-          $SignatureText .= "</div>\n";
-          $SignatureText .= $query -> end_multipart_form;
+          $SignatureText .= "$SignatureLink (unknown status)";
         }
-      } elsif ($Status eq "NotReady") {
-        $SignatureText .= "$SignatureLink (waiting for other signatures)";
       } else {
-        $SignatureText .= "$SignatureLink (unknown status)";
+        if ($Status eq "Ready") {
+          $SignatureText .= "$SignatureLink (waiting for signature)";
+        } elsif ($Status eq "Signed"){
+          $SignatureText .= "$SignatureLink (signature complete)";
+        } elsif ($Status eq "NotReady") {
+          $SignatureText .= "$SignatureLink (waiting for other signatures)";
+        } else {
+          $SignatureText .= "$SignatureLink (unknown status)";
+        }
       }
       push @SignatureSnippets,$SignatureText;
     } # if ($SignatureIDOK)
@@ -173,12 +190,28 @@ sub PrintSignatureInfo ($) {
 
 sub SignatureLink ($) {
   require "NotificationSQL.pm";
-  my ($EmailUserID) = @_;
+  require "SQLUtilities.pm";
+  require "SignoffSQL.pm";
+  my ($EmailUserID,$SignatureID) = @_;
 
   &FetchEmailUser($EmailUserID);
-  my $Link = "<a href=\"$SignatureReport?emailuserid=$EmailUserID\">";
-     $Link .= $EmailUser{$EmailUserID}{Name};
-     $Link .= "</a>";
+  my $Link = "<a href=\"$SignatureReport?emailuserid=$EmailUserID\"";
+  if ($SignatureID) {
+    FetchSignature($SignatureID);
+    if ($Signatures{$SignatureID}{Signed}) {
+      my $SignatureTimestamp = $Signatures{$SignatureID}{TimeStamp};
+      my $SignatureDateTime = ConvertToDateTime({-MySQLTimeStamp => $SignatureTimestamp, });
+      my $SignatureTime  = DateTimeString({ -DateTime => $SignatureDateTime });
+
+
+      $Link .= " title=\"Signed $SignatureTime\"";
+    } else {
+      $Link .= " title=\"Not signed\"";
+    }
+  }#title=\"$InstitutionName\"
+  $Link .= ">";
+  $Link .= $EmailUser{$EmailUserID}{Name};
+  $Link .= "</a>";
   return $Link;
 }
 1;

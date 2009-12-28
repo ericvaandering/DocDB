@@ -143,6 +143,12 @@ sub GetInstitutions { # Creates/fills a hash $Institutions{$InstitutionID}{} wit
   $HaveAllInstitutions = 1;
 }
 
+sub ClearInstitutions {
+  %Institutions = ();
+  $HaveAllInstitutions = 0;
+  return;
+}
+
 sub FetchInstitution { # Creates/fills a hash $Institutions{$InstitutionID}{} with all Institutions
   my ($InstitutionID) = @_;
   if ($Institutions{$InstitutionID}{InstitutionID}) {

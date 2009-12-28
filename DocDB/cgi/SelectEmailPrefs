@@ -143,7 +143,7 @@ if ($Mode eq "newuser") {
     print "<p/>\n";
     EndPage();
   } else { # Everything OK, lets create the user
-    srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
+    srand (time ^ $$ ^ unpack "%32L*", `ps -eaf`);
 
     my $Salt = ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]).
                ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]);

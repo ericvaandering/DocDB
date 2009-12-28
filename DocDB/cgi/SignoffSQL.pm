@@ -312,8 +312,8 @@ sub CopyRevisionSignoffs { # CopySignoffs from one revision to another
 
   my $SignoffInsert    = $dbh -> prepare("insert into Signoff (SignoffID,DocRevID,Note) ".
                                          "values (0,?,?)");
-  my $SignatureInsert  = $dbh -> prepare("insert into Signature (SignatureID,EmailUserID,SignoffID,Note,Signed) ".
-                                         "values (0,?,?,?,?)");
+  my $SignatureInsert  = $dbh -> prepare("insert into Signature (SignatureID,EmailUserID,SignoffID,Note,Signed,TimeStamp) ".
+                                         "values (0,?,?,?,?,?)");
 
   my %SignoffMap   = ();
 
@@ -330,11 +330,14 @@ sub CopyRevisionSignoffs { # CopySignoffs from one revision to another
       FetchSignature($OldSignatureID);
       # Copy Signatures
       my $Signed = $Signatures{$OldSignatureID}{Signed};
+      my $TimeStamp = $Signatures{$OldSignatureID}{TimeStamp};
       if (!$CopySignatures) {
         $Signed = $FALSE;
+	$TimeStamp = 0;
       }
       $SignatureInsert->execute($Signatures{$OldSignatureID}{EmailUserID}, $NewSignoffID,
-                                $Signatures{$OldSignatureID}{Note},        $Signed);
+                                $Signatures{$OldSignatureID}{Note},        $Signed,
+				$TimeStamp);
     }
   }
   my $DependencyInsert = $dbh -> prepare("insert into SignoffDependency (SignoffDependencyID,PreSignoffID,SignoffID) ".
