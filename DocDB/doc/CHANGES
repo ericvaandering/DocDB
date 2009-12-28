@@ -1,4 +1,6 @@
-
+8.7.12
+ Show the times when a document is signed in left bar, document list, and popups 
+ in document view. 
  Fix caching and wording problem for administering institutions 
 
 8.7.11
