@@ -1,7 +1,8 @@
 8.7.13
  Fix an old bug where authors were essentially unsorted. Only did the right
  thing by accident.
-
+ Fix a bug where single session events showed the session location, but
+ editing the event edited the event location. Now use event location.
 
 8.7.12
  Show the times when a document is signed in left bar, document list, and popups
