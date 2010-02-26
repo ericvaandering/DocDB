@@ -1,10 +1,15 @@
+8.7.13
+ Fix an old bug where authors were essentially unsorted. Only did the right
+ thing by accident.
+
+
 8.7.12
- Show the times when a document is signed in left bar, document list, and popups 
- in document view. 
- Fix caching and wording problem for administering institutions 
+ Show the times when a document is signed in left bar, document list, and popups
+ in document view.
+ Fix caching and wording problem for administering institutions
 
 8.7.11
- 
+
  Use dash instead of spaces to deliniate levels in topics
 
 8.7.10

@@ -87,12 +87,12 @@ sub byLastName { # Obsolete
 sub AuthorRevIDsByOrder {
   require "AuthorSQL.pm";
 
-  if ($AuthorRevIDs{$a}{AuthorOrder} || $AuthorRevIDs{$b}{AuthorOrder}) {
-    return $a <=> $b;
+  if ($RevisionAuthors{$a}{AuthorOrder} || $RevisionAuthors{$b}{AuthorOrder}) {
+    return $RevisionAuthors{$a}{AuthorOrder} <=> $RevisionAuthors{$b}{AuthorOrder};
   }
 
-  my $AID = $AuthorRevIDs{$a}{AuthorID};
-  my $BID = $AuthorRevIDs{$b}{AuthorID};
+  my $AID = $RevisionAuthors{$a}{AuthorID};
+  my $BID = $RevisionAuthors{$b}{AuthorID};
 
   unless ($Authors{$AID}{LastName}) {
     FetchAuthor($AID);
