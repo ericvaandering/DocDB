@@ -215,6 +215,7 @@ sub TopicListWithChildren { # Recursive routine
   my $Depth      = exists $ArgRef->{-depth}      ?   $ArgRef->{-depth}      : 1;
   my $CheckEvent = exists $ArgRef->{-checkevent} ?   $ArgRef->{-checkevent} : $FALSE; # name or provenance
   my $Chooser    = exists $ArgRef->{-chooser}    ?   $ArgRef->{-chooser}    : $FALSE;
+  my @DefaultTopicIDs = exists $ArgRef->{-defaulttopicids}   ? @{$ArgRef->{-defaulttopicids}}  : ();
 
   require "MeetingSQL.pm";
   require "MeetingHTML.pm";
@@ -239,14 +240,31 @@ sub TopicListWithChildren { # Recursive routine
       $HTML .= "<ul class=\"$Class\" id=\"TopicTree\">\n";
     }
     foreach my $TopicID (@TopicIDs) {
+      my $NodeClass = "";
+      if ($Chooser) {
+        my $TopicName = TopicName( {-topicid => $TopicID, -format => "short"} );
+        my @ChildTopicIDs  = TopicAndSubTopics({-topicid => $TopicID});
+        my @CommonTopicIDs = Union(\@DefaultTopicIDs,@ChildTopicIDs);
+        push @DebugStack,"Topic $TopicID children ".join (',',@ChildTopicIDs)." default ".join (',',@DefaultTopicIDs)." union ".join (',',@CommonTopicIDs);
+
+        if (@CommonTopicIDs) {
+          $NodeClass = "liOpen";
+        } else {
+          $NodeClass = "liClosed";
+        }
+      }
       if ($Depth > 1 || $Chooser) {
-        $HTML .= "<li>";
+        $HTML .= "<li";
+        if ($NodeClass) {
+          $HTML .= " class=\"$NodeClass\"";
+        }
+        $HTML .= ">";
       } else {
         $HTML .= "<strong>";
       }
       if ($Chooser) {
-        my $TopicName = TopicName( {-topicid => $TopicID, -format => "short"} );
         $HTML.= $query -> checkbox(-name => "topics", -value => $TopicID, -label => $TopicName);
+
       } else {
         $HTML .= TopicLink( {-topicid => $TopicID} );
       }
