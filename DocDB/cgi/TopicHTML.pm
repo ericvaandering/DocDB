@@ -222,8 +222,8 @@ sub TopicListWithChildren { # Recursive routine
   my @TopicIDs = sort TopicByAlpha @TopicIDs;
 
   my ($Class,$Strong,$EStrong);
-  if ($Chooser) {
-    $Class = "mktree";
+  if ($Chooser && $Depth == 1) {
+        $Class = "mktree";
    # FIXME: Put ID in here, detect elsewhere
 #     $Strong = "<strong>";
 #     $EStrong = "</strong>";
