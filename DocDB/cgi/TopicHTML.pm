@@ -266,6 +266,7 @@ sub TopicListWithChildren { # Recursive routine
       }
       if ($Chooser) {
         my $TopicName = TopicName( {-topicid => $TopicID, -format => "short"} );
+        push @DebugStack,"Checking $TopicID $TopicName against ".join (',',@DefaultTopicIDs);
         if (IndexOf($TopicID,@DefaultTopicIDs)) {
           $HTML.= $query -> checkbox(-name => "topics", -value => $TopicID, -label => $TopicName, -checked => 'checked');
         } else {
