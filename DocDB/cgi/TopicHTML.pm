@@ -216,6 +216,7 @@ sub TopicListWithChildren { # Recursive routine
   my $CheckEvent = exists $ArgRef->{-checkevent} ?   $ArgRef->{-checkevent} : $FALSE; # name or provenance
   my $Chooser    = exists $ArgRef->{-chooser}    ?   $ArgRef->{-chooser}    : $FALSE;
   my @DefaultTopicIDs = exists $ArgRef->{-defaulttopicids}   ? @{$ArgRef->{-defaulttopicids}}  : ();
+  push @DebugStack,"Chooser $Chooser Topics ".join (',',@TopicIDs)." default ".join (',',@DefaultTopicIDs);
 
   require "MeetingSQL.pm";
   require "MeetingHTML.pm";
@@ -280,7 +281,7 @@ sub TopicListWithChildren { # Recursive routine
       if (@{$TopicChildren{$TopicID}}) {
         $HTML .= "\n";
         $HTML .= TopicListWithChildren({ -topicids => $TopicChildren{$TopicID}, -depth => $Depth+1,
-                                         -chooser  => $Chooser, });
+                                         -chooser  => $Chooser, -defaulttopicids => \@DefaultTopicIDs});
       } elsif ($Depth == 1 && !$Chooser) {
         $HTML .= '<br class="EmptyTopic" />';
       }
