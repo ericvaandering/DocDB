@@ -214,26 +214,37 @@ sub TopicListWithChildren { # Recursive routine
   my @TopicIDs   = exists $ArgRef->{-topicids}   ? @{$ArgRef->{-topicids}}  : ();
   my $Depth      = exists $ArgRef->{-depth}      ?   $ArgRef->{-depth}      : 1;
   my $CheckEvent = exists $ArgRef->{-checkevent} ?   $ArgRef->{-checkevent} : $FALSE; # name or provenance
+  my $Chooser    = exists $ArgRef->{-chooser}    ?   $ArgRef->{-chooser}    : $FALSE;
 
   require "MeetingSQL.pm";
   require "MeetingHTML.pm";
 
   my @TopicIDs = sort TopicByAlpha @TopicIDs;
 
+  my ($Class,$Strong,$EStrong);
+  if ($Chooser) {
+    $Class = "TopicTree";
+#     $Strong = "<strong>";
+#     $EStrong = "</strong>";
+  } else {
+    $Class = "$Depth-deep";
+#     $Strong = "";
+#     $EStrong = "";
+  }
   my $HTML;
 
   if (@TopicIDs) {
-    if ($Depth > 1) {
-      $HTML .= "<ul class=\"$Depth-deep\">\n";
+    if ($Depth > 1 || $Chooser) {
+      $HTML .= "<ul class=\"$Class\">\n";
     }
     foreach my $TopicID (@TopicIDs) {
-      if ($Depth > 1) {
+      if ($Depth > 1 || $Chooser) {
         $HTML .= "<li>";
       } else {
         $HTML .= "<strong>";
       }
       $HTML .= TopicLink( {-topicid => $TopicID} );
-      if ($Depth == 1) {
+      if ($Depth == 1 || $Chooser) {
         $HTML .= "</strong>\n";
       }
 #      if ($CheckEvent) {
