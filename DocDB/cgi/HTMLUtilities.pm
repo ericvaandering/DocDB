@@ -1,8 +1,8 @@
 #
-# Description: Routines to output headers, footers, navigation bars, etc. 
+# Description: Routines to output headers, footers, navigation bars, etc.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 #
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
@@ -10,7 +10,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -27,19 +27,19 @@ require "ProjectRoutines.pm";
 
 sub PrettyHTML ($) {
   my ($HTML) = @_;
-  
+
   # This function is supposed to pretty-up any valid (X)HTML, but
-  # it doesn't work particularly well. As written, things like &nbsp; are not 
+  # it doesn't work particularly well. As written, things like &nbsp; are not
   # valid XML. One possibility is to use HTML::Entities::encode_numeric in some way
   # which should produce safe entities or to use a subsitution map
-  
+
   return $HTML;
-  
+
   use HTML::Entities;
   use XML::Twig;
-  
+
   my $OldHTML = $HTML;
-  
+
   $HTML = HTML::Entities::decode($HTML);
   $HTML = HTML::Entities::encode($HTML,'&');
 
@@ -50,12 +50,12 @@ sub PrettyHTML ($) {
   } else {
     push @DebugStack,"HTML Parse failed with error: ".$@;
     return $OldHTML;
-  }    
+  }
 }
 
-sub DocDBHeader { 
+sub DocDBHeader {
   my ($Title,$PageTitle,%Params) = @_;
-  
+
   my $Search  = $Params{-search}; # Fix search page!
   my $NoBody  = $Params{-nobody};
   my $Refresh = $Params{-refresh} || "";
@@ -64,10 +64,10 @@ sub DocDBHeader {
   my @ScriptParts = split /\//,$ENV{SCRIPT_NAME};
   my $ScriptName  = pop @ScriptParts;
 
-  unless ($PageTitle) { 
+  unless ($PageTitle) {
     $PageTitle = $Title;
-  }  
-  
+  }
+
   # FIXME: Do Hash lookup for scripts as they are certified XHTML?
   if ($DOCTYPE) {
     print $DOCTYPE;
@@ -79,17 +79,19 @@ sub DocDBHeader {
   print "<head>\n";
   if ($Refresh) {
     print "<meta http-equiv=\"refresh\" content=\"$Refresh\" />\n";
-  }  
+  }
   print '<meta http-equiv="Content-Type" content="text/html; charset='.$HTTP_ENCODING.'" />',"\n";
   print "<title>$Title</title>\n";
 
   # Include DocDB style sheets
-  
+
+
+  print "<base href=\"$web_root/Static/\"\n";
   my @PublicCSS = ("");
   if ($Public) {
     @PublicCSS = ("","Public");
   }
-  
+
   foreach my $ScriptCSS ("",$ScriptName) {
     foreach my $ProjectCSS ("",$ShortProject) {
       foreach my $PublicCSS (@PublicCSS) {
@@ -100,7 +102,7 @@ sub DocDBHeader {
             if ($BrowserCSS eq "_IE") { # Use IE format for including. Hopefully we can not give these to IE7
               print "<!--[if IE]>\n";
               print "<link rel=\"stylesheet\" href=\"$CSSURL\" type=\"text/css\" />\n";
-              print "<![endif]-->\n"; 
+              print "<![endif]-->\n";
             } else {
               print "<link rel=\"stylesheet\" href=\"$CSSURL\" type=\"text/css\" />\n";
             }
@@ -118,10 +120,10 @@ sub DocDBHeader {
       EventSearchScript();
     }
     print "<script type=\"text/javascript\" src=\"$JSURLPath/$Script.js\"></script>\n";
-  }  
+  }
 
   if (defined &ProjectHeader) {
-    &ProjectHeader($Title,$PageTitle); 
+    &ProjectHeader($Title,$PageTitle);
   }
 
   print "</head>\n";
@@ -131,30 +133,30 @@ sub DocDBHeader {
   } else {
     if ($NoBody) {
       print "<body class=\"PopUp\">\n";
-    } else {  
+    } else {
       print "<body class=\"Normal\">\n";
-    }  
-  }  
-  
+    }
+  }
+
   if (defined &ProjectBodyStart && !$NoBody) {
-    &ProjectBodyStart($Title,$PageTitle); 
+    &ProjectBodyStart($Title,$PageTitle);
   }
 }
 
 sub DocDBFooter ($$;%) {
   require "ResponseElements.pm";
-  
+
   my ($WebMasterEmail,$WebMasterName,%Params) = @_;
-  
+
   my $NoBody = $Params{-nobody};
 
   &DebugPage("At DocDBFooter");
-  
-  unless ($NoBody) { 
+
+  unless ($NoBody) {
     if (defined &ProjectFooter) {
-      &ProjectFooter($WebMasterEmail,$WebMasterName); 
+      &ProjectFooter($WebMasterEmail,$WebMasterName);
     }
-  }  
+  }
   print "</body></html>\n";
 }
 
