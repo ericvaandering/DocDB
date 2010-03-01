@@ -90,7 +90,7 @@ SetAuthorMode();
 SetTopicMode();
 
 print $query -> header( -charset => $HTTP_ENCODING );
-my @Scripts = ("PopUps","InsertRevisionNote","AuthorMethodDisplay","TopicChooser");
+my @Scripts = ("PopUps","InsertRevisionNote","AuthorMethodDisplay","TreeChooser");
 if      ($mode eq "add") {
   DocDBHeader("$Project Document Addition",   "Document Addition",    -scripts => \@Scripts);
 } elsif ($mode eq "reserve") {

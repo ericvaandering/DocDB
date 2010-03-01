@@ -223,7 +223,8 @@ sub TopicListWithChildren { # Recursive routine
 
   my ($Class,$Strong,$EStrong);
   if ($Chooser) {
-    $Class = "TopicTree";
+    $Class = "mktree";
+   # FIXME: Put ID in here, detect elsewhere
 #     $Strong = "<strong>";
 #     $EStrong = "</strong>";
   } else {
@@ -235,7 +236,7 @@ sub TopicListWithChildren { # Recursive routine
 
   if (@TopicIDs) {
     if ($Depth > 1 || $Chooser) {
-      $HTML .= "<ul class=\"$Class\">\n";
+      $HTML .= "<ul class=\"$Class\" id=\"TopicTree\">\n";
     }
     foreach my $TopicID (@TopicIDs) {
       if ($Depth > 1 || $Chooser) {
@@ -244,7 +245,7 @@ sub TopicListWithChildren { # Recursive routine
         $HTML .= "<strong>";
       }
       $HTML .= TopicLink( {-topicid => $TopicID} );
-      if ($Depth == 1 || $Chooser) {
+      if ($Depth == 1 && !$Chooser) {
         $HTML .= "</strong>\n";
       }
 #      if ($CheckEvent) {
@@ -255,15 +256,16 @@ sub TopicListWithChildren { # Recursive routine
 #      }
       if (@{$TopicChildren{$TopicID}}) {
         $HTML .= "\n";
-        $HTML .= TopicListWithChildren({ -topicids => $TopicChildren{$TopicID}, -depth => $Depth+1 });
-      } elsif ($Depth == 1) {
+        $HTML .= TopicListWithChildren({ -topicids => $TopicChildren{$TopicID}, -depth => $Depth+1,
+                                         -chooser  => $Chooser, });
+      } elsif ($Depth == 1 && !$Chooser) {
         $HTML .= '<br class="EmptyTopic" />';
       }
-      if ($Depth > 1) {
+      if ($Depth > 1 || $Chooser) {
         $HTML .= "</li>\n";
       }
     }
-    if ($Depth > 1) {
+    if ($Depth > 1 || $Chooser) {
       $HTML .= "</ul>\n";
     }
   }
