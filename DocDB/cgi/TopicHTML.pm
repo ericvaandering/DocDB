@@ -245,7 +245,7 @@ sub TopicListWithChildren { # Recursive routine
     foreach my $TopicID (@TopicIDs) {
       my $NodeClass = "";
       if ($Chooser) {
-        my @ChildTopicIDs  = TopicAndSubTopics({-topicid => $TopicID});
+        my @ChildTopicIDs  = TopicAndSubTopics({-topicid => $TopicID, -includetopic => $FALSE});
         my @CommonTopicIDs = Union(\@DefaultTopicIDs,@ChildTopicIDs);
         push @DebugStack,"Topic $TopicID children ".join (',',@ChildTopicIDs)." default ".join (',',@DefaultTopicIDs)." union ".join (',',@CommonTopicIDs);
 
