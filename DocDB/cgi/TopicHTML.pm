@@ -244,7 +244,12 @@ sub TopicListWithChildren { # Recursive routine
       } else {
         $HTML .= "<strong>";
       }
-      $HTML .= TopicLink( {-topicid => $TopicID} );
+      if ($Chooser) {
+        my $TopicName = TopicName( {-topicid => $TopicID, -format => "short"} );
+        $HTML.= $query -> checkbox(-name => "topics", -value => $TopicID, -label => $TopicName);
+      } else {
+        $HTML .= TopicLink( {-topicid => $TopicID} );
+      }
       if ($Depth == 1 && !$Chooser) {
         $HTML .= "</strong>\n";
       }
