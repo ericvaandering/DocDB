@@ -263,10 +263,15 @@ sub TopicListWithChildren { # Recursive routine
       }
       if ($Chooser) {
         my $TopicName = TopicName( {-topicid => $TopicID, -format => "short"} );
+        my $Booleans = "";
+        if ($Depth < $Preferences{Topics}{MinLevel}{Document}) {
+          $TopicName = '['.$TopicName.']';
+          $Booleans .= "-disabled";
+        }
         if (defined IndexOf($TopicID,@DefaultTopicIDs)) {
-          $HTML.= $query -> checkbox(-name => "topics", -value => $TopicID, -label => $TopicName, -checked => 'checked');
+          $HTML.= $query -> checkbox(-name => "topics", -value => $TopicID, -label => $TopicName, -checked => 'checked', $Booleans);
         } else {
-          $HTML.= $query -> checkbox(-name => "topics", -value => $TopicID, -label => $TopicName);
+          $HTML.= $query -> checkbox(-name => "topics", -value => $TopicID, -label => $TopicName, $Booleans);
         }
       } else {
         $HTML .= TopicLink( {-topicid => $TopicID} );
