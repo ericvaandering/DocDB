@@ -216,7 +216,9 @@ sub TopicListWithChildren { # Recursive routine
   my $CheckEvent = exists $ArgRef->{-checkevent} ?   $ArgRef->{-checkevent} : $FALSE; # name or provenance
   my $Chooser    = exists $ArgRef->{-chooser}    ?   $ArgRef->{-chooser}    : $FALSE;
   my @DefaultTopicIDs = exists $ArgRef->{-defaulttopicids}   ? @{$ArgRef->{-defaulttopicids}}  : ();
-  push @DebugStack,"Chooser $Chooser Topics ".join (',',@TopicIDs)." default ".join (',',@DefaultTopicIDs);
+  my $HelpLink   = exists $ArgRef->{-helplink}   ?   $ArgRef->{-helplink}   : "topics";
+  my $HelpText   = exists $ArgRef->{-helptext}   ?   $ArgRef->{-helptext}   : "Topics";
+  my $Required   = exists $ArgRef->{-required}   ?   $ArgRef->{-required}   : $TRUE;
 
   require "MeetingSQL.pm";
   require "MeetingHTML.pm";
@@ -225,13 +227,15 @@ sub TopicListWithChildren { # Recursive routine
 
   my @TopicIDs = sort TopicByAlpha @TopicIDs;
 
+  my $HTML;
   my ($Class,$Strong,$EStrong);
   if ($Chooser && $Depth == 1) {
-        $Class = "mktree";
+     $Class = "mktree";
+     $HTML .= FormElementTitle(-helplink  => $HelpLink, -helptext  => $HelpText ,
+                               -required  => $Required);
   } else {
     $Class = "$Depth-deep";
   }
-  my $HTML;
 
   if (@TopicIDs) {
     if ($Depth > 1 || $Chooser) {
