@@ -8,7 +8,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -56,7 +56,8 @@ $archives{multi}   = "Multiple files";
 
 $topicmodes{multi}  = "Multiple Topic Boxes";
 $topicmodes{single} = "Single Topic List";
-@topicmodes = ("multi","single");
+$topicmodes{tree}   = "Expandable Tree";
+@topicmodes = ("tree","multi","single");
 
 $authormodes{field} = "Ordered text field";
 $authormodes{list}  = "Selectable list";

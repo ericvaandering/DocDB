@@ -345,15 +345,6 @@ print "<td colspan=\"4\">\n";
 print "</td>\n";
 print "</tr>\n";
 
-#### Temporary until figured out
-print "<tr>\n";
-print "<td colspan=\"4\">\n";
- my @RootTopicIDs = sort TopicByAlpha AllRootTopics();
- print TopicListWithChildren({ -topicids => \@RootTopicIDs, -defaulttopicids => \@TopicDefaults, -chooser => $TRUE });
-print "</td>\n";
-print "</tr>\n";
-
-
 print "<tr>\n";
 print "<td colspan=\"4\">\n";
  &KeywordsBox(-required => $RequiredEntries{Keyword});
@@ -491,6 +482,12 @@ if ($TopicMode eq "single") {
                      -default  => \@TopicDefaults,
                      -multiple => $TRUE,
                      -minlevel => $Preferences{Topics}{MinLevel}{Document}, });
+} elsif ($TopicMode eq "tree") {
+  print "<tr><td colspan=\"4\" id=\"TopicTreeSelector\">\n";
+  my @RootTopicIDs = sort TopicByAlpha AllRootTopics();
+  print TopicListWithChildren({ -topicids        => \@RootTopicIDs,
+                                -defaulttopicids => \@TopicDefaults,
+                                -chooser         => $TRUE });
 }
 print "</td></tr>\n";
 
