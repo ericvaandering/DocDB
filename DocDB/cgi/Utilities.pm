@@ -26,7 +26,7 @@ sub Unique {
   return @UniqueElements;
 }
 
-sub Union (\@@) {
+sub Union {
   my ($Array_ref,@A2) = @_;
 
   my @A1 = @{$Array_ref};

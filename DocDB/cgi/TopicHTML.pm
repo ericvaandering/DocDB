@@ -228,13 +228,8 @@ sub TopicListWithChildren { # Recursive routine
   my ($Class,$Strong,$EStrong);
   if ($Chooser && $Depth == 1) {
         $Class = "mktree";
-   # FIXME: Put ID in here, detect elsewhere
-#     $Strong = "<strong>";
-#     $EStrong = "</strong>";
   } else {
     $Class = "$Depth-deep";
-#     $Strong = "";
-#     $EStrong = "";
   }
   my $HTML;
 
@@ -247,8 +242,6 @@ sub TopicListWithChildren { # Recursive routine
       if ($Chooser) {
         my @ChildTopicIDs  = TopicAndSubTopics({-topicid => $TopicID, -includetopic => $FALSE});
         my @CommonTopicIDs = Union(\@DefaultTopicIDs,@ChildTopicIDs);
-        push @DebugStack,"Topic $TopicID children ".join (',',@ChildTopicIDs)." default ".join (',',@DefaultTopicIDs)." union ".join (',',@CommonTopicIDs);
-
         if (@CommonTopicIDs) {
           $NodeClass = "liOpen";
         } else {
@@ -266,7 +259,6 @@ sub TopicListWithChildren { # Recursive routine
       }
       if ($Chooser) {
         my $TopicName = TopicName( {-topicid => $TopicID, -format => "short"} );
-        push @DebugStack,"Checking $TopicID $TopicName against ".join (',',@DefaultTopicIDs);
         if (defined IndexOf($TopicID,@DefaultTopicIDs)) {
           $HTML.= $query -> checkbox(-name => "topics", -value => $TopicID, -label => $TopicName, -checked => 'checked');
         } else {
