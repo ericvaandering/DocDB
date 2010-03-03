@@ -263,7 +263,7 @@ print "<h4>$Message</h4><p/>\n";
 if ($Days) { # Print out modified by form
   require "FormElements.pm";
 
-  print $query -> startform('POST',"ListBy");
+  print $query -> startform('POST',"$ListBy");
   print "<center>";
   print $query -> submit (-value => "Show Documents");
   print " modified in the last ";

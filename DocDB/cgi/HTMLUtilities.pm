@@ -85,8 +85,6 @@ sub DocDBHeader {
 
   # Include DocDB style sheets
 
-
-  print "<base href=\"$web_root/Static/\" />\n";
   my @PublicCSS = ("");
   if ($Public) {
     @PublicCSS = ("","Public");
