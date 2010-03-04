@@ -140,6 +140,7 @@ sub TopicName ($) {
   my ($ArgRef) = @_;
   my $TopicID = exists $ArgRef->{-topicid} ? $ArgRef->{-topicid} : "";
   my $Format  = exists $ArgRef->{-format}  ? $ArgRef->{-format}  : "withparents";
+  my $Escape  = exists $ArgRef->{-escape}  ? $ArgRef->{-escape}  : $TRUE;
 
   my $Separator = ":";
 
@@ -156,7 +157,11 @@ sub TopicName ($) {
       $Text .= $Separator;
     }
   }
-  $Text .= CGI::escapeHTML($Topics{$TopicID}{Short});
+  if ($Escape) {
+    $Text .= CGI::escapeHTML($Topics{$TopicID}{Short});
+  } else {
+    $Text .= $Topics{$TopicID}{Short};
+  }
 
   return $Text;
 }
@@ -262,7 +267,7 @@ sub TopicListWithChildren { # Recursive routine
         $HTML .= "<strong>";
       }
       if ($Chooser) {
-        my $TopicName = TopicName( {-topicid => $TopicID, -format => "short"} );
+        my $TopicName = TopicName( {-topicid => $TopicID, -format => "short", -escape => $FALSE} );
         my $Booleans = "";
         if ($Depth < $Preferences{Topics}{MinLevel}{Document}) {
           $TopicName = '['.$TopicName.']';
