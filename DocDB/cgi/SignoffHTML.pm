@@ -133,8 +133,8 @@ sub PrintSignatureInfo ($) {
             $Action = "unsign";
             $ActionText = "Remove Signature"
           }
-          if ($UserValidation eq "certificate") {
-            if (FetchEmailUserIDByCert() == $EmailUserID) {
+          if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
+            if (FetchEmailUserID() == $EmailUserID) {
               $SignatureText .= $query -> start_multipart_form('POST',"$SignRevision");
               $SignatureText .= "<div>\n";
               $SignatureText .= "$SignatureLink ";

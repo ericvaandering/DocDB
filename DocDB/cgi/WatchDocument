@@ -33,6 +33,7 @@ require "ResponseElements.pm";
 require "EmailSecurity.pm";
 require "NotificationSQL.pm";
 require "DocumentHTML.pm";
+require "Security.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
@@ -57,9 +58,8 @@ print $query -> header( -charset => $HTTP_ENCODING );
 
 if ($Password) {
   $EmailUserID = &ValidateEmailUser($UserName,$Password);
-} elsif ($UserValidation eq "certificate") {
-  require "CertificateUtilities.pm";
-  $EmailUserID = &FetchEmailUserIDByCert();
+} elsif ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
+  $EmailUserID = FetchEmailUserID();
 }
 
 if ($EmailUserID) {
