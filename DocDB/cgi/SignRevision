@@ -3,11 +3,15 @@
 # Description: Change preferences for what/when to be notified of document
 #              changes in e-mail.
 #
-#      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified:
+#        Name: $RCSfile$
+# Description: Generates HTML for things related to signoffs
 #
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 

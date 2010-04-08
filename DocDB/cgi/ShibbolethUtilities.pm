@@ -1,7 +1,12 @@
-# Description: Various routines to deal with certificates
+# Description: Routines to deal with shibboleth as an authentication mechanism
+#
+#        Name: $RCSfile$
+# Description: Generates HTML for things related to signoffs
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified:
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -44,41 +49,41 @@ sub FetchSecurityGroupsForShib (%) {
 }
 
 sub FetchEmailUserIDForShib (%) {
-  my %Params = @_;
-
-  my $IgnoreVerification = $Params{-ignoreverification};
-
-  require "SecuritySQL.pm";
-  require "NotificationSQL.pm";
-
-  my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
-  my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
-
-  $CertificateCN    = $CertCN;
-  $CertificateEmail = $CertEmail;
-
-  push @DebugStack,"Finding EmailUserID by certificate $CertCN";
-
-  # If we do http basic with users, this routine will function with minor modifications
-
-  my $EmailUserSelect;
-  if ($IgnoreVerification) {
-    $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                     "where Name=?");
-  } else {
-    $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                     "where Verified=1 and Name=?");
-  }
-  $EmailUserSelect -> execute($CertCN);
-
-  my ($EmailUserID) = $EmailUserSelect -> fetchrow_array;
-  push @DebugStack,"Found e-mail user: $EmailUserID";
-
-  if ($EmailUserID) {
-    FetchEmailUser($EmailUserID)
-  }
-
-  return $EmailUserID;
+#   my %Params = @_;
+#
+#   my $IgnoreVerification = $Params{-ignoreverification};
+#
+#   require "SecuritySQL.pm";
+#   require "NotificationSQL.pm";
+#
+#   my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
+#   my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
+#
+#   $CertificateCN    = $CertCN;
+#   $CertificateEmail = $CertEmail;
+#
+#   push @DebugStack,"Finding EmailUserID by certificate $CertCN";
+#
+#   # If we do http basic with users, this routine will function with minor modifications
+#
+#   my $EmailUserSelect;
+#   if ($IgnoreVerification) {
+#     $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
+#                                      "where Name=?");
+#   } else {
+#     $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
+#                                      "where Verified=1 and Name=?");
+#   }
+#   $EmailUserSelect -> execute($CertCN);
+#
+#   my ($EmailUserID) = $EmailUserSelect -> fetchrow_array;
+#   push @DebugStack,"Found e-mail user: $EmailUserID";
+#
+#   if ($EmailUserID) {
+#     FetchEmailUser($EmailUserID)
+#   }
+#
+#   return $EmailUserID;
 }
 
 1;
