@@ -1,10 +1,8 @@
 #! /usr/bin/env perl
-#
+##
+#        Name: $RCSfile$
 # Description: Change preferences for what/when to be notified of document
 #              changes in e-mail.
-#
-#        Name: $RCSfile$
-# Description: Generates HTML for things related to signoffs
 #
 #    Revision: $Revision$
 #    Modified: $Author$ on $Date$

@@ -1,14 +1,13 @@
-# Description: Routines to deal with shibboleth as an authentication mechanism
 #
 #        Name: $RCSfile$
-# Description: Generates HTML for things related to signoffs
+# Description: Routines to deal with shibboleth as an authentication mechanism
 #
 #    Revision: $Revision$
 #    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
