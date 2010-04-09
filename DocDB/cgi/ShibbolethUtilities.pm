@@ -59,14 +59,13 @@ sub FetchSecurityGroupsForShib (%) {
 
 sub FetchEmailUserIDForShib () {
   my $ShibName = $ENV{ADFS_LOGIN};
-  push @DebugStack,"Finding EmailUserID by shibboleth $ShibName";
+  push @DebugStack,"Finding EmailUserID by shibboleth name $ShibName";
 
   my $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
                                       "where Username=?");
   $EmailUserSelect -> execute($ShibName);
 
   my ($EmailUserID) = $EmailUserSelect -> fetchrow_array;
-  push @DebugStack,"Found e-mail user: $EmailUserID";
 
   if ($EmailUserID) {
     FetchEmailUser($EmailUserID)

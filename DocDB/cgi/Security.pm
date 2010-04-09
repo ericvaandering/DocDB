@@ -274,7 +274,6 @@ sub FindUsersGroups (;%) {
     require "CertificateUtilities.pm";
     @UsersGroupIDs = &FetchSecurityGroupsByCert();
   } elsif ($UserValidation eq "shibboleth") {
-    push @DebugStack,"Find UG by shibboleth";
     require "ShibbolethUtilities.pm";
     @UsersGroupIDs = FetchSecurityGroupsForShib();
   } elsif ($UserValidation eq "basic-user") {

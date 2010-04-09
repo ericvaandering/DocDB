@@ -223,14 +223,14 @@ if ($Mode eq "update") {
     $Name     = $ENV{ADFS_FULLNAME};
     $Email    = $ENV{ADFS_EMAIL};
     if (!$EmailUserID) {
-      push @DebugStack,"ShibUser does not exist in email user, creating";
+      push @DebugStack,"Shibboleth user does not exist in EmailUser, creating";
       my $UserInsert        = $dbh -> prepare(
        "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Password,Verified) ".
        "values                (0,          ?,       ?,   ?,           ?,       1)");
       $UserInsert -> execute($UserName,$Name,$Email,'x');
       $EmailUserID = FetchEmailUserIDForShib();
     }
-    push @DebugStack,"Updating shibUser $EmailUserID";
+    push @DebugStack,"Updating shibboleth EmailUserID $EmailUserID";
     my $UpdateUserInfo = $dbh -> prepare("update EmailUser set Name=?,EmailAddress=?,PreferHTML=? where EmailUserID=?");
     $UpdateUserInfo -> execute($Name,$Email,$HTML,$EmailUserID);
   } elsif ($UserValidation eq "certificate") {
