@@ -226,7 +226,7 @@ if ($Mode eq "update") {
       push @DebugStack,"ShibUser does not exist in email user, creating";
       my $UserInsert        = $dbh -> prepare(
        "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Password,Verified) ".
-       "values                (0,          ?,       ?,  ,?           ,?       ,1)");
+       "values                (0,          ?,       ?,   ?,           ?,       1)");
       $UserInsert -> execute($UserName,$Name,$Email,'x');
       $EmailUserID = FetchEmailUserIDForShib();
     }
