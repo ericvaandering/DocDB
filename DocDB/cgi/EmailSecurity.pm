@@ -73,6 +73,15 @@ sub UserPrefForm ($) {
   my $PreferHTML   = $EmailUser{$EmailUserID}{PreferHTML};
 
   print "<table class=\"MedPaddedTable LeftHeader\">";
+
+#   my $UpdateEmail = $TRUE;
+  if ($UserValidation eq "shibboleth") {
+    $Name = $ENV{ADFS_FULLNAME};
+    $EmailAddress = $ENV{ADFS_EMAIL};
+#     $UpdateEmail = $FALSE;
+  }
+
+
   if ($Digest) {
     print "<tr><th>\n";
     print $query -> hidden(-name => 'username', -default => $Username);
@@ -91,12 +100,15 @@ sub UserPrefForm ($) {
     print "</td></tr>";
   }
 
-  if  ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
+  if  ($UserValidation eq "certificate") {
     print "<tr><th>Real name:</th>\n<td>$Name</td></tr>\n";
     print "<tr><th>E-mail address:</th>\n<td>";
     print $query -> textfield(-name => 'email',    -default => $EmailAddress,
                               -size => 24, -maxlength => 64);
     print "</td></tr>\n";
+  } elsif  ($UserValidation eq "shibboleth") {
+    print "<tr><th>Real name:</th>\n<td>$Name</td></tr>\n";
+    print "<tr><th>E-mail address:</th>\n<td>$EmailAddress</td></tr>\n";
   } else {
     print "<tr><th>Real name:</th>\n<td>";
     print $query -> textfield(-name => 'name',     -default => $Name,
