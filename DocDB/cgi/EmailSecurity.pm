@@ -8,7 +8,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -78,7 +78,7 @@ sub UserPrefForm ($) {
     print $query -> hidden(-name => 'username', -default => $Username);
     print $query -> hidden(-name => 'digest', -default => $Digest);
     print "Username:</th>\n<td>$Username</td></tr>";
-  } elsif ($UserValidation eq "certificate") {
+  } elsif ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
     print "<tr><th>Username:</th>\n<td>$Username</td></tr>";
   } else {
     print "<tr><th>Username:</th>\n<td>";
@@ -91,7 +91,7 @@ sub UserPrefForm ($) {
     print "</td></tr>";
   }
 
-  if  ($UserValidation eq "certificate") {
+  if  ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
     print "<tr><th>Real name:</th>\n<td>$Name</td></tr>\n";
     print "<tr><th>E-mail address:</th>\n<td>";
     print $query -> textfield(-name => 'email',    -default => $EmailAddress,
@@ -123,7 +123,7 @@ sub UserPrefForm ($) {
     print $query -> checkbox(-name => "html", -value => 1, -label => '');
   }
   print "</td></tr>\n";
-  if  ($UserValidation eq "certificate") {
+  if  ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
     print "<tr><th>Member of Groups:</th>\n";
     print "<td><ul>\n";
     my @UserGroupIDs = &FetchUserGroupIDs($EmailUserID);
