@@ -102,6 +102,10 @@ $ImmediateDocuments =~ s/,/ /g; my @ImmediateDocuments = split /\s+/,$ImmediateD
 $UserName =~ s/\s+//g;
 $Password =~ s/\s+//g;
 
+if ($UserValidation eq "shibboleth") {
+  $UserName = $ENV{ADFS_LOGIN};
+}
+
 if (($NewPass || $ConfNewPass) && ($NewPass ne $ConfNewPass)) {
   push @WarnStack,"The passwords you entered did not match. Password not
   changed.";
@@ -190,7 +194,7 @@ if ($Password) {
 if ($EmailUserID) {
   FetchEmailUser($EmailUserID);
   $Digest = EmailUserDigest($EmailUserID);
-} else {
+} elsif ($UserValidation ne "shibboleth") {
   push @ErrorStack,"The username/password pair or certificate you supplied is invalid. Please try again or contact an administrator.";
   ErrorPage();
   LoginEmailUserForm();
@@ -212,7 +216,7 @@ if ($Mode eq "update") {
   my $HTML     = $params{html};
 
 # Update DB
-  # TODO: Do the right thing for shibboleth, can't set e-mail probably
+
   if ($UserValidation eq "shibboleth") {
     my $EmailUserID = FetchEmailUserIDForShib();
     $UserName = $ENV{ADFS_LOGIN};

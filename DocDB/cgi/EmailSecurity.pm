@@ -76,8 +76,10 @@ sub UserPrefForm ($) {
 
 #   my $UpdateEmail = $TRUE;
   if ($UserValidation eq "shibboleth") {
-    $Name = $ENV{ADFS_FULLNAME};
+    $Name         = $ENV{ADFS_FULLNAME};
     $EmailAddress = $ENV{ADFS_EMAIL};
+    $UserName     = $ENV{ADFS_LOGIN};
+
 #     $UpdateEmail = $FALSE;
   }
 
