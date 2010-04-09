@@ -76,6 +76,7 @@ sub UserPrefForm ($) {
     $Name         = $ENV{ADFS_FULLNAME};
     $EmailAddress = $ENV{ADFS_EMAIL};
     $UserName     = $ENV{ADFS_LOGIN};
+    push @DebugStack,"Setting shib username $UserName    ";
   }
 
   print "<table class=\"MedPaddedTable LeftHeader\">";
@@ -86,6 +87,7 @@ sub UserPrefForm ($) {
     print $query -> hidden(-name => 'digest', -default => $Digest);
     print "Username:</th>\n<td>$Username</td></tr>";
   } elsif ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
+    push @DebugStack,"printing shib ";
     print "<tr><th>Username:</th>\n<td>$Username</td></tr>";
   } else {
     print "<tr><th>Username:</th>\n<td>";
