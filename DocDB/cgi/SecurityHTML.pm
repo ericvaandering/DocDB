@@ -24,8 +24,6 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-# TODO: Update for shibboleth
-
 sub SecurityScroll (%) {
   require "SecuritySQL.pm";
   require "Sorts.pm";
@@ -130,7 +128,9 @@ sub ModifyListByID {
 
 sub PersonalAccountLink () {
   my $PersonalAccountLink = "<a href=\"$EmailLogin\">Your Account</a>";
-  if ($UserValidation eq "certificate") {
+  if ($UserValidation eq "shibboleth") {
+    $PersonalAccountLink = "<a href=\"$SelectEmailPrefs\">Your Account</a>";
+  } elsif ($UserValidation eq "certificate") {
     require "CertificateUtilities.pm";
     my $CertificateStatus = &CertificateStatus();
     if ($CertificateStatus eq "verified") {
@@ -139,7 +139,7 @@ sub PersonalAccountLink () {
       $PersonalAccountLink = "";
     }
   }
-  # TODO: Do something equivalent for Shibboleth, or not. May be adequate
+
   if ($Public) {
     $PersonalAccountLink = "";
   }
