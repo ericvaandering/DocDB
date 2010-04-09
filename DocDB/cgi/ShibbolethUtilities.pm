@@ -24,27 +24,22 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-
 sub FetchSecurityGroupsForShib (%) {
   require "SecuritySQL.pm";
 
-  my %ShibGroupMap = { "cms-members" => "cmspix", "cms-service-docdb" => "DocDBAdm" }; #FIXME move to ProjectGlobals
+  my %ShibGroupMap = ( "cms-members" => "cmspix", "cms-service-docdb" => "DocDBAdm" ); #FIXME move to ProjectGlobals
   my @ShibGroups = split /;/,$ENV{ADFS_GROUP};
+  my @UsersGroupIDs = ();
 
   foreach my $ShibGroup (@ShibGroups) {
-    push @DebugStack,"Checking $ShibGroup";
     if ($ShibGroupMap{$ShibGroup}) {
-      push @DebugStack,"Getting ID for ".$ShibGroupMap{ShibGroup};
-
-      my $UsersGroupID = FetchSecurityGroupByName($ShibGroupMap{ShibGroup});
+      my $UsersGroupID = FetchSecurityGroupByName($ShibGroupMap{$ShibGroup});
       if ($UsersGroupID) {
-        push @DebugStack,"Got ID $UsersGroupID";
         push @UsersGroupIDs,$UsersGroupID;
       }
     }
   }
-
-  return @UserGroupIDs;
+  return @UsersGroupIDs;
 }
 
 sub FetchEmailUserIDForShib (%) {
