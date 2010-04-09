@@ -27,9 +27,21 @@
 sub FetchSecurityGroupsForShib (%) {
   require "SecuritySQL.pm";
 
+  my @UsersGroupIDs = ();
+
+  # If user is in DocDB's database, give them those groups
+  my $EmailUserID = FetchEmailUserIDForShib();
+  @UsersGroupIDs = FetchUserGroupIDs($EmailUserID);
+
+  if (@UsersGroupIDs) {
+    return @UsersGroupIDs;
+  }
+
+  # Otherwise map shibboleth groups to DocDB groups
+
+  push @DebugStack,"Setting DocDB groups from shibboleth groups";
   my %ShibGroupMap = ( "cms-members" => "cmspix", "cms-service-docdb" => "DocDBAdm" ); #FIXME move to ProjectGlobals
   my @ShibGroups = split /;/,$ENV{ADFS_GROUP};
-  my @UsersGroupIDs = ();
 
   foreach my $ShibGroup (@ShibGroups) {
     if ($ShibGroupMap{$ShibGroup}) {
@@ -42,7 +54,7 @@ sub FetchSecurityGroupsForShib (%) {
   return @UsersGroupIDs;
 }
 
-sub FetchEmailUserIDForShib (%) {
+sub FetchEmailUserIDForShib () {
 #   my %Params = @_;
 #
 #   my $IgnoreVerification = $Params{-ignoreverification};
@@ -56,28 +68,27 @@ sub FetchEmailUserIDForShib (%) {
 #   $CertificateCN    = $CertCN;
 #   $CertificateEmail = $CertEmail;
 #
-#   push @DebugStack,"Finding EmailUserID by certificate $CertCN";
+  my $ShibName = $ENV{ADFS_LOGIN};
+  push @DebugStack,"Finding EmailUserID by shibboleth $ShibName";
 #
 #   # If we do http basic with users, this routine will function with minor modifications
 #
-#   my $EmailUserSelect;
-#   if ($IgnoreVerification) {
-#     $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-#                                      "where Name=?");
+  my $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
+                                       "where Name=?");
 #   } else {
 #     $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
 #                                      "where Verified=1 and Name=?");
 #   }
-#   $EmailUserSelect -> execute($CertCN);
+  $EmailUserSelect -> execute($ShibName);
 #
-#   my ($EmailUserID) = $EmailUserSelect -> fetchrow_array;
-#   push @DebugStack,"Found e-mail user: $EmailUserID";
+  my ($EmailUserID) = $EmailUserSelect -> fetchrow_array;
+  push @DebugStack,"Found e-mail user: $EmailUserID";
 #
-#   if ($EmailUserID) {
-#     FetchEmailUser($EmailUserID)
-#   }
+  if ($EmailUserID) {
+    FetchEmailUser($EmailUserID)
+  }
 #
-#   return $EmailUserID;
+  return $EmailUserID;
 }
 
 1;
