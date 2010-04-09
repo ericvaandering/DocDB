@@ -33,7 +33,7 @@ sub FetchSecurityGroupsForShib (%) {
 
   foreach my $ShibGroup (@ShibGroups) {
     push @DebugStack,"Checking $ShibGroup";
-    if ($ShibGroupMap{ShibGroup}) {
+    if ($ShibGroupMap{$ShibGroup}) {
       push @DebugStack,"Getting ID for ".$ShibGroupMap{ShibGroup};
 
       my $UsersGroupID = FetchSecurityGroupByName($ShibGroupMap{ShibGroup});
