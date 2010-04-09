@@ -58,39 +58,20 @@ sub FetchSecurityGroupsForShib (%) {
 }
 
 sub FetchEmailUserIDForShib () {
-#   my %Params = @_;
-#
-#   my $IgnoreVerification = $Params{-ignoreverification};
-#
-#   require "SecuritySQL.pm";
-#   require "NotificationSQL.pm";
-#
-#   my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
-#   my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
-#
-#   $CertificateCN    = $CertCN;
-#   $CertificateEmail = $CertEmail;
-#
   my $ShibName = $ENV{ADFS_LOGIN};
   push @DebugStack,"Finding EmailUserID by shibboleth $ShibName";
-#
-#   # If we do http basic with users, this routine will function with minor modifications
-#
+
   my $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                       "where Name=?");
-#   } else {
-#     $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-#                                      "where Verified=1 and Name=?");
-#   }
+                                      "where Name=?");
   $EmailUserSelect -> execute($ShibName);
-#
+
   my ($EmailUserID) = $EmailUserSelect -> fetchrow_array;
   push @DebugStack,"Found e-mail user: $EmailUserID";
-#
+
   if ($EmailUserID) {
     FetchEmailUser($EmailUserID)
   }
-#
+
   return $EmailUserID;
 }
 
