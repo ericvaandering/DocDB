@@ -72,17 +72,13 @@ sub UserPrefForm ($) {
   my $EmailAddress = $EmailUser{$EmailUserID}{EmailAddress};
   my $PreferHTML   = $EmailUser{$EmailUserID}{PreferHTML};
 
-  print "<table class=\"MedPaddedTable LeftHeader\">";
-
-#   my $UpdateEmail = $TRUE;
   if ($UserValidation eq "shibboleth") {
     $Name         = $ENV{ADFS_FULLNAME};
     $EmailAddress = $ENV{ADFS_EMAIL};
     $UserName     = $ENV{ADFS_LOGIN};
-
-#     $UpdateEmail = $FALSE;
   }
 
+  print "<table class=\"MedPaddedTable LeftHeader\">";
 
   if ($Digest) {
     print "<tr><th>\n";
