@@ -306,10 +306,10 @@ sub FetchEmailUserID (;%) {
   my $EmailUserID;
   if ($UserValidation eq "certificate") {
     require "CertificateUtilities.pm";
-    my $EmailUserID  = FetchEmailUserIDByCert(%Params);
+    $EmailUserID  = FetchEmailUserIDByCert(%Params);
   } elsif ($UserValidation eq "shibboleth") {
     require "ShibbolethUtilities.pm";
-    my $EmailUserID  = FetchEmailUserIDForShib(%Params);
+    $EmailUserID  = FetchEmailUserIDForShib(%Params);
 
   }
 
