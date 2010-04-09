@@ -62,7 +62,7 @@ sub FetchEmailUserIDForShib () {
   push @DebugStack,"Finding EmailUserID by shibboleth $ShibName";
 
   my $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                      "where Name=?");
+                                      "where Username=?");
   $EmailUserSelect -> execute($ShibName);
 
   my ($EmailUserID) = $EmailUserSelect -> fetchrow_array;
