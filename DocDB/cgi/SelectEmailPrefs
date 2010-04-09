@@ -213,7 +213,23 @@ if ($Mode eq "update") {
 
 # Update DB
   # TODO: Do the right thing for shibboleth, can't set e-mail probably
-  if ($UserValidation eq "certificate") {
+  if ($UserValidation eq "shibboleth") {
+    my $EmailUserID = FetchEmailUserIDForShib();
+    $UserName = $ENV{ADFS_LOGIN};
+    $Name     = $ENV{ADFS_FULLNAME};
+    $Email    = $ENV{ADFS_EMAIL};
+    if (!$EmailUserID) {
+      push @DebugStack,"ShibUser does not exist in email user, creating";
+      my $UserInsert        = $dbh -> prepare(
+       "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Verified) ".
+       "values                (0,          ?,       ?,  ,?            1)");
+      $UserInsert -> execute($UserName,$Name,$Email);
+      $EmailUserID = FetchEmailUserIDForShib();
+    }
+    push @DebugStack,"Updating shibUser $EmailUserID";
+    my $UpdateUserInfo = $dbh -> prepare("update EmailUser set EmailAddress=?,PreferHTML=? where EmailUserID=?");
+    $UpdateUserInfo -> execute($Email,$HTML,$EmailUserID);
+  } elsif ($UserValidation eq "certificate") {
     my $UpdateUserInfo = $dbh -> prepare("update EmailUser set EmailAddress=?,PreferHTML=? where EmailUserID=?");
     $UpdateUserInfo -> execute($Email,$HTML,$EmailUserID);
   } else {
