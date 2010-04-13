@@ -43,14 +43,15 @@ sub FetchSecurityGroupsForShib (%) {
   # Otherwise map shibboleth groups to DocDB groups
 
   push @DebugStack,"Setting DocDB groups from shibboleth groups";
-  my %ShibGroupMap = ( "cms-members" => "cmspix", "cms-service-docdb" => "DocDBAdm" ); #FIXME move to ProjectGlobals
   my @ShibGroups = split /;/,$ENV{ADFS_GROUP};
 
   foreach my $ShibGroup (@ShibGroups) {
     if ($ShibGroupMap{$ShibGroup}) {
-      my $UsersGroupID = FetchSecurityGroupByName($ShibGroupMap{$ShibGroup});
-      if ($UsersGroupID) {
-        push @UsersGroupIDs,$UsersGroupID;
+      foreach my $DocDBGroup @{ $ShibGroupMap{$ShibGroup} };
+        my $UsersGroupID = FetchSecurityGroupByName($DocDBGroup);
+        if ($UsersGroupID) {
+          push @UsersGroupIDs,$UsersGroupID;
+        }
       }
     }
   }

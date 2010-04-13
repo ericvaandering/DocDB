@@ -26,8 +26,6 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-# TODO: Update for shibboleth
-
 use CGI qw(-nosticky);
 use DBI;
 
