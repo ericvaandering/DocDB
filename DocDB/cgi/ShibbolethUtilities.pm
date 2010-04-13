@@ -47,7 +47,7 @@ sub FetchSecurityGroupsForShib (%) {
 
   foreach my $ShibGroup (@ShibGroups) {
     if ($ShibGroupMap{$ShibGroup}) {
-      foreach my $DocDBGroup @{ $ShibGroupMap{$ShibGroup} };
+      foreach my $DocDBGroup (@{ $ShibGroupMap{$ShibGroup} }) {
         my $UsersGroupID = FetchSecurityGroupByName($DocDBGroup);
         if ($UsersGroupID) {
           push @UsersGroupIDs,$UsersGroupID;
