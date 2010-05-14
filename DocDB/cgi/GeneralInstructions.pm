@@ -413,12 +413,16 @@ HTML
   
   if ($UserValidation eq "shibboleth") {
     print <<AUTHSTART;
-    <a name="authentication" /><h2>Authentication</h2>';
-    <table><tr><td>ADFS Group</td><td>DocDB Groups</td></tr>
+    <a name="authentication" /><h2>Authentication</h2>
+    <table><tr><th>ADFS Group</th><th>DocDB Groups</th></tr>
 AUTHSTART
     foreach my $ADFSGroup (sort keys %ShibGroupMap) {
-       print "<tr><td>$ADFSGroup</td>";
-       print "<tr>\n";
+       print "<tr><td>$ADFSGroup</td><td>";
+       foreach my $DocDBGroup (@{$ADFSGroup}) {
+         print "$DocDBGroup ";
+       
+       } 
+       print "<td><tr>\n";
     }
     print <<AUTHEND;
     </table>
