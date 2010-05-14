@@ -414,6 +414,14 @@ HTML
   if ($UserValidation eq "shibboleth") {
     print <<AUTHSTART;
     <a name="authentication" /><h2>Authentication</h2>
+    <p>You are authenticated through a single signon mechanism known as
+    shibboleth. Shibboleth determines which of its groups, known as ADFS 
+    groups or e-groups you belong to. These are then translated into DocDB's
+    groups which you may use to determine who may view or change documents you 
+    create or modify. </p>
+    
+    <p>For this instance of DocDB, this is the mapping between ADFS groups and 
+    DocDB groups:
     <table><tr><th>ADFS Group</th><th>DocDB Groups</th></tr>
 AUTHSTART
     foreach my $ADFSGroup (sort keys %ShibGroupMap) {
@@ -425,7 +433,7 @@ AUTHSTART
        print "<td><tr>\n";
     }
     print <<AUTHEND;
-    </table>
+    </table></p>
 AUTHEND
   }
   print <<HTML;
