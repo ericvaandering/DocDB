@@ -54,6 +54,12 @@ TOC
       <li><a href="#upload">Upload methods</a></li>
       <li><a href="#filling">Filling in the form</a></li>
       <li><a href="#topickey">Topics and Keywords</a></li>
+      
+TOC
+    if   ($UserValidation eq "shibboleth") {
+      print '<li><a href="#authentication">Authentication</a></li>';
+    }
+    print <<TOC;
       <li><a href="#advanced">Advanced options</a></li>
      </ul></li>
      <li><a href="#special">Special Cases</a>
@@ -403,6 +409,13 @@ HTML
 
   <p>Topics can be nested or combined with keywords to refine a collection of documents and aid in
   searchability.</p>
+HTML
+  
+  if ($UserValidation eq "shibboleth") {
+    print '<a name="authentication" /><h2>Authentication</h2>';
+
+
+  }
 
   <a name="advanced" />
   <h2>Advanced options</h2>
