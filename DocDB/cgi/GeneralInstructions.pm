@@ -418,7 +418,7 @@ HTML
 AUTHSTART
     foreach my $ADFSGroup (sort keys %ShibGroupMap) {
        print "<tr><td>$ADFSGroup</td><td>";
-       foreach my $DocDBGroup (@{$ADFSGroup}) {
+       foreach my $DocDBGroup (@{ $ShibGroupMap{$ADFSGroup} }) {
          print "$DocDBGroup ";
        
        } 
