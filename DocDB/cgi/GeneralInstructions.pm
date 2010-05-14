@@ -414,9 +414,9 @@ HTML
   if ($UserValidation eq "shibboleth") {
     print <<AUTHSTART;
     <a name="authentication" /><h2>Authentication</h2>
-    <p>You are authenticated through a single signon mechanism known as
+    <p>You are authenticated through a single sign-on mechanism known as
     shibboleth. Shibboleth determines which of its groups, known as ADFS 
-    groups or e-groups you belong to. These are then translated into DocDB's
+    groups or e-groups, you belong to. These are then translated into DocDB's
     groups which you may use to determine who may view or change documents you 
     create or modify. </p>
     
