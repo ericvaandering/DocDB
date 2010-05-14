@@ -416,7 +416,7 @@ HTML
 
 
   }
-
+  print <<HTML;
   <a name="advanced" />
   <h2>Advanced options</h2>
 
