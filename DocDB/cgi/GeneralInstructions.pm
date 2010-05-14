@@ -421,7 +421,7 @@ HTML
     create or modify. </p>
     
     <p>For this instance of DocDB, this is the mapping between ADFS groups and 
-    DocDB groups:
+    DocDB groups:</p>
     <table><tr><th>ADFS Group</th><th>DocDB Groups</th></tr>
 AUTHSTART
     foreach my $ADFSGroup (sort keys %ShibGroupMap) {
@@ -433,7 +433,8 @@ AUTHSTART
        print "<td><tr>\n";
     }
     print <<AUTHEND;
-    </table></p>
+    </table>
+    <p>This mapping can only be changed by a DocDB administrator</p>
 AUTHEND
   }
   print <<HTML;
