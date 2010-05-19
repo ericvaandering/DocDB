@@ -330,14 +330,12 @@ sub AuthorChooser {
     $FirstLetter =~ tr/[a-z]/[A-Z]/;
     $SecondLetter = substr $Authors{$AuthorID}{LastName},0,2;
     $SecondLetter =~ tr/[a-z]/[A-Z]/;
-    $SecondLetter =~ tr/[A-Z][A-Z]/[A-Z][a-z]/;
-    push @DebugStack,"Comparing $FirstLetter $LastLetter $IsOpen";
+    $SecondLetter =~ s/\b(\w)/\U\L$1/g;
+
     if ($FirstLetter ne $LastLetter) {
       if ($IsOpen) {
-        push @DebugStack,"Closing";
         $HTML .= "</li></ul></li></ul>\n";
         $SecondOpen = $FALSE;
-
       }
       my $NodeClass = "liClosed";
       $HTML .= "<li class=\"$NodeClass\">";
