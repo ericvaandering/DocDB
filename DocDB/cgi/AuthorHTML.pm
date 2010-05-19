@@ -332,13 +332,13 @@ sub AuthorChooser {
       }
       my $NodeClass = "liClosed";
       $HTML .= "<li class=\"$NodeClass\">";
-      $HTML .= $FirstLetter;
+      $HTML .= "begins with ".$FirstLetter;
       $HTML .= "<ul>\n";
       $IsOpen = $TRUE;
       $LastLetter = $FirstLetter;
     }
 
-    $HTML .= '<li class="2-deep">'.$AuthorLabels{$AuthorID}."<li>\n";
+    $HTML .= '<li class="2-deep">'.$AuthorLabels{$AuthorID}."</li>\n";
   }
   print "</li></ul></ul>\n";
   print $HTML;
