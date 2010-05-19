@@ -322,22 +322,36 @@ sub AuthorChooser {
 
   $HTML .= '<ul class="mktree" id="AuthorTree">'."\n";
   my $LastLetter = 'Nothing';
+  my $LastSecond = 'Nothing';
   my $IsOpen = $FALSE;
+  my $SecondOpen = $FALSE;
   foreach my $AuthorID (@AuthorIDs) {
     $FirstLetter = substr $Authors{$AuthorID}{LastName},0,1;
     $FirstLetter =~ tr/[a-z]/[A-Z]/;
     $SecondLetter = substr $Authors{$AuthorID}{LastName},0,2;
     $SecondLetter =~ tr/[a-z]/[A-Z]/;
-    if ($SecondLetter ne $LastLetter) {
+    if ($FirstLetter ne $LastLetter) {
       if ($IsOpen) {
+        $HTML .= "</li></ul>\n";
+      }
+      my $NodeClass = "liClosed";
+      $HTML .= "<li class=\"$NodeClass\">";
+      $HTML .= "begins with ".$FirstLetter;
+      $HTML .= "<ul>\n";
+      $IsOpen = $TRUE;
+      $LastLetter = $FirstLetter;
+    }
+
+    if ($SecondLetter ne $LastSecond) {
+      if ($SecondOpen) {
         $HTML .= "</li></ul>\n";
       }
       my $NodeClass = "liClosed";
       $HTML .= "<li class=\"$NodeClass\">";
       $HTML .= "begins with ".$SecondLetter;
       $HTML .= "<ul>\n";
-      $IsOpen = $TRUE;
-      $LastLetter = $SecondLetter;
+      $SecondOpen = $TRUE;
+      $LastSecond = $SecondLetter;
     }
     $HTML .= '<li class="2-deep">';
     if (defined IndexOf($AuthorID,@DefaultAuthorIDs)) {
@@ -348,7 +362,7 @@ sub AuthorChooser {
     $HTML .= "</li>\n";
 
   }
-  print "</li></ul></ul>\n";
+  print "</li></ul></li></ul></ul>\n";
   print $HTML;
 }
 
