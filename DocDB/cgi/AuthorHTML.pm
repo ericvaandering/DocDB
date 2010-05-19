@@ -329,8 +329,8 @@ sub AuthorChooser {
     $FirstLetter = substr $Authors{$AuthorID}{LastName},0,1;
     $FirstLetter =~ tr/[a-z]/[A-Z]/;
     $SecondLetter = substr $Authors{$AuthorID}{LastName},0,2;
-    $SecondLetter =~ tr/[a-z]/[A-Z]/;
-    $SecondLetter =~ s/\b(\w)/\u\L$1/g;
+    $SecondLetter =~ tr/[A-Z]/[a-z]/;
+    $SecondLetter =~ s/\b(\w)/\u$1/g;
 
     if ($FirstLetter ne $LastLetter) {
       if ($IsOpen) {
