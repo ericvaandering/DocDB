@@ -326,16 +326,18 @@ sub AuthorChooser {
   foreach my $AuthorID (@AuthorIDs) {
     $FirstLetter = substr $Authors{$AuthorID}{LastName},0,1;
     $FirstLetter =~ tr/[a-z]/[A-Z]/;
-    if ($FirstLetter ne $LastLetter) {
+    $SecondLetter = substr $Authors{$AuthorID}{LastName},0,2;
+    $SecondLetter =~ tr/[a-z]/[A-Z]/;
+    if ($SecondLetter ne $LastLetter) {
       if ($IsOpen) {
         $HTML .= "</li></ul>\n";
       }
       my $NodeClass = "liClosed";
       $HTML .= "<li class=\"$NodeClass\">";
-      $HTML .= "begins with ".$FirstLetter;
+      $HTML .= "begins with ".$SecondLetter;
       $HTML .= "<ul>\n";
       $IsOpen = $TRUE;
-      $LastLetter = $FirstLetter;
+      $LastLetter = $SecondLetter;
     }
     $HTML .= '<li class="2-deep">';
     if (defined IndexOf($AuthorID,@DefaultAuthorIDs)) {
