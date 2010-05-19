@@ -337,8 +337,14 @@ sub AuthorChooser {
       $IsOpen = $TRUE;
       $LastLetter = $FirstLetter;
     }
+    $HTML .= '<li class="2-deep">';
+    if (defined IndexOf($AuthorID,@DefaultAuthorIDs)) {
+        $HTML.= $query -> checkbox(-name => $Name, -value => $AuthorID, -label => $AuthorLabels{$AuthorID}, -checked => 'checked',);
+    } else {
+        $HTML.= $query -> checkbox(-name => $Name, -value => $AuthorID, -label => $AuthorLabels{$AuthorID},);
+    }
+    $HTML .= "</li>\n";
 
-    $HTML .= '<li class="2-deep">'.$AuthorLabels{$AuthorID}."</li>\n";
   }
   print "</li></ul></ul>\n";
   print $HTML;
