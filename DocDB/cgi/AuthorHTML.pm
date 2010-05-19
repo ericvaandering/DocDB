@@ -330,6 +330,7 @@ sub AuthorChooser {
     $FirstLetter =~ tr/[a-z]/[A-Z]/;
     $SecondLetter = substr $Authors{$AuthorID}{LastName},0,2;
     $SecondLetter =~ tr/[a-z]/[A-Z]/;
+    $SecondLetter =~ tr/[A-Z][A-Z]/[A-Z][a-z]/;
     push @DebugStack,"Comparing $FirstLetter $LastLetter $IsOpen";
     if ($FirstLetter ne $LastLetter) {
       if ($IsOpen) {
