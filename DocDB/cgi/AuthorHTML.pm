@@ -335,6 +335,8 @@ sub AuthorChooser {
       if ($IsOpen) {
         push @DebugStack,"Closing";
         $HTML .= "</li></ul></li></ul>\n";
+        my $SecondOpen = $FALSE;
+
       }
       my $NodeClass = "liClosed";
       $HTML .= "<li class=\"$NodeClass\">";
