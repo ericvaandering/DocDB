@@ -334,6 +334,7 @@ sub AuthorChooser {
       $HTML .= "<li class=\"$NodeClass\">";
       $HTML .= $FirstLetter;
       $HTML .= "</li><ul>\n";
+      $IsOpen = $TRUE;
       $LastLetter = $FirstLetter;
     }
 
