@@ -428,9 +428,9 @@ $TextExtraText   = "<a href=\"Javascript:author_method_choose(\'scroll\');\">(Se
 
 print "<td id=\"AuthorScroll\"$AuthorScrollDisplay>\n";
 print $query -> hidden(-name => 'authormode', -default => $AuthorMode);
-AuthorScroll(-required  => $RequiredEntries{Author}, -helplink => "authors",
-             -default   => \@AuthorDefaults,         -multiple => "true",
-             -extratext => $ScrollExtraText,);
+AuthorChooser({-required  => $RequiredEntries{Author}, -helplink => "authors",
+             -defaultauthorids   => \@AuthorDefaults,         -multiple => "true",
+             -extratext => $ScrollExtraText,});
 print "</td>\n";
 
 print "<td id=\"AuthorText\"$AuthorTextDisplay>\n";

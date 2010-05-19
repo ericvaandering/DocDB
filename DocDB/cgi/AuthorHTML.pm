@@ -280,6 +280,67 @@ sub AuthorsTable {
   print "</table>\n";
 }
 
+sub AuthorChooser {
+  my ($ArgRef) = @_;
+  my $Depth      = exists $ArgRef->{-depth}      ?   $ArgRef->{-depth}      : 2;
+#   my $CheckEvent = exists $ArgRef->{-checkevent} ?   $ArgRef->{-checkevent} : $FALSE; # name or provenance
+#   my $Chooser    = exists $ArgRef->{-chooser}    ?   $ArgRef->{-chooser}    : $FALSE;
+  my @DefaultAuthorIDs = exists $ArgRef->{-defaultauthorids}   ? @{$ArgRef->{-defaultauthorids}}  : ();
+  my $Name   = exists $ArgRef->{-name}   ?   $ArgRef->{-name}   : "authors";
+  my $HelpLink   = exists $ArgRef->{-helplink}   ?   $ArgRef->{-helplink}   : "authors";
+  my $HelpText   = exists $ArgRef->{-helptext}   ?   $ArgRef->{-helptext}   : "Authors";
+  my $Required   = exists $ArgRef->{-required}   ?   $ArgRef->{-required}   : $TRUE;
+
+#   my $Multiple  =   $Params{-multiple}  || 0;
+#   my $HelpLink  =   $Params{-helplink}  || "";
+#   my $HelpText  =   $Params{-helptext}  || "Authors";
+#   my $ExtraText =   $Params{-extratext} || "";
+#   my $Required  =   $Params{-required}  || 0;
+#   my $Name      =   $Params{-name}      || "authors";
+#   my $Size      =   $Params{-size}      || 10;
+#   my $Disabled  =   $Params{-disabled}  || "";
+#  my @Defaults  = @{$Params{-default}};
+  my $HTML;
+  unless (keys %Author) {
+    GetAuthors();
+  }
+
+  my @AuthorIDs = sort byLastName keys %Authors;
+  my %AuthorLabels = ();
+  my @ActiveIDs = ();
+  foreach my $ID (@AuthorIDs) {
+    if ($Authors{$ID}{ACTIVE} || $All) {
+      $AuthorLabels{$ID} = $Authors{$ID}{Formal};
+      push @ActiveIDs,$ID;
+    }
+  }
+  if ($HelpLink) {
+    $HTML .= FormElementTitle(-helplink => $HelpLink, -helptext  => $HelpText,
+                              -required => $Required, -extratext => $ExtraText, );
+    $HTML .= "\n";
+  }
+
+  $HTML .= '<ul class="mkdtree" id="AuthorTree">'."\n";
+  my $LastLetter = 'Nothing';
+  foreach my $AuthorID (@AuthorIDs) {
+    $FirstLetter = substr $Authors{$AuthorID}{LastName},0,1;
+    $FirstLetter =~ tr/[a-z]/[A-Z]/;
+    if ($FirstLetter ne $LastLetter) {
+      my $NodeClass = "liClosed";
+      $HTML .= "<li class=\"$NodeClass\">";
+      $HTML .= $LastLetter;
+      $HTML .= "</li><ul>\n";
+    }
+
+    $HTML .= '<li>'.$AuthorLabels{$AuthorID}."<li>\n";
+    if ($FirstLetter ne $LastLetter) {
+      $LastLetter = $FirstLetter;
+      $HTML .= "</ul>\n";
+    }
+  }
+  print $HTML;
+}
+
 sub AuthorScroll (%) {
   require "AuthorSQL.pm";
   require "Sorts.pm";
