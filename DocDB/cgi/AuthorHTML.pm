@@ -330,9 +330,11 @@ sub AuthorChooser {
     $FirstLetter =~ tr/[a-z]/[A-Z]/;
     $SecondLetter = substr $Authors{$AuthorID}{LastName},0,2;
     $SecondLetter =~ tr/[a-z]/[A-Z]/;
+    push @DebugStack,"Comparing $FirstLetter $LastLetter $IsOpen";
     if ($FirstLetter ne $LastLetter) {
       if ($IsOpen) {
-        $HTML .= "</li></ul>\n";
+        push @DebugStack,"Closing";
+        $HTML .= "</li></ul></li></ul>\n";
       }
       my $NodeClass = "liClosed";
       $HTML .= "<li class=\"$NodeClass\">";
@@ -353,7 +355,7 @@ sub AuthorChooser {
       $SecondOpen = $TRUE;
       $LastSecond = $SecondLetter;
     }
-    $HTML .= '<li class="2-deep">';
+    $HTML .= '<li class="3-deep">';
     if (defined IndexOf($AuthorID,@DefaultAuthorIDs)) {
         $HTML.= $query -> checkbox(-name => $Name, -value => $AuthorID, -label => $AuthorLabels{$AuthorID}, -checked => 'checked',);
     } else {
