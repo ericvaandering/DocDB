@@ -328,19 +328,19 @@ sub AuthorChooser {
     $FirstLetter =~ tr/[a-z]/[A-Z]/;
     if ($FirstLetter ne $LastLetter) {
       if ($IsOpen) {
-        $HTML .= "</ul>\n";
+        $HTML .= "</li></ul>\n";
       }
       my $NodeClass = "liClosed";
       $HTML .= "<li class=\"$NodeClass\">";
       $HTML .= $FirstLetter;
-      $HTML .= "</li><ul>\n";
+      $HTML .= "<ul>\n";
       $IsOpen = $TRUE;
       $LastLetter = $FirstLetter;
     }
 
-    $HTML .= '<li>'.$AuthorLabels{$AuthorID}."<li>\n";
+    $HTML .= '<li class="2-deep">'.$AuthorLabels{$AuthorID}."<li>\n";
   }
-  print "</ul></ul>\n";
+  print "</li></ul></ul>\n";
   print $HTML;
 }
 
