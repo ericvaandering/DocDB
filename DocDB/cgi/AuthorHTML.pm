@@ -320,24 +320,26 @@ sub AuthorChooser {
     $HTML .= "\n";
   }
 
-  $HTML .= '<ul class="mkdtree" id="AuthorTree">'."\n";
+  $HTML .= '<ul class="mktree" id="AuthorTree">'."\n";
   my $LastLetter = 'Nothing';
+  my $IsOpen = $FALSE;
   foreach my $AuthorID (@AuthorIDs) {
     $FirstLetter = substr $Authors{$AuthorID}{LastName},0,1;
     $FirstLetter =~ tr/[a-z]/[A-Z]/;
     if ($FirstLetter ne $LastLetter) {
+      if ($IsOpen) {
+        $HTML .= "</ul>\n";
+      }
       my $NodeClass = "liClosed";
       $HTML .= "<li class=\"$NodeClass\">";
-      $HTML .= $LastLetter;
+      $HTML .= $FirstLetter;
       $HTML .= "</li><ul>\n";
+      $LastLetter = $FirstLetter;
     }
 
     $HTML .= '<li>'.$AuthorLabels{$AuthorID}."<li>\n";
-    if ($FirstLetter ne $LastLetter) {
-      $LastLetter = $FirstLetter;
-      $HTML .= "</ul>\n";
-    }
   }
+  print "</ul></ul>\n";
   print $HTML;
 }
 
