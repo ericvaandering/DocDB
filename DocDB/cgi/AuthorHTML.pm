@@ -394,6 +394,7 @@ sub AuthorChooser {
         $HTML.= '<label><input type="radio" name="'.$Name.
                 '" value=".$AuthorID." />'.$AuthorLabels{$AuthorID}.'</label>'."\n";
       }
+    }
     $HTML .= "</li>\n";
 
   }
