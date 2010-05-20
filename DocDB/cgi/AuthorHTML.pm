@@ -325,19 +325,37 @@ sub AuthorChooser {
   my $LastSecond = 'Nothing';
   my $IsOpen = $FALSE;
   my $SecondOpen = $FALSE;
-  foreach my $AuthorID (@AuthorIDs) {
-    $FirstLetter = substr $Authors{$AuthorID}{LastName},0,1;
-    $FirstLetter =~ tr/[a-z]/[A-Z]/;
+  my ($FirstLetter,$SecondLetter,$NodeClass);
+
+  # Loop over default AuthorIDs to find lists that should be left open
+
+  my %OpenLists = ();
+  foreach my $AuthorID (@DefaultAuthorIDs) {
     $SecondLetter = substr $Authors{$AuthorID}{LastName},0,2;
     $SecondLetter =~ tr/[A-Z]/[a-z]/;
     $SecondLetter =~ s/\b(\w)/\u$1/g;
+    $FirstLetter = substr $SecondLetter,0,1;
+    push @DebugStack,$Authors{$AuthorID}{LastName}." $FirstLetter $SecondLetter";
+    $OpenLists{$FirstLetter} = $TRUE;
+    $OpenLists{$SecondLetter} = $TRUE;
+  }
+
+  foreach my $AuthorID (@AuthorIDs) {
+    $SecondLetter = substr $Authors{$AuthorID}{LastName},0,2;
+    $SecondLetter =~ tr/[A-Z]/[a-z]/;
+    $SecondLetter =~ s/\b(\w)/\u$1/g;
+    $FirstLetter = substr $SecondLetter,0,1;
 
     if ($FirstLetter ne $LastLetter) {
       if ($IsOpen) {
         $HTML .= "</li></ul></li></ul>\n";
         $SecondOpen = $FALSE;
       }
-      my $NodeClass = "liClosed";
+      if ($OpenLists{$FirstLetter}) {
+        $NodeClass = "liOpen";
+      } else {
+        $NodeClass = "liClosed";
+      }
       $HTML .= "<li class=\"$NodeClass\">";
       $HTML .= "begins with ".$FirstLetter;
       $HTML .= "<ul>\n";
@@ -349,7 +367,12 @@ sub AuthorChooser {
       if ($SecondOpen) {
         $HTML .= "</li></ul>\n";
       }
-      my $NodeClass = "liClosed";
+      if ($OpenLists{$SecondLetter}) {
+        $NodeClass = "liOpen";
+      } else {
+        $NodeClass = "liClosed";
+      }
+
       $HTML .= "<li class=\"$NodeClass\">";
       $HTML .= $SecondLetter;
       $HTML .= "<ul>\n";
