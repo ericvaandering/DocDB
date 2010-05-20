@@ -409,9 +409,14 @@ if ($UserValidation eq "certificate") {
 }
 
 print "<td>\n";
-AuthorScroll(-required => $RequiredEntries{Requester}, -helplink => "requester",
-             -helptext => "Submitter",                 -name     => "requester",
-             -default  => [$RequesterDefault], );
+AuthorChooser({-required         => $RequiredEntries{Requester}, -helplink => "requester",
+               -helptext         => "Submitter",                 -name     => "requester",
+               -defaultauthorids => [$RequesterDefault],         -multiple => $FALSE,
+             });
+
+# AuthorScroll(-required => $RequiredEntries{Requester}, -helplink => "requester",
+#              -helptext => "Submitter",                 -name     => "requester",
+#              -default  => [$RequesterDefault], );
 print "</td>\n";
 
 my ($AuthorScrollDisplay,$AuthorTextDisplay);
@@ -429,7 +434,7 @@ $TextExtraText   = "<a href=\"Javascript:author_method_choose(\'scroll\');\">(Se
 print "<td id=\"AuthorScroll\"$AuthorScrollDisplay>\n";
 print $query -> hidden(-name => 'authormode', -default => $AuthorMode);
 AuthorChooser({-required  => $RequiredEntries{Author}, -helplink => "authors",
-             -defaultauthorids   => \@AuthorDefaults,         -multiple => "true",
+             -defaultauthorids   => \@AuthorDefaults,         -multiple => $TRUE,
              -extratext => $ScrollExtraText,});
 print "</td>\n";
 

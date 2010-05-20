@@ -289,12 +289,12 @@ sub AuthorChooser {
   my $Name   = exists $ArgRef->{-name}   ?   $ArgRef->{-name}   : "authors";
   my $HelpLink   = exists $ArgRef->{-helplink}   ?   $ArgRef->{-helplink}   : "authors";
   my $HelpText   = exists $ArgRef->{-helptext}   ?   $ArgRef->{-helptext}   : "Authors";
+  my $ExtraText =   exists $ArgRef->{-extratext}   ?   $ArgRef->{-extratext}   : "Authors";
   my $Required   = exists $ArgRef->{-required}   ?   $ArgRef->{-required}   : $TRUE;
-
-#   my $Multiple  =   $Params{-multiple}  || 0;
+  my $Multiple  =    exists $ArgRef->{-multiple}   ?   $ArgRef->{-multiple}   :   0;
 #   my $HelpLink  =   $Params{-helplink}  || "";
 #   my $HelpText  =   $Params{-helptext}  || "Authors";
-#   my $ExtraText =   $Params{-extratext} || "";
+  my $ExtraText =   $Params{-extratext} || "";
 #   my $Required  =   $Params{-required}  || 0;
 #   my $Name      =   $Params{-name}      || "authors";
 #   my $Size      =   $Params{-size}      || 10;
@@ -335,7 +335,7 @@ sub AuthorChooser {
     $SecondLetter =~ tr/[A-Z]/[a-z]/;
     $SecondLetter =~ s/\b(\w)/\u$1/g;
     $FirstLetter = substr $SecondLetter,0,1;
-    push @DebugStack,$Authors{$AuthorID}{LastName}." $FirstLetter $SecondLetter";
+
     $OpenLists{$FirstLetter} = $TRUE;
     $OpenLists{$SecondLetter} = $TRUE;
   }
@@ -357,7 +357,7 @@ sub AuthorChooser {
         $NodeClass = "liClosed";
       }
       $HTML .= "<li class=\"$NodeClass\">";
-      $HTML .= "begins with ".$FirstLetter;
+      $HTML .= "Beginning with ".$FirstLetter;
       $HTML .= "<ul>\n";
       $IsOpen = $TRUE;
       $LastLetter = $FirstLetter;
@@ -380,11 +380,20 @@ sub AuthorChooser {
       $LastSecond = $SecondLetter;
     }
     $HTML .= '<li class="3-deep">';
-    if (defined IndexOf($AuthorID,@DefaultAuthorIDs)) {
+    if ($Multiple) {
+      if (defined IndexOf($AuthorID,@DefaultAuthorIDs)) {
         $HTML.= $query -> checkbox(-name => $Name, -value => $AuthorID, -label => $AuthorLabels{$AuthorID}, -checked => 'checked',);
-    } else {
+      } else {
         $HTML.= $query -> checkbox(-name => $Name, -value => $AuthorID, -label => $AuthorLabels{$AuthorID},);
-    }
+      }
+    } else {
+      if (defined IndexOf($AuthorID,@DefaultAuthorIDs)) {
+        $HTML.= '<label><input type="radio" name="'.$Name.
+                '" value=".$AuthorID." checked="checked" />'.$AuthorLabels{$AuthorID}.'</label>'."\n";
+      } else {
+        $HTML.= '<label><input type="radio" name="'.$Name.
+                '" value=".$AuthorID." />'.$AuthorLabels{$AuthorID}.'</label>'."\n";
+      }
     $HTML .= "</li>\n";
 
   }
