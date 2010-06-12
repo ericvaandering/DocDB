@@ -348,7 +348,7 @@ sub AuthorChooser {
 
     if ($FirstLetter ne $LastLetter) {
       if ($IsOpen) {
-        $HTML .= "</li></ul></li></ul>\n";
+        $HTML .= "</ul></li></ul>\n";
         $SecondOpen = $FALSE;
       }
       if ($OpenLists{$FirstLetter}) {
@@ -365,7 +365,7 @@ sub AuthorChooser {
 
     if ($SecondLetter ne $LastSecond) {
       if ($SecondOpen) {
-        $HTML .= "</li></ul>\n";
+        $HTML .= "</ul>\n";
       }
       if ($OpenLists{$SecondLetter}) {
         $NodeClass = "liOpen";
@@ -389,16 +389,16 @@ sub AuthorChooser {
     } else {
       if (defined IndexOf($AuthorID,@DefaultAuthorIDs)) {
         $HTML.= '<label><input type="radio" name="'.$Name.
-                '" value=".$AuthorID." checked="checked" />'.$AuthorLabels{$AuthorID}.'</label>'."\n";
+                '" value="'.$AuthorID.'" checked="checked" />'.$AuthorLabels{$AuthorID}.'</label>'."\n";
       } else {
         $HTML.= '<label><input type="radio" name="'.$Name.
-                '" value=".$AuthorID." />'.$AuthorLabels{$AuthorID}.'</label>'."\n";
+                '" value="'.$AuthorID.'" />'.$AuthorLabels{$AuthorID}.'</label>'."\n";
       }
     }
     $HTML .= "</li>\n";
 
   }
-  print "</li></ul></li></ul></ul>\n";
+  print "</ul></li></ul></ul>\n";
   print $HTML;
 }
 
