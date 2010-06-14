@@ -244,7 +244,7 @@ sub TopicListWithChildren { # Recursive routine
 
   my $HTML;
   my ($Class,$Strong,$EStrong);
-  if (($Chooser || $MaxDepth) && $Depth == 1) {
+  if (($Chooser && $Depth == 1) || ($MaxDepth && $Depth == 2)) {
      $Class = "mktree";
      $HTML .= FormElementTitle(-helplink  => $HelpLink, -helptext  => $HelpText ,
                                -required  => $Required);
