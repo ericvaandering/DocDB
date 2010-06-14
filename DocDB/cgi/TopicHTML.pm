@@ -186,7 +186,7 @@ sub TopicsTable {
     $TotalSize += $Size;
   }
   foreach my $TopicID (@RootTopicIDs) {
-    my $HTML = TopicListWithChildren({ -topicids => [$TopicID], -maxdepth => $Depth, -helptext => "", -checkevent => $TRUE });
+    my $HTML = TopicListWithChildren({ -topicids => [$TopicID], -maxdepth => $Depth, -helplink => "", -checkevent => $TRUE });
     $List{$TopicID}{HTML} = $HTML;
   }
 
@@ -267,6 +267,12 @@ sub TopicListWithChildren { # Recursive routine
           $NodeClass = "liClosed";
         }
       }
+      if ($MaxDepth && $Depth > $MaxDepth) {
+        $NodeClass = "liClosed";
+      } else {
+        $NodeClass = "liOpen";
+      }
+
       if ($Depth > 1 || $Chooser) {
         $HTML .= "<li";
         if ($NodeClass) {
