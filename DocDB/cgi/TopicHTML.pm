@@ -171,7 +171,7 @@ sub TopicsTable {
   require "TopicUtilities.pm";
 
   my ($ArgRef) = @_;
-  my $Depth = exists $ArgRef->{-depth} ? $ArgRef->{-depth} : 3;
+  my $Depth = exists $ArgRef->{-depth} ? $ArgRef->{-depth} : 2;
 
   my $NCols = 4;
 
@@ -181,14 +181,13 @@ sub TopicsTable {
   foreach my $TopicID (@RootTopicIDs) {
     my @SubTopicIDs = TopicAndSubTopics({ -topicid => $TopicID, -maxdepth => $Depth, });
     push @DebugStack,"Topic $TopicID has ".$#SubTopicIDs." subtopics at depth $Depth";
+    my $Size = $#SubTopicIDs + 1;
+    $List{$TopicID}{Size} = $Size;
+    $TotalSize += $Size;
   }
   foreach my $TopicID (@RootTopicIDs) {
     my $HTML = TopicListWithChildren({ -topicids => [$TopicID], -checkevent => $TRUE });
     $List{$TopicID}{HTML} = $HTML;
-    my @Lines = split /\n/,$HTML;
-    my $Size = grep /href/,@Lines;
-    $List{$TopicID}{Size} = $Size;
-    $TotalSize += $Size;
   }
 
   # This algorithm attempts to balance the length of columns in a multi-column
@@ -196,7 +195,7 @@ sub TopicsTable {
   # columns on the fly
 
   my $Target = $TotalSize/$NCols;
-  push @DebugStack,"Target column length $Target";
+  push @DebugStack,"Initial target column length $Target";
   print '<table class="HighPaddedTable CenteredTable">'."<tr><td>\n";
   my $Col      = 1;
   my $NThisCol = 0;
@@ -206,8 +205,10 @@ sub TopicsTable {
 
 # Insert new cell if current chunk is to large and it's not
 # the first thing in a column or the last column
-
+    
+    push @DebugStack,"Target: $Target So far: $NThisCol Testing: $Size";
     if ($NThisCol != 0 && $Col != $NCols && $NThisCol + 0.5*$Size >= $Target) {
+      push @DebugStack,"Breaking column";
       $Target = ($TotalSize - $NSoFar)/($NCols-$Col);
       print "</td><td>\n";
       ++$Col;
