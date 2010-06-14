@@ -186,7 +186,7 @@ sub TopicsTable {
     $TotalSize += $Size;
   }
   foreach my $TopicID (@RootTopicIDs) {
-    my $HTML = TopicListWithChildren({ -topicids => [$TopicID], -maxdepth => $Depth, -checkevent => $TRUE });
+    my $HTML = TopicListWithChildren({ -topicids => [$TopicID], -maxdepth => $Depth, -helptext => "", -checkevent => $TRUE });
     $List{$TopicID}{HTML} = $HTML;
   }
 
