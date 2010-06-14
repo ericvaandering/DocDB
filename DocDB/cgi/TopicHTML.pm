@@ -171,7 +171,7 @@ sub TopicsTable {
   require "TopicUtilities.pm";
 
   my ($ArgRef) = @_;
-  my $Depth = exists $ArgRef->{-depth} ? $ArgRef->{-depth} : 3;
+  my $Depth = exists $ArgRef->{-depth} ? $ArgRef->{-depth} : 2;
 
   my $NCols = 4;
 
@@ -268,11 +268,12 @@ sub TopicListWithChildren { # Recursive routine
         } else {
           $NodeClass = "liClosed";
         }
-      }
-      if ($MaxDepth && $Depth > $MaxDepth) {
-        $NodeClass = "liClosed";
       } else {
-        $NodeClass = "liOpen";
+        if ($MaxDepth && $Depth > $MaxDepth) {
+            $NodeClass = "liClosed";
+        } else {
+            $NodeClass = "liOpen";
+        }
       }
 
       if ($Depth > 1 || $Chooser) {
@@ -311,6 +312,7 @@ sub TopicListWithChildren { # Recursive routine
       if (@{$TopicChildren{$TopicID}}) {
         $HTML .= "\n";
         $HTML .= TopicListWithChildren({ -topicids => $TopicChildren{$TopicID}, -depth => $Depth+1,
+                                         -maxdepth => $MaxDepth,
                                          -chooser  => $Chooser, -defaulttopicids => \@DefaultTopicIDs});
       } elsif ($Depth == 1 && !$Chooser) {
         $HTML .= '<br class="EmptyTopic" />';
