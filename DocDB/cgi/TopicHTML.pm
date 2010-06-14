@@ -171,7 +171,7 @@ sub TopicsTable {
   require "TopicUtilities.pm";
 
   my ($ArgRef) = @_;
-  my $Depth = exists $ArgRef->{-depth} ? $ArgRef->{-depth} : 2;
+  my $Depth = exists $ArgRef->{-depth} ? $ArgRef->{-depth} : 3;
 
   my $NCols = 4;
 
@@ -226,7 +226,7 @@ sub TopicListWithChildren { # Recursive routine
   my ($ArgRef) = @_;
   my @TopicIDs   = exists $ArgRef->{-topicids}   ? @{$ArgRef->{-topicids}}  : ();
   my $Depth      = exists $ArgRef->{-depth}      ?   $ArgRef->{-depth}      : 1;
-  my $MaxDepth   = exists $ArgRef->{-maxdepth}   ?   $ArgRef->{-maxdepth}   : 1;
+  my $MaxDepth   = exists $ArgRef->{-maxdepth}   ?   $ArgRef->{-maxdepth}   : 0;
   my $CheckEvent = exists $ArgRef->{-checkevent} ?   $ArgRef->{-checkevent} : $FALSE; # name or provenance
   my $Chooser    = exists $ArgRef->{-chooser}    ?   $ArgRef->{-chooser}    : $FALSE;
   my @DefaultTopicIDs = exists $ArgRef->{-defaulttopicids}   ? @{$ArgRef->{-defaulttopicids}}  : ();
@@ -245,9 +245,11 @@ sub TopicListWithChildren { # Recursive routine
   my $HTML;
   my ($Class,$Strong,$EStrong);
   if (($Chooser && $Depth == 1) || ($MaxDepth && $Depth == 2)) {
-     $Class = "mktree";
-     $HTML .= FormElementTitle(-helplink  => $HelpLink, -helptext  => $HelpText ,
-                               -required  => $Required);
+    $Class = "mktree";
+    unless ($MaxDepth) { 
+      $HTML .= FormElementTitle(-helplink  => $HelpLink, -helptext  => $HelpText ,
+                                -required  => $Required);
+    }
   } else {
     $Class = "$Depth-deep";
   }
