@@ -238,6 +238,7 @@ sub TopicListWithChildren { # Recursive routine
   require "MeetingHTML.pm";
   require "TopicSQL.pm";
   require "Utilities.pm";
+  require "FormElements.pm";
 
   my @TopicIDs = sort TopicByAlpha @TopicIDs;
 
