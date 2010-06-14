@@ -179,7 +179,7 @@ sub TopicsTable {
   my $TotalSize = 0;
   my @RootTopicIDs = sort TopicByAlpha AllRootTopics();
   foreach my $TopicID (@RootTopicIDs) {
-    my @SubTopicIDs = TopicAndSubTopics({ -topicid => $ChildID, -maxdepth => $Depth, });
+    my @SubTopicIDs = TopicAndSubTopics({ -topicid => $TopicID, -maxdepth => $Depth, });
     push @DebugStack,"Topic $TopicID has ".$#SubTopicIDs." subtopics at depth $Depth";
   }
   foreach my $TopicID (@RootTopicIDs) {
