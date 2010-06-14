@@ -39,6 +39,7 @@ sub TopicAndSubTopics {
   my ($ArgRef) = @_;
   my $TopicID      = exists $ArgRef->{-topicid}      ? $ArgRef->{-topicid}      : 0;
   my $IncludeTopic = exists $ArgRef->{-includetopic} ? $ArgRef->{-includetopic} : $TRUE;
+  my $MaxDepth     = exists $ArgRef->{-maxdepth}     ? $ArgRef->{-maxdepth}     : 10000;
 
   require "TopicSQL.pm";
   require "Utilities.pm";
@@ -50,8 +51,10 @@ sub TopicAndSubTopics {
     push @TopicIDs,$TopicID;
   }
   foreach my $ChildID (@{$TopicChildren{$TopicID}}) {
-    my @ChildIDs = TopicAndSubTopics({ -topicid => $ChildID });
-    push @TopicIDs,@ChildIDs;
+    if ($MaxDepth > 0) {
+      my @ChildIDs = TopicAndSubTopics({ -topicid => $ChildID, -maxdepth => $MaxDepth-1, });
+      push @TopicIDs,@ChildIDs;
+    }
   }
 
   return Unique(@TopicIDs);

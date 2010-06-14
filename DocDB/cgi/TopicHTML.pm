@@ -170,11 +170,18 @@ sub TopicsTable {
   require "Sorts.pm";
   require "TopicUtilities.pm";
 
+  my ($ArgRef) = @_;
+  my $Depth = exists $ArgRef->{-depth} ? $ArgRef->{-depth} : 3;
+
   my $NCols = 4;
 
   my %Lists = ();
   my $TotalSize = 0;
   my @RootTopicIDs = sort TopicByAlpha AllRootTopics();
+  foreach my $TopicID (@RootTopicIDs) {
+    my @SubTopicIDs = TopicAndSubTopics({ -topicid => $ChildID, -maxdepth => $Depth, });
+    push @DebugStack,"Topic $TopicID has ".$#SubTopicIDs." subtopics at depth $Depth";
+  }
   foreach my $TopicID (@RootTopicIDs) {
     my $HTML = TopicListWithChildren({ -topicids => [$TopicID], -checkevent => $TRUE });
     $List{$TopicID}{HTML} = $HTML;
