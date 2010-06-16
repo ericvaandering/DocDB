@@ -24,6 +24,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub TitleBox (%) {
+  push @DebugStack,"tb TitleDefault $TitleDefault";
   my (%Params) = @_;
   #FIXME: Get rid of global default
 
