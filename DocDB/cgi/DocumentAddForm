@@ -79,7 +79,7 @@ my @PreTopics    = $query -> param('pretopic');
    $mode         = $params{mode}; # FIXME: Can't be my since used in subroutines
 
 if ($mode ne "add"    && $mode ne "reserve" &&
-    $mode ne "update" && $mode ne "updatedb") {
+    $mode ne "update" && $mode ne "updatedb" && $mode ne "clone") {
   $mode = "add";
 }
 
@@ -90,7 +90,7 @@ SetTopicMode();
 
 print $query -> header( -charset => $HTTP_ENCODING );
 my @Scripts = ("PopUps","InsertRevisionNote","AuthorMethodDisplay");
-if      ($mode eq "add") {
+if      ($mode eq "add" || $mode eq "clone") {
   DocDBHeader("$Project Document Addition",   "Document Addition",    -scripts => \@Scripts);
 } elsif ($mode eq "reserve") {
   DocDBHeader("$Project Document Reservation","Document Reservation", -scripts => \@Scripts);
@@ -104,9 +104,9 @@ if      ($mode eq "add") {
 unless (CanCreate()) {
   push @ErrorStack,"You are not allowed to modify or create documents.";
 }
-if ($mode eq "update" || $mode eq "updatedb") {
+if ($mode eq "update" || $mode eq "updatedb" || $mode eq "clone") {
   unless ($params{docid}) {
-    push @ErrorStack,"You must supply a document number to modify a document.";
+    push @ErrorStack,"You must supply a document number to modify or clone a document.";
   }
 }
 if ($mode eq "update" || $mode eq "add") {
@@ -158,7 +158,7 @@ if ($mode eq "updatedb") {
   }
 }
 
-if ($mode eq "update") {
+if ($mode eq "update" || $mode eq "clone") {
   $Version = $Documents{$DocumentID}{NVersions};
 }
 
@@ -172,7 +172,7 @@ my ($AuthorListOrdered);
 my ($DocTypeIDDefault,$RequesterDefault,$RevisionNoteDefault,$SignoffsDefault,
     $XRefDefault);
 
-if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
+if ($mode eq "update" || $mode eq "updatedb" || $mode eq "clone") { # Need to read in last version values and update
   $DocRevID            = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   $TitleDefault        = $DocRevisions{$DocRevID}{Title};
   $PubInfoDefault      = $DocRevisions{$DocRevID}{PUBINFO};
@@ -266,6 +266,14 @@ if ($mode eq "add" && ($SessionID||$ConferenceID)) {
 &EndPage(@ErrorStack); # The user may have made mistakes, warn and exit
 
 &SetFileOptions($DocRevID);
+
+# Clone is add, just with no document #
+
+if ($mode eq "clone") {
+  $mode       = "add";
+  $DocumentID = 0;
+  $Version    = 0;
+}  
 
 print $query -> start_multipart_form('POST',$ProcessDocumentAdd,'id="documentadd" name="documentadd"');
 print "<div>\n";
