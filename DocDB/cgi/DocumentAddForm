@@ -177,10 +177,8 @@ my ($DocTypeIDDefault,$RequesterDefault,$RevisionNoteDefault,$SignoffsDefault,
     $XRefDefault);
 
 if ($mode eq "update" || $mode eq "updatedb" || $mode eq "clone") { # Need to read in last version values and update
-  push @DebugStack,"Setting defaults $DocumentID,$Version";
   $DocRevID            = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   $TitleDefault        = $DocRevisions{$DocRevID}{Title};
-  push @DebugStack,"if TitleDefault $TitleDefault";
   $PubInfoDefault      = $DocRevisions{$DocRevID}{PUBINFO};
   $AbstractDefault     = $DocRevisions{$DocRevID}{Abstract};
   $RequesterDefault    = $DocRevisions{$DocRevID}{Submitter};
@@ -349,7 +347,6 @@ if (@OpenSessionTalkIDs) {
 
 print "<tr>\n";
 print "<td colspan=\"4\">\n";
- push @DebugStack,"td TitleDefault $TitleDefault";
  &TitleBox(-required => $RequiredEntries{Title});
 print "</td>\n";
 print "</tr>\n";
