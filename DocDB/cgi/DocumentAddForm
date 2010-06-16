@@ -285,10 +285,8 @@ print "<div>\n";
 print $query -> hidden(-name => 'mode',      -default => $mode);
 print $query -> hidden(-name => 'upload',    -default => 'file');
 print $query -> hidden(-name => 'archive',   -default => 'single');
-unless ($Mode eq "clone" or $Mode eq "add") {
-  print $query -> hidden(-name => 'docid',     -default => $DocumentID);
-  print $query -> hidden(-name => 'oldversion',-default => $Version);
-}
+print $query -> hidden(-name => 'docid',     -default => $DocumentID);
+print $query -> hidden(-name => 'oldversion',-default => $Version);
 
 # Generate unique ID to disallow multiple posting
 srand (time ^ $$ ^ unpack "%32L*", `ps -eaf`);
