@@ -76,7 +76,7 @@ $Mode = $params{mode};
 print $query -> header( -charset => $HTTP_ENCODING );
 if ($Mode eq "reserve") {
   &DocDBHeader("$Project Document Reservation Results","Document Reservation Results",-scripts => ["PopUps"]);
-} elsif ($Mode eq "add") {
+} elsif ($Mode eq "add" || $Mode eq "clone") {
   &DocDBHeader("$Project Document Addition Results","Document Addition Results",-scripts => ["PopUps"]);
 } elsif ($Mode eq "update" || $mode eq "updatedb") {
   &DocDBHeader("$Project Document Modification Results","Document Modification Results",-scripts => ["PopUps"]);
