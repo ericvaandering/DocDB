@@ -8,7 +8,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -77,6 +77,7 @@ my $SessionID    = $params{sessionid};
 my $Version      = $params{version};
 my @PreTopics    = $query -> param('pretopic');
    $mode         = $params{mode}; # FIXME: Can't be my since used in subroutines
+my $Clone;
 
 if ($mode ne "add"    && $mode ne "reserve" &&
     $mode ne "update" && $mode ne "updatedb" && $mode ne "clone") {
@@ -173,6 +174,7 @@ my ($DocTypeIDDefault,$RequesterDefault,$RevisionNoteDefault,$SignoffsDefault,
     $XRefDefault);
 
 if ($mode eq "update" || $mode eq "updatedb" || $mode eq "clone") { # Need to read in last version values and update
+  push @DebugStack,"Setting defaults";
   $DocRevID            = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   $TitleDefault        = $DocRevisions{$DocRevID}{Title};
   $PubInfoDefault      = $DocRevisions{$DocRevID}{PUBINFO};
@@ -273,6 +275,7 @@ if ($mode eq "clone") {
   $mode       = "add";
   $DocumentID = 0;
   $Version    = 0;
+  $Clone      = $TRUE;
 }  
 
 print $query -> start_multipart_form('POST',$ProcessDocumentAdd,'id="documentadd" name="documentadd"');

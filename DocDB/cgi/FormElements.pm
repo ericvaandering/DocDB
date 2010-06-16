@@ -1,14 +1,14 @@
-#
-#        Name: FormElements.pm
+#        Name: $RCSfile$
 # Description: Various routines which supply input forms for document 
 #              addition, etc. This file is deprecated. Routines are 
 #              being moved out into the various *HTML.pm files.
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
-#
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
