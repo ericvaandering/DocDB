@@ -7,7 +7,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 #
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -96,7 +96,10 @@ $Preferences{Options}{AlwaysRetrieveFile}       = $FALSE; # Always use RetrieveF
 
 $Preferences{Options}{SubmitAgree}              = ""; # "Put text here to make users agree to a privacy statement or some-such. <br/><b>I agree:</b>"
 
-$Preferences{Components}{iCal}  = $TRUE; # Display links to iCal calendars
+$Preferences{Components}{iCal}             = $TRUE; # Display links to iCal calendars
+$Preferences{Components}{AgendaMaker}      = $TRUE; # Sessions for events
+$Preferences{Components}{Calendar}         = $TRUE; # Calendar
+$Preferences{Components}{LastModifiedHome} = $TRUE; # Last modified on the homepage
 
 $Preferences{Topics}{MinLevel}{Document} = 1;
 $Preferences{Events}{MaxSessionList}     = 5;
