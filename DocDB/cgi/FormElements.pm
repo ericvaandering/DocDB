@@ -269,6 +269,22 @@ sub NameEntryBox (;%) {
   print "</tr></table>\n";
 }
 
+sub CloneButton {
+  my ($DocumentID) = @_;
+
+  $query -> param('mode','clone'); 
+  $query -> param('docid',$DocumentID);
+
+  print $query -> startform('POST',$DocumentAddForm);
+  print "<div>\n";
+  print $query -> hidden(-name => 'mode',  -default => 'clone');
+  print $query -> hidden(-name => 'docid', -default => $DocumentID);
+  print $query -> submit (-value => "Create Similar");
+  print "\n</div>\n";
+  print $query -> endform;
+  print "\n";
+}
+
 sub UpdateButton {
   my ($DocumentID) = @_;
 

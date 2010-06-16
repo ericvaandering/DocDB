@@ -171,13 +171,14 @@ sub PrintRevisionInfo {
   print "</dl>\n";
   print "</div>\n";  # BasicDocInfo
 
-  if (&CanModify($DocumentID) && !$HideButtons) {
+  if (CanModify($DocumentID) && !$HideButtons) {
     print "<div id=\"UpdateButtons\">\n";
-    &UpdateButton($DocumentID);
-    &UpdateDBButton($DocumentID,$Version);
+    UpdateButton($DocumentID);
+    UpdateDBButton($DocumentID,$Version);
     if ($Version) {
-      &AddFilesButton($DocumentID,$Version);
+      AddFilesButton($DocumentID,$Version);
     }
+    CloneButton($DocumentID);
     print "</div>\n";
   }
 
