@@ -7,7 +7,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -118,6 +118,7 @@ my @EventIDs          = $query -> param('events');
 my @RequestedTopicIDs = $query -> param('topics');
 
 if ($Archive eq "multi") {$Archive = "single";} # No real difference
+if ($Mode eq "clone") {$Mode = "add"; $mode = "add";} # Same thing
 
 # Fill in file hash
 
