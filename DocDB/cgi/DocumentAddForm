@@ -149,6 +149,9 @@ if ($mode eq "update" || $mode eq "updatedb") {
     push @ErrorStack,"You are not allowed to modify this document.";
   }
 }
+if ($mode eq "clone") {
+  FetchDocument($DocumentID);
+}
 
 if ($mode eq "updatedb") {
   unless (defined $Version) {
