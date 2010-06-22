@@ -420,10 +420,6 @@ if ($Preferences{Authors}{Selector} eq "active") {
     print RequesterActiveSearch({-required => $RequiredEntries{Requester}, -helplink => "requester",
                -helptext => "Submitter",                 -name     => "requester",
                -default  => $RequesterDefault, });
-#     print '  <input name="requester_text" type="text" id="requester-submitter" value="">
-#             <input name="requester" type="hidden" id="requester-submitter-id" value="">
-#     ';
-#     print "\n";
 } elsif ($Preferences{Authors}{Selector} eq "scroll") {
   AuthorScroll(-required => $RequiredEntries{Requester}, -helplink => "requester",
                -helptext => "Submitter",                 -name     => "requester",
@@ -445,8 +441,8 @@ $TextExtraText   = "<a href=\"Javascript:author_method_choose(\'scroll\');\">(Se
 
 print "<td id=\"AuthorScroll\"$AuthorScrollDisplay>\n";
 print $query -> hidden(-name => 'authormode', -default => $AuthorMode);
-AuthorChooser({-required  => $RequiredEntries{Author}, -helplink => "authors",
-             -defaultauthorids   => \@AuthorDefaults,         -multiple => $TRUE,
+AuthorActiveSearch({-required  => $RequiredEntries{Author}, -helplink => "authors",
+             -defaultauthorids   => \@AuthorDefaults,
              -extratext => $ScrollExtraText,});
 print "</td>\n";
 
