@@ -441,7 +441,7 @@ $TextExtraText   = "<a href=\"Javascript:author_method_choose(\'scroll\');\">(Se
 
 print "<td id=\"AuthorScroll\"$AuthorScrollDisplay>\n";
 print $query -> hidden(-name => 'authormode', -default => $AuthorMode);
-AuthorActiveSearch({-required  => $RequiredEntries{Author}, -helplink => "authors",
+print AuthorActiveSearch({-required  => $RequiredEntries{Author}, -helplink => "authors",
              -defaultauthorids   => \@AuthorDefaults,
              -extratext => $ScrollExtraText,});
 print "</td>\n";
