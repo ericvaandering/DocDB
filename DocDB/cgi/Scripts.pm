@@ -84,4 +84,49 @@ PREAMBLE
   print "//-->\n</script>\n";
 }
 
+sub AuthorSearchScript {
+  require "AuthorSQL.pm";
+  require "Sorts.pm";
+
+  print <<PREAMBLE;
+        <script type="text/javascript">
+        jQuery().ready(function() {
+
+                /* Here we initially hide the publication fields. TODO: show they be shown in edit page?
+                 *  yes, if they were once set, no otherwise?
+                 */
+                publication_elements().hide();
+
+
+                /* here the actual switch is initialized */
+                initialize_publications_switch();
+        });
+
+
+
+        var auth_ids = [
+                /* [author_id, author_name] */
+PREAMBLE
+
+  GetAuthors();
+  my @AuthorIDs     = sort byLastName keys %Authors;
+  foreach my $AuthorID (@AuthorIDs) {
+    print '['.$AuthorID.', "'.$Authors{$AuthorID}{Formal}.'"],'."\n";
+  }
+# $Authors{$AuthorID}{Formal}
+#               [1, "Vidmantas Zemleris"],
+#                 [2, "Lucas Taylor"],
+#                 [3, "Eric Vaandering"],
+#                 [4, "Vilius Vicockas"],
+#                 [5, "Adomas Paltanavicius"],
+#                 [6, "Joana Daunyte"]
+  print <<ENDSCRIPT;
+        ];
+
+        </script>
+
+ENDSCRIPT
+
+}
+
 1;

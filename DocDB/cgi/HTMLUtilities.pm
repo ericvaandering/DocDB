@@ -117,6 +117,10 @@ sub DocDBHeader {
       require "Scripts.pm";
       EventSearchScript();
     }
+    if  ($Script eq "AuthorSearch") { # Get global variables in right place
+      require "Scripts.pm";
+      AuthorSearchScript();
+    }
     print "<script type=\"text/javascript\" src=\"$JSURLPath/$Script.js\"></script>\n";
   }
 
