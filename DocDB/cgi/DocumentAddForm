@@ -417,11 +417,13 @@ if ($UserValidation eq "certificate") {
 print "<td>\n";
 
 if ($Preferences{Authors}{Selector} eq "active") {
-
-    print '  <input name="requester_text" type="text" id="requester-submitter" value="">
-            <input name="requester" type="hidden" id="requester-submitter-id" value="">
-    ';
-    print "\n";
+    print RequesterActiveSearch({-required => $RequiredEntries{Requester}, -helplink => "requester",
+               -helptext => "Submitter",                 -name     => "requester",
+               -default  => $RequesterDefault, });
+#     print '  <input name="requester_text" type="text" id="requester-submitter" value="">
+#             <input name="requester" type="hidden" id="requester-submitter-id" value="">
+#     ';
+#     print "\n";
 } elsif ($Preferences{Authors}{Selector} eq "scroll") {
   AuthorScroll(-required => $RequiredEntries{Requester}, -helplink => "requester",
                -helptext => "Submitter",                 -name     => "requester",

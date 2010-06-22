@@ -402,6 +402,39 @@ sub AuthorChooser {
   print $HTML;
 }
 
+sub RequesterActiveSearch {
+  my ($ArgRef) = @_;
+#   my $Depth      = exists $ArgRef->{-depth}      ?   $ArgRef->{-depth}      : 2;
+#   my $CheckEvent = exists $ArgRef->{-checkevent} ?   $ArgRef->{-checkevent} : $FALSE; # name or provenance
+#   my $Chooser    = exists $ArgRef->{-chooser}    ?   $ArgRef->{-chooser}    : $FALSE;
+  my $Default = exists $ArgRef->{-default}   ? $ArgRef->{-default}  : 0;
+  my $Name   = exists $ArgRef->{-name}   ?   $ArgRef->{-name}   : "requester";
+  my $HelpLink   = exists $ArgRef->{-helplink}   ?   $ArgRef->{-helplink}   : "authors";
+  my $HelpText   = exists $ArgRef->{-helptext}   ?   $ArgRef->{-helptext}   : "Submitter";
+#   my $ExtraText =   exists $ArgRef->{-extratext}   ?   $ArgRef->{-extratext}   : "Authors";
+  my $Required   = exists $ArgRef->{-required}   ?   $ArgRef->{-required}   : $TRUE;
+#   my $Multiple  =    exists $ArgRef->{-multiple}   ?   $ArgRef->{-multiple}   :   0;
+#   my $HelpLink  =   $Params{-helplink}  || "";
+#   my $HelpText  =   $Params{-helptext}  || "Authors";
+  my $ExtraText =   $Params{-extratext} || "";
+#   my $Required  =   $Params{-required}  || 0;
+#   my $Name      =   $Params{-name}      || "authors";
+#   my $Size      =   $Params{-size}      || 10;
+#   my $Disabled  =   $Params{-disabled}  || "";
+#  my @Defaults  = @{$Params{-default}};
+
+  my $HTML;
+  if ($HelpLink) {
+    $HTML .= FormElementTitle(-helplink => $HelpLink, -helptext  => $HelpText,
+                              -required => $Required, -extratext => $ExtraText, );
+    $HTML .= "\n";
+  }
+
+  $HTML .= '<input name="requester_text" type="text" id="requester-submitter" value="">'.
+           '<input name="requester" type="hidden" id="requester-submitter-id" value="">'."\n";
+  return $HTML;
+}
+
 sub AuthorScroll (%) {
   require "AuthorSQL.pm";
   require "Sorts.pm";
