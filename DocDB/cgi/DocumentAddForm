@@ -91,6 +91,12 @@ SetTopicMode();
 
 print $query -> header( -charset => $HTTP_ENCODING );
 my @Scripts = ("PopUps","InsertRevisionNote","AuthorMethodDisplay","TreeChooser","AuthorSearch");
+# FIXME: Don't load uneeded scripts
+
+push @Scripts,"jquery-autocomplete/jquery-1.4.2.min.js","jquery-autocomplete/jquery.autocomplete.css",
+              "jquery-autocomplete/jquery.autocomplete.pack.js";
+
+
 if      ($mode eq "add") {
   DocDBHeader("$Project Document Addition",   "Document Addition",    -scripts => \@Scripts);
 } elsif ($mode eq "reserve") {
@@ -409,14 +415,18 @@ if ($UserValidation eq "certificate") {
 }
 
 print "<td>\n";
-AuthorChooser({-required         => $RequiredEntries{Requester}, -helplink => "requester",
-               -helptext         => "Submitter",                 -name     => "requester",
-               -defaultauthorids => [$RequesterDefault],         -multiple => $FALSE,
-             });
 
-# AuthorScroll(-required => $RequiredEntries{Requester}, -helplink => "requester",
-#              -helptext => "Submitter",                 -name     => "requester",
-#              -default  => [$RequesterDefault], );
+if ($Preferences{Authors}{Selector} eq "active") {
+
+    print '  <input name="requester_text" type="text" id="requester-submitter" value="">
+            <input name="requester" type="hidden" id="requester-submitter-id" value="">
+    ';
+    print "\n";
+} elsif ($Preferences{Authors}{Selector} eq "scroll") {
+  AuthorScroll(-required => $RequiredEntries{Requester}, -helplink => "requester",
+               -helptext => "Submitter",                 -name     => "requester",
+               -default  => [$RequesterDefault], );
+}
 print "</td>\n";
 
 my ($AuthorScrollDisplay,$AuthorTextDisplay);
