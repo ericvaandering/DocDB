@@ -280,11 +280,11 @@ sub AuthorsTable {
   print "</table>\n";
 }
 
+
+# FIXME: This is no longer used and can be removed
 sub AuthorChooser {
   my ($ArgRef) = @_;
   my $Depth      = exists $ArgRef->{-depth}      ?   $ArgRef->{-depth}      : 2;
-#   my $CheckEvent = exists $ArgRef->{-checkevent} ?   $ArgRef->{-checkevent} : $FALSE; # name or provenance
-#   my $Chooser    = exists $ArgRef->{-chooser}    ?   $ArgRef->{-chooser}    : $FALSE;
   my @DefaultAuthorIDs = exists $ArgRef->{-defaultauthorids}   ? @{$ArgRef->{-defaultauthorids}}  : ();
   my $Name   = exists $ArgRef->{-name}   ?   $ArgRef->{-name}   : "authors";
   my $HelpLink   = exists $ArgRef->{-helplink}   ?   $ArgRef->{-helplink}   : "authors";
@@ -292,14 +292,7 @@ sub AuthorChooser {
   my $ExtraText =   exists $ArgRef->{-extratext}   ?   $ArgRef->{-extratext}   : "Authors";
   my $Required   = exists $ArgRef->{-required}   ?   $ArgRef->{-required}   : $TRUE;
   my $Multiple  =    exists $ArgRef->{-multiple}   ?   $ArgRef->{-multiple}   :   0;
-#   my $HelpLink  =   $Params{-helplink}  || "";
-#   my $HelpText  =   $Params{-helptext}  || "Authors";
   my $ExtraText =   $Params{-extratext} || "";
-#   my $Required  =   $Params{-required}  || 0;
-#   my $Name      =   $Params{-name}      || "authors";
-#   my $Size      =   $Params{-size}      || 10;
-#   my $Disabled  =   $Params{-disabled}  || "";
-#  my @Defaults  = @{$Params{-default}};
   my $HTML;
   unless (keys %Author) {
     GetAuthors();
@@ -404,7 +397,7 @@ sub AuthorChooser {
 
 sub RequesterActiveSearch {
   my ($ArgRef) = @_;
-  my $Default = exists $ArgRef->{-default}   ? $ArgRef->{-default}  : 0;
+  my $DefaultID = exists $ArgRef->{-default}   ? $ArgRef->{-default}  : 0;
   my $Name   = exists $ArgRef->{-name}   ?   $ArgRef->{-name}   : "requester";
   my $HelpLink   = exists $ArgRef->{-helplink}   ?   $ArgRef->{-helplink}   : "authors";
   my $HelpText   = exists $ArgRef->{-helptext}   ?   $ArgRef->{-helptext}   : "Submitter";
@@ -418,44 +411,39 @@ sub RequesterActiveSearch {
     $HTML .= "\n";
   }
 
-  $HTML .= '<input name="requester_text" type="text" id="requester-submitter" value="">'.
-           '<input name="requester" type="hidden" id="requester-submitter-id" value="">'."\n";
+  my ($Default, $DefaultName);
+  if ($DefaultID) {
+    $Default = $DefaultID;
+    $DefaultName = $Authors{$DefaultID}{Formal};
+  }
+
+  $HTML .= '<input name="requester_text" type="text" id="requester-submitter" value="'.$DefaultName.'">'.
+           '<input name="requester" type="hidden" id="requester-submitter-id" value="'.$Default.'">'."\n";
   return $HTML;
 }
 
 sub AuthorActiveSearch {
   my ($ArgRef) = @_;
   my $Depth      = exists $ArgRef->{-depth}      ?   $ArgRef->{-depth}      : 2;
-#   my $CheckEvent = exists $ArgRef->{-checkevent} ?   $ArgRef->{-checkevent} : $FALSE; # name or provenance
-#   my $Chooser    = exists $ArgRef->{-chooser}    ?   $ArgRef->{-chooser}    : $FALSE;
   my @DefaultAuthorIDs = exists $ArgRef->{-defaultauthorids}   ? @{$ArgRef->{-defaultauthorids}}  : ();
   my $Name   = exists $ArgRef->{-name}   ?   $ArgRef->{-name}   : "authors";
   my $HelpLink   = exists $ArgRef->{-helplink}   ?   $ArgRef->{-helplink}   : "authors";
   my $HelpText   = exists $ArgRef->{-helptext}   ?   $ArgRef->{-helptext}   : "Authors";
   my $Required   = exists $ArgRef->{-required}   ?   $ArgRef->{-required}   : $TRUE;
-#   my $Multiple  =    exists $ArgRef->{-multiple}   ?   $ArgRef->{-multiple}   :   0;
-#   my $HelpLink  =   $Params{-helplink}  || "";
-#   my $HelpText  =   $Params{-helptext}  || "Authors";
   my $ExtraText =   $Params{-extratext} || "";
-#   my $Required  =   $Params{-required}  || 0;
-#   my $Name      =   $Params{-name}      || "authors";
-#   my $Size      =   $Params{-size}      || 10;
-#   my $Disabled  =   $Params{-disabled}  || "";
-#  my @Defaults  = @{$Params{-default}};
-  my $HTML;
-#   unless (keys %Author) {
-#     GetAuthors();
-#   }
 
   my @AuthorIDs = sort byLastName keys %Authors;
-  my %AuthorLabels = ();
-  my @ActiveIDs = ();
-  foreach my $ID (@AuthorIDs) {
-    if ($Authors{$ID}{ACTIVE} || $All) {
-      $AuthorLabels{$ID} = $Authors{$ID}{Formal};
-      push @ActiveIDs,$ID;
-    }
-  }
+#   my %AuthorLabels = ();
+#   my @ActiveIDs = ();
+#   foreach my $ID (@AuthorIDs) {
+#     if ($Authors{$ID}{ACTIVE} || $All) {
+#       $AuthorLabels{$ID} = $Authors{$ID}{Formal};
+#       push @ActiveIDs,$ID;
+#     }
+#   }
+
+  my $HTML;
+
   if ($HelpLink) {
     $HTML .= FormElementTitle(-helplink => $HelpLink, -helptext  => $HelpText,
                               -required => $Required, -extratext => $ExtraText, );
