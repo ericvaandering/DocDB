@@ -99,7 +99,9 @@ PREAMBLE
   foreach my $AuthorID (@AuthorIDs) {
     print '['.$AuthorID.', "'.$Authors{$AuthorID}{Formal}.'"],'."\n";
   }
-  print "\n];\n</script>\n";
+  print "\n];\n";
+  print 'var imgURL = "'.$ImgURLPath.'";';
+  print "</script>\n";
 }
 
 1;
