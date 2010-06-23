@@ -18,7 +18,7 @@
 							<label for=""auth_item_' + auth_id + '"">&nbsp;'+auth_title +'</label>\
 						</li>');
 
-			var remove_button = $('<span class="remove_button">Remove</span>');
+                        var remove_button = $('<span class="remove_button"><img src="' + imgURL + '/stop_icon.gif" /></span>');
 
 			// remove handler
 			$(remove_button).click( function(){
@@ -49,10 +49,10 @@ $().ready(function() {
 		mustMatch: true,
 		matchContains: true,
 		scrollHeight: 220,
-	
+
 		/* temporarly: this is a little bad - as it automatically selects one of the entries without user pressing up-down, but allows to avoid form submition after Return */
-		selectFirst: true, 
-		
+		selectFirst: true,
+
 		formatItem: function(item) {
 			return item[1];
 		}
@@ -72,10 +72,10 @@ $().ready(function() {
 		mustMatch: true,
 		matchContains: true,
 		scrollHeight: 220,
-	
+
 		/* temporarly: this is a little bad - as it automatically selects one of the entries without user pressing up-down, but allows to avoid form submition after Return */
-		selectFirst: true, 
-		
+		selectFirst: true,
+
 		formatItem: function(item) {
 			return item[1];
 		}
