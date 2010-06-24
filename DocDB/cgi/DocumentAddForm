@@ -338,11 +338,11 @@ if ($mode eq "add") {
              Make sure you know all the required information.<br/>\n";
 }
 
-print "Required fields are marked with an asterisk (*).<br/>";
-print "Click on any of the headings for help.\n";
+print "Required fields are marked with an asterisk (*). ";
 if ($Quick) {
   print "<a href=\"Javascript:unhideQuick();\">(Show all fields)</a>\n";
 }
+print "<br/>Click on any of the headings for help.\n";
 print "</h4>\n";
 
 print "</td>\n";
