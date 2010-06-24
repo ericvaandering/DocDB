@@ -417,6 +417,7 @@ sub RequesterActiveSearch {
     $DefaultName = $Authors{$DefaultID}{Formal};
   }
 
+  $HTML .= '<ul id="padding_ul"></ul>'."\n";
   $HTML .= '<input name="requester_text" type="text" id="requester-submitter" value="'.$DefaultName.'">'.
            '<input name="requester" type="hidden" id="requester-submitter-id" value="'.$Default.'">'."\n";
   return $HTML;
@@ -433,14 +434,6 @@ sub AuthorActiveSearch {
   my $ExtraText =   $Params{-extratext} || "";
 
   my @AuthorIDs = sort byLastName keys %Authors;
-#   my %AuthorLabels = ();
-#   my @ActiveIDs = ();
-#   foreach my $ID (@AuthorIDs) {
-#     if ($Authors{$ID}{ACTIVE} || $All) {
-#       $AuthorLabels{$ID} = $Authors{$ID}{Formal};
-#       push @ActiveIDs,$ID;
-#     }
-#   }
 
   my $HTML;
 

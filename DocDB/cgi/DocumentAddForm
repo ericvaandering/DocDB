@@ -96,7 +96,7 @@ SetAuthorMode();
 SetTopicMode();
 
 print $query -> header( -charset => $HTTP_ENCODING );
-my @Scripts = ("PopUps","InsertRevisionNote","AuthorMethodDisplay",);
+my @Scripts = ("PopUps","InsertRevisionNote","AuthorMethodDisplay","QuickShow",);
 
 if ($TopicMode eq "tree") {
   push @Scripts,"TreeChooser";
@@ -339,7 +339,12 @@ if ($mode eq "add") {
 }
 
 print "Required fields are marked with an asterisk (*).<br/>";
-print "Click on any of the headings for help.</h4>\n"; print "</td>\n";
+print "Click on any of the headings for help.</h4>\n";
+if ($Quick) {
+  print "<a href=\"Javascript:unhideQuick();\">(Show all fields)</a>";
+}
+
+print "</td>\n";
 print "</tr>\n";
 
 ### Title, abstract, and keywords
