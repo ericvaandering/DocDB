@@ -78,6 +78,12 @@ my $SessionID    = $params{sessionid};
 my $Version      = $params{version};
 my @PreTopics    = $query -> param('pretopic');
    $mode         = $params{mode}; # FIXME: Can't be my since used in subroutines
+my $Quick        = $params{quick};
+
+my $QuickClass = " QuickEntryShow";
+if ($Quick) {
+  $QuickClass = " QuickEntryHide";
+}
 
 if ($mode ne "add"    && $mode ne "reserve" &&
     $mode ne "update" && $mode ne "updatedb") {
@@ -90,12 +96,17 @@ SetAuthorMode();
 SetTopicMode();
 
 print $query -> header( -charset => $HTTP_ENCODING );
-my @Scripts = ("PopUps","InsertRevisionNote","AuthorMethodDisplay","TreeChooser","AuthorSearch");
-# FIXME: Don't load uneeded scripts
+my @Scripts = ("PopUps","InsertRevisionNote","AuthorMethodDisplay",);
 
-push @Scripts,"jquery-autocomplete/jquery-1.4.2.min.js","jquery-autocomplete/jquery.autocomplete.css",
-              "jquery-autocomplete/jquery.autocomplete.pack.js";
+if ($TopicMode eq "tree") {
+  push @Scripts,"TreeChooser";
+}
 
+if ($AuthorMode eq "active") {
+  push @Scripts,"AuthorSearch","jquery-autocomplete/jquery-1.4.2.min.js",
+                "jquery-autocomplete/jquery.autocomplete.css",
+                "jquery-autocomplete/jquery.autocomplete.pack.js";
+}
 
 if      ($mode eq "add") {
   DocDBHeader("$Project Document Addition",   "Document Addition",    -scripts => \@Scripts);
@@ -522,7 +533,7 @@ if ($Preferences{Options}{SubmitAgree}) {
 
 ### Submit button prior to optional information
 
-print "<tr><td colspan=\"4\" class=\"SubmitCell\">\n";
+print "<tr><td colspan=\"4\" class=\"SubmitCell$QuickClass\">\n";
 if      ($mode eq "add") {
   print $query -> submit (-value => "Submit document");
 } elsif ($mode eq "reserve") {
@@ -534,7 +545,7 @@ print "</td></tr>\n";
 
 ### Events
 
-print "<tr><td colspan=\"4\">\n";
+print "<tr class=\"$QuickClass\"><td colspan=\"4\">\n";
  EventSelect( {-required => $FALSE,          -format   => "full",
                -default  => \@EventDefaults, -multiple => $TRUE} );
 print "</td></tr>\n";
@@ -549,11 +560,11 @@ print "</td></tr>\n";
 
 ### References and Publication info
 
-print "<tr><td colspan=\"4\">\n"; ReferenceForm(); print "</td></tr>\n";
-print "<tr><td colspan=\"4\">\n"; PubInfoBox();    print "</td></tr>\n";
+print "<tr class=\"$QuickClass\"><td colspan=\"4\">\n"; ReferenceForm(); print "</td></tr>\n";
+print "<tr class=\"$QuickClass\"><td colspan=\"4\">\n"; PubInfoBox();    print "</td></tr>\n";
 
 if ($UseSignoffs) { # FIXME: Later may be more complicated control
-  print "<tr><td colspan=\"4\">\n";
+  print "<tr class=\"$QuickClass\"><td colspan=\"4\">\n";
   SignoffBox(-default => $SignoffDefault);
   print "</td></tr>\n";
 }
