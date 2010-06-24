@@ -447,7 +447,7 @@ sub AuthorActiveSearch {
   $HTML .= '</div>'."\n";
   $HTML .= '<input name="authors_selection_text" type="text" id="authors_selector"><br /> (click or press <i>Enter</i>)'."\n";
 
-  if (@DefaultAuthorIDs) {
+#   if (@DefaultAuthorIDs) {
     $HTML .= '<script type="text/javascript">
                 <!--
 
@@ -460,7 +460,7 @@ sub AuthorActiveSearch {
 
                 // -->
         </script>';
-  }
+#   }
   return $HTML;
 
 }

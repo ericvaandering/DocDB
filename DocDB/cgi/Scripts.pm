@@ -90,6 +90,18 @@ sub AuthorSearchScript {
 
   print <<PREAMBLE;
         <script type="text/javascript">
+        jQuery().ready(function() {
+
+                /* Here we initially hide the publication fields. TODO: show they be shown in edit page?
+                 *  yes, if they were once set, no otherwise?
+                 */
+//                publication_elements().hide();
+
+
+                /* here the actual switch is initialized */
+//                initialize_publications_switch();
+        });
+
         var auth_ids = [
                 /* [author_id, author_name] */
 PREAMBLE
