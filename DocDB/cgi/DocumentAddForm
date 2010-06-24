@@ -420,7 +420,7 @@ if ($AuthorMode eq "active") {
     print RequesterActiveSearch({-required => $RequiredEntries{Requester}, -helplink => "requester",
                -helptext => "Submitter",                 -name     => "requester",
                -default  => $RequesterDefault, });
-} elsif ($AuthorMode eq "scroll" || $AuthorMode eq "field") {
+} elsif ($AuthorMode eq "list" || $AuthorMode eq "field") {
   AuthorScroll(-required => $RequiredEntries{Requester}, -helplink => "requester",
                -helptext => "Submitter",                 -name     => "requester",
                -default  => [$RequesterDefault], );

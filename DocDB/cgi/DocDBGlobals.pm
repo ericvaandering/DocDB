@@ -100,7 +100,7 @@ $Preferences{Components}{iCal}  = $TRUE; # Display links to iCal calendars
 
 $Preferences{Topics}{MinLevel}{Document} = 1;
 $Preferences{Topics}{Selector}           = "tree";   # tree, multi, or single
-$Preferences{Authors}{Selector}          = "active"; # active, scroll, or text
+$Preferences{Authors}{Selector}          = "active"; # active, list, or field
 $Preferences{Events}{MaxSessionList}     = 5;
 
 $htaccess             = ".htaccess";
