@@ -36,8 +36,8 @@ sub SetAuthorMode {
   } else {
     $AuthorMode = $AuthorModePref;
   }
-  if ($AuthorMode ne "list" && $AuthorMode ne "field") {
-    $AuthorMode = "list";
+  if ($AuthorMode ne "list" && $AuthorMode ne "field" && $AuthorMode ne "active") {
+    $Preferences{Authors}{Selector} || $AuthorMode = "list";
   }
 }
 

@@ -61,7 +61,8 @@ $topicmodes{tree}   = "Expandable Tree";
 
 $authormodes{field} = "Ordered text field";
 $authormodes{list}  = "Selectable list";
-@authormodes = ("list","field");
+$authormodes{active}  = "Active search";
+@authormodes = ("list","field","active");
 
 GetPrefsCookie();
 

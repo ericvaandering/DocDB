@@ -416,11 +416,11 @@ if ($UserValidation eq "certificate") {
 
 print "<td>\n";
 
-if ($Preferences{Authors}{Selector} eq "active") {
+if ($AuthorMode eq "active") {
     print RequesterActiveSearch({-required => $RequiredEntries{Requester}, -helplink => "requester",
                -helptext => "Submitter",                 -name     => "requester",
                -default  => $RequesterDefault, });
-} elsif ($Preferences{Authors}{Selector} eq "scroll") {
+} elsif ($AuthorMode eq "scroll" || $AuthorMode eq "field") {
   AuthorScroll(-required => $RequiredEntries{Requester}, -helplink => "requester",
                -helptext => "Submitter",                 -name     => "requester",
                -default  => [$RequesterDefault], );
@@ -439,17 +439,26 @@ if ($AuthorMode eq "list") {
 $ScrollExtraText = "<a href=\"Javascript:author_method_choose(\'text\');\">(Text w/ order)</a>";
 $TextExtraText   = "<a href=\"Javascript:author_method_choose(\'scroll\');\">(Select from list)</a>";
 
-print "<td id=\"AuthorScroll\"$AuthorScrollDisplay>\n";
-print $query -> hidden(-name => 'authormode', -default => $AuthorMode);
-print AuthorActiveSearch({-required  => $RequiredEntries{Author}, -helplink => "authors",
-             -defaultauthorids   => \@AuthorDefaults,
-             -extratext => $ScrollExtraText,});
-print "</td>\n";
+if ($AuthorMode eq "active") {
+  print "<td id=\"AuthorActiveSearch\">\n";
+  print $query -> hidden(-name => 'authormode', -default => $AuthorMode);
+  print AuthorActiveSearch({-required  => $RequiredEntries{Author}, -helplink => "authors",
+              -defaultauthorids   => \@AuthorDefaults,
+              -extratext => $ScrollExtraText,});
+  print "</td>\n";
+} else {
+  print "<td id=\"AuthorScroll\"$AuthorScrollDisplay>\n";
+  print $query -> hidden(-name => 'authormode', -default => $AuthorMode);
+  AuthorScroll(-required  => $RequiredEntries{Author}, -helplink => "authors",
+              -default   => \@AuthorDefaults,         -multiple => "true",
+              -extratext => $ScrollExtraText,);
+  print "</td>\n";
 
-print "<td id=\"AuthorText\"$AuthorTextDisplay>\n";
-AuthorTextEntry({ -required => $RequiredEntries{Author}, -extratext => $TextExtraText,
-                  -default  => \@AuthorDefaults, });
-print "</td>\n";
+  print "<td id=\"AuthorText\"$AuthorTextDisplay>\n";
+  AuthorTextEntry({ -required => $RequiredEntries{Author}, -extratext => $TextExtraText,
+                    -default  => \@AuthorDefaults, });
+  print "</td>\n";
+}
 
 print "<td>\n";
 my $SecurityText;
