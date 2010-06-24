@@ -1,7 +1,8 @@
-#  Module Purpose:
-#    Gather in one place all the routines that set the look and feel
-#    of DocumentAddForm based on user selections, preferences, and defaults
-#    (in that order)
+#
+#        Name: $RCSfile$
+# Description:  Gather in one place all the routines that set the look and feel
+#               of DocumentAddForm based on user selections, preferences, and
+#               defaults (in that order)
 #
 #  Functions in this file:
 #
@@ -12,7 +13,12 @@
 #    SetAuthorDefault: Sets Author and Requester defaults to cookie value
 #    SetFileOptions:   Sets archive mode and number of uploads
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 

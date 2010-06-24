@@ -1,9 +1,14 @@
 #! /usr/bin/env perl
 #
-# Author:  Adam Bryant
+#        Name: $RCSfile$
+# Description: Main page for selecting various user-level preferences
 #
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+#      Author: Adam Bryant
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
