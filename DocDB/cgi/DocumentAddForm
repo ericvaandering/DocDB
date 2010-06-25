@@ -103,9 +103,8 @@ if ($TopicMode eq "tree") {
 }
 
 if ($AuthorMode eq "active") {
-  push @Scripts,"AuthorSearch","jquery-autocomplete/jquery-1.4.2.min.js",
-                "jquery-autocomplete/jquery.autocomplete.css",
-                "jquery-autocomplete/jquery.autocomplete.pack.js";
+  push @Scripts,"jquery-autocomplete/jquery-1.4.2.min",
+                "jquery-autocomplete/jquery.autocomplete.pack","AuthorSearch";
 }
 
 if      ($mode eq "add") {

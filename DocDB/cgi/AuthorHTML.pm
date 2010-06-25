@@ -418,8 +418,8 @@ sub RequesterActiveSearch {
   }
 
   $HTML .= '<ul id="padding_ul"></ul>'."\n";
-  $HTML .= '<input name="requester_text" type="text" id="requester-submitter" value="'.$DefaultName.'">'.
-           '<input name="requester" type="hidden" id="requester-submitter-id" value="'.$Default.'">'."\n";
+  $HTML .= '<input name="requester_text" type="text" id="requester" value="'.$DefaultName.'">'.
+           '<input name="requester" type="hidden" id="requester-id" value="'.$Default.'">'."\n";
   return $HTML;
 }
 
