@@ -241,7 +241,7 @@ sub LocalSearch ($) {
   ### Get Documents from DocumentRevision that match
 
     my @RevisionPhrases = ();
-    my $RevisionQuery   = "select DocumentID from DocumentRevision where Obsolete=0 and ";
+    my $RevisionQuery   = "select DocumentID from DocumentRevision where Obsolete=0 and (";
 
     if ($TitlePhrase       ) {push @RevisionPhrases,$TitlePhrase       ;}
     if ($AbstractPhrase    ) {push @RevisionPhrases,$AbstractPhrase    ;}
@@ -253,7 +253,8 @@ sub LocalSearch ($) {
     if ($StartDatePhrase   ) {push @RevisionPhrases,$StartDatePhrase   ;}
 
     $RevisionQuery .= join $OuterLogic,@RevisionPhrases;
-
+    $RevisionQuery .= ")";
+    push @DebugStack,"Revision query is $RevisionQuery";
     my %RevisionDocumentIDs = ();
 
     my $document_list = $dbh -> prepare($RevisionQuery);
@@ -266,6 +267,7 @@ sub LocalSearch ($) {
       $RevisionDocumentIDs{$DocumentID} = 1; # Hash removes duplicates
     }
     @RevisionDocumentIDs = keys %RevisionDocumentIDs;
+    push @DebugStack,"Found document IDs are ".join ' ',@RevisionDocumentIDs;
   }
 
   ### Topics (if any)
