@@ -57,6 +57,8 @@ jQuery().ready(function() {
     		selectFirst: true,
 
     		formatItem: function(item) {
+                        if (!item)
+                                return false;
     			return item[1];
     		}
     		});
@@ -91,6 +93,8 @@ jQuery().ready(function() {
     		selectFirst: true,
 
     		formatItem: function(item) {
+                        if (!item)
+                                return false;
     			return item[1];
     		}
     	})

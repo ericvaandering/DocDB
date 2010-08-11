@@ -348,4 +348,7 @@ td.Updated {
         color: white;
 }
 
-
+input.hidden {
+    visibility: hidden;
+    display: none;
+}
