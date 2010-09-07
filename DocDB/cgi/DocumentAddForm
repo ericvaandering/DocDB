@@ -8,7 +8,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -59,6 +59,7 @@ require "RevisionHTML.pm";
 require "SecurityHTML.pm";
 require "SignoffHTML.pm";
 require "TalkHTML.pm";
+require "TopicHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -77,9 +78,16 @@ my $SessionID    = $params{sessionid};
 my $Version      = $params{version};
 my @PreTopics    = $query -> param('pretopic');
    $mode         = $params{mode}; # FIXME: Can't be my since used in subroutines
+my $Clone;
+my $Quick        = $params{quick};
+
+my $QuickClass = " QuickEntryShow";
+if ($Quick) {
+  $QuickClass = " QuickEntryHide";
+}
 
 if ($mode ne "add"    && $mode ne "reserve" &&
-    $mode ne "update" && $mode ne "updatedb") {
+    $mode ne "update" && $mode ne "updatedb" && $mode ne "clone") {
   $mode = "add";
 }
 
@@ -89,13 +97,27 @@ SetAuthorMode();
 SetTopicMode();
 
 print $query -> header( -charset => $HTTP_ENCODING );
-my @Scripts = ("PopUps","InsertRevisionNote","AuthorMethodDisplay");
-if      ($mode eq "add") {
-  DocDBHeader("$Project Document Addition",   "Document Addition",    -scripts => \@Scripts);
+my @Scripts = ("PopUps","InsertRevisionNote","AuthorMethodDisplay","QuickShow",);
+
+if ($TopicMode eq "tree") {
+  push @Scripts,"TreeChooser";
+}
+push @Scripts,"jquery-autocomplete/jquery-1.4.2.min","jquery/jquery.elastic","jquery/jquery.validate.pack";
+my @JQueryElements = ("elastic","validate");
+
+if ($AuthorMode eq "active") {
+  push @Scripts,"jquery-autocomplete/jquery.autocomplete.pack","AuthorSearch";
+  push @JQueryElements,"autocomplete";
+}
+
+push @Scripts,"JQueryReady";
+
+if      ($mode eq "add" || $mode eq "clone") {
+  DocDBHeader("$Project Document Addition",   "Document Addition",    -scripts => \@Scripts, -jqueryelements => \ @JQueryElements);
 } elsif ($mode eq "reserve") {
-  DocDBHeader("$Project Document Reservation","Document Reservation", -scripts => \@Scripts);
+  DocDBHeader("$Project Document Reservation","Document Reservation", -scripts => \@Scripts, -jqueryelements => \ @JQueryElements);
 } elsif ($mode eq "update" || $mode eq "updatedb") {
-  DocDBHeader("$Project Document Update",     "Document Update",      -scripts => \@Scripts);
+  DocDBHeader("$Project Document Update",     "Document Update",      -scripts => \@Scripts, -jqueryelements => \ @JQueryElements);
 }
 
 @ErrorStack = ();
@@ -104,9 +126,9 @@ if      ($mode eq "add") {
 unless (CanCreate()) {
   push @ErrorStack,"You are not allowed to modify or create documents.";
 }
-if ($mode eq "update" || $mode eq "updatedb") {
+if ($mode eq "update" || $mode eq "updatedb" || $mode eq "clone") {
   unless ($params{docid}) {
-    push @ErrorStack,"You must supply a document number to modify a document.";
+    push @ErrorStack,"You must supply a document number to modify or clone a document.";
   }
 }
 if ($mode eq "update" || $mode eq "add") {
@@ -148,6 +170,9 @@ if ($mode eq "update" || $mode eq "updatedb") {
     push @ErrorStack,"You are not allowed to modify this document.";
   }
 }
+if ($mode eq "clone") {
+  FetchDocument($DocumentID);
+}
 
 if ($mode eq "updatedb") {
   unless (defined $Version) {
@@ -158,7 +183,7 @@ if ($mode eq "updatedb") {
   }
 }
 
-if ($mode eq "update") {
+if ($mode eq "update" || $mode eq "clone") {
   $Version = $Documents{$DocumentID}{NVersions};
 }
 
@@ -172,7 +197,7 @@ my ($AuthorListOrdered);
 my ($DocTypeIDDefault,$RequesterDefault,$RevisionNoteDefault,$SignoffsDefault,
     $XRefDefault);
 
-if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version values and update
+if ($mode eq "update" || $mode eq "updatedb" || $mode eq "clone") { # Need to read in last version values and update
   $DocRevID            = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
   $TitleDefault        = $DocRevisions{$DocRevID}{Title};
   $PubInfoDefault      = $DocRevisions{$DocRevID}{PUBINFO};
@@ -267,6 +292,15 @@ if ($mode eq "add" && ($SessionID||$ConferenceID)) {
 
 &SetFileOptions($DocRevID);
 
+# Clone is add, just with no document #
+
+if ($mode eq "clone") {
+  $mode       = "add";
+  $DocumentID = 0;
+  $Version    = 0;
+  $Clone      = $TRUE;
+}  
+
 print $query -> start_multipart_form('POST',$ProcessDocumentAdd,'id="documentadd" name="documentadd"');
 print "<div>\n";
 print $query -> hidden(-name => 'mode',      -default => $mode);
@@ -302,26 +336,25 @@ print "<table class=\"CenteredTable HighPaddedTable\">\n";
 print "<tr>\n";
 print "<td colspan=\"4\">\n";
 if ($mode eq "add") {
-  print "<h4>You have chosen to add a new document to the database.<br/>
-             Make sure you know all the required information and
-             the file is ready for uploading.<br/>\n";
+  print "<h4>You are adding a new document to DocDB. ";
 } elsif ($mode eq "reserve") {
-  print "<h4>You have chosen to reserve a new document document number in
-             the database. <br/>
-             You CANNOT upload the document using this form.<br/>
-             Make sure you know all the required information.<br/>\n";
+  print "<h4>You are reserving a new document document number in
+             DocDB. ";
 } elsif ($mode eq "update") {
   $documentName = &FullDocumentID($DocumentID);
-  print "<h4>You have chosen to update $documentName.
-             Make sure you know all the required information.<br/>\n";
+  print "<h4>You are updating $documentName. ";
 } elsif ($mode eq "updatedb") {
   $documentName = &FullDocumentID($DocumentID,$Version);
-  print "<h4>You have chosen to update the database for $documentName.
-             Make sure you know all the required information.<br/>\n";
+  print "<h4>You are update the metadata for $documentName. ";
 }
 
-print "Required fields are marked with an asterisk (*).<br/>";
-print "Click on any of the headings for help.</h4>\n"; print "</td>\n";
+print "Required fields are marked with an asterisk (*). ";
+if ($Quick) {
+  print "<a href=\"Javascript:unhideQuick();\">(Show all fields)</a>\n";
+}
+print "</h4>\n";
+
+print "</td>\n";
 print "</tr>\n";
 
 ### Title, abstract, and keywords
@@ -406,11 +439,18 @@ if ($UserValidation eq "certificate") {
 } else {
   print "<tr>\n";
 }
-
+push @DebugStack,"AuthorMode $AuthorMode";
 print "<td>\n";
-AuthorScroll(-required => $RequiredEntries{Requester}, -helplink => "requester",
-             -helptext => "Submitter",                 -name     => "requester",
-             -default  => [$RequesterDefault], );
+
+if ($AuthorMode eq "active") {
+    print RequesterActiveSearch({-required => $RequiredEntries{Requester}, -helplink => "requester",
+               -helptext => "Submitter",                 -name     => "requester",
+               -default  => $RequesterDefault, });
+} elsif ($AuthorMode eq "list" || $AuthorMode eq "field") {
+  AuthorScroll(-required => $RequiredEntries{Requester}, -helplink => "requester",
+               -helptext => "Submitter",                 -name     => "requester",
+               -default  => [$RequesterDefault], );
+}
 print "</td>\n";
 
 my ($AuthorScrollDisplay,$AuthorTextDisplay);
@@ -425,22 +465,31 @@ if ($AuthorMode eq "list") {
 $ScrollExtraText = "<a href=\"Javascript:author_method_choose(\'text\');\">(Text w/ order)</a>";
 $TextExtraText   = "<a href=\"Javascript:author_method_choose(\'scroll\');\">(Select from list)</a>";
 
-print "<td id=\"AuthorScroll\"$AuthorScrollDisplay>\n";
-print $query -> hidden(-name => 'authormode', -default => $AuthorMode);
-AuthorScroll(-required  => $RequiredEntries{Author}, -helplink => "authors",
-             -default   => \@AuthorDefaults,         -multiple => "true",
-             -extratext => $ScrollExtraText,);
-print "</td>\n";
+if ($AuthorMode eq "active") {
+  print "<td id=\"AuthorActiveSearch\">\n";
+  print $query -> hidden(-name => 'authormode', -default => $AuthorMode);
+  print AuthorActiveSearch({-required  => $RequiredEntries{Author}, -helplink => "authors",
+              -defaultauthorids   => \@AuthorDefaults,
+              -extratext => $ScrollExtraText,});
+  print "</td>\n";
+} else {
+  print "<td id=\"AuthorScroll\"$AuthorScrollDisplay>\n";
+  print $query -> hidden(-name => 'authormode', -default => $AuthorMode);
+  AuthorScroll(-required  => $RequiredEntries{Author}, -helplink => "authors",
+              -default   => \@AuthorDefaults,         -multiple => "true",
+              -extratext => $ScrollExtraText,);
+  print "</td>\n";
 
-print "<td id=\"AuthorText\"$AuthorTextDisplay>\n";
-AuthorTextEntry({ -required => $RequiredEntries{Author}, -extratext => $TextExtraText,
-                  -default  => \@AuthorDefaults, });
-print "</td>\n";
+  print "<td id=\"AuthorText\"$AuthorTextDisplay>\n";
+  AuthorTextEntry({ -required => $RequiredEntries{Author}, -extratext => $TextExtraText,
+                    -default  => \@AuthorDefaults, });
+  print "</td>\n";
+}
 
 print "<td>\n";
 my $SecurityText;
 if ($EnhancedSecurity) {
-  $SecurityText = "View";
+  $SecurityText = "Can View";
 } else {
   $SecurityText = "Security";
 }
@@ -455,7 +504,7 @@ if ($EnhancedSecurity) {
   print "<td>\n";
   SecurityScroll(-name      => 'modify',
                  -helplink  => 'modifygroups',
-                 -helptext  => 'Modify',
+                 -helptext  => 'Can Modify',
                  -multiple  => $TRUE,
                  -default   => \@ModifyDefaults);
   print "</td>\n";
@@ -481,6 +530,12 @@ if ($TopicMode eq "single") {
                      -default  => \@TopicDefaults,
                      -multiple => $TRUE,
                      -minlevel => $Preferences{Topics}{MinLevel}{Document}, });
+} elsif ($TopicMode eq "tree") {
+  print "<tr><td colspan=\"4\" id=\"TopicTreeSelector\">\n";
+  my @RootTopicIDs = sort TopicByAlpha AllRootTopics();
+  print TopicListWithChildren({ -topicids        => \@RootTopicIDs,
+                                -defaulttopicids => \@TopicDefaults,
+                                -chooser         => $TRUE });
 }
 print "</td></tr>\n";
 
@@ -493,7 +548,7 @@ if ($Preferences{Options}{SubmitAgree}) {
 
 ### Submit button prior to optional information
 
-print "<tr><td colspan=\"4\" class=\"SubmitCell\">\n";
+print "<tr><td colspan=\"4\" class=\"SubmitCell$QuickClass\">\n";
 if      ($mode eq "add") {
   print $query -> submit (-value => "Submit document");
 } elsif ($mode eq "reserve") {
@@ -505,7 +560,7 @@ print "</td></tr>\n";
 
 ### Events
 
-print "<tr><td colspan=\"4\">\n";
+print "<tr class=\"$QuickClass\"><td colspan=\"4\">\n";
  EventSelect( {-required => $FALSE,          -format   => "full",
                -default  => \@EventDefaults, -multiple => $TRUE} );
 print "</td></tr>\n";
@@ -520,11 +575,11 @@ print "</td></tr>\n";
 
 ### References and Publication info
 
-print "<tr><td colspan=\"4\">\n"; ReferenceForm(); print "</td></tr>\n";
-print "<tr><td colspan=\"4\">\n"; PubInfoBox();    print "</td></tr>\n";
+print "<tr class=\"$QuickClass\"><td colspan=\"4\">\n"; ReferenceForm(); print "</td></tr>\n";
+print "<tr class=\"$QuickClass\"><td colspan=\"4\">\n"; PubInfoBox();    print "</td></tr>\n";
 
 if ($UseSignoffs) { # FIXME: Later may be more complicated control
-  print "<tr><td colspan=\"4\">\n";
+  print "<tr class=\"$QuickClass\"><td colspan=\"4\">\n";
   SignoffBox(-default => $SignoffDefault);
   print "</td></tr>\n";
 }

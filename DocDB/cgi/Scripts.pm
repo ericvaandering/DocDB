@@ -84,4 +84,40 @@ PREAMBLE
   print "//-->\n</script>\n";
 }
 
+sub AuthorSearchScript {
+  require "AuthorSQL.pm";
+  require "Sorts.pm";
+
+  print <<PREAMBLE;
+        <script type="text/javascript">
+        var auth_ids = [
+                /* [author_id, author_name] */
+PREAMBLE
+
+  GetAuthors();
+  my @AuthorIDs     = sort byLastName keys %Authors;
+#  $#AuthorIDs = 5;
+  foreach my $AuthorID (@AuthorIDs) {
+    print '['.$AuthorID.', "'.$Authors{$AuthorID}{Formal}.'"],'."\n";
+  }
+  print "\n];\n";
+  print 'var imgURL = "'.$ImgURLPath.'";';
+  print "</script>\n";
+}
+
+sub JQueryReadyScript {
+  print '<script type="text/javascript">'."\n";
+  print "jQuery().ready(function() {\n";
+  foreach my $Element (@JQueryElements) { 
+    if ($Element eq "elastic") {
+      print "  jQuery('textarea').elastic();\n";
+    }
+    if ($Element eq "validate") {
+      print "  jQuery('form#documentadd').validate({onfocusout: true, onkeyup: true});\n";
+    }
+  }     
+  print "});\n";
+  print "</script>\n";
+}
+
 1;

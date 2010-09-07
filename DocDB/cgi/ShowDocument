@@ -47,7 +47,7 @@ $query = new CGI;  # Global for subroutines
    $AsOf       = $params{asof};
 my $OutFormat  = $params{outformat} || "HTML";
    $OutFormat =~ tr/[a-z]/[A-Z]/;
-
+my $StyleSheet = $params{stylesheet};
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number!";
@@ -97,7 +97,7 @@ if (&CanAccess($DocumentID,$Version)) {
 if ($OutFormat eq 'XML') {
   require "XMLOutput.pm";
   unless ($NoXMLHead) {
-    print XMLHeader();
+    print XMLHeader({-stylesheet => $StyleSheet, });
   }  
   NewXMLOutput();
 } else {

@@ -1,14 +1,14 @@
-#
-#        Name: FormElements.pm
+#        Name: $RCSfile$
 # Description: Various routines which supply input forms for document 
 #              addition, etc. This file is deprecated. Routines are 
 #              being moved out into the various *HTML.pm files.
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
-#
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -190,7 +190,7 @@ sub PubInfoBox {
   print $ElementTitle,"\n";                                     
 
   print $query -> textarea (-name => 'pubinfo', -default => $PubInfoDefault,
-                            -columns => 60, -rows => 3);
+                            -columns => 60, -rows => 1);
 };
 
 sub InstitutionSelect (;%) { # Scrolling selectable list for institutions
@@ -267,6 +267,22 @@ sub NameEntryBox (;%) {
                              -size => 20, -maxlength => 32,$Booleans);
   print "</td>\n";
   print "</tr></table>\n";
+}
+
+sub CloneButton {
+  my ($DocumentID) = @_;
+
+  $query -> param('mode','clone'); 
+  $query -> param('docid',$DocumentID);
+
+  print $query -> startform('POST',$DocumentAddForm);
+  print "<div>\n";
+  print $query -> hidden(-name => 'mode',  -default => 'clone');
+  print $query -> hidden(-name => 'docid', -default => $DocumentID);
+  print $query -> submit (-value => "Create Similar");
+  print "\n</div>\n";
+  print $query -> endform;
+  print "\n";
 }
 
 sub UpdateButton {
@@ -394,10 +410,14 @@ sub FormElementTitle (%) {
   my $NoBold    = $Params{-nobold}    || 0;
   my $NoColon   = $Params{-nocolon}   || 0;
   my $Required  = $Params{-required}  || 0;
-
+  my $ErrorMsg  = $Params{-errormsg}  || "";
+  my $Name      = $Params{-name}      || $HelpLink;
   my $TitleText = "";
   my $Colon     = "";
-  
+  if ($Required && $ErrorMsg && $Name) {
+    $TitleText .= '<label for="'.$Name.'" class="error">'.$ErrorMsg.'<br/></label>';
+  }
+
   unless ($HelpLink || $Text) {
     return $TitleText;
   }  

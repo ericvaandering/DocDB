@@ -7,7 +7,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Stephen Wood (saw@jlab.org), Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -548,22 +548,24 @@ sub PrintEventLeftSidebar ($) {
       }
     }
     if (CanModifyMeeting($EventID)) {
-      if ($DisplayMode eq "SingleSession") {
-        print "<p/>\n";
-        SessionModifyButton(-eventid => $EventID,     -buttontext => "Modify Agenda");
-      } elsif ($DisplayMode eq "Session") {
-        print "<p/>\n";
-        SessionModifyButton(-sessionid => $SessionID, -buttontext => "Modify Session");
-      }
+      if ($Preferences{Components}{AgendaMaker}) {
+        if ($DisplayMode eq "SingleSession") {
+          print "<p/>\n";
+          SessionModifyButton(-eventid => $EventID,     -buttontext => "Modify Agenda");
+        } elsif ($DisplayMode eq "Session") {
+          print "<p/>\n";
+          SessionModifyButton(-sessionid => $SessionID, -buttontext => "Modify Session");
+        }
 
-      print "<p/>\n";
-      if ($DisplayMode eq "SingleSession") {
-        EventModifyButton(-eventid => $EventID, -buttontext => "Add Sessions");
-      } else {
-        EventModifyButton(-eventid => $EventID, -buttontext => "Modify Event");
+        print "<p/>\n";
+        if ($DisplayMode eq "SingleSession") {
+          EventModifyButton(-eventid => $EventID, -buttontext => "Add Sessions");
+        } else {
+          EventModifyButton(-eventid => $EventID, -buttontext => "Modify Event");
+        }
+        print "<p/>\n";
+        EventCopyButton(-eventid => $EventID);
       }
-      print "<p/>\n";
-      EventCopyButton(-eventid => $EventID);
     }
   }
 

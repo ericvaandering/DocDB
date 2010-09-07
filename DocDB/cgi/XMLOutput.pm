@@ -34,10 +34,16 @@ sub NewXMLOutput {
 }
 
 sub XMLHeader {
+  my ($ArgRef) = @_;
+  my $StyleSheet = exists $ArgRef->{-stylesheet} ? $ArgRef->{-stylesheet} : "";
+
   my $Header;
   $Header .= "Content-Type: text/xml\n";
   $Header .= "\n";
   $Header .= '<?xml version="1.0" encoding="'.$HTTP_ENCODING.'"?>'."\n";
+  if ($StyleSheet) {
+    $Header .= '<?xml-stylesheet href="'.$StyleSheet.'" type="text/xsl" ?>';
+  }
   return $Header;
 }
 

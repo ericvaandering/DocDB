@@ -1,9 +1,14 @@
 #! /usr/bin/env perl
 #
+#        Name: $RCSfile$
+# Description: The second "homepage" for adding documents and other metadata
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -173,24 +178,26 @@ if (CanCreateMeeting()) {
   print "<ul>\n";
 
   ### Full meeting form
+  
+  if ($Preferences{Components}{AgendaMaker}) {
+    print "<li>\n"; 
+    print $query -> startform('POST',$MeetingModify),"<div>\n";
+    print $query -> submit (-value => "Create");
+    print " a new event with multiple sessions"; 
+    print "\n</div>\n",$query -> endform,"\n\n";
+    print "</li>\n"; 
 
-  print "<li>\n"; 
-  print $query -> startform('POST',$MeetingModify),"<div>\n";
-  print $query -> submit (-value => "Create");
-  print " a new event with multiple sessions"; 
-  print "\n</div>\n",$query -> endform,"\n\n";
-  print "</li>\n"; 
+    ### Reduced meeting form
 
-  ### Reduced meeting form
-
-  print "<li>\n"; 
-  print $query -> startform('POST',$SessionModify),"<div>\n";
-  print $query -> hidden(-name => 'singlesession', -default => 1);
-  print $query -> hidden(-name => 'mode', -default => "new");
-  print $query -> submit (-value => "Create");
-  print " a new event with only one session"; 
-  print "\n</div>\n",$query -> endform,"\n\n";
-  print "</li>\n"; 
+    print "<li>\n"; 
+    print $query -> startform('POST',$SessionModify),"<div>\n";
+    print $query -> hidden(-name => 'singlesession', -default => 1);
+    print $query -> hidden(-name => 'mode', -default => "new");
+    print $query -> submit (-value => "Create");
+    print " a new event with only one session"; 
+    print "\n</div>\n",$query -> endform,"\n\n";
+    print "</li>\n"; 
+  }
 
   ### No sessions form
 

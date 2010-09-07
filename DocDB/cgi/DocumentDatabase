@@ -1,6 +1,5 @@
 #! /usr/bin/env perl
 #
-#
 #        Name: $RCSfile$
 # Description: The Document Database homepage. Give the user various ways to  
 #              view documents, a link to ways to change documents, and a list 
@@ -11,7 +10,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -152,20 +151,26 @@ my $ShowForm  = $query -> startform('POST',$ShowDocument);
 
 print "<div class=\"HomepageMainChoice\">$ShowForm</div>\n";  
 
-print "<div class=\"HomepageMainChoice\">\n";
-print $query -> startform('POST',$ListBy);
-print "<div>\n";
-print $query -> submit (-value => "Show");
-print "<strong> documents modified in the last </strong>";
-DaysPulldown($LastDays);
-print "<strong> days</strong>";
-print "</div>\n";
-print $query -> endform;
-print "</div>\n";  
+# Last modified pulldown
 
-print "<div class=\"HomepageMainChoice\">\n";
-print "<strong><a href=\"$ShowCalendar\">Calendar</a> of events or <a href=\"$ShowCalendar?todayonly=1\">today's</a> events</strong>";
-print "</div>\n";  
+if ($Preferences{Components}{LastModifiedHome}) {
+  print "<div class=\"HomepageMainChoice\">\n";
+  print $query -> startform('POST',$ListBy);
+  print "<div>\n";
+  print $query -> submit (-value => "Show");
+  print "<strong> documents modified in the last </strong>";
+  DaysPulldown($LastDays);
+  print "<strong> days</strong>";
+  print "</div>\n";
+  print $query -> endform;
+  print "</div>\n";  
+}
+
+if ($Preferences{Components}{Calendar}) {
+  print "<div class=\"HomepageMainChoice\">\n";
+  print "<strong><a href=\"$ShowCalendar\">Calendar</a> of events or <a href=\"$ShowCalendar?todayonly=1\">today's</a> events</strong>";
+  print "</div>\n";  
+}
 
 # Fill arrays that print lists of documents
 

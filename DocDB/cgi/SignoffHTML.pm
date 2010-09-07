@@ -6,7 +6,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -36,7 +36,7 @@ sub SignoffBox { # Just a text box for now with a list of names
   print $ElementTitle,"\n";
 
   print $query -> textarea (-name => 'signofflist', -default => $Default,
-                            -columns => 30, -rows => 6);
+                            -columns => 30, -rows => 2);
 };
 
 sub PrintRevisionSignoffInfo ($) { # FIXME: Handle more complicated topologies?
@@ -133,8 +133,8 @@ sub PrintSignatureInfo ($) {
             $Action = "unsign";
             $ActionText = "Remove Signature"
           }
-          if ($UserValidation eq "certificate") {
-            if (FetchEmailUserIDByCert() == $EmailUserID) {
+          if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
+            if (FetchEmailUserID() == $EmailUserID) {
               $SignatureText .= $query -> start_multipart_form('POST',"$SignRevision");
               $SignatureText .= "<div>\n";
               $SignatureText .= "$SignatureLink ";

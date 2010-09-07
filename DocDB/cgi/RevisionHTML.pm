@@ -1,12 +1,12 @@
 #        Name: $RCSfile$
-# Description: 
+# Description:
 #    Revision: $Revision$
 #    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -24,17 +24,24 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub TitleBox (%) {
+  push @DebugStack,"tb TitleDefault $TitleDefault";
   my (%Params) = @_;
   #FIXME: Get rid of global default
 
   my $Required   = $Params{-required}   || 0;
-
-  my $ElementTitle = &FormElementTitle(-helplink  => "title" ,
-                                       -helptext  => "Title" ,
-                                       -required  => $Required );
-  print $ElementTitle,"\n";
-  print $query -> textfield (-name => 'title', -default => $TitleDefault,
-                             -size => 70, -maxlength => 240);
+  
+  my $HTML = FormElementTitle(-helplink  => "title" ,
+                              -helptext  => "Title" ,
+                              -required  => $Required ,
+                              -errormsg  => 'You must specify a document title.'
+                              );
+  $HTML .= $ElementTitle."\n";
+  my %FieldParams = (-name => 'title', -default => $TitleDefault, -size => 70, -maxlength => 240);
+  if ($Required) {
+    $FieldParams{'-class'} = "required";
+  }
+  $HTML .=  $query -> textfield(%FieldParams);
+  print $HTML;
 };
 
 sub AbstractBox (%) {
@@ -46,14 +53,19 @@ sub AbstractBox (%) {
   my $HelpText = $Params{-helptext} || "Abstract";
   my $Name     = $Params{-name}     || "abstract";
   my $Columns  = $Params{-columns}  || 60;
-  my $Rows     = $Params{-rows}     || 6;
+  my $Rows     = $Params{-rows}     || 4;
 
   my $ElementTitle = &FormElementTitle(-helplink  => $HelpLink ,
                                        -helptext  => $HelpText ,
-                                       -required  => $Required );
+                                       -required  => $Required ,
+                                       -errormsg  => 'You must specify an abstract.');
   print $ElementTitle,"\n";
-  print $query -> textarea (-name    => $Name, -default => $AbstractDefault,
-                            -rows    => $Rows, -columns => $Columns);
+  my %FieldParams = (-name    => $Name, -default => $AbstractDefault,
+                     -rows    => $Rows, -columns => $Columns);
+  if ($Required) {
+    $FieldParams{'-class'} = "required";
+  }
+  print $query -> textarea(%FieldParams);
 };
 
 sub RevisionNoteBox {
@@ -81,7 +93,7 @@ sub RevisionNoteBox {
                                        -required  => $Required );
   print $ElementTitle,"\n";
   print $query -> textarea (-name => 'revisionnote', -default => $Default,
-                            -columns => 60, -rows => 6);
+                            -columns => 60, -rows => 2);
 };
 
 sub DocTypeButtons (%) {
@@ -100,11 +112,17 @@ sub DocTypeButtons (%) {
 
   my $ElementTitle = &FormElementTitle(-helplink  => "doctype" ,
                                        -helptext  => "Document type" ,
-                                       -required  => $Required );
+                                       -required  => $Required,
+                                       -errormsg  => 'You must choose a document type.');
+
   print "<div class=\"LowPaddedTable\">\n";
   print $ElementTitle,"\n";
-  print $query -> radio_group(-columns => 3,           -name    => "doctype",
-                              -values => \%ShortTypes, -default => $Default);
+  my %FieldParams = (-columns => 3,            -name    => "doctype", 
+                     -values  => \%ShortTypes, -default => $Default);
+  if ($Required) {
+    $FieldParams{'-class'} = "required";
+  }
+  print $query -> radio_group(%FieldParams);
   print "</div>\n";
 };
 
@@ -171,13 +189,14 @@ sub PrintRevisionInfo {
   print "</dl>\n";
   print "</div>\n";  # BasicDocInfo
 
-  if (&CanModify($DocumentID) && !$HideButtons) {
+  if (CanModify($DocumentID) && !$HideButtons) {
     print "<div id=\"UpdateButtons\">\n";
-    &UpdateButton($DocumentID);
-    &UpdateDBButton($DocumentID,$Version);
+    UpdateButton($DocumentID);
+    UpdateDBButton($DocumentID,$Version);
     if ($Version) {
-      &AddFilesButton($DocumentID,$Version);
+      AddFilesButton($DocumentID,$Version);
     }
+    CloneButton($DocumentID);
     print "</div>\n";
   }
 
@@ -206,7 +225,7 @@ sub PrintRevisionInfo {
 
   PrintAbstract($DocRevisions{$DocRevID}{Abstract}); # All are called only here, so changes are OK
   FileListByRevID($DocRevID); # All are called only here, so changes are OK
-  print TopicListByID( {-topicids => \@TopicIDs, -listelement => "withparents"} );
+  print TopicListByID( {-topicids => \@TopicIDs, -listelement => "withparents", -sortby => "provenance",} );
   AuthorListByAuthorRevID({ -authorrevids => \@RevAuthorIDs });
   PrintKeywords($DocRevisions{$DocRevID}{Keywords});
   PrintRevisionNote($DocRevisions{$DocRevID}{Note});

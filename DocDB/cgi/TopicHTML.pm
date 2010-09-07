@@ -140,6 +140,7 @@ sub TopicName ($) {
   my ($ArgRef) = @_;
   my $TopicID = exists $ArgRef->{-topicid} ? $ArgRef->{-topicid} : "";
   my $Format  = exists $ArgRef->{-format}  ? $ArgRef->{-format}  : "withparents";
+  my $Escape  = exists $ArgRef->{-escape}  ? $ArgRef->{-escape}  : $TRUE;
 
   my $Separator = ":";
 
@@ -156,7 +157,11 @@ sub TopicName ($) {
       $Text .= $Separator;
     }
   }
-  $Text .= CGI::escapeHTML($Topics{$TopicID}{Short});
+  if ($Escape) {
+    $Text .= CGI::escapeHTML($Topics{$TopicID}{Short});
+  } else {
+    $Text .= $Topics{$TopicID}{Short};
+  }
 
   return $Text;
 }
@@ -165,18 +170,24 @@ sub TopicsTable {
   require "Sorts.pm";
   require "TopicUtilities.pm";
 
+  my ($ArgRef) = @_;
+  my $Depth = exists $ArgRef->{-depth} ? $ArgRef->{-depth} : 1;
+
   my $NCols = 4;
 
   my %Lists = ();
   my $TotalSize = 0;
   my @RootTopicIDs = sort TopicByAlpha AllRootTopics();
   foreach my $TopicID (@RootTopicIDs) {
-    my $HTML = TopicListWithChildren({ -topicids => [$TopicID], -checkevent => $TRUE });
-    $List{$TopicID}{HTML} = $HTML;
-    my @Lines = split /\n/,$HTML;
-    my $Size = grep /href/,@Lines;
+    my @SubTopicIDs = TopicAndSubTopics({ -topicid => $TopicID, -maxdepth => $Depth, });
+    push @DebugStack,"Topic $TopicID has ".$#SubTopicIDs." subtopics at depth $Depth";
+    my $Size = $#SubTopicIDs + 1;
     $List{$TopicID}{Size} = $Size;
     $TotalSize += $Size;
+  }
+  foreach my $TopicID (@RootTopicIDs) {
+    my $HTML = TopicListWithChildren({ -topicids => [$TopicID], -maxdepth => $Depth, -helplink => "", -checkevent => $TRUE });
+    $List{$TopicID}{HTML} = $HTML;
   }
 
   # This algorithm attempts to balance the length of columns in a multi-column
@@ -184,7 +195,7 @@ sub TopicsTable {
   # columns on the fly
 
   my $Target = $TotalSize/$NCols;
-  push @DebugStack,"Target column length $Target";
+  push @DebugStack,"Initial target column length $Target";
   print '<table class="HighPaddedTable CenteredTable">'."<tr><td>\n";
   my $Col      = 1;
   my $NThisCol = 0;
@@ -194,8 +205,10 @@ sub TopicsTable {
 
 # Insert new cell if current chunk is to large and it's not
 # the first thing in a column or the last column
-
+    
+    push @DebugStack,"Target: $Target So far: $NThisCol Testing: $Size";
     if ($NThisCol != 0 && $Col != $NCols && $NThisCol + 0.5*$Size >= $Target) {
+      push @DebugStack,"Breaking column";
       $Target = ($TotalSize - $NSoFar)/($NCols-$Col);
       print "</td><td>\n";
       ++$Col;
@@ -213,27 +226,83 @@ sub TopicListWithChildren { # Recursive routine
   my ($ArgRef) = @_;
   my @TopicIDs   = exists $ArgRef->{-topicids}   ? @{$ArgRef->{-topicids}}  : ();
   my $Depth      = exists $ArgRef->{-depth}      ?   $ArgRef->{-depth}      : 1;
+  my $MaxDepth   = exists $ArgRef->{-maxdepth}   ?   $ArgRef->{-maxdepth}   : 0;
   my $CheckEvent = exists $ArgRef->{-checkevent} ?   $ArgRef->{-checkevent} : $FALSE; # name or provenance
+  my $Chooser    = exists $ArgRef->{-chooser}    ?   $ArgRef->{-chooser}    : $FALSE;
+  my @DefaultTopicIDs = exists $ArgRef->{-defaulttopicids}   ? @{$ArgRef->{-defaulttopicids}}  : ();
+  my $HelpLink   = exists $ArgRef->{-helplink}   ?   $ArgRef->{-helplink}   : "topics";
+  my $HelpText   = exists $ArgRef->{-helptext}   ?   $ArgRef->{-helptext}   : "Topics";
+  my $Required   = exists $ArgRef->{-required}   ?   $ArgRef->{-required}   : $TRUE;
 
   require "MeetingSQL.pm";
   require "MeetingHTML.pm";
+  require "TopicSQL.pm";
+  require "Utilities.pm";
+  require "FormElements.pm";
 
   my @TopicIDs = sort TopicByAlpha @TopicIDs;
 
   my $HTML;
+  my ($Class,$Strong,$EStrong);
+  if (($Chooser && $Depth == 1) || ($MaxDepth && $Depth == 2)) {
+    $Class = "mktree";
+    unless ($MaxDepth) { 
+      $HTML .= FormElementTitle(-helplink  => $HelpLink, -helptext  => $HelpText ,
+                                -required  => $Required, 
+                                -errormsg  => 'You must choose at least one topic.');
+      $HTML .= '<input id="topic_dummy" class="hidden required" type="checkbox" value="dummy" name="topics" />'."\n";
+    }
+  } else {
+    $Class = "$Depth-deep";
+  }
 
   if (@TopicIDs) {
-    if ($Depth > 1) {
-      $HTML .= "<ul class=\"$Depth-deep\">\n";
+    if ($Depth > 1 || $Chooser) {
+      $HTML .= "<ul class=\"$Class\" id=\"TopicTree\">\n";
     }
     foreach my $TopicID (@TopicIDs) {
-      if ($Depth > 1) {
-        $HTML .= "<li>";
+      my $NodeClass = "";
+      if ($Chooser) {
+        my @ChildTopicIDs  = TopicAndSubTopics({-topicid => $TopicID, -includetopic => $FALSE});
+        my @CommonTopicIDs = Union(\@DefaultTopicIDs,@ChildTopicIDs);
+        if (@CommonTopicIDs) {
+          $NodeClass = "liOpen";
+        } else {
+          $NodeClass = "liClosed";
+        }
+      } else {
+        if ($MaxDepth && $Depth > $MaxDepth) {
+            $NodeClass = "liClosed";
+        } else {
+            $NodeClass = "liOpen";
+        }
+      }
+
+      if ($Depth > 1 || $Chooser) {
+        $HTML .= "<li";
+        if ($NodeClass) {
+          $HTML .= " class=\"$NodeClass\"";
+        }
+        $HTML .= ">";
       } else {
         $HTML .= "<strong>";
       }
-      $HTML .= TopicLink( {-topicid => $TopicID} );
-      if ($Depth == 1) {
+      if ($Chooser) {
+        my $TopicName = TopicName( {-topicid => $TopicID, -format => "short", -escape => $FALSE} );
+        my $Booleans = "";
+        if ($Depth < $Preferences{Topics}{MinLevel}{Document}) {
+          $TopicName = '['.$TopicName.']';
+          $Booleans .= "-disabled";
+        }
+        if (defined IndexOf($TopicID,@DefaultTopicIDs)) {
+          $HTML.= $query -> checkbox(-name => "topics", -value => $TopicID, -label => $TopicName, -checked => 'checked', $Booleans);
+        } else {
+          $HTML.= $query -> checkbox(-name => "topics", -value => $TopicID, -label => $TopicName, $Booleans);
+        }
+      } else {
+        $HTML .= TopicLink( {-topicid => $TopicID} );
+      }
+      if ($Depth == 1 && !$Chooser) {
         $HTML .= "</strong>\n";
       }
 #      if ($CheckEvent) {
@@ -244,15 +313,17 @@ sub TopicListWithChildren { # Recursive routine
 #      }
       if (@{$TopicChildren{$TopicID}}) {
         $HTML .= "\n";
-        $HTML .= TopicListWithChildren({ -topicids => $TopicChildren{$TopicID}, -depth => $Depth+1 });
-      } elsif ($Depth == 1) {
+        $HTML .= TopicListWithChildren({ -topicids => $TopicChildren{$TopicID}, -depth => $Depth+1,
+                                         -maxdepth => $MaxDepth,
+                                         -chooser  => $Chooser, -defaulttopicids => \@DefaultTopicIDs});
+      } elsif ($Depth == 1 && !$Chooser) {
         $HTML .= '<br class="EmptyTopic" />';
       }
-      if ($Depth > 1) {
+      if ($Depth > 1 || $Chooser) {
         $HTML .= "</li>\n";
       }
     }
-    if ($Depth > 1) {
+    if ($Depth > 1 || $Chooser) {
       $HTML .= "</ul>\n";
     }
   }
@@ -322,6 +393,7 @@ sub TopicScrollTable ($) {
   print FormElementTitle(-helplink  => $HelpLink, -helptext  => $HelpText ,
                          -required  => $Required);
   print "</th>"; # </tr> by table routine
+#  print '<input id="topic_dummy" class="hidden required" type="checkbox" value="dummy" name="topics" />'."\n";
 
   my @RootTopicIDs = sort TopicByAlpha AllRootTopics();
 
@@ -333,6 +405,11 @@ sub TopicScrollTable ($) {
     }
     print "<td>\n";
     print "<strong>$Topics{$TopicID}{Short}</strong><br/>\n";
+    my $ColReq = $FALSE;
+    if ($Required && $Col==0) {
+      $ColReq = $TRUE;
+    }
+
     TopicScroll({ -itemformat => "short",    -multiple => $TRUE, -helplink => "",
                   -default    => \@Defaults, -topicids => \@TopicIDs,
                   -minlevel   => $MinLevel, });
@@ -361,6 +438,10 @@ sub TopicScroll ($) {
 
   if ($Disabled) {
     $Options{-disabled} = "disabled";
+  }
+
+  if ($Required) {
+    $Options{'-class'} = "required";
   }
 
   require "TopicSQL.pm";
@@ -395,7 +476,7 @@ sub TopicScroll ($) {
 
   print FormElementTitle(-helplink  => $HelpLink, -helptext  => $HelpText ,
                          -text      => $Text    , -extratext => $ExtraText,
-                         -required  => $Required);
+                         -required  => $Required, -errormsg  => 'You must choose at least one topic.');
 
   $query ->  autoEscape(0);  # Turn off and on since sometimes scrolling_list double escape this.
 
