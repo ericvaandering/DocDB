@@ -190,7 +190,7 @@ sub PubInfoBox {
   print $ElementTitle,"\n";                                     
 
   print $query -> textarea (-name => 'pubinfo', -default => $PubInfoDefault,
-                            -columns => 60, -rows => 3);
+                            -columns => 60, -rows => 1);
 };
 
 sub InstitutionSelect (;%) { # Scrolling selectable list for institutions
@@ -410,10 +410,14 @@ sub FormElementTitle (%) {
   my $NoBold    = $Params{-nobold}    || 0;
   my $NoColon   = $Params{-nocolon}   || 0;
   my $Required  = $Params{-required}  || 0;
-
+  my $ErrorMsg  = $Params{-errormsg}  || "";
+  my $Name      = $Params{-name}      || $HelpLink;
   my $TitleText = "";
   my $Colon     = "";
-  
+  if ($Required && $ErrorMsg && $Name) {
+    $TitleText .= '<label for="'.$Name.'" class="error">'.$ErrorMsg.'<br/></label>';
+  }
+
   unless ($HelpLink || $Text) {
     return $TitleText;
   }  
