@@ -256,6 +256,20 @@ td.Time {
   color: red;
 }
 
+a.Help[href] {
+        color: #444;
+        text-decoration: none;
+	background-image: url('help.png');
+	background-repeat:no-repeat;
+
+	background-position: right center;
+	padding-right: 22px;
+
+	text-height: 16px;
+/*	padding-left: 22px;*/
+
+}
+
 td.Updated {
   text-align: right;
   white-space: nowrap;
