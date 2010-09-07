@@ -18,7 +18,7 @@
 							<label for=""auth_item_' + auth_id + '"">&nbsp;'+auth_title +'</label>\
 						</li>');
 
-			var remove_button = jQuery('<a class="remove_button"><img src="' + imgURL + '/stop_icon.gif" /></a>');
+			var remove_button = jQuery('<a class="remove_button"><img src="' + imgURL + '/delete.png" /></a>');
 
 			// remove handler
 			jQuery(remove_button).click( function(event){
