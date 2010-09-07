@@ -131,7 +131,7 @@ sub DocDBHeader {
   }
 
   if (defined &ProjectHeader) {
-    &ProjectHeader($Title,$PageTitle, -scripts => \@Scripts, -jqueryelements => \@JQueryElements);
+    ProjectHeader($Title,$PageTitle, -scripts => \@Scripts, -jqueryelements => \@JQueryElements);
   }
 
   print "</head>\n";

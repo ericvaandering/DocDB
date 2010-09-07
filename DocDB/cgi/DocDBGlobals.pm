@@ -102,6 +102,8 @@ $Preferences{Components}{Calendar}         = $TRUE; # Calendar
 $Preferences{Components}{LastModifiedHome} = $TRUE; # Last modified on the homepage
 
 $Preferences{Topics}{MinLevel}{Document} = 1;
+$Preferences{Topics}{Selector}           = "tree";   # tree, multi, or single
+$Preferences{Authors}{Selector}          = "active"; # active, list, or field
 $Preferences{Events}{MaxSessionList}     = 5;
 
 $htaccess             = ".htaccess";

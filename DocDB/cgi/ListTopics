@@ -33,7 +33,8 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 GetTopics();
 
 print $query -> header( -charset => $HTTP_ENCODING );
-DocDBHeader("List of Topics");
+my @Scripts = ("TreeChooser");
+DocDBHeader("List of Topics", "List of Topics", -scripts => \@Scripts);
 
 TopicsTable();
 

@@ -205,7 +205,7 @@ sub TopicsTable {
 
 # Insert new cell if current chunk is to large and it's not
 # the first thing in a column or the last column
-    
+
     push @DebugStack,"Target: $Target So far: $NThisCol Testing: $Size";
     if ($NThisCol != 0 && $Col != $NCols && $NThisCol + 0.5*$Size >= $Target) {
       push @DebugStack,"Breaking column";
@@ -246,9 +246,9 @@ sub TopicListWithChildren { # Recursive routine
   my ($Class,$Strong,$EStrong);
   if (($Chooser && $Depth == 1) || ($MaxDepth && $Depth == 2)) {
     $Class = "mktree";
-    unless ($MaxDepth) { 
+    unless ($MaxDepth) {
       $HTML .= FormElementTitle(-helplink  => $HelpLink, -helptext  => $HelpText ,
-                                -required  => $Required, 
+                                -required  => $Required,
                                 -errormsg  => 'You must choose at least one topic.');
       $HTML .= '<input id="topic_dummy" class="hidden required" type="checkbox" value="dummy" name="topics" />'."\n";
     }

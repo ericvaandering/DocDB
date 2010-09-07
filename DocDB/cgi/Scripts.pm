@@ -108,14 +108,14 @@ PREAMBLE
 sub JQueryReadyScript {
   print '<script type="text/javascript">'."\n";
   print "jQuery().ready(function() {\n";
-  foreach my $Element (@JQueryElements) { 
+  foreach my $Element (@JQueryElements) {
     if ($Element eq "elastic") {
       print "  jQuery('textarea').elastic();\n";
     }
     if ($Element eq "validate") {
       print "  jQuery('form#documentadd').validate({onfocusout: true, onkeyup: true});\n";
     }
-  }     
+  }
   print "});\n";
   print "</script>\n";
 }

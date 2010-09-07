@@ -299,7 +299,7 @@ if ($mode eq "clone") {
   $DocumentID = 0;
   $Version    = 0;
   $Clone      = $TRUE;
-}  
+}
 
 print $query -> start_multipart_form('POST',$ProcessDocumentAdd,'id="documentadd" name="documentadd"');
 print "<div>\n";
@@ -443,7 +443,7 @@ push @DebugStack,"AuthorMode $AuthorMode";
 print "<td>\n";
 
 if ($AuthorMode eq "active") {
-    print RequesterActiveSearch({-required => $RequiredEntries{Requester}, -helplink => "requester",
+  print RequesterActiveSearch({-required => $RequiredEntries{Requester}, -helplink => "requester",
                -helptext => "Submitter",                 -name     => "requester",
                -default  => $RequesterDefault, });
 } elsif ($AuthorMode eq "list" || $AuthorMode eq "field") {
