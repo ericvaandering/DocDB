@@ -696,7 +696,7 @@ sub EventHeader ($) {
                       "External URL","Event Info","Event Wrapup");
 
   if ($DisplayMode eq "SingleSession") {
-    @Fields       = ("Full Title","Date &amp; Time","Location","Alt. Location",
+    @Fields       = ("Full Title","Date &amp; Time","Event Location","Alt. Event Location",
                      "Event Topic(s)","Event Moderator(s)","External URL","Session Info");
     %RenameFields = ( "Session Info" => "Event Info",);
   }
@@ -754,11 +754,11 @@ sub EventHeader ($) {
     $Fields{"Date &amp; Time"} = EuroDate($SeparatorStartTime)." at ".EuroTimeHM($SeparatorStartTime);
   }
 
-  if ($Sessions{$SessionID}{Location}) {
+  if ($Sessions{$SessionID}{Location} && $DisplayMode ne "SingleSession") {
     $Fields{"Location"} = $Sessions{$SessionID}{Location};
   }
 
-  if ($Sessions{$SessionID}{AltLocation}) {
+  if ($Sessions{$SessionID}{AltLocation} && $DisplayMode ne "SingleSession") {
     $Fields{"Alt. Location"} = $Sessions{$SessionID}{AltLocation};
   }
 
