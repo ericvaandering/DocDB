@@ -280,6 +280,75 @@ sub AuthorsTable {
   print "</table>\n";
 }
 
+
+sub RequesterActiveSearch {
+  my ($ArgRef) = @_;
+  my $DefaultID = exists $ArgRef->{-default}   ? $ArgRef->{-default}  : 0;
+  my $Name   = exists $ArgRef->{-name}   ?   $ArgRef->{-name}   : "requester";
+  my $HelpLink   = exists $ArgRef->{-helplink}   ?   $ArgRef->{-helplink}   : "authors";
+  my $HelpText   = exists $ArgRef->{-helptext}   ?   $ArgRef->{-helptext}   : "Submitter";
+  my $Required   = exists $ArgRef->{-required}   ?   $ArgRef->{-required}   : $TRUE;
+  my $ExtraText =   $Params{-extratext} || "";
+
+  my $HTML;
+  if ($HelpLink) {
+    $HTML .= FormElementTitle(-helplink => $HelpLink, -helptext  => $HelpText,
+                              -required => $Required, -extratext => $ExtraText,
+                              -name     => "requester",
+                              -errormsg => 'You must choose a requester.');
+    $HTML .= "\n";
+  }
+
+  my ($Default, $DefaultName);
+  if ($DefaultID) {
+    $Default = $DefaultID;
+    $DefaultName = $Authors{$DefaultID}{Formal};
+  }
+
+  $HTML .= '<input class="required" name="requester_text" type="text" id="requester" value="'.$DefaultName.'">'.
+           '<input name="requester" type="hidden" id="requester-id" value="'.$Default.'">'."\n";
+  return $HTML;
+}
+
+sub AuthorActiveSearch {
+  my ($ArgRef) = @_;
+  my $Depth      = exists $ArgRef->{-depth}      ?   $ArgRef->{-depth}      : 2;
+  my @DefaultAuthorIDs = exists $ArgRef->{-defaultauthorids}   ? @{$ArgRef->{-defaultauthorids}}  : ();
+  my $Name   = exists $ArgRef->{-name}   ?   $ArgRef->{-name}   : "authors";
+  my $HelpLink   = exists $ArgRef->{-helplink}   ?   $ArgRef->{-helplink}   : "authors";
+  my $HelpText   = exists $ArgRef->{-helptext}   ?   $ArgRef->{-helptext}   : "Authors";
+  my $Required   = exists $ArgRef->{-required}   ?   $ArgRef->{-required}   : $TRUE;
+  my $ExtraText =   $Params{-extratext} || "";
+
+  my @AuthorIDs = sort byLastName keys %Authors;
+
+  my $HTML;
+
+  if ($HelpLink) {
+    $HTML .= FormElementTitle(-helplink => $HelpLink, -helptext  => $HelpText,
+                              -required => $Required, -extratext => $ExtraText,
+                              -errormsg => 'You must choose at least one author.');
+    $HTML .= "\n";
+  }
+  $HTML .= '<div id="sel_authors_box">'."\n";
+  $HTML .= '<ul id="authors_id_span"></ul>'."\n";
+  $HTML .= '</div>'."\n";
+  $HTML .= '<input id="author_dummy" class="hidden required" type="checkbox" value="dummy" name="authors" />'."\n";
+  $HTML .= '<input name="authors_selection_text" type="text" id="authors_selector"><br /> (click or press <i>Enter</i>)'."\n";
+
+  $HTML .= '<script type="text/javascript">
+            <!--
+            $().ready(function() {';
+  foreach my $AuthorID (@DefaultAuthorIDs) {
+    # /* call this function for each author, with authors_id and title [do not forget to escape it]  */
+    $HTML .= 'addAuthorList(['.$AuthorID.', "'.$Authors{$AuthorID}{Formal}.'"]);'."\n";
+  }
+  $HTML .= '});
+            // -->
+            </script>';
+  return $HTML;
+}
+
 sub AuthorScroll (%) {
   require "AuthorSQL.pm";
   require "Sorts.pm";
