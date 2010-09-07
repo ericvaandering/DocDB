@@ -1,12 +1,15 @@
+#        Name: $RCSfile$
 # Description: The generic instructions for DocDB. This is mostly HTML, but making
 #              it a script allows us to eliminate parts of it that we don't want
 #              and get it following everyone's style, and allows groups to add
 #              to it with ProjectMessages.
 #
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 #    Additional Text: Marcia Teckenbrock
 
 #    This file is part of DocDB.
@@ -51,6 +54,12 @@ TOC
       <li><a href="#upload">Upload methods</a></li>
       <li><a href="#filling">Filling in the form</a></li>
       <li><a href="#topickey">Topics and Keywords</a></li>
+      
+TOC
+    if   ($UserValidation eq "shibboleth") {
+      print '<li><a href="#authentication">Authentication</a></li>';
+    }
+    print <<TOC;
       <li><a href="#advanced">Advanced options</a></li>
      </ul></li>
      <li><a href="#special">Special Cases</a>
@@ -230,7 +239,7 @@ HTML
 
 HTML
 
-  if ($Preferences{Options}{AlwaysRetrieveFile} || $UserValidation eq "certificate") {
+  if ($Preferences{Options}{AlwaysRetrieveFile} || $UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
 
     print <<HTML;
   <p><strong>Note on HTML uploads:</strong>
@@ -400,7 +409,35 @@ HTML
 
   <p>Topics can be nested or combined with keywords to refine a collection of documents and aid in
   searchability.</p>
-
+HTML
+  
+  if ($UserValidation eq "shibboleth") {
+    print <<AUTHSTART;
+    <a name="authentication" /><h2>Authentication</h2>
+    <p>You are authenticated through a single sign-on mechanism known as
+    shibboleth. Shibboleth determines which of its groups, known as ADFS 
+    groups or e-groups, you belong to. These are then translated into DocDB's
+    groups which you may use to determine who may view or change documents you 
+    create or modify. </p>
+    
+    <p>For this instance of DocDB, this is the mapping between ADFS groups and 
+    DocDB groups:</p>
+    <table><tr><th>ADFS Group</th><th>DocDB Groups</th></tr>
+AUTHSTART
+    foreach my $ADFSGroup (sort keys %ShibGroupMap) {
+       print "<tr><td>$ADFSGroup</td><td>";
+       foreach my $DocDBGroup (@{ $ShibGroupMap{$ADFSGroup} }) {
+         print "$DocDBGroup ";
+       
+       } 
+       print "<td><tr>\n";
+    }
+    print <<AUTHEND;
+    </table>
+    <p>This mapping can only be changed by a DocDB administrator</p>
+AUTHEND
+  }
+  print <<HTML;
   <a name="advanced" />
   <h2>Advanced options</h2>
 

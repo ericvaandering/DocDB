@@ -1,14 +1,19 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+#        Name: $RCSfile$
+# Description: Get a file from a document. Automatically or by extension if possible.
 #
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -50,7 +55,7 @@ my $Extension  = $params{extension};
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number!";
-}  
+}
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
@@ -63,11 +68,11 @@ if (defined $Version && defined $AsOf) {
 }
 if (grep /\//,$FileName) {
   push @ErrorStack,"File names with / are not allowed for security reasons.";
-}  
+}
 
 if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
   print $query -> header( -charset => $HTTP_ENCODING );
-  DocDBHeader("File Retrieve Results"); 
+  DocDBHeader("File Retrieve Results");
   EndPage();
 }
 
@@ -94,8 +99,8 @@ unless (&CanAccess($DocumentID,$Version)) {
     push @ErrorStack,"The $remote_user group is not authorized to view this document (or it does not exist).";
   } else {
     push @ErrorStack,"This document is not publicly accessible.";
-  }  
-}  
+  }
+}
 
 unless ($DocRevID) {
   push @ErrorStack,"This document does not exist.";
@@ -103,7 +108,7 @@ unless ($DocRevID) {
 
 if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
   print $query -> header( -charset => $HTTP_ENCODING );
-  &DocDBHeader("File Retrieve Results"); 
+  &DocDBHeader("File Retrieve Results");
   EndPage();
 }
 
@@ -119,14 +124,14 @@ if ($FileName) {
         grep /$Extension$/i,$DocFiles{$DocFileID}{NAME}) {
       ++$NFiles;
       $LastFile = $DocFiles{$DocFileID}{NAME};
-    } 
+    }
   }
   if ($NFiles == 1) {
     $FullFile = &FullFile($DocumentID,$Version,$LastFile);
     $FullURL  = &GetURLDir($DocumentID,$Version).CGI::escape($LastFile);
   } elsif ($NFiles > 1) {
     push @WarnStack,"More than one file was found. Please select one below.";
-  }  
+  }
 } else {
   &FetchDocFiles($DocRevID);
   my $NFiles = 0;
@@ -136,7 +141,7 @@ if ($FileName) {
         $DocFiles{$DocFileID}{ROOT}) {
       ++$NFiles;
       $LastFile = $DocFiles{$DocFileID}{NAME};
-    } 
+    }
   }
   if ($NFiles == 1) {
     $FullFile = &FullFile($DocumentID,$Version,$LastFile);
@@ -145,21 +150,21 @@ if ($FileName) {
     push @WarnStack,"More than one file was found. Please select one below.";
   } else {
     push @WarnStack,"No files were found. Document info is below.";
-  }  
-}    
+  }
+}
 
 unless (-e $FullFile) {
   push @WarnStack,"No appropriate file was found.";
 }
 
-if ($FullFile && ($UserValidation eq "certificate" || $Preferences{Options}{AlwaysRetrieveFile})) {
+if ($FullFile && ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $Preferences{Options}{AlwaysRetrieveFile})) {
   require "FileUtilities.pm";
   StreamFile(-file => $FullFile);
 } elsif ($FullURL) {
   print $query -> redirect(-location => $FullURL, -method => 'GET');
 } else {
   print $query -> header( -charset => $HTTP_ENCODING );
-  DocDBHeader("File Retrieve Results"); 
+  DocDBHeader("File Retrieve Results");
   EndPage(@ErrorStack);
 
   PrintRevisionInfo($DocRevID);

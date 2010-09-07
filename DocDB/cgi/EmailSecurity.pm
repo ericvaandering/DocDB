@@ -8,7 +8,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -72,13 +72,20 @@ sub UserPrefForm ($) {
   my $EmailAddress = $EmailUser{$EmailUserID}{EmailAddress};
   my $PreferHTML   = $EmailUser{$EmailUserID}{PreferHTML};
 
+  if ($UserValidation eq "shibboleth") {
+    $Name         = $ENV{ADFS_FULLNAME};
+    $EmailAddress = $ENV{ADFS_EMAIL};
+    $Username     = $ENV{ADFS_LOGIN};
+  }
+
   print "<table class=\"MedPaddedTable LeftHeader\">";
+
   if ($Digest) {
     print "<tr><th>\n";
     print $query -> hidden(-name => 'username', -default => $Username);
     print $query -> hidden(-name => 'digest', -default => $Digest);
     print "Username:</th>\n<td>$Username</td></tr>";
-  } elsif ($UserValidation eq "certificate") {
+  } elsif ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
     print "<tr><th>Username:</th>\n<td>$Username</td></tr>";
   } else {
     print "<tr><th>Username:</th>\n<td>";
@@ -97,6 +104,9 @@ sub UserPrefForm ($) {
     print $query -> textfield(-name => 'email',    -default => $EmailAddress,
                               -size => 24, -maxlength => 64);
     print "</td></tr>\n";
+  } elsif  ($UserValidation eq "shibboleth") {
+    print "<tr><th>Real name:</th>\n<td>$Name</td></tr>\n";
+    print "<tr><th>E-mail address:</th>\n<td>$EmailAddress</td></tr>\n";
   } else {
     print "<tr><th>Real name:</th>\n<td>";
     print $query -> textfield(-name => 'name',     -default => $Name,
@@ -123,7 +133,7 @@ sub UserPrefForm ($) {
     print $query -> checkbox(-name => "html", -value => 1, -label => '');
   }
   print "</td></tr>\n";
-  if  ($UserValidation eq "certificate") {
+  if  ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
     print "<tr><th>Member of Groups:</th>\n";
     print "<td><ul>\n";
     my @UserGroupIDs = &FetchUserGroupIDs($EmailUserID);

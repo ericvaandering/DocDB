@@ -8,7 +8,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -273,6 +273,9 @@ sub FindUsersGroups (;%) {
   if ($UserValidation eq "certificate") {
     require "CertificateUtilities.pm";
     @UsersGroupIDs = &FetchSecurityGroupsByCert();
+  } elsif ($UserValidation eq "shibboleth") {
+    require "ShibbolethUtilities.pm";
+    @UsersGroupIDs = FetchSecurityGroupsForShib();
   } elsif ($UserValidation eq "basic-user") {
     # Coming (maybe)
   } else {
@@ -294,6 +297,22 @@ sub FindUsersGroups (;%) {
   }
 
   return @UsersGroupIDs;
+}
+
+sub FetchEmailUserID (;%) {
+  my %Params = @_;
+
+  my $EmailUserID;
+  if ($UserValidation eq "certificate") {
+    require "CertificateUtilities.pm";
+    $EmailUserID  = FetchEmailUserIDByCert(%Params);
+  } elsif ($UserValidation eq "shibboleth") {
+    require "ShibbolethUtilities.pm";
+    $EmailUserID  = FetchEmailUserIDForShib(%Params);
+
+  }
+
+  return $EmailUserID;
 }
 
 1;

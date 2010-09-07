@@ -1,8 +1,8 @@
 #! /usr/bin/env perl
 #
 #        Name: $RCSfile$
-# Description: The Document Database homepage. Give the user various ways to  
-#              view documents, a link to ways to change documents, and a list 
+# Description: The Document Database homepage. Give the user various ways to
+#              view documents, a link to ways to change documents, and a list
 #              of the most recently updated documents.
 #
 #    Revision: $Revision$
@@ -15,7 +15,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -27,9 +27,11 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+# TODO: Do a redirect for first time users of shibboleth?
+
 use Benchmark;
-use CGI;                                                      
-use DBI;                                                      
+use CGI;
+use DBI;
 
 $StartTime = new Benchmark;
 
@@ -55,7 +57,7 @@ if ($UserValidation eq "certificate") {
   $CertificateStatus = CertificateStatus();
 }
 
-# %params = $query -> Vars;  # No parameters (yet?) 
+# %params = $query -> Vars;  # No parameters (yet?)
 
 print $query->header( -charset => $HTTP_ENCODING );
 if ($UserValidation eq "certificate" && $CertificateStatus ne "verified") {
@@ -96,9 +98,9 @@ print "<p><strong><a href=\"$DocDBInstructions\">Instructions</a></strong></p>\n
 unless ($Public) {
   if ($PersonalAccountLink) {
     print "<p><strong>$PersonalAccountLink</strong></p>\n";
-  }  
+  }
   print "<p><strong><a href=\"$SelectPrefs\">Preferences</a></strong></p>\n";
-  if ($UserValidation eq "certificate") {
+  if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
     print "<p><strong>",&GroupLimitLink(),"</strong></p>\n";
   }
 }
@@ -126,30 +128,30 @@ my @ExternalDocDBIDs = GetAllExternalDocDBs();
 my $SearchDiv  = $query -> startform('POST',$Search);
    $SearchDiv .= "<div>\n";
    $SearchDiv .= $query -> submit (-value => "Search");
-   $SearchDiv .= " <strong>for</strong> "; 
+   $SearchDiv .= " <strong>for</strong> ";
    $SearchDiv .= $query -> textfield(-name => "simpletext", -size => 40, -maxlength => 300);
    $SearchDiv .= $query -> hidden(-name => "simple", -default => '1');
    $SearchDiv .= " <strong>(<a href=\"$SearchForm#Advanced\">Advanced</a>";
 if (@ExternalDocDBIDs) {
    $SearchDiv .= " or <a href=\"$XSearch\">Cross Search</a>";
 }
-   $SearchDiv .= ")</strong>"; 
+   $SearchDiv .= ")</strong>";
    $SearchDiv .= "\n</div>\n";
    $SearchDiv .= $query -> endform;
 
-print "<div class=\"HomepageMainChoice\">$SearchDiv</div>\n";  
+print "<div class=\"HomepageMainChoice\">$SearchDiv</div>\n";
 
 my $ShowForm  = $query -> startform('POST',$ShowDocument);
    $ShowForm .= "<div>\n";
    $ShowForm .= $query -> submit (-value => "Show");
-   $ShowForm .= " <strong>$ShortProject-doc-#</strong> "; 
+   $ShowForm .= " <strong>$ShortProject-doc-#</strong> ";
    $ShowForm .= $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
-   $ShowForm .= " <strong>-v</strong> "; 
+   $ShowForm .= " <strong>-v</strong> ";
    $ShowForm .= $query -> textfield(-name => "version", -size => 3, -maxlength => 3);
    $ShowForm .= "\n</div>\n";
    $ShowForm .= $query -> endform;
 
-print "<div class=\"HomepageMainChoice\">$ShowForm</div>\n";  
+print "<div class=\"HomepageMainChoice\">$ShowForm</div>\n";
 
 # Last modified pulldown
 
@@ -163,13 +165,13 @@ if ($Preferences{Components}{LastModifiedHome}) {
   print "<strong> days</strong>";
   print "</div>\n";
   print $query -> endform;
-  print "</div>\n";  
+  print "</div>\n";
 }
 
 if ($Preferences{Components}{Calendar}) {
   print "<div class=\"HomepageMainChoice\">\n";
   print "<strong><a href=\"$ShowCalendar\">Calendar</a> of events or <a href=\"$ShowCalendar?todayonly=1\">today's</a> events</strong>";
-  print "</div>\n";  
+  print "</div>\n";
 }
 
 # Fill arrays that print lists of documents
@@ -184,13 +186,13 @@ push @FirstColumn,"<a href=\"$ListGroups\">Groups</a>";
 push @FirstColumn,"<a href=\"$ListKeywords\">Keywords</a>";
 unless ($Public && !$PublicAccess{MeetingList}) {
   push @FirstColumn,"<a href=\"$ListAllMeetings\">Events</a>";
-}  
+}
 
 if ($UseSignoffs && (!$Public || $PublicAccess{MeetingList})) {
   push @OtherColumns,"<a href=\"$ListManagedDocuments\">Managed documents</a>";
 }
-if ($UserValidation eq "certificate" || 
-    (!$Public && $Preferences{Options}{DynamicFullList}{Private}) || 
+if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" ||
+    (!$Public && $Preferences{Options}{DynamicFullList}{Private}) ||
     ( $Public && $Preferences{Options}{DynamicFullList}{Public})) {
   push @OtherColumns,"<a href=\"$ListBy?alldocs=1\">All documents</a>";
 } else {
@@ -215,10 +217,10 @@ for (my $Index = 0; $Index < $Rows; ++$Index) {
   for (my $ColIndex = 0; $ColIndex < $Cols; ++$ColIndex) {
     unless ($Index+$ColIndex*$Rows >= scalar(@OtherColumns)) {
       print "<td>&nbsp;&loz;&nbsp;",$OtherColumns[$Index+$ColIndex*$Rows],"</td>\n";
-    }  
-  }  
+    }
+  }
   print "</tr>\n";
-}    
+}
 
 ++$Cols;
 
@@ -226,10 +228,10 @@ foreach my $Spanner (@Spanners) {
   print "<tr>\n";
   print "<td colspan=\"$Cols\">&nbsp;&loz;&nbsp;",$Spanner,"</td>\n";
   print "</tr>\n";
-}    
+}
 
 print "</table>\n";
- 
+
 ### Right column (wrapped around by middle column)
 
 #print "<div id=\"RightColumn3Col\">\n";
@@ -266,19 +268,19 @@ print "</div>\n";  # DocDBHomeBody
 
 ### Print table
 
-  if (@DocumentIDs) { ### FIXME: Move both kinds of titles into DocumentTable  
+  if (@DocumentIDs) { ### FIXME: Move both kinds of titles into DocumentTable
     print "<hr/><h4>\n";
     if ($#DocumentIDs >= $HomeMaxDocs) {
       print "Last $HomeMaxDocs documents modified\n";
-    } else {  
+    } else {
       print "Documents modified in the last $HomeLastDays days\n";
     }
     print "</h4>\n";
   }
-  
+
   my %FieldList = PrepareFieldList(-default => "Default");
-  my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs, 
-                                        -sortby    => $SortBy,     -reverse => $Reverse, 
+  my $NumberOfDocuments = DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs,
+                                        -sortby    => $SortBy,     -reverse => $Reverse,
                                         -maxdocs   => $HomeMaxDocs);
 }
 

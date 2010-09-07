@@ -1,16 +1,18 @@
 #
-#        Name: SecurityHTML.pm
+#        Name: $RCSfile$
 # Description: Routines which supply HTML and form elements related to security
 #
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -27,13 +29,13 @@ sub SecurityScroll (%) {
   require "Sorts.pm";
   require "Scripts.pm";
   require "FormElements.pm";
-  
+
   my (%Params) = @_;
-  
+
   my $AddPublic =   $Params{-addpublic} || $FALSE;
   my $HelpLink  =   $Params{-helplink}  || "";
   my $HelpText  =   $Params{-helptext}  || "Groups";
-  my $Multiple  =   $Params{-multiple}; 
+  my $Multiple  =   $Params{-multiple};
   my $Name      =   $Params{-name}      || "groups";
   my $Format    =   $Params{-format}    || "short";
   my $Size      =   $Params{-size}      || 10;
@@ -42,17 +44,17 @@ sub SecurityScroll (%) {
   my @Default   = @{$Params{-default}};
 
   my %Options = ();
- 
+
   if ($Disabled) {
     $Options{-disabled} = "disabled";
-  }  
+  }
 
   &GetSecurityGroups;
-  
+
   unless (@GroupIDs) {
     @GroupIDs = keys %SecurityGroups;
   }
-    
+
   my %GroupLabels = ();
 
   foreach my $GroupID (@GroupIDs) {
@@ -60,37 +62,37 @@ sub SecurityScroll (%) {
     if ($Format eq "full") {
       $GroupLabels{$GroupID} .= " [".$SecurityGroups{$GroupID}{Description}."]";
     }
-  }  
-  
+  }
+
   if ($AddPublic) { # Add dummy security code for "Public"
-    my $ID = 0; 
-    push @GroupIDs,$ID; 
+    my $ID = 0;
+    push @GroupIDs,$ID;
     $GroupLabels{$ID} = "Public";
   }
-      
+
   @GroupIDs = sort numerically @GroupIDs;
 
-  if ($HelpLink) {  
+  if ($HelpLink) {
     my $BoxTitle = &FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText);
     print $BoxTitle;
   }
-  
-  print $query -> scrolling_list(-name => $Name, -values => \@GroupIDs, 
-                                 -labels => \%GroupLabels, 
+
+  print $query -> scrolling_list(-name => $Name, -values => \@GroupIDs,
+                                 -labels => \%GroupLabels,
                                  -size => $Size, -multiple => $Multiple,
                                  -default => \@Default, %Options);
 };
 
 sub SecurityListByID {
   my (@GroupIDs) = @_;
-  
+
   print "<div id=\"Viewable\">\n";
   if ($EnhancedSecurity) {
     print "<b>Viewable by:</b><br/>\n";
-  } else {  
+  } else {
     print "<b>Accessible by:</b><br/>\n";
-  }  
-  
+  }
+
   print "<ul>\n";
   if (@GroupIDs) {
     foreach $GroupID (@GroupIDs) {
@@ -105,11 +107,11 @@ sub SecurityListByID {
 
 sub ModifyListByID {
   my (@GroupIDs) = @_;
-  
+
   unless ($EnhancedSecurity) {
     return;
   }
-    
+
   print "<div id=\"Modifiable\">\n";
   print "<b>Modifiable by:</b><br/>\n";
   print "<ul>\n";
@@ -126,7 +128,9 @@ sub ModifyListByID {
 
 sub PersonalAccountLink () {
   my $PersonalAccountLink = "<a href=\"$EmailLogin\">Your Account</a>";
-  if ($UserValidation eq "certificate") {
+  if ($UserValidation eq "shibboleth") {
+    $PersonalAccountLink = "<a href=\"$SelectEmailPrefs\">Your Account</a>";
+  } elsif ($UserValidation eq "certificate") {
     require "CertificateUtilities.pm";
     my $CertificateStatus = &CertificateStatus();
     if ($CertificateStatus eq "verified") {
@@ -135,6 +139,7 @@ sub PersonalAccountLink () {
       $PersonalAccountLink = "";
     }
   }
+
   if ($Public) {
     $PersonalAccountLink = "";
   }
@@ -147,13 +152,13 @@ sub SecurityLink ($) {
   my $Check   = exists $ArgRef->{-check}   ? $ArgRef->{-check}   : "";
 
   require "Security.pm";
-  
+
   my %Message = ("view" => "Can't view now", "create" => "Can't modify now");
 
   unless ($GroupID) {
     return;
   }
-  
+
   my $Link = "<a href=\"$ListBy?groupid=$GroupID\"";
   $Link .= " title=\"$SecurityGroups{$GroupID}{Description}\"";
   $Link .= ">";
@@ -161,8 +166,8 @@ sub SecurityLink ($) {
   $Link .= "</a>";
   if ($Check && !GroupCan({ -groupid => $GroupID, -action => $Check }) ) {
     $Link .= "<br/>(".$Message{$Check}.")";
-  }  
-     
+  }
+
   return $Link;
 }
 

@@ -280,7 +280,7 @@ sub FileUploadBox (%) {
   if ($Required && !$AllowCopy && !$DescOnly) { # Only require on add
     $Options{'-name'} = $ReqName;
     $Options{'-errormsg'} = 'You must upload at least one file.'
-  } 
+  }
 
   my $BoxTitle = FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText,
                                   -required => $Required, %Options);
@@ -321,7 +321,7 @@ sub FileUploadBox (%) {
       my %Options = ();
       if ($ElementName eq $ReqName && !$AllowCopy && !$DescOnly) {
         $Options{-class} = "required";
-      } 
+      }
       if ($Type eq "file") {
         print $query -> filefield(-name      => $ElementName, -size => $FileSize,
                                   -maxlength => $FileMaxSize, %Options);
@@ -393,7 +393,7 @@ sub ArchiveUploadBox (%)  {
   my %Options = ();
   if ($Required) {
      $Options{-class} = "required";
-  } 
+  }
 
   print "<table class=\"LowPaddedTable LeftHeader\">\n";
   print "<tr><td colspan=\"2\">";

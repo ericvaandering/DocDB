@@ -1,9 +1,17 @@
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+#        Name: $RCSfile$
+# Description: HTML for document notifications
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -18,9 +26,9 @@
 sub DocNotifySignup (%) {
   my %Params     = @_;
   my $DocumentID = $Params{-docid};
-  
-  my $NeedUserFields = ($UserValidation ne "certificate");
-  
+
+  my $NeedUserFields = ($UserValidation ne "certificate" && $UserValidation ne "shibboleth");
+
   print "<div id=\"DocNotifySignup\">\n";
   print $query -> start_multipart_form('POST',$WatchDocument);
   print "<div class=\"InputWrapper\">\n";
