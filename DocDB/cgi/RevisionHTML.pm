@@ -29,7 +29,7 @@ sub TitleBox (%) {
   #FIXME: Get rid of global default
 
   my $Required   = $Params{-required}   || 0;
-  
+
   my $HTML = FormElementTitle(-helplink  => "title" ,
                               -helptext  => "Title" ,
                               -required  => $Required ,
@@ -117,7 +117,7 @@ sub DocTypeButtons (%) {
 
   print "<div class=\"LowPaddedTable\">\n";
   print $ElementTitle,"\n";
-  my %FieldParams = (-columns => 3,            -name    => "doctype", 
+  my %FieldParams = (-columns => 3,            -name    => "doctype",
                      -values  => \%ShortTypes, -default => $Default);
   if ($Required) {
     $FieldParams{'-class'} = "required";
@@ -445,7 +445,7 @@ sub PrintModTimes {
 
   print "<dt>Document Created:</dt>\n<dd>$DocTime</dd>\n";
   print "<dt>Contents Revised:</dt>\n<dd>$VersionTime</dd>\n";
-  print "<dt>DB Info Revised:</dt>\n<dd>$RevTime</dd>\n";
+  print "<dt>Metadata Revised:</dt>\n<dd>$RevTime</dd>\n";
   if ($ActualTime ne $RevTime) {
     print "<dt>Actually Revised:</dt>\n<dd>$ActualTime</dd>\n";
   }

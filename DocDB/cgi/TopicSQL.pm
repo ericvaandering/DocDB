@@ -7,7 +7,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -265,7 +265,7 @@ sub DeleteTopic ($) {
   if (@TopicDocIDs && !$Force) {
     push @WarnStack,"Cannot delete a topic with associated documents. ".
       "Use the force option to delete this topic and all associations. ".
-      "Some associations may be from documents updated with \"Update DB Info\" ".
+      "Some associations may be from documents updated with \"Update Metadata\" ".
       "which are no longer visible, but you must use the force option to erase this history.";
     $Abort = $TRUE;
   }
@@ -278,7 +278,7 @@ sub DeleteTopic ($) {
   if ($Abort) {
     return 0;
   }
- 
+
   my $TopicDelete     = $dbh -> prepare("delete from Topic          where TopicID=?");
   my $RevisionDelete  = $dbh -> prepare("delete from RevisionTopic  where TopicID=?");
   my $HintDelete      = $dbh -> prepare("delete from TopicHint      where TopicID=?");

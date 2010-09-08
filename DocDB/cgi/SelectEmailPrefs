@@ -35,6 +35,7 @@ require "EmailSecurity.pm";
 require "MailNotification.pm";
 require "Scripts.pm";
 require "Sorts.pm";
+require "Security.pm";
 require "SearchFormElements.pm";
 
 require "HTMLUtilities.pm";
