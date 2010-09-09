@@ -7,7 +7,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -51,12 +51,12 @@ EndPage();
 my $CertificateStatus = &CertificateStatus();
 my $CertEmail = $params{email};
 
-unless ($CertEmail) { 
+unless ($CertEmail) {
   push @ErrorStack,"You must supply an e-mail address.";
 }
 
 EndPage();
-    
+
 my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
 
 if ($CertificateStatus eq "verified") {
@@ -71,15 +71,15 @@ if ($CertificateStatus eq "verified") {
     }
   } else {
     print "<li>None: Contact an adminstrator if this is incorrect</li>\n";
-  }       
+  }
   print "</ul>\n";
-} elsif ($CertificateStatus eq "unverified") {  
+} elsif ($CertificateStatus eq "unverified") {
   print "<b>You have already applied for access to documents. A new request has not been generated.
          If you believe your request has been misplaced or neglected, contact an administator.</b>";
   print "The following information may be helpful:<br>\n";
   print "<b>Certificate Common Name (CN):</b> $CertCN<br>\n";
   print "<b>Certificate E-mail Address:</b> $CertEmail<br>\n";
-} elsif ($CertificateStatus eq "mismatch") {  
+} elsif ($CertificateStatus eq "mismatch") {
   print "<b>Your certificate is valid but a similar certificate already exists
          for  either your e-mail address or your name (CN). Only one
          certificate is allowed per person. Contact an administrator if you
@@ -87,7 +87,7 @@ if ($CertificateStatus eq "verified") {
   print "The following information may be helpful:<br>\n";
   print "<b>Certificate Common Name (CN):</b> $CertCN<br>\n";
   print "<b>Certificate E-mail Address:</b> $CertEmail<br>\n";
-} elsif ($CertificateStatus eq "nocert") {  
+} elsif ($CertificateStatus eq "nocert") {
   print "<b>You didn't present a certificate. Make sure your browser is supplying one and contact an administrator if are supplying one.</b>";
 } elsif ($CertificateStatus eq "noapp") {
 
@@ -97,7 +97,7 @@ if ($CertificateStatus eq "verified") {
   my @RequestedGroupIDs = split /\0/,$params{reqgroups};
   my $UserName = $CertCN;
      $UserName =~ s/\W//g;
-     
+
 ### Fill in DB tables
 
   my $UserInsert = $dbh -> prepare(
@@ -105,17 +105,19 @@ if ($CertificateStatus eq "verified") {
       "            values (0,?,?,?,0,'x')");
      $UserInsert -> execute($UserName,$CertCN,$CertEmail);
   my $EmailUserID = $UserInsert -> {mysql_insertid}; # Works with MySQL only
-  
+
   my $UsersGroupInsert = $dbh -> prepare(
       "insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) ".
       "            values (0,?,?)");
   foreach my $GroupID (@RequestedGroupIDs) {
-    $UsersGroupInsert -> execute($EmailUserID,$GroupID);
-  }  
+    if ($GroupID) {
+      $UsersGroupInsert -> execute($EmailUserID,$GroupID);
+    }
+  }
 
 ### Notify applicant and administrator
 
-  
+
   print "You ($CertCN with e-mail address $CertEmail) have requested ";
   print "access to $Project DocDB. ";
   print "You have requested membership in the following groups:\n";
@@ -123,14 +125,14 @@ if ($CertificateStatus eq "verified") {
   foreach my $GroupID (@RequestedGroupIDs) {
     &FetchSecurityGroup($GroupID);
     print "<li>",$SecurityGroups{$GroupID}{NAME},"</li>\n";
-  }  
+  }
   print "</ul>\n";
 
   if ($MailInstalled) {
     require "EmailUtilities.pm";
-    
+
     print "An e-mail has been sent to the administrators and a confirmation e-mail has been sent to you.<p/>\n";
-    
+
     my @To      = ($DBWebMasterEmail);
     my $Subject = "$CertCN requests access to $Project DocDB";
     my $Body    = "$CertCN with e-mail address $CertEmail has requested ";
@@ -139,7 +141,7 @@ if ($CertificateStatus eq "verified") {
     foreach my $GroupID (@RequestedGroupIDs) {
       &FetchSecurityGroup($GroupID);
       $Body .= "  ".$SecurityGroups{$GroupID}{NAME}."\n";
-    }  
+    }
     $Body .= "\n";
     $Body .= "If this is correct, please visit $EmailAdministerForm, ";
     $Body .= "select \"Modify\", select the user, check \"Verify\", and click to Submit.\n\n";
@@ -147,7 +149,7 @@ if ($CertificateStatus eq "verified") {
     if ($CertNote) {
       $Body .= "The user attached this note to their application:\n";
       $Body .= $CertNote;
-    }  
+    }
     &SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
 
     my @To      = ($CertEmail);
@@ -161,7 +163,7 @@ if ($CertificateStatus eq "verified") {
     $Body      .= "Thank you.";
 
     &SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
-  }    
+  }
 
 }
 
