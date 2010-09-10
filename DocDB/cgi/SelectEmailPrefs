@@ -218,6 +218,7 @@ if ($Mode eq "update") {
 # Update DB
 
   if ($UserValidation eq "shibboleth") {
+    require "ShibbolethUtilities.pm";
     my $EmailUserID = FetchEmailUserIDForShib();
     $UserName = $ENV{ADFS_LOGIN};
     $Name     = $ENV{ADFS_FULLNAME};
