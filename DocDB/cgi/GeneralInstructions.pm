@@ -369,10 +369,14 @@ HTML
 
   <p>
   When <strong>updating</strong> a document, you can change all the information above.
-  However, all the forms should be pre-filled for you with the information from
-  the previous version. You will either have to supply <i>all</i> the files you want to
-  be in the new version, or choose to have unchanged files copied to the next version.</p>
-
+  However, all the forms should be pre-filled for you with the information from the previous version.
+  For documents with multiple files, you may update just some of the files or all of them. In either case,
+  the version number will be incremented. DocDB assumes the new document revision will include the same set
+  (hence, the same number) of files. Therefore, for each file listed, you need to either provide an updated file
+  (using Browse), or explicitly copy the previous version of the file to the new version of the document.
+  To copy a file, click the box to the right of the line: <q>Copy filename from previous version:</q>
+  If you want to drop a file from the new version, leave its box unchecked, and at the end of the
+  list of files click the box in front of <q>New version has fewer files</q>. </p>
   <p>
   Finally, <strong>updating the database information</strong> about the document is similar to
   updating the document except for two things. First, you can't supply new
