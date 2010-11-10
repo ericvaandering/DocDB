@@ -210,7 +210,8 @@ if ($Days) {
              $SecurityGroups{$GroupID}{NAME}</span> are available:";
 
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
-           "DocumentRevision,RevisionSecurity where DocumentRevision.DocRevID=RevisionSecurity.DocRevID and RevisionSecurity.GroupID=?");
+           "DocumentRevision,RevisionSecurity where DocumentRevision.DocRevID=RevisionSecurity.DocRevID ".
+           "and DocumentRevision.Obsolete=0 and RevisionSecurity.GroupID=?");
   $List -> execute($GroupID);
 } elsif ($AllPubs) {
   $Title   = "$Project Publications";
