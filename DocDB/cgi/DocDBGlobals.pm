@@ -89,6 +89,8 @@ $Preferences{Security}{Certificates}{FNALKCA} = $FALSE;      # TRUE or FALSE - s
 $Preferences{Security}{Certificates}{DOEGrids} = $FALSE;     # TRUE or FALSE - show DOEgrid certificate instructions
 $Preferences{Security}{Certificates}{ShowCertInstructions} = $FALSE;  # TRUE or FALSE - show certificate instructions even on non-cert version
 
+$Preferences{Security}{AuthName} = "";  # Set to override default AuthName of group1 or group2, etc.
+
 $Preferences{Options}{DynamicFullList}{Private} = $FALSE; # Generate Full document list by dynamically for private db
 $Preferences{Options}{DynamicFullList}{Public}  = $FALSE; # Generate Full document list by dynamically for public db
 
