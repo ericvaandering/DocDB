@@ -162,6 +162,9 @@ sub ProtectDirectory { # Write (or delete) correct .htaccess file in directory
   }
 
   my $AuthName = join ' or ',@users;
+  if ($Preferences{Security}{AuthName}) {
+     $AuthName = $Preferences{Security}{AuthName};
+  }
 
   my $directory = &GetDirectory($documentID,$version);
   if (@users) {
