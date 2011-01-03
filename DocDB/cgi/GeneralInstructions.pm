@@ -9,7 +9,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 #    Additional Text: Marcia Teckenbrock
 
 #    This file is part of DocDB.
@@ -54,7 +54,7 @@ TOC
       <li><a href="#upload">Upload methods</a></li>
       <li><a href="#filling">Filling in the form</a></li>
       <li><a href="#topickey">Topics and Keywords</a></li>
-      
+
 TOC
     if   ($UserValidation eq "shibboleth") {
       print '<li><a href="#authentication">Authentication</a></li>';
@@ -96,7 +96,7 @@ sub GeneralInstructionsBody {
   if ($Public) {
 
   print '
-  <a name="about" />
+  <a name="about"></a>
   <h1>About DocDB</h1>
   <p>Only some of the documents in DocDB are publicly accessible.
   If you try to access documents that are not visible to the public,
@@ -126,7 +126,7 @@ sub GeneralInstructionsBody {
   <p>A <q>document</q> consists of a number of files along with
   additional information about the document.</p>
 
-  <a name="find" />
+  <a name="find"></a>
   <h1>Finding Documents</h1>
 
   <p>If you are looking for a specific document and know its document number,
@@ -138,7 +138,7 @@ sub GeneralInstructionsBody {
   </p>
 
 
-  <a name="more" />
+  <a name="more"></a>
   <h1>More Information</h1>
 
   <p>If you want more information about how DocDB works or would like to use it for
@@ -150,7 +150,7 @@ HTML
 
   print <<HTML;
 
-  <a name="entering" />
+  <a name="entering"></a>
   <h1>Entering or updating a document in the database</h1>
 
   <p>Creating a document will be most users first experience with DocDB.
@@ -158,11 +158,11 @@ HTML
   to proceed. Follow the link to "Create or change documents or other information"
   to begin.</p>
 
-  <a name="morehelp" />
+  <a name="morehelp"></a>
 
   <h2>Getting More Help</h2>
 
-  <p>You can often get more help when using DocDB by clicking on <span class="Help">red terms</span> on the
+  <p>You can often get more help when using DocDB by clicking on <span class="Help">headings</span> on the
   page. A small window will pop up to explain what is going on.</p>
 
   <p>If you don't find your answer in the pop-up or  if you have additional
@@ -173,7 +173,7 @@ HTML
   <a href="http://www-btev.fnal.gov/cgi-bin/public/DocDB/ShowDocument?docid=140">
   BTeV-doc-140</a>.</p>
 
-  <a name="modtypes" />
+  <a name="modtypes"></a>
   <h2>What do you want to do?</h2>
 
   <p>You can add information or documents to the database in five different ways for
@@ -188,9 +188,10 @@ HTML
   <li><strong>Update document: </strong>You want to upload a new version of a document that is already in the
   database. You will also be able to change any of the information in the
   database about the document. You must supply a document number to modify.</li>
-  <li><strong>Update database information: </strong>The document hasn't changed, but the
-  information about it has. For example, it's now published so you want to add
-  that information. You must supply a document number to modify.</li>
+  <li><strong>Update metadata: </strong>The document hasn't changed, but the
+  information about it has. This option leaves all of the attached files in place while
+  allowing you to update just the metadata associated with the document (e.g. revise the topics,
+  authors, file descriptions, etc.). </li>
   <li><strong>Add files to document:</strong> Perhaps you forgot a file initially, or maybe
   now you have a PDF file to go with the PowerPoint file already
   present. You can add these files to an existing version of a document. If the
@@ -202,7 +203,7 @@ HTML
   Select the type of modification appropriate to your situation.
   </p>
 
-  <a name="prepare" />
+  <a name="prepare"></a>
   <h2>Preparing your document for upload</h2>
 
   <p>
@@ -302,7 +303,7 @@ HTML
 
   print <<HTML;
 
-  <a name="upload" />
+  <a name="upload"></a>
   <h2>Upload methods</h2>
 
   Once your document is prepared, you have one more decision to make. How do you
@@ -321,7 +322,7 @@ HTML
   we hope this will change in the near future.</li>
   </ol>
 
-  <a name="filling" />
+  <a name="filling"></a>
   <h2>Filling in the form</h2>
 
   <p>Now that you've decided what you want to do and how you want to get any required
@@ -330,7 +331,7 @@ HTML
 
   <p>You are now presented with an initially daunting form asking for all kinds of
   information about your document. A lot of the fields are required, but some are
-  optional. The required fields are indicated. You can click on any <span class="Help">red link</span> to get a quick
+  optional. The required fields are indicated. You can click on any <span class="Help">heading</span> to get a quick
   help window that tells you what you are being asked for. Instructions for every
   piece of information are not reproduced here, just click on the <span class="Help">red link</span>
   if anything is not obvious.</p>
@@ -382,7 +383,7 @@ HTML
   updating the document except for two things. First, you can't supply new
   files. Second, a new version number <i>is not</i> created.</p>
 
-  <a name="topickey" />
+  <a name="topickey"></a>
   <h2>Topics and Keywords</h2>
 
   <p>When you put documents into DocDB, paying attention to the topics and keywords you select is a
@@ -414,17 +415,17 @@ HTML
   <p>Topics can be nested or combined with keywords to refine a collection of documents and aid in
   searchability.</p>
 HTML
-  
+
   if ($UserValidation eq "shibboleth") {
     print <<AUTHSTART;
-    <a name="authentication" /><h2>Authentication</h2>
+    <a name="authentication"></a><h2>Authentication</h2>
     <p>You are authenticated through a single sign-on mechanism known as
-    shibboleth. Shibboleth determines which of its groups, known as ADFS 
+    shibboleth. Shibboleth determines which of its groups, known as ADFS
     groups or e-groups, you belong to. These are then translated into DocDB's
-    groups which you may use to determine who may view or change documents you 
+    groups that you may use to determine who may view or change documents you
     create or modify. </p>
-    
-    <p>For this instance of DocDB, this is the mapping between ADFS groups and 
+
+    <p>For this instance of DocDB, this is the mapping between ADFS groups and
     DocDB groups:</p>
     <table><tr><th>ADFS Group</th><th>DocDB Groups</th></tr>
 AUTHSTART
@@ -432,9 +433,9 @@ AUTHSTART
        print "<tr><td>$ADFSGroup</td><td>";
        foreach my $DocDBGroup (@{ $ShibGroupMap{$ADFSGroup} }) {
          print "$DocDBGroup ";
-       
-       } 
-       print "<td><tr>\n";
+
+       }
+       print "</td></tr>\n";
     }
     print <<AUTHEND;
     </table>
@@ -442,7 +443,7 @@ AUTHSTART
 AUTHEND
   }
   print <<HTML;
-  <a name="advanced" />
+  <a name="advanced"></a>
   <h2>Advanced options</h2>
 
   <p>
@@ -468,16 +469,16 @@ AUTHEND
   written  some time ago, you should probably not select this option. By default,
   new documents are entered with the current date and time.</p>
 
-  <a name="special" />
+  <a name="special"></a>
   <h1>Special Cases</h1>
 
-  <a name="meeting" />
+  <a name="meeting"></a>
   <h2>Documents for Events</h2>
 
   <p>These can be entered into the database using the normal entry
   form, just make sure you choose the appropriate event for your talk. </p>
 
-  <a name="conference" />
+  <a name="conference"></a>
   <h2>Conference Talks and Proceedings</h2>
 
   <p>Conference documents are added just like any other document, except for one extra step.
@@ -494,17 +495,17 @@ AUTHEND
   the conference from the list of events. This way your document is
   associated with the right conference.</p>
 
-  <a name="reference" />
+  <a name="reference"></a>
   <h2>Publications in Refereed Journals</h2>
 
   <p>Above the free-form "Publication Information" field is a place to select a
   journal, volume, and page for your document if it is published. If you need a
   journal added, let the database administrators know.</p>
 
-  <a name="prefsandemail" />
+  <a name="prefsandemail"></a>
   <h1>Preferences and E-mail Notification</h1>
 
-  <a name="prefs" />
+  <a name="prefs"></a>
   <h2>Setting preferences</h2>
 
   <p>Setting preferences with the Document Database allows you to configure the
@@ -525,7 +526,7 @@ AUTHEND
   Also, make sure your browser will accept cookies, at least for the DocDB web
   server.</p>
 
-  <a name="email" />
+  <a name="email"></a>
   <h2>Setting e-mail notification</h2>
 
   <p>By following the link for "Your Account" from the main page, you can
@@ -539,7 +540,7 @@ AUTHEND
 HTML
 
   if ($UseSignoffs) {
-   print "<a name=\"signoff\" /><h1>Document Signoffs</h1>\n";
+   print "<a name=\"signoff\"></a><h1>Document Signoffs</h1>\n";
 
    print "<p>An optional component of DocDB is to allow some documents to be <q>signed</q>
    by a group of people before becoming <q>approved.</q> People with <strong>Personal
@@ -564,7 +565,7 @@ HTML
   updated, the signoff list structure is preserved, but the approvals themselves
   are cleared.</p>\n";
 
-   print "<p>The signoff system provides a number of additional convieniences:</p>
+   print "<p>The signoff system provides a number of additional conveniences:</p>
   <ul>
     <li>Email notifications to signatories when a document is ready for their
     signature</li>
@@ -576,7 +577,7 @@ HTML
   <ul>
     <li>Email reports of outstanding signatures needed (to desired signatory and
       other signatories of documents)</li>
-    <li>More complicated approval topolgies (OR's, parallel paths, etc.)</li>
+    <li>More complicated approval topologies (OR's, parallel paths, etc.)</li>
     <li>Reminders if a document goes unsigned for a while</li>
     <li>Restricting the list of people who may sign documents to a sub-set of those with
     personal accounts</li>
@@ -585,7 +586,7 @@ HTML
 
   print <<HTML;
 
-  <a name="advancedusers" />
+  <a name="advancedusers"></a>
   <h1>Notes for Advanced Users</h1>
 
   <p>As you become more familiar with DocDB, you may wish to link to documents,
@@ -594,10 +595,10 @@ HTML
      href="$DocDBInstructions?set=advanced">Advanced Instructions</a> describe
      how to do these things and more.</p>
 
-  <a name="philosophy" />
+  <a name="philosophy"></a>
   <h1>Final Words</h1>
 
-  <a name="annoyances" />
+  <a name="annoyances"></a>
   <h2>Javascript, pop-ups, and cookies</h2>
 
   <p>DocDB makes limited use of these technologies to enhance your experience,
@@ -607,7 +608,7 @@ HTML
   configure your web browser to allow cookies, pop-ups, etc. from the DocDB
   server.</p>
 
-  <a name="archive" />
+  <a name="archive"></a>
   <h2>Archive vs. Catalog</h2>
 
   <p>Some other document databases are only a method for cataloging
@@ -622,7 +623,7 @@ HTML
   of the most common options. Of course, if you have a suggestion on how to make
   things easier, please let us know.</p>
 
-  <a name="whatis" />
+  <a name="whatis"></a>
   <h2>What is a document?</h2>
 
   <p>This may sound like a stupid question, but it's not. People tend to think of
@@ -635,7 +636,7 @@ HTML
   "Figure." The document type you  choose tells people what the document
   <strong>is</strong> not what format it's stored in.)</p>
 
-  <a name="formats" />
+  <a name="formats"></a>
   <h2>File formats (PowerPoint, Postscript, PDF etc.)</h2>
 
 
