@@ -256,7 +256,7 @@ td.Time {
   color: red;
 }
 
-a.Help[href] {
+a.Help[href], span.Help {
         color: #444;
         text-decoration: none;
 	background-image: url('help.png');

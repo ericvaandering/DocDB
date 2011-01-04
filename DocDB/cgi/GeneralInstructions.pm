@@ -162,8 +162,9 @@ HTML
 
   <h2>Getting More Help</h2>
 
-  <p>You can often get more help when using DocDB by clicking on <span class="Help">headings</span> on the
-  page. A small window will pop up to explain what is going on.</p>
+  <p>You can often get more help when using DocDB by clicking on
+  <span class="Help">the headings like this</span> on the
+  page. A small window will pop up to explain that term.</p>
 
   <p>If you don't find your answer in the pop-up or  if you have additional
   questions or problems with the DocDB, please send e-mail to the <a
@@ -333,7 +334,7 @@ HTML
   information about your document. A lot of the fields are required, but some are
   optional. The required fields are indicated. You can click on any <span class="Help">heading</span> to get a quick
   help window that tells you what you are being asked for. Instructions for every
-  piece of information are not reproduced here, just click on the <span class="Help">red link</span>
+  piece of information are not reproduced here, just click on the <span class="Help">help heading</span>
   if anything is not obvious.</p>
 
   <p>Also, note that lots of things can have more than one selection. For instance,
