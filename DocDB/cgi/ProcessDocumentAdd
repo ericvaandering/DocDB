@@ -48,6 +48,7 @@ require "HTMLUtilities.pm";
 require "Security.pm";
 require "Scripts.pm";
 
+require "DocumentHTML.pm";
 require "TopicHTML.pm";
 require "SecurityHTML.pm";
 

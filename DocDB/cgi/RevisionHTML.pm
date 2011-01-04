@@ -469,7 +469,6 @@ sub OtherVersionLinks {
   $HTML .= "<p><b>Quick Links:</b>\n";
   $HTML .= "<br/>";
   $HTML .= DocumentLink(-docid => $DocumentID, -noversion => $TRUE, -linktext => "Latest Version");
-  $HTML .= "</p>\n";
 
   if (!$Public && $Preferences{Security}{Instances}{Public}) {
     my @GroupIDs     = GetRevisionSecurityGroups($DocRevID);
@@ -479,6 +478,7 @@ sub OtherVersionLinks {
     }
   }
 
+  $HTML .= "</p>\n";
   print $HTML;
 
   unless ($#RevIDs > 0) {return;}
