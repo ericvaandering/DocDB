@@ -332,7 +332,7 @@ HTML
 
   <p>You are now presented with an initially daunting form asking for all kinds of
   information about your document. A lot of the fields are required, but some are
-  optional. The required fields are indicated. You can click on any <span class="Help">heading</span> to get a quick
+  optional. The required fields are indicated. You can click on any heading to get a quick
   help window that tells you what you are being asked for. Instructions for every
   piece of information are not reproduced here, just click on the <span class="Help">help heading</span>
   if anything is not obvious.</p>
