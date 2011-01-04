@@ -366,3 +366,7 @@ input.hidden {
     visibility: hidden;
     display: none;
 }
+
+.FileSpacer {
+    height: 0.5em;
+}
