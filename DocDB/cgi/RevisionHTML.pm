@@ -464,11 +464,24 @@ sub OtherVersionLinks {
   my ($DocumentID,$CurrentVersion) = @_;
   my @RevIDs   = reverse sort RevisionByVersion &FetchRevisionsByDocument($DocumentID);
 
+  my $HTML = "";
+  $HTML .= "<div id=\"OtherVersions\">\n";
+  $HTML .= "<p><b>Quick Links:</b>\n";
+  $HTML .= "<br/>";
+  $HTML .= DocumentLink(-docid => $DocumentID, -noversion => $TRUE, -linktext => "Latest Version");
+  $HTML .= "</p>\n";
+
+  if (!$Public && $Preferences{Security}{Instances}{Public}) {
+    my @GroupIDs     = GetRevisionSecurityGroups($DocRevID);
+    unless (@GroupIDs) {
+      my $PublicURL = $Preferences{Security}{Instances}{Public}.'/ShowDocument?docid='.$DocumentID;
+      $HTML .= '<br/><a href="'.$PublicURL.'">Public Version</a>'."\n";
+    }
+  }
+
+  print $HTML;
+
   unless ($#RevIDs > 0) {return;}
-  print "<div id=\"OtherVersions\">\n";
-  print "<p><b>Quick Links:</b>\n";
-  print DocumentLink(-docid => $DocumentID, -noversion => $TRUE, -linktext => "Latest Version");
-  print "</p>\n";
   print "<b>Other Versions:</b>\n";
 
   print "<table id=\"OtherVersionTable\" class=\"Alternating LowPaddedTable\">\n";
