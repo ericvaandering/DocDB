@@ -360,7 +360,7 @@ sub FileUploadBox (%) {
     print $MainHelp;
     print "</td></tr>\n";
     if ($FileID && $AllowCopy && !$DescOnly) {
-      print "<tr><td>&nbsp;</td><td colspan=\"2\">\n";
+      print "<tr><td>&nbsp;</td><td colspan=\"2\" class=\"FileCopyRow\">\n";
       print "Copy <tt>$DocFiles{$FileID}{NAME}</tt> from previous version:";
       print $query -> hidden(-name => $FileIDName, -value => $FileID);
       print $query -> checkbox(-name => $CopyName, -label => '');
