@@ -1,12 +1,15 @@
+#        Name: $RCSfile$
 # Description: The instructions for the event organizer and calendar in DocDB.
 #              This is mostly HTML, but making  it a script allows us to eliminate
 #              parts of it that we don't want and get it following everyone's
 #              style, and allows groups to add to it with ProjectMessages.
 #
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
