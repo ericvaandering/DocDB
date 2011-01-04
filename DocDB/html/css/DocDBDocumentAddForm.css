@@ -31,3 +31,7 @@ form#documentadd label.error {
 .QuickEntryHide {
   display: none;
 }
+
+.FileCopyRow {
+    height: 2.0em;
+}

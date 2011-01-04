@@ -366,11 +366,3 @@ input.hidden {
     visibility: hidden;
     display: none;
 }
-
-.FileSpacer {
-    height: 0.5em;
-}
-
-.FileCopyRow {
-    padding-bottom: 1.0em;
-}
