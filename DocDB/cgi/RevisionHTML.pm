@@ -6,7 +6,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #
 
-# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -466,6 +466,9 @@ sub OtherVersionLinks {
 
   unless ($#RevIDs > 0) {return;}
   print "<div id=\"OtherVersions\">\n";
+  print "<p><b>Quick Links:</b>\n";
+  print DocumentLink(-docid => $DocumentID, -noversion => $TRUE, -linktext => "Latest Version");
+  print "</p>\n";
   print "<b>Other Versions:</b>\n";
 
   print "<table id=\"OtherVersionTable\" class=\"Alternating LowPaddedTable\">\n";
