@@ -532,7 +532,7 @@ print "You were successful. Your Document ID is <b>$full_docid, version
 print "You can use these links to access ";
 print DocumentLink(-docid => $documentID, -version => $version, -linktext => "this version");
 print " of the document or the ";
-print DocumentLink(-docid => $DocumentID, -noversion => $TRUE,  -linktext => "latest version");
+print DocumentLink(-docid => $documentID, -noversion => $TRUE,  -linktext => "latest version");
 print ".<br/>\n";
 
 print "<br/>Your entry was created with the following information: <p><hr><p>\n";

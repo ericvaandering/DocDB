@@ -481,7 +481,10 @@ sub OtherVersionLinks {
   $HTML .= "</p>\n";
   print $HTML;
 
-  unless ($#RevIDs > 0) {return;}
+  unless ($#RevIDs > 0) {
+    print "</div>\n";
+    return;
+  }
   print "<b>Other Versions:</b>\n";
 
   print "<table id=\"OtherVersionTable\" class=\"Alternating LowPaddedTable\">\n";
