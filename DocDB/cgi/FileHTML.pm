@@ -236,8 +236,7 @@ sub FileUploadBox (%) {
   my $NOrigFiles = scalar(@FileIDs);
   unless ($MaxFiles) {
     if (@FileIDs) {
-      $MaxFiles = @FileIDs + $AddFiles;
-
+      $MaxFiles = max(@FileIDs + $AddFiles,$NumberUploads);
     } elsif ($NumberUploads) {
       $MaxFiles = $NumberUploads;
     } elsif ($UserPreferences{NumFiles}) {
