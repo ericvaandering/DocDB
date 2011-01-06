@@ -366,3 +366,12 @@ input.hidden {
     visibility: hidden;
     display: none;
 }
+
+.FileEntry td {
+  padding: 3px 5px 3px 5px;
+}
+
+.FileEntry th {
+  padding: 5px 5px 5px 5px;
+}
+

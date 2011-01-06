@@ -273,7 +273,7 @@ sub FileUploadBox (%) {
   print $query -> hidden(-name => 'maxfiles', -default => $MaxFiles);
   print "</div>\n";
 
-  print "<table class=\"Alternating LeftHeader\">\n";
+  print "<table class=\"Alternating LeftHeader FileEntry\">\n";
 
   my ($HelpLink,$HelpText,$FileHelpLink,$FileHelpText,$DescHelpLink,$DescHelpText,$ReqName);
   if ($Type eq "file") {
