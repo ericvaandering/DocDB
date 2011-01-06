@@ -214,6 +214,29 @@ sub FileUploadBox (%) {
 
   require "Sorts.pm";
 
+# Could add a clear button with some code like this
+
+# <div id="uploadFile_div">
+# <input type="file" class="fieldMoz" id="uploadFile"
+#             onkeydown="return false;" size="40" name="uploadFile"/>
+# </div>
+# <a onclick="clearFileInputField('uploadFile_div')"
+#                          href="javascript:noAction();">Clear</a>
+#
+# Java Script function below looks strange but acts exactly in the way we want:
+#
+#
+# <script>
+# function clearFileInputField(tagId) {
+#     document.getElementById(tagId).innerHTML =
+#                     document.getElementById(tagId).innerHTML;
+# }
+# </script>
+
+
+
+
+
   if ($DocRevID) {
     require "MiscSQL.pm";
     @FileIDs = &FetchDocFiles($DocRevID);
@@ -300,6 +323,7 @@ sub FileUploadBox (%) {
     my $CopyName    = "copyfile$i";
     my $URLName     = "url$i";
     my $NewName     = "newname$i";
+    my $CellName    = "filecell$i";
 
     my $FileHelp        = FormElementTitle(-helplink => $FileHelpLink, -helptext => $FileHelpText);
     my $DescriptionHelp = FormElementTitle(-helplink => $DescHelpLink, -helptext => $DescHelpText);
@@ -307,8 +331,16 @@ sub FileUploadBox (%) {
     my $MainHelp        = FormElementTitle(-helplink => "main", -helptext => "Main?", -nocolon => $TRUE, -nobold => $TRUE);
     my $DefaultDesc = $DocFiles{$FileID}{DESCRIPTION};
 
+    if ($i % 2) {
+      $RowClass = "Odd";
+    } else {
+      $RowClass = "Even";
+    }
+    my $TR = '<tr class="'.$RowClass.'">'."\n";
+
+    print '<div name="'.$CellName.'">'."\n";
+    print $TR;
     if ($DescOnly) {
-      print "<tr>\n";
       print "<th>Filename:</th>";
       print "<td>\n";
       print $DocFiles{$FileID}{NAME};
@@ -316,7 +348,7 @@ sub FileUploadBox (%) {
       print "</td>\n";
       print "</tr>\n";
     } else {
-      print "<tr><th>\n";
+      print "<th>\n";
       print $FileHelp;
       print "</th>\n";
 
@@ -336,7 +368,8 @@ sub FileUploadBox (%) {
       print "</tr>\n";
 
       if ($Type eq "http") {
-        print "<tr><th>\n";
+        print $TR;
+        print "<th>\n";
         print $NewNameHelp;
         print "</th>\n";
 
@@ -347,7 +380,8 @@ sub FileUploadBox (%) {
         print "</tr>\n";
       }
     }
-    print "<tr><th>\n";
+    print $TR;
+    print "<th>\n";
     print $DescriptionHelp;
     print "</th>\n";
     print "<td>\n";
@@ -363,7 +397,8 @@ sub FileUploadBox (%) {
     print $MainHelp;
     print "</td></tr>\n";
     if ($FileID && $AllowCopy && !$DescOnly) {
-      print "<tr><td>&nbsp;</td><td colspan=\"2\" class=\"FileCopyRow\">\n";
+      print $TR;
+      print "<td>&nbsp;</td><td colspan=\"2\" class=\"FileCopyRow\">\n";
       print "Copy <tt>$DocFiles{$FileID}{NAME}</tt> from previous version:";
       print $query -> hidden(-name => $FileIDName, -value => $FileID);
       print $query -> checkbox(-name => $CopyName, -label => '');
