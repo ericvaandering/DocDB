@@ -319,7 +319,7 @@ sub FileUploadBox (%) {
     my $CopyName    = "copyfile$i";
     my $URLName     = "url$i";
     my $NewName     = "newname$i";
-    my $RowClass = ("Even","Odd")[$i % 2];
+    my $RowClass = ("Odd","Even")[$i % 2];
 
     my $FileHelp        = FormElementTitle(-helplink => $FileHelpLink, -helptext => $FileHelpText);
     my $DescriptionHelp = FormElementTitle(-helplink => $DescHelpLink, -helptext => $DescHelpText);
@@ -391,7 +391,6 @@ sub FileUploadBox (%) {
       print "</td></tr>\n";
     }
     print "</tbody\n";
-    print '<tr><td colspan="3" class="FileSpacer"></td></tr>'."\n";
   }
   if ($AllowCopy && $NOrigFiles) {
     print '<tr><td colspan="2">';
