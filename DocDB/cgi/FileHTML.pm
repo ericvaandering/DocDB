@@ -233,10 +233,6 @@ sub FileUploadBox (%) {
 # }
 # </script>
 
-
-
-
-
   if ($DocRevID) {
     require "MiscSQL.pm";
     @FileIDs = &FetchDocFiles($DocRevID);
@@ -323,7 +319,7 @@ sub FileUploadBox (%) {
     my $CopyName    = "copyfile$i";
     my $URLName     = "url$i";
     my $NewName     = "newname$i";
-    my $CellName    = "filecell$i";
+    my $RowClass = ("Even","Odd")[$i % 2];
 
     my $FileHelp        = FormElementTitle(-helplink => $FileHelpLink, -helptext => $FileHelpText);
     my $DescriptionHelp = FormElementTitle(-helplink => $DescHelpLink, -helptext => $DescHelpText);
@@ -331,16 +327,9 @@ sub FileUploadBox (%) {
     my $MainHelp        = FormElementTitle(-helplink => "main", -helptext => "Main?", -nocolon => $TRUE, -nobold => $TRUE);
     my $DefaultDesc = $DocFiles{$FileID}{DESCRIPTION};
 
-    if ($i % 2) {
-      $RowClass = "Odd";
-    } else {
-      $RowClass = "Even";
-    }
-    my $TR = '<tr class="'.$RowClass.'">'."\n";
-
-    print '<div name="'.$CellName.'">'."\n";
-    print $TR;
+    print "<tbody class=\"$RowClass\">\n";
     if ($DescOnly) {
+      print "<tr>\n";
       print "<th>Filename:</th>";
       print "<td>\n";
       print $DocFiles{$FileID}{NAME};
@@ -348,7 +337,7 @@ sub FileUploadBox (%) {
       print "</td>\n";
       print "</tr>\n";
     } else {
-      print "<th>\n";
+      print "<tr><th>\n";
       print $FileHelp;
       print "</th>\n";
 
@@ -368,8 +357,7 @@ sub FileUploadBox (%) {
       print "</tr>\n";
 
       if ($Type eq "http") {
-        print $TR;
-        print "<th>\n";
+        print "<tr><th>\n";
         print $NewNameHelp;
         print "</th>\n";
 
@@ -380,8 +368,7 @@ sub FileUploadBox (%) {
         print "</tr>\n";
       }
     }
-    print $TR;
-    print "<th>\n";
+    print "<tr><th>\n";
     print $DescriptionHelp;
     print "</th>\n";
     print "<td>\n";
@@ -397,13 +384,13 @@ sub FileUploadBox (%) {
     print $MainHelp;
     print "</td></tr>\n";
     if ($FileID && $AllowCopy && !$DescOnly) {
-      print $TR;
-      print "<td>&nbsp;</td><td colspan=\"2\" class=\"FileCopyRow\">\n";
+      print "<tr><td>&nbsp;</td><td colspan=\"2\" class=\"FileCopyRow\">\n";
       print "Copy <tt>$DocFiles{$FileID}{NAME}</tt> from previous version:";
       print $query -> hidden(-name => $FileIDName, -value => $FileID);
       print $query -> checkbox(-name => $CopyName, -label => '');
       print "</td></tr>\n";
     }
+    print "</tbody\n";
     print '<tr><td colspan="3" class="FileSpacer"></td></tr>'."\n";
   }
   if ($AllowCopy && $NOrigFiles) {
@@ -421,6 +408,7 @@ sub FileUploadBox (%) {
     print $query -> password_field (-name => 'http_pass', -size => 20, -maxlength => 40);
     print "</td></tr>\n";
   }
+
   print "</table>\n";
 }
 
