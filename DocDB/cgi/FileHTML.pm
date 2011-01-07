@@ -355,11 +355,11 @@ function clearFileInputField(tagId) {
         $Options{-class} = "required";
       }
       if ($Type eq "file") {
-        print "<div id=\"$DivName\">\n"
+        print "<span id=\"$DivName\">\n";
         print $query -> filefield(-name      => $ElementName, -size => $FileSize,
                                   -maxlength => $FileMaxSize, %Options);
-        print "</div>\n";
-        print "<a onclick=\"clearFileInputField('$DivName')\"  href=\"javascript:noAction();\">Clear</a>\n";
+        print "</span>\n";
+        print "<input class=\"SystemButton\" type=\"button\" value=\"Clear\" onclick=\"clearFileInputField('$DivName')\"  />\n";
       } elsif ($Type eq "http") {
         print $query -> textfield(-name      => $URLName,     -size => $FileSize,
                                   -maxlength => $FileMaxSize, %Options);
