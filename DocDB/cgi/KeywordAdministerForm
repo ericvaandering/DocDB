@@ -6,12 +6,12 @@
 #      Author: Lynn Garren (garren@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -23,7 +23,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI;                                                                                      
+use CGI;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -57,7 +57,7 @@ unless (&CanAdminister()) {
 
 EndPage(@ErrorStack);
 
-print "<b>This form allows you to administer the keyword list.</b><p>\n"; 
+print "<b>This form allows you to administer the keyword list.</b><p>\n";
 
 print "Begin by selecting an action for what you want to administer. If you
        select <b>New</b>, the selection from the first list will be
@@ -65,7 +65,7 @@ print "Begin by selecting an action for what you want to administer. If you
        If you select <b>Modify</b> you have to make a
        selection from the first list and any attributes you select on the
        right will be changed. If you leave something blank, it will not be
-       changed. If you select <b>Delete</b> any selections other than from 
+       changed. If you select <b>Delete</b> any selections other than from
        the first list will be ignored.<p>\n";
 
 print "Note that deleting and then re-entering with the same information is
@@ -98,15 +98,15 @@ print "</tr>\n";
 print "<tr valign=top>\n";
 print "<td>\n";
  &KeywordSelect(-format => "full", -maxlabel => 40, -disabled => true);
-print "</td>\n"; 
+print "</td>\n";
 #print "</tr>\n";
 
-print "<td>\n"; 
- &KeywordGroupSelect(-format => "short", -multiple => "true", 
-                     -remove => "true",  -disabled => true); 
+print "<td>\n";
+ &KeywordGroupSelect(-format => "short", -multiple => "true",
+                     -remove => "true",  -disabled => true);
 print "</td>\n";
 
-print "<td>\n"; 
+print "<td>\n";
 print "<table cellpadding=5>\n";
 print "<tr valign=top>\n";
 print "<td>\n";
@@ -115,7 +115,7 @@ print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td>\n"; 
+print "<td>\n";
  &LongDescriptionBox(-name => 'longdesc',-disabled => true);
 print "</td>\n";
 print "</tr>\n";
@@ -126,7 +126,7 @@ print "<tr valign=top>\n";
 print "<td colspan=3>\n";
 &AdministratorPassword;
 print "&nbsp;";
-print $query -> submit (-value => "Change Keyword Info");
+print $query -> submit (-class => "Action", -value => "Change Keyword Info");
 print "</td>\n";
 print "</tr>\n";
 
@@ -143,13 +143,13 @@ print $query -> start_multipart_form('POST',"$KeywordGroupAdminister",
                                      "id=\"keygroups\" name=\"keygroups\"");
 print "<table cellpadding=10>\n";
 print "<tr valign=top>\n";
-print "<td colspan=2>\n"; 
+print "<td colspan=2>\n";
  &AdministerActions(-form => "keygroups");
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr valign=top>\n";
-print "<td rowspan=2>\n"; 
+print "<td rowspan=2>\n";
  &KeywordGroupSelect(-format => "full", -disabled => true);
 print "</td>\n";
 print "<td>\n";
@@ -167,7 +167,7 @@ print "<tr valign=top>\n";
 print "<td colspan=3>\n";
 &AdministratorPassword;
 print "&nbsp;";
-print $query -> submit (-value => "Change Keyword Group Info");
+print $query -> submit (-class => "Action", -value => "Change Keyword Group Info");
 print "</td>\n";
 print "</tr>\n";
 
