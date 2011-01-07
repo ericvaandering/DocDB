@@ -72,7 +72,7 @@ print "</td><td>\n";
 print $query -> textfield(-size => 40, -name => "simpletext");
 print $query -> hidden(-name => "simple", -default => '1');
 print "</td><td>\n";
-print $query -> submit (-value => "Quick Search");
+print $query -> submit (-class => "Action", -value => "Quick Search");
 print "</td></tr></table>\n";
 print $query -> end_multipart_form;
 
@@ -84,7 +84,7 @@ print $query -> start_multipart_form('POST',$Search,"name=\"queryform\"");
 print "<table class=\"SearchFormTable HighPaddedTable CenteredTable\">\n";
 print "<tr>\n";
  print "<td colspan=\"3\" class=\"SubmitCell\">\n";
- print '<a name="Advanced" />';
+ print '<a name="Advanced"></a>';
  print $query -> submit (-value => "Advanced Search");
  print "&nbsp;&nbsp;&nbsp;\n";
  print $query -> reset (-value => "Reset Search Form");
