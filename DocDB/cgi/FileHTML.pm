@@ -225,7 +225,6 @@ sub FileUploadBox (%) {
 #
 # Java Script function below looks strange but acts exactly in the way we want:
 #
-#
 # <script>
 # function clearFileInputField(tagId) {
 #     document.getElementById(tagId).innerHTML =
@@ -273,6 +272,14 @@ sub FileUploadBox (%) {
   print $query -> hidden(-name => 'maxfiles', -default => $MaxFiles);
   print "</div>\n";
 
+  print '<script>
+function clearFileInputField(tagId) {
+    document.getElementById(tagId).innerHTML =
+                    document.getElementById(tagId).innerHTML;
+}
+</script>
+';
+
   print "<table class=\"Alternating LeftHeader FileEntry\">\n";
 
   my ($HelpLink,$HelpText,$FileHelpLink,$FileHelpText,$DescHelpLink,$DescHelpText,$ReqName);
@@ -313,6 +320,7 @@ sub FileUploadBox (%) {
   for (my $i = 1; $i <= $MaxFiles; ++$i) {
     my $FileID = shift @FileIDs;
     my $ElementName = "upload$i";
+    my $DivName     = "upload_div$i";
     my $DescName    = "filedesc$i";
     my $MainName    = "main$i";
     my $FileIDName  = "fileid$i";
@@ -347,8 +355,11 @@ sub FileUploadBox (%) {
         $Options{-class} = "required";
       }
       if ($Type eq "file") {
+        print "<div id=\"$DivName\">\n"
         print $query -> filefield(-name      => $ElementName, -size => $FileSize,
                                   -maxlength => $FileMaxSize, %Options);
+        print "</div>\n";
+        print "<a onclick=\"clearFileInputField('$DivName')\"  href=\"javascript:noAction();\">Clear</a>\n";
       } elsif ($Type eq "http") {
         print $query -> textfield(-name      => $URLName,     -size => $FileSize,
                                   -maxlength => $FileMaxSize, %Options);
