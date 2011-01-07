@@ -272,14 +272,6 @@ sub FileUploadBox (%) {
   print $query -> hidden(-name => 'maxfiles', -default => $MaxFiles);
   print "</div>\n";
 
-  print '<script>
-function clearFileInputField(tagId) {
-    document.getElementById(tagId).innerHTML =
-                    document.getElementById(tagId).innerHTML;
-}
-</script>
-';
-
   print "<table class=\"Alternating LeftHeader FileEntry\">\n";
 
   my ($HelpLink,$HelpText,$FileHelpLink,$FileHelpText,$DescHelpLink,$DescHelpText,$ReqName);

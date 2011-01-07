@@ -97,7 +97,7 @@ SetAuthorMode();
 SetTopicMode();
 
 print $query -> header( -charset => $HTTP_ENCODING );
-my @Scripts = ("PopUps","InsertRevisionNote","AuthorMethodDisplay","QuickShow",);
+my @Scripts = ("PopUps","InsertRevisionNote","AuthorMethodDisplay","QuickShow","ClearFile",);
 
 if ($TopicMode eq "tree") {
   push @Scripts,"TreeChooser";
