@@ -335,7 +335,7 @@ sub FileUploadBox (%) {
   print "</td></tr>\n";
 
   if ($AllowCopy && !$DescOnly) {
-    print '<tr><td>&nbsp;</td><td colspan="2"><input type="checkbox" name="checkall" onclick="checkUncheckAll(this);" /> ';
+    print '<tr><td>&nbsp;</td><td colspan="2"><input type="checkbox" name="checkall" onclick="checkUncheckAll(this, "copyfile");" /> ';
     print 'Copy all files from previous version (must choose at least one not to copy below).</td></tr>'."\n";
   }
 
