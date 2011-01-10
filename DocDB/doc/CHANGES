@@ -1,3 +1,6 @@
+
+RC: add copy all files from previous version check box
+
 8.7.21
   Fixes for URLs in parentheses, wrong CGI variable for fily copy check boxes,
   list of text fields that can contain newlines.

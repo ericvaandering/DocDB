@@ -225,48 +225,6 @@ sub FileUploadBox (%) {
 
   require "Sorts.pm";
 
-#         function checkUncheckAll(theElement) {
-#      var theForm = theElement.form, z = 0;
-#          for(z=0; z<theForm.length;z++){
-#       if(theForm[z].type == 'checkbox' && theForm[z].name != 'checkall'){
-#           theForm[z].checked = theElement.checked;
-#           }
-#      }
-#     }
-
-    print "<script>
-      String.prototype.startsWith = function(str)
-        {return (this.match('^'+str)==str)}
-
-      function checkUncheckAll(theElement,startName) {
-        var theForm = theElement.form, z = 0;
-        for(z=0; z<theForm.length;z++){
-          if(theForm[z].type == 'checkbox' && theForm[z].name.startsWith(startName)){
-            theForm[z].checked = theElement.checked;
-          }
-        }
-      }
-      </script>\n";
-
-
-# Could add a clear button with some code like this
-
-# <div id="uploadFile_div">
-# <input type="file" class="fieldMoz" id="uploadFile"
-#             onkeydown="return false;" size="40" name="uploadFile"/>
-# </div>
-# <a onclick="clearFileInputField('uploadFile_div')"
-#                          href="javascript:noAction();">Clear</a>
-#
-# Java Script function below looks strange but acts exactly in the way we want:
-#
-# <script>
-# function clearFileInputField(tagId) {
-#     document.getElementById(tagId).innerHTML =
-#                     document.getElementById(tagId).innerHTML;
-# }
-# </script>
-
   if ($DocRevID) {
     require "MiscSQL.pm";
     @FileIDs = &FetchDocFiles($DocRevID);
@@ -336,7 +294,7 @@ sub FileUploadBox (%) {
   if ($AllowCopy && !$DescOnly) {
     print '<tr><td>&nbsp;</td><td colspan="2">';
     print '<input type="checkbox" name="checkall" onclick="checkUncheckAll(this,\'copyfile\');" /> ';
-    print 'Copy all files from previous version (must choose at least one not to copy below).</td></tr>'."\n";
+    print 'Copy all files from previous version (must still supply at least one new file below)</td></tr>'."\n";
   }
 
   for (my $i = 1; $i <= $MaxFiles; ++$i) {
