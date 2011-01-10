@@ -333,8 +333,12 @@ sub FileUploadBox (%) {
   print '<tr><td colspan="2">';
   print $BoxTitle;
   print "</td></tr>\n";
-  print '<tr><td><input type="checkbox" name="checkall" onclick="checkUncheckAll(this);" /></td>'
-  print '<td>Copy all files from previous version (must choose at least one not to copy below).</td></tr>'."\n";
+
+  if ($AllowCopy && !$DescOnly) {
+    print '<tr><td><input type="checkbox" name="checkall" onclick="checkUncheckAll(this);" /></td>';
+    print '<td>Copy all files from previous version (must choose at least one not to copy below).</td></tr>'."\n";
+  }
+
   for (my $i = 1; $i <= $MaxFiles; ++$i) {
     my $FileID = shift @FileIDs;
     my $ElementName = "upload$i";
