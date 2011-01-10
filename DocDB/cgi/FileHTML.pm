@@ -225,6 +225,48 @@ sub FileUploadBox (%) {
 
   require "Sorts.pm";
 
+#         function checkUncheckAll(theElement) {
+#      var theForm = theElement.form, z = 0;
+#          for(z=0; z<theForm.length;z++){
+#       if(theForm[z].type == 'checkbox' && theForm[z].name != 'checkall'){
+#           theForm[z].checked = theElement.checked;
+#           }
+#      }
+#     }
+
+    print "<script>
+      String.prototype.startsWith = function(str)
+        {return (this.match("^"+str)==str)}
+
+      function checkUncheckAll(theElement,start) {
+        var theForm = theElement.form, z = 0;
+        for(z=0; z<theForm.length;z++){
+          if(theForm[z].type == 'checkbox' && theForm[z].name.startsWith(start)){
+            theForm[z].checked = theElement.checked;
+          }
+        }
+      }
+      </script>\n";
+
+
+# Could add a clear button with some code like this
+
+# <div id="uploadFile_div">
+# <input type="file" class="fieldMoz" id="uploadFile"
+#             onkeydown="return false;" size="40" name="uploadFile"/>
+# </div>
+# <a onclick="clearFileInputField('uploadFile_div')"
+#                          href="javascript:noAction();">Clear</a>
+#
+# Java Script function below looks strange but acts exactly in the way we want:
+#
+# <script>
+# function clearFileInputField(tagId) {
+#     document.getElementById(tagId).innerHTML =
+#                     document.getElementById(tagId).innerHTML;
+# }
+# </script>
+
   if ($DocRevID) {
     require "MiscSQL.pm";
     @FileIDs = &FetchDocFiles($DocRevID);
@@ -290,7 +332,8 @@ sub FileUploadBox (%) {
   print '<tr><td colspan="2">';
   print $BoxTitle;
   print "</td></tr>\n";
-
+  print '<tr><td><input type="checkbox" name="checkall" onclick="checkUncheckAll(this);" /></td>'
+  print '<td>Copy all files from previous version (must choose at least one not to copy below).</td></tr>'."\n";
   for (my $i = 1; $i <= $MaxFiles; ++$i) {
     my $FileID = shift @FileIDs;
     my $ElementName = "upload$i";
