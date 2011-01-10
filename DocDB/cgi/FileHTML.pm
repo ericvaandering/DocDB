@@ -238,10 +238,10 @@ sub FileUploadBox (%) {
       String.prototype.startsWith = function(str)
         {return (this.match('^'+str)==str)}
 
-      function checkUncheckAll(theElement,start) {
+      function checkUncheckAll(theElement,startName) {
         var theForm = theElement.form, z = 0;
         for(z=0; z<theForm.length;z++){
-          if(theForm[z].type == 'checkbox' && theForm[z].name.startsWith(start)){
+          if(theForm[z].type == 'checkbox' && theForm[z].name.startsWith(startName)){
             theForm[z].checked = theElement.checked;
           }
         }
@@ -334,7 +334,8 @@ sub FileUploadBox (%) {
   print "</td></tr>\n";
 
   if ($AllowCopy && !$DescOnly) {
-    print '<tr><td>&nbsp;</td><td colspan="2"><input type="checkbox" name="checkall" onclick="checkUncheckAll(this, "copyfile");" /> ';
+    print '<tr><td>&nbsp;</td><td colspan="2">';
+    print '<input type="checkbox" name="checkall" onclick="checkUncheckAll(this,\'copyfile\');" /> ';
     print 'Copy all files from previous version (must choose at least one not to copy below).</td></tr>'."\n";
   }
 
