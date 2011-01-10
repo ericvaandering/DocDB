@@ -249,6 +249,9 @@ sub FileUploadBox (%) {
       $MaxFiles = 1;
     }
   }
+  if ($DescOnly) {
+    $MaxFiles = $NOrigFiles;
+  }
 
   print "<div>\n";
   print $query -> hidden(-name => 'maxfiles', -default => $MaxFiles);
