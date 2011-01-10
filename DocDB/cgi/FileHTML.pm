@@ -236,7 +236,7 @@ sub FileUploadBox (%) {
 
     print "<script>
       String.prototype.startsWith = function(str)
-        {return (this.match("^"+str)==str)}
+        {return (this.match('^'+str)==str)}
 
       function checkUncheckAll(theElement,start) {
         var theForm = theElement.form, z = 0;
@@ -334,8 +334,8 @@ sub FileUploadBox (%) {
   print "</td></tr>\n";
 
   if ($AllowCopy && !$DescOnly) {
-    print '<tr><td><input type="checkbox" name="checkall" onclick="checkUncheckAll(this);" /></td>';
-    print '<td>Copy all files from previous version (must choose at least one not to copy below).</td></tr>'."\n";
+    print '<tr><td>&nbsp;</td><td colspan="2"><input type="checkbox" name="checkall" onclick="checkUncheckAll(this);" /> ';
+    print 'Copy all files from previous version (must choose at least one not to copy below).</td></tr>'."\n";
   }
 
   for (my $i = 1; $i <= $MaxFiles; ++$i) {
@@ -406,10 +406,10 @@ sub FileUploadBox (%) {
     print $MainHelp;
     print "</td></tr>\n";
     if ($FileID && $AllowCopy && !$DescOnly) {
-      print "<tr><td>&nbsp;</td><td colspan=\"2\">\n";
-      print "Copy <tt>$DocFiles{$FileID}{NAME}</tt> from previous version:";
+      print "<tr><td>&nbsp;</td><td colspan=\"2\" class=\"FileCopyRow\">\n";
       print $query -> hidden(-name => $FileIDName, -value => $FileID);
       print $query -> checkbox(-name => $CopyName, -label => '');
+      print "Copy <tt>$DocFiles{$FileID}{NAME}</tt> from previous version:";
       print "</td></tr>\n";
     }
     print "<tr><td colspan=\"3\"></td></tr>\n";
