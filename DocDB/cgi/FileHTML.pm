@@ -297,7 +297,7 @@ sub FileUploadBox (%) {
   if ($AllowCopy && !$DescOnly) {
     print '<tr><td>&nbsp;</td><td colspan="2">';
     print '<input type="checkbox" name="checkall" onclick="checkUncheckAll(this,\'copyfile\');" /> ';
-    print 'Copy all files from previous version (must still supply at least one new file below)</td></tr>'."\n";
+    print 'Copy all files from previous version (at least one file must be added or updated)</td></tr>'."\n";
   }
 
   for (my $i = 1; $i <= $MaxFiles; ++$i) {
