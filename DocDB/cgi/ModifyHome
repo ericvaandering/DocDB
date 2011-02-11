@@ -321,7 +321,7 @@ print $query -> radio_group(-name => "authormode", -values => \@authormodes, -de
 print "</td></tr>\n";
 
 print "<tr><td class=\"LeftHeader\">\n";
-print FormElementTitle(-helplink => "dateoverride", -helptext => "Override submit date",
+print FormElementTitle(-helplink => "dateoverride", -helptext => "Override creation date",
                        -nobreak  => $TRUE);
 print "</td>\n";
 print "<td>\n";
