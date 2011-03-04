@@ -7,7 +7,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -48,6 +48,7 @@ require "HTMLUtilities.pm";
 require "Security.pm";
 require "Scripts.pm";
 
+require "DocumentHTML.pm";
 require "TopicHTML.pm";
 require "SecurityHTML.pm";
 
@@ -526,8 +527,13 @@ unless ($DocRevID) {
 }
 
 print "You were successful. Your Document ID is <b>$full_docid, version
-       $version</b>.<br>
-       Your entry was created with the following information: <p><hr><p>\n";
+       $version</b>.\n";
+
+print "You can access the latest version of this document with this link: ";
+print DocumentLink(-docid => $documentID, -noversion => $TRUE);
+print ".<br/>\n";
+
+print "<br/>Your entry was created with the following information: <p><hr><p>\n";
 
 PrintRevisionInfo($DocRevID);
 

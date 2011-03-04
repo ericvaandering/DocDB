@@ -256,7 +256,7 @@ td.Time {
   color: red;
 }
 
-a.Help[href] {
+a.Help[href], span.Help {
         color: #444;
         text-decoration: none;
 	background-image: url('help.png');
@@ -366,3 +366,12 @@ input.hidden {
     visibility: hidden;
     display: none;
 }
+
+.FileEntry td {
+  padding: 3px 5px 3px 5px;
+}
+
+.FileEntry th {
+  padding: 5px 5px 5px 5px;
+}
+

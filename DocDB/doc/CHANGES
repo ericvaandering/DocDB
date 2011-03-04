@@ -1,3 +1,20 @@
+8.8.3
+ Adjust CSS so that multiple file updates are well separated.
+ Add links to document w/o version and public doc are on ShowDocument
+  (See DocDB globals for cross-instance settings)
+ Add link to document just created or updated
+ Adjust help to more generic help links, fix a couple of spellings/grammar
+ Clear button for files
+ Copy all checkbox for files
+
+8.8.0
+
+ Javascript validation of DocumentAddForm
+ New expandable tree for viewing/selecting topics
+ New active search on author names
+ Create Similar button for document creation
+ Minor interface changes
+
 8.7.10
 
  Some fixes to topic administration

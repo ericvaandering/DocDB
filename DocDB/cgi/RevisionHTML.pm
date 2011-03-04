@@ -6,7 +6,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #
 
-# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -464,8 +464,27 @@ sub OtherVersionLinks {
   my ($DocumentID,$CurrentVersion) = @_;
   my @RevIDs   = reverse sort RevisionByVersion &FetchRevisionsByDocument($DocumentID);
 
-  unless ($#RevIDs > 0) {return;}
-  print "<div id=\"OtherVersions\">\n";
+  my $HTML = "";
+  $HTML .= "<div id=\"OtherVersions\">\n";
+  $HTML .= "<p><b>Quick Links:</b>\n";
+  $HTML .= "<br/>";
+  $HTML .= DocumentLink(-docid => $DocumentID, -noversion => $TRUE, -linktext => "Latest Version");
+
+  if (!$Public && $Preferences{Security}{Instances}{Public}) {
+    my @GroupIDs     = GetRevisionSecurityGroups($DocRevID);
+    unless (@GroupIDs) {
+      my $PublicURL = $Preferences{Security}{Instances}{Public}.'/ShowDocument?docid='.$DocumentID;
+      $HTML .= '<br/><a href="'.$PublicURL.'">Public Version</a>'."\n";
+    }
+  }
+
+  $HTML .= "</p>\n";
+  print $HTML;
+
+  unless ($#RevIDs > 0) {
+    print "</div>\n";
+    return;
+  }
   print "<b>Other Versions:</b>\n";
 
   print "<table id=\"OtherVersionTable\" class=\"Alternating LowPaddedTable\">\n";

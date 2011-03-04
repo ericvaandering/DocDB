@@ -186,7 +186,7 @@ sub DateTimePullDown { #FIXME: Replace with DateTimePulldown
 
 sub PubInfoBox {
   my $ElementTitle = &FormElementTitle(-helplink  => "pubinfo",
-                                       -helptext  => "Other publication information");
+                                       -helptext  => "URLs or other publication information");
   print $ElementTitle,"\n";
 
   print $query -> textarea (-name => 'pubinfo', -default => $PubInfoDefault,

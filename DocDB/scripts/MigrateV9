@@ -69,6 +69,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
     "alter table Conference add ExternalURL varchar(240) default NULL",
     "alter table Conference add ExternalKey varchar(240) default NULL",
     "alter table EmailUser  add ExternalKey varchar(240) default NULL",
+    "alter table Author     add ExternalKey varchar(240) default NULL",
 
     "alter table Suppress add EmailUserID int default '0'",
     "alter table Suppress add Disabled int default '0'",
@@ -147,7 +148,7 @@ if ($Action eq "delete") {
   # Get rid of tables and columns no longer needed
 
   print "Removing obsolete tables, columns, keys.\n";
-  my @Actions = (   
+  my @Actions = (
     "alter table Moderator  drop key Separator",
     "alter table EventTopic drop key Separator",
     "alter table Suppress   drop key Type",

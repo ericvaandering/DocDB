@@ -86,8 +86,8 @@ sub SetFileOptions {
     $Archive = $UploadTypePref
   }
 
-  if ($Archive eq "single") {$NumberUploads = 3;}  # Make sure
   if ($Archive eq "multi")  {$Archive = "single";} # No real difference
+  if ($Archive eq "single") {$NumberUploads = 3;}  # Make sure
   if ($Archive ne "archive" && $Archive ne "single") {
     $Archive = "single";
   }

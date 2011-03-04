@@ -3,12 +3,12 @@
 #      Author: Lynn Garren (garren@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -20,7 +20,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI qw(-nosticky);                                                                                      
+use CGI qw(-nosticky);
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -47,7 +47,7 @@ DocDBHeader("Administrative Functions","",-scripts => ["PopUps"]);
 
 unless (CanAdminister()) {
   push @ErrorStack,"This page is for administrators only. You are not an administrator.";
-}  
+}
 
 my $PersonalAccountLink = PersonalAccountLink();
 
@@ -68,7 +68,7 @@ print "<p><strong><a href=\"$DocDBInstructions\">Instructions</a></strong></p>\n
 print "<p><strong><a href=\"$DocDBInstructions?set=admin\">Administrator Instructions</strong></p>\n";
 if ($PersonalAccountLink) {
   print "<p><strong>$PersonalAccountLink</strong></p>\n";
-}  
+}
 foreach my $Text (@{ $ProjectMessages{Homepage}{LeftColumn} }) {
   print "<p><strong>$Text</strong></p>\n";
 }
@@ -82,13 +82,13 @@ print "<strong>Document management:</strong>";
 
 if (CanAdminister()) { # Delete Form
   print "<ul>\n";
-  print "<li>"; 
+  print "<li>";
   print "\n",$query -> startform('POST',$DeleteConfirm),"<div>\n";
-  print $query -> submit (-value => "Delete");
-  print " document # "; 
+  print $query -> submit (-class => "Action", -value => "Delete");
+  print " document # ";
   print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
   print "\n</div>\n",$query -> endform,"\n\n";
-  print "</li>"; 
+  print "</li>";
   print "</ul>\n";
 }
 
@@ -96,7 +96,7 @@ print "<p><strong>Database maintenance:</strong></p>\n";
 print "<ul>\n";
 print "<li>Add an <a href=\"$AuthorAddForm\">author</a></li>\n";
 print "</ul>\n";
-           
+
 if (CanAdminister()) {
   print "<p><b>Administrator only functions:</b></p>\n";
   print "<ul>\n";
@@ -106,7 +106,7 @@ if (CanAdminister()) {
   print "<li>Administer <a href=\"$EmailAdministerForm\">personal accounts</a>";
   if ($UserValidation eq "certificate") {
     print " or <a href=\"$BulkCertificateInsert\">create new accounts</a>";
-  }  
+  }
   print "</li>\n";
   print "<li>Administer <a href=\"$KeywordAdministerForm\">keywords and keyword groups</a></li>\n";
   print "<li>Administer <a href=\"$AdministerForm\">authors, institutions, types, and journals</a></li>\n";
@@ -115,7 +115,7 @@ if (CanAdminister()) {
 }
 
 print "<hr/>\n";
-  
+
 
 print "</div>\n";  # MainColumn3Col
 

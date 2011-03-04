@@ -242,7 +242,7 @@ periods.
 
  <entry>
 <key>overdatepref</key>
-<title>Override submit date</title>
+<title>Override creation date</title>
   <text>
 Use this option if you want to (by default) be able to set the date and time
 for documents written in the past. This is useful mainly for those entering
@@ -601,10 +601,10 @@ from a number of shorter lists split up by topic.
 
  <entry>
   <key>dateoverride</key>
-  <title>Overriding the submission date</title>
+  <title>Overriding the creation date</title>
   <text>
 Use this option to set the date and time for a document written in the past.
-Unless you are submitting a document from the old database or one written a long
+Unless you are submitting a document from an old database or one written a long
 time ago, you should probably not check this. By default, new documents are
 entered with the current date and time.
   </text>

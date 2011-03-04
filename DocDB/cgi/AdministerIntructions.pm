@@ -1,17 +1,17 @@
-# Description: The generic instructions for DocDB. This is mostly HTML, but making 
+# Description: The generic instructions for DocDB. This is mostly HTML, but making
 #              it a script allows us to eliminate parts of it that we don't want
 #              and get it following everyone's style, and allows groups to add
 #              to it with ProjectMessages.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -40,7 +40,7 @@ TOC
 sub AdminInstructionsBody {
   print <<HTML;
 
-  <a name="basic" />
+  <a name="basic"></a>
   <h1>Admintering DocDB</h1>
 
   <p>DocDB comes with a full complement of administration pages which modify
@@ -49,11 +49,11 @@ sub AdminInstructionsBody {
   intended for regular users. However, you should become comfortable with using
   these pages. These pages have been written at various times, so some may be
   more user friendly than others. If you have a suggestion on how to improve
-  particular pages, contact your maintainer or the developers. </p> 
+  particular pages, contact your maintainer or the developers. </p>
 
   <p>While some conventions differ from page to page (see above), a few are consistent:</p>
-  
-  <ol>   
+
+  <ol>
   <li>You must always supply the administrator password for every action. This
       is to remind you that you are doing something potentially harmful and to
       keep a casual user from exploiting unknown DocDB bugs and causing
@@ -80,16 +80,16 @@ sub AdminInstructionsBody {
   <li>If you are unsure of what you are doing, ask your maintainer or even back
       up the DB before acting.</li>
   </ol>
-  
-  <a name="specific" />
+
+  <a name="specific"></a>
   <h1>Specific Cases</h1>
 
-  <a name="groups" />
+  <a name="groups"></a>
   <h2>Administering groups</h2>
-  
+
   <p>Groups are at the heart of the access control in DocDB and they are a
      little difficult to understand.</p>
-  
+
   <p>Access to documents within the DocDB is controlled in several ways. A
      document may be tagged as accessible to a subset of groups. Additionally,
      each group may have a list of subordinate groups. Anything marked viewable
@@ -105,9 +105,9 @@ sub AdminInstructionsBody {
      those in the .htpasswd file although the comparison is not case
      sensitive.</p>
 
-  <a name="personal" />
+  <a name="personal"></a>
   <h2>Personal accounts</h2>
-  
+
   <p>These are settings for users in DocDB. While you can see what their
      settings are  (e.g. which documents they are watching) you can only change
      things that they cannot, such as the password (unless using certificate

@@ -7,7 +7,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 #
-# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -90,6 +90,13 @@ $Preferences{Security}{Certificates}{DOEGrids} = $FALSE;     # TRUE or FALSE - s
 $Preferences{Security}{Certificates}{ShowCertInstructions} = $FALSE;  # TRUE or FALSE - show certificate instructions even on non-cert version
 
 $Preferences{Security}{AuthName} = "";  # Set to override default AuthName of group1 or group2, etc.
+
+# Set these URLs to $cgi_root for the various instances you maintain if you want cross-links between them
+
+$Preferences{Security}{Instances}{Public}      = "";
+$Preferences{Security}{Instances}{Basic}       = "";
+$Preferences{Security}{Instances}{Certificate} = "";
+$Preferences{Security}{Instances}{Shibboleth}  = "";
 
 $Preferences{Options}{DynamicFullList}{Private} = $FALSE; # Generate Full document list by dynamically for private db
 $Preferences{Options}{DynamicFullList}{Public}  = $FALSE; # Generate Full document list by dynamically for public db

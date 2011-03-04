@@ -124,7 +124,7 @@ print $query -> radio_group(-name => "authormode", -values => \@authormodes, -de
 print "</td></tr>\n";
 
 print "<tr><th>\n";
-print FormElementTitle(-helplink => "overdatepref", -helptext => "Override submit date");
+print FormElementTitle(-helplink => "overdatepref", -helptext => "Override creation date");
 print "</th>\n";
 print "<td colspan=\"2\">\n";
 print $query -> radio_group(-name => "overdate", -values => ['No','Yes'],
