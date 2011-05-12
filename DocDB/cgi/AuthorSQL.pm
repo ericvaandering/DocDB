@@ -56,7 +56,11 @@ sub GetAuthors { # Creates/fills a hash $Authors{$AuthorID}{} with all authors
   $AuthorCount -> execute();
   $AuthorCount -> bind_columns(undef, \($AuthorID,$Count));
   while ($AuthorCount -> fetch) {
-    $AuthorCounts{$AuthorID}{Exact} = $Count;
+    if (exists $AuthorCounts{$AuthorID}{Exact}) {
+      ++$AuthorCounts{$AuthorID}{Exact};
+    } else {
+      $AuthorCounts{$AuthorID}{Exact} = 1;
+    }
   }
 
 }

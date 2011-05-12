@@ -59,8 +59,13 @@ sub GetTopics {
   $TopicCount -> execute();
   $TopicCount -> bind_columns(undef, \($TopicID,$Count));
   while ($TopicCount -> fetch) {
-    $TopicCounts{$TopicID}{Exact} = $Count;
-    $TopicCounts{$TopicID}{Total} = $Count;
+    if (exists $TopicCounts{$TopicID}) {
+      ++$TopicCounts{$TopicID}{Exact};
+      ++$TopicCounts{$TopicID}{Total};
+    } else {
+      $TopicCounts{$TopicID}{Exact} = 1;
+      $TopicCounts{$TopicID}{Total} = 1;
+    }
     # May want to add children to Total
   }
 

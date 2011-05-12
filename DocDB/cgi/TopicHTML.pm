@@ -319,7 +319,7 @@ sub TopicListWithChildren { # Recursive routine
       if (@{$TopicChildren{$TopicID}}) {
         $HTML .= "\n";
         $HTML .= TopicListWithChildren({ -topicids => $TopicChildren{$TopicID}, -depth => $Depth+1,
-                                         -maxdepth => $MaxDepth,
+                                         -maxdepth => $MaxDepth, -showcount => $ShowCount,
                                          -chooser  => $Chooser, -defaulttopicids => \@DefaultTopicIDs});
       } elsif ($Depth == 1 && !$Chooser) {
         $HTML .= '<br class="EmptyTopic" />';
