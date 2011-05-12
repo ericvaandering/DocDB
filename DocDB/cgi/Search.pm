@@ -146,6 +146,7 @@ sub LocalSearch ($) {
     $OuterLogic        = "OR";
     $IncludeSubTopics  = $TRUE;
 
+    $DocIDSearch            = int($SimpleText);
     $TitleSearch            = $SimpleText;
     $AbstractSearch         = $SimpleText;
     $KeywordSearch          = $SimpleText;
@@ -197,6 +198,10 @@ sub LocalSearch ($) {
   ### Check parameters for errors
 
   my @DocumentIDs = ();
+  if ($DocIDSearch) {
+    push @DocumentIDs, $DocIDSearch;
+    $Documents{$DocIDSearch}{Relevance} += 10;
+  }
   my @RevisionDocumentIDs = ();
   my @TopicDocumentIDs = ();
   my @ContentDocumentIDs = ();

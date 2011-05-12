@@ -24,6 +24,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 %SearchWeights = ( # These weights are used to order documents from the simple search
+                  "Document"        => 10,
                   "Author"          => 4,
                   "Topic"           => 3,
                   "DocType"         => 2,
