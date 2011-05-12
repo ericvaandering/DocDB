@@ -1,3 +1,8 @@
+8.8.4
+ Add totals to topic, author tables
+ AuthorSearch.js script now weights responses
+ Quick search on a number returns that document if it exists
+
 8.8.3
  Adjust CSS so that multiple file updates are well separated.
  Add links to document w/o version and public doc are on ShowDocument
