@@ -1,12 +1,13 @@
+#
 #        Name: $RCSfile$
 # Description: Bits of code to do various searches. Some specific, some generic
-
 #    Revision: $Revision$
 #    Modified: $Author$ on $Date$
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -24,7 +25,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 %SearchWeights = ( # These weights are used to order documents from the simple search
-                  "Document"        => 10,
+                  "Document"        => 100,
                   "Author"          => 4,
                   "Topic"           => 3,
                   "DocType"         => 2,

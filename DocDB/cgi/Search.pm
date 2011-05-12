@@ -1,4 +1,5 @@
-#        Name: Search.pm
+#
+#        Name: $RCSfile$
 # Description: Searching is done here, moved out of Search for XML
 #              Three modes of presenting information:
 #              1) mode=date (default, sorted by reverse date, modification date given)
@@ -9,8 +10,9 @@
 #    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -200,7 +202,7 @@ sub LocalSearch ($) {
   my @DocumentIDs = ();
   if ($DocIDSearch) {
     push @DocumentIDs, $DocIDSearch;
-    $Documents{$DocIDSearch}{Relevance} += 10;
+    $Documents{$DocIDSearch}{Relevance} += 100;
   }
   my @RevisionDocumentIDs = ();
   my @TopicDocumentIDs = ();
