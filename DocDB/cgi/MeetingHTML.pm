@@ -276,7 +276,7 @@ sub SessionSeparator ($) {
   my ($MeetingOrderID) = @_;
 
   if ($SessionSeparatorDefault eq "Yes") {
-    print "Break\n";
+    print "Break $MeetingOrderID\n";
   } elsif ($SessionSeparatorDefault eq "No") {
     print "\n";
   } else {
