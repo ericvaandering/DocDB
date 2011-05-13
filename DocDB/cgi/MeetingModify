@@ -93,6 +93,12 @@ my @MeetingOrderIDs      = split /\0/,$params{meetingorderid};
 my @SessionDeletes       = split /\0/,$params{sessiondelete};
 my @SessionShowAlls      = split /\0/,$params{sessionshowall};
 
+push @DebugStack,join " ","MeetingOrderIDs",@MeetingOrderIDs;
+push @DebugStack,join " ","SessionTitles",@SessionTitles;
+push @DebugStack,join " ","RawSessionSeparators",@RawSessionSeparators;
+push @DebugStack,join " ","SessionOrders",@SessionOrders;
+push @DebugStack,"Mode $Mode";
+
 my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
 my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
 
