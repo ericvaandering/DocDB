@@ -311,6 +311,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
            "insert into SessionSeparator ".
            "(SessionSeparatorID, ConferenceID, StartTime, Location, Title, Description) ".
            "values (0,?,?,?,?,?)");
+          push @DebugStack, "Creating break with   $SessionTitle  $MeetingOrderID";
           $SessionSeparatorInsert -> execute($ConferenceID,$SessionDate,$SessionLocation,$SessionTitle,$SessionDescription);
           $SessionSeparatorID = $SessionSeparatorInsert -> {mysql_insertid}; # Works with MySQL only
           push @ActionStack,"Created break: $SessionTitle";
@@ -324,6 +325,7 @@ if ($Mode eq "create" || $Mode eq "modify") {
               -moderatorids => \@ModeratorIDs,   -topicids    => \@TopicIDs,
               -showalltalks => $SessionShowAllFlags{$MeetingOrderID},
           });
+          push @DebugStack, "Creating session with   $SessionTitle  $MeetingOrderID";
           push @ActionStack,"Created session: $SessionTitle";
           ++$SessionsModified;
 	}
