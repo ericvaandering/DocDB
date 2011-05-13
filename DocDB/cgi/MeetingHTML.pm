@@ -278,7 +278,7 @@ sub SessionSeparator ($) {
 
   if ($SessionSeparatorDefault eq "Yes") {
     print "Break $MeetingOrderID\n";
-    print $query -> hidden(-name => "sessionseparator", -default => "$MeetingOrderID");
+    print $query -> checkbox(-name => "sessionseparator", -value => "$MeetingOrderID", -label => 'Break');
   } elsif ($SessionSeparatorDefault eq "No") {
     print "\n";
   } else {
