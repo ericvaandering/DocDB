@@ -1,3 +1,6 @@
+8.7.14
+ Don't put versions on files in meeting display mode
+
 8.7.13
  Fix an old bug where authors were essentially unsorted. Only did the right
  thing by accident.
