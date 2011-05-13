@@ -110,7 +110,7 @@ sub SessionEntryForm (%) {
   my $ConferenceID    =   $Params{-conferenceid}     || 0;
   my $OffsetDays      =   $Params{-offsetdays}       || 0;
   my @MeetingOrderIDs = @{$Params{-meetingorderids}};
-  my $Copy = $TRUE;
+
   print "<table id=\"SessionEntry\" class=\"MedPaddedTable Alternating CenteredTable\">\n";
   print "<thead>\n";
   print "<tr><th colspan=\"5\">\n";
@@ -207,7 +207,6 @@ sub SessionEntryForm (%) {
     $query -> param('meetingorderid',$MeetingOrderID); #FIXME: Try to remove
     print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
 
-    print "$MeetingOrderID";
     SessionOrder();                     print "<br/>\n";
     SessionModifyLink($MeetingOrderID); print "<br/>\n";
     SessionDelete($MeetingOrderID);     print "<br/>\n";
@@ -278,7 +277,6 @@ sub SessionSeparator ($) {
   if ($SessionSeparatorDefault eq "Yes") {
     print "Break\n";
     print $query -> hidden(-name => "sessionseparator", -default => "$MeetingOrderID");
-#     print $query -> checkbox(-name => "sessionseparator", -value => "$MeetingOrderID", -label => 'Break');
   } elsif ($SessionSeparatorDefault eq "No") {
     print "\n";
   } else {

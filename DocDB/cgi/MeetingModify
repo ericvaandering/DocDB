@@ -93,12 +93,6 @@ my @MeetingOrderIDs      = split /\0/,$params{meetingorderid};
 my @SessionDeletes       = split /\0/,$params{sessiondelete};
 my @SessionShowAlls      = split /\0/,$params{sessionshowall};
 
-push @DebugStack,join " ","MeetingOrderIDs",@MeetingOrderIDs;
-push @DebugStack,join " ","SessionTitles",@SessionTitles;
-push @DebugStack,join " ","RawSessionSeparators",@RawSessionSeparators;
-push @DebugStack,join " ","SessionOrders",@SessionOrders;
-push @DebugStack,"Mode $Mode";
-
 my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
 my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
 
@@ -311,7 +305,6 @@ if ($Mode eq "create" || $Mode eq "modify") {
            "insert into SessionSeparator ".
            "(SessionSeparatorID, ConferenceID, StartTime, Location, Title, Description) ".
            "values (0,?,?,?,?,?)");
-          push @DebugStack, "Creating break with   $SessionTitle  $MeetingOrderID";
           $SessionSeparatorInsert -> execute($ConferenceID,$SessionDate,$SessionLocation,$SessionTitle,$SessionDescription);
           $SessionSeparatorID = $SessionSeparatorInsert -> {mysql_insertid}; # Works with MySQL only
           push @ActionStack,"Created break: $SessionTitle";
@@ -325,7 +318,6 @@ if ($Mode eq "create" || $Mode eq "modify") {
               -moderatorids => \@ModeratorIDs,   -topicids    => \@TopicIDs,
               -showalltalks => $SessionShowAllFlags{$MeetingOrderID},
           });
-          push @DebugStack, "Creating session with   $SessionTitle  $MeetingOrderID";
           push @ActionStack,"Created session: $SessionTitle";
           ++$SessionsModified;
 	}
