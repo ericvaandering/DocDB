@@ -7,7 +7,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Stephen Wood (saw@jlab.org), Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -455,7 +455,7 @@ sub PrintSession (%) {
   if (@SessionOrderIDs) {
     my %FieldListOptions = (-default => "Event Agenda", -eventid => $EventID, -eventgroupid => $EventGroupID);
     my %FieldList = PrepareFieldList(%FieldListOptions);
-    DocumentTable(-sessionorderids => \@SessionOrderIDs, -fieldlist => \%FieldList);
+    DocumentTable(-sessionorderids => \@SessionOrderIDs, -fieldlist => \%FieldList, -skipversions => $TRUE);
   } else {
     if ($OnlyTalks) {
       print "<strong>No agenda yet</strong>\n";

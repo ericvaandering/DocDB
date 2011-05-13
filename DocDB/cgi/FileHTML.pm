@@ -70,7 +70,7 @@ sub FileListByRevID {
 
 sub ShortFileListByRevID {
   require "MiscSQL.pm";
-  my ($DocRevID) = @_;
+  my ($DocRevID, $SkipVersions) = @_;
 
   my @FileIDs  = &FetchDocFiles($DocRevID);
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
@@ -83,7 +83,7 @@ sub ShortFileListByRevID {
     }
   }
   if (@RootFiles) {
-    &ShortFileListByFileID(@RootFiles);
+    ShortFileListByFileID({-files => \@RootFiles, -skipversions => $SkipVersions, });
   } else {
     print "None<br/>\n";
   }
@@ -115,7 +115,9 @@ sub FileListByFileID {
 sub ShortFileListByFileID { # FIXME: Make special case of FileListByFileID
   require "Sorts.pm";
 
-  my (@Files) = @_;
+  my ($ArgRef) = @_;
+  my @Files        = exists $ArgRef->{-files}        ? @{$ArgRef->{-files}}       : ();
+  my $SkipVersions = exists $ArgRef->{-skipversions} ?   $ArgRef->{-skipversions} : $FALSE;
 
   @Files = sort FilesByDescription @Files;
 
@@ -124,7 +126,7 @@ sub ShortFileListByFileID { # FIXME: Make special case of FileListByFileID
     my $Version    = $DocRevisions{$DocRevID}{VERSION};
     my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
     my $Link = FileLink( {-maxlength => 20, -format => "short", -docid => $DocumentID, -version => $Version,
-                          -shortname   => $DocFiles{$FileID}{NAME},
+                          -shortname   => $DocFiles{$FileID}{NAME}, -skipversions => $SkipVersions,
                           -description => $DocFiles{$FileID}{DESCRIPTION}} );
     print "$Link<br/>\n";
   }
@@ -133,13 +135,14 @@ sub ShortFileListByFileID { # FIXME: Make special case of FileListByFileID
 sub FileLink ($) {
   my ($ArgRef) = @_;
 
-  my $DocumentID  = exists $ArgRef->{-docid}       ? $ArgRef->{-docid}       : 0;
-  my $Version     = exists $ArgRef->{-version}     ? $ArgRef->{-version}     : 0;
-  my $ShortName   = exists $ArgRef->{-shortname}   ? $ArgRef->{-shortname}   : "";
-  my $Description = exists $ArgRef->{-description} ? $ArgRef->{-description} : "";
-  my $MaxLength   = exists $ArgRef->{-maxlength}   ? $ArgRef->{-maxlength}   : 60;
-  my $MaxExt      = exists $ArgRef->{-maxext}      ? $ArgRef->{-maxext}      : 4;
-  my $Format      = exists $ArgRef->{-format}      ? $ArgRef->{-format}      : "long";
+  my $DocumentID   = exists $ArgRef->{-docid}        ? $ArgRef->{-docid}        : 0;
+  my $Version      = exists $ArgRef->{-version}      ? $ArgRef->{-version}      : 0;
+  my $ShortName    = exists $ArgRef->{-shortname}    ? $ArgRef->{-shortname}    : "";
+  my $Description  = exists $ArgRef->{-description}  ? $ArgRef->{-description}  : "";
+  my $MaxLength    = exists $ArgRef->{-maxlength}    ? $ArgRef->{-maxlength}    : 60;
+  my $MaxExt       = exists $ArgRef->{-maxext}       ? $ArgRef->{-maxext}       : 4;
+  my $Format       = exists $ArgRef->{-format}       ? $ArgRef->{-format}       : "long";
+  my $SkipVersions = exists $ArgRef->{-skipversions} ? $ArgRef->{-skipversions} : $FALSE;
 
   require "FSUtilities.pm";
   require "FileUtilities.pm";
@@ -158,7 +161,10 @@ sub FileLink ($) {
 
   my $URL = $BaseURL.$ShortFile;
   if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $Preferences{Options}{AlwaysRetrieveFile}) {
-    $URL = $RetrieveFile."?docid=".$DocumentID."&amp;version=".$Version."&amp;filename=".$ShortFile;
+    $URL = $RetrieveFile."?docid=".$DocumentID.";filename=".$ShortFile;
+    unless ($SkipVersions) {
+        $URL .= ";version=".$Version;
+    }
   }
 
   my $Link = "";
