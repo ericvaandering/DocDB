@@ -455,7 +455,7 @@ sub PrintSession (%) {
   if (@SessionOrderIDs) {
     my %FieldListOptions = (-default => "Event Agenda", -eventid => $EventID, -eventgroupid => $EventGroupID);
     my %FieldList = PrepareFieldList(%FieldListOptions);
-    DocumentTable(-sessionorderids => \@SessionOrderIDs, -fieldlist => \%FieldList);
+    DocumentTable(-sessionorderids => \@SessionOrderIDs, -fieldlist => \%FieldList, -skipversions => $TRUE);
   } else {
     if ($OnlyTalks) {
       print "<strong>No agenda yet</strong>\n";
