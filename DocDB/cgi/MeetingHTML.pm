@@ -110,7 +110,7 @@ sub SessionEntryForm (%) {
   my $ConferenceID    =   $Params{-conferenceid}     || 0;
   my $OffsetDays      =   $Params{-offsetdays}       || 0;
   my @MeetingOrderIDs = @{$Params{-meetingorderids}};
-
+  my $Copy = $TRUE;
   print "<table id=\"SessionEntry\" class=\"MedPaddedTable Alternating CenteredTable\">\n";
   print "<thead>\n";
   print "<tr><th colspan=\"5\">\n";
@@ -204,6 +204,7 @@ sub SessionEntryForm (%) {
     if ($OffsetDays) {  # We are copying, not modifiying the original
       $query -> param('meetingorderid',"n$SessionOrder"); #FIXME: Try to remove
       print $query -> hidden(-name => 'meetingorderid', -default => "n$SessionOrder");
+      $MeetingOrderID = "n$SessionOrder";
     } else {
       $query -> param('meetingorderid',$MeetingOrderID); #FIXME: Try to remove
       print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
