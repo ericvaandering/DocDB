@@ -82,7 +82,7 @@ sub ShortFileListByRevID {
     }
   }
   if (@RootFiles) {
-    ShortFileListByFileID({-files => @RootFiles, -skipversions => $SkipVersions, });
+    ShortFileListByFileID({-files => \@RootFiles, -skipversions => $SkipVersions, });
   } else {
     print "None<br/>\n";
   }
