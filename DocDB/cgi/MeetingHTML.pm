@@ -208,6 +208,7 @@ sub SessionEntryForm (%) {
       $query -> param('meetingorderid',$MeetingOrderID); #FIXME: Try to remove
       print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
     }
+    print "$MeetingOrderID";
     SessionOrder();                     print "<br/>\n";
     SessionModifyLink($MeetingOrderID); print "<br/>\n";
     SessionDelete($MeetingOrderID);     print "<br/>\n";
