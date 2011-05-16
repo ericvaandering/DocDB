@@ -192,7 +192,7 @@ if ($EmailUserID) {
 
 ### Display of existing groups
 
-  my @EmailUserIDs = sort EmailUserIDsByName GetEmailUserIDs();
+  my @EmailUserIDs = sort EmailUserIDsByUsername GetEmailUserIDs();
 
   print "<table class=\"DocumentList Alternating\">\n";
   print "<tr><th>Name</th><th>Username</th><th>Verified?</th><th>Can Sign?</th><th>Groups</th></tr>\n";
@@ -246,7 +246,7 @@ if ($EmailUserID) {
   my @SecurityGroups = sort keys %SecurityIDs;
 
   foreach my $SecurityGroup (@SecurityGroups) {
-    my @EmailUserIDs = sort EmailUserIDsByName FetchEmailUserIDsBySecurityGroup($SecurityIDs{$SecurityGroup});
+    my @EmailUserIDs = sort EmailUserIDsByUsername FetchEmailUserIDsBySecurityGroup($SecurityIDs{$SecurityGroup});
     if (@EmailUserIDs) {
       print "<p><a name=\"$SecurityGroup\" /><strong>$SecurityGroup has these members:</strong></p>\n<ul>\n";
       foreach my $EmailUserID (@EmailUserIDs) {

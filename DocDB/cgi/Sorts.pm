@@ -7,7 +7,7 @@
 #
 # Author Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -412,6 +412,16 @@ sub EmailUserIDsByName {
    $alast cmp $blast
           or
   $afirst cmp $bfirst;
+}
+
+sub EmailUserIDsByUsername {
+  my $an = $EmailUser{$a}{Username};
+  my $bn = $EmailUser{$b}{Username};
+
+  $an  =~ tr/[A-Z]/[a-z]/;
+  $bn  =~ tr/[A-Z]/[a-z]/;
+
+  $an cmp $bn;
 }
 
 sub EventsByDate { # Do sort by date
