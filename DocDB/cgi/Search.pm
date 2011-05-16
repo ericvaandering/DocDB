@@ -104,13 +104,13 @@ sub LocalSearch ($) {
 
   $SimpleText         =~ s/[^\s\w+-\.]//go;
   $TitleSearch        =~ s/[^\s\w+-\.]//go;
-  $AbstractSearch     =~ s/[^\s\w+-\.]//go;
+  $AbstractSearch     =~ s/[^\s\w+-\.\/]//go;
   $KeywordSearch      =~ s/[^\s\w+-\.]//go;
-  $RevisionNoteSearch =~ s/[^\s\w+-\.]//go;
-  $PubInfoSearch      =~ s/[^\s\w+-\.]//go;
+  $RevisionNoteSearch =~ s/[^\s\w+-\.\/]//go;
+  $PubInfoSearch      =~ s/[^\s\w+-\.\/]//go;
   $FileSearch         =~ s/[^\s\w+-\.]//go;
   $FileDescSearch     =~ s/[^\s\w+-\.]//go;
-  $FileContSearch     =~ s/[^\s\w+-\.]//go;
+  $FileContSearch     =~ s/[^\s\w+-\.\/]//go;
 
   GetTopics();
   GetSecurityGroups();
