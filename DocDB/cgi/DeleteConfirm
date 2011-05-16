@@ -52,6 +52,10 @@ $DocumentID = $params{docid};
 $DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
 $DocumentID =~ s/\s+$//;
 
+my $DelVersion = $params{version};
+$DelVersion =~ s/^\s+//; # Remove leading and trailing spaces
+$DelVersion =~ s/\s+$//;
+
 @ErrorStack = ();
 
 unless ($DocumentID) {
@@ -67,10 +71,10 @@ EndPage(-startpage => $TRUE);
 &GetSecurityGroups;
 &FetchDocument($DocumentID);
 
-$Version = $Documents{$DocumentID}{NVersions}; # Show latest version
+$Version = $DelVersion or $Documents{$DocumentID}{NVersions}; # Show latest version if not supplied
 
 print $query -> header( -charset => $HTTP_ENCODING );
-&DocDBHeader("Confirm Deletion of Document $DocumentID");
+&DocDBHeader("Confirm Deletion of Document $DocumentID-v$DelVersion");
 
 my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 

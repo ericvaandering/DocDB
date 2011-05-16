@@ -87,6 +87,8 @@ if (CanAdminister()) { # Delete Form
   print $query -> submit (-class => "Action", -value => "Delete");
   print " document # ";
   print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
+  print " -v ";
+  print $query -> textfield(-name => "version", -size => 4, -maxlength => 4);
   print "\n</div>\n",$query -> endform,"\n\n";
   print "</li>";
   print "</ul>\n";
