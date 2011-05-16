@@ -1,8 +1,8 @@
 function InsertSignature (name) {
   var value = opener.document.getElementsByName("signofflist")[0].value;
   if (value == '') {
-    value = name;
+    opener.document.getElementsByName("signofflist")[0].value = name;
   } else {
-    value += '\n' +name;
+    opener.document.getElementsByName("signofflist")[0].value += '\n' +name;
   }
 }

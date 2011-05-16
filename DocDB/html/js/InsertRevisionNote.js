@@ -1,8 +1,8 @@
 function InsertRevisionNote (note) {
   var value = document.getElementsByName("revisionnote")[0].value;
   if (value == '') {
-    value = note;
+    document.getElementsByName("revisionnote")[0].value = note;
   } else {
-    value += note;
+    document.getElementsByName("revisionnote")[0].value += note;
   }
 }
