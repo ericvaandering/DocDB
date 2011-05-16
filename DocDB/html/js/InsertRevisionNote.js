@@ -1,5 +1,5 @@
 function InsertRevisionNote (note) {
-  var value = opener.document.getElementsByName("revisionnote")[0].value;
+  var value = document.getElementsByName("revisionnote")[0].value;
   if (value == '') {
     value = note;
   } else {
