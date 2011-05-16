@@ -72,7 +72,11 @@ EndPage(-startpage => $TRUE);
 &GetSecurityGroups;
 &FetchDocument($DocumentID);
 
-$Version = $DelVersion or $Documents{$DocumentID}{NVersions}; # Show latest version if not supplied
+
+my $Version = $Documents{$DocumentID}{NVersions}; # Show latest version if not supplied
+if ($DelVersion) {
+  $Version = $DelVersion;
+}
 
 print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Confirm Deletion of Document $DocumentID-v$DelVersion");
