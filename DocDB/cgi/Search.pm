@@ -102,7 +102,7 @@ sub LocalSearch ($) {
 
   ### Purify input (remove punctuation)
 
-  $SimpleText         =~ s/[^\s\w+-\.\/]//go;
+  $SimpleText         =~ s/[^\s\w+-\.]//go;
   $TitleSearch        =~ s/[^\s\w+-\.]//go;
   $AbstractSearch     =~ s/[^\s\w+-\.\/]//go;
   $KeywordSearch      =~ s/[^\s\w+-\.]//go;
