@@ -1,7 +1,8 @@
 #! /usr/bin/env perl
 #        Name: $RCSfile$
-# Description: Displays the document to be deleted and requests the
-#              admin password. Calls DeleteDocument to delete the doc.
+# Description: Displays the document (or document and version)
+#              to be deleted and requests the admin password.
+#              Calls DeleteDocument to delete the doc.
 #
 #    Revision: $Revision$
 #    Modified: $Author$ on $Date$
@@ -77,6 +78,7 @@ print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Confirm Deletion of Document $DocumentID-v$DelVersion");
 
 my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
+push @DebugStack, "Requested document $DocumentID -v $Version returned DRI $DocRevID";
 
 unless ($DocRevID) {
   push @ErrorStack,"This document does not exist.";
