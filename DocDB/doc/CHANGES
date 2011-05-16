@@ -3,6 +3,9 @@
  AuthorSearch.js script now weights responses
  Quick search on a number returns that document if it exists
  Don't put versions on files in meeting display mode
+ Fix issue where "Schedule Similar" mixed data between sessions
+ Sort list of personal accounts
+ Fix JS issues where project adds a form to HTML
 
 8.8.3
  Adjust CSS so that multiple file updates are well separated.
