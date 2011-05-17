@@ -44,10 +44,8 @@ $DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
 $DocumentID =~ s/\s+$//;
 
 my $Version = $params{version};
-push @DebugStack,"Version is ".$Version.".";
 $Version =~ s/^\s+//; # Remove leading and trailing spaces
 $Version =~ s/\s+$//;
-push @DebugStack,"Version is ".$Version.".";
 
 my $Password      = $params{password};
 my $Username      = $params{admuser};
@@ -80,8 +78,6 @@ $Directory = &GetDirectory($DocumentID, $Version);
 unless ($Version) {
   chop $Directory;chop $Directory;chop $Directory;chop $Directory; # 3 numbers plus /
 }
-push @DebugStack,"Dir to delete: $Directory";
-push @DebugStack,"Version is ".$Version.".";
 
 my $revision_list   = $dbh -> prepare("select DocRevID from DocumentRevision where DocumentID=?");
 my $revision_find   = $dbh -> prepare("select DocRevID from DocumentRevision where DocumentID=? and VersionNumber=?");
@@ -111,13 +107,11 @@ if ($Version) {
 }
 
 my @Revisions = keys %Revision;
-push @DebugStack, "DocRevIDs to delete: ".join ',',@Revisions;
-push @ErrorStack,"Ending";
-EndPage(@ErrorStack);
 unless (@Revisions) {
   print "Document $DocumentID does not exist.\n";
   exit;
 }
+push @DebugStack, "DocRevIDs to delete: ".join ', ',@Revisions;
 
 # Delete stuff from files and linking tables
 
