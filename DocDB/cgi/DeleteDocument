@@ -74,9 +74,11 @@ EndPage(@ErrorStack);
 
 # Get directory and pull off version number
 
-$Directory = &GetDirectory($DocumentID, $Version);
-unless ($Version) {
-  chop $Directory;chop $Directory;chop $Directory;chop $Directory; # 3 numbers plus /
+if ($Version) {
+  $Directory = GetDirectory($DocumentID, $Version);
+} else {
+  $Directory = GetDirectory($DocumentID);
+  chop $Directory; chop $Directory; chop $Directory; chop $Directory; # 3 numbers plus /
 }
 
 my $revision_list   = $dbh -> prepare("select DocRevID from DocumentRevision where DocumentID=?");
