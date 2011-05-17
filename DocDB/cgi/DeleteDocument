@@ -116,6 +116,7 @@ unless (@Revisions) {
 # Delete stuff from files and linking tables
 
 foreach $RevisionID (@Revisions) {
+  push @DebugStack, "Deleting revision $RevisionID";
   $author_delete   -> execute($RevisionID);
   $topic_delete    -> execute($RevisionID);
   $file_delete     -> execute($RevisionID);
@@ -126,6 +127,7 @@ foreach $RevisionID (@Revisions) {
 # Delete revisions and document for full document delete
 
 unless ($Version) {
+  push @DebugStack, "Deleting document $DocumentID";
   $document_delete -> execute($DocumentID);
   $revision_delete -> execute($DocumentID);
 }
@@ -133,6 +135,7 @@ unless ($Version) {
 # Delete stuff from file system
 
 $command = "rm -rf $Directory/*";
+push @DebugStack, "Executing $command";
 system ($command);
 
 if ($Version) {

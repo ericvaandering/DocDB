@@ -6,6 +6,8 @@
  Fix issue where "Schedule Similar" mixed data between sessions
  Sort list of personal accounts
  Fix JS issues where project adds a form to HTML
+ Allow searches for some URLs in advanced search of abstract, etc.
+ Option to delete just one version of a document
 
 8.8.3
  Adjust CSS so that multiple file updates are well separated.
