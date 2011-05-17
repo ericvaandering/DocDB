@@ -84,7 +84,7 @@ push @DebugStack,"Dir to delete: $Directory";
 push @DebugStack,"Version is ".$Version.".";
 
 my $revision_list   = $dbh -> prepare("select DocRevID from DocumentRevision where DocumentID=?");
-my $revision_find   = $dbh -> prepare("select DocRevID from DocumentRevision where DocumentID=? and Version=?");
+my $revision_find   = $dbh -> prepare("select DocRevID from DocumentRevision where DocumentID=? and VersionNumber=?");
 my $document_delete = $dbh -> prepare("delete from Document         where DocumentID=?");
 my $revision_delete = $dbh -> prepare("delete from DocumentRevision where DocumentID=?");
 my $single_delete   = $dbh -> prepare("delete from DocumentRevision where DocRevID=?");
