@@ -82,8 +82,6 @@ unless ($Version) {
 }
 push @DebugStack,"Dir to delete: $Directory";
 push @DebugStack,"Version is ".$Version.".";
-push @ErrorStack,"Ending";
-EndPage(@ErrorStack);
 
 my $revision_list   = $dbh -> prepare("select DocRevID from DocumentRevision where DocumentID=?");
 my $revision_find   = $dbh -> prepare("select DocRevID from DocumentRevision where DocumentID=? and Version=?");
@@ -99,20 +97,23 @@ my $security_delete = $dbh -> prepare("delete from RevisionSecurity where DocRev
 
 my %Revision = ();
 if ($Version) {
-  $revision_list -> execute($DocumentID);
-  $revision_list -> bind_columns(undef, \($DocRevID));
-  while ($revision_list -> fetch) {
-    $Revision{$DocRevID}{DocRevID}      = $DocRevID;
-  }
-} else {
   $revision_find -> execute($DocumentID, $Version);
   $revision_find -> bind_columns(undef, \($DocRevID));
   while ($revision_find -> fetch) {
-    $Revision{$DocRevID}{DocRevID}      = $DocRevID;
+    $Revision{$DocRevID}{DocRevID} = $DocRevID;
+  }
+} else {
+  $revision_list -> execute($DocumentID);
+  $revision_list -> bind_columns(undef, \($DocRevID));
+  while ($revision_list -> fetch) {
+    $Revision{$DocRevID}{DocRevID} = $DocRevID;
   }
 }
+
 my @Revisions = keys %Revision;
 push @DebugStack, "DocRevIDs to delete: ".join ',',@Revisions;
+push @ErrorStack,"Ending";
+EndPage(@ErrorStack);
 unless (@Revisions) {
   print "Document $DocumentID does not exist.\n";
   exit;
