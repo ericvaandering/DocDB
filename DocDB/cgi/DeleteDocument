@@ -47,6 +47,7 @@ my $Version = $params{version};
 push @DebugStack,"Version is ".$Version.".";
 $Version =~ s/^\s+//; # Remove leading and trailing spaces
 $Version =~ s/\s+$//;
+push @DebugStack,"Version is ".$Version.".";
 
 my $Password      = $params{password};
 my $Username      = $params{admuser};
@@ -71,15 +72,18 @@ unless (&CanAdminister) {
   push @ErrorStack,"You must be logged in as the adminstrator to delete
   documents";
 }
-push @ErrorStack,"Ending";
 EndPage(@ErrorStack);
 
 # Get directory and pull off version number
 
-$Directory = &GetDirectory($DocumentID);
+$Directory = &GetDirectory($DocumentID, $Version);
 unless ($Version) {
   chop $Directory;chop $Directory;chop $Directory;chop $Directory; # 3 numbers plus /
 }
+push @DebugStack,"Dir to delete: $Directory";
+push @DebugStack,"Version is ".$Version.".";
+push @ErrorStack,"Ending";
+EndPage(@ErrorStack);
 
 my $revision_list   = $dbh -> prepare("select DocRevID from DocumentRevision where DocumentID=?");
 my $revision_find   = $dbh -> prepare("select DocRevID from DocumentRevision where DocumentID=? and Version=?");
