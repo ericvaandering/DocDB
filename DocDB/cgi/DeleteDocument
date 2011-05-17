@@ -44,6 +44,7 @@ $DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
 $DocumentID =~ s/\s+$//;
 
 my $Version = $params{version};
+push @DebugStack,"Version is ".$Version.".";
 $Version =~ s/^\s+//; # Remove leading and trailing spaces
 $Version =~ s/\s+$//;
 
@@ -70,7 +71,7 @@ unless (&CanAdminister) {
   push @ErrorStack,"You must be logged in as the adminstrator to delete
   documents";
 }
-
+push @ErrorStack,"Ending";
 EndPage(@ErrorStack);
 
 # Get directory and pull off version number
