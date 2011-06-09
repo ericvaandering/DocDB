@@ -7,7 +7,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Stephen Wood (saw@jlab.org), Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -202,12 +202,11 @@ sub SessionEntryForm (%) {
 
     print "<td rowspan=\"2\">";
     if ($OffsetDays) {  # We are copying, not modifiying the original
-      $query -> param('meetingorderid',"n$SessionOrder"); #FIXME: Try to remove
-      print $query -> hidden(-name => 'meetingorderid', -default => "n$SessionOrder");
-    } else {
-      $query -> param('meetingorderid',$MeetingOrderID); #FIXME: Try to remove
-      print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
+      $MeetingOrderID = "n$SessionOrder";
     }
+    $query -> param('meetingorderid',$MeetingOrderID); #FIXME: Try to remove
+    print $query -> hidden(-name => 'meetingorderid', -default => $MeetingOrderID);
+
     SessionOrder();                     print "<br/>\n";
     SessionModifyLink($MeetingOrderID); print "<br/>\n";
     SessionDelete($MeetingOrderID);     print "<br/>\n";
@@ -277,6 +276,7 @@ sub SessionSeparator ($) {
 
   if ($SessionSeparatorDefault eq "Yes") {
     print "Break\n";
+    print $query -> hidden(-name => "sessionseparator", -default => "$MeetingOrderID");
   } elsif ($SessionSeparatorDefault eq "No") {
     print "\n";
   } else {
@@ -455,7 +455,7 @@ sub PrintSession (%) {
   if (@SessionOrderIDs) {
     my %FieldListOptions = (-default => "Event Agenda", -eventid => $EventID, -eventgroupid => $EventGroupID);
     my %FieldList = PrepareFieldList(%FieldListOptions);
-    DocumentTable(-sessionorderids => \@SessionOrderIDs, -fieldlist => \%FieldList);
+    DocumentTable(-sessionorderids => \@SessionOrderIDs, -fieldlist => \%FieldList, -skipversions => $TRUE);
   } else {
     if ($OnlyTalks) {
       print "<strong>No agenda yet</strong>\n";

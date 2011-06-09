@@ -1,9 +1,11 @@
 #
+#        Name: $RCSfile$
 # Description: Routines to create HTML elements for authors and institutions
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
-#
 
 # Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -266,6 +268,10 @@ sub AuthorsTable {
       print "<ul>\n";
     }
     my $AuthorLink = AuthorLink($AuthorID, -format => "formal");
+    my $AuthorCount = "";
+    if ($AuthorCounts{$AuthorID}{Exact}) {
+      $AuthorCount = " ($AuthorCounts{$AuthorID}{Exact})";
+    }
 #    if ($CheckEvent) {
 #      my %Hash = GetEventHashByModerator($AuthorID);
 #      if (%Hash) {
@@ -273,7 +279,7 @@ sub AuthorsTable {
 #      }
 #    }
 
-    print "<li>$AuthorLink</li>\n";
+    print "<li>$AuthorLink$AuthorCount</li>\n";
     $CloseLastColumn = 1;
   }
   print "</ul></td></tr>";

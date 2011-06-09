@@ -7,7 +7,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -186,7 +186,8 @@ sub TopicsTable {
     $TotalSize += $Size;
   }
   foreach my $TopicID (@RootTopicIDs) {
-    my $HTML = TopicListWithChildren({ -topicids => [$TopicID], -maxdepth => $Depth, -helplink => "", -checkevent => $TRUE });
+    my $HTML = TopicListWithChildren({ -topicids => [$TopicID], -maxdepth => $Depth, -helplink => "",
+                                       -checkevent => $TRUE,    -showcount => $TRUE, });
     $List{$TopicID}{HTML} = $HTML;
   }
 
@@ -228,6 +229,7 @@ sub TopicListWithChildren { # Recursive routine
   my $Depth      = exists $ArgRef->{-depth}      ?   $ArgRef->{-depth}      : 1;
   my $MaxDepth   = exists $ArgRef->{-maxdepth}   ?   $ArgRef->{-maxdepth}   : 0;
   my $CheckEvent = exists $ArgRef->{-checkevent} ?   $ArgRef->{-checkevent} : $FALSE; # name or provenance
+  my $ShowCount  = exists $ArgRef->{-showcount}  ?   $ArgRef->{-showcount}  : $FALSE;
   my $Chooser    = exists $ArgRef->{-chooser}    ?   $ArgRef->{-chooser}    : $FALSE;
   my @DefaultTopicIDs = exists $ArgRef->{-defaulttopicids}   ? @{$ArgRef->{-defaulttopicids}}  : ();
   my $HelpLink   = exists $ArgRef->{-helplink}   ?   $ArgRef->{-helplink}   : "topics";
@@ -302,6 +304,9 @@ sub TopicListWithChildren { # Recursive routine
       } else {
         $HTML .= TopicLink( {-topicid => $TopicID} );
       }
+      if ($ShowCount && $TopicCounts{$TopicID}{Exact}) {
+        $HTML .= " ($TopicCounts{$TopicID}{Exact})";
+      }
       if ($Depth == 1 && !$Chooser) {
         $HTML .= "</strong>\n";
       }
@@ -314,7 +319,7 @@ sub TopicListWithChildren { # Recursive routine
       if (@{$TopicChildren{$TopicID}}) {
         $HTML .= "\n";
         $HTML .= TopicListWithChildren({ -topicids => $TopicChildren{$TopicID}, -depth => $Depth+1,
-                                         -maxdepth => $MaxDepth,
+                                         -maxdepth => $MaxDepth, -showcount => $ShowCount,
                                          -chooser  => $Chooser, -defaulttopicids => \@DefaultTopicIDs});
       } elsif ($Depth == 1 && !$Chooser) {
         $HTML .= '<br class="EmptyTopic" />';

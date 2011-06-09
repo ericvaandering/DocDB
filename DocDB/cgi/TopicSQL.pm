@@ -7,7 +7,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 
-# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -30,6 +30,7 @@ sub GetTopics {
   require "TopicUtilities.pm";
 
   %Topics        = ();
+  %TopicCounts   = ();
   %TopicParents  = ();
   %TopicChildren = ();
 
@@ -50,6 +51,24 @@ sub GetTopics {
     push @{$TopicParents{$TopicID}}       ,$ParentTopicID;
     push @{$TopicChildren{$ParentTopicID}},$TopicID;
   }
+
+  # Count how many times each topic is listed
+  my $TopicCount = $dbh -> prepare("select DISTINCT RevisionTopic.TopicID,DocumentRevision.DocumentID ".
+                                   "from RevisionTopic ".
+                                   "LEFT JOIN DocumentRevision on (RevisionTopic.DocRevID=DocumentRevision.DocRevID)");
+  $TopicCount -> execute();
+  $TopicCount -> bind_columns(undef, \($TopicID,$Count));
+  while ($TopicCount -> fetch) {
+    if (exists $TopicCounts{$TopicID}) {
+      ++$TopicCounts{$TopicID}{Exact};
+      ++$TopicCounts{$TopicID}{Total};
+    } else {
+      $TopicCounts{$TopicID}{Exact} = 1;
+      $TopicCounts{$TopicID}{Total} = 1;
+    }
+    # May want to add children to Total
+  }
+
   BuildTopicProvenance();
   $GotAllTopics = 1;
 };

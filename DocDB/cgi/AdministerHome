@@ -1,4 +1,9 @@
 #! /usr/bin/env perl
+#        Name: $RCSfile$
+# Description: Group administrative actions into one page
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
 #
 #      Author: Lynn Garren (garren@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
@@ -87,6 +92,8 @@ if (CanAdminister()) { # Delete Form
   print $query -> submit (-class => "Action", -value => "Delete");
   print " document # ";
   print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
+  print " -v";
+  print $query -> textfield(-name => "version", -size => 4, -maxlength => 4);
   print "\n</div>\n",$query -> endform,"\n\n";
   print "</li>";
   print "</ul>\n";

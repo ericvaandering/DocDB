@@ -1,4 +1,5 @@
-#        Name: Search.pm
+#
+#        Name: $RCSfile$
 # Description: Searching is done here, moved out of Search for XML
 #              Three modes of presenting information:
 #              1) mode=date (default, sorted by reverse date, modification date given)
@@ -9,8 +10,9 @@
 #    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -102,13 +104,13 @@ sub LocalSearch ($) {
 
   $SimpleText         =~ s/[^\s\w+-\.]//go;
   $TitleSearch        =~ s/[^\s\w+-\.]//go;
-  $AbstractSearch     =~ s/[^\s\w+-\.]//go;
+  $AbstractSearch     =~ s/[^\s\w+-\.\/\:]//go;
   $KeywordSearch      =~ s/[^\s\w+-\.]//go;
-  $RevisionNoteSearch =~ s/[^\s\w+-\.]//go;
-  $PubInfoSearch      =~ s/[^\s\w+-\.]//go;
+  $RevisionNoteSearch =~ s/[^\s\w+-\.\/\:]//go;
+  $PubInfoSearch      =~ s/[^\s\w+-\.\/\:]//go;
   $FileSearch         =~ s/[^\s\w+-\.]//go;
   $FileDescSearch     =~ s/[^\s\w+-\.]//go;
-  $FileContSearch     =~ s/[^\s\w+-\.]//go;
+  $FileContSearch     =~ s/[^\s\w+-\.\/\:]//go;
 
   GetTopics();
   GetSecurityGroups();
@@ -146,6 +148,7 @@ sub LocalSearch ($) {
     $OuterLogic        = "OR";
     $IncludeSubTopics  = $TRUE;
 
+    $DocIDSearch            = int($SimpleText);
     $TitleSearch            = $SimpleText;
     $AbstractSearch         = $SimpleText;
     $KeywordSearch          = $SimpleText;
@@ -197,6 +200,10 @@ sub LocalSearch ($) {
   ### Check parameters for errors
 
   my @DocumentIDs = ();
+  if ($DocIDSearch) {
+    push @DocumentIDs, $DocIDSearch;
+    $Documents{$DocIDSearch}{Relevance} += 100;
+  }
   my @RevisionDocumentIDs = ();
   my @TopicDocumentIDs = ();
   my @ContentDocumentIDs = ();

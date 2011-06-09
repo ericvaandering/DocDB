@@ -1,9 +1,19 @@
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+#        Name: $RCSfile$
+# Description: This script provides a form to administer users receiving
+#              e-mail notifications and shows the complete list of who is
+#              receiving what.
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -19,7 +29,7 @@ sub MailNotices (%) {
 
   unless ($MailInstalled) {
     return;
-  }  
+  }
 
   require Mail::Send;
   require Mail::Mailer;
@@ -29,21 +39,21 @@ sub MailNotices (%) {
   require "ResponseElements.pm";
   require "Utilities.pm";
   require "Security.pm";
-  
+
   my (%Params) = @_;
 
   my $DocRevID     =   $Params{-docrevid};
   my $Type         =   $Params{-type}      || "updateunknown";
   my @EmailUserIDs = @{$Params{-emailids}};
-  
+
   FetchDocRevisionByID($DocRevID);
   my $DocumentID = $DocRevisions{$DocRevID}{DOCID};
   my $Version    = $DocRevisions{$DocRevID}{Version};
-  
-# Figure out who cares 
+
+# Figure out who cares
 
   my @Addressees = ();
-  if ($Type eq "update"  || $Type eq "updatedb" || $Type eq "add" || 
+  if ($Type eq "update"  || $Type eq "updatedb" || $Type eq "add" ||
       $Type eq "reserve" || $Type eq "addfiles" || $Type eq "updateunknown") {
     @Addressees = UsersToNotify($DocRevID,{-period => "Immediate"} );
   } elsif ($Type eq "signature") {
@@ -51,7 +61,7 @@ sub MailNotices (%) {
       FetchEmailUser($EmailUserID);
       push @Addressees,$EmailUser{$EmailUserID}{EmailAddress};
     }
-  } elsif ($Type eq "approved") { 
+  } elsif ($Type eq "approved") {
     @Addressees = UsersToNotify($DocRevID,{-period => "Immediate"} );
     my %EmailUsers = ();
     my @SignoffIDs = GetAllSignoffsByDocRevID($DocRevID);
@@ -61,12 +71,12 @@ sub MailNotices (%) {
         my $EmailUserID = $Signatures{$SignatureID}{EmailUserID};
         FetchEmailUser($EmailUserID);
         push @Addressees,$EmailUser{$EmailUserID}{EmailAddress};
-      }  
-    }  
-  } 
-  
+      }
+    }
+  }
+
   @Addressees = Unique(@Addressees);
-  
+
 # If anyone, open the mailer
 
   if (@Addressees) {
@@ -78,13 +88,13 @@ sub MailNotices (%) {
     my $Title  = $DocRevisions{$DocRevID}{Title};
 
     my ($Subject,$Message,$Feedback);
-    
-    if ($Type eq "update"  || $Type eq "updatedb" || $Type eq "add" || 
+
+    if ($Type eq "update"  || $Type eq "updatedb" || $Type eq "add" ||
         $Type eq "reserve" || $Type eq "addfiles" || $Type eq "updateunknown") {
       $Subject  = "$FullID: $Title";
       $Message  = "The following document was added or updated ".
                   "in the $Project Document Database:\n\n";
-      $Feedback = "<b>E-mail sent to: </b>";        
+      $Feedback = "<b>E-mail sent to: </b>";
       if      ($Type eq "update") {
         $Message  = "The following document was updated ".
                     "in the $Project Document Database:\n\n";
@@ -100,7 +110,7 @@ sub MailNotices (%) {
       } elsif ($Type eq "addfiles") {
         $Message  = "Files were added to the following document ".
              "in the $Project Document Database:\n\n";
-      }  
+      }
     } elsif ($Type eq "signature") {
       $Subject  = "Ready for signature: $FullID: $Title";
       $Message  = "The following document ".
@@ -108,14 +118,14 @@ sub MailNotices (%) {
                   "is ready for your signature:\n".
                   "(Note that you may not be able to sign if you share ".
                   "signature authority with someone who has already signed.)\n\n";
-      $Feedback = "<b>Signature(s) requested from: </b>";           
+      $Feedback = "<b>Signature(s) requested from: </b>";
     } elsif ($Type eq "approved") {
       $Subject  = "Approved: $FullID: $Title";
       $Message  = "The following document ".
                   "in the $Project Document Database ".
                   "has been approved (received all necessary signatures).\n\n";
-      $Feedback = "<b>Approval notification sent to: </b>";           
-    }  
+      $Feedback = "<b>Approval notification sent to: </b>";
+    }
 
     $Headers{To} = \@Addressees;
     $Headers{From} = "$Project Document Database <$DBWebMasterEmail>";
@@ -129,9 +139,9 @@ sub MailNotices (%) {
     $Addressees =~ s/\&/\&amp\;/g;
     $Addressees =~ s/</\&lt\;/g;
     $Addressees =~ s/>/\&gt\;/g;
-    
+
     print $Feedback,$Addressees,"<p>";
-  }  
+  }
 }
 
 sub RevisionMailBody ($) {
@@ -144,11 +154,11 @@ sub RevisionMailBody ($) {
   require "Sorts.pm";
 
   FetchDocRevisionByID($DocRevID);
-  
+
   my $Title  = $DocRevisions{$DocRevID}{Title};
   my $FullID = FullDocumentID($DocRevisions{$DocRevID}{DOCID},$DocRevisions{$DocRevID}{VERSION});
   my $URL    = DocumentURL($DocRevisions{$DocRevID}{DOCID});
-  
+
   FetchAuthor($DocRevisions{$DocRevID}{Submitter});
   my $Submitter = $Authors{$DocRevisions{$DocRevID}{Submitter}}{FULLNAME};
 
@@ -157,9 +167,9 @@ sub RevisionMailBody ($) {
   my @AuthorIDs    = AuthorRevIDsToAuthorIDs({ -authorrevids => \@AuthorRevIDs, });
   my @TopicIDs     = GetRevisionTopics({-docrevid => $DocRevID});
   my @EventIDs     = GetRevisionEvents($DocRevID);
-  
-# Build list of authors  
-  
+
+# Build list of authors
+
   my @Authors = ();
   foreach $AuthorID (@AuthorIDs) {
     FetchAuthor($AuthorID);
@@ -169,9 +179,9 @@ sub RevisionMailBody ($) {
     push @Authors,$Authors{$AuthorID}{FULLNAME};
   }
   my $Authors = join ', ',@Authors;
-  
+
 # Build list of topics
-  
+
   my @Topics = ();
   foreach $TopicID (@TopicIDs) {
     FetchTopic({-topicid => $TopicID});
@@ -181,9 +191,9 @@ sub RevisionMailBody ($) {
     push @Topics,$Topics{$TopicID}{Long};
   }
   my $Topics = join ', ',@Topics;
-  
-# Build list of events  
-  
+
+# Build list of events
+
   my @Events = ();
   foreach $EventID (@EventIDs) {
     FetchConferenceByConferenceID($EventID);
@@ -194,10 +204,10 @@ sub RevisionMailBody ($) {
          " (".EuroDate($Conferences{$EventID}{StartDate}).")";
   }
   my $Events = join ', ',@Events;
-  
-  
+
+
   # Construct the mail body
-  
+
   print $Mailer "       Title: ",$DocRevisions{$DocRevID}{Title},"\n";
   print $Mailer " Document ID: ",$FullID,"\n";
   print $Mailer "         URL: ",$URL,"\n";
@@ -207,12 +217,12 @@ sub RevisionMailBody ($) {
   print $Mailer "      Topics: ",$Topics,"\n";
   if ($Events) {
     print $Mailer "      Events: ",$Events,"\n";
-  } 
+  }
   print $Mailer "    Keywords: ",$DocRevisions{$DocRevID}{Keywords},"\n";
   print $Mailer "    Abstract: ",$DocRevisions{$DocRevID}{Abstract},"\n";
   if ($DocRevisions{$DocRevID}{Note}) {
     print $Mailer "       Notes: ",$DocRevisions{$DocRevID}{Note},"\n";
-  }  
+  }
 }
 
 sub UsersToNotify ($$) {
@@ -223,14 +233,14 @@ sub UsersToNotify ($$) {
   require "MeetingSQL.pm";
   require "NotificationSQL.pm";
   require "TopicSQL.pm";
-  
+
   require "Security.pm";
   require "Utilities.pm";
   require "AuthorUtilities.pm";
 
   unless ($Period eq "Immediate" || $Period eq "Daily" || $Period eq "Weekly") {
     return undef;
-  }  
+  }
 
   GetTopics();
 
@@ -248,12 +258,12 @@ sub UsersToNotify ($$) {
     "select EmailUserID from Notification where Period=? and Type=? and TextKey=?");
 
 # Get users interested in this particular document (only immediate)
- 
+
   if ($Period eq "Immediate") {
     $Fetch -> execute("Immediate","Document",$DocumentID);
     $Fetch -> bind_columns(undef,\($UserID));
     while ($Fetch -> fetch) {
-      $UserIDs{$UserID} = 1; 
+      $UserIDs{$UserID} = 1;
     }
   }
 
@@ -263,12 +273,12 @@ sub UsersToNotify ($$) {
   $Fetch -> execute($Period,"AllDocuments",1);
   $Fetch -> bind_columns(undef,\($UserID));
   while ($Fetch -> fetch) {
-    $UserIDs{$UserID} = 1; 
+    $UserIDs{$UserID} = 1;
   }
   $Fetch -> execute($Period,"AllDocuments",0);
   $Fetch -> bind_columns(undef,\($UserID));
   while ($Fetch -> fetch) {
-    $UserIDs{$UserID} = 1; 
+    $UserIDs{$UserID} = 1;
   }
 
 # Get users interested in topics for this reporting period
@@ -276,7 +286,7 @@ sub UsersToNotify ($$) {
   GetTopics();
   my @TopicIDs = ();
   my @InitialTopicIDs = GetRevisionTopics( {-docrevid => $DocRevID} );
-  
+
   foreach my $TopicID (@InitialTopicIDs) {
     push @TopicIDs,@{$TopicProvenance{$TopicID}}; # Add ancestors to list
   }
@@ -285,10 +295,10 @@ sub UsersToNotify ($$) {
     $Fetch -> execute($Period,"Topic",$TopicID);
     $Fetch -> bind_columns(undef,\($UserID));
     while ($Fetch -> fetch) {
-      $UserIDs{$UserID} = 1; 
+      $UserIDs{$UserID} = 1;
     }
-  }  
-    
+  }
+
 # Get users interested in events for this reporting period
 
   my @EventIDs = GetRevisionEvents($DocRevID);
@@ -297,17 +307,17 @@ sub UsersToNotify ($$) {
     $Fetch -> execute($Period,"Event",$EventID);
     $Fetch -> bind_columns(undef,\($UserID));
     while ($Fetch -> fetch) {
-      $UserIDs{$UserID} = 1; 
+      $UserIDs{$UserID} = 1;
     }
 
     my $EventGroupID = $Conferences{$EventID}{EventGroupID};
-    
+
     $Fetch -> execute($Period,"EventGroup",$EventGroupID);
     $Fetch -> bind_columns(undef,\($UserID));
     while ($Fetch -> fetch) {
-      $UserIDs{$UserID} = 1; 
+      $UserIDs{$UserID} = 1;
     }
-  }  
+  }
 
 # Get users interested in authors for this reporting period
 
@@ -317,12 +327,12 @@ sub UsersToNotify ($$) {
     $Fetch -> execute($Period,"Author",$AuthorID);
     $Fetch -> bind_columns(undef,\($UserID));
     while ($Fetch -> fetch) {
-      $UserIDs{$UserID} = 1; 
+      $UserIDs{$UserID} = 1;
     }
-  }  
+  }
 
 # Get users interested in keywords for this reporting period
-    
+
   FetchDocRevisionByID($DocRevID);
   my @Keywords = split /,*\s+/,$DocRevisions{$DocRevID}{Keywords}; # Comma and/or space separated
 
@@ -331,13 +341,13 @@ sub UsersToNotify ($$) {
     $TextFetch -> execute($Period,"Keyword",$Keyword);
     $TextFetch -> bind_columns(undef,\($UserID));
     while ($TextFetch -> fetch) {
-      $UserIDs{$UserID} = 1; 
+      $UserIDs{$UserID} = 1;
     }
-  }  
+  }
 
-# Translate UserIDs into E-mail addresses, 
+# Translate UserIDs into E-mail addresses,
 # verify user is allowed to receive notification
-   
+
   foreach $UserID (keys %UserIDs) {
     my $EmailUserID = FetchEmailUser($UserID);
     if ($EmailUserID && CanAccess($DocumentID,$Version,$EmailUserID)) {
@@ -347,8 +357,8 @@ sub UsersToNotify ($$) {
         push @Addressees,$EmailAddress;
       }
     }
-  } 
-  
+  }
+
   return @Addressees;
 }
 
@@ -360,12 +370,12 @@ sub EmailKeywordForm ($) {
 
   require "FormElements.pm";
 
-  print FormElementTitle(-helplink  => "notifykeyword", -helptext => $Period, 
+  print FormElementTitle(-helplink  => "notifykeyword", -helptext => $Period,
                          -extratext => "(separate with spaces)");
 
   my $Keywords = join ' ',sort @Defaults;
 
-  print $query -> textfield (-name => $Name , -default   => $Keywords, 
+  print $query -> textfield (-name => $Name , -default   => $Keywords,
                              -size => 80,     -maxlength => 400);
 }
 
@@ -378,7 +388,7 @@ sub EmailAllForm ($) {
     print $query -> checkbox(-name => $Name, -checked => 'checked', -value => 1, -label => 'All Documents');
   } else {
     print $query -> checkbox(-name => $Name, -value => 1, -label => 'All Documents');
-  }                             
+  }
 }
 
 sub DisplayNotification ($$;$) {
@@ -398,38 +408,38 @@ sub DisplayNotification ($$;$) {
   my @EventGroupIDs = @{$Notifications{$EmailUserID}{"EventGroup_".$Set}};
   my @Keywords      = @{$Notifications{$EmailUserID}{"Keyword_".$Set}};
   my @AllDocuments  = @{$Notifications{$EmailUserID}{"AllDocuments_".$Set}};
-  
+
   my $NewNotify = (@AllDocuments || @AuthorIDs || @TopicIDs || @EventIDs || @EventGroupIDs || @Keywords);
-                    
+
   if ($NotifyAllTopics || $NewNotify) {
-    print "<b>$Set notifications:</b>\n";  
-    print "<ul>\n";  
+    print "<b>$Set notifications:</b>\n";
+    print "<ul>\n";
   } elsif ($Always) {
-    print "<b>$Set notifications:</b>\n";  
-    print "<ul>\n";  
-    print "<li>None</li>\n";  
+    print "<b>$Set notifications:</b>\n";
+    print "<ul>\n";
+    print "<li>None</li>\n";
     print "</ul>\n";
     return;
   } else {
     return;
   }
-  
-  if (@AllDocuments) { 
-    print "<li>All documents</li>\n";  
-  }  
-  
+
+  if (@AllDocuments) {
+    print "<li>All documents</li>\n";
+  }
+
   foreach my $TopicID (@TopicIDs) {
     print "<li>Topic: ",TopicLink({ -topicid => $TopicID }),"</li>";
   }
-    
+
   foreach my $AuthorID (@AuthorIDs) {
     print "<li> Author: ",AuthorLink($AuthorID),"</li>";
   }
-    
+
   foreach my $EventID (@EventIDs) {
     print "<li>Event: ",EventLink(-eventid => $EventID),"</li>";
   }
-    
+
   foreach my $EventGroupID (@EventGroupIDs) {
     print "<li>Event Group: ",EventGroupLink(-eventgroupid => $EventGroupID),"</li>";
   }
@@ -437,37 +447,37 @@ sub DisplayNotification ($$;$) {
   foreach my $Keyword (@Keywords) {
     print "<li>Keyword: ",KeywordLink($Keyword),"</li>";
   }
-     
-  print "</ul>\n";  
+
+  print "</ul>\n";
 }
 
 sub EmailUserSelect (%) {
   require "Sorts.pm";
   my (%Params) = @_;
-  
+
   my $Disabled = $Params{-disabled}  || "0";
-  my @Defaults = @{$Params{-default}}; 
+  my @Defaults = @{$Params{-default}};
 
   my %Options = ();
   if ($Disabled) {
     $Options{-disabled} = "disabled";
-  }  
-  
+  }
+
   my @EmailUserIDs = &GetEmailUserIDs;
   foreach my $EmailUserID (@EmailUserIDs) {
-    &FetchEmailUser($EmailUserID);  
+    &FetchEmailUser($EmailUserID);
     $EmailUserLabels{$EmailUserID} = $EmailUser{$EmailUserID}{Username};
-  }  
-  
-  @EmailUserIDs = sort EmailUserIDsByName @EmailUserIDs;
-  
-  print FormElementTitle(-helplink => "emailuser", -helptext => "Username"); 
-  print $query -> scrolling_list(-name   => 'emailuserid', 
-                                 -values => \@EmailUserIDs, 
-                                 -labels => \%EmailUserLabels, 
-                                 -size   => 10, -default => \@Defaults, 
+  }
+
+  @EmailUserIDs = sort EmailUserIDsByUsername @EmailUserIDs;
+
+  print FormElementTitle(-helplink => "emailuser", -helptext => "Username");
+  print $query -> scrolling_list(-name   => 'emailuserid',
+                                 -values => \@EmailUserIDs,
+                                 -labels => \%EmailUserLabels,
+                                 -size   => 10, -default => \@Defaults,
                                  %Options);
 
 }
-  
+
 1;

@@ -1,7 +1,8 @@
 function InsertKeyword (name) {
-  if (opener.document.forms[0].keywords.value == '') {
-    opener.document.forms[0].keywords.value = name;
+  var value = opener.document.getElementsByName("keywords")[0].value;
+  if (value == '') {
+    opener.document.getElementsByName("keywords")[0].value = name;
   } else {
-    opener.document.forms[0].keywords.value += ' ' + name;
+    opener.document.getElementsByName("keywords")[0].value += ' ' + name;
   }
 }
