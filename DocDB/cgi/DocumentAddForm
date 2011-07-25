@@ -145,8 +145,10 @@ my %RequiredEntries = ();
 
 $RequiredEntries{Title}     = 1;   # Note that this isn't completely
 $RequiredEntries{Abstract}  = 1;   # functional. Some of these variables
-$RequiredEntries{Keyword}   = 0;   # aren't passed, and of those that are
-$RequiredEntries{Note}      = 0;   # some may be ignored.
+$RequiredEntries{Keyword}   = 0;   # aren't passed, and of those that are some may be ignored.
+if ($Preferences{Options}{Update}{RequireNote} && ($mode eq "update" || $mode eq "updatedb")){
+  $RequiredEntries{Note} = 1;
+}
 $RequiredEntries{File}      = 1;   #
 $RequiredEntries{Type}      = 1;   # After the defaults are set a hook could
 $RequiredEntries{Requester} = 1;   # be installed to change these based on
@@ -202,7 +204,9 @@ if ($mode eq "update" || $mode eq "updatedb" || $mode eq "clone") { # Need to re
   $TitleDefault        = $DocRevisions{$DocRevID}{Title};
   $PubInfoDefault      = $DocRevisions{$DocRevID}{PUBINFO};
   $AbstractDefault     = $DocRevisions{$DocRevID}{Abstract};
-  $RequesterDefault    = $DocRevisions{$DocRevID}{Submitter};
+  if (not $Preferences{Options}{Update}{RequireSubmitter}) {
+    $RequesterDefault  = $DocRevisions{$DocRevID}{Submitter};
+  }
   $KeywordsDefault     = $DocRevisions{$DocRevID}{Keywords};
   $RevisionNoteDefault = $DocRevisions{$DocRevID}{Note};
   $DocTypeIDDefault    = $DocRevisions{$DocRevID}{DocTypeID};
