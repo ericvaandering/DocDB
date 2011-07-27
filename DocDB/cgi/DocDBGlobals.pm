@@ -1,4 +1,4 @@
-#
+#        Name: $RCSfile$
 # Description: Configuration file for the DocDB. Sets default
 #              values and script names. Do not change this file,
 #              specific local settings are in ProjectGlobals.pm.
@@ -7,7 +7,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 #
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -97,6 +97,10 @@ $Preferences{Options}{DynamicFullList}{Public}  = $FALSE; # Generate Full docume
 $Preferences{Options}{AlwaysRetrieveFile}       = $FALSE; # Always use RetrieveFile instead of File Links
 
 $Preferences{Options}{SubmitAgree}              = ""; # "Put text here to make users agree to a privacy statement or some-such. <br/><b>I agree:</b>"
+
+# On updates of documents, require an entry in the note field and/or zero out the submitter and require a new entry
+$Preferences{Options}{Update}{RequireNote}      = $FALSE;
+$Preferences{Options}{Update}{RequireSubmitter} = $FALSE;
 
 $Preferences{Components}{iCal}  = $TRUE; # Display links to iCal calendars
 

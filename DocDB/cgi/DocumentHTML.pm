@@ -41,6 +41,7 @@ sub DocumentTable (%) {
   my $MaxDocs         =   $Params{-maxdocs};
   my $NoneBehavior    =   $Params{-nonebehavior} || "skip";  # skip|
   my $TalkID          =   $Params{-talkid} || 0;
+  my $SkipVersions    =   $Params{-skipversions} || $False;
   my @DocumentIDs     = @{$Params{-docids}};
   my @SessionOrderIDs = @{$Params{-sessionorderids}};
   my %FieldList       = %{$Params{-fieldlist}};
@@ -266,7 +267,7 @@ sub DocumentTable (%) {
         print AddLineBreaks(URLify($DocRevisions{$DocRevID}{Note}));
       } elsif ($Field eq "Files") {    # Files in document
         require "FileHTML.pm";
-        ShortFileListByRevID($DocRevID);
+        ShortFileListByRevID($DocRevID, $SkipVersions);
       } elsif ($Field eq "Confirm") {
         print $query -> start_multipart_form('POST',$ConfirmTalkHint);
         print "<div>\n";

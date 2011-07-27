@@ -8,7 +8,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -140,6 +140,10 @@ if ($mode eq "reserve") {
   $RequiredEntries{Abstract}  = 0;
 }
 
+if ($Preferences{Options}{Update}{RequireNote} && ($mode eq "update" || $mode eq "updatedb")){
+  $RequiredEntries{Note} = 1;
+}
+
 my $DocRevID;
 
 if ($mode eq "update" || $mode eq "updatedb") {
@@ -177,7 +181,9 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   $TitleDefault        = $DocRevisions{$DocRevID}{Title};
   $PubInfoDefault      = $DocRevisions{$DocRevID}{PUBINFO};
   $AbstractDefault     = $DocRevisions{$DocRevID}{Abstract};
-  $RequesterDefault    = $DocRevisions{$DocRevID}{Submitter};
+  if (not $Preferences{Options}{Update}{RequireSubmitter}) {
+    $RequesterDefault  = $DocRevisions{$DocRevID}{Submitter};
+  }
   $KeywordsDefault     = $DocRevisions{$DocRevID}{Keywords};
   $RevisionNoteDefault = $DocRevisions{$DocRevID}{Note};
   $DocTypeIDDefault    = $DocRevisions{$DocRevID}{DocTypeID};

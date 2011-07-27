@@ -1,12 +1,12 @@
 #        Name: $RCSfile$
-# Description: 
+# Description:
+#
 #    Revision: $Revision$
 #    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -60,6 +60,7 @@ sub RevisionNoteBox {
   my (%Params) = @_;
   my $Default  = $Params{-default}  || "";
   my $JSInsert = $Params{-jsinsert} || "";
+  my $Required = $Params{-required} || 0;
   print "<a name=\"RevisionNote\" />";
 
   my $ExtraText = "";
