@@ -225,6 +225,12 @@ unless ($params{title}) {
   push @ErrorStack,"You must supply a title for this document.";
 }
 
+if ($mode eq "update" || $mode eq "updatedb") {
+  if ($Preferences{Options}{Update}{RequireNote} && !$RevisionNote) {
+    push @ErrorStack,"You must supply a note when updating this document.";
+  }
+}
+
 if (@JournalIDs || @Volumes || @Pages) {
   my @TestJournalIDs = @JournalIDs;
   my @TestVolumes    = @Volumes;

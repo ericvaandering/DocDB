@@ -105,6 +105,10 @@ $Preferences{Options}{AlwaysRetrieveFile}       = $FALSE; # Always use RetrieveF
 
 $Preferences{Options}{SubmitAgree}              = ""; # "Put text here to make users agree to a privacy statement or some-such. <br/><b>I agree:</b>"
 
+# On updates of documents, require an entry in the note field and/or zero out the submitter and require a new entry
+$Preferences{Options}{Update}{RequireNote}      = $FALSE;
+$Preferences{Options}{Update}{RequireSubmitter} = $FALSE;
+
 $Preferences{Components}{iCal}             = $TRUE; # Display links to iCal calendars
 $Preferences{Components}{AgendaMaker}      = $TRUE; # Sessions for events
 $Preferences{Components}{Calendar}         = $TRUE; # Calendar

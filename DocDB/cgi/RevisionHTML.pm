@@ -72,6 +72,7 @@ sub RevisionNoteBox {
   my (%Params) = @_;
   my $Default  = $Params{-default}  || "";
   my $JSInsert = $Params{-jsinsert} || "";
+  my $Required = $Params{-required} || 0;
   print "<a name=\"RevisionNote\" />";
 
   my $ExtraText = "";
@@ -92,8 +93,14 @@ sub RevisionNoteBox {
                                        -extratext => $ExtraText,
                                        -required  => $Required );
   print $ElementTitle,"\n";
-  print $query -> textarea (-name => 'revisionnote', -default => $Default,
-                            -columns => 60, -rows => 2);
+  my %FieldParams = (-name    => 'revisionnote', -default => $Default,
+                     -rows    => 2, -columns => 60);
+  if ($Required) {
+    $FieldParams{'-class'} = "required";
+  }
+  print $query -> textarea(%FieldParams);
+#   print $query -> textarea (-name => 'revisionnote', -default => $Default,
+#                             -columns => 60, -rows => 2);
 };
 
 sub DocTypeButtons (%) {
