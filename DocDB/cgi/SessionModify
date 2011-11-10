@@ -63,7 +63,7 @@ $query = new CGI;  # Global for subroutines
 
 %params = $query -> Vars;
 foreach my $Keyword (keys %params) {
-  $params{$keyword} = CGI::escapeHTML($params{$Keyword});
+  $params{$Keyword} = CGI::escapeHTML($params{$Keyword});
 }
 $query -> delete_all(); # Stop program from caching variable from script to script
 

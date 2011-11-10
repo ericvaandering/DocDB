@@ -72,7 +72,7 @@ GetSecurityGroups();
 
 %params = $query -> Vars;
 foreach my $Keyword (keys %params) {
-  $params{$keyword} = CGI::escapeHTML($params{$Keyword});
+  $params{$Keyword} = CGI::escapeHTML($params{$Keyword});
 }
 $mode = $params{mode}; #FIXME: Remove
 $Mode = $params{mode};

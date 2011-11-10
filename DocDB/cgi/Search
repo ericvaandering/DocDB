@@ -41,7 +41,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 my %CGIParams = $query -> Vars;
 foreach my $Keyword (keys %CGIParams) {
-  $CGIParams{$keyword} = CGI::escapeHTML($CGIParams{$Keyword});
+  $CGIParams{$Keyword} = CGI::escapeHTML($CGIParams{$Keyword});
 }
 
 ### Pull info out of params into local variables

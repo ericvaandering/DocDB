@@ -45,7 +45,7 @@ my $Twig = XML::Twig -> new();
 $query = new CGI;  # Global for subroutines
 my %CGIParams = $query -> Vars;
 foreach my $Keyword (keys %CGIParams) {
-  $CGIParams{$keyword} = CGI::escapeHTML($CGIParams{$Keyword});
+  $CGIParams{$Keyword} = CGI::escapeHTML($CGIParams{$Keyword});
 }
 CreateConnection(-type => "rw");
 
