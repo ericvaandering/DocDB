@@ -504,7 +504,7 @@ HTML
   if ($UseSignoffs) {
    print "<a name=\"signoff\" /><h1>Document Signoffs</h1>\n";
 
-   print "<p>An optional component of DocDB is to allow some documents to be <q>signed</q>
+   print "<p>An optional component of DocDB is to allow some documents to be <q>signed</q> or <q>approved</q>
    by a group of people before becoming <q>approved.</q> People with <strong>Personal
    Accounts</strong> can sign documents. The list of people needing to approve a
    document is editable by the same groups that can edit the document itself.</p>
@@ -512,20 +512,12 @@ HTML
    To <q>freeze</q> a document and its meta-information such that only
    <q>managers</q> can modify it or unfreeze it, ask the
    <a href=\"mailto:$DBWebMasterEmail\">DocDB
-   administrators</a> for the procedure.</p>\n";
+   administrators</a> for the procedure. The administrators can also add or subtract from the list of possible approvers.</p>\n";
 
    print "<p>When displaying document version(s) in a list, there are obvious indications of
   which documents are approved, which are unapproved, and which are obsolete
   (even if they were approved at some time). All information about who <q>signed</q>'
   each version of each document is kept.</p>\n";
-
-   print "<p>DocDB contains the ability to allow any number of approval <q>topologies.</q>
-  For instance, person A or person B might be allowed to sign at the first step,
-  followed by person C at the second step. Or, person A and person B may both have to
-  sign (but in parallel) before person C can sign. However, the current DocDB code only
-  allows one topology (an ordered list). When a document under control is
-  updated, the signoff list structure is preserved, but the approvals themselves
-  are cleared.</p>\n";
 
    print "<p>The signoff system provides a number of additional convieniences:</p>
   <ul>
@@ -535,16 +527,61 @@ HTML
     <li>List of all documents a person is a signatory (actual or requested) on</li>
   </ul>\n";
 
-   print "<p>A number of other features are planned and will be added as needed:</p>
-  <ul>
-    <li>Email reports of outstanding signatures needed (to desired signatory and
-      other signatories of documents)</li>
-    <li>More complicated approval topolgies (OR's, parallel paths, etc.)</li>
-    <li>Reminders if a document goes unsigned for a while</li>
-    <li>Restricting the list of people who may sign documents to a sub-set of those with
-    personal accounts</li>
-  </ul>\n";
-  }
+   print <<HTML;
+
+   <p>How signature lists work varies a bit based on the action you are taking with a document.</p>
+   <h2>New Documents</h2>
+
+    <p>On the new document page is a box labeled 'Signoffs'.
+    There is also a link ('Signoff Chooser') to the list of all people that have
+    been enabled to be approvers for DocDB.</p>
+
+    <p>If the submitter chooses to enable signoffs for a document, click the
+    'Signoff Chooser'
+    link and pick one or more individuals to approve the document.  You can
+    do this by selecting the names on the pop-up window in the order in which
+    the approvals should occur.  Approvers will be sent e-mail in that order.</p>
+
+    <p>The status of the document will be 'Unapproved' until signoffs are
+    completed.  The list of selected approvers is at the bottom of the DocDB
+    page for the document, and includes the status of the signoff process.</p>
+
+
+   <h2>Updating Documents</h2>
+
+    <p>When updating a document, you are allowed to change the approvers required,
+    including
+    removing all approvers.  Then update the document as needed and any signoffs
+    will be
+    handled as for new documents. All necessary approvals are set to unapproved
+    for the new version of the document.</p>
+
+
+   <h2>Updating Metadata</h2>
+    <p>When updating metadata, you are allowed to change the approvers required,
+    including
+    removing all approvers.  Then update the metadata as needed. All necessary approvals are set to unapproved
+    for the document.</p>
+
+
+
+    <h2>Adding Files to a Document</h2>
+    <p>Adding a file does not allow any changes to the list of approvers.
+    All necessary approvals are set to unapproved
+    for the document.</p>
+
+
+    <h2>Approvers</h2>
+    <p>Approvers will receive an e-mail requesting they 'sign' the document. A URL
+    of the document page
+    is included in the e-mail. This document page contains a button to press
+    (and possibly a password to enter) next
+    to the name of the approver.  Once all approvers have 'signed' the document, the status
+    will change to 'Approved'.</p>
+
+HTML
+
+}
 
   print <<HTML;
 
