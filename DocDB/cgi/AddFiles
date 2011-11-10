@@ -8,7 +8,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -62,6 +62,9 @@ $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass
 ### Set up, give user initial information
 
 %params = $query -> Vars;
+foreach my $Keyword (keys %params) {
+  $params{$keyword} = CGI::escapeHTML($params{$Keyword});
+}
 
 print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("$Project File Addition Results","File Addition Results");

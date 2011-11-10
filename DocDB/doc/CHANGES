@@ -2,6 +2,7 @@
  Fix consistentcy issues between submitter and requester
  No security by default should default to user's security, not public
  StreamFile: change to using 'print' instead of 'sysprint' in the StreamFile routine
+ Fix several possible instances of XSS
 
 8.7.14
  Don't put versions on files in meeting display mode

@@ -71,6 +71,9 @@ GetSecurityGroups();
 ### Set up, give user initial information
 
 %params = $query -> Vars;
+foreach my $Keyword (keys %params) {
+  $params{$keyword} = CGI::escapeHTML($params{$Keyword});
+}
 $mode = $params{mode}; #FIXME: Remove
 $Mode = $params{mode};
 
