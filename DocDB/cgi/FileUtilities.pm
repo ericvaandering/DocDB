@@ -200,8 +200,6 @@ sub StreamFile (%) {
 
     my @Parts = split /\//,$File;
     my $ShortFile = pop @Parts;
-    select STDOUT;
-    $| = 1;
 
     my $AttachmentString = "";
     if (defined($Preferences{Options}{FileEndingsForAttachment})) {
@@ -215,6 +213,9 @@ sub StreamFile (%) {
     print "Content-Type: $MimeType\n", # Print header
           "Content-Disposition: $AttachmentString filename=\"$ShortFile\"\n",
           "Content-Length: $Size\n\n";
+
+    select STDOUT;
+    $| = 1;
 
     open OUT, "<$File" or die "Cannot open File\n";
     binmode OUT if -B $File;
