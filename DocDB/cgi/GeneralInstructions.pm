@@ -6,7 +6,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 #    Additional Text: Marcia Teckenbrock
 
 #    This file is part of DocDB.
@@ -335,7 +335,7 @@ HTML
   When <strong>reserving</strong> a document, you must supply:</p>
   <ul>
    <li>A title </li>
-   <li>A requester (who is requesting the document?)</li>
+   <li>A submitter (who is requesting or uoloading the document?)</li>
    <li>A document type (talk, note, etc.)</li>
   </ul>
 
@@ -475,7 +475,7 @@ HTML
   forms to your liking and to save some typing by telling the database who you
   are. </p>
 
-  <p>Once the database knows who you are, your name will be pre-selected as the requester and
+  <p>Once the database knows who you are, your name will be pre-selected as the submitter and
   author of new documents. You can, of course, change this setting to enter
   documents by people other than (or in addition to) yourself.</p>
 
