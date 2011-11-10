@@ -341,6 +341,10 @@ if ($#securities > 0) {
   }
 }
 
+if ($#securities < 0) {
+  @securities = FindUsersGroups();
+}
+
 my $ViewCheck = "create"; # Create/view are the same, check for more restrictive
 if ($EnhancedSecurity) {
   $ViewCheck = "view";
