@@ -3,7 +3,7 @@
 #    Revision: $Revision$
 #    Modified: $Author$ on $Date$
 #
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
