@@ -516,7 +516,7 @@ HTML
 
    print "<p>When displaying document version(s) in a list, there are obvious indications of
   which documents are approved, which are unapproved, and which are obsolete
-  (even if they were approved at some time). All information about who <q>signed</q>'
+  (even if they were approved at some time). All information about who <q>signed</q>
   each version of each document is kept.</p>\n";
 
    print "<p>The signoff system provides a number of additional convieniences:</p>
@@ -532,17 +532,17 @@ HTML
    <p>How signature lists work varies a bit based on the action you are taking with a document.</p>
    <h2>New Documents</h2>
 
-    <p>On the new document page is a box labeled 'Signoffs'.
-    There is also a link ('Signoff Chooser') to the list of all people that have
+    <p>On the new document page is a box labeled <q>Signoffs</q>.
+    There is also a link (<q>Signoff Chooser</q>) to the list of all people that have
     been enabled to be approvers for DocDB.</p>
 
     <p>If the submitter chooses to enable signoffs for a document, click the
-    'Signoff Chooser'
+    <q>Signoff Chooser</q>
     link and pick one or more individuals to approve the document.  You can
     do this by selecting the names on the pop-up window in the order in which
     the approvals should occur.  Approvers will be sent e-mail in that order.</p>
 
-    <p>The status of the document will be 'Unapproved' until signoffs are
+    <p>The status of the document will be <q>Unapproved</q> until signoffs are
     completed.  The list of selected approvers is at the bottom of the DocDB
     page for the document, and includes the status of the signoff process.</p>
 
@@ -572,12 +572,12 @@ HTML
 
 
     <h2>Approvers</h2>
-    <p>Approvers will receive an e-mail requesting they 'sign' the document. A URL
+    <p>Approvers will receive an e-mail requesting they sign the document. A URL
     of the document page
     is included in the e-mail. This document page contains a button to press
     (and possibly a password to enter) next
-    to the name of the approver.  Once all approvers have 'signed' the document, the status
-    will change to 'Approved'.</p>
+    to the name of the approver.  Once all approvers have signed the document, the status
+    will change to <q>Approved</q>.</p>
 
 HTML
 
