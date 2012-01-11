@@ -1,4 +1,5 @@
 8.7.15
+ Cache timezone name, fix apparent issues with DateTime constructor
  Fix consistentcy issues between submitter and requester
  No security by default should default to user's security, not public
  StreamFile: change to using 'print' instead of 'sysprint' in the StreamFile routine

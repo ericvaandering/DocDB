@@ -26,6 +26,8 @@
 
 # Constants
 
+use DateTime;
+$LocalTimezone = DateTime::TimeZone->new(name => 'local');
 $TRUE  = 1;
 $FALSE = 0;
 

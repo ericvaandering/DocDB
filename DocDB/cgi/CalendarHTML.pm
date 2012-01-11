@@ -70,7 +70,7 @@ sub PrintCalendar {
   my $DaysInMonth = DateTime -> last_day_of_month(year => $Year, month => $Month) -> day();
   my $FirstDay    = DateTime -> new(year => $Year, month => $Month, day => 1);
   my $MonthName   = $FirstDay -> month_name();
-  my $Today       = DateTime ->today(time_zone => 'local');
+  my $Today       = DateTime ->today(time_zone => $LocalTimezone);
 
   my $Class = "ByMonth";
   if ($Type eq "year") {
