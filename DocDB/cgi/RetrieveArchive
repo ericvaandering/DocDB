@@ -7,7 +7,7 @@
 #    Modified:
 #
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -103,14 +103,14 @@ unless (@ErrorStack) {
 
   if ($Type eq "tar.gz") {
     if ($GTar) {
-      $Status = system("$GTar czf $TmpFile -C $Directory .");
+      $Status = system("$GTar czf $TmpFile --exclude='.htaccess' -C $Directory .");
     } elsif ($Tar && $GZip) {
-      $Status = system("$Tar cf - $Directory | $GZip > $TmpFile");
+      $Status = system("$Tar cf - --exclude='.htaccess' $Directory | $GZip > $TmpFile");
     }
   } elsif ($Type eq "tar") {
-    $Status = system("$Tar cf $TmpFile $Directory");
+    $Status = system("$Tar cf --exclude='.htaccess' $TmpFile $Directory");
   } elsif ($Type eq "zip") {
-    $Status = system("$Zip $TmpFile $Directory/*");
+    $Status = system("$Zip $TmpFile --exclude .htaccess $Directory/*");
   }
   if ($Status) {
     push @ErrorStack,"There was a problem creating the archive. Please contact an administrator.";
@@ -126,5 +126,6 @@ if (@ErrorStack || @WarnStack) { # There was a problem. Warn the user.
   DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 } else {
   StreamFile(-file => $TmpFile);
+  unlink($TmpFile);
 }
 

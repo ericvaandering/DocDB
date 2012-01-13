@@ -96,7 +96,7 @@ sub ConvertToDateTime {
     }
     $DateTime = DateTime -> new(year => $Year, month  => $Month,  day => $Day,
                                 hour => $Hour, minute => $Min, second => $Sec,
-                                time_zone => 'local');
+                                time_zone => $LocalTimezone);
   } elsif ($OldTimeStamp) {
     my $Year  = substr  $OldTimeStamp,0,4;
     my $Month = substr  $OldTimeStamp,4,2;
@@ -106,7 +106,7 @@ sub ConvertToDateTime {
     my $Sec   = substr  $OldTimeStamp,12,2;
     $DateTime = DateTime -> new(year => $Year, month  => $Month,  day => $Day,
                                 hour => $Hour, minute => $Min, second => $Sec,
-                                time_zone => 'local');
+                                time_zone => $LocalTimezone);
   }
 
   return $DateTime;

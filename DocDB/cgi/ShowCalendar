@@ -69,7 +69,7 @@ my $WindowStart;
 my $WindowEnd;
 my $WindowDays;
 my $EventTableStart;
-my $Today = DateTime -> now(time_zone => 'local');
+my $Today = DateTime -> now(time_zone => $LocalTimezone);
 
 push @DebugStack, "Today is ".$Today -> iso8601;
 
