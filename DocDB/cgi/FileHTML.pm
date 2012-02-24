@@ -6,7 +6,7 @@
 #    Modified:
 #
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2012 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -23,6 +23,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+use HTML::Entities;
 
 sub FileListByRevID {
   require "MiscSQL.pm";
@@ -342,7 +343,8 @@ sub FileUploadBox (%) {
     print "</th>\n";
     print "<td>\n";
     print $query -> textfield (-name      => $DescName, -size    => 60,
-                               -maxlength => 128,       -default => $DefaultDesc);
+                               -maxlength => 128,
+                               -default => HTML::Entities::decode($DefaultDesc));
 
     if ($DocFiles{$FileID}{ROOT} || !$FileID) {
       print $query -> checkbox(-name => $MainName, -checked => 'checked', -label => '');

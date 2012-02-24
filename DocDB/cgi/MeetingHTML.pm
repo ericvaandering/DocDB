@@ -7,7 +7,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Stephen Wood (saw@jlab.org), Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2012 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -23,6 +23,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+use HTML::Entities;
 
 sub LocationBox (;%) {
   require "FormElements.pm";
@@ -43,7 +45,7 @@ sub LocationBox (;%) {
                                        -helptext  => "Location",
                                        -required  => $Required );
   print $ElementTitle,"\n";
-  print $query -> textfield (-name => 'location', -default => $Default,
+  print $query -> textfield (-name => 'location', -default => HTML::Entities::decode($Default),
                              -size => 40, -maxlength => 64, $Booleans);
   print "</div>\n";
 };
@@ -67,7 +69,7 @@ sub EventURLBox (;%) {
                                        -helptext  => "URL",
                                        -required  => $Required );
   print $ElementTitle,"\n";
-  print $query -> textfield (-name => 'url', -default => $Default,
+  print $query -> textfield (-name => 'url', -default => HTML::Entities::decode($Default),
                              -size => 40, -maxlength => 240, $Booleans);
   print "</div>\n";
 };
@@ -77,7 +79,7 @@ sub ConferencePreambleBox {
   my $ElementTitle = &FormElementTitle(-helplink  => "meetpreepi",
                                        -helptext  => "Event Preamble");
   print $ElementTitle,"\n";
-  print $query -> textarea (-name => 'meetpreamble', -default => $MeetingDefaultPreamble,
+  print $query -> textarea (-name => 'meetpreamble', -default => HTML::Entities::decode($MeetingDefaultPreamble),
                             -columns => 50, -rows => 7);
 };
 
@@ -86,7 +88,7 @@ sub ConferenceEpilogueBox {
   my $ElementTitle = &FormElementTitle(-helplink  => "meetpreepi",
                                        -helptext  => "Event Epilogue");
   print $ElementTitle,"\n";
-  print $query -> textarea (-name => 'meetepilogue', -default => $MeetingDefaultEpilogue,
+  print $query -> textarea (-name => 'meetepilogue', -default => HTML::Entities::decode($MeetingDefaultEpilogue),
                             -columns => 50, -rows => 7);
 };
 
@@ -307,12 +309,13 @@ sub SessionModifyLink ($) {
 sub SessionTitle ($) {
   $query -> param('sessiontitle',$SessionDefaultTitle);
   print $query -> textfield (-name => 'sessiontitle', -size => 40, -maxlength => 128,
-                             -default => $SessionDefaultTitle);
+                             -default => HTML::Entities::decode($SessionDefaultTitle));
 }
 
 sub SessionDescription {
   $query -> param('sessiondescription',$SessionDefaultDescription);
-  print $query -> textarea (-name => 'sessiondescription',-value => $SessionDefaultDescription,
+  print $query -> textarea (-name => 'sessiondescription',
+                            -value => HTML::Entities::decode($SessionDefaultDescription),
                             -columns => 40, -rows => 3);
 }
 

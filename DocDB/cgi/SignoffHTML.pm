@@ -6,7 +6,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2012 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -23,10 +23,12 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+use HTML::Entities;
+
 sub SignoffBox { # Just a text box for now with a list of names
   my (%Params) = @_;
 
-  my $Default  = $Params{-default}  || "";
+  my $Default  = HTML::Entities::decode($Params{-default}) || "";
 
   my $ChooserLink  = "- <a href=\"Javascript:signoffchooserwindow(\'$SignoffChooser\');\">".
         "<b>Signoff Chooser</b></a>";

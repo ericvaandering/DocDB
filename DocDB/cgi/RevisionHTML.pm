@@ -6,7 +6,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2012 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -23,6 +23,8 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+use HTML::Entities;
+
 sub TitleBox (%) {
   my (%Params) = @_;
   #FIXME: Get rid of global default
@@ -32,8 +34,10 @@ sub TitleBox (%) {
   my $ElementTitle = &FormElementTitle(-helplink  => "title" ,
                                        -helptext  => "Title" ,
                                        -required  => $Required );
+
+  my $Default = HTML::Entities::decode($TitleDefault);
   print $ElementTitle,"\n";
-  print $query -> textfield (-name => 'title', -default => $TitleDefault,
+  print $query -> textfield (-name => 'title', -default => $Default,
                              -size => 70, -maxlength => 240);
 };
 
@@ -51,14 +55,16 @@ sub AbstractBox (%) {
   my $ElementTitle = &FormElementTitle(-helplink  => $HelpLink ,
                                        -helptext  => $HelpText ,
                                        -required  => $Required );
+
+  my $Default = HTML::Entities::decode($AbstractDefault);
   print $ElementTitle,"\n";
-  print $query -> textarea (-name    => $Name, -default => $AbstractDefault,
+  print $query -> textarea (-name    => $Name, -default => $Default,
                             -rows    => $Rows, -columns => $Columns);
 };
 
 sub RevisionNoteBox {
   my (%Params) = @_;
-  my $Default  = $Params{-default}  || "";
+  my $Default  = HTML::Entities::decode($Params{-default}) || "";
   my $JSInsert = $Params{-jsinsert} || "";
   my $Required = $Params{-required} || 0;
   print "<a name=\"RevisionNote\" />";

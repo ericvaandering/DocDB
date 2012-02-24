@@ -4,7 +4,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Stephen Wood (saw@jlab.org)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2012 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -20,6 +20,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+use HTML::Entities;
 
 sub TalkEntryForm (@) {
   require "FormElements.pm";
@@ -143,12 +145,12 @@ sub TalkEntryForm (@) {
 sub TalkTitle ($) {
   $query -> param('talktitle',$TalkDefaultTitle);
   print $query -> textfield (-name => 'talktitle', -size => 40, -maxlength => 128,
-                             -default => $TalkDefaultTitle);
+                             -default => HTML::Entities::decode($TalkDefaultTitle));
 }
 
 sub TalkNote {
   $query -> param('talknote', $TalkDefaultNote);
-  print $query -> textarea (-name => 'talknote',-value => $TalkDefaultNote,
+  print $query -> textarea (-name => 'talknote',-value => HTML::Entities::decode($TalkDefaultNote),
                             -columns => 40, -rows => 4);
 }
 

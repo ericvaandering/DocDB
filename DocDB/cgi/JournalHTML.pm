@@ -1,16 +1,16 @@
 #
-# Description: Routines with form elements and other HTML generating 
+# Description: Routines with form elements and other HTML generating
 #              code pertaining to Journals and References.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2012 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -22,18 +22,20 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+use HTML::Entities;
+
 sub JournalSelect (;%) {
   my (%Params) = @_;
-  
+
   my $Disabled = $Params{-disabled} || "0";
   my $Mode     = $Params{-format}   || "0";
- 
+
   my $Booleans = "";
-  
+
   if ($Disabled) {
     $Booleans .= "-disabled";
-  }  
-  
+  }
+
   my @JournalIDs = keys %Journals;
   my %JournalLabels = ();
   foreach my $ID (@JournalIDs) {
@@ -42,49 +44,49 @@ sub JournalSelect (;%) {
   @JournalIDs = sort @JournalIDs;  #FIXME Sort by abbreviation
 
   print FormElementTitle(-helplink => "journal", -helptext => "Journal");
-  print $query -> scrolling_list(-name => "journal", -values => \@JournalIDs, 
-                                 -labels => \%JournalLabels, -size => 10, 
+  print $query -> scrolling_list(-name => "journal", -values => \@JournalIDs,
+                                 -labels => \%JournalLabels, -size => 10,
                                  -default => $JournalDefault, $Booleans);
 
 }
 
 sub JournalEntryBox (;%) {
   my (%Params) = @_;
-  
+
   my $Disabled = $Params{-disabled} || "0";
   my $Mode     = $Params{-format}   || "0";
- 
+
   my $Booleans = "";
-  
+
   if ($Disabled) {
     $Booleans .= "-disabled";
-  }  
+  }
 
   print "<table cellpadding=5><tr valign=top>\n";
   print "<td>\n";
   print FormElementTitle(-helplink => "journalentry", -helptext => "Full Name");
-  print $query -> textfield (-name => 'name', 
+  print $query -> textfield (-name => 'name',
                              -size => 40, -maxlength => 128, $Booleans);
   print "</td>\n";
   print "<td>\n";
   print FormElementTitle(-helplink => "journalentry", -helptext => "Publisher");
-  print $query -> textfield (-name => 'pub', 
+  print $query -> textfield (-name => 'pub',
                              -size => 40, -maxlength => 64, $Booleans);
   print "</td></tr>\n";
 
   print "<tr><td>\n";
   print FormElementTitle(-helplink => "journalentry", -helptext => "Abbreviation");
-  print $query -> textfield (-name => 'abbr', 
+  print $query -> textfield (-name => 'abbr',
                              -size => 40, -maxlength => 64, $Booleans);
   print "</td>\n";
   print "<td>\n";
   print FormElementTitle(-helplink => "journalentry", -helptext => "URL");
-  print $query -> textfield (-name => 'url', 
+  print $query -> textfield (-name => 'url',
                              -size => 40, -maxlength => 240, $Booleans);
   print "</td></tr>\n";
   print "<tr><td>\n";
   print FormElementTitle(-helplink => "journalentry", -helptext => "Acronym");
-  print $query -> textfield (-name => 'acronym', 
+  print $query -> textfield (-name => 'acronym',
                              -size => 8, -maxlength => 8, $Booleans);
   print "</td></tr>\n";
   print "</table>\n";
@@ -119,7 +121,7 @@ sub JournalTable (;$) {
 
 sub ReferenceForm {
   require "MiscSQL.pm";
-  
+
   GetJournals();
 
   my @JournalIDs = keys %Journals;
@@ -129,33 +131,33 @@ sub ReferenceForm {
   }
   @JournalIDs = sort @JournalIDs;  #FIXME Sort by acronym
   unshift @JournalIDs,0; $JournalLabels{0} = "----"; # Null Journal
-  my $ElementTitle = FormElementTitle(-helplink  => "reference", 
+  my $ElementTitle = FormElementTitle(-helplink  => "reference",
                                       -helptext  => "Journal References");
-  print $ElementTitle,"\n";                                     
+  print $ElementTitle,"\n";
 
   my @ReferenceIDs = (@ReferenceDefaults,0);
-  
+
   print "<table class=\"LowPaddedTable\">\n";
-  foreach my $ReferenceID (@ReferenceIDs) { 
+  foreach my $ReferenceID (@ReferenceIDs) {
     print "<tr>\n";
     my $JournalDefault = $RevisionReferences{$ReferenceID}{JournalID};
     my $VolumeDefault  = $RevisionReferences{$ReferenceID}{Volume}   ;
     my $PageDefault    = $RevisionReferences{$ReferenceID}{Page}     ;
     print "<td><b>Journal: </b>\n";
-    print $query -> popup_menu(-name => "journal", -values => \@JournalIDs, 
+    print $query -> popup_menu(-name => "journal", -values => \@JournalIDs,
                                    -labels => \%JournalLabels,
                                    -default => $JournalDefault);
     print "</td>";
     print "<td><b>Volume:</b> \n";
-    print $query -> textfield (-name => 'volume', 
-                               -size => 8, -maxlength => 8, 
-                               -default => $VolumeDefault);
+    print $query -> textfield (-name => 'volume',
+                               -size => 8, -maxlength => 8,
+                               -default => HTML::Entities::decode($VolumeDefault));
     print "</td>";
     print "<td><b>Page:</b> \n";
-    print $query -> textfield (-name => 'page', 
-                               -size => 8, -maxlength => 16, 
-                               -default => $PageDefault);
-    print "</td></tr>\n";                           
+    print $query -> textfield (-name => 'page',
+                               -size => 8, -maxlength => 16,
+                               -default => HTML::Entities::decode($PageDefault));
+    print "</td></tr>\n";
   }
   print "</table>\n";
 }
