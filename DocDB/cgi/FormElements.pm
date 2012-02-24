@@ -191,7 +191,7 @@ sub PubInfoBox {
                                        -helptext  => "Other publication information");
   print $ElementTitle,"\n";
 
-  print $query -> textarea (-name => 'pubinfo', -default => $PubInfoDefault,
+  print $query -> textarea (-name => 'pubinfo', -default => HTML::Entities::decode($PubInfoDefault),
                             -columns => 60, -rows => 3);
 };
 
