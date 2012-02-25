@@ -1,4 +1,12 @@
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+#        Name: $RCSfile$
+# Description:
+#
+#    Revision: $Revision$
+#    Modified: $Author$ on $Date$
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+
+# Copyright 2001-2012 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -157,7 +165,11 @@ sub AddLineBreaks {
 sub SafeHTML {
   my ($Text) = @_;
   $Text =~ s/\&/\&amp;/g;
+
   $Text =~ s/\&amp;amp;/\&amp;/g;
+  $Text =~ s/\&amp;quot;/\&quot;/g;
+  $Text =~ s/\&amp;#39;/\&#39;/g;
+
   return $Text;
 }
 
