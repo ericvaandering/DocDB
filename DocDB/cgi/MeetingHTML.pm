@@ -34,19 +34,11 @@ sub LocationBox (;%) {
   my $Default  = $Params{-default}   || "";
   my $Disabled = $Params{-disabled}  || "0";
 
-  my $Booleans = "";
-
-  if ($Disabled) {
-    $Booleans .= "-disabled";
-  }
-
   print "<div class=\"LocationEntry\">\n";
-  my $ElementTitle = &FormElementTitle(-helplink  => "location",
-                                       -helptext  => "Location",
-                                       -required  => $Required );
-  print $ElementTitle,"\n";
-  print $query -> textfield (-name => 'location', -default => HTML::Entities::decode($Default),
-                             -size => 40, -maxlength => 64, $Booleans);
+  TextField(-name     => "location", -helptext  => "Location",
+            -helplink => "location", -required  => $Required,
+            -size     => 40,         -maxlength => 64,
+            -default  => $Default,   -disabled  => $Disabled);
   print "</div>\n";
 };
 
