@@ -8,7 +8,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2012 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -71,9 +71,6 @@ GetSecurityGroups();
 ### Set up, give user initial information
 
 %params = $query -> Vars;
-foreach my $Keyword (keys %params) {
-  $params{$Keyword} = CGI::escapeHTML($params{$Keyword});
-}
 $mode = $params{mode}; #FIXME: Remove
 $Mode = $params{mode};
 
