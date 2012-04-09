@@ -7,7 +7,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2012 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -219,7 +219,7 @@ if ($PreserveSigs && $mode ne "updatedb") {
   push @ErrorStack,'Signatures may only be preserved when modifying document meta-data.';
 }
 unless ($params{requester}) {
-  push @ErrorStack,"You must supply a requester for this document.";
+  push @ErrorStack,"You must supply a submitter for this document.";
 }
 unless ($params{title}) {
   push @ErrorStack,"You must supply a title for this document.";
