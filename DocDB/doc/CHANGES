@@ -2,6 +2,8 @@
  Fix consistentcy issues between submitter and requester
  No security by default should default to user's security, not public
  StreamFile: change to using 'print' instead of 'sysprint' in the StreamFile routine
+ Fix exclusion list for .htaccess files in archive creation
+ Improved signoff instructions from Eileen Berman
 
 8.8.4
  Add totals to topic, author tables
