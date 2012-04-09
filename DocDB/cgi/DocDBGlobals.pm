@@ -7,7 +7,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 #
-# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2012 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -26,6 +26,8 @@
 
 # Constants
 
+use DateTime;
+$LocalTimezone = DateTime::TimeZone->new(name => 'local');
 $TRUE  = 1;
 $FALSE = 0;
 

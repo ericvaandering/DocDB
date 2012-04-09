@@ -9,7 +9,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2012 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -69,7 +69,7 @@ my $WindowStart;
 my $WindowEnd;
 my $WindowDays;
 my $EventTableStart;
-my $Today = DateTime -> now(time_zone => 'local');
+my $Today = DateTime -> now(time_zone => $LocalTimezone);
 
 push @DebugStack, "Today is ".$Today -> iso8601;
 

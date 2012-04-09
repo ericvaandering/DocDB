@@ -8,7 +8,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2012 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -70,7 +70,7 @@ sub PrintCalendar {
   my $DaysInMonth = DateTime -> last_day_of_month(year => $Year, month => $Month) -> day();
   my $FirstDay    = DateTime -> new(year => $Year, month => $Month, day => 1);
   my $MonthName   = $FirstDay -> month_name();
-  my $Today       = DateTime ->today(time_zone => 'local');
+  my $Today       = DateTime ->today(time_zone => $LocalTimezone);
 
   my $Class = "ByMonth";
   if ($Type eq "year") {

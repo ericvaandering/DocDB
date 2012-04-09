@@ -1,14 +1,14 @@
-# Description: Various routines to deal with certificates 
+# Description: Various routines to deal with certificates
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2012 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -21,15 +21,15 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 sub FetchSecurityGroupsByCert (%) {
-  require "SecuritySQL.pm"; 
+  require "SecuritySQL.pm";
   my %Params = @_;
   my $EmailUserID  = FetchEmailUserIDByCert(%Params);
   if ($EmailUser{$EmailUserID}{Verified} != 1) {
     push @DebugStack,"User is not verified";
-    push @WarnStack,"You have a valid certificate, but have are not yet allowed to access to DocDB. 
+    push @WarnStack,"You have a valid certificate, but are not yet allowed to access to DocDB.
                    <a href=\"$CertificateApplyForm\">Apply for access.</a>";
     return;
-  }  
+  }
   my @UserGroupIDs = FetchUserGroupIDs($EmailUserID);
   return @UserGroupIDs;
 }
@@ -38,15 +38,15 @@ sub FetchEmailUserIDByCert (%) {
   my %Params = @_;
 
   my $IgnoreVerification = $Params{-ignoreverification};
- 
-  require "SecuritySQL.pm"; 
-  require "NotificationSQL.pm"; 
+
+  require "SecuritySQL.pm";
+  require "NotificationSQL.pm";
 
   my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
   my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
 
-  $CertificateCN    = $CertCN; 
-  $CertificateEmail = $CertEmail; 
+  $CertificateCN    = $CertCN;
+  $CertificateEmail = $CertEmail;
 
   push @DebugStack,"Finding EmailUserID by certificate $CertCN";
 
@@ -56,19 +56,19 @@ sub FetchEmailUserIDByCert (%) {
   if ($IgnoreVerification) {
     $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
                                      "where Name=?");
-  } else {                                   
+  } else {
     $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
                                      "where Verified=1 and Name=?");
   }
   $EmailUserSelect -> execute($CertCN);
 
-  my ($EmailUserID) = $EmailUserSelect -> fetchrow_array; 
+  my ($EmailUserID) = $EmailUserSelect -> fetchrow_array;
   push @DebugStack,"Found e-mail user: $EmailUserID";
 
   if ($EmailUserID) {
     FetchEmailUser($EmailUserID)
   }
-  
+
   return $EmailUserID;
 }
 
@@ -83,37 +83,37 @@ sub CertificateStatus () {
   # nocert     --  no certificate was presented (not sure if this can work)
 
   my $CertificateStatus = "";
- 
+
   my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
   my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
-  
+
   push @DebugStack,"Finding Status by certificate";
-  
+
   unless ($CertCN) {
     $CertificateStatus = "nocert";
     push @DebugStack,"Certificate Status: $CertificateStatus";
     return $CertificateStatus;
-  } 
-    
+  }
+
   my $EmailUserSelect;
   $EmailUserSelect = $dbh->prepare("select EmailUserID,Verified from EmailUser ".
                                      "where Name=?");
   $EmailUserSelect -> execute($CertCN);
-  my ($EmailUserID,$Verified) = $EmailUserSelect -> fetchrow_array; 
+  my ($EmailUserID,$Verified) = $EmailUserSelect -> fetchrow_array;
   push @DebugStack,"Checking user $CertCN by CN";
-  
+
   if ($Verified) {
     $CertificateStatus = "verified";
     push @DebugStack,"Certificate Status: $CertificateStatus";
     return $CertificateStatus;
-  } 
-  
+  }
+
   if ($EmailUserID) {
     $CertificateStatus = "unverified";
     push @DebugStack,"Certificate Status: $CertificateStatus";
     return $CertificateStatus;
-  } 
-  
+  }
+
   $CertificateStatus = "noapp";
   push @DebugStack,"Certificate Status: $CertificateStatus";
   return $CertificateStatus;

@@ -6,7 +6,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2012 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -96,7 +96,7 @@ sub ConvertToDateTime {
     }
     $DateTime = DateTime -> new(year => $Year, month  => $Month,  day => $Day,
                                 hour => $Hour, minute => $Min, second => $Sec,
-                                time_zone => 'local');
+                                time_zone => $LocalTimezone);
   } elsif ($OldTimeStamp) {
     my $Year  = substr  $OldTimeStamp,0,4;
     my $Month = substr  $OldTimeStamp,4,2;
@@ -106,7 +106,7 @@ sub ConvertToDateTime {
     my $Sec   = substr  $OldTimeStamp,12,2;
     $DateTime = DateTime -> new(year => $Year, month  => $Month,  day => $Day,
                                 hour => $Hour, minute => $Min, second => $Sec,
-                                time_zone => 'local');
+                                time_zone => $LocalTimezone);
   }
 
   return $DateTime;

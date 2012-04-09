@@ -2,7 +2,7 @@
 #
 # Author Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2012 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -88,7 +88,7 @@ if ($CertificateStatus eq "verified") {
   print "<b>Certificate Common Name (CN):</b> $CertCN<br>\n";
   print "<b>Certificate E-mail Address:</b> $CertEmail<br>\n";
 } elsif ($CertificateStatus eq "nocert") {
-  print "<b>You didn't present a certificate. Make sure your browser is supplying one and contact an administrator if are supplying one.</b>";
+  print "<b>You didn't present a certificate. Make sure your browser is supplying one and contact an administrator if you are supplying one.</b>";
 } elsif ($CertificateStatus eq "noapp") {
 
 ### Get additional parameters
