@@ -8,7 +8,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2012 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -573,7 +573,7 @@ print "</td></tr>\n";
 
 print "<tr><td colspan=\"4\">\n";
 TextField(-name     => 'xrefs', -size => 40,
-          -default  => $XRefDefault,
+          -default  => $XRefDefault, -maxlength => 2048,
           -helplink => 'xrefentry', -helptext => 'Related Documents');
 print "</td></tr>\n";
 
