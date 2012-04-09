@@ -1,5 +1,5 @@
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -196,11 +196,12 @@ sub StreamFile (%) {
 
     my @Parts = split /\//,$File;
     my $ShortFile = pop @Parts;
-    select STDOUT;
-    $| = 1;
     print "Content-Type: $MimeType\n", # Print header
           "Content-Disposition: filename=\"$ShortFile\"\n",
           "Content-Length: $Size\n\n";
+
+    select STDOUT;
+    $| = 1;
 
     open OUT, "<$File" or die "Cannot open File\n";
     binmode OUT if -B $File;
@@ -210,11 +211,15 @@ sub StreamFile (%) {
       next unless defined $Length;
 
       my $Offset = 0;
-      while ($Length) {
-        my $Written = syswrite STDOUT, $Buffer, $Length, $Offset;
+      my $Written= 1;
+      while ($Length && $Written > 0) {
+        print STDOUT $Buffer;
+        $Written = $Length;
+        last unless defined($Written);
         $Length -= $Written;
         $Offset += $Written;
       }
+      last unless defined($Written);
     }
     close OUT;
   } else {
