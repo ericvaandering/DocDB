@@ -86,7 +86,7 @@ if ($Days || $Hours) {
     "from DocumentRevision where Obsolete=0 and DocRevID=?");
   my @AllRevisions = sort numerically keys %AllRevision;
   foreach $RevID (@AllRevisions) {
-    unless ($RevID) {next;}
+    unless (defined ($RevID)) {next;}
     $revision_list -> execute($RevID);
     ($DocRevID,$DocumentID,$VersionNumber) = $revision_list -> fetchrow_array;
     $Revision{$DocRevID}{DocRevID}      = $DocRevID;
@@ -98,7 +98,7 @@ if ($Days || $Hours) {
 my @Revisions = sort numerically keys %Revision;
 
 foreach $RevisionID (@Revisions) {
-  unless ($Revision{$RevisionID}{VersionNumber}) {next;} # No directories for v0 documents
+  #unless ($Revision{$RevisionID}{VersionNumber}) {next;} # No directories for v0 documents
   my $security_list = $dbh -> prepare(
     "select GroupID ".
     "from RevisionSecurity where DocRevID=?");
@@ -114,9 +114,12 @@ foreach $RevisionID (@Revisions) {
   foreach $GroupID (@GroupIDs) {
     print " $GroupID";
   }
-  &ProtectDirectory($Revision{$RevisionID}{DocumentID},
-                    $Revision{$RevisionID}{VersionNumber},
-                    @GroupIDs);
+  my $Directory = &GetDirectory($Revision{$RevisionID}{DocumentID},$Revision{$RevisionID}{VersionNumber});
+  if (-d $Directory) { 
+     &ProtectDirectory($Revision{$RevisionID}{DocumentID},
+                      $Revision{$RevisionID}{VersionNumber},
+                      @GroupIDs);
+  }                    
   print "\n"; 
 }
  

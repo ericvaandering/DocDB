@@ -188,6 +188,9 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   $RevisionNoteDefault = $DocRevisions{$DocRevID}{Note};
   $DocTypeIDDefault    = $DocRevisions{$DocRevID}{DocTypeID};
   @SecurityDefaults    = GetRevisionSecurityGroups($DocRevID);
+  unless (@SecurityDefaults) {
+    @SecurityDefaults = (0);	
+  }
   my @AuthorRevIDs     = GetRevisionAuthors($DocRevID);
      @AuthorRevIDs     = sort AuthorRevIDsByOrder @AuthorRevIDs;
   $AuthorListOrdered   = IsAuthorListOrdered({     -authorrevids => \@AuthorRevIDs, });
