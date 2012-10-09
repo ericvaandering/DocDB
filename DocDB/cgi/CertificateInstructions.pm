@@ -49,9 +49,9 @@ TOC
 KCA
   }
   print <<TOC;
-   <li><a href="$DocDBInstructions?set=register">Register your certificate with DocDB</a></li>
    <li><a href="$DocDBInstructions?set=import">Importing and Exporting certificates</a></li>
    <li><a href="http://computing.fnal.gov/security/pki/browsercerttest.html">How to test your certificate</a></li>
+   <li><a href="$DocDBInstructions?set=register">Register your certificate with DocDB</a></li>
    <li><a href="$DocDBInstructions?set=protect">Protect your certificate</a></li>
    <li><a href="$DocDBInstructions?set=misc#issues">Known issues with certificates</a>
 TOC
@@ -103,15 +103,15 @@ KCA
 
   print <<HTML;
 <p>
-<a href="$DocDBInstructions?set=register">Register</a> your certificate with DocDB
-</p>
-<p>
 <a href="$DocDBInstructions?set=import">Importing and Exporting</a> certificates 
 </p>
 <p> 
 You may wish to 
 <a href="http://computing.fnal.gov/security/pki/browsercerttest.html">test your certificate</a>.
 </p> 
+<p>
+<a href="$DocDBInstructions?set=register">Register</a> your certificate with DocDB
+</p>
 <p>
 <a href="$DocDBInstructions?set=protect">Protect your certificate.</a>
 </p>

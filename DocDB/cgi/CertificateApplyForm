@@ -81,7 +81,8 @@ if ($CertificateStatus eq "verified") {
   print "<b>Certificate Common Name (CN):</b> $CertCN<br/>\n";
   print "<b>Certificate E-mail Address:</b> $CertEmail<br/>\n";
 } elsif ($CertificateStatus eq "nocert") {  
-  print "<b>You didn't present a certificate. Make sure your browser is supplying one and contact an administrator if are supplying one.</b><p/>";
+  print "<b>You didn't present a certificate. Make sure your browser is supplying one and contact an administrator if are supplying one.
+            The <a href=\"$DocDBInstructions?set=cert\">Certificate Instructions</a> may help you in obtaining and importing a certificate.</b><p/>";
 } elsif ($CertificateStatus eq "noapp") {
   require "SecurityHTML.pm";
   require "FormElements.pm";
