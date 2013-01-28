@@ -3,15 +3,15 @@
 # Description: A simple for to allow new author addition (no changes possible)
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 #
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -24,7 +24,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 
-use CGI qw(-nosticky);                                                                                      
+use CGI qw(-nosticky);
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -50,10 +50,10 @@ print $query -> start_multipart_form('POST',"$AuthorAdd");
 print "<p><strong>You are about to add an author to the $Project document
 database.</strong> Anyone is allowed to add authors. <strong>Please be
 careful</strong> and make sure to put the authors first name, last name, and
-middle initials (with periods) in the right place. If you make a mistake, 
+middle initials (with periods) in the right place. If you make a mistake,
 <span class=\"Warning\">DO NOT</span> enter the author again. Contact an
-<a href=\"mailto:$DBWebMasterEmail\">adminstrator</a> and explain the problem.
-Required fields are denoted by $RequiredMark.  Click any 
+<a href=\"mailto:$DBWebMasterEmail\">administrator</a> and explain the problem.
+Required fields are denoted by $RequiredMark.  Click any
 <span class=\"Help\">highlighted link</span> for quick help.</p>\n";
 
 print "<table class=\"CenteredTable HighPaddedTable\">\n";

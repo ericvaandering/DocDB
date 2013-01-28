@@ -1,19 +1,19 @@
 #! /usr/bin/env perl
 #
-# Description: The instructions for DocDB. This is mostly HTML, but making 
+# Description: The instructions for DocDB. This is mostly HTML, but making
 #              it a script allows us to eliminate parts of it that we don't want
 #              and get it following everyone's style, and allows groups to add
 #              to it with ProjectMessages.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -25,8 +25,8 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI;                                                      
-use DBI;                                                      
+use CGI;
+use DBI;
 
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
@@ -39,7 +39,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 &GetSecurityGroups;
 
-%params = $query -> Vars; 
+%params = $query -> Vars;
 $InstructionSet = $params{set} || "general";
 
 # Title
@@ -77,7 +77,7 @@ if ($InstructionSet eq "general") {
   $PageTitle = "Advanced Users &amp; XML Interface";
   $HTMLTitle = $PageTitle;
 } elsif ($InstructionSet eq "admin") {
-  $PageTitle = "Adminstration Instructions";
+  $PageTitle = "Administration Instructions";
   $HTMLTitle = $PageTitle;
 }
 print $query->header( -charset => $HTTP_ENCODING );

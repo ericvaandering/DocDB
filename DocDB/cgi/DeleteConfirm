@@ -8,7 +8,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -58,7 +58,7 @@ unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number to delete.";
 }
 unless (&CanAdminister) {
-  push @ErrorStack,"You must be logged in as the adminstrator to delete
+  push @ErrorStack,"You must be logged in as the administrator to delete
   documents";
 }
 
@@ -80,7 +80,7 @@ unless ($DocRevID) {
 
 EndPage(@ErrorStack);
 
-print "<p><center><b>To delete this document, you must supply the adminstrator
+print "<p><center><b>To delete this document, you must supply the administrator
           username and password:</b>";
 
 print $query -> startform('POST',$DeleteDocument);

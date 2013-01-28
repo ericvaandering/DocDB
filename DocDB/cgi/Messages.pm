@@ -1,17 +1,17 @@
 #
-# Description: Central location for many of the error messages for the DocDB 
-#              since many programs return the same errors. 
+# Description: Central location for many of the error messages for the DocDB
+#              since many programs return the same errors.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Lynn Garren (garren@fnal.gov)
 #
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -26,7 +26,7 @@
 $Msg_NoConnect        = "Unable to connect to the database. Please alert an administrator.";
 
 $Msg_AdminNoConnect   = "Unable to connect to the database. Make sure you use the correct password.";
-$Msg_AdminNoLogin     = "You must be logged in as the adminstrator to perform this action.";
+$Msg_AdminNoLogin     = "You must be logged in as the administrator to perform this action.";
 $Msg_AdminNoPass      = "You must supply a username and password to perform administration actions.";
 
 $Msg_ModInstEmpty     = "You must select an institution to modify or delete.";
@@ -48,8 +48,8 @@ $Msg_DelFullEvent     = "This event has associated documents. Not deleted.";
 
 # Messages for document creation, modification, display
 
-$Msg_DocNoAccess      = "Either you are not authorized to view this document 
-                         (with the username and password you supplied)  
+$Msg_DocNoAccess      = "Either you are not authorized to view this document
+                         (with the username and password you supplied)
                          or the document does not exist.";
 
 
@@ -91,6 +91,6 @@ $Msg_WarnModManaged = "Warning: You are about to modify a managed document. This
 if (-e "ProjectMessages.pm") {
   require "ProjectMessages.pm";
   push @DebugStack,"Included Project Messages";
-}  
+}
 
 1;

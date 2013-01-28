@@ -1,23 +1,23 @@
 #! /usr/bin/env perl
 #
-#        Name: EmailAdminister 
-# Description: This script is called by EmailAdministerForm and does 
+#        Name: EmailAdminister
+# Description: This script is called by EmailAdministerForm and does
 #              administration on users who have signed up for email from the
 #              DB. Since users can change almost everything, it really just
 #              deletes users and changes their passwords in case they forget.
-#              It also displays all the users and their notification 
+#              It also displays all the users and their notification
 #              preferences.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 #
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -43,7 +43,7 @@ require "EmailUserHTML.pm";
 
 $query = new CGI;  # Global for subroutines
 
-# Parameters to script 
+# Parameters to script
 
 %params = $query -> Vars;
 my $Password      = $params{password};
@@ -63,7 +63,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
 unless ($dbh) {
   push @ErrorStack,$Msg_AdminNoConnect;
-}         
+}
 
 print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader("Modified E-mail Users");
@@ -73,7 +73,7 @@ GetSecurityGroups();
 
 unless (CanAdminister()) {
   push @ErrorStack,$Msg_AdminNoLogin;
-}  
+}
 EndPage();
 
 if      ($Action eq "Delete") { # Delete user
@@ -94,20 +94,20 @@ if      ($Action eq "Delete") { # Delete user
         my $Table = "Email$NotifyType$NotifyTime";
         my $NotifyDelete = $dbh -> prepare("delete from $Table where EmailUserID=?");
            $NotifyDelete -> execute($EmailUserID);
-      }  
+      }
     }
     push @ActionStack,"The user was deleted.";
   }
   ActionReport();
-} elsif ($Action eq "Modify") { 
-  unless ($EmailUserID) { # Deal with password changes 
+} elsif ($Action eq "Modify") {
+  unless ($EmailUserID) { # Deal with password changes
     push @ErrorStack,$Msg_ModEUserEmpty;
   }
   EndPage();
 
   FetchEmailUser($EmailUserID);
 
-  if ($NewPassword) { 
+  if ($NewPassword) {
     srand (time ^ $$ ^ unpack "%32L*", `ps -eaf`);
 
     my $Salt = ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]).
@@ -126,9 +126,9 @@ if      ($Action eq "Delete") { # Delete user
   if ($ClearUser || $SingleUser) {
     my $UserUpdate = $dbh -> prepare("update EmailUser set CanSign=0,Verified=0 where EmailUserID=?");
        $UserUpdate -> execute($EmailUserID);
-    unless ($SingleUser) {   
+    unless ($SingleUser) {
       push @ActionStack,"The user is no longer verified and cannot sign documents.";
-    }  
+    }
   }
   if ($UserSign) {
     my $UserUpdate = $dbh -> prepare("update EmailUser set CanSign=1 where EmailUserID=?");
@@ -139,13 +139,13 @@ if      ($Action eq "Delete") { # Delete user
     my $UserUpdate = $dbh -> prepare("update EmailUser set Verified=1 where EmailUserID=?");
        $UserUpdate -> execute($EmailUserID);
     push @ActionStack,"The user is verified.";
-    
+
     if ($MailInstalled && $UserValidation eq "certificate") {
       require "EmailUtilities.pm";
 
       my @To      = ($EmailUser{$EmailUserID}{EmailAddress},$DBWebMasterEmail);
       my $Subject = "DocDB account for $EmailUser{$EmailUserID}{Name} activated";
-      my $Body    = "An adminstrator has approved the request for ";
+      my $Body    = "An administrator has approved the request for ";
       $Body      .= "$EmailUser{$EmailUserID}{Name} for access to $Project DocDB. ";
       $Body      .= "If you did not request access to $Project DocDB, ";
       $Body      .= "please contact $DBWebMasterEmail immediately.";
@@ -154,35 +154,35 @@ if      ($Action eq "Delete") { # Delete user
   }
   foreach my $UsersGroupID (@UsersGroupIDs) {
     my $UsersGroupSelect = $dbh -> prepare("select UsersGroupID from UsersGroup where EmailUserID=? and GroupID=?");
-       $UsersGroupSelect -> execute($EmailUserID,$UsersGroupID); 
+       $UsersGroupSelect -> execute($EmailUserID,$UsersGroupID);
     my ($ComboExists) = $UsersGroupSelect -> fetchrow_array;
-    unless ($ComboExists) {  
+    unless ($ComboExists) {
       my $UsersGroupUpdate = $dbh -> prepare("insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) ".
                                              " values (0,?,?)");
-         $UsersGroupUpdate -> execute($EmailUserID,$UsersGroupID); 
+         $UsersGroupUpdate -> execute($EmailUserID,$UsersGroupID);
       FetchSecurityGroup($UsersGroupID);
       push @ActionStack,"Added user to $SecurityGroups{$UsersGroupID}{NAME}";
-    }  
-  }  
-  
+    }
+  }
+
   ClearEmailUsers();
   FetchEmailUser($EmailUserID);
   ActionReport();
-                           
+
   print "<h3>The user now has the following information:</h3>";
   print "<table class=\"LowPaddedTable\">\n";
   PrintEmailUserInfo($EmailUserID);
   print "</table>\n";
-} elsif ($Action eq "New") { 
+} elsif ($Action eq "New") {
   push @ErrorStack,"You can't create new users here. Do it the normal way.";
 } else {
   push @ErrorStack,"No valid action was specified.";
-}  
+}
 
 EndPage();
 WarnPage();
 
 DocDBNavBar();
 DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
- 
+
 exit;

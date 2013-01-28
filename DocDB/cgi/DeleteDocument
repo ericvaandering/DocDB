@@ -1,18 +1,18 @@
 #! /usr/bin/env perl
 #
 # Description: This script is called by DeleteConfirm to actually delete
-#              the requested document, all associated entries in the DB, 
-#              and the actual files as well. 
+#              the requested document, all associated entries in the DB,
+#              and the actual files as well.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -50,7 +50,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
 unless ($dbh) {
   push @ErrorStack,"Unable to connect to the database. Check the password.";
-}         
+}
 
 print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Deleting Document $DocumentID");
@@ -59,11 +59,11 @@ EndPage(@ErrorStack);
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number to delete.";
-}  
+}
 unless (&CanAdminister) {
-  push @ErrorStack,"You must be logged in as the adminstrator to delete
+  push @ErrorStack,"You must be logged in as the administrator to delete
   documents";
-}  
+}
 
 EndPage(@ErrorStack);
 
@@ -92,10 +92,10 @@ my @Revisions = keys %Revision;
 unless (@Revisions) {
   print "Document $DocumentID does not exist.\n";
   exit;
-}  
-  
-# Delete stuff from files and linking tables  
-  
+}
+
+# Delete stuff from files and linking tables
+
 foreach $RevisionID (@Revisions) {
   $author_delete   -> execute($RevisionID);
   $topic_delete    -> execute($RevisionID);
@@ -107,16 +107,16 @@ foreach $RevisionID (@Revisions) {
 
 $document_delete -> execute($DocumentID);
 $revision_delete -> execute($DocumentID);
- 
+
 # Delete stuff from file system
 
 $command = "rm -rf $Directory/*";
 system ($command);
- 
+
 print "<b>Document $DocumentID has been deleted.</b><p>";
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 
- 
+
 exit;

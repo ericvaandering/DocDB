@@ -2,12 +2,12 @@
 #
 # Author Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -63,16 +63,16 @@ if ($CertificateStatus eq "verified") {
       print "<li>",$SecurityGroups{$GroupID}{NAME},"</li>\n";
     }
   } else {
-    print "<li><b>None.</b> Contact an adminstrator if this is incorrect</li>\n";
-  }       
+    print "<li><b>None.</b> Contact an administrator if this is incorrect</li>\n";
+  }
   print "</ul>\n";
-} elsif ($CertificateStatus eq "unverified") {  
-  print "<b>Your certificate is valid and you have applied for access to documents. 
+} elsif ($CertificateStatus eq "unverified") {
+  print "<b>Your certificate is valid and you have applied for access to documents.
          If you believe your request has been misplaced or neglected, contact an administator.</b><p/>";
   print "The following information may be helpful:<br>\n";
   print "<b>Certificate Common Name (CN):</b> $CertCN<br/>\n";
   print "<b>Certificate E-mail Address:</b> $CertEmail<br/>\n";
-} elsif ($CertificateStatus eq "mismatch") {  
+} elsif ($CertificateStatus eq "mismatch") {
   print "<b>Your certificate is valid but a similar certificate already exists
          for  either your e-mail address or your name (CN). Only one
          certificate is allowed per person. Contact an administrator if you
@@ -80,14 +80,14 @@ if ($CertificateStatus eq "verified") {
   print "The following information may be helpful:<br/>\n";
   print "<b>Certificate Common Name (CN):</b> $CertCN<br/>\n";
   print "<b>Certificate E-mail Address:</b> $CertEmail<br/>\n";
-} elsif ($CertificateStatus eq "nocert") {  
+} elsif ($CertificateStatus eq "nocert") {
   print "<b>You didn't present a certificate. Make sure your browser is supplying one and contact an administrator if are supplying one.</b><p/>";
 } elsif ($CertificateStatus eq "noapp") {
   require "SecurityHTML.pm";
   require "FormElements.pm";
   print "<p><b>Your certificate is valid but you have never applied for access to
-         documents.<br/>Fill out the form below to apply for access. 
-         Select the groups which you think you belong to from the list. 
+         documents.<br/>Fill out the form below to apply for access.
+         Select the groups which you think you belong to from the list.
          Your selection(s) will be verified by an administrator.</b></p>";
   print "<center>\n";
   print $query -> start_multipart_form('POST',$UserAccessApply);
@@ -104,14 +104,14 @@ if ($CertificateStatus eq "verified") {
   print "<tr>\n";
   print "</td></tr>\n";
   print "<tr><td colspan=\"2\">\n";
-  TextArea(-helplink  => "certnote", -helptext => "Notes", 
+  TextArea(-helplink  => "certnote", -helptext => "Notes",
            -extratext => "(Identify yourself or other notes if needed.)",
-           -name      => "certnote");    
+           -name      => "certnote");
   print "</td></tr>";
   print "<tr><td colspan=2 align=center>\n";
   print $query -> submit (-value => "Apply for access");
   print "</td></tr>";
-  print "</table>\n";       
+  print "</table>\n";
   print "</center>\n";
 }
 
