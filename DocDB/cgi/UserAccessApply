@@ -75,7 +75,7 @@ if ($CertificateStatus eq "verified") {
   print "</ul>\n";
 } elsif ($CertificateStatus eq "unverified") {
   print "<b>You have already applied for access to documents. A new request has not been generated.
-         If you believe your request has been misplaced or neglected, contact an administator.</b>";
+         If you believe your request has been misplaced or neglected, contact an administrator.</b>";
   print "The following information may be helpful:<br>\n";
   print "<b>Certificate Common Name (CN):</b> $CertCN<br>\n";
   print "<b>Certificate E-mail Address:</b> $CertEmail<br>\n";
