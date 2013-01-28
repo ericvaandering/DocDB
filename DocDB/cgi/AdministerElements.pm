@@ -1,5 +1,5 @@
 #        Name: $RCSfile$
-# Description: Various routines which supply input forms for adminstrative
+# Description: Various routines which supply input forms for administrative
 #              functions
 #
 #    Revision: $Revision$
@@ -7,7 +7,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 

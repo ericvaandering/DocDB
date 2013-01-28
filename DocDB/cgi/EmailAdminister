@@ -12,7 +12,7 @@
 #    Modified:
 #
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -145,7 +145,7 @@ if      ($Action eq "Delete") { # Delete user
 
       my @To      = ($EmailUser{$EmailUserID}{EmailAddress},$DBWebMasterEmail);
       my $Subject = "DocDB account for $EmailUser{$EmailUserID}{Name} activated";
-      my $Body    = "An adminstrator has approved the request for ";
+      my $Body    = "An administrator has approved the request for ";
       $Body      .= "$EmailUser{$EmailUserID}{Name} for access to $Project DocDB. ";
       $Body      .= "If you did not request access to $Project DocDB, ";
       $Body      .= "please contact $DBWebMasterEmail immediately.";

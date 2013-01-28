@@ -5,7 +5,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -260,7 +260,7 @@ sub ExtractArchive {
     system ($Command);
   } else {
     print "Could not unpack the archive; contact an
-    <a href=\"mailto:$DBWebMasterEmail\">adminstrator</a>. <br>\n";
+    <a href=\"mailto:$DBWebMasterEmail\">administrator</a>. <br>\n";
   }
   chdir $current_dir;
 }

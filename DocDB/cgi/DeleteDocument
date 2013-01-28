@@ -9,7 +9,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -67,7 +67,7 @@ unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number to delete.";
 }
 unless (&CanAdminister) {
-  push @ErrorStack,"You must be logged in as the adminstrator to delete
+  push @ErrorStack,"You must be logged in as the administrator to delete
   documents";
 }
 EndPage(@ErrorStack);

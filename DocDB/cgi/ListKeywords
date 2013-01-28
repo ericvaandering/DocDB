@@ -1,20 +1,20 @@
 #! /usr/bin/env perl
 #
 #        Name: ListKeywords
-# Description: Lists the managed keywords. 
+# Description: Lists the managed keywords.
 #              In the first mode, links perform a search
-#              In chooser mode, links insert the keyword into the 
+#              In chooser mode, links insert the keyword into the
 #              form on the calling page
 #
 #      Author: Lynn Garren (garren@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -26,7 +26,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI;                                                                                      
+use CGI;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -57,7 +57,7 @@ if ($Mode eq "chooser") {
   print "<p>\n";
   print "Please use the following keywords to facilitate searches. Note that
   spaces are NOT allowed in keywords.  To suggest additional keywords, send mail
-  to an <a href=\"mailto:$DBWebMasterEmail\">adminstrator</a>. The links below
+  to an <a href=\"mailto:$DBWebMasterEmail\">administrator</a>. The links below
   will search the database for all instances of a single keyword. Use the
   <a href=\"$SearchForm\" target=\"_blank\">search form</a>  to do a more
   complicated search.</p>\n";
@@ -67,7 +67,7 @@ if ($Mode eq "chooser") {
   } elsif ($Format eq "long") {
     print "<p>The <a href=\"$ListKeywords?format=short\">abbreviated listing</a>
     lists all the keywords compactly.\n</p>";
-  }  
+  }
   if ($KeywordAddendumText) {
     print "<p>$KeywordAddendumText</p>\n";
   }

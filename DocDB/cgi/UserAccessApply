@@ -2,7 +2,7 @@
 #
 # Author Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -70,7 +70,7 @@ if ($CertificateStatus eq "verified") {
       print "<li>",$SecurityGroups{$GroupID}{NAME},"</li>\n";
     }
   } else {
-    print "<li>None: Contact an adminstrator if this is incorrect</li>\n";
+    print "<li>None: Contact an administrator if this is incorrect</li>\n";
   }
   print "</ul>\n";
 } elsif ($CertificateStatus eq "unverified") {
@@ -159,7 +159,7 @@ if ($CertificateStatus eq "verified") {
     $Body      .= "access to $Project DocDB. If you did not initiate this request, ";
     $Body      .= "please contact the DocDB administrators at $DBWebMasterEmail immediately.\n\n";
     $Body      .= "If you did request this access, please give the ";
-    $Body      .= "adminstrators a few business days to respond to your request.\n";
+    $Body      .= "administrators a few business days to respond to your request.\n";
     $Body      .= "Thank you.";
 
     &SendEmail(-body => $Body, -to => \@To, -subject => $Subject);

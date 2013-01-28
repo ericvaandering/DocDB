@@ -9,7 +9,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -63,7 +63,7 @@ unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number to delete.";
 }
 unless (&CanAdminister) {
-  push @ErrorStack,"You must be logged in as the adminstrator to delete
+  push @ErrorStack,"You must be logged in as the administrator to delete
   documents";
 }
 
@@ -95,9 +95,9 @@ print "<p><center><b>";
 if ($DelVersion) {
   print "You are going to delete just this one version of this document. ".
         "If you want to delete all versions, don't enter a version number. ".
-        "To delete this version, you must supply the adminstrator username and password:";
+        "To delete this version, you must supply the administrator username and password:";
 } else {
-  print "To delete all versions of this document, you must supply the adminstrator username and password:";
+  print "To delete all versions of this document, you must supply the administrator username and password:";
 }
 print "</b>";
 
