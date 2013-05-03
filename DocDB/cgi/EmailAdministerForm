@@ -65,6 +65,11 @@ unless (CanAdminister()) {
 
 EndPage();
 
+my $UsernameHeader = "Username";
+if ($UserValidation eq "certificate") {
+  $UsernameHeader = "Certificate DN"
+}
+
 if ($EmailUserID) {
   print "<p>This form allows you to delete the user, change which groups the
          user belongs to, ";
@@ -121,7 +126,7 @@ print "</tr>\n";
 print "<tr>\n";
 
 print "<td>\n";
- EmailUserSelect(-disabled => $TRUE, -default => [$EmailUserID]);
+ EmailUserSelect(-disabled => $TRUE, -default => [$EmailUserID], -helptext => $UsernameHeader);
 print "</td>\n";
 
 print "<td>\n";
@@ -192,10 +197,10 @@ if ($EmailUserID) {
 
 ### Display of existing groups
 
-  my @EmailUserIDs = sort EmailUserIDsByUsername GetEmailUserIDs();
+  my @EmailUserIDs = sort EmailUserIDsByName GetEmailUserIDs();
 
   print "<table class=\"DocumentList Alternating\">\n";
-  print "<tr><th>Name</th><th>Username</th><th>Verified?</th><th>Can Sign?</th><th>Groups</th></tr>\n";
+  print "<tr><th>Name</th><th>$UsernameHeader</th><th>Verified?</th><th>Can Sign?</th><th>Groups</th></tr>\n";
   #print "<th>Notifications</th>\n";
 
   my $Row = 0;
@@ -246,7 +251,7 @@ if ($EmailUserID) {
   my @SecurityGroups = sort keys %SecurityIDs;
 
   foreach my $SecurityGroup (@SecurityGroups) {
-    my @EmailUserIDs = sort EmailUserIDsByUsername FetchEmailUserIDsBySecurityGroup($SecurityIDs{$SecurityGroup});
+    my @EmailUserIDs = sort EmailUserIDsByName FetchEmailUserIDsBySecurityGroup($SecurityIDs{$SecurityGroup});
     if (@EmailUserIDs) {
       print "<p><a name=\"$SecurityGroup\" /><strong>$SecurityGroup has these members:</strong></p>\n<ul>\n";
       foreach my $EmailUserID (@EmailUserIDs) {

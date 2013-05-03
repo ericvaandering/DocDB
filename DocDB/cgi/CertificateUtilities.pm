@@ -3,7 +3,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -44,23 +44,21 @@ sub FetchEmailUserIDByCert (%) {
 
   my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
   my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
-
-  $CertificateCN    = $CertCN; 
-  $CertificateEmail = $CertEmail; 
-
-  push @DebugStack,"Finding EmailUserID by certificate $CertCN";
+  my $CertDN    = $ENV{SSL_CLIENT_S_DN};
 
   # If we do http basic with users, this routine will function with minor modifications
 
   my $EmailUserSelect;
+  
+  push @DebugStack, "Finding EmailUserID and groups by DN $CertDN";
   if ($IgnoreVerification) {
     $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                     "where Name=?");
-  } else {                                   
+                   "where Username=?");
+  } else {
     $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
-                                     "where Verified=1 and Name=?");
+                   "where Verified=1 and Username=?");
   }
-  $EmailUserSelect -> execute($CertCN);
+  $EmailUserSelect -> execute($CertDN);
 
   my ($EmailUserID) = $EmailUserSelect -> fetchrow_array; 
   push @DebugStack,"Found e-mail user: $EmailUserID";
@@ -86,8 +84,7 @@ sub CertificateStatus () {
  
   my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
   my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
-  
-  push @DebugStack,"Finding Status by certificate";
+  my $CertDN    = $ENV{SSL_CLIENT_S_DN};
   
   unless ($CertCN) {
     $CertificateStatus = "nocert";
@@ -96,12 +93,13 @@ sub CertificateStatus () {
   } 
     
   my $EmailUserSelect;
+  push @DebugStack, "Finding status by DN $CertDN";
   $EmailUserSelect = $dbh->prepare("select EmailUserID,Verified from EmailUser ".
-                                     "where Name=?");
-  $EmailUserSelect -> execute($CertCN);
-  my ($EmailUserID,$Verified) = $EmailUserSelect -> fetchrow_array; 
-  push @DebugStack,"Checking user $CertCN by CN";
+                                     "where Username=?");
+  $EmailUserSelect -> execute($CertDN);
   
+  my ($EmailUserID,$Verified) = $EmailUserSelect -> fetchrow_array;
+
   if ($Verified) {
     $CertificateStatus = "verified";
     push @DebugStack,"Certificate Status: $CertificateStatus";
