@@ -1248,11 +1248,20 @@ or may not be the same as the web username and password.
 
  <entry>
   <key>certname</key>
-  <title>Certificate Common Name (CN)</title>
+  <title>Certificate Distinguished Name (DN)</title>
   <text>
-   This is a unique identifier in the user's client certificate. It is usually
-   the user's name or login. It must be entered exactly or the user will not be
+   This is the unique identifier (subject or DN) in the user's client certificate. 
+   It must be entered exactly or the user will not be
    authenticated when they  present their client certificate to DocDB.
+  </text>
+ </entry>
+
+ <entry>
+  <key>usersname</key>
+  <title>User's Name (CN)</title>
+  <text>   
+   Enter the user's common name. Often this is present in a CN section of the certificate DN, but it need
+   not be entered exactly; it is not used for authentication.
   </text>
  </entry>
 

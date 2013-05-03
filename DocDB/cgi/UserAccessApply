@@ -58,6 +58,7 @@ unless ($CertEmail) {
 EndPage();
 
 my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
+my $CertDN    = $ENV{SSL_CLIENT_S_DN};
 
 if ($CertificateStatus eq "verified") {
   print "<b>Your certificate has already been verified. A new request has NOT been generated.<br>".
@@ -77,14 +78,7 @@ if ($CertificateStatus eq "verified") {
   print "<b>You have already applied for access to documents. A new request has not been generated.
          If you believe your request has been misplaced or neglected, contact an administrator.</b>";
   print "The following information may be helpful:<br>\n";
-  print "<b>Certificate Common Name (CN):</b> $CertCN<br>\n";
-  print "<b>Certificate E-mail Address:</b> $CertEmail<br>\n";
-} elsif ($CertificateStatus eq "mismatch") {
-  print "<b>Your certificate is valid but a similar certificate already exists
-         for  either your e-mail address or your name (CN). Only one
-         certificate is allowed per person. Contact an administrator if you
-         don't know what to do.</b>";
-  print "The following information may be helpful:<br>\n";
+  print "<b>Certificate Distinguished Name (DN):</b> $CertDN<br>\n";
   print "<b>Certificate Common Name (CN):</b> $CertCN<br>\n";
   print "<b>Certificate E-mail Address:</b> $CertEmail<br>\n";
 } elsif ($CertificateStatus eq "nocert") {
@@ -95,8 +89,7 @@ if ($CertificateStatus eq "verified") {
 
   my $CertNote          = $params{certnote};
   my @RequestedGroupIDs = split /\0/,$params{reqgroups};
-  my $UserName = $CertCN;
-     $UserName =~ s/\W//g;
+  my $UserName = $CertDN;
 
 ### Fill in DB tables
 
@@ -116,7 +109,7 @@ if ($CertificateStatus eq "verified") {
 ### Notify applicant and administrator
 
 
-  print "You ($CertCN with e-mail address $CertEmail) have requested ";
+  print "You ($CertDN with e-mail address $CertEmail) have requested ";
   print "access to $Project DocDB. ";
   print "You have requested membership in the following groups:\n";
   print "<ul>\n";
@@ -133,7 +126,7 @@ if ($CertificateStatus eq "verified") {
 
     my @To      = ($DBWebMasterEmail);
     my $Subject = "$CertCN requests access to $Project DocDB";
-    my $Body    = "$CertCN with e-mail address $CertEmail has requested ";
+    my $Body    = "$CertCN (Certificate DN $CertDN) with e-mail address $CertEmail has requested ";
     $Body      .= "access to $Project DocDB. ";
     $Body      .= "He or she requests membership in the following groups:\n";
     foreach my $GroupID (@RequestedGroupIDs) {

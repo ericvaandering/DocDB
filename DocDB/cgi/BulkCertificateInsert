@@ -5,7 +5,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -95,17 +95,16 @@ if ($Action eq "Insert") {
   my $UsersGroupInsert = $dbh -> prepare("insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) values (0,?,?)");
 
   foreach my $Row (1..$MaxUsers) {
-    my $Name     = $Untaint -> extract (-as_printable => "name$Row")  || "";
+    my $Username = $Untaint -> extract (-as_printable => "name$Row")  || "";
+    my $Name     = $Untaint -> extract (-as_printable => "commonname$Row")  || "";
     my $Email    = $Untaint -> extract (-as_printable => "email$Row") || "";
-    my $Username = $Name;
-       $Username =~ s/\W//g;
 
     if ($Username) {
       if ($Usernames{$Username}) {
         push @WarnStack,"The user $Name already exists. Not inserted.";
         next;
       }
-      unless ($Email) {
+      unless ($Email && $Name) {
         push @WarnStack,"You must supply a name and e-mail address for the user $Name. Not inserted.";
         next;
       }
@@ -157,20 +156,24 @@ if ($UseSignoffs) {
 print "</td></tr>\n";
 
 print "<tr><th>";
-print FormElementTitle(-helplink => 'certname',  -helptext => 'Certificate CN');
+print FormElementTitle(-helplink => 'usersname',  -helptext => "User's Name");
+print "</th><th>";
+print FormElementTitle(-helplink => 'certname',  -helptext => 'Certificate DN');
 print "</th><th>";
 print FormElementTitle(-helplink => 'certemail', -helptext => 'E-mail Address');
 print "</th></tr>\n";
 
 foreach my $Row (1..$MaxUsers) {
   print "<tr><td>\n";
-  TextField(-name => "name$Row",  -size => 40, -maxlength => $DBColumnSize{EmailUser}{Name}        );
+  TextField(-name => "commonname$Row",  -size => 40, -maxlength => $DBColumnSize{EmailUser}{Name}        );
+  print "</td><td>\n";
+  TextField(-name => "name$Row",  -size => 40, -maxlength => 2048);
   print "</td><td>\n";
   TextField(-name => "email$Row", -size => 30, -maxlength => $DBColumnSize{EmailUser}{EmailAddress});
   print "</td></tr>\n";
 }
 
-print '<tr><td colspan="2" class="SubmitCell">';
+print '<tr><td colspan="3" class="SubmitCell">';
 print $query -> submit (-value => "Insert Users");
 print "</td></tr>\n";
 

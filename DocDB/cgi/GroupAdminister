@@ -9,7 +9,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -249,7 +249,7 @@ if      ($Action eq "Delete") { # Delete group
    "insert into GroupHierarchy (HierarchyID,ChildID,ParentID) ".
                        "values (0,?,?)");
   foreach my $ChildID (@ChildIDs) {
-    if ($ChildID) {
+    if ($ChildID && $ChildID != $ParentID) {
       $HierarchyInsert -> execute($ChildID,$ParentID);
     }
   }     

@@ -8,7 +8,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -455,6 +455,7 @@ sub EmailUserSelect (%) {
   require "Sorts.pm";
   my (%Params) = @_;
 
+  my $HelpText = $Params{-helptext}  || "Username";
   my $Disabled = $Params{-disabled}  || "0";
   my @Defaults = @{$Params{-default}};
 
@@ -466,12 +467,13 @@ sub EmailUserSelect (%) {
   my @EmailUserIDs = &GetEmailUserIDs;
   foreach my $EmailUserID (@EmailUserIDs) {
     &FetchEmailUser($EmailUserID);
-    $EmailUserLabels{$EmailUserID} = $EmailUser{$EmailUserID}{Username};
+    $EmailUserLabels{$EmailUserID} = $EmailUser{$EmailUserID}{Name}.
+                                     ' ['.$EmailUser{$EmailUserID}{Username}.']';
   }
 
-  @EmailUserIDs = sort EmailUserIDsByUsername @EmailUserIDs;
+  @EmailUserIDs = sort EmailUserIDsByName @EmailUserIDs;
 
-  print FormElementTitle(-helplink => "emailuser", -helptext => "Username");
+  print FormElementTitle(-helplink => "emailuser", -helptext => $HelpText);
   print $query -> scrolling_list(-name   => 'emailuserid',
                                  -values => \@EmailUserIDs,
                                  -labels => \%EmailUserLabels,

@@ -52,6 +52,9 @@ print $query -> header( -charset => $HTTP_ENCODING );
 my $CertificateStatus = &CertificateStatus();
 my $CertEmail = $ENV{SSL_CLIENT_S_DN_Email};
 my $CertCN    = $ENV{SSL_CLIENT_S_DN_CN};
+my $CertDN    = $ENV{SSL_CLIENT_S_DN};
+
+push @DebugStack, "DN is $CertDN, CN is $CertCN";
 
 if ($CertificateStatus eq "verified") {
   print "<b>Your certificate has been verified and you have access to documents from these groups:</b>";
@@ -70,14 +73,7 @@ if ($CertificateStatus eq "verified") {
   print "<b>Your certificate is valid and you have applied for access to documents.
          If you believe your request has been misplaced or neglected, contact an administator.</b><p/>";
   print "The following information may be helpful:<br>\n";
-  print "<b>Certificate Common Name (CN):</b> $CertCN<br/>\n";
-  print "<b>Certificate E-mail Address:</b> $CertEmail<br/>\n";
-} elsif ($CertificateStatus eq "mismatch") {
-  print "<b>Your certificate is valid but a similar certificate already exists
-         for  either your e-mail address or your name (CN). Only one
-         certificate is allowed per person. Contact an administrator if you
-         don't know what to do.</b><p/>";
-  print "The following information may be helpful:<br/>\n";
+  print "<b>Certificate Distinguished Name (DN):</b> $CertDN<br/>\n";
   print "<b>Certificate Common Name (CN):</b> $CertCN<br/>\n";
   print "<b>Certificate E-mail Address:</b> $CertEmail<br/>\n";
 } elsif ($CertificateStatus eq "nocert") {
@@ -93,7 +89,9 @@ if ($CertificateStatus eq "verified") {
   print $query -> start_multipart_form('POST',$UserAccessApply);
   print "<table class=\"MedPaddedTable CenteredTable\">\n";
   print "<tr>\n";
-  print "<td><b>Your name (Certificate CN):</b><br/>&nbsp;&nbsp;$CertCN<p/>\n";
+  print "<td colspan=\"2\"><b>Your certificate DN:</b><br/>&nbsp;&nbsp;$CertDN<p/>\n";
+  print "</tr><tr>\n";
+  print "<td><b>Your name (certificate CN):</b><br/>&nbsp;&nbsp;$CertCN<p/>\n";
   TextField(-name => "email", -helplink  => "email", -helptext => "Your E-mail",
             -size => 20,      -maxlength => 64,      -default  => $CertEmail);
   print "</td>\n";

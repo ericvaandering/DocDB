@@ -8,7 +8,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -113,7 +113,7 @@ if ($Action eq "Delete") {
 
 # Deal with parent changes   
 
-  if ($ParentTopicID && $ParentTopicID == $TopicID) {
+  if ($TopicID && $ParentTopicID && $ParentTopicID == $TopicID) {
     push @WarnStack,"You cannot set a topic to be its own parent. No action taken.";
   }  
 
@@ -141,7 +141,7 @@ if ($Action eq "Delete") {
 
     $TopicInsert -> execute($ShortName,$LongName);
     my $TopicID = $TopicInsert -> {mysql_insertid};
-    if ($ParentTopicID) {
+    if ($ParentTopicID && $TopicID && $ParentTopicID != $TopicID) {
       my $Insert = $dbh -> prepare("insert into TopicHierarchy (TopicHierarchyID,TopicID,ParentTopicID) values (0,?,?)");
       $Insert -> execute($TopicID,$ParentTopicID);
       push @ActionStack,"New sub-topic created with descriptions $ShortName and $LongName.";
