@@ -12,7 +12,7 @@
 #    SetAuthorDefault: Sets Author and Submitter defaults to cookie value
 #    SetFileOptions:   Sets archive mode and number of uploads
 
-# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
