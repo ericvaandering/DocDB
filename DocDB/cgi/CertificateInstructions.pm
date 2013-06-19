@@ -11,7 +11,7 @@
 # is set, there may be some issues. Please feel free to send patches if you find
 # FNAL specific information remaining.
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
