@@ -1,12 +1,10 @@
 #! /usr/bin/env perl
 #
-#        Name: $RCSfile$
+#        Name: ProcessDocumentAdd
 # Description: Receives the output of DocumentAddForm and creates or updates the document
 #
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
-#
 #      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 
 # Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
