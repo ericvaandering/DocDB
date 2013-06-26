@@ -1,9 +1,8 @@
 #        Name: UntaintInteger.pm
 # Description: Allows an integer with leading/trailing whitespace
 #
-#    Modified: Eric Vaandering (ewv@fnal.gov)
-#
 #      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 
 # Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
