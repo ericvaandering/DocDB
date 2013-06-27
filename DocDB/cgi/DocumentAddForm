@@ -62,6 +62,7 @@ require "TalkHTML.pm";
 require "TopicHTML.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 &GetAuthors;

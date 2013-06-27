@@ -70,7 +70,9 @@ GetSecurityGroups();
 
 ### Set up, give user initial information
 
-%params = $query -> Vars;
+%params = $query -> Vars; # TODO remove
+my $Untaint   = CGI::Untaint -> new($query -> Vars);
+
 $mode = $params{mode}; #FIXME: Remove
 $Mode = $params{mode};
 
@@ -87,36 +89,57 @@ if ($Mode eq "reserve") {
 ### FIXME: Get all the params here, too confusing later on to be using $param
 ### FIXME: Any reason all of these can't be "my"?
 
-my $Archive       = $params{archive};
-my $DocTypeID     = $params{doctype};
-my $Title         = $params{title};
-my $Abstract      = $params{abstract};
-my $PubInfo       = $params{pubinfo};
-my $AuthorMode    = $params{authormode};
-   $Overdate      = $params{overdate};
-   $Overday       = $params{overday};
-   $Overmonth     = $params{overmonth};
-   $Overyear      = $params{overyear};
-   $Overmin       = $params{overmin};
-   $Overhour      = $params{overhour};
-   @JournalIDs    = split /\0/,$params{journal};
-   @Volumes       = split /\0/,$params{volume};
-   @Pages         = split /\0/,$params{page};
-   $Keywords      = $params{keywords};
-   $Requester     = $params{requester}; #FIXME: Replace with RequesterID
-my $RequesterID   = $params{requester};
+# "Hidden" things
+
+my $Archive = $Untaint -> extract(-as_printable => "archive") || "";
+my $AuthorMode = $Untaint -> extract(-as_printable => "authormode") || "";
+my $OldVersion = $Untaint -> extract(-as_printable => "oldversion") || "";
+my $MaxFiles = $Untaint -> extract(-as_printable => "maxfiles") || "";
+my $UniqueID = $Untaint -> extract(-as_printable => "uniqueid") || "";
+
+# Text fields
+
+my $Title = $Untaint -> extract(-as_safehtml => "title") || "";
+my $Abstract = $Untaint -> extract(-as_safehtml => "abstract") || "";
+my $PubInfo = $Untaint -> extract(-as_safehtml => "pubinfo") || "";
+my $Keywords = $Untaint -> extract(-as_safehtml => "keywords") || "";
+my $RevisionNote = $Untaint -> extract(-as_safehtml => "revisionnote") || "";
+my $SignoffList = $Untaint -> extract(-as_safehtml => "signofflist") || "";
+
+# Checkboxes
+
+my $SubmitAgree = $Untaint -> extract(-as_printable => "submitagree") || "";
+my $PreserveSigs = $Untaint -> extract(-as_printable => "preservesigs") || "";
+my $LessFiles = $Untaint -> extract(-as_printable => "LessFiles") || "";
+
+# ID numbers and numerical fields
+
+my $DocTypeID = $Untaint -> extract(-as_integer => "doctype") || 0;
+my $RequesterID = $Untaint -> extract(-as_integer => "requester") || 0;
 my $SessionTalkID = $params{sessiontalkid};
-my $RevisionNote  = $params{revisionnote};
-my $SignoffList   = $params{signofflist};
-my $OldVersion    = $params{oldversion};
-my $SubmitAgree   = $params{submitagree};
-my $PreserveSigs  = $params{preservesigs};
-my $LessFiles     = $params{LessFiles};
-my $MaxFiles      = $params{maxfiles};
-my $UniqueID      = $params{uniqueid};
+
+my $Overdate = $Untaint -> extract(-as_integer => "overdate") || 0;
+my $Overday = $Untaint -> extract(-as_integer => "overday") || 0;
+my $Overmonth = $Untaint -> extract(-as_integer => "overmonth") || 0;
+my $Overyear = $Untaint -> extract(-as_integer => "overyear") || 0;
+my $Overmin = $Untaint -> extract(-as_integer => "overmin") || 0;
+my $Overhour = $Untaint -> extract(-as_integer => "overhour") || 0;
+
+# Stuff to fix
+
+my   @JournalIDs    = split /\0/,$params{journal};
+my   @Volumes       = split /\0/,$params{volume};
+my   @Pages         = split /\0/,$params{page};
+
+$Requester     = $RequesterID; #FIXME: Replace with RequesterID
+
 my @XRefs         = split /,*\s+/,$params{xrefs}; # Can be comma or space separated
 my @EventIDs          = $query -> param('events');
 my @RequestedTopicIDs = $query -> param('topics');
+
+# FIXME: All the file stuff (maybe can keep looping through like below
+# FIXME: Authors. Extract to two fields with untaint, pass through to figure out IDs
+
 
 if ($Archive eq "multi") {$Archive = "single";} # No real difference
 if ($Mode eq "clone") {$Mode = "add"; $mode = "add";} # Same thing

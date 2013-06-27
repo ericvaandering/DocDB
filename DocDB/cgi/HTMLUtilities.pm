@@ -23,6 +23,12 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 
+# Make available these handlers to every script that needs them
+
+use CGI::Untaint;
+require "UntaintHTML.pm";
+require "UntaintInteger.pm";
+
 require "ProjectRoutines.pm";
 
 sub PrettyHTML ($) {
