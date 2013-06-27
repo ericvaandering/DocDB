@@ -71,6 +71,8 @@ GetSecurityGroups();
 ### Set up, give user initial information
 
 %params = $query -> Vars;
+my $Untaint   = CGI::Untaint -> new($query -> Vars);
+
 $mode = $params{mode}; #FIXME: Remove
 $Mode = $params{mode};
 
@@ -88,9 +90,9 @@ if ($Mode eq "reserve") {
 ### FIXME: Any reason all of these can't be "my"?
 
 my $Archive       = $params{archive};
-my $DocTypeID     = $params{doctype};
+my $DocTypeID = $Untaint -> extract (-as_integer => "doctype")  || 0;
 my $Title         = $params{title};
-my $Abstract      = $params{abstract};
+my $Abstract = $Untaint -> extract (-as_safehtml => "abstract")  || "";
 my $PubInfo       = $params{pubinfo};
 my $AuthorMode    = $params{authormode};
    $Overdate      = $params{overdate};
