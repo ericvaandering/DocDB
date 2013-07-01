@@ -37,7 +37,7 @@ sub SmartHTML ($) {
   my $MakeURLs      = exists $ArgRef->{-makeURLs}      ?  $ArgRef->{-makeURLs}      : $FALSE;
   my $AddLineBreaks = exists $ArgRef->{-addLineBreaks} ?  $ArgRef->{-addLineBreaks} : $FALSE;
   $MakeURLs = $FALSE;
-  $AddLineBreaks = $FALSE;
+#  $AddLineBreaks = $TRUE;
   if ($MakeURLs) {
 
     my $urls = '(http|telnet|gopher|file|wais|ftp|https)';
@@ -64,6 +64,11 @@ sub SmartHTML ($) {
   }
 
   $Text =~ s{([^\w\s&#;]|&(?!#\d+;))}{"&#".unpack(U,$1).";"}ge;
+  
+  if ($AddLineBreaks) {
+    $Text =~ s/\n\n/<p\/>/g;
+    $Text =~ s/\n/<br\/>/g;
+  }
 
   return $Text;
 }
