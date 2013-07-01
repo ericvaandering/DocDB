@@ -23,6 +23,8 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+require "HTMLUtilities.pm";
+
 sub TitleBox (%) {
   my (%Params) = @_;
   #FIXME: Get rid of global default
@@ -234,9 +236,10 @@ sub PrintAbstract ($;$) {
   my $Format = exists $ArgRef->{-format} ? $ArgRef->{-format} : "div";
 
   if ($Abstract) {
-    $Abstract = &URLify($Abstract);
-    $Abstract =~ s/\n\n/<p\/>/g;
-    $Abstract =~ s/\n/<br\/>/g;
+#     $Abstract = &URLify($Abstract);
+#     $Abstract =~ s/\n\n/<p\/>/g;
+#     $Abstract =~ s/\n/<br\/>/g;
+    $Abstract = SmartHTML( {-text => $Abstract, -makeURLs => $TRUE, -addLineBreaks => $TRUE} );
   } else {
     $Abstract = "None";
   }
