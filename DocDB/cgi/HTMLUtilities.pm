@@ -36,7 +36,7 @@ sub SmartHTML ($) {
   my $Text          = exists $ArgRef->{-text}          ?  $ArgRef->{-text}          : "";
   my $MakeURLs      = exists $ArgRef->{-makeURLs}      ?  $ArgRef->{-makeURLs}      : $FALSE;
   my $AddLineBreaks = exists $ArgRef->{-addLineBreaks} ?  $ArgRef->{-addLineBreaks} : $FALSE;
-  $MakeURLs = $FALSE;
+#  $MakeURLs = $FALSE;
 #  $AddLineBreaks = $TRUE;
   if ($MakeURLs) {
 
