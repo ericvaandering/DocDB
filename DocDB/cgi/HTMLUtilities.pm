@@ -36,13 +36,12 @@ sub SmartHTML ($) {
   my $Text          = exists $ArgRef->{-text}          ?  $ArgRef->{-text}          : "";
   my $MakeURLs      = exists $ArgRef->{-makeURLs}      ?  $ArgRef->{-makeURLs}      : $FALSE;
   my $AddLineBreaks = exists $ArgRef->{-addLineBreaks} ?  $ArgRef->{-addLineBreaks} : $FALSE;
-#  $MakeURLs = $FALSE;
-#  $AddLineBreaks = $TRUE;
 
-  $Text =~ s{([^\w\s&#;]|&(?!#\d+;))}{"&#".unpack(U,$1).";"}ge;
-  
+  # Escape text into &x1234; format ignoring a alphanumerics and a few special characters
+  $Text =~ s{([^\:\/\.\-\w\s&#%;]|&(?!#?\w+;))}{"&#x".sprintf("%x", unpack(U,$1)).";"}ge;
+
+  # Turn found URLs into hyperlinks, adapted from Perl Cookbook, 6.21
   if ($MakeURLs) {
-
     my $urls = '(http|telnet|gopher|file|wais|ftp|https)';
     my $ltrs = '\w';
     my $gunk = '/#~:.?+=&%@!\-';
@@ -66,6 +65,7 @@ sub SmartHTML ($) {
              }{<a href="$1">$1</a>}igox;
   }
 
+  # Make two line-feeds into a paragraph break and one into a line break in HTML
   if ($AddLineBreaks) {
     $Text =~ s/\n\n/<p\/>/g;
     $Text =~ s/\n/<br\/>/g;
