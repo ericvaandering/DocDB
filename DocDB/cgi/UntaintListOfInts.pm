@@ -34,9 +34,8 @@ sub is_valid {
   my $self = shift;
   my $RawValue = $self->value;
   my @Values = split /\0/,$RawValue;
-  print STDERR "The decoded list is ".join ',',@Values;
   my $ArrRef = \@Values;
-  print STDERR "Array Ref is ".$ArrRef;
+
   $self->value($ArrRef);
 }
 
