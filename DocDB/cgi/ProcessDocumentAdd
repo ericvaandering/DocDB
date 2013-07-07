@@ -128,7 +128,10 @@ my $Overhour = $Untaint -> extract(-as_integer => "overhour") || 0;
 
 # Stuff to fix
 
-my @TestTopicIDs = $Untaint -> extract(-as_listofint => "topics") || ();
+my $TestTopicIDs = $Untaint -> extract(-as_listofint => "topics") || undef;
+#my @TestTopicIDs = $Untaint -> extract(-as_listofint => "topics") || ();
+print STDERR  "TTI is ".$TestTopicIDs;
+my @TestTopicIDs = @{ $TestTopicIDs};
 
 push @DebugStack, "Topics from test are ".(join ',', @TestTopicIDs)." so there.";
 
