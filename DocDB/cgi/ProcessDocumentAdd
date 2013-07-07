@@ -130,7 +130,7 @@ my $Overhour = $Untaint -> extract(-as_integer => "overhour") || 0;
 
 my @TestTopicIDs = $Untaint -> extract(-as_listofint => "topics") || ();
 
-push @DebugStack, "Topics from test are ".(join ',', @TestTopicIDs)." so there."
+push @DebugStack, "Topics from test are ".(join ',', @TestTopicIDs)." so there.";
 
 my   @JournalIDs    = split /\0/,$params{journal};
 my   @Volumes       = split /\0/,$params{volume};
