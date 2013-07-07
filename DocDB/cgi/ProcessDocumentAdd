@@ -44,6 +44,7 @@ require "FileUtilities.pm";
 require "TopicUtilities.pm";
 require "WebUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 
 require "Security.pm";
 require "Scripts.pm";
@@ -126,6 +127,11 @@ my $Overmin = $Untaint -> extract(-as_integer => "overmin") || 0;
 my $Overhour = $Untaint -> extract(-as_integer => "overhour") || 0;
 
 # Stuff to fix
+
+#FIXME: Coalesce to one line?
+#my $TestTopicIDs = $Untaint -> extract(-as_listofint => "topics") || undef;
+my @TestTopicIDs = @{ $Untaint -> extract(-as_listofint => "topics") || undef };
+push @DebugStack, "Topics from test are ".(join ',', @TestTopicIDs)." so there.";
 
 my   @JournalIDs    = split /\0/,$params{journal};
 my   @Volumes       = split /\0/,$params{volume};
