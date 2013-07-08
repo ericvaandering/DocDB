@@ -24,6 +24,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+require "HTMLUtilities.pm";
 require "AuthorHTML.pm"; #FIXME: Remove, move references to correct place
 require "TopicHTML.pm";  #FIXME: Remove, move references to correct place
 require "FileHTML.pm";   #FIXME: Remove, move references to correct place
@@ -31,11 +32,14 @@ require "RevisionHTML.pm";   #FIXME: Remove, move references to correct place
 
 sub PrintTitle {
   my ($Title) = @_;
+  my $HTML = "<h1>";
   if ($Title) {
-    print "<h1>$Title</h1>\n";
+    $HTML .= SmartHTML( {-text => $Title, } );
   } else {
-    print "<h1><b>Title:</b> none<br></h1>\n";
+    $HTML .= "<b>Title:</b> none";
   }
+  $HTML .= "</h1>\n";
+  print $HTML;
 }
 
 sub WarnPage () { # Non-fatal errors

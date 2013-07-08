@@ -261,9 +261,6 @@ sub PrintAbstract ($;$) {
   my $Format = exists $ArgRef->{-format} ? $ArgRef->{-format} : "div";
 
   if ($Abstract) {
-#     $Abstract = &URLify($Abstract);
-#     $Abstract =~ s/\n\n/<p\/>/g;
-#     $Abstract =~ s/\n/<br\/>/g;
     $Abstract = SmartHTML( {-text => $Abstract, -makeURLs => $TRUE, -addLineBreaks => $TRUE} );
   } else {
     $Abstract = "None";
@@ -311,9 +308,7 @@ sub PrintRevisionNote {
   my ($RevisionNote) = @_;
   if ($RevisionNote) {
     print "<div id=\"RevisionNote\">\n";
-    $RevisionNote = &URLify($RevisionNote);
-    $RevisionNote =~ s/\n\n/<p\/>/g;
-    $RevisionNote =~ s/\n/<br\/>/g;
+    $RevisionNote = SmartHTML( {-text => $RevisionNote, -makeURLs => $TRUE, -addLineBreaks => $TRUE} );
     print "<dl>\n";
     print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Notes and Changes:</span></dt>\n";
     print "<dd>$RevisionNote</dd>\n";
@@ -429,9 +424,7 @@ sub PrintPubInfo ($) {
   my ($pubinfo) = @_;
   if ($pubinfo) {
     print "<div id=\"PubInfo\">\n";
-    $pubinfo = &URLify($pubinfo);
-    $pubinfo =~ s/\n\n/<p>/g;
-    $pubinfo =~ s/\n/<br>/g;
+    $pubinfo = SmartHTML( {-text => $pubinfo, -makeURLs => $TRUE, -addLineBreaks => $TRUE} );
     print "<dl>\n";
     print "<dt class=\"InfoHeader\"><span class=\"InfoHeader\">Publication Information:</span></dt>\n";
     print "<dd>$pubinfo</dd>\n";

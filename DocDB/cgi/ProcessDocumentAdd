@@ -71,24 +71,22 @@ GetSecurityGroups();
 
 ### Set up, give user initial information
 
-%params = $query -> Vars; # TODO remove
+#%params = $query -> Vars; # TODO remove
 my $Untaint   = CGI::Untaint -> new($query -> Vars);
 
-$mode = $params{mode}; #FIXME: Remove
-$Mode = $params{mode};
+my $Mode = $Untaint -> extract(-as_printable => "mode") || "";
+$mode = $Mode; #FIXME: Remove when not needed
 
 print $query -> header( -charset => $HTTP_ENCODING );
 if ($Mode eq "reserve") {
   &DocDBHeader("$Project Document Reservation Results","Document Reservation Results",-scripts => ["PopUps"]);
 } elsif ($Mode eq "add" || $Mode eq "clone") {
   &DocDBHeader("$Project Document Addition Results","Document Addition Results",-scripts => ["PopUps"]);
-} elsif ($Mode eq "update" || $mode eq "updatedb") {
+} elsif ($Mode eq "update" || $Mode eq "updatedb") {
   &DocDBHeader("$Project Document Modification Results","Document Modification Results",-scripts => ["PopUps"]);
 }
 
 ### Pull info out of params into local variables
-### FIXME: Get all the params here, too confusing later on to be using $param
-### FIXME: Any reason all of these can't be "my"?
 
 # "Hidden" things
 
@@ -97,6 +95,8 @@ my $AuthorMode = $Untaint -> extract(-as_printable => "authormode") || "";
 my $OldVersion = $Untaint -> extract(-as_printable => "oldversion") || "";
 my $MaxFiles = $Untaint -> extract(-as_printable => "maxfiles") || "";
 my $UniqueID = $Untaint -> extract(-as_printable => "uniqueid") || "";
+my $DocumentID = $Untaint -> extract(-as_integer => "docid") || 0;
+my $UserVersion = $Untaint -> extract(-as_integer => "version") || undef; # Special case to allow modifying version 0 (reservations)
 
 # Text fields
 
@@ -117,8 +117,7 @@ my $LessFiles = $Untaint -> extract(-as_printable => "LessFiles") || "";
 
 my $DocTypeID = $Untaint -> extract(-as_integer => "doctype") || 0;
 my $RequesterID = $Untaint -> extract(-as_integer => "requester") || 0;
-   $Requester = $RequesterID; #FIXME: Replace with RequesterID
-my $SessionTalkID = $params{sessiontalkid};
+my $SessionTalkID = $Untaint -> extract(-as_integer => "sessiontalkid") || 0;
 
 my $Overdate = $Untaint -> extract(-as_integer => "overdate") || 0;
 my $Overday = $Untaint -> extract(-as_integer => "overday") || 0;
@@ -126,6 +125,12 @@ my $Overmonth = $Untaint -> extract(-as_integer => "overmonth") || 0;
 my $Overyear = $Untaint -> extract(-as_integer => "overyear") || 0;
 my $Overmin = $Untaint -> extract(-as_integer => "overmin") || 0;
 my $Overhour = $Untaint -> extract(-as_integer => "overhour") || 0;
+
+my @AuthorIDs = @{ $Untaint -> extract(-as_listofint => "authors") || undef };
+my $AuthorManual = $Untaint -> extract(-as_safehtml => "authormanual") || "";
+
+my @ViewGroupIDs = @{ $Untaint -> extract(-as_listofint => "security") || undef };
+my @ModifyGroupIDs = @{ $Untaint -> extract(-as_listofint => "modify") || undef };
 
 # Journal Info
 
@@ -137,9 +142,12 @@ my @XRefs = split /,*\s+/,($Untaint -> extract(-as_safehtml => "xrefs") || ""); 
 my @EventIDs = @{ $Untaint -> extract(-as_listofint => "events") || undef };
 my @RequestedTopicIDs = @{ $Untaint -> extract(-as_listofint => "topics") || undef };
 
-# FIXME: All the file stuff (maybe can keep looping through like below
-# FIXME: Authors. Extract to two fields with untaint, pass through to figure out IDs
+# Zip/tarfile params
 
+my $SingleUpload = $Untaint -> extract(-as_printable => "single_upload") || "";
+my $SingleHTTP = $Untaint -> extract(-as_printable => "single_http") || "";
+my $MainFile = $Untaint -> extract(-as_printable => "mainfile") || "";
+my $Description = $Untaint -> extract(-as_safehtml => "filedesc") || "";
 
 if ($Archive eq "multi") {$Archive = "single";} # No real difference
 if ($Mode eq "clone") {$Mode = "add"; $mode = "add";} # Same thing
@@ -154,12 +162,12 @@ my $AddNewFile    = 0;
 my $NumberOfFiles = 0;
 for (my $i = 1; $i<= $MaxFiles; ++$i) {
   my $Key = $i; # Probably something better later
-  my $UploadI = $Untaint -> extract(-as_printable => "upload$i") || "";
+  my $UploadI = $query -> param("upload$i");
   my $UrlI = $Untaint -> extract(-as_printable => "url$i") || "";
   my $CopyI = $Untaint -> extract(-as_printable => "copy$i") || "";
   my $FileIDI = $Untaint -> extract(-as_integer => "fileid$i") || 0;
   my $NewNameI = $Untaint -> extract(-as_safehtml => "newname$i") || ""; # FIXME: More restrictive?
-  my $MainI = $Untaint -> extract(-as_integer => "main$i") || "";
+  my $MainI = $Untaint -> extract(-as_printable => "main$i") || "";
   my $DescriptionI = $Untaint -> extract(-as_safehtml => "filedesc$i") || "";
   if ($UploadI) {
     $AddNewFile = 1;
@@ -197,17 +205,15 @@ for (my $i = 1; $i<= $MaxFiles; ++$i) {
 my %Archive = ();
 if ($Archive eq "archive") { # They uploaded a tar/zip file
   $AddNewFile = 1;
-  $Archive{File} = $query ->  param("single_upload");
-  $Archive{MainFile}    = $params{"mainfile"};
-  $Archive{Description} = $params{"filedesc"};
+  $Archive{File} = $SingleUpload;
+  $Archive{MainFile} = $MainFile;
+  $Archive{Description} = $Description;
 }
 
 my $OrderAuthors = $FALSE;
 if ($AuthorMode eq "field") {
   $OrderAuthors = $TRUE;
-  @authorIDs = ProcessManualAuthors($params{authormanual});
-} else {
-  @authorIDs = split /\0/,$params{authors};
+  @AuthorIDs = ProcessManualAuthors($AuthorManual);
 }
 
 if ($Overdate && $Overyear && $Overmonth && $Overday) {
@@ -250,10 +256,10 @@ if ($PreserveSigs && !CanPreserveSigs()) {
 if ($PreserveSigs && $mode ne "updatedb") {
   push @ErrorStack,'Signatures may only be preserved when modifying document meta-data.';
 }
-unless ($params{requester}) {
-  push @ErrorStack,"You must supply a requester for this document.";
+unless ($RequesterID) {
+  push @ErrorStack,"You must supply a submitter for this document.";
 }
-unless ($params{title}) {
+unless ($Title) {
   push @ErrorStack,"You must supply a title for this document.";
 }
 
@@ -283,7 +289,7 @@ unless ($DocTypeID) {
 }
 
 if ($Mode eq "add" || $Mode eq "update") {
-  unless ($params{abstract}) {
+  unless ($Abstract) {
     push @ErrorStack,"You must supply an abstract for this document.";
   }
   unless ($AddNewFile) {
@@ -291,10 +297,10 @@ if ($Mode eq "add" || $Mode eq "update") {
                       If you just want to change information about the
                       document, choose `Update DB Info' instead.";
   }
-  if     ($params{single_upload} && $params{single_http}) {
+  if     ($SingleUpload && $SingleHTTP) {
     push @ErrorStack,"You may not specify both URL and file upload.";
   }
-  if     (!$params{mainfile} && $Archive eq "archive") {
+  if     (!$MainFile && $Archive eq "archive") {
     push @ErrorStack,"You must specify a main file in the archive.";
   }
 
@@ -305,7 +311,6 @@ if ($Mode eq "add" || $Mode eq "update") {
 }
 
 if ($Mode eq "update" && !$LessFiles) {
-  my $DocumentID = $params{docid};
   FetchDocument($DocumentID);
   my $Version = $Documents{$DocumentID}{NVersions};
   my $DocRevID = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
@@ -318,10 +323,10 @@ if ($Mode eq "update" && !$LessFiles) {
 }
 
 if ($Mode eq "update" || $Mode eq "updatedb") {
-  unless ($params{docid}) {
+  unless ($DocumentID) {
     push @ErrorStack,"You must supply a document number to modify a document.";
   }
-  unless (&CanModify($params{docid})) {
+  unless (&CanModify($DocumentID)) {
     push @ErrorStack,"You are not allowed to modify this document.";
   }
 }
@@ -354,13 +359,13 @@ if ($mode eq "add" || $mode eq "update") {
   }
 }
 
-@securities  = split ("\0",$params{security});
+@securities  = @ViewGroupIDs;
 if ($EnhancedSecurity) {
-  @ModifyGroups = split ("\0",$params{modify});
+  @ModifyGroups = @ModifyGroupIDs;
 }
 
 if ($mode eq "add" || $mode eq "update" || $mode eq "updatedb") {
-  unless (@authorIDs) {
+  unless (@AuthorIDs) {
     push @ErrorStack,"You must supply at least one author for this document.";
   }
 }
@@ -422,7 +427,7 @@ my $documentID;
 if ($mode eq "reserve" || $mode eq "add") {
   $documentID = &InsertDocument(-requesterid => $RequesterID, -datetime => $SQL_NOW, -dochash => $UniqueID);
 } else {
-  $documentID = $params{docid};
+  $documentID = $DocumentID;
 }
 
 ### Set version number. For reservations, it is "0", for new documents "1". For
@@ -439,8 +444,8 @@ if      ($mode eq "reserve") {
   $version   = $Documents{$documentID}{NVersions} + 1;
 } elsif ($mode eq "updatedb") {
   &FetchDocument($documentID);
-  if  (defined $params{version}) {
-    $version = $params{version};
+  if  (defined $UserVersion) {
+    $version = $UserVersion;
   } else {
     $version = $Documents{$documentID}{NVersions};
   }
@@ -492,7 +497,7 @@ if (@XRefs) {
 ### Add to authors, topics and securities
 
 my $Count;
-$Count = InsertAuthors( -docrevid  => $DocRevID, -authorids => \@authorIDs, -order => $OrderAuthors);
+$Count = InsertAuthors( -docrevid  => $DocRevID, -authorids => \@AuthorIDs, -order => $OrderAuthors);
 $Count = InsertTopics(  -docrevid  => $DocRevID, -topicids  => \@TopicIDs);
 $Count = InsertSecurity(-docrevid  => $DocRevID,
                         -viewids   => \@securities,
