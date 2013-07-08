@@ -236,9 +236,6 @@ sub PrintAbstract ($;$) {
   my $Format = exists $ArgRef->{-format} ? $ArgRef->{-format} : "div";
 
   if ($Abstract) {
-#     $Abstract = &URLify($Abstract);
-#     $Abstract =~ s/\n\n/<p\/>/g;
-#     $Abstract =~ s/\n/<br\/>/g;
     $Abstract = SmartHTML( {-text => $Abstract, -makeURLs => $TRUE, -addLineBreaks => $TRUE} );
   } else {
     $Abstract = "None";

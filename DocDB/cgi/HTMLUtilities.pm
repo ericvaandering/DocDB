@@ -24,6 +24,8 @@
 
 require "ProjectRoutines.pm";
 
+# FIXME: Remove URLify, Paragraphize, AddLineBreaks, SafeHTML (possibly) from Utitlities.pm
+
 sub SmartHTML ($) {
   my ($ArgRef) = @_;
   my $Text          = exists $ArgRef->{-text}          ?  $ArgRef->{-text}          : "";
@@ -60,8 +62,9 @@ sub SmartHTML ($) {
 
   # Make two line-feeds into a paragraph break and one into a line break in HTML
   if ($AddLineBreaks) {
-    $Text =~ s/\n\n/<p\/>/g;
-    $Text =~ s/\n/<br\/>/g;
+    $Text =~ s/\s*\n\s*\n\s*/<p\/>/g; # Replace two new lines and any space with <p>
+    $Text =~ s/\s*\n\s*/<br\/>\n/g;
+    $Text =~ s/<p\/>/<p\/>\n/g;
   }
 
   return $Text;

@@ -74,15 +74,15 @@ GetSecurityGroups();
 %params = $query -> Vars; # TODO remove
 my $Untaint   = CGI::Untaint -> new($query -> Vars);
 
-$mode = $params{mode}; #FIXME: Remove
-$Mode = $params{mode};
+my $Mode = $Untaint -> extract(-as_printable => "mode") || "";
+$mode = $Mode; #FIXME: Remove when not needed
 
 print $query -> header( -charset => $HTTP_ENCODING );
 if ($Mode eq "reserve") {
   &DocDBHeader("$Project Document Reservation Results","Document Reservation Results",-scripts => ["PopUps"]);
 } elsif ($Mode eq "add") {
   &DocDBHeader("$Project Document Addition Results","Document Addition Results",-scripts => ["PopUps"]);
-} elsif ($Mode eq "update" || $mode eq "updatedb") {
+} elsif ($Mode eq "update" || $Mode eq "updatedb") {
   &DocDBHeader("$Project Document Modification Results","Document Modification Results",-scripts => ["PopUps"]);
 }
 
@@ -127,6 +127,9 @@ my $Overyear = $Untaint -> extract(-as_integer => "overyear") || 0;
 my $Overmin = $Untaint -> extract(-as_integer => "overmin") || 0;
 my $Overhour = $Untaint -> extract(-as_integer => "overhour") || 0;
 
+my @AuthorIDs = @{ $Untaint -> extract(-as_listofint => "authors") || undef };
+my $AuthorManual = $Untaint -> extract(-as_safehtml => "authormanual") || "";
+
 # Journal Info
 
 my @JournalIDs = @{ $Untaint -> extract(-as_listofint => "journal") || undef };
@@ -137,7 +140,12 @@ my @XRefs = split /,*\s+/,($Untaint -> extract(-as_safehtml => "xrefs") || ""); 
 my @EventIDs = @{ $Untaint -> extract(-as_listofint => "events") || undef };
 my @RequestedTopicIDs = @{ $Untaint -> extract(-as_listofint => "topics") || undef };
 
-# FIXME: All the file stuff (maybe can keep looping through like below
+# Zip/tarfile params
+
+my $SingleUpload = $Untaint -> extract(-as_printable => "single_upload") || "";
+my $MainFile = $Untaint -> extract(-as_printable => "mainfile") || "";
+my $Description = $Untaint -> extract(-as_safehtml => "filedesc") || ""
+
 # FIXME: Authors. Extract to two fields with untaint, pass through to figure out IDs
 
 
@@ -196,17 +204,15 @@ for (my $i = 1; $i<= $MaxFiles; ++$i) {
 my %Archive = ();
 if ($Archive eq "archive") { # They uploaded a tar/zip file
   $AddNewFile = 1;
-  $Archive{File} = $query ->  param("single_upload");
-  $Archive{MainFile}    = $params{"mainfile"};
-  $Archive{Description} = $params{"filedesc"};
+  $Archive{File} = $SingleUpload;
+  $Archive{MainFile} = $MainFile;
+  $Archive{Description} = $Description;
 }
 
 my $OrderAuthors = $FALSE;
 if ($AuthorMode eq "field") {
   $OrderAuthors = $TRUE;
-  @authorIDs = ProcessManualAuthors($params{authormanual});
-} else {
-  @authorIDs = split /\0/,$params{authors};
+  @AuthorIDs = ProcessManualAuthors($AuthorManual);
 }
 
 if ($Overdate && $Overyear && $Overmonth && $Overday) {
@@ -359,7 +365,7 @@ if ($EnhancedSecurity) {
 }
 
 if ($mode eq "add" || $mode eq "update" || $mode eq "updatedb") {
-  unless (@authorIDs) {
+  unless (@AuthorIDs) {
     push @ErrorStack,"You must supply at least one author for this document.";
   }
 }
@@ -495,7 +501,7 @@ if (@XRefs) {
 ### Add to authors, topics and securities
 
 my $Count;
-$Count = InsertAuthors( -docrevid  => $DocRevID, -authorids => \@authorIDs, -order => $OrderAuthors);
+$Count = InsertAuthors( -docrevid  => $DocRevID, -authorids => \@AuthorIDs, -order => $OrderAuthors);
 $Count = InsertTopics(  -docrevid  => $DocRevID, -topicids  => \@TopicIDs);
 $Count = InsertSecurity(-docrevid  => $DocRevID,
                         -viewids   => \@securities,
