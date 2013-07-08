@@ -117,6 +117,7 @@ my $LessFiles = $Untaint -> extract(-as_printable => "LessFiles") || "";
 
 my $DocTypeID = $Untaint -> extract(-as_integer => "doctype") || 0;
 my $RequesterID = $Untaint -> extract(-as_integer => "requester") || 0;
+   $Requester = $RequesterID; #FIXME: Replace with RequesterID
 my $SessionTalkID = $params{sessiontalkid};
 
 my $Overdate = $Untaint -> extract(-as_integer => "overdate") || 0;
@@ -126,22 +127,15 @@ my $Overyear = $Untaint -> extract(-as_integer => "overyear") || 0;
 my $Overmin = $Untaint -> extract(-as_integer => "overmin") || 0;
 my $Overhour = $Untaint -> extract(-as_integer => "overhour") || 0;
 
-# Stuff to fix
+# Journal Info
 
-#FIXME: Coalesce to one line?
-#my $TestTopicIDs = $Untaint -> extract(-as_listofint => "topics") || undef;
-my @TestTopicIDs = @{ $Untaint -> extract(-as_listofint => "topics") || undef };
-push @DebugStack, "Topics from test are ".(join ',', @TestTopicIDs)." so there.";
+my @JournalIDs = @{ $Untaint -> extract(-as_listofint => "journal") || undef };
+my @Volumes = @{ $Untaint -> extract(-as_listofwords => "volume") || undef };
+my @Pages = @{ $Untaint -> extract(-as_listofwords => "page") || undef };
 
-my   @JournalIDs    = split /\0/,$params{journal};
-my   @Volumes       = split /\0/,$params{volume};
-my   @Pages         = split /\0/,$params{page};
-
-$Requester     = $RequesterID; #FIXME: Replace with RequesterID
-
-my @XRefs         = split /,*\s+/,$params{xrefs}; # Can be comma or space separated
-my @EventIDs          = $query -> param('events');
-my @RequestedTopicIDs = $query -> param('topics');
+my @XRefs = split /,*\s+/,($Untaint -> extract(-as_safehtml => "xrefs") || ""); # Can be comma or space separated
+my @EventIDs = @{ $Untaint -> extract(-as_listofint => "events") || undef };
+my @RequestedTopicIDs = @{ $Untaint -> extract(-as_listofint => "topics") || undef };
 
 # FIXME: All the file stuff (maybe can keep looping through like below
 # FIXME: Authors. Extract to two fields with untaint, pass through to figure out IDs
@@ -151,6 +145,8 @@ if ($Archive eq "multi") {$Archive = "single";} # No real difference
 if ($Mode eq "clone") {$Mode = "add"; $mode = "add";} # Same thing
 
 # Fill in file hash
+my $HttpUser = $Untaint -> extract(-as_printable => "http_user") || "";
+my $HttpPass = $Untaint -> extract(-as_printable => "http_pass") || "";
 
 my %Files = ();
 my $NeedURLs      = 0;
@@ -158,34 +154,41 @@ my $AddNewFile    = 0;
 my $NumberOfFiles = 0;
 for (my $i = 1; $i<= $MaxFiles; ++$i) {
   my $Key = $i; # Probably something better later
-  if ($params{"upload$i"}) {
+  my $UploadI = $Untaint -> extract(-as_printable => "upload$i") || "";
+  my $UrlI = $Untaint -> extract(-as_printable => "url$i") || "";
+  my $CopyI = $Untaint -> extract(-as_printable => "copy$i") || "";
+  my $FileIDI = $Untaint -> extract(-as_integer => "fileid$i") || 0;
+  my $NewNameI = $Untaint -> extract(-as_safehtml => "newname$i") || ""; # FIXME: More restrictive?
+  my $MainI = $Untaint -> extract(-as_integer => "main$i") || "";
+  my $DescriptionI = $Untaint -> extract(-as_safehtml => "filedesc$i") || "";
+  if ($UploadI) {
     $AddNewFile = 1;
     ++$NumberOfFiles;
-    $Files{$Key}{File} = $query ->  param("upload$i");
-  } elsif ($params{"url$i"}) {
+    $Files{$Key}{File} = $UploadI;
+  } elsif ($UrlI) {
     $NeedURLs = 1;
     $AddNewFile = 1;
     ++$NumberOfFiles;
-    $Files{$Key}{URL}         = $params{"url$i"};
-    $Files{$Key}{User}        = $params{http_user};
-    $Files{$Key}{Pass}        = $params{http_pass};
-    $Files{$Key}{NewFilename} = $params{"newname$i"};
-  } elsif ($params{"copyfile$i"}) {
+    $Files{$Key}{URL}         = $UrlI;
+    $Files{$Key}{User}        = $HttpUser;
+    $Files{$Key}{Pass}        = $HttpPass;
+    $Files{$Key}{NewFilename} = $NewNameI;
+  } elsif ($CopyI) {
     ++$NumberOfFiles;
-    $Files{$Key}{CopyFileID} = $params{"fileid$i"};
+    $Files{$Key}{CopyFileID} = $FileIDI;
   } elsif ($Mode eq "updatedb") {
     ++$NumberOfFiles;
-    $Files{$Key}{FileID} = $params{"fileid$i"};
+    $Files{$Key}{FileID} = $FileIDI;
     push @DebugStack,"Duplicating in slot $i, $Files{$Key}{FileID}";
   }
 
-  if ($params{"main$i"}) {
+  if ($MainI) {
     $Files{$Key}{Main} = 1;
   } else {
     $Files{$Key}{Main} = 0;
   }
 
-  $Files{$Key}{Description} = $params{"filedesc$i"};
+  $Files{$Key}{Description} = $DescriptionI;
 }
 
 # FIXME: Several places fetch information for the about-to-be-updated document

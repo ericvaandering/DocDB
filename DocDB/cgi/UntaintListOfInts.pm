@@ -1,4 +1,4 @@
-#        Name: UntaintInteger.pm
+#        Name: UntaintListOfInts.pm
 # Description: Allows a list of (null separated) positive integers
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
