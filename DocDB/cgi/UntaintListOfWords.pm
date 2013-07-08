@@ -1,5 +1,5 @@
-#
-# Description: Gather together all Untaint handlers for every script that needs them
+#        Name: UntaintListOfWords.pm
+# Description: Allows a list of (null separated) words
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
@@ -21,11 +21,22 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI::Untaint;
+package CGI::Untaint::listofwords;
 
-require "UntaintHTML.pm";
-require "UntaintInteger.pm";
-require "UntaintListOfInts.pm";
-require "UntaintListOfWords.pm";
+$VERSION = '1.00';
+
+use strict;
+use base 'CGI::Untaint::object';
+
+sub _untaint_re { qr/^((\w+)(\000)*)+$/ }
+
+sub is_valid {
+  my $self = shift;
+  my $RawValue = $self->value;
+  my @Values = split /\0/,$RawValue;
+  my $ArrRef = \@Values;
+
+  $self->value($ArrRef);
+}
 
 1;
