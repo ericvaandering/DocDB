@@ -161,7 +161,7 @@ my $AddNewFile    = 0;
 my $NumberOfFiles = 0;
 for (my $i = 1; $i<= $MaxFiles; ++$i) {
   my $Key = $i; # Probably something better later
-  my $UploadI = $query -> param("upload$i"); #$Untaint -> extract(-as_printable => "upload$i") || "";
+  my $UploadI = $query -> param("upload$i");
   my $UrlI = $Untaint -> extract(-as_printable => "url$i") || "";
   my $CopyI = $Untaint -> extract(-as_printable => "copy$i") || "";
   my $FileIDI = $Untaint -> extract(-as_integer => "fileid$i") || 0;
