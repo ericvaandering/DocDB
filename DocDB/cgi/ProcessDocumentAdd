@@ -147,10 +147,7 @@ my @RequestedTopicIDs = @{ $Untaint -> extract(-as_listofint => "topics") || und
 my $SingleUpload = $Untaint -> extract(-as_printable => "single_upload") || "";
 my $SingleHTTP = $Untaint -> extract(-as_printable => "single_http") || "";
 my $MainFile = $Untaint -> extract(-as_printable => "mainfile") || "";
-my $Description = $Untaint -> extract(-as_safehtml => "filedesc") || ""
-
-# FIXME: Authors. Extract to two fields with untaint, pass through to figure out IDs
-
+my $Description = $Untaint -> extract(-as_safehtml => "filedesc") || "";
 
 if ($Archive eq "multi") {$Archive = "single";} # No real difference
 
@@ -164,12 +161,12 @@ my $AddNewFile    = 0;
 my $NumberOfFiles = 0;
 for (my $i = 1; $i<= $MaxFiles; ++$i) {
   my $Key = $i; # Probably something better later
-  my $UploadI = $Untaint -> extract(-as_printable => "upload$i") || "";
+  my $UploadI = $query -> param("upload$i"); #$Untaint -> extract(-as_printable => "upload$i") || "";
   my $UrlI = $Untaint -> extract(-as_printable => "url$i") || "";
   my $CopyI = $Untaint -> extract(-as_printable => "copy$i") || "";
   my $FileIDI = $Untaint -> extract(-as_integer => "fileid$i") || 0;
   my $NewNameI = $Untaint -> extract(-as_safehtml => "newname$i") || ""; # FIXME: More restrictive?
-  my $MainI = $Untaint -> extract(-as_integer => "main$i") || "";
+  my $MainI = $Untaint -> extract(-as_printable => "main$i") || "";
   my $DescriptionI = $Untaint -> extract(-as_safehtml => "filedesc$i") || "";
   if ($UploadI) {
     $AddNewFile = 1;
