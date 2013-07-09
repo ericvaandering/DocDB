@@ -71,7 +71,7 @@ GetSecurityGroups();
 
 ### Set up, give user initial information
 
-%params = $query -> Vars; # TODO remove
+#%params = $query -> Vars; # TODO remove
 my $Untaint   = CGI::Untaint -> new($query -> Vars);
 
 my $Mode = $Untaint -> extract(-as_printable => "mode") || "";
@@ -87,8 +87,6 @@ if ($Mode eq "reserve") {
 }
 
 ### Pull info out of params into local variables
-### FIXME: Get all the params here, too confusing later on to be using $param
-### FIXME: Any reason all of these can't be "my"?
 
 # "Hidden" things
 
@@ -97,6 +95,8 @@ my $AuthorMode = $Untaint -> extract(-as_printable => "authormode") || "";
 my $OldVersion = $Untaint -> extract(-as_printable => "oldversion") || "";
 my $MaxFiles = $Untaint -> extract(-as_printable => "maxfiles") || "";
 my $UniqueID = $Untaint -> extract(-as_printable => "uniqueid") || "";
+my $DocumentID = $Untaint -> extract(-as_integer => "docid") || 0;
+my $UserVersion = $Untaint -> extract(-as_integer => "version") || undef; # Special case to allow modifying version 0 (reservations)
 
 # Text fields
 
@@ -117,8 +117,7 @@ my $LessFiles = $Untaint -> extract(-as_printable => "LessFiles") || "";
 
 my $DocTypeID = $Untaint -> extract(-as_integer => "doctype") || 0;
 my $RequesterID = $Untaint -> extract(-as_integer => "requester") || 0;
-   $Requester = $RequesterID; #FIXME: Replace with RequesterID
-my $SessionTalkID = $params{sessiontalkid};
+my $SessionTalkID = $Untaint -> extract(-as_integer => "sessiontalkid") || 0;
 
 my $Overdate = $Untaint -> extract(-as_integer => "overdate") || 0;
 my $Overday = $Untaint -> extract(-as_integer => "overday") || 0;
@@ -129,6 +128,9 @@ my $Overhour = $Untaint -> extract(-as_integer => "overhour") || 0;
 
 my @AuthorIDs = @{ $Untaint -> extract(-as_listofint => "authors") || undef };
 my $AuthorManual = $Untaint -> extract(-as_safehtml => "authormanual") || "";
+
+my @ViewGroupIDs = @{ $Untaint -> extract(-as_listofint => "security") || undef };
+my @ModifyGroupIDs = @{ $Untaint -> extract(-as_listofint => "modify") || undef };
 
 # Journal Info
 
@@ -143,6 +145,7 @@ my @RequestedTopicIDs = @{ $Untaint -> extract(-as_listofint => "topics") || und
 # Zip/tarfile params
 
 my $SingleUpload = $Untaint -> extract(-as_printable => "single_upload") || "";
+my $SingleHTTP = $Untaint -> extract(-as_printable => "single_http") || "";
 my $MainFile = $Untaint -> extract(-as_printable => "mainfile") || "";
 my $Description = $Untaint -> extract(-as_safehtml => "filedesc") || ""
 
@@ -255,10 +258,10 @@ if ($PreserveSigs && !CanPreserveSigs()) {
 if ($PreserveSigs && $mode ne "updatedb") {
   push @ErrorStack,'Signatures may only be preserved when modifying document meta-data.';
 }
-unless ($params{requester}) {
+unless ($RequesterID) {
   push @ErrorStack,"You must supply a submitter for this document.";
 }
-unless ($params{title}) {
+unless ($Title) {
   push @ErrorStack,"You must supply a title for this document.";
 }
 
@@ -288,7 +291,7 @@ unless ($DocTypeID) {
 }
 
 if ($Mode eq "add" || $Mode eq "update") {
-  unless ($params{abstract}) {
+  unless ($Abstract) {
     push @ErrorStack,"You must supply an abstract for this document.";
   }
   unless ($AddNewFile) {
@@ -296,10 +299,10 @@ if ($Mode eq "add" || $Mode eq "update") {
                       If you just want to change information about the
                       document, choose `Update DB Info' instead.";
   }
-  if     ($params{single_upload} && $params{single_http}) {
+  if     ($SingleUpload && $SingleHTTP) {
     push @ErrorStack,"You may not specify both URL and file upload.";
   }
-  if     (!$params{mainfile} && $Archive eq "archive") {
+  if     (!$MainFile && $Archive eq "archive") {
     push @ErrorStack,"You must specify a main file in the archive.";
   }
 
@@ -310,7 +313,6 @@ if ($Mode eq "add" || $Mode eq "update") {
 }
 
 if ($Mode eq "update" && !$LessFiles) {
-  my $DocumentID = $params{docid};
   FetchDocument($DocumentID);
   my $Version = $Documents{$DocumentID}{NVersions};
   my $DocRevID = FetchRevisionByDocumentAndVersion($DocumentID,$Version);
@@ -323,10 +325,10 @@ if ($Mode eq "update" && !$LessFiles) {
 }
 
 if ($Mode eq "update" || $Mode eq "updatedb") {
-  unless ($params{docid}) {
+  unless ($DocumentID) {
     push @ErrorStack,"You must supply a document number to modify a document.";
   }
-  unless (&CanModify($params{docid})) {
+  unless (&CanModify($DocumentID)) {
     push @ErrorStack,"You are not allowed to modify this document.";
   }
 }
@@ -359,9 +361,9 @@ if ($mode eq "add" || $mode eq "update") {
   }
 }
 
-@securities  = split ("\0",$params{security});
+@securities  = @ViewGroupIDs;
 if ($EnhancedSecurity) {
-  @ModifyGroups = split ("\0",$params{modify});
+  @ModifyGroups = @ModifyGroupIDs;
 }
 
 if ($mode eq "add" || $mode eq "update" || $mode eq "updatedb") {
@@ -431,7 +433,7 @@ my $documentID;
 if ($mode eq "reserve" || $mode eq "add") {
   $documentID = &InsertDocument(-requesterid => $RequesterID, -datetime => $SQL_NOW, -dochash => $UniqueID);
 } else {
-  $documentID = $params{docid};
+  $documentID = $DocumentID;
 }
 
 ### Set version number. For reservations, it is "0", for new documents "1". For
@@ -448,8 +450,8 @@ if      ($mode eq "reserve") {
   $version   = $Documents{$documentID}{NVersions} + 1;
 } elsif ($mode eq "updatedb") {
   &FetchDocument($documentID);
-  if  (defined $params{version}) {
-    $version = $params{version};
+  if  (defined $UserVersion) {
+    $version = $UserVersion;
   } else {
     $version = $Documents{$documentID}{NVersions};
   }
