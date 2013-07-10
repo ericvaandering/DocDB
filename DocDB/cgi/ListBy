@@ -144,11 +144,12 @@ if ($Days) {
 
   my $Link = AuthorLink($AuthorID);
 
-  $Message = "<span class=\"Highlight\">$Link of $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG}</span>
-              is listed as an author on the following documents:";
+  $Message = "<span class=\"Highlight\">$Link of ";
+  $Message .= SmartHTML( {-text => $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG}, } );
+  $Message .= "</span> is listed as an author on the following documents:";
   my %Hash = GetEventHashByModerator($AuthorID);
   if (%Hash) {
-    $Message .= '<br/>(List <a href="'.$ListEventsBy.'?authorid='.$AuthorID.'">events</a> moderated by '.$Authors{$AuthorID}{FULLNAME}.')';
+    $Message .= '<br/>(List <a href="'.$ListEventsBy.'?authorid='.$AuthorID.'">events</a> moderated by '.$Link.')';
   }
   @DocumentIDs = GetAuthorDocuments($AuthorID);
 } elsif ($EventID) {
