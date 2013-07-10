@@ -35,7 +35,8 @@ sub TitleBox (%) {
                                        -helptext  => "Title" ,
                                        -required  => $Required );
   print $ElementTitle,"\n";
-  print $query -> textfield (-name => 'title', -default => $TitleDefault,
+  my $SafeDefault = SmartHTML({-text => $TitleDefault},);
+  print $query -> textfield (-name => 'title', -default => $SafeDefault,
                              -size => 70, -maxlength => 240);
 };
 
@@ -54,11 +55,13 @@ sub AbstractBox (%) {
                                        -helptext  => $HelpText ,
                                        -required  => $Required );
   print $ElementTitle,"\n";
-  print $query -> textarea (-name    => $Name, -default => $AbstractDefault,
+  my $SafeDefault = SmartHTML({-text => $AbstractDefault},);
+  print $query -> textarea (-name    => $Name, -default => $SafeDefault,
                             -rows    => $Rows, -columns => $Columns);
 };
 
 sub RevisionNoteBox {
+  # FIXME: Make Javascript OK with SmartHTML
   my (%Params) = @_;
   my $Default  = $Params{-default}  || "";
   my $JSInsert = $Params{-jsinsert} || "";
@@ -83,7 +86,8 @@ sub RevisionNoteBox {
                                        -extratext => $ExtraText,
                                        -required  => $Required );
   print $ElementTitle,"\n";
-  print $query -> textarea (-name => 'revisionnote', -default => $Default,
+  my $SafeDefault = SmartHTML({-text => $Default},);
+  print $query -> textarea (-name => 'revisionnote', -default => $SafeDefault,
                             -columns => 60, -rows => 6);
 };
 
