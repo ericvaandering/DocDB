@@ -378,17 +378,16 @@ sub TopicScroll ($) {
   my %TopicLabels = ();
 #  my @ActiveIDs = @TopicIDs; # Later can select single root topics, etc.
 
-  my $SafeShort = SmartHTML({-text=>$Topics{$ID}{Short}});
-  my $SafeLong = SmartHTML({-text=>$Topics{$ID}{Long}});
-
   foreach my $ID (@TopicIDs) {
+    my $SafeShort = SmartHTML({-text=>$Topics{$ID}{Short}});
+    my $SafeLong = SmartHTML({-text=>$Topics{$ID}{Long}});
     my $Spaces = '-'x(1*(scalar(@{$TopicProvenance{$ID}})-1));
     if ($ItemFormat eq "short") {
       $TopicLabels{$ID} = $Spaces.$SafeShort;
     } elsif ($ItemFormat eq "long") {
       $TopicLabels{$ID} = $Spaces.$SafeLong;
     } elsif ($ItemFormat eq "full") {
-      $TopicLabels{$ID} = $Spaces.$SafeShort." [".$SafeLong."]");
+      $TopicLabels{$ID} = $Spaces.$SafeShort." [".$SafeLong."]";
     }
 
     if (($ItemFormat eq "short" or $ItemFormat eq "long") &&

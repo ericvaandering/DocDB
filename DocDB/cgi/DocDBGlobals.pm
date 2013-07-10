@@ -30,7 +30,7 @@ use DateTime;
 $LocalTimezone = DateTime::TimeZone->new(name => 'local');
 $TRUE  = 1;
 $FALSE = 0;
-
+$DebugOutput=1;
 # Advertising link for DocDB
 
 $DocDBHome = "http://docdb-v.sourceforge.net/";
