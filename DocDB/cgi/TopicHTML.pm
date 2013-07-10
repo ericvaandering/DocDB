@@ -24,6 +24,8 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+require "HTMLUtilities.pm";
+
 sub TopicListByID {
   my ($ArgRef) = @_;
   my @TopicIDs    = exists $ArgRef->{-topicids}    ? @{$ArgRef->{-topicids}}   : ();
@@ -116,14 +118,14 @@ sub TopicLink ($) {
   $Link = "";
 
   if ($Format eq "short") {
-    $Text    = CGI::escapeHTML($Topics{$TopicID}{Short});
+    $Text    = SmartHTML( {-text => $Topics{$TopicID}{Short}, } );
     $Tooltip = TopicName({-topicid => $TopicID, -format => "withparents",} );
   } elsif ($Format eq "long") {
-    $Text    = CGI::escapeHTML($Topics{$TopicID}{Long} );
-    $Tooltip = CGI::escapeHTML($Topics{$TopicID}{Short});
+    $Text    = SmartHTML( {-text => $Topics{$TopicID}{Long} , } );
+    $Tooltip = SmartHTML( {-text => $Topics{$TopicID}{Short}, } );
   } elsif ($Format eq "withparents") {
-    $Text    = CGI::escapeHTML($Topics{$TopicID}{Short});
-    $Tooltip = CGI::escapeHTML($Topics{$TopicID}{Long} );
+    $Text    = SmartHTML( {-text => $Topics{$TopicID}{Short}, } );
+    $Tooltip = SmartHTML( {-text => $Topics{$TopicID}{Long}, } );
     my @ParentTopicIDs = FetchTopicParents( {-topicid => $TopicID});
     if (@ParentTopicIDs) {
       my ($ParentTopicID) = @ParentTopicIDs;
@@ -156,7 +158,7 @@ sub TopicName ($) {
       $Text .= $Separator;
     }
   }
-  $Text .= CGI::escapeHTML($Topics{$TopicID}{Short});
+  $Text .= SmartHTML( {-text => $Topics{$TopicID}{Short}, } );
 
   return $Text;
 }
