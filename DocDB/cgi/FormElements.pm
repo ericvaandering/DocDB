@@ -1,4 +1,5 @@
-#        Name: $RCSfile$
+#
+#        Name: FormElements.pm
 # Description: Various routines which supply input forms for document
 #              addition, etc. This file is deprecated. Routines are
 #              being moved out into the various *HTML.pm files.
@@ -188,8 +189,8 @@ sub PubInfoBox {
   my $ElementTitle = &FormElementTitle(-helplink  => "pubinfo",
                                        -helptext  => "URLs or other publication information");
   print $ElementTitle,"\n";
-
-  print $query -> textarea (-name => 'pubinfo', -default => $PubInfoDefault,
+  my $SafeDefault = SmartHTML({-text => $PubInfoDefault},);
+  print $query -> textarea (-name => 'pubinfo', -default => $SafeDefault,
                             -columns => 60, -rows => 1);
 };
 

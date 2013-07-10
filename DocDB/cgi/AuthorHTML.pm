@@ -385,7 +385,7 @@ sub AuthorScroll (%) {
   my @ActiveIDs = ();
   foreach my $ID (@AuthorIDs) {
     if ($Authors{$ID}{ACTIVE} || $All) {
-      $AuthorLabels{$ID} = $Authors{$ID}{Formal};
+      $AuthorLabels{$ID} = SmartHTML({-text=>$Authors{$ID}{Formal}});
       push @ActiveIDs,$ID;
     }
   }
@@ -422,7 +422,7 @@ sub AuthorTextEntry ($;@) {
 
   foreach $AuthorID (@Defaults) {
     FetchAuthor($AuthorID);
-    $AuthorManDefault .= "$Authors{$AuthorID}{FULLNAME}\n" ;
+    $AuthorManDefault .= SmartHTML({-text=>$Authors{$AuthorID}{FULLNAME}})."\n" ;
   }
 
   print FormElementTitle(-helplink => $HelpLink, -helptext  => $HelpText,

@@ -38,7 +38,9 @@ sub TitleBox (%) {
                               -errormsg  => 'You must specify a document title.'
                               );
   $HTML .= $ElementTitle."\n";
-  my %FieldParams = (-name => 'title', -default => $TitleDefault, -size => 70, -maxlength => 240);
+  my $SafeDefault = SmartHTML({-text => $TitleDefault},);
+
+  my %FieldParams = (-name => 'title', -default => $SafeDefault, -size => 70, -maxlength => 240);
   if ($Required) {
     $FieldParams{'-class'} = "required";
   }
@@ -62,7 +64,8 @@ sub AbstractBox (%) {
                                        -required  => $Required ,
                                        -errormsg  => 'You must specify an abstract.');
   print $ElementTitle,"\n";
-  my %FieldParams = (-name    => $Name, -default => $AbstractDefault,
+  my $SafeDefault = SmartHTML({-text => $AbstractDefault},);
+  my %FieldParams = (-name    => $Name, -default => $SafeDefault,
                      -rows    => $Rows, -columns => $Columns);
   if ($Required) {
     $FieldParams{'-class'} = "required";
@@ -71,6 +74,7 @@ sub AbstractBox (%) {
 };
 
 sub RevisionNoteBox {
+  # FIXME: Make Javascript OK with SmartHTML
   my (%Params) = @_;
   my $Default  = $Params{-default}  || "";
   my $JSInsert = $Params{-jsinsert} || "";
@@ -95,7 +99,8 @@ sub RevisionNoteBox {
                                        -extratext => $ExtraText,
                                        -required  => $Required );
   print $ElementTitle,"\n";
-  my %FieldParams = (-name    => 'revisionnote', -default => $Default,
+  my $SafeDefault = SmartHTML({-text => $Default},);
+  my %FieldParams = (-name    => 'revisionnote', -default => $SafeDefault,
                      -rows    => 2, -columns => 60);
   if ($Required) {
     $FieldParams{'-class'} = "required";
