@@ -274,6 +274,7 @@ sub KeywordsBox (%) {
   Chooser</b></a>",
                                        -required  => $Required );
   print $ElementTitle,"\n";
+  my $SafeDefault = SmartHTML({-text => $KeywordsDefault},);
   print $query -> textfield (-name => 'keywords', -default => $KeywordsDefault,
                              -size => 70, -maxlength => 240);
 };
