@@ -46,7 +46,7 @@ sub KeywordGroupInfo ($;$) {
 
 sub KeywordsbyKeywordGroup ($;$) {
 
-  # FIXME: Make KeyLink SafeHTML
+  # FIXME: Make KeyLink SmartHTML
   my ($KeywordGroupID,$Mode) = @_;
 
   require "Sorts.pm";
@@ -255,7 +255,7 @@ sub KeywordLink ($;%) { # FIXME: Allow parameters of short, long, full a la Lynn
   my ($Keyword,%Params) = @_;
 
   my $Format = $Params{-format} || "short"; # short, full
-  my $SafeKeyword = SafeHTML( {-text => $Keyword} );
+  my $SafeKeyword = SmartHTML( {-text => $Keyword} );
   my $ret = "<a href=\"$Search\?keywordsearchmode=anyword;keywordsearch=$SafeKeyword\">";
   $ret .= "$SafeKeyword";
   $ret .=  "</a>";
