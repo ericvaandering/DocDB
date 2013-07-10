@@ -378,15 +378,17 @@ sub TopicScroll ($) {
   my %TopicLabels = ();
 #  my @ActiveIDs = @TopicIDs; # Later can select single root topics, etc.
 
+  my $SafeShort = SmartHTML({-text=>$Topics{$ID}{Short}});
+  my $SafeLong = SmartHTML({-text=>$Topics{$ID}{Long}});
+
   foreach my $ID (@TopicIDs) {
     my $Spaces = '-'x(1*(scalar(@{$TopicProvenance{$ID}})-1));
     if ($ItemFormat eq "short") {
-      $TopicLabels{$ID} = $Spaces.CGI::escapeHTML($Topics{$ID}{Short});
+      $TopicLabels{$ID} = $Spaces.$SafeShort;
     } elsif ($ItemFormat eq "long") {
-      $TopicLabels{$ID} = $Spaces.CGI::escapeHTML($Topics{$ID}{Long});
+      $TopicLabels{$ID} = $Spaces.$SafeLong;
     } elsif ($ItemFormat eq "full") {
-      $TopicLabels{$ID} = $Spaces.CGI::escapeHTML($Topics{$ID}{Short}.
-                                             " [".$Topics{$ID}{Long}."]");
+      $TopicLabels{$ID} = $Spaces.$SafeShort." [".$SafeLong."]");
     }
 
     if (($ItemFormat eq "short" or $ItemFormat eq "long") &&
@@ -399,13 +401,10 @@ sub TopicScroll ($) {
                          -text      => $Text    , -extratext => $ExtraText,
                          -required  => $Required);
 
-  $query ->  autoEscape(0);  # Turn off and on since sometimes scrolling_list double escape this.
-
   print $query -> scrolling_list(-name     => $Name, -values => \@TopicIDs,
                                  -size     => $Size, -labels => \%TopicLabels,
                                  -multiple => $Multiple,
                                  -default  => \@Defaults, %Options);
-  $query ->  autoEscape(1);
 }
 
 1;
