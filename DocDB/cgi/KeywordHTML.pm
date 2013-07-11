@@ -231,17 +231,20 @@ sub KeywordLinkByID ($;%) {
   my $NoLink = $Params{-nolink} || "";      # will just return information
 
   &FetchKeyword($KeywordID);
-  my $Keyword = $Keywords{$KeywordID}{Short};
+  my $SafeShortKeyword = SmartHTML( {-text => $Keywords{$KeywordID}{Short}} );
+  my $SafeLongKeyword = SmartHTML( {-text => $Keywords{$KeywordID}{long}} );
   my $Link;
 
+  # FIXME_XSS: Check to make sure this kind of search still works.
+  # May need to remove special characters or adapt search atoms
   unless ($NoLink) {
-    $Link .= "<a href=\"$Search\?keywordsearchmode=anyword&amp;keywordsearch=$Keyword\">";
+    $Link .= "<a href=\"$Search\?keywordsearchmode=anyword&amp;keywordsearch=$SafeShortKeyword\">";
   }
 
   if ($Format eq "short") {
-    $Link .= $Keywords{$KeywordID}{Short};
+    $Link .= $SafeShortKeyword;
   } elsif ($Format eq "long") {
-    $Link .= $Keywords{$KeywordID}{Long};
+    $Link .= $SafeLongKeyword;
   }
 
   unless ($NoLink) {
