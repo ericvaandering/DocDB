@@ -34,11 +34,11 @@ sub KeywordGroupInfo ($;$) {
   &FetchKeywordGroup($KeyID);
   my $info;
   if ($mode eq "short") {
-    $info = $KeywordGroups{$KeyID}{Short};
+    $info = SmartHTML({-text=>$KeywordGroups{$KeyID}{Short}});
   } elsif ($mode eq "long") {
-    $info = $KeywordGroups{$KeyID}{Long};
+    $info = SmartHTML({-text=>$KeywordGroups{$KeyID}{Long}});
   } else {
-    $info = $KeywordGroups{$KeyID}{Short};
+    $info = SmartHTML({-text=>$KeywordGroups{$KeyID}{Short}});
   }
 
   return $info;
@@ -46,7 +46,8 @@ sub KeywordGroupInfo ($;$) {
 
 sub KeywordsbyKeywordGroup ($;$) {
 
-  # FIXME: Make KeyLink SmartHTML
+  # FIXME_XSS: Check to make sure this kind of search still works.
+  # May need to remove special characters or adapt search atoms
   my ($KeywordGroupID,$Mode) = @_;
 
   require "Sorts.pm";
@@ -59,8 +60,9 @@ sub KeywordsbyKeywordGroup ($;$) {
   foreach my $KeywordID (@KeywordIDs) {
     my $KeyLink;
     if ($Mode eq "chooser") {
+      my $SafeKeyword = SmartHTML({-text=>$KeywordGroups{$KeyID}{Short}});
       $KeyLink = "<a href=\"$ListKeywords?mode=chooser\" ".
-                 "onclick=\"InsertKeyword('$Keywords{$KeywordID}{Short}');\">$Keywords{$KeywordID}{Short}</a>";
+                 "onclick=\"InsertKeyword('$SafeKeyword');\">$SafeKeyword</a>";
     } else {
       $KeyLink = &KeywordLinkByID($KeywordID,-format => "short");
     }
