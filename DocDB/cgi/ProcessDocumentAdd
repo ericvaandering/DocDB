@@ -144,7 +144,7 @@ my @RequestedTopicIDs = @{ $Untaint -> extract(-as_listofint => "topics") || und
 
 # Zip/tarfile params
 
-my $SingleUpload = $Untaint -> extract(-as_printable => "single_upload") || "";
+my $SingleUpload = $query -> param("single_upload"); # Filehandle
 my $SingleHTTP = $Untaint -> extract(-as_printable => "single_http") || "";
 my $MainFile = $Untaint -> extract(-as_printable => "mainfile") || "";
 my $Description = $Untaint -> extract(-as_safehtml => "filedesc") || "";
