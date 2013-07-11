@@ -60,7 +60,7 @@ sub KeywordsbyKeywordGroup ($;$) {
   foreach my $KeywordID (@KeywordIDs) {
     my $KeyLink;
     if ($Mode eq "chooser") {
-      my $SafeKeyword = SmartHTML({-text=>$KeywordGroups{$KeyID}{Short}});
+      my $SafeKeyword = SmartHTML({-text=>$Keywords{$KeywordID}{Short}});
       $KeyLink = "<a href=\"$ListKeywords?mode=chooser\" ".
                  "onclick=\"InsertKeyword('$SafeKeyword');\">$SafeKeyword</a>";
     } else {
