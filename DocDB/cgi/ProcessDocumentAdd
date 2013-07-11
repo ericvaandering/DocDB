@@ -71,8 +71,7 @@ GetSecurityGroups();
 
 ### Set up, give user initial information
 
-#%params = $query -> Vars; # TODO remove
-my $Untaint   = CGI::Untaint -> new($query -> Vars);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
 my $Mode = $Untaint -> extract(-as_printable => "mode") || "";
 $mode = $Mode; #FIXME: Remove when not needed
@@ -86,7 +85,7 @@ if ($Mode eq "reserve") {
   &DocDBHeader("$Project Document Modification Results","Document Modification Results",-scripts => ["PopUps"]);
 }
 
-### Pull info out of params into local variables
+### Pull info out of parameters into local variables
 
 # "Hidden" things
 
@@ -119,9 +118,9 @@ my $DocTypeID = $Untaint -> extract(-as_integer => "doctype") || 0;
 my $RequesterID = $Untaint -> extract(-as_integer => "requester") || 0;
 my $SessionTalkID = $Untaint -> extract(-as_integer => "sessiontalkid") || 0;
 
-my $Overdate = $Untaint -> extract(-as_integer => "overdate") || 0;
+my $Overdate = $Untaint -> extract(-as_safehtml => "overdate") || 0;
 my $Overday = $Untaint -> extract(-as_integer => "overday") || 0;
-my $Overmonth = $Untaint -> extract(-as_integer => "overmonth") || 0;
+my $Overmonth = $Untaint -> extract(-as_safehtml => "overmonth") || 0;
 my $Overyear = $Untaint -> extract(-as_integer => "overyear") || 0;
 my $Overmin = $Untaint -> extract(-as_integer => "overmin") || 0;
 my $Overhour = $Untaint -> extract(-as_integer => "overhour") || 0;
@@ -144,7 +143,7 @@ my @RequestedTopicIDs = @{ $Untaint -> extract(-as_listofint => "topics") || und
 
 # Zip/tarfile params
 
-my $SingleUpload = $Untaint -> extract(-as_printable => "single_upload") || "";
+my $SingleUpload = $query -> param("single_upload"); # Filehandle
 my $SingleHTTP = $Untaint -> extract(-as_printable => "single_http") || "";
 my $MainFile = $Untaint -> extract(-as_printable => "mainfile") || "";
 my $Description = $Untaint -> extract(-as_safehtml => "filedesc") || "";
