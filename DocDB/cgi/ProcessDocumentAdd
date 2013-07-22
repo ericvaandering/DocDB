@@ -71,8 +71,7 @@ GetSecurityGroups();
 
 ### Set up, give user initial information
 
-#%params = $query -> Vars; # TODO remove
-my $Untaint   = CGI::Untaint -> new($query -> Vars);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
 my $Mode = $Untaint -> extract(-as_printable => "mode") || "";
 $mode = $Mode; #FIXME: Remove when not needed
@@ -86,7 +85,7 @@ if ($Mode eq "reserve") {
   &DocDBHeader("$Project Document Modification Results","Document Modification Results",-scripts => ["PopUps"]);
 }
 
-### Pull info out of params into local variables
+### Pull info out of parameters into local variables
 
 # "Hidden" things
 
