@@ -1,10 +1,11 @@
 #! /usr/bin/env perl
 #
+#        Name: AuthorAdd
 # Description: Adds an author into the DB list of authors.  
 #              Called by submission from AddAuthorForm 
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 #
 
 # Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
@@ -38,12 +39,12 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
 GetSecurityGroups();
 
-%params = $query -> Vars;
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-$InstitutionID   = $params{inst};
-$FirstName       = $params{first};
-$MiddleInitials  = $params{middle};
-$LastName        = $params{lastname};
+my $InstitutionID = $Untaint -> extract(-as_integer => "inst") || 0;
+my $FirstName = $Untaint -> extract(-as_safehtml => "first") || 0;
+my $MiddleInitials = $Untaint -> extract(-as_safehtml => "middle") || 0;
+my $LastName = $Untaint -> extract(-as_safehtml => "lastname") || 0;
 
 print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader("Author Addition Results");
