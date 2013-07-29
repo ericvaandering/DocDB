@@ -38,24 +38,26 @@ require "AuthorSQL.pm";
 require "Messages.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 
-%params = $query -> Vars;
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
 @ErrorStack = ();
 @WarnStack  = ();
 
 # Parameters to script
 
-$Password    = $params{password};
-my $Username = $params{admuser};
-$Action      = $params{admaction};
+my $Password = $Untaint -> extract(-as_printable => "password") || "";
+my $Username = $Untaint -> extract(-as_printable => "admuser") || "";
+my $Action = $Untaint -> extract(-as_printable => "admaction") || "";
 
-my $AuthorID      = $params{authors};
-my $ConsolidateID = $params{targetauthor};
-$FirstName        = $params{first};
-$Middle           = $params{middle};
-$LastName         = $params{lastname};
-$InstitutionID    = $params{inst};
+my $AuthorID = $Untaint -> extract(-as_integer => "authors") || 0;
+my $ConsolidateID = $Untaint -> extract(-as_integer => "targetauthor") || 0;
+my $InstitutionID = $Untaint -> extract(-as_integer => "inst") || 0;
+
+my $FirstName = $Untaint -> extract(-as_safehtml => "first") || 0;
+my $Middle = $Untaint -> extract(-as_safehtml => "middle") || 0;
+my $LastName = $Untaint -> extract(-as_safehtml => "lastname") || 0;
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 

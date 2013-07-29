@@ -3,7 +3,7 @@
 # Description: Allows an administrator to create entries for certificate users in EmailUser
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified:
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 
 # Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -41,18 +41,18 @@ require "SecuritySQL.pm";
 require "SecurityHTML.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 
 # Parameters to script
 
 my $Untaint   = CGI::Untaint -> new($query -> Vars);
-my %CGIParams = $query -> Vars;
 
 my $Password = $Untaint -> extract (-as_printable => "password")  || "";
 my $Username = $Untaint -> extract (-as_printable => "admuser")   || "";
 my $Action   = $Untaint -> extract (-as_printable => "admaction") || "";
 my $Force    = $Untaint -> extract (-as_printable => "admforce")  || "";
 my $CanSign  = $Untaint -> extract (-as_printable => "CanSign")   || "";
-my @GroupIDs = split /\0/,$CGIParams{group};
+my @GroupIDs = @{ $Untaint -> extract(-as_listofint => "group") || undef };
 
 if ($CanSign) {$CanSign = $TRUE;}
 
@@ -96,7 +96,7 @@ if ($Action eq "Insert") {
 
   foreach my $Row (1..$MaxUsers) {
     my $Username = $Untaint -> extract (-as_printable => "name$Row")  || "";
-    my $Name     = $Untaint -> extract (-as_printable => "commonname$Row")  || "";
+    my $Name     = $Untaint -> extract (-as_safehtml => "commonname$Row")  || "";
     my $Email    = $Untaint -> extract (-as_printable => "email$Row") || "";
 
     if ($Username) {
