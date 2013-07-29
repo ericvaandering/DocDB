@@ -38,28 +38,28 @@ require "GroupHTML.pm";
 require "Messages.pm";
 
 $query = new CGI;  # Global for subroutines
-
-%CGIParams = $query -> Vars;
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
 @ErrorStack = ();
 @WarnStack  = ();
 
 # Parameters to script 
 
-my $Password       = $CGIParams{password};
-my $Username       = $CGIParams{admuser};
-my $Action         = $CGIParams{admaction};
+my $Password = $Untaint -> extract(-as_printable => "password") || "";
+my $Username = $Untaint -> extract(-as_printable => "admuser") || "";
+my $Action = $Untaint -> extract(-as_printable => "admaction") || "";
+my $Force = $Untaint -> extract(-as_printable => "admforce") || "";
 
-my $Description    = $CGIParams{description};
-my $Name           = $CGIParams{name};
-my $ParentID       = $CGIParams{parent};
-my @ChildIDs       = split /\0/,$CGIParams{child};
-my $View           = $CGIParams{view};
-my $Create         = $CGIParams{create};
-my $Admin          = $CGIParams{admin};
-my $NoPerm         = $CGIParams{remove};
-my $RemoveChildren = $CGIParams{removesubs};
-my $Force          = $CGIParams{admforce};
+my $Description = $Untaint -> extract(-as_safehtml => "description") || "";
+my $Name = $Untaint -> extract(-as_safehtml => "name") || "";
+my $ParentID = $Untaint -> extract(-as_integer => "ParentID") || 0;
+my @ChildIDs = @{ $Untaint -> extract(-as_listofint => "child") || undef };
+my $View = $Untaint -> extract(-as_printable => "view") || "";
+my $Create = $Untaint -> extract(-as_printable => "create") || "";
+my $Admin = $Untaint -> extract(-as_printable => "admin") || "";
+my $NoPerm = $Untaint -> extract(-as_printable => "remove") || "";
+my $RemoveChildren = $Untaint -> extract(-as_printable => "removesubs") || "";
 
 if ($View)           {$View   = 1;} # Make sure they are in format MySQL is expecting
 if ($Create)         {$Create = 1;}

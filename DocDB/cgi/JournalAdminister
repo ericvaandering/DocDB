@@ -36,24 +36,24 @@ require "JournalHTML.pm";
 require "Messages.pm";
 
 $query = new CGI;  # Global for subroutines
-
-%params = $query -> Vars;
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
 @ErrorStack = ();
 @WarnStack  = ();
 
 # Parameters to script 
 
-$Password     = $params{password};
-my $Username      = $params{admuser};
-$Action       = $params{admaction};
+my $Password = $Untaint -> extract(-as_printable => "password") || "";
+my $Username = $Untaint -> extract(-as_printable => "admuser") || "";
+my $Action = $Untaint -> extract(-as_printable => "admaction") || "";
 
-$JournalID    = $params{journal};
-$FullName     = $params{name};
-$Abbreviation = $params{abbr};
-$Acronym      = $params{acronym};
-$Publisher    = $params{pub};
-$URL          = $params{url};
+my $JournalID = $Untaint -> extract(-as_integer => "journal") || 0;
+my $FullName = $Untaint -> extract(-as_safehtml => "name") || "";
+my $Abbreviation = $Untaint -> extract(-as_safehtml => "abbr") || "";
+my $Acronym = $Untaint -> extract(-as_safehtml => "acronym") || "";
+my $Publisher = $Untaint -> extract(-as_safehtml => "pub") || "";
+my $URL = $Untaint -> extract(-as_safehtml => "url") || "";
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 

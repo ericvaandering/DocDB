@@ -37,21 +37,21 @@ require "AuthorHTML.pm";
 require "Messages.pm";
 
 $query = new CGI;  # Global for subroutines
-
-%params = $query -> Vars;
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
 @ErrorStack = ();
 @WarnStack  = ();
 
 # Parameters to script 
 
-$Password      = $params{password};
-my $Username      = $params{admuser};
-$Action        = $params{admaction};
+my $Password = $Untaint -> extract(-as_printable => "password") || "";
+my $Username = $Untaint -> extract(-as_printable => "admuser") || "";
+my $Action = $Untaint -> extract(-as_printable => "admaction") || "";
 
-$InstitutionID = $params{inst};
-$LongName      = $params{longdesc};
-$ShortName     = $params{shortdesc};
+my $InstitutionID = $Untaint -> extract(-as_integer => "inst") || 0;
+my $LongName = $Untaint -> extract(-as_safehtml => "longdesc") || "";
+my $ShortName = $Untaint -> extract(-as_safehtml => "shortdesc") || "";
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
