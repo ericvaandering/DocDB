@@ -44,21 +44,21 @@ require "XRefHTML.pm";
 require "XRefSQL.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-%params = $query -> Vars;
+my $Password = $Untaint -> extract(-as_printable => "password") || "";
+my $Username = $Untaint -> extract(-as_printable => "admuser") || "";
+my $Action = $Untaint -> extract(-as_printable => "admaction") || "";
+my $Force = $Untaint -> extract(-as_printable => "admforce") || "";
 
-my $Password         = $params{password};
-my $Username         = $params{admuser};
-my $Action           = $params{admaction};
-my $Force            = $params{admforce};
+my $SubForm = $Untaint -> extract(-as_printable => "subform") || "";
 
-my $SubForm          = $params{subform};
-
-my $ExternalDocDBID  = $params{externaldocdbs};
-my $ProjectName      = $params{project};
-my $Description      = $params{desc};
-my $PublicURL        = $params{puburl};
-my $PrivateURL       = $params{privurl};
+my $ExternalDocDBID = $Untaint -> extract(-as_integer => "externaldocdbs") || 0;
+my $ProjectName = $Untaint -> extract(-as_safehtml => "project") || "";
+my $Description = $Untaint -> extract(-as_safehtml => "desc") || "";
+my $PublicURL = $Untaint -> extract(-as_safehtml => "puburl") || "";
+my $PrivateURL = $Untaint -> extract(-as_safehtml => "privurl") || "";
 
 $query -> delete_all();
 

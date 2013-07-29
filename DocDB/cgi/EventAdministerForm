@@ -48,19 +48,19 @@ require "MeetingHTML.pm";
 require "TopicHTML.pm"; # For description boxes
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-%params = $query -> Vars;
+my $Password = $Untaint -> extract(-as_printable => "password") || "";
+my $Username = $Untaint -> extract(-as_printable => "admuser") || "";
+my $Action = $Untaint -> extract(-as_printable => "admaction") || "";
+my $Force = $Untaint -> extract(-as_printable => "admforce") || "";
 
-my $Password         = $params{password};
-my $Username         = $params{admuser};
-my $Action           = $params{admaction};
-my $Force            = $params{admforce};
-
-my $SubForm          = $params{subform};
-my $EventGroupID     = int($params{eventgroups});
-my $EventID          = int($params{events});
-my $ShortDescription = $params{shortdesc};
-my $LongDescription  = $params{longdesc};
+my $SubForm = $Untaint -> extract(-as_printable => "subform") || "";
+my $EventGroupID = $Untaint -> extract(-as_integer => "eventgroups") || 0;
+my $EventID = $Untaint -> extract(-as_integer => "events") || 0;
+my $ShortDescription = $Untaint -> extract(-as_safehtml => "shortdesc") || "";
+my $LongDescription = $Untaint -> extract(-as_safehtml => "longdesc") || "";
 
 $query -> delete_all();
 

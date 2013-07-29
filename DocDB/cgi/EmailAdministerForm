@@ -45,11 +45,12 @@ require "SecuritySQL.pm";
 require "NotificationSQL.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-%params = $query -> Vars;
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-my $EmailUserID  = $params{emailuserid} || 0;
+my $EmailUserID = $Untaint -> extract(-as_integer => "emailuserid") || 0;
 
 GetSecurityGroups();
 
