@@ -1,5 +1,8 @@
 #! /usr/bin/env perl
 #
+#        Name: AdministerHome
+# Description: A "home page" for the various administration pages 
+#
 #      Author: Lynn Garren (garren@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 
@@ -30,11 +33,9 @@ require "Scripts.pm";
 require "ResponseElements.pm";
 require "FormElements.pm";
 require "Messages.pm";
-#require "Cookies.pm";
 require "Security.pm";
 require "SecuritySQL.pm";
 require "SecurityHTML.pm";
-#require "MeetingSecurityUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
 $query -> autoEscape(0);

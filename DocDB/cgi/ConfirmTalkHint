@@ -4,7 +4,7 @@
 #              and a document
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 #
 
 # Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
@@ -45,19 +45,15 @@ require "Security.pm";
 require "SQLChecks.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 
-%params = $query -> Vars;
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
 @ErrorStack = ();
 @WarnStack  = ();
 
-$DocumentID    = $params{documentid};
-$SessionTalkID = $params{sessiontalkid};
-
-$DocumentID    =~ s/^\s+//; # Remove leading and trailing spaces
-$DocumentID    =~ s/\s+$//;
-$SessionTalkID =~ s/^\s+//;
-$SessionTalkID =~ s/\s+$//;
+my $DocumentID = $Untaint -> extract(-as_integer => "documentid") || 0;
+my $SessionTalkID = $Untaint -> extract(-as_integer => "sessiontalkid") || 0;
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number!";
