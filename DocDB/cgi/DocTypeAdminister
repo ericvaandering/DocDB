@@ -37,18 +37,18 @@ require "DocTypeHTML.pm";
 require "Messages.pm";
 
 $query = new CGI;  # Global for subroutines
-
-%params = $query -> Vars;
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
 # Parameters to script 
 
-$Password  = $params{password};
-my $Username      = $params{admuser};
-$Action    = $params{admaction};
+my $Password = $Untaint -> extract(-as_printable => "password") || "";
+my $Username = $Untaint -> extract(-as_printable => "admuser") || "";
+my $Action = $Untaint -> extract(-as_printable => "admaction") || "";
 
-my $DocTypeID = $params{doctype};
-my $ShortName = $params{name};
-my $LongName  = $params{longdesc};
+my $DocTypeID = $Untaint -> extract(-as_integer => "doctype") || 0;
+my $ShortName = $Untaint -> extract(-as_safehtml => "name") || 0;
+my $LongName = $Untaint -> extract(-as_safehtml => "longdesc") || 0;
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
