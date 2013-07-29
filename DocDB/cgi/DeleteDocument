@@ -34,15 +34,12 @@ require "FSUtilities.pm";
 require "HTMLUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-%params = $query -> Vars;
-
-$DocumentID = $params{docid};
-$DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
-$DocumentID =~ s/\s+$//;
-
-my $Password      = $params{password};
-my $Username      = $params{admuser};
+my $DocumentID = $Untaint -> extract(-as_integer => "documentid") || 0;
+my $Password = $Untaint -> extract(-as_printable => "password") || "";
+my $Username = $Untaint -> extract(-as_printable => "admuser") || "";
 
 @ErrorStack = ();
 

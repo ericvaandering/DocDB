@@ -53,12 +53,12 @@ require "EventUtilities.pm";
 require "Utilities.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-%params = $query -> Vars;
-
-my $SessionID          = $params{sessionid};
-my $SessionSeparatorID = $params{sessionseparatorid};
-my $EventID            = $params{conferenceid};
+my $SessionID = $Untaint -> extract(-as_integer => "sessionid") || 0;
+my $SessionSeparatorID = $Untaint -> extract(-as_integer => "sessionseparatorid") || 0;
+my $EventID = $Untaint -> extract(-as_integer => "conferenceid") || 0;
 
 @ErrorStack = ();
 @WarnStack  = ();
