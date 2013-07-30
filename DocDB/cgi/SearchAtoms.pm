@@ -85,15 +85,23 @@ sub RegExpSearchAtom {
   my $RegExpAtom  = '';
 
   my $SimpleWord = $Word;
-  $SimpleWord =~ s/^\w+//g;
+  $SimpleWord =~ s/\W//g;
   if ($SimpleWord eq $Word) { # No special characters found
     push @RegExpParts, $Word;
   } else {
     print STDERR "Special characters found in $Word becomes $SimpleWord, gotta figure this out\n";
     # First take care of regexp special characters
-    my $RESafeWord = $Word;
-    $RESafeWord =~ s/(\[\\\^\$\.\|\?\*\+\(\))/\\\1/;
-    push @RegExpParts, $RESafeWord;
+    my $Escaped = $Word;
+    $Escaped =~ s/([\[\\\^\$\.\|\?\*\+\(\)])/\\\1/g;                     # Prepend \ to regexp safe characters [\^$.|?*+()
+    push @RegExpParts, $Escaped;
+    push @RegExpParts, HTML::Entities::encode($Word);                    # &amp;
+    push @RegExpParts, HTML::Entities::encode_entities_numeric($Word);   # &#xab;
+    $Escaped = $Word;
+    $Escaped =~ s{(\W)}{"%".sprintf("%x", unpack(U,$1))}ge;              # %20
+    push @RegExpParts, $Escaped
+    $Escaped = $Word;
+    $Escaped =~ s{(\W)}{"&#".unpack(U,$1).";"}ge;                        # &#1234;
+    push @RegExpParts, $Escaped
   }
 
   if ($RequireWord) {
