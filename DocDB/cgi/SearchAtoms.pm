@@ -55,13 +55,9 @@ sub TextSearch {
     foreach my $Word (@Words) {
       if ($Mode eq "anysub" || $Mode eq "allsub") {
         my $RegExp = RegExpSearchAtom($Word);
-#        $Word =~ tr/[A-Z]/[a-z]/;
-#        push @Atoms,"LOWER($Field) like \"%$Word%\"";
         push @Atoms, "$Field rlike $RegExp";
       } elsif ($Mode eq "anyword" || $Mode eq "allword") {
         my $RegExp = RegExpSearchAtom($Word, $TRUE);
-#        $Word =~ tr/[A-Z]/[a-z]/;
-#        push @Atoms,"LOWER($Field) REGEXP \"\[\[:<:\]\]$Word\[\[:>:\]\]\"";
         push @Atoms, "$Field rlike $RegExp";
       }
     }
@@ -91,24 +87,24 @@ sub RegExpSearchAtom {
   if ($SimpleWord eq $Word) { # No special characters found
     push @RegExpParts, $Word;
   } else {
-    print STDERR "Special characters found in $Word becomes $SimpleWord, gotta figure this out\n";
-    # First take care of regexp special characters
-    my $Escaped = $Word;
-    $Escaped =~ s/([\[\\\^\$\.\|\?\*\+\(\)])/\\\1/g;                     # Prepend \ to regexp safe characters [\^$.|?*+()
-    print STDERR " adding $Escaped\n";
+    my $Escaped = $Word;                                         # First take care of regexp special characters
+    $Escaped =~ s/([\[\\\^\$\.\|\?\*\+\(\)])/\\\1/g;             # Prepend \ to regexp safe characters [\^$.|?*+()
     push @RegExpParts, $Escaped;
 
     $Escaped = HTML::Entities::encode($Word);                    # &amp;
     if ($Escaped ne $Word) {
       push @RegExpParts, $Escaped;
     }
+
     $Escaped = HTML::Entities::encode_entities_numeric($Word);   # &#xab;
     if ($Escaped ne $Word) {
       push @RegExpParts, $Escaped;
     }
+
     $Escaped = $Word;
     $Escaped =~ s{(\W)}{"%".sprintf("%x", unpack(U,$1))}ge;      # %20
     push @RegExpParts, $Escaped;
+
     $Escaped = $Word;
     $Escaped =~ s{(\W)}{"&#".unpack(U,$1).";"}ge;                # &#1234;
     push @RegExpParts, $Escaped;
@@ -123,8 +119,8 @@ sub RegExpSearchAtom {
   if ($RequireWord) {
     $RegExpAtom .= '[[:>:]]';
   }
+
   my $SafeAtom = $dbh->quote($RegExpAtom);
-  print STDERR "Searching for $SafeAtom\n";
   return $SafeAtom;
 }
 
