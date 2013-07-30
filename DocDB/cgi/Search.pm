@@ -155,7 +155,7 @@ sub LocalSearch ($) {
     $PubInfoSearch          = $SimpleText;
     $FileSearch             = $SimpleText;
     $FileDescSearch         = $SimpleText;
-    $FileContSearch         = $SimpleAlphaNumeric  # No idea what they'd do with special characters, best to remove
+    $FileContSearch         = $SimpleAlphaNumeric;  # No idea what they'd do with special characters, best to remove
     $TitleSearchMode        = "anyword";
     $AbstractSearchMode     = "anyword";
     $KeywordSearchMode      = "anyword";
