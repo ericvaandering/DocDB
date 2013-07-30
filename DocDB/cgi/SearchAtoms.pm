@@ -23,6 +23,8 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+use HTML::Entities qw(encode_entities_numeric);
+
 %SearchWeights = ( # These weights are used to order documents from the simple search
                   "Author"          => 4,
                   "Topic"           => 3,
@@ -52,6 +54,7 @@ sub TextSearch {
     my @Words = split /\s+/,$Words;
     foreach my $Word (@Words) {
       if ($Mode eq "anysub" || $Mode eq "allsub") {
+        my $RegExp = RegExpSearchAtom($Word);
         $Word =~ tr/[A-Z]/[a-z]/;
         push @Atoms,"LOWER($Field) like \"%$Word%\"";
       } elsif ($Mode eq "anyword" || $Mode eq "allword") {
@@ -72,6 +75,34 @@ sub TextSearch {
   if ($Phrase) {$Phrase = "($Phrase)";}
 
   return $Phrase;
+}
+
+sub RegExpSearchAtom {
+  my ($Word, $RequireWord) = @_;
+
+  my @RegExpParts = ();
+  my $RegExpAtom  = '';
+
+  my $SimpleWord = $Word;
+  $SimpleWord = s/^\w+//g;
+  if ($SimpleWord eq $Word) { # No special characters found
+    push @RegExpParts, $Word;
+  } else {
+    print STDERR "Special characters found, gotta figure this out\n";
+  }
+
+  if ($RequireWord) {
+    $RegExpAtom .= '[[:<:]]';
+  }
+  $RegExpAtom .= '(';
+  $RegExpAtom .= join '|', @RegExpParts;
+  $RegExpAtom .= ')';
+  if ($RequireWord) {
+    $RegExpAtom .= '[[:>:]]';
+  }
+  my $SafeAtom = $dbh->quote($RegExpAtom);
+  print STDERR "Searching for $SafeAtom\n";
+  return $SafeAtom;
 }
 
 sub IDSearch {
