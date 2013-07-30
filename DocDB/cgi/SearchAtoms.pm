@@ -55,12 +55,14 @@ sub TextSearch {
     foreach my $Word (@Words) {
       if ($Mode eq "anysub" || $Mode eq "allsub") {
         my $RegExp = RegExpSearchAtom($Word);
-        $Word =~ tr/[A-Z]/[a-z]/;
-        push @Atoms,"LOWER($Field) like \"%$Word%\"";
+#        $Word =~ tr/[A-Z]/[a-z]/;
+#        push @Atoms,"LOWER($Field) like \"%$Word%\"";
+        push @Atoms, "$Field rlike $RegExp";
       } elsif ($Mode eq "anyword" || $Mode eq "allword") {
         my $RegExp = RegExpSearchAtom($Word, $TRUE);
-        $Word =~ tr/[A-Z]/[a-z]/;
-        push @Atoms,"LOWER($Field) REGEXP \"\[\[:<:\]\]$Word\[\[:>:\]\]\"";
+#        $Word =~ tr/[A-Z]/[a-z]/;
+#        push @Atoms,"LOWER($Field) REGEXP \"\[\[:<:\]\]$Word\[\[:>:\]\]\"";
+        push @Atoms, "$Field rlike $RegExp";
       }
     }
   }
