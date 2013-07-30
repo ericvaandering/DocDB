@@ -93,15 +93,23 @@ sub RegExpSearchAtom {
     # First take care of regexp special characters
     my $Escaped = $Word;
     $Escaped =~ s/([\[\\\^\$\.\|\?\*\+\(\)])/\\\1/g;                     # Prepend \ to regexp safe characters [\^$.|?*+()
+    print STDERR " adding $Escaped\n";
     push @RegExpParts, $Escaped;
-    push @RegExpParts, HTML::Entities::encode($Word);                    # &amp;
-    push @RegExpParts, HTML::Entities::encode_entities_numeric($Word);   # &#xab;
+
+    $Escaped = HTML::Entities::encode($Word);                    # &amp;
+    if ($Escaped ne $Word) {
+      push @RegExpParts, $Escaped;
+    }
+    $Escaped = HTML::Entities::encode_entities_numeric($Word);   # &#xab;
+    if ($Escaped ne $Word) {
+      push @RegExpParts, $Escaped;
+    }
     $Escaped = $Word;
-    $Escaped =~ s{(\W)}{"%".sprintf("%x", unpack(U,$1))}ge;              # %20
-    push @RegExpParts, $Escaped
+    $Escaped =~ s{(\W)}{"%".sprintf("%x", unpack(U,$1))}ge;      # %20
+    push @RegExpParts, $Escaped;
     $Escaped = $Word;
-    $Escaped =~ s{(\W)}{"&#".unpack(U,$1).";"}ge;                        # &#1234;
-    push @RegExpParts, $Escaped
+    $Escaped =~ s{(\W)}{"&#".unpack(U,$1).";"}ge;                # &#1234;
+    push @RegExpParts, $Escaped;
   }
 
   if ($RequireWord) {
