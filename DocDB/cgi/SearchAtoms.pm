@@ -58,6 +58,7 @@ sub TextSearch {
         $Word =~ tr/[A-Z]/[a-z]/;
         push @Atoms,"LOWER($Field) like \"%$Word%\"";
       } elsif ($Mode eq "anyword" || $Mode eq "allword") {
+        my $RegExp = RegExpSearchAtom($Word, $TRUE);
         $Word =~ tr/[A-Z]/[a-z]/;
         push @Atoms,"LOWER($Field) REGEXP \"\[\[:<:\]\]$Word\[\[:>:\]\]\"";
       }
@@ -84,11 +85,15 @@ sub RegExpSearchAtom {
   my $RegExpAtom  = '';
 
   my $SimpleWord = $Word;
-  $SimpleWord = s/^\w+//g;
+  $SimpleWord =~ s/^\w+//g;
   if ($SimpleWord eq $Word) { # No special characters found
     push @RegExpParts, $Word;
   } else {
-    print STDERR "Special characters found, gotta figure this out\n";
+    print STDERR "Special characters found in $Word becomes $SimpleWord, gotta figure this out\n";
+    # First take care of regexp special characters
+    my $RESafeWord = $Word;
+    $RESafeWord =~ s/(\[\\\^\$\.\|\?\*\+\(\))/\\\1/;
+    push @RegExpParts, $RESafeWord;
   }
 
   if ($RequireWord) {
