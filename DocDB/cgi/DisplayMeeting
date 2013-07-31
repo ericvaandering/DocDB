@@ -27,6 +27,7 @@
 
 use Benchmark;
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 $StartTime = new Benchmark;

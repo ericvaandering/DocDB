@@ -1,6 +1,6 @@
 #! /usr/bin/env perl
 #
-# Description: Script to confirm a match between a talk entered in the agenda 
+# Description: Script to confirm a match between a talk entered in the agenda
 #              and a document
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
@@ -12,7 +12,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -26,6 +26,7 @@
 
 
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -57,11 +58,11 @@ my $SessionTalkID = $Untaint -> extract(-as_integer => "sessiontalkid") || 0;
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number!";
-}  
+}
 
 unless ($SessionTalkID) {
   push @ErrorStack,"You are must supply a Session Number!";
-}  
+}
 
 print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Confirming document match","",-nobody => $TRUE);
@@ -69,7 +70,7 @@ print $query -> header( -charset => $HTTP_ENCODING );
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 unless ($dbh) {
   push @ErrorStack,$Msg_NoConnect;
-}      
+}
 &EndPage(@ErrorStack);
 
 &FetchDocument($DocumentID);
@@ -101,9 +102,9 @@ my $RevisionEventCheck = $dbh -> prepare("select RevEventID from RevisionEvent w
 $RevisionEventCheck -> execute($DocRevID,$ConferenceID);
 my ($RevisionEventID) = $RevisionEventCheck -> fetchrow_array;
 unless ($RevisionEventID) {
-  my $Insert = $dbh -> prepare("insert into RevisionEvent (RevEventID,DocRevID,ConferenceID) values (0,?,?)"); 
+  my $Insert = $dbh -> prepare("insert into RevisionEvent (RevEventID,DocRevID,ConferenceID) values (0,?,?)");
   $Insert -> execute($DocRevID,$ConferenceID);
-}  
+}
 print "<p><b>The match has been confirmed.<br/>
              Press the button below to reload the original page.</b></p>\n";
 

@@ -1,7 +1,7 @@
 #! /usr/bin/env perl
 #
 # Description: This script is called by KeywordAdministerForm and does administration
-#              on the Keyword table in the DB. 
+#              on the Keyword table in the DB.
 #
 #      Author: Lynn Garren (garren@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
@@ -11,7 +11,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -27,6 +27,7 @@
 # FIXME: Check for duplicate keyword, warn
 
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -45,8 +46,8 @@ my $Untaint = CGI::Untaint -> new($query -> Vars);
 @ErrorStack = ();
 @WarnStack  = ();
 
-# Parameters to script 
- 
+# Parameters to script
+
 my $Password = $Untaint -> extract(-as_printable => "password") || "";
 my $Username = $Untaint -> extract(-as_printable => "admuser") || "";
 my $Action = $Untaint -> extract(-as_printable => "admaction") || "";
@@ -60,7 +61,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
 unless ($dbh) {
   push @ErrorStack,$Msg_AdminNoConnect;
-}         
+}
 print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Modified List of Keywords");
 
@@ -68,10 +69,10 @@ print $query -> header( -charset => $HTTP_ENCODING );
 
 unless (&CanAdminister) {
   push @ErrorStack,$Msg_AdminNoLogin;
-}  
+}
 &EndPage(@ErrorStack);
 
-if ($Action eq "Delete") { 
+if ($Action eq "Delete") {
 
   unless ($KeywordID) {
     push @ErrorStack,$Msg_ModKeywdEmpty;
@@ -79,9 +80,9 @@ if ($Action eq "Delete") {
   &EndPage(@ErrorStack);
   &FetchKeyword($KeywordID);
   my $KeywordLink   = &KeywordLinkByID($KeywordID);
-  
+
   &DeleteKeyword($KeywordID); # Delete KeywordID from Keyword table
-  
+
   print "$KeywordLink has been removed from the database.<br>\n";
 } elsif ($Action eq "Modify") {
   unless ($KeywordID) {
@@ -89,29 +90,29 @@ if ($Action eq "Delete") {
   }
   &EndPage(@ErrorStack);
 
-# Deal with name changes     
+# Deal with name changes
 
-  if ($ShortName) { 
+  if ($ShortName) {
     print "<b>Updating short keyword name.</b><br>\n";
     my $KeywordUpdate = $dbh->prepare(
        "update Keyword set ShortDescription=? where KeywordID=?");
     $KeywordUpdate -> execute($ShortName,$KeywordID);
   }
-  if ($LongName) { 
+  if ($LongName) {
     print "<b>Updating long keyword name.</b><br>\n";
     my $KeywordUpdate = $dbh->prepare(
        "update Keyword set LongDescription=? where KeywordID=?");
     $KeywordUpdate -> execute($LongName,$KeywordID);
   }
 
-# Deal with KeywordGroup changes   
+# Deal with KeywordGroup changes
 
   @KeywordGroupIDs = sort numerically @KeywordGroupIDs; # Want to get -1: remove first
   foreach my $KeywordGroupID (@KeywordGroupIDs) {
     if ($KeywordGroupID == -1) { # Remove existing KeywordGrouping entries
       my $GroupingDelete = $dbh -> prepare("delete from KeywordGrouping where KeywordID=?");
       $GroupingDelete -> execute($KeywordID);
-    } elsif ($KeywordGroupID) { 
+    } elsif ($KeywordGroupID) {
       my $GroupingSelect = $dbh -> prepare(
        "select KeywordGroupingID from KeywordGrouping where KeywordID=? and KeywordGroupID=?");
       $GroupingSelect -> execute($KeywordID,$KeywordGroupID);
@@ -130,11 +131,11 @@ if ($Action eq "Delete") {
 
   print "<b>Adding a new keyword.</b><br>\n";
   my $KeywordInsert = $dbh->prepare(
-   "insert into Keyword (KeywordID, ShortDescription, LongDescription) ". 
+   "insert into Keyword (KeywordID, ShortDescription, LongDescription) ".
    "values (0,?,?)");
 
   my $KeywordGroupingInsert = $dbh->prepare(
-   "insert into KeywordGrouping (KeywordGroupingID, KeywordGroupID, KeywordID) ". 
+   "insert into KeywordGrouping (KeywordGroupingID, KeywordGroupID, KeywordID) ".
    "values (0,?,?)");
 
   $KeywordInsert -> execute($ShortName,$LongName);
@@ -142,10 +143,10 @@ if ($Action eq "Delete") {
 
   foreach my $KeywordGroupID (@KeywordGroupIDs) {
     $KeywordGroupingInsert -> execute($KeywordGroupID,$KeywordID);
-  }  
+  }
 } else {
   push @ErrorStack,"No valid action was specified.";
-}  
+}
 
 # For modify or new fetch information and display.
 
@@ -158,7 +159,7 @@ if ($Action eq "Modify" || $Action eq "New") {
   print "Short description: $ShortLink<br>\n";
   print "Long description: $LongLink<br>\n";
   print "</b><p>\n";
-}  
+}
 
 print "<p>\n";
 $keyadminform = "<a href=\"$KeywordAdministerForm\">Administer Keywords</a>";
@@ -173,5 +174,5 @@ print "<p>\n";
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
- 
+
 exit;

@@ -28,6 +28,7 @@
 
 
 use CGI qw(-nosticky);
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";

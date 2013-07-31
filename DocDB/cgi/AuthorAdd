@@ -1,8 +1,8 @@
 #! /usr/bin/env perl
 #
 #        Name: AuthorAdd
-# Description: Adds an author into the DB list of authors.  
-#              Called by submission from AddAuthorForm 
+# Description: Adds an author into the DB list of authors.
+#              Called by submission from AddAuthorForm
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
@@ -13,7 +13,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -26,6 +26,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -58,24 +59,24 @@ unless (CanCreate()) {
 }
 unless ($InstitutionID && $FirstName && $LastName) {
   push @ErrorStack,"You must supply a first and last name and an institution.";
-}  
-  
+}
+
 EndPage(@ErrorStack);
 
 my $AuthorInsert = $dbh->prepare(
    "insert into Author ".
-          "(AuthorID, FirstName, MiddleInitials, LastName, InstitutionID,Active) ". 
+          "(AuthorID, FirstName, MiddleInitials, LastName, InstitutionID,Active) ".
    "values (0,        ?,         ?,              ?,        ?,            1)");
-            
+
 $AuthorInsert -> execute($FirstName,$MiddleInitials,$LastName,$InstitutionID);
 my $AuthorID = $AuthorInsert -> {mysql_insertid}; # Works with MySQL only
-                           
+
 if ($AuthorID) {
-  push @ActionStack,"$FirstName $MiddleInitials $LastName has been added as an author. You can <a href=\"$AuthorAddForm\">add another</a> author."; 
+  push @ActionStack,"$FirstName $MiddleInitials $LastName has been added as an author. You can <a href=\"$AuthorAddForm\">add another</a> author.";
 } else {
   unless (@ErrorStack) {
     push @ErrorStack,"Something unknown went wrong. Contact an administrator.";
-  }   
+  }
 }
 
 ActionReport();

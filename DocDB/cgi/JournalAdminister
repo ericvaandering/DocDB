@@ -2,17 +2,17 @@
 #
 # Description: This script is called by AdministerForm and does administration
 #              on journals in the DB. This script adds, modifies and deletes
-#              journals. 
+#              journals.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
 # Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -25,6 +25,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -42,7 +43,7 @@ my $Untaint = CGI::Untaint -> new($query -> Vars);
 @ErrorStack = ();
 @WarnStack  = ();
 
-# Parameters to script 
+# Parameters to script
 
 my $Password = $Untaint -> extract(-as_printable => "password") || "";
 my $Username = $Untaint -> extract(-as_printable => "admuser") || "";
@@ -59,7 +60,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
 unless ($dbh) {
   push @ErrorStack,$Msg_AdminNoConnect;
-}         
+}
 print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Modified List of Institutions");
 
@@ -67,7 +68,7 @@ print $query -> header( -charset => $HTTP_ENCODING );
 
 unless (&CanAdminister) {
   push @ErrorStack,$Msg_AdminNoLogin;
-}  
+}
 &EndPage(@ErrorStack);
 
 &GetJournals;
@@ -86,33 +87,33 @@ if      ($Action eq "Delete") { # Delete institutions
   }
   &EndPage(@ErrorStack);
 
-# Deal with name changes     
+# Deal with name changes
 
-  if ($FullName) { 
+  if ($FullName) {
     print "<b>Updating journal name.</b><br>\n";
     my $JournalUpdate = $dbh->prepare(
        "update Journal set Name=? where JournalID=?");
     $JournalUpdate -> execute($FullName,$JournalID);
   }
-  if ($Abbreviation) { 
+  if ($Abbreviation) {
     print "<b>Updating journal abbreviation.</b><br>\n";
     my $JournalUpdate = $dbh->prepare(
        "update Journal set Abbreviation=? where JournalID=?");
     $JournalUpdate -> execute($Abbreviation,$JournalID);
   }
-  if ($Acronym) { 
+  if ($Acronym) {
     print "<b>Updating journal acronym.</b><br>\n";
     my $JournalUpdate = $dbh->prepare(
        "update Journal set Acronym=? where JournalID=?");
     $JournalUpdate -> execute($Acronym,$JournalID);
   }
-  if ($Publisher) { 
+  if ($Publisher) {
     print "<b>Updating journal publisher.</b><br>\n";
     my $JournalUpdate = $dbh->prepare(
        "update Journal set Publisher=? where JournalID=?");
     $JournalUpdate -> execute($Publisher,$JournalID);
   }
-  if ($URL) { 
+  if ($URL) {
     print "<b>Updating journal URL.</b><br>\n";
     my $JournalUpdate = $dbh->prepare(
        "update Journal set URL=? where JournalID=?");
@@ -129,7 +130,7 @@ if      ($Action eq "Delete") { # Delete institutions
   $JournalID = $JournalInsert -> {mysql_insertid}; # Works with MySQL only
 } else {
   push @ErrorStack,"No valid action was specified.";
-}  
+}
 
 # For modify or new fetch institution information and display.
 
@@ -142,7 +143,7 @@ if ($Action eq "Modify" || $Action eq "New") {
   print "Publisher:    $Journals{$JournalID}{Publisher}    <br>\n";
   print "URL:          $Journals{$JournalID}{URL}          <br>\n";
   print "</b><p>\n";
-}  
+}
 
 print "<p>\n";
 
@@ -151,5 +152,5 @@ print "<p>\n";
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
- 
+
 exit;

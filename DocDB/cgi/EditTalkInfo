@@ -5,14 +5,14 @@
 #              and display it since it could get crowded in the normal table.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
 # Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -26,7 +26,8 @@
 
 # FIXME: XHTML
 
-use CGI qw(-nosticky);                                                                                      
+use CGI qw(-nosticky);
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -42,7 +43,7 @@ require "TalkSQL.pm";
 require "MeetingSQL.pm";
 require "TalkHintSQL.pm";
 
-$query = new CGI;  
+$query = new CGI;
 $query -> autoEscape(0);
 my $Untaint = CGI::Untaint -> new($query -> Vars);
 
@@ -57,7 +58,7 @@ my @TopicHints = @{ $Untaint -> extract(-as_listofint => "topics") || undef };
 if ($Confirmed) {
   $Confirmed = $TRUE;
 }
-  
+
 CreateConnection(-type => "rw");
 EndPage(-startpage => $TRUE);
 
@@ -90,14 +91,14 @@ EndPage(-startpage => $TRUE);
 if ($TalkSeparatorID) { # Modify a talk separator
   my $TalkSeparatorUpdate = $dbh -> prepare(
    "update TalkSeparator set ".
-   "Time=?, Title=?, Note=? ". 
+   "Time=?, Title=?, Note=? ".
    "where TalkSeparatorID=?");
   $TalkSeparatorUpdate -> execute($Length,$Title,$Note,$TalkSeparatorID);
   push @ActionStack,"Modified break: $Title";
 } elsif ($SessionTalkID) { # Modify a talk
   my $SessionTalkUpdate = $dbh -> prepare(
    "update SessionTalk set ".
-   "DocumentID=?, Confirmed=?, Time=?, HintTitle=?, Note=? ". 
+   "DocumentID=?, Confirmed=?, Time=?, HintTitle=?, Note=? ".
    "where SessionTalkID=?");
   $SessionTalkUpdate -> execute($DocumentID,$Confirmed,$Length,$Title,$Note,$SessionTalkID);
   if ($Confirmed) {
@@ -107,7 +108,7 @@ if ($TalkSeparatorID) { # Modify a talk separator
   InsertAuthorHints($SessionTalkID,@AuthorHints);
   push @ActionStack,"Modified talk: $Title";
 }
-  
+
 # Start page
 
 print $query -> header( -charset => $HTTP_ENCODING );
