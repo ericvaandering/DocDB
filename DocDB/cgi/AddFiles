@@ -26,7 +26,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use Benchmark;
-use CGI;
+use CGI::Untaint;
 use DBI;
 
 $StartTime = new Benchmark;
@@ -74,7 +74,7 @@ print $query -> header( -charset => $HTTP_ENCODING );
 ### Get document and revision ID
 
 my $DocumentID = $Untaint -> extract(-as_integer => "docid") || 0;
-my $Version = $Untaint -> extract(-as_integer => "version") || 0; 
+my $Version = $Untaint -> extract(-as_integer => "version") || 0;
 my $Replace = $Untaint -> extract(-as_printable => "replace") || "";
 my $MaxFiles = $Untaint -> extract(-as_integer => "maxfiles") || 0;
 my $Replace = $Untaint -> extract(-as_printable => "submitagree") || "";

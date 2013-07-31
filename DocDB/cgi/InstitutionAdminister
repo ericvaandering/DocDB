@@ -3,17 +3,17 @@
 # Description: This script is called by AdministerForm and does administration
 #              on Institutions in the DB. This script adds, modifies and deletes
 #              institutions. It will not delete institutions if there are authors
-#              associated with that institution. 
+#              associated with that institution.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
 # Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -25,7 +25,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -43,7 +43,7 @@ my $Untaint = CGI::Untaint -> new($query -> Vars);
 @ErrorStack = ();
 @WarnStack  = ();
 
-# Parameters to script 
+# Parameters to script
 
 my $Password = $Untaint -> extract(-as_printable => "password") || "";
 my $Username = $Untaint -> extract(-as_printable => "admuser") || "";
@@ -57,7 +57,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
 unless ($dbh) {
   push @ErrorStack,$Msg_AdminNoConnect;
-}         
+}
 print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Modified List of Institutions");
 
@@ -65,13 +65,13 @@ print $query -> header( -charset => $HTTP_ENCODING );
 
 unless (&CanAdminister) {
   push @ErrorStack,$Msg_AdminNoLogin;
-}  
+}
 &EndPage(@ErrorStack);
 
 &GetInstitutions;
 
 if      ($Action eq "Delete") { # Delete institutions
-  @AuthorIDs = &GetInstitutionAuthors($InstitutionID); 
+  @AuthorIDs = &GetInstitutionAuthors($InstitutionID);
   if (!$InstitutionID) {
     push @ErrorStack,$Msg_ModInstEmpty;
   } elsif (@AuthorIDs) {
@@ -89,15 +89,15 @@ if      ($Action eq "Delete") { # Delete institutions
   }
   &EndPage(@ErrorStack);
 
-# Deal with name changes     
+# Deal with name changes
 
-  if ($ShortName) { 
+  if ($ShortName) {
     print "<b>Updating short institution name.</b><br>\n";
     my $InstitutionUpdate = $dbh->prepare(
        "update Institution set ShortName=? where InstitutionID=?");
     $InstitutionUpdate -> execute($ShortName,$InstitutionID);
   }
-  if ($LongName) { 
+  if ($LongName) {
     print "<b>Updating long institution name.</b><br>\n";
     my $InstitutionUpdate = $dbh->prepare(
        "update Institution set LongName=? where InstitutionID=?");
@@ -113,7 +113,7 @@ if      ($Action eq "Delete") { # Delete institutions
   $InstitutionID = $InstitutionInsert -> {mysql_insertid}; # Works with MySQL only
 } else {
   push @ErrorStack,"No valid action was specified.";
-}  
+}
 
 # For modify or new fetch institution information and display.
 
@@ -124,7 +124,7 @@ if ($Action eq "Modify" || $Action eq "New") {
   print "Short institution name: $Institutions{$InstitutionID}{SHORT}<br>\n";
   print "Long institution name:  $Institutions{$InstitutionID}{LONG}<br>\n";
   print "</b><p>\n";
-}  
+}
 
 print "<p>\n";
 
@@ -133,5 +133,5 @@ print "<p>\n";
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
- 
+
 exit;

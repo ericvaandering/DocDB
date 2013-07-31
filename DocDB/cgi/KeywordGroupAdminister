@@ -3,17 +3,17 @@
 # Description: This script is called by KeywordAdministerForm and does administration
 #              on Keyword Groups in the DB. This script adds, modifies and deletes
 #              these groups. It will not delete groups if there are associated
-#              keywords. 
+#              keywords.
 #
 #      Author: Lynn Garren (garren@fnal.gov)
-#    Modified: 
+#    Modified:
 
 # Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -25,7 +25,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -43,7 +43,7 @@ my $Untaint = CGI::Untaint -> new($query -> Vars);
 @ErrorStack = ();
 @WarnStack  = ();
 
-# Parameters to script 
+# Parameters to script
 
 my $Password = $Untaint -> extract(-as_printable => "password") || "";
 my $Username = $Untaint -> extract(-as_printable => "admuser") || "";
@@ -57,7 +57,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
 unless ($dbh) {
   push @ErrorStack,$Msg_AdminNoConnect;
-}         
+}
 
 print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Modified List of Keyword Groups");
@@ -66,13 +66,13 @@ print $query -> header( -charset => $HTTP_ENCODING );
 
 unless (&CanAdminister) {
   push @ErrorStack,$Msg_AdminNoLogin;
-}  
+}
 &EndPage(@ErrorStack);
 
 &GetKeywords;
 
 if      ($Action eq "Delete") { # Delete keyword groups
-  @KeywordListIDs = &GetKeywordsByKeywordGroupID($KeywordGroupID); 
+  @KeywordListIDs = &GetKeywordsByKeywordGroupID($KeywordGroupID);
   if (!$KeywordGroupID) {
     push @ErrorStack,$Msg_ModKeyGrEmpty;
   } elsif (@KeywordListIDs) { # Not sure we want this anymore
@@ -90,15 +90,15 @@ if      ($Action eq "Delete") { # Delete keyword groups
   }
   &EndPage(@ErrorStack);
 
-# Deal with name changes     
+# Deal with name changes
 
-  if ($ShortName) { 
+  if ($ShortName) {
     print "<b>Updating short description.</b><br>\n";
     my $KeywordGroupUpdate = $dbh->prepare(
        "update KeywordGroup set ShortDescription=? where KeywordGroupID=?");
     $KeywordGroupUpdate -> execute($ShortName,$KeywordGroupID);
   }
-  if ($LongName) { 
+  if ($LongName) {
     print "<b>Updating long description.</b><br>\n";
     my $KeywordGroupUpdate = $dbh->prepare(
        "update KeywordGroup set LongDescription=? where KeywordGroupID=?");
@@ -114,7 +114,7 @@ if      ($Action eq "Delete") { # Delete keyword groups
   $KeywordGroupID = $KeywordGroupInsert -> {mysql_insertid}; # Works with MySQL only
 } else {
   push @ErrorStack,"No valid action was specified.";
-}  
+}
 
 # For modify or new fetch information and display.
 
@@ -124,7 +124,7 @@ if ($Action eq "Modify" || $Action eq "New") {
   print "Short description: $KeywordGroups{$KeywordGroupID}{Short}<br>\n";
   print "Long description:  $KeywordGroups{$KeywordGroupID}{Long}<br>\n";
   print "</b><p>\n";
-}  
+}
 
 print "<p>\n";
 $keyadminform = "<a href=\"$KeywordAdministerForm\">Administer Keywords</a>";
@@ -139,5 +139,5 @@ print "<p>\n";
 
 &DocDBNavBar;
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
- 
+
 exit;

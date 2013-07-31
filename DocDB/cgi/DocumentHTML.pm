@@ -23,6 +23,8 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+require "HTMLUtilities.pm";
+
 sub DocumentTable (%) {
   require "DocumentSQL.pm";
   require "RevisionSQL.pm";
@@ -383,7 +385,7 @@ sub DocumentLink (%) {
     $Link .= $DocumentID."-v".$Version;
     $Link .= $EndElement;
   } elsif ($TitleLink) {      # Use the document Title
-    $Link .= $DocRevisions{$DocRevID}{Title};
+    $Link .= SmartHTML({-text => $DocRevisions{$DocRevID}{Title} });
     $Link .= $EndElement;
     if ($UseSignoffs && !$NoApprovalStatus) { # Put document status on next line
       require "SignoffUtilities.pm";
