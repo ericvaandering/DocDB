@@ -35,6 +35,7 @@ require "ResponseElements.pm";
 require "Security.pm";
 require "FSUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 
 $query = new CGI;  # Global for subroutines
 $query -> autoEscape(0);

@@ -43,6 +43,7 @@ require "DocDBFields.pm";
 
 require "DBUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "MeetingSecurityUtilities.pm";
 
 require "ConfigSQL.pm";

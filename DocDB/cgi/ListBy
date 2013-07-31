@@ -35,6 +35,7 @@ require "DocDBGlobals.pm";
 require "DocumentHTML.pm";
 require "SecuritySQL.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "DocumentUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
@@ -196,8 +197,10 @@ if ($Days) {
   FetchDocType ($TypeID);
   $FieldListOptions{-doctypeid} = $TypeID;
   $Title   = "Document List by Type";
-  $Message = "These documents of type <span class=\"Highlight\">
-             $DocumentTypes{$TypeID}{SHORT}</span> are available:";
+
+  $Message = "These documents of type <span class=\"Highlight\">";
+  $Message .= SmartHTML({-text => $DocumentTypes{$TypeID}{SHORT},});
+  $Message .= "</span> are available:";
 
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
            "DocumentRevision where DocumentRevision.DocTypeID=?");

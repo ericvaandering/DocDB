@@ -35,6 +35,7 @@ require "Sorts.pm";
 require "ResponseElements.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "KeywordHTML.pm";
 require "KeywordSQL.pm";
 require "Messages.pm";

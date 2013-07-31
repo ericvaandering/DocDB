@@ -32,6 +32,7 @@ require "DocDBGlobals.pm";
 require "ResponseElements.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "MiscSQL.pm";
 require "JournalHTML.pm";
 require "Messages.pm";

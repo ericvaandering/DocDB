@@ -37,6 +37,7 @@ require "ResponseElements.pm";
 require "Security.pm";
 require "MeetingSecurityUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "DBUtilities.pm";
 
 require "TalkSQL.pm";

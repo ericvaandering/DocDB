@@ -36,6 +36,7 @@ require "Messages.pm";
 require "DBUtilities.pm";
 require "DBColumnSizes.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 
 require "SecuritySQL.pm";
 require "SecurityHTML.pm";

@@ -39,6 +39,7 @@ require "Sorts.pm";
 
 require "DBUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 
 require "SecuritySQL.pm";
 require "XRefHTML.pm";

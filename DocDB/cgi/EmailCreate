@@ -29,6 +29,7 @@ use DBI;
 
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "ResponseElements.pm";
 
 $query = new CGI;  # Global for subroutines
