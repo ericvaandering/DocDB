@@ -35,6 +35,7 @@ require "DocDBGlobals.pm";
 require "DocumentHTML.pm";
 require "SecuritySQL.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "DocumentUtilities.pm";
 
 $query = new CGI;  # Global for subroutines

@@ -41,6 +41,7 @@ require "MiscSQL.pm";
 require "FSUtilities.pm";
 require "WebUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "FileUtilities.pm";
 require "Security.pm";
 

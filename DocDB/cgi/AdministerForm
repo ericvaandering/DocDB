@@ -49,6 +49,7 @@ require "MiscSQL.pm";
 require "ResponseElements.pm";
 
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "Sorts.pm";
 
 $query = new CGI;  # Global for subroutines

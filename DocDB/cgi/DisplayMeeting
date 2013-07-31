@@ -36,6 +36,7 @@ require "DocDBGlobals.pm";
 require "Messages.pm";
 
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "ResponseElements.pm";
 require "Sorts.pm";
 require "Scripts.pm";

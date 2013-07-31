@@ -36,6 +36,7 @@ require "Scripts.pm";
 require "ResponseElements.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "AdministerElements.pm";
 require "EmailUserHTML.pm";
 require "SecurityHTML.pm";

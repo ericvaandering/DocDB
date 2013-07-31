@@ -37,6 +37,7 @@ require "DocumentSQL.pm";
 require "RevisionSQL.pm";
 
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "AdministerElements.pm";
 require "Security.pm";
 

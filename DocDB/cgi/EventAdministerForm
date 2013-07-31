@@ -41,6 +41,7 @@ require "Sorts.pm";
 
 require "DBUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 
 require "MeetingSQL.pm";
 require "SecuritySQL.pm";
