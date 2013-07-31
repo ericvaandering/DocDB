@@ -215,10 +215,12 @@ sub InstitutionSelect (;%) { # Scrolling selectable list for institutions
   my @InstIDs = sort byInstitution keys %Institutions;
   my %InstLabels = ();
   foreach my $ID (@InstIDs) {
+    my $LongName = SmartHTML({-text => $Institutions{$ID}{LONG}},);
+    my $ShortName = SmartHTML({-text => $Institutions{$ID}{SHORT}},);
     if ($Mode eq "full") {
-      $InstLabels{$ID} = $Institutions{$ID}{SHORT}." [".$Institutions{$ID}{LONG}."]";
+      $InstLabels{$ID} = $ShortName." [".$LongName."]";
     } else {
-      $InstLabels{$ID} = $Institutions{$ID}{SHORT};
+      $InstLabels{$ID} = $ShortName;
     }
   }
   if ($Disabled) {
