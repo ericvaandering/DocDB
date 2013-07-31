@@ -43,7 +43,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-my $InstructionSet = $Untaint -> extract(-as_printable => "general") || "";
+my $InstructionSet = $Untaint -> extract(-as_printable => "set") || "general";
 
 # Title
 
