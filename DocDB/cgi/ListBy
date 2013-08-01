@@ -167,7 +167,7 @@ if ($Days) {
   $Message .= SmartHTML({-text => $Conferences{$EventID}{LongDescription}});
   $Message .= "</span> ";
   if ($Conferences{$EventID}{URL}) {
-    $Message .= "(".SmartHTML({-text => $Conferences{$EventID}{URL}, -makeURLs=$TRUE})."</a>) ";
+    $Message .= "(".SmartHTML({-text => $Conferences{$EventID}{URL}, -makeURLs=>$TRUE})."</a>) ";
   }
   $Message .= "are available:";
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
