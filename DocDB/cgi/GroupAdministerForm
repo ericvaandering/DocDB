@@ -134,7 +134,6 @@ foreach my $GroupID (@GroupIDs) {
   print "<tr>\n";
   print "<td><strong>";
   print SmartHTML({-text => $SecurityGroups{$GroupID}{NAME}},);
-  $SecurityGroups{$GroupID}{NAME}
   print "</strong><br/>(";
   print SmartHTML({-text => $SecurityGroups{$GroupID}{Description}},);
   print ")</td>\n";
