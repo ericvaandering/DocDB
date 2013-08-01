@@ -167,16 +167,16 @@ sub KeywordSelect (%) { # Scrolling selectable list for keyword groups
   my %KeywordLabels = ();
   foreach my $ID (@KeywordIDs) {
     if ($Format eq "short") {
-      $KeywordLabels{$ID} = $Keywords{$ID}{Short};
+      $KeywordLabels{$ID} = SmartHTML({-text=>$Keywords{$KeywordID}{Short}});
     } elsif ($Format eq "long") {
-      $KeywordLabels{$ID} = $Keywords{$ID}{Long};
+      $KeywordLabels{$ID} = SmartHTML({-text=>$Keywords{$KeywordID}{Long}});
     } elsif ($Format eq "full") {
-      $KeywordLabels{$ID} = $Keywords{$ID}{Short}." [";
+      $KeywordLabels{$ID} = SmartHTML({-text=>$Keywords{$KeywordID}{Short}})." [";
       if ($MaxLabel) {
         if ( (length $Keywords{$ID}{Long}) > $MaxLabel) {
-          $KeywordLabels{$ID} .= substr($Keywords{$ID}{Long},0,$MaxLabel)." ...";
+          $KeywordLabels{$ID} .= substr(SmartHTML({-text=>$Keywords{$KeywordID}{Long}}),0,$MaxLabel)." ...";
         } else {
-          $KeywordLabels{$ID} .= $Keywords{$ID}{Long};
+          $KeywordLabels{$ID} .= SmartHTML({-text=>$Keywords{$KeywordID}{Long}});
         }
         $KeywordLabels{$ID} .= "]";
       }
@@ -209,9 +209,9 @@ sub KeywordGroupSelect (%) { # Scrolling selectable list for keyword groups
 
   foreach my $ID (@KeyGroupIDs) {
     if ($Format eq "full") {
-      $GroupLabels{$ID} = "$KeywordGroups{$ID}{Short} [$KeywordGroups{$ID}{Long}]";
+      $GroupLabels{$ID} = SmartHTML({-text=>$KeywordGroups{$ID}{Short}})." ".SmartHTML({-text=>$KeywordGroups{$ID}{Long}});
     } else {
-      $GroupLabels{$ID} = $KeywordGroups{$ID}{Short};
+      $GroupLabels{$ID} = SmartHTML({-text=>$KeywordGroups{$ID}{Short}});
     }
   }
 
