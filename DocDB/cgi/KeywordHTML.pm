@@ -167,16 +167,16 @@ sub KeywordSelect (%) { # Scrolling selectable list for keyword groups
   my %KeywordLabels = ();
   foreach my $ID (@KeywordIDs) {
     if ($Format eq "short") {
-      $KeywordLabels{$ID} = SmartHTML({-text=>$Keywords{$KeywordID}{Short}});
+      $KeywordLabels{$ID} = SmartHTML({-text=>$Keywords{$ID}{Short}});
     } elsif ($Format eq "long") {
-      $KeywordLabels{$ID} = SmartHTML({-text=>$Keywords{$KeywordID}{Long}});
+      $KeywordLabels{$ID} = SmartHTML({-text=>$Keywords{$ID}{Long}});
     } elsif ($Format eq "full") {
-      $KeywordLabels{$ID} = SmartHTML({-text=>$Keywords{$KeywordID}{Short}})." [";
+      $KeywordLabels{$ID} = SmartHTML({-text=>$Keywords{$ID}{Short}})." [";
       if ($MaxLabel) {
         if ( (length $Keywords{$ID}{Long}) > $MaxLabel) {
-          $KeywordLabels{$ID} .= substr(SmartHTML({-text=>$Keywords{$KeywordID}{Long}}),0,$MaxLabel)." ...";
+          $KeywordLabels{$ID} .= substr(SmartHTML({-text=>$Keywords{$ID}{Long}}),0,$MaxLabel)." ...";
         } else {
-          $KeywordLabels{$ID} .= SmartHTML({-text=>$Keywords{$KeywordID}{Long}});
+          $KeywordLabels{$ID} .= SmartHTML({-text=>$Keywords{$ID}{Long}});
         }
         $KeywordLabels{$ID} .= "]";
       }
