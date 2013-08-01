@@ -79,8 +79,8 @@ my $DocumentID = $Untaint -> extract(-as_integer => "docid") || 0;
 my $Version = $Untaint -> extract(-as_integer => "version") || 0;
 my $Replace = $Untaint -> extract(-as_printable => "replace") || "";
 my $MaxFiles = $Untaint -> extract(-as_integer => "maxfiles") || 0;
-my $Replace = $Untaint -> extract(-as_printable => "submitagree") || "";
-my $Replace = $Untaint -> extract(-as_printable => "preservesigs") || "";
+my $SubmitAgree = $Untaint -> extract(-as_printable => "submitagree") || "";
+my $PreserveSigs = $Untaint -> extract(-as_printable => "preservesigs") || "";
 
 my $DocRevID;
 
