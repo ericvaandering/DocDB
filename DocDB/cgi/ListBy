@@ -163,9 +163,11 @@ if ($Days) {
   $FieldListOptions{-eventid}      = $EventID;
   $FieldListOptions{-eventgroupid} = $Conferences{$EventID}{EventGroupID};
   $Title   = "Document List by Event";
-  $Message = "These documents from <span class=\"Highlight\">$Conferences{$EventID}{LongDescription}</span> ";
+  $Message = "These documents from <span class=\"Highlight\">";
+  $Message .= SmartHTML({-text => $Conferences{$EventID}{LongDescription}});
+  $Message .= "</span> ";
   if ($Conferences{$EventID}{URL}) {
-    $Message .= "(<a href=\"$Conferences{$EventID}{URL}\">$Conferences{$EventID}{URL}</a>) ";
+    $Message .= "(".SmartHTML({-text => $Conferences{$EventID}{URL}, -makeURLs=$TRUE})."</a>) ";
   }
   $Message .= "are available:";
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
@@ -187,7 +189,9 @@ if ($Days) {
   $FieldListOptions{-eventgroupid} = $EventGroupID;
   $FieldListOptions{-default}      = "Event Group Default";
   $Title   = "Document List by Event Group";
-  $Message = "These documents from <span class=\"Highlight\">$EventGroups{$EventGroupID}{LongDescription}</span> are available:";
+  $Message = "These documents from <span class=\"Highlight\">";
+  $Message .= SmartHTML({-text => $EventGroups{$EventGroupID}{LongDescription},});
+  $Message .="</span> are available:";
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
            "DocumentRevision,RevisionEvent,Conference where DocumentRevision.DocRevID=RevisionEvent.DocRevID ".
            "and DocumentRevision.Obsolete=0 and RevisionEvent.ConferenceID=Conference.ConferenceID and Conference.EventGroupID=?");
@@ -210,8 +214,9 @@ if ($Days) {
     $GroupID = FetchSecurityGroupByName($Group);
   }
   $Title   = "Document List by Group";
-  $Message = "These documents for <span class=\"Highlight\">
-             $SecurityGroups{$GroupID}{NAME}</span> are available:";
+  $Message = "These documents for <span class=\"Highlight\">";
+  $Message .= SmartHTML({-text => $SecurityGroups{$GroupID}{NAME},});
+  $Message .= "</span> are available:";
 
   $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
            "DocumentRevision,RevisionSecurity where DocumentRevision.DocRevID=RevisionSecurity.DocRevID ".
