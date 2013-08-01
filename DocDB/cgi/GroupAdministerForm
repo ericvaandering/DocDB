@@ -1,17 +1,17 @@
 #! /usr/bin/env perl
 #
-# Description: This script provides a form to administer groups in 
+# Description: This script provides a form to administer groups in
 #              the DocDB and shows the relationships between groups.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
 # Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -23,7 +23,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI qw(-nosticky);                                                                                      
+use CGI qw(-nosticky);
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -46,7 +46,7 @@ $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass
 GetSecurityGroups();
 
 print $query -> header( -charset => $HTTP_ENCODING );
-DocDBHeader("Group Administration","",-scripts => ["PopUps","GroupAdminDisable"]); 
+DocDBHeader("Group Administration","",-scripts => ["PopUps","GroupAdminDisable"]);
 
 @ErrorStack = ();
 @WarnStack  = ();
@@ -92,14 +92,14 @@ print "</tr>\n";
 
 print "<tr>\n";
 print '<td rowspan="4">';
-SecurityScroll(-name      => 'parent', -disabled => $TRUE, 
+SecurityScroll(-name      => 'parent', -disabled => $TRUE,
                -helplink  => 'parent', -helptext => 'Group');
-print "</td>\n";  
+print "</td>\n";
 print '<td rowspan="4">';
 SecurityScroll(-name      => 'child', -disabled => $TRUE, -multiple => $TRUE,
                -helplink  => 'child', -helptext => 'Subordinates');
 print "<br/>\n";
-print $query -> checkbox(-name  => "removesubs", -value    => 'removesubs', 
+print $query -> checkbox(-name  => "removesubs", -value    => 'removesubs',
                          -label => '',           -disabled => 'disabled');
 print "Remove all";
 print "</td>\n";
@@ -132,7 +132,12 @@ my @GroupIDs = sort numerically keys %SecurityGroups;
 print '<table class="HighPaddedTable">';
 foreach my $GroupID (@GroupIDs) {
   print "<tr>\n";
-  print "<td><strong>$SecurityGroups{$GroupID}{NAME}</strong><br/>($SecurityGroups{$GroupID}{Description})</td>\n";
+  print "<td><strong>";
+  print SmartHTML({-text => $SecurityGroups{$GroupID}{NAME}},);
+  $SecurityGroups{$GroupID}{NAME}
+  print "</strong><br/>(";
+  print SmartHTML({-text => $SecurityGroups{$GroupID}{Description}},);
+  print ")</td>\n";
   print "<td>\n";
   print "<strong>Dominant groups:</strong>\n";
   PrintGroupParents($GroupID);
@@ -146,7 +151,7 @@ foreach my $GroupID (@GroupIDs) {
   PrintGroupPermissions($GroupID);
   print "</td>\n";
   print "</tr>\n";
-} 
+}
 print "</table>\n";
 
 print "<hr/>\n";

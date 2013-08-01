@@ -3,14 +3,14 @@
 # Description: Routines which supply HTML and form elements related to security
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
 # Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -27,13 +27,14 @@ sub SecurityScroll (%) {
   require "Sorts.pm";
   require "Scripts.pm";
   require "FormElements.pm";
-  
+  require "HTMLUtilities.pm";
+
   my (%Params) = @_;
-  
+
   my $AddPublic =   $Params{-addpublic} || $FALSE;
   my $HelpLink  =   $Params{-helplink}  || "";
   my $HelpText  =   $Params{-helptext}  || "Groups";
-  my $Multiple  =   $Params{-multiple}; 
+  my $Multiple  =   $Params{-multiple};
   my $Name      =   $Params{-name}      || "groups";
   my $Format    =   $Params{-format}    || "short";
   my $Size      =   $Params{-size}      || 10;
@@ -42,55 +43,56 @@ sub SecurityScroll (%) {
   my @Default   = @{$Params{-default}};
 
   my %Options = ();
- 
+
   if ($Disabled) {
     $Options{-disabled} = "disabled";
-  }  
+  }
 
   &GetSecurityGroups;
-  
+
   unless (@GroupIDs) {
     @GroupIDs = keys %SecurityGroups;
   }
-    
+
   my %GroupLabels = ();
 
   foreach my $GroupID (@GroupIDs) {
-    $GroupLabels{$GroupID} = $SecurityGroups{$GroupID}{NAME};
+    SmartHTML({-text => $SecurityGroups{$GroupID}{NAME}},);
+    $GroupLabels{$GroupID} = SmartHTML({-text => $SecurityGroups{$GroupID}{NAME}},);
     if ($Format eq "full") {
-      $GroupLabels{$GroupID} .= " [".$SecurityGroups{$GroupID}{Description}."]";
+      $GroupLabels{$GroupID} .= " [".SmartHTML({-text => $SecurityGroups{$GroupID}{Description}},)."]";
     }
-  }  
-  
+  }
+
   if ($AddPublic) { # Add dummy security code for "Public"
-    my $ID = 0; 
-    push @GroupIDs,$ID; 
+    my $ID = 0;
+    push @GroupIDs,$ID;
     $GroupLabels{$ID} = "Public";
   }
-      
+
   @GroupIDs = sort numerically @GroupIDs;
 
-  if ($HelpLink) {  
+  if ($HelpLink) {
     my $BoxTitle = &FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText);
     print $BoxTitle;
   }
-  
-  print $query -> scrolling_list(-name => $Name, -values => \@GroupIDs, 
-                                 -labels => \%GroupLabels, 
+
+  print $query -> scrolling_list(-name => $Name, -values => \@GroupIDs,
+                                 -labels => \%GroupLabels,
                                  -size => $Size, -multiple => $Multiple,
                                  -default => \@Default, %Options);
 };
 
 sub SecurityListByID {
   my (@GroupIDs) = @_;
-  
+
   print "<div id=\"Viewable\">\n";
   if ($EnhancedSecurity) {
     print "<b>Viewable by:</b><br/>\n";
-  } else {  
+  } else {
     print "<b>Accessible by:</b><br/>\n";
-  }  
-  
+  }
+
   print "<ul>\n";
   if (@GroupIDs) {
     foreach $GroupID (@GroupIDs) {
@@ -105,11 +107,11 @@ sub SecurityListByID {
 
 sub ModifyListByID {
   my (@GroupIDs) = @_;
-  
+
   unless ($EnhancedSecurity) {
     return;
   }
-    
+
   print "<div id=\"Modifiable\">\n";
   print "<b>Modifiable by:</b><br/>\n";
   print "<ul>\n";
@@ -147,22 +149,23 @@ sub SecurityLink ($) {
   my $Check   = exists $ArgRef->{-check}   ? $ArgRef->{-check}   : "";
 
   require "Security.pm";
-  
+
   my %Message = ("view" => "Can't view now", "create" => "Can't modify now");
 
   unless ($GroupID) {
     return;
   }
-  
+
   my $Link = "<a href=\"$ListBy?groupid=$GroupID\"";
-  $Link .= " title=\"$SecurityGroups{$GroupID}{Description}\"";
-  $Link .= ">";
-  $Link .= $SecurityGroups{$GroupID}{NAME};
+  $Link .= ' title="';
+  $Link .= SmartHTML({-text => $SecurityGroups{$GroupID}{Description}},);
+  $Link .= '">';
+  $Link .= SmartHTML({-text => $SecurityGroups{$GroupID}{NAME}},);
   $Link .= "</a>";
   if ($Check && !GroupCan({ -groupid => $GroupID, -action => $Check }) ) {
     $Link .= "<br/>(".$Message{$Check}.")";
-  }  
-     
+  }
+
   return $Link;
 }
 
