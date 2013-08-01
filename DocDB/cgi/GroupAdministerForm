@@ -132,7 +132,11 @@ my @GroupIDs = sort numerically keys %SecurityGroups;
 print '<table class="HighPaddedTable">';
 foreach my $GroupID (@GroupIDs) {
   print "<tr>\n";
-  print "<td><strong>$SecurityGroups{$GroupID}{NAME}</strong><br/>($SecurityGroups{$GroupID}{Description})</td>\n";
+  print "<td><strong>";
+  print SmartHTML({-text => $SecurityGroups{$GroupID}{NAME}},);
+  print "</strong><br/>(";
+  print SmartHTML({-text => $SecurityGroups{$GroupID}{Description}},);
+  print ")</td>\n";
   print "<td>\n";
   print "<strong>Dominant groups:</strong>\n";
   PrintGroupParents($GroupID);

@@ -24,6 +24,9 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+use HTML::Entities;
+use URI::Escape;
+
 require "HTMLUtilities.pm";
 
 sub KeywordGroupInfo ($;$) {
@@ -167,16 +170,16 @@ sub KeywordSelect (%) { # Scrolling selectable list for keyword groups
   my %KeywordLabels = ();
   foreach my $ID (@KeywordIDs) {
     if ($Format eq "short") {
-      $KeywordLabels{$ID} = $Keywords{$ID}{Short};
+      $KeywordLabels{$ID} = SmartHTML({-text=>$Keywords{$ID}{Short}});
     } elsif ($Format eq "long") {
-      $KeywordLabels{$ID} = $Keywords{$ID}{Long};
+      $KeywordLabels{$ID} = SmartHTML({-text=>$Keywords{$ID}{Long}});
     } elsif ($Format eq "full") {
-      $KeywordLabels{$ID} = $Keywords{$ID}{Short}." [";
+      $KeywordLabels{$ID} = SmartHTML({-text=>$Keywords{$ID}{Short}})." [";
       if ($MaxLabel) {
         if ( (length $Keywords{$ID}{Long}) > $MaxLabel) {
-          $KeywordLabels{$ID} .= substr($Keywords{$ID}{Long},0,$MaxLabel)." ...";
+          $KeywordLabels{$ID} .= substr(SmartHTML({-text=>$Keywords{$ID}{Long}}),0,$MaxLabel)." ...";
         } else {
-          $KeywordLabels{$ID} .= $Keywords{$ID}{Long};
+          $KeywordLabels{$ID} .= SmartHTML({-text=>$Keywords{$ID}{Long}});
         }
         $KeywordLabels{$ID} .= "]";
       }
@@ -209,9 +212,9 @@ sub KeywordGroupSelect (%) { # Scrolling selectable list for keyword groups
 
   foreach my $ID (@KeyGroupIDs) {
     if ($Format eq "full") {
-      $GroupLabels{$ID} = "$KeywordGroups{$ID}{Short} [$KeywordGroups{$ID}{Long}]";
+      $GroupLabels{$ID} = SmartHTML({-text=>$KeywordGroups{$ID}{Short}})." ".SmartHTML({-text=>$KeywordGroups{$ID}{Long}});
     } else {
-      $GroupLabels{$ID} = $KeywordGroups{$ID}{Short};
+      $GroupLabels{$ID} = SmartHTML({-text=>$KeywordGroups{$ID}{Short}});
     }
   }
 
@@ -235,12 +238,14 @@ sub KeywordLinkByID ($;%) {
   &FetchKeyword($KeywordID);
   my $SafeShortKeyword = SmartHTML( {-text => $Keywords{$KeywordID}{Short}} );
   my $SafeLongKeyword = SmartHTML( {-text => $Keywords{$KeywordID}{long}} );
+  my $UnsafeURI = decode_entities($Keywords{$KeywordID}{Short});
+  my $SafeURI = uri_escape($UnsafeURI);
   my $Link;
 
   # FIXME_XSS: Check to make sure this kind of search still works.
   # May need to remove special characters or adapt search atoms
   unless ($NoLink) {
-    $Link .= "<a href=\"$Search\?keywordsearchmode=anyword&amp;keywordsearch=$SafeShortKeyword\">";
+    $Link .= "<a href=\"$Search\?keywordsearchmode=anyword&amp;keywordsearch=$SafeURI\">";
   }
 
   if ($Format eq "short") {
@@ -261,7 +266,9 @@ sub KeywordLink ($;%) { # FIXME: Allow parameters of short, long, full a la Lynn
 
   my $Format = $Params{-format} || "short"; # short, full
   my $SafeKeyword = SmartHTML( {-text => $Keyword} );
-  my $ret = "<a href=\"$Search\?keywordsearchmode=anyword;keywordsearch=$SafeKeyword\">";
+  my $UnsafeURI = decode_entities($Keyword);
+  my $SafeURI = uri_escape($UnsafeURI);
+  my $ret = "<a href=\"$Search\?keywordsearchmode=anyword;keywordsearch=$SafeURI\">";
   $ret .= "$SafeKeyword";
   $ret .=  "</a>";
   return $ret;
