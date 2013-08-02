@@ -238,7 +238,7 @@ sub KeywordLinkByID ($;%) {
   &FetchKeyword($KeywordID);
   my $SafeShortKeyword = SmartHTML( {-text => $Keywords{$KeywordID}{Short}} );
   my $SafeLongKeyword = SmartHTML( {-text => $Keywords{$KeywordID}{long}} );
-  my $UnsafeURI = HTML::decode_entities($Keywords{$KeywordID}{Short});
+  my $UnsafeURI = decode_entities($Keywords{$KeywordID}{Short});
   my $SafeURI = uri_escape($UnsafeURI);
   my $Link;
 
@@ -266,7 +266,7 @@ sub KeywordLink ($;%) { # FIXME: Allow parameters of short, long, full a la Lynn
 
   my $Format = $Params{-format} || "short"; # short, full
   my $SafeKeyword = SmartHTML( {-text => $Keyword} );
-  my $UnsafeURI = HTML::decode_entities($Keyword);
+  my $UnsafeURI = decode_entities($Keyword);
   my $SafeURI = uri_escape($UnsafeURI);
   my $ret = "<a href=\"$Search\?keywordsearchmode=anyword;keywordsearch=$SafeURI\">";
   $ret .= "$SafeKeyword";
