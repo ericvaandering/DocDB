@@ -3,7 +3,7 @@
 #        Author:  Eric Vaandering
 #          Date:  22 May 2005
 #
-# Allow a user to choose to limit their membership to certain groups 
+# Allow a user to choose to limit their membership to certain groups
 # for a period of time
 
 # Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
@@ -11,7 +11,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -36,7 +36,7 @@ require "Scripts.pm";
 
 # Start page
 $query  = new CGI;
-%params = $query -> Vars; 
+$query -> autoEscape(0);
 $dbh    = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 print $query -> header( -charset => $HTTP_ENCODING );
@@ -45,7 +45,7 @@ print $query -> header( -charset => $HTTP_ENCODING );
 &EndPage(@ErrorStack);
 
 print "<h3>Using this page, you can remove groups whose permissions you don't want to use</h3>\n";
- 
+
 print $query -> startform('POST',$SetGroups);
 print "<div>\n";
 print "<table id=\"SelectGroups\" class=\"CenteredTable MedPaddedTable\">\n";
@@ -57,15 +57,15 @@ my @RawGroupIDs = &FindUsersGroups(-ignorecookie => $TRUE);
 print "</td><td>\n";
 
 my @Times = ("session",1,7,30,365);
-my %Labels = ("session" => "This session", 
+my %Labels = ("session" => "This session",
                       1 => "One day",
                       7 => "One week",
                      30 => "One month",
                     365 => "One year");
 
 print "<strong>Limit for:</strong><br/>\n";
-                    
-print $query -> popup_menu (-name   => 'duration', 
+
+print $query -> popup_menu (-name   => 'duration',
                             -values => \@Times,
                             -labels => \%Labels);
 print "</td></tr><tr><td colspan=\"2\" id=\"SubmitCell\">\n";

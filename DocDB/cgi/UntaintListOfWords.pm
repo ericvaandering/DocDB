@@ -28,6 +28,8 @@ $VERSION = '1.00';
 use strict;
 use base 'CGI::Untaint::object';
 
+sub _untaint_re { qr/^((\w+)(\000)*)+$/ }
+
 sub is_valid {
   my $self = shift;
   my $RawValue = $self->value;

@@ -1,5 +1,6 @@
 #        Name: UntaintListOfHTML.pm
 # Description: Allows a list of (null separated) possible HTML fragments
+#              and return sanitized HTML
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
@@ -21,15 +22,13 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-package CGI::Untaint::listofwords;
+package CGI::Untaint::listofhtmls;
 
 $VERSION = '1.00';
 
 use strict;
 use base 'CGI::Untaint::object';
 use HTML::Entities qw(encode_entities_numeric);
-
-sub _untaint_re { qr/^((\w+)(\000)*)+$/ }
 
 sub is_valid {
   my $self = shift;
