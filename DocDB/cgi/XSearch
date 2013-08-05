@@ -8,7 +8,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -20,7 +20,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI qw(-nosticky);                                                                                      
+use CGI qw(-nosticky);
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -47,17 +47,17 @@ my $LocalSearch = $CGIParams{"docdb-0"};
 CreateConnection(-type => "ro");
 
 print $query -> header( -charset => $HTTP_ENCODING );
-DocDBHeader("DocDB X-Search","",-scripts => ["PopUps"]); 
+DocDBHeader("DocDB X-Search","",-scripts => ["PopUps"]);
 
 if ($XSearchDescription) {
   print $XSearchDescription;
 } else {
-  print "<h3>Here you can search documents in other DocDB installations. 
+  print "<h3>Here you can search documents in other DocDB installations.
   Only public documents from those installations will be shown. If you
-  don't see the the installation you want, the 
+  don't see the the installation you want, the
   <a href=\"http://docdb.fnal.gov/DocDB-public/DocDB/XSearch\">DocDB
   site</a> may have what you are looking for.</h3>";
-}     
+}
 
 my @ExternalDocDBIDs = GetAllExternalDocDBs();
 
@@ -80,7 +80,7 @@ if ($LocalSearch || !$SearchText) {
   push @CheckArray, $query -> checkbox(-name  => "docdb-0", -label => "").$ShortProject;
 }
 foreach my $DocDBID (@ExternalDocDBIDs) {
-  my $Link = ExternalDocDBLink( {-docdbid => $DocDBID} ); 
+  my $Link = ExternalDocDBLink( {-docdbid => $DocDBID} );
   if ($CGIParams{"docdb-$DocDBID"} || !$SearchText) {
     push @CheckArray, $query -> checkbox(-name  => "docdb-$DocDBID", -checked => 'checked', -label => "").$Link;
   } else {
@@ -93,7 +93,7 @@ foreach my $DocDBID (@ExternalDocDBIDs) {
 my $NColumns = 1;
 if (scalar(@CheckArray) > 6) {
   $NColumns = 3;
-} elsif (scalar(@CheckArray) > 3) {  
+} elsif (scalar(@CheckArray) > 3) {
   $NColumns = 2;
 }
 
@@ -106,7 +106,7 @@ my $GotOne = $TRUE;
 
 while ($GotOne) {
   $GotOne = $FALSE;
-  my $Row = "<tr>\n"; 
+  my $Row = "<tr>\n";
   foreach my $ColumnRef (@ColumnRefs) {
     my $Element = shift @{$ColumnRef};
     if ($Element) {
@@ -118,8 +118,8 @@ while ($GotOne) {
   if ($GotOne) {
     $Table .= $Row;
   }
-}      
-$Table .= "</table>\n";   
+}
+$Table .= "</table>\n";
 
 # Print Search Table
 
@@ -136,7 +136,7 @@ print $Table;
 
 print '</td></tr>';
 print '<tr><td class="SubmitCell" colspan="2">';
-print $query -> submit (-value => "Cross Search");     
+print $query -> submit (-value => "Cross Search");
 print '</td></tr></table>';
 print $query -> end_multipart_form;
 
@@ -163,9 +163,9 @@ WarnPage();
 
 %XSearchDocs  = %FoundDocuments; # Make global for search
 my @Documents = reverse sort XSearchDocsByRelevance keys %FoundDocuments;
-%XSearchDocs  = (); 
+%XSearchDocs  = ();
 
-# Print document table 
+# Print document table
 
 if (@Documents) {
   print '<table class="Alternating DocumentList">';
@@ -178,20 +178,20 @@ if (@Documents) {
     print "<tr class=\"$RowClass\">";
     print "<td><a href=\"$URL\">$Identifier</a></td>\n";
     print "<td><a href=\"$URL\">$FoundDocuments{$Identifier}{Title}</a></td>\n";
-    
+
     print "<td>$FoundDocuments{$Identifier}{Author}";
     if ($FoundDocuments{$Identifier}{EtAl}) {
       print " <em>et al.</em>";
-    }  
+    }
     print "</td>\n";
-    
+
     print '<td class="Updated">',EuroDate($FoundDocuments{$Identifier}{Date}),"</td>\n";
-    
+
     print "</tr>\n";
   }
   print "</table>\n";
   print "<p><strong>Number of documents found: ",int($Row),"</strong></p>\n";
-}  
+}
 
 DocDBNavBar();
 DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

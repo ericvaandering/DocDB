@@ -43,6 +43,7 @@ require "Security.pm";
 
 my $Twig = XML::Twig -> new();
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 my %CGIParams = $query -> Vars;
 CreateConnection(-type => "rw");
 

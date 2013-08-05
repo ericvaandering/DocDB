@@ -21,6 +21,7 @@
 
 use Benchmark;
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 $StartTime = new Benchmark;
@@ -28,14 +29,15 @@ $StartTime = new Benchmark;
 require "DocDBGlobals.pm";
 require "Messages.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "ResponseElements.pm";
 require "SecuritySQL.pm";
 
 require "CertificateUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
-
-%params = $query -> Vars;
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
@@ -49,7 +51,7 @@ EndPage();
 ### Output Information
 
 my $CertificateStatus = &CertificateStatus();
-my $CertEmail = $params{email};
+my $CertEmail = $Untaint -> extract(-as_safehtml => "email") || "";
 
 unless ($CertEmail) {
   push @ErrorStack,"You must supply an e-mail address.";
@@ -87,8 +89,8 @@ if ($CertificateStatus eq "verified") {
 
 ### Get additional parameters
 
-  my $CertNote          = $params{certnote};
-  my @RequestedGroupIDs = split /\0/,$params{reqgroups};
+  my $CertNote = $Untaint -> extract(-as_safehtml => "certnote") || "";
+  my @RequestedGroupIDs = @{ $Untaint -> extract(-as_listofint => "reqgroups") || undef };
   my $UserName = $CertDN;
 
 ### Fill in DB tables
