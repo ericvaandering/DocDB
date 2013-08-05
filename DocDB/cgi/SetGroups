@@ -25,22 +25,25 @@
 
 
 use CGI qw(-nosticky);
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "ResponseElements.pm";
 require "Cookies.pm";
 
 # Start page
 
-$query = new CGI;
-%params = $query -> Vars;
+$query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
 my @cookies = ();
 
-my $Duration = $params{duration};
-my @GroupIDs = split /\0/,$params{groups};
+my $Duration = $Untaint -> extract(-as_safehtml => "duration") || "";
+my @GroupIDs = @{ $Untaint -> extract(-as_listofint => "groups") || undef };
 unless (@GroupIDs) {
   @GroupIDs = (-1);
 }

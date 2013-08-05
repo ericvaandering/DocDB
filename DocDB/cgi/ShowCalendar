@@ -32,12 +32,14 @@
 
 use Benchmark; $StartTime = new Benchmark;
 use CGI;
+use CGI::Untaint;
 use DBI;
 use DateTime;
 
 require "DocDBGlobals.pm";
 require "DBUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "ResponseElements.pm";
 
 require "MeetingSecurityUtilities.pm";
@@ -48,13 +50,13 @@ require "MeetingHTML.pm";
 require "MeetingSQL.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-my %Params = $query -> Vars;
-
-my $Day       = $Params{day}       || 0;
-my $Month     = $Params{month}     || 0;
-my $Year      = $Params{year}      || 0;
-my $TodayOnly = $Params{todayonly} || 0;
+my $Day = $Untaint -> extract(-as_integer => "day") || 0;
+my $Month = $Untaint -> extract(-as_integer => "month") || 0;
+my $Year = $Untaint -> extract(-as_integer => "year") || 0;
+my $TodayOnly = $Untaint -> extract(-as_safehtml => "todayonly") || "";
 
 CreateConnection();
 
