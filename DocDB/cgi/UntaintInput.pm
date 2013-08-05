@@ -27,5 +27,6 @@ require "UntaintHTML.pm";
 require "UntaintInteger.pm";
 require "UntaintListOfInts.pm";
 require "UntaintListOfWords.pm";
+require "UntaintListOfHTML.pm";
 
 1;

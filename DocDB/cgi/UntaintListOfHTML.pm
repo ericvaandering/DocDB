@@ -1,5 +1,5 @@
-#        Name: UntaintListOfWords.pm
-# Description: Allows a list of (null separated) words
+#        Name: UntaintListOfHTML.pm
+# Description: Allows a list of (null separated) possible HTML fragments
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
@@ -27,12 +27,20 @@ $VERSION = '1.00';
 
 use strict;
 use base 'CGI::Untaint::object';
+use HTML::Entities qw(encode_entities_numeric);
+
+sub _untaint_re { qr/^((\w+)(\000)*)+$/ }
 
 sub is_valid {
   my $self = shift;
   my $RawValue = $self->value;
   my @Values = split /\0/,$RawValue;
-  my $ArrRef = \@Values;
+  my @SafeValues = ();
+  foreach $Value (@Values) {
+    my $SafeValue = encode_entities_numeric($Value);
+    push @SafeValues, $SafeValue;
+  }
+  my $ArrRef = \@SafeValues;
 
   $self->value($ArrRef);
 }
