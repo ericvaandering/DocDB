@@ -6,7 +6,7 @@
 #              receiving what.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 #
 
 # Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
@@ -14,7 +14,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -26,7 +26,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI qw(-nosticky);                                                                                      
+use CGI qw(-nosticky);
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -39,12 +39,13 @@ require "SecuritySQL.pm";
 require "NotificationSQL.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 GetSecurityGroups();
 
 print $query -> header( -charset => $HTTP_ENCODING );
-DocDBHeader("List of Groups and Users",""); 
+DocDBHeader("List of Groups and Users","");
 
 @ErrorStack = ();
 @WarnStack  = ();
@@ -62,12 +63,12 @@ EndPage();
 
 print "<h2>DocDB Security Groups</h2>\n";
 
-print "<p>These are the security groups withing DocDB and a summary of their 
+print "<p>These are the security groups withing DocDB and a summary of their
        permissions. To see  the individual members of these groups, see the
        lists below or click on the group name which will take you to the list.
        </p>\n";
 
-print '<table class="CenteredTable LowPaddedTable">'."\n"; 
+print '<table class="CenteredTable LowPaddedTable">'."\n";
 print '<tr><th>Group</th><th>Description</th><th>Admin?</th><th>Create?</th><th>View?</th></tr>'."\n";
 foreach my $SecurityGroupID (@SecurityGroupIDs) {
   print '<tr>';
@@ -92,14 +93,14 @@ foreach my $SecurityGroupID (@SecurityGroupIDs) {
   if (@EmailUserIDs) {
     print "<p><a name=\"$GroupName\" /><strong>$GroupName has these members:</strong></p>\n<ul>\n";
     foreach my $EmailUserID (@EmailUserIDs) {
-      if ($EmailUser{$EmailUserID}{Name}) { 
+      if ($EmailUser{$EmailUserID}{Name}) {
         print "<li>$EmailUser{$EmailUserID}{Name} ($EmailUser{$EmailUserID}{Username}, $EmailUser{$EmailUserID}{EmailAddress})</li>\n";
-      }  
+      }
     }
     print "</ul>\n";
   } else {
     print "<p><a name=\"$GroupName\" /><strong>$GroupName has no members.</strong></p>\n";
-  }    
+  }
 }
 
 DocDBNavBar();

@@ -44,6 +44,7 @@ require "TopicHTML.pm";
 require "CalendarHTML.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 
 # Parameters to script
 
