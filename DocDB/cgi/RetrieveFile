@@ -26,6 +26,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -36,22 +37,21 @@ require "RevisionSQL.pm";
 require "MiscSQL.pm";
 require "FSUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "Security.pm";
 require "SQLChecks.pm";
 
 require "RevisionHTML.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-%params = $query -> Vars;
-
-my $DocumentID = $params{docid};
-   $DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
-   $DocumentID =~ s/\s+$//;
-my $Version    = $params{version};
-my $AsOf       = $params{asof};
-my $FileName   = $params{filename};
-my $Extension  = $params{extension};
+my $DocumentID = $Untaint -> extract(-as_integer => "docid") || 0;
+my $Version = $Untaint -> extract(-as_integer => "version") || 0;
+my $AsOf = $Untaint -> extract(-as_safehtml => "asof") || "";
+my $FileName = $Untaint -> extract(-as_safehtml => "filename") || "";
+my $Extension = $Untaint -> extract(-as_safehtml => "extension") || "";
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number!";

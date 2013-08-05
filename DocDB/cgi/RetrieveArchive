@@ -27,6 +27,7 @@
 # FIXME: No links ask for .tar (might change)
 
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -35,15 +36,16 @@ require "SecuritySQL.pm";
 require "DocumentSQL.pm";
 require "FSUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "FileUtilities.pm";
 require "Security.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-%params = $query -> Vars;
-
-my $Type       = $params{type} ;
-my $DocumentID = $params{docid};
+my $Type = $Untaint -> extract(-as_printable => "type") || "";
+my $DocumentID = $Untaint -> extract(-as_integer => "docid") || 0;
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number!";
