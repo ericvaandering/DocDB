@@ -12,7 +12,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -26,7 +26,8 @@
 
 # FIXME: XHTML
 
-use CGI qw(-nosticky);                                                                                      
+use CGI qw(-nosticky);
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -36,6 +37,7 @@ require "ResponseElements.pm";
 require "Security.pm";
 require "MeetingSecurityUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 
 require "DocumentSQL.pm";
 require "RevisionSQL.pm";
@@ -51,16 +53,17 @@ require "TalkHTML.pm";
 require "AuthorHTML.pm";
 require "TopicHTML.pm";
 
-$query = new CGI;  
-%params = $query -> Vars;
+$query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-my $SessionOrderID = $params{sessionorderid};
+my $SessionOrderID = $Untaint -> extract(-as_integer => "sessionorderid") || 0;
 
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 unless ($dbh) {
   push @ErrorStack,$Msg_NoConnect;
-}         
+}
 EndPage();
 
 # FIXME: XHTML
@@ -85,7 +88,7 @@ if ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
   $Confirmed            = $SessionTalks{$SessionTalkID}{Confirmed} ;
   $SessionID            = $SessionTalks{$SessionTalkID}{SessionID};
   # Get hints and convert to format accepted by scrolling lists
-  
+
   my @TopicHintIDs = &FetchTopicHintsBySessionTalkID($SessionTalkID);
   foreach my $TopicHintID (@TopicHintIDs) {
     push @TalkDefaultTopicHints,$TopicHints{$TopicHintID}{TopicID};
@@ -97,7 +100,7 @@ if ($SessionOrders{$SessionOrderID}{SessionTalkID}) {
 } elsif ($SessionOrders{$SessionOrderID}{TalkSeparatorID}) {
   $TalkSeparatorID   = $SessionOrders{$SessionOrderID}{TalkSeparatorID};
   FetchTalkSeparatorByID($TalkSeparatorID);
-  
+
   $TalkDefaultConfirmed = "";
   $TalkDefaultTime      = $TalkSeparators{$TalkSeparatorID}{Time}  || "00:30";
   $TalkDefaultTitle     = $TalkSeparators{$TalkSeparatorID}{Title} || "";
@@ -126,31 +129,31 @@ if ($Confirmed && $DocumentID) {
   $BestTitle  = $DocRevisions{$DocRevID}{Title};
   $UpdateLink = $DocumentAddForm."?mode=update&docid=$DocumentID";
 } else {
-  $BestTitle = $SessionTalks{$SessionTalkID}{HintTitle};    
+  $BestTitle = $SessionTalks{$SessionTalkID}{HintTitle};
 }
- 
+
 # Start page
 
 print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader("Notes for $BestTitle","",-nobody => $TRUE, -scripts => ["PopUps"]);
 EndPage();
 
-print "<h5>Use this form to edit the agenda information for a single talk or break. 
+print "<h5>Use this form to edit the agenda information for a single talk or break.
           This does not change the information for the associated document, if any. ";
 if ($UpdateLink) {
-  print "You may <a href=\"$UpdateLink\">change that info</a> also.";         
-}          
+  print "You may <a href=\"$UpdateLink\">change that info</a> also.";
+}
 print "</h5>\n";
 
-### Form to change Agenda Info 
- 
+### Form to change Agenda Info
+
 print $query -> start_multipart_form('POST',$EditTalkInfo);
 print '<table class="MedPaddedTable LeftHeader">';
 
 print "<tr>\n";
 print "<th>",FormElementTitle(-helplink => "talkinfo", -helptext => "Title"),"</th>\n";
-print '<td colspan="2">'; 
-$query -> param('sessionorderid',$SessionOrderID);
+print '<td colspan="2">';
+my $SessionOrderID = $Untaint -> extract(-as_integer => "sessionorderid") || $SessionOrderID;
 print $query -> hidden(-name => 'sessionorderid', -default => $SessionOrderID),"\n";
 TalkTitle($TalkDefaultTitle);
 print "</td>\n";
@@ -159,23 +162,23 @@ print "</tr><tr>\n";
 if ($SessionTalkID) {
   print "<th>",FormElementTitle(-helplink => "talkdocid", -helptext => "Document #"),"</th>\n";
   print '<td colspan="2">';
-  TextField(-name => "docid", -size => 6, -maxlength => 6, -default => $DocumentID); 
-  TalkConfirm($SessionOrderID);  
-  print "</td></tr><tr>\n";  
+  TextField(-name => "docid", -size => 6, -maxlength => 6, -default => $DocumentID);
+  TalkConfirm($SessionOrderID);
+  print "</td></tr><tr>\n";
 }
 
 print "<th>",FormElementTitle(-helplink => "talktime", -helptext => "Time"),"</th>\n";
-print '<td colspan="2">'; 
-TalkTimePullDown();  
+print '<td colspan="2">';
+TalkTimePullDown();
 print "</td>\n";
-print "</tr><tr>\n"; 
+print "</tr><tr>\n";
 
 print "<th>",FormElementTitle(-helplink => "talkinfo"     , -helptext => "Notes"),"</th>\n";
 print '<td colspan="2">';
-TextArea(-name => 'talknote', -columns => 50, -rows => 8, -default => $TalkDefaultNote); 
+TextArea(-name => 'talknote', -columns => 50, -rows => 8, -default => $TalkDefaultNote);
 print "</td>\n";
 print "</tr>\n";
-  
+
 if ($SessionTalkID) {
   print "<tr><th>",FormElementTitle(-helplink => "authorhint", -helptext => "Author Hints", -nocolon => $TRUE);
   print  " &amp; ",FormElementTitle(-helplink => "topichint"    , -helptext => "Topic Hints"),"</th>\n";
@@ -198,7 +201,7 @@ if ($SessionTalkID) { # Don't do this for seperators
       print "<p><b>This talk is a confirmed match with this document:</b></p>\n";
     } else {
       print "<p><b>This talk has been matched (but not confirmed) with this document:</b></p>\n";
-    } 
+    }
     my @DocumentIDs = ($DocumentID);
     my %FieldList = PrepareFieldList(-fields => ["Title","Author","Topics","Files"]);
     DocumentTable(-fieldlist => \%FieldList, -docids  => \@DocumentIDs);
@@ -216,7 +219,7 @@ if ($SessionTalkID) { # Don't do this for seperators
       first):</b></p>\n";
       my %FieldList = PrepareFieldList(-fields => ["Title","Author","Topics","Confirm"]);
       DocumentTable(-fieldlist => \%FieldList, -docids  => \@MatchedDocIDs, -talkid => $SessionTalkID);
-    }  
+    }
   }
 }
 
