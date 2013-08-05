@@ -40,11 +40,13 @@ require "Sorts.pm";
 
 require "DBUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 
 require "TopicHTML.pm";
 require "TopicSQL.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 
 # Parameters to script
 
@@ -57,8 +59,8 @@ my $Force         = $Untaint -> extract (-as_printable => "admforce")    || "";
 
 my $TopicID       = $Untaint -> extract (-as_integer   => "topics")      || 0;
 my $ParentTopicID = $Untaint -> extract (-as_integer   => "parenttopic") || 0;
-my $LongName      = $Untaint -> extract (-as_printable => "longdesc")    || "";
-my $ShortName     = $Untaint -> extract (-as_printable => "shortdesc")   || "";
+my $LongName      = $Untaint -> extract (-as_safehtml => "longdesc")    || "";
+my $ShortName     = $Untaint -> extract (-as_safehtml => "shortdesc")   || "";
 
 
 $query -> delete_all();
