@@ -7,7 +7,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -19,7 +19,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI;                                                                                      
+use CGI;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -29,6 +29,7 @@ require "HTMLUtilities.pm";
 require "DBUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 CreateConnection(-type => "ro");
 
 GetSecurityGroups();
@@ -44,8 +45,8 @@ foreach my $GroupID (keys %SecurityGroups) {
   print "<td>",SecurityLink( {-groupid => $GroupID} ),"</td>\n";
   print "<td>",$SecurityGroups{$GroupID}{Description},"</td>\n";
   print "</tr>\n";
-} 
- 
+}
+
 print "</table>\n";
 
 

@@ -27,6 +27,7 @@
 
 use Benchmark;
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 $StartTime = new Benchmark;
@@ -39,27 +40,27 @@ require "UntaintInput.pm";
 require "DocumentUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-%params = $query -> Vars;
+my $Days = $Untaint -> extract(-as_integer => "days") || 0;
+my $TypeID = $Untaint -> extract(-as_integer => "typeid") || 0;
+my $AuthorID = $Untaint -> extract(-as_integer => "authorid") || 0;
 
-my $Days         = $params{days}         || 0;
-my $TypeID       = $params{typeid}       || 0;
-my $AuthorID     = $params{authorid}     || 0;
+my $TopicID = $Untaint -> extract(-as_integer => "topicid") || 0;
+my $Topic = $Untaint -> extract(-as_safehtml => "topic") || "";
 
-my $TopicID      = $params{topicid}      || 0;
-my $Topic        = $params{topic}        || 0;
+my $EventID = $Untaint -> extract(-as_integer => "eventid") || 0;
+my $EventGroupID = $Untaint -> extract(-as_integer => "eventgroupid") || 0;
+my $EventGroup = $Untaint -> extract(-as_safehtml => "eventgroup") || "";
 
-my $EventID      = $params{eventid}      || 0;
-my $EventGroupID = $params{eventgroupid} || 0;
-my $EventGroup   = $params{eventgroup}   || "";
+my $GroupID = $Untaint -> extract(-as_integer => "groupid") || 0;
+my $Group = $Untaint -> extract(-as_safehtml => "group") || "";
 
-my $GroupID      = $params{groupid}      || 0;
-my $Group        = $params{group}        || "";
+my $AllPubs = $Untaint -> extract(-as_safehtml => "allpubs") || "";
+my $AllDocs = $Untaint -> extract(-as_safehtml => "alldocs") || "";
 
-my $AllPubs      = $params{allpubs}      || "";
-my $AllDocs      = $params{alldocs}      || "";
-
-my $Mode         = $params{mode}         || "";
+my $Mode = $Untaint -> extract(-as_safehtml => "mode") || "";
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
