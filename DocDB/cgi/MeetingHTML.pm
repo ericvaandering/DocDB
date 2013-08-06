@@ -24,6 +24,8 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+require "HTMLUtilities.pm";
+
 sub LocationBox (;%) {
   require "FormElements.pm";
 
@@ -895,9 +897,9 @@ sub EventGroupLink (%) {
   $Link .= $ListAllMeetings."?eventgroupid=".$EventGroupID;
   $Link .= "\">";
   if ($Format eq "short")  {
-    $Link .= $EventGroups{$EventGroupID}{ShortDescription};
+    $Link .= SmartHTML( {-text => $EventGroups{$EventGroupID}{ShortDescription}, } );
   } else {
-    $Link .= $EventGroups{$EventGroupID}{LongDescription};
+    $Link .= SmartHTML( {-text => $EventGroups{$EventGroupID}{LongDescription}, } );
   }
   $Link .= "</a>";
   return $Link;
@@ -931,14 +933,14 @@ sub EventLink (%) {
   if ($ToolTipMode eq "Date") {
     $ToolTip = EuroDate($Conferences{$EventID}{StartDate});
   } else {
-    $ToolTip = $Conferences{$EventID}{Full};
+    $ToolTip = SmartHTML( {-text => $Conferences{$EventID}{Full}, } );
   }
 
   my $Link  = "<a href=\"$URL\" class=\"$Class\" title=\"$ToolTip\">";
   if ($Format eq "long") {
-    $Link .= $Conferences{$EventID}{LongDescription};
+    $Link .= SmartHTML( {-text => $Conferences{$EventID}{LongDescription}, } );
   } else {
-    $Link .= $Conferences{$EventID}{Title};
+    $Link .= SmartHTML( {-text => $Conferences{$EventID}{Title}, } );
   }
   $Link .= "</a>";
 
@@ -964,8 +966,8 @@ sub ModifyEventLink ($) {
     $URL = "$MeetingModify?conferenceid=$EventID";
   }
 
-  my $Title = $Conferences{$EventID}{Title};
-  my $ToolTip = $Conferences{$EventID}{Full};
+  my $Title = SmartHTML( {-text => $Conferences{$EventID}{Title}, } );
+  my $ToolTip = SmartHTML( {-text => $Conferences{$EventID}{Full}, } );
 
   my $Link  = "<a href=\"$URL\">";
      $Link .= $Title;
@@ -1033,11 +1035,11 @@ sub EventsByGroup (%) {
   }
   print "<table class=\"$TableClass\">";
   print "<tr><td colspan=\"4\">\n";
-
+  my $ShortGroup = SmartHTML( {-text => $EventGroups{$EventGroupID}{ShortDescription}, } );
   if ($Mode eq "display") {
-    print "<strong>$Big<a href=\"$ListBy?eventgroupid=$EventGroupID\">$EventGroups{$EventGroupID}{ShortDescription}</a>$EBig</strong>\n";
+    print "<strong>$Big<a href=\"$ListBy?eventgroupid=$EventGroupID\">$ShortGroup</a>$EBig</strong>\n";
   } else {
-    print "<strong>$Big$EventGroups{$EventGroupID}{ShortDescription}$EBig</strong>\n";
+    print "<strong>$Big$ShortGroup$EBig</strong>\n";
   }
   if ($Preferences{Components}{iCal}) {
     print ' '.ICalLink({ -eventgroupid => $EventGroupID });
