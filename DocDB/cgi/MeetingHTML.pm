@@ -621,7 +621,7 @@ sub PrintEventRightSidebar ($) {
     if ($EventID == $OtherEventID) {
 
       if ($DisplayMode eq "SingleSession" || $DisplayMode eq "Event") {
-        print "<li><strong>",$Conferences{$EventID}{Title},"</strong>\n";
+        print "<li><strong>",SmartHTML({-text=>$Conferences{$EventID}{Title}}),"</strong>\n";
       } else {
         print "<li>",EventLink(-eventid => $OtherEventID, -tooltip => "Date"),"\n";
       }
@@ -636,7 +636,7 @@ sub PrintEventRightSidebar ($) {
           my $OtherSeparatorID = $MeetingOrders{$MeetingOrderID}{SessionSeparatorID};
           if ($OtherSessionID) {
             if ($OtherSessionID == $SessionID) {
-              print "<li><strong>",$Sessions{$SessionID}{Title},"</strong></li>\n";
+              print "<li><strong>",SmartHTML({-text=>$Sessions{$SessionID}{Title}}),"</strong></li>\n";
             } else {
               FetchSessionByID($OtherSessionID);
               my $Link = SessionLink(-sessionid => $OtherSessionID,
@@ -645,7 +645,7 @@ sub PrintEventRightSidebar ($) {
             }
           } elsif ($OtherSeparatorID) {
             if ($OtherSeparatorID == $SeparatorID) {
-              print "<li><strong>",$SessionSeparators{$SeparatorID}{Title},"</strong></li>\n";
+              print "<li><strong>",SmartHTML({-text=>$SessionSeparators{$SeparatorID}{Title}}),"</strong></li>\n";
             } else {
               FetchSessionSeparatorByID($OtherSeparatorID);
               my $Link = SessionSeparatorLink({-sessionseparatorid => $OtherSeparatorID,
