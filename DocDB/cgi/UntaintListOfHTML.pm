@@ -35,7 +35,7 @@ sub is_valid {
   my $RawValue = $self->value;
   my @Values = split /\0/,$RawValue;
   my @SafeValues = ();
-  foreach $Value (@Values) {
+  foreach my $Value (@Values) {
     my $SafeValue = encode_entities_numeric($Value);
     push @SafeValues, $SafeValue;
   }
