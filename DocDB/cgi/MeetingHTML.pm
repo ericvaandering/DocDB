@@ -385,24 +385,25 @@ sub SessionSeparatorLink ($) {
 
   my $Text;
   my $ToolTip;
+  my $EventTitle = SmartHTML({-text=>$Conferences{$SessionSeparators{$SessionSeparatorID}{ConferenceID}}{Title}});
+  my $SeparatorTitle = SmartHTML({-text=>$SessionSeparators{$SessionSeparatorID}{Title}});
+  my $Location = SmartHTML({-text=>$SessionSeparators{$SessionSeparatorID}{Location}});
   if ($ToolTipMode eq "TimeAndLoc") {
     $ToolTip = EuroTimeHM($SessionSeparators{$SessionSeparatorID}{StartTime})." ".
                EuroDate($SessionSeparators{$SessionSeparatorID}{StartTime});
   } else {
-    $ToolTip = $Conferences{$SessionSeparators{$SessionSeparatorID}{ConferenceID}}{Title}
-               ." - ".$SessionSeparators{$SessionSeparatorID}{Title};
+    $ToolTip = $EventTitle." - ".$SeparatorTitle;
   }
   if ($SessionSeparators{$SessionSeparatorID}{Location}) {
-    $ToolTip .= " - ".$SessionSeparators{$SessionSeparatorID}{Location};
+    $ToolTip .= " - ".$Location;
   }
 
   # Would like to use newlines instead of -. See mozilla bugs Bug 67127 and 45375
 
   if ($Format eq "full") {
-    $Text = $Conferences{$SessionSeparators{$SessionSeparatorID}{ConferenceID}}{Title}
-            .":".$SessionSeparators{$SessionSeparatorID}{Title};
+    $Text = $EventTitle.":".$SeparatorTitle;
   } else {
-    $Text = $SessionSeparators{$SessionSeparatorID}{Title};
+    $Text = $SeparatorTitle;
   }
 
   my $Link = "<a href=\"$URL\" title=\"$ToolTip\">$Text</a>";
@@ -683,8 +684,8 @@ sub EventHeader ($) {
   require "SQLUtilities.pm";
   require "Utilities.pm";
 
-  my $SessionTitle       = $Sessions{$SessionID}{Title};
-  my $EventTitle         = $Conferences{$EventID}{LongDescription};
+  my $SessionTitle       = SmartHTML({-text=>$Sessions{$SessionID}{Title}});
+  my $EventTitle         = SmartHTML({-text=>$Conferences{$EventID}{LongDescription}});
   my $SessionStartTime   = $Sessions{$SessionID}{StartTime};
   my $SeparatorStartTime = $SessionSeparators{$SeparatorID}{StartTime};
 
@@ -725,11 +726,11 @@ sub EventHeader ($) {
   }
 
   if ($Conferences{$EventID}{Location}) {
-    $Fields{"Event Location"} = $Conferences{$EventID}{Location};
+    $Fields{"Event Location"} = SmartHTML({-text=>$Conferences{$EventID}{Location}});
   }
 
   if ($Conferences{$EventID}{AltLocation}) {
-    $Fields{"Alt. Event Location"} = $Conferences{$EventID}{AltLocation};
+    $Fields{"Alt. Event Location"} = SmartHTML({-text=>$Conferences{$EventID}{AltLocation}});
   }
 
   if (@{$Conferences{$EventID}{Topics}}) {
@@ -755,11 +756,11 @@ sub EventHeader ($) {
   }
 
   if ($Sessions{$SessionID}{Location} && $DisplayMode ne "SingleSession") {
-    $Fields{"Location"} = $Sessions{$SessionID}{Location};
+    $Fields{"Location"} = SmartHTML({-text=>$Sessions{$SessionID}{Location}});
   }
 
   if ($Sessions{$SessionID}{AltLocation} && $DisplayMode ne "SingleSession") {
-    $Fields{"Alt. Location"} = $Sessions{$SessionID}{AltLocation};
+    $Fields{"Alt. Location"} = SmartHTML({-text=>$Sessions{$SessionID}{AltLocation}});
   }
 
   if (@{$Sessions{$SessionID}{Topics}}) {
@@ -775,25 +776,26 @@ sub EventHeader ($) {
         -listformat => "br",    -sortby    => "name",
        });
   }
-
+  # FIXME: May need to HTML::decode folowed by URI::encode
   if ($Conferences{$EventID}{URL}) {
-    $Fields{"External URL"} = "<a href=\"$Conferences{$EventID}{URL}\">$Conferences{$EventID}{Title}</a>";
+    $Fields{"External URL"} = "<a href=\"$Conferences{$EventID}{URL}\">".
+                              SmartHTML({-text=>$Conferences{$EventID}{Title}})."</a>";
   }
 
   if ($Conferences{$EventID}{Preamble}) {
-    $Fields{"Event Info"}   = URLify(AddLineBreaks($Conferences{$EventID}{Preamble}));
+    $Fields{"Event Info"} = SmartHTML({-text=>$Conferences{$EventID}{Preamble}, -addLineBreaks=>$TRUE, -makeURLs=>$TRUE});
   }
 
   if ($Conferences{$EventID}{Epilogue} && $SeparatorID) {
-    $Fields{"Event Wrapup"} = URLify(AddLineBreaks($Conferences{$EventID}{Epilogue}));
+    $Fields{"Event Wrapup"} = SmartHTML({-text=>$Conferences{$EventID}{Epilogue}, -addLineBreaks=>$TRUE, -makeURLs=>$TRUE});
   }
 
   if ($Sessions{$SessionID}{Description}) {
-    $Fields{"Session Info"} = URLify(AddLineBreaks($Sessions{$SessionID}{Description}));
+    $Fields{"Session Info"} = SmartHTML({-text=>$Sessions{$SessionID}{Description}, -addLineBreaks=>$TRUE, -makeURLs=>$TRUE});
   }
 
   if ($SessionSeparators{$SeparatorID}{Description}) {
-    $Fields{"Session Info"} = URLify(AddLineBreaks($SessionSeparators{$SeparatorID}{Description}));
+    $Fields{"Session Info"} = SmartHTML({-text=>$SessionSeparators{$SeparatorID}{Description}, -addLineBreaks=>$TRUE, -makeURLs=>$TRUE});
   }
 
   my $HTML;
@@ -829,7 +831,7 @@ sub PrintMeetingEpilogue ($) {
     print '<table class="MedPaddedTable LeftHeader CenteredTable Alternating" id="EventEpilogue">';
     print '<tr class="Odd"><th>Event Wrapup:</th>';
     print "<td>\n";
-    print URLify(AddLineBreaks($Conferences{$ConferenceID}{Epilogue}));
+    print SmartHTML({-text=>$Conferences{$ConferenceID}{Epilogue}, -addLineBreaks=>$TRUE, -makeURLs=>$TRUE});
     print "</td></tr></table>\n";
   }
 }
@@ -843,6 +845,9 @@ sub SessionInfo ($) {
   require "SQLUtilities.pm";
 
   FetchSessionByID($SessionID);
+  my $Title = SmartHTML({-text=>$Sessions{$SessionID}{Title}});
+  my $Description = SmartHTML({-text=>$Sessions{$SessionID}{Description}, -addLineBreaks=>$TRUE, -makeURLs=>$TRUE});
+  my $Location = SmartHTML({-text=>$Sessions{$SessionID}{Location}});
 
   # DocumentList puts a class on every cell, this only on Date
 
@@ -850,9 +855,9 @@ sub SessionInfo ($) {
   $HTML .= "<tr class=\"$RowClass\">";
   $HTML .= '<td class="Date">'.EuroDateHM($Sessions{$SessionID}{StartTime}).'</td>';
   $HTML .= "<td><a href=\"$DisplayMeeting?sessionid=$SessionID\">";
-  $HTML .=     "$Sessions{$SessionID}{Title}</a></td>";
-  $HTML .= '<td>'.URLify(AddLineBreaks($Sessions{$SessionID}{Description})).'</td>';
-  $HTML .= '<td>'.$Sessions{$SessionID}{Location}              .'</td>';
+  $HTML .=     "$Title</a></td>";
+  $HTML .= '<td>'.$Description.'</td>';
+  $HTML .= '<td>'.$Location.'</td>';
   $HTML .= '<td>'.TopicListByID({
               -linktype   => "event", -topicids    => $Sessions{$SessionID}{Topics},
               -listformat => "br",    -listelement => "short", -sortby => "name",
@@ -874,13 +879,15 @@ sub PrintSessionSeparatorInfo ($) {
 
   FetchSessionSeparatorByID($SessionSeparatorID);
   my $Link = SessionSeparatorLink( {-sessionseparatorid => $SessionSeparatorID} );
+  my $Description = SmartHTML({-text=>$SessionSeparators{$SessionSeparatorID}{Description}, -addLineBreaks=>$TRUE, -makeURLs=>$TRUE});
+  my $Location = SmartHTML({-text=>$SessionSeparators{$SessionSeparatorID}{Location}});
 
   # DocumentList puts a class on every cell, this only on Date
 
   print "<td class=\"Date\">",EuroDateHM($SessionSeparators{$SessionSeparatorID}{StartTime}),"</td>\n";
   print "<td>$Link</td>\n";
-  print "<td>",URLify(AddLineBreaks($SessionSeparators{$SessionSeparatorID}{Description})),"</td>\n";
-  print "<td>",$SessionSeparators{$SessionSeparatorID}{Location},"</td>\n";
+  print "<td>",$Description,"</td>\n";
+  print "<td>",$Location,"</td>\n";
   print '<td>&nbsp;</td><td>&nbsp;</td>'; # Topics and Moderators
 }
 
