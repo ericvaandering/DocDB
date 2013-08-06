@@ -337,33 +337,36 @@ sub SessionLink (%) {
 
   my $Text;
   my $ToolTip;
+  my $EventTitle = SmartHTML({-text=>$Conferences{$EventID}{Title}});
+  my $SessionTitle = SmartHTML({-text=>$Sessions{$SessionID}{Title}});
+  my $Location = SmartHTML({-text=>$Sessions{$SessionID}{Location}});
   if ($ToolTipMode eq "TimeAndLoc") {
     $ToolTip = EuroTimeHM($Sessions{$SessionID}{StartTime})." ".
                EuroDate($Sessions{$SessionID}{StartTime});
   } else {
     if ($Conferences{$EventID}{Title} eq $Sessions{$SessionID}{Title}) {
-      $ToolTip = $Sessions{$SessionID}{Title};
+      $ToolTip = $SessionTitle;
     } else {
-      $ToolTip = $Conferences{$EventID}{Title}." - ".$Sessions{$SessionID}{Title};
+      $ToolTip = $EventTitle." - ".$SessionTitle;
     }
   }
   if ($Sessions{$SessionID}{Location}) {
-    $ToolTip .= " - ".$Sessions{$SessionID}{Location};
+    $ToolTip .= " - ".$Location;
   }
   # Would like to use newlines instead of -. See mozilla bugs Bug 67127 and 45375
 
   if ($Format eq "full") {
     if ($Conferences{$EventID}{Title} && $Sessions{$SessionID}{Title} &&
         $Conferences{$EventID}{Title} ne $Sessions{$SessionID}{Title}) {
-      $Text = $Conferences{$EventID}{Title}.":".$Sessions{$SessionID}{Title};
+      $Text = $EventTitle.":".$SessionTitle;
     } else {
-      $Text = $Conferences{$EventID}{Title};
+      $Text = $EventTitle;
     }
   } else {
     if ($Text = $Sessions{$SessionID}{Title}) {
-      $Text = $Sessions{$SessionID}{Title};
+      $Text = $SessionTitle;
     } else {
-      $Text = $Conferences{$EventID}{Title};
+      $Text = $EventTitle;
     }
   }
 
