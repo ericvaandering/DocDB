@@ -22,20 +22,22 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-package CGI::Untaint::listofhtmls;
+package CGI::Untaint::listofhtml;
 
 $VERSION = '1.00';
 
 use strict;
-use base 'CGI::Untaint::object';
+use base 'CGI::Untaint::listofwords';
 use HTML::Entities qw(encode_entities_numeric);
+
+sub _untaint_re { qr/^(.*(\000)*)+$/ }
 
 sub is_valid {
   my $self = shift;
   my $RawValue = $self->value;
   my @Values = split /\0/,$RawValue;
   my @SafeValues = ();
-  foreach $Value (@Values) {
+  foreach my $Value (@Values) {
     my $SafeValue = encode_entities_numeric($Value);
     push @SafeValues, $SafeValue;
   }

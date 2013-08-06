@@ -171,8 +171,8 @@ if (@HashIDs) {
       }
 
       $Title    = SessionLink(-sessionid => $SessionID, -format => "full");
-      $Location = join '<br/>',$Sessions{$SessionID}{Location},
-                               $Sessions{$SessionID}{AltLocation};
+      $Location = join '<br/>',SmartHTML({-text=>$Sessions{$SessionID}{Location}}),
+                               SmartHTML({-text=>$Sessions{$SessionID}{AltLocation}});
       $Topics   = TopicListByID({ -linktype => "event", -listformat => "br", -sortby => "name",
                                   -topicids => $Sessions{$SessionID}{Topics}, });
 
@@ -193,8 +193,8 @@ if (@HashIDs) {
       }
 
       $Title    = EventLink(-eventid => $EventID,);
-      $Location = join '<br/>',$Conferences{$EventID}{Location},
-                               $Conferences{$EventID}{AltLocation};
+      $Location = join '<br/>',SmartHTML({-text=>$Conferences{$EventID}{Location}}),
+                               SmartHTML({-text=>$Conferences{$EventID}{AltLocation}});
       $Topics   = TopicListByID({ -linktype => "event", -listformat => "br", -sortby => "name",
                                   -topicids => $Conferences{$EventID}{Topics}, });
       $Time = 'All day/no time';

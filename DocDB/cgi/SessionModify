@@ -85,7 +85,7 @@ my $SessionMonth = $Untaint -> extract(-as_safehtml => "sessionmonth") || "";
 my $SessionYear = $Untaint -> extract(-as_integer => "sessionyear") || 0;
 my $SessionHour = $Untaint -> extract(-as_integer => "sessiontime") || 0;
 
-my @SessionOrderIDs = @{ $Untaint -> extract(-as_listofint => "sessionorderid") || undef };
+my @SessionOrderIDs = @{ $Untaint -> extract(-as_listofhtml => "sessionorderid") || undef };
 my @TalkOrders = @{ $Untaint -> extract(-as_listofhtml => "talkorder") || undef };
 my @TalkTitles = @{ $Untaint -> extract(-as_listofhtml => "talktitle") || undef };
 my @TalkNotes = @{ $Untaint -> extract(-as_listofhtml => "talknote") || undef };

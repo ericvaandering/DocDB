@@ -96,13 +96,14 @@ if ($SubForm eq "eventgroup") {
   if ($Action eq "Delete") {
     &DeleteEventGroup(-eventgroupid => $EventGroupID, -force => $Force);
   } elsif ($Action eq "Modify") {
+    my $OldShortDescription = SmartHTML({-text => $EventGroups{$EventGroupID}{ShortDescription}},);
     if ($ShortDescription) {
-      push @ActionStack,"Updated short description of $EventGroups{$EventGroupID}{ShortDescription}";
+      push @ActionStack,"Updated short description of $OldShortDescription";
       my $Update = $dbh->prepare("update EventGroup set ShortDescription=? where EventGroupID=?");
       $Update -> execute($ShortDescription,$EventGroupID);
     }
     if ($LongDescription) {
-      push @ActionStack,"Updated long description of $EventGroups{$EventGroupID}{ShortDescription}";
+      push @ActionStack,"Updated long description of $OldShortDescription";
       my $Update = $dbh->prepare("update EventGroup set LongDescription=? where EventGroupID=?");
       $Update -> execute($LongDescription,$EventGroupID);
     }
