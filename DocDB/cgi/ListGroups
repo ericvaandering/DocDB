@@ -43,7 +43,7 @@ print "<tr><th>Group</th><th>Description</th></tr>\n";
 foreach my $GroupID (keys %SecurityGroups) {
   print "<tr>\n";
   print "<td>",SecurityLink( {-groupid => $GroupID} ),"</td>\n";
-  print "<td>",$SecurityGroups{$GroupID}{Description},"</td>\n";
+  print "<td>",SmartHTML({-text=>$SecurityGroups{$GroupID}{Description}}),"</td>\n";
   print "</tr>\n";
 }
 

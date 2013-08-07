@@ -121,7 +121,7 @@ sub DocTypeButtons (%) {
   my %ShortTypes = ();
 
   foreach my $DocTypeID (@DocTypeIDs) {
-    $ShortTypes{$DocTypeID} = $DocumentTypes{$DocTypeID}{SHORT};
+    $ShortTypes{$DocTypeID} = SmartHTML({-text=>$DocumentTypes{$DocTypeID}{SHORT}});
   }
 
   my $ElementTitle = &FormElementTitle(-helplink  => "doctype" ,

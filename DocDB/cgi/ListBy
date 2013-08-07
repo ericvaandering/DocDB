@@ -118,8 +118,9 @@ if ($Days) {
     $SubTopicMessage = "(subtopic of ".TopicLink({-topicid => $ParentTopicID}).")";
   }
 
-  $Message = "These documents on <span class=\"Highlight\">$Topics{$TopicID}{Long}
-              </span> $SubTopicMessage ";
+  $Message = "These documents on <span class=\"Highlight\">".
+             SmartHTML({-text=>$Topics{$TopicID}{Long}}).
+             "</span> $SubTopicMessage ";
   if ($HasSubTopics) {
     $Message .= "and sub-topics ";
   }

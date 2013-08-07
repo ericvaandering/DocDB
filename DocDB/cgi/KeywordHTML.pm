@@ -237,7 +237,7 @@ sub KeywordLinkByID ($;%) {
 
   &FetchKeyword($KeywordID);
   my $SafeShortKeyword = SmartHTML( {-text => $Keywords{$KeywordID}{Short}} );
-  my $SafeLongKeyword = SmartHTML( {-text => $Keywords{$KeywordID}{long}} );
+  my $SafeLongKeyword = SmartHTML( {-text => $Keywords{$KeywordID}{Long}} );
   my $UnsafeURI = decode_entities($Keywords{$KeywordID}{Short});
   my $SafeURI = uri_escape($UnsafeURI);
   my $Link;
