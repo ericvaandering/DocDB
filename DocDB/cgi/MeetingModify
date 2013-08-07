@@ -90,6 +90,10 @@ my @MeetingModifyGroupIDs = @{ $Untaint -> extract(-as_listofint => "meetingmodi
 my @MeetingTopicIDs = @{ $Untaint -> extract(-as_listofint => "topics") || undef };
 my @MeetingModeratorIDs = @{ $Untaint -> extract(-as_listofint => "moderators") || undef };
 
+print STDERR "TopicIDs:",@MeetingTopicIDs,"\n";
+print STDERR "Moderators:",@MeetingModeratorIDs,"\n";
+print STDERR "Mode: $Mode\n";
+
 my @SessionYears = @{ $Untaint -> extract(-as_listofint => "sessionyear") || undef };
 my @SessionMonths = @{ $Untaint -> extract(-as_listofhtml => "sessionmonth") || undef };
 my @SessionDays = @{ $Untaint -> extract(-as_listofint => "sessionday") || undef };
