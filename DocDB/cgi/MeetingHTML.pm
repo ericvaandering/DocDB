@@ -1146,10 +1146,10 @@ sub EventGroupSelect ($) {
   my %Labels        = ();
   foreach my $EventGroupID (@EventGroupIDs) {
     if ($Format eq "full") {
-      $Labels{$EventGroupID} = $EventGroups{$EventGroupID}{ShortDescription}.
-      ":".$EventGroups{$EventGroupID}{LongDescription};
+      $Labels{$EventGroupID} = SmartHTML({-text => $EventGroups{$EventGroupID}{ShortDescription}},).
+      ":".SmartHTML({-text => $EventGroups{$EventGroupID}{LongDescription}},);
     } else {
-      $Labels{$EventGroupID} = $EventGroups{$EventGroupID}{ShortDescription};
+      $Labels{$EventGroupID} = SmartHTML({-text => $EventGroups{$EventGroupID}{ShortDescription}},);
     }
   }
 
@@ -1188,8 +1188,8 @@ sub EventSelect ($) {
   my %Labels        = ();
   foreach my $ConferenceID (@ConferenceIDs) {
     if ($Format eq "full") {
-      $Labels{$ConferenceID} = $EventGroups{$Conferences{$ConferenceID}{EventGroupID}}{ShortDescription}.":".
-                               $Conferences{$ConferenceID}{Title} .
+      $Labels{$ConferenceID} = SmartHTML({-text => $EventGroups{$Conferences{$ConferenceID}{EventGroupID}}{ShortDescription}},).":".
+                               SmartHTML({-text => $Conferences{$ConferenceID}{Title}},).
                                " (".EuroDate($Conferences{$ConferenceID}{StartDate}).")";
     }
   }
