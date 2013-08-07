@@ -381,7 +381,7 @@ sub TextArea (%) {
                                        -nobreak   => $NoBreak  ,
                                        -required  => $Required );
   print $ElementTitle,"\n";
-  print $query -> textarea (-name    => $Name,    -default   => &SafeHTML($Default),
+  print $query -> textarea (-name    => $Name,    -default   => SmartHTML({-text=>$Default}),
                             -columns => $Columns, -rows      => $Rows);
 }
 
