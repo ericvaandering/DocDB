@@ -57,10 +57,6 @@ my $print = $Untaint -> extract(-as_printable => "subform") || "";
 my $int = $Untaint -> extract(-as_integer => "eventgroups") || 0;
 my $html = $Untaint -> extract(-as_safehtml => "longdesc") || "";
 
-my @htmls = @{ $Untaint -> extract(-as_listofhtml => "defaultlists") || undef };
-my @words = @{ $Untaint -> extract(-as_listofwords => "defaultlists") || undef };
-my @ints = @{ $Untaint -> extract(-as_listofint => "topics") || undef };
-
 my $Mode = $Untaint -> extract(-as_safehtml => "mode") || "";
 my $NoSessions = $Untaint -> extract(-as_safehtml => "nosessions") || "";
 
@@ -90,10 +86,6 @@ my @MeetingModifyGroupIDs = @{ $Untaint -> extract(-as_listofint => "meetingmodi
 my @MeetingTopicIDs = @{ $Untaint -> extract(-as_listofint => "topics") || undef };
 my @MeetingModeratorIDs = @{ $Untaint -> extract(-as_listofint => "moderators") || undef };
 
-print STDERR "TopicIDs:",@MeetingTopicIDs,"\n";
-print STDERR "Moderators:",@MeetingModeratorIDs,"\n";
-print STDERR "Mode: $Mode\n";
-
 my @SessionYears = @{ $Untaint -> extract(-as_listofint => "sessionyear") || undef };
 my @SessionMonths = @{ $Untaint -> extract(-as_listofhtml => "sessionmonth") || undef };
 my @SessionDays = @{ $Untaint -> extract(-as_listofint => "sessionday") || undef };
@@ -105,7 +97,7 @@ my @SessionLocations = @{ $Untaint -> extract(-as_listofhtml => "sessionlocation
 my @SessionAltLocations = @{ $Untaint -> extract(-as_listofhtml => "sessionaltlocation") || undef };
 my @SessionTitles = @{ $Untaint -> extract(-as_listofhtml => "sessiontitle") || undef };
 my @SessionDescriptions = @{ $Untaint -> extract(-as_listofhtml => "sessiondescription") || undef };
-my @MeetingOrderIDs = @{ $Untaint -> extract(-as_listofint => "meetingorderid") || undef };
+my @MeetingOrderIDs = @{ $Untaint -> extract(-as_listofwords => "meetingorderid") || undef };
 my @SessionDeletes = @{ $Untaint -> extract(-as_listofwords => "sessiondelete") || undef };
 my @SessionShowAlls = @{ $Untaint -> extract(-as_listofwords => "sessionshowall") || undef };
 
