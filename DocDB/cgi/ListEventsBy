@@ -92,7 +92,9 @@ if ($TopicID) {
       $EventHash{$ID} = $Hash{$ID};
     }
   }
-  $HTML .= "<h4>Events for <span class=\"Highlight\">$Topics{$TopicID}{Long} </span>";
+  $HTML .= "<h4>Events for <span class=\"Highlight\">";
+  $HTML .= SmartHTML({-text=>$Topics{$TopicID}{Long}});
+  $HTML .= " </span>";
   if (scalar(@ChildTopicIDs) > 1) {
     $HTML .= " and its sub-topics";
   }
@@ -106,8 +108,9 @@ if ($TopicID) {
 
   my $Link = AuthorLink($AuthorID);
 
-  $HTML .= "<h4>Events moderated by <span class=\"Highlight\">$Link of
-            $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG}</span>";
+  $HTML .= "<h4>Events moderated by <span class=\"Highlight\">$Link of";
+  $HTML .= SmartHTML({-text=>$Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG}});
+  $HTML .= "</span>";
   if ($Preferences{Components}{iCal}) {
     $HTML .= ' '.ICalLink({ -authorid => $AuthorID });
   }
