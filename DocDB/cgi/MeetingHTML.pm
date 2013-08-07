@@ -76,19 +76,21 @@ sub EventURLBox (;%) {
 
 sub ConferencePreambleBox {
   require "FormElements.pm";
+  my $SafePreamble = SmartHTML({-text=>$MeetingDefaultPreamble});
   my $ElementTitle = &FormElementTitle(-helplink  => "meetpreepi",
                                        -helptext  => "Event Preamble");
   print $ElementTitle,"\n";
-  print $query -> textarea (-name => 'meetpreamble', -default => $MeetingDefaultPreamble,
+  print $query -> textarea (-name => 'meetpreamble', -default => $SafePreamble,
                             -columns => 50, -rows => 7);
 };
 
 sub ConferenceEpilogueBox {
   require "FormElements.pm";
+  my $SafeEpilogue = SmartHTML({-text=>$MeetingDefaultEpilogue});
   my $ElementTitle = &FormElementTitle(-helplink  => "meetpreepi",
                                        -helptext  => "Event Epilogue");
   print $ElementTitle,"\n";
-  print $query -> textarea (-name => 'meetepilogue', -default => $MeetingDefaultEpilogue,
+  print $query -> textarea (-name => 'meetepilogue', -default => $SafeEpilogue,
                             -columns => 50, -rows => 7);
 };
 
