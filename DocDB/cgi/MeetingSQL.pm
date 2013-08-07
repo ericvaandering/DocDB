@@ -255,6 +255,9 @@ sub FetchEventByEventID { # Fetches an event by EventID
   unless ($LimitInfo) {
     push @DebugStack,"Getting all info for event $EventID.";
   }
+  unless ($EventID) {
+    return 0;
+  }  
   if ($Conferences{$EventID}{EventGroupID}) { # We already have this one
     if ($Conferences{$EventID}{HaveAllInfo} || $LimitInfo) {
       return $EventID;
