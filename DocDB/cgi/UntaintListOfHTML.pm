@@ -22,12 +22,12 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-package CGI::Untaint::listofhtmls;
+package CGI::Untaint::listofhtml;
 
 $VERSION = '1.00';
 
 use strict;
-use base 'CGI::Untaint::object';
+use base 'CGI::Untaint::listofwords';
 use HTML::Entities qw(encode_entities_numeric);
 
 sub is_valid {
