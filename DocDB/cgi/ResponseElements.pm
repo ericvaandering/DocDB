@@ -215,9 +215,9 @@ sub TypeLink {
     $link .= "<a href=\"$ListBy?typeid=$TypeID\">";
   }
   if ($mode eq "short") {
-    $link .= $DocumentTypes{$TypeID}{SHORT};
+    $link .= SmartHTML({-text => $DocumentTypes{$TypeID}{SHORT}});
   } else {
-    $link .= $DocumentTypes{$TypeID}{LONG};
+    $link .= SmartHTML({-text => $DocumentTypes{$TypeID}{LONG}});
   }
   unless ($Public) {
     $link .= "</a>";

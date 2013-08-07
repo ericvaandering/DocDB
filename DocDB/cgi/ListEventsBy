@@ -108,7 +108,7 @@ if ($TopicID) {
 
   my $Link = AuthorLink($AuthorID);
 
-  $HTML .= "<h4>Events moderated by <span class=\"Highlight\">$Link of";
+  $HTML .= "<h4>Events moderated by <span class=\"Highlight\">$Link of ";
   $HTML .= SmartHTML({-text=>$Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG}});
   $HTML .= "</span>";
   if ($Preferences{Components}{iCal}) {
