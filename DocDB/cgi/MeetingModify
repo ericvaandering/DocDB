@@ -307,28 +307,28 @@ if ($Mode eq "create" || $Mode eq "modify") {
     # Key on MeetingOrderID to see if we are going to insert or update.
     if (grep /n/,$MeetingOrderID) {
       if ($SessionTitle || $SessionDescription) {
-	if ($SessionSeparatorFlags{$MeetingOrderID}) {
-          # Create a new separator
-          my $SessionSeparatorInsert = $dbh -> prepare(
-           "insert into SessionSeparator ".
-           "(SessionSeparatorID, ConferenceID, StartTime, Location, Title, Description) ".
-           "values (0,?,?,?,?,?)");
-          $SessionSeparatorInsert -> execute($ConferenceID,$SessionDate,$SessionLocation,$SessionTitle,$SessionDescription);
-          $SessionSeparatorID = $SessionSeparatorInsert -> {mysql_insertid}; # Works with MySQL only
-          push @ActionStack,"Created break: $SessionTitle";
-          ++$SessionsModified;
-	} else {
-          # Create a new session
-          $SessionID = InsertSession({
-              -eventid      => $ConferenceID,    -date        => $SessionDate,
-              -title        => $SessionTitle,    -description => $SessionDescription,
-              -location     => $SessionLocation, -altlocation => $SessionAltLocation,
-              -moderatorids => \@ModeratorIDs,   -topicids    => \@TopicIDs,
-              -showalltalks => $SessionShowAllFlags{$MeetingOrderID},
-          });
-          push @ActionStack,"Created session: $SessionTitle";
-          ++$SessionsModified;
-	}
+        if ($SessionSeparatorFlags{$MeetingOrderID}) {
+              # Create a new separator
+              my $SessionSeparatorInsert = $dbh -> prepare(
+               "insert into SessionSeparator ".
+               "(SessionSeparatorID, ConferenceID, StartTime, Location, Title, Description) ".
+               "values (0,?,?,?,?,?)");
+              $SessionSeparatorInsert -> execute($ConferenceID,$SessionDate,$SessionLocation,$SessionTitle,$SessionDescription);
+              $SessionSeparatorID = $SessionSeparatorInsert -> {mysql_insertid}; # Works with MySQL only
+              push @ActionStack,"Created break: $SessionTitle";
+              ++$SessionsModified;
+        } else {
+              # Create a new session
+              $SessionID = InsertSession({
+                  -eventid      => $ConferenceID,    -date        => $SessionDate,
+                  -title        => $SessionTitle,    -description => $SessionDescription,
+                  -location     => $SessionLocation, -altlocation => $SessionAltLocation,
+                  -moderatorids => \@ModeratorIDs,   -topicids    => \@TopicIDs,
+                  -showalltalks => $SessionShowAllFlags{$MeetingOrderID},
+              });
+              push @ActionStack,"Created session: $SessionTitle";
+              ++$SessionsModified;
+        }
         # Insert the order of the session or separator
         my $MeetingOrderInsert = $dbh -> prepare(
          "insert into MeetingOrder ".
