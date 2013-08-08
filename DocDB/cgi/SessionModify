@@ -83,7 +83,7 @@ if ($ShowAllTalks) {
 my $SessionDay = $Untaint -> extract(-as_integer => "sessionday") || 0;
 my $SessionMonth = $Untaint -> extract(-as_safehtml => "sessionmonth") || "";
 my $SessionYear = $Untaint -> extract(-as_integer => "sessionyear") || 0;
-my $SessionHour = $Untaint -> extract(-as_integer => "sessiontime") || 0;
+my $SessionHour = $Untaint -> extract(-as_safehtml => "sessiontime") || 0;
 
 my @SessionOrderIDs = @{ $Untaint -> extract(-as_listofhtml => "sessionorderid") || undef };
 my @TalkOrders = @{ $Untaint -> extract(-as_listofhtml => "talkorder") || undef };
