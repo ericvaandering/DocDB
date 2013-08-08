@@ -89,7 +89,7 @@ my @MeetingModeratorIDs = @{ $Untaint -> extract(-as_listofint => "moderators") 
 my @SessionYears = @{ $Untaint -> extract(-as_listofint => "sessionyear") || undef };
 my @SessionMonths = @{ $Untaint -> extract(-as_listofhtml => "sessionmonth") || undef };
 my @SessionDays = @{ $Untaint -> extract(-as_listofint => "sessionday") || undef };
-my @SessionHours = @{ $Untaint -> extract(-as_listofint => "sessiontime") || undef };
+my @SessionHours = @{ $Untaint -> extract(-as_listofhtml => "sessiontime") || undef };
 my @SessionOrders = @{ $Untaint -> extract(-as_listofhtml => "sessionorder") || undef };
 my @RawSessionSeparators = @{ $Untaint -> extract(-as_listofwords => "sessionseparator") || undef };
 
