@@ -98,22 +98,22 @@ if ($SubForm eq "externaldocdb") {
     push @ActionStack,"Deleted reference to external DocDB";
   } elsif ($Action eq "Modify") {
     if ($ProjectName) {
-      push @ActionStack,"Updated project name of $ExternalDocDBs{$ExternalDocDBID}{Project}";
+      push @ActionStack,"Updated the project name.";
       my $Update = $dbh->prepare("update ExternalDocDB set Project=? where ExternalDocDBID=?");
       $Update -> execute($ProjectName,$ExternalDocDBID);
     }
     if ($Description) {
-      push @ActionStack,"Updated description of $ExternalDocDBs{$ExternalDocDBID}{Project}";
+      push @ActionStack,"Updated the description.";
       my $Update = $dbh->prepare("update ExternalDocDB set Description=? where ExternalDocDBID=?");
       $Update -> execute($Description,$ExternalDocDBID);
     }
     if ($PrivateURL) {
-      push @ActionStack,"Updated private URL of $ExternalDocDBs{$ExternalDocDBID}{Project}";
+      push @ActionStack,"Updated the private URL.";
       my $Update = $dbh->prepare("update ExternalDocDB set PrivateURL=? where ExternalDocDBID=?");
       $Update -> execute($PrivateURL,$ExternalDocDBID);
     }
     if ($PublicURL) {
-      push @ActionStack,"Updated public URL of $ExternalDocDBs{$ExternalDocDBID}{Project}";
+      push @ActionStack,"Updated the public URL.";
       my $Update = $dbh->prepare("update ExternalDocDB set PublicURL=? where ExternalDocDBID=?");
       $Update -> execute($PublicURL,$ExternalDocDBID);
     }
