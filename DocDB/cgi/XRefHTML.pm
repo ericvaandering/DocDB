@@ -128,7 +128,7 @@ sub ExternalDocDBLink ($) {
   my ($ArgRef) = @_;
   my $DocDBID = exists $ArgRef->{-docdbid} ? $ArgRef->{-docdbid} : 0;
   my $Link = "<a href=\"$ExternalDocDBs{$DocDBID}{PublicURL}/DocumentDatabase\"";
-  $Link .= "title=\"$ExternalDocDBs{$DocDBID}{Description}\">";
+  $Link .= 'title="'.SmartHTML({-text=>$ExternalDocDBs{$DocDBID}{Description}}).'">';
   $Link .= SmartHTML({-text=>$ExternalDocDBs{$DocDBID}{Project}});
   $Link .= '</a>';
   return $Link;

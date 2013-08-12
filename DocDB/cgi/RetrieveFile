@@ -58,7 +58,7 @@ GetSecurityGroups();
 
 FetchDocument($DocumentID);
 
-if (defined $Version && defined $AsOf) {
+if ($Version && $AsOf) {
   push @ErrorStack,"You may not specify both a version and date.";
 }
 if (grep /\//,$FileName) {
