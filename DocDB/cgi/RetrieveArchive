@@ -46,6 +46,7 @@ my $Untaint = CGI::Untaint -> new($query -> Vars);
 
 my $Type = $Untaint -> extract(-as_printable => "type") || "";
 my $DocumentID = $Untaint -> extract(-as_integer => "docid") || 0;
+my $InputVersion = $Untaint -> extract(-as_integer => "version") || undef;
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number!";
@@ -59,8 +60,8 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetSecurityGroups;
 &FetchDocument($DocumentID);
 
-if (defined $params{version}) {
-  $Version = $params{version};
+if (defined $InputVersion) {
+  $Version = $InputVersion;
 } else {
   $Version = $Documents{$DocumentID}{NVersions};
 }

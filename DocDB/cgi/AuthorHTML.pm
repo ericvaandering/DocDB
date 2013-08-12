@@ -46,7 +46,7 @@ sub FirstAuthor ($;$) {
   if ($Institution) {
     FetchInstitution($Authors{$FirstID}{InstitutionID});
     $AuthorLink .= "<br/><em>".
-                   $Institutions{$Authors{$FirstID}{InstitutionID}}{SHORT}.
+                   SmartHTML({-text=>$Institutions{$Authors{$FirstID}{InstitutionID}}{SHORT}}).
                    "</em>";
   }
   return $AuthorLink;

@@ -50,7 +50,7 @@ my $Untaint = CGI::Untaint -> new($query -> Vars);
 my $DocumentID = $Untaint -> extract(-as_integer => "docid") || 0;
 my $Version = $Untaint -> extract(-as_integer => "version") || 0;
 my $AsOf = $Untaint -> extract(-as_safehtml => "asof") || "";
-my $FileName = $Untaint -> extract(-as_safehtml => "filename") || "";
+my $FileName = $Untaint -> extract(-as_printable => "filename") || "";
 my $Extension = $Untaint -> extract(-as_safehtml => "extension") || "";
 
 unless ($DocumentID) {
@@ -95,11 +95,7 @@ if (defined $Version) {
 }
 
 unless (&CanAccess($DocumentID,$Version)) {
-  if ($remote_user) {
-    push @ErrorStack,"The $remote_user group is not authorized to view this document (or it does not exist).";
-  } else {
-    push @ErrorStack,"This document is not publicly accessible.";
-  }
+  push @ErrorStack,"You are not authorized to view this document (or it does not exist).";
 }
 
 unless ($DocRevID) {
