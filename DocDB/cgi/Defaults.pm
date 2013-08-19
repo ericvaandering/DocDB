@@ -29,10 +29,13 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+use CGI::Untaint;
 
 sub SetAuthorMode {
-  if ($params{authormode}) {
-    $AuthorMode = $params{authormode};
+  my $Untaint = CGI::Untaint -> new($query -> Vars);
+  my $Param = $Untaint -> extract(-as_safehtml => "authormode") || "";
+  if ($Param) {
+    $AuthorMode = $Param;
   } else {
     $AuthorMode = $AuthorModePref;
   }
@@ -42,8 +45,10 @@ sub SetAuthorMode {
 }
 
 sub SetTopicMode {
-  if ($params{topicmode}) {
-    $TopicMode = $params{topicmode};
+  my $Untaint = CGI::Untaint -> new($query -> Vars);
+  my $Param = $Untaint -> extract(-as_safehtml => "topicmode") || "";
+  if ($Param) {
+    $TopicMode = $Param;
   } else {
     $TopicMode = $TopicModePref;
   }
@@ -53,8 +58,10 @@ sub SetTopicMode {
 }
 
 sub SetUploadMethod {
-  if ($params{upload}) {
-    $Upload = $params{upload};
+  my $Untaint = CGI::Untaint -> new($query -> Vars);
+  my $Param = $Untaint -> extract(-as_safehtml => "upload") || "";
+  if ($Param) {
+    $Upload = $Param;
   } else {
     $Upload = $UploadMethodPref;
   }
@@ -64,8 +71,10 @@ sub SetUploadMethod {
 }
 
 sub SetDateOverride {
-  if ($params{overdate}) {
-    $Overdate = $params{overdate};
+  my $Untaint = CGI::Untaint -> new($query -> Vars);
+  my $Param = $Untaint -> extract(-as_safehtml => "overdate") || "";
+  if ($Param) {
+    $Overdate = $Param;
   } else {
     $Overdate = $DateOverridePref;
   }
@@ -74,8 +83,12 @@ sub SetDateOverride {
 sub SetFileOptions {
   my ($DocRevID) = @_;
 
-  if ($params{archive}) {
-    $Archive = $params{archive};
+  my $Untaint = CGI::Untaint -> new($query -> Vars);
+  my $InputArchive = $Untaint -> extract(-as_safehtml => "archive") || "";
+  my $InputNumFile = $Untaint -> extract(-as_safehtml => "numfile") || "";
+
+  if ($InputArchive) {
+    $Archive = $InputArchive;
   } else {
     $Archive = $UploadTypePref
   }
@@ -86,8 +99,8 @@ sub SetFileOptions {
     $Archive = "single";
   }
 
-  if ($params{numfile}) {               # User has selected
-    $NumberUploads = $params{numfile};
+  if ($InputNumFile) {               # User has selected
+    $NumberUploads = $InputNumFile;
   } elsif ($NumFilesPref && $mode ne "update") {             # User has a pref
     if ($Meeting  || $OtherMeeting) {
       if ($NumFilesPref < 3) {

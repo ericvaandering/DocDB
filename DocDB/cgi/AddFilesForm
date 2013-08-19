@@ -27,6 +27,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI qw(-nosticky);
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -45,21 +46,21 @@ require "FileHTML.pm";
 require "Cookies.pm";
 require "Defaults.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "Scripts.pm";
 
 $query = new CGI;  # Global for subroutines
 $query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 &GetSecurityGroups;
 &GetPrefsCookie;
 
-%params = $query -> Vars;
-
-$DocumentID    = $params{docid};
-$Upload        = $params{upload};
-$NumberUploads = $params{numfile};
-#$Version done later
+my $DocumentID = $Untaint -> extract(-as_integer => "docid") || 0;
+my $Upload = $Untaint -> extract(-as_safehtml => "upload") || undef;
+my $NumberUploads = $Untaint -> extract(-as_integer => "numfile") || 0; # Global since not passed (oversight)
+my $InputVersion = $Untaint -> extract(-as_integer => "version") || undef;
 
 # Set defaults
 
@@ -77,11 +78,11 @@ unless ($DocumentID) {
 
 &FetchDocument($DocumentID);
 
-if ($params{version} eq "0") {
+if ($InputVersion eq "0") {
   $Version = 0;
 } else {
-  if ($params{version}) {
-    $Version = $params{version};
+  if ($InputVersion) {
+    $Version = $InputVersion;
   } else {
     $Version = $Documents{$DocumentID}{NVersions};
   }
