@@ -44,7 +44,7 @@ my $Untaint = CGI::Untaint -> new($query -> Vars);
 
    $DocumentID = $Untaint -> extract(-as_integer => "docid") || 0;
    $Version = $Untaint -> extract(-as_integer => "version") || undef;
-   $AsOf = $Untaint -> extract(-as_safehtml => "asof") || "";
+   $AsOf = $Untaint -> extract(-as_safehtml => "asof") || undef;
 my $OutFormat = $Untaint -> extract(-as_safehtml => "outformat") || "HTML";
    $OutFormat =~ tr/[a-z]/[A-Z]/;
 

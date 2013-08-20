@@ -24,6 +24,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
+use CGI::Untaint;
 use XML::Parser::PerlSAX;
 use XML::PatAct::MatchName;
 use XML::PatAct::ToObjects;
@@ -32,6 +33,7 @@ use XML::Grove::AsCanonXML;
 
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 
 my $DefaultPatterns = [
   'helpfile'    => [ qw{ -holder                                  } ],
