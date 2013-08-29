@@ -80,7 +80,7 @@ sub BuildTopicProvenance {
         $Found = $TRUE;
         my @ParentIDs = @{$TopicParents{$LastID}};
         my $FirstParentID = pop @ParentIDs;
-        if (grep $FirstParentID, @{$TopicProvenance{$TopicID}}) {
+        if (grep {$_ eq $FirstParentID} @{$TopicProvenance{$TopicID}}) {
           push @ErrorStack, "Detected a topic loop where topic $TopicID has topic $FirstParentID as a parent multiple times. Aborting.";
           return;
         }
