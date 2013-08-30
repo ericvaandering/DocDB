@@ -1,7 +1,10 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+#        Name: ShowDocument
+# Description: Display a document, its metadata, links to other versions and links to the files
 #
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 
 # Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
