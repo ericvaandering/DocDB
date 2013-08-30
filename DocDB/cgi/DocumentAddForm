@@ -1,12 +1,10 @@
 #! /usr/bin/env perl
 #
-#        Name: $RCSfile$
+#        Name: DocumentAddForm
 # Description: The main form to add or modify documents or metadata
 #
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
-#
 #      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 
 # Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
