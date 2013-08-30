@@ -118,8 +118,10 @@ if ($Action eq "Delete") {
   }
 
   if (grep $ParentTopicID, @{$TopicDescendants{$TopicID}}) {
-    push @WarnStack,"The topic you tried to modify has the proposed parent as one of its descendants. No action taken.";
+    push @ErrorStack,"The topic you tried to modify has the proposed parent as one of its descendants. No action taken.";
   }
+
+  EndPage();
 
   if ($TopicID && $ParentTopicID && $ParentTopicID != $TopicID) {
     push @ActionStack,"Updated parent topic of (sub)topic.";
