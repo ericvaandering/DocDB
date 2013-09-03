@@ -53,7 +53,7 @@ sub WarnPage () { # Non-fatal errors
              request: </dt>\n";
     }
     foreach $message (@WarnStack) {
-      print "<dd>$message</dd>\n";
+      print "<dd>".SmartHTML({-text=>$message})."</dd>\n";
     }
     print "</dl>\n";
   }
@@ -67,7 +67,7 @@ sub DebugPage (;$) { # Debugging output
     print "<dl class=\"debug\">\n";
     print "<dt class=\"Warning\">Debugging messages: $CheckPoint</dt>\n";
     foreach my $Message (@DebugStack) {
-      print "<dd>$Message</dd>\n";
+      print "<dd>".SmartHTML({-text=>$Message})."</dd>\n";
     }
     print "</dl>\n";
   } elsif ($CheckPoint && $DebugOutput) {
@@ -106,7 +106,7 @@ sub ErrorPage { # Fatal errors, continues page
              request:</dt>\n";
     }
     foreach $message (@ErrorStack) {
-      print "<dd>$message</dd>\n";
+      print "<dd>".SmartHTML({-text=>$message})."</dd>\n";
     }
     print "</dl>\n";
     print "<p/>\n";
@@ -120,7 +120,7 @@ sub ActionReport {
     print "<dl class=\"Action\">\n";
     print "<dt class=\"Action\">Action(s) taken:</dt>\n";
     foreach $Message (@ActionStack) {
-      print "<dd>$Message</dd>\n";
+      print "<dd>".SmartHTML({-text=>$Message})."</dd>\n";
     }
     print "</dl>\n";
   }
