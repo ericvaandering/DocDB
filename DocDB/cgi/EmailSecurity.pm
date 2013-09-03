@@ -84,9 +84,9 @@ sub UserPrefForm ($) {
     print "<tr><th>\n";
     print $query -> hidden(-name => 'username', -default => $Username);
     print $query -> hidden(-name => 'digest', -default => $Digest);
-    print "Username:</th>\n<td>$Username</td></tr>";
+    print "Username:</th>\n<td>".SmartHTML({-text => $Username})."</td></tr>";
   } elsif ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
-    print "<tr><th>Username:</th>\n<td>$Username</td></tr>";
+    print "<tr><th>Username:</th>\n<td>".SmartHTML({-text => $Username})."</td></tr>";
   } else {
     print "<tr><th>Username:</th>\n<td>";
     print $query -> textfield(-name => 'username', -default => $Username,
@@ -101,7 +101,7 @@ sub UserPrefForm ($) {
   if  ($UserValidation eq "certificate") {
     print "<tr><th>Real name:</th>\n<td>$Name</td></tr>\n";
     print "<tr><th>E-mail address:</th>\n<td>";
-    print $query -> textfield(-name => 'email',    -default => $EmailAddress,
+    print $query -> textfield(-name => 'email',    -default => SmartHTML({-text => $EmailAddress}),
                               -size => 24, -maxlength => 64);
     print "</td></tr>\n";
   } elsif  ($UserValidation eq "shibboleth") {
@@ -109,11 +109,11 @@ sub UserPrefForm ($) {
     print "<tr><th>E-mail address:</th>\n<td>$EmailAddress</td></tr>\n";
   } else {
     print "<tr><th>Real name:</th>\n<td>";
-    print $query -> textfield(-name => 'name',     -default => $Name,
+    print $query -> textfield(-name => 'name',     -default => SmartHTML({-text => $Name}),
                               -size => 24, -maxlength => 128);
     print "</td></tr>\n";
     print "<tr><th>E-mail address:</th>\n<td>";
-    print $query -> textfield(-name => 'email',    -default => $EmailAddress,
+    print $query -> textfield(-name => 'email',    -default => SmartHTML({-text => $EmailAddress}),
                               -size => 24, -maxlength => 64);
     print "</td></tr>\n";
     print "<tr><th>New password:</th>\n<td>";
@@ -139,7 +139,7 @@ sub UserPrefForm ($) {
     my @UserGroupIDs = &FetchUserGroupIDs($EmailUserID);
     foreach my $UserGroupID (@UserGroupIDs) {
       &FetchSecurityGroup($UserGroupID);
-      print "<li>$SecurityGroups{$UserGroupID}{NAME}</li>\n";
+      print "<li>".SmartHTML({-text => $SecurityGroups{$UserGroupID}{NAME}})."</li>\n";
     }
     print "</ul></td></tr>\n";
   }

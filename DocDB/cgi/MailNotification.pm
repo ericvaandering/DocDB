@@ -25,6 +25,8 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+require "HTMLUtilities.pm";
+
 sub MailNotices (%) {
 
   unless ($MailInstalled) {
@@ -136,9 +138,7 @@ sub MailNotices (%) {
     RevisionMailBody($DocRevID);   # Write the body
     $Mailer -> close;              # Complete the message and send it
     my $Addressees = join ', ',@Addressees;
-    $Addressees =~ s/\&/\&amp\;/g;
-    $Addressees =~ s/</\&lt\;/g;
-    $Addressees =~ s/>/\&gt\;/g;
+    $Addressees = SmartHTML({-text => $Addressees});
 
     print $Feedback,$Addressees,"<p>";
   }
@@ -467,8 +467,8 @@ sub EmailUserSelect (%) {
   my @EmailUserIDs = &GetEmailUserIDs;
   foreach my $EmailUserID (@EmailUserIDs) {
     &FetchEmailUser($EmailUserID);
-    $EmailUserLabels{$EmailUserID} = $EmailUser{$EmailUserID}{Name}.
-                                     ' ['.$EmailUser{$EmailUserID}{Username}.']';
+    my $Text = $EmailUser{$EmailUserID}{Name}.' ['.$EmailUser{$EmailUserID}{Username}.']';
+    $EmailUserLabels{$EmailUserID} = SmartHTML({-text => $Text});
   }
 
   @EmailUserIDs = sort EmailUserIDsByName @EmailUserIDs;

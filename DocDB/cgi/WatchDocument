@@ -83,9 +83,9 @@ EndPage();
 
 my $DocumentLink = &DocumentLink(-docid => $DocumentID, -noversion => $TRUE);
 
-print "An e-mail will be sent to $EmailUser{$EmailUserID}{Name}
-       ($EmailUser{$EmailUserID}{EmailAddress}) when $DocumentLink changes.<p/>\n";
-
+print SmartHTML({-text => "An e-mail will be sent to $EmailUser{$EmailUserID}{Name}
+       ($EmailUser{$EmailUserID}{EmailAddress}) when $DocumentLink changes."});
+print "<p/>\n";
 
 &InsertEmailDocumentImmediate(-emailuserid => $EmailUserID, -docid => $DocumentID);
 
