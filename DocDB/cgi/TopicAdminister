@@ -2,18 +2,18 @@
 #
 # Description: This script is called by AdministerForm and does administration
 #              on Topics in the DB. TopicAdd is simpler and can only add
-#              topics. TopicAdd is most useful in setting up a new DB, while 
-#              TopicAdminister will be more useful in maintaining an existing DB. 
+#              topics. TopicAdd is most useful in setting up a new DB, while
+#              TopicAdminister will be more useful in maintaining an existing DB.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
 # Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -42,11 +42,11 @@ require "DBUtilities.pm";
 require "HTMLUtilities.pm";
 
 require "TopicHTML.pm";
-require "TopicSQL.pm"; 
+require "TopicSQL.pm";
 
 $query = new CGI;  # Global for subroutines
 
-# Parameters to script 
+# Parameters to script
 
 my $Untaint = CGI::Untaint -> new($query -> Vars);
 
@@ -82,12 +82,12 @@ DocDBHeader("Topic Administration","",-scripts => ["PopUps","TopicAdminDisable"]
 
 unless (CanAdminister()) {
   push @ErrorStack,$Msg_AdminNoLogin;
-}  
+}
 EndPage();
 GetTopics();
 
 if ($Action eq "Delete") {
-  # FIXME?: Force option is not going to be compatible with children with 
+  # FIXME?: Force option is not going to be compatible with children with
   # multiple parents In that case we would need to determine if any topics
   # would be orphaned and  then delete those, but not ones with another
   # parent
@@ -98,41 +98,47 @@ if ($Action eq "Delete") {
     push @WarnStack,$Msg_ModTopicEmpty;
   }
 
-# Deal with name changes     
+# Deal with name changes
 
-  if ($TopicID && $ShortName) { 
+  if ($TopicID && $ShortName) {
     push @ActionStack,"Updated short description of topic.";
     my $Update = $dbh -> prepare("update Topic set ShortDescription=? where TopicID=?");
     $Update -> execute($ShortName,$TopicID);
   }
-  if ($TopicID && $LongName) { 
+  if ($TopicID && $LongName) {
     push @ActionStack,"Updated long description of topic.";
     my $Update = $dbh -> prepare("update Topic set LongDescription=? where TopicID=?");
     $Update -> execute($LongName,$TopicID);
   }
 
-# Deal with parent changes   
+# Deal with parent changes
 
   if ($TopicID && $ParentTopicID && $ParentTopicID == $TopicID) {
     push @WarnStack,"You cannot set a topic to be its own parent. No action taken.";
-  }  
+  }
 
-  if ($TopicID && $ParentTopicID && $ParentTopicID != $TopicID) { 
+  if (grep $ParentTopicID, @{$TopicDescendants{$TopicID}}) {
+    push @ErrorStack,"The topic you tried to modify has the proposed parent as one of its descendants. No action taken.";
+  }
+
+  EndPage();
+
+  if ($TopicID && $ParentTopicID && $ParentTopicID != $TopicID) {
     push @ActionStack,"Updated parent topic of (sub)topic.";
-   
+
     my $Delete = $dbh -> prepare("delete from TopicHierarchy where TopicID=?");
     my $Insert = $dbh -> prepare("insert into TopicHierarchy (TopicHierarchyID,TopicID,ParentTopicID) values (0,?,?)");
-   
+
     $Delete -> execute($TopicID);
     $Insert -> execute($TopicID,$ParentTopicID);
   }
 } elsif ($Action eq "New") {
 
   if ($ShortName || $LongName) {
-    if (!$LongName) { 
+    if (!$LongName) {
       $LongName = $ShortName;
       push @WarnStack,"No long description supplied. Short description substituted.";
-    } elsif (!$ShortName) { 
+    } elsif (!$ShortName) {
       $ShortName = $LongName;
       push @WarnStack,"No short description supplied. Long description substituted.";
     }
@@ -150,16 +156,16 @@ if ($Action eq "Delete") {
     }
   } else {
     push @WarnStack,"No short or long description supplied. No topic created.";
-  }  
-} elsif ($TopicID || $ParentTopicID || $LongName || $ShortName) { 
+  }
+} elsif ($TopicID || $ParentTopicID || $LongName || $ShortName) {
   push @WarnStack,"No valid action was specified.";
-}  
- 
-if (@ActionStack) { 
+}
+
+if (@ActionStack) {
   ClearTopics();
   GetTopics();
   ActionReport();
-}  
+}
 
 EndPage();
 
@@ -167,18 +173,18 @@ print $query -> start_multipart_form('POST',"$TopicAdminister",'id="topic" name=
 
 print "<table class=\"MedPaddedTable\">\n";
 print "<tr>\n";
-print "<td colspan=\"2\">\n"; 
- AdministerActions(-form => "topic");      
+print "<td colspan=\"2\">\n";
+ AdministerActions(-form => "topic");
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
-print "<td rowspan=\"3\">\n"; 
- TopicScroll({ -helptext   => "Topic", -helplink => "topics", 
+print "<td rowspan=\"3\">\n";
+ TopicScroll({ -helptext   => "Topic", -helplink => "topics",
                -itemformat => "full",  -disabled => $TRUE,
-               -extratext  => "[Long description]", 
-            }); 
-print "</td>\n"; 
+               -extratext  => "[Long description]",
+            });
+print "</td>\n";
 print "<td>\n"; ShortDescriptionBox(-name => "shortdesc", -disabled => $TRUE);
 print "</td>\n";
 print "</tr>\n";
@@ -189,18 +195,18 @@ print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
-print "<td>\n"; 
+print "<td>\n";
  AdminRegardless();
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
-print "<td>\n";  
- TopicScroll({ -helptext   => "Parent Topic", -helplink => "parenttopic", 
+print "<td>\n";
+ TopicScroll({ -helptext   => "Parent Topic", -helplink => "parenttopic",
                -itemformat => "full",         -disabled => $TRUE,
                -name       => "parenttopic",
-               -extratext  => "[Long description]", 
-            }); 
+               -extratext  => "[Long description]",
+            });
 print "</td>\n";
 print "</tr>\n";
 
@@ -217,5 +223,5 @@ print $query -> end_multipart_form;
 
 DocDBNavBar();
 DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
- 
+
 exit;
