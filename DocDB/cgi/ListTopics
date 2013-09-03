@@ -7,7 +7,7 @@
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -26,6 +26,7 @@ require "DocDBGlobals.pm";
 require "TopicSQL.pm";
 require "TopicHTML.pm";
 require "HTMLUtilities.pm";
+require "ResponseElements.pm";
 
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
@@ -35,6 +36,7 @@ GetTopics();
 print $query -> header( -charset => $HTTP_ENCODING );
 my @Scripts = ("TreeChooser");
 DocDBHeader("List of Topics", "List of Topics", -scripts => \@Scripts);
+EndPage();
 
 TopicsTable();
 
