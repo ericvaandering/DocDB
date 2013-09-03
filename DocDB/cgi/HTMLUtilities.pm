@@ -24,8 +24,6 @@
 
 require "ProjectRoutines.pm";
 
-# FIXME: Remove URLify, Paragraphize, AddLineBreaks, SafeHTML (possibly) from Utitlities.pm
-
 sub SmartHTML ($) {
   my ($ArgRef) = @_;
   my $Text          = exists $ArgRef->{-text}          ?  $ArgRef->{-text}          : "";

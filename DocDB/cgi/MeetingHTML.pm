@@ -531,8 +531,9 @@ sub PrintSessionHeader ($) {
   }
 
   if ($Sessions{$SessionID}{Description}) {
-    my $Description = AddLineBreaks($Sessions{$SessionID}{Description});
-    print "<div class=\"SessionDescription\"> ",URLify($Description),"</div>\n";
+    print "<div class=\"SessionDescription\"> ";
+    print SmartHTML({-text=>$Sessions{$SessionID}{Description}, -addLineBreaks=>$TRUE, -makeURLs=>$TRUE});
+    print "</div>\n";
   }
 }
 
