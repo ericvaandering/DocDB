@@ -266,7 +266,7 @@ sub DocumentTable (%) {
       } elsif ($Field eq "Abstract") { # Abstract
         PrintAbstract($DocRevisions{$DocRevID}{Abstract}, {-format => "bare"} );
       } elsif ($Field eq "DocNotes") { # Notes and Changes
-        print AddLineBreaks(URLify($DocRevisions{$DocRevID}{Note}));
+        print SmartHTML({-text=>$DocRevisions{$DocRevID}{Note}, -addLineBreaks=>$TRUE, -makeURLs=>$TRUE});
       } elsif ($Field eq "Files") {    # Files in document
         require "FileHTML.pm";
         ShortFileListByRevID($DocRevID, $SkipVersions);
@@ -297,9 +297,9 @@ sub DocumentTable (%) {
         }
       } elsif ($Field eq "TalkNotes") {
         if ($SessionTalkID) {
-          print URLify( AddLineBreaks($SessionTalks{$SessionTalkID}{Note}) );
+          print SmartHTML({-text=>$SessionTalks{$SessionTalkID}{Note}, -addLineBreaks=>$TRUE, -makeURLs=>$TRUE});
         } elsif ($TalkSeparatorID) {
-          print URLify( AddLineBreaks($TalkSeparators{$TalkSeparatorID}{Note}) );
+          print SmartHTML({-text=>$TalkSeparators{$TalkSeparatorID}{Note}, -addLineBreaks=>$TRUE, -makeURLs=>$TRUE});
         }
       } elsif ($Field eq "Edit") {
         if ($SessionOrderID) {

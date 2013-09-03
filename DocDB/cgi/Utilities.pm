@@ -89,34 +89,6 @@ sub IndexOf {
   }
 }
 
-sub URLify { # Adapted from Perl Cookbook, 6.21
-  my ($Text) = @_;
-
-  $urls = '(http|telnet|gopher|file|wais|ftp|https)';
-  $ltrs = '\w';
-  $gunk = '/#~:.?+=&%@!\-';
-  $punc = '.:?\-';
-  $any  = "${ltrs}${gunk}${punc}";
-  $Text =~ s{
-              \b                    # start at word boundary
-              (                     # begin $1  {
-               $urls     :          # need resource and a colon
-               [$any] +?            # followed by on or more
-                                    #  of any valid character, but
-                                    #  be conservative and take only
-                                    #  what you need to....
-              )                     # end   $1  }
-              (?=                   # look-ahead non-consumptive assertion
-               [$punc]*             # either 0 or more punctuation
-               [^$any]              #   followed by a non-url char
-               |                    # or else
-               $                    #   then end of the string
-              )
-             }{<a href="$1">$1</a>}igox;
-  $Text = &SafeHTML($Text);
-  return $Text;
-}
-
 sub AddTime ($;$) {
   my ($TimeA,$TimeB) = @_;
 
@@ -135,30 +107,6 @@ sub AddTime ($;$) {
   my $TimeString = sprintf "%2.2d:%2.2d:%2.2d",$Hour,$Min,$Sec;
 
   return $TimeString;
-}
-
-sub Paragraphize {
-  my ($Text) = @_;
-  $Text =~ s/\s*\n\s*\n\s*/<p\/>/g; # Replace two new lines and any space with <p>
-  $Text =~ s/<p\/>/<p\/>\n/g;
-  $Text = SafeHTML($Text);
-  return $Text;
-}
-
-sub AddLineBreaks {
-  my ($Text) = @_;
-  $Text =~ s/\s*\n\s*\n\s*/<p\/>/g; # Replace two new lines and any space with <p>
-  $Text =~ s/\s*\n\s*/<br\/>\n/g;
-  $Text =~ s/<p\/>/<p\/>\n/g;
-  $Text = SafeHTML($Text);
-  return $Text;
-}
-
-sub SafeHTML {
-  my ($Text) = @_;
-  $Text =~ s/\&/\&amp;/g;
-  $Text =~ s/\&amp;amp;/\&amp;/g;
-  return $Text;
 }
 
 sub Printable ($) {
