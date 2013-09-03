@@ -106,11 +106,11 @@ if ($Action eq "Insert") {
         next;
       }
       unless ($Email && $Name) {
-        push @WarnStack,"You must supply a name and e-mail address for the user $Name. Not inserted.";
+        push @WarnStack,"You must supply a name and e-mail address for the user. Not inserted.";
         next;
       }
       unless (@GroupIDs) {
-        push @WarnStack,"You did not specify any groups. $Name inserted with membership in no groups.";
+        push @WarnStack,"You did not specify any groups. The users was inserted with membership in no groups.";
       }
       $UserInsert -> execute($Username,$Name,$Email,$CanSign);
       my $EmailUserID = $UserInsert -> {mysql_insertid}; # Works with MySQL only
