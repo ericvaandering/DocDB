@@ -1,7 +1,14 @@
+8.7.19
+ Fix case where infinite loop is caused if topic parent is set to a descendant
+ Add ability to add "attachment" in StreamFile for some extensions. Helps with Office
+
+8.7.18
+ Use full DN from certificate as username, not CN which is not unique
+
 8.7.17
  Don't loose security when updating public docs
  Modified Resecure from Laura
- 
+
 8.7.16
  Fix exclusion list for zip files
  Increase limit on related documents
