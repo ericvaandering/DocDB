@@ -41,8 +41,8 @@ $query = new CGI;  # Global for subroutines
 $query -> autoEscape(0);
 my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-my $DocumentID = $Untaint -> extract(-as_integer => "docid") || 0;
-my $Version = $Untaint -> extract(-as_integer => "version") || 0;
+my $DocumentID = $Untaint -> extract(-as_typedint => "docid") || 0;
+my $Version = $Untaint -> extract(-as_typedint => "version") || 0;
 my $Password = $Untaint -> extract(-as_printable => "password") || "";
 my $Username = $Untaint -> extract(-as_printable => "admuser") || "";
 

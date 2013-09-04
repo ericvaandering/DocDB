@@ -52,11 +52,8 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-my $DocumentID = $Untaint -> extract(-as_integer => "documentid") || 0;
-
-my $DelVersion = $params{version};
-$DelVersion =~ s/^\s+//; # Remove leading and trailing spaces
-$DelVersion =~ s/\s+$//;
+my $DocumentID = $Untaint -> extract(-as_typedint => "documentid") || 0;
+my $DocumentID = $Untaint -> extract(-as_typedint => "version") || 0;
 
 @ErrorStack = ();
 
