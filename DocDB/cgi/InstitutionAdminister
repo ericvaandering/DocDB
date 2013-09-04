@@ -83,7 +83,7 @@ if      ($Action eq "Delete") { # Delete institutions
   } else {
     my $InstitutionDelete = $dbh -> prepare("delete from Institution where InstitutionID=?");
     $InstitutionDelete -> execute($InstitutionID);
-    print "<b>$Institutions{$InstitutionID}{LONG} has been deleted.</b><br>\n";
+    print "<b>The institution has been deleted.</b><br>\n";
   }
 } elsif ($Action eq "Modify") { # Modify institutions
   unless ($InstitutionID) {
