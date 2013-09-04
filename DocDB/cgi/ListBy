@@ -127,7 +127,7 @@ if ($Days) {
   $Message .= "are available:";
   my %Hash = GetEventHashByTopic($TopicID);
   if (%Hash) {
-    $Message .= '<br/>(List <a href="'.$ListEventsBy.'?topicid='.$TopicID.'">events</a> on '.$Topics{$TopicID}{Long}.')';
+    $Message .= '<br/>(List <a href="'.$ListEventsBy.'?topicid='.$TopicID.'">events</a> on '.SmartHTML({-text=>$Topics{$TopicID}{Long}}).')';
   }
 } elsif ($AuthorID) {
 
