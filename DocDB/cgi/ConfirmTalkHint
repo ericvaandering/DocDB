@@ -54,8 +54,8 @@ my $Untaint = CGI::Untaint -> new($query -> Vars);
 @ErrorStack = ();
 @WarnStack  = ();
 
-my $DocumentID = $Untaint -> extract(-as_integer => "documentid") || 0;
-my $SessionTalkID = $Untaint -> extract(-as_integer => "sessiontalkid") || 0;
+my $DocumentID = $Untaint -> extract(-as_typedint => "documentid") || 0;
+my $SessionTalkID = $Untaint -> extract(-as_typedint => "sessiontalkid") || 0;
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number!";
