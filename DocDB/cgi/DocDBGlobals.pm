@@ -102,7 +102,7 @@ $Preferences{Options}{DynamicFullList}{Private} = $FALSE; # Generate Full docume
 $Preferences{Options}{DynamicFullList}{Public}  = $FALSE; # Generate Full document list by dynamically for public db
 
 $Preferences{Options}{AlwaysRetrieveFile}       = $FALSE; # Always use RetrieveFile instead of File Links
-$Preferences{Options}{FileEndingsForAttachment} = ("doc","docx","xls","xlsx","ppt","pptx","pps","ppsx");
+@{$Preferences{Options}{FileEndingsForAttachment}} = ("doc","docx","xls","xlsx","ppt","pptx","pps","ppsx");
 
 $Preferences{Options}{SubmitAgree}              = ""; # "Put text here to make users agree to a privacy statement or some-such. <br/><b>I agree:</b>"
 
