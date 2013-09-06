@@ -199,12 +199,11 @@ sub StreamFile (%) {
     my $AttachmentString = "";
     if (defined($Preferences{Options}{FileEndingsForAttachment})) {
       my $Search = $ShortFile;
-      my $AttachRegex = join "|", $Preferences{Options}{FileEndingsForAttachment};
+      my $AttachRegex = join "|", @{$Preferences{Options}{FileEndingsForAttachment}};
       if ($Search =~ m/\.($AttachRegex})$/i) {
          $AttachmentString = "attachment;";
       }
     }
-
 
     print "Content-Type: $MimeType\n", # Print header
           "Content-Disposition: $AttachmentString filename=\"$ShortFile\"\n",
