@@ -62,10 +62,12 @@ sub TopicAndSubTopics {
 
 sub BuildTopicProvenance {
   %TopicProvenance = ();
+  %TopicDescendants = ();
 
   # When finished, @{$TopicProvenance{$TopicID}} is an array for every $TopicID,
   # which has that TopicID as its first element, its parent as its second,
   # grandparent as the third, etc.
+  # @{$TopicDescendants{$TopicID}} is a list of all children, grandchildren, etc for a topic.
 
   foreach my $TopicID (keys %Topics) {
     push @{$TopicProvenance{$TopicID}},$TopicID;
@@ -84,7 +86,20 @@ sub BuildTopicProvenance {
         $Found = $TRUE;
         my @ParentIDs = @{$TopicParents{$LastID}};
         my $FirstParentID = pop @ParentIDs;
+        if (grep {$_ eq $FirstParentID} @{$TopicProvenance{$TopicID}}) {
+          push @ErrorStack, "Detected a topic loop where topic $TopicID has topic $FirstParentID as a parent multiple times. Aborting.";
+          return;
+        }
         push @{$TopicProvenance{$TopicID}},$FirstParentID;
+      }
+    }
+  }
+
+  foreach my $TopicID (keys %Topics) {
+    my @IDs = @{$TopicProvenance{$TopicID}};
+    foreach my $ID (@IDs) {
+      if ($ID != $TopicID) {
+        push @{$TopicDescendants{$ID}}, $TopicID;
       }
     }
   }

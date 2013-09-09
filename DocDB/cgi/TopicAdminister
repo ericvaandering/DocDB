@@ -117,6 +117,12 @@ if ($Action eq "Delete") {
     push @WarnStack,"You cannot set a topic to be its own parent. No action taken.";
   }
 
+  if (grep $ParentTopicID, @{$TopicDescendants{$TopicID}}) {
+    push @ErrorStack,"The topic you tried to modify has the proposed parent as one of its descendants. No action taken.";
+  }
+
+  EndPage();
+
   if ($TopicID && $ParentTopicID && $ParentTopicID != $TopicID) {
     push @ActionStack,"Updated parent topic of (sub)topic.";
 

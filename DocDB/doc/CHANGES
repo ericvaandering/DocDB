@@ -1,3 +1,10 @@
+next
+ Fix case where infinite loop is caused if topic parent is set to a descendant
+ Add ability to add "attachment" in StreamFile for some extensions. Helps with Office
+
+8.8.5
+ Use full DN from certificate as username, not CN which is not unique
+
 8.8.4
  Add totals to topic, author tables
  AuthorSearch.js script now weights responses
