@@ -200,7 +200,7 @@ sub StreamFile (%) {
     if (defined($Preferences{Options}{FileEndingsForAttachment})) {
       my $Search = $ShortFile;
       my $AttachRegex = join "|", @{$Preferences{Options}{FileEndingsForAttachment}};
-      if ($Search =~ m/\.($AttachRegex})$/i) {
+      if ($Search =~ m/\.($AttachRegex)$/i) {
          $AttachmentString = "attachment;";
       }
     }
