@@ -54,6 +54,8 @@ require "MeetingSQL.pm";
 require "TalkHintSQL.pm";
 require "TalkSQL.pm";
 
+require "TopicSQL.pm";
+
 $query = new CGI;  # Global for subroutines
 
 &GetPrefsCookie;
@@ -194,6 +196,9 @@ if ($SessionID) {
   push @ErrorStack,"You must specify a session or event to modify. You probably arrived
   here by error.";
 }
+
+GetTopics();
+
 EndPage();
 
 if ($SingleSession && $EventID) { # Grab single session ID in single session mode

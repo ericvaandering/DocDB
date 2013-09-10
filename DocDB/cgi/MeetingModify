@@ -206,6 +206,8 @@ foreach my $CheckTitle (@CheckTitles) { # Check session times
   }
 }
 
+GetTopics();
+
 EndPage();
 
 my $SessionsModified = 0;
