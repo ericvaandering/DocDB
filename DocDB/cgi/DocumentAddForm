@@ -63,6 +63,9 @@ require "TalkHTML.pm";
 $query = new CGI;  # Global for subroutines
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
+@ErrorStack = ();
+@WarnStack = ();
+
 &GetAuthors;
 &GetTopics;
 &GetSecurityGroups;
@@ -97,9 +100,6 @@ if      ($mode eq "add") {
 } elsif ($mode eq "update" || $mode eq "updatedb") {
   DocDBHeader("$Project Document Update",     "Document Update",      -scripts => \@Scripts);
 }
-
-@ErrorStack = ();
-@WarnStack = ();
 
 unless (CanCreate()) {
   push @ErrorStack,"You are not allowed to modify or create documents.";
@@ -189,7 +189,7 @@ if ($mode eq "update" || $mode eq "updatedb") { # Need to read in last version v
   $DocTypeIDDefault    = $DocRevisions{$DocRevID}{DocTypeID};
   @SecurityDefaults    = GetRevisionSecurityGroups($DocRevID);
   unless (@SecurityDefaults) {
-    @SecurityDefaults = (0);	
+    @SecurityDefaults = (0);
   }
   my @AuthorRevIDs     = GetRevisionAuthors($DocRevID);
      @AuthorRevIDs     = sort AuthorRevIDsByOrder @AuthorRevIDs;
