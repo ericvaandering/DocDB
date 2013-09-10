@@ -54,6 +54,8 @@ require "MeetingSQL.pm";
 require "TalkHintSQL.pm";
 require "TalkSQL.pm";
 
+require "TopicSQL.pm";
+
 $query = new CGI;  # Global for subroutines
 
 &GetPrefsCookie;

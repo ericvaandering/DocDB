@@ -127,13 +127,7 @@ sub TopicLink ($) {
     my @ParentTopicIDs = FetchTopicParents( {-topicid => $TopicID});
     if (@ParentTopicIDs) {
       my ($ParentTopicID) = @ParentTopicIDs;
-      my $NextLink = TopicLink({-topicid => $ParentTopicID, -format => $Format,} );
-      my $Search = $Link;
-      if ($Search =~ m/$NextLink/) {
-         push @ErrorStack,"Topic loop in topic $TopicID detected. Aborting. Contact an administrator.";
-         return;
-      }
-      $Link .= $NextLink;
+      $Link .= TopicLink({-topicid => $ParentTopicID, -format => $Format,} );
       $Link .= $Separator;
     }
   }
