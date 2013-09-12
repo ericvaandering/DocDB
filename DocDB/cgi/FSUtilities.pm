@@ -284,7 +284,7 @@ sub DownloadURLs (%) {
     if ($Files{$FileKey}{URL}) {
       my $URL = $Files{$FileKey}{URL};
       unless (&ValidFileURL($URL)) {
-        push @ErrorStack,"The URL <tt>$URL</tt> is not well formed. Don't forget ".
+        push @ErrorStack,"The URL $URL is not well formed. Don't forget ".
                          "http:// on the front and a file name after the last /.";
       }
       my @Options = ();

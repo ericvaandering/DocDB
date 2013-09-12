@@ -330,9 +330,9 @@ if ($Mode eq "update" || $Mode eq "updatedb") {
 }
 
 if ($Preferences{Options}{SubmitAgree} && !$SubmitAgree) {
-  push @ErrorStack,'You must check the box near with this statement: <br/>'.
+  push @ErrorStack,'You must check the box near with this statement: \n'.
                    $Preferences{Options}{SubmitAgree}.
-                   '<br/>to submit the document.';
+                   '\nto submit the document.';
 }
 
 ### Final checks
