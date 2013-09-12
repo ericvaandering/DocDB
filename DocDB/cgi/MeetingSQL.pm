@@ -640,7 +640,7 @@ sub DeleteEventGroup (%) {
 
   my $Delete = $dbh -> prepare("delete from EventGroup where EventGroupID=?");
   $Delete -> execute($EventGroupID);
-  push @ActionStack,"Event group <strong>$EventGroups{$EventGroupID}{LongDescription}</strong> deleted";
+  push @ActionStack,"Event group $EventGroups{$EventGroupID}{LongDescription} deleted";
 
   return 1;
 }
@@ -690,7 +690,7 @@ sub DeleteEvent (%) {
   $Delete          -> execute($EventID);
   $DeleteTopic     -> execute($EventID);
   $DeleteModerator -> execute($EventID);
-  push @ActionStack,"Event <strong>$Conferences{$EventID}{Title}</strong> deleted";
+  push @ActionStack,"Event $Conferences{$EventID}{Title} deleted";
   if (@DocRevIDs) {
     my $Delete = $dbh -> prepare("delete from RevisionEvent where ConferenceID=?");
     $Delete -> execute($EventID);

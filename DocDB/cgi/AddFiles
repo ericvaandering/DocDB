@@ -96,9 +96,9 @@ if ($DocumentID && $Version) {
 }
 
 if ($Preferences{Options}{SubmitAgree} && !$SubmitAgree) {
-  push @ErrorStack,'You must check the box near with this statement: <br/>'.
+  push @ErrorStack,'You must check the box near with this statement: \n'.
                    $Preferences{Options}{SubmitAgree}.
-                   '<br/>to add files to the document.';
+                   '\nto add files to the document.';
 }
 
 if ($PreserveSigs && !CanPreserveSigs()) {

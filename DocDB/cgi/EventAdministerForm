@@ -108,7 +108,7 @@ if ($SubForm eq "eventgroup") {
       $Update -> execute($LongDescription,$EventGroupID);
     }
   } elsif ($Action eq "New") {
-    push @ActionStack,"New event group with description <strong>$ShortDescription</strong> inserted";
+    push @ActionStack,"New event group with description $ShortDescription inserted";
     my $Insert = $dbh -> prepare("insert into EventGroup (ShortDescription,LongDescription) values (?,?)");
     $Insert -> execute($ShortDescription,$LongDescription);
   } else {
@@ -118,7 +118,7 @@ if ($SubForm eq "eventgroup") {
   if ($Action eq "Delete") {
     &DeleteEvent(-eventid => $EventID, -force => $Force);
   } else {
-    push @WarnStack,"Only \"Delete\" is a valid action";
+    push @WarnStack,"Only \"Delete\" is a valid action for events.";
   }
 }
 

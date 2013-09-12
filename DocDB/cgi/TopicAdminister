@@ -148,7 +148,7 @@ if ($Action eq "Delete") {
       $Insert -> execute($TopicID,$ParentTopicID);
       push @ActionStack,"New sub-topic created with descriptions $ShortName and $LongName.";
     } else {
-      push @ActionStack,"New <span class=\"Highlight\">root-level topic</span> created with descriptions $ShortName and $LongName.";
+      push @ActionStack,"New root-level topic created with descriptions $ShortName and $LongName.";
     }
   } else {
     push @WarnStack,"No short or long description supplied. No topic created.";
