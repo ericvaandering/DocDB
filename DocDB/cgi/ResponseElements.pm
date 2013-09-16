@@ -7,7 +7,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -24,6 +24,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+require "HTMLUtilities.pm";
 require "AuthorHTML.pm"; #FIXME: Remove, move references to correct place
 require "TopicHTML.pm";  #FIXME: Remove, move references to correct place
 require "FileHTML.pm";   #FIXME: Remove, move references to correct place
@@ -31,11 +32,14 @@ require "RevisionHTML.pm";   #FIXME: Remove, move references to correct place
 
 sub PrintTitle {
   my ($Title) = @_;
+  my $HTML = "<h1>";
   if ($Title) {
-    print "<h1>$Title</h1>\n";
+    $HTML .= SmartHTML( {-text => $Title, } );
   } else {
-    print "<h1><b>Title:</b> none<br></h1>\n";
+    $HTML .= "<b>Title:</b> none";
   }
+  $HTML .= "</h1>\n";
+  print $HTML;
 }
 
 sub WarnPage () { # Non-fatal errors
@@ -49,7 +53,7 @@ sub WarnPage () { # Non-fatal errors
              request: </dt>\n";
     }
     foreach $message (@WarnStack) {
-      print "<dd>$message</dd>\n";
+      print "<dd>".SmartHTML({-text=>$message})."</dd>\n";
     }
     print "</dl>\n";
   }
@@ -63,7 +67,7 @@ sub DebugPage (;$) { # Debugging output
     print "<dl class=\"debug\">\n";
     print "<dt class=\"Warning\">Debugging messages: $CheckPoint</dt>\n";
     foreach my $Message (@DebugStack) {
-      print "<dd>$Message</dd>\n";
+      print "<dd>".SmartHTML({-text=>$Message})."</dd>\n";
     }
     print "</dl>\n";
   } elsif ($CheckPoint && $DebugOutput) {
@@ -102,7 +106,7 @@ sub ErrorPage { # Fatal errors, continues page
              request:</dt>\n";
     }
     foreach $message (@ErrorStack) {
-      print "<dd>$message</dd>\n";
+      print "<dd>".SmartHTML({-text=>$message})."</dd>\n";
     }
     print "</dl>\n";
     print "<p/>\n";
@@ -116,7 +120,7 @@ sub ActionReport {
     print "<dl class=\"Action\">\n";
     print "<dt class=\"Action\">Action(s) taken:</dt>\n";
     foreach $Message (@ActionStack) {
-      print "<dd>$Message</dd>\n";
+      print "<dd>".SmartHTML({-text=>$Message})."</dd>\n";
     }
     print "</dl>\n";
   }
@@ -211,9 +215,9 @@ sub TypeLink {
     $link .= "<a href=\"$ListBy?typeid=$TypeID\">";
   }
   if ($mode eq "short") {
-    $link .= $DocumentTypes{$TypeID}{SHORT};
+    $link .= SmartHTML({-text => $DocumentTypes{$TypeID}{SHORT}});
   } else {
-    $link .= $DocumentTypes{$TypeID}{LONG};
+    $link .= SmartHTML({-text => $DocumentTypes{$TypeID}{LONG}});
   }
   unless ($Public) {
     $link .= "</a>";

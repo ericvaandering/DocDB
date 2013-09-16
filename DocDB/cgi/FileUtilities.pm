@@ -1,5 +1,5 @@
 
-# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -188,9 +188,12 @@ sub StreamFile (%) {
     my $Size = (stat $File)[7];
 
     $MimeType = mimetype($File);              # Try Mime-info first
+
     unless ($MimeType) {
-      $MimeType = `$FileMagic -ib \"$File\"`; # Use magic as a backup
-      chomp $MimeType;
+      # This is unsafe. Until we can figure out a way to do this, comment it out. Could use IPC::Run if we had it
+#      $MimeType = `$FileMagic -ib \"$File\"`; # Use magic as a backup
+#      chomp $MimeType;
+      $MimeType = 'binary/octet-stream';
       print STDERR "DocDB: MIME info not found, defaulting to \"magic\" which says: $MimeType\n";
     }
 
@@ -234,7 +237,7 @@ sub StreamFile (%) {
   } else {
     print $query -> header( -charset => $HTTP_ENCODING );
     print $query -> start_html,
-          "There was a problem. File $File does not exist.",
+          "There was a problem. The file does not exist.",
           $query -> end_html;
   }
 }

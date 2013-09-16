@@ -1,11 +1,12 @@
+#        Name: AuthorHTML.pm
 #
 # Description: Routines to create HTML elements for authors and institutions
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified:
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 #
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -21,6 +22,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+require "HTMLUtilities.pm";
 
 sub FirstAuthor ($;$) {
   my ($DocRevID,$ArgRef) = @_;
@@ -41,7 +44,7 @@ sub FirstAuthor ($;$) {
   if ($Institution) {
     FetchInstitution($Authors{$FirstID}{InstitutionID});
     $AuthorLink .= "<br/><em>".
-                   $Institutions{$Authors{$FirstID}{InstitutionID}}{SHORT}.
+                   SmartHTML({-text=>$Institutions{$Authors{$FirstID}{InstitutionID}}{SHORT}}).
                    "</em>";
   }
   return $AuthorLink;
@@ -152,6 +155,7 @@ sub AuthorLink ($;%) {
   FetchAuthor($AuthorID);
   FetchInstitution($Authors{$AuthorID}{InstitutionID});
   my $InstitutionName = $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG};
+  $InstitutionName = SmartHTML( {-text => $InstitutionName,} );
   unless ($Authors{$AuthorID}{FULLNAME}) {
     return "Unknown";
   }
@@ -165,9 +169,9 @@ sub AuthorLink ($;%) {
   my $Link;
   $Link = "<a href=\"$Script?authorid=$AuthorID\" title=\"$InstitutionName\">";
   if ($Format eq "full") {
-    $Link .= $Authors{$AuthorID}{FULLNAME};
+    $Link .= SmartHTML( {-text => $Authors{$AuthorID}{FULLNAME}, } );
   } elsif ($Format eq "formal") {
-    $Link .= $Authors{$AuthorID}{Formal};
+    $Link .= SmartHTML( {-text => $Authors{$AuthorID}{Formal}, } );
   }
   $Link .= "</a>";
 
@@ -185,7 +189,7 @@ sub PrintAuthorInfo {
 
   print "$link\n";
   print " of ";
-  print $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG};
+  print SmartHTML( {-text => $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG}, } );
 }
 
 sub AuthorsByInstitution {
@@ -306,7 +310,7 @@ sub AuthorScroll (%) {
   my @ActiveIDs = ();
   foreach my $ID (@AuthorIDs) {
     if ($Authors{$ID}{ACTIVE} || $All) {
-      $AuthorLabels{$ID} = $Authors{$ID}{Formal};
+      $AuthorLabels{$ID} = SmartHTML({-text=>$Authors{$ID}{Formal}});
       push @ActiveIDs,$ID;
     }
   }
@@ -343,7 +347,7 @@ sub AuthorTextEntry ($;@) {
 
   foreach $AuthorID (@Defaults) {
     FetchAuthor($AuthorID);
-    $AuthorManDefault .= "$Authors{$AuthorID}{FULLNAME}\n" ;
+    $AuthorManDefault .= SmartHTML({-text=>$Authors{$AuthorID}{FULLNAME}})."\n" ;
   }
 
   print FormElementTitle(-helplink => $HelpLink, -helptext  => $HelpText,

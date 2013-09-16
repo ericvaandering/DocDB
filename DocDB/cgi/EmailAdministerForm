@@ -10,7 +10,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -28,6 +28,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI qw(-nosticky);
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -35,6 +36,7 @@ require "Scripts.pm";
 require "ResponseElements.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "AdministerElements.pm";
 require "EmailUserHTML.pm";
 require "SecurityHTML.pm";
@@ -45,11 +47,12 @@ require "SecuritySQL.pm";
 require "NotificationSQL.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-%params = $query -> Vars;
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-my $EmailUserID  = $params{emailuserid} || 0;
+my $EmailUserID = $Untaint -> extract(-as_integer => "emailuserid") || 0;
 
 GetSecurityGroups();
 
@@ -236,8 +239,8 @@ if ($EmailUserID) {
     my $Link = $EmailAdministerForm."?emailuserid=$EmailUserID";
 
     print "<tr class=\"$RowClass\">\n";
-    print "<td><a href=\"$Link\">$EmailUser{$EmailUserID}{Name}</a>    </td>\n";
-    print "<td><a href=\"$Link\">$EmailUser{$EmailUserID}{Username}</a></td>\n";
+    print "<td><a href=\"$Link\">".SmartHTML({-text => $EmailUser{$EmailUserID}{Name}})."</a></td>\n";
+    print "<td><a href=\"$Link\">".SmartHTML({-text => $EmailUser{$EmailUserID}{Username}})."</a></td>\n";
     print "<td>$Verified</td>\n";
     print "<td>$CanSign</td>\n";
     print "<td>$Groups</td>\n";
@@ -256,7 +259,7 @@ if ($EmailUserID) {
       print "<p><a name=\"$SecurityGroup\" /><strong>$SecurityGroup has these members:</strong></p>\n<ul>\n";
       foreach my $EmailUserID (@EmailUserIDs) {
         if ($EmailUser{$EmailUserID}{Name}) {
-          print "<li>$EmailUser{$EmailUserID}{Name} ($EmailUser{$EmailUserID}{Username}, $EmailUser{$EmailUserID}{EmailAddress})</li>\n";
+          print "<li>".SmartHTML({-text => "$EmailUser{$EmailUserID}{Name} ($EmailUser{$EmailUserID}{Username}, $EmailUser{$EmailUserID}{EmailAddress})"})."</li>\n";
         } else {
           print "<li>Unknown (ID: $EmailUserID)</li>\n";
         }

@@ -1,14 +1,17 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+#        Name: ShowDocument
+# Description: Display a document, its metadata, links to other versions and links to the files
 #
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -21,6 +24,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -30,6 +34,7 @@ require "DocumentSQL.pm";
 require "RevisionSQL.pm";
 require "FSUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "Security.pm";
 require "Scripts.pm";
 require "SQLChecks.pm";
@@ -37,21 +42,18 @@ require "SQLChecks.pm";
 require "RevisionHTML.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-%params = $query -> Vars;
-
-   $DocumentID = $params{docid};
-   $DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
-   $DocumentID =~ s/\s+$//;
-   $Version    = $params{version};
-   $AsOf       = $params{asof};
-my $OutFormat  = $params{outformat} || "HTML";
+   $DocumentID = $Untaint -> extract(-as_typedint => "docid") || 0;
+   $Version = $Untaint -> extract(-as_typedint => "version") || undef;
+   $AsOf = $Untaint -> extract(-as_safehtml => "asof") || undef;
+my $OutFormat = $Untaint -> extract(-as_safehtml => "outformat") || "HTML";
    $OutFormat =~ tr/[a-z]/[A-Z]/;
-
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number!";
-}  
+}
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
@@ -89,8 +91,8 @@ if (&CanAccess($DocumentID,$Version)) {
     push @ErrorStack,"The $remote_user group is not authorized to view this document (or it does not exist).";
   } else {
     push @ErrorStack,"This document is not publicly accessible.";
-  }  
-} 
+  }
+}
 
 # Print appropriate header
 
@@ -98,7 +100,7 @@ if ($OutFormat eq 'XML') {
   require "XMLOutput.pm";
   unless ($NoXMLHead) {
     print XMLHeader();
-  }  
+  }
   NewXMLOutput();
 } else {
   print $query -> header( -charset => $HTTP_ENCODING );
@@ -113,13 +115,13 @@ unless ($DocRevID) { # Probably never executed since CanAccess fails.
 
 if ($OutFormat eq 'XML') {
   my %XMLDisplay = ("All" => $TRUE);
-  my $DocumentXML = DocumentXMLOut( {-docid   => $DocRevisions{$DocRevID}{DOCID}, 
-                                     -version => $DocRevisions{$DocRevID}{Version}, 
-                                     -display => \%XMLDisplay, 
+  my $DocumentXML = DocumentXMLOut( {-docid   => $DocRevisions{$DocRevID}{DOCID},
+                                     -version => $DocRevisions{$DocRevID}{Version},
+                                     -display => \%XMLDisplay,
                                     } );
   if ($DocumentXML) {
     $DocumentXML -> paste(last_child => $DocDBXML);
-  }  
+  }
 } else {
   EndPage();
   PrintRevisionInfo($DocRevID, -showversions => 1);

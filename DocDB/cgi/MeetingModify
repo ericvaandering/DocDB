@@ -7,7 +7,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2012 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -25,6 +25,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI qw(-nosticky);
+use CGI::Untaint;
 use DBI;
 use Time::Local;
 
@@ -32,6 +33,7 @@ require "DocDBGlobals.pm";
 require "Messages.pm";
 
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "ResponseElements.pm";
 require "FormElements.pm";
 require "Sorts.pm";
@@ -47,51 +49,57 @@ require "TopicSQL.pm";
 require "WebUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
-
-%params = $query -> Vars;
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 $query -> delete_all(); # Stop program from caching variable from script to script
 
-my $Mode               = $params{mode};
-my $NoSessions         = $params{nosessions};
+my $print = $Untaint -> extract(-as_printable => "subform") || "";
+my $int = $Untaint -> extract(-as_integer => "eventgroups") || 0;
+my $html = $Untaint -> extract(-as_safehtml => "longdesc") || "";
 
-my $EventGroupID       = $params{eventgroups};
-my $Short              = $params{shortdesc};
-my $Long               = $params{long};
+my $Mode = $Untaint -> extract(-as_safehtml => "mode") || "";
+my $NoSessions = $Untaint -> extract(-as_safehtml => "nosessions") || "";
 
-my $ConferenceID       = $params{conferenceid};
-my $OffsetDays         = $params{offsetdays};
+my $EventGroupID = $Untaint -> extract(-as_integer => "eventgroups") || 0;
+my $Short = $Untaint -> extract(-as_safehtml => "shortdesc") || "";
+my $Long = $Untaint -> extract(-as_safehtml => "long") || "";
 
-my $StartYear          = $params{startyear};
-my $StartMonth         = $params{startmonth};
-my $StartDay           = $params{startday};
-my $EndYear            = $params{endyear};
-my $EndMonth           = $params{endmonth};
-my $EndDay             = $params{endday};
-my $MeetPreamble       = $params{meetpreamble};
-my $MeetEpilogue       = $params{meetepilogue};
-my $Location           = $params{location};
-my $AltLocation        = $params{altlocation};
-my $URL                = $params{url};
-my $ShowAllTalks       = $params{meetshowall};
+my $ConferenceID = $Untaint -> extract(-as_integer => "conferenceid") || 0;
+my $OffsetDays = $Untaint -> extract(-as_integer => "offsetdays") || 0;
 
-my @MeetingViewGroupIDs   = split /\0/,$params{meetingviewgroups};
-my @MeetingModifyGroupIDs = split /\0/,$params{meetingmodifygroups};
-my @MeetingTopicIDs       = split /\0/,$params{topics};
-my @MeetingModeratorIDs   = split /\0/,$params{moderators};
+my $StartYear = $Untaint -> extract(-as_integer => "startyear") || 0;
+my $StartMonth = $Untaint -> extract(-as_safehtml => "startmonth") || "";
+my $StartDay = $Untaint -> extract(-as_integer => "startday") || 0;
+my $EndYear = $Untaint -> extract(-as_integer => "endyear") || 0;
+my $EndMonth = $Untaint -> extract(-as_safehtml => "endmonth") || "";
+my $EndDay = $Untaint -> extract(-as_integer => "endday") || 0;
 
-my @SessionYears         = split /\0/,$params{sessionyear};
-my @SessionMonths        = split /\0/,$params{sessionmonth};
-my @SessionDays          = split /\0/,$params{sessionday};
-my @SessionHours         = split /\0/,$params{sessiontime};
-my @SessionOrders        = split /\0/,$params{sessionorder};
-my @RawSessionSeparators = split /\0/,$params{sessionseparator};
-my @SessionLocations     = split /\0/,$params{sessionlocation};
-my @SessionAltLocations  = split /\0/,$params{sessionaltlocation};
-my @SessionTitles        = split /\0/,$params{sessiontitle};
-my @SessionDescriptions  = split /\0/,$params{sessiondescription};
-my @MeetingOrderIDs      = split /\0/,$params{meetingorderid};
-my @SessionDeletes       = split /\0/,$params{sessiondelete};
-my @SessionShowAlls      = split /\0/,$params{sessionshowall};
+my $MeetPreamble = $Untaint -> extract(-as_safehtml => "meetpreamble") || "";
+my $MeetEpilogue = $Untaint -> extract(-as_safehtml => "meetepilogue") || "";
+my $Location = $Untaint -> extract(-as_safehtml => "location") || "";
+my $AltLocation = $Untaint -> extract(-as_safehtml => "altlocation") || "";
+my $URL = $Untaint -> extract(-as_safehtml => "url") || "";
+my $ShowAllTalks = $Untaint -> extract(-as_safehtml => "meetshowall") || "";
+
+my @MeetingViewGroupIDs = @{ $Untaint -> extract(-as_listofint => "meetingviewgroups") || undef };
+my @MeetingModifyGroupIDs = @{ $Untaint -> extract(-as_listofint => "meetingmodifygroups") || undef };
+my @MeetingTopicIDs = @{ $Untaint -> extract(-as_listofint => "topics") || undef };
+my @MeetingModeratorIDs = @{ $Untaint -> extract(-as_listofint => "moderators") || undef };
+
+my @SessionYears = @{ $Untaint -> extract(-as_listofint => "sessionyear") || undef };
+my @SessionMonths = @{ $Untaint -> extract(-as_listofhtml => "sessionmonth") || undef };
+my @SessionDays = @{ $Untaint -> extract(-as_listofint => "sessionday") || undef };
+my @SessionHours = @{ $Untaint -> extract(-as_listofhtml => "sessiontime") || undef };
+my @SessionOrders = @{ $Untaint -> extract(-as_listofhtml => "sessionorder") || undef };
+my @RawSessionSeparators = @{ $Untaint -> extract(-as_listofwords => "sessionseparator") || undef };
+
+my @SessionLocations = @{ $Untaint -> extract(-as_listofhtml => "sessionlocation") || undef };
+my @SessionAltLocations = @{ $Untaint -> extract(-as_listofhtml => "sessionaltlocation") || undef };
+my @SessionTitles = @{ $Untaint -> extract(-as_listofhtml => "sessiontitle") || undef };
+my @SessionDescriptions = @{ $Untaint -> extract(-as_listofhtml => "sessiondescription") || undef };
+my @MeetingOrderIDs = @{ $Untaint -> extract(-as_listofwords => "meetingorderid") || undef };
+my @SessionDeletes = @{ $Untaint -> extract(-as_listofwords => "sessiondelete") || undef };
+my @SessionShowAlls = @{ $Untaint -> extract(-as_listofwords => "sessionshowall") || undef };
 
 my $StartDate = "$StartYear-$ReverseAbrvMonth{$StartMonth}-$StartDay";
 my $EndDate   = "$EndYear-$ReverseAbrvMonth{$EndMonth}-$EndDay";
@@ -295,34 +303,34 @@ if ($Mode eq "create" || $Mode eq "modify") {
     my $SessionSeparatorID = 0;
     my $SessionID          = 0;
 
-    my @TopicIDs     = split /\0/,$params{"sessiontopics-$MeetingOrderID"};
-    my @ModeratorIDs = split /\0/,$params{"moderators-$MeetingOrderID"};
+    my @TopicIDs = @{ $Untaint -> extract(-as_listofint => "sessiontopics-$MeetingOrderID") || undef };
+    my @ModeratorIDs = @{ $Untaint -> extract(-as_listofint => "moderators-$MeetingOrderID") || undef };
 
     # Key on MeetingOrderID to see if we are going to insert or update.
     if (grep /n/,$MeetingOrderID) {
       if ($SessionTitle || $SessionDescription) {
-	if ($SessionSeparatorFlags{$MeetingOrderID}) {
-          # Create a new separator
-          my $SessionSeparatorInsert = $dbh -> prepare(
-           "insert into SessionSeparator ".
-           "(SessionSeparatorID, ConferenceID, StartTime, Location, Title, Description) ".
-           "values (0,?,?,?,?,?)");
-          $SessionSeparatorInsert -> execute($ConferenceID,$SessionDate,$SessionLocation,$SessionTitle,$SessionDescription);
-          $SessionSeparatorID = $SessionSeparatorInsert -> {mysql_insertid}; # Works with MySQL only
-          push @ActionStack,"Created break: $SessionTitle";
-          ++$SessionsModified;
-	} else {
-          # Create a new session
-          $SessionID = InsertSession({
-              -eventid      => $ConferenceID,    -date        => $SessionDate,
-              -title        => $SessionTitle,    -description => $SessionDescription,
-              -location     => $SessionLocation, -altlocation => $SessionAltLocation,
-              -moderatorids => \@ModeratorIDs,   -topicids    => \@TopicIDs,
-              -showalltalks => $SessionShowAllFlags{$MeetingOrderID},
-          });
-          push @ActionStack,"Created session: $SessionTitle";
-          ++$SessionsModified;
-	}
+        if ($SessionSeparatorFlags{$MeetingOrderID}) {
+              # Create a new separator
+              my $SessionSeparatorInsert = $dbh -> prepare(
+               "insert into SessionSeparator ".
+               "(SessionSeparatorID, ConferenceID, StartTime, Location, Title, Description) ".
+               "values (0,?,?,?,?,?)");
+              $SessionSeparatorInsert -> execute($ConferenceID,$SessionDate,$SessionLocation,$SessionTitle,$SessionDescription);
+              $SessionSeparatorID = $SessionSeparatorInsert -> {mysql_insertid}; # Works with MySQL only
+              push @ActionStack,"Created break: $SessionTitle";
+              ++$SessionsModified;
+        } else {
+              # Create a new session
+              $SessionID = InsertSession({
+                  -eventid      => $ConferenceID,    -date        => $SessionDate,
+                  -title        => $SessionTitle,    -description => $SessionDescription,
+                  -location     => $SessionLocation, -altlocation => $SessionAltLocation,
+                  -moderatorids => \@ModeratorIDs,   -topicids    => \@TopicIDs,
+                  -showalltalks => $SessionShowAllFlags{$MeetingOrderID},
+              });
+              push @ActionStack,"Created session: $SessionTitle";
+              ++$SessionsModified;
+        }
         # Insert the order of the session or separator
         my $MeetingOrderInsert = $dbh -> prepare(
          "insert into MeetingOrder ".

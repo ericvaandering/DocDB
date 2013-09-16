@@ -8,7 +8,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2012 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -26,6 +26,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI qw(-nosticky);
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -40,6 +41,7 @@ require "Utilities.pm";
 
 require "EventUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "MeetingSecurityUtilities.pm";
 require "TalkHintUtilities.pm";
 require "WebUtilities.pm";
@@ -57,57 +59,58 @@ require "TalkSQL.pm";
 require "TopicSQL.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 
 &GetPrefsCookie;
 &SetAuthorMode;
 
 ### Gather parameters
 
-%params = $query -> Vars;
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 $query -> delete_all(); # Stop program from caching variable from script to script
 
-my $SessionID          = $params{sessionid};
-my $Mode               = $params{mode};
-my $SingleSession      = $params{singlesession};
+my $SessionID = $Untaint -> extract(-as_integer => "sessionid") || 0;
+my $Mode = $Untaint -> extract(-as_safehtml => "mode") || "";
+my $SingleSession = $Untaint -> extract(-as_safehtml => "singlesession") || "";
 
-my $SessionTitle       = $params{sessiontitle};
-my $SessionDescription = $params{sessiondescription};
-my $SessionLocation    = $params{sessionlocation};
-my $SessionAltLocation = $params{sessionaltlocation};
-my $ShowAllTalks       = $params{meetshowall};
+my $SessionTitle = $Untaint -> extract(-as_safehtml => "sessiontitle") || "";
+my $SessionDescription = $Untaint -> extract(-as_safehtml => "sessiondescription") || "";
+my $SessionLocation = $Untaint -> extract(-as_safehtml => "sessionlocation") || "";
+my $SessionAltLocation = $Untaint -> extract(-as_safehtml => "sessionaltlocation") || "";
+my $ShowAllTalks = $Untaint -> extract(-as_safehtml => "meetshowall") || "";
 if ($ShowAllTalks) {
   $ShowAllTalks = $TRUE;
 }
 
-my $SessionDay   = $params{sessionday};
-my $SessionMonth = $params{sessionmonth};
-my $SessionYear  = $params{sessionyear};
-my $SessionHour  = $params{sessiontime};
+my $SessionDay = $Untaint -> extract(-as_integer => "sessionday") || 0;
+my $SessionMonth = $Untaint -> extract(-as_safehtml => "sessionmonth") || "";
+my $SessionYear = $Untaint -> extract(-as_integer => "sessionyear") || 0;
+my $SessionHour = $Untaint -> extract(-as_safehtml => "sessiontime") || 0;
 
-my @SessionOrderIDs = split /\0/,$params{sessionorderid};
-my @TalkOrders      = split /\0/,$params{talkorder};
-my @TalkTitles      = split /\0/,$params{talktitle};
-my @TalkNotes       = split /\0/,$params{talknote};
-my @TalkTimes       = split /\0/,$params{talktime};
-my @TalkSeparators  = split /\0/,$params{talkseparator};
-my @TalkDeletes     = split /\0/,$params{talkdelete};
-my @TalkConfirms    = split /\0/,$params{talkconfirm};
-my @TalkReserves    = split /\0/,$params{talkreserve};
-my @TimeStamps      = split /\0/,$params{timestamp};
+my @SessionOrderIDs = @{ $Untaint -> extract(-as_listofhtml => "sessionorderid") || undef };
+my @TalkOrders = @{ $Untaint -> extract(-as_listofhtml => "talkorder") || undef };
+my @TalkTitles = @{ $Untaint -> extract(-as_listofhtml => "talktitle") || undef };
+my @TalkNotes = @{ $Untaint -> extract(-as_listofhtml => "talknote") || undef };
+my @TalkTimes = @{ $Untaint -> extract(-as_listofhtml => "talktime") || undef };
+my @TalkSeparators = @{ $Untaint -> extract(-as_listofhtml => "talkseparator") || undef };
+my @TalkDeletes = @{ $Untaint -> extract(-as_listofhtml => "talkdelete") || undef };
+my @TalkConfirms = @{ $Untaint -> extract(-as_listofhtml => "talkconfirm") || undef };
+my @TalkReserves = @{ $Untaint -> extract(-as_listofhtml => "talkreserve") || undef };
+my @TimeStamps = @{ $Untaint -> extract(-as_listofhtml => "timestamp") || undef };
 
 # For single session mode
 
-my $EventID               = $params{eventid};
-my $Location              = $params{location};
-my $AltLocation           = $params{altlocation};
-my $URL                   = $params{url};
-my $EventGroupID          = $params{eventgroups};
-my $Short                 = $params{shortdesc};
-my $Long                  = $params{long};
-my @MeetingViewGroupIDs   = split /\0/,$params{meetingviewgroups};
-my @MeetingModifyGroupIDs = split /\0/,$params{meetingmodifygroups};
-my @TopicIDs              = split /\0/,$params{topics};
-my @ModeratorIDs          = split /\0/,$params{moderators};
+my $EventID = $Untaint -> extract(-as_integer => "eventid") || 0;
+my $Location = $Untaint -> extract(-as_safehtml => "location") || "";
+my $AltLocation = $Untaint -> extract(-as_safehtml => "altlocation") || "";
+my $URL = $Untaint -> extract(-as_safehtml => "url") || "";
+my $EventGroupID = $Untaint -> extract(-as_integer => "eventgroups") || 0;
+my $Short = $Untaint -> extract(-as_safehtml => "shortdesc") || "";
+my $Long = $Untaint -> extract(-as_safehtml => "long") || "";
+my @MeetingViewGroupIDs = @{ $Untaint -> extract(-as_listofint => "meetingviewgroups") || undef };
+my @MeetingModifyGroupIDs = @{ $Untaint -> extract(-as_listofint => "meetingmodifygroups") || undef };
+my @TopicIDs = @{ $Untaint -> extract(-as_listofint => "topics") || undef };
+my @ModeratorIDs = @{ $Untaint -> extract(-as_listofint => "moderators") || undef };
 
 unless ($Long) {$Long = $Short;}
 
@@ -295,16 +298,14 @@ if ($Mode eq "modify" || $Mode eq "create") {
 
     my $TalkConfirmed   = $TalkConfirmFlags{$SessionOrderID};
     my $TalkReserve     = $TalkReserveFlags{$SessionOrderID};
-    my $TalkDocID       = $params{"talkdocid-$SessionOrderID"};
-    my $NewSessionID    = $params{"newsessionid-$SessionOrderID"};
+    my $TalkDocID = $Untaint -> extract(-as_integer => "talkdocid-$SessionOrderID") || 0;
+    my $NewSessionID = $Untaint -> extract(-as_integer => "newsessionid-$SessionOrderID") || 0;
 
-    my @TopicHints  = split /\0/,$params{"topics-$SessionOrderID"};
-    my @AuthorHints = ();
-    if ($params{"authors-$SessionOrderID"}) {
-      @AuthorHints = split /\0/,$params{"authors-$SessionOrderID"};
-    } elsif ($params{"authortext-$SessionOrderID"}) {
+    my @TopicHints = @{ $Untaint -> extract(-as_listofint => "topics-$SessionOrderID") || undef };
+    my @AuthorHints = @{ $Untaint -> extract(-as_listofint => "authors-$SessionOrderID") || undef };
+    my $AuthorText = $Untaint -> extract(-as_safehtml => "authortext-$SessionOrderID") || "";
+    if (!@AuthorHints && $AuthorText) {
       require "AuthorSQL.pm";
-      my $AuthorText = $params{"authortext-$SessionOrderID"};
       @AuthorHints = ProcessManualAuthors($AuthorText);
     }
 

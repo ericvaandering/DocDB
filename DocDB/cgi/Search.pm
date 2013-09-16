@@ -10,7 +10,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -100,15 +100,15 @@ sub LocalSearch ($) {
 
   ### Purify input (remove punctuation)
 
-  $SimpleText         =~ s/[^\s\w+-\.]//go;
-  $TitleSearch        =~ s/[^\s\w+-\.]//go;
-  $AbstractSearch     =~ s/[^\s\w+-\.]//go;
-  $KeywordSearch      =~ s/[^\s\w+-\.]//go;
-  $RevisionNoteSearch =~ s/[^\s\w+-\.]//go;
-  $PubInfoSearch      =~ s/[^\s\w+-\.]//go;
-  $FileSearch         =~ s/[^\s\w+-\.]//go;
-  $FileDescSearch     =~ s/[^\s\w+-\.]//go;
-  $FileContSearch     =~ s/[^\s\w+-\.]//go;
+#  $SimpleText         =~ s/[^\s\w+-\.]//go;
+#  $TitleSearch        =~ s/[^\s\w+-\.]//go;
+#  $AbstractSearch     =~ s/[^\s\w+-\.]//go;
+#  $KeywordSearch      =~ s/[^\s\w+-\.]//go;
+#  $RevisionNoteSearch =~ s/[^\s\w+-\.]//go;
+#  $PubInfoSearch      =~ s/[^\s\w+-\.]//go;
+#  $FileSearch         =~ s/[^\s\w+-\.]//go;
+#  $FileDescSearch     =~ s/[^\s\w+-\.]//go;
+  $FileContSearch     =~ s/[^\s\w+-\.]//go;  # No idea what they'd do with special characters, best to remove
 
   GetTopics();
   GetSecurityGroups();
@@ -125,6 +125,8 @@ sub LocalSearch ($) {
   }
 
   if ($SimpleText) { # Break up words and set parameters for rest of search
+    my $SimpleAlphaNumeric = $SimpleText;
+    $SimpleAlphaNumeric =~ s/[^\s\w+-\.]//go;    # FIXME: Upgrade Match* routines to handle special characters
     @RequesterSearchIDs  = ();
     @AuthorSearchIDs     = ();
     @TypeSearchIDs       = ();
@@ -132,7 +134,7 @@ sub LocalSearch ($) {
     @EventSearchIDs      = ();
     @EventGroupSearchIDs = ();
 
-    my @Words = split /\s+/,$SimpleText;
+    my @Words = split /\s+/,$SimpleAlphaNumeric;
     foreach my $Word (@Words) {
       push @AuthorSearchIDs    ,MatchAuthor(     {-either => $Word} );
       push @TypeSearchIDs      ,MatchDocType(    {-short  => $Word} );
@@ -153,7 +155,7 @@ sub LocalSearch ($) {
     $PubInfoSearch          = $SimpleText;
     $FileSearch             = $SimpleText;
     $FileDescSearch         = $SimpleText;
-    $FileContSearch         = $SimpleText;
+    $FileContSearch         = $SimpleAlphaNumeric;  # No idea what they'd do with special characters, best to remove
     $TitleSearchMode        = "anyword";
     $AbstractSearchMode     = "anyword";
     $KeywordSearchMode      = "anyword";

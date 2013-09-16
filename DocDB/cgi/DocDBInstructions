@@ -26,21 +26,25 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "Messages.pm";
 require "SecuritySQL.pm";
 require "Security.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 &GetSecurityGroups;
 
-%params = $query -> Vars;
-$InstructionSet = $params{set} || "general";
+my $Untaint = CGI::Untaint -> new($query -> Vars);
+
+my $InstructionSet = $Untaint -> extract(-as_printable => "set") || "general";
 
 # Title
 

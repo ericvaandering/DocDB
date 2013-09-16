@@ -1,14 +1,14 @@
 #! /usr/bin/env perl
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -20,7 +20,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI qw(-nosticky);                                                                                      
+use CGI qw(-nosticky);
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -37,6 +37,7 @@ require "SecurityHTML.pm";
 require "MeetingSecurityUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 GetSecurityGroups();
@@ -66,7 +67,7 @@ print "<p><strong><a href=\"$MainPage\">Main Menu</a></strong></p>\n";
 print "<p><strong><a href=\"$DocDBInstructions\">Instructions</a></strong></p>\n";
 if ($PersonalAccountLink) {
   print "<p><strong>$PersonalAccountLink</strong></p>\n";
-}  
+}
 print "<p><strong><a href=\"#customcreate\">Customized<br/>Create/Modify</a></strong></p>\n";
 print "<p><strong><a href=\"#addform\">Customized<br/>Add Files</a></strong></p>\n";
 foreach my $Text (@{ $ProjectMessages{Homepage}{LeftColumn} }) {
@@ -83,88 +84,88 @@ print "(".FormElementTitle(-helplink => "modifytypes", -helptext => "Which optio
 ### New upload short form
 
 print "<ul>\n";
-print "<li>"; 
+print "<li>";
 print "\n",$query -> startform('POST',$DocumentAddForm),"<div>\n";
 print $query -> submit (-value => "Create a new");
-print " document from "; 
+print " document from ";
 print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
-print " file(s) on your "; 
+print " file(s) on your ";
 print FormElementTitle(-helplink => "uploadmethod", -helptext => "local computer",
                        -nocolon  => $TRUE,          -nobreak  => $TRUE);
 print $query -> hidden(-name => 'mode',    -default => 'add');
 print $query -> hidden(-name => 'upload',    -default => 'file');
 print "\n</div>\n",$query -> endform,"\n\n";
-print "</li>"; 
+print "</li>";
 
 ### New http short form
 
-print "<li>"; 
+print "<li>";
 print "\n",$query -> startform('POST',$DocumentAddForm),"<div>\n";
 print $query -> submit (-value => "Create a new");
-print " document from "; 
+print " document from ";
 print $query -> textfield(-name => "numfile", -size => 2, -maxlength => 2);
-print " file(s) on the "; 
+print " file(s) on the ";
 print FormElementTitle(-helplink => "uploadmethod", -helptext => "web",
                        -nocolon  => $TRUE,          -nobreak  => $TRUE);
 print $query -> hidden(-name => 'mode',    -default => 'add');
 print $query -> hidden(-name => 'upload',    -default => 'http');
 print "\n</div>\n",$query -> endform,"\n\n";
-print "</li>"; 
+print "</li>";
 
 ### Reserve form (button)
 
-print "<li>"; 
+print "<li>";
 print "\n",$query -> startform('POST',$DocumentAddForm),"<div>\n";
 print $query -> submit (-value => "Reserve");
-print " a document number\n"; 
+print " a document number\n";
 print "(if you don't yet have a draft of your document).\n";
 print $query -> hidden(-name => 'mode',    -default => 'reserve');
 print "\n</div>\n",$query -> endform,"\n\n";
-print "</li>"; 
+print "</li>";
 
 ### Update short form
 
-print "<li>"; 
+print "<li>";
 print "\n",$query -> startform('POST',$DocumentAddForm),"<div>\n";
 print $query -> submit (-value => "Update");
-print " document # "; 
+print " document # ";
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 print $query -> hidden(-name => 'mode',    -default => 'update');
 print "\n</div>\n",$query -> endform,"\n\n";
-print "</li>"; 
+print "</li>";
 
 ### Update DB short form
 
-print "<li>"; 
+print "<li>";
 print "\n",$query -> startform('POST',$DocumentAddForm),"<div>\n";
 print $query -> submit (-value => "Update DB Info");
-print " for document # "; 
+print " for document # ";
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 print $query -> hidden(-name => 'mode',    -default => 'updatedb');
 print "\n</div>\n",$query -> endform,"\n\n";
-print "</li>"; 
+print "</li>";
 
 ### File Add short form
 
-print "<li>"; 
+print "<li>";
 print "\n",$query -> startform('POST',$AddFilesForm),"<div>\n";
 print $query -> submit (-value => "Add");
-print " "; 
+print " ";
 print $query -> textfield(-name => "numfile", -size => 3, -maxlength => 2);
-print " file(s) to document # "; 
+print " file(s) to document # ";
 print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
 #print $query -> hidden(-name => 'mode',    -default => 'updatedb');
 print "\n</div>\n",$query -> endform,"\n\n";
-print "</li>"; 
+print "</li>";
 
 if (CanAdminister()) { # Delete Form
-  print "<li>"; 
+  print "<li>";
   print "\n",$query -> startform('POST',$DeleteConfirm),"<div>\n";
   print $query -> submit (-value => "Delete");
-  print " document # "; 
+  print " document # ";
   print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
   print "\n</div>\n",$query -> endform,"\n\n";
-  print "</li>"; 
+  print "</li>";
 }
 print "</ul>\n";
 
@@ -174,34 +175,34 @@ if (CanCreateMeeting()) {
 
   ### Full meeting form
 
-  print "<li>\n"; 
+  print "<li>\n";
   print $query -> startform('POST',$MeetingModify),"<div>\n";
   print $query -> submit (-value => "Create");
-  print " a new event with multiple sessions"; 
+  print " a new event with multiple sessions";
   print "\n</div>\n",$query -> endform,"\n\n";
-  print "</li>\n"; 
+  print "</li>\n";
 
   ### Reduced meeting form
 
-  print "<li>\n"; 
+  print "<li>\n";
   print $query -> startform('POST',$SessionModify),"<div>\n";
   print $query -> hidden(-name => 'singlesession', -default => 1);
   print $query -> hidden(-name => 'mode', -default => "new");
   print $query -> submit (-value => "Create");
-  print " a new event with only one session"; 
+  print " a new event with only one session";
   print "\n</div>\n",$query -> endform,"\n\n";
-  print "</li>\n"; 
+  print "</li>\n";
 
   ### No sessions form
 
-  print "<li>\n"; 
+  print "<li>\n";
   print $query -> startform('POST',$MeetingModify),"<div>\n";
   print $query -> hidden(-name => 'nosessions',    -default => 1);
   print $query -> submit (-value => "Create");
-  print " an externally managed event (e. g. a conference)"; 
+  print " an externally managed event (e. g. a conference)";
   print "\n</div>\n",$query -> endform,"\n\n";
-  print "</li>\n"; 
-  
+  print "</li>\n";
+
   print "<li>Modify an  <a href=\"$ListAllMeetings?mode=modify\">existing
              event</a> (choose event on next page)</li>\n";
 
@@ -215,14 +216,14 @@ if (CanAdminister()) {
   print "<li>Perform other <a href=\"$AdministerHome\">administration tasks</a></li>\n";
 }
 print "</ul>\n";
-           
+
 
 print "<hr/>\n";
-  
-### Customized Add/Update form creation form   
+
+### Customized Add/Update form creation form
 
 print "<a name=\"customcreate\" />\n";
-  
+
 print $query -> startform('POST',$DocumentAddForm);
 #print "<div>\n";
 $modes{reserve}  = "Reserve document #";
