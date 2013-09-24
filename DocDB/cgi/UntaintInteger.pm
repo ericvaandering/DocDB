@@ -28,7 +28,7 @@ $VERSION = '1.00';
 use strict;
 use base 'CGI::Untaint::object';
 
-sub _untaint_re { qr/^\s+([+-]?\d+)\s+$/ }
+sub _untaint_re { qr/^\s*([+-]?\d+)\s*$/ }
 
 sub is_valid {
   my $self = shift;
