@@ -191,10 +191,11 @@ sub StreamFile (%) {
 
     unless ($MimeType) {
       # This is unsafe. Until we can figure out a way to do this, comment it out. Could use IPC::Run if we had it
-#      $MimeType = `$FileMagic -ib \"$File\"`; # Use magic as a backup
-#      chomp $MimeType;
+      # $MimeType = `$FileMagic -ib \"$File\"`; # Use magic as a backup
+      # chomp $MimeType;
+      # print STDERR "DocDB: MIME info not found, defaulting to \"magic\" which says: $MimeType\n";
       $MimeType = 'binary/octet-stream';
-      print STDERR "DocDB: MIME info not found, defaulting to \"magic\" which says: $MimeType\n";
+      print STDERR "DocDB: MIME info not found, defaulting to binary/octet-stream\n";
     }
 
     my @Parts = split /\//,$File;

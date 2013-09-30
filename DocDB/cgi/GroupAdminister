@@ -55,7 +55,7 @@ my $Force = $Untaint -> extract(-as_printable => "admforce") || "";
 
 my $Description = $Untaint -> extract(-as_safehtml => "description") || "";
 my $Name = $Untaint -> extract(-as_safehtml => "name") || "";
-my $ParentID = $Untaint -> extract(-as_integer => "ParentID") || 0;
+my $ParentID = $Untaint -> extract(-as_integer => "parent") || 0;
 my @ChildIDs = @{ $Untaint -> extract(-as_listofint => "child") || undef };
 my $View = $Untaint -> extract(-as_printable => "view") || "";
 my $Create = $Untaint -> extract(-as_printable => "create") || "";
