@@ -61,7 +61,7 @@ sub AdvancedInstructionsBody {
   <p>You can also construct URL's that link to your document. The URL is of the form
   <tt>$ShowDocument?docid=XXXX&amp;version=XX</tt>,
   where the X's represent <i>just the numbers</i> of the document and version.
-  (I.e. leave off the ``$ShortProject-doc-'' and ``-v.'') As above, you can leave off the
+  (I.e. leave off the <q>$ShortProject-doc-</q> and <q>-v.</q>) As above, you can leave off the
   <tt>&amp;version=XX</tt> to refer to the latest version.</p>
 
   <p><strong>Using "as of" instead of version number:</strong> Instead of specifying a version
