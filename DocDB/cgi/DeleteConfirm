@@ -51,7 +51,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-my $DocumentID = $Untaint -> extract(-as_typedint => "documentid") || 0;
+my $DocumentID = $Untaint -> extract(-as_typedint => "docid") || 0;
 
 @ErrorStack = ();
 
