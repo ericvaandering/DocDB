@@ -128,6 +128,12 @@ my @AuthorIDs = @{ $Untaint -> extract(-as_listofint => "authors") || undef };
 my $AuthorManual = $Untaint -> extract(-as_safehtml => "authormanual") || "";
 
 my @ViewGroupIDs = @{ $Untaint -> extract(-as_listofint => "security") || undef };
+
+# Don't understand this but untaint of a list with the value "0" produces an empty list. Untaint as printable does not help.
+my $ViewGroupRaw = $query -> param("security");
+if ($ViewGroupRaw eq "0") {
+  @ViewGroupIDs = (0);
+}
 my @ModifyGroupIDs = @{ $Untaint -> extract(-as_listofint => "modify") || undef };
 
 # Journal Info
