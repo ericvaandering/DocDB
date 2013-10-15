@@ -43,7 +43,7 @@ $query -> autoEscape(0);
 my $Untaint = CGI::Untaint -> new($query -> Vars);
 
 my $DocumentID = $Untaint -> extract(-as_integer => "docid") || 0;
-my $Version = $Untaint -> extract(-as_integer => "version") || 0;
+my $Version = $Untaint -> extract(-as_integer => "version") || undef;
 my $AsOf = $Untaint -> extract(-as_safehtml => "asof") || "";
 my $FileName = $Untaint -> extract(-as_printable => "filename") || "";
 my $Extension = $Untaint -> extract(-as_safehtml => "extension") || "";
