@@ -37,7 +37,7 @@ sub SmartHTML ($) {
   if ($MakeURLs) {
     my $urls = '(http|telnet|gopher|file|wais|ftp|https)';
     my $ltrs = '\w';
-    my $gunk = '/#~:.?+=&%@!\-';
+    my $gunk = '/#~:.?+=&%@!{};\-';
     my $punc = '.:?\-';
     my $any  = "${ltrs}${gunk}${punc}";
     $Text =~ s{
