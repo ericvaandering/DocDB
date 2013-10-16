@@ -20,6 +20,6 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-$DocDBVersion = "8.7.20rc4";
+$DocDBVersion = "8.7.20rc5";
 
 1;
