@@ -39,7 +39,7 @@ sub SendEmail (%) {
     my $Mailer = new Mail::Mailer 'smtp', Server => $MailServer;
     $Headers{To}      = \@Addressees;
     $Headers{From}    = $From;
-    $Headers{Subject} = $Subject;
+    $Headers{Subject} = HTML::Entities::decode_entities($Subject);
 
     $Mailer -> open(\%Headers);    # Start mail with headers
     print $Mailer HTML::Entities::decode_entities($Body);

@@ -133,7 +133,7 @@ sub MailNotices (%) {
 
     $Headers{To} = \@Addressees;
     $Headers{From} = "$Project Document Database <$DBWebMasterEmail>";
-    $Headers{Subject} = $Subject;
+    $Headers{Subject} = HTML::Entities::decode_entities($Subject);
 
     $Mailer -> open(\%Headers);    # Start mail with headers
     print $Mailer HTML::Entities::decode_entities($Message);
