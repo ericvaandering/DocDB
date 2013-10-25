@@ -3,12 +3,12 @@
 # Author Eric Vaandering (ewv@fnal.gov)
 #
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -21,6 +21,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -31,26 +32,25 @@ require "RevisionSQL.pm";
 require "MiscSQL.pm";
 require "FSUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "Security.pm";
 require "SQLChecks.pm";
 
 require "RevisionHTML.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-%params = $query -> Vars;
-
-my $DocumentID = $params{docid};
-   $DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
-   $DocumentID =~ s/\s+$//;
-my $Version    = $params{version};
-my $AsOf       = $params{asof};
-my $FileName   = $params{filename};
-my $Extension  = $params{extension};
+my $DocumentID = $Untaint -> extract(-as_integer => "docid") || 0;
+my $Version = $Untaint -> extract(-as_integer => "version") || undef;
+my $AsOf = $Untaint -> extract(-as_safehtml => "asof") || undef;
+my $FileName = $Untaint -> extract(-as_printable => "filename") || "";
+my $Extension = $Untaint -> extract(-as_safehtml => "extension") || "";
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number!";
-}  
+}
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
@@ -58,16 +58,16 @@ GetSecurityGroups();
 
 FetchDocument($DocumentID);
 
-if (defined $Version && defined $AsOf) {
+if ($Version && $AsOf) {
   push @ErrorStack,"You may not specify both a version and date.";
 }
 if (grep /\//,$FileName) {
   push @ErrorStack,"File names with / are not allowed for security reasons.";
-}  
+}
 
 if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
   print $query -> header( -charset => $HTTP_ENCODING );
-  DocDBHeader("File Retrieve Results"); 
+  DocDBHeader("File Retrieve Results");
   EndPage();
 }
 
@@ -90,12 +90,8 @@ if (defined $Version) {
 }
 
 unless (&CanAccess($DocumentID,$Version)) {
-  if ($remote_user) {
-    push @ErrorStack,"The $remote_user group is not authorized to view this document (or it does not exist).";
-  } else {
-    push @ErrorStack,"This document is not publicly accessible.";
-  }  
-}  
+  push @ErrorStack,"You are not authorized to view this document (or it does not exist).";
+}
 
 unless ($DocRevID) {
   push @ErrorStack,"This document does not exist.";
@@ -103,7 +99,7 @@ unless ($DocRevID) {
 
 if (@ErrorStack) {  # The user made one or more mistakes, warn and exit
   print $query -> header( -charset => $HTTP_ENCODING );
-  &DocDBHeader("File Retrieve Results"); 
+  &DocDBHeader("File Retrieve Results");
   EndPage();
 }
 
@@ -119,14 +115,14 @@ if ($FileName) {
         grep /$Extension$/i,$DocFiles{$DocFileID}{NAME}) {
       ++$NFiles;
       $LastFile = $DocFiles{$DocFileID}{NAME};
-    } 
+    }
   }
   if ($NFiles == 1) {
     $FullFile = &FullFile($DocumentID,$Version,$LastFile);
     $FullURL  = &GetURLDir($DocumentID,$Version).CGI::escape($LastFile);
   } elsif ($NFiles > 1) {
     push @WarnStack,"More than one file was found. Please select one below.";
-  }  
+  }
 } else {
   &FetchDocFiles($DocRevID);
   my $NFiles = 0;
@@ -136,7 +132,7 @@ if ($FileName) {
         $DocFiles{$DocFileID}{ROOT}) {
       ++$NFiles;
       $LastFile = $DocFiles{$DocFileID}{NAME};
-    } 
+    }
   }
   if ($NFiles == 1) {
     $FullFile = &FullFile($DocumentID,$Version,$LastFile);
@@ -145,8 +141,8 @@ if ($FileName) {
     push @WarnStack,"More than one file was found. Please select one below.";
   } else {
     push @WarnStack,"No files were found. Document info is below.";
-  }  
-}    
+  }
+}
 
 unless (-e $FullFile) {
   push @WarnStack,"No appropriate file was found.";
@@ -159,7 +155,7 @@ if ($FullFile && ($UserValidation eq "certificate" || $Preferences{Options}{Alwa
   print $query -> redirect(-location => $FullURL, -method => 'GET');
 } else {
   print $query -> header( -charset => $HTTP_ENCODING );
-  DocDBHeader("File Retrieve Results"); 
+  DocDBHeader("File Retrieve Results");
   EndPage(@ErrorStack);
 
   PrintRevisionInfo($DocRevID);

@@ -3,7 +3,7 @@
 #    Revision: $Revision$
 #    Modified: $Author$ on $Date$
 #
-# Copyright 2001-2012 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -20,6 +20,6 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-$DocDBVersion = "8.7.19";
+$DocDBVersion = "8.7.20rc6";
 
 1;

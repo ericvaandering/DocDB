@@ -1,17 +1,17 @@
 #
-#        Name: TalkSQL.pm 
-# Description: Routines to access SQL tables related to talks for meetings 
+#        Name: TalkSQL.pm
+# Description: Routines to access SQL tables related to talks for meetings
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 #
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -32,6 +32,10 @@ sub FetchSessionTalksByConferenceID ($) {
   my ($ConferenceID) = @_;
   my $SessionTalkID;
   my @SessionTalkIDs = ();
+  unless ($ConferenceID) {
+    return @SessionTalkIDs;
+  }
+
   my $SessionTalkList   = $dbh -> prepare(
     "select SessionTalk.SessionTalkID from SessionTalk,Session ".
     "where Session.SessionID=SessionTalk.SessionID and Session.ConferenceID=?");
@@ -41,13 +45,17 @@ sub FetchSessionTalksByConferenceID ($) {
     $SessionTalkID = &FetchSessionTalkByID($SessionTalkID);
     push @SessionTalkIDs,$SessionTalkID;
   }
-  return @SessionTalkIDs; 
+  return @SessionTalkIDs;
 }
 
 sub FetchSessionTalksBySessionID ($) {
   my ($SessionID) = @_;
   my $SessionTalkID;
   my @SessionTalkIDs = ();
+  unless ($SessionID) {
+    return @SessionTalkIDs;
+  }
+
   my $SessionTalkList   = $dbh -> prepare(
     "select SessionTalkID from SessionTalk where SessionID=?");
   $SessionTalkList -> execute($SessionID);
@@ -56,12 +64,12 @@ sub FetchSessionTalksBySessionID ($) {
     $SessionTalkID = &FetchSessionTalkByID($SessionTalkID);
     push @SessionTalkIDs,$SessionTalkID;
   }
-  return @SessionTalkIDs; 
+  return @SessionTalkIDs;
 }
 
 sub FetchSessionTalkByID ($) {
   my ($SessionTalkID) = @_;
-  my ($SessionID,$DocumentID,$Confirmed,$Time,$HintTitle,$Note,$TimeStamp); 
+  my ($SessionID,$DocumentID,$Confirmed,$Time,$HintTitle,$Note,$TimeStamp);
   my $SessionTalkFetch = $dbh -> prepare(
     "select SessionID,DocumentID,Confirmed,Time,HintTitle,Note,TimeStamp ".
     "from SessionTalk where SessionTalkID=?");
@@ -69,7 +77,7 @@ sub FetchSessionTalkByID ($) {
     return $SessionTalkID;
   }
   $SessionTalkFetch -> execute($SessionTalkID);
-  ($SessionID,$DocumentID,$Confirmed,$Time,$HintTitle,$Note,$TimeStamp) = $SessionTalkFetch -> fetchrow_array; 
+  ($SessionID,$DocumentID,$Confirmed,$Time,$HintTitle,$Note,$TimeStamp) = $SessionTalkFetch -> fetchrow_array;
   if ($TimeStamp) {
     $SessionTalks{$SessionTalkID}{SessionID}  = $SessionID;
     $SessionTalks{$SessionTalkID}{DocumentID} = $DocumentID;
@@ -79,7 +87,7 @@ sub FetchSessionTalkByID ($) {
     $SessionTalks{$SessionTalkID}{Note}       = $Note;
     $SessionTalks{$SessionTalkID}{TimeStamp}  = $TimeStamp;
   }
-  return $SessionTalkID;  
+  return $SessionTalkID;
 }
 
 sub FetchTalkSeparatorsBySessionID ($) {
@@ -94,12 +102,12 @@ sub FetchTalkSeparatorsBySessionID ($) {
     $TalkSeparatorID = &FetchTalkSeparatorByID($TalkSeparatorID);
     push @TalkSeparatorIDs,$TalkSeparatorID;
   }
-  return @TalkSeparatorIDs; 
+  return @TalkSeparatorIDs;
 }
 
 sub FetchTalkSeparatorByID ($) {
   my ($TalkSeparatorID) = @_;
-  my ($SessionID,$Time,$Title,$Note,$TimeStamp); 
+  my ($SessionID,$Time,$Title,$Note,$TimeStamp);
   my $TalkSeparatorFetch = $dbh -> prepare(
     "select SessionID,Time,Title,Note,TimeStamp ".
     "from TalkSeparator where TalkSeparatorID=?");
@@ -107,7 +115,7 @@ sub FetchTalkSeparatorByID ($) {
     return $TalkSeparatorID;
   }
   $TalkSeparatorFetch -> execute($TalkSeparatorID);
-  ($SessionID,$Time,$Title,$Note,$TimeStamp) = $TalkSeparatorFetch -> fetchrow_array; 
+  ($SessionID,$Time,$Title,$Note,$TimeStamp) = $TalkSeparatorFetch -> fetchrow_array;
   if ($TimeStamp) {
     $TalkSeparators{$TalkSeparatorID}{SessionID} = $SessionID;
     $TalkSeparators{$TalkSeparatorID}{Time}	 = $Time;
@@ -115,8 +123,8 @@ sub FetchTalkSeparatorByID ($) {
     $TalkSeparators{$TalkSeparatorID}{Note}      = $Note;
     $TalkSeparators{$TalkSeparatorID}{TimeStamp} = $TimeStamp;
   }
-  
-  return $TalkSeparatorID;  
+
+  return $TalkSeparatorID;
 }
 
 sub FetchSessionOrdersBySessionID {
@@ -148,7 +156,7 @@ sub FetchSessionOrdersBySessionID {
     $SessionOrders{$SessionOrderID}{TalkOrder}	     = $TalkOrder;
     push @SessionOrderIDs,$SessionOrderID;
   }
-  return @SessionOrderIDs; 
+  return @SessionOrderIDs;
 }
 
 sub FetchSessionOrderByID ($) {
@@ -172,20 +180,20 @@ sub DeleteSessionTalk ($) {
 
   require "TalkHintSQL.pm";
 
-  my $TalkDelete  = $dbh -> prepare("delete from SessionTalk  where SessionTalkID=?"); 
-  my $OrderDelete = $dbh -> prepare("delete from SessionOrder where SessionTalkID=?"); 
+  my $TalkDelete  = $dbh -> prepare("delete from SessionTalk  where SessionTalkID=?");
+  my $OrderDelete = $dbh -> prepare("delete from SessionOrder where SessionTalkID=?");
 
   $TalkDelete  -> execute($SessionTalkID);
   $OrderDelete -> execute($SessionTalkID);
-  
-  &DeleteHints($SessionTalkID);  
+
+  &DeleteHints($SessionTalkID);
 }
 
 sub DeleteTalkSeparator ($) {
   my ($TalkSeparatorID) = @_;
 
-  my $SeparatorDelete = $dbh -> prepare("delete from TalkSeparator where TalkSeparatorID=?"); 
-  my $OrderDelete     = $dbh -> prepare("delete from SessionOrder  where TalkSeparatorID=?"); 
+  my $SeparatorDelete = $dbh -> prepare("delete from TalkSeparator where TalkSeparatorID=?");
+  my $OrderDelete     = $dbh -> prepare("delete from SessionOrder  where TalkSeparatorID=?");
 
   $SeparatorDelete -> execute($TalkSeparatorID);
   $OrderDelete     -> execute($TalkSeparatorID);
@@ -194,21 +202,21 @@ sub DeleteTalkSeparator ($) {
 sub ConfirmTalk (%) {
   require "RevisionSQL.pm";
   my %Params = @_;
-  
+
   my $DocumentID    = $Params{-docid}         || 0;
   my $SessionTalkID = $Params{-sessiontalkid} || 0;
   my $EventID       = $Params{-eventid}       || 0;
-  
+
   &FetchRevisionsByDocument($DocumentID);
   my $DocRevID = $DocRevIDs{$DocumentID}{$Documents{$DocumentID}{NVersions}};
-  
+
   my $Check = $dbh -> prepare("select RevEventID from RevisionEvent where DocRevID=? and ConferenceID=?");
   $Check -> execute($DocRevID,$EventID);
   my ($RevisionEventID) = $Check -> fetchrow_array;
   unless ($RevisionEventID) {
-    my $Insert = $dbh -> prepare("insert into RevisionEvent (RevEventID,DocRevID,ConferenceID) values (0,?,?)"); 
+    my $Insert = $dbh -> prepare("insert into RevisionEvent (RevEventID,DocRevID,ConferenceID) values (0,?,?)");
     $Insert -> execute($DocRevID,$EventID);
-  }  
-} 
+  }
+}
 
 1;

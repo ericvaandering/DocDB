@@ -27,6 +27,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -34,17 +35,18 @@ require "KeywordSQL.pm";
 require "ResponseElements.pm";
 require "KeywordHTML.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 
 require "Messages.pm";
 
 $query = new CGI;  # Global for subroutines
-%params = $query -> Vars;
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-my $Mode   = $params{mode}   || "display";
-my $Format = $params{format} || "short"  ;
+my $Mode = $Untaint -> extract(-as_printable => "mode") || "display";
+my $Format = $Untaint -> extract(-as_printable => "format") || "short";
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
-
 
 print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("List of Keywords","", -scripts => ["PopUps","InsertKeyword"]);

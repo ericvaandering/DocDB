@@ -1,3 +1,8 @@
+8.7.20
+ Fix lots of potential cross-site scripting problems by making (nearly) all
+ inputs valid HTML and doing the same with database output. Databases will now
+ contain a mix of escaped HTML and things with bare &, >, < etc.
+
 8.7.19
  Fix case where infinite loop is caused if topic parent is set to a descendant
  Add ability to add "attachment" in StreamFile for some extensions. Helps with Office

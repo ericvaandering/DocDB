@@ -7,7 +7,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -255,6 +255,9 @@ sub FetchEventByEventID { # Fetches an event by EventID
   unless ($LimitInfo) {
     push @DebugStack,"Getting all info for event $EventID.";
   }
+  unless ($EventID) {
+    return 0;
+  }
   if ($Conferences{$EventID}{EventGroupID}) { # We already have this one
     if ($Conferences{$EventID}{HaveAllInfo} || $LimitInfo) {
       return $EventID;
@@ -319,6 +322,9 @@ sub FetchEventByEventID { # Fetches an event by EventID
 
 sub FetchSessionsByConferenceID ($) {
   my ($ConferenceID) = @_;
+  unless ($ConferenceID) {
+    return undef;
+  }
   my $SessionID;
   my @SessionIDs = ();
   my $SessionList   = $dbh -> prepare(
@@ -366,6 +372,9 @@ sub ClearSessions () {
 sub FetchSessionByID ($) {
   my ($SessionID) = @_;
 
+  unless ($SessionID) {
+    return undef;
+  }
   if ($Sessions{$SessionID}{TimeStamp}) {
     return $SessionID;
   }
@@ -631,7 +640,7 @@ sub DeleteEventGroup (%) {
 
   my $Delete = $dbh -> prepare("delete from EventGroup where EventGroupID=?");
   $Delete -> execute($EventGroupID);
-  push @ActionStack,"Event group <strong>$EventGroups{$EventGroupID}{LongDescription}</strong> deleted";
+  push @ActionStack,"Event group $EventGroups{$EventGroupID}{LongDescription} deleted";
 
   return 1;
 }
@@ -681,7 +690,7 @@ sub DeleteEvent (%) {
   $Delete          -> execute($EventID);
   $DeleteTopic     -> execute($EventID);
   $DeleteModerator -> execute($EventID);
-  push @ActionStack,"Event <strong>$Conferences{$EventID}{Title}</strong> deleted";
+  push @ActionStack,"Event $Conferences{$EventID}{Title} deleted";
   if (@DocRevIDs) {
     my $Delete = $dbh -> prepare("delete from RevisionEvent where ConferenceID=?");
     $Delete -> execute($EventID);

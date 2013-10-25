@@ -6,7 +6,7 @@
 #
 # Author Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -22,6 +22,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+use HTML::Entities qw(encode_entities_numeric);
 
 %SearchWeights = ( # These weights are used to order documents from the simple search
                   "Author"          => 4,
@@ -52,11 +54,11 @@ sub TextSearch {
     my @Words = split /\s+/,$Words;
     foreach my $Word (@Words) {
       if ($Mode eq "anysub" || $Mode eq "allsub") {
-        $Word =~ tr/[A-Z]/[a-z]/;
-        push @Atoms,"LOWER($Field) like \"%$Word%\"";
+        my $RegExp = RegExpSearchAtom($Word);
+        push @Atoms, "$Field rlike $RegExp";
       } elsif ($Mode eq "anyword" || $Mode eq "allword") {
-        $Word =~ tr/[A-Z]/[a-z]/;
-        push @Atoms,"LOWER($Field) REGEXP \"\[\[:<:\]\]$Word\[\[:>:\]\]\"";
+        my $RegExp = RegExpSearchAtom($Word, $TRUE);
+        push @Atoms, "$Field rlike $RegExp";
       }
     }
   }
@@ -72,6 +74,54 @@ sub TextSearch {
   if ($Phrase) {$Phrase = "($Phrase)";}
 
   return $Phrase;
+}
+
+sub RegExpSearchAtom {
+  my ($Word, $RequireWord) = @_;
+
+  my @RegExpParts = ();
+  my $RegExpAtom  = '';
+
+  my $SimpleWord = $Word;
+  $SimpleWord =~ s/\W//g;
+  if ($SimpleWord eq $Word) { # No special characters found
+    push @RegExpParts, $Word;
+  } else {
+    my $Escaped = $Word;                                         # First take care of regexp special characters
+    $Escaped =~ s/([\[\\\^\$\.\|\?\*\+\(\)])/\\\1/g;             # Prepend \ to regexp safe characters [\^$.|?*+()
+    push @RegExpParts, $Escaped;
+
+    $Escaped = HTML::Entities::encode($Word);                    # &amp;
+    if ($Escaped ne $Word) {
+      push @RegExpParts, $Escaped;
+    }
+
+    $Escaped = HTML::Entities::encode_entities_numeric($Word);   # &#xab;
+    if ($Escaped ne $Word) {
+      push @RegExpParts, $Escaped;
+    }
+
+    $Escaped = $Word;
+    $Escaped =~ s{(\W)}{"%".sprintf("%x", unpack(U,$1))}ge;      # %20
+    push @RegExpParts, $Escaped;
+
+    $Escaped = $Word;
+    $Escaped =~ s{(\W)}{"&#".unpack(U,$1).";"}ge;                # &#1234;
+    push @RegExpParts, $Escaped;
+  }
+
+  if ($RequireWord) {
+    $RegExpAtom .= '[[:<:]]';
+  }
+  $RegExpAtom .= '(';
+  $RegExpAtom .= join '|', @RegExpParts;
+  $RegExpAtom .= ')';
+  if ($RequireWord) {
+    $RegExpAtom .= '[[:>:]]';
+  }
+
+  my $SafeAtom = $dbh->quote($RegExpAtom);
+  return $SafeAtom;
 }
 
 sub IDSearch {

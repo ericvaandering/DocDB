@@ -4,15 +4,15 @@
 #              changes in e-mail.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 #
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -24,11 +24,13 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI;    
+use CGI;
+use CGI::Untaint;
 use DBI;
-                                                  
+
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "Scripts.pm";
 
 require "ResponseElements.pm";
@@ -42,21 +44,22 @@ require "EmailSecurity.pm";
 require "CertificateUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
-%params = $query -> Vars;
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
 # Collect parameters
 
-my $Action      = $params{action};
-my $EmailUserID = $params{emailuserid};
-my $SignatureID = $params{signatureid};
-my $Password    = $params{"password-$EmailUserID"};
+my $Action = $Untaint -> extract(-as_printable => "action") || "";
+my $EmailUserID = $Untaint -> extract(-as_integer => "emailuserid") || 0;
+my $SignatureID = $Untaint -> extract(-as_integer => "signatureid") || 0;
+my $Password = $Untaint -> extract(-as_printable => "password-$EmailUserID") || "";
 
 $Password =~ s/\s+//g;
 
 # Start the page
-   
+
 print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Document Signature","",-scripts => ["PopUps"]);
 
@@ -71,9 +74,9 @@ print $query -> header( -charset => $HTTP_ENCODING );
 my $UserName = $EmailUser{$EmailUserID}{Username};
 $EmailUserID = 0;
 
-if ($Password) { 
+if ($Password) {
   $EmailUserID = &ValidateEmailUser($UserName,$Password);
-} 
+}
 
 if ($UserValidation eq "certificate") {
   $EmailUserID = FetchEmailUserIDByCert();
@@ -89,17 +92,17 @@ unless ($EmailUserID) {
 
 unless ($Signatures{$SignatureID}{EmailUserID} == $EmailUserID) {
   push @ErrorStack,"You are not authorized to sign in this slot.";
-}  
+}
 if ($Action eq "sign" && $Signatures{$SignatureID}{Signed}) {
   push @ErrorStack,"This signature slot is already signed. You can't sign again.";
-}  
+}
 if ($Action eq "unsign" && !$Signatures{$SignatureID}{Signed}) {
   push @ErrorStack,"This signature slot is not signed. You can't remove the signature.";
-}  
+}
 if ($Action ne "unsign" && $Action ne "sign") {
   push @ErrorStack,"The action is not recognized. Must be either sign or unsign.";
-}  
-  
+}
+
 # Standard warnings/errors on exit
 
 EndPage();
@@ -118,8 +121,8 @@ if ($Action eq "sign") {
 }
 
 print "<b>You have $SignMessage the document. The new document information is
-          shown below:</b><p/>\n"; 
-print "<hr/>\n"; 
+          shown below:</b><p/>\n";
+print "<hr/>\n";
 
 # Get revision number and print updated info
 

@@ -1,17 +1,17 @@
-# Description: The generic instructions for DocDB. This is mostly HTML, but making 
+# Description: The generic instructions for DocDB. This is mostly HTML, but making
 #              it a script allows us to eliminate parts of it that we don't want
 #              and get it following everyone's style, and allows groups to add
 #              to it with ProjectMessages.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -61,7 +61,7 @@ sub AdvancedInstructionsBody {
   <p>You can also construct URL's that link to your document. The URL is of the form
   <tt>$ShowDocument?docid=XXXX&amp;version=XX</tt>,
   where the X's represent <i>just the numbers</i> of the document and version.
-  (I.e. leave off the ``$ShortProject-doc-'' and ``-v.'') As above, you can leave off the
+  (I.e. leave off the <q>$ShortProject-doc-</q> and <q>-v.</q>) As above, you can leave off the
   <tt>&amp;version=XX</tt> to refer to the latest version.</p>
 
   <p><strong>Using "as of" instead of version number:</strong> Instead of specifying a version
@@ -70,11 +70,11 @@ sub AdvancedInstructionsBody {
 
   <h3>Linking to files in a document</h3>
 
-  <p>There is a script interface which fetches files from DocDB. The URL is 
+  <p>There is a script interface which fetches files from DocDB. The URL is
   <tt>$RetrieveFile?docid=XXXX&amp;version=XX&amp;filename=xxxxxx</tt>.
   The version number can be left off to get files from the latest version number.
   The filename can also be left off. If there is only one file marked <q>Main</q>
-  that file will be retrieved. 
+  that file will be retrieved.
   An alternate form is
   <tt>$RetrieveFile?docid=XXXX&amp;version=XX&amp;extension=xxx</tt>,
   so for instance you can specify PDF as the extension to retrieve the PDF file
@@ -94,16 +94,16 @@ sub AdvancedInstructionsBody {
   The most useful searches are by author, topic, keyword, or events.</p>
 
   <p>
-  To link to a topic, you must first find out the topic ID number. 
-  The easiest way to do this is to simply click on that topic from the 
+  To link to a topic, you must first find out the topic ID number.
+  The easiest way to do this is to simply click on that topic from the
   <a href="$ListTopics">list by topic</a> page.
-  The URL for a single topic will be 
-  <tt>$ListBy?topicid=xxx</tt>. 
-  Similarly, links to documents by authors are most easily found by the 
+  The URL for a single topic will be
+  <tt>$ListBy?topicid=xxx</tt>.
+  Similarly, links to documents by authors are most easily found by the
   <a href="$ListAuthors">list by author</a> page.
   </p>
   <p>
-  Use the search form to link to a keyword: 
+  Use the search form to link to a keyword:
   <tt>$Search?keywordsearchmode=anysub&amp;keywordsearch=xxxxxxx</tt>.
   </p>
   <p>
@@ -126,7 +126,7 @@ sub AdvancedInstructionsBody {
   have values of <tt>AND</tt> and <tt>OR</tt>. For instance, if you specify two authors,
   <tt>innerlogic=OR</tt> will return documents by <i>either</i> author while <tt>AND</tt>
   will require the document to be authored by <i>both</i> people. To understand
-  <tt>outerlogic</tt>, take the example of searching for an author and a topic. 
+  <tt>outerlogic</tt>, take the example of searching for an author and a topic.
   <tt>outerlogic=OR</tt> will require a document to either have the correct author or the
   correct topic, while <tt>AND</tt> will require both. Both options can be specified at the
   same time. <tt>outerlogic</tt> defaults to <tt>AND</tt> and <tt>innerlogic</tt> defaults
@@ -161,7 +161,7 @@ sub AdvancedInstructionsBody {
    more than one are specified, <i>only one</i> word must be found</li>
    <li><tt>searchmode=allsub</tt> as above, but <i>all</i> words must be found</li>
    <li><tt>searchmode=anyword</tt> or <tt>allword</tt> like above, but the word must be found surrounded by spaces</li>
-  </ul> 
+  </ul>
   <p>
   More modes can be added if required. To search for more than one word, place the code for a space (%20) between
   them.  </p>
@@ -182,13 +182,13 @@ sub AdvancedInstructionsBody {
   <a name="xml" />
   <h1>XML Interface</h1>
 
-  <p>An XML interface for retrieving information from and submiting information to DocDB is 
+  <p>An XML interface for retrieving information from and submiting information to DocDB is
      partially complete. It is not fully complete, but it may satisfy the most common needs.</p>
-     
+
   <a name="xmldown" />
   <h2>XML Downloads</h2>
 
-  <p>Any link to <tt>Search</tt> or <tt>ShowDocument</tt> described above will generate XML 
+  <p>Any link to <tt>Search</tt> or <tt>ShowDocument</tt> described above will generate XML
      output if <tt>&amp;outformat=xml</tt> is added to the parameter list. <tt>Search</tt> returns
      a summary of the found documents while <tt>ShowDocument</tt> returns all the meta-info for
      the document.</p>
@@ -198,7 +198,7 @@ sub AdvancedInstructionsBody {
      the XML output). Future improvements  to the XML facilities of DocDB may include XML output
      from <tt>ListBy</tt>, XML output of events, and  XML output of topic, author and other lists.
      If any of these enhancements would be useful to you, please contact your  administrator or
-     the developers.</p>  
+     the developers.</p>
 
   <a name="xmlup" />
   <h2>XML Uploads</h2>
@@ -206,9 +206,9 @@ sub AdvancedInstructionsBody {
   <p>Since version 8.4 DocDB has supported uploads of XML data describing documents. This is
      done with the <a href="$XMLUpload">XMLUpload</a> script. The XML output of ShowDocument
      described above can be used almost directly to create a new document. One new XML element
-     must be added to such an XMLFile and a second element is optional. Both elements must be 
+     must be added to such an XMLFile and a second element is optional. Both elements must be
      added as children of &lt;docdb&gt; (at the same level as &lt;document&gt;).</p>
-     
+
   <p>The first XML element is <tt>control</tt> which has two parameters: <tt>mode</tt> and
      <tt>usedate</tt>. <tt>mode</tt> must be one of three values, <q>new</q>, <q>bump</q>, or <q>updatedb</q>. New
      ignores the  document ID in the uploaded XML and creates a new document with the included
@@ -223,25 +223,25 @@ sub AdvancedInstructionsBody {
        &lt;mode&gt;new&lt;/mode&gt;
        &lt;usedate&gt;yes&lt;/usedate&gt;
      &lt;/control&gt;
-     </pre> 
+     </pre>
 
   <p>The second element XML element (which is optional) is <tt>authentication</tt> which contains
      the  username and password needed to download the file(s) in the document from the remote
      source. It will look like this:</p>
-     
+
      <pre>
      &lt;authentication&gt;
        &lt;username&gt;http-basic-username&lt;/username&gt;
        &lt;password&gt;http-basic-password&lt;/password&gt;
      &lt;/authentication&gt;
-     </pre> 
-     
-  <p>Generally speaking, when DocDB is processing an XML file, the <tt>id</tt> numbers describing 
+     </pre>
+
+  <p>Generally speaking, when DocDB is processing an XML file, the <tt>id</tt> numbers describing
      things  like topics, events, etc. are used and the names of those things shown in the XML
      file are ignored. Also, not all information  about a document van be uploaded via XML. This
      can be changed if there is a need for it. </p>
 
-  <p>If the <tt>id</tt> numbers are missing, DocDB attempts a text match for the following 
+  <p>If the <tt>id</tt> numbers are missing, DocDB attempts a text match for the following
      information:</p>
   <ul>
    <li>Document submitter (based on <tt>firstname</tt> and <tt>lastname</tt>)</li>
@@ -256,9 +256,9 @@ sub AdvancedInstructionsBody {
        as well</li>
   </ul>
 
-  <p>Finally, you will notice that there is no provision for adding files via XML. 
+  <p>Finally, you will notice that there is no provision for adding files via XML.
      This could be added but was not needed at the moment.</p>
-     
+
   <a name="program" />
   <h1>Programatic Interface</h1>
 

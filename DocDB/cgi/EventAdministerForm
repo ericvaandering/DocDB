@@ -9,7 +9,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -28,6 +28,7 @@
 
 
 use CGI qw(-nosticky);
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -40,6 +41,7 @@ require "Sorts.pm";
 
 require "DBUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 
 require "MeetingSQL.pm";
 require "SecuritySQL.pm";
@@ -48,19 +50,19 @@ require "MeetingHTML.pm";
 require "TopicHTML.pm"; # For description boxes
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-%params = $query -> Vars;
+my $Password = $Untaint -> extract(-as_printable => "password") || "";
+my $Username = $Untaint -> extract(-as_printable => "admuser") || "";
+my $Action = $Untaint -> extract(-as_printable => "admaction") || "";
+my $Force = $Untaint -> extract(-as_printable => "admforce") || "";
 
-my $Password         = $params{password};
-my $Username         = $params{admuser};
-my $Action           = $params{admaction};
-my $Force            = $params{admforce};
-
-my $SubForm          = $params{subform};
-my $EventGroupID     = int($params{eventgroups});
-my $EventID          = int($params{events});
-my $ShortDescription = $params{shortdesc};
-my $LongDescription  = $params{longdesc};
+my $SubForm = $Untaint -> extract(-as_printable => "subform") || "";
+my $EventGroupID = $Untaint -> extract(-as_integer => "eventgroups") || 0;
+my $EventID = $Untaint -> extract(-as_integer => "events") || 0;
+my $ShortDescription = $Untaint -> extract(-as_safehtml => "shortdesc") || "";
+my $LongDescription = $Untaint -> extract(-as_safehtml => "longdesc") || "";
 
 $query -> delete_all();
 
@@ -94,18 +96,19 @@ if ($SubForm eq "eventgroup") {
   if ($Action eq "Delete") {
     &DeleteEventGroup(-eventgroupid => $EventGroupID, -force => $Force);
   } elsif ($Action eq "Modify") {
+    my $OldShortDescription = SmartHTML({-text => $EventGroups{$EventGroupID}{ShortDescription}},);
     if ($ShortDescription) {
-      push @ActionStack,"Updated short description of $EventGroups{$EventGroupID}{ShortDescription}";
+      push @ActionStack,"Updated short description of $OldShortDescription";
       my $Update = $dbh->prepare("update EventGroup set ShortDescription=? where EventGroupID=?");
       $Update -> execute($ShortDescription,$EventGroupID);
     }
     if ($LongDescription) {
-      push @ActionStack,"Updated long description of $EventGroups{$EventGroupID}{ShortDescription}";
+      push @ActionStack,"Updated long description of $OldShortDescription";
       my $Update = $dbh->prepare("update EventGroup set LongDescription=? where EventGroupID=?");
       $Update -> execute($LongDescription,$EventGroupID);
     }
   } elsif ($Action eq "New") {
-    push @ActionStack,"New event group with description <strong>$ShortDescription</strong> inserted";
+    push @ActionStack,"New event group with description $ShortDescription inserted";
     my $Insert = $dbh -> prepare("insert into EventGroup (ShortDescription,LongDescription) values (?,?)");
     $Insert -> execute($ShortDescription,$LongDescription);
   } else {
@@ -115,7 +118,7 @@ if ($SubForm eq "eventgroup") {
   if ($Action eq "Delete") {
     &DeleteEvent(-eventid => $EventID, -force => $Force);
   } else {
-    push @WarnStack,"Only \"Delete\" is a valid action";
+    push @WarnStack,"Only \"Delete\" is a valid action for events.";
   }
 }
 

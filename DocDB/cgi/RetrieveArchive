@@ -7,7 +7,7 @@
 #    Modified:
 #
 
-# Copyright 2001-2012 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -27,6 +27,7 @@
 # FIXME: No links ask for .tar (might change)
 
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -35,15 +36,17 @@ require "SecuritySQL.pm";
 require "DocumentSQL.pm";
 require "FSUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "FileUtilities.pm";
 require "Security.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-%params = $query -> Vars;
-
-my $Type       = $params{type} ;
-my $DocumentID = $params{docid};
+my $Type = $Untaint -> extract(-as_printable => "type") || "";
+my $DocumentID = $Untaint -> extract(-as_integer => "docid") || 0;
+my $InputVersion = $Untaint -> extract(-as_integer => "version") || undef;
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number!";
@@ -57,8 +60,8 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetSecurityGroups;
 &FetchDocument($DocumentID);
 
-if (defined $params{version}) {
-  $Version = $params{version};
+if (defined $InputVersion) {
+  $Version = $InputVersion;
 } else {
   $Version = $Documents{$DocumentID}{NVersions};
 }

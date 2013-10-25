@@ -8,7 +8,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -26,22 +26,24 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
 require "MeetingSQL.pm";
 require "MeetingHTML.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "SecuritySQL.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
-%params = $query -> Vars;
-
-my $Mode         = $params{mode} || "display";
-my $EventGroupID = $params{eventgroupid};
-my $EventGroup   = $params{eventgroup};
+my $Mode = $Untaint -> extract(-as_printable => "mode") || "display";
+my $EventGroupID = $Untaint -> extract(-as_integer => "eventgroupid") || 0;
+my $EventGroup = $Untaint -> extract(-as_integer => "eventgroup") || 0;
 
 GetSecurityGroups();
 

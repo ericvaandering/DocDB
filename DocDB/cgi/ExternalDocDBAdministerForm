@@ -1,18 +1,18 @@
 #! /usr/bin/env perl
 #
 #        Name: ExternalDocDBAdministerForm
-# Description: Allows the administrator to add knowledge of other DocDBs. 
+# Description: Allows the administrator to add knowledge of other DocDBs.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 #
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -26,6 +26,7 @@
 
 
 use CGI qw(-nosticky);
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -38,27 +39,28 @@ require "Sorts.pm";
 
 require "DBUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 
 require "SecuritySQL.pm";
 require "XRefHTML.pm";
 require "XRefSQL.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-%params = $query -> Vars;
+my $Password = $Untaint -> extract(-as_printable => "password") || "";
+my $Username = $Untaint -> extract(-as_printable => "admuser") || "";
+my $Action = $Untaint -> extract(-as_printable => "admaction") || "";
+my $Force = $Untaint -> extract(-as_printable => "admforce") || "";
 
-my $Password         = $params{password};
-my $Username         = $params{admuser};
-my $Action           = $params{admaction};
-my $Force            = $params{admforce};
+my $SubForm = $Untaint -> extract(-as_printable => "subform") || "";
 
-my $SubForm          = $params{subform};
-
-my $ExternalDocDBID  = $params{externaldocdbs};
-my $ProjectName      = $params{project};
-my $Description      = $params{desc};
-my $PublicURL        = $params{puburl};
-my $PrivateURL       = $params{privurl};
+my $ExternalDocDBID = $Untaint -> extract(-as_integer => "externaldocdbs") || 0;
+my $ProjectName = $Untaint -> extract(-as_safehtml => "project") || "";
+my $Description = $Untaint -> extract(-as_safehtml => "desc") || "";
+my $PublicURL = $Untaint -> extract(-as_safehtml => "puburl") || "";
+my $PrivateURL = $Untaint -> extract(-as_safehtml => "privurl") || "";
 
 $query -> delete_all();
 
@@ -75,7 +77,7 @@ GetSecurityGroups();
 
 print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader("Administer External DocDBs","",
-             -scripts => ["PopUps","ExternalDocDBAdminDisable"]); 
+             -scripts => ["PopUps","ExternalDocDBAdminDisable"]);
 
 unless (CanAdminister()) {
   push @ErrorStack,"You are not allowed to access administrative functions.";
@@ -95,40 +97,40 @@ if ($SubForm eq "externaldocdb") {
     $Delete  -> execute($ExternalDocDBID);
     push @ActionStack,"Deleted reference to external DocDB";
   } elsif ($Action eq "Modify") {
-    if ($ProjectName) { 
-      push @ActionStack,"Updated project name of $ExternalDocDBs{$ExternalDocDBID}{Project}";
+    if ($ProjectName) {
+      push @ActionStack,"Updated the project name.";
       my $Update = $dbh->prepare("update ExternalDocDB set Project=? where ExternalDocDBID=?");
       $Update -> execute($ProjectName,$ExternalDocDBID);
     }
-    if ($Description) { 
-      push @ActionStack,"Updated description of $ExternalDocDBs{$ExternalDocDBID}{Project}";
+    if ($Description) {
+      push @ActionStack,"Updated the description.";
       my $Update = $dbh->prepare("update ExternalDocDB set Description=? where ExternalDocDBID=?");
       $Update -> execute($Description,$ExternalDocDBID);
     }
-    if ($PrivateURL) { 
-      push @ActionStack,"Updated private URL of $ExternalDocDBs{$ExternalDocDBID}{Project}";
+    if ($PrivateURL) {
+      push @ActionStack,"Updated the private URL.";
       my $Update = $dbh->prepare("update ExternalDocDB set PrivateURL=? where ExternalDocDBID=?");
       $Update -> execute($PrivateURL,$ExternalDocDBID);
     }
-    if ($PublicURL) { 
-      push @ActionStack,"Updated public URL of $ExternalDocDBs{$ExternalDocDBID}{Project}";
+    if ($PublicURL) {
+      push @ActionStack,"Updated the public URL.";
       my $Update = $dbh->prepare("update ExternalDocDB set PublicURL=? where ExternalDocDBID=?");
       $Update -> execute($PublicURL,$ExternalDocDBID);
     }
-  } elsif ($Action eq "New") { 
-    push @ActionStack,"New external DocDB for <strong>$ProjectName</strong> added";
-    my $Insert = $dbh -> prepare("insert into ExternalDocDB (Project,Description,PrivateURL,PublicURL) values (?,?,?,?)"); 
+  } elsif ($Action eq "New") {
+    push @ActionStack,"New external DocDB for $ProjectName added";
+    my $Insert = $dbh -> prepare("insert into ExternalDocDB (Project,Description,PrivateURL,PublicURL) values (?,?,?,?)");
     $Insert -> execute($ProjectName,$Description,$PrivateURL,$PublicURL);
   } else {
     push @WarnStack,"No valid action was specified.";
-  }  
+  }
 }
-   
-if (@ActionStack) { 
+
+if (@ActionStack) {
   ClearExternalDocDBs();
   GetAllExternalDocDBs();
   ActionReport();
-}  
+}
 
 EndPage();
 
@@ -157,7 +159,7 @@ print $query -> start_multipart_form('POST',"$ExternalDocDBAdministerForm",
                                      "name=\"externaldocdb\" id=\"externaldocdb\"");
 print "<table class=\"LowPaddedTable CenteredTable\">\n";
 print "<tr>\n";
-print "<td colspan=\"3\">\n"; 
+print "<td colspan=\"3\">\n";
  AdministerActions(-form => "externaldocdb");
  print $query -> hidden(-name => "subform",   -default => "externaldocdb");
 print "</td>\n";
@@ -165,33 +167,33 @@ print "</tr>\n";
 
 print "<tr>\n";
 print "<td rowspan=\"5\">\n";
- ExternalDocDBSelect(-disabled => true, -format => "full"); 
-print "</td>\n";  
-print "<td>\n"; 
+ ExternalDocDBSelect(-disabled => true, -format => "full");
+print "</td>\n";
+print "<td>\n";
  TextField(-name => "project", -disabled => "true", -helptext => "Project", -helplink => "extdocdb");
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
-print "<td>\n"; 
+print "<td>\n";
  TextField(-name => "desc", -disabled => "true", -helptext => "Description", -helplink => "extdocdb");
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
-print "<td>\n"; 
+print "<td>\n";
  TextField(-name => "puburl", -disabled => "true", -helptext => "Public URL", -helplink => "extdocdb");
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
-print "<td>\n"; 
+print "<td>\n";
  TextField(-name => "privurl", -disabled => "true", -helptext => "Private URL", -helplink => "extdocdb");
 print "</td>\n";
 print "</tr>\n";
 
 print "<tr>\n";
-print "<td>\n"; 
+print "<td>\n";
  AdminRegardless();
 print "</td>\n";
 print "</tr>\n";

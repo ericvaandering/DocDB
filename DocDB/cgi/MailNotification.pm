@@ -25,6 +25,10 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+use HTML::Entities;
+
+require "HTMLUtilities.pm";
+
 sub MailNotices (%) {
 
   unless ($MailInstalled) {
@@ -129,16 +133,14 @@ sub MailNotices (%) {
 
     $Headers{To} = \@Addressees;
     $Headers{From} = "$Project Document Database <$DBWebMasterEmail>";
-    $Headers{Subject} = $Subject;
+    $Headers{Subject} = HTML::Entities::decode_entities($Subject);
 
     $Mailer -> open(\%Headers);    # Start mail with headers
-    print $Mailer $Message;
+    print $Mailer HTML::Entities::decode_entities($Message);
     RevisionMailBody($DocRevID);   # Write the body
     $Mailer -> close;              # Complete the message and send it
     my $Addressees = join ', ',@Addressees;
-    $Addressees =~ s/\&/\&amp\;/g;
-    $Addressees =~ s/</\&lt\;/g;
-    $Addressees =~ s/>/\&gt\;/g;
+    $Addressees = SmartHTML({-text => $Addressees});
 
     print $Feedback,$Addressees,"<p>";
   }
@@ -208,20 +210,20 @@ sub RevisionMailBody ($) {
 
   # Construct the mail body
 
-  print $Mailer "       Title: ",$DocRevisions{$DocRevID}{Title},"\n";
-  print $Mailer " Document ID: ",$FullID,"\n";
-  print $Mailer "         URL: ",$URL,"\n";
-  print $Mailer "        Date: ",$DocRevisions{$DocRevID}{DATE},"\n";
-  print $Mailer "Submitted by: ",$Submitter,"\n";
-  print $Mailer "     Authors: ",$Authors,"\n";
-  print $Mailer "      Topics: ",$Topics,"\n";
+  print $Mailer "       Title: ",HTML::Entities::decode_entities($DocRevisions{$DocRevID}{Title}),"\n";
+  print $Mailer " Document ID: ",HTML::Entities::decode_entities($FullID),"\n";
+  print $Mailer "         URL: ",HTML::Entities::decode_entities($URL),"\n";
+  print $Mailer "        Date: ",HTML::Entities::decode_entities($DocRevisions{$DocRevID}{DATE}),"\n";
+  print $Mailer "Submitted by: ",HTML::Entities::decode_entities($Submitter),"\n";
+  print $Mailer "     Authors: ",HTML::Entities::decode_entities($Authors),"\n";
+  print $Mailer "      Topics: ",HTML::Entities::decode_entities($Topics),"\n";
   if ($Events) {
-    print $Mailer "      Events: ",$Events,"\n";
+    print $Mailer "      Events: ",HTML::Entities::decode_entities($Events),"\n";
   }
-  print $Mailer "    Keywords: ",$DocRevisions{$DocRevID}{Keywords},"\n";
-  print $Mailer "    Abstract: ",$DocRevisions{$DocRevID}{Abstract},"\n";
+  print $Mailer "    Keywords: ",HTML::Entities::decode_entities($DocRevisions{$DocRevID}{Keywords}),"\n";
+  print $Mailer "    Abstract: ",HTML::Entities::decode_entities($DocRevisions{$DocRevID}{Abstract}),"\n";
   if ($DocRevisions{$DocRevID}{Note}) {
-    print $Mailer "       Notes: ",$DocRevisions{$DocRevID}{Note},"\n";
+    print $Mailer "       Notes: ",HTML::Entities::decode_entities($DocRevisions{$DocRevID}{Note}),"\n";
   }
 }
 
@@ -467,8 +469,8 @@ sub EmailUserSelect (%) {
   my @EmailUserIDs = &GetEmailUserIDs;
   foreach my $EmailUserID (@EmailUserIDs) {
     &FetchEmailUser($EmailUserID);
-    $EmailUserLabels{$EmailUserID} = $EmailUser{$EmailUserID}{Name}.
-                                     ' ['.$EmailUser{$EmailUserID}{Username}.']';
+    my $Text = $EmailUser{$EmailUserID}{Name}.' ['.$EmailUser{$EmailUserID}{Username}.']';
+    $EmailUserLabels{$EmailUserID} = SmartHTML({-text => $Text});
   }
 
   @EmailUserIDs = sort EmailUserIDsByName @EmailUserIDs;

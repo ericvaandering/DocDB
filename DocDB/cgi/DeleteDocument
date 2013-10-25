@@ -25,6 +25,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -32,17 +33,15 @@ require "ResponseElements.pm";
 require "Security.pm";
 require "FSUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-%params = $query -> Vars;
-
-$DocumentID = $params{docid};
-$DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
-$DocumentID =~ s/\s+$//;
-
-my $Password      = $params{password};
-my $Username      = $params{admuser};
+my $DocumentID = $Untaint -> extract(-as_typedint => "docid") || 0;
+my $Password = $Untaint -> extract(-as_printable => "password") || "";
+my $Username = $Untaint -> extract(-as_printable => "admuser") || "";
 
 @ErrorStack = ();
 

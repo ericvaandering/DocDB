@@ -1,19 +1,19 @@
 #! /usr/bin/env perl
 #
 #        Name: DocTypeAdminister.pm
-# Description: This script is called by AdministerForm and does administration 
+# Description: This script is called by AdministerForm and does administration
 #              on document types in the DB. This script adds, modifies and
 #              deletes document types.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -26,35 +26,37 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "MiscSQL.pm";
 require "DocTypeHTML.pm";
 require "Messages.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-%params = $query -> Vars;
+# Parameters to script
 
-# Parameters to script 
+my $Password = $Untaint -> extract(-as_printable => "password") || "";
+my $Username = $Untaint -> extract(-as_printable => "admuser") || "";
+my $Action = $Untaint -> extract(-as_printable => "admaction") || "";
 
-$Password  = $params{password};
-my $Username      = $params{admuser};
-$Action    = $params{admaction};
-
-my $DocTypeID = $params{doctype};
-my $ShortName = $params{name};
-my $LongName  = $params{longdesc};
+my $DocTypeID = $Untaint -> extract(-as_integer => "doctype") || 0;
+my $ShortName = $Untaint -> extract(-as_safehtml => "name") || 0;
+my $LongName = $Untaint -> extract(-as_safehtml => "longdesc") || 0;
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
 unless ($dbh) {
   push @ErrorStack,$Msg_AdminNoConnect;
-}         
+}
 EndPage();
 
 print $query -> header( -charset => $HTTP_ENCODING );
@@ -62,7 +64,7 @@ DocDBHeader("Modified List of Document Types");
 
 unless (CanAdminister()) {
   push @ErrorStack,$Msg_AdminNoLogin;
-}  
+}
 EndPage();
 
 GetDocTypes();
@@ -81,14 +83,14 @@ if      ($Action eq "Delete") { # Delete institutions
   }
   EndPage();
 
-# Deal with name changes     
+# Deal with name changes
 
-  if ($ShortName) { 
+  if ($ShortName) {
     push @ActionStack,"Changed document type's short name to $ShortName";
     my $DocTypeUpdate = $dbh->prepare("update DocumentType set ShortType=? where DocTypeID=?");
     $DocTypeUpdate -> execute($ShortName,$DocTypeID);
   }
-  if ($LongName) { 
+  if ($LongName) {
     push @ActionStack,"Changed document type's long name to $LongName";
     my $DocTypeUpdate = $dbh -> prepare("update DocumentType set LongType=? where DocTypeID=?");
     $DocTypeUpdate -> execute($LongName,$DocTypeID);
@@ -100,7 +102,7 @@ if      ($Action eq "Delete") { # Delete institutions
   $DocTypeID = $DocTypeInsert -> {mysql_insertid}; # Works with MySQL only
 } else {
   push @ErrorStack,"No valid action was specified.";
-}  
+}
 
 # For modify or new fetch institution information and display.
 
@@ -109,5 +111,5 @@ EndPage();
 
 DocDBNavBar();
 DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
- 
+
 exit;
