@@ -31,14 +31,14 @@ sub SmartHTML ($) {
   my $AddLineBreaks = exists $ArgRef->{-addLineBreaks} ?  $ArgRef->{-addLineBreaks} : $FALSE;
 
   # Escape text into &x1234; format ignoring a alphanumerics and a few special characters
-  $Text =~ s{([^\:\/\.\-\?\=\+\w\s&#%;]|&(?!#?\w+;))}{"&#x".sprintf("%x", unpack(U,$1)).";"}ge;
+  $Text =~ s{([^\:\/\.\-\?\=\+\w\s&#%;)]|&(?!#?\w+;))}{"&#x".sprintf("%x", unpack(U,$1)).";"}ge;
 
   # Turn found URLs into hyperlinks, adapted from Perl Cookbook, 6.21
   if ($MakeURLs) {
     my $urls = '(http|telnet|gopher|file|wais|ftp|https)';
     my $ltrs = '\w';
     my $gunk = '/#~:.?+=&%@!{};\-';
-    my $punc = '.:?\-';
+    my $punc = '.:?\-\)';
     my $any  = "${ltrs}${gunk}${punc}";
     $Text =~ s{
               \b                    # start at word boundary
