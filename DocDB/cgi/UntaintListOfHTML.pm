@@ -30,6 +30,7 @@ use strict;
 use base 'CGI::Untaint::listofwords';
 use HTML::Entities qw(encode_entities_numeric);
 
+# Could also add s modifier to regex and .* instead of (.|\n)*
 sub _untaint_re { qr/^((.|\n)*(\000)*)+$/ }
 
 sub is_valid {
