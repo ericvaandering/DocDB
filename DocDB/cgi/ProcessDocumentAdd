@@ -166,7 +166,7 @@ for (my $i = 1; $i<= $MaxFiles; ++$i) {
   my $Key = $i; # Probably something better later
   my $UploadI = $query -> param("upload$i");
   my $UrlI = $Untaint -> extract(-as_printable => "url$i") || "";
-  my $CopyI = $Untaint -> extract(-as_printable => "copy$i") || "";
+  my $CopyI = $Untaint -> extract(-as_printable => "copyfile$i") || "";
   my $FileIDI = $Untaint -> extract(-as_integer => "fileid$i") || 0;
   my $NewNameI = $Untaint -> extract(-as_safehtml => "newname$i") || ""; # FIXME: More restrictive?
   my $MainI = $Untaint -> extract(-as_printable => "main$i") || "";
