@@ -30,34 +30,38 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
 require "Security.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "SecuritySQL.pm";
 require "NotificationSQL.pm";
 require "Messages.pm";
 require "EmailUserHTML.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
 # Parameters to script
 
-%params = $query -> Vars;
-my $Password      = $params{password};
-my $Username      = $params{admuser};
-my $Action        = $params{admaction};
+my $Password = $Untaint -> extract(-as_printable => "password") || "";
+my $Username = $Untaint -> extract(-as_printable => "admuser") || "";
+my $Action = $Untaint -> extract(-as_printable => "admaction") || "";
 
-my $EmailUserID   = $params{emailuserid};
-my $SingleUser    = $params{singleuser};
-my $NewPassword   = $params{resetpw};
-my $ClearGroups   = ($params{cleargroups} eq "on");
-my $ClearUser     = ($params{clearuser}   eq "on");
-my $UserSign      = ($params{usersign}    eq "on");
-my $VerifyUser    = ($params{verifyuser}  eq "on");
-my @UsersGroupIDs = split /\0/,$params{usergroups};
+my $EmailUserID = $Untaint -> extract(-as_integer => "emailuserid") || 0;
+my $SingleUser = $Untaint -> extract(-as_safehtml => "singleuser") || "";
+my $NewPassword = $Untaint -> extract(-as_printable => "resetpw") || "";
+
+my $ClearGroups   = ($Untaint -> extract(-as_printable => "cleargroups") eq "on");
+my $ClearUser     = ($Untaint -> extract(-as_printable => "clearuser")   eq "on");
+my $UserSign      = ($Untaint -> extract(-as_printable => "usersign")    eq "on");
+my $VerifyUser    = ($Untaint -> extract(-as_printable => "verifyuser")  eq "on");
+my @UsersGroupIDs = @{ $Untaint -> extract(-as_listofint => "usergroups") || undef };
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 

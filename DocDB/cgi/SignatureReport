@@ -2,12 +2,12 @@
 #
 # Author Eric Vaandering (ewv@fnal.gov)
 #
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -33,6 +33,7 @@
 
 use Benchmark;
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 $StartTime = new Benchmark;
@@ -46,16 +47,17 @@ require "ResponseElements.pm";
 require "DocumentHTML.pm";
 
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "RevisionUtilities.pm";
 require "SignoffUtilities.pm";
 require "Utilities.pm";
 require "DocumentUtilities.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-%params = $query -> Vars;
-
-my $EmailUserID = $params{emailuserid};
+my $EmailUserID = $Untaint -> extract(-as_integer => "emailuserid") || 0;
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
@@ -87,20 +89,20 @@ foreach my $SignoffID (@SignoffIDs) {
       my $Status = &SignoffStatus ($SignoffID);
       if ($Status eq "Ready") {
         push @ReadyDocumentIDs,$DocumentID;
-      } elsif ($Status eq "NotReady") { 
+      } elsif ($Status eq "NotReady") {
         push @NotReadyDocumentIDs,$DocumentID;
-      } elsif ($Status eq "Signed") { 
+      } elsif ($Status eq "Signed") {
         my ($RevisionStatus) = &RevisionStatus($DocRevID);
         if ($RevisionStatus eq "Approved") {
           push @ApprovedDocumentIDs,$DocumentID;
         } elsif ($RevisionStatus eq "Unapproved") {
           push @SignedDocumentIDs,$DocumentID;
-        }      
+        }
       }
     }
-  }    
+  }
 }
-    
+
 my @CurrentDocumentIDs = (@ReadyDocumentIDs ,@NotReadyDocumentIDs,@ApprovedDocumentIDs,@SignedDocumentIDs);
 @OldSignatureDocumentIDs = RemoveArray(\@DocumentIDs,@CurrentDocumentIDs);
 
@@ -109,7 +111,7 @@ if (@ReadyDocumentIDs) {
 
   my %FieldList = PrepareFieldList(-fields => ["Docid","Title","Author","Updated"]);
   DocumentTable(-fieldlist => \%FieldList,
-                -docids    => \@ReadyDocumentIDs, 
+                -docids    => \@ReadyDocumentIDs,
                 -sortby    => "date", -reverse => 1);
 }
 
@@ -118,7 +120,7 @@ if (@NotReadyDocumentIDs) {
 
   my %FieldList = PrepareFieldList(-fields => ["Docid","Title","CanSign","Updated"]);
   DocumentTable(-fieldlist => \%FieldList,
-                -docids    => \@NotReadyDocumentIDs, 
+                -docids    => \@NotReadyDocumentIDs,
                 -sortby    => "date", -reverse => 1);
 }
 
@@ -127,7 +129,7 @@ if (@SignedDocumentIDs) {
 
   my %FieldList = PrepareFieldList(-fields => ["Docid","Title","CanSign","Updated"]);
   DocumentTable(-fieldlist => \%FieldList,
-                -docids    => \@SignedDocumentIDs, 
+                -docids    => \@SignedDocumentIDs,
                 -sortby    => "date", -reverse => 1);
 }
 
@@ -136,7 +138,7 @@ if (@ApprovedDocumentIDs) {
 
   my %FieldList = PrepareFieldList(-fields => ["Docid","Title","Author","Updated"]);
   DocumentTable(-fieldlist => \%FieldList,
-                -docids    => \@ApprovedDocumentIDs, 
+                -docids    => \@ApprovedDocumentIDs,
                 -sortby    => "date", -reverse => 1);
 }
 
@@ -145,7 +147,7 @@ if (@OldSignatureDocumentIDs) {
 
   my %FieldList = PrepareFieldList(-fields => ["Docid","Title","Author","Updated"]);
   DocumentTable(-fieldlist => \%FieldList,
-                -docids    => \@OldSignatureDocumentIDs, 
+                -docids    => \@OldSignatureDocumentIDs,
                 -sortby    => "date", -reverse => 1);
 }
 

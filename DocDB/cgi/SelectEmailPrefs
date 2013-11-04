@@ -4,12 +4,12 @@
 # Description: Change preferences for what/when to be notified of document
 #              changes in e-mail.
 #
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified:
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -27,6 +27,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI qw(-nosticky);
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -39,6 +40,7 @@ require "Security.pm";
 require "SearchFormElements.pm";
 
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "DocumentUtilities.pm";
 
 require "AuthorSQL.pm";
@@ -51,51 +53,56 @@ require "MeetingHTML.pm";
 require "TopicHTML.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
 GetTopics();
 GetAuthors();
 
-%params = $query -> Vars;
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
 # Collect parameters
 
-my $Mode         = $params{mode};
-my $UserName     = $params{username};
-my $Password     = $params{password};
-my $NewPass      = $params{newpass};
-my $ConfNewPass  = $params{confnewpass};
-   $Digest       = $params{digest};
+my $Mode = $Untaint -> extract(-as_safehtml => "mode") || "";
+my $UserName = $Untaint -> extract(-as_safehtml => "username") || "";
+my $Password = $Untaint -> extract(-as_printable => "password") || "";
+my $NewPass = $Untaint -> extract(-as_printable => "newpass") || "";
+my $ConfNewPass = $Untaint -> extract(-as_printable => "confnewpass") || "";
+my $Digest = $Untaint -> extract(-as_safehtml => "digest") || "";
 
-my @ImmediateEventGroupIDs = split /\0/,$params{immediate_eventgroups};
-my @DailyEventGroupIDs     = split /\0/,$params{daily_eventgroups};
-my @WeeklyEventGroupIDs    = split /\0/,$params{weekly_eventgroups};
+my $Name = $Untaint -> extract(-as_safehtml => "name") || "";
+my $Email = $Untaint -> extract(-as_safehtml => "email") || "";
+my $HTML = $Untaint -> extract(-as_safehtml => "html") || "";
 
-my @ImmediateEventIDs      = split /\0/,$params{immediate_events};
-my @DailyEventIDs          = split /\0/,$params{daily_events};
-my @WeeklyEventIDs         = split /\0/,$params{weekly_events};
+my @ImmediateEventGroupIDs = @{ $Untaint -> extract(-as_listofint => "immediate_eventgroups") || undef };
+my @DailyEventGroupIDs = @{ $Untaint -> extract(-as_listofint => "daily_eventgroups") || undef };
+my @WeeklyEventGroupIDs = @{ $Untaint -> extract(-as_listofint => "weekly_eventgroups") || undef };
 
-my @ImmediateTopicIDs      = split /\0/,$params{immediate_topics};
-my @DailyTopicIDs          = split /\0/,$params{daily_topics};
-my @WeeklyTopicIDs         = split /\0/,$params{weekly_topics};
+my @ImmediateEventIDs = @{ $Untaint -> extract(-as_listofint => "immediate_events") || undef };
+my @DailyEventIDs = @{ $Untaint -> extract(-as_listofint => "daily_events") || undef };
+my @WeeklyEventIDs = @{ $Untaint -> extract(-as_listofint => "weekly_events") || undef };
 
-my @ImmediateAuthorIDs     = split /\0/,$params{immediate_authors};
-my @DailyAuthorIDs         = split /\0/,$params{daily_authors};
-my @WeeklyAuthorIDs        = split /\0/,$params{weekly_authors};
+my @ImmediateTopicIDs = @{ $Untaint -> extract(-as_listofint => "immediate_topics") || undef };
+my @DailyTopicIDs = @{ $Untaint -> extract(-as_listofint => "daily_topics") || undef };
+my @WeeklyTopicIDs = @{ $Untaint -> extract(-as_listofint => "weekly_topics") || undef };
 
-my $ImmediateAll           = $params{immediate_all};
-my $DailyAll               = $params{daily_all};
-my $WeeklyAll              = $params{weekly_all};
+my @ImmediateAuthorIDs = @{ $Untaint -> extract(-as_listofint => "immediate_authors") || undef };
+my @DailyAuthorIDs = @{ $Untaint -> extract(-as_listofint => "daily_authors") || undef };
+my @WeeklyAuthorIDs = @{ $Untaint -> extract(-as_listofint => "weekly_authors") || undef };
 
-my $ImmediateKeywords      = $params{immediate_keywords};
-my $DailyKeywords          = $params{daily_keywords};
-my $WeeklyKeywords         = $params{weekly_keywords};
+my $ImmediateAll = $Untaint -> extract(-as_safehtml => "immediate_all") || "";
+my $DailyAll = $Untaint -> extract(-as_safehtml => "daily_all") || "";
+my $WeeklyAll = $Untaint -> extract(-as_safehtml => "weekly_all") || "";
+
+my $ImmediateKeywords = $Untaint -> extract(-as_safehtml => "immediate_keywords") || "";
+my $DailyKeywords = $Untaint -> extract(-as_safehtml => "daily_keywords") || "";
+my $WeeklyKeywords = $Untaint -> extract(-as_safehtml => "weekly_keywords") || "";
 
 $ImmediateKeywords =~ s/,/ /g; my @ImmediateKeywords = split /\s+/,$ImmediateKeywords;
 $DailyKeywords     =~ s/,/ /g; my @DailyKeywords     = split /\s+/,$DailyKeywords    ;
 $WeeklyKeywords    =~ s/,/ /g; my @WeeklyKeywords    = split /\s+/,$WeeklyKeywords   ;
 
-my $ImmediateDocuments      = $params{immediate_documents};
+my $ImmediateDocuments = $Untaint -> extract(-as_safehtml => "immediate_documents") || "";
 $ImmediateDocuments =~ s/,/ /g; my @ImmediateDocuments = split /\s+/,$ImmediateDocuments;
 
 $UserName =~ s/\s+//g;
@@ -111,7 +118,7 @@ if (($NewPass || $ConfNewPass) && ($NewPass ne $ConfNewPass)) {
 }
 
 if ($Mode eq "newuser") {
-  my $PassConf = $params{passconf};
+  my $PassConf = $Untaint -> extract(-as_printable => "passconf") || "";
   $PassConf =~ s/\s+//g;
 
 # Do the passwords match, is there a password
@@ -171,6 +178,7 @@ if ($Mode eq "newuser") {
     if ($GroupID) {
       $EmailUserInsert -> execute($EmailUserID,$GroupID);
     }
+
     print "User <b>$UserName</b> created as a member of <b>$remote_user</b> group.
            Do not forget your password, there is no way to retrieve it.<p\>\n";
     $Mode = "update"; # Now display the form to update
@@ -210,10 +218,6 @@ EndPage();
 
 if ($Mode eq "update") {
 
-# Collect relevant parameters for user preferences
-  my $Name     = $params{name};
-  my $Email    = $params{email};
-  my $HTML     = $params{html};
 
 # Update DB
 

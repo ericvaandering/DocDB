@@ -11,7 +11,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -29,10 +29,12 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "ResponseElements.pm";
 require "EmailSecurity.pm";
 require "NotificationSQL.pm";
@@ -40,15 +42,15 @@ require "DocumentHTML.pm";
 require "Security.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
-
-%params = $query -> Vars;
 
 # Collect parameters
 
-my $DocumentID  = $params{docid};
-my $UserName    = $params{username};
-my $Password    = $params{password};
+my $DocumentID = $Untaint -> extract(-as_integer => "docid") || 0;
+my $UserName = $Untaint -> extract(-as_safehtml => "username") || "";
+my $Password = $Untaint -> extract(-as_printable => "password") || "";
 
 $UserName =~ s/\s+//g;
 $Password =~ s/\s+//g;
@@ -81,9 +83,9 @@ EndPage();
 
 my $DocumentLink = &DocumentLink(-docid => $DocumentID, -noversion => $TRUE);
 
-print "An e-mail will be sent to $EmailUser{$EmailUserID}{Name}
-       ($EmailUser{$EmailUserID}{EmailAddress}) when $DocumentLink changes.<p/>\n";
-
+print SmartHTML({-text => "An e-mail will be sent to $EmailUser{$EmailUserID}{Name}
+       ($EmailUser{$EmailUserID}{EmailAddress}) when Document $DocumentID changes."});
+print "<p/>\n";
 
 &InsertEmailDocumentImmediate(-emailuserid => $EmailUserID, -docid => $DocumentID);
 

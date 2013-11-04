@@ -6,7 +6,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -22,6 +22,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+require "HTMLUtilities.pm";
 
 sub DocumentTable (%) {
   require "DocumentSQL.pm";
@@ -264,7 +266,7 @@ sub DocumentTable (%) {
       } elsif ($Field eq "Abstract") { # Abstract
         PrintAbstract($DocRevisions{$DocRevID}{Abstract}, {-format => "bare"} );
       } elsif ($Field eq "DocNotes") { # Notes and Changes
-        print AddLineBreaks(URLify($DocRevisions{$DocRevID}{Note}));
+        print SmartHTML({-text=>$DocRevisions{$DocRevID}{Note}, -addLineBreaks=>$TRUE, -makeURLs=>$TRUE});
       } elsif ($Field eq "Files") {    # Files in document
         require "FileHTML.pm";
         ShortFileListByRevID($DocRevID, $SkipVersions);
@@ -295,9 +297,9 @@ sub DocumentTable (%) {
         }
       } elsif ($Field eq "TalkNotes") {
         if ($SessionTalkID) {
-          print URLify( AddLineBreaks($SessionTalks{$SessionTalkID}{Note}) );
+          print SmartHTML({-text=>$SessionTalks{$SessionTalkID}{Note}, -addLineBreaks=>$TRUE, -makeURLs=>$TRUE});
         } elsif ($TalkSeparatorID) {
-          print URLify( AddLineBreaks($TalkSeparators{$TalkSeparatorID}{Note}) );
+          print SmartHTML({-text=>$TalkSeparators{$TalkSeparatorID}{Note}, -addLineBreaks=>$TRUE, -makeURLs=>$TRUE});
         }
       } elsif ($Field eq "Edit") {
         if ($SessionOrderID) {
@@ -383,7 +385,7 @@ sub DocumentLink (%) {
     $Link .= $DocumentID."-v".$Version;
     $Link .= $EndElement;
   } elsif ($TitleLink) {      # Use the document Title
-    $Link .= $DocRevisions{$DocRevID}{Title};
+    $Link .= SmartHTML({-text => $DocRevisions{$DocRevID}{Title} });
     $Link .= $EndElement;
     if ($UseSignoffs && !$NoApprovalStatus) { # Put document status on next line
       require "SignoffUtilities.pm";

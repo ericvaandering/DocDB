@@ -1,9 +1,14 @@
-next
+8.8.6
+ Use full DN from certificate as username, not CN which is not unique
+ ****Must issue command "alter table EmailUser modify Username  text;" on each DocDB prior
+     to this upgrade****
+
+ Fix lots of potential cross-site scripting problems by making (nearly) all
+ inputs valid HTML and doing the same with database output. Databases will now
+ contain a mix of escaped HTML and things with bare &, >, < etc.
+
  Fix case where infinite loop is caused if topic parent is set to a descendant
  Add ability to add "attachment" in StreamFile for some extensions. Helps with Office
-
-8.8.5
- Use full DN from certificate as username, not CN which is not unique
 
 8.8.4
  Add totals to topic, author tables

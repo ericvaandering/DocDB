@@ -7,7 +7,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 
-# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -321,9 +321,9 @@ sub DeleteTopic ($) {
   }
 
   if ($Force) {
-    push @ActionStack,"Topic <strong>$Topics{$TopicID}{LongDescription}</strong>, all sub-topics, all associations, and all associations to sub-topics deleted.";
+    push @ActionStack,"Topic $Topics{$TopicID}{LongDescription}, all sub-topics, all associations, and all associations to sub-topics deleted.";
   } else {
-    push @ActionStack,"Topic <strong>$Topics{$TopicID}{LongDescription}</strong> deleted.";
+    push @ActionStack,"Topic $Topics{$TopicID}{LongDescription} deleted.";
   }
   return 1;
 }

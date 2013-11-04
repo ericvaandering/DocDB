@@ -1,17 +1,17 @@
 #! /usr/bin/env perl
 #
 # Description: Usually called as a pop-up, this looks up in docdb.hlp
-#              the information on a specific topic. 
+#              the information on a specific topic.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -23,7 +23,8 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI;                                                                                      
+use CGI;
+use CGI::Untaint;
 use XML::Parser::PerlSAX;
 use XML::PatAct::MatchName;
 use XML::PatAct::ToObjects;
@@ -32,6 +33,7 @@ use XML::Grove::AsCanonXML;
 
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 
 my $DefaultPatterns = [
   'helpfile'    => [ qw{ -holder                                  } ],
@@ -51,7 +53,7 @@ my $ProjectPatterns = [
 
 if (-e "ProjectHelp.xml") {
   $ProjectHelp = 1;
-}  
+}
 
 my $DefaultMatcher = XML::PatAct::MatchName -> new(Patterns => $DefaultPatterns);
 my $DefaultHandler = XML::PatAct::ToObjects -> new(Patterns => $DefaultPatterns,
@@ -70,12 +72,13 @@ if ($ProjectHelp) {
 
 # Start page
 
-$query = new CGI;  
+$query = new CGI;
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("$Project DocDB Help","",-nobody => $TRUE);
 
-%params = $query -> Vars;
-$helpterm = $params{term};   # Extract term user wants help for
+$helpterm = $Untaint -> extract(-as_safehtml => "term") || "";
 
 # Parse XML into hashes, pull out desired text
 
@@ -127,6 +130,6 @@ if ($DefaultText || $ProjectText) {
   }
 } else {
   print "<b><big>No help available on this topic.</big></b><p>\n";
-}  
+}
 
 &DocDBFooter($DBWebMasterEmail,$DBWebMasterName,-nobody => $TRUE);

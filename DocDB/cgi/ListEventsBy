@@ -9,7 +9,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -44,6 +44,7 @@ require "TopicHTML.pm";
 require "CalendarHTML.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 
 # Parameters to script
 
@@ -91,7 +92,9 @@ if ($TopicID) {
       $EventHash{$ID} = $Hash{$ID};
     }
   }
-  $HTML .= "<h4>Events for <span class=\"Highlight\">$Topics{$TopicID}{Long} </span>";
+  $HTML .= "<h4>Events for <span class=\"Highlight\">";
+  $HTML .= SmartHTML({-text=>$Topics{$TopicID}{Long}});
+  $HTML .= " </span>";
   if (scalar(@ChildTopicIDs) > 1) {
     $HTML .= " and its sub-topics";
   }
@@ -105,8 +108,9 @@ if ($TopicID) {
 
   my $Link = AuthorLink($AuthorID);
 
-  $HTML .= "<h4>Events moderated by <span class=\"Highlight\">$Link of
-            $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG}</span>";
+  $HTML .= "<h4>Events moderated by <span class=\"Highlight\">$Link of ";
+  $HTML .= SmartHTML({-text=>$Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG}});
+  $HTML .= "</span>";
   if ($Preferences{Components}{iCal}) {
     $HTML .= ' '.ICalLink({ -authorid => $AuthorID });
   }
@@ -170,8 +174,8 @@ if (@HashIDs) {
       }
 
       $Title    = SessionLink(-sessionid => $SessionID, -format => "full");
-      $Location = join '<br/>',$Sessions{$SessionID}{Location},
-                               $Sessions{$SessionID}{AltLocation};
+      $Location = join '<br/>',SmartHTML({-text=>$Sessions{$SessionID}{Location}}),
+                               SmartHTML({-text=>$Sessions{$SessionID}{AltLocation}});
       $Topics   = TopicListByID({ -linktype => "event", -listformat => "br", -sortby => "name",
                                   -topicids => $Sessions{$SessionID}{Topics}, });
 
@@ -192,8 +196,8 @@ if (@HashIDs) {
       }
 
       $Title    = EventLink(-eventid => $EventID,);
-      $Location = join '<br/>',$Conferences{$EventID}{Location},
-                               $Conferences{$EventID}{AltLocation};
+      $Location = join '<br/>',SmartHTML({-text=>$Conferences{$EventID}{Location}}),
+                               SmartHTML({-text=>$Conferences{$EventID}{AltLocation}});
       $Topics   = TopicListByID({ -linktype => "event", -listformat => "br", -sortby => "name",
                                   -topicids => $Conferences{$EventID}{Topics}, });
       $Time = 'All day/no time';

@@ -6,8 +6,9 @@
 #    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified:
 
-# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -29,6 +30,7 @@ sub SecurityScroll (%) {
   require "Sorts.pm";
   require "Scripts.pm";
   require "FormElements.pm";
+  require "HTMLUtilities.pm";
 
   my (%Params) = @_;
 
@@ -58,9 +60,10 @@ sub SecurityScroll (%) {
   my %GroupLabels = ();
 
   foreach my $GroupID (@GroupIDs) {
-    $GroupLabels{$GroupID} = $SecurityGroups{$GroupID}{NAME};
+    SmartHTML({-text => $SecurityGroups{$GroupID}{NAME}},);
+    $GroupLabels{$GroupID} = SmartHTML({-text => $SecurityGroups{$GroupID}{NAME}},);
     if ($Format eq "full") {
-      $GroupLabels{$GroupID} .= " [".$SecurityGroups{$GroupID}{Description}."]";
+      $GroupLabels{$GroupID} .= " [".SmartHTML({-text => $SecurityGroups{$GroupID}{Description}},)."]";
     }
   }
 
@@ -160,9 +163,10 @@ sub SecurityLink ($) {
   }
 
   my $Link = "<a href=\"$ListBy?groupid=$GroupID\"";
-  $Link .= " title=\"$SecurityGroups{$GroupID}{Description}\"";
-  $Link .= ">";
-  $Link .= $SecurityGroups{$GroupID}{NAME};
+  $Link .= ' title="';
+  $Link .= SmartHTML({-text => $SecurityGroups{$GroupID}{Description}},);
+  $Link .= '">';
+  $Link .= SmartHTML({-text => $SecurityGroups{$GroupID}{NAME}},);
   $Link .= "</a>";
   if ($Check && !GroupCan({ -groupid => $GroupID, -action => $Check }) ) {
     $Link .= "<br/>(".$Message{$Check}.")";

@@ -8,7 +8,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -27,6 +27,7 @@
 
 use Benchmark;
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 $StartTime = new Benchmark;
@@ -35,6 +36,7 @@ require "DocDBGlobals.pm";
 require "Messages.pm";
 
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "ResponseElements.pm";
 require "Sorts.pm";
 require "Scripts.pm";
@@ -53,12 +55,12 @@ require "EventUtilities.pm";
 require "Utilities.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-%params = $query -> Vars;
-
-my $SessionID          = $params{sessionid};
-my $SessionSeparatorID = $params{sessionseparatorid};
-my $EventID            = $params{conferenceid};
+my $SessionID = $Untaint -> extract(-as_integer => "sessionid") || 0;
+my $SessionSeparatorID = $Untaint -> extract(-as_integer => "sessionseparatorid") || 0;
+my $EventID = $Untaint -> extract(-as_integer => "conferenceid") || 0;
 
 @ErrorStack = ();
 @WarnStack  = ();

@@ -1,13 +1,12 @@
-#        Name: $RCSfile$
+#        Name: FileHTML.pm
+#
 # Description: Subroutines to provide links for files, groups of
 #              files and archives.
 #
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
-#
 #      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -24,6 +23,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+require "HTMLUtilities.pm";
 
 sub FileListByRevID {
   require "MiscSQL.pm";
@@ -168,6 +168,11 @@ sub FileLink ($) {
   }
 
   my $Link = "";
+
+  # Sanitize output
+  $ShortName = SmartHTML( {-text => $ShortName, } );
+  $Description = SmartHTML( {-text => $Description, } );
+  $PrintedName = SmartHTML( {-text => $PrintedName, } );
 
   if ($Format eq "short") {
     if ($Description) {

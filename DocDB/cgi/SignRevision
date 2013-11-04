@@ -3,12 +3,12 @@
 #        Name: $RCSfile$
 # Description: Sign (approve) a revision of a document
 #
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified:
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -26,10 +26,12 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "Scripts.pm";
 
 require "ResponseElements.pm";
@@ -43,16 +45,17 @@ require "EmailSecurity.pm";
 require "Security.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 
-%params = $query -> Vars;
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
 # Collect parameters
 
-my $Action      = $params{action};
-my $EmailUserID = $params{emailuserid};
-my $SignatureID = $params{signatureid};
-my $Password    = $params{"password-$EmailUserID"};
+my $Action = $Untaint -> extract(-as_printable => "action") || "";
+my $EmailUserID = $Untaint -> extract(-as_integer => "emailuserid") || 0;
+my $SignatureID = $Untaint -> extract(-as_integer => "signatureid") || 0;
+my $Password = $Untaint -> extract(-as_printable => "password-$EmailUserID") || "";
 
 $Password =~ s/\s+//g;
 

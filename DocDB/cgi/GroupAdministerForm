@@ -6,7 +6,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 
-# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -40,6 +40,7 @@ require "HTMLUtilities.pm";
 require "Sorts.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 $dbh   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 GetSecurityGroups();
@@ -131,7 +132,11 @@ my @GroupIDs = sort numerically keys %SecurityGroups;
 print '<table class="HighPaddedTable">';
 foreach my $GroupID (@GroupIDs) {
   print "<tr>\n";
-  print "<td><strong>$SecurityGroups{$GroupID}{NAME}</strong><br/>($SecurityGroups{$GroupID}{Description})</td>\n";
+  print "<td><strong>";
+  print SmartHTML({-text => $SecurityGroups{$GroupID}{NAME}},);
+  print "</strong><br/>(";
+  print SmartHTML({-text => $SecurityGroups{$GroupID}{Description}},);
+  print ")</td>\n";
   print "<td>\n";
   print "<strong>Dominant groups:</strong>\n";
   PrintGroupParents($GroupID);

@@ -3,15 +3,15 @@
 # Description: Creates a new e-mail notification account
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified:
 #
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -23,24 +23,27 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI;    
+use CGI;
+use CGI::Untaint;
 use DBI;
-                                                  
+
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "ResponseElements.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 @ErrorStack = ();
 
-%params = $query -> Vars;
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
 # Collect parameters
 
-my $UserName = $params{username};
-my $Password = $params{password};
-my $PassConf = $params{passconf};
+my $UserName = $Untaint -> extract(-as_safehtml => "username") || "";
+my $Password = $Untaint -> extract(-as_printable => "password") || "";
+my $PassConf = $Untaint -> extract(-as_printable => "passconf") || "";
 $UserName =~ s/\s+//g;
 $Password =~ s/\s+//g;
 $PassConf =~ s/\s+//g;
@@ -65,7 +68,7 @@ if ($UserExists) {
 }
 
 # Start the page
-   
+
 print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Notification Account Creation");
 
@@ -73,7 +76,7 @@ print $query -> header( -charset => $HTTP_ENCODING );
 
 unless (@ErrorStack) {
   srand (time ^ $$ ^ unpack "%32L*", `ps -eaf`);
-  
+
   my $Salt = ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]).
              ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]);
 
@@ -81,10 +84,10 @@ unless (@ErrorStack) {
   my $UserInsert        = $dbh -> prepare(
      "insert into EmailUser (EmailUserID,Username,Password) ".
      "values                (0,          ?,       ?)");
-     $UserInsert -> execute($UserName,$EncryptedPassword); 
-     
+     $UserInsert -> execute($UserName,$EncryptedPassword);
+
   print "User <b>$UserName</b> created. Do not forget your password, there is no way to
-  retrieve it.<p>\n";   
+  retrieve it.<p>\n";
 }
 
 EndPage(@ErrorStack);

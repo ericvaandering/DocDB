@@ -8,7 +8,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -26,6 +26,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -36,22 +37,21 @@ require "RevisionSQL.pm";
 require "MiscSQL.pm";
 require "FSUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "Security.pm";
 require "SQLChecks.pm";
 
 require "RevisionHTML.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-%params = $query -> Vars;
-
-my $DocumentID = $params{docid};
-   $DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
-   $DocumentID =~ s/\s+$//;
-my $Version    = $params{version};
-my $AsOf       = $params{asof};
-my $FileName   = $params{filename};
-my $Extension  = $params{extension};
+my $DocumentID = $Untaint -> extract(-as_integer => "docid") || 0;
+my $Version = $Untaint -> extract(-as_integer => "version") || undef;
+my $AsOf = $Untaint -> extract(-as_safehtml => "asof") || undef;
+my $FileName = $Untaint -> extract(-as_printable => "filename") || "";
+my $Extension = $Untaint -> extract(-as_safehtml => "extension") || "";
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number!";
@@ -63,7 +63,7 @@ GetSecurityGroups();
 
 FetchDocument($DocumentID);
 
-if (defined $Version && defined $AsOf) {
+if ($Version && $AsOf) {
   push @ErrorStack,"You may not specify both a version and date.";
 }
 if (grep /\//,$FileName) {
@@ -95,11 +95,7 @@ if (defined $Version) {
 }
 
 unless (&CanAccess($DocumentID,$Version)) {
-  if ($remote_user) {
-    push @ErrorStack,"The $remote_user group is not authorized to view this document (or it does not exist).";
-  } else {
-    push @ErrorStack,"This document is not publicly accessible.";
-  }
+  push @ErrorStack,"You are not authorized to view this document (or it does not exist).";
 }
 
 unless ($DocRevID) {

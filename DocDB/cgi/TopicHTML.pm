@@ -7,7 +7,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2011 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -23,6 +23,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+require "HTMLUtilities.pm";
 
 sub TopicListByID {
   my ($ArgRef) = @_;
@@ -116,14 +118,14 @@ sub TopicLink ($) {
   $Link = "";
 
   if ($Format eq "short") {
-    $Text    = CGI::escapeHTML($Topics{$TopicID}{Short});
+    $Text    = SmartHTML( {-text => $Topics{$TopicID}{Short}, } );
     $Tooltip = TopicName({-topicid => $TopicID, -format => "withparents",} );
   } elsif ($Format eq "long") {
-    $Text    = CGI::escapeHTML($Topics{$TopicID}{Long} );
-    $Tooltip = CGI::escapeHTML($Topics{$TopicID}{Short});
+    $Text    = SmartHTML( {-text => $Topics{$TopicID}{Long} , } );
+    $Tooltip = SmartHTML( {-text => $Topics{$TopicID}{Short}, } );
   } elsif ($Format eq "withparents") {
-    $Text    = CGI::escapeHTML($Topics{$TopicID}{Short});
-    $Tooltip = CGI::escapeHTML($Topics{$TopicID}{Long} );
+    $Text    = SmartHTML( {-text => $Topics{$TopicID}{Short}, } );
+    $Tooltip = SmartHTML( {-text => $Topics{$TopicID}{Long}, } );
     my @ParentTopicIDs = FetchTopicParents( {-topicid => $TopicID});
     if (@ParentTopicIDs) {
       my ($ParentTopicID) = @ParentTopicIDs;
@@ -157,11 +159,13 @@ sub TopicName ($) {
       $Text .= $Separator;
     }
   }
-  if ($Escape) {
-    $Text .= CGI::escapeHTML($Topics{$TopicID}{Short});
-  } else {
-    $Text .= $Topics{$TopicID}{Short};
-  }
+# Merge conflict. Escape can probably just be removed everywhere since SmartHTML is smart
+#  if ($Escape) {
+#    $Text .= CGI::escapeHTML($Topics{$TopicID}{Short});
+#  } else {
+#    $Text .= $Topics{$TopicID}{Short};
+#  }
+  $Text .= SmartHTML( {-text => $Topics{$TopicID}{Short}, } );
 
   return $Text;
 }
@@ -463,14 +467,15 @@ sub TopicScroll ($) {
 #  my @ActiveIDs = @TopicIDs; # Later can select single root topics, etc.
 
   foreach my $ID (@TopicIDs) {
+    my $SafeShort = SmartHTML({-text=>$Topics{$ID}{Short}});
+    my $SafeLong = SmartHTML({-text=>$Topics{$ID}{Long}});
     my $Spaces = '-'x(1*(scalar(@{$TopicProvenance{$ID}})-1));
     if ($ItemFormat eq "short") {
-      $TopicLabels{$ID} = $Spaces.CGI::escapeHTML($Topics{$ID}{Short});
+      $TopicLabels{$ID} = $Spaces.$SafeShort;
     } elsif ($ItemFormat eq "long") {
-      $TopicLabels{$ID} = $Spaces.CGI::escapeHTML($Topics{$ID}{Long});
+      $TopicLabels{$ID} = $Spaces.$SafeLong;
     } elsif ($ItemFormat eq "full") {
-      $TopicLabels{$ID} = $Spaces.CGI::escapeHTML($Topics{$ID}{Short}.
-                                             " [".$Topics{$ID}{Long}."]");
+      $TopicLabels{$ID} = $Spaces.$SafeShort." [".$SafeLong."]";
     }
 
     if (($ItemFormat eq "short" or $ItemFormat eq "long") &&
@@ -483,13 +488,10 @@ sub TopicScroll ($) {
                          -text      => $Text    , -extratext => $ExtraText,
                          -required  => $Required, -errormsg  => 'You must choose at least one topic.');
 
-  $query ->  autoEscape(0);  # Turn off and on since sometimes scrolling_list double escape this.
-
   print $query -> scrolling_list(-name     => $Name, -values => \@TopicIDs,
                                  -size     => $Size, -labels => \%TopicLabels,
                                  -multiple => $Multiple,
                                  -default  => \@Defaults, %Options);
-  $query ->  autoEscape(1);
 }
 
 1;

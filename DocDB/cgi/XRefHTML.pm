@@ -4,7 +4,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -20,6 +20,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+require "HTMLUtilities.pm";
 
 sub PrintXRefInfo ($) {
   require "XRefSQL.pm";
@@ -51,7 +53,7 @@ sub PrintXRefInfo ($) {
         if ($Version) {
           $DocumentLink .= "&amp;version=$Version";
         }
-        $DocumentLink .= "\">".$ExtProject."-doc-".$DocumentID;
+        $DocumentLink .= "\">".SmartHTML({-text=>$ExtProject})."-doc-".$DocumentID;
         if ($Version) {
           $DocumentLink .= "-v$Version";
         }
@@ -126,8 +128,8 @@ sub ExternalDocDBLink ($) {
   my ($ArgRef) = @_;
   my $DocDBID = exists $ArgRef->{-docdbid} ? $ArgRef->{-docdbid} : 0;
   my $Link = "<a href=\"$ExternalDocDBs{$DocDBID}{PublicURL}/DocumentDatabase\"";
-  $Link .= "title=\"$ExternalDocDBs{$DocDBID}{Description}\">";
-  $Link .= $ExternalDocDBs{$DocDBID}{Project};
+  $Link .= 'title="'.SmartHTML({-text=>$ExternalDocDBs{$DocDBID}{Description}}).'">';
+  $Link .= SmartHTML({-text=>$ExternalDocDBs{$DocDBID}{Project}});
   $Link .= '</a>';
   return $Link;
 }
@@ -160,10 +162,10 @@ sub ExternalDocDBSelect (;%) {
   my %Labels        = ();
   foreach my $ExternalDocDBID (@ExternalDocDBIDs) {
     if ($Format eq "full") {
-      $Labels{$ExternalDocDBID} = $ExternalDocDBs{$ExternalDocDBID}{Project}.
-      ":".$ExternalDocDBs{$ExternalDocDBID}{Description};
+      $Labels{$ExternalDocDBID} = SmartHTML({-text=>$ExternalDocDBs{$ExternalDocDBID}{Project}}).
+      ":".SmartHTML({-text=>$ExternalDocDBs{$ExternalDocDBID}{Description}});
     } else {
-      $Labels{$ExternalDocDBID} = $ExternalDocDBs{$ExternalDocDBID}{Project};
+      $Labels{$ExternalDocDBID} = SmartHTML({-text=>$ExternalDocDBs{$ExternalDocDBID}{Project}});
     }
   }
 

@@ -10,7 +10,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -48,6 +48,7 @@ require "XRefSQL.pm";
 require "Messages.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 GetSecurityGroups();
 
@@ -56,8 +57,6 @@ if ($UserValidation eq "certificate") {
   require "CertificateUtilities.pm";
   $CertificateStatus = CertificateStatus();
 }
-
-# %params = $query -> Vars;  # No parameters (yet?)
 
 print $query->header( -charset => $HTTP_ENCODING );
 if ($UserValidation eq "certificate" && $CertificateStatus ne "verified") {

@@ -1,4 +1,5 @@
-#        Name: $RCSfile$
+#
+#        Name: FormElements.pm
 # Description: Various routines which supply input forms for document
 #              addition, etc. This file is deprecated. Routines are
 #              being moved out into the various *HTML.pm files.
@@ -8,7 +9,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 
-# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -188,8 +189,8 @@ sub PubInfoBox {
   my $ElementTitle = &FormElementTitle(-helplink  => "pubinfo",
                                        -helptext  => "URLs or other publication information");
   print $ElementTitle,"\n";
-
-  print $query -> textarea (-name => 'pubinfo', -default => $PubInfoDefault,
+  my $SafeDefault = SmartHTML({-text => $PubInfoDefault},);
+  print $query -> textarea (-name => 'pubinfo', -default => $SafeDefault,
                             -columns => 60, -rows => 1);
 };
 
@@ -215,10 +216,12 @@ sub InstitutionSelect (;%) { # Scrolling selectable list for institutions
   my @InstIDs = sort byInstitution keys %Institutions;
   my %InstLabels = ();
   foreach my $ID (@InstIDs) {
+    my $LongName = SmartHTML({-text => $Institutions{$ID}{LONG}},);
+    my $ShortName = SmartHTML({-text => $Institutions{$ID}{SHORT}},);
     if ($Mode eq "full") {
-      $InstLabels{$ID} = $Institutions{$ID}{SHORT}." [".$Institutions{$ID}{LONG}."]";
+      $InstLabels{$ID} = $ShortName." [".$LongName."]";
     } else {
-      $InstLabels{$ID} = $Institutions{$ID}{SHORT};
+      $InstLabels{$ID} = $ShortName;
     }
   }
   if ($Disabled) {
@@ -395,7 +398,7 @@ sub TextArea (%) {
                                        -nobreak   => $NoBreak  ,
                                        -required  => $Required );
   print $ElementTitle,"\n";
-  print $query -> textarea (-name    => $Name,    -default   => &SafeHTML($Default),
+  print $query -> textarea (-name    => $Name,    -default   => SmartHTML({-text=>$Default}),
                             -columns => $Columns, -rows      => $Rows);
 }
 

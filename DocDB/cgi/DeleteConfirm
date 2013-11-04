@@ -27,6 +27,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -37,25 +38,22 @@ require "DocumentSQL.pm";
 require "RevisionSQL.pm";
 
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "AdministerElements.pm";
 require "Security.pm";
 
 require "RevisionHTML.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 &GetSecurityGroups;
 
-%params = $query -> Vars;
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-$DocumentID = $params{docid};
-$DocumentID =~ s/^\s+//; # Remove leading and trailing spaces
-$DocumentID =~ s/\s+$//;
-
-my $DelVersion = $params{version};
-$DelVersion =~ s/^\s+//; # Remove leading and trailing spaces
-$DelVersion =~ s/\s+$//;
+my $DocumentID = $Untaint -> extract(-as_typedint => "docid") || 0;
+my $DocumentID = $Untaint -> extract(-as_typedint => "version") || 0;
 
 @ErrorStack = ();
 

@@ -1,14 +1,12 @@
 #! /usr/bin/env perl
 #
-#        Name: $RCSfile$
+#        Name: DocumentAddForm
 # Description: The main form to add or modify documents or metadata
 #
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
-#
 #      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2010 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -26,6 +24,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 use CGI qw(-nosticky);
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -45,6 +44,7 @@ require "TopicSQL.pm";
 require "ResponseElements.pm";
 require "FormElements.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "Utilities.pm";
 require "Defaults.pm";
 require "Security.pm";
@@ -62,6 +62,7 @@ require "TalkHTML.pm";
 require "TopicHTML.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 @ErrorStack = ();
@@ -73,16 +74,17 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 &GetDocTypes;
 &GetPrefsCookie;
 
-%params = $query -> Vars;
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-my $DocumentID   = $params{docid};
-my $ConferenceID = $params{conferenceid};
-my $SessionID    = $params{sessionid};
-my $Version      = $params{version};
-my @PreTopics    = $query -> param('pretopic');
-   $mode         = $params{mode}; # FIXME: Can't be my since used in subroutines
+my $DocumentID = $Untaint -> extract(-as_integer => "docid") || 0;
+my $ConferenceID = $Untaint -> extract(-as_integer => "conferenceid") || undef;
+my $SessionID = $Untaint -> extract(-as_integer => "sessionid") || undef;
+my $Version = $Untaint -> extract(-as_integer => "version") || undef;
+my $InputVersion = $Untaint -> extract(-as_integer => "version") || undef;
+my @PreTopics = @{ $Untaint -> extract(-as_listofint => "pretopic") || undef };
+   $mode = $Untaint -> extract(-as_safehtml => "mode") || "";  # FIXME: Can't be "my" since used in subroutines
 my $Clone;
-my $Quick        = $params{quick};
+my $Quick = $Untaint -> extract(-as_safehtml => "quick") || "";
 
 my $QuickClass = " QuickEntryShow";
 if ($Quick) {
@@ -127,7 +129,7 @@ unless (CanCreate()) {
   push @ErrorStack,"You are not allowed to modify or create documents.";
 }
 if ($mode eq "update" || $mode eq "updatedb" || $mode eq "clone") {
-  unless ($params{docid}) {
+  unless ($DocumentID) {
     push @ErrorStack,"You must supply a document number to modify or clone a document.";
   }
 }
@@ -322,7 +324,7 @@ my $UniqueID = time."-".(int rand (2**31-1));
 print $query -> hidden(-name => 'uniqueid',  -default => $UniqueID);
 
 if ($mode eq "updatedb") {
-  if (defined $params{version}) {
+  if (defined $InputVersion) {
     print $query -> hidden(-name => 'version',   -default => $Version);
   }
 }

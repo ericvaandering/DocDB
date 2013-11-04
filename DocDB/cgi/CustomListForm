@@ -9,7 +9,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -28,6 +28,7 @@
 
 
 use CGI qw(-nosticky);
+use CGI::Untaint;
 use DBI;
 
 require "DocDBGlobals.pm";
@@ -42,6 +43,7 @@ require "DocDBFields.pm";
 
 require "DBUtilities.pm";
 require "HTMLUtilities.pm";
+require "UntaintInput.pm";
 require "MeetingSecurityUtilities.pm";
 
 require "ConfigSQL.pm";
@@ -55,16 +57,17 @@ require "MeetingHTML.pm";
 require "TopicHTML.pm";
 
 $query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
 
-%params = $query -> Vars;
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
-my $Scope             = $params{scope};
-my @EventGroupIDs     = split /\0/,$params{eventgroups};
-my @EventIDs          = split /\0/,$params{events};
-my @Defaults          = split /\0/,$params{defaultlists};
-my @TopicIDs          = split /\0/,$params{topics};
-my @DocTypeIDs        = split /\0/,$params{doctype};
-my $DefaultEventID    = $params{eventid};
+my $Scope = $Untaint -> extract(-as_printable => "scope") || "";
+my @EventGroupIDs = @{ $Untaint -> extract(-as_listofint => "eventgroups") || undef };
+my @EventIDs = @{ $Untaint -> extract(-as_listofint => "events") || undef };
+my @Defaults = @{ $Untaint -> extract(-as_listofwords => "defaultlists") || undef };
+my @TopicIDs = @{ $Untaint -> extract(-as_listofint => "topics") || undef };
+my @DocTypeIDs = @{ $Untaint -> extract(-as_listofint => "doctype") || undef };
+my $DefaultEventID = $Untaint -> extract(-as_integer => "eventid") || 0;
 
 my $MaxFields = 15;
 my @Cookies = ();
@@ -98,13 +101,13 @@ if (CanAdminister()) {
 
 my %FieldList = ();
 foreach my $FieldCount (1..$MaxFields) {
-  my $Field = $params{"field$FieldCount"};
+  my $Field = $Untaint -> extract(-as_printable => "field$FieldCount") || "";
   if ($Field && $Field ne "xxxx") {
     push @ActionStack,"Field \"$Field\" added to the display";
-    $FieldList{$Field}{Row}     = $params{"row$FieldCount"};
-    $FieldList{$Field}{Column}  = $params{"col$FieldCount"};
-    $FieldList{$Field}{RowSpan} = $params{"rowspan$FieldCount"};
-    $FieldList{$Field}{ColSpan} = $params{"colspan$FieldCount"};
+    $FieldList{$Field}{Row}     = $Untaint -> extract(-as_integer => "row$FieldCount") || 0;
+    $FieldList{$Field}{Column}  = $Untaint -> extract(-as_integer => "col$FieldCount") || 0;
+    $FieldList{$Field}{RowSpan} = $Untaint -> extract(-as_integer => "rowspan$FieldCount") || 0;
+    $FieldList{$Field}{ColSpan} = $Untaint -> extract(-as_integer => "colspan$FieldCount") || 0;
   }
 }
 

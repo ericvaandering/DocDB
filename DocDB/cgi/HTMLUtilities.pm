@@ -5,7 +5,7 @@
 #    Modified:
 #
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -22,8 +22,51 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-
 require "ProjectRoutines.pm";
+
+sub SmartHTML ($) {
+  my ($ArgRef) = @_;
+  my $Text          = exists $ArgRef->{-text}          ?  $ArgRef->{-text}          : "";
+  my $MakeURLs      = exists $ArgRef->{-makeURLs}      ?  $ArgRef->{-makeURLs}      : $FALSE;
+  my $AddLineBreaks = exists $ArgRef->{-addLineBreaks} ?  $ArgRef->{-addLineBreaks} : $FALSE;
+
+  # Escape text into &x1234; format ignoring a alphanumerics and a few special characters
+  $Text =~ s{([^\:\/\.\-\?\=\+\w\s&#%;)]|&(?!#?\w+;))}{"&#x".sprintf("%x", unpack(U,$1)).";"}ge;
+
+  # Turn found URLs into hyperlinks, adapted from Perl Cookbook, 6.21
+  if ($MakeURLs) {
+    my $urls = '(http|telnet|gopher|file|wais|ftp|https)';
+    my $ltrs = '\w';
+    my $gunk = '/#~:.?+=&%@!{};\-';
+    my $punc = '.:?\-\)';
+    my $any  = "${ltrs}${gunk}${punc}";
+    $Text =~ s{
+              \b                    # start at word boundary
+              (                     # begin $1  {
+               $urls     :          # need resource and a colon
+               [$any] +?            # followed by on or more
+                                    #  of any valid character, but
+                                    #  be conservative and take only
+                                    #  what you need to....
+              )                     # end   $1  }
+              (?=                   # look-ahead non-consumptive assertion
+               [$punc]*             # either 0 or more punctuation
+               [^$any]              #   followed by a non-url char
+               |                    # or else
+               $                    #   then end of the string
+              )
+             }{<a href="$1">$1</a>}igox;
+  }
+
+  # Make two line-feeds into a paragraph break and one into a line break in HTML
+  if ($AddLineBreaks) {
+    $Text =~ s/\s*\n\s*\n\s*/<p\/>/g; # Replace two new lines and any space with <p>
+    $Text =~ s/\s*\n\s*/<br\/>\n/g;
+    $Text =~ s/<p\/>/<p\/>\n/g;
+  }
+
+  return $Text;
+}
 
 sub PrettyHTML ($) {
   my ($HTML) = @_;
