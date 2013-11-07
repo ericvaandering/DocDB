@@ -57,7 +57,9 @@ foreach $EmailUserID (@EmailUserIDs) {
   FetchEmailUser($EmailUserID);
   unless (CanSign($EmailUserID)) {next;}
   my $Name = $EmailUser{$EmailUserID}{Name};
-  print "<a href=\"#list\" onclick=\"InsertSignature('$Name');\">$Name</a><br>";
+  my $JSName = $Name;
+  $JSName =~ s/\'/\\\'/g;
+  print "<a href=\"#list\" onclick=\"InsertSignature('$JSName');\">$Name</a><br>";
 }
 
 print "<center><form>\n";
