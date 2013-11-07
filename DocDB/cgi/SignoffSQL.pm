@@ -22,6 +22,8 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+use HTML::Entities;
+
 sub ProcessSignoffList ($) {
   my ($SignoffList) = @_;
 
@@ -36,7 +38,8 @@ sub ProcessSignoffList ($) {
     chomp $Entry;
     $Entry =~ s/^\s+//g;
     $Entry =~ s/\s+$//g;
-
+    my $SafeEntry = $Entry;
+    $Entry = HTML::Entities::decode_entities($Entry);
     unless ($Entry) {
       push @WarnStack,"A blank line was entered into the signoff list. It was ignored.";
       next;
@@ -62,12 +65,12 @@ sub ProcessSignoffList ($) {
         push @EmailUserIDs,$EmailUserID;
         next;
       } else {
-        push @ErrorStack,"$Entry is not allowed to sign documents. Contact an administrator to change the permissions or ".
+        push @ErrorStack,"$SafeEntry is not allowed to sign documents. Contact an administrator to change the permissions or ".
                          "restrict your choices to those who can sign documents.";
       }
     }
 
-    push @ErrorStack,"No unique match was found for the signoff $Entry. Please go
+    push @ErrorStack,"No unique match was found for the signoff $SafeEntry. Please go
                       back and try again.";
   }
   return @EmailUserIDs;
