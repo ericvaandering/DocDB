@@ -54,7 +54,7 @@ sub ProcessSignoffList ($) {
     my $EmailUserList = $dbh -> prepare("select EmailUserID from EmailUser where Name rlike ?");
 
 ### Find exact match (initial or full name)
-    my $RegExp = "^(".$Entry."|".$SafeEntry.")$";
+    my $RegExp = '^('.$Entry.'|'.$SafeEntry.')$';
     $EmailUserList -> execute($RegExp);
     $EmailUserList -> bind_columns(undef, \($EmailUserID));
     @Matches = ();
