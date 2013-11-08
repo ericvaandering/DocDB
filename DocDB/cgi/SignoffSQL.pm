@@ -40,6 +40,7 @@ sub ProcessSignoffList ($) {
     $Entry =~ s/\s+$//g;
     my $SafeEntry = $Entry;
     $Entry = HTML::Entities::decode_entities($Entry);
+
     unless ($Entry) {
       push @WarnStack,"A blank line was entered into the signoff list. It was ignored.";
       next;
@@ -50,11 +51,11 @@ sub ProcessSignoffList ($) {
       $Entry = join ' ',@Parts[1],@Parts[0];
     }
 
-    my $EmailUserList = $dbh -> prepare("select EmailUserID from EmailUser where Name=?");
+    my $EmailUserList = $dbh -> prepare("select EmailUserID from EmailUser where Name rlike ?");
 
 ### Find exact match (initial or full name)
-
-    $EmailUserList -> execute($Entry);
+    my $RegExp = "^(".$Entry."|".$SafeEntry.")$";
+    $EmailUserList -> execute($RegExp);
     $EmailUserList -> bind_columns(undef, \($EmailUserID));
     @Matches = ();
     while ($EmailUserList -> fetch) {
