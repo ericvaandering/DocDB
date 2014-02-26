@@ -12,7 +12,7 @@ CREATE TABLE Author (
   LastName varchar(32) NOT NULL default '',
   InstitutionID int(11) NOT NULL default '0',
   Active int(11) default '1',
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (AuthorID),
   KEY Name (LastName)
 ) TYPE=MyISAM;
@@ -31,7 +31,7 @@ CREATE TABLE AuthorHint (
   AuthorHintID int(11) NOT NULL auto_increment,
   SessionTalkID int(11) default NULL,
   AuthorID int(11) default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (AuthorHintID),
   KEY SessionTalkID (SessionTalkID)
 ) TYPE=MyISAM;
@@ -52,7 +52,7 @@ CREATE TABLE Conference (
   URL varchar(240) default NULL,
   StartDate date default NULL,
   EndDate date default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   Title varchar(128) default NULL,
   Preamble text,
   Epilogue text,
@@ -92,7 +92,7 @@ CREATE TABLE ConfigSetting (
   Sub5Value varchar(64) default NULL,
   Description text,
   Constrained int(11) default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (ConfigSettingID),
   KEY ConfigGroup (ConfigGroup),
   KEY Sub1Group (Sub1Group),
@@ -114,7 +114,7 @@ CREATE TABLE ConfigValue (
   ConfigSettingID int(11) default NULL,
   Value varchar(64) default NULL,
   Description text,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (ConfigValueID),
   KEY ConfigSettingID (ConfigSettingID)
 ) TYPE=MyISAM;
@@ -133,7 +133,7 @@ CREATE TABLE DocXRef (
   DocXRefID int(11) NOT NULL auto_increment,
   DocRevID int(11) default NULL,
   DocumentID int(11) default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   Version int(11) default NULL,
   Project varchar(32) default NULL,
   PRIMARY KEY  (DocXRefID),
@@ -155,7 +155,7 @@ CREATE TABLE Document (
   DocumentID int(11) NOT NULL auto_increment,
   RequesterID int(11) NOT NULL default '0',
   RequestDate datetime default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   DocHash char(32) default NULL,
   Alias varchar(255) default NULL,
   PRIMARY KEY  (DocumentID),
@@ -179,7 +179,7 @@ CREATE TABLE DocumentFile (
   FileName varchar(255) NOT NULL default '',
   Date datetime default NULL,
   RootFile tinyint(4) default '1',
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   Description varchar(128) default NULL,
   PRIMARY KEY  (DocFileID),
   KEY DocRevID (DocRevID)
@@ -204,7 +204,7 @@ CREATE TABLE DocumentRevision (
   VersionNumber int(11) NOT NULL default '0',
   Abstract text,
   RevisionDate datetime default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   Obsolete tinyint(4) default '0',
   Keywords varchar(240) default NULL,
   Note text,
@@ -230,7 +230,7 @@ CREATE TABLE DocumentType (
   DocTypeID int(11) NOT NULL auto_increment,
   ShortType varchar(32) default NULL,
   LongType varchar(255) default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (DocTypeID)
 ) TYPE=MyISAM;
 
@@ -251,7 +251,7 @@ CREATE TABLE EmailUser (
   Name char(128) NOT NULL default '',
   EmailAddress char(64) NOT NULL default '',
   PreferHTML int(11) NOT NULL default '0',
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   CanSign int(11) NOT NULL default '0',
   Verified int(11) NOT NULL default '0',
   AuthorID int(11) NOT NULL default '0',
@@ -272,7 +272,7 @@ CREATE TABLE EventGroup (
   EventGroupID int(11) NOT NULL auto_increment,
   ShortDescription varchar(32) NOT NULL default '',
   LongDescription text,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (EventGroupID)
 ) TYPE=MyISAM;
 
@@ -292,7 +292,7 @@ CREATE TABLE EventTopic (
   EventID int(11) NOT NULL default '0',
   SessionID int(11) NOT NULL default '0',
   SessionSeparatorID int(11) NOT NULL default '0',
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (EventTopicID),
   KEY Topic (TopicID),
   KEY Event (EventID),
@@ -316,7 +316,7 @@ CREATE TABLE ExternalDocDB (
   Description varchar(255) default NULL,
   PublicURL varchar(255) default NULL,
   PrivateURL varchar(255) default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (ExternalDocDBID)
 ) TYPE=MyISAM;
 
@@ -334,7 +334,7 @@ CREATE TABLE GroupHierarchy (
   HierarchyID int(11) NOT NULL auto_increment,
   ChildID int(11) NOT NULL default '0',
   ParentID int(11) NOT NULL default '0',
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (HierarchyID)
 ) TYPE=MyISAM;
 
@@ -352,7 +352,7 @@ CREATE TABLE Institution (
   InstitutionID int(11) NOT NULL auto_increment,
   ShortName varchar(40) NOT NULL default '',
   LongName varchar(80) NOT NULL default '',
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (InstitutionID)
 ) TYPE=MyISAM;
 
@@ -372,7 +372,7 @@ CREATE TABLE Journal (
   Name varchar(128) NOT NULL default '',
   Publisher varchar(64) NOT NULL default '',
   URL varchar(240) default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   Acronym varchar(8) default NULL,
   PRIMARY KEY  (JournalID)
 ) TYPE=MyISAM;
@@ -391,7 +391,7 @@ CREATE TABLE Keyword (
   KeywordID int(11) NOT NULL auto_increment,
   ShortDescription varchar(32) default NULL,
   LongDescription text,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (KeywordID)
 ) TYPE=MyISAM;
 
@@ -409,7 +409,7 @@ CREATE TABLE KeywordGroup (
   KeywordGroupID int(11) NOT NULL auto_increment,
   ShortDescription varchar(32) default NULL,
   LongDescription text,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (KeywordGroupID)
 ) TYPE=MyISAM;
 
@@ -427,7 +427,7 @@ CREATE TABLE KeywordGrouping (
   KeywordGroupingID int(11) NOT NULL auto_increment,
   KeywordGroupID int(11) default NULL,
   KeywordID int(11) default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (KeywordGroupingID),
   KEY KeywordID (KeywordID),
   KEY KeywordGroupID (KeywordGroupID)
@@ -447,7 +447,7 @@ CREATE TABLE MeetingModify (
   MeetingModifyID int(11) NOT NULL auto_increment,
   ConferenceID int(11) default NULL,
   GroupID int(11) default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (MeetingModifyID),
   KEY ConferenceID (ConferenceID)
 ) TYPE=MyISAM;
@@ -467,7 +467,7 @@ CREATE TABLE MeetingOrder (
   SessionOrder int(11) default NULL,
   SessionID int(11) default NULL,
   SessionSeparatorID int(11) default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (MeetingOrderID),
   KEY SessionID (SessionID),
   KEY SessionSeparatorID (SessionSeparatorID)
@@ -487,7 +487,7 @@ CREATE TABLE MeetingSecurity (
   MeetingSecurityID int(11) NOT NULL auto_increment,
   ConferenceID int(11) default NULL,
   GroupID int(11) default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (MeetingSecurityID),
   KEY ConferenceID (ConferenceID)
 ) TYPE=MyISAM;
@@ -508,7 +508,7 @@ CREATE TABLE Moderator (
   EventID int(11) NOT NULL default '0',
   SessionID int(11) NOT NULL default '0',
   SessionSeparatorID int(11) NOT NULL default '0',
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (ModeratorID),
   KEY Author (AuthorID),
   KEY Event (EventID),
@@ -532,7 +532,7 @@ CREATE TABLE Notification (
   Type varchar(32) default NULL,
   ForeignID int(11) default NULL,
   Period varchar(32) default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   TextKey varchar(255) default NULL,
   PRIMARY KEY  (NotificationID),
   KEY EmailUserID (EmailUserID),
@@ -554,7 +554,7 @@ CREATE TABLE RevisionAuthor (
   DocRevID int(11) NOT NULL default '0',
   AuthorID int(11) NOT NULL default '0',
   AuthorOrder int(11) default '0',
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (RevAuthorID),
   KEY DocRevID (DocRevID),
   KEY AuthorID (AuthorID)
@@ -574,7 +574,7 @@ CREATE TABLE RevisionEvent (
   RevEventID int(11) NOT NULL auto_increment,
   DocRevID int(11) NOT NULL default '0',
   ConferenceID int(11) NOT NULL default '0',
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (RevEventID),
   KEY MinorTopicID (ConferenceID),
   KEY DocRevID (DocRevID)
@@ -594,7 +594,7 @@ CREATE TABLE RevisionModify (
   RevModifyID int(11) NOT NULL auto_increment,
   GroupID int(11) default NULL,
   DocRevID int(11) default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (RevModifyID),
   KEY GroupID (GroupID),
   KEY DocRevID (DocRevID)
@@ -616,7 +616,7 @@ CREATE TABLE RevisionReference (
   JournalID int(11) default NULL,
   Volume char(32) default NULL,
   Page char(32) default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (ReferenceID),
   KEY JournalID (JournalID),
   KEY DocRevID (DocRevID)
@@ -636,7 +636,7 @@ CREATE TABLE RevisionSecurity (
   RevSecurityID int(11) NOT NULL auto_increment,
   GroupID int(11) NOT NULL default '0',
   DocRevID int(11) NOT NULL default '0',
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (RevSecurityID),
   KEY Grp (GroupID),
   KEY Revision (DocRevID)
@@ -655,7 +655,7 @@ CREATE TABLE RevisionSecurity (
 CREATE TABLE RevisionTopic (
   RevTopicID int(11) NOT NULL auto_increment,
   DocRevID int(11) NOT NULL default '0',
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   TopicID int(11) NOT NULL default '0',
   PRIMARY KEY  (RevTopicID),
   KEY DocRevID (DocRevID),
@@ -676,7 +676,7 @@ CREATE TABLE SecurityGroup (
   GroupID int(11) NOT NULL auto_increment,
   Name char(16) NOT NULL default '',
   Description char(64) default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   CanCreate int(11) default '0',
   CanAdminister int(11) default '0',
   CanView int(11) default '1',
@@ -700,7 +700,7 @@ CREATE TABLE Session (
   StartTime datetime default NULL,
   Title varchar(128) default NULL,
   Description text,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   Location varchar(128) default NULL,
   AltLocation varchar(255) default NULL,
   ShowAllTalks int(11) default '0',
@@ -723,7 +723,7 @@ CREATE TABLE SessionOrder (
   TalkOrder int(11) default NULL,
   SessionTalkID int(11) default NULL,
   TalkSeparatorID int(11) default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (SessionOrderID),
   KEY SessionTalkID (SessionTalkID),
   KEY TalkSeparatorID (TalkSeparatorID)
@@ -745,7 +745,7 @@ CREATE TABLE SessionSeparator (
   StartTime datetime default NULL,
   Title varchar(128) default NULL,
   Description text,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   Location varchar(128) default NULL,
   PRIMARY KEY  (SessionSeparatorID),
   KEY ConferenceID (ConferenceID)
@@ -769,7 +769,7 @@ CREATE TABLE SessionTalk (
   Time time default NULL,
   HintTitle varchar(128) default NULL,
   Note text,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (SessionTalkID),
   KEY SessionID (SessionID),
   KEY DocumentID (DocumentID)
@@ -791,7 +791,7 @@ CREATE TABLE Signature (
   SignoffID int(11) default NULL,
   Note text,
   Signed int(11) default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (SignatureID),
   KEY EmailUserID (EmailUserID),
   KEY SignoffID (SignoffID)
@@ -811,7 +811,7 @@ CREATE TABLE Signoff (
   SignoffID int(11) NOT NULL auto_increment,
   DocRevID int(11) default NULL,
   Note text,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (SignoffID),
   KEY DocRevID (DocRevID)
 ) TYPE=MyISAM;
@@ -830,7 +830,7 @@ CREATE TABLE SignoffDependency (
   SignoffDependencyID int(11) NOT NULL auto_increment,
   SignoffID int(11) default NULL,
   PreSignoffID int(11) default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (SignoffDependencyID),
   KEY SignoffID (SignoffID),
   KEY PreSignoffID (PreSignoffID)
@@ -877,7 +877,7 @@ CREATE TABLE TalkSeparator (
   Time time default NULL,
   Title varchar(128) default NULL,
   Note text,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (TalkSeparatorID),
   KEY SessionID (SessionID)
 ) TYPE=MyISAM;
@@ -896,7 +896,7 @@ CREATE TABLE Topic (
   TopicID int(11) NOT NULL auto_increment,
   ShortDescription varchar(64) default '',
   LongDescription text,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (TopicID)
 ) TYPE=MyISAM;
 
@@ -914,7 +914,7 @@ CREATE TABLE TopicHierarchy (
   TopicHierarchyID int(11) NOT NULL auto_increment,
   TopicID int(11) NOT NULL default '0',
   ParentTopicID int(11) NOT NULL default '0',
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (TopicHierarchyID),
   KEY Topic (TopicID),
   KEY Parent (ParentTopicID)
@@ -933,7 +933,7 @@ CREATE TABLE TopicHierarchy (
 CREATE TABLE TopicHint (
   TopicHintID int(11) NOT NULL auto_increment,
   SessionTalkID int(11) default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   TopicID int(11) NOT NULL default '0',
   PRIMARY KEY  (TopicHintID),
   KEY SessionTalkID (SessionTalkID)
@@ -953,7 +953,7 @@ CREATE TABLE UsersGroup (
   UsersGroupID int(11) NOT NULL auto_increment,
   EmailUserID int(11) default NULL,
   GroupID int(11) default NULL,
-  TimeStamp timestamp(14) NOT NULL,
+  TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (UsersGroupID),
   KEY EmailUserID (EmailUserID)
 ) TYPE=MyISAM;
