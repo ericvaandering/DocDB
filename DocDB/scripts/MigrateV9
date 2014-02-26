@@ -3,10 +3,10 @@
 # Author Eric Vaandering (ewv@fnal.gov)
 #
 
-# Usage: MigrateV8 --u=username --p=password --a=init|migrate|undo|delete
+# Usage: MigrateV9 --u=username --p=password --a=init|migrate|undo|delete
 
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -85,7 +85,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
       SecurityGroupID int(11) NOT NULL default '0',
       EmailUserID int(11) NOT NULL default '0',
       SecurityHash varchar(300) default NULL,
-      TimeStamp timestamp(14) NOT NULL,
+      TimeStamp timestamp NOT NULL,
       PRIMARY KEY (FeedLinkID),
       KEY SecurityGroupKey (SecurityGroupID),
       KEY EmailUserKey (EmailUserID),
@@ -98,7 +98,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
       EmailUserID int(11) NOT NULL default '0',
       TableType varchar(32) default NULL,
       ForeignID int(11) default NULL,
-      TimeStamp timestamp(14) NOT NULL,
+      TimeStamp timestamp NOT NULL,
       PRIMARY KEY  (LocalAdministerID),
       KEY TypeKey  (TableType),
       KEY EmailUserKey (EmailUserID),
@@ -109,6 +109,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
       AuthorGroupID int(11) NOT NULL auto_increment,
       GroupID int(11) NOT NULL default '0',
       AuthorID int(11) NOT NULL default '0',
+      TimeStamp timestamp NOT NULL,
       PRIMARY KEY  (AuthorGroupID),
       KEY GroupKey  (GroupID),
       KEY AuthorKey (AuthorID)
