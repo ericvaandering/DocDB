@@ -8,7 +8,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -131,9 +131,7 @@ for (my $i = 1; $i<= $MaxFiles; ++$i) {
                          replaced with a new version.";
       } else {
         push @ErrorStack,"The file $short_file already exists.  You may not add
-             files with the same file name.<br>
-             You probably want to <a href=\"$UpdateLink\">update</a> your
-             document,  not add files.";
+             files with the same file name. You probably want to update your document,  not add files.";
       }
     }
   } elsif ($UrlI) {
@@ -148,9 +146,8 @@ for (my $i = 1; $i<= $MaxFiles; ++$i) {
                           replaced with a new version.";
       } else {
         push @ErrorStack,"The file $short_file already exists.
-         You may not add files with the same file name.<br>
-         You probably want to <a href=\"$UpdateLink\">update</a> your document,
-         not add files.";
+         You may not add files with the same file name.
+         You probably want to update your document, not add files.";
       }
     }
   }
