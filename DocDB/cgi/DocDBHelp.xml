@@ -5,12 +5,10 @@
  Description: The snippets of documentation that appear in pop-up scripts.
               Read by DocDBHelp
 
-    Revision: $Revision$
-    Modified: $Author$ on $Date$
-
       Author: Eric Vaandering (ewv@fnal.gov)
+    Modified: Eric Vaandering (ewv@fnal.gov)
 
- Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+ Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
 
     This file is part of DocDB.
 
@@ -1250,7 +1248,7 @@ or may not be the same as the web username and password.
   <key>certname</key>
   <title>Certificate Distinguished Name (DN)</title>
   <text>
-   This is the unique identifier (subject or DN) in the user's client certificate. 
+   This is the unique identifier (subject or DN) in the user's client certificate.
    It must be entered exactly or the user will not be
    authenticated when they  present their client certificate to DocDB.
   </text>
@@ -1259,7 +1257,7 @@ or may not be the same as the web username and password.
  <entry>
   <key>usersname</key>
   <title>User's Name (CN)</title>
-  <text>   
+  <text>
    Enter the user's common name. Often this is present in a CN section of the certificate DN, but it need
    not be entered exactly; it is not used for authentication.
   </text>
@@ -1284,6 +1282,22 @@ or may not be the same as the web username and password.
          be useful if there are two author entries for one person or if your practice is to
          move all activity by people who have left the organization to <q>Obsolete Author</q>
          or something similar.</p><p>This field is optional.</p>
+     </text>
+ </entry>
+
+ <entry>
+     <key>eventgroups</key>
+     <title>Event Group</title>
+     <text>
+         <p>Select which group (or category) of events that this event should belong to.</p>
+     </text>
+ </entry>
+
+ <entry>
+     <key>moderators</key>
+     <title>Moderators</title>
+     <text>
+         <p>Select the person or people who will be the moderators of this session.</p>
      </text>
  </entry>
 
