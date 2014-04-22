@@ -6,7 +6,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -76,8 +76,10 @@ sub RevisionNoteBox {
     $JSInsert =~ s/\n/\\n/g;
     $JSInsert =~ s/\r//g;
     $JSInsert =~ s/\'/\\\'/g;
+    $JSInsert =~ s/\&#x27;/\\\&#x27;/g;
+    $JSInsert =~ s/\&#x22;/\\\&#x27;/g;  # Double quote with single quote
     $JSInsert =~ s/\"/\\\'/g; # FIXME: See if there is a way to insert double quotes
-                              #        Bad HTML/JS interaction, I think
+                              #        Bad HTML/JS interaction, I think. Try breaking string at $JSInsert
     $ExtraText = "<a href=\"#RevisionNote\" onclick=\"InsertRevisionNote('$JSInsert');\">(Insert notes from previous version)</a>";
   }
 
