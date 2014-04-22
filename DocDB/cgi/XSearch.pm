@@ -7,12 +7,12 @@
 #
 # Author Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
 #    DocDB is free software; you can redistribute it and/or modify
-#    it under the terms of version 2 of the GNU General Public License 
+#    it under the terms of version 2 of the GNU General Public License
 #    as published by the Free Software Foundation.
 
 #    DocDB is distributed in the hope that it will be useful,
@@ -33,30 +33,30 @@ sub XSearchParse ($) {
   use XML::Twig;
   use LWP::UserAgent;
   require "XRefSQL.pm";
- 
+
   my $LWP = LWP::UserAgent -> new();
   $LWP -> timeout(30);
 
   my $Twig = XML::Twig -> new();
 
   my %FoundDocuments = ();
-  my $ProjectXML;  
+  my $ProjectXML;
   if ($Project) {
     my $ExternalDocDBID = $ExternalProjects{$Project};
 
     unless ($ExternalDocDBID) {
       return undef;
-    }   
+    }
 
     my $SearchURL = $ExternalDocDBs{$ExternalDocDBID}{PublicURL}."/Search";
-    $SearchURL .= "?outformat=XML&simple=1";
-    $SearchURL .= "&simpletext=$Text";
-    push @DebugStack,"Contacting $Project $SearchURL";  
+    $SearchURL .= "?outformat=XML&amp;simple=1";
+    $SearchURL .= "&amp;simpletext=$Text";
+    push @DebugStack,"Contacting $Project $SearchURL";
     $Twig -> safe_parse($LWP -> get($SearchURL) -> content());
     if ($@) {
       push @WarnStack,"$Project DocDB did not return valid data. Error was ".$@;
       return undef;
-    }  
+    }
     push @DebugStack,"$Project returned OK";
     ($ProjectXML) = $Twig -> children("docdb");
   } elsif ($UseTwig) {
@@ -80,13 +80,13 @@ sub XSearchParse ($) {
     my $DocID     = $Document -> {'att'} -> {'id'};
     my $URL       = $Document -> {'att'} -> {'href'};
     my $Relevance = $Document -> {'att'} -> {'relevance'};
-    
+
     my $Identifier = $Project."-".$DocID;
-    
+
     my $Revision =  $Document -> first_child();
     unless ($Revision) {
       next;
-    }  
+    }
 
     my $DateTime = $Revision -> {'att'} -> {'modified'};
     my ($Date,$Time) = split /\s+/,$DateTime;
@@ -96,7 +96,7 @@ sub XSearchParse ($) {
       next;
     }
     my $Title = $TitleElt -> text();
-    
+
     my $AuthorElt = $Revision -> first_child("author");
     my $Author;
     if ($AuthorElt) {
@@ -104,7 +104,7 @@ sub XSearchParse ($) {
     } else {
       $Author = "None";
     }
-         
+
     my @Authors = $Revision -> children("author");
     my $EtAl = $FALSE;
     if (scalar(@Authors)>1) {
@@ -117,8 +117,8 @@ sub XSearchParse ($) {
     $FoundDocuments{$Identifier}{Author}    = $Author;
     $FoundDocuments{$Identifier}{EtAl}      = $EtAl;
     $FoundDocuments{$Identifier}{Date}      = $Date;
-  }  
-  
+  }
+
   return %FoundDocuments;
 }
 
