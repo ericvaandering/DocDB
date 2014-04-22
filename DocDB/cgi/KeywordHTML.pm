@@ -269,7 +269,7 @@ sub KeywordLink ($;%) { # FIXME: Allow parameters of short, long, full a la Lynn
   my $SafeKeyword = SmartHTML( {-text => $Keyword} );
   my $UnsafeURI = decode_entities($Keyword);
   my $SafeURI = uri_escape($UnsafeURI);
-  my $ret = "<a href=\"$Search\?keywordsearchmode=anyword;keywordsearch=$SafeURI\">";
+  my $ret = "<a href=\"$Search\?keywordsearchmode=anyword&amp;keywordsearch=$SafeURI\">";
   $ret .= "$SafeKeyword";
   $ret .=  "</a>";
   return $ret;
