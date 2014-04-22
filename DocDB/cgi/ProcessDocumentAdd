@@ -395,7 +395,7 @@ if ($EnhancedSecurity) {
 foreach my $GroupID (@securities) {
   unless ($GroupID) {next;} # Don't check for public
   unless (GroupCan({ -groupid => $GroupID, -action => $ViewCheck }) ) {
-    push @WarnStack,"The group ".SecurityLink({ -groupid => $GroupID, }).
+    push @WarnStack,"A selected group".
          " is not currently allowed to view documents. If this changes,".
          " this document will be viewable by that group.";
   }
@@ -404,7 +404,7 @@ foreach my $GroupID (@securities) {
 foreach my $GroupID (@ModifyGroups) {
   unless ($GroupID) {next;} # Don't check for public
   unless (GroupCan({ -groupid => $GroupID, -action => "create" }) ) {
-    push @WarnStack,"The group ".SecurityLink({ -groupid => $GroupID, }).
+    push @WarnStack,"A selected group".
          " is not currently allowed to create or modify documents. If this changes,".
          " this document will be modifiable by that group.";
   }

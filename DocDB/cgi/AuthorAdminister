@@ -9,7 +9,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -104,8 +104,7 @@ if      ($Action eq "Delete") {
 
   print "$AuthorLink has been removed from the database.<br>\n";
   if (@AuthorDocIDs && !$ConsolidateID) {
-    push @WarnStack,"$AuthorLink was an author on documents. These
-                     entries have been removed.";
+    push @WarnStack,"This author was an author on documents. These entries have been removed.";
   }
 } elsif ($Action eq "Modify") {
   if ($FirstName && $LastName) { # Deal with name changes (first & last will update initials)

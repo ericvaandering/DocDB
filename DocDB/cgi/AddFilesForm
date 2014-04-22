@@ -95,7 +95,7 @@ unless ($DocRevID) {
 }
 unless ($Version) {
   push @ErrorStack,"You cannot add files to a document that has only been
-  reserved. <a href=\"$UpdateLink\">Create a new version</a> instead. ";
+  reserved. Create a new version instead. ";
 }
 
 # Warn the user if they are about to modify a controlled document
