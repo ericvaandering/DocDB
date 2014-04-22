@@ -7,7 +7,7 @@
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 #
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -64,6 +64,7 @@ sub KeywordsbyKeywordGroup ($;$) {
     my $KeyLink;
     if ($Mode eq "chooser") {
       my $SafeKeyword = SmartHTML({-text=>$Keywords{$KeywordID}{Short}});
+      $SafeKeyword =~ s/\'/\\\'/g;
       $KeyLink = "<a href=\"$ListKeywords?mode=chooser\" ".
                  "onclick=\"InsertKeyword('$SafeKeyword');\">$SafeKeyword</a>";
     } else {
