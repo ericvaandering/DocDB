@@ -1,3 +1,13 @@
+RC:
+
+  Fix several places where apostrophes or single quotes were causing problems with rendered Javascript
+  Make Timestamp fields in setup & migration scripts compatible with MySQL 5.5
+  Replace ; with &amp; in URLs in several places. SharePoint does not like the ; form
+  Remove HTML from some warning/error messages since that is now sanitized into line noise
+  Add a couple of missing help messages
+
+
+
 8.7.21
   Fixes for URLs in parentheses, wrong CGI variable for fily copy check boxes,
   list of text fields that can contain newlines.
