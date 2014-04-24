@@ -262,7 +262,7 @@ sub FileUploadBox (%) {
   print $query -> hidden(-name => 'maxfiles', -default => $MaxFiles);
   print "</div>\n";
 
-  print "<table class=\"LowPaddedTable LeftHeader\">\n";
+  print "<table class=\"Alternating LeftHeader\">\n";
 
   my ($HelpLink,$HelpText,$FileHelpLink,$FileHelpText,$DescHelpLink,$DescHelpText);
   if ($Type eq "file") {
@@ -306,6 +306,7 @@ sub FileUploadBox (%) {
     my $CopyName    = "copyfile$i";
     my $URLName     = "url$i";
     my $NewName     = "newname$i";
+    my $RowClass = ("Even","Odd")[$i % 2];
 
     my $FileHelp        = FormElementTitle(-helplink => $FileHelpLink, -helptext => $FileHelpText);
     my $DescriptionHelp = FormElementTitle(-helplink => $DescHelpLink, -helptext => $DescHelpText);
@@ -313,6 +314,7 @@ sub FileUploadBox (%) {
     my $MainHelp        = FormElementTitle(-helplink => "main", -helptext => "Main?", -nocolon => $TRUE, -nobold => $TRUE);
     my $DefaultDesc = $DocFiles{$FileID}{DESCRIPTION};
 
+    print "<tbody class=\"$RowClass\">\n";
     if ($DescOnly) {
       print "<tr>\n";
       print "<th>Filename:</th>";
@@ -371,7 +373,8 @@ sub FileUploadBox (%) {
       print "Copy <tt>$DocFiles{$FileID}{NAME}</tt> from previous version:";
       print "</td></tr>\n";
     }
-    print "<tr><td colspan=\"3\"></td></tr>\n";
+    print "</tbody\n";
+    print '<tr><td colspan="3" class="FileSpacer"></td></tr>'."\n";
   }
   if ($AllowCopy && $NOrigFiles) {
     print '<tr><td colspan="2">';
@@ -388,6 +391,7 @@ sub FileUploadBox (%) {
     print $query -> password_field (-name => 'http_pass', -size => 20, -maxlength => 40);
     print "</td></tr>\n";
   }
+
   print "</table>\n";
 }
 
