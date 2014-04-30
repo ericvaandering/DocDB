@@ -89,7 +89,7 @@ if ($InputVersion eq "0") {
 }
 my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 
-my $UpdateLink = $DocumentAddForm."?mode=update;docid=$DocumentID";
+my $UpdateLink = $DocumentAddForm."?mode=update&amp;docid=$DocumentID";
 unless (&CanModify($DocumentID,$Version)) {
   push @ErrorStack,"You are not authorized to modify this document.";
 }
