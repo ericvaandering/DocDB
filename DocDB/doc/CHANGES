@@ -6,6 +6,7 @@ RC:
   Remove HTML from some warning/error messages since that is now sanitized into line noise
   Add a couple of missing help messages
   Add "copy all files from previous version" check box, ported from 8.8 branch
+  Fix URL validation broken by XSS protections, add a few more OK characters
 
 8.7.21
   Fixes for URLs in parentheses, wrong CGI variable for fily copy check boxes,
