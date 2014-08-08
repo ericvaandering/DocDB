@@ -1,15 +1,15 @@
 #! /usr/bin/env perl
-##
-#        Name: $RCSfile$
+#
+#        Name: SelectEmailPrefs.pm
 # Description: Change preferences for what/when to be notified of document
 #              changes in e-mail.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified:
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -71,7 +71,7 @@ my $ConfNewPass = $Untaint -> extract(-as_printable => "confnewpass") || "";
 my $Digest = $Untaint -> extract(-as_safehtml => "digest") || "";
 
 my $Name = $Untaint -> extract(-as_safehtml => "name") || "";
-my $Email = $Untaint -> extract(-as_safehtml => "email") || "";
+my $Email = $Untaint -> extract(-as_email => "email") || "";
 my $HTML = $Untaint -> extract(-as_safehtml => "html") || "";
 
 my @ImmediateEventGroupIDs = @{ $Untaint -> extract(-as_listofint => "immediate_eventgroups") || undef };
@@ -115,6 +115,10 @@ if ($UserValidation eq "shibboleth") {
 if (($NewPass || $ConfNewPass) && ($NewPass ne $ConfNewPass)) {
   push @WarnStack,"The passwords you entered did not match. Password not
   changed.";
+}
+
+if (!$Email && $query->param('email')) { # Checking raw param to see if the user tried to supply one
+  push @ErrorStack,"The email address does not appear to be valid. Please try again.";
 }
 
 if ($Mode eq "newuser") {

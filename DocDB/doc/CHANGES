@@ -6,6 +6,7 @@
   Remove HTML from some warning/error messages since that is now sanitized into line noise
   Add a couple of missing help messages
   Fix URL validation broken by XSS protections, add a few more OK characters
+  Add Untaint method for e-mail address, add to SelectEmailPrefs
 
 8.8.6
  Use full DN from certificate as username, not CN which is not unique
