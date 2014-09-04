@@ -730,7 +730,7 @@ Insert/Modify functions to select your type of upload.
   <key>topics</key>
   <title>Topics</title>
   <text>
-<p>Select all the topics and subtopics for the document. Note that
+<p>Select all the topics and subtopics for the document or event. Note that
 there are three ways to enter topics: From an expandable tree, from one
 big long list, or from several shorter lists. You can select the mode
 from the customize form on the main page.</p>
@@ -1105,7 +1105,7 @@ or may not be the same as the web username and password.
 
  <entry>
   <key>meetingmodifygroups</key>
-  <title>Meeting Viewable by</title>
+  <title>Meeting Modifiable by</title>
   <text>
    Select the groups you want to be able to modify the meeting and the agendas
    for the sessions in the meeting.  By default this is chosen to be the group
