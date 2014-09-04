@@ -4,10 +4,13 @@ RC:
   Make Timestamp fields in setup & migration scripts compatible with MySQL 5.5
   Replace ; with &amp; in URLs in several places. SharePoint does not like the ; form
   Remove HTML from some warning/error messages since that is now sanitized into line noise
-  Add a couple of missing help messages
+  Add a couple of missing help messages, edit a couple of others
   Add "copy all files from previous version" check box, ported from 8.8 branch
   Fix URL validation broken by XSS protections, add a few more OK characters
   Add Untaint method for e-mail address, add to SelectEmailPrefs
+  Schedule similar event will allow one year into the future, not one year from the event date
+  Don't lose the preamble when modifying/duplicating events
+  
 
 8.7.21
   Fixes for URLs in parentheses, wrong CGI variable for fily copy check boxes,

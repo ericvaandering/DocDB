@@ -128,7 +128,7 @@ sub SessionEntryForm (%) {
    print "<th>",FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Session Title<br/>&amp; Description", -nobreak => $TRUE, -nocolon => $TRUE),                         "</th>\n";
    print "<th>",FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Start Date and Time<br/>Location<br/>Alt. Location", -nobreak => $TRUE, -nocolon => $TRUE),"</th>\n";
    print "<th>",FormElementTitle(-helplink  => "moderators",  -helptext  => "Moderators", -nobreak => $TRUE, -nocolon => $TRUE),                      "</th>\n";
-   print "<th>",FormElementTitle(-helplink  => "eventopics",  -helptext  => "Topics",     -nobreak => $TRUE, -nocolon => $TRUE),                      "</th>\n";
+   print "<th>",FormElementTitle(-helplink  => "topics",  -helptext  => "Topics",     -nobreak => $TRUE, -nocolon => $TRUE),                      "</th>\n";
   print "</tr>\n";
   print "</thead>\n";
 

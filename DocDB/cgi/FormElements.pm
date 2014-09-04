@@ -64,6 +64,7 @@ sub DateTimePulldown (%) { # Note capitalization
 
   my ($Sec,$Min,$Hour,$Day,$Mon,$Year) = localtime(time);
   $Year += 1900;
+  $CurrentYear = $Year;
   $Min = (int (($Min+($Granularity/2))/$Granularity))*$Granularity; # Nearest $Granularity minutes
 
   my $DefaultHHMM;
@@ -90,7 +91,7 @@ sub DateTimePulldown (%) { # Note capitalization
   }
 
   my @Years = ();
-  for (my $i = $FirstYear; $i<=$Year+1; ++$i) { # $FirstYear - current year + 1
+  for (my $i = $FirstYear; $i<=$CurrentYear+2; ++$i) { # $FirstYear - current year + 2
     push @Years,$i;
   }
 
@@ -160,7 +161,7 @@ sub DateTimePullDown { #FIXME: Replace with DateTimePulldown
              "Jul","Aug","Sep","Oct","Nov","Dec");
 
   my @years = ();
-  for ($i = $FirstYear; $i<=$year; ++$i) { # $FirstYear - current year
+  for ($i = $FirstYear; $i<=$year + 2; ++$i) { # $FirstYear - current year + 2
     push @years,$i;
   }
 
