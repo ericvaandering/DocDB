@@ -27,7 +27,7 @@ sub FetchSecurityGroupsByCert (%) {
   if ($EmailUser{$EmailUserID}{Verified} != 1) {
     push @DebugStack,"User is not verified";
     push @WarnStack,"You have a valid certificate, but are not yet allowed to access to DocDB.
-                   <a href=\"$CertificateApplyForm\">Apply for access.</a>";
+                   Visit $CertificateApplyForm to apply for access.</a>";
     return;
   }
   my @UserGroupIDs = FetchUserGroupIDs($EmailUserID);

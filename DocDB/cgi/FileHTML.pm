@@ -6,7 +6,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -161,9 +161,9 @@ sub FileLink ($) {
 
   my $URL = $BaseURL.$ShortFile;
   if ($UserValidation eq "certificate" || $Preferences{Options}{AlwaysRetrieveFile}) {
-    $URL = $RetrieveFile."?docid=".$DocumentID.";filename=".$ShortFile;
+    $URL = $RetrieveFile."?docid=".$DocumentID.'&amp;filename='.$ShortFile;
     unless ($SkipVersions) {
-        $URL .= ";version=".$Version;
+        $URL .= '&amp;version='.$Version;
     }
   }
 
@@ -262,7 +262,7 @@ sub FileUploadBox (%) {
   print $query -> hidden(-name => 'maxfiles', -default => $MaxFiles);
   print "</div>\n";
 
-  print "<table class=\"LowPaddedTable LeftHeader\">\n";
+  print "<table class=\"Alternating LeftHeader\">\n";
 
   my ($HelpLink,$HelpText,$FileHelpLink,$FileHelpText,$DescHelpLink,$DescHelpText);
   if ($Type eq "file") {
@@ -291,6 +291,12 @@ sub FileUploadBox (%) {
   print $BoxTitle;
   print "</td></tr>\n";
 
+  if ($AllowCopy && !$DescOnly) {
+    print '<tr><td>&nbsp;</td><td colspan="2">';
+    print '<input type="checkbox" name="checkall" onclick="checkUncheckAll(this,\'copyfile\');" /> ';
+    print 'Copy all files from previous version (at least one file must be added or updated)</td></tr>'."\n";
+  }
+
   for (my $i = 1; $i <= $MaxFiles; ++$i) {
     my $FileID = shift @FileIDs;
     my $ElementName = "upload$i";
@@ -300,6 +306,7 @@ sub FileUploadBox (%) {
     my $CopyName    = "copyfile$i";
     my $URLName     = "url$i";
     my $NewName     = "newname$i";
+    my $RowClass = ("Even","Odd")[$i % 2];
 
     my $FileHelp        = FormElementTitle(-helplink => $FileHelpLink, -helptext => $FileHelpText);
     my $DescriptionHelp = FormElementTitle(-helplink => $DescHelpLink, -helptext => $DescHelpText);
@@ -307,6 +314,7 @@ sub FileUploadBox (%) {
     my $MainHelp        = FormElementTitle(-helplink => "main", -helptext => "Main?", -nocolon => $TRUE, -nobold => $TRUE);
     my $DefaultDesc = $DocFiles{$FileID}{DESCRIPTION};
 
+    print "<tbody class=\"$RowClass\">\n";
     if ($DescOnly) {
       print "<tr>\n";
       print "<th>Filename:</th>";
@@ -359,13 +367,14 @@ sub FileUploadBox (%) {
     print $MainHelp;
     print "</td></tr>\n";
     if ($FileID && $AllowCopy && !$DescOnly) {
-      print "<tr><td>&nbsp;</td><td colspan=\"2\">\n";
-      print "Copy <tt>$DocFiles{$FileID}{NAME}</tt> from previous version:";
+      print "<tr><td>&nbsp;</td><td colspan=\"2\" class=\"FileCopyRow\">\n";
       print $query -> hidden(-name => $FileIDName, -value => $FileID);
       print $query -> checkbox(-name => $CopyName, -label => '');
+      print "Copy <tt>$DocFiles{$FileID}{NAME}</tt> from previous version:";
       print "</td></tr>\n";
     }
-    print "<tr><td colspan=\"3\"></td></tr>\n";
+    print "</tbody\n";
+    print '<tr><td colspan="3" class="FileSpacer"></td></tr>'."\n";
   }
   if ($AllowCopy && $NOrigFiles) {
     print '<tr><td colspan="2">';
@@ -382,6 +391,7 @@ sub FileUploadBox (%) {
     print $query -> password_field (-name => 'http_pass', -size => 20, -maxlength => 40);
     print "</td></tr>\n";
   }
+
   print "</table>\n";
 }
 

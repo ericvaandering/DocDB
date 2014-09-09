@@ -1,15 +1,12 @@
 #! /usr/bin/env perl
 #
-#        Name: $RCSfile$
+#        Name: AddFilesForm
 # Description: An entry form to add files to an existing document
 #
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
-#
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified:
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -89,7 +86,7 @@ if ($InputVersion eq "0") {
 }
 my $DocRevID   = &FetchRevisionByDocumentAndVersion($DocumentID,$Version);
 
-my $UpdateLink = $DocumentAddForm."?mode=update;docid=$DocumentID";
+my $UpdateLink = $DocumentAddForm."?mode=update&amp;docid=$DocumentID";
 unless (&CanModify($DocumentID,$Version)) {
   push @ErrorStack,"You are not authorized to modify this document.";
 }
@@ -98,7 +95,7 @@ unless ($DocRevID) {
 }
 unless ($Version) {
   push @ErrorStack,"You cannot add files to a document that has only been
-  reserved. <a href=\"$UpdateLink\">Create a new version</a> instead. ";
+  reserved. Create a new version instead. ";
 }
 
 # Warn the user if they are about to modify a controlled document

@@ -7,7 +7,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Stephen Wood (saw@jlab.org), Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -128,7 +128,7 @@ sub SessionEntryForm (%) {
    print "<th>",FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Session Title<br/>&amp; Description", -nobreak => $TRUE, -nocolon => $TRUE),                         "</th>\n";
    print "<th>",FormElementTitle(-helplink  => "sessioninfo", -helptext  => "Start Date and Time<br/>Location<br/>Alt. Location", -nobreak => $TRUE, -nocolon => $TRUE),"</th>\n";
    print "<th>",FormElementTitle(-helplink  => "moderators",  -helptext  => "Moderators", -nobreak => $TRUE, -nocolon => $TRUE),                      "</th>\n";
-   print "<th>",FormElementTitle(-helplink  => "eventopics",  -helptext  => "Topics",     -nobreak => $TRUE, -nocolon => $TRUE),                      "</th>\n";
+   print "<th>",FormElementTitle(-helplink  => "topics",  -helptext  => "Topics",     -nobreak => $TRUE, -nocolon => $TRUE),                      "</th>\n";
   print "</tr>\n";
   print "</thead>\n";
 
@@ -1318,7 +1318,7 @@ sub ICalLink ($) {
   my $TopicID      = exists $ArgRef->{-topicid}      ? $ArgRef->{-topicid}      : 0;
   my $AllEvents    = exists $ArgRef->{-allevents}    ? $ArgRef->{-allevents}    : 0;
 
-  my $Link =  ' <a href="'.$ListEventsBy.'?format=ical;';
+  my $Link =  ' <a href="'.$ListEventsBy.'?format=ical&amp;';
   if ($AuthorID) {
     $Link .= 'authorid='.$AuthorID;
   }

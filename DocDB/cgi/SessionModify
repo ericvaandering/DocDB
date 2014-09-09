@@ -578,7 +578,7 @@ if ($SingleSession) {
   print "</div><div>\n";
   TextArea(-name     => 'sessiondescription', -columns => 40, -rows => 4,
            -default  => $SessionDefaultDescription,
-           -helplink => 'sessioninfo', -helptext => 'Preamble');
+           -helplink => 'confpreamble', -helptext => 'Preamble');
 
   print "</div>\n";
   print "</td>\n";
@@ -610,7 +610,7 @@ if ($SingleSession) {
 
   print "<td colspan=\"2\">\n";
   TopicScroll({ -multiple => $TRUE,         -default => \@DefaultTopicIDs,
-                -helplink => "eventtopics", -itemformat => "short"});
+                -helplink => "topics", -itemformat => "short"});
   print "</td>\n";
   print "</tr>\n";
 } else {
@@ -634,7 +634,7 @@ if ($SingleSession) {
 
   print '<td rowspan="2">';
   TopicScroll({ -multiple => $TRUE,         -default => \@DefaultTopicIDs,
-                -helplink => "eventtopics", -itemformat => "short"});
+                -helplink => "topics", -itemformat => "short"});
   print "</td>\n";
 
   print "</tr>\n";

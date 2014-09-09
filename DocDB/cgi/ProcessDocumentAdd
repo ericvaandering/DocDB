@@ -6,7 +6,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -297,7 +297,7 @@ if ($Mode eq "add" || $Mode eq "update") {
   unless ($AddNewFile) {
     push @ErrorStack,"You must supply a new or changed file for this document.
                       If you just want to change information about the
-                      document, choose `Update DB Info' instead.";
+                      document, choose Update DB Info instead.";
   }
   if     ($SingleUpload && $SingleHTTP) {
     push @ErrorStack,"You may not specify both URL and file upload.";
@@ -397,7 +397,7 @@ if ($EnhancedSecurity) {
 foreach my $GroupID (@securities) {
   unless ($GroupID) {next;} # Don't check for public
   unless (GroupCan({ -groupid => $GroupID, -action => $ViewCheck }) ) {
-    push @WarnStack,"The group ".SecurityLink({ -groupid => $GroupID, }).
+    push @WarnStack,"A selected group".
          " is not currently allowed to view documents. If this changes,".
          " this document will be viewable by that group.";
   }
@@ -406,7 +406,7 @@ foreach my $GroupID (@securities) {
 foreach my $GroupID (@ModifyGroups) {
   unless ($GroupID) {next;} # Don't check for public
   unless (GroupCan({ -groupid => $GroupID, -action => "create" }) ) {
-    push @WarnStack,"The group ".SecurityLink({ -groupid => $GroupID, }).
+    push @WarnStack,"A selected group".
          " is not currently allowed to create or modify documents. If this changes,".
          " this document will be modifiable by that group.";
   }

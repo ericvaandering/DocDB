@@ -1,5 +1,5 @@
-#        Name: UntaintInput.pm
-# Description: Gather together all Untaint handlers for every script that needs them
+#        Name: UntaintEmail.pm
+# Description: Passes through an e-mail address with leading/trailing spaces
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
@@ -21,13 +21,22 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-use CGI::Untaint;
+package CGI::Untaint::email;
 
-require "UntaintEmail.pm";
-require "UntaintHTML.pm";
-require "UntaintInteger.pm";
-require "UntaintListOfInts.pm";
-require "UntaintListOfWords.pm";
-require "UntaintListOfHTML.pm";
+$VERSION = '1.00';
+
+use strict;
+use base 'CGI::Untaint::object';
+
+sub _untaint_re { qr/^\s*[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+\s*$/ }
+
+sub is_valid {
+  my $self = shift;
+  my $NewEmail = $self->value;
+     $NewEmail =~ s/^\s+//; # Remove leading and trailing spaces
+     $NewEmail =~ s/\s+$//;
+
+  $self->value($NewEmail);
+}
 
 1;
