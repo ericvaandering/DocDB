@@ -10,9 +10,8 @@
   Schedule similar event will allow one year into the future, not one year from the event date
   Don't lose the preamble when modifying/duplicating events
   
-
 8.7.21
-  Fixes for URLs in parentheses, wrong CGI variable for fily copy check boxes,
+  Fixes for URLs in parentheses, wrong CGI variable for file copy check boxes,
   list of text fields that can contain newlines.
 
 8.7.20
