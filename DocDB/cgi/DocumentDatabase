@@ -60,9 +60,9 @@ if ($UserValidation eq "certificate") {
 
 print $query->header( -charset => $HTTP_ENCODING );
 if ($UserValidation eq "certificate" && $CertificateStatus ne "verified") {
-  DocDBHeader("$Project Document Database","Document Database", -scripts => ["PopUps"], -refresh => "5;url=$CertificateApplyForm");
+  DocDBHeader("$Project Document Database","$Project Document Database", -scripts => ["PopUps"], -refresh => "5;url=$CertificateApplyForm");
 } else {
-  DocDBHeader("$Project Document Database","Document Database", -scripts => ["PopUps"]);
+  DocDBHeader("$Project Document Database","$Project Document Database", -scripts => ["PopUps"]);
 }
 
 my $PersonalAccountLink = PersonalAccountLink();
