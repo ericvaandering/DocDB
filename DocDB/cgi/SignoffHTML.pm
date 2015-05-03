@@ -123,7 +123,7 @@ sub PrintSignatureInfo ($) {
       # Otherwise, note that it's waiting
 
       my $SignatureText = "";
-      my $SignatureLink = &SignatureLink($EmailUserID,$SignatureID);
+      my ($SignatureLink, $SignatureTime) = SignatureLink($EmailUserID,$SignatureID);
       if ($UserCanSign) {
         if ($Status eq "Ready" || $Status eq "Signed") {
           if ($Status eq "Ready") {
@@ -146,7 +146,7 @@ sub PrintSignatureInfo ($) {
               $SignatureText .= $query -> end_multipart_form;
             } else {
               if ($Status eq "Signed") {
-                $SignatureText .= "$SignatureLink (signature complete)";
+                $SignatureText .= "$SignatureLink (signed $SignatureTime)";
               } else {
                 $SignatureText .= "$SignatureLink (waiting for signature)";
               }
@@ -173,7 +173,7 @@ sub PrintSignatureInfo ($) {
         if ($Status eq "Ready") {
           $SignatureText .= "$SignatureLink (waiting for signature)";
         } elsif ($Status eq "Signed"){
-          $SignatureText .= "$SignatureLink (signature complete)";
+          $SignatureText .= "$SignatureLink (signed $SignatureTime)";
         } elsif ($Status eq "NotReady") {
           $SignatureText .= "$SignatureLink (waiting for other signatures)";
         } else {
@@ -212,6 +212,6 @@ sub SignatureLink ($) {
   $Link .= ">";
   $Link .= $EmailUser{$EmailUserID}{Name};
   $Link .= "</a>";
-  return $Link;
+  return ($Link, $SignatureTime);
 }
 1;
