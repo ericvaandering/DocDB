@@ -193,6 +193,7 @@ sub SignatureLink ($) {
   require "SQLUtilities.pm";
   require "SignoffSQL.pm";
   my ($EmailUserID,$SignatureID) = @_;
+  my $SignatureTime;
 
   &FetchEmailUser($EmailUserID);
   my $Link = "<a href=\"$SignatureReport?emailuserid=$EmailUserID\"";
@@ -201,7 +202,7 @@ sub SignatureLink ($) {
     if ($Signatures{$SignatureID}{Signed}) {
       my $SignatureTimestamp = $Signatures{$SignatureID}{TimeStamp};
       my $SignatureDateTime = ConvertToDateTime({-MySQLTimeStamp => $SignatureTimestamp, });
-      my $SignatureTime  = DateTimeString({ -DateTime => $SignatureDateTime });
+         $SignatureTime  = DateTimeString({ -DateTime => $SignatureDateTime });
 
 
       $Link .= " title=\"Signed $SignatureTime\"";
