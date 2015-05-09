@@ -10,6 +10,7 @@
   Schedule similar event will allow one year into the future, not one year from the event date
   Don't lose the preamble when modifying/duplicating events
   Show signature times by default
+  Reduce # of topic columns to 3
 
 
 8.8.6
