@@ -24,6 +24,7 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 
 sub TopicListByID {
@@ -177,7 +178,7 @@ sub TopicsTable {
   my ($ArgRef) = @_;
   my $Depth = exists $ArgRef->{-depth} ? $ArgRef->{-depth} : 1;
 
-  my $NCols = 4;
+  my $NCols = $Preferences{Topics}{NColumns};
 
   my %Lists = ();
   my $TotalSize = 0;

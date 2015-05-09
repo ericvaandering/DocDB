@@ -117,6 +117,7 @@ $Preferences{Components}{LastModifiedHome} = $TRUE; # Last modified on the homep
 
 $Preferences{Topics}{MinLevel}{Document} = 1;
 $Preferences{Topics}{Selector}           = "tree";   # tree, multi, or single
+$Preferences{Topics}{NColumns}           = 3;        # number of columns in the topic table
 $Preferences{Authors}{Selector}          = "active"; # active, list, or field
 $Preferences{Events}{MaxSessionList}     = 5;
 
