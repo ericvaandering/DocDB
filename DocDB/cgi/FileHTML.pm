@@ -395,7 +395,7 @@ sub FileUploadBox (%) {
       print "Copy <tt>$DocFiles{$FileID}{NAME}</tt> from previous version:";
       print "</td></tr>\n";
     }
-    print "</tbody\n";
+    print "</tbody>\n";
   }
   if ($AllowCopy && $NOrigFiles) {
     print '<tr><td colspan="2">';
