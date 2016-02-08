@@ -34,6 +34,8 @@ ln -sf ../../DocDB/ShowCalendar . # Could be optional
 ln -sf ../../DocDB/DocDBHelp .
 ln -sf ../../DocDB/DocDBHelp.xml .
 
+ln -sf ../../DocDB/Statistics .
+
 #ln -sf ../../DocDB/ProjectHelp.xml . # Project help may be different for public
 
 echo "If no errors were reported, things are safe for public access now."
