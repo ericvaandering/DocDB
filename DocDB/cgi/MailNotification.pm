@@ -457,7 +457,9 @@ sub EmailUserSelect (%) {
   require "Sorts.pm";
   my (%Params) = @_;
 
+  my $HelpLink = $Params{-helplink}  || "emailuser";
   my $HelpText = $Params{-helptext}  || "Username";
+  my $Name = $Params{-name}  || "emailuserid";
   my $Disabled = $Params{-disabled}  || "0";
   my @Defaults = @{$Params{-default}};
 
@@ -475,8 +477,8 @@ sub EmailUserSelect (%) {
 
   @EmailUserIDs = sort EmailUserIDsByName @EmailUserIDs;
 
-  print FormElementTitle(-helplink => "emailuser", -helptext => $HelpText);
-  print $query -> scrolling_list(-name   => 'emailuserid',
+  print FormElementTitle(-helplink => $HelpLink, -helptext => $HelpText);
+  print $query -> scrolling_list(-name   => $Name,
                                  -values => \@EmailUserIDs,
                                  -labels => \%EmailUserLabels,
                                  -size   => 10, -default => \@Defaults,
