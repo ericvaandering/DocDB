@@ -541,6 +541,7 @@ my @FileIDs;
 if ($mode eq "updatedb") { # Copy DocumentFile entries
   &ProtectDirectory($documentID,$version,@securities); # Redo security
   @FileIDs = &AddFiles(-docrevid => $DocRevID, -files => \%Files, -oldversion => $OldVersion);
+  &ProtectDirectory($documentID,$version,@securities); # Redo security again
 }
 
 if ($mode eq "add" || $mode eq "update") { # We're adding new files
@@ -551,6 +552,7 @@ if ($mode eq "add" || $mode eq "update") { # We're adding new files
   } elsif ($Archive eq "archive") { # They uploaded a tar/zip file
     @FileIDs = &AddArchive(-docrevid => $DocRevID, -archive => \%Archive);
   }
+  &ProtectDirectory($documentID,$version,@securities); # Redo security again
 }
 
 ### If we had any warnings print them out now
