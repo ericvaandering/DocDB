@@ -247,16 +247,16 @@ sub ExtractArchive {
     $Command = $Tar." xf ".$File;
   } elsif ((grep /\.tgz$/,$File) || (grep /\.tar\.gz$/,$File)) {
     if ($GTar) {
-      $Command = $GTar." xfz ".$File;
+      $Command = $GTar." xfz ".$File." --exclude .htaccess";
     } elsif ($Tar && $GZip) {
       $Command = $GUnzip." -c ".$File." | ".$Tar." xf -";
     }
   } elsif (grep /\.zip$/,$File) {
-    $Command = $Unzip." ".$File;
+    $Command = $Unzip." ".$File." -x .htaccess";
   }
 
   if ($Command) {
-    print "Unpacking the archive with the command <tt>$Command</tt> <br>\n";
+    print "Unpacking the archive.<br>\n";
     system ($Command);
   } else {
     print "Could not unpack the archive; contact an
