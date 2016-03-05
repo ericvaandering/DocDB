@@ -183,6 +183,7 @@ sub PrintDayEvents (%) {
   use DateTime;
   require "Sorts.pm";
   require "MeetingSQL.pm";
+  require "MeetingSecurityUtilities.pm";
   require "Utilities.pm";
   require "EventUtilities.pm";
 
@@ -210,6 +211,7 @@ sub PrintDayEvents (%) {
   my @AllSessionIDs  = ();
   my $EventID;
   foreach $EventID (@EventIDs) {
+    unless (CanAccessMeeting($EventID)) {next;} # Ignore meetings they can't see
     my @SessionIDs = sort &FetchSessionsByConferenceID($EventID);
     if (@SessionIDs) {
       foreach my $SessionID (@SessionIDs) {
