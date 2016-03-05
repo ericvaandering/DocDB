@@ -183,6 +183,7 @@ sub PrintDayEvents (%) {
   use DateTime;
   require "Sorts.pm";
   require "MeetingSQL.pm";
+  require "MeetingSecurityUtilities.pm";
   require "Utilities.pm";
   require "EventUtilities.pm";
 
@@ -210,6 +211,7 @@ sub PrintDayEvents (%) {
   my @AllSessionIDs  = ();
   my $EventID;
   foreach $EventID (@EventIDs) {
+    unless (CanAccessMeeting($EventID)) {next;} # Ignore meetings they can't see
     my @SessionIDs = sort &FetchSessionsByConferenceID($EventID);
     if (@SessionIDs) {
       foreach my $SessionID (@SessionIDs) {
@@ -243,6 +245,7 @@ sub PrintDayEvents (%) {
 ### Loop over all day/no time events
 
   foreach $EventID (@AllDayEventIDs) {
+    unless (CanAccessMeeting($EventID)) {next;} # Ignore meetings they can't see
     my $EventLink = &EventLink(-eventid => $EventID, -format => "full");
     if ($EventLink) {
       ++$Count;
@@ -269,6 +272,7 @@ sub PrintDayEvents (%) {
 
   @AllSessionIDs = sort SessionsByDateTime @AllSessionIDs;
   foreach my $SessionID (@AllSessionIDs) {
+    unless (CanAccessMeeting($Sessions{$SessionID}{ConferenceID})) {next;} # Ignore meetings they can't see
     my $StartTime = &EuroTimeHM($Sessions{$SessionID}{StartTime});
     my $EndTime   = &TruncateSeconds(&SessionEndTime($SessionID));
     if ($EndTime eq $StartTime) {
