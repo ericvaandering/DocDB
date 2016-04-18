@@ -3,6 +3,7 @@
   Do not show titles of calendar events that you are not able to access
   Add the ability to copy settings from one certificate login to another
     (deletion must be done in a separate step)
+  Add a signature report for each user to the admin form
 
 8.7.22
   Fix several places where apostrophes or single quotes were causing problems with rendered Javascript

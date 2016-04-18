@@ -237,7 +237,8 @@ if ($EmailUserID) {
     }
 
     my $Verified = ("No","Yes")[$EmailUser{$EmailUserID}{Verified}];
-    my $CanSign  = ("No","Yes")[$EmailUser{$EmailUserID}{CanSign}];
+    my $CanSignText  = ("No","Yes")[$EmailUser{$EmailUserID}{CanSign}];
+    my $CanSign = '<a href="'.$SignatureReport."?emailuserid=$EmailUserID\">".SmartHTML({-text => $CanSignText}).'</a>';
 
     ++$Row;
     my $RowClass = ("Even","Odd")[$Row % 2];
