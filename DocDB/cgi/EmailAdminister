@@ -207,12 +207,10 @@ if      ($Action eq "Delete") { # Delete user
     }
 
     # Update all notifications
-
     my $NotificationUpdate = $dbh -> prepare("update Notification set EmailUserID=? where EmailUserID=?");
        $NotificationUpdate -> execute($NewCertID, $EmailUserID);
 
     # Copy all groups
-
     my @UsersGroupIDs = FetchUserGroupIDs($EmailUserID);
     foreach my $UsersGroupID (@UsersGroupIDs) {
       my $UsersGroupSelect = $dbh -> prepare("select UsersGroupID from UsersGroup where EmailUserID=? and GroupID=?");
@@ -228,29 +226,13 @@ if      ($Action eq "Delete") { # Delete user
     }
 
     # Update signed signatures
-
-    my $SignatureUpdate = $dbh -> prepare("update Signature set EmailUserID=? where EmailUserID=? and Signed=1");
+    my $SignatureUpdate = $dbh -> prepare("update Signature set EmailUserID=? where EmailUserID=?");
        $SignatureUpdate -> execute($NewCertID, $EmailUserID);
 
-    # Copy unsigned signatures
+    # Remove signature authority from the old account
+    my $UserUpdate = $dbh -> prepare("update EmailUser set CanSign=0 where EmailUserID=?");
+       $UserUpdate -> execute($EmailUserID);
 
-    my $SignatureID;
-    my @SignatureIDs = ();
-    my $SignatureList = $dbh -> prepare("select SignatureID from Signature where EmailUserID=? and Signed=0");
-       $SignatureList -> execute($EmailUserID);
-    $SignatureList -> bind_columns(undef, \($SignatureID));
-    while ($SignatureList -> fetch) {
-      FetchSignature($SignatureID);
-      my $SignatureSelect = $dbh -> prepare("select SignatureID from Signature where EmailUserID=? and SignoffID=?");
-         $SignatureSelect -> execute($NewCertID, $Signatures{$SignatureID}{SignoffID});
-      my ($ComboExists) = $SignatureSelect -> fetchrow_array;
-      unless ($ComboExists) {
-        my $SignatureUpdate = $dbh -> prepare("insert into Signature (SignatureID,EmailUserID,SignoffID,Signed) ".
-                                               " values (0,?,?, 0)");
-           $UsersGroupUpdate -> execute($NewCertID,$Signatures{$SignatureID}{SignoffID});
-        push @ActionStack,"Pending signature duplicated";
-      }
-    }
   } # End of certificate consolidation
 
 } elsif ($Action eq "New") {
