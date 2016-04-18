@@ -14,7 +14,13 @@ function disabler_peraccount() {
   if (document.peraccount.admaction[2].checked == true) {
     document.peraccount.usergroups.disabled = false;
     document.peraccount.emailuserid.disabled = false;
-    document.peraccount.newcertid.disabled = false;
+    document.peraccount.newcertid.disabled = true;
     document.peraccount.resetpw.disabled = false;
+  }
+  if (document.peraccount.admaction[3].checked == true) {
+    document.peraccount.usergroups.disabled = true;
+    document.peraccount.emailuserid.disabled = false;
+    document.peraccount.newcertid.disabled = false;
+    document.peraccount.resetpw.disabled = true;
   }
 }

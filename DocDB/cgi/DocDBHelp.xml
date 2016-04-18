@@ -1303,10 +1303,10 @@ or may not be the same as the web username and password.
 
  <entry>
      <key>newcert</key>
-     <title>Updated Certificate</title>
+     <title>Updated Certificate or Account</title>
      <text>
-         <p>Select the new certificate for the person. All user settings, email notifications, and signature authority
-         will be copied to the new certificate.</p>
+         <p>Select the new account or certificate for the person. All user settings, email notifications, and signature authority
+         will be copied to the new account or certificate.</p>
      </text>
  </entry>
 

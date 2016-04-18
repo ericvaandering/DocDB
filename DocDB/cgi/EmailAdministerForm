@@ -67,8 +67,10 @@ unless (CanAdminister()) {
 EndPage();
 
 my $UsernameHeader = "Username";
+my $NewUsernameHeader = "New Username";
 if ($UserValidation eq "certificate") {
-  $UsernameHeader = "Certificate DN"
+  $UsernameHeader = "Certificate DN";
+  $NewUsernameHeader = "New Certificate DN";
 }
 
 if ($EmailUserID) {
@@ -119,7 +121,7 @@ print "<table class=\"MedPaddedTable\">\n";
 print "<tr>\n";
 
 print "<td colspan=\"3\">\n";
- AdministerActions(-form => "peraccount");
+ AdministerActions(-form => "peraccount", -addTransfer => $TRUE);
 print "</td>\n";
 
 print "</tr>\n";
@@ -147,11 +149,9 @@ print "</tr>\n";
 
 # The select box for consolidating certificates
 
-if ($UserValidation eq "certificate") {
-  print "<tr><td>\n";
-  EmailUserSelect(-disabled => $TRUE, -helptext => "Updated Certificate", -helplink => 'newcert', -name => 'newcertid');
-  print "</td></tr>\n";
-}
+print "<tr><td>\n";
+EmailUserSelect(-disabled => $TRUE, -helptext => $NewUsernameHeader, -helplink => 'newcert', -name => 'newcertid');
+print "</td></tr>\n";
 
 if ($EmailUserID) {
   print "<tr><td colspan=\"3\">\n";

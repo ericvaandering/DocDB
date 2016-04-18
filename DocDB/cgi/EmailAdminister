@@ -180,6 +180,8 @@ if      ($Action eq "Delete") { # Delete user
   PrintEmailUserInfo($EmailUserID);
   print "</table>\n";
 
+} elsif ($Action eq "Transfer") {
+
   # Consolidate certificates starting with basic settings
 
   if ($NewCertID) {
