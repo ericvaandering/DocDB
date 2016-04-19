@@ -64,7 +64,7 @@ if ($Version && $AsOf) {
 if (grep /\//,$FileName) {
   push @ErrorStack,"File names with / are not allowed for security reasons.";
 }
-if (grep /"htaccess"/,$FileName) {
+if (grep /htaccess/,$FileName) {
   push @ErrorStack,"You may not access this file for security reasons.";
 }
 
