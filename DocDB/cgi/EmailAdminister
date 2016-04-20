@@ -184,7 +184,7 @@ if      ($Action eq "Delete") { # Delete user
 
   # Consolidate certificates starting with basic settings
 
-  if ($NewCertID) {
+  if ($NewCertID && $EmailUserID && $NewCertID != $EmailUserID) {
     FetchEmailUser($EmailUserID);
     FetchEmailUser($NewCertID);
     if ($EmailUser{$EmailUserID}{Name} && !$EmailUser{$NewCertID}{Name}) {
@@ -235,8 +235,9 @@ if      ($Action eq "Delete") { # Delete user
     my $UserUpdate = $dbh -> prepare("update EmailUser set CanSign=0 where EmailUserID=?");
        $UserUpdate -> execute($EmailUserID);
 
-  } # End of certificate consolidation
-
+  } else { # End of certificate consolidation
+    push @ErrorStack,"You must select an old and new user (which must be different) to transfer settings and permissions.";
+  }
 } elsif ($Action eq "New") {
   push @ErrorStack,"You can't create new users here. Do it the normal way.";
 } else {
