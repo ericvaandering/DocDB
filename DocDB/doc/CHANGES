@@ -21,6 +21,7 @@
   Show signature times by default
   Reduce # of topic columns to 3 (p1)
   Fix broken TBODY tag that was screwing up layout (p2)
+  Restore ability to delete a document (p3)
 
 8.8.6
  Use full DN from certificate as username, not CN which is not unique
