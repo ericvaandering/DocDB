@@ -43,7 +43,9 @@ sub PrintEmailUserInfo ($) {
   print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{PreferHTML}]."</td>\n";
   print "</tr><tr>\n";
   print "<th>Can Sign:</th>";
-  print "<td>".("No","Yes")[$EmailUser{$EmailUserID}{CanSign}]."</td>\n";
+  my $CanSignText  = ("No","Yes")[$EmailUser{$EmailUserID}{CanSign}];
+  my $CanSign = '<a href="'.$SignatureReport."?emailuserid=$EmailUserID\">".SmartHTML({-text => $CanSignText}).'</a>';
+  print "<td>$CanSign</td>\n";
   print "</tr><tr>\n";
 
   # Groups user belongs (or wants to belong to)

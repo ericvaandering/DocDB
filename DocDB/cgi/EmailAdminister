@@ -237,6 +237,16 @@ if      ($Action eq "Delete") { # Delete user
     my $UserUpdate = $dbh -> prepare("update EmailUser set CanSign=0 where EmailUserID=?");
        $UserUpdate -> execute($EmailUserID);
 
+    # Print the new user info
+    ClearEmailUsers();
+    FetchEmailUser($NewCertID);
+    ActionReport();
+
+    print "<h3>The new user now has the following information:</h3>";
+    print "<table class=\"LowPaddedTable\">\n";
+    PrintEmailUserInfo($NewCertID);
+    print "</table>\n";
+
   } else { # End of certificate consolidation
     push @ErrorStack,"You must select an old and new user (which must be different) to transfer settings and permissions.";
   }
