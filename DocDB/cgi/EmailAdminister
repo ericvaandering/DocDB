@@ -237,6 +237,7 @@ if      ($Action eq "Delete") { # Delete user
 
     # Print the new user info
     ClearEmailUsers();
+    FetchEmailUser($EmailUserID);
     FetchEmailUser($NewCertID);
     ActionReport();
 
@@ -244,6 +245,20 @@ if      ($Action eq "Delete") { # Delete user
     print "<table class=\"LowPaddedTable\">\n";
     PrintEmailUserInfo($NewCertID);
     print "</table>\n";
+
+    if ($MailInstalled && $UserValidation eq "certificate") {
+      require "EmailUtilities.pm";
+
+      my @To      = ($EmailUser{$EmailUserID}{EmailAddress},$EmailUser{$NewCertID}{EmailAddress},$DBWebMasterEmail);
+      my $Subject = "DocDB account for $EmailUser{$NewCertID}{Name} updated";
+      my $Body    = "An administrator has transferred permissions from the certificate ";
+      $Body      .= "$EmailUser{$EmailUserID}{Name} to the new certificate ";
+      $Body      .= "$EmailUser{$NewCertID}{Name} for access to $Project DocDB. ";
+      $Body      .= "If you think this was done in error, ";
+      $Body      .= "please contact $DBWebMasterEmail immediately.";
+      SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
+    }
+
 
   } else { # End of certificate consolidation
     push @ErrorStack,"You must select an old and new user (which must be different) to transfer settings and permissions.";
