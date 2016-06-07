@@ -28,6 +28,7 @@
 use HTML::Entities;
 
 require "HTMLUtilities.pm";
+require "Utilities.pm";
 
 sub MailNotices (%) {
 
@@ -410,6 +411,12 @@ sub DisplayNotification ($$;$) {
   my @EventGroupIDs = @{$Notifications{$EmailUserID}{"EventGroup_".$Set}};
   my @Keywords      = @{$Notifications{$EmailUserID}{"Keyword_".$Set}};
   my @AllDocuments  = @{$Notifications{$EmailUserID}{"AllDocuments_".$Set}};
+
+  @AuthorIDs = Unique(@AuthorIDs);
+  @TopicIDs = Unique(@TopicIDs);
+  @EventIDs = Unique(@EventIDs);
+  @EventGroupIDs = Unique(@EventGroupIDs);
+  @Keywords = Unique(@Keywords);
 
   my $NewNotify = (@AllDocuments || @AuthorIDs || @TopicIDs || @EventIDs || @EventGroupIDs || @Keywords);
 
