@@ -59,6 +59,7 @@ my $Group = $Untaint -> extract(-as_safehtml => "group") || "";
 
 my $AllPubs = $Untaint -> extract(-as_safehtml => "allpubs") || "";
 my $AllDocs = $Untaint -> extract(-as_safehtml => "alldocs") || "";
+my $OldDocs = $Untaint -> extract(-as_safehtml => "old") || "";
 
 my $Mode = $Untaint -> extract(-as_safehtml => "mode") || "";
 
@@ -101,9 +102,19 @@ if ($Days) {
   my $HasSubTopics = (scalar(@ChildTopicIDs) > 1);
   $FieldListOptions{-topicid} = $TopicID;
   $Title   = "Document List by Topic";
-  $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
-           "DocumentRevision,RevisionTopic where DocumentRevision.DocRevID=RevisionTopic.DocRevID ".
-           "and DocumentRevision.Obsolete=0 and RevisionTopic.TopicID=?");
+  if ($OldDocs) {
+    $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) ".
+             "from (DocumentRevision,RevisionTopic) ".
+             "where DocumentRevision.DocRevID=RevisionTopic.DocRevID and DocumentRevision.Obsolete=0 and RevisionTopic.TopicID=?");
+  } else {
+    $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) ".
+             "from (DocumentRevision,RevisionTopic) ".
+             "join (select DocumentRevision.DocumentID, max(DocumentRevision.VersionNumber) as mv from DocumentRevision ".
+                   "group by DocumentRevision.DocumentID) maxver ".
+             "on (DocumentRevision.DocumentID=maxver.DocumentID and DocumentRevision.VersionNumber=maxver.mv ) ".
+             "where DocumentRevision.DocRevID=RevisionTopic.DocRevID and DocumentRevision.Obsolete=0 and RevisionTopic.TopicID=?");
+  }
+
   foreach my $ChildTopicID (@ChildTopicIDs) {
     FetchTopic($ChildTopicID);
     $List -> execute($ChildTopicID);
@@ -125,6 +136,19 @@ if ($Days) {
     $Message .= "and sub-topics ";
   }
   $Message .= "are available:";
+
+  if ($OldDocs) {
+    $Message .= "<br/>Showing documents with any version with topic <span class=\"Highlight\">".
+             SmartHTML({-text=>$Topics{$TopicID}{Long}}).
+             "</span>. See documents with ".TopicLink({-topicid => $TopicID}).
+             " only on the most recent version.";
+  } else {
+    $Message .= "<br/>Showing documents with topic <span class=\"Highlight\">".
+             SmartHTML({-text=>$Topics{$TopicID}{Long}}).
+             "</span> on the most recent version. See documents with ".TopicLink({-topicid => $TopicID, -olddocs=>$TRUE}).
+             " on any version.";
+  }
+
   my %Hash = GetEventHashByTopic($TopicID);
   if (%Hash) {
     $Message .= '<br/>(List <a href="'.$ListEventsBy.'?topicid='.$TopicID.'">events</a> on '.SmartHTML({-text=>$Topics{$TopicID}{Long}}).')';
@@ -146,15 +170,23 @@ if ($Days) {
   $Title   = "Document List by Author";
 
   my $Link = AuthorLink($AuthorID);
+  my $LinkWithOld = AuthorLink($AuthorID, -olddocs => $TRUE);
 
   $Message = "<span class=\"Highlight\">$Link of ";
   $Message .= SmartHTML( {-text => $Institutions{$Authors{$AuthorID}{InstitutionID}}{LONG}, } );
-  $Message .= "</span> is listed as an author on the following documents:";
+  if ($OldDocs) {
+    $Message .= "</span> is listed as an author on some version of the following documents:";
+    $Message .= "<br/>See documents with ".$Link." as an author only on the most recent version.";
+  } else {
+    $Message .= "</span> is listed as an author on the most recent version of the following documents:";
+    $Message .= "<br/>See documents with ".$LinkWithOld." on any version.";
+  }
+
   my %Hash = GetEventHashByModerator($AuthorID);
   if (%Hash) {
     $Message .= '<br/>(List <a href="'.$ListEventsBy.'?authorid='.$AuthorID.'">events</a> moderated by '.$Link.')';
   }
-  @DocumentIDs = GetAuthorDocuments($AuthorID);
+  @DocumentIDs = GetAuthorDocuments($AuthorID, $OldDocs);
 } elsif ($EventID) {
 
 ### Event
