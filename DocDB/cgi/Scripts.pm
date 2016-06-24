@@ -117,7 +117,10 @@ sub JQueryReadyScript {
     }
     if ($Element eq "tablesorter") {
 #      print qq(  \$\(".DocumentList"\).tablesorter\(\);\n);
-      print "  jQuery('.DocumentList').tablesorter({sortList : [[4,0]]});\n";
+      print "  jQuery('.DocumentList').tablesorter({widgets: [\"zebra\"],
+          widgetOptions : {
+           zebra : [ \"Even\", \"Odd\" ]
+    }});\n";
     }
   }
   print "});\n";

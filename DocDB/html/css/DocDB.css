@@ -174,11 +174,11 @@ table.CenteredTable {
   margin-left: auto;
 }
 
-li.Odd, tr.Odd, tbody.Odd {
+li.Odd, tr.Odd, tbody.Odd, tr.Odd td {
   background: #eee;
 }
 
-li.Even, tr.Even, tbody.Even, .DocumentList th {
+li.Even, tr.Even, tbody.Even, tr.Even td, .DocumentList th {
   background: white;
 }
 
@@ -374,4 +374,3 @@ input.hidden {
 .FileEntry th {
   padding: 5px 5px 5px 5px;
 }
-
