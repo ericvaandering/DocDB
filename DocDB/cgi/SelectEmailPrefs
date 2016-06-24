@@ -145,10 +145,15 @@ if ($Mode eq "newuser") {
   }
 }
 
+my @Scripts = ("PopUps");
+push @Scripts,"jquery/jquery-3.0.0.min","jquery/jquery.tablesorter.min","jquery/jquery.tablesorter.widgets";
+@JQueryElements = ("tablesorter");
+push @Scripts,"JQueryReady";
+
 # Start the page
 
 print $query -> header( -charset => $HTTP_ENCODING );
-DocDBHeader("Update Notification Preferences","",-scripts => ["PopUps"]); # Prob need specialized header
+DocDBHeader("Update Notification Preferences", "", -scripts => \@Scripts, -jqueryelements => \@JQueryElements);
 
 # Create new user if called for
 

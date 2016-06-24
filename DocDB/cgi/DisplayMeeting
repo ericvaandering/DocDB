@@ -84,8 +84,13 @@ if (!$dbh) {
   $PageTitle = $Conferences{$EventID}{Title};
 }
 
+my @Scripts = ("PopUps");
+push @Scripts,"jquery/jquery-3.0.0.min","jquery/jquery.tablesorter.min","jquery/jquery.tablesorter.widgets";
+@JQueryElements = ("tablesorter");
+push @Scripts,"JQueryReady";
+
 print $query -> header( -charset => $HTTP_ENCODING );
-DocDBHeader($PageTitle,"", -scripts => ["PopUps"]);
+DocDBHeader($PageTitle, "", -scripts => \@Scripts, -jqueryelements => \@JQueryElements);
 EndPage(@ErrorStack);
 
 my $DisplayMode = ""; # 4 choices: Event, SingleSession(Event), Session, Separator

@@ -122,8 +122,12 @@ sub LocalSearch ($) {
     }
     NewXMLOutput();
   } else {
+    my @Scripts = ("jquery/jquery-3.0.0.min","jquery/jquery.tablesorter.min","jquery/jquery.tablesorter.widgets");
+    @JQueryElements = ("tablesorter");
+    push @Scripts,"JQueryReady";
+
     print $query -> header( -charset => $HTTP_ENCODING );
-    DocDBHeader("$Project Document Search Results","Search Results");
+    DocDBHeader("$Project Document Search Results","Search Results", -scripts => \@Scripts, -jqueryelements => \@JQueryElements);
   }
 
   if ($SimpleText) { # Break up words and set parameters for rest of search
