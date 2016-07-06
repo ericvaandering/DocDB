@@ -116,7 +116,7 @@ if ($EmailUserID) {
 ### Email User Modification
 
 print $query -> start_multipart_form('POST',"$EmailAdminister",
-                                     "id=\"peraccount\" name=\"peraccount\"");
+                                     "id=\"peraccount\" name=\"peraccount\" onsubmit=\"return confirmxfer()\"");
 print "<table class=\"MedPaddedTable\">\n";
 print "<tr>\n";
 
@@ -187,7 +187,7 @@ print "<tr>\n";
 print "<td colspan=\"3\">\n";
 AdministratorPassword();
 print "&nbsp;";
-print $query -> submit(-value => "Modify Personal Account");
+print $query -> submit(-name => "somename", -value => "Modify Personal Account");
 print "</td>\n";
 print "</tr>\n";
 
