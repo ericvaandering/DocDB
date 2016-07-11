@@ -1,16 +1,14 @@
 #! /usr/bin/env perl
 #
-#        Name: $RCSfile$
+#        Name: EmailAdministerForm
 # Description: This script provides a form to administer users receiving
 #              e-mail notifications and shows the complete list of who is
 #              receiving what.
 #
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2016 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -69,15 +67,17 @@ unless (CanAdminister()) {
 EndPage();
 
 my $UsernameHeader = "Username";
+my $NewUsernameHeader = "New Username";
 if ($UserValidation eq "certificate") {
-  $UsernameHeader = "Certificate DN"
+  $UsernameHeader = "Certificate DN";
+  $NewUsernameHeader = "New Certificate DN";
 }
 
 if ($EmailUserID) {
   print "<p>This form allows you to delete the user, change which groups the
          user belongs to, ";
   unless ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
-    print "reset the user's password, ";
+    print "reset the user's password, copy settings to a new certificate, ";
   }
   print " and change their permissions. The full information, including
           notifications, for the user is shown below.</p>";
@@ -116,12 +116,12 @@ if ($EmailUserID) {
 ### Email User Modification
 
 print $query -> start_multipart_form('POST',"$EmailAdminister",
-                                     "id=\"peraccount\" name=\"peraccount\"");
+                                     "id=\"peraccount\" name=\"peraccount\" onsubmit=\"return confirmxfer()\"");
 print "<table class=\"MedPaddedTable\">\n";
 print "<tr>\n";
 
 print "<td colspan=\"3\">\n";
- AdministerActions(-form => "peraccount");
+ AdministerActions(-form => "peraccount", -addTransfer => $TRUE);
 print "</td>\n";
 
 print "</tr>\n";
@@ -146,6 +146,12 @@ SecurityScroll(-helplink => 'usergroups', -helptext => 'User\'s Groups',
                -multiple => $TRUE,        -default  => \@DefaultUsersGroups);
 print "</td>\n";
 print "</tr>\n";
+
+# The select box for consolidating certificates
+
+print "<tr><td>\n";
+EmailUserSelect(-disabled => $TRUE, -helptext => $NewUsernameHeader, -helplink => 'newcert', -name => 'newcertid');
+print "</td></tr>\n";
 
 if ($EmailUserID) {
   print "<tr><td colspan=\"3\">\n";
@@ -181,7 +187,7 @@ print "<tr>\n";
 print "<td colspan=\"3\">\n";
 AdministratorPassword();
 print "&nbsp;";
-print $query -> submit(-class => "Action", -value => "Modify Personal Account");
+print $query -> submit(-name => "somename", -class => "Action", -value => "Modify Personal Account");
 print "</td>\n";
 print "</tr>\n";
 
@@ -231,7 +237,8 @@ if ($EmailUserID) {
     }
 
     my $Verified = ("No","Yes")[$EmailUser{$EmailUserID}{Verified}];
-    my $CanSign  = ("No","Yes")[$EmailUser{$EmailUserID}{CanSign}];
+    my $CanSignText  = ("No","Yes")[$EmailUser{$EmailUserID}{CanSign}];
+    my $CanSign = '<a href="'.$SignatureReport."?emailuserid=$EmailUserID\">".SmartHTML({-text => $CanSignText}).'</a>';
 
     ++$Row;
     my $RowClass = ("Even","Odd")[$Row % 2];
