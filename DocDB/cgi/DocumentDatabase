@@ -58,11 +58,16 @@ if ($UserValidation eq "certificate") {
   $CertificateStatus = CertificateStatus();
 }
 
+my @Scripts = ("PopUps");
+push @Scripts,"jquery/jquery-3.0.0.min","jquery/jquery.tablesorter.min","jquery/jquery.tablesorter.widgets";
+@JQueryElements = ("tablesorter");
+push @Scripts,"JQueryReady";
+
 print $query->header( -charset => $HTTP_ENCODING );
 if ($UserValidation eq "certificate" && $CertificateStatus ne "verified") {
   DocDBHeader("$Project Document Database","Document Database", -scripts => ["PopUps"], -refresh => "5;url=$CertificateApplyForm");
 } else {
-  DocDBHeader("$Project Document Database","Document Database", -scripts => ["PopUps"]);
+  DocDBHeader("$Project Document Database","Document Database", -scripts => \@Scripts, -jqueryelements => \@JQueryElements);
 }
 
 my $PersonalAccountLink = PersonalAccountLink();

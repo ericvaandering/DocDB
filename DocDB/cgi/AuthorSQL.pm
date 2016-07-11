@@ -6,6 +6,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
+#
 
 # Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
 
@@ -185,11 +186,22 @@ sub FetchInstitution { # Creates/fills a hash $Institutions{$InstitutionID}{} wi
 sub GetAuthorDocuments { # Return a list of all documents the author is associated with
   require "RevisionSQL.pm";
 
-  my ($AuthorID) = @_;   # FIXME: Using join, can simplify into one SQL statement?
+  my ($AuthorID, $OldDocs) = @_;
 
-  my $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from ".
-              "DocumentRevision,RevisionAuthor where DocumentRevision.DocRevID=RevisionAuthor.DocRevID ".
-              "and DocumentRevision.Obsolete=0 and RevisionAuthor.AuthorID=?");
+  my $List;
+  if ($OldDocs) {
+    $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) ".
+             "from DocumentRevision,RevisionAuthor ".
+             "where DocumentRevision.DocRevID=RevisionAuthor.DocRevID and DocumentRevision.Obsolete=0 and RevisionAuthor.AuthorID=?");
+  } else {
+    $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) ".
+             "from (DocumentRevision, RevisionAuthor) ".
+             "join (select DocumentRevision.DocumentID, max(DocumentRevision.VersionNumber) as mv from DocumentRevision ".
+                   "group by DocumentRevision.DocumentID) maxver ".
+             "on (DocumentRevision.DocumentID=maxver.DocumentID and DocumentRevision.VersionNumber=maxver.mv ) ".
+             "where DocumentRevision.DocRevID=RevisionAuthor.DocRevID and DocumentRevision.Obsolete=0 and RevisionAuthor.AuthorID=?");
+  }
+
   $List -> execute($AuthorID);
 
   my @DocumentIDs = ();

@@ -115,6 +115,13 @@ sub JQueryReadyScript {
     if ($Element eq "validate") {
       print "  jQuery('form#documentadd').validate({onfocusout: true, onkeyup: true});\n";
     }
+    if ($Element eq "tablesorter") {
+#      print qq(  \$\(".DocumentList"\).tablesorter\(\);\n);
+      print "  jQuery('.DocumentList').tablesorter({widgets: [\"zebra\"],
+          widgetOptions : {
+           zebra : [ \"Even\", \"Odd\" ]
+    }});\n";
+    }
   }
   print "});\n";
   print "</script>\n";
