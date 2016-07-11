@@ -182,6 +182,8 @@ $new_dir = &MakeDirectory($DocumentID,$Version);
 
 my @FileIDs = &AddFiles(-docrevid   => $DocRevID, -files => \%Files,
                         -replaceold => $Replace);
+my @GroupIDs = GetRevisionSecurityGroups($DocRevID);
+ProtectDirectory($DocumentID, $Version, @GroupIDs); # Redo security again
 
 ### Touch document
 
