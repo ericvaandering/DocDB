@@ -71,7 +71,7 @@ sub DocumentTable (%) {
   my @Fields = sort FieldsByColumn keys %FieldList;
   %SortFields = ();
 
-  print qq(<table class="Alternating DocumentList">\n);
+  print qq(<table id="DocumentTable" class="Alternating DocumentList tablesorter">\n);
 
   print "<thead><tr>\n";
   my $LastRow = 1;
@@ -97,7 +97,7 @@ sub DocumentTable (%) {
     $TH .= " class=\"$Field\">";
     print "$TH",$FieldTitles{$Field},"</th>\n";
   }
-  print "</tr></thead>\n";
+  print "</tr></thead><tbody>\n";
 
 ### Sort document IDs, reverse from convention if needed
 
@@ -176,7 +176,7 @@ sub DocumentTable (%) {
     if ($Unconfirmed) {
       $RowClass .= " Unconfirmed";
     }
-    print "<tbody class=\"$RowClass\"><tr>\n";
+    print "<tr>\n";
     my $LastRow = 1;
     foreach my $Field (@Fields) {
       if ($Public && $PublicSkipFields{$Field}) {
@@ -314,12 +314,12 @@ sub DocumentTable (%) {
       }
       print "</td>\n";
     }
-    print "</tr></tbody>\n";
+    print "</tr>\n";
   }
 
 ### End table, return
 
-  print "</table>\n";
+  print "</tbody></table>\n";
 
   return $NumberOfDocuments;
 }

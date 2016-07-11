@@ -134,6 +134,9 @@ sub DocDBHeader {
     @PublicCSS = ("","Public");
   }
 
+  my $TableSorterCSS = $CSSURLPath."/theme.default.css";
+  print "<link rel=\"stylesheet\" href=\"$TableSorterCSS\" type=\"text/css\" />\n";
+
   foreach my $ScriptCSS ("",$ScriptName) {
     foreach my $ProjectCSS ("",$ShortProject) {
       foreach my $PublicCSS (@PublicCSS) {

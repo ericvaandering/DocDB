@@ -39,6 +39,11 @@ require "HTMLUtilities.pm";
 require "UntaintInput.pm";
 require "DocumentUtilities.pm";
 
+my @Scripts = ("PopUps");
+push @Scripts,"jquery/jquery-3.0.0.min","jquery/jquery.tablesorter.min","jquery/jquery.tablesorter.widgets";
+@JQueryElements = ("tablesorter");
+push @Scripts,"JQueryReady";
+
 $query = new CGI;  # Global for subroutines
 $query -> autoEscape(0);
 my $Untaint = CGI::Untaint -> new($query -> Vars);
@@ -298,7 +303,7 @@ unless (@DocumentIDs) { # Some do their own
 ### Start HTML
 
 print $query -> header( -charset => $HTTP_ENCODING );
-DocDBHeader($Title);
+DocDBHeader($Title, "",  -scripts => \@Scripts, -jqueryelements => \@JQueryElements);
 
 print "<h4>$Message</h4><p/>\n";
 
