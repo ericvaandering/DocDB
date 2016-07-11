@@ -1,3 +1,10 @@
+8.7.23
+  Address a security issue where a careless user could overwrite .htaccess
+  Do not show titles of calendar events that you are not able to access
+  Add the ability to copy settings from one certificate login to another
+    (deletion must be done in a separate step)
+  Add a signature report for each user to the admin form
+
 8.7.22
   Fix several places where apostrophes or single quotes were causing problems with rendered Javascript
   Make Timestamp fields in setup & migration scripts compatible with MySQL 5.5
@@ -9,10 +16,9 @@
   Add Untaint method for e-mail address, add to SelectEmailPrefs
   Schedule similar event will allow one year into the future, not one year from the event date
   Don't lose the preamble when modifying/duplicating events
-  
 
 8.7.21
-  Fixes for URLs in parentheses, wrong CGI variable for fily copy check boxes,
+  Fixes for URLs in parentheses, wrong CGI variable for file copy check boxes,
   list of text fields that can contain newlines.
 
 8.7.20

@@ -30,12 +30,16 @@ sub AdministerActions (%) {
   my (%Params) = @_;
 
   my $Form = $Params{-form}  || "";
+  my $AddTransfer = $Params{-addTransfer}  || $FALSE;
 
   my %Action = ();
 
   $Action{Delete}    = "Delete";
   $Action{New}       = "New";
   $Action{Modify}    = "Modify";
+  if ($AddTransfer) {
+    $Action{Transfer}    = "Transfer";
+  }
   print FormElementTitle(-helplink => "admaction", -helptext => "Action");
   print $query -> radio_group(-name => "admaction",
                               -values => \%Action, -default => "-",

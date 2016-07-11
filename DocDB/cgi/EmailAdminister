@@ -42,6 +42,7 @@ require "SecuritySQL.pm";
 require "NotificationSQL.pm";
 require "Messages.pm";
 require "EmailUserHTML.pm";
+require "SignoffSQL.pm";
 
 $query = new CGI;  # Global for subroutines
 $query -> autoEscape(0);
@@ -54,6 +55,7 @@ my $Username = $Untaint -> extract(-as_printable => "admuser") || "";
 my $Action = $Untaint -> extract(-as_printable => "admaction") || "";
 
 my $EmailUserID = $Untaint -> extract(-as_integer => "emailuserid") || 0;
+my $NewCertID = $Untaint -> extract(-as_integer => "newcertid") || 0;
 my $SingleUser = $Untaint -> extract(-as_safehtml => "singleuser") || "";
 my $NewPassword = $Untaint -> extract(-as_printable => "resetpw") || "";
 
@@ -177,6 +179,90 @@ if      ($Action eq "Delete") { # Delete user
   print "<table class=\"LowPaddedTable\">\n";
   PrintEmailUserInfo($EmailUserID);
   print "</table>\n";
+
+} elsif ($Action eq "Transfer") {
+
+  # Consolidate certificates starting with basic settings
+
+  if ($NewCertID && $EmailUserID && $NewCertID != $EmailUserID) {
+    FetchEmailUser($EmailUserID);
+    FetchEmailUser($NewCertID);
+    if ($EmailUser{$EmailUserID}{Name} && !$EmailUser{$NewCertID}{Name}) {
+      my $UserUpdate = $dbh -> prepare("update EmailUser set Name=? where EmailUserID=?");
+         $UserUpdate -> execute($EmailUser{$EmailUserID}{Name}, $NewCertID);
+    }
+    if ($EmailUser{$EmailUserID}{EmailAddress} && !$EmailUser{$NewCertID}{EmailAddress}) {
+      my $UserUpdate = $dbh -> prepare("update EmailUser set EmailAddress=? where EmailUserID=?");
+         $UserUpdate -> execute($EmailUser{$EmailUserID}{EmailAddress}, $NewCertID);
+    }
+    if ($EmailUser{$EmailUserID}{AuthorID} && !$EmailUser{$NewCertID}{AuthorID}) {
+      my $UserUpdate = $dbh -> prepare("update EmailUser set AuthorID=? where EmailUserID=?");
+         $UserUpdate -> execute($EmailUser{$EmailUserID}{AuthorID}, $NewCertID);
+    }
+    if ($EmailUser{$EmailUserID}{CanSign} && !$EmailUser{$NewCertID}{CanSign}) {
+      my $UserUpdate = $dbh -> prepare("update EmailUser set CanSign=1 where EmailUserID=?");
+         $UserUpdate -> execute($NewCertID);
+    }
+    if ($EmailUser{$EmailUserID}{Verified} && !$EmailUser{$NewCertID}{Verified}) {
+      my $UserUpdate = $dbh -> prepare("update EmailUser set Verified=1 where EmailUserID=?");
+         $UserUpdate -> execute($NewCertID);
+    }
+
+    # Update all notifications
+    my $NotificationUpdate = $dbh -> prepare("update Notification set EmailUserID=? where EmailUserID=?");
+       $NotificationUpdate -> execute($NewCertID, $EmailUserID);
+
+    # Copy all groups
+    my @UsersGroupIDs = FetchUserGroupIDs($EmailUserID);
+    foreach my $UsersGroupID (@UsersGroupIDs) {
+      my $UsersGroupSelect = $dbh -> prepare("select UsersGroupID from UsersGroup where EmailUserID=? and GroupID=?");
+         $UsersGroupSelect -> execute($NewCertID,$UsersGroupID);
+      my ($ComboExists) = $UsersGroupSelect -> fetchrow_array;
+      unless ($ComboExists) {
+        my $UsersGroupUpdate = $dbh -> prepare("insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) ".
+                                               " values (0,?,?)");
+           $UsersGroupUpdate -> execute($NewCertID,$UsersGroupID);
+        FetchSecurityGroup($UsersGroupID);
+        push @ActionStack,"Added user to $SecurityGroups{$UsersGroupID}{NAME}";
+      }
+    }
+
+    # Update signed signatures
+    my $SignatureUpdate = $dbh -> prepare("update Signature set EmailUserID=? where EmailUserID=?");
+       $SignatureUpdate -> execute($NewCertID, $EmailUserID);
+
+    # Remove signature authority from the old account
+    my $UserUpdate = $dbh -> prepare("update EmailUser set CanSign=0 where EmailUserID=?");
+       $UserUpdate -> execute($EmailUserID);
+
+    # Print the new user info
+    ClearEmailUsers();
+    FetchEmailUser($EmailUserID);
+    FetchEmailUser($NewCertID);
+    ActionReport();
+
+    print "<h3>The new user now has the following information:</h3>";
+    print "<table class=\"LowPaddedTable\">\n";
+    PrintEmailUserInfo($NewCertID);
+    print "</table>\n";
+
+    if ($MailInstalled && $UserValidation eq "certificate") {
+      require "EmailUtilities.pm";
+
+      my @To      = ($EmailUser{$EmailUserID}{EmailAddress},$EmailUser{$NewCertID}{EmailAddress},$DBWebMasterEmail);
+      my $Subject = "DocDB account for $EmailUser{$NewCertID}{Name} updated";
+      my $Body    = "An administrator has transferred permissions from the certificate ";
+      $Body      .= "$EmailUser{$EmailUserID}{Name} to the new certificate ";
+      $Body      .= "$EmailUser{$NewCertID}{Name} for access to $Project DocDB. ";
+      $Body      .= "If you think this was done in error, ";
+      $Body      .= "please contact $DBWebMasterEmail immediately.";
+      SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
+    }
+
+
+  } else { # End of certificate consolidation
+    push @ErrorStack,"You must select an old and new user (which must be different) to transfer settings and permissions.";
+  }
 } elsif ($Action eq "New") {
   push @ErrorStack,"You can't create new users here. Do it the normal way.";
 } else {

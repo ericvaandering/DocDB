@@ -1301,4 +1301,13 @@ or may not be the same as the web username and password.
      </text>
  </entry>
 
+ <entry>
+     <key>newcert</key>
+     <title>Updated Certificate or Account</title>
+     <text>
+         <p>Select the new account or certificate for the person. All user settings, email notifications, and signature authority
+         will be copied to the new account or certificate.</p>
+     </text>
+ </entry>
+
 </helpfile>
