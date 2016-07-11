@@ -1,19 +1,14 @@
 8.8.8
-
-  Make the list of documents sortable dynamically by clicking columns
-
-8.8.8
   Forward port 8.7.23 changes
    Address a security issue where a careless user could overwrite .htaccess
    Do not show titles of calendar events that you are not able to access
    Add the ability to copy settings from one certificate login to another
      (deletion must be done in a separate step)
    Add a signature report for each user to the admin form
-
-
   Change the defaul ListBy author and topic to only show documents with that author or topic on the 
    latest version of the document. Provide a link to return to the previous behavior which shows
    any document that had that author or topic on any version.
+  Make the list of documents sortable dynamically by clicking columns
 
 8.8.7
 
