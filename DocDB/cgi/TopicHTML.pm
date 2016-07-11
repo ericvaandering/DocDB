@@ -101,6 +101,7 @@ sub TopicLink ($) {
   my $TopicID = exists $ArgRef->{-topicid} ? $ArgRef->{-topicid} : "";
   my $Format  = exists $ArgRef->{-format}  ? $ArgRef->{-format}  : "short";
   my $Type    = exists $ArgRef->{-type}    ? $ArgRef->{-type}    : "document";
+  my $OldDocs = exists $ArgRef->{-olddocs} ? $ArgRef->{-olddocs} : "";
 
   my $Separator = ":";
 
@@ -116,6 +117,9 @@ sub TopicLink ($) {
   }
 
   $URL     = $Script."?topicid=".$TopicID;
+  if ($OldDocs) {
+    $URL .= "&amp;old=1";
+  }
   $Link = "";
 
   if ($Format eq "short") {

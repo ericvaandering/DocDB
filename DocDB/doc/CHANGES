@@ -7,6 +7,10 @@
    Add a signature report for each user to the admin form
 
 
+  Change the defaul ListBy author and topic to only show documents with that author or topic on the 
+   latest version of the document. Provide a link to return to the previous behavior which shows
+   any document that had that author or topic on any version.
+
 8.8.7
 
   Fix several places where apostrophes or single quotes were causing problems with rendered Javascript
@@ -21,6 +25,7 @@
   Show signature times by default
   Reduce # of topic columns to 3 (p1)
   Fix broken TBODY tag that was screwing up layout (p2)
+  Restore ability to delete a document (p3)
 
 8.8.6
  Use full DN from certificate as username, not CN which is not unique

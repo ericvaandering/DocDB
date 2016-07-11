@@ -153,6 +153,7 @@ sub AuthorLink ($;%) {
   my ($AuthorID,%Params) = @_;
   my $Format = $Params{-format} || "full"; # full, formal
   my $Type   = $Params{-type}   || "document"; # document, event
+  my $OldDocs = $Params{-olddocs} || "";
 
   FetchAuthor($AuthorID);
   FetchInstitution($Authors{$AuthorID}{InstitutionID});
@@ -169,7 +170,12 @@ sub AuthorLink ($;%) {
   }
 
   my $Link;
-  $Link = "<a href=\"$Script?authorid=$AuthorID\" title=\"$InstitutionName\">";
+  if ($OldDocs) {
+    $Link = "<a href=\"$Script?authorid=$AuthorID&amp;old=1\" title=\"$InstitutionName\">";
+  } else {
+    $Link = "<a href=\"$Script?authorid=$AuthorID\" title=\"$InstitutionName\">";
+  }
+
   if ($Format eq "full") {
     $Link .= SmartHTML( {-text => $Authors{$AuthorID}{FULLNAME}, } );
   } elsif ($Format eq "formal") {
