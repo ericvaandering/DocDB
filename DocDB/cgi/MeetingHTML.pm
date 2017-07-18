@@ -1212,14 +1212,14 @@ sub TalkUploadButton (%) {
   my $EventID   = $Params{-eventid};
   my $SessionID = $Params{-sessionid};
 
-  print $query -> startform('POST',$DocumentAddForm),"<div>\n";
+  print $query -> start_form('POST',$DocumentAddForm),"<div>\n";
   print $query -> submit (-value => "Upload Document");
   if ($EventID) {
     print $query -> hidden(-name => 'conferenceid', -default => $EventID);
   } elsif ($SessionID) {
     print $query -> hidden(-name => 'sessionid',    -default => $SessionID);
   }
-  print "\n</div>\n",$query -> endform,"\n";
+  print "\n</div>\n",$query -> end_form,"\n";
 }
 
 sub SessionModifyButton (%) {
@@ -1230,7 +1230,7 @@ sub SessionModifyButton (%) {
   my $LabelText  = $Params{-labeltext}  || "";
   my $ButtonText = $Params{-buttontext} || "Modify";
 
-  print $query -> startform('POST',$SessionModify),"<div>\n";
+  print $query -> start_form('POST',$SessionModify),"<div>\n";
   print $query -> submit (-value => $ButtonText);
   print $LabelText;
   if ($EventID) {
@@ -1239,7 +1239,7 @@ sub SessionModifyButton (%) {
   } elsif ($SessionID) {
     print $query -> hidden(-name => 'sessionid',    -default => $SessionID);
   }
-  print "\n</div>\n",$query -> endform,"\n";
+  print "\n</div>\n",$query -> end_form,"\n";
 }
 
 sub EventModifyButton (%) {
@@ -1249,11 +1249,11 @@ sub EventModifyButton (%) {
   my $ButtonText = $Params{-buttontext} || "Modify agenda";
   my $LabelText  = $Params{-labeltext}  || "";
 
-  print $query -> startform('POST',$MeetingModify),"<div>\n";
+  print $query -> start_form('POST',$MeetingModify),"<div>\n";
   print $query -> submit (-value => $ButtonText);
   print $LabelText;
   print $query -> hidden(-name => 'conferenceid',    -default => $EventID);
-  print "\n</div>\n",$query -> endform,"\n";
+  print "\n</div>\n",$query -> end_form,"\n";
 }
 
 sub EventCopyButton (%) {
@@ -1269,23 +1269,23 @@ sub EventCopyButton (%) {
                  49 => "7 weeks", 56 => "8 weeks", 70 => "10 weeks",
                  84 => "12 weeks",);
 
-  print $query -> startform('POST',$MeetingModify),"<div>\n";
+  print $query -> start_form('POST',$MeetingModify),"<div>\n";
   print $query -> hidden(-name => "mode",         -default => "copy");
   print $query -> hidden(-name => "conferenceid", -default => $EventID);
   print $query -> submit (-value => "Schedule Similar");
   print "<br/> in ";
   print $query -> popup_menu(-name => "offsetdays", -values => \@Offsets, -labels => \%Labels, -default => 7);
-  print "\n</div>\n",$query -> endform,"\n";
+  print "\n</div>\n",$query -> end_form,"\n";
 }
 
 sub EventDisplayButton ($) {
   my ($ArgRef) = @_;
 
   my $EventID = exists $ArgRef->{-eventid} ? $ArgRef->{-eventid} : 0;
-  print $query -> startform('POST',$CustomListForm),"<div>\n";
+  print $query -> start_form('POST',$CustomListForm),"<div>\n";
   print $query -> hidden(-name => "eventid", -default => $EventID);
   print $query -> submit (-value => "Change Display");
-  print "\n</div>\n",$query -> endform,"\n";
+  print "\n</div>\n",$query -> end_form,"\n";
 }
 
 sub ListByEventLink {

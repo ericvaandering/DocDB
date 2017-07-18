@@ -129,7 +129,7 @@ if (CanCreate()) {
 }
 
 my @ExternalDocDBIDs = GetAllExternalDocDBs();
-my $SearchDiv  = $query -> startform('POST',$Search);
+my $SearchDiv  = $query -> start_form('POST',$Search);
    $SearchDiv .= "<div>\n";
    $SearchDiv .= $query -> submit (-value => "Search");
    $SearchDiv .= " <strong>for</strong> ";
@@ -141,11 +141,11 @@ if (@ExternalDocDBIDs) {
 }
    $SearchDiv .= ")</strong>";
    $SearchDiv .= "\n</div>\n";
-   $SearchDiv .= $query -> endform;
+   $SearchDiv .= $query -> end_form;
 
 print "<div class=\"HomepageMainChoice\">$SearchDiv</div>\n";
 
-my $ShowForm  = $query -> startform('POST',$ShowDocument);
+my $ShowForm  = $query -> start_form('POST',$ShowDocument);
    $ShowForm .= "<div>\n";
    $ShowForm .= $query -> submit (-value => "Show");
    $ShowForm .= " <strong>$ShortProject-doc-#</strong> ";
@@ -153,7 +153,7 @@ my $ShowForm  = $query -> startform('POST',$ShowDocument);
    $ShowForm .= " <strong>-v</strong> ";
    $ShowForm .= $query -> textfield(-name => "version", -size => 3, -maxlength => 3);
    $ShowForm .= "\n</div>\n";
-   $ShowForm .= $query -> endform;
+   $ShowForm .= $query -> end_form;
 
 print "<div class=\"HomepageMainChoice\">$ShowForm</div>\n";
 
@@ -161,14 +161,14 @@ print "<div class=\"HomepageMainChoice\">$ShowForm</div>\n";
 
 if ($Preferences{Components}{LastModifiedHome}) {
   print "<div class=\"HomepageMainChoice\">\n";
-  print $query -> startform('POST',$ListBy);
+  print $query -> start_form('POST',$ListBy);
   print "<div>\n";
   print $query -> submit (-value => "Show");
   print "<strong> documents modified in the last </strong>";
   DaysPulldown($LastDays);
   print "<strong> days</strong>";
   print "</div>\n";
-  print $query -> endform;
+  print $query -> end_form;
   print "</div>\n";
 }
 

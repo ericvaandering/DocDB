@@ -193,7 +193,7 @@ print $query -> submit (-value => "Change Agenda Information");
 print "</td></tr>\n";
 print "</table>\n";
 
-print $query -> endform;
+print $query -> end_form;
 
 if ($SessionTalkID) { # Don't do this for seperators
   if ($DocumentID) {

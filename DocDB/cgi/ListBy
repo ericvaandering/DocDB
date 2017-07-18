@@ -312,13 +312,13 @@ print "<h4>$Message</h4><p/>\n";
 if ($Days) { # Print out modified by form
   require "FormElements.pm";
 
-  print $query -> startform('POST',"$ListBy");
+  print $query -> start_form('POST',"$ListBy");
   print "<center>";
   print $query -> submit(-class => "Action", -value => "Show Documents");
   print " modified in the last ";
   DaysPulldown($Days);
   print " days.</center>";
-  print $query -> endform;
+  print $query -> end_form;
   print "<p/>";
 }
 
