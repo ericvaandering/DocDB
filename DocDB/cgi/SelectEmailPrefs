@@ -341,7 +341,7 @@ if ($Mode eq "update") {
 
 ClearNotifications();
 
-print $query -> startform('POST',$SelectEmailPrefs);
+print $query -> start_form('POST',$SelectEmailPrefs);
 print "<div id=\"SelectEmailPrefsForm\">\n";
 print $query -> hidden(-name => 'mode', -default => "update", -override => 1);
 
@@ -508,7 +508,7 @@ print $query -> submit (-value => "Update Notification Preferences");
 print " \n";
 print $query -> reset (-value => "Reset");
 print "</td></tr></table></div>\n";
-print $query -> endform;
+print $query -> end_form;
 print "<hr/>\n";
 
 DocDBNavBar();

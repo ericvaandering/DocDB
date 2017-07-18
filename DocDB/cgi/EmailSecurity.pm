@@ -167,7 +167,7 @@ sub EmailUserDigest ($) {
 
 sub NewEmailUserForm {
   print "<b>Create a new account:</b><p>\n";
-  print $query -> startform('POST',$SelectEmailPrefs);
+  print $query -> start_form('POST',$SelectEmailPrefs);
   print $query -> hidden(-name => 'mode', -default => "newuser", -override => 1);
 
   print "<dl><dd><table>";
@@ -180,12 +180,12 @@ sub NewEmailUserForm {
   print "<tr><td colspan=2 align=center>";
   print $query -> submit (-value => "Create new account");
   print "</table></dl>\n";
-  print $query -> endform;
+  print $query -> end_form;
 }
 
 sub LoginEmailUserForm {
   print "<b>Change preferences on an existing account:</b><p>\n";
-  print $query -> startform('POST',$SelectEmailPrefs);
+  print $query -> start_form('POST',$SelectEmailPrefs);
   print $query -> hidden(-name => 'mode', -default => "login", -override => 1);
 
   print "<dl><dd><table>";
@@ -196,7 +196,7 @@ sub LoginEmailUserForm {
   print "<tr><td colspan=2 align=center>";
   print $query -> submit (-value => "Login");
   print "</table></dl>\n";
-  print $query -> endform;
+  print $query -> end_form;
 }
 
 sub CanSign($) {
