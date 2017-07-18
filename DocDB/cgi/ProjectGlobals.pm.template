@@ -9,7 +9,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -146,5 +146,15 @@ $ShortProject   = "MyProject";    # This is the project used in the Document ID
                          # Scripts and engine installed for searching files
 
 #$DefaultPublicAccess  = 0;     # New documents are public by default
+
+
+# For the Shibboleth and FNALSSO authorization methods, turn e-groups, LDAP, ADFS groups into DocDB groups
+# In the SsoGroupMap, the keys must be lower case with no spaces surrounding = signs to ensure an LDAP match
+# (per the LDAP schema spec)
+
+#$Preferences{Security}{SSOGroupVariables} = ("SSO_FNAL_GROUPS");  # Environmental variables with lists of groups
+#%ShibGroupMap = {'shibgroup1' => ['DocDBGroup1', 'DocDBGroup2'], 'shibgroup2' => []}
+#%SsoGroupMap = {'ssogroup1' => ['DocDBGroup1', 'DocDBGroup2'], 'ssogroup2' => []}
+
 
 1;

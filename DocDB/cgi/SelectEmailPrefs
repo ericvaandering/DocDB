@@ -6,10 +6,8 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
-#
-#      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -108,9 +106,15 @@ $ImmediateDocuments =~ s/,/ /g; my @ImmediateDocuments = split /\s+/,$ImmediateD
 $UserName =~ s/\s+//g;
 $Password =~ s/\s+//g;
 
+my ($FQUN, $EmailAddress, $Name);
+
 if ($UserValidation eq "shibboleth") {
   $UserName = $ENV{ADFS_LOGIN};
-}
+} elsif ($UserValidation eq "FNALSSO") {
+  require "FNALSSOUtilities.pm";
+  ($FQUN, $UserName, $EmailAddress, $Name) = GetUserInfoFSSO();
+  $UserName = $FQUN;
+}  
 
 if (($NewPass || $ConfNewPass) && ($NewPass ne $ConfNewPass)) {
   push @WarnStack,"The passwords you entered did not match. Password not
@@ -134,7 +138,10 @@ if ($Mode eq "newuser") {
     push @ErrorStack,"The passwords you entered did not match. Please try again.";
   }
 
-# Does the username already exist?
+# Does the username already exist and is it valid
+  if ($UserName !~ /^[a-zA-Z][a-zA-Z0-9_\.\-\@]+$/) {
+    push @ErrorStack,"Your username may not contain any special characters except dash, period, at, or underscore.";
+  }
 
   my $UserFetch =  $dbh->prepare("select COUNT(EmailUserID) from EmailUser where Username=?");
      $UserFetch -> execute($UserName);
@@ -155,6 +162,7 @@ push @Scripts,"JQueryReady";
 print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader("Update Notification Preferences", "", -scripts => \@Scripts, -jqueryelements => \@JQueryElements);
 
+my $EmailUserID;
 # Create new user if called for
 
 if ($Mode eq "newuser") {
@@ -181,7 +189,7 @@ if ($Mode eq "newuser") {
 
 # Make the user part of the group who's httpd password they've used.
 
-    my $EmailUserID =  $UserInsert -> {mysql_insertid}; # Works with MySQL only
+    $EmailUserID =  $UserInsert -> {mysql_insertid}; # Works with MySQL only
     my $GroupID = FetchSecurityGroupByName($remote_user);
     my $EmailUserInsert = $dbh -> prepare("insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) values (0,?,?)");
     if ($GroupID) {
@@ -204,14 +212,14 @@ if ($Password) {
   $EmailUserID = ValidateEmailUser($UserName,$Password);
 } elsif ($Digest) {
   $EmailUserID = ValidateEmailUserDigest($UserName,$Digest);
-} elsif ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
+} elsif ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
   $EmailUserID = FetchEmailUserID();
 }
 
 if ($EmailUserID) {
   FetchEmailUser($EmailUserID);
   $Digest = EmailUserDigest($EmailUserID);
-} elsif ($UserValidation ne "shibboleth") {
+} elsif ($UserValidation ne "shibboleth" && $UserValidation ne "FNALSSO" ) {
   push @ErrorStack,"The username/password pair or certificate you supplied is invalid. Please try again or contact an administrator.";
   ErrorPage();
   LoginEmailUserForm();
@@ -230,21 +238,32 @@ if ($Mode eq "update") {
 
 # Update DB
 
-  if ($UserValidation eq "shibboleth") {
+  if ($UserValidation eq "shibboleth" or $UserValidation eq "FNALSSO") {
     require "ShibbolethUtilities.pm";
-    my $EmailUserID = FetchEmailUserIDForShib();
-    $UserName = $ENV{ADFS_LOGIN};
-    $Name     = $ENV{ADFS_FULLNAME};
-    $Email    = $ENV{ADFS_EMAIL};
+    require "FNALSSOUtilities.pm";
+    if ($UserValidation eq "shibboleth") {
+      $EmailUserID = FetchEmailUserIDForShib();
+      $UserName = $ENV{ADFS_LOGIN};
+      $Name     = $ENV{ADFS_FULLNAME};
+      $Email    = $ENV{ADFS_EMAIL};
+    } elsif ($UserValidation eq "FNALSSO") {
+      $EmailUserID = FetchEmailUserIDForFSSO();
+      $Email = $EmailAddress;
+    }
     if (!$EmailUserID) {
-      push @DebugStack,"Shibboleth user does not exist in EmailUser, creating";
+      push @DebugStack,"Shibboleth or FNAL SSO user does not exist in EmailUser, creating";
       my $UserInsert        = $dbh -> prepare(
        "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Password,Verified) ".
        "values                (0,          ?,       ?,   ?,           ?,       1)");
-      $UserInsert -> execute($UserName,$Name,$Email,'x');
-      $EmailUserID = FetchEmailUserIDForShib();
+      $UserInsert -> execute($FQUN,$Name,$Email,'x');
+      if ($UserValidation eq "shibboleth") {
+        $EmailUserID = FetchEmailUserIDForShib();
+      } elsif ($UserValidation eq "FNALSSO") {
+        $EmailUserID = FetchEmailUserIDForFSSO();
+      }
+      push @DebugStack, "Newly created EmailUserID $EmailUserID";
     }
-    push @DebugStack,"Updating shibboleth EmailUserID $EmailUserID";
+    push @DebugStack,"Updating shibboleth or FNAL SSO EmailUserID $EmailUserID";
     my $UpdateUserInfo = $dbh -> prepare("update EmailUser set Name=?,EmailAddress=?,PreferHTML=? where EmailUserID=?");
     $UpdateUserInfo -> execute($Name,$Email,$HTML,$EmailUserID);
   } elsif ($UserValidation eq "certificate") {
@@ -256,7 +275,7 @@ if ($Mode eq "update") {
   }
 
   if ($NewPass && $ConfNewPass && ($NewPass eq $ConfNewPass)
-               && ($UserValidation ne "certificate" && $UserValidation ne "shibboleth")) {
+               && ($UserValidation ne "certificate" && $UserValidation ne "shibboleth" && $UserValidation ne "FNALSSO")) {
     srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
 
     my $Salt = ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]).
@@ -355,7 +374,7 @@ print "<p><b>Use this page to change your personal account settings.</b></p>
        Also shown are which group(s) you are a member of. If this list is incorrect,
        <a href=\"mailto:$DBWebMasterEmail\">contact the administrators</a> and ask them
        to change your group membership.</p>\n";
-unless ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
+unless ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
   print "<p>If you want to change your password, type the new password in both boxes.</p>\n";
 }
 print "<p>At the bottom part of the page, select the <a href=\"#topic\">topics

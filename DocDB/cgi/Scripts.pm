@@ -24,6 +24,8 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+use HTML::Entities;
+
 sub TalkNoteLink {
   my ($SessionOrderID) = @_;
   return "<a href=\"Javascript:notepopupwindow(\'$ShowTalkNote?sessionorderid=$SessionOrderID\');\">Edit</a>";
@@ -76,7 +78,7 @@ PREAMBLE
   }
 
   foreach $EventID (sort EventsByDate keys %Conferences) { #FIXME use join
-    my $label = $Conferences{$EventID}{Full};
+    my $label = HTML::Entities::decode_entities($Conferences{$EventID}{Full});
     $label =~ tr/a-zA-Z0-9\.\,\'\-\ //dc; # Remove special characters
     $label =~ s/\'/\\\'/; # Escape single quotes
     print "event[\'$EventID\'] = \'$label\';\n";
@@ -98,7 +100,8 @@ PREAMBLE
   GetAuthors();
   my @AuthorIDs     = sort byLastName keys %Authors;
   foreach my $AuthorID (@AuthorIDs) {
-    my $Label = $Authors{$AuthorID}{Formal};
+    my $Label = HTML::Entities::decode_entities($Authors{$AuthorID}{Formal});
+
     $Label =~ tr/a-zA-Z0-9\.\,\'\-\ //dc; # Remove special characters
     $Label =~ s/\'/\\\'/; # Escape single quotes
     print '['.$AuthorID.', "'.$Label.'"],'."\n";

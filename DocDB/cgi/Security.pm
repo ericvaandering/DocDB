@@ -1,14 +1,11 @@
 #
-#        Name: $RCSfile$
+#        Name: Security.pm
 # Description: Routines to determine various levels of access to documents
 #              and the database based on usernames, doc numbers, etc.
 #
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
-#
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -290,6 +287,9 @@ sub FindUsersGroups (;%) {
   } elsif ($UserValidation eq "shibboleth") {
     require "ShibbolethUtilities.pm";
     @UsersGroupIDs = FetchSecurityGroupsForShib();
+  } elsif ($UserValidation eq "FNALSSO") {
+    require "FNALSSOUtilities.pm";
+    @UsersGroupIDs = FetchSecurityGroupsForFSSO();
   } elsif ($UserValidation eq "basic-user") {
     # Coming (maybe)
   } else {
@@ -303,13 +303,15 @@ sub FindUsersGroups (;%) {
   }
 
   @UsersGroupIDs = &Unique(@UsersGroupIDs);
+
   unless ($IgnoreCookie) {
     my @LimitedGroupIDs = &GetGroupsCookie();
     if (@LimitedGroupIDs) {
       @UsersGroupIDs = &Union(\@LimitedGroupIDs,@UsersGroupIDs);
     }
   }
-
+  
+  push @DebugStack,"After limiting, user belongs to unique groups ".join ', ',@UsersGroupIDs;
   return @UsersGroupIDs;
 }
 
@@ -323,7 +325,9 @@ sub FetchEmailUserID (;%) {
   } elsif ($UserValidation eq "shibboleth") {
     require "ShibbolethUtilities.pm";
     $EmailUserID  = FetchEmailUserIDForShib(%Params);
-
+  } elsif ($UserValidation eq "FNALSSO") {
+    require "FNALSSOUtilities.pm";
+    $EmailUserID  = FetchEmailUserIDForFSSO();
   }
 
   return $EmailUserID;

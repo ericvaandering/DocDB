@@ -1,5 +1,6 @@
 #! /usr/bin/env perl
 #
+#        Name: RetrieveArchive
 # Description: Create an archive (.zip, .tar, .tar.gz) file of the document
 #              and stream it to the user.
 #
@@ -68,11 +69,7 @@ if (defined $InputVersion) {
 }
 
 unless (&CanAccess($DocumentID,$Version)) {
-  if ($remote_user) {
-    push @ErrorStack,"The $remote_user group is not authorized to view this document (or it does not exist).";
-  } else {
-    push @ErrorStack,"This document is not publicly accessible.";
-  }
+  push @ErrorStack,"You are not authorized to view this document (or it does not exist).";
 }
 
 if (($Type eq "zip" && !$Zip)) {

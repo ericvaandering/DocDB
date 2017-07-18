@@ -1,12 +1,9 @@
-#        Name: $RCSfile$
+#        Name: SignoffHTML.pm
 # Description: Generates HTML for things related to signoffs
-#
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -57,6 +54,12 @@ sub PrintRevisionSignoffInfo ($) { # FIXME: Handle more complicated topologies?
   my $UserCanSign = $FALSE;
   if (CanModify($DocumentID,$Version) || CanAccess($DocumentID,$Version)) {
     $UserCanSign = $TRUE;
+  }
+  if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
+    my $EmailUserID = FetchEmailUserID();
+    unless ($EmailUser{$EmailUserID}{CanSign} && $EmailUser{$EmailUserID}{Verified}) {
+      $UserCanSign = $FALSE;
+    }
   }
 
   my @RootSignoffIDs = &GetRootSignoffs($DocRevID);
@@ -133,7 +136,7 @@ sub PrintSignatureInfo ($) {
             $Action = "unsign";
             $ActionText = "Remove Signature"
           }
-          if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
+          if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
             if (FetchEmailUserID() == $EmailUserID) {
               $SignatureText .= $query -> start_multipart_form('POST',"$SignRevision");
               $SignatureText .= "<div>\n";

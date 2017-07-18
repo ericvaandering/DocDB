@@ -1,15 +1,12 @@
-#        Name: $RCSfile$
+#        Name: GeneralInstructions.pm
 # Description: The generic instructions for DocDB. This is mostly HTML, but making
 #              it a script allows us to eliminate parts of it that we don't want
 #              and get it following everyone's style, and allows groups to add
 #              to it with ProjectMessages.
 #
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
-#
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
 #    Additional Text: Marcia Teckenbrock
 
 #    This file is part of DocDB.
@@ -56,7 +53,7 @@ TOC
       <li><a href="#topickey">Topics and Keywords</a></li>
 
 TOC
-    if   ($UserValidation eq "shibboleth") {
+    if   ($UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
       print '<li><a href="#authentication">Authentication</a></li>';
     }
     print <<TOC;
@@ -241,7 +238,7 @@ HTML
 
 HTML
 
-  if ($Preferences{Options}{AlwaysRetrieveFile} || $UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
+  if ($Preferences{Options}{AlwaysRetrieveFile} || $UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
 
     print <<HTML;
   <p><strong>Note on HTML uploads:</strong>
@@ -422,13 +419,13 @@ HTML
     <a name="authentication"></a><h2>Authentication</h2>
     <p>You are authenticated through a single sign-on mechanism known as
     shibboleth. Shibboleth determines which of its groups, known as ADFS
-    groups or e-groups, you belong to. These are then translated into DocDB's
+    groups or e-groups, you belong to. These are then translated into the DocDB
     groups that you may use to determine who may view or change documents you
     create or modify. </p>
 
     <p>For this instance of DocDB, this is the mapping between ADFS groups and
     DocDB groups:</p>
-    <table><tr><th>ADFS Group</th><th>DocDB Groups</th></tr>
+    <p><table><tr><th>ADFS Group</th><th>DocDB Group(s)</th></tr>
 AUTHSTART
     foreach my $ADFSGroup (sort keys %ShibGroupMap) {
        print "<tr><td>$ADFSGroup</td><td>";
@@ -439,10 +436,38 @@ AUTHSTART
        print "</td></tr>\n";
     }
     print <<AUTHEND;
-    </table>
+    </table></p>
+    <p>This mapping can only be changed by a DocDB administrator</p>
+AUTHEND
+  } elsif ($UserValidation eq "FNALSSO") {
+    print <<AUTHSTART;
+    <a name="authentication"></a><h2>Authentication</h2>
+    <p>You are authenticated through a single sign-on mechanism (SSO).
+    The SSO determines which of its groups
+    you belong to. These are then translated into the DocDB
+    groups that are used to determine who may view or change documents you
+    create or modify. You may also 
+    <a href="$CertificateApplyForm">request membership</a>
+    in additional DocDB groups.</p>
+
+    <p>For this instance of DocDB, this is the mapping between SSO groups and
+    DocDB groups:</p>
+    <p><table><tr><th>SSO Group</th><th>DocDB Group(s)</th></tr>
+AUTHSTART
+    foreach my $SSOGroup (sort keys %SsoGroupMap) {
+       print "<tr><td>$SSOGroup</td><td>";
+       foreach my $DocDBGroup (@{ $SsoGroupMap{$SSOGroup} }) {
+         print "$DocDBGroup ";
+
+       }
+       print "</td></tr>\n";
+    }
+    print <<AUTHEND;
+    </table></p>
     <p>This mapping can only be changed by a DocDB administrator</p>
 AUTHEND
   }
+
   print <<HTML;
   <a name="advanced"></a>
   <h2>Advanced options</h2>
