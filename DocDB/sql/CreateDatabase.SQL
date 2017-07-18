@@ -15,7 +15,7 @@ CREATE TABLE Author (
   TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (AuthorID),
   KEY Name (LastName)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `Author`
@@ -34,7 +34,7 @@ CREATE TABLE AuthorHint (
   TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (AuthorHintID),
   KEY SessionTalkID (SessionTalkID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `AuthorHint`
@@ -63,7 +63,7 @@ CREATE TABLE Conference (
   PRIMARY KEY  (ConferenceID),
   KEY StartDate (StartDate),
   KEY EndDate (EndDate)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `Conference`
@@ -97,7 +97,7 @@ CREATE TABLE ConfigSetting (
   KEY ConfigGroup (ConfigGroup),
   KEY Sub1Group (Sub1Group),
   KEY ForeignID (ForeignID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `ConfigSetting`
@@ -117,7 +117,7 @@ CREATE TABLE ConfigValue (
   TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (ConfigValueID),
   KEY ConfigSettingID (ConfigSettingID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `ConfigValue`
@@ -139,7 +139,7 @@ CREATE TABLE DocXRef (
   PRIMARY KEY  (DocXRefID),
   KEY DocRevID (DocRevID),
   KEY DocumentID (DocumentID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `DocXRef`
@@ -161,7 +161,7 @@ CREATE TABLE Document (
   PRIMARY KEY  (DocumentID),
   KEY Requester (RequesterID),
   KEY Alias (Alias)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `Document`
@@ -183,7 +183,7 @@ CREATE TABLE DocumentFile (
   Description varchar(128) default NULL,
   PRIMARY KEY  (DocFileID),
   KEY DocRevID (DocRevID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `DocumentFile`
@@ -214,7 +214,7 @@ CREATE TABLE DocumentRevision (
   KEY DocumentID (DocumentID),
   KEY DocumentTitle (DocumentTitle),
   KEY VersionNumber (VersionNumber)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `DocumentRevision`
@@ -232,7 +232,7 @@ CREATE TABLE DocumentType (
   LongType varchar(255) default NULL,
   TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (DocTypeID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `DocumentType`
@@ -256,7 +256,7 @@ CREATE TABLE EmailUser (
   Verified int(11) NOT NULL default '0',
   AuthorID int(11) NOT NULL default '0',
   PRIMARY KEY  (EmailUserID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `EmailUser`
@@ -274,7 +274,7 @@ CREATE TABLE EventGroup (
   LongDescription text,
   TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (EventGroupID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `EventGroup`
@@ -298,7 +298,7 @@ CREATE TABLE EventTopic (
   KEY Event (EventID),
   KEY Session (SessionID),
   KEY SepKey (SessionSeparatorID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `EventTopic`
@@ -318,7 +318,7 @@ CREATE TABLE ExternalDocDB (
   PrivateURL varchar(255) default NULL,
   TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (ExternalDocDBID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `ExternalDocDB`
@@ -336,7 +336,7 @@ CREATE TABLE GroupHierarchy (
   ParentID int(11) NOT NULL default '0',
   TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (HierarchyID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `GroupHierarchy`
@@ -354,7 +354,7 @@ CREATE TABLE Institution (
   LongName varchar(80) NOT NULL default '',
   TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (InstitutionID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `Institution`
@@ -375,7 +375,7 @@ CREATE TABLE Journal (
   TimeStamp timestamp NOT NULL,
   Acronym varchar(8) default NULL,
   PRIMARY KEY  (JournalID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `Journal`
@@ -393,7 +393,7 @@ CREATE TABLE Keyword (
   LongDescription text,
   TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (KeywordID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `Keyword`
@@ -411,7 +411,7 @@ CREATE TABLE KeywordGroup (
   LongDescription text,
   TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (KeywordGroupID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `KeywordGroup`
@@ -431,7 +431,7 @@ CREATE TABLE KeywordGrouping (
   PRIMARY KEY  (KeywordGroupingID),
   KEY KeywordID (KeywordID),
   KEY KeywordGroupID (KeywordGroupID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `KeywordGrouping`
@@ -450,7 +450,7 @@ CREATE TABLE MeetingModify (
   TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (MeetingModifyID),
   KEY ConferenceID (ConferenceID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `MeetingModify`
@@ -471,7 +471,7 @@ CREATE TABLE MeetingOrder (
   PRIMARY KEY  (MeetingOrderID),
   KEY SessionID (SessionID),
   KEY SessionSeparatorID (SessionSeparatorID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `MeetingOrder`
@@ -490,7 +490,7 @@ CREATE TABLE MeetingSecurity (
   TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (MeetingSecurityID),
   KEY ConferenceID (ConferenceID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `MeetingSecurity`
@@ -514,7 +514,7 @@ CREATE TABLE Moderator (
   KEY Event (EventID),
   KEY Session (SessionID),
   KEY SepKey (SessionSeparatorID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `Moderator`
@@ -537,7 +537,7 @@ CREATE TABLE Notification (
   PRIMARY KEY  (NotificationID),
   KEY EmailUserID (EmailUserID),
   KEY ForeignID (ForeignID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `Notification`
@@ -558,7 +558,7 @@ CREATE TABLE RevisionAuthor (
   PRIMARY KEY  (RevAuthorID),
   KEY DocRevID (DocRevID),
   KEY AuthorID (AuthorID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `RevisionAuthor`
@@ -578,7 +578,7 @@ CREATE TABLE RevisionEvent (
   PRIMARY KEY  (RevEventID),
   KEY MinorTopicID (ConferenceID),
   KEY DocRevID (DocRevID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `RevisionEvent`
@@ -598,7 +598,7 @@ CREATE TABLE RevisionModify (
   PRIMARY KEY  (RevModifyID),
   KEY GroupID (GroupID),
   KEY DocRevID (DocRevID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `RevisionModify`
@@ -620,7 +620,7 @@ CREATE TABLE RevisionReference (
   PRIMARY KEY  (ReferenceID),
   KEY JournalID (JournalID),
   KEY DocRevID (DocRevID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `RevisionReference`
@@ -640,7 +640,7 @@ CREATE TABLE RevisionSecurity (
   PRIMARY KEY  (RevSecurityID),
   KEY Grp (GroupID),
   KEY Revision (DocRevID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `RevisionSecurity`
@@ -660,7 +660,7 @@ CREATE TABLE RevisionTopic (
   PRIMARY KEY  (RevTopicID),
   KEY DocRevID (DocRevID),
   KEY TopicID (TopicID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `RevisionTopic`
@@ -682,7 +682,7 @@ CREATE TABLE SecurityGroup (
   CanView int(11) default '1',
   CanConfig int(11) default '0',
   PRIMARY KEY  (GroupID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `SecurityGroup`
@@ -706,7 +706,7 @@ CREATE TABLE Session (
   ShowAllTalks int(11) default '0',
   PRIMARY KEY  (SessionID),
   KEY ConferenceID (ConferenceID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `Session`
@@ -727,7 +727,7 @@ CREATE TABLE SessionOrder (
   PRIMARY KEY  (SessionOrderID),
   KEY SessionTalkID (SessionTalkID),
   KEY TalkSeparatorID (TalkSeparatorID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `SessionOrder`
@@ -749,7 +749,7 @@ CREATE TABLE SessionSeparator (
   Location varchar(128) default NULL,
   PRIMARY KEY  (SessionSeparatorID),
   KEY ConferenceID (ConferenceID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `SessionSeparator`
@@ -773,7 +773,7 @@ CREATE TABLE SessionTalk (
   PRIMARY KEY  (SessionTalkID),
   KEY SessionID (SessionID),
   KEY DocumentID (DocumentID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `SessionTalk`
@@ -795,7 +795,7 @@ CREATE TABLE Signature (
   PRIMARY KEY  (SignatureID),
   KEY EmailUserID (EmailUserID),
   KEY SignoffID (SignoffID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `Signature`
@@ -814,7 +814,7 @@ CREATE TABLE Signoff (
   TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (SignoffID),
   KEY DocRevID (DocRevID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `Signoff`
@@ -834,7 +834,7 @@ CREATE TABLE SignoffDependency (
   PRIMARY KEY  (SignoffDependencyID),
   KEY SignoffID (SignoffID),
   KEY PreSignoffID (PreSignoffID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `SignoffDependency`
@@ -859,7 +859,7 @@ CREATE TABLE Suppress (
   KEY Type (Type),
   KEY ForeignID (ForeignID),
   KEY TextKey (TextKey)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `Suppress`
@@ -880,7 +880,7 @@ CREATE TABLE TalkSeparator (
   TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (TalkSeparatorID),
   KEY SessionID (SessionID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `TalkSeparator`
@@ -898,7 +898,7 @@ CREATE TABLE Topic (
   LongDescription text,
   TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (TopicID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `Topic`
@@ -918,7 +918,7 @@ CREATE TABLE TopicHierarchy (
   PRIMARY KEY  (TopicHierarchyID),
   KEY Topic (TopicID),
   KEY Parent (ParentTopicID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `TopicHierarchy`
@@ -937,7 +937,7 @@ CREATE TABLE TopicHint (
   TopicID int(11) NOT NULL default '0',
   PRIMARY KEY  (TopicHintID),
   KEY SessionTalkID (SessionTalkID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `TopicHint`
@@ -956,7 +956,7 @@ CREATE TABLE UsersGroup (
   TimeStamp timestamp NOT NULL,
   PRIMARY KEY  (UsersGroupID),
   KEY EmailUserID (EmailUserID)
-) TYPE=MyISAM;
+) ENGINE=MyISAM;
 
 --
 -- Dumping data for table `UsersGroup`
