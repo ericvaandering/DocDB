@@ -30,7 +30,7 @@ my @Modules = (
                "CGI::Untaint",
                "Cwd",
                "DateTime",
-               "Digest::SHA1",
+               "Digest::SHA",
                "DBI",
                "File::Find",
                "File::MimeInfo",
