@@ -1,3 +1,7 @@
+8.8.9
+  Update to start_form/end_form for compatibility
+  Update SHA1 to SHA for compatibiity
+
 8.8.8
   Forward port 8.7.23 changes
    Address a security issue where a careless user could overwrite .htaccess
