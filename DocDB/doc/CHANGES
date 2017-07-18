@@ -1,6 +1,7 @@
 8.8.9
   Update to start_form/end_form for compatibility
   Update SHA1 to SHA for compatibiity
+  Update TYPE to ENGINE for compatibility with newer MySQL/MariaDB
 
 8.8.8
   Forward port 8.7.23 changes
