@@ -160,7 +160,8 @@ sub FileLink ($) {
   }
 
   my $URL = $BaseURL.$ShortFile;
-  if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $Preferences{Options}{AlwaysRetrieveFile}) {
+  if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || 
+      $UserValidation eq "FNALSSO" || $Preferences{Options}{AlwaysRetrieveFile}) {
     $URL = $RetrieveFile."?docid=".$DocumentID.'&amp;filename='.$ShortFile;
     unless ($SkipVersions) {
         $URL .= '&amp;version='.$Version;

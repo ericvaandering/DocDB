@@ -32,6 +32,8 @@ require "ResponseElements.pm";
 require "FormElements.pm";
 require "Scripts.pm";
 require "Security.pm";
+require "SecurityHTML.pm";
+require "FormElements.pm";
 
 require "CertificateUtilities.pm";
 
@@ -42,7 +44,11 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 ### Start HTML
 
 print $query -> header( -charset => $HTTP_ENCODING );
-&DocDBHeader("Certificate Status and Application","",-scripts => ["PopUps"]);
+if ($UserValidation eq "FNALSSO") {
+  DocDBHeader("SSO Status and Application","",-scripts => ["PopUps"]);
+} else {
+ DocDBHeader("Certificate Status and Application","",-scripts => ["PopUps"]);
+}
 
 &EndPage(@ErrorStack);
 
@@ -74,25 +80,50 @@ if ($CertificateStatus eq "verified") {
   print "<b>Certificate Distinguished Name (DN):</b> $CertDN<br/>\n";
   print "<b>Certificate Common Name (CN):</b> $CertCN<br/>\n";
   print "<b>Certificate E-mail Address:</b> $CertEmail<br/>\n";
-} elsif ($CertificateStatus eq "nocert") {
-  print "<b>You didn't present a certificate. Make sure your browser is supplying one and contact an administrator if are supplying one.</b><p/>";
-} elsif ($CertificateStatus eq "noapp") {
-  require "SecurityHTML.pm";
-  require "FormElements.pm";
-  print "<p><b>Your certificate is valid but you have never applied for access to
-         documents.<br/>Fill out the form below to apply for access.
-         Select the groups which you think you belong to from the list.
-         Your selection(s) will be verified by an administrator.</b></p>";
+} elsif ($CertificateStatus eq "noapp" || $UserValidation eq "FNALSSO") {
+  if ($UserValidation eq "FNALSSO") {
+    print "<p><b>Your SSO is valid and your current groups are listed.
+           Fill out the form below to apply for access to additional groups.<br/>
+           Select the groups which you think you belong to from the list.
+           Your selection(s) will be verified by an administrator.</b></p>";
+  } else {
+    print "<p><b>Your certificate is valid but you have never applied for access to
+           documents.<br/>Fill out the form below to apply for access.
+           Select the groups which you think you belong to from the list.
+           Your selection(s) will be verified by an administrator.</b></p>";
+  }         
   print "<center>\n";
-  print $query -> start_multipart_form('POST',$UserAccessApply);
+  if ($UserValidation eq "FNALSSO") {
+      print $query -> start_multipart_form('POST',$SSOAccessApply);
+  } else {
+    print $query -> start_multipart_form('POST',$UserAccessApply);
+  }  
   print "<table class=\"MedPaddedTable CenteredTable\">\n";
   print "<tr>\n";
-  print "<td colspan=\"2\"><b>Your certificate DN:</b><br/>&nbsp;&nbsp;$CertDN<p/>\n";
-  print "</tr><tr>\n";
-  print "<td><b>Your name (certificate CN):</b><br/>&nbsp;&nbsp;$CertCN<p/>\n";
-  TextField(-name => "email", -helplink  => "email", -helptext => "Your E-mail",
-            -size => 20,      -maxlength => 64,      -default  => $CertEmail);
-  print "</td>\n";
+
+  if ($UserValidation eq "FNALSSO") {
+    require "FNALSSOUtilities.pm";
+    my ($Username, $EmailAddress, $Name) = GetUserInfoFSSO();
+    my $EmailUserID = FetchEmailUserID();
+    print "<td><b>Username:</b> $Username</p>\n";
+    print "<b>Name:</b> $Name</p>\n";
+    print "<b>Email:</b> $EmailAddress<p/>\n";
+    print "<b>Current groups:</b>\n";
+    print "<ul>\n";
+    my @UserGroupIDs = FetchSecurityGroupsForFSSO();
+    foreach my $UserGroupID (@UserGroupIDs) {
+      FetchSecurityGroup($UserGroupID);
+      print "<li>".SmartHTML({-text => $SecurityGroups{$UserGroupID}{NAME}})."</li>\n";
+    }
+    print "</ul>\n";
+  } else {
+    print "<td colspan=\"2\"><b>Your certificate DN:</b><br/>&nbsp;&nbsp;$CertDN<p/></td>\n";
+    print "</tr><tr>\n";
+    print "<td><b>Your name (certificate CN):</b><br/>&nbsp;&nbsp;$CertCN<p/>\n";
+    TextField(-name => "email", -helplink  => "email", -helptext => "Your E-mail",
+              -size => 20,      -maxlength => 64,      -default  => $CertEmail);
+    print "</td>\n";
+  }  
   print "<td>\n";
   SecurityScroll(-helplink => "reqgroups", -helptext => "Requested Groups",
                  -name     => "reqgroups", -multiple => $TRUE, -format => "full");
@@ -109,6 +140,8 @@ if ($CertificateStatus eq "verified") {
   print "</td></tr>";
   print "</table>\n";
   print "</center>\n";
+} elsif ($CertificateStatus eq "nocert") {
+  print "<b>You didn't present a certificate. Make sure your browser is supplying one and contact an administrator if are supplying one.</b><p/>";
 }
 
 &DocDBNavBar();

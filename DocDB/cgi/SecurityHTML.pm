@@ -131,7 +131,7 @@ sub ModifyListByID {
 
 sub PersonalAccountLink () {
   my $PersonalAccountLink = "<a href=\"$EmailLogin\">Your Account</a>";
-  if ($UserValidation eq "shibboleth") {
+  if ($UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
     $PersonalAccountLink = "<a href=\"$SelectEmailPrefs\">Your Account</a>";
   } elsif ($UserValidation eq "certificate") {
     require "CertificateUtilities.pm";

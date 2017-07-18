@@ -73,6 +73,9 @@ sub UserPrefForm ($) {
     $Name         = $ENV{ADFS_FULLNAME};
     $EmailAddress = $ENV{ADFS_EMAIL};
     $Username     = $ENV{ADFS_LOGIN};
+  } elsif ($UserValidiation eq "FNALSSO") {
+    require "FNALSSOUtilities.pm";
+    ($Username, $EmailAddress, $Name) = GetUserInfoFSSO();
   }
 
   print "<table class=\"MedPaddedTable LeftHeader\">";
@@ -82,7 +85,7 @@ sub UserPrefForm ($) {
     print $query -> hidden(-name => 'username', -default => $Username);
     print $query -> hidden(-name => 'digest', -default => $Digest);
     print "Username:</th>\n<td>".SmartHTML({-text => $Username})."</td></tr>";
-  } elsif ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
+  } elsif ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
     print "<tr><th>Username:</th>\n<td>".SmartHTML({-text => $Username})."</td></tr>";
   } else {
     print "<tr><th>Username:</th>\n<td>";
@@ -101,7 +104,7 @@ sub UserPrefForm ($) {
     print $query -> textfield(-name => 'email',    -default => SmartHTML({-text => $EmailAddress}),
                               -size => 24, -maxlength => 64);
     print "</td></tr>\n";
-  } elsif  ($UserValidation eq "shibboleth") {
+  } elsif  ($UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
     print "<tr><th>Real name:</th>\n<td>$Name</td></tr>\n";
     print "<tr><th>E-mail address:</th>\n<td>$EmailAddress</td></tr>\n";
   } else {
@@ -130,21 +133,25 @@ sub UserPrefForm ($) {
     print $query -> checkbox(-name => "html", -value => 1, -label => '');
   }
   print "</td></tr>\n";
-  if  ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
+  if  ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
     print "<tr><th>Member of Groups:</th>\n";
     print "<td><ul>\n";
-    my @UserGroupIDs = &FetchUserGroupIDs($EmailUserID);
+    my @UserGroupIDs = FindUsersGroups(-ignorecookie => $TRUE);
+    push @DebugStack, @UserGroupIDs;
     foreach my $UserGroupID (@UserGroupIDs) {
       &FetchSecurityGroup($UserGroupID);
       print "<li>".SmartHTML({-text => $SecurityGroups{$UserGroupID}{NAME}})."</li>\n";
     }
     print "</ul></td></tr>\n";
   }
+  if  ($UserValidation eq "FNALSSO") {
+    print "<tr><td colspan=\"2\"><a href=\"$CertificateApplyForm\">Apply for access</a> to additional groups</td></tr>\n";
+  }
   print "</table>\n";
 }
 
 sub EmailUserDigest ($) {
-  use Digest::SHA qw(sha1_hex);
+  use Digest::SHA1 qw(sha1_hex);
   my ($EmailUserID) = @_;
   &FetchEmailUser($EmailUserID);
 

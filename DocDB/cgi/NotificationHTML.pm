@@ -27,7 +27,7 @@ sub DocNotifySignup (%) {
   my %Params     = @_;
   my $DocumentID = $Params{-docid};
 
-  my $NeedUserFields = ($UserValidation ne "certificate" && $UserValidation ne "shibboleth");
+  my $NeedUserFields = ($UserValidation ne "certificate" && $UserValidation ne "shibboleth" && $UserValidation ne "FNALSSO");
 
   print "<div id=\"DocNotifySignup\">\n";
   print $query -> start_multipart_form('POST',$WatchDocument);

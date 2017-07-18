@@ -110,7 +110,11 @@ $Password =~ s/\s+//g;
 
 if ($UserValidation eq "shibboleth") {
   $UserName = $ENV{ADFS_LOGIN};
-}
+} elsif ($UserValidation eq "FNALSSO") {
+  require "FNALSSOUtilities.pm";
+  my ($EmailAddress, $Name);
+  ($Username, $EmailAddress, $Name) = GetUserInfoFSSO();
+}  
 
 if (($NewPass || $ConfNewPass) && ($NewPass ne $ConfNewPass)) {
   push @WarnStack,"The passwords you entered did not match. Password not
@@ -204,14 +208,14 @@ if ($Password) {
   $EmailUserID = ValidateEmailUser($UserName,$Password);
 } elsif ($Digest) {
   $EmailUserID = ValidateEmailUserDigest($UserName,$Digest);
-} elsif ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
+} elsif ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
   $EmailUserID = FetchEmailUserID();
 }
 
 if ($EmailUserID) {
   FetchEmailUser($EmailUserID);
   $Digest = EmailUserDigest($EmailUserID);
-} elsif ($UserValidation ne "shibboleth") {
+} elsif ($UserValidation ne "shibboleth" && $UserValidation ne "FNALSSO" ) {
   push @ErrorStack,"The username/password pair or certificate you supplied is invalid. Please try again or contact an administrator.";
   ErrorPage();
   LoginEmailUserForm();
@@ -230,21 +234,28 @@ if ($Mode eq "update") {
 
 # Update DB
 
-  if ($UserValidation eq "shibboleth") {
+  if ($UserValidation eq "shibboleth" or $UserValidation eq "FNALSSO") {
     require "ShibbolethUtilities.pm";
-    my $EmailUserID = FetchEmailUserIDForShib();
-    $UserName = $ENV{ADFS_LOGIN};
-    $Name     = $ENV{ADFS_FULLNAME};
-    $Email    = $ENV{ADFS_EMAIL};
+    require "FNALSSOUtilities.pm";
+    my $EmailUserID;
+    if ($UserValidation eq "shibboleth") {
+      $EmailUserID = FetchEmailUserIDForShib();
+      $UserName = $ENV{ADFS_LOGIN};
+      $Name     = $ENV{ADFS_FULLNAME};
+      $Email    = $ENV{ADFS_EMAIL};
+    } elsif ($UserValidation eq "FNALSSO") {
+      $EmailUserID = FetchEmailUserIDForFSSO();
+      ($Username, $EmailAddress, $Name) = GetUserInfoFSSO();
+    }  
     if (!$EmailUserID) {
-      push @DebugStack,"Shibboleth user does not exist in EmailUser, creating";
+      push @DebugStack,"Shibboleth or FNAL SSO user does not exist in EmailUser, creating";
       my $UserInsert        = $dbh -> prepare(
        "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Password,Verified) ".
        "values                (0,          ?,       ?,   ?,           ?,       1)");
       $UserInsert -> execute($UserName,$Name,$Email,'x');
       $EmailUserID = FetchEmailUserIDForShib();
     }
-    push @DebugStack,"Updating shibboleth EmailUserID $EmailUserID";
+    push @DebugStack,"Updating shibboleth or FNAL SSO EmailUserID $EmailUserID";
     my $UpdateUserInfo = $dbh -> prepare("update EmailUser set Name=?,EmailAddress=?,PreferHTML=? where EmailUserID=?");
     $UpdateUserInfo -> execute($Name,$Email,$HTML,$EmailUserID);
   } elsif ($UserValidation eq "certificate") {
@@ -256,7 +267,7 @@ if ($Mode eq "update") {
   }
 
   if ($NewPass && $ConfNewPass && ($NewPass eq $ConfNewPass)
-               && ($UserValidation ne "certificate" && $UserValidation ne "shibboleth")) {
+               && ($UserValidation ne "certificate" && $UserValidation ne "shibboleth" && $UserValidation ne "FNALSSO")) {
     srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
 
     my $Salt = ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]).
@@ -355,7 +366,7 @@ print "<p><b>Use this page to change your personal account settings.</b></p>
        Also shown are which group(s) you are a member of. If this list is incorrect,
        <a href=\"mailto:$DBWebMasterEmail\">contact the administrators</a> and ask them
        to change your group membership.</p>\n";
-unless ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
+unless ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
   print "<p>If you want to change your password, type the new password in both boxes.</p>\n";
 }
 print "<p>At the bottom part of the page, select the <a href=\"#topic\">topics

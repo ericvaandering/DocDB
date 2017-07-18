@@ -267,6 +267,7 @@ $WatchDocument         = $cgi_root."WatchDocument";
 $CertificateApplyForm  = $cgi_root."CertificateApplyForm";
 $BulkCertificateInsert = $cgi_root."BulkCertificateInsert";
 $UserAccessApply       = $cgi_root."UserAccessApply";
+$SSOAccessApply        = $cgi_root."SSOAccessApply";
 $ListGroupUsers        = $cgi_root."ListGroupUsers";
 
 $DocDBHelp             = $cgi_root."DocDBHelp";

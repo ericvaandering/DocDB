@@ -246,7 +246,7 @@ CREATE TABLE DocumentType (
 
 CREATE TABLE EmailUser (
   EmailUserID int(11) NOT NULL auto_increment,
-  Username char(32) NOT NULL default '',
+  Username text NOT NULL default '',
   Password char(32) NOT NULL default '',
   Name char(128) NOT NULL default '',
   EmailAddress char(64) NOT NULL default '',

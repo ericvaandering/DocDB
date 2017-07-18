@@ -104,7 +104,7 @@ unless ($Public) {
     print "<p><strong>$PersonalAccountLink</strong></p>\n";
   }
   print "<p><strong><a href=\"$SelectPrefs\">Preferences</a></strong></p>\n";
-  if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
+  if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
     print "<p><strong>",&GroupLimitLink(),"</strong></p>\n";
   }
 }
@@ -195,7 +195,7 @@ unless ($Public && !$PublicAccess{MeetingList}) {
 if ($UseSignoffs && (!$Public || $PublicAccess{MeetingList})) {
   push @OtherColumns,"<a href=\"$ListManagedDocuments\">Managed documents</a>";
 }
-if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" ||
+if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO" ||
     (!$Public && $Preferences{Options}{DynamicFullList}{Private}) ||
     ( $Public && $Preferences{Options}{DynamicFullList}{Public})) {
   push @OtherColumns,"<a href=\"$ListBy?alldocs=1\">All documents</a>";

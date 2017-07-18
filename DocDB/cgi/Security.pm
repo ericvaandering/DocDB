@@ -287,6 +287,9 @@ sub FindUsersGroups (;%) {
   } elsif ($UserValidation eq "shibboleth") {
     require "ShibbolethUtilities.pm";
     @UsersGroupIDs = FetchSecurityGroupsForShib();
+  } elsif ($UserValidation eq "FNALSSO") {
+    require "FNALSSOUtilities.pm";
+    @UsersGroupIDs = FetchSecurityGroupsForFSSO();
   } elsif ($UserValidation eq "basic-user") {
     # Coming (maybe)
   } else {
@@ -300,13 +303,15 @@ sub FindUsersGroups (;%) {
   }
 
   @UsersGroupIDs = &Unique(@UsersGroupIDs);
+
   unless ($IgnoreCookie) {
     my @LimitedGroupIDs = &GetGroupsCookie();
     if (@LimitedGroupIDs) {
       @UsersGroupIDs = &Union(\@LimitedGroupIDs,@UsersGroupIDs);
     }
   }
-
+  
+  push @DebugStack,"After limiting, user belongs to unique groups ".join ', ',@UsersGroupIDs;
   return @UsersGroupIDs;
 }
 
@@ -320,7 +325,9 @@ sub FetchEmailUserID (;%) {
   } elsif ($UserValidation eq "shibboleth") {
     require "ShibbolethUtilities.pm";
     $EmailUserID  = FetchEmailUserIDForShib(%Params);
-
+  } elsif ($UserValidation eq "FNALSSO") {
+    require "FNALSSOUtilities.pm";
+    $EmailUserID  = FetchEmailUserIDForFSSO();
   }
 
   return $EmailUserID;

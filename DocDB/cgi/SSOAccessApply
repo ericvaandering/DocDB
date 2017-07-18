@@ -1,0 +1,166 @@
+#! /usr/bin/env perl
+#
+# Author Eric Vaandering (ewv@fnal.gov)
+
+# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
+
+#    This file is part of DocDB.
+
+#    DocDB is free software; you can redistribute it and/or modify
+#    it under the terms of version 2 of the GNU General Public License
+#    as published by the Free Software Foundation.
+
+#    DocDB is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with DocDB; if not, write to the Free Software
+#    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+use Benchmark;
+use CGI;
+use CGI::Untaint;
+use DBI;
+
+$StartTime = new Benchmark;
+
+require "DocDBGlobals.pm";
+require "Messages.pm";
+require "HTMLUtilities.pm";
+require "UntaintInput.pm";
+require "ResponseElements.pm";
+require "Security.pm";
+require "SecuritySQL.pm";
+require "NotificationSQL.pm";
+
+require "FNALSSOUtilities.pm";
+
+$query = new CGI;  # Global for subroutines
+$query -> autoEscape(0);
+my $Untaint = CGI::Untaint -> new($query -> Vars);
+my @RequestedGroupIDs = @{ $Untaint -> extract(-as_listofint => "reqgroups") || undef };
+my $ApplicationNote = $Untaint -> extract(-as_safehtml => "certnote") || "";
+
+$dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+
+### Start HTML
+
+print $query -> header( -charset => $HTTP_ENCODING );
+DocDBHeader("SSO Group Application");
+
+# EndPage();
+# 
+# ### Output Information
+# 
+# my $CertificateStatus = &CertificateStatus();
+# my $CertEmail = $Untaint -> extract(-as_safehtml => "email") || "";
+# 
+
+
+if ($UserValidation ne "FNALSSO") {
+  push @ErrorStack,"This script is only to be used for the SSO access method.";
+}
+EndPage();
+
+my ($Username, $EmailAddress, $Name) = GetUserInfoFSSO();
+my $EmailUserID = FetchEmailUserID();
+
+if ($EmailUserID) {
+
+  ### User is already database, presumably requesting additional groups
+
+  print "<b>Your SSO login has been verified. A new request has been sent to change your group membership.<br>".
+        "You currently have access to documents from these DocDB groups:</b>";
+  my @GroupIDs = FindUsersGroups(-ignorecookie => $TRUE);
+
+  print "<ul>\n";
+  if (@GroupIDs) {
+    foreach my $GroupID (@GroupIDs) {
+      FetchSecurityGroup($GroupID);
+      print "<li>",$SecurityGroups{$GroupID}{NAME},"</li>\n";
+    }    
+  } else {
+    print "<li>None: Contact an administrator if this is incorrect</li>\n";
+  }
+  print "</ul>\n";
+} else {
+
+  ### This is their first time. Let them know if they have access to groups already via SSO groups
+
+  print "<b>Your SSO login has not been verified. A new request has been sent verify your login and to change your group membership.<br>".
+        "Because of your SSO group membership, you currently have access to documents from these DocDB groups:</b>";
+  my @GroupIDs = FindUsersGroups(-ignorecookie => $TRUE);
+
+  print "<ul>\n";
+  if (@GroupIDs) {
+    foreach my $GroupID (@GroupIDs) {
+      FetchSecurityGroup($GroupID);
+      print "<li>",$SecurityGroups{$GroupID}{NAME},"</li>\n";
+    }    
+  } else {
+    print "<li>None: Contact an administrator if this is incorrect</li>\n";
+  }
+  print "</ul>\n";
+  
+  ### Fill in DB tables
+
+  my $UserInsert = $dbh -> prepare(
+      "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Verified,Password) ".
+      "            values (0,?,?,?,1,'x')");
+     $UserInsert -> execute($Username,$Name,$EmailAddress);
+  my $EmailUserID = $UserInsert -> {mysql_insertid}; # Works with MySQL only  
+}
+
+### More feedback to user
+
+print "You ($Name with e-mail address $EmailAddress) have requested ";
+print "membership in the following groups in $Project DocDB. ";
+print "<ul>\n";
+foreach my $GroupID (@RequestedGroupIDs) {
+  FetchSecurityGroup($GroupID);
+  print "<li>",$SecurityGroups{$GroupID}{NAME},"</li>\n";
+}
+print "</ul>\n";
+
+### Notify applicant and administrator
+
+if ($MailInstalled) {
+  require "EmailUtilities.pm";
+
+  print "An e-mail has been sent to the administrators and a confirmation e-mail has been sent to you.<p/>\n";
+
+  my @To      = ($DBWebMasterEmail);
+  my $Subject = "$Name requests access to $Project DocDB";
+  my $Body    = "$Name (username $Username) with e-mail address $EmailAddress has requested ";
+  $Body      .= "access to $Project DocDB. ";
+  $Body      .= "He or she requests membership in the following groups:\n";
+  foreach my $GroupID (@RequestedGroupIDs) {
+    FetchSecurityGroup($GroupID);
+    $Body .= " - ".$SecurityGroups{$GroupID}{NAME}."\n";
+  }
+  $Body .= "\n";
+  $Body .= "If this is correct, please visit $EmailAdministerForm, ";
+  $Body .= "select \"Modify\", select the user and requested groups, and click to Submit.\n\n";
+  $Body .= "If the groups are not correct, select the correct groups before clicking Submit.\n\n";
+  if ($ApplicationNote) {
+    $Body .= "The user attached this note to their application:\n";
+    $Body .= $ApplicationNote;
+  }
+  SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
+
+  my @To      = ($EmailAddress);
+  my $Subject = "$Name requests access to $Project DocDB";
+  my $Body    = "Dear $Name,\n\n";
+  $Body      .= "You, or someone using your e-mail address ($EmailAddress) has requested ";
+  $Body      .= "access to $Project DocDB. If you did not initiate this request, ";
+  $Body      .= "please contact the DocDB administrators at $DBWebMasterEmail immediately.\n\n";
+  $Body      .= "If you did request this access, please give the ";
+  $Body      .= "administrators a few business days to respond to your request.\n";
+  $Body      .= "Thank you.";
+  SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
+}
+
+DocDBNavBar();
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName);

@@ -64,7 +64,7 @@ print $query -> header( -charset => $HTTP_ENCODING );
 
 if ($Password) {
   $EmailUserID = &ValidateEmailUser($UserName,$Password);
-} elsif ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
+} elsif ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
   $EmailUserID = FetchEmailUserID();
 }
 
