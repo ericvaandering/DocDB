@@ -26,8 +26,6 @@ require "SecuritySQL.pm";
 require "NotificationSQL.pm";
 require "Utilities.pm";
 
-# TODO:  Write instructions? Use Shibboleth instructions?
-
 sub FetchSecurityGroupsForFSSO (%) {
 
   my @UsersGroupIDs = ();
@@ -54,9 +52,19 @@ sub FetchSecurityGroupsForFSSO (%) {
       }
     }
   }
-  
-  @UsersGroupIDs = Unique(@UsersGroupIDs);
   push @DebugStack,"After SSO groups, DocDB groups for user: ".join ', ',@UsersGroupIDs;
+  # And finally from their cert as well
+  
+  $CertEmailUserID = FetchEmailUserIDByCert();
+  if ($CertEmailUserID) {
+    @CertGroupIDs = FetchUserGroupIDs($CertEmailUserID);
+    foreach my $CertGroupID (@CertGroupIDs) {
+      push @UsersGroupIDs, $CertGroupID;
+    }
+  }
+  push @DebugStack,"After Cert groups, DocDB groups for user: ".join ', ',@UsersGroupIDs;
+  @UsersGroupIDs = Unique(@UsersGroupIDs);
+  push @DebugStack,"Final unique DocDB groups for user: ".join ', ',@UsersGroupIDs;
   return @UsersGroupIDs;
 }
 
@@ -66,17 +74,18 @@ sub FetchEmailUserIDForFSSO () {
 
   my $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
                                       "where Username=?");
-  $EmailUserSelect -> execute($SSOName);
+  $EmailUserSelect -> execute('Mellon:'.$SSOName);
 
   my ($EmailUserID) = $EmailUserSelect -> fetchrow_array;
 
   # If we don't find them by their name, try the certificate pattern
   
   if (!$EmailUserID) { 
-    $SSOPattern = "%cilogon%CN=UID:$SSOName";
+    my $SSOPattern = "%/DC=org/DC=cilogon/C=US/O=Fermi National Accelerator Laboratory/OU=People/%CN=UID:$SSOName";
     my $EmailUserSearch = $dbh->prepare("select EmailUserID from EmailUser where Username LIKE ?");
     $EmailUserSearch -> execute($SSOPattern);
     $EmailUserID = $EmailUserSearch -> fetchrow_array;
+    push @DebugStack, "Determined user ID from cert to be $EmailUserID";
   }
   if ($EmailUserID) {
     FetchEmailUser($EmailUserID)
@@ -99,6 +108,22 @@ sub GetUserInfoFSSO () {
   }
 
   return ($Username, $EmailAddress, $Name);
+}
+
+
+sub FetchEmailUserIDByCert() {
+  # We have to handle this separately because a user can only have one ID which should be 
+  # SSO if it exists, but this is used to grant more groups to a user. This can be made 
+  # optional if required.
+  
+  my $SSOName = $ENV{SSO_USERID};
+  my $SSOPattern = "%/DC=org/DC=cilogon/C=US/O=Fermi National Accelerator Laboratory/OU=People/%CN=UID:$SSOName";
+  my $EmailUserSearch = $dbh->prepare("select EmailUserID from EmailUser where Username LIKE ?");
+  $EmailUserSearch -> execute($SSOPattern);
+  $EmailUserID = $EmailUserSearch -> fetchrow_array;
+  push @DebugStack, "Determined user ID from cert to be $EmailUserID";
+
+  return $EmailUserID;
 }
 
 1;

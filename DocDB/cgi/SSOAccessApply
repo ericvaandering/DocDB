@@ -109,7 +109,7 @@ if ($EmailUserID) {
   my $UserInsert = $dbh -> prepare(
       "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Verified,Password) ".
       "            values (0,?,?,?,1,'x')");
-     $UserInsert -> execute($Username,$Name,$EmailAddress);
+     $UserInsert -> execute('Mellon:'.$Username,$Name,$EmailAddress);
   my $EmailUserID = $UserInsert -> {mysql_insertid}; # Works with MySQL only  
 }
 
