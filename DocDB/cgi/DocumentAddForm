@@ -6,7 +6,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -593,8 +593,8 @@ if ($UseSignoffs) { # FIXME: Later may be more complicated control
   print "</td></tr>\n";
 }
 
-if ($mode eq "updatedb" && $UseSignoffs &&
-    $SignoffDefault && CanPreserveSigs()) {
+if (($mode eq "updatedb" || $mode eq "update") && $UseSignoffs &&
+    $SignoffDefault && CanPreserveSigs($mode)) {
   print '<tr><td colspan="4">';
   print FormElementTitle(-helplink => "preservesigs",
                          -helptext => "Preserve signatures on this revision?",

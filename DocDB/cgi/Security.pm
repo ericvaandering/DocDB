@@ -232,6 +232,17 @@ sub CanPreserveSigs { # Can the user preserve signatures during document modific
   # FIXME: Currently a hack, will change in version 9
   require "SecuritySQL.pm";
 
+  my ($Mode) = @_;
+
+  # One group is allowed to preserve signoffs for document updates, the others only for metadata updates
+  my @AllowedGroups = ();
+  if ($Mode eq "update") {
+    @AllowedGroups = @HackDocsPreserveSignoffGroups;
+    push @AllowedGroups, @HackPreserveSignoffGroups;
+  } else {
+    @AllowedGroups = @HackPreserveSignoffGroups;
+  }
+
   my $CanPreserveSigs = $FALSE;
   if ($Public || $ReadOnly) {
     return $CanPreserveSigs;
@@ -240,9 +251,9 @@ sub CanPreserveSigs { # Can the user preserve signatures during document modific
 
   foreach my $UserGroupID (@UsersGroupIDs) {
     FetchSecurityGroup($UserGroupID);
-    foreach my $PreserveName (@HackPreserveSignoffGroups) {
+    foreach my $PreserveName (@AllowedGroups) {
       if ($PreserveName eq $SecurityGroups{$UserGroupID}{NAME}) {
-        $CanPreserveSigs = 1; # User checks out
+        $CanPreserveSigs = $TRUE; # User checks out
       }
     }
   }

@@ -6,7 +6,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -146,7 +146,7 @@ print FormElementTitle(-helplink => "replacefiles", -helptext => "Replace duplic
 print $query -> checkbox(-name => "replace", -label => '(Check for yes.)',
                          -onclick => "helppopupwindow(\'DocDBHelp?term=replacefiles\');");
 print "</td></tr>";
-if ($UseSignoffs && CanPreserveSigs()) {
+if ($UseSignoffs && CanPreserveSigs("update")) {
   print '<tr><td>';
   print FormElementTitle(-helplink => "preservesigs",
                          -helptext => "Preserve signatures on this revision?",

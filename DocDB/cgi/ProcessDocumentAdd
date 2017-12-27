@@ -6,7 +6,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -253,7 +253,7 @@ if      ($mode eq "add") {
 unless (&CanCreate()) {
   push @ErrorStack,"You are not allowed to modify or create documents.";
 }
-if ($PreserveSigs && !CanPreserveSigs()) {
+if ($PreserveSigs && !CanPreserveSigs($mode)) {
   push @ErrorStack,'You are not authorized to preserve signatures when making '.
                    'this change. Members of another group may have this capability. ';
 }
@@ -594,7 +594,9 @@ if ($MailInstalled) {
 
 if ($UseSignoffs) {
   ClearSignatures();
-  NotifySignees($DocRevID);
+  unless ($PreserveSigs) {
+    NotifySignees($DocRevID);
+  }
 }
 
 $EndTime  = new Benchmark;

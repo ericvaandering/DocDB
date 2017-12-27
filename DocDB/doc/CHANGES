@@ -4,6 +4,9 @@
   Update TYPE to ENGINE for compatibility with newer MySQL/MariaDB
   Update the message when an administrator makes changes to a certificate account
   Allow read-only users that have signature authority to sign documents
+  Add @HackDocsPreserveSignoffGroups to DocDBGlobals to allow groups of people
+    to change documents without requiring a new signature
+
 
 8.8.8
   Forward port 8.7.23 changes

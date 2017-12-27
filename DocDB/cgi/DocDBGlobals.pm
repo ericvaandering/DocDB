@@ -141,7 +141,8 @@ $TalkMatchThreshold   = 100;   # Threshold for matching talks with agenda entrie
 # clearing the signature list. This variable will be replaced in DocDB 9.x with
 # a database field.
 
-@HackPreserveSignoffGroups = (); # = ('Writer','Admin')
+@HackPreserveSignoffGroups = (); # = ('Writer','Admin')  # Users allowed to modify metadata and add files without clearing signature list
+@HackDocsPreserveSignoffGroups = (); # = ('Writer','Admin')  # Users allowed to modify documents without clearing signature list
 
 $RequiredMark = "&nbsp;*&nbsp;";
 
