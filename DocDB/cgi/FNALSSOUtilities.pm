@@ -82,9 +82,7 @@ sub FetchEmailUserIDForFSSO () {
   
   if (!$EmailUserID) {
     $SSOShortName = $SSOName;
-    push @DebugStack, "SSOshortName is $SSOShortName";
-    $SSOShortName =~ s/"\@fnal.gov"//gi;
-    push @DebugStack, "SSOshortName is $SSOShortName";
+    $SSOShortName =~ s/\@fnal\.gov//gi;
 
     my $SSOPattern = "%/DC=org/DC=cilogon/C=US/O=Fermi National Accelerator Laboratory/OU=People/%CN=UID:$SSOShortName";
     my $EmailUserSearch = $dbh->prepare("select EmailUserID from EmailUser where Username LIKE ?");
@@ -123,9 +121,7 @@ sub FetchEmailUserIDByCert() {
   
   my $SSOName = $ENV{SSO_EPPN};
 
-  push @DebugStack, "SSOName is $SSOName";
-  $SSOName =~ s/"\@fnal.gov"//gi;
-  push @DebugStack, "SSOName is $SSOName";
+  $SSOName =~ s/\@fnal\.gov//gi;
   my $SSOPattern = "%/DC=org/DC=cilogon/C=US/O=Fermi National Accelerator Laboratory/OU=People/%CN=UID:$SSOName";
   my $EmailUserSearch = $dbh->prepare("select EmailUserID from EmailUser where Username LIKE ?");
   $EmailUserSearch -> execute($SSOPattern);
