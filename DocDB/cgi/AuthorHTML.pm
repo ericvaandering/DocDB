@@ -354,7 +354,7 @@ sub AuthorActiveSearch {
 
   $HTML .= '<script type="text/javascript">
             <!--
-            $().ready(function() {';
+            jQuery().ready(function() {';
   foreach my $AuthorID (@DefaultAuthorIDs) {
     # /* call this function for each author, with authors_id and title [do not forget to escape it]  */
     $HTML .= 'addAuthorList(['.$AuthorID.', "'.$Authors{$AuthorID}{Formal}.'"]);'."\n";
