@@ -22,6 +22,8 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+require "DocDBGlobals.pm";
+
 require "SecuritySQL.pm";
 require "NotificationSQL.pm";
 require "Utilities.pm";
@@ -38,8 +40,8 @@ sub FetchSecurityGroupsForFSSO (%) {
 
   # Also map FNAL SSO groups to DocDB groups
 
-  if (exists $ENV{'SSO_Session_ID'}) {
-    my @SsoGroups = split /;/,$ENV{SSO_FNAL_GROUPS};
+  if (exists $ENV{'SSO_Session_ID'} && exists $ENV{$Preferences{Security}{SSOGroupVariable}}) {
+    my @SsoGroups = split /;/,$ENV{$Preferences{Security}{SSOGroupVariable}};
 
     foreach my $SsoGroup (@SsoGroups) {
 	  if ($SsoGroupMap{$SsoGroup}) {

@@ -90,6 +90,7 @@ $Preferences{Security}{Certificates}{DOEGrids} = $FALSE;     # TRUE or FALSE - s
 $Preferences{Security}{Certificates}{ShowCertInstructions} = $FALSE;  # TRUE or FALSE - show certificate instructions even on non-cert version
 
 $Preferences{Security}{AuthName} = "";  # Set to override default AuthName of group1 or group2, etc.
+$Preferences{Security}{SSOGroupVariable} = "";  # Environmental variable with list of groups
 
 # Set these URLs to $cgi_root for the various instances you maintain if you want cross-links between them
 

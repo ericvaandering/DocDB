@@ -147,4 +147,7 @@ $ShortProject   = "MyProject";    # This is the project used in the Document ID
 
 #$DefaultPublicAccess  = 0;     # New documents are public by default
 
+#$Preferences{Security}{SSOGroupVariable} = "SSO_FNAL_GROUPS";  # Environmental variable with list of groups
+
+
 1;
