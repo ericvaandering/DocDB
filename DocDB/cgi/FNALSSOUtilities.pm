@@ -69,7 +69,7 @@ sub FetchSecurityGroupsForFSSO (%) {
 }
 
 sub FetchEmailUserIDForFSSO () {
-  my $SSOName = $ENV{SSO_USERID};
+  my $SSOName = $ENV{SSO_EPPN};
   push @DebugStack,"Finding EmailUserID by FNAL SSO name $SSOName";
 
   my $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
@@ -80,8 +80,13 @@ sub FetchEmailUserIDForFSSO () {
 
   # If we don't find them by their name, try the certificate pattern
   
-  if (!$EmailUserID) { 
-    my $SSOPattern = "%/DC=org/DC=cilogon/C=US/O=Fermi National Accelerator Laboratory/OU=People/%CN=UID:$SSOName";
+  if (!$EmailUserID) {
+    $SSOShortName = $SSOName;
+    push @DebugStack, "SSOshortName is $SSOShortName";
+    $SSOShortName =~ s/"\@fnal.gov"//gi;
+    push @DebugStack, "SSOshortName is $SSOShortName";
+
+    my $SSOPattern = "%/DC=org/DC=cilogon/C=US/O=Fermi National Accelerator Laboratory/OU=People/%CN=UID:$SSOShortName";
     my $EmailUserSearch = $dbh->prepare("select EmailUserID from EmailUser where Username LIKE ?");
     $EmailUserSearch -> execute($SSOPattern);
     $EmailUserID = $EmailUserSearch -> fetchrow_array;
@@ -104,7 +109,7 @@ sub GetUserInfoFSSO () {
   if (exists $ENV{'SSO_Session_ID'}) {
     $Name = $ENV{SSO_NAME_FIRST}.' '.$ENV{SSO_NAME_LAST};
     $EmailAddress = $ENV{SSO_EMAIL};
-    $Username = $ENV{SSO_USERID};
+    $Username = $ENV{SSO_EPPN};
   }
 
   return ($Username, $EmailAddress, $Name);
@@ -116,7 +121,11 @@ sub FetchEmailUserIDByCert() {
   # SSO if it exists, but this is used to grant more groups to a user. This can be made 
   # optional if required.
   
-  my $SSOName = $ENV{SSO_USERID};
+  my $SSOName = $ENV{SSO_EPPN};
+
+  push @DebugStack, "SSOName is $SSOName";
+  $SSOName =~ s/"\@fnal.gov"//gi;
+  push @DebugStack, "SSOName is $SSOName";
   my $SSOPattern = "%/DC=org/DC=cilogon/C=US/O=Fermi National Accelerator Laboratory/OU=People/%CN=UID:$SSOName";
   my $EmailUserSearch = $dbh->prepare("select EmailUserID from EmailUser where Username LIKE ?");
   $EmailUserSearch -> execute($SSOPattern);
