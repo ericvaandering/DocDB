@@ -48,14 +48,14 @@ sub PrintRevisionSignoffInfo ($) { # FIXME: Handle more complicated topologies?
   my $Version    = $DocRevisions{$DocRevID}{Version};
 
   # Don't display anything if the user is logged in as public.
-  # If the user can't modify the document, only show signatures,
-  # don't provide the ability to sign.
+  # Provide the ability to sign if the user can modify or
+  # if the user can access the document (without modify permissions).
 
   if ($Public) {
     return;
   }
   my $UserCanSign = $FALSE;
-  if (CanModify($DocumentID,$Version)) {
+  if (CanModify($DocumentID,$Version) || CanAccess($DocumentID,$Version)) {
     $UserCanSign = $TRUE;
   }
 
