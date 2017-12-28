@@ -4,6 +4,8 @@
   Update TYPE to ENGINE for compatibility with newer MySQL/MariaDB
   Update the message when an administrator makes changes to a certificate account
   Allow read-only users that have signature authority to sign documents
+  Put multiple URLs in notification e-mails if they exist
+    The format of notification e-mails has changed slightly for better clarity
 
 8.8.8
   Forward port 8.7.23 changes
