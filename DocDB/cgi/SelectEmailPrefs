@@ -159,6 +159,7 @@ push @Scripts,"JQueryReady";
 print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader("Update Notification Preferences", "", -scripts => \@Scripts, -jqueryelements => \@JQueryElements);
 
+my $EmailUserID;
 # Create new user if called for
 
 if ($Mode eq "newuser") {
@@ -185,7 +186,7 @@ if ($Mode eq "newuser") {
 
 # Make the user part of the group who's httpd password they've used.
 
-    my $EmailUserID =  $UserInsert -> {mysql_insertid}; # Works with MySQL only
+    $EmailUserID =  $UserInsert -> {mysql_insertid}; # Works with MySQL only
     my $GroupID = FetchSecurityGroupByName($remote_user);
     my $EmailUserInsert = $dbh -> prepare("insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) values (0,?,?)");
     if ($GroupID) {
@@ -237,7 +238,6 @@ if ($Mode eq "update") {
   if ($UserValidation eq "shibboleth" or $UserValidation eq "FNALSSO") {
     require "ShibbolethUtilities.pm";
     require "FNALSSOUtilities.pm";
-    my $EmailUserID;
     if ($UserValidation eq "shibboleth") {
       $EmailUserID = FetchEmailUserIDForShib();
       $UserName = $ENV{ADFS_LOGIN};
