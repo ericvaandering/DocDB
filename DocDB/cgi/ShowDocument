@@ -88,11 +88,7 @@ my $PageTitle = "$ShortProject-doc-$DocumentID-v$Version: Not authorized";
 if (&CanAccess($DocumentID,$Version)) {
   $PageTitle = "$ShortProject-doc-$DocumentID-v$Version: $DocRevisions{$DocRevID}{Title}";
 } else {
-  if ($remote_user) {
-    push @ErrorStack,"The $remote_user group is not authorized to view this document (or it does not exist).";
-  } else {
-    push @ErrorStack,"This document is not publicly accessible.";
-  }
+  push @ErrorStack,"You do not have permission to view this document (or it does not exist).";
 }
 
 # Print appropriate header
