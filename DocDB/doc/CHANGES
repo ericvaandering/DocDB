@@ -18,7 +18,6 @@
   Make the list of documents sortable dynamically by clicking columns
 
 8.8.7
-
   Fix several places where apostrophes or single quotes were causing problems with rendered Javascript
   Make Timestamp fields in setup & migration scripts compatible with MySQL 5.5
   Replace ; with &amp; in URLs in several places. SharePoint does not like the ; form
@@ -74,45 +73,114 @@
  Create Similar button for document creation
  Minor interface changes
 
-8.7.10
+8.7.23
+ ### Versions 8.7.11 to 8.7.23 were a long-lived fork of 8.7 the development of which proceeded
+     in parallel with version 8.8. You'll often see the release notes repeat ###
 
+  Address a security issue where a careless user could overwrite .htaccess
+  Do not show titles of calendar events that you are not able to access
+  Add the ability to copy settings from one certificate login to another
+    (deletion must be done in a separate step)
+  Add a signature report for each user to the admin form
+
+8.7.22
+  Fix several places where apostrophes or single quotes were causing problems with rendered Javascript
+  Make Timestamp fields in setup & migration scripts compatible with MySQL 5.5
+  Replace ; with &amp; in URLs in several places. SharePoint does not like the ; form
+  Remove HTML from some warning/error messages since that is now sanitized into line noise
+  Add a couple of missing help messages, edit a couple of others
+  Add "copy all files from previous version" check box, ported from 8.8 branch
+  Fix URL validation broken by XSS protections, add a few more OK characters
+  Add Untaint method for e-mail address, add to SelectEmailPrefs
+  Schedule similar event will allow one year into the future, not one year from the event date
+  Don't lose the preamble when modifying/duplicating events
+
+8.7.21
+  Fixes for URLs in parentheses, wrong CGI variable for file copy check boxes,
+  list of text fields that can contain newlines.
+
+8.7.20
+ Fix lots of potential cross-site scripting problems by making (nearly) all
+ inputs valid HTML and doing the same with database output. Databases will now
+ contain a mix of escaped HTML and things with bare &, >, < etc.
+
+8.7.19
+ Fix case where infinite loop is caused if topic parent is set to a descendant
+ Add ability to add "attachment" in StreamFile for some extensions. Helps with Office
+
+8.7.18
+ Use full DN from certificate as username, not CN which is not unique
+
+8.7.17
+ Don't loose security when updating public docs
+ Modified Resecure from Laura
+
+8.7.16
+ Fix exclusion list for zip files
+ Increase limit on related documents
+ Back out XSS patches from 8.7.15, need a more robust solution
+
+8.7.15
+ Cache timezone name, fix apparent issues with DateTime constructor
+ Fix consistentcy issues between submitter and requester
+ No security by default should default to user's security, not public
+ StreamFile: change to using 'print' instead of 'sysprint' in the StreamFile routine
+ Fix several possible instances of XSS
+ Improved signoff instructions from Eileen Berman
+
+8.7.14
+ Don't put versions on files in meeting display mode
+ Fix issue where "Schedule Similar" mixed data between sessions
+ Sort list of personal accounts
+ Add options (see DocDBGlobals) for additional requirements on updated docs
+
+8.7.13
+ Fix an old bug where authors were essentially unsorted. Only did the right
+ thing by accident.
+ Fix a bug where single session events showed the session location, but
+ editing the event edited the event location. Now use event location.
+
+8.7.12
+ Show the times when a document is signed in left bar, document list, and popups
+ in document view.
+ Fix caching and wording problem for administering institutions
+
+8.7.11
+ ### Versions 8.7.11 to 8.7.23 were a long-lived fork of 8.7 the development of which proceeded
+     in parallel with version 8.8. You'll often see the release notes repeat ###
+
+ Use dash instead of spaces to deliniate levels in topics
+
+8.7.10
  Some fixes to topic administration
 
 8.7.9
-
  Add URL to ListBy for events
 
 8.7.8
-
  Rename Fields.pm to DocDBFields.pm to avoid an apparent case sensitivity
  problem on Mac OS X. Found with the help of Mark Foster, Sussex.
 
 8.7.7
-
  Bugfix to ShowTalkNote from Charles Lane, Drexel
 
 8.7.6
-
  Stop text from wrapping on main page choices
  Add a link and functionality for today's events
 
 8.7.4/8.75
-
  Further performance enhancements related to Events
 
 8.7.3
-
  Fix problem with cookies expiration date beyond end of unix time
 
  Fix bug where AddFiles would clear signatures regardless of users setting
 
 8.7.1/8.7.2
-
  A bugfix in AddFiles (was crashing due to a syntax error) and performance
  enhancements related to Events (regression in 8.7.0)
 
 8.7.0
-
  A new option allows special users to copy the signature list and whether
  those signatures have been made to be preserved or copied when metadata is
  updated. This is used for small or irrelevant changes that should not
