@@ -40,15 +40,16 @@ sub FetchSecurityGroupsForFSSO (%) {
 
   # Also map FNAL SSO groups to DocDB groups
 
-  if (exists $ENV{'SSO_Session_ID'} && exists $ENV{$Preferences{Security}{SSOGroupVariable}}) {
-    my @SsoGroups = split /;/,$ENV{$Preferences{Security}{SSOGroupVariable}};
-
-    foreach my $SsoGroup (@SsoGroups) {
-	  if ($SsoGroupMap{$SsoGroup}) {
-        foreach my $DocDBGroup (@{ $SsoGroupMap{$SsoGroup} }) {
-          my $UsersGroupID = FetchSecurityGroupByName($DocDBGroup);
-          if ($UsersGroupID) {
-            push @UsersGroupIDs,$UsersGroupID;
+  if (exists $ENV{'SSO_Session_ID'} && exists $ENV{$Preferences{Security}{SSOGroupVariables}}) {
+    foreach my $GroupVariable ($Preferences{Security}{SSOGroupVariables}) {
+      my @SsoGroups = split /;/,$ENV{$GroupVariable};
+      foreach my $SsoGroup (@SsoGroups) {
+        if ($SsoGroupMap{$SsoGroup}) {
+          foreach my $DocDBGroup (@{ $SsoGroupMap{$SsoGroup} }) {
+            my $UsersGroupID = FetchSecurityGroupByName($DocDBGroup);
+            if ($UsersGroupID) {
+              push @UsersGroupIDs,$UsersGroupID;
+            }
           }
         }
       }
