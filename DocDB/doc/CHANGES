@@ -13,6 +13,7 @@
   Add @HackDocsPreserveSignoffGroups to DocDBGlobals to allow groups of people
     to change documents without requiring a new signature
   Add support for Fermilab Mellon based authentication. Very similar to CERN SSO Shibboleth based authentication
+   - Set $Preferences{Security}{TransferCertToSSO} to $TRUE to automatically transfer cert accounts over to SSO
 
 8.8.8
   Forward port 8.7.23 changes

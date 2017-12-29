@@ -245,7 +245,7 @@ if ($Mode eq "update") {
       $Email    = $ENV{ADFS_EMAIL};
     } elsif ($UserValidation eq "FNALSSO") {
       $EmailUserID = FetchEmailUserIDForFSSO();
-      ($Username, $EmailAddress, $Name) = GetUserInfoFSSO();
+      ($UserName, $Email, $Name) = GetUserInfoFSSO();
     }  
     if (!$EmailUserID) {
       push @DebugStack,"Shibboleth or FNAL SSO user does not exist in EmailUser, creating";
