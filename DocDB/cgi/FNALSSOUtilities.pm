@@ -81,12 +81,12 @@ sub FetchEmailUserIDForFSSO () {
   my ($CertUserID, $SSOShortName);
 
   # If we don't find them by their name, try the certificate pattern
-  
   if (!$EmailUserID) {
     $CertUserID = FetchEmailUserIDByCertForSSO();
   }
 
   if (!$EmailUserID and $Preferences{Security}{TransferCertToSSO}) {
+    # If the preference is set, create the user and transfer certificate information
     $EmailUserID = CreateSSOUser();
     if ($CertUserID and $EmailUserID) {
        TransferEmailUserSettings( {-oldemailuserid => $CertUserID, -newemailuserid => $EmailUserID} );
@@ -118,7 +118,7 @@ sub GetUserInfoFSSO() {
     $Username = $ENV{SSO_EPPN};
   }
 
-  return ($Username, $EmailAddress, $Name);
+  return ('Mellon:'.$Username, $Username, $EmailAddress, $Name);
 }
 
 sub FetchEmailUserIDByCertForSSO() {
@@ -139,12 +139,12 @@ sub FetchEmailUserIDByCertForSSO() {
 }
 
 sub CreateSSOUser() {
-  my ($UserName, $Email, $Name) = GetUserInfoFSSO();
-  push @DebugStack, "Creating FNAL SSO user in EmailUser with Username=$UserName, Email=$Email, Name=$Name ";
+  my ($FQUN, $UserName, $Email, $Name) = GetUserInfoFSSO();
+  push @DebugStack, "Creating FNAL SSO user in EmailUser with Username=$FQUN, Email=$Email, Name=$Name ";
   my $UserInsert = $dbh->prepare(
       "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Password,Verified) " .
       "values                (0,          ?,       ?,   ?,           ?,       1)");
-  $UserInsert->execute($UserName, $Name, $Email, 'x');
+  $UserInsert->execute($FQUN, $Name, $Email, 'x');
   $EmailUserID = FetchEmailUserIDForShib();
   return $EmailUserID;
 }

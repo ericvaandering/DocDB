@@ -64,7 +64,7 @@ if ($UserValidation ne "FNALSSO") {
 }
 EndPage();
 
-my ($Username, $EmailAddress, $Name) = GetUserInfoFSSO();
+my ($FQUN, $Username, $EmailAddress, $Name) = GetUserInfoFSSO();
 my $EmailUserID = FetchEmailUserID();
 
 if ($EmailUserID) {
@@ -109,7 +109,7 @@ if ($EmailUserID) {
   my $UserInsert = $dbh -> prepare(
       "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Verified,Password) ".
       "            values (0,?,?,?,1,'x')");
-     $UserInsert -> execute('Mellon:'.$Username,$Name,$EmailAddress);
+     $UserInsert -> execute($FQUN,$Name,$EmailAddress);
   my $EmailUserID = $UserInsert -> {mysql_insertid}; # Works with MySQL only  
 }
 
@@ -133,7 +133,7 @@ if ($MailInstalled) {
 
   my @To      = ($DBWebMasterEmail);
   my $Subject = "$Name requests access to $Project DocDB";
-  my $Body    = "$Name (username $Username) with e-mail address $EmailAddress has requested ";
+  my $Body    = "$Name (username $FQUN) with e-mail address $EmailAddress has requested ";
   $Body      .= "access to $Project DocDB. ";
   $Body      .= "He or she requests membership in the following groups:\n";
   foreach my $GroupID (@RequestedGroupIDs) {

@@ -103,9 +103,9 @@ if ($CertificateStatus eq "verified") {
 
   if ($UserValidation eq "FNALSSO") {
     require "FNALSSOUtilities.pm";
-    my ($Username, $EmailAddress, $Name) = GetUserInfoFSSO();
+    my ($FQUN, $Username, $EmailAddress, $Name) = GetUserInfoFSSO();
     my $EmailUserID = FetchEmailUserID();
-    print "<td><b>Username:</b> $Username</p>\n";
+    print "<td><b>Username:</b> $FQUN</p>\n";
     print "<b>Name:</b> $Name</p>\n";
     print "<b>Email:</b> $EmailAddress<p/>\n";
     print "<b>Current groups:</b>\n";

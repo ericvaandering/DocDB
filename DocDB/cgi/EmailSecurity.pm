@@ -75,7 +75,7 @@ sub UserPrefForm ($) {
     $Username     = $ENV{ADFS_LOGIN};
   } elsif ($UserValidiation eq "FNALSSO") {
     require "FNALSSOUtilities.pm";
-    ($Username, $EmailAddress, $Name) = GetUserInfoFSSO();
+    ($FQUN, $Username, $EmailAddress, $Name) = GetUserInfoFSSO();
   }
 
   print "<table class=\"MedPaddedTable LeftHeader\">";
@@ -86,7 +86,7 @@ sub UserPrefForm ($) {
     print $query -> hidden(-name => 'digest', -default => $Digest);
     print "Username:</th>\n<td>".SmartHTML({-text => $Username})."</td></tr>";
   } elsif ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
-    print "<tr><th>Username:</th>\n<td>".SmartHTML({-text => $Username})."</td></tr>";
+    print "<tr><th>Username:</th>\n<td>".SmartHTML({-text => $FQUN})."</td></tr>";
   } else {
     print "<tr><th>Username:</th>\n<td>";
     print $query -> textfield(-name => 'username', -default => $Username,

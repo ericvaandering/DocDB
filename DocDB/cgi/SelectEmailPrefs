@@ -108,12 +108,14 @@ $ImmediateDocuments =~ s/,/ /g; my @ImmediateDocuments = split /\s+/,$ImmediateD
 $UserName =~ s/\s+//g;
 $Password =~ s/\s+//g;
 
+my ($FQUN, $EmailAddress, $Name);
+
 if ($UserValidation eq "shibboleth") {
   $UserName = $ENV{ADFS_LOGIN};
 } elsif ($UserValidation eq "FNALSSO") {
   require "FNALSSOUtilities.pm";
-  my ($EmailAddress, $Name);
-  ($Username, $EmailAddress, $Name) = GetUserInfoFSSO();
+  ($FQUN, $UserName, $EmailAddress, $Name) = GetUserInfoFSSO();
+  $UserName = $FQUN;
 }  
 
 if (($NewPass || $ConfNewPass) && ($NewPass ne $ConfNewPass)) {
@@ -245,14 +247,17 @@ if ($Mode eq "update") {
       $Email    = $ENV{ADFS_EMAIL};
     } elsif ($UserValidation eq "FNALSSO") {
       $EmailUserID = FetchEmailUserIDForFSSO();
-      ($UserName, $Email, $Name) = GetUserInfoFSSO();
+      $Email = $EmailAddress;
+      # FIXME: Remove this if it works ok (done above)
+#      ($FQUN, $UserName, $Email, $Name) = GetUserInfoFSSO();
+#      $UserName = $FQUN;
     }  
     if (!$EmailUserID) {
       push @DebugStack,"Shibboleth or FNAL SSO user does not exist in EmailUser, creating";
       my $UserInsert        = $dbh -> prepare(
        "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Password,Verified) ".
        "values                (0,          ?,       ?,   ?,           ?,       1)");
-      $UserInsert -> execute($UserName,$Name,$Email,'x');
+      $UserInsert -> execute($FQUN,$Name,$Email,'x');
       $EmailUserID = FetchEmailUserIDForShib();
     }
     push @DebugStack,"Updating shibboleth or FNAL SSO EmailUserID $EmailUserID";
