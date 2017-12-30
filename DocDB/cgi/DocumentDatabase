@@ -1,16 +1,13 @@
 #! /usr/bin/env perl
 #
-#        Name: $RCSfile$
+#        Name: DocumentDatabase
 # Description: The Document Database homepage. Give the user various ways to
 #              view documents, a link to ways to change documents, and a list
 #              of the most recently updated documents.
 #
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
-#
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 

@@ -1,14 +1,11 @@
 #
-#        Name: $RCSfile$
+#        Name: SecurityHTML.pm
 # Description: Routines which supply HTML and form elements related to security
-#
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 

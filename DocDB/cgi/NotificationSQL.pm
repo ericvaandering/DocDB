@@ -1,4 +1,9 @@
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+#        Name: NotificationSQL.pm
+# Description: SQL for document notifications
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+
+# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 

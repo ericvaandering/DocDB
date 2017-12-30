@@ -1,14 +1,11 @@
 #
-#        Name: $RCSfile$
+#        Name: Security.pm
 # Description: Routines to determine various levels of access to documents
 #              and the database based on usernames, doc numbers, etc.
 #
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
-#
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
