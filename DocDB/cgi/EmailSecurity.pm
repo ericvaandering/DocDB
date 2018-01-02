@@ -64,6 +64,8 @@ sub ValidateEmailUserDigest ($$) {
 sub UserPrefForm ($) {
   my ($EmailUserID) = @_;
 
+  my $FQUN;
+
   my $Username     = $EmailUser{$EmailUserID}{Username};
   my $Name         = $EmailUser{$EmailUserID}{Name};
   my $EmailAddress = $EmailUser{$EmailUserID}{EmailAddress};
@@ -73,7 +75,7 @@ sub UserPrefForm ($) {
     $Name         = $ENV{ADFS_FULLNAME};
     $EmailAddress = $ENV{ADFS_EMAIL};
     $Username     = $ENV{ADFS_LOGIN};
-  } elsif ($UserValidiation eq "FNALSSO") {
+  } elsif ($UserValidation eq "FNALSSO") {
     require "FNALSSOUtilities.pm";
     ($FQUN, $Username, $EmailAddress, $Name) = GetUserInfoFSSO();
   }

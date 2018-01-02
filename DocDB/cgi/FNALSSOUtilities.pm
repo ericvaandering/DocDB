@@ -118,6 +118,8 @@ sub GetUserInfoFSSO() {
     $Username = $ENV{SSO_EPPN};
   }
 
+  push @DebugStack, "GetUserInfoFSSO returning Mellon:$Username, $Username, $EmailAddress, $Name";
+
   return ('Mellon:'.$Username, $Username, $EmailAddress, $Name);
 }
 
