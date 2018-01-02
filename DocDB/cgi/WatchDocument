@@ -6,7 +6,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -46,6 +46,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
 my $DocumentID = $Untaint -> extract(-as_integer => "docid") || 0;
 my $UserName = $Untaint -> extract(-as_safehtml => "username") || "";
 my $Password = $Untaint -> extract(-as_printable => "password") || "";
+my $EmailUserID;
 
 $UserName =~ s/\s+//g;
 $Password =~ s/\s+//g;

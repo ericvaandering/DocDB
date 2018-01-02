@@ -5,7 +5,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -34,6 +34,8 @@ sub FetchSecurityGroupsForFSSO (%) {
 
   # If user is in DocDB's database, give them those groups
   my $EmailUserID = FetchEmailUserIDForFSSO();
+  my $CertEmailUserID;
+
   @UsersGroupIDs = FetchUserGroupIDs($EmailUserID);
   push @DebugStack,"User explicity has groups ".join ' ',@UsersGroupIDs;
 
@@ -108,9 +110,9 @@ sub FetchEmailUserIDForFSSO () {
 }
 
 sub GetUserInfoFSSO() {
-  $Username = "Unknown";
-  $EmailAddress = "Unknown";
-  $Name = "Unknown";
+  my $Username = "Unknown";
+  my $EmailAddress = "Unknown";
+  my $Name = "Unknown";
 
   if (exists $ENV{'SSO_Session_ID'}) {
     $Name = $ENV{SSO_NAME_FIRST}.' '.$ENV{SSO_NAME_LAST};
@@ -134,7 +136,7 @@ sub FetchEmailUserIDByCertForSSO() {
   my $SSOPattern = "%/DC=org/DC=cilogon/C=US/O=Fermi National Accelerator Laboratory/OU=People/%CN=UID:$SSOName";
   my $EmailUserSearch = $dbh->prepare("select EmailUserID from EmailUser where Username LIKE ?");
   $EmailUserSearch -> execute($SSOPattern);
-  $EmailUserID = $EmailUserSearch -> fetchrow_array;
+  my $EmailUserID = $EmailUserSearch -> fetchrow_array;
   push @DebugStack, "Determined user ID from cert to be $EmailUserID";
 
   return $EmailUserID;
@@ -147,7 +149,7 @@ sub CreateSSOUser() {
       "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Password,Verified) " .
       "values                (0,          ?,       ?,   ?,           ?,       1)");
   $UserInsert->execute($FQUN, $Name, $Email, 'x');
-  $EmailUserID = FetchEmailUserIDForShib();
+  my $EmailUserID = FetchEmailUserIDForShib();
   return $EmailUserID;
 }
 
