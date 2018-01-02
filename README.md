@@ -2,7 +2,7 @@
 
 DocDB is a powerful and flexible collaborative document server. It was originally developed for use by the BTeV collaboration 
 at Fermilab and is now used by twenty or more other experiments, Fermilab divisions, organizations, national laboratories, 
-and companies (a partial list). DocDB is well suited for managing and sharing documents (not just official publications) 
+and companies. DocDB is well suited for managing and sharing documents (not just official publications) 
 among groups of up to several hundred people.
 
 A DocDB installation consists of three parts: 1) a relational database which stores information about the documents, 
@@ -18,12 +18,12 @@ pointers to the actual document files, and access restriction information.
  * Changes to a document result in a new version of the document. Old versions remain available, providing historical archiving. Different versions allow different access restrictions, so documents can be developed in private and then released.
  * DocDB contains an event and agenda management system which allows documents to be associated with meetings of all sizes.
 
-Please see BTeV-doc-140 for a somewhat outdated description of DocDB.
+Please see [BTeV-doc-140](http://btev-docdb.fnal.gov/cgi-bin/public/DocDB/ShowDocument?docid=140) for a description of the early versions of DocDB.
 
 DocDB is available under the terms of the GNU Public License (GPL), version 2.
 
-To obtain DocDB, please see the files section of our project management page for a zip file. 
-For the very latest code, see the developers GitHub repository. Installation instructions are maintained at Fermilab. 
+To obtain DocDB, please see the [releases section](https://github.com/ericvaandering/DocDB/releases) of the GitHub repository for a zip file. 
+[Installation instructions](https://github.com/ericvaandering/DocDB/wiki/Installation) are maintained on the GitHub Wiki. 
 
 Send questions about installing DocDB to docdb-users@fnal.gov 
 The docdb-users mailing list is archived at http://listserv.fnal.gov/archives/docdb-users.html.
