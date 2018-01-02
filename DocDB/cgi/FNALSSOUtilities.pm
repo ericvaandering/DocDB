@@ -27,6 +27,7 @@ require "DocDBGlobals.pm";
 require "SecuritySQL.pm";
 require "NotificationSQL.pm";
 require "Utilities.pm";
+require "DBUtilities.pm";
 
 sub FetchSecurityGroupsForFSSO (%) {
 
@@ -80,21 +81,21 @@ sub FetchEmailUserIDForFSSO () {
   $EmailUserSelect -> execute('Mellon:'.$SSOName);
 
   my ($EmailUserID) = $EmailUserSelect -> fetchrow_array;
-  my ($CertUserID, $SSOShortName);
+  my ($CertUserID);
 
   # If we don't find them by their name, try the certificate pattern
   if (!$EmailUserID) {
     $CertUserID = FetchEmailUserIDByCertForSSO();
   }
 
-  if (!$EmailUserID and $Preferences{Security}{TransferCertToSSO}) {
-    # If the preference is set, create the user and transfer certificate information
+  if (!$EmailUserID and ($Preferences{Security}{TransferCertToSSO} or $Preferences{Security}{AutoCreateSSO})) {
+    # If either preference is set, create the user and transfer certificate information
     $EmailUserID = CreateSSOUser();
-    if ($CertUserID and $EmailUserID) {
+    if ($CertUserID and $EmailUserID and $Preferences{Security}{TransferCertToSSO}) {
        TransferEmailUserSettings( {-oldemailuserid => $CertUserID, -newemailuserid => $EmailUserID} );
     }
   } elsif (!$EmailUserID and $CertUserID) {
-    # Just use the certificate info if it
+    # Just use the certificate info if it exists
     push @DebugStack, "Could not find SSO information for $SSOName, using EmailUserID $CertUserID from certificate.";
     $EmailUserID = $CertUserID;
   }
@@ -145,11 +146,14 @@ sub FetchEmailUserIDByCertForSSO() {
 sub CreateSSOUser() {
   my ($FQUN, $UserName, $Email, $Name) = GetUserInfoFSSO();
   push @DebugStack, "Creating FNAL SSO user in EmailUser with Username=$FQUN, Email=$Email, Name=$Name ";
-  my $UserInsert = $dbh->prepare(
+  CreateConnection(-type => "rw");   # Can't rely on connection setup by top script, may be read-only
+  my $UserInsert = $dbh_rw->prepare(
       "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Password,Verified) " .
       "values                (0,          ?,       ?,   ?,           ?,       1)");
   $UserInsert->execute($FQUN, $Name, $Email, 'x');
-  my $EmailUserID = FetchEmailUserIDForShib();
+  my $EmailUserID = $UserInsert -> {mysql_insertid}; # Works with MySQL only
+  DestroyConnection($dbh_rw);
+  push @DebugStack, "Created EmailUserID $EmailUserID for SSO";
   return $EmailUserID;
 }
 

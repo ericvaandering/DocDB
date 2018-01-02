@@ -7,7 +7,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 #
-# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -91,7 +91,9 @@ $Preferences{Security}{Certificates}{ShowCertInstructions} = $FALSE;  # TRUE or 
 
 $Preferences{Security}{AuthName} = "";  # Set to override default AuthName of group1 or group2, etc.
 $Preferences{Security}{SSOGroupVariables} = ();  # Environmental variables with lists of groups
-$Preferences{Security}{TransferCertToSSO} = $FALSE;  # Automatically transfer certificate user information to SSO or automatically make SSO account if it does not exist
+$Preferences{Security}{AutoCreateSSO} = $FALSE;  # Automatically create an SSO user if none exists
+$Preferences{Security}{TransferCertToSSO} = $FALSE;  # Automatically transfer certificate user information to SSO
+                                                     # (implies AutoCreateSSO)
 
 # Set these URLs to $cgi_root for the various instances you maintain if you want cross-links between them
 

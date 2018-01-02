@@ -3,7 +3,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -21,6 +21,7 @@
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
 require "SecuritySQL.pm";
+require "DBUtilities.pm";
 
 sub ClearEmailUsers () {
   %EmailUser         = ();
@@ -170,42 +171,50 @@ sub TransferEmailUserSettings {
   my $EmailUserID = exists $ArgRef->{-oldemailuserid} ? $ArgRef->{-oldemailuserid} : 0;
   my $NewCertID = exists $ArgRef->{-newemailuserid} ? $ArgRef->{-newemailuserid} : 0;
 
+  push @DebugStack, "Transferring settings from EmailUserID $EmailUserID to $NewCertID";
+  unless ($EmailUser{$EmailUserID}{Verified}) {
+    push @DebugStack, "Cowardly refusing to transfer settings from an unverified user.";
+    return;
+  }
+
   if ($NewCertID && $EmailUserID && $NewCertID != $EmailUserID) {
     FetchEmailUser($EmailUserID);
     FetchEmailUser($NewCertID);
+    CreateConnection(-type => "rw");   # Can't rely on connection setup by top script, may be read-only
+
     if ($EmailUser{$EmailUserID}{Name} && !$EmailUser{$NewCertID}{Name}) {
-      my $UserUpdate = $dbh->prepare("update EmailUser set Name=? where EmailUserID=?");
+      my $UserUpdate = $dbh_rw->prepare("update EmailUser set Name=? where EmailUserID=?");
       $UserUpdate->execute($EmailUser{$EmailUserID}{Name}, $NewCertID);
     }
     if ($EmailUser{$EmailUserID}{EmailAddress} && !$EmailUser{$NewCertID}{EmailAddress}) {
-      my $UserUpdate = $dbh->prepare("update EmailUser set EmailAddress=? where EmailUserID=?");
+      my $UserUpdate = $dbh_rw->prepare("update EmailUser set EmailAddress=? where EmailUserID=?");
       $UserUpdate->execute($EmailUser{$EmailUserID}{EmailAddress}, $NewCertID);
     }
     if ($EmailUser{$EmailUserID}{AuthorID} && !$EmailUser{$NewCertID}{AuthorID}) {
-      my $UserUpdate = $dbh->prepare("update EmailUser set AuthorID=? where EmailUserID=?");
+      my $UserUpdate = $dbh_rw->prepare("update EmailUser set AuthorID=? where EmailUserID=?");
       $UserUpdate->execute($EmailUser{$EmailUserID}{AuthorID}, $NewCertID);
     }
     if ($EmailUser{$EmailUserID}{CanSign} && !$EmailUser{$NewCertID}{CanSign}) {
-      my $UserUpdate = $dbh->prepare("update EmailUser set CanSign=1 where EmailUserID=?");
+      my $UserUpdate = $dbh_rw->prepare("update EmailUser set CanSign=1 where EmailUserID=?");
       $UserUpdate->execute($NewCertID);
     }
     if ($EmailUser{$EmailUserID}{Verified} && !$EmailUser{$NewCertID}{Verified}) {
-      my $UserUpdate = $dbh->prepare("update EmailUser set Verified=1 where EmailUserID=?");
+      my $UserUpdate = $dbh_rw->prepare("update EmailUser set Verified=1 where EmailUserID=?");
       $UserUpdate->execute($NewCertID);
     }
 
     # Update all notifications
-    my $NotificationUpdate = $dbh->prepare("update Notification set EmailUserID=? where EmailUserID=?");
+    my $NotificationUpdate = $dbh_rw->prepare("update Notification set EmailUserID=? where EmailUserID=?");
     $NotificationUpdate->execute($NewCertID, $EmailUserID);
 
     # Copy all groups
     my @UsersGroupIDs = FetchUserGroupIDs($EmailUserID);
     foreach my $UsersGroupID (@UsersGroupIDs) {
-      my $UsersGroupSelect = $dbh->prepare("select UsersGroupID from UsersGroup where EmailUserID=? and GroupID=?");
+      my $UsersGroupSelect = $dbh_rw->prepare("select UsersGroupID from UsersGroup where EmailUserID=? and GroupID=?");
       $UsersGroupSelect->execute($NewCertID, $UsersGroupID);
       my ($ComboExists) = $UsersGroupSelect->fetchrow_array;
       unless ($ComboExists) {
-        my $UsersGroupUpdate = $dbh->prepare("insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) " .
+        my $UsersGroupUpdate = $dbh_rw->prepare("insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) " .
             " values (0,?,?)");
         $UsersGroupUpdate->execute($NewCertID, $UsersGroupID);
         FetchSecurityGroup($UsersGroupID);
@@ -214,12 +223,13 @@ sub TransferEmailUserSettings {
     }
 
     # Update signed signatures
-    my $SignatureUpdate = $dbh->prepare("update Signature set EmailUserID=? where EmailUserID=?");
+    my $SignatureUpdate = $dbh_rw->prepare("update Signature set EmailUserID=? where EmailUserID=?");
     $SignatureUpdate->execute($NewCertID, $EmailUserID);
 
     # Remove signature authority from the old account
-    my $UserUpdate = $dbh->prepare("update EmailUser set CanSign=0 where EmailUserID=?");
+    my $UserUpdate = $dbh_rw->prepare("update EmailUser set CanSign=0 where EmailUserID=?");
     $UserUpdate->execute($EmailUserID);
+    DestroyConnection($dbh_rw);
   }
 }
 
