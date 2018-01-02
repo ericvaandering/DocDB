@@ -246,17 +246,19 @@ if ($Mode eq "update") {
     } elsif ($UserValidation eq "FNALSSO") {
       $EmailUserID = FetchEmailUserIDForFSSO();
       $Email = $EmailAddress;
-      # FIXME: Remove this if it works ok (done above)
-#      ($FQUN, $UserName, $Email, $Name) = GetUserInfoFSSO();
-#      $UserName = $FQUN;
-    }  
+    }
     if (!$EmailUserID) {
       push @DebugStack,"Shibboleth or FNAL SSO user does not exist in EmailUser, creating";
       my $UserInsert        = $dbh -> prepare(
        "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Password,Verified) ".
        "values                (0,          ?,       ?,   ?,           ?,       1)");
       $UserInsert -> execute($FQUN,$Name,$Email,'x');
-      $EmailUserID = FetchEmailUserIDForShib();
+      if ($UserValidation eq "shibboleth") {
+        $EmailUserID = FetchEmailUserIDForShib();
+      } elsif ($UserValidation eq "FNALSSO") {
+        $EmailUserID = FetchEmailUserIDForFSSO();
+      }
+      push @DebugStack, "Newly created EmailUserID $EmailUserID";
     }
     push @DebugStack,"Updating shibboleth or FNAL SSO EmailUserID $EmailUserID";
     my $UpdateUserInfo = $dbh -> prepare("update EmailUser set Name=?,EmailAddress=?,PreferHTML=? where EmailUserID=?");
