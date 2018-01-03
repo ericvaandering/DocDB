@@ -135,7 +135,7 @@ sub FetchEmailUserIDByCertForSSO() {
 
   $SSOName =~ s/\@fnal\.gov//gi;
   my $SSOPattern = "%/DC=org/DC=cilogon/C=US/O=Fermi National Accelerator Laboratory/OU=People/%CN=UID:$SSOName";
-  my $EmailUserSearch = $dbh->prepare("select EmailUserID from EmailUser where Username LIKE ?");
+  my $EmailUserSearch = $dbh->prepare("select EmailUserID from EmailUser where Username LIKE ? and Verified=1");
   $EmailUserSearch -> execute($SSOPattern);
   my $EmailUserID = $EmailUserSearch -> fetchrow_array;
   push @DebugStack, "Determined user ID from cert to be $EmailUserID";
