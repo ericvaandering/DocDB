@@ -23,7 +23,7 @@ Please see [BTeV-doc-140](http://btev-docdb.fnal.gov/cgi-bin/public/DocDB/ShowDo
 DocDB is available under the terms of the GNU Public License (GPL), version 2.
 
 To obtain DocDB, please see the [releases section](https://github.com/ericvaandering/DocDB/releases) of the GitHub repository for a zip file. 
-[Installation instructions](https://github.com/ericvaandering/DocDB/wiki/Installation) are maintained on the GitHub Wiki. 
+[Installation instructions](https://github.com/ericvaandering/DocDB/wiki/Installing-docdb) are maintained on the GitHub Wiki. 
 
 Send questions about installing DocDB to docdb-users@fnal.gov 
 The docdb-users mailing list is archived at http://listserv.fnal.gov/archives/docdb-users.html.
