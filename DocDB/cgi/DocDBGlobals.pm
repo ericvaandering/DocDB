@@ -101,6 +101,7 @@ $Preferences{Security}{Instances}{Public}      = "";
 $Preferences{Security}{Instances}{Basic}       = "";
 $Preferences{Security}{Instances}{Certificate} = "";
 $Preferences{Security}{Instances}{Shibboleth}  = "";
+$Preferences{Security}{Instances}{FNALSSO}     = "";
 
 $Preferences{Options}{DynamicFullList}{Private} = $FALSE; # Generate Full document list by dynamically for private db
 $Preferences{Options}{DynamicFullList}{Public}  = $FALSE; # Generate Full document list by dynamically for public db
