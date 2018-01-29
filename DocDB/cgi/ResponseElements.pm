@@ -1,4 +1,4 @@
-#
+#        Name: ResponseElements.pm
 # Description: Subroutines to provide various parts of HTML about documents
 #              and linking to other docs, etc.
 #
@@ -7,7 +7,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -138,13 +138,26 @@ sub FullDocumentID ($;$) {
 }
 
 sub DocumentURL {
-  my ($DocumentID,$Version) = @_;
+  my ($DocumentID,$Version,$Instance) = @_;
+  my $ShowDocURL;
+
+  if ($Instance && $Preferences{Security}{Instances}{$Instance}) {
+    if ($Preferences{Security}{Instances}{$Instance} =~ /\/$/) {  # Ends with /
+      $ShowDocURL = $Preferences{Security}{Instances}{$Instance} . 'ShowDocument';
+    } else {
+      $ShowDocURL = $Preferences{Security}{Instances}{$Instance} . '/ShowDocument';
+    }
+  } else {
+    $ShowDocURL = $ShowDocument;
+  }
+
   my $URL;
   if (defined $Version) {
-    $URL =  "$ShowDocument\?docid=$DocumentID\&amp;version=$Version";
+    $URL =  "$ShowDocURL\?docid=$DocumentID\&amp;version=$Version";
   } else {
-    $URL =  "$ShowDocument\?docid=$DocumentID";
+    $URL =  "$ShowDocURL\?docid=$DocumentID";
   }
+
   return $URL
 }
 

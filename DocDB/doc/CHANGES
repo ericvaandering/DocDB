@@ -6,6 +6,8 @@
   Allow read-only users that have signature authority to sign documents
   Show watched documents for a user on EmailAdministerForm for that single user
   Add a parameter to limit the size of a document that can generate an archive
+  Put multiple URLs in notification e-mails if they exist
+    The format of notification e-mails has changed slightly for better clarity
 
 8.8.8
   Forward port 8.7.23 changes
