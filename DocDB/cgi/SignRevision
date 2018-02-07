@@ -126,9 +126,8 @@ print "<hr/>\n";
 # Get revision number and print updated info
 
 my $SignoffID = $Signatures{$SignatureID}{SignoffID};
-&FetchSignoff($SignoffID);
-
-&ClearSignatures;
+ClearSignatures();
+FetchSignoff($SignoffID);
 
 my $DocRevID  = $Signoffs{$SignoffID}{DocRevID};
 &PrintRevisionInfo($DocRevID);

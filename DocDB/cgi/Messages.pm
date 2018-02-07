@@ -84,8 +84,8 @@ $Msg_ModKeywdEmpty = "You must select a keyword to modify or delete.";
 # Signoff Messages
 
 $Msg_WarnModManaged = "Warning: You are about to modify a managed document. This will clear all the signatures on the document.";
-$Msg_WarnModManagedHack = "Warning: You are about to modify a managed document. ".
-                          "This will clear all the signatures on the document, unless you check the box to preserve them.";
+$Msg_WarnModManagedHack = "Warning: You are about to clear all the signatures on the document, ".
+                          "unless you check the box (near the bottom of this page) to preserve signatures.";
 
 # FIXME: Add more messages from other programs
 

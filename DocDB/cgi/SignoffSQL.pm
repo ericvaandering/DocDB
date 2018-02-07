@@ -279,7 +279,6 @@ sub GetSignatures ($) {
 sub ClearSignatures {
   $HaveAllSignatures = 0;
   %Signatures = ();
-  %Signoffs = ();
 }
 
 sub FetchSignature ($) {
@@ -337,11 +336,11 @@ sub CopyRevisionSignoffs { # CopySignoffs from one revision to another
       my $TimeStamp = $Signatures{$OldSignatureID}{TimeStamp};
       if (!$CopySignatures) {
         $Signed = $FALSE;
-	$TimeStamp = 0;
+        $TimeStamp = 0;
       }
       $SignatureInsert->execute($Signatures{$OldSignatureID}{EmailUserID}, $NewSignoffID,
                                 $Signatures{$OldSignatureID}{Note},        $Signed,
-				$TimeStamp);
+                                $TimeStamp);
     }
   }
   my $DependencyInsert = $dbh -> prepare("insert into SignoffDependency (SignoffDependencyID,PreSignoffID,SignoffID) ".
