@@ -1,11 +1,10 @@
-#        Name: $RCSfile$
+#        Name:SignoffSQL.pm
 # Description: SQL interface routines for signoffs
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -280,6 +279,7 @@ sub GetSignatures ($) {
 sub ClearSignatures {
   $HaveAllSignatures = 0;
   %Signatures = ();
+  %Signoffs = ();
 }
 
 sub FetchSignature ($) {

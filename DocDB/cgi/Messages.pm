@@ -1,4 +1,3 @@
-#
 # Description: Central location for many of the error messages for the DocDB
 #              since many programs return the same errors.
 #
@@ -6,7 +5,7 @@
 #    Modified: Lynn Garren (garren@fnal.gov)
 #
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -85,6 +84,8 @@ $Msg_ModKeywdEmpty = "You must select a keyword to modify or delete.";
 # Signoff Messages
 
 $Msg_WarnModManaged = "Warning: You are about to modify a managed document. This will clear all the signatures on the document.";
+$Msg_WarnModManagedHack = "Warning: You are about to modify a managed document. ".
+                          "This will clear all the signatures on the document, unless you check the box to preserve them.";
 
 # FIXME: Add more messages from other programs
 

@@ -6,7 +6,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -261,7 +261,11 @@ if ($UseSignoffs && ($mode eq "update" || $mode eq "updatedb")) {
   require "SignoffUtilities.pm";
   my ($Status) = &RevisionStatus($DocRevID);
   unless ($Status eq "Unmanaged") {
-    push @WarnStack,$Msg_WarnModManaged;
+    if (CanPreserveSigs($mode)) {
+      push @WarnStack, $Msg_WarnModManagedHack;
+    } else {
+      push @WarnStack, $Msg_WarnModManaged;
+    }
   }
 }
 
@@ -354,7 +358,7 @@ if ($mode eq "add") {
   print "<h4>You are updating $documentName. ";
 } elsif ($mode eq "updatedb") {
   $documentName = &FullDocumentID($DocumentID,$Version);
-  print "<h4>You are update the metadata for $documentName. ";
+  print "<h4>You are updating the metadata for $documentName. ";
 }
 
 print "Required fields are marked with an asterisk (*). ";
