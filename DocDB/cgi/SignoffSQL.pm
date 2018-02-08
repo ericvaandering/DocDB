@@ -1,11 +1,10 @@
-#        Name: $RCSfile$
+#        Name:SignoffSQL.pm
 # Description: SQL interface routines for signoffs
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -337,11 +336,11 @@ sub CopyRevisionSignoffs { # CopySignoffs from one revision to another
       my $TimeStamp = $Signatures{$OldSignatureID}{TimeStamp};
       if (!$CopySignatures) {
         $Signed = $FALSE;
-	$TimeStamp = 0;
+        $TimeStamp = 0;
       }
       $SignatureInsert->execute($Signatures{$OldSignatureID}{EmailUserID}, $NewSignoffID,
                                 $Signatures{$OldSignatureID}{Note},        $Signed,
-				$TimeStamp);
+                                $TimeStamp);
     }
   }
   my $DependencyInsert = $dbh -> prepare("insert into SignoffDependency (SignoffDependencyID,PreSignoffID,SignoffID) ".

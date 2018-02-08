@@ -6,7 +6,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -104,7 +104,11 @@ if ($UseSignoffs) {
   require "SignoffUtilities.pm";
   my ($Status) = &RevisionStatus($DocRevID);
   unless ($Status eq "Unmanaged") {
-    push @WarnStack,$Msg_WarnModManaged;
+    if (CanPreserveSigs("update")) {
+      push @WarnStack, $Msg_WarnModManagedHack;
+    } else {
+      push @WarnStack, $Msg_WarnModManaged;
+    }
   }
 }
 
@@ -146,7 +150,7 @@ print FormElementTitle(-helplink => "replacefiles", -helptext => "Replace duplic
 print $query -> checkbox(-name => "replace", -label => '(Check for yes.)',
                          -onclick => "helppopupwindow(\'DocDBHelp?term=replacefiles\');");
 print "</td></tr>";
-if ($UseSignoffs && CanPreserveSigs()) {
+if ($UseSignoffs && CanPreserveSigs("update")) {
   print '<tr><td>';
   print FormElementTitle(-helplink => "preservesigs",
                          -helptext => "Preserve signatures on this revision?",

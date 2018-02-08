@@ -1,14 +1,12 @@
 #! /usr/bin/env perl
 #
-#        Name: $RCSfile$
+#        Name: SignRevision
 # Description: Sign (approve) a revision of a document
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified:
-#
-#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -128,9 +126,8 @@ print "<hr/>\n";
 # Get revision number and print updated info
 
 my $SignoffID = $Signatures{$SignatureID}{SignoffID};
-&FetchSignoff($SignoffID);
-
-&ClearSignatures;
+ClearSignatures();
+FetchSignoff($SignoffID);
 
 my $DocRevID  = $Signoffs{$SignoffID}{DocRevID};
 &PrintRevisionInfo($DocRevID);

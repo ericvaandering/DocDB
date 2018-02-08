@@ -8,6 +8,8 @@
   Add a parameter to limit the size of a document that can generate an archive
   Put multiple URLs in notification e-mails if they exist
     The format of notification e-mails has changed slightly for better clarity
+  Add @HackDocsPreserveSignoffGroups to DocDBGlobals to allow groups of people
+    to change documents without requiring a new signature
 
 8.8.8
   Forward port 8.7.23 changes
