@@ -7,7 +7,7 @@
 #    Modified:
 #
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -47,6 +47,7 @@ my $Untaint = CGI::Untaint -> new($query -> Vars);
 my $Type = $Untaint -> extract(-as_printable => "type") || "";
 my $DocumentID = $Untaint -> extract(-as_integer => "docid") || 0;
 my $InputVersion = $Untaint -> extract(-as_integer => "version") || undef;
+my ($Version);
 
 unless ($DocumentID) {
   push @ErrorStack,"You are must supply a document number!";
@@ -88,35 +89,48 @@ my $Status;
 my $TmpFile;
 
 unless (@ErrorStack) {
-  my $Directory = &GetDirectory($DocumentID,$Version);
+  my $Directory = GetDirectory($DocumentID, $Version);
 
-### Get rid of files left over from old (< v6.5.0) versions
-
-  my $TarFile   = "$Directory/tmp$DocumentID-$Version.tar";
-  my $TgzFile   = "$Directory/tmp$DocumentID-$Version.tar.gz";
-  my $ZipFile   = "$Directory/tmp$DocumentID-$Version.zip";
+  # Get rid of files left over from old (< v6.5.0) versions
+  my $TarFile = "$Directory/tmp$DocumentID-$Version.tar";
+  my $TgzFile = "$Directory/tmp$DocumentID-$Version.tar.gz";
+  my $ZipFile = "$Directory/tmp$DocumentID-$Version.zip";
   unlink $TarFile;
   unlink $TgzFile;
   unlink $ZipFile;
 
-  my $ShortFile = "tmp$DocumentID-$Version.$Type";
+  # Check that the directory is not too big
 
-  $TmpFile   = "$TmpDir/$ShortFile";
-  $Directory =~ s/\/+$//g;
-
-  if ($Type eq "tar.gz") {
-    if ($GTar) {
-      $Status = system("$GTar czf $TmpFile -C $Directory .");
-    } elsif ($Tar && $GZip) {
-      $Status = system("$Tar cf - $Directory | $GZip > $TmpFile");
-    }
-  } elsif ($Type eq "tar") {
-    $Status = system("$Tar cf $TmpFile $Directory");
-  } elsif ($Type eq "zip") {
-    $Status = system("$Zip $TmpFile $Directory/*");
+  my $size = 0;
+  for my $filename (glob("$Directory/*")) {
+    next unless -f $filename;
+    $size += -s _;
   }
-  if ($Status) {
-    push @ErrorStack,"There was a problem creating the archive. Please contact an administrator.";
+  if ($size > $Preferences{Options}{MaxArchiveSize} * 1024 * 1024) {
+    push @ErrorStack, "The document contents exceed $Preferences{Options}{MaxArchiveSize} MB. Too large to make an archive.";
+  } else {
+    my $ShortFile = "tmp$DocumentID-$Version.$Type";
+
+    $TmpFile = "$TmpDir/$ShortFile";
+    $Directory =~ s/\/+$//g;
+
+    if ($Type eq "tar.gz") {
+      if ($GTar) {
+        $Status = system("$GTar czf $TmpFile -C $Directory .");
+      }
+      elsif ($Tar && $GZip) {
+        $Status = system("$Tar cf - $Directory | $GZip > $TmpFile");
+      }
+    }
+    elsif ($Type eq "tar") {
+      $Status = system("$Tar cf $TmpFile $Directory");
+    }
+    elsif ($Type eq "zip") {
+      $Status = system("$Zip $TmpFile $Directory/*");
+    }
+    if ($Status) {
+      push @ErrorStack, "There was a problem creating the archive. Please contact an administrator.";
+    }
   }
 }
 
@@ -129,5 +143,6 @@ if (@ErrorStack || @WarnStack) { # There was a problem. Warn the user.
   DocDBFooter($DBWebMasterEmail,$DBWebMasterName);
 } else {
   StreamFile(-file => $TmpFile);
+  unlink $TmpFile;
 }
 

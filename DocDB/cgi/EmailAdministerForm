@@ -195,9 +195,10 @@ print "</table>\n";
 print $query -> end_multipart_form;
 
 if ($EmailUserID) {
+  my $Count = FetchNotifications( {-emailuserid => $EmailUserID} );
   print "<h4>Full User Information</h4>";
   print '<table class="MedPaddedTable">';
-  PrintEmailUserInfo($EmailUserID);
+  PrintEmailUserInfo($EmailUserID, $TRUE);
   print '</table>';
 } else {
   print "<p>\n";
