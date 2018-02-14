@@ -1,15 +1,12 @@
 #! /usr/bin/env perl
 #
-#        Name: $RCSfile$
+#        Name: ModifyHome
 # Description: The second "homepage" for adding documents and other metadata
 #
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
-#
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified:
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -184,6 +181,7 @@ if (CanCreateMeeting()) {
   if ($Preferences{Components}{AgendaMaker}) {
     print "<li>\n";
     print $query -> start_form('POST',$MeetingModify),"<div>\n";
+    print $query -> hidden(-name => 'dummy', -default => 1);
     print $query -> submit (-class => "Action", -value => "Create");
     print " a new event with multiple sessions";
     print "\n</div>\n",$query -> end_form,"\n\n";
