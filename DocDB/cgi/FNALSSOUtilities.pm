@@ -145,7 +145,12 @@ sub FetchEmailUserIDByCertForSSO() {
 
 sub CreateSSOUser() {
   my ($FQUN, $UserName, $Email, $Name) = GetUserInfoFSSO();
-  push @DebugStack, "Creating FNAL SSO user in EmailUser with Username=$FQUN, Email=$Email, Name=$Name ";
+  if ($FQUN eq 'Mellon:Unknown') {
+    push @DebugStack, 'Username is Unknown. Not inserting. SSO may not be set up correctly.';
+    return;
+  }
+
+  push @DebugStack, "Creating FNAL SSO user in EmailUser with Username=$FQUN, Email=$Email, Name=$Name";
   CreateConnection(-type => "rw");   # Can't rely on connection setup by top script, may be read-only
   my $UserInsert = $dbh_rw->prepare(
       "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Password,Verified) " .
