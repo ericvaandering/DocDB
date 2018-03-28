@@ -172,6 +172,7 @@ sub TransferEmailUserSettings {
   my $NewCertID = exists $ArgRef->{-newemailuserid} ? $ArgRef->{-newemailuserid} : 0;
 
   push @DebugStack, "Transferring settings from EmailUserID $EmailUserID to $NewCertID";
+  FetchEmailUser($EmailUserID);
   unless ($EmailUser{$EmailUserID}{Verified}) {
     push @DebugStack, "Cowardly refusing to transfer settings from an unverified user.";
     return;
