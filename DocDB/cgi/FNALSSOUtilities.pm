@@ -91,6 +91,7 @@ sub FetchEmailUserIDForFSSO () {
   if (!$EmailUserID and ($Preferences{Security}{TransferCertToSSO} or $Preferences{Security}{AutoCreateSSO})) {
     # If either preference is set, create the user and transfer certificate information
     $EmailUserID = CreateSSOUser();
+    push @DebugStack, "Checking on transfer: $CertUserID and $EmailUserID and $Preferences{Security}{TransferCertToSSO}";
     if ($CertUserID and $EmailUserID and $Preferences{Security}{TransferCertToSSO}) {
        TransferEmailUserSettings( {-oldemailuserid => $CertUserID, -newemailuserid => $EmailUserID} );
     }

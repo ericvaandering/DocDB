@@ -177,6 +177,7 @@ sub TransferEmailUserSettings {
     return;
   }
 
+  push @DebugStack, "Checking for transfer from ID $EmailUserID to $NewCertID";
   if ($NewCertID && $EmailUserID && $NewCertID != $EmailUserID) {
     FetchEmailUser($EmailUserID);
     FetchEmailUser($NewCertID);
