@@ -78,7 +78,7 @@ sub FetchEmailUserIDForFSSO () {
   push @DebugStack,"Finding EmailUserID by FNAL SSO name $SSOName";
 
   my $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser where Username=?");
-  $EmailUserSelect -> execute('Mellon:'.$SSOName);
+  $EmailUserSelect -> execute('SSO:'.$SSOName);
 
   my ($EmailUserID) = $EmailUserSelect -> fetchrow_array;
   my ($CertUserID);
@@ -122,9 +122,9 @@ sub GetUserInfoFSSO() {
     $Username = $ENV{SSO_EPPN};
   }
 
-  push @DebugStack, "GetUserInfoFSSO returning Mellon:$Username, $Username, $EmailAddress, $Name";
+  push @DebugStack, "GetUserInfoFSSO returning SSO:$Username, $Username, $EmailAddress, $Name";
 
-  return ('Mellon:'.$Username, $Username, $EmailAddress, $Name);
+  return ('SSO:'.$Username, $Username, $EmailAddress, $Name);
 }
 
 sub FetchEmailUserIDByCertForSSO() {
@@ -146,7 +146,7 @@ sub FetchEmailUserIDByCertForSSO() {
 
 sub CreateSSOUser() {
   my ($FQUN, $UserName, $Email, $Name) = GetUserInfoFSSO();
-  if ($FQUN eq 'Mellon:Unknown') {
+  if ($FQUN eq 'SSO:Unknown') {
     push @DebugStack, 'Username is Unknown. Not inserting. SSO may not be set up correctly.';
     return;
   }
