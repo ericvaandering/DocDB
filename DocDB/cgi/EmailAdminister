@@ -12,7 +12,7 @@
 #    Modified:
 #
 
-# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -82,9 +82,15 @@ unless (CanAdminister()) {
 }
 EndPage();
 
-if      ($Action eq "Delete") { # Delete user
+if ($Action eq "Delete") { # Delete user
+  my @SignoffIDs = GetSignoffIDs(-emailuserid => $EmailUserID);
   if (!$EmailUserID) {
     push @ErrorStack,$Msg_ModEUserEmpty;
+  } elsif (@SignoffIDs) {
+    push @ErrorStack, 'You cannot delete this account, it has <a href="'.$SignatureReport."?emailuserid=$EmailUserID\">".
+                      'signed or needs to sign documents</a>. '.
+                      'You can disable this account by using Modify and checking Clear Verify and Sign '.
+                      'or you can transfer this account to another and then delete it.';
   } else {
     my $UserDelete         = $dbh -> prepare("delete from EmailUser    where EmailUserID=?");
     my $UsersGroupDelete   = $dbh -> prepare("delete from UsersGroup   where EmailUserID=?");
