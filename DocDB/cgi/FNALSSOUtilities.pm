@@ -96,9 +96,15 @@ sub FetchEmailUserIDForFSSO () {
        TransferEmailUserSettings( {-oldemailuserid => $CertUserID, -newemailuserid => $EmailUserID} );
     }
   } elsif (!$EmailUserID and $CertUserID) {
-    # Just use the certificate info if it exists
-    push @DebugStack, "Could not find SSO information for $SSOName, using EmailUserID $CertUserID from certificate.";
-    $EmailUserID = $CertUserID;
+    # Just use the certificate info if it exists and we are requested to
+    if ($Preferences{Security}{UseCertGroupsForSSO}
+        && !$Preferences{Security}{AutoCreateSSO}
+        && !$Preferences{Security}{TransferCertToSSO}) {
+      push @DebugStack, "Could not find SSO information for $SSOName, using EmailUserID $CertUserID from certificate.";
+      $EmailUserID = $CertUserID;
+    } else {
+      push @DebugStack, "Could not find SSO information for $SSOName, Certificate ID $CertUserID found but not used.";
+    }
   }
 
   if ($EmailUserID) {

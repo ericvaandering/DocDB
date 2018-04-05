@@ -1,12 +1,13 @@
 #! /usr/bin/env perl
 #
+#        Name: EmailCreate
 # Description: Creates a new e-mail notification account
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 #
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -48,7 +49,7 @@ $UserName =~ s/\s+//g;
 $Password =~ s/\s+//g;
 $PassConf =~ s/\s+//g;
 
-# Do the passwords match, is there a password
+# Do the passwords match, is there a password, and are the username characters reasonable?
 
 if ($Password eq "") {
   push @ErrorStack,"You may not supply an empty password. Please go back and try again.";
@@ -56,6 +57,10 @@ if ($Password eq "") {
 if ($Password ne $PassConf) {
   push @ErrorStack,"The passwords you entered did not match. Please go back and try again.";
 }
+if ($UserName !~ /^[a-zA-Z][a-zA-Z0-9_\.\-]+$/) {
+  push @ErrorStack,"Your username may not contain any special characters except dash, period, or underscore.";
+}
+
 
 # Does the username already exist?
 

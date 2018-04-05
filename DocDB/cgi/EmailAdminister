@@ -203,7 +203,7 @@ if ($Action eq "Delete") { # Delete user
 
     print "<h3>The new user now has the following information:</h3>";
     print "<table class=\"LowPaddedTable\">\n";
-    PrintEmailUserInfo($NewCertID);
+    PrintEmailUserInfo($NewCertID, $TRUE);
     print "</table>\n";
 
     if ($MailInstalled && $UserValidation eq "certificate") {
