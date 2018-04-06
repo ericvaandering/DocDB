@@ -77,6 +77,11 @@ sub FetchEmailUserIDForFSSO () {
   my $SSOName = $ENV{SSO_EPPN};
   push @DebugStack,"Finding EmailUserID by FNAL SSO name $SSOName";
 
+  unless ($dbh) { # FIXME: The DB handle may not exist if an admin user entered the wrong password
+    push @DebugStack,"No database handle. Cannot find user.";
+    return;
+  }
+
   my $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser where Username=?");
   $EmailUserSelect -> execute('SSO:'.$SSOName);
 
@@ -137,7 +142,12 @@ sub FetchEmailUserIDByCertForSSO() {
   # We have to handle this separately because a user can only have one ID which should be 
   # SSO if it exists, but this is used to grant more groups to a user. This can be made 
   # optional if required.
-  
+
+  unless ($dbh) { # FIXME: The DB handle may not exist if an admin user entered the wrong password
+    push @DebugStack,"No database handle. Cannot determine user ID from cert.";
+    return;
+  }
+
   my $SSOName = $ENV{SSO_EPPN};
 
   $SSOName =~ s/\@fnal\.gov//gi;
