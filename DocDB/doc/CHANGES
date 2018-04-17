@@ -1,5 +1,6 @@
 8.8.9
   Update to start_form/end_form for compatibility
+  Fix DocDBHelp. See https://github.com/ericvaandering/DocDB/pull/45
   Update SHA1 to SHA for compatibiity
   Update TYPE to ENGINE for compatibility with newer MySQL/MariaDB
   Update the message when an administrator makes changes to a certificate account
