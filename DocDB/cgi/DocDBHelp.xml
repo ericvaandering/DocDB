@@ -44,7 +44,7 @@
   <text>
      The group names for managed keywords. While users can apply any keyword
      to a document, the groups and keywords in them allow you to suggest a
-     set of <q>approved</q> keywords.
+     set of approved keywords.
   </text>
  </entry>
 
@@ -54,11 +54,11 @@
   <text>
      Type in the names of authors to search for. Put each author on a new line.
      Use full last names and first names or initials. Each author entered will
-     checked against the database and a <b>unique</b> match must be found or
+     checked against the database and a unique match must be found or
      that entry will be ignored. Requiring a unique match means that for people
      who share a last name, the first name must be fully specified. Entered
      middle initials are ignored.
-     <p/>
+
      Authors entered here are added to the authors selected with the  list on
      the left (if any).
   </text>
@@ -68,14 +68,11 @@
   <key>xsearchtext</key>
   <title>Cross Search</title>
   <text>
-     <p>
      Words typed here will be searched in all the DocDBs checked on the right.
      The search on the local DocDB will be over all documents you can access.
      The search in remote DocDBs will only cover publicly accessible documents.
-     </p><p>
      If you would like another DocDB added to the list, ask your DocDB
      administrator.
-     </p>
   </text>
  </entry>
 
@@ -83,15 +80,11 @@
   <key>quicksearch</key>
   <title>Quick Search</title>
   <text>
-   <p>
     Enter one or more words to search for. These words will be searched for in
     authors, topics, events, etc. as well as in text meta-data such as titles
     and abstracts. The returned list of documents will be ranked by the number
     and quality of matches.
-   </p>
-   <p>
     For more targeted searches, use the advanced form below.
-   </p>
   </text>
  </entry>
 
@@ -122,11 +115,11 @@ Access to documents within the DocDB is controlled in several ways. A document
 may be tagged as accessible to a subset of groups. Additionally, each group may
 have a list of subordinate groups. Anything marked viewable by a subordinate is
 also viewable by its superior group. (This relationship does not extend to more
-than one generation, though.)<p/> Each group also has a flag determining
+than one generation, though.)Each group also has a flag determining
 whether that group is allowed to create new  or modify existing documents. If a
 group is in the list of those allowed to modify a  document, it can change that
 document (assuming they also have the create/modify flag set). These group
-names must match those in the <b>.htpasswd</b> file although the comparison is
+names must match those in the .htpasswd file although the comparison is
 not case sensitive.
   </text>
  </entry>
@@ -134,11 +127,11 @@ not case sensitive.
   <key>child</key>
   <title>Subordinate groups</title>
   <text>
-   <p>Select the groups you want to be subordinates of this group. This means
+   Select the groups you want to be subordinates of this group. This means
    that this group will be able to see and change all documents that
-   the subordinate groups can.</p>
-   <p>To change a group's dominant groups, you must change the subordinate
-   groups of the dominant group</p>
+   the subordinate groups can.
+   To change a group's dominant groups, you must change the subordinate
+   groups of the dominant group.
   </text>
  </entry>
 
@@ -190,9 +183,9 @@ periods.
   <text>
 Select the keywords that you want to be notified when they are entered on
 documents. The keywords are case insensitive, but otherwise must match
-<b>exactly</b>. Immediate notification will send you e-mail on each
+exactly. Immediate notification will send you e-mail on each
 document as it is entered. Daily and weekly notifications send out lists of
-documents you are interested in every day or week.<p/>
+documents you are interested in every day or week.
 
 You can select any combination of keywords for each of the three
 periods.
@@ -207,7 +200,7 @@ Select the topics that you want to be notified about for the selected time perio
 If you select a topic, you will receive notifications for its sub-topics as well.
 Immediate notification will send you e-mail on each document as it is entered. Daily
 and weekly notifications send out lists of documents you are interested in every day
-or week.<p/>
+or week.
 
 You can select any combination of topics and sub-topics for each of the three
 periods.
@@ -222,7 +215,7 @@ Select the events and event groups for documents that you want to be notified ab
 If you select an event group, you will receive notifications for all events in that.
 Immediate notification will send you e-mail on each document as it is entered. Daily
 and weekly notifications send out lists of documents you are interested in every day
-or week.<p/>
+or week.
 
 You can select any combination of groups and events for each of the three
 periods.
@@ -284,9 +277,9 @@ document.
 You can select the topics and/or sub-topics for the
 document(s) you are searching for. The default is to search all sub-topics for
 a topic as well; you can turn this option off by checking the box. However, for
-searches of an <q>AND</q> of topics, this option is not available. E.g., a search
-for on documents with topics <q>Asia AND Europe</q> will not find documents with
-topics <q>Germany</q> and <q>China</q>.
+searches of an AND of topics, this option is not available. E.g., a search
+for on documents with topics Asia AND Europe will not find documents with
+topics Germany and China.
   </text>
  </entry>
 
@@ -296,7 +289,7 @@ topics <q>Germany</q> and <q>China</q>.
   <text>
 Use these two menus to select a date range for the document(s) you are looking
 for. You can leave either the start or end completely blank for an open ended
-search. <p/>
+search.
 You can also leave months and/or days blank on one or both menus to perform
 searches between the beginning and end of years and months (whichever is
 appropriate). Unpredictable
@@ -310,7 +303,7 @@ of the month.
 <title>Document Type</title>
   <text>
 Select the types of documents you are looking for. Note that regardless of the
-setting of <b>Within Fields</b> this search will be performed with a logical
+setting of Within Fields this search will be performed with a logical
 OR.
   </text>
  </entry>
@@ -321,7 +314,7 @@ OR.
   <text>
 Select the people who might have initially submitted or made a modification
 to the document you are looking for. Note that regardless of the setting of
-<b>Within Fields</b> this search will be performed with a logical OR.
+Within Fields this search will be performed with a logical OR.
   </text>
  </entry>
 
@@ -331,17 +324,16 @@ to the document you are looking for. Note that regardless of the setting of
   <text>
 These fields allow you to search on the various text items in the database.
 The following modes are used to search for information:
-<ul>
- <li><b>Any words as sub-string: </b>The information you enter is broken into
+1. Any words as sub-string: The information you enter is broken into
  words (delimited by spaces) and the field you are searching in is required to
  match one or more of these words as a sub-string (<i>lock</i> will match
- <i>lock</i> and <i>block</i>).</li>
- <li><b>All words as sub-string: </b>The information you enter is broken into
+ lock and block).
+ 2. All words as sub-string: The information you enter is broken into
  words (delimited by spaces) and the field you are searching in is required to
- match all of these words as sub-strings (in any order).</li>
- <li><b>Any or all words as words: </b>Like the searches above, but spaces are
- require to delimit words (<i>lock</i> will not match <i>block</i>).</li>
-</ul>
+ match all of these words as sub-strings (in any order).
+ 3. Any or all words as words: Like the searches above, but spaces are
+ require to delimit words (lock> will not match block).
+
   </text>
  </entry>
 
@@ -360,20 +352,20 @@ The following modes are used to search for information:
 <key>logictype</key>
 <title>Between Fields vs. Within Fields</title>
   <text>
-Two types of logic can be used to refine your search. <p/>
+Two types of logic can be used to refine your search.
 
-The setting for <b>Between Fields</b> lets you select AND or OR between
+The setting for Between Fields lets you select AND or OR between
 elements on the form. For instance, if you select and Author and a Topic, you
 can either find documents by that author AND on that topic or by that author OR
-on that topic. AND is the default.<p/>
+on that topic. AND is the default.
 
-The setting for <b>Within Fields</b> determines what happens when, for instance,
+The setting for Within Fields determines what happens when, for instance,
 you select two authors. You can either require that both authors are present on
 the paper (AND) or either author is present (OR). OR is the
 default. Note that this setting
 doesn't apply to text searches (since they use their own syntax). Also, for
 Submitter and Document Type, multiple settings on the document are not
-possible, so these searches are <b>always</b> done with an OR.
+possible, so these searches are always done with an OR.
   </text>
  </entry>
 
@@ -393,12 +385,11 @@ possible, so these searches are <b>always</b> done with an OR.
   <text>
 If you select this option, any files you add which duplicate file names of
 existing files will completely replace the old files (no backup will be kept).
-Do <strong>not</strong> use this option to avoid creating a new version of a
+Do  not use this option to avoid creating a new version of a
 document, even if only minor changes have been made. This option is, instead,
 intended for making minor fixes to presentation formats and the like.  Disk
 space is cheap, mistakes are not.
-<p/>
-Please use this option responsibly.
+ Please use this option responsibly.
   </text>
  </entry>
 
@@ -406,21 +397,21 @@ Please use this option responsibly.
   <key>authormanual</key>
   <title>Ordered Author List</title>
   <text>
-   <p>Type the names of the authors <strong>in order</strong> here. Put each
+   Type the names of the authors in order here. Put each
    author on a new line. Use first names or initials and full last names. Each
-   author entered will checked against the database and a <b>unique</b> match
-   must be found for <strong>all</strong> authors before the document will be
+   author entered will checked against the database and a  unique match
+   must be found for all authors before the document will be
    added. Requiring a unique match means that for people who share a last name and initial,
    the first name must be fully specified. Entered middle initials are
-   ignored.</p>
-   <p>This will create an ordered author list. If you normally enter authors
+   ignored.
+   This will create an ordered author list. If you normally enter authors
    from  a selectable list and you instead see the text entry box, that means
-   the list was already ordered by someone else.</p>
-   <p>If you would prefer to select the author names from a list, click on
+   the list was already ordered by someone else.
+   If you would prefer to select the author names from a list, click on
    "Select from list" or choose "Selectable List" as the author selection mode
    from the advanced form on the DocDB Changes page. Switching list styles
    will not preserve changes just made and the list style will erase any
-   ordering of the authors.</p>
+   ordering of the authors.
   </text>
  </entry>
 
@@ -444,9 +435,9 @@ Select the date of the end of the conference.
   <key>location</key>
   <title>Location &amp; Alternate</title>
   <text>
-   <p>Enter the location of the conference, event, or session. This can be a
+   Enter the location of the conference, event, or session. This can be a
    city, an institution, or a room number depending on the circumstances. The
-   alternate location might be video or teleconferencing instructions.</p>
+   alternate location might be video or teleconferencing instructions.
   </text>
  </entry>
 
@@ -499,7 +490,8 @@ In this box, enter a URL available on the web. The file will be fetched from
 this URL and stored on the server. The URL must be a full URL, with http:// at
 the beginning and a file name at the end (cannot end in "/"). The https and ftp
 protocols may also work.
-<p/>
+
+
 If the URL is protected, enter the username and password used to access the
 URL. The username and password are not saved.
   </text>
@@ -521,23 +513,24 @@ URL. The username and password are not saved.
   <title>Modification Actions</title>
   <text>
 There are five ways to modify a document:
-<ol>
-<li>Reserve a document #: Select this option if you want a number for a document
-you are going to write, but don't have a draft of the document.</li>
-<li>New document: You have a new document ready to be put into the database that
-has not been entered before.</li>
-<li>Update document: You have a new version of a document already in the
+1. Reserve a document #: Select this option if you want a number for a document
+you are going to write, but don't have a draft of the document.
+2. New document: You have a new document ready to be put into the database that
+has not been entered before.
+3. Update document: You have a new version of a document already in the
 database. You will also be able to change any of the information in the database
-about the document. You must supply a document number to modify.</li>
-<li>Update database information: The document hasn't changed, but the
+about the document. You must supply a document number to modify.
+4. Update database information: The document hasn't changed, but the
 information about it has. For example, it's now published so you want to add that
-information. You must supply a document number to modify.</li>
-<li>Add/Replace files: You forgot a file that belongs with the document or
-something minor has changed in one of the files.<p/>Replacing files should be done
+information. You must supply a document number to modify.
+5. Add/Replace files: You forgot a file that belongs with the document or
+something minor has changed in one of the files.
+      Replacing files should be done
 with caution since no backup is kept. Please do not use this capability to
 avoid creating a new version of a document when that is more appropriate. Disk
-space is cheap, mistakes are not.</li>
-</ol>
+space is cheap, mistakes are not.
+
+
 Select the type of modification appropriate to your situation
   </text>
  </entry>
@@ -547,12 +540,13 @@ Select the type of modification appropriate to your situation
   <title>Upload Methods</title>
   <text>
 You can upload documents by two different methods.
-<ol>
-<li>You can upload files from
-your local computer </li>
-<li>You can upload files by supplying a URL. In this case, the database
-system downloads the document from the location you specify. </li>
-</ol>
+
+
+1. You can upload files from
+your local computer
+2. You can upload files by supplying a URL. In this case, the database
+system downloads the document from the location you specify.
+
 In both cases the document is ultimately stored on the document database web server.
   </text>
  </entry>
@@ -562,16 +556,17 @@ In both cases the document is ultimately stored on the document database web ser
   <title>Upload Types</title>
   <text>
 You can upload three different types of documents.
-<ol>
-<li>You can upload a single file. This is the default. </li>
-<li>You can upload a document consisting of multiple files, such as PowerPoint
+
+
+1. You can upload a single file. This is the default.
+2. You can upload a document consisting of multiple files, such as PowerPoint
 and PDF by selecting "Multiple" and filling in the "# of files" option with the
-number of files you want to upload. </li>
-<li>You can upload an archive file containing all the files in your document.
+number of files you want to upload.
+3. You can upload an archive file containing all the files in your document.
 However, only one of those files will be directly accessible. For example, use
 this option to upload a group of linked web pages. You can upload files in
-.tar, .tar.gz, .tgz, or .zip format.</li>
-</ol>
+.tar, .tar.gz, .tgz, or .zip format.
+
   </text>
  </entry>
 
@@ -588,12 +583,12 @@ from a number of shorter lists split up by topic.
   <key>authoroption</key>
   <title>Author Selection</title>
   <text>
-   <p>There are two methods of entering the authors for a document. The first is
+   There are two methods of entering the authors for a document. The first is
    selecting the authors from a list of all possible authors. The second is to
    type the names of the authors into a form. This creates an
-   <strong>ordered</strong> author list. <em>However</em> for your document to
+   ordered author list. However for your document to
    be accepted, every author that you entered must successfully match an author
-   in the database.</p>
+   in the database.
   </text>
  </entry>
 
@@ -657,7 +652,8 @@ or updating a document.
   <text>
 In this field, include any additional publication information that can't be
 placed in the boxes above. Valid URLs entered here will be linked for the user. This field is optional.
-<p/>
+
+
 If your document is in a journal or preprint archive that you feel should be
 added to the list in the DocDB, please contact an administrator.
   </text>
@@ -670,7 +666,8 @@ added to the list in the DocDB, please contact an administrator.
 In this space, add any references to journals or archives for your
 document. If the journal or archive does not exist and you feel should be
 added to the list in the DocDB, please contact an administrator.
-<p/>
+
+
 If you already have more than one reference for your document, add the first one
 now. When the document is entered, select Update DB Info and add the other ones.
 Each time you "Update DB Info" you are given the chance to add one additional
@@ -697,12 +694,15 @@ Usually you will press the "Browse" button to select, from your local file
 system, the file to be uploaded. The base file name cannot contain a back slash
 "\" or a forward slash "/" to preserve compatibility with both Windows and
 Unix.
-<p/>
+
+
 You can also enter a short description of each file, which will appear in the
 summary of the document. The description is optional.
-<p/>
+
+
 If there are more upload boxes than you need, just leave the last ones blank.
-<p/>
+
+
 If you want to submit a URL rather than a local file, use the Customize
 Insert/Modify functions to select your type of upload.
   </text>
@@ -712,17 +712,19 @@ Insert/Modify functions to select your type of upload.
   <key>authors</key>
   <title>Authors</title>
   <text>
-   <p>If entering a new or revised document, select all the authors of the
+   If entering a new or revised document, select all the authors of the
    document.  If you would prefer to type in the author names individually and
    in order, click on "Text w/ order" or select "Ordered text field" as the
    author selection mode from the advanced form on the DocDB Changes page.
    Switching list styles will not  preserve changes just made and the list style
-   will erase any ordering of the authors.</p>
-   <p> If searching for a document, select the authors appropriately for your
-   setting of <b>Within Fields</b>.</p>
-   <p> To select multiple authors either click or CTRL-click (depending on your
+   will erase any ordering of the authors.
+
+          If searching for a document, select the authors appropriately for your
+   setting of Within Fields.
+
+   To select multiple authors either click or CTRL-click (depending on your
    browser) on the author names.  If a document has multiple authors, the
-   <q>first author</q> will be the first alphabetically.</p>
+   first author will be the first alphabetically.
   </text>
  </entry>
 
@@ -730,15 +732,16 @@ Insert/Modify functions to select your type of upload.
   <key>topics</key>
   <title>Topics</title>
   <text>
-<p>Select all the topics and subtopics for the document or event. Note that
+Select all the topics and subtopics for the document or event. Note that
 there are three ways to enter topics: From an expandable tree, from one
 big long list, or from several shorter lists. You can select the mode
-from the customize form on the main page.</p>
-<p>To use the tree, click to expand sub-topics until you find the topics
+from the customize form on the main page.
+
+      To use the tree, click to expand sub-topics until you find the topics
 you need. Click the check boxes next to the topic. To select multiple
 topics from scrolling lists, hold control or command (depending on your
 browser) and click on the topic names. You are not allowed to select
-topics in brackets (if any).</p>
+topics in brackets (if any).
   </text>
  </entry>
 
@@ -759,7 +762,7 @@ except generate a warning if you combine "Public" with another name.
   <title>Document Type</title>
   <text>
 Select which kind of document this is. This has nothing to do with the format of
-the document. I.e. a PowerPoint file isn't <i>necessarily</i> a "Talk."
+the document. I.e. a PowerPoint file isn't necessarily a "Talk."
   </text>
  </entry>
 
@@ -812,13 +815,15 @@ Enter a URL for your document. The file will be fetched from this URL and
 stored on the server. The URL must be a full URL, with http:// at the beginning
 and a file name at the end (cannot end in "/"). The https and ftp protocols may
 also work.
-<p/>
+
+
 If the URL is password protected, enter the username and password for the URL
 here. The username and password are NOT saved. If you enter more than one  URL,
 the same username and password are used for each URL. If you need to fetch
 files with different authentications, just upload some now and use "Add Files"
 to add the other files later.
-<p/>
+
+
 You can also enter a short description of each file, which will appear in the
 summary of the document. The description is optional.
   </text>
@@ -917,13 +922,13 @@ or may not be the same as the web username and password.
   <title>Breaks and Events</title>
   <text>
    Check this box if your entry is a break between sessions. These
-   <q>sessions</q> cannot have talks or documents associated with them. You
+   sessions cannot have talks or documents associated with them. You
    might use such a separator between sessions to denote a coffee break, a
    meal, or another activity.
-   <p/>
-   There are also separators you can use between <i>talks</i> to indicate
+
+   There are also separators you can use between talks to indicate
    breaks in the agenda for lunch or coffee. (These are inserted as you
-   designate talks <i>within</i> a session.) Which type to use where depends
+   designate talks  within a session.) Which type to use where depends
    on the organization of your meeting. </text>
  </entry>
 
@@ -959,16 +964,17 @@ or may not be the same as the web username and password.
   <key>meetshowall</key>
   <title>Show All Talks for Meeting or Session</title>
   <text>
-   <p> Checking this box for a whole meeting will also display all the sessions
+   Checking this box for a whole meeting will also display all the sessions
    for the meeting and all the talks within those sessions. If this is left
-   unchecked for a meeting, displaying the meeting will display <em>links</em>
+   unchecked for a meeting, displaying the meeting will display links
    to the individual sessions. It is suggested that this box be checked for
    meetings with just a few sessions and left unchecked for meetings with many
-   sessions, especially parallel sessions.</p>
-   <p> Checking this box for a session in a meeting will display the talks for
+   sessions, especially parallel sessions.
+
+   Checking this box for a session in a meeting will display the talks for
    this session in the view of the meeting but will not display the talks for
    other sessions. You may want to check this box for plenary sessions but leave
-   it unchecked for parallel sessions.</p>
+   it unchecked for parallel sessions.
   </text>
  </entry>
 
@@ -979,7 +985,9 @@ or may not be the same as the web username and password.
    Fill out the information for as many sessions as you need. If there are
    not enough blank sessions, don't worry, you'll be able to add additional
    sessions later. After this is done, you'll be able to populate each
-   session with talks.<p/>You can also create separators between sessions for
+   session with talks.
+
+      You can also create separators between sessions for
    meals or activities.
   </text>
  </entry>
@@ -990,8 +998,10 @@ or may not be the same as the web username and password.
   <text>
    You are entering a document that is probably related to a meeting for
    which an agenda has already been entered. Select your talk from the list.
-   Any title, topics, or authors listed are <i>guesses</i> by the
-   organizer(s) and need not be the same as what you enter.<p/> If you don't
+   Any title, topics, or authors listed are guesses by the
+   organizer(s) and need not be the same as what you enter.
+
+      If you don't
    find your agenda entry, just leave the selector on "Select your talk..."
   </text>
  </entry>
@@ -1010,22 +1020,22 @@ or may not be the same as the web username and password.
   <key>talketc</key>
   <title>Talk Options</title>
   <text>
-   <p><strong>Confirm:</strong> Check this box if DocDB has guessed the talk
+   Confirm: Check this box if DocDB has guessed the talk
    correctly based on the agenda information. Also check this box if you
    manually enter a document number in the "Doc. #" box. If you fail to do
-   this, DocDB will try to guess again,  possibly erasing your change.</p>
+   this, DocDB will try to guess again,  possibly erasing your change.
 
-   <p><strong>Delete:</strong> Check this box to delete a talk from the agenda. A document associated with
-   the talk (if any) will <b>not</b> be deleted, just the agenda entry.</p>
+   Delete: Check this box to delete a talk from the agenda. A document associated with
+   the talk (if any) will not be deleted, just the agenda entry.
 
-   <p><strong>Reserve:</strong> Check this box to create a new document based
+   Reserve: Check this box to create a new document based
    on the  information entered in the agenda. The submitter of the document is
    listed as the first author and the document is modifiable by anyone who can
-   <i>view</i> the meeting. You must supply at least one author for the
-   document.</p>
+   view the meeting. You must supply at least one author for the
+   document.
 
-   <p><strong>Break:</strong> Check this box to create a break (e.g. for coffee)
-   rather than a talk in the agenda.</p>
+   Break: Check this box to create a break (e.g. for coffee)
+   rather than a talk in the agenda.
   </text>
  </entry>
 
@@ -1033,11 +1043,11 @@ or may not be the same as the web username and password.
   <key>talkdocid</key>
   <title>Talk Document #</title>
   <text>
-   <p>This field shows the document # matched with the agenda entry in DocDB.
+   This field shows the document # matched with the agenda entry in DocDB.
    If you know the corresponding document #, type it in and click
-   <strong>Confirm</strong> to the left. If you know there will not be a document
+   Confirm to the left. If you know there will not be a document
    for a slot, or wish to prevent DocDB from guessing which document matches, enter
-   <strong>0</strong> and click <strong>Confirm</strong>.</p>
+   0 and click Confirm.
   </text>
  </entry>
 
@@ -1088,7 +1098,7 @@ or may not be the same as the web username and password.
    This field is for notes and changes from version to version of your document. When just updating
    the database information, this information is filled in by default (but you can still change it). When
    updating the document itself, this information is not pre-filled. If you want to preserve
-   the notes from the previous version, click on the link <q>Insert notes from previous version</q>.
+   the notes from the previous version, click on the link Insert notes from previous version.
   </text>
  </entry>
 
@@ -1186,7 +1196,9 @@ or may not be the same as the web username and password.
    ID like 123-v4 will refer only to the specified version. A document ID like
    FOO-123-v4 will refer to version 4 of document 123 for project FOO. Consult
    your DocDB admins  to find out what other projects' DocDBs you can link to
-   this way. <p/>
+   this way.
+
+
    Document numbers can be separated by spaces or commas.
   </text>
  </entry>
@@ -1227,7 +1239,7 @@ or may not be the same as the web username and password.
   <title>External DocDB Information</title>
   <text>
    Fill in the information for any external DocDBs you want your users to be
-   able to reference in <q>Related Documents.</q> <q>Project</q> should be the short
+   able to reference in Related Documents. Project should be the short
    project name, the description can be a longer description. The URLs should be
    the public and private URLs where the scripts reside. Do not include a script name.
    (I. e., they should be of the form: http://server.name.com/cgi-bin/DocDB/.)
@@ -1280,11 +1292,13 @@ or may not be the same as the web username and password.
      <key>targetauthor</key>
      <title>Author to Consolidate</title>
      <text>
-         <p>Instead of simply deleting the author, all references to the author about
+         Instead of simply deleting the author, all references to the author about
          to be deleted will be updated to another author before deletion. This may
          be useful if there are two author entries for one person or if your practice is to
-         move all activity by people who have left the organization to <q>Obsolete Author</q>
-         or something similar.</p><p>This field is optional.</p>
+         move all activity by people who have left the organization to Obsolete Author
+         or something similar.
+
+             This field is optional.
      </text>
  </entry>
 
@@ -1292,7 +1306,7 @@ or may not be the same as the web username and password.
      <key>eventgroups</key>
      <title>Event Group</title>
      <text>
-         <p>Select which group (or category) of events that this event should belong to.</p>
+         Select which group (or category) of events that this event should belong to.
      </text>
  </entry>
 
@@ -1300,7 +1314,7 @@ or may not be the same as the web username and password.
      <key>moderators</key>
      <title>Moderators</title>
      <text>
-         <p>Select the person or people who will be the moderators of this session.</p>
+         Select the person or people who will be the moderators of this session.
      </text>
  </entry>
 
@@ -1308,8 +1322,8 @@ or may not be the same as the web username and password.
      <key>newcert</key>
      <title>Updated Certificate or Account</title>
      <text>
-         <p>Select the new account or certificate for the person. All user settings, email notifications, and signature authority
-         will be copied to the new account or certificate.</p>
+         Select the new account or certificate for the person. All user settings, email notifications, and signature authority
+         will be copied to the new account or certificate.
      </text>
  </entry>
 

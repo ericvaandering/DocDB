@@ -1,12 +1,13 @@
 #! /usr/bin/env perl
 #
+#        Name: DocDBHelp
 # Description: Usually called as a pop-up, this looks up in docdb.hlp
 #              the information on a specific topic.
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -25,49 +26,14 @@
 
 use CGI;
 use CGI::Untaint;
-use XML::Parser::PerlSAX;
-use XML::PatAct::MatchName;
-use XML::PatAct::ToObjects;
-use XML::Grove::AsString;
-use XML::Grove::AsCanonXML;
+use XML::Simple;
 
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "UntaintInput.pm";
 
-my $DefaultPatterns = [
-  'helpfile'    => [ qw{ -holder                                  } ],
-  'entry'       => [ -make => Schema::Entry                  ],
-  'key'         => [ qw{ -field Key -as-string                   } ],
-  'title'       => [ qw{ -field Title -as-string                } ],
-  'text'        => [ qw{ -field Text -grove                } ],
-];
-
-my $ProjectPatterns = [
-  'helpfile'    => [ qw{ -holder                                  } ],
-  'entry'       => [ -make => Schema::Entry, -args => 'Action => %{action}'                  ],
-  'key'         => [ qw{ -field Key -as-string                   } ],
-  'title'       => [ qw{ -field Title -as-string                } ],
-  'text'        => [ qw{ -field Text -grove              } ],
-];
-
 if (-e "ProjectHelp.xml") {
   $ProjectHelp = 1;
-}
-
-my $DefaultMatcher = XML::PatAct::MatchName -> new(Patterns => $DefaultPatterns);
-my $DefaultHandler = XML::PatAct::ToObjects -> new(Patterns => $DefaultPatterns,
-                                                    Matcher => $DefaultMatcher);
-my $DefaultParser = XML::Parser::PerlSAX -> new(Handler => $DefaultHandler);
-my $DefaultSchema = $DefaultParser -> parse(Source => {SystemId => "DocDBHelp.xml"  });
-
-my ($ProjectMatcher,$ProjectHandler,$ProjectParser,$ProjectSchema);
-if ($ProjectHelp) {
-  $ProjectMatcher = XML::PatAct::MatchName -> new(Patterns => $ProjectPatterns);
-  $ProjectHandler = XML::PatAct::ToObjects -> new(Patterns => $ProjectPatterns,
-                                                   Matcher => $ProjectMatcher);
-  $ProjectParser = XML::Parser::PerlSAX -> new(Handler => $ProjectHandler);
-  $ProjectSchema = $ProjectParser -> parse(Source => {SystemId => "ProjectHelp.xml"});
 }
 
 # Start page
@@ -80,25 +46,23 @@ print $query -> header( -charset => $HTTP_ENCODING );
 
 $helpterm = $Untaint -> extract(-as_safehtml => "term") || "";
 
+push @DebugStack, "Looking for help on $helpterm";
+
+my ($DefaultText, $DefaultTitle, $ProjectText, $ProjectTitle, $Action);
+
 # Parse XML into hashes, pull out desired text
 
-@Array = @{$DefaultSchema};
-foreach $Element (@Array) {
-  if (${%{$Element}}{Key} eq $helpterm) {
-    $DefaultText  = ${%{$Element}}{Text} -> as_canon_xml;
-    $DefaultTitle = ${%{$Element}}{Title};
-  }
-}
+my $HelpXML = XMLin("DocDBHelp.xml");
+
+$DefaultText = %{$HelpXML->{entry}{$helpterm}}->{text};
+$DefaultTitle = %{$HelpXML->{entry}{$helpterm}}->{title};
 
 if ($ProjectHelp) {
-  @Array = @{$ProjectSchema};
-  foreach $Element (@Array) {
-    if (${%{$Element}}{Key} eq $helpterm) {
-      $Action = ${%{$Element}}{Action};
-      $ProjectText = ${%{$Element}}{Text} -> as_canon_xml;
-      $ProjectTitle = ${%{$Element}}{Title};
-    }
-  }
+  my $ProjectXML = XMLin("ProjectHelp.xml");
+
+  $ProjectText = %{$ProjectXML->{entry}{$helpterm}}->{text};
+  $ProjectTitle = %{$ProjectXML->{entry}{$helpterm}}->{title};
+  $Action = %{$ProjectXML->{entry}{$helpterm}}->{action};
 }
 
 # Remove line breaks and XML element tags
@@ -132,4 +96,4 @@ if ($DefaultText || $ProjectText) {
   print "<b><big>No help available on this topic.</big></b><p>\n";
 }
 
-&DocDBFooter($DBWebMasterEmail,$DBWebMasterName,-nobody => $TRUE);
+DocDBFooter($DBWebMasterEmail,$DBWebMasterName,-nobody => $TRUE);
