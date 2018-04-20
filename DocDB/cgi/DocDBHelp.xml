@@ -326,11 +326,13 @@ These fields allow you to search on the various text items in the database.
 The following modes are used to search for information:
 1. Any words as sub-string: The information you enter is broken into
  words (delimited by spaces) and the field you are searching in is required to
- match one or more of these words as a sub-string (<i>lock</i> will match
+ match one or more of these words as a sub-string ("lock" will match
  lock and block).
+
  2. All words as sub-string: The information you enter is broken into
  words (delimited by spaces) and the field you are searching in is required to
  match all of these words as sub-strings (in any order).
+
  3. Any or all words as words: Like the searches above, but spaces are
  require to delimit words (lock> will not match block).
 
@@ -1292,13 +1294,19 @@ or may not be the same as the web username and password.
      <key>targetauthor</key>
      <title>Author to Consolidate</title>
      <text>
-         Instead of simply deleting the author, all references to the author about
-         to be deleted will be updated to another author before deletion. This may
+         Instead of simply deleting an author, it is often useful to "Consolidate"
+         instead. To do this: In the first list (under the heading "Authors"),
+         select the author that will be removed. In the second list
+         (under the heading "Consolidate"), select the author to use instead.
+         After submitting, all documents with the first author will now list
+         the second ("Consolidate") author, and the first author will be deleted.
+
+         This may
          be useful if there are two author entries for one person or if your practice is to
          move all activity by people who have left the organization to Obsolete Author
          or something similar.
 
-             This field is optional.
+         This field is optional.
      </text>
  </entry>
 
