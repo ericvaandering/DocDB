@@ -8,7 +8,7 @@
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 #
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -44,9 +44,9 @@ GetSecurityGroups();
 my $Untaint = CGI::Untaint -> new($query -> Vars);
 
 my $InstitutionID = $Untaint -> extract(-as_integer => "inst") || 0;
-my $FirstName = $Untaint -> extract(-as_safehtml => "first") || 0;
-my $MiddleInitials = $Untaint -> extract(-as_safehtml => "middle") || 0;
-my $LastName = $Untaint -> extract(-as_safehtml => "lastname") || 0;
+my $FirstName = $Untaint -> extract(-as_safehtml => "first") || "";
+my $MiddleInitials = $Untaint -> extract(-as_safehtml => "middle") || "";
+my $LastName = $Untaint -> extract(-as_safehtml => "lastname") || "";
 
 print $query -> header( -charset => $HTTP_ENCODING );
 DocDBHeader("Author Addition Results");
