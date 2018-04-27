@@ -4,6 +4,7 @@
   Update SHA1 to SHA for compatibiity
   Update TYPE to ENGINE for compatibility with newer MySQL/MariaDB
   Update the message when an administrator makes changes to a certificate account
+  Fix a few input sanitizations that were using 0 instead of the empty string
   Allow read-only users that have signature authority to sign documents
   Show watched documents for a user on EmailAdministerForm for that single user
   Add a parameter to limit the size of a document that can generate an archive
