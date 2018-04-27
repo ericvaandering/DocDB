@@ -30,7 +30,11 @@ sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with 
   if ($HaveAllSecurityGroups) {
     return;
   }
-   
+  unless ($dbh) { # FIXME: The DB handle may not exist if an admin user entered the wrong password
+    push @DebugStack,"No database handle. Cannot find security groups.";
+    return;
+  }
+
   push @DebugStack,"Getting all security groups";
   
   my ($GroupID,$Name,$Description,$CanCreate,$CanAdminister,$TimeStamp);
@@ -188,6 +192,12 @@ sub FetchUserGroupIDs ($) {
   my ($EmailUserID) = @_;
 
   my @UserGroupIDs = ();
+    unless ($dbh) { # FIXME: The DB handle may not exist if an admin user entered the wrong password
+    push @DebugStack,"No database handle. Cannot find user's groups.";
+    return @UserGroupIDs;
+  }
+
+
   my $UserGroupID;
   
   if ($EmailUserID) {
