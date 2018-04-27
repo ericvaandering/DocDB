@@ -192,7 +192,7 @@ sub FetchUserGroupIDs ($) {
   my ($EmailUserID) = @_;
 
   my @UserGroupIDs = ();
-    unless ($dbh) { # FIXME: The DB handle may not exist if an admin user entered the wrong password
+  unless ($dbh) { # FIXME: The DB handle may not exist if an admin user entered the wrong password
     push @DebugStack,"No database handle. Cannot find user's groups.";
     return @UserGroupIDs;
   }
