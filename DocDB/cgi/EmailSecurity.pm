@@ -78,6 +78,8 @@ sub UserPrefForm ($) {
   } elsif ($UserValidation eq "FNALSSO") {
     require "FNALSSOUtilities.pm";
     ($FQUN, $Username, $EmailAddress, $Name) = GetUserInfoFSSO();
+  } elsif ($UserValidation eq "certtificate") {
+    $FQUN = $Username;
   }
 
   print "<table class=\"MedPaddedTable LeftHeader\">";
