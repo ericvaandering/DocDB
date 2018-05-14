@@ -1,14 +1,11 @@
-#        Name: $RCSfile$
+#        Name: EmailSecurity.pm
 # Description: Security routines for individual user accounts. Used for notifications,
 #              preferences, and sign-offs. Some of this should
 #              probably be moved to other or new files.
 #
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
-#
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -205,7 +202,7 @@ sub CanSign($) {
   require "NotificationSQL.pm";
 
   FetchEmailUser($EmailUserID);
-  return $EmailUser{$EmailUserID}{CanSign};
+  return $EmailUser{$EmailUserID}{CanSign} && $EmailUser{$EmailUserID}{Verified};
 }
 
 1;
