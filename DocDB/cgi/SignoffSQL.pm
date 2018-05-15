@@ -157,7 +157,7 @@ sub GetSignoffDocumentIDs (%) {
   if ($EmailUserID) {
     $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from Signature,Signoff,DocumentRevision
             where Signature.EmailUserID=? and Signoff.SignoffID=Signature.SignoffID and
-            Signoff.DocRevID=DocumentRevision.DocRevID");
+            Signoff.DocRevID=DocumentRevision.DocRevID and DocumentRevision.Obsolete=0");
     $List -> execute($EmailUserID);
   }
 
