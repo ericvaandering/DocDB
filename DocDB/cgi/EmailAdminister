@@ -151,9 +151,10 @@ if      ($Action eq "Delete") { # Delete user
 
       my @To      = ($EmailUser{$EmailUserID}{EmailAddress},$DBWebMasterEmail);
       my $Subject = "DocDB account for $EmailUser{$EmailUserID}{Name} activated";
-      my $Body    = "An administrator has made a change to your $Project DocDB account. ";
-      $Body      .= "If you think this was done in error, ";
-      $Body      .= "please contact $DBWebMasterEmail immediately.";
+      my $Body = "An administrator has approved the request for access to DocDB or ";
+      $Body .= "made a change (such as changing group memberships) to your $Project DocDB account. ";
+      $Body .= "If you think this was done in error or have questions, ";
+      $Body .= "please contact $DBWebMasterEmail.";
       SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
     }
   }
