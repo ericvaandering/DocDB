@@ -70,8 +70,8 @@ sub ProcessSignoffList ($) {
       }
     }
 
-    push @ErrorStack,"No unique match was found for the signoff $SafeEntry. Please go
-                      back and try again.";
+    push @ErrorStack,"No unique match was found for the signoff $SafeEntry. Contact an administrator to restrict ".
+        "signatures to a single account per person.";
   }
   return @EmailUserIDs;
 }
