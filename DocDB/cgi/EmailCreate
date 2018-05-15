@@ -58,7 +58,7 @@ if ($Password ne $PassConf) {
   push @ErrorStack,"The passwords you entered did not match. Please go back and try again.";
 }
 if ($UserName !~ /^[a-zA-Z][a-zA-Z0-9_\.\-\@]+$/) {
-  push @ErrorStack,"Your username may not contain any special characters except dash, period, \@, or underscore.";
+  push @ErrorStack,"Your username may not contain any special characters except dash, period, at, or underscore.";
 }
 
 
