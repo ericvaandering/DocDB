@@ -1,11 +1,12 @@
 #
-# Description: Routines to open and close DB 
+#        Name: DBUtilities.pm
+# Description: Routines to open and close DB
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: 
 #
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -37,6 +38,9 @@ sub CreateConnection (%) {
   if ($User && $Password) {
     $dbh = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$User,$Password) 
                 || push @ErrorStack,$Msg_AdminNoConnect;
+    $dbh_ro   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass)
+                || push @ErrorStack,$Msg_NoConnect;
+
   } elsif ($Type eq "ro") {
     $dbh_ro   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass) 
                 || push @ErrorStack,$Msg_NoConnect;
@@ -55,6 +59,7 @@ sub CreateConnection (%) {
   
   unless ($dbh) {
     push @ErrorStack,"Unable to connect to the database.";
+    return undef;
   }  
   
   return $dbh;          
