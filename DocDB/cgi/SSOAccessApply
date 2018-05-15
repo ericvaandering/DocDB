@@ -1,8 +1,13 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+#        Name: SSOAccessApply
+# Description: Deal with the process of having a user apply to use DocDB via their SSO login. This is mostly
+#              for getting access to groups that they normally don't get access to
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -141,8 +146,27 @@ if ($MailInstalled) {
     $Body .= " - ".$SecurityGroups{$GroupID}{NAME}."\n";
   }
   $Body .= "\n";
-  $Body .= "If this is correct, please visit $EmailAdministerForm, ";
-  $Body .= "select \"Modify\", select the user and requested groups, and click to Submit.\n\n";
+  $Body .= "If this is correct, please visit one of these URLs: ";
+
+  my $AdminURL;
+  if ($Preferences{Security}{Instances}{Shibboleth}) {
+    $AdminURL = $ShowDocURL = $Preferences{Security}{Instances}{Shibboleth} . '/EmailAdministerForm';
+    print $Mailer "SSO URL:\n",HTML::Entities::decode_entities($AdminURL),"\n\n";
+  }
+  if ($Preferences{Security}{Instances}{FNALSSO}) {
+    $AdminURL = $ShowDocURL = $Preferences{Security}{Instances}{FNALSSO} . '/EmailAdministerForm';
+    print $Mailer "Services account / Single Sign-On URL:\n",HTML::Entities::decode_entities($AdminURL),"\n\n";
+  }
+  if ($Preferences{Security}{Instances}{Certificate}) {
+    $AdminURL = $ShowDocURL = $Preferences{Security}{Instances}{Certificate} . '/EmailAdministerForm';
+    print $Mailer "Certificate URL:\n",HTML::Entities::decode_entities($AdminURL),"\n\n";
+  }
+  if ($Preferences{Security}{Instances}{Basic}) {
+    $AdminURL = $ShowDocURL = $Preferences{Security}{Instances}{Basic} . '/EmailAdministerForm';
+    print $Mailer "DocDB username/password URL:\n",HTML::Entities::decode_entities($AdminURL),"\n\n";
+  }
+
+  $Body .= "Select \"Modify\", select the user, check \"Verify\", and click to Submit.\n\n";
   $Body .= "If the groups are not correct, select the correct groups before clicking Submit.\n\n";
   if ($ApplicationNote) {
     $Body .= "The user attached this note to their application:\n";
