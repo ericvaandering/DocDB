@@ -151,19 +151,19 @@ if ($MailInstalled) {
   my $AdminURL;
   if ($Preferences{Security}{Instances}{Shibboleth}) {
     $AdminURL = $Preferences{Security}{Instances}{Shibboleth} . '/EmailAdministerForm';
-    print $Mailer "SSO URL:\n",HTML::Entities::decode_entities($AdminURL),"\n\n";
+    $Body .= "SSO URL:\n",HTML::Entities::decode_entities($AdminURL),"\n\n";
   }
   if ($Preferences{Security}{Instances}{FNALSSO}) {
     $AdminURL = $Preferences{Security}{Instances}{FNALSSO} . '/EmailAdministerForm';
-    print $Mailer "Services account / Single Sign-On URL:\n",HTML::Entities::decode_entities($AdminURL),"\n\n";
+    $Body .= "Services account / Single Sign-On URL:\n",HTML::Entities::decode_entities($AdminURL),"\n\n";
   }
   if ($Preferences{Security}{Instances}{Certificate}) {
     $AdminURL = $Preferences{Security}{Instances}{Certificate} . '/EmailAdministerForm';
-    print $Mailer "Certificate URL:\n",HTML::Entities::decode_entities($AdminURL),"\n\n";
+    $Body .= "Certificate URL:\n",HTML::Entities::decode_entities($AdminURL),"\n\n";
   }
   if ($Preferences{Security}{Instances}{Basic}) {
     $AdminURL = $Preferences{Security}{Instances}{Basic} . '/EmailAdministerForm';
-    print $Mailer "DocDB username/password URL:\n",HTML::Entities::decode_entities($AdminURL),"\n\n";
+    $Body .= "DocDB username/password URL:\n",HTML::Entities::decode_entities($AdminURL),"\n\n";
   }
 
   $Body .= "Select \"Modify\", select the user, check \"Verify\", and click to Submit.\n\n";
