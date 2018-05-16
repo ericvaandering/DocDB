@@ -54,7 +54,7 @@ $AnswerFile = ".DocDBSetup";
 my @PublicIgnore = ("AddFiles", "AddFilesForm", "AdministerForm", "AuthorAdd",
 "AuthorAddForm", "AuthorAdminister", "CertificateApplyForm", "ConfirmTalkHint",
 "DeleteConfirm", "DeleteDocument", "DocTypeAdminister", "DocumentAddForm",
-"EmailAdminister", "EmailAdministerForm", "EmailCreate", "EmailLogin",
+"EmailAdminister", "EmailAdministerForm", "EmailLogin",
 "EventAdministerForm", "GroupAdminister", "GroupAdministerForm",
 "InstitutionAdminister", "JournalAdminister", "KeywordAdministerForm",
 "KeywordGroupAdminister", "KeywordListAdminister", "MajorTopicAdminister",
