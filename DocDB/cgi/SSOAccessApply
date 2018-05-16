@@ -150,19 +150,19 @@ if ($MailInstalled) {
 
   my $AdminURL;
   if ($Preferences{Security}{Instances}{Shibboleth}) {
-    $AdminURL = $ShowDocURL = $Preferences{Security}{Instances}{Shibboleth} . '/EmailAdministerForm';
+    $AdminURL = $Preferences{Security}{Instances}{Shibboleth} . '/EmailAdministerForm';
     print $Mailer "SSO URL:\n",HTML::Entities::decode_entities($AdminURL),"\n\n";
   }
   if ($Preferences{Security}{Instances}{FNALSSO}) {
-    $AdminURL = $ShowDocURL = $Preferences{Security}{Instances}{FNALSSO} . '/EmailAdministerForm';
+    $AdminURL = $Preferences{Security}{Instances}{FNALSSO} . '/EmailAdministerForm';
     print $Mailer "Services account / Single Sign-On URL:\n",HTML::Entities::decode_entities($AdminURL),"\n\n";
   }
   if ($Preferences{Security}{Instances}{Certificate}) {
-    $AdminURL = $ShowDocURL = $Preferences{Security}{Instances}{Certificate} . '/EmailAdministerForm';
+    $AdminURL = $Preferences{Security}{Instances}{Certificate} . '/EmailAdministerForm';
     print $Mailer "Certificate URL:\n",HTML::Entities::decode_entities($AdminURL),"\n\n";
   }
   if ($Preferences{Security}{Instances}{Basic}) {
-    $AdminURL = $ShowDocURL = $Preferences{Security}{Instances}{Basic} . '/EmailAdministerForm';
+    $AdminURL = $Preferences{Security}{Instances}{Basic} . '/EmailAdministerForm';
     print $Mailer "DocDB username/password URL:\n",HTML::Entities::decode_entities($AdminURL),"\n\n";
   }
 

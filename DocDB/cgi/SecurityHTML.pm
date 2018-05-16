@@ -5,7 +5,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 
-# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -57,10 +57,9 @@ sub SecurityScroll (%) {
   my %GroupLabels = ();
 
   foreach my $GroupID (@GroupIDs) {
-    SmartHTML({-text => $SecurityGroups{$GroupID}{NAME}},);
-    $GroupLabels{$GroupID} = SmartHTML({-text => $SecurityGroups{$GroupID}{NAME}},);
+    $GroupLabels{$GroupID} = $SecurityGroups{$GroupID}{NAME};
     if ($Format eq "full") {
-      $GroupLabels{$GroupID} .= " [".SmartHTML({-text => $SecurityGroups{$GroupID}{Description}},)."]";
+      $GroupLabels{$GroupID} .= " [".$SecurityGroups{$GroupID}{Description}."]";
     }
   }
 
