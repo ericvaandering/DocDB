@@ -36,22 +36,33 @@ sub CreateConnection (%) {
   my $Password = $Params{-password};
   
   if ($User && $Password) {
-    $dbh = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$User,$Password) 
-                || push @ErrorStack,$Msg_AdminNoConnect;
-    $dbh_ro   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass)
-                || push @ErrorStack,$Msg_NoConnect;
+    $dbh = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$User,$Password);
+    unless ($dbh) {
+      push @ErrorStack,$Msg_AdminNoConnect;
+    };
+    $dbh_ro = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+    unless ($dbh_ro) {
+      push @ErrorStack,$Msg_NoConnect;
+    };
 
   } elsif ($Type eq "ro") {
-    $dbh_ro   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass) 
-                || push @ErrorStack,$Msg_NoConnect;
+    $dbh_ro = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+    unless ($dbh_ro) {
+      push @ErrorStack,$Msg_NoConnect;
+    };
+
     unless ($dbh) {
       $dbh = $dbh_ro;
     }
   } elsif ($Type eq "rw") {
-    $dbh_ro   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass) 
-                || push @ErrorStack,$Msg_NoConnect;
-    $dbh_rw   = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass) 
-                || push @ErrorStack,$Msg_NoConnect;
+    $dbh_ro = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
+    unless ($dbh_ro) {
+      push @ErrorStack,$Msg_NoConnect;
+    };
+    $dbh_rw = DBI -> connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rwuser,$db_rwpass);
+    unless ($dbh_rw) {
+      push @ErrorStack,$Msg_NoConnect;
+    };
     unless ($dbh) {
       $dbh = $dbh_rw;
     }
@@ -59,7 +70,7 @@ sub CreateConnection (%) {
   
   unless ($dbh) {
     push @ErrorStack,"Unable to connect to the database.";
-    return undef;
+    return;
   }  
   
   return $dbh;          
