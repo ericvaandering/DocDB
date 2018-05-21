@@ -470,22 +470,31 @@ my ($AuthorScrollDisplay,$AuthorTextDisplay);
 if ($AuthorListOrdered) {
   $AuthorMode = "field";
 }
-if ($AuthorMode eq "list") {
+if ($AuthorMode eq "list" || $AuthorMode eq "active") {
    $AuthorTextDisplay   = ' style="display: none;"';
 } elsif ($AuthorMode eq "field") {
    $AuthorScrollDisplay = ' style="display: none;"';
 }
-$ScrollExtraText = "<a href=\"Javascript:author_method_choose(\'text\');\">(Text w/ order)</a>";
-$TextExtraText   = "<a href=\"Javascript:author_method_choose(\'scroll\');\">(Select from list)</a>";
 
 if ($AuthorMode eq "active") {
-  print "<td id=\"AuthorActiveSearch\">\n";
+  $ScrollExtraText = "<a href=\"Javascript:author_method_choose_text(\'text\');\">(Text w/ order)</a>";
+  $TextExtraText   = "<a href=\"Javascript:author_method_choose_text(\'active\');\">(Active search)</a>";
+
+  print "<td id=\"AuthorActiveSearch\"$AuthorScrollDisplay>\n";
   print $query -> hidden(-name => 'authormode', -default => $AuthorMode);
   print AuthorActiveSearch({-required  => $RequiredEntries{Author}, -helplink => "authors",
               -defaultauthorids   => \@AuthorDefaults,
               -extratext => $ScrollExtraText,});
   print "</td>\n";
+  print "<td id=\"AuthorText\"$AuthorTextDisplay>\n";
+  AuthorTextEntry({ -required => $RequiredEntries{Author}, -extratext => $TextExtraText,
+                    -default  => \@AuthorDefaults, });
+  print "</td>\n";
+
 } else {
+  $ScrollExtraText = "<a href=\"Javascript:author_method_choose(\'text\');\">(Text w/ order)</a>";
+  $TextExtraText   = "<a href=\"Javascript:author_method_choose(\'scroll\');\">(Select from list)</a>";
+
   print "<td id=\"AuthorScroll\"$AuthorScrollDisplay>\n";
   print $query -> hidden(-name => 'authormode', -default => $AuthorMode);
   AuthorScroll(-required  => $RequiredEntries{Author}, -helplink => "authors",
