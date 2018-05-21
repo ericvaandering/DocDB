@@ -1,14 +1,10 @@
 #        Name: AuthorHTML.pm
-#
-#        Name: $RCSfile$
 # Description: Routines to create HTML elements for authors and institutions
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -328,13 +324,11 @@ sub RequesterActiveSearch {
 
 sub AuthorActiveSearch {
   my ($ArgRef) = @_;
-  my $Depth      = exists $ArgRef->{-depth}      ?   $ArgRef->{-depth}      : 2;
-  my @DefaultAuthorIDs = exists $ArgRef->{-defaultauthorids}   ? @{$ArgRef->{-defaultauthorids}}  : ();
-  my $Name   = exists $ArgRef->{-name}   ?   $ArgRef->{-name}   : "authors";
-  my $HelpLink   = exists $ArgRef->{-helplink}   ?   $ArgRef->{-helplink}   : "authors";
-  my $HelpText   = exists $ArgRef->{-helptext}   ?   $ArgRef->{-helptext}   : "Authors";
-  my $Required   = exists $ArgRef->{-required}   ?   $ArgRef->{-required}   : $TRUE;
-  my $ExtraText =   $Params{-extratext} || "";
+  my @DefaultAuthorIDs = exists $ArgRef->{-defaultauthorids} ? @{$ArgRef->{-defaultauthorids}} : ();
+  my $HelpLink = exists $ArgRef->{-helplink} ? $ArgRef->{-helplink} : "authors";
+  my $HelpText = exists $ArgRef->{-helptext} ? $ArgRef->{-helptext} : "Authors";
+  my $Required = exists $ArgRef->{-required} ? $ArgRef->{-required} : $TRUE;
+  my $ExtraText = exists $ArgRef->{-extratext} ? $ArgRef->{-extratext} : "";
 
   my @AuthorIDs = sort byLastName keys %Authors;
 
