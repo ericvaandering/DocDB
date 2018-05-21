@@ -470,9 +470,9 @@ my ($AuthorScrollDisplay,$AuthorTextDisplay);
 if ($AuthorListOrdered) {
   $AuthorMode = "field";
 }
-if ($AuthorMode eq "list") {
+if ($AuthorMode eq "list" || $AuthorMode eq "active") {
    $AuthorTextDisplay   = ' style="display: none;"';
-} elsif ($AuthorMode eq "field" || $AuthorMode eq "active") {
+} elsif ($AuthorMode eq "field") {
    $AuthorScrollDisplay = ' style="display: none;"';
 }
 $ScrollExtraText = "<a href=\"Javascript:author_method_choose(\'text\');\">(Text w/ order)</a>";
