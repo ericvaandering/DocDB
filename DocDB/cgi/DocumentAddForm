@@ -476,9 +476,11 @@ if ($AuthorMode eq "list" || $AuthorMode eq "active") {
    $AuthorScrollDisplay = ' style="display: none;"';
 }
 $ScrollExtraText = "<a href=\"Javascript:author_method_choose(\'text\');\">(Text w/ order)</a>";
-$TextExtraText   = "<a href=\"Javascript:author_method_choose(\'scroll\');\">(Select from list)</a>";
+$ScrollExtraText = "<a href=\"Javascript:author_method_choose_text(\'text\');\">(Text w/ order)</a>";
 
 if ($AuthorMode eq "active") {
+  $TextExtraText   = "<a href=\"Javascript:author_method_choose_text(\'active\');\">(Active search)</a>";
+
   print "<td id=\"AuthorActiveSearch\"$AuthorScrollDisplay>\n";
   print $query -> hidden(-name => 'authormode', -default => $AuthorMode);
   print AuthorActiveSearch({-required  => $RequiredEntries{Author}, -helplink => "authors",
@@ -491,6 +493,8 @@ if ($AuthorMode eq "active") {
   print "</td>\n";
 
 } else {
+  $TextExtraText   = "<a href=\"Javascript:author_method_choose(\'scroll\');\">(Select from list)</a>";
+
   print "<td id=\"AuthorScroll\"$AuthorScrollDisplay>\n";
   print $query -> hidden(-name => 'authormode', -default => $AuthorMode);
   AuthorScroll(-required  => $RequiredEntries{Author}, -helplink => "authors",
