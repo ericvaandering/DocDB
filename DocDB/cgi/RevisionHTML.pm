@@ -1,12 +1,10 @@
-#        Name: $RCSfile$
-# Description:
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
+#        Name: RevisionHTML.pm
+# Description: Produce HTML related to information on document revisions
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -472,7 +470,8 @@ sub OtherVersionLinks {
   require "Sorts.pm";
 
   my ($DocumentID,$CurrentVersion) = @_;
-  my @RevIDs   = reverse sort RevisionByVersion &FetchRevisionsByDocument($DocumentID);
+  my @RevIDs = reverse sort RevisionByVersion &FetchRevisionsByDocument($DocumentID);
+  my $DocRevID = $RevIDs[0];
 
   my $HTML = "";
   $HTML .= "<div id=\"OtherVersions\">\n";
