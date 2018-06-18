@@ -320,12 +320,15 @@ sub CopyRevisionSignoffs { # CopySignoffs from one revision to another
 
   my %SignoffMap   = ();
 
+  push @DebugStack, "Copying signatures from DRI $OldDocRevID to $NewDocRevID with T/F $CopySignatures";
+
   my @OldSignoffIDs = GetAllSignoffsByDocRevID($OldDocRevID);
   foreach my $OldSignoffID (@OldSignoffIDs) {
     # Copy the signoff
     FetchSignoff($OldSignoffID);
     $SignoffInsert->execute($NewDocRevID,$Signoffs{$OldSignoffID}{Note});
     my $NewSignoffID = $SignoffInsert->{mysql_insertid}; # Works with MySQL only
+
     $SignoffMap{$OldSignoffID} = $NewSignoffID;
 
     my @OldSignatureIDs = GetSignatures($OldSignoffID);
@@ -338,6 +341,7 @@ sub CopyRevisionSignoffs { # CopySignoffs from one revision to another
         $Signed = $FALSE;
         $TimeStamp = 0;
       }
+      push @DebugStack, "Copying a signature for $Signatures{$OldSignatureID}{EmailUserID} to SI $NewSignoffID: T/F $Signed at $TimeStamp ";
       $SignatureInsert->execute($Signatures{$OldSignatureID}{EmailUserID}, $NewSignoffID,
                                 $Signatures{$OldSignatureID}{Note},        $Signed,
                                 $TimeStamp);

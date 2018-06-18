@@ -50,6 +50,7 @@ require "Defaults.pm";
 require "Security.pm";
 require "XRefUtilities.pm";
 require "AuthorUtilities.pm";
+require "SignoffUtilities.pm";
 
 require "FileHTML.pm";
 require "JournalHTML.pm";
@@ -258,7 +259,6 @@ if ($EnhancedSecurity) {
 # Warn the user if they are about to modify a controlled document
 my ($SigStatus) = RevisionStatus($DocRevID);
 if ($UseSignoffs && ($mode eq "update" || $mode eq "updatedb")) {
-  require "SignoffUtilities.pm";
   unless ($SigStatus eq "Unmanaged") {
     if (CanPreserveSigs($mode)) {
       push @WarnStack, $Msg_WarnModManagedHack;
