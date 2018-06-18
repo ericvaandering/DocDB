@@ -254,11 +254,9 @@ unless (&CanCreate()) {
   push @ErrorStack,"You are not allowed to modify or create documents.";
 }
 if ($PreserveSigs && !CanPreserveSigs($mode)) {
-  push @ErrorStack,'You are not authorized to preserve signatures when making '.
-                   'this change. Members of another group may have this capability. ';
-}
-if ($PreserveSigs && $mode ne "updatedb") {
-  push @ErrorStack,'Signatures may only be preserved when modifying document meta-data.';
+  push @ErrorStack,'You are not authorized to preserve signatures when making this change. '.
+                   'Members of another group may have this capability. Permissions to preserve signatures depend on '.
+                   'the type of modification.';
 }
 unless ($RequesterID) {
   push @ErrorStack,"You must supply a submitter for this document.";

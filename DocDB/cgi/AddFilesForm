@@ -43,6 +43,7 @@ require "FileHTML.pm";
 require "Cookies.pm";
 require "Defaults.pm";
 require "HTMLUtilities.pm";
+require "SignoffUtilities.pm";
 require "UntaintInput.pm";
 require "Scripts.pm";
 
