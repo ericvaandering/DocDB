@@ -99,11 +99,11 @@ unless ($Version) {
 }
 
 # Warn the user if they are about to modify a controlled document
+my ($SigStatus) = RevisionStatus($DocRevID);
 
 if ($UseSignoffs) {
   require "SignoffUtilities.pm";
-  my ($Status) = &RevisionStatus($DocRevID);
-  unless ($Status eq "Unmanaged") {
+  unless ($SigStatus eq "Unmanaged") {
     if (CanPreserveSigs("update")) {
       push @WarnStack, $Msg_WarnModManagedHack;
     } else {
@@ -150,7 +150,8 @@ print FormElementTitle(-helplink => "replacefiles", -helptext => "Replace duplic
 print $query -> checkbox(-name => "replace", -label => '(Check for yes.)',
                          -onclick => "helppopupwindow(\'DocDBHelp?term=replacefiles\');");
 print "</td></tr>";
-if ($UseSignoffs && CanPreserveSigs("update")) {
+
+if ($SigStatus ne "Unmanaged" && CanPreserveSigs("update")) {
   print '<tr><td>';
   print FormElementTitle(-helplink => "preservesigs",
                          -helptext => "Preserve signatures on this revision?",

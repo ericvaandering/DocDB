@@ -256,11 +256,10 @@ if ($EnhancedSecurity) {
 }
 
 # Warn the user if they are about to modify a controlled document
-
+my ($SigStatus) = RevisionStatus($DocRevID);
 if ($UseSignoffs && ($mode eq "update" || $mode eq "updatedb")) {
   require "SignoffUtilities.pm";
-  my ($Status) = &RevisionStatus($DocRevID);
-  unless ($Status eq "Unmanaged") {
+  unless ($SigStatus eq "Unmanaged") {
     if (CanPreserveSigs($mode)) {
       push @WarnStack, $Msg_WarnModManagedHack;
     } else {
@@ -606,7 +605,7 @@ if ($UseSignoffs) { # FIXME: Later may be more complicated control
   print "</td></tr>\n";
 }
 
-if (($mode eq "updatedb" || $mode eq "update") && $UseSignoffs &&
+if (($mode eq "updatedb" || $mode eq "update") && $SigStatus ne "Unmanaged" &&
     $SignoffDefault && CanPreserveSigs($mode)) {
   print '<tr><td colspan="4">';
   print FormElementTitle(-helplink => "preservesigs",
