@@ -437,12 +437,15 @@ if ($mode eq "reserve" || $mode eq "add") {
 ### version or the one being updated
 
 my $version;
+my $OldRevID;
 if      ($mode eq "reserve") {
   $version   = 0;
 } elsif ($mode eq "add") {
   $version   = 1;
 } elsif ($mode eq "update") {
   &FetchDocument($documentID);
+  $OldRevID = FetchRevisionByDocumentAndVersion($documentID,$Documents{$documentID}{NVersions});
+  push @DebugStack, "Set OldRevID to $OldRevID in update mode";
   $version   = $Documents{$documentID}{NVersions} + 1;
 } elsif ($mode eq "updatedb") {
   &FetchDocument($documentID);
@@ -455,12 +458,13 @@ if      ($mode eq "reserve") {
     push @WarnStack,"You have updated an old version of a document. Hope this
     is what you wanted to do.";
   }
+  $OldRevID = FetchRevisionByDocumentAndVersion($documentID,$version);
+  push @DebugStack, "Set OldRevID to $OldRevID in update metadata mode";
+
 }
 
-my $OldRevID;
 if ($mode eq "updatedb") { # New Document revision replaces old. Fetch
                            # old DocumentRevision and mark it obsolete
-  $OldRevID = &FetchRevisionByDocumentAndVersion($documentID,$version);
   my $ObsoleteRevision = $dbh -> prepare("update DocumentRevision set Obsolete=1 where DocRevID=?");
   $ObsoleteRevision -> execute($OldRevID);
 }
@@ -524,7 +528,7 @@ if ($UseSignoffs && $SignoffList && !$PreserveSigs) {
   if (@SignoffIDs) {
     InsertSignoffList($DocRevID,@SignoffIDs);
   }
-} elsif ($PreserveSigs) {
+} elsif ($PreserveSigs && $OldRevID) {
   push @WarnStack,"The document's signatures have been identically preserved. ".
                   "Any changes in the list have been ignored.";
   CopyRevisionSignoffs($OldRevID,$DocRevID,$TRUE);
