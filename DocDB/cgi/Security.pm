@@ -238,9 +238,9 @@ sub CanPreserveSigs { # Can the user preserve signatures during document modific
   my @AllowedGroups = ();
   if ($Mode eq "update") {
     @AllowedGroups = @HackDocsPreserveSignoffGroups;
-    push @AllowedGroups, @HackPreserveSignoffGroups;
   } else {
     @AllowedGroups = @HackPreserveSignoffGroups;
+    push @AllowedGroups, @HackPreserveSignoffGroups;
   }
 
   my $CanPreserveSigs = $FALSE;
