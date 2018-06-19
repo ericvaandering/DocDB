@@ -26,7 +26,8 @@
    latest version of the document. Provide a link to return to the previous behavior which shows
    any document that had that author or topic on any version.
   Make the list of documents sortable dynamically by clicking columns
-
+  Restore authors being copied on metadata and document updates (p1)
+  
 8.8.7
   Fix several places where apostrophes or single quotes were causing problems with rendered Javascript
   Make Timestamp fields in setup & migration scripts compatible with MySQL 5.5
