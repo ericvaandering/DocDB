@@ -117,7 +117,7 @@ sub MailNotices (%) {
       $Subject  = "Ready for signature: $FullID: $Title";
       $Message  = "The following document ".
                   "in the $Project Document Database ".
-                  "is ready for your signature:\n\n".
+                  "is ready for your signature:\n\n";
       $Feedback = "<b>Signature(s) requested from: </b>";
     } elsif ($Type eq "approved") {
       $Subject  = "Approved: $FullID: $Title";

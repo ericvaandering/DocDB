@@ -24,7 +24,7 @@
 
 $Msg_NoConnect        = "Unable to connect to the database. Please alert an administrator.";
 
-$Msg_AdminNoConnect   = "Unable to connect to the database. Make sure you use the correct password.";
+$Msg_AdminNoConnect   = "Unable to connect to the database. Make sure you use the correct DocDB administrator username and password.";
 $Msg_AdminNoLogin     = "You must be logged in as the administrator to perform this action.";
 $Msg_AdminNoPass      = "You must supply a username and password to perform administration actions.";
 

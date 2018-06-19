@@ -12,7 +12,7 @@
 #    Modified:
 #
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -82,9 +82,15 @@ unless (CanAdminister()) {
 }
 EndPage();
 
-if      ($Action eq "Delete") { # Delete user
+if ($Action eq "Delete") { # Delete user
+  my @SignoffIDs = GetSignoffIDs(-emailuserid => $EmailUserID);
   if (!$EmailUserID) {
     push @ErrorStack,$Msg_ModEUserEmpty;
+  } elsif (@SignoffIDs) {
+    push @ErrorStack, 'You cannot delete this account, it has signed or needs to sign documents. '.
+                      'Visit the URL '."$SignatureReport?emailuserid=$EmailUserID".' to see which documents. '.
+                      'You can disable this account by using Modify and checking Clear Verify and Sign '.
+                      'or you can transfer this account to another and then delete it.';
   } else {
     my $UserDelete         = $dbh -> prepare("delete from EmailUser    where EmailUserID=?");
     my $UsersGroupDelete   = $dbh -> prepare("delete from UsersGroup   where EmailUserID=?");
@@ -106,12 +112,14 @@ if      ($Action eq "Delete") { # Delete user
   }
   ActionReport();
 } elsif ($Action eq "Modify") {
+  push @DebugStack, "Changing info for EmailUserID $EmailUserID";
   unless ($EmailUserID) { # Deal with password changes
     push @ErrorStack,$Msg_ModEUserEmpty;
   }
   EndPage();
 
   FetchEmailUser($EmailUserID);
+  push @DebugStack, "Changing info for $EmailUser{$EmailUserID}{Username}";
 
   if ($NewPassword) {
     srand (time ^ $$ ^ unpack "%32L*", `ps -eaf`);
@@ -122,7 +130,7 @@ if      ($Action eq "Delete") { # Delete user
     my $EncryptedPassword = crypt($NewPassword,$Salt);
     my $UserUpdate = $dbh -> prepare("update EmailUser set Password=? where EmailUserID=?");
        $UserUpdate -> execute($EncryptedPassword,$EmailUserID);
-    push @ActionStack,"The User's password was changed. They should change it again ASAP.";
+    push @ActionStack,"The user's password was changed. They should change it again ASAP.";
   }
   if ($ClearGroups || $SingleUser) {
     my $UsersGroupDelete = $dbh -> prepare("delete from UsersGroup where EmailUserID=?");
@@ -145,16 +153,16 @@ if      ($Action eq "Delete") { # Delete user
     my $UserUpdate = $dbh -> prepare("update EmailUser set Verified=1 where EmailUserID=?");
        $UserUpdate -> execute($EmailUserID);
     push @ActionStack,"The user is verified.";
-
-    if ($MailInstalled && $UserValidation eq "certificate") {
+    push @DebugStack, "Verifying user";
+    if ($MailInstalled && $UserValidation ne "basic-user" && $EmailUser{$EmailUserID}{EmailAddress}) {
+      push @DebugStack, "Sending verification mail to user and admin";
       require "EmailUtilities.pm";
 
       my @To      = ($EmailUser{$EmailUserID}{EmailAddress},$DBWebMasterEmail);
       my $Subject = "DocDB account for $EmailUser{$EmailUserID}{Name} activated";
-      my $Body = "An administrator has approved the request for access to DocDB or ";
+      my $Body = "An administrator has approved a request for access to DocDB or ";
       $Body .= "made a change (such as changing group memberships) to your $Project DocDB account. ";
-      $Body .= "If you think this was done in error or have questions, ";
-      $Body .= "please contact $DBWebMasterEmail.";
+      $Body .= "If you think this was done in error or have questions, please contact $DBWebMasterEmail.";
       SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
     }
   }
@@ -173,8 +181,10 @@ if      ($Action eq "Delete") { # Delete user
     }
   }
 
+  push @DebugStack, "Clearing all EmailUsers";
   ClearEmailUsers();
   FetchEmailUser($EmailUserID);
+  push @DebugStack, "Got info for EmailUserID $EmailUserID, $EmailUser{$EmailUserID}{Username}";
   ActionReport();
 
   print "<h3>The user now has the following information:</h3>";
@@ -187,55 +197,7 @@ if      ($Action eq "Delete") { # Delete user
   # Consolidate certificates starting with basic settings
 
   if ($NewCertID && $EmailUserID && $NewCertID != $EmailUserID) {
-    FetchEmailUser($EmailUserID);
-    FetchEmailUser($NewCertID);
-    if ($EmailUser{$EmailUserID}{Name} && !$EmailUser{$NewCertID}{Name}) {
-      my $UserUpdate = $dbh -> prepare("update EmailUser set Name=? where EmailUserID=?");
-         $UserUpdate -> execute($EmailUser{$EmailUserID}{Name}, $NewCertID);
-    }
-    if ($EmailUser{$EmailUserID}{EmailAddress} && !$EmailUser{$NewCertID}{EmailAddress}) {
-      my $UserUpdate = $dbh -> prepare("update EmailUser set EmailAddress=? where EmailUserID=?");
-         $UserUpdate -> execute($EmailUser{$EmailUserID}{EmailAddress}, $NewCertID);
-    }
-    if ($EmailUser{$EmailUserID}{AuthorID} && !$EmailUser{$NewCertID}{AuthorID}) {
-      my $UserUpdate = $dbh -> prepare("update EmailUser set AuthorID=? where EmailUserID=?");
-         $UserUpdate -> execute($EmailUser{$EmailUserID}{AuthorID}, $NewCertID);
-    }
-    if ($EmailUser{$EmailUserID}{CanSign} && !$EmailUser{$NewCertID}{CanSign}) {
-      my $UserUpdate = $dbh -> prepare("update EmailUser set CanSign=1 where EmailUserID=?");
-         $UserUpdate -> execute($NewCertID);
-    }
-    if ($EmailUser{$EmailUserID}{Verified} && !$EmailUser{$NewCertID}{Verified}) {
-      my $UserUpdate = $dbh -> prepare("update EmailUser set Verified=1 where EmailUserID=?");
-         $UserUpdate -> execute($NewCertID);
-    }
-
-    # Update all notifications
-    my $NotificationUpdate = $dbh -> prepare("update Notification set EmailUserID=? where EmailUserID=?");
-       $NotificationUpdate -> execute($NewCertID, $EmailUserID);
-
-    # Copy all groups
-    my @UsersGroupIDs = FetchUserGroupIDs($EmailUserID);
-    foreach my $UsersGroupID (@UsersGroupIDs) {
-      my $UsersGroupSelect = $dbh -> prepare("select UsersGroupID from UsersGroup where EmailUserID=? and GroupID=?");
-         $UsersGroupSelect -> execute($NewCertID,$UsersGroupID);
-      my ($ComboExists) = $UsersGroupSelect -> fetchrow_array;
-      unless ($ComboExists) {
-        my $UsersGroupUpdate = $dbh -> prepare("insert into UsersGroup (UsersGroupID,EmailUserID,GroupID) ".
-                                               " values (0,?,?)");
-           $UsersGroupUpdate -> execute($NewCertID,$UsersGroupID);
-        FetchSecurityGroup($UsersGroupID);
-        push @ActionStack,"Added user to $SecurityGroups{$UsersGroupID}{NAME}";
-      }
-    }
-
-    # Update signed signatures
-    my $SignatureUpdate = $dbh -> prepare("update Signature set EmailUserID=? where EmailUserID=?");
-       $SignatureUpdate -> execute($NewCertID, $EmailUserID);
-
-    # Remove signature authority from the old account
-    my $UserUpdate = $dbh -> prepare("update EmailUser set CanSign=0 where EmailUserID=?");
-       $UserUpdate -> execute($EmailUserID);
+    TransferEmailUserSettings( {-oldemailuserid => $EmailUserID, -newemailuserid => $NewCertID} );
 
     # Print the new user info
     ClearEmailUsers();
@@ -245,19 +207,19 @@ if      ($Action eq "Delete") { # Delete user
 
     print "<h3>The new user now has the following information:</h3>";
     print "<table class=\"LowPaddedTable\">\n";
-    PrintEmailUserInfo($NewCertID);
+    PrintEmailUserInfo($NewCertID, $TRUE);
     print "</table>\n";
 
-    if ($MailInstalled && $UserValidation eq "certificate") {
+    if ($MailInstalled
+        && ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO")) {
       require "EmailUtilities.pm";
 
-      my @To      = ($EmailUser{$EmailUserID}{EmailAddress},$EmailUser{$NewCertID}{EmailAddress},$DBWebMasterEmail);
+      my @To = ($EmailUser{$EmailUserID}{EmailAddress}, $EmailUser{$NewCertID}{EmailAddress},$DBWebMasterEmail);
       my $Subject = "DocDB account for $EmailUser{$NewCertID}{Name} updated";
-      my $Body    = "An administrator has transferred permissions from the certificate ";
-      $Body      .= "$EmailUser{$EmailUserID}{Name} to the new certificate ";
-      $Body      .= "$EmailUser{$NewCertID}{Name} for access to $Project DocDB. ";
-      $Body      .= "If you think this was done in error, ";
-      $Body      .= "please contact $DBWebMasterEmail immediately.";
+      my $Body = "An administrator has transferred permissions from ";
+      $Body .= "account $EmailUser{$EmailUserID}{Username} to ";
+      $Body .= "account $EmailUser{$NewCertID}{Username} for access to $Project DocDB. ";
+      $Body .= "If you think this was done in error or have questions, please contact $DBWebMasterEmail.";
       SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
     }
 

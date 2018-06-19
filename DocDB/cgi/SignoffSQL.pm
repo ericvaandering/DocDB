@@ -50,7 +50,7 @@ sub ProcessSignoffList ($) {
       $Entry = join ' ',@Parts[1],@Parts[0];
     }
 
-    my $EmailUserList = $dbh -> prepare("select EmailUserID from EmailUser where Name rlike ?");
+    my $EmailUserList = $dbh -> prepare("select EmailUserID from EmailUser where CanSign=1 and Name rlike ?");
 
 ### Find exact match (initial or full name)
     my $RegExp = '^('.$Entry.'|'.$SafeEntry.')$';
@@ -65,12 +65,13 @@ sub ProcessSignoffList ($) {
         push @EmailUserIDs,$EmailUserID;
         next;
       } else {
+        # FIXME: This code path is not currently possible
         push @ErrorStack,"$SafeEntry is not allowed to sign documents. Contact an administrator to change the permissions or ".
                          "restrict your choices to those who can sign documents.";
       }
     }
 
-    push @ErrorStack,"No unique match was found for the signoff $SafeEntry. Contact an administrator to restrict ".
+    push @ErrorStack,"No unique match was found for the signoff $SafeEntry or $SafeEntry is not allowed to sign documents. Contact an administrator to restrict ".
         "signatures to a single account per person.";
   }
   return @EmailUserIDs;

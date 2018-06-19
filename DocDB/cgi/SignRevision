@@ -77,7 +77,7 @@ if ($Password) {
   $EmailUserID = &ValidateEmailUser($UserName,$Password);
 }
 
-if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
+if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
   $EmailUserID = FetchEmailUserID();
 }
 

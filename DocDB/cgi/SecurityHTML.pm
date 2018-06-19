@@ -1,14 +1,11 @@
 #
-#        Name: $RCSfile$
+#        Name: SecurityHTML.pm
 # Description: Routines which supply HTML and form elements related to security
-#
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -60,10 +57,9 @@ sub SecurityScroll (%) {
   my %GroupLabels = ();
 
   foreach my $GroupID (@GroupIDs) {
-    SmartHTML({-text => $SecurityGroups{$GroupID}{NAME}},);
-    $GroupLabels{$GroupID} = SmartHTML({-text => $SecurityGroups{$GroupID}{NAME}},);
+    $GroupLabels{$GroupID} = $SecurityGroups{$GroupID}{NAME};
     if ($Format eq "full") {
-      $GroupLabels{$GroupID} .= " [".SmartHTML({-text => $SecurityGroups{$GroupID}{Description}},)."]";
+      $GroupLabels{$GroupID} .= " [".$SecurityGroups{$GroupID}{Description}."]";
     }
   }
 
@@ -131,7 +127,7 @@ sub ModifyListByID {
 
 sub PersonalAccountLink () {
   my $PersonalAccountLink = "<a href=\"$EmailLogin\">Your Account</a>";
-  if ($UserValidation eq "shibboleth") {
+  if ($UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
     $PersonalAccountLink = "<a href=\"$SelectEmailPrefs\">Your Account</a>";
   } elsif ($UserValidation eq "certificate") {
     require "CertificateUtilities.pm";
@@ -143,7 +139,7 @@ sub PersonalAccountLink () {
     }
   }
 
-  if ($Public) {
+  if ($Public && $UserValidation ne "FNALSSO") {
     $PersonalAccountLink = "";
   }
   return $PersonalAccountLink;

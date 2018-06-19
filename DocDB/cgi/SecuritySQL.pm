@@ -1,4 +1,9 @@
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+#        Name: SecuritySQL.pm
+# Description: Security an groups access to the database
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -25,7 +30,11 @@ sub GetSecurityGroups { # Creates/fills a hash $SecurityGroups{$GroupID}{} with 
   if ($HaveAllSecurityGroups) {
     return;
   }
-   
+  unless ($dbh) { # FIXME: The DB handle may not exist if an admin user entered the wrong password
+    push @DebugStack,"No database handle. Cannot find security groups.";
+    return;
+  }
+
   push @DebugStack,"Getting all security groups";
   
   my ($GroupID,$Name,$Description,$CanCreate,$CanAdminister,$TimeStamp);
@@ -140,7 +149,12 @@ sub GetRevisionModifyGroups {
 
 sub SecurityLookup {
   my ($User) = @_;
-  
+
+  unless ($dbh) {
+    push @DebugStack,"No database handle. Cannot find user.";
+    return;
+  }
+
   my $GroupName = $dbh->prepare("select Name from SecurityGroup where lower(Name) like lower(?)");
   $GroupName -> execute($User);
 
@@ -153,7 +167,12 @@ sub FetchSecurityGroupByName ($) {
   my ($Name) = @_;
   if ($SecurityIDs{$Name}) {
     return $SecurityIDs{$Name};
-  }  
+  }
+
+  unless ($dbh) {
+    push @DebugStack,"No database handle. Cannot find group by name.";
+    return;
+  }
 
   my $GroupSelect = $dbh->prepare("select GroupID from SecurityGroup where lower(Name) like lower(?)");
 
@@ -173,6 +192,12 @@ sub FetchUserGroupIDs ($) {
   my ($EmailUserID) = @_;
 
   my @UserGroupIDs = ();
+  unless ($dbh) { # FIXME: The DB handle may not exist if an admin user entered the wrong password
+    push @DebugStack,"No database handle. Cannot find user's groups.";
+    return @UserGroupIDs;
+  }
+
+
   my $UserGroupID;
   
   if ($EmailUserID) {

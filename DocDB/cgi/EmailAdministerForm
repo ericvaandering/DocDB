@@ -8,7 +8,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2016 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -76,8 +76,8 @@ if ($UserValidation eq "certificate") {
 if ($EmailUserID) {
   print "<p>This form allows you to delete the user, change which groups the
          user belongs to, ";
-  unless ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
-    print "reset the user's password, copy settings to a new certificate, ";
+  unless ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
+    print "reset the user's password, copy settings to a new account, ";
   }
   print " and change their permissions. The full information, including
           notifications, for the user is shown below.</p>";
@@ -86,7 +86,7 @@ if ($EmailUserID) {
 
   print "<p>Since users can modify their own data and create their own accounts,
          the only functions you can perform here are to delete a user, ";
-  unless ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
+  unless ($UserValidation eq "certificate" || $UserValidation eq "shibboleth"|| $UserValidation eq "FNALSSO") {
     print "reset the user's password, ";
   }
   print "change the user's permissions, and change which groups the user belongs to. If  \"Clear Groups\" is
@@ -133,7 +133,7 @@ print "<td>\n";
 print "</td>\n";
 
 print "<td>\n";
-if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth") {
+if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
   print "&nbsp;\n";
 } else {
   print FormElementTitle(-helplink => "resetpassword", -helptext => "New Password");
