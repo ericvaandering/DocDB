@@ -234,14 +234,15 @@ sub CanPreserveSigs { # Can the user preserve signatures during document modific
 
   my ($Mode) = @_;
 
+  push @DebugStack. "Checking on ability to preserve docs for mode $Mode";
+
   # One group is allowed to preserve signoffs for document updates, the others only for metadata updates
-  my @AllowedGroups = ();
-  if ($Mode eq "update") {
-    @AllowedGroups = @HackDocsPreserveSignoffGroups;
-  } else {
-    @AllowedGroups = @HackPreserveSignoffGroups;
+  my @AllowedGroups = @HackDocsPreserveSignoffGroups;
+
+  if ($Mode ne "update") {
     push @AllowedGroups, @HackPreserveSignoffGroups;
   }
+  push @DebugStack, "Groups that can preserve signatures: ".join ', ',@AllowedGroups;
 
   my $CanPreserveSigs = $FALSE;
   if ($Public || $ReadOnly) {
@@ -249,11 +250,13 @@ sub CanPreserveSigs { # Can the user preserve signatures during document modific
   }
   my @UsersGroupIDs = FindUsersGroups();
 
+  push @DebugStack, "Users groups are: ".join ', ',@UsersGroupIDs;
   foreach my $UserGroupID (@UsersGroupIDs) {
     FetchSecurityGroup($UserGroupID);
     foreach my $PreserveName (@AllowedGroups) {
       if ($PreserveName eq $SecurityGroups{$UserGroupID}{NAME}) {
         $CanPreserveSigs = $TRUE; # User checks out
+        push @DebugStack, "Group $PreserveName allows the user to preserve signatures.";
       }
     }
   }
