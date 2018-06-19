@@ -234,7 +234,7 @@ sub CanPreserveSigs { # Can the user preserve signatures during document modific
 
   my ($Mode) = @_;
 
-  push @DebugStack. "Checking on ability to preserve docs for mode $Mode";
+  push @DebugStack, "Checking on ability to preserve docs for mode $Mode";
 
   # One group is allowed to preserve signoffs for document updates, the others only for metadata updates
   my @AllowedGroups = @HackDocsPreserveSignoffGroups;
