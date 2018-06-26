@@ -1,9 +1,10 @@
-# Description: Various routines to deal with certificates 
+#        Name: CertificateUtilities.pm
+# Description: Various routines to deal with certificates
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
-#    Modified: 
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -49,7 +50,12 @@ sub FetchEmailUserIDByCert (%) {
   # If we do http basic with users, this routine will function with minor modifications
 
   my $EmailUserSelect;
-  
+
+  unless ($dbh) {
+    push @DebugStack,"No database handle. Cannot find user by cert.";
+    return;
+  }
+
   push @DebugStack, "Finding EmailUserID and groups by DN $CertDN";
   if ($IgnoreVerification) {
     $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".

@@ -1,14 +1,12 @@
 #! /usr/bin/env perl
 #
-#        Name: $RCSfile$
+#        Name: AddFiles
 # Description: Adds downloaded files to the database and filesystem
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified:
 
-# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -101,7 +99,7 @@ if ($Preferences{Options}{SubmitAgree} && !$SubmitAgree) {
                    '\nto add files to the document.';
 }
 
-if ($PreserveSigs && !CanPreserveSigs()) {
+if ($PreserveSigs && !CanPreserveSigs("update")) {
   push @ErrorStack,'You are not authorized to preserve signatures when making '.
                    'this change. Members of another group may have this capability. ';
 }

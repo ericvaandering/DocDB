@@ -1,14 +1,11 @@
 #
-#        Name: $RCSfile$
+#        Name: Security.pm
 # Description: Routines to determine various levels of access to documents
 #              and the database based on usernames, doc numbers, etc.
 #
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
-#
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -232,17 +229,31 @@ sub CanPreserveSigs { # Can the user preserve signatures during document modific
   # FIXME: Currently a hack, will change in version 9
   require "SecuritySQL.pm";
 
+  my ($Mode) = @_;
+
+  push @DebugStack, "Checking on ability to preserve docs for mode $Mode";
+
+  # One group is allowed to preserve signoffs for document updates, the others only for metadata updates
+  my @AllowedGroups = @HackDocsPreserveSignoffGroups;
+
+  if ($Mode ne "update") {
+    push @AllowedGroups, @HackPreserveSignoffGroups;
+  }
+  push @DebugStack, "Groups that can preserve signatures: ".join ', ',@AllowedGroups;
+
   my $CanPreserveSigs = $FALSE;
   if ($Public || $ReadOnly) {
     return $CanPreserveSigs;
   }
   my @UsersGroupIDs = FindUsersGroups();
 
+  push @DebugStack, "Users groups are: ".join ', ',@UsersGroupIDs;
   foreach my $UserGroupID (@UsersGroupIDs) {
     FetchSecurityGroup($UserGroupID);
-    foreach my $PreserveName (@HackPreserveSignoffGroups) {
+    foreach my $PreserveName (@AllowedGroups) {
       if ($PreserveName eq $SecurityGroups{$UserGroupID}{NAME}) {
-        $CanPreserveSigs = 1; # User checks out
+        $CanPreserveSigs = $TRUE; # User checks out
+        push @DebugStack, "Group $PreserveName allows the user to preserve signatures.";
       }
     }
   }
@@ -276,6 +287,9 @@ sub FindUsersGroups (;%) {
   } elsif ($UserValidation eq "shibboleth") {
     require "ShibbolethUtilities.pm";
     @UsersGroupIDs = FetchSecurityGroupsForShib();
+  } elsif ($UserValidation eq "FNALSSO") {
+    require "FNALSSOUtilities.pm";
+    @UsersGroupIDs = FetchSecurityGroupsForFSSO();
   } elsif ($UserValidation eq "basic-user") {
     # Coming (maybe)
   } else {
@@ -289,13 +303,15 @@ sub FindUsersGroups (;%) {
   }
 
   @UsersGroupIDs = &Unique(@UsersGroupIDs);
+
   unless ($IgnoreCookie) {
     my @LimitedGroupIDs = &GetGroupsCookie();
     if (@LimitedGroupIDs) {
       @UsersGroupIDs = &Union(\@LimitedGroupIDs,@UsersGroupIDs);
     }
   }
-
+  
+  push @DebugStack,"After limiting, user belongs to unique groups ".join ', ',@UsersGroupIDs;
   return @UsersGroupIDs;
 }
 
@@ -309,7 +325,9 @@ sub FetchEmailUserID (;%) {
   } elsif ($UserValidation eq "shibboleth") {
     require "ShibbolethUtilities.pm";
     $EmailUserID  = FetchEmailUserIDForShib(%Params);
-
+  } elsif ($UserValidation eq "FNALSSO") {
+    require "FNALSSOUtilities.pm";
+    $EmailUserID  = FetchEmailUserIDForFSSO();
   }
 
   return $EmailUserID;

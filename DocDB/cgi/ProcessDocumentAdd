@@ -6,7 +6,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -117,9 +117,9 @@ my $DocTypeID = $Untaint -> extract(-as_integer => "doctype") || 0;
 my $RequesterID = $Untaint -> extract(-as_integer => "requester") || 0;
 my $SessionTalkID = $Untaint -> extract(-as_integer => "sessiontalkid") || 0;
 
-my $Overdate = $Untaint -> extract(-as_safehtml => "overdate") || 0;
-my $Overday = $Untaint -> extract(-as_integer => "overday") || 0;
-my $Overmonth = $Untaint -> extract(-as_safehtml => "overmonth") || 0;
+my $Overdate = $Untaint -> extract(-as_safehtml => "overdate") || "";
+my $Overday = $Untaint -> extract(-as_integer => "overday") || "";
+my $Overmonth = $Untaint -> extract(-as_safehtml => "overmonth") || "";
 my $Overyear = $Untaint -> extract(-as_integer => "overyear") || 0;
 my $Overmin = $Untaint -> extract(-as_integer => "overmin") || 0;
 my $Overhour = $Untaint -> extract(-as_integer => "overhour") || 0;
@@ -253,12 +253,10 @@ if      ($mode eq "add") {
 unless (&CanCreate()) {
   push @ErrorStack,"You are not allowed to modify or create documents.";
 }
-if ($PreserveSigs && !CanPreserveSigs()) {
-  push @ErrorStack,'You are not authorized to preserve signatures when making '.
-                   'this change. Members of another group may have this capability. ';
-}
-if ($PreserveSigs && $mode ne "updatedb") {
-  push @ErrorStack,'Signatures may only be preserved when modifying document meta-data.';
+if ($PreserveSigs && !CanPreserveSigs($mode)) {
+  push @ErrorStack,'You are not authorized to preserve signatures when making this change. '.
+                   'Members of another group may have this capability. Permissions to preserve signatures depend on '.
+                   'the type of modification.';
 }
 unless ($RequesterID) {
   push @ErrorStack,"You must supply a submitter for this document.";
@@ -439,12 +437,15 @@ if ($mode eq "reserve" || $mode eq "add") {
 ### version or the one being updated
 
 my $version;
+my $OldRevID;
 if      ($mode eq "reserve") {
   $version   = 0;
 } elsif ($mode eq "add") {
   $version   = 1;
 } elsif ($mode eq "update") {
   &FetchDocument($documentID);
+  $OldRevID = FetchRevisionByDocumentAndVersion($documentID,$Documents{$documentID}{NVersions});
+  push @DebugStack, "Set OldRevID to $OldRevID in update mode";
   $version   = $Documents{$documentID}{NVersions} + 1;
 } elsif ($mode eq "updatedb") {
   &FetchDocument($documentID);
@@ -457,12 +458,13 @@ if      ($mode eq "reserve") {
     push @WarnStack,"You have updated an old version of a document. Hope this
     is what you wanted to do.";
   }
+  $OldRevID = FetchRevisionByDocumentAndVersion($documentID,$version);
+  push @DebugStack, "Set OldRevID to $OldRevID in update metadata mode";
+
 }
 
-my $OldRevID;
 if ($mode eq "updatedb") { # New Document revision replaces old. Fetch
                            # old DocumentRevision and mark it obsolete
-  $OldRevID = &FetchRevisionByDocumentAndVersion($documentID,$version);
   my $ObsoleteRevision = $dbh -> prepare("update DocumentRevision set Obsolete=1 where DocRevID=?");
   $ObsoleteRevision -> execute($OldRevID);
 }
@@ -526,7 +528,7 @@ if ($UseSignoffs && $SignoffList && !$PreserveSigs) {
   if (@SignoffIDs) {
     InsertSignoffList($DocRevID,@SignoffIDs);
   }
-} elsif ($PreserveSigs) {
+} elsif ($PreserveSigs && $OldRevID) {
   push @WarnStack,"The document's signatures have been identically preserved. ".
                   "Any changes in the list have been ignored.";
   CopyRevisionSignoffs($OldRevID,$DocRevID,$TRUE);
@@ -594,7 +596,9 @@ if ($MailInstalled) {
 
 if ($UseSignoffs) {
   ClearSignatures();
-  NotifySignees($DocRevID);
+  unless ($PreserveSigs) {
+    NotifySignees($DocRevID);
+  }
 }
 
 $EndTime  = new Benchmark;

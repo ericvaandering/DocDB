@@ -1,11 +1,10 @@
-#        Name: $RCSfile$
+#        Name:SignoffSQL.pm
 # Description: SQL interface routines for signoffs
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -51,7 +50,7 @@ sub ProcessSignoffList ($) {
       $Entry = join ' ',@Parts[1],@Parts[0];
     }
 
-    my $EmailUserList = $dbh -> prepare("select EmailUserID from EmailUser where Name rlike ?");
+    my $EmailUserList = $dbh -> prepare("select EmailUserID from EmailUser where CanSign=1 and Name rlike ?");
 
 ### Find exact match (initial or full name)
     my $RegExp = '^('.$Entry.'|'.$SafeEntry.')$';
@@ -66,13 +65,14 @@ sub ProcessSignoffList ($) {
         push @EmailUserIDs,$EmailUserID;
         next;
       } else {
+        # FIXME: This code path is not currently possible
         push @ErrorStack,"$SafeEntry is not allowed to sign documents. Contact an administrator to change the permissions or ".
                          "restrict your choices to those who can sign documents.";
       }
     }
 
-    push @ErrorStack,"No unique match was found for the signoff $SafeEntry. Please go
-                      back and try again.";
+    push @ErrorStack,"No unique match was found for the signoff $SafeEntry or $SafeEntry is not allowed to sign documents. Contact an administrator to restrict ".
+        "signatures to a single account per person.";
   }
   return @EmailUserIDs;
 }
@@ -158,7 +158,7 @@ sub GetSignoffDocumentIDs (%) {
   if ($EmailUserID) {
     $List = $dbh -> prepare("select DISTINCT(DocumentRevision.DocumentID) from Signature,Signoff,DocumentRevision
             where Signature.EmailUserID=? and Signoff.SignoffID=Signature.SignoffID and
-            Signoff.DocRevID=DocumentRevision.DocRevID");
+            Signoff.DocRevID=DocumentRevision.DocRevID and DocumentRevision.Obsolete=0");
     $List -> execute($EmailUserID);
   }
 
@@ -321,12 +321,15 @@ sub CopyRevisionSignoffs { # CopySignoffs from one revision to another
 
   my %SignoffMap   = ();
 
+  push @DebugStack, "Copying signatures from DRI $OldDocRevID to $NewDocRevID with T/F $CopySignatures";
+
   my @OldSignoffIDs = GetAllSignoffsByDocRevID($OldDocRevID);
   foreach my $OldSignoffID (@OldSignoffIDs) {
     # Copy the signoff
     FetchSignoff($OldSignoffID);
     $SignoffInsert->execute($NewDocRevID,$Signoffs{$OldSignoffID}{Note});
     my $NewSignoffID = $SignoffInsert->{mysql_insertid}; # Works with MySQL only
+
     $SignoffMap{$OldSignoffID} = $NewSignoffID;
 
     my @OldSignatureIDs = GetSignatures($OldSignoffID);
@@ -337,11 +340,12 @@ sub CopyRevisionSignoffs { # CopySignoffs from one revision to another
       my $TimeStamp = $Signatures{$OldSignatureID}{TimeStamp};
       if (!$CopySignatures) {
         $Signed = $FALSE;
-	$TimeStamp = 0;
+        $TimeStamp = 0;
       }
+      push @DebugStack, "Copying a signature for $Signatures{$OldSignatureID}{EmailUserID} to SI $NewSignoffID: T/F $Signed at $TimeStamp ";
       $SignatureInsert->execute($Signatures{$OldSignatureID}{EmailUserID}, $NewSignoffID,
                                 $Signatures{$OldSignatureID}{Note},        $Signed,
-				$TimeStamp);
+                                $TimeStamp);
     }
   }
   my $DependencyInsert = $dbh -> prepare("insert into SignoffDependency (SignoffDependencyID,PreSignoffID,SignoffID) ".

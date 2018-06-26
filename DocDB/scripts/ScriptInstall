@@ -32,7 +32,7 @@
 
 # Usage: answer the questions. Your answers are stored for the next invocation.
 
-# Copyright 2001-2009 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -54,13 +54,13 @@ $AnswerFile = ".DocDBSetup";
 my @PublicIgnore = ("AddFiles", "AddFilesForm", "AdministerForm", "AuthorAdd",
 "AuthorAddForm", "AuthorAdminister", "CertificateApplyForm", "ConfirmTalkHint",
 "DeleteConfirm", "DeleteDocument", "DocTypeAdminister", "DocumentAddForm",
-"EmailAdminister", "EmailAdministerForm", "EmailCreate", "EmailLogin",
+"EmailAdminister", "EmailAdministerForm", "EmailLogin",
 "EventAdministerForm", "GroupAdminister", "GroupAdministerForm",
 "InstitutionAdminister", "JournalAdminister", "KeywordAdministerForm",
 "KeywordGroupAdminister", "KeywordListAdminister", "MajorTopicAdminister",
 "MeetingModify", "ModifyHome", "ProcessDocumentAdd", "SelectEmailPrefs",
 "SelectGroups", "SelectPrefs", "SessionModify", "SetGroups", "SetPrefs",
-"SignoffChooser", "SignRevision", "WatchDocument");
+"SignoffChooser", "SignRevision", "SSOAccessApply", "UserAccessApply", "WatchDocument");
 
 my @TemplateIgnore = ("ProjectGlobals.pm.template",
 "ProjectMessages.pm.template", "ProjectHelp.xml.template",

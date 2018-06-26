@@ -1,13 +1,10 @@
-#        Name: $RCSfile$
+#        Name: AdministerElements.pm
 # Description: Various routines which supply input forms for administrative
 #              functions
 #
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
-#
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 

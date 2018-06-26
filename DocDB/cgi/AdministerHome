@@ -90,13 +90,13 @@ print "<strong>Document management:</strong>";
 if (CanAdminister()) { # Delete Form
   print "<ul>\n";
   print "<li>";
-  print "\n",$query -> startform('POST',$DeleteConfirm),"<div>\n";
+  print "\n",$query -> start_form('POST',$DeleteConfirm),"<div>\n";
   print $query -> submit (-class => "Action", -value => "Delete");
   print " document # ";
   print $query -> textfield(-name => "docid", -size => 6, -maxlength => 6);
   print " -v";
   print $query -> textfield(-name => "version", -size => 4, -maxlength => 4);
-  print "\n</div>\n",$query -> endform,"\n\n";
+  print "\n</div>\n",$query -> end_form,"\n\n";
   print "</li>";
   print "</ul>\n";
 }

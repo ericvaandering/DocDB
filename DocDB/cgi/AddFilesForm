@@ -6,7 +6,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -43,6 +43,7 @@ require "FileHTML.pm";
 require "Cookies.pm";
 require "Defaults.pm";
 require "HTMLUtilities.pm";
+require "SignoffUtilities.pm";
 require "UntaintInput.pm";
 require "Scripts.pm";
 
@@ -99,12 +100,16 @@ unless ($Version) {
 }
 
 # Warn the user if they are about to modify a controlled document
+my ($SigStatus) = RevisionStatus($DocRevID);
 
 if ($UseSignoffs) {
   require "SignoffUtilities.pm";
-  my ($Status) = &RevisionStatus($DocRevID);
-  unless ($Status eq "Unmanaged") {
-    push @WarnStack,$Msg_WarnModManaged;
+  unless ($SigStatus eq "Unmanaged") {
+    if (CanPreserveSigs("update")) {
+      push @WarnStack, $Msg_WarnModManagedHack;
+    } else {
+      push @WarnStack, $Msg_WarnModManaged;
+    }
   }
 }
 
@@ -146,7 +151,8 @@ print FormElementTitle(-helplink => "replacefiles", -helptext => "Replace duplic
 print $query -> checkbox(-name => "replace", -label => '(Check for yes.)',
                          -onclick => "helppopupwindow(\'DocDBHelp?term=replacefiles\');");
 print "</td></tr>";
-if ($UseSignoffs && CanPreserveSigs()) {
+
+if ($SigStatus ne "Unmanaged" && CanPreserveSigs("update")) {
   print '<tr><td>';
   print FormElementTitle(-helplink => "preservesigs",
                          -helptext => "Preserve signatures on this revision?",

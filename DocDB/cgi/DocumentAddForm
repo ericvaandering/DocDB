@@ -6,7 +6,7 @@
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -50,6 +50,7 @@ require "Defaults.pm";
 require "Security.pm";
 require "XRefUtilities.pm";
 require "AuthorUtilities.pm";
+require "SignoffUtilities.pm";
 
 require "FileHTML.pm";
 require "JournalHTML.pm";
@@ -256,12 +257,14 @@ if ($EnhancedSecurity) {
 }
 
 # Warn the user if they are about to modify a controlled document
-
+my ($SigStatus) = RevisionStatus($DocRevID);
 if ($UseSignoffs && ($mode eq "update" || $mode eq "updatedb")) {
-  require "SignoffUtilities.pm";
-  my ($Status) = &RevisionStatus($DocRevID);
-  unless ($Status eq "Unmanaged") {
-    push @WarnStack,$Msg_WarnModManaged;
+  unless ($SigStatus eq "Unmanaged") {
+    if (CanPreserveSigs($mode)) {
+      push @WarnStack, $Msg_WarnModManagedHack;
+    } else {
+      push @WarnStack, $Msg_WarnModManaged;
+    }
   }
 }
 
@@ -354,7 +357,7 @@ if ($mode eq "add") {
   print "<h4>You are updating $documentName. ";
 } elsif ($mode eq "updatedb") {
   $documentName = &FullDocumentID($DocumentID,$Version);
-  print "<h4>You are update the metadata for $documentName. ";
+  print "<h4>You are updating the metadata for $documentName. ";
 }
 
 print "Required fields are marked with an asterisk (*). ";
@@ -466,22 +469,31 @@ my ($AuthorScrollDisplay,$AuthorTextDisplay);
 if ($AuthorListOrdered) {
   $AuthorMode = "field";
 }
-if ($AuthorMode eq "list") {
+if ($AuthorMode eq "list" || $AuthorMode eq "active") {
    $AuthorTextDisplay   = ' style="display: none;"';
 } elsif ($AuthorMode eq "field") {
    $AuthorScrollDisplay = ' style="display: none;"';
 }
-$ScrollExtraText = "<a href=\"Javascript:author_method_choose(\'text\');\">(Text w/ order)</a>";
-$TextExtraText   = "<a href=\"Javascript:author_method_choose(\'scroll\');\">(Select from list)</a>";
 
 if ($AuthorMode eq "active") {
-  print "<td id=\"AuthorActiveSearch\">\n";
+  $ScrollExtraText = "<a href=\"Javascript:author_method_choose_text(\'text\');\">(Text w/ order)</a>";
+  $TextExtraText   = "<a href=\"Javascript:author_method_choose_text(\'active\');\">(Active search)</a>";
+
+  print "<td id=\"AuthorActiveSearch\"$AuthorScrollDisplay>\n";
   print $query -> hidden(-name => 'authormode', -default => $AuthorMode);
   print AuthorActiveSearch({-required  => $RequiredEntries{Author}, -helplink => "authors",
               -defaultauthorids   => \@AuthorDefaults,
               -extratext => $ScrollExtraText,});
   print "</td>\n";
+  print "<td id=\"AuthorText\"$AuthorTextDisplay>\n";
+  AuthorTextEntry({ -required => $RequiredEntries{Author}, -extratext => $TextExtraText,
+                    -default  => \@AuthorDefaults, });
+  print "</td>\n";
+
 } else {
+  $ScrollExtraText = "<a href=\"Javascript:author_method_choose(\'text\');\">(Text w/ order)</a>";
+  $TextExtraText   = "<a href=\"Javascript:author_method_choose(\'scroll\');\">(Select from list)</a>";
+
   print "<td id=\"AuthorScroll\"$AuthorScrollDisplay>\n";
   print $query -> hidden(-name => 'authormode', -default => $AuthorMode);
   AuthorScroll(-required  => $RequiredEntries{Author}, -helplink => "authors",
@@ -593,8 +605,8 @@ if ($UseSignoffs) { # FIXME: Later may be more complicated control
   print "</td></tr>\n";
 }
 
-if ($mode eq "updatedb" && $UseSignoffs &&
-    $SignoffDefault && CanPreserveSigs()) {
+if (($mode eq "updatedb" || $mode eq "update") && $SigStatus ne "Unmanaged" &&
+    $SignoffDefault && CanPreserveSigs($mode)) {
   print '<tr><td colspan="4">';
   print FormElementTitle(-helplink => "preservesigs",
                          -helptext => "Preserve signatures on this revision?",

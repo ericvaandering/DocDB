@@ -4,12 +4,9 @@
 # Description: This single form provides a number of interfaces to admin
 #              tools, each run by a different script.
 #
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
-#
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -120,7 +117,7 @@ print "</tr>\n";
 
 print "<tr valign=top>\n";
 print "<td>\n";
- &AuthorScroll(-helplink => "author", -disabled => true);
+ &AuthorScroll(-helplink => "authors", -disabled => true);
 print "</td>\n";
 print "<td>\n";
  AuthorScroll(-helplink => "targetauthor", -helptext => "Consolidate", -name => "targetauthor", -disabled => true);

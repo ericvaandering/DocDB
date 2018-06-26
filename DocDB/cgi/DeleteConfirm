@@ -99,7 +99,7 @@ if ($DelVersion) {
 }
 print "</b>";
 
-print $query -> startform('POST',$DeleteDocument);
+print $query -> start_form('POST',$DeleteDocument);
 &AdministratorPassword;
 print $query -> hidden(-name => 'docid',    -default => $DocumentID);
 if ($DelVersion) {
@@ -107,7 +107,7 @@ if ($DelVersion) {
 }
 print "<b> </b>";
 print $query -> submit (-value => "Delete Document");
-print $query -> endform;
+print $query -> end_form;
 
 print "</center><p>";
 

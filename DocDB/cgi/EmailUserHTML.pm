@@ -1,5 +1,10 @@
+#        Name: EmailUserHTML.pm
+# Description: HTML routines related to EmailUsers (personal accounts)
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -16,8 +21,11 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+require "DocumentHTML.pm";
+require "DocumentUtilities.pm";
+
 sub PrintEmailUserInfo ($) {
-  my ($EmailUserID) = @_;
+  my ($EmailUserID, $ShowWatchedDocs) = @_;
 
   require "NotificationSQL.pm";
   require "SecuritySQL.pm";
@@ -79,6 +87,18 @@ sub PrintEmailUserInfo ($) {
   print "<td>\n";
   DisplayNotification($EmailUserID,"Weekly");
   print "</td>\n";
+
+  # Display a table of individually watched documents
+  if ($ShowWatchedDocs) {
+    my @WatchDocumentIDs = @{$Notifications{$EmailUserID}{Document_Immediate}};
+    if (@WatchDocumentIDs) {
+      print '<tr><td colspan="4">';
+      print "<h4>Individually watched documents:</h4>\n";
+      my %FieldList = PrepareFieldList(-default => "Default");
+      my $NDocs = DocumentTable(-fieldlist => \%FieldList, -docids => \@WatchDocumentIDs, -sortby => 'docid');
+      print '</td></tr>';
+    }
+  }
 
   print "</tr>\n";
 }

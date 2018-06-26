@@ -1,12 +1,9 @@
-#        Name: $RCSfile$
+#        Name: NotificationHTML.pm
 # Description: HTML for document notifications
-#
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2017 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -27,7 +24,7 @@ sub DocNotifySignup (%) {
   my %Params     = @_;
   my $DocumentID = $Params{-docid};
 
-  my $NeedUserFields = ($UserValidation ne "certificate" && $UserValidation ne "shibboleth");
+  my $NeedUserFields = ($UserValidation ne "certificate" && $UserValidation ne "shibboleth" && $UserValidation ne "FNALSSO");
 
   print "<div id=\"DocNotifySignup\">\n";
   print $query -> start_multipart_form('POST',$WatchDocument);

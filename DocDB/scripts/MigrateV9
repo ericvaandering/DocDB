@@ -64,6 +64,7 @@ if ($Action eq "init") { # Modify existing tables and add new tables in preparat
 
     # TODO: rename Type and it's key in Suppress
     # Remove hack put in in version 8
+    # TODO: Adapt to 2nd hack added to have different lists for updating docs and metadata
     "alter table SecurityGroup  add CanPreserveSigs int default '0'",
     # External keys/URLs for events and users
     "alter table Conference add ExternalURL varchar(240) default NULL",

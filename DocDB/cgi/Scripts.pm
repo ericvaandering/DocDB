@@ -7,7 +7,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -23,6 +23,8 @@
 #    You should have received a copy of the GNU General Public License
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+use HTML::Entities;
 
 sub TalkNoteLink {
   my ($SessionOrderID) = @_;
@@ -76,7 +78,8 @@ PREAMBLE
   }
 
   foreach $EventID (sort EventsByDate keys %Conferences) { #FIXME use join
-    my $label = $Conferences{$EventID}{Full};
+    my $label = HTML::Entities::decode_entities($Conferences{$EventID}{Full});
+    $label =~ tr/a-zA-Z0-9\.\,\'\-\ //dc; # Remove special characters
     $label =~ s/\'/\\\'/; # Escape single quotes
     print "event[\'$EventID\'] = \'$label\';\n";
   }
@@ -96,9 +99,12 @@ PREAMBLE
 
   GetAuthors();
   my @AuthorIDs     = sort byLastName keys %Authors;
-#  $#AuthorIDs = 5;
   foreach my $AuthorID (@AuthorIDs) {
-    print '['.$AuthorID.', "'.$Authors{$AuthorID}{Formal}.'"],'."\n";
+    my $Label = HTML::Entities::decode_entities($Authors{$AuthorID}{Formal});
+
+    $Label =~ tr/a-zA-Z0-9\.\,\'\-\ //dc; # Remove special characters
+    $Label =~ s/\'/\\\'/; # Escape single quotes
+    print '['.$AuthorID.', "'.$Label.'"],'."\n";
   }
   print "\n];\n";
   print 'var imgURL = "'.$ImgURLPath.'";';

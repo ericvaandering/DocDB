@@ -279,13 +279,13 @@ sub CloneButton {
   $query -> param('mode','clone');
   $query -> param('docid',$DocumentID);
 
-  print $query -> startform('POST',$DocumentAddForm);
+  print $query -> start_form('POST',$DocumentAddForm);
   print "<div>\n";
   print $query -> hidden(-name => 'mode',  -default => 'clone');
   print $query -> hidden(-name => 'docid', -default => $DocumentID);
   print $query -> submit (-value => "Create Similar");
   print "\n</div>\n";
-  print $query -> endform;
+  print $query -> end_form;
   print "\n";
 }
 
@@ -297,13 +297,13 @@ sub UpdateButton {
   $query -> param('mode','update');
   $query -> param('docid',$DocumentID);
 
-  print $query -> startform('POST',$DocumentAddForm);
+  print $query -> start_form('POST',$DocumentAddForm);
   print "<div>\n";
   print $query -> hidden(-name => 'mode',  -default => 'update');
   print $query -> hidden(-name => 'docid', -default => $DocumentID);
   print $query -> submit (-value => "Update Document");
   print "\n</div>\n";
-  print $query -> endform;
+  print $query -> end_form;
   print "\n";
 }
 
@@ -316,14 +316,14 @@ sub UpdateDBButton {
   $query -> param('docid',  $DocumentID);
   $query -> param('version',$Version);
 
-  print $query -> startform('POST',$DocumentAddForm);
+  print $query -> start_form('POST',$DocumentAddForm);
   print "<div>\n";
   print $query -> hidden(-name =>    'mode', -default => 'updatedb');
   print $query -> hidden(-name =>   'docid', -default => $DocumentID);
   print $query -> hidden(-name => 'version', -default => $Version);
   print $query -> submit (-value => "Update Metadata");
   print "\n</div>\n";
-  print $query -> endform;
+  print $query -> end_form;
   print "\n";
 }
 
@@ -335,13 +335,13 @@ sub AddFilesButton {
   $query -> param('docid',$DocumentID);
   $query -> param('version',$Version);
 
-  print $query -> startform('POST',$AddFilesForm);
+  print $query -> start_form('POST',$AddFilesForm);
   print "<div>\n";
   print $query -> hidden(-name => 'docid',   -default => $DocumentID);
   print $query -> hidden(-name => 'version', -default => $Version);
   print $query -> submit (-value => "Add Files");
   print "\n</div>\n";
-  print $query -> endform;
+  print $query -> end_form;
   print "\n";
 }
 

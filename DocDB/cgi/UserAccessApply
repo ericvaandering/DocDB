@@ -1,8 +1,12 @@
 #! /usr/bin/env perl
 #
-# Author Eric Vaandering (ewv@fnal.gov)
+#        Name: UserAccessApply
+# Description: Deal with the process of having a user apply to use DocDB via their certificate
+#
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -134,18 +138,47 @@ if ($CertificateStatus eq "verified") {
     $Body      .= "access to $Project DocDB. ";
     $Body      .= "He or she requests membership in the following groups:\n";
     foreach my $GroupID (@RequestedGroupIDs) {
-      &FetchSecurityGroup($GroupID);
-      $Body .= "  ".$SecurityGroups{$GroupID}{NAME}."\n";
+      FetchSecurityGroup($GroupID);
+      $Body .= " - ".$SecurityGroups{$GroupID}{NAME}."\n";
     }
     $Body .= "\n";
-    $Body .= "If this is correct, please visit $EmailAdministerForm, ";
-    $Body .= "select \"Modify\", select the user, check \"Verify\", and click to Submit.\n\n";
-    $Body .= "If the groups are not correct, select the correct groups before clicking Submit.\n\n";
+
     if ($CertNote) {
       $Body .= "The user attached this note to their application:\n";
-      $Body .= $CertNote;
+      $Body .= $CertNote."\n\n";
     }
-    &SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
+
+    $Body .= "If this is correct, please visit one of these URLs:\n\n";
+
+    my $AdminURL;
+    if ($Preferences{Security}{Instances}{Shibboleth}) {
+      $AdminURL = $Preferences{Security}{Instances}{Shibboleth} . '/EmailAdministerForm';
+      $Body .= "SSO URL:\n".HTML::Entities::decode_entities($AdminURL)."\n\n";
+    }
+    if ($Preferences{Security}{Instances}{FNALSSO}) {
+      $AdminURL = $Preferences{Security}{Instances}{FNALSSO} . '/EmailAdministerForm';
+      $Body .= "Services account / Single Sign-On URL:\n".HTML::Entities::decode_entities($AdminURL)."\n\n";
+    }
+    if ($Preferences{Security}{Instances}{Certificate}) {
+      $AdminURL = $Preferences{Security}{Instances}{Certificate} . '/EmailAdministerForm';
+      $Body .= "Certificate URL:\n".HTML::Entities::decode_entities($AdminURL)."\n\n";
+    }
+    if ($Preferences{Security}{Instances}{Basic}) {
+      $AdminURL = $Preferences{Security}{Instances}{Basic} . '/EmailAdministerForm';
+      $Body .= "DocDB username/password URL:\n".HTML::Entities::decode_entities($AdminURL)."\n\n";
+    }
+
+    $Body .= "If you want to give the new account the same permissions as a user's existing account:\n".
+             "Select \"Transfer\", select the user's old account from which to transfer permissions ".
+             "in the top list, select the user's new account to which to transfer permissions ".
+             "in the bottom list, and click \"Modify Personal Account\".\n\n";
+
+    $Body .= "Otherwise, if you want to authorize the new account without transferring from an old account:\n".
+             "Select \"Modify\", select the user, check \"Verify\", and click \"Modify Personal Account\".\n".
+             "If the groups are not correct, select \"Clear User's Groups\" and then ".
+             "select all the correct groups before clicking \"Modify Personal Account\".\n";
+
+    SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
 
     my @To      = ($CertEmail);
     my $Subject = "$CertCN requests access to $Project DocDB";

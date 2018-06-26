@@ -9,7 +9,7 @@
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2014 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -57,9 +57,9 @@ my $AuthorID = $Untaint -> extract(-as_integer => "authors") || 0;
 my $ConsolidateID = $Untaint -> extract(-as_integer => "targetauthor") || 0;
 my $InstitutionID = $Untaint -> extract(-as_integer => "inst") || 0;
 
-my $FirstName = $Untaint -> extract(-as_safehtml => "first") || 0;
-my $Middle = $Untaint -> extract(-as_safehtml => "middle") || 0;
-my $LastName = $Untaint -> extract(-as_safehtml => "lastname") || 0;
+my $FirstName = $Untaint -> extract(-as_safehtml => "first") || "";
+my $Middle = $Untaint -> extract(-as_safehtml => "middle") || "";
+my $LastName = $Untaint -> extract(-as_safehtml => "lastname") || "";
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 

@@ -1,14 +1,11 @@
-#        Name: $RCSfile$
+#        Name: MailNotification.pm
 # Description: This script provides a form to administer users receiving
 #              e-mail notifications and shows the complete list of who is
 #              receiving what.
 #
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
-#
 #      Author: Eric Vaandering (ewv@fnal.gov)
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -120,9 +117,7 @@ sub MailNotices (%) {
       $Subject  = "Ready for signature: $FullID: $Title";
       $Message  = "The following document ".
                   "in the $Project Document Database ".
-                  "is ready for your signature:\n".
-                  "(Note that you may not be able to sign if you share ".
-                  "signature authority with someone who has already signed.)\n\n";
+                  "is ready for your signature:\n\n";
       $Feedback = "<b>Signature(s) requested from: </b>";
     } elsif ($Type eq "approved") {
       $Subject  = "Approved: $FullID: $Title";
@@ -158,9 +153,13 @@ sub RevisionMailBody ($) {
 
   FetchDocRevisionByID($DocRevID);
 
-  my $Title  = $DocRevisions{$DocRevID}{Title};
+  my $Title = $DocRevisions{$DocRevID}{Title};
   my $FullID = FullDocumentID($DocRevisions{$DocRevID}{DOCID},$DocRevisions{$DocRevID}{VERSION});
-  my $URL    = DocumentURL($DocRevisions{$DocRevID}{DOCID});
+  my $URL = DocumentURL($DocRevisions{$DocRevID}{DOCID});
+  my $CertURL = DocumentURL($DocRevisions{$DocRevID}{DOCID}, undef, 'Certificate');
+  my $SSOURL = DocumentURL($DocRevisions{$DocRevID}{DOCID}, undef, 'Shibboleth');
+  my $BasicURL = DocumentURL($DocRevisions{$DocRevID}{DOCID}, undef, 'Basic');
+  my $FNALSSOURL = DocumentURL($DocRevisions{$DocRevID}{DOCID}, undef, 'FNALSSO');
 
   FetchAuthor($DocRevisions{$DocRevID}{Submitter});
   my $Submitter = $Authors{$DocRevisions{$DocRevID}{Submitter}}{FULLNAME};
@@ -208,12 +207,28 @@ sub RevisionMailBody ($) {
   }
   my $Events = join ', ',@Events;
 
-
   # Construct the mail body
 
-  print $Mailer "       Title: ",HTML::Entities::decode_entities($DocRevisions{$DocRevID}{Title}),"\n";
+  # There can be lots of different URLs. Share them all, but not needlessly
+  if (!($Preferences{Security}{Instances}{Basic} || $Preferences{Security}{Instances}{Certificate} ||
+        $Preferences{Security}{Instances}{Shibboleth} || $Preferences{Security}{Instances}{FNALSSO})) {
+    print $Mailer "         URL: ",HTML::Entities::decode_entities($URL),"\n";
+  }
+  if ($Preferences{Security}{Instances}{Shibboleth}) {
+    print $Mailer "SSO URL:\n",HTML::Entities::decode_entities($SSOURL),"\n\n";
+  }
+  if ($Preferences{Security}{Instances}{FNALSSO}) {
+    print $Mailer "Services account / Single Sign-On URL:\n",HTML::Entities::decode_entities($FNALSSOURL),"\n\n";
+  }
+  if ($Preferences{Security}{Instances}{Certificate}) {
+    print $Mailer "Certificate URL:\n",HTML::Entities::decode_entities($CertURL),"\n\n";
+  }
+  if ($Preferences{Security}{Instances}{Basic}) {
+    print $Mailer "DocDB username/password URL:\n",HTML::Entities::decode_entities($BasicURL),"\n\n";
+  }
+
+  print $Mailer "       Title: ",HTML::Entities::decode_entities($Title),"\n";
   print $Mailer " Document ID: ",HTML::Entities::decode_entities($FullID),"\n";
-  print $Mailer "         URL: ",HTML::Entities::decode_entities($URL),"\n";
   print $Mailer "        Date: ",HTML::Entities::decode_entities($DocRevisions{$DocRevID}{DATE}),"\n";
   print $Mailer "Submitted by: ",HTML::Entities::decode_entities($Submitter),"\n";
   print $Mailer "     Authors: ",HTML::Entities::decode_entities($Authors),"\n";
@@ -221,11 +236,14 @@ sub RevisionMailBody ($) {
   if ($Events) {
     print $Mailer "      Events: ",HTML::Entities::decode_entities($Events),"\n";
   }
-  print $Mailer "    Keywords: ",HTML::Entities::decode_entities($DocRevisions{$DocRevID}{Keywords}),"\n";
-  print $Mailer "    Abstract: ",HTML::Entities::decode_entities($DocRevisions{$DocRevID}{Abstract}),"\n";
+  print $Mailer "    Keywords: ",HTML::Entities::decode_entities($DocRevisions{$DocRevID}{Keywords}),"\n\n";
+
+  print $Mailer "Abstract:\n\n",HTML::Entities::decode_entities($DocRevisions{$DocRevID}{Abstract}),"\n\n";
   if ($DocRevisions{$DocRevID}{Note}) {
-    print $Mailer "       Notes: ",HTML::Entities::decode_entities($DocRevisions{$DocRevID}{Note}),"\n";
+    print $Mailer "Notes:\n\n",HTML::Entities::decode_entities($DocRevisions{$DocRevID}{Note}),"\n\n";
   }
+
+  return;
 }
 
 sub UsersToNotify ($$) {

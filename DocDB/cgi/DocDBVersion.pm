@@ -1,9 +1,10 @@
-#        Name: $RCSfile$
+#        Name: DocDBVersion.pm
 # Description: Holds the version number string for DocDB
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
 #
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+#      Author: Eric Vaandering (ewv@fnal.gov)
+#    Modified: Eric Vaandering (ewv@fnal.gov)
+#
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -20,6 +21,6 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
-$DocDBVersion = "8.8.8p1";
+$DocDBVersion = "8.8.9";
 
 1;

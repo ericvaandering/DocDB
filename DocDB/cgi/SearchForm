@@ -1,15 +1,12 @@
 #! /usr/bin/env perl
 #
-#        Name: $RCSfile$
+#        Name: SearchForm
 # Description: Build the input form for the "Advanced" (formerly normal) DocDB Search
-#
-#    Revision: $Revision$
-#    Modified: $Author$ on $Date$
 #
 #      Author: Eric Vaandering (ewv@fnal.gov)
 #
 
-# Copyright 2001-2013 Eric Vaandering, Lynn Garren, Adam Bryant
+# Copyright 2001-2018 Eric Vaandering, Lynn Garren, Adam Bryant
 
 #    This file is part of DocDB.
 
@@ -129,7 +126,7 @@ print "</tr>\n";
  print "</td>\n";
 
  print "<td>\n"; # Authors
- AuthorScroll(-helplink => "author", -multiple => $TRUE);
+ AuthorScroll(-helplink => "authors", -multiple => $TRUE);
  print "</td>\n";
 
  print "<td>\n";
