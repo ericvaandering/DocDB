@@ -70,6 +70,8 @@ jQuery().ready(function() {
         };
 
         function matchSubset_starts(s, sub) {
+            if (s === undefined || s === null)
+                return false;
             if (!options.matchCase)
                 s = s.toLowerCase();
             var i = s.indexOf(sub);
@@ -178,6 +180,8 @@ jQuery().ready(function() {
 
                     /* Match second name with highest priority, first name with lower, and other with lowest */
                     function parse_first_last_names(s){
+                        if (s.indexOf(",") == -1)
+                           return {first:"", last:s};
                         first = s.split(",")[1];
                         last = s.split(",")[0];
                         /* TODO: is always comma available ? */ 

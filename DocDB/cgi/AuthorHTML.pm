@@ -344,7 +344,7 @@ sub AuthorActiveSearch {
   $HTML .= '<ul id="authors_id_span"></ul>'."\n";
   $HTML .= '</div>'."\n";
   $HTML .= '<input id="author_dummy" class="hidden required" type="checkbox" value="dummy" name="authors" />'."\n";
-  $HTML .= '<input name="authors_selection_text" type="text" id="authors_selector"><br /> (click or press <i>Enter</i>)'."\n";
+  $HTML .= '<input name="authors_selection_text" type="text" id="authors_selector"><br /> (type to search and<br/>click or press <i>Enter</i>)'."\n";
 
   $HTML .= '<script type="text/javascript">
             <!--
