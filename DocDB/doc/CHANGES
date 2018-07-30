@@ -1,3 +1,7 @@
+8.8.9p1
+  Fix the author searching JS for old cases where first or last name may not exist
+  Include a patch from 8.7 branch that was never included
+
 8.8.9
   Update to start_form/end_form for compatibility
   Fix DocDBHelp. See https://github.com/ericvaandering/DocDB/pull/45
