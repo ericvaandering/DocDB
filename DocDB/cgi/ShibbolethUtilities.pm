@@ -68,11 +68,50 @@ sub FetchEmailUserIDForShib () {
 
   my ($EmailUserID) = $EmailUserSelect -> fetchrow_array;
 
+  if (!$EmailUserID and $Preferences{Security}{AutoCreateShib}) {
+    $EmailUserID = CreateShibUser();
+  }
+
   if ($EmailUserID) {
     FetchEmailUser($EmailUserID)
   }
 
   return $EmailUserID;
+}
+
+sub CreateShibUser() {
+  my ($FQUN, $UserName, $Email, $Name) = GetUserInfoShib();
+  if ($FQUN eq 'Unknown') {
+    push @DebugStack, 'Username is Unknown. Not inserting. SSO may not be set up correctly.';
+    return;
+  }
+
+  push @DebugStack, "Creating Shibboleth SSO user in EmailUser with Username=$FQUN, Email=$Email, Name=$Name";
+  CreateConnection(-type => "rw");   # Can't rely on connection setup by top script, may be read-only
+  my $UserInsert = $dbh_rw->prepare(
+      "insert into EmailUser (EmailUserID,Username,Name,EmailAddress,Password,Verified) " .
+      "values                (0,          ?,       ?,   ?,           ?,       1)");
+  $UserInsert->execute($FQUN, $Name, $Email, 'x');
+  my $EmailUserID = $UserInsert -> {mysql_insertid}; # Works with MySQL only
+  DestroyConnection($dbh_rw);
+  push @DebugStack, "Created EmailUserID $EmailUserID for SSO";
+  return $EmailUserID;
+}
+
+sub GetUserInfoShib() {
+  my $Username = "Unknown";
+  my $EmailAddress = "Unknown";
+  my $Name = "Unknown";
+
+  if (exists $ENV{'ADFS_LOGIN'}) {
+    $Name = $ENV{ADFS_FULLNAME};
+    $EmailAddress = $ENV{ADFS_EMAIL};
+    $Username = $ENV{ADFS_LOGIN};
+  }
+
+  push @DebugStack, "GetUserInfoShib returning $Username, $Username, $EmailAddress, $Name";
+
+  return ($Username, $Username, $EmailAddress, $Name);
 }
 
 1;

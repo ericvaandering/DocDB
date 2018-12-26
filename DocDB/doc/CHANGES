@@ -1,3 +1,7 @@
+8.8.9p2
+  Add an option $Preferences{Security}{AutoCreateShib} (defaults to $FALSE) to automatically create shibboleth accounts
+    (following what was done for Fermilab SSO). Fixes a regression where it was difficult or impossible to make an account
+
 8.8.9p1
   Fix the author searching JS for old cases where first or last name may not exist
   Include a patch from 8.7 branch that was never included
