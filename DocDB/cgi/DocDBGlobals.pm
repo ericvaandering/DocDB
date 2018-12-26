@@ -92,6 +92,7 @@ $Preferences{Security}{Certificates}{ShowCertInstructions} = $FALSE;  # TRUE or 
 $Preferences{Security}{AuthName} = "";  # Set to override default AuthName of group1 or group2, etc.
 $Preferences{Security}{SSOGroupVariables} = ();  # Environmental variables with lists of groups
 $Preferences{Security}{AutoCreateSSO} = $FALSE;  # Automatically create an SSO user if none exists
+$Preferences{Security}{AutoCreateShib} = $FALSE;  # Automatically create a Shibboleth user if none exists
 $Preferences{Security}{UseCertGroupsForSSO} = $FALSE;  # If no SSO account exists, use the groups from the certificate
 $Preferences{Security}{TransferCertToSSO} = $FALSE;  # Automatically transfer certificate user information to SSO
                                                      # (implies AutoCreateSSO)
