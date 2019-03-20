@@ -246,8 +246,8 @@ if      ($Action eq "Delete") { # Delete group
 } elsif ($Action eq "New") { # Create new groups
   push @ActionStack,"Adding a new group.";
   my $GroupInsert = $dbh->prepare(
-   "insert into SecurityGroup (GroupID,Name,Description,CanCreate,CanAdminister,CanView,CanConfig) ".
-                      "values (0,?,?,?,?,?,0)");
+   "insert into SecurityGroup (Name,Description,CanCreate,CanAdminister,CanView,CanConfig) ".
+                      "values (?,?,?,?,?,0)");
 
   $GroupInsert -> execute($Name,$Description,$Create,$Admin,$View);
   $ParentID = $GroupInsert -> {mysql_insertid}; # Works with MySQL only
