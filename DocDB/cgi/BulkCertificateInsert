@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 # Description: Allows an administrator to create entries for certificate users in EmailUser
 #

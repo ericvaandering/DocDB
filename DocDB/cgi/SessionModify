@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: $RCSfile$
 # Description: Add talks to sessions of a meeting. Calls itself. In future,

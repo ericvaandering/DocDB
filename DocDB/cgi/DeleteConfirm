@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #        Name: $RCSfile$
 # Description: Displays the document (or document and version)
 #              to be deleted and requests the admin password.

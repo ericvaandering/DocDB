@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #        Name: $RCSfile$
 # Description: Group administrative actions into one page
 #

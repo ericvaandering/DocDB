@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 # Description: A simple script to allow new author addition (no changes possible)
 #

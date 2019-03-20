@@ -1,5 +1,8 @@
 #! /usr/bin/env perl
 
+use lib ".";
+
+
 #        Name: SetPrefs
 # Description: Reads form parameters from SelectPrefs and stores user's
 #              selections in a group of cookies, one for each preference.

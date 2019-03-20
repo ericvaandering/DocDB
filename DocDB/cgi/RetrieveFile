@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: $RCSfile$
 # Description: Get a file from a document. Automatically or by extension if possible.

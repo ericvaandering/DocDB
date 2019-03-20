@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 # Description: This script is called by KeywordAdministerForm and does administration
 #              on the Keyword table in the DB.

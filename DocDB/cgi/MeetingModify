@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: $RCSfile$
 # Description: Modify sessions of meeting the shell of a meeting. Calls itself

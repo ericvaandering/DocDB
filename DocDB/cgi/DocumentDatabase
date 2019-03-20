@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: DocumentDatabase
 # Description: The Document Database homepage. Give the user various ways to

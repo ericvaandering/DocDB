@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: $RCSfile$
 # Description: Print out various types of calendar (monthly/yearly/daily) and the events

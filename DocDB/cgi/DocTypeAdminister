@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: DocTypeAdminister
 # Description: This script is called by AdministerForm and does administration

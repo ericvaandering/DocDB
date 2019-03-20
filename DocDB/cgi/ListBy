@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: $RCSfile$
 # Description: Generate tables of document for various input parameters

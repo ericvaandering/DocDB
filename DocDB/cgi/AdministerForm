@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: AdministerForm
 # Description: This single form provides a number of interfaces to admin

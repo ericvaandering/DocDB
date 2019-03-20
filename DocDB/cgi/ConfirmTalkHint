@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 # Description: Script to confirm a match between a talk entered in the agenda
 #              and a document

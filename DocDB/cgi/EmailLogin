@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 # Description: The login form to a users e-mail notification account
 #

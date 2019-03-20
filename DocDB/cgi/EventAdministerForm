@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: EventAdministerForm
 # Description: This single form provides interfaces to admin tools for

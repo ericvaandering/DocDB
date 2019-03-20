@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: DocumentAddForm
 # Description: The main form to add or modify documents or metadata

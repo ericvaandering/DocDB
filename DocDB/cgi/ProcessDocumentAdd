@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: ProcessDocumentAdd
 # Description: Receives the output of DocumentAddForm and creates or updates the document

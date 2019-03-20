@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: AuthorAdd
 # Description: Adds an author into the DB list of authors.

@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: ListKeywords
 # Description: Lists the managed keywords.

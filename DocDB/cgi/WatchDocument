@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: WatchDocument
 # Description: Change preferences for what/when to be notified of document

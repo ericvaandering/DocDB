@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: GroupAdminister
 # Description: This script is called by GroupAdministerForm and does

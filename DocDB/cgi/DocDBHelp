@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: DocDBHelp
 # Description: Usually called as a pop-up, this looks up in docdb.hlp

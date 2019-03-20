@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: EmailAdminister
 # Description: This script is called by EmailAdministerForm and does

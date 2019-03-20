@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: ShowTalkNote
 # Description: Usually called as a pop-up, this will look up the note for a talk

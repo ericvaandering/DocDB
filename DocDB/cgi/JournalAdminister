@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 # Description: This script is called by AdministerForm and does administration
 #              on journals in the DB. This script adds, modifies and deletes

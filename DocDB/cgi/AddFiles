@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: AddFiles
 # Description: Adds downloaded files to the database and filesystem

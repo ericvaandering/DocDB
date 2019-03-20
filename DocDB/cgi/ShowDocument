@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: ShowDocument
 # Description: Display a document, its metadata, links to other versions and links to the files

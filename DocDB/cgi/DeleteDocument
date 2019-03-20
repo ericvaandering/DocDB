@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #        Name: $RCSfile$
 # Description: This script is called by DeleteConfirm to actually delete
 #              the requested document, all associated entries in the DB,
