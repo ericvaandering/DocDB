@@ -54,15 +54,15 @@ my ($DefaultText, $DefaultTitle, $ProjectText, $ProjectTitle, $Action);
 
 my $HelpXML = XMLin("DocDBHelp.xml");
 
-$DefaultText = %{$HelpXML->{entry}{$helpterm}}->{text};
-$DefaultTitle = %{$HelpXML->{entry}{$helpterm}}->{title};
+$DefaultText = $HelpXML->{entry}{$helpterm}->{text};
+$DefaultTitle = $HelpXML->{entry}{$helpterm}->{title};
 
 if ($ProjectHelp) {
   my $ProjectXML = XMLin("ProjectHelp.xml");
 
-  $ProjectText = %{$ProjectXML->{entry}{$helpterm}}->{text};
-  $ProjectTitle = %{$ProjectXML->{entry}{$helpterm}}->{title};
-  $Action = %{$ProjectXML->{entry}{$helpterm}}->{action};
+  $ProjectText = $ProjectXML->{entry}{$helpterm}->{text};
+  $ProjectTitle = $ProjectXML->{entry}{$helpterm}->{title};
+  $Action = $ProjectXML->{entry}{$helpterm}->{action};
 }
 
 # Remove line breaks and XML element tags
