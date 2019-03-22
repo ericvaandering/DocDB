@@ -531,6 +531,7 @@ if ($NoSessions) {
                  -helplink  => 'meetingviewgroups',
                  -helptext  => 'Viewable by',
                  -multiple  => $TRUE,
+                 -permission=> 'CanView',
                  -default   => \@MeetingViewDefaults,
                  -size      => 8);
   print "</td>\n";
@@ -541,6 +542,7 @@ if ($NoSessions) {
                  -helplink => 'meetingmodifygroups',
                  -helptext => 'Modifiable by',
                  -multiple => $TRUE,
+                 -permission=> 'CanCreate',
                  -default  => \@MeetingModifyDefaults,
                  -size     => 8);
   print "</td>\n";
