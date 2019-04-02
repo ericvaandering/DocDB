@@ -27,6 +27,7 @@
 
 use Benchmark;
 use CGI;
+use CGI::Untaint;
 use DBI;
 
 $StartTime = new Benchmark;
@@ -34,6 +35,7 @@ $StartTime = new Benchmark;
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "Search.pm";
+require "UntaintInput.pm";
 
 $query = new CGI;  # Global for subroutines
 $query -> autoEscape(0);
@@ -42,10 +44,11 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 
 # Need these unsanitized to perform searches. Never printed anyhow.
 my %CGIParams = $query -> Vars;
+my $Untaint = CGI::Untaint -> new($query -> Vars);
 
 ### Pull info out of params into local variables
 
-my $OutFormat = $CGIParams{outformat} || "HTML";
+my $OutFormat = $Untaint -> extract(-as_printable => "outformat") || "HTML";
    $OutFormat =~ tr/[a-z]/[A-Z]/;
 
 LocalSearch( {-cgiparams => \%CGIParams} );

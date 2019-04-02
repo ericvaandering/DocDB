@@ -35,6 +35,9 @@ sub LocalSearch ($) {
   my %params    = exists $ArgRef->{-cgiparams} ? %{$ArgRef->{-cgiparams}} : ();
   my $NoXMLHead = exists $ArgRef->{-noxmlhead} ?   $ArgRef->{-noxmlhead}  : $FALSE;
 
+  use CGI::Untaint;
+  require "UntaintInput.pm";
+
   require "FSUtilities.pm";
   require "WebUtilities.pm";
   require "Utilities.pm";
@@ -58,58 +61,61 @@ sub LocalSearch ($) {
 
   ### Pull info out of params into local variables
 
-  my $OutFormat = $params{outformat} || "HTML";
+  my $Untaint = CGI::Untaint -> new(%params);
 
-  $InnerLogic  = $params{innerlogic} || "OR";
-  $OuterLogic  = $params{outerlogic} || "AND";
+  my $OutFormat = $Untaint -> extract(-as_printable => "outformat") || "HTML";
 
-  $TitleSearch            = $params{titlesearch};
-  $TitleSearchMode        = $params{titlesearchmode};
-  $AbstractSearch         = $params{abstractsearch};
-  $AbstractSearchMode     = $params{abstractsearchmode};
-  $KeywordSearch          = $params{keywordsearch};
-  $KeywordSearchMode      = $params{keywordsearchmode};
-  $RevisionNoteSearch     = $params{revisionnotesearch};
-  $RevisionNoteSearchMode = $params{revisionnotesearchmode};
-  $PubInfoSearch          = $params{pubinfosearch};
-  $PubInfoSearchMode      = $params{pubinfosearchmode};
-  $FileSearch             = $params{filesearch};
-  $FileSearchMode         = $params{filesearchmode};
-  $FileDescSearch         = $params{filedescsearch};
-  $FileDescSearchMode     = $params{filedescsearchmode};
-  $FileContSearch         = $params{filecontsearch};
-  $FileContSearchMode     = $params{filecontsearchmode};
+  $InnerLogic = $Untaint -> extract(-as_printable => "innerlogic") || "OR";
+  $OuterLogic = $Untaint -> extract(-as_printable => "outerlogic") || "AND";
 
-  my $AuthorManual        = $params{authormanual};
-     @RequesterSearchIDs  = split /\0/,$params{requestersearch};
-     @AuthorSearchIDs     = split /\0/,$params{authors};
-     @TypeSearchIDs       = split /\0/,$params{doctypemulti};
+  $TitleSearch = $Untaint -> extract(-as_printable => "titlesearch");
+  $TitleSearchMode = $Untaint -> extract(-as_printable => "titlesearchmode");
+  $AbstractSearch = $Untaint -> extract(-as_printable => "abstractsearch");
+  $AbstractSearchMode = $Untaint -> extract(-as_printable => "abstractsearchmode");
+  $KeywordSearch = $Untaint -> extract(-as_printable => "keywordsearch");
+  $KeywordSearchMode = $Untaint -> extract(-as_printable => "keywordsearchmode");
+  $RevisionNoteSearch = $Untaint -> extract(-as_printable => "revisionnotesearch");
+  $RevisionNoteSearchMode = $Untaint -> extract(-as_printable => "revisionnotesearchmode");
+  $PubInfoSearch = $Untaint -> extract(-as_printable => "pubinfosearch");
+  $PubInfoSearchMode = $Untaint -> extract(-as_printable => "pubinfosearchmode");
+  $FileSearch = $Untaint -> extract(-as_printable => "filesearch");
+  $FileSearchMode = $Untaint -> extract(-as_printable => "filesearchmode");
+  $FileDescSearch = $Untaint -> extract(-as_printable => "filedescsearch");
+  $FileDescSearchMode = $Untaint -> extract(-as_printable => "filedescsearchmode");
+  $FileContSearch = $Untaint -> extract(-as_printable => "filecontsearch");
+  $FileContSearchMode = $Untaint -> extract(-as_printable => "filecontsearchmode");
 
-  my @TopicSearchIDs      = split /\0/,$params{topics};
-  my $IncludeSubTopics    = $params{includesubtopics};
+  my $AuthorManual = $Untaint -> extract(-as_printable => "authormanual");
+
+  @RequesterSearchIDs = @{ $Untaint -> extract(-as_listofint => "requestersearch") || undef };
+  @AuthorSearchIDs = @{ $Untaint -> extract(-as_listofint => "authors") || undef };
+  @TypeSearchIDs = @{ $Untaint -> extract(-as_listofint => "doctypemulti") || undef };
+
+  my @TopicSearchIDs = @{ $Untaint -> extract(-as_listofint => "topics") || undef };
+  my $IncludeSubTopics = $Untaint -> extract(-as_printable => "includesubtopics");
   if ($IncludeSubTopics) {
     $IncludeSubTopics = $TRUE;
   }
 
   push @DebugStack,"Searching for topics ".join ', ',@TopicSearchIDs;
-  my @EventSearchIDs      = split /\0/,$params{events};
-  my @EventGroupSearchIDs = split /\0/,$params{eventgroups};
+  my @EventSearchIDs = @{ $Untaint -> extract(-as_listofint => "events") || undef };
+  my @EventGroupSearchIDs = @{ $Untaint -> extract(-as_listofint => "eventgroups") || undef };
 
   ### Parameters for simple search
 
-  my $Simple     = $params{simple};
-  my $SimpleText = $params{simpletext};
+  my $Simple = $Untaint -> extract(-as_integer => "simple");
+  my $SimpleText = $Untaint -> extract(-as_printable => "simpletext");
 
   ### Purify input (remove punctuation)
 
-#  $SimpleText         =~ s/[^\s\w+-\.]//go;
-#  $TitleSearch        =~ s/[^\s\w+-\.]//go;
-#  $AbstractSearch     =~ s/[^\s\w+-\.]//go;
-#  $KeywordSearch      =~ s/[^\s\w+-\.]//go;
-#  $RevisionNoteSearch =~ s/[^\s\w+-\.]//go;
-#  $PubInfoSearch      =~ s/[^\s\w+-\.]//go;
-#  $FileSearch         =~ s/[^\s\w+-\.]//go;
-#  $FileDescSearch     =~ s/[^\s\w+-\.]//go;
+  $SimpleText         =~ s/[^\s\w+-\.]//go;
+  $TitleSearch        =~ s/[^\s\w+-\.]//go;
+  $AbstractSearch     =~ s/[^\s\w+-\.]//go;
+  $KeywordSearch      =~ s/[^\s\w+-\.]//go;
+  $RevisionNoteSearch =~ s/[^\s\w+-\.]//go;
+  $PubInfoSearch      =~ s/[^\s\w+-\.]//go;
+  $FileSearch         =~ s/[^\s\w+-\.]//go;
+  $FileDescSearch     =~ s/[^\s\w+-\.]//go;
   $FileContSearch     =~ s/[^\s\w+-\.]//go;  # No idea what they'd do with special characters, best to remove
 
   GetTopics();
@@ -180,25 +186,25 @@ sub LocalSearch ($) {
     }
   }
 
-  $Afterday   = $params{afterday};
-  $Aftermonth = $params{aftermonth};
-  $Afteryear  = $params{afteryear};
+  $Afterday = $Untaint -> extract(-as_printable => "afterday");
+  $Aftermonth = $Untaint -> extract(-as_printable => "aftermonth");
+  $Afteryear = $Untaint -> extract(-as_printable => "afteryear");
   if ($Afteryear && $Afteryear ne "----") {
     if ($Aftermonth eq "---") {$Aftermonth = "Jan";}
     if ($Afterday   eq "--")  {$Afterday   = "1";}
     $SQLBegin   = "$Afteryear-$ReverseAbrvMonth{$Aftermonth}-$Afterday";
   }
 
-  $Beforeday   = $params{beforeday};
-  $Beforemonth = $params{beforemonth};
-  $Beforeyear  = $params{beforeyear};
+  $Beforeday = $Untaint -> extract(-as_printable => "beforeday");
+  $Beforemonth = $Untaint -> extract(-as_printable => "beforemonth");
+  $Beforeyear = $Untaint -> extract(-as_printable => "beforeyear");
   if ($Beforeyear && $Beforeyear ne "----") {
     if ($Beforemonth eq "---") {$Beforemonth = "Dec";}
     if ($Beforeday   eq "--")  {$Beforeday   = DaysInMonth($ReverseAbrvMonth{$Beforemonth},$Beforeyear);}
     $SQLEnd     = "$Beforeyear-$ReverseAbrvMonth{$Beforemonth}-$Beforeday";
   }
 
-  my $Mode    = $params{mode};
+  my $Mode = $Untaint -> extract(-as_printable => "mode");
   unless ($Mode eq "date" or $Mode eq "meeting" or $Mode eq "conference" or $Mode eq "title") {
     $Mode = "date";
   }
