@@ -128,7 +128,7 @@ sub LocalSearch ($) {
     }
     NewXMLOutput();
   } else {
-    my @Scripts = ("jquery/jquery-3.0.0.min","jquery/jquery.tablesorter.min","jquery/jquery.tablesorter.widgets");
+    my @Scripts = ("jquery/jquery-3.5.1.slim.min","jquery/jquery.tablesorter.min","jquery/jquery.tablesorter.widgets");
     @JQueryElements = ("tablesorter");
     push @Scripts,"JQueryReady";
 
