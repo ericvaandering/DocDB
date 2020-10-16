@@ -42,8 +42,8 @@ sub FetchSecurityGroupsForShib (%) {
 
   # Otherwise map shibboleth groups to DocDB groups
 
-  push @DebugStack,"Setting DocDB groups from shibboleth groups";
-  my @ShibGroups = split /;/,$ENV{ADFS_GROUP};
+  push @DebugStack,"Setting DocDB groups from shibboleth groups ".$ENV{CERN_ROLES};
+  my @ShibGroups = split /;/,$ENV{CERN_ROLES};
 
   foreach my $ShibGroup (@ShibGroups) {
     if ($ShibGroupMap{$ShibGroup}) {
@@ -59,7 +59,7 @@ sub FetchSecurityGroupsForShib (%) {
 }
 
 sub FetchEmailUserIDForShib () {
-  my $ShibName = $ENV{ADFS_LOGIN};
+  my $ShibName = $ENV{CERN_LOGIN};
   push @DebugStack,"Finding EmailUserID by shibboleth name $ShibName";
 
   my $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
@@ -103,10 +103,10 @@ sub GetUserInfoShib() {
   my $EmailAddress = "Unknown";
   my $Name = "Unknown";
 
-  if (exists $ENV{'ADFS_LOGIN'}) {
-    $Name = $ENV{ADFS_FULLNAME};
-    $EmailAddress = $ENV{ADFS_EMAIL};
-    $Username = $ENV{ADFS_LOGIN};
+  if (exists $ENV{'CERN_LOGIN'}) {
+    $Name = $ENV{CERN_FULLNAME};
+    $EmailAddress = $ENV{CERN_EMAIL};
+    $Username = $ENV{CERN_LOGIN};
   }
 
   push @DebugStack, "GetUserInfoShib returning $Username, $Username, $EmailAddress, $Name";
