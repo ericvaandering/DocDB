@@ -39,6 +39,7 @@ sub SecurityScroll (%) {
   my $Format    =   $Params{-format}    || "short";
   my $Size      =   $Params{-size}      || 10;
   my $Disabled  =   $Params{-disabled}  || $FALSE;
+  my $Permission=   $Params{-permission}|| "";
   my @GroupIDs  = @{$Params{-groupids}};
   my @Default   = @{$Params{-default}};
 
@@ -51,7 +52,17 @@ sub SecurityScroll (%) {
   &GetSecurityGroups;
 
   unless (@GroupIDs) {
-    @GroupIDs = keys %SecurityGroups;
+    if($Permission){
+      @GroupIDs = ();
+      foreach my $ID (keys %SecurityGroups) {
+        if($SecurityGroups{$ID}{$Permission}){
+          push @GroupIDs,$ID;
+        }
+      }
+    }
+    else{
+      @GroupIDs = keys %SecurityGroups;
+    }
   }
 
   my %GroupLabels = ();

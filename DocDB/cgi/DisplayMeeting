@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: DisplayMeeting
 # Description: Displays talks for a meeting or just a session of a meeting

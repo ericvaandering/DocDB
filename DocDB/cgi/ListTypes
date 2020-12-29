@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 # Author Eric Vaandering (ewv@fnal.gov)
 

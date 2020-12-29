@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: ExternalDocDBAdministerForm
 # Description: Allows the administrator to add knowledge of other DocDBs.

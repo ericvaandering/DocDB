@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 # Description: This script provides a form to administer groups in
 #              the DocDB and shows the relationships between groups.

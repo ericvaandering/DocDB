@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: ModifyHome
 # Description: The second "homepage" for adding documents and other metadata

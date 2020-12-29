@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: EmailAdministerForm
 # Description: This script provides a form to administer users receiving

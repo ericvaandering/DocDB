@@ -97,8 +97,23 @@ sub ICalEventEntry {
 
   my $ICalFormatter = DateTime::Format::ICal->new();
 
-  $EventHash{dtstart} = $ICalFormatter->format_datetime($Conferences{$EventID}{StartDateTime});
-  $EventHash{dtend}   = $ICalFormatter->format_datetime($Conferences{$EventID}{EndDateTime});
+  my $formated_dtstart = $ICalFormatter->format_datetime($Conferences{$EventID}{StartDateTime});
+  if ($formated_dtstart =~ m/TZID=/) {
+    my ($timezone, $timestamp) = split(':', $formated_dtstart, 2);
+    $EventHash{'dtstart;'.$timezone} = $timestamp
+  }
+  else {
+    $EventHash{dtstart} = $formated_dtstart
+  }
+  my $formated_dtend = $ICalFormatter->format_datetime($Conferences{$EventID}{EndDateTime});
+  if ($formated_dtend =~ m/TZID=/) {
+    my ($timezone, $timestamp) = split(':', $formated_dtend, 2);
+    $EventHash{'dtend;'.$timezone} = $timestamp
+  }
+  else {
+    $EventHash{dtend} = $formated_dtend
+  }
+
   $EventHash{"LAST-MODIFIED"} = $ICalFormatter->format_datetime($Conferences{$EventID}{ModifiedDateTime});
 
   foreach my $Key (keys %ICalMapping) {
@@ -154,8 +169,23 @@ sub ICalSessionEntry {
   SessionEndTime($SessionID);
   my $ICalFormatter = DateTime::Format::ICal->new();
 
-  $SessionHash{dtstart} = $ICalFormatter->format_datetime($Sessions{$SessionID}{StartDateTime});
-  $SessionHash{dtend}   = $ICalFormatter->format_datetime($Sessions{$SessionID}{EndDateTime});
+  my $formated_dtstart = $ICalFormatter->format_datetime($Sessions{$SessionID}{StartDateTime});
+  if ($formated_dtstart =~ m/TZID=/) {
+    my ($timezone, $timestamp) = split(':', $formated_dtstart, 2);
+    $SessionHash{'dtstart;'.$timezone} = $timestamp
+  }
+  else {
+    $SessionHash{dtstart} = $formated_dtstart
+  }
+  my $formated_dtend = $ICalFormatter->format_datetime($Sessions{$SessionID}{EndDateTime});
+  if ($formated_dtend =~ m/TZID=/) {
+    my ($timezone, $timestamp) = split(':', $formated_dtend, 2);
+    $SessionHash{'dtend;'.$timezone} = $timestamp
+  }
+  else {
+    $SessionHash{dtend} = $formated_dtend
+  }
+  
   $SessionHash{"LAST-MODIFIED"} = $ICalFormatter->format_datetime($Sessions{$SessionID}{ModifiedDateTime});
 
   foreach my $Key (keys %ICalMapping) {

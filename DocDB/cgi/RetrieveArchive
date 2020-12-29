@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: RetrieveArchive
 # Description: Create an archive (.zip, .tar, .tar.gz) file of the document

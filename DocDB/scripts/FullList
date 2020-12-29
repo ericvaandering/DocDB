@@ -1,4 +1,8 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
+#
 #
 # Description: Invoke with "-u username" which will generate an HTML list of  
 #              all the documents that user is allowed to see. Redirect to a 

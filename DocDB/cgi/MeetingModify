@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: $RCSfile$
 # Description: Modify sessions of meeting the shell of a meeting. Calls itself
@@ -528,6 +531,7 @@ if ($NoSessions) {
                  -helplink  => 'meetingviewgroups',
                  -helptext  => 'Viewable by',
                  -multiple  => $TRUE,
+                 -permission=> 'CanView',
                  -default   => \@MeetingViewDefaults,
                  -size      => 8);
   print "</td>\n";
@@ -538,6 +542,7 @@ if ($NoSessions) {
                  -helplink => 'meetingmodifygroups',
                  -helptext => 'Modifiable by',
                  -multiple => $TRUE,
+                 -permission=> 'CanCreate',
                  -default  => \@MeetingModifyDefaults,
                  -size     => 8);
   print "</td>\n";

@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: CustomListForm
 # Description: Allow users, admins, and meeting organizers to change how various

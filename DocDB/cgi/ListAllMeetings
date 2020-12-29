@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: ListAllMeetings
 # Description: Generates a nice table of all meetings, either for viewing or modification

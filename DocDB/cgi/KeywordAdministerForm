@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 # Description: Add keywords or keyword groups to the keyword list
 #              The keyword list is used indirectly to lookup approved keywords

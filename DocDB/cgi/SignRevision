@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: SignRevision
 # Description: Sign (approve) a revision of a document

@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: $RCSfile$
 # Description: Add talks to sessions of a meeting. Calls itself. In future,
@@ -588,6 +591,7 @@ if ($SingleSession) {
                  -helplink  => 'meetingviewgroups',
                  -helptext  => 'Viewable by',
                  -multiple  => true,
+                 -permission=> 'CanView',
                  -default   => \@MeetingViewDefaults,
                  -size      => 8);
   print "</td>\n";
@@ -596,6 +600,7 @@ if ($SingleSession) {
                  -helplink  => 'meetingmodifygroups',
                  -helptext  => 'Modifiable by',
                  -multiple  => true,
+                 -permission=> 'CanCreate',
                  -default   => \@MeetingModifyDefaults,
                  -size      => 8);
   print "</td>\n";

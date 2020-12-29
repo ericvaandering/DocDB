@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: ListEventsBy
 # Description: This script lists events and sessions based on the topic(s) or

@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: DocumentAddForm
 # Description: The main form to add or modify documents or metadata
@@ -519,6 +522,7 @@ SecurityScroll(-addpublic => 'true',
                -helplink  => 'security',
                -helptext  => $SecurityText,
                -multiple  => $TRUE,
+               -permission=> 'CanView',
                -default   => \@SecurityDefaults);
 print "</td>\n";
 if ($EnhancedSecurity) {
@@ -527,6 +531,7 @@ if ($EnhancedSecurity) {
                  -helplink  => 'modifygroups',
                  -helptext  => 'Can Modify',
                  -multiple  => $TRUE,
+                 -permission=> 'CanCreate',
                  -default   => \@ModifyDefaults);
   print "</td>\n";
 }

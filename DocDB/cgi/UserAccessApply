@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: UserAccessApply
 # Description: Deal with the process of having a user apply to use DocDB via their certificate

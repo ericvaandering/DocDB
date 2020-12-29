@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Author:  Eric Vaandering
 #          Date:  22 May 2005

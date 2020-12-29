@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: GroupAdminister
 # Description: This script is called by GroupAdministerForm and does
@@ -64,10 +67,15 @@ my $NoPerm = $Untaint -> extract(-as_printable => "remove") || "";
 my $RemoveChildren = $Untaint -> extract(-as_printable => "removesubs") || "";
 
 if ($View)           {$View   = 1;} # Make sure they are in format MySQL is expecting
+else                 {$View   = 0;}
 if ($Create)         {$Create = 1;}
+else                 {$Create = 0;}
 if ($Admin)          {$Admin  = 1;}
+else                 {$Admin  = 0;}
 if ($NoPerm)         {$NoPerm = 1;}
+else                 {$NoPerm = 0;}
 if ($RemoveChildren) {$RemoveChildren = 1;}
+else                 {$RemoveChildren = 0;}
 
 $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$Username,$Password);
 
@@ -241,8 +249,8 @@ if      ($Action eq "Delete") { # Delete group
 } elsif ($Action eq "New") { # Create new groups
   push @ActionStack,"Adding a new group.";
   my $GroupInsert = $dbh->prepare(
-   "insert into SecurityGroup (GroupID,Name,Description,CanCreate,CanAdminister,CanView,CanConfig) ".
-                      "values (0,?,?,?,?,?,0)");
+   "insert into SecurityGroup (Name,Description,CanCreate,CanAdminister,CanView,CanConfig) ".
+                      "values (?,?,?,?,?,0)");
 
   $GroupInsert -> execute($Name,$Description,$Create,$Admin,$View);
   $ParentID = $GroupInsert -> {mysql_insertid}; # Works with MySQL only

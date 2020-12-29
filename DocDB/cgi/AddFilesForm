@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: AddFilesForm
 # Description: An entry form to add files to an existing document

@@ -1,4 +1,7 @@
 #! /usr/bin/env perl
+
+use lib ".";
+
 #
 #        Name: SearchForm
 # Description: Build the input form for the "Advanced" (formerly normal) DocDB Search
