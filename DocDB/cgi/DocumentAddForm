@@ -108,7 +108,7 @@ my @Scripts = ("PopUps","InsertRevisionNote","AuthorMethodDisplay","QuickShow","
 if ($TopicMode eq "tree") {
   push @Scripts,"TreeChooser";
 }
-push @Scripts,"jquery/jquery-1.4.2.min","jquery/jquery.elastic","jquery/jquery.validate.pack";
+push @Scripts,"jquery/jquery-3.0.0.min","jquery/jquery.elastic.source.js","jquery/jquery.validate.min.js";
 my @JQueryElements = ("elastic","validate");
 
 if ($AuthorMode eq "active") {
