@@ -15,6 +15,7 @@ RUN yum install -y httpd mod_ssl \
 
 # Jobber is a lightweight cron replacement written in Go
 RUN rpm -i https://github.com/dshearer/jobber/releases/download/v1.4.4/jobber-1.4.4-1.el8.x86_64.rpm
+ADD dot-jobber.yaml /root/.jobber
 
 # j2cli is used for templating config files which will be useful for passing environment variables
 RUN pip install --no-cache-dir --upgrade pip
@@ -31,5 +32,4 @@ RUN mkdir -p /var/www/cgi-bin/DocDB && cp DocDB/DocDB/cgi/* /var/www/cgi-bin/Doc
 RUN mkdir -p /var/www/html/DocDB/Static/ && cp -R /DocDB/DocDB/html/css/ /DocDB/DocDB/html/js/ /DocDB/DocDB/html/img/ /var/www/html/DocDB/Static/
 
 ADD docker-entrypoint.sh /
-ADD dot-jobber.yaml /root/.jobber
 ENTRYPOINT ["/docker-entrypoint.sh"]

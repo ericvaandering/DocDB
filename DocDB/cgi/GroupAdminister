@@ -65,7 +65,7 @@ my $RemoveChildren = $Untaint -> extract(-as_printable => "removesubs") || "";
 
 if ($View)           {$View   = 1;} # Make sure they are in format MySQL is expecting
 if ($Create)         {$Create = 1;}
-if ($Admin)          {$Admin  = 1;}
+if ($Admin)          {$Admin  = 1;} else {$Admin = 0;}
 if ($NoPerm)         {$NoPerm = 1;}
 if ($RemoveChildren) {$RemoveChildren = 1;}
 
