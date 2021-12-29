@@ -113,13 +113,21 @@ sub RegExpSearchAtom {
   }
 
   if ($RequireWord) {
-    $RegExpAtom .= '[[:<:]]';
+    if $MySQLVersion < 8 {
+      $RegExpAtom .= '[[:<:]]';
+    } else {
+      $RegExpAtom .= '\\b';
+    }
   }
   $RegExpAtom .= '(';
   $RegExpAtom .= join '|', @RegExpParts;
   $RegExpAtom .= ')';
   if ($RequireWord) {
-    $RegExpAtom .= '[[:>:]]';
+    if $MySQLVersion < 8 {
+      $RegExpAtom .= '[[:>:]]';
+    } else {
+      $RegExpAtom .= '\\b';
+    }
   }
 
   my $SafeAtom = $dbh->quote($RegExpAtom);

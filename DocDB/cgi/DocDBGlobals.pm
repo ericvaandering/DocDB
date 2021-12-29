@@ -28,6 +28,7 @@
 
 $TRUE  = 1;
 $FALSE = 0;
+$MySQLVersion = 8;
 
 # Advertising link for DocDB
 
