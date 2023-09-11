@@ -205,7 +205,7 @@ print $query -> start_multipart_form('POST',"$EventAdministerForm",
 print "<table class=\"HighPaddedTable CenteredTable\">\n";
 print "<tr>\n";
 print "<td colspan=\"2\">\n";
-print "You can only delete with this form; you can do everything else through event management.\n";
+print "You can only delete with this form; you can do everything else through <a href=\"ModifyHome\">event management</a>.\n";
 print "</td>\n";
 print "</tr>\n";
 
