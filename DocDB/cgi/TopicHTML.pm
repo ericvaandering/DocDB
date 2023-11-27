@@ -24,6 +24,8 @@
 #    along with DocDB; if not, write to the Free Software
 #    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 
+use FindBin qw($RealBin);
+use lib $RealBin;
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 

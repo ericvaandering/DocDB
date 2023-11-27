@@ -29,6 +29,8 @@ use DBI;
 
 $StartTime = new Benchmark;
 
+use FindBin qw($RealBin);
+use lib $RealBin;
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
 require "AuthorSQL.pm";

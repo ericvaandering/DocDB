@@ -30,6 +30,8 @@
 use CGI;
 use DBI;
 
+use FindBin qw($RealBin);
+use lib $RealBin;
 require "DocDBGlobals.pm";
 require "Messages.pm";
 require "HTMLUtilities.pm";

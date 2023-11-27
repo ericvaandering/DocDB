@@ -28,6 +28,8 @@
 use CGI qw(-nosticky);
 use DBI;
 
+use FindBin qw($RealBin);
+use lib $RealBin;
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "SecuritySQL.pm";

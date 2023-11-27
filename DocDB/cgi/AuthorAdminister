@@ -31,6 +31,8 @@ use CGI;
 use CGI::Untaint;
 use DBI;
 
+use FindBin qw($RealBin);
+use lib $RealBin;
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
 require "Security.pm";
