@@ -113,7 +113,7 @@ sub RegExpSearchAtom {
   }
 
   if ($RequireWord) {
-    if $MySQLVersion < 8 {
+    if ($MySQLVersion < 8) {
       $RegExpAtom .= '[[:<:]]';
     } else {
       $RegExpAtom .= '\\b';
@@ -123,7 +123,7 @@ sub RegExpSearchAtom {
   $RegExpAtom .= join '|', @RegExpParts;
   $RegExpAtom .= ')';
   if ($RequireWord) {
-    if $MySQLVersion < 8 {
+    if ($MySQLVersion < 8) {
       $RegExpAtom .= '[[:>:]]';
     } else {
       $RegExpAtom .= '\\b';
