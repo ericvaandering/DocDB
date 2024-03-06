@@ -35,7 +35,7 @@ sub AdministerActions (%) {
   my @Action = ('New', 'Delete', 'Modify');
 
   if ($AddTransfer) {
-    unshift( @Action, "Transfer" );
+    push( @Action, "Transfer" );
   }
   print FormElementTitle(-helplink => "admaction", -helptext => "Action");
   print $query -> radio_group(-name => "admaction",
