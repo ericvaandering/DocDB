@@ -113,13 +113,13 @@ sub RegExpSearchAtom {
   }
 
   if ($RequireWord) {
-    $RegExpAtom .= '[[:<:]]';
+    $RegExpAtom .= '\\b';
   }
   $RegExpAtom .= '(';
   $RegExpAtom .= join '|', @RegExpParts;
   $RegExpAtom .= ')';
   if ($RequireWord) {
-    $RegExpAtom .= '[[:>:]]';
+    $RegExpAtom .= '\\b';
   }
 
   my $SafeAtom = $dbh->quote($RegExpAtom);
