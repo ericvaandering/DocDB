@@ -21,7 +21,7 @@ RUN dnf install -y httpd mod_ssl \
 
 RUN dnf install -y perl perl-CPAN perl-CGI perl-DBI perl-DBD-MySQL perl-DateTime perl-File-MimeInfo \
                    perl-MailTools perl-XML-Twig perl-libxml-perl perl-DateTime-Format-ICal perl-libwww-perl \
-                   perl-Data-ICal perl-Digest-SHA1 perl-XML-Simple \
+                   perl-Digest-SHA1 perl-XML-Simple \
                    && yum clean all \
                    && rm -rf /var/cache/yum
 
