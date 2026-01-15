@@ -28,6 +28,8 @@
 use CGI qw(-nosticky);
 use DBI;
 
+use FindBin qw($Bin);
+use lib $Bin;
 require "DocDBGlobals.pm";
 require "FormElements.pm";
 require "Scripts.pm";
