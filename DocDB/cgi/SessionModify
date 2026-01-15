@@ -29,8 +29,8 @@ use CGI qw(-nosticky);
 use CGI::Untaint;
 use DBI;
 
-use FindBin qw($RealBin);
-use lib $RealBin;
+use FindBin qw($Bin);
+use lib $Bin;
 require "DocDBGlobals.pm";
 require "Messages.pm";
 require "Cookies.pm";

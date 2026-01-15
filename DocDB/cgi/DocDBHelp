@@ -28,8 +28,8 @@ use CGI;
 use CGI::Untaint;
 use XML::Simple;
 
-use FindBin qw($RealBin);
-use lib $RealBin;
+use FindBin qw($Bin);
+use lib $Bin;
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "UntaintInput.pm";
