@@ -44,6 +44,7 @@ RUN sudo cpan -i CGI::Untaint
 
 # Get DocDB software and install it
 RUN git clone https://github.com/ericvaandering/DocDB.git
+RUN cd DocDB; git checkout alma9_omnibus
 RUN mkdir -p /var/www/cgi-bin/DocDB && cp DocDB/DocDB/cgi/* /var/www/cgi-bin/DocDB
 RUN mkdir -p /var/www/html/DocDB/Static/ && cp -R /DocDB/DocDB/html/css/ /DocDB/DocDB/html/js/ /DocDB/DocDB/html/img/ /var/www/html/DocDB/Static/
 
