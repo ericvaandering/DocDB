@@ -333,7 +333,7 @@ sub FetchEmailUserID (;%) {
     $EmailUserID  = FetchEmailUserIDForFSSO();
   } elsif ($UserValidation eq "CERNSSO") {
     require "CERNSSO.pm";
-    $EmailUserID  = FetchEmailUserIDForSSO();
+    $EmailUserID  = FetchEmailUserIDForCERNSSO();
   }
 
   return $EmailUserID;

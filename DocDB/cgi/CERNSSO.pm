@@ -58,7 +58,7 @@ sub FetchSecurityGroupsForCERNSSO (%) {
   return @UsersGroupIDs;
 }
 
-sub FetchEmailUserIDForSSO () {
+sub FetchEmailUserIDForCERNSSO () {
   my $SSOName = $ENV{OIDC_CLAIM_preferred_username};
   push @DebugStack,"Finding EmailUserID by SSO name $SSOName";
 
