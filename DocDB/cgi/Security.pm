@@ -292,7 +292,7 @@ sub FindUsersGroups (;%) {
     @UsersGroupIDs = FetchSecurityGroupsForFSSO();
   } elsif ($UserValidation eq "CERNSSO") {
     require "CERNSSO.pm";
-    @UsersGroupIDs = FetchSecurityGroupsForSSO();
+    @UsersGroupIDs = FetchSecurityGroupsForCERNSSO();
   } elsif ($UserValidation eq "basic-user") {
     # Coming (maybe)
   } else {
