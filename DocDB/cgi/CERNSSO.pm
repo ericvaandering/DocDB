@@ -69,7 +69,7 @@ sub FetchEmailUserIDForCERNSSO () {
   my ($EmailUserID) = $EmailUserSelect -> fetchrow_array;
 
   if (!$EmailUserID and $Preferences{Security}{AutoCreateShib}) {
-    $EmailUserID = CreateSSOUser();
+    $EmailUserID = CreateCERNSSOUser();
   }
 
   if ($EmailUserID) {
@@ -79,8 +79,8 @@ sub FetchEmailUserIDForCERNSSO () {
   return $EmailUserID;
 }
 
-sub CreateSSOUser() {
-  my ($FQUN, $UserName, $Email, $Name) = GetUserInfoSSO();
+sub CreateCERNSSOUser() {
+  my ($FQUN, $UserName, $Email, $Name) = GetUserInfoCERNSSO();
   if ($FQUN eq 'Unknown') {
     push @DebugStack, 'Username is Unknown. Not inserting. SSO may not be set up correctly.';
     return;
@@ -98,7 +98,7 @@ sub CreateSSOUser() {
   return $EmailUserID;
 }
 
-sub GetUserInfoSSO() {
+sub GetUserInfoCERNSSO() {
   my $Username = "Unknown";
   my $EmailAddress = "Unknown";
   my $Name = "Unknown";

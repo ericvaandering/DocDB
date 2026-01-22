@@ -213,7 +213,8 @@ if ($Action eq "Delete") { # Delete user
     print "</table>\n";
 
     if ($MailInstalled
-        && ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO")) {
+        && ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" ||
+            $UserValidation eq "FNALSSO" || $UserValidation eq "CERNSSO")) {
       require "EmailUtilities.pm";
 
       my @To = ($EmailUser{$EmailUserID}{EmailAddress}, $EmailUser{$NewCertID}{EmailAddress},$DBWebMasterEmail);

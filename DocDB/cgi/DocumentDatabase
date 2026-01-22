@@ -106,7 +106,8 @@ if (!$Public or $UserValidation eq "FNALSSO") {  # Public set if not in any grou
   if ($UserValidation eq "FNALSSO") {
     print "<p><strong><a href=\"$CertificateApplyForm\">Apply to Groups</a></strong></p>\n";
   }
-  if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
+  if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" ||
+      $UserValidation eq "FNALSSO" || $UserValidation eq "CERNSSO") {
     print "<p><strong>",&GroupLimitLink(),"</strong></p>\n";
   }
 }
@@ -197,7 +198,8 @@ unless ($Public && !$PublicAccess{MeetingList}) {
 if ($UseSignoffs && (!$Public || $PublicAccess{MeetingList})) {
   push @OtherColumns,"<a href=\"$ListManagedDocuments\">Managed documents</a>";
 }
-if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO" ||
+if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" ||
+    $UserValidation eq "FNALSSO" || $UserValidation eq "CERNSSO" ||
     (!$Public && $Preferences{Options}{DynamicFullList}{Private}) ||
     ( $Public && $Preferences{Options}{DynamicFullList}{Public})) {
   push @OtherColumns,"<a href=\"$ListBy?alldocs=1\">All documents</a>";

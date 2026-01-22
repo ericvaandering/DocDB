@@ -55,7 +55,8 @@ sub PrintRevisionSignoffInfo ($) { # FIXME: Handle more complicated topologies?
   if (CanModify($DocumentID,$Version) || CanAccess($DocumentID,$Version)) {
     $UserCanSign = $TRUE;
   }
-  if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
+  if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" ||
+      $UserValidation eq "FNALSSO" || $UserValidation eq "CERNSSO") {
     my $EmailUserID = FetchEmailUserID();
     unless ($EmailUser{$EmailUserID}{CanSign} && $EmailUser{$EmailUserID}{Verified}) {
       $UserCanSign = $FALSE;
@@ -136,7 +137,8 @@ sub PrintSignatureInfo ($) {
             $Action = "unsign";
             $ActionText = "Remove Signature"
           }
-          if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
+          if ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" ||
+              $UserValidation eq "FNALSSO" || $UserValidation eq "CERNSSO") {
             if (FetchEmailUserID() == $EmailUserID) {
               $SignatureText .= $query -> start_multipart_form('POST',"$SignRevision");
               $SignatureText .= "<div>\n";

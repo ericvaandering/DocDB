@@ -53,7 +53,7 @@ TOC
       <li><a href="#topickey">Topics and Keywords</a></li>
 
 TOC
-    if   ($UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
+    if ($UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO" || $UserValidation eq "CERNSSO") {
       print '<li><a href="#authentication">Authentication</a></li>';
     }
     print <<TOC;
@@ -238,7 +238,8 @@ HTML
 
 HTML
 
-  if ($Preferences{Options}{AlwaysRetrieveFile} || $UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
+  if ($Preferences{Options}{AlwaysRetrieveFile} || $UserValidation eq "certificate" ||
+      $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO" || $UserValidation eq "CERNSSO") {
 
     print <<HTML;
   <p><strong>Note on HTML uploads:</strong>
@@ -414,12 +415,12 @@ HTML
   searchability.</p>
 HTML
 
-  if ($UserValidation eq "shibboleth") {
+  if ($UserValidation eq "shibboleth" || $UserValidation eq "CERNSSO") {
     print <<AUTHSTART;
     <a name="authentication"></a><h2>Authentication</h2>
-    <p>You are authenticated through a single sign-on mechanism known as
-    shibboleth. Shibboleth determines which of its groups, known as ADFS
-    groups or e-groups, you belong to. These are then translated into the DocDB
+    <p>You are authenticated through a CERN's single sign-on mechanism.
+    This determines which of its groups, derived
+    from e-groups, you belong to. These are then translated into the DocDB
     groups that you may use to determine who may view or change documents you
     create or modify. </p>
 

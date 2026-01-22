@@ -158,7 +158,8 @@ unless (-e $FullFile) {
   push @WarnStack,"No appropriate file was found.";
 }
 
-if ($FullFile && ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $Preferences{Options}{AlwaysRetrieveFile})) {
+if ($FullFile && ($UserValidation eq "certificate" || $UserValidation eq "shibboleth"  ||
+                  $UserValidation eq "CERNSSO" || $Preferences{Options}{AlwaysRetrieveFile})) {
   require "FileUtilities.pm";
   StreamFile(-file => $FullFile);
 } elsif ($FullURL) {

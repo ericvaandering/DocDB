@@ -41,7 +41,7 @@ $dbh   = DBI->connect('DBI:mysql:'.$db_name.':'.$db_host,$db_rouser,$db_ropass);
 print $query -> header( -charset => $HTTP_ENCODING );
 &DocDBHeader("Personal Account Login");
 
-if ($UserValidation eq "shibboleth" or $UserValidation eq "FNALSSO") {
+if ($UserValidation eq "shibboleth" or $UserValidation eq "FNALSSO" or $UserValidation eq "CERNSSO") {
   push @ErrorStack,"This page is not valid for single sign-on methods.";
 }
 EndPage();

@@ -211,7 +211,8 @@ sub RevisionMailBody ($) {
 
   # There can be lots of different URLs. Share them all, but not needlessly
   if (!($Preferences{Security}{Instances}{Basic} || $Preferences{Security}{Instances}{Certificate} ||
-        $Preferences{Security}{Instances}{Shibboleth} || $Preferences{Security}{Instances}{FNALSSO})) {
+        $Preferences{Security}{Instances}{Shibboleth} || $Preferences{Security}{Instances}{FNALSSO} ||
+        $Preferences{Security}{Instances}{CERNSSO})) {
     print $Mailer "         URL: ",HTML::Entities::decode_entities($URL),"\n";
   }
   if ($Preferences{Security}{Instances}{Shibboleth}) {
