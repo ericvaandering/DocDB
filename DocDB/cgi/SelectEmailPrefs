@@ -114,7 +114,11 @@ if ($UserValidation eq "shibboleth") {
   require "FNALSSOUtilities.pm";
   ($FQUN, $UserName, $EmailAddress, $Name) = GetUserInfoFSSO();
   $UserName = $FQUN;
-}  
+} elsif ($UserValidation eq "CERNSSO") {
+  require "CERNSSO.pm";
+  ($FQUN, $UserName, $EmailAddress, $Name) = GetUserInfoCERNSSO();
+  $UserName = $FQUN;
+}
 
 if (($NewPass || $ConfNewPass) && ($NewPass ne $ConfNewPass)) {
   push @WarnStack,"The passwords you entered did not match. Password not
@@ -212,14 +216,15 @@ if ($Password) {
   $EmailUserID = ValidateEmailUser($UserName,$Password);
 } elsif ($Digest) {
   $EmailUserID = ValidateEmailUserDigest($UserName,$Digest);
-} elsif ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
+} elsif ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" ||
+         $UserValidation eq "FNALSSO" || $UserValidation eq "CERNSSO") {
   $EmailUserID = FetchEmailUserID();
 }
 
 if ($EmailUserID) {
   FetchEmailUser($EmailUserID);
   $Digest = EmailUserDigest($EmailUserID);
-} elsif ($UserValidation ne "shibboleth" && $UserValidation ne "FNALSSO" ) {
+} elsif ($UserValidation ne "shibboleth" && $UserValidation ne "FNALSSO" && $UserValidation ne "CERNSSO") {
   push @ErrorStack,"The username/password pair or certificate you supplied is invalid. Please try again or contact an administrator.";
   ErrorPage();
   LoginEmailUserForm();
@@ -238,9 +243,10 @@ if ($Mode eq "update") {
 
 # Update DB
 
-  if ($UserValidation eq "shibboleth" or $UserValidation eq "FNALSSO") {
+  if ($UserValidation eq "shibboleth" or $UserValidation eq "FNALSSO" or $UserValidation eq "CERNSSO") {
     require "ShibbolethUtilities.pm";
     require "FNALSSOUtilities.pm";
+    require "CERNSSO.pm";
     if ($UserValidation eq "shibboleth") {
       $EmailUserID = FetchEmailUserIDForShib();
       $UserName = $ENV{ADFS_LOGIN};
@@ -248,6 +254,9 @@ if ($Mode eq "update") {
       $Email    = $ENV{ADFS_EMAIL};
     } elsif ($UserValidation eq "FNALSSO") {
       $EmailUserID = FetchEmailUserIDForFSSO();
+      $Email = $EmailAddress;
+    } elsif ($UserValidation eq "CERNSSO") {
+      $EmailUserID = FetchEmailUserIDForCERNSSO();
       $Email = $EmailAddress;
     }
     if (!$EmailUserID) {
@@ -260,10 +269,12 @@ if ($Mode eq "update") {
         $EmailUserID = FetchEmailUserIDForShib();
       } elsif ($UserValidation eq "FNALSSO") {
         $EmailUserID = FetchEmailUserIDForFSSO();
+      } elsif ($UserValidation eq "CERNSSO") {
+        $EmailUserID = FetchEmailUserIDForCERNSSO();
       }
       push @DebugStack, "Newly created EmailUserID $EmailUserID";
     }
-    push @DebugStack,"Updating shibboleth or FNAL SSO EmailUserID $EmailUserID";
+    push @DebugStack,"Updating SSO EmailUserID $EmailUserID";
     my $UpdateUserInfo = $dbh -> prepare("update EmailUser set Name=?,EmailAddress=?,PreferHTML=? where EmailUserID=?");
     $UpdateUserInfo -> execute($Name,$Email,$HTML,$EmailUserID);
   } elsif ($UserValidation eq "certificate") {
@@ -275,7 +286,8 @@ if ($Mode eq "update") {
   }
 
   if ($NewPass && $ConfNewPass && ($NewPass eq $ConfNewPass)
-               && ($UserValidation ne "certificate" && $UserValidation ne "shibboleth" && $UserValidation ne "FNALSSO")) {
+               && ($UserValidation ne "certificate" && $UserValidation ne "shibboleth" &&
+                   $UserValidation ne "FNALSSO" && $UserValidation ne "CERNSSO")) {
     srand (time ^ $$ ^ unpack "%32L*", `ps axww`);
 
     my $Salt = ((0..9,'a'..'z','A'..'Z','.','/')[(int rand (64))]).
@@ -374,7 +386,8 @@ print "<p><b>Use this page to change your personal account settings.</b></p>
        Also shown are which group(s) you are a member of. If this list is incorrect,
        <a href=\"mailto:$DBWebMasterEmail\">contact the administrators</a> and ask them
        to change your group membership.</p>\n";
-unless ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
+unless ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" ||
+        $UserValidation eq "FNALSSO" || $UserValidation eq "CERNSSO") {
   print "<p>If you want to change your password, type the new password in both boxes.</p>\n";
 }
 print "<p>At the bottom part of the page, select the <a href=\"#topic\">topics

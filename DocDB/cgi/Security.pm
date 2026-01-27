@@ -290,6 +290,9 @@ sub FindUsersGroups (;%) {
   } elsif ($UserValidation eq "FNALSSO") {
     require "FNALSSOUtilities.pm";
     @UsersGroupIDs = FetchSecurityGroupsForFSSO();
+  } elsif ($UserValidation eq "CERNSSO") {
+    require "CERNSSO.pm";
+    @UsersGroupIDs = FetchSecurityGroupsForCERNSSO();
   } elsif ($UserValidation eq "basic-user") {
     # Coming (maybe)
   } else {
@@ -328,6 +331,9 @@ sub FetchEmailUserID (;%) {
   } elsif ($UserValidation eq "FNALSSO") {
     require "FNALSSOUtilities.pm";
     $EmailUserID  = FetchEmailUserIDForFSSO();
+  } elsif ($UserValidation eq "CERNSSO") {
+    require "CERNSSO.pm";
+    $EmailUserID  = FetchEmailUserIDForCERNSSO();
   }
 
   return $EmailUserID;

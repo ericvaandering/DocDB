@@ -75,6 +75,9 @@ sub UserPrefForm ($) {
     $Name         = $ENV{ADFS_FULLNAME};
     $EmailAddress = $ENV{ADFS_EMAIL};
     $Username     = $ENV{ADFS_LOGIN};
+  } elsif ($UserValidation eq "CERNSSO") {
+    require "CERNSSO.pm";
+    ($FQUN, $Username, $EmailAddress, $Name) = GetUserInfoCERNSSO();
   } elsif ($UserValidation eq "FNALSSO") {
     require "FNALSSOUtilities.pm";
     ($FQUN, $Username, $EmailAddress, $Name) = GetUserInfoFSSO();
@@ -89,7 +92,8 @@ sub UserPrefForm ($) {
     print $query -> hidden(-name => 'username', -default => $Username);
     print $query -> hidden(-name => 'digest', -default => $Digest);
     print "Username:</th>\n<td>".SmartHTML({-text => $Username})."</td></tr>";
-  } elsif ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
+  } elsif ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" ||
+           $UserValidation eq "FNALSSO" || $UserValidation eq "CERNSSO") {
     print "<tr><th>Username:</th>\n<td>".SmartHTML({-text => $FQUN})."</td></tr>";
   } else {
     print "<tr><th>Username:</th>\n<td>";
@@ -108,7 +112,7 @@ sub UserPrefForm ($) {
     print $query -> textfield(-name => 'email',    -default => SmartHTML({-text => $EmailAddress}),
                               -size => 24, -maxlength => 64);
     print "</td></tr>\n";
-  } elsif  ($UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
+  } elsif  ($UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO" || $UserValidation eq "CERNSSO") {
     print "<tr><th>Real name:</th>\n<td>$Name</td></tr>\n";
     print "<tr><th>E-mail address:</th>\n<td>$EmailAddress</td></tr>\n";
   } else {
@@ -137,7 +141,8 @@ sub UserPrefForm ($) {
     print $query -> checkbox(-name => "html", -value => 1, -label => '');
   }
   print "</td></tr>\n";
-  if  ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" || $UserValidation eq "FNALSSO") {
+  if  ($UserValidation eq "certificate" || $UserValidation eq "shibboleth" ||
+       $UserValidation eq "FNALSSO" || $UserValidation eq "CERNSSO") {
     print "<tr><th>Member of Groups:</th>\n";
     print "<td><ul>\n";
     my @UserGroupIDs = FindUsersGroups(-ignorecookie => $TRUE);
