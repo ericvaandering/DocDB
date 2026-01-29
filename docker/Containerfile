@@ -15,7 +15,7 @@ RUN dnf upgrade -y && \
 
 RUN dnf install -y httpd mod_ssl \
                    sudo git \
-                   sendmail sendmail-cf python pip python-pip \
+                   sendmail sendmail-cf python pip python-pip cronie procps-ng \
                    && yum clean all \
                    && rm -rf /var/cache/yum
 
@@ -29,9 +29,9 @@ RUN dnf -y install https://www.rpmfind.net/linux/almalinux/9.7/devel/x86_64/os/P
     && dnf clean all \
     && rm -rf /var/cache/dnf
 
-# Jobber is a lightweight cron replacement written in Go
-RUN rpm -i https://github.com/dshearer/jobber/releases/download/v1.4.4/jobber-1.4.4-1.el8.x86_64.rpm
-ADD dot-jobber.yaml /root/.jobber
+# Set up cron
+COPY crontab /etc/crontab
+RUN touch /var/log/cron.log
 
 # j2cli is used for templating config files which will be useful for passing environment variables
 #RUN python3 -m pip install --no-cache-dir --upgrade pip

@@ -1,0 +1,8 @@
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+
+# Daily at 00:05
+5 0 * * * root cd /DocDB/DocDB/scripts; ./DocDBDaily.csh  > /dev/null
+
+# Weekly on Sunday at 00:15
+15 0 * * 0 root cd /DocDB/DocDB/scripts; ./DocDBWeekly.csh  > /dev/null
