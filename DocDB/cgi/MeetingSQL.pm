@@ -496,6 +496,7 @@ sub InsertEvent (%) {
   my $AltLocation      = exists $ArgRef->{-altlocation}      ?   $ArgRef->{-altlocation}      : "";
   my $URL              = exists $ArgRef->{-url}              ?   $ArgRef->{-url}              : "";
   my $ShowAllTalks     = exists $ArgRef->{-showalltalks}     ?   $ArgRef->{-showalltalks}     : 0;
+  if ($ShowAllTalks == '') $ShowAllTalks = 0;
   my $Preamble         = exists $ArgRef->{-preamble}         ?   $ArgRef->{-preamble}         : "";
   my $Epilogue         = exists $ArgRef->{-epilogue}         ?   $ArgRef->{-epilogue}         : "";
   my @TopicIDs         = exists $ArgRef->{-topicids}         ? @{$ArgRef->{-topicids}}        : ();

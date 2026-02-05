@@ -29,6 +29,8 @@ use CGI;
 use CGI::Untaint;
 use DBI;
 
+use FindBin qw($Bin);
+use lib $Bin;
 require "DocDBGlobals.pm";
 require "Messages.pm";
 

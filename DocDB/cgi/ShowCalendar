@@ -36,6 +36,8 @@ use CGI::Untaint;
 use DBI;
 use DateTime;
 
+use FindBin qw($Bin);
+use lib $Bin;
 require "DocDBGlobals.pm";
 require "DBUtilities.pm";
 require "HTMLUtilities.pm";

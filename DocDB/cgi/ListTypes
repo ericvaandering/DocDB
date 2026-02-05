@@ -22,6 +22,8 @@
 use CGI;
 use DBI;
 
+use FindBin qw($Bin);
+use lib $Bin;
 require "DocDBGlobals.pm";
 require "MiscSQL.pm";
 require "ResponseElements.pm";
