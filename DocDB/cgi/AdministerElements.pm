@@ -36,7 +36,7 @@ sub AdministerActions (%) {
   }
   print FormElementTitle(-helplink => "admaction", -helptext => "Action");
   print $query -> radio_group(-name => "admaction",
-                              -values => \%Action, -default => "-",
+                              -values => \@Action, -default => "-",
                               -onclick => "disabler_$Form();");
 };
 
