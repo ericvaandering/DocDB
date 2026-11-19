@@ -59,7 +59,7 @@ sub FetchSecurityGroupsForCERNSSO (%) {
 }
 
 sub FetchEmailUserIDForCERNSSO () {
-  my $SSOName = $ENV{OIDC_CLAIM_preferred_username};
+  my $SSOName = $ENV{OIDC_CLAIM_cern_upn};
   push @DebugStack,"Finding EmailUserID by SSO name $SSOName";
 
   my $EmailUserSelect = $dbh->prepare("select EmailUserID from EmailUser ".
@@ -103,7 +103,7 @@ sub GetUserInfoCERNSSO() {
   my $EmailAddress = "Unknown";
   my $Name = "Unknown";
 
-  if (exists $ENV{'OIDC_CLAIM_cern_uid'}) {
+  if (exists $ENV{'OIDC_CLAIM_email'}) {
     $Name = $ENV{OIDC_CLAIM_name};
     $EmailAddress = $ENV{OIDC_CLAIM_email};
     $Username = $ENV{OIDC_CLAIM_cern_upn};
