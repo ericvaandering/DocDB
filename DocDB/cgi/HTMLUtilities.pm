@@ -125,6 +125,7 @@ sub DocDBHeader {
     print "<meta http-equiv=\"refresh\" content=\"$Refresh\" />\n";
   }
   print '<meta http-equiv="Content-Type" content="text/html; charset='.$HTTP_ENCODING.'" />',"\n";
+  print '<meta name="viewport" content="width=device-width, initial-scale=1">',"\n";
   print "<title>$Title</title>\n";
 
   # Include DocDB style sheets
