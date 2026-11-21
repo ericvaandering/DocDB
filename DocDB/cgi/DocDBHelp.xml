@@ -1294,17 +1294,24 @@ or may not be the same as the web username and password.
      <key>targetauthor</key>
      <title>Author to Consolidate</title>
      <text>
-         Instead of simply deleting an author, it is often useful to "Consolidate"
-         instead. To do this: In the first list (under the heading "Authors"),
-         select the author that will be removed. In the second list
-         (under the heading "Consolidate"), select the author to use instead.
-         After submitting, all documents with the first author will now list
-         the second ("Consolidate") author, and the first author will be deleted.
+         It is recommended to "consolidate" authors instead of deleting an author if there are 
+         two author entries for one person (such as a duplicate, or if someone has changed their 
+         name, or if your practice is to move all activity by people who have left the organization to a
+         different author or an "Obsolete Author" or something similar).
 
-         This may
-         be useful if there are two author entries for one person or if your practice is to
-         move all activity by people who have left the organization to Obsolete Author
-         or something similar.
+         If you simply delete an author instead, that author will be removed from all documents 
+         and events they were listed on, whereas consolidating authors will put the author entry
+         you choose to keep on all documents and events that had either author.
+       
+         To consolidate authors:
+         1. Select the action of "Delete".
+         2. In the first list (under the heading "Authors"), select the author that will be removed.
+         3. In the second list (under the heading "Consolidate"), select the author to use instead.
+         4. Enter an administrator username and password and click the "Change Author Info" button.
+	 
+         After this, all documents and events with the first author will now list the second 
+         ("Consolidate") author, and the first author will be deleted. The documents and events
+	 with the second author will still retain that second author.
 
          This field is optional.
      </text>

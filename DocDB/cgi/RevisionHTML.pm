@@ -117,11 +117,16 @@ sub DocTypeButtons (%) {
   my $Default  = $Params{-default}  || 0;
 
   &GetDocTypes();
-  my @DocTypeIDs = keys %DocumentTypes;
+  # sort alphabetically by short doctype name                                                          \
+  my @DocTypeIDs = sort {$DocumentTypes{$a}{SHORT} cmp $DocumentTypes{$b}{SHORT}} keys %DocumentTypes;
+  # no sorting, doctypes listed in different random order each time under Cloudflare
+  #my @DocTypeIDs = keys %DocumentTypes;  
   my %ShortTypes = ();
 
   foreach my $DocTypeID (@DocTypeIDs) {
-    $ShortTypes{$DocTypeID} = SmartHTML({-text=>$DocumentTypes{$DocTypeID}{SHORT}});
+      $ShortTypes{$DocTypeID} = SmartHTML({-text=>$DocumentTypes{$DocTypeID}{SHORT}});
+      # $ShortTypes{$DocTypeID} = $DocumentTypes{$DocTypeID}{SHORT};
+      # print "DocTypeID: $DocTypeID, $ShortTypes{$DocTypeID} <BR>";
   }
 
   my $ElementTitle = &FormElementTitle(-helplink  => "doctype" ,
@@ -131,8 +136,13 @@ sub DocTypeButtons (%) {
 
   print "<div class=\"LowPaddedTable\">\n";
   print $ElementTitle,"\n";
-  my %FieldParams = (-columns => 3,            -name    => "doctype",
-                     -values  => \%ShortTypes, -default => $Default);
+  my %FieldParams = (-columns => 3,
+		     -name    => "doctype",
+		     # Print doctypes sorted by shortname 
+                     #-values  => \%ShortTypes,		     		     
+                     -values  => \@DocTypeIDs,
+                     -labels  => \%ShortTypes,
+		     -default => $Default);
   if ($Required) {
     $FieldParams{'-class'} = "required";
   }
@@ -381,8 +391,16 @@ sub PrintEventInfo (%) {
   my $DocRevID = $Params{-docrevid};
   my $Format   = $Params{-format}   || "normal";
 
-  my @EventIDs = GetRevisionEvents($DocRevID);
-
+  # sort by most recent date first
+  my @EventIDs = reverse sort EventsByDate GetRevisionEvents($DocRevID);
+  # sort alphabetically by title
+  #my @EventIDs = sort {$Conferences{$a}{Title} cmp $Conferences{$b}{Title}} GetRevisionEvents($DocRevID);
+  # sort alphabetically by long description
+  #my @EventIDs = sort {$Conferences{$a}{LongDescription} cmp $Conferences{$b}{LongDescription}} GetRevisionEvents($DocRevID);
+  # no sorting, events listed in different random order each time under Cloudflare
+  #my @EventIDs = GetRevisionEvents($DocRevID);
+  #print keys ( %Conferences{$EventIDs[0]} );
+      
   if (@EventIDs) {
     unless ($Format eq "short" || $Format eq "description") {
       print "<div id=\"EventInfo\">\n";

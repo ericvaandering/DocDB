@@ -32,9 +32,10 @@
 use CGI;
 use CGI::Untaint;
 use DBI;
+use DateTime;
+
 use FindBin qw($Bin);
 use lib $Bin;
-
 require "DocDBGlobals.pm";
 require "ResponseElements.pm";
 require "Security.pm";
@@ -49,6 +50,7 @@ require "SignoffSQL.pm";
 $query = new CGI;  # Global for subroutines
 $query -> autoEscape(0);
 my $Untaint = CGI::Untaint -> new($query -> Vars);
+my $Datetime = DateTime->now;
 
 # Parameters to script
 
@@ -101,15 +103,19 @@ if ($Action eq "Delete") { # Delete user
     $NotificationDelete -> execute($EmailUserID);
     $UserDelete         -> execute($EmailUserID);
 
-    my @NotifyTimes = ("Immediate","Daily","Weekly");
-    my @NotifyTypes = ("Author","Keyword","Topic");
-    foreach my $NotifyType (@NotifyTypes) {  # Loop over all tables and delete
-      foreach my $NotifyTime (@NotifyTimes) {
-        my $Table = "Email$NotifyType$NotifyTime";
-        my $NotifyDelete = $dbh -> prepare("delete from $Table where EmailUserID=?");
-           $NotifyDelete -> execute($EmailUserID);
-      }
-    }
+    # These tables (EmailImmediateAuthor etc) do not exist so they
+    # can not be deleted which adds spurios errors to the log file.
+    #
+    #my @NotifyTimes = ("Immediate","Daily","Weekly");
+    #my @NotifyTypes = ("Author","Keyword","Topic");
+    #foreach my $NotifyType (@NotifyTypes) {  # Loop over all tables and delete
+    #  foreach my $NotifyTime (@NotifyTimes) {
+    #    my $Table = "Email$NotifyType$NotifyTime";
+    #    my $NotifyDelete = $dbh -> prepare("delete from $Table where EmailUserID=?");
+    #       $NotifyDelete -> execute($EmailUserID);
+    #  }
+    #}
+    
     push @ActionStack,"The user was deleted.";
   }
   ActionReport();
@@ -165,6 +171,9 @@ if ($Action eq "Delete") { # Delete user
       my $Body = "An administrator has approved a request for access to DocDB or ";
       $Body .= "made a change (such as changing group memberships) to your $Project DocDB account. ";
       $Body .= "If you think this was done in error or have questions, please contact $DBWebMasterEmail.";
+      # Add date stamp to make email body unique so listserv does not bounce these emails back to list owners as duplicates.
+      # Having a different subject with the same email body still caused the email to bounce back to list owners.
+      $Body .= "\n\n$Datetime";
       SendEmail(-body => $Body, -to => \@To, -subject => $Subject);
     }
   }

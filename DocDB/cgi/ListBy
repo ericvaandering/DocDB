@@ -106,6 +106,11 @@ if ($Days) {
   my @ChildTopicIDs  = TopicAndSubTopics({-topicid => $TopicID});
   my @ParentTopicIDs = FetchTopicParents({-topicid => $TopicID});
 
+  # flag on fetch because fetch with no execute causes log error with RHEL 9
+  # "ListBy: DBD::mysql::st fetch failed: fetch () without execute()"
+  # Ex: This happens when click on topic associated with 0 documents.
+  $FetchFlag = 0;
+  
   my $HasSubTopics = (scalar(@ChildTopicIDs) > 1);
   $FieldListOptions{-topicid} = $TopicID;
   $Title   = "Document List by Topic";
@@ -125,6 +130,7 @@ if ($Days) {
   foreach my $ChildTopicID (@ChildTopicIDs) {
     FetchTopic($ChildTopicID);
     $List -> execute($ChildTopicID);
+    $FetchFlag = 1;
     while (my ($DocumentID) = $List -> fetchrow_array) {
       push @DocumentIDs,$DocumentID;
     }
@@ -193,6 +199,7 @@ if ($Days) {
   if (%Hash) {
     $Message .= '<br/>(List <a href="'.$ListEventsBy.'?authorid='.$AuthorID.'">events</a> moderated by '.$Link.')';
   }
+  $FetchFlag = 1;
   @DocumentIDs = GetAuthorDocuments($AuthorID, $OldDocs);
 } elsif ($EventID) {
 
@@ -291,8 +298,10 @@ if ($Mode eq "conference") {
 }
 
 # Do the fetch on the $List. "unless (@DocumentIDs)" here to do complex fetches, user specify
-
-unless (@DocumentIDs) { # Some do their own
+# Condition to continue is if have not already fetched rather than if there are no DocumentIDs
+# Otherwise get error "ListBy: DBD::mysql::st fetch failed: fetch () without execute()" with RHEL 9
+#unless (@DocumentIDs) { # Some do their own
+unless ($FetchFlag) { # Some do their own
   if ($List) {
     my $DocumentID;
     $List -> bind_columns(undef, \($DocumentID));

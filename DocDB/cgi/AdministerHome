@@ -30,9 +30,9 @@
 
 use CGI qw(-nosticky);
 use DBI;
+
 use FindBin qw($Bin);
 use lib $Bin;
-
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 require "SecuritySQL.pm";
@@ -115,7 +115,7 @@ if (CanAdminister()) {
   print "<li>Administer <a href=\"$TopicAdminister\">topics</a></li>\n";
   print "<li>Administer <a href=\"$EventAdministerForm\">events</a></li>\n";
   print "<li>Administer <a href=\"$EmailAdministerForm\">personal accounts</a>";
-  if ($UserValidation eq "certificate") {
+  if ($UserValidation eq "certificate" || $UserValidation eq "FNALSSO") {    
     print " or <a href=\"$BulkCertificateInsert\">create new accounts</a>";
   }
   print "</li>\n";

@@ -22,11 +22,11 @@
 use Benchmark;
 use CGI;
 use DBI;
-use FindBin qw($Bin);
-use lib $Bin;
 
 $StartTime = new Benchmark;
 
+use FindBin qw($Bin);
+use lib $Bin;
 require "DocDBGlobals.pm";
 require "Messages.pm";
 require "HTMLUtilities.pm";
@@ -115,6 +115,11 @@ if ($CertificateStatus eq "verified") {
     my @UserGroupIDs = FetchSecurityGroupsForFSSO();
     foreach my $UserGroupID (@UserGroupIDs) {
       FetchSecurityGroup($UserGroupID);
+    }
+    # sort alphabetically by group name
+    # no sorting, groups listed in different random order each time under Cloudflare
+    @UserGroupIDs = sort ( {$SecurityGroups{$a}{NAME} cmp $SecurityGroups{$b}{NAME}} @UserGroupIDs);
+    foreach my $UserGroupID (@UserGroupIDs) {
       print "<li>".SmartHTML({-text => $SecurityGroups{$UserGroupID}{NAME}})."</li>\n";
     }
     print "</ul>\n";

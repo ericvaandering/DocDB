@@ -28,7 +28,7 @@ sub AdminInstructionsSidebar {
   <h2>Contents</h2>
   <ul>
    <li><a href="#basic">Basic Administration</a></li>
-   <li><a href="#special">Specific Cases</a>
+   <li><a href="#specific">Specific Cases</a>
    <ul>
     <li><a href="#groups">Understanding groups</a></li>
     <li><a href="#personal">Personal accounts</a></li>
@@ -41,10 +41,10 @@ sub AdminInstructionsBody {
   print <<HTML;
 
   <a name="basic"></a>
-  <h1>Admintering DocDB</h1>
+  <h1>Administering DocDB</h1>
 
   <p>DocDB comes with a full complement of administration pages which modify
-  the underlying lists of meta-data.  Since these pages are used by very few
+  the underlying lists of metadata.  Since these pages are used by very few
   people, you will find they are not as polished or fool-proof as the pages
   intended for regular users. However, you should become comfortable with using
   these pages. These pages have been written at various times, so some may be
@@ -53,20 +53,21 @@ sub AdminInstructionsBody {
 
   <p>While some conventions differ from page to page (see above), a few are consistent:</p>
 
+  <p>
   <ol>
-  <li>You must always supply the administrator password for every action. This
+      <li>You must always supply the administrator password for every action. This
       is to remind you that you are doing something potentially harmful and to
       keep a casual user from exploiting unknown DocDB bugs and causing
-      havoc.</li>
+      havoc.</li><br>
   <li>You must select an action from New, Modify, or Delete. This activates the
       parts of the user interface you may use. You must enable Javascript for
       this to work. For Modify, you typically select   something to act on on
       the left and then change what you want to change on the  right. Usually
       if you leave something blank, no change will be made. In certain cases
-      there are boxes to check which will clear lists like this.</li>
+      there are boxes to check which will clear lists like this.</li><br>
   <li>Be especially careful deleting things. Deleting and then adding the same thing
       back again is not the same thing. Every piece of meta-data (like an author) is
-      just a number in the DB.</li>
+      just a number in the DB.</li><br>
   <li>Some more recent routines have a <strong>Force</strong> option. This is
       a  warning that you are about to do something potentially destructive.
       For instance, if you  check <strong>Force</strong> and delete a group of
@@ -76,10 +77,31 @@ sub AdminInstructionsBody {
       do severe damage to your underlying database. If you try to do the action
       without using <strong>Force</strong>, it will proceed if there are no
       side effects. In the case above, deleting a group that is not allowed to
-      view or modify any documents will succeed.</li>
+      view or modify any documents will succeed.</li><br>
   <li>If you are unsure of what you are doing, ask your maintainer or even back
       up the DB before acting.</li>
   </ol>
+  </p>
+
+  <a name="adminactions"></a>
+  <h1>Administrator Actions vs. User Actions</h1>
+  <p>The following actions require administrator username/password:
+  <ul><li>add/modify/delete groups</li>
+  <li>add/modify which groups a user belongs to</li>
+  <li>verify/unverify a user</li>
+  <li>allow a user to sign documents</li>
+  <li>modify/delete an author</li>
+  <li>add/modify/delete topics/keywords/groups/institutions/document types</li>
+  <li>delete documents/events</li></ul></p>
+
+  <p>Users are expected to perform the following actions:
+  <ul><li>reserve/create/modify their own documents</li>
+  <li>create/modify their own events</li>
+  <li>sign/remove their signature from documents (if this setting is enabled)</li>
+  <li>create authors</li>
+  <li>add/modify their notifications (watched documents)</li>
+  <li>view their own account information (including what groups they are in)</li>
+  <li>request membership in additional groups if they don't have access to needed documents or events</li></ul></p>
 
   <a name="specific"></a>
   <h1>Specific Cases</h1>
@@ -109,11 +131,46 @@ sub AdminInstructionsBody {
   <h2>Personal accounts</h2>
 
   <p>These are settings for users in DocDB. While you can see what their
-     settings are  (e.g. which documents they are watching) you can only change
-     things that they cannot, such as the password (unless using certificate
-     authentication) and which groups they belong to. The user is expected to
-     do everything else for themselves.</p>
+     settings are (e.g. which documents they are watching), you cannot change
+     which documents they are watching or their password. You can only change
+     things that they cannot, such as which groups they belong to, whether
+     they can sign documents, and whether their account is verified. The user
+     is expected to do everything else for themselves.</p>
 
+  <p>In order to add a non-private username/password user to a group (such as an 
+     SSO or certificate user), that user must have already accessed this DocDB 
+     using SSO or their certificate. After they've entered this DocDB at least once, 
+     their username will show up in the list of usernames in the "Administer Personal 
+    Accounts" page in the Administration area.</p>
+
+  <ol>
+    <li>Select the Action "Modify".</li>
+    <li>Select the Username</li>
+    <li>Select the groups to add.</li>
+    <li>Enter the administrator username and password and click "Modify Personal Account".</li></ol>
+
+  <p>To remove permission groups from a user:</p>
+
+  <ol>
+    <li>Go to the Administer personal accounts page.</li>
+    <li>Select the Action "Modify".</li>
+    <li>Select the Username to be updated.</li>
+    <li>Select the checkbox "Clear User's Groups".</li>
+    <li>Select any groups that should be retained from the box "User's Groups".</li>
+    <li>Enter the Administrator username and password and click "Modify Personal Account".</li></ol>
+
+  <p>To consolidate users' accounts:</p>
+  <ol>
+    <li>Go to the Administer personal accounts page.</li>
+    <li>Select the Action "Transfer".</li>
+    <li>Select the Username from which permissions should be transferred.</li>
+    <li>Select the New Username, the target account.</li>
+    <li>Enter the Administrator username and password and click "Modify Personal Account".</li>
+    <li>(Optional) To delete the obsolete account, select the Action "Delete", the Username 
+        to be deleted, and enter the Administrator username and password and click "Modify 
+        Personal Account".</li></ol>
+  <p>Personal accounts that have been used to sign documents or need to sign documents 
+  cannot be deleted, but can be disabled by removing the Verify check.<p>
 HTML
 
 }

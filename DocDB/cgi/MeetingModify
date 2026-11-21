@@ -28,9 +28,10 @@ use CGI qw(-nosticky);
 use CGI::Untaint;
 use DBI;
 use Time::Local;
+use DateTime;
+
 use FindBin qw($Bin);
 use lib $Bin;
-
 require "DocDBGlobals.pm";
 require "Messages.pm";
 
@@ -455,7 +456,6 @@ if ($SetMode eq "create") { # Defaults for new meetings, just like for documents
 }
 
 if ($Mode eq "copy" && $OffsetDays) {
-  use DateTime;
   my ($StartYear,$StartMonth,$StartDay) = split /-/,$DefaultStartDate;
   my ($EndYear,$EndMonth,$EndDay)       = split /-/,$DefaultEndDate;
 

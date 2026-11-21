@@ -149,6 +149,11 @@ sub UserPrefForm ($) {
     push @DebugStack, @UserGroupIDs;
     foreach my $UserGroupID (@UserGroupIDs) {
       &FetchSecurityGroup($UserGroupID);
+    }
+    # sort alphabetically by group name
+    # if no sorting, groups listed in different random order each time under Cloudflare
+    @UserGroupIDs = sort ( {$SecurityGroups{$a}{NAME} cmp $SecurityGroups{$b}{NAME}} @UserGroupIDs);
+    foreach my $UserGroupID (@UserGroupIDs) {
       print "<li>".SmartHTML({-text => $SecurityGroups{$UserGroupID}{NAME}})."</li>\n";
     }
     print "</ul></td></tr>\n";

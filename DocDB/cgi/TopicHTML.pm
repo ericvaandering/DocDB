@@ -26,7 +26,6 @@
 
 use FindBin qw($Bin);
 use lib $Bin;
-
 require "DocDBGlobals.pm";
 require "HTMLUtilities.pm";
 

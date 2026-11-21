@@ -27,6 +27,9 @@ package CGI::Untaint::listofhtml;
 $VERSION = '1.00';
 
 use strict;
+use FindBin qw($Bin);
+use lib $Bin;
+use UntaintListOfWords;
 use base 'CGI::Untaint::listofwords';
 use HTML::Entities qw(encode_entities_numeric);
 

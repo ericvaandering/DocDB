@@ -211,7 +211,10 @@ sub KeywordGroupSelect (%) { # Scrolling selectable list for keyword groups
   }
 
   print FormElementTitle(-helplink => "keywordgroups", -helptext => "Keyword Groups");
-  my @KeyGroupIDs = keys %KeywordGroups;
+  # sort alphabetically by short keywordgroup name         
+  my @KeyGroupIDs = sort {$KeywordGroups{$a}{Short} cmp $KeywordGroups{$b}{Short}} keys %KeywordGroups;
+  # no sorting, keywordgroups listed in different random order each time under Cloudflare
+  #my @KeyGroupIDs = keys %KeywordGroups;
   my %GroupLabels = ();
 
   foreach my $ID (@KeyGroupIDs) {

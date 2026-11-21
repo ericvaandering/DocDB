@@ -42,7 +42,12 @@ DocDBHeader("List of Groups");
 print '<table class="CenteredTable MedPaddedTable">';
 print "<tr><th>Group</th><th>Description</th></tr>\n";
 
-foreach my $GroupID (keys %SecurityGroups) {
+# sort alphabetically by group name
+foreach my $GroupID (sort ({$SecurityGroups{$a}{NAME} cmp $SecurityGroups{$b}{NAME}} (keys %SecurityGroups))) {
+# sort ascending by groupid 
+#foreach my $GroupID (sort {$a <=> $b} (keys %SecurityGroups)) {
+# no sorting, groups listed in different random order each time under Cloudflare
+#foreach my $GroupID (keys %SecurityGroups) {    
   print "<tr>\n";
   print "<td>",SecurityLink( {-groupid => $GroupID} ),"</td>\n";
   print "<td>",SmartHTML({-text=>$SecurityGroups{$GroupID}{Description}}),"</td>\n";

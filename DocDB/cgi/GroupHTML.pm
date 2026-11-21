@@ -31,7 +31,10 @@ sub PrintGroupParents ($) {
   
   if (@Parents) {
     print "<ul>\n";
-    foreach my $Parent (@Parents) {
+    # sort alphabetically by group name 
+    foreach my $Parent (sort (@Parents)) {
+    # no sorting, groups listed in different random order each time under Cloudflare 	
+    #foreach my $Parent (@Parents) {
       print "<li>$Parent</li>\n";
     }  
     print "</ul>\n";
@@ -53,7 +56,10 @@ sub PrintGroupChildren ($) {
   
   if (@Children) {
     print "<ul>\n";
-    foreach my $Child (@Children) {
+    # sort alphabetically by group name
+    foreach my $Child (sort (@Children)) {
+    # no sorting, groups listed in different random order each time under Cloudflare 		
+    #foreach my $Child (@Children) {
       print "<li>$Child</li>\n";
     }  
     print "</ul>\n";

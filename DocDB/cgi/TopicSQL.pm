@@ -90,7 +90,10 @@ sub GetRevisionTopics {
       push @TopicIDs,$TopicID;
     }
   }
-  @TopicIDs = Unique(@TopicIDs);
+  # sort by topicid
+  @TopicIDs = sort {$a <=> $b} Unique(@TopicIDs);
+  # no sorting, topicid listed in different random order each time under Cloudflare
+  # @TopicIDs = Unique(@TopicIDs);
   return @TopicIDs;
 }
 

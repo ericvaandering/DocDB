@@ -418,12 +418,22 @@ sub DisplayNotification ($$;$) {
 
   require "NotificationSQL.pm";
   require "AuthorHTML.pm";
+  require "AuthorSQL.pm";
   require "KeywordHTML.pm";
+  require "KeywordSQL.pm";
   require "MeetingHTML.pm";
+  require "MeetingSQL.pm";
   require "TopicHTML.pm";
-
+  require "TopicSQL.pm";
+  require "Sorts.pm";
+  
   FetchNotifications( {-emailuserid => $EmailUserID} );
-
+  GetAuthors ();
+  GetTopics ();
+  GetEventsByDate ();
+  GetConferences ();
+  GetAllEventGroups ();
+    
   my @AuthorIDs     = @{$Notifications{$EmailUserID}{"Author_".$Set}};
   my @TopicIDs      = @{$Notifications{$EmailUserID}{"Topic_".$Set}};
   my @EventIDs      = @{$Notifications{$EmailUserID}{"Event_".$Set}};
@@ -431,11 +441,26 @@ sub DisplayNotification ($$;$) {
   my @Keywords      = @{$Notifications{$EmailUserID}{"Keyword_".$Set}};
   my @AllDocuments  = @{$Notifications{$EmailUserID}{"AllDocuments_".$Set}};
 
-  @AuthorIDs = Unique(@AuthorIDs);
-  @TopicIDs = Unique(@TopicIDs);
-  @EventIDs = Unique(@EventIDs);
-  @EventGroupIDs = Unique(@EventGroupIDs);
-  @Keywords = Unique(@Keywords);
+  # sort alphabetically 
+  @AuthorIDs =     sort byLastName Unique(@AuthorIDs);
+  @TopicIDs =      sort TopicByAlpha Unique(@TopicIDs);
+  @EventIDs =      reverse sort EventsByDate Unique(@EventIDs);
+  @EventGroupIDs = sort EventGroupsByName Unique(@EventGroupIDs);
+  @Keywords =      sort {$a cmp $b} Unique(@Keywords);
+    
+  #sort by ID
+  #@AuthorIDs =     sort {$a<=>$b} Unique(@AuthorIDs);
+  #@TopicIDs =      sort {$a<=>$b} Unique(@TopicIDs);
+  #@EventIDs =      sort {$a<=>$b} Unique(@EventIDs);
+  #@EventGroupIDs = sort {$a<=>$b} Unique(@EventGroupIDs);
+  #@Keywords =      sort {$a<=>$b} Unique(@Keywords);
+
+  # no sorting, items listed in different random order each time under Cloudflare
+  #@AuthorIDs = Unique(@AuthorIDs);
+  #@TopicIDs = Unique(@TopicIDs);
+  #@EventIDs = Unique(@EventIDs);
+  #@EventGroupIDs = Unique(@EventGroupIDs);
+  #@Keywords = Unique(@Keywords);
 
   my $NewNotify = (@AllDocuments || @AuthorIDs || @TopicIDs || @EventIDs || @EventGroupIDs || @Keywords);
 

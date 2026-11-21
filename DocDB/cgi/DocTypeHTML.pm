@@ -38,7 +38,12 @@ sub DocTypeSelect (;%) { # Scrolling selectable list for doc type search
   }
 
   my %DocTypeLabels = ();
-  foreach my $DocTypeID (keys %DocumentTypes) {
+
+  # sort alphabetically by short doctype name
+  @DocumentTypesSorted = (sort {$DocumentTypes{$a}{SHORT} cmp $DocumentTypes{$b}{SHORT}} keys %DocumentTypes); 
+  foreach my $DocTypeID (@DocumentTypesSorted) {
+  # no sorting, doctypes listed in different random order each time under Cloudflare    
+  #foreach my $DocTypeID (keys %DocumentTypes) {
     my $LongName = SmartHTML({-text => $DocumentTypes{$DocTypeID}{LONG}},);
     my $ShortName = SmartHTML({-text => $DocumentTypes{$DocTypeID}{SHORT}},);
     if ($Format eq "short") {
@@ -47,9 +52,12 @@ sub DocTypeSelect (;%) { # Scrolling selectable list for doc type search
       $DocTypeLabels{$DocTypeID} = "$ShortName [$LongName]";
     }
   }
+
   print FormElementTitle(-helplink => "doctype", -helptext => "Document type");
   print $query -> scrolling_list(-size => 10, -name => "doctype", -multiple => $Multiple,
-                              -values => \%DocTypeLabels, $Booleans);
+                		 # -values => \%DocTypeLabels, $Booleans);
+                                 -values => \@DocumentTypesSorted, 
+                                 -labels => \%DocTypeLabels, $Booleans);
 };
 
 
